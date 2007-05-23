@@ -1,0 +1,66 @@
+model PersonCompany
+
+class Person
+attributes
+  name:String
+operations
+  employer():Set(Company)=self.job.employer->asSet()
+end
+
+class Company
+attributes
+  name:String
+operations
+  employee():Set(Person)=self.job.employee->asSet()
+end
+
+class Job
+attributes
+  salary:Integer
+operations
+  bossPlus():Set(Job)=
+    if boss.isDefined
+      then boss.bossPlus()->including(boss)
+      else oclEmpty(Set(Job)) endif
+  workerPlus():Set(Job)=workerPlusOnSet(worker)
+  workerPlusOnSet(s:Set(Job)):Set(Job)=
+    let oneStep:Set(Job)=s.worker->asSet in
+    if oneStep->exists(j|s->excludes(j))
+      then workerPlusOnSet(s->union(oneStep)) else s endif
+end
+
+association PersonJob between
+  Person[1] role employee
+  Job[0..*] role job
+end
+
+association CompanyJob between
+  Company[1] role employer
+  Job[0..*] role job
+end
+
+association BossWorker between
+  Job[0..1] role boss
+  Job[0..*] role worker
+end
+
+constraints 
+
+context p1:Person inv personNamesAreUnique:
+  Person.allInstances->forAll(p2|p1.name=p2.name implies p1=p2)
+
+context c1:Company inv companyNamesAreUnique:
+  Company.allInstances->forAll(c2|c1.name=c2.name implies c1=c2)
+
+context j1:Job inv employeeEmployerAreUnique:
+  Job.allInstances->forAll(j2|
+    j1.employee=j2.employee and j1.employer=j2.employer implies j1=j2)
+
+context top:Job inv bossWorkerSameEmployer:
+  top.worker->forAll(low|low.employer=top.employer)
+
+context j:Job inv bossWorkerIsHierarchy:
+  j.workerPlus()->excludes(j)
+
+context top:Job inv bossBetterPaidThanWorker:
+  top.worker->forAll(low|low.salary<top.salary)

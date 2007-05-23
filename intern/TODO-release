@@ -1,0 +1,5 @@
+- rename .usl to .use
+- remove graphics code from distribution
+- write www pages
+- make juse test cases from test cases in parser package
+- change package names to org.tzi.juse ?

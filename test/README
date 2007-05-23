@@ -1,0 +1,17 @@
+This directory contains test cases for OCL expressions. You can test
+the USE compiler and evaluation of expressions by typing `make
+test'. The calculated results should match the expected output in the
+files *.out. Differences to the expected results can be found in the
+*.result files.
+
+File format of *.in files:
+--------------------------
+
+These files are for testing parsing and evaluation of expressions. A
+file `foo.in' is used to derive files `foo.cmd' and `foo.out'. The
+first is a command file that can be read by USE. The second contains
+the expected output. Lines starting with `#' in *.in files are ignored
+as well as empty lines. All other lines not starting with a `*' are
+taken as input for USE. Lines with a leading `*' mark expected output
+(without the `*') from USE.
+

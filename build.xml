@@ -1,0 +1,552 @@
+<!--$ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ -->
+
+<project name="use" default="build" basedir=".">
+  <description>Build file for USE</description>
+
+  <!-- the following two lines are updated automatically on "prcs rekey", don't
+       change it manually. -->
+  <!-- $Format: "  <property name=\"release.version\" value=\"$ReleaseVersion$\"/>"$ -->
+  <property name="release.version" value="2.3.1"/>
+
+  <!-- set release name to "use-x.y.z" -->
+
+  <property name="release.name"       value="${ant.project.name}-${release.version}"/>
+
+  <!-- define top-level directories -->
+
+  <property name="bin.dir"            location="${basedir}/bin"/>
+  <property name="etc.dir"            location="${basedir}/etc"/>
+  <property name="examples.dir"       location="${basedir}/examples"/>
+  <property name="images.dir"         location="${basedir}/images"/>
+  <property name="lib.dir"            location="${basedir}/lib"/>
+  <property name="src.dir"            location="${basedir}/src"/>
+  <property name="src.main.dir"       location="${src.dir}/main"/>
+  <property name="src.gui.dir"        location="${src.dir}/gui"/>
+  <property name="src.test.dir"       location="${src.dir}/test"/>
+  <property name="test.dir"           location="${basedir}/test"/>
+  <property name="intern.dir"         value="${basedir}/intern"/>
+
+  <!-- define build directories and files -->
+
+  <property name="build.dir"          location="${basedir}/build"/>
+  <property name="build.classes.dir"  location="${build.dir}/classes"/>
+  <property name="build.lib.dir"      location="${build.dir}/lib"/>
+  <property name="build.javadoc.dir"  location="${build.dir}/javadoc"/>
+  <property name="build.release.dir"  location="${build.dir}/release/${release.name}"/>
+  <property name="build.doc.dir"      location="${build.dir}/doc"/>
+  <property name="use.jar"            location="${build.lib.dir}/use.jar"/>
+  <property name="use-gui.jar"        location="${build.lib.dir}/use-gui.jar"/>
+
+  <property name="antlr.jar"          location="${lib.dir}/antlr-2.7.4.jar"/>
+  <property name="junit.jar"          location="${lib.dir}/junit.jar"/>
+  <property name="gsbase.jar"         location="${lib.dir}/gsbase.jar"/>
+  <property name="checkstyle.jar"     location="${lib.dir}/checkstyle-all-3.4.jar"/>
+  <property name="xerces.jar"         location="${lib.dir}/xerces.jar"/>
+	
+  <property name="readline.src.dir"   location="${src.main.dir}/org/tzi/use/util/input"/>
+  <property name="parser.dir"         location="${src.main.dir}/org/tzi/use/parser"/>
+
+  <available file="${intern.dir}" type="dir" property="intern.dir.present"/>
+
+  <condition property="os.windows">
+    <os family="windows"/>
+  </condition>
+
+  <!-- perform all major targets. Should be done before a checkin to
+       avoid broken snapshots.  -->
+
+  <target name="all" description="perform clean, build, test-junit, javadoc"
+    depends="clean, build, test-junit, javadoc" />
+
+  <!-- compile with jikes. Use like "ant with.jikes build" -->
+
+  <target name="with.jikes" description="compile using jikes">
+    <property name="build.compiler" value="jikes"/>
+    <property name="build.compiler.emacs" value="true"/>
+    <property name="build.compiler.pedantic" value="false"/>
+    <property name="build.compiler.warnings" value="false"/>
+  </target>
+
+  <!-- help -->
+
+  <target name="help" 
+    description="Shows how to get a list of available targets">
+    <echo>run "ant -projecthelp" for a list of available targets</echo>
+  </target>
+
+  <!-- output configuration information -->
+
+  <target name="config-info">
+    <echo>Operating System: ${os.name} ${os.version}</echo>
+    <echo>Java Runtime:     ${java.runtime.name}</echo>
+    <echo>Java Home:        ${java.home}</echo>
+    <echo>Java Version:     ${java.vm.version}</echo>
+    <echo>Build Compiler:   ${build.compiler}</echo>
+    <echo>Ant Version:      ${ant.version}</echo>
+  </target>
+
+  <!-- initialization required before all targets -->
+
+  <target name="init">
+    <tstamp/>
+  </target>
+
+  <!-- check whether ANTLR generated parser is up-to-date -->
+
+  <target name="check-parser-uptodate" depends="init">
+    <condition property="parser.uptodate">
+      <and>
+        <!-- ocl parser -->
+        <uptodate srcfile="${parser.dir}/ocl/ocl.g" 
+                  targetfile="${parser.dir}/ocl/GOCLParser.java"/>
+
+        <!-- use parser -->
+        <uptodate srcfile="${parser.dir}/use/use.g" 
+                  targetfile="${parser.dir}/use/GUSEParser.java"/>
+
+        <!-- command language parser -->
+        <uptodate srcfile="${parser.dir}/cmd/cmd.g" 
+                  targetfile="${parser.dir}/cmd/GCmdParser.java"/>
+
+        <!-- generator parser -->
+        <uptodate srcfile="${parser.dir}/generator/generator.g" 
+                  targetfile="${parser.dir}/generator/GGeneratorParser.java"/>
+
+      </and>
+    </condition>
+  </target>
+
+  <!-- create ANTLR generated parser -->
+
+  <target name="create-parser" depends="check-parser-uptodate" 
+    unless="parser.uptodate">
+ 
+    <!-- ocl parser -->
+    <echo>Generating ocl parser</echo>
+    <java classname="antlr.Tool" dir="${parser.dir}/ocl" fork="yes">
+      <classpath path="${antlr.jar}"/>
+      <arg value="ocl.g"/> 
+    </java>
+
+    <!-- use parser -->
+    <echo>Generating use parser</echo>
+    <java classname="antlr.Tool" dir="${parser.dir}/use" fork="yes">
+      <classpath path="${antlr.jar}"/>
+       <arg line="-glib ../ocl/ocl.g use.g"/> 
+    </java>
+
+    <!-- command line parser -->
+    <echo>Generating command line parser</echo>
+    <java classname="antlr.Tool" dir="${parser.dir}/cmd" fork="yes">
+      <classpath path="${antlr.jar}"/>
+      <arg line="-glib ../ocl/ocl.g cmd.g"/> 
+    </java>
+
+    <!-- generator parser -->
+    <echo>Generating generator parser</echo>
+    <java classname="antlr.Tool" dir="${parser.dir}/generator" fork="yes">
+      <classpath path="${antlr.jar}"/>
+      <arg line="-glib ../use/expandeduse.g generator.g"/> 
+    </java>
+
+    <delete>
+      <fileset dir="${parser.dir}" includes="**/expanded*.g"/>
+    </delete>
+  </target>
+
+  <!-- compile USE sources -->
+
+  <target name="compile-use" depends="compile-use-gui"/>
+
+  <target name="compile-use-main" depends="create-parser">
+    <mkdir dir="${build.classes.dir}"/>
+    <javac srcdir="${src.main.dir}" destdir="${build.classes.dir}" 
+       deprecation="on" debug="on" listfiles="off" 
+       classpath="${antlr.jar}:${junit.jar}:${xerces.jar}" 
+       source="1.4" target="1.4">
+    </javac>  
+    <javac srcdir="${src.test.dir}" destdir="${build.classes.dir}" 
+       deprecation="on" debug="on" listfiles="off"
+       classpath="${antlr.jar}:${junit.jar}:${gsbase.jar}"
+       source="1.4" target="1.4">
+       <exclude name="org/tzi/use/gui/**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="compile-use-gui" depends="compile-use-main">
+    <mkdir dir="${build.classes.dir}"/>
+    <javac srcdir="${src.gui.dir}" destdir="${build.classes.dir}" 
+       deprecation="on" debug="on" listfiles="off" 
+       classpath="${antlr.jar}:${junit.jar}:${xerces.jar}" 
+       source="1.4" target="1.4">
+    </javac>  
+    <javac srcdir="${src.test.dir}" destdir="${build.classes.dir}" 
+       deprecation="on" debug="on" listfiles="off"
+       classpath="${antlr.jar}:${junit.jar}:${gsbase.jar}"
+       source="1.4" target="1.4">
+       <include name="org/tzi/use/gui/**/*.java"/>
+    </javac>
+  </target>
+  
+
+  <!-- create USE jar -->
+
+  <target name="jar-use" depends="compile-use">
+    <mkdir dir="${build.lib.dir}"/>
+    <jar jarfile="${use.jar}" basedir="${build.classes.dir}">
+       <exclude name="**/*Test.class"/>
+       <exclude name="org/tzi/use/gui/**"/>
+    </jar> 
+    <copy todir="${build.lib.dir}">
+      <fileset dir="${lib.dir}"/>
+    </copy>
+    <jar jarfile="${use-gui.jar}" basedir="${build.classes.dir}">
+       <exclude name="**/*Test.class"/>
+       <include name="org/tzi/use/gui/**"/>
+    </jar> 
+    <copy todir="${build.lib.dir}">
+      <fileset dir="${lib.dir}"/>
+    </copy>
+  </target>
+
+  <!-- check whether the native readline wrapper lib must be build -->
+  <target name="check-nativelib-needcompile" depends="init">
+     <uptodate property="nativelib.uptodate"
+       srcfile="${readline.src.dir}/natGNUReadline.c" 
+       targetfile="${build.lib.dir}/libnatGNUReadline.so"/>
+    
+    <condition property="nativelib.needcompile">
+      <and>
+        <!-- no readline on windows -->
+        <not><isset property="nativelib.uptodate"/></not>
+        <not><isset property="os.windows"/></not>
+      </and>
+    </condition>
+  </target>
+
+  <!-- create native readline wrapper -->
+
+  <target name="create-nativelib" depends="compile-use,check-nativelib-needcompile" 
+    if="nativelib.needcompile">
+    <echo>executing javah</echo>
+    <exec executable="javah" failonerror="true">
+      <arg value="-jni"/>
+      <arg value="-classpath"/>
+      <arg value="${build.classes.dir}"/>
+      <arg value="-d"/>
+      <arg value="${build.lib.dir}"/>
+      <arg value="org.tzi.use.util.input.GNUReadline"/>
+    </exec>
+
+    <echo>executing gcc: compiling native code</echo>
+    <exec executable="gcc" failonerror="true">
+      <arg value="-fPIC"/>
+      <arg value="-Wall"/>
+      <arg value="-g"/>
+      <arg value="-O2"/>
+      <arg value="-I"/>
+      <arg value="${build.lib.dir}"/>
+      <arg value="-I"/>
+      <arg value="${java.home}/../include"/>
+      <arg value="-I"/>
+      <arg value="${java.home}/../include/linux"/>
+      <arg value="-I"/>
+      <arg value="${java.home}/../include/solaris"/>
+      <arg value="-c"/>
+      <arg value="${readline.src.dir}/natGNUReadline.c"/>
+      <arg value="-o"/>
+      <arg value="${build.lib.dir}/natGNUReadline.o"/>
+    </exec>
+    <delete file="${build.lib.dir}/org_tzi_use_util_input_GNUReadline.h"/>
+
+    <echo>executing gcc: linking shared library</echo>
+    <exec executable="gcc" failonerror="true">
+      <arg value="${build.lib.dir}/natGNUReadline.o"/>
+      <arg value="-shared"/>
+      <arg value="-lreadline"/>
+      <arg value="-lcurses"/>
+      <arg value="-o"/>
+      <arg value="${build.lib.dir}/libnatGNUReadline.so"/>
+    </exec>
+    <delete file="${build.lib.dir}/natGNUReadline.o" quiet="true"/>
+  </target>
+
+  <!-- create all jars -->
+
+  <target name="build" depends="jar-use, create-nativelib" 
+    description="build everything "/>
+
+
+  <!-- delete the build tree -->
+
+  <target name="clean" description="clean build directory" >
+    <delete dir="${build.dir}"/>
+  </target>
+
+
+  <!-- delete files in the source tree that can be regenerated -->
+
+  <target name="maintainer-clean" depends="clean">
+    <exec executable="make" dir="${test.dir}" failonerror="true">
+      <arg value="maintainer-clean"/>
+    </exec>
+    <exec executable="make" dir="${test.dir}/state" failonerror="true">
+      <arg value="maintainer-clean"/>
+    </exec>
+    <exec executable="make" dir="${examples.dir}" failonerror="true">
+      <arg value="maintainer-clean"/>
+    </exec>
+  </target>
+
+
+  <!-- generate javadoc -->
+
+  <target name="javadoc" depends="create-parser"
+    description="generates javadoc API documentation" >
+    <mkdir dir="${build.javadoc.dir}"/>
+    <javadoc packagenames="org.*"
+             sourcepath="${src.main.dir}"
+	     classpath="${antlr.jar}:${junit.jar}"
+             destdir="${build.javadoc.dir}"
+             author="true"
+             version="true"
+             private="true"
+             use="true"
+             windowtitle="${ant.project.name} API"
+             doctitle="${release.name}">
+      <tag name="pre" scope="constructors,methods" description="Precondition:" />
+      <bottom><![CDATA[<i>Copyright &#169; 1999-2004 Mark Richters. All Rights
+	     Reserved.</i>]]></bottom>
+    </javadoc>
+  </target>
+
+
+  <!-- generate html code from the USE grammar -->
+
+  <target name="generate-grammar-html" depends="init" 
+    description="generates html code from the USE grammar">
+    <java classname="antlr.Tool" dir="${parser.dir}" fork="yes">
+      <classpath path="${antlr.jar}"/>
+      <arg value="-html"/> 
+      <arg value="use.g"/> 
+    </java>
+  </target>
+
+  <!-- generate diagnostic files from the USE grammar -->
+
+  <target name="generate-grammar-diagnostic" depends="init" 
+    description="generates diagnostic files from the USE grammar">
+    <java classname="antlr.Tool" dir="${parser.dir}" fork="yes">
+      <classpath path="${antlr.jar}"/>
+      <arg value="-diagnostic"/> 
+      <arg value="use.g"/> 
+    </java>
+  </target>
+
+  <!-- run all tests -->
+
+  <target name="test" description="run all tests" depends="test-junit, test-other" />
+
+  <!-- run unit tests -->
+
+  <target name="test-junit" description="run unit tests" depends="build">
+    <junit haltonfailure="yes">
+      <jvmarg value="-Dbasedir=${basedir}"/>
+      <formatter type="brief" usefile="no"/>
+      <classpath path="${antlr.jar}:${build.classes.dir}:${gsbase.jar}"/>
+      <batchtest fork="yes">
+        <fileset dir="${src.test.dir}">
+          <include name="**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!-- run unit tests with gui  -->
+
+  <target name="test-junit-swing" description="runs unit tests with gui" depends="build">
+    <java classname="junit.swingui.TestRunner" fork="yes">
+      <jvmarg value="-Dbasedir=${basedir}"/>
+      <classpath path="${antlr.jar}:${build.classes.dir}:${gsbase.jar}:${junit.jar}"/>
+    </java>
+  </target>
+
+
+  <!-- run other tests via make -->
+
+  <target name="test-other" description="run scripted tests" depends="build">
+    <exec executable="make" dir="${test.dir}" failonerror="true">
+      <arg value="clean"/>
+      <arg value="test"/>
+    </exec>
+    <exec executable="make" dir="${test.dir}/state" failonerror="true">
+      <arg value="clean"/>
+      <arg value="test"/>
+    </exec>
+    <exec executable="make" dir="${examples.dir}" failonerror="true">
+      <arg value="clean"/>
+      <arg value="test"/>
+    </exec>
+  </target>
+
+
+  <!-- Performs several coding style checks (project specific) -->
+
+  <target name="checkstyle" depends="init">
+	<taskdef resource="checkstyletask.properties" classpath="${checkstyle.jar}"/>
+	<checkstyle config="etc/checkstyle-use.xml" 
+      failOnViolation="yes"  classpath="${antlr.jar}:${build.classes.dir}">
+	  <fileset dir="${src.dir}">
+        <include name="**/*.java"/>
+        <exclude name="main/org/tzi/use/parser/**/G*.java"/>
+        <exclude name="main/org/tzi/use/parser/generator/*.java"/>
+        <exclude name="**/*_test.java"/>
+        <exclude name="main/org/tzi/use/gen/**/*.java"/>
+      </fileset>
+	</checkstyle>
+	<checkstyle config="etc/checkstyle-generator.xml" 
+      failOnViolation="yes"  classpath="${antlr.jar}:${build.classes.dir}">
+	  <fileset dir="${src.dir}">
+        <include name="main/org/tzi/use/parser/generator/ASTG*.java"/>
+        <include name="main/org/tzi/use/gen/**/*.java"/>
+      </fileset>
+	</checkstyle>
+  </target>
+
+  <!-- Maintainance target: Enforces correct line breaks and replaces tabs -->
+
+  <target name="fixcrlf" depends="init">
+    <fixcrlf srcDir="${src.dir}" eol="lf" javafiles="yes"
+      includes="**/*.java"
+      tab="remove" tablength="4"/>
+  </target>
+
+  <!-- create www docs -->
+
+  <target name="doc" description="create www documentation">
+    <fail unless="intern.dir.present"
+      message="This target requires files that are not part of the release distribution." />
+    <mkdir dir="${build.doc.dir}"/>
+    <copy todir="${build.doc.dir}">
+      <fileset dir="${basedir}" includes="INSTALL,NEWS,README"/>
+    </copy>
+    <exec executable="make" dir="intern/www" failonerror="true">
+      <arg value="clean"/>
+      <arg value="all"/>
+      <arg value="install"/>
+    </exec>
+    <exec executable="make" dir="intern/www" failonerror="true">
+      <arg value="clean"/>
+    </exec>
+  </target>
+
+  <!-- create release -->
+
+  <target name="release" 
+    description="create release distribution"
+    depends="maintainer-clean, build, doc">
+
+    <!-- clean up example and test directories -->
+    <exec executable="make" dir="${test.dir}" failonerror="true">
+      <arg value="clean"/>
+    </exec>
+    <exec executable="make" dir="${test.dir}/state" failonerror="true">
+      <arg value="clean"/>
+    </exec>
+    <exec executable="make" dir="${examples.dir}" failonerror="true">
+      <arg value="clean"/>
+    </exec>
+
+    <!-- copy top-level files -->
+    <mkdir dir="${build.release.dir}"/>
+    <copy todir="${build.release.dir}">
+      <fileset dir="${basedir}" includes=".classpath,.project,AUTHORS,build.xml,ChangeLog,COPYING,INSTALL,NEWS,README*"/>
+    </copy>
+
+    <!-- copy bin files -->
+    <mkdir dir="${build.release.dir}/bin"/>
+    <copy todir="${build.release.dir}/bin">
+      <fileset dir="${bin.dir}"/>
+    </copy>
+    <chmod file="${build.release.dir}/bin/use" perm="a+rx" />
+
+    <!-- copy doc files -->
+    <mkdir dir="${build.release.dir}/doc"/>
+    <copy todir="${build.release.dir}/doc">
+      <fileset dir="${build.doc.dir}"/>
+    </copy>
+
+    <!-- copy etc files -->
+    <mkdir dir="${build.release.dir}/etc"/>
+    <copy todir="${build.release.dir}/etc">
+      <fileset dir="${etc.dir}"/>
+    </copy>
+
+    <!-- copy example files -->
+    <mkdir dir="${build.release.dir}/examples"/>
+    <copy todir="${build.release.dir}/examples">
+      <fileset dir="${examples.dir}" excludes="**/*.done" />
+    </copy>
+
+    <!-- copy image files -->
+    <mkdir dir="${build.release.dir}/images"/>
+    <copy todir="${build.release.dir}/images">
+      <fileset dir="${images.dir}" />
+    </copy>
+
+    <!-- copy lib files -->
+    <mkdir dir="${build.release.dir}/lib"/>
+    <copy todir="${build.release.dir}/lib">
+      <fileset dir="${build.lib.dir}">
+        <exclude name="checkstyle-all-3.4.jar"/>
+      </fileset>
+    </copy>
+
+    <!-- copy src files -->
+    <mkdir dir="${build.release.dir}/src"/>
+    <copy todir="${build.release.dir}/src">
+      <fileset dir="${src.dir}"/>
+    </copy>
+
+    <!-- copy test files -->
+    <mkdir dir="${build.release.dir}/test"/>
+    <copy todir="${build.release.dir}/test">
+      <fileset dir="${test.dir}" />
+    </copy>
+    <chmod file="${build.release.dir}/test/mkcmd.pl" perm="a+rx" />
+    <chmod file="${build.release.dir}/test/mkout.pl" perm="a+rx" />
+
+    <!-- create release tar file -->
+    <property name="release.tar" value="${build.release.dir}/../${release.name}.tar"/>
+    <delete file="${release.tar}"/>
+    <delete file="${release.tar}.gz"/>
+    <tar longfile="gnu" destfile="${release.tar}">
+      <tarfileset dir="${build.release.dir}/.." mode="755">
+        <include name="${release.name}/bin/use"/>
+        <include name="${release.name}/test/*.pl"/>
+      </tarfileset>
+      <tarfileset dir="${build.release.dir}/..">
+        <include name="${release.name}/**"/>
+        <exclude name="${release.name}/bin/use"/>
+        <exclude name="${release.name}/test/*.pl"/>
+      </tarfileset>
+    </tar>
+    <gzip src="${release.tar}" zipfile="${release.tar}.gz"/>
+
+    <!-- create release zip file -->
+    <property name="release.zip" value="${build.release.dir}/../${release.name}.zip"/>
+    <delete file="${release.zip}"/>
+    <zip destfile="${release.zip}">
+      <zipfileset dir="${build.release.dir}/.." filemode="755">
+        <include name="${release.name}/bin/use"/>
+        <include name="${release.name}/test/*.pl"/>
+      </zipfileset>
+      <zipfileset dir="${build.release.dir}/..">
+        <include name="${release.name}/**"/>
+        <exclude name="${release.name}/bin/use"/>
+        <exclude name="${release.name}/test/*.pl"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+</project>

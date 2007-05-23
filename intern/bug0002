@@ -1,0 +1,54 @@
+$State: Closed$
+$BugAuthor: mr$
+
+X-From-Line: Ananda.Amatya@dcs.warwick.ac.uk Tue Oct 17 11:41:26 2000
+Received: from gem.dcs.warwick.ac.uk (root@gem.dcs.warwick.ac.uk [137.205.224.9])
+	by nmh.informatik.uni-bremen.de (8.10.1/8.10.1) with ESMTP id e9H9fL214177
+	for <mr@informatik.uni-bremen.de>; Tue, 17 Oct 2000 11:41:22 +0200 (MEST)
+Received: from dcs.warwick.ac.uk (ananda@localhost [127.0.0.1])
+	by gem.dcs.warwick.ac.uk (8.11.1/8.10.2) with ESMTP id e9H9fGD19026
+	for <mr@informatik.uni-bremen.de>; Tue, 17 Oct 2000 10:41:17 +0100 (BST)
+Sender: ananda@dcs.warwick.ac.uk
+X-Gnus-Mail-Source: file:/var/mail/mr
+Message-ID: <39EC1EB9.4D75F01B@dcs.warwick.ac.uk>
+Date: Tue, 17 Oct 2000 10:41:13 +0100
+From: Ananda Amatya <Ananda.Amatya@dcs.warwick.ac.uk>
+X-Mailer: Mozilla 4.75 [en] (X11; U; SunOS 5.8 sun4u)
+X-Accept-Language: en
+MIME-Version: 1.0
+To: mr@informatik.uni-bremen.de
+Subject: Problem with making use1.1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Content-Length: 509
+Lines: 27
+Xref: dustbin.informatik.uni-bremen.de mail.misc:2787
+
+Dear Mark,
+
+In trying to make use, I came up with the following error message:
+
+ananda@gem:use-1.1.0 >$ /gnu/bin/make all
+make: *** No rule to make target `README.in', needed by `README'.
+Stop.
+
+I notice that there is no README.in file in the release.
+
+I shall appreciate help.
+
+Many thanks.
+
+Ananda
+
+P.s. make clean worked.
+
+
+--
+Ananda M. S. Amatya
+Dept of Computer Science, University of Warwick, Coventry, CV4 7AL
+Phone: +44 2476 523669   WWW: http://www.dcs.warwick.ac.uk/~ananda
+Fax:   +44 2476 573024
+
+
+
+

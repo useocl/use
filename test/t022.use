@@ -1,0 +1,23 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model t022
+
+class Test
+operations
+  op(arg:Set(Sequence(OclAny))):Set(Sequence(OclAny))=
+    arg->including(arg->asSequence->at(1))
+  test():Set(Sequence(OclAny)) = op(Set{Sequence{1,2}})
+
+  transitiveClosure( init : Set(Sequence(OclAny)) ) : Set(Sequence(OclAny)) = 
+    let baseSet:Set(OclAny)=
+      init->collect(at(1))->union(init->collect(at(2)))->asSet in
+    baseSet->iterate(e1,e2,e3:OclAny;           
+      res:Set(Sequence(OclAny))=init |
+      if res->exists(p1,p2:Sequence(OclAny) |
+          p1->at(1)=e1 and p1->at(2)=e2 and
+          p2->at(1)=e2 and p2->at(2)=e3)
+        then res->including(Sequence{e1,e3}) else res endif)
+  call_12_23():Set(Sequence(OclAny))=
+    self.transitiveClosure(Set{Sequence{1,2},Sequence{2,3}})
+
+end 

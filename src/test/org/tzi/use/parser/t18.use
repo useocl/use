@@ -1,0 +1,14 @@
+model t18
+
+class A
+attributes  
+  attr : Integer
+end
+
+class B
+attributes  
+  attr : String
+end
+
+class C < A,B
+end

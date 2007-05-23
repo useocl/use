@@ -1,0 +1,23 @@
+model bug0035
+
+
+class C
+end
+
+associationclass A1
+between
+  C[1] role r11
+  C[1] role r12
+end
+
+associationclass A2
+between
+  C[0..1] role r21
+  C[1] role r22
+end
+    
+associationclass A3
+between
+  C[1] role r31
+  C[*] role r32
+end

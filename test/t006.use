@@ -1,0 +1,10 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model t006
+
+class A
+attributes
+  attr : Integer
+operations
+  op() : String = 'foo'
+end

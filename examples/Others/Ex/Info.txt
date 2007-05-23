@@ -1,0 +1,13 @@
+This example is the same as Example/Documentation/Demo.
+But there is an invariant added and absent comments
+in the Ex.use file.
+
+Ex*.cmd == Demo*.cmd
+
+e.cmd: 
+== Ex.cmd and a creation of three 
+more projects controlled by the department
+
+After executing e.cmd one more invariant evaluates to
+false, because there are more projects controlled by the
+department than there are employees working for it.

@@ -1,0 +1,6 @@
+This test file was automatically generated. 
+It contains 50 classes and 2450 (= 50 * 49) 
+associations connecting each class with each other.
+
+Test.cmd:
+empty

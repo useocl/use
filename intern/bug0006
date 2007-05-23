@@ -1,0 +1,124 @@
+$State: Closed$
+$BugAuthor: mr$
+
+X-From-Line: stuart@mclellankent.com Mon Oct 30 15:51:27 2000
+Received: from roam1 (roam1.u-net.net [195.102.240.81])
+	by nmh.informatik.uni-bremen.de (8.10.1/8.10.1) with ESMTP id e9UEpLt03634
+	for <mr@informatik.uni-bremen.de>; Mon, 30 Oct 2000 15:51:22 +0100 (MET)
+Received: from p60.nas2.is5.u-net.net ([195.102.200.188] helo=mclellankent.com)
+	by roam1 with asmtp (Exim 3.036 #1)
+	id 13qGGs-0003qK-00
+	for mr@Informatik.Uni-Bremen.DE; Mon, 30 Oct 2000 14:50:46 +0000
+X-Gnus-Mail-Source: file:/var/mail/mr
+Message-ID: <39FD8A80.40ED8B37@mclellankent.com>
+Date: Mon, 30 Oct 2000 14:49:36 +0000
+From: stuart kent <stuart@mclellankent.com>
+X-Mailer: Mozilla 4.72 [en] (Windows NT 5.0; U)
+X-Accept-Language: en
+MIME-Version: 1.0
+To: Mark Richters <mr@informatik.uni-bremen.de>
+Subject: Re: OCL syntax used in USE
+References: <39FBFEC4.E5937FCE@mclellankent.com> <tkog02lgf6.fsf@dustbin.informatik.uni-bremen.de> <39FD67DD.4C9093E4@mclellankent.com> <tkr94ys85k.fsf@dustbin.informatik.uni-bremen.de>
+Content-Type: multipart/mixed;
+ boundary="------------FA0D1C854FC25E23594641BF"
+X-Content-Length: 2483
+Lines: 96
+Xref: dustbin.informatik.uni-bremen.de mail.misc:2852
+
+This is a multi-part message in MIME format.
+--------------FA0D1C854FC25E23594641BF
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Thanks for the info.
+
+I've just been playing with the tool, and had a few problems around setting
+attributes to Real values via the GUI (the odd crash etc.). I've got it to work
+now, but only by editing the .cmd file directly. Also, with inheritance the GUI
+doesn't seem to notice associations to parents when creating links.
+
+Attached are the two files I have been using.
+
+Stuart
+--
+ukc home - http://www.cs.ukc.ac.uk/people/staff/sjhk
+uml'2000 - http://www.cs.york.ac.uk/uml2000
+puml group - http://www.puml.org/
+
+
+--------------FA0D1C854FC25E23594641BF
+Content-Type: text/plain; charset=us-ascii;
+ name="Q8.use"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="Q8.use"
+
+model Drawings
+
+class Drawing
+attributes
+    area:Real;
+end
+
+class BoxOnlyDrawing < Drawing
+end
+
+class DrawingElement
+attributes
+    area:Real;
+    x_radius:Real;
+    y_radius:Real;
+end
+
+class Circle < DrawingElement
+attributes
+    radius:Real;
+end
+
+class Rectangle < DrawingElement
+attributes
+    length:Real;
+    width:Real;
+end
+
+association elements between
+    Drawing [1] role drawing;
+    DrawingElement [*] role elements;
+end
+
+constraints
+
+context Drawing
+inv define_area:
+    self.area=self.elements->collect(e|e.area)->sum
+
+context Rectangle
+inv define_rectangle_area:
+    self.area=width*length and self.length=self.x_radius*2.0 and self.width=self.y_radius*2.0
+
+context Circle
+inv define_circle_area:
+    self.area=self.radius*self.radius*22/7 and self.radius=self.x_radius and self.x_radius=self.y_radius
+
+context BoxOnlyDrawing
+inv type_elements:
+    self.elements->forAll(e|e.oclIsKindOf(Rectangle))
+
+--------------FA0D1C854FC25E23594641BF
+Content-Type: application/x-unknown-content-type-cmdfile;
+ name="Q8.cmd"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline;
+ filename="Q8.cmd"
+
+IWNyZWF0ZSBkMSA6IERyYXdpbmcNCiFjcmVhdGUgcjEgOiBSZWN0YW5nbGUNCiFjcmVhdGUg
+YzEgOiBDaXJjbGUNCiFpbnNlcnQgKGQxLHIxKSBpbnRvIGVsZW1lbnRzDQohaW5zZXJ0IChk
+MSxjMSkgaW50byBlbGVtZW50cw0KIXNldCBjMS5hcmVhID0gMzguNQ0KIXNldCBjMS5yYWRp
+dXMgPSAzLjUNCiFzZXQgYzEueF9yYWRpdXMgPSAzLjUNCiFzZXQgYzEueV9yYWRpdXMgPSAz
+LjUNCiFzZXQgcjEuYXJlYSA9IDMwLjANCiFzZXQgcjEubGVuZ3RoID0gNi4wDQohc2V0IHIx
+LndpZHRoID0gNS4wDQohc2V0IHIxLnhfcmFkaXVzID0gMy4wDQohc2V0IHIxLnlfcmFkaXVz
+ID0gMi41DQohc2V0IGQxLmFyZWE9NjguNQ0K
+--------------FA0D1C854FC25E23594641BF--
+
+
+

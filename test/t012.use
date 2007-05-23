@@ -1,0 +1,27 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model t012
+
+class A
+operations
+  swap_b()
+end
+
+class B
+end
+
+association R1 between 
+  A[*] role ra1
+  B[1] role rb1
+end
+
+association R2 between 
+  A[*] role ra2
+  B[1] role rb2
+end
+
+-- constraints
+
+-- context A::swap_b() 
+--   post: self.rb1 = self.rb2@pre
+--   post: self.rb2 = self.rb1@pre

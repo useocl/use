@@ -1,0 +1,66 @@
+$Bug: Bag/Set of Set, Sequence, and Bag fails.$
+$Category: OCL$
+$State: Closed$
+$BugAuthor: gogolla$
+$Tests: ExpQueryTest, test/t020$
+
+hallo mark,
+
+mir sind zwei use-fehler untergekommen. wie sollen wir mit so etwas
+umgehen? hast du eine idee woran es liegt? dann koennte ich die
+fehlerbehebung vieleicht an fabian gutsche geben.
+
+gruss
+martin
+
+------------------------------------------------------------------------
+
+Fehler 1:
+
+use> ?Sequence{Set{42},Sequence{42},Bag{42}}
+-> Sequence{Set{42},Sequence{42},Bag{42}} : Sequence(Collection(Integer))
+
+use> ?Bag{Set{42},Sequence{42},Bag{42}}
+INTERNAL ERROR: An unexpected exception occured. This happened most probably
+due to an error in the program. The program will try to continue, but may
+not be able to recover from the error. Please send a bug report to mr@tzi.org
+with a description of your last input and include the following output:
+Program version: 2.1.0pre
+Project version: use 0.217 Wed, 27 Jun 2001 23:38:19 +0200 mr
+Stack trace: java.lang.ClassCastException
+        at org.tzi.use.uml.ocl.value.BagValue.compareTo(BagValue.java:311)
+        at java.util.Arrays.mergeSort(Unknown Source)
+        at java.util.Arrays.sort(Unknown Source)
+        at org.tzi.use.uml.ocl.value.BagValue.toString(BagValue.java:279)
+        at org.tzi.use.uml.ocl.value.Value.toStringWithType(Value.java:94)
+        at org.tzi.use.main.Shell.cmdQuery(Shell.java:767)
+        at org.tzi.use.main.Shell.processLine(Shell.java:260)
+        at org.tzi.use.main.Shell.processLineSafely(Shell.java:215)
+        at org.tzi.use.main.Shell.run(Shell.java:174)
+        at java.lang.Thread.run(Unknown Source)
+
+use> ?Set{Set{42},Sequence{42},Bag{42}}
+INTERNAL ERROR: An unexpected exception occured. This happened most probably
+due to an error in the program. The program will try to continue, but may
+not be able to recover from the error. Please send a bug report to mr@tzi.org
+with a description of your last input and include the following output:
+Program version: 2.1.0pre
+Project version: use 0.217 Wed, 27 Jun 2001 23:38:19 +0200 mr
+Stack trace: java.lang.ClassCastException
+        at org.tzi.use.uml.ocl.value.SequenceValue.compareTo(SequenceValue.java:284)
+        at java.util.TreeMap.compare(Unknown Source)
+        at java.util.TreeMap.put(Unknown Source)
+        at java.util.TreeSet.add(Unknown Source)
+        at org.tzi.use.uml.ocl.value.SetValue.add(SetValue.java:120)
+        at org.tzi.use.uml.ocl.value.SetValue.<init>(SetValue.java:63)
+        at org.tzi.use.uml.ocl.expr.ExpSetLiteral.eval(ExpSetLiteral.java:56)
+        at org.tzi.use.uml.ocl.expr.Evaluator.evaluate(Evaluator.java:111)
+        at org.tzi.use.uml.ocl.expr.Evaluator.eval(Evaluator.java:69)
+        at org.tzi.use.uml.ocl.expr.Evaluator.eval(Evaluator.java:80)
+        at org.tzi.use.main.Shell.cmdQuery(Shell.java:762)
+        at org.tzi.use.main.Shell.processLine(Shell.java:260)
+        at org.tzi.use.main.Shell.processLineSafely(Shell.java:215)
+        at org.tzi.use.main.Shell.run(Shell.java:174)
+        at java.lang.Thread.run(Unknown Source)
+
+------------------------------------------------------------------------

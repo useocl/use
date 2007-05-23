@@ -1,0 +1,13 @@
+model t7
+
+enum Color { red, blue }
+
+class Point
+attributes
+  c : Color
+end
+
+constraints
+
+context Point inv:
+  self.c = #Red  -- failed in 1.2.0

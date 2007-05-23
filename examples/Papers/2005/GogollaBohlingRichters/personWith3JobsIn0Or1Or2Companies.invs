@@ -1,0 +1,4 @@
+context Person inv personWith3JobsIn0Or1Or2Companies:
+  Person.allInstances->exists(p|p.job->size=3)
+  and
+  Company.allInstances->size<=2

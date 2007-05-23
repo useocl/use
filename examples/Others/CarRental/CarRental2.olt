@@ -1,0 +1,30 @@
+#USE object diagram layout
+#Sun Dec 03 17:42:54 CET 2000
+Object.cargroup2.y=226.730457818466
+Object.manager.y=133.31993179090327
+Object.cargroup2.x=499.97414784124277
+Object.manager.x=77.67293005991286
+Object.car2.y=183.69423613898311
+Object.car2.x=316.3238605676434
+Object.car4.y=265.730457818466
+Object.car4.x=314.97414784124277
+Object.check1.y=86.73045781846601
+Association.Maintenance.y=84.73045781846601
+Object.check1.x=478.97414784124277
+Object.servicedepot1.y=27.730457818466007
+Association.Maintenance.x=312.97414784124277
+Object.servicedepot1.x=311.97414784124277
+Object.customer1.y=42.0
+Object.cargroup1.y=146.38981433286645
+Object.customer1.x=113.84909018064764
+Object.cargroup1.x=475.4094592130598
+Object.car1.y=140.05157831734937
+Object.car1.x=314.3366348999298
+Object.branch.y=223.8064817204507
+Object.cargroup3.y=308.730457818466
+Object.branch.x=142.61269294564647
+Object.cargroup3.x=502.97414784124277
+Object.car3.y=223.0282459906494
+Object.car3.x=314.9925501894131
+Object.rental1.y=95.53700513535279
+Object.rental1.x=228.95789489628993

@@ -1,0 +1,15 @@
+context p:Person inv personEmployeeInverseCompanyEmployer:
+  Company.allInstances->forAll(c|
+    p.employer()->includes(c)=c.employee()->includes(p))
+
+context Person inv NEGATEDpersonEmployeeInverseCompanyEmployer:
+  Person.allInstances->exists(p|
+    Company.allInstances->exists(c|
+      p.employer()->includes(c)<>c.employee()->includes(p)))
+
+context Person inv NEGATEDpersonEmployeeInverseCompanyEmployer2:
+  Person.allInstances->exists(p|
+    Company.allInstances->exists(c|
+      p.employer()->includes(c) and c.employee()->excludes(p)
+      or
+      p.employer()->excludes(c) and c.employee()->includes(p)))

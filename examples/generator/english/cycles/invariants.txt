@@ -1,0 +1,8 @@
+
+context Train
+  inv Chain_tooWeak:
+  self.waggon->select(w: Waggon | w.predecessor->isEmpty)->size = 1
+
+context Waggon
+  inv NoCycles:
+  not self.transPredecessor()->includes(self)

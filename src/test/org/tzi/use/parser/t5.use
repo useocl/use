@@ -1,0 +1,14 @@
+model t5
+
+class A
+end
+
+association R between
+  A[*] role a1
+  A[0..1] role a2
+end
+
+constraints
+
+context A inv:
+  self.a2->forAll(a | true)

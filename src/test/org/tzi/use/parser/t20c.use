@@ -1,0 +1,23 @@
+model t20
+
+class A
+end
+
+class B < A
+end
+
+class C < A
+end
+
+class D
+end
+
+association assoc2 between
+  B[*] role rb
+  D[*] role rd
+end
+
+association assoc1 between
+  C[*] role rc
+  D[*] role rd
+end

@@ -1,0 +1,21 @@
+Structural problems:
+
+- Message requires an Interaction (Fig. 2-17)
+
+- Interaction requires a Collaboration (Fig. 2-17)
+
+- Interaction must own all ClassifierRoles (Message [1]: The sender
+  and the receiver must participate in the Collaboration which defines
+  the context of the Interaction.)
+
+- Added a package to contain classifiers and collaboration
+  (Collaboration [1]: All Classifiers and Associations of the
+  ClassifierRoles and AssociationRoles in the Collaboration must be
+  included in the namespace owning the Collaboration.)
+
+
+Der zweite Stimulus geht meiner Meinung nach nicht aus dem
+Collaboration-Diagramm hervor. Dort muesste dann eigentlich auch eine
+zweite Message stehen, oder? Dazu kaeme dann eine ActionSequence im
+unteren Diagramm, so dass jeder Stimulus seine eigene dispatchAction
+hat.

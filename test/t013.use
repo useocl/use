@@ -1,0 +1,16 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model t013
+
+class A
+end
+
+class B
+attributes
+  battr : Integer
+end
+
+association R between 
+  A[*]
+  B[1] role rb
+end

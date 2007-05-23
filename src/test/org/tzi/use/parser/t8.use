@@ -1,0 +1,7 @@
+model t8
+
+class A
+operations
+  op1() : Boolean = self.op2()
+  op2() : Boolean = self.op1()
+end

@@ -1,0 +1,519 @@
+# -*- sh -*-
+# $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+#
+
+# This file is for testing parsing and evaluation of expressions. Each
+# expression may span multiple lines. They must be followed by a line
+# prefixed with '->' containing the expected result. Comment lines
+# starting with a double hash ('##') are printed out during testing.
+
+#
+## Basic literals
+#
+
+42
+-> 42 : Integer
+
+3.1
+-> 3.1 : Real
+
+-5
+-> -5 : Integer
+
+true
+-> true : Boolean
+
+false
+-> false : Boolean
+
+'aString'
+-> 'aString' : String
+
+''
+-> '' : String
+
+#
+## Operations on Integers and Reals
+#
+
+3-(8+4)*(4+5)
+-> -105 : Integer
+
+-(3-(8+4)*(4+5))
+-> 105 : Integer
+
+- - -(3-(8+4)*(4+5))
+-> 105 : Integer
+
+3 / 0
+-> Undefined : Real
+
+3 div 0
+-> Undefined : Integer
+
+10.mod(3)
+-> 1 : Integer
+
+3 / 1.5
+-> 2.0 : Real
+
+3.0 / 2
+-> 1.5 : Real
+
+3.min(4)
+-> 3 : Integer
+
+3.max(4)
+-> 4 : Integer
+
+3.abs
+-> 3 : Integer
+
+3.abs + 4
+-> 7 : Integer
+
+3.9.floor
+-> 3 : Integer
+
+3.floor
+-> 3 : Integer
+
+3.9.round
+-> 4 : Integer
+
+3.round
+-> 3 : Integer
+
+3 < 4
+-> true : Boolean
+
+3.0 < 4
+-> true : Boolean
+
+3 < 4.0
+-> true : Boolean
+
+3 = 3.0
+-> true : Boolean
+
+#
+## Operations on Booleans
+#
+
+true or false
+-> true : Boolean
+
+false implies true = not false or false
+-> true : Boolean
+
+not not false
+-> false : Boolean
+
+#FIXME:
+#true or Undefined
+#-> true : Boolean
+
+#
+## Operations on Strings
+#
+
+'foo'.size
+-> 3 : Integer
+
+'foo'.concat('bar')
+-> 'foobar' : String
+
+# FIXME: add + operator for strings?
+#'foo' + 'bar'
+#-> 'foobar' : String
+
+'foO'.toUpper
+-> 'FOO' : String
+
+'fOO'.toLower
+-> 'foo' : String
+
+'foobar'.substring(2,4)
+-> 'oob' : String
+
+
+#
+## If-then-else expressions
+#
+
+if true then 2 else 3 endif
+-> 2 : Integer
+
+if false then 2 else 3 endif
+-> 3 : Integer
+
+#
+## Collection literals
+#
+
+Set{1, 2}
+-> Set{1,2} : Set(Integer)
+
+Set{1..3}
+-> Set{1,2,3} : Set(Integer)
+
+Set{1..2*2}
+-> Set{1,2,3,4} : Set(Integer)
+
+Set{1.3, 2.5}
+-> Set{1.3,2.5} : Set(Real)
+
+Set{'b','a'}
+-> Set{'a','b'} : Set(String)
+
+Set{1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9}
+-> Set{1,2,3,4,5,6,7,8,9} : Set(Integer)
+
+Set{Set{1}, Set{2}}
+-> Set{Set{1},Set{2}} : Set(Set(Integer))
+
+Set{Set{1}, Set{2}, Set{2}, Set{3}}
+-> Set{Set{1},Set{2},Set{3}} : Set(Set(Integer))
+
+Sequence{'a','b'}
+-> Sequence{'a','b'} : Sequence(String)
+
+Sequence{5..8}
+-> Sequence{5,6,7,8} : Sequence(Integer)
+
+Sequence{'a','b','a'}
+-> Sequence{'a','b','a'} : Sequence(String)
+
+Sequence{Set{1},Set{2,3}}
+-> Sequence{Set{1},Set{2,3}} : Sequence(Set(Integer))
+
+Bag{1,2,2,3}
+-> Bag{1,2,2,3} : Bag(Integer)
+
+Bag{Set{1}, Set{2}, Set{2}, Set{3}}
+-> Bag{Set{1},Set{2},Set{2},Set{3}} : Bag(Set(Integer))
+
+#
+## Empty collections
+#
+
+oclEmpty(Set(Integer))
+-> Set{} : Set(Integer)
+
+oclEmpty(Set(Set(Integer)))
+-> Set{} : Set(Set(Integer))
+
+#
+## Query expressions
+#
+
+Set{1,2,3}->select(true)
+-> Set{1,2,3} : Set(Integer)
+
+Set{1,2,3}->select(e :  Integer | e > 1)
+-> Set{2,3} : Set(Integer)
+
+Set{1,2,3}->select(e | e > 1)
+-> Set{2,3} : Set(Integer)
+
+#
+## Iterate Expressions
+#
+
+Set{1,2,3,4,5,6}->iterate(e : Integer; acc : Integer = 0 | acc + e)
+-> 21 : Integer
+
+Sequence{3,2,1}->iterate(e : Integer; acc : Integer = 6 | acc - e)
+-> 0 : Integer
+
+Bag{1,2,2,3}->iterate(e : Integer; acc : Integer = 0 | acc + e)
+-> 8 : Integer
+
+Set{Set{1,2},Set{2,3,4}}->iterate(e : Set(Integer); acc : Set(String) = Set{'a'} | Set{'b'})
+-> Set{'b'} : Set(String)
+
+Set{Set{1,2},Set{3},Set{2,3,4}}->iterate(e : Set(Integer); acc : Set(Integer) = Set{0} | acc->union(e))
+-> Set{0,1,2,3,4} : Set(Integer)
+
+Sequence{1,2,3}->iterate(
+    e1, e2 : Integer;
+    res : Integer = 0 |
+    res + e1 * e2)
+-> 36 : Integer
+
+#
+## Set operations
+#
+
+Set{1,2,3}->size()
+-> 3 : Integer
+
+Set{1,2,3}->union(Set{0,2,4})
+-> Set{0,1,2,3,4} : Set(Integer)
+
+Set{1,2}->union(Set{1,2})
+-> Set{1,2} : Set(Integer)
+
+Set{1,2}->union(Bag{1,2,3})
+-> Bag{1,1,2,2,3} : Bag(Integer)
+
+Set{1,2,3}->intersection(Set{1,2})
+-> Set{1,2} : Set(Integer)
+
+Set{1,2,3}->intersection(Set{4})
+-> Set{} : Set(Integer)
+
+Set{1,2,3} - Set{2}
+-> Set{1,3} : Set(Integer)
+
+Set{1,2,3}->symmetricDifference(Set{2,4})
+-> Set{1,3,4} : Set(Integer)
+
+Set{1,2,3}->including(5)
+-> Set{1,2,3,5} : Set(Integer)
+
+Set{1,2,3}->including(1)
+-> Set{1,2,3} : Set(Integer)
+
+Set{1,2,3}->excluding(5)
+-> Set{1,2,3} : Set(Integer)
+
+Set{1,2,3}->excluding(1)
+-> Set{2,3} : Set(Integer)
+
+Set{1,2,3}->select(e | e > 1)
+-> Set{2,3} : Set(Integer)
+
+Set{1,2,3}->select(e | e <> 2)
+-> Set{1,3} : Set(Integer)
+
+Set{Set{1,2},Set{2,3,4}}->select(s | s->size > 2)
+-> Set{Set{2,3,4}} : Set(Set(Integer))
+
+Set{Set{2},Set{1,2},Set{2,3,4}}->select(s | s->size.mod(2) = 1)
+-> Set{Set{2},Set{2,3,4}} : Set(Set(Integer))
+
+Set{Set{2},Set{1,2},Set{2,3,4}}->select(s | s->size.mod(2) = 1)->size()
+-> 2 : Integer
+
+Set{1,2,3}->reject(e | e > 1)
+-> Set{1} : Set(Integer)
+
+Set{1,2,3}->reject(e | e <> 2)
+-> Set{2} : Set(Integer)
+
+Set{1,2,3}->collect(e | e * 2)
+-> Bag{2,4,6} : Bag(Integer)
+
+Set{1,2,3}->collect(1)
+-> Bag{1,1,1} : Bag(Integer)
+
+Set{1,2,3}->collect(e | 'abc'.substring(e,3))
+-> Bag{'abc','bc','c'} : Bag(String)
+
+#
+## Sequence operations
+#
+
+Sequence{1,2,3}->at(1)
+-> 1 : Integer
+
+Sequence{1,2,3}->at(2)
+-> 2 : Integer
+
+Sequence{1,2,3}->at(3)
+-> 3 : Integer
+
+Sequence{1,2,3}->at(1) = 1 
+    and Sequence{1,2,3}->at(2) = 2 
+    and Sequence{1,2,3}->at(3) = 3
+-> true : Boolean
+
+Sequence{1,2,2,3}->asSet
+-> Set{1,2,3} : Set(Integer)
+
+
+#
+## Bag operations
+#
+
+Bag{1,2}->union(Bag{1,2,3})
+-> Bag{1,1,2,2,3} : Bag(Integer)
+
+Bag{1,2,2,3}->asSet
+-> Set{1,2,3} : Set(Integer)
+
+Bag{Set{1}, Set{2}, Set{2}, Set{3}}->asSet
+-> Set{Set{1},Set{2},Set{3}} : Set(Set(Integer))
+
+
+#
+## Flattening
+#
+
+Bag{Set{1}, Set{2}, Set{2}, Set{3}}->flatten
+-> Bag{1,2,2,3} : Bag(Integer)
+
+Bag{Bag{1,1}, Bag{2,1}, Bag{1,2,3}}->flatten
+-> Bag{1,1,1,1,2,2,3} : Bag(Integer)
+
+Bag{Sequence{1,2}, Sequence{2,1}, Sequence{2,3}}->flatten
+-> Bag{1,1,2,2,2,3} : Bag(Integer)
+
+Set{Set{1}, Set{2}, Set{2}, Set{3}}->flatten
+-> Set{1,2,3} : Set(Integer)
+
+Set{Bag{1,1}, Bag{2,1}, Bag{1,2,3}}->flatten
+-> Set{1,2,3} : Set(Integer)
+
+Set{Sequence{1,2}, Sequence{2,1}, Sequence{2,3}}->flatten
+-> Set{1,2,3} : Set(Integer)
+
+Sequence{Sequence{1,2}, Sequence{2,1}, Sequence{2,3}}->flatten
+-> Sequence{1,2,2,1,2,3} : Sequence(Integer)
+
+#
+## Exists and forAll on collections
+#
+
+Set{1,2,3,4,5,6}->exists(e | e > 0)
+-> true : Boolean
+
+Set{1,2,3,4,5,6}->exists(e | e = 7)
+-> false : Boolean
+
+Set{1,2,3,4,5,6}->forAll(e | e > 0)
+-> true : Boolean
+
+Set{1,2,3,4,5,6}->forAll(e | e > 1)
+-> false : Boolean
+
+Sequence{1,2,3,4,5,6}->exists(e | e > 0)
+-> true : Boolean
+
+Sequence{1,2,3,4,5,6}->exists(e | e = 7)
+-> false : Boolean
+
+Sequence{1,2,3,4,5,6}->forAll(e | e > 0)
+-> true : Boolean
+
+Sequence{1,2,3,4,5,6}->forAll(e | e > 1)
+-> false : Boolean
+
+Bag{1,2,3,4,5,6}->exists(e | e > 0)
+-> true : Boolean
+
+Bag{1,2,3,4,5,6}->exists(e | e = 7)
+-> false : Boolean
+
+Bag{1,2,3,4,5,6}->forAll(e | e > 0)
+-> true : Boolean
+
+Bag{1,2,3,4,5,6}->forAll(e | e > 1)
+-> false : Boolean
+
+#
+## Nested Iterate Expressions
+#
+
+Set{Set{1,2},Set{2,3,4}}->iterate(
+    e1 :  Set(Integer); 
+    acc1 : Integer = 0 | 
+    e1->iterate(
+	e2 : Integer; 
+	acc2 : Integer = 0 | 
+	acc2 + e2) + acc1)
+-> 12 : Integer
+
+#
+## Cartesian Product
+# FIXME: need empty set literal: e.g. Set(Sequence(Integer)).new
+
+Set{1,2,3}->iterate(
+    e1 : Integer; 
+    s : Set(Sequence(Integer)) = Set{Sequence{1,4}} | 
+    s->union(Set{4,5,6}->iterate(
+	e2 : Integer; 
+	s2 : Set(Sequence(Integer)) = Set{Sequence{1,4}} | 
+	s2->including(Sequence{e1, e2}))))
+-> Set{Sequence{1,4},Sequence{1,5},Sequence{1,6},Sequence{2,4},Sequence{2,5},Sequence{2,6},Sequence{3,4},Sequence{3,5},Sequence{3,6}} : Set(Sequence(Integer))
+
+#
+## Transitive Closure (Warshall's algorithm)
+#
+
+# M = Set{1,2,3} 
+# Relation R subseteq M x M = Set{Sequence{1,2}, Sequence{2,3}}
+# Result R* = Set{Sequence{1,2},Sequence{1,3},Sequence{2,3}}
+Set{1,2,3}->iterate(
+    e3 : Integer; 
+    s3 : Set(Sequence(Integer)) = Set{Sequence{1,2}, Sequence{2,3}} | 
+    Set{1,2,3}->iterate(
+	e2 : Integer; 
+	s2 : Set(Sequence(Integer)) = s3 | 
+	Set{1,2,3}->iterate(
+	    e1 : Integer; 
+	    s1 : Set(Sequence(Integer)) = s2 | 
+	    if s1->exists(p1 : Sequence(Integer) | 
+		s1->exists(p2 : Sequence(Integer) | 
+		    (p1->at(1) = e1 and p1->at(2) = e2) or
+		    (p1->at(1) = e1 and p1->at(2) = e3 and
+		     p2->at(1) = e3 and p2->at(2) = e2)
+		))
+	    then
+		s1->including(Sequence{e1,e2})
+	    else 
+		s1
+	    endif)))
+-> Set{Sequence{1,2},Sequence{1,3},Sequence{2,3}} : Set(Sequence(Integer))
+
+
+Set{1,2,3,4}->iterate(
+    e3 : Integer; 
+    s3 : Set(Sequence(Integer)) = Set{Sequence{1,2}, Sequence{2,3}, Sequence{3,4}} | 
+    Set{1,2,3,4}->iterate(
+	e2 : Integer; 
+	s2 : Set(Sequence(Integer)) = s3 | 
+	Set{1,2,3,4}->iterate(
+	    e1 : Integer; 
+	    s1 : Set(Sequence(Integer)) = s2 | 
+	    if s1->exists(p1 : Sequence(Integer) | 
+		s1->exists(p2 : Sequence(Integer) | 
+		    (p1->at(1) = e1 and p1->at(2) = e2) or
+		    (p1->at(1) = e1 and p1->at(2) = e3 and
+		     p2->at(1) = e3 and p2->at(2) = e2)
+		))
+	    then
+		s1->including(Sequence{e1,e2})
+	    else 
+		s1
+	    endif)))->size()
+-> 6 : Integer
+
+#
+## Sorting a sequence
+#
+Sequence{2,4,6,3}->iterate(
+    e1 : Integer;
+    res1 : Sequence(Integer) = Sequence{1}->select(false) |
+    if res1->isEmpty then
+      Sequence{e1}
+    else
+      if res1->last <= e1 then
+        res1->append(e1)
+      else
+        res1->iterate(
+          e2 : Integer;
+          res2 : Sequence(Integer) = Sequence{1}->select(false) |
+          if e1 < e2 and res2->forAll(e3:Integer | e1 >= e3 ) then
+            res2->append(e1)->append(e2)
+          else
+            res2->append(e2)
+          endif
+        )
+      endif
+    endif
+  )
+-> Sequence{2,3,4,6} : Sequence(Integer)
+
+

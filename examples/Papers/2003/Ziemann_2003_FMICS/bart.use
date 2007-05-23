@@ -1,0 +1,327 @@
+model BART
+
+enum ExposureKind { open , tunnel }
+
+
+-------------------------------------------------------------------------------
+-- CLASSES ********************************************************************
+-------------------------------------------------------------------------------
+
+class Train
+
+attributes
+  -- estimated train nose location (ft):
+  nose : Real	
+  -- estimated speed (mph):
+  v : Real
+  -- estimated acceleration (mphps):
+  a : Real
+  -- commanded speed (mph):
+  vcm : Real
+  -- commanded acceleration (mphps)
+  acm : Real
+  -- length of train (f):
+  length : Integer
+
+operations
+  currentSeg() : Segment =
+    self.track.segment
+      ->select(segBegin <= self.nose and segEnd > self.nose)
+      ->asSequence()->first()
+
+  nextClosedGate() : Gate =
+    let candidates = self.currentSeg().nextPlus()
+      ->collect(gate)
+      ->select(not open)
+      ->asSequence() in
+    if candidates->isEmpty()
+    then candidates->first()
+    else candidates->iterate(g:Gate; result:Gate=candidates->first()|
+      if g.segment.segEnd<result.segment.segEnd then g else result endif)
+    endif
+
+  nextTrain() : Train =
+  let candidates = self.currentSeg().nextPlus()
+    ->collect(currentTrains())
+    ->flatten()
+    ->select(t|t.nose > self.nose)
+    ->asSequence() in
+  if candidates->isEmpty() 
+  then candidates->first()
+  else candidates->iterate(t:Train; result:Train=candidates->first()|
+    if t.nose < result.nose then t else result endif)
+  endif
+
+  nextStop() : Real =
+    let candidates = Sequence{self.dest.segEnd,
+      self.nextClosedGate().segment.segEnd, 
+      self.nextTrain().nose - self.nextTrain().length}
+      ->reject(isUndefined) in
+    candidates->iterate(s:Real; result:Real = candidates->first() |
+      if s < result then s else result endif)
+
+  stationComputer() : StationComputer =
+    StationComputer.allInstances
+      ->select(sc|self.currentSeg().nextPlus()->includes(sc.se))
+      ->select(sc|sc.sb.segBegin <= self.currentSeg().segBegin and
+                  sc.se.segEnd >= self.currentSeg().segEnd)
+      ->asSequence()->first()
+end
+
+-------------------------------------------------------------------------------
+
+class StationComputer
+
+operations
+  trains() : Set(Train) =
+    Train.allInstances->select(stationComputer()=self)
+
+  -- worst case stopping distance: 
+  wcsd(t:Train) : Real = 
+    let pu:Real=3.0 in -- position uncertainty
+    let puf:Integer=6 in -- position uncertainty factor
+    let d1:Real=(puf*pu) in -- + t.no(i)se???
+    
+    let ad:Real=2 in -- AATC delay (s)
+    let d2:Real=t.v*ad in -- v statt vcm!! [pz]
+
+    let tjp:Real=1.5 in -- jerk time in propulsion (s)
+    let ap:Real=3 in -- ap: acceleration in propulsion (mphps) (full)
+    let jp:Real=ap/tjp in -- jerk limit in propulsion (mphps ps)
+    let a:Real= -21.9*t.currentSeg().grade/100 in 
+			-- acceleration due to grade (mphps)
+    let d3:Real=t.v*tjp + 1/2*ap*tjp*tjp +
+		1/6*jp*tjp*tjp*tjp + 1/2*a*tjp*tjp in
+
+    let v3:Real=t.v + ap*tjp + 1/2*jp*tjp*tjp + a*tjp in
+    let mc:Real=1 in -- mode change (s)
+    let d4:Real=v3*mc + 1/2*a*mc*mc in
+
+    let v4:Real=v3+a*mc in
+    let ncar:Integer=10 in -- number of car in consist
+    let nfail:Integer=2 in -- number of failed cars
+    let nfsmc:Integer=2 in -- number of cars in FSMC
+    let qfsmc:Real=(ncar-nfail-nfsmc)/ncar in
+    let brk:Real=if t.currentSeg().exposure=#open 
+		 then -1.5
+		 else -2.0
+ 		 endif in -- design brake rate
+    let jb:Real=-1.5 in -- jerk limit in braking (mphps ps)
+    let tjb:Real=brk/jb in
+    let d5:Real=v4*tjb + 1/6*jb*qfsmc*tjb*tjb*tjb + 1/2*a*tjb*tjb in
+    
+    let v5:Real=v4 + 1/2*jb*qfsmc*tjb*tjb + a*tjb in
+    let fsmc:Real=8.5 in -- fail safe mode change time (s)
+    let t6:Real=fsmc-tjp-mc-tjb in
+    let bfs:Real=brk*qfsmc in
+    let d6:Real=v5*t6 + 1/2*bfs*t6*t6 + 1/2*a*t6*t6 in
+
+    let v6:Real=v5 + bfs*t6 + a*t6 in
+    let q:Real=(ncar-nfail)/ncar in
+    let vf=0 in --final speed (mph)
+    let d7:Real=(vf*vf - v6*v6)/(2*(brk*q + a)) in
+    
+    if t.a < 0
+    then d1+d2+d7
+    else d1+d2+d3+d4+d5+d6+d7
+    endif
+
+  -- worst case stopping distance (pessimistic): 
+  wcsd2(t:Train) : Real = 
+    let pu:Real=3.0 in -- position uncertainty
+    let puf:Integer=6 in -- position uncertainty factor
+    let d1:Real=(puf*pu) in -- + t.no(i)se???
+    
+    let ad:Real=2 in -- AATC delay (s)
+    let d2:Real=t.v*ad in -- v statt vcm!!
+
+    let tjp:Real=1.5 in -- jerk time in propulsion (s)
+    let ap:Real=3 in -- ap: acceleration in propulsion (mphps) (full)
+    let jp:Real=ap/tjp in -- jerk limit in propulsion (mphps ps)
+    let a:Real=-21.9*(-4)/100 in -- -21.9*t.currentSeg().grade/100 in 
+			-- acceleration due to grade (mphps)
+			-- pz: always -4
+    let d3:Real=t.v*tjp + 1/2*ap*tjp*tjp +
+		1/6*jp*tjp*tjp*tjp + 1/2*a*tjp*tjp in
+
+    let v3:Real=t.v + ap*tjp + 1/2*jp*tjp*tjp + a*tjp in
+    let mc:Real=1 in -- mode change (s)
+    let d4:Real=v3*mc + 1/2*a*mc*mc in
+
+    let v4:Real=v3+a*mc in
+    let ncar:Integer=10 in -- number of car in consist
+    let nfail:Integer=2 in -- number of failed cars
+    let nfsmc:Integer=2 in -- number of cars in FSMC
+    let qfsmc:Real=(ncar-nfail-nfsmc)/ncar in
+    let brk:Real=-1.5 in -- design brake rate: always -1.5 [pz]
+    let jb:Real=-1.5 in -- jerk limit in braking (mphps ps)
+    let tjb:Real=brk/jb in
+    let d5:Real=v4*tjb + 1/6*jb*qfsmc*tjb*tjb*tjb + 1/2*a*tjb*tjb in
+    
+    let v5:Real=v4 + 1/2*jb*qfsmc*tjb*tjb + a*tjb in
+    let fsmc:Real=8.5 in -- fail safe mode change time (s)
+    let t6:Real=fsmc-tjp-mc-tjb in
+    let bfs:Real=brk*qfsmc in
+    let d6:Real=v5*t6 + 1/2*bfs*t6*t6 + 1/2*a*t6*t6 in
+
+    let v6:Real=v5 + bfs*t6 + a*t6 in
+    let q:Real=(ncar-nfail)/ncar in
+    let vf=0 in --final speed (mph)
+    let d7:Real=(vf*vf - v6*v6)/(2*(brk*q + a)) in
+    
+    d1+d2+d3+d4+d5+d6+d7
+
+  control(t:Train)
+end
+
+
+-------------------------------------------------------------------------------
+
+class Track
+end
+
+-------------------------------------------------------------------------------
+
+class Segment
+
+attributes
+  segBegin : Integer
+  segEnd : Integer
+  length : Integer
+  civilSpeed : Integer
+  grade : Real
+  exposure : ExposureKind
+
+operations
+  nextPlus() : Set(Segment) = 
+    nextPlusAux(Set{self})->reject(isUndefined)
+
+  previousPlus() : Set(Segment) =
+    prevPlusAux(Set{self})->reject(isUndefined)
+
+  nextPlusAux(s:Set(Segment)) : Set(Segment) =
+    if s->collect(seg|seg.next)->exists(seg|s->excludes(seg))
+    then nextPlusAux(s->union(s->collect(seg|seg.next))->asSet)
+    else s
+    endif
+
+  prevPlusAux(s:Set(Segment)) : Set(Segment) =
+    if s->collect(seg|seg.previous)->exists(seg|s->excludes(seg))
+    then prevPlusAux(s->union(s->collect(seg|seg.previous))->asSet)
+    else s
+    endif
+
+  currentTrains() : Set(Train) =
+    Train.allInstances->select(currentSeg()=self)
+end
+
+-------------------------------------------------------------------------------
+
+class StationPlatform < Segment
+
+attributes
+  stationName : String
+end
+
+-------------------------------------------------------------------------------
+
+class Gate
+
+attributes
+  open : Boolean
+end
+
+-------------------------------------------------------------------------------
+-- ASSOCIATIONS ***************************************************************
+-------------------------------------------------------------------------------
+
+association BelongsTo between
+  Segment[1..*]
+  Track[1]
+end
+
+association On between
+  Train[*]
+  Track[1]
+end
+
+association ControlBegin between
+  StationComputer[0..1] role scb
+  Segment[1] role sb
+end
+
+association ControlEnd between
+  StationComputer[0..1] role sce
+  Segment[1] role se
+end  
+
+association SegmentOrder between
+  Segment[0..1] role previous
+  Segment[0..1] role next
+end
+
+association Origin between
+  StationPlatform[0..1] role orig 
+  Train[*] role t1
+end
+
+association Destination between
+  StationPlatform[0..1] role dest 
+  Train[*] role t2
+end
+
+association Boundary between
+  Gate[0..1]
+  Segment[1]
+end
+
+-------------------------------------------------------------------------------
+-- CONSTRAINTS ****************************************************************
+-------------------------------------------------------------------------------
+
+constraints
+
+context Segment inv fitting:
+  self.next.isDefined implies self.next.segBegin=self.segEnd
+
+context Segment inv correctLength:
+  self.segEnd-self.segBegin=self.length
+
+context Segment inv track:
+  self.next.isDefined implies self.track = self.next.track
+
+context Train inv line:
+  self.orig.nextPlus()->includes(self.dest)
+
+context Train inv vcm:
+  self.vcm >= 0 and self.vcm <= 80
+
+context Train inv acm:
+  (self.acm >= 0 and self.acm <= 3) or
+  (self.acm >= -2 and self.acm <= -0.45)
+-- or (self.acm = -3)
+
+context StationComputer inv bounderies:
+  self.sb.nextPlus()->includes(self.se)
+
+context StationComputer inv civilSpeedSafety:
+  self.trains()->forAll(t|t.v <= t.currentSeg().civilSpeed)
+
+context StationComputer inv closedGateSafety:
+  self.trains()->forAll(t|
+    t.nextClosedGate().isDefined implies
+    t.nose+self.wcsd(t) < t.nextClosedGate().segment.segEnd)
+    
+context StationComputer inv crashSafety:
+  self.trains()->forAll(t|
+    t.nextTrain().isDefined implies
+      t.nose+self.wcsd(t) < t.nextTrain().nose-t.nextTrain().length)
+    
+context StationComputer::wcsd(t:Train) : Real
+  pre: self.trains()->includes(t)
+
+context StationComputer::control(t:Train)
+  pre: self.trains()->includes(t)
+
+context StationComputer::trains() : Set(Train)
+  post: result->size()<=20

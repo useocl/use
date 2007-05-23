@@ -1,0 +1,91 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+--
+-- Modeled after an example in:
+-- Mark Richters and Martin Gogolla, "On Formalizing the UML Object
+-- Constraint Language OCL", Proc. 17th Int. Conf. Conceptual Modeling
+-- (ER'98), Tok Wang Ling and Sudha Ram and Mong Li Lee (eds.),
+-- Springer, Berlin, LNCS 1507, 1998.
+
+model CarRental
+
+-- classes
+
+class Company
+attributes
+  name :String
+  numEmployees :Integer
+--  derived numEmployees :Integer
+operations
+--    stockPrice() :Real
+  selectR24() : Set(Vehicle) = 
+    self.vehicle->select(v | v.registration.substring(1,3) = 'R24')
+end
+
+class RentalStation
+attributes
+  location :String
+end
+
+
+class Person
+attributes
+  firstname :String
+  lastname :String
+  age :Integer
+  isMarried :Boolean
+operations
+  fullname() : String =
+    firstname.concat(' ').concat(lastname)
+--    income(d :Date) :Integer
+end
+
+--abstract
+class Vehicle
+attributes
+  registration :String
+  numWheels :Integer
+end
+
+class Car < Vehicle
+attributes
+--  category :enum { compact, midsize, luxury }
+end
+
+class Motorcycle < Vehicle
+attributes
+  numSaddles :Integer
+  cc :Integer
+end
+
+-- associations
+
+association Owns between 
+  Company[0..1] 
+  Vehicle[*] 
+end
+
+aggregation hasBranch between
+  Company[1]
+  RentalStation[1..*]
+end
+
+association managedBy between
+  RentalStation[0..1] role managedStation
+  Person[1] role manager
+end
+
+association WorksFor between
+  Person[0..*] role employee
+  RentalStation[0..1] role employer
+end
+
+-- constraints
+
+-- Person
+--   self.age > 0
+
+-- RentalStation
+--   self.employee->forall(income("98/03/01") > 2000)
+
+-- c1,c2 :Company
+--   c1 <> c2 implies c1.name <> c2.name

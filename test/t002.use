@@ -1,0 +1,32 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model t002
+
+enum colorEnum { red, green, blue }
+
+class A
+attributes
+  a : OclAny
+operations
+  fac(n : Integer) : Integer =
+    if n <= 1 then 1 else n * self.fac(n - 1) endif
+
+  allBs() : Set(B) =
+    self.b->union(self.b.allBs())
+end
+
+class B < A
+end
+
+class C
+end
+
+association A_C between
+  A[*]
+  C[*]
+end  
+
+association A_B between
+  A[*]
+  B[0..1]
+end  

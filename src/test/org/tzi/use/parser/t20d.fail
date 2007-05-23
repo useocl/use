@@ -1,0 +1,1 @@
+t20d.use:23:13: In association `assoc2': Association end `rd' navigable from class `F' conflicts with same rolename in association `assoc1'.

@@ -1,0 +1,14 @@
+model t027
+
+class A
+end
+
+class B
+end
+
+constraints 
+
+context A
+
+context B
+inv: true

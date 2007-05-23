@@ -1,0 +1,9 @@
+
+context Zug
+  inv Kette_zuWeich:
+  self.waggon->select(w: Waggon | w.vorgaenger->isEmpty)->size = 1
+
+context Waggon
+  inv KeineSchleife:
+  not self.transVorgaenger()->includes(self)
+

@@ -1,0 +1,5 @@
+context Person inv twoRoleEmployee:
+  Person.allInstances->exists(p |
+    p.job->exists(low, top |
+      low.boss.isDefined and top.worker->notEmpty and
+      low.employer<>top.employer))

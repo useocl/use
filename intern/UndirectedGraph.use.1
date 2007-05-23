@@ -1,0 +1,35 @@
+// -*- java -*- (we want emacs font locking)
+// $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+//
+model UndirectedGraph
+
+// classes
+
+class Graph
+methods
+  addNode(n : Integer);
+  addEdge(n1, n2 : Integer) =
+    n1.connectNode(n2);
+    n2.connectNode(n1);
+end
+
+class Node
+attributes
+  num : Integer;
+methods
+  connectNode(n : Integer) =
+    target = target->including(n);
+end
+
+// associations
+
+composition GraphHasNodes between
+  Graph[1];
+  Node[*];
+end
+
+association Edge between
+  Node[*] role source;
+  Node[*] role target;
+end
+

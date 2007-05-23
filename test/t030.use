@@ -1,0 +1,8 @@
+model t030
+
+class C
+attributes 
+  var1 : Tuple(x : Integer, y : Integer)
+  var2 : Tuple( x : Tuple(x : Integer), y : Tuple(y : Integer))
+end
+

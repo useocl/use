@@ -1,0 +1,215 @@
+model ZugModel
+
+-- --------------------------------------------------------------------------
+-- Abschnitt: Klassen Zug, Waggon
+-- --------------------------------------------------------------------------
+
+class Zug end
+
+class Waggon
+attributes
+  anzahlPlaetze: Integer;
+operations
+/*
+  -- Hilfsoperation f"ur transVorgaenger
+  privateTransVorgaenger( collector: Set(Waggon) ) : Set(Waggon) =
+    if (self.vorgaenger.isUndefined or collector->includes(self) )
+    then
+      collector
+    else
+      self.vorgaenger.privateTransVorgaenger( collector->union(Set{self}) )
+    endif;
+
+  -- transVorgaenger ermittelt alle direkten und indirekten Vorgaenger
+  -- Terminiert auch bei Schleifen
+  transVorgaenger() : Set(Waggon) =
+	self.privateTransVorgaenger(oclEmpty(Set(Waggon)));
+*/
+
+  vorgaengerAsSet(): Set(Waggon) =
+    if vorgaenger.isUndefined
+    then
+      oclEmpty(Set(Waggon))
+    else 
+      Set{vorgaenger} endif;
+
+  privateTransVorgaenger(s: Set(Waggon)) : Set(Waggon) =
+    if s->union(s->collect(w:Waggon|w.vorgaengerAsSet())->flatten)->asSet() = s
+    then
+       s
+    else
+       privateTransVorgaenger(
+         s->union(s->collect(w:Waggon|w.vorgaengerAsSet())->flatten)->asSet() )
+    endif;
+
+  transVorgaenger() : Set(Waggon) =
+    self.privateTransVorgaenger(vorgaengerAsSet());
+end
+
+-- --------------------------------------------------------------------------
+-- Abschnitt: Fahrt, Strecke, Bahnhof, Reservierung
+-- --------------------------------------------------------------------------
+
+class Fahrt end
+
+class Bahnhof
+attributes
+  name: String;
+operations
+  -- indexIn wird benoetigt, da keine Operation
+  --   Sequence(T)>>indexOf(T): Integer existiert!
+  -- preconditions:
+  --   seq->includes(self)
+  indexIn( seq: Sequence(Bahnhof) ) : Integer =
+    if seq->at(1) = self
+    then
+      1
+    else 
+      self.indexIn( seq->subSequence(2, seq->size) )+1
+    endif;
+end
+
+class Strecke
+operations
+  -- prueft, ob sich zwei Streckenabschnitte (a1 nach a2) und (b1 nach b2)
+  --   \"uberlappen
+  -- preconditions:
+  --   self.bahnhof->includesAll( Set{a1, a2, b1, b2} ) and
+  --   self.bahnhof->at(a1) < self.bahnhof->at(a2) and
+  --   self.bahnhof->at(b1) < self.bahnhof->at(b2)
+  overlaps( a1: Bahnhof, a2: Bahnhof,
+            b1: Bahnhof, b2: Bahnhof ) : Boolean =
+    b2.indexIn(self.bahnhof) > a1.indexIn(self.bahnhof) and
+    a2.indexIn(self.bahnhof) > b1.indexIn(self.bahnhof);
+end
+
+class Reservierung
+attributes
+  platznummer: Integer;
+end
+
+-- --------------------------------------------------------------------------
+-- Abschnitt: Relationen
+-- --------------------------------------------------------------------------
+
+aggregation Zugaufbau between
+  Zug[1];
+  Waggon[1..*];
+end
+
+association Reihung between
+  Waggon[0..1] role vorgaenger;
+  Waggon[0..1] role nachfolger;
+end
+
+association Einsatz between
+  Fahrt[*];
+  Zug[1];
+end
+
+association FahrtStrecke between
+  Fahrt[*];
+  Strecke[1];
+end
+
+association Halt between
+  Strecke[*];
+  Bahnhof[2..*] ordered;
+end
+
+association RVon between
+  Bahnhof[1] role von;
+  Reservierung[*] role resVon;
+end
+
+association RBis between
+  Bahnhof[1] role bis;
+  Reservierung[*] role resBis;
+end
+
+association ResFahrt between
+  Reservierung[*];
+  Fahrt[1];
+end
+
+association ResWaggon between
+  Reservierung[*];
+  Waggon[1];
+end
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+constraints
+
+-- --------------------------------------------------------------------------
+-- Abschnitt: Folgende Constraints beziehen sich auf die Klassen
+-- Zug und Waggon und auf die Assoziationen Zugaufbau
+-- und Reihung.
+-- --------------------------------------------------------------------------
+
+-- Die Waggons eines Zuges bilden eine Kette
+context Zug inv Kette:
+  self.waggon->exists( w: Waggon |
+    w.transVorgaenger()->excludes(w) and 
+    w.transVorgaenger()->including(w) = self.waggon
+  )
+
+-- Ein Zug hat maximal 50 Waggons
+context Zug inv Maximal50Waggons:
+  self.waggon->size <= 50
+
+-- --------------------------------------------------------------------------
+-- Abschnitt: Constraints f"ur Bahnhof & Strecke
+-- --------------------------------------------------------------------------
+
+-- Bahnhof>>name ist ein Schluesselattribut.
+context Bahnhof inv NameIstSchluesselattribut:
+  not self.name.isUndefined() and
+    Bahnhof.allInstances->forAll( b: Bahnhof |
+      self.name = b.name implies self=b
+    )
+
+-- Strecken sind bzgl. der Abfolge der Bahnh"ofe eindeutig
+context Strecke inv StreckeEindeutigBzglBahnhoefe:
+  Strecke.allInstances->forAll( str: Strecke |
+    str.bahnhof = self.bahnhof implies str=self
+  )
+
+-- --------------------------------------------------------------------------
+-- Abschnitt: Constraints, die eine korrekte Reservierung gew"ahrleisten
+-- --------------------------------------------------------------------------
+
+-- Eine Reservierung bezieht sich auf eine konkrete Fahrt und auf einen
+-- Waggon. Der Waggon muss Bestandteil des Zuges der Fahrt sein.
+context Reservierung inv WaggonBestandteilDerFahrt:
+  self.waggon.zug = self.fahrt.zug 
+
+-- Bei einer Reservierung m"ussen "von" und "bis" zur
+-- Strecke geh"oren und die Ordnung innerhalb der Strecke einhalten
+context Reservierung inv ReserviertVonBis:
+  self.fahrt.strecke.bahnhof->includes(self.von) and
+  self.fahrt.strecke.bahnhof->includes(self.bis) and
+  ( self.von.indexIn(self.fahrt.strecke.bahnhof) <
+    self.bis.indexIn(self.fahrt.strecke.bahnhof) )
+
+-- Die Platznummer einer Reservierung ist positiv und nicht gr"o"ser als
+-- die Anzahl der verf"ugbaren Pl"atze des Waggons.
+context Reservierung inv Platznummer:
+  self.platznummer > 0 and self.platznummer<=self.waggon.anzahlPlaetze
+
+-- Keine Mehrfachreservierungen von Plaetzen:
+--   Die Platznummer ist bzgl. einer Kombination von Fahrt, Waggon und
+--   "Streckenabschnitt" eindeutig.
+context Fahrt inv KeineMehrfachreservierung:
+  self.zug.waggon->forAll(w: Waggon |
+    w.reservierung->forAll(res1: Reservierung |
+      w.reservierung->forAll(res2: Reservierung |
+        res1.platznummer = res2.platznummer implies
+          (self.strecke.overlaps( res1.von, res1.bis,
+                                  res2.von, res2.bis )
+           implies res1 = res2)
+      )
+    )
+  )
+
+-- end model

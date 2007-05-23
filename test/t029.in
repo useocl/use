@@ -1,0 +1,23 @@
+!create a:A
+!create b:B
+!create c:C
+
+?a.c 
+*-> Set{} : Set(C)
+
+?a.b
+*-> Set{} : Set(B)
+
+?b.a 
+*-> Set{} : Set(A)
+
+?b.c
+*-> Set{} : Set(C)
+
+?c.a
+*-> Set{} : Set(A)
+
+?c.b 
+*-> Set{} : Set(B)
+
+quit

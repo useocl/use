@@ -1,0 +1,21 @@
+Points and polygons are represented in this example.
+Ordered points can belong to polygons. A single
+point and a set of points representing
+a polygon can be moved. There are also colored
+points.
+
+Polygon.use:
+three classes Point, ColorPoint (subclass of Point) and
+Polygon
+one association (with stereotype ordered)
+Polygon_Point between points and polygons
+for each class, there is an operation
+with side effects for moving the points resp.
+polygons and the corresponding constraints
+(postconditions) defined
+
+Polygon.cmd:
+creates a polygon and three points
+one of it is colored
+then the polygon, a point and the colored point
+are moved

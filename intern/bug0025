@@ -1,0 +1,9 @@
+$Bug: Associationname of a tenary association can not be hidden.$
+$Category: GUI$
+$State: Closed$
+$BugAuthor: gutsche$
+$Tests: $
+
+Having an objectdiagram with a tenary link. Selecting hide
+Associationname in the popup menu the associationname of the tenary
+link will not disapear. 

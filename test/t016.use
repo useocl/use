@@ -1,0 +1,23 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+model Test
+
+-- used to verify error behaviour when evaluating system 
+-- states under wrong multiplicities
+
+class A 
+attributes
+  x : Integer
+end
+
+class B
+end
+
+association R  between  
+  A [1]
+  B [*]
+end
+
+constraints 
+
+context B inv:
+  a.x = 1

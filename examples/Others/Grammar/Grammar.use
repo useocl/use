@@ -1,0 +1,81 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+-- Model for context-free grammars G = (V, T, P, S)
+
+model Grammar
+
+class Grammar
+end
+
+abstract class Symbol
+attributes
+  name : String
+end
+
+class Terminal < Symbol
+end
+
+class NonTerminal < Symbol
+end
+
+class Production
+end
+
+class RhsElement
+attributes
+  position : Integer
+end
+
+
+composition Symbols between
+  Grammar[1] role symbolOwner
+  Symbol[1..*]
+end
+
+composition StartSymbol between
+  Grammar[0..1] role startOwner
+  NonTerminal[1] role start
+end
+
+composition Productions between
+  Grammar[1]
+  Production[1..*]
+end
+
+association Production_LHS between
+  Production[1..*]
+  NonTerminal[1] role lhs
+end
+
+association Production_RHS between
+  Production[1]
+  RhsElement[*] role rhs
+end
+
+association RhsElement_Symbol between
+  RhsElement[*] role occurrence
+  Symbol[1]
+end
+
+constraints
+
+-- symbol names are unique (implies V union T is disjoint)
+context Grammar 
+inv UniqueSymbols: 
+  self.symbol->isUnique(name)
+
+-- position numbers of elements in rhs of production must be unique
+context Production 
+inv Production1: 
+   self.rhs->isUnique(r : RhsElement | r.position)
+
+-- position numbers must cover range from 1 to maximum of all positions
+inv Production2: 
+  self.rhs.position->asSet 
+  = 
+  Set{1..self.rhs.position->iterate(p; m : Integer = 0 | p.max(m))}
+
+context Terminal
+-- each terminal should appear in a rhs of a production
+inv Terminal1:
+  self.occurrence->notEmpty()

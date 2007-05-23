@@ -1,0 +1,19 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model t16  -- @pre only in postconditions
+
+class A
+operations
+  op1(p1 : Integer) : String
+end
+
+constraints
+
+context A 
+  inv: self@pre.isDefined()
+  inv: self.oclIsNew()
+
+context A::op1(p1 : Integer) : String
+  pre:  self@pre.isDefined()
+  pre: self.oclIsNew()
+  post: self.oclIsNew()

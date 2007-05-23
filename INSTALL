@@ -1,0 +1,69 @@
+
+			 How to install USE
+			 ==================
+			
+1. Requirements
+---------------
+
+USE is implemented in Java(tm). Therefore, it should run on any
+platform on which a Java runtime system (e.g. the Sun JDK) is
+available. So far this has been tested mainly on Unix-like platforms
+(Solaris and Linux) but it should work also on Windows. If you're
+trying to install USE on any other platform, you are on your own,
+although this should not be too difficult.
+
+The distribution of USE comes with full sources. If you want to
+compile USE yourself, you will need Sun's Java 2 Development Kit (JDK)
+version 1.4.2 or later (see http://java.sun.com) and Apache Ant 1.6.0
+or later. Earlier versions of the JDK and ant may work but have not
+been tested. For running all tests, you will need some Unix tools like
+GNU make, perl, sed, etc. All of them should be available on any
+decent Linux distribution.
+
+
+2. Compilation
+--------------
+
+The distribution of USE comes with compiled sources. If you don't
+want or need to recompile them, you can skip this step!
+
+Otherwise, a simple "ant build" should compile the whole USE package.
+
+Interaction with USE is done via a command line interface. This will
+be much more comfortable if you have the GNU readline library
+available on your system. USE provides an interface to the readline
+library. For example, it allows bash or emacs-like editing of lines
+and keeps a history file of recent input. Since the readline library
+is platform dependent, the interface has to be compiled on your
+system. Changes to the build file may be necessary for your
+environment. The native code has been tested with gcc-2.95.2 and
+gcc3. If you don't have the readline library - don't worry. USE will
+fall back to a simple input mechanism if it cannot find or load the
+readline library at runtime.
+
+You can optionally do some tests by running "ant test'. This will run
+various unit tests and calls USE to compile the specifications in the
+example and test directory. There should be no error output.
+
+
+3. Basic Installation
+---------------------
+
+There are no additional libraries required. You should only make sure
+that the "java" program is in your program search path.
+
+
+4. Running USE
+--------------
+
+The easiest way to start USE, is to use the shell script supplied with
+this distribution (there is also a file use.bat for Windows). To use
+this wrapper script, add the bin directory to your PATH environment
+variable. Entering
+
+	use -h
+
+will give you a list of command line options. Also, look at the file
+use.properties in the etc directory to see if you have to adapt some
+settings to your environment. See the file README for a quick tour
+that will help you getting started.

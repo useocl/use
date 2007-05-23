@@ -1,0 +1,21 @@
+# $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+# See the README file in this directory for information about the file
+# format.
+
+# create some objects
+
+!create a:A
+
+? a.op(1, 2)
+*-> 3 : Integer
+
+# Test for bug0008. In versions prior to 1.4.0 this expression yields
+# Bag{0}, because evaluation of x - 1 modifies x in the caller's scope
+# to be zero, so that the second argument to op is also zero while it
+# should be one.
+
+? Sequence{1}->collect(x | a.op(x - 1, x))
+*-> Sequence{1} : Sequence(Integer)
+
+exit

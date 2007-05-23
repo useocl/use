@@ -1,0 +1,54 @@
+$State: Closed$
+$BugAuthor: mr$
+
+X-From-Line: mr@informatik.uni-bremen.de Wed Feb 21 17:01:21 2001
+Received: from dustbin.informatik.uni-bremen.de (dustbin.informatik.uni-bremen.de [134.102.224.82])
+	by nmh.informatik.uni-bremen.de (8.10.1/8.10.1) with ESMTP id f1LG1Li20181
+	for <mr>; Wed, 21 Feb 2001 17:01:21 +0100 (MET)
+Received: (from mr@localhost)
+	by dustbin.informatik.uni-bremen.de (8.8.8+Sun/8.8.7) id RAA24012;
+	Wed, 21 Feb 2001 17:01:20 +0100 (MET)
+X-Authentication-Warning: dustbin.informatik.uni-bremen.de: mr set sender to mr@informatik.uni-bremen.de using -f
+Sender: mr@Informatik.Uni-Bremen.DE
+To: mr
+Subject: use
+From: Mark Richters <mr@Informatik.Uni-Bremen.DE>
+Date: 21 Feb 2001 17:01:20 +0100
+X-Gnus-Mail-Source: file:/var/mail/mr
+Message-ID: <tkhf1ogh4f.fsf@dustbin.informatik.uni-bremen.de>
+User-Agent: Gnus/5.0808 (Gnus v5.8.8) Emacs/20.6
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+X-Content-Length: 1778
+Lines: 28
+Xref: dustbin.informatik.uni-bremen.de mail.local:4893 mail.ag:1503 mail.me:55
+
+use> Exception occurred during event dispatching:
+java.lang.NullPointerException
+        at org.tzi.use.gui.views.ExprEvalBrowser.createNodes(ExprEvalBrowser.java:53)
+        at org.tzi.use.gui.views.ExprEvalBrowser.<init>(ExprEvalBrowser.java:43)
+        at org.tzi.use.gui.views.ExprEvalBrowser.create(ExprEvalBrowser.java:64)
+        at org.tzi.use.gui.views.ClassInvariantView$2.mouseClicked(ClassInvariantView.java:193)
+        at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:211)
+        at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:210)
+        at java.awt.Component.processMouseEvent(Component.java:3718)
+        at java.awt.Component.processEvent(Component.java:3544)
+        at java.awt.Container.processEvent(Container.java:1165)
+        at java.awt.Component.dispatchEventImpl(Component.java:2593)
+        at java.awt.Container.dispatchEventImpl(Container.java:1214)
+        at java.awt.Component.dispatchEvent(Component.java:2497)
+        at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:2452)
+        at java.awt.LightweightDispatcher.processMouseEvent(Container.java:2231)
+        at java.awt.LightweightDispatcher.dispatchEvent(Container.java:2126)
+        at java.awt.Container.dispatchEventImpl(Container.java:1201)
+        at java.awt.Window.dispatchEventImpl(Window.java:912)
+        at java.awt.Component.dispatchEvent(Component.java:2497)
+        at java.awt.EventQueue.dispatchEvent(EventQueue.java:333)
+        at java.awt.EventDispatchThread.pumpOneEvent(EventDispatchThread.java:103)
+        at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
+        at java.awt.EventDispatchThread.run(EventDispatchThread.java:84)
+
+-- 
+Mark Richters (mr@informatik.uni-bremen.de)
+
+

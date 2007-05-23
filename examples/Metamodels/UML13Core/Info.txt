@@ -1,0 +1,8 @@
+Specifies the UML 1.3 Core
+the definition is also a part of /Specifications/
+UML13All
+
+UML13Core.use:
+
+UML13Core.cmd:
+empty

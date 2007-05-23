@@ -1,0 +1,1097 @@
+-- $Id: UML13Core.use 1.1 Thu, 06 Jul 2006 15:16:20 +0200 green $
+
+-- issues to resolve:
+-- - can't specify navigavibility
+
+-- minor changes:
+
+--    - all associations have a name
+
+--    - renamed identifiers which are keywords in USE (e.g., association,
+--    aggregate). Appended an underscore to these names.
+
+--    - calls of additional (user-defined) operations with no arguments
+--    contain parentheses '()'
+
+--    - replaced occurrences of Boolean enumeration types by the real
+--    Boolean type.
+
+
+-- error categories:
+--   E0: not yet available in USE
+--   E0.1: association class not available
+--   E1: Typo/Notation
+
+--   E2: Inconsisteny
+--   E2.1: Rolename defined but class name used in navigation
+--   E2.2: Problem in Class diagram
+--   E2.3: non-existing operation
+
+--   E3: Type checking
+--   E3.1: return type of operation declared as set but operation returns bag
+--   E3.2: elements of a subtype are selected but cast to subtype is missing in the following
+--   E3.3: return type of operation declared as set but operation returns sequence
+--   E3.4: type mismatch in operation call
+
+--   E4: General
+--   E4.1: expression has errors, fix not possible because intended meaning is unclear
+--   E4.2: operations on scalar values applied to collection
+
+-- informational:
+--   I1.1: inserted an explicit collect
+--   I1.2: use Set{...} or = in navigation to a single object 
+--   I1.3: inserted explicit flatten operation
+--   I1.4: replaced Name type with String type
+--   I1.5: reference to other package
+--   I1.6: inserted element variable declaration in expr based on iterate
+--   I1.7: replaced boolean enumeration literal
+--   I1.8: reformulated expression
+
+model UML13Core
+
+enum AggregationKind { none, aggregate, composite }
+enum ParameterDirectionKind { in_, out, inout, return }
+enum ScopeKind { instance, classifier }
+enum VisibilityKind { public, protected, private }
+
+-- Package: Core
+
+-- Fig. 2-5
+
+abstract class Element
+end
+
+abstract class ModelElement < Element
+attributes
+  name : String
+operations
+
+-- [1] The operation supplier results in a Set containing all direct
+-- suppliers of the ModelElement.
+
+-- STATE: I1.1, I1.3, E3.1
+
+  supplier() : Set(ModelElement) =
+    self.clientDependency->collect(d : Dependency | d.supplier)->flatten->asSet
+
+-- [2] The operation allSuppliers results in a Set containing all the
+-- ModelElements that are suppliers of this ModelElement, including
+-- the suppliers of these Model Elements. This is the transitive
+-- closure.
+
+-- STATE: E4.2: allSuppliers(), I1.1, I1.3
+
+  allSuppliers() : Set(ModelElement) = 
+    self.supplier()->union(self.supplier()->collect(m : ModelElement | 
+      m.allSuppliers())->flatten)->asSet
+
+-- [3] The operation model results in the set of Models to which the
+-- ModelElement belongs.
+
+-- FIXME: I1.5: refers to package model management
+
+--   model() : Set(Model) = 
+--     self.namespace->union(self.namespace.allSurroundingNamespaces)
+--       ->select( ns| ns.oclIsKindOf (Model))
+
+-- [4] A ModelElement is a template when it has parameters.
+
+-- STATE: E2.2: templateParameter may refer to ModelElement or Templateparameter class
+
+  isTemplate() : Boolean = 
+    (self.templateParameter->notEmpty)
+
+-- [5] A ModelElement is an instantiated template when it is related
+-- to a template by a Binding relationship.
+
+-- STATE: Ok, I1.6: d
+
+  isInstantiated() : Boolean = 
+    self.clientDependency->select(d : Dependency | d.oclIsKindOf(Binding))->notEmpty
+
+-- [6] The templateArguments are the arguments of an instantiated
+-- template, which substitute for template parameters.
+
+-- STATE: I1.6: d, I1.1, I1.3, E4.2, E3.1, E3.2
+
+  templateArguments() : Set(ModelElement) = 
+    self.clientDependency->select(d : Dependency | d.oclIsKindOf(Binding))
+      ->collect(d : Dependency | d.oclAsType(Binding).argument)->flatten->asSet
+end
+
+abstract class Feature < ModelElement
+attributes
+  ownerScope : ScopeKind
+  visibility : VisibilityKind
+end
+
+abstract class Namespace < ModelElement
+operations
+
+-- [1] The operation contents results in a Set containing all
+-- ModelElements contained by the Namespace.
+
+-- STATE: E1, E4.1: illegal union construct
+
+  contents() : Set(ModelElement) =
+    self.ownedElement
+
+-- [2] The operation allContents results in a Set containing all
+-- ModelElements contained by the Namespace.
+
+-- STATE: Ok
+
+  allContents() : Set(ModelElement) = 
+    self.contents()
+
+-- [3] The operation allVisibleElements results in a Set containing
+-- all ModelElements visible outside of the Namespace.
+
+-- STATE: E0.1: need association class ElementOwnership
+
+  allVisibleElements() : Set(ModelElement) =
+    self.allContents()
+
+-- [4] The operation allSurroundingNamespaces results in a Set
+-- containing all surrounding Namespaces.
+
+-- STATE: Ok, I1.2
+
+  allSurroundingNamespaces() : Set(Namespace) =
+    Set{self.namespace}->union(self.namespace.allSurroundingNamespaces())
+end
+
+abstract class GeneralizableElement < ModelElement
+attributes
+  isRoot : Boolean
+  isLeaf : Boolean
+  isAbstract : Boolean
+operations
+
+-- [1] The operation parent returns a Set containing all direct
+-- parents.
+
+-- STATE: I1.1, E3.1
+
+  parent() : Set(GeneralizableElement) =
+    self.generalization->collect(g | g.parent)->asSet
+
+-- [2] The operation allParents returns a Set containing all the
+-- Generalizable Elements inherited by this GeneralizableElement (the
+-- transitive closure), excluding the GeneralizableElement itself.
+
+-- STATE: I1.1, I1.3, E3.1
+
+  allParents() : Set(GeneralizableElement) =
+    self.parent()->union(
+      self.parent()->collect(g | g.allParents())->flatten)->asSet
+end
+
+class Parameter < ModelElement
+attributes
+  kind : ParameterDirectionKind
+end
+
+class Constraint < ModelElement
+end
+
+abstract class Classifier < Namespace, GeneralizableElement
+operations
+
+-- [1] The operation allFeatures results in a Set containing all
+-- Features of the Classifier itself and all its inherited Features.
+
+-- STATE: Ok, I1.1, I1.3
+
+  allFeatures() : Set(Feature) =
+    self.feature->asSet->union(
+      self.parent()->collect(g | 
+        g.oclAsType(Classifier).allFeatures())->flatten->asSet)
+
+-- [2] The operation allOperations results in a Set containing all
+-- Operations of the Classifier itself and all its inherited
+-- Operations.
+
+-- STATE: E3.2
+
+  allOperations() : Set(Operation) =
+    self.allFeatures()->select(f | f.oclIsKindOf(Operation))->collect(f | 
+      f.oclAsType(Operation))->asSet
+
+-- [3] The operation allMethods results in a Set containing all
+-- Methods of the Classifier itself and all its inherited Methods.
+
+-- STATE: E1, E3.2
+
+  allMethods() : Set(Method) =
+    self.allFeatures()->select(f | f.oclIsKindOf(Method))->collect(f | 
+      f.oclAsType(Method))->asSet
+
+-- [4] The operation allAttributes results in a Set containing all
+-- Attributes of the Classifier itself and all its inherited
+-- Attributes.
+
+-- STATE: E1, E3.2
+
+  allAttributes() : Set(Attribute) =
+    self.allFeatures()->select(f | f.oclIsKindOf(Attribute))->collect(f | 
+      f.oclAsType(Attribute))->asSet
+
+-- [5] The operation associations results in a Set containing all
+-- Associations of the Classifier itself.
+
+-- STATE: E1, I1.1
+
+  associations() : Set(Association) =
+    self.associationEnd->collect(ae : AssociationEnd | ae.association_)->asSet
+
+-- [6] The operation allAssociations results in a Set containing all
+-- Associations of the Classifier itself and all its inherited
+-- Associations.
+
+-- STATE: E1, I1.1, I1.3
+
+  allAssociations() : Set(Association) =
+    self.associations()->union(
+      self.parent()->collect(g | 
+        g.oclAsType(Classifier).allAssociations())->flatten->asSet)
+
+-- [7] The operation oppositeAssociationEnds results in a set of all
+-- AssociationEnds that are opposite to the Classifier.
+
+-- STATE: E1: self.associationm, size > 1 ?!, < vs. <>, E2.1: associationEnd vs. connection, E3.1, I1.3, E4.2: .size
+
+  oppositeAssociationEnds() : Set(AssociationEnd) =
+    self.associations()->select ( a | a.connection->select ( ae | 
+      ae.type = self )->size = 1 )->collect ( a | 
+        a.connection->select ( ae | ae.type <> self ) )->union
+          ( self.associations()->select ( a | a.connection->select ( ae |
+            ae.type = self )->size > 1 )->collect ( a | a.connection) )
+              ->flatten->asSet
+
+-- [8] The operation allOppositeAssociationEnds results in a set of
+-- all AssociationEnds, including the inherited ones, that are
+-- opposite to the Classifier.
+
+-- STATE: Ok, I1.1, I1.3
+
+  allOppositeAssociationEnds() : Set (AssociationEnd) =
+    self.oppositeAssociationEnds()->union ( 
+      self.parent()->collect(g |
+        g.oclAsType(Classifier).allOppositeAssociationEnds())->flatten->asSet)
+
+-- [9] The operation specification yields the set of Classifiers that
+-- the current Classifier realizes.
+
+-- STATE: I1.1, E4.2: oclIsKindOf, I1.5: stereotype is in package extension mechanism
+
+  specification() : Set(Classifier) = 
+    self.clientDependency->
+      select(d | d.oclIsKindOf(Abstraction) 
+--      and d.stereotype.name = "realization"   
+        and d.supplier->forAll(m : ModelElement | m.oclIsKindOf(Classifier)))
+      ->collect(d : Dependency | d.supplier)->flatten
+      ->collect(m : ModelElement | m.oclAsType(Classifier))->asSet
+
+-- [10] The operation allContents returns a Set containing all
+-- ModelElements contained in the Classifier together with the
+-- contents inherited from its parents.
+
+-- STATE: E0.1: ElementOwnership
+
+  allContents() : Set(ModelElement) =
+--    self.contents->union(self.parent.allContents->select(e | 
+--      e.elementOwnership.visibility = #public or 
+--      e.elementOwnership.visibility = #protected))
+
+      self.contents()->union(
+        self.parent()->collect(g | 
+          g.oclAsType(Classifier).allContents())->flatten->asSet)
+
+-- [11] The operation allDiscriminators results in a Set containing
+-- all Discriminators of the Gen-eralizations from which the
+-- Classifier is descended itself and all its inherited Features.
+
+-- STATE: Ok, I1.4, I1.1, I1.3
+
+  allDiscriminators() : Set(String) =
+    self.generalization->collect(g | g.discriminator)->union( 
+      self.parent()->collect(g | 
+        g.oclAsType(Classifier).allDiscriminators())->flatten)->asSet
+
+end
+
+abstract class StructuralFeature < Feature
+end
+
+abstract class BehavioralFeature < Feature
+attributes
+  isQuery : Boolean
+operations
+
+-- [1] The operation hasSameSignature checks if the argument has the
+-- same signature as the instance itself.
+
+-- STATE: Ok
+
+  hasSameSignature(b : BehavioralFeature) : Boolean =
+    (self.name = b.name) and
+    (self.parameter->size = b.parameter->size) and 
+    Sequence{ 1..(self.parameter->size) }->forAll(index : Integer | 
+      b.parameter->at(index).type = 
+        self.parameter->at(index).type and 
+      b.parameter->at(index).kind = 
+        self.parameter->at(index).kind
+    )
+
+-- [2] The operation matchesSignature checks if the argument has a
+-- signature that would clash with the signature of the instance
+-- itself (and therefore must be unique). Mismatches in kind or any
+-- differences in return parameters do not cause a mismatch:
+
+-- STATE: E1 missing # before return
+
+  matchesSignature(b : BehavioralFeature) : Boolean =
+    (self.name = b.name) and
+    (self.parameter->size = b.parameter->size) and 
+    Sequence{ 1..(self.parameter->size) }->forAll(index : Integer | 
+      b.parameter->at(index).type = 
+        self.parameter->at(index).type or 
+      (b.parameter->at(index).kind = #return and 
+        self.parameter->at(index).kind = #return) 
+    )
+end
+
+class Attribute < StructuralFeature
+end
+
+class Operation < BehavioralFeature
+end
+
+class Method < BehavioralFeature
+end
+
+-- Fig. 2-6
+
+abstract class Relationship < ModelElement
+end
+
+class Flow < Relationship
+end
+
+class Generalization < Relationship
+attributes
+  discriminator : String
+end
+
+class AssociationEnd < ModelElement
+attributes
+  isNavigable : Boolean
+  aggregation_ : AggregationKind
+end
+
+class Association < Relationship, GeneralizableElement
+operations
+
+-- [1] The operation allConnections results in the set of all
+-- AssociationEnds of the Association.
+
+-- STATE: E3.3
+
+  allConnections() : Set(AssociationEnd) =
+    self.connection->asSet
+
+end
+
+class Class < Classifier
+end
+
+class AssociationClass < Class, Association
+operations
+
+-- [1] The operation allConnections results in the set of all
+-- AssociationEnds of the AssociationClass, including all connections
+-- defined by its parent (transitive closure).
+
+-- STATE: E2: self.connection results in a sequence, union(Seq,Bag) does not exist, I1.3
+
+  allConnections() : Set(AssociationEnd) =
+    self.connection->asBag->union(self.parent()->select
+      (s | s.oclIsKindOf(Association))->collect (g : GeneralizableElement |
+        g.oclAsType(Association).allConnections())->flatten)->asSet
+end
+
+-- Fig. 2-7
+
+class Dependency < Relationship
+end
+
+class Binding < Dependency
+end
+
+class Abstraction < Dependency
+end
+
+class Usage < Dependency
+end
+
+class Permission < Dependency
+end
+
+-- Fig. 2-8
+
+class Interface < Classifier
+end
+
+class DataType < Classifier
+end
+
+class Node < Classifier
+end
+
+class Component < Classifier
+operations
+
+-- [1] The operation allResidentElements results in a Set containing
+-- all ModelElements resident in a Component or one of its ancestors.
+
+-- STATE: E1: set, E4.2: parent, E0.1: elementResidence, E2.2: Fig. 2-8 ElementResidence vs. Element
+
+  allResidentElements() : Set(ModelElement) = 
+    self.resident->union(
+      self.parent()->collect(g | 
+	  g.oclAsType(Component).allResidentElements()->select( re |
+--         re.elementResidence.visibility = #public or 
+--         re.elementResidence.visibility = #protected
+	true
+      ))->flatten)->asSet
+
+-- [2] The operation allVisibleElements results in a Set containing
+-- all ModelElements visible out-side the Component.
+
+-- STATE: E0.1, E1: ->, superflous )
+
+  allVisibleElements() : Set(ModelElement) = 
+    self.allContents()->union (
+        self.allResidentElements())
+
+--   allVisibleElements() : Set(ModelElement) = 
+--     self.allContents()->select( e | 
+--       e.elementOwnership.visibility = #public)->union ( 
+--         self.allResidentElements()->select ( re | 
+--             re.elementResidence.visibility = #public))
+
+end
+
+-- Fig. 2-9
+
+class Comment < ModelElement
+end
+
+abstract class PresentationElement < Element
+end
+
+
+-- Fig. 2-5
+
+association Constraint_ModelElement between
+  Constraint[*]
+  ModelElement[1..*] role constrainedElement
+end
+
+composition Namespace_ModelElement between
+  Namespace[0..1]
+  ModelElement[*] role ownedElement
+end
+
+composition Classifier_Feature between
+  Classifier[0..1] role owner
+  Feature[*] ordered
+end
+
+composition BehavioralFeature_Parameter between
+  BehavioralFeature[0..1]
+  Parameter[*] ordered
+end
+
+association Operation_Method between
+  Operation[1] role specification
+  Method[*]
+end
+
+association Parameter_Classifier between
+  Parameter[*]
+  Classifier[1] role type
+end
+
+association StructuralFeature_Classifier between
+  StructuralFeature[*]
+  Classifier[1] role type
+end
+
+-- Fig. 2-6
+
+association Flow_ModelElement1 between
+  Flow[*] role sourceFlow
+  ModelElement[*] role source
+end
+
+association Flow_ModelElement2 between
+  Flow[*] role targetFlow
+  ModelElement[*] role target
+end
+
+association Generalization_GeneralizableElement1 between
+  Generalization[*] role generalization
+  GeneralizableElement[1] role child
+end
+
+association Generalization_GeneralizableElement2 between
+  Generalization[*] role specialization
+  GeneralizableElement[1] role parent
+end
+
+association Generalization_Classifier between
+  Generalization[*] role powertypeRange
+  Classifier[0..1] role powertype
+end
+
+association AssociationEnd_Classifier1 between
+  AssociationEnd[*]
+  Classifier[1] role type
+end
+
+association AssociationEnd_Classifier2 between
+  -- UML-ERR: role name not in Figure but in description
+  AssociationEnd[*] role participant 
+  Classifier[*] role specification
+end
+
+composition Association_AssociationEnd between
+  Association[1] role association_
+  AssociationEnd[2..*] role connection ordered
+end
+
+composition AssociationEnd_Attribute between
+  AssociationEnd[0..1]
+  Attribute[*] role qualifier ordered
+end
+
+-- Fig. 2-7
+
+association ModelElement_Dependency1 between
+  ModelElement[1..*] role supplier
+  Dependency[*] role supplierDependency
+end
+
+association ModelElement_Dependency2 between
+  ModelElement[1..*] role client
+  Dependency[*] role clientDependency
+end
+
+aggregation Binding_ModelElement between
+  Binding[0..1]
+  ModelElement[1..*] role argument ordered
+end
+
+-- Fig. 2-8
+
+aggregation Node_Component between
+  Node[*] role deploymentLocation
+  Component[*] role resident
+end
+
+-- FIXME: association class 
+aggregation ElementResidence between
+  Component[*] role implementationLocation
+  ModelElement[*] role resident
+end
+
+-- Fig. 2-9
+
+-- FIXME: association class
+-- UML-ERR: name conflict between rolename templateParameter and
+-- association class TemplateParameter
+composition TemplateParameter between
+  ModelElement[0..1]
+  ModelElement[*] role templateParameter
+end
+
+association ModelElement_PresentationElement between
+  ModelElement[*] role subject
+  PresentationElement[*] role presentation
+end
+
+association ModelElement_Comment between
+  ModelElement[*] role annotatedElement
+  Comment[*]
+end
+
+constraints
+
+context Association 
+
+-- [1] The AssociationEnds must have a unique name within the
+-- Association.
+
+-- STATE: Ok
+
+inv Association1:
+  self.allConnections()->forAll( r1, r2 | r1.name = r2.name implies r1 = r2 ) 
+
+-- [2] At most one AssociationEnd may be an aggregation or
+-- composition.
+
+-- STATE: E1: <>, I1.6
+
+inv Association2:
+  self.allConnections()->select(ae : AssociationEnd |
+    ae.aggregation_ <> #none)->size <= 1 
+
+-- [3] If an Association has three or more AssociationEnds, then no
+-- AssociationEnd may be an aggregation or composition.
+
+-- STATE: E1: forall, I1.6
+
+inv Association3:
+  self.allConnections()->size >=3 implies 
+    self.allConnections()->forAll(ae : AssociationEnd | 
+      ae.aggregation_ = #none) 
+
+-- [4] The connected Classifiers of the AssociationEnds should be
+-- included in the Namespace of the Association.
+
+-- STATE: Ok
+
+inv Association4:
+  self.allConnections()->forAll (r | 
+    self.namespace.allContents()->includes(r.type))
+
+
+context AssociationClass
+
+-- [1] The names of the AssociationEnds and the StructuralFeatures do
+-- not overlap.
+
+-- STATE: E1: <
+
+inv AssociationClass1:
+  self.allConnections()->forAll( ar | 
+    self.allFeatures()->forAll( f | 
+      f.oclIsKindOf(StructuralFeature) implies ar.name <> f.name )) 
+
+-- [2] An AssociationClass cannot be defined between itself and
+-- something else.
+
+-- STATE: E1: <
+
+inv AssociationClass2:
+  self.allConnections()->forAll(ar | ar.type <> self)
+
+
+context AssociationEnd
+
+-- [1] The Classifier of an AssociationEnd cannot be an Interface or a
+-- DataType if the association is navigable away from that end.
+
+-- STATE: E1: <, oclIsKingOf, I1.7
+
+inv AssociationEnd1:
+  (self.type.oclIsKindOf(Interface) or
+  self.type.oclIsKindOf(DataType)) implies 
+    self.association_.connection->select (ae | ae <> self)->forAll(ae | 
+      not ae.isNavigable) 
+
+-- [2] An Instance may not belong by composition to more than one
+-- composite Instance.
+
+-- STATE: E2.3: multiplicity.max
+
+inv AssociationEnd2:
+  true
+--   self.aggregation = #composite implies self.multiplicity.max <= 1
+
+
+context BehavioralFeature
+
+-- [1] All Parameters should have a unique name. 
+
+-- STATE: Ok
+
+inv BehavioralFeature1:
+  self.parameter->forAll(p1, p2 | p1.name = p2.name implies p1 = p2) 
+
+-- [2] The type of the Parameters should be included in the Namespace of the Classifier.
+
+-- STATE: Ok
+
+inv BehavioralFeature2:
+  self.parameter->forAll( p | 
+    self.owner.namespace.allContents()->includes (p.type) )
+
+
+context Binding
+
+-- [1] The argument ModelElement must conform to the parameter
+-- ModelElement in a Binding. In an instantiation it must be of the
+-- same kind.
+
+-- No OCL
+
+-- [2] A Binding has one client and one supplier.
+
+-- STATE: Ok
+
+inv Binding2:
+  (self.client->size = 1) and (self.supplier->size = 1) 
+
+-- [3] A ModelElement may participate in at most one Binding as a
+-- client.
+
+-- STATE: E1: []
+
+inv Binding3:
+  Binding.allInstances->forAll(b1, b2 | 
+   (b1 <> b2) implies (b1.client <> b2.client))
+
+
+context Class
+
+-- [1] If a Class is concrete, all the Operations of the Class should
+-- have a realizing Method in the full descriptor.
+
+-- STATE: Ok, I1.2
+
+inv Class1:
+  not self.isAbstract implies self.allOperations()->forAll(op |
+    self.allMethods()->exists(m | m.specification = op))
+
+-- [2] A Class can only contain Classes, Associations,
+-- Generalizations, UseCases, Constraints, Dependencies,
+-- Collaborations, DataTypes, and Interfaces as a Namespace.
+
+-- STATE: E1: ->, missing ), I1.5: UseCase, Collaboration
+
+inv Class2:
+  self.allContents()->forAll(c |
+    c.oclIsKindOf(Class ) or 
+    c.oclIsKindOf(Association ) or 
+    c.oclIsKindOf(Generalization) or 
+--    c.oclIsKindOf(UseCase ) or 
+    c.oclIsKindOf(Constraint ) or 
+    c.oclIsKindOf(Dependency ) or 
+--    c.oclIsKindOf(Collaboration ) or 
+    c.oclIsKindOf(DataType ) or 
+    c.oclIsKindOf(Interface ))
+
+
+context Classifier
+
+-- [1] No BehavioralFeature of the same kind may match the same
+-- signature in a Classifier.
+
+-- STATE: I1.5: Reception, E3.4: matchesSignature(g)
+
+inv Classifier1:
+  self.feature->forAll(f, g |
+  ( 
+    ( 
+      (f.oclIsKindOf(Operation) and g.oclIsKindOf(Operation)) or 
+      (f.oclIsKindOf(Method ) and g.oclIsKindOf(Method )) 
+--   or   (f.oclIsKindOf(Reception) and g.oclIsKindOf(Reception)) 
+    ) and 
+    f.oclAsType(BehavioralFeature).matchesSignature(g.oclAsType(BehavioralFeature)) 
+  ) implies f = g) 
+
+-- [2] No Attributes may have the same name within a Classifier.
+
+-- STATE: Ok
+
+inv Classifier2:
+  self.feature->select ( a | a.oclIsKindOf (Attribute) )->forAll ( p, q | 
+    p.name = q.name implies p = q ) 
+
+-- [3] No opposite AssociationEnds may have the same name within a
+-- Classifier.
+
+-- STATE: E2.3: oppositeEnds
+
+inv Classifier3:
+  self.oppositeAssociationEnds()->forAll ( p, q | p.name = q.name implies p = q ) 
+
+-- [4] The name of an Attribute may not be the same as the name of an
+-- opposite AssociationEnd or a ModelElement contained in the
+-- Classifier.
+
+-- STATE: E3.4: union, I1.8 changed order of union
+
+inv Classifier4:
+  self.feature->select( a | a.oclIsKindOf (Attribute) )->forAll ( a | 
+    not self.allContents()->union(self.allOppositeAssociationEnds())->collect( q |
+      q.name)->includes(a.name))
+
+-- [5] The name of an opposite AssociationEnd may not be the same as
+-- the name of an Attribute or a ModelElement contained in the
+-- Classifier.
+
+-- STATE: E3.4: union, I1.8: changed order of union
+
+inv Classifier5:
+  self.oppositeAssociationEnds()->forAll( o | 
+    not self.allContents()->union(self.allAttributes())->collect ( q | 
+      q.name)->includes (o.name)) 
+
+-- [6] For each Operation in an specification realized by the
+-- Classifier, the Classifier must have a matching Operation.
+
+-- STATE: I1.1: specification->forAll, E2.3: hasMatchingSignature
+
+inv Classifier6:
+  self.specification()->forAll(c |
+    c.allOperations()->forAll(interOp | 
+      self.allOperations()->exists( op | op.matchesSignature(interOp))))
+
+-- [7] All of the generalizations in the range of a powertype have the
+-- same discriminator.
+
+-- STATE: Ok
+
+inv Classifier7:
+  self.powertypeRange->forAll(g1, g2 | g1.discriminator = g2.discriminator) 
+
+-- [8] Discriminator names must be distinct from attribute names and
+-- opposite AssociationEnd names.
+
+-- STATE: Ok, I1.1
+
+inv Classifier8:
+  self.allDiscriminators()->intersection(
+    self.allAttributes()->collect(a | a.name)->union
+      (self.allOppositeAssociationEnds()->collect(ae | 
+        ae.name))->asSet)->isEmpty
+
+
+context Component
+
+-- [1] A Component may only contain other Components.
+
+-- STATE: E1: -
+
+inv Component1:
+  self.allContents()->forAll( c | c.oclIsKindOf(Component))
+
+-- [2] A Component may only implement DataTypes, Interfaces, Classes,
+-- Associations, Dependencies, Constraints, Signals, DataValues and
+-- Objects.
+
+-- STATE: E1: -, I1.5
+
+inv Component2:
+  self.allResidentElements()->forAll( re | 
+    re.oclIsKindOf(DataType) or 
+    re.oclIsKindOf(Interface) or 
+    re.oclIsKindOf(Class) or 
+    re.oclIsKindOf(Association) or 
+    re.oclIsKindOf(Dependency) or 
+    re.oclIsKindOf(Constraint)
+--    re.oclIsKindOf(Signal) or 
+--    re.oclIsKindOf(DataValue) or
+--    re.oclIsKindOf(Object) 
+    )
+
+
+context Constraint
+
+-- [1] A Constraint cannot be applied to itself.
+
+-- STATE: Ok
+
+inv Constraint1:
+  not self.constrainedElement->includes(self)
+
+
+context DataType
+
+-- [1] A DataType can only contain Operations, which all must be queries.
+
+-- STATE: Ok
+
+inv DataType1:
+  self.allFeatures()->forAll(f | 
+    f.oclIsKindOf(Operation) and f.oclAsType(Operation).isQuery)
+
+-- [2] A DataType cannot contain any other ModelElements.
+
+-- STATE: Ok
+
+inv DataType2:
+  self.allContents()->isEmpty
+
+
+context GeneralizableElement
+
+-- [1] A root cannot have any Generalizations.
+
+-- STATE: Ok
+
+inv GeneralizableElement1:
+  self.isRoot implies self.generalization->isEmpty 
+
+-- [2] No GeneralizableElement can have a parent Generalization to an
+-- element which is a leaf.
+
+-- STATE: Ok
+
+inv GeneralizableElement2:
+  self.parent()->forAll(s | not s.isLeaf) 
+
+-- [3] Circular inheritance is not allowed. 
+
+-- STATE: Ok
+
+inv GeneralizableElement3:
+  not self.allParents()->includes(self) 
+
+-- [4] The parent must be included in the Namespace of the
+-- GeneralizableElement.
+
+-- STATE: Ok
+
+inv GeneralizableElement4:
+  self.generalization->forAll(g | 
+    self.namespace.allContents()->includes(g.parent) )
+
+
+-- E0
+-- context ImplementationClass (stereotype of Class)
+
+
+context Interface
+
+-- [1] An Interface can only contain Operations.
+
+-- STATE: Ok, I1.5: Reception
+
+inv Interface1:
+  self.allFeatures()->forAll(f | 
+    f.oclIsKindOf(Operation) )
+--    f.oclIsKindOf(Operation) or f.oclIsKindOf(Reception))
+
+-- [2] An Interface cannot contain any ModelElements.
+
+-- STATE: Ok
+
+inv Interface2:
+  self.allContents()->isEmpty
+
+-- [3] All Features defined in an Interface are public.
+
+-- STATE: Ok
+
+inv Interface3:
+  self.allFeatures()->forAll ( f | f.visibility = #public )
+
+
+context Method
+
+-- [1] If the realized Operation is a query, then so is the Method.
+
+-- STATE: Ok
+
+inv Method1:
+  self.specification.isQuery implies self.isQuery 
+
+-- [2] The signature of the Method should be the same as the signature
+-- of the realized Operation.
+
+-- STATE: Ok
+
+inv Method2:
+  self.hasSameSignature(self.specification) 
+
+-- [3] The visibility of the Method should be the same as for the
+-- realized Operation.
+
+-- STATE: Ok
+
+inv Method3:
+  self.visibility = self.specification.visibility 
+
+-- [4] The realized Operation must be a feature (possibly inherited)
+-- of the same Classifier as the Method.
+
+-- STATE: Ok
+
+inv Method4:
+  self.owner.allOperations()->includes(self.specification) 
+
+-- [5] If the realized Operation has been overridden one or more times
+-- in the ancestors of the owner of the Method, then the Method must
+-- realize the latest overriding (that is, all other Operations with
+-- the same signature must be owned by ancestors of the owner of the
+-- real-ized Operation).
+
+-- STATE: E1: missing )
+
+inv Method5:
+  self.specification.owner.allOperations()->includesAll( 
+    (self.owner.allOperations()->select(op | 
+      self.hasSameSignature(op))))
+
+
+context Namespace
+
+-- [1] If a contained element, which is not an Association or
+-- Generalization has a name, then the name must be unique in the
+-- Namespace.
+
+-- STATE: E1: <
+
+inv Namespace1:
+  self.allContents()->forAll(me1, me2 : ModelElement | 
+    ( not me1.oclIsKindOf (Association) and 
+      not me2.oclIsKindOf (Association) and 
+      me1.name <> '' and 
+      me2.name <> '' and 
+      me1.name = me2.name 
+     ) implies me1 = me2 ) 
+
+-- [2] All Associations must have a unique combination of name and
+-- associated Classifiers in the Namespace.
+
+-- STATE: I1.6, E3.2, I1.1
+
+inv Namespace2:
+  self.allContents()->select(m : ModelElement | 
+    m.oclIsKindOf(Association))->collect(m : ModelElement | 
+    m.oclAsType(Association))->forAll(a1, a2 | 
+      a1.name = a2.name and 
+      a1.connection->collect(ae : AssociationEnd | ae.type) = 
+      a2.connection->collect(ae : AssociationEnd | ae.type)
+      implies a1 = a2)
+
+context StructuralFeature
+
+-- [1] The connected type should be included in the owner's Namespace.
+
+-- STATE: Ok
+
+inv StructuralFeature1:
+  self.owner.namespace.allContents()->includes(self.type) 
+
+-- [2] The type of a StructuralFeature must be a Class, DataType or Interface.
+
+-- STATE: Ok
+
+inv StructuralFeature2:
+  self.type.oclIsKindOf(Class) or 
+  self.type.oclIsKindOf(DataType) or 
+  self.type.oclIsKindOf(Interface)
+
+
+-- E0
+-- context Trace
+
+--  E0
+-- context Type
+

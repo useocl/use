@@ -1,0 +1,8 @@
+model t17
+class A
+end
+
+class A
+attributes
+  anAttr : Integer
+end

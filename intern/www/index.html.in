@@ -1,0 +1,366 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<!-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ -->
+<head>
+<meta name="author" content="Mark Richters, Fabian Buettner, Fabian Gutsche"> 
+<meta name="keywords" content="UML,OCL,USE,validation,tool"> 
+<title>USE - A UML-based Specification Environment</title>
+</head>
+<body bgcolor="#ffffff">
+
+<table summary="">
+<tr>
+
+<td bgcolor="#e0e0ff" valign="top">
+<table border="0" cellspacing="0" cellpadding="5" summary="">
+<tr><td><img alt="USE logo" src="use1b.gif"></td></tr>
+<tr><td valign="top"><a href="#overview">Overview</a></tr>
+<tr><td valign="top"><a href="#news">News</a></tr>
+<tr><td valign="top"><a href="#doc">Documentation</a></td></tr>
+<tr><td valign="top"><a href="#screenshots">Screen shot</a></td></tr>
+<tr><td valign="top"><a href="#sysreq">System Requirements</a></td></tr>
+<tr><td valign="top"><a href="#download">Download</a></td></tr>
+<tr><td valign="top"><a href="#ml">Mailing Lists</a></td></tr>
+<tr><td valign="top"><a href="#references">References</a></td></tr>
+</table>
+</td>
+
+<td>
+<table cellspacing="5" cellpadding="2" summary="">
+<tr><td><center><h1>A UML-based Specification Environment</h1></center></td></tr>
+
+<!-- ====================================== -->
+
+<tr><th bgcolor="#e0e0ff"><a name="overview">Overview</a></th></tr>
+<tr><td>
+
+<p>USE is a system for the specification of information systems. It is
+based on a subset of the Unified Modeling Language (UML) <a
+href="#ref1">[1]</a>. A USE specification contains a textual
+description of a model using features found in UML class diagrams
+(classes, associations, etc.). Expressions written in the Object
+Constraint Language (OCL) are used to specify additional integrity
+constraints on the model. A model can be animated to validate the
+specification against non-formal requirements. System states
+(snapshots of a running system) can be created and manipulated during
+an animation. For each snapshot the OCL constraints are automatically
+checked. Information about a system state is given by graphical views.
+OCL expressions can be entered and evaluated to query detailed
+information about a system state. The picture below gives a general
+view of the USE approach.</p>
+
+<center><img alt="Overview of the USE approach" 
+  src="gen-img/overview.png"> </center>
+
+<p>
+
+The USE specification language is based on UML and OCL. Due to the semi-formal
+definition of early OCL versions, there were language constructs whose
+interpretation was ambiguous or unclear <a href="#ref2">[2]</a>.
+
+In <a href="#ref3">[3]</a> and <a href="#ref4">[4]</a> we have presented a
+formalization of OCL which was designed to provide a solution for most of the
+problems and which became part of UML 1.4/1.5.
+
+The USE approach to validation is described in <a href="#ref5">[5]</a> and <a
+  href="#ref6">[6]</a>.
+
+Several other papers of our group employing USE can be found in the <a
+  href="http://www.db.informatik.uni-bremen.de/publications">publications of
+  our group</a>.  </p>
+
+</td></tr>
+
+<!-- ====================================== -->
+
+<tr><th bgcolor="#e0e0ff"><a name="news">News</a></th></tr>
+<tr><td>
+
+    <ul> 
+      <li> Aug, 2006 <strong>A comprehensive user documentation for USE is currently under development and will be released soon.</strong>
+      </li>
+  <li> Aug, 2006 <strong>USE 2.3.1 has been released</strong>.
+  Performance has been improved for large link sets. 
+  Several improvements to the GUI have been made, including an 
+  improved sequence diagram that is much more customizable now.
+  <br>The examples have been completely reorganized and are now 
+  categorized by feature (see <a href="README.examples">examples/</a> directory).
+  See the <a href=NEWS>NEWS</a> file for more details.
+  </li>
+
+<li> Sep, 2005 <strong>USE 2.3.0 has been released</strong>.
+USE now displays class diagrams. This version also incorporates some 
+bug fixes (including the bug that sometimes caused the command line
+to hang). See the <a href=NEWS>NEWS</a>
+file for more details.
+</li>
+
+<li> May, 2005 <strong>USE 2.2.0 has been released</strong>.
+This release supports UML association classes and provides several bug
+fixes. Furthermore, the Snapshot Generator 
+[<a href="#ref7">7</a>,<a href="#ref8">8</a>] 
+is now incorporated into
+USE. See the <a href=NEWS>NEWS</a>
+file for more details. A short description of <a
+href="nc.html">improvements made in USE 2.2.0</a> can be found
+here.
+</li>
+<li> May, 2004: <strong>USE 2.1.0 has been released</strong>.
+This release features some extensions for the command language and
+support for OCL 2.0 tuple types.  The project has been restructured
+internally to make development easier.  For example, the build system
+has been moved to <a href="http://ant.apache.org">Apache Ant</a> and
+unit tests are now done with <a
+href="http://www.junit.org">junit</a>. See the <a href=NEWS>NEWS</a>
+file for more details.  <strong>Note:</strong> It was necessary to
+make a small change in the command syntax that is incompatible with
+previous versions. The NEWS file describes how you can easily update
+your command files.</li>
+
+<li>8 June, 2001: <strong>USE 2.0.1 has been released</strong>. This
+is mainly a bug fix release. The only new feature is a change to the
+USE grammar that now allows classes, associations, and constraints to
+appear in any order in a specification file.</li>
+
+<li>19 March, 2001: <strong>USE 2.0.0 has been
+released</strong>. Major new features are support for pre- and
+postconditions, printing of diagrams, and automatic generation of UML
+sequence diagrams. There are also a number of improvements w.r.t. the
+USE and OCL syntax.</li>
+</ul>
+
+<!-- ====================================== -->
+
+<tr><th bgcolor="#e0e0ff"><a name="doc">Documentation</a></th></tr>
+<tr><td>
+
+<p>The following documentation is available.</p>
+
+<ul>
+<li>A <a href="qt.html">quick tour</a> guides you through an example
+demonstrating the core features of USE.</li>
+
+<li>A description of how to <a href="prepost.html">validate pre- and
+postconditions</a>.</li>
+
+<li>A short description of <a href="nc.html">improvements made in USE 2.2.0</a></li>
+
+</ul>
+
+<!-- ====================================== -->
+
+<tr><th bgcolor="#e0e0ff"><a name="screenshots">Screen shot</a></th></tr>
+<tr><td>
+
+<p>The screen shot below shows information about a system state
+generated with the USE tool. More detailed information is given in the
+quick tour. Click on the picture below to get an enlarged
+version. </p>
+
+<center>
+<a href="qt7.png"><img src="gen-img/qt7-small.png" alt="Screenshot of USE"></a>
+</center>
+
+</td></tr>
+
+<!-- ====================================== -->
+
+<tr><th bgcolor="#e0e0ff"><a name="sysreq">System Requirements</a></th></tr>
+<tr><td>
+
+<p>USE is implemented in Java(tm). Therefore, it should run on any
+platform on which a Java runtime system (e.g. the Sun JDK) is
+available. So far this has been tested mainly on Unix-like platforms
+(Solaris and Linux) but it should work also on Windows. If you're
+trying to install USE on any other platform, you are on your own,
+although this should not be too difficult.</p>
+
+<p>The distribution of USE comes with full sources. If you want to
+compile USE yourself, you will need Sun's Java 2 Development Kit (JDK)
+version 1.4.2 or later (see http://java.sun.com) and Apache Ant 1.6.0
+or later. Earlier versions of the JDK and ant may work but have not
+been tested. For running all tests, you will need some Unix tools like
+GNU make, perl, sed, etc. All of them should be available on any
+decent Linux distribution.</p>
+
+</td></tr>
+
+<!-- ====================================== -->
+
+<tr><th bgcolor="#e0e0ff"><a name="download">Download</a></th></tr>
+<tr><td>
+
+<p>Note that this is a release of a research prototype. There is no
+warranty of any kind.</p>
+
+<p>The release is available in compressed tar and zip format. Both
+files have the same content. The gzipped tar file is somewhat smaller
+in size. After unpacking the release archive, please read the files
+<a href="README">README</a> and <a href="INSTALL">INSTALL</a> for
+further information. If you are updating your USE release, please read
+the file <a href="NEWS">NEWS</a>. It contains a short summary of
+changes between releases.</p>
+
+<ul>
+<li>The files <a href="NEWS">NEWS</a>, <a href="README">README</a>,
+and <a href="INSTALL">INSTALL</a> for this release.</li>
+
+<li><a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-@release_version@.tar.gz">use-@release_version@.tar.gz</a> (~5 Mb)</li>
+<li><a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-@release_version@.zip">use-@release_version@.zip</a> (~5 Mb)</li>
+</ul>
+
+<p>Older releases are still available.</p>
+
+<ul>
+
+  <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.3.0.tar.gz">use-2.3.0.tar.gz</a>
+  </li>
+
+  <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.2.0.tar.gz">use-2.2.0.tar.gz</a>
+  </li>
+
+  <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.1.0.tar.gz">use-2.1.0.tar.gz</a>
+  </li>
+
+  <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.0.1.tar.gz">use-2.0.1.tar.gz</a>
+  </li>
+  
+  <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.0.0.tar.gz">use-2.0.0.tar.gz</a>
+  </li>
+
+  <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-1.5.0.tar.gz">use-1.5.0.tar.gz</a>
+  </li>
+
+  <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-1.4.0.tar.gz">use-1.4.0.tar.gz</a>
+  </li>
+
+  <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-1.3.0.tar.gz">use-1.3.0.tar.gz</a>
+  </li>
+</ul>
+
+</td></tr>
+
+<!-- ====================================== -->
+
+<tr><th bgcolor="#e0e0ff"><a name="ml">Mailing Lists</a></th></tr>
+<tr><td>
+
+<p>If you want to get
+notifications about new releases, you should subscribe to the list
+<tt>use-announce</tt>. This is a moderated list only used for
+announcements.</p>
+
+<p>To subscribe to the list, send "subscribe" in the body of a message
+to the appropriate *-request address:
+
+<ul>
+<li><a
+href="mailto:use-announce-request@informatik.uni-bremen.de">use-announce-request@informatik.uni-bremen.de</a></li>
+
+</ul>
+
+<p>To report problems with any of the mailing lists, send mail to
+<tt>owner-use@informatik.uni-bremen.de</tt>.</p>
+
+</td></tr>
+
+<!-- ====================================== -->
+
+<tr><th bgcolor="#e0e0ff"><a name="references">References</a></th></tr>
+<tr><td>
+
+<p>See also the complete list of
+<a href="http://www.db.informatik.uni-bremen.de/publications">publications of our group</a> where most papers are available online.</p>  
+
+<table summary="References">
+
+<tr>
+<td valign="top"><a name="ref1">[1]</a></td>
+<td>OMG Unified Modeling Language Specification, Version 1.3, June
+    1999. Object Management Group, Inc., Framingham, Mass., Internet:
+    <a href="http://www.omg.org">http://www.omg.org</a>, 1999.</td>
+</tr>
+
+<tr>
+<td valign="top"><a name="ref2">[2]</a></td>
+<td>Martin Gogolla and Mark Richters. On constraints and queries in
+    UML. In Martin Schader and Axel Korthaus, editors, The Unified
+    Modeling Language - Technical Aspects and Applications, pages
+    109-121. Physica-Verlag, Heidelberg, 1998.</td>
+</tr>
+
+<tr>
+<td valign="top"><a name="ref3">[3]</a></td>
+<td>Mark Richters and Martin Gogolla. On formalizing the UML object
+    constraint language OCL. In Tok Wang Ling, Sudha Ram, and Mong Li
+    Lee, editors, Proc. 17th Int. Conf. Conceptual Modeling (ER'98),
+    pages 449-464. Springer, Berlin, LNCS Vol. 1507, 1998.</td>
+</tr>
+
+<tr>
+<td valign="top"><a name="ref4">[4]</a></td>
+<td>Mark Richters and Martin Gogolla. A metamodel for OCL. In Robert
+    France and Bernhard Rumpe, editors, Proceedings of the Second
+    International Conference on the Unified Modeling Language: UML'99,
+    LNCS Vol. 1723. Springer, 1999.</td>
+</tr>
+
+<tr>
+<td valign="top"><a name="ref5">[5]</a></td>
+<td>Mark Richters and Martin Gogolla. Validating UML models and OCL
+    constraints. UML 2000 - The Unified Modeling Language. Advancing
+    the Standard. Third International Conference, York, UK, October 2000, 
+    LNCS Vol. 1939. Springer, 2000.</td>
+</tr>
+
+<tr>
+<td valign="top"><a name="ref6">[6]</a></td>
+<td>Mark Richters. A Precise Approach to Validating UML Models and OCL
+    Constraints. Phd thesis. Universitaet Bremen. Logos Verlag,
+    Berlin, BISS Monographs, No. 14. 2002.</td>
+</tr>
+
+<tr>
+<td valign="top"><a name="ref7">[7]</a></td>
+<td><a href="assl.ps">ASSL - A Snapshot Sequence Language</a></td>
+</tr>
+
+<tr>
+<td valign="top"><a name="ref8">[8]</a></td>
+<td>Martin Gogolla, Jo&uml;rn Bohling, and Mark Richters. <a href="http://www.db.informatik.uni-bremen.de/publications/Gogolla_2003_UML.ps">
+    Validation of UML and OCL Models by Automatic Snapshot Generation</a>. 
+    In Grady Booch, Perdita Stevens, and Jonathan Whittle, editors, Proc.
+    6th Int. Conf. Unified Modeling Language&nbsp;(UML'2003). Springer, Berlin, LNCS&nbsp;2863, 2003.<br>
+</td>
+</tr>
+
+</table>
+</td>
+</tr>
+
+<!-- ====================================== -->
+
+</table>
+</td>
+
+</tr>
+</table>
+
+<!--  Local Variables: -->
+<!--  mode:sgml -->
+<!--  End: -->
+
+<!--  LocalWords:  junit tm JDK Solaris perl sed gzipped README online Richters
+ -->
+<!--  LocalWords:  Framingham Schader Korthaus Physica Tok Sudha Mong Proc Conf
+ -->
+<!--  LocalWords:  LNCS Rumpe Phd Universitaet BISS ASSL
+ -->

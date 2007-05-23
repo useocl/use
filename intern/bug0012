@@ -1,0 +1,50 @@
+$State: Closed$
+$BugAuthor: mr$
+
+X-From-Line: lecamus@irit.fr Mon Feb 19 18:12:29 2001
+Received: from irit.irit.fr ([141.115.4.5])
+	by nmh.informatik.uni-bremen.de (8.10.1/8.10.1) with ESMTP id f1JHCSi05014
+	for <mr@informatik.uni-bremen.de>; Mon, 19 Feb 2001 18:12:28 +0100 (MET)
+Received: from irit.fr (madres [141.115.8.81])
+	by irit.irit.fr (8.9.3/8.9.3) with ESMTP id SAA26282
+	for <mr@informatik.uni-bremen.de>; Mon, 19 Feb 2001 18:12:48 +0100 (MET)
+X-Gnus-Mail-Source: file:/var/mail/mr
+Message-ID: <3A91546C.C7F4832F@irit.fr>
+Date: Mon, 19 Feb 2001 18:14:20 +0100
+From: Christophe LECAMUS <lecamus@irit.fr>
+X-Mailer: Mozilla 4.75 [fr] (WinNT; U)
+X-Accept-Language: fr
+MIME-Version: 1.0
+To: mr@informatik.uni-bremen.de
+Subject: Use derived Association
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Content-Length: 638
+Lines: 24
+Xref: dustbin.informatik.uni-bremen.de mail.misc:3435
+
+Hello,
+
+we have noticed the presence of 2 associations :
+AssociationRole_AssociationEndRole
+AssociationEndRole_ClassifierRole
+which seems to be unnecessary.
+In UML metamodel these associations mention roles with names starting
+with /.
+They are in fact derived roles that must be computed from the inherited
+association.
+So the 2 previous associations must be replaced by operations computing
+the roles.
+
+I e-mail you a problem occur when i show result of invariant in Class
+Extend.
+We have tried Use 1.5.0 under Unix and Java 1.3 and the problem doesn't
+occur.
+My version of Java under NT was 1.2.2.
+So perhaps ...
+Christophe Le Camus
+
+
+
+
+

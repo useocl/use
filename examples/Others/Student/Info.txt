@@ -1,0 +1,10 @@
+This example is a part of /Others/Job.
+There are persons, students and employees with
+generalization.
+
+Student.use:
+three classes Person, Student (subclass of Person)
+and Employee (subclass of Person)
+
+Student.cmd:
+empty

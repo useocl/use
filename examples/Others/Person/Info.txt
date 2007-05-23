@@ -1,0 +1,12 @@
+This example shows the connection of father, mother
+and children with the aid of a class and a 3-ary
+association Family.
+Every child has exactly one father and one mother.
+Fathers and mothers may have more than one child.
+
+Person.use:
+one class Person
+one association Family
+
+Person.cmd:
+empty

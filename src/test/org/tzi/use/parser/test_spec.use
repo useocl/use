@@ -1,0 +1,49 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model AB
+
+class A
+operations
+  op()
+end
+
+class B
+attributes
+  c : Integer
+end
+
+association R between
+  A[*]
+  B[1]
+end
+
+constraints
+
+context A::op()
+  pre:  self.b.c = 1
+  post p1: self.b.c = 0
+  post p2: self.b@pre.c = 2
+  post p3: self.b@pre.c@pre = 1
+  post p4: self.b.c@pre = oclUndefined(Integer)
+
+
+/*
+-- create initial state:
+!create a : A
+!create b1 : B
+!set b1.c := 1
+!insert (a, b1) into R
+
+-- enter operation, check preconditions, save current state
+!openter a.op()
+
+-- effect of op()
+!set b1.c := 2
+!delete (a,b1) from R
+!create b2 : B
+!set b2.c := 0
+!insert (a, b2) into R
+
+-- exit operation, check postconditions with saved and current state
+!opexit
+*/

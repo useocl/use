@@ -1,0 +1,2 @@
+- load, edit, compile a specification
+- animate a specification

@@ -1,0 +1,9 @@
+
+SIMPLE CREATION OF OBJECTS AND LINKS
+
+Adds 10 wagons to a train.
+
+This example shows how objects and links can be added to a
+given state by calling the procedure `waggonkette(Zug,Integer)'.
+
+

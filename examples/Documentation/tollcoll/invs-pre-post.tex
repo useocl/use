@@ -1,0 +1,59 @@
+Invariants
+----------
+
+context Truck inv numIsKey  - num is key attribute for Truck
+context Point inv nameIsKey - name is key attribute for Point
+context Point inv noCycles  - no cycles in the Point graph
+
+Pre- and postconditions for Point operations
+--------------------------------------------
+
+context Point::init(aName:String)
+pre  freshPoint   - Point is unused
+post nameAssigned - attribute name was assigned
+post allPointInvs - all Point invariants hold
+
+context Point::northConnect(aNorth:Point)
+pre  aNorthDefined      - param aNorth not undefined
+pre  freshConnection    - planned link not in self's north/south links
+pre  notSelfLink        - planeed link not a self loop
+pre  insertionOk        - planned link induces not a cycle
+post connectionAssigned - planned link existing
+post allPointInvs       - all Point invariants hold
+
+context Point::southConnect(aSouth:Point)
+- analogously to northConnect
+
+Pre- and postconditions for Truck operations
+--------------------------------------------
+
+context Truck::init(aNum:String)
+pre  freshTruck           - Truck is unused
+post numTripsDebtAssigned - Truck attributes were assigned
+post allTruckInvs         - all Truck invariants hold
+
+context Truck::enter(entry:Point)
+pre  tripsOk         - trips empty or last is undefined
+pre  currentEmpty    - not currently connected to a Point
+post debtAssigned    - attribute debt initialized
+post currentAssigned - currently connected to entry
+post allTruckInvs    - all Truck invariants hold
+
+context Truck::move(target:Point)
+pre  currentExists   - currently connected to a Point
+pre  targetReachable - target connected to current Point
+post currentAssigned - currently connected to target
+post allTruckInvs    - all Truck invariants hold
+
+context Truck::pay(amount:Integer)
+pre  amountPositive - amount is positive
+pre  currentExists  - currently connected to a Point
+post debtReduced    - debt was reduced by amount
+post allTruckInvs   - all Truck invariants hold
+
+context Truck::bye():Integer
+pre  currentExists           - currently connected to a Point
+pre  noDebt                  - no debt due
+post returnEqualsOverPayment - overpayment is returned to Truck
+post currentEmpty            - not currently connected to a Point
+post allTruckInvs            - all Truck invariants hold

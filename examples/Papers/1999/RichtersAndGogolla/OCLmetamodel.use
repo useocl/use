@@ -1,0 +1,84 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model OCLmetamodel
+
+-- Package: Types
+
+abstract class Type
+attributes
+  name : String
+end
+
+abstract class BasicType < Type
+end
+
+class IntegerType < BasicType
+constraints
+  inv: self.name = 'IntegerType'
+end
+
+class RealType < BasicType
+end
+
+class StringType < BasicType
+end
+
+class BooleanType < BasicType
+end
+
+class InstanceType < Type
+end
+
+class Class
+end
+
+class EnumType < Type
+    --constraints
+    --FIXME:  self.literal->isUnique(name)
+end
+
+class EnumLiteral
+attributes
+  name : String
+constraints
+  inv: self.name.size > 0
+end
+
+class OclAnyType < Type
+end
+
+class OclTypeType < Type
+end
+
+class CollectionType < Type
+end
+
+class SetType < CollectionType
+end
+
+class SequenceType < CollectionType
+end
+
+class BagType < CollectionType
+end
+
+association Conforms between
+  Type[*] role supertype
+  Type[*] role subtype
+end
+
+association TypeParameter between
+  CollectionType[*]
+  Type[1] role elementType
+end
+
+aggregation ClassType between
+  InstanceType[0..1]
+  Class[1] role definingClass
+end
+
+aggregation EnumDefinition between
+  EnumType[0..1]
+  EnumLiteral[1..*] role literal
+end
+

@@ -1,0 +1,19 @@
+model t13 -- test grammar changes re. propertyCall
+
+class Foo
+end
+
+class Bar < Foo
+end
+
+constraints
+
+context Foo inv i1: 
+  exists(true)
+
+context Foo inv i2: 
+  iterate(e; a : Integer = 0 | true)
+
+context Foo inv i3: 
+  oclAsType(Bar).isDefined()
+

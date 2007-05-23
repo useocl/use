@@ -1,0 +1,12 @@
+This example is the simple version of /Others/Person.
+There are nodes and connections between them.
+The role of a node can be parent or child.
+
+ReflexiveAssociation.use:
+one class Node with one attribute num
+one association
+
+ReflexiveAssociation.cmd:
+creates two objects
+both are connected with two links and changed roles
+a third link connects an object with itself

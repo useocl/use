@@ -1,0 +1,11 @@
+$Bug: Equals for bags does not work as expected.$
+$Category: OCL$
+$State: Closed$
+$BugAuthor: green$
+$Tests: test/t019, AbstractBagTest$
+
+use> ?Bag{0,1}=Bag{1,1}
+     true : Boolean
+use> ?Bag{1,1}=Bag{0,1}
+     false : Boolean
+

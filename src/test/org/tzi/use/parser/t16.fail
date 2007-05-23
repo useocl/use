@@ -1,0 +1,4 @@
+t16.use:13:8: Modifier @pre is only allowed in postconditions.
+t16.use:14:13: Operation oclIsNew is only allowed in postconditions.
+t16.use:17:9: Modifier @pre is only allowed in postconditions.
+t16.use:18:13: Operation oclIsNew is only allowed in postconditions.

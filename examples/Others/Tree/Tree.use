@@ -1,0 +1,34 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model Tree
+
+class TreeNode
+attributes
+  name : String
+operations
+  -- works for dags
+  childPlus1():Set(TreeNode) =
+    Set{self}->union(self.child)->union(self.child->collect(tn | tn.childPlus1())->flatten->asSet)
+  -- works for graphs
+  childPlus2():Set(TreeNode) =
+    self.childPlusOnNodeSet(Set{self})
+  childPlusOnNodeSet(aTreeNodeSet:Set(TreeNode)):Set(TreeNode) =
+    if aTreeNodeSet->includesAll(self.child) then
+      aTreeNodeSet
+    else
+      self.child->collect(tn |
+        tn.childPlusOnNodeSet(aTreeNodeSet->union(Set{tn})->union(self.child)))->flatten->asSet
+    endif
+  childPlus3():Set(TreeNode) =
+    TreeNode.allInstances->iterate(tn1:TreeNode; result:Set(TreeNode)=Set{self} |
+      result->union(result->collect(tn2 | tn2.child)->flatten->asSet))
+end
+
+association Parentship between
+  TreeNode [0..1] role parent
+  TreeNode [0..*] role child
+end
+
+constraints
+context TreeNode inv AcyclicParentship:
+  not(self.childPlus2()->includes(self))

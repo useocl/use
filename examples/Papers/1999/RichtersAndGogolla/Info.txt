@@ -1,0 +1,12 @@
+This example corresponds to Fig. 4 Metamodel
+for OCL Types in "A Metamodel for OCL"
+
+see also: Phd thesis of Mark Richters
+Figure 6.5
+
+OCLmetamodel.use:
+contains a class with generalization and associations
+for each OCL type
+
+OCLmetamodel.cmd:
+empty

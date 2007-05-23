@@ -1,0 +1,367 @@
+------------------------------------------------------------------------
+
+procedure generatePersons(count:Integer)
+var thePersons:Sequence(Person);
+begin
+thePersons:=CreateN(Person,[count]);
+for p:Person in [thePersons]
+  begin
+  [p].name:=
+    Any([Sequence{'Ada', 'Bob', 'Cher', 'Dan', 'Eva', 'Fred', 'Gil',
+    'Hal', 'Ida', 'Joan', 'Kim', 'Lisa', 'Max', 'Nick', 'Ole', 'Pam',
+    'Qian', 'Ron', 'Sam', 'Tom', 'Ulf', 'Vera', 'Wini', 'Xara', 'Yoko',
+    'Zoe'}->reject(n1|Person.allInstances.name->exists(n2|n1=n2))]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure generatePersonsFirstMidLast(count:Integer)
+var thePersons:Sequence(Person), firstNames:Sequence(String),
+    midNames:Sequence(String), lastNames:Sequence(String), 
+    firstName:String, midName:String, lastName:String;
+begin -- 26*26*26=17576
+thePersons:=CreateN(Person,[count]);
+firstNames:=[Sequence{'Ada', 'Bob', 'Cher', 'Dan', 'Eva', 'Fred', 'Gil',
+  'Hal', 'Ida', 'Joan', 'Kim', 'Lisa', 'Max', 'Nick', 'Ole', 'Pam',
+  'Qian', 'Ron', 'Sam', 'Tom', 'Ulf', 'Vera', 'Wini', 'Xara', 'Yoko',
+  'Zoe'}];
+midNames:=[Sequence{'A.', 'B.', 'C.', 'D.', 'E.', 'F.', 'G.', 'H.', 'I.',
+  'J.', 'K.', 'L.', 'M.', 'N.', 'O.', 'P.', 'Q.', 'R.', 'S.', 'T.', 'U.',
+  'V.', 'W.', 'X.', 'Y.', 'Z.'}];
+lastNames:=[Sequence{'Adams', 'Baker', 'Crosby', 'Dylan', 'Everly',
+  'Flack', 'Gibb', 'Harrison', 'Ingle', 'Jagger', 'King', 'Lennon',
+  'McCartney', 'Nash', 'Orbison', 'Palmer', 'Quincy', 'Richard', 'Star',
+  'Taylor', 'Underwood', 'Vincent', 'Wyman', 'Xerxes', 'Young',
+  'Zappa'}];
+for p:Person in [thePersons]
+  begin
+  firstNames:=Sub([firstNames],[26]);
+  midNames:=Sub([midNames],[26]);
+  lastNames:=Sub([lastNames],[26]);
+  firstName:=Try([firstNames]);
+  midName:=Try([midNames]);
+  lastName:=Try([lastNames
+                 ->reject(lastName|Person.allInstances.name->
+                     exists(n|n=firstName.concat(' ').concat(midName).
+                                concat(' ').concat(lastName)))]);
+  [p].name:=[firstName.concat(' ').concat(midName).
+                       concat(' ').concat(lastName)];
+  end;
+end;
+
+------------------------------------------------------------------------
+
+-- Avenue, Alley, Boulevard, Crescent, Drive, Lane, Parade, Road, Street, Terrace, Way
+-- Beech, Birch, Elm, Fir, Oak, Palm, Pine, Poplar, Sequoia, Willow
+-- Black, Blue, Brown, Gray, Green, Pink, Red, White, Yellow
+-- City, Hamlet, Metropolis, Town, Village
+-- Apple, Banana, Date, Grapefruit, Lemon, Mango, Orange, Peach, Pear, Pineapple, Strawberry
+-- Ape, Bird, Cat, Cow, Chicken, Dog, Elephant, Goat, Hen, Horse, Lion, Seal, Tiger
+-- Canal, Creek, Lake, Ocean, Pond, River, Sea, Stream
+-- Building, Domicile, Home, House, Hut, Palace, Residence, Shed, Shelter
+-- Daffodil, Daisy, Narcissus, Rose, Tulip, Violet
+-- Country, Fatherland, Homeland, Kingdom, Land, Motherland, Nation, Realm, State, Territory
+-- Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+-- Mon, Tue, Wed, Thu, Fri, Sat, Sun
+-- 1900..2100
+-- 01..28/29/30/31
+-- Beer, Coffee, Juice, Liquor, Milk, Tea, Water
+-- Breakfast, Lunch, Tea, Dinner, Supper
+-- Maccaroni, Penne, Ravioli, Spaghetti, Spaghettini, Tortelini
+
+------------------------------------------------------------------------
+
+-- context p1:Person inv personNamesAreUnique:
+--   Person.allInstances->forAll(p2|p1.name=p2.name implies p1=p2)
+-- 
+-- context Person inv personNamesAreUnique:
+--   Person.allInstances->forAll(p1|
+--     Person.allInstances->forAll(p2|p1.name=p2.name implies p1=p2))
+
+procedure generatePersonsV2(count:Integer)
+var thePersons:Sequence(Person);
+begin
+thePersons:=CreateN(Person,[count]);
+for p:Person in [thePersons]
+  begin
+  [p].name:=
+    Any([Sequence{'Ada', 'Bob', 'Cher', 'Dan', 'Eva', 'Fred', 'Gil',
+    'Hal', 'Ida', 'Joan', 'Kim', 'Lisa', 'Max', 'Nick', 'Ole', 'Pam',
+    'Qian', 'Ron', 'Sam', 'Tom', 'Ulf', 'Vera', 'Wini', 'Xara', 'Yoko',
+    'Zoe'}->reject(n|
+      not Person.allInstances->forAll(p1|
+        Person.allInstances->forAll(p2|p1.name=p2.name implies p1=p2)))]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure generatePersonsNaive(count:Integer)
+var thePersons:Sequence(Person);
+begin
+thePersons:=CreateN(Person,[count]);
+for p:Person in [thePersons]
+  begin
+  [p].name:=
+    Try([Sequence{'Ada', 'Bob', 'Cher', 'Dan', 'Eva', 'Fred', 'Gil',
+    'Hal', 'Ida', 'Joan', 'Kim', 'Lisa', 'Max', 'Nick', 'Ole', 'Pam',
+    'Qian', 'Ron', 'Sam', 'Tom', 'Ulf', 'Vera', 'Wini', 'Xara', 'Yoko',
+    'Zoe'}]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure generateCompanies(count:Integer)
+var theCompanies:Sequence(Company);
+begin
+theCompanies:=CreateN(Company,[count]);
+for p:Company in [theCompanies]
+  begin
+  [p].name:=
+    Any([Sequence{'AMD', 'DEC', 'HP', 'IBM', 'Lex', 'Miro', 'NEC',
+    'SAP', 'Sony', 'Sun'}
+    ->reject(n1|Company.allInstances.name->exists(n2|n1=n2))]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure generateJobs(count:Integer)
+var theJobs:Sequence(Job),
+    aPerson:Person,
+    aCompany:Company;
+begin
+theJobs:=CreateN(Job,[count]);
+for j:Job in [theJobs]
+  begin
+  aPerson:=Try([Person.allInstances->asSequence
+                ->select(p|Person.allInstances->
+                           forAll(p2|p.job->size<=p2.job->size))
+              ]);
+  aCompany:=Try([Company.allInstances->asSequence
+                 ->reject(c|aPerson.employer()->includes(c))
+                 ->select(c|Company.allInstances->
+                            forAll(c2|c.job->size<=c2.job->size))
+               ]);
+  Insert(PersonJob,[aPerson],[j]);
+  Insert(CompanyJob,[aCompany],[j]);
+  end;
+end;
+-- possible modification:
+-- additional parameters: personFairness:Boolean
+--                        companyFairness:Boolean
+-- aPerson := if personFairness then expr-with-select else expr-without-select endif
+-- aComapny ... analogously ...
+
+------------------------------------------------------------------------
+
+procedure generateBossWorkerV0(count:Integer)
+var top:Job, low:Job, lowSalary:Integer, topSalary:Integer;
+begin
+for i:Integer in [Sequence{1..count}]
+  begin
+  top:=Try([Job.allInstances->asSequence]);
+  low:=Try([Job.allInstances->asSequence
+            ->reject(j|j.boss.isDefined or
+                       j=top or
+                       j.workerPlus()->includes(top) or
+                       top.workerPlus()->includes(j) or
+                       top.employer<>j.employer
+                       -- or top.worker->size>=2 -- for bin tree; could be given for top
+                       -- or top.worker->notEmpty -- for chaining; could be given for top
+          )]);
+  -- also tried ->reject(A)->reject(B) instead of ->reject(A or B)
+  -- but ->reject(A or B) takes only 60% of evaluation time of ->reject(A)->reject(B)
+  lowSalary:=Any([Sequence{2000,2500,3000,3500,4000,4500,5000}]);
+  lowSalary:=[if low.worker->isEmpty then lowSalary else                           -- for bin tree
+                   low.worker->collect(salary)                                     --
+                   ->iterate(s:Integer;m:Integer=0|if s>m then s else m endif)+500 --
+                 endif];                                                           --
+  [low].salary:=[lowSalary];
+  topSalary:=[top.worker->collect(salary)
+    ->iterate(s:Integer;m:Integer=0|if s>m then s else m endif).
+    max(lowSalary)+500];
+  [top].salary:=[topSalary];
+  Insert(BossWorker,[top],[low]);
+  end;
+for j:Job in
+  [Job.allInstances->select(j|j.salary.isUndefined)->asSequence]
+  begin
+  [j].salary:=
+    Any([Sequence{2500,3000,3500,4000,4500,5000,5500,6000,6500}]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure generateBossWorker(count:Integer)
+var top:Job, low:Job, depth:Integer, addition:Integer;
+begin
+for i:Integer in [Sequence{1..count}]
+  begin
+  top:=Try([Job.allInstances->asSequence
+            -- -> reject(top|top.worker->size>=2)  -- for bin tree
+            -- -> reject(top|top.worker->notEmpty) -- for chaining
+          ]);
+  low:=Try([Job.allInstances->asSequence
+            ->reject(low|low.boss.isDefined or
+                         low=top or
+                         low.workerPlus()->includes(top) or
+                         top.workerPlus()->includes(low) or
+                         top.employer<>low.employer
+          )]);
+  -- also tried ->reject(A)->reject(B) instead of ->reject(A or B)
+  -- but ->reject(A or B) takes only 60% of evaluation time of ->reject(A)->reject(B)
+  Insert(BossWorker,[top],[low]);
+  end;
+depth:=[0];
+for j:Job in [Job.allInstances->select(j|j.salary.isUndefined)->asSequence]
+  begin
+  depth:=[if j.bossPlus()->size>depth then j.bossPlus()->size else depth endif];
+  end;
+for j:Job in [Job.allInstances->select(j|j.salary.isUndefined)->asSequence]
+  begin
+  addition:=Any([Sequence{0,500,1000,1500}]);
+  [j].salary:=[1000+2000*(depth-j.bossPlus()->size)+addition];
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure generateBossWorker2()
+var top:Job, middleLeft:Job, middleRight:Job,
+    lowLeft1:Job, lowLeft2:Job, lowRight1:Job, lowRight2:Job;
+begin
+top:=Any([Job.allInstances->asSequence]);
+middleLeft:=
+  Any([Job.allInstances->asSequence->excluding(top)]);
+middleRight:=
+  Any([Job.allInstances->asSequence->excluding(top)
+  ->excluding(middleLeft)]);
+lowLeft1:=
+  Any([Job.allInstances->asSequence->excluding(top)
+  ->excluding(middleLeft)->excluding(middleRight)]);
+lowLeft2:=
+  Any([Job.allInstances->asSequence->excluding(top)
+  ->excluding(middleLeft)->excluding(middleRight)
+  ->excluding(lowLeft1)]);
+lowRight1:=
+  Any([Job.allInstances->asSequence->excluding(top)
+  ->excluding(middleLeft)->excluding(middleRight)
+  ->excluding(lowLeft1)->excluding(lowLeft2)]);
+lowRight2:=
+  Any([Job.allInstances->asSequence->excluding(top)
+  ->excluding(middleLeft)->excluding(middleRight)
+  ->excluding(lowLeft1)->excluding(lowLeft2)
+  ->excluding(lowRight1)]);
+Insert(BossWorker,[top],[middleLeft]);
+Insert(BossWorker,[top],[middleRight]);
+Insert(BossWorker,[middleLeft],[lowLeft1]);
+Insert(BossWorker,[middleLeft],[lowLeft2]);
+Insert(BossWorker,[middleRight],[lowRight1]);
+Insert(BossWorker,[middleRight],[lowRight2]);
+[lowLeft1].salary:=Any([Sequence{2000,2500,3000,3500,4000,4500,5000}]);
+[lowLeft2].salary:=Any([Sequence{2000,2500,3000,3500,4000,4500,5000}]);
+[lowRight1].salary:=Any([Sequence{2000,2500,3000,3500,4000,4500,5000}]);
+[lowRight2].salary:=Any([Sequence{2000,2500,3000,3500,4000,4500,5000}]);
+[middleLeft].salary:=
+  [Set{lowLeft1,lowLeft2,lowRight1,lowRight2}->collect(salary)
+  ->iterate(s:Integer;m:Integer=0|if s>m then s else m endif)+500];
+[middleRight].salary:=
+  [Set{lowLeft1,lowLeft2,lowRight1,lowRight2}->collect(salary)
+  ->iterate(s:Integer;m:Integer=0|if s>m then s else m endif)+500];
+[top].salary:=
+  [middleLeft.salary.max(middleRight.salary)+500];
+end;
+
+------------------------------------------------------------------------
+
+procedure generateTopMidLow()
+var top:Job, mid:Job, low:Job, jobs:Sequence(Job);
+begin
+-- let Job.allInstances have 3 elements
+jobs:=[Job.allInstances->asSequence];
+top:=Try([jobs]);
+mid:=Try([jobs->excluding(top)]);
+low:=Try([jobs->excluding(top)->excluding(mid)]);
+-- 3*2*2=6 choices for [top,mid,low]
+Insert(BossWorker,[top],[mid]);
+Insert(BossWorker,[mid],[low]);
+-- Try(BossWorker,[Sequence{top}],[Sequence{mid}]);
+-- Try(BossWorker,[Sequence{mid}],[Sequence{low}]);
+[top].salary:=Try([Sequence{2000,3000,4000}]);
+[mid].salary:=Try([Sequence{2000,3000,4000}]);
+[low].salary:=Try([Sequence{2000,3000,4000}]);
+-- 3*3*3=27 choices for the 3 salaries
+-- makes up 6*27=162 choices
+-- 4*162=648 for Try(BossWorker,...) instead of Insert(BossWorker,...)
+end;
+
+------------------------------------------------------------------------
+
+procedure generatePersonWith2Jobs0Companies()
+var p:Person, j1:Job, j2:Job;
+begin
+p :=Create(Person);
+j1:=Create(Job);
+j2:=Create(Job);
+Insert(PersonJob,[p],[j1]);
+Insert(PersonJob,[p],[j2]);
+end;
+
+procedure generatePersonWith2Jobs1Company()
+var p:Person, j1:Job, j2:Job, c:Company;
+begin
+p :=Create(Person);
+j1:=Create(Job);
+j2:=Create(Job);
+c :=Create(Company);
+Insert(PersonJob,[p],[j1]);
+Insert(PersonJob,[p],[j2]);
+Try(CompanyJob,[Sequence{c}],[Sequence{j1,j2}]);
+end;
+
+procedure generatePersonWith3Jobs0Companies()
+var p:Person, j1:Job, j2:Job, j3:Job;
+begin
+p :=Create(Person);
+j1:=Create(Job);
+j2:=Create(Job);
+j3:=Create(Job);
+Insert(PersonJob,[p],[j1]);
+Insert(PersonJob,[p],[j2]);
+Insert(PersonJob,[p],[j3]);
+end;
+
+procedure generatePersonWith3Jobs1Company()
+var p:Person, j1:Job, j2:Job, j3:Job, c:Company;
+begin
+p :=Create(Person);
+j1:=Create(Job);
+j2:=Create(Job);
+j3:=Create(Job);
+c :=Create(Company);
+Insert(PersonJob,[p],[j1]);
+Insert(PersonJob,[p],[j2]);
+Insert(PersonJob,[p],[j3]);
+Try(CompanyJob,[Sequence{c}],[Sequence{j1,j2,j3}]);
+end;
+
+procedure generatePersonWith3Jobs2Companies()
+var p:Person, j1:Job, j2:Job, j3:Job, c1:Company, c2:Company;
+begin
+p :=Create(Person);
+j1:=Create(Job);
+j2:=Create(Job);
+j3:=Create(Job);
+c1:=Create(Company); [c1].name:=['Company1'];
+c2:=Create(Company); [c2].name:=['Company2'];
+Insert(PersonJob,[p],[j1]);
+Insert(PersonJob,[p],[j2]);
+Insert(PersonJob,[p],[j3]);
+Try(CompanyJob,[Sequence{c1,c2}],[Sequence{j1,j2,j3}]);
+end;
+
+------------------------------------------------------------------------

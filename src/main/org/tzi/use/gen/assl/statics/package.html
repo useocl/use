@@ -1,0 +1,27 @@
+<html>
+  <body> Provides classes of the metamodel of ASSL (a snapshot space language).
+    The following diagram shows a subset of the classes of this package. Note
+    that some specializations are incomplete. <br> <img
+	SRC="../../../../../../../../etc/forJavadoc/gen-assl-statics1.gif">
+	<br> Subclasses of <code>GInstruction</code> and
+	  <code>GValueInstruction</code> not shown in this diagram are commands
+	  of <A HREF="../../../../../../../../etc/forJavadoc/assl.ps">ASSL</A>.
+	  Their instances are created by the <A
+	    HREF="../../../../../../../../etc/forJavadoc/matcherpattern.html">Matcher 
+	    pattern</A>. Classes implementing the
+	  <code>IGInstructionMatcher</code> interface are the matchers of the
+	  pattern. The Creator is <code>GInstructionCreator</code>. The diagram
+	  shows how OCL is embedded in ASSL. Some subclasses of
+	  <code>GInstruction</code> have associations to classes of the
+	  <code>uml.mm</code> package (e.g. <code>GAttributeAssignment</code>,
+	  <code>GInstrInsert_Assoc_Linkends</code>). See the constructor of a
+	  subclass for details. <p> An instance of this ASSL metamodel should
+	    be well typed and consistent to a model
+	    (<code>uml.mm.MModel</code>). Consistency and typing are not
+	    checked by the constructors or operations of the classes. To get a
+	    well typed and consistent instance of the ASSL metamodel, the
+	    checks should be done by a package parsing ASSL texts (e.g.
+	    <code>org.tzi.use.parser</code>). @see org.tzi.use.parser @see
+	    org.tzi.use.uml.mm </body>
+</html>
+

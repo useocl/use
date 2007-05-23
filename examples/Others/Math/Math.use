@@ -1,0 +1,13 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model Math
+
+class Math
+operations
+  gcd(x : Integer, y : Integer) : Integer
+    post:
+      Sequence{1..x.max(y)}->exists(i, j | 
+	(result * i = x) and (result * j = y)
+	and not Sequence{1..x.max(y)}->exists(k | 
+ 	  (k * i = x) and (k * j = y) and k > result))
+end

@@ -1,0 +1,4 @@
+context Job inv bossBossBetterPaidThanWorker:
+  Job.allInstances->forAll(low, mid, top |
+    low.boss=mid and mid.boss=top implies
+    low.salary<top.salary)

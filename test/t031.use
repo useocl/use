@@ -1,0 +1,14 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model RecursiveOperations
+
+-- classes
+
+class Rec
+operations
+  recurse() : Integer =
+    1 + self.recurse()
+
+  fac(n : Integer) : Integer =
+    if n <= 1 then 1 else n * self.fac(n - 1) endif
+end

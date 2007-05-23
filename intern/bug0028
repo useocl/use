@@ -1,0 +1,1827 @@
+$Bug: Correct treatment of implicit collect$
+$Category: OCL$
+$State: Closed$
+$BugAuthor: gogolla$
+$Tests: test/t024$
+
+Update Fabian B. 21.08.04: It should work. Seq(Set(T))->flatten has no
+unique semantics, but this also applies to Set(T)->asSequence - which
+already works.
+
+Update Fabian B. 24.08.04: According to Martin, this actually should
+*not* work in USE.  There should be not
+Sequence(Set(T))->flatten/Sequence(Bag(T))->flatten.  But we need
+better error handling!
+
+Reason for this error (gutsche):
+
+To handle an implicit collect USE uses flattening. OCL does not define
+how flattening should be carried out. It just states flattening is
+allways used having nested Collections (S. 40 3.6.2 Object Constraint
+Language Precise Modeling with UML, Jos Warmer).  
+
+In uml.ocl.expr::ExpStdOp::Op_collection_flatten#matches line 1571,
+USE states ` Sequence(Set(T)) and Sequence(Bag(T)) is not
+well-defined! ' 
+
+Question how should we handle that?
+
+
+
+
+Error description (gogolla):
+
+(C) use-bug: korrekte Behandlung vom impliziten Collect
+
+c:/mg/examples/er2mofV1/assl-12.cmd> ?Sequence{RelSem_Tuple1}.attrMap.value.cont
+ent
+
+INTERNAL ERROR: An unexpected exception occured. This happened most probably
+due to an error in the program. The program will try to continue, but may
+not be able to recover from the error. Please send a bug report to mr@tzi.org
+with a description of your last input and include the following output:
+Program version: 2.0.0-generator_1.01
+Project version: use 0.207 Mon, 19 Mar 2001 16:30:41 +0100 mr
+Stack trace: java.lang.RuntimeException: genImplicitCollect failed: Undefined op
+eration `Sequence(Set(Base_AttrMap))->flatten()'.
+        at org.tzi.use.parser.ASTExpression.genImplicitCollect(ASTExpression.jav
+a:176)
+        at org.tzi.use.parser.ASTOperationExpression.collectShorthandWithOutArgs
+(ASTOperationExpression.java:343)
+        at org.tzi.use.parser.ASTOperationExpression.gen1(ASTOperationExpression
+.java:290)
+        at org.tzi.use.parser.ASTOperationExpression.gen(ASTOperationExpression.
+java:128)
+        at org.tzi.use.parser.ASTOperationExpression.gen(ASTOperationExpression.
+java:127)
+        at org.tzi.use.parser.ASTOperationExpression.gen(ASTOperationExpression.
+java:127)
+        at org.tzi.use.parser.USECompiler.compileExpression(USECompiler.java:117
+)
+        at org.tzi.use.main.Shell.cmdQuery(Shell.java:747)
+        at org.tzi.use.main.Shell.processLine(Shell.java:261)
+        at org.tzi.use.main.Shell.processLineSafely(Shell.java:216)
+        at org.tzi.use.main.Shell.run(Shell.java:175)
+        at java.lang.Thread.run(Unknown Source)
+
+to follow: 1. use file
+           2. assl file
+           3. cmd file
+
+------------------------------------------------------------------------
+-- use file
+------------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+model er2mof
+
+------------------------------------------------------------------------
+-- Order of packages:
+--   Base, ErSyn, ErSem, RelSyn, RelSem, DataMods, Er2Rel
+-- Dependencies between packages:
+--        Er2Rel
+--          |
+--      DataMods
+--       /    \
+--    ErSem  RelSem
+--      |      |
+--    ErSyn  RelSyn
+--       \    /
+--        Base
+-- Order of USE parts (because of compatibility with older USE):
+--   Classes, Associations, Invariants
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+-- Base
+------------------------------------------------------------------------
+
+abstract class Base_Named
+attributes
+  name : String
+end
+
+class Base_DataType < Base_Named
+end
+
+class Base_Value
+attributes
+  content : String
+end
+
+class Base_Attribute < Base_Named
+attributes
+  isKey : Boolean;
+end
+
+class Base_AttrMap
+end
+
+------------------------------------------------------------------------
+-- ErSyn
+------------------------------------------------------------------------
+
+class ErSyn_ErSchema < Base_Named
+end
+
+class ErSyn_Entity < Base_Named
+operations
+  key() : Set(Base_Attribute) = self.attribute->select(a | a.isKey)
+  osRelend() : Set(ErSyn_Relend) = -- other side relends
+    self.relend->collect(re | re.relship.relend->excluding(re))->
+      flatten->asSet
+end
+
+class ErSyn_Relship < Base_Named
+end
+
+class ErSyn_Relend < Base_Named
+end
+
+------------------------------------------------------------------------
+-- ErSem
+------------------------------------------------------------------------
+
+class ErSem_ErState
+operations
+  findInstance(keyAttrs:Sequence(String),entName:String):ErSem_Instance=
+    let theEntity:ErSyn_Entity=
+      self.erSchema.entity->select(name=entName)->any(true) in
+    self.instance->select(entity=theEntity)->
+    select(i:ErSem_Instance|Sequence{1..keyAttrs->size div(2)}->
+      forAll(j:Integer|
+        let attrName:String=keyAttrs->at(2*(j-1)+1) in
+        let attrValue:String=keyAttrs->at(2*(j-1)+2) in
+        let attr:Base_Attribute=theEntity.attribute->
+              select(name=attrName)->any(true) in
+        i.applyAttr(self,attr)=attrValue))->any(true)
+end
+
+class ErSem_Instance
+operations
+  applyAttr(aState:ErSem_ErState,anAttr:Base_Attribute):String=
+    self.attrMap->
+      select(am|am.erState->includes(aState) and am.attribute=anAttr)->
+        any(true).value.content
+end
+
+class ErSem_Link
+operations
+  applyRelend(aState:ErSem_ErState,aRelend:ErSyn_Relend):ErSem_Instance=
+    self.relendMap->
+      select(rm | rm.erState->includes(aState) and rm.relend=aRelend)->
+        any(true).instance
+  applyAttr(aState:ErSem_ErState,anAttr:Base_Attribute):String=
+    self.attrMap->
+      select(am|am.erState->includes(aState) and am.attribute=anAttr)->
+        any(true).value.content
+end
+
+class ErSem_RelendMap
+end
+
+------------------------------------------------------------------------
+-- RelSyn
+------------------------------------------------------------------------
+
+class RelSyn_RelDBSchema < Base_Named
+end
+
+class RelSyn_RelSchema < Base_Named
+operations
+  key() : Set(Base_Attribute) = self.attribute->select(a | a.isKey)
+end
+
+------------------------------------------------------------------------
+-- RelSem
+------------------------------------------------------------------------
+
+class RelSem_RelDBState
+end
+
+class RelSem_Tuple
+operations
+  applyAttr(aState:RelSem_RelDBState,anAttr:Base_Attribute):String=
+    self.attrMap->
+      select(am | am.relDBState->includes(aState) and
+                  am.attribute=anAttr)->any(true).value.content
+end
+
+------------------------------------------------------------------------
+-- Er2Rel
+------------------------------------------------------------------------
+
+class Er2Rel_Trans
+end
+
+------------------------------------------------------------------------
+-- Base
+------------------------------------------------------------------------
+
+association Base_ValueTyping between
+  Base_Value[0..*] role value;
+  Base_DataType[1] role dataType;
+end
+
+association Base_AttributeTyping between
+  Base_Attribute[0..*] role attribute;
+  Base_DataType[1] role dataType;
+end
+
+association Base_AttrMapTarget between
+  Base_AttrMap[0..*] role attrMap;
+  Base_Value[1] role value;
+end
+
+association Base_AttrMapTyping between
+  Base_AttrMap[0..*] role attrMap;
+  Base_Attribute[1] role attribute;
+end
+
+------------------------------------------------------------------------
+-- ErSyn
+------------------------------------------------------------------------
+
+-- ownerships assocs
+
+association ErSyn_OwnershipErSchemaEntity between
+  ErSyn_ErSchema[1] role erSchema;
+  ErSyn_Entity[1..*] role entity;
+end
+
+association ErSyn_OwnershipErSchemaRelship between
+  ErSyn_ErSchema[1] role erSchema;
+  ErSyn_Relship[0..*] role relship;
+end
+
+association ErSyn_OwnershipRelshipRelend between
+  ErSyn_Relship[1] role relship;
+  ErSyn_Relend[2..*] role relend;
+end
+
+association ErSyn_OwnershipEntityAttribute between
+  ErSyn_Entity[0..1] role entity;
+  Base_Attribute[0..*] role attribute;
+end
+
+association ErSyn_OwnershipRelshipAttribute between
+  ErSyn_Relship[0..1] role relship;
+  Base_Attribute[0..*] role attribute;
+end
+
+-- Typing associations
+
+association ErSyn_RelendTyping between
+  ErSyn_Relend[0..*] role relend;
+  ErSyn_Entity[1] role entity;
+end
+
+------------------------------------------------------------------------
+-- ErSem
+------------------------------------------------------------------------
+
+-- Ownership associations  - - - - - - - - - - - - - - - - - - - - - - -
+
+association ErSem_OwnershipErStateInstance between
+  ErSem_ErState[1..*] role erState;
+  ErSem_Instance[0..*] role instance;
+end
+
+association ErSem_OwnershipErStateLink between
+  ErSem_ErState[1..*] role erState;
+  ErSem_Link[0..*] role link;
+end
+
+association ErSem_OwnershipErStateAttrMap between
+  ErSem_ErState[0..*] role erState;
+  Base_AttrMap[0..*] role attrMap;
+end
+
+association ErSem_OwnershipErStateRelendMap between
+  ErSem_ErState[1..*] role erState;
+  ErSem_RelendMap[0..*] role relendMap;
+end
+
+-- Instance, AttrMap and RelendMap source associations - - - - - - - - -
+
+association ErSem_InstanceAttrMap between
+  ErSem_Instance[0..1] role instance;
+  Base_AttrMap[0..*] role attrMap;
+end
+
+association ErSem_LinkAttrMap between
+  ErSem_Link[0..1] role link;
+  Base_AttrMap[0..*] role attrMap;
+end
+
+association ErSem_LinkRelendMap between
+  ErSem_Link[1] role link;
+  ErSem_RelendMap[2..*] role relendMap;
+end
+
+-- RelendMap associations  - - - - - - - - - - - - - - - - - - - - - - -
+
+association ErSem_RelendMapTarget between
+  ErSem_RelendMap[0..*] role relendMap;
+  ErSem_Instance[1] role instance;
+end
+
+association ErSem_RelendMapTyping between
+  ErSem_RelendMap[0..*] role relendMap;
+  ErSyn_Relend[1] role relend;
+end
+
+-- Typing associations - - - - - - - - - - - - - - - - - - - - - - - - -
+
+association ErSem_ErStateTyping between
+  ErSem_ErState[0..*] role erState;
+  ErSyn_ErSchema[1] role erSchema;
+end
+
+association ErSem_InstanceTyping between
+  ErSem_Instance[0..*] role instance;
+  ErSyn_Entity[1] role entity;
+end
+
+association ErSem_LinkTyping between
+  ErSem_Link[0..*] role link;
+  ErSyn_Relship[1] role relship;
+end
+
+------------------------------------------------------------------------
+-- RelSyn
+------------------------------------------------------------------------
+
+association RelSyn_OwnershipRelDBSchemaRelSchema between
+  RelSyn_RelDBSchema[1] role relDBSchema;
+  RelSyn_RelSchema[1..*] role relSchema;
+end
+
+association RelSyn_OwnershipRelSchemaAttribute between
+  RelSyn_RelSchema[0..1] role relSchema;
+  Base_Attribute[1..*] role attribute;
+end
+
+------------------------------------------------------------------------
+-- RelSem
+------------------------------------------------------------------------
+
+association RelSem_OwnershipRelDBStateTuple between
+  RelSem_RelDBState[1..*] role relDBState;
+  RelSem_Tuple[0..*] role tuple;
+end
+
+association RelSem_OwnershipRelDBStateAttrMap between
+  RelSem_RelDBState[0..*] role relDBState;
+  Base_AttrMap[0..*] role attrMap;
+end
+
+association RelSem_TupleAttrMap between
+  RelSem_Tuple[0..1] role tuple;
+  Base_AttrMap[1..*] role attrMap;
+end
+
+association RelSem_RelDBStateTyping between
+  RelSem_RelDBState[0..*] role relDBState;
+  RelSyn_RelDBSchema[1] role relDBSchema;
+end
+
+association RelSem_TupleTyping between
+  RelSem_Tuple[0..*] role tuple;
+  RelSyn_RelSchema[1] role relSchema;
+end
+
+------------------------------------------------------------------------
+-- Er2Rel
+------------------------------------------------------------------------
+
+association Er2Rel_OwnershipTransErSchema between
+  Er2Rel_Trans[0..1] role trans;
+  ErSyn_ErSchema[1] role erSchema;
+end
+
+association Er2Rel_OwnershipTransRelDBSchema between
+  Er2Rel_Trans[0..1] role trans;
+  RelSyn_RelDBSchema[1] role relDBSchema;
+end
+
+association Er2Rel_OwnershipTransErState between
+  Er2Rel_Trans[0..1] role trans;
+  ErSem_ErState[0..*] role erState;
+end
+
+association Er2Rel_OwnershipTransRelDBState between
+  Er2Rel_Trans[0..1] role trans;
+  RelSem_RelDBState[0..*] role relDBState;
+end
+
+association Er2Rel_StateTrans between
+  ErSem_ErState[0..1] role erState;
+  RelSem_RelDBState[0..1] role relDBState;
+end
+
+------------------------------------------------------------------------
+
+constraints
+
+------------------------------------------------------------------------
+-- Base
+------------------------------------------------------------------------
+
+-- Names are defined, have a non-zero length, and consist of letters
+-- and digits
+
+context Base_Named inv nameOk:
+  let small:Set(String)=
+    Set{'a','b','c','d','e','f','g','h','i','j','k','l','m',
+        'n','o','p','q','r','s','t','u','v','w','x','y','z'} in
+  let capital:Set(String)=
+    Set{'A','B','C','D','E','F','G','H','I','J','K','L','M',
+        'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'} in
+  let digit:Set(String)=
+    Set{'0','1','2','3','4','5','6','7','8','9'} in
+  self.name.isDefined and self.name.size>0 and
+  Set{1..self.name.size}->forAll(i |
+    Set{'_'}->union(small)->union(capital)->union(digit)->
+      includes(self.name.substring(i,i)))
+
+-- Distinguishability of values: Different Values have different
+-- content or are linked to different DataTypes
+
+context self:Base_Value inv differentContentOrDataType:
+  Base_Value.allInstances->forAll(self2 |
+    self<>self2 implies
+    (self.content<>self2.content or self.dataType<>self2.dataType))
+
+-- Commutativity restriction: The DataType of the Attribute of an
+-- AttrMap is identical to the DataType of the Value of the AttrMap
+
+context self:Base_AttrMap inv commutativityDataType:
+  self.attribute.dataType=self.value.dataType
+
+-- Naming restriction: Different DataTypes have different names
+
+context self:Base_DataType inv uniqueDataTypeNames:
+  Base_DataType.allInstances->
+    forAll(self2 | self.name=self2.name implies self=self2)
+
+------------------------------------------------------------------------
+-- ErSyn
+------------------------------------------------------------------------
+
+-- Commutativity restriction: The ErSchema of the Entity of a Relend
+-- is identical to the ErSchema of the Relship of the Relend
+
+context self:ErSyn_Relend inv commutativityErSchema:
+  self.entity.erSchema=self.relship.erSchema
+
+-- Name restrictions - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+-- Different ErSchemas have different names
+
+context self:ErSyn_ErSchema inv uniqueErSchemaNames:
+  ErSyn_ErSchema.allInstances->
+    forAll(self2 | self.name=self2.name implies self=self2)
+
+-- Within one ErSchema, different Entities have different names
+
+context self:ErSyn_ErSchema inv uniqueEntityNamesWithinErSchema:
+  self.entity->forAll(e1,e2 | e1.name=e2.name implies e1=e2)
+
+-- Within one ErSchema, different Relships have different names
+
+context self:ErSyn_ErSchema inv uniqueRelshipNamesWithinErSchema:
+  self.relship->forAll(r1,r2 | r1.name=r2.name implies r1=r2)
+
+-- Within one ErSchema, Entities and Relships have different names
+
+context self:ErSyn_ErSchema
+  inv differentEntityAndRelshipNamesWithinErSchema:
+  self.entity->forAll(e | self.relship->forAll(r | e.name<>r.name))
+
+-- Within one Relship, different Relends have different names
+
+context self:ErSyn_Relship inv uniqueRelendNamesWithinRelship:
+  self.relend->forAll(re1,re2 | re1.name=re2.name implies re1=re2)
+
+-- Within one Entity, different Attributes have different names
+
+context self:ErSyn_Entity inv uniqueAttributeNamesWithinEntity:
+  self.attribute->forAll(a1,a2 | a1.name=a2.name implies a1=a2)
+
+-- Within one Relship, different Attributes have different names
+
+context self:ErSyn_Relship inv uniqueAttributeNamesWithinRelship:
+  self.attribute->forAll(a1,a2 | a1.name=a2.name implies a1=a2)
+
+-- Within one Entity, opposite side Relends and Attributes have
+-- different names
+
+context self:ErSyn_Entity
+  inv differentOsRelendAndAttributeNamesWithinEntity:
+  self.osRelend()->forAll(re | self.attribute->forAll(a |
+    re.name<>a.name))
+
+-- Within one Relship, Relends and Attributes have different names
+
+context self:ErSyn_Relship
+  inv differentRelendAndAttributeNamesWithinRelship:
+  self.relend->forAll(re | self.attribute->forAll(a | re.name<>a.name))
+
+-- Within one Entity, different opposite side Relends have different
+-- names
+
+context self:ErSyn_Entity inv uniqueOsRelendNamesWithinEntity:
+  self.osRelend()->forAll(re1,re2 | re1.name=re2.name implies re1=re2)
+
+-- Key restrictions  - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+-- The set of key attributes of an Entity is not empty
+
+context self:ErSyn_Entity inv entityKeyNotEmpty:
+  self.key()->notEmpty
+
+-- The set of key attributes of a Relship is empty
+
+context self:ErSyn_Relship inv relshipKeyEmpty:
+  self.attribute->select(a | a.isKey)->isEmpty
+
+------------------------------------------------------------------------
+-- ErSem
+------------------------------------------------------------------------
+
+-- Functional restrictions - - - - - - - - - - - - - - - - - - - - - - -
+
+-- An InstanceAttrMap, i.e., an AttrMap being linked to an Instance,
+-- represents a non-redundant, functional assignment of a Value to an
+-- Attribute of an Entity within an ErState for the given Instance
+
+context self:Base_AttrMap inv instanceAttrMapIsFunction:
+  Base_AttrMap.allInstances->forAll(self2 |
+    (self<>self2 and self.instance->size=1 and self2.instance->size=1)
+    implies
+      ((self.attribute=self2.attribute and self.instance=self2.instance)
+       implies
+       (self.erState<>self2.erState and self.value<>self2.value)))
+
+-- A LinkAttrMap, i.e., an AttrMap being linked to a Link, represents a
+-- non-redundant, functional assignment of a Value to an Attribute of
+-- a Relship within an ErState for the given Link
+
+context self:Base_AttrMap inv linkAttrMapIsFunction:
+  Base_AttrMap.allInstances->forAll(self2 |
+    (self<>self2 and self.link->size=1 and self2.link->size=1)
+    implies
+    ((self.attribute=self2.attribute and self.link=self2.link)
+     implies
+     (self.erState<>self2.erState and self.value<>self.value)))
+
+-- A RelendMap represents a non-redundant, functional assignment of an
+-- Instance to a Relend within an ErState for a given Link
+
+context self:ErSem_RelendMap inv relendMapIsFunction:
+  ErSem_RelendMap.allInstances->forAll(self2 | self<>self2 implies
+    ((self.relend=self2.relend and self.link=self2.link)
+     implies
+     (self.erState<>self2.erState and self.instance<>self.instance)))
+
+-- Commutativity restrictions  - - - - - - - - - - - - - - - - - - - - -
+
+-- Commutativity restrictions touching ErSem and ErSyn classes - - - - -
+
+-- The Attributes of the Entity of an Instance are identical to the
+-- Attributes of the AttrMaps of the Instance; in other words, there
+-- are Attribute assignments for all Attributes of an Instance
+
+context self:ErSem_Instance inv commutativityAttribute:
+  self.entity.attribute=self.attrMap.attribute->asSet
+
+-- The Attributes of the Relship of a Link are identical to the
+-- Attributes of the AttrMaps of the Link; in other words, there are
+-- Attribute assignments for all Attributes of a Link
+
+context self:ErSem_Link inv commutativityAttribute:
+  self.relship.attribute=self.attrMap.attribute->asSet
+
+-- The Relends of the Relship of a Link are identical to the Relends
+-- of the RelendMaps of the Link; in other words, there are Relend
+-- assignments for all Relends of a Link
+
+context self:ErSem_Link inv commutativityRelend:
+  self.relship.relend=self.relendMap.relend->asSet
+
+-- The Entity of the Relend of a RelendMap is identical to the Entity
+-- of the Instance of the RelendMap
+
+context self:ErSem_RelendMap inv commutativityEntity:
+  self.relend.entity=self.instance.entity
+
+-- The Relship of the Relend of a RelendMap is identical to the
+-- Relship of the Link of the RelendMap
+
+context self:ErSem_RelendMap inv commutativityRelship:
+  self.relend.relship=self.link.relship
+
+-- The ErSchema of the ErState of an Instance is identical to the
+-- ErSchema of the Entity of the Instance
+
+context self:ErSem_Instance inv commutativityErSchema:
+  self.erState.erSchema->asSet=Set{self.entity.erSchema}
+
+-- The ErSchema of the ErState of a Link is identical to the ErSchema
+-- of the Relship of the Link
+
+context self:ErSem_Link inv commutativityErSchema:
+  self.erState.erSchema->asSet=Set{self.relship.erSchema}
+
+-- The Entity of the Instance of an AttrMap being an InstanceAttrMap
+-- is identical to the Entity of the Attribute of the AttrMap
+
+context self:Base_AttrMap inv commutativityEntity:
+  self.instance->size=1 implies
+  self.instance.entity=self.attribute.entity
+
+-- The Relship of the Link of an AttrMap being a LinkAttrMap is
+-- identical to the Relship of the Attribute of the AttrMap
+
+context self:Base_AttrMap inv commutativityRelship:
+  self.link->size=1 implies
+  self.link.relship=self.attribute.relship
+
+-- Commutativity restrictions touching only ErSem classes  - - - - - - -
+
+-- The ErStates of the Instance of an AttrMap being an InstanceAttrMap
+-- include the ErStates of the AttrMap
+
+context self:Base_AttrMap inv commutativityInstanceErState:
+  self.instance->size=1 implies
+  self.instance.erState->includesAll(self.erState)
+
+-- The ErStates of the Link of an AttrMap being a LinkAttrMap
+-- include the ErStates of the AttrMap
+
+context self:Base_AttrMap inv commutativityLinkErState:
+  self.link->size=1 implies
+  self.link.erState->includesAll(self.erState)
+
+-- The ErStates of an Instance of a RelendMap include the
+-- ErStates of the RelendMap
+
+context self:ErSem_RelendMap inv commutativityInstanceErState:
+  self.instance.erState->includesAll(self.erState)
+
+-- The ErStates of a Link of a RelendMap include the ErStates of
+-- the RelendMap
+
+context self:ErSem_RelendMap inv commutativityLinkErState:
+  self.link.erState->includesAll(self.erState)
+
+-- The ErStates of an Instance of a RelendMap include the ErStates of
+-- the Link of the Relendmap
+
+context self:ErSem_RelendMap inv commutativityInstanceLinkErState:
+  self.instance.erState->includesAll(self.link.erState)
+
+-- Uniqueness restrictions for keys and Relend maps  - - - - - - - - - -
+
+-- Two different Instances of one Entity can be distinguished in every
+-- ErState where both Instances occur by a key Attribute of the Entity
+
+context self:ErSem_Instance inv keyMapUnique:
+  ErSem_Instance.allInstances->forAll(self2 |
+    self<>self2 and self.entity=self2.entity
+    implies
+    self.erState->intersection(self2.erState)->forAll(s |
+      self.entity.key()->exists(ka |
+        self.applyAttr(s,ka)<>self2.applyAttr(s,ka))))
+
+-- Two different Links of one Relship can be distinguished in every
+-- ErState where both Links occur by a Relend of the Relship
+
+context self:ErSem_Link inv relendMapUnique:
+  ErSem_Link.allInstances->forAll(self2 |
+    self<>self2 and self.relship=self2.relship
+    implies
+    self.erState->intersection(self2.erState)->forAll(s |
+      self.relship.relend->exists(re |
+        self.applyRelend(s,re)<>self2.applyRelend(s,re))))
+
+------------------------------------------------------------------------
+-- RelSyn
+------------------------------------------------------------------------
+
+-- Name restrictions - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+-- Different RelDBSchemas have different names
+
+context self:RelSyn_RelDBSchema inv uniqueRelDBSchemaNames:
+  RelSyn_RelDBSchema.allInstances->forAll(self2 |
+    self.name=self2.name implies self=self2)
+
+-- Within one RelDBSchema, different RelSchemas have different names
+
+context self:RelSyn_RelDBSchema
+  inv uniqueRelSchemaNamesWithinRelDBSchema:
+  self.relSchema->forAll(r1,r2 | r1.name=r2.name implies r1=r2)
+
+-- Within one RelSchema, different Attributes have different names
+
+context self:RelSyn_RelSchema inv uniqueAttrNamesWithinRelSchema:
+  self.attribute->forAll(a1,a2 | a1.name=a2.name implies a1=a2)
+
+-- Key restriction - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+-- The set of key Attributes of a RelSchema is not empty
+
+context self:RelSyn_RelSchema inv relSchemaKeyNotEmpty:
+  self.key()->notEmpty
+
+------------------------------------------------------------------------
+-- RelSem
+------------------------------------------------------------------------
+
+-- TupAttrMap is mapping - - - - - - - - - - - - - - - - - - - - - - - -
+
+-- A TupleAttrMap, i.e., an AttrMap being linked to a Tuple,
+-- represents a non-redundant, functional assignment of a Value to an
+-- Attribute of a RelSchema within an ErState for the given Tuple
+
+context self:Base_AttrMap inv tupleAttrMapIsFunction:
+  Base_AttrMap.allInstances->forAll(self2 |
+    (self<>self2 and self.tuple->size=1 and self2.tuple->size=1)
+    implies
+    ((self.attribute=self2.attribute and self.tuple=self2.tuple)
+     implies
+     (self.relDBState<>self2.relDBState and self.value<>self2.value)))
+
+-- Commutativity restrictions  - - - - - - - - - - - - - - - - - - - - -
+
+-- Commutativity restrictions touching RelSem and RelSyn classes - - - -
+
+-- The Attributes of the RelSchema of a Tuple are identical to the
+-- Attributes of the AttrMaps of the Tuple; in other words, there are
+-- Attribute assignments for all Attributes of a Tuple
+
+context self:RelSem_Tuple inv commutativityAttribute:
+  self.relSchema.attribute=self.attrMap.attribute->asSet
+
+-- The RelDBSchema of the RelDBState of a Tuple is identical to the
+-- RelDBSchema of the RelSchema of the Tuple
+
+context self:RelSem_Tuple inv commutativityRelDBSchema:
+  self.relDBState.relDBSchema->asSet=Set{self.relSchema.relDBSchema}
+
+-- The RelSchema of the Tuple of an AttrMap being a TupleAttrMap is
+-- identical to the RelSchema of the Attribute of the Tuple
+
+context self:Base_AttrMap inv commutativityRelSchema:
+  self.tuple->size=1 implies
+  self.tuple.relSchema=self.attribute.relSchema
+
+-- Commutativity restrictions touching only RelSem classes - - - - - - -
+
+-- The RelDBStates of the Tuple of an AttrMap being a TupleAttrMap
+-- include the RelDBStates of the AttrMap
+
+context self:Base_AttrMap inv commutativityRelDBState:
+  self.tuple->size=1 implies
+  self.tuple.relDBState->includesAll(self.relDBState)
+
+-- Key restriction - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+-- Two different Tuples of one RelSchema can be distinguished in every
+-- RelDBState where both Tuples occur by a key Attribute of the
+-- RelSchema
+
+context self:RelSem_Tuple inv keyMapUnique:
+  RelSem_Tuple.allInstances->forAll(self2 |
+    self<>self2 and self.relSchema=self2.relSchema
+    implies
+    self.relDBState->intersection(self2.relDBState)->forAll(s |
+      self.relSchema.key()->exists(ka |
+        self.applyAttr(s,ka)<>self2.applyAttr(s,ka))))
+
+------------------------------------------------------------------------
+-- DataMods - Package only with constraints; no classes; no associations
+------------------------------------------------------------------------
+
+-- An Attribute is either an Entity Attribute or a Relship Attribute
+-- or a RelSchema Attribute
+
+context self:Base_Attribute inv linkedToOneOfEntityRelshipRelSchema:
+  (self.entity->size)+(self.relship->size)+(self.relSchema->size)=1
+
+-- An AttrMap belongs to either an Instance or a Link or a Tuple,
+-- i.e., is an InstanceAttrMap or a LinkAttrMap or a TupleAttrMap
+
+context self:Base_AttrMap inv linkedToOneOfInstanceLinkTuple:
+  (self.instance->size)+(self.link->size)+(self.tuple->size)=1
+
+-- An AttrMap lives either in a RelDBState or an ErState
+
+context self:Base_AttrMap inv linkedToOneOfRelDBStateErState:
+  self.relDBState->size>0 xor self.erState->size>0
+
+------------------------------------------------------------------------
+-- Er2Rel
+------------------------------------------------------------------------
+
+-- Constraints on syntax part  - - - - - - - - - - - - - - - - - - - - -
+
+-- For every Entity in the ErSchema there is a RelSchema having the
+-- same name and Attributes with the same properties, i.e., name,
+-- DataType, and key property
+
+context self:Er2Rel_Trans inv relSchemaForEntity:
+  self.erSchema.entity->forAll(e |
+    self.relDBSchema.relSchema->one(rl |
+      e.name=rl.name and
+      e.attribute->forAll(ea |
+        rl.attribute->one(ra |
+          ea.name=ra.name and ea.dataType=ra.dataType and
+          ea.isKey=ra.isKey))))
+
+-- For every Relship in the ErSchema there is a RelSchema having the
+-- same name, Relends representing the arms of the relationship, and
+-- Attributes with the same properties, i.e., name, DataType, and key
+-- property
+
+context self:Er2Rel_Trans inv relSchemaForRelship:
+  self.erSchema.relship->forAll(rs |
+    self.relDBSchema.relSchema->one(rl |
+      rs.name=rl.name and
+      rs.relend->forAll(re | re.entity.key()->forAll(rek |
+        rl.attribute->one(ra |
+          re.name.concat('_').concat(rek.name)=ra.name and 
+          rek.dataType=ra.dataType and ra.isKey))) and
+      rs.attribute->forAll(rsa |
+        rl.attribute->one(ra |
+          rsa.name=ra.name and rsa.dataType=ra.dataType and
+          ra.isKey=false))))
+
+-- For every RelSchema there is either an Entity or a Relship with the
+-- same properties and name; if the RelSchema corresponds to an
+-- Entity, both have Attributes with the same names, DataTypes, and
+-- key properties; if the RelSchema corresponds to a Relship, the
+-- RelSchema has Attributes corresponding to the arms of the Relship
+-- and both have Attributes with the same properties
+
+context self:Er2Rel_Trans inv entityXorRelshipForRelSchema:
+  self.relDBSchema.relSchema->forAll(rl |
+    self.erSchema.entity->one(e |
+      rl.name=e.name and
+      rl.attribute->forAll(ra |
+        e.attribute->one(ea |
+          ra.name=ea.name and ea.dataType=ra.dataType and
+          ra.isKey=ea.isKey)))
+    xor
+    self.erSchema.relship->one(rs |
+      rl.name=rs.name and
+      rl.attribute->forAll(ra |
+        rs.relend->one(re |
+          re.entity.key()->one(rek |
+            ra.name=re.name.concat('_').concat(rek.name) and 
+            ra.dataType=rek.dataType and ra.isKey))
+        xor
+        rs.attribute->one(rsa |
+          ra.name=rsa.name and ra.dataType=rsa.dataType and
+          ra.isKey=false))))
+
+-- Constraints on semantic part  - - - - - - - - - - - - - - - - - - - -
+
+-- For every Instance in a ErState there is exactly one Tuple in one
+-- RelDBState such that for every AttrMap of the Instance there is
+-- exactly one AttrMap of the Tuple having the same name and Value
+
+context self:Er2Rel_Trans inv instanceCorrespondsToTuple:
+  self.erState->forAll(erSt | self.relDBState->one(relSt |
+    erSt.instance->forAll(i | relSt.tuple->one(t |
+      i.attrMap->forAll(amEr |
+        t.attrMap->one(amRel |
+          amEr.attribute.name=amRel.attribute.name and
+          amEr.value=amRel.value))))))
+
+-- For every Link in a ErState there is exactly one Tuple in one
+-- RelDBState such that for every AttrMap of the Link there is exactly
+-- one AttrMap of the Tuple having the same name and Value
+
+context self:Er2Rel_Trans inv linkAttrsCorrespondToTuple:
+  self.erState->forAll(erSt | self.relDBState->one(relSt |
+    erSt.link->forAll(l | relSt.tuple->one(t |
+      l.attrMap->forAll(amEr |
+        t.attrMap->one(amRel |
+          amEr.attribute.name=amRel.attribute.name and
+          amEr.value=amRel.value))))))
+
+-- For every Link in a ErState there is exactly one Tuple in one
+-- RelDBState such that for every RelendMap of the Link and every
+-- AttrMap of a key Attribute of the Instance referred to in the Link
+-- there is exactly one AttrMap of the Tuple having a corresponding
+-- name and Value
+
+context self:Er2Rel_Trans inv linkEndsCorrespondsToTuple:
+  self.erState->forAll(erSt | self.relDBState->one(relSt |
+    erSt.link->forAll(l | relSt.tuple->one(t |
+      l.relendMap->forAll(rm |
+        rm.instance.attrMap->
+        select(amEr | amEr.attribute.isKey)->forAll(amEr |
+          t.attrMap->select(amRel | amRel.attribute.isKey)->
+          one(amRel |
+            amRel.attribute.name =
+              rm.relend.name.concat('_').concat(amEr.attribute.name) and
+            amRel.value=amEr.value)))))))
+
+-- For every Tuple in a RelDBState (1) there is either exactly one
+-- Instance such that for every attrMap of the Tuple there is exactly
+-- one attrMap in the Instance holding the same information or (2)
+-- there is exactly one link such that for every attrMap of Tuple the
+-- following holds: (A) if the attrMap belongs not to a key Attribute,
+-- there is exactly one attrMap in the Link holding the same
+-- information, and (B) if the attrMap belongs to a key Attribute,
+-- there is exactly one RelendMap in the Link and exactly one attrMap
+-- of the RelendMap such that the attrMap from the Tuple and the
+-- attrMap from the Link hold the same information
+
+context self:Er2Rel_Trans inv tupleCorrespondsToInstanceXorLink:
+  self.relDBState->forAll(relSt | self.erState->one(erSt |
+    relSt.tuple->forAll(t | erSt.instance->one(i |
+      t.attrMap->forAll(amRel |
+        i.attrMap->one(amEr |
+          amEr.attribute.name=amRel.attribute.name and
+          amEr.value=amRel.value)))
+      xor
+      erSt.link->one(l |
+        t.attrMap->forAll(amRel |
+          ( not(amRel.attribute.isKey) implies
+            l.attrMap->one(amEr |
+              amEr.attribute.name=amRel.attribute.name and
+              amEr.value=amRel.value) )
+          and
+          ( amRel.attribute.isKey implies
+            l.relendMap->one(rm |
+              rm.instance.attrMap->select(amEr | amEr.attribute.isKey)->
+              one(amEr |
+                amRel.attribute.name =
+                  rm.relend.name.concat('_').concat(amEr.attribute.name)
+                and amRel.value=amEr.value))))))))
+
+-- In a transformation, there is exactly one RelDBState for every
+-- ERState
+
+context self:Er2Rel_Trans inv relDBStateForErState:
+  self.erState->forAll(erSt |
+    self.relDBState->one(relSt | erSt.relDBState=relSt))
+
+-- In a transformation, there is exactly one ErState for every
+-- RelDBState
+
+context self:Er2Rel_Trans inv erStateForRelDBState:
+  self.relDBState->forAll(relSt |
+    self.erState->one(erSt | relSt.erState=erSt))
+
+-- The ErSchemas of the translated ErStates of a transformation are
+-- identical to the ErSchema of the transformation
+
+context self:Er2Rel_Trans inv commutativityErSchema:
+  self.erState->notEmpty implies
+  self.erState.erSchema->asSet=Set{self.erSchema}
+
+-- The RelDBSchemas of the translated RelDBStates of a transformation
+-- are identical to the RelDBSchema of the transformation
+
+context self:Er2Rel_Trans inv commutativityRelDBSchema:
+  self.relDBState->notEmpty implies
+  self.relDBState.relDBSchema->asSet=Set{self.relDBSchema}
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+-- assl file
+------------------------------------------------------------------------
+/*
+
+general considerations for handling items in procedures
+=======================================================
+
+- assume procedures are called only if all invariants are satisfied;
+  the achieved system state after procedure execution should then also
+  satisfy all invariants
+- assume procedures are called with correct parameters; this is
+  non-trivial and has to be explicitly denoted below in the respective
+  procedures
+- if items which can be generated are missing, then generate them
+- if such items are present, use the present items
+- such items can be: data types, values
+- if items depend on other items, e.g., relships depend on entities,
+  assume the items to be depended on are already present,
+  e.g., a relship can only be established between existing entities
+- general conventions for parameters:
+  -- parameter names are like attributes in classes
+  -- order goes from 'small' to 'large' [not sure about this any more]
+- order of variable declaration should coincide with first variable use
+
+------------------------------------------------------------------------
+
+Introductory example for ErSchema generation
+============================================
+
+create PMEr:ErSchema
+addEntity(PMEr,
+          'Person',
+          Sequence{'passport','Integer','key',
+                   'gender','String','nonkey'})
+addRelship(PMEr,
+           'Marriage',
+           Sequence{'wife','Person','husband','Person'},
+           Sequence{'date','String'})
+
+- the order in sequences is flexible, e.g., equivalent to above is
+  Sequence{'gender','String','nonkey','passport','Integer','key'} or
+  Sequence{'husband','Person','wife','Person'}
+- the string 'key' has to be used; instead of 'nonkey' any other string
+  except 'key' can be used
+
+------------------------------------------------------------------------
+
+Example for generating a single state
+=====================================
+
+diana, charles & marriage -> erState1
+-------------------------------------
+
+create erState1:ErState
+erStateTyping(PMEr,
+              erState1) -- explicit insert
+addInstance(erState1,
+            Sequence{'passport','456','gender','male'},
+            'Person')
+addInstance(erState1,
+            Sequence{'passport','123','gender','female'},
+            'Person')
+addLink(erState1,
+        Sequence{'wife','passport','123','husband','passport','456'},
+        Sequence{'date','1981/07/29'},
+        'Marriage')
+
+------------------------------------------------------------------------
+
+Example for generating three connected states
+=============================================
+
+charles -> erState1; charles & diana -> erState2; marriage -> erState3
+----------------------------------------------------------------------
+
+create erState1:ErState
+erStateTyping(PMEr,
+              erState1)
+addInstance(erState1,
+            Sequence{'passport','456','gender','male'},
+            'Person')
+
+create erState2:ErState
+erStateTyping(PMEr,
+              erState2)
+copyInstance(erState1,
+             erState2,
+             Sequence{'passport','456'},
+            'Person',
+             oclEmpty(Sequence(String)))
+addInstance(erState2,
+            Sequence{'passport','123','gender','female'},
+            'Person')
+
+create erState3:ErState
+erStateTyping(PMEr,
+              erState3)
+copyInstance(erState1,
+             erState3,
+             Sequence{'passport','456'},
+             'Person',
+             oclEmpty(Sequence(String)))
+copyInstance(erState1,
+             erState3,
+             Sequence{'passport','123'},
+             'Person',
+             oclEmpty(Sequence(String)))
+addLink(erState3,
+        Sequence{'wife','passport','123','husband','passport','456'},
+        Sequence{'date','1981/07/29'},
+        'Marriage')
+
+    charles       charles, diana    charles, diana, charles-diana
+
+  \ erState1 /    \  erState2  /    \          erState3         /
+
+must two different states be different in some detail?
+
+*/
+
+------------------------------------------------------------------------
+
+procedure addEntity(erSchema:ErSyn_ErSchema,
+  entity:String,
+  attrs:Sequence(String)) -- triples[attrName,dtName,key/nonkey]
+var theEntity:ErSyn_Entity,
+  theAttrs:Sequence(Base_Attribute),
+  theDataType:Base_DataType;
+begin
+theEntity:=Create(ErSyn_Entity);
+[theEntity].name:=[entity];
+Insert(ErSyn_OwnershipErSchemaEntity,[erSchema],[theEntity]);
+theAttrs:=CreateN(Base_Attribute,[attrs->size div(3)]);
+for i:Integer in [Sequence{1..attrs->size div(3)}]
+  begin
+  [theAttrs->at(i)].name:=[attrs->at(3*(i-1)+1)];
+  [theAttrs->at(i)].isKey:=
+    [if attrs->at(3*(i-1)+3)='key' then true else false endif];
+  Insert(ErSyn_OwnershipEntityAttribute,[theEntity],[theAttrs->at(i)]);
+  theDataType:=[Base_DataType.allInstances->
+    select(name=attrs->at(3*(i-1)+2))->any(true)];
+  for b:Boolean in [if theDataType.isUndefined
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    theDataType:=Create(Base_DataType);
+    [theDataType].name:=[attrs->at(3*(i-1)+2)];
+    end;
+  Insert(Base_AttributeTyping,[theAttrs->at(i)],[theDataType]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure addRelship(erSchema:ErSyn_ErSchema,
+  relship:String,
+  relends:Sequence(String), -- pairs [relendName,entName]
+  attrs:Sequence(String))   -- pairs [attrName,dtName]
+var theRelship:ErSyn_Relship,
+  theRelends:Sequence(ErSyn_Relend),
+  theTypingEntity:ErSyn_Entity,
+  theAttrs:Sequence(Base_Attribute),
+  theDataType:Base_DataType;
+begin
+theRelship:=Create(ErSyn_Relship);
+[theRelship].name:=[relship];
+Insert(ErSyn_OwnershipErSchemaRelship,[erSchema],[theRelship]);
+theRelends:=CreateN(ErSyn_Relend,[relends->size div(2)]);
+for i:Integer in [Sequence{1..relends->size div(2)}]
+  begin
+  [theRelends->at(i)].name:=[relends->at(2*(i-1)+1)];
+  Insert(ErSyn_OwnershipRelshipRelend,[theRelship],[theRelends->at(i)]);
+  theTypingEntity:=[erSchema.entity->
+    select(name=relends->at(2*(i-1)+2))->any(true)];
+  Insert(ErSyn_RelendTyping,[theRelends->at(i)],[theTypingEntity]);
+  end;
+theAttrs:=CreateN(Base_Attribute,[attrs->size div(2)]);
+for i:Integer in [Sequence{1..attrs->size div(2)}]
+  begin
+  [theAttrs->at(i)].name:=[attrs->at(2*(i-1)+1)];
+  [theAttrs->at(i)].isKey:=[false];
+  Insert(ErSyn_OwnershipRelshipAttribute,
+    [theRelship],[theAttrs->at(i)]);
+  theDataType:=[Base_DataType.allInstances->
+    select(name=attrs->at(2*(i-1)+2))->any(true)];
+  for b:Boolean in [if theDataType.isUndefined
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    theDataType:=Create(Base_DataType);
+    [theDataType].name:=[attrs->at(2*(i-1)+2)];
+    end;
+  Insert(Base_AttributeTyping,[theAttrs->at(i)],[theDataType]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure addInstance(erState:ErSem_ErState,
+  attrs:Sequence(String),
+  entity:String)
+var theInstance:ErSem_Instance,
+  theEntity:ErSyn_Entity,
+  theAttrMaps:Sequence(Base_AttrMap),
+  theAttr:Base_Attribute,
+  theValue:Base_Value;
+begin
+theInstance:=Create(ErSem_Instance);
+Insert(ErSem_OwnershipErStateInstance,[erState],[theInstance]);
+theEntity:=[erState.erSchema.entity->select(name=entity)->any(true)];
+Insert(ErSem_InstanceTyping,[theInstance],[theEntity]);
+theAttrMaps:=CreateN(Base_AttrMap,[attrs->size div(2)]);
+for i:Integer in [Sequence{1..attrs->size div(2)}]
+  begin
+  Insert(ErSem_InstanceAttrMap,[theInstance],[theAttrMaps->at(i)]);
+  Insert(ErSem_OwnershipErStateAttrMap,[erState],[theAttrMaps->at(i)]);
+  theAttr:=[theEntity.attribute->
+    select(name=attrs->at(2*(i-1)+1))->any(true)];
+  Insert(Base_AttrMapTyping,[theAttrMaps->at(i)],[theAttr]);
+  theValue:=[theAttr.dataType.value->
+    select(content=attrs->at(2*(i-1)+2))->any(true)];
+  for b:Boolean in [if theValue.isUndefined
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    theValue:=Create(Base_Value);
+    [theValue].content:=[attrs->at(2*(i-1)+2)];
+    Insert(Base_ValueTyping,[theValue],[theAttr.dataType]);
+    end;
+  Insert(Base_AttrMapTarget,[theAttrMaps->at(i)],[theValue]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure addLink(erState:ErSem_ErState,
+  attrs:Sequence(String),
+  linkAttrs:Sequence(String),
+  relship:String)
+var theLink:ErSem_Link,
+  theRelship:ErSyn_Relship,
+  theRelendMaps:Sequence(ErSem_RelendMap),
+  pointer:Integer,
+  theRelend:ErSyn_Relend,
+  keyAttrs:Sequence(String),
+  theTargetInstance:ErSem_Instance,
+  theAttrMaps:Sequence(Base_AttrMap),
+  theAttr:Base_Attribute,
+  theValue:Base_Value;
+-- object creation: 4 different classes
+-- link creation: 11 different assocs
+begin
+-- handle the link
+theLink:=Create(ErSem_Link);
+Insert(ErSem_OwnershipErStateLink,[erState],[theLink]);
+theRelship:=[erState.erSchema.relship->
+  select(name=relship)->any(true)];
+Insert(ErSem_LinkTyping,[theLink],[theRelship]);
+-- handle relends
+theRelendMaps:=CreateN(ErSem_RelendMap,[theRelship.relend->size]);
+pointer:=[1];
+for i:Integer in [Sequence{1..theRelship.relend->size}]
+  begin
+  Insert(ErSem_LinkRelendMap,[theLink],[theRelendMaps->at(i)]);
+  Insert(ErSem_OwnershipErStateRelendMap,[erState],
+                                         [theRelendMaps->at(i)]);
+  theRelend:=[theRelship.relend->
+    select(name=attrs->at(pointer))->any(true)];
+  Insert(ErSem_RelendMapTyping,[theRelendMaps->at(i)],[theRelend]);
+  pointer:=[pointer+1];
+  keyAttrs:=[attrs->subSequence(pointer,pointer+
+    2*(theRelend.entity.attribute->select(isKey=true)->size)-1)];
+  pointer:=
+    [pointer+2*(theRelend.entity.attribute->select(isKey=true)->size)];
+  theTargetInstance:=[erState.
+    findInstance(keyAttrs,theRelend.entity.name)];
+  Insert(ErSem_RelendMapTarget,[theRelendMaps->at(i)],
+                               [theTargetInstance]);
+  end;
+-- handle attributes
+theAttrMaps:=CreateN(Base_AttrMap,[linkAttrs->size div(2)]);
+for i:Integer in [Sequence{1..linkAttrs->size div(2)}]
+  begin
+  Insert(ErSem_LinkAttrMap,[theLink],[theAttrMaps->at(i)]);
+  Insert(ErSem_OwnershipErStateAttrMap,[erState],[theAttrMaps->at(i)]);
+  theAttr:=[theRelship.attribute->
+    select(name=linkAttrs->at(2*(i-1)+1))->any(true)];
+  Insert(Base_AttrMapTyping,[theAttrMaps->at(i)],[theAttr]);
+  theValue:=[theAttr.dataType.value->
+    select(content=linkAttrs->at(2*(i-1)+2))->any(true)];
+  for b:Boolean in [if theValue.isUndefined
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    theValue:=Create(Base_Value);
+    [theValue].content:=[linkAttrs->at(2*(i-1)+2)];
+    Insert(Base_ValueTyping,[theValue],[theAttr.dataType]);
+    end;
+  Insert(Base_AttrMapTarget,[theAttrMaps->at(i)],[theValue]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure copyInstance(oldErState:ErSem_ErState,
+  newErState:ErSem_ErState,
+  keyAttrs:Sequence(String), -- pairs [attrName,value]
+  entity:String,
+  attrs:Sequence(String)) -- pairs [attrName,value] of modified attrs
+var theInstance:ErSem_Instance,
+  pointer:Integer,
+  theAttrMap:Base_AttrMap,
+  theValue:Base_Value;
+begin
+theInstance:=[oldErState.findInstance(keyAttrs,entity)];
+Insert(ErSem_OwnershipErStateInstance,[newErState],[theInstance]);
+for am:Base_AttrMap in [theInstance.attrMap->
+  select(am | am.erState->includes(oldErState))->asSequence]
+  begin
+  pointer:=[Sequence{1..attrs->size}->iterate(i:Integer;res:Integer=0|
+    if i.mod(2)=1 and attrs->at(i)=am.attribute.name
+      then i else res endif)];
+  for b:Boolean in [if pointer=0 -- am.attribute not in 'attrs'
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    Insert(ErSem_OwnershipErStateAttrMap,[newErState],[am]);
+    end;
+  for b:Boolean in [if not(pointer=0) -- am.attribute in 'attrs'
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    theAttrMap:=Create(Base_AttrMap);
+    Insert(ErSem_OwnershipErStateAttrMap,[newErState],[theAttrMap]);
+    Insert(Base_AttrMapTyping,[theAttrMap],[am.attribute]);
+    Insert(ErSem_InstanceAttrMap,[theInstance],[theAttrMap]);
+    theValue:=[Base_Value.allInstances->
+      select(dataType=am.attribute.dataType)->
+      select(content=attrs->at(pointer+1))->any(true)];
+    for b2:Boolean in [if theValue.isUndefined
+      then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+      begin
+      theValue:=Create(Base_Value);
+      [theValue].content:=[attrs->at(pointer+1)];
+      Insert(Base_ValueTyping,[theValue],[am.attribute.dataType]);
+      end;
+    Insert(Base_AttrMapTarget,[theAttrMap],[theValue]);
+    end;
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure addRelSchema(relDBSchema:RelSyn_RelDBSchema,
+  relSchema:String,
+  attrs:Sequence(String)) -- triples[attrName,dtName,key/nonkey]
+var theRelSchema:RelSyn_RelSchema,
+  theAttrs:Sequence(Base_Attribute),
+  theDataType:Base_DataType;
+begin
+theRelSchema:=Create(RelSyn_RelSchema);
+[theRelSchema].name:=[relSchema];
+Insert(RelSyn_OwnershipRelDBSchemaRelSchema,[relDBSchema],[theRelSchema]);
+theAttrs:=CreateN(Base_Attribute,[attrs->size div(3)]);
+for i:Integer in [Sequence{1..attrs->size div(3)}]
+  begin
+  [theAttrs->at(i)].name:=[attrs->at(3*(i-1)+1)];
+  [theAttrs->at(i)].isKey:=
+    [if attrs->at(3*(i-1)+3)='key' then true else false endif];
+  Insert(RelSyn_OwnershipRelSchemaAttribute,
+         [theRelSchema],[theAttrs->at(i)]);
+  theDataType:=[Base_DataType.allInstances->
+    select(name=attrs->at(3*(i-1)+2))->any(true)];
+  for b:Boolean in [if theDataType.isUndefined
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    theDataType:=Create(Base_DataType);
+    [theDataType].name:=[attrs->at(3*(i-1)+2)];
+    end;
+  Insert(Base_AttributeTyping,[theAttrs->at(i)],[theDataType]);
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure addTuple(relDBState:RelSem_RelDBState,
+  attrs:Sequence(String),
+  relSchema:String)
+var theTuple:RelSem_Tuple,
+  theRelSchema:RelSyn_RelSchema,
+  theAttrMaps:Sequence(Base_AttrMap),
+  theAttr:Base_Attribute,
+  theValue:Base_Value;
+begin
+theTuple:=Create(RelSem_Tuple);
+Insert(RelSem_OwnershipRelDBStateTuple,[relDBState],[theTuple]);
+theRelSchema:=[relDBState.relDBSchema.relSchema->select(name=relSchema)->any(true)];
+Insert(RelSem_TupleTyping,[theTuple],[theRelSchema]);
+theAttrMaps:=CreateN(Base_AttrMap,[attrs->size div(2)]);
+for i:Integer in [Sequence{1..attrs->size div(2)}]
+  begin
+  Insert(RelSem_TupleAttrMap,[theTuple],[theAttrMaps->at(i)]);
+  Insert(RelSem_OwnershipRelDBStateAttrMap,[relDBState],[theAttrMaps->at(i)]);
+  theAttr:=[theRelSchema.attribute->
+    select(name=attrs->at(2*(i-1)+1))->any(true)];
+  Insert(Base_AttrMapTyping,[theAttrMaps->at(i)],[theAttr]);
+  theValue:=[theAttr.dataType.value->
+    select(content=attrs->at(2*(i-1)+2))->any(true)];
+  for b:Boolean in [if theValue.isUndefined
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    theValue:=Create(Base_Value);
+    [theValue].content:=[attrs->at(2*(i-1)+2)];
+    Insert(Base_ValueTyping,[theValue],[theAttr.dataType]);
+    end;
+  Insert(Base_AttrMapTarget,[theAttrMaps->at(i)],[theValue]);
+  end;
+end;
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+-- not sure about usefulness from this point onwards
+
+procedure randomSnapShot()
+var
+  Base_DataType_count:Integer,
+  Base_Attribute_count:Integer,
+  ErSyn_ErSchema_count:Integer,
+  ErSyn_Entity_count:Integer,
+  ErSyn_Relship_count:Integer,
+  ErSyn_Relend_count:Integer,
+  theBase_DataTypes:Sequence(Base_DataType),
+  theBase_Attributes:Sequence(Base_Attribute),
+  theErSyn_ErSchemas:Sequence(ErSyn_ErSchema),
+  theErSyn_Entitys:Sequence(ErSyn_Entity),
+  theErSyn_Relships:Sequence(ErSyn_Relship),
+  theErSyn_Relends:Sequence(ErSyn_Relend),
+  Base_AttributeTyping_count:Integer,
+  ErSyn_OwnershipErSchemaEntity_count:Integer,
+  ErSyn_OwnershipErSchemaRelship_count:Integer,
+  ErSyn_OwnershipRelshipRelend_count:Integer,
+  ErSyn_OwnershipEntityAttribute_count:Integer,
+  ErSyn_OwnershipRelshipAttribute_count:Integer,
+  ErSyn_RelendTyping_count:Integer,
+  Base_Attribute1:Base_Attribute,
+  Base_DataType1:Base_DataType,
+  ErSyn_ErSchema2:ErSyn_ErSchema,
+  ErSyn_Entity2:ErSyn_Entity,
+  ErSyn_ErSchema3:ErSyn_ErSchema,
+  ErSyn_Relship3:ErSyn_Relship,
+  ErSyn_Relship4:ErSyn_Relship,
+  ErSyn_Relend4:ErSyn_Relend,
+  ErSyn_Entity5:ErSyn_Entity,
+  Base_Attribute5:Base_Attribute,
+  ErSyn_Relship6:ErSyn_Relship,
+  Base_Attribute6:Base_Attribute,
+  ErSyn_Relend7:ErSyn_Relend,
+  ErSyn_Entity7:ErSyn_Entity,
+  history:Sequence(Sequence(OclAny));
+begin
+--
+Base_DataType_count:=[1];
+Base_Attribute_count:=[6];
+ErSyn_ErSchema_count:=[1];
+ErSyn_Entity_count:=[2];
+ErSyn_Relship_count:=[1];
+ErSyn_Relend_count:=[2];
+--
+Base_AttributeTyping_count:=[6];
+ErSyn_OwnershipErSchemaEntity_count:=[2];
+ErSyn_OwnershipErSchemaRelship_count:=[1];
+ErSyn_OwnershipRelshipRelend_count:=[2];
+ErSyn_OwnershipEntityAttribute_count:=[4];
+ErSyn_OwnershipRelshipAttribute_count:=[2];
+ErSyn_RelendTyping_count:=[2];
+--
+theBase_DataTypes:=CreateN(Base_DataType,[Base_DataType_count]);
+theBase_Attributes:=CreateN(Base_Attribute,[Base_Attribute_count]);
+theErSyn_ErSchemas:=CreateN(ErSyn_ErSchema,[ErSyn_ErSchema_count]);
+theErSyn_Entitys:=CreateN(ErSyn_Entity,[ErSyn_Entity_count]);
+theErSyn_Relships:=CreateN(ErSyn_Relship,[ErSyn_Relship_count]);
+theErSyn_Relends:=CreateN(ErSyn_Relend,[ErSyn_Relend_count]);
+history:=[oclEmpty(Sequence(Sequence(OclAny)))];
+for i:Integer in [Sequence{1..Base_AttributeTyping_count}]
+  begin
+  Base_Attribute1:=Any([theBase_Attributes]);
+  Base_DataType1:=Any([theBase_DataTypes]);
+  for b:Boolean in [if
+    history->excludes(Sequence{Base_Attribute1,Base_DataType1})
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    Insert(Base_AttributeTyping,[Base_Attribute1],[Base_DataType1]);
+    history:=
+      [history->including(Sequence{Base_Attribute1,Base_DataType1})];
+    end;
+  end;
+history:=[oclEmpty(Sequence(Sequence(OclAny)))];
+for i:Integer in [Sequence{1..ErSyn_OwnershipErSchemaEntity_count}]
+  begin
+  ErSyn_ErSchema2:=Any([theErSyn_ErSchemas]);
+  ErSyn_Entity2:=Any([theErSyn_Entitys]);
+  for b:Boolean in [if
+    history->excludes(Sequence{ErSyn_ErSchema2,ErSyn_Entity2})
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    Insert(ErSyn_OwnershipErSchemaEntity,[ErSyn_ErSchema2],
+                                         [ErSyn_Entity2]);
+    history:=
+      [history->including(Sequence{ErSyn_ErSchema2,ErSyn_Entity2})];
+    end;
+  end;
+history:=[oclEmpty(Sequence(Sequence(OclAny)))];
+for i:Integer in [Sequence{1..ErSyn_OwnershipErSchemaRelship_count}]
+  begin
+  ErSyn_ErSchema3:=Any([theErSyn_ErSchemas]);
+  ErSyn_Relship3:=Any([theErSyn_Relships]);
+  for b:Boolean in [if
+    history->excludes(Sequence{ErSyn_ErSchema3,ErSyn_Relship3})
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    Insert(ErSyn_OwnershipErSchemaRelship,[ErSyn_ErSchema3],
+                                          [ErSyn_Relship3]);
+    history:=
+      [history->including(Sequence{ErSyn_ErSchema3,ErSyn_Relship3})];
+    end;
+  end;
+history:=[oclEmpty(Sequence(Sequence(OclAny)))];
+for i:Integer in [Sequence{1..ErSyn_OwnershipRelshipRelend_count}]
+  begin
+  ErSyn_Relship4:=Any([theErSyn_Relships]);
+  ErSyn_Relend4:=Any([theErSyn_Relends]);
+  for b:Boolean in [if
+    history->excludes(Sequence{ErSyn_Relship4,ErSyn_Relend4})
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    Insert(ErSyn_OwnershipRelshipRelend,[ErSyn_Relship4],
+                                        [ErSyn_Relend4]);
+    history:=
+      [history->including(Sequence{ErSyn_Relship4,ErSyn_Relend4})];
+    end;
+  end;
+history:=[oclEmpty(Sequence(Sequence(OclAny)))];
+for i:Integer in [Sequence{1..ErSyn_OwnershipEntityAttribute_count}]
+  begin
+  ErSyn_Entity5:=Any([theErSyn_Entitys]);
+  Base_Attribute5:=Any([theBase_Attributes]);
+  for b:Boolean in [if
+    history->excludes(Sequence{ErSyn_Entity5,Base_Attribute5})
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    Insert(ErSyn_OwnershipEntityAttribute,[ErSyn_Entity5],
+                                          [Base_Attribute5]);
+    history:=
+      [history->including(Sequence{ErSyn_Entity5,Base_Attribute5})];
+    end;
+  end;
+history:=[oclEmpty(Sequence(Sequence(OclAny)))];
+for i:Integer in [Sequence{1..ErSyn_OwnershipRelshipAttribute_count}]
+  begin
+  ErSyn_Relship6:=Any([theErSyn_Relships]);
+  Base_Attribute6:=Any([theBase_Attributes]);
+  for b:Boolean in [if
+    history->excludes(Sequence{ErSyn_Relship6,Base_Attribute6})
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    Insert(ErSyn_OwnershipRelshipAttribute,[ErSyn_Relship6],
+                                           [Base_Attribute6]);
+    history:=
+      [history->including(Sequence{ErSyn_Relship6,Base_Attribute6})];
+    end;
+  end;
+history:=[oclEmpty(Sequence(Sequence(OclAny)))];
+for i:Integer in [Sequence{1..ErSyn_RelendTyping_count}]
+  begin
+  ErSyn_Relend7:=Any([theErSyn_Relends]);
+  ErSyn_Entity7:=Any([theErSyn_Entitys]);
+  for b:Boolean in [if
+    history->excludes(Sequence{ErSyn_Relend7,ErSyn_Entity7})
+    then Sequence{true} else oclEmpty(Sequence(Boolean)) endif]
+    begin
+    Insert(ErSyn_RelendTyping,[ErSyn_Relend7],[ErSyn_Entity7]);
+    history:=
+      [history->including(Sequence{ErSyn_Relend7,ErSyn_Entity7})];
+    end;
+  end;
+end;
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+procedure genErSchema(countMinDataType:Integer,
+  countMaxDataType:Integer,
+  countMinEntity:Integer, countMaxEntity:Integer,
+  countMinEntAttr:Integer, countMaxEntAttr:Integer,
+  countMinRelship:Integer, countMaxRelship:Integer,
+  countMinRelshipEnd:Integer, countMaxRelshipEnd:Integer,
+  countMinRelAttribute:Integer, countMaxRelAttribute:Integer)
+var theErSchema:ErSyn_ErSchema,
+  theEntities:Sequence(ErSyn_Entity), theEntity:ErSyn_Entity,
+  theAttributes:Sequence(Base_Attribute), theAttribute:Base_Attribute,
+  theDataTypes:Sequence(Base_DataType), theDataType:Base_DataType,
+  theRelships:Sequence(ErSyn_Relship),
+  theRelshipEnds:Sequence(ErSyn_Relend),
+  countDataType:Integer, countEntity:Integer,
+  countAttribute:Integer, countRelship:Integer,
+  countRelshipEnd:Integer;
+begin
+countDataType:=Any([Sequence{countMinDataType..countMaxDataType}]);
+theDataTypes:=CreateN(Base_DataType,[countDataType]);
+for d:Base_DataType in [theDataTypes]
+  begin
+  [d].name:=Any([Sequence{'Chilly', 'Cold', 'Freezy', 'Hot',
+    'Icy', 'Mild', 'Warm'}->
+    reject(new|theDataTypes.name->exists(old|new=old))]);
+  end;
+theErSchema:=Create(ErSyn_ErSchema);
+[theErSchema].name:=
+  Any([Sequence{'Foggy', 'Snowy', 'Steamy', 'Stormy', 'Sunny',
+  'Wet', 'Windy'}]);
+countEntity:=Any([Sequence{countMinEntity..countMaxEntity}]);
+theEntities:=CreateN(ErSyn_Entity,[countEntity]);
+for e:ErSyn_Entity in [theEntities]
+  begin
+  [e].name:=Any([Sequence{'Black', 'Blue', 'Brown', 'Green', 'Grey',
+      'Red', 'Pink', 'Purple', 'White', 'Yellow'}->
+    reject(new|theEntities.name->exists(old|new=old))]);
+  Insert(ErSyn_OwnershipErSchemaEntity,[theErSchema],[e]);
+  countAttribute:=
+    Any([Sequence{countMinEntAttr..countMaxEntAttr}]);
+  theAttributes:=CreateN(Base_Attribute,[countAttribute]);
+  for a:Base_Attribute in [theAttributes]
+    begin
+    [a].name:=Any([Sequence{'Dali', 'Degas', 'Ernst', 'Goya',
+      'Kadinsky', 'Nolde', 'Miro', 'Picasso', 'Renoir', 'VanGogh'}->
+      reject(new|theAttributes.name->exists(old|new=old))]);
+    [a].isKey:=Any([Sequence{false,true}]);
+    Insert(ErSyn_OwnershipEntityAttribute,[e],[a]);
+    theDataType:=Any([theDataTypes]);
+    Insert(Base_AttributeTyping,[a],[theDataType]);
+    end;
+  theAttribute:=Any([theAttributes]);
+  [theAttribute].isKey:=[true];
+  end;
+countRelship:=Any([Sequence{countMinRelship..countMaxRelship}]);
+theRelships:=CreateN(ErSyn_Relship,[countRelship]);
+for r:ErSyn_Relship in [theRelships]
+  begin
+  Insert(ErSyn_OwnershipErSchemaRelship,[theErSchema],[r]);
+  [r].name:=Any([Sequence{'Bach', 'Bizet', 'Debussy', 'Grieg',
+    'Haendel', 'Mozart', 'Ravel', 'Satie', 'Verdi', 'Vivaldi'}->
+    reject(new|theRelships.name->exists(old|new=old))]);
+  countRelshipEnd:=
+    Any([Sequence{countMinRelshipEnd..countMaxRelshipEnd}]);
+  theRelshipEnds:=CreateN(ErSyn_Relend,[countRelshipEnd]);
+  for re:ErSyn_Relend in [theRelshipEnds]
+    begin
+    [re].name:=Any([Sequence{'Cantor', 'Church', 'Goedel', 'Herbrand',
+      'Frege', 'Noether', 'Skolem', 'Turing', 'Post', 'Rosser'}->
+    reject(new|theRelshipEnds.name->exists(old|new=old))]);
+    Insert(ErSyn_OwnershipRelshipRelend,[r],[re]);
+    theEntity:=Any([theEntities]);
+    Insert(ErSyn_RelendTyping,[re],[theEntity]);
+    end;
+  countAttribute:=
+    Any([Sequence{countMinRelAttribute..countMaxRelAttribute}]);
+  theAttributes:=CreateN(Base_Attribute,[countAttribute]);
+  for a:Base_Attribute in [theAttributes]
+    begin
+    [a].name:=Any([Sequence{'Dali', 'Degas', 'Ernst', 'Goya',
+      'Kadinsky', 'Nolde', 'Miro', 'Picasso', 'Renoir', 'VanGogh'}->
+      reject(new|theAttributes.name->exists(old|new=old))]);
+    [a].isKey:=[false];
+    Insert(ErSyn_OwnershipRelshipAttribute,[r],[a]);
+    theDataType:=Any([theDataTypes]);
+    Insert(Base_AttributeTyping,[a],[theDataType]);
+    end;
+  end;
+end;
+
+------------------------------------------------------------------------
+
+procedure genErState(s:ErSyn_ErSchema,
+  countMinValues:Integer,countMaxValues:Integer,
+  countMinInstances:Integer, countMaxInstances:Integer,
+  countMinLinks:Integer, countMaxLinks:Integer)
+var theState:ErSem_ErState,
+  countValues:Integer,
+  theValues:Sequence(Base_Value),
+  v:Base_Value,
+  theDataTypes:Sequence(Base_DataType),
+  theDataType:Base_DataType,
+  theDigits:Sequence(String),
+  theDigitsDigits:Sequence(String),
+  countInstances:Integer,
+  theInstances:Sequence(ErSem_Instance),
+  inst:ErSem_Instance,
+  theEntities:Sequence(ErSyn_Entity),
+  theEntity:ErSyn_Entity,
+  countLinks:Integer,
+  theLinks:Sequence(ErSem_Link),
+  link:ErSem_Link,
+  theRelships:Sequence(ErSyn_Relship),
+  theRelship:ErSyn_Relship;
+begin
+theState:=Create(ErSem_ErState);
+theDigits:=[Sequence{'0','1','2','3','4','5','6','7','8','9'}];
+theDigitsDigits:=[oclEmpty(Sequence(String))];
+for s_o:String in [theDigits]
+  begin
+  for s_i:String in [theDigits]
+    begin
+    theDigitsDigits:=[theDigitsDigits->append(s_o.concat(s_i))];
+    end;
+  end;
+theDataTypes:=
+  [s.entity.attribute->union(s.relship.attribute).dataType->asSequence];
+countValues:=Any([Sequence{countMinValues..countMaxValues}]);
+theValues:=CreateN(Base_Value,[countValues]);
+for i:Integer in [Sequence{1..countValues}]
+  begin
+  v:=[theValues->at(i)];
+  theDataType:=Any([theDataTypes]);
+  Insert(Base_ValueTyping,[v],[theDataType]);
+  [v].content:=[theDataType.name.concat(theDigitsDigits->at(i))];
+  end;
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+theEntities:=[s.entity->asSequence];
+countInstances:=Any([Sequence{countMinInstances..countMaxInstances}]);
+theInstances:=CreateN(ErSem_Instance,[countInstances]);
+for i:Integer in [Sequence{1..countInstances}]
+  begin
+  inst:=[theInstances->at(i)];
+  theEntity:=Any([theEntities]);
+  Insert(ErSem_InstanceTyping,[inst],[theEntity]);
+  Insert(ErSem_OwnershipErStateInstance,[theState],[inst]);
+  end;
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+theRelships:=[s.relship->asSequence];
+countLinks:=Any([Sequence{countMinLinks..countMaxLinks}]);
+theLinks:=CreateN(ErSem_Link,[countLinks]);
+for i:Integer in [Sequence{1..countLinks}]
+  begin
+  link:=[theLinks->at(i)];
+  theRelship:=Any([theRelships]);
+  Insert(ErSem_LinkTyping,[link],[theRelship]);
+  Insert(ErSem_OwnershipErStateLink,[theState],[link]);
+  end;
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+end;
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+-- cmd file
+------------------------------------------------------------------------
+-- ################################
+
+-- read c:/mg/examples/er2mofV1/assl-11.cmd
+
+open c:/mg/examples/er2mofV1/er2mof.use
+
+!create RelDBSchema1:RelSyn_RelDBSchema
+!set RelDBSchema1.name='RelDBSchema1'
+\
+gen start c:\mg\examples\er2mofV1\er2mof.assl 
+addRelSchema(RelDBSchema1,
+             'Person',
+             Sequence{'salary','Integer','nonkey',
+                      'age','Integer','nonkey',
+                      'firstName','String','key',
+                      'lastName','String','key'})
+.
+gen result
+gen result accept
+
+------------------------------------------------------------------------
+
+!create RelDBState1:RelSem_RelDBState
+!insert (RelDBState1,RelDBSchema1) into RelSem_RelDBStateTyping
+
+\
+gen start c:\mg\examples\er2mofV1\er2mof.assl 
+addTuple(RelDBState1,
+         Sequence{'firstName','ada','lastName','apple','salary','5000','age','42'},
+         'Person')
+.
+gen result
+gen result accept
+
+\
+gen start c:\mg\examples\er2mofV1\er2mof.assl 
+addTuple(RelDBState1,
+         Sequence{'firstName','bob','lastName','banana','salary','5000','age','42'},
+         'Person')
+.
+gen result
+gen result accept
+
+\
+gen start c:\mg\examples\er2mofV1\er2mof.assl 
+addTuple(RelDBState1,
+         Sequence{'firstName','ada','lastName','banana','salary','5000','age','42'},
+         'Person')
+.
+gen result
+gen result accept
+
+gen flags RelSem_Tuple::keyMapUnique +d
+
+\
+gen start -b c:\mg\examples\er2mofV1\er2mof.assl 
+addTuple(RelDBState1,
+         Sequence{'firstName','ada','lastName','apple','salary','6000','age','43'},
+         'Person')
+.
+gen result
+gen result accept
+
+--------------------------------
+
+\
+?Sequence{RelSem_Tuple1,RelSem_Tuple2,RelSem_Tuple3,RelSem_Tuple4}->
+ collect(t|Sequence{t.applyAttr(RelDBState1,Base_Attribute1),
+                    t.applyAttr(RelDBState1,Base_Attribute2),
+                    t.applyAttr(RelDBState1,Base_Attribute3),
+                    t.applyAttr(RelDBState1,Base_Attribute4)})
+.
+
+--------------------------------
+
+?Sequence{RelSem_Tuple1}.attrMap.value.content
+------------------------------------------------------------------------
+-- end of bug report
+------------------------------------------------------------------------

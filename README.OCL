@@ -1,0 +1,45 @@
+-*- Text -*-
+$Date: Sun, 18 Mar 2001 19:41:39 +0100 $
+$ReleaseVersion: 2.3.1 $
+
+This file documents issues related to the implementation of OCL in
+USE.
+
+* OCL syntax:
+
+  - Implicit flattening is only done when used with the shorthand
+    notation for collect. You can always explicitly flatten a
+    collection with the `flatten' operation that has been added in
+    USE. For example,
+
+        company.branches->collect(c | c.employees)
+
+    results in Bag(Set(Employee)). This result value can be flattened
+    into a Bag(Employee) by using the following expression:
+
+        company.branches->collect(c | c.employees)->flatten
+
+  - Type checking requires that empty collections must be specified as
+    oclEmpty(<collection-type>). For example, oclEmpty(Set(Integer))
+    instead of Set{}.
+
+* OCL semantics:
+
+  - Note that some OCL operations are non-deterministic, e.g.,
+    Set(T)->asSequence. The result of these operations are
+    implementation dependent. The equation s1->asSequence =
+    s1->asSequence will therefore be wrong in general.
+
+
+* OCL extensions/variations:
+
+  - Collection types can be nested to any level, e.g.,
+    Bag(Set(Sequence(Person))).
+
+  - All types include an undefined value. For example, the expression
+    1/0 results in the value "undefined" of type Integer. Checking for
+    an undefined value can be done with the new operations "isDefined"
+    and "isUndefined". These are defined for all types, e.g.,
+    (1/0).isUndefined() results in "true". An undefined value may be
+    explicitly specified with the new operation "oclUndefined(T)"
+    where T may be any type.

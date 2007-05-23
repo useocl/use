@@ -1,0 +1,199 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model OCL2MM
+
+------------------------------------
+-- Package: UML Core
+------------------------------------
+
+abstract class ModelElement -- from Core
+attributes
+  name : String
+end
+
+------------------------------------
+-- Package: Types
+------------------------------------
+
+-- Figure 2-1
+
+abstract class Classifier < ModelElement  -- from Core
+operations
+  conformsTo(c : Classifier) : Boolean = false
+end
+
+class TuplePart
+attributes
+  name : String
+end
+
+class TupleType < DataType
+end
+
+class DataType < Classifier  -- from Core
+end
+
+class Primitive < DataType  -- from Core
+end
+
+class CollectionType < DataType
+end
+
+class SetType < CollectionType
+end
+
+class SequenceType < CollectionType
+end
+
+class BagType < CollectionType
+end
+
+
+association CollectionType_Classifier between
+  CollectionType[0..4]
+  Classifier[1] role elementType
+end
+
+association TupleType_TuplePart between
+  TupleType[1]
+  TuplePart[1..*] role part
+end
+
+association TuplePart_Classifier between
+  TuplePart[*]
+  Classifier[1] role type
+end
+
+
+-- constraints
+
+-- context CollectionType 
+
+-- -- [1] The name of a collection type is Collection followed by the
+-- -- element type's name in parentheses.
+
+-- inv CollectionType1: 
+--   self.name = 'Collection'.concat(self.elementType.name).concat(')')
+
+-- inv:
+--   CollectionType.allInstances->forAll(ct1, ct2 |
+--     ct1.elementType.conformsTo(ct2.elementType) 
+--       implies ct1.conformsTo(ct2))
+
+
+------------------------------------
+-- Package: Expressions
+------------------------------------
+
+-- Figure 2-2
+
+abstract class OclExpression < ModelElement
+end
+
+abstract class PropertyCallExp < OclExpression
+end
+
+class ConstantExp < OclExpression
+end
+
+class VariableExp < OclExpression
+end
+
+abstract class ModelPropertyCallExp < PropertyCallExp
+end
+
+class IteratorExp < PropertyCallExp
+end
+
+class IterateExp < IteratorExp
+end
+
+class VariableDeclaration
+attributes
+  varName : String
+end
+
+
+association OclExpression_Classifier between
+  OclExpression[*]
+  Classifier[1] role type
+end
+
+composition PropertyCallExp_OclExpression between
+  PropertyCallExp[0..1] role appliedProperty
+  OclExpression[1] role source
+end
+
+composition IteratorExp_OclExpression between
+  IteratorExp[0..1]
+  OclExpression[1] role body
+end
+
+composition IteratorExp_VariableDeclaration between
+  IteratorExp[0..1] role iterateExpr
+  VariableDeclaration[1] role iterator
+end
+
+composition IterateExp_VariableDeclaration between
+  IterateExp[0..1] role baseExp
+  VariableDeclaration[1] role result
+end
+
+composition VariableDeclaration_OclExpression between
+  VariableDeclaration[0..1] role initializedVariable
+  IterateExp[0..1] role initExpression
+end
+
+association VariableDeclaration_Classifier between
+  VariableDeclaration[*]
+  Classifier[1] role type
+end
+
+association VariableDeclaration_VariableExp between
+  VariableDeclaration[1] role referredVariable
+  VariableExp[0..*]
+end
+
+
+-- Figure 2-3
+
+class Attribute < ModelElement  -- from Core
+end
+
+class AssociationEnd < ModelElement  -- from Core
+end
+
+class Operation < ModelElement  -- from Core
+end
+
+class AttributeCallExp < ModelPropertyCallExp
+end
+
+association AttributeCallExp_Attribute between
+  AttributeCallExp[*]
+  VariableExp[1] role referredAttribute
+end
+
+class OperationCallExp < ModelPropertyCallExp
+end
+
+association OperationCallExp_Operation between
+  OperationCallExp[*]
+  Operation[1] role referredOperation
+end
+
+class NavigationCallExp < ModelPropertyCallExp
+end
+
+-- FIXME: add NavigationCallExp associations
+
+composition NavigationCallExp_OclExpression between
+  NavigationCallExp[0..1]
+  OclExpression[*] role qualifiers ordered
+end
+
+composition OperationCallExp_OclExpression between
+  OperationCallExp[0..1]
+  OclExpression[*] role arguments ordered
+end
+

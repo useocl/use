@@ -1,0 +1,14 @@
+Diagram elements can register themselves as event listeners on other
+elements. For example, when a class symbol is moved, all attached
+associations should update their paths. Likewise, GUI components
+listen on change events triggered by diagram symbols. Moving a class
+symbol results in the following event chain:
+
+component.move 
+  -> class diagram symbol.move 
+    -> notify component about new position 
+      -> component redraw 
+    -> notify all attached associations
+      -> associations move 
+      -> notify association components
+        -> component redraw 

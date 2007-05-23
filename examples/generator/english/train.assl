@@ -1,0 +1,87 @@
+
+-- SEE waggonchain/README
+-- creates `numberOfWaggons' waggons and adds them to train `t'.
+procedure waggonchain( t: Train, numberOfWaggons: Integer )
+  var waggons: Sequence(Waggon), predecessor: Waggon;
+begin
+  waggons := CreateN( Waggon, [numberOfWaggons] );
+  for w: Waggon in [waggons] begin
+    for b:Boolean in [Sequence{true}->excluding(predecessor.isUndefined)] begin
+      Insert(WaggonOrder, [predecessor], [w]);
+    end;
+    Insert( TrainBuildup, [t], [w] );
+    predecessor := [w];
+    [w].numberOfSeats := Any( [Sequence{20, 30, 50}] );
+  end;
+end;
+
+-- SIEHE reservation/README
+-- creates a reservation for a given `journey' from
+-- station `from' to Station `to'.
+-- Tries all seats existing in the Train. The Constraints
+-- of the Model have to preserve a correct Reservation.
+procedure reservation( journey: Journey, fromStation: Station, to:Station)
+  var waggon: Waggon, r: Reservation;
+begin
+  r := Create( Reservation );
+  Insert( ResJourney, [r], [journey] );
+  Insert( RFrom, [fromStation], [r] );
+  Insert( Rto, [to], [r] );
+  waggon := Try([journey.train.waggon->asSequence]);
+  Insert( ResWaggon, [r], [waggon] );
+  [r].seatNumber := Try( [Sequence{1..waggon.numberOfSeats}] );
+end;
+
+-- SEE cycles/README
+-- SEE predecessor/README
+-- creates `nt' trains and `nw' waggons and tests every combination of
+-- links of the associations `Trainbuildup' and `WaggonOrder'. 
+-- During the creation only links between the new objects are created or deleted.
+procedure testTrainBuildupAndWaggonOrder(nt: Integer, nw: Integer)
+  var waggons: Sequence(Waggon), trains: Sequence(Train);
+begin
+  trains := CreateN(Train, [nt]);
+  waggons := CreateN(Waggon, [nw]);
+  Try(TrainBuildup, [trains], [waggons]);
+  Try(WaggonOrder, [waggons], [waggons]);
+end;
+
+
+procedure testTrainBuildupAndWaggonOrderTo(maxt: Integer, maxw: Integer)
+  var waggons: Sequence(Waggon), trains: Sequence(Train),
+      nt: Integer, nw: Integer;
+begin
+  nt := Try([Sequence{1..maxt}]);
+  nw := Try([Sequence{1..maxw}]);
+  trains := CreateN(Train, [nt]);
+  waggons := CreateN(Waggon, [nw]);
+  Try(TrainBuildup, [trains], [waggons]);
+  Try(WaggonOrder, [waggons], [waggons]);
+end;
+
+procedure delTrain (train: Train)
+begin
+  Delete([train]);
+end;
+
+procedure delWaggon (w: Waggon)
+begin
+  Delete([w]);
+end;
+
+procedure deleteAll (train: Train)
+  var waggons:Sequence(Waggon);
+begin
+  waggons := [train.waggon->asSequence];
+  for w:Waggon in [waggons] begin
+    if [w.predecessor->isEmpty] then
+      begin
+        Delete([w]);
+      end
+    else
+      begin
+        waggons := [waggons->including(w)];
+      end;
+  end;
+  Delete([train]);
+end;

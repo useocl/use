@@ -1,0 +1,23 @@
+This example corresponds to
+the case study of Mark Richters in his PhD Thesis:
+"A Precise Approach to Validating UML Models and OCL
+Constraints"
+
+EmployeeExtended.use:
+Classes from /Others/Ex/Ex.use
+Person renamed into Employee
+Employee extended by attribute age : Integer
+Employee extended by operation raiseSalary from
+/Documentation/Employee.use
+Invariants from /Others/Ex/Ex.use
+Constraint for raiseSalary from Employee, extended
+by the postcondition amount > 0 and changed
+from rate to amount
+
+EmployeeExtended.cmd:
+==EmployeeExtended0.cmd,EmployeeExtended1.cmd,
+EmployeeExtended2.cmd,EmployeeExtended3.cmd,
+EmployeeExtended4.cmd,EmployeeExtendedRaiseSalary.cmd
+
+Builds up on /Others/Ex/Ex.cmd and is extended
+by an operation call from /Documentation/Employee.cmd

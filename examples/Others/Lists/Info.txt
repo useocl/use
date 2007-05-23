@@ -1,0 +1,14 @@
+This example shows a representation of lists.
+They can belong to maps and include object pairs.
+
+Lists.use:
+several classes with generalization and associations
+many constraints
+
+Lists.cmd:
+one list is created with three not empty lists and
+one empty list
+then a Map with a not empty list containing a pair
+is created
+
+Lists.olt:

@@ -1,0 +1,35 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model t15  -- pre-/postconditions
+
+class A
+operations
+  op1(p1 : Integer) : String
+    post: 'AAA' <> 'BBB'
+end
+
+class B
+attributes
+  c : Integer
+end
+
+association R between
+  A[*]
+  B[1]
+end
+
+constraints
+
+context a : A 
+  inv: a.b.c >= 0
+
+context A::op1(p1 : Integer) : String
+  pre:  p1.mod(2) = 0
+  pre:  b.c > 0
+  post: b.c@pre = 0
+  post: self@pre.b.c = 0
+  post: Set{1,2,3}->notEmpty
+  post: result = 'foo'
+
+context A::op1(p1 : Integer) : String
+  post: true

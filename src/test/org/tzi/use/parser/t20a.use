@@ -1,0 +1,23 @@
+model t20
+
+class P1_A
+end
+
+class P1_B
+end
+
+class P2_A < P1_A
+end
+
+class P2_B < P1_B
+end
+
+association assoc2 between
+  P1_A[*] role ra
+  P1_B[*] role rb
+end
+
+association assoc1 between
+  P2_A[*] role ra
+  P2_B[*] role rb
+end

@@ -1,0 +1,9 @@
+This example shows generalization between several
+classes without attributes, operations and associations.
+
+MultipleInheritance.use:
+five classes A, B (subclass of A), C (subclass of A), 
+D (subclass of B, C and E), E
+
+MultipleInheritance.cmd:
+creates an object for every class

@@ -1,0 +1,21 @@
+model Ternary1
+
+-- classes
+
+class A
+end
+
+class B
+end
+
+class C
+end
+
+-- associations
+
+association R between
+  A[*];
+  B[*];
+  C[0..1];
+end
+

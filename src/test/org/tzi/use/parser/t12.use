@@ -1,0 +1,10 @@
+model t12 -- test scope of invariant names
+
+class Foo
+end
+
+constraints
+
+context Foo inv i: true
+context Foo inv i: true
+

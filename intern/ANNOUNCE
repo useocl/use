@@ -1,0 +1,16 @@
+The USE (UML-based Specification Environment) tool is available from
+
+	http://www.db.informatik.uni-bremen.de/projects/USE/
+
+USE is a system for the specification of information systems. It is
+based on a subset of the Unified Modeling Language (UML). A USE
+specification contains a textual description of a model using features
+found in UML class diagrams (classes, associations, etc.). Expressions
+written in the Object Constraint Language (OCL) are used to specify
+additional integrity constraints on the model. A model can be animated
+to validate the specification against non-formal requirements. System
+states (snapshots of a running system) can be created and manipulated
+during an animation. For each snapshot the OCL constraints are
+automatically checked. Information about a system state is given by
+graphical views.  OCL expressions can be entered and evaluated to
+query detailed information about a system state.

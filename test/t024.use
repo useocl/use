@@ -1,0 +1,27 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model t024
+
+class A
+end
+
+class B
+end
+
+class C
+end
+
+association AB between
+  A[0..*] 
+  B[0..*]
+end
+
+association BC between
+  B[0..*]
+  C[0..*]
+end
+
+association AB_ordered between
+  A[0..*] role a_ordered ordered
+  B[0..*] role b_ordered ordered
+end

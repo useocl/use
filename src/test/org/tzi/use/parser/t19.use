@@ -1,0 +1,14 @@
+model t19
+
+class A
+operations
+  op(param : Integer) : Integer
+end
+
+class B
+operations
+  op(param : String) : Integer
+end
+
+class C < A,B
+end

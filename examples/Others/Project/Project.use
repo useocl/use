@@ -1,0 +1,60 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+-- Example from exercises of the lecture Object-oriented Software Design
+
+model Project
+
+class Employee
+attributes
+  name : String
+  salary : Integer
+constraints
+  -- constraint f.: FIXME: Employee.allInstances
+--    Employee.allInstances->forAll(e1, e2 | 
+--      e1.project->size > e2.project->size 
+--        implies e1.salary > e2.salary)
+end
+
+class Department
+attributes
+  name : String
+  location : String
+  budget : Integer
+constraints
+  -- constraint e.
+  inv e: employee->size > project->size
+end
+
+class Project 
+attributes
+  name : String
+  budget : Integer
+constraints
+  -- constraint g.
+  inv g: budget <= department.budget
+
+  -- "Project workers must work in a department which controls the
+  -- project." (h)
+  inv: department.employee->includesAll(employee)
+end
+
+
+association WorksIn between
+  Employee[*]
+  Department[1..*]
+end
+
+association WorksOn between
+  Employee[*]
+  Project[*]
+end
+
+association Controls between
+  Department[1]
+  Project[*]
+end
+
+
+-- Proposal for global queries?!
+--  context Department select:
+--    name = 'String'

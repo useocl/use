@@ -1,0 +1,27 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model AB
+
+class A
+operations
+  op(p : Integer)
+end
+
+class B
+attributes
+  c : Integer
+end
+
+association R between
+  A[*]
+  B[1]
+end
+
+constraints
+
+context A::op(p : Integer)
+  pre:  self.b.c = 1
+  post p1: self.b.c = 0
+  post p2: self.b@pre.c = p
+  post p3: self.b@pre.c@pre = 1
+  post p4: self.b.c@pre = oclUndefined(Integer)

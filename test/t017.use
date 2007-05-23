@@ -1,0 +1,14 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+model Test
+
+class A
+end
+
+class B
+end
+
+association R between
+  A[0..1] role r1
+  A[0..1] role r2
+  B[*] role r3
+end

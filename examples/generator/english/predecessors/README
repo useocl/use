@@ -1,0 +1,18 @@
+
+This directory contains two examples using procedure
+`testTrainBuildupAndWaggonOrder(Integer,Integer).
+
+Invariant `Train::Chain' prevents that a waggons
+predecessor is part of another train.
+
+When executing the first example (run.cmd), another invariant
+`Waggon::PredecessorInSameTrain' is loaded. The generator searches for a
+state, which satisfies `Train::Chain' and not `Waggon::PredecessorInSameTrain'.
+If a state exists, it is a counterexample showing
+that `Train::Chain' is too weak. Starting run.cmd results in a `no valid state
+found' message, because `Train::Chain' is correct.
+
+The second example (run2.cmd) replaces `Train::Chain' with `Train::Chain_tooWeak',
+which is too weak. Starting run2.cmd results in a counterexample showing that
+`Train::Chain_tooWeak' does not prevent that a wagons predecessor is part of
+another train.

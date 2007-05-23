@@ -1,0 +1,126 @@
+$State: Closed$
+$BugAuthor: mr$
+
+X-From-Line: tharrison@compdata.com Mon Dec 11 17:54:57 2000
+Received: from cdsflip (cdsflip.compdata.com [216.54.232.60])
+	by nmh.informatik.uni-bremen.de (8.10.1/8.10.1) with ESMTP id eBBGsu922577
+	for <mr@Informatik.Uni-Bremen.DE>; Mon, 11 Dec 2000 17:54:56 +0100 (MET)
+Received: by exchange.compdata.com with Internet Mail Service (5.5.2650.21)
+	id <YVK0LHWQ>; Mon, 11 Dec 2000 10:52:28 -0600
+Received: from exchange.compdata.com ([216.54.232.7])
+          by cdsflip (JAMES SMTP Server 1.1b1) with SMTP ID 317
+          for <mr@Informatik.Uni-Bremen.DE>;
+          Mon, 11 Dec 2000 10:49:11 -0600
+Received: from localhost ([127.0.0.1])
+          by cdsflip (JAMES SMTP Server 1.1b1) with SMTP ID 654
+          for <mr@Informatik.Uni-Bremen.DE>;
+          Mon, 11 Dec 2000 10:49:11 -0600
+X-Gnus-Mail-Source: file:/var/mail/mr
+Message-ID: <2651964.976553351587.JavaMail.SYSTEM@cdsflip>
+From: "Harrison, Tim" <tharrison@compdata.com>
+To: "'Mark Richters'" <mr@Informatik.Uni-Bremen.DE>
+Subject: USE 1.4.0 - bad result type for operation causes crash
+Date: Mon, 11 Dec 2000 10:52:28 -0600
+MIME-Version: 1.0
+X-Mailer: Internet Mail Service (5.5.2650.21)
+Content-Type: multipart/alternative;
+	boundary="----_=_NextPart_001_01C06392.BEC6A1BC"
+X-Yehti: flipped
+X-Content-Length: 3969
+Lines: 93
+Xref: dustbin.informatik.uni-bremen.de mail.misc:3082
+
+------_=_NextPart_001_01C06392.BEC6A1BC
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+
+Mark,
+
+The following code (which contains a reference to a type 'Failure' that
+doesn't exist in the model) produces a stack dump. I encountered this bug
+when I accidentally typed 'real' instead of 'Real'.
+
+-- begin test.use
+model foobar
+
+class Foo
+operations
+  bar() : Failure = 0;
+end
+-- end test.use
+
+-- begin stack dump
+use version 1.4.0, Copyright (C) 1999,2000 Mark Richters
+Exception in thread "main" java.lang.NullPointerException
+        at org.tzi.use.parser.ASTOperation.genFinal(ASTOperation.java,
+Compiled Code)
+        at
+org.tzi.use.parser.ASTClass.genConstraintsAndOperationBodies(ASTClass.java,
+Compiled Code)
+        at org.tzi.use.parser.ASTModel.gen(ASTModel.java, Compiled Code)
+        at
+org.tzi.use.parser.USECompiler.compileSpecification(USECompiler.java:69)
+        at org.tzi.use.main.Main.main(Main.java:68)
+-- end stack dump
+
+-- Tim Harrison <mailto:tharrison@compdata.com>
+-- Complete Data Solutions, Inc.
+-- 1301 S Capital of Texas Hwy, Suite 300B / Austin, TX 78746
+-- Phone: +1-512-329-6161 x273 / FAX: +1-512-329-6163
+-- <http://www.compdata.com/>
+
+------_=_NextPart_001_01C06392.BEC6A1BC
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="MS Exchange Server version 5.5.2650.12">
+<TITLE>USE 1.4.0 - bad result type for operation causes crash</TITLE>
+</HEAD>
+<BODY>
+
+<P><FONT SIZE=2>Mark,</FONT>
+</P>
+
+<P><FONT SIZE=2>The following code (which contains a reference to a type 'Failure' that doesn't exist in the model) produces a stack dump. I encountered this bug when I accidentally typed 'real' instead of 'Real'.</FONT></P>
+
+<P><FONT SIZE=2>-- begin test.use</FONT>
+<BR><FONT SIZE=2>model foobar</FONT>
+</P>
+
+<P><FONT SIZE=2>class Foo</FONT>
+<BR><FONT SIZE=2>operations</FONT>
+<BR><FONT SIZE=2>&nbsp; bar() : Failure = 0;</FONT>
+<BR><FONT SIZE=2>end</FONT>
+<BR><FONT SIZE=2>-- end test.use</FONT>
+</P>
+
+<P><FONT SIZE=2>-- begin stack dump</FONT>
+<BR><FONT SIZE=2>use version 1.4.0, Copyright (C) 1999,2000 Mark Richters</FONT>
+<BR><FONT SIZE=2>Exception in thread &quot;main&quot; java.lang.NullPointerException</FONT>
+<BR><FONT SIZE=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at org.tzi.use.parser.ASTOperation.genFinal(ASTOperation.java, Compiled Code)</FONT>
+<BR><FONT SIZE=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at org.tzi.use.parser.ASTClass.genConstraintsAndOperationBodies(ASTClass.java, Compiled Code)</FONT>
+<BR><FONT SIZE=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at org.tzi.use.parser.ASTModel.gen(ASTModel.java, Compiled Code)</FONT>
+<BR><FONT SIZE=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at org.tzi.use.parser.USECompiler.compileSpecification(USECompiler.java:69)</FONT>
+<BR><FONT SIZE=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at org.tzi.use.main.Main.main(Main.java:68)</FONT>
+<BR><FONT SIZE=2>-- end stack dump</FONT>
+</P>
+
+<P><FONT SIZE=2>-- Tim Harrison &lt;<A HREF="mailto:tharrison@compdata.com">mailto:tharrison@compdata.com</A>&gt;</FONT>
+<BR><FONT SIZE=2>-- Complete Data Solutions, Inc.</FONT>
+<BR><FONT SIZE=2>-- 1301 S Capital of Texas Hwy, Suite 300B / Austin, TX 78746</FONT>
+<BR><FONT SIZE=2>-- Phone: +1-512-329-6161 x273 / FAX: +1-512-329-6163</FONT>
+<BR><FONT SIZE=2>-- &lt;<A href="http://cdsflip.compdata.com:7230/impression/servlet/Click?transformID=11396&url=http%3A%2F%2Fwww.compdata.com%2F">www.compdata.com</A>&gt;</FONT>
+</P>
+
+<A href="http://cdsflip.compdata.com:7230/impression/servlet/Click?transformID=11395&url=http://www.compdata.com"><IMG src="http://cdsflip.compdata.com:7230/impression/servlet/Impression?transformID=11395&low=http://cdsflip.compdata.com/yehti/media//CDS_Logo2.jpg"></A></BODY>
+</HTML>
+------_=_NextPart_001_01C06392.BEC6A1BC--
+
+
+

@@ -1,0 +1,11 @@
+This example shows the use of two different recursive
+operations. One of it does not terminate.
+Like /Documentation/NestedOperationCalls the factorial
+function is defined here, but without constraints.
+
+RecursiveOperations.use:
+one class Rec with two operations
+
+RecursiveOperations.cmd:
+one object is created
+two operation calls with different arguments

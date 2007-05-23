@@ -1,0 +1,4 @@
+class.Company.position.x = 2000
+class.Company.position.y = 2000
+class.Person.position.x = 9000
+class.Person.position.y = 3500

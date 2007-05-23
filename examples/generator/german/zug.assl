@@ -1,0 +1,88 @@
+
+-- SIEHE wagonkette/README
+-- erzeugt `anzahlWaggons' waggons und fuegt diese zum Zug `z' hinzu.
+procedure waggonkette( z: Zug, anzahlWaggons: Integer )
+  var waggons: Sequence(Waggon), vorgaenger: Waggon;
+begin
+  waggons := CreateN( Waggon, [anzahlWaggons] );
+  for w: Waggon in [waggons] begin
+    for b:Boolean in [Sequence{true}->excluding(vorgaenger.isUndefined)] begin
+      Insert(Reihung, [vorgaenger], [w]);
+    end;
+    Insert( Zugaufbau, [z], [w] );
+    vorgaenger := [w];
+    [w].anzahlPlaetze := Any( [Sequence{20, 30, 50}] );
+  end;
+end;
+
+-- SIEHE reservierung/README
+-- legt eine Reservierung an fuer eine gegebene `fahrt' von dem
+-- Bahnhof `von' bis zu dem Bahnhof `bis'
+-- Probiert dabei alle Plaetze des Zuges durch. Die Constraints
+-- des Modells muessen eine korrekte Reservierung gewaehrleisten.
+procedure reservierung( fahrt: Fahrt, von: Bahnhof, bis:Bahnhof)
+  var waggon: Waggon, r: Reservierung;
+begin
+  r := Create( Reservierung );
+  Insert( ResFahrt, [r], [fahrt] );
+  Insert( RVon, [von], [r] );
+  Insert( RBis, [bis], [r] );
+  waggon := Try([fahrt.zug.waggon->asSequence]);
+  Insert( ResWaggon, [r], [waggon] );
+  [r].platznummer := Try( [Sequence{1..waggon.anzahlPlaetze}] );
+end;
+
+-- SIEHE schleifen/README
+-- SIEHE vorgaenger/README
+-- erzeugt `nz' Zuege und `nw' Waggons und testet jede Linkkombination
+-- der Assoziationen `Zugaufbau' und `Reihung'. Dabei werden ausschliesslich
+-- Links zwischen den in dieser Prozedur erzeugten Objekten erzeugt
+-- bzw. geloescht.
+procedure testeZugaufbauUndWaggonreihung(nz: Integer, nw: Integer)
+  var waggons: Sequence(Waggon), zuege: Sequence(Zug);
+begin
+  zuege := CreateN(Zug, [nz]);
+  waggons := CreateN(Waggon, [nw]);
+  Try(Zugaufbau, [zuege], [waggons]);
+  Try(Reihung, [waggons], [waggons]);
+end;
+
+
+procedure testeZugaufbauUndWaggonreihungBis(maxz: Integer, maxw: Integer)
+  var waggons: Sequence(Waggon), zuege: Sequence(Zug),
+      nz: Integer, nw: Integer;
+begin
+  nz := Try([Sequence{1..maxz}]);
+  nw := Try([Sequence{1..maxw}]);
+  zuege := CreateN(Zug, [nz]);
+  waggons := CreateN(Waggon, [nw]);
+  Try(Zugaufbau, [zuege], [waggons]);
+  Try(Reihung, [waggons], [waggons]);
+end;
+
+procedure zugWeg (zug: Zug)
+begin
+  Delete([zug]);
+end;
+
+procedure waggonWeg (w: Waggon)
+begin
+  Delete([w]);
+end;
+
+procedure allesWeg (zug: Zug)
+  var waggons:Sequence(Waggon);
+begin
+  waggons := [zug.waggon->asSequence];
+  for w:Waggon in [waggons] begin
+    if [w.vorgaenger->isEmpty] then
+      begin
+        Delete([w]);
+      end
+    else
+      begin
+        waggons := [waggons->including(w)];
+      end;
+  end;
+  Delete([zug]);
+end;

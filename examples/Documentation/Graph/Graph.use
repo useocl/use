@@ -1,0 +1,21 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model Graph
+
+class Node
+operations
+  newTarget()
+end
+
+association Edge between
+  Node[*] role source
+  Node[*] role target
+end
+
+constraints
+
+context Node::newTarget()
+  post oneNewTarget: 
+    (target - target@pre)->size() = 1 
+  post targetNodeIsNew: 
+    (target - target@pre)->forAll(n | n.oclIsNew())

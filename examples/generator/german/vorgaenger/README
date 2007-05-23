@@ -1,0 +1,18 @@
+
+This directory contains two examples using
+procedure `testeZugaufbauUndWaggonreihung(Integer,Integer).
+
+Invariant `Zug::Kette' prevents that a wagons
+predecessor is part of another train.
+
+When executing the first example (run.cmd), another invariant
+`Waggon::VorgaengerImGleichenZug' is loaded. The generator searches for a
+state, which satisfies `Zug::Kette' and not `Waggon::VorgaengerImGleichenZug'.
+If a state exists, it is a counterexample showing
+that `Zug::Kette' is too weak. Starting run.cmd results in a `no valid state
+found' message, because `Zug::Kette' is correct.
+
+The second example (run2.cmd) replaces `Zug::Kette' with `Zug::Kette_zuWeich',
+which is too weak. Starting run2.cmd results in a counterexample showing that
+`Zug::Kette_zuWeich' does not prevent that a wagons predecessor is part of
+another train.

@@ -1,0 +1,30 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model Job
+
+class Person
+attributes
+  name : String
+end
+
+class Student < Person
+attributes
+  semester : Integer
+end
+
+class Employee < Person
+attributes
+  ssn : String
+end
+
+class Job
+attributes
+  wage : Real
+end
+
+association Works between
+  Person[0..1] role worker
+  Job[0..1]
+end
+
+

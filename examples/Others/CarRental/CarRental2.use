@@ -1,0 +1,245 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model CarRental2
+
+--  datatypes
+
+--  enum CarGroupKind { compact, intermediate, luxury }
+--  enum Sex { male, female }
+
+-- datatype Date "org.tzi.use.uml.ocl.ext.Date"
+-- operations
+--   static Date(year : Integer, month : Integer, day : Integer) : Date
+--   static now() : Date
+--   < (date2 : Date) : Boolean
+--   > (date2 : Date) : Boolean
+--   = (date2 : Date) : Boolean
+--   <> (date2 : Date) : Boolean
+--   after(when :Date) : Boolean
+--   before(when : Date) : Boolean
+--   day() : Integer
+-- end
+
+-- classes
+
+abstract class Person
+attributes
+  firstname : String
+  lastname : String
+  age : Integer
+  isMarried : Boolean
+  email : Set(String)
+operations
+  -- produce a full name, e.g. 'Mr. Frank Black'
+  fullname(prefix : String) : String =
+    prefix.concat(' ').concat(firstname).concat(' ').concat(lastname)
+end
+
+class Customer < Person
+attributes
+  address : String
+end
+
+class Employee < Person
+attributes
+  salary : Real
+operations
+  raiseSalary(amount : Real) : Real
+end
+
+class Branch
+attributes
+  location : String
+operations
+  -- query all rentals for a given date
+  rentalsForDate(day : String) : Set(Rental) =
+    rental->select(r : Rental | r.fromDate <= day and day <= r.untilDate)
+end
+
+class Rental
+attributes
+  fromDate : String --Date
+  untilDate : String --Date
+--constraints
+    -- only a car of the requested car group or a higher (better) one
+    -- may be assigned to a rental
+--    Set{car}->notEmpty 
+--        implies ( carGroup.car->includes(car) or 
+--  		car.carGroup.isHigherThan(carGroup))
+end
+
+class CarGroup
+attributes
+  kind : String -- compact, intermediate, luxury
+-- operations: transitive closure of lower or higher grade cars
+--  operations
+--      allHigher() : Set(CarGroup) = 
+--        if higher.isUndefined then Set{} else higher.allHigher()->including(self) endif
+end
+
+class Car
+attributes
+  id : String
+operations
+  description() : String =
+    id.concat(' of group ').concat(carGroup.kind)
+end
+
+class ServiceDepot
+attributes
+  location : String
+end
+
+class Check
+attributes
+  description : String
+end
+
+-- Associations
+
+association Management between
+  Employee[1] role manager
+  Branch[0..1] role managedBranch
+end
+
+association Employment between
+  Employee[*] role employee
+  Branch[1] role employer
+end
+
+association Fleet between
+  Branch[1]
+  Car[*]
+end
+
+association Offers between
+  Branch[*]
+  CarGroup[*]
+end
+
+association Classification between
+  CarGroup[1]
+  Car[*]
+end
+
+association Booking between
+  Rental[*]
+  Customer[1]
+end
+
+association Provider between
+  Rental[*]
+  Branch[1]
+end
+
+association Reservation between
+  Rental[*]
+  CarGroup[1]
+end
+
+association Assignment between
+  Rental[0..1]
+  Car[0..1]
+end
+
+association Quality between
+  CarGroup[0..1] role higher
+  CarGroup[0..1] role lower
+--constraints
+  -- The association is not reflexive
+--  higher <> lower
+end
+
+association Maintenance between
+  ServiceDepot[0..1]
+  Check[*]
+  Car[*]
+end
+
+-- Constraints
+
+constraints
+
+-- The association Quality is anti-reflexive and anti-symmetric
+-- context q1 : Quality inv:
+--   not Quality.allInstances->exists(q2 | 
+--     q1.lower = q2.higher and q1.higher = q2.lower)
+
+
+context Person
+
+-- The age attribute of persons is greater than zero
+inv Person1: 
+  age > 0
+
+-- both names must be defined
+inv Person2:
+  firstname.isDefined() and lastname.isDefined()
+
+-- the age must be in a reasonable range
+inv Person3:
+  age > 0 and age < 150
+
+
+context Employee
+
+-- each employee is either a manager or a clerk of a branch
+inv Employee1:
+   employer->isEmpty xor managedBranch->isEmpty
+
+context Branch 
+
+-- Each manager is also an employee of the same branch
+inv Branch1: 
+  self.employee->includes(self.manager)
+
+-- Managers get a higher salary than employees
+inv Branch2: 
+  self.employee->forAll(e | e <> self.manager 
+    implies self.manager.salary > e.salary)
+
+context CarGroup 
+
+-- The order on CarGroups is not reflexive
+inv CarGroup1: 
+  higher <> self and lower <> self
+
+-- The order on CarGroups is anti-symmetric
+inv CarGroup2: 
+  higher.higher <> self and lower.lower <> self
+
+-- The order on CarGroups is strictly monotonic, i.e. there are no cycles
+
+context Car
+
+-- A car may not be assigned to a maintenance and 
+-- to a rental at the same time
+inv Car1: 
+  rental->isEmpty() or serviceDepot->isEmpty()
+
+-- A maintenance is done in only one service depot 
+-- (this cannot be expressed with multiplicities 
+-- on ternary associations)
+inv Car2: 
+  serviceDepot->size() <= 1
+
+context Rental
+
+  -- Only a car of the requested car group or a higher
+  -- (better) one may be assigned to a rental
+--   inv: self.car.isDefined implies 
+--     ( carGroup.car->includes(car) 
+--       or car.carGroup.isBetterThan(carGroup) )
+
+-- A reserved car group must be offered by the 
+-- branch providing the reservation
+inv Rental2: 
+  self.branch.carGroup->includes(self.carGroup)
+
+
+context Employee::raiseSalary(amount : Real) : Real
+  -- If the amount is positive, raise the salary 
+  -- by the given amount
+  pre:  amount > 0
+  post: self.salary = self.salary@pre + amount
+          and result = self.salary

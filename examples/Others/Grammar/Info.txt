@@ -1,0 +1,25 @@
+This example describes a grammar with terminal
+and non terminal symbols (composition)
+and production rules describing how the symbols
+can be replaced.
+
+Grammar.use:
+several classes with generalization
+and compositions compositions
+for every class at least one simple invariant
+with iterate and nested operations
+
+Grammar.cmd:
+a simple grammar is created
+four terminal symbols +, -, 0 and 1
+two non terminal symbols expr and operator
+five production rules
+<expr> -> <expr> <operator> <expr>
+<expr> -> '0'
+<expr> -> '1'
+<operator> -> '+'
+<operator> -> '-'
+
+Grammar.fig:
+
+Grammar.olt:

@@ -1,0 +1,22 @@
+model Graph
+
+class Node
+operations
+  newTarget()
+end
+
+association Edge between
+  Node[*] role source
+  Node[*] role target
+end
+
+constraints
+
+context Node::newTarget()
+  -- the operation must link exactly one target node
+  post oneNewTarget: 
+    (target - target@pre)->size() = 1 
+
+  -- the target node must not exist before
+  post targetNodeIsNew: 
+    (target - target@pre)->forAll(n | n.oclIsNew())

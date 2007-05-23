@@ -1,0 +1,27 @@
+This example shows companies and persons working
+for them.
+
+The example corresponds to the example
+model in the section `Validating Pre- and Postconditions
+with USE´
+
+Employee.use:
+Corresponds to examples/monitoring/Employee.use,
+but the invariant context Person inv: age >= 18
+is missing here
+
+two classes Person and Company with at least
+one operation with side effects
+one association WorksFor
+no invariants, but one constraint for every operation
+
+Employee.cmd:
+creates one Company and one Person
+the operation hire is executed to create a link
+between both objects
+after that, the raiseSalary operation with return value
+is executed
+finally the new link is destroyed by executing the
+operation fire
+
+Employee.dgm:

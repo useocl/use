@@ -1,0 +1,7 @@
+model t1b
+
+enum A { foo }
+
+class A
+end
+

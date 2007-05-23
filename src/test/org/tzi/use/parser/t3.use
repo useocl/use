@@ -1,0 +1,12 @@
+model t3
+
+class A
+end
+
+class B
+end
+
+association R between
+A [0..1]
+B [0]
+end

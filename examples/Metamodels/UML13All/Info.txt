@@ -1,0 +1,11 @@
+Specifies UML 1.3 in USE
+
+UML13All.use:
+-
+
+UML13All.cmd:
+leer
+
+Demo-meta.cmd:
+Represents a part of the metamodel of the /Documentation/
+Demo example. (classes and attributes)

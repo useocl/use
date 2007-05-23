@@ -1,0 +1,2 @@
+t1.use:6:7: Redefinition of `A'.
+t1.use:3:7: `A' previously declared here.

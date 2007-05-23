@@ -1,0 +1,28 @@
+$Bug: Scrolling in ObjectCount window does not work correctly.$
+$Category: GUI$
+$State: Open$
+$BugAuthor: green$
+
+
+Reason for this error (gutsche): 
+
+The barchart is drawen with java.awt. components and those components
+are heavy weight components. Everything else in the ObjectCountView
+and the sourounding are javax.swing. components. Swing however are
+leight weight components. This gives the resulting distraction in the
+view discriped below. 
+More information about this can be found at:
+http://java.sun.com/products/jfc/tsc/articles/mixing/index.html
+last viewed on 07.08.04
+
+Suggestion: 
+Replacing the BarChartView with a table in which we add bars as an
+images in a corresponding size.
+
+
+Error description (green):
+
+If the ObjectCount window countains more lines than the screen can
+display, the view is distorted in the lower part of the view.
+
+

@@ -1,0 +1,14 @@
+This example contains only one class with an operation
+not free from side effects with return type Integer.
+Its not defined as query, but with a postcondition
+and result inside the class definition (not as an
+explicit constraint).
+The operation computes the greatest common divisor
+of the arguments (two Integers). 
+
+Math.use:
+one class Math with an operation gcd
+
+Math.cmd:
+gdc is called with different arguments
+the result values satisfy the postcondition

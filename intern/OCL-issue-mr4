@@ -1,0 +1,12 @@
+
+Number of context variables
+---------------------------
+
+The OCL grammar only allows at most one variable in a
+classifierContext.  There seems to be no reason why this could not be
+generalized to allow more than one variable. The example on p. 7-18
+(which is frequently needed in similar forms) could then be just
+written as:
+
+context p1, p2 : Person inv:
+  p1 <> p2 implies p1.name <> p2.name

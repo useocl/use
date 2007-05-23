@@ -1,0 +1,123 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model Lists
+
+class Object
+end
+
+class Map < Object
+end
+
+abstract class List < Object
+operations
+  -- These should actually be abstract operations that have to be
+  -- implemented by subclasses (not yet available in USE)
+  tail() : Sequence(List) = oclUndefined(Sequence(List))
+  closure() : Sequence(List) = oclUndefined(Sequence(List))
+end
+
+class EmptyList < List
+operations
+  tail() : Sequence(List) = oclEmpty(Sequence(List))
+  closure() : Sequence(List) = oclEmpty(Sequence(List))
+end
+
+class NonEmptyList < List
+operations
+  tail() : Sequence(List) =
+    if self.next.oclIsKindOf(NonEmptyList) then
+      self.next.tail()->prepend(self.next)
+    else
+      self.next.tail()
+    endif
+
+  closure() : Sequence(List) =
+    self.tail()->prepend(self)
+end
+
+class Pair < Object
+end
+
+association Map_List between
+  Map[*]
+  List[1]
+end
+
+association Next_List between
+  NonEmptyList[*] role previous
+  List[1] role next
+end
+
+association List_Element between
+  NonEmptyList[0..1] role root
+  Object[0..1] role elt
+end
+
+association Pair_Key between
+  Pair[0..1] role keyOwner
+  Object[1] role key
+end
+
+association Pair_Value between
+  Pair[0..1] role valueOwner
+  Object[1] role val
+end
+
+constraints
+
+-- no Lists that belong to different Maps overlap
+-- no m1, m2: Map - m1 | some (m1.list.*next & m2.list.*next)
+context Map inv:
+  Map.allInstances->forAll(m1, m2 | m1 <> m2 
+    implies m1.list.closure()->asSet->intersection(m2.list.closure()->asSet)->isEmpty)
+
+
+-- Lists contained in Maps have Pairs as their elements
+-- Map.list.*next.elt in Pair
+context List inv ListsInMapsHavePairs:
+  self.map->notEmpty 
+    implies self.closure()->forAll(l | l.oclAsType(NonEmptyList).elt.oclIsKindOf(Pair))
+
+
+-- Lists contained in Maps do not hold null references as elements
+-- all p: Map.list.*next & NonEmptyList | some p.elt
+context List inv ListsInMapsHaveElements:
+  self.map->notEmpty 
+    implies self.closure()->forAll(l | l.oclAsType(NonEmptyList).elt->notEmpty)
+
+-- no object is both a key of some Pair and a val of some Pair
+-- no Pair.key & Pair.val
+context Pair inv NoObjectKeyAndVal:
+  self.key <> self.val
+
+
+-- Lists do not contain duplicates
+-- all p: List, o: Object | sole o & p.*next.elt
+context List inv NoDuplicates:
+  self.closure()->asBag->select(l | l.oclAsType(NonEmptyList).elt->notEmpty)->size
+  = 
+  self.closure()->asSet->select(l | l.oclAsType(NonEmptyList).elt->notEmpty)->size
+
+
+-- no cyclic Lists
+-- all p: List | p !in p.+next
+context List inv NoCycles:
+  not self.tail()->includes(self)
+
+
+-- no List contains itself as an element
+-- no p: List | p in p.*next.elt
+context List inv NotContainsSelf:
+  not self.closure()->exists(l | l.oclAsType(NonEmptyList).elt->includes(self))
+
+
+-- no List contains a List as an element
+-- no List & List.elt 
+context List inv NoListElement:
+  not self.closure()->exists(l | l.oclAsType(NonEmptyList).elt.oclIsKindOf(List))
+
+
+-- there is only one EmptyList object
+-- one EmptyList
+context EmptyList inv OneEmptyList:
+  EmptyList.allInstances->size = 1

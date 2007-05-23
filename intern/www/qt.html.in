@@ -1,0 +1,382 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<!-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ -->
+<head>
+<title>USE Quick Tour</title>
+<meta name="author" content="Mark Richters"> 
+<meta name="keywords" content="UML,OCL,USE,validation,tool"> 
+</head>
+<body bgcolor="#ffffff">
+
+<center><h1>USE Quick Tour</h1></center>
+
+<p>This quick tour will demonstrate the main features of USE.</p>
+
+<!-- ====================================== -->
+
+<h2>1. Example Model</h2>
+
+<p>Consider the following UML class diagram for a simple model
+describing employees, departments, projects, and their relationships
+to each other.</p>
+
+<center><img src="gen-img/cls-EDP.png" alt="class diagram"></center>
+
+<p>We extend the model by the following four constraints which place
+further restrictions on systems conforming to the model. The
+constraints are first given in natural language and will later be
+expressed more formally in OCL (Object Constraint Language).</p>
+
+<p>Constraints:</p>
+<ol>
+<li><cite>The number of employees working in a department must be greater or
+equal to the number of projects controlled by the
+department.</cite></li>
+
+<li><cite>Employees get a higher salary when they work on more
+projects.</cite></li>
+
+<li><cite>The budget of a project must not exceed the budget of the
+controlling department.</cite></li>
+
+<li><cite>Employees working on a project must also work in the
+controlling department.</cite></li>
+</ol>
+
+<p>The goal of applying the USE tool is to interactively validate the
+above model and the constraints. Objects and links can be created
+which constitute a system state reflecting a snapshot of a running
+system. In every system state, the constraints are automatically
+checked for validity.</p>
+
+<!-- ====================================== -->
+
+<h2>2. USE Specifications</h2>
+
+<p>The USE tool expects as input a textual description of a model and
+its constraints. The above class diagram must therefore be first
+translated into a USE specification (a possible extension to USE would
+be the import of an XMI file created by a CASE tool like <a
+href="http://argouml.tigris.org">Argo UML</a> or Rational Rose.). The
+first part of the specification shown below describes the structural
+information of the class diagram.</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+#include "Demo1.use.html"
+</pre></td></tr></table></blockquote>
+
+<p>In the second part of the specification, we define the constraints
+in OCL. Each constraint is defined as an invariant in context of a
+class.</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+#include "Demo2.use.html"
+</pre></td></tr></table></blockquote>
+
+<p>The complete specification is also available in the file <a
+href="Demo.use"><tt>Demo.use</tt></a> in the example directory of the
+distribution.</p>
+
+<!-- ====================================== -->
+
+<h2>3. Running USE</h2>
+
+<p>The following command can be used to invoke USE on the example
+specification (assuming the current working directory is the top-level
+directory of the distribution and the <code>bin</code> directory is
+added to your <code>PATH</code> environment variable).</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+<b>use examples/Demo.use</b>
+</pre></td></tr></table></blockquote>
+
+<p>This command will compile and check the file
+<tt>Demo.use</tt>. There are currently two kinds of user interfaces
+which can be used simultaneously. The first one is a command line
+interface where you enter commands at a prompt. The output should be
+similar to the following.</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+loading properties from: /home/mr/use/etc/use.properties
+use version @release_version@, Copyright (C) 1999,2000 Mark Richters
+compiling specification...
+Model Company (3 classes, 3 associations, 4 invariants, 0 operations)
+Enter `help' for a list of available commands.
+use> 
+</pre></td></tr></table></blockquote>
+
+<p>At this point you can enter commands at the prompt (try 'help' for
+a list of available commands). For example, you can enter OCL
+expressions by starting the input with a question mark. The expression
+will be evaluated and its result will be shown, e.g.:</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>? Set{1,2,3}->select(e | e &gt; 1)</b>
+-> Set{2,3} : Set(Integer)
+</pre></td></tr></table></blockquote>
+
+<p>The command line interface is useful for experienced users and for
+automated validation procedures since commands can be read from a
+script file. The graphical user interface is easier to learn and
+provides different ways of visualizing a system state. By default both
+interfaces are launched (unless you specify the switch
+<code>-nogui</code> at startup time).</p>
+
+<!-- ====================================== -->
+
+<h2>4. The Graphical User Interface</h2>
+
+<p>Let's get back to the example. The window that appears after
+starting USE can be seen in the following screen shot (click on the
+picture to get an enlarged version).</p>
+
+<blockquote>
+<a href="qt1.png"><img src="gen-img/qt1-small.png" alt="screenshot"></a>
+</blockquote>
+
+<p>On the left is a tree view showing the contents (classes,
+associations, invariants, and pre- and postconditions) of the
+model. The next picture shows the expanded tree with all model
+elements. One of the invariants is selected and its definition is
+shown in the panel below the tree.</p>
+
+<blockquote>
+<a href="qt2.png"><img src="gen-img/qt2-small.png" alt="screenshot"></a>
+</blockquote>
+
+<p>The large area on the right is a workspace where you can open views
+visualizing different aspects of a system. Views can be created any
+time by choosing an entry from the view menu or directly by a toolbar
+button. There is no limit on active views. The next screen shot
+displays the main window after the creation of four views.</p>
+
+<blockquote>
+<a href="qt3.png"><img src="gen-img/qt3-small.png" alt="screenshot"></a>
+</blockquote>
+
+<p>The two upper views list the names of classes and associations
+defined in the model and shows the number of objects and links in the
+current system state. The initial system state is empty, i.e., there
+are no objects and links yet. The view at the lower left displays a
+list of OCL invariants and their results. As you can see, all
+invariants are true in the empty system state. Finally, the lower
+right view will show an object diagram once we have created objects
+and links. </p>
+
+<!-- ====================================== -->
+
+<h2>5. Creating Objects and Setting Attributes</h2>
+
+Objects can be created by selecting a class and specifying a name for
+the object. The menu command <code>State|Create object</code> opens a
+dialog where this information can be entered.
+
+<blockquote>
+<a href="qt4.png"><img src="gen-img/qt4-small.png" alt="screenshot"></a>
+</blockquote>
+
+<p>Alternatively, the following command can be used at the prompt to
+achieve the same effect.</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!create cs:Department</b>
+</pre></td></tr></table></blockquote>
+
+<p>And, even simpler, an object can be created via drag &amp;
+drop. Just select a class in the model browser and drag it to the
+object diagram.</p>
+
+<p>Note the change in the system state views. The upper right view
+indicates that there is now one department object, and the object
+diagram shows this object graphically.</p>
+
+<blockquote>
+<a href="qt4a.png"><img src="gen-img/qt4a-small.png" alt="screenshot"></a>
+</blockquote>
+
+<p>A context menu available on a right mouse click in the object
+diagram provides several display options. For example, the automatic
+layout can be turned off, the layout of the diagram can be saved and
+restored from a file, etc. In the previous picture we have turned on
+the display of attribute values. You can see that the attribute values
+of the department object are all undefined. For changing attribute
+values, we can use the <tt>set</tt> command:</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!set cs.name := 'Computer Science'</b>
+use> <b>!set cs.location := 'Bremen'</b>
+use> <b>!set cs.budget := 10000</b>
+</pre></td></tr></table></blockquote>
+
+<p>Attributes can also be changed with an <em>object properties
+view</em>. If you choose <code>View|Create|Object Properties</code>
+from the View menu and select the <code>cs</code> object, you get the
+following view where you can inspect and change attributes of the
+selected object:</p>
+
+<blockquote>
+<img src="qt2c.png" alt="screenshot">
+</blockquote>
+
+<p>We continue by adding two employee objects and setting their
+attributes (Again, we use the command line interface here, but the
+same can be achieved by using the previously discussed steps in the
+graphical user interface).</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!create john : Employee</b>
+use> <b>!set john.name := 'John'</b>
+use> <b>!set john.salary := 4000</b>
+use> <b>!create frank : Employee</b>
+use> <b>!set frank.name := 'Frank'</b>
+use> <b>!set frank.salary := 4500</b>
+</pre></td></tr></table></blockquote>
+
+<p>Now we have three objects, a department and two employees, but
+still no connections between them. The layout in the object diagram is
+continuously refined and updated. This can be turned off by
+deselecting the option <code>Auto-Layout</code> in the context menu of
+the object diagram.</p>
+
+<p>The previous commands resulted in an invalid system state. This is
+discussed in detail in the next section.</p>
+
+<blockquote>
+<a href="qt5.png"><img src="gen-img/qt5-small.png" alt="screenshot"></a>
+</blockquote>
+
+<!-- ====================================== -->
+
+<h2>6. Model Inherent Constraints</h2>
+
+<p>The invariant view indicates some problem with the new system
+state. The message says: <em>Model inherent constraints
+violated</em>. Model inherent constraints are constraints defined
+implicitly by a UML model (in contrast to explicit OCL
+constraints). The details about this message are shown in the Log
+panel at the bottom of the screen (they are also available by issuing
+a <tt>check</tt> command at the prompt):</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>check</b>
+Multiplicity constraint violation in association `WorksIn´:
+  Object `frank´ is connected to 0 object(s) of class `Department´
+  but the multiplicity is specified as `1..*'.
+Multiplicity constraint violation in association `WorksIn´:
+  Object `john´ is connected to 0 object(s) of class `Department´
+  but the multiplicity is specified as `1..*'.
+</pre></td></tr></table></blockquote>
+
+<p>The problem here is that we have specified in the model that each
+employee has to be related to at least one department object (see the
+class diagram above). In our current state, no employee has a link to
+a department. In order to fix this, we insert the missing links into
+the WorksIn association:</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!insert (john,cs) into WorksIn</b>
+use> <b>!insert (frank,cs) into WorksIn</b>
+</pre></td></tr></table></blockquote>
+
+<p>Links can also be inserted by selecting the objects to be connected
+in the object diagram and choosing the <code>insert</code> command
+from the context menu.</p>
+
+<p>The new state shows the links in the object diagram as red edges
+between the employee objects and the department object. The invariants
+are satisfied again.</p>
+
+<blockquote>
+<a href="qt6.png"><img src="gen-img/qt6-small.png" alt="screenshot"></a>
+</blockquote>
+
+<!-- ====================================== -->
+
+<h2>7. Checking OCL Invariants</h2>
+
+<p>We have seen that class invariants are checked automatically each
+time a system state changes. This section shows how invariants can be
+analyzed. We continue the example by adding two projects and linking
+them to the existing employees and the department:</p>
+
+<blockquote><table summary=""  width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!create research : Project</b>
+use> <b>!set research.name := 'Research'</b>
+use> <b>!set research.budget := 12000</b>
+use> 
+use> <b>!create teaching : Project</b>
+use> <b>!set teaching.name := 'Validating UML'</b>
+use> <b>!set teaching.budget := 3000</b>
+use> 
+use> <b>!insert (cs,research) into Controls</b>
+use> <b>!insert (cs,teaching) into Controls</b>
+use> 
+use> <b>!insert (frank,research) into WorksOn</b>
+use> <b>!insert (frank,teaching) into WorksOn</b>
+use> <b>!insert (john,research) into WorksOn</b>
+</pre></td></tr></table></blockquote>
+
+
+<p>The resulting state is shown below.</p>
+
+<blockquote>
+<a href="qt7.png"><img src="gen-img/qt7-small.png" alt="screenshot"></a>
+</blockquote>
+
+<p>In this state, three of the four invariants are true but one
+fails. The failing one has the name
+<tt>BudgetWithinDepartmentBudget</tt>. This invariant states that
+<cite>The budget of a project must not exceed the budget of the
+controlling department</cite>. Obviously, one of the two projects in
+our example must have a budget higher than the budget of the
+department.</p>
+
+<p>The value <tt>false</tt> finally resulting from an evaluation of an
+invariant is not very helpful in finding the reason for an illegal
+system state. An <i>evaluation browser</i> provides a more detailed
+view of an expression by showing the results of all
+sub-expressions. Double-clicking on an invariant will open an
+evaluation browser:</p>
+
+<blockquote>
+<a href="qt8.png"><img src="gen-img/qt8-small.png" alt="screenshot"></a>
+</blockquote>
+
+<p>The root node in the evaluation browser shows the complete
+expression and its result (which is false for the chosen
+invariant). For each component of an expression there are child nodes
+displaying the sub-expressions and their results. You can see that the
+argument expression of the forAll quantifier is false, thus making the
+whole expression result false. In this sub-expression, the variable
+<tt>self</tt> is bound to the object <tt>research</tt>. The evaluation
+browser has helped to find out that it is the budget attribute value
+of this object which causes the invariant to fail.</p>
+
+<!-- ====================================== -->
+
+<h2>8. Evaluating OCL Expressions</h2>
+
+<p>The OCL parser and interpreter of USE allows the evaluation of
+arbitrary OCL expressions. The menu item <code>State|Evaluate OCL
+expression</code> opens a dialog where expressions can be entered and
+evaluated.</p>
+
+<blockquote>
+<img src="qt9a.png" alt="screenshot">
+</blockquote>
+
+The following example shows a complex expression navigating from a
+department over projects to employees. The expression finds all
+projects of the computer science department in which an employee
+called john is involved.
+
+<blockquote>
+<img src="qt9b.png" alt="screenshot">
+</blockquote>
+
+
+<p><a href="index.html">Back to the USE home page.</a></p>
+
+<!--  Local Variables: -->
+<!--  mode:sgml -->
+<!--  End: -->

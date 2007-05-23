@@ -1,0 +1,8 @@
+nice to have:
+- warnings for token used in parser but not defined in lexer
+- emacs like error messages
+
+bugs:
+- bug in syntactic predicate in lexer
+- only increase column information in overwritten consume method when not guessing
+

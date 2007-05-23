@@ -1,0 +1,12 @@
+#USE object diagram layout
+#Sun Dec 03 17:58:55 CET 2000
+Object.teaching.y=212.0
+Object.teaching.x=298.0
+Object.research.y=212.0
+Object.cs.y=32.0
+Object.frank.y=34.0
+Object.research.x=167.0
+Object.cs.x=356.0
+Object.frank.x=100.0
+Object.john.y=80.0
+Object.john.x=105.0

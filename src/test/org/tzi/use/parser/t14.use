@@ -1,0 +1,30 @@
+model t14
+
+enum foo { bla, foobar}
+
+class A
+attributes
+ x : Integer
+operations
+constraints
+
+end
+
+class B
+operations
+  op() : Real = 3/4
+  op2() : Real = 1.123 + 1.2324
+  op3() : Set(Integer) = Set{1..2}
+  op4() : Integer = if true then 1 else 2 endif
+end
+
+association a between
+  A[1] role x
+  B[2..4,1,5..8,9,10]
+end
+
+constraints
+
+context B::op() : Real
+  pre: true
+  post: result < 1

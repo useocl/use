@@ -1,0 +1,12 @@
+-- constraints
+
+constraints
+
+context Company::hire(p : Person)
+  pre  hirePre1: p.isDefined()
+  pre  hirePre2: employee->excludes(p)
+  post hirePost: employee->includes(p)
+
+context Company::fire(p : Person)
+  pre  firePre:  employee->includes(p)
+  post firePost: employee->excludes(p)

@@ -1,0 +1,54 @@
+- collection expressions for insert, delete, or general loop construct? 
+  add example for Cartesian product of links
+- fix mouse handling in views (for jdk1.4)
+- GUI: playback of command files, forward, backward, timed animation
+- update prepost.html
+- new views: variable bindings
+- overloading of operations (need resolution rules)
+- user-defined operations with non-identifier names such as <,=,+,etc.
+- add data types like Date
+- GUI: object diagram: insert link: include inherited associations
+- bug fix: shorthand for 0..1 sets does not work with -><iterate-expr> ?!
+- MMInstanceGenerator: generate operations
+- add Tuple type
+- association classes
+
+
++ allow expressions in !commands
++ check other commands for OCL expressions
++ grammar: arbitrary order of classes, associations, constraints
++ OCL let-expressions
++ use greatest common supertype of elements in collection literals
++ new views: opcall stack
++ add oclIsNew
++ add OCL pre- and postconditions
++ grammar: inconsistent semicolon rules for attributes and constraints section 
+  (made semicolons optional) 
++ grammar: allow query expressions without element variable
+  and implicit self in grammar (see bug0009)
+  - changed grammar to use propertyCall
+  - Removed ASTIdExpression, use only ASTOperationExpression
+  - add stack for default context expression in class Context
++ invariant names local to class scope
++ implement "any", "one" (OCL 1.4)
++ GUI solution for check -d: list of "good" instances and list of "bad" instances
++ add isUnique operation
++ new nodes in object diagrams are all positioned at 0,0
++ button in EvalOCLDialog: Clear result
++ bug0010
++ check actionsemantics-mm
++ enforce Classifier3 invariant in USE models
++ generate vcg graph for class diagrams
++ OCL shorthand notation (also add flag to disable)
++ shorthand for 0..1 association ends: rolename->isEmpty()
++ production of evalnodes requires lots of memory, make optional
++ check structure: n-ary links
++ shortcut evaluation of boolean expressions
+
+
+File|Load script
+fix: also offer inherited associations for inerting links
+statusline: hint for popup-menu on object diagram
+delete object
+remove link
++ add www docs to dist

@@ -1,0 +1,1 @@
+t6.use:9:9: An arrow operation treating a single object as a set may only be applied, if the object results from a navigation to an association end with multiplicity 0..1.

@@ -1,0 +1,131 @@
+// -*- java -*- (we want emacs font locking)
+// $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+//
+model Abalone
+
+/*
+  Operations are expressions without side-effects.
+  Methods perform actions with side-effects:
+  - manipulate attribute values
+  - manipulate associations
+
+  creation operations, constructors:
+  b = Board.create(p1,...,pn)
+  Has.addLink(self, b) 
+  removeLink(o1,...,on)
+  hasLink(o1,...,on)
+
+*/
+
+// classes
+
+class Game
+    // operations:
+    // createBoard
+    // createPlayers (at least black and white)
+    // addPlayer(color : String)
+
+constraints
+    // players must all have different colors
+    //  player->forAll(p1, p2 | p1.color <> p2.color);
+
+//  creation
+//    create() =
+//      board := board.including(Board.create());
+//  methods
+//    start = player[1].move();
+
+//  interaction
+//    create >> Board.create();
+end
+
+class Player
+attributes
+  color : String;
+    // operations:
+    // addMarble
+end
+
+class Board
+    // operations:
+    // createHoles
+constraints
+    // holes must have different positions
+    hole->forAll(h1, h2 | h1.x <> h2.x and h1.y <> h2.y);
+// hole->forAll(h1, h2 | not h1.equals(h2));
+end
+
+class Hole
+attributes
+  x : Integer;
+  y : Integer;
+// operations
+//    equals(h : Hole) : Boolean = 
+//      (x = h.y and y = h.y);
+end
+
+class Marble
+attributes
+  color : String;		// can be derived from owner (player)
+constraints
+  color <> '';
+end
+
+class MarbleMove
+constraints
+    // marble must be on board
+    //self.marble.hole->notEmpty();
+    // source and destination position must be different
+    // not (destination = marble.hole)
+end
+
+class Move
+end
+
+// associations
+
+// FIXME: reverse read direction
+aggregation PlaysIn between
+  Game[1];
+  Player[2..*];
+end
+
+aggregation Has between
+  Game[1];
+  Board[1];
+end
+
+composition Contains between
+  Board[1];
+  Hole[1..*];
+end
+
+//  association Neighbor between
+//    Hole[0..6] role h1;
+//    Hole[0..6] role h2;
+//  end
+
+association Occupies between
+  Marble[0..1];
+  Hole[0..1];
+end
+
+aggregation Owns between
+  Player[1];
+  Marble[1..*];
+end
+
+aggregation Moves between
+  MarbleMove[*];
+  Marble[1];
+end
+
+aggregation Position between
+  MarbleMove[*];
+  Hole[1] role destination;
+end
+
+composition Parts between
+  Move[*];
+  MarbleMove[1..*];
+end

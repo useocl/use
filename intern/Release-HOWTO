@@ -1,0 +1,29 @@
+- add current release to intern/www/index.html.in, Section "Older
+  releases", check file size info of distribution
+
+- use.prj: set Project-Keywords to new version
+
+- add Changelog entry, checkin working version
+
+- create a new major version:
+
+	prcs checkin -r1-1-0-release
+
+- build and test release
+
+	ant all
+
+- copy documentation manually to web site
+
+	cp -rp build/doc/* /home/dbs/www/doc/projects/USE-x.y.z
+
+- copy new release to save place, copy all releases to web site
+
+	cp use-*.tar.gz use-*.zip ~/work/java/use-releases
+	cp ~/work/java/use-releases/* /home/dbs/www/doc/projects/USE-x.y.z
+
+- check WWW home page and download links
+
+- send mail to use-announce
+
+- approve bounced mail in gnus with `|' and /home/majordomo/bin/approve

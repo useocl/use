@@ -1,0 +1,35 @@
+An example with employees working in different departments
+on projects, which are controlled by a department.
+After executing Demo.cmd one invariant evaluates to false
+because one project has a higher budged than its department.
+
+This example is part of the "USE Quick Tour".
+
+Demo.use:
+three classes Employee, Department and Project
+three associations
+at least one invariant for each class
+
+Demo.cmd:
+== the sequence of Demo0.cmd to Demo4.cmd
+
+SplitCommands/Demo0.cmd:
+creates one object of type Department
+
+SplitCommands/Demo1.cmd:
+assigns the attribute values in the new object
+
+SplitCommands/Demo2.cmd:
+creates two objects of type Employee and assigns
+attribute values
+
+SplitCommands/Demo3.cmd:
+creates two links between the department and the employees
+
+SplitCommands/Demo4.cmd:
+creates two projects, assigns attribute values and
+creates two links between the projects and the 
+department
+creates links between the employees and the new projects
+
+Classdiagram/Demo-UML.eps: Class diagram for this example

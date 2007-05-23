@@ -1,0 +1,7 @@
+context Person inv twoBossesWithDisjointWorkers2:
+  Person.allInstances->exists(b1,b2|
+    let b1worker:Set(Job)=b1.job.worker->asSet in
+    let b2worker:Set(Job)=b2.job.worker->asSet in
+    b1worker->size>=2 and
+    b2worker->size>=2 and
+    b1worker->intersection(b2worker)->isEmpty)

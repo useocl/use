@@ -1,0 +1,38 @@
+$Bug: Navigation in ternary association fails (wrong result type).$
+$Category: OCL$
+$State: Closed$
+$BugAuthor: green$
+$Tests: test/t017$
+
+Problem: If you have a use model like the following
+
+  class A
+  end
+
+  class B
+  end
+
+association R between
+  A[0..1] role r1
+  A[0..1] role r2
+  B[*] role r3
+end
+
+and a system state
+
+  !create A1:A
+  !create A2:A
+  !create A3:A
+  !create B:B
+  !insert (A1,A2,B) into R
+  !insert (A2,A3,B) into R
+
+and then try to evaluate the following 
+
+  ?B.r1
+
+you get an error "expected link set size 1 at association end `start', found: 2"
+But you should get Set{A1,A2}!
+
+
+

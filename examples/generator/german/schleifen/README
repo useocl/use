@@ -1,0 +1,16 @@
+
+This directory contains two examples calling
+procedure `testeZugaufbauUndWaggonreihung(Integer,Integer).
+
+Invariant `Zug::Kette' will be evaluated to false if the links of association
+`Reihung' form a cycle.
+
+In the first example (run.cmd) another invariant `Waggon::KeineSchleife' is
+loaded. The generator searches for a state, which satisfies `Zug::Kette' but
+not `Waggon::KeineSchleife'. If a state exists, it is a counterexample showing
+that `Zug::Kette' is too weak. Starting run.cmd results in a `no valid state
+found' message, because `Zug::Kette' is correct.
+
+The second example (run2.cmd) replaces `Zug::Kette' with `Zug::Kette_zuWeich',
+which is too weak. Starting run2.cmd results in a counterexample showing that
+`Zug::Kette_zuWeich' does not prevent cycles.

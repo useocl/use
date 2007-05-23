@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ 
+# Start script for USE
+
+## resolve links - $0 may be a link to use home
+PRG="$0"
+progname=`basename "$0"`
+
+# need this for relative symlinks
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '/.*' > /dev/null; then
+  PRG="$link"
+  else
+  PRG=`dirname "$PRG"`"/$link"
+  fi
+done
+
+USE_HOME=`dirname "$PRG"`/..
+
+# make it fully qualified
+# unset CDPATH since the bash cd builtin may print the result in some cases,
+# and we get the path twice. 
+unset CDPATH
+USE_HOME=`cd "$USE_HOME" && pwd`
+
+basedir=$USE_HOME
+
+# build classpath and path for native readline library wrapper
+# if we have a build directory then use libraries from current build, 
+# otherwise use released libraries 
+if [ -d $basedir/build ]; then
+    CLASSPATH=`echo $basedir/build/lib/*.jar | /bin/sed s/\ /:/g`
+    LD_LIBRARY_PATH=$basedir/build/lib
+else
+    CLASSPATH=`echo $basedir/lib/*.jar | /bin/sed s/\ /:/g`
+    LD_LIBRARY_PATH=$basedir/lib
+fi
+export CLASSPATH LD_LIBRARY_PATH
+
+# set cmd for running USE
+cmd="java -Xms128m -Xmx512m org.tzi.use.main.Main -H=$basedir $@"
+
+# run the java vm
+exec $cmd
+
+

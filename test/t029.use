@@ -1,0 +1,18 @@
+model bug0036
+
+class A
+end
+
+class B
+end
+
+class C 
+end
+
+association R between 
+  A[*] 
+  B[1] 
+  C[*] 
+end
+
+

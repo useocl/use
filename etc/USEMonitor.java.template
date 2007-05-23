@@ -1,0 +1,285 @@
+// -*- mode: java -*-
+@FILE_HEADER@
+
+package org.tzi.use.monitor;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.reflect.SourceLocation;
+import java.net.Socket;
+import java.io.PrintWriter;
+import java.io.IOException;
+import java.util.Set;
+import java.util.IdentityHashMap;
+
+/**
+ * Interface to be implemented (by introduction) by all monitored
+ * classes. This maps every monitored java object to a unique USE
+ * object.
+ */
+interface USEObject {
+    int getUSEId();
+    void setUSEId(int id);
+}
+
+aspect USEMonitor {
+    /**
+     * Set to true if source location should be output as comments in
+     * USE commands.
+     */
+    private static final boolean LOG_LOCATION = false;
+
+    // --- introductions
+
+    /**
+     * Let all observed classes implement the interface USEObject.
+     */
+    declare parents: (
+@INTRODUCTION_PARENTS@
+        ) implements USEObject;
+
+    /**
+     * Adds a private ID field to every class that is used to assign 
+     * every new object a unique identifier. This identifier maps USE 
+     * objects to Java objects and vice versa.
+     */
+    private int (
+@INTRODUCTION_USEID_FIELD@
+        ).fUSEId;
+
+    /**
+     * Returns the unique ID of an object. Implements the interface 
+     * USEObject.
+     */
+    public int (
+@INTRODUCTION_USEID_GETTER@
+        ).getUSEId() { return fUSEId; }
+
+    /**
+     * Sets the unique ID of an object. Implements the interface 
+     * USEObject.
+     */
+    public void (
+@INTRODUCTION_USEID_SETTER@
+        ).setUSEId(int id) { fUSEId = id; }
+
+
+    // --- pointcuts
+
+    /**
+     * Monitored classes.
+     */
+    pointcut pcClass() :
+@POINTCUT_CLASS@
+        ;
+
+    /**
+     * The constructors of monitored classes.
+     */
+    pointcut pcConstructor(Object _this) :
+        this(_this) && pcClass() && execution(new(..));
+
+    /**
+     * The methods of monitored classes.
+     */
+    pointcut pcMethod(Object t) :
+        target(t) && pcClass() && (
+@POINTCUT_METHOD@
+	);
+
+    /**
+     * The field setters of monitored classes.
+     */
+    pointcut pcSetter(Object t, Object _args) :
+        target(t) && pcClass() && args(_args) && (
+@POINTCUT_SETTER@
+        );
+
+
+//     /**
+//      * Calls to add methods on collections.
+//      */
+//     pointcut pcSetAdd(Object o, Company _this, Object _who) : 
+// 	monitoredClass() && target(o) && this(_this)
+// 	&& call(* *.add(Object)) 
+// 	&& args(_who);
+
+//     /**
+//      * Calls to remove methods on collections.
+//      */
+//     pointcut pcSetRemove(Object o, Company _this, Object _who) : 
+// 	monitoredClass() && target(o) && this(_this) 
+// 	&& call(* *.remove(Object)) && args(_who);
+
+    // --- advices
+
+    /**
+     * Monitor object creation.
+     */
+    before (Object _this) : pcConstructor(_this) {
+        logLocation(thisJoinPoint, "before constructor execution");
+
+        // assign object a unique ID for identification in USE
+	USEObject uobj = (USEObject) _this;
+	// object may already have an ID when the constructor of a
+	// super class has been called before
+	if ( uobj.getUSEId() > 0 )
+	    return;
+
+	uobj.setUSEId(fNextId++);
+
+	// strip off package name
+	String classname = thisJoinPoint.getTarget().getClass().getName();
+	int n = classname.lastIndexOf('.');
+	if ( n >= 0 && n < classname.length() - 1 )
+	    classname = classname.substring(n + 1);
+        log("!create " + getUSEObjectName(_this) + " : " + classname);
+    }
+
+    after(Object t) : pcConstructor(t) {
+        logLocation(thisJoinPoint, "after constructor execution");
+        log("check");
+    }
+
+    /**
+     * Monitor method execution.
+     */
+    before (Object t) : pcMethod(t) {
+        logLocation(thisJoinPoint, "before method execution");
+	Object[] args = thisJoinPoint.getArgs();
+	StringBuffer sargs = new StringBuffer();
+	for (int i = 0; i < args.length; i++) {
+	    if ( i > 0 )
+		sargs.append(", ");
+	    if ( args[i] instanceof USEObject ) {
+		int oid = ((USEObject) args[i]).getUSEId();
+		sargs.append("obj" + oid);
+	    } else if ( args[i] instanceof String ) 
+		sargs.append("'" + args[i] + "'");
+	    else 
+		sargs.append(args[i]);
+	}
+
+	String methodName = thisJoinPoint.getSignature().getName();
+        log("!openter " + getUSEObjectName(t) + " " + methodName + "(" + sargs + ")");
+    }
+
+    after(Object t) returning (Object retVal) : pcMethod(t) {
+        logLocation(thisJoinPoint, "after method execution");
+        log("!opexit " + (( retVal == null ) ? "" : retVal));
+    }
+
+    /**
+     * Trace field setters.
+     */
+    after(Object t, Object newValue) : pcSetter(t, newValue) {
+        logLocation(thisJoinPoint, "setting field");
+	String value = newValue.toString();
+	if ( newValue instanceof String ) 
+	    value = "'" + value + "'";
+
+	String attrName = thisJoinPoint.getSignature().getName();
+	// filter assignments to fields related to associations
+	// FIXME: generalize
+	if ( ! attrName.equals("employee") )
+	     log("!set " + getUSEObjectName(t) + "." + attrName + " := " + value);
+	else 
+	    fFields.put(newValue, attrName);
+    }
+
+//     /**
+//      * Insert association links.
+//      */
+//     after(Object o, Company _this, Object _who) : pcSetAdd(o, _this, _who) {
+//         logLocation(thisJoinPoint, "adding link");
+// 	if ( fFields.containsKey(o) ) {
+// 	    log("!insert (" 
+// 		+ getUSEObjectName(_who) + ", " 
+// 		+ getUSEObjectName(_this) 
+// 		+ ") into WorksFor");
+// 	}
+
+//     }
+
+
+//     /**
+//      * Insert association links.
+//      */
+//     after(Object o, Company _this, Object _who) : pcSetRemove(o, _this, _who) {
+//         logLocation(thisJoinPoint, "removing link");
+// 	if ( fFields.containsKey(o) ) {
+// 	    log("!delete (" 
+// 		+ getUSEObjectName(_who) + ", " 
+// 		+ getUSEObjectName(_this) 
+// 		+ ") from WorksFor");
+// 	}
+
+//     }
+
+
+//     after(Object o) : pcSetGetter(o) {
+//         logLocation(thisJoinPoint, "----------------- pcSetGetter");
+//         log("* " + o + ", " + thisJoinPoint.getSignature());
+//     }
+
+
+    /**
+     * The next unique ID assigned to a new object.
+     */
+    private static int fNextId = 1;
+    
+    /**
+     * Map of field values to field names. Used for identifying
+     * modifications of association elements.
+     */
+    private IdentityHashMap fFields = new IdentityHashMap(); // (Object -> String fieldname)
+
+    // helpers
+
+    private String getUSEObjectName(Object obj) {
+	int id = ((USEObject) obj).getUSEId();
+	return "obj" + id;
+    } 
+
+    private void logLocation(JoinPoint jp, String msg) {
+	if ( LOG_LOCATION ) {
+	    SourceLocation loc = jp.getSourceLocation();
+	    log("-- " + loc.getFileName() + ":" + loc.getLine() + ": " + msg);
+	}
+    }
+
+    private Socket fSocket;
+    private boolean fInitDone;
+    private PrintWriter fOut;
+    
+    /**
+     * Initializes a  socket connection to USE.
+     */
+    private void initSocket() {
+	fInitDone = true;
+	try {
+	    fSocket = new Socket("localhost", 1777);
+	    // flush after each line of output
+	    fOut = new PrintWriter(fSocket.getOutputStream(), true);
+	} catch (IOException ex) {
+	    System.err.println("can't connect to localhost/1777: " + ex.getMessage());
+	    if ( fSocket != null ) {
+		try {
+		    fSocket.close();
+		} catch (IOException e) { }
+	    }
+	}
+    }
+
+    /**
+     * Outputs commands either to socket or stdout
+     */
+    private void log(String msg) {
+	if ( fSocket == null && ! fInitDone )
+	    initSocket();
+	if ( fOut != null ) {
+	    fOut.println(msg);
+	} else {
+	    System.out.println(msg);
+	}
+    }
+}

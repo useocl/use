@@ -1,0 +1,13 @@
+To add a bug description, simple create a new intern/bugxxxx file
+(chose the next free number for xxxx). 
+You may include the following tags somewhere in your file:
+
+$Bug: my bugdescription$
+$Author: green $
+$State: the state of the bug (Open, Closed, Pending, ... )$
+$Tests: tests that cover this bugs (e.g. in test/ or unit tests)$
+
+You can use the mainentance target 'buglist-fb3' to generate and
+update the buglist on the fb3 website.
+
+Fabian

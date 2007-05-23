@@ -1,0 +1,6 @@
+model t10 -- regression test for bug0010
+
+class Foo
+operations
+  bar() : Failure = 0
+end

@@ -1,0 +1,603 @@
+USE NEWS -- history of user-visible changes. -*- Text -*-
+$Date: Wed, 16 Aug 2006 13:18:05 +0200 $
+$ReleaseVersion: 2.3.1 $
+
+Please send bug reports to mr@informatik.uni-bremen.de.  See the file
+`README' for a description of how to report bugs.
+
+
+** Changes since version 2.3.0
+
+* [GUI] The sequence diagram view has been improved. Events can now be filtered, 
+  and the layout is more customizable. Printing has been improved.
+
+* [GUI] Object properties (ie, attributes of an object) can now be invoked 
+  from the context menu or by double clicking on an object in the object diagram view.
+
+* [GUI] Bug fixed in object properties view: Changes to attribute values now
+  take effect even if the edit field is still active. This replaces the
+  strange behaviour of previous USE versions, where one had to give the focus to
+  another attribute after editing.
+
+* The GUI of USE is now separated into a second jar (use-gui.jar). 
+  When invoking use with -nogui, use-gui.jar is not required.
+
+* Evaluation performance has been improved.
+  Especially working with large link sets is now much faster.
+
+* Changed context menu. Now all possible insertable and deletable links
+  between selected objects are shown. This includes superclass associations as
+  well as all combinations of possible objects.  The GUI is much more
+  consistent with the command line now.
+
+* The examples have been completely reorganized and categorized.
+
+* Tuple types are now fully supported.
+
+
+
+** Changes since version 2.2.0
+
+  Special features: 
+
+* Association names, role names, and multiplicities can be placed on a
+  user defined position in the class diagram and object diagrams.
+  Double click on the left mouse button to reposition an element.
+  
+* You can now add user defined nodes on association and link edges to 
+  conrol the layout of an edge. Double click on an edge to create an
+  additional node. Double click again on this node and it will
+  disappear.
+
+* Classes/Objects or associations/links can be selected and deselected
+  within the Model browser. Select the desired model element in the
+  Model browser and click with the middle mouse button on the selected
+  model element. In the class diagram the class or association will be
+  selected. In the object diagram all objects or all links will be
+  selected corresponding to the selected class or association.  
+
+* There is now a class diagram window.  
+
+* Links can be deleted within the GUI as well now.
+
+* Bug fix: The command line now works stable again (it was not
+  responding in certain situations in version 2.2.0)
+
+* USE syntax: The syntax for association classes has changed. 
+  It is now: 
+   associationclass WorksFor
+   between
+     Company[0..1] role employer
+     Person[1..*] role employee
+   attributes
+     salary : Integer
+   end
+  The association part and the class part have been switched. People
+  seem to find this more intuitive.
+
+
+** Changes since version 2.1.0
+
+* The startup scripts (bin/use and bin/use.bat) automatically
+  determine the USE home directory on most installations (unix/linux
+  and windows). USE now runs 'out of the box'.
+
+* On Windows, USE can now be installed in locations containing
+  spaces in their path names 
+  (e.g., c:\documents and setting\green\My Files\use)
+
+* Now compiles under Java 1.5 / 5.0.
+
+* UML association classes are now available in USE. 
+  See documentation for further details.
+  Syntax:
+   associationclass WorksFor
+   between
+     Company[0..1] role employer
+     Person[1..*] role employee
+   attributes
+     salary : Integer
+   end
+  Create links for association classes using the new command 
+   !create aJob : WorksFor between (aPerson,aCompany)'
+
+* It is now possible to optionally specify the source end in
+  navigation with `<object>.<rolename>[<rolename>]'. This is
+  necessary when a navigation is ambiguous (regards reflexive ternary
+  associations and association classes).
+
+* The GUI model browser now supports several types of sorting
+  classes, associations, and constraints.
+
+* Added new shell command ':' to display the static type of an
+  expression. 
+
+* Check structure after every change (GUI) is now disabled by
+  default. In earlier versions this was initially enabled. 
+  We disabled it, because reading command files could be really time
+  consuming.
+
+* Objects and association names can be hidden in the object view.
+
+* A little more help is now available.
+
+* All files (*.use, *.cmd, *.invs) can be read by USE now with 
+  open. File type is chosen based on the content.
+  The commands 'read' and 'load' are still available.
+
+* The USE Snapshot Generator has been integrated into USE. 
+
+* An 'if then else' construct is integrated in the ASSL-Language for
+  the Generator
+
+* A 'delete'-command is now available in the ASSL-Language for objects
+  and associations
+
+* With the command 'check -a' all invariants are checked now (USE and
+  Generator invariants). Negated Generator invariants are checked as
+  well now.
+
+* If a model inherent invariant is violated, all invariants which are
+  unaffected from the violation are still evaluated.
+  (When typing 'check' in the shell or when using the class invariant
+  dialog in the GUI).
+
+
+
+
+** Changes since version 2.0.1
+
+* The build system has been simplified and switched from "make" to
+  apache ant. If you want to build USE from source, use ant with the
+  provided build.xml file.
+
+* Preliminary support for OCL 2.0 tuple types has been added. See the
+  file test/t014.in for an example.
+
+* The commands "insert", "delete", "destroy", and "set" are more
+  flexible now in that they accept OCL expressions as arguments
+  instead of only object names. Existing command scripts will still
+  work (with a minor change - see below) since object names are
+  interpreted as OCL variables.
+
+  - The "insert" and "delete" commands insert/delete links into/from
+    an association. Syntax:
+
+      insertCmd ::= "insert" 
+        "(" expression "," expression { "," expression } ")" "into" id
+      deleteCmd ::= "delete" 
+        "(" expression "," expression { "," expression } ")" "from" id
+
+    Each expression must evaluate to an object reference.
+
+  - The "destroy" command destroys one or more objects. Syntax:
+
+      destroyCmd ::= "destroy" expression
+
+    The expression may also denote a collection of objects. For
+    example, the command
+
+      !destroy Person.allInstances
+
+    removes all Person objects from a system state at once.
+
+  - The "set" command assigns a value to an attribute of an
+    object. Syntax:
+
+      setCmd ::= "set" expression ":=" expression 
+
+    The first expression must be an attribute access expression giving
+    an "l-value" for an attribute. Example:
+
+      !set company.manager.salary := 5000
+
+    Note that the assignment token had to be changed from "=" to ":="
+    to make the grammar unambiguous. Existing script files can be
+    converted with the following command in a bash shell:
+
+      $ for f in *.cmd; do mv $f $f.old; \
+        sed -e 's/\(!set[^=]*\)=/\1:=/1' $f.old > $f; done 
+
+* A new "let" command allows to bind new variables. The syntax is:
+
+  letCmd ::= "let" id [ ":" type ] "=" expression
+
+  For an example, see the specification SwapLinks.use in the examples
+  directory.
+
+
+** Changes since version 2.0.0
+
+* An Extension to USE 2.0.0. was added. It is extended by a tool for 
+  generating (valid) snapshots for given class models. Changes in USE 
+  and an overview about new packages are described in file CHANGES.
+
+* A change to the USE grammar now allows classes, associations, and
+  constraints to appear in any order in a specification file.
+
+* Bug fixes: 
+
+  - Invoking the "Reset" command when no model is loaded caused a
+    NullPointerException. Reported by Joern Bohling.
+
+  - "destroy" commands showed up as "delete" in the Command list view
+    and the "write" shell command. Reported by Joern Bohling.
+
+  - OCL operations "including" and "excluding" didn't accept undefined
+    argument values.
+
+  - Flattening of collections with undefined (collection) elements
+    caused an exception. Reported by Arne Lindow.
+
+  - The OCL operation "sortedBy" caused an exception when the argument
+    type differed from the collection element type. Reported by Arne
+    Lindow.
+
+
+** Changes since version 1.5.0
+
+* Support for pre- and postconditions has been added. Examples can be
+  found in the specification files AB.use, Employee.use, Graph.use,
+  and NestedOperationCalls.use. See the documentation about
+  "Validating pre- and postconditions" available at the project web
+  site (http://www.db.informatik.uni-bremen.de/projects/USE/) for
+  details.
+
+* Operation calls can be simulated with the new commands `openter' and
+  `opexit'. Preconditions are checked on entry, and postconditions are
+  checked on exit of an operation. See the documentation on pre- and
+  postconditions for details.
+
+* Three new views have been added:
+
+  - UML sequence diagrams show the flow of messages (i.e., sequence of
+    operation calls).
+
+  - A call stack shows the stack of currently active operations.
+
+  - A command list shows the sequence of executed state manipulation
+    commands in the syntax of the USE command language.
+
+* Object diagrams and sequence diagrams can be printed with the
+  `File|Print...' menu command.
+
+* A new shell command `write' writes the list of executed commands to
+  stdout or to a file. This function corresponds to the `File|Save'
+  menu item.
+
+* A `step mode' helps to animate command scripts from the shell. The
+  command `step on' activates a single-step mode in which commands are
+  executed only after a key has been pressed.
+
+* The grammar of USE specifications has been changed slightly to be
+  more orthogonal. Semicolons terminating enumeration type, attribute,
+  operation, and association end definitions are now deprecated
+  although they are still allowed. This may change in the future so
+  that semicolons are dropped completely. All of the example files
+  have been updated.
+
+* Some grammar limititations have been lifted: element variables in
+  iterate-based expressions can now be omitted as in standard OCL,
+  e.g., self.employees->select(age > 20) is fine now whereas it
+  previously had to be written as 
+  self.employees->select(e | age > 20).
+
+* Invariant names must be unique in class scope rather than in model
+  scope. It's now ok to have invariants with the same name in
+  different classes, for example,
+
+	 context Foo inv i: ...
+	 context Bar inv i: ...
+
+* The OCL 1.4 operations `collection->one and `collection->any' have
+  been added. Examples can be found in test/t1.in.
+
+* The syntax of collection literals and real literals has been updated
+  to OCL 1.4.  Multiple integer ranges are now accepted in collection
+  literals, e.g., Set{1..3,5..7}. Real literals may contain exponents.
+
+* The type OclAny has been added.
+
+* Let expressions (OCL 1.3 style) have been added.
+
+* Type checking for collection literals has been improved. Previously,
+  all elements had to have the same type. Now, the least common
+  supertype (if a unique one exists) is used. Examples:
+	   
+	   Set{1} : Set(Integer)
+	   Set{1,1.1} : Set(Real)
+	   Set{1,1.1,true} : Set(OclAny)
+
+  Note that the type inference mechanism does not yet handle some
+  cases related to multiple inheritance. In some rare cases it signals
+  a type check error where a common supertype exists.
+
+* Bug fixes: 
+
+  - Specification files were not closed after compilation causing the
+    file to remain locked during a session on windows platforms.
+
+  - Opening an evaluation browser on an expression containing iterate
+    could caused a NullPointerException. Reported by Arne Lindow.
+
+  - Fixed derived associations in the Collaboration package in
+    UML13All.use and actionsemantics.use. Reported by Christophe
+    Lecamus.
+
+
+** Changes since version 1.4.0
+
+* A new view for class extents has been added. A table shows all
+  objects of a class, their attribute values and their results
+  w.r.t. invariants. This information helps to quickly identify
+  individual objects that violate any constraints. The view is called
+  `class extent view' and is available from the the menu item
+  `View|Create...'. A context menu in the view window provides
+  additional options.
+
+* New nodes in object diagrams are placed randomly if objects are
+  created by a script. They all were stacked on top of each other at
+  position (0,0) previously.
+
+* There is a new button `Clear result' in the OCL evaluation dialog.
+
+* The semantics of OCL if-expressions changed with respect to
+  undefined values. If the condition is undefined the result will be
+  undefined, too. For example, the expression `if
+  oclUndefined(Boolean) then 2 else 3 endif' results in `Undefined :
+  Integer'. In previous versions, the result was 3.
+
+* The OCL operations `collection->isUnique', `collection->sortedBy',
+  `bag->asSequence', and `set->asSequence' have been added. Examples
+  can be found in test/t1.in.
+
+* Bug fixes: 
+
+  - A NullPointerException was thrown by the USE-compiler if a result
+    type of an operation was undefined. Reported by Tim Harrison.
+
+  - The OCL operations includesAll and excludesAll now correctly
+    accept any collection with the same element type T as the receiver
+    collection. Previously, only subtypes of the receiver collection
+    were possible. Reported by Tim Harrison.
+
+  - The collect operation applied to sequences now correctly returns a
+    sequence instead of a bag. Reported by Tim Harrison.
+
+  - Undefined values in collections sometimes "disappeared" or caused
+    runtime exceptions.
+
+  - Variables bound to new objects were not available in global
+    scope. For example, after doing `!create p : Person', the variable
+    p was not available in commands like `!set p.age=p.age + 1'.
+
+
+** Changes since version 1.3.0
+
+* Thanks to Jose Alvarez and Andy Evans from the University of York,
+  UK, for contributing their specification of the UML Action Semantics
+  model as defined in Response to OMG RFP ad/98-11-01. The
+  specification is in the file actionsemantics.use in the examples
+  directory. The file groupactionexample.cmd contains an example
+  script.
+
+* The layout of object diagrams can be saved to and loaded from a
+  file. The `Load layout' and `Save layout' commands are available via
+  the context menu in object diagrams. The default extension for
+  layout files is ".olt" (object diagram layout).
+
+* Attribute values of objects can be shown in object diagrams. This
+  option can be toggled with the checkbox `Show attribute values' in
+  the context menu of object diagrams.
+
+* The `check' command has changed. The option `verbose' is now `-v'. A
+  new option `-d' gives more details in case of a failing
+  invariant. It shows those instances that violate the constraint. The
+  check can also be optionally restricted to a list of invariants.
+
+* The check for rolename conflicts is now more strict. This has
+  revealed more errors in the UML 1.3 metamodel. For example, in
+  Fig. 2-17, the rolename `connection' at AssociationEndRole conflicts
+  with the inherited identical rolename at class AssociationEnd.
+
+* Bug fixes: 
+
+  - Equality of OCL values was not always well-defined for integer and
+    real values. Undefined values sometimes caused an
+    exception.
+
+  - Operation bodies with expressions refering to other operations
+    that are defined later in a specification did not compile.
+
+  - The shorthand notation for collect did not work with oclIsTypeOf,
+    oclIsKindOf and oclAsType. Also, these operations are defined for
+    OclAny and subtypes only. Previously, they could be applied to
+    collections although the collection types are not subtypes of
+    OclAny. Reported by Tim Harrison.
+
+  - Evaluation of operation parameters could produce wrong results in
+    certain circumstances. If a variable with the same name of a
+    formal parameter exists in the caller's scope, this variable would
+    change in the caller's context. See the file test/t5.in for an
+    example. Bug report and fix submitted by Jean-Paul Bodeveix.
+
+
+** Changes since version 1.2.0
+
+* The OCL shorthand notation for collect has been implemented (see
+  Section 7.6.2 of UML 1.3). The file test/t4.in contains examples and
+  test cases. The shorthand syntax can be disabled with the command
+  line option `-disableCollectShorthand'.
+
+* The new command `readq' ("read quiet") allows to read command files
+  in the interactive shell without echoing its contents. This has been
+  useful when producing large snapshots.
+
+* Bug fixes: 
+
+  - A NullPointerException was thrown by the USE-compiler if an
+    undefined enumeration literal appeared in an OCL
+    expression. Reported by Joern Bohling.
+
+
+** Changes since version 1.1.0
+
+* The USE parser will issue a warning if the `ordered' feature is
+  specified for an association end with multiplicity of at most one.
+
+* The OCL shorthand notation treating objects resulting from
+  navigation over associations with multiplicity zero or one as set
+  has been implemented. For example, the existence of a link to a
+  single object can be tested as follows: self.manager->notEmpty
+
+* A new property `use.eval.numthreads' in use.properties specifies the
+  number of parallel threads to use when evaluating constraints. If
+  you have a multi-processor machine, increasing this number 
+  should significantly speed up constraint checking for large
+  snapshots and models with many constraints.
+
+* A new command line option `-q' facilitates batch processing. After a
+  specification is read, a command file is executed, and all
+  constraints are checked. The program returns with exit code 1, if
+  any constraint failed, with exit code 0 otherwise.
+
+* Cardinality of n-ary association links is checked against
+  multiplicity specification. Previously, only binary associations
+  were checked.
+
+* Full support of OCL string literals with escape sequences has been
+  added. Support for double quotes around strings has been dropped
+  since they are not part of OCL 1.3.
+
+* The unary "+" operator has been added to the syntax of OCL
+  expressions.
+
+* The type "Collection(T)" could not be explicitly specified
+  previously. Now it is possible to write expressions like
+  Set{Set{1},Set{2}}->select(s : Collection(Integer) | s->notEmpty)
+
+* Bug fixes: 
+
+  - A NullPointerException was thrown by the USE-compiler if a parent
+    class in a specialization clause of a class declaration was not
+    defined previously. Reported by Jose Alvarez.
+
+  - Building from sources failed because README.in is missing in the
+    distribution. Removed the dependency in the Makefile. Reported by
+    Ananda M. S. Amatya.
+
+  - Compilation of org/tzi/use/graph/layout/LayeredLayout.java failed
+    with javac complaining about possibly uninitialized
+    variables. Reported by Ananda M. S. Amatya.
+
+  - Real values with difference less than 1 were considered equal when
+    being added to a set (e.g., Set{1.3,1.2} resulted in
+    Set{1.3}). This bug caused WRONG RESULTS IN OCL EXPRESSIONS in
+    previous releases. Reported by Joern Bohling.
+
+
+** Changes since version 1.0.1
+
+* The new operation `oclUndefined(type)' allows to denote the
+  undefined value of the specified type. This is an OCL extension.
+
+* The behavior of boolean operations has changed w.r.t undefined
+  arguments. It should now conform to the rules listed in `The
+  Amsterdam Manifesto on OCL', Technical Report TUM-I9925, TU
+  Muenchen, 1999.
+
+* Evaluation of most OCL expressions is faster now due to
+  short-circuit evaluation of binary boolean operations.
+
+* New menu item `State|Reset' resets a system to its initial
+  state. The corresponding script command is `reset'.
+
+* New checkbox menu item `State|Check structure after every change'
+  allows to turn off automatic structure checking. This is useful when
+  reading a large script from the shell producing many intermediate
+  states.
+
+* N-ary associations (n > 2) are supported in object diagrams. They
+  are drawn as diamonds.
+
+* The use-generic-mode for emacs (in etc/use.el) has been extended to
+  work for USE cmd files.
+
+* Comments in cmd files may start with `--'.
+
+* Bug fixes:
+
+  - When an object was destroyed, dangling links were not removed.
+
+  - Undo of `destroy object' did not work.
+
+  - Trying to set an attribute to a value with wrong type caused an
+    uncaught exception.
+
+  - OCL expressions with implicit references to self sometimes caused
+    an exception during evaluation.
+
+  - The UML metamodel (in examples/UML13All.use) itself violates
+    well-formedness rule `Classifier3' for associations between
+    State/Action, Message/ClassifierRole, Stimulus/Instance,
+    Message/Message, UseCase/Include, and UseCase/Extend. Fixed by
+    adding different role names.
+
+
+** Changes since version 1.0.0
+
+* A number of bugs related to type checking and evaluating OCL
+  expressions are fixed.
+
+* Most of the operations of predefined types (Sect. 7.8 of the OMG UML
+  1.3 document) are now implemented.
+
+* An almost complete specification of the UML 1.3 metamodel is
+  available in examples/UML13All.use.
+
+
+** Changes since version 0.9.0
+
+* Objects can be created by dragging a class from the model browser
+  onto an object diagram.
+
+* Any number of objects can be selected in object diagrams by holding
+  the shift key while clicking on them.
+
+* Links between objects can be inserted by selecting the objects and
+  then choosing from the popup menu one of the available associations.
+
+* A Log panel shows more detailed information about some actions.
+
+* A new view for showing and changing object properties has been
+  added.
+
+* Models can be loaded via the `File|Open' menu command.
+
+* New menu item `State|Check structure' allows checking model inherent
+  constraints. Details are sent to the Log panel.
+
+* New menu item `File|Save script' allows saving a script that can be
+  read by the USE shell to reproduce the current system state.
+
+* A `destroy' command for destroying objects, and a `delete' command
+  for removing links has been added to the USE shell syntax. An
+  example can be found in the file examples/Job.cmd.
+
+* Full undo support for all state manipulation commands is available.
+
+* Automatic layout of object diagrams has been reimplemented. 
+
+  - The new algorithm tries to move elements to the centre and keeps
+    them inside the visible area.
+
+  - Self-links are shown as circles. 
+
+  - Display of role names is optional (see popup menu).
+
+* Fixed a bug that let views stay hidden after creation when run with
+  Java 1.3.
+
+ LocalWords:  ReleaseVersion README associationclass WorksFor aJob aPerson cmd
+ LocalWords:  aCompany rolename invs ASSL xml insertCmd deleteCmd destroyCmd
+ LocalWords:  setCmd

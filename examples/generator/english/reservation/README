@@ -1,0 +1,10 @@
+
+This example uses procedure `reservation(Journey, Station, Station})'.
+
+It shows how ASSL can assist in finding difficult system states. Suppose the
+user is not able to add a reservation so that the new state is valid. The
+generator will test every seat in the train. If it finds a valid state, the
+procedure stops.
+
+Furthermore procedure `reservation(Journey, Station, Station})' is like a
+typical reservation use case.

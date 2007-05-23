@@ -1,0 +1,512 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<!-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ -->
+<head>
+<title>Validating Pre- and Postconditions</title>
+<meta name="author" content="Mark Richters"> 
+<meta name="keywords"
+content="UML,OCL,USE,validation,tool,precondition,postcondition,oclIsNew,@pre"> 
+</head>
+<body bgcolor="#ffffff">
+
+<center><h1>Validating Pre- and Postconditions with USE</h1></center>
+
+<!-- ====================================== -->
+
+<p>OCL provides special syntax for specifying pre- and postconditions
+on operations in a UML model. Pre- and postconditions are constraints
+that define a contract that an implementation of the operation has to
+fulfill. A precondition must hold when an operation is called, a
+postcondition must be true when the operation returns. The USE tool
+allows to validate pre- and postconditions by simulating operation
+calls. The following describes how this feature works.</p>
+
+<p><strong>Contents:</strong></p>
+
+<blockquote>
+<dl>
+<dt>1. <a href="#sec1">Example Model</a></dt>
+<dt>2. <a href="#sec2">Adding Pre- and Postconditions</a></dt>
+<dt>3. <a href="#sec3">Validating the Model</a></dt>
+<dd><dl>
+<dt>3.1 <a href="#sec31">Initial State</a></dt>
+<dt>3.2 <a href="#sec32">Calling Operations and Checking Preconditions</a></dt>
+<dt>3.3 <a href="#sec33">Operation Effects</a></dt>
+<dt>3.4 <a href="#sec34">Exiting Operations and Checking Postconditions</a></dt>
+<dt>3.5 <a href="#sec35">Result Values and References to the Previous State</a></dt>
+<dt>3.6 <a href="#sec36">Visualization as Sequence Diagram</a></dt>
+</dl></dd>
+<dt>4. <a href="#sec4">An Example with <tt>oclIsNew</tt></a></dt>
+<dt>5. <a href="#sec5">Nested Operation Calls</a></dt>
+</dl>
+</blockquote>
+
+<p><a href="index.html">Back to the USE home page.</a></p>
+
+<!--  ===================================================== -->
+
+<h2><a name="sec1">1. Example Model</a></h2>
+
+<p>Consider the following UML class diagram for a simple model with
+persons that can work for a company.</p>
+
+<center><img src="gen-img/cls-Employee.png" alt="class diagram"></center>
+
+<p>Here is the USE specification of the model shown in the class
+diagram that we use in the sequel.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+#include "Employee1.use.html"
+</pre></td></tr></table></blockquote>
+
+
+<!--  ===================================================== -->
+
+<h2><a name="sec2">2. Adding Pre- and Postconditions</a></h2>
+
+<p>We add pre- and postconditions for the hire and fire operations in
+class Company. The USE specification is extended as follows.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+#include "Employee2.use.html"
+</pre></td></tr></table></blockquote>
+
+<p>The first precondition of the <tt>hire</tt> operation is named
+<tt>hirePre1</tt> and makes sure that the operation can only be called
+with a well-defined person object (Note that the operation
+<tt>isDefined</tt> is a USE extension. It is not possible to express
+this constraint with standard OCL). The second precondition
+(<tt>hirePre2</tt>) makes sure that the person passed as parameter
+<tt>p</tt> is not already an employee of the company. The
+postcondition (<tt>hirePost</tt>) guarantees that after the operation
+has exited, the person actually has been added to the set of
+employees. The constraints for the operation <tt>fire</tt> work just
+the other way round.</p>
+
+
+<!--  ===================================================== -->
+
+<h2><a name="sec3">3. Validating the Model</a></h2>
+
+<!--  ===================================================== -->
+
+<h3><a name="sec31">3.1 Initial State</a></h3>
+
+<p>Now let's test the pre- and postconditions. First we start the USE
+tool with the specification of the example model.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+<b>$ use Employee.use</b>
+use version 1.6.0, Copyright (C) 1999,2000,2001 Mark Richters
+use> 
+</pre></td></tr></table></blockquote>
+
+<p>At the prompt, we enter the following commands to create two
+objects.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!create ibm : Company</b>
+use> <b>!create joe : Person</b>
+use> <b>!set joe.name := 'Joe'</b>
+use> <b>!set joe.age := 23</b>
+</pre></td></tr></table></blockquote>
+
+<p>The current system state can be visualized with an object diagram
+view in USE (click on the picture to get an enlarged version).</p>
+
+<blockquote>
+<a href="pp1.png"><img src="gen-img/pp1-small.png" alt="screenshot"></a>
+</blockquote>
+
+<p>Next, we want to call the operation <tt>hire</tt> on the company
+object to hire <tt>joe</tt> as a new employee.</p>
+
+<!--  ===================================================== -->
+
+<h3><a name="sec32">3.2 Calling Operations and Checking Preconditions</a></h3>
+
+<p>Operation calls are initiated with the command
+<tt>openter</tt>. The syntax is</p>
+
+<blockquote>
+!openter &lt;<i>source-expression</i>&gt;&nbsp;&lt;<i>operation-name</i>&gt;&nbsp;(&nbsp;[&lt;<i>argument-expression-list</i>&gt;]&nbsp;)
+</blockquote>
+
+<p>where &lt;<i>source-expression</i>&gt; must be an OCL expression
+denoting the receiver object of the operation named
+&lt;<i>operation-name</i>&gt;. Depending on the operation's signature
+an &lt;<i>argument-expression-list</i>&gt; has to be passed to the
+operation.
+</p>
+
+<p>The following command shows the top-level bindings of
+variables. These variables can be used in expressions to refer to
+existing objects.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>info vars</b>
+ibm : Company = @ibm
+joe : Person = @joe
+</pre></td></tr></table></blockquote>
+
+<p>We invoke the operation <tt>hire</tt> on the receiver object
+<tt>ibm</tt> and pass the object <tt>joe</tt> as parameter.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!openter ibm hire(joe)</b>
+precondition `hirePre1' is true
+precondition `hirePre2' is true
+</pre></td></tr></table></blockquote>
+
+<p>The <tt>openter</tt> command has the following effect.</p>
+
+<ol>
+<li>The source expression is evaluated to determine the receiver
+object.</li>
+
+<li>The argument expressions are evaluated.</li>
+
+<li>The variable <tt>self</tt> is bound to the receiver object and the
+argument values are bound to the formal parameters of the
+operation. These bindings determine the local scope of the
+operation.</li>
+
+<li>All preconditions specified for the operation are evaluated.</li>
+
+<li> If all preconditions are satisfied, the current system state is
+saved and the operation call is saved on a call stack.</li>
+</ol>
+
+<p>In the example, the call of the operation <tt>hire</tt> was
+successful because both preconditions are satisfied. The stack of
+currently active operations can be viewed by issuing the following
+command.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>info opstack</b>
+active operations: 
+1. Company::hire(p : Person)
+</pre></td></tr></table></blockquote>
+
+<p>We can verify the bindings of the <tt>self</tt> variable and the
+formal parameter <tt>p</tt> as follows.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>info vars</b>
+ibm : Company = @ibm
+joe : Person = @joe
+p : Person = @joe
+self : Company = @ibm
+</pre></td></tr></table></blockquote>
+
+<!--  ===================================================== -->
+
+<h3><a name="sec33">3.3 Operation Effects</a></h3>
+
+<p>We can simulate the execution of an operation with the usual USE
+primitives for changing a system state. The postcondition of the
+<tt>hire</tt> operation requires that a WorksFor link between the
+person and the company has to be created. We also set the salary of
+the new employee.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!insert (p, ibm) into WorksFor</b>
+use> <b>!set p.salary := 2000</b>
+</pre></td></tr></table></blockquote>
+
+<p>The object diagram shows the new system state with the link between
+the person and company objects.</p>
+
+<blockquote>
+<a href="pp2.png"><img src="gen-img/pp2-small.png" alt="screenshot"></a>
+</blockquote>
+
+<!--  ===================================================== -->
+
+<h3><a name="sec34">3.4 Exiting Operations and Checking Postconditions</a></h3>
+
+<p>After generating all side-effects of an operation, we are ready to
+exit the operation and check its postconditions. The command
+<tt>opexit</tt> simulates a return from the currently active
+operation. The syntax is</p>
+
+<blockquote>
+!opexit [&lt;<i>result-expression</i>&gt;]
+</blockquote>
+
+<p>The optional &lt;<i>result-expression</i>&gt; is only
+required for operations with a result value. An example will be given
+later. The operation <tt>hire</tt> specifies no result, so we can just
+issue</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!opexit</b>
+postcondition `hirePost' is true
+</pre></td></tr></table></blockquote>
+
+<p>The <tt>opexit</tt> command has the following effect.</p>
+
+<ol>
+<li>The currently active operation is popped from the call stack.</li>
+
+<li>If an optional result value is given, it is bound to the special
+OCL variable "result".</li>
+
+<li>All postconditions specified for the operation are evaluated in
+context of the current system state and the pre-state saved at
+operation entry time.</li>
+
+<li>All local variable bindings are removed.</li>
+</ol>
+
+<p>In our example, the postcondition <tt>hirePost</tt> is
+satisfied.</p>
+
+<p>The operation has been removed from the call stack.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>info opstack</b>
+no active operations.
+</pre></td></tr></table></blockquote>
+
+<p>All variable bindings local to operations are removed on exit.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>info vars</b>
+ibm : Company = @ibm
+joe : Person = @joe
+</pre></td></tr></table></blockquote>
+
+<p>Note that object names are elements of the top-level bindings. If
+you create new objects inside an operation call, their names will
+still be available after exiting the operation.</p>
+
+<!--  ===================================================== -->
+
+<h3><a name="sec35">3.5 Result Values and References to the Previous State</a></h3>
+
+<p>The operation <tt>raiseSalary</tt> in class Person is used for
+changing the salary of an employee by a given rate. The following
+constraints are added to the model specification.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+#include "Employee3.use.html"
+</pre></td></tr></table></blockquote>
+
+<p>The first postcondition <tt>raiseSalaryPost</tt> requires that the
+new value of the salary attribute equals a value that is computed in
+terms of the previous value using the <tt>@pre</tt> modifier. The
+second postcondition <tt>resultPost</tt> specifies that the result
+value of the operation equals the new salary.</p>
+
+<p>We call <tt>raiseSalary</tt> on the new employee <tt>joe</tt>. The
+rate <tt>0.1</tt> is given to raise the salary by 10%.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!openter joe raiseSalary(0.1)</b>
+</pre></td></tr></table></blockquote>
+
+<p>The salary attribute is assigned a new value with the <tt>set</tt>
+command.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!set self.salary := self.salary + self.salary * rate</b>
+</pre></td></tr></table></blockquote>
+
+<p>Since <tt>raiseSalary</tt> is an operation with a return value, we
+have to specify a result value on exit. This value is bound to the OCL
+<tt>result</tt> variable when the postconditions are evaluated.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!opexit 2200</b>
+postcondition `raiseSalaryPost' is true
+postcondition `resultPost' is true
+</pre></td></tr></table></blockquote>
+
+<!--  ===================================================== -->
+
+<h3><a name="sec36">3.6 Visualization as Sequence Diagram</a></h3>
+
+<p>The USE tool can visualize a sequence of operation calls as a UML
+sequence diagram. The following screenshot shows the sequence of calls
+for the example. During a validation session the diagram is
+automatically updated on each operation call.</p>
+
+<blockquote>
+<a href="pp-seq-emp.png"><img src="gen-img/pp-seq-emp-small.png" alt="screenshot"></a>
+</blockquote>
+
+<!--  ===================================================== -->
+
+<h2><a name="sec4">4. An Example with <tt>oclIsNew</tt></a></h2>
+
+<p>Here is another example modeling a graph structure. Objects of
+class Node represent nodes of a graph that can be connected by
+edges. Each node can be connected to an arbitrary number of source and
+target nodes. The Node class contains an operation
+<tt>newTarget()</tt>. The purpose of this operation is to (1) create a
+new node and (2) to insert a new edge between the source node and the
+new target node.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+#include "Graph.use.html"
+</pre></td></tr></table></blockquote>
+
+<p>The postcondition <tt>targetNodeIsNew</tt> also demonstrates the
+application of the OCL operation <tt>oclIsNew</tt> to check for the
+creation of new objects.</p>
+
+<p>We use the following command script for animating the model. The
+script simulates three operation calls. The first one is expected to
+succeed while the second and third one should violate the
+postconditions.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+!create n1 : Node
+
+<i>-- this call satisfies both postconditions</i>
+!openter n1 newTarget()
+!create n2 : Node
+!insert (n1,n2) into Edge
+!opexit
+
+<i>-- postcondition oneNewTarget fails, 
+-- because n3 is not linked to n1</i>
+!openter n1 newTarget()
+!create n3 : Node
+!opexit
+
+<i>-- postcondition targetNodeIsNew fails, 
+-- because n3 has already been created above</i>
+!openter n1 newTarget()
+!insert (n1,n3) into Edge
+!opexit
+</pre></td></tr></table></blockquote>
+
+<p>Here is the output of the USE tool confirming our expectations
+about the success and failure of postconditions. Details during the
+evaluation of failing postconditions provide hints about what went
+wrong.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+$ use -nogui Graph.use Graph.cmd
+use version 1.6.0, Copyright (C) 1999,2000,2001 Mark Richters
+Graph.cmd> !create n1 : Node
+Graph.cmd> 
+Graph.cmd> -- this call satisfies both postconditions
+Graph.cmd> !openter n1 newTarget()
+Graph.cmd> !create n2 : Node
+Graph.cmd> !insert (n1,n2) into Edge
+Graph.cmd> !opexit
+postcondition `oneNewTarget' is true
+postcondition `targetNodeIsNew' is true
+Graph.cmd> 
+Graph.cmd> -- postcondition oneNewTarget fails, 
+Graph.cmd> -- because n3 is not linked to n1
+Graph.cmd> !openter n1 newTarget()
+Graph.cmd> !create n3 : Node
+Graph.cmd> !opexit
+postcondition `oneNewTarget' is false
+evaluation results:
+  self : Node = @n1
+  self.target : Set(Node) = Set{@n2}
+  self : Node = @n1
+  self.target@pre : Set(Node) = Set{@n2}
+  (self.target - self.target@pre) : Set(Node) = Set{}
+  (self.target - self.target@pre)->size : Integer = 0
+  1 : Integer = 1
+  ((self.target - self.target@pre)->size = 1) : Boolean = false
+postcondition `targetNodeIsNew' is true
+Graph.cmd> 
+Graph.cmd> -- postcondition targetNodeIsNew fails, 
+Graph.cmd> -- because n3 has already been created above
+Graph.cmd> !openter n1 newTarget()
+Graph.cmd> !insert (n1,n3) into Edge
+Graph.cmd> !opexit
+postcondition `oneNewTarget' is true
+postcondition `targetNodeIsNew' is false
+evaluation results:
+  self : Node = @n1
+  self.target : Set(Node) = Set{@n2,@n3}
+  self : Node = @n1
+  self.target@pre : Set(Node) = Set{@n2}
+  (self.target - self.target@pre) : Set(Node) = Set{@n3}
+  n : Node = @n3
+  n.oclIsNew : Boolean = false
+  (self.target - self.target@pre)->forAll(n : Node | n.oclIsNew) : Boolean = false
+Graph.cmd> 
+</pre></td></tr></table></blockquote>
+
+<p>The screenshot below shows the sequence diagram automatically
+generated from the example. Dashed return arrows in red indicate that
+a postcondition failed on exit from an operation call.</p>
+
+<blockquote>
+<a href="pp-seq-graph.png"><img src="gen-img/pp-seq-graph-small.png" alt="screenshot"></a>
+</blockquote>
+
+<!--  ===================================================== -->
+
+<h2><a name="sec5">5. Nested Operation Calls</a></h2>
+
+<p>This example shows how operation calls may be nested in the
+simulation. It also shows that postconditions may be specified on
+operations without side-effects. An OCL expression can be given to
+describe the computation of a side-effect free operation. In the
+example, we use a recursive definition of the factorial function.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+#include "NestedOperationCalls.use.html"
+</pre></td></tr></table></blockquote>
+
+<p>The postcondition reflects the inductive case of the definition of
+the factorial function. The following commands show the computation of
+<tt>3!</tt>.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!create r : Rec</b>
+use> <b>!openter r fac(3)</b>
+precondition `pre1' is true
+use> <b>!openter r fac(2)</b>
+precondition `pre1' is true
+use> <b>!openter r fac(1)</b>
+precondition `pre1' is true
+</pre></td></tr></table></blockquote>
+
+<p>The call stack now looks like this.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>info opstack</b>
+active operations: 
+1. Rec::fac(n : Integer) : Integer
+2. Rec::fac(n : Integer) : Integer
+3. Rec::fac(n : Integer) : Integer
+</pre></td></tr></table></blockquote>
+
+<p>We exit the operations in reverse order and provide result values
+that satisfy the postcondition.</p>
+
+<blockquote><table width="90%" bgcolor="#e0e0e0"><tr><td><pre>
+use> <b>!opexit 1</b>
+postcondition `post1' is true
+use> <b>!opexit 2</b>
+postcondition `post1' is true
+use> <b>!opexit 6</b>
+postcondition `post1' is true
+</pre></td></tr></table></blockquote>
+
+<p>The screenshot below shows the sequence diagram automatically
+generated from the example. Note the stacked activation frames
+resulting from the recursion.</p>
+
+<blockquote>
+<a href="pp-seq-rec.png"><img src="gen-img/pp-seq-rec-small.png" alt="screenshot"></a>
+</blockquote>
+
+
+<p><a href="index.html">Back to the USE home page.</a></p>
+
+
+<!--  Local Variables: -->
+<!--  mode:sgml -->
+<!--  End: -->

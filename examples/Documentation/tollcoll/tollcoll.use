@@ -1,0 +1,197 @@
+------------------------------------------------------ model TollCollect
+model TollCollect
+------------------------------------------------------------ class Truck
+class Truck
+attributes
+  num:String
+  trips:Sequence(Point)
+  debt:Integer
+operations
+  init(aNum:String)
+  enter(entry:Point)
+  move(target:Point)
+  pay(amount:Integer)
+  bye():Integer
+  ----------------------------------------------------------------------
+  numIsKey():Boolean=
+    Truck.allInstances->forAll(self,self2|
+      self<>self2 implies self.num<>self2.num)
+end
+------------------------------------------------------------ class Point
+class Point
+attributes
+  name:String
+operations
+  init(aName:String)
+  northConnect(aNorth:Point)
+  southConnect(aSouth:Point)
+  ----------------------------------------------------------------------
+  northPlus():Set(Point)=
+    northPlusOnSet(self.north)
+  northPlusOnSet(curSol:Set(Point)):Set(Point)= -- current solution
+    let oneStep:Set(Point)=
+      curSol->collect(p|p.north)->flatten->asSet in
+    if oneStep->exists(p|curSol->excludes(p))
+      then northPlusOnSet(curSol->union(oneStep))
+      else curSol endif
+  southPlus():Set(Point)=
+    southPlusOnSet(self.south)
+  southPlusOnSet(curSol:Set(Point)):Set(Point)= -- current solution
+    let oneStep:Set(Point)=
+      curSol->collect(p|p.south)->flatten->asSet in
+    if oneStep->exists(p|curSol->excludes(p))
+      then southPlusOnSet(curSol->union(oneStep))
+      else curSol endif
+  ----------------------------------------------------------------------
+  -- tc solution from richter's diss; does not work for 'pearl lines'
+  -- with 4 edges (hamburg, hannover, munich, garmisch, obersdorf)
+  -- northPlus():Set(Point)=
+  --   Point.allInstances->iterate(p1,p2,p3:Point;
+  --     r:Set(Sequence(Point))=
+  --       Point.allInstances->iterate(p1,p2:Point;
+  --         r2:Set(Sequence(Point))=oclEmpty(Set(Sequence(Point)))|
+  --         if p1.north->includes(p2)
+  --           then r2->including(Sequence{p1,p2}) else r2 endif)|
+  --     if r->exists(sp1,sp2:Sequence(Point) |
+  --        sp1->at(1)=p1 and sp1->at(2)=p2 and
+  --        sp2->at(1)=p2 and sp2->at(2)=p3)
+  --        then r->including(Sequence{p1,p3}) else r endif)->
+  --   iterate(sp:Sequence(Point);r:Set(Point)=oclEmpty(Set(Point))|
+  --     if sp->at(1)=self then r->including(sp->at(2)) else r endif)
+  -- southPlus():Set(Point)=
+  --   Point.allInstances->iterate(p1,p2,p3:Point;
+  --     r:Set(Sequence(Point))=
+  --       Point.allInstances->iterate(p1,p2:Point;
+  --         r2:Set(Sequence(Point))=oclEmpty(Set(Sequence(Point)))|
+  --         if p1.south->includes(p2)
+  --           then r2->including(Sequence{p1,p2}) else r2 endif)|
+  --     if r->exists(sp1,sp2:Sequence(Point) |
+  --        sp1->at(1)=p1 and sp1->at(2)=p2 and
+  --        sp2->at(1)=p2 and sp2->at(2)=p3)
+  --        then r->including(Sequence{p1,p3}) else r endif)->
+  --   iterate(sp:Sequence(Point);r:Set(Point)=oclEmpty(Set(Point))|
+  --     if sp->at(1)=self then r->including(sp->at(2)) else r endif)
+  ----------------------------------------------------------------------
+  ----------------------------------------------------------------------
+  nameIsKey():Boolean=
+    Point.allInstances->forAll(self,self2|
+      self<>self2 implies self.name<>self2.name)
+  noCycles():Boolean=
+    Point.allInstances->forAll(self|
+      not(self.northPlus()->includes(self)))
+end
+---------------------------------------------------- association Current
+association Current between
+  Truck[0..*]
+  Point[0..1]
+end
+------------------------------------------------- association Connection
+association Connection between
+  Point[0..*] role north
+  Point[0..*] role south
+end
+------------------------------------------------------------ constraints
+constraints
+------------------------------------------------------------- invariants
+context Truck inv numIsKeyInv:
+  numIsKey()
+context Point inv nameIsKeyInv:
+  nameIsKey()
+context Point inv noCyclesInv:
+  noCycles()
+------------------------------------------------------------ Point::init
+context Point::init(aName:String)
+pre freshPoint:
+  self.name=oclUndefined(String) and
+  self.north->isEmpty and self.south->isEmpty
+post nameAssigned:
+  aName=self.name
+post allPointInvs:
+  nameIsKey() and noCycles()
+---------------------------------------------------- Point::northConnect
+context Point::northConnect(aNorth:Point)
+pre aNorthDefined:
+  aNorth.isDefined
+pre freshConnection:
+  self.north->excludes(aNorth) and self.south->excludes(aNorth)
+pre notSelfLink:
+  not(self=aNorth)
+pre insertionOk:
+  not(aNorth.northPlus()->includes(self))
+post connectionAssigned:
+  self.north->includes(aNorth)
+post allPointInvs:
+  nameIsKey() and noCycles()
+---------------------------------------------------- Point::southConnect
+context Point::southConnect(aSouth:Point)
+pre aSouthDefined:
+  aSouth.isDefined
+pre freshConnection:
+  self.north->excludes(aSouth) and self.south->excludes(aSouth)
+pre notSelfLink:
+  not(self=aSouth)
+pre insertionOk:
+  not(aSouth.southPlus()->includes(self))
+post connectionAssigned:
+  self.south->includes(aSouth)
+post allPointInvs:
+  nameIsKey() and noCycles()
+------------------------------------------------------------ Truck::init
+context Truck::init(aNum:String)
+pre freshTruck:
+  self.num=oclUndefined(String) and
+  self.trips=oclUndefined(Sequence(Point)) and
+  self.debt=oclUndefined(Integer)
+post numTripsDebtAssigned:
+  aNum=self.num and
+  oclEmpty(Sequence(Point))=self.trips and
+  0=self.debt
+post allTruckInvs:
+  numIsKey()
+----------------------------------------------------------- Truck::enter
+context Truck::enter(entry:Point)
+pre tripsOk:
+  self.trips=oclEmpty(Sequence(Point)) or
+  self.trips->last=oclUndefined(Point)
+pre currentEmpty:
+  self.point->isEmpty
+post debtAssigned:
+  1=self.debt
+post currentAssigned:
+  entry=self.point
+post allTruckInvs:
+  numIsKey()
+------------------------------------------------------------ Truck::move
+context Truck::move(target:Point)
+pre currentExists:
+  self.point->size=1
+pre targetReachable:
+  self.point.north->union(self.point.south)->includes(target)
+post currentAssigned:
+  target=self.point
+post allTruckInvs:
+  numIsKey()
+------------------------------------------------------------- Truck::pay
+context Truck::pay(amount:Integer)
+pre amountPositive:
+  amount>0
+pre currentExists:
+  self.point->size=1
+post debtReduced:
+  (self.debt@pre-amount)=(self.debt)
+post allTruckInvs:
+  numIsKey()
+------------------------------------------------------------- Truck::bye
+context Truck::bye():Integer
+pre currentExists:
+  self.point->size=1
+pre noDebt:
+  self.debt<=0
+post returnEqualsOverPayment:
+  self.debt.abs=result
+post currentEmpty:
+  self.point->isEmpty
+post allTruckInvs:
+  numIsKey()
+------------------------------------------------------------------------
+

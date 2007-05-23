@@ -1,0 +1,13 @@
+model NestedOperationCalls
+
+class Rec
+operations
+  fac(n : Integer) : Integer =
+    if n <= 1 then 1 else n * self.fac(n - 1) endif
+end
+
+constraints
+
+context Rec::fac(n : Integer) : Integer
+  pre:  n > 0
+  post: result = n * fac(n - 1)

@@ -1,0 +1,34 @@
+Subject: Collection operations "includes", "excludes", and "count"
+	 should have parameter of type T.
+
+Description:
+
+The Collection operations "includes", "excludes", and "count" expect
+an argument of type OclAny. This basically allows arguments of any
+type. The argument should, however, have at least the type T, the type
+of the collection's elements.
+
+  1. This would be more in line with other operations defined in Set,
+     Bag, and Sequence which all make use of the type parameter.
+
+  2. Some expressions can be statically shown to be always false. For
+     example, Set{1,2}->includes('aString') can never be true, since
+     String is neither equal to Integer, nor is it a subtype of
+     Integer. These kinds of expressions don't make sense. They could
+     be detected by an OCL parser with the proposed change.
+
+  3. The definition of "count" in Collection conflicts with those
+     definitions of "count" found in Set, Bag, and Sequence, where the
+     type parameter is already used.
+
+Proposed change:
+
+The definitions of "includes", "excludes", and "count" should be
+changed to:
+
+collection->includes(object : T) : Boolean
+
+collection->excludes(object : T) : Boolean
+
+collection->count(object : T) : Integer
+

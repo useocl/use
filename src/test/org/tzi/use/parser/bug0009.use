@@ -1,0 +1,13 @@
+model foobar
+class foo
+attributes
+  bar_attr : Integer
+operations
+  bar_op() : Integer = bar_attr + 1
+constraints
+  inv OK1 : 0 <= self.bar_attr -- explicit self accepted
+  inv OK2 : 0 <= bar_attr      -- implicit self accepted
+  inv OK3 : 1 <= self.bar_op() -- explicit self accepted
+  inv notOK : 1 <= bar_op()      -- implicit self not accepted, USE error produced
+end
+

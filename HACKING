@@ -1,0 +1,66 @@
+-*- Text -*-
+$ReleaseVersion: 2.3.1 $
+
+This document gives some guide lines how to make changes to USE and
+how to work with PRCS.
+
+1. Checking out a working copy from the repository.
+
+ - Make sure the environment variable PRCS_REPOSITORY is set to the
+   location of the central PRCS repository.
+  
+ - Change to an empty directory for your working copies of USE.
+
+   % mkdir ~/use
+   % cd ~/use
+
+ - Checkout out the project files:
+    
+   % prcs checkout use
+
+2. Making changes to files.
+  
+ - Edit existing files does not require any special steps.
+
+ - If you add new files, you must also add entries for them to the
+   project file "use.prj". You can do this with
+
+   % prcs populate
+
+ - If you remove new files, you must also remove entries for them
+   from the project file "use.prj". You can do this with
+
+   % prcs populate -d
+
+   For reasons of readability, the file entries in "use.prj" are
+   sorted alphabetically. This has to be done manually. Please
+   maintain this ordering, when adding or deleting files. You can edit
+   "use.prj" with a text editor. Just don't break the structure.
+
+ - These steps can be done in any order and as often as you like.
+
+3. Checking in your changes.
+
+ - Make sure your changes don't break the build. Run a fresh build and
+   all tests:
+
+   % ant all
+
+ - Document all changes that concern the user interface (in a broad
+   sense) in the "NEWS" file. This is important for users who want to
+   know what has changed between two releases.
+
+ - For each changed file, add a short description to the "ChangeLog"
+   file so that other people can understand what your changes are
+   about. This can easily be done within emacs by typing "C-x 4 a"
+   within the changed file's buffer.
+
+ - Add an entry "* VERSION: 0.n" at the top of the "ChangeLog" file
+   where n is the next minor number that will be assigned by PRCS to
+   your checked-in version. Look at "use.prj" to determine n or at
+   previos entries in "ChangeLog".
+
+ - Checkin your changes and update all version identifiers.
+
+   % prcs checkin
+   % prcs rekey

@@ -1,0 +1,2 @@
+context p:Person inv jobsAtMost:
+  p.job->size<=2

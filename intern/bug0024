@@ -1,0 +1,11 @@
+$Bug: Saving objectdiagram layout with hidden objects does not work.$
+$Category: GUI$
+$State: Closed$
+$BugAuthor: gutsche$
+$Tests: $
+
+Create a number of objects in the objectdiagram. Hide some of those
+objects. Save layout of the objectdiagram. Reset the system
+state. Create the same objects like before. Load layout, just saved,
+for the objectdiagram. The objects which were hidden when saving the
+layout are not hidden.

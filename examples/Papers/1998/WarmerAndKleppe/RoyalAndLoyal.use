@@ -1,0 +1,114 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+-- Modeled after an example taken from:
+-- Jos Warmer and Anneke Kleppe, "The Object Constraint Language:
+-- Precise Modeling with UML", Addison-Wesley, 1998. (p. 12)
+
+model RoyalAndLoyal
+
+-- classes
+
+class Burning < Transaction
+end
+
+class Customer
+attributes
+  name : String
+  title : String
+  isMale : Boolean
+  age : Integer
+--  constraints
+--    age >= 18
+end
+
+class CustomerCard
+attributes
+  valid : Boolean
+  validFrom : Integer --Date
+  goodThru : Integer --Date
+--  color : enum{ silver, gold }
+  printedName : String
+--  constraints
+--    valid = true
+end
+
+--  class Earning < Transaction
+--  end
+
+class LoyaltyAccount
+attributes
+  points : Integer
+--  operations
+--    earn(i : Integer)
+--    burn(i : Integer)
+--    isEmpty() : Boolean
+end
+
+class LoyaltyProgram
+    --operations
+    -- FIXME: enroll(c : Customer)
+end
+
+class ProgramPartner
+attributes
+  numberOfCustomers : Integer
+end
+
+class Service
+attributes
+  condition : Boolean
+  pointsEarned : Integer
+  pointsBurned : Integer
+  description : String
+end
+
+class ServiceLevel
+attributes
+  name : String
+end
+
+class Transaction
+attributes
+  points : Integer
+  date : Integer --Date
+--  operations
+--    program() : LoyaltyProgram
+end
+
+-- associations
+
+association LoyaltyProgram_ProgramPartner between
+  LoyaltyProgram[1..*]
+  ProgramPartner[1..*] role partners
+end
+
+association ProgramPartner_Service between
+  ProgramPartner[1]
+  Service[0..*] role delivered_Services
+end
+
+association LoyaltyProgram_ServiceLevel between
+  LoyaltyProgram[1]
+  ServiceLevel[1..*] role delivered_Services -- FIXME: ordered
+end
+
+association Customer_CustomerCard between
+  Customer[1] role owner
+  CustomerCard[0..*] role cards
+end
+
+association CustomerCard_Transaction between
+  CustomerCard[1] role card
+  Transaction[0..*] role transactions
+end
+
+association Service_Transaction between
+  Service[1]
+  Transaction[0..*] role transactions
+end
+
+association LoyaltyAccount_Transaction between
+  LoyaltyAccount[1]
+  Transaction[0..*] role transactions
+end
+

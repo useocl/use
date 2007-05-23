@@ -1,0 +1,215 @@
+model TrainModel
+
+-- --------------------------------------------------------------------------
+-- Section: Classes Train, Waggon
+-- --------------------------------------------------------------------------
+
+class Train end
+
+class Waggon
+attributes
+  numberOfSeats: Integer;
+operations
+/*
+  -- Auxiliary Operation for transPredecessor
+  privateTransPredecessor( collector: Set(Waggon) ) : Set(Waggon) =
+    if (self.predecessor.isUndefined or collector->includes(self) )
+    then
+      collector
+    else
+      self.predecessor.privateTransPredecessor( collector->union(Set{self}) )
+    endif;
+
+  -- transPredecessor computes all direct and indirect Predecessors
+  -- also terminates for Cycles
+  transPredecessor() : Set(Waggon) =
+    self.privateTransPredecessor(oclEmpty(Set(Waggon)));
+*/
+
+  predecessorAsSet(): Set(Waggon) =
+    if predecessor.isUndefined
+    then
+      oclEmpty(Set(Waggon))
+    else 
+      Set{predecessor} endif;
+
+  privateTransPredecessor(s: Set(Waggon)) : Set(Waggon) =
+    if s->union(s->collect(w:Waggon|w.predecessorAsSet())->flatten)->asSet() = s
+    then
+       s
+    else
+       privateTransPredecessor(
+         s->union(s->collect(w:Waggon|w.predecessorAsSet())->flatten)->asSet() )
+    endif;
+
+  transPredecessor() : Set(Waggon) =
+    self.privateTransPredecessor(predecessorAsSet());
+end
+
+-- --------------------------------------------------------------------------
+-- Section: Journey, Way, Station, Reservation
+-- --------------------------------------------------------------------------
+
+class Journey end
+
+class Station
+attributes
+  name: String;
+operations
+  -- There is no Operation
+  -- Sequence(T)>>indexOf(T): Integer!
+  -- Thats why we need indexIn.
+  -- preconditions:
+  --  seq->includes(self)
+  indexIn( seq: Sequence(Station) ) : Integer =
+    if seq->at(1) = self
+    then
+      1
+    else 
+      self.indexIn( seq->subSequence(2, seq->size) )+1
+    endif;
+end
+
+class Way
+operations
+  -- checks if the parts (a1 to a2) and (b1 to b2)
+  -- of the Way overlap
+  -- preconditions:
+  --   self.station->includesAll( Set{a1, a2, b1, b2} ) and
+  --   self.station->at(a1) < self.station->at(a2) and
+  --   self.station->at(b1) < self.station->at(b2)
+  overlaps( a1: Station, a2: Station,
+            b1: Station, b2: Station ) : Boolean =
+    b2.indexIn(self.station) > a1.indexIn(self.station) and
+    a2.indexIn(self.station) > b1.indexIn(self.station);
+end
+
+class Reservation
+attributes
+  seatNumber: Integer;
+end
+
+-- --------------------------------------------------------------------------
+-- Section: Relationships
+-- --------------------------------------------------------------------------
+
+aggregation TrainBuildup between
+  Train[1];
+  Waggon[1..*];
+end
+
+association WaggonOrder between
+  Waggon[0..1] role predecessor;
+  Waggon[0..1] role successor;
+end
+
+association Assignment between
+  Journey[*];
+  Train[1];
+end
+
+association JourneyWay between
+  Journey[*];
+  Way[1];
+end
+
+association Stops between
+  Way[*];
+  Station[2..*] ordered;
+end
+
+association RFrom between
+  Station[1] role fromStation;
+  Reservation[*] role resFrom;
+end
+
+association Rto between
+  Station[1] role to;
+  Reservation[*] role resTo;
+end
+
+association ResJourney between
+  Reservation[*];
+  Journey[1];
+end
+
+association ResWaggon between
+  Reservation[*];
+  Waggon[1];
+end
+
+-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+constraints
+
+-- --------------------------------------------------------------------------
+-- Section: The following Constraints apply to the classes
+-- Train and Waggon and to the Associations TrainBuildup
+-- and WaggonOrder.
+-- --------------------------------------------------------------------------
+
+-- The waggons of a train represent a chain.
+context Train inv Chain:
+  self.waggon->exists( w: Waggon |
+    w.transPredecessor()->excludes(w) and 
+    w.transPredecessor()->including(w) = self.waggon
+  )
+
+-- A train has at most 50 waggons
+context Train inv Maximum50Waggons:
+  self.waggon->size <= 50
+
+-- --------------------------------------------------------------------------
+-- Section: Constraints for Station & Way
+-- --------------------------------------------------------------------------
+
+-- Station>>name is a Key-Attribute
+context Station inv NameIsKeyAttribute:
+  not self.name.isUndefined() and
+    Station.allInstances->forAll( s: Station |
+      self.name = s.name implies self=s
+    )
+
+-- Ways are identified by their stations
+context Way inv WaysIdentifiedByStations:
+  Way.allInstances->forAll( w: Way |
+    w.station = self.station implies w=self
+  )
+
+-- --------------------------------------------------------------------------
+-- Section: Constraints ensuring correct Reservations
+-- --------------------------------------------------------------------------
+
+-- The reserved Waggon hast to be a part of the reserved journeys train.
+context Reservation inv WaggonComponentOfJourney:
+  self.waggon.train = self.journey.train 
+
+-- The "from" and "to" of a reservation must belong to the Way
+-- and have to preserve its order 
+context Reservation inv ReservedFromTo:
+  self.journey.way.station->includes(self.fromStation) and
+  self.journey.way.station->includes(self.to) and
+  ( self.fromStation.indexIn(self.journey.way.station) <
+    self.to.indexIn(self.journey.way.station) )
+
+-- The number of the seat belonging to a reservation is greater than 0
+-- but not higher than the number of existing seats in the waggon.
+context Reservation inv SeatNumber:
+  self.seatNumber > 0 and self.seatNumber<=self.waggon.numberOfSeats
+
+-- No multiple reservations for a seat:
+-- The combination of the number of a seat, a waggon and a part of the Way
+-- identify a reservation uniquely.
+context Journey inv NoMultipleReservations:
+  self.train.waggon->forAll(w: Waggon |
+    w.reservation->forAll(res1: Reservation |
+      w.reservation->forAll(res2: Reservation |
+        res1.seatNumber = res2.seatNumber implies
+          (self.way.overlaps( res1.fromStation, res1.to,
+                                  res2.fromStation, res2.to )
+           implies res1 = res2)
+      )
+    )
+  )
+
+-- end model
