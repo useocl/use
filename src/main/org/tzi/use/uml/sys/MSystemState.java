@@ -987,7 +987,9 @@ public final class MSystemState {
                             " object" + 
                             ((n == 1 ) ? "" : "s") +
                             " of class `" + 
-                            aend2.cls().name() + "'");
+                            aend2.cls().name() +  
+                            "' via role `" +
+                            aend2.name()+ "'");
                 out.println("  but the multiplicity is specified as `" +
                             aend2.multiplicity() + "'.");
                 valid = false;
