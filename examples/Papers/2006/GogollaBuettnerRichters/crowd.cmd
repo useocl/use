@@ -4,8 +4,6 @@
 -- Creates the object diagram:
 -- read examples/Papers/2006/GogollaBuettnerRichters/crowd.cmd
 
-open examples/Papers/2006/GogollaBuettnerRichters/civstat.use
-
 gen flags Person::attributesDefined +d
 gen flags Person::femaleHasNoWife +d
 gen flags Person::maleHasNoHusband +d
