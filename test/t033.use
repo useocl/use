@@ -1,0 +1,10 @@
+model t033
+
+class Part
+end
+
+
+composition Inclusion between
+  Part[0..*] role parent;
+  Part[0..*] role child;
+end

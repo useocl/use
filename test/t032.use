@@ -1,0 +1,10 @@
+model t032
+
+class Part
+end
+
+
+aggregation Inclusion between
+  Part[0..*] role parent;
+  Part[0..*] role child;
+end

@@ -1,0 +1,16 @@
+#Test the errors when creating a new aggregation link:
+# The error of the cyclic Aggregation
+# The error of the duplicated link
+
+!create section, subsection, subsubsection: Part
+!insert (section, subsection) into Inclusion
+!insert (subsection, subsubsection) into Inclusion
+
+!insert (subsubsection, section) into Inclusion
+*The error of the cyclic Aggreagation
+
+!insert (subsection, section) into Inclusion
+*The error of the cyclic Aggreagation
+
+!insert (section, subsection) into Inclusion
+*The error of the duplicated link
