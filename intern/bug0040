@@ -1,0 +1,13 @@
+$Bug: Conversion results (asSequence/asBag) incosistent$
+$Category: OCL$
+$State: Open$
+$BugAuthor: Mirco (opti)$
+$Tests: -$
+
+Example:
+
+?let s=Set{41,42} in s->asSequence()=s->asBag()->asSequence()
+false : Boolean
+
+?let s=Set{42,43} in s->asSequence()=s->asBag()->asSequence()
+true : Boolean
