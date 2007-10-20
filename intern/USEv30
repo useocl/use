@@ -1,10 +1,11 @@
 USE
 
+- assign create -> Seq. diagr. (Fehler) beheben
 - repair all bugs (about 40)
 - list all developers participating in the USE system or USE modules
 - list all new features available through diploma/master thesis, projects etc.
 - decide which features are appropriate for USE and should be included, which features have to be improved and which can be disregarded
-- provide for further UML and OCL features (e.g. aggregation and composition (semantically), ordered sets)
+- provide for further UML and OCL features (e.g. aggregation and composition (semantically), ordered sets, qualifier)
 - integrate the snapshot generator in the GUI***
 - provide for (generic) standard procedures (for the generator) applicable for every model (for example to create an example objectdiagram)
 - evaluation over more then two model levels (M0,M1,M2)
