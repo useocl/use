@@ -4092,7 +4092,24 @@ public GGeneratorParser(ParserSharedInputState state) {
 		try {      // for error handling
 			name = LT(1);
 			match(IDENT);
-			match(COLON);
+			{
+			switch ( LA(1)) {
+			case COLON:
+			{
+				match(COLON);
+				break;
+			}
+			case EQUAL:
+			{
+				match(EQUAL);
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
 			e=expression();
 			n = new ASTTupleItem((MyToken) name, e);
 		}
@@ -4115,7 +4132,7 @@ public GGeneratorParser(ParserSharedInputState state) {
 			tp=tuplePart();
 			tpList.add(tp);
 			{
-			_loop223:
+			_loop224:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -4123,7 +4140,7 @@ public GGeneratorParser(ParserSharedInputState state) {
 					tpList.add(tp);
 				}
 				else {
-					break _loop223;
+					break _loop224;
 				}
 				
 			} while (true);
