@@ -58,7 +58,7 @@ public final class TupleValue extends Value implements Comparable {
         String s = "Tuple{";
         TupleType t = (TupleType) type();
         for (int i = 0; i < fParts.length; i++) {
-            s += t.parts()[i].name() + ":" + fParts[i];
+            s += t.parts()[i].name() + "=" + fParts[i];
             if (i < fParts.length - 1 )
                 s += ",";
         }
@@ -70,7 +70,7 @@ public final class TupleValue extends Value implements Comparable {
             return true;
         else if (obj instanceof TupleValue ) {
             TupleValue other = (TupleValue) obj;
-            return fParts.equals(other.fParts);
+            return Arrays.equals(fParts,other.fParts);
         }
         return false;
     }
