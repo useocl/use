@@ -39,16 +39,14 @@ import org.tzi.use.util.TypedProperties;
 public class Options {
 
     // the internal version
-    /* $Format: "public static final String PROJECT_VERSION = \"$ProjectHeader$\";"$ */
-public static final String PROJECT_VERSION = "use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti";
+//    public static final String PROJECT_VERSION = "$InternalUSEVersion: $:";
 
     // the release version
-    /* $Format: "public static final String RELEASE_VERSION = \"$ReleaseVersion$\";"$ */
-public static final String RELEASE_VERSION = "2.3.1";
+    public static final String RELEASE_VERSION = "2.3.1";
 
     
     // the copyright:
-    public static final String COPYRIGHT = "Copyright (C) 1999-2006 University of Bremen";
+    public static final String COPYRIGHT = "Copyright (C) 1999-2007 University of Bremen";
 
     /**
      * Name of the file for system properties located in the 
@@ -234,8 +232,7 @@ public static final String RELEASE_VERSION = "2.3.1";
                     Log.setVerbose(true);
                     Log.setPrintTime(true);
                 } else if (arg.equals("V") ) {
-                    System.out.println("release " + RELEASE_VERSION + " ("+
-                                       PROJECT_VERSION + ")");
+                    System.out.println("release " + RELEASE_VERSION);
                     System.exit(0);
                 } else if (arg.equals("debug") ) {
                     Log.setTrace(true);

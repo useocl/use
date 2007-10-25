@@ -71,7 +71,7 @@ public class GGenerator {
             PrintWriter pw
                 = new PrintWriter(new FileWriter("generator_error.txt"));
             pw.println("Program version: " + Options.RELEASE_VERSION);
-            pw.println("Project version: " + Options.PROJECT_VERSION);
+            //pw.println("Project version: " + Options.PROJECT_VERSION);
             pw.println("Stack trace: ");
             e.printStackTrace(pw);
             pw.close();
@@ -85,7 +85,7 @@ public class GGenerator {
                                "PLEASE SEND THE FOLLOWING INFORMATION "+nl+
                                "TO joebo@informatik.uni-bremen.de.");
             System.err.println("Program version: " + Options.RELEASE_VERSION);
-            System.err.println("Project version: " + Options.PROJECT_VERSION);
+            //System.err.println("Project version: " + Options.PROJECT_VERSION);
             System.err.println("Stack trace: ");
             e.printStackTrace();
         }

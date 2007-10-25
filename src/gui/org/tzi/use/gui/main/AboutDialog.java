@@ -54,8 +54,7 @@ class AboutDialog extends JDialog {
         infoBox.add(l);
           
         infoBox.add(line(Options.COPYRIGHT));
-        infoBox.add(line("Version " + Options.RELEASE_VERSION +
-                         " ("+ Options.PROJECT_VERSION + ")"));
+        infoBox.add(line("Version " + Options.RELEASE_VERSION));
         infoBox.add(line("For more information see:"));
         infoBox.add(line("http://www.db.informatik.uni-bremen.de/projects/USE/"));
         infoBox.add(Box.createRigidArea(new Dimension(0,5)));

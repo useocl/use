@@ -266,7 +266,7 @@ public final class Shell implements Runnable {
                             + nl
                             + "with a description of your last input and include the following output:");
             System.err.println("Program version: " + Options.RELEASE_VERSION);
-            System.err.println("Project version: " + Options.PROJECT_VERSION);
+            //System.err.println("Project version: " + Options.PROJECT_VERSION);
             System.err.print("Stack trace: ");
             ex.printStackTrace();
         }
