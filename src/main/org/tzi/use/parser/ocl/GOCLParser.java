@@ -1711,7 +1711,24 @@ public GOCLParser(ParserSharedInputState state) {
 		try {      // for error handling
 			name = LT(1);
 			match(IDENT);
-			match(COLON);
+			{
+			switch ( LA(1)) {
+			case COLON:
+			{
+				match(COLON);
+				break;
+			}
+			case EQUAL:
+			{
+				match(EQUAL);
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
 			e=expression();
 			n = new ASTTupleItem((MyToken) name, e);
 		}
@@ -1753,7 +1770,7 @@ public GOCLParser(ParserSharedInputState state) {
 			tp=tuplePart();
 			tpList.add(tp);
 			{
-			_loop89:
+			_loop90:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -1761,7 +1778,7 @@ public GOCLParser(ParserSharedInputState state) {
 					tpList.add(tp);
 				}
 				else {
-					break _loop89;
+					break _loop90;
 				}
 				
 			} while (true);

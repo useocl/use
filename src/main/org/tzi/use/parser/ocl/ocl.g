@@ -655,7 +655,7 @@ tupleLiteral returns [ASTTupleLiteral n]
 tupleItem returns [ASTTupleItem n]
 { ASTExpression e; n = null; }
 :
-    name:IDENT COLON e=expression 
+    name:IDENT (COLON|EQUAL) e=expression 
     { n = new ASTTupleItem((MyToken) name, e); } 
     ;
 

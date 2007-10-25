@@ -3533,7 +3533,24 @@ public GUSEParser(ParserSharedInputState state) {
 		try {      // for error handling
 			name = LT(1);
 			match(IDENT);
-			match(COLON);
+			{
+			switch ( LA(1)) {
+			case COLON:
+			{
+				match(COLON);
+				break;
+			}
+			case EQUAL:
+			{
+				match(EQUAL);
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
 			e=expression();
 			n = new ASTTupleItem((MyToken) name, e);
 		}
@@ -3556,7 +3573,7 @@ public GUSEParser(ParserSharedInputState state) {
 			tp=tuplePart();
 			tpList.add(tp);
 			{
-			_loop190:
+			_loop191:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -3564,7 +3581,7 @@ public GUSEParser(ParserSharedInputState state) {
 					tpList.add(tp);
 				}
 				else {
-					break _loop190;
+					break _loop191;
 				}
 				
 			} while (true);

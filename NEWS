@@ -5,6 +5,12 @@ $ReleaseVersion: 2.3.1 $
 Please send bug reports to mr@informatik.uni-bremen.de.  See the file
 `README' for a description of how to report bugs.
 
+** Changes since version 2.3.1
+
+* [OCL] The tuple values can now be written as 'Tuple{a=1,b=2}', which
+  conforms to the 2.0 standard. The old style Tuple{a:1,b:1} is still 
+  supported. 
+
 
 ** Changes since version 2.3.0
 
