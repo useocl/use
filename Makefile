@@ -23,32 +23,6 @@ find-fixme:
 find-todo:
 	find $(src_dir) -name "*.java" | xargs grep -n TODO
 
-.PHONY: ci pop pack
-
-ci:
-	ant checkstyle
-	prcs checkin
-	prcs rekey
-
-pop:
-	prcs populate -d
-
-# backup project repository
-
-pkg_date = $(shell date +"%Y%m%d-%H%M")
-pkg_file = ../$(package)-$(pkg_date).pkg
-
-pack:	
-	(rm -f $(pkg_file); prcs package -z $(package) $(pkg_file))
-
-prcs_tree: $(package).vcg
-
-
 # dirty.. generates buglist 
 update-buglist: 
 	cd intern; make-buglist.pl bug???? > buglist.html
-
-$(package).vcg: 
-	prcs info -l $(package) | prcs_tree.pl > $@
-
-
