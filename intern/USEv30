@@ -16,6 +16,7 @@ USE
 - correct evaluation results of some Standard OCL Operations
 - usable result value of user defined operations
 - empty model at system start
+- Klassenfeatures in Ergänzung zu Objektdeatures
 - ...
 
 
