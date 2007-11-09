@@ -1,0 +1,20 @@
+model t304
+class A
+end
+
+class B
+end
+
+class C
+end
+
+composition ac1 between
+  A[*] role r1
+  B[*] role r2
+end
+
+composition ac2 between
+  C[*]
+  B[*]
+end
+

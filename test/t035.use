@@ -1,0 +1,10 @@
+model t300
+
+class A
+end
+
+composition ac between
+  A[*] role r1
+  A[*] role r2
+end
+

@@ -1,0 +1,8 @@
+!create x:A
+!create y:C
+!create z:B
+!insert (x,z) into ac1
+!insert (y,z) into ac2
+*Error: Object `z' is already a part of other composition.
+
+exit

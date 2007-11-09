@@ -41,8 +41,8 @@ final class MWholePartLinkImpl implements MWholePartLink {
     /**
      * Constructor.     
      */
-    MWholePartLinkImpl(MAssociation assoc, List objects) throws MSystemException {
-        delegatesLink = new MLinkImpl(assoc,objects);
+    MWholePartLinkImpl(MLink link) throws MSystemException {
+        delegatesLink = link;
     }
     
     /**
@@ -112,7 +112,7 @@ final class MWholePartLinkImpl implements MWholePartLink {
     public Object source(){
         int aggregationKind = association().aggregationKind();
         if ( (aggregationKind == MAggregationKind.AGGREGATION) || 
-	     (aggregationKind == MAggregationKind.COMPOSITION) ){            
+         (aggregationKind == MAggregationKind.COMPOSITION) ){            
             MObject[] temp = linkedObjectsAsArray();                 
             return temp[0];        
         }
@@ -125,7 +125,7 @@ final class MWholePartLinkImpl implements MWholePartLink {
     public Object target(){
         int aggregationKind = association().aggregationKind();
         if ( (aggregationKind == MAggregationKind.AGGREGATION) || 
-	     (aggregationKind == MAggregationKind.COMPOSITION) ){	    
+         (aggregationKind == MAggregationKind.COMPOSITION) ){       
             MObject[] temp = linkedObjectsAsArray();             
             return temp[1];            
         }

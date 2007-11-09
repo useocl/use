@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ */
+/* $ProjectHeader: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green $ */
 
 package org.tzi.use.gui.views.diagrams;
 
@@ -45,7 +45,7 @@ import org.tzi.use.uml.mm.MAssociationEnd;
 /**
  * Base class of all edge types in the diagram.
  * 
- * @version $ProjectVersion: 0.393 $
+ * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Fabian Gutsche
  */
 public abstract class EdgeBase extends DirectedEdgeBase
@@ -271,10 +271,33 @@ public abstract class EdgeBase extends DirectedEdgeBase
         int targetNav = -1; // end navigable??
         int inheritance = -1; // inheritance edge
         
-        if ( fAssoc != null ) {
+        if ( fAssoc != null ) {        	
             Iterator assocEndIt = fAssoc.associationEnds().iterator();
+            MAssociationEnd assocEnd1, assocEnd2;
+            
+            //Fixed the error with aggregation when
+            //fSource.cls() = fTarget.cls()
+                
+            if ( assocEndIt.hasNext() ) {
+                assocEnd1 = (MAssociationEnd) assocEndIt.next();
+                source = assocEnd1.aggregationKind();
+                if ( assocEnd1.isExplicitNavigable() ) {
+                	sourceNav = DIRECTED_EDGE;
+                }
+                
+            }    
+            
+            if ( assocEndIt.hasNext() ) {
+            	assocEnd2 = (MAssociationEnd) assocEndIt.next();                                	                	
+                target = assocEnd2.aggregationKind();
+                if ( assocEnd2.isExplicitNavigable() ) {
+                	targetNav = DIRECTED_EDGE;                
+                }                                   	                
+                
+            }
+	    /*Iterator assocEndIt = fAssoc.associationEnds().iterator();
             while ( assocEndIt.hasNext() ) {
-                MAssociationEnd assocEnd = (MAssociationEnd) assocEndIt.next();
+               // MAssociationEnd assocEnd = (MAssociationEnd) assocEndIt.next();
                 
                 if ( isReflexive() ) {
                     source = assocEnd.aggregationKind();
@@ -301,12 +324,15 @@ public abstract class EdgeBase extends DirectedEdgeBase
                     if ( assocEnd.isExplicitNavigable() ) {
                         targetNav = DIRECTED_EDGE;
                     }
-                }
-            }
+                } */
+            
         } else if ( fAssoc == null ) {
             inheritance = INHERITANCE_EDGE;
         }
         // draw all line segments
+        
+        
+        
         if ( !fNodesOnEdge.isEmpty() ) {
             Iterator it = fNodesOnEdge.iterator();
             int counter = 0;

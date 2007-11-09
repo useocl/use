@@ -1,0 +1,17 @@
+model t306
+class A
+end
+
+class B
+end
+
+composition ac1 between
+  A[*] role r1
+  B[*] role r2
+end
+
+composition ac2 between
+  A[*]
+  B[*]
+end
+

@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ */
+/* $ProjectHeader: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green $ */
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
@@ -82,6 +82,7 @@ import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
@@ -97,7 +98,7 @@ import org.tzi.use.uml.sys.MObjectState;
 /**
  * A panel drawing UML object diagrams.
  * 
- * @version $ProjectVersion: 0.393 $
+ * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Mark Richters
  */
 public class NewObjectDiagram extends DiagramView 
@@ -368,10 +369,19 @@ public class NewObjectDiagram extends DiagramView
      * Adds a link to the diagram.
      */
     public void addLink(MLink link) {
-        String label = link.association().name();
-        Iterator linkEndIter = link.linkEnds().iterator();
-        MLinkEnd linkEnd1 = (MLinkEnd) linkEndIter.next();
-        MLinkEnd linkEnd2 = (MLinkEnd) linkEndIter.next();
+	MAssociation assoc = link.association();
+        String label = assoc.name();
+	Iterator iter = assoc.associationEnds().iterator();
+	MLinkEnd linkEnd1 = null;
+	MLinkEnd linkEnd2 = null;
+        while (iter.hasNext()) {
+	  linkEnd1 = link.linkEnd((MAssociationEnd) iter.next());
+	  linkEnd2 = link.linkEnd((MAssociationEnd) iter.next());
+	}
+	if( (linkEnd1 == null) || (linkEnd2 == null)){
+	  throw new RuntimeException( "added link is invalidate" );
+	}
+		
         MObject obj1 = linkEnd1.object();
         MObject obj2 = linkEnd2.object();
         
@@ -433,7 +443,7 @@ public class NewObjectDiagram extends DiagramView
                 // connected to a "normal" link
                 fNaryLinkToDiamondNodeMap.put(link, node);
                 List halfEdges = new ArrayList();
-                linkEndIter = link.linkEnds().iterator();
+                Iterator linkEndIter = link.linkEnds().iterator();
                 while (linkEndIter.hasNext()) {
                     MLinkEnd linkEnd = (MLinkEnd) linkEndIter.next();
                     MObject obj = linkEnd.object();
