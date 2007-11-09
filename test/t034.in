@@ -1,17 +1,7 @@
-#Test the error when creating a new composition link or a new aggregation link:
-# The error of the cyclic whole/part relationship
-# The error of the shared part
+!create x:A
+!create y:B
+!insert (x,y) into ac1
+!insert (y,x) into ac2
+*Error: Detected a cycle in aggregation hierarchy. Object `y' is already a part of `x'.
 
-!create a: A
-!create b, b1: B
-!create c: C
-
-!insert (a, b1) into AB
-!insert (b1,b) into BB
-!insert (b, c) into BC
-
-
-!insert (c, a) into CA
-*The error of the cyclic whole/part relationship
-
-
+exit

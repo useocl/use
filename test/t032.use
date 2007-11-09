@@ -1,10 +1,10 @@
-model t032
+model t200
 
-class Part
+class A
 end
 
-
-aggregation Inclusion between
-  Part[0..*] role parent;
-  Part[0..*] role child;
+composition ac between
+  A[*] role r1
+  A[*] role r2
 end
+

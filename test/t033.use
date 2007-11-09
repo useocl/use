@@ -1,10 +1,17 @@
 model t033
-
-class Part
+class A
 end
 
-
-composition Inclusion between
-  Part[0..*] role parent;
-  Part[0..*] role child;
+class B
 end
+
+aggregation ac1 between
+  A[*] role r1
+  B[*] role r2
+end
+
+aggregation ac2 between
+  B[*]
+  A[*]
+end
+

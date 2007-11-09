@@ -1,30 +1,17 @@
 model t034
-
 class A
 end
 
 class B
 end
 
-class C
+composition ac1 between
+  A[*] role r1
+  B[*] role r2
 end
 
-aggregation AB between
-  A[0..*] role parent;
-  B[0..*] role child;
+aggregation ac2 between
+  B[*]
+  A[*]
 end
 
-aggregation BC between
-  B[0..*] role parent;
-  C[0..*] role child;
-end
-
-aggregation BB between
-  B[0..*] role parent_BB;
-  B[0..*] role child_BB;
-end
-
-composition CA between
-  C[0..1] role parent;
-  A[0..*] role child;
-end
