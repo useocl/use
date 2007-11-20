@@ -377,6 +377,7 @@ public class NewObjectDiagram extends DiagramView
         while (iter.hasNext()) {
 	  linkEnd1 = link.linkEnd((MAssociationEnd) iter.next());
 	  linkEnd2 = link.linkEnd((MAssociationEnd) iter.next());
+	  break;	  
 	}
 	if( (linkEnd1 == null) || (linkEnd2 == null)){
 	  throw new RuntimeException( "added link is invalidate" );
