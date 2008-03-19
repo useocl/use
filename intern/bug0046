@@ -1,0 +1,65 @@
+$Bug: Tuple crahes with runtime exception (when used in precondition)$
+$Category: OCL$
+$State: Open$
+$BugAuthor: Mirco (opti)$
+$Tests: -$
+
+model TupleCrash
+
+class tuple_crash
+attributes
+  a:Tuple(one:Set(Tuple(x:Integer,y:Integer)),
+          two:Set(Tuple(z:Integer,w:Integer)))
+operations
+  op()
+end
+
+constraints
+
+context tuple_crash::op() pre fresh:
+  -- true
+  a.isUndefined()
+
+use> java.lang.RuntimeException: case 811 not handled
+        at org.tzi.use.parser.ocl.ASTOperationExpression.gen1(ASTOperationExpres
+sion.java:341)
+        at org.tzi.use.parser.ocl.ASTOperationExpression.gen(ASTOperationExpress
+ion.java:135)
+        at org.tzi.use.parser.use.ASTPrePostClause.gen(ASTPrePostClause.java:73)
+
+        at org.tzi.use.parser.use.ASTPrePost.gen(ASTPrePost.java:138)
+        at org.tzi.use.parser.use.ASTModel.gen(ASTModel.java:222)
+        at org.tzi.use.parser.use.USECompiler.compileSpecification(USECompiler.j
+ava:73)
+        at org.tzi.use.gui.main.MainWindow$ActionFileOpenSpec.compile(MainWindow
+.java:764)
+        at org.tzi.use.gui.main.MainWindow$ActionFileOpenSpec.actionPerformed(Ma
+inWindow.java:753)
+        at javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+        at javax.swing.AbstractButton$ForwardActionEvents.actionPerformed(Unknow
+n Source)
+        at javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+        at javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+        at javax.swing.AbstractButton.doClick(Unknown Source)
+        at javax.swing.plaf.basic.BasicMenuItemUI.doClick(Unknown Source)
+        at javax.swing.plaf.basic.BasicMenuItemUI$MouseInputHandler.mouseRelease
+d(Unknown Source)
+        at java.awt.Component.processMouseEvent(Unknown Source)
+        at java.awt.Component.processEvent(Unknown Source)
+        at java.awt.Container.processEvent(Unknown Source)
+        at java.awt.Component.dispatchEventImpl(Unknown Source)
+        at java.awt.Container.dispatchEventImpl(Unknown Source)
+        at java.awt.Component.dispatchEvent(Unknown Source)
+        at java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+        at java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+        at java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+        at java.awt.Container.dispatchEventImpl(Unknown Source)
+        at java.awt.Window.dispatchEventImpl(Unknown Source)
+        at java.awt.Component.dispatchEvent(Unknown Source)
+        at java.awt.EventQueue.dispatchEvent(Unknown Source)
+        at java.awt.EventDispatchThread.pumpOneEventForHierarchy(Unknown Source)
+
+        at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+        at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+        at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+        at java.awt.EventDispatchThread.run(Unknown Source)

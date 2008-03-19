@@ -1,0 +1,53 @@
+$Bug: Violated postcondition results in infiltered output, but
+only the false parts are required$
+$Category: OCL$
+$State: Open$
+$BugAuthor: Mirco (opti)$
+$Tests: -$
+
+Result USE - SVN:
+
+c:\mondexonline\imperative\createExceptionalWorld2.cmd> !opexit postcondition `WorldDoesNotChange' is false evaluation results:
+  self : AbWorld = @world
+  self.abAuthPurse : Set(AbPurse) = Set{@abelP,@bankP,@cainP,@newPurse}
+  self : AbWorld = @world
+  self.abAuthPurse@pre : Set(AbPurse) = Set{@abelP,@bankP,@cainP}
+  (self.abAuthPurse = self.abAuthPurse@pre) : Boolean = false
+  self : AbWorld = @world
+  self.abAuthPurse@pre : Set(AbPurse) = Set{@abelP,@bankP,@cainP}
+  purse : AbPurse = @abelP
+  purse.coinBalance : Set(Coin) = Set{}
+  purse : AbPurse = @abelP
+  purse.coinBalance@pre : Set(Coin) = Set{}
+  (purse.coinBalance = purse.coinBalance@pre) : Boolean = true
+  purse : AbPurse = @abelP
+  purse.coinLost : Set(Coin) = Set{}
+  purse : AbPurse = @abelP
+  purse.coinLost@pre : Set(Coin) = Set{}
+  (purse.coinLost = purse.coinLost@pre) : Boolean = true
+  ((purse.coinBalance = purse.coinBalance@pre) and (purse.coinLost = purse.coinLost@pre)) : Boolean = true
+  purse : AbPurse = @bankP
+  purse.coinBalance : Set(Coin) = Set{@coin1,@coin2}
+  purse : AbPurse = @bankP
+  purse.coinBalance@pre : Set(Coin) = Set{@coin1,@coin2}
+  (purse.coinBalance = purse.coinBalance@pre) : Boolean = true
+  purse : AbPurse = @bankP
+  purse.coinLost : Set(Coin) = Set{}
+  purse : AbPurse = @bankP
+  purse.coinLost@pre : Set(Coin) = Set{}
+  (purse.coinLost = purse.coinLost@pre) : Boolean = true
+  ((purse.coinBalance = purse.coinBalance@pre) and (purse.coinLost = purse.coinLost@pre)) : Boolean = true
+  purse : AbPurse = @cainP
+  purse.coinBalance : Set(Coin) = Set{@coin3}
+  purse : AbPurse = @cainP
+  purse.coinBalance@pre : Set(Coin) = Set{@coin3}
+  (purse.coinBalance = purse.coinBalance@pre) : Boolean = true
+  purse : AbPurse = @cainP
+  purse.coinLost : Set(Coin) = Set{}
+  purse : AbPurse = @cainP
+  purse.coinLost@pre : Set(Coin) = Set{}
+  (purse.coinLost = purse.coinLost@pre) : Boolean = true
+  ((purse.coinBalance = purse.coinBalance@pre) and (purse.coinLost = purse.coinLost@pre)) : Boolean = true
+  self.abAuthPurse@pre->forAll(purse : AbPurse | ((purse.coinBalance = purse.coinBalance@pre) and (purse.coinLost = purse.coinLost@pre))) : Boolean = true
+  ((self.abAuthPurse = self.abAuthPurse@pre) and self.abAuthPurse@pre->forAll(purse : AbPurse | ((purse.coinBalance = purse.coinBalance@pre) and (purse.coinLost = purse.coinLost@pre)))) : Boolean = false c:\mondexonline\imperative\createExceptionalWorld2.cmd>
+use>

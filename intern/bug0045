@@ -1,0 +1,7 @@
+$Bug: OCL standard requires parentheses for allInstances$
+$Category: OCL$
+$State: Open$
+$BugAuthor: Mirco (opti)$
+$Tests: -$
+
+Person.allInstances()

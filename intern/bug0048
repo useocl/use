@@ -1,0 +1,14 @@
+$Bug: Destruction of object valued operation argument results in
+exception$
+$Category: OCL$
+$State: Open$
+$BugAuthor: Mirco (opti)$
+$Tests: -$
+
+class Person
+operations kill(p:Person)
+
+cmd file Person_kill:
+!destroy p
+
+see bug0048.pro

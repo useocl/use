@@ -1,0 +1,10 @@
+$Bug: Inconsistent results: asSequence for sets and bags$
+$Category: OCL$
+$State: Open$
+$BugAuthor: Mirco (opti)$
+$Tests: -$
+
+use> ?Bag{3,2,1,1}->asSequence()
+-> Sequence{3,1,1,2} : Sequence(Integer)
+use> ?Set{3,2,1,1}->asSequence()
+-> Sequence{1,2,3} : Sequence(Integer)
