@@ -2,7 +2,7 @@
 
 TOPDIR = ..
 
-USE = $(TOPDIR)/bin/use -nogui -nr
+USE = $(TOPDIR)/bin/use.bat -nogui -nr
 
 INFILES := $(wildcard *.in)
 OUTFILES := $(INFILES:.in=.out) 
