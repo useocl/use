@@ -875,6 +875,51 @@ public GOCLParser(ParserSharedInputState state) {
 					match(IDENT);
 					match(DOT);
 					match(LITERAL_allInstances);
+					{
+					switch ( LA(1)) {
+					case LPAREN:
+					{
+						match(LPAREN);
+						match(RPAREN);
+						break;
+					}
+					case EOF:
+					case COMMA:
+					case RPAREN:
+					case EQUAL:
+					case LITERAL_in:
+					case LITERAL_implies:
+					case LITERAL_or:
+					case LITERAL_xor:
+					case LITERAL_and:
+					case NOT_EQUAL:
+					case LESS:
+					case GREATER:
+					case LESS_EQUAL:
+					case GREATER_EQUAL:
+					case PLUS:
+					case MINUS:
+					case STAR:
+					case SLASH:
+					case LITERAL_div:
+					case ARROW:
+					case DOT:
+					case AT:
+					case BAR:
+					case LITERAL_then:
+					case LITERAL_else:
+					case LITERAL_endif:
+					case RBRACE:
+					case DOTDOT:
+					{
+						break;
+					}
+					default:
+					{
+						throw new NoViableAltException(LT(1), getFilename());
+					}
+					}
+					}
 					n = new ASTAllInstancesExpression((MyToken) id1);
 					{
 					switch ( LA(1)) {
@@ -1307,7 +1352,7 @@ public GOCLParser(ParserSharedInputState state) {
 					e=expression();
 					n.addArg(e);
 					{
-					_loop61:
+					_loop62:
 					do {
 						if ((LA(1)==COMMA)) {
 							match(COMMA);
@@ -1315,7 +1360,7 @@ public GOCLParser(ParserSharedInputState state) {
 							n.addArg(e);
 						}
 						else {
-							break _loop61;
+							break _loop62;
 						}
 						
 					} while (true);
@@ -1519,7 +1564,7 @@ public GOCLParser(ParserSharedInputState state) {
 			ci=collectionItem();
 			n.addItem(ci);
 			{
-			_loop72:
+			_loop73:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -1527,7 +1572,7 @@ public GOCLParser(ParserSharedInputState state) {
 					n.addItem(ci);
 				}
 				else {
-					break _loop72;
+					break _loop73;
 				}
 				
 			} while (true);
@@ -1593,7 +1638,7 @@ public GOCLParser(ParserSharedInputState state) {
 			ti=tupleItem();
 			tiList.add(ti);
 			{
-			_loop79:
+			_loop80:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -1601,7 +1646,7 @@ public GOCLParser(ParserSharedInputState state) {
 					tiList.add(ti);
 				}
 				else {
-					break _loop79;
+					break _loop80;
 				}
 				
 			} while (true);
@@ -1770,7 +1815,7 @@ public GOCLParser(ParserSharedInputState state) {
 			tp=tuplePart();
 			tpList.add(tp);
 			{
-			_loop90:
+			_loop91:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -1778,7 +1823,7 @@ public GOCLParser(ParserSharedInputState state) {
 					tpList.add(tp);
 				}
 				else {
-					break _loop90;
+					break _loop91;
 				}
 				
 			} while (true);

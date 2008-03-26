@@ -384,7 +384,7 @@ primaryExpression returns [ASTExpression n]
     | LPAREN n=expression RPAREN
     | n=ifExpression
     // HACK: the following requires k=3
-    | id1:IDENT DOT "allInstances"  
+    | id1:IDENT DOT "allInstances" ( LPAREN RPAREN )?
       { n = new ASTAllInstancesExpression((MyToken) id1); }
       ( AT "pre" { n.setIsPre(); } ) ? 
     ;

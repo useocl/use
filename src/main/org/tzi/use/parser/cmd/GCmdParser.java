@@ -1395,6 +1395,64 @@ public GCmdParser(ParserSharedInputState state) {
 					match(IDENT);
 					match(DOT);
 					match(LITERAL_allInstances);
+					{
+					switch ( LA(1)) {
+					case LPAREN:
+					{
+						match(LPAREN);
+						match(RPAREN);
+						break;
+					}
+					case EOF:
+					case COMMA:
+					case RPAREN:
+					case IDENT:
+					case LITERAL_let:
+					case EQUAL:
+					case LITERAL_in:
+					case LITERAL_implies:
+					case LITERAL_or:
+					case LITERAL_xor:
+					case LITERAL_and:
+					case NOT_EQUAL:
+					case LESS:
+					case GREATER:
+					case LESS_EQUAL:
+					case GREATER_EQUAL:
+					case PLUS:
+					case MINUS:
+					case STAR:
+					case SLASH:
+					case LITERAL_div:
+					case ARROW:
+					case DOT:
+					case AT:
+					case BAR:
+					case SEMI:
+					case LITERAL_then:
+					case LITERAL_else:
+					case LITERAL_endif:
+					case RBRACE:
+					case DOTDOT:
+					case LITERAL_create:
+					case LITERAL_assign:
+					case COLON_EQUAL:
+					case LITERAL_destroy:
+					case LITERAL_insert:
+					case LITERAL_delete:
+					case LITERAL_set:
+					case LITERAL_openter:
+					case LITERAL_opexit:
+					case LITERAL_execute:
+					{
+						break;
+					}
+					default:
+					{
+						throw new NoViableAltException(LT(1), getFilename());
+					}
+					}
+					}
 					n = new ASTAllInstancesExpression((MyToken) id1);
 					{
 					switch ( LA(1)) {
@@ -1866,7 +1924,7 @@ public GCmdParser(ParserSharedInputState state) {
 					e=expression();
 					n.addArg(e);
 					{
-					_loop89:
+					_loop90:
 					do {
 						if ((LA(1)==COMMA)) {
 							match(COMMA);
@@ -1874,7 +1932,7 @@ public GCmdParser(ParserSharedInputState state) {
 							n.addArg(e);
 						}
 						else {
-							break _loop89;
+							break _loop90;
 						}
 						
 					} while (true);
@@ -2091,7 +2149,7 @@ public GCmdParser(ParserSharedInputState state) {
 			ci=collectionItem();
 			n.addItem(ci);
 			{
-			_loop100:
+			_loop101:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -2099,7 +2157,7 @@ public GCmdParser(ParserSharedInputState state) {
 					n.addItem(ci);
 				}
 				else {
-					break _loop100;
+					break _loop101;
 				}
 				
 			} while (true);
@@ -2165,7 +2223,7 @@ public GCmdParser(ParserSharedInputState state) {
 			ti=tupleItem();
 			tiList.add(ti);
 			{
-			_loop107:
+			_loop108:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -2173,7 +2231,7 @@ public GCmdParser(ParserSharedInputState state) {
 					tiList.add(ti);
 				}
 				else {
-					break _loop107;
+					break _loop108;
 				}
 				
 			} while (true);
@@ -2323,7 +2381,7 @@ public GCmdParser(ParserSharedInputState state) {
 			tp=tuplePart();
 			tpList.add(tp);
 			{
-			_loop118:
+			_loop119:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -2331,7 +2389,7 @@ public GCmdParser(ParserSharedInputState state) {
 					tpList.add(tp);
 				}
 				else {
-					break _loop118;
+					break _loop119;
 				}
 				
 			} while (true);

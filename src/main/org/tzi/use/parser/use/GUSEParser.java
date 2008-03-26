@@ -2577,6 +2577,81 @@ public GUSEParser(ParserSharedInputState state) {
 					match(IDENT);
 					match(DOT);
 					match(LITERAL_allInstances);
+					{
+					switch ( LA(1)) {
+					case LPAREN:
+					{
+						match(LPAREN);
+						match(RPAREN);
+						break;
+					}
+					case EOF:
+					case COMMA:
+					case RPAREN:
+					case IDENT:
+					case EQUAL:
+					case LITERAL_in:
+					case LITERAL_implies:
+					case LITERAL_or:
+					case LITERAL_xor:
+					case LITERAL_and:
+					case NOT_EQUAL:
+					case LESS:
+					case GREATER:
+					case LESS_EQUAL:
+					case GREATER_EQUAL:
+					case PLUS:
+					case MINUS:
+					case STAR:
+					case SLASH:
+					case LITERAL_div:
+					case ARROW:
+					case DOT:
+					case AT:
+					case LITERAL_pre:
+					case BAR:
+					case SEMI:
+					case LITERAL_if:
+					case LITERAL_then:
+					case LITERAL_else:
+					case LITERAL_endif:
+					case RBRACE:
+					case DOTDOT:
+					case LITERAL_constraints:
+					case LITERAL_abstract:
+					case LITERAL_class:
+					case LITERAL_end:
+					case LITERAL_associationClass:
+					case LITERAL_associationclass:
+					case LITERAL_aggregation:
+					case LITERAL_composition:
+					case LITERAL_begin:
+					case LITERAL_association:
+					case LITERAL_context:
+					case LITERAL_inv:
+					case LITERAL_post:
+					case LITERAL_var:
+					case LITERAL_declare:
+					case LITERAL_set:
+					case COLON_EQUAL:
+					case LITERAL_create:
+					case LITERAL_insert:
+					case LITERAL_delete:
+					case LITERAL_destroy:
+					case LITERAL_while:
+					case LITERAL_do:
+					case LITERAL_wend:
+					case LITERAL_for:
+					case LITERAL_execute:
+					{
+						break;
+					}
+					default:
+					{
+						throw new NoViableAltException(LT(1), getFilename());
+					}
+					}
+					}
 					n = new ASTAllInstancesExpression((MyToken) id1);
 					{
 					switch ( LA(1)) {
@@ -3099,7 +3174,7 @@ public GUSEParser(ParserSharedInputState state) {
 					e=expression();
 					n.addArg(e);
 					{
-					_loop162:
+					_loop163:
 					do {
 						if ((LA(1)==COMMA)) {
 							match(COMMA);
@@ -3107,7 +3182,7 @@ public GUSEParser(ParserSharedInputState state) {
 							n.addArg(e);
 						}
 						else {
-							break _loop162;
+							break _loop163;
 						}
 						
 					} while (true);
@@ -3341,7 +3416,7 @@ public GUSEParser(ParserSharedInputState state) {
 			ci=collectionItem();
 			n.addItem(ci);
 			{
-			_loop173:
+			_loop174:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -3349,7 +3424,7 @@ public GUSEParser(ParserSharedInputState state) {
 					n.addItem(ci);
 				}
 				else {
-					break _loop173;
+					break _loop174;
 				}
 				
 			} while (true);
@@ -3415,7 +3490,7 @@ public GUSEParser(ParserSharedInputState state) {
 			ti=tupleItem();
 			tiList.add(ti);
 			{
-			_loop180:
+			_loop181:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -3423,7 +3498,7 @@ public GUSEParser(ParserSharedInputState state) {
 					tiList.add(ti);
 				}
 				else {
-					break _loop180;
+					break _loop181;
 				}
 				
 			} while (true);
@@ -3573,7 +3648,7 @@ public GUSEParser(ParserSharedInputState state) {
 			tp=tuplePart();
 			tpList.add(tp);
 			{
-			_loop191:
+			_loop192:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -3581,7 +3656,7 @@ public GUSEParser(ParserSharedInputState state) {
 					tpList.add(tp);
 				}
 				else {
-					break _loop191;
+					break _loop192;
 				}
 				
 			} while (true);
