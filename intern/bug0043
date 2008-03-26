@@ -1,7 +1,8 @@
 $Bug: Construction of empty collection results in internal error$
 $Category: GUI$
-$State: Open$
+$State: Closed$
 $BugAuthor: mk$
-$Tests: -$
+$Tests: test/t041$
 
 ?oclEmpty(Collection(Integer))
+

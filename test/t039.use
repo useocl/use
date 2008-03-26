@@ -1,0 +1,9 @@
+model test
+
+class C
+attributes 
+ i : Integer
+ b : Boolean
+end
+
+

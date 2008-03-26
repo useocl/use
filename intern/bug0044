@@ -1,8 +1,10 @@
 $Bug: sortedBy results in internal error$
 $Category: OCL$
-$State: Open$
+$State: Closed$
 $BugAuthor: mk$
-$Tests: -$
+$Tests: test/t039$
+
+DESCRIPTION: 
 
 sortedBy
 - fehler auf Set(Tuple(...))
@@ -61,3 +63,8 @@ use>Sequence{44,'A'}}->sortedBy(e|e->last())
 <input>:1:58: Argument of sortedBy must have basic type (Integer, Real, String or Boolean), found `OclAny'.
 
 ------------------------------------------------------------------------
+
+FIX:
+ - check for collection operations in expression generation
+ - fix error message of sortedBy (Boolean /ist/ not allowed)
+

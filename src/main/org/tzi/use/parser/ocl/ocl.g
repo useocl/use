@@ -709,7 +709,7 @@ collectionType returns [ASTCollectionType n]
     { MyToken op = (MyToken) LT(1); } 
     ( "Collection" | "Set" | "Sequence" | "Bag" ) 
     LPAREN elemType=type RPAREN
-    { n = new ASTCollectionType(op, elemType); }
+    { n = new ASTCollectionType(op, elemType); n.setStartToken(op);}
     ;
 
 

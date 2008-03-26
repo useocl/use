@@ -54,7 +54,7 @@ public class ExpSortedBy extends ExpQuery {
         if (! ( t.isNumber() || t.isString() ) )
             throw new ExpInvalidException(
                                           "Argument of sortedBy must have basic type " +
-                                          "(Integer, Real, String or Boolean), found `" + 
+                                          "(Integer, Real, or String), found `" + 
                                           queryExp.type() + "'.");
     }
 

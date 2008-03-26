@@ -1737,7 +1737,7 @@ public GOCLParser(ParserSharedInputState state) {
 			match(LPAREN);
 			elemType=type();
 			match(RPAREN);
-			n = new ASTCollectionType(op, elemType);
+			n = new ASTCollectionType(op, elemType); n.setStartToken(op);
 		}
 		catch (RecognitionException ex) {
 			reportError(ex);

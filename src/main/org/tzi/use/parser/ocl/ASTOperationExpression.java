@@ -319,7 +319,8 @@ public class ASTOperationExpression extends ASTExpression {
                 throw new SemanticException(fOp, MSG_DISABLE_COLLECT_SHORTHAND);
             res = collectShorthandWithArgs(opname, srcExpr);
         break;
-        case SRC_TUPLE_TYPE + DOT:
+        case SRC_TUPLE_TYPE + DOT + PARENTHESES:
+        case SRC_TUPLE_TYPE + DOT + NO_PARENTHESES:
             TupleType t = (TupleType)srcType;
             TupleType.Part p = t.getPart(opname);
             if (p==null) {
@@ -329,6 +330,9 @@ public class ASTOperationExpression extends ASTExpression {
                 res = new ExpTupleSelectOp(p, srcExpr);
             }
         break;
+        case SRC_TUPLE_TYPE + ARROW + PARENTHESES:
+        case SRC_TUPLE_TYPE + ARROW + NO_PARENTHESES:
+	    throw new SemanticException(fOp, "Collection operation not applicable to tuple type.");
 
         //          throw new SemanticException(fOp,
         /*          "If you want to apply an operation to a
