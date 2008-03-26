@@ -1,7 +1,7 @@
 $Bug: Inconsistent results: asSequence for sets and bags$
 $Category: OCL$
 $State: Open$
-$BugAuthor: Mirco (opti)$
+$BugAuthor: mk$
 $Tests: -$
 
 use> ?Bag{3,2,1,1}->asSequence()

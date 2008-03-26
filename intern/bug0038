@@ -1,5 +1,4 @@
-$Bug: The generator does not accept procedure arguments
-corresponding to subtypes of the required type.$
+$Bug: The generator does not accept procedure arguments corresponding to subtypes of the required type.$
 $Category: ASSL$
 $State: Open$
 $BugAuthor: opti$

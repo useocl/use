@@ -1,8 +1,7 @@
-$Bug: Violated postcondition results in infiltered output, but
-only the false parts are required$
+$Bug: Violated postcondition results in infiltered output, but only the false parts are required$
 $Category: OCL$
 $State: Open$
-$BugAuthor: Mirco (opti)$
+$BugAuthor: mk$
 $Tests: -$
 
 Result USE - SVN:

@@ -1,8 +1,7 @@
-$Bug: Destruction of object valued operation argument results in
-exception$
+$Bug: Destruction of object valued operation argument results in exception$
 $Category: OCL$
 $State: Open$
-$BugAuthor: Mirco (opti)$
+$BugAuthor: mk$
 $Tests: -$
 
 class Person

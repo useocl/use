@@ -1,7 +1,7 @@
 $Bug: sortedBy results in internal error$
 $Category: OCL$
 $State: Open$
-$BugAuthor: Mirco (opti)$
+$BugAuthor: mk$
 $Tests: -$
 
 sortedBy

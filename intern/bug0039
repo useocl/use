@@ -1,8 +1,7 @@
-$Bug: Composition: Diamonds are not shown in the object diagram when 
-subclasses are involved (see example)$
+$Bug: Composition: Diamonds are not shown in the object diagram when subclasses are involved (see example)$
 $Category: GUI$
 $State: Open$
-$BugAuthor: Mirco (opti)$
+$BugAuthor: mk$
 $Tests: -$
 
 Example:

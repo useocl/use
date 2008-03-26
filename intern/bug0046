@@ -1,7 +1,7 @@
 $Bug: Tuple crahes with runtime exception (when used in precondition)$
 $Category: OCL$
 $State: Open$
-$BugAuthor: Mirco (opti)$
+$BugAuthor: mk$
 $Tests: -$
 
 model TupleCrash
