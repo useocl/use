@@ -1,8 +1,8 @@
 $Bug: Call of oclEmpty with Collection causes internal error$
 $Category: OCL$
-$State: Open$
+$State: Closed$
 $BugAuthor: mk$
-$Tests: -$
+$Tests: test/t041$
 
 use> ?oclEmpty(Collection(Integer))
 
