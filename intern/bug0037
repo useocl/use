@@ -1,9 +1,11 @@
-$Bug: Wrong type for navigation from ternary association$
+$Bug: Evaluation with ?? does not show subexpressions for operation calls.$
 $Category: Evaluation$
 $State: Open$
 $BugAuthor: green$
 $Tests: test/t031$
 
-Evaluation with ?? does not show subexpressions for operation calls.
+DESCRIPTION:
 
-Reason: changes for action language in ExpObjOp.
+  Evaluation with ?? does not show subexpressions for operation calls.
+
+  Reason: changes for action language in ExpObjOp.

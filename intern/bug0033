@@ -4,640 +4,647 @@ $State: Closed$
 $BugAuthor: green$
 $Tests: USECompilerTests.java/t17$
 
-(Repeated declaration of a class leads to a NullPointerException if
- the second class declaration contains an attribute section)
-
-> ich verstehe nicht genau, welcher bug hier gemeint ist. soll es
-> erlaubt sein, dass eine Klasse an mehreren Stellen im .use-file
-> deklariert wird?
-
-Nein, das soll eigentlich nicht erlaubt sein. Es wird normalerweise
-auch geprueft und erkannt, z.B.:
-
-  Test.use:4:7: Redefinition of `A'.
-  Test.use:2:7: `A' previously declared here.
-
-In Fernandos Beispiel ist die Klasse Date doppelt definiert und
-triggert damit eine NullPointerException. Ich haenge sein Beispiel
-nochmal als Text untenan (kann sein, dass es beim forward nicht mit
-dabei war). Damit bekomme ich folgende Ausgabe:
-
-5801:$ ~/work/java/use/use/bin/use -v -nogui Navios.use 
-loading properties from: /home/mr/work/java/use/use/etc/use.properties
-use version 2.1.1pre, Copyright (C) 1999-2004 Mark Richters
-compiling specification...
-Exception in thread "main" java.lang.NullPointerException
-        at org.tzi.use.uml.mm.MClass.allParents(MClass.java:337)
-        at org.tzi.use.uml.mm.MClass.attribute(MClass.java:172)
-        at org.tzi.use.uml.mm.MClass.addAttribute(MClass.java:109)
-        at org.tzi.use.parser.ASTClass.genAttributesOperationSignaturesAndGenSpec(ASTClass.java:124)
-        at org.tzi.use.parser.ASTModel.gen(ASTModel.java:115)
-        at org.tzi.use.parser.USECompiler.compileSpecification(USECompiler.java:67)
-        at org.tzi.use.main.Main.main(Main.java:70)
-
-
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-
- model Navios
-
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-
--- produced "13-02-2002_0:19:14"
--- converted "13-02-2002_00:20:08"
-
-------------------------------------------------------------------------
--- Enumerated Types
-------------------------------------------------------------------------
-
-enum EnumType_1 {atracado, fundeado, navegar, abatido}
-
-
-------------------------------------------------------------------------
--- Classes of Posicionamento
-------------------------------------------------------------------------
-
-        class Posicao
-        end --Posicao
-
-        class Coordenada
-                attributes
-                        graus:Integer
-                        minutos:Integer
-                        segundos:Double
-        end --Coordenada
-
-        class Instante
-                attributes
-                        ano:Integer
-                        mes:Integer
-                        dia:Integer
-                        hora:Integer
-                        minuto:Integer
-                        segundo:Integer
-        end --Instante
-
-        class Date
-               attributes
-                        day:Integer
-                        month:Integer
-                        year:Integer
-        end --Date
-
- -- end Classes of Posicionamento
-
-------------------------------------------------------------------------
--- Classes of Pessoal
-------------------------------------------------------------------------
-
-        class Embarque
-                attributes
-                        data_embarque:Date
-                        date_desembarque:Date
-                        funcao:CategoriaProfissional
-        end --Embarque
-
-        abstract class Oficial < Tripulante
-                operations
-                        Promove():Boolean
-        end --Oficial
-
-        class OficialMaquinas < Oficial
-                operations
-                        SupervisionaManutencao():Boolean
-                        CalculaConsumos():Boolean
-                        VigiaFuncionamento():Boolean
-                        Aposenta():Boolean
-        end --OficialMaquinas
-
-        abstract class Tripulante < FuncionarioMar
-                operations
-                        NavioCorrente():Embarcacao
-                        DiasEmbarcado():Integer
-                        FuncaoCorrente():CategoriaProfissional
-        end --Tripulante
-
-        class FuncionarioTerra < Empregado
-                operations
-                        Promove():Boolean
-        end --FuncionarioTerra
-
-        class Desembarcado < FuncionarioMar
-                attributes
-                        data_desembarque:Date
-                        doente:Boolean
-                operations
-                        DiasDesembarcado():Integer
-        end --Desembarcado
-
-        abstract class Empregado
-                attributes
-                        nome:String
-                        morada:String
-                        no_contribuinte:Long
-                        name:Coordenada
-                        no_empregado:Integer
-                operations
-                        Promove():Boolean
-                        AlteraMorada():Boolean
-                        Aposenta():Boolean
-        end --Empregado
-
-        class Marinheiro < Tripulante
-                operations
-                        PicaMetal():Integer
-                        PintaNavio():Integer
-                        GovernaNavio():Integer
-                        PassaCabos():Integer
-                        Promove():Boolean
-        end --Marinheiro
-
-        class Mestre < Tripulante
-                operations
-                        GerePaiolMantimentos():Boolean
-                        ControlaMarinheiros():Boolean
-                        DefineTarefas():Boolean
-                        GerePaiolPecas():Boolean
-                        Promove():Boolean
-        end --Mestre
-
-        class OficialPiloto < Oficial
-                operations
-                        ObservaEstrelas():Boolean
-                        DeterminaPosicao():Posicao
-                        CalculaRumo():Double
-                        MedeAlturaSol():Double
-                        MedeAzimuteSol():Double
-        end --OficialPiloto
-
-        class CategoriaProfissional
-                attributes
-                        designacao:String
-                        vencimento:Currency
-                operations
-                        Escreve()
-                        ActualizaVencimento(novo_valor:Currency):Boolean
-        end --CategoriaProfissional
-
-        class CedulaMaritima
-        end --CedulaMaritima
-
-        abstract class FuncionarioMar < Empregado
-                operations
-                        Embarca(destino:Embarcacao, funcao:CategoriaProfissional):Boolean
-                        Desembarca():Boolean
-        end --FuncionarioMar
-
-        class Armador
-                attributes
-                        nome:String
-                        morada_sede:String
-                        capital_social:Integer
-                        no_contribuinte:Integer
-        end --Armador
-
- -- end Classes of Pessoal
-
-------------------------------------------------------------------------
--- Classes of Embarcacoes
-------------------------------------------------------------------------
-
-        class Tanque
-        end --Tanque
-
-        class CasaMaquina
-        end --CasaMaquina
-
-        class Conves
-        end --Conves
-
-        class Porao
-        end --Porao
-
-        class Ponte
-        end --Ponte
-
-        class InstalacoesTripulacao
-        end --InstalacoesTripulacao
-
-        class PaiolConves
-        end --PaiolConves
-
-        class PaiolMaquina
-        end --PaiolMaquina
-
-        class CamaraFrigorifica
-        end --CamaraFrigorifica
-
-        abstract class Armazem
-        end --Armazem
-
-        class Item
-        end --Item
-
-        class NaoPerecivel < Item
-        end --NaoPerecivel
-
-        class Perecivel < Item
-        end --Perecivel
-
-        class Sobressalente < NaoPerecivel
-        end --Sobressalente
-
-        class Apresto < NaoPerecivel
-        end --Apresto
-
-        class Alimento < Perecivel
-        end --Alimento
-
-        class TabelasNauticas
-                operations
-                        DaPosicao(altura_sol:Coordenada, azimute_sol:Coordenada, instante_observacao:Instante):Posicao
-        end --TabelasNauticas
-
-        class Relogio
-                operations
-                        Acerta(nova_hora:Time)
-                        ForneceHora():Time
-        end --Relogio
-
-        class RodaLeme
-                operations
-                        RodaEstibordo():Boolean
-                        RodaBombordo():Boolean
-        end --RodaLeme
-
-        class GiroBussula
-                operations
-                        Calibra()
-        end --GiroBussula
-
-        class Anfibio < Terrestre,Maritimo
-        end --Anfibio
-
-        class Maritimo < Veiculo
-                attributes
-                        numero_helices:Integer
-                        velocidade_maxima:Integer
-                        autonomia:Integer
-        end --Maritimo
-
-        class Terrestre < Veiculo
-                attributes
-                        numero_eixos:Integer
-                        tipo_pneus:String
-                        numero_portas:Integer
-                        velocidade_maxima:Integer
-                        autonomia:Integer
-        end --Terrestre
-
-        class Misto < Motor,Vela
-        end --Misto
-
-        class Motor < Propulsao
-        end --Motor
-
-        class RollOnRollOff < Comercio
-        end --RollOnRollOff
-
-        class PortaContentores < Comercio
-        end --PortaContentores
-
-        class CargaGeral < Comercio
-        end --CargaGeral
-
-        class Quimico < Comercio
-        end --Quimico
-
-        class Petroleiro < Comercio
-        end --Petroleiro
-
-        class Guerra < Embarcacao
-        end --Guerra
-
-        class Comercio < Embarcacao
-        end --Comercio
-
-        class Pesca < Embarcacao
-        end --Pesca
-
-        class Recreio < Embarcacao
-        end --Recreio
-
-        class Vela < Propulsao
-        end --Vela
-
-        class Embarcacao
-                attributes
-                        nome:String
-                        arqueacao:Long
-                        calado:Double
-                        data_construcao:Date
-                        andamento:Double
-                        rumo:Double
-                        situacao:EnumType_1
-                operations
-                        Atracar():Boolean
-                        Fundear():Boolean
-                        Aproar(novo_rumo:Posicao):Boolean
-                        Navegar(nos:Integer):Boolean
-                        Projectar():Boolean
-                        Construir():Boolean
-                        Ensaiar():Boolean
-                        Aprovar():Boolean
-                        Reprovar():Boolean
-                        TerminarTrabalhos():Boolean
-                        Avariar():Boolean
-                        Manter():Boolean
-                        Abater():Boolean
-                        Desmantelar():Boolean
-                        Reclassificar():Boolean
-                        Encalhar():Boolean
-                        Desencalhar():Boolean
-                        Degradar():Boolean
-                        Corroer():Boolean
-                        Afundar()
-                        Manobrar():Boolean
-        end --Embarcacao
-
-        class Veiculo
-                attributes
-                        numero_lugares:Integer
-        end --Veiculo
-
-        class Propulsao
-        end --Propulsao
-
- -- end Classes of Embarcacoes
-
-------------------------------------------------------------------------
--- Classes of TypesPackage
-------------------------------------------------------------------------
-
-        class Date
-               attributes
-                        day:Integer
-                        month:Integer
-                        year:Integer
-        end --Date
-
-        class Double
-        end --Double
-
-        class Long
-        end --Long
-
-        class Currency
-        end --Currency
-
-        class Time
-        end --Time
-
- -- end Classes of TypesPackage
-
-------------------------------------------------------------------------
--- Associations of Posicionamento
-------------------------------------------------------------------------
-
-        association momento_obtencao between
-         Instante[ * ] role instante
-         Posicao[ * ] role posicao
-        end -- momento_obtencao
-
-        association Posicao_Embarcacao_1 between
-         Posicao[ 0..1 ] role rumo_actual
-         Embarcacao[ * ] role embarcacao_rumo
-        end -- 
-
-        composition Coordenada_Posicao_2 between
-         Coordenada[ 1 ] role latitude
-         Posicao[ 1 ] role posicao_latitude
-        end -- 
-
-        association Posicao_Embarcacao_3 between
-         Posicao[ 1 ] role posicao_actual
-         Embarcacao[ * ] role embarcacao_posicao
-        end -- 
-
-        aggregation Posicao_Coordenada_4 between
-         Posicao[ * ] role posicao_longitude
-         Coordenada[ 1 ] role longitude
-        end -- 
-
-        association Posicao_Embarcacao_5 between
-         Posicao[ 1..* ] role rota
-         Embarcacao[ 1 ] role embarcacao_rota
-        end -- 
-
- -- end Associations of Posicionamento
-
-------------------------------------------------------------------------
--- Associations of Pessoal
-------------------------------------------------------------------------
-
-        association possui between
-         CategoriaProfissional[ 1 ] role theCategoriaProfissional
-         Empregado[ 0..* ] role empregado
-        end -- possui
-
-        association tem between
-         CedulaMaritima[ 1 ] role cedulaMaritima
-         FuncionarioMar[ 1 ] role funcionarioMar
-        end -- tem
-
-        association assume between
-         CategoriaProfissional[ 1 ] role categoriaProfissional
-         Tripulante[ 0..* ] role tripulante
-        end -- assume
-
-        association Armador_Empregado_6 between
-         Armador[ 0..1 ] role armador
-         Empregado[ * ] role trabalhador
-        end -- 
-
-        association Comandante between
-         Embarcacao[ 1 ] role e_comandado
-         OficialPiloto[ 1 ] role comanda
-        end -- Comandante
-
-        association Embarcacao_Tripulante_7 between
-         Embarcacao[ 1..* ] role embarcacao
-         Tripulante[ 1..* ] role tripulante
-        end -- 
-
-        association Timoneiro between
-         Marinheiro[ 0..1 ] role governa
-         Embarcacao[ 0..1 ] role e_governado
-        end -- Timoneiro
-
-        association CategoriaProfissional_Empregado_8 between
-         CategoriaProfissional[ * ] role categoria
-         Empregado[ * ] role possui
-        end -- 
-
-        association Embarcacao_Embarque_9 between
-         Embarcacao[ 1 ] role embarcacao
-         Embarque[ 1..* ] role embarque
-        end
-
-        association Tripulante_Embarque_10 between
-         Tripulante[ 1 ] role tripulante
-         Embarque[ 1..* ] role embarque
-        end
-
- -- end Associations of Pessoal
-
-------------------------------------------------------------------------
--- Associations of Embarcacoes
-------------------------------------------------------------------------
-
-        aggregation Embarcacao_Armazem_11 between
-         Embarcacao[ 1 ] role embarcacao
-         Armazem[ 0..* ] role armazem
-        end -- 
-
-        association Armazem_CamaraFrigorifica_12 between
-         Armazem[ * ] role armazem
-         CamaraFrigorifica[ * ] role camaraFrigorifica
-        end -- 
-
-        association Propulsao_Embarcacao_13 between
-         Propulsao[ * ] role propulsao
-         Embarcacao[ * ] role embarcacao
-        end -- 
-
-        aggregation Embarcacao_Porao_14 between
-         Embarcacao[ * ] role embarcacao
-         Porao[ 0..* ] role poroes ordered
-        end -- 
-
-        aggregation Embarcacao_Conves_15 between
-         Embarcacao[ * ] role embarcacao
-         Conves[ 1..* ] role conves
-        end -- 
-
-        composition Embarcacao_Ponte_16 between
-         Embarcacao[ 1 ] role embarcacao
-         Ponte[ 0..1 ] role ponte
-        end -- 
-
-        aggregation Embarcacao_InstalacoesTripulacao_17 between
-         Embarcacao[ * ] role embarcacao
-         InstalacoesTripulacao[ 0..1 ] role instalacoesTripulacao
-        end -- 
-
-        composition Embarcacao_CasaMaquina_18 between
-         Embarcacao[ * ] role embarcacao
-         CasaMaquina[ 0..1 ] role casaMaquina
-        end -- 
-
-        aggregation Embarcacao_Tanque_19 between
-         Embarcacao[ * ] role embarcacao
-         Tanque[ 1..* ] role tanque
-        end -- 
-
-        aggregation Ponte_RodaLeme_20 between
-         Ponte[ * ] role ponte
-         RodaLeme[ 1 ] role rodaLeme
-        end -- 
-
-        aggregation Ponte_GiroBussula_21 between
-         Ponte[ * ] role ponte
-         GiroBussula[ 0..1 ] role giroBussula
-        end -- 
-
-        aggregation Ponte_Relogio_22 between
-         Ponte[ * ] role ponte
-         Relogio[ 1..* ] role relogio
-        end -- 
-
-        aggregation Ponte_TabelasNauticas_23 between
-         Ponte[ * ] role ponte
-         TabelasNauticas[ 0..* ] role tabelasNauticas
-        end -- 
-
- -- end Associations of Embarcacoes
-
-------------------------------------------------------------------------
--- Constraints of Posicionamento
-------------------------------------------------------------------------
-
---   Put your OCL model constraints here in the following format:
-
---     ________________________________________________
---     context <class name>
-
---     inv <invariant id>: <invariant body>
---     ________________________________________________
---     context <class name>::<operation signature>
-
---     pre <precondition id>: <precondition body>
-
---     post <postcondition id>: <postcondition body>
---     ________________________________________________
-
- -- end Constraints of Posicionamento
-
-------------------------------------------------------------------------
--- Constraints of Pessoal
-------------------------------------------------------------------------
-
---   Put your OCL model constraints here in the following format:
-
---     ________________________________________________
---     context <class name>
-
---     inv <invariant id>: <invariant body>
---     ________________________________________________
---     context <class name>::<operation signature>
-
---     pre <precondition id>: <precondition body>
-
---     post <postcondition id>: <postcondition body>
---     ________________________________________________
-
- -- end Constraints of Pessoal
-
-------------------------------------------------------------------------
--- Constraints of Embarcacoes
-------------------------------------------------------------------------
-
---   Put your OCL model constraints here in the following format:
-
---     ________________________________________________
---     context <class name>
-
---     inv <invariant id>: <invariant body>
---     ________________________________________________
---     context <class name>::<operation signature>
-
---     pre <precondition id>: <precondition body>
-
---     post <postcondition id>: <postcondition body>
---     ________________________________________________
-
- -- end Constraints of Embarcacoes
-
-------------------------------------------------------------------------
--- Constraints of TypesPackage
-------------------------------------------------------------------------
-
---   Put your OCL model constraints here in the following format:
-
---     ________________________________________________
---     context <class name>
-
---     inv <invariant id>: <invariant body>
---     ________________________________________________
---     context <class name>::<operation signature>
-
---     pre <precondition id>: <precondition body>
-
---     post <postcondition id>: <postcondition body>
---     ________________________________________________
-
- -- end Constraints of TypesPackage
-
-
- -- end model Navios
+DESCRIPTION:
+
+  (Repeated declaration of a class leads to a NullPointerException if
+   the second class declaration contains an attribute section)
+
+  > ich verstehe nicht genau, welcher bug hier gemeint ist. soll es
+  > erlaubt sein, dass eine Klasse an mehreren Stellen im .use-file
+  > deklariert wird?
+
+  Nein, das soll eigentlich nicht erlaubt sein. Es wird normalerweise
+  auch geprueft und erkannt, z.B.:
+
+    Test.use:4:7: Redefinition of `A'.
+    Test.use:2:7: `A' previously declared here.
+
+  In Fernandos Beispiel ist die Klasse Date doppelt definiert und
+  triggert damit eine NullPointerException. Ich haenge sein Beispiel
+  nochmal als Text untenan (kann sein, dass es beim forward nicht mit
+  dabei war). Damit bekomme ich folgende Ausgabe:
+
+  5801:$ ~/work/java/use/use/bin/use -v -nogui Navios.use 
+  loading properties from: /home/mr/work/java/use/use/etc/use.properties
+  use version 2.1.1pre, Copyright (C) 1999-2004 Mark Richters
+  compiling specification...
+  Exception in thread "main" java.lang.NullPointerException
+	  at org.tzi.use.uml.mm.MClass.allParents(MClass.java:337)
+	  at org.tzi.use.uml.mm.MClass.attribute(MClass.java:172)
+	  at org.tzi.use.uml.mm.MClass.addAttribute(MClass.java:109)
+	  at org.tzi.use.parser.ASTClass.genAttributesOperationSignaturesAndGenSpec(ASTClass.java:124)
+	  at org.tzi.use.parser.ASTModel.gen(ASTModel.java:115)
+	  at org.tzi.use.parser.USECompiler.compileSpecification(USECompiler.java:67)
+	  at org.tzi.use.main.Main.main(Main.java:70)
+
+
+  ------------------------------------------------------------------------
+  ------------------------------------------------------------------------
+
+   model Navios
+
+  ------------------------------------------------------------------------
+  ------------------------------------------------------------------------
+
+  -- produced "13-02-2002_0:19:14"
+  -- converted "13-02-2002_00:20:08"
+
+  ------------------------------------------------------------------------
+  -- Enumerated Types
+  ------------------------------------------------------------------------
+
+  enum EnumType_1 {atracado, fundeado, navegar, abatido}
+
+
+  ------------------------------------------------------------------------
+  -- Classes of Posicionamento
+  ------------------------------------------------------------------------
+
+	  class Posicao
+	  end --Posicao
+
+	  class Coordenada
+		  attributes
+			  graus:Integer
+			  minutos:Integer
+			  segundos:Double
+	  end --Coordenada
+
+	  class Instante
+		  attributes
+			  ano:Integer
+			  mes:Integer
+			  dia:Integer
+			  hora:Integer
+			  minuto:Integer
+			  segundo:Integer
+	  end --Instante
+
+	  class Date
+		 attributes
+			  day:Integer
+			  month:Integer
+			  year:Integer
+	  end --Date
+
+   -- end Classes of Posicionamento
+
+  ------------------------------------------------------------------------
+  -- Classes of Pessoal
+  ------------------------------------------------------------------------
+
+	  class Embarque
+		  attributes
+			  data_embarque:Date
+			  date_desembarque:Date
+			  funcao:CategoriaProfissional
+	  end --Embarque
+
+	  abstract class Oficial < Tripulante
+		  operations
+			  Promove():Boolean
+	  end --Oficial
+
+	  class OficialMaquinas < Oficial
+		  operations
+			  SupervisionaManutencao():Boolean
+			  CalculaConsumos():Boolean
+			  VigiaFuncionamento():Boolean
+			  Aposenta():Boolean
+	  end --OficialMaquinas
+
+	  abstract class Tripulante < FuncionarioMar
+		  operations
+			  NavioCorrente():Embarcacao
+			  DiasEmbarcado():Integer
+			  FuncaoCorrente():CategoriaProfissional
+	  end --Tripulante
+
+	  class FuncionarioTerra < Empregado
+		  operations
+			  Promove():Boolean
+	  end --FuncionarioTerra
+
+	  class Desembarcado < FuncionarioMar
+		  attributes
+			  data_desembarque:Date
+			  doente:Boolean
+		  operations
+			  DiasDesembarcado():Integer
+	  end --Desembarcado
+
+	  abstract class Empregado
+		  attributes
+			  nome:String
+			  morada:String
+			  no_contribuinte:Long
+			  name:Coordenada
+			  no_empregado:Integer
+		  operations
+			  Promove():Boolean
+			  AlteraMorada():Boolean
+			  Aposenta():Boolean
+	  end --Empregado
+
+	  class Marinheiro < Tripulante
+		  operations
+			  PicaMetal():Integer
+			  PintaNavio():Integer
+			  GovernaNavio():Integer
+			  PassaCabos():Integer
+			  Promove():Boolean
+	  end --Marinheiro
+
+	  class Mestre < Tripulante
+		  operations
+			  GerePaiolMantimentos():Boolean
+			  ControlaMarinheiros():Boolean
+			  DefineTarefas():Boolean
+			  GerePaiolPecas():Boolean
+			  Promove():Boolean
+	  end --Mestre
+
+	  class OficialPiloto < Oficial
+		  operations
+			  ObservaEstrelas():Boolean
+			  DeterminaPosicao():Posicao
+			  CalculaRumo():Double
+			  MedeAlturaSol():Double
+			  MedeAzimuteSol():Double
+	  end --OficialPiloto
+
+	  class CategoriaProfissional
+		  attributes
+			  designacao:String
+			  vencimento:Currency
+		  operations
+			  Escreve()
+			  ActualizaVencimento(novo_valor:Currency):Boolean
+	  end --CategoriaProfissional
+
+	  class CedulaMaritima
+	  end --CedulaMaritima
+
+	  abstract class FuncionarioMar < Empregado
+		  operations
+			  Embarca(destino:Embarcacao, funcao:CategoriaProfissional):Boolean
+			  Desembarca():Boolean
+	  end --FuncionarioMar
+
+	  class Armador
+		  attributes
+			  nome:String
+			  morada_sede:String
+			  capital_social:Integer
+			  no_contribuinte:Integer
+	  end --Armador
+
+   -- end Classes of Pessoal
+
+  ------------------------------------------------------------------------
+  -- Classes of Embarcacoes
+  ------------------------------------------------------------------------
+
+	  class Tanque
+	  end --Tanque
+
+	  class CasaMaquina
+	  end --CasaMaquina
+
+	  class Conves
+	  end --Conves
+
+	  class Porao
+	  end --Porao
+
+	  class Ponte
+	  end --Ponte
+
+	  class InstalacoesTripulacao
+	  end --InstalacoesTripulacao
+
+	  class PaiolConves
+	  end --PaiolConves
+
+	  class PaiolMaquina
+	  end --PaiolMaquina
+
+	  class CamaraFrigorifica
+	  end --CamaraFrigorifica
+
+	  abstract class Armazem
+	  end --Armazem
+
+	  class Item
+	  end --Item
+
+	  class NaoPerecivel < Item
+	  end --NaoPerecivel
+
+	  class Perecivel < Item
+	  end --Perecivel
+
+	  class Sobressalente < NaoPerecivel
+	  end --Sobressalente
+
+	  class Apresto < NaoPerecivel
+	  end --Apresto
+
+	  class Alimento < Perecivel
+	  end --Alimento
+
+	  class TabelasNauticas
+		  operations
+			  DaPosicao(altura_sol:Coordenada, azimute_sol:Coordenada, instante_observacao:Instante):Posicao
+	  end --TabelasNauticas
+
+	  class Relogio
+		  operations
+			  Acerta(nova_hora:Time)
+			  ForneceHora():Time
+	  end --Relogio
+
+	  class RodaLeme
+		  operations
+			  RodaEstibordo():Boolean
+			  RodaBombordo():Boolean
+	  end --RodaLeme
+
+	  class GiroBussula
+		  operations
+			  Calibra()
+	  end --GiroBussula
+
+	  class Anfibio < Terrestre,Maritimo
+	  end --Anfibio
+
+	  class Maritimo < Veiculo
+		  attributes
+			  numero_helices:Integer
+			  velocidade_maxima:Integer
+			  autonomia:Integer
+	  end --Maritimo
+
+	  class Terrestre < Veiculo
+		  attributes
+			  numero_eixos:Integer
+			  tipo_pneus:String
+			  numero_portas:Integer
+			  velocidade_maxima:Integer
+			  autonomia:Integer
+	  end --Terrestre
+
+	  class Misto < Motor,Vela
+	  end --Misto
+
+	  class Motor < Propulsao
+	  end --Motor
+
+	  class RollOnRollOff < Comercio
+	  end --RollOnRollOff
+
+	  class PortaContentores < Comercio
+	  end --PortaContentores
+
+	  class CargaGeral < Comercio
+	  end --CargaGeral
+
+	  class Quimico < Comercio
+	  end --Quimico
+
+	  class Petroleiro < Comercio
+	  end --Petroleiro
+
+	  class Guerra < Embarcacao
+	  end --Guerra
+
+	  class Comercio < Embarcacao
+	  end --Comercio
+
+	  class Pesca < Embarcacao
+	  end --Pesca
+
+	  class Recreio < Embarcacao
+	  end --Recreio
+
+	  class Vela < Propulsao
+	  end --Vela
+
+	  class Embarcacao
+		  attributes
+			  nome:String
+			  arqueacao:Long
+			  calado:Double
+			  data_construcao:Date
+			  andamento:Double
+			  rumo:Double
+			  situacao:EnumType_1
+		  operations
+			  Atracar():Boolean
+			  Fundear():Boolean
+			  Aproar(novo_rumo:Posicao):Boolean
+			  Navegar(nos:Integer):Boolean
+			  Projectar():Boolean
+			  Construir():Boolean
+			  Ensaiar():Boolean
+			  Aprovar():Boolean
+			  Reprovar():Boolean
+			  TerminarTrabalhos():Boolean
+			  Avariar():Boolean
+			  Manter():Boolean
+			  Abater():Boolean
+			  Desmantelar():Boolean
+			  Reclassificar():Boolean
+			  Encalhar():Boolean
+			  Desencalhar():Boolean
+			  Degradar():Boolean
+			  Corroer():Boolean
+			  Afundar()
+			  Manobrar():Boolean
+	  end --Embarcacao
+
+	  class Veiculo
+		  attributes
+			  numero_lugares:Integer
+	  end --Veiculo
+
+	  class Propulsao
+	  end --Propulsao
+
+   -- end Classes of Embarcacoes
+
+  ------------------------------------------------------------------------
+  -- Classes of TypesPackage
+  ------------------------------------------------------------------------
+
+	  class Date
+		 attributes
+			  day:Integer
+			  month:Integer
+			  year:Integer
+	  end --Date
+
+	  class Double
+	  end --Double
+
+	  class Long
+	  end --Long
+
+	  class Currency
+	  end --Currency
+
+	  class Time
+	  end --Time
+
+   -- end Classes of TypesPackage
+
+  ------------------------------------------------------------------------
+  -- Associations of Posicionamento
+  ------------------------------------------------------------------------
+
+	  association momento_obtencao between
+	   Instante[ * ] role instante
+	   Posicao[ * ] role posicao
+	  end -- momento_obtencao
+
+	  association Posicao_Embarcacao_1 between
+	   Posicao[ 0..1 ] role rumo_actual
+	   Embarcacao[ * ] role embarcacao_rumo
+	  end -- 
+
+	  composition Coordenada_Posicao_2 between
+	   Coordenada[ 1 ] role latitude
+	   Posicao[ 1 ] role posicao_latitude
+	  end -- 
+
+	  association Posicao_Embarcacao_3 between
+	   Posicao[ 1 ] role posicao_actual
+	   Embarcacao[ * ] role embarcacao_posicao
+	  end -- 
+
+	  aggregation Posicao_Coordenada_4 between
+	   Posicao[ * ] role posicao_longitude
+	   Coordenada[ 1 ] role longitude
+	  end -- 
+
+	  association Posicao_Embarcacao_5 between
+	   Posicao[ 1..* ] role rota
+	   Embarcacao[ 1 ] role embarcacao_rota
+	  end -- 
+
+   -- end Associations of Posicionamento
+
+  ------------------------------------------------------------------------
+  -- Associations of Pessoal
+  ------------------------------------------------------------------------
+
+	  association possui between
+	   CategoriaProfissional[ 1 ] role theCategoriaProfissional
+	   Empregado[ 0..* ] role empregado
+	  end -- possui
+
+	  association tem between
+	   CedulaMaritima[ 1 ] role cedulaMaritima
+	   FuncionarioMar[ 1 ] role funcionarioMar
+	  end -- tem
+
+	  association assume between
+	   CategoriaProfissional[ 1 ] role categoriaProfissional
+	   Tripulante[ 0..* ] role tripulante
+	  end -- assume
+
+	  association Armador_Empregado_6 between
+	   Armador[ 0..1 ] role armador
+	   Empregado[ * ] role trabalhador
+	  end -- 
+
+	  association Comandante between
+	   Embarcacao[ 1 ] role e_comandado
+	   OficialPiloto[ 1 ] role comanda
+	  end -- Comandante
+
+	  association Embarcacao_Tripulante_7 between
+	   Embarcacao[ 1..* ] role embarcacao
+	   Tripulante[ 1..* ] role tripulante
+	  end -- 
+
+	  association Timoneiro between
+	   Marinheiro[ 0..1 ] role governa
+	   Embarcacao[ 0..1 ] role e_governado
+	  end -- Timoneiro
+
+	  association CategoriaProfissional_Empregado_8 between
+	   CategoriaProfissional[ * ] role categoria
+	   Empregado[ * ] role possui
+	  end -- 
+
+	  association Embarcacao_Embarque_9 between
+	   Embarcacao[ 1 ] role embarcacao
+	   Embarque[ 1..* ] role embarque
+	  end
+
+	  association Tripulante_Embarque_10 between
+	   Tripulante[ 1 ] role tripulante
+	   Embarque[ 1..* ] role embarque
+	  end
+
+   -- end Associations of Pessoal
+
+  ------------------------------------------------------------------------
+  -- Associations of Embarcacoes
+  ------------------------------------------------------------------------
+
+	  aggregation Embarcacao_Armazem_11 between
+	   Embarcacao[ 1 ] role embarcacao
+	   Armazem[ 0..* ] role armazem
+	  end -- 
+
+	  association Armazem_CamaraFrigorifica_12 between
+	   Armazem[ * ] role armazem
+	   CamaraFrigorifica[ * ] role camaraFrigorifica
+	  end -- 
+
+	  association Propulsao_Embarcacao_13 between
+	   Propulsao[ * ] role propulsao
+	   Embarcacao[ * ] role embarcacao
+	  end -- 
+
+	  aggregation Embarcacao_Porao_14 between
+	   Embarcacao[ * ] role embarcacao
+	   Porao[ 0..* ] role poroes ordered
+	  end -- 
+
+	  aggregation Embarcacao_Conves_15 between
+	   Embarcacao[ * ] role embarcacao
+	   Conves[ 1..* ] role conves
+	  end -- 
+
+	  composition Embarcacao_Ponte_16 between
+	   Embarcacao[ 1 ] role embarcacao
+	   Ponte[ 0..1 ] role ponte
+	  end -- 
+
+	  aggregation Embarcacao_InstalacoesTripulacao_17 between
+	   Embarcacao[ * ] role embarcacao
+	   InstalacoesTripulacao[ 0..1 ] role instalacoesTripulacao
+	  end -- 
+
+	  composition Embarcacao_CasaMaquina_18 between
+	   Embarcacao[ * ] role embarcacao
+	   CasaMaquina[ 0..1 ] role casaMaquina
+	  end -- 
+
+	  aggregation Embarcacao_Tanque_19 between
+	   Embarcacao[ * ] role embarcacao
+	   Tanque[ 1..* ] role tanque
+	  end -- 
+
+	  aggregation Ponte_RodaLeme_20 between
+	   Ponte[ * ] role ponte
+	   RodaLeme[ 1 ] role rodaLeme
+	  end -- 
+
+	  aggregation Ponte_GiroBussula_21 between
+	   Ponte[ * ] role ponte
+	   GiroBussula[ 0..1 ] role giroBussula
+	  end -- 
+
+	  aggregation Ponte_Relogio_22 between
+	   Ponte[ * ] role ponte
+	   Relogio[ 1..* ] role relogio
+	  end -- 
+
+	  aggregation Ponte_TabelasNauticas_23 between
+	   Ponte[ * ] role ponte
+	   TabelasNauticas[ 0..* ] role tabelasNauticas
+	  end -- 
+
+   -- end Associations of Embarcacoes
+
+  ------------------------------------------------------------------------
+  -- Constraints of Posicionamento
+  ------------------------------------------------------------------------
+
+  --   Put your OCL model constraints here in the following format:
+
+  --     ________________________________________________
+  --     context <class name>
+
+  --     inv <invariant id>: <invariant body>
+  --     ________________________________________________
+  --     context <class name>::<operation signature>
+
+  --     pre <precondition id>: <precondition body>
+
+  --     post <postcondition id>: <postcondition body>
+  --     ________________________________________________
+
+   -- end Constraints of Posicionamento
+
+  ------------------------------------------------------------------------
+  -- Constraints of Pessoal
+  ------------------------------------------------------------------------
+
+  --   Put your OCL model constraints here in the following format:
+
+  --     ________________________________________________
+  --     context <class name>
+
+  --     inv <invariant id>: <invariant body>
+  --     ________________________________________________
+  --     context <class name>::<operation signature>
+
+  --     pre <precondition id>: <precondition body>
+
+  --     post <postcondition id>: <postcondition body>
+  --     ________________________________________________
+
+   -- end Constraints of Pessoal
+
+  ------------------------------------------------------------------------
+  -- Constraints of Embarcacoes
+  ------------------------------------------------------------------------
+
+  --   Put your OCL model constraints here in the following format:
+
+  --     ________________________________________________
+  --     context <class name>
+
+  --     inv <invariant id>: <invariant body>
+  --     ________________________________________________
+  --     context <class name>::<operation signature>
+
+  --     pre <precondition id>: <precondition body>
+
+  --     post <postcondition id>: <postcondition body>
+  --     ________________________________________________
+
+   -- end Constraints of Embarcacoes
+
+  ------------------------------------------------------------------------
+  -- Constraints of TypesPackage
+  ------------------------------------------------------------------------
+
+  --   Put your OCL model constraints here in the following format:
+
+  --     ________________________________________________
+  --     context <class name>
+
+  --     inv <invariant id>: <invariant body>
+  --     ________________________________________________
+  --     context <class name>::<operation signature>
+
+  --     pre <precondition id>: <precondition body>
+
+  --     post <postcondition id>: <postcondition body>
+  --     ________________________________________________
+
+   -- end Constraints of TypesPackage
+
+
+   -- end model Navios
+
+SOLUTION:
+
+  Fixed. But how?
+

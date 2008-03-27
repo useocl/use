@@ -1,0 +1,11 @@
+?Bag{3,2,1,1}->asSequence()
+*-> Sequence{1,1,2,3} : Sequence(Integer)
+?Set{3,2,1,1}->asSequence()
+*-> Sequence{1,2,3} : Sequence(Integer)
+?let s=Set{41,42} in s->asSequence()=s->asBag()->asSequence()
+*-> true : Boolean
+?let s=Set{42,43} in s->asSequence()=s->asBag()->asSequence()
+*-> true : Boolean
+?let s=Set{42,41} in s->asSequence()=s->asBag()->asSequence()
+*-> true : Boolean
+exit

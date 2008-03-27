@@ -4,6 +4,10 @@ $State: Closed$
 $BugAuthor: mk$
 $Tests: test/t038$
 
-Person.allInstances().
+DESCRIPTION:
+ 
+  Person.allInstances() does not work, only Person.allInstances
 
-Parentheses are not allowed but optional.
+SOLUTION:
+
+  Parentheses are now allowed (but still optional).

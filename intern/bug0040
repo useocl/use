@@ -1,13 +1,19 @@
 $Bug: Conversion results (asSequence/asBag) inconsistent$
 $Category: OCL$
-$State: Open$
+$State: Closed$
 $BugAuthor: mk$
-$Tests: -$
+$Tests: test/t041$
 
-Example:
+DESCRIPTION:
+  
+  Example:
+  ?let s=Set{41,42} in s->asSequence()=s->asBag()->asSequence()
+  false : Boolean
+  
+  ?let s=Set{42,43} in s->asSequence()=s->asBag()->asSequence()
+  true : Boolean
 
-?let s=Set{41,42} in s->asSequence()=s->asBag()->asSequence()
-false : Boolean
+SOLUTION: 
 
-?let s=Set{42,43} in s->asSequence()=s->asBag()->asSequence()
-true : Boolean
+  (Was already fixed in an earlier version.) 
+  Used TreeMap instead of HashMap to store the actual values in BagValue. 

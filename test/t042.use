@@ -1,0 +1,16 @@
+model TupleCrash
+
+class tuple_crash
+attributes
+  a:Tuple(one:Set(Tuple(x:Integer,y:Integer)),
+          two:Set(Tuple(z:Integer,w:Integer)))
+operations
+  op()
+end
+
+constraints
+
+context tuple_crash::op() pre fresh:
+  -- true
+  a.isUndefined()
+  

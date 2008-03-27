@@ -4,56 +4,58 @@ $State: Open$
 $BugAuthor: opti$
 $Tests: -$
 
-Example:
+DESCRIPTION:
 
-------------------------------------------------------------------------
-model assl_inh
+  Example:
 
-class A
-attributes
-  name:String
-end
+  ------------------------------------------------------------------------
+  model assl_inh
 
-class B < A
-end
-------------------------------------------------------------------------
-procedure set_attr(a:A)
-begin
-[a].name:=[''];
-end;
-------------------------------------------------------------------------
--- read c:/mg/testuse/assl_inh.cmd
+  class A
+  attributes
+    name:String
+  end
 
-open c:/mg/testuse/assl_inh.use
+  class B < A
+  end
+  ------------------------------------------------------------------------
+  procedure set_attr(a:A)
+  begin
+  [a].name:=[''];
+  end;
+  ------------------------------------------------------------------------
+  -- read c:/mg/testuse/assl_inh.cmd
 
-!create b:B
+  open c:/mg/testuse/assl_inh.use
 
-gen start c:/mg/testuse/assl_inh.assl set_attr(b)
-gen result
-gen result accept
+  !create b:B
 
-gen start c:/mg/testuse/assl_inh.assl set_attr(let b2A:A=b in b2A)
-gen result
-gen result accept
-------------------------------------------------------------------------
-use> open c:/mg/testuse/assl_inh.use
+  gen start c:/mg/testuse/assl_inh.assl set_attr(b)
+  gen result
+  gen result accept
 
-use> !create b:B
+  gen start c:/mg/testuse/assl_inh.assl set_attr(let b2A:A=b in b2A)
+  gen result
+  gen result accept
+  ------------------------------------------------------------------------
+  use> open c:/mg/testuse/assl_inh.use
 
-use> gen start c:/mg/testuse/assl_inh.assl set_attr(b)
-     Error: procedure set_attr(B) not found in c:/mg/testuse/assl_inh.assl
-use> gen result
-     Error: No result available.
-use> gen result accept
-     Error: No result available.
+  use> !create b:B
 
-use> gen start c:/mg/testuse/assl_inh.assl set_attr(let b2A:A=b in b2A)
-use> gen result
-     Random number generator was initialized with 3720.
-     Checked 1 snapshots.
-     Result: Valid state found.
-     Commands to produce the valid state:
-     !set @b.name := ''
-use> gen result accept
-     Generated result (system state) accepted.
-------------------------------------------------------------------------
+  use> gen start c:/mg/testuse/assl_inh.assl set_attr(b)
+       Error: procedure set_attr(B) not found in c:/mg/testuse/assl_inh.assl
+  use> gen result
+       Error: No result available.
+  use> gen result accept
+       Error: No result available.
+
+  use> gen start c:/mg/testuse/assl_inh.assl set_attr(let b2A:A=b in b2A)
+  use> gen result
+       Random number generator was initialized with 3720.
+       Checked 1 snapshots.
+       Result: Valid state found.
+       Commands to produce the valid state:
+       !set @b.name := ''
+  use> gen result accept
+       Generated result (system state) accepted.
+  ------------------------------------------------------------------------

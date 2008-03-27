@@ -4,43 +4,49 @@ $State: Closed$
 $BugAuthor: green$
 $Tests: test/t029$
 
-Example:
+DESCRIPTION:
 
-model test
+  Example:
 
-class A
-end
+  model test
 
-class B
-end
+  class A
+  end
 
-class C 
-end
+  class B
+  end
 
-association R between 
-  A[*] 
-  B[1] 
-  C[*] 
-end
+  class C 
+  end
 
-!create a:A
-!create b:B
-!create c:C
+  association R between 
+    A[*] 
+    B[1] 
+    C[*] 
+  end
 
-?a.c 
-*-> Set{} : Set(Set(C)))
+  !create a:A
+  !create b:B
+  !create c:C
 
-?a.b
-*-> Set{} : Set(Set(B))
+  ?a.c 
+  *-> Set{} : Set(Set(C)))
 
-?b.a 
-*-> Set{} : Set(Set(A))
+  ?a.b
+  *-> Set{} : Set(Set(B))
 
-?b.c
-*-> Set{} : Set(Set(C))
+  ?b.a 
+  *-> Set{} : Set(Set(A))
 
-?c.a
-*-> Set{} : Set(Set(A))
+  ?b.c
+  *-> Set{} : Set(Set(C))
 
-?c.b 
-*-> Set{} : Set(Set(B))
+  ?c.a
+  *-> Set{} : Set(Set(A))
+
+  ?c.b 
+  *-> Set{} : Set(Set(B))
+
+SOLUTION:
+
+  Fixed. But how?

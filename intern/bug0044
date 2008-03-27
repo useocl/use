@@ -6,65 +6,67 @@ $Tests: test/t039$
 
 DESCRIPTION: 
 
-sortedBy
-- fehler auf Set(Tuple(...))
-- ist ok auf Set(Sequence(...))
+  sortedBy
+  - fehler auf Set(Tuple(...))
+  - ist ok auf Set(Sequence(...))
 
-- fehler mit sortedBy(true)
-- ist ok mit sortedBy(0)
+  - fehler mit sortedBy(true)
+  - ist ok mit sortedBy(0)
 
-- fehler mit OclAny
+  - fehler mit OclAny
 
-------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 
-use>?Set{Tuple{fname:'Ada',lname:'Banana'},
-         Tuple{fname:'Bob',lname:'Apple'}}->sortedBy(e|e->last())
+  use>?Set{Tuple{fname:'Ada',lname:'Banana'},
+	   Tuple{fname:'Bob',lname:'Apple'}}->sortedBy(e|e->last())
 
-INTERNAL ERROR: An unexpected exception occured. This happened most probably due to an error in the program. The program will try to continue, but may not be able to recover from the error. Please send a bug report to mr@tzi.org with a description of your last input and include the following output:
-Program version: 2.3.1
-Project version: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green Stack trace: java.lang.RuntimeException: case 821 not handled
-        at org.tzi.use.parser.ocl.ASTOperationExpression.gen1(ASTOperationExpression.java:341)
-        at org.tzi.use.parser.ocl.ASTOperationExpression.gen(ASTOperationExpression.java:135)
-        at org.tzi.use.parser.ocl.ASTQueryExpression.gen(ASTQueryExpression.java:115)
-        at org.tzi.use.parser.ocl.OCLCompiler.compileExpression(OCLCompiler.java:68)
-        at org.tzi.use.main.shell.Shell.cmdQuery(Shell.java:924)
-        at org.tzi.use.main.shell.Shell.processLine(Shell.java:318)
-        at org.tzi.use.main.shell.Shell.processLineSafely(Shell.java:254)
-        at org.tzi.use.main.shell.Shell.run(Shell.java:205)
-        at java.lang.Thread.run(Unknown Source)
+  INTERNAL ERROR: An unexpected exception occured. This happened most probably due to an error in the program. The program will try to continue, but may not be able to recover from the error. Please send a bug report to mr@tzi.org with a description of your last input and include the following output:
+  Program version: 2.3.1
+  Project version: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green Stack trace: java.lang.RuntimeException: case 821 not handled
+	  at org.tzi.use.parser.ocl.ASTOperationExpression.gen1(ASTOperationExpression.java:341)
+	  at org.tzi.use.parser.ocl.ASTOperationExpression.gen(ASTOperationExpression.java:135)
+	  at org.tzi.use.parser.ocl.ASTQueryExpression.gen(ASTQueryExpression.java:115)
+	  at org.tzi.use.parser.ocl.OCLCompiler.compileExpression(OCLCompiler.java:68)
+	  at org.tzi.use.main.shell.Shell.cmdQuery(Shell.java:924)
+	  at org.tzi.use.main.shell.Shell.processLine(Shell.java:318)
+	  at org.tzi.use.main.shell.Shell.processLineSafely(Shell.java:254)
+	  at org.tzi.use.main.shell.Shell.run(Shell.java:205)
+	  at java.lang.Thread.run(Unknown Source)
 
-........................................................................
+  ........................................................................
 
-use> ?Set{Sequence{'Ada','Banana'},Sequence{'Bob','Apple'}}->
-     sortedBy(e|e->last())
+  use> ?Set{Sequence{'Ada','Banana'},Sequence{'Bob','Apple'}}->
+       sortedBy(e|e->last())
 
--> Sequence{Sequence{'Bob','Apple'},Sequence{'Ada','Banana'}} :
-   Sequence(Sequence(String))
+  -> Sequence{Sequence{'Bob','Apple'},Sequence{'Ada','Banana'}} :
+     Sequence(Sequence(String))
 
-------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 
-use>?Set{Sequence{'Bob','Apple'},Sequence{'Ada','Banana'}}->sortedBy(tru
-use>e)
+  use>?Set{Sequence{'Bob','Apple'},Sequence{'Ada','Banana'}}->sortedBy(tru
+  use>e)
 
-<input>:1:56: Argument of sortedBy must have basic type (Integer, Real, String or Boolean), found `Boolean'.
+  <input>:1:56: Argument of sortedBy must have basic type (Integer, Real, String or Boolean), found `Boolean'.
 
-........................................................................
+  ........................................................................
 
-use>?Set{Sequence{'Bob','Apple'},Sequence{'Ada','Banana'}}->sortedBy(0)
+  use>?Set{Sequence{'Bob','Apple'},Sequence{'Ada','Banana'}}->sortedBy(0)
 
--> Sequence{Sequence{'Ada','Banana'},Sequence{'Bob','Apple'}} :
-   Sequence(Sequence(String))
+  -> Sequence{Sequence{'Ada','Banana'},Sequence{'Bob','Apple'}} :
+     Sequence(Sequence(String))
 
-------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 
-use>?Set{Sequence{42,'C'}, Sequence{43,'B'},
-use>Sequence{44,'A'}}->sortedBy(e|e->last())
+  use>?Set{Sequence{42,'C'}, Sequence{43,'B'},
+  use>Sequence{44,'A'}}->sortedBy(e|e->last())
 
-<input>:1:58: Argument of sortedBy must have basic type (Integer, Real, String or Boolean), found `OclAny'.
+  <input>:1:58: Argument of sortedBy must have basic type (Integer, Real, String or Boolean), found `OclAny'.
 
-------------------------------------------------------------------------
+  ------------------------------------------------------------------------
 
-FIX:
- - check for collection operations in expression generation
+SOLUTION:
+
+ - Added check for collection operations in expression generation (the error case above
+   slipped through)
  - fix error message of sortedBy (Boolean /ist/ not allowed)
 

@@ -4,26 +4,30 @@ $State: Closed$
 $BugAuthor: green$
 $Tests: test/t028$
 
-Example:
+DESCRIPTION:
 
-class C
-end
+  Example:
 
-associationclass A
-between
-  C[1] role r1
-  C[2] role r2
-end
+  class C
+  end
 
-
-!create c1:C
-!create c2:C
-!create a : A between (c1,c2)
-
-?c1.a[r1]
--> Set{@a} : Set(A)
-
-but should be
--> @a : A
+  associationclass A
+  between
+    C[1] role r1
+    C[2] role r2
+  end
 
 
+  !create c1:C
+  !create c2:C
+  !create a : A between (c1,c2)
+
+  ?c1.a[r1]
+  -> Set{@a} : Set(A)
+
+  but should be
+  -> @a : A
+
+SOLUTION:
+
+  Fixed. But how?

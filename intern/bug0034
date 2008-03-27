@@ -4,14 +4,17 @@ $State: Closed$
 $BugAuthor: green$
 $Tests: $
 
-Using File->Exit or closing the main window leaves the command line
-shell open.
+DESCRIPTION:
+  
+  Using File->Exit or closing the main window leaves the command line
+  shell open.
 
+  Problem: The command shell is waiting for a line. Calling
+  System.exit() leaves shell unusable under Linux/GNUReadline.
 
+SOLUTION: 
+  
+  Added InterruptableGNUReadline class which can be interrupted
+  from outside and restores shell state. Uses deprecated Thread.stop,
+  though. 
 
-Problem: The command shell is waiting for a line. Calling
-System.exit() leaves shell unusable under Linux/GNUReadline.
-
-Fix: Added InterruptableGNUReadline class which can be interrupted
-from outside and restores shell state. Uses deprecated Thread.stop,
-though. 

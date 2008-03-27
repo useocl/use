@@ -4,25 +4,27 @@ $State: Open$
 $BugAuthor: mk$
 $Tests: -$
 
-Example:
+DESCRIPTION:
+  
+  Example:
 
-------------------------------------------------------------------------
-model Comp
+  ------------------------------------------------------------------------
+  model Comp
 
-class A
-end
+  class A
+  end
 
-class C < A
-end
+  class C < A
+  end
 
-class B
-end
+  class B
+  end
 
-composition AB between
-  A[0..*] role test1
-  B[1] role test2
-end
-------------------------------------------------------------------------
+  composition AB between
+    A[0..*] role test1
+    B[1] role test2
+  end
+  ------------------------------------------------------------------------
 
-A link between a(:A) and b(:B) has a diamond, but
-a link between c(:C) and b has not.
+  A link between a(:A) and b(:B) has a diamond, but
+  a link between c(:C) and b has not.
