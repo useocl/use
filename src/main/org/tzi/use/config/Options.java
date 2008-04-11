@@ -38,11 +38,8 @@ import org.tzi.use.util.TypedProperties;
  */
 public class Options {
 
-    // the internal version
-//    public static final String PROJECT_VERSION = "$InternalUSEVersion: $:";
-
     // the release version
-    public static final String RELEASE_VERSION = "2.3.1";
+    public static final String RELEASE_VERSION = "2.4.0";
 
     
     // the copyright:
