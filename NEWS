@@ -1,6 +1,6 @@
 USE NEWS -- history of user-visible changes. -*- Text -*-
-$Date: Wed, 16 Aug 2006 13:18:05 +0200 $
-$ReleaseVersion: 2.3.1 $
+
+$Id$
 
 Please send bug reports to mk@informatik.uni-bremen.de. See the file
 `README' for a description of how to report bugs.
