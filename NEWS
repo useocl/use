@@ -2,22 +2,27 @@ USE NEWS -- history of user-visible changes. -*- Text -*-
 $Date: Wed, 16 Aug 2006 13:18:05 +0200 $
 $ReleaseVersion: 2.3.1 $
 
-Please send bug reports to mr@informatik.uni-bremen.de.  See the file
+Please send bug reports to mk@informatik.uni-bremen.de. See the file
 `README' for a description of how to report bugs.
+
 
 ** Changes since version 2.3.1
 
 * [OCL] The tuple values can now be written as 'Tuple{a=1,b=2}', which
-  conforms to the 2.0 standard. The old style Tuple{a:1,b:1} is still 
-  supported. 
+  conforms to the 2.0 standard. The old style Tuple{a:1,b:1} is still
+  supported.
+
+* [GUI] The evaluation browser has been improved. Sub-tree evaluation
+  can now be configured in several ways. The browser now opens on ??
+  and on the evaluation dialog.
 
 
 ** Changes since version 2.3.0
 
-* [GUI] The sequence diagram view has been improved. Events can now be filtered, 
+* [GUI] The sequence diagram view has been improved. Events can now be filtered,
   and the layout is more customizable. Printing has been improved.
 
-* [GUI] Object properties (ie, attributes of an object) can now be invoked 
+* [GUI] Object properties (ie, attributes of an object) can now be invoked
   from the context menu or by double clicking on an object in the object diagram view.
 
 * [GUI] Bug fixed in object properties view: Changes to attribute values now
@@ -25,7 +30,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   strange behaviour of previous USE versions, where one had to give the focus to
   another attribute after editing.
 
-* The GUI of USE is now separated into a second jar (use-gui.jar). 
+* The GUI of USE is now separated into a second jar (use-gui.jar).
   When invoking use with -nogui, use-gui.jar is not required.
 
 * Evaluation performance has been improved.
@@ -44,13 +49,13 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
 
 ** Changes since version 2.2.0
 
-  Special features: 
+  Special features:
 
 * Association names, role names, and multiplicities can be placed on a
   user defined position in the class diagram and object diagrams.
   Double click on the left mouse button to reposition an element.
-  
-* You can now add user defined nodes on association and link edges to 
+
+* You can now add user defined nodes on association and link edges to
   conrol the layout of an edge. Double click on an edge to create an
   additional node. Double click again on this node and it will
   disappear.
@@ -60,17 +65,17 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   Model browser and click with the middle mouse button on the selected
   model element. In the class diagram the class or association will be
   selected. In the object diagram all objects or all links will be
-  selected corresponding to the selected class or association.  
+  selected corresponding to the selected class or association.
 
-* There is now a class diagram window.  
+* There is now a class diagram window.
 
 * Links can be deleted within the GUI as well now.
 
 * Bug fix: The command line now works stable again (it was not
   responding in certain situations in version 2.2.0)
 
-* USE syntax: The syntax for association classes has changed. 
-  It is now: 
+* USE syntax: The syntax for association classes has changed.
+  It is now:
    associationclass WorksFor
    between
      Company[0..1] role employer
@@ -89,12 +94,12 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   and windows). USE now runs 'out of the box'.
 
 * On Windows, USE can now be installed in locations containing
-  spaces in their path names 
+  spaces in their path names
   (e.g., c:\documents and setting\green\My Files\use)
 
 * Now compiles under Java 1.5 / 5.0.
 
-* UML association classes are now available in USE. 
+* UML association classes are now available in USE.
   See documentation for further details.
   Syntax:
    associationclass WorksFor
@@ -104,7 +109,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
    attributes
      salary : Integer
    end
-  Create links for association classes using the new command 
+  Create links for association classes using the new command
    !create aJob : WorksFor between (aPerson,aCompany)'
 
 * It is now possible to optionally specify the source end in
@@ -116,10 +121,10 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   classes, associations, and constraints.
 
 * Added new shell command ':' to display the static type of an
-  expression. 
+  expression.
 
 * Check structure after every change (GUI) is now disabled by
-  default. In earlier versions this was initially enabled. 
+  default. In earlier versions this was initially enabled.
   We disabled it, because reading command files could be really time
   consuming.
 
@@ -127,11 +132,11 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
 
 * A little more help is now available.
 
-* All files (*.use, *.cmd, *.invs) can be read by USE now with 
+* All files (*.use, *.cmd, *.invs) can be read by USE now with
   open. File type is chosen based on the content.
   The commands 'read' and 'load' are still available.
 
-* The USE Snapshot Generator has been integrated into USE. 
+* The USE Snapshot Generator has been integrated into USE.
 
 * An 'if then else' construct is integrated in the ASSL-Language for
   the Generator
@@ -169,9 +174,9 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   - The "insert" and "delete" commands insert/delete links into/from
     an association. Syntax:
 
-      insertCmd ::= "insert" 
+      insertCmd ::= "insert"
         "(" expression "," expression { "," expression } ")" "into" id
-      deleteCmd ::= "delete" 
+      deleteCmd ::= "delete"
         "(" expression "," expression { "," expression } ")" "from" id
 
     Each expression must evaluate to an object reference.
@@ -190,7 +195,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   - The "set" command assigns a value to an attribute of an
     object. Syntax:
 
-      setCmd ::= "set" expression ":=" expression 
+      setCmd ::= "set" expression ":=" expression
 
     The first expression must be an attribute access expression giving
     an "l-value" for an attribute. Example:
@@ -202,7 +207,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
     converted with the following command in a bash shell:
 
       $ for f in *.cmd; do mv $f $f.old; \
-        sed -e 's/\(!set[^=]*\)=/\1:=/1' $f.old > $f; done 
+        sed -e 's/\(!set[^=]*\)=/\1:=/1' $f.old > $f; done
 
 * A new "let" command allows to bind new variables. The syntax is:
 
@@ -214,14 +219,14 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
 
 ** Changes since version 2.0.0
 
-* An Extension to USE 2.0.0. was added. It is extended by a tool for 
-  generating (valid) snapshots for given class models. Changes in USE 
+* An Extension to USE 2.0.0. was added. It is extended by a tool for
+  generating (valid) snapshots for given class models. Changes in USE
   and an overview about new packages are described in file CHANGES.
 
 * A change to the USE grammar now allows classes, associations, and
   constraints to appear in any order in a specification file.
 
-* Bug fixes: 
+* Bug fixes:
 
   - Invoking the "Reset" command when no model is loaded caused a
     NullPointerException. Reported by Joern Bohling.
@@ -285,7 +290,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
 * Some grammar limititations have been lifted: element variables in
   iterate-based expressions can now be omitted as in standard OCL,
   e.g., self.employees->select(age > 20) is fine now whereas it
-  previously had to be written as 
+  previously had to be written as
   self.employees->select(e | age > 20).
 
 * Invariant names must be unique in class scope rather than in model
@@ -309,7 +314,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
 * Type checking for collection literals has been improved. Previously,
   all elements had to have the same type. Now, the least common
   supertype (if a unique one exists) is used. Examples:
-	   
+	
 	   Set{1} : Set(Integer)
 	   Set{1,1.1} : Set(Real)
 	   Set{1,1.1,true} : Set(OclAny)
@@ -318,7 +323,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   cases related to multiple inheritance. In some rare cases it signals
   a type check error where a common supertype exists.
 
-* Bug fixes: 
+* Bug fixes:
 
   - Specification files were not closed after compilation causing the
     file to remain locked during a session on windows platforms.
@@ -357,7 +362,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   `bag->asSequence', and `set->asSequence' have been added. Examples
   can be found in test/t1.in.
 
-* Bug fixes: 
+* Bug fixes:
 
   - A NullPointerException was thrown by the USE-compiler if a result
     type of an operation was undefined. Reported by Tim Harrison.
@@ -406,7 +411,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   Fig. 2-17, the rolename `connection' at AssociationEndRole conflicts
   with the inherited identical rolename at class AssociationEnd.
 
-* Bug fixes: 
+* Bug fixes:
 
   - Equality of OCL values was not always well-defined for integer and
     real values. Undefined values sometimes caused an
@@ -439,7 +444,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   in the interactive shell without echoing its contents. This has been
   useful when producing large snapshots.
 
-* Bug fixes: 
+* Bug fixes:
 
   - A NullPointerException was thrown by the USE-compiler if an
     undefined enumeration literal appeared in an OCL
@@ -458,7 +463,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
 
 * A new property `use.eval.numthreads' in use.properties specifies the
   number of parallel threads to use when evaluating constraints. If
-  you have a multi-processor machine, increasing this number 
+  you have a multi-processor machine, increasing this number
   should significantly speed up constraint checking for large
   snapshots and models with many constraints.
 
@@ -482,7 +487,7 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
   previously. Now it is possible to write expressions like
   Set{Set{1},Set{2}}->select(s : Collection(Integer) | s->notEmpty)
 
-* Bug fixes: 
+* Bug fixes:
 
   - A NullPointerException was thrown by the USE-compiler if a parent
     class in a specialization clause of a class declaration was not
@@ -592,12 +597,12 @@ Please send bug reports to mr@informatik.uni-bremen.de.  See the file
 
 * Full undo support for all state manipulation commands is available.
 
-* Automatic layout of object diagrams has been reimplemented. 
+* Automatic layout of object diagrams has been reimplemented.
 
   - The new algorithm tries to move elements to the centre and keeps
     them inside the visible area.
 
-  - Self-links are shown as circles. 
+  - Self-links are shown as circles.
 
   - Display of role names is optional (see popup menu).
 

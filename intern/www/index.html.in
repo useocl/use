@@ -2,8 +2,8 @@
 <html>
 <!-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ -->
 <head>
-<meta name="author" content="Mark Richters, Fabian Buettner, Fabian Gutsche"> 
-<meta name="keywords" content="UML,OCL,USE,validation,tool"> 
+<meta name="author" content="Mark Richters, Fabian Buettner, Fabian Gutsche, Mirco Kuhlmann">
+<meta name="keywords" content="UML,OCL,USE,validation,tool">
 <title>USE - A UML-based Specification Environment</title>
 </head>
 <body bgcolor="#ffffff">
@@ -49,7 +49,7 @@ OCL expressions can be entered and evaluated to query detailed
 information about a system state. The picture below gives a general
 view of the USE approach.</p>
 
-<center><img alt="Overview of the USE approach" 
+<center><img alt="Overview of the USE approach"
   src="gen-img/overview.png"> </center>
 
 <p>
@@ -76,20 +76,25 @@ Several other papers of our group employing USE can be found in the <a
 <tr><th bgcolor="#e0e0ff"><a name="news">News</a></th></tr>
 <tr><td>
 
-    <ul> 
-      <li> Aug, 2006 <strong>A comprehensive user documentation for USE is currently under development and will be released soon.</strong>
-      </li>
+    <ul>
+  <li> Apr, 2008 <strong>USE 2.4.0 has been released</strong>.
+  The evaluation browser has been improved. Sub-tree evaluation
+  can now be configured in several ways. Several bugs have been fixed.
+  See the <a href=NEWS>NEWS</a> file for more details.
+  </li>
+  <li> May, 2007 <strong>USE 2.3.1 documentation has been released.</strong> (Preliminary Version 0.1)</li>
+  <li> Aug, 2006 <strong>A comprehensive user documentation for USE is currently under development and will be released soon.</strong></li>
   <li> Aug, 2006 <strong>USE 2.3.1 has been released</strong>.
-  Performance has been improved for large link sets. 
-  Several improvements to the GUI have been made, including an 
+  Performance has been improved for large link sets.
+  Several improvements to the GUI have been made, including an
   improved sequence diagram that is much more customizable now.
-  <br>The examples have been completely reorganized and are now 
+  <br>The examples have been completely reorganized and are now
   categorized by feature (see <a href="README.examples">examples/</a> directory).
   See the <a href=NEWS>NEWS</a> file for more details.
   </li>
 
 <li> Sep, 2005 <strong>USE 2.3.0 has been released</strong>.
-USE now displays class diagrams. This version also incorporates some 
+USE now displays class diagrams. This version also incorporates some
 bug fixes (including the bug that sometimes caused the command line
 to hang). See the <a href=NEWS>NEWS</a>
 file for more details.
@@ -97,8 +102,8 @@ file for more details.
 
 <li> May, 2005 <strong>USE 2.2.0 has been released</strong>.
 This release supports UML association classes and provides several bug
-fixes. Furthermore, the Snapshot Generator 
-[<a href="#ref7">7</a>,<a href="#ref8">8</a>] 
+fixes. Furthermore, the Snapshot Generator
+[<a href="#ref7">7</a>,<a href="#ref8">8</a>]
 is now incorporated into
 USE. See the <a href=NEWS>NEWS</a>
 file for more details. A short description of <a
@@ -137,8 +142,11 @@ USE and OCL syntax.</li>
 <p>The following documentation is available.</p>
 
 <ul>
+
 <li>A <a href="qt.html">quick tour</a> guides you through an example
 demonstrating the core features of USE.</li>
+
+<li><a href="use-documentation.pdf">USE documentation</a> (~1.2 Mb)</li>
 
 <li>A description of how to <a href="prepost.html">validate pre- and
 postconditions</a>.</li>
@@ -214,6 +222,10 @@ and <a href="INSTALL">INSTALL</a> for this release.</li>
 <ul>
 
   <li>
+  <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.3.1.tar.gz">use-2.3.1.tar.gz</a>
+  </li>
+
+  <li>
   <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.3.0.tar.gz">use-2.3.0.tar.gz</a>
   </li>
 
@@ -228,7 +240,7 @@ and <a href="INSTALL">INSTALL</a> for this release.</li>
   <li>
   <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.0.1.tar.gz">use-2.0.1.tar.gz</a>
   </li>
-  
+
   <li>
   <a href="http://www.db.informatik.uni-bremen.de/projects/USE/use-2.0.0.tar.gz">use-2.0.0.tar.gz</a>
   </li>
@@ -250,7 +262,7 @@ and <a href="INSTALL">INSTALL</a> for this release.</li>
 
 <!-- ====================================== -->
 
-<tr><th bgcolor="#e0e0ff"><a name="ml">Mailing Lists</a></th></tr>
+<!--<tr><th bgcolor="#e0e0ff"><a name="ml">Mailing Lists</a></th></tr>
 <tr><td>
 
 <p>If you want to get
@@ -270,7 +282,7 @@ href="mailto:use-announce-request@informatik.uni-bremen.de">use-announce-request
 <p>To report problems with any of the mailing lists, send mail to
 <tt>owner-use@informatik.uni-bremen.de</tt>.</p>
 
-</td></tr>
+</td></tr>-->
 
 <!-- ====================================== -->
 
@@ -278,7 +290,7 @@ href="mailto:use-announce-request@informatik.uni-bremen.de">use-announce-request
 <tr><td>
 
 <p>See also the complete list of
-<a href="http://www.db.informatik.uni-bremen.de/publications">publications of our group</a> where most papers are available online.</p>  
+<a href="http://www.db.informatik.uni-bremen.de/publications">publications of our group</a> where most papers are available online.</p>
 
 <table summary="References">
 
@@ -317,7 +329,7 @@ href="mailto:use-announce-request@informatik.uni-bremen.de">use-announce-request
 <td valign="top"><a name="ref5">[5]</a></td>
 <td>Mark Richters and Martin Gogolla. Validating UML models and OCL
     constraints. UML 2000 - The Unified Modeling Language. Advancing
-    the Standard. Third International Conference, York, UK, October 2000, 
+    the Standard. Third International Conference, York, UK, October 2000,
     LNCS Vol. 1939. Springer, 2000.</td>
 </tr>
 
@@ -335,10 +347,18 @@ href="mailto:use-announce-request@informatik.uni-bremen.de">use-announce-request
 
 <tr>
 <td valign="top"><a name="ref8">[8]</a></td>
-<td>Martin Gogolla, Jo&uml;rn Bohling, and Mark Richters. <a href="http://www.db.informatik.uni-bremen.de/publications/Gogolla_2003_UML.ps">
-    Validation of UML and OCL Models by Automatic Snapshot Generation</a>. 
+<td>Martin Gogolla, J&ouml;rn Bohling, and Mark Richters. <a href="http://www.db.informatik.uni-bremen.de/publications/Gogolla_2003_UML.ps">
+    Validation of UML and OCL Models by Automatic Snapshot Generation</a>.
     In Grady Booch, Perdita Stevens, and Jonathan Whittle, editors, Proc.
     6th Int. Conf. Unified Modeling Language&nbsp;(UML'2003). Springer, Berlin, LNCS&nbsp;2863, 2003.<br>
+</td>
+</tr>
+
+<tr>
+<td valign="top"><a name="ref9">[9]</a></td>
+<td>Martin Gogolla, Fabian B&uuml;ttner, and Mark Richters.
+<a href="http://www.db.informatik.uni-bremen.de/publications/Gogolla_2007_SCP.ps">USE: A UML-Based Specification Environment for Validating
+UML and OCL.</a> Science of Computer Programming, 69:27-34, 2007.
 </td>
 </tr>
 
