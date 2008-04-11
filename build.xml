@@ -1,12 +1,9 @@
-<!--$ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ -->
+<!--$Id$ -->
 
 <project name="use" default="build" basedir=".">
   <description>Build file for USE</description>
 
-  <!-- the following two lines are updated automatically on "prcs rekey", don't
-       change it manually. -->
-  <!-- $Format: "  <property name=\"release.version\" value=\"$ReleaseVersion$\"/>"$ -->
-  <property name="release.version" value="2.3.1"/>
+  <property name="release.version" value="2.4.0"/>
 
   <!-- set release name to "use-x.y.z" -->
 

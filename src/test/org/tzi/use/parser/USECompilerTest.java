@@ -18,7 +18,7 @@
  */
 
 /*
-$Id$
+// $Id$
  */
 package org.tzi.use.parser;
 
