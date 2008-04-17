@@ -43,7 +43,7 @@ public class Options {
 
     
     // the copyright:
-    public static final String COPYRIGHT = "Copyright (C) 1999-2007 University of Bremen";
+    public static final String COPYRIGHT = "Copyright (C) 1999-2008 University of Bremen";
 
     /**
      * Name of the file for system properties located in the 
