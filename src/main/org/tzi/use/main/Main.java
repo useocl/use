@@ -121,7 +121,12 @@ public final class Main {
             // create system
             system = new MSystem(model);
             session.setSystem(system);
-        }
+        } else {
+	  model = new ModelFactory().createModel("empty model");
+	  system = new MSystem(model);
+	  Log.verbose("using empty model.");
+	  session.setSystem(system);
+	} 
 
         if (Options.doGUI) {
             Class mainWindowClass = null;
