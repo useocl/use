@@ -263,6 +263,11 @@ public class BagValue extends CollectionValue {
                 + "}";
     }
 
+    protected Integer getClassCompareNr()
+    {
+    	return new Integer(3);
+    }
+    
     /**
      * Two bags are equal iff they contain the same elements. The declared types
      * may be different if the second is a subtype of the first.

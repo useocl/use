@@ -1,1 +1,1 @@
-t20b.use:20:13: In association `assoc2': Association end `rb' navigable from class `P2_A' conflicts with same rolename in association `assoc1'.
+t20b.use:20:13: In association `assoc2': Association end `ra' navigable from class `P2_B' conflicts with same rolename in association `assoc1'.

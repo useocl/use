@@ -368,6 +368,11 @@ public class SetValue extends CollectionValue {
         return fElements.hashCode();
     }
 
+    protected Integer getClassCompareNr()
+    {
+    	return new Integer(1);
+    }
+    
     /**
      * Two sets are equal iff they contain the same elements. However, the
      * declared types may be different if the second is a subtype of the first.

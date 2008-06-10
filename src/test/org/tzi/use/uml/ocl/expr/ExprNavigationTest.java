@@ -314,8 +314,8 @@ public class ExprNavigationTest extends TestCase {
             List objects = system.state().getNavigableObjects( p1, personEnd, companyEnd );
 
             assertEquals( 2, objects.size() );
-            assertEquals( "c2", ( ( MObject ) objects.get( 0 ) ).name() );
-            assertEquals( "c1", ( ( MObject ) objects.get( 1 ) ).name() );
+            assertEquals( "c2", ( ( MObject ) objects.get( 1 ) ).name() );
+            assertEquals( "c1", ( ( MObject ) objects.get( 0 ) ).name() );
         } catch ( Exception e ) {
             fail( "Exception was thrown: " + e.getMessage() );
         }

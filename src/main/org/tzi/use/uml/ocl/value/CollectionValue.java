@@ -75,6 +75,8 @@ public abstract class CollectionValue extends Value {
     public abstract boolean excludesAll(CollectionValue v);
     public abstract int count(Value v);
 
+    protected abstract Integer getClassCompareNr();
+    
     public abstract Collection collection();
 
     public int compareTo(Object o) {
@@ -88,7 +90,8 @@ public abstract class CollectionValue extends Value {
             if (c.getClass().equals( getClass() ) ) {
                 return res;
             } else {
-                return (res != 0) ? res : +1;
+            	// Need to make compares work in both directions a < b => b > a
+            	return getClassCompareNr().compareTo(c.getClassCompareNr());
             }
         }
         throw new ClassCastException();
@@ -105,7 +108,8 @@ public abstract class CollectionValue extends Value {
             return fElemType;
         }
         
-        Value[] values = (Value[])collection().toArray(new Value[]{});
+        Value[] values = new Value[collection().size()];
+        collection().toArray(values);
         
         // easy case: one or more elements of equal type
         Type t0 = values[0].type();

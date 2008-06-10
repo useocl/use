@@ -246,6 +246,11 @@ public class SequenceValue extends CollectionValue {
         return fElements.hashCode();
     }
 
+    protected Integer getClassCompareNr()
+    {
+    	return new Integer(2);
+    }
+    
     /** 
      * Two sequences are equal iff they contain the same elements in
      * same order. However, the declared types may be different if the
