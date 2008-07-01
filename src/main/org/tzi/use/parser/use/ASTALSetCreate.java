@@ -18,17 +18,18 @@
  */
 package org.tzi.use.parser.use;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.ocl.type.*;
 import org.tzi.use.uml.al.ALAction;
 import org.tzi.use.uml.al.ALSetCreate;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.ExpAttrOp;
 import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * @author green
@@ -36,10 +37,10 @@ import org.tzi.use.uml.ocl.expr.Expression;
 public class ASTALSetCreate extends ASTALAction {
 
     private ASTExpression fLValue;
-    private MyToken fCls;
+    private Token fCls;
     private ASTExpression fNameExpr;
     
-    public ASTALSetCreate(ASTExpression lValue, MyToken cls, ASTExpression nameExpr) {
+    public ASTALSetCreate(ASTExpression lValue, Token cls, ASTExpression nameExpr) {
         fLValue = lValue;
         fCls = cls;
         fNameExpr = nameExpr;

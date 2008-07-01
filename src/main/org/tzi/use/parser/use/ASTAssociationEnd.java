@@ -21,9 +21,9 @@
 
 package org.tzi.use.parser.use;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
@@ -36,18 +36,18 @@ import org.tzi.use.uml.mm.MMultiplicity;
  * @author  Mark Richters
  */
 public class ASTAssociationEnd extends AST {
-    private MyToken fName;
+    private Token fName;
     private ASTMultiplicity fMultiplicity;
-    private MyToken fRolename;  // optional: may be null!
+    private Token fRolename;  // optional: may be null!
     private boolean fOrdered;
 
-    public ASTAssociationEnd(MyToken name, ASTMultiplicity mult) {
+    public ASTAssociationEnd(Token name, ASTMultiplicity mult) {
         fName = name;
         fMultiplicity = mult;
         fOrdered = false;
     }
 
-    public void setRolename(MyToken rolename) {
+    public void setRolename(Token rolename) {
         fRolename = rolename;
     }
 

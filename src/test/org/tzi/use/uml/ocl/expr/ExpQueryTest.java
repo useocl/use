@@ -22,7 +22,6 @@
 package org.tzi.use.uml.ocl.expr;
 
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
 
@@ -306,11 +305,11 @@ public class ExpQueryTest extends TestCase {
         ModelFactory f = new ModelFactory();
         MModel model =  f.createModel("Test");
         String expText = "Set{Set{42},Sequence{42},Bag{42}}";
-        StringReader reader = new StringReader(expText);
+        
         PrintWriter dummyWriter = new PrintWriter(new StringWriter());
         VarBindings bindings = new VarBindings();
                         
-        Expression exp = OCLCompiler.compileExpression(model, reader, "<junit test>", 
+        Expression exp = OCLCompiler.compileExpression(model, expText, "<junit test>", 
                                                        dummyWriter, bindings);
         
         assertNotNull(exp);
@@ -326,11 +325,11 @@ public class ExpQueryTest extends TestCase {
         ModelFactory f = new ModelFactory();
         MModel model =  f.createModel("Test");
         String expText = "Bag{Set{42},Sequence{42},Bag{42}}";
-        StringReader reader = new StringReader(expText);
+        
         PrintWriter dummyWriter = new PrintWriter(new StringWriter());
         VarBindings bindings = new VarBindings();
                         
-        Expression exp = OCLCompiler.compileExpression(model, reader, "<junit test>", 
+        Expression exp = OCLCompiler.compileExpression(model, expText, "<junit test>", 
                                                        dummyWriter, bindings);
         
         assertNotNull(exp);

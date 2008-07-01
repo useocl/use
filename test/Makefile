@@ -27,7 +27,7 @@ test-out2: t2.out
 
 %.result: %.in %.use
 	-rm -f $@
-	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | tail +2 | diff -u $(basename $<).out - > $(basename $<).result
+	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | tail --lines=+2 | diff -u $(basename $<).out - > $(basename $<).result
 
 clean:
 	rm -f $(RESULTFILES) *~ core

@@ -21,8 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
-import org.tzi.use.parser.MyToken;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -31,15 +31,15 @@ import org.tzi.use.parser.MyToken;
  * @author  Mark Richters
  */
 public class ASTTupleItem extends AST {
-    private MyToken fName;
+    private Token fName;
     private ASTExpression fExpr;
 
-    public ASTTupleItem(MyToken name, ASTExpression expr) {
+    public ASTTupleItem(Token name, ASTExpression expr) {
         fName = name;
         fExpr = expr;
     }
 
-    public MyToken name() {
+    public Token name() {
         return fName;
     }
 

@@ -1,1 +1,1 @@
-t9.use:9:17: Operation `oclIsKindOf' cannot be applied to collection.
+t9.use:9:16: Operation `oclIsKindOf' cannot be applied to collection.

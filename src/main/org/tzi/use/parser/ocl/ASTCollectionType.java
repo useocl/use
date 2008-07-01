@@ -21,8 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -34,14 +34,14 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTCollectionType extends ASTType {
-    private MyToken fName;
+    private Token fName;
     private ASTType fElement;
 
     /**
      * Constructs a nested type. The type constructor is given as
      * <code>name</code>. 
      */
-    public ASTCollectionType(MyToken name, ASTType elem) {
+    public ASTCollectionType(Token name, ASTType elem) {
         fName = name;
         fElement = elem;
     }

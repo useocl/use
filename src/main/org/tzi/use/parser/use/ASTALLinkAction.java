@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MAssociation;
@@ -39,9 +39,9 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 public abstract class ASTALLinkAction extends ASTALAction {
 
     protected List fExpressions;
-    protected MyToken fAssociation;
+    protected Token fAssociation;
 
-    public ASTALLinkAction(List exprList, MyToken assoc) {
+    public ASTALLinkAction(List exprList, Token assoc) {
         fExpressions = exprList;
         fAssociation = assoc;
     }

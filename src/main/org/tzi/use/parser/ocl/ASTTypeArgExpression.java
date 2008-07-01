@@ -21,12 +21,12 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.use.GUSETokenTypes;
+import org.tzi.use.parser.use.GUSEParser;
 import org.tzi.use.uml.ocl.expr.ExpAsType;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpIsKindOf;
@@ -43,12 +43,12 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTTypeArgExpression extends ASTExpression {
-    private MyToken fOpToken;
+    private Token fOpToken;
     private ASTExpression fSourceExpr; // may be null
     private ASTType fTargetType;
     private boolean fFollowsArrow;
 
-    public ASTTypeArgExpression(MyToken opToken, 
+    public ASTTypeArgExpression(Token opToken, 
                                 ASTExpression source, 
                                 ASTType targetType,
                                 boolean followsArrow) {
@@ -123,11 +123,11 @@ public class ASTTypeArgExpression extends ASTExpression {
     {
         try {
             switch ( fOpToken.getType() ) {
-            case GUSETokenTypes.LITERAL_oclAsType:
+            case GUSEParser.LITERAL_oclAsType:
                 return new ExpAsType(expr, t);
-            case GUSETokenTypes.LITERAL_oclIsKindOf:
+            case GUSEParser.LITERAL_oclIsKindOf:
                 return new ExpIsKindOf(expr, t);
-            case GUSETokenTypes.LITERAL_oclIsTypeOf:
+            case GUSEParser.LITERAL_oclIsTypeOf:
                 return new ExpIsTypeOf(expr, t);
             default:
                 throw new RuntimeException("Unexpected token type: " + fOpToken);

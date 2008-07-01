@@ -24,9 +24,9 @@ package org.tzi.use.parser.ocl;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
@@ -53,7 +53,7 @@ public abstract class ASTExpression extends AST {
         "Try `use -h' for help on enabling it.";
 
     // first token of expression useful for error reporting
-    private MyToken fStartToken; 
+    private Token fStartToken; 
 
     private boolean fIsPre;
 
@@ -66,11 +66,11 @@ public abstract class ASTExpression extends AST {
     }
 
 
-    public void setStartToken(MyToken pos) {
+    public void setStartToken(Token pos) {
         fStartToken = pos;
     }
 
-    public MyToken getStartToken() {
+    public Token getStartToken() {
         return fStartToken;
     }
 
@@ -82,7 +82,7 @@ public abstract class ASTExpression extends AST {
      * Generates a predefined standard operation expression.
      */
     protected Expression genStdOperation(Context ctx,
-                                         MyToken token, 
+    									 Token token, 
                                          String opname,
                                          Expression[] args) 
         throws SemanticException
@@ -101,7 +101,7 @@ public abstract class ASTExpression extends AST {
      * Generates a predefined standard operation expression.
      */
     protected Expression genStdOperation(Context ctx,
-                                         MyToken token, 
+    									 Token token, 
                                          String opname,
                                          ASTExpression[] args) 
         throws SemanticException
@@ -114,7 +114,7 @@ public abstract class ASTExpression extends AST {
     }
 
     protected Expression genStdOperation(Context ctx,
-                                         MyToken token, 
+    									 Token token, 
                                          String opname,
                                          List args) 
         throws SemanticException
@@ -124,7 +124,7 @@ public abstract class ASTExpression extends AST {
         return genStdOperation(ctx, token, opname, exparr);
     }
 
-    protected Expression genNavigation( MyToken rolenameToken,
+    protected Expression genNavigation( Token rolenameToken,
                                         MClass srcClass,
                                         Expression srcExpr,
                                         MNavigableElement dst ) 
@@ -132,11 +132,11 @@ public abstract class ASTExpression extends AST {
         return genNavigation( rolenameToken, srcClass, srcExpr, dst, null );
     }
 
-    protected Expression genNavigation(MyToken rolenameToken,
+    protected Expression genNavigation(Token rolenameToken,
                                        MClass srcClass,
                                        Expression srcExpr,
                                        MNavigableElement dst,
-                                       MyToken explicitRolenameToken )
+                                       Token explicitRolenameToken )
         throws SemanticException
     {
         Expression res = null;

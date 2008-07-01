@@ -1,20 +1,6 @@
-// $ANTLR 2.7.4: "expandedgenerator.g" -> "GGeneratorParser.java"$
+// $ANTLR 3.1b1 GGenerator.g 2008-07-01 13:26:40
  
 package org.tzi.use.parser.generator;
-
-import antlr.TokenBuffer;
-import antlr.TokenStreamException;
-import antlr.TokenStreamIOException;
-import antlr.ANTLRException;
-import antlr.LLkParser;
-import antlr.Token;
-import antlr.TokenStream;
-import antlr.RecognitionException;
-import antlr.NoViableAltException;
-import antlr.MismatchedTokenException;
-import antlr.SemanticException;
-import antlr.ParserSharedInputState;
-import antlr.collections.impl.BitSet;
 
 import org.tzi.use.parser.*;
 import org.tzi.use.parser.ocl.*;
@@ -23,4614 +9,1336 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GGeneratorParser extends antlr.LLkParser       implements GGeneratorTokenTypes
- {
-  
-    final static String Q_COLLECT  = "collect";
-    final static String Q_SELECT   = "select";
-    final static String Q_REJECT   = "reject";
-    final static String Q_FORALL   = "forAll";
-    final static String Q_EXISTS   = "exists";
-    final static String Q_ISUNIQUE = "isUnique";
-    final static String Q_SORTEDBY = "sortedBy";
-    final static String Q_ANY      = "any";
-    final static String Q_ONE      = "one";
 
-    final static int Q_COLLECT_ID  = 1;
-    final static int Q_SELECT_ID   = 2;
-    final static int Q_REJECT_ID   = 3;
-    final static int Q_FORALL_ID   = 4;
-    final static int Q_EXISTS_ID   = 5;
-    final static int Q_ISUNIQUE_ID = 6;
-    final static int Q_SORTEDBY_ID = 7;
-    final static int Q_ANY_ID      = 8;
-    final static int Q_ONE_ID      = 9;
+import org.antlr.runtime.*;
+import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
 
-    final static HashMap queryIdentMap = new HashMap();
+public class GGeneratorParser extends Parser {
+    public static final String[] tokenNames = new String[] {
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "LITERAL_oclAsType", "LITERAL_oclIsKindOf", "LITERAL_oclIsTypeOf", "LPAREN", "COMMA", "RPAREN", "IDENT", "COLON", "EQUAL", "NOT_EQUAL", "LESS", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "STAR", "SLASH", "ARROW", "DOT", "AT", "BAR", "SEMI", "LBRACK", "RBRACK", "INT", "REAL", "STRING", "HASH", "LBRACE", "RBRACE", "DOTDOT", "COLON_COLON", "COLON_EQUAL", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'let'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'pre'", "'iterate'", "'if'", "'then'", "'else'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'oclEmpty'", "'oclUndefined'", "'Tuple'", "'Collection'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'constraints'", "'end'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'begin'", "'association'", "'role'", "'ordered'", "'context'", "'inv'", "'post'", "'var'", "'declare'", "'set'", "'create'", "'namehint'", "'insert'", "'into'", "'delete'", "'from'", "'destroy'", "'while'", "'do'", "'wend'", "'for'", "'execute'", "'procedure'"
+    };
+    public static final int LITERAL_oclAsType=4;
+    public static final int STAR=20;
+    public static final int EOF=-1;
+    public static final int T__93=93;
+    public static final int T__94=94;
+    public static final int T__91=91;
+    public static final int RPAREN=9;
+    public static final int T__92=92;
+    public static final int GREATER=15;
+    public static final int T__90=90;
+    public static final int NOT_EQUAL=13;
+    public static final int LITERAL_oclIsTypeOf=6;
+    public static final int LESS=14;
+    public static final int T__99=99;
+    public static final int T__98=98;
+    public static final int T__97=97;
+    public static final int T__96=96;
+    public static final int T__95=95;
+    public static final int RBRACK=28;
+    public static final int T__80=80;
+    public static final int T__81=81;
+    public static final int RBRACE=34;
+    public static final int T__82=82;
+    public static final int T__83=83;
+    public static final int LITERAL_oclIsKindOf=5;
+    public static final int INT=29;
+    public static final int T__85=85;
+    public static final int T__84=84;
+    public static final int T__87=87;
+    public static final int T__86=86;
+    public static final int T__89=89;
+    public static final int T__88=88;
+    public static final int REAL=30;
+    public static final int WS=39;
+    public static final int T__71=71;
+    public static final int T__72=72;
+    public static final int T__70=70;
+    public static final int SL_COMMENT=40;
+    public static final int LESS_EQUAL=16;
+    public static final int T__76=76;
+    public static final int T__75=75;
+    public static final int T__74=74;
+    public static final int T__73=73;
+    public static final int T__79=79;
+    public static final int T__78=78;
+    public static final int T__77=77;
+    public static final int T__68=68;
+    public static final int T__69=69;
+    public static final int T__66=66;
+    public static final int T__67=67;
+    public static final int T__64=64;
+    public static final int LBRACK=27;
+    public static final int T__65=65;
+    public static final int T__62=62;
+    public static final int T__63=63;
+    public static final int ESC=43;
+    public static final int LBRACE=33;
+    public static final int DOTDOT=35;
+    public static final int T__61=61;
+    public static final int T__60=60;
+    public static final int LPAREN=7;
+    public static final int T__55=55;
+    public static final int AT=24;
+    public static final int ML_COMMENT=41;
+    public static final int T__56=56;
+    public static final int T__57=57;
+    public static final int T__58=58;
+    public static final int COLON_EQUAL=37;
+    public static final int T__51=51;
+    public static final int SLASH=21;
+    public static final int T__52=52;
+    public static final int T__53=53;
+    public static final int T__54=54;
+    public static final int COMMA=8;
+    public static final int T__59=59;
+    public static final int T__103=103;
+    public static final int T__104=104;
+    public static final int EQUAL=12;
+    public static final int IDENT=10;
+    public static final int PLUS=18;
+    public static final int RANGE_OR_INT=42;
+    public static final int DOT=23;
+    public static final int T__50=50;
+    public static final int T__46=46;
+    public static final int T__47=47;
+    public static final int T__48=48;
+    public static final int T__49=49;
+    public static final int HASH=32;
+    public static final int HEX_DIGIT=44;
+    public static final int COLON_COLON=36;
+    public static final int T__102=102;
+    public static final int T__101=101;
+    public static final int T__100=100;
+    public static final int MINUS=19;
+    public static final int SEMI=26;
+    public static final int COLON=11;
+    public static final int NEWLINE=38;
+    public static final int VOCAB=45;
+    public static final int ARROW=22;
+    public static final int GREATER_EQUAL=17;
+    public static final int BAR=25;
+    public static final int STRING=31;
 
-    static {
-        queryIdentMap.put(Q_COLLECT,  new Integer(Q_COLLECT_ID));
-        queryIdentMap.put(Q_SELECT,   new Integer(Q_SELECT_ID));
-        queryIdentMap.put(Q_REJECT,   new Integer(Q_REJECT_ID));
-        queryIdentMap.put(Q_FORALL,   new Integer(Q_FORALL_ID));
-        queryIdentMap.put(Q_EXISTS,   new Integer(Q_EXISTS_ID));
-        queryIdentMap.put(Q_ISUNIQUE, new Integer(Q_ISUNIQUE_ID));
-        queryIdentMap.put(Q_SORTEDBY, new Integer(Q_SORTEDBY_ID));
-        queryIdentMap.put(Q_ANY,      new Integer(Q_ANY_ID));
-        queryIdentMap.put(Q_ONE,      new Integer(Q_ONE_ID));
+    // delegates
+    public GGenerator_GUSEBase_GOCLBase gGOCLBase;
+    public GGenerator_GUSEBase gGUSEBase;
+    // delegators
+
+
+        public GGeneratorParser(TokenStream input) {
+            this(input, new RecognizerSharedState());
+        }
+        public GGeneratorParser(TokenStream input, RecognizerSharedState state) {
+            super(input, state);
+            gGUSEBase = new GGenerator_GUSEBase(input, state, this);
+        }
+        
+
+    public String[] getTokenNames() { return GGeneratorParser.tokenNames; }
+    public String getGrammarFileName() { return "GGenerator.g"; }
+
+
+    	private ParseErrorHandler fParseErrorHandler;
+        
+        public void init(ParseErrorHandler handler) {
+            fParseErrorHandler = handler;
+    		this.gGUSEBase.init(handler);
+        }
+        
+        /* Overridden methods. */
+        public void emitErrorMessage(String msg) {
+           	fParseErrorHandler.reportError(msg);
+    	}
+     
+
+
+    // $ANTLR start invariantListOnly
+    // GGenerator.g:62:1: invariantListOnly returns [List invariantList] : (def= invariant )* EOF ;
+    public final List invariantListOnly() throws RecognitionException {
+        List invariantList = null;
+
+        ASTConstraintDefinition def = null;
+
+
+         invariantList = new ArrayList(); 
+        try {
+            // GGenerator.g:64:1: ( (def= invariant )* EOF )
+            // GGenerator.g:65:5: (def= invariant )* EOF
+            {
+            // GGenerator.g:65:5: (def= invariant )*
+            loop1:
+            do {
+                int alt1=2;
+                int LA1_0 = input.LA(1);
+
+                if ( (LA1_0==86) ) {
+                    alt1=1;
+                }
+
+
+                switch (alt1) {
+            	case 1 :
+            	    // GGenerator.g:65:7: def= invariant
+            	    {
+            	    pushFollow(FOLLOW_invariant_in_invariantListOnly82);
+            	    def=invariant();
+
+            	    state._fsp--;
+
+            	     invariantList.add(def); 
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop1;
+                }
+            } while (true);
+
+            match(input,EOF,FOLLOW_EOF_in_invariantListOnly93); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return invariantList;
     }
+    // $ANTLR end invariantListOnly
 
-    protected boolean isQueryIdent(Token t) {
-        return queryIdentMap.containsKey(t.getText());
-    }
-    
-    private int fNest = 0;
-    
-    public void traceIn(String rname) throws TokenStreamException {
-        for (int i = 0; i < fNest; i++)
-            System.out.print(" ");
-        super.traceIn(rname);
-        fNest++;
-    }
 
-    public void traceOut(String rname) throws TokenStreamException {
-        fNest--;
-        for (int i = 0; i < fNest; i++)
-            System.out.print(" ");
-        super.traceOut(rname);
-    }
-    
-    public void init(ParseErrorHandler handler) {
-        fParseErrorHandler = handler;
-    }
+    // $ANTLR start procedureListOnly
+    // GGenerator.g:114:1: procedureListOnly returns [List procedureList] : (proc= procedure )* EOF ;
+    public final List procedureListOnly() throws RecognitionException {
+        List procedureList = null;
 
-    /* Overridden methods. */
-	private ParseErrorHandler fParseErrorHandler;
-    
-    public void reportError(RecognitionException ex) {
-        fParseErrorHandler.reportError(
-	        ex.getLine() + ":" +ex.getColumn() + ": " + ex.getMessage());
-    }
+        ASTGProcedure proc = null;
 
-protected GGeneratorParser(TokenBuffer tokenBuf, int k) {
-  super(tokenBuf,k);
-  tokenNames = _tokenNames;
+
+         procedureList = new ArrayList(); 
+        try {
+            // GGenerator.g:116:1: ( (proc= procedure )* EOF )
+            // GGenerator.g:117:5: (proc= procedure )* EOF
+            {
+            // GGenerator.g:117:5: (proc= procedure )*
+            loop2:
+            do {
+                int alt2=2;
+                int LA2_0 = input.LA(1);
+
+                if ( (LA2_0==104) ) {
+                    alt2=1;
+                }
+
+
+                switch (alt2) {
+            	case 1 :
+            	    // GGenerator.g:118:7: proc= procedure
+            	    {
+            	    pushFollow(FOLLOW_procedure_in_procedureListOnly138);
+            	    proc=procedure();
+
+            	    state._fsp--;
+
+            	     procedureList.add(proc); 
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop2;
+                }
+            } while (true);
+
+            match(input,EOF,FOLLOW_EOF_in_procedureListOnly153); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return procedureList;
+    }
+    // $ANTLR end procedureListOnly
+
+
+    // $ANTLR start procedure
+    // GGenerator.g:129:1: procedure returns [ASTGProcedure proc] : 'procedure' name= IDENT LPAREN parameterDecls= variableDeclarationList RPAREN ( 'var' localDecls= variableDeclarationList SEMI )? 'begin' instructions= instructionList 'end' SEMI ;
+    public final ASTGProcedure procedure() throws RecognitionException {
+        ASTGProcedure proc = null;
+
+        Token name=null;
+        List parameterDecls = null;
+
+        List localDecls = null;
+
+        List instructions = null;
+
+
+         localDecls = new ArrayList(); 
+        try {
+            // GGenerator.g:131:1: ( 'procedure' name= IDENT LPAREN parameterDecls= variableDeclarationList RPAREN ( 'var' localDecls= variableDeclarationList SEMI )? 'begin' instructions= instructionList 'end' SEMI )
+            // GGenerator.g:132:5: 'procedure' name= IDENT LPAREN parameterDecls= variableDeclarationList RPAREN ( 'var' localDecls= variableDeclarationList SEMI )? 'begin' instructions= instructionList 'end' SEMI
+            {
+            match(input,104,FOLLOW_104_in_procedure181); 
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_procedure185); 
+            match(input,LPAREN,FOLLOW_LPAREN_in_procedure187); 
+            pushFollow(FOLLOW_variableDeclarationList_in_procedure191);
+            parameterDecls=variableDeclarationList();
+
+            state._fsp--;
+
+            match(input,RPAREN,FOLLOW_RPAREN_in_procedure193); 
+            // GGenerator.g:133:5: ( 'var' localDecls= variableDeclarationList SEMI )?
+            int alt3=2;
+            int LA3_0 = input.LA(1);
+
+            if ( (LA3_0==89) ) {
+                alt3=1;
+            }
+            switch (alt3) {
+                case 1 :
+                    // GGenerator.g:133:7: 'var' localDecls= variableDeclarationList SEMI
+                    {
+                    match(input,89,FOLLOW_89_in_procedure201); 
+                    pushFollow(FOLLOW_variableDeclarationList_in_procedure205);
+                    localDecls=variableDeclarationList();
+
+                    state._fsp--;
+
+                    match(input,SEMI,FOLLOW_SEMI_in_procedure207); 
+
+                    }
+                    break;
+
+            }
+
+            match(input,82,FOLLOW_82_in_procedure216); 
+            pushFollow(FOLLOW_instructionList_in_procedure220);
+            instructions=instructionList();
+
+            state._fsp--;
+
+            match(input,76,FOLLOW_76_in_procedure222); 
+            match(input,SEMI,FOLLOW_SEMI_in_procedure224); 
+             proc = new ASTGProcedure(name, parameterDecls, localDecls, instructions ); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return proc;
+    }
+    // $ANTLR end procedure
+
+
+    // $ANTLR start variableDeclarationList
+    // GGenerator.g:142:1: variableDeclarationList returns [List varDecls] : (decl= variableDeclaration ( COMMA decl= variableDeclaration )* )? ;
+    public final List variableDeclarationList() throws RecognitionException {
+        List varDecls = null;
+
+        ASTVariableDeclaration decl = null;
+
+
+         varDecls = new ArrayList(); 
+        try {
+            // GGenerator.g:144:1: ( (decl= variableDeclaration ( COMMA decl= variableDeclaration )* )? )
+            // GGenerator.g:145:5: (decl= variableDeclaration ( COMMA decl= variableDeclaration )* )?
+            {
+            // GGenerator.g:145:5: (decl= variableDeclaration ( COMMA decl= variableDeclaration )* )?
+            int alt5=2;
+            int LA5_0 = input.LA(1);
+
+            if ( (LA5_0==IDENT) ) {
+                alt5=1;
+            }
+            switch (alt5) {
+                case 1 :
+                    // GGenerator.g:145:7: decl= variableDeclaration ( COMMA decl= variableDeclaration )*
+                    {
+                    pushFollow(FOLLOW_variableDeclaration_in_variableDeclarationList262);
+                    decl=variableDeclaration();
+
+                    state._fsp--;
+
+                    varDecls.add(decl);
+                    // GGenerator.g:146:7: ( COMMA decl= variableDeclaration )*
+                    loop4:
+                    do {
+                        int alt4=2;
+                        int LA4_0 = input.LA(1);
+
+                        if ( (LA4_0==COMMA) ) {
+                            alt4=1;
+                        }
+
+
+                        switch (alt4) {
+                    	case 1 :
+                    	    // GGenerator.g:146:8: COMMA decl= variableDeclaration
+                    	    {
+                    	    match(input,COMMA,FOLLOW_COMMA_in_variableDeclarationList273); 
+                    	    pushFollow(FOLLOW_variableDeclaration_in_variableDeclarationList277);
+                    	    decl=variableDeclaration();
+
+                    	    state._fsp--;
+
+                    	    varDecls.add(decl);
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop4;
+                        }
+                    } while (true);
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return varDecls;
+    }
+    // $ANTLR end variableDeclarationList
+
+
+    // $ANTLR start instructionList
+    // GGenerator.g:154:1: instructionList returns [List instructions] : (instr= instruction SEMI )* ;
+    public final List instructionList() throws RecognitionException {
+        List instructions = null;
+
+        ASTGInstruction instr = null;
+
+
+         instructions = new ArrayList(); 
+        try {
+            // GGenerator.g:156:1: ( (instr= instruction SEMI )* )
+            // GGenerator.g:157:5: (instr= instruction SEMI )*
+            {
+            // GGenerator.g:157:5: (instr= instruction SEMI )*
+            loop6:
+            do {
+                int alt6=2;
+                int LA6_0 = input.LA(1);
+
+                if ( (LA6_0==IDENT||LA6_0==LBRACK||LA6_0==57||LA6_0==102) ) {
+                    alt6=1;
+                }
+
+
+                switch (alt6) {
+            	case 1 :
+            	    // GGenerator.g:157:7: instr= instruction SEMI
+            	    {
+            	    pushFollow(FOLLOW_instruction_in_instructionList321);
+            	    instr=instruction();
+
+            	    state._fsp--;
+
+            	    match(input,SEMI,FOLLOW_SEMI_in_instructionList323); 
+            	    instructions.add(instr);
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop6;
+                }
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return instructions;
+    }
+    // $ANTLR end instructionList
+
+
+    // $ANTLR start instruction
+    // GGenerator.g:168:1: instruction returns [ASTGInstruction instr] : (instrVA= variableAssignment | instrAA= attributeAssignment | instrLO= loop | instrAI= atomicInstruction | instrIT= ifThenElse );
+    public final ASTGInstruction instruction() throws RecognitionException {
+        ASTGInstruction instr = null;
+
+        ASTGVariableAssignment instrVA = null;
+
+        ASTGAttributeAssignment instrAA = null;
+
+        ASTGLoop instrLO = null;
+
+        ASTGAtomicInstruction instrAI = null;
+
+        ASTGIfThenElse instrIT = null;
+
+
+        try {
+            // GGenerator.g:169:1: (instrVA= variableAssignment | instrAA= attributeAssignment | instrLO= loop | instrAI= atomicInstruction | instrIT= ifThenElse )
+            int alt7=5;
+            switch ( input.LA(1) ) {
+            case IDENT:
+                {
+                int LA7_1 = input.LA(2);
+
+                if ( (LA7_1==COLON_EQUAL) ) {
+                    alt7=1;
+                }
+                else if ( (LA7_1==LPAREN) ) {
+                    alt7=4;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 7, 1, input);
+
+                    throw nvae;
+                }
+                }
+                break;
+            case LBRACK:
+                {
+                alt7=2;
+                }
+                break;
+            case 102:
+                {
+                alt7=3;
+                }
+                break;
+            case 57:
+                {
+                alt7=5;
+                }
+                break;
+            default:
+                NoViableAltException nvae =
+                    new NoViableAltException("", 7, 0, input);
+
+                throw nvae;
+            }
+
+            switch (alt7) {
+                case 1 :
+                    // GGenerator.g:170:7: instrVA= variableAssignment
+                    {
+                    pushFollow(FOLLOW_variableAssignment_in_instruction358);
+                    instrVA=variableAssignment();
+
+                    state._fsp--;
+
+                    instr = instrVA;
+
+                    }
+                    break;
+                case 2 :
+                    // GGenerator.g:171:7: instrAA= attributeAssignment
+                    {
+                    pushFollow(FOLLOW_attributeAssignment_in_instruction373);
+                    instrAA=attributeAssignment();
+
+                    state._fsp--;
+
+                    instr = instrAA;
+
+                    }
+                    break;
+                case 3 :
+                    // GGenerator.g:172:7: instrLO= loop
+                    {
+                    pushFollow(FOLLOW_loop_in_instruction387);
+                    instrLO=loop();
+
+                    state._fsp--;
+
+                    instr = instrLO;
+
+                    }
+                    break;
+                case 4 :
+                    // GGenerator.g:173:7: instrAI= atomicInstruction
+                    {
+                    pushFollow(FOLLOW_atomicInstruction_in_instruction404);
+                    instrAI=atomicInstruction();
+
+                    state._fsp--;
+
+                    instr = instrAI;
+
+                    }
+                    break;
+                case 5 :
+                    // GGenerator.g:174:7: instrIT= ifThenElse
+                    {
+                    pushFollow(FOLLOW_ifThenElse_in_instruction418);
+                    instrIT=ifThenElse();
+
+                    state._fsp--;
+
+                    instr = instrIT;
+
+                    }
+                    break;
+
+            }
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return instr;
+    }
+    // $ANTLR end instruction
+
+
+    // $ANTLR start variableAssignment
+    // GGenerator.g:181:1: variableAssignment returns [ASTGVariableAssignment assignment] : target= IDENT COLON_EQUAL source= valueInstruction ;
+    public final ASTGVariableAssignment variableAssignment() throws RecognitionException {
+        ASTGVariableAssignment assignment = null;
+
+        Token target=null;
+        ASTGValueInstruction source = null;
+
+
+        try {
+            // GGenerator.g:182:1: (target= IDENT COLON_EQUAL source= valueInstruction )
+            // GGenerator.g:183:5: target= IDENT COLON_EQUAL source= valueInstruction
+            {
+            target=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableAssignment448); 
+            match(input,COLON_EQUAL,FOLLOW_COLON_EQUAL_in_variableAssignment450); 
+            pushFollow(FOLLOW_valueInstruction_in_variableAssignment454);
+            source=valueInstruction();
+
+            state._fsp--;
+
+             assignment = new ASTGVariableAssignment( target, source ); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return assignment;
+    }
+    // $ANTLR end variableAssignment
+
+
+    // $ANTLR start attributeAssignment
+    // GGenerator.g:191:1: attributeAssignment returns [ASTGAttributeAssignment assignment] : targetObject= oclExpression DOT attributeName= IDENT COLON_EQUAL source= valueInstruction ;
+    public final ASTGAttributeAssignment attributeAssignment() throws RecognitionException {
+        ASTGAttributeAssignment assignment = null;
+
+        Token attributeName=null;
+        ASTGocl targetObject = null;
+
+        ASTGValueInstruction source = null;
+
+
+        try {
+            // GGenerator.g:192:1: (targetObject= oclExpression DOT attributeName= IDENT COLON_EQUAL source= valueInstruction )
+            // GGenerator.g:193:5: targetObject= oclExpression DOT attributeName= IDENT COLON_EQUAL source= valueInstruction
+            {
+            pushFollow(FOLLOW_oclExpression_in_attributeAssignment486);
+            targetObject=oclExpression();
+
+            state._fsp--;
+
+            match(input,DOT,FOLLOW_DOT_in_attributeAssignment488); 
+            attributeName=(Token)match(input,IDENT,FOLLOW_IDENT_in_attributeAssignment492); 
+            match(input,COLON_EQUAL,FOLLOW_COLON_EQUAL_in_attributeAssignment500); 
+            pushFollow(FOLLOW_valueInstruction_in_attributeAssignment504);
+            source=valueInstruction();
+
+            state._fsp--;
+
+             assignment = new ASTGAttributeAssignment(
+            			 targetObject, attributeName, source ); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return assignment;
+    }
+    // $ANTLR end attributeAssignment
+
+
+    // $ANTLR start loop
+    // GGenerator.g:203:1: loop returns [ASTGLoop loop] : t= 'for' decl= variableDeclaration 'in' sequence= oclExpression 'begin' instructions= instructionList 'end' ;
+    public final ASTGLoop loop() throws RecognitionException {
+        ASTGLoop loop = null;
+
+        Token t=null;
+        ASTVariableDeclaration decl = null;
+
+        ASTGocl sequence = null;
+
+        List instructions = null;
+
+
+        try {
+            // GGenerator.g:204:1: (t= 'for' decl= variableDeclaration 'in' sequence= oclExpression 'begin' instructions= instructionList 'end' )
+            // GGenerator.g:205:5: t= 'for' decl= variableDeclaration 'in' sequence= oclExpression 'begin' instructions= instructionList 'end'
+            {
+            t=(Token)match(input,102,FOLLOW_102_in_loop536); 
+            pushFollow(FOLLOW_variableDeclaration_in_loop540);
+            decl=variableDeclaration();
+
+            state._fsp--;
+
+            match(input,47,FOLLOW_47_in_loop542); 
+            pushFollow(FOLLOW_oclExpression_in_loop546);
+            sequence=oclExpression();
+
+            state._fsp--;
+
+            match(input,82,FOLLOW_82_in_loop548); 
+            pushFollow(FOLLOW_instructionList_in_loop559);
+            instructions=instructionList();
+
+            state._fsp--;
+
+            match(input,76,FOLLOW_76_in_loop561); 
+             loop = new ASTGLoop( decl, sequence, instructions, t ); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return loop;
+    }
+    // $ANTLR end loop
+
+
+    // $ANTLR start ifThenElse
+    // GGenerator.g:216:1: ifThenElse returns [ASTGIfThenElse ifThenElse] : token= 'if' sequence= oclExpression 'then' 'begin' thenInstructions= instructionList 'end' ( 'else' 'begin' elseInstructions= instructionList 'end' )? ;
+    public final ASTGIfThenElse ifThenElse() throws RecognitionException {
+        ASTGIfThenElse ifThenElse = null;
+
+        Token token=null;
+        ASTGocl sequence = null;
+
+        List thenInstructions = null;
+
+        List elseInstructions = null;
+
+
+         List elseInstructionsList = new ArrayList(); 
+        try {
+            // GGenerator.g:218:1: (token= 'if' sequence= oclExpression 'then' 'begin' thenInstructions= instructionList 'end' ( 'else' 'begin' elseInstructions= instructionList 'end' )? )
+            // GGenerator.g:219:5: token= 'if' sequence= oclExpression 'then' 'begin' thenInstructions= instructionList 'end' ( 'else' 'begin' elseInstructions= instructionList 'end' )?
+            {
+            token=(Token)match(input,57,FOLLOW_57_in_ifThenElse597); 
+            pushFollow(FOLLOW_oclExpression_in_ifThenElse601);
+            sequence=oclExpression();
+
+            state._fsp--;
+
+            match(input,58,FOLLOW_58_in_ifThenElse612); 
+            match(input,82,FOLLOW_82_in_ifThenElse614); 
+            pushFollow(FOLLOW_instructionList_in_ifThenElse618);
+            thenInstructions=instructionList();
+
+            state._fsp--;
+
+            match(input,76,FOLLOW_76_in_ifThenElse620); 
+            // GGenerator.g:221:9: ( 'else' 'begin' elseInstructions= instructionList 'end' )?
+            int alt8=2;
+            int LA8_0 = input.LA(1);
+
+            if ( (LA8_0==59) ) {
+                alt8=1;
+            }
+            switch (alt8) {
+                case 1 :
+                    // GGenerator.g:221:10: 'else' 'begin' elseInstructions= instructionList 'end'
+                    {
+                    match(input,59,FOLLOW_59_in_ifThenElse631); 
+                    match(input,82,FOLLOW_82_in_ifThenElse633); 
+                    pushFollow(FOLLOW_instructionList_in_ifThenElse637);
+                    elseInstructions=instructionList();
+
+                    state._fsp--;
+
+                    match(input,76,FOLLOW_76_in_ifThenElse639); 
+                     elseInstructionsList=elseInstructions; 
+
+                    }
+                    break;
+
+            }
+
+             ifThenElse = new ASTGIfThenElse( sequence, thenInstructions,
+                            elseInstructionsList, token ); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return ifThenElse;
+    }
+    // $ANTLR end ifThenElse
+
+
+    // $ANTLR start valueInstruction
+    // GGenerator.g:230:1: valueInstruction returns [ASTGValueInstruction valueinstr] : (atmoicInstr= atomicInstruction | oclExpr= oclExpression );
+    public final ASTGValueInstruction valueInstruction() throws RecognitionException {
+        ASTGValueInstruction valueinstr = null;
+
+        ASTGAtomicInstruction atmoicInstr = null;
+
+        ASTGocl oclExpr = null;
+
+
+        try {
+            // GGenerator.g:231:1: (atmoicInstr= atomicInstruction | oclExpr= oclExpression )
+            int alt9=2;
+            int LA9_0 = input.LA(1);
+
+            if ( (LA9_0==IDENT) ) {
+                alt9=1;
+            }
+            else if ( (LA9_0==LBRACK) ) {
+                alt9=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 9, 0, input);
+
+                throw nvae;
+            }
+            switch (alt9) {
+                case 1 :
+                    // GGenerator.g:232:7: atmoicInstr= atomicInstruction
+                    {
+                    pushFollow(FOLLOW_atomicInstruction_in_valueInstruction679);
+                    atmoicInstr=atomicInstruction();
+
+                    state._fsp--;
+
+                    valueinstr = atmoicInstr; 
+
+                    }
+                    break;
+                case 2 :
+                    // GGenerator.g:233:7: oclExpr= oclExpression
+                    {
+                    pushFollow(FOLLOW_oclExpression_in_valueInstruction693);
+                    oclExpr=oclExpression();
+
+                    state._fsp--;
+
+                    valueinstr = oclExpr; 
+
+                    }
+                    break;
+
+            }
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return valueinstr;
+    }
+    // $ANTLR end valueInstruction
+
+
+    // $ANTLR start atomicInstruction
+    // GGenerator.g:241:1: atomicInstruction returns [ASTGAtomicInstruction instr] : name= IDENT LPAREN (parameter= instructionParameter ( COMMA parameter= instructionParameter )* )? RPAREN ;
+    public final ASTGAtomicInstruction atomicInstruction() throws RecognitionException {
+        ASTGAtomicInstruction instr = null;
+
+        Token name=null;
+        Object parameter = null;
+
+
+        try {
+            // GGenerator.g:242:1: (name= IDENT LPAREN (parameter= instructionParameter ( COMMA parameter= instructionParameter )* )? RPAREN )
+            // GGenerator.g:243:5: name= IDENT LPAREN (parameter= instructionParameter ( COMMA parameter= instructionParameter )* )? RPAREN
+            {
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_atomicInstruction723); 
+             instr = new ASTGAtomicInstruction(name); 
+            match(input,LPAREN,FOLLOW_LPAREN_in_atomicInstruction727); 
+            // GGenerator.g:244:9: (parameter= instructionParameter ( COMMA parameter= instructionParameter )* )?
+            int alt11=2;
+            int LA11_0 = input.LA(1);
+
+            if ( (LA11_0==IDENT||LA11_0==LBRACK) ) {
+                alt11=1;
+            }
+            switch (alt11) {
+                case 1 :
+                    // GGenerator.g:244:11: parameter= instructionParameter ( COMMA parameter= instructionParameter )*
+                    {
+                    pushFollow(FOLLOW_instructionParameter_in_atomicInstruction741);
+                    parameter=instructionParameter();
+
+                    state._fsp--;
+
+                     instr.addParameter(parameter); 
+                    // GGenerator.g:245:13: ( COMMA parameter= instructionParameter )*
+                    loop10:
+                    do {
+                        int alt10=2;
+                        int LA10_0 = input.LA(1);
+
+                        if ( (LA10_0==COMMA) ) {
+                            alt10=1;
+                        }
+
+
+                        switch (alt10) {
+                    	case 1 :
+                    	    // GGenerator.g:245:15: COMMA parameter= instructionParameter
+                    	    {
+                    	    match(input,COMMA,FOLLOW_COMMA_in_atomicInstruction759); 
+                    	    pushFollow(FOLLOW_instructionParameter_in_atomicInstruction763);
+                    	    parameter=instructionParameter();
+
+                    	    state._fsp--;
+
+                    	     instr.addParameter(parameter); 
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop10;
+                        }
+                    } while (true);
+
+
+                    }
+                    break;
+
+            }
+
+            match(input,RPAREN,FOLLOW_RPAREN_in_atomicInstruction811); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return instr;
+    }
+    // $ANTLR end atomicInstruction
+
+
+    // $ANTLR start instructionParameter
+    // GGenerator.g:256:1: instructionParameter returns [Object parameter] : (parameterOcl= oclExpression | parameterIdent= instrParameterIdent );
+    public final Object instructionParameter() throws RecognitionException {
+        Object parameter = null;
+
+        ASTGocl parameterOcl = null;
+
+        Token parameterIdent = null;
+
+
+        try {
+            // GGenerator.g:257:1: (parameterOcl= oclExpression | parameterIdent= instrParameterIdent )
+            int alt12=2;
+            int LA12_0 = input.LA(1);
+
+            if ( (LA12_0==LBRACK) ) {
+                alt12=1;
+            }
+            else if ( (LA12_0==IDENT) ) {
+                alt12=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 12, 0, input);
+
+                throw nvae;
+            }
+            switch (alt12) {
+                case 1 :
+                    // GGenerator.g:258:7: parameterOcl= oclExpression
+                    {
+                    pushFollow(FOLLOW_oclExpression_in_instructionParameter839);
+                    parameterOcl=oclExpression();
+
+                    state._fsp--;
+
+                    parameter = parameterOcl; 
+
+                    }
+                    break;
+                case 2 :
+                    // GGenerator.g:259:7: parameterIdent= instrParameterIdent
+                    {
+                    pushFollow(FOLLOW_instrParameterIdent_in_instructionParameter851);
+                    parameterIdent=instrParameterIdent();
+
+                    state._fsp--;
+
+                    parameter = parameterIdent; 
+
+                    }
+                    break;
+
+            }
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return parameter;
+    }
+    // $ANTLR end instructionParameter
+
+
+    // $ANTLR start instrParameterIdent
+    // GGenerator.g:266:1: instrParameterIdent returns [Token t] : i= IDENT ;
+    public final Token instrParameterIdent() throws RecognitionException {
+        Token t = null;
+
+        Token i=null;
+
+        try {
+            // GGenerator.g:267:1: (i= IDENT )
+            // GGenerator.g:268:5: i= IDENT
+            {
+            i=(Token)match(input,IDENT,FOLLOW_IDENT_in_instrParameterIdent879); 
+             t = i; 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return t;
+    }
+    // $ANTLR end instrParameterIdent
+
+
+    // $ANTLR start oclExpression
+    // GGenerator.g:275:1: oclExpression returns [ASTGocl encapOcl] : i= LBRACK ocl= expression RBRACK ;
+    public final ASTGocl oclExpression() throws RecognitionException {
+        ASTGocl encapOcl = null;
+
+        Token i=null;
+        ASTExpression ocl = null;
+
+
+        try {
+            // GGenerator.g:276:1: (i= LBRACK ocl= expression RBRACK )
+            // GGenerator.g:277:5: i= LBRACK ocl= expression RBRACK
+            {
+            i=(Token)match(input,LBRACK,FOLLOW_LBRACK_in_oclExpression907); 
+            pushFollow(FOLLOW_expression_in_oclExpression911);
+            ocl=expression();
+
+            state._fsp--;
+
+            match(input,RBRACK,FOLLOW_RBRACK_in_oclExpression913); 
+             encapOcl = new ASTGocl(ocl, i); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return encapOcl;
+    }
+    // $ANTLR end oclExpression
+
+
+    // $ANTLR start procedureCallOnly
+    // GGenerator.g:290:1: procedureCallOnly returns [ASTGProcedureCall call] : name= IDENT LPAREN (ocl= expression ( COMMA ocl= expression )* )? RPAREN EOF ;
+    public final ASTGProcedureCall procedureCallOnly() throws RecognitionException {
+        ASTGProcedureCall call = null;
+
+        Token name=null;
+        ASTExpression ocl = null;
+
+
+        try {
+            // GGenerator.g:291:1: (name= IDENT LPAREN (ocl= expression ( COMMA ocl= expression )* )? RPAREN EOF )
+            // GGenerator.g:292:5: name= IDENT LPAREN (ocl= expression ( COMMA ocl= expression )* )? RPAREN EOF
+            {
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_procedureCallOnly948); 
+            call = new ASTGProcedureCall(name);
+            match(input,LPAREN,FOLLOW_LPAREN_in_procedureCallOnly956); 
+            // GGenerator.g:293:12: (ocl= expression ( COMMA ocl= expression )* )?
+            int alt14=2;
+            int LA14_0 = input.LA(1);
+
+            if ( ((LA14_0>=LITERAL_oclAsType && LA14_0<=LPAREN)||LA14_0==IDENT||(LA14_0>=PLUS && LA14_0<=MINUS)||(LA14_0>=INT && LA14_0<=HASH)||LA14_0==46||LA14_0==53||(LA14_0>=56 && LA14_0<=57)||(LA14_0>=61 && LA14_0<=68)) ) {
+                alt14=1;
+            }
+            switch (alt14) {
+                case 1 :
+                    // GGenerator.g:294:5: ocl= expression ( COMMA ocl= expression )*
+                    {
+                    pushFollow(FOLLOW_expression_in_procedureCallOnly967);
+                    ocl=expression();
+
+                    state._fsp--;
+
+                    call.addParameter(ocl);
+                    // GGenerator.g:295:5: ( COMMA ocl= expression )*
+                    loop13:
+                    do {
+                        int alt13=2;
+                        int LA13_0 = input.LA(1);
+
+                        if ( (LA13_0==COMMA) ) {
+                            alt13=1;
+                        }
+
+
+                        switch (alt13) {
+                    	case 1 :
+                    	    // GGenerator.g:295:7: COMMA ocl= expression
+                    	    {
+                    	    match(input,COMMA,FOLLOW_COMMA_in_procedureCallOnly977); 
+                    	    pushFollow(FOLLOW_expression_in_procedureCallOnly981);
+                    	    ocl=expression();
+
+                    	    state._fsp--;
+
+                    	    call.addParameter(ocl);
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop13;
+                        }
+                    } while (true);
+
+
+                    }
+                    break;
+
+            }
+
+            match(input,RPAREN,FOLLOW_RPAREN_in_procedureCallOnly995); 
+            match(input,EOF,FOLLOW_EOF_in_procedureCallOnly1001); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return call;
+    }
+    // $ANTLR end procedureCallOnly
+
+    // Delegated rules
+    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
+    public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
+    public ASTAssociationEnd associationEnd() throws RecognitionException { return gGUSEBase.associationEnd(); }
+    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
+    public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
+    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
+    public ASTPrePost prePost() throws RecognitionException { return gGUSEBase.prePost(); }
+    public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
+    public ASTALExecute alExec() throws RecognitionException { return gGUSEBase.alExec(); }
+    public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
+    public ASTPrePostClause prePostClause() throws RecognitionException { return gGUSEBase.prePostClause(); }
+    public ASTALSet alSet() throws RecognitionException { return gGUSEBase.alSet(); }
+    public ASTExpression conditionalAndExpression() throws RecognitionException { return gGOCLBase.conditionalAndExpression(); }
+    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
+    public void generalClassDefinition(ASTModel n) throws RecognitionException { gGUSEBase.generalClassDefinition(n); }
+    public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
+    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
+    public ASTExpression expression() throws RecognitionException { return gGOCLBase.expression(); }
+    public ASTAssociationClass associationClassDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.associationClassDefinition(isAbstract); }
+    public ASTInvariantClause invariantClause() throws RecognitionException { return gGUSEBase.invariantClause(); }
+    public ASTClass classDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.classDefinition(isAbstract); }
+    public ASTExpression primaryExpression() throws RecognitionException { return gGOCLBase.primaryExpression(); }
+    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
+    public ASTOperation operationDefinition() throws RecognitionException { return gGUSEBase.operationDefinition(); }
+    public ASTALFor alFor() throws RecognitionException { return gGUSEBase.alFor(); }
+    public List idList() throws RecognitionException { return gGOCLBase.idList(); }
+    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
+    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
+    public ASTVariableDeclaration variableDeclaration() throws RecognitionException { return gGOCLBase.variableDeclaration(); }
+    public ASTExpression unaryExpression() throws RecognitionException { return gGOCLBase.unaryExpression(); }
+    public ASTALDelete alDelete() throws RecognitionException { return gGUSEBase.alDelete(); }
+    public ASTConstraintDefinition invariant() throws RecognitionException { return gGUSEBase.invariant(); }
+    public ASTExpression relationalExpression() throws RecognitionException { return gGOCLBase.relationalExpression(); }
+    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
+    public ASTExpression conditionalXOrExpression() throws RecognitionException { return gGOCLBase.conditionalXOrExpression(); }
+    public ASTALSetCreate alSetCreate() throws RecognitionException { return gGUSEBase.alSetCreate(); }
+    public ASTAttribute attributeDefinition() throws RecognitionException { return gGUSEBase.attributeDefinition(); }
+    public ASTALIf alIf() throws RecognitionException { return gGUSEBase.alIf(); }
+    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
+    public ASTAssociation associationDefinition() throws RecognitionException { return gGUSEBase.associationDefinition(); }
+    public ASTALWhile alWhile() throws RecognitionException { return gGUSEBase.alWhile(); }
+    public ASTALCreateVar alCreateVar() throws RecognitionException { return gGUSEBase.alCreateVar(); }
+    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
+    public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
+    public ASTEnumTypeDefinition enumTypeDefinition() throws RecognitionException { return gGUSEBase.enumTypeDefinition(); }
+    public ASTALDestroy alDestroy() throws RecognitionException { return gGUSEBase.alDestroy(); }
+    public ASTALInsert alInsert() throws RecognitionException { return gGUSEBase.alInsert(); }
+    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
+    public ASTALAction alAction() throws RecognitionException { return gGUSEBase.alAction(); }
+    public ASTExpression conditionalImpliesExpression() throws RecognitionException { return gGOCLBase.conditionalImpliesExpression(); }
+    public ASTMultiplicity multiplicity() throws RecognitionException { return gGUSEBase.multiplicity(); }
+    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
+    public ASTMultiplicityRange multiplicityRange() throws RecognitionException { return gGUSEBase.multiplicityRange(); }
+    public ASTExpression postfixExpression() throws RecognitionException { return gGOCLBase.postfixExpression(); }
+    public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
+    public ASTALActionList alActionList() throws RecognitionException { return gGUSEBase.alActionList(); }
+    public List paramList() throws RecognitionException { return gGOCLBase.paramList(); }
+    public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
+    public ASTExpression equalityExpression() throws RecognitionException { return gGOCLBase.equalityExpression(); }
+    public ASTExpression multiplicativeExpression() throws RecognitionException { return gGOCLBase.multiplicativeExpression(); }
+    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
+    public ASTCollectionLiteral collectionLiteral() throws RecognitionException { return gGOCLBase.collectionLiteral(); }
+    public int multiplicitySpec() throws RecognitionException { return gGUSEBase.multiplicitySpec(); }
+
+
+ 
+
+    public static final BitSet FOLLOW_invariant_in_invariantListOnly82 = new BitSet(new long[]{0x0000000000000000L,0x0000000000400000L});
+    public static final BitSet FOLLOW_EOF_in_invariantListOnly93 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_procedure_in_procedureListOnly138 = new BitSet(new long[]{0x0000000000000000L,0x0000010000000000L});
+    public static final BitSet FOLLOW_EOF_in_procedureListOnly153 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_104_in_procedure181 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_IDENT_in_procedure185 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_LPAREN_in_procedure187 = new BitSet(new long[]{0x0000000000000600L});
+    public static final BitSet FOLLOW_variableDeclarationList_in_procedure191 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_RPAREN_in_procedure193 = new BitSet(new long[]{0x0000000000000000L,0x0000000002040000L});
+    public static final BitSet FOLLOW_89_in_procedure201 = new BitSet(new long[]{0x0000000004000400L});
+    public static final BitSet FOLLOW_variableDeclarationList_in_procedure205 = new BitSet(new long[]{0x0000000004000000L});
+    public static final BitSet FOLLOW_SEMI_in_procedure207 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
+    public static final BitSet FOLLOW_82_in_procedure216 = new BitSet(new long[]{0x0200000008000400L,0x0000004000001000L});
+    public static final BitSet FOLLOW_instructionList_in_procedure220 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_76_in_procedure222 = new BitSet(new long[]{0x0000000004000000L});
+    public static final BitSet FOLLOW_SEMI_in_procedure224 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_variableDeclaration_in_variableDeclarationList262 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_COMMA_in_variableDeclarationList273 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_variableDeclaration_in_variableDeclarationList277 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_instruction_in_instructionList321 = new BitSet(new long[]{0x0000000004000000L});
+    public static final BitSet FOLLOW_SEMI_in_instructionList323 = new BitSet(new long[]{0x0200000008000402L,0x0000004000000000L});
+    public static final BitSet FOLLOW_variableAssignment_in_instruction358 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_attributeAssignment_in_instruction373 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_loop_in_instruction387 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_atomicInstruction_in_instruction404 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ifThenElse_in_instruction418 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_variableAssignment448 = new BitSet(new long[]{0x0000002000000000L});
+    public static final BitSet FOLLOW_COLON_EQUAL_in_variableAssignment450 = new BitSet(new long[]{0x0000000008000400L});
+    public static final BitSet FOLLOW_valueInstruction_in_variableAssignment454 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_oclExpression_in_attributeAssignment486 = new BitSet(new long[]{0x0000000000800000L});
+    public static final BitSet FOLLOW_DOT_in_attributeAssignment488 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_IDENT_in_attributeAssignment492 = new BitSet(new long[]{0x0000002000000000L});
+    public static final BitSet FOLLOW_COLON_EQUAL_in_attributeAssignment500 = new BitSet(new long[]{0x0000000008000400L});
+    public static final BitSet FOLLOW_valueInstruction_in_attributeAssignment504 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_102_in_loop536 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_variableDeclaration_in_loop540 = new BitSet(new long[]{0x0000800000000000L});
+    public static final BitSet FOLLOW_47_in_loop542 = new BitSet(new long[]{0x0000000008000400L});
+    public static final BitSet FOLLOW_oclExpression_in_loop546 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
+    public static final BitSet FOLLOW_82_in_loop548 = new BitSet(new long[]{0x0200000008000400L,0x0000004000001000L});
+    public static final BitSet FOLLOW_instructionList_in_loop559 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_76_in_loop561 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_57_in_ifThenElse597 = new BitSet(new long[]{0x0000000008000400L});
+    public static final BitSet FOLLOW_oclExpression_in_ifThenElse601 = new BitSet(new long[]{0x0400000000000000L});
+    public static final BitSet FOLLOW_58_in_ifThenElse612 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
+    public static final BitSet FOLLOW_82_in_ifThenElse614 = new BitSet(new long[]{0x0200000008000400L,0x0000004000001000L});
+    public static final BitSet FOLLOW_instructionList_in_ifThenElse618 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_76_in_ifThenElse620 = new BitSet(new long[]{0x0800000000000002L});
+    public static final BitSet FOLLOW_59_in_ifThenElse631 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
+    public static final BitSet FOLLOW_82_in_ifThenElse633 = new BitSet(new long[]{0x0200000008000400L,0x0000004000001000L});
+    public static final BitSet FOLLOW_instructionList_in_ifThenElse637 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_76_in_ifThenElse639 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_atomicInstruction_in_valueInstruction679 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_oclExpression_in_valueInstruction693 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_atomicInstruction723 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_LPAREN_in_atomicInstruction727 = new BitSet(new long[]{0x0000000008000600L});
+    public static final BitSet FOLLOW_instructionParameter_in_atomicInstruction741 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_COMMA_in_atomicInstruction759 = new BitSet(new long[]{0x0000000008000400L});
+    public static final BitSet FOLLOW_instructionParameter_in_atomicInstruction763 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_RPAREN_in_atomicInstruction811 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_oclExpression_in_instructionParameter839 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_instrParameterIdent_in_instructionParameter851 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_instrParameterIdent879 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LBRACK_in_oclExpression907 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_expression_in_oclExpression911 = new BitSet(new long[]{0x0000000010000000L});
+    public static final BitSet FOLLOW_RBRACK_in_oclExpression913 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_procedureCallOnly948 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_LPAREN_in_procedureCallOnly956 = new BitSet(new long[]{0xE3204001E00C06F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_expression_in_procedureCallOnly967 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_COMMA_in_procedureCallOnly977 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_expression_in_procedureCallOnly981 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_RPAREN_in_procedureCallOnly995 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_procedureCallOnly1001 = new BitSet(new long[]{0x0000000000000002L});
+
 }
-
-public GGeneratorParser(TokenBuffer tokenBuf) {
-  this(tokenBuf,5);
-}
-
-protected GGeneratorParser(TokenStream lexer, int k) {
-  super(lexer,k);
-  tokenNames = _tokenNames;
-}
-
-public GGeneratorParser(TokenStream lexer) {
-  this(lexer,5);
-}
-
-public GGeneratorParser(ParserSharedInputState state) {
-  super(state,5);
-  tokenNames = _tokenNames;
-}
-
-	public final List  invariantListOnly() throws RecognitionException, TokenStreamException {
-		List invariantList;
-		
-		invariantList = new ArrayList(); ASTConstraintDefinition def;
-		
-		try {      // for error handling
-			{
-			_loop3:
-			do {
-				if ((LA(1)==LITERAL_context)) {
-					def=invariant();
-					invariantList.add(def);
-				}
-				else {
-					break _loop3;
-				}
-				
-			} while (true);
-			}
-			match(Token.EOF_TYPE);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_0);
-		}
-		return invariantList;
-	}
-	
-	public final ASTConstraintDefinition  invariant() throws RecognitionException, TokenStreamException {
-		ASTConstraintDefinition n;
-		
-		Token  v = null;
-		n = null; ASTType t = null; ASTInvariantClause inv = null;
-		
-		try {      // for error handling
-			n = new ASTConstraintDefinition();
-			match(LITERAL_context);
-			{
-			if ((LA(1)==IDENT) && (LA(2)==COLON)) {
-				v = LT(1);
-				match(IDENT);
-				match(COLON);
-				n.setVarName((MyToken) v);
-			}
-			else if ((LA(1)==IDENT) && (_tokenSet_1.member(LA(2)))) {
-			}
-			else {
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			
-			}
-			t=simpleType();
-			n.setType(t);
-			{
-			_loop104:
-			do {
-				if ((LA(1)==LITERAL_inv)) {
-					inv=invariantClause();
-					n.addInvariantClause(inv);
-				}
-				else {
-					break _loop104;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_2);
-		}
-		return n;
-	}
-	
-	public final List  procedureListOnly() throws RecognitionException, TokenStreamException {
-		List procedureList;
-		
-		procedureList = new ArrayList();
-		
-		try {      // for error handling
-			{
-			_loop6:
-			do {
-				if ((LA(1)==LITERAL_procedure)) {
-					ASTGProcedure proc;
-					proc=procedure();
-					procedureList.add(proc);
-				}
-				else {
-					break _loop6;
-				}
-				
-			} while (true);
-			}
-			match(Token.EOF_TYPE);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_0);
-		}
-		return procedureList;
-	}
-	
-	public final ASTGProcedure  procedure() throws RecognitionException, TokenStreamException {
-		ASTGProcedure proc;
-		
-		Token  name = null;
-		List parameterDecls; List localDecls; List instructions; 
-		localDecls = new ArrayList(); proc = null;
-		
-		try {      // for error handling
-			match(LITERAL_procedure);
-			name = LT(1);
-			match(IDENT);
-			match(LPAREN);
-			parameterDecls=variableDeclarationList();
-			match(RPAREN);
-			{
-			switch ( LA(1)) {
-			case LITERAL_var:
-			{
-				match(LITERAL_var);
-				localDecls=variableDeclarationList();
-				match(SEMI);
-				break;
-			}
-			case LITERAL_begin:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(LITERAL_begin);
-			instructions=instructionList();
-			match(LITERAL_end);
-			match(SEMI);
-			proc = new ASTGProcedure(
-			(MyToken) name, parameterDecls, localDecls, instructions );
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_3);
-		}
-		return proc;
-	}
-	
-	public final List  variableDeclarationList() throws RecognitionException, TokenStreamException {
-		List varDecls;
-		
-		ASTVariableDeclaration decl; varDecls = new ArrayList();
-		
-		try {      // for error handling
-			{
-			switch ( LA(1)) {
-			case IDENT:
-			{
-				decl=variableDeclaration();
-				varDecls.add(decl);
-				{
-				_loop12:
-				do {
-					if ((LA(1)==COMMA)) {
-						match(COMMA);
-						decl=variableDeclaration();
-						varDecls.add(decl);
-					}
-					else {
-						break _loop12;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case RPAREN:
-			case SEMI:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_4);
-		}
-		return varDecls;
-	}
-	
-	public final List  instructionList() throws RecognitionException, TokenStreamException {
-		List instructions;
-		
-		ASTGInstruction instr; instructions = new ArrayList();
-		
-		try {      // for error handling
-			{
-			_loop15:
-			do {
-				if ((_tokenSet_5.member(LA(1)))) {
-					instr=instruction();
-					match(SEMI);
-					instructions.add(instr);
-				}
-				else {
-					break _loop15;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_6);
-		}
-		return instructions;
-	}
-	
-	public final ASTVariableDeclaration  variableDeclaration() throws RecognitionException, TokenStreamException {
-		ASTVariableDeclaration n;
-		
-		Token  name = null;
-		ASTType t; n = null;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			match(COLON);
-			t=type();
-			n = new ASTVariableDeclaration((MyToken) name, t);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_7);
-		}
-		return n;
-	}
-	
-	public final ASTGInstruction  instruction() throws RecognitionException, TokenStreamException {
-		ASTGInstruction instr;
-		
-		instr=null;
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case LBRACK:
-			{
-				instr=attributeAssignment();
-				break;
-			}
-			case LITERAL_for:
-			{
-				instr=loop();
-				break;
-			}
-			case LITERAL_if:
-			{
-				instr=ifThenElse();
-				break;
-			}
-			default:
-				if ((LA(1)==IDENT) && (LA(2)==COLON_EQUAL)) {
-					instr=variableAssignment();
-				}
-				else if ((LA(1)==IDENT) && (LA(2)==LPAREN)) {
-					instr=atomicInstruction();
-				}
-			else {
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_8);
-		}
-		return instr;
-	}
-	
-	public final ASTGVariableAssignment  variableAssignment() throws RecognitionException, TokenStreamException {
-		ASTGVariableAssignment assignment;
-		
-		Token  target = null;
-		ASTGValueInstruction source; assignment=null;
-		
-		try {      // for error handling
-			target = LT(1);
-			match(IDENT);
-			match(COLON_EQUAL);
-			source=valueInstruction();
-			assignment = new ASTGVariableAssignment( (MyToken) target, source );
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_8);
-		}
-		return assignment;
-	}
-	
-	public final ASTGAttributeAssignment  attributeAssignment() throws RecognitionException, TokenStreamException {
-		ASTGAttributeAssignment assignment;
-		
-		Token  attributeName = null;
-		ASTGValueInstruction source; ASTGocl targetObject;
-		assignment=null;
-		
-		try {      // for error handling
-			targetObject=oclExpression();
-			match(DOT);
-			attributeName = LT(1);
-			match(IDENT);
-			match(COLON_EQUAL);
-			source=valueInstruction();
-			assignment = new ASTGAttributeAssignment(
-						 targetObject, (MyToken) attributeName, source );
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_8);
-		}
-		return assignment;
-	}
-	
-	public final ASTGLoop  loop() throws RecognitionException, TokenStreamException {
-		ASTGLoop loop;
-		
-		Token  t = null;
-		ASTVariableDeclaration decl; ASTGocl sequence; List instructions;
-		loop=null;
-		
-		try {      // for error handling
-			t = LT(1);
-			match(LITERAL_for);
-			decl=variableDeclaration();
-			match(LITERAL_in);
-			sequence=oclExpression();
-			match(LITERAL_begin);
-			instructions=instructionList();
-			match(LITERAL_end);
-			loop= new ASTGLoop( decl, sequence, instructions, (MyToken)t );
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_8);
-		}
-		return loop;
-	}
-	
-	public final ASTGAtomicInstruction  atomicInstruction() throws RecognitionException, TokenStreamException {
-		ASTGAtomicInstruction instr;
-		
-		Token  name = null;
-		instr=null; ASTGInstructionParameterInterface parameter;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			instr= new ASTGAtomicInstruction((MyToken) name);
-			match(LPAREN);
-			{
-			switch ( LA(1)) {
-			case IDENT:
-			case LBRACK:
-			{
-				parameter=instructionParameter();
-				instr.addParameter(parameter);
-				{
-				_loop26:
-				do {
-					if ((LA(1)==COMMA)) {
-						match(COMMA);
-						parameter=instructionParameter();
-						instr.addParameter(parameter);
-					}
-					else {
-						break _loop26;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case RPAREN:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(RPAREN);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_8);
-		}
-		return instr;
-	}
-	
-	public final ASTGIfThenElse  ifThenElse() throws RecognitionException, TokenStreamException {
-		ASTGIfThenElse ifThenElse;
-		
-		Token  token = null;
-		ASTGocl sequence; List thenInstructions; List elseInstructions;
-		elseInstructions = new ArrayList(); ifThenElse=null;
-		
-		try {      // for error handling
-			token = LT(1);
-			match(LITERAL_if);
-			sequence=oclExpression();
-			match(LITERAL_then);
-			match(LITERAL_begin);
-			thenInstructions=instructionList();
-			match(LITERAL_end);
-			{
-			switch ( LA(1)) {
-			case LITERAL_else:
-			{
-				match(LITERAL_else);
-				match(LITERAL_begin);
-				elseInstructions=instructionList();
-				match(LITERAL_end);
-				break;
-			}
-			case SEMI:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			ifThenElse= new ASTGIfThenElse( sequence, thenInstructions,
-			elseInstructions, (MyToken)token );
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_8);
-		}
-		return ifThenElse;
-	}
-	
-	public final ASTGValueInstruction  valueInstruction() throws RecognitionException, TokenStreamException {
-		ASTGValueInstruction valueinstr;
-		
-		valueinstr = null;
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case IDENT:
-			{
-				valueinstr=atomicInstruction();
-				break;
-			}
-			case LBRACK:
-			{
-				valueinstr=oclExpression();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_8);
-		}
-		return valueinstr;
-	}
-	
-	public final ASTGocl  oclExpression() throws RecognitionException, TokenStreamException {
-		ASTGocl encapOcl;
-		
-		Token  i = null;
-		ASTExpression ocl; encapOcl=null;
-		
-		try {      // for error handling
-			i = LT(1);
-			match(LBRACK);
-			ocl=expression();
-			match(RBRACK);
-			encapOcl = new ASTGocl(ocl, (MyToken)i);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_9);
-		}
-		return encapOcl;
-	}
-	
-	public final ASTGInstructionParameterInterface  instructionParameter() throws RecognitionException, TokenStreamException {
-		ASTGInstructionParameterInterface parameter;
-		
-		parameter=null;
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case LBRACK:
-			{
-				parameter=oclExpression();
-				break;
-			}
-			case IDENT:
-			{
-				parameter=instrParameterIdent();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_10);
-		}
-		return parameter;
-	}
-	
-	public final MyToken  instrParameterIdent() throws RecognitionException, TokenStreamException {
-		MyToken t;
-		
-		Token  i = null;
-		t=null;
-		
-		try {      // for error handling
-			i = LT(1);
-			match(IDENT);
-			t = (MyToken) i;
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_10);
-		}
-		return t;
-	}
-	
-	public final ASTExpression  expression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  name = null;
-		ASTLetExpression prevLet = null, firstLet = null; ASTType t = null; 
-		ASTExpression e1, e2; n = null; 
-		
-		
-		try {      // for error handling
-			MyToken tok = (MyToken) LT(1); /* remember start of expression */
-			{
-			_loop147:
-			do {
-				if ((LA(1)==LITERAL_let)) {
-					match(LITERAL_let);
-					name = LT(1);
-					match(IDENT);
-					{
-					switch ( LA(1)) {
-					case COLON:
-					{
-						match(COLON);
-						t=type();
-						break;
-					}
-					case EQUAL:
-					{
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
-					}
-					match(EQUAL);
-					e1=expression();
-					match(LITERAL_in);
-					ASTLetExpression nextLet = new ASTLetExpression((MyToken) name, t, e1);
-					if ( firstLet == null ) 
-					firstLet = nextLet;
-					if ( prevLet != null ) 
-					prevLet.setInExpr(nextLet);
-					prevLet = nextLet;
-					
-				}
-				else {
-					break _loop147;
-				}
-				
-			} while (true);
-			}
-			n=conditionalImpliesExpression();
-			if ( n != null ) 
-			n.setStartToken(tok);
-			if ( prevLet != null ) { 
-			prevLet.setInExpr(n);
-			n = firstLet;
-			n.setStartToken(tok);
-			}
-			
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_11);
-		}
-		return n;
-	}
-	
-	public final ASTGProcedureCall  procedureCallOnly() throws RecognitionException, TokenStreamException {
-		ASTGProcedureCall call;
-		
-		Token  name = null;
-		call = null; ASTExpression ocl;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			call = new ASTGProcedureCall((MyToken)name);
-			match(LPAREN);
-			{
-			switch ( LA(1)) {
-			case LPAREN:
-			case IDENT:
-			case LITERAL_let:
-			case PLUS:
-			case MINUS:
-			case LITERAL_not:
-			case LITERAL_iterate:
-			case LITERAL_oclAsType:
-			case LITERAL_oclIsKindOf:
-			case LITERAL_oclIsTypeOf:
-			case LITERAL_if:
-			case LITERAL_true:
-			case LITERAL_false:
-			case INT:
-			case REAL:
-			case STRING:
-			case HASH:
-			case LITERAL_Set:
-			case LITERAL_Sequence:
-			case LITERAL_Bag:
-			case LITERAL_oclEmpty:
-			case LITERAL_oclUndefined:
-			case LITERAL_Tuple:
-			{
-				ocl=expression();
-				call.addParameter(ocl);
-				{
-				_loop33:
-				do {
-					if ((LA(1)==COMMA)) {
-						match(COMMA);
-						ocl=expression();
-						call.addParameter(ocl);
-					}
-					else {
-						break _loop33;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case RPAREN:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(RPAREN);
-			match(Token.EOF_TYPE);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_0);
-		}
-		return call;
-	}
-	
-	public final ASTModel  model() throws RecognitionException, TokenStreamException {
-		ASTModel n;
-		
-		Token  name = null;
-		
-		ASTEnumTypeDefinition e = null;
-		ASTAssociation a = null;
-		ASTConstraintDefinition cons = null;
-		ASTPrePost ppc = null;
-		n = null;
-		
-		
-		try {      // for error handling
-			match(LITERAL_model);
-			name = LT(1);
-			match(IDENT);
-			n = new ASTModel((MyToken) name);
-			{
-			_loop36:
-			do {
-				if ((LA(1)==LITERAL_enum)) {
-					e=enumTypeDefinition();
-					n.addEnumTypeDef(e);
-				}
-				else {
-					break _loop36;
-				}
-				
-			} while (true);
-			}
-			{
-			_loop43:
-			do {
-				switch ( LA(1)) {
-				case LITERAL_abstract:
-				case LITERAL_class:
-				case LITERAL_associationClass:
-				case LITERAL_associationclass:
-				{
-					{
-					generalClassDefinition(n);
-					}
-					break;
-				}
-				case LITERAL_aggregation:
-				case LITERAL_composition:
-				case LITERAL_association:
-				{
-					{
-					a=associationDefinition();
-					n.addAssociation(a);
-					}
-					break;
-				}
-				case LITERAL_constraints:
-				{
-					{
-					match(LITERAL_constraints);
-					{
-					_loop42:
-					do {
-						if ((LA(1)==LITERAL_context) && (LA(2)==IDENT) && (_tokenSet_12.member(LA(3)))) {
-							cons=invariant();
-							n.addConstraint(cons);
-						}
-						else if ((LA(1)==LITERAL_context) && (LA(2)==IDENT) && (LA(3)==COLON_COLON)) {
-							ppc=prePost();
-							n.addPrePost(ppc);
-						}
-						else {
-							break _loop42;
-						}
-						
-					} while (true);
-					}
-					}
-					break;
-				}
-				default:
-				{
-					break _loop43;
-				}
-				}
-			} while (true);
-			}
-			match(Token.EOF_TYPE);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_0);
-		}
-		return n;
-	}
-	
-	public final ASTEnumTypeDefinition  enumTypeDefinition() throws RecognitionException, TokenStreamException {
-		ASTEnumTypeDefinition n;
-		
-		Token  name = null;
-		List idList; n = null;
-		
-		try {      // for error handling
-			match(LITERAL_enum);
-			name = LT(1);
-			match(IDENT);
-			match(LBRACE);
-			idList=idList();
-			match(RBRACE);
-			{
-			switch ( LA(1)) {
-			case SEMI:
-			{
-				match(SEMI);
-				break;
-			}
-			case EOF:
-			case LITERAL_constraints:
-			case LITERAL_enum:
-			case LITERAL_abstract:
-			case LITERAL_class:
-			case LITERAL_associationClass:
-			case LITERAL_associationclass:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			case LITERAL_association:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			n = new ASTEnumTypeDefinition((MyToken) name, idList);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_13);
-		}
-		return n;
-	}
-	
-	public final void generalClassDefinition(
-		ASTModel n
-	) throws RecognitionException, TokenStreamException {
-		
-		boolean isAbstract = false;
-		ASTClass c = null;
-		ASTAssociationClass ac = null;
-		
-		try {      // for error handling
-			{
-			switch ( LA(1)) {
-			case LITERAL_abstract:
-			{
-				match(LITERAL_abstract);
-				isAbstract = true;
-				break;
-			}
-			case LITERAL_class:
-			case LITERAL_associationClass:
-			case LITERAL_associationclass:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_class:
-			{
-				{
-				c=classDefinition(isAbstract);
-				n.addClass(c);
-				}
-				break;
-			}
-			case LITERAL_associationClass:
-			case LITERAL_associationclass:
-			{
-				{
-				ac=associationClassDefinition(isAbstract);
-				n.addAssociationClass(ac);
-				}
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_14);
-		}
-	}
-	
-	public final ASTAssociation  associationDefinition() throws RecognitionException, TokenStreamException {
-		ASTAssociation n;
-		
-		Token  name = null;
-		ASTAssociationEnd ae; n = null;
-		
-		try {      // for error handling
-			MyToken t = (MyToken) LT(1);
-			{
-			switch ( LA(1)) {
-			case LITERAL_association:
-			{
-				match(LITERAL_association);
-				break;
-			}
-			case LITERAL_aggregation:
-			{
-				match(LITERAL_aggregation);
-				break;
-			}
-			case LITERAL_composition:
-			{
-				match(LITERAL_composition);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			name = LT(1);
-			match(IDENT);
-			n = new ASTAssociation(t, (MyToken) name);
-			match(LITERAL_between);
-			ae=associationEnd();
-			n.addEnd(ae);
-			{
-			int _cnt90=0;
-			_loop90:
-			do {
-				if ((LA(1)==IDENT)) {
-					ae=associationEnd();
-					n.addEnd(ae);
-				}
-				else {
-					if ( _cnt90>=1 ) { break _loop90; } else {throw new NoViableAltException(LT(1), getFilename());}
-				}
-				
-				_cnt90++;
-			} while (true);
-			}
-			match(LITERAL_end);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_14);
-		}
-		return n;
-	}
-	
-	public final ASTPrePost  prePost() throws RecognitionException, TokenStreamException {
-		ASTPrePost n;
-		
-		Token  classname = null;
-		Token  opname = null;
-		n = null; List pl = null; ASTType rt = null; ASTPrePostClause ppc = null;
-		
-		try {      // for error handling
-			match(LITERAL_context);
-			classname = LT(1);
-			match(IDENT);
-			match(COLON_COLON);
-			opname = LT(1);
-			match(IDENT);
-			pl=paramList();
-			{
-			switch ( LA(1)) {
-			case COLON:
-			{
-				match(COLON);
-				rt=type();
-				break;
-			}
-			case LITERAL_pre:
-			case LITERAL_post:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			n = new ASTPrePost((MyToken) classname, (MyToken) opname, pl, rt);
-			{
-			int _cnt110=0;
-			_loop110:
-			do {
-				if ((LA(1)==LITERAL_pre||LA(1)==LITERAL_post)) {
-					ppc=prePostClause();
-					n.addPrePostClause(ppc);
-				}
-				else {
-					if ( _cnt110>=1 ) { break _loop110; } else {throw new NoViableAltException(LT(1), getFilename());}
-				}
-				
-				_cnt110++;
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_2);
-		}
-		return n;
-	}
-	
-	public final List  idList() throws RecognitionException, TokenStreamException {
-		List idList;
-		
-		Token  id0 = null;
-		Token  idn = null;
-		idList = new ArrayList();
-		
-		try {      // for error handling
-			id0 = LT(1);
-			match(IDENT);
-			idList.add((MyToken) id0);
-			{
-			_loop141:
-			do {
-				if ((LA(1)==COMMA)) {
-					match(COMMA);
-					idn = LT(1);
-					match(IDENT);
-					idList.add((MyToken) idn);
-				}
-				else {
-					break _loop141;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_15);
-		}
-		return idList;
-	}
-	
-	public final ASTClass  classDefinition(
-		boolean isAbstract
-	) throws RecognitionException, TokenStreamException {
-		ASTClass n;
-		
-		Token  name = null;
-		List idList; n = null;
-		
-		try {      // for error handling
-			match(LITERAL_class);
-			name = LT(1);
-			match(IDENT);
-			n = new ASTClass((MyToken) name, isAbstract);
-			{
-			switch ( LA(1)) {
-			case LESS:
-			{
-				match(LESS);
-				idList=idList();
-				n.addSuperClasses(idList);
-				break;
-			}
-			case LITERAL_constraints:
-			case LITERAL_attributes:
-			case LITERAL_operations:
-			case LITERAL_end:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_attributes:
-			{
-				match(LITERAL_attributes);
-				ASTAttribute a;
-				{
-				_loop55:
-				do {
-					if ((LA(1)==IDENT)) {
-						a=attributeDefinition();
-						n.addAttribute(a);
-					}
-					else {
-						break _loop55;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case LITERAL_constraints:
-			case LITERAL_operations:
-			case LITERAL_end:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_operations:
-			{
-				match(LITERAL_operations);
-				ASTOperation op;
-				{
-				_loop58:
-				do {
-					if ((LA(1)==IDENT)) {
-						op=operationDefinition();
-						n.addOperation(op);
-					}
-					else {
-						break _loop58;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case LITERAL_constraints:
-			case LITERAL_end:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_constraints:
-			{
-				match(LITERAL_constraints);
-				{
-				_loop61:
-				do {
-					if ((LA(1)==LITERAL_inv)) {
-						ASTInvariantClause inv;
-						inv=invariantClause();
-						n.addInvariantClause(inv);
-					}
-					else {
-						break _loop61;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case LITERAL_end:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(LITERAL_end);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_14);
-		}
-		return n;
-	}
-	
-	public final ASTAssociationClass  associationClassDefinition(
-		boolean isAbstract
-	) throws RecognitionException, TokenStreamException {
-		ASTAssociationClass n;
-		
-		Token  name = null;
-		List idList; n = null; ASTAssociationEnd ae;
-		
-		try {      // for error handling
-			MyToken t1 = (MyToken) LT(1);
-			{
-			switch ( LA(1)) {
-			case LITERAL_associationClass:
-			{
-				match(LITERAL_associationClass);
-				break;
-			}
-			case LITERAL_associationclass:
-			{
-				match(LITERAL_associationclass);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			
-			if (t1.getText().equals("associationClass")) {
-			reportWarning("the 'associationClass' keyword is deprecated and will " +
-			"not be supported in the future, use 'associationclass' instead");
-			}  
-			
-			name = LT(1);
-			match(IDENT);
-			n = new ASTAssociationClass((MyToken) name, isAbstract);
-			{
-			switch ( LA(1)) {
-			case LESS:
-			{
-				match(LESS);
-				idList=idList();
-				n.addSuperClasses(idList);
-				break;
-			}
-			case LITERAL_between:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(LITERAL_between);
-			ae=associationEnd();
-			n.addEnd(ae);
-			{
-			int _cnt66=0;
-			_loop66:
-			do {
-				if ((LA(1)==IDENT)) {
-					ae=associationEnd();
-					n.addEnd(ae);
-				}
-				else {
-					if ( _cnt66>=1 ) { break _loop66; } else {throw new NoViableAltException(LT(1), getFilename());}
-				}
-				
-				_cnt66++;
-			} while (true);
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_attributes:
-			{
-				match(LITERAL_attributes);
-				ASTAttribute a;
-				{
-				_loop69:
-				do {
-					if ((LA(1)==IDENT)) {
-						a=attributeDefinition();
-						n.addAttribute(a);
-					}
-					else {
-						break _loop69;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case LITERAL_constraints:
-			case LITERAL_operations:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_operations:
-			{
-				match(LITERAL_operations);
-				ASTOperation op;
-				{
-				_loop72:
-				do {
-					if ((LA(1)==IDENT)) {
-						op=operationDefinition();
-						n.addOperation(op);
-					}
-					else {
-						break _loop72;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case LITERAL_constraints:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_constraints:
-			{
-				match(LITERAL_constraints);
-				{
-				_loop75:
-				do {
-					if ((LA(1)==LITERAL_inv)) {
-						ASTInvariantClause inv;
-						inv=invariantClause();
-						n.addInvariantClause(inv);
-					}
-					else {
-						break _loop75;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			{
-				MyToken t = (MyToken) LT(1);
-				{
-				switch ( LA(1)) {
-				case LITERAL_aggregation:
-				{
-					match(LITERAL_aggregation);
-					break;
-				}
-				case LITERAL_composition:
-				{
-					match(LITERAL_composition);
-					break;
-				}
-				default:
-				{
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				}
-				}
-				n.setKind(t);
-				break;
-			}
-			case LITERAL_end:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(LITERAL_end);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_14);
-		}
-		return n;
-	}
-	
-	public final ASTAttribute  attributeDefinition() throws RecognitionException, TokenStreamException {
-		ASTAttribute n;
-		
-		Token  name = null;
-		ASTType t; n = null;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			match(COLON);
-			t=type();
-			{
-			switch ( LA(1)) {
-			case SEMI:
-			{
-				match(SEMI);
-				break;
-			}
-			case IDENT:
-			case LITERAL_constraints:
-			case LITERAL_operations:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			n = new ASTAttribute((MyToken) name, t);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_16);
-		}
-		return n;
-	}
-	
-	public final ASTOperation  operationDefinition() throws RecognitionException, TokenStreamException {
-		ASTOperation n;
-		
-		Token  name = null;
-		List pl; ASTType t = null; ASTExpression e = null; 
-		ASTPrePostClause ppc = null; n = null; 
-		ASTALActionList al = null;
-		
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			pl=paramList();
-			{
-			switch ( LA(1)) {
-			case COLON:
-			{
-				match(COLON);
-				t=type();
-				break;
-			}
-			case IDENT:
-			case EQUAL:
-			case LITERAL_pre:
-			case SEMI:
-			case LITERAL_constraints:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			case LITERAL_begin:
-			case LITERAL_post:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case EQUAL:
-			{
-				match(EQUAL);
-				e=expression();
-				break;
-			}
-			case IDENT:
-			case LITERAL_pre:
-			case SEMI:
-			case LITERAL_constraints:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			case LITERAL_begin:
-			case LITERAL_post:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_begin:
-			{
-				match(LITERAL_begin);
-				al=alActionList();
-				match(LITERAL_end);
-				break;
-			}
-			case IDENT:
-			case LITERAL_pre:
-			case SEMI:
-			case LITERAL_constraints:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			case LITERAL_post:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			n = new ASTOperation((MyToken) name, pl, t, e,al);
-			{
-			_loop85:
-			do {
-				if ((LA(1)==LITERAL_pre||LA(1)==LITERAL_post)) {
-					ppc=prePostClause();
-					n.addPrePostClause(ppc);
-				}
-				else {
-					break _loop85;
-				}
-				
-			} while (true);
-			}
-			{
-			switch ( LA(1)) {
-			case SEMI:
-			{
-				match(SEMI);
-				break;
-			}
-			case IDENT:
-			case LITERAL_constraints:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_17);
-		}
-		return n;
-	}
-	
-	public final ASTInvariantClause  invariantClause() throws RecognitionException, TokenStreamException {
-		ASTInvariantClause n;
-		
-		Token  name = null;
-		ASTExpression e; n = null;
-		
-		try {      // for error handling
-			match(LITERAL_inv);
-			{
-			switch ( LA(1)) {
-			case IDENT:
-			{
-				name = LT(1);
-				match(IDENT);
-				break;
-			}
-			case COLON:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(COLON);
-			e=expression();
-			n = new ASTInvariantClause((MyToken) name, e);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_18);
-		}
-		return n;
-	}
-	
-	public final ASTAssociationEnd  associationEnd() throws RecognitionException, TokenStreamException {
-		ASTAssociationEnd n;
-		
-		Token  name = null;
-		Token  rn = null;
-		ASTMultiplicity m; n = null;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			match(LBRACK);
-			m=multiplicity();
-			match(RBRACK);
-			n = new ASTAssociationEnd((MyToken) name, m);
-			{
-			switch ( LA(1)) {
-			case LITERAL_role:
-			{
-				match(LITERAL_role);
-				rn = LT(1);
-				match(IDENT);
-				n.setRolename((MyToken) rn);
-				break;
-			}
-			case IDENT:
-			case SEMI:
-			case LITERAL_constraints:
-			case LITERAL_attributes:
-			case LITERAL_operations:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			case LITERAL_ordered:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LITERAL_ordered:
-			{
-				match(LITERAL_ordered);
-				n.setOrdered();
-				break;
-			}
-			case IDENT:
-			case SEMI:
-			case LITERAL_constraints:
-			case LITERAL_attributes:
-			case LITERAL_operations:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case SEMI:
-			{
-				match(SEMI);
-				break;
-			}
-			case IDENT:
-			case LITERAL_constraints:
-			case LITERAL_attributes:
-			case LITERAL_operations:
-			case LITERAL_end:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_19);
-		}
-		return n;
-	}
-	
-	public final ASTType  type() throws RecognitionException, TokenStreamException {
-		ASTType n;
-		
-		n = null;
-		
-		try {      // for error handling
-			MyToken tok = (MyToken) LT(1); /* remember start of type */
-			{
-			switch ( LA(1)) {
-			case IDENT:
-			{
-				n=simpleType();
-				break;
-			}
-			case LITERAL_Set:
-			case LITERAL_Sequence:
-			case LITERAL_Bag:
-			case LITERAL_Collection:
-			{
-				n=collectionType();
-				break;
-			}
-			case LITERAL_Tuple:
-			{
-				n=tupleType();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			n.setStartToken(tok);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_20);
-		}
-		return n;
-	}
-	
-	public final List  paramList() throws RecognitionException, TokenStreamException {
-		List paramList;
-		
-		ASTVariableDeclaration v; paramList = new ArrayList();
-		
-		try {      // for error handling
-			match(LPAREN);
-			{
-			switch ( LA(1)) {
-			case IDENT:
-			{
-				v=variableDeclaration();
-				paramList.add(v);
-				{
-				_loop138:
-				do {
-					if ((LA(1)==COMMA)) {
-						match(COMMA);
-						v=variableDeclaration();
-						paramList.add(v);
-					}
-					else {
-						break _loop138;
-					}
-					
-				} while (true);
-				}
-				break;
-			}
-			case RPAREN:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(RPAREN);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_21);
-		}
-		return paramList;
-	}
-	
-	public final ASTALActionList  alActionList() throws RecognitionException, TokenStreamException {
-		ASTALActionList al;
-		
-		
-			al = null;
-			ASTALAction action = null;
-			al = new ASTALActionList();
-		
-		
-		try {      // for error handling
-			{
-			_loop116:
-			do {
-				if ((_tokenSet_22.member(LA(1)))) {
-					action=alAction();
-					al.add(action);
-				}
-				else {
-					break _loop116;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_23);
-		}
-		return al;
-	}
-	
-	public final ASTPrePostClause  prePostClause() throws RecognitionException, TokenStreamException {
-		ASTPrePostClause n;
-		
-		Token  name = null;
-		ASTExpression e; n = null;
-		
-		try {      // for error handling
-			MyToken t = (MyToken) LT(1);
-			{
-			switch ( LA(1)) {
-			case LITERAL_pre:
-			{
-				match(LITERAL_pre);
-				break;
-			}
-			case LITERAL_post:
-			{
-				match(LITERAL_post);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case IDENT:
-			{
-				name = LT(1);
-				match(IDENT);
-				break;
-			}
-			case COLON:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(COLON);
-			e=expression();
-			n = new ASTPrePostClause(t, (MyToken) name, e);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_24);
-		}
-		return n;
-	}
-	
-	public final ASTMultiplicity  multiplicity() throws RecognitionException, TokenStreamException {
-		ASTMultiplicity n;
-		
-		ASTMultiplicityRange mr; n = null;
-		
-		try {      // for error handling
-			
-				MyToken t = (MyToken) LT(1); // remember start position of expression
-				n = new ASTMultiplicity(t); 
-			
-			mr=multiplicityRange();
-			n.addRange(mr);
-			{
-			_loop97:
-			do {
-				if ((LA(1)==COMMA)) {
-					match(COMMA);
-					mr=multiplicityRange();
-					n.addRange(mr);
-				}
-				else {
-					break _loop97;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_25);
-		}
-		return n;
-	}
-	
-	public final ASTMultiplicityRange  multiplicityRange() throws RecognitionException, TokenStreamException {
-		ASTMultiplicityRange n;
-		
-		int ms1, ms2; n = null;
-		
-		try {      // for error handling
-			ms1=multiplicitySpec();
-			n = new ASTMultiplicityRange(ms1);
-			{
-			switch ( LA(1)) {
-			case DOTDOT:
-			{
-				match(DOTDOT);
-				ms2=multiplicitySpec();
-				n.setHigh(ms2);
-				break;
-			}
-			case COMMA:
-			case RBRACK:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_26);
-		}
-		return n;
-	}
-	
-	public final int  multiplicitySpec() throws RecognitionException, TokenStreamException {
-		int m;
-		
-		Token  i = null;
-		m = -1;
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case INT:
-			{
-				i = LT(1);
-				match(INT);
-				m = Integer.parseInt(i.getText());
-				break;
-			}
-			case STAR:
-			{
-				match(STAR);
-				m = -1;
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_27);
-		}
-		return m;
-	}
-	
-	public final ASTSimpleType  simpleType() throws RecognitionException, TokenStreamException {
-		ASTSimpleType n;
-		
-		Token  name = null;
-		n = null;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			n = new ASTSimpleType((MyToken) name);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_28);
-		}
-		return n;
-	}
-	
-	public final ASTALAction  alAction() throws RecognitionException, TokenStreamException {
-		ASTALAction action;
-		
-		
-			action = null;
-		
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case LITERAL_var:
-			case LITERAL_declare:
-			{
-				action=alCreateVar();
-				break;
-			}
-			case LITERAL_delete:
-			{
-				action=alDelete();
-				break;
-			}
-			case LITERAL_set:
-			{
-				action=alSet();
-				break;
-			}
-			case LITERAL_create:
-			{
-				action=alSetCreate();
-				break;
-			}
-			case LITERAL_insert:
-			{
-				action=alInsert();
-				break;
-			}
-			case LITERAL_destroy:
-			{
-				action=alDestroy();
-				break;
-			}
-			case LITERAL_if:
-			{
-				action=alIf();
-				break;
-			}
-			case LITERAL_while:
-			{
-				action=alWhile();
-				break;
-			}
-			case LITERAL_for:
-			{
-				action=alFor();
-				break;
-			}
-			case LITERAL_execute:
-			{
-				action=alExec();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return action;
-	}
-	
-	public final ASTALCreateVar  alCreateVar() throws RecognitionException, TokenStreamException {
-		ASTALCreateVar var;
-		
-		Token  name = null;
-		
-			var = null;
-			ASTType type = null;
-		
-		
-		try {      // for error handling
-			{
-			switch ( LA(1)) {
-			case LITERAL_var:
-			{
-				match(LITERAL_var);
-				break;
-			}
-			case LITERAL_declare:
-			{
-				match(LITERAL_declare);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			name = LT(1);
-			match(IDENT);
-			match(COLON);
-			type=type();
-			var = new ASTALCreateVar(name,type);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return var;
-	}
-	
-	public final ASTALDelete  alDelete() throws RecognitionException, TokenStreamException {
-		ASTALDelete n;
-		
-		Token  id = null;
-		ASTExpression e; List exprList = new ArrayList(); n = null;
-		
-		try {      // for error handling
-			match(LITERAL_delete);
-			match(LPAREN);
-			e=expression();
-			exprList.add(e);
-			match(COMMA);
-			e=expression();
-			exprList.add(e);
-			{
-			_loop128:
-			do {
-				if ((LA(1)==COMMA)) {
-					match(COMMA);
-					e=expression();
-					exprList.add(e);
-				}
-				else {
-					break _loop128;
-				}
-				
-			} while (true);
-			}
-			match(RPAREN);
-			match(LITERAL_from);
-			id = LT(1);
-			match(IDENT);
-			n = new ASTALDelete(exprList, (MyToken) id);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return n;
-	}
-	
-	public final ASTALSet  alSet() throws RecognitionException, TokenStreamException {
-		ASTALSet set;
-		
-		
-		set = null;
-		ASTExpression lval = null;
-		ASTExpression rval = null;
-		
-		
-		try {      // for error handling
-			match(LITERAL_set);
-			lval=expression();
-			match(COLON_EQUAL);
-			rval=expression();
-			set = new ASTALSet(lval, rval);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return set;
-	}
-	
-	public final ASTALSetCreate  alSetCreate() throws RecognitionException, TokenStreamException {
-		ASTALSetCreate setcreate;
-		
-		Token  new_ = null;
-		Token  cls = null;
-		
-		setcreate = null;
-		ASTExpression lval = null;
-		ASTExpression nameExpr = null;
-		
-		
-		try {      // for error handling
-			match(LITERAL_create);
-			lval=expression();
-			match(COLON_EQUAL);
-			if (!( LT(1).getText().equals("new") ))
-			  throw new SemanticException(" LT(1).getText().equals(\"new\") ");
-			new_ = LT(1);
-			match(IDENT);
-			cls = LT(1);
-			match(IDENT);
-			{
-			switch ( LA(1)) {
-			case LITERAL_namehint:
-			{
-				match(LITERAL_namehint);
-				nameExpr=expression();
-				break;
-			}
-			case IDENT:
-			case LITERAL_if:
-			case LITERAL_else:
-			case LITERAL_endif:
-			case LITERAL_end:
-			case LITERAL_var:
-			case LITERAL_declare:
-			case LITERAL_set:
-			case LITERAL_create:
-			case LITERAL_insert:
-			case LITERAL_delete:
-			case LITERAL_destroy:
-			case LITERAL_while:
-			case LITERAL_wend:
-			case LITERAL_for:
-			case LITERAL_execute:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			setcreate = new ASTALSetCreate(lval, (MyToken)cls, nameExpr);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return setcreate;
-	}
-	
-	public final ASTALInsert  alInsert() throws RecognitionException, TokenStreamException {
-		ASTALInsert insert;
-		
-		Token  id = null;
-		ASTExpression e; List exprList = new ArrayList(); insert = null;
-		
-		try {      // for error handling
-			match(LITERAL_insert);
-			match(LPAREN);
-			e=expression();
-			exprList.add(e);
-			match(COMMA);
-			e=expression();
-			exprList.add(e);
-			{
-			_loop125:
-			do {
-				if ((LA(1)==COMMA)) {
-					match(COMMA);
-					e=expression();
-					exprList.add(e);
-				}
-				else {
-					break _loop125;
-				}
-				
-			} while (true);
-			}
-			match(RPAREN);
-			match(LITERAL_into);
-			id = LT(1);
-			match(IDENT);
-			insert = new ASTALInsert(exprList, (MyToken) id);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return insert;
-	}
-	
-	public final ASTALDestroy  alDestroy() throws RecognitionException, TokenStreamException {
-		ASTALDestroy n;
-		
-		ASTExpression e = null;  n = null;
-		
-		try {      // for error handling
-			match(LITERAL_destroy);
-			e=expression();
-			n = new ASTALDestroy(e);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return n;
-	}
-	
-	public final ASTALIf  alIf() throws RecognitionException, TokenStreamException {
-		ASTALIf i;
-		
-		
-			i = null;
-			ASTExpression ifexpr;
-			ASTALActionList thenlist;
-			ASTALActionList elselist=null;
-		
-		
-		try {      // for error handling
-			match(LITERAL_if);
-			ifexpr=expression();
-			match(LITERAL_then);
-			thenlist=alActionList();
-			{
-			switch ( LA(1)) {
-			case LITERAL_else:
-			{
-				match(LITERAL_else);
-				elselist=alActionList();
-				break;
-			}
-			case LITERAL_endif:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(LITERAL_endif);
-			i = new ASTALIf(ifexpr,thenlist,elselist);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return i;
-	}
-	
-	public final ASTALWhile  alWhile() throws RecognitionException, TokenStreamException {
-		ASTALWhile w;
-		
-		
-			w = null;
-			ASTExpression expr;
-			ASTALActionList body;
-		
-		
-		try {      // for error handling
-			match(LITERAL_while);
-			expr=expression();
-			match(LITERAL_do);
-			body=alActionList();
-			match(LITERAL_wend);
-			w = new ASTALWhile(expr,body);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return w;
-	}
-	
-	public final ASTALFor  alFor() throws RecognitionException, TokenStreamException {
-		ASTALFor f;
-		
-		Token  var = null;
-		Token  next = null;
-		
-			f = null;
-			ASTExpression expr;
-			ASTALActionList body;
-			ASTType type;
-		
-		
-		try {      // for error handling
-			match(LITERAL_for);
-			var = LT(1);
-			match(IDENT);
-			match(COLON);
-			type=type();
-			match(LITERAL_in);
-			expr=expression();
-			match(LITERAL_do);
-			body=alActionList();
-			if (!( LT(1).getText().equals("next") ))
-			  throw new SemanticException(" LT(1).getText().equals(\"next\") ");
-			next = LT(1);
-			match(IDENT);
-			f = new ASTALFor(var,type,expr,body);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return f;
-	}
-	
-	public final ASTALExecute  alExec() throws RecognitionException, TokenStreamException {
-		ASTALExecute c;
-		
-		
-		ASTExpression op;
-		c=null;
-		
-		
-		try {      // for error handling
-			match(LITERAL_execute);
-			op=expression();
-			c = new ASTALExecute(op);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_29);
-		}
-		return c;
-	}
-	
-	public final ASTExpression  expressionOnly() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		n = null;
-		
-		try {      // for error handling
-			n=expression();
-			match(Token.EOF_TYPE);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_0);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  conditionalImpliesExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  op = null;
-		ASTExpression n1; n = null;
-		
-		try {      // for error handling
-			n=conditionalOrExpression();
-			{
-			_loop150:
-			do {
-				if ((LA(1)==LITERAL_implies)) {
-					op = LT(1);
-					match(LITERAL_implies);
-					n1=conditionalOrExpression();
-					n = new ASTBinaryExpression((MyToken) op, n, n1);
-				}
-				else {
-					break _loop150;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_11);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  conditionalOrExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  op = null;
-		ASTExpression n1; n = null;
-		
-		try {      // for error handling
-			n=conditionalXOrExpression();
-			{
-			_loop153:
-			do {
-				if ((LA(1)==LITERAL_or)) {
-					op = LT(1);
-					match(LITERAL_or);
-					n1=conditionalXOrExpression();
-					n = new ASTBinaryExpression((MyToken) op, n, n1);
-				}
-				else {
-					break _loop153;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_30);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  conditionalXOrExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  op = null;
-		ASTExpression n1; n = null;
-		
-		try {      // for error handling
-			n=conditionalAndExpression();
-			{
-			_loop156:
-			do {
-				if ((LA(1)==LITERAL_xor)) {
-					op = LT(1);
-					match(LITERAL_xor);
-					n1=conditionalAndExpression();
-					n = new ASTBinaryExpression((MyToken) op, n, n1);
-				}
-				else {
-					break _loop156;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_31);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  conditionalAndExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  op = null;
-		ASTExpression n1; n = null;
-		
-		try {      // for error handling
-			n=equalityExpression();
-			{
-			_loop159:
-			do {
-				if ((LA(1)==LITERAL_and)) {
-					op = LT(1);
-					match(LITERAL_and);
-					n1=equalityExpression();
-					n = new ASTBinaryExpression((MyToken) op, n, n1);
-				}
-				else {
-					break _loop159;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_32);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  equalityExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		ASTExpression n1; n = null;
-		
-		try {      // for error handling
-			n=relationalExpression();
-			{
-			_loop163:
-			do {
-				if ((LA(1)==EQUAL||LA(1)==NOT_EQUAL)) {
-					MyToken op = (MyToken) LT(1);
-					{
-					switch ( LA(1)) {
-					case EQUAL:
-					{
-						match(EQUAL);
-						break;
-					}
-					case NOT_EQUAL:
-					{
-						match(NOT_EQUAL);
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
-					}
-					n1=relationalExpression();
-					n = new ASTBinaryExpression(op, n, n1);
-				}
-				else {
-					break _loop163;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_33);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  relationalExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		ASTExpression n1; n = null;
-		
-		try {      // for error handling
-			n=additiveExpression();
-			{
-			_loop167:
-			do {
-				if (((LA(1) >= LESS && LA(1) <= GREATER_EQUAL))) {
-					MyToken op = (MyToken) LT(1);
-					{
-					switch ( LA(1)) {
-					case LESS:
-					{
-						match(LESS);
-						break;
-					}
-					case GREATER:
-					{
-						match(GREATER);
-						break;
-					}
-					case LESS_EQUAL:
-					{
-						match(LESS_EQUAL);
-						break;
-					}
-					case GREATER_EQUAL:
-					{
-						match(GREATER_EQUAL);
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
-					}
-					n1=additiveExpression();
-					n = new ASTBinaryExpression(op, n, n1);
-				}
-				else {
-					break _loop167;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_34);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  additiveExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		ASTExpression n1; n = null;
-		
-		try {      // for error handling
-			n=multiplicativeExpression();
-			{
-			_loop171:
-			do {
-				if ((LA(1)==PLUS||LA(1)==MINUS)) {
-					MyToken op = (MyToken) LT(1);
-					{
-					switch ( LA(1)) {
-					case PLUS:
-					{
-						match(PLUS);
-						break;
-					}
-					case MINUS:
-					{
-						match(MINUS);
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
-					}
-					n1=multiplicativeExpression();
-					n = new ASTBinaryExpression(op, n, n1);
-				}
-				else {
-					break _loop171;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_35);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  multiplicativeExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		ASTExpression n1; n = null;
-		
-		try {      // for error handling
-			n=unaryExpression();
-			{
-			_loop175:
-			do {
-				if (((LA(1) >= STAR && LA(1) <= LITERAL_div))) {
-					MyToken op = (MyToken) LT(1);
-					{
-					switch ( LA(1)) {
-					case STAR:
-					{
-						match(STAR);
-						break;
-					}
-					case SLASH:
-					{
-						match(SLASH);
-						break;
-					}
-					case LITERAL_div:
-					{
-						match(LITERAL_div);
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
-					}
-					n1=unaryExpression();
-					n = new ASTBinaryExpression(op, n, n1);
-				}
-				else {
-					break _loop175;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_36);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  unaryExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		n = null;
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case PLUS:
-			case MINUS:
-			case LITERAL_not:
-			{
-				{
-				MyToken op = (MyToken) LT(1);
-				{
-				switch ( LA(1)) {
-				case LITERAL_not:
-				{
-					match(LITERAL_not);
-					break;
-				}
-				case MINUS:
-				{
-					match(MINUS);
-					break;
-				}
-				case PLUS:
-				{
-					match(PLUS);
-					break;
-				}
-				default:
-				{
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				}
-				}
-				n=unaryExpression();
-				n = new ASTUnaryExpression((MyToken) op, n);
-				}
-				break;
-			}
-			case LPAREN:
-			case IDENT:
-			case LITERAL_iterate:
-			case LITERAL_oclAsType:
-			case LITERAL_oclIsKindOf:
-			case LITERAL_oclIsTypeOf:
-			case LITERAL_if:
-			case LITERAL_true:
-			case LITERAL_false:
-			case INT:
-			case REAL:
-			case STRING:
-			case HASH:
-			case LITERAL_Set:
-			case LITERAL_Sequence:
-			case LITERAL_Bag:
-			case LITERAL_oclEmpty:
-			case LITERAL_oclUndefined:
-			case LITERAL_Tuple:
-			{
-				n=postfixExpression();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_37);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  postfixExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		boolean arrow; n = null;
-		
-		try {      // for error handling
-			n=primaryExpression();
-			{
-			_loop182:
-			do {
-				if ((LA(1)==ARROW||LA(1)==DOT)) {
-					{
-					switch ( LA(1)) {
-					case ARROW:
-					{
-						match(ARROW);
-						arrow = true;
-						break;
-					}
-					case DOT:
-					{
-						match(DOT);
-						arrow = false;
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
-					}
-					n=propertyCall(n, arrow);
-				}
-				else {
-					break _loop182;
-				}
-				
-			} while (true);
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_37);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  primaryExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  id1 = null;
-		n = null;
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case LITERAL_true:
-			case LITERAL_false:
-			case INT:
-			case REAL:
-			case STRING:
-			case HASH:
-			case LITERAL_Set:
-			case LITERAL_Sequence:
-			case LITERAL_Bag:
-			case LITERAL_oclEmpty:
-			case LITERAL_oclUndefined:
-			case LITERAL_Tuple:
-			{
-				n=literal();
-				break;
-			}
-			case LPAREN:
-			{
-				match(LPAREN);
-				n=expression();
-				match(RPAREN);
-				break;
-			}
-			case LITERAL_if:
-			{
-				n=ifExpression();
-				break;
-			}
-			default:
-				if ((_tokenSet_38.member(LA(1))) && (_tokenSet_39.member(LA(2))) && (_tokenSet_40.member(LA(3)))) {
-					n=propertyCall(null, false);
-				}
-				else if ((LA(1)==IDENT) && (LA(2)==DOT) && (LA(3)==LITERAL_allInstances)) {
-					id1 = LT(1);
-					match(IDENT);
-					match(DOT);
-					match(LITERAL_allInstances);
-					{
-					switch ( LA(1)) {
-					case LPAREN:
-					{
-						match(LPAREN);
-						match(RPAREN);
-						break;
-					}
-					case EOF:
-					case COMMA:
-					case RPAREN:
-					case IDENT:
-					case EQUAL:
-					case LITERAL_in:
-					case LITERAL_implies:
-					case LITERAL_or:
-					case LITERAL_xor:
-					case LITERAL_and:
-					case NOT_EQUAL:
-					case LESS:
-					case GREATER:
-					case LESS_EQUAL:
-					case GREATER_EQUAL:
-					case PLUS:
-					case MINUS:
-					case STAR:
-					case SLASH:
-					case LITERAL_div:
-					case ARROW:
-					case DOT:
-					case AT:
-					case LITERAL_pre:
-					case BAR:
-					case SEMI:
-					case RBRACK:
-					case LITERAL_if:
-					case LITERAL_then:
-					case LITERAL_else:
-					case LITERAL_endif:
-					case RBRACE:
-					case DOTDOT:
-					case LITERAL_constraints:
-					case LITERAL_abstract:
-					case LITERAL_class:
-					case LITERAL_end:
-					case LITERAL_associationClass:
-					case LITERAL_associationclass:
-					case LITERAL_aggregation:
-					case LITERAL_composition:
-					case LITERAL_begin:
-					case LITERAL_association:
-					case LITERAL_context:
-					case LITERAL_inv:
-					case LITERAL_post:
-					case LITERAL_var:
-					case LITERAL_declare:
-					case LITERAL_set:
-					case COLON_EQUAL:
-					case LITERAL_create:
-					case LITERAL_insert:
-					case LITERAL_delete:
-					case LITERAL_destroy:
-					case LITERAL_while:
-					case LITERAL_do:
-					case LITERAL_wend:
-					case LITERAL_for:
-					case LITERAL_execute:
-					{
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
-					}
-					n = new ASTAllInstancesExpression((MyToken) id1);
-					{
-					switch ( LA(1)) {
-					case AT:
-					{
-						match(AT);
-						match(LITERAL_pre);
-						n.setIsPre();
-						break;
-					}
-					case EOF:
-					case COMMA:
-					case RPAREN:
-					case IDENT:
-					case EQUAL:
-					case LITERAL_in:
-					case LITERAL_implies:
-					case LITERAL_or:
-					case LITERAL_xor:
-					case LITERAL_and:
-					case NOT_EQUAL:
-					case LESS:
-					case GREATER:
-					case LESS_EQUAL:
-					case GREATER_EQUAL:
-					case PLUS:
-					case MINUS:
-					case STAR:
-					case SLASH:
-					case LITERAL_div:
-					case ARROW:
-					case DOT:
-					case LITERAL_pre:
-					case BAR:
-					case SEMI:
-					case RBRACK:
-					case LITERAL_if:
-					case LITERAL_then:
-					case LITERAL_else:
-					case LITERAL_endif:
-					case RBRACE:
-					case DOTDOT:
-					case LITERAL_constraints:
-					case LITERAL_abstract:
-					case LITERAL_class:
-					case LITERAL_end:
-					case LITERAL_associationClass:
-					case LITERAL_associationclass:
-					case LITERAL_aggregation:
-					case LITERAL_composition:
-					case LITERAL_begin:
-					case LITERAL_association:
-					case LITERAL_context:
-					case LITERAL_inv:
-					case LITERAL_post:
-					case LITERAL_var:
-					case LITERAL_declare:
-					case LITERAL_set:
-					case COLON_EQUAL:
-					case LITERAL_create:
-					case LITERAL_insert:
-					case LITERAL_delete:
-					case LITERAL_destroy:
-					case LITERAL_while:
-					case LITERAL_do:
-					case LITERAL_wend:
-					case LITERAL_for:
-					case LITERAL_execute:
-					{
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
-					}
-				}
-			else {
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  propertyCall(
-		ASTExpression source, boolean followsArrow
-	) throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		n = null;
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case LITERAL_iterate:
-			{
-				n=iterateExpression(source);
-				break;
-			}
-			case LITERAL_oclAsType:
-			case LITERAL_oclIsKindOf:
-			case LITERAL_oclIsTypeOf:
-			{
-				n=typeExpression(source, followsArrow);
-				break;
-			}
-			default:
-				if (((LA(1)==IDENT) && (LA(2)==LPAREN) && (_tokenSet_42.member(LA(3))) && (_tokenSet_43.member(LA(4))) && (_tokenSet_44.member(LA(5))))&&( isQueryIdent(LT(1)) )) {
-					n=queryExpression(source);
-				}
-				else if ((LA(1)==IDENT) && (_tokenSet_39.member(LA(2))) && (_tokenSet_45.member(LA(3))) && (_tokenSet_46.member(LA(4))) && (_tokenSet_47.member(LA(5)))) {
-					n=operationExpression(source, followsArrow);
-				}
-			else {
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  literal() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  t = null;
-		Token  f = null;
-		Token  i = null;
-		Token  r = null;
-		Token  s = null;
-		Token  enumLit = null;
-		n = null;
-		
-		try {      // for error handling
-			switch ( LA(1)) {
-			case LITERAL_true:
-			{
-				t = LT(1);
-				match(LITERAL_true);
-				n = new ASTBooleanLiteral(true);
-				break;
-			}
-			case LITERAL_false:
-			{
-				f = LT(1);
-				match(LITERAL_false);
-				n = new ASTBooleanLiteral(false);
-				break;
-			}
-			case INT:
-			{
-				i = LT(1);
-				match(INT);
-				n = new ASTIntegerLiteral((MyToken) i);
-				break;
-			}
-			case REAL:
-			{
-				r = LT(1);
-				match(REAL);
-				n = new ASTRealLiteral((MyToken) r);
-				break;
-			}
-			case STRING:
-			{
-				s = LT(1);
-				match(STRING);
-				n = new ASTStringLiteral((MyToken) s);
-				break;
-			}
-			case HASH:
-			{
-				match(HASH);
-				enumLit = LT(1);
-				match(IDENT);
-				n = new ASTEnumLiteral((MyToken) enumLit);
-				break;
-			}
-			case LITERAL_Set:
-			case LITERAL_Sequence:
-			case LITERAL_Bag:
-			{
-				n=collectionLiteral();
-				break;
-			}
-			case LITERAL_oclEmpty:
-			{
-				n=emptyCollectionLiteral();
-				break;
-			}
-			case LITERAL_oclUndefined:
-			{
-				n=undefinedLiteral();
-				break;
-			}
-			case LITERAL_Tuple:
-			{
-				n=tupleLiteral();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  ifExpression() throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  i = null;
-		ASTExpression cond, t, e; n = null;
-		
-		try {      // for error handling
-			i = LT(1);
-			match(LITERAL_if);
-			cond=expression();
-			match(LITERAL_then);
-			t=expression();
-			match(LITERAL_else);
-			e=expression();
-			match(LITERAL_endif);
-			n = new ASTIfExpression((MyToken) i, cond, t, e);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  queryExpression(
-		ASTExpression range
-	) throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  op = null;
-		
-		ASTElemVarsDeclaration decls = new ASTElemVarsDeclaration(); 
-		n = null; 
-		
-		
-		try {      // for error handling
-			op = LT(1);
-			match(IDENT);
-			match(LPAREN);
-			{
-			if ((LA(1)==IDENT) && (LA(2)==COMMA||LA(2)==COLON||LA(2)==BAR)) {
-				decls=elemVarsDeclaration();
-				match(BAR);
-			}
-			else if ((_tokenSet_42.member(LA(1))) && (_tokenSet_48.member(LA(2)))) {
-			}
-			else {
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			
-			}
-			n=expression();
-			match(RPAREN);
-			n = new ASTQueryExpression((MyToken) op, range, decls, n);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTExpression  iterateExpression(
-		ASTExpression range
-	) throws RecognitionException, TokenStreamException {
-		ASTExpression n;
-		
-		Token  i = null;
-		
-		ASTElemVarsDeclaration decls = null; 
-		ASTVariableInitialization init = null; 
-		n = null;
-		
-		
-		try {      // for error handling
-			i = LT(1);
-			match(LITERAL_iterate);
-			match(LPAREN);
-			decls=elemVarsDeclaration();
-			match(SEMI);
-			init=variableInitialization();
-			match(BAR);
-			n=expression();
-			match(RPAREN);
-			n = new ASTIterateExpression((MyToken) i, range, decls, init, n);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTOperationExpression  operationExpression(
-		ASTExpression source, boolean followsArrow
-	) throws RecognitionException, TokenStreamException {
-		ASTOperationExpression n;
-		
-		Token  name = null;
-		Token  rolename = null;
-		ASTExpression e; n = null;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			n = new ASTOperationExpression((MyToken) name, source, followsArrow);
-			{
-			switch ( LA(1)) {
-			case LBRACK:
-			{
-				match(LBRACK);
-				rolename = LT(1);
-				match(IDENT);
-				match(RBRACK);
-				n.setExplicitRolename((MyToken) rolename);
-				break;
-			}
-			case EOF:
-			case LPAREN:
-			case COMMA:
-			case RPAREN:
-			case IDENT:
-			case EQUAL:
-			case LITERAL_in:
-			case LITERAL_implies:
-			case LITERAL_or:
-			case LITERAL_xor:
-			case LITERAL_and:
-			case NOT_EQUAL:
-			case LESS:
-			case GREATER:
-			case LESS_EQUAL:
-			case GREATER_EQUAL:
-			case PLUS:
-			case MINUS:
-			case STAR:
-			case SLASH:
-			case LITERAL_div:
-			case ARROW:
-			case DOT:
-			case AT:
-			case LITERAL_pre:
-			case BAR:
-			case SEMI:
-			case RBRACK:
-			case LITERAL_if:
-			case LITERAL_then:
-			case LITERAL_else:
-			case LITERAL_endif:
-			case RBRACE:
-			case DOTDOT:
-			case LITERAL_constraints:
-			case LITERAL_abstract:
-			case LITERAL_class:
-			case LITERAL_end:
-			case LITERAL_associationClass:
-			case LITERAL_associationclass:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			case LITERAL_begin:
-			case LITERAL_association:
-			case LITERAL_context:
-			case LITERAL_inv:
-			case LITERAL_post:
-			case LITERAL_var:
-			case LITERAL_declare:
-			case LITERAL_set:
-			case COLON_EQUAL:
-			case LITERAL_create:
-			case LITERAL_insert:
-			case LITERAL_delete:
-			case LITERAL_destroy:
-			case LITERAL_while:
-			case LITERAL_do:
-			case LITERAL_wend:
-			case LITERAL_for:
-			case LITERAL_execute:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case AT:
-			{
-				match(AT);
-				match(LITERAL_pre);
-				n.setIsPre();
-				break;
-			}
-			case EOF:
-			case LPAREN:
-			case COMMA:
-			case RPAREN:
-			case IDENT:
-			case EQUAL:
-			case LITERAL_in:
-			case LITERAL_implies:
-			case LITERAL_or:
-			case LITERAL_xor:
-			case LITERAL_and:
-			case NOT_EQUAL:
-			case LESS:
-			case GREATER:
-			case LESS_EQUAL:
-			case GREATER_EQUAL:
-			case PLUS:
-			case MINUS:
-			case STAR:
-			case SLASH:
-			case LITERAL_div:
-			case ARROW:
-			case DOT:
-			case LITERAL_pre:
-			case BAR:
-			case SEMI:
-			case RBRACK:
-			case LITERAL_if:
-			case LITERAL_then:
-			case LITERAL_else:
-			case LITERAL_endif:
-			case RBRACE:
-			case DOTDOT:
-			case LITERAL_constraints:
-			case LITERAL_abstract:
-			case LITERAL_class:
-			case LITERAL_end:
-			case LITERAL_associationClass:
-			case LITERAL_associationclass:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			case LITERAL_begin:
-			case LITERAL_association:
-			case LITERAL_context:
-			case LITERAL_inv:
-			case LITERAL_post:
-			case LITERAL_var:
-			case LITERAL_declare:
-			case LITERAL_set:
-			case COLON_EQUAL:
-			case LITERAL_create:
-			case LITERAL_insert:
-			case LITERAL_delete:
-			case LITERAL_destroy:
-			case LITERAL_while:
-			case LITERAL_do:
-			case LITERAL_wend:
-			case LITERAL_for:
-			case LITERAL_execute:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			{
-			switch ( LA(1)) {
-			case LPAREN:
-			{
-				match(LPAREN);
-				n.hasParentheses();
-				{
-				switch ( LA(1)) {
-				case LPAREN:
-				case IDENT:
-				case LITERAL_let:
-				case PLUS:
-				case MINUS:
-				case LITERAL_not:
-				case LITERAL_iterate:
-				case LITERAL_oclAsType:
-				case LITERAL_oclIsKindOf:
-				case LITERAL_oclIsTypeOf:
-				case LITERAL_if:
-				case LITERAL_true:
-				case LITERAL_false:
-				case INT:
-				case REAL:
-				case STRING:
-				case HASH:
-				case LITERAL_Set:
-				case LITERAL_Sequence:
-				case LITERAL_Bag:
-				case LITERAL_oclEmpty:
-				case LITERAL_oclUndefined:
-				case LITERAL_Tuple:
-				{
-					e=expression();
-					n.addArg(e);
-					{
-					_loop196:
-					do {
-						if ((LA(1)==COMMA)) {
-							match(COMMA);
-							e=expression();
-							n.addArg(e);
-						}
-						else {
-							break _loop196;
-						}
-						
-					} while (true);
-					}
-					break;
-				}
-				case RPAREN:
-				{
-					break;
-				}
-				default:
-				{
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				}
-				}
-				match(RPAREN);
-				break;
-			}
-			case EOF:
-			case COMMA:
-			case RPAREN:
-			case IDENT:
-			case EQUAL:
-			case LITERAL_in:
-			case LITERAL_implies:
-			case LITERAL_or:
-			case LITERAL_xor:
-			case LITERAL_and:
-			case NOT_EQUAL:
-			case LESS:
-			case GREATER:
-			case LESS_EQUAL:
-			case GREATER_EQUAL:
-			case PLUS:
-			case MINUS:
-			case STAR:
-			case SLASH:
-			case LITERAL_div:
-			case ARROW:
-			case DOT:
-			case LITERAL_pre:
-			case BAR:
-			case SEMI:
-			case RBRACK:
-			case LITERAL_if:
-			case LITERAL_then:
-			case LITERAL_else:
-			case LITERAL_endif:
-			case RBRACE:
-			case DOTDOT:
-			case LITERAL_constraints:
-			case LITERAL_abstract:
-			case LITERAL_class:
-			case LITERAL_end:
-			case LITERAL_associationClass:
-			case LITERAL_associationclass:
-			case LITERAL_aggregation:
-			case LITERAL_composition:
-			case LITERAL_begin:
-			case LITERAL_association:
-			case LITERAL_context:
-			case LITERAL_inv:
-			case LITERAL_post:
-			case LITERAL_var:
-			case LITERAL_declare:
-			case LITERAL_set:
-			case COLON_EQUAL:
-			case LITERAL_create:
-			case LITERAL_insert:
-			case LITERAL_delete:
-			case LITERAL_destroy:
-			case LITERAL_while:
-			case LITERAL_do:
-			case LITERAL_wend:
-			case LITERAL_for:
-			case LITERAL_execute:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTTypeArgExpression  typeExpression(
-		ASTExpression source, boolean followsArrow
-	) throws RecognitionException, TokenStreamException {
-		ASTTypeArgExpression n;
-		
-		ASTType t = null; n = null;
-		
-		try {      // for error handling
-			MyToken opToken = (MyToken) LT(1);
-			{
-			switch ( LA(1)) {
-			case LITERAL_oclAsType:
-			{
-				match(LITERAL_oclAsType);
-				break;
-			}
-			case LITERAL_oclIsKindOf:
-			{
-				match(LITERAL_oclIsKindOf);
-				break;
-			}
-			case LITERAL_oclIsTypeOf:
-			{
-				match(LITERAL_oclIsTypeOf);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(LPAREN);
-			t=type();
-			match(RPAREN);
-			n = new ASTTypeArgExpression(opToken, source, t, followsArrow);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTElemVarsDeclaration  elemVarsDeclaration() throws RecognitionException, TokenStreamException {
-		ASTElemVarsDeclaration n;
-		
-		List idList; ASTType t = null; n = null;
-		
-		try {      // for error handling
-			idList=idList();
-			{
-			switch ( LA(1)) {
-			case COLON:
-			{
-				match(COLON);
-				t=type();
-				break;
-			}
-			case BAR:
-			case SEMI:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			n = new ASTElemVarsDeclaration(idList, t);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_49);
-		}
-		return n;
-	}
-	
-	public final ASTVariableInitialization  variableInitialization() throws RecognitionException, TokenStreamException {
-		ASTVariableInitialization n;
-		
-		Token  name = null;
-		ASTType t; ASTExpression e; n = null;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			match(COLON);
-			t=type();
-			match(EQUAL);
-			e=expression();
-			n = new ASTVariableInitialization((MyToken) name, t, e);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_50);
-		}
-		return n;
-	}
-	
-	public final ASTCollectionLiteral  collectionLiteral() throws RecognitionException, TokenStreamException {
-		ASTCollectionLiteral n;
-		
-		ASTCollectionItem ci; n = null;
-		
-		try {      // for error handling
-			MyToken op = (MyToken) LT(1);
-			{
-			switch ( LA(1)) {
-			case LITERAL_Set:
-			{
-				match(LITERAL_Set);
-				break;
-			}
-			case LITERAL_Sequence:
-			{
-				match(LITERAL_Sequence);
-				break;
-			}
-			case LITERAL_Bag:
-			{
-				match(LITERAL_Bag);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			n = new ASTCollectionLiteral(op);
-			match(LBRACE);
-			ci=collectionItem();
-			n.addItem(ci);
-			{
-			_loop207:
-			do {
-				if ((LA(1)==COMMA)) {
-					match(COMMA);
-					ci=collectionItem();
-					n.addItem(ci);
-				}
-				else {
-					break _loop207;
-				}
-				
-			} while (true);
-			}
-			match(RBRACE);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTEmptyCollectionLiteral  emptyCollectionLiteral() throws RecognitionException, TokenStreamException {
-		ASTEmptyCollectionLiteral n;
-		
-		ASTType t = null; n = null;
-		
-		try {      // for error handling
-			match(LITERAL_oclEmpty);
-			match(LPAREN);
-			t=collectionType();
-			match(RPAREN);
-			n = new ASTEmptyCollectionLiteral(t);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTUndefinedLiteral  undefinedLiteral() throws RecognitionException, TokenStreamException {
-		ASTUndefinedLiteral n;
-		
-		ASTType t = null; n = null;
-		
-		try {      // for error handling
-			match(LITERAL_oclUndefined);
-			match(LPAREN);
-			t=type();
-			match(RPAREN);
-			n = new ASTUndefinedLiteral(t);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTTupleLiteral  tupleLiteral() throws RecognitionException, TokenStreamException {
-		ASTTupleLiteral n;
-		
-		ASTTupleItem ti; n = null; List tiList = new ArrayList();
-		
-		try {      // for error handling
-			match(LITERAL_Tuple);
-			match(LBRACE);
-			ti=tupleItem();
-			tiList.add(ti);
-			{
-			_loop214:
-			do {
-				if ((LA(1)==COMMA)) {
-					match(COMMA);
-					ti=tupleItem();
-					tiList.add(ti);
-				}
-				else {
-					break _loop214;
-				}
-				
-			} while (true);
-			}
-			match(RBRACE);
-			n = new ASTTupleLiteral(tiList);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_41);
-		}
-		return n;
-	}
-	
-	public final ASTCollectionItem  collectionItem() throws RecognitionException, TokenStreamException {
-		ASTCollectionItem n;
-		
-		ASTExpression e; n = new ASTCollectionItem();
-		
-		try {      // for error handling
-			e=expression();
-			n.setFirst(e);
-			{
-			switch ( LA(1)) {
-			case DOTDOT:
-			{
-				match(DOTDOT);
-				e=expression();
-				n.setSecond(e);
-				break;
-			}
-			case COMMA:
-			case RBRACE:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_51);
-		}
-		return n;
-	}
-	
-	public final ASTCollectionType  collectionType() throws RecognitionException, TokenStreamException {
-		ASTCollectionType n;
-		
-		ASTType elemType = null; n = null;
-		
-		try {      // for error handling
-			MyToken op = (MyToken) LT(1);
-			{
-			switch ( LA(1)) {
-			case LITERAL_Collection:
-			{
-				match(LITERAL_Collection);
-				break;
-			}
-			case LITERAL_Set:
-			{
-				match(LITERAL_Set);
-				break;
-			}
-			case LITERAL_Sequence:
-			{
-				match(LITERAL_Sequence);
-				break;
-			}
-			case LITERAL_Bag:
-			{
-				match(LITERAL_Bag);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			match(LPAREN);
-			elemType=type();
-			match(RPAREN);
-			n = new ASTCollectionType(op, elemType); n.setStartToken(op);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_20);
-		}
-		return n;
-	}
-	
-	public final ASTTupleItem  tupleItem() throws RecognitionException, TokenStreamException {
-		ASTTupleItem n;
-		
-		Token  name = null;
-		ASTExpression e; n = null;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			{
-			switch ( LA(1)) {
-			case COLON:
-			{
-				match(COLON);
-				break;
-			}
-			case EQUAL:
-			{
-				match(EQUAL);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			}
-			}
-			e=expression();
-			n = new ASTTupleItem((MyToken) name, e);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_51);
-		}
-		return n;
-	}
-	
-	public final ASTTupleType  tupleType() throws RecognitionException, TokenStreamException {
-		ASTTupleType n;
-		
-		ASTTuplePart tp; n = null; List tpList = new ArrayList();
-		
-		try {      // for error handling
-			match(LITERAL_Tuple);
-			match(LPAREN);
-			tp=tuplePart();
-			tpList.add(tp);
-			{
-			_loop225:
-			do {
-				if ((LA(1)==COMMA)) {
-					match(COMMA);
-					tp=tuplePart();
-					tpList.add(tp);
-				}
-				else {
-					break _loop225;
-				}
-				
-			} while (true);
-			}
-			match(RPAREN);
-			n = new ASTTupleType(tpList);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_20);
-		}
-		return n;
-	}
-	
-	public final ASTType  typeOnly() throws RecognitionException, TokenStreamException {
-		ASTType n;
-		
-		n = null;
-		
-		try {      // for error handling
-			n=type();
-			match(Token.EOF_TYPE);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_0);
-		}
-		return n;
-	}
-	
-	public final ASTTuplePart  tuplePart() throws RecognitionException, TokenStreamException {
-		ASTTuplePart n;
-		
-		Token  name = null;
-		ASTType t; n = null;
-		
-		try {      // for error handling
-			name = LT(1);
-			match(IDENT);
-			match(COLON);
-			t=type();
-			n = new ASTTuplePart((MyToken) name, t);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			consume();
-			consumeUntil(_tokenSet_10);
-		}
-		return n;
-	}
-	
-	
-	public static final String[] _tokenNames = {
-		"<0>",
-		"EOF",
-		"<2>",
-		"NULL_TREE_LOOKAHEAD",
-		"'('",
-		"','",
-		"')'",
-		"an identifier",
-		"':'",
-		"\"let\"",
-		"'='",
-		"\"in\"",
-		"\"implies\"",
-		"\"or\"",
-		"\"xor\"",
-		"\"and\"",
-		"'<>'",
-		"'<'",
-		"'>'",
-		"'<='",
-		"'>='",
-		"'+'",
-		"'-'",
-		"'*'",
-		"'/'",
-		"\"div\"",
-		"\"not\"",
-		"'->'",
-		"'.'",
-		"\"allInstances\"",
-		"'@'",
-		"\"pre\"",
-		"'|'",
-		"\"iterate\"",
-		"';'",
-		"'['",
-		"']'",
-		"\"oclAsType\"",
-		"\"oclIsKindOf\"",
-		"\"oclIsTypeOf\"",
-		"\"if\"",
-		"\"then\"",
-		"\"else\"",
-		"\"endif\"",
-		"\"true\"",
-		"\"false\"",
-		"INT",
-		"REAL",
-		"STRING",
-		"'#'",
-		"\"Set\"",
-		"\"Sequence\"",
-		"\"Bag\"",
-		"'{'",
-		"'}'",
-		"'..'",
-		"\"oclEmpty\"",
-		"\"oclUndefined\"",
-		"\"Tuple\"",
-		"\"Collection\"",
-		"\"model\"",
-		"\"constraints\"",
-		"\"enum\"",
-		"\"abstract\"",
-		"\"class\"",
-		"\"attributes\"",
-		"\"operations\"",
-		"\"end\"",
-		"\"associationClass\"",
-		"\"associationclass\"",
-		"\"between\"",
-		"\"aggregation\"",
-		"\"composition\"",
-		"\"begin\"",
-		"\"association\"",
-		"\"role\"",
-		"\"ordered\"",
-		"\"context\"",
-		"\"inv\"",
-		"'::'",
-		"\"post\"",
-		"\"var\"",
-		"\"declare\"",
-		"\"set\"",
-		"':='",
-		"\"create\"",
-		"\"namehint\"",
-		"\"insert\"",
-		"\"into\"",
-		"\"delete\"",
-		"\"from\"",
-		"\"destroy\"",
-		"\"while\"",
-		"\"do\"",
-		"\"wend\"",
-		"\"for\"",
-		"\"execute\"",
-		"\"procedure\""
-	};
-	
-	private static final long[] mk_tokenSet_0() {
-		long[] data = { 2L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
-	private static final long[] mk_tokenSet_1() {
-		long[] data = { -6917529027641081854L, 26033L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
-	private static final long[] mk_tokenSet_2() {
-		long[] data = { -6917529027641081854L, 9649L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
-	private static final long[] mk_tokenSet_3() {
-		long[] data = { 2L, 8589934592L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());
-	private static final long[] mk_tokenSet_4() {
-		long[] data = { 17179869248L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_4 = new BitSet(mk_tokenSet_4());
-	private static final long[] mk_tokenSet_5() {
-		long[] data = { 1133871366272L, 2147483648L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
-	private static final long[] mk_tokenSet_6() {
-		long[] data = { 0L, 8L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_6 = new BitSet(mk_tokenSet_6());
-	private static final long[] mk_tokenSet_7() {
-		long[] data = { 17179871328L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_7 = new BitSet(mk_tokenSet_7());
-	private static final long[] mk_tokenSet_8() {
-		long[] data = { 17179869184L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_8 = new BitSet(mk_tokenSet_8());
-	private static final long[] mk_tokenSet_9() {
-		long[] data = { 2216471560288L, 512L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_9 = new BitSet(mk_tokenSet_9());
-	private static final long[] mk_tokenSet_10() {
-		long[] data = { 96L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_10 = new BitSet(mk_tokenSet_10());
-	private static final long[] mk_tokenSet_11() {
-		long[] data = { -6863469247096420126L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_11 = new BitSet(mk_tokenSet_11());
-	private static final long[] mk_tokenSet_12() {
-		long[] data = { -6917529027641081598L, 26033L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_12 = new BitSet(mk_tokenSet_12());
-	private static final long[] mk_tokenSet_13() {
-		long[] data = { -2305843009213693950L, 1457L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_13 = new BitSet(mk_tokenSet_13());
-	private static final long[] mk_tokenSet_14() {
-		long[] data = { -6917529027641081854L, 1457L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_14 = new BitSet(mk_tokenSet_14());
-	private static final long[] mk_tokenSet_15() {
-		long[] data = { 2323857429198012672L, 78L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_15 = new BitSet(mk_tokenSet_15());
-	private static final long[] mk_tokenSet_16() {
-		long[] data = { 2305843009213694080L, 396L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_16 = new BitSet(mk_tokenSet_16());
-	private static final long[] mk_tokenSet_17() {
-		long[] data = { 2305843009213694080L, 392L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_17 = new BitSet(mk_tokenSet_17());
-	private static final long[] mk_tokenSet_18() {
-		long[] data = { -6917529027641081854L, 26041L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_18 = new BitSet(mk_tokenSet_18());
-	private static final long[] mk_tokenSet_19() {
-		long[] data = { 2305843009213694080L, 398L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_19 = new BitSet(mk_tokenSet_19());
-	private static final long[] mk_tokenSet_20() {
-		long[] data = { 2305857326487178466L, 7963870092L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_20 = new BitSet(mk_tokenSet_20());
-	private static final long[] mk_tokenSet_21() {
-		long[] data = { 2305843028541048192L, 66440L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_21 = new BitSet(mk_tokenSet_21());
-	private static final long[] mk_tokenSet_22() {
-		long[] data = { 1099511627776L, 6890061824L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_22 = new BitSet(mk_tokenSet_22());
-	private static final long[] mk_tokenSet_23() {
-		long[] data = { 13194139533440L, 1073741832L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_23 = new BitSet(mk_tokenSet_23());
-	private static final long[] mk_tokenSet_24() {
-		long[] data = { -6917529008313728894L, 75193L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_24 = new BitSet(mk_tokenSet_24());
-	private static final long[] mk_tokenSet_25() {
-		long[] data = { 68719476736L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_25 = new BitSet(mk_tokenSet_25());
-	private static final long[] mk_tokenSet_26() {
-		long[] data = { 68719476768L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_26 = new BitSet(mk_tokenSet_26());
-	private static final long[] mk_tokenSet_27() {
-		long[] data = { 36028865738440736L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_27 = new BitSet(mk_tokenSet_27());
-	private static final long[] mk_tokenSet_28() {
-		long[] data = { -6917514710367597342L, 7963895741L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_28 = new BitSet(mk_tokenSet_28());
-	private static final long[] mk_tokenSet_29() {
-		long[] data = { 14293651161216L, 7963803656L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_29 = new BitSet(mk_tokenSet_29());
-	private static final long[] mk_tokenSet_30() {
-		long[] data = { -6863469247096416030L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_30 = new BitSet(mk_tokenSet_30());
-	private static final long[] mk_tokenSet_31() {
-		long[] data = { -6863469247096407838L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_31 = new BitSet(mk_tokenSet_31());
-	private static final long[] mk_tokenSet_32() {
-		long[] data = { -6863469247096391454L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_32 = new BitSet(mk_tokenSet_32());
-	private static final long[] mk_tokenSet_33() {
-		long[] data = { -6863469247096358686L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_33 = new BitSet(mk_tokenSet_33());
-	private static final long[] mk_tokenSet_34() {
-		long[] data = { -6863469247096292126L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_34 = new BitSet(mk_tokenSet_34());
-	private static final long[] mk_tokenSet_35() {
-		long[] data = { -6863469247094326046L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_35 = new BitSet(mk_tokenSet_35());
-	private static final long[] mk_tokenSet_36() {
-		long[] data = { -6863469247088034590L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_36 = new BitSet(mk_tokenSet_36());
-	private static final long[] mk_tokenSet_37() {
-		long[] data = { -6863469247029314334L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_37 = new BitSet(mk_tokenSet_37());
-	private static final long[] mk_tokenSet_38() {
-		long[] data = { 970662609024L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_38 = new BitSet(mk_tokenSet_38());
-	private static final long[] mk_tokenSet_39() {
-		long[] data = { -6863469211193180942L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_39 = new BitSet(mk_tokenSet_39());
-	private static final long[] mk_tokenSet_40() {
-		long[] data = { -5773614758259326990L, 8585701305L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_40 = new BitSet(mk_tokenSet_40());
-	private static final long[] mk_tokenSet_41() {
-		long[] data = { -6863469246626661150L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_41 = new BitSet(mk_tokenSet_41());
-	private static final long[] mk_tokenSet_42() {
-		long[] data = { 513394835581829776L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_42 = new BitSet(mk_tokenSet_42());
-	private static final long[] mk_tokenSet_43() {
-		long[] data = { 522402075028486128L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_43 = new BitSet(mk_tokenSet_43());
-	private static final long[] mk_tokenSet_44() {
-		long[] data = { -5764607523034234894L, 8501815225L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_44 = new BitSet(mk_tokenSet_44());
-	private static final long[] mk_tokenSet_45() {
-		long[] data = { -6350075510562750478L, 8585701305L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_45 = new BitSet(mk_tokenSet_45());
-	private static final long[] mk_tokenSet_46() {
-		long[] data = { -6341068275874529294L, 8585734143L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_46 = new BitSet(mk_tokenSet_46());
-	private static final long[] mk_tokenSet_47() {
-		long[] data = { -5764607523034234894L, 8589928447L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_47 = new BitSet(mk_tokenSet_47());
-	private static final long[] mk_tokenSet_48() {
-		long[] data = { 522402070733518544L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_48 = new BitSet(mk_tokenSet_48());
-	private static final long[] mk_tokenSet_49() {
-		long[] data = { 21474836480L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_49 = new BitSet(mk_tokenSet_49());
-	private static final long[] mk_tokenSet_50() {
-		long[] data = { 4294967296L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_50 = new BitSet(mk_tokenSet_50());
-	private static final long[] mk_tokenSet_51() {
-		long[] data = { 18014398509482016L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_51 = new BitSet(mk_tokenSet_51());
-	
-	}

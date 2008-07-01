@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.MAggregationKind;
@@ -46,11 +46,11 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  */
 public class ASTAssociationClass extends ASTClass {
 
-    private MyToken fKind = null;
+    private Token fKind = null;
     private MAssociationClass fAssocClass;  
     private List fAssociationEnds;
 
-    public ASTAssociationClass( MyToken name, boolean isAbstract ) {
+    public ASTAssociationClass( Token name, boolean isAbstract ) {
         super( name, isAbstract );
         fAssociationEnds = new ArrayList();
     }
@@ -59,7 +59,7 @@ public class ASTAssociationClass extends ASTClass {
         fAssociationEnds.add( ae );
     }
 
-    public void setKind( MyToken kind ) {
+    public void setKind( Token kind ) {
         fKind = kind;
     }
 
@@ -79,7 +79,7 @@ public class ASTAssociationClass extends ASTClass {
         if ( fSuperClasses != null ) {
             Iterator it = fSuperClasses.iterator();
             while ( it.hasNext() ) {
-                MyToken id = ( MyToken ) it.next();
+            	Token id = ( Token ) it.next();
 
                 // lookup parent by name
                 MClass parent = ctx.model().getClass( id.getText() );

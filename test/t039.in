@@ -5,12 +5,12 @@
 *-> Sequence{Tuple{s='xyz',b=true},Tuple{s='zxy',b=false}} : Sequence(Tuple(s:String,b:Boolean))
 
 ?Set{Tuple{s:'zxy',b:false},Tuple{s:'xyz',b:true}}->sortedBy(x|x.b)
-*<input>:1:52: Argument of sortedBy must have basic type (Integer, Real, or String), found `Boolean'.
+*<input>:1:51: Argument of sortedBy must have basic type (Integer, Real, or String), found `Boolean'.
 
 ?Set{Tuple{s:'zxy',b:false},Tuple{s:'xyz',b:true}}->sortedBy(x|x->last())
-*<input>:1:66: Collection operation not applicable to tuple type.
+*<input>:1:65: Collection operation not applicable to tuple type.
 
 ?Set{Tuple{s:'zxy',b:false},Tuple{a:'xyz',b:true}}
-*<input>:1:1: Type mismatch, Set element 2 does not have a common supertype with previous elements.
+*<input>:1:0: Type mismatch, Set element 2 does not have a common supertype with previous elements.
 
 exit

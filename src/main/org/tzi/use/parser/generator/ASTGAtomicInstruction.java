@@ -33,25 +33,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import antlr.CommonToken;
+import org.antlr.runtime.Token;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GInstructionCreator;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.util.StringUtil;
 
 public class ASTGAtomicInstruction extends ASTGValueInstruction {
-    MyToken fName;
+	Token fName;
     List fParameter;  // ASTGInstructionParameterInterface;
 
-    public ASTGAtomicInstruction(MyToken name) {
+    public ASTGAtomicInstruction(Token name) {
         fName = name;
         fParameter = new ArrayList();
     }
 
-    public void addParameter( ASTGInstructionParameterInterface parameter ) {
+    public void addParameter( Object parameter ) {
         fParameter.add(parameter);
     }
 
@@ -63,8 +62,8 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
         Iterator it = fParameter.iterator();
         while (it.hasNext() ) {
             Object param = it.next();
-            if (param instanceof CommonToken ) {
-                String name = ((CommonToken) param).getText();
+            if (param instanceof Token ) {
+                String name = ((Token) param).getText();
                 boolean isClass = ctx.model().getClass(name)!=null;
                 boolean isAssociation = ctx.model().getAssociation(name)!=null;
                 if (isClass && isAssociation )

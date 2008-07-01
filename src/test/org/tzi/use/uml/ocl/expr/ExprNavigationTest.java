@@ -22,7 +22,6 @@
 package org.tzi.use.uml.ocl.expr;
 
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -334,7 +333,7 @@ public class ExprNavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
 
@@ -356,7 +355,7 @@ public class ExprNavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
 
@@ -378,7 +377,7 @@ public class ExprNavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
 
@@ -404,7 +403,7 @@ public class ExprNavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( sw ); //System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
 
@@ -418,11 +417,11 @@ public class ExprNavigationTest extends TestCase {
         expr = "p1.job";
         
         navExpr = OCLCompiler.compileExpression( system.model(),
-                                                 new StringReader( expr ),
+                                                 expr,
                                                  "<input>", pw,
                                                  system.topLevelBindings() );
         assertNull( navExpr );
-        String expected = "<input>:1:4: The navigation path is ambiguous. "
+        String expected = "<input>:1:3: The navigation path is ambiguous. "
             +"A qualification of the source association is required.";
         assertEquals(expected, sw.toString().trim());
 
@@ -430,7 +429,7 @@ public class ExprNavigationTest extends TestCase {
         expr = "p1.job[worker]";
         
         navExpr = OCLCompiler.compileExpression( system.model(),
-                                                 new StringReader( expr ),
+                                                 expr,
                                                  "<input>", pw,
                                                  system.topLevelBindings() );
 

@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -39,10 +39,10 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTEnumTypeDefinition extends AST {
-    private MyToken fName;
+    private Token fName;
     private List fIdList;   // (MyToken)
 
-    public ASTEnumTypeDefinition(MyToken name, List idList) {
+    public ASTEnumTypeDefinition(Token name, List idList) {
         fName = name;
         fIdList = idList;
     }
@@ -55,7 +55,7 @@ public class ASTEnumTypeDefinition extends AST {
         List literalList = new ArrayList();
         Iterator it = fIdList.iterator();
         while (it.hasNext() ) {
-            MyToken tok = (MyToken) it.next();
+        	Token tok = (Token) it.next();
             literalList.add(tok.getText());
         }
     

@@ -24,8 +24,8 @@ package org.tzi.use.parser.use;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -37,10 +37,10 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTPropertyCallExpression extends ASTExpression {
-    private MyToken fOp;
+    private Token fOp;
     private List fArgs;     // (ASTExpression) may be empty!
 
-    public ASTPropertyCallExpression(MyToken token, ASTExpression source) {
+    public ASTPropertyCallExpression(Token token, ASTExpression source) {
         fOp = token;
         fArgs = new ArrayList();
         if (source != null )

@@ -21,8 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -37,12 +37,12 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTLetExpression extends ASTExpression {
-    private MyToken fVarToken;
+    private Token fVarToken;
     private ASTType fVarType;   // optional: may be null
     private ASTExpression fVarExpr;
     private ASTExpression fInExpr;
 
-    public ASTLetExpression(MyToken varToken, 
+    public ASTLetExpression(Token varToken, 
                             ASTType type,
                             ASTExpression varExpr) {
         fVarToken = varToken;

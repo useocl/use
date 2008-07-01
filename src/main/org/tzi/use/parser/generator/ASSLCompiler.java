@@ -21,6 +21,9 @@
 
 package org.tzi.use.parser.generator;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -28,6 +31,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.tool.GProcedureCall;
 import org.tzi.use.parser.Context;
@@ -52,14 +58,27 @@ public class ASSLCompiler {
      * @return List the comiled procedures (GProcedure)
      */
     public static List compileProcedures(MModel model,
-                                         Reader in,
+                                         InputStream in,
                                          String inName,
                                          PrintWriter err) {
-        List astgProcList = new ArrayList();
+        
+    	List astgProcList = new ArrayList();
         List procedures = new ArrayList();  // GProcedure
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
-        GGeneratorLexer lexer = new GGeneratorLexer(in);
-        GGeneratorParser parser = new GGeneratorParser(lexer);
+        
+        ANTLRInputStream aInput;
+		try {
+			aInput = new ANTLRInputStream(in);
+			aInput.name = inName;
+		} catch (IOException e1) {
+			err.println(e1.getMessage());
+			return null;
+		}
+		
+        GGeneratorLexer lexer = new GGeneratorLexer(aInput);
+        CommonTokenStream tStream = new CommonTokenStream(lexer);
+        
+        GGeneratorParser parser = new GGeneratorParser(tStream);
         lexer.init(errHandler);
         parser.init(errHandler);
         boolean error = false;
@@ -95,19 +114,11 @@ public class ASSLCompiler {
                     }
                 }
             }
-        } catch (antlr.RecognitionException e) {
-            error = true;
-            err.println(parser.getFilename() +":" + 
-                        e.getLine() + ":" + e.getColumn() + ": " + 
+        } catch (RecognitionException e) {
+            err.println(parser.getSourceName() +":" + 
+                        e.line + ":" +
+                        e.charPositionInLine + ": " + 
                         e.getMessage());
-        } catch (antlr.TokenStreamRecognitionException e) {
-            error = true;
-            err.println(parser.getFilename() +":" + 
-                        e.recog.getLine() + ":" + e.recog.getColumn() + ": " + 
-                        e.recog.getMessage());
-        } catch (antlr.TokenStreamException ex) {
-            error = true;
-            err.println(parser.getFilename() +":" + ex.getMessage());
         }
         err.flush();
         if (error)
@@ -116,6 +127,24 @@ public class ASSLCompiler {
             return procedures;
     }
 
+    /**
+     * Compiles a procedure call (call given as String)
+     *
+     * @param  model the model of the call
+     * @param  systemState the context of the call
+     * @param  in the input source stream
+     * @param  inName the name of the input source stream
+     * @param  err output stream for error messages
+     * @return GProcedureCall the compiled call or null
+     */
+    public static GProcedureCall compileProcedureCall(MModel model,
+                                                      MSystemState systemState,
+                                                      String in, 
+                                                      String inName,
+                                                      PrintWriter err) {
+    	InputStream stream = new ByteArrayInputStream(in.getBytes());
+    	return ASSLCompiler.compileProcedureCall(model, systemState, stream, inName, err);
+    }
     /**
      * Compiles a procedure call
      *
@@ -128,14 +157,17 @@ public class ASSLCompiler {
      */
     public static GProcedureCall compileProcedureCall(MModel model,
                                                       MSystemState systemState,
-                                                      Reader in, 
+                                                      InputStream in, 
                                                       String inName,
                                                       PrintWriter err) {
         GProcedureCall procCall = null;
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
         try {
-            GGeneratorLexer lexer = new GGeneratorLexer(in);
-            GGeneratorParser parser = new GGeneratorParser(lexer);
+        	ANTLRInputStream aInput = new ANTLRInputStream(in);
+            GGeneratorLexer lexer = new GGeneratorLexer(aInput);
+            CommonTokenStream tStream = new CommonTokenStream(lexer);
+            GGeneratorParser parser = new GGeneratorParser(tStream);
+            
             parser.init(errHandler);
             lexer.init(errHandler);
     
@@ -155,16 +187,15 @@ public class ASSLCompiler {
                 if (ctx.errorCount() > 0 )
                     procCall = null;
             }
-        } catch (antlr.RecognitionException e) {
-            errHandler.reportError(e.getLine() + ":" + e.getColumn() + ": " +e.getMessage());
-        } catch (antlr.TokenStreamRecognitionException e) {
-            errHandler.reportError(e.recog.getLine() + ":" + e.recog.getColumn() 
-                    + ": " + e.recog.getMessage());
-        } catch (antlr.TokenStreamException ex) {
-            errHandler.reportError(ex.getMessage());
+        } catch (RecognitionException e) {
+            err.println(e.line + ":" +
+                        e.charPositionInLine + ": " + 
+                        e.getMessage());
         } catch (SemanticException e) {
-            errHandler.reportError(e.getMessage());
-      }
+            err.println(e.getMessage());
+        } catch (IOException e) {
+        	err.println(e.getMessage());
+		}
         err.flush();
         return procCall;
     }
@@ -179,14 +210,20 @@ public class ASSLCompiler {
      * @return Collection the added invariants (MClassInvariant)
      */
     public static Collection compileAndAddInvariants(MModel model,
-                                                     Reader in,
+                                                     InputStream in,
                                                      String inName,
                                                      PrintWriter err) {
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
         Collection addedInvs = null;
+        
         try {
-            GGeneratorLexer lexer = new GGeneratorLexer(in);
-            GGeneratorParser parser = new GGeneratorParser(lexer);
+        	ANTLRInputStream aInput = new ANTLRInputStream(in);
+        	aInput.name = inName;
+        	
+            GGeneratorLexer lexer = new GGeneratorLexer(aInput);
+            CommonTokenStream tStream = new CommonTokenStream(lexer);
+            GGeneratorParser parser = new GGeneratorParser(tStream);
+            
             lexer.init(errHandler);
             parser.init(errHandler);
     
@@ -207,14 +244,13 @@ public class ASSLCompiler {
                 addedInvs = new ArrayList(model.classInvariants());
                 addedInvs.removeAll(existingInvs);
             }
-        } catch (antlr.RecognitionException e) {
-            errHandler.reportError(e.getLine() + ":" + e.getColumn() + ": " +e.getMessage());
-        } catch (antlr.TokenStreamRecognitionException e) {
-            errHandler.reportError(e.recog.getLine() + ":" + e.recog.getColumn() 
-                    + ": " + e.recog.getMessage());
-        } catch (antlr.TokenStreamException ex) {
-            errHandler.reportError(ex.getMessage());
-        }
+        } catch (RecognitionException e) {
+            err.println(e.line + ":" +
+                        e.charPositionInLine + ": " + 
+                        e.getMessage());
+        } catch (IOException e) {
+        	err.println(e.getMessage());
+		}
         err.flush();
         return addedInvs;
     }

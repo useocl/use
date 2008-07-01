@@ -18,22 +18,21 @@
  */
 package org.tzi.use.parser.use;
 
+import org.antlr.runtime.Token;
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.al.ALAction;
 import org.tzi.use.uml.al.ALCreateVar;
 import org.tzi.use.uml.ocl.type.Type;
 
-import antlr.Token;
-
 /**
  * @author green
  */
 public class ASTALCreateVar extends ASTALAction {
 
-    private MyToken fName;
+    private Token fName;
     private ASTType fType;
     
     /**
@@ -41,7 +40,7 @@ public class ASTALCreateVar extends ASTALAction {
      * @param type
      */
     public ASTALCreateVar(Token name, ASTType type) {
-        fName = (MyToken)name;
+        fName = (Token)name;
         fType = type;
     }
 

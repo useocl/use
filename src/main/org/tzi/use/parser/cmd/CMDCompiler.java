@@ -21,10 +21,15 @@
 
 package org.tzi.use.parser.cmd;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.util.List;
 
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
@@ -45,15 +50,45 @@ public class CMDCompiler {
      */
     public static List compileCmdList(MModel model,
                                       MSystemState systemState,
-                                      Reader in, 
+                                      String in, 
+                                      String inName,
+                                      PrintWriter err) {
+    	
+    	InputStream stream = new ByteArrayInputStream(in.getBytes());
+    	return CMDCompiler.compileCmdList(model, systemState, stream, inName, err);
+    }
+    /**
+     * Compiles a list of object manipulation commands.
+     *
+     * @param  in the source to be compiled
+     * @param  inName name of the source stream
+     * @param  err output stream for error messages
+     * @return List(Cmd) or null if there were any errors
+     */
+    public static List compileCmdList(MModel model,
+                                      MSystemState systemState,
+                                      InputStream in, 
                                       String inName,
                                       PrintWriter err) {
         List cmdList = null;
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
-        GCmdLexer lexer = new GCmdLexer(in);
-        GCmdParser parser = new GCmdParser(lexer);
+        
+        ANTLRInputStream aInput;
+		try {
+			aInput = new ANTLRInputStream(in);
+		} catch (IOException e1) {
+			err.println(e1.getMessage());
+			return cmdList;
+		}
+		
+        GCmdLexer lexer = new GCmdLexer(aInput);
+        CommonTokenStream tStream = new CommonTokenStream(lexer);
+        
+        GCmdParser parser = new GCmdParser(tStream);
+        
         lexer.init(errHandler);
         parser.init(errHandler);
+        
         try {
             // Parse the command
             ASTCmdList astCmdList = parser.cmdList();
@@ -70,19 +105,13 @@ public class CMDCompiler {
                 if (ctx.errorCount() > 0 )
                     cmdList = null;
             }
-        } catch (antlr.RecognitionException e) {
-            err.println(parser.getFilename() +":" + 
-                        e.getLine() + ":" +
-                        e.getColumn() + ": " + 
+        } catch (RecognitionException e) {
+            err.println(parser.getSourceName() +":" + 
+                        e.line + ":" +
+                        e.charPositionInLine + ": " + 
                         e.getMessage());
-        } catch (SemanticException ex) {
-            err.println(ex.getMessage());
-        } catch (antlr.TokenStreamRecognitionException e) {
-            err.println(parser.getFilename() +":" + 
-                        e.recog.getLine() + ":" + e.recog.getColumn() + ": " + 
-                        e.recog.getMessage());
-        } catch (antlr.TokenStreamException ex) {
-            err.println(ex.getMessage());
+        } catch (SemanticException e) {
+            err.println(e.getMessage());
         }
         err.flush();
         return cmdList;

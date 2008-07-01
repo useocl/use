@@ -21,9 +21,9 @@
 
 package org.tzi.use.parser.use;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
@@ -42,10 +42,10 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTInvariantClause extends AST {
-    MyToken fName;      // optional
+	Token fName;      // optional
     ASTExpression fExpr;
 
-    public ASTInvariantClause(MyToken name, ASTExpression e) {
+    public ASTInvariantClause(Token name, ASTExpression e) {
         fName = name;
         fExpr = e;
     }
@@ -55,7 +55,7 @@ public class ASTInvariantClause extends AST {
     }
 
 
-    void gen(Context ctx, MyToken varName, MClass cls) {
+    void gen(Context ctx, Token varName, MClass cls) {
         // enter context variable into scope of invariant
         ObjectType ot = TypeFactory.mkObjectType(cls);
         Symtable vars = ctx.varTable();

@@ -21,9 +21,9 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
@@ -35,10 +35,10 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTVariableDeclaration extends AST {
-    private MyToken fName;
+    private Token fName;
     private ASTType fType;
 
-    public ASTVariableDeclaration(MyToken name, ASTType type) {
+    public ASTVariableDeclaration(Token name, ASTType type) {
         fName = name;
         fType = type;
     }
@@ -50,7 +50,7 @@ public class ASTVariableDeclaration extends AST {
         return new VarDecl(fName.getText(), type); 
     }
 
-    public MyToken name() {
+    public Token name() {
         return fName;
     }
 }

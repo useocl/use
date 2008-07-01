@@ -21,9 +21,9 @@
 
 package org.tzi.use.parser.use;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
@@ -43,11 +43,11 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTPrePostClause extends AST {
-    MyToken fToken;     // pre or post
-    MyToken fName;      // optional
+	Token fToken;     // pre or post
+	Token fName;      // optional
     ASTExpression fExpr;
 
-    public ASTPrePostClause(MyToken tok, MyToken name, ASTExpression e) {
+    public ASTPrePostClause(Token tok, Token name, ASTExpression e) {
         fToken = tok;
         fName = name;
         fExpr = e;

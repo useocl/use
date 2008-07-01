@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.uml.mm.MMultiplicity;
 
 /**
@@ -37,10 +37,10 @@ import org.tzi.use.uml.mm.MMultiplicity;
  * @author  Mark Richters
  */
 public class ASTMultiplicity extends AST {
-    private MyToken fStartToken; // for error position
+    private Token fStartToken; // for error position
     private List fRanges;   // (ASTMultiplicityRange)
 
-    public ASTMultiplicity(MyToken t) {
+    public ASTMultiplicity(Token t) {
         fStartToken = t;
         fRanges = new ArrayList();
     }

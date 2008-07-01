@@ -29,22 +29,19 @@
 
 package org.tzi.use.parser.generator;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GOCLExpression;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 
-public class ASTGocl extends ASTGValueInstruction
-    implements ASTGInstructionParameterInterface {
+public class ASTGocl extends ASTGValueInstruction {
   
-//    private MyToken fname;
     private ASTExpression fExpression;
 
-    public ASTGocl(ASTExpression expression, MyToken t) {
+    public ASTGocl(ASTExpression expression, Token t) {
         fExpression = expression;
-//        fname = t;
     }
 
     public GInstruction gen(Context ctx) throws SemanticException {

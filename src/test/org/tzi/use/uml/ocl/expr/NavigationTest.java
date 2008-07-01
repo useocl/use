@@ -22,7 +22,6 @@
 package org.tzi.use.uml.ocl.expr;
 
 import java.io.PrintWriter;
-import java.io.StringReader;
 
 import junit.framework.*;
 
@@ -61,7 +60,7 @@ public class NavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
 
@@ -84,7 +83,7 @@ public class NavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
         Evaluator eval = new Evaluator();
@@ -104,7 +103,7 @@ public class NavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
 
@@ -126,7 +125,7 @@ public class NavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
 
@@ -148,7 +147,7 @@ public class NavigationTest extends TestCase {
         PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
-                                                            new StringReader( expr ),
+                                                            expr,
                                                             "<input>", pw,
                                                             system.topLevelBindings() );
 

@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser;
 
+import org.antlr.runtime.Token;
+
 /**
  * A ScrPos object keeps information about a position in a source file.
  *
@@ -38,10 +40,10 @@ class SrcPos {
         fColumn = column;
     }
 
-    SrcPos(MyToken token) {
-        fSrcName = token.srcName();
+    SrcPos(Token token) {
+        fSrcName = token.getInputStream().getSourceName();
         fLine = token.getLine();
-        fColumn = token.getColumn();
+        fColumn = token.getCharPositionInLine();
     }
 
     /** 

@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.sys.MCmd;
@@ -40,11 +40,11 @@ import org.tzi.use.uml.sys.MCmdCreateInsertObjects;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
 public class ASTCreateInsertCmd extends ASTCmd {
-    private MyToken fNameCreate;
+    private Token fNameCreate;
     private List fIdListInsert; // (MyToken)
-    private MyToken fAssocClassName;
+    private Token fAssocClassName;
 
-    public ASTCreateInsertCmd( MyToken nameCreate, MyToken assocClassName, 
+    public ASTCreateInsertCmd( Token nameCreate, Token assocClassName, 
                                List idListInsert ) {
         fNameCreate = nameCreate;
         fAssocClassName = assocClassName;
@@ -71,7 +71,7 @@ public class ASTCreateInsertCmd extends ASTCmd {
             List nameListInsert = new ArrayList();
             Iterator it = fIdListInsert.iterator();
             while ( it.hasNext() ) {
-                MyToken tok = ( MyToken ) it.next();
+            	Token tok = ( Token ) it.next();
                 nameListInsert.add( tok.getText() );
             }
             return new MCmdCreateInsertObjects( ctx.systemState(),

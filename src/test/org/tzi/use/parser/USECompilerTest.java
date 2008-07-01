@@ -23,10 +23,13 @@
 package org.tzi.use.parser;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -186,10 +189,13 @@ public class USECompilerTest extends TestCase {
             if (VERBOSE) {
                 System.out.println("expression: " + expStr);
             }
+            
+            InputStream stream = new ByteArrayInputStream(expStr.getBytes());
+            
             Expression expr =
                 OCLCompiler.compileExpression(
                                               model,
-                                              new StringReader(expStr),
+                                              stream,
                                               TEST_EXPR_FILE,
                                               new PrintWriter(System.err),
                                               new VarBindings());
@@ -198,7 +204,7 @@ public class USECompilerTest extends TestCase {
             MSystemState systemState = new MSystem(model).state();
             //Log.setTrace(true);
             Value val = new Evaluator().eval(expr, systemState);
-            assertEquals("evaluate", resultStr, val.toStringWithType());
+            assertEquals("evaluate: " + expStr, resultStr, val.toStringWithType());
         }
     }
 
@@ -310,9 +316,19 @@ public class USECompilerTest extends TestCase {
 
 
     private MModel compileSpecification(File specFile, PrintWriter newErr) throws FileNotFoundException {
-        Reader r = new BufferedReader(new FileReader(specFile));
-        return USECompiler.compileSpecification(r, specFile.getName(), 
+        FileInputStream specStream = new FileInputStream(specFile);
+        MModel result;
+        
+        result = USECompiler.compileSpecification(specStream, specFile.getName(), 
                                                 newErr, new ModelFactory());
+        try {
+			specStream.close();
+		} catch (IOException e) {
+			// This can be ignored
+			e.printStackTrace();
+		}
+        
+        return result;
     }
 
 }

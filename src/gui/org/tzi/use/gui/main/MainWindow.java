@@ -35,6 +35,7 @@ import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -632,7 +633,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
         MSystem system = fSession.system();
         java.util.List cmdList = CMDCompiler.compileCmdList(system.model(),
-                system.state(), new StringReader(line), "<input>", fLogWriter);
+                system.state(), line, "<input>", fLogWriter);
 
         // compile errors?
         if (cmdList == null) {
@@ -758,10 +759,10 @@ public class MainWindow extends JFrame implements StateChangeListener {
                     .println("compiling specification " + f.getName() + "...");
             MModel model = null;
             MSystem system = null;
-            Reader r = null;
+            FileInputStream iStream = null;
             try {
-                r = new BufferedReader(new FileReader(f));
-                model = USECompiler.compileSpecification(r, f.getName(),
+                iStream = new FileInputStream(f);
+                model = USECompiler.compileSpecification(iStream, f.getName(),
                         fLogWriter, new ModelFactory());
                 fLogWriter.println("done.");
                 if (model != null) {
@@ -772,9 +773,9 @@ public class MainWindow extends JFrame implements StateChangeListener {
             } catch (FileNotFoundException ex) {
                 Log.error("File `" + f.getName() + "' not found.");
             } finally {
-                if (r != null)
+                if (iStream != null)
                     try {
-                        r.close();
+                        iStream.close();
                     } catch (IOException ex) {
                         // ignored
                     }

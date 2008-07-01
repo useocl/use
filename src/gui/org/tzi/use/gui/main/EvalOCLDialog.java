@@ -25,8 +25,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.swing.BorderFactory;
@@ -219,7 +220,7 @@ class EvalOCLDialog extends JDialog {
 
         // compile query
         Expression expr = OCLCompiler.compileExpression(fSystem.model(),
-                new StringReader(in), "Error", out, fSystem.topLevelBindings());
+                in, "Error", out, fSystem.topLevelBindings());
         out.flush();
         fTextIn.requestFocus();
 

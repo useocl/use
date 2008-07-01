@@ -21,9 +21,9 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -40,13 +40,13 @@ import org.tzi.use.uml.ocl.expr.VarInitializer;
  * @author  Mark Richters
  */
 public class ASTIterateExpression extends ASTExpression {
-    private MyToken fIterateToken;
+    private Token fIterateToken;
     private ASTExpression fRange; // may be null
     private ASTElemVarsDeclaration fDeclList;
     private ASTVariableInitialization fInit;
     private ASTExpression fExpr;
 
-    public ASTIterateExpression(MyToken iterateToken,
+    public ASTIterateExpression(Token iterateToken,
                                 ASTExpression range, 
                                 ASTElemVarsDeclaration declList,
                                 ASTVariableInitialization init,

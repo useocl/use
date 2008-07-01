@@ -34,7 +34,9 @@
   <property name="use.jar"            location="${build.lib.dir}/use.jar"/>
   <property name="use-gui.jar"        location="${build.lib.dir}/use-gui.jar"/>
 
-  <property name="antlr.jar"          location="${lib.dir}/antlr-2.7.4.jar"/>
+  <property name="antlr.jar"          location="${lib.dir}/antlr-3.1b1.jar"/>
+  <property name="antlr2.jar"         location="${lib.dir}/antlr-2.7.7.jar"/>
+  <property name="stringtemplate.jar" location="${lib.dir}/stringtemplate-3.1.jar"/>
   <property name="junit.jar"          location="${lib.dir}/junit.jar"/>
   <property name="gsbase.jar"         location="${lib.dir}/gsbase.jar"/>
   <property name="checkstyle.jar"     location="${lib.dir}/checkstyle-all-3.4.jar"/>
@@ -93,20 +95,31 @@
   <target name="check-parser-uptodate" depends="init">
     <condition property="parser.uptodate">
       <and>
-        <!-- ocl parser -->
-        <uptodate srcfile="${parser.dir}/ocl/ocl.g" 
+        <!-- ocl parser to ocl base -->
+        <uptodate srcfile="${parser.dir}/base/GOCLBase.g" 
                   targetfile="${parser.dir}/ocl/GOCLParser.java"/>
 
-        <!-- use parser -->
-        <uptodate srcfile="${parser.dir}/use/use.g" 
+      	<!-- ocl parser to ocl lexer rules -->
+      	<uptodate srcfile="${parser.dir}/base/GOCLLexerRules.g" 
+      			  targetfile="${parser.dir}/ocl/GOCLParser.java"/>
+      	
+      	<!-- ocl parser to ocl -->
+      	<uptodate srcfile="${parser.dir}/ocl/GOCL.g" 
+      			  targetfile="${parser.dir}/ocl/GOCLParser.java"/>
+      	
+        <!-- use parser to required grammars -->
+        <uptodate srcfile="${parser.dir}/use/GUSE.g" 
+                  targetfile="${parser.dir}/use/GUSEParser.java"/>
+      	
+        <uptodate srcfile="${parser.dir}/base/GUSEBase.g" 
                   targetfile="${parser.dir}/use/GUSEParser.java"/>
 
         <!-- command language parser -->
-        <uptodate srcfile="${parser.dir}/cmd/cmd.g" 
+        <uptodate srcfile="${parser.dir}/cmd/GCmd.g" 
                   targetfile="${parser.dir}/cmd/GCmdParser.java"/>
 
         <!-- generator parser -->
-        <uptodate srcfile="${parser.dir}/generator/generator.g" 
+        <uptodate srcfile="${parser.dir}/generator/GGenerator.g" 
                   targetfile="${parser.dir}/generator/GGeneratorParser.java"/>
 
       </and>
@@ -120,30 +133,30 @@
  
     <!-- ocl parser -->
     <echo>Generating ocl parser</echo>
-    <java classname="antlr.Tool" dir="${parser.dir}/ocl" fork="yes">
-      <classpath path="${antlr.jar}"/>
-      <arg value="ocl.g"/> 
+    <java classname="org.antlr.Tool" dir="${parser.dir}/ocl" fork="yes">
+      <classpath path="${antlr.jar};${antlr2.jar};${stringtemplate.jar}"/>
+      <arg line="-lib ../base GOCL.g"/>
     </java>
 
     <!-- use parser -->
     <echo>Generating use parser</echo>
-    <java classname="antlr.Tool" dir="${parser.dir}/use" fork="yes">
-      <classpath path="${antlr.jar}"/>
-       <arg line="-glib ../ocl/ocl.g use.g"/> 
+    <java classname="org.antlr.Tool" dir="${parser.dir}/use" fork="yes">
+      <classpath path="${antlr.jar};${antlr2.jar};${stringtemplate.jar}"/>
+      <arg line="-lib ../base GUSE.g"/> 
     </java>
 
     <!-- command line parser -->
     <echo>Generating command line parser</echo>
-    <java classname="antlr.Tool" dir="${parser.dir}/cmd" fork="yes">
-      <classpath path="${antlr.jar}"/>
-      <arg line="-glib ../ocl/ocl.g cmd.g"/> 
+    <java classname="org.antlr.Tool" dir="${parser.dir}/cmd" fork="yes">
+      <classpath path="${antlr.jar};${antlr2.jar};${stringtemplate.jar}"/>
+      <arg line="-lib ../base GCmd.g"/> 
     </java>
 
     <!-- generator parser -->
     <echo>Generating generator parser</echo>
-    <java classname="antlr.Tool" dir="${parser.dir}/generator" fork="yes">
-      <classpath path="${antlr.jar}"/>
-      <arg line="-glib ../use/expandeduse.g generator.g"/> 
+    <java classname="org.antlr.Tool" dir="${parser.dir}/generator" fork="yes">
+      <classpath path="${antlr.jar};${antlr2.jar};${stringtemplate.jar}"/>
+      <arg line="-lib ../base GGenerator.g"/> 
     </java>
 
     <delete>
@@ -151,11 +164,61 @@
     </delete>
   </target>
 
+  <!-- set package declarations in generated Parsers -->
+  <target name="patch-packages" depends="create-parser">
+  	<echo>Patching generated classes</echo>
+  	<replace file="${parser.dir}/use/GUSE_GUSEBase.java" token="@package" value="org.tzi.use.parser.use"/>
+  	<replace file="${parser.dir}/use/GUSE_GUSEBase.java" token="@base_packageimport" value="org.tzi.use.parser.ocl"/>
+  	
+  	<replace file="${parser.dir}/use/GUSE_GOCLLexerRules.java" token="@package" value="org.tzi.use.parser.use"/>
+  	<replace file="${parser.dir}/use/GUSE_GOCLLexerRules.java" token="@base_packageimport" value="org.tzi.use.parser.ocl"/>
+  	
+  	<replace file="${parser.dir}/use/GUSE_GUSEBase_GOCLBase.java" token="@package" value="org.tzi.use.parser.use"/>
+  	<replace file="${parser.dir}/use/GUSE_GUSEBase_GOCLBase.java" token="@base_packageimport" value="org.tzi.use.parser.ocl"/>
+  	
+  	<replace file="${parser.dir}/ocl/GOCL_GOCLBase.java" token="@package" value="org.tzi.use.parser.ocl"/>
+  	<replace file="${parser.dir}/ocl/GOCL_GOCLBase.java" token="@base_packageimport" value="org.tzi.use.parser.use"/>
+  	
+  	<replace file="${parser.dir}/ocl/GOCLLexer.java" token="@package" value="org.tzi.use.parser.ocl"/>
+  	<replace file="${parser.dir}/ocl/GOCLLexer.java" token="@base_packageimport" value="org.tzi.use.parser.use"/>
+  	  	
+  	<replace file="${parser.dir}/ocl/GOCL_GOCLLexerRules.java" token="@package" value="org.tzi.use.parser.ocl"/>
+  	<replace file="${parser.dir}/ocl/GOCL_GOCLLexerRules.java" token="@base_packageimport" value="org.tzi.use.parser.use"/>
+  	
+  	<replace file="${parser.dir}/cmd/GCmd_GOCLLexerRules.java" token="@package" value="org.tzi.use.parser.cmd"/>
+  	<replace file="${parser.dir}/cmd/GCmd_GOCLLexerRules.java" token="@base_packageimport" value="org.tzi.use.parser.ocl"/>
+  	
+  	<replace file="${parser.dir}/cmd/GCmd_GOCLBase.java" token="@package" value="org.tzi.use.parser.cmd"/>
+  	<replace file="${parser.dir}/cmd/GCmd_GOCLBase.java" token="@base_packageimport" value="org.tzi.use.parser.ocl"/>
+  	
+  	<replace file="${parser.dir}/generator/GGenerator_GOCLLexerRules.java" token="@package" value="org.tzi.use.parser.generator"/>
+  	<replace file="${parser.dir}/generator/GGenerator_GOCLLexerRules.java" token="@base_packageimport" value="org.tzi.use.parser.ocl"/>
+  	
+  	<replace file="${parser.dir}/generator/GGenerator_GUSEBase.java" token="@package" value="org.tzi.use.parser.generator"/>
+  	<replace file="${parser.dir}/generator/GGenerator_GUSEBase.java" token="@base_packageimport" value=" org.tzi.use.parser.ocl.*;import org.tzi.use.parser.use"/>
+  	
+  	<replace file="${parser.dir}/generator/GGenerator_GUSEBase_GOCLBase.java" token="@package" value="org.tzi.use.parser.generator"/>
+  	<replace file="${parser.dir}/generator/GGenerator_GUSEBase_GOCLBase.java" token="@base_packageimport" value="org.tzi.use.parser.ocl"/>
+  	
+  	<!-- these are two bugs in ANTLRv3.1b1: 
+  		- A wrong Constructor is generated for grammars importing a composite grammar 
+  		- The delgate parser is not initialized
+  	-->
+  	<replace file="${parser.dir}/generator/GGenerator_GUSEBase.java" 
+  		token="gGOCLBase = new GGenerator_GUSEBase_GOCLBase(input, state, this, gGGenerator);"
+  		value="gGOCLBase = new GGenerator_GUSEBase_GOCLBase(input, state, gGGenerator, this);gGGenerator.gGOCLBase = gGOCLBase;"/>
+  	
+  	<replace file="${parser.dir}/use/GUSE_GUSEBase.java" 
+  	  		token="gGOCLBase = new GUSE_GUSEBase_GOCLBase(input, state, this, gGUSE);"
+  	  		value="gGOCLBase = new GUSE_GUSEBase_GOCLBase(input, state, gGUSE, this);gGUSE.gGOCLBase = gGOCLBase;"/>
+  	
+  </target>
+
   <!-- compile USE sources -->
 
   <target name="compile-use" depends="compile-use-gui"/>
 
-  <target name="compile-use-main" depends="create-parser">
+  <target name="compile-use-main" depends="patch-packages">
     <mkdir dir="${build.classes.dir}"/>
     <javac srcdir="${src.main.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off" 

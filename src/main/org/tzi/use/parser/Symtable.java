@@ -24,6 +24,7 @@ package org.tzi.use.parser;
 import java.util.HashMap;
 import java.util.Stack;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
@@ -163,7 +164,7 @@ public class Symtable {
 //        throw new SemanticException(pos, msg);
 //    }
 //    
-    public void add(MyToken token, Type type) 
+    public void add(Token token, Type type) 
         throws SemanticException 
     {
         this.add(token.getText(), type, new SrcPos(token));

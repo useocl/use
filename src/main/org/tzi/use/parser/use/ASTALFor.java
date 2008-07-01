@@ -18,8 +18,9 @@
  */
 package org.tzi.use.parser.use;
 
+import org.antlr.runtime.Token;
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
@@ -30,20 +31,18 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 
-import antlr.Token;
-
 /**
  * @author green
  */
 public class ASTALFor extends ASTALAction {
 
-    private MyToken fVariable;
+    private Token fVariable;
     private ASTType fVariableType;
     private ASTExpression fExpression;
     private ASTALActionList fBody;
 
     public ASTALFor(Token var, ASTType type, ASTExpression expr, ASTALActionList body) {
-        fVariable = (MyToken)var;
+        fVariable = (Token)var;
         fVariableType = type;
         fExpression = expr;
         fBody = body;

@@ -115,14 +115,14 @@ public class GGenerator {
             Log.verbose("Compiling procedures from " + filename + ".");
             procedures=ASSLCompiler.compileProcedures(
                                                      fSystem.model(),
-                                                     new BufferedReader(new FileReader(filename)),
+                                                     new FileInputStream(filename),
                                                      filename,
                                                      new PrintWriter(System.err) );
             if (procedures!=null) {
                 Log.verbose("Compiling `" + callstr + "'.");
                 call = ASSLCompiler.compileProcedureCall(fSystem.model(),
                                                         fSystem.state(),
-                                                        new StringReader(callstr),
+                                                        callstr,
                                                         "<input>",
                                                         new PrintWriter(System.err)
                                                         );
@@ -338,7 +338,7 @@ public class GGenerator {
         try {
             addedInvs = ASSLCompiler.compileAndAddInvariants(
                                                             fGModel,
-                                                            new BufferedReader(new FileReader(filename)),
+                                                            new FileInputStream(filename),
                                                             filename,
                                                             new PrintWriter(System.err) );
         } catch (FileNotFoundException e) {

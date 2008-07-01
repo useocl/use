@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -81,10 +81,12 @@ public class ASTElemVarsDeclaration extends AST {
         VarDeclList varDeclList = new VarDeclList(true);
         Iterator it = fIdList.iterator();
         while (it.hasNext() ) {
-            MyToken id = (MyToken) it.next();
-	    if (varDeclList.containsName(id.getText())) {
-	      throw new SemanticException(id, "double declared variable");
-	    }
+        	Token id = (Token) it.next();
+        	
+		    if (varDeclList.containsName(id.getText())) {
+		      throw new SemanticException(id, "double declared variable");
+		    }
+		    
             VarDecl decl = new VarDecl(id.getText(), type);
             varDeclList.add(decl);
         }
@@ -96,7 +98,7 @@ public class ASTElemVarsDeclaration extends AST {
     {
         Iterator it = fIdList.iterator();
         while (it.hasNext() ) {
-            MyToken id = (MyToken) it.next();
+        	Token id = (Token) it.next();
             vars.add(id, type);
         }
     }

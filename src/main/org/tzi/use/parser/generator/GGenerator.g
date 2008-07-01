@@ -1,8 +1,10 @@
-header { 
-package org.tzi.use.parser.generator;
-}
+grammar GGenerator;
 
-{
+import GUSEBase, GOCLLexerRules;
+
+@header { 
+package org.tzi.use.parser.generator;
+
 import org.tzi.use.parser.*;
 import org.tzi.use.parser.ocl.*;
 import org.tzi.use.parser.use.*;
@@ -10,11 +12,41 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 }
-class GGeneratorParser extends GUSEParser;
-options {
-    exportVocab = GGenerator;
+ 
+@members {
+	private ParseErrorHandler fParseErrorHandler;
     
+    public void init(ParseErrorHandler handler) {
+        fParseErrorHandler = handler;
+		this.gGUSEBase.init(handler);
+    }
+    
+    /* Overridden methods. */
+    public void emitErrorMessage(String msg) {
+       	fParseErrorHandler.reportError(msg);
+	}
+ }
+ 
+@lexer::header {
+package org.tzi.use.parser.generator;
+
+import org.tzi.use.parser.ParseErrorHandler;
 }
+ 
+@lexer::members {
+	private ParseErrorHandler fParseErrorHandler;
+    
+    public void init(ParseErrorHandler handler) {
+        fParseErrorHandler = handler;
+		this.gGOCLLexerRules.init(handler);
+    }
+    
+    /* Overridden methods. */
+    public void reportError(RecognitionException ex) {
+        fParseErrorHandler.reportError(
+	        ex.line + ":" + (ex.charPositionInLine + 1) + ": " + ex.getMessage());
+    }
+ }
  
 // ------------------------------------
 // Generator grammar (extends USE grammar)
@@ -28,9 +60,9 @@ options {
   invariantListOnly ::= { invariant }
 */
 invariantListOnly returns [List invariantList] 
-{ invariantList = new ArrayList(); ASTConstraintDefinition def; } 
+@init { $invariantList = new ArrayList(); } 
 :
-    ( def=invariant { invariantList.add(def); } )*
+    ( def=invariant { $invariantList.add($def.n); } )*
     EOF
     ;
 
@@ -41,7 +73,7 @@ invariantListOnly returns [List invariantList]
 /*
 procedureListOnly ::= (procedure)*
 
-procedure ::= "procedure" id "(" variableDeclarationList ")"
+procedure ::= 'procedure' id '(' variableDeclarationList ')'
               ("var" variableDeclarationList ";")?
               "begin" instructionList "end" ";"
 
@@ -80,10 +112,10 @@ oclExpression ::= "[" expression "]"
 procedureListOnly ::= (procedure)*
 */
 procedureListOnly returns [List procedureList]
-{ procedureList = new ArrayList(); }
+@init{ $procedureList = new ArrayList(); }
 :
-    ( { ASTGProcedure proc; }
-      proc=procedure { procedureList.add(proc); }
+    (
+      proc=procedure { $procedureList.add($proc.proc); }
     )*
     EOF
     ;
@@ -95,14 +127,12 @@ procedure ::= "procedure" id "(" variableDeclarationList ")"
               "begin" instructionList "end" ";"
 */
 procedure returns [ASTGProcedure proc]
-{ List parameterDecls; List localDecls; List instructions; 
-  localDecls = new ArrayList(); proc = null; }
+@init{ localDecls = new ArrayList(); }
 :
-    "procedure" name:IDENT LPAREN parameterDecls=variableDeclarationList RPAREN
-    ( "var" localDecls=variableDeclarationList SEMI )?
-    "begin" instructions=instructionList "end" SEMI
-    { proc = new ASTGProcedure(
-               (MyToken) name, parameterDecls, localDecls, instructions ); }
+    'procedure' name=IDENT LPAREN parameterDecls=variableDeclarationList RPAREN
+    ( 'var' localDecls=variableDeclarationList SEMI )?
+    'begin' instructions=instructionList 'end' SEMI
+    { proc = new ASTGProcedure($name, $parameterDecls.varDecls, $localDecls.varDecls, $instructions.instructions ); }
     ;
 
 
@@ -110,10 +140,10 @@ procedure returns [ASTGProcedure proc]
 variableDeclarationList ::= (variableDeclaration ("," variableDeclaration)* )?
 */
 variableDeclarationList returns [List varDecls]
-{ ASTVariableDeclaration decl; varDecls = new ArrayList(); }
+@init{ $varDecls = new ArrayList(); }
 :
-    ( decl=variableDeclaration {varDecls.add(decl);}
-      (COMMA decl=variableDeclaration {varDecls.add(decl);} )*
+    ( decl=variableDeclaration {$varDecls.add($decl.n);}
+      (COMMA decl=variableDeclaration {$varDecls.add($decl.n);} )*
     )?
     ;
 
@@ -122,9 +152,9 @@ variableDeclarationList returns [List varDecls]
 instructionList ::= ( instruction ";" )*
 */
 instructionList returns [List instructions]
-{ ASTGInstruction instr; instructions = new ArrayList(); }
+@init{ $instructions = new ArrayList(); }
 :
-    ( instr=instruction SEMI {instructions.add(instr);} )*
+    ( instr=instruction SEMI {$instructions.add($instr.instr);} )*
     ;
 
 
@@ -136,13 +166,12 @@ instruction ::= variableAssignment
                 | ifThenElse
 */
 instruction returns [ASTGInstruction instr]
-{ instr=null; }
 :
-    instr=variableAssignment
-    | instr=attributeAssignment
-    | instr=loop
-    | instr=atomicInstruction
-    | instr=ifThenElse
+      instrVA = variableAssignment  {$instr = $instrVA.assignment;}
+    | instrAA = attributeAssignment {$instr = $instrAA.assignment;}
+    | instrLO = loop				{$instr = $instrLO.loop;}
+    | instrAI = atomicInstruction	{$instr = $instrAI.instr;}
+    | instrIT = ifThenElse			{$instr = $instrIT.ifThenElse;}
     ;
 
 
@@ -150,10 +179,9 @@ instruction returns [ASTGInstruction instr]
 variableAssignment ::= id ":=" valueInstruction
 */
 variableAssignment returns [ASTGVariableAssignment assignment]
-{ ASTGValueInstruction source; assignment=null; }
 :
-    target:IDENT COLON_EQUAL source=valueInstruction
-    { assignment = new ASTGVariableAssignment( (MyToken) target, source ); }
+    target=IDENT COLON_EQUAL source=valueInstruction
+    { $assignment = new ASTGVariableAssignment( $target, $source.valueinstr ); }
     ;
 
 
@@ -161,13 +189,11 @@ variableAssignment returns [ASTGVariableAssignment assignment]
 attributeAssignment ::= oclExpression DOT id ":=" valueInstruction
 */
 attributeAssignment returns [ASTGAttributeAssignment assignment]
-{ ASTGValueInstruction source; ASTGocl targetObject;
-  assignment=null; }
 :
-    targetObject=oclExpression DOT attributeName:IDENT
+    targetObject=oclExpression DOT attributeName=IDENT
       COLON_EQUAL source=valueInstruction
-    { assignment = new ASTGAttributeAssignment(
-			 targetObject, (MyToken) attributeName, source ); }
+    { $assignment = new ASTGAttributeAssignment(
+			 $targetObject.encapOcl, $attributeName, $source.valueinstr ); }
     ;
 
 
@@ -175,12 +201,10 @@ attributeAssignment returns [ASTGAttributeAssignment assignment]
 loop ::= "for" variableDeclaration "in" oclExpression
 	 "begin" instructionList "end" */
 loop returns [ASTGLoop loop]
-{ ASTVariableDeclaration decl; ASTGocl sequence; List instructions;
-  loop=null; }
 :
-    t:"for" decl=variableDeclaration "in" sequence=oclExpression "begin"
-       instructions=instructionList "end"
-    { loop= new ASTGLoop( decl, sequence, instructions, (MyToken)t ); }
+    t='for' decl=variableDeclaration 'in' sequence=oclExpression 'begin'
+       instructions=instructionList 'end'
+    { $loop = new ASTGLoop( $decl.n, $sequence.encapOcl, $instructions.instructions, $t ); }
     ;
 
 
@@ -190,14 +214,13 @@ ifThenElse ::= "if" oclExpression
 	 ("else" "begin" instructionList "end")?
      ";"  */
 ifThenElse returns [ASTGIfThenElse ifThenElse]
-{ ASTGocl sequence; List thenInstructions; List elseInstructions;
-  elseInstructions = new ArrayList(); ifThenElse=null; }
+@init{ List elseInstructionsList = new ArrayList(); }
 :
-    token:"if" sequence=oclExpression 
-        "then" "begin" thenInstructions=instructionList "end"
-        ("else" "begin" elseInstructions=instructionList "end")?
-    { ifThenElse= new ASTGIfThenElse( sequence, thenInstructions,
-                elseInstructions, (MyToken)token ); }
+    token='if' sequence=oclExpression 
+        'then' 'begin' thenInstructions=instructionList 'end'
+        ('else' 'begin' elseInstructions=instructionList 'end' { elseInstructionsList=$elseInstructions.instructions; })?
+    { $ifThenElse = new ASTGIfThenElse( $sequence.encapOcl, $thenInstructions.instructions,
+                elseInstructionsList, $token ); }
     ;
 
 
@@ -205,10 +228,9 @@ ifThenElse returns [ASTGIfThenElse ifThenElse]
 valueInstruction ::= atomicInstruction | oclExpression
 */
 valueInstruction returns [ASTGValueInstruction valueinstr]
-{ valueinstr = null; }
 :
-    valueinstr=atomicInstruction
-    | valueinstr=oclExpression
+      atmoicInstr = atomicInstruction	{$valueinstr = $atmoicInstr.instr; }
+    | oclExpr = oclExpression			{$valueinstr = $oclExpr.encapOcl; }
     ;
 
 
@@ -217,12 +239,11 @@ atomicInstruction ::=
     id "(" ( instructionParameter (","instructionParameter)* )? ")"
 */
 atomicInstruction returns [ASTGAtomicInstruction instr]
-{ instr=null; ASTGInstructionParameterInterface parameter;}
 :
-    name:IDENT { instr= new ASTGAtomicInstruction((MyToken) name); } LPAREN
-        ( parameter=instructionParameter { instr.addParameter(parameter); }
+    name=IDENT { $instr = new ASTGAtomicInstruction($name); } LPAREN
+        ( parameter=instructionParameter { $instr.addParameter($parameter.parameter); }
             ( COMMA parameter=instructionParameter
-              { instr.addParameter(parameter); }
+              { $instr.addParameter($parameter.parameter); }
             )*
         )?
     RPAREN
@@ -232,21 +253,19 @@ atomicInstruction returns [ASTGAtomicInstruction instr]
 /* ------------------------------------
 instructionParameter ::= oclExpression | instrParameterIdent
 */
-instructionParameter returns [ASTGInstructionParameterInterface parameter]
-{ parameter=null; }
+instructionParameter returns [Object parameter]
 :
-    parameter=oclExpression
-    | parameter=instrParameterIdent
+      parameterOcl=oclExpression {$parameter = $parameterOcl.encapOcl; }
+    | parameterIdent=instrParameterIdent {$parameter = $parameterIdent.t; }
     ;
 
 
 /* ------------------------------------
 instructionParameter ::= oclExpression | instrParameterIdent
 */
-instrParameterIdent returns [MyToken t]
-{ t=null; }
+instrParameterIdent returns [Token t]
 :
-    i:IDENT { t = (MyToken) i; }
+    i=IDENT { $t = $i; }
     ;
 
 
@@ -254,10 +273,9 @@ instrParameterIdent returns [MyToken t]
 oclExpression ::= "[" expression "]" 
 */
 oclExpression returns [ASTGocl encapOcl]
-{ ASTExpression ocl; encapOcl=null; }
 :
-    i:LBRACK ocl=expression RBRACK
-    { encapOcl = new ASTGocl(ocl, (MyToken)i); }
+    i=LBRACK ocl=expression RBRACK
+    { $encapOcl = new ASTGocl($ocl.n, $i); }
     ;
 
 
@@ -270,31 +288,11 @@ procedureCallOnly ::= id "("
 		         ")"
 */
 procedureCallOnly returns [ASTGProcedureCall call]
-{ call = null; ASTExpression ocl; }
 :
-    name:IDENT {call = new ASTGProcedureCall((MyToken)name);}
+    name=IDENT {$call = new ASTGProcedureCall($name);}
     LPAREN ( 
-	   ocl=expression {call.addParameter(ocl);}
-	   ( COMMA ocl=expression {call.addParameter(ocl);} )*
+	   ocl=expression {$call.addParameter($ocl.n);}
+	   ( COMMA ocl=expression {$call.addParameter($ocl.n);} )*
     )? RPAREN
     EOF
     ;
-
-    
-{
-	import org.tzi.use.parser.MyToken;
-	import org.tzi.use.parser.ParseErrorHandler;
-	import java.io.PrintWriter;
-	import org.tzi.use.util.Log;
-	import org.tzi.use.util.StringUtil;
-}
-class GGeneratorLexer extends GUSELexer;
-options {
-    importVocab = GGenerator;
-}
-
-protected
-VOCAB:	
-    '\3'..'\377'
-    ;
-

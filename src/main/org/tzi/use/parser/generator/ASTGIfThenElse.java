@@ -33,15 +33,15 @@ package org.tzi.use.parser.generator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.gen.assl.statics.GIfThenElse;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 
 public class ASTGIfThenElse extends ASTGInstruction {
-    private MyToken fname;
+    private Token fname;
     ASTGocl fCondition;
     List fThenInstructions;
     List fElseInstructions;
@@ -50,7 +50,7 @@ public class ASTGIfThenElse extends ASTGInstruction {
     public ASTGIfThenElse(ASTGocl condition,
                           List thenInstructions,
                           List elseInstructions,
-                          MyToken t) {
+                          Token t) {
         fCondition = condition;
         fThenInstructions = thenInstructions;
         fElseInstructions = elseInstructions;

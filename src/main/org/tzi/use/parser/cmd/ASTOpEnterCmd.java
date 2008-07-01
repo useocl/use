@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MClass;
@@ -47,10 +47,10 @@ import org.tzi.use.uml.sys.MOperationCall;
  */
 public class ASTOpEnterCmd extends ASTCmd {
     private ASTExpression fSrcExpr;
-    private MyToken fOp;
+    private Token fOp;
     private List fArgs;     // (ASTExpression) 
 
-    public ASTOpEnterCmd(ASTExpression source, MyToken op) {
+    public ASTOpEnterCmd(ASTExpression source, Token op) {
         fSrcExpr = source;
         fOp = op;
         fArgs = new ArrayList();

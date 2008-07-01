@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -131,18 +132,18 @@ public class Context {
         return fErrorCount;
     }
 
-    public void reportWarning(MyToken t, String msg) {
+    public void reportWarning(Token t, String msg) {
         fErr.println(fFilename + ":" + t.getLine() + ":" + 
-                     t.getColumn() + ": Warning: " + msg);
+                     t.getCharPositionInLine() + ": Warning: " + msg);
     }
     
-    public void reportError(MyToken t, String msg) {
+    public void reportError(Token t, String msg) {
         fErrorCount++;
         fErr.println(fFilename + ":" + t.getLine() + ":" + 
-                     t.getColumn() + ": " + msg);
+                     t.getCharPositionInLine() + ": " + msg);
     }
     
-    public void reportError(MyToken t, Exception ex) {
+    public void reportError(Token t, Exception ex) {
         reportError(t, ex.getMessage());
     }
     

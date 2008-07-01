@@ -23,10 +23,13 @@ package org.tzi.use.main.shell;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
@@ -436,7 +439,7 @@ public final class Shell implements Runnable {
         // compile command
         MSystem system = system();
         List cmdList = CMDCompiler.compileCmdList(system.model(), system
-                .state(), new StringReader(line), "<input>", new PrintWriter(
+                .state(), line, "<input>", new PrintWriter(
                 System.err));
 
         // compile errors?
@@ -880,18 +883,18 @@ public final class Shell implements Runnable {
      */
     private void cmdOpenUseFile(String filename) {
         MModel model = null;
-        Reader r = null;
+        FileInputStream specStream = null;
         try {
             Log.verbose("compiling specification...");
-            r = new BufferedReader(new FileReader(filename));
-            model = USECompiler.compileSpecification(r, filename,
+            specStream = new FileInputStream(filename);
+            model = USECompiler.compileSpecification(specStream, filename,
                     new PrintWriter(System.err), new ModelFactory());
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");
         } finally {
-            if (r != null)
+            if (specStream != null)
                 try {
-                    r.close();
+                	specStream.close();
                 } catch (IOException ex) {
                     //TODO: Should this be silently ignored? [throw new
                     // Error(ex)?]
@@ -921,8 +924,10 @@ public final class Shell implements Runnable {
 
         // compile query
         MSystem system = system();
+        InputStream stream = new ByteArrayInputStream(line.getBytes());
+        
         Expression expr = OCLCompiler.compileExpression(system.model(),
-                new StringReader(line), "<input>", new PrintWriter(System.err),
+                stream, "<input>", new PrintWriter(System.err),
                 system.topLevelBindings());
 
         // compile errors?
@@ -979,8 +984,10 @@ public final class Shell implements Runnable {
 
         // compile query
         MSystem system = system();
+        InputStream stream = new ByteArrayInputStream(line.getBytes());
+        
         Expression expr = OCLCompiler.compileExpression(system.model(),
-                new StringReader(line), "<input>", new PrintWriter(System.err),
+                stream, "<input>", new PrintWriter(System.err),
                 system.topLevelBindings());
 
         // compile errors?

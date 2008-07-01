@@ -1,2 +1,2 @@
-t17.use:5:7: Redefinition of `A'.
-t17.use:2:7: `A' previously declared here.
+t17.use:5:6: Redefinition of `A'.
+t17.use:2:6: `A' previously declared here.

@@ -23,6 +23,7 @@ package org.tzi.use.main;
 
 import java.awt.Font;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -81,20 +82,20 @@ public final class Main {
 
         // compile spec if filename given as argument
         if (Options.specFilename != null) {
-            Reader r = null;
+        	FileInputStream specStream = null;
             try {
                 Log.verbose("compiling specification...");
-                r = new BufferedReader(new FileReader(Options.specFilename));
-                model = USECompiler.compileSpecification(r,
+                specStream = new FileInputStream(Options.specFilename);
+                model = USECompiler.compileSpecification(specStream,
                         Options.specFilename, new PrintWriter(System.err),
                         new ModelFactory());
             } catch (FileNotFoundException e) {
                 Log.error("File `" + Options.specFilename + "' not found.");
                 System.exit(1);
             } finally {
-                if (r != null)
+                if (specStream != null)
                     try {
-                        r.close();
+                    	specStream.close();
                     } catch (IOException ex) {
                         // ignored
                     }

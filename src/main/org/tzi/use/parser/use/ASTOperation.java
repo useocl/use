@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
@@ -49,7 +49,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTOperation extends AST {
-    private MyToken fName;
+    private Token fName;
     private List fParamList;    // (ASTVariableDeclaration)
     private ASTType fType;  // (optional)
     private ASTExpression fExpr; // (optional)
@@ -59,7 +59,7 @@ public class ASTOperation extends AST {
     // for UML AL
     private ASTALAction fExecutableBody;
 
-    public ASTOperation(MyToken name, List paramList, 
+    public ASTOperation(Token name, List paramList, 
                         ASTType t, ASTExpression expr, ASTALActionList list) {
         fName = name;
         fParamList = paramList;

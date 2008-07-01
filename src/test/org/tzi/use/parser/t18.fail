@@ -1,1 +1,1 @@
-t18.use:13:7: Inheritance conflict: attribute attr occurs with different types in the base classes of C
+t18.use:13:6: Inheritance conflict: attribute attr occurs with different types in the base classes of C

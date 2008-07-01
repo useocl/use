@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.ocl.type.ObjectType;
@@ -61,7 +61,7 @@ public class ASTCreateCmd extends ASTCmd {
                 List nameList = new ArrayList();
                 Iterator it = fIdList.iterator();
                 while (it.hasNext() ) {
-                    MyToken tok = (MyToken) it.next();
+                    Token tok = (Token) it.next();
                     nameList.add(tok.getText());
                 }
 

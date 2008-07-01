@@ -20,8 +20,8 @@ package org.tzi.use.parser.use;
 
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.al.ALAction;
 import org.tzi.use.uml.al.ALInsert;
@@ -32,7 +32,7 @@ import org.tzi.use.uml.mm.MAssociation;
  */
 public class ASTALInsert extends ASTALLinkAction {
 
-    public ASTALInsert(List exprList, MyToken assoc) {
+    public ASTALInsert(List exprList, Token assoc) {
         super(exprList, assoc);
     }
 

@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser;
 
+import org.antlr.runtime.Token;
+
 /** 
  * Exception thrown during code generation in AST walking.
  *
@@ -46,12 +48,12 @@ public class SemanticException extends Exception {
      * Construct exception with information about source position
      * given by an error token.
      */
-    public SemanticException(MyToken token, String message) {
+    public SemanticException(Token token, String message) {
         super(message);
         fSrcPos = new SrcPos(token);
     }
     
-    public SemanticException(MyToken token, Exception ex) {
+    public SemanticException(Token token, Exception ex) {
         this(token, ex.getMessage());
     }
     

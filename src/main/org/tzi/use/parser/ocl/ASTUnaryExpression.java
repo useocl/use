@@ -21,8 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.Expression;
 
@@ -33,10 +33,10 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTUnaryExpression extends ASTExpression {
-    private MyToken fToken;
+    private Token fToken;
     private ASTExpression fExpr;
 
-    public ASTUnaryExpression(MyToken token, 
+    public ASTUnaryExpression(Token token, 
                               ASTExpression expr) {
         fToken = token;
         fExpr = expr;

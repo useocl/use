@@ -21,8 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpIf;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -35,12 +35,12 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTIfExpression extends ASTExpression {
-    private MyToken fIfToken;
+    private Token fIfToken;
     private ASTExpression fCond;
     private ASTExpression fThen;
     private ASTExpression fElse;
 
-    public ASTIfExpression(MyToken ifToken,
+    public ASTIfExpression(Token ifToken,
                            ASTExpression cond,
                            ASTExpression t, 
                            ASTExpression e) {

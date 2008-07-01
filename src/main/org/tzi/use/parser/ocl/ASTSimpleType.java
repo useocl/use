@@ -21,8 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type;
@@ -35,9 +35,9 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTSimpleType extends ASTType {
-    private MyToken fName;
+    private Token fName;
 
-    public ASTSimpleType(MyToken name) {
+    public ASTSimpleType(Token name) {
         fName = name;
     }
 

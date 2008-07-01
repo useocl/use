@@ -21,8 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpConstEnum;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -35,9 +35,9 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @author  Mark Richters
  */
 public class ASTEnumLiteral extends ASTExpression {
-    private MyToken fValue;
+    private Token fValue;
 
-    public ASTEnumLiteral(MyToken token) {
+    public ASTEnumLiteral(Token token) {
         fValue = token;
     }
 

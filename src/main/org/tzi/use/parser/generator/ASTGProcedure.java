@@ -32,22 +32,22 @@ package org.tzi.use.parser.generator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 
 public class ASTGProcedure extends AST {
-    private MyToken fName;
+    private Token fName;
     private List fParameterDecls; // ASTVariableDeclaration
     private List fLocalDecls; // ASTVariableDeclaration
     private List fInstructions; // ASTGInstruction
 
     public ASTGProcedure (
-                          MyToken name, List parameterDecls, List localDecls, List instructions ) {
+    		Token name, List parameterDecls, List localDecls, List instructions ) {
         fName = name;
         fParameterDecls = parameterDecls;
         fLocalDecls = localDecls;

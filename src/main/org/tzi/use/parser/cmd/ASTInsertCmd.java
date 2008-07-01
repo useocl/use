@@ -24,8 +24,8 @@ package org.tzi.use.parser.cmd;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MAssociation;
@@ -41,9 +41,9 @@ import org.tzi.use.uml.sys.MCmdInsertLink;
  */
 public class ASTInsertCmd extends ASTCmd {
     private List fExprList; // (ASTExpression)
-    private MyToken fAssocName;
+    private Token fAssocName;
 
-    public ASTInsertCmd(List exprList, MyToken assocName) {
+    public ASTInsertCmd(List exprList, Token assocName) {
         fExprList = exprList;
         fAssocName = assocName;
     }

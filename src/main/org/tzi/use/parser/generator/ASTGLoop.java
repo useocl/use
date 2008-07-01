@@ -32,18 +32,18 @@ package org.tzi.use.parser.generator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GLoop;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.SequenceType;
 
 public class ASTGLoop extends ASTGInstruction {
-    MyToken fName;
+	Token fName;
     ASTVariableDeclaration fDecl;
     ASTGocl fSequence;
     List fInstructions;
@@ -51,7 +51,7 @@ public class ASTGLoop extends ASTGInstruction {
     public ASTGLoop( ASTVariableDeclaration decl,
                      ASTGocl sequence,
                      List instructions,
-                     MyToken t) {
+                     Token t) {
         fDecl = decl;
         fSequence = sequence;
         fInstructions = instructions;

@@ -21,8 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.ExpAllInstances;
@@ -37,9 +37,9 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTAllInstancesExpression extends ASTExpression {
-    private MyToken fToken;
+    private Token fToken;
 
-    public ASTAllInstancesExpression(MyToken token) {
+    public ASTAllInstancesExpression(Token token) {
         fToken = token;
     }
 

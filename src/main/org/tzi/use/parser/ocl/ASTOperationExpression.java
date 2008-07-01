@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
@@ -56,15 +56,15 @@ import org.tzi.use.util.StringUtil;
  * @author  Mark Richters
  */
 public class ASTOperationExpression extends ASTExpression {
-    private MyToken fOp;
+    private Token fOp;
     private ASTExpression fSrcExpr;
     private List fArgs;     // (ASTExpression) 
     private boolean fHasParentheses;
     private boolean fFollowsArrow;
     private Expression[] fArgExprs;
-    private MyToken fExplicitRolename;
+    private Token fExplicitRolename;
 
-    public ASTOperationExpression(MyToken op, 
+    public ASTOperationExpression(Token op, 
                                   ASTExpression source, 
                                   boolean followsArrow) {
         fOp = op;
@@ -82,7 +82,7 @@ public class ASTOperationExpression extends ASTExpression {
         fHasParentheses = true;
     }
 
-    public void setExplicitRolename( MyToken rolename ) {
+    public void setExplicitRolename( Token rolename ) {
         fExplicitRolename = rolename;
     }
 

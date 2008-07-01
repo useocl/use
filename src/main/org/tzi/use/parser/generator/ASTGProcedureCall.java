@@ -33,18 +33,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.gen.tool.GProcedureCall;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 
 public class ASTGProcedureCall extends AST {
-    private MyToken fName;
+    private Token fName;
     private List fParameter;   // ASTExpression
 
-    public ASTGProcedureCall(MyToken name) {
+    public ASTGProcedureCall(Token name) {
         fName = name;
         fParameter = new ArrayList();
     }

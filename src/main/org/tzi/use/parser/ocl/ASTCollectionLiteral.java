@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpBagLiteral;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -42,11 +42,11 @@ import org.tzi.use.util.StringUtil;
  * @author  Mark Richters
  */
 public class ASTCollectionLiteral extends ASTExpression {
-    private MyToken fToken;
+    private Token fToken;
     private List fItems;    // (ASTCollectionItem)
     private boolean fHasRanges;
 
-    public ASTCollectionLiteral(MyToken token) {
+    public ASTCollectionLiteral(Token token) {
         fToken = token;
         fItems = new ArrayList();
     }

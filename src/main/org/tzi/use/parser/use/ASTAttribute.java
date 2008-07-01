@@ -21,9 +21,9 @@
 
 package org.tzi.use.parser.use;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.mm.MAttribute;
@@ -35,10 +35,10 @@ import org.tzi.use.uml.mm.MAttribute;
  * @author  Mark Richters
  */
 public class ASTAttribute extends AST {
-    private MyToken fName;
+    private Token fName;
     private ASTType fType;
 
-    public ASTAttribute(MyToken name, ASTType type) {
+    public ASTAttribute(Token name, ASTType type) {
         fName = name;
         fType = type;
     }
@@ -50,7 +50,7 @@ public class ASTAttribute extends AST {
         return attr;
     }
 
-    public MyToken nameToken() {
+    public Token nameToken() {
         return fName;
     }
 

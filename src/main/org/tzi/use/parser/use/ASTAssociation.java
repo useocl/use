@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
@@ -42,11 +42,11 @@ import org.tzi.use.uml.mm.MModel;
  * @author  Mark Richters
  */
 public class ASTAssociation extends AST {
-    private MyToken fKind;
-    private MyToken fName;
+    private Token fKind;
+    private Token fName;
     private List fAssociationEnds; // (ASTAssociationEnd)
 
-    public ASTAssociation(MyToken kind, MyToken name) {
+    public ASTAssociation(Token kind, Token name) {
         fKind = kind;
         fName = name;
         fAssociationEnds = new ArrayList();

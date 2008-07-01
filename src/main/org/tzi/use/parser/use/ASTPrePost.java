@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTType;
@@ -46,13 +46,13 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTPrePost extends AST {
-    private MyToken fClassName;
-    private MyToken fOpName;
+    private Token fClassName;
+    private Token fOpName;
     private List fParamList;    // (ASTVariableDeclaration)
     private ASTType fResultType; // optional
     private List fPrePostClauses;
 
-    public ASTPrePost(MyToken classname, MyToken opname, 
+    public ASTPrePost(Token classname, Token opname, 
                       List paramList, ASTType resultType) {
         fClassName = classname;
         fOpName = opname;

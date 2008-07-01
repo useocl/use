@@ -21,9 +21,9 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
 
@@ -36,13 +36,13 @@ import org.tzi.use.uml.ocl.type.Type;
 
 public abstract class ASTType extends AST {
     // first token of type, useful for error reporting
-    private MyToken fStartToken; 
+    private Token fStartToken; 
 
-    public void setStartToken(MyToken pos) {
+    public void setStartToken(Token pos) {
         fStartToken = pos;
     }
 
-    public MyToken getStartToken() {
+    public Token getStartToken() {
         return fStartToken;
     }
 

@@ -21,11 +21,18 @@
 
 package org.tzi.use.parser.use;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
+import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 
@@ -51,14 +58,42 @@ public class USECompiler {
      * @param  err output stream for error messages
      * @return MModel null if there were any errors
      */
-    public static MModel compileSpecification(Reader in, 
+    public static MModel compileSpecification(String in, 
+                                              String inName,
+                                              PrintWriter err,
+                                              ModelFactory factory) {
+    	
+    	InputStream inStream = new ByteArrayInputStream(in.getBytes());
+    	return USECompiler.compileSpecification(inStream, inName, err, factory);
+    }
+    /**
+     * Compiles a specification.
+     *
+     * @param  in the source to be compiled
+     * @param  inName name of the source stream
+     * @param  err output stream for error messages
+     * @return MModel null if there were any errors
+     */
+    public static MModel compileSpecification(InputStream in, 
                                               String inName,
                                               PrintWriter err,
                                               ModelFactory factory) {
         MModel model = null;
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
-        GUSELexer lexer = new GUSELexer(in);
-        GUSEParser parser = new GUSEParser(lexer);
+        
+        ANTLRInputStream aInput;
+		try {
+			aInput = new ANTLRInputStream(in);
+			aInput.name = inName;
+		} catch (IOException e1) {
+			err.println(e1.getMessage());
+			return model;
+		}
+		
+        GUSELexer lexer = new GUSELexer(aInput);
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        GUSEParser parser = new GUSEParser(tokenStream);
+        
         lexer.init(errHandler);
         parser.init(errHandler);
         try {
@@ -74,17 +109,13 @@ public class USECompiler {
                 if (ctx.errorCount() > 0 )
                     model = null;
             }
-        } catch (antlr.RecognitionException e) {
-            err.println(parser.getFilename() +":" + 
-                        e.getLine() + ":" + e.getColumn() + ": " + 
+        } catch (RecognitionException e) {
+            err.println(parser.getSourceName() +":" + 
+                        e.line + ":" +
+                        e.charPositionInLine + ": " + 
                         e.getMessage());
-        } catch (antlr.TokenStreamRecognitionException e) {
-            err.println(parser.getFilename() +":" + 
-                        e.recog.getLine() + ":" + e.recog.getColumn() + ": " + 
-                        e.recog.getMessage());
-        } catch (antlr.TokenStreamException ex) {
-            err.println(parser.getFilename() +":" + ex.getMessage());
         }
+        
         err.flush();
         return model;
     }

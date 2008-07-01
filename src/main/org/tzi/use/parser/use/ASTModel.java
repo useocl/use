@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTEnumTypeDefinition;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -43,7 +43,7 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @author  Mark Richters
  */
 public class ASTModel extends AST {
-    private MyToken fName;
+    private Token fName;
     private List fEnumTypeDefs; // (ASTEnumTypeDefinition)
     private List fClasses;  // (ASTClass)
     private List fAssociationClasses;   // (ASTAssociationClass)
@@ -51,7 +51,7 @@ public class ASTModel extends AST {
     private List fConstraints;  // (ASTConstraintDefinition)
     private List fPrePosts; // (ASTPrePost)
 
-    public ASTModel(MyToken name) {
+    public ASTModel(Token name) {
         fName = name;
         fEnumTypeDefs = new ArrayList();
         fClasses = new ArrayList();

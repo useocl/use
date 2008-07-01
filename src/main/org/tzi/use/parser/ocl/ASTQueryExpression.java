@@ -21,12 +21,11 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.MyToken;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
-import org.tzi.use.parser.ocl.GOCLParser;
 import org.tzi.use.uml.ocl.expr.ExpAny;
 import org.tzi.use.uml.ocl.expr.ExpCollect;
 import org.tzi.use.uml.ocl.expr.ExpExists;
@@ -50,12 +49,12 @@ import org.tzi.use.uml.ocl.type.CollectionType;
  * @author  Mark Richters
  */
 public class ASTQueryExpression extends ASTExpression {
-    private MyToken fOp;
+    private Token fOp;
     private ASTExpression fRange; // may be null
     private ASTElemVarsDeclaration fDeclList;
     private ASTExpression fExpr;
 
-    public ASTQueryExpression(MyToken op, 
+    public ASTQueryExpression(Token op, 
                               ASTExpression range, 
                               ASTElemVarsDeclaration declList,
                               ASTExpression expr) {
