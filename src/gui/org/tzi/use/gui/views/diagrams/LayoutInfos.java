@@ -23,6 +23,7 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -148,7 +149,10 @@ public class LayoutInfos {
         if ( fNaryEdgeToHalfEdgeMap != null ) {
             it = fNaryEdgeToHalfEdgeMap.values().iterator(); 
             while ( it.hasNext() ) {
-                ((EdgeBase) it.next()).resetNodesOnEdges();
+            	List edges = (List) it.next();
+            	for (Iterator it1 = edges.iterator();it1.hasNext();)
+            		((EdgeBase) it1.next()).resetNodesOnEdges();
+            		
             }
         }
         if ( fEdgeNodeToEdgeMap != null ) {
