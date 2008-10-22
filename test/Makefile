@@ -29,9 +29,11 @@ test-out1: t1.out
 test-out2: t2.out
 	$(USE) $(basename $<).use $(basename $<).cmd
 
+# Die Zeit, die der Generator benötigt, wird aus dem Ergebnis herausgenommen.
 %.result: %.in %.use
 	-rm -f $@
-	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | tail --lines=+2 | diff -u $(basename $<).out - > $(basename $<).result
+	dos2unix $(basename $<).out
+	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | diff -u $(basename $<).out - > $(basename $<).result
 
 clean:
 	rm -f $(RESULTFILES) *~ core

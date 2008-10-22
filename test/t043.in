@@ -1,0 +1,94 @@
+gen flags Snapshot::birth_pos_civstatAssigned +d
+gen flags Snapshot::birth_pos_genderAssigned +d
+gen flags Snapshot::birth_pos_isAliveAssigned +d
+gen flags Snapshot::birth_pos_nameAssigned +d
+gen flags Snapshot::birth_pre_freshUnlinkedPerson +d
+gen flags Snapshot::death_pos_husbandWidowed +d
+gen flags Snapshot::death_pos_notAlive +d
+gen flags Snapshot::death_pos_wifeWidowed +d
+gen flags Snapshot::death_pre_isAlive +d
+gen flags Snapshot::divorce_pos_husbandDivorced +d
+gen flags Snapshot::divorce_pos_isDivorced +d
+gen flags Snapshot::divorce_pos_wifeDivorced +d
+gen flags Snapshot::divorce_pre_husbandAlive +d
+gen flags Snapshot::divorce_pre_isAlive +d
+gen flags Snapshot::divorce_pre_isMarried +d
+gen flags Snapshot::divorce_pre_wifeAlive +d
+gen flags Snapshot::inv_attributesDefined +d
+gen flags Snapshot::inv_femaleHasNoWife +d
+gen flags Snapshot::inv_maleHasNoHusband +d
+gen flags Snapshot::inv_nameCapitalThenSmallLetters +d
+gen flags Snapshot::inv_nameIsUnique +d
+gen flags Snapshot::marry_pos_femaleHasMarriedHusband +d
+gen flags Snapshot::marry_pos_isMarried +d
+gen flags Snapshot::marry_pos_maleHasMarriedWife +d
+gen flags Snapshot::marry_pre_aSpouseAlive +d
+gen flags Snapshot::marry_pre_aSpouseDefined +d
+gen flags Snapshot::marry_pre_aSpouseUnmarried +d
+gen flags Snapshot::marry_pre_differentGenders +d
+gen flags Snapshot::marry_pre_isAlive +d
+gen flags Snapshot::marry_pre_isUnmarried +d
+gen start -s -r 1568 t043.assl transition(1,1)
+gen result
+*Random number generator was initialized with 1568.
+*Checked 1 snapshots.
+*Result: Valid state found.
+*Commands to produce the valid state:
+*!create Person1 : Person
+*!set @Person1.name := 'Cam'
+*!set @Person1.civstat := #divorced
+*!set @Person1.gender := #female
+*!set @Person1.alive := true
+*!create Snapshot1 : Snapshot
+*!insert (Snapshot1,Person1) into SnapshotPerson
+*!create Person2 : Person
+*!set @Person2.name := 'Cam'
+*!set @Person2.civstat := #divorced
+*!set @Person2.gender := #female
+*!set @Person2.alive := true
+*!create Snapshot2 : Snapshot
+*!insert (Snapshot2,Person2) into SnapshotPerson
+*!insert (Person1,Person2) into PredSuccPerson
+*!create deathC1 : deathC
+*!set @deathC1.aSelf := @Person1
+*!insert (Snapshot1,Snapshot2,deathC1) into PredSuccOpC
+*!set @Person2.alive := false
+gen result accept
+*Generated result (system state) accepted.
+check
+*checking structure...
+*checking invariants...
+*checking invariant (1) `Snapshot::birth_pos_civstatAssigned': OK.
+*checking invariant (2) `Snapshot::birth_pos_genderAssigned': OK.
+*checking invariant (3) `Snapshot::birth_pos_isAliveAssigned': OK.
+*checking invariant (4) `Snapshot::birth_pos_nameAssigned': OK.
+*checking invariant (5) `Snapshot::birth_pre_freshUnlinkedPerson': OK.
+*checking invariant (6) `Snapshot::death_pos_husbandWidowed': OK.
+*checking invariant (7) `Snapshot::death_pos_notAlive': OK.
+*checking invariant (8) `Snapshot::death_pos_wifeWidowed': OK.
+*checking invariant (9) `Snapshot::death_pre_isAlive': OK.
+*checking invariant (10) `Snapshot::divorce_pos_husbandDivorced': OK.
+*checking invariant (11) `Snapshot::divorce_pos_isDivorced': OK.
+*checking invariant (12) `Snapshot::divorce_pos_wifeDivorced': OK.
+*checking invariant (13) `Snapshot::divorce_pre_husbandAlive': OK.
+*checking invariant (14) `Snapshot::divorce_pre_isAlive': OK.
+*checking invariant (15) `Snapshot::divorce_pre_isMarried': OK.
+*checking invariant (16) `Snapshot::divorce_pre_wifeAlive': OK.
+*checking invariant (17) `Snapshot::inv_attributesDefined': OK.
+*checking invariant (18) `Snapshot::inv_femaleHasNoWife': OK.
+*checking invariant (19) `Snapshot::inv_maleHasNoHusband': OK.
+*checking invariant (20) `Snapshot::inv_nameCapitalThenSmallLetters': OK.
+*checking invariant (21) `Snapshot::inv_nameIsUnique': OK.
+*checking invariant (22) `Snapshot::marry_pos_femaleHasMarriedHusband': OK.
+*checking invariant (23) `Snapshot::marry_pos_isMarried': OK.
+*checking invariant (24) `Snapshot::marry_pos_maleHasMarriedWife': OK.
+*checking invariant (25) `Snapshot::marry_pre_aSpouseAlive': OK.
+*checking invariant (26) `Snapshot::marry_pre_aSpouseDefined': OK.
+*checking invariant (27) `Snapshot::marry_pre_aSpouseUnmarried': OK.
+*checking invariant (28) `Snapshot::marry_pre_differentGenders': OK.
+*checking invariant (29) `Snapshot::marry_pre_isAlive': OK.
+*checking invariant (30) `Snapshot::marry_pre_isUnmarried': OK.
+*checked 30 invariants , 0 failures.
+?Sequence{Person1.succ,deathC1.aSelf,deathC1.aSelf.succ}
+*-> Sequence{@Person2,@Person1,@Person2} : Sequence(Person)
+exit

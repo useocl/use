@@ -3,15 +3,19 @@
 TOPDIR = ../..
 
 # change switch to `-qv' to get output in case of test failures
-USE = $(TOPDIR)/bin/use -q
+ifeq ($(OS), Windows_NT)
+	USE = $(TOPDIR)/bin/use.bat -q
+else
+	USE = $(TOPDIR)/bin/use -q
+endif
 
 GOOD_CMD_FILES := $(wildcard *-good*.cmd)
-GOOD_DONE_FILES := $(GOOD_CMD_FILES:.cmd=.done) 
+GOOD_DONE_FILES := $(GOOD_CMD_FILES:.cmd=.done)
 
 BAD_CMD_FILES := $(wildcard *-bad*.cmd)
-BAD_DONE_FILES := $(BAD_CMD_FILES:.cmd=.done) 
+BAD_DONE_FILES := $(BAD_CMD_FILES:.cmd=.done)
 
-all: 
+all:
 
 test: test-good test-bad
 
