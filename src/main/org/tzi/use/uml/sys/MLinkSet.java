@@ -56,7 +56,7 @@ public final class MLinkSet {
         }
         public final boolean equals(Object o) {
             CacheEntry e = (CacheEntry)o;
-            return e.end == end && e.object == object;
+            return e.end == end && e.object.equals( object );
         }
     }
     
