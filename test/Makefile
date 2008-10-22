@@ -2,12 +2,16 @@
 
 TOPDIR = ..
 
-USE = $(TOPDIR)/bin/use -nogui -nr
+ifeq ($(OS), Windows_NT)
+	USE = $(TOPDIR)/bin/use.bat -nogui -nr
+else
+	USE = $(TOPDIR)/bin/use -nogui -nr
+endif
 
 INFILES := $(wildcard *.in)
-OUTFILES := $(INFILES:.in=.out) 
-CMDFILES := $(INFILES:.in=.cmd) 
-RESULTFILES := $(INFILES:.in=.result) 
+OUTFILES := $(INFILES:.in=.out)
+CMDFILES := $(INFILES:.in=.cmd)
+RESULTFILES := $(INFILES:.in=.result)
 
 all: $(OUTFILES) $(CMDFILES)
 
@@ -34,4 +38,3 @@ clean:
 
 maintainer-clean: clean
 	rm -f $(OUTFILES) $(CMDFILES)
-
