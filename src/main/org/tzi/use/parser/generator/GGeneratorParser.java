@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GGenerator.g 2008-07-01 13:26:40
+// $ANTLR 3.1b1 GGenerator.g 2009-03-06 10:35:37
  
 package org.tzi.use.parser.generator;
 
@@ -1201,69 +1201,69 @@ public class GGeneratorParser extends Parser {
     // $ANTLR end procedureCallOnly
 
     // Delegated rules
-    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
-    public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
-    public ASTAssociationEnd associationEnd() throws RecognitionException { return gGUSEBase.associationEnd(); }
-    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
-    public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
-    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
-    public ASTPrePost prePost() throws RecognitionException { return gGUSEBase.prePost(); }
-    public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
-    public ASTALExecute alExec() throws RecognitionException { return gGUSEBase.alExec(); }
-    public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
-    public ASTPrePostClause prePostClause() throws RecognitionException { return gGUSEBase.prePostClause(); }
-    public ASTALSet alSet() throws RecognitionException { return gGUSEBase.alSet(); }
     public ASTExpression conditionalAndExpression() throws RecognitionException { return gGOCLBase.conditionalAndExpression(); }
-    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
+    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
+    public ASTExpression equalityExpression() throws RecognitionException { return gGOCLBase.equalityExpression(); }
+    public ASTMultiplicity multiplicity() throws RecognitionException { return gGUSEBase.multiplicity(); }
+    public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
+    public ASTVariableDeclaration variableDeclaration() throws RecognitionException { return gGOCLBase.variableDeclaration(); }
+    public ASTALExecute alExec() throws RecognitionException { return gGUSEBase.alExec(); }
+    public int multiplicitySpec() throws RecognitionException { return gGUSEBase.multiplicitySpec(); }
     public void generalClassDefinition(ASTModel n) throws RecognitionException { gGUSEBase.generalClassDefinition(n); }
-    public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
+    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
+    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
+    public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
+    public ASTALDelete alDelete() throws RecognitionException { return gGUSEBase.alDelete(); }
+    public ASTALSet alSet() throws RecognitionException { return gGUSEBase.alSet(); }
     public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
+    public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
+    public ASTEnumTypeDefinition enumTypeDefinition() throws RecognitionException { return gGUSEBase.enumTypeDefinition(); }
     public ASTExpression expression() throws RecognitionException { return gGOCLBase.expression(); }
-    public ASTAssociationClass associationClassDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.associationClassDefinition(isAbstract); }
-    public ASTInvariantClause invariantClause() throws RecognitionException { return gGUSEBase.invariantClause(); }
+    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
+    public ASTExpression postfixExpression() throws RecognitionException { return gGOCLBase.postfixExpression(); }
+    public ASTALCreateVar alCreateVar() throws RecognitionException { return gGUSEBase.alCreateVar(); }
+    public ASTPrePost prePost() throws RecognitionException { return gGUSEBase.prePost(); }
+    public ASTAssociationEnd associationEnd() throws RecognitionException { return gGUSEBase.associationEnd(); }
+    public ASTExpression conditionalImpliesExpression() throws RecognitionException { return gGOCLBase.conditionalImpliesExpression(); }
+    public ASTPrePostClause prePostClause() throws RecognitionException { return gGUSEBase.prePostClause(); }
+    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
     public ASTClass classDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.classDefinition(isAbstract); }
-    public ASTExpression primaryExpression() throws RecognitionException { return gGOCLBase.primaryExpression(); }
-    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
-    public ASTOperation operationDefinition() throws RecognitionException { return gGUSEBase.operationDefinition(); }
+    public ASTAttribute attributeDefinition() throws RecognitionException { return gGUSEBase.attributeDefinition(); }
+    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
+    public ASTExpression unaryExpression() throws RecognitionException { return gGOCLBase.unaryExpression(); }
+    public ASTExpression conditionalXOrExpression() throws RecognitionException { return gGOCLBase.conditionalXOrExpression(); }
     public ASTALFor alFor() throws RecognitionException { return gGUSEBase.alFor(); }
     public List idList() throws RecognitionException { return gGOCLBase.idList(); }
-    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
-    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
-    public ASTVariableDeclaration variableDeclaration() throws RecognitionException { return gGOCLBase.variableDeclaration(); }
-    public ASTExpression unaryExpression() throws RecognitionException { return gGOCLBase.unaryExpression(); }
-    public ASTALDelete alDelete() throws RecognitionException { return gGUSEBase.alDelete(); }
-    public ASTConstraintDefinition invariant() throws RecognitionException { return gGUSEBase.invariant(); }
-    public ASTExpression relationalExpression() throws RecognitionException { return gGOCLBase.relationalExpression(); }
-    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
-    public ASTExpression conditionalXOrExpression() throws RecognitionException { return gGOCLBase.conditionalXOrExpression(); }
-    public ASTALSetCreate alSetCreate() throws RecognitionException { return gGUSEBase.alSetCreate(); }
-    public ASTAttribute attributeDefinition() throws RecognitionException { return gGUSEBase.attributeDefinition(); }
-    public ASTALIf alIf() throws RecognitionException { return gGUSEBase.alIf(); }
-    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
-    public ASTAssociation associationDefinition() throws RecognitionException { return gGUSEBase.associationDefinition(); }
-    public ASTALWhile alWhile() throws RecognitionException { return gGUSEBase.alWhile(); }
-    public ASTALCreateVar alCreateVar() throws RecognitionException { return gGUSEBase.alCreateVar(); }
-    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
-    public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
-    public ASTEnumTypeDefinition enumTypeDefinition() throws RecognitionException { return gGUSEBase.enumTypeDefinition(); }
-    public ASTALDestroy alDestroy() throws RecognitionException { return gGUSEBase.alDestroy(); }
-    public ASTALInsert alInsert() throws RecognitionException { return gGUSEBase.alInsert(); }
-    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
-    public ASTALAction alAction() throws RecognitionException { return gGUSEBase.alAction(); }
-    public ASTExpression conditionalImpliesExpression() throws RecognitionException { return gGOCLBase.conditionalImpliesExpression(); }
-    public ASTMultiplicity multiplicity() throws RecognitionException { return gGUSEBase.multiplicity(); }
-    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
     public ASTMultiplicityRange multiplicityRange() throws RecognitionException { return gGUSEBase.multiplicityRange(); }
-    public ASTExpression postfixExpression() throws RecognitionException { return gGOCLBase.postfixExpression(); }
-    public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
-    public ASTALActionList alActionList() throws RecognitionException { return gGUSEBase.alActionList(); }
-    public List paramList() throws RecognitionException { return gGOCLBase.paramList(); }
+    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
     public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
-    public ASTExpression equalityExpression() throws RecognitionException { return gGOCLBase.equalityExpression(); }
-    public ASTExpression multiplicativeExpression() throws RecognitionException { return gGOCLBase.multiplicativeExpression(); }
+    public ASTAssociationClass associationClassDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.associationClassDefinition(isAbstract); }
     public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
+    public ASTConstraintDefinition invariant() throws RecognitionException { return gGUSEBase.invariant(); }
+    public ASTALActionList alActionList() throws RecognitionException { return gGUSEBase.alActionList(); }
+    public ASTExpression multiplicativeExpression() throws RecognitionException { return gGOCLBase.multiplicativeExpression(); }
+    public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
+    public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
+    public ASTALWhile alWhile() throws RecognitionException { return gGUSEBase.alWhile(); }
+    public ASTALInsert alInsert() throws RecognitionException { return gGUSEBase.alInsert(); }
+    public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
+    public ASTExpression primaryExpression() throws RecognitionException { return gGOCLBase.primaryExpression(); }
+    public ASTInvariantClause invariantClause() throws RecognitionException { return gGUSEBase.invariantClause(); }
+    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
+    public ASTALDestroy alDestroy() throws RecognitionException { return gGUSEBase.alDestroy(); }
+    public ASTAssociation associationDefinition() throws RecognitionException { return gGUSEBase.associationDefinition(); }
+    public ASTExpression relationalExpression() throws RecognitionException { return gGOCLBase.relationalExpression(); }
+    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
+    public List paramList() throws RecognitionException { return gGOCLBase.paramList(); }
+    public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
     public ASTCollectionLiteral collectionLiteral() throws RecognitionException { return gGOCLBase.collectionLiteral(); }
-    public int multiplicitySpec() throws RecognitionException { return gGUSEBase.multiplicitySpec(); }
+    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
+    public ASTALSetCreate alSetCreate() throws RecognitionException { return gGUSEBase.alSetCreate(); }
+    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
+    public ASTOperation operationDefinition() throws RecognitionException { return gGUSEBase.operationDefinition(); }
+    public ASTALIf alIf() throws RecognitionException { return gGUSEBase.alIf(); }
+    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
+    public ASTALAction alAction() throws RecognitionException { return gGUSEBase.alAction(); }
 
 
  

@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GOCLLexerRules.g 2008-07-01 13:26:32
+// $ANTLR 3.1b1 GOCLLexerRules.g 2009-03-06 10:35:28
 
 package org.tzi.use.parser.ocl; 
 
@@ -1096,32 +1096,34 @@ public class GOCL_GOCLLexerRules extends Lexer {
     // $ANTLR start REAL
     public final void mREAL() throws RecognitionException {
         try {
-            // GOCLLexerRules.g:110:5: ( INT ( '.' INT | ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? ) )
-            // GOCLLexerRules.g:111:5: INT ( '.' INT | ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? )
+            // GOCLLexerRules.g:110:5: ( INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT ) )
+            // GOCLLexerRules.g:111:5: INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
             {
             mINT(); if (state.failed) return ;
-            // GOCLLexerRules.g:111:9: ( '.' INT | ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? )
-            int alt9=2;
-            int LA9_0 = input.LA(1);
+            // GOCLLexerRules.g:111:9: ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
+            int alt10=2;
+            int LA10_0 = input.LA(1);
 
-            if ( (LA9_0=='.') ) {
-                alt9=1;
+            if ( (LA10_0=='.') ) {
+                alt10=1;
+            }
+            else if ( (LA10_0=='E'||LA10_0=='e') ) {
+                alt10=2;
             }
             else {
-                alt9=2;}
-            switch (alt9) {
+                if (state.backtracking>0) {state.failed=true; return ;}
+                NoViableAltException nvae =
+                    new NoViableAltException("", 10, 0, input);
+
+                throw nvae;
+            }
+            switch (alt10) {
                 case 1 :
-                    // GOCLLexerRules.g:111:11: '.' INT
+                    // GOCLLexerRules.g:111:10: '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
                     {
                     match('.'); if (state.failed) return ;
                     mINT(); if (state.failed) return ;
-
-                    }
-                    break;
-                case 2 :
-                    // GOCLLexerRules.g:111:21: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
-                    {
-                    // GOCLLexerRules.g:111:21: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
+                    // GOCLLexerRules.g:111:18: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
                     int alt8=2;
                     int LA8_0 = input.LA(1);
 
@@ -1130,7 +1132,7 @@ public class GOCL_GOCLLexerRules extends Lexer {
                     }
                     switch (alt8) {
                         case 1 :
-                            // GOCLLexerRules.g:111:23: ( 'e' | 'E' ) ( '+' | '-' )? INT
+                            // GOCLLexerRules.g:111:19: ( 'e' | 'E' ) ( '+' | '-' )? INT
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -1142,7 +1144,7 @@ public class GOCL_GOCLLexerRules extends Lexer {
                                 recover(mse);
                                 throw mse;}
 
-                            // GOCLLexerRules.g:111:33: ( '+' | '-' )?
+                            // GOCLLexerRules.g:111:31: ( '+' | '-' )?
                             int alt7=2;
                             int LA7_0 = input.LA(1);
 
@@ -1179,6 +1181,50 @@ public class GOCL_GOCLLexerRules extends Lexer {
 
                     }
                     break;
+                case 2 :
+                    // GOCLLexerRules.g:111:52: ( 'e' | 'E' ) ( '+' | '-' )? INT
+                    {
+                    if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                        input.consume();
+                    state.failed=false;
+                    }
+                    else {
+                        if (state.backtracking>0) {state.failed=true; return ;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
+
+                    // GOCLLexerRules.g:111:64: ( '+' | '-' )?
+                    int alt9=2;
+                    int LA9_0 = input.LA(1);
+
+                    if ( (LA9_0=='+'||LA9_0=='-') ) {
+                        alt9=1;
+                    }
+                    switch (alt9) {
+                        case 1 :
+                            // GOCLLexerRules.g:
+                            {
+                            if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
+                                input.consume();
+                            state.failed=false;
+                            }
+                            else {
+                                if (state.backtracking>0) {state.failed=true; return ;}
+                                MismatchedSetException mse = new MismatchedSetException(null,input);
+                                recover(mse);
+                                throw mse;}
+
+
+                            }
+                            break;
+
+                    }
+
+                    mINT(); if (state.failed) return ;
+
+                    }
+                    break;
 
             }
 
@@ -1196,29 +1242,32 @@ public class GOCL_GOCLLexerRules extends Lexer {
         try {
             int _type = RANGE_OR_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // GOCLLexerRules.g:114:13: ( ( INT '..' )=> INT | ( INT '.' INT )=> REAL | ( INT ( 'e' | 'E' ) )=> REAL | INT )
-            int alt10=4;
-            int LA10_0 = input.LA(1);
+            // GOCLLexerRules.g:114:13: ( ( INT '..' )=> INT | ( REAL )=> REAL | INT )
+            int alt11=3;
+            int LA11_0 = input.LA(1);
 
-            if ( ((LA10_0>='0' && LA10_0<='9')) ) {
-                int LA10_1 = input.LA(2);
+            if ( ((LA11_0>='0' && LA11_0<='9')) ) {
+                int LA11_1 = input.LA(2);
 
-                if ( (synpred1_GOCLLexerRules()) ) {
-                    alt10=1;
+                if ( ((LA11_1>='0' && LA11_1<='9')) && (synpred2_GOCLLexerRules())) {
+                    alt11=2;
                 }
-                else if ( (synpred2_GOCLLexerRules()) ) {
-                    alt10=2;
+                else if ( (LA11_1=='.') && (synpred2_GOCLLexerRules())) {
+                    alt11=2;
                 }
-                else if ( (synpred3_GOCLLexerRules()) ) {
-                    alt10=3;
+                else if ( (LA11_1=='E'||LA11_1=='e') && (synpred2_GOCLLexerRules())) {
+                    alt11=2;
+                }
+                else if ( (synpred1_GOCLLexerRules()) ) {
+                    alt11=1;
                 }
                 else if ( (true) ) {
-                    alt10=4;
+                    alt11=3;
                 }
                 else {
                     if (state.backtracking>0) {state.failed=true; return ;}
                     NoViableAltException nvae =
-                        new NoViableAltException("", 10, 1, input);
+                        new NoViableAltException("", 11, 1, input);
 
                     throw nvae;
                 }
@@ -1226,11 +1275,11 @@ public class GOCL_GOCLLexerRules extends Lexer {
             else {
                 if (state.backtracking>0) {state.failed=true; return ;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 10, 0, input);
+                    new NoViableAltException("", 11, 0, input);
 
                 throw nvae;
             }
-            switch (alt10) {
+            switch (alt11) {
                 case 1 :
                     // GOCLLexerRules.g:115:7: ( INT '..' )=> INT
                     {
@@ -1242,7 +1291,7 @@ public class GOCL_GOCLLexerRules extends Lexer {
                     }
                     break;
                 case 2 :
-                    // GOCLLexerRules.g:116:7: ( INT '.' INT )=> REAL
+                    // GOCLLexerRules.g:116:7: ( REAL )=> REAL
                     {
                     mREAL(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -1252,17 +1301,7 @@ public class GOCL_GOCLLexerRules extends Lexer {
                     }
                     break;
                 case 3 :
-                    // GOCLLexerRules.g:117:7: ( INT ( 'e' | 'E' ) )=> REAL
-                    {
-                    mREAL(); if (state.failed) return ;
-                    if ( state.backtracking==0 ) {
-                       _type=REAL; 
-                    }
-
-                    }
-                    break;
-                case 4 :
-                    // GOCLLexerRules.g:118:9: INT
+                    // GOCLLexerRules.g:117:9: INT
                     {
                     mINT(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -1286,27 +1325,27 @@ public class GOCL_GOCLLexerRules extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // GOCLLexerRules.g:123:7: ( '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\'' )
-            // GOCLLexerRules.g:124:5: '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\''
+            // GOCLLexerRules.g:122:7: ( '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\'' )
+            // GOCLLexerRules.g:123:5: '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\''
             {
             match('\''); if (state.failed) return ;
-            // GOCLLexerRules.g:124:10: (~ ( '\\'' | '\\\\' ) | ESC )*
-            loop11:
+            // GOCLLexerRules.g:123:10: (~ ( '\\'' | '\\\\' ) | ESC )*
+            loop12:
             do {
-                int alt11=3;
-                int LA11_0 = input.LA(1);
+                int alt12=3;
+                int LA12_0 = input.LA(1);
 
-                if ( ((LA11_0>='\u0000' && LA11_0<='&')||(LA11_0>='(' && LA11_0<='[')||(LA11_0>=']' && LA11_0<='\uFFFE')) ) {
-                    alt11=1;
+                if ( ((LA12_0>='\u0000' && LA12_0<='&')||(LA12_0>='(' && LA12_0<='[')||(LA12_0>=']' && LA12_0<='\uFFFE')) ) {
+                    alt12=1;
                 }
-                else if ( (LA11_0=='\\') ) {
-                    alt11=2;
+                else if ( (LA12_0=='\\') ) {
+                    alt12=2;
                 }
 
 
-                switch (alt11) {
+                switch (alt12) {
             	case 1 :
-            	    // GOCLLexerRules.g:124:12: ~ ( '\\'' | '\\\\' )
+            	    // GOCLLexerRules.g:123:12: ~ ( '\\'' | '\\\\' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
             	        input.consume();
@@ -1322,7 +1361,7 @@ public class GOCL_GOCLLexerRules extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // GOCLLexerRules.g:124:27: ESC
+            	    // GOCLLexerRules.g:123:27: ESC
             	    {
             	    mESC(); if (state.failed) return ;
 
@@ -1330,7 +1369,7 @@ public class GOCL_GOCLLexerRules extends Lexer {
             	    break;
 
             	default :
-            	    break loop11;
+            	    break loop12;
                 }
             } while (true);
 
@@ -1349,56 +1388,56 @@ public class GOCL_GOCLLexerRules extends Lexer {
     // $ANTLR start ESC
     public final void mESC() throws RecognitionException {
         try {
-            // GOCLLexerRules.g:136:1: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
-            // GOCLLexerRules.g:137:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // GOCLLexerRules.g:135:1: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
+            // GOCLLexerRules.g:136:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             {
             match('\\'); if (state.failed) return ;
-            // GOCLLexerRules.g:138:6: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
-            int alt15=11;
+            // GOCLLexerRules.g:137:6: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            int alt16=11;
             switch ( input.LA(1) ) {
             case 'n':
                 {
-                alt15=1;
+                alt16=1;
                 }
                 break;
             case 'r':
                 {
-                alt15=2;
+                alt16=2;
                 }
                 break;
             case 't':
                 {
-                alt15=3;
+                alt16=3;
                 }
                 break;
             case 'b':
                 {
-                alt15=4;
+                alt16=4;
                 }
                 break;
             case 'f':
                 {
-                alt15=5;
+                alt16=5;
                 }
                 break;
             case '\"':
                 {
-                alt15=6;
+                alt16=6;
                 }
                 break;
             case '\'':
                 {
-                alt15=7;
+                alt16=7;
                 }
                 break;
             case '\\':
                 {
-                alt15=8;
+                alt16=8;
                 }
                 break;
             case 'u':
                 {
-                alt15=9;
+                alt16=9;
                 }
                 break;
             case '0':
@@ -1406,7 +1445,7 @@ public class GOCL_GOCLLexerRules extends Lexer {
             case '2':
             case '3':
                 {
-                alt15=10;
+                alt16=10;
                 }
                 break;
             case '4':
@@ -1414,76 +1453,76 @@ public class GOCL_GOCLLexerRules extends Lexer {
             case '6':
             case '7':
                 {
-                alt15=11;
+                alt16=11;
                 }
                 break;
             default:
                 if (state.backtracking>0) {state.failed=true; return ;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 15, 0, input);
+                    new NoViableAltException("", 16, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt15) {
+            switch (alt16) {
                 case 1 :
-                    // GOCLLexerRules.g:138:8: 'n'
+                    // GOCLLexerRules.g:137:8: 'n'
                     {
                     match('n'); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // GOCLLexerRules.g:139:8: 'r'
+                    // GOCLLexerRules.g:138:8: 'r'
                     {
                     match('r'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // GOCLLexerRules.g:140:8: 't'
+                    // GOCLLexerRules.g:139:8: 't'
                     {
                     match('t'); if (state.failed) return ;
 
                     }
                     break;
                 case 4 :
-                    // GOCLLexerRules.g:141:8: 'b'
+                    // GOCLLexerRules.g:140:8: 'b'
                     {
                     match('b'); if (state.failed) return ;
 
                     }
                     break;
                 case 5 :
-                    // GOCLLexerRules.g:142:8: 'f'
+                    // GOCLLexerRules.g:141:8: 'f'
                     {
                     match('f'); if (state.failed) return ;
 
                     }
                     break;
                 case 6 :
-                    // GOCLLexerRules.g:143:8: '\"'
+                    // GOCLLexerRules.g:142:8: '\"'
                     {
                     match('\"'); if (state.failed) return ;
 
                     }
                     break;
                 case 7 :
-                    // GOCLLexerRules.g:144:8: '\\''
+                    // GOCLLexerRules.g:143:8: '\\''
                     {
                     match('\''); if (state.failed) return ;
 
                     }
                     break;
                 case 8 :
-                    // GOCLLexerRules.g:145:8: '\\\\'
+                    // GOCLLexerRules.g:144:8: '\\\\'
                     {
                     match('\\'); if (state.failed) return ;
 
                     }
                     break;
                 case 9 :
-                    // GOCLLexerRules.g:146:8: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+                    // GOCLLexerRules.g:145:8: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                     {
                     match('u'); if (state.failed) return ;
                     mHEX_DIGIT(); if (state.failed) return ;
@@ -1494,31 +1533,31 @@ public class GOCL_GOCLLexerRules extends Lexer {
                     }
                     break;
                 case 10 :
-                    // GOCLLexerRules.g:147:8: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
+                    // GOCLLexerRules.g:146:8: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
                     {
                     matchRange('0','3'); if (state.failed) return ;
-                    // GOCLLexerRules.g:147:17: ( '0' .. '7' ( '0' .. '7' )? )?
-                    int alt13=2;
-                    int LA13_0 = input.LA(1);
+                    // GOCLLexerRules.g:146:17: ( '0' .. '7' ( '0' .. '7' )? )?
+                    int alt14=2;
+                    int LA14_0 = input.LA(1);
 
-                    if ( ((LA13_0>='0' && LA13_0<='7')) ) {
-                        alt13=1;
+                    if ( ((LA14_0>='0' && LA14_0<='7')) ) {
+                        alt14=1;
                     }
-                    switch (alt13) {
+                    switch (alt14) {
                         case 1 :
-                            // GOCLLexerRules.g:147:18: '0' .. '7' ( '0' .. '7' )?
+                            // GOCLLexerRules.g:146:18: '0' .. '7' ( '0' .. '7' )?
                             {
                             matchRange('0','7'); if (state.failed) return ;
-                            // GOCLLexerRules.g:147:27: ( '0' .. '7' )?
-                            int alt12=2;
-                            int LA12_0 = input.LA(1);
+                            // GOCLLexerRules.g:146:27: ( '0' .. '7' )?
+                            int alt13=2;
+                            int LA13_0 = input.LA(1);
 
-                            if ( ((LA12_0>='0' && LA12_0<='7')) ) {
-                                alt12=1;
+                            if ( ((LA13_0>='0' && LA13_0<='7')) ) {
+                                alt13=1;
                             }
-                            switch (alt12) {
+                            switch (alt13) {
                                 case 1 :
-                                    // GOCLLexerRules.g:147:28: '0' .. '7'
+                                    // GOCLLexerRules.g:146:28: '0' .. '7'
                                     {
                                     matchRange('0','7'); if (state.failed) return ;
 
@@ -1537,19 +1576,19 @@ public class GOCL_GOCLLexerRules extends Lexer {
                     }
                     break;
                 case 11 :
-                    // GOCLLexerRules.g:147:45: '4' .. '7' ( '0' .. '7' )?
+                    // GOCLLexerRules.g:146:45: '4' .. '7' ( '0' .. '7' )?
                     {
                     matchRange('4','7'); if (state.failed) return ;
-                    // GOCLLexerRules.g:147:54: ( '0' .. '7' )?
-                    int alt14=2;
-                    int LA14_0 = input.LA(1);
+                    // GOCLLexerRules.g:146:54: ( '0' .. '7' )?
+                    int alt15=2;
+                    int LA15_0 = input.LA(1);
 
-                    if ( ((LA14_0>='0' && LA14_0<='7')) ) {
-                        alt14=1;
+                    if ( ((LA15_0>='0' && LA15_0<='7')) ) {
+                        alt15=1;
                     }
-                    switch (alt14) {
+                    switch (alt15) {
                         case 1 :
-                            // GOCLLexerRules.g:147:55: '0' .. '7'
+                            // GOCLLexerRules.g:146:55: '0' .. '7'
                             {
                             matchRange('0','7'); if (state.failed) return ;
 
@@ -1576,8 +1615,8 @@ public class GOCL_GOCLLexerRules extends Lexer {
     // $ANTLR start HEX_DIGIT
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // GOCLLexerRules.g:153:10: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
-            // GOCLLexerRules.g:154:5: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
+            // GOCLLexerRules.g:152:10: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
+            // GOCLLexerRules.g:153:5: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f') ) {
                 input.consume();
@@ -1603,8 +1642,8 @@ public class GOCL_GOCLLexerRules extends Lexer {
         try {
             int _type = IDENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // GOCLLexerRules.g:165:9: ( ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // GOCLLexerRules.g:166:5: ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // GOCLLexerRules.g:164:9: ( ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // GOCLLexerRules.g:165:5: ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
             if ( input.LA(1)=='$'||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1616,18 +1655,18 @@ public class GOCL_GOCLLexerRules extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // GOCLLexerRules.g:166:39: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
-            loop16:
+            // GOCLLexerRules.g:165:39: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            loop17:
             do {
-                int alt16=2;
-                int LA16_0 = input.LA(1);
+                int alt17=2;
+                int LA17_0 = input.LA(1);
 
-                if ( ((LA16_0>='0' && LA16_0<='9')||(LA16_0>='A' && LA16_0<='Z')||LA16_0=='_'||(LA16_0>='a' && LA16_0<='z')) ) {
-                    alt16=1;
+                if ( ((LA17_0>='0' && LA17_0<='9')||(LA17_0>='A' && LA17_0<='Z')||LA17_0=='_'||(LA17_0>='a' && LA17_0<='z')) ) {
+                    alt17=1;
                 }
 
 
-                switch (alt16) {
+                switch (alt17) {
             	case 1 :
             	    // GOCLLexerRules.g:
             	    {
@@ -1646,7 +1685,7 @@ public class GOCL_GOCLLexerRules extends Lexer {
             	    break;
 
             	default :
-            	    break loop16;
+            	    break loop17;
                 }
             } while (true);
 
@@ -1664,8 +1703,8 @@ public class GOCL_GOCLLexerRules extends Lexer {
     // $ANTLR start VOCAB
     public final void mVOCAB() throws RecognitionException {
         try {
-            // GOCLLexerRules.g:173:6: ( '\\U0003' .. '\\U0377' )
-            // GOCLLexerRules.g:174:5: '\\U0003' .. '\\U0377'
+            // GOCLLexerRules.g:172:6: ( '\\U0003' .. '\\U0377' )
+            // GOCLLexerRules.g:173:5: '\\U0003' .. '\\U0377'
             {
             matchRange('\u0003','\u0377'); if (state.failed) return ;
 
@@ -1679,9 +1718,9 @@ public class GOCL_GOCLLexerRules extends Lexer {
 
     public void mTokens() throws RecognitionException {
         // GOCLLexerRules.g:1:8: ( WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | RANGE_OR_INT | STRING | IDENT )
-        int alt17=33;
-        alt17 = dfa17.predict(input);
-        switch (alt17) {
+        int alt18=33;
+        alt18 = dfa18.predict(input);
+        switch (alt18) {
             case 1 :
                 // GOCLLexerRules.g:1:10: WS
                 {
@@ -1933,37 +1972,14 @@ public class GOCL_GOCLLexerRules extends Lexer {
 
     // $ANTLR start synpred2_GOCLLexerRules
     public final void synpred2_GOCLLexerRules_fragment() throws RecognitionException {   
-        // GOCLLexerRules.g:116:7: ( INT '.' INT )
-        // GOCLLexerRules.g:116:9: INT '.' INT
+        // GOCLLexerRules.g:116:7: ( REAL )
+        // GOCLLexerRules.g:116:9: REAL
         {
-        mINT(); if (state.failed) return ;
-        match('.'); if (state.failed) return ;
-        mINT(); if (state.failed) return ;
+        mREAL(); if (state.failed) return ;
 
         }
     }
     // $ANTLR end synpred2_GOCLLexerRules
-
-    // $ANTLR start synpred3_GOCLLexerRules
-    public final void synpred3_GOCLLexerRules_fragment() throws RecognitionException {   
-        // GOCLLexerRules.g:117:7: ( INT ( 'e' | 'E' ) )
-        // GOCLLexerRules.g:117:9: INT ( 'e' | 'E' )
-        {
-        mINT(); if (state.failed) return ;
-        if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
-            input.consume();
-        state.failed=false;
-        }
-        else {
-            if (state.backtracking>0) {state.failed=true; return ;}
-            MismatchedSetException mse = new MismatchedSetException(null,input);
-            recover(mse);
-            throw mse;}
-
-
-        }
-    }
-    // $ANTLR end synpred3_GOCLLexerRules
 
     public final boolean synpred1_GOCLLexerRules() {
         state.backtracking++;
@@ -1993,42 +2009,28 @@ public class GOCL_GOCLLexerRules extends Lexer {
         state.failed=false;
         return success;
     }
-    public final boolean synpred3_GOCLLexerRules() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred3_GOCLLexerRules_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
 
 
-    protected DFA17 dfa17 = new DFA17(this);
-    static final String DFA17_eotS =
+    protected DFA18 dfa18 = new DFA18(this);
+    static final String DFA18_eotS =
         "\2\uffff\1\33\1\35\2\uffff\1\40\1\uffff\1\42\1\uffff\1\44\3\uffff"+
         "\1\47\31\uffff";
-    static final String DFA17_eofS =
+    static final String DFA18_eofS =
         "\50\uffff";
-    static final String DFA17_minS =
+    static final String DFA18_minS =
         "\1\11\1\uffff\1\52\1\55\2\uffff\1\72\1\uffff\1\56\1\uffff\1\75\3"+
         "\uffff\1\75\31\uffff";
-    static final String DFA17_maxS =
+    static final String DFA18_maxS =
         "\1\175\1\uffff\1\57\1\76\2\uffff\1\75\1\uffff\1\56\1\uffff\1\75"+
         "\3\uffff\1\76\31\uffff";
-    static final String DFA17_acceptS =
+    static final String DFA18_acceptS =
         "\1\uffff\1\1\2\uffff\1\5\1\6\1\uffff\1\12\1\uffff\1\15\1\uffff\1"+
         "\20\1\21\1\22\1\uffff\1\25\1\30\1\31\1\32\1\33\1\34\1\36\1\37\1"+
         "\40\1\41\1\2\1\3\1\35\1\4\1\26\1\10\1\11\1\7\1\14\1\13\1\17\1\16"+
         "\1\24\1\27\1\23";
-    static final String DFA17_specialS =
+    static final String DFA18_specialS =
         "\50\uffff}>";
-    static final String[] DFA17_transitionS = {
+    static final String[] DFA18_transitionS = {
             "\2\1\1\uffff\2\1\22\uffff\1\1\2\uffff\1\13\1\30\2\uffff\1\27"+
             "\1\17\1\23\1\25\1\20\1\7\1\3\1\10\1\2\12\26\1\6\1\24\1\16\1"+
             "\11\1\12\1\uffff\1\4\32\30\1\15\1\uffff\1\22\1\uffff\1\30\1"+
@@ -2074,34 +2076,34 @@ public class GOCL_GOCLLexerRules extends Lexer {
             ""
     };
 
-    static final short[] DFA17_eot = DFA.unpackEncodedString(DFA17_eotS);
-    static final short[] DFA17_eof = DFA.unpackEncodedString(DFA17_eofS);
-    static final char[] DFA17_min = DFA.unpackEncodedStringToUnsignedChars(DFA17_minS);
-    static final char[] DFA17_max = DFA.unpackEncodedStringToUnsignedChars(DFA17_maxS);
-    static final short[] DFA17_accept = DFA.unpackEncodedString(DFA17_acceptS);
-    static final short[] DFA17_special = DFA.unpackEncodedString(DFA17_specialS);
-    static final short[][] DFA17_transition;
+    static final short[] DFA18_eot = DFA.unpackEncodedString(DFA18_eotS);
+    static final short[] DFA18_eof = DFA.unpackEncodedString(DFA18_eofS);
+    static final char[] DFA18_min = DFA.unpackEncodedStringToUnsignedChars(DFA18_minS);
+    static final char[] DFA18_max = DFA.unpackEncodedStringToUnsignedChars(DFA18_maxS);
+    static final short[] DFA18_accept = DFA.unpackEncodedString(DFA18_acceptS);
+    static final short[] DFA18_special = DFA.unpackEncodedString(DFA18_specialS);
+    static final short[][] DFA18_transition;
 
     static {
-        int numStates = DFA17_transitionS.length;
-        DFA17_transition = new short[numStates][];
+        int numStates = DFA18_transitionS.length;
+        DFA18_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA17_transition[i] = DFA.unpackEncodedString(DFA17_transitionS[i]);
+            DFA18_transition[i] = DFA.unpackEncodedString(DFA18_transitionS[i]);
         }
     }
 
-    class DFA17 extends DFA {
+    class DFA18 extends DFA {
 
-        public DFA17(BaseRecognizer recognizer) {
+        public DFA18(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 17;
-            this.eot = DFA17_eot;
-            this.eof = DFA17_eof;
-            this.min = DFA17_min;
-            this.max = DFA17_max;
-            this.accept = DFA17_accept;
-            this.special = DFA17_special;
-            this.transition = DFA17_transition;
+            this.decisionNumber = 18;
+            this.eot = DFA18_eot;
+            this.eof = DFA18_eof;
+            this.min = DFA18_min;
+            this.max = DFA18_max;
+            this.accept = DFA18_accept;
+            this.special = DFA18_special;
+            this.transition = DFA18_transition;
         }
         public String getDescription() {
             return "1:1: Tokens : ( WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | RANGE_OR_INT | STRING | IDENT );";

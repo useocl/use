@@ -21,7 +21,7 @@ options {
     defaultErrorHandler = true;	
 
     // don't automatically test all tokens for literals
-    testLiterals = false;    
+    testLiterals = false;
 
     k = 2;
 }
@@ -108,14 +108,13 @@ INT:
 
 fragment
 REAL:
-    INT ( '.' INT | ( ('e'|'E') ('+'|'-')? INT )?)
+    INT ('.' INT (('e' | 'E') ('+' | '-')? INT)? | ('e' | 'E') ('+' | '-')? INT)
     ;
 
 RANGE_OR_INT:
-      ( INT '..' )    => INT    { $type=INT; }
-    | ( INT '.' INT)  => REAL   { $type=REAL; }
-    | ( INT ('e'|'E'))  => REAL { $type=REAL; }
-    |   INT                     { $type=INT; }
+      ( INT '..' )      => INT    { $type=INT; }
+    | ( REAL )          => REAL   { $type=REAL; }
+    |   INT                       { $type=INT; }
     ;
 
 // String literals

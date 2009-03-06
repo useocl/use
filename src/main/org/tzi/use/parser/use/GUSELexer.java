@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GUSE__.g 2008-07-01 13:26:35
+// $ANTLR 3.1b1 GUSE__.g 2009-03-06 10:35:31
 
 /*
  * USE - UML based specification environment

@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GOCL__.g 2008-07-01 13:26:32
+// $ANTLR 3.1b1 GOCL__.g 2009-03-06 10:35:28
 
 package org.tzi.use.parser.ocl; 
 
