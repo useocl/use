@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GOCLBase.g 2009-03-06 10:35:34
+// $ANTLR 3.1b1 GOCLBase.g 2009-03-27 14:16:40
  
 /*
  * USE - UML based specification environment
@@ -138,6 +138,7 @@ public class GCmd_GOCLBase extends Parser {
 
       
         final static String Q_COLLECT  = "collect";
+        final static String Q_COLLECTNESTED  = "collectNested";
         final static String Q_SELECT   = "select";
         final static String Q_REJECT   = "reject";
         final static String Q_FORALL   = "forAll";
@@ -156,7 +157,8 @@ public class GCmd_GOCLBase extends Parser {
         final static int Q_SORTEDBY_ID = 7;
         final static int Q_ANY_ID      = 8;
         final static int Q_ONE_ID      = 9;
-    
+        final static int Q_COLLECTNESTED_ID  = 10;
+        
         final static HashMap queryIdentMap = new HashMap();
     
         static {
@@ -169,6 +171,7 @@ public class GCmd_GOCLBase extends Parser {
             queryIdentMap.put(Q_SORTEDBY, new Integer(Q_SORTEDBY_ID));
             queryIdentMap.put(Q_ANY,      new Integer(Q_ANY_ID));
             queryIdentMap.put(Q_ONE,      new Integer(Q_ONE_ID));
+            queryIdentMap.put(Q_COLLECTNESTED, new Integer(Q_COLLECTNESTED_ID));
         }
     
         protected boolean isQueryIdent(Token t) {
@@ -189,7 +192,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start paramList
-    // GOCLBase.g:122:1: paramList returns [List paramList] : LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN ;
+    // GOCLBase.g:125:1: paramList returns [List paramList] : LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN ;
     public final List paramList() throws RecognitionException {
         List paramList = null;
 
@@ -198,11 +201,11 @@ public class GCmd_GOCLBase extends Parser {
 
          paramList = new ArrayList(); 
         try {
-            // GOCLBase.g:124:1: ( LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN )
-            // GOCLBase.g:125:5: LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN
+            // GOCLBase.g:127:1: ( LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN )
+            // GOCLBase.g:128:5: LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN
             {
             match(input,LPAREN,FOLLOW_LPAREN_in_paramList76); 
-            // GOCLBase.g:126:5: (v= variableDeclaration ( COMMA v= variableDeclaration )* )?
+            // GOCLBase.g:129:5: (v= variableDeclaration ( COMMA v= variableDeclaration )* )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -211,7 +214,7 @@ public class GCmd_GOCLBase extends Parser {
             }
             switch (alt2) {
                 case 1 :
-                    // GOCLBase.g:127:7: v= variableDeclaration ( COMMA v= variableDeclaration )*
+                    // GOCLBase.g:130:7: v= variableDeclaration ( COMMA v= variableDeclaration )*
                     {
                     pushFollow(FOLLOW_variableDeclaration_in_paramList93);
                     v=variableDeclaration();
@@ -219,7 +222,7 @@ public class GCmd_GOCLBase extends Parser {
                     state._fsp--;
 
                      paramList.add(v); 
-                    // GOCLBase.g:128:7: ( COMMA v= variableDeclaration )*
+                    // GOCLBase.g:131:7: ( COMMA v= variableDeclaration )*
                     loop1:
                     do {
                         int alt1=2;
@@ -232,7 +235,7 @@ public class GCmd_GOCLBase extends Parser {
 
                         switch (alt1) {
                     	case 1 :
-                    	    // GOCLBase.g:128:9: COMMA v= variableDeclaration
+                    	    // GOCLBase.g:131:9: COMMA v= variableDeclaration
                     	    {
                     	    match(input,COMMA,FOLLOW_COMMA_in_paramList105); 
                     	    pushFollow(FOLLOW_variableDeclaration_in_paramList109);
@@ -273,7 +276,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start idList
-    // GOCLBase.g:136:1: idList returns [List idList] : id0= IDENT ( COMMA idn= IDENT )* ;
+    // GOCLBase.g:139:1: idList returns [List idList] : id0= IDENT ( COMMA idn= IDENT )* ;
     public final List idList() throws RecognitionException {
         List idList = null;
 
@@ -282,12 +285,12 @@ public class GCmd_GOCLBase extends Parser {
 
          idList = new ArrayList(); 
         try {
-            // GOCLBase.g:138:1: (id0= IDENT ( COMMA idn= IDENT )* )
-            // GOCLBase.g:139:5: id0= IDENT ( COMMA idn= IDENT )*
+            // GOCLBase.g:141:1: (id0= IDENT ( COMMA idn= IDENT )* )
+            // GOCLBase.g:142:5: id0= IDENT ( COMMA idn= IDENT )*
             {
             id0=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList158); 
              idList.add(id0); 
-            // GOCLBase.g:140:5: ( COMMA idn= IDENT )*
+            // GOCLBase.g:143:5: ( COMMA idn= IDENT )*
             loop3:
             do {
                 int alt3=2;
@@ -300,7 +303,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt3) {
             	case 1 :
-            	    // GOCLBase.g:140:7: COMMA idn= IDENT
+            	    // GOCLBase.g:143:7: COMMA idn= IDENT
             	    {
             	    match(input,COMMA,FOLLOW_COMMA_in_idList168); 
             	    idn=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList172); 
@@ -330,7 +333,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start variableDeclaration
-    // GOCLBase.g:148:1: variableDeclaration returns [ASTVariableDeclaration n] : name= IDENT COLON t= type ;
+    // GOCLBase.g:151:1: variableDeclaration returns [ASTVariableDeclaration n] : name= IDENT COLON t= type ;
     public final ASTVariableDeclaration variableDeclaration() throws RecognitionException {
         ASTVariableDeclaration n = null;
 
@@ -339,8 +342,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:149:1: (name= IDENT COLON t= type )
-            // GOCLBase.g:150:5: name= IDENT COLON t= type
+            // GOCLBase.g:152:1: (name= IDENT COLON t= type )
+            // GOCLBase.g:153:5: name= IDENT COLON t= type
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableDeclaration203); 
             match(input,COLON,FOLLOW_COLON_in_variableDeclaration205); 
@@ -366,7 +369,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start expression
-    // GOCLBase.g:158:1: expression returns [ASTExpression n] : ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression ;
+    // GOCLBase.g:161:1: expression returns [ASTExpression n] : ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression ;
     public final ASTExpression expression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -383,11 +386,11 @@ public class GCmd_GOCLBase extends Parser {
           ASTExpression e2;
 
         try {
-            // GOCLBase.g:163:1: ( ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression )
-            // GOCLBase.g:164:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression
+            // GOCLBase.g:166:1: ( ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression )
+            // GOCLBase.g:167:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression
             {
              Token tok = input.LT(1); /* remember start of expression */ 
-            // GOCLBase.g:165:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )*
+            // GOCLBase.g:168:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )*
             loop5:
             do {
                 int alt5=2;
@@ -400,11 +403,11 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt5) {
             	case 1 :
-            	    // GOCLBase.g:166:7: 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in'
+            	    // GOCLBase.g:169:7: 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in'
             	    {
             	    match(input,46,FOLLOW_46_in_expression257); 
             	    name=(Token)match(input,IDENT,FOLLOW_IDENT_in_expression261); 
-            	    // GOCLBase.g:166:24: ( COLON t= type )?
+            	    // GOCLBase.g:169:24: ( COLON t= type )?
             	    int alt4=2;
             	    int LA4_0 = input.LA(1);
 
@@ -413,7 +416,7 @@ public class GCmd_GOCLBase extends Parser {
             	    }
             	    switch (alt4) {
             	        case 1 :
-            	            // GOCLBase.g:166:26: COLON t= type
+            	            // GOCLBase.g:169:26: COLON t= type
             	            {
             	            match(input,COLON,FOLLOW_COLON_in_expression265); 
             	            pushFollow(FOLLOW_type_in_expression269);
@@ -482,7 +485,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start conditionalImpliesExpression
-    // GOCLBase.g:195:1: conditionalImpliesExpression returns [ASTExpression n] : nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* ;
+    // GOCLBase.g:198:1: conditionalImpliesExpression returns [ASTExpression n] : nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* ;
     public final ASTExpression conditionalImpliesExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -493,8 +496,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:196:1: (nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* )
-            // GOCLBase.g:197:5: nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )*
+            // GOCLBase.g:199:1: (nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* )
+            // GOCLBase.g:200:5: nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )*
             {
             pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression338);
             nCndOrExp=conditionalOrExpression();
@@ -502,7 +505,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
             n = nCndOrExp;
-            // GOCLBase.g:198:5: (op= 'implies' n1= conditionalOrExpression )*
+            // GOCLBase.g:201:5: (op= 'implies' n1= conditionalOrExpression )*
             loop6:
             do {
                 int alt6=2;
@@ -515,7 +518,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt6) {
             	case 1 :
-            	    // GOCLBase.g:198:7: op= 'implies' n1= conditionalOrExpression
+            	    // GOCLBase.g:201:7: op= 'implies' n1= conditionalOrExpression
             	    {
             	    op=(Token)match(input,48,FOLLOW_48_in_conditionalImpliesExpression351); 
             	    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression355);
@@ -549,7 +552,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start conditionalOrExpression
-    // GOCLBase.g:208:1: conditionalOrExpression returns [ASTExpression n] : nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* ;
+    // GOCLBase.g:211:1: conditionalOrExpression returns [ASTExpression n] : nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* ;
     public final ASTExpression conditionalOrExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -560,8 +563,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:209:1: (nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* )
-            // GOCLBase.g:210:5: nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )*
+            // GOCLBase.g:212:1: (nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* )
+            // GOCLBase.g:213:5: nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )*
             {
             pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression401);
             nCndXorExp=conditionalXOrExpression();
@@ -569,7 +572,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
             n = nCndXorExp;
-            // GOCLBase.g:211:5: (op= 'or' n1= conditionalXOrExpression )*
+            // GOCLBase.g:214:5: (op= 'or' n1= conditionalXOrExpression )*
             loop7:
             do {
                 int alt7=2;
@@ -582,7 +585,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt7) {
             	case 1 :
-            	    // GOCLBase.g:211:7: op= 'or' n1= conditionalXOrExpression
+            	    // GOCLBase.g:214:7: op= 'or' n1= conditionalXOrExpression
             	    {
             	    op=(Token)match(input,49,FOLLOW_49_in_conditionalOrExpression414); 
             	    pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression418);
@@ -616,7 +619,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start conditionalXOrExpression
-    // GOCLBase.g:221:1: conditionalXOrExpression returns [ASTExpression n] : nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* ;
+    // GOCLBase.g:224:1: conditionalXOrExpression returns [ASTExpression n] : nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* ;
     public final ASTExpression conditionalXOrExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -627,8 +630,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:222:1: (nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* )
-            // GOCLBase.g:223:5: nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )*
+            // GOCLBase.g:225:1: (nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* )
+            // GOCLBase.g:226:5: nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )*
             {
             pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression463);
             nCndAndExp=conditionalAndExpression();
@@ -636,7 +639,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
             n = nCndAndExp;
-            // GOCLBase.g:224:5: (op= 'xor' n1= conditionalAndExpression )*
+            // GOCLBase.g:227:5: (op= 'xor' n1= conditionalAndExpression )*
             loop8:
             do {
                 int alt8=2;
@@ -649,7 +652,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt8) {
             	case 1 :
-            	    // GOCLBase.g:224:7: op= 'xor' n1= conditionalAndExpression
+            	    // GOCLBase.g:227:7: op= 'xor' n1= conditionalAndExpression
             	    {
             	    op=(Token)match(input,50,FOLLOW_50_in_conditionalXOrExpression476); 
             	    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression480);
@@ -683,7 +686,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start conditionalAndExpression
-    // GOCLBase.g:234:1: conditionalAndExpression returns [ASTExpression n] : nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* ;
+    // GOCLBase.g:237:1: conditionalAndExpression returns [ASTExpression n] : nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* ;
     public final ASTExpression conditionalAndExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -694,8 +697,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:235:1: (nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* )
-            // GOCLBase.g:236:5: nEqExp= equalityExpression (op= 'and' n1= equalityExpression )*
+            // GOCLBase.g:238:1: (nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* )
+            // GOCLBase.g:239:5: nEqExp= equalityExpression (op= 'and' n1= equalityExpression )*
             {
             pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression525);
             nEqExp=equalityExpression();
@@ -703,7 +706,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
             n = nEqExp;
-            // GOCLBase.g:237:5: (op= 'and' n1= equalityExpression )*
+            // GOCLBase.g:240:5: (op= 'and' n1= equalityExpression )*
             loop9:
             do {
                 int alt9=2;
@@ -716,7 +719,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt9) {
             	case 1 :
-            	    // GOCLBase.g:237:7: op= 'and' n1= equalityExpression
+            	    // GOCLBase.g:240:7: op= 'and' n1= equalityExpression
             	    {
             	    op=(Token)match(input,51,FOLLOW_51_in_conditionalAndExpression538); 
             	    pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression542);
@@ -750,7 +753,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start equalityExpression
-    // GOCLBase.g:247:1: equalityExpression returns [ASTExpression n] : nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* ;
+    // GOCLBase.g:250:1: equalityExpression returns [ASTExpression n] : nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* ;
     public final ASTExpression equalityExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -760,8 +763,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:248:1: (nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* )
-            // GOCLBase.g:249:5: nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
+            // GOCLBase.g:251:1: (nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* )
+            // GOCLBase.g:252:5: nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
             {
             pushFollow(FOLLOW_relationalExpression_in_equalityExpression586);
             nRelExp=relationalExpression();
@@ -769,7 +772,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
             n = nRelExp;
-            // GOCLBase.g:250:5: ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
+            // GOCLBase.g:253:5: ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
             loop10:
             do {
                 int alt10=2;
@@ -782,7 +785,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt10) {
             	case 1 :
-            	    // GOCLBase.g:250:7: ( EQUAL | NOT_EQUAL ) n1= relationalExpression
+            	    // GOCLBase.g:253:7: ( EQUAL | NOT_EQUAL ) n1= relationalExpression
             	    {
             	     Token op = input.LT(1); 
             	    if ( (input.LA(1)>=EQUAL && input.LA(1)<=NOT_EQUAL) ) {
@@ -825,7 +828,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start relationalExpression
-    // GOCLBase.g:261:1: relationalExpression returns [ASTExpression n] : nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* ;
+    // GOCLBase.g:264:1: relationalExpression returns [ASTExpression n] : nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* ;
     public final ASTExpression relationalExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -835,8 +838,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:262:1: (nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* )
-            // GOCLBase.g:263:5: nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
+            // GOCLBase.g:265:1: (nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* )
+            // GOCLBase.g:266:5: nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
             {
             pushFollow(FOLLOW_additiveExpression_in_relationalExpression660);
             nAddiExp=additiveExpression();
@@ -844,7 +847,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
             n = nAddiExp;
-            // GOCLBase.g:264:5: ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
+            // GOCLBase.g:267:5: ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
             loop11:
             do {
                 int alt11=2;
@@ -857,7 +860,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt11) {
             	case 1 :
-            	    // GOCLBase.g:264:7: ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression
+            	    // GOCLBase.g:267:7: ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression
             	    {
             	     Token op = input.LT(1); 
             	    if ( (input.LA(1)>=LESS && input.LA(1)<=GREATER_EQUAL) ) {
@@ -900,7 +903,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start additiveExpression
-    // GOCLBase.g:275:1: additiveExpression returns [ASTExpression n] : nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* ;
+    // GOCLBase.g:278:1: additiveExpression returns [ASTExpression n] : nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* ;
     public final ASTExpression additiveExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -910,8 +913,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:276:1: (nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* )
-            // GOCLBase.g:277:5: nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
+            // GOCLBase.g:279:1: (nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* )
+            // GOCLBase.g:280:5: nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
             {
             pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression742);
             nMulExp=multiplicativeExpression();
@@ -919,7 +922,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
             n = nMulExp;
-            // GOCLBase.g:278:5: ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
+            // GOCLBase.g:281:5: ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
             loop12:
             do {
                 int alt12=2;
@@ -932,7 +935,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt12) {
             	case 1 :
-            	    // GOCLBase.g:278:7: ( PLUS | MINUS ) n1= multiplicativeExpression
+            	    // GOCLBase.g:281:7: ( PLUS | MINUS ) n1= multiplicativeExpression
             	    {
             	     Token op = input.LT(1); 
             	    if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS) ) {
@@ -975,7 +978,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start multiplicativeExpression
-    // GOCLBase.g:289:1: multiplicativeExpression returns [ASTExpression n] : nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* ;
+    // GOCLBase.g:292:1: multiplicativeExpression returns [ASTExpression n] : nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* ;
     public final ASTExpression multiplicativeExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -985,8 +988,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:290:1: (nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* )
-            // GOCLBase.g:291:5: nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
+            // GOCLBase.g:293:1: (nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* )
+            // GOCLBase.g:294:5: nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
             {
             pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression815);
             nUnExp=unaryExpression();
@@ -994,7 +997,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
              n = nUnExp;
-            // GOCLBase.g:292:5: ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
+            // GOCLBase.g:295:5: ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
             loop13:
             do {
                 int alt13=2;
@@ -1007,7 +1010,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt13) {
             	case 1 :
-            	    // GOCLBase.g:292:7: ( STAR | SLASH | 'div' ) n1= unaryExpression
+            	    // GOCLBase.g:295:7: ( STAR | SLASH | 'div' ) n1= unaryExpression
             	    {
             	     Token op = input.LT(1); 
             	    if ( (input.LA(1)>=STAR && input.LA(1)<=SLASH)||input.LA(1)==52 ) {
@@ -1050,7 +1053,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start unaryExpression
-    // GOCLBase.g:304:1: unaryExpression returns [ASTExpression n] : ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression );
+    // GOCLBase.g:307:1: unaryExpression returns [ASTExpression n] : ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression );
     public final ASTExpression unaryExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -1060,7 +1063,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:305:1: ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression )
+            // GOCLBase.g:308:1: ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression )
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -1078,10 +1081,10 @@ public class GCmd_GOCLBase extends Parser {
             }
             switch (alt14) {
                 case 1 :
-                    // GOCLBase.g:306:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
+                    // GOCLBase.g:309:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
                     {
-                    // GOCLBase.g:306:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
-                    // GOCLBase.g:306:9: ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression
+                    // GOCLBase.g:309:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
+                    // GOCLBase.g:309:9: ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression
                     {
                      Token op = input.LT(1); 
                     if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS)||input.LA(1)==53 ) {
@@ -1106,7 +1109,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 2 :
-                    // GOCLBase.g:310:7: nPosExp= postfixExpression
+                    // GOCLBase.g:313:7: nPosExp= postfixExpression
                     {
                     pushFollow(FOLLOW_postfixExpression_in_unaryExpression948);
                     nPosExp=postfixExpression();
@@ -1132,7 +1135,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start postfixExpression
-    // GOCLBase.g:318:1: postfixExpression returns [ASTExpression n] : nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* ;
+    // GOCLBase.g:321:1: postfixExpression returns [ASTExpression n] : nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* ;
     public final ASTExpression postfixExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -1143,8 +1146,8 @@ public class GCmd_GOCLBase extends Parser {
 
          boolean arrow = false; 
         try {
-            // GOCLBase.g:320:1: (nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* )
-            // GOCLBase.g:321:5: nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
+            // GOCLBase.g:323:1: (nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* )
+            // GOCLBase.g:324:5: nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
             {
             pushFollow(FOLLOW_primaryExpression_in_postfixExpression981);
             nPrimExp=primaryExpression();
@@ -1152,7 +1155,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
              n = nPrimExp; 
-            // GOCLBase.g:322:5: ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
+            // GOCLBase.g:325:5: ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
             loop16:
             do {
                 int alt16=2;
@@ -1165,9 +1168,9 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt16) {
             	case 1 :
-            	    // GOCLBase.g:323:6: ( ARROW | DOT ) nPc= propertyCall[$n, arrow]
+            	    // GOCLBase.g:326:6: ( ARROW | DOT ) nPc= propertyCall[$n, arrow]
             	    {
-            	    // GOCLBase.g:323:6: ( ARROW | DOT )
+            	    // GOCLBase.g:326:6: ( ARROW | DOT )
             	    int alt15=2;
             	    int LA15_0 = input.LA(1);
 
@@ -1185,7 +1188,7 @@ public class GCmd_GOCLBase extends Parser {
             	    }
             	    switch (alt15) {
             	        case 1 :
-            	            // GOCLBase.g:323:8: ARROW
+            	            // GOCLBase.g:326:8: ARROW
             	            {
             	            match(input,ARROW,FOLLOW_ARROW_in_postfixExpression999); 
             	             arrow = true; 
@@ -1193,7 +1196,7 @@ public class GCmd_GOCLBase extends Parser {
             	            }
             	            break;
             	        case 2 :
-            	            // GOCLBase.g:323:34: DOT
+            	            // GOCLBase.g:326:34: DOT
             	            {
             	            match(input,DOT,FOLLOW_DOT_in_postfixExpression1005); 
             	             arrow = false; 
@@ -1234,7 +1237,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start primaryExpression
-    // GOCLBase.g:339:1: primaryExpression returns [ASTExpression n] : (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? );
+    // GOCLBase.g:342:1: primaryExpression returns [ASTExpression n] : (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? );
     public final ASTExpression primaryExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -1249,7 +1252,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:340:1: (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? )
+            // GOCLBase.g:343:1: (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? )
             int alt19=5;
             switch ( input.LA(1) ) {
             case INT:
@@ -1326,7 +1329,7 @@ public class GCmd_GOCLBase extends Parser {
 
             switch (alt19) {
                 case 1 :
-                    // GOCLBase.g:341:7: nLit= literal
+                    // GOCLBase.g:344:7: nLit= literal
                     {
                     pushFollow(FOLLOW_literal_in_primaryExpression1056);
                     nLit=literal();
@@ -1338,7 +1341,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 2 :
-                    // GOCLBase.g:342:7: nPc= propertyCall[null, false]
+                    // GOCLBase.g:345:7: nPc= propertyCall[null, false]
                     {
                     pushFollow(FOLLOW_propertyCall_in_primaryExpression1068);
                     nPc=propertyCall(null, false);
@@ -1350,7 +1353,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 3 :
-                    // GOCLBase.g:343:7: LPAREN nExp= expression RPAREN
+                    // GOCLBase.g:346:7: LPAREN nExp= expression RPAREN
                     {
                     match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression1079); 
                     pushFollow(FOLLOW_expression_in_primaryExpression1083);
@@ -1364,7 +1367,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 4 :
-                    // GOCLBase.g:344:7: nIfExp= ifExpression
+                    // GOCLBase.g:347:7: nIfExp= ifExpression
                     {
                     pushFollow(FOLLOW_ifExpression_in_primaryExpression1097);
                     nIfExp=ifExpression();
@@ -1376,12 +1379,12 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 5 :
-                    // GOCLBase.g:346:7: id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )?
+                    // GOCLBase.g:349:7: id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )?
                     {
                     id1=(Token)match(input,IDENT,FOLLOW_IDENT_in_primaryExpression1114); 
                     match(input,DOT,FOLLOW_DOT_in_primaryExpression1116); 
                     match(input,54,FOLLOW_54_in_primaryExpression1118); 
-                    // GOCLBase.g:346:36: ( LPAREN RPAREN )?
+                    // GOCLBase.g:349:36: ( LPAREN RPAREN )?
                     int alt17=2;
                     int LA17_0 = input.LA(1);
 
@@ -1390,7 +1393,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     switch (alt17) {
                         case 1 :
-                            // GOCLBase.g:346:38: LPAREN RPAREN
+                            // GOCLBase.g:349:38: LPAREN RPAREN
                             {
                             match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression1122); 
                             match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression1124); 
@@ -1401,7 +1404,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
 
                      n = new ASTAllInstancesExpression(id1); 
-                    // GOCLBase.g:348:7: ( AT 'pre' )?
+                    // GOCLBase.g:351:7: ( AT 'pre' )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -1410,7 +1413,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     switch (alt18) {
                         case 1 :
-                            // GOCLBase.g:348:9: AT 'pre'
+                            // GOCLBase.g:351:9: AT 'pre'
                             {
                             match(input,AT,FOLLOW_AT_in_primaryExpression1145); 
                             match(input,55,FOLLOW_55_in_primaryExpression1147); 
@@ -1439,7 +1442,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start propertyCall
-    // GOCLBase.g:361:1: propertyCall[ASTExpression source, boolean followsArrow] returns [ASTExpression n] : ({...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] );
+    // GOCLBase.g:364:1: propertyCall[ASTExpression source, boolean followsArrow] returns [ASTExpression n] : ({...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] );
     public final ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTExpression n = null;
 
@@ -1453,7 +1456,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:362:1: ({...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] )
+            // GOCLBase.g:365:1: ({...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] )
             int alt20=4;
             switch ( input.LA(1) ) {
             case IDENT:
@@ -1495,7 +1498,7 @@ public class GCmd_GOCLBase extends Parser {
 
             switch (alt20) {
                 case 1 :
-                    // GOCLBase.g:366:7: {...}?nExpQuery= queryExpression[source]
+                    // GOCLBase.g:369:7: {...}?nExpQuery= queryExpression[source]
                     {
                     if ( !( isQueryIdent(input.LT(1)) ) ) {
                         throw new FailedPredicateException(input, "propertyCall", " isQueryIdent(input.LT(1)) ");
@@ -1510,7 +1513,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 2 :
-                    // GOCLBase.g:368:7: nExpIterate= iterateExpression[source]
+                    // GOCLBase.g:371:7: nExpIterate= iterateExpression[source]
                     {
                     pushFollow(FOLLOW_iterateExpression_in_propertyCall1226);
                     nExpIterate=iterateExpression(source);
@@ -1522,7 +1525,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 3 :
-                    // GOCLBase.g:369:7: nExpOperation= operationExpression[source, followsArrow]
+                    // GOCLBase.g:372:7: nExpOperation= operationExpression[source, followsArrow]
                     {
                     pushFollow(FOLLOW_operationExpression_in_propertyCall1239);
                     nExpOperation=operationExpression(source, followsArrow);
@@ -1534,7 +1537,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 4 :
-                    // GOCLBase.g:370:7: nExpType= typeExpression[source, followsArrow]
+                    // GOCLBase.g:373:7: nExpType= typeExpression[source, followsArrow]
                     {
                     pushFollow(FOLLOW_typeExpression_in_propertyCall1252);
                     nExpType=typeExpression(source, followsArrow);
@@ -1560,7 +1563,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start queryExpression
-    // GOCLBase.g:386:1: queryExpression[ASTExpression range] returns [ASTExpression n] : op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN ;
+    // GOCLBase.g:389:1: queryExpression[ASTExpression range] returns [ASTExpression n] : op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN ;
     public final ASTExpression queryExpression(ASTExpression range) throws RecognitionException {
         ASTExpression n = null;
 
@@ -1572,12 +1575,12 @@ public class GCmd_GOCLBase extends Parser {
 
         ASTElemVarsDeclaration decl = new ASTElemVarsDeclaration(); 
         try {
-            // GOCLBase.g:387:69: (op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN )
-            // GOCLBase.g:388:5: op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN
+            // GOCLBase.g:390:69: (op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN )
+            // GOCLBase.g:391:5: op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN
             {
             op=(Token)match(input,IDENT,FOLLOW_IDENT_in_queryExpression1294); 
             match(input,LPAREN,FOLLOW_LPAREN_in_queryExpression1301); 
-            // GOCLBase.g:390:5: (decls= elemVarsDeclaration BAR )?
+            // GOCLBase.g:393:5: (decls= elemVarsDeclaration BAR )?
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -1590,7 +1593,7 @@ public class GCmd_GOCLBase extends Parser {
             }
             switch (alt21) {
                 case 1 :
-                    // GOCLBase.g:390:7: decls= elemVarsDeclaration BAR
+                    // GOCLBase.g:393:7: decls= elemVarsDeclaration BAR
                     {
                     pushFollow(FOLLOW_elemVarsDeclaration_in_queryExpression1312);
                     decls=elemVarsDeclaration();
@@ -1628,7 +1631,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start iterateExpression
-    // GOCLBase.g:404:1: iterateExpression[ASTExpression range] returns [ASTExpression n] : i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN ;
+    // GOCLBase.g:407:1: iterateExpression[ASTExpression range] returns [ASTExpression n] : i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN ;
     public final ASTExpression iterateExpression(ASTExpression range) throws RecognitionException {
         ASTExpression n = null;
 
@@ -1641,8 +1644,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:404:65: (i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN )
-            // GOCLBase.g:405:5: i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN
+            // GOCLBase.g:407:65: (i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN )
+            // GOCLBase.g:408:5: i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN
             {
             i=(Token)match(input,56,FOLLOW_56_in_iterateExpression1366); 
             match(input,LPAREN,FOLLOW_LPAREN_in_iterateExpression1372); 
@@ -1681,7 +1684,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start operationExpression
-    // GOCLBase.g:426:1: operationExpression[ASTExpression source, boolean followsArrow] returns [ASTOperationExpression n] : name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? ;
+    // GOCLBase.g:429:1: operationExpression[ASTExpression source, boolean followsArrow] returns [ASTOperationExpression n] : name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? ;
     public final ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTOperationExpression n = null;
 
@@ -1691,12 +1694,12 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:428:1: (name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? )
-            // GOCLBase.g:429:5: name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
+            // GOCLBase.g:431:1: (name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? )
+            // GOCLBase.g:432:5: name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression1450); 
              n = new ASTOperationExpression(name, source, followsArrow); 
-            // GOCLBase.g:432:5: ( LBRACK rolename= IDENT RBRACK )?
+            // GOCLBase.g:435:5: ( LBRACK rolename= IDENT RBRACK )?
             int alt22=2;
             int LA22_0 = input.LA(1);
 
@@ -1705,7 +1708,7 @@ public class GCmd_GOCLBase extends Parser {
             }
             switch (alt22) {
                 case 1 :
-                    // GOCLBase.g:432:7: LBRACK rolename= IDENT RBRACK
+                    // GOCLBase.g:435:7: LBRACK rolename= IDENT RBRACK
                     {
                     match(input,LBRACK,FOLLOW_LBRACK_in_operationExpression1466); 
                     rolename=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression1470); 
@@ -1717,7 +1720,7 @@ public class GCmd_GOCLBase extends Parser {
 
             }
 
-            // GOCLBase.g:434:5: ( AT 'pre' )?
+            // GOCLBase.g:437:5: ( AT 'pre' )?
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -1726,7 +1729,7 @@ public class GCmd_GOCLBase extends Parser {
             }
             switch (alt23) {
                 case 1 :
-                    // GOCLBase.g:434:7: AT 'pre'
+                    // GOCLBase.g:437:7: AT 'pre'
                     {
                     match(input,AT,FOLLOW_AT_in_operationExpression1485); 
                     match(input,55,FOLLOW_55_in_operationExpression1487); 
@@ -1737,7 +1740,7 @@ public class GCmd_GOCLBase extends Parser {
 
             }
 
-            // GOCLBase.g:435:5: ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
+            // GOCLBase.g:438:5: ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -1746,11 +1749,11 @@ public class GCmd_GOCLBase extends Parser {
             }
             switch (alt26) {
                 case 1 :
-                    // GOCLBase.g:436:7: LPAREN (e= expression ( COMMA e= expression )* )? RPAREN
+                    // GOCLBase.g:439:7: LPAREN (e= expression ( COMMA e= expression )* )? RPAREN
                     {
                     match(input,LPAREN,FOLLOW_LPAREN_in_operationExpression1508); 
                      n.hasParentheses(); 
-                    // GOCLBase.g:437:7: (e= expression ( COMMA e= expression )* )?
+                    // GOCLBase.g:440:7: (e= expression ( COMMA e= expression )* )?
                     int alt25=2;
                     int LA25_0 = input.LA(1);
 
@@ -1759,7 +1762,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     switch (alt25) {
                         case 1 :
-                            // GOCLBase.g:438:7: e= expression ( COMMA e= expression )*
+                            // GOCLBase.g:441:7: e= expression ( COMMA e= expression )*
                             {
                             pushFollow(FOLLOW_expression_in_operationExpression1529);
                             e=expression();
@@ -1767,7 +1770,7 @@ public class GCmd_GOCLBase extends Parser {
                             state._fsp--;
 
                              n.addArg(e); 
-                            // GOCLBase.g:439:7: ( COMMA e= expression )*
+                            // GOCLBase.g:442:7: ( COMMA e= expression )*
                             loop24:
                             do {
                                 int alt24=2;
@@ -1780,7 +1783,7 @@ public class GCmd_GOCLBase extends Parser {
 
                                 switch (alt24) {
                             	case 1 :
-                            	    // GOCLBase.g:439:9: COMMA e= expression
+                            	    // GOCLBase.g:442:9: COMMA e= expression
                             	    {
                             	    match(input,COMMA,FOLLOW_COMMA_in_operationExpression1541); 
                             	    pushFollow(FOLLOW_expression_in_operationExpression1545);
@@ -1827,7 +1830,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start typeExpression
-    // GOCLBase.g:451:1: typeExpression[ASTExpression source, boolean followsArrow] returns [ASTTypeArgExpression n] : ( LITERAL_oclAsType | LITERAL_oclIsKindOf | LITERAL_oclIsTypeOf ) LPAREN t= type RPAREN ;
+    // GOCLBase.g:454:1: typeExpression[ASTExpression source, boolean followsArrow] returns [ASTTypeArgExpression n] : ( LITERAL_oclAsType | LITERAL_oclIsKindOf | LITERAL_oclIsTypeOf ) LPAREN t= type RPAREN ;
     public final ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTTypeArgExpression n = null;
 
@@ -1835,8 +1838,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:453:1: ( ( LITERAL_oclAsType | LITERAL_oclIsKindOf | LITERAL_oclIsTypeOf ) LPAREN t= type RPAREN )
-            // GOCLBase.g:454:2: ( LITERAL_oclAsType | LITERAL_oclIsKindOf | LITERAL_oclIsTypeOf ) LPAREN t= type RPAREN
+            // GOCLBase.g:456:1: ( ( LITERAL_oclAsType | LITERAL_oclIsKindOf | LITERAL_oclIsTypeOf ) LPAREN t= type RPAREN )
+            // GOCLBase.g:457:2: ( LITERAL_oclAsType | LITERAL_oclIsKindOf | LITERAL_oclIsTypeOf ) LPAREN t= type RPAREN
             {
              Token opToken = input.LT(1); 
             if ( (input.LA(1)>=LITERAL_oclAsType && input.LA(1)<=LITERAL_oclIsTypeOf) ) {
@@ -1872,7 +1875,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start elemVarsDeclaration
-    // GOCLBase.g:465:1: elemVarsDeclaration returns [ASTElemVarsDeclaration n] : idListRes= idList ( COLON t= type )? ;
+    // GOCLBase.g:468:1: elemVarsDeclaration returns [ASTElemVarsDeclaration n] : idListRes= idList ( COLON t= type )? ;
     public final ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException {
         ASTElemVarsDeclaration n = null;
 
@@ -1883,15 +1886,15 @@ public class GCmd_GOCLBase extends Parser {
 
          List idList; 
         try {
-            // GOCLBase.g:467:1: (idListRes= idList ( COLON t= type )? )
-            // GOCLBase.g:468:5: idListRes= idList ( COLON t= type )?
+            // GOCLBase.g:470:1: (idListRes= idList ( COLON t= type )? )
+            // GOCLBase.g:471:5: idListRes= idList ( COLON t= type )?
             {
             pushFollow(FOLLOW_idList_in_elemVarsDeclaration1664);
             idListRes=idList();
 
             state._fsp--;
 
-            // GOCLBase.g:469:5: ( COLON t= type )?
+            // GOCLBase.g:472:5: ( COLON t= type )?
             int alt27=2;
             int LA27_0 = input.LA(1);
 
@@ -1900,7 +1903,7 @@ public class GCmd_GOCLBase extends Parser {
             }
             switch (alt27) {
                 case 1 :
-                    // GOCLBase.g:469:7: COLON t= type
+                    // GOCLBase.g:472:7: COLON t= type
                     {
                     match(input,COLON,FOLLOW_COLON_in_elemVarsDeclaration1672); 
                     pushFollow(FOLLOW_type_in_elemVarsDeclaration1676);
@@ -1931,7 +1934,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start variableInitialization
-    // GOCLBase.g:478:1: variableInitialization returns [ASTVariableInitialization n] : name= IDENT COLON t= type EQUAL e= expression ;
+    // GOCLBase.g:481:1: variableInitialization returns [ASTVariableInitialization n] : name= IDENT COLON t= type EQUAL e= expression ;
     public final ASTVariableInitialization variableInitialization() throws RecognitionException {
         ASTVariableInitialization n = null;
 
@@ -1942,8 +1945,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:479:1: (name= IDENT COLON t= type EQUAL e= expression )
-            // GOCLBase.g:480:5: name= IDENT COLON t= type EQUAL e= expression
+            // GOCLBase.g:482:1: (name= IDENT COLON t= type EQUAL e= expression )
+            // GOCLBase.g:483:5: name= IDENT COLON t= type EQUAL e= expression
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableInitialization1711); 
             match(input,COLON,FOLLOW_COLON_in_variableInitialization1713); 
@@ -1975,7 +1978,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start ifExpression
-    // GOCLBase.g:489:1: ifExpression returns [ASTExpression n] : i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' ;
+    // GOCLBase.g:492:1: ifExpression returns [ASTExpression n] : i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' ;
     public final ASTExpression ifExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -1988,8 +1991,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:490:1: (i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' )
-            // GOCLBase.g:491:5: i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif'
+            // GOCLBase.g:493:1: (i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' )
+            // GOCLBase.g:494:5: i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif'
             {
             i=(Token)match(input,57,FOLLOW_57_in_ifExpression1755); 
             pushFollow(FOLLOW_expression_in_ifExpression1759);
@@ -2027,7 +2030,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start literal
-    // GOCLBase.g:509:1: literal returns [ASTExpression n] : (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral );
+    // GOCLBase.g:512:1: literal returns [ASTExpression n] : (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral );
     public final ASTExpression literal() throws RecognitionException {
         ASTExpression n = null;
 
@@ -2047,7 +2050,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:510:1: (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral )
+            // GOCLBase.g:513:1: (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral )
             int alt28=10;
             switch ( input.LA(1) ) {
             case 61:
@@ -2111,7 +2114,7 @@ public class GCmd_GOCLBase extends Parser {
 
             switch (alt28) {
                 case 1 :
-                    // GOCLBase.g:511:7: t= 'true'
+                    // GOCLBase.g:514:7: t= 'true'
                     {
                     t=(Token)match(input,61,FOLLOW_61_in_literal1812); 
                      n = new ASTBooleanLiteral(true); 
@@ -2119,7 +2122,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 2 :
-                    // GOCLBase.g:512:7: f= 'false'
+                    // GOCLBase.g:515:7: f= 'false'
                     {
                     f=(Token)match(input,62,FOLLOW_62_in_literal1826); 
                      n = new ASTBooleanLiteral(false); 
@@ -2127,7 +2130,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 3 :
-                    // GOCLBase.g:513:7: i= INT
+                    // GOCLBase.g:516:7: i= INT
                     {
                     i=(Token)match(input,INT,FOLLOW_INT_in_literal1839); 
                      n = new ASTIntegerLiteral(i); 
@@ -2135,7 +2138,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 4 :
-                    // GOCLBase.g:514:7: r= REAL
+                    // GOCLBase.g:517:7: r= REAL
                     {
                     r=(Token)match(input,REAL,FOLLOW_REAL_in_literal1854); 
                      n = new ASTRealLiteral(r); 
@@ -2143,7 +2146,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 5 :
-                    // GOCLBase.g:515:7: s= STRING
+                    // GOCLBase.g:518:7: s= STRING
                     {
                     s=(Token)match(input,STRING,FOLLOW_STRING_in_literal1868); 
                      n = new ASTStringLiteral(s); 
@@ -2151,7 +2154,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 6 :
-                    // GOCLBase.g:516:7: HASH enumLit= IDENT
+                    // GOCLBase.g:519:7: HASH enumLit= IDENT
                     {
                     match(input,HASH,FOLLOW_HASH_in_literal1878); 
                     enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal1882); 
@@ -2160,7 +2163,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 7 :
-                    // GOCLBase.g:517:7: nColIt= collectionLiteral
+                    // GOCLBase.g:520:7: nColIt= collectionLiteral
                     {
                     pushFollow(FOLLOW_collectionLiteral_in_literal1894);
                     nColIt=collectionLiteral();
@@ -2172,7 +2175,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 8 :
-                    // GOCLBase.g:518:7: nEColIt= emptyCollectionLiteral
+                    // GOCLBase.g:521:7: nEColIt= emptyCollectionLiteral
                     {
                     pushFollow(FOLLOW_emptyCollectionLiteral_in_literal1906);
                     nEColIt=emptyCollectionLiteral();
@@ -2184,7 +2187,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 9 :
-                    // GOCLBase.g:519:7: nUndLit= undefinedLiteral
+                    // GOCLBase.g:522:7: nUndLit= undefinedLiteral
                     {
                     pushFollow(FOLLOW_undefinedLiteral_in_literal1918);
                     nUndLit=undefinedLiteral();
@@ -2196,7 +2199,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 10 :
-                    // GOCLBase.g:520:7: nTupleLit= tupleLiteral
+                    // GOCLBase.g:523:7: nTupleLit= tupleLiteral
                     {
                     pushFollow(FOLLOW_tupleLiteral_in_literal1930);
                     nTupleLit=tupleLiteral();
@@ -2222,7 +2225,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start collectionLiteral
-    // GOCLBase.g:528:1: collectionLiteral returns [ASTCollectionLiteral n] : ( 'Set' | 'Sequence' | 'Bag' ) LBRACE ci= collectionItem ( COMMA ci= collectionItem )* RBRACE ;
+    // GOCLBase.g:531:1: collectionLiteral returns [ASTCollectionLiteral n] : ( 'Set' | 'Sequence' | 'Bag' ) LBRACE ci= collectionItem ( COMMA ci= collectionItem )* RBRACE ;
     public final ASTCollectionLiteral collectionLiteral() throws RecognitionException {
         ASTCollectionLiteral n = null;
 
@@ -2230,8 +2233,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:529:1: ( ( 'Set' | 'Sequence' | 'Bag' ) LBRACE ci= collectionItem ( COMMA ci= collectionItem )* RBRACE )
-            // GOCLBase.g:530:5: ( 'Set' | 'Sequence' | 'Bag' ) LBRACE ci= collectionItem ( COMMA ci= collectionItem )* RBRACE
+            // GOCLBase.g:532:1: ( ( 'Set' | 'Sequence' | 'Bag' ) LBRACE ci= collectionItem ( COMMA ci= collectionItem )* RBRACE )
+            // GOCLBase.g:533:5: ( 'Set' | 'Sequence' | 'Bag' ) LBRACE ci= collectionItem ( COMMA ci= collectionItem )* RBRACE
             {
              Token op = input.LT(1); 
             if ( (input.LA(1)>=63 && input.LA(1)<=65) ) {
@@ -2251,7 +2254,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
              n.addItem(ci); 
-            // GOCLBase.g:535:5: ( COMMA ci= collectionItem )*
+            // GOCLBase.g:538:5: ( COMMA ci= collectionItem )*
             loop29:
             do {
                 int alt29=2;
@@ -2264,7 +2267,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt29) {
             	case 1 :
-            	    // GOCLBase.g:535:7: COMMA ci= collectionItem
+            	    // GOCLBase.g:538:7: COMMA ci= collectionItem
             	    {
             	    match(input,COMMA,FOLLOW_COMMA_in_collectionLiteral2008); 
             	    pushFollow(FOLLOW_collectionItem_in_collectionLiteral2012);
@@ -2299,7 +2302,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start collectionItem
-    // GOCLBase.g:543:1: collectionItem returns [ASTCollectionItem n] : e= expression ( DOTDOT e= expression )? ;
+    // GOCLBase.g:546:1: collectionItem returns [ASTCollectionItem n] : e= expression ( DOTDOT e= expression )? ;
     public final ASTCollectionItem collectionItem() throws RecognitionException {
         ASTCollectionItem n = null;
 
@@ -2308,8 +2311,8 @@ public class GCmd_GOCLBase extends Parser {
 
          n = new ASTCollectionItem(); 
         try {
-            // GOCLBase.g:545:1: (e= expression ( DOTDOT e= expression )? )
-            // GOCLBase.g:546:5: e= expression ( DOTDOT e= expression )?
+            // GOCLBase.g:548:1: (e= expression ( DOTDOT e= expression )? )
+            // GOCLBase.g:549:5: e= expression ( DOTDOT e= expression )?
             {
             pushFollow(FOLLOW_expression_in_collectionItem2053);
             e=expression();
@@ -2317,7 +2320,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
              n.setFirst(e); 
-            // GOCLBase.g:547:5: ( DOTDOT e= expression )?
+            // GOCLBase.g:550:5: ( DOTDOT e= expression )?
             int alt30=2;
             int LA30_0 = input.LA(1);
 
@@ -2326,7 +2329,7 @@ public class GCmd_GOCLBase extends Parser {
             }
             switch (alt30) {
                 case 1 :
-                    // GOCLBase.g:547:7: DOTDOT e= expression
+                    // GOCLBase.g:550:7: DOTDOT e= expression
                     {
                     match(input,DOTDOT,FOLLOW_DOTDOT_in_collectionItem2064); 
                     pushFollow(FOLLOW_expression_in_collectionItem2068);
@@ -2357,7 +2360,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start emptyCollectionLiteral
-    // GOCLBase.g:557:1: emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n] : 'oclEmpty' LPAREN t= collectionType RPAREN ;
+    // GOCLBase.g:560:1: emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n] : 'oclEmpty' LPAREN t= collectionType RPAREN ;
     public final ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException {
         ASTEmptyCollectionLiteral n = null;
 
@@ -2365,8 +2368,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:558:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
-            // GOCLBase.g:559:5: 'oclEmpty' LPAREN t= collectionType RPAREN
+            // GOCLBase.g:561:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
+            // GOCLBase.g:562:5: 'oclEmpty' LPAREN t= collectionType RPAREN
             {
             match(input,66,FOLLOW_66_in_emptyCollectionLiteral2097); 
             match(input,LPAREN,FOLLOW_LPAREN_in_emptyCollectionLiteral2099); 
@@ -2393,7 +2396,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start undefinedLiteral
-    // GOCLBase.g:570:1: undefinedLiteral returns [ASTUndefinedLiteral n] : 'oclUndefined' LPAREN t= type RPAREN ;
+    // GOCLBase.g:573:1: undefinedLiteral returns [ASTUndefinedLiteral n] : 'oclUndefined' LPAREN t= type RPAREN ;
     public final ASTUndefinedLiteral undefinedLiteral() throws RecognitionException {
         ASTUndefinedLiteral n = null;
 
@@ -2401,8 +2404,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:571:1: ( 'oclUndefined' LPAREN t= type RPAREN )
-            // GOCLBase.g:572:5: 'oclUndefined' LPAREN t= type RPAREN
+            // GOCLBase.g:574:1: ( 'oclUndefined' LPAREN t= type RPAREN )
+            // GOCLBase.g:575:5: 'oclUndefined' LPAREN t= type RPAREN
             {
             match(input,67,FOLLOW_67_in_undefinedLiteral2135); 
             match(input,LPAREN,FOLLOW_LPAREN_in_undefinedLiteral2137); 
@@ -2429,7 +2432,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start tupleLiteral
-    // GOCLBase.g:581:1: tupleLiteral returns [ASTTupleLiteral n] : 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE ;
+    // GOCLBase.g:584:1: tupleLiteral returns [ASTTupleLiteral n] : 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE ;
     public final ASTTupleLiteral tupleLiteral() throws RecognitionException {
         ASTTupleLiteral n = null;
 
@@ -2438,8 +2441,8 @@ public class GCmd_GOCLBase extends Parser {
 
          List tiList = new ArrayList(); 
         try {
-            // GOCLBase.g:583:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
-            // GOCLBase.g:584:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
+            // GOCLBase.g:586:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
+            // GOCLBase.g:587:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
             {
             match(input,68,FOLLOW_68_in_tupleLiteral2177); 
             match(input,LBRACE,FOLLOW_LBRACE_in_tupleLiteral2183); 
@@ -2449,7 +2452,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
              tiList.add(ti); 
-            // GOCLBase.g:587:5: ( COMMA ti= tupleItem )*
+            // GOCLBase.g:590:5: ( COMMA ti= tupleItem )*
             loop31:
             do {
                 int alt31=2;
@@ -2462,7 +2465,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt31) {
             	case 1 :
-            	    // GOCLBase.g:587:7: COMMA ti= tupleItem
+            	    // GOCLBase.g:590:7: COMMA ti= tupleItem
             	    {
             	    match(input,COMMA,FOLLOW_COMMA_in_tupleLiteral2202); 
             	    pushFollow(FOLLOW_tupleItem_in_tupleLiteral2206);
@@ -2498,7 +2501,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start tupleItem
-    // GOCLBase.g:595:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( COLON | EQUAL ) e= expression ;
+    // GOCLBase.g:598:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( COLON | EQUAL ) e= expression ;
     public final ASTTupleItem tupleItem() throws RecognitionException {
         ASTTupleItem n = null;
 
@@ -2507,8 +2510,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:596:1: (name= IDENT ( COLON | EQUAL ) e= expression )
-            // GOCLBase.g:597:5: name= IDENT ( COLON | EQUAL ) e= expression
+            // GOCLBase.g:599:1: (name= IDENT ( COLON | EQUAL ) e= expression )
+            // GOCLBase.g:600:5: name= IDENT ( COLON | EQUAL ) e= expression
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem2248); 
             if ( (input.LA(1)>=COLON && input.LA(1)<=EQUAL) ) {
@@ -2542,7 +2545,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start type
-    // GOCLBase.g:608:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
+    // GOCLBase.g:611:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
     public final ASTType type() throws RecognitionException {
         ASTType n = null;
 
@@ -2554,11 +2557,11 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:609:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
-            // GOCLBase.g:610:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            // GOCLBase.g:612:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
+            // GOCLBase.g:613:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
             {
              Token tok = input.LT(1); /* remember start of type */ 
-            // GOCLBase.g:611:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            // GOCLBase.g:614:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
             int alt32=3;
             switch ( input.LA(1) ) {
             case IDENT:
@@ -2588,7 +2591,7 @@ public class GCmd_GOCLBase extends Parser {
 
             switch (alt32) {
                 case 1 :
-                    // GOCLBase.g:612:7: nTSimple= simpleType
+                    // GOCLBase.g:615:7: nTSimple= simpleType
                     {
                     pushFollow(FOLLOW_simpleType_in_type2306);
                     nTSimple=simpleType();
@@ -2600,7 +2603,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 2 :
-                    // GOCLBase.g:613:7: nTCollection= collectionType
+                    // GOCLBase.g:616:7: nTCollection= collectionType
                     {
                     pushFollow(FOLLOW_collectionType_in_type2318);
                     nTCollection=collectionType();
@@ -2612,7 +2615,7 @@ public class GCmd_GOCLBase extends Parser {
                     }
                     break;
                 case 3 :
-                    // GOCLBase.g:614:7: nTTuple= tupleType
+                    // GOCLBase.g:617:7: nTTuple= tupleType
                     {
                     pushFollow(FOLLOW_tupleType_in_type2330);
                     nTTuple=tupleType();
@@ -2642,7 +2645,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start typeOnly
-    // GOCLBase.g:619:1: typeOnly returns [ASTType n] : nT= type EOF ;
+    // GOCLBase.g:622:1: typeOnly returns [ASTType n] : nT= type EOF ;
     public final ASTType typeOnly() throws RecognitionException {
         ASTType n = null;
 
@@ -2650,8 +2653,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:620:1: (nT= type EOF )
-            // GOCLBase.g:621:5: nT= type EOF
+            // GOCLBase.g:623:1: (nT= type EOF )
+            // GOCLBase.g:624:5: nT= type EOF
             {
             pushFollow(FOLLOW_type_in_typeOnly2362);
             nT=type();
@@ -2676,15 +2679,15 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start simpleType
-    // GOCLBase.g:631:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
+    // GOCLBase.g:634:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
     public final ASTSimpleType simpleType() throws RecognitionException {
         ASTSimpleType n = null;
 
         Token name=null;
 
         try {
-            // GOCLBase.g:632:1: (name= IDENT )
-            // GOCLBase.g:633:5: name= IDENT
+            // GOCLBase.g:635:1: (name= IDENT )
+            // GOCLBase.g:636:5: name= IDENT
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_simpleType2392); 
              n = new ASTSimpleType(name); 
@@ -2704,7 +2707,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start collectionType
-    // GOCLBase.g:641:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN ;
+    // GOCLBase.g:644:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN ;
     public final ASTCollectionType collectionType() throws RecognitionException {
         ASTCollectionType n = null;
 
@@ -2712,8 +2715,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:642:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN )
-            // GOCLBase.g:643:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN
+            // GOCLBase.g:645:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN )
+            // GOCLBase.g:646:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN
             {
              Token op = input.LT(1); 
             if ( (input.LA(1)>=63 && input.LA(1)<=65)||input.LA(1)==69 ) {
@@ -2749,7 +2752,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start tupleType
-    // GOCLBase.g:653:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
+    // GOCLBase.g:656:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
     public final ASTTupleType tupleType() throws RecognitionException {
         ASTTupleType n = null;
 
@@ -2758,8 +2761,8 @@ public class GCmd_GOCLBase extends Parser {
 
          List tpList = new ArrayList(); 
         try {
-            // GOCLBase.g:655:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
-            // GOCLBase.g:656:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
+            // GOCLBase.g:658:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
+            // GOCLBase.g:659:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
             {
             match(input,68,FOLLOW_68_in_tupleType2488); 
             match(input,LPAREN,FOLLOW_LPAREN_in_tupleType2490); 
@@ -2769,7 +2772,7 @@ public class GCmd_GOCLBase extends Parser {
             state._fsp--;
 
              tpList.add(tp); 
-            // GOCLBase.g:658:5: ( COMMA tp= tuplePart )*
+            // GOCLBase.g:661:5: ( COMMA tp= tuplePart )*
             loop33:
             do {
                 int alt33=2;
@@ -2782,7 +2785,7 @@ public class GCmd_GOCLBase extends Parser {
 
                 switch (alt33) {
             	case 1 :
-            	    // GOCLBase.g:658:7: COMMA tp= tuplePart
+            	    // GOCLBase.g:661:7: COMMA tp= tuplePart
             	    {
             	    match(input,COMMA,FOLLOW_COMMA_in_tupleType2510); 
             	    pushFollow(FOLLOW_tuplePart_in_tupleType2514);
@@ -2818,7 +2821,7 @@ public class GCmd_GOCLBase extends Parser {
 
 
     // $ANTLR start tuplePart
-    // GOCLBase.g:667:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
+    // GOCLBase.g:670:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
     public final ASTTuplePart tuplePart() throws RecognitionException {
         ASTTuplePart n = null;
 
@@ -2827,8 +2830,8 @@ public class GCmd_GOCLBase extends Parser {
 
 
         try {
-            // GOCLBase.g:668:1: (name= IDENT COLON t= type )
-            // GOCLBase.g:669:5: name= IDENT COLON t= type
+            // GOCLBase.g:671:1: (name= IDENT COLON t= type )
+            // GOCLBase.g:672:5: name= IDENT COLON t= type
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tuplePart2558); 
             match(input,COLON,FOLLOW_COLON_in_tuplePart2560); 

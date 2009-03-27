@@ -21,8 +21,14 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.BagValue;
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.SetValue;
+import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 
 /** 
@@ -63,7 +69,17 @@ public class ExpCollect extends ExpQuery {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = evalCollect(ctx);
+        Value res = evalCollectNested(ctx);
+        
+        if (res.isUndefined()) 
+        	res = new UndefinedValue(type());
+        else if (res.isBag())           
+        	res = ((BagValue) res).flatten();
+        else if (res.isSet())      
+        	res = ((SetValue) res).flatten();
+        else if (res.isSequence()) 
+        	res = ((SequenceValue) res).flatten();
+        
         ctx.exit(this, res);
         return res;
     }

@@ -339,8 +339,7 @@ public class SetValue extends CollectionValue {
      */
     public SetValue flatten() {
         if (!elemType().isCollection())
-            throw new RuntimeException("Set `" + type()
-                    + "' cannot be flattened");
+            return this;
 
         CollectionType c2 = (CollectionType) elemType();
         SetValue res = new SetValue(c2.elemType());

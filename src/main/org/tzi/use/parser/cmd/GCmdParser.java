@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GCmd.g 2009-03-06 10:35:33
+// $ANTLR 3.1b1 GCmd.g 2009-03-27 14:16:40
  
 /*
  * USE - UML based specification environment
@@ -1123,42 +1123,42 @@ public class GCmdParser extends Parser {
     // $ANTLR end synpred1_GCmd
 
     // Delegated rules
-    public ASTExpression equalityExpression() throws RecognitionException { return gGOCLBase.equalityExpression(); }
-    public ASTCollectionLiteral collectionLiteral() throws RecognitionException { return gGOCLBase.collectionLiteral(); }
-    public ASTVariableDeclaration variableDeclaration() throws RecognitionException { return gGOCLBase.variableDeclaration(); }
-    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
-    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
+    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
     public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
-    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
-    public ASTExpression conditionalImpliesExpression() throws RecognitionException { return gGOCLBase.conditionalImpliesExpression(); }
-    public ASTExpression conditionalAndExpression() throws RecognitionException { return gGOCLBase.conditionalAndExpression(); }
-    public ASTExpression multiplicativeExpression() throws RecognitionException { return gGOCLBase.multiplicativeExpression(); }
-    public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
-    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
-    public ASTExpression unaryExpression() throws RecognitionException { return gGOCLBase.unaryExpression(); }
-    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
+    public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
+    public ASTVariableDeclaration variableDeclaration() throws RecognitionException { return gGOCLBase.variableDeclaration(); }
+    public ASTCollectionLiteral collectionLiteral() throws RecognitionException { return gGOCLBase.collectionLiteral(); }
+    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
+    public ASTExpression relationalExpression() throws RecognitionException { return gGOCLBase.relationalExpression(); }
     public ASTExpression primaryExpression() throws RecognitionException { return gGOCLBase.primaryExpression(); }
+    public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
+    public ASTExpression conditionalAndExpression() throws RecognitionException { return gGOCLBase.conditionalAndExpression(); }
+    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
+    public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
+    public ASTExpression unaryExpression() throws RecognitionException { return gGOCLBase.unaryExpression(); }
+    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
+    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
+    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
+    public ASTExpression conditionalXOrExpression() throws RecognitionException { return gGOCLBase.conditionalXOrExpression(); }
+    public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
+    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
+    public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
+    public List idList() throws RecognitionException { return gGOCLBase.idList(); }
+    public ASTExpression conditionalImpliesExpression() throws RecognitionException { return gGOCLBase.conditionalImpliesExpression(); }
+    public ASTExpression multiplicativeExpression() throws RecognitionException { return gGOCLBase.multiplicativeExpression(); }
+    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
+    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
+    public ASTExpression equalityExpression() throws RecognitionException { return gGOCLBase.equalityExpression(); }
+    public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
+    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
+    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
+    public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
+    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
     public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
     public List paramList() throws RecognitionException { return gGOCLBase.paramList(); }
-    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
     public ASTExpression expression() throws RecognitionException { return gGOCLBase.expression(); }
-    public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
-    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
-    public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
-    public ASTExpression relationalExpression() throws RecognitionException { return gGOCLBase.relationalExpression(); }
-    public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
-    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
-    public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
-    public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
-    public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
-    public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
-    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
-    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
     public ASTExpression postfixExpression() throws RecognitionException { return gGOCLBase.postfixExpression(); }
-    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
-    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
-    public List idList() throws RecognitionException { return gGOCLBase.idList(); }
-    public ASTExpression conditionalXOrExpression() throws RecognitionException { return gGOCLBase.conditionalXOrExpression(); }
+    public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
 
     public final boolean synpred1_GCmd() {
         state.backtracking++;

@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GOCLLexerRules.g 2009-03-06 10:35:32
+// $ANTLR 3.1b1 GOCLLexerRules.g 2009-03-27 14:16:39
 
 package org.tzi.use.parser.use; 
 

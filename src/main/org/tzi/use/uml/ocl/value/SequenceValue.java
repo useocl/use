@@ -210,8 +210,7 @@ public class SequenceValue extends CollectionValue {
      */
     public SequenceValue flatten() {
         if (! elemType().isCollection() ) 
-            throw new RuntimeException("Sequence `" + type() + 
-                                       "' cannot be flattened");
+            return this;
     
         CollectionType c2 = (CollectionType) elemType();
         SequenceValue res = new SequenceValue(c2.elemType());

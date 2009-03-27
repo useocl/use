@@ -63,6 +63,7 @@ import @base_packageimport.*;
   
 @members{  
     final static String Q_COLLECT  = "collect";
+    final static String Q_COLLECTNESTED  = "collectNested";
     final static String Q_SELECT   = "select";
     final static String Q_REJECT   = "reject";
     final static String Q_FORALL   = "forAll";
@@ -81,7 +82,8 @@ import @base_packageimport.*;
     final static int Q_SORTEDBY_ID = 7;
     final static int Q_ANY_ID      = 8;
     final static int Q_ONE_ID      = 9;
-
+    final static int Q_COLLECTNESTED_ID  = 10;
+    
     final static HashMap queryIdentMap = new HashMap();
 
     static {
@@ -94,6 +96,7 @@ import @base_packageimport.*;
         queryIdentMap.put(Q_SORTEDBY, new Integer(Q_SORTEDBY_ID));
         queryIdentMap.put(Q_ANY,      new Integer(Q_ANY_ID));
         queryIdentMap.put(Q_ONE,      new Integer(Q_ONE_ID));
+        queryIdentMap.put(Q_COLLECTNESTED, new Integer(Q_COLLECTNESTED_ID));
     }
 
     protected boolean isQueryIdent(Token t) {

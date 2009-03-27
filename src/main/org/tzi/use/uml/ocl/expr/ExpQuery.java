@@ -217,7 +217,7 @@ public abstract class ExpQuery extends Expression {
     /**
      * Evaluate collect expressions.
      */
-    protected final Value evalCollect(EvalContext ctx) {
+    protected final Value evalCollectNested(EvalContext ctx) {
         // evaluate range
         Value v = fRangeExp.eval(ctx);
         if (v.isUndefined())

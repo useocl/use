@@ -28,6 +28,7 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.ocl.expr.ExpAny;
 import org.tzi.use.uml.ocl.expr.ExpCollect;
+import org.tzi.use.uml.ocl.expr.ExpCollectNested;
 import org.tzi.use.uml.ocl.expr.ExpExists;
 import org.tzi.use.uml.ocl.expr.ExpForAll;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -126,6 +127,7 @@ public class ASTQueryExpression extends ASTExpression {
             switch ( idval ) {
             case GOCLParser.Q_SELECT_ID:
             case GOCLParser.Q_COLLECT_ID:
+            case GOCLParser.Q_COLLECTNESTED_ID:
             case GOCLParser.Q_REJECT_ID:
             case GOCLParser.Q_ISUNIQUE_ID:
             case GOCLParser.Q_SORTEDBY_ID:
@@ -142,6 +144,9 @@ public class ASTQueryExpression extends ASTExpression {
                 switch ( idval ) {
                 case GOCLParser.Q_SELECT_ID:
                     res = new ExpSelect(decl, range, expr);
+                    break;
+                case GOCLParser.Q_COLLECTNESTED_ID:
+                    res = new ExpCollectNested(decl, range, expr);
                     break;
                 case GOCLParser.Q_COLLECT_ID:
                     res = new ExpCollect(decl, range, expr);

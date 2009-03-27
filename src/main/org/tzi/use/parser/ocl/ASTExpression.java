@@ -31,7 +31,7 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.expr.ExpCollect;
+import org.tzi.use.uml.ocl.expr.ExpCollectNested;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpNavigation;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
@@ -197,8 +197,8 @@ public abstract class ASTExpression extends AST {
     {
         Expression res = null;
         try {
-            ExpCollect eCollect = 
-                new ExpCollect(new VarDecl("$e", elemType), srcExpr, expr);
+            ExpCollectNested eCollect = 
+                new ExpCollectNested(new VarDecl("$e", elemType), srcExpr, expr);
             res = eCollect;
         
             // is result a nested collection?

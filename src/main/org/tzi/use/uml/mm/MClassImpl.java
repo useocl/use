@@ -22,6 +22,7 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -270,13 +271,21 @@ public class MClassImpl extends MModelElementImpl implements MClass {
     public MOperation operation(String name, boolean searchInherited) {
         MOperation op = (MOperation) fOperations.get(name);
         if (op == null && searchInherited ) {
-            Iterator it = allParents().iterator();
-            while (it.hasNext() ) {
+	        for (Iterator it=parents().iterator();it.hasNext();) {
                 MClass cls = (MClass) it.next();
                 op = (MOperation) cls.operation(name, false);
                 if (op != null )
-                    break;
+                    return op;
             }
+	        // FIXME: The compiler has to check a unique binding in case
+	        //        of multiple inheritance
+	        for (Iterator it=parents().iterator();it.hasNext();) {
+                MClass cls = (MClass) it.next();
+                op = (MOperation) cls.operation(name, true);
+                if (op != null )
+                    return op;
+            }
+            
         }
         return op;
     }

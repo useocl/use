@@ -166,7 +166,7 @@ public class ExpQueryTest extends TestCase {
                 new ExpConstInteger(2)};
         Expression mult2Exp = ExpStdOp.create("*", args);
         Expression exp =
-            new ExpCollect(new VarDecl("e", TypeFactory.mkInteger()), fSet123, mult2Exp);
+            new ExpCollectNested(new VarDecl("e", TypeFactory.mkInteger()), fSet123, mult2Exp);
         Value[] values =
             new Value[] { new IntegerValue(2), new IntegerValue(4), new IntegerValue(6)};
         assertEquals(

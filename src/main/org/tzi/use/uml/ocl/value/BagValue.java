@@ -229,8 +229,7 @@ public class BagValue extends CollectionValue {
      */
     public BagValue flatten() {
         if (!elemType().isCollection())
-            throw new RuntimeException("Bag `" + type()
-                    + "' cannot be flattened");
+           return this;
 
         CollectionType c2 = (CollectionType) elemType();
         BagValue res = new BagValue(c2.elemType());
