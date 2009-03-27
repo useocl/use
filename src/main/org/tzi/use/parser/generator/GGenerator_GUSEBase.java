@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GUSEBase.g 2009-03-27 14:16:42
+// $ANTLR 3.1b1 GUSEBase.g 2009-03-27 15:04:23
  
 /*
  * USE - UML based specification environment
@@ -118,6 +118,8 @@ public class GGenerator_GUSEBase extends Parser {
     public static final int T__103=103;
     public static final int T__104=104;
     public static final int EQUAL=12;
+    public static final int T__105=105;
+    public static final int T__106=106;
     public static final int IDENT=10;
     public static final int PLUS=18;
     public static final int RANGE_OR_INT=42;
@@ -201,7 +203,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:91:1: ( 'enum' name= IDENT LBRACE idListRes= idList RBRACE ( SEMI )? )
             // GUSEBase.g:92:5: 'enum' name= IDENT LBRACE idListRes= idList RBRACE ( SEMI )?
             {
-            match(input,70,FOLLOW_70_in_enumTypeDefinition47); 
+            match(input,72,FOLLOW_72_in_enumTypeDefinition47); 
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_enumTypeDefinition51); 
             match(input,LBRACE,FOLLOW_LBRACE_in_enumTypeDefinition53); 
             pushFollow(FOLLOW_idList_in_enumTypeDefinition57);
@@ -263,14 +265,14 @@ public class GGenerator_GUSEBase extends Parser {
             int alt2=2;
             int LA2_0 = input.LA(1);
 
-            if ( (LA2_0==71) ) {
+            if ( (LA2_0==73) ) {
                 alt2=1;
             }
             switch (alt2) {
                 case 1 :
                     // GUSEBase.g:108:7: 'abstract'
                     {
-                    match(input,71,FOLLOW_71_in_generalClassDefinition104); 
+                    match(input,73,FOLLOW_73_in_generalClassDefinition104); 
                      isAbstract = true; 
 
                     }
@@ -282,10 +284,10 @@ public class GGenerator_GUSEBase extends Parser {
             int alt3=2;
             int LA3_0 = input.LA(1);
 
-            if ( (LA3_0==72) ) {
+            if ( (LA3_0==74) ) {
                 alt3=1;
             }
-            else if ( ((LA3_0>=77 && LA3_0<=78)) ) {
+            else if ( ((LA3_0>=79 && LA3_0<=80)) ) {
                 alt3=2;
             }
             else {
@@ -369,7 +371,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:130:1: ( 'class' name= IDENT ( LESS idListRes= idList )? ( 'attributes' (a= attributeDefinition )* )? ( 'operations' (op= operationDefinition )* )? ( 'constraints' (inv= invariantClause )* )? 'end' )
             // GUSEBase.g:131:5: 'class' name= IDENT ( LESS idListRes= idList )? ( 'attributes' (a= attributeDefinition )* )? ( 'operations' (op= operationDefinition )* )? ( 'constraints' (inv= invariantClause )* )? 'end'
             {
-            match(input,72,FOLLOW_72_in_classDefinition182); 
+            match(input,74,FOLLOW_74_in_classDefinition182); 
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_classDefinition186); 
              n = new ASTClass(name, isAbstract); 
             // GUSEBase.g:132:5: ( LESS idListRes= idList )?
@@ -400,14 +402,14 @@ public class GGenerator_GUSEBase extends Parser {
             int alt6=2;
             int LA6_0 = input.LA(1);
 
-            if ( (LA6_0==73) ) {
+            if ( (LA6_0==75) ) {
                 alt6=1;
             }
             switch (alt6) {
                 case 1 :
                     // GUSEBase.g:133:7: 'attributes' (a= attributeDefinition )*
                     {
-                    match(input,73,FOLLOW_73_in_classDefinition213); 
+                    match(input,75,FOLLOW_75_in_classDefinition213); 
                     // GUSEBase.g:134:7: (a= attributeDefinition )*
                     loop5:
                     do {
@@ -448,14 +450,14 @@ public class GGenerator_GUSEBase extends Parser {
             int alt8=2;
             int LA8_0 = input.LA(1);
 
-            if ( (LA8_0==74) ) {
+            if ( (LA8_0==76) ) {
                 alt8=1;
             }
             switch (alt8) {
                 case 1 :
                     // GUSEBase.g:136:7: 'operations' (op= operationDefinition )*
                     {
-                    match(input,74,FOLLOW_74_in_classDefinition247); 
+                    match(input,76,FOLLOW_76_in_classDefinition247); 
                     // GUSEBase.g:137:7: (op= operationDefinition )*
                     loop7:
                     do {
@@ -496,21 +498,21 @@ public class GGenerator_GUSEBase extends Parser {
             int alt10=2;
             int LA10_0 = input.LA(1);
 
-            if ( (LA10_0==75) ) {
+            if ( (LA10_0==77) ) {
                 alt10=1;
             }
             switch (alt10) {
                 case 1 :
                     // GUSEBase.g:139:7: 'constraints' (inv= invariantClause )*
                     {
-                    match(input,75,FOLLOW_75_in_classDefinition281); 
+                    match(input,77,FOLLOW_77_in_classDefinition281); 
                     // GUSEBase.g:140:7: (inv= invariantClause )*
                     loop9:
                     do {
                         int alt9=2;
                         int LA9_0 = input.LA(1);
 
-                        if ( (LA9_0==87) ) {
+                        if ( (LA9_0==89) ) {
                             alt9=1;
                         }
 
@@ -540,7 +542,7 @@ public class GGenerator_GUSEBase extends Parser {
 
             }
 
-            match(input,76,FOLLOW_76_in_classDefinition325); 
+            match(input,78,FOLLOW_78_in_classDefinition325); 
 
             }
 
@@ -580,7 +582,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:166:5: classKW= ( 'associationClass' | 'associationclass' ) name= IDENT ( LESS idListRes= idList )? 'between' ae= associationEnd (ae= associationEnd )+ ( 'attributes' (a= attributeDefinition )* )? ( 'operations' (op= operationDefinition )* )? ( 'constraints' (inv= invariantClause )* )? ( ( 'aggregation' | 'composition' ) )? 'end'
             {
             classKW=(Token)input.LT(1);
-            if ( (input.LA(1)>=77 && input.LA(1)<=78) ) {
+            if ( (input.LA(1)>=79 && input.LA(1)<=80) ) {
                 input.consume();
                 state.errorRecovery=false;
             }
@@ -621,7 +623,7 @@ public class GGenerator_GUSEBase extends Parser {
 
             }
 
-            match(input,79,FOLLOW_79_in_associationClassDefinition410); 
+            match(input,81,FOLLOW_81_in_associationClassDefinition410); 
             pushFollow(FOLLOW_associationEnd_in_associationClassDefinition418);
             ae=associationEnd();
 
@@ -667,14 +669,14 @@ public class GGenerator_GUSEBase extends Parser {
             int alt14=2;
             int LA14_0 = input.LA(1);
 
-            if ( (LA14_0==73) ) {
+            if ( (LA14_0==75) ) {
                 alt14=1;
             }
             switch (alt14) {
                 case 1 :
                     // GUSEBase.g:179:7: 'attributes' (a= attributeDefinition )*
                     {
-                    match(input,73,FOLLOW_73_in_associationClassDefinition443); 
+                    match(input,75,FOLLOW_75_in_associationClassDefinition443); 
                     // GUSEBase.g:180:7: (a= attributeDefinition )*
                     loop13:
                     do {
@@ -715,14 +717,14 @@ public class GGenerator_GUSEBase extends Parser {
             int alt16=2;
             int LA16_0 = input.LA(1);
 
-            if ( (LA16_0==74) ) {
+            if ( (LA16_0==76) ) {
                 alt16=1;
             }
             switch (alt16) {
                 case 1 :
                     // GUSEBase.g:182:7: 'operations' (op= operationDefinition )*
                     {
-                    match(input,74,FOLLOW_74_in_associationClassDefinition477); 
+                    match(input,76,FOLLOW_76_in_associationClassDefinition477); 
                     // GUSEBase.g:183:7: (op= operationDefinition )*
                     loop15:
                     do {
@@ -763,21 +765,21 @@ public class GGenerator_GUSEBase extends Parser {
             int alt18=2;
             int LA18_0 = input.LA(1);
 
-            if ( (LA18_0==75) ) {
+            if ( (LA18_0==77) ) {
                 alt18=1;
             }
             switch (alt18) {
                 case 1 :
                     // GUSEBase.g:185:7: 'constraints' (inv= invariantClause )*
                     {
-                    match(input,75,FOLLOW_75_in_associationClassDefinition511); 
+                    match(input,77,FOLLOW_77_in_associationClassDefinition511); 
                     // GUSEBase.g:186:7: (inv= invariantClause )*
                     loop17:
                     do {
                         int alt17=2;
                         int LA17_0 = input.LA(1);
 
-                        if ( (LA17_0==87) ) {
+                        if ( (LA17_0==89) ) {
                             alt17=1;
                         }
 
@@ -811,7 +813,7 @@ public class GGenerator_GUSEBase extends Parser {
             int alt19=2;
             int LA19_0 = input.LA(1);
 
-            if ( ((LA19_0>=80 && LA19_0<=81)) ) {
+            if ( ((LA19_0>=82 && LA19_0<=83)) ) {
                 alt19=1;
             }
             switch (alt19) {
@@ -819,7 +821,7 @@ public class GGenerator_GUSEBase extends Parser {
                     // GUSEBase.g:190:7: ( 'aggregation' | 'composition' )
                     {
                      Token t = input.LT(1); 
-                    if ( (input.LA(1)>=80 && input.LA(1)<=81) ) {
+                    if ( (input.LA(1)>=82 && input.LA(1)<=83) ) {
                         input.consume();
                         state.errorRecovery=false;
                     }
@@ -835,7 +837,7 @@ public class GGenerator_GUSEBase extends Parser {
 
             }
 
-            match(input,76,FOLLOW_76_in_associationClassDefinition594); 
+            match(input,78,FOLLOW_78_in_associationClassDefinition594); 
 
             }
 
@@ -982,20 +984,20 @@ public class GGenerator_GUSEBase extends Parser {
             int alt23=2;
             int LA23_0 = input.LA(1);
 
-            if ( (LA23_0==82) ) {
+            if ( (LA23_0==84) ) {
                 alt23=1;
             }
             switch (alt23) {
                 case 1 :
                     // GUSEBase.g:226:3: 'begin' al= alActionList 'end'
                     {
-                    match(input,82,FOLLOW_82_in_operationDefinition717); 
+                    match(input,84,FOLLOW_84_in_operationDefinition717); 
                     pushFollow(FOLLOW_alActionList_in_operationDefinition721);
                     al=alActionList();
 
                     state._fsp--;
 
-                    match(input,76,FOLLOW_76_in_operationDefinition723); 
+                    match(input,78,FOLLOW_78_in_operationDefinition723); 
 
                     }
                     break;
@@ -1009,7 +1011,7 @@ public class GGenerator_GUSEBase extends Parser {
                 int alt24=2;
                 int LA24_0 = input.LA(1);
 
-                if ( (LA24_0==55||LA24_0==88) ) {
+                if ( (LA24_0==55||LA24_0==90) ) {
                     alt24=1;
                 }
 
@@ -1080,7 +1082,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:242:5: ( 'association' | 'aggregation' | 'composition' ) name= IDENT 'between' ae= associationEnd (ae= associationEnd )+ 'end'
             {
              Token t = input.LT(1); 
-            if ( (input.LA(1)>=80 && input.LA(1)<=81)||input.LA(1)==83 ) {
+            if ( (input.LA(1)>=82 && input.LA(1)<=83)||input.LA(1)==85 ) {
                 input.consume();
                 state.errorRecovery=false;
             }
@@ -1091,7 +1093,7 @@ public class GGenerator_GUSEBase extends Parser {
 
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationDefinition813); 
              n = new ASTAssociation(t, name); 
-            match(input,79,FOLLOW_79_in_associationDefinition821); 
+            match(input,81,FOLLOW_81_in_associationDefinition821); 
             pushFollow(FOLLOW_associationEnd_in_associationDefinition829);
             ae=associationEnd();
 
@@ -1133,7 +1135,7 @@ public class GGenerator_GUSEBase extends Parser {
                 cnt26++;
             } while (true);
 
-            match(input,76,FOLLOW_76_in_associationDefinition852); 
+            match(input,78,FOLLOW_78_in_associationDefinition852); 
 
             }
 
@@ -1176,14 +1178,14 @@ public class GGenerator_GUSEBase extends Parser {
             int alt27=2;
             int LA27_0 = input.LA(1);
 
-            if ( (LA27_0==84) ) {
+            if ( (LA27_0==86) ) {
                 alt27=1;
             }
             switch (alt27) {
                 case 1 :
                     // GUSEBase.g:261:7: 'role' rn= IDENT
                     {
-                    match(input,84,FOLLOW_84_in_associationEnd902); 
+                    match(input,86,FOLLOW_86_in_associationEnd902); 
                     rn=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd906); 
                      n.setRolename(rn); 
 
@@ -1196,14 +1198,14 @@ public class GGenerator_GUSEBase extends Parser {
             int alt28=2;
             int LA28_0 = input.LA(1);
 
-            if ( (LA28_0==85) ) {
+            if ( (LA28_0==87) ) {
                 alt28=1;
             }
             switch (alt28) {
                 case 1 :
                     // GUSEBase.g:262:7: 'ordered'
                     {
-                    match(input,85,FOLLOW_85_in_associationEnd919); 
+                    match(input,87,FOLLOW_87_in_associationEnd919); 
                      n.setOrdered(); 
 
                     }
@@ -1443,7 +1445,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:320:5: 'context' (v= IDENT COLON )? t= simpleType (inv= invariantClause )*
             {
              n = new ASTConstraintDefinition(); 
-            match(input,86,FOLLOW_86_in_invariant1109); 
+            match(input,88,FOLLOW_88_in_invariant1109); 
             // GUSEBase.g:322:5: (v= IDENT COLON )?
             int alt33=2;
             int LA33_0 = input.LA(1);
@@ -1480,7 +1482,7 @@ public class GGenerator_GUSEBase extends Parser {
                 int alt34=2;
                 int LA34_0 = input.LA(1);
 
-                if ( (LA34_0==87) ) {
+                if ( (LA34_0==89) ) {
                     alt34=1;
                 }
 
@@ -1532,7 +1534,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:334:1: ( 'inv' (name= IDENT )? COLON e= expression )
             // GUSEBase.g:335:5: 'inv' (name= IDENT )? COLON e= expression
             {
-            match(input,87,FOLLOW_87_in_invariantClause1178); 
+            match(input,89,FOLLOW_89_in_invariantClause1178); 
             // GUSEBase.g:335:11: (name= IDENT )?
             int alt35=2;
             int LA35_0 = input.LA(1);
@@ -1591,7 +1593,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:348:1: ( 'context' classname= IDENT COLON_COLON opname= IDENT pl= paramList ( COLON rt= type )? (ppc= prePostClause )+ )
             // GUSEBase.g:349:5: 'context' classname= IDENT COLON_COLON opname= IDENT pl= paramList ( COLON rt= type )? (ppc= prePostClause )+
             {
-            match(input,86,FOLLOW_86_in_prePost1223); 
+            match(input,88,FOLLOW_88_in_prePost1223); 
             classname=(Token)match(input,IDENT,FOLLOW_IDENT_in_prePost1227); 
             match(input,COLON_COLON,FOLLOW_COLON_COLON_in_prePost1229); 
             opname=(Token)match(input,IDENT,FOLLOW_IDENT_in_prePost1233); 
@@ -1631,7 +1633,7 @@ public class GGenerator_GUSEBase extends Parser {
                 int alt37=2;
                 int LA37_0 = input.LA(1);
 
-                if ( (LA37_0==55||LA37_0==88) ) {
+                if ( (LA37_0==55||LA37_0==90) ) {
                     alt37=1;
                 }
 
@@ -1688,7 +1690,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:360:5: ( 'pre' | 'post' ) (name= IDENT )? COLON e= expression
             {
              Token t = input.LT(1); 
-            if ( input.LA(1)==55||input.LA(1)==88 ) {
+            if ( input.LA(1)==55||input.LA(1)==90 ) {
                 input.consume();
                 state.errorRecovery=false;
             }
@@ -1758,7 +1760,7 @@ public class GGenerator_GUSEBase extends Parser {
                 int alt39=2;
                 int LA39_0 = input.LA(1);
 
-                if ( (LA39_0==57||(LA39_0>=89 && LA39_0<=92)||LA39_0==94||LA39_0==96||(LA39_0>=98 && LA39_0<=99)||(LA39_0>=102 && LA39_0<=103)) ) {
+                if ( (LA39_0==57||(LA39_0>=91 && LA39_0<=94)||LA39_0==96||LA39_0==98||(LA39_0>=100 && LA39_0<=101)||(LA39_0>=104 && LA39_0<=105)) ) {
                     alt39=1;
                 }
 
@@ -1827,33 +1829,33 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:374:1: (aCV= alCreateVar | aDl= alDelete | aSe= alSet | aSC= alSetCreate | aIn= alInsert | aDe= alDestroy | aIf= alIf | aWh= alWhile | aFo= alFor | aEx= alExec )
             int alt40=10;
             switch ( input.LA(1) ) {
-            case 89:
-            case 90:
+            case 91:
+            case 92:
                 {
                 alt40=1;
                 }
                 break;
-            case 96:
+            case 98:
                 {
                 alt40=2;
                 }
                 break;
-            case 91:
+            case 93:
                 {
                 alt40=3;
                 }
                 break;
-            case 92:
+            case 94:
                 {
                 alt40=4;
                 }
                 break;
-            case 94:
+            case 96:
                 {
                 alt40=5;
                 }
                 break;
-            case 98:
+            case 100:
                 {
                 alt40=6;
                 }
@@ -1863,17 +1865,17 @@ public class GGenerator_GUSEBase extends Parser {
                 alt40=7;
                 }
                 break;
-            case 99:
+            case 101:
                 {
                 alt40=8;
                 }
                 break;
-            case 102:
+            case 104:
                 {
                 alt40=9;
                 }
                 break;
-            case 103:
+            case 105:
                 {
                 alt40=10;
                 }
@@ -2033,7 +2035,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:390:1: ( ( 'var' | 'declare' ) name= IDENT COLON t= type )
             // GUSEBase.g:391:2: ( 'var' | 'declare' ) name= IDENT COLON t= type
             {
-            if ( (input.LA(1)>=89 && input.LA(1)<=90) ) {
+            if ( (input.LA(1)>=91 && input.LA(1)<=92) ) {
                 input.consume();
                 state.errorRecovery=false;
             }
@@ -2079,7 +2081,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:396:1: ( 'set' lval= expression COLON_EQUAL rval= expression )
             // GUSEBase.g:398:5: 'set' lval= expression COLON_EQUAL rval= expression
             {
-            match(input,91,FOLLOW_91_in_alSet1544); 
+            match(input,93,FOLLOW_93_in_alSet1544); 
             pushFollow(FOLLOW_expression_in_alSet1548);
             lval=gGGenerator.expression();
 
@@ -2123,7 +2125,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:403:1: ( 'create' lval= expression COLON_EQUAL {...}?new_= IDENT cls= IDENT ( 'namehint' nameExpr= expression )? )
             // GUSEBase.g:404:5: 'create' lval= expression COLON_EQUAL {...}?new_= IDENT cls= IDENT ( 'namehint' nameExpr= expression )?
             {
-            match(input,92,FOLLOW_92_in_alSetCreate1578); 
+            match(input,94,FOLLOW_94_in_alSetCreate1578); 
             pushFollow(FOLLOW_expression_in_alSetCreate1582);
             lval=gGGenerator.expression();
 
@@ -2139,14 +2141,14 @@ public class GGenerator_GUSEBase extends Parser {
             int alt41=2;
             int LA41_0 = input.LA(1);
 
-            if ( (LA41_0==93) ) {
+            if ( (LA41_0==95) ) {
                 alt41=1;
             }
             switch (alt41) {
                 case 1 :
                     // GUSEBase.g:405:7: 'namehint' nameExpr= expression
                     {
-                    match(input,93,FOLLOW_93_in_alSetCreate1603); 
+                    match(input,95,FOLLOW_95_in_alSetCreate1603); 
                     pushFollow(FOLLOW_expression_in_alSetCreate1607);
                     nameExpr=gGGenerator.expression();
 
@@ -2188,7 +2190,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:412:1: ( 'insert' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'into' id= IDENT )
             // GUSEBase.g:413:5: 'insert' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'into' id= IDENT
             {
-            match(input,94,FOLLOW_94_in_alInsert1638); 
+            match(input,96,FOLLOW_96_in_alInsert1638); 
             match(input,LPAREN,FOLLOW_LPAREN_in_alInsert1640); 
             pushFollow(FOLLOW_expression_in_alInsert1649);
             e=gGGenerator.expression();
@@ -2235,7 +2237,7 @@ public class GGenerator_GUSEBase extends Parser {
             } while (true);
 
             match(input,RPAREN,FOLLOW_RPAREN_in_alInsert1683); 
-            match(input,95,FOLLOW_95_in_alInsert1685); 
+            match(input,97,FOLLOW_97_in_alInsert1685); 
             id=(Token)match(input,IDENT,FOLLOW_IDENT_in_alInsert1689); 
              insert = new ASTALInsert(exprList, id); 
 
@@ -2267,7 +2269,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:423:1: ( 'delete' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'from' id= IDENT )
             // GUSEBase.g:424:5: 'delete' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'from' id= IDENT
             {
-            match(input,96,FOLLOW_96_in_alDelete1721); 
+            match(input,98,FOLLOW_98_in_alDelete1721); 
             match(input,LPAREN,FOLLOW_LPAREN_in_alDelete1723); 
             pushFollow(FOLLOW_expression_in_alDelete1731);
             e=gGGenerator.expression();
@@ -2314,7 +2316,7 @@ public class GGenerator_GUSEBase extends Parser {
             } while (true);
 
             match(input,RPAREN,FOLLOW_RPAREN_in_alDelete1764); 
-            match(input,97,FOLLOW_97_in_alDelete1766); 
+            match(input,99,FOLLOW_99_in_alDelete1766); 
             id=(Token)match(input,IDENT,FOLLOW_IDENT_in_alDelete1770); 
              n = new ASTALDelete(exprList, id); 
 
@@ -2344,7 +2346,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:433:1: ( 'destroy' e= expression )
             // GUSEBase.g:434:6: 'destroy' e= expression
             {
-            match(input,98,FOLLOW_98_in_alDestroy1799); 
+            match(input,100,FOLLOW_100_in_alDestroy1799); 
             pushFollow(FOLLOW_expression_in_alDestroy1803);
             e=gGGenerator.expression();
 
@@ -2448,19 +2450,19 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:448:1: ( 'while' expr= expression 'do' body= alActionList 'wend' )
             // GUSEBase.g:449:2: 'while' expr= expression 'do' body= alActionList 'wend'
             {
-            match(input,99,FOLLOW_99_in_alWhile1871); 
+            match(input,101,FOLLOW_101_in_alWhile1871); 
             pushFollow(FOLLOW_expression_in_alWhile1875);
             expr=gGGenerator.expression();
 
             state._fsp--;
 
-            match(input,100,FOLLOW_100_in_alWhile1879); 
+            match(input,102,FOLLOW_102_in_alWhile1879); 
             pushFollow(FOLLOW_alActionList_in_alWhile1885);
             body=alActionList();
 
             state._fsp--;
 
-            match(input,101,FOLLOW_101_in_alWhile1888); 
+            match(input,103,FOLLOW_103_in_alWhile1888); 
              w = new ASTALWhile(expr, body); 
 
             }
@@ -2495,7 +2497,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:458:1: ( 'for' var= IDENT COLON t= type 'in' expr= expression 'do' body= alActionList {...}?next= IDENT )
             // GUSEBase.g:459:2: 'for' var= IDENT COLON t= type 'in' expr= expression 'do' body= alActionList {...}?next= IDENT
             {
-            match(input,102,FOLLOW_102_in_alFor1907); 
+            match(input,104,FOLLOW_104_in_alFor1907); 
             var=(Token)match(input,IDENT,FOLLOW_IDENT_in_alFor1911); 
             match(input,COLON,FOLLOW_COLON_in_alFor1913); 
             pushFollow(FOLLOW_type_in_alFor1917);
@@ -2509,7 +2511,7 @@ public class GGenerator_GUSEBase extends Parser {
 
             state._fsp--;
 
-            match(input,100,FOLLOW_100_in_alFor1927); 
+            match(input,102,FOLLOW_102_in_alFor1927); 
             pushFollow(FOLLOW_alActionList_in_alFor1933);
             body=alActionList();
 
@@ -2547,7 +2549,7 @@ public class GGenerator_GUSEBase extends Parser {
             // GUSEBase.g:467:1: ( 'execute' op= expression )
             // GUSEBase.g:468:5: 'execute' op= expression
             {
-            match(input,103,FOLLOW_103_in_alExec1960); 
+            match(input,105,FOLLOW_105_in_alExec1960); 
             pushFollow(FOLLOW_expression_in_alExec1964);
             op=gGGenerator.expression();
 
@@ -2573,69 +2575,69 @@ public class GGenerator_GUSEBase extends Parser {
 
  
 
-    public static final BitSet FOLLOW_70_in_enumTypeDefinition47 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_72_in_enumTypeDefinition47 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_enumTypeDefinition51 = new BitSet(new long[]{0x0000000200000000L});
     public static final BitSet FOLLOW_LBRACE_in_enumTypeDefinition53 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_idList_in_enumTypeDefinition57 = new BitSet(new long[]{0x0000000400000000L});
     public static final BitSet FOLLOW_RBRACE_in_enumTypeDefinition59 = new BitSet(new long[]{0x0000000004000002L});
     public static final BitSet FOLLOW_SEMI_in_enumTypeDefinition63 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_71_in_generalClassDefinition104 = new BitSet(new long[]{0x0000000000000000L,0x0000000000006100L});
+    public static final BitSet FOLLOW_73_in_generalClassDefinition104 = new BitSet(new long[]{0x0000000000000000L,0x0000000000018400L});
     public static final BitSet FOLLOW_classDefinition_in_generalClassDefinition122 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_associationClassDefinition_in_generalClassDefinition142 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_72_in_classDefinition182 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_IDENT_in_classDefinition186 = new BitSet(new long[]{0x0000000000004000L,0x0000000000001E00L});
+    public static final BitSet FOLLOW_74_in_classDefinition182 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_IDENT_in_classDefinition186 = new BitSet(new long[]{0x0000000000004000L,0x0000000000007800L});
     public static final BitSet FOLLOW_LESS_in_classDefinition196 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_idList_in_classDefinition200 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001E00L});
-    public static final BitSet FOLLOW_73_in_classDefinition213 = new BitSet(new long[]{0x0000000000000400L,0x0000000000001C00L});
-    public static final BitSet FOLLOW_attributeDefinition_in_classDefinition226 = new BitSet(new long[]{0x0000000000000400L,0x0000000000001C00L});
-    public static final BitSet FOLLOW_74_in_classDefinition247 = new BitSet(new long[]{0x0000000000000400L,0x0000000000001800L});
-    public static final BitSet FOLLOW_operationDefinition_in_classDefinition260 = new BitSet(new long[]{0x0000000000000400L,0x0000000000001800L});
-    public static final BitSet FOLLOW_75_in_classDefinition281 = new BitSet(new long[]{0x0000000000000000L,0x0000000000801000L});
-    public static final BitSet FOLLOW_invariantClause_in_classDefinition301 = new BitSet(new long[]{0x0000000000000000L,0x0000000000801000L});
-    public static final BitSet FOLLOW_76_in_classDefinition325 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_idList_in_classDefinition200 = new BitSet(new long[]{0x0000000000000000L,0x0000000000007800L});
+    public static final BitSet FOLLOW_75_in_classDefinition213 = new BitSet(new long[]{0x0000000000000400L,0x0000000000007000L});
+    public static final BitSet FOLLOW_attributeDefinition_in_classDefinition226 = new BitSet(new long[]{0x0000000000000400L,0x0000000000007000L});
+    public static final BitSet FOLLOW_76_in_classDefinition247 = new BitSet(new long[]{0x0000000000000400L,0x0000000000006000L});
+    public static final BitSet FOLLOW_operationDefinition_in_classDefinition260 = new BitSet(new long[]{0x0000000000000400L,0x0000000000006000L});
+    public static final BitSet FOLLOW_77_in_classDefinition281 = new BitSet(new long[]{0x0000000000000000L,0x0000000002004000L});
+    public static final BitSet FOLLOW_invariantClause_in_classDefinition301 = new BitSet(new long[]{0x0000000000000000L,0x0000000002004000L});
+    public static final BitSet FOLLOW_78_in_classDefinition325 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_associationClassDefinition359 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_IDENT_in_associationClassDefinition385 = new BitSet(new long[]{0x0000000000004000L,0x0000000000008000L});
+    public static final BitSet FOLLOW_IDENT_in_associationClassDefinition385 = new BitSet(new long[]{0x0000000000004000L,0x0000000000020000L});
     public static final BitSet FOLLOW_LESS_in_associationClassDefinition395 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_idList_in_associationClassDefinition399 = new BitSet(new long[]{0x0000000000000000L,0x0000000000008000L});
-    public static final BitSet FOLLOW_79_in_associationClassDefinition410 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_idList_in_associationClassDefinition399 = new BitSet(new long[]{0x0000000000000000L,0x0000000000020000L});
+    public static final BitSet FOLLOW_81_in_associationClassDefinition410 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_associationEnd_in_associationClassDefinition418 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_associationEnd_in_associationClassDefinition430 = new BitSet(new long[]{0x0000000000000400L,0x0000000000031E00L});
-    public static final BitSet FOLLOW_73_in_associationClassDefinition443 = new BitSet(new long[]{0x0000000000000400L,0x0000000000031C00L});
-    public static final BitSet FOLLOW_attributeDefinition_in_associationClassDefinition456 = new BitSet(new long[]{0x0000000000000400L,0x0000000000031C00L});
-    public static final BitSet FOLLOW_74_in_associationClassDefinition477 = new BitSet(new long[]{0x0000000000000400L,0x0000000000031800L});
-    public static final BitSet FOLLOW_operationDefinition_in_associationClassDefinition490 = new BitSet(new long[]{0x0000000000000400L,0x0000000000031800L});
-    public static final BitSet FOLLOW_75_in_associationClassDefinition511 = new BitSet(new long[]{0x0000000000000000L,0x0000000000831000L});
-    public static final BitSet FOLLOW_invariantClause_in_associationClassDefinition531 = new BitSet(new long[]{0x0000000000000000L,0x0000000000831000L});
-    public static final BitSet FOLLOW_set_in_associationClassDefinition565 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_76_in_associationClassDefinition594 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_associationEnd_in_associationClassDefinition430 = new BitSet(new long[]{0x0000000000000400L,0x00000000000C7800L});
+    public static final BitSet FOLLOW_75_in_associationClassDefinition443 = new BitSet(new long[]{0x0000000000000400L,0x00000000000C7000L});
+    public static final BitSet FOLLOW_attributeDefinition_in_associationClassDefinition456 = new BitSet(new long[]{0x0000000000000400L,0x00000000000C7000L});
+    public static final BitSet FOLLOW_76_in_associationClassDefinition477 = new BitSet(new long[]{0x0000000000000400L,0x00000000000C6000L});
+    public static final BitSet FOLLOW_operationDefinition_in_associationClassDefinition490 = new BitSet(new long[]{0x0000000000000400L,0x00000000000C6000L});
+    public static final BitSet FOLLOW_77_in_associationClassDefinition511 = new BitSet(new long[]{0x0000000000000000L,0x00000000020C4000L});
+    public static final BitSet FOLLOW_invariantClause_in_associationClassDefinition531 = new BitSet(new long[]{0x0000000000000000L,0x00000000020C4000L});
+    public static final BitSet FOLLOW_set_in_associationClassDefinition565 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
+    public static final BitSet FOLLOW_78_in_associationClassDefinition594 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_attributeDefinition626 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_COLON_in_attributeDefinition628 = new BitSet(new long[]{0x8000000000000400L,0x0000000000000033L});
+    public static final BitSet FOLLOW_COLON_in_attributeDefinition628 = new BitSet(new long[]{0x8000000000000400L,0x00000000000000C3L});
     public static final BitSet FOLLOW_type_in_attributeDefinition632 = new BitSet(new long[]{0x0000000004000002L});
     public static final BitSet FOLLOW_SEMI_in_attributeDefinition636 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_operationDefinition675 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_paramList_in_operationDefinition683 = new BitSet(new long[]{0x0080000004001802L,0x0000000001040000L});
-    public static final BitSet FOLLOW_COLON_in_operationDefinition691 = new BitSet(new long[]{0x8000000000000400L,0x0000000000000033L});
-    public static final BitSet FOLLOW_type_in_operationDefinition695 = new BitSet(new long[]{0x0080000004001002L,0x0000000001040000L});
-    public static final BitSet FOLLOW_EQUAL_in_operationDefinition705 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
-    public static final BitSet FOLLOW_expression_in_operationDefinition709 = new BitSet(new long[]{0x0080000004000002L,0x0000000001040000L});
-    public static final BitSet FOLLOW_82_in_operationDefinition717 = new BitSet(new long[]{0x0200000000000000L,0x000000CD5E001000L});
-    public static final BitSet FOLLOW_alActionList_in_operationDefinition721 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_76_in_operationDefinition723 = new BitSet(new long[]{0x0080000004000002L,0x0000000001000000L});
-    public static final BitSet FOLLOW_prePostClause_in_operationDefinition742 = new BitSet(new long[]{0x0080000004000002L,0x0000000001000000L});
+    public static final BitSet FOLLOW_paramList_in_operationDefinition683 = new BitSet(new long[]{0x0080000004001802L,0x0000000004100000L});
+    public static final BitSet FOLLOW_COLON_in_operationDefinition691 = new BitSet(new long[]{0x8000000000000400L,0x00000000000000C3L});
+    public static final BitSet FOLLOW_type_in_operationDefinition695 = new BitSet(new long[]{0x0080000004001002L,0x0000000004100000L});
+    public static final BitSet FOLLOW_EQUAL_in_operationDefinition705 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
+    public static final BitSet FOLLOW_expression_in_operationDefinition709 = new BitSet(new long[]{0x0080000004000002L,0x0000000004100000L});
+    public static final BitSet FOLLOW_84_in_operationDefinition717 = new BitSet(new long[]{0x0200000000000000L,0x0000033578004000L});
+    public static final BitSet FOLLOW_alActionList_in_operationDefinition721 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
+    public static final BitSet FOLLOW_78_in_operationDefinition723 = new BitSet(new long[]{0x0080000004000002L,0x0000000004000000L});
+    public static final BitSet FOLLOW_prePostClause_in_operationDefinition742 = new BitSet(new long[]{0x0080000004000002L,0x0000000004000000L});
     public static final BitSet FOLLOW_SEMI_in_operationDefinition755 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_associationDefinition788 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_IDENT_in_associationDefinition813 = new BitSet(new long[]{0x0000000000000000L,0x0000000000008000L});
-    public static final BitSet FOLLOW_79_in_associationDefinition821 = new BitSet(new long[]{0x0000000000000400L,0x0000000000031E00L});
-    public static final BitSet FOLLOW_associationEnd_in_associationDefinition829 = new BitSet(new long[]{0x0000000000000400L,0x0000000000031E00L});
-    public static final BitSet FOLLOW_associationEnd_in_associationDefinition841 = new BitSet(new long[]{0x0000000000000400L,0x0000000000031E00L});
-    public static final BitSet FOLLOW_76_in_associationDefinition852 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_associationDefinition813 = new BitSet(new long[]{0x0000000000000000L,0x0000000000020000L});
+    public static final BitSet FOLLOW_81_in_associationDefinition821 = new BitSet(new long[]{0x0000000000000400L,0x00000000000C7800L});
+    public static final BitSet FOLLOW_associationEnd_in_associationDefinition829 = new BitSet(new long[]{0x0000000000000400L,0x00000000000C7800L});
+    public static final BitSet FOLLOW_associationEnd_in_associationDefinition841 = new BitSet(new long[]{0x0000000000000400L,0x00000000000C7800L});
+    public static final BitSet FOLLOW_78_in_associationDefinition852 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_associationEnd878 = new BitSet(new long[]{0x0000000008000000L});
     public static final BitSet FOLLOW_LBRACK_in_associationEnd880 = new BitSet(new long[]{0x0000000020100000L});
     public static final BitSet FOLLOW_multiplicity_in_associationEnd884 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_RBRACK_in_associationEnd886 = new BitSet(new long[]{0x0000000004000002L,0x0000000000300000L});
-    public static final BitSet FOLLOW_84_in_associationEnd902 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_IDENT_in_associationEnd906 = new BitSet(new long[]{0x0000000004000002L,0x0000000000200000L});
-    public static final BitSet FOLLOW_85_in_associationEnd919 = new BitSet(new long[]{0x0000000004000002L});
+    public static final BitSet FOLLOW_RBRACK_in_associationEnd886 = new BitSet(new long[]{0x0000000004000002L,0x0000000000C00000L});
+    public static final BitSet FOLLOW_86_in_associationEnd902 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_IDENT_in_associationEnd906 = new BitSet(new long[]{0x0000000004000002L,0x0000000000800000L});
+    public static final BitSet FOLLOW_87_in_associationEnd919 = new BitSet(new long[]{0x0000000004000002L});
     public static final BitSet FOLLOW_SEMI_in_associationEnd932 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_multiplicityRange_in_multiplicity967 = new BitSet(new long[]{0x0000000000000102L});
     public static final BitSet FOLLOW_COMMA_in_multiplicity977 = new BitSet(new long[]{0x0000000020100000L});
@@ -2645,28 +2647,28 @@ public class GGenerator_GUSEBase extends Parser {
     public static final BitSet FOLLOW_multiplicitySpec_in_multiplicityRange1024 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_INT_in_multiplicitySpec1058 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_STAR_in_multiplicitySpec1068 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_86_in_invariant1109 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_88_in_invariant1109 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_invariant1119 = new BitSet(new long[]{0x0000000000000800L});
     public static final BitSet FOLLOW_COLON_in_invariant1121 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_simpleType_in_invariant1136 = new BitSet(new long[]{0x0000000000000002L,0x0000000000831000L});
-    public static final BitSet FOLLOW_invariantClause_in_invariant1148 = new BitSet(new long[]{0x0000000000000002L,0x0000000000831000L});
-    public static final BitSet FOLLOW_87_in_invariantClause1178 = new BitSet(new long[]{0x0000000000000C00L});
+    public static final BitSet FOLLOW_simpleType_in_invariant1136 = new BitSet(new long[]{0x0000000000000002L,0x00000000020C4000L});
+    public static final BitSet FOLLOW_invariantClause_in_invariant1148 = new BitSet(new long[]{0x0000000000000002L,0x00000000020C4000L});
+    public static final BitSet FOLLOW_89_in_invariantClause1178 = new BitSet(new long[]{0x0000000000000C00L});
     public static final BitSet FOLLOW_IDENT_in_invariantClause1184 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_COLON_in_invariantClause1189 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_COLON_in_invariantClause1189 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_invariantClause1193 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_86_in_prePost1223 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_88_in_prePost1223 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_prePost1227 = new BitSet(new long[]{0x0000001000000000L});
     public static final BitSet FOLLOW_COLON_COLON_in_prePost1229 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_prePost1233 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_paramList_in_prePost1237 = new BitSet(new long[]{0x0080000004000800L,0x0000000001000000L});
-    public static final BitSet FOLLOW_COLON_in_prePost1241 = new BitSet(new long[]{0x8000000000000400L,0x0000000000000033L});
-    public static final BitSet FOLLOW_type_in_prePost1245 = new BitSet(new long[]{0x0080000004000000L,0x0000000001000000L});
-    public static final BitSet FOLLOW_prePostClause_in_prePost1264 = new BitSet(new long[]{0x0080000004000002L,0x0000000001000000L});
+    public static final BitSet FOLLOW_paramList_in_prePost1237 = new BitSet(new long[]{0x0080000004000800L,0x0000000004000000L});
+    public static final BitSet FOLLOW_COLON_in_prePost1241 = new BitSet(new long[]{0x8000000000000400L,0x00000000000000C3L});
+    public static final BitSet FOLLOW_type_in_prePost1245 = new BitSet(new long[]{0x0080000004000000L,0x0000000004000000L});
+    public static final BitSet FOLLOW_prePostClause_in_prePost1264 = new BitSet(new long[]{0x0080000004000002L,0x0000000004000000L});
     public static final BitSet FOLLOW_set_in_prePostClause1298 = new BitSet(new long[]{0x0000000000000C00L});
     public static final BitSet FOLLOW_IDENT_in_prePostClause1313 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_COLON_in_prePostClause1318 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_COLON_in_prePostClause1318 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_prePostClause1322 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alAction_in_alActionList1355 = new BitSet(new long[]{0x0200000000000002L,0x000000CD5E000000L});
+    public static final BitSet FOLLOW_alAction_in_alActionList1355 = new BitSet(new long[]{0x0200000000000002L,0x0000033578000000L});
     public static final BitSet FOLLOW_alCreateVar_in_alAction1381 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_alDelete_in_alAction1393 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_alSet_in_alAction1405 = new BitSet(new long[]{0x0000000000000002L});
@@ -2679,63 +2681,63 @@ public class GGenerator_GUSEBase extends Parser {
     public static final BitSet FOLLOW_alExec_in_alAction1489 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_alCreateVar1508 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_alCreateVar1516 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_COLON_in_alCreateVar1518 = new BitSet(new long[]{0x8000000000000400L,0x0000000000000033L});
+    public static final BitSet FOLLOW_COLON_in_alCreateVar1518 = new BitSet(new long[]{0x8000000000000400L,0x00000000000000C3L});
     public static final BitSet FOLLOW_type_in_alCreateVar1522 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_91_in_alSet1544 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_93_in_alSet1544 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alSet1548 = new BitSet(new long[]{0x0000002000000000L});
-    public static final BitSet FOLLOW_COLON_EQUAL_in_alSet1550 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_COLON_EQUAL_in_alSet1550 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alSet1554 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_92_in_alSetCreate1578 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_94_in_alSetCreate1578 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alSetCreate1582 = new BitSet(new long[]{0x0000002000000000L});
     public static final BitSet FOLLOW_COLON_EQUAL_in_alSetCreate1584 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_alSetCreate1590 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_IDENT_in_alSetCreate1594 = new BitSet(new long[]{0x0000000000000002L,0x0000000020000000L});
-    public static final BitSet FOLLOW_93_in_alSetCreate1603 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_IDENT_in_alSetCreate1594 = new BitSet(new long[]{0x0000000000000002L,0x0000000080000000L});
+    public static final BitSet FOLLOW_95_in_alSetCreate1603 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alSetCreate1607 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_94_in_alInsert1638 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_LPAREN_in_alInsert1640 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_96_in_alInsert1638 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_LPAREN_in_alInsert1640 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alInsert1649 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_COMMA_in_alInsert1653 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_COMMA_in_alInsert1653 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alInsert1661 = new BitSet(new long[]{0x0000000000000300L});
-    public static final BitSet FOLLOW_COMMA_in_alInsert1667 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_COMMA_in_alInsert1667 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alInsert1671 = new BitSet(new long[]{0x0000000000000300L});
-    public static final BitSet FOLLOW_RPAREN_in_alInsert1683 = new BitSet(new long[]{0x0000000000000000L,0x0000000080000000L});
-    public static final BitSet FOLLOW_95_in_alInsert1685 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_RPAREN_in_alInsert1683 = new BitSet(new long[]{0x0000000000000000L,0x0000000200000000L});
+    public static final BitSet FOLLOW_97_in_alInsert1685 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_alInsert1689 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_96_in_alDelete1721 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_LPAREN_in_alDelete1723 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_98_in_alDelete1721 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_LPAREN_in_alDelete1723 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alDelete1731 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_COMMA_in_alDelete1735 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_COMMA_in_alDelete1735 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alDelete1743 = new BitSet(new long[]{0x0000000000000300L});
-    public static final BitSet FOLLOW_COMMA_in_alDelete1749 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_COMMA_in_alDelete1749 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alDelete1753 = new BitSet(new long[]{0x0000000000000300L});
-    public static final BitSet FOLLOW_RPAREN_in_alDelete1764 = new BitSet(new long[]{0x0000000000000000L,0x0000000200000000L});
-    public static final BitSet FOLLOW_97_in_alDelete1766 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_RPAREN_in_alDelete1764 = new BitSet(new long[]{0x0000000000000000L,0x0000000800000000L});
+    public static final BitSet FOLLOW_99_in_alDelete1766 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_alDelete1770 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_98_in_alDestroy1799 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_100_in_alDestroy1799 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alDestroy1803 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_57_in_alIf1827 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_57_in_alIf1827 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alIf1831 = new BitSet(new long[]{0x0400000000000000L});
-    public static final BitSet FOLLOW_58_in_alIf1835 = new BitSet(new long[]{0x1A00000000000000L,0x000000CD5E000000L});
+    public static final BitSet FOLLOW_58_in_alIf1835 = new BitSet(new long[]{0x1A00000000000000L,0x0000033578000000L});
     public static final BitSet FOLLOW_alActionList_in_alIf1839 = new BitSet(new long[]{0x1800000000000000L});
-    public static final BitSet FOLLOW_59_in_alIf1843 = new BitSet(new long[]{0x1200000000000000L,0x000000CD5E000000L});
+    public static final BitSet FOLLOW_59_in_alIf1843 = new BitSet(new long[]{0x1200000000000000L,0x0000033578000000L});
     public static final BitSet FOLLOW_alActionList_in_alIf1847 = new BitSet(new long[]{0x1000000000000000L});
     public static final BitSet FOLLOW_60_in_alIf1852 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_99_in_alWhile1871 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
-    public static final BitSet FOLLOW_expression_in_alWhile1875 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_100_in_alWhile1879 = new BitSet(new long[]{0x0200000000000000L,0x000000ED5E000000L});
-    public static final BitSet FOLLOW_alActionList_in_alWhile1885 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_101_in_alWhile1888 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_102_in_alFor1907 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_101_in_alWhile1871 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
+    public static final BitSet FOLLOW_expression_in_alWhile1875 = new BitSet(new long[]{0x0000000000000000L,0x0000004000000000L});
+    public static final BitSet FOLLOW_102_in_alWhile1879 = new BitSet(new long[]{0x0200000000000000L,0x000003B578000000L});
+    public static final BitSet FOLLOW_alActionList_in_alWhile1885 = new BitSet(new long[]{0x0000000000000000L,0x0000008000000000L});
+    public static final BitSet FOLLOW_103_in_alWhile1888 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_104_in_alFor1907 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_alFor1911 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_COLON_in_alFor1913 = new BitSet(new long[]{0x8000000000000400L,0x0000000000000033L});
+    public static final BitSet FOLLOW_COLON_in_alFor1913 = new BitSet(new long[]{0x8000000000000400L,0x00000000000000C3L});
     public static final BitSet FOLLOW_type_in_alFor1917 = new BitSet(new long[]{0x0000800000000000L});
-    public static final BitSet FOLLOW_47_in_alFor1919 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
-    public static final BitSet FOLLOW_expression_in_alFor1923 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_100_in_alFor1927 = new BitSet(new long[]{0x0200000000000400L,0x000000CD5E000000L});
+    public static final BitSet FOLLOW_47_in_alFor1919 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
+    public static final BitSet FOLLOW_expression_in_alFor1923 = new BitSet(new long[]{0x0000000000000000L,0x0000004000000000L});
+    public static final BitSet FOLLOW_102_in_alFor1927 = new BitSet(new long[]{0x0200000000000400L,0x0000033578000000L});
     public static final BitSet FOLLOW_alActionList_in_alFor1933 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_alFor1940 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_103_in_alExec1960 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_105_in_alExec1960 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_alExec1964 = new BitSet(new long[]{0x0000000000000002L});
 
 }

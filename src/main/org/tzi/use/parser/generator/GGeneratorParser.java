@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GGenerator.g 2009-03-27 14:16:42
+// $ANTLR 3.1b1 GGenerator.g 2009-03-27 15:04:23
  
 package org.tzi.use.parser.generator;
 
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class GGeneratorParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "LITERAL_oclAsType", "LITERAL_oclIsKindOf", "LITERAL_oclIsTypeOf", "LPAREN", "COMMA", "RPAREN", "IDENT", "COLON", "EQUAL", "NOT_EQUAL", "LESS", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "STAR", "SLASH", "ARROW", "DOT", "AT", "BAR", "SEMI", "LBRACK", "RBRACK", "INT", "REAL", "STRING", "HASH", "LBRACE", "RBRACE", "DOTDOT", "COLON_COLON", "COLON_EQUAL", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'let'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'pre'", "'iterate'", "'if'", "'then'", "'else'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'oclEmpty'", "'oclUndefined'", "'Tuple'", "'Collection'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'constraints'", "'end'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'begin'", "'association'", "'role'", "'ordered'", "'context'", "'inv'", "'post'", "'var'", "'declare'", "'set'", "'create'", "'namehint'", "'insert'", "'into'", "'delete'", "'from'", "'destroy'", "'while'", "'do'", "'wend'", "'for'", "'execute'", "'procedure'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "LITERAL_oclAsType", "LITERAL_oclIsKindOf", "LITERAL_oclIsTypeOf", "LPAREN", "COMMA", "RPAREN", "IDENT", "COLON", "EQUAL", "NOT_EQUAL", "LESS", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "STAR", "SLASH", "ARROW", "DOT", "AT", "BAR", "SEMI", "LBRACK", "RBRACK", "INT", "REAL", "STRING", "HASH", "LBRACE", "RBRACE", "DOTDOT", "COLON_COLON", "COLON_EQUAL", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'let'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'pre'", "'iterate'", "'if'", "'then'", "'else'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Collection'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'constraints'", "'end'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'begin'", "'association'", "'role'", "'ordered'", "'context'", "'inv'", "'post'", "'var'", "'declare'", "'set'", "'create'", "'namehint'", "'insert'", "'into'", "'delete'", "'from'", "'destroy'", "'while'", "'do'", "'wend'", "'for'", "'execute'", "'procedure'"
     };
     public static final int LITERAL_oclAsType=4;
     public static final int STAR=20;
@@ -97,6 +97,8 @@ public class GGeneratorParser extends Parser {
     public static final int T__103=103;
     public static final int T__104=104;
     public static final int EQUAL=12;
+    public static final int T__105=105;
+    public static final int T__106=106;
     public static final int IDENT=10;
     public static final int PLUS=18;
     public static final int RANGE_OR_INT=42;
@@ -174,7 +176,7 @@ public class GGeneratorParser extends Parser {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( (LA1_0==86) ) {
+                if ( (LA1_0==88) ) {
                     alt1=1;
                 }
 
@@ -233,7 +235,7 @@ public class GGeneratorParser extends Parser {
                 int alt2=2;
                 int LA2_0 = input.LA(1);
 
-                if ( (LA2_0==104) ) {
+                if ( (LA2_0==106) ) {
                     alt2=1;
                 }
 
@@ -291,7 +293,7 @@ public class GGeneratorParser extends Parser {
             // GGenerator.g:131:1: ( 'procedure' name= IDENT LPAREN parameterDecls= variableDeclarationList RPAREN ( 'var' localDecls= variableDeclarationList SEMI )? 'begin' instructions= instructionList 'end' SEMI )
             // GGenerator.g:132:5: 'procedure' name= IDENT LPAREN parameterDecls= variableDeclarationList RPAREN ( 'var' localDecls= variableDeclarationList SEMI )? 'begin' instructions= instructionList 'end' SEMI
             {
-            match(input,104,FOLLOW_104_in_procedure181); 
+            match(input,106,FOLLOW_106_in_procedure181); 
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_procedure185); 
             match(input,LPAREN,FOLLOW_LPAREN_in_procedure187); 
             pushFollow(FOLLOW_variableDeclarationList_in_procedure191);
@@ -304,14 +306,14 @@ public class GGeneratorParser extends Parser {
             int alt3=2;
             int LA3_0 = input.LA(1);
 
-            if ( (LA3_0==89) ) {
+            if ( (LA3_0==91) ) {
                 alt3=1;
             }
             switch (alt3) {
                 case 1 :
                     // GGenerator.g:133:7: 'var' localDecls= variableDeclarationList SEMI
                     {
-                    match(input,89,FOLLOW_89_in_procedure201); 
+                    match(input,91,FOLLOW_91_in_procedure201); 
                     pushFollow(FOLLOW_variableDeclarationList_in_procedure205);
                     localDecls=variableDeclarationList();
 
@@ -324,13 +326,13 @@ public class GGeneratorParser extends Parser {
 
             }
 
-            match(input,82,FOLLOW_82_in_procedure216); 
+            match(input,84,FOLLOW_84_in_procedure216); 
             pushFollow(FOLLOW_instructionList_in_procedure220);
             instructions=instructionList();
 
             state._fsp--;
 
-            match(input,76,FOLLOW_76_in_procedure222); 
+            match(input,78,FOLLOW_78_in_procedure222); 
             match(input,SEMI,FOLLOW_SEMI_in_procedure224); 
              proc = new ASTGProcedure(name, parameterDecls, localDecls, instructions ); 
 
@@ -449,7 +451,7 @@ public class GGeneratorParser extends Parser {
                 int alt6=2;
                 int LA6_0 = input.LA(1);
 
-                if ( (LA6_0==IDENT||LA6_0==LBRACK||LA6_0==57||LA6_0==102) ) {
+                if ( (LA6_0==IDENT||LA6_0==LBRACK||LA6_0==57||LA6_0==104) ) {
                     alt6=1;
                 }
 
@@ -532,7 +534,7 @@ public class GGeneratorParser extends Parser {
                 alt7=2;
                 }
                 break;
-            case 102:
+            case 104:
                 {
                 alt7=3;
                 }
@@ -722,7 +724,7 @@ public class GGeneratorParser extends Parser {
             // GGenerator.g:204:1: (t= 'for' decl= variableDeclaration 'in' sequence= oclExpression 'begin' instructions= instructionList 'end' )
             // GGenerator.g:205:5: t= 'for' decl= variableDeclaration 'in' sequence= oclExpression 'begin' instructions= instructionList 'end'
             {
-            t=(Token)match(input,102,FOLLOW_102_in_loop536); 
+            t=(Token)match(input,104,FOLLOW_104_in_loop536); 
             pushFollow(FOLLOW_variableDeclaration_in_loop540);
             decl=variableDeclaration();
 
@@ -734,13 +736,13 @@ public class GGeneratorParser extends Parser {
 
             state._fsp--;
 
-            match(input,82,FOLLOW_82_in_loop548); 
+            match(input,84,FOLLOW_84_in_loop548); 
             pushFollow(FOLLOW_instructionList_in_loop559);
             instructions=instructionList();
 
             state._fsp--;
 
-            match(input,76,FOLLOW_76_in_loop561); 
+            match(input,78,FOLLOW_78_in_loop561); 
              loop = new ASTGLoop( decl, sequence, instructions, t ); 
 
             }
@@ -782,13 +784,13 @@ public class GGeneratorParser extends Parser {
             state._fsp--;
 
             match(input,58,FOLLOW_58_in_ifThenElse612); 
-            match(input,82,FOLLOW_82_in_ifThenElse614); 
+            match(input,84,FOLLOW_84_in_ifThenElse614); 
             pushFollow(FOLLOW_instructionList_in_ifThenElse618);
             thenInstructions=instructionList();
 
             state._fsp--;
 
-            match(input,76,FOLLOW_76_in_ifThenElse620); 
+            match(input,78,FOLLOW_78_in_ifThenElse620); 
             // GGenerator.g:221:9: ( 'else' 'begin' elseInstructions= instructionList 'end' )?
             int alt8=2;
             int LA8_0 = input.LA(1);
@@ -801,13 +803,13 @@ public class GGeneratorParser extends Parser {
                     // GGenerator.g:221:10: 'else' 'begin' elseInstructions= instructionList 'end'
                     {
                     match(input,59,FOLLOW_59_in_ifThenElse631); 
-                    match(input,82,FOLLOW_82_in_ifThenElse633); 
+                    match(input,84,FOLLOW_84_in_ifThenElse633); 
                     pushFollow(FOLLOW_instructionList_in_ifThenElse637);
                     elseInstructions=instructionList();
 
                     state._fsp--;
 
-                    match(input,76,FOLLOW_76_in_ifThenElse639); 
+                    match(input,78,FOLLOW_78_in_ifThenElse639); 
                      elseInstructionsList=elseInstructions; 
 
                     }
@@ -1134,7 +1136,7 @@ public class GGeneratorParser extends Parser {
             int alt14=2;
             int LA14_0 = input.LA(1);
 
-            if ( ((LA14_0>=LITERAL_oclAsType && LA14_0<=LPAREN)||LA14_0==IDENT||(LA14_0>=PLUS && LA14_0<=MINUS)||(LA14_0>=INT && LA14_0<=HASH)||LA14_0==46||LA14_0==53||(LA14_0>=56 && LA14_0<=57)||(LA14_0>=61 && LA14_0<=68)) ) {
+            if ( ((LA14_0>=LITERAL_oclAsType && LA14_0<=LPAREN)||LA14_0==IDENT||(LA14_0>=PLUS && LA14_0<=MINUS)||(LA14_0>=INT && LA14_0<=HASH)||LA14_0==46||LA14_0==53||(LA14_0>=56 && LA14_0<=57)||(LA14_0>=61 && LA14_0<=70)) ) {
                 alt14=1;
             }
             switch (alt14) {
@@ -1201,94 +1203,94 @@ public class GGeneratorParser extends Parser {
     // $ANTLR end procedureCallOnly
 
     // Delegated rules
-    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
-    public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
-    public ASTAssociationEnd associationEnd() throws RecognitionException { return gGUSEBase.associationEnd(); }
-    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
-    public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
-    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
-    public ASTPrePost prePost() throws RecognitionException { return gGUSEBase.prePost(); }
-    public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
-    public ASTALExecute alExec() throws RecognitionException { return gGUSEBase.alExec(); }
     public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
-    public ASTPrePostClause prePostClause() throws RecognitionException { return gGUSEBase.prePostClause(); }
-    public ASTALSet alSet() throws RecognitionException { return gGUSEBase.alSet(); }
-    public ASTExpression conditionalAndExpression() throws RecognitionException { return gGOCLBase.conditionalAndExpression(); }
-    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
-    public void generalClassDefinition(ASTModel n) throws RecognitionException { gGUSEBase.generalClassDefinition(n); }
-    public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
-    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
-    public ASTExpression expression() throws RecognitionException { return gGOCLBase.expression(); }
-    public ASTAssociationClass associationClassDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.associationClassDefinition(isAbstract); }
+    public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
+    public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
+    public ASTAssociation associationDefinition() throws RecognitionException { return gGUSEBase.associationDefinition(); }
     public ASTInvariantClause invariantClause() throws RecognitionException { return gGUSEBase.invariantClause(); }
-    public ASTClass classDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.classDefinition(isAbstract); }
-    public ASTExpression primaryExpression() throws RecognitionException { return gGOCLBase.primaryExpression(); }
-    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
-    public ASTOperation operationDefinition() throws RecognitionException { return gGUSEBase.operationDefinition(); }
-    public ASTALFor alFor() throws RecognitionException { return gGUSEBase.alFor(); }
-    public List idList() throws RecognitionException { return gGOCLBase.idList(); }
+    public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
+    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
+    public ASTPrePost prePost() throws RecognitionException { return gGUSEBase.prePost(); }
+    public ASTExpression conditionalAndExpression() throws RecognitionException { return gGOCLBase.conditionalAndExpression(); }
     public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
+    public ASTEnumTypeDefinition enumTypeDefinition() throws RecognitionException { return gGUSEBase.enumTypeDefinition(); }
+    public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
+    public ASTExpression expression() throws RecognitionException { return gGOCLBase.expression(); }
+    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
+    public ASTExpression primaryExpression() throws RecognitionException { return gGOCLBase.primaryExpression(); }
+    public ASTAttribute attributeDefinition() throws RecognitionException { return gGUSEBase.attributeDefinition(); }
+    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
+    public List idList() throws RecognitionException { return gGOCLBase.idList(); }
+    public ASTALDelete alDelete() throws RecognitionException { return gGUSEBase.alDelete(); }
     public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
     public ASTVariableDeclaration variableDeclaration() throws RecognitionException { return gGOCLBase.variableDeclaration(); }
     public ASTExpression unaryExpression() throws RecognitionException { return gGOCLBase.unaryExpression(); }
-    public ASTALDelete alDelete() throws RecognitionException { return gGUSEBase.alDelete(); }
     public ASTConstraintDefinition invariant() throws RecognitionException { return gGUSEBase.invariant(); }
     public ASTExpression relationalExpression() throws RecognitionException { return gGOCLBase.relationalExpression(); }
-    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
     public ASTExpression conditionalXOrExpression() throws RecognitionException { return gGOCLBase.conditionalXOrExpression(); }
-    public ASTALSetCreate alSetCreate() throws RecognitionException { return gGUSEBase.alSetCreate(); }
-    public ASTAttribute attributeDefinition() throws RecognitionException { return gGUSEBase.attributeDefinition(); }
-    public ASTALIf alIf() throws RecognitionException { return gGUSEBase.alIf(); }
-    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
-    public ASTAssociation associationDefinition() throws RecognitionException { return gGUSEBase.associationDefinition(); }
-    public ASTALWhile alWhile() throws RecognitionException { return gGUSEBase.alWhile(); }
-    public ASTALCreateVar alCreateVar() throws RecognitionException { return gGUSEBase.alCreateVar(); }
     public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
-    public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
-    public ASTEnumTypeDefinition enumTypeDefinition() throws RecognitionException { return gGUSEBase.enumTypeDefinition(); }
-    public ASTALDestroy alDestroy() throws RecognitionException { return gGUSEBase.alDestroy(); }
-    public ASTALInsert alInsert() throws RecognitionException { return gGUSEBase.alInsert(); }
-    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
+    public ASTALSet alSet() throws RecognitionException { return gGUSEBase.alSet(); }
+    public ASTALIf alIf() throws RecognitionException { return gGUSEBase.alIf(); }
+    public ASTAssociationClass associationClassDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.associationClassDefinition(isAbstract); }
+    public ASTPrePostClause prePostClause() throws RecognitionException { return gGUSEBase.prePostClause(); }
+    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
+    public ASTOperation operationDefinition() throws RecognitionException { return gGUSEBase.operationDefinition(); }
     public ASTALAction alAction() throws RecognitionException { return gGUSEBase.alAction(); }
+    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
+    public ASTALInsert alInsert() throws RecognitionException { return gGUSEBase.alInsert(); }
+    public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
+    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
+    public void generalClassDefinition(ASTModel n) throws RecognitionException { gGUSEBase.generalClassDefinition(n); }
+    public ASTALSetCreate alSetCreate() throws RecognitionException { return gGUSEBase.alSetCreate(); }
     public ASTExpression conditionalImpliesExpression() throws RecognitionException { return gGOCLBase.conditionalImpliesExpression(); }
-    public ASTMultiplicity multiplicity() throws RecognitionException { return gGUSEBase.multiplicity(); }
-    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
-    public ASTMultiplicityRange multiplicityRange() throws RecognitionException { return gGUSEBase.multiplicityRange(); }
-    public ASTExpression postfixExpression() throws RecognitionException { return gGOCLBase.postfixExpression(); }
-    public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
-    public ASTALActionList alActionList() throws RecognitionException { return gGUSEBase.alActionList(); }
-    public List paramList() throws RecognitionException { return gGOCLBase.paramList(); }
+    public ASTALFor alFor() throws RecognitionException { return gGUSEBase.alFor(); }
     public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
+    public ASTALDestroy alDestroy() throws RecognitionException { return gGUSEBase.alDestroy(); }
+    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
+    public ASTALWhile alWhile() throws RecognitionException { return gGUSEBase.alWhile(); }
+    public ASTAssociationEnd associationEnd() throws RecognitionException { return gGUSEBase.associationEnd(); }
+    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
+    public ASTClass classDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.classDefinition(isAbstract); }
+    public ASTMultiplicity multiplicity() throws RecognitionException { return gGUSEBase.multiplicity(); }
+    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
+    public ASTExpression postfixExpression() throws RecognitionException { return gGOCLBase.postfixExpression(); }
+    public ASTALActionList alActionList() throws RecognitionException { return gGUSEBase.alActionList(); }
+    public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
+    public int multiplicitySpec() throws RecognitionException { return gGUSEBase.multiplicitySpec(); }
+    public List paramList() throws RecognitionException { return gGOCLBase.paramList(); }
+    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
+    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
     public ASTExpression equalityExpression() throws RecognitionException { return gGOCLBase.equalityExpression(); }
     public ASTExpression multiplicativeExpression() throws RecognitionException { return gGOCLBase.multiplicativeExpression(); }
-    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
+    public ASTALExecute alExec() throws RecognitionException { return gGUSEBase.alExec(); }
+    public ASTALCreateVar alCreateVar() throws RecognitionException { return gGUSEBase.alCreateVar(); }
     public ASTCollectionLiteral collectionLiteral() throws RecognitionException { return gGOCLBase.collectionLiteral(); }
-    public int multiplicitySpec() throws RecognitionException { return gGUSEBase.multiplicitySpec(); }
+    public ASTMultiplicityRange multiplicityRange() throws RecognitionException { return gGUSEBase.multiplicityRange(); }
 
 
  
 
-    public static final BitSet FOLLOW_invariant_in_invariantListOnly82 = new BitSet(new long[]{0x0000000000000000L,0x0000000000400000L});
+    public static final BitSet FOLLOW_invariant_in_invariantListOnly82 = new BitSet(new long[]{0x0000000000000000L,0x0000000001000000L});
     public static final BitSet FOLLOW_EOF_in_invariantListOnly93 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_procedure_in_procedureListOnly138 = new BitSet(new long[]{0x0000000000000000L,0x0000010000000000L});
+    public static final BitSet FOLLOW_procedure_in_procedureListOnly138 = new BitSet(new long[]{0x0000000000000000L,0x0000040000000000L});
     public static final BitSet FOLLOW_EOF_in_procedureListOnly153 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_104_in_procedure181 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_106_in_procedure181 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_IDENT_in_procedure185 = new BitSet(new long[]{0x0000000000000080L});
     public static final BitSet FOLLOW_LPAREN_in_procedure187 = new BitSet(new long[]{0x0000000000000600L});
     public static final BitSet FOLLOW_variableDeclarationList_in_procedure191 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_RPAREN_in_procedure193 = new BitSet(new long[]{0x0000000000000000L,0x0000000002040000L});
-    public static final BitSet FOLLOW_89_in_procedure201 = new BitSet(new long[]{0x0000000004000400L});
+    public static final BitSet FOLLOW_RPAREN_in_procedure193 = new BitSet(new long[]{0x0000000000000000L,0x0000000008100000L});
+    public static final BitSet FOLLOW_91_in_procedure201 = new BitSet(new long[]{0x0000000004000400L});
     public static final BitSet FOLLOW_variableDeclarationList_in_procedure205 = new BitSet(new long[]{0x0000000004000000L});
-    public static final BitSet FOLLOW_SEMI_in_procedure207 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
-    public static final BitSet FOLLOW_82_in_procedure216 = new BitSet(new long[]{0x0200000008000400L,0x0000004000001000L});
-    public static final BitSet FOLLOW_instructionList_in_procedure220 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_76_in_procedure222 = new BitSet(new long[]{0x0000000004000000L});
+    public static final BitSet FOLLOW_SEMI_in_procedure207 = new BitSet(new long[]{0x0000000000000000L,0x0000000000100000L});
+    public static final BitSet FOLLOW_84_in_procedure216 = new BitSet(new long[]{0x0200000008000400L,0x0000010000004000L});
+    public static final BitSet FOLLOW_instructionList_in_procedure220 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
+    public static final BitSet FOLLOW_78_in_procedure222 = new BitSet(new long[]{0x0000000004000000L});
     public static final BitSet FOLLOW_SEMI_in_procedure224 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_variableDeclaration_in_variableDeclarationList262 = new BitSet(new long[]{0x0000000000000102L});
     public static final BitSet FOLLOW_COMMA_in_variableDeclarationList273 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_variableDeclaration_in_variableDeclarationList277 = new BitSet(new long[]{0x0000000000000102L});
     public static final BitSet FOLLOW_instruction_in_instructionList321 = new BitSet(new long[]{0x0000000004000000L});
-    public static final BitSet FOLLOW_SEMI_in_instructionList323 = new BitSet(new long[]{0x0200000008000402L,0x0000004000000000L});
+    public static final BitSet FOLLOW_SEMI_in_instructionList323 = new BitSet(new long[]{0x0200000008000402L,0x0000010000000000L});
     public static final BitSet FOLLOW_variableAssignment_in_instruction358 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_attributeAssignment_in_instruction373 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_loop_in_instruction387 = new BitSet(new long[]{0x0000000000000002L});
@@ -1302,23 +1304,23 @@ public class GGeneratorParser extends Parser {
     public static final BitSet FOLLOW_IDENT_in_attributeAssignment492 = new BitSet(new long[]{0x0000002000000000L});
     public static final BitSet FOLLOW_COLON_EQUAL_in_attributeAssignment500 = new BitSet(new long[]{0x0000000008000400L});
     public static final BitSet FOLLOW_valueInstruction_in_attributeAssignment504 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_102_in_loop536 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_104_in_loop536 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_variableDeclaration_in_loop540 = new BitSet(new long[]{0x0000800000000000L});
     public static final BitSet FOLLOW_47_in_loop542 = new BitSet(new long[]{0x0000000008000400L});
-    public static final BitSet FOLLOW_oclExpression_in_loop546 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
-    public static final BitSet FOLLOW_82_in_loop548 = new BitSet(new long[]{0x0200000008000400L,0x0000004000001000L});
-    public static final BitSet FOLLOW_instructionList_in_loop559 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_76_in_loop561 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_oclExpression_in_loop546 = new BitSet(new long[]{0x0000000000000000L,0x0000000000100000L});
+    public static final BitSet FOLLOW_84_in_loop548 = new BitSet(new long[]{0x0200000008000400L,0x0000010000004000L});
+    public static final BitSet FOLLOW_instructionList_in_loop559 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
+    public static final BitSet FOLLOW_78_in_loop561 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_57_in_ifThenElse597 = new BitSet(new long[]{0x0000000008000400L});
     public static final BitSet FOLLOW_oclExpression_in_ifThenElse601 = new BitSet(new long[]{0x0400000000000000L});
-    public static final BitSet FOLLOW_58_in_ifThenElse612 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
-    public static final BitSet FOLLOW_82_in_ifThenElse614 = new BitSet(new long[]{0x0200000008000400L,0x0000004000001000L});
-    public static final BitSet FOLLOW_instructionList_in_ifThenElse618 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_76_in_ifThenElse620 = new BitSet(new long[]{0x0800000000000002L});
-    public static final BitSet FOLLOW_59_in_ifThenElse631 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
-    public static final BitSet FOLLOW_82_in_ifThenElse633 = new BitSet(new long[]{0x0200000008000400L,0x0000004000001000L});
-    public static final BitSet FOLLOW_instructionList_in_ifThenElse637 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_76_in_ifThenElse639 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_58_in_ifThenElse612 = new BitSet(new long[]{0x0000000000000000L,0x0000000000100000L});
+    public static final BitSet FOLLOW_84_in_ifThenElse614 = new BitSet(new long[]{0x0200000008000400L,0x0000010000004000L});
+    public static final BitSet FOLLOW_instructionList_in_ifThenElse618 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
+    public static final BitSet FOLLOW_78_in_ifThenElse620 = new BitSet(new long[]{0x0800000000000002L});
+    public static final BitSet FOLLOW_59_in_ifThenElse631 = new BitSet(new long[]{0x0000000000000000L,0x0000000000100000L});
+    public static final BitSet FOLLOW_84_in_ifThenElse633 = new BitSet(new long[]{0x0200000008000400L,0x0000010000004000L});
+    public static final BitSet FOLLOW_instructionList_in_ifThenElse637 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
+    public static final BitSet FOLLOW_78_in_ifThenElse639 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_atomicInstruction_in_valueInstruction679 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_oclExpression_in_valueInstruction693 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_atomicInstruction723 = new BitSet(new long[]{0x0000000000000080L});
@@ -1330,13 +1332,13 @@ public class GGeneratorParser extends Parser {
     public static final BitSet FOLLOW_oclExpression_in_instructionParameter839 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_instrParameterIdent_in_instructionParameter851 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_instrParameterIdent879 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LBRACK_in_oclExpression907 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_LBRACK_in_oclExpression907 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_oclExpression911 = new BitSet(new long[]{0x0000000010000000L});
     public static final BitSet FOLLOW_RBRACK_in_oclExpression913 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_procedureCallOnly948 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_LPAREN_in_procedureCallOnly956 = new BitSet(new long[]{0xE3204001E00C06F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_LPAREN_in_procedureCallOnly956 = new BitSet(new long[]{0xE3204001E00C06F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_procedureCallOnly967 = new BitSet(new long[]{0x0000000000000300L});
-    public static final BitSet FOLLOW_COMMA_in_procedureCallOnly977 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000001FL});
+    public static final BitSet FOLLOW_COMMA_in_procedureCallOnly977 = new BitSet(new long[]{0xE3204001E00C04F0L,0x000000000000007FL});
     public static final BitSet FOLLOW_expression_in_procedureCallOnly981 = new BitSet(new long[]{0x0000000000000300L});
     public static final BitSet FOLLOW_RPAREN_in_procedureCallOnly995 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_procedureCallOnly1001 = new BitSet(new long[]{0x0000000000000002L});

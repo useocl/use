@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GOCLLexerRules.g 2009-03-27 14:16:37
+// $ANTLR 3.1b1 GOCLLexerRules.g 2009-03-27 15:04:18
 
 package org.tzi.use.parser.ocl; 
 
@@ -72,12 +72,14 @@ public class GOCL_GOCLLexerRules extends Lexer {
     public static final int INT=29;
     public static final int COLON_COLON=40;
     public static final int MINUS=19;
-    public static final int Tokens=70;
+    public static final int Tokens=72;
     public static final int SEMI=26;
     public static final int COLON=11;
     public static final int REAL=30;
+    public static final int T__71=71;
     public static final int WS=37;
     public static final int NEWLINE=36;
+    public static final int T__70=70;
     public static final int SL_COMMENT=38;
     public static final int VOCAB=45;
     public static final int ARROW=22;
@@ -1249,13 +1251,13 @@ public class GOCL_GOCLLexerRules extends Lexer {
             if ( ((LA11_0>='0' && LA11_0<='9')) ) {
                 int LA11_1 = input.LA(2);
 
-                if ( ((LA11_1>='0' && LA11_1<='9')) && (synpred2_GOCLLexerRules())) {
-                    alt11=2;
-                }
-                else if ( (LA11_1=='.') && (synpred2_GOCLLexerRules())) {
+                if ( (LA11_1=='.') && (synpred2_GOCLLexerRules())) {
                     alt11=2;
                 }
                 else if ( (LA11_1=='E'||LA11_1=='e') && (synpred2_GOCLLexerRules())) {
+                    alt11=2;
+                }
+                else if ( ((LA11_1>='0' && LA11_1<='9')) && (synpred2_GOCLLexerRules())) {
                     alt11=2;
                 }
                 else if ( (synpred1_GOCLLexerRules()) ) {

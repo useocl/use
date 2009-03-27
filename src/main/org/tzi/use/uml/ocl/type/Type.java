@@ -21,7 +21,11 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+
+import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 
 /**
  * Abstract base class of all types. Types should be created only by
@@ -131,5 +135,63 @@ public abstract class Type {
     public boolean isTupleType() {
         return (this instanceof TupleType);
     }
+    
+	public static Type leastCommonSupertype(Type[] types) throws ExpInvalidException {
+		if (types.length == 0 )
+            return new VoidType();
+
+        // easy case: one or more elements of equal type
+        boolean sameTypes = true;
+        for (int i = 1; i < types.length; i++)
+            if (! types[0].equals(types[i]) ) {
+                sameTypes = false;
+                break;
+            }
+        if (sameTypes )
+            return types[0];
+
+        // determine common supertypes = intersection of all
+        // supertypes of all elements
+        Set cs = new HashSet();
+        cs.addAll(types[0].allSupertypes());
+        for (int i = 1; i < types.length; i++) {
+            cs.retainAll(types[i].allSupertypes());
+            // return immediately if intersection is empty
+            if (cs.isEmpty() )
+                throw new ExpInvalidException("Type mismatch, element " + 
+                                              (i + 1) +
+                                              " does not have a common supertype " + 
+                                              "with previous elements.");
+        }
+        // System.err.println("*** common supertypes: " + cs);
+
+        // determine the least common supertype
+
+        // if there is only one common supertype return it
+        if (cs.size() == 1 ) 
+            return (Type) cs.iterator().next();
+
+        // search for a type that is less than or equal to all other types
+        types[0] = null;
+        Iterator it1 = cs.iterator();
+        outerLoop: 
+        while (it1.hasNext() ) {
+            Type t1 = (Type) it1.next();
+            Iterator it2 = cs.iterator();
+            while (it2.hasNext() ) {
+                Type t2 = (Type) it2.next();
+                if (! t1.isSubtypeOf(t2) )
+                    continue outerLoop;
+            }
+            types[0] = t1;
+            break;
+        }
+        // System.err.println("*** least common supertype: " + t0);
+        if (types[0] != null )
+            return types[0];
+        
+        return null;
+	}
+
 }
 

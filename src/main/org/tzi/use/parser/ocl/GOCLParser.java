@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GOCL.g 2009-03-27 14:16:36
+// $ANTLR 3.1b1 GOCL.g 2009-03-27 15:04:17
  
 /*
  * USE - UML based specification environment
@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 public class GOCLParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "LITERAL_oclAsType", "LITERAL_oclIsKindOf", "LITERAL_oclIsTypeOf", "LPAREN", "COMMA", "RPAREN", "IDENT", "COLON", "EQUAL", "NOT_EQUAL", "LESS", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "STAR", "SLASH", "ARROW", "DOT", "AT", "BAR", "SEMI", "LBRACK", "RBRACK", "INT", "REAL", "STRING", "HASH", "LBRACE", "RBRACE", "DOTDOT", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "COLON_COLON", "COLON_EQUAL", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'let'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'pre'", "'iterate'", "'if'", "'then'", "'else'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'oclEmpty'", "'oclUndefined'", "'Tuple'", "'Collection'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "LITERAL_oclAsType", "LITERAL_oclIsKindOf", "LITERAL_oclIsTypeOf", "LPAREN", "COMMA", "RPAREN", "IDENT", "COLON", "EQUAL", "NOT_EQUAL", "LESS", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "STAR", "SLASH", "ARROW", "DOT", "AT", "BAR", "SEMI", "LBRACK", "RBRACK", "INT", "REAL", "STRING", "HASH", "LBRACE", "RBRACE", "DOTDOT", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "COLON_COLON", "COLON_EQUAL", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'let'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'pre'", "'iterate'", "'if'", "'then'", "'else'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Collection'"
     };
     public static final int T__68=68;
     public static final int T__69=69;
@@ -101,7 +101,9 @@ public class GOCLParser extends Parser {
     public static final int COLON=11;
     public static final int REAL=30;
     public static final int WS=37;
+    public static final int T__71=71;
     public static final int NEWLINE=36;
+    public static final int T__70=70;
     public static final int SL_COMMENT=38;
     public static final int VOCAB=45;
     public static final int ARROW=22;
@@ -221,38 +223,38 @@ public class GOCLParser extends Parser {
     public ASTExpression equalityExpression() throws RecognitionException { return gGOCLBase.equalityExpression(); }
     public ASTExpression conditionalAndExpression() throws RecognitionException { return gGOCLBase.conditionalAndExpression(); }
     public ASTVariableDeclaration variableDeclaration() throws RecognitionException { return gGOCLBase.variableDeclaration(); }
-    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
-    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
     public ASTExpression relationalExpression() throws RecognitionException { return gGOCLBase.relationalExpression(); }
+    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
     public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
-    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
-    public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
     public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
+    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
+    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
     public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
     public List idList() throws RecognitionException { return gGOCLBase.idList(); }
+    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
     public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
     public List paramList() throws RecognitionException { return gGOCLBase.paramList(); }
     public ASTExpression postfixExpression() throws RecognitionException { return gGOCLBase.postfixExpression(); }
     public ASTExpression conditionalImpliesExpression() throws RecognitionException { return gGOCLBase.conditionalImpliesExpression(); }
     public ASTCollectionLiteral collectionLiteral() throws RecognitionException { return gGOCLBase.collectionLiteral(); }
-    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
+    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
+    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
+    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
     public ASTExpression unaryExpression() throws RecognitionException { return gGOCLBase.unaryExpression(); }
     public ASTExpression conditionalXOrExpression() throws RecognitionException { return gGOCLBase.conditionalXOrExpression(); }
-    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
-    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
+    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
+    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
     public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
     public ASTExpression primaryExpression() throws RecognitionException { return gGOCLBase.primaryExpression(); }
-    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
+    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
     public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
     public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
-    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
-    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
+    public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
     public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
-    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
+    public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
+    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
     public ASTExpression expression() throws RecognitionException { return gGOCLBase.expression(); }
-    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
     public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
-    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
 
 
  

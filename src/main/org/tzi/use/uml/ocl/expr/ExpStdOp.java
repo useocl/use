@@ -1856,8 +1856,11 @@ final class Op_set_union extends OpGeneric {
         if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
             SetType set1 = (SetType) params[0];
             SetType set2 = (SetType) params[1];
-            if (set2.elemType().isSubtypeOf(set1.elemType()))
-                return set1;
+            try {
+				return Type.leastCommonSupertype( new Type[]{set1, set2});
+			} catch (ExpInvalidException ignored) {
+			}
+            
         }
         return null;
     }
@@ -2020,8 +2023,8 @@ final class Op_set_including extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isSet()) {
             SetType set1 = (SetType) params[0];
-            if (params[1].isSubtypeOf(set1.elemType()))
-                return set1;
+            if (params[1].isSubtypeOf(set1.elemType())) return set1;
+            if (set1.elemType().isSubtypeOf(params[1])) return new SetType(params[1]);
         }
         return null;
     }
@@ -2184,8 +2187,7 @@ final class Op_bag_union extends OpGeneric {
         if (params.length == 2 && params[0].isBag() && params[1].isBag()) {
             BagType bag1 = (BagType) params[0];
             BagType bag2 = (BagType) params[1];
-            if (bag2.elemType().isSubtypeOf(bag1.elemType()))
-                return bag1;
+            if (bag2.elemType().isSubtypeOf(bag1.elemType())) return bag1;
         }
         return null;
     }

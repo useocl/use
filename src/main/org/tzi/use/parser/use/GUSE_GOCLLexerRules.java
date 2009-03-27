@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GOCLLexerRules.g 2009-03-27 14:16:39
+// $ANTLR 3.1b1 GOCLLexerRules.g 2009-03-27 15:04:20
 
 package org.tzi.use.parser.use; 
 
@@ -95,6 +95,8 @@ public class GUSE_GOCLLexerRules extends Lexer {
     public static final int T__103=103;
     public static final int T__104=104;
     public static final int EQUAL=12;
+    public static final int T__105=105;
+    public static final int T__106=106;
     public static final int IDENT=10;
     public static final int PLUS=18;
     public static final int RANGE_OR_INT=42;
@@ -111,7 +113,7 @@ public class GUSE_GOCLLexerRules extends Lexer {
     public static final int T__101=101;
     public static final int T__100=100;
     public static final int MINUS=19;
-    public static final int Tokens=105;
+    public static final int Tokens=107;
     public static final int SEMI=26;
     public static final int COLON=11;
     public static final int NEWLINE=38;
@@ -1284,13 +1286,13 @@ public class GUSE_GOCLLexerRules extends Lexer {
             if ( ((LA11_0>='0' && LA11_0<='9')) ) {
                 int LA11_1 = input.LA(2);
 
-                if ( ((LA11_1>='0' && LA11_1<='9')) && (synpred2_GOCLLexerRules())) {
-                    alt11=2;
-                }
-                else if ( (LA11_1=='.') && (synpred2_GOCLLexerRules())) {
+                if ( (LA11_1=='.') && (synpred2_GOCLLexerRules())) {
                     alt11=2;
                 }
                 else if ( (LA11_1=='E'||LA11_1=='e') && (synpred2_GOCLLexerRules())) {
+                    alt11=2;
+                }
+                else if ( ((LA11_1>='0' && LA11_1<='9')) && (synpred2_GOCLLexerRules())) {
                     alt11=2;
                 }
                 else if ( (synpred1_GOCLLexerRules()) ) {

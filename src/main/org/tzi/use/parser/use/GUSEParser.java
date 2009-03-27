@@ -1,4 +1,4 @@
-// $ANTLR 3.1b1 GUSE.g 2009-03-27 14:16:38
+// $ANTLR 3.1b1 GUSE.g 2009-03-27 15:04:19
  
 /*
  * USE - UML based specification environment
@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 public class GUSEParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "LITERAL_oclAsType", "LITERAL_oclIsKindOf", "LITERAL_oclIsTypeOf", "LPAREN", "COMMA", "RPAREN", "IDENT", "COLON", "EQUAL", "NOT_EQUAL", "LESS", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "STAR", "SLASH", "ARROW", "DOT", "AT", "BAR", "SEMI", "LBRACK", "RBRACK", "INT", "REAL", "STRING", "HASH", "LBRACE", "RBRACE", "DOTDOT", "COLON_COLON", "COLON_EQUAL", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'let'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'pre'", "'iterate'", "'if'", "'then'", "'else'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'oclEmpty'", "'oclUndefined'", "'Tuple'", "'Collection'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'constraints'", "'end'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'begin'", "'association'", "'role'", "'ordered'", "'context'", "'inv'", "'post'", "'var'", "'declare'", "'set'", "'create'", "'namehint'", "'insert'", "'into'", "'delete'", "'from'", "'destroy'", "'while'", "'do'", "'wend'", "'for'", "'execute'", "'model'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "LITERAL_oclAsType", "LITERAL_oclIsKindOf", "LITERAL_oclIsTypeOf", "LPAREN", "COMMA", "RPAREN", "IDENT", "COLON", "EQUAL", "NOT_EQUAL", "LESS", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "STAR", "SLASH", "ARROW", "DOT", "AT", "BAR", "SEMI", "LBRACK", "RBRACK", "INT", "REAL", "STRING", "HASH", "LBRACE", "RBRACE", "DOTDOT", "COLON_COLON", "COLON_EQUAL", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'let'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'pre'", "'iterate'", "'if'", "'then'", "'else'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Collection'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'constraints'", "'end'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'begin'", "'association'", "'role'", "'ordered'", "'context'", "'inv'", "'post'", "'var'", "'declare'", "'set'", "'create'", "'namehint'", "'insert'", "'into'", "'delete'", "'from'", "'destroy'", "'while'", "'do'", "'wend'", "'for'", "'execute'", "'model'"
     };
     public static final int LITERAL_oclAsType=4;
     public static final int STAR=20;
@@ -120,6 +120,8 @@ public class GUSEParser extends Parser {
     public static final int T__103=103;
     public static final int T__104=104;
     public static final int EQUAL=12;
+    public static final int T__105=105;
+    public static final int T__106=106;
     public static final int IDENT=10;
     public static final int PLUS=18;
     public static final int RANGE_OR_INT=42;
@@ -208,7 +210,7 @@ public class GUSEParser extends Parser {
             // GUSE.g:153:1: ( 'model' modelName= IDENT (e= enumTypeDefinition )* ( ( generalClassDefinition[$n] ) | (a= associationDefinition ) | ( 'constraints' (cons= invariant | ppc= prePost )* ) )* EOF )
             // GUSE.g:154:5: 'model' modelName= IDENT (e= enumTypeDefinition )* ( ( generalClassDefinition[$n] ) | (a= associationDefinition ) | ( 'constraints' (cons= invariant | ppc= prePost )* ) )* EOF
             {
-            match(input,104,FOLLOW_104_in_model71); 
+            match(input,106,FOLLOW_106_in_model71); 
             modelName=(Token)match(input,IDENT,FOLLOW_IDENT_in_model75); 
              n = new ASTModel(modelName); 
             // GUSE.g:155:5: (e= enumTypeDefinition )*
@@ -217,7 +219,7 @@ public class GUSEParser extends Parser {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( (LA1_0==70) ) {
+                if ( (LA1_0==72) ) {
                     alt1=1;
                 }
 
@@ -246,22 +248,22 @@ public class GUSEParser extends Parser {
             do {
                 int alt3=4;
                 switch ( input.LA(1) ) {
-                case 71:
-                case 72:
-                case 77:
-                case 78:
+                case 73:
+                case 74:
+                case 79:
+                case 80:
                     {
                     alt3=1;
                     }
                     break;
-                case 80:
-                case 81:
+                case 82:
                 case 83:
+                case 85:
                     {
                     alt3=2;
                     }
                     break;
-                case 75:
+                case 77:
                     {
                     alt3=3;
                     }
@@ -311,14 +313,14 @@ public class GUSEParser extends Parser {
             	    // GUSE.g:158:9: ( 'constraints' (cons= invariant | ppc= prePost )* )
             	    // GUSE.g:158:11: 'constraints' (cons= invariant | ppc= prePost )*
             	    {
-            	    match(input,75,FOLLOW_75_in_model137); 
+            	    match(input,77,FOLLOW_77_in_model137); 
             	    // GUSE.g:159:11: (cons= invariant | ppc= prePost )*
             	    loop2:
             	    do {
             	        int alt2=3;
             	        int LA2_0 = input.LA(1);
 
-            	        if ( (LA2_0==86) ) {
+            	        if ( (LA2_0==88) ) {
             	            int LA2_2 = input.LA(2);
 
             	            if ( (LA2_2==IDENT) ) {
@@ -327,7 +329,7 @@ public class GUSEParser extends Parser {
             	                if ( (LA2_3==COLON_COLON) ) {
             	                    alt2=2;
             	                }
-            	                else if ( (LA2_3==EOF||LA2_3==COLON||(LA2_3>=71 && LA2_3<=72)||LA2_3==75||(LA2_3>=77 && LA2_3<=78)||(LA2_3>=80 && LA2_3<=81)||LA2_3==83||(LA2_3>=86 && LA2_3<=87)) ) {
+            	                else if ( (LA2_3==EOF||LA2_3==COLON||(LA2_3>=73 && LA2_3<=74)||LA2_3==77||(LA2_3>=79 && LA2_3<=80)||(LA2_3>=82 && LA2_3<=83)||LA2_3==85||(LA2_3>=88 && LA2_3<=89)) ) {
             	                    alt2=1;
             	                }
 
@@ -397,81 +399,81 @@ public class GUSEParser extends Parser {
     // $ANTLR end model
 
     // Delegated rules
-    public ASTMultiplicityRange multiplicityRange() throws RecognitionException { return gGUSEBase.multiplicityRange(); }
-    public ASTALWhile alWhile() throws RecognitionException { return gGUSEBase.alWhile(); }
+    public ASTALCreateVar alCreateVar() throws RecognitionException { return gGUSEBase.alCreateVar(); }
+    public ASTInvariantClause invariantClause() throws RecognitionException { return gGUSEBase.invariantClause(); }
     public ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException { return gGOCLBase.emptyCollectionLiteral(); }
-    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
-    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
-    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
     public ASTExpression relationalExpression() throws RecognitionException { return gGOCLBase.relationalExpression(); }
-    public ASTALDelete alDelete() throws RecognitionException { return gGUSEBase.alDelete(); }
-    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
-    public ASTAssociationEnd associationEnd() throws RecognitionException { return gGUSEBase.associationEnd(); }
+    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
+    public ASTClass classDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.classDefinition(isAbstract); }
     public ASTExpression unaryExpression() throws RecognitionException { return gGOCLBase.unaryExpression(); }
     public ASTEnumTypeDefinition enumTypeDefinition() throws RecognitionException { return gGUSEBase.enumTypeDefinition(); }
-    public ASTALActionList alActionList() throws RecognitionException { return gGUSEBase.alActionList(); }
-    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
+    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
+    public int multiplicitySpec() throws RecognitionException { return gGUSEBase.multiplicitySpec(); }
+    public ASTOperation operationDefinition() throws RecognitionException { return gGUSEBase.operationDefinition(); }
+    public ASTALInsert alInsert() throws RecognitionException { return gGUSEBase.alInsert(); }
+    public ASTPrePostClause prePostClause() throws RecognitionException { return gGUSEBase.prePostClause(); }
     public List idList() throws RecognitionException { return gGOCLBase.idList(); }
-    public ASTMultiplicity multiplicity() throws RecognitionException { return gGUSEBase.multiplicity(); }
+    public ASTAssociationEnd associationEnd() throws RecognitionException { return gGUSEBase.associationEnd(); }
     public ASTExpression primaryExpression() throws RecognitionException { return gGOCLBase.primaryExpression(); }
-    public ASTInvariantClause invariantClause() throws RecognitionException { return gGUSEBase.invariantClause(); }
-    public ASTALFor alFor() throws RecognitionException { return gGUSEBase.alFor(); }
+    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
+    public ASTALSet alSet() throws RecognitionException { return gGUSEBase.alSet(); }
+    public ASTALExecute alExec() throws RecognitionException { return gGUSEBase.alExec(); }
     public ASTAssociation associationDefinition() throws RecognitionException { return gGUSEBase.associationDefinition(); }
     public ASTExpression conditionalXOrExpression() throws RecognitionException { return gGOCLBase.conditionalXOrExpression(); }
     public ASTExpression conditionalAndExpression() throws RecognitionException { return gGOCLBase.conditionalAndExpression(); }
-    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
-    public ASTAssociationClass associationClassDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.associationClassDefinition(isAbstract); }
-    public int multiplicitySpec() throws RecognitionException { return gGUSEBase.multiplicitySpec(); }
+    public ASTALDelete alDelete() throws RecognitionException { return gGUSEBase.alDelete(); }
+    public ASTMultiplicityRange multiplicityRange() throws RecognitionException { return gGUSEBase.multiplicityRange(); }
+    public ASTALFor alFor() throws RecognitionException { return gGUSEBase.alFor(); }
     public ASTExpression expression() throws RecognitionException { return gGOCLBase.expression(); }
     public ASTConstraintDefinition invariant() throws RecognitionException { return gGUSEBase.invariant(); }
-    public ASTALCreateVar alCreateVar() throws RecognitionException { return gGUSEBase.alCreateVar(); }
+    public ASTALAction alAction() throws RecognitionException { return gGUSEBase.alAction(); }
+    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
     public ASTExpression conditionalOrExpression() throws RecognitionException { return gGOCLBase.conditionalOrExpression(); }
-    public ASTALIf alIf() throws RecognitionException { return gGUSEBase.alIf(); }
     public ASTExpression equalityExpression() throws RecognitionException { return gGOCLBase.equalityExpression(); }
     public ASTExpression literal() throws RecognitionException { return gGOCLBase.literal(); }
-    public ASTALInsert alInsert() throws RecognitionException { return gGUSEBase.alInsert(); }
-    public ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.propertyCall(source, followsArrow); }
+    public ASTTupleLiteral tupleLiteral() throws RecognitionException { return gGOCLBase.tupleLiteral(); }
+    public ASTALWhile alWhile() throws RecognitionException { return gGUSEBase.alWhile(); }
     public ASTUndefinedLiteral undefinedLiteral() throws RecognitionException { return gGOCLBase.undefinedLiteral(); }
-    public ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.typeExpression(source, followsArrow); }
+    public ASTALActionList alActionList() throws RecognitionException { return gGUSEBase.alActionList(); }
     public List paramList() throws RecognitionException { return gGOCLBase.paramList(); }
-    public ASTCollectionType collectionType() throws RecognitionException { return gGOCLBase.collectionType(); }
-    public ASTClass classDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.classDefinition(isAbstract); }
-    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
-    public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
-    public ASTALDestroy alDestroy() throws RecognitionException { return gGUSEBase.alDestroy(); }
-    public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
-    public ASTPrePostClause prePostClause() throws RecognitionException { return gGUSEBase.prePostClause(); }
+    public ASTExpression queryExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.queryExpression(range); }
+    public ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException { return gGOCLBase.elemVarsDeclaration(); }
+    public ASTTupleType tupleType() throws RecognitionException { return gGOCLBase.tupleType(); }
+    public ASTALSetCreate alSetCreate() throws RecognitionException { return gGUSEBase.alSetCreate(); }
+    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
     public ASTVariableDeclaration variableDeclaration() throws RecognitionException { return gGOCLBase.variableDeclaration(); }
-    public ASTALAction alAction() throws RecognitionException { return gGUSEBase.alAction(); }
-    public ASTALSet alSet() throws RecognitionException { return gGUSEBase.alSet(); }
     public ASTExpression additiveExpression() throws RecognitionException { return gGOCLBase.additiveExpression(); }
+    public ASTALDestroy alDestroy() throws RecognitionException { return gGUSEBase.alDestroy(); }
     public ASTPrePost prePost() throws RecognitionException { return gGUSEBase.prePost(); }
     public ASTCollectionLiteral collectionLiteral() throws RecognitionException { return gGOCLBase.collectionLiteral(); }
+    public ASTExpression iterateExpression(ASTExpression range) throws RecognitionException { return gGOCLBase.iterateExpression(range); }
     public ASTExpression multiplicativeExpression() throws RecognitionException { return gGOCLBase.multiplicativeExpression(); }
+    public ASTALIf alIf() throws RecognitionException { return gGUSEBase.alIf(); }
     public ASTExpression conditionalImpliesExpression() throws RecognitionException { return gGOCLBase.conditionalImpliesExpression(); }
     public ASTType type() throws RecognitionException { return gGOCLBase.type(); }
     public ASTSimpleType simpleType() throws RecognitionException { return gGOCLBase.simpleType(); }
-    public ASTAttribute attributeDefinition() throws RecognitionException { return gGUSEBase.attributeDefinition(); }
-    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
-    public ASTCollectionItem collectionItem() throws RecognitionException { return gGOCLBase.collectionItem(); }
+    public ASTAssociationClass associationClassDefinition(boolean isAbstract) throws RecognitionException { return gGUSEBase.associationClassDefinition(isAbstract); }
+    public ASTExpression ifExpression() throws RecognitionException { return gGOCLBase.ifExpression(); }
+    public ASTVariableInitialization variableInitialization() throws RecognitionException { return gGOCLBase.variableInitialization(); }
     public void generalClassDefinition(ASTModel n) throws RecognitionException { gGUSEBase.generalClassDefinition(n); }
     public ASTExpression postfixExpression() throws RecognitionException { return gGOCLBase.postfixExpression(); }
-    public ASTOperation operationDefinition() throws RecognitionException { return gGUSEBase.operationDefinition(); }
-    public ASTTuplePart tuplePart() throws RecognitionException { return gGOCLBase.tuplePart(); }
-    public ASTALExecute alExec() throws RecognitionException { return gGUSEBase.alExec(); }
-    public ASTALSetCreate alSetCreate() throws RecognitionException { return gGUSEBase.alSetCreate(); }
+    public ASTTupleItem tupleItem() throws RecognitionException { return gGOCLBase.tupleItem(); }
+    public ASTAttribute attributeDefinition() throws RecognitionException { return gGUSEBase.attributeDefinition(); }
+    public ASTType typeOnly() throws RecognitionException { return gGOCLBase.typeOnly(); }
+    public ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException { return gGOCLBase.operationExpression(source, followsArrow); }
+    public ASTMultiplicity multiplicity() throws RecognitionException { return gGUSEBase.multiplicity(); }
 
 
  
 
-    public static final BitSet FOLLOW_104_in_model71 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_IDENT_in_model75 = new BitSet(new long[]{0x0000000000000000L,0x00000000000B69C0L});
-    public static final BitSet FOLLOW_enumTypeDefinition_in_model87 = new BitSet(new long[]{0x0000000000000000L,0x00000000000B69C0L});
-    public static final BitSet FOLLOW_generalClassDefinition_in_model104 = new BitSet(new long[]{0x0000000000000000L,0x00000000000B6980L});
-    public static final BitSet FOLLOW_associationDefinition_in_model121 = new BitSet(new long[]{0x0000000000000000L,0x00000000000B6980L});
-    public static final BitSet FOLLOW_75_in_model137 = new BitSet(new long[]{0x0000000000000000L,0x00000000004B6980L});
-    public static final BitSet FOLLOW_invariant_in_model155 = new BitSet(new long[]{0x0000000000000000L,0x00000000004B6980L});
-    public static final BitSet FOLLOW_prePost_in_model176 = new BitSet(new long[]{0x0000000000000000L,0x00000000004B6980L});
+    public static final BitSet FOLLOW_106_in_model71 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_IDENT_in_model75 = new BitSet(new long[]{0x0000000000000000L,0x00000000002DA700L});
+    public static final BitSet FOLLOW_enumTypeDefinition_in_model87 = new BitSet(new long[]{0x0000000000000000L,0x00000000002DA700L});
+    public static final BitSet FOLLOW_generalClassDefinition_in_model104 = new BitSet(new long[]{0x0000000000000000L,0x00000000002DA600L});
+    public static final BitSet FOLLOW_associationDefinition_in_model121 = new BitSet(new long[]{0x0000000000000000L,0x00000000002DA600L});
+    public static final BitSet FOLLOW_77_in_model137 = new BitSet(new long[]{0x0000000000000000L,0x00000000012DA600L});
+    public static final BitSet FOLLOW_invariant_in_model155 = new BitSet(new long[]{0x0000000000000000L,0x00000000012DA600L});
+    public static final BitSet FOLLOW_prePost_in_model176 = new BitSet(new long[]{0x0000000000000000L,0x00000000012DA600L});
     public static final BitSet FOLLOW_EOF_in_model217 = new BitSet(new long[]{0x0000000000000002L});
 
 }

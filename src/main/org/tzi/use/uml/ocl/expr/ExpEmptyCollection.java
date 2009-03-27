@@ -21,8 +21,8 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.VoidType;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.SetValue;
@@ -57,7 +57,8 @@ public final class ExpEmptyCollection extends Expression {
         ctx.enter(this);
         Value res = null;
         Type t = type();
-        Type elemType = ((CollectionType) t).elemType();
+        Type elemType = new VoidType(); //((CollectionType) t).elemType();
+        
         if (t.isSet() )
             res = new SetValue(elemType);
         else if (t.isBag() )

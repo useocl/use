@@ -534,8 +534,10 @@ collectionLiteral returns [ASTCollectionLiteral n]
     ( 'Set' | 'Sequence' | 'Bag' ) 
     { $n = new ASTCollectionLiteral(op); }
     LBRACE 
-    ci=collectionItem { $n.addItem($ci.n); } 
-    ( COMMA ci=collectionItem { $n.addItem($ci.n); } )* 
+    (
+      ci=collectionItem { $n.addItem($ci.n); } 
+      ( COMMA ci=collectionItem { $n.addItem($ci.n); } )*
+    )? 
     RBRACE
     ;
 
@@ -574,6 +576,12 @@ undefinedLiteral returns [ASTUndefinedLiteral n]
 :
     'oclUndefined' LPAREN t=type RPAREN
     { $n = new ASTUndefinedLiteral($t.n); }
+|
+    'Undefined'
+    { $n = new ASTUndefinedLiteral(); }
+|
+    'null'
+    { $n = new ASTUndefinedLiteral(); }
     ;
 
 
