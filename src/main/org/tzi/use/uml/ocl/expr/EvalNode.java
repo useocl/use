@@ -85,7 +85,7 @@ public class EvalNode {
     public EvalNode(VarBindings fVarBindings) {
         this.fVarBindings = new Vector();
         Iterator it = fVarBindings.iterator();
-        int i = 0;
+        
         while (it.hasNext()) {
             Entry entry = (Entry) it.next();
             this.fVarBindings.add(entry);

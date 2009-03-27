@@ -32,17 +32,13 @@ import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterJob;
 import java.beans.PropertyVetoException;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.Iterator;
 
 import javax.swing.AbstractAction;
@@ -80,11 +76,12 @@ import org.tzi.use.gui.views.CommandView;
 import org.tzi.use.gui.views.LinkCountView;
 import org.tzi.use.gui.views.ObjectCountView;
 import org.tzi.use.gui.views.ObjectPropertiesView;
-// import org.tzi.use.gui.views.SequenceDiagramView;
 import org.tzi.use.gui.views.StateEvolutionView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.gui.views.diagrams.classdiagram.NewClassDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
+import org.tzi.use.gui.views.seqDiag.SDScrollPane;
+import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.cmd.CMDCompiler;
@@ -101,8 +98,6 @@ import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.uml.sys.StateChangeListener;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.USEWriter;
-import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
-import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 
 /**
  * The main application window of USE.

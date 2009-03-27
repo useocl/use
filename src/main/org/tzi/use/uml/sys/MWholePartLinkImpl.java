@@ -21,12 +21,11 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.List;
 import java.util.Set;
 
+import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAggregationKind;
 
 /**
  * A link is an instance of an fAssociation.

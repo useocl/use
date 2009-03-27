@@ -577,7 +577,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
         g.setFont(fProperties.getFont());
-        FontMetrics fm = g.getFontMetrics();
+        
         Map lifelines = null;
         synchronized (this) {
             lifelines = new HashMap(fLifelines);
@@ -3862,7 +3862,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         }
         key += ass.name();
         // int counter = 1;
-        int counter = 1;
+        
         int yValue = lastYValue;
         AssLifeline ll = (AssLifeline) fLifelines.get(key);
         // AssLifeline ll = (AssLifeline) fLifelines.get(key
