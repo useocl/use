@@ -84,6 +84,10 @@ import org.tzi.use.util.input.ReadlineTestReadlineDecorator;
 import org.tzi.use.util.input.SocketReadline;
 
 class NoSystemException extends Exception {
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
 }
 
 /**

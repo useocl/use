@@ -146,11 +146,10 @@ class GChecker implements IGChecker {
             GInvariantStatistic stat 
                 = (GInvariantStatistic) fInvariantStatistics[k];
             if (!stat.flaggedInvariant().disabled()) {
-                int ddd = 1;
                 boolean valid = stat.flaggedInvariant().eval(state);
                 stat.registerResult(valid);
                 if (!valid ) {
-                    pw.println(stat.flaggedInvariant().toString()+" invalid.");
+                    pw.println(stat.flaggedInvariant().toString()+ " invalid.");
                     result = false;
                 }
             }

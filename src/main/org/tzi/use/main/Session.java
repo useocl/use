@@ -44,6 +44,11 @@ public class Session {
      * Event triggered when a command has been executed.
      */
     public class ExecutedCmd extends EventObject {
+    	/**
+    	 * To get rid of the warning...
+    	 */
+    	private static final long serialVersionUID = 1L;
+    	
         private MCmd fCmd;
         public ExecutedCmd(Object source, MCmd cmd) {
             super(source);

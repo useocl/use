@@ -30,7 +30,12 @@ package org.tzi.use.uml.mm;
  */
 public class MInvalidModelException extends Exception {
 
-    public MInvalidModelException() {
+    /**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MInvalidModelException() {
         super();
     }
 

@@ -29,7 +29,12 @@ package org.tzi.use.uml.ocl.expr;
  */
 public class ExpInvalidException extends Exception {
 
-    public ExpInvalidException() {
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ExpInvalidException() {
         super();
     }
 

@@ -354,8 +354,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                                 Evaluator evaluator = new Evaluator();
                                 evaluator.enableEvalTree();
                                 try {
-                                    Value v = evaluator.eval(expr, fSystem
-                                            .state());
+                                    evaluator.eval(expr, fSystem.state());
                                 } catch (MultiplicityViolationException ex) {
                                     return;
                                 }

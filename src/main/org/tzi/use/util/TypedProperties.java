@@ -32,7 +32,12 @@ import java.util.Arrays;
  */
 public class TypedProperties extends Properties {
 
-    public TypedProperties() {
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public TypedProperties() {
         super();
     }
 

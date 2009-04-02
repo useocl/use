@@ -106,10 +106,11 @@ public abstract class ASTExpression extends AST {
                                          ASTExpression[] args) 
         throws SemanticException
     {
-        Expression res;
         Expression[] expargs = new Expression[args.length];
+        
         for (int i = 0; i < args.length; i++)
             expargs[i] = args[i].gen(ctx);
+        
         return genStdOperation(ctx, token, opname, expargs);
     }
 

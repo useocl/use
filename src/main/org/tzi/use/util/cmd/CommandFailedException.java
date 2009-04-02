@@ -30,7 +30,12 @@ package org.tzi.use.util.cmd;
  */
 public class CommandFailedException extends Exception {
 
-    public CommandFailedException() {
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public CommandFailedException() {
         super();
     }
 

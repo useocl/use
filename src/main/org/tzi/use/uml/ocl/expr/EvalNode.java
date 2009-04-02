@@ -287,7 +287,7 @@ public class EvalNode {
         stoken.add(new Character(':'));
         stoken.add(new Character('-'));
         ret = "(" + getExprAndValue() + ")";
-        Iterator it = fVarBindings.iterator();
+        
         for (int i = fVarBindings.size() - 1; i >= 0; --i) {
             Entry entry = (Entry) fVarBindings.get(i);
             String varname = entry.getVarName();
@@ -337,7 +337,7 @@ public class EvalNode {
         stoken.add(new Character(':'));
         stoken.add(new Character('-'));
         ret = "(" + term + ")";
-        Iterator it = fVarBindings.iterator();
+        
         for (int i = fVarBindings.size() - 1; i >= 0; --i) {
             Entry entry = (Entry) fVarBindings.get(i);
             String varname = entry.getVarName();

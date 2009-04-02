@@ -26,7 +26,12 @@ package org.tzi.use.uml.ocl.expr;
  * @author  Joern Bohling
  */
 public class MultiplicityViolationException extends RuntimeException {
-    public MultiplicityViolationException(String str) {
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MultiplicityViolationException(String str) {
         super(str);
     }
 }

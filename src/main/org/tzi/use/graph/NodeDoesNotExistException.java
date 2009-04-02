@@ -28,7 +28,11 @@ package org.tzi.use.graph;
  * @author      Mark Richters 
  */
 public class NodeDoesNotExistException extends RuntimeException {
-
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+	
     public NodeDoesNotExistException() {
         super();
     }

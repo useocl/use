@@ -29,7 +29,12 @@ package org.tzi.use.uml.sys;
  */
 public class MSystemException extends Exception {
 
-    public MSystemException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7731025713320613916L;
+
+	public MSystemException() {
         super();
     }
 

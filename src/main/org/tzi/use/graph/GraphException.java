@@ -29,7 +29,11 @@ package org.tzi.use.graph;
  * @author      Mark Richters 
  */
 public abstract class GraphException extends Exception {
-
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+	
     public GraphException() {
         super();
     }

@@ -31,7 +31,12 @@ package org.tzi.use.util.cmd;
  */
 public class CannotUndoException extends Exception {
 
-    public CannotUndoException() {
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public CannotUndoException() {
         super();
     }
 

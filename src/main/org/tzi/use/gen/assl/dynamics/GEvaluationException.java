@@ -30,7 +30,11 @@
 package org.tzi.use.gen.assl.dynamics;
 
 public class GEvaluationException extends Exception {
-
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+	
     public GEvaluationException() {
         super();
     }

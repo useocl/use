@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-04-02 11:59:22
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-04-02 13:53:37
  
 /*
  * USE - UML based specification environment
@@ -125,7 +125,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "expressionOnly"
-    // OCL.g:92:1: expressionOnly returns [ASTExpression n] : nExp= expression EOF ;
+    // OCL.g:91:1: expressionOnly returns [ASTExpression n] : nExp= expression EOF ;
     public final ASTExpression expressionOnly() throws RecognitionException {
         ASTExpression n = null;
 
@@ -133,8 +133,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:93:1: (nExp= expression EOF )
-            // OCL.g:94:5: nExp= expression EOF
+            // OCL.g:92:1: (nExp= expression EOF )
+            // OCL.g:93:5: nExp= expression EOF
             {
             pushFollow(FOLLOW_expression_in_expressionOnly68);
             nExp=expression();
@@ -159,7 +159,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "expression"
-    // OCL.g:101:1: expression returns [ASTExpression n] : ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression ;
+    // OCL.g:100:1: expression returns [ASTExpression n] : ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression ;
     public final ASTExpression expression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -177,11 +177,11 @@ public class OCLParser extends BaseParser {
           Token tok = null;
 
         try {
-            // OCL.g:107:1: ( ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression )
-            // OCL.g:108:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression
+            // OCL.g:106:1: ( ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression )
+            // OCL.g:107:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression
             {
              tok = input.LT(1); /* remember start of expression */ 
-            // OCL.g:109:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )*
+            // OCL.g:108:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )*
             loop2:
             do {
                 int alt2=2;
@@ -194,11 +194,11 @@ public class OCLParser extends BaseParser {
 
                 switch (alt2) {
             	case 1 :
-            	    // OCL.g:110:7: 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in'
+            	    // OCL.g:109:7: 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in'
             	    {
             	    match(input,43,FOLLOW_43_in_expression118); 
             	    name=(Token)match(input,IDENT,FOLLOW_IDENT_in_expression122); 
-            	    // OCL.g:110:24: ( COLON t= type )?
+            	    // OCL.g:109:24: ( COLON t= type )?
             	    int alt1=2;
             	    int LA1_0 = input.LA(1);
 
@@ -207,7 +207,7 @@ public class OCLParser extends BaseParser {
             	    }
             	    switch (alt1) {
             	        case 1 :
-            	            // OCL.g:110:26: COLON t= type
+            	            // OCL.g:109:26: COLON t= type
             	            {
             	            match(input,COLON,FOLLOW_COLON_in_expression126); 
             	            pushFollow(FOLLOW_type_in_expression130);
@@ -276,7 +276,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "paramList"
-    // OCL.g:138:1: paramList returns [List paramList] : LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN ;
+    // OCL.g:137:1: paramList returns [List paramList] : LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN ;
     public final List paramList() throws RecognitionException {
         List paramList = null;
 
@@ -285,11 +285,11 @@ public class OCLParser extends BaseParser {
 
          paramList = new ArrayList(); 
         try {
-            // OCL.g:140:1: ( LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN )
-            // OCL.g:141:5: LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN
+            // OCL.g:139:1: ( LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN )
+            // OCL.g:140:5: LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN
             {
             match(input,LPAREN,FOLLOW_LPAREN_in_paramList199); 
-            // OCL.g:142:5: (v= variableDeclaration ( COMMA v= variableDeclaration )* )?
+            // OCL.g:141:5: (v= variableDeclaration ( COMMA v= variableDeclaration )* )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -298,7 +298,7 @@ public class OCLParser extends BaseParser {
             }
             switch (alt4) {
                 case 1 :
-                    // OCL.g:143:7: v= variableDeclaration ( COMMA v= variableDeclaration )*
+                    // OCL.g:142:7: v= variableDeclaration ( COMMA v= variableDeclaration )*
                     {
                     pushFollow(FOLLOW_variableDeclaration_in_paramList216);
                     v=variableDeclaration();
@@ -306,7 +306,7 @@ public class OCLParser extends BaseParser {
                     state._fsp--;
 
                      paramList.add(v); 
-                    // OCL.g:144:7: ( COMMA v= variableDeclaration )*
+                    // OCL.g:143:7: ( COMMA v= variableDeclaration )*
                     loop3:
                     do {
                         int alt3=2;
@@ -319,7 +319,7 @@ public class OCLParser extends BaseParser {
 
                         switch (alt3) {
                     	case 1 :
-                    	    // OCL.g:144:9: COMMA v= variableDeclaration
+                    	    // OCL.g:143:9: COMMA v= variableDeclaration
                     	    {
                     	    match(input,COMMA,FOLLOW_COMMA_in_paramList228); 
                     	    pushFollow(FOLLOW_variableDeclaration_in_paramList232);
@@ -360,7 +360,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "idList"
-    // OCL.g:152:1: idList returns [List idList] : id0= IDENT ( COMMA idn= IDENT )* ;
+    // OCL.g:151:1: idList returns [List idList] : id0= IDENT ( COMMA idn= IDENT )* ;
     public final List idList() throws RecognitionException {
         List idList = null;
 
@@ -369,12 +369,12 @@ public class OCLParser extends BaseParser {
 
          idList = new ArrayList(); 
         try {
-            // OCL.g:154:1: (id0= IDENT ( COMMA idn= IDENT )* )
-            // OCL.g:155:5: id0= IDENT ( COMMA idn= IDENT )*
+            // OCL.g:153:1: (id0= IDENT ( COMMA idn= IDENT )* )
+            // OCL.g:154:5: id0= IDENT ( COMMA idn= IDENT )*
             {
             id0=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList281); 
              idList.add(id0); 
-            // OCL.g:156:5: ( COMMA idn= IDENT )*
+            // OCL.g:155:5: ( COMMA idn= IDENT )*
             loop5:
             do {
                 int alt5=2;
@@ -387,7 +387,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt5) {
             	case 1 :
-            	    // OCL.g:156:7: COMMA idn= IDENT
+            	    // OCL.g:155:7: COMMA idn= IDENT
             	    {
             	    match(input,COMMA,FOLLOW_COMMA_in_idList291); 
             	    idn=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList295); 
@@ -417,7 +417,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "variableDeclaration"
-    // OCL.g:164:1: variableDeclaration returns [ASTVariableDeclaration n] : name= IDENT COLON t= type ;
+    // OCL.g:163:1: variableDeclaration returns [ASTVariableDeclaration n] : name= IDENT COLON t= type ;
     public final ASTVariableDeclaration variableDeclaration() throws RecognitionException {
         ASTVariableDeclaration n = null;
 
@@ -426,8 +426,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:165:1: (name= IDENT COLON t= type )
-            // OCL.g:166:5: name= IDENT COLON t= type
+            // OCL.g:164:1: (name= IDENT COLON t= type )
+            // OCL.g:165:5: name= IDENT COLON t= type
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableDeclaration326); 
             match(input,COLON,FOLLOW_COLON_in_variableDeclaration328); 
@@ -453,7 +453,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "conditionalImpliesExpression"
-    // OCL.g:174:1: conditionalImpliesExpression returns [ASTExpression n] : nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* ;
+    // OCL.g:173:1: conditionalImpliesExpression returns [ASTExpression n] : nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* ;
     public final ASTExpression conditionalImpliesExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -464,8 +464,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:175:1: (nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* )
-            // OCL.g:176:5: nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )*
+            // OCL.g:174:1: (nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* )
+            // OCL.g:175:5: nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )*
             {
             pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression368);
             nCndOrExp=conditionalOrExpression();
@@ -473,7 +473,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
             n = nCndOrExp;
-            // OCL.g:177:5: (op= 'implies' n1= conditionalOrExpression )*
+            // OCL.g:176:5: (op= 'implies' n1= conditionalOrExpression )*
             loop6:
             do {
                 int alt6=2;
@@ -486,7 +486,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt6) {
             	case 1 :
-            	    // OCL.g:177:7: op= 'implies' n1= conditionalOrExpression
+            	    // OCL.g:176:7: op= 'implies' n1= conditionalOrExpression
             	    {
             	    op=(Token)match(input,45,FOLLOW_45_in_conditionalImpliesExpression381); 
             	    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression385);
@@ -520,7 +520,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "conditionalOrExpression"
-    // OCL.g:186:1: conditionalOrExpression returns [ASTExpression n] : nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* ;
+    // OCL.g:185:1: conditionalOrExpression returns [ASTExpression n] : nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* ;
     public final ASTExpression conditionalOrExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -531,8 +531,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:187:1: (nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* )
-            // OCL.g:188:5: nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )*
+            // OCL.g:186:1: (nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* )
+            // OCL.g:187:5: nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )*
             {
             pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression430);
             nCndXorExp=conditionalXOrExpression();
@@ -540,7 +540,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
             n = nCndXorExp;
-            // OCL.g:189:5: (op= 'or' n1= conditionalXOrExpression )*
+            // OCL.g:188:5: (op= 'or' n1= conditionalXOrExpression )*
             loop7:
             do {
                 int alt7=2;
@@ -553,7 +553,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt7) {
             	case 1 :
-            	    // OCL.g:189:7: op= 'or' n1= conditionalXOrExpression
+            	    // OCL.g:188:7: op= 'or' n1= conditionalXOrExpression
             	    {
             	    op=(Token)match(input,46,FOLLOW_46_in_conditionalOrExpression443); 
             	    pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression447);
@@ -587,7 +587,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "conditionalXOrExpression"
-    // OCL.g:198:1: conditionalXOrExpression returns [ASTExpression n] : nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* ;
+    // OCL.g:197:1: conditionalXOrExpression returns [ASTExpression n] : nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* ;
     public final ASTExpression conditionalXOrExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -598,8 +598,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:199:1: (nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* )
-            // OCL.g:200:5: nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )*
+            // OCL.g:198:1: (nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* )
+            // OCL.g:199:5: nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )*
             {
             pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression491);
             nCndAndExp=conditionalAndExpression();
@@ -607,7 +607,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
             n = nCndAndExp;
-            // OCL.g:201:5: (op= 'xor' n1= conditionalAndExpression )*
+            // OCL.g:200:5: (op= 'xor' n1= conditionalAndExpression )*
             loop8:
             do {
                 int alt8=2;
@@ -620,7 +620,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt8) {
             	case 1 :
-            	    // OCL.g:201:7: op= 'xor' n1= conditionalAndExpression
+            	    // OCL.g:200:7: op= 'xor' n1= conditionalAndExpression
             	    {
             	    op=(Token)match(input,47,FOLLOW_47_in_conditionalXOrExpression504); 
             	    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression508);
@@ -654,7 +654,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "conditionalAndExpression"
-    // OCL.g:210:1: conditionalAndExpression returns [ASTExpression n] : nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* ;
+    // OCL.g:209:1: conditionalAndExpression returns [ASTExpression n] : nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* ;
     public final ASTExpression conditionalAndExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -665,8 +665,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:211:1: (nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* )
-            // OCL.g:212:5: nEqExp= equalityExpression (op= 'and' n1= equalityExpression )*
+            // OCL.g:210:1: (nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* )
+            // OCL.g:211:5: nEqExp= equalityExpression (op= 'and' n1= equalityExpression )*
             {
             pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression552);
             nEqExp=equalityExpression();
@@ -674,7 +674,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
             n = nEqExp;
-            // OCL.g:213:5: (op= 'and' n1= equalityExpression )*
+            // OCL.g:212:5: (op= 'and' n1= equalityExpression )*
             loop9:
             do {
                 int alt9=2;
@@ -687,7 +687,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt9) {
             	case 1 :
-            	    // OCL.g:213:7: op= 'and' n1= equalityExpression
+            	    // OCL.g:212:7: op= 'and' n1= equalityExpression
             	    {
             	    op=(Token)match(input,48,FOLLOW_48_in_conditionalAndExpression565); 
             	    pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression569);
@@ -721,7 +721,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "equalityExpression"
-    // OCL.g:222:1: equalityExpression returns [ASTExpression n] : nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* ;
+    // OCL.g:221:1: equalityExpression returns [ASTExpression n] : nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* ;
     public final ASTExpression equalityExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -732,8 +732,8 @@ public class OCLParser extends BaseParser {
 
          Token op = null; 
         try {
-            // OCL.g:224:1: (nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* )
-            // OCL.g:225:5: nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
+            // OCL.g:223:1: (nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* )
+            // OCL.g:224:5: nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
             {
             pushFollow(FOLLOW_relationalExpression_in_equalityExpression617);
             nRelExp=relationalExpression();
@@ -741,7 +741,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
             n = nRelExp;
-            // OCL.g:226:5: ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
+            // OCL.g:225:5: ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
             loop10:
             do {
                 int alt10=2;
@@ -754,7 +754,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt10) {
             	case 1 :
-            	    // OCL.g:226:7: ( EQUAL | NOT_EQUAL ) n1= relationalExpression
+            	    // OCL.g:225:7: ( EQUAL | NOT_EQUAL ) n1= relationalExpression
             	    {
             	     op = input.LT(1); 
             	    if ( input.LA(1)==EQUAL||input.LA(1)==NOT_EQUAL ) {
@@ -797,7 +797,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "relationalExpression"
-    // OCL.g:236:1: relationalExpression returns [ASTExpression n] : nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* ;
+    // OCL.g:235:1: relationalExpression returns [ASTExpression n] : nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* ;
     public final ASTExpression relationalExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -808,8 +808,8 @@ public class OCLParser extends BaseParser {
 
          Token op = null; 
         try {
-            // OCL.g:238:1: (nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* )
-            // OCL.g:239:5: nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
+            // OCL.g:237:1: (nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* )
+            // OCL.g:238:5: nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
             {
             pushFollow(FOLLOW_additiveExpression_in_relationalExpression695);
             nAddiExp=additiveExpression();
@@ -817,7 +817,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
             n = nAddiExp;
-            // OCL.g:240:5: ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
+            // OCL.g:239:5: ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
             loop11:
             do {
                 int alt11=2;
@@ -830,7 +830,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt11) {
             	case 1 :
-            	    // OCL.g:240:7: ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression
+            	    // OCL.g:239:7: ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression
             	    {
             	     op = input.LT(1); 
             	    if ( (input.LA(1)>=LESS && input.LA(1)<=GREATER_EQUAL) ) {
@@ -873,7 +873,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "additiveExpression"
-    // OCL.g:250:1: additiveExpression returns [ASTExpression n] : nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* ;
+    // OCL.g:249:1: additiveExpression returns [ASTExpression n] : nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* ;
     public final ASTExpression additiveExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -884,8 +884,8 @@ public class OCLParser extends BaseParser {
 
          Token op = null; 
         try {
-            // OCL.g:252:1: (nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* )
-            // OCL.g:253:5: nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
+            // OCL.g:251:1: (nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* )
+            // OCL.g:252:5: nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
             {
             pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression781);
             nMulExp=multiplicativeExpression();
@@ -893,7 +893,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
             n = nMulExp;
-            // OCL.g:254:5: ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
+            // OCL.g:253:5: ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
             loop12:
             do {
                 int alt12=2;
@@ -906,7 +906,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt12) {
             	case 1 :
-            	    // OCL.g:254:7: ( PLUS | MINUS ) n1= multiplicativeExpression
+            	    // OCL.g:253:7: ( PLUS | MINUS ) n1= multiplicativeExpression
             	    {
             	     op = input.LT(1); 
             	    if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS) ) {
@@ -949,7 +949,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "multiplicativeExpression"
-    // OCL.g:265:1: multiplicativeExpression returns [ASTExpression n] : nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* ;
+    // OCL.g:264:1: multiplicativeExpression returns [ASTExpression n] : nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* ;
     public final ASTExpression multiplicativeExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -960,8 +960,8 @@ public class OCLParser extends BaseParser {
 
          Token op = null; 
         try {
-            // OCL.g:267:1: (nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* )
-            // OCL.g:268:5: nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
+            // OCL.g:266:1: (nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* )
+            // OCL.g:267:5: nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
             {
             pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression859);
             nUnExp=unaryExpression();
@@ -969,7 +969,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
              n = nUnExp;
-            // OCL.g:269:5: ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
+            // OCL.g:268:5: ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
             loop13:
             do {
                 int alt13=2;
@@ -982,7 +982,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt13) {
             	case 1 :
-            	    // OCL.g:269:7: ( STAR | SLASH | 'div' ) n1= unaryExpression
+            	    // OCL.g:268:7: ( STAR | SLASH | 'div' ) n1= unaryExpression
             	    {
             	     op = input.LT(1); 
             	    if ( (input.LA(1)>=STAR && input.LA(1)<=SLASH)||input.LA(1)==49 ) {
@@ -1025,7 +1025,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "unaryExpression"
-    // OCL.g:281:1: unaryExpression returns [ASTExpression n] : ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression );
+    // OCL.g:280:1: unaryExpression returns [ASTExpression n] : ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression );
     public final ASTExpression unaryExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -1036,7 +1036,7 @@ public class OCLParser extends BaseParser {
 
          Token op = null; 
         try {
-            // OCL.g:283:1: ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression )
+            // OCL.g:282:1: ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression )
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -1054,10 +1054,10 @@ public class OCLParser extends BaseParser {
             }
             switch (alt14) {
                 case 1 :
-                    // OCL.g:284:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
+                    // OCL.g:283:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
                     {
-                    // OCL.g:284:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
-                    // OCL.g:284:9: ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression
+                    // OCL.g:283:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
+                    // OCL.g:283:9: ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression
                     {
                      op = input.LT(1); 
                     if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS)||input.LA(1)==50 ) {
@@ -1082,7 +1082,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 2 :
-                    // OCL.g:288:7: nPosExp= postfixExpression
+                    // OCL.g:287:7: nPosExp= postfixExpression
                     {
                     pushFollow(FOLLOW_postfixExpression_in_unaryExpression997);
                     nPosExp=postfixExpression();
@@ -1108,7 +1108,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "postfixExpression"
-    // OCL.g:296:1: postfixExpression returns [ASTExpression n] : nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* ;
+    // OCL.g:295:1: postfixExpression returns [ASTExpression n] : nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* ;
     public final ASTExpression postfixExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -1119,8 +1119,8 @@ public class OCLParser extends BaseParser {
 
          boolean arrow = false; 
         try {
-            // OCL.g:298:1: (nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* )
-            // OCL.g:299:5: nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
+            // OCL.g:297:1: (nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* )
+            // OCL.g:298:5: nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
             {
             pushFollow(FOLLOW_primaryExpression_in_postfixExpression1030);
             nPrimExp=primaryExpression();
@@ -1128,7 +1128,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
              n = nPrimExp; 
-            // OCL.g:300:5: ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
+            // OCL.g:299:5: ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
             loop16:
             do {
                 int alt16=2;
@@ -1141,9 +1141,9 @@ public class OCLParser extends BaseParser {
 
                 switch (alt16) {
             	case 1 :
-            	    // OCL.g:301:6: ( ARROW | DOT ) nPc= propertyCall[$n, arrow]
+            	    // OCL.g:300:6: ( ARROW | DOT ) nPc= propertyCall[$n, arrow]
             	    {
-            	    // OCL.g:301:6: ( ARROW | DOT )
+            	    // OCL.g:300:6: ( ARROW | DOT )
             	    int alt15=2;
             	    int LA15_0 = input.LA(1);
 
@@ -1161,7 +1161,7 @@ public class OCLParser extends BaseParser {
             	    }
             	    switch (alt15) {
             	        case 1 :
-            	            // OCL.g:301:8: ARROW
+            	            // OCL.g:300:8: ARROW
             	            {
             	            match(input,ARROW,FOLLOW_ARROW_in_postfixExpression1048); 
             	             arrow = true; 
@@ -1169,7 +1169,7 @@ public class OCLParser extends BaseParser {
             	            }
             	            break;
             	        case 2 :
-            	            // OCL.g:301:34: DOT
+            	            // OCL.g:300:34: DOT
             	            {
             	            match(input,DOT,FOLLOW_DOT_in_postfixExpression1054); 
             	             arrow = false; 
@@ -1210,7 +1210,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "primaryExpression"
-    // OCL.g:317:1: primaryExpression returns [ASTExpression n] : (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? );
+    // OCL.g:316:1: primaryExpression returns [ASTExpression n] : (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? );
     public final ASTExpression primaryExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -1225,7 +1225,7 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:318:1: (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? )
+            // OCL.g:317:1: (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? )
             int alt19=5;
             switch ( input.LA(1) ) {
             case INT:
@@ -1304,7 +1304,7 @@ public class OCLParser extends BaseParser {
 
             switch (alt19) {
                 case 1 :
-                    // OCL.g:319:7: nLit= literal
+                    // OCL.g:318:7: nLit= literal
                     {
                     pushFollow(FOLLOW_literal_in_primaryExpression1105);
                     nLit=literal();
@@ -1316,7 +1316,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 2 :
-                    // OCL.g:320:7: nPc= propertyCall[null, false]
+                    // OCL.g:319:7: nPc= propertyCall[null, false]
                     {
                     pushFollow(FOLLOW_propertyCall_in_primaryExpression1117);
                     nPc=propertyCall(null, false);
@@ -1328,7 +1328,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 3 :
-                    // OCL.g:321:7: LPAREN nExp= expression RPAREN
+                    // OCL.g:320:7: LPAREN nExp= expression RPAREN
                     {
                     match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression1128); 
                     pushFollow(FOLLOW_expression_in_primaryExpression1132);
@@ -1342,7 +1342,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 4 :
-                    // OCL.g:322:7: nIfExp= ifExpression
+                    // OCL.g:321:7: nIfExp= ifExpression
                     {
                     pushFollow(FOLLOW_ifExpression_in_primaryExpression1146);
                     nIfExp=ifExpression();
@@ -1354,12 +1354,12 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 5 :
-                    // OCL.g:324:7: id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )?
+                    // OCL.g:323:7: id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )?
                     {
                     id1=(Token)match(input,IDENT,FOLLOW_IDENT_in_primaryExpression1163); 
                     match(input,DOT,FOLLOW_DOT_in_primaryExpression1165); 
                     match(input,51,FOLLOW_51_in_primaryExpression1167); 
-                    // OCL.g:324:36: ( LPAREN RPAREN )?
+                    // OCL.g:323:36: ( LPAREN RPAREN )?
                     int alt17=2;
                     int LA17_0 = input.LA(1);
 
@@ -1368,7 +1368,7 @@ public class OCLParser extends BaseParser {
                     }
                     switch (alt17) {
                         case 1 :
-                            // OCL.g:324:38: LPAREN RPAREN
+                            // OCL.g:323:38: LPAREN RPAREN
                             {
                             match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression1171); 
                             match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression1173); 
@@ -1379,7 +1379,7 @@ public class OCLParser extends BaseParser {
                     }
 
                      n = new ASTAllInstancesExpression(id1); 
-                    // OCL.g:326:7: ( AT 'pre' )?
+                    // OCL.g:325:7: ( AT 'pre' )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -1388,7 +1388,7 @@ public class OCLParser extends BaseParser {
                     }
                     switch (alt18) {
                         case 1 :
-                            // OCL.g:326:9: AT 'pre'
+                            // OCL.g:325:9: AT 'pre'
                             {
                             match(input,AT,FOLLOW_AT_in_primaryExpression1194); 
                             match(input,52,FOLLOW_52_in_primaryExpression1196); 
@@ -1417,7 +1417,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "propertyCall"
-    // OCL.g:339:1: propertyCall[ASTExpression source, boolean followsArrow] returns [ASTExpression n] : ({...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] );
+    // OCL.g:338:1: propertyCall[ASTExpression source, boolean followsArrow] returns [ASTExpression n] : ({...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] );
     public final ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTExpression n = null;
 
@@ -1431,7 +1431,7 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:340:1: ({...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] )
+            // OCL.g:339:1: ({...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] )
             int alt20=4;
             switch ( input.LA(1) ) {
             case IDENT:
@@ -1473,7 +1473,7 @@ public class OCLParser extends BaseParser {
 
             switch (alt20) {
                 case 1 :
-                    // OCL.g:344:7: {...}?nExpQuery= queryExpression[source]
+                    // OCL.g:343:7: {...}?nExpQuery= queryExpression[source]
                     {
                     if ( !(( org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) )) ) {
                         throw new FailedPredicateException(input, "propertyCall", " org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) ");
@@ -1488,7 +1488,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 2 :
-                    // OCL.g:346:7: nExpIterate= iterateExpression[source]
+                    // OCL.g:345:7: nExpIterate= iterateExpression[source]
                     {
                     pushFollow(FOLLOW_iterateExpression_in_propertyCall1275);
                     nExpIterate=iterateExpression(source);
@@ -1500,7 +1500,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 3 :
-                    // OCL.g:347:7: nExpOperation= operationExpression[source, followsArrow]
+                    // OCL.g:346:7: nExpOperation= operationExpression[source, followsArrow]
                     {
                     pushFollow(FOLLOW_operationExpression_in_propertyCall1288);
                     nExpOperation=operationExpression(source, followsArrow);
@@ -1512,7 +1512,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 4 :
-                    // OCL.g:348:7: nExpType= typeExpression[source, followsArrow]
+                    // OCL.g:347:7: nExpType= typeExpression[source, followsArrow]
                     {
                     pushFollow(FOLLOW_typeExpression_in_propertyCall1301);
                     nExpType=typeExpression(source, followsArrow);
@@ -1538,7 +1538,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "queryExpression"
-    // OCL.g:357:1: queryExpression[ASTExpression range] returns [ASTExpression n] : op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN ;
+    // OCL.g:356:1: queryExpression[ASTExpression range] returns [ASTExpression n] : op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN ;
     public final ASTExpression queryExpression(ASTExpression range) throws RecognitionException {
         ASTExpression n = null;
 
@@ -1550,12 +1550,12 @@ public class OCLParser extends BaseParser {
 
         ASTElemVarsDeclaration decl = new ASTElemVarsDeclaration(); 
         try {
-            // OCL.g:358:69: (op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN )
-            // OCL.g:359:5: op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN
+            // OCL.g:357:69: (op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN )
+            // OCL.g:358:5: op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN
             {
             op=(Token)match(input,IDENT,FOLLOW_IDENT_in_queryExpression1336); 
             match(input,LPAREN,FOLLOW_LPAREN_in_queryExpression1343); 
-            // OCL.g:361:5: (decls= elemVarsDeclaration BAR )?
+            // OCL.g:360:5: (decls= elemVarsDeclaration BAR )?
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -1568,7 +1568,7 @@ public class OCLParser extends BaseParser {
             }
             switch (alt21) {
                 case 1 :
-                    // OCL.g:361:7: decls= elemVarsDeclaration BAR
+                    // OCL.g:360:7: decls= elemVarsDeclaration BAR
                     {
                     pushFollow(FOLLOW_elemVarsDeclaration_in_queryExpression1354);
                     decls=elemVarsDeclaration();
@@ -1606,7 +1606,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "iterateExpression"
-    // OCL.g:375:1: iterateExpression[ASTExpression range] returns [ASTExpression n] : i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN ;
+    // OCL.g:374:1: iterateExpression[ASTExpression range] returns [ASTExpression n] : i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN ;
     public final ASTExpression iterateExpression(ASTExpression range) throws RecognitionException {
         ASTExpression n = null;
 
@@ -1619,8 +1619,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:375:65: (i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN )
-            // OCL.g:376:5: i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN
+            // OCL.g:374:65: (i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN )
+            // OCL.g:375:5: i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN
             {
             i=(Token)match(input,53,FOLLOW_53_in_iterateExpression1407); 
             match(input,LPAREN,FOLLOW_LPAREN_in_iterateExpression1413); 
@@ -1659,7 +1659,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "operationExpression"
-    // OCL.g:397:1: operationExpression[ASTExpression source, boolean followsArrow] returns [ASTOperationExpression n] : name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? ;
+    // OCL.g:396:1: operationExpression[ASTExpression source, boolean followsArrow] returns [ASTOperationExpression n] : name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? ;
     public final ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTOperationExpression n = null;
 
@@ -1669,12 +1669,12 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:399:1: (name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? )
-            // OCL.g:400:5: name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
+            // OCL.g:398:1: (name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? )
+            // OCL.g:399:5: name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression1491); 
              n = new ASTOperationExpression(name, source, followsArrow); 
-            // OCL.g:403:5: ( LBRACK rolename= IDENT RBRACK )?
+            // OCL.g:402:5: ( LBRACK rolename= IDENT RBRACK )?
             int alt22=2;
             int LA22_0 = input.LA(1);
 
@@ -1683,7 +1683,7 @@ public class OCLParser extends BaseParser {
             }
             switch (alt22) {
                 case 1 :
-                    // OCL.g:403:7: LBRACK rolename= IDENT RBRACK
+                    // OCL.g:402:7: LBRACK rolename= IDENT RBRACK
                     {
                     match(input,LBRACK,FOLLOW_LBRACK_in_operationExpression1507); 
                     rolename=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression1511); 
@@ -1695,7 +1695,7 @@ public class OCLParser extends BaseParser {
 
             }
 
-            // OCL.g:405:5: ( AT 'pre' )?
+            // OCL.g:404:5: ( AT 'pre' )?
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -1704,7 +1704,7 @@ public class OCLParser extends BaseParser {
             }
             switch (alt23) {
                 case 1 :
-                    // OCL.g:405:7: AT 'pre'
+                    // OCL.g:404:7: AT 'pre'
                     {
                     match(input,AT,FOLLOW_AT_in_operationExpression1526); 
                     match(input,52,FOLLOW_52_in_operationExpression1528); 
@@ -1715,7 +1715,7 @@ public class OCLParser extends BaseParser {
 
             }
 
-            // OCL.g:406:5: ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
+            // OCL.g:405:5: ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -1724,11 +1724,11 @@ public class OCLParser extends BaseParser {
             }
             switch (alt26) {
                 case 1 :
-                    // OCL.g:407:7: LPAREN (e= expression ( COMMA e= expression )* )? RPAREN
+                    // OCL.g:406:7: LPAREN (e= expression ( COMMA e= expression )* )? RPAREN
                     {
                     match(input,LPAREN,FOLLOW_LPAREN_in_operationExpression1549); 
                      n.hasParentheses(); 
-                    // OCL.g:408:7: (e= expression ( COMMA e= expression )* )?
+                    // OCL.g:407:7: (e= expression ( COMMA e= expression )* )?
                     int alt25=2;
                     int LA25_0 = input.LA(1);
 
@@ -1737,7 +1737,7 @@ public class OCLParser extends BaseParser {
                     }
                     switch (alt25) {
                         case 1 :
-                            // OCL.g:409:7: e= expression ( COMMA e= expression )*
+                            // OCL.g:408:7: e= expression ( COMMA e= expression )*
                             {
                             pushFollow(FOLLOW_expression_in_operationExpression1570);
                             e=expression();
@@ -1745,7 +1745,7 @@ public class OCLParser extends BaseParser {
                             state._fsp--;
 
                              n.addArg(e); 
-                            // OCL.g:410:7: ( COMMA e= expression )*
+                            // OCL.g:409:7: ( COMMA e= expression )*
                             loop24:
                             do {
                                 int alt24=2;
@@ -1758,7 +1758,7 @@ public class OCLParser extends BaseParser {
 
                                 switch (alt24) {
                             	case 1 :
-                            	    // OCL.g:410:9: COMMA e= expression
+                            	    // OCL.g:409:9: COMMA e= expression
                             	    {
                             	    match(input,COMMA,FOLLOW_COMMA_in_operationExpression1582); 
                             	    pushFollow(FOLLOW_expression_in_operationExpression1586);
@@ -1805,7 +1805,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "typeExpression"
-    // OCL.g:422:1: typeExpression[ASTExpression source, boolean followsArrow] returns [ASTTypeArgExpression n] : ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN ;
+    // OCL.g:421:1: typeExpression[ASTExpression source, boolean followsArrow] returns [ASTTypeArgExpression n] : ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN ;
     public final ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTTypeArgExpression n = null;
 
@@ -1814,8 +1814,8 @@ public class OCLParser extends BaseParser {
 
          Token opToken = null; 
         try {
-            // OCL.g:425:1: ( ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN )
-            // OCL.g:426:2: ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN
+            // OCL.g:424:1: ( ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN )
+            // OCL.g:425:2: ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN
             {
              opToken = input.LT(1); 
             if ( (input.LA(1)>=54 && input.LA(1)<=56) ) {
@@ -1851,7 +1851,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "elemVarsDeclaration"
-    // OCL.g:437:1: elemVarsDeclaration returns [ASTElemVarsDeclaration n] : idListRes= idList ( COLON t= type )? ;
+    // OCL.g:436:1: elemVarsDeclaration returns [ASTElemVarsDeclaration n] : idListRes= idList ( COLON t= type )? ;
     public final ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException {
         ASTElemVarsDeclaration n = null;
 
@@ -1862,15 +1862,15 @@ public class OCLParser extends BaseParser {
 
          List idList; 
         try {
-            // OCL.g:439:1: (idListRes= idList ( COLON t= type )? )
-            // OCL.g:440:5: idListRes= idList ( COLON t= type )?
+            // OCL.g:438:1: (idListRes= idList ( COLON t= type )? )
+            // OCL.g:439:5: idListRes= idList ( COLON t= type )?
             {
             pushFollow(FOLLOW_idList_in_elemVarsDeclaration1710);
             idListRes=idList();
 
             state._fsp--;
 
-            // OCL.g:441:5: ( COLON t= type )?
+            // OCL.g:440:5: ( COLON t= type )?
             int alt27=2;
             int LA27_0 = input.LA(1);
 
@@ -1879,7 +1879,7 @@ public class OCLParser extends BaseParser {
             }
             switch (alt27) {
                 case 1 :
-                    // OCL.g:441:7: COLON t= type
+                    // OCL.g:440:7: COLON t= type
                     {
                     match(input,COLON,FOLLOW_COLON_in_elemVarsDeclaration1718); 
                     pushFollow(FOLLOW_type_in_elemVarsDeclaration1722);
@@ -1910,7 +1910,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "variableInitialization"
-    // OCL.g:450:1: variableInitialization returns [ASTVariableInitialization n] : name= IDENT COLON t= type EQUAL e= expression ;
+    // OCL.g:449:1: variableInitialization returns [ASTVariableInitialization n] : name= IDENT COLON t= type EQUAL e= expression ;
     public final ASTVariableInitialization variableInitialization() throws RecognitionException {
         ASTVariableInitialization n = null;
 
@@ -1921,8 +1921,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:451:1: (name= IDENT COLON t= type EQUAL e= expression )
-            // OCL.g:452:5: name= IDENT COLON t= type EQUAL e= expression
+            // OCL.g:450:1: (name= IDENT COLON t= type EQUAL e= expression )
+            // OCL.g:451:5: name= IDENT COLON t= type EQUAL e= expression
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableInitialization1757); 
             match(input,COLON,FOLLOW_COLON_in_variableInitialization1759); 
@@ -1954,7 +1954,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "ifExpression"
-    // OCL.g:461:1: ifExpression returns [ASTExpression n] : i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' ;
+    // OCL.g:460:1: ifExpression returns [ASTExpression n] : i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' ;
     public final ASTExpression ifExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -1967,8 +1967,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:462:1: (i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' )
-            // OCL.g:463:5: i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif'
+            // OCL.g:461:1: (i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' )
+            // OCL.g:462:5: i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif'
             {
             i=(Token)match(input,57,FOLLOW_57_in_ifExpression1801); 
             pushFollow(FOLLOW_expression_in_ifExpression1805);
@@ -2006,7 +2006,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "literal"
-    // OCL.g:481:1: literal returns [ASTExpression n] : (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral );
+    // OCL.g:480:1: literal returns [ASTExpression n] : (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral );
     public final ASTExpression literal() throws RecognitionException {
         ASTExpression n = null;
 
@@ -2026,7 +2026,7 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:482:1: (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral )
+            // OCL.g:481:1: (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral )
             int alt28=10;
             switch ( input.LA(1) ) {
             case 61:
@@ -2092,7 +2092,7 @@ public class OCLParser extends BaseParser {
 
             switch (alt28) {
                 case 1 :
-                    // OCL.g:483:7: t= 'true'
+                    // OCL.g:482:7: t= 'true'
                     {
                     t=(Token)match(input,61,FOLLOW_61_in_literal1858); 
                      n = new ASTBooleanLiteral(true); 
@@ -2100,7 +2100,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 2 :
-                    // OCL.g:484:7: f= 'false'
+                    // OCL.g:483:7: f= 'false'
                     {
                     f=(Token)match(input,62,FOLLOW_62_in_literal1872); 
                      n = new ASTBooleanLiteral(false); 
@@ -2108,7 +2108,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 3 :
-                    // OCL.g:485:7: i= INT
+                    // OCL.g:484:7: i= INT
                     {
                     i=(Token)match(input,INT,FOLLOW_INT_in_literal1885); 
                      n = new ASTIntegerLiteral(i); 
@@ -2116,7 +2116,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 4 :
-                    // OCL.g:486:7: r= REAL
+                    // OCL.g:485:7: r= REAL
                     {
                     r=(Token)match(input,REAL,FOLLOW_REAL_in_literal1900); 
                      n = new ASTRealLiteral(r); 
@@ -2124,7 +2124,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 5 :
-                    // OCL.g:487:7: s= STRING
+                    // OCL.g:486:7: s= STRING
                     {
                     s=(Token)match(input,STRING,FOLLOW_STRING_in_literal1914); 
                      n = new ASTStringLiteral(s); 
@@ -2132,7 +2132,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 6 :
-                    // OCL.g:488:7: HASH enumLit= IDENT
+                    // OCL.g:487:7: HASH enumLit= IDENT
                     {
                     match(input,HASH,FOLLOW_HASH_in_literal1924); 
                     enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal1928); 
@@ -2141,7 +2141,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 7 :
-                    // OCL.g:489:7: nColIt= collectionLiteral
+                    // OCL.g:488:7: nColIt= collectionLiteral
                     {
                     pushFollow(FOLLOW_collectionLiteral_in_literal1940);
                     nColIt=collectionLiteral();
@@ -2153,7 +2153,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 8 :
-                    // OCL.g:490:7: nEColIt= emptyCollectionLiteral
+                    // OCL.g:489:7: nEColIt= emptyCollectionLiteral
                     {
                     pushFollow(FOLLOW_emptyCollectionLiteral_in_literal1952);
                     nEColIt=emptyCollectionLiteral();
@@ -2165,7 +2165,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 9 :
-                    // OCL.g:491:7: nUndLit= undefinedLiteral
+                    // OCL.g:490:7: nUndLit= undefinedLiteral
                     {
                     pushFollow(FOLLOW_undefinedLiteral_in_literal1964);
                     nUndLit=undefinedLiteral();
@@ -2177,7 +2177,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 10 :
-                    // OCL.g:492:7: nTupleLit= tupleLiteral
+                    // OCL.g:491:7: nTupleLit= tupleLiteral
                     {
                     pushFollow(FOLLOW_tupleLiteral_in_literal1976);
                     nTupleLit=tupleLiteral();
@@ -2203,7 +2203,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "collectionLiteral"
-    // OCL.g:500:1: collectionLiteral returns [ASTCollectionLiteral n] : ( 'Set' | 'Sequence' | 'Bag' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE ;
+    // OCL.g:499:1: collectionLiteral returns [ASTCollectionLiteral n] : ( 'Set' | 'Sequence' | 'Bag' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE ;
     public final ASTCollectionLiteral collectionLiteral() throws RecognitionException {
         ASTCollectionLiteral n = null;
 
@@ -2212,8 +2212,8 @@ public class OCLParser extends BaseParser {
 
          Token op = null; 
         try {
-            // OCL.g:502:1: ( ( 'Set' | 'Sequence' | 'Bag' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE )
-            // OCL.g:503:5: ( 'Set' | 'Sequence' | 'Bag' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE
+            // OCL.g:501:1: ( ( 'Set' | 'Sequence' | 'Bag' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE )
+            // OCL.g:502:5: ( 'Set' | 'Sequence' | 'Bag' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE
             {
              op = input.LT(1); 
             if ( (input.LA(1)>=63 && input.LA(1)<=65) ) {
@@ -2227,7 +2227,7 @@ public class OCLParser extends BaseParser {
 
              n = new ASTCollectionLiteral(op); 
             match(input,LBRACE,FOLLOW_LBRACE_in_collectionLiteral2039); 
-            // OCL.g:507:5: (ci= collectionItem ( COMMA ci= collectionItem )* )?
+            // OCL.g:506:5: (ci= collectionItem ( COMMA ci= collectionItem )* )?
             int alt30=2;
             int LA30_0 = input.LA(1);
 
@@ -2236,7 +2236,7 @@ public class OCLParser extends BaseParser {
             }
             switch (alt30) {
                 case 1 :
-                    // OCL.g:508:7: ci= collectionItem ( COMMA ci= collectionItem )*
+                    // OCL.g:507:7: ci= collectionItem ( COMMA ci= collectionItem )*
                     {
                     pushFollow(FOLLOW_collectionItem_in_collectionLiteral2056);
                     ci=collectionItem();
@@ -2244,7 +2244,7 @@ public class OCLParser extends BaseParser {
                     state._fsp--;
 
                      n.addItem(ci); 
-                    // OCL.g:509:7: ( COMMA ci= collectionItem )*
+                    // OCL.g:508:7: ( COMMA ci= collectionItem )*
                     loop29:
                     do {
                         int alt29=2;
@@ -2257,7 +2257,7 @@ public class OCLParser extends BaseParser {
 
                         switch (alt29) {
                     	case 1 :
-                    	    // OCL.g:509:9: COMMA ci= collectionItem
+                    	    // OCL.g:508:9: COMMA ci= collectionItem
                     	    {
                     	    match(input,COMMA,FOLLOW_COMMA_in_collectionLiteral2069); 
                     	    pushFollow(FOLLOW_collectionItem_in_collectionLiteral2073);
@@ -2298,7 +2298,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "collectionItem"
-    // OCL.g:518:1: collectionItem returns [ASTCollectionItem n] : e= expression ( DOTDOT e= expression )? ;
+    // OCL.g:517:1: collectionItem returns [ASTCollectionItem n] : e= expression ( DOTDOT e= expression )? ;
     public final ASTCollectionItem collectionItem() throws RecognitionException {
         ASTCollectionItem n = null;
 
@@ -2307,8 +2307,8 @@ public class OCLParser extends BaseParser {
 
          n = new ASTCollectionItem(); 
         try {
-            // OCL.g:520:1: (e= expression ( DOTDOT e= expression )? )
-            // OCL.g:521:5: e= expression ( DOTDOT e= expression )?
+            // OCL.g:519:1: (e= expression ( DOTDOT e= expression )? )
+            // OCL.g:520:5: e= expression ( DOTDOT e= expression )?
             {
             pushFollow(FOLLOW_expression_in_collectionItem2121);
             e=expression();
@@ -2316,7 +2316,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
              n.setFirst(e); 
-            // OCL.g:522:5: ( DOTDOT e= expression )?
+            // OCL.g:521:5: ( DOTDOT e= expression )?
             int alt31=2;
             int LA31_0 = input.LA(1);
 
@@ -2325,7 +2325,7 @@ public class OCLParser extends BaseParser {
             }
             switch (alt31) {
                 case 1 :
-                    // OCL.g:522:7: DOTDOT e= expression
+                    // OCL.g:521:7: DOTDOT e= expression
                     {
                     match(input,DOTDOT,FOLLOW_DOTDOT_in_collectionItem2132); 
                     pushFollow(FOLLOW_expression_in_collectionItem2136);
@@ -2356,7 +2356,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "emptyCollectionLiteral"
-    // OCL.g:532:1: emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n] : 'oclEmpty' LPAREN t= collectionType RPAREN ;
+    // OCL.g:531:1: emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n] : 'oclEmpty' LPAREN t= collectionType RPAREN ;
     public final ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException {
         ASTEmptyCollectionLiteral n = null;
 
@@ -2364,8 +2364,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:533:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
-            // OCL.g:534:5: 'oclEmpty' LPAREN t= collectionType RPAREN
+            // OCL.g:532:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
+            // OCL.g:533:5: 'oclEmpty' LPAREN t= collectionType RPAREN
             {
             match(input,66,FOLLOW_66_in_emptyCollectionLiteral2165); 
             match(input,LPAREN,FOLLOW_LPAREN_in_emptyCollectionLiteral2167); 
@@ -2392,7 +2392,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "undefinedLiteral"
-    // OCL.g:545:1: undefinedLiteral returns [ASTUndefinedLiteral n] : ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' );
+    // OCL.g:544:1: undefinedLiteral returns [ASTUndefinedLiteral n] : ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' );
     public final ASTUndefinedLiteral undefinedLiteral() throws RecognitionException {
         ASTUndefinedLiteral n = null;
 
@@ -2400,7 +2400,7 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:546:1: ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' )
+            // OCL.g:545:1: ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' )
             int alt32=3;
             switch ( input.LA(1) ) {
             case 67:
@@ -2427,7 +2427,7 @@ public class OCLParser extends BaseParser {
 
             switch (alt32) {
                 case 1 :
-                    // OCL.g:547:5: 'oclUndefined' LPAREN t= type RPAREN
+                    // OCL.g:546:5: 'oclUndefined' LPAREN t= type RPAREN
                     {
                     match(input,67,FOLLOW_67_in_undefinedLiteral2203); 
                     match(input,LPAREN,FOLLOW_LPAREN_in_undefinedLiteral2205); 
@@ -2442,7 +2442,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 2 :
-                    // OCL.g:550:5: 'Undefined'
+                    // OCL.g:549:5: 'Undefined'
                     {
                     match(input,68,FOLLOW_68_in_undefinedLiteral2225); 
                      n = new ASTUndefinedLiteral(); 
@@ -2450,7 +2450,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 3 :
-                    // OCL.g:553:5: 'null'
+                    // OCL.g:552:5: 'null'
                     {
                     match(input,69,FOLLOW_69_in_undefinedLiteral2239); 
                      n = new ASTUndefinedLiteral(); 
@@ -2472,7 +2472,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "tupleLiteral"
-    // OCL.g:562:1: tupleLiteral returns [ASTTupleLiteral n] : 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE ;
+    // OCL.g:561:1: tupleLiteral returns [ASTTupleLiteral n] : 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE ;
     public final ASTTupleLiteral tupleLiteral() throws RecognitionException {
         ASTTupleLiteral n = null;
 
@@ -2481,8 +2481,8 @@ public class OCLParser extends BaseParser {
 
          List tiList = new ArrayList(); 
         try {
-            // OCL.g:564:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
-            // OCL.g:565:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
+            // OCL.g:563:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
+            // OCL.g:564:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
             {
             match(input,70,FOLLOW_70_in_tupleLiteral2273); 
             match(input,LBRACE,FOLLOW_LBRACE_in_tupleLiteral2279); 
@@ -2492,7 +2492,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
              tiList.add(ti); 
-            // OCL.g:568:5: ( COMMA ti= tupleItem )*
+            // OCL.g:567:5: ( COMMA ti= tupleItem )*
             loop33:
             do {
                 int alt33=2;
@@ -2505,7 +2505,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt33) {
             	case 1 :
-            	    // OCL.g:568:7: COMMA ti= tupleItem
+            	    // OCL.g:567:7: COMMA ti= tupleItem
             	    {
             	    match(input,COMMA,FOLLOW_COMMA_in_tupleLiteral2298); 
             	    pushFollow(FOLLOW_tupleItem_in_tupleLiteral2302);
@@ -2541,7 +2541,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "tupleItem"
-    // OCL.g:576:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( COLON | EQUAL ) e= expression ;
+    // OCL.g:575:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( COLON | EQUAL ) e= expression ;
     public final ASTTupleItem tupleItem() throws RecognitionException {
         ASTTupleItem n = null;
 
@@ -2550,8 +2550,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:577:1: (name= IDENT ( COLON | EQUAL ) e= expression )
-            // OCL.g:578:5: name= IDENT ( COLON | EQUAL ) e= expression
+            // OCL.g:576:1: (name= IDENT ( COLON | EQUAL ) e= expression )
+            // OCL.g:577:5: name= IDENT ( COLON | EQUAL ) e= expression
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem2344); 
             if ( (input.LA(1)>=COLON && input.LA(1)<=EQUAL) ) {
@@ -2585,7 +2585,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "type"
-    // OCL.g:589:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
+    // OCL.g:588:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
     public final ASTType type() throws RecognitionException {
         ASTType n = null;
 
@@ -2598,11 +2598,11 @@ public class OCLParser extends BaseParser {
 
          Token tok = null; 
         try {
-            // OCL.g:591:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
-            // OCL.g:592:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            // OCL.g:590:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
+            // OCL.g:591:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
             {
              tok = input.LT(1); /* remember start of type */ 
-            // OCL.g:593:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            // OCL.g:592:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
             int alt34=3;
             switch ( input.LA(1) ) {
             case IDENT:
@@ -2632,7 +2632,7 @@ public class OCLParser extends BaseParser {
 
             switch (alt34) {
                 case 1 :
-                    // OCL.g:594:7: nTSimple= simpleType
+                    // OCL.g:593:7: nTSimple= simpleType
                     {
                     pushFollow(FOLLOW_simpleType_in_type2407);
                     nTSimple=simpleType();
@@ -2644,7 +2644,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 2 :
-                    // OCL.g:595:7: nTCollection= collectionType
+                    // OCL.g:594:7: nTCollection= collectionType
                     {
                     pushFollow(FOLLOW_collectionType_in_type2419);
                     nTCollection=collectionType();
@@ -2656,7 +2656,7 @@ public class OCLParser extends BaseParser {
                     }
                     break;
                 case 3 :
-                    // OCL.g:596:7: nTTuple= tupleType
+                    // OCL.g:595:7: nTTuple= tupleType
                     {
                     pushFollow(FOLLOW_tupleType_in_type2431);
                     nTTuple=tupleType();
@@ -2686,7 +2686,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "typeOnly"
-    // OCL.g:601:1: typeOnly returns [ASTType n] : nT= type EOF ;
+    // OCL.g:600:1: typeOnly returns [ASTType n] : nT= type EOF ;
     public final ASTType typeOnly() throws RecognitionException {
         ASTType n = null;
 
@@ -2694,8 +2694,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:602:1: (nT= type EOF )
-            // OCL.g:603:5: nT= type EOF
+            // OCL.g:601:1: (nT= type EOF )
+            // OCL.g:602:5: nT= type EOF
             {
             pushFollow(FOLLOW_type_in_typeOnly2463);
             nT=type();
@@ -2720,15 +2720,15 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "simpleType"
-    // OCL.g:613:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
+    // OCL.g:612:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
     public final ASTSimpleType simpleType() throws RecognitionException {
         ASTSimpleType n = null;
 
         Token name=null;
 
         try {
-            // OCL.g:614:1: (name= IDENT )
-            // OCL.g:615:5: name= IDENT
+            // OCL.g:613:1: (name= IDENT )
+            // OCL.g:614:5: name= IDENT
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_simpleType2493); 
              n = new ASTSimpleType(name); 
@@ -2748,7 +2748,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "collectionType"
-    // OCL.g:623:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN ;
+    // OCL.g:622:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN ;
     public final ASTCollectionType collectionType() throws RecognitionException {
         ASTCollectionType n = null;
 
@@ -2757,8 +2757,8 @@ public class OCLParser extends BaseParser {
 
          Token op = null; 
         try {
-            // OCL.g:625:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN )
-            // OCL.g:626:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN
+            // OCL.g:624:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN )
+            // OCL.g:625:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) LPAREN elemType= type RPAREN
             {
              op = input.LT(1); 
             if ( (input.LA(1)>=63 && input.LA(1)<=65)||input.LA(1)==71 ) {
@@ -2794,7 +2794,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "tupleType"
-    // OCL.g:636:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
+    // OCL.g:635:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
     public final ASTTupleType tupleType() throws RecognitionException {
         ASTTupleType n = null;
 
@@ -2803,8 +2803,8 @@ public class OCLParser extends BaseParser {
 
          List tpList = new ArrayList(); 
         try {
-            // OCL.g:638:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
-            // OCL.g:639:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
+            // OCL.g:637:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
+            // OCL.g:638:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
             {
             match(input,70,FOLLOW_70_in_tupleType2594); 
             match(input,LPAREN,FOLLOW_LPAREN_in_tupleType2596); 
@@ -2814,7 +2814,7 @@ public class OCLParser extends BaseParser {
             state._fsp--;
 
              tpList.add(tp); 
-            // OCL.g:641:5: ( COMMA tp= tuplePart )*
+            // OCL.g:640:5: ( COMMA tp= tuplePart )*
             loop35:
             do {
                 int alt35=2;
@@ -2827,7 +2827,7 @@ public class OCLParser extends BaseParser {
 
                 switch (alt35) {
             	case 1 :
-            	    // OCL.g:641:7: COMMA tp= tuplePart
+            	    // OCL.g:640:7: COMMA tp= tuplePart
             	    {
             	    match(input,COMMA,FOLLOW_COMMA_in_tupleType2616); 
             	    pushFollow(FOLLOW_tuplePart_in_tupleType2620);
@@ -2863,7 +2863,7 @@ public class OCLParser extends BaseParser {
 
 
     // $ANTLR start "tuplePart"
-    // OCL.g:650:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
+    // OCL.g:649:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
     public final ASTTuplePart tuplePart() throws RecognitionException {
         ASTTuplePart n = null;
 
@@ -2872,8 +2872,8 @@ public class OCLParser extends BaseParser {
 
 
         try {
-            // OCL.g:651:1: (name= IDENT COLON t= type )
-            // OCL.g:652:5: name= IDENT COLON t= type
+            // OCL.g:650:1: (name= IDENT COLON t= type )
+            // OCL.g:651:5: name= IDENT COLON t= type
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tuplePart2664); 
             match(input,COLON,FOLLOW_COLON_in_tuplePart2666); 

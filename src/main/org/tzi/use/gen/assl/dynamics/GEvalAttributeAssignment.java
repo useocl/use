@@ -30,20 +30,16 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GAttributeAssignment;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdSetAttribute;
-import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-
-import org.tzi.use.util.cmd.CommandFailedException;
-import org.tzi.use.util.cmd.CannotUndoException;
-
-
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.ExpAttrOp;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
+import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MCmd;
+import org.tzi.use.uml.sys.MCmdSetAttribute;
+import org.tzi.use.util.cmd.CannotUndoException;
+import org.tzi.use.util.cmd.CommandFailedException;
 
 
 class GEvalAttributeAssignment extends GEvalInstruction
@@ -84,7 +80,6 @@ class GEvalAttributeAssignment extends GEvalInstruction
 
             // um ExprAttrOp zu generieren.
             MAttribute a = fInstr.targetAttribute();
-            ExpVariable expV = new ExpVariable( a.name(), a.type() );
             Value v = new ObjectValue( TypeFactory.mkObjectType( a.owner() ), 
                                        conf.systemState().objectByName( fObjectName ) );
 

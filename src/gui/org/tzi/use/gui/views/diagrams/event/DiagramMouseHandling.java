@@ -58,7 +58,6 @@ public final class DiagramMouseHandling implements MouseListener,
     
     private Selection fNodeSelection;
     private Selection fEdgeSelection;
-    private DropTarget fDropTarget;
     private DirectedGraph fGraph;
     private DiagramView fDiagram;
     
@@ -80,7 +79,7 @@ public final class DiagramMouseHandling implements MouseListener,
         fGraph = graph;
         fDiagram = diagram;
         
-        fDropTarget = new DropTarget(fDiagram, this);
+        new DropTarget(fDiagram, this);
     }
     
     

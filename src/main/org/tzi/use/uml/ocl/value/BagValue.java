@@ -234,13 +234,22 @@ public class BagValue extends CollectionValue {
         CollectionType c2 = (CollectionType) elemType();
         BagValue res = new BagValue(c2.elemType());
         Iterator it = fElements.iterator();
+        
         while (it.hasNext()) {
-            CollectionValue elem = (CollectionValue) it.next();
-            Iterator it2 = elem.iterator();
-            while (it2.hasNext()) {
-                Value elem2 = (Value) it2.next();
-                res.add(elem2);
-            }
+        	Value v = (Value)it.next();
+        	if (v.isUndefined())
+        	{
+        		res.add(v);
+        	}
+        	else
+        	{
+        		CollectionValue elem = (CollectionValue) v;
+        		Iterator it2 = elem.iterator();
+        		while (it2.hasNext()) {
+        			Value elem2 = (Value) it2.next();
+        			res.add(elem2);
+        		}
+        	}
         }
         return res;
     }
@@ -254,7 +263,6 @@ public class BagValue extends CollectionValue {
      */
     public String toString() {
         Object[] valArray = fElements.toArray();
-        Iterator it = fElements.iterator();
         // sorting needed in HashMaps but not anymore in TreeMaps
         // Arrays.sort(valArray);
         return "Bag{"

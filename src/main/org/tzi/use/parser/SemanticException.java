@@ -30,6 +30,11 @@ import org.antlr.runtime.Token;
  * @author      Mark Richters 
  */
 public class SemanticException extends Exception {
+	/**
+	 * To get rid of the warning...
+	 */
+	private static final long serialVersionUID = 1L;
+	
     private final SrcPos fSrcPos;
 
     /** 

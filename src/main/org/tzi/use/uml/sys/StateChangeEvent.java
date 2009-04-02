@@ -34,7 +34,12 @@ import java.util.List;
  * @author      Mark Richters 
  */
 public class StateChangeEvent extends EventObject {
-    private List fNewObjects;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6548177260846525532L;
+	
+	private List fNewObjects;
     private List fDeletedObjects;
     private List fModifiedObjects;
     private List fNewLinks;

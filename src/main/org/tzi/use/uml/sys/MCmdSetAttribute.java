@@ -168,7 +168,6 @@ public final class MCmdSetAttribute extends MCmd {
     }
 
     public String getValue(){
-        VarBindings varBindings = fSystemState.system().topLevelBindings();
         return fSetExpr.toString(); 
     }
 }

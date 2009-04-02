@@ -45,7 +45,6 @@ import org.tzi.use.parser.ParseErrorHandler;
 }
 
 @lexer::members {
-    private PrintWriter fErr;
     private ParseErrorHandler fParseErrorHandler;
 
     public String getFilename() {
