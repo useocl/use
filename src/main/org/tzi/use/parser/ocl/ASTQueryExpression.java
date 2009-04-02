@@ -26,6 +26,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
+import org.tzi.use.parser.base.ParserHelper;
 import org.tzi.use.uml.ocl.expr.ExpAny;
 import org.tzi.use.uml.ocl.expr.ExpCollect;
 import org.tzi.use.uml.ocl.expr.ExpCollectNested;
@@ -117,7 +118,7 @@ public class ASTQueryExpression extends ASTExpression {
         }
 
         try {
-            Integer id = (Integer) GOCLParser.queryIdentMap.get(opname);
+            Integer id = (Integer) ParserHelper.queryIdentMap.get(opname);
             if (id == null )
                 throw new SemanticException(fOp,
                                             "Internal error: unknown query operation `" +
@@ -125,14 +126,14 @@ public class ASTQueryExpression extends ASTExpression {
 
             int idval = id.intValue();
             switch ( idval ) {
-            case GOCLParser.Q_SELECT_ID:
-            case GOCLParser.Q_COLLECT_ID:
-            case GOCLParser.Q_COLLECTNESTED_ID:
-            case GOCLParser.Q_REJECT_ID:
-            case GOCLParser.Q_ISUNIQUE_ID:
-            case GOCLParser.Q_SORTEDBY_ID:
-            case GOCLParser.Q_ANY_ID:
-            case GOCLParser.Q_ONE_ID:
+            case ParserHelper.Q_SELECT_ID:
+            case ParserHelper.Q_COLLECT_ID:
+            case ParserHelper.Q_COLLECTNESTED_ID:
+            case ParserHelper.Q_REJECT_ID:
+            case ParserHelper.Q_ISUNIQUE_ID:
+            case ParserHelper.Q_SORTEDBY_ID:
+            case ParserHelper.Q_ANY_ID:
+            case ParserHelper.Q_ONE_ID:
                 VarDecl decl;
                 if (declList.isEmpty() )
                     decl = null;
@@ -142,38 +143,38 @@ public class ASTQueryExpression extends ASTExpression {
                     throw new SemanticException(fOp, "Only one element variable in " + 
                                                 opname + " expression allowed.");
                 switch ( idval ) {
-                case GOCLParser.Q_SELECT_ID:
+                case ParserHelper.Q_SELECT_ID:
                     res = new ExpSelect(decl, range, expr);
                     break;
-                case GOCLParser.Q_COLLECTNESTED_ID:
+                case ParserHelper.Q_COLLECTNESTED_ID:
                     res = new ExpCollectNested(decl, range, expr);
                     break;
-                case GOCLParser.Q_COLLECT_ID:
+                case ParserHelper.Q_COLLECT_ID:
                     res = new ExpCollect(decl, range, expr);
                     break;
-                case GOCLParser.Q_REJECT_ID:
+                case ParserHelper.Q_REJECT_ID:
                     res = new ExpReject(decl, range, expr);
                     break;
-                case GOCLParser.Q_ISUNIQUE_ID:
+                case ParserHelper.Q_ISUNIQUE_ID:
                     res = new ExpIsUnique(decl, range, expr);
                     break;
-                case GOCLParser.Q_SORTEDBY_ID:
+                case ParserHelper.Q_SORTEDBY_ID:
                     res = new ExpSortedBy(decl, range, expr);
                     break;
-                case GOCLParser.Q_ANY_ID:
+                case ParserHelper.Q_ANY_ID:
                     res = new ExpAny(decl, range, expr);
                     break;
-                case GOCLParser.Q_ONE_ID:
+                case ParserHelper.Q_ONE_ID:
                     res = new ExpOne(decl, range, expr);
                     break;
                 default:
                     // TODO: ignore or error on default?
                 }
                 break;
-            case GOCLParser.Q_EXISTS_ID:
+            case ParserHelper.Q_EXISTS_ID:
                 res = new ExpExists(declList, range, expr);
                 break;
-            case GOCLParser.Q_FORALL_ID:
+            case ParserHelper.Q_FORALL_ID:
                 res = new ExpForAll(declList, range, expr);
                 break;
             default:

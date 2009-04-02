@@ -1,0 +1,126 @@
+
+/*
+--------- Start of file OCLLexerRules.gpart -------------------- 
+*/
+
+// Whitespace -- ignored
+WS:
+    ( ' '
+    | '\t'
+    | '\f'
+    | NEWLINE
+    )
+    { $channel=HIDDEN; }
+    ;
+
+// Single-line comments
+SL_COMMENT:
+    ('//' | '--')
+    (~('\n'|'\r'))* NEWLINE
+    { $channel=HIDDEN; }
+    ;
+
+// multiple-line comments
+ML_COMMENT:
+    '/*' ( options {greedy=false;} : . )* '*/' { $channel=HIDDEN; };
+
+fragment
+NEWLINE	:	
+    '\r\n' | '\r' | '\n';
+    
+// Use paraphrases for nice error messages
+ARROW 		 : '->';
+AT     		 : '@';
+BAR 		 : '|';
+COLON 		 : ':';
+COLON_COLON	 : '::';
+COLON_EQUAL	 : ':=';
+COMMA 		 : ',';
+DOT 		 : '.';
+DOTDOT 		 : '..';
+EQUAL 		 : '=';
+GREATER 	 : '>';
+GREATER_EQUAL : '>=';
+HASH 		 : '#';
+LBRACE 		 : '{';
+LBRACK 		 : '[';
+LESS 		 : '<';
+LESS_EQUAL 	 : '<=';
+LPAREN 		 : '(';
+MINUS 		 : '-';
+NOT_EQUAL 	 : '<>';
+PLUS 		 : '+';
+RBRACE 		 : '}';
+RBRACK 		 : ']';
+RPAREN		 : ')';
+SEMI		 : ';';
+SLASH 		 : '/';
+STAR 		 : '*';
+
+fragment
+INT:
+    ('0'..'9')+
+    ;
+
+fragment
+REAL:
+    INT ('.' INT (('e' | 'E') ('+' | '-')? INT)? | ('e' | 'E') ('+' | '-')? INT)
+    ;
+
+RANGE_OR_INT:
+      ( INT '..' )      => INT    { $type=INT; }
+    | ( REAL )          => REAL   { $type=REAL; }
+    |   INT                       { $type=INT; }
+    ;
+
+// String literals
+
+STRING:	
+    '\'' ( ~('\''|'\\') | ESC)* '\'';
+
+// escape sequence -- note that this is protected; it can only be called
+//   from another lexer rule -- it will not ever directly return a token to
+//   the parser
+// There are various ambiguities hushed in this rule.  The optional
+// '0'...'7' digit matches should be matched here rather than letting
+// them go back to STRING_LITERAL to be matched.  ANTLR does the
+// right thing by matching immediately; hence, it's ok to shut off
+// the FOLLOW ambig warnings.
+fragment
+ESC
+:
+    '\\'
+     ( 'n'
+     | 'r'
+     | 't'
+     | 'b'
+     | 'f'
+     | '"'
+     | '\''
+     | '\\'
+     | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+     | '0'..'3' ('0'..'7' ('0'..'7')? )?  | '4'..'7' ('0'..'7')?
+     )
+     ;
+
+// hexadecimal digit (again, note it's protected!)
+fragment
+HEX_DIGIT:
+    ( '0'..'9' | 'A'..'F' | 'a'..'f' );
+
+
+// An identifier.  Note that testLiterals is set to true!  This means
+// that after we match the rule, we look in the literals table to see
+// if it's a literal or really an identifer.
+
+IDENT:
+    ('$' | 'a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*
+    ;
+
+// A dummy rule to force vocabulary to be all characters (except
+// special ones that ANTLR uses internally (0 to 2)
+
+fragment
+VOCAB:	
+    '\U0003'..'\U0377'
+    ;

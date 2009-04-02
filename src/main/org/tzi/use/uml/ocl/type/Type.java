@@ -72,125 +72,128 @@ public abstract class Type {
 
     // The following set of functions is a rather ugly solution, but
     // it avoids numerous instanceof tests in user code.
-
+    // Corresponding Subtypes override these methods and return true
     public boolean isNumber() {
-        return (this instanceof IntegerType)
-            || (this instanceof RealType);
+    	return false;
     }
 
     public boolean isInteger() {
-        return (this instanceof IntegerType);
+    	return false;
     }
 
     public boolean isReal() {
-        return (this instanceof RealType);
+    	return false;
     }
 
     public boolean isString() {
-        return (this instanceof StringType);
+    	return false;
     }
 
     public boolean isBoolean() {
-        return (this instanceof BooleanType);
+    	return false;
     }
 
     public boolean isEnum() {
-        return (this instanceof EnumType);
+    	return false;
     }
 
     public boolean isCollection() {
-        return (this instanceof CollectionType);
+    	return false;
     }
 
     public boolean isTrueCollection() {
-        return (this.getClass() == CollectionType.class);
+    	return false;
     }
 
     public boolean isSetBagOrSequence() {
-        return (this instanceof SetType)
-            || (this instanceof BagType)
-            || (this instanceof SequenceType);
+        return (this.isSet())
+            || (this.isBag())
+            || (this.isSequence());
     }
 
     public boolean isSet() {
-        return (this instanceof SetType);
+    	return false;
     }
 
     public boolean isSequence() {
-        return (this instanceof SequenceType);
+    	return false;
     }
 
     public boolean isBag() {
-        return (this instanceof BagType);
+    	return false;
     }
 
     public boolean isObjectType() {
-        return (this instanceof ObjectType);
+    	return false;
     }
 
     public boolean isOclAny() {
-        return (this instanceof OclAnyType);
+    	return false;
     }
 
     public boolean isTupleType() {
-        return (this instanceof TupleType);
+    	return false;
     }
     
-	public static Type leastCommonSupertype(Type[] types) throws ExpInvalidException {
-		if (types.length == 0 )
-            return new VoidType();
+    public boolean isVoidType() {
+    	return false;
+    }
+    
+    /**
+     * Returns the least common supertype to the given Type
+     * @param type
+     * @return
+     * @throws ExpInvalidException
+     */
+	public Type getLeastCommonSupertype(Type type) {
+		if (type == null )
+            return this;
 
-        // easy case: one or more elements of equal type
-        boolean sameTypes = true;
-        for (int i = 1; i < types.length; i++)
-            if (! types[0].equals(types[i]) ) {
-                sameTypes = false;
-                break;
-            }
-        if (sameTypes )
-            return types[0];
+        // easy case: equal type
+        if (this.equals(type))
+        	return type;
 
+        // one of the types (this or type) is oclVoid
+        if (this.isVoidType())
+        	return type;
+        
+        if (type.isVoidType())
+        	return this;
+        
         // determine common supertypes = intersection of all
         // supertypes of all elements
         Set cs = new HashSet();
-        cs.addAll(types[0].allSupertypes());
-        for (int i = 1; i < types.length; i++) {
-            cs.retainAll(types[i].allSupertypes());
-            // return immediately if intersection is empty
-            if (cs.isEmpty() )
-                throw new ExpInvalidException("Type mismatch, element " + 
-                                              (i + 1) +
-                                              " does not have a common supertype " + 
-                                              "with previous elements.");
-        }
-        // System.err.println("*** common supertypes: " + cs);
-
+        cs.addAll(this.allSupertypes());
+        cs.retainAll(type.allSupertypes());
+        
+        // return immediately if intersection is empty
+        if (cs.isEmpty() )
+        	return null;
+        
         // determine the least common supertype
-
         // if there is only one common supertype return it
         if (cs.size() == 1 ) 
             return (Type) cs.iterator().next();
 
         // search for a type that is less than or equal to all other types
-        types[0] = null;
+        Type cType = null;
         Iterator it1 = cs.iterator();
         outerLoop: 
         while (it1.hasNext() ) {
             Type t1 = (Type) it1.next();
             Iterator it2 = cs.iterator();
+            
             while (it2.hasNext() ) {
                 Type t2 = (Type) it2.next();
                 if (! t1.isSubtypeOf(t2) )
                     continue outerLoop;
             }
-            types[0] = t1;
+            
+            cType = t1;
             break;
         }
-        // System.err.println("*** least common supertype: " + t0);
-        if (types[0] != null )
-            return types[0];
-        
-        return null;
+    
+        return cType;
 	}
 
 }

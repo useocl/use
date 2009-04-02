@@ -81,10 +81,10 @@ public class CMDCompiler {
 			return cmdList;
 		}
 		
-        GCmdLexer lexer = new GCmdLexer(aInput);
+        CmdLexer lexer = new CmdLexer(aInput);
         CommonTokenStream tStream = new CommonTokenStream(lexer);
         
-        GCmdParser parser = new GCmdParser(tStream);
+        CmdParser parser = new CmdParser(tStream);
         
         lexer.init(errHandler);
         parser.init(errHandler);

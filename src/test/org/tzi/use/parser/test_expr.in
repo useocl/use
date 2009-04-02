@@ -198,10 +198,10 @@ Bag{Set{1}, Set{2}, Set{2}, Set{3}}
 #
 
 oclEmpty(Set(Integer))
--> Set{} : Set(Integer)
+-> Set{} : Set(OclVoid)
 
 oclEmpty(Set(Set(Integer)))
--> Set{} : Set(Set(Integer))
+-> Set{} : Set(OclVoid)
 
 #
 ## Query expressions

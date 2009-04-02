@@ -46,6 +46,14 @@ public class CollectionType extends Type {
         return fElemType;
     }
 
+    public boolean isCollection() {
+    	return true;
+    }
+    
+    public boolean isTrueCollection() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
@@ -75,6 +83,17 @@ public class CollectionType extends Type {
         return res;
     }
 
+    public Type getLeastCommonSupertype(Type type)
+    {
+    	if (!type.isCollection())
+    		return null;
+    	
+    	CollectionType cType = (CollectionType)type;
+    	Type commonElementType = this.fElemType.getLeastCommonSupertype(cType.fElemType);
+    	
+    	return TypeFactory.mkCollection(commonElementType);
+    }
+        
     public String toString() {
         return "Collection(" + elemType() + ")";
     }

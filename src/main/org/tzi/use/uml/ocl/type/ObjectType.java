@@ -44,6 +44,10 @@ public final class ObjectType extends Type {
         return fClass;
     }
     
+    public boolean isObjectType() {
+    	return true;
+    }
+    
     /** 
      * Test subtype relation between this and <code>t</code>. 
      */

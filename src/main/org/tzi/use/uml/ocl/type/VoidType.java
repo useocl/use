@@ -4,6 +4,8 @@ import java.util.Set;
 
 public class VoidType extends Type {
 
+	public static VoidType Instance = new VoidType();
+	
 	public Set allSupertypes() {
 		throw new RuntimeException("Not implemented yet.");
 	}
@@ -16,6 +18,10 @@ public class VoidType extends Type {
 		return 0;
 	}
 
+	public boolean isVoidType() {
+    	return true;
+    }
+	
 	public boolean isSubtypeOf(Type t) {
 		return true;
 	}

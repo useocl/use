@@ -40,6 +40,10 @@ public final class OclAnyType extends Type {
         return equals(t);
     }
 
+    public boolean isOclAny() {
+    	return true;
+    }
+    
     /** 
      * Returns the set of all supertypes (including this type).
      */

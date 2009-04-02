@@ -46,6 +46,28 @@ public final class SequenceType extends CollectionType {
             return "Sequence(" + elemType() + ")";
     }
 
+    public boolean isTrueCollection() {
+    	return false;
+    }
+    
+    public boolean isSequence() {
+    	return true;
+    }
+    
+    public Type getLeastCommonSupertype(Type type)
+    {
+    	if (!type.isCollection())
+    		return null;
+    	
+    	CollectionType cType = (CollectionType)type;
+    	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
+    	
+    	if (type.isSequence())
+    		return TypeFactory.mkSequence(commonElementType);
+    	else
+    		return TypeFactory.mkCollection(commonElementType);
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */

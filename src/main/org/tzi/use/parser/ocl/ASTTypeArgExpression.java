@@ -26,7 +26,6 @@ import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.use.GUSEParser;
 import org.tzi.use.uml.ocl.expr.ExpAsType;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpIsKindOf;
@@ -122,16 +121,17 @@ public class ASTTypeArgExpression extends ASTExpression {
         throws SemanticException 
     {
         try {
-            switch ( fOpToken.getType() ) {
-            case GUSEParser.LITERAL_oclAsType:
+        	String typeOperation = fOpToken.getText();
+        	
+            if (typeOperation.equals("oclAsType"))
                 return new ExpAsType(expr, t);
-            case GUSEParser.LITERAL_oclIsKindOf:
+            else if (typeOperation.equals("oclIsKindOf"))
                 return new ExpIsKindOf(expr, t);
-            case GUSEParser.LITERAL_oclIsTypeOf:
+            else if (typeOperation.equals("oclIsTypeOf"))
                 return new ExpIsTypeOf(expr, t);
-            default:
-                throw new RuntimeException("Unexpected token type: " + fOpToken);
-            }
+            else
+                throw new SemanticException(fOpToken, "Unexpected type operation: " + fOpToken.getText());
+
         } catch (ExpInvalidException ex) {
             throw new SemanticException(fTargetType.getStartToken(), ex.getMessage());
         }

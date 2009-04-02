@@ -32,8 +32,6 @@ import org.antlr.runtime.RecognitionException;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.ocl.GOCLLexer;
-import org.tzi.use.parser.ocl.GOCLParser;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
@@ -86,10 +84,10 @@ public class OCLCompiler {
 			return expr;
 		}
 		
-        GOCLLexer lexer = new GOCLLexer(aInput);
+        OCLLexer lexer = new OCLLexer(aInput);
         
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        GOCLParser parser = new GOCLParser(tokenStream);
+        OCLParser parser = new OCLParser(tokenStream);
         
         lexer.init(errHandler);
         parser.init(errHandler);
@@ -116,7 +114,12 @@ public class OCLCompiler {
                         e.getMessage());
         } catch (SemanticException e) {
             err.println(e.getMessage());
+        } catch (NullPointerException e) {
+        	// Only throw if not handled before
+        	if (errHandler.errorCount() == 0)
+        		throw e;
         }
+        
         err.flush();
         return expr;
     }
@@ -161,10 +164,10 @@ public class OCLCompiler {
 			return type;
 		}
 		
-        GOCLLexer lexer = new GOCLLexer(aInput);
+        OCLLexer lexer = new OCLLexer(aInput);
         
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        GOCLParser parser = new GOCLParser(tokenStream);
+        OCLParser parser = new OCLParser(tokenStream);
         
         lexer.init(errHandler);
         parser.init(errHandler);

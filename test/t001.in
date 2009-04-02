@@ -478,10 +478,10 @@
 #
 
 ? oclEmpty(Set(Integer))
-*-> Set{} : Set(Integer)
+*-> Set{} : Set(OclVoid)
 
 ? oclEmpty(Set(Set(Integer)))
-*-> Set{} : Set(Set(Integer))
+*-> Set{} : Set(OclVoid)
 
 #
 ## Query expressions

@@ -36,6 +36,10 @@ public final class BooleanType extends BasicType {
         super("Boolean");
     }
     
+    public boolean isBoolean() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */

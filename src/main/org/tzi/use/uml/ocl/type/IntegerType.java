@@ -36,6 +36,14 @@ public final class IntegerType extends BasicType {
         super("Integer");
     }
     
+    public boolean isNumber() {
+    	return true;
+    }
+    
+    public boolean isInteger() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */

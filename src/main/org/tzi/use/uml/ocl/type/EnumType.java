@@ -56,6 +56,10 @@ public final class EnumType extends Type {
         }
     }
     
+    public boolean isEnum() {
+    	return true;
+    }
+    
     /** 
      * Returns the name of the enumeration type.
      */

@@ -21,10 +21,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.VoidType;
 import org.tzi.use.uml.ocl.value.Value;
@@ -52,17 +48,29 @@ public abstract class ExpCollectionLiteral extends Expression {
     protected Type inferElementType() 
         throws ExpInvalidException
     {
+    	if (this.fElemExpr.length == 0)
+    		return VoidType.Instance;
+    	else if (this.fElemExpr.length == 1)
+    		return this.fElemExpr[0].type();
     	
-    	Type[] types = new Type[fElemExpr.length];
-    	for (int i = 0; i< fElemExpr.length;++i) {
-    		types[i] = fElemExpr[i].type();
+    	Type commonSuperType = this.fElemExpr[0].type();
+    	Type t2;
+    	
+    	for (int i = 1; i < fElemExpr.length; ++i) {
+    		t2 = fElemExpr[i].type();
+    		commonSuperType = commonSuperType.getLeastCommonSupertype(t2);
+    		
+    		if (commonSuperType == null)
+    			throw new ExpInvalidException("Type mismatch, " + fKind + " element " + 
+                        (i + 1) +
+                        " does not have a common supertype " + 
+                        "with previous elements.");
     	}
         
-    	Type res =  Type.leastCommonSupertype(types);
-
-    	if (res != null) return res; 
+    	return commonSuperType; 
+    	
         // FIXME: deal with other cases: t1 < t, t2 < t, t1 and t2 unrelated.
-        throw new ExpInvalidException("Cannot determine type of " + fKind + ".");
+        // throw new ExpInvalidException("Cannot determine type of " + fKind + ".");
     }
 
 

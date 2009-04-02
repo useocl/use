@@ -63,6 +63,7 @@ public class ParseErrorHandler {
     
     public void reportError(String error) {
         fErrWriter.println(fFileName + ":" + error);
+        fErrWriter.flush();
         incErrorCount();
     }
 

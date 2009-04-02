@@ -81,6 +81,7 @@ public class ASTCollectionLiteral extends ASTExpression {
         Expression[] eArgs = new Expression[args.size()];
         for (int i = 0; i < args.size(); i++)
             eArgs[i] = ((ASTExpression) args.get(i)).gen(ctx);
+        
         try {
             if (opname.equals("mkSet") )
                 return new ExpSetLiteral(eArgs);

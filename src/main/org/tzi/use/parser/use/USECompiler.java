@@ -88,9 +88,9 @@ public class USECompiler {
 			return model;
 		}
 		
-        GUSELexer lexer = new GUSELexer(aInput);
+        USELexer lexer = new USELexer(aInput);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        GUSEParser parser = new GUSEParser(tokenStream);
+        USEParser parser = new USEParser(tokenStream);
         
         lexer.init(errHandler);
         parser.init(errHandler);

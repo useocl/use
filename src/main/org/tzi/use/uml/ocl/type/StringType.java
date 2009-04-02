@@ -36,6 +36,10 @@ public final class StringType extends BasicType {
         super("String");
     }
     
+    public boolean isString() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */

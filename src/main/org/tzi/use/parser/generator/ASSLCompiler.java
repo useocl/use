@@ -74,10 +74,10 @@ public class ASSLCompiler {
 			return null;
 		}
 		
-        GGeneratorLexer lexer = new GGeneratorLexer(aInput);
+        GeneratorLexer lexer = new GeneratorLexer(aInput);
         CommonTokenStream tStream = new CommonTokenStream(lexer);
         
-        GGeneratorParser parser = new GGeneratorParser(tStream);
+        GeneratorParser parser = new GeneratorParser(tStream);
         lexer.init(errHandler);
         parser.init(errHandler);
         boolean error = false;
@@ -163,9 +163,9 @@ public class ASSLCompiler {
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
         try {
         	ANTLRInputStream aInput = new ANTLRInputStream(in);
-            GGeneratorLexer lexer = new GGeneratorLexer(aInput);
+            GeneratorLexer lexer = new GeneratorLexer(aInput);
             CommonTokenStream tStream = new CommonTokenStream(lexer);
-            GGeneratorParser parser = new GGeneratorParser(tStream);
+            GeneratorParser parser = new GeneratorParser(tStream);
             
             parser.init(errHandler);
             lexer.init(errHandler);
@@ -219,9 +219,9 @@ public class ASSLCompiler {
         	ANTLRInputStream aInput = new ANTLRInputStream(in);
         	aInput.name = inName;
         	
-            GGeneratorLexer lexer = new GGeneratorLexer(aInput);
+            GeneratorLexer lexer = new GeneratorLexer(aInput);
             CommonTokenStream tStream = new CommonTokenStream(lexer);
-            GGeneratorParser parser = new GGeneratorParser(tStream);
+            GeneratorParser parser = new GeneratorParser(tStream);
             
             lexer.init(errHandler);
             parser.init(errHandler);

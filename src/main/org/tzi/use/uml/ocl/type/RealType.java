@@ -36,6 +36,14 @@ public final class RealType extends BasicType {
         super("Real");
     }
     
+    public boolean isNumber() {
+    	return true;
+    }
+    
+    public boolean isReal() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */

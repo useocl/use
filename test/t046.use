@@ -1,0 +1,17 @@
+model t046
+
+class A
+end
+
+class B < A
+end
+
+class C < A
+end
+
+class D < B, C
+end
+
+class E < C
+end
+

@@ -113,7 +113,10 @@ public final class TupleType extends Type {
         for (int i=0; i<fParts.length;++i) hashCode += fParts[i].hashCode();
         return hashCode;
     }
-    
+
+    public boolean isTupleType() {
+    	return true;
+    }
 
     /** 
      * Returns the set of all supertypes (including this type).

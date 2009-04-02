@@ -45,6 +45,14 @@ public final class BagType extends CollectionType {
             return "Bag(" + elemType() + ")";
     }
 
+    public boolean isTrueCollection() {
+    	return false;
+    }
+
+    public boolean isBag() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */

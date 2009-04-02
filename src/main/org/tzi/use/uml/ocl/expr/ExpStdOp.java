@@ -1856,12 +1856,12 @@ final class Op_set_union extends OpGeneric {
         if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
             SetType set1 = (SetType) params[0];
             SetType set2 = (SetType) params[1];
-            try {
-				return Type.leastCommonSupertype( new Type[]{set1, set2});
-			} catch (ExpInvalidException ignored) {
-			}
+            
+            if (set2.elemType().isSubtypeOf(set1.elemType()))
+            	return set1;
             
         }
+        
         return null;
     }
 

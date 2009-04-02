@@ -45,6 +45,14 @@ public final class SetType extends CollectionType {
             return "Set(" + elemType() + ")";
     }
 
+    public boolean isTrueCollection() {
+    	return false;
+    }
+    
+    public boolean isSet() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
@@ -75,6 +83,23 @@ public final class SetType extends CollectionType {
         return res;
     }
 
+    public Type getLeastCommonSupertype(Type type)
+    {
+    	if (!type.isCollection())
+    		return null;
+    	
+    	CollectionType cType = (CollectionType)type;
+    	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
+    	
+    	if (commonElementType == null)
+    		return null;
+    	
+    	if (type.isSet())
+    		return TypeFactory.mkSet(commonElementType);
+    	else
+    		return TypeFactory.mkCollection(commonElementType);
+    }
+    
     public String toString() {
         return "Set(" + elemType() + ")";
     }
