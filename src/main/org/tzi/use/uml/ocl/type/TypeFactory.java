@@ -43,7 +43,8 @@ public final class TypeFactory {
     private static StringType stringType = new StringType();
     private static BooleanType booleanType = new BooleanType();
     private static OclAnyType oclAnyType = new OclAnyType();
-
+    private static VoidType voidType = new VoidType();
+    
     /**
      * No instances.
      */
@@ -94,6 +95,10 @@ public final class TypeFactory {
         return oclAnyType;
     }
 
+    public static VoidType mkVoidType() {
+    	return voidType;
+    }
+    
     public static TupleType mkTuple(TupleType.Part[] parts) {
         return new TupleType(parts);
     }

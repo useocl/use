@@ -607,7 +607,7 @@ typeOnly returns [ASTType n]
   simpleType ::= id 
 
   A simple type may be a basic type (Integer, Real, Boolean, String),
-  an enumeration type, an object type, or OclAny.
+  an enumeration type, an object type, OclAny or OclVoid.
 */
 simpleType returns [ASTSimpleType n]
 :

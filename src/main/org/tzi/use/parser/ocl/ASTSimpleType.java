@@ -55,6 +55,8 @@ public class ASTSimpleType extends ASTType {
             res = TypeFactory.mkReal();
         else if (name.equals("OclAny") )
             res = TypeFactory.mkOclAny();
+        else if (name.equals("OclVoid") )
+        	res = TypeFactory.mkVoidType();
         else { 
             // check for enumeration type
             res = ctx.model().enumType(name);

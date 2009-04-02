@@ -22,7 +22,7 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.VoidType;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
@@ -49,7 +49,7 @@ public abstract class ExpCollectionLiteral extends Expression {
         throws ExpInvalidException
     {
     	if (this.fElemExpr.length == 0)
-    		return VoidType.Instance;
+    		return TypeFactory.mkVoidType();
     	else if (this.fElemExpr.length == 1)
     		return this.fElemExpr[0].type();
     	

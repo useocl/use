@@ -4,8 +4,6 @@ import java.util.Set;
 
 public class VoidType extends Type {
 
-	public static VoidType Instance = new VoidType();
-	
 	public Set allSupertypes() {
 		throw new RuntimeException("Not implemented yet.");
 	}
