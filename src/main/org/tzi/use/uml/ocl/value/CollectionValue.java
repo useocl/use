@@ -24,12 +24,10 @@ package org.tzi.use.uml.ocl.value;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.util.CollectionComparator;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import java.util.HashSet;
-import java.util.Set;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.util.CollectionComparator;
 
 /**
  * Base class for collection values.
@@ -111,60 +109,28 @@ public abstract class CollectionValue extends Value {
         Value[] values = new Value[collection().size()];
         collection().toArray(values);
         
-        // easy case: one or more elements of equal type
-        Type t0 = values[0].type();
-        boolean sameTypes = true;
-        for (int i = 1; i < values.length; i++)
-            if (! t0.equals(values[i].type()) ) {
-                sameTypes = false;
-                break;
-            }
-        if (sameTypes )
-            return t0;
-
-        // determine common supertypes = intersection of all
-        // supertypes of all elements
-        Set cs = new HashSet();
-        cs.addAll(values[0].type().allSupertypes());
-        for (int i = 1; i < values.length; i++) {
-            cs.retainAll(values[i].type().allSupertypes());
-            // return immediately if intersection is empty
-            if (cs.isEmpty() )
-                throw new ExpInvalidException("Type mismatch, " + this.getClass().toString() + " element " + 
-                                              (i + 1) +
-                                              " does not have a common supertype " + 
-                                              "with previous elements.");
+        // One Value => Type is element type
+        if (values.length == 1) {
+        	return values[0].type();
         }
-        // System.err.println("*** common supertypes: " + cs);
-
-        // determine the least common supertype
-
-        // if there is only one common supertype return it
-        if (cs.size() == 1 ) 
-            return (Type) cs.iterator().next();
-
-        // search for a type that is less than or equal to all other types
-        t0 = null;
-        Iterator it1 = cs.iterator();
-        outerLoop: 
-        while (it1.hasNext() ) {
-            Type t1 = (Type) it1.next();
-            Iterator it2 = cs.iterator();
-            while (it2.hasNext() ) {
-                Type t2 = (Type) it2.next();
-                if (! t1.isSubtypeOf(t2) )
-                    continue outerLoop;
-            }
-            t0 = t1;
-            break;
-        }
-        // System.err.println("*** least common supertype: " + t0);
-        if (t0 != null )
-            return t0;
-
+        
+        // Two or more values
+        Type commonSuperType = values[0].type();
+    	Type t2;
+    	
+    	for (int i = 1; i < values.length; ++i) {
+    		t2 = values[i].type();
+    		commonSuperType = commonSuperType.getLeastCommonSupertype(t2);
+    		
+    		if (commonSuperType == null)
+    			throw new ExpInvalidException("Type mismatch, " + this.getClass().toString() + " element " + 
+                        (i + 1) +
+                        " does not have a common supertype " + 
+                        "with previous elements.");
+    	}
+    	
         // FIXME: deal with other cases: t1 < t, t2 < t, t1 and t2 unrelated.
-	return fElemType;
-        //throw new ExpInvalidException("Cannot determine type of " + this.getClass().toString() + ".");
+        return commonSuperType;
     }
 
 
