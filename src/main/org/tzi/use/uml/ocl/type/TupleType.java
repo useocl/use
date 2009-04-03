@@ -22,10 +22,12 @@
 package org.tzi.use.uml.ocl.type;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.tzi.use.util.StringUtil;
-import java.util.Arrays;
 
 /**
  * OCL Tuple type.
@@ -34,7 +36,7 @@ import java.util.Arrays;
  * @author      Mark Richters 
  */
 public final class TupleType extends Type {
-    private Part[] fParts;
+    private Map<String, Part> fParts = new TreeMap<String, Part>();
 
     public static class Part {
         private String fName;
@@ -76,10 +78,21 @@ public final class TupleType extends Type {
     }
         
     TupleType(Part[] parts) {
-        fParts = parts;
+    	for(int index = 0; index < parts.length; index++)
+        {
+    		fParts.put(parts[index].name(), parts[index]);
+        }
     }
 
-    public Part[] parts() {
+    public boolean isTupleType() {
+    	return true;
+    }
+    
+    /**
+     * Returns the defined tuple parts
+     * @return A map of the type Map&lt;String, Part&gt;
+     */
+    public Map<String, Part> getParts() {
         return fParts;
     }
 
@@ -94,7 +107,7 @@ public final class TupleType extends Type {
      * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'. 
      */
     public String toString() {
-        return "Tuple(" + StringUtil.fmtSeq(fParts, ",") + ")";
+        return "Tuple(" + StringUtil.fmtSeq(fParts.values().iterator(), ",") + ")";
     }
 
     /** 
@@ -104,37 +117,35 @@ public final class TupleType extends Type {
         if (obj == null) return false;
         if (obj == this ) return true;
         if (obj.getClass().equals(getClass()))
-            return Arrays.equals(((TupleType) obj).fParts, fParts);
+            return fParts.equals(((TupleType) obj).fParts);
         return false;
     }
 
     public int hashCode() {
         int hashCode = 23;
-        for (int i=0; i<fParts.length;++i) hashCode += fParts[i].hashCode();
+        Iterator<Part> iter = fParts.values().iterator();
+        
+        while(iter.hasNext()) { 
+        	hashCode += iter.next().hashCode();
+        }
+        
         return hashCode;
     }
-
-    public boolean isTupleType() {
-    	return true;
-    }
+    
 
     /** 
      * Returns the set of all supertypes (including this type).
      */
-    public Set allSupertypes() {
-        Set res = new HashSet(1);
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>(1);
         res.add(this);
         return res;
     }
 
     public Part getPart(String name) {
-        for (int i=0;i<parts().length;++i) {
-            Part p = parts()[i];
-            if (p.name().equals(name)) {
-                return parts()[i];
-            }
-        }
-        return null;
+        if (fParts.containsKey(name))
+        	return fParts.get(name);
+        else
+        	return null;
     }
 }
-

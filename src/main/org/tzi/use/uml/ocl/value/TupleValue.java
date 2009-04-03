@@ -21,9 +21,13 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.tzi.use.uml.ocl.type.TupleType;
+import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.util.CollectionComparator;
 
 /**
@@ -33,36 +37,63 @@ import org.tzi.use.util.CollectionComparator;
  * @author  Mark Richters
  */
 public final class TupleValue extends Value implements Comparable {
-    private Value[] fParts;
+    /**
+     * Map&lt;String, Value&gt;
+     */
+	private Map<String, Value> fParts = new TreeMap<String, Value>();
 
     /**
      * Constructs a tuple and sets all values. Elements are type checked
      * as they get inserted into the tuple.
      *
+     * @param t The type of the tuple
+     * @param parts Map&lt;String, Value&gt; containing the tuple parts
+     * 
      * @exception IllegalArgumentException the type of at least one
      *            value does not match 
      */
-    public TupleValue(TupleType t, Value[] parts) {
+    public TupleValue(TupleType t, Map<String, Value> parts) {
         super(t);
-        fParts = new Value[parts.length];
-        TupleType.Part[] typeParts = t.parts();
-        for (int i = 0; i < parts.length; i++) {
-            if (! parts[i].type().isSubtypeOf(typeParts[i].type()) )
+        
+        Map<String, Part> typeParts = t.getParts();
+        Iterator<Entry<String, Value>> iter = parts.entrySet().iterator();
+        
+        while(iter.hasNext())
+        {
+        	Map.Entry<String, Value> entry = iter.next();
+        	Part typePart = typeParts.get(entry.getKey());
+        	Value value = entry.getValue();
+        	
+            if (! value.type().isSubtypeOf(typePart.type()) )
                 throw new IllegalArgumentException("type mismatch: " + 
-                                                   parts[i].type() + ", " + typeParts[i].type());
-            fParts[i] = parts[i];
+                                                   value.type() + ", " + typePart.type());
+            fParts.put(entry.getKey(), value);
         }
     }
 
     public String toString() {
-        String s = "Tuple{";
-        TupleType t = (TupleType) type();
-        for (int i = 0; i < fParts.length; i++) {
-            s += t.parts()[i].name() + "=" + fParts[i];
-            if (i < fParts.length - 1 )
-                s += ",";
+        StringBuilder s = new StringBuilder("Tuple{");
+        Iterator<String> iter = fParts.keySet().iterator();
+        boolean first = true;
+        
+        while(iter.hasNext())
+        {
+        	String name = iter.next();
+        	Value value = fParts.get(name);
+        	
+        	if (!first)
+        		s.append(",");
+        	else
+        		first = false;
+        	
+        	s.append(name);
+        	s.append("=");
+        	s.append(value.toString());
         }
-        return s + "}";
+        
+        s.append("}");
+        
+        return s.toString();
     }
 
     public boolean equals(Object obj) {
@@ -70,7 +101,7 @@ public final class TupleValue extends Value implements Comparable {
             return true;
         else if (obj instanceof TupleValue ) {
             TupleValue other = (TupleValue) obj;
-            return Arrays.equals(fParts,other.fParts);
+            return fParts.equals(other.fParts);
         }
         return false;
     }
@@ -86,22 +117,18 @@ public final class TupleValue extends Value implements Comparable {
             return +1;
         if (! (o instanceof TupleValue) )
             throw new ClassCastException();
+        
         TupleValue other = (TupleValue) o;
-        return new CollectionComparator().compare(Arrays.asList(fParts), 
-                                                  Arrays.asList(other.fParts));
+        return new CollectionComparator().compare(fParts.values(), 
+                                                  other.fParts.values());
     }
 
     
     public Value getElementValue(String name) {
-        TupleType t = (TupleType)type();
-        for (int i=0;i<t.parts().length;++i) {
-            TupleType.Part p = t.parts()[i];
-            if (p.name().equals(name)) {
-                return fParts[i];
-            }
-        }
-        throw new IllegalArgumentException("No such element: " + name);
+        if (fParts.containsKey(name))
+        	return (Value)fParts.get(name);
+        else
+        	throw new IllegalArgumentException("No such element: " + name);
     }
 
 }
-

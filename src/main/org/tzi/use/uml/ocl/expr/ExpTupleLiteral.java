@@ -21,6 +21,9 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.TupleValue;
@@ -57,8 +60,10 @@ public final class ExpTupleLiteral extends Expression {
         // determine tuple type
         fParts = parts;
         TupleType.Part[] typeParts = new TupleType.Part[fParts.length];
+        
         for (int i = 0; i < fParts.length; i++)
             typeParts[i] = new TupleType.Part(fParts[i].fName, fParts[i].fExpr.type());
+        
         setResultType(TypeFactory.mkTuple(typeParts));
     }
 
@@ -68,10 +73,12 @@ public final class ExpTupleLiteral extends Expression {
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = null;
-        Value[] parts = new Value[fParts.length];
+        Map parts = new HashMap(fParts.length);
+        
         for (int i = 0; i < fParts.length; i++) {
-            parts[i] = fParts[i].fExpr.eval(ctx);
+            parts.put(fParts[i].fName, fParts[i].fExpr.eval(ctx));
         }
+        
         res = new TupleValue((TupleType) type(), parts);
         ctx.exit(this, res);
         return res;
@@ -81,4 +88,3 @@ public final class ExpTupleLiteral extends Expression {
         return "Tuple {" + StringUtil.fmtSeq(fParts, ",") + "}";
     }
 }
-

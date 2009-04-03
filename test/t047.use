@@ -1,0 +1,7 @@
+model Test
+
+class Person
+  attributes
+    firstName : String
+    lastName : String
+end

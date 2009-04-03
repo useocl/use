@@ -1,8 +1,8 @@
 ?Set{Tuple{s:'zxy',b:false},Tuple{s:'xyz',b:true}}->sortedBy(x|x.s)
-*-> Sequence{Tuple{s='xyz',b=true},Tuple{s='zxy',b=false}} : Sequence(Tuple(s:String,b:Boolean))
+*-> Sequence{Tuple{b=true,s='xyz'},Tuple{b=false,s='zxy'}} : Sequence(Tuple(b:Boolean,s:String))
 
 ?Set{Tuple{s:'zxy',b:false},Tuple{s:'xyz',b:true}}->sortedBy(s)
-*-> Sequence{Tuple{s='xyz',b=true},Tuple{s='zxy',b=false}} : Sequence(Tuple(s:String,b:Boolean))
+*-> Sequence{Tuple{b=true,s='xyz'},Tuple{b=false,s='zxy'}} : Sequence(Tuple(b:Boolean,s:String))
 
 ?Set{Tuple{s:'zxy',b:false},Tuple{s:'xyz',b:true}}->sortedBy(x|x.b)
 *<input>:1:51: Argument of sortedBy must have basic type (Integer, Real, or String), found `Boolean'.
