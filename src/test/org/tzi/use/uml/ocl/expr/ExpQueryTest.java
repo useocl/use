@@ -90,7 +90,7 @@ public class ExpQueryTest extends TestCase {
     }
 
     public void testSelect1() throws ExpInvalidException {
-        Expression exp = new ExpSelect(null, fSet123, new ExpConstBoolean(true));
+        Expression exp = new ExpSelect((VarDecl)null, fSet123, new ExpConstBoolean(true));
         Value[] values =
             new Value[] { new IntegerValue(1), new IntegerValue(2), new IntegerValue(3)};
         assertEquals(

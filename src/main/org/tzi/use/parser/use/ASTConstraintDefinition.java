@@ -23,6 +23,7 @@ package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
@@ -40,20 +41,21 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTConstraintDefinition extends AST {
-    private Token fVarName;   // optional
+    private List fVarNames;   // optional
     private ASTType fType;
     private ArrayList fInvariantClauses; // (ASTInvariantClause)
 
     public ASTConstraintDefinition() {
-        fInvariantClauses = new ArrayList();
+    	fVarNames = new ArrayList();
+    	fInvariantClauses = new ArrayList();
     }
 
     public void addInvariantClause(ASTInvariantClause inv) {
         fInvariantClauses.add(inv);
     }
 
-    public void setVarName(Token tok) {
-        fVarName = tok;
+    public void addVarName(Token tok) {
+        fVarNames.add(tok);
     }
 
     public void setType(ASTType t) {
@@ -72,7 +74,7 @@ public class ASTConstraintDefinition extends AST {
             Iterator it = fInvariantClauses.iterator();
             while (it.hasNext() ) {
                 ASTInvariantClause astInv = (ASTInvariantClause) it.next();
-                astInv.gen(ctx, fVarName, cls);
+                astInv.gen(ctx, fVarNames, cls);
             }
         } catch (SemanticException ex) {
             ctx.reportError(ex);

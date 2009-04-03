@@ -48,6 +48,21 @@ public class ExpSelect extends ExpQuery {
         assertBooleanQuery();
     }
 
+    /**
+     * Constructs a select expression. <code>elemVarDecl</code> may be null.
+     */
+    public ExpSelect(VarDeclList elemVarDeclList,
+                     Expression  rangeExp, 
+                     Expression  queryExp) 
+        throws ExpInvalidException
+    {
+        // result has same type as range expression
+        super(rangeExp.type(), elemVarDeclList, rangeExp, queryExp);
+    
+        // queryExp must be a boolean expression
+        assertBooleanQuery();
+    }
+    
     /** 
      * Return name of query expression.
      */
@@ -65,4 +80,3 @@ public class ExpSelect extends ExpQuery {
         return res;
     }
 }
-

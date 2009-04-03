@@ -49,12 +49,12 @@ public final class ModelFactory {
         return new MAssociationClassImpl( name, isAbstract );
     }
 
-    public MClassInvariant createClassInvariant(String name, String var, 
-                                                MClass cls, Expression inv) 
-        throws ExpInvalidException
-    {
-        return new MClassInvariant(name, var, cls, inv);
-    }
+    public MClassInvariant createClassInvariant(String name, List vars, 
+            									MClass cls, Expression inv, boolean isExistential) 
+    	throws ExpInvalidException
+	{
+    	return new MClassInvariant(name, vars, cls, inv, isExistential);
+	}
 
     public MPrePostCondition createPrePostCondition(String name, 
                                                     MOperation op, 

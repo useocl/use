@@ -253,12 +253,11 @@ invariant returns [ASTConstraintDefinition n]
 :
     { $n = new ASTConstraintDefinition(); }
     'context'
-    ( v=IDENT COLON { $n.setVarName($v); } )? // requires k = 2
-
+    ( v=IDENT { $n.addVarName($v); } 
+       (',' v=IDENT  { $n.addVarName($v); } )* COLON )? 
     t=simpleType { $n.setType($t.n); }
     ( inv=invariantClause { $n.addInvariantClause($inv.n); } )* //+
     ;
-
 
 /* ------------------------------------
   invariantClause ::= 
@@ -266,8 +265,8 @@ invariant returns [ASTConstraintDefinition n]
 */
 invariantClause returns [ASTInvariantClause n]
 :
-    'inv' ( name=IDENT )? COLON e=expression
-    { $n = new ASTInvariantClause($name, $e.n); }
+      'inv' ( name=IDENT )? COLON e=expression { $n = new ASTInvariantClause($name, $e.n); }
+    | 'existential' 'inv' ( name=IDENT )? COLON e=expression { $n = new ASTExistentialInvariantClause($name, $e.n); }
     ;
 
 

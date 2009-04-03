@@ -467,7 +467,7 @@ public class TestModelUtil {
             person.addAttribute (name);
             
             Expression expr = new ExpVariable( "p1", TypeFactory.mkBoolean() );
-            MClassInvariant inv = new MClassInvariant( null, null, person, expr );
+            MClassInvariant inv = new MClassInvariant( null, null, person, expr, false );
             model.addClassInvariant( inv );
             
             return model;

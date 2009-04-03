@@ -1,0 +1,12 @@
+model Test
+class Person
+  attributes
+    isChief : Boolean
+end
+
+constraints
+context Person existential inv chiefExists:
+  self.isChief = true
+
+context Person inv oldChiefExists:
+  Person.allInstances()->exists(p | p.isChief = true)

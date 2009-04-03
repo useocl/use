@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
 public class LayoutContentHandler extends ContentHandler {
     
     // <--! <!DOCTYPE diagram_Layout SYSTEM "etc\layout.dtd">
-    // <?xml version="1.0" encoding="iso-8859–1"?> -->
+    // <?xml version="1.0" encoding="iso-8859-1"?> -->
     
     private String fTagContent;
     private boolean fHide;

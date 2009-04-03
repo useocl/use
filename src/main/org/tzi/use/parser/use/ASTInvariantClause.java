@@ -21,6 +21,10 @@
 
 package org.tzi.use.parser.use;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
@@ -55,22 +59,29 @@ public class ASTInvariantClause extends AST {
     }
 
 
-    void gen(Context ctx, Token varName, MClass cls) {
+    void gen(Context ctx, List varTokens, MClass cls) {
         // enter context variable into scope of invariant
         ObjectType ot = TypeFactory.mkObjectType(cls);
         Symtable vars = ctx.varTable();
         vars.enterScope();
 
-        String var = null;
+        Token var = null;
+        List varNames = new ArrayList();
+        
         try {
-            if (varName != null ) {
-                var = varName.getText();
-                vars.add(varName, ot);
-                ctx.exprContext().push(var, ot);
+            if (varTokens != null && varTokens.size() > 0) {
+                Iterator iter = varTokens.iterator();
+            	while(iter.hasNext()) {
+            		var = (Token)iter.next();
+            		vars.add(var, ot);
+            		ctx.exprContext().push(var.getText(), ot);
+            		varNames.add(var.getText());
+            	}
             } else {
                 // create pseudo-variable "self"
                 vars.add("self", ot, null);
                 ctx.exprContext().push("self", ot);
+                varNames.add("self");
             }
 
             Expression expr = fExpr.gen(ctx);
@@ -78,8 +89,9 @@ public class ASTInvariantClause extends AST {
             if (fName != null )
                 invName = fName.getText();
             
-            MClassInvariant inv = 
-                ctx.modelFactory().createClassInvariant(invName, var, cls, expr);
+            MClassInvariant inv = onCreateMClassInvariant(ctx, cls, varNames,
+					expr, invName);
+            
             // sets the line position of the USE-Model in this  invarinat
             inv.setPositionInModel( fExpr.getStartToken().getLine() );
             ctx.model().addClassInvariant(inv);
@@ -93,4 +105,12 @@ public class ASTInvariantClause extends AST {
         vars.exitScope(); 
         ctx.exprContext().pop();
     }
+
+	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClass cls,
+			List varNames, Expression expr, String invName)
+			throws ExpInvalidException {
+		MClassInvariant inv = 
+		    ctx.modelFactory().createClassInvariant(invName, varNames, cls, expr, false);
+		return inv;
+	}
 }

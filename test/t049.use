@@ -1,0 +1,11 @@
+model Test
+  class Person
+  attributes
+    name : String
+end
+
+constraints
+context p1, p2 : Person inv nameUnique:
+  p1.name = p2.name implies p1 = p2
+
+

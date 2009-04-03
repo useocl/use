@@ -1,0 +1,20 @@
+!create ada:Person
+!set ada.name := 'Ada'
+!create bob:Person
+!set bob.name := 'Bob'
+!create cyd:Person
+!set cyd.name := 'Cyd'
+check
+*checking structure...
+*checking invariants...
+*checking invariant (1) `Person::nameUnique': OK.
+*checked 1 invariant , 0 failures.
+!create ada2:Person
+!set ada2.name := 'Ada'
+check
+*checking structure...
+*checking invariants...
+*checking invariant (1) `Person::nameUnique': FAILED.
+*  -> false : Boolean
+*checked 1 invariant , 1 failure.
+exit
