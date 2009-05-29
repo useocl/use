@@ -119,6 +119,10 @@ public abstract class Type {
     	return false;
     }
 
+    public boolean isOrderedSet() {
+		return false;
+	}
+    
     public boolean isBag() {
     	return false;
     }
@@ -195,6 +199,5 @@ public abstract class Type {
     
         return cType;
 	}
-
 }
 

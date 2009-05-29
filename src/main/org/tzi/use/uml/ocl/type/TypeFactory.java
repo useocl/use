@@ -87,6 +87,10 @@ public final class TypeFactory {
         return new BagType(elemType);
     }
 
+    public static OrderedSetType mkOrderedSet(Type elemType) {
+    	return new OrderedSetType(elemType);
+    }
+    
     public static ObjectType mkObjectType(MClass cls) {
         return new ObjectType(cls);
     }

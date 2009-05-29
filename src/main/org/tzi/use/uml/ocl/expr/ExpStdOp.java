@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.uml.ocl.type.*;
+import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.uml.ocl.value.*;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
@@ -139,7 +140,7 @@ public final class ExpStdOp extends Expression {
             new Op_collection_excludes(), new Op_collection_count(),
             new Op_collection_includesAll(), new Op_collection_excludesAll(),
             new Op_collection_isEmpty(), new Op_collection_notEmpty(),
-            new Op_collection_sum(),
+            new Op_collection_sum(), new Op_collection_product(),
             // the following are special expressions:
             // exists
             // forall
@@ -180,11 +181,22 @@ public final class ExpStdOp extends Expression {
             new Op_sequence_at(), new Op_sequence_first(),
             new Op_sequence_last(), new Op_sequence_including(),
             new Op_sequence_excluding(), new Op_sequence_asBag(),
-            new Op_sequence_asSet(),
+            new Op_sequence_asSet(), new Op_sequence_indexOf(),
+            new Op_sequence_insertAt(),
 
+            // operations on OrderedSet
+            new Op_orderedSet_union(), new Op_orderedSet_append(),
+            new Op_orderedSet_prepend(), new Op_orderedSet_subSequence(),
+            new Op_orderedSet_at(), new Op_orderedSet_first(),
+            new Op_orderedSet_last(), new Op_orderedSet_including(),
+            new Op_orderedSet_excluding(), new Op_orderedSet_asBag(),
+            new Op_orderedSet_asSet(), new Op_orderedSet_indexOf(),
+            new Op_orderedSet_insertAt(),
+            
             // creation operations for collections
             new Op_mkSet(), new Op_mkSetRange(), new Op_mkSequence(),
             new Op_mkSequenceRange(), new Op_mkBag(), new Op_mkBagRange(),
+            new Op_mkOrderedSet(), new Op_mkOrderedSetRange(),
 
             // generic operations on all types
             new Op_equal(), new Op_notequal(), new Op_isDefined(),
@@ -1513,7 +1525,7 @@ final class Op_collection_includes extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isCollection()) {
             CollectionType coll = (CollectionType) params[0];
-            if (params[1].isSubtypeOf(coll.elemType()))
+            if (params[1].getLeastCommonSupertype(coll.elemType()) != null)
                 return TypeFactory.mkBoolean();
         }
         return null;
@@ -1548,7 +1560,7 @@ final class Op_collection_excludes extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isCollection()) {
             CollectionType coll = (CollectionType) params[0];
-            if (params[1].isSubtypeOf(coll.elemType()))
+            if (params[1].getLeastCommonSupertype(coll.elemType()) != null)
                 return TypeFactory.mkBoolean();
         }
         return null;
@@ -1583,7 +1595,7 @@ final class Op_collection_count extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isCollection()) {
             CollectionType coll = (CollectionType) params[0];
-            if (params[1].isSubtypeOf(coll.elemType()))
+            if (params[1].getLeastCommonSupertype(coll.elemType()) != null)
                 return TypeFactory.mkInteger();
         }
         return null;
@@ -1619,8 +1631,8 @@ final class Op_collection_includesAll extends OpGeneric {
                 && params[1].isCollection()) {
             CollectionType coll1 = (CollectionType) params[0];
             CollectionType coll2 = (CollectionType) params[1];
-            Type t = coll1.elemType();
-            if (coll2.isSubtypeOf(TypeFactory.mkCollection(t)))
+            
+            if (coll2.getLeastCommonSupertype(coll1) != null)
                 return TypeFactory.mkBoolean();
         }
         return null;
@@ -1655,8 +1667,8 @@ final class Op_collection_excludesAll extends OpGeneric {
                 && params[1].isCollection()) {
             CollectionType coll1 = (CollectionType) params[0];
             CollectionType coll2 = (CollectionType) params[1];
-            Type t = coll1.elemType();
-            if (coll2.isSubtypeOf(TypeFactory.mkCollection(t)))
+     
+            if (coll2.getLeastCommonSupertype(coll1) != null)
                 return TypeFactory.mkBoolean();
         }
         return null;
@@ -1780,6 +1792,46 @@ final class Op_collection_sum extends OpGeneric {
     }
 }
 
+/* product : Collection(T) x Collection(T2) -> Set(Tuple(first: T, second : T2)) */
+final class Op_collection_product extends OpGeneric {
+    public String name() {
+        return "product";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isCollection() && params[1].isCollection()) {
+            CollectionType c = (CollectionType) params[0];
+            CollectionType c2 = (CollectionType) params[1];
+            
+            Part[] parts = new Part[2];
+        	parts[0] = new Part("first", c.elemType());
+        	parts[1] = new Part("second", c2.elemType());
+        	
+        	TupleType tupleType = TypeFactory.mkTuple(parts);
+        	return TypeFactory.mkSet(tupleType);
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	if (args[0].isUndefined() || args[1].isUndefined())
+    		return new UndefinedValue(resultType);
+    	
+        CollectionValue col1 = (CollectionValue) args[0];
+        CollectionValue col2 = (CollectionValue) args[1];
+        
+        return col1.product(col2);        
+    }
+}
+
 // --------------------------------------------------------
 
 /* flatten : C1(C2(T)) -> C1(T) */
@@ -1807,6 +1859,12 @@ final class Op_collection_flatten extends OpGeneric {
                     return TypeFactory.mkBag(c2.elemType());
                 else if (c1.isSequence() /* && c2.isSequence() */)
                     return TypeFactory.mkSequence(c2.elemType());
+                else
+                	return c1.elemType();
+            }
+            else
+            {
+            	return c1;
             }
         }
         return null;
@@ -1857,9 +1915,7 @@ final class Op_set_union extends OpGeneric {
             SetType set1 = (SetType) params[0];
             SetType set2 = (SetType) params[1];
             
-            if (set2.elemType().isSubtypeOf(set1.elemType()))
-            	return set1;
-            
+            return set1.getLeastCommonSupertype(set2);            
         }
         
         return null;
@@ -1892,8 +1948,10 @@ final class Op_set_union_bag extends OpGeneric {
         if (params.length == 2 && params[0].isSet() && params[1].isBag()) {
             SetType set = (SetType) params[0];
             BagType bag = (BagType) params[1];
-            if (bag.elemType().isSubtypeOf(set.elemType()))
-                return TypeFactory.mkBag(set.elemType());
+            Type newElementType = set.elemType().getLeastCommonSupertype(bag.elemType());
+            
+            if (newElementType != null)
+                return TypeFactory.mkBag(newElementType);
         }
         return null;
     }
@@ -1925,8 +1983,10 @@ final class Op_set_intersection extends OpGeneric {
         if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
             SetType set1 = (SetType) params[0];
             SetType set2 = (SetType) params[1];
-            if (set2.elemType().isSubtypeOf(set1.elemType()))
-                return set1;
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(set2.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSet(commonElementType);
         }
         return null;
     }
@@ -1958,8 +2018,11 @@ final class Op_set_intersection_bag extends OpGeneric {
         if (params.length == 2 && params[0].isSet() && params[1].isBag()) {
             SetType set = (SetType) params[0];
             BagType bag = (BagType) params[1];
-            if (bag.elemType().isSubtypeOf(set.elemType()))
-                return set;
+
+            Type commonElementType = set.elemType().getLeastCommonSupertype(bag.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSet(commonElementType);
         }
         return null;
     }
@@ -1991,8 +2054,10 @@ final class Op_set_difference extends OpGeneric {
         if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
             SetType set1 = (SetType) params[0];
             SetType set2 = (SetType) params[1];
-            if (set2.elemType().isSubtypeOf(set1.elemType()))
-                return set1;
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(set2.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSet(commonElementType);
         }
         return null;
     }
@@ -2023,8 +2088,12 @@ final class Op_set_including extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isSet()) {
             SetType set1 = (SetType) params[0];
-            if (params[1].isSubtypeOf(set1.elemType())) return set1;
-            if (set1.elemType().isSubtypeOf(params[1])) return new SetType(params[1]);
+            
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+            	return TypeFactory.mkSet(commonElementType);
+
         }
         return null;
     }
@@ -2056,8 +2125,10 @@ final class Op_set_excluding extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isSet()) {
             SetType set1 = (SetType) params[0];
-            if (params[1].isSubtypeOf(set1.elemType()))
-                return set1;
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSet(commonElementType);
         }
         return null;
     }
@@ -2090,8 +2161,11 @@ final class Op_set_symmetricDifference extends OpGeneric {
         if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
             SetType set1 = (SetType) params[0];
             SetType set2 = (SetType) params[1];
-            if (set2.elemType().isSubtypeOf(set1.elemType()))
-                return set1;
+            
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(set2.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSet(commonElementType);
         }
         return null;
     }
@@ -2187,7 +2261,11 @@ final class Op_bag_union extends OpGeneric {
         if (params.length == 2 && params[0].isBag() && params[1].isBag()) {
             BagType bag1 = (BagType) params[0];
             BagType bag2 = (BagType) params[1];
-            if (bag2.elemType().isSubtypeOf(bag1.elemType())) return bag1;
+            
+            Type commonElementType = bag1.elemType().getLeastCommonSupertype(bag2.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkBag(commonElementType);
         }
         return null;
     }
@@ -2219,8 +2297,11 @@ final class Op_bag_union_set extends OpGeneric {
         if (params.length == 2 && params[0].isBag() && params[1].isSet()) {
             BagType bag = (BagType) params[0];
             SetType set = (SetType) params[1];
-            if (set.elemType().isSubtypeOf(bag.elemType()))
-                return bag;
+            
+            Type commonElementType = bag.elemType().getLeastCommonSupertype(set.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkBag(commonElementType);
         }
         return null;
     }
@@ -2252,8 +2333,12 @@ final class Op_bag_intersection extends OpGeneric {
         if (params.length == 2 && params[0].isBag() && params[1].isBag()) {
             BagType bag1 = (BagType) params[0];
             BagType bag2 = (BagType) params[1];
-            if (bag2.elemType().isSubtypeOf(bag1.elemType()))
-                return bag1;
+            
+            Type commonElementType = bag1.elemType().getLeastCommonSupertype(bag2.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkBag(commonElementType);
+            
         }
         return null;
     }
@@ -2285,8 +2370,11 @@ final class Op_bag_intersection_set extends OpGeneric {
         if (params.length == 2 && params[0].isBag() && params[1].isSet()) {
             BagType bag = (BagType) params[0];
             SetType set = (SetType) params[1];
-            if (set.elemType().isSubtypeOf(bag.elemType()))
-                return TypeFactory.mkSet(bag.elemType());
+            
+            Type commonElementType = bag.elemType().getLeastCommonSupertype(set.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSet(commonElementType);
         }
         return null;
     }
@@ -2317,8 +2405,10 @@ final class Op_bag_including extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isBag()) {
             BagType bag = (BagType) params[0];
-            if (params[1].isSubtypeOf(bag.elemType()))
-                return bag;
+            Type commonElementType = bag.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkBag(commonElementType);
         }
         return null;
     }
@@ -2350,8 +2440,10 @@ final class Op_bag_excluding extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isBag()) {
             BagType bag = (BagType) params[0];
-            if (params[1].isSubtypeOf(bag.elemType()))
-                return bag;
+            Type commonElementType = bag.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkBag(commonElementType);
         }
         return null;
     }
@@ -2449,8 +2541,12 @@ final class Op_sequence_union extends OpGeneric {
                 && params[1].isSequence()) {
             SequenceType sequence1 = (SequenceType) params[0];
             SequenceType sequence2 = (SequenceType) params[1];
-            if (sequence2.elemType().isSubtypeOf(sequence1.elemType()))
-                return sequence1;
+            
+            Type commonElementType = sequence1.elemType().getLeastCommonSupertype(sequence2.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSequence(commonElementType);
+            
         }
         return null;
     }
@@ -2481,8 +2577,11 @@ final class Op_sequence_append extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isSequence()) {
             SequenceType seqType = (SequenceType) params[0];
-            if (params[1].isSubtypeOf(seqType.elemType()))
-                return seqType;
+            
+            Type commonElementType = seqType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSequence(commonElementType);
         }
         return null;
     }
@@ -2512,8 +2611,11 @@ final class Op_sequence_prepend extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isSequence()) {
             SequenceType seqType = (SequenceType) params[0];
-            if (params[1].isSubtypeOf(seqType.elemType()))
-                return seqType;
+            
+            Type commonElementType = seqType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSequence(commonElementType);
         }
         return null;
     }
@@ -2521,6 +2623,45 @@ final class Op_sequence_prepend extends OpGeneric {
     public Value eval(EvalContext ctx, Value[] args, Type resultType) {
         SequenceValue seq = (SequenceValue) args[0];
         return seq.prepend(args[1]);
+    }
+}
+
+//--------------------------------------------------------
+
+/* insertAt : Sequence(T) x Integer x T -> Sequence(T) */
+final class Op_sequence_insertAt extends OpGeneric {
+    public String name() {
+        return "insertAt";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 3 && params[0].isSequence() && params[1].isInteger()) {
+        	SequenceType seqType = (SequenceType) params[0];
+            
+            Type commonElementType = seqType.elemType().getLeastCommonSupertype(params[2]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSequence(commonElementType);
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	SequenceValue seq = (SequenceValue) args[0];
+    	SequenceValue res = seq.insertAt((IntegerValue)args[1], (Value)args[2]);
+    	
+    	if (res == null)
+    		return new UndefinedValue(resultType);
+    	else
+    		return res;
     }
 }
 
@@ -2684,8 +2825,12 @@ final class Op_sequence_including extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isSequence()) {
             SequenceType seqType = (SequenceType) params[0];
-            if (params[1].isSubtypeOf(seqType.elemType()))
-                return seqType;
+            
+            Type commonElementType = seqType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSequence(commonElementType);
+            
         }
         return null;
     }
@@ -2717,8 +2862,11 @@ final class Op_sequence_excluding extends OpGeneric {
     public Type matches(Type params[]) {
         if (params.length == 2 && params[0].isSequence()) {
             SequenceType seqType = (SequenceType) params[0];
-            if (params[1].isSubtypeOf(seqType.elemType()))
-                return seqType;
+            
+            Type commonElementType = seqType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkSequence(commonElementType);
         }
         return null;
     }
@@ -2728,6 +2876,47 @@ final class Op_sequence_excluding extends OpGeneric {
             return new UndefinedValue(resultType);
         SequenceValue seq = (SequenceValue) args[0];
         return seq.excluding(args[1]);
+    }
+}
+
+/* indexOf : Sequence(T) x T -> Integer */
+final class Op_sequence_indexOf extends OpGeneric {
+    public String name() {
+        return "indexOf";
+    }
+
+    public int kind() {
+        return SPECIAL;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isSequence()) {
+            SequenceType seqType = (SequenceType) params[0];
+            
+            Type commonElementType = seqType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkInteger();
+            
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        if (args[0].isUndefined())
+            return new UndefinedValue(resultType);
+        
+        SequenceValue seq = (SequenceValue) args[0];
+        
+        int index = seq.indexOf(args[1]);
+        if (index == -1)
+        	return new UndefinedValue(resultType);
+        else
+        	return new IntegerValue(index + 1);
     }
 }
 
@@ -2801,6 +2990,482 @@ final class Op_sequence_asSet extends OpGeneric {
 
         // the set constructor will remove duplicates
         return new SetValue(seq.elemType(), elems);
+    }
+}
+
+//--------------------------------------------------------
+//
+// OrderedSet operations.
+//
+// --------------------------------------------------------
+
+/* union : OrderedSet(T1) x OrderedSet(T2) -> OrderedSet(T1), with T2 <= T1 */
+final class Op_orderedSet_union extends OpGeneric {
+    public String name() {
+        return "union";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isOrderedSet()
+                && params[1].isOrderedSet()) {
+            OrderedSetType oset1 = (OrderedSetType) params[0];
+            OrderedSetType oset2 = (OrderedSetType) params[1];
+            
+            Type commonElementType = oset1.elemType().getLeastCommonSupertype(oset2.elemType());
+            
+            if (commonElementType != null)
+                return TypeFactory.mkOrderedSet(commonElementType);
+            
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        OrderedSetValue oset1 = (OrderedSetValue) args[0];
+        OrderedSetValue oset2 = (OrderedSetValue) args[1];
+        return oset1.union(oset2);
+    }
+}
+
+// --------------------------------------------------------
+
+/* append : OrderedSet(T) x T -> OrderedSet(T) */
+final class Op_orderedSet_append extends OpGeneric {
+    public String name() {
+        return "append";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isOrderedSet()) {
+            OrderedSetType osetType = (OrderedSetType) params[0];
+            
+            Type commonElementType = osetType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkOrderedSet(commonElementType);
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        OrderedSetValue oset = (OrderedSetValue) args[0];
+        return oset.append(args[1]);
+    }
+}
+
+// --------------------------------------------------------
+
+/* prepend : OrderedSet(T) x T -> OrderedSet(T) */
+final class Op_orderedSet_prepend extends OpGeneric {
+    public String name() {
+        return "prepend";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isOrderedSet()) {
+        	OrderedSetType osetType = (OrderedSetType) params[0];
+            
+            Type commonElementType = osetType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkOrderedSet(commonElementType);
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	OrderedSetValue oset = (OrderedSetValue) args[0];
+        return oset.prepend(args[1]);
+    }
+}
+
+//--------------------------------------------------------
+
+/* insertAt : OrderedSet(T) x Integer x T -> OrderedSet(T) */
+final class Op_orderedSet_insertAt extends OpGeneric {
+    public String name() {
+        return "insertAt";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 3 && params[0].isOrderedSet() && params[1].isInteger()) {
+        	OrderedSetType osetType = (OrderedSetType) params[0];
+            
+            Type commonElementType = osetType.elemType().getLeastCommonSupertype(params[2]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkOrderedSet(commonElementType);
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	OrderedSetValue oset = (OrderedSetValue) args[0];
+    	OrderedSetValue res = oset.insertAt((IntegerValue)args[1], (Value)args[2]);
+    	
+    	if (res == null)
+    		return new UndefinedValue(resultType);
+    	else
+    		return res;
+    }
+}
+
+// --------------------------------------------------------
+
+/* subOrderedSet : OrderedSet(T) x Integer x Integer -> OrderedSet(T) */
+final class Op_orderedSet_subSequence extends OpGeneric {
+    public String name() {
+        return "subOrderedSet";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return true;
+    }
+
+    public Type matches(Type params[]) {
+        return (params.length == 3 && params[0].isOrderedSet()
+                && params[1].isInteger() && params[2].isInteger()) ? params[0]
+                : null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        OrderedSetValue seq = (OrderedSetValue) args[0];
+        int lower = ((IntegerValue) args[1]).value();
+        int upper = ((IntegerValue) args[2]).value();
+        if (lower > upper)
+            return new UndefinedValue(resultType);
+
+        Value res = null;
+        try {
+            res = seq.subOrderedSet(lower - 1, upper);
+        } catch (IndexOutOfBoundsException e) {
+            res = new UndefinedValue(resultType);
+        }
+        return res;
+    }
+}
+
+// --------------------------------------------------------
+
+/* at : OrderedSet(T) x Integer -> T */
+final class Op_orderedSet_at extends OpGeneric {
+    public String name() {
+        return "at";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isOrderedSet()
+                && params[1].isInteger()) {
+            OrderedSetType oset = (OrderedSetType) params[0];
+            return oset.elemType();
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	OrderedSetValue oset = (OrderedSetValue) args[0];
+        IntegerValue n = (IntegerValue) args[1];
+        Value res = null;
+        try {
+            res = oset.get(n.value() - 1);
+        } catch (IndexOutOfBoundsException e) {
+            res = new UndefinedValue(resultType);
+        }
+        return res;
+    }
+}
+
+// --------------------------------------------------------
+
+/* first : OrderedSet(T) -> T */
+final class Op_orderedSet_first extends OpGeneric {
+    public String name() {
+        return "first";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 1 && params[0].isOrderedSet()) {
+        	OrderedSetType oset = (OrderedSetType) params[0];
+            return oset.elemType();
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	OrderedSetValue oset = (OrderedSetValue) args[0];
+        if (oset.isEmpty())
+            return new UndefinedValue(resultType);
+        return oset.get(0);
+    }
+}
+
+// --------------------------------------------------------
+
+/* last : OrderedSet(T) -> T */
+final class Op_orderedSet_last extends OpGeneric {
+    public String name() {
+        return "last";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 1 && params[0].isOrderedSet()) {
+        	OrderedSetType oset = (OrderedSetType) params[0];
+            return oset.elemType();
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	OrderedSetValue oset = (OrderedSetValue) args[0];
+        if (oset.isEmpty())
+            return new UndefinedValue(resultType);
+        return oset.get(oset.size() - 1);
+    }
+}
+
+// --------------------------------------------------------
+
+/* including : OrderedSet(T) x T -> OrderedSet(T) */
+final class Op_orderedSet_including extends OpGeneric {
+    public String name() {
+        return "including";
+    }
+
+    public int kind() {
+        return SPECIAL;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isOrderedSet()) {
+        	OrderedSetType osetType = (OrderedSetType) params[0];
+            
+            Type commonElementType = osetType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkOrderedSet(commonElementType);
+            
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        if (args[0].isUndefined())
+            return new UndefinedValue(resultType);
+        OrderedSetValue oset = (OrderedSetValue) args[0];
+        return oset.append(args[1]);
+    }
+}
+
+// --------------------------------------------------------
+
+/* excluding : OrderedSet(T) x T -> OrderedSet(T) */
+final class Op_orderedSet_excluding extends OpGeneric {
+    public String name() {
+        return "excluding";
+    }
+
+    public int kind() {
+        return SPECIAL;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isOrderedSet()) {
+        	OrderedSetType osetType = (OrderedSetType) params[0];
+            
+            Type commonElementType = osetType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkOrderedSet(commonElementType);
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        if (args[0].isUndefined())
+            return new UndefinedValue(resultType);
+        OrderedSetValue oset = (OrderedSetValue) args[0];
+        return oset.excluding(args[1]);
+    }
+}
+
+/* indexOf : OrderedSet(T) x T -> Integer */
+final class Op_orderedSet_indexOf extends OpGeneric {
+    public String name() {
+        return "indexOf";
+    }
+
+    public int kind() {
+        return SPECIAL;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 2 && params[0].isOrderedSet()) {
+            OrderedSetType osetType = (OrderedSetType) params[0];
+            
+            Type commonElementType = osetType.elemType().getLeastCommonSupertype(params[1]);
+            
+            if (commonElementType != null)
+                return TypeFactory.mkInteger();
+            
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        if (args[0].isUndefined())
+            return new UndefinedValue(resultType);
+        
+        OrderedSetValue oset = (OrderedSetValue) args[0];
+        
+        int index = oset.indexOf(args[1]);
+        if (index == -1)
+        	return new UndefinedValue(resultType);
+        else
+        	return new IntegerValue(index + 1);
+    }
+}
+
+// --------------------------------------------------------
+
+/* asBag : OrderedSet(T) -> Bag(T) */
+final class Op_orderedSet_asBag extends OpGeneric {
+    public String name() {
+        return "asBag";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 1 && params[0].isOrderedSet()) {
+        	OrderedSetType oset = (OrderedSetType) params[0];
+            return TypeFactory.mkBag(oset.elemType());
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	OrderedSetValue oset = (OrderedSetValue) args[0];
+        Value[] elems = new Value[oset.size()];
+        Iterator it = oset.iterator();
+        int i = 0;
+        while (it.hasNext())
+            elems[i++] = (Value) it.next();
+
+        return new BagValue(oset.elemType(), elems);
+    }
+}
+
+// --------------------------------------------------------
+
+/* asSet : OrderedSet(T) -> Set(T) */
+final class Op_orderedSet_asSet extends OpGeneric {
+    public String name() {
+        return "asSet";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length == 1 && params[0].isOrderedSet()) {
+        	OrderedSetType seq = (OrderedSetType) params[0];
+            return TypeFactory.mkSet(seq.elemType());
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+    	OrderedSetValue oset = (OrderedSetValue) args[0];
+        Value[] elems = new Value[oset.size()];
+        Iterator it = oset.iterator();
+        int i = 0;
+        while (it.hasNext())
+            elems[i++] = (Value) it.next();
+
+        return new SetValue(oset.elemType(), elems);
     }
 }
 
@@ -3061,6 +3726,89 @@ final class Op_mkBagRange extends OpGeneric {
     }
 }
 
+//--------------------------------------------------------
+
+/* mkOrderedSet : T x T x ... x T -> OrderedSet(T) */
+final class Op_mkOrderedSet extends OpGeneric {
+    public String name() {
+        return "mkOrderedSet";
+    }
+
+    // may include undefined elements
+    public int kind() {
+        return SPECIAL;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        if (params.length > 0) {
+            final Type elemType = params[0];
+            // all arguments of set constructor must have equal type
+            // FIXME: relax to common base type?
+            for (int i = 1; i < params.length; i++)
+                if (!params[i].equals(elemType))
+                    return null;
+            return TypeFactory.mkOrderedSet(elemType);
+        }
+        return null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        return new OrderedSetValue(args[0].type(), args);
+    }
+
+    public String stringRep(Expression args[], String atPre) {
+        return "OrderedSet{" + StringUtil.fmtSeq(args, ",") + "}";
+    }
+}
+
+// --------------------------------------------------------
+
+/* mkSequenceRange : Integer x Integer, ... -> OrderedSet(Integer) */
+final class Op_mkOrderedSetRange extends OpGeneric {
+    public String name() {
+        return "mkOrderedSetRange";
+    }
+
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Type matches(Type params[]) {
+        return (params.length >= 2 && params.length % 2 == 0
+                && params[0].isInteger() && params[1].isInteger()) ? TypeFactory
+                .mkOrderedSet(TypeFactory.mkInteger())
+                : null;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        int[] ranges = new int[args.length];
+        for (int i = 0; i < args.length; i++)
+            ranges[i] = ((IntegerValue) args[i]).value();
+
+        return new OrderedSetValue(TypeFactory.mkInteger(), ranges);
+    }
+
+    public String stringRep(Expression args[], String atPre) {
+        if (args.length % 2 != 0)
+            throw new IllegalArgumentException("length=" + args.length);
+        String s = "OrderedSet{";
+        for (int i = 0; i < args.length; i += 2) {
+            if (i > 0)
+                s += ",";
+            s += args[i] + ".." + args[i + 1];
+        }
+        s += "}";
+        return s;
+    }
+}
 // --------------------------------------------------------
 //
 // Generic operations on enumeration types.
@@ -3089,8 +3837,7 @@ final class Op_equal extends OpGeneric {
 
     public Type matches(Type params[]) {
         if (params.length == 2
-                && (params[1].isSubtypeOf(params[0]) || params[0]
-                        .isSubtypeOf(params[1])))
+                && params[0].getLeastCommonSupertype(params[1]) != null)
             return TypeFactory.mkBoolean();
         else
             return null;
@@ -3098,10 +3845,14 @@ final class Op_equal extends OpGeneric {
 
     public Value eval(EvalContext ctx, Value[] args, Type resultType) {
         boolean res;
+        
         if (args[1].type().isSubtypeOf(args[0].type()))
             res = args[0].equals(args[1]);
-        else
+        else if (args[0].type().isSubtypeOf(args[1].type()))
             res = args[1].equals(args[0]);
+        else
+        	res = false;
+        
         return BooleanValue.get(res);
     }
 }

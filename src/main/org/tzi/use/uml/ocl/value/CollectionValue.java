@@ -22,11 +22,15 @@
 package org.tzi.use.uml.ocl.value;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.util.CollectionComparator;
 
 /**
@@ -52,12 +56,15 @@ public abstract class CollectionValue extends Value {
 
     public void setElemType( Type t ) {
         fElemType = t;
+        // TODO: Use inheritance (LH)
         if (this instanceof SetValue) {
             setType( TypeFactory.mkSet(fElemType));
         } else if (this instanceof BagValue) {
             setType( TypeFactory.mkBag(fElemType));
         } else if (this instanceof SequenceValue) {
             setType( TypeFactory.mkSequence(fElemType));
+        } else if (this instanceof OrderedSetValue) {
+        	setType( TypeFactory.mkOrderedSet(fElemType));
         } else {
             setType( TypeFactory.mkCollection(fElemType));
         } 
@@ -142,5 +149,40 @@ public abstract class CollectionValue extends Value {
         }
     }
     
+    public SetValue product(CollectionValue col)
+    {
+    	Part[] parts = new Part[2];
+    	parts[0] = new Part("first", this.elemType());
+    	parts[1] = new Part("second", col.elemType());
+    	
+    	TupleType tupleType = TypeFactory.mkTuple(parts);
+    	SetValue res = new SetValue(tupleType);
+    	
+    	Iterator iter1 = this.iterator();
+    	Iterator iter2;
+    	Value elem1, elem2;
+    	TupleValue tuple;
+    	Map<String, Value> valueParts;
+    	
+    	while (iter1.hasNext())
+    	{
+    		elem1 = (Value)iter1.next();
+    		iter2 = col.iterator();
+    		
+    		while(iter2.hasNext())
+    		{
+    			elem2 = (Value)iter2.next();
+    			
+    			valueParts = new HashMap<String, Value>(2);
+    			valueParts.put("first", elem1);
+    			valueParts.put("second", elem2);
+    			
+    			tuple = new TupleValue(tupleType, valueParts);
+    			res.add(tuple);
+    		}
+    	}
+    	
+    	return res;
+    }
 }
 

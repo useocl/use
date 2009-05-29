@@ -248,7 +248,7 @@ public abstract class ExpQuery extends Expression {
         }
 
         // result is collection with mapped values
-        if (fRangeExp.type().isSequence())
+        if (fRangeExp.type().isSequence() || fRangeExp.type().isOrderedSet())
             return new SequenceValue(fQueryExp.type(), resValues);
         else
             return new BagValue(fQueryExp.type(), resValues);

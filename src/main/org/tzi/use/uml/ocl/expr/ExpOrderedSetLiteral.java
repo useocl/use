@@ -17,46 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id: ExpCollect.java 61 2008-04-11 11:52:15Z opti $
+// $Id: ExpSequenceLiteral.java 61 2008-04-11 11:52:15Z opti $
 
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.Value;
 
-/** 
- * OCL collect expression.
+/**
+ * Constant sequence literal.
  *
  * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author  Lars Hamann
  */
-public class ExpCollectNested extends ExpQuery {
-    
-    /**
-     * Constructs a collect expression. <code>elemVarDecl</code> may be null.
-     */
-    public ExpCollectNested(VarDecl elemVarDecl,
-                      Expression rangeExp, 
-                      Expression queryExp) 
+public final class ExpOrderedSetLiteral extends ExpCollectionLiteral {
+
+    public ExpOrderedSetLiteral(Expression[] elemExpr) 
         throws ExpInvalidException
     {
-        // result type is bag or sequence of query expression type
-        super( rangeExp.type().isSequence() || rangeExp.type().isOrderedSet()
-                ? (Type) TypeFactory.mkSequence(queryExp.type())
-                : (Type) TypeFactory.mkBag(queryExp.type()), 
-               ( elemVarDecl != null ) 
-               ? new VarDeclList(elemVarDecl) 
-               : new VarDeclList(true),
-               rangeExp, queryExp);
-    }
-
-    /** 
-     * Return name of query expression.
-     */
-    public String name() {
-        return "collectNested";
+        super("OrderedSet", elemExpr);
+        setResultType(TypeFactory.mkOrderedSet(inferElementType()));
     }
 
     /**
@@ -64,7 +46,8 @@ public class ExpCollectNested extends ExpQuery {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = evalCollectNested(ctx);
+        Value res = 
+            new OrderedSetValue(((CollectionType) type()).elemType(), evalArgs(ctx));
         ctx.exit(this, res);
         return res;
     }

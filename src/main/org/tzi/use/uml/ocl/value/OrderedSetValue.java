@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
+// $Id: SequenceValue.java 186 2009-03-27 13:30:35Z green $
 
 package org.tzi.use.uml.ocl.value;
 
@@ -34,40 +34,38 @@ import org.tzi.use.util.StringUtil;
  * Sequence values.
  *
  * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author  Lars Hamann
  */
-public class SequenceValue extends CollectionValue {
+public class OrderedSetValue extends CollectionValue {
     private ArrayList fElements;
     
     /**
-     * Constructs a new empty sequence.
+     * Constructs a new empty OrderedSet.
      */
-    public SequenceValue(Type elemType) {
-        super(TypeFactory.mkSequence(elemType), elemType);
+    public OrderedSetValue(Type elemType) {
+        super(TypeFactory.mkOrderedSet(elemType), elemType);
         fElements = new ArrayList();
     }
 
     /**
-     * Constructs a sequence and adds all values. Elements are type checked
-     * as they get inserted into the sequence.
-     *
-     * @exception IllegalArgumentException the type of at least one
-     *            value does not match 
+     * Constructs an orderedset and adds all values. Elements are type checked
+     * as they get inserted into the orderedset.
+     * 
+     * Duplicates are ignored after the first occurence.
      */
-    public SequenceValue(Type elemType, Value[] values) {
+    public OrderedSetValue(Type elemType, Value[] values) {
         this(elemType);
         for (int i = 0; i < values.length; i++)
             add(values[i]);
     }
 
     /**
-     * Constructs a sequence and adds all values. Elements are type checked
+     * Constructs an orderedset and adds all values. Elements are type checked
      * as they get inserted into the sequence.
-     *
-     * @exception IllegalArgumentException the type of at least one
-     *            value does not match 
+     * 
+     * Duplicates are ignored after the first occurence.
      */
-    public SequenceValue(Type elemType, Collection values) {
+    public OrderedSetValue(Type elemType, Collection values) {
         this(elemType);
         Iterator it = values.iterator(); 
         while (it.hasNext() )
@@ -75,12 +73,10 @@ public class SequenceValue extends CollectionValue {
     }
 
     /**
-     * Constructs a sequence and fills it with ranges of integers.
+     * Constructs an orderedset and fills it with ranges of integers.
      *
-     * @exception IllegalArgumentException the type of at least one
-     *            value does not match 
      */
-    public SequenceValue(Type elemType, int[] ranges) {
+    public OrderedSetValue(Type elemType, int[] ranges) {
         this(elemType);
         int i = 0; 
         while (i < ranges.length ) {
@@ -95,10 +91,10 @@ public class SequenceValue extends CollectionValue {
 
 
     /**
-     * Returns the element at the specified position in this sequence.
+     * Returns the element at the specified position in this orderedset.
      *
      * @param index index of element to return.
-     * @return the element at the specified position in this list.
+     * @return the element at the specified position in this orderedset.
      * 
      * @throws IndexOutOfBoundsException if the index is out of range (index
      *        &lt; 1 || index &gt; size()).
@@ -145,12 +141,12 @@ public class SequenceValue extends CollectionValue {
     }
 
     /** 
-     * Returns a copy of this sequence excluding all occurrences of v.
+     * Returns a copy of this orderedset excluding all occurrences of v.
      *
-     * @pre T2 <= T1, if this has type Sequence(T1) and v has type T2.
+     * @pre T2 <= T1, if this has type OrderedSet(T1) and v has type T2.
      */
-    public SequenceValue excluding(Value v) {
-        SequenceValue res = new SequenceValue(elemType());
+    public OrderedSetValue excluding(Value v) {
+        OrderedSetValue res = new OrderedSetValue(elemType());
         Iterator it = fElements.iterator(); 
         while (it.hasNext() ) {
             Value elem = (Value) it.next();
@@ -160,6 +156,22 @@ public class SequenceValue extends CollectionValue {
         return res;
     }
 
+    public OrderedSetValue insertAt(IntegerValue index, Value v) {
+    	if (index.value() < 1 || index.value() > fElements.size() + 1)
+    		return null;
+    	
+    	OrderedSetValue res = new OrderedSetValue(elemType());
+    	res.addAll(fElements);
+    	res.fElements.add(index.value() - 1, v);
+    	res.deriveRuntimeType();
+    	
+    	return res;
+    }
+    
+    public int indexOf(Value v) {
+    	return fElements.indexOf(v);
+    }
+    
     public int count(Value v) {
         int res = 0;
         Iterator it = fElements.iterator(); 
@@ -169,66 +181,57 @@ public class SequenceValue extends CollectionValue {
         return res;
     }
 
-    public SequenceValue union(SequenceValue v) {
-        SequenceValue res = new SequenceValue(elemType());
+    public OrderedSetValue union(OrderedSetValue v) {
+        OrderedSetValue res = new OrderedSetValue(elemType());
         res.addAll(fElements);
         res.addAll(v.fElements);
+        res.deriveRuntimeType();
         return res;
     }
 
-    public SequenceValue append(Value v) {
-        SequenceValue res = new SequenceValue(elemType());
+    public OrderedSetValue append(Value v) {
+        OrderedSetValue res = new OrderedSetValue(elemType());
         res.addAll(fElements);
         res.add(v);
+        res.deriveRuntimeType();
         return res;
     }
 
-    public SequenceValue prepend(Value v) {
-        SequenceValue res = new SequenceValue(elemType());
-        res.add(v);
+    public OrderedSetValue prepend(Value v) {
+        OrderedSetValue res = new OrderedSetValue(elemType());
+        if (!fElements.contains(v))
+        	res.add(v);
+        
         res.addAll(fElements);
+        res.deriveRuntimeType();
+        
         return res;
     }
 
-    public SequenceValue insertAt(IntegerValue index, Value v) {
-    	if (index.value() < 1 || index.value() >= fElements.size())
-    		return null;
-    	
-    	SequenceValue res = new SequenceValue(elemType());
-    	res.addAll(fElements);
-    	res.fElements.add(index.value(), v);
-    	
-    	return res;
-    }
-    
-    public int indexOf(Value v) {
-    	return fElements.indexOf(v);
-    }
-    
     /**
-     * Returns a new sequence only containing the give range of
+     * Returns a new orderedset only containing the give range of
      * elements.
      *
      * @throws    IndexOutOfBoundsException if range is illegal
      */
-    public SequenceValue subSequence(int lower, int upper) {
-        SequenceValue res = new SequenceValue(elemType());
+    public OrderedSetValue subOrderedSet(int lower, int upper) {
+        OrderedSetValue res = new OrderedSetValue(elemType());
         for (int i = lower; i < upper; i++) 
             res.add((Value)fElements.get(i));
         return res;
     }
 
     /**
-     * Returns a new "flattened" sequence. This sequence must have
+     * Returns a new "flattened" ordered set. This ordered set must have
      * sequence elements.  
      * Otherwise the result is nondeterministic, as in Set->asSequence
      */
-    public SequenceValue flatten() {
+    public OrderedSetValue flatten() {
         if (! elemType().isCollection() ) 
             return this;
     
         CollectionType c2 = (CollectionType) elemType();
-        SequenceValue res = new SequenceValue(c2.elemType());
+        OrderedSetValue res = new OrderedSetValue(c2.elemType());
         Iterator it = fElements.iterator(); 
         while (it.hasNext() ) {
             CollectionValue elem = (CollectionValue) it.next();
@@ -242,8 +245,8 @@ public class SequenceValue extends CollectionValue {
     }
 
     public Object clone() throws CloneNotSupportedException {
-        // TODO: why has SequenceValue a clone method, while Set and BagValue don't?
-        SequenceValue res = (SequenceValue)super.clone();
+        // TODO: why have OrderedSet and SequenceValue a clone method, while Set and BagValue don't?
+        OrderedSetValue res = (OrderedSetValue)super.clone();
         res.fElements = (ArrayList) fElements.clone();
         return res;
     }
@@ -253,7 +256,7 @@ public class SequenceValue extends CollectionValue {
     }
 
     public String toString() {
-        return "Sequence{" + StringUtil.fmtSeq(fElements.iterator(), ",") + "}";
+        return "OrderedSet{" + StringUtil.fmtSeq(fElements.iterator(), ",") + "}";
     }
 
     public int hashCode() {
@@ -266,20 +269,20 @@ public class SequenceValue extends CollectionValue {
     }
     
     /** 
-     * Two sequences are equal iff they contain the same elements in
+     * Two ordered sets are equal iff they contain the same elements in
      * same order. However, the declared types may be different if the
      * second is a subtype of the first.
      *
-     * @pre T2 <= T1, if this has type Sequence(T1) and 
-     *      obj has type Sequence(T2). 
+     * @pre T2 <= T1, if this has type OrderedSet(T1) and 
+     *      obj has type OrderedSet(T2). 
      */
     public boolean equals(Object obj) {
         // FIXME: this equals is not symmetric (ocl-equals != java-equals?)
         if (obj == null) return false;
         if (obj.getClass().equals(getClass()) ) {
-            SequenceValue seq2 = (SequenceValue) obj;
-            return seq2.type().isSubtypeOf(this.type()) 
-                && fElements.equals(seq2.fElements);
+            OrderedSetValue os2 = (OrderedSetValue) obj;
+            return os2.type().isSubtypeOf(this.type()) 
+                && fElements.equals(os2.fElements);
         }
         return false;
     }
@@ -300,13 +303,23 @@ public class SequenceValue extends CollectionValue {
 //     }
 
     void add(Value v) {
-        fElements.add(v);
-        deriveRuntimeType();
+    	if (!fElements.contains(v)) {
+    		fElements.add(v);
+    		deriveRuntimeType();
+    	}
     }
 
 
     void addAll(Collection v) {
-        fElements.addAll(v);
+    	Iterator iter = v.iterator();
+    	while (iter.hasNext()) {
+    		Value element = (Value)iter.next();
+    		
+    		if (!fElements.contains(element)) {
+        		fElements.add(element);
+        	}
+    	}
+    	
         deriveRuntimeType();
     }
 

@@ -59,6 +59,8 @@ public class ASTCollectionType extends ASTType {
             res = TypeFactory.mkBag(elemType);
         else if (name.equals("Collection") )
             res = TypeFactory.mkCollection(elemType);
+        else if (name.equals("OrderedSet"))
+        	res = TypeFactory.mkOrderedSet(elemType);
         else throw new SemanticException(fName,
                                          "Expected collection type, found `" + name + "'.");
         return res;

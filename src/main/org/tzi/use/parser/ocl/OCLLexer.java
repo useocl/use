@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-04-03 12:29:09
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-05-18 17:15:27
 
 package org.tzi.use.parser.ocl; 
 
@@ -77,6 +77,7 @@ public class OCLLexer extends Lexer {
     public static final int REAL=27;
     public static final int T__71=71;
     public static final int WS=34;
+    public static final int T__72=72;
     public static final int NEWLINE=33;
     public static final int T__70=70;
     public static final int SL_COMMENT=35;
@@ -603,10 +604,10 @@ public class OCLLexer extends Lexer {
         try {
             int _type = T__66;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // OCL.g:52:7: ( 'oclEmpty' )
-            // OCL.g:52:9: 'oclEmpty'
+            // OCL.g:52:7: ( 'OrderedSet' )
+            // OCL.g:52:9: 'OrderedSet'
             {
-            match("oclEmpty"); if (state.failed) return ;
+            match("OrderedSet"); if (state.failed) return ;
 
 
             }
@@ -624,10 +625,10 @@ public class OCLLexer extends Lexer {
         try {
             int _type = T__67;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // OCL.g:53:7: ( 'oclUndefined' )
-            // OCL.g:53:9: 'oclUndefined'
+            // OCL.g:53:7: ( 'oclEmpty' )
+            // OCL.g:53:9: 'oclEmpty'
             {
-            match("oclUndefined"); if (state.failed) return ;
+            match("oclEmpty"); if (state.failed) return ;
 
 
             }
@@ -645,10 +646,10 @@ public class OCLLexer extends Lexer {
         try {
             int _type = T__68;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // OCL.g:54:7: ( 'Undefined' )
-            // OCL.g:54:9: 'Undefined'
+            // OCL.g:54:7: ( 'oclUndefined' )
+            // OCL.g:54:9: 'oclUndefined'
             {
-            match("Undefined"); if (state.failed) return ;
+            match("oclUndefined"); if (state.failed) return ;
 
 
             }
@@ -666,10 +667,10 @@ public class OCLLexer extends Lexer {
         try {
             int _type = T__69;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // OCL.g:55:7: ( 'null' )
-            // OCL.g:55:9: 'null'
+            // OCL.g:55:7: ( 'Undefined' )
+            // OCL.g:55:9: 'Undefined'
             {
-            match("null"); if (state.failed) return ;
+            match("Undefined"); if (state.failed) return ;
 
 
             }
@@ -687,10 +688,10 @@ public class OCLLexer extends Lexer {
         try {
             int _type = T__70;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // OCL.g:56:7: ( 'Tuple' )
-            // OCL.g:56:9: 'Tuple'
+            // OCL.g:56:7: ( 'null' )
+            // OCL.g:56:9: 'null'
             {
-            match("Tuple"); if (state.failed) return ;
+            match("null"); if (state.failed) return ;
 
 
             }
@@ -708,8 +709,29 @@ public class OCLLexer extends Lexer {
         try {
             int _type = T__71;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // OCL.g:57:7: ( 'Collection' )
-            // OCL.g:57:9: 'Collection'
+            // OCL.g:57:7: ( 'Tuple' )
+            // OCL.g:57:9: 'Tuple'
+            {
+            match("Tuple"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__71"
+
+    // $ANTLR start "T__72"
+    public final void mT__72() throws RecognitionException {
+        try {
+            int _type = T__72;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // OCL.g:58:7: ( 'Collection' )
+            // OCL.g:58:9: 'Collection'
             {
             match("Collection"); if (state.failed) return ;
 
@@ -722,7 +744,7 @@ public class OCLLexer extends Lexer {
         finally {
         }
     }
-    // $ANTLR end "T__71"
+    // $ANTLR end "T__72"
 
     // $ANTLR start "WS"
     public final void mWS() throws RecognitionException {
@@ -2241,8 +2263,8 @@ public class OCLLexer extends Lexer {
     // $ANTLR end "VOCAB"
 
     public void mTokens() throws RecognitionException {
-        // OCL.g:1:8: ( T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | RANGE_OR_INT | STRING | IDENT )
-        int alt18=62;
+        // OCL.g:1:8: ( T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | RANGE_OR_INT | STRING | IDENT )
+        int alt18=63;
         alt18 = dfa18.predict(input);
         switch (alt18) {
             case 1 :
@@ -2449,231 +2471,238 @@ public class OCLLexer extends Lexer {
                 }
                 break;
             case 30 :
-                // OCL.g:1:184: WS
+                // OCL.g:1:184: T__72
+                {
+                mT__72(); if (state.failed) return ;
+
+                }
+                break;
+            case 31 :
+                // OCL.g:1:190: WS
                 {
                 mWS(); if (state.failed) return ;
 
                 }
                 break;
-            case 31 :
-                // OCL.g:1:187: SL_COMMENT
+            case 32 :
+                // OCL.g:1:193: SL_COMMENT
                 {
                 mSL_COMMENT(); if (state.failed) return ;
 
                 }
                 break;
-            case 32 :
-                // OCL.g:1:198: ML_COMMENT
+            case 33 :
+                // OCL.g:1:204: ML_COMMENT
                 {
                 mML_COMMENT(); if (state.failed) return ;
 
                 }
                 break;
-            case 33 :
-                // OCL.g:1:209: ARROW
+            case 34 :
+                // OCL.g:1:215: ARROW
                 {
                 mARROW(); if (state.failed) return ;
 
                 }
                 break;
-            case 34 :
-                // OCL.g:1:215: AT
+            case 35 :
+                // OCL.g:1:221: AT
                 {
                 mAT(); if (state.failed) return ;
 
                 }
                 break;
-            case 35 :
-                // OCL.g:1:218: BAR
+            case 36 :
+                // OCL.g:1:224: BAR
                 {
                 mBAR(); if (state.failed) return ;
 
                 }
                 break;
-            case 36 :
-                // OCL.g:1:222: COLON
+            case 37 :
+                // OCL.g:1:228: COLON
                 {
                 mCOLON(); if (state.failed) return ;
 
                 }
                 break;
-            case 37 :
-                // OCL.g:1:228: COLON_COLON
+            case 38 :
+                // OCL.g:1:234: COLON_COLON
                 {
                 mCOLON_COLON(); if (state.failed) return ;
 
                 }
                 break;
-            case 38 :
-                // OCL.g:1:240: COLON_EQUAL
+            case 39 :
+                // OCL.g:1:246: COLON_EQUAL
                 {
                 mCOLON_EQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 39 :
-                // OCL.g:1:252: COMMA
+            case 40 :
+                // OCL.g:1:258: COMMA
                 {
                 mCOMMA(); if (state.failed) return ;
 
                 }
                 break;
-            case 40 :
-                // OCL.g:1:258: DOT
+            case 41 :
+                // OCL.g:1:264: DOT
                 {
                 mDOT(); if (state.failed) return ;
 
                 }
                 break;
-            case 41 :
-                // OCL.g:1:262: DOTDOT
+            case 42 :
+                // OCL.g:1:268: DOTDOT
                 {
                 mDOTDOT(); if (state.failed) return ;
 
                 }
                 break;
-            case 42 :
-                // OCL.g:1:269: EQUAL
+            case 43 :
+                // OCL.g:1:275: EQUAL
                 {
                 mEQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 43 :
-                // OCL.g:1:275: GREATER
+            case 44 :
+                // OCL.g:1:281: GREATER
                 {
                 mGREATER(); if (state.failed) return ;
 
                 }
                 break;
-            case 44 :
-                // OCL.g:1:283: GREATER_EQUAL
+            case 45 :
+                // OCL.g:1:289: GREATER_EQUAL
                 {
                 mGREATER_EQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 45 :
-                // OCL.g:1:297: HASH
+            case 46 :
+                // OCL.g:1:303: HASH
                 {
                 mHASH(); if (state.failed) return ;
 
                 }
                 break;
-            case 46 :
-                // OCL.g:1:302: LBRACE
+            case 47 :
+                // OCL.g:1:308: LBRACE
                 {
                 mLBRACE(); if (state.failed) return ;
 
                 }
                 break;
-            case 47 :
-                // OCL.g:1:309: LBRACK
+            case 48 :
+                // OCL.g:1:315: LBRACK
                 {
                 mLBRACK(); if (state.failed) return ;
 
                 }
                 break;
-            case 48 :
-                // OCL.g:1:316: LESS
+            case 49 :
+                // OCL.g:1:322: LESS
                 {
                 mLESS(); if (state.failed) return ;
 
                 }
                 break;
-            case 49 :
-                // OCL.g:1:321: LESS_EQUAL
+            case 50 :
+                // OCL.g:1:327: LESS_EQUAL
                 {
                 mLESS_EQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 50 :
-                // OCL.g:1:332: LPAREN
+            case 51 :
+                // OCL.g:1:338: LPAREN
                 {
                 mLPAREN(); if (state.failed) return ;
 
                 }
                 break;
-            case 51 :
-                // OCL.g:1:339: MINUS
+            case 52 :
+                // OCL.g:1:345: MINUS
                 {
                 mMINUS(); if (state.failed) return ;
 
                 }
                 break;
-            case 52 :
-                // OCL.g:1:345: NOT_EQUAL
+            case 53 :
+                // OCL.g:1:351: NOT_EQUAL
                 {
                 mNOT_EQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 53 :
-                // OCL.g:1:355: PLUS
+            case 54 :
+                // OCL.g:1:361: PLUS
                 {
                 mPLUS(); if (state.failed) return ;
 
                 }
                 break;
-            case 54 :
-                // OCL.g:1:360: RBRACE
+            case 55 :
+                // OCL.g:1:366: RBRACE
                 {
                 mRBRACE(); if (state.failed) return ;
 
                 }
                 break;
-            case 55 :
-                // OCL.g:1:367: RBRACK
+            case 56 :
+                // OCL.g:1:373: RBRACK
                 {
                 mRBRACK(); if (state.failed) return ;
 
                 }
                 break;
-            case 56 :
-                // OCL.g:1:374: RPAREN
+            case 57 :
+                // OCL.g:1:380: RPAREN
                 {
                 mRPAREN(); if (state.failed) return ;
 
                 }
                 break;
-            case 57 :
-                // OCL.g:1:381: SEMI
+            case 58 :
+                // OCL.g:1:387: SEMI
                 {
                 mSEMI(); if (state.failed) return ;
 
                 }
                 break;
-            case 58 :
-                // OCL.g:1:386: SLASH
+            case 59 :
+                // OCL.g:1:392: SLASH
                 {
                 mSLASH(); if (state.failed) return ;
 
                 }
                 break;
-            case 59 :
-                // OCL.g:1:392: STAR
+            case 60 :
+                // OCL.g:1:398: STAR
                 {
                 mSTAR(); if (state.failed) return ;
 
                 }
                 break;
-            case 60 :
-                // OCL.g:1:397: RANGE_OR_INT
+            case 61 :
+                // OCL.g:1:403: RANGE_OR_INT
                 {
                 mRANGE_OR_INT(); if (state.failed) return ;
 
                 }
                 break;
-            case 61 :
-                // OCL.g:1:410: STRING
+            case 62 :
+                // OCL.g:1:416: STRING
                 {
                 mSTRING(); if (state.failed) return ;
 
                 }
                 break;
-            case 62 :
-                // OCL.g:1:417: IDENT
+            case 63 :
+                // OCL.g:1:423: IDENT
                 {
                 mIDENT(); if (state.failed) return ;
 
@@ -2740,116 +2769,117 @@ public class OCLLexer extends Lexer {
 
     protected DFA18 dfa18 = new DFA18(this);
     static final String DFA18_eotS =
-        "\1\uffff\20\50\1\uffff\1\103\1\105\2\uffff\1\110\1\uffff\1\112\1"+
-        "\uffff\1\114\3\uffff\1\117\12\uffff\1\50\1\121\2\50\1\124\1\125"+
-        "\22\50\17\uffff\1\151\1\uffff\2\50\2\uffff\1\50\1\160\1\161\1\50"+
-        "\1\163\1\164\1\50\1\166\5\50\1\174\1\50\1\176\3\50\1\uffff\6\50"+
-        "\2\uffff\1\50\2\uffff\1\u0089\1\uffff\1\u008a\1\u008b\1\u008c\2"+
-        "\50\1\uffff\1\50\1\uffff\12\50\4\uffff\1\u009b\1\u009c\2\50\1\u009f"+
-        "\11\50\2\uffff\2\50\1\uffff\1\50\1\u00ac\1\u00ad\11\50\2\uffff\3"+
-        "\50\1\u00ba\2\50\1\u00bd\2\50\1\u00c0\2\50\1\uffff\2\50\1\uffff"+
-        "\1\u00c5\1\50\1\uffff\4\50\1\uffff\1\u00cb\1\u00cc\1\u00cd\2\50"+
-        "\3\uffff\1\u00d0\1\u00d1\2\uffff";
+        "\1\uffff\21\51\1\uffff\1\105\1\107\2\uffff\1\112\1\uffff\1\114\1"+
+        "\uffff\1\116\3\uffff\1\121\12\uffff\1\51\1\123\2\51\1\126\1\127"+
+        "\23\51\17\uffff\1\154\1\uffff\2\51\2\uffff\1\51\1\163\1\164\1\51"+
+        "\1\166\1\167\1\51\1\171\5\51\1\177\1\51\1\u0081\4\51\1\uffff\6\51"+
+        "\2\uffff\1\51\2\uffff\1\u008d\1\uffff\1\u008e\1\u008f\1\u0090\2"+
+        "\51\1\uffff\1\51\1\uffff\13\51\4\uffff\1\u00a0\1\u00a1\3\51\1\u00a5"+
+        "\11\51\2\uffff\3\51\1\uffff\1\51\1\u00b3\1\u00b4\12\51\2\uffff\3"+
+        "\51\1\u00c2\2\51\1\u00c5\3\51\1\u00c9\2\51\1\uffff\2\51\1\uffff"+
+        "\1\51\1\u00cf\1\51\1\uffff\4\51\1\u00d5\1\uffff\1\u00d6\1\u00d7"+
+        "\1\u00d8\2\51\4\uffff\1\u00db\1\u00dc\2\uffff";
     static final String DFA18_eofS =
-        "\u00d2\uffff";
+        "\u00dd\uffff";
     static final String DFA18_minS =
         "\1\11\1\145\1\146\1\143\1\157\1\154\1\151\1\157\1\162\1\150\1\154"+
-        "\1\141\1\145\1\141\1\156\1\165\1\157\1\uffff\1\52\1\55\2\uffff\1"+
-        "\72\1\uffff\1\56\1\uffff\1\75\3\uffff\1\75\12\uffff\1\164\1\60\1"+
-        "\160\1\145\2\60\1\154\1\162\1\144\1\154\1\166\1\164\1\154\2\145"+
-        "\1\165\1\163\1\144\1\154\1\161\1\147\1\144\1\160\1\154\17\uffff"+
+        "\1\141\1\145\1\141\1\162\1\156\1\165\1\157\1\uffff\1\52\1\55\2\uffff"+
+        "\1\72\1\uffff\1\56\1\uffff\1\75\3\uffff\1\75\12\uffff\1\164\1\60"+
+        "\1\160\1\145\2\60\1\154\1\162\1\144\1\154\1\166\1\164\1\154\2\145"+
+        "\1\165\1\163\1\144\1\154\1\161\1\147\2\144\1\160\1\154\17\uffff"+
         "\1\60\1\uffff\1\154\1\162\2\uffff\1\101\2\60\1\111\2\60\1\154\1"+
-        "\60\1\156\2\145\1\151\1\163\1\60\1\165\1\60\1\145\2\154\1\uffff"+
+        "\60\1\156\2\145\1\151\1\163\1\60\1\165\1\60\2\145\2\154\1\uffff"+
         "\1\151\1\141\2\163\1\155\1\156\2\uffff\1\156\2\uffff\1\60\1\uffff"+
-        "\3\60\1\146\1\145\1\uffff\1\145\1\uffff\1\146\3\145\1\164\1\124"+
-        "\1\113\1\160\1\144\1\163\4\uffff\2\60\1\156\1\151\1\60\1\143\1\163"+
-        "\1\145\1\171\1\151\1\171\1\164\1\145\1\164\2\uffff\1\143\1\156\1"+
-        "\uffff\1\164\2\60\1\160\1\156\1\160\1\171\1\146\1\141\2\145\1\151"+
-        "\2\uffff\1\145\1\144\1\145\1\60\1\151\1\156\1\60\1\144\1\157\1\60"+
-        "\2\117\1\uffff\1\156\1\143\1\uffff\1\60\1\156\1\uffff\2\146\2\145"+
-        "\1\uffff\3\60\1\144\1\163\3\uffff\2\60\2\uffff";
+        "\3\60\1\146\1\145\1\uffff\1\145\1\uffff\1\162\1\146\3\145\1\164"+
+        "\1\124\1\113\1\160\1\144\1\163\4\uffff\2\60\1\156\1\145\1\151\1"+
+        "\60\1\143\1\163\1\145\1\171\1\151\1\171\1\164\1\145\1\164\2\uffff"+
+        "\1\143\1\144\1\156\1\uffff\1\164\2\60\1\160\1\156\1\160\1\171\1"+
+        "\146\1\141\1\145\1\123\1\145\1\151\2\uffff\1\145\1\144\1\145\1\60"+
+        "\1\151\1\156\1\60\1\145\1\144\1\157\1\60\2\117\1\uffff\1\156\1\143"+
+        "\1\uffff\1\164\1\60\1\156\1\uffff\2\146\2\145\1\60\1\uffff\3\60"+
+        "\1\144\1\163\4\uffff\2\60\2\uffff";
     static final String DFA18_maxS =
         "\1\175\1\145\1\164\1\162\1\157\1\156\1\151\1\165\2\162\1\156\1\141"+
-        "\1\145\1\141\1\156\1\165\1\157\1\uffff\1\57\1\76\2\uffff\1\75\1"+
-        "\uffff\1\56\1\uffff\1\75\3\uffff\1\76\12\uffff\1\164\1\172\1\160"+
-        "\1\145\2\172\1\154\1\162\1\144\1\154\1\166\1\164\1\154\2\145\1\165"+
-        "\1\163\1\144\1\154\1\164\1\147\1\144\1\160\1\154\17\uffff\1\172"+
-        "\1\uffff\1\154\1\162\2\uffff\1\125\2\172\1\111\2\172\1\154\1\172"+
-        "\1\156\2\145\1\151\1\163\1\172\1\165\1\172\1\145\2\154\1\uffff\1"+
-        "\151\1\141\2\163\1\155\1\156\2\uffff\1\156\2\uffff\1\172\1\uffff"+
-        "\3\172\1\146\1\145\1\uffff\1\145\1\uffff\1\146\3\145\1\164\2\124"+
-        "\1\160\1\144\1\163\4\uffff\2\172\1\156\1\151\1\172\1\143\1\163\1"+
-        "\145\1\171\1\151\1\171\1\164\1\145\1\164\2\uffff\1\143\1\156\1\uffff"+
-        "\1\164\2\172\1\160\1\156\1\160\1\171\1\146\1\141\2\145\1\151\2\uffff"+
-        "\1\145\1\144\1\145\1\172\1\151\1\156\1\172\1\144\1\157\1\172\2\117"+
-        "\1\uffff\1\156\1\143\1\uffff\1\172\1\156\1\uffff\2\146\2\145\1\uffff"+
-        "\3\172\1\144\1\163\3\uffff\2\172\2\uffff";
+        "\1\145\1\141\1\162\1\156\1\165\1\157\1\uffff\1\57\1\76\2\uffff\1"+
+        "\75\1\uffff\1\56\1\uffff\1\75\3\uffff\1\76\12\uffff\1\164\1\172"+
+        "\1\160\1\145\2\172\1\154\1\162\1\144\1\154\1\166\1\164\1\154\2\145"+
+        "\1\165\1\163\1\144\1\154\1\164\1\147\2\144\1\160\1\154\17\uffff"+
+        "\1\172\1\uffff\1\154\1\162\2\uffff\1\125\2\172\1\111\2\172\1\154"+
+        "\1\172\1\156\2\145\1\151\1\163\1\172\1\165\1\172\2\145\2\154\1\uffff"+
+        "\1\151\1\141\2\163\1\155\1\156\2\uffff\1\156\2\uffff\1\172\1\uffff"+
+        "\3\172\1\146\1\145\1\uffff\1\145\1\uffff\1\162\1\146\3\145\1\164"+
+        "\2\124\1\160\1\144\1\163\4\uffff\2\172\1\156\1\145\1\151\1\172\1"+
+        "\143\1\163\1\145\1\171\1\151\1\171\1\164\1\145\1\164\2\uffff\1\143"+
+        "\1\144\1\156\1\uffff\1\164\2\172\1\160\1\156\1\160\1\171\1\146\1"+
+        "\141\1\145\1\123\1\145\1\151\2\uffff\1\145\1\144\1\145\1\172\1\151"+
+        "\1\156\1\172\1\145\1\144\1\157\1\172\2\117\1\uffff\1\156\1\143\1"+
+        "\uffff\1\164\1\172\1\156\1\uffff\2\146\2\145\1\172\1\uffff\3\172"+
+        "\1\144\1\163\4\uffff\2\172\2\uffff";
     static final String DFA18_acceptS =
-        "\21\uffff\1\36\2\uffff\1\42\1\43\1\uffff\1\47\1\uffff\1\52\1\uffff"+
-        "\1\55\1\56\1\57\1\uffff\1\62\1\65\1\66\1\67\1\70\1\71\1\73\1\74"+
-        "\1\75\1\76\30\uffff\1\37\1\40\1\72\1\41\1\63\1\45\1\46\1\44\1\51"+
-        "\1\50\1\54\1\53\1\61\1\64\1\60\1\uffff\1\2\2\uffff\1\17\1\4\23\uffff"+
+        "\22\uffff\1\37\2\uffff\1\43\1\44\1\uffff\1\50\1\uffff\1\53\1\uffff"+
+        "\1\56\1\57\1\60\1\uffff\1\63\1\66\1\67\1\70\1\71\1\72\1\74\1\75"+
+        "\1\76\1\77\31\uffff\1\40\1\41\1\73\1\42\1\64\1\46\1\47\1\45\1\52"+
+        "\1\51\1\55\1\54\1\62\1\65\1\61\1\uffff\1\2\2\uffff\1\17\1\4\24\uffff"+
         "\1\1\6\uffff\1\5\1\6\1\uffff\1\7\1\10\1\uffff\1\12\5\uffff\1\25"+
-        "\1\uffff\1\27\12\uffff\1\33\1\20\1\23\1\21\16\uffff\1\22\1\24\2"+
-        "\uffff\1\34\14\uffff\1\3\1\13\14\uffff\1\30\2\uffff\1\26\2\uffff"+
-        "\1\14\4\uffff\1\32\5\uffff\1\35\1\15\1\16\2\uffff\1\31\1\11";
+        "\1\uffff\1\27\13\uffff\1\34\1\20\1\23\1\21\17\uffff\1\22\1\24\3"+
+        "\uffff\1\35\15\uffff\1\3\1\13\15\uffff\1\31\2\uffff\1\26\3\uffff"+
+        "\1\14\5\uffff\1\33\5\uffff\1\30\1\36\1\15\1\16\2\uffff\1\32\1\11";
     static final String DFA18_specialS =
-        "\u00d2\uffff}>";
+        "\u00dd\uffff}>";
     static final String[] DFA18_transitionS = {
-            "\2\21\1\uffff\2\21\22\uffff\1\21\2\uffff\1\33\1\50\2\uffff\1"+
-            "\47\1\37\1\43\1\45\1\40\1\27\1\23\1\30\1\22\12\46\1\26\1\44"+
-            "\1\36\1\31\1\32\1\uffff\1\24\1\50\1\15\1\20\17\50\1\14\1\17"+
-            "\1\16\5\50\1\35\1\uffff\1\42\1\uffff\1\50\1\uffff\1\5\2\50\1"+
-            "\6\1\12\1\13\2\50\1\2\2\50\1\1\1\50\1\7\1\3\1\10\3\50\1\11\3"+
-            "\50\1\4\2\50\1\34\1\25\1\41",
-            "\1\51",
-            "\1\55\6\uffff\1\53\1\52\5\uffff\1\54",
-            "\1\57\16\uffff\1\56",
-            "\1\60",
-            "\1\62\1\uffff\1\61",
-            "\1\63",
-            "\1\64\5\uffff\1\65",
-            "\1\66",
-            "\1\67\11\uffff\1\70",
-            "\1\71\1\uffff\1\72",
-            "\1\73",
+            "\2\22\1\uffff\2\22\22\uffff\1\22\2\uffff\1\34\1\51\2\uffff\1"+
+            "\50\1\40\1\44\1\46\1\41\1\30\1\24\1\31\1\23\12\47\1\27\1\45"+
+            "\1\37\1\32\1\33\1\uffff\1\25\1\51\1\15\1\21\13\51\1\16\3\51"+
+            "\1\14\1\20\1\17\5\51\1\36\1\uffff\1\43\1\uffff\1\51\1\uffff"+
+            "\1\5\2\51\1\6\1\12\1\13\2\51\1\2\2\51\1\1\1\51\1\7\1\3\1\10"+
+            "\3\51\1\11\3\51\1\4\2\51\1\35\1\26\1\42",
+            "\1\52",
+            "\1\56\6\uffff\1\54\1\53\5\uffff\1\55",
+            "\1\60\16\uffff\1\57",
+            "\1\61",
+            "\1\63\1\uffff\1\62",
+            "\1\64",
+            "\1\65\5\uffff\1\66",
+            "\1\67",
+            "\1\70\11\uffff\1\71",
+            "\1\72\1\uffff\1\73",
             "\1\74",
             "\1\75",
             "\1\76",
             "\1\77",
             "\1\100",
+            "\1\101",
+            "\1\102",
             "",
-            "\1\102\4\uffff\1\101",
-            "\1\101\20\uffff\1\104",
+            "\1\104\4\uffff\1\103",
+            "\1\103\20\uffff\1\106",
             "",
             "",
-            "\1\106\2\uffff\1\107",
-            "",
-            "\1\111",
+            "\1\110\2\uffff\1\111",
             "",
             "\1\113",
             "",
-            "",
-            "",
-            "\1\115\1\116",
-            "",
+            "\1\115",
             "",
             "",
             "",
-            "",
+            "\1\117\1\120",
             "",
             "",
             "",
             "",
             "",
-            "\1\120",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\122",
-            "\1\123",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\1\126",
-            "\1\127",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\1\124",
+            "\1\125",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\130",
             "\1\131",
             "\1\132",
@@ -2861,154 +2891,166 @@ public class OCLLexer extends Lexer {
             "\1\140",
             "\1\141",
             "\1\142",
-            "\1\144\2\uffff\1\143",
-            "\1\145",
-            "\1\146",
+            "\1\143",
+            "\1\144",
+            "\1\146\2\uffff\1\145",
             "\1\147",
             "\1\150",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "",
+            "\1\151",
             "\1\152",
             "\1\153",
             "",
             "",
-            "\1\154\3\uffff\1\156\3\uffff\1\155\13\uffff\1\157",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\1\162",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "",
+            "\1\155",
+            "\1\156",
+            "",
+            "",
+            "\1\157\3\uffff\1\161\3\uffff\1\160\13\uffff\1\162",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\165",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\1\167",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\170",
-            "\1\171",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\172",
             "\1\173",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "\1\174",
             "\1\175",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\1\177",
+            "\1\176",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u0080",
-            "\1\u0081",
-            "",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u0082",
             "\1\u0083",
             "\1\u0084",
             "\1\u0085",
+            "",
             "\1\u0086",
             "\1\u0087",
-            "",
-            "",
             "\1\u0088",
+            "\1\u0089",
+            "\1\u008a",
+            "\1\u008b",
             "",
             "",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "\1\u008c",
             "",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\1\u008d",
-            "\1\u008e",
             "",
-            "\1\u008f",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "",
-            "\1\u0090",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u0091",
             "\1\u0092",
+            "",
             "\1\u0093",
+            "",
             "\1\u0094",
             "\1\u0095",
-            "\1\u0096\10\uffff\1\u0097",
+            "\1\u0096",
+            "\1\u0097",
             "\1\u0098",
             "\1\u0099",
             "\1\u009a",
-            "",
-            "",
-            "",
-            "",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "\1\u009b\10\uffff\1\u009c",
             "\1\u009d",
             "\1\u009e",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\1\u00a0",
-            "\1\u00a1",
+            "\1\u009f",
+            "",
+            "",
+            "",
+            "",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u00a2",
             "\1\u00a3",
             "\1\u00a4",
-            "\1\u00a5",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u00a6",
             "\1\u00a7",
             "\1\u00a8",
-            "",
-            "",
             "\1\u00a9",
             "\1\u00aa",
-            "",
             "\1\u00ab",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "\1\u00ac",
+            "\1\u00ad",
             "\1\u00ae",
+            "",
+            "",
             "\1\u00af",
             "\1\u00b0",
             "\1\u00b1",
+            "",
             "\1\u00b2",
-            "\1\u00b3",
-            "\1\u00b4",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u00b5",
             "\1\u00b6",
-            "",
-            "",
             "\1\u00b7",
             "\1\u00b8",
             "\1\u00b9",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "\1\u00ba",
             "\1\u00bb",
             "\1\u00bc",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "\1\u00bd",
             "\1\u00be",
-            "\1\u00bf",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\1\u00c1",
-            "\1\u00c2",
             "",
+            "",
+            "\1\u00bf",
+            "\1\u00c0",
+            "\1\u00c1",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u00c3",
             "\1\u00c4",
-            "",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u00c6",
-            "",
             "\1\u00c7",
             "\1\u00c8",
-            "\1\u00c9",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "\1\u00ca",
+            "\1\u00cb",
             "",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "\1\u00cc",
+            "\1\u00cd",
+            "",
             "\1\u00ce",
-            "\1\u00cf",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\1\u00d0",
+            "",
+            "\1\u00d1",
+            "\1\u00d2",
+            "\1\u00d3",
+            "\1\u00d4",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\1\u00d9",
+            "\1\u00da",
             "",
             "",
             "",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
-            "\12\50\7\uffff\32\50\4\uffff\1\50\1\uffff\32\50",
+            "",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
+            "\12\51\7\uffff\32\51\4\uffff\1\51\1\uffff\32\51",
             "",
             ""
     };
@@ -3043,7 +3085,7 @@ public class OCLLexer extends Lexer {
             this.transition = DFA18_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | RANGE_OR_INT | STRING | IDENT );";
+            return "1:1: Tokens : ( T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | RANGE_OR_INT | STRING | IDENT );";
         }
     }
  

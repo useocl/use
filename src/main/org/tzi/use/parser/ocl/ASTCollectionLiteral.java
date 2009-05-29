@@ -30,6 +30,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpBagLiteral;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.ocl.expr.ExpOrderedSetLiteral;
 import org.tzi.use.uml.ocl.expr.ExpSequenceLiteral;
 import org.tzi.use.uml.ocl.expr.ExpSetLiteral;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -89,6 +90,8 @@ public class ASTCollectionLiteral extends ASTExpression {
                 return new ExpBagLiteral(eArgs);
             else if (opname.equals("mkSequence") )
                 return new ExpSequenceLiteral(eArgs);
+            else if (opname.equals("mkOrderedSet"))
+            	return new ExpOrderedSetLiteral(eArgs);
             else
                 return genStdOperation(ctx, fToken, opname, eArgs);
         } catch (ExpInvalidException ex) {

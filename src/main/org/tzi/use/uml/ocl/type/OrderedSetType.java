@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
+// $Id: SequenceType.java 194 2009-04-02 10:26:53Z lars $
 
 package org.tzi.use.uml.ocl.type;
 
@@ -26,38 +26,56 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * The OCL Bag type.
+ * The OCL Sequence type.
  *
  * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author  Lars Hamann
  * @see     SetType
+ * @see     SequenceType
  */
-public final class BagType extends CollectionType {
+public final class OrderedSetType extends CollectionType {
 
-    public BagType(Type elemType) {
+    public OrderedSetType(Type elemType) {
         super(elemType);
     }
 
     public String shortName() {
         if (elemType().isCollection() )
-            return "Bag(...)";
+            return "OrderedSet(...)";
         else 
-            return "Bag(" + elemType() + ")";
+            return "OrderedSet(" + elemType() + ")";
     }
 
     public boolean isTrueCollection() {
     	return false;
     }
-
-    public boolean isBag() {
+    
+    public boolean isSequence() {
+    	return false;
+    }
+    
+    public boolean isOrderedSet() {
     	return true;
+    }
+    public Type getLeastCommonSupertype(Type type)
+    {
+    	if (!type.isCollection())
+    		return null;
+    	
+    	CollectionType cType = (CollectionType)type;
+    	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
+    	
+    	if (type.isOrderedSet())
+    		return TypeFactory.mkOrderedSet(commonElementType);
+    	else
+    		return TypeFactory.mkCollection(commonElementType);
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-        if (! t.isTrueCollection() && ! t.isBag() )
+        if (! t.isTrueCollection() && ! t.isOrderedSet() )
             return false;
 
         CollectionType t2 = (CollectionType) t;
@@ -68,8 +86,8 @@ public final class BagType extends CollectionType {
 
     /** 
      * Returns the set of all supertypes (including this type).  If
-     * this collection has type Bag(T) the result is the set of
-     * all types Bag(T') and Collection(T') where T' <= T.
+     * this collection has type Sequence(T) the result is the set of
+     * all types Sequence(T') and Collection(T') where T' <= T.
      */
     public Set allSupertypes() {
         Set res = new HashSet();
@@ -78,29 +96,12 @@ public final class BagType extends CollectionType {
         Iterator typeIter = elemSuper.iterator();
         while (typeIter.hasNext() ) {
             Type t = (Type) typeIter.next();
-            res.add(TypeFactory.mkBag(t));
+            res.add(TypeFactory.mkOrderedSet(t));
         }
         return res;
     }
 
-    public Type getLeastCommonSupertype(Type type)
-    {
-    	if (!type.isCollection())
-    		return null;
-    	
-    	CollectionType cType = (CollectionType)type;
-    	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
-    	
-    	if (commonElementType == null)
-    		return null;
-    	
-    	if (type.isBag())
-    		return TypeFactory.mkBag(commonElementType);
-    	else
-    		return TypeFactory.mkCollection(commonElementType);
-    }
-    
     public String toString() {
-        return "Bag(" + elemType() + ")";
+        return "OrderedSet(" + elemType() + ")";
     }
 }

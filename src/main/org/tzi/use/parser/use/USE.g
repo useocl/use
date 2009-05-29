@@ -936,13 +936,13 @@ literal returns [ASTExpression n]
 
 /* ------------------------------------
   collectionLiteral ::= 
-    ( "Set" | "Sequence" | "Bag" ) "{" collectionItem { "," collectionItem } "}"
+    ( "Set" | "Sequence" | "Bag" | "OrderedSet" ) "{" collectionItem { "," collectionItem } "}"
 */
 collectionLiteral returns [ASTCollectionLiteral n]
 @init { Token op = null; }
 :
     { op = input.LT(1); } 
-    ( 'Set' | 'Sequence' | 'Bag' ) 
+    ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) 
     { $n = new ASTCollectionLiteral(op); }
     LBRACE 
     (
@@ -1059,13 +1059,13 @@ simpleType returns [ASTSimpleType n]
 
 /* ------------------------------------
   collectionType ::= 
-    ( "Collection" | "Set" | "Sequence" | "Bag" ) "(" type ")"
+    ( "Collection" | "Set" | "Sequence" | "Bag" | "OrderedSet" ) "(" type ")"
 */
 collectionType returns [ASTCollectionType n]
 @init { Token op = null; }
 :
     { op = input.LT(1); } 
-    ( 'Collection' | 'Set' | 'Sequence' | 'Bag' ) 
+    ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) 
     LPAREN elemType=type RPAREN
     { $n = new ASTCollectionType(op, $elemType.n); $n.setStartToken(op);}
     ;

@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
@@ -46,9 +47,11 @@ public class ExpCollect extends ExpQuery {
         throws ExpInvalidException
     {
         // result type is bag or sequence of query expression type
-        super( rangeExp.type().isSequence()
-               ? (Type) TypeFactory.mkSequence(queryExp.type())
-               : (Type) TypeFactory.mkBag(queryExp.type()), 
+        super( rangeExp.type().isSequence() || rangeExp.type().isOrderedSet()
+               ? (Type) TypeFactory.mkSequence(
+            		   (queryExp.type().isCollection() ? ((CollectionType)queryExp.type()).elemType() : queryExp.type()))
+               : (Type) TypeFactory.mkBag(
+            		   (queryExp.type().isCollection() ? ((CollectionType)queryExp.type()).elemType() : queryExp.type())), 
                ( elemVarDecl != null ) 
                ? new VarDeclList(elemVarDecl) 
                : new VarDeclList(true),
