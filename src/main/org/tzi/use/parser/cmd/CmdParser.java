@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2009-05-18 17:15:33
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2009-06-04 18:03:26
  
 /*
  * USE - UML based specification environment
@@ -6995,8 +6995,8 @@ public class CmdParser extends BaseParser {
     static final String DFA3_maxS =
         "\1\67\1\7\11\uffff\1\12\1\7\1\uffff\1\67\1\uffff";
     static final String DFA3_acceptS =
-        "\2\uffff\1\2\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\2\uffff\1\1\1\uffff"+
-        "\1\3";
+        "\2\uffff\1\2\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\2\uffff\1\1\1"+
+        "\uffff\1\3";
     static final String DFA3_specialS =
         "\20\uffff}>";
     static final String[] DFA3_transitionS = {
@@ -7065,10 +7065,10 @@ public class CmdParser extends BaseParser {
     static final String DFA9_specialS =
         "\1\0\1\1\35\uffff}>";
     static final String[] DFA9_transitionS = {
-            "\1\24\2\uffff\1\17\1\22\11\uffff\1\5\6\uffff\2\2\5\uffff\1\6"+
-            "\1\7\1\10\10\uffff\2\24\1\uffff\2\24\1\uffff\1\24\1\uffff\3"+
-            "\24\1\1\1\24\30\uffff\1\23\15\uffff\1\2\1\uffff\1\20\3\21\1"+
-            "\3\1\4\4\11\1\12\1\13\1\14\1\15\1\16",
+            "\1\24\2\uffff\1\17\1\22\11\uffff\1\5\6\uffff\2\2\5\uffff\1"+
+            "\6\1\7\1\10\10\uffff\2\24\1\uffff\2\24\1\uffff\1\24\1\uffff"+
+            "\3\24\1\1\1\24\30\uffff\1\23\15\uffff\1\2\1\uffff\1\20\3\21"+
+            "\1\3\1\4\4\11\1\12\1\13\1\14\1\15\1\16",
             "\1\uffff",
             "",
             "",

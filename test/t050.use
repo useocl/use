@@ -1,0 +1,20 @@
+model VehicleHierarchy
+
+class Vehicle 
+attributes
+  name : String
+end
+
+class Ship < Vehicle end
+
+class Car < Vehicle end
+
+class EconomicalCar < Car end
+
+class FuelGuzzlingCar < Car 
+attributes
+  consumption : Integer
+end
+
+class AmphibianCar < Ship, Car 
+end

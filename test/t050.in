@@ -1,0 +1,14 @@
+!create amphCar:AmphibianCar
+!create fuelCar:FuelGuzzlingCar
+!create econCar:EconomicalCar
+!create ship:Ship
+?Set{econCar, fuelCar}
+*->Set{@econCar, @fuelCar} : Set(Car)
+?Set{econCar, fuelCar, amphCar}
+*->Set{@econCar, @fuelCar, @amphCar} : Set(Car)
+?Set{econCar, fuelCar, amphCar, ship}
+*->Set{@econCar, @fuelCar, @amphCar, @ship} : Set(Vehicle)
+?Set{amphCar, ship}
+*->Set{@amphCar, @ship} : Set(Ship)
+?Set{econCar, fuelCar, amphCar, ship, 'Hello'}
+*->Set{@econCar, @fuelCar, @amphCar, @ship, 'Hello'} : Set(OclAny)
