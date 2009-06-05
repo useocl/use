@@ -5,24 +5,6 @@ $ReleaseVersion: 2.3.1 $
 This file documents issues related to the implementation of OCL in
 USE.
 
-* OCL syntax:
-
-  - Implicit flattening is only done when used with the shorthand
-    notation for collect. You can always explicitly flatten a
-    collection with the `flatten' operation that has been added in
-    USE. For example,
-
-        company.branches->collect(c | c.employees)
-
-    results in Bag(Set(Employee)). This result value can be flattened
-    into a Bag(Employee) by using the following expression:
-
-        company.branches->collect(c | c.employees)->flatten
-
-  - Type checking requires that empty collections must be specified as
-    oclEmpty(<collection-type>). For example, oclEmpty(Set(Integer))
-    instead of Set{}.
-
 * OCL semantics:
 
   - Note that some OCL operations are non-deterministic, e.g.,
@@ -32,9 +14,16 @@ USE.
 
 
 * OCL extensions/variations:
+  - Invariants can be marked as "existential", e. g.,
+    context Person existential inv bossExists:
+        self.isBoss = true
+    When no instance of a person is created or no boss exists this 
+    invariant will evaluate to false (instead of "normal" invariants,
+    where ist will evaluate to true, if no person is instanciated.
 
-  - Collection types can be nested to any level, e.g.,
-    Bag(Set(Sequence(Person))).
+  - Invariants can have multiple variables, e. g.,
+    context p1, p2:Person inv nameUnique
+        p1.name = p2.name implies p1 = p2
 
   - All types include an undefined value. For example, the expression
     1/0 results in the value "undefined" of type Integer. Checking for
