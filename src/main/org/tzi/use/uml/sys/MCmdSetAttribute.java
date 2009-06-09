@@ -145,10 +145,17 @@ public final class MCmdSetAttribute extends MCmd {
      * achieving the same effect of this command.  
      */
     public String getUSEcmd() {
+    	
+    	String attExp = fAttrExpr.toString();
+    	// If direct object access an extra @ is prepended.
+    	// This cannot be read by the cmd interpreter. 
+    	if (attExp.startsWith("@"))
+    		attExp = attExp.substring(1);
+    	
         // replaces('$', ' ') is used in case there was an implicit
         // collect than variables like `$e' are inserted and can not
         // be read by USE again.
-        return ("!set " + fAttrExpr + " := " + fSetExpr).replace('$', ' ');
+        return ("!set " + attExp + " := " + fSetExpr).replace('$', ' ');
     }
 
     /**

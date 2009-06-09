@@ -1,0 +1,56 @@
+-- This sample is based from the Paper "UML 2 Composition Model" by
+-- Conrad Bock, published in the "Journal of Object Technology" 
+-- Vol. 3, No. 10, November - December 2004
+model Composition1
+
+class Car
+  attributes
+    name : String
+end
+
+class Wheel
+end
+
+class Engine
+end
+
+class Boat
+end
+
+class Propeller
+end
+
+composition DrivesOn between
+  Car[1]
+  Wheel[4]
+end
+
+composition CarPoweredBy between
+  Car[0..1]
+  Engine[1]
+end
+
+composition BoatPoweredBy between
+  Boat[0..1]
+  Engine[1]
+end
+
+composition DrivesWith between
+  Boat[1]
+  Propeller[1..4]
+end
+
+association PowersWheel between
+  Engine[0..1]
+  Wheel[0..2]
+end
+
+association PowersPropeller between
+  Engine[0..1]
+  Propeller[0..1]
+end
+
+constraints
+
+context Car inv nameGiven:
+  self.name.isDefined()

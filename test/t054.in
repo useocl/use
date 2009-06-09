@@ -1,0 +1,20 @@
+gen start -r 6589 t054.assl createState(1, 1)
+gen result
+*Random number generator was initialized with 6589.
+*Checked 253973 snapshots.
+*Result: Valid state found.
+*Commands to produce the valid state:
+*!create Car1 : Car
+*!create Boat1 : Boat
+*!create Engine1,Engine2 : Engine
+*!create Wheel1,Wheel2,Wheel3,Wheel4 : Wheel
+*!create Propeller1 : Propeller
+*!set Car1.name := 'Audi A4'
+*!insert (Car1,Engine1) into CarPoweredBy
+*!insert (Car1,Wheel4) into DrivesOn
+*!insert (Car1,Wheel3) into DrivesOn
+*!insert (Car1,Wheel2) into DrivesOn
+*!insert (Car1,Wheel1) into DrivesOn
+*!insert (Boat1,Engine2) into BoatPoweredBy
+*!insert (Boat1,Propeller1) into DrivesWith
+exit

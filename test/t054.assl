@@ -1,0 +1,26 @@
+procedure createState( numOfCars: Integer, numOfBoats: Integer )
+  var cars: Sequence(Car),
+      boats: Sequence(Boat),
+      engines: Sequence(Engine),
+      wheels: Sequence(Wheel),
+      propeller: Sequence(Propeller),
+      carNames: Sequence(String);
+begin
+  cars := CreateN( Car, [numOfCars] );
+  boats := CreateN( Boat, [numOfBoats] );
+  engines := CreateN( Engine, [numOfCars + numOfBoats] );
+  wheels := CreateN( Wheel, [numOfCars * 4] );
+  propeller := CreateN( Propeller, [numOfBoats] );
+  carNames := [Sequence{'Audi A4', 'Audi A3'}];
+  
+  for c: Car in [cars] begin
+    [c].name := Any([carNames]);
+  end;
+
+  Try(CarPoweredBy, [cars], [engines]);
+  Try(DrivesOn, [cars], [wheels]);
+  Try(PowersWheel, [engines], [wheels]);
+  Try(BoatPoweredBy, [boats], [engines]);
+  Try(DrivesWith, [boats], [propeller]);
+  Try(PowersPropeller, [engines], [propeller]);
+end;
