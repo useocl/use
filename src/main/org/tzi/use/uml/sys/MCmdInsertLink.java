@@ -61,7 +61,7 @@ public final class MCmdInsertLink extends MCmd {
         super(true);
         fSystemState = systemState;
         fObjectExprs = exprs;
-        fObjects = new MObjectImpl[fObjectExprs.length];
+        fObjects = new MObject[fObjectExprs.length];
         fAssociation = assoc;
     }
 
@@ -70,7 +70,7 @@ public final class MCmdInsertLink extends MCmd {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
         VarBindings varBindings = fSystemState.system().topLevelBindings();
         List assocEnds = fAssociation.associationEnds();
 

@@ -66,7 +66,7 @@ public final class MCmdSetAttribute extends MCmd {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
         VarBindings varBindings = fSystemState.system().topLevelBindings();
 
         // get source expression and evaluate to object

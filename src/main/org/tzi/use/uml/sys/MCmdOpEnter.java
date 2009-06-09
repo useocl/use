@@ -63,7 +63,7 @@ public final class MCmdOpEnter extends MCmd {
      * @exception CommandFailedException
      *                if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
         fSuccessful = fSystemState.system().enterOperation(fOpCall,
                 new PrintWriter(Log.out()));
         // fSystemState.system().enterOperation(fOpCall, new

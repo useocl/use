@@ -29,7 +29,8 @@ package org.tzi.use.util.cmd;
  */
 public abstract class Command {
     private boolean fCanUndo;
-
+    private boolean executed = false;
+    
     protected Command(boolean canUndo) {
         fCanUndo = canUndo;
     }
@@ -39,8 +40,14 @@ public abstract class Command {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public abstract void execute() throws CommandFailedException;
+    public final void execute() throws CommandFailedException
+    {
+    	doExecute();
+    	executed = true;
+    }
 
+    protected abstract void doExecute() throws CommandFailedException;
+    
     /**
      * Undo effect of executing a command.
      *
@@ -65,5 +72,14 @@ public abstract class Command {
      */
     public final boolean canUndo() {
         return fCanUndo; 
+    }
+    
+    /**
+     * Returns true, if command was executed successfull
+     * @return
+     */
+    public final boolean hasExecuted()
+    {
+    	return executed;
     }
 }

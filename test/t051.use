@@ -1,0 +1,543 @@
+/* 
+ * Fichier     : MGL806_G01_ANDJ_WebEval.use
+ * Etudiant    : Jean ANDRÉ
+ * Programme   : Génie Logiciel - 3822
+ * Cours       : MGL806 - Méthodes formelles et semi-formelles
+ * Professeur  : Sylvie Ratté - sylvieratte@gmail.com / sylvie.ratte@etsmtl.ca
+ *             :
+ * Intra       : 3 étape, 5% de la note
+ *             :
+ * Objectif    : Mise en pratique d'OCL
+ *             : 
+ *             : - 4 invariants non triviaux
+ *             : - 2 opérations (comprenant minimalement 2 pré conditions)
+ *             : - 1 requête non triviale
+ *
+ *
+ * Ce diagramme de classes décrit le système de révision par les pairs.
+ *
+ * Niveau de détail : Moyen - Sea level.
+ *
+ */
+
+
+model MGL806_G01_ANDJ_WebEval
+
+/**
+ * Personne, est une personne physique qui peut être un étudiant, un professeur/enseignat ou une
+ * personne à contrat. Une personne devient correcteur lorsque le département lui
+ * attribue un groupe-cours (c'est alors un enseignant) ou si la personne a un contrat en bonne
+ * et due forme du département.
+ *
+ *
+ **/
+class Personne
+   attributes
+      CodePermanent : String
+      Nom           : String
+      Prenom        : String
+      Courriel      : String
+operations 
+    modifier()
+end
+
+
+/**
+ * La session définie une période dans une année. Elle est associée à un numéro qui définit une saison dans l'année.
+ * Ainsi 1=Hiver, 2=Eté, 3=Automne. L'identifiant complet de la session se définit par l'année et son numéro de saison.
+ * Ex: 200902 = Session d'Été 2009.
+ *
+ **/
+class Session
+   attributes
+      Annee         : Integer
+      NbSession     : Integer
+end
+
+
+/**
+ * Le Cours définit l'unité d'enseignement et se compose d'un sigle. Ex: MGL806
+ *
+ *
+ **/
+class Cours
+   attributes
+      Sigle         : String
+end
+
+
+/**
+ * Un groupeCours l'instance concrète d'un cours associé à une session. Ainsi l'identifiant unique
+ * d'un Groupe-Cours se construit à partir du numéro de session (Année+saison, ex: 20092 => Ete 2009),
+ * du sigle du Cours (ex. MGL806) et du numéro de groupe (Ex: 200902MGL80601). Un groupe-Cours est donné
+ * par un enseignant, possède un correcteur et des élèves inscrits.
+ *
+ *
+ **/
+associationclass GroupeCours
+   between
+   Cours[0..*]
+   Session[0..*]
+   attributes
+      IdsCours      : String
+   operations 
+      ajouterEquipe()
+      supprimerEquipe()
+      ajouterEnonce()
+      suppressionEnonce()
+end
+
+
+/**
+ * Resultats conserve la note finale de chaque étudiant pour un cours donné.
+ *
+ **/
+associationclass Resultats
+   between
+   GroupeCours[0..*] role coursInscrit
+   Personne[0..*] role etudiantInscrit
+   attributes
+      NoteFinale   : Real
+end
+
+
+/**
+ * L'énoncé existe en soi et l'ensemble des enoncés forme une bibbliothèque d'énoncés.
+ * Il se compose de thèmes d'évaluation. Ces derniers permettront de bâtir la grille
+ * d'évaluation (ou formulaire) correspondante à l'activitée.
+ * Lorsqu'associé à une activité (notée), l'énoncé décrit l'activité et sert donc l'étudiant
+ * qui en prend connaissance.
+ *
+ *
+ **/
+class Enonce
+   attributes
+      Titre        : String
+operations 
+    modifier()
+    supprimer()
+    ajouterTheme()
+    supprimerTheme()
+end
+
+
+/**
+ * ThemeEvaluation, un thème d'évaluation est un thème sur lequel l'activité (notée) sera évaluée (ou notée).
+ * Un thème d'évaluation existe en soi et l'ensemble des thèmes d'évaluation forme une bibliothèque de thèmes.
+ *
+ *
+ **/
+class ThemeEvaluation
+   attributes
+      NomTheme        : String
+      Description     : String
+      Ponderation     : Integer
+      AvecCommentaire : Boolean
+end
+
+
+/**
+ * Le Travail ou encore "réalisation concrète" est le produit d'un ou plusieurs étudiants.
+ * A un travail donné correspond une activité (notée). Un travail donné est évalué par un correcteur
+ * et/ou par une équipe en remplissant une grille d'évaluation.
+ *
+ *
+ **/
+class Travail
+   attributes
+      NoteOfficielle : Real
+   operations
+      /**
+       * Retourne la liste des travaux qui ont une grille d'évaluation pour un étudiant donné et
+       * ayant une note minimale donnée.
+       *
+       * @param etu  L'étudiant en question
+       * @param note Une note sous forme d'entier
+       *
+       **/
+      getListeTravauxAvecGrille(etu : Personne, note: Real) : Set(Travail) =
+etu.listeDesRealisations->select(t : Travail |
+t.evaluationGrille->select(evg : EvaluationGrille | evg.NoteAttribuee >=
+note)->size() > 0)
+      
+      /**
+       * Retourne la liste des travaux pour un étudiant et un correcteur donnés
+       *
+       **/
+       getListeTravauxEtudiantAvecCorrecteur(etu : Personne, correcteur : Personne) : Set(Travail) = 
+etu.listeDesRealisations->intersection(correcteur.coursCorriges.activiteNotee.realisationConcrete)
+end
+
+
+/**
+ * L'Activité Notée compose un Groupe-Cours en segmentant la durée du Groupe-Cours en un certain
+ * nombre d'activités. Il existe plusieurs types d'activité dont les présentations, les laboratoires,
+ * les rapports, les examens et les devoirs. L'activité est décrite par un énoncé et possède un seul
+ * état à un moment donné (Inacessible, Remise Travaux, Evaluation Travaux, Evaluation Terminée).
+ * L'activité est pratiqué par les étudiants ou une équipe qui remettent un travail encore appelé
+ * "réalisation concrète".
+ *
+ *
+ **/
+class ActiviteNotee
+   attributes
+      Ponderation       : Integer
+      Maximum           : Integer
+      EstEnEquipe       : Boolean
+      EstEvalueParPairs : Boolean
+end
+
+
+/**
+ * Une équipe est un ensemble d'étudiants pour un Groupe-Cours donné. Une équipe possède un responsable
+ * et est constitué d'un ou plusieurs élèves.
+ *
+ *
+ **/
+class Equipe
+   attributes
+      Titre        : String
+      Description  : Integer
+      Logo         : String
+
+operations 
+    modifier()
+    ajouterMembre( p : Personne) : Boolean
+       pre:  self.equipeEtudiant->size() < 4
+       pre:  self.equipeEtudiant->includes(p) = false
+
+    supprimerMembre( p : Personne) : Boolean
+       pre:  self.equipeEtudiant->includes(p) = true
+end
+
+
+/**
+ * La grille d'évaluation ou encore formulaire d'évaluation est le résultat d'une correction par les pairs
+ * c.a.d par les étudiants eux-mêmes. La grille est constituée d'éléments d'évaluation dont chacun correspond
+ * à un thème d'évaluation. La liste des thèmes disponibles dans une grille est définie par l'énoncé attachée à
+ * l'activité notée. La grille d'évaluation est saisie par une équipe qui attribue une note au travail, la note attribuée.
+ *
+ *
+ **/
+class EvaluationGrille
+   attributes
+      NoteAttribuee : Real
+   operations
+      /**
+       * Calculer de la moyenne arithmétique en additionnant les notes de l'ensembles des thèmes en le divisant
+       * par le nombre de themes de la grille.
+       *
+       **/
+      CalculerNoteAttribue() : Real = self.evaluationElement.Note->sum() /
+self.evaluationElement->size()
+end
+
+
+/**
+ * Un élément d'évaluation est étroitement lié à une grille d'évaluation. Il en existe plusieurs types et il permet d'attribuer
+ * une note sur un aspect (un thème) particulier du travail.
+ *
+ *
+ **/
+class EvaluationElement
+   attributes
+      Commentaire : String
+      Note        : Real
+end
+
+
+/**
+ * Une personne appartient à une équipe. Elle peut faire partie d'une autre equipe tant et pour autant
+ * qu'il s'agit d'un GroupeCours different.
+ *
+ **/
+associationclass EquipePersonne
+   between
+    Personne[0..4] role equipeEtudiant
+    Equipe[0..*] role equipeCours ordered
+   attributes
+      Surnom         : String
+      NomUtilisateur : String
+      EstResponsable : Boolean
+end
+
+
+
+/*
+ * ---------------------------------------------------------
+ *
+ *      BASE ET SOUS CLASSE ETAT DE L'ACTIVITE NOTEE
+ *
+ * ---------------------------------------------------------
+ */
+class EtatActivite
+end
+
+class Inaccessible < EtatActivite
+end
+
+class RemiseTravaux < EtatActivite
+end
+
+
+class EvaluationTravaux < EtatActivite
+end
+
+class EvaluationTerminee < EtatActivite
+end
+
+
+
+/*
+ * ---------------------------------------------------------
+ *
+ *      BASE ET SOUS CLASSES DE ENONCÉ->DOCUMENT
+ *
+ * ---------------------------------------------------------
+ */
+class Document
+end
+
+class Description < Document
+end
+
+
+/*
+ * ---------------------------------------------------------
+ *
+ *          SOUS CLASSES D'ACTIVITE NOTEE
+ *
+ * ---------------------------------------------------------
+ */
+class Presentation < ActiviteNotee
+end
+
+class Laboratoire < ActiviteNotee
+end
+
+class Rapport < ActiviteNotee
+end
+
+class Examen < ActiviteNotee
+end
+
+class Devoir < ActiviteNotee
+end
+
+
+/*
+ * ---------------------------------------------------------
+ *
+ *          SOUS CLASSES THEME D'EVALUATION
+ *
+ * ---------------------------------------------------------
+ */
+class Maintenabilite < ThemeEvaluation
+end
+
+class Convivialite < ThemeEvaluation
+end
+
+class Robustesse < ThemeEvaluation
+end
+
+class Performance < ThemeEvaluation
+end
+
+
+/*
+ * ---------------------------------------------------------
+ *
+ *          LES ASSOCIATIONS
+ *
+ * ---------------------------------------------------------
+ */
+
+association Inscrit between
+    Personne[0..*] role etudiant
+    GroupeCours[0..*] role coursInscrits
+end
+
+association Enseigne between
+    Personne[0..1] role enseignant
+    GroupeCours[0..*] role coursEnseignes
+end
+
+association Corrige between
+    Personne[0..1] role correcteur
+    GroupeCours[0..*] role coursCorriges
+end
+
+association NoterOfficiellement between
+    Personne[1] role correcteur
+    ActiviteNotee[0..*] role travauxAEvaluer
+end
+
+association Realise between
+    Personne[1..*] role etudiant
+    Travail[0..*] role listeDesRealisations
+end
+
+aggregation TravailRemis between
+    ActiviteNotee[1]
+    Travail[0..*] role realisationConcrete
+end
+
+aggregation Gere between
+    Personne[1]
+    Enonce[0..*]
+end
+
+aggregation Contient between
+    Enonce[0..*]
+    ThemeEvaluation[0..*]
+end
+
+composition Possede between
+    EvaluationGrille[1]
+    EvaluationElement[0..*]
+end
+
+association Refere between
+    EvaluationElement[0..*]
+    ThemeEvaluation[1]
+end
+
+aggregation Dispose between
+    Enonce[0..*]
+    Document[0..*]
+end
+
+association EstEvalue between
+    Travail[1]
+    EvaluationGrille[0..*]
+end
+
+association Saisir between
+    Equipe[1] role uneEquipe
+    EvaluationGrille[0..5]
+end
+
+association Execute between
+    Equipe[1] role oneEquipe
+    Travail[0..*] role listeDesRealisations
+end
+
+association FaireRevue between
+    Equipe[0..*] role lesEquipes
+    Travail[0..*] role travauxAEvaluer
+end
+
+association APourResponsable between
+    Equipe[0..*]
+    Personne[1]
+end
+
+association EstDecrit between
+    ActiviteNotee[0..*]
+    Enonce[0..1]
+end
+
+association EstEn between
+    ActiviteNotee[0..*]
+    EtatActivite[1]
+end
+
+association EstConstitue between
+    GroupeCours[1]
+    ActiviteNotee[0..*]
+end
+
+
+/*
+ * ---------------------------------------------------------
+ *
+ *          LES CONTRAINTES
+ *
+ * ---------------------------------------------------------
+ */
+
+constraints
+
+/**
+ * 1ER INVARIANT SET
+ * -----------------
+ * Les thèmes contenu dans la grille d'évaluation d'un travail donné doivent être strictement identiques
+ * avec les thèmes d'un énoncé d'une activité donnée.
+ * 
+ *  1) La taille de la liste de la grille == La taille de la liste des thèmes de l'énoncé
+ *  2) Le theme de la liste de la grille appartient à La liste des themes de l'énoncé
+ *  3) Chaque élément doit apparaître 1 seule fois dans la liste
+ *  4) Les themes pour une grille d'evaluation ou pour un enoncé ne peut être vide
+ *
+ * Pour faire la comparaison, cela nécessite que l'énoncé soit utilisée par une activité notée et que
+ * la grille d'évaluation corresponde à un travail de la même activitée notée.
+ *
+ **/
+context Travail
+   inv A1 : self.evaluationGrille.evaluationElement->size() =
+self.activiteNotee.enonce.themeEvaluation->size()
+   inv A2 : self.evaluationGrille.evaluationElement->notEmpty() and
+self.activiteNotee.enonce.themeEvaluation->notEmpty()
+   inv A3 :
+self.evaluationGrille.evaluationElement.themeEvaluation->includesAll(self.activiteNotee.enonce.themeEvaluation)
+
+/**
+ * 2EME INVARIANT SET
+ * ------------------
+ * Tout enseignant est un correcteur autorisé. Dès que le département attribue un groupe-cours à un enseignant,
+ * il en devient automatiquement le correcteur. Par conséquent, le correcteur d'une activité notée doit être un 
+ * enseignant du groupe-cours dont est issue l'activité.
+ * 
+ *
+ **/
+context ActiviteNotee
+   inv A1:
+self.correcteur.coursCorriges->intersection(Set{self.groupeCours})->size() = 1
+   
+/**
+ * 3EME INVARIANT SET
+ * ------------------
+ * Les activités réalisées par un étudiant font nécessairement parties des activités notées
+ * prévues au groupe-cours auxquels il est inscrit. Ainsi donc, le nombre de réalisations
+ * effectuées devrait toujours être inférieur ou égal au nombre d'activités notées au cours
+ * correspondant.
+ * 
+ *
+ **/
+ context Personne
+    inv A1 : self.listeDesRealisations->forAll( r : Travail |
+self.coursInscrits->intersection( Set{r.activiteNotee.groupeCours})->size()
+= 1 )
+    inv A2 : self.coursInscrits->forAll(g : GroupeCours |
+g.activiteNotee->size() >= self.listeDesRealisations->select(t |
+t.activiteNotee.groupeCours = g)->size() )
+  
+  
+/**
+ * 4EME INVARIANT SET
+ * ------------------
+ * 
+ *
+ *
+ **/
+
+
+/*
+ * ---------------------------------------------------------
+ *
+ *             PRE-POST CONDITION  (voir aussi au dessus)
+ *
+ * ---------------------------------------------------------
+ */
+context EvaluationGrille::CalculerNoteAttribue() : Real
+   -- L'attribution de la note ne peut se faire que si et seulement si l'activité est dans un état "EvaluationTerminée".
+   pre : self.travail.activiteNotee.etatActivite->size() = 1
+   pre :
+self.travail.activiteNotee.etatActivite.oclIsTypeOf(EvaluationTerminee) =
+true
+
+
+context Travail::getListeTravauxAvecGrille(etu : Personne, note: Integer) :
+Set(Travail)
+   pre : note >=0 and note <=100

@@ -1,0 +1,4 @@
+!create p1:Person
+?p1.firstSecond()
+*-> Set{} : Set(Person)
+exit

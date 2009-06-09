@@ -78,7 +78,7 @@ public final class MCmdDeleteLink extends MCmd {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
         fObjectStates = new ArrayList();
         fRemovedLinks = new HashSet();
         fRemovedObjects = new HashSet();

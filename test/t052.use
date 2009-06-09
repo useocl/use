@@ -1,0 +1,8 @@
+model t052
+
+class Person
+attributes
+  name :String
+operations 
+  kill(p:Person)
+end

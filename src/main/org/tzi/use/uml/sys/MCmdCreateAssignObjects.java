@@ -63,7 +63,7 @@ public final class MCmdCreateAssignObjects extends MCmd {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
         fObjects = new ArrayList();
         VarBindings varBindings = fSystemState.system().varBindings();
         Iterator it = fVarNames.iterator();

@@ -107,14 +107,14 @@ public final class MCmdDestroyObjects extends MCmd {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
         fObjectStates = new ArrayList();
         fRemovedLinks = new HashSet();
         fRemovedObjects = new HashSet();
         Set objects = new HashSet();
         
         Evaluator evaluator = new Evaluator();
-        VarBindings varBindings = fSystemState.system().varBindings();
+        VarBindings varBindings = fSystemState.system().topLevelBindings();
         Iterator objExprsIter = Arrays.asList(fObjectExprs).iterator();
         while( objExprsIter.hasNext() ) { 
             Expression expr = (Expression) objExprsIter.next();

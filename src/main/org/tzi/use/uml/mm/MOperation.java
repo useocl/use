@@ -110,7 +110,10 @@ public final class MOperation extends MModelElementImpl {
      *            not conform to the declared result type 
      */
     public void setExpression(Expression expr) throws MInvalidModelException {
-        if (! expr.type().isSubtypeOf(fResultType) )
+        // If no result type is set, use type of the expression
+    	if (fResultType == null)
+    		fResultType = expr.type();
+    	else if (! expr.type().isSubtypeOf(fResultType) )
             throw new MInvalidModelException("Expression type `" + 
                                              expr.type() + 
                                              "' does not match declared result type `" + fResultType + "'.");

@@ -1,0 +1,12 @@
+model Person
+
+class Person
+operations
+  -- firstSecond():Set(Person)=self.first->union(self.second)
+  firstSecond()=self.first->union(self.second)
+end
+
+association Relationship between
+  Person [0..*] role first
+  Person [0..*] role second
+end

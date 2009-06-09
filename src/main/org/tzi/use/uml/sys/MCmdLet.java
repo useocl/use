@@ -54,7 +54,7 @@ public final class MCmdLet extends MCmd {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
         MSystem system = fSystemState.system();
 
         // evaluate expression

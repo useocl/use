@@ -126,7 +126,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     
         // Just get combinations of objects and check its size.
         List combinations = ListUtil.combinations(fObjectLists);
-        if (combinations.size()>MAX_LINKS) {
+        if (combinations.size() > MAX_LINKS) {
             collector.invalid("Can't execute `" + fInstr + "', because there" +
                               "are more than 2^" +MAX_LINKS+ "combinations.");
             return;
@@ -200,7 +200,9 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
                 while (lowestSetBit != -1) {
                     MCmd cmd = (MCmd) cmds[lowestSetBit];
                     collector.basicPrintWriter().println(cmd.getUSEcmd());
-                    cmd.execute();
+                    try {
+                    	cmd.execute();
+                    } catch (CommandFailedException e) {}
                     addedBits = addedBits.andNot(
                                                  BigInteger.ZERO.setBit(lowestSetBit));
                     lowestSetBit = addedBits.getLowestSetBit();
@@ -211,7 +213,8 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
                 while (lowestSetBit != -1) {
                     MCmd cmd = (MCmd) cmds[lowestSetBit];
                     collector.basicPrintWriter().println("undo: " + cmd.getUSEcmd());
-                    cmd.undo();
+                    if (cmd.hasExecuted())
+                    	cmd.undo();
                     removedBits = removedBits.andNot(
                                                      BigInteger.ZERO.setBit(lowestSetBit));
                     lowestSetBit = removedBits.getLowestSetBit();
@@ -235,8 +238,8 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
                 combination = combination.add(BigInteger.ONE);
             }
         
-        } catch (CommandFailedException e) {
-            throw new GEvaluationException(e);
+        //} catch (CommandFailedException e) {
+        //   throw new GEvaluationException(e);
         } catch (CannotUndoException e) {
             throw new GEvaluationException(e);
         }
@@ -247,7 +250,8 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             while (lowestSetBit != -1) {
                 MCmd cmd = (MCmd) cmds[lowestSetBit];
                 collector.basicPrintWriter().println("undo: " + cmd.getUSEcmd());
-                cmd.undo();
+                if (cmd.hasExecuted())
+                	cmd.undo();
                 previousCombination = previousCombination.andNot(
                                                                  BigInteger.ZERO.setBit(lowestSetBit));
                 lowestSetBit = previousCombination.getLowestSetBit();

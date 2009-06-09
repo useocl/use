@@ -73,7 +73,7 @@ public final class MCmdCreateInsertObjects extends MCmd {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
 
         // specifies if the object already exists in the systemstate
         VarBindings varBindings = fSystemState.system().varBindings();

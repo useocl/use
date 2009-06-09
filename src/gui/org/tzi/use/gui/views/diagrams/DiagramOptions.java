@@ -31,7 +31,7 @@ import java.awt.Color;
  */
 public abstract class DiagramOptions {
 
-    protected boolean fDoAutoLayout = true;
+    protected boolean fDoAutoLayout = false;
     protected boolean fShowRolenames = false;
     protected boolean fShowAssocNames = true;
     protected boolean fDoAntiAliasing = false;

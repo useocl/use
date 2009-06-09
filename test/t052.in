@@ -1,0 +1,6 @@
+!create p1:Person
+!create p2:Person
+!openter p1 kill(p2)
+!destroy p
+!opexit
+exit

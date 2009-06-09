@@ -52,7 +52,7 @@ public final class MCmdExecute extends MCmd {
      *
      * @exception CommandFailedException if the command failed.
      */
-    public void execute() throws CommandFailedException {
+    public void doExecute() throws CommandFailedException {
         if (!Options.extensionActionLanguage) {
             throw new CommandFailedException("Executable operations are experimental. \n" 
                     + "They must be enabled using -XenableActionLanguage");
