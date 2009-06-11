@@ -127,7 +127,7 @@ public class GGenerator {
                                                         new PrintWriter(System.err)
                                                         );
             }
-            if (call!=null && procedures!=null) {
+            if (call != null && procedures != null) {
                 GProcedure proc = call.findMatching( procedures );
                 if (proc == null)
                     Log.error( call.signatureString()

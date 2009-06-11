@@ -27,8 +27,10 @@ package org.tzi.use.gen.tool;
 
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.util.ListUtil;
 import org.tzi.use.util.StringUtil;
 import java.util.List;
 import java.util.ArrayList;
@@ -43,37 +45,45 @@ import java.util.Iterator;
 public class GProcedureCall {
     private String fName;
     private List fParameter;  // Expressions    
-
+    private GSignature signature = null;
+    
     public GProcedureCall (String name, List params) {
         fName = name;
         fParameter = params;
     }
 
-    private ArrayList parameterTypes() {
+    private List<Type> getParameterTypes() {
         Iterator it = fParameter.iterator();
-        ArrayList types = new ArrayList();
-        while (it.hasNext())
+        
+        ArrayList<Type> types = new ArrayList<Type>();
+        while (it.hasNext()) {
             types.add( ((Expression) it.next()).type() );
+        }
+        
         return types;
     }
 
-    public List signature() {
-        List types = (ArrayList) parameterTypes().clone();
-        types.add(0, fName);
-        return types;
+    public GSignature getSignature() {
+        if (signature == null)
+        {
+        	signature = new GSignature(fName, getParameterTypes());
+        }
+        
+        return signature;
     }
 
     public String signatureString() {
-        return "procedure " + fName + "("
-            + StringUtil.fmtSeq(parameterTypes().iterator(), ",") + ")";
+        return getSignature().toString();
     }
     
     public GProcedure findMatching( List procedures ) {
-        List signature = signature();
+        GSignature sig = getSignature();
+        
         Iterator it = procedures.iterator();
         while (it.hasNext() ) {
             GProcedure proc = (GProcedure) it.next();
-            if (proc.signature().equals(signature) )
+            
+            if (proc.getSignature().conformsTo(sig) )
                 return proc;
         }
         return null;

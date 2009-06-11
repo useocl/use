@@ -100,7 +100,7 @@ public class ASSLCompiler {
                             boolean ignore = false;
                             Iterator it = procedures.iterator();
                             while (it.hasNext())
-                                if (((GProcedure) it.next()).signature().equals(proc.signature() ) ) {
+                                if (((GProcedure) it.next()).getSignature().equals(proc.getSignature() ) ) {
                                     err.println("Warning: Ignoring redefinition of " + proc);
                                     ignore = true;
                                 }
