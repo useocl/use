@@ -1,0 +1,20 @@
+!create b:B
+gen start -r 4155 t055.assl set_attr(b)
+gen result
+*Random number generator was initialized with 4155.
+*Checked 1 snapshots.
+*Result: Valid state found.
+*Commands to produce the valid state:
+*!set b.name := ''
+gen result accept
+*Generated result (system state) accepted.
+gen start -r 5907 t055.assl set_attr(let b2A:A=b in b2A)
+gen result
+*Random number generator was initialized with 5907.
+*Checked 1 snapshots.
+*Result: Valid state found.
+*Commands to produce the valid state:
+*!set b.name := ''
+gen result accept
+*Generated result (system state) accepted.
+exit
