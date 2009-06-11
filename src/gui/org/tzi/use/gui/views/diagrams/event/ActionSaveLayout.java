@@ -51,7 +51,9 @@ import org.tzi.use.util.Log;
  * @author Fabian Gutsche
  */
 public class ActionSaveLayout extends AbstractAction {
-    private JFileChooser fChooser;
+	private static String LAST_PATH = "";
+	
+	private JFileChooser fChooser;
     private String fTitle = "";
     private String fAppendix = "";
     private DirectedGraph fGraph;
@@ -86,16 +88,14 @@ public class ActionSaveLayout extends AbstractAction {
     
     
     public void actionPerformed(ActionEvent e) {
-        String path;
-        String xml = "";
+        StringBuilder xml = new StringBuilder();
         
         int option = JOptionPane.YES_OPTION;
         File f = null;
         do {
             // reuse chooser if possible
             if (fChooser == null) {
-                path = System.getProperty("user.dir");
-                fChooser = new JFileChooser(path);
+                fChooser = new JFileChooser(ActionSaveLayout.LAST_PATH);
                 ExtFileFilter filter = 
                     new ExtFileFilter( fAppendix, fTitle );
                 fChooser.addChoosableFileFilter(filter);
@@ -105,7 +105,7 @@ public class ActionSaveLayout extends AbstractAction {
             if (returnVal != JFileChooser.APPROVE_OPTION)
                 return;
 
-            path = fChooser.getCurrentDirectory().toString();
+            ActionSaveLayout.LAST_PATH = fChooser.getCurrentDirectory().toString();
             String filename = fChooser.getSelectedFile().getName();
 
             // if file does not have the appendix .olt or .clt at the appendix
@@ -117,7 +117,7 @@ public class ActionSaveLayout extends AbstractAction {
                 filename += "." + fAppendix;
             }
 
-            f = new File(path, filename);
+            f = new File(ActionSaveLayout.LAST_PATH, filename);
             Log.verbose("File " + f);
 
             if (f.exists()) {
@@ -133,37 +133,55 @@ public class ActionSaveLayout extends AbstractAction {
             // will be overwritten or cancel is pressed.
         } while (option != JOptionPane.YES_OPTION);
 
+        // TODO: Change to XmlDocument and create nodes, instead of writing a string
+ 
         // save diagram options
-        xml += "<diagramOptions>" + LayoutTags.NL;
-        xml += LayoutTags.INDENT + LayoutTags.AUTOLAYOUT_O 
-               + Boolean.toString( fOpt.isDoAutoLayout() ) + LayoutTags.AUTOLAYOUT_C 
-               + LayoutTags.NL;  
-        xml += LayoutTags.INDENT + LayoutTags.ANTIALIASING_O 
-               + Boolean.toString( fOpt.isDoAntiAliasing() ) + LayoutTags.ANTIALIASING_C
-               + LayoutTags.NL;  
-        xml += LayoutTags.INDENT + LayoutTags.SHOWASSOCNAMES_O
-               + Boolean.toString( fOpt.isShowAssocNames() ) + LayoutTags.SHOWASSOCNAMES_C
-               + LayoutTags.NL;  
-        xml += LayoutTags.INDENT + LayoutTags.SHOWATTRIBUTES_O 
-               + Boolean.toString( fOpt.isShowAttributes() ) + LayoutTags.SHOWATTRIBUTES_C 
-               + LayoutTags.NL;  
-        xml += LayoutTags.INDENT + LayoutTags.SHOWMULTIPLICITIES_O 
-               + Boolean.toString( fOpt.isShowMutliplicities() ) + LayoutTags.SHOWMULTIPLICITIES_C 
-               + LayoutTags.NL;  
-        xml += LayoutTags.INDENT + LayoutTags.SHOWOPERATIONS_O
-               + Boolean.toString( fOpt.isShowOperations() ) + LayoutTags.SHOWOPERATIONS_C 
-               + LayoutTags.NL;  
-        xml += LayoutTags.INDENT + LayoutTags.SHOWROLENAMES_O
-               + Boolean.toString( fOpt.isShowRolenames() ) + LayoutTags.SHOWROLENAMES_C
-               + LayoutTags.NL;  
-        xml += "</diagramOptions>" + LayoutTags.NL + LayoutTags.NL;
+        xml.append("<diagramOptions>" + LayoutTags.NL);
+        xml.append(LayoutTags.INDENT);
+        xml.append(LayoutTags.AUTOLAYOUT_O);
+        xml.append(fOpt.isDoAutoLayout());
+        xml.append(LayoutTags.AUTOLAYOUT_C);
+        xml.append(LayoutTags.NL);  
+        xml.append(LayoutTags.INDENT);
+        xml.append(LayoutTags.ANTIALIASING_O); 
+        xml.append(fOpt.isDoAntiAliasing());
+        xml.append(LayoutTags.ANTIALIASING_C);
+        xml.append(LayoutTags.NL);  
+        xml.append(LayoutTags.INDENT);
+        xml.append(LayoutTags.SHOWASSOCNAMES_O);
+        xml.append(fOpt.isShowAssocNames());
+        xml.append(LayoutTags.SHOWASSOCNAMES_C);
+        xml.append(LayoutTags.NL);
+        xml.append(LayoutTags.INDENT);
+        xml.append(LayoutTags.SHOWATTRIBUTES_O);
+        xml.append(fOpt.isShowAttributes());
+        xml.append(LayoutTags.SHOWATTRIBUTES_C);
+        xml.append(LayoutTags.NL);  
+        xml.append(LayoutTags.INDENT);
+        xml.append(LayoutTags.SHOWMULTIPLICITIES_O); 
+        xml.append(fOpt.isShowMutliplicities() );
+        xml.append(LayoutTags.SHOWMULTIPLICITIES_C);
+        xml.append(LayoutTags.NL);
+        xml.append(LayoutTags.INDENT);
+        xml.append(LayoutTags.SHOWOPERATIONS_O);
+        xml.append(fOpt.isShowOperations());
+        xml.append(LayoutTags.SHOWOPERATIONS_C);
+        xml.append(LayoutTags.NL);  
+        xml.append(LayoutTags.INDENT);
+        xml.append(LayoutTags.SHOWROLENAMES_O);
+        xml.append(fOpt.isShowRolenames());
+        xml.append(LayoutTags.SHOWROLENAMES_C);
+        xml.append(LayoutTags.NL);
+        xml.append("</diagramOptions>");
+        xml.append(LayoutTags.NL);
+        xml.append(LayoutTags.NL);
         
         // store node positions in property object
         Iterator nodeIterator = fGraph.iterator();
         while (nodeIterator.hasNext()) {
             NodeBase n = (NodeBase) nodeIterator.next();
-            xml += n.storePlacementInfo( false );
-            xml += LayoutTags.NL;
+            xml.append(n.storePlacementInfo( false ));
+            xml.append(xml.append(LayoutTags.NL));
         }
 
         // store EdgePropertie positions in property object
@@ -173,14 +191,15 @@ public class ActionSaveLayout extends AbstractAction {
             if ( edge instanceof HalfEdge ) {
                 continue;
             }
-            xml += edge.storePlacementInfo( false );
-            xml += LayoutTags.NL;
+            xml.append(edge.storePlacementInfo( false ));
+            xml.append(LayoutTags.NL);
         }
         
-        xml += LayoutTags.NL + fLayoutInfos.getHiddenElementsXML();
+        xml.append(LayoutTags.NL);
+        xml.append(fLayoutInfos.getHiddenElementsXML());
         
         XMLParserAccess xmlParser = new XMLParserAccessImpl();
-        xmlParser.saveXMLFile( f, xml );
+        xmlParser.saveXMLFile( f, xml.toString() );
         fLog.println("Wrote layout file " + f);
     }
 

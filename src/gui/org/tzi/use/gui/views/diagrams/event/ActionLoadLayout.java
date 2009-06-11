@@ -29,6 +29,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
+import org.antlr.analysis.ActionLabel;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
@@ -45,7 +46,9 @@ import org.tzi.use.util.Log;
  * @author Fabian Gutsche
  */
 public class ActionLoadLayout extends AbstractAction {
-    private JFileChooser fChooser;
+    
+	private static String LAST_PATH = "";
+	private JFileChooser fChooser;
     private String fTitle = "";
     private String fAppendix = "";
     private DiagramView fDiagram;
@@ -81,11 +84,9 @@ public class ActionLoadLayout extends AbstractAction {
     }
     
     public void actionPerformed(ActionEvent e) {
-        String path;
         // reuse chooser if possible
         if (fChooser == null) {
-            path = System.getProperty("user.dir");
-            fChooser = new JFileChooser(path);
+            fChooser = new JFileChooser(ActionLoadLayout.LAST_PATH);
             ExtFileFilter filter = new ExtFileFilter( fAppendix, fTitle );
             fChooser.addChoosableFileFilter(filter);
             fChooser.setDialogTitle("Load layout");
@@ -94,8 +95,8 @@ public class ActionLoadLayout extends AbstractAction {
         if (returnVal != JFileChooser.APPROVE_OPTION)
             return;
 
-        path = fChooser.getCurrentDirectory().toString();
-        File f = new File(path, fChooser.getSelectedFile().getName());
+        ActionLoadLayout.LAST_PATH = fChooser.getCurrentDirectory().toString();
+        File f = fChooser.getSelectedFile();
         Log.verbose("File " + f);
 
         //show all hidden nodes and edges. This is nesseccary, if 

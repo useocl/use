@@ -103,10 +103,7 @@ public class LayoutContentHandler extends ContentHandler {
              || qName.equals( LayoutTags.EDGEPROPERTY ) ) {
                fCtx.popType();
         }
-        
-        
-        
-        
+
         if ( qName.equals( LayoutTags.ANTIALIASING ) ) {
             fCtx.getOpt().setDoAntiAliasing( Boolean.valueOf( fTagContent.trim() ).booleanValue() );
         }
@@ -136,9 +133,6 @@ public class LayoutContentHandler extends ContentHandler {
                     MClass cls = fCtx.getModel().getClass( fTagContent.trim() );
                     fCtx.setActualNode( (NodeBase) fCtx.getActualMap().get( cls ) );
                     fCtx.setActualObj( cls );
-//                    System.out.println("cls: "+fTagContent.trim());
-//                    System.out.println("fCtx.getActualNode(): "+fCtx.getActualNode());
-//                    System.out.println("fCtx.peekType(): "+fCtx.peekType());
                 } else {
                     parseNode( qName, fTagContent.trim() );
                 }

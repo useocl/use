@@ -24,7 +24,9 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.tool.GSignature;
 import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,8 @@ public class GProcedure {
     private List fParameterDecls; // VarDecl
     private List fLocalDecls; // VarDecl
     private GInstructionList fInstructionList;
-
+    private GSignature signature = null;
+    
     public GProcedure(String name) {
         fName = name;
         fParameterDecls = new ArrayList();
@@ -75,22 +78,26 @@ public class GProcedure {
         return fInstructionList;
     }
 
-    private List parameterTypes() {
+    private List<Type> getParameterTypes() {
         Iterator it = parameterDecls().iterator();
-        ArrayList types = new ArrayList();
+        ArrayList<Type> types = new ArrayList<Type>();
+        
         while (it.hasNext())
             types.add( ((VarDecl) it.next()).type() );
+        
         return types;
     }
 
-    public List signature() {
-        List types = new ArrayList(parameterTypes());
-        types.add(0, name());
-        return types;
+    public GSignature getSignature() {
+        if (signature == null) {
+        	signature = new GSignature(fName, getParameterTypes());
+        }
+        
+        return signature;
     }
 
     private String signatureString() {
-        return "procedure " + name() + "(" + StringUtil.fmtSeq(parameterTypes().iterator(), ",") + ")";
+        return getSignature().toString();
     }
     
     public String toString() {
