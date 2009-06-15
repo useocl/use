@@ -4,7 +4,9 @@ $Id$
 
 Please send bug reports to mk@informatik.uni-bremen.de. See the file
 `README' for a description of how to report bugs.
-
+** Changes since version 2.4.0
+A detailed list of changes can be found here:
+http://sourceforge.net/apps/mantisbt/useocl/changelog_page.php 
 
 ** Changes since version 2.3.1
 
