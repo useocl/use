@@ -326,13 +326,11 @@ public class NewObjectDiagram extends DiagramView
      * Adds an object to the diagram.
      */
     public void addObject(MObject obj) {
-        // Find a random new position. getWidth and getheight return 0
+        // Find a random new position. getWidth and getHeight return 0
         // if we are called on a new diagram.
-//        if ( isDoAutoLayout() ) {
-//            fNextNodeX = Math.random() * Math.max(100, getWidth());
-//            fNextNodeY = Math.random() * Math.max(100, getHeight());
-//        }
-//        
+		fNextNodeX = Math.random() * Math.max(100, getWidth());
+		fNextNodeY = Math.random() * Math.max(100, getHeight());
+  
         ObjectNode n = new ObjectNode( obj, fParent, fOpt);
         n.setPosition( fNextNodeX, fNextNodeY );
         synchronized (fLock) {
