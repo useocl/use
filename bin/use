@@ -30,12 +30,13 @@ basedir=$USE_HOME
 
 # build classpath and path for native readline library wrapper
 # if we have a build directory then use libraries from current build, 
-# otherwise use released libraries 
+# otherwise use released libraries
+
 if [ -d $basedir/build ]; then
-    CLASSPATH=`echo $basedir/build/lib/*.jar | /bin/sed s/\ /:/g`
+    CLASSPATH=`echo $basedir/build/lib/*.jar | sed s/\ /:/g`
     LD_LIBRARY_PATH=$basedir/build/lib
 else
-    CLASSPATH=`echo $basedir/lib/*.jar | /bin/sed s/\ /:/g`
+    CLASSPATH=`echo $basedir/lib/*.jar | sed s/\ /:/g`
     LD_LIBRARY_PATH=$basedir/lib
 fi
 export CLASSPATH LD_LIBRARY_PATH
