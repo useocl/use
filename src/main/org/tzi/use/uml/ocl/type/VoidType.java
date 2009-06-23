@@ -4,8 +4,8 @@ import java.util.Set;
 
 public class VoidType extends Type {
 
-	public Set allSupertypes() {
-		throw new RuntimeException("Not implemented yet.");
+	public Set<Type> allSupertypes() {
+		throw new UnsupportedOperationException("Call to allSupertypes is invalid on OclVoid");
 	}
 
 	public boolean equals(Object obj) {

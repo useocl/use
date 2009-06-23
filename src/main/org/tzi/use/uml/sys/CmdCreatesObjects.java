@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2004 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2009 University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,45 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+package org.tzi.use.uml.sys;
 
-// $Id$
-
-package org.tzi.use.uml.ocl.type;
-
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
- * The OCL String type.
- *
+ * Interface for commands that create objects.
+ * Needed, because AssociationClasses are instantiated
+ * with an other command then normal classes.
+ * 
  * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author      Lars Hamann 
  */
-public final class StringType extends BasicType {
-
-    StringType() {
-        super("String");
-    }
-    
-    public boolean isString() {
-    	return true;
-    }
-    
-    /** 
-     * Returns true if this type is a subtype of <code>t</code>. 
-     */
-    public boolean isSubtypeOf(Type t) {
-        return equals(t) || t.isOclAny();
-    }
-
-    /** 
-     * Returns the set of all supertypes (including this type).
-     */
-    public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>(2);
-        res.add(TypeFactory.mkOclAny());
-        res.add(this);
-        return res;
-    }
-
+public interface CmdCreatesObjects {
+	
+	/**
+	 * The list of the created objects.
+	 * @return list of created objects
+	 */
+	public List<MObject> getObjects();
 }

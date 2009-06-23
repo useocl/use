@@ -60,13 +60,13 @@ public final class VarBindings {
         }
     }
 
-    private ArrayList fBindings;
+    private ArrayList<Entry> fBindings;
 
     /**
      * Creates an empty VarBindings.
      */
     public VarBindings() {
-        fBindings = new ArrayList();
+        fBindings = new ArrayList<Entry>();
     }
 
     /**
@@ -74,7 +74,7 @@ public final class VarBindings {
      * object passed as parameter.
      */
     public VarBindings(VarBindings bindings) {
-        fBindings = (ArrayList) bindings.fBindings.clone();
+        fBindings = new ArrayList<Entry>(bindings.fBindings);
     }
 
     /**
@@ -108,7 +108,7 @@ public final class VarBindings {
     public void remove(String varname) {
         // search in reverse order
         for (int i = fBindings.size() - 1; i >= 0; i--) {
-            Entry b = (Entry) fBindings.get(i);
+            Entry b = fBindings.get(i);
             if (b.fVarname.equals(varname)) {
                 fBindings.remove(i);
                 break;
@@ -126,7 +126,7 @@ public final class VarBindings {
     public Value getValue(String name) {
         // search in reverse order
         for (int i = fBindings.size() - 1; i >= 0; i--) {
-            Entry b = (Entry) fBindings.get(i);
+            Entry b = fBindings.get(i);
             if (b.fVarname.equals(name))
                 return b.fValue;
         }
@@ -136,7 +136,7 @@ public final class VarBindings {
     /**
      * Returns an iterator over VarBindings.Entry objects.
      */
-    public Iterator iterator() {
+    public Iterator<Entry> iterator() {
         return fBindings.iterator();
     }
 

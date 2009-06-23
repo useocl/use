@@ -21,11 +21,9 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -42,14 +40,14 @@ import org.tzi.use.util.TreeBag;
  * @author Mark Richters
  */
 public class BagValue extends CollectionValue {
-    private TreeBag fElements; // (Value)
+    private TreeBag<Value> fElements; // (Value)
 
     /**
      * Constructs a new empty bag.
      */
     public BagValue(Type elemType) {
         super(TypeFactory.mkBag(elemType), elemType);
-        fElements = new TreeBag();
+        fElements = new TreeBag<Value>();
     }
 
     /**
@@ -72,11 +70,9 @@ public class BagValue extends CollectionValue {
      * @exception IllegalArgumentException
      *                the type of at least one value does not match
      */
-    public BagValue(Type elemType, Collection values) {
+    public BagValue(Type elemType, Collection<Value> values) {
         this(elemType);
-        Iterator it = values.iterator();
-        while (it.hasNext())
-            add((Value) it.next());
+        addAll(values);
     }
 
     /**
@@ -97,6 +93,11 @@ public class BagValue extends CollectionValue {
         }
     }
 
+    @Override
+    public void doSetElemType() {
+        setType( TypeFactory.mkBag(fElemType));
+    }
+    
     /**
      * Adds an element to the bag. The element's type is not checked.
      */
@@ -141,7 +142,7 @@ public class BagValue extends CollectionValue {
             v2 = this;
         }
 
-        Iterator it = v1.fElements.uniqueIterator();
+        Iterator<Value> it = v1.fElements.uniqueIterator();
         while (it.hasNext()) {
             Value elem = (Value) it.next();
             if (v2.includes(elem)) {
@@ -153,7 +154,7 @@ public class BagValue extends CollectionValue {
         return res;
     }
 
-    public Iterator iterator() {
+    public Iterator<Value> iterator() {
         return fElements.iterator();
     }
 
@@ -174,9 +175,9 @@ public class BagValue extends CollectionValue {
     }
 
     public boolean excludesAll(CollectionValue v) {
-        Iterator it = v.iterator();
+        Iterator<Value> it = v.iterator();
         while (it.hasNext()) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (fElements.contains(elem))
                 return false;
         }
@@ -233,10 +234,10 @@ public class BagValue extends CollectionValue {
 
         CollectionType c2 = (CollectionType) elemType();
         BagValue res = new BagValue(c2.elemType());
-        Iterator it = fElements.iterator();
+        Iterator<Value> it = fElements.iterator();
         
         while (it.hasNext()) {
-        	Value v = (Value)it.next();
+        	Value v = it.next();
         	if (v.isUndefined())
         	{
         		res.add(v);
@@ -244,9 +245,9 @@ public class BagValue extends CollectionValue {
         	else
         	{
         		CollectionValue elem = (CollectionValue) v;
-        		Iterator it2 = elem.iterator();
+        		Iterator<Value> it2 = elem.iterator();
         		while (it2.hasNext()) {
-        			Value elem2 = (Value) it2.next();
+        			Value elem2 = it2.next();
         			res.add(elem2);
         		}
         	}
@@ -254,7 +255,7 @@ public class BagValue extends CollectionValue {
         return res;
     }
 
-    public Collection collection() {
+    public Collection<Value> collection() {
         return fElements;
     }
 
@@ -262,11 +263,8 @@ public class BagValue extends CollectionValue {
      * Returns a string representation of this bag. The elements are sorted.
      */
     public String toString() {
-        Object[] valArray = fElements.toArray();
-        // sorting needed in HashMaps but not anymore in TreeMaps
-        // Arrays.sort(valArray);
         return "Bag{"
-                + StringUtil.fmtSeq(Arrays.asList(valArray).iterator(), ",")
+                + StringUtil.fmtSeq(iterator(), ",")
                 + "}";
     }
 
@@ -297,23 +295,16 @@ public class BagValue extends CollectionValue {
         return fElements.hashCode();
     }
 
-    void addAll(Collection v) {
-        // if (! v.type().isSubtypeOf(elemType()) )
-        // throw new IllegalArgumentException("type mismatch: " + v.type() +
-        // ", " + elemType());
+    void addAll(Collection<Value> v) {
         fElements.addAll(v);
-        try {
-            setElemType(inferElementType());
-        } catch (ExpInvalidException e) {
-            throw new RuntimeException(e);
-        }
+        deriveRuntimeType();
     }
 
     void add(Value v) {
         boolean needToDeriveRuntimeType = true;
         // performance optimization
-        for (Iterator it = fElements.iterator(); it.hasNext();) {
-            Value val = (Value) it.next();
+        for (Iterator<Value> it = fElements.iterator(); it.hasNext();) {
+            Value val = it.next();
             if (val.type().equals(v.type())) {
                 needToDeriveRuntimeType = false;
                 break;
@@ -321,50 +312,17 @@ public class BagValue extends CollectionValue {
         }
         fElements.add(v);
         if (needToDeriveRuntimeType) {
-            try {
-                setElemType(inferElementType());
-            } catch (ExpInvalidException e) {
-                throw new RuntimeException(e);
-            }
+        	deriveRuntimeType();
         }
     }
 
     void add(Value v, int i) {
-        // if (! v.type().isSubtypeOf(elemType()) )
-        // throw new IllegalArgumentException("type mismatch: " + v.type() +
-        // ", " + elemType());
         fElements.add(v, i);
-        try {
-            setElemType(inferElementType());
-        } catch (ExpInvalidException e) {
-            throw new RuntimeException(e);
-        }
+        deriveRuntimeType();
     }
 
     void removeAll(Value v) {
-        // if (! v.type().isSubtypeOf(elemType()) )
-        // throw new IllegalArgumentException("type mismatch: " + v.type() +
-        // ", " + elemType());
         fElements.removeAll(v);
-        try {
-            setElemType(inferElementType());
-        } catch (ExpInvalidException e) {
-            throw new RuntimeException(e);
-        }
+        deriveRuntimeType();
     }
-
-    // public int compareTo(Object o) {
-    // if (o == this )
-    // return 0;
-    // if (o instanceof UndefinedValue )
-    // return +1;
-    // if (! (o instanceof BagValue) )
-    // throw new ClassCastException();
-    // BagValue bag2 = (BagValue) o;
-    // if (! bag2.type().isSubtypeOf(this.type()) )
-    // throw new ClassCastException("this.type() = " + this.type() +
-    // ", bag2.type() = " + bag2.type());
-
-    // return new CollectionComparator().compare(fElements, bag2.fElements);
-    // }
 }

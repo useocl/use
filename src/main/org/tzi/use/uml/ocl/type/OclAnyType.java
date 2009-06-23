@@ -47,8 +47,8 @@ public final class OclAnyType extends Type {
     /** 
      * Returns the set of all supertypes (including this type).
      */
-    public Set allSupertypes() {
-        Set res = new HashSet(1);
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>(1);
         res.add(this);
         return res;
     }

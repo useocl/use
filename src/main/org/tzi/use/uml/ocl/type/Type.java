@@ -68,7 +68,7 @@ public abstract class Type {
     /** 
      * Returns the set of all supertypes (including this type).
      */
-    public abstract Set allSupertypes();
+    public abstract Set<Type> allSupertypes();
 
     // The following set of functions is a rather ugly solution, but
     // it avoids numerous instanceof tests in user code.
@@ -143,6 +143,10 @@ public abstract class Type {
     	return false;
     }
     
+    public boolean isDate() {
+    	return false;
+    }
+    
     /**
      * Returns the least common supertype to the given Type
      * @param type
@@ -166,7 +170,7 @@ public abstract class Type {
         
         // determine common supertypes = intersection of all
         // supertypes of all elements
-        Set cs = new HashSet();
+        Set<Type> cs = new HashSet<Type>();
         cs.addAll(this.allSupertypes());
         cs.retainAll(type.allSupertypes());
         
@@ -181,14 +185,14 @@ public abstract class Type {
 
         // search for a type that is less than or equal to all other types
         Type cType = null;
-        Iterator it1 = cs.iterator();
+        Iterator<Type> it1 = cs.iterator();
         outerLoop: 
         while (it1.hasNext() ) {
-            Type t1 = (Type) it1.next();
-            Iterator it2 = cs.iterator();
+            Type t1 = it1.next();
+            Iterator<Type> it2 = cs.iterator();
             
             while (it2.hasNext() ) {
-                Type t2 = (Type) it2.next();
+                Type t2 = it2.next();
                 if (! t1.isSubtypeOf(t2) )
                     continue outerLoop;
             }

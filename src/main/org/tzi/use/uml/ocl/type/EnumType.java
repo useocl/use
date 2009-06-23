@@ -35,24 +35,24 @@ import java.util.Set;
  */
 public final class EnumType extends Type {
     private String fName;
-    private ArrayList fLiterals; // list of enumeration literals
-    private HashSet fLiteralSet; // (String) for fast access
+    private ArrayList<String> fLiterals; // list of enumeration literals
+    private HashSet<String> fLiteralSet; // for fast access
 
     /**
      * Constructs an enumeration type with name and list of literals
      * (String objects). The list of literals is checked for
      * duplicates.
      */
-    EnumType(String name, List literals) {
+    EnumType(String name, List<String> literals) {
         fName = name;
-        fLiterals = new ArrayList(literals);
-        fLiteralSet = new HashSet(fLiterals.size());
-        Iterator it = fLiterals.iterator();
+        fLiterals = new ArrayList<String>(literals);
+        fLiteralSet = new HashSet<String>(fLiterals.size());
+        
+        Iterator<String> it = fLiterals.iterator();
         while (it.hasNext() ) {
-            String lit = (String) it.next();
+            String lit = it.next();
             if (! fLiteralSet.add(lit) )
-                throw new IllegalArgumentException("duplicate literal `" + 
-                                                   lit + "'");
+                throw new IllegalArgumentException("duplicate literal `" +  lit + "'");
         }
     }
     
@@ -70,7 +70,7 @@ public final class EnumType extends Type {
     /** 
      * Returns an iterator over the literals.
      */
-    public Iterator literals() {
+    public Iterator<String> literals() {
         return fLiterals.iterator();
     }
 
@@ -91,8 +91,8 @@ public final class EnumType extends Type {
     /** 
      * Returns the set of all supertypes (including this type).
      */
-    public Set allSupertypes() {
-        Set res = new HashSet(2);
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>(2);
         res.add(TypeFactory.mkOclAny());
         res.add(this);
         return res;

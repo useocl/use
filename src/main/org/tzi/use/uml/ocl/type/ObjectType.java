@@ -62,14 +62,15 @@ public final class ObjectType extends Type {
     /** 
      * Returns the set of all supertypes (including this type).
      */
-    public Set allSupertypes() {
-        Set res = new HashSet();
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
         res.add(this);
         res.add(TypeFactory.mkOclAny());
-        Set parents = fClass.allParents();
-        Iterator clsIter = parents.iterator();
+        Set<MClass> parents = fClass.allParents();
+        Iterator<MClass> clsIter = parents.iterator();
+        
         while (clsIter.hasNext() ) {
-            MClass cls = (MClass) clsIter.next();
+            MClass cls = clsIter.next();
             res.add(TypeFactory.mkObjectType(cls));
         }
         return res;

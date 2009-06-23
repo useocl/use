@@ -62,7 +62,7 @@ public final class RealValue extends Value {
         return new Double(fValue).hashCode();
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
         if (o instanceof IntegerValue ) {

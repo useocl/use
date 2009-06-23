@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 USE.g 2009-06-04 18:03:25
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 USE.g 2009-06-16 14:38:31
  
 /*
  * USE - UML based specification environment
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 
 public class USEParser extends BaseParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "IDENT", "LBRACE", "RBRACE", "SEMI", "LESS", "COLON", "EQUAL", "LBRACK", "RBRACK", "COMMA", "DOTDOT", "INT", "STAR", "COLON_COLON", "COLON_EQUAL", "LPAREN", "RPAREN", "NOT_EQUAL", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "SLASH", "ARROW", "DOT", "AT", "BAR", "REAL", "STRING", "HASH", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'model'", "'constraints'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'end'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'begin'", "'association'", "'role'", "'ordered'", "'context'", "'inv'", "'existential'", "'pre'", "'post'", "'var'", "'declare'", "'set'", "'create'", "'namehint'", "'insert'", "'into'", "'delete'", "'from'", "'destroy'", "'if'", "'then'", "'else'", "'endif'", "'while'", "'do'", "'wend'", "'for'", "'in'", "'execute'", "'let'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'iterate'", "'oclAsType'", "'oclIsKindOf'", "'oclIsTypeOf'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'OrderedSet'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Collection'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "IDENT", "LBRACE", "RBRACE", "SEMI", "LESS", "COLON", "EQUAL", "LBRACK", "RBRACK", "COMMA", "DOTDOT", "INT", "STAR", "COLON_COLON", "COLON_EQUAL", "LPAREN", "RPAREN", "NOT_EQUAL", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "SLASH", "ARROW", "DOT", "AT", "BAR", "REAL", "STRING", "HASH", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'model'", "'constraints'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'end'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'begin'", "'association'", "'role'", "'ordered'", "'context'", "'inv'", "'existential'", "'pre'", "'post'", "'var'", "'declare'", "'set'", "'create'", "'namehint'", "'insert'", "'into'", "'delete'", "'from'", "'destroy'", "'if'", "'then'", "'else'", "'endif'", "'while'", "'do'", "'wend'", "'for'", "'in'", "'execute'", "'let'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'iterate'", "'oclAsType'", "'oclIsKindOf'", "'oclIsTypeOf'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'OrderedSet'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Date'", "'Collection'"
     };
     public static final int STAR=16;
     public static final int EOF=-1;
@@ -110,6 +110,7 @@ public class USEParser extends BaseParser {
     public static final int T__107=107;
     public static final int T__108=108;
     public static final int COMMA=13;
+    public static final int T__109=109;
     public static final int T__59=59;
     public static final int T__103=103;
     public static final int T__104=104;
@@ -3751,7 +3752,7 @@ public class USEParser extends BaseParser {
             if ( ((LA64_0>=PLUS && LA64_0<=MINUS)||LA64_0==91) ) {
                 alt64=1;
             }
-            else if ( (LA64_0==IDENT||LA64_0==INT||LA64_0==LPAREN||(LA64_0>=REAL && LA64_0<=HASH)||LA64_0==75||(LA64_0>=93 && LA64_0<=107)) ) {
+            else if ( (LA64_0==IDENT||LA64_0==INT||LA64_0==LPAREN||(LA64_0>=REAL && LA64_0<=HASH)||LA64_0==75||(LA64_0>=93 && LA64_0<=108)) ) {
                 alt64=2;
             }
             else {
@@ -3951,6 +3952,7 @@ public class USEParser extends BaseParser {
             case 105:
             case 106:
             case 107:
+            case 108:
                 {
                 alt69=1;
                 }
@@ -4441,7 +4443,7 @@ public class USEParser extends BaseParser {
                     int alt75=2;
                     int LA75_0 = input.LA(1);
 
-                    if ( (LA75_0==IDENT||LA75_0==INT||LA75_0==LPAREN||(LA75_0>=PLUS && LA75_0<=MINUS)||(LA75_0>=REAL && LA75_0<=HASH)||LA75_0==75||LA75_0==85||LA75_0==91||(LA75_0>=93 && LA75_0<=107)) ) {
+                    if ( (LA75_0==IDENT||LA75_0==INT||LA75_0==LPAREN||(LA75_0>=PLUS && LA75_0<=MINUS)||(LA75_0>=REAL && LA75_0<=HASH)||LA75_0==75||LA75_0==85||LA75_0==91||(LA75_0>=93 && LA75_0<=108)) ) {
                         alt75=1;
                     }
                     switch (alt75) {
@@ -4715,7 +4717,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "literal"
-    // USE.g:922:1: literal returns [ASTExpression n] : (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral );
+    // USE.g:923:1: literal returns [ASTExpression n] : (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral | nDateLit= dateLiteral );
     public final ASTExpression literal() throws RecognitionException {
         ASTExpression n = null;
 
@@ -4733,10 +4735,12 @@ public class USEParser extends BaseParser {
 
         ASTTupleLiteral nTupleLit = null;
 
+        ASTDateLiteral nDateLit = null;
+
 
         try {
-            // USE.g:923:1: (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral )
-            int alt78=10;
+            // USE.g:924:1: (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral | nDateLit= dateLiteral )
+            int alt78=11;
             switch ( input.LA(1) ) {
             case 97:
                 {
@@ -4793,6 +4797,11 @@ public class USEParser extends BaseParser {
                 alt78=10;
                 }
                 break;
+            case 108:
+                {
+                alt78=11;
+                }
+                break;
             default:
                 NoViableAltException nvae =
                     new NoViableAltException("", 78, 0, input);
@@ -4802,7 +4811,7 @@ public class USEParser extends BaseParser {
 
             switch (alt78) {
                 case 1 :
-                    // USE.g:924:7: t= 'true'
+                    // USE.g:925:7: t= 'true'
                     {
                     t=(Token)match(input,97,FOLLOW_97_in_literal4028); 
                      n = new ASTBooleanLiteral(true); 
@@ -4810,7 +4819,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 2 :
-                    // USE.g:925:7: f= 'false'
+                    // USE.g:926:7: f= 'false'
                     {
                     f=(Token)match(input,98,FOLLOW_98_in_literal4042); 
                      n = new ASTBooleanLiteral(false); 
@@ -4818,7 +4827,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 3 :
-                    // USE.g:926:7: i= INT
+                    // USE.g:927:7: i= INT
                     {
                     i=(Token)match(input,INT,FOLLOW_INT_in_literal4055); 
                      n = new ASTIntegerLiteral(i); 
@@ -4826,7 +4835,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 4 :
-                    // USE.g:927:7: r= REAL
+                    // USE.g:928:7: r= REAL
                     {
                     r=(Token)match(input,REAL,FOLLOW_REAL_in_literal4070); 
                      n = new ASTRealLiteral(r); 
@@ -4834,7 +4843,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 5 :
-                    // USE.g:928:7: s= STRING
+                    // USE.g:929:7: s= STRING
                     {
                     s=(Token)match(input,STRING,FOLLOW_STRING_in_literal4084); 
                      n = new ASTStringLiteral(s); 
@@ -4842,7 +4851,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 6 :
-                    // USE.g:929:7: HASH enumLit= IDENT
+                    // USE.g:930:7: HASH enumLit= IDENT
                     {
                     match(input,HASH,FOLLOW_HASH_in_literal4094); 
                     enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal4098); 
@@ -4851,7 +4860,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 7 :
-                    // USE.g:930:7: nColIt= collectionLiteral
+                    // USE.g:931:7: nColIt= collectionLiteral
                     {
                     pushFollow(FOLLOW_collectionLiteral_in_literal4110);
                     nColIt=collectionLiteral();
@@ -4863,7 +4872,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 8 :
-                    // USE.g:931:7: nEColIt= emptyCollectionLiteral
+                    // USE.g:932:7: nEColIt= emptyCollectionLiteral
                     {
                     pushFollow(FOLLOW_emptyCollectionLiteral_in_literal4122);
                     nEColIt=emptyCollectionLiteral();
@@ -4875,7 +4884,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 9 :
-                    // USE.g:932:7: nUndLit= undefinedLiteral
+                    // USE.g:933:7: nUndLit= undefinedLiteral
                     {
                     pushFollow(FOLLOW_undefinedLiteral_in_literal4134);
                     nUndLit=undefinedLiteral();
@@ -4887,7 +4896,7 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 10 :
-                    // USE.g:933:7: nTupleLit= tupleLiteral
+                    // USE.g:934:7: nTupleLit= tupleLiteral
                     {
                     pushFollow(FOLLOW_tupleLiteral_in_literal4146);
                     nTupleLit=tupleLiteral();
@@ -4895,6 +4904,18 @@ public class USEParser extends BaseParser {
                     state._fsp--;
 
                     n = nTupleLit; 
+
+                    }
+                    break;
+                case 11 :
+                    // USE.g:935:7: nDateLit= dateLiteral
+                    {
+                    pushFollow(FOLLOW_dateLiteral_in_literal4158);
+                    nDateLit=dateLiteral();
+
+                    state._fsp--;
+
+                    n = nDateLit; 
 
                     }
                     break;
@@ -4913,7 +4934,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "collectionLiteral"
-    // USE.g:941:1: collectionLiteral returns [ASTCollectionLiteral n] : ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE ;
+    // USE.g:943:1: collectionLiteral returns [ASTCollectionLiteral n] : ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE ;
     public final ASTCollectionLiteral collectionLiteral() throws RecognitionException {
         ASTCollectionLiteral n = null;
 
@@ -4922,8 +4943,8 @@ public class USEParser extends BaseParser {
 
          Token op = null; 
         try {
-            // USE.g:943:1: ( ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE )
-            // USE.g:944:5: ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE
+            // USE.g:945:1: ( ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE )
+            // USE.g:946:5: ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE
             {
              op = input.LT(1); 
             if ( (input.LA(1)>=99 && input.LA(1)<=102) ) {
@@ -4936,25 +4957,25 @@ public class USEParser extends BaseParser {
             }
 
              n = new ASTCollectionLiteral(op); 
-            match(input,LBRACE,FOLLOW_LBRACE_in_collectionLiteral4213); 
-            // USE.g:948:5: (ci= collectionItem ( COMMA ci= collectionItem )* )?
+            match(input,LBRACE,FOLLOW_LBRACE_in_collectionLiteral4225); 
+            // USE.g:950:5: (ci= collectionItem ( COMMA ci= collectionItem )* )?
             int alt80=2;
             int LA80_0 = input.LA(1);
 
-            if ( (LA80_0==IDENT||LA80_0==INT||LA80_0==LPAREN||(LA80_0>=PLUS && LA80_0<=MINUS)||(LA80_0>=REAL && LA80_0<=HASH)||LA80_0==75||LA80_0==85||LA80_0==91||(LA80_0>=93 && LA80_0<=107)) ) {
+            if ( (LA80_0==IDENT||LA80_0==INT||LA80_0==LPAREN||(LA80_0>=PLUS && LA80_0<=MINUS)||(LA80_0>=REAL && LA80_0<=HASH)||LA80_0==75||LA80_0==85||LA80_0==91||(LA80_0>=93 && LA80_0<=108)) ) {
                 alt80=1;
             }
             switch (alt80) {
                 case 1 :
-                    // USE.g:949:7: ci= collectionItem ( COMMA ci= collectionItem )*
+                    // USE.g:951:7: ci= collectionItem ( COMMA ci= collectionItem )*
                     {
-                    pushFollow(FOLLOW_collectionItem_in_collectionLiteral4230);
+                    pushFollow(FOLLOW_collectionItem_in_collectionLiteral4242);
                     ci=collectionItem();
 
                     state._fsp--;
 
                      n.addItem(ci); 
-                    // USE.g:950:7: ( COMMA ci= collectionItem )*
+                    // USE.g:952:7: ( COMMA ci= collectionItem )*
                     loop79:
                     do {
                         int alt79=2;
@@ -4967,10 +4988,10 @@ public class USEParser extends BaseParser {
 
                         switch (alt79) {
                     	case 1 :
-                    	    // USE.g:950:9: COMMA ci= collectionItem
+                    	    // USE.g:952:9: COMMA ci= collectionItem
                     	    {
-                    	    match(input,COMMA,FOLLOW_COMMA_in_collectionLiteral4243); 
-                    	    pushFollow(FOLLOW_collectionItem_in_collectionLiteral4247);
+                    	    match(input,COMMA,FOLLOW_COMMA_in_collectionLiteral4255); 
+                    	    pushFollow(FOLLOW_collectionItem_in_collectionLiteral4259);
                     	    ci=collectionItem();
 
                     	    state._fsp--;
@@ -4991,7 +5012,7 @@ public class USEParser extends BaseParser {
 
             }
 
-            match(input,RBRACE,FOLLOW_RBRACE_in_collectionLiteral4266); 
+            match(input,RBRACE,FOLLOW_RBRACE_in_collectionLiteral4278); 
 
             }
 
@@ -5008,7 +5029,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "collectionItem"
-    // USE.g:959:1: collectionItem returns [ASTCollectionItem n] : e= expression ( DOTDOT e= expression )? ;
+    // USE.g:961:1: collectionItem returns [ASTCollectionItem n] : e= expression ( DOTDOT e= expression )? ;
     public final ASTCollectionItem collectionItem() throws RecognitionException {
         ASTCollectionItem n = null;
 
@@ -5017,16 +5038,16 @@ public class USEParser extends BaseParser {
 
          n = new ASTCollectionItem(); 
         try {
-            // USE.g:961:1: (e= expression ( DOTDOT e= expression )? )
-            // USE.g:962:5: e= expression ( DOTDOT e= expression )?
+            // USE.g:963:1: (e= expression ( DOTDOT e= expression )? )
+            // USE.g:964:5: e= expression ( DOTDOT e= expression )?
             {
-            pushFollow(FOLLOW_expression_in_collectionItem4295);
+            pushFollow(FOLLOW_expression_in_collectionItem4307);
             e=expression();
 
             state._fsp--;
 
              n.setFirst(e); 
-            // USE.g:963:5: ( DOTDOT e= expression )?
+            // USE.g:965:5: ( DOTDOT e= expression )?
             int alt81=2;
             int LA81_0 = input.LA(1);
 
@@ -5035,10 +5056,10 @@ public class USEParser extends BaseParser {
             }
             switch (alt81) {
                 case 1 :
-                    // USE.g:963:7: DOTDOT e= expression
+                    // USE.g:965:7: DOTDOT e= expression
                     {
-                    match(input,DOTDOT,FOLLOW_DOTDOT_in_collectionItem4306); 
-                    pushFollow(FOLLOW_expression_in_collectionItem4310);
+                    match(input,DOTDOT,FOLLOW_DOTDOT_in_collectionItem4318); 
+                    pushFollow(FOLLOW_expression_in_collectionItem4322);
                     e=expression();
 
                     state._fsp--;
@@ -5066,7 +5087,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "emptyCollectionLiteral"
-    // USE.g:973:1: emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n] : 'oclEmpty' LPAREN t= collectionType RPAREN ;
+    // USE.g:975:1: emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n] : 'oclEmpty' LPAREN t= collectionType RPAREN ;
     public final ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException {
         ASTEmptyCollectionLiteral n = null;
 
@@ -5074,17 +5095,17 @@ public class USEParser extends BaseParser {
 
 
         try {
-            // USE.g:974:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
-            // USE.g:975:5: 'oclEmpty' LPAREN t= collectionType RPAREN
+            // USE.g:976:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
+            // USE.g:977:5: 'oclEmpty' LPAREN t= collectionType RPAREN
             {
-            match(input,103,FOLLOW_103_in_emptyCollectionLiteral4339); 
-            match(input,LPAREN,FOLLOW_LPAREN_in_emptyCollectionLiteral4341); 
-            pushFollow(FOLLOW_collectionType_in_emptyCollectionLiteral4345);
+            match(input,103,FOLLOW_103_in_emptyCollectionLiteral4351); 
+            match(input,LPAREN,FOLLOW_LPAREN_in_emptyCollectionLiteral4353); 
+            pushFollow(FOLLOW_collectionType_in_emptyCollectionLiteral4357);
             t=collectionType();
 
             state._fsp--;
 
-            match(input,RPAREN,FOLLOW_RPAREN_in_emptyCollectionLiteral4347); 
+            match(input,RPAREN,FOLLOW_RPAREN_in_emptyCollectionLiteral4359); 
              n = new ASTEmptyCollectionLiteral(t); 
 
             }
@@ -5102,7 +5123,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "undefinedLiteral"
-    // USE.g:986:1: undefinedLiteral returns [ASTUndefinedLiteral n] : ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' );
+    // USE.g:988:1: undefinedLiteral returns [ASTUndefinedLiteral n] : ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' );
     public final ASTUndefinedLiteral undefinedLiteral() throws RecognitionException {
         ASTUndefinedLiteral n = null;
 
@@ -5110,7 +5131,7 @@ public class USEParser extends BaseParser {
 
 
         try {
-            // USE.g:987:1: ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' )
+            // USE.g:989:1: ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' )
             int alt82=3;
             switch ( input.LA(1) ) {
             case 104:
@@ -5137,32 +5158,32 @@ public class USEParser extends BaseParser {
 
             switch (alt82) {
                 case 1 :
-                    // USE.g:988:5: 'oclUndefined' LPAREN t= type RPAREN
+                    // USE.g:990:5: 'oclUndefined' LPAREN t= type RPAREN
                     {
-                    match(input,104,FOLLOW_104_in_undefinedLiteral4377); 
-                    match(input,LPAREN,FOLLOW_LPAREN_in_undefinedLiteral4379); 
-                    pushFollow(FOLLOW_type_in_undefinedLiteral4383);
+                    match(input,104,FOLLOW_104_in_undefinedLiteral4389); 
+                    match(input,LPAREN,FOLLOW_LPAREN_in_undefinedLiteral4391); 
+                    pushFollow(FOLLOW_type_in_undefinedLiteral4395);
                     t=type();
 
                     state._fsp--;
 
-                    match(input,RPAREN,FOLLOW_RPAREN_in_undefinedLiteral4385); 
+                    match(input,RPAREN,FOLLOW_RPAREN_in_undefinedLiteral4397); 
                      n = new ASTUndefinedLiteral(t); 
 
                     }
                     break;
                 case 2 :
-                    // USE.g:991:5: 'Undefined'
+                    // USE.g:993:5: 'Undefined'
                     {
-                    match(input,105,FOLLOW_105_in_undefinedLiteral4399); 
+                    match(input,105,FOLLOW_105_in_undefinedLiteral4411); 
                      n = new ASTUndefinedLiteral(); 
 
                     }
                     break;
                 case 3 :
-                    // USE.g:994:5: 'null'
+                    // USE.g:996:5: 'null'
                     {
-                    match(input,106,FOLLOW_106_in_undefinedLiteral4413); 
+                    match(input,106,FOLLOW_106_in_undefinedLiteral4425); 
                      n = new ASTUndefinedLiteral(); 
 
                     }
@@ -5182,7 +5203,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "tupleLiteral"
-    // USE.g:1003:1: tupleLiteral returns [ASTTupleLiteral n] : 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE ;
+    // USE.g:1005:1: tupleLiteral returns [ASTTupleLiteral n] : 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE ;
     public final ASTTupleLiteral tupleLiteral() throws RecognitionException {
         ASTTupleLiteral n = null;
 
@@ -5191,18 +5212,18 @@ public class USEParser extends BaseParser {
 
          List tiList = new ArrayList(); 
         try {
-            // USE.g:1005:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
-            // USE.g:1006:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
+            // USE.g:1007:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
+            // USE.g:1008:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
             {
-            match(input,107,FOLLOW_107_in_tupleLiteral4447); 
-            match(input,LBRACE,FOLLOW_LBRACE_in_tupleLiteral4453); 
-            pushFollow(FOLLOW_tupleItem_in_tupleLiteral4461);
+            match(input,107,FOLLOW_107_in_tupleLiteral4459); 
+            match(input,LBRACE,FOLLOW_LBRACE_in_tupleLiteral4465); 
+            pushFollow(FOLLOW_tupleItem_in_tupleLiteral4473);
             ti=tupleItem();
 
             state._fsp--;
 
              tiList.add(ti); 
-            // USE.g:1009:5: ( COMMA ti= tupleItem )*
+            // USE.g:1011:5: ( COMMA ti= tupleItem )*
             loop83:
             do {
                 int alt83=2;
@@ -5215,10 +5236,10 @@ public class USEParser extends BaseParser {
 
                 switch (alt83) {
             	case 1 :
-            	    // USE.g:1009:7: COMMA ti= tupleItem
+            	    // USE.g:1011:7: COMMA ti= tupleItem
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_tupleLiteral4472); 
-            	    pushFollow(FOLLOW_tupleItem_in_tupleLiteral4476);
+            	    match(input,COMMA,FOLLOW_COMMA_in_tupleLiteral4484); 
+            	    pushFollow(FOLLOW_tupleItem_in_tupleLiteral4488);
             	    ti=tupleItem();
 
             	    state._fsp--;
@@ -5233,7 +5254,7 @@ public class USEParser extends BaseParser {
                 }
             } while (true);
 
-            match(input,RBRACE,FOLLOW_RBRACE_in_tupleLiteral4487); 
+            match(input,RBRACE,FOLLOW_RBRACE_in_tupleLiteral4499); 
              n = new ASTTupleLiteral(tiList); 
 
             }
@@ -5251,7 +5272,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "tupleItem"
-    // USE.g:1017:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( COLON | EQUAL ) e= expression ;
+    // USE.g:1019:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( COLON | EQUAL ) e= expression ;
     public final ASTTupleItem tupleItem() throws RecognitionException {
         ASTTupleItem n = null;
 
@@ -5260,10 +5281,10 @@ public class USEParser extends BaseParser {
 
 
         try {
-            // USE.g:1018:1: (name= IDENT ( COLON | EQUAL ) e= expression )
-            // USE.g:1019:5: name= IDENT ( COLON | EQUAL ) e= expression
+            // USE.g:1020:1: (name= IDENT ( COLON | EQUAL ) e= expression )
+            // USE.g:1021:5: name= IDENT ( COLON | EQUAL ) e= expression
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem4518); 
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem4530); 
             if ( (input.LA(1)>=COLON && input.LA(1)<=EQUAL) ) {
                 input.consume();
                 state.errorRecovery=false;
@@ -5273,7 +5294,7 @@ public class USEParser extends BaseParser {
                 throw mse;
             }
 
-            pushFollow(FOLLOW_expression_in_tupleItem4528);
+            pushFollow(FOLLOW_expression_in_tupleItem4540);
             e=expression();
 
             state._fsp--;
@@ -5294,8 +5315,39 @@ public class USEParser extends BaseParser {
     // $ANTLR end "tupleItem"
 
 
+    // $ANTLR start "dateLiteral"
+    // USE.g:1029:1: dateLiteral returns [ASTDateLiteral n] : 'Date' LBRACE v= STRING RBRACE ;
+    public final ASTDateLiteral dateLiteral() throws RecognitionException {
+        ASTDateLiteral n = null;
+
+        Token v=null;
+
+        try {
+            // USE.g:1030:1: ( 'Date' LBRACE v= STRING RBRACE )
+            // USE.g:1031:5: 'Date' LBRACE v= STRING RBRACE
+            {
+            match(input,108,FOLLOW_108_in_dateLiteral4571); 
+            match(input,LBRACE,FOLLOW_LBRACE_in_dateLiteral4573); 
+            v=(Token)match(input,STRING,FOLLOW_STRING_in_dateLiteral4577); 
+            match(input,RBRACE,FOLLOW_RBRACE_in_dateLiteral4579); 
+             n = new ASTDateLiteral( v ); 
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return n;
+    }
+    // $ANTLR end "dateLiteral"
+
+
     // $ANTLR start "type"
-    // USE.g:1030:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
+    // USE.g:1041:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
     public final ASTType type() throws RecognitionException {
         ASTType n = null;
 
@@ -5308,11 +5360,11 @@ public class USEParser extends BaseParser {
 
          Token tok = null; 
         try {
-            // USE.g:1032:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
-            // USE.g:1033:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            // USE.g:1043:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
+            // USE.g:1044:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
             {
              tok = input.LT(1); /* remember start of type */ 
-            // USE.g:1034:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            // USE.g:1045:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
             int alt84=3;
             switch ( input.LA(1) ) {
             case IDENT:
@@ -5324,7 +5376,7 @@ public class USEParser extends BaseParser {
             case 100:
             case 101:
             case 102:
-            case 108:
+            case 109:
                 {
                 alt84=2;
                 }
@@ -5343,9 +5395,9 @@ public class USEParser extends BaseParser {
 
             switch (alt84) {
                 case 1 :
-                    // USE.g:1035:7: nTSimple= simpleType
+                    // USE.g:1046:7: nTSimple= simpleType
                     {
-                    pushFollow(FOLLOW_simpleType_in_type4581);
+                    pushFollow(FOLLOW_simpleType_in_type4629);
                     nTSimple=simpleType();
 
                     state._fsp--;
@@ -5355,9 +5407,9 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 2 :
-                    // USE.g:1036:7: nTCollection= collectionType
+                    // USE.g:1047:7: nTCollection= collectionType
                     {
-                    pushFollow(FOLLOW_collectionType_in_type4593);
+                    pushFollow(FOLLOW_collectionType_in_type4641);
                     nTCollection=collectionType();
 
                     state._fsp--;
@@ -5367,9 +5419,9 @@ public class USEParser extends BaseParser {
                     }
                     break;
                 case 3 :
-                    // USE.g:1037:7: nTTuple= tupleType
+                    // USE.g:1048:7: nTTuple= tupleType
                     {
-                    pushFollow(FOLLOW_tupleType_in_type4605);
+                    pushFollow(FOLLOW_tupleType_in_type4653);
                     nTTuple=tupleType();
 
                     state._fsp--;
@@ -5397,7 +5449,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "typeOnly"
-    // USE.g:1042:1: typeOnly returns [ASTType n] : nT= type EOF ;
+    // USE.g:1053:1: typeOnly returns [ASTType n] : nT= type EOF ;
     public final ASTType typeOnly() throws RecognitionException {
         ASTType n = null;
 
@@ -5405,15 +5457,15 @@ public class USEParser extends BaseParser {
 
 
         try {
-            // USE.g:1043:1: (nT= type EOF )
-            // USE.g:1044:5: nT= type EOF
+            // USE.g:1054:1: (nT= type EOF )
+            // USE.g:1055:5: nT= type EOF
             {
-            pushFollow(FOLLOW_type_in_typeOnly4637);
+            pushFollow(FOLLOW_type_in_typeOnly4685);
             nT=type();
 
             state._fsp--;
 
-            match(input,EOF,FOLLOW_EOF_in_typeOnly4639); 
+            match(input,EOF,FOLLOW_EOF_in_typeOnly4687); 
              n = nT; 
 
             }
@@ -5431,17 +5483,17 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "simpleType"
-    // USE.g:1054:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
+    // USE.g:1065:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
     public final ASTSimpleType simpleType() throws RecognitionException {
         ASTSimpleType n = null;
 
         Token name=null;
 
         try {
-            // USE.g:1055:1: (name= IDENT )
-            // USE.g:1056:5: name= IDENT
+            // USE.g:1066:1: (name= IDENT )
+            // USE.g:1067:5: name= IDENT
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_simpleType4667); 
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_simpleType4715); 
              n = new ASTSimpleType(name); 
 
             }
@@ -5459,7 +5511,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "collectionType"
-    // USE.g:1064:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN ;
+    // USE.g:1075:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN ;
     public final ASTCollectionType collectionType() throws RecognitionException {
         ASTCollectionType n = null;
 
@@ -5468,11 +5520,11 @@ public class USEParser extends BaseParser {
 
          Token op = null; 
         try {
-            // USE.g:1066:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN )
-            // USE.g:1067:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN
+            // USE.g:1077:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN )
+            // USE.g:1078:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN
             {
              op = input.LT(1); 
-            if ( (input.LA(1)>=99 && input.LA(1)<=102)||input.LA(1)==108 ) {
+            if ( (input.LA(1)>=99 && input.LA(1)<=102)||input.LA(1)==109 ) {
                 input.consume();
                 state.errorRecovery=false;
             }
@@ -5481,13 +5533,13 @@ public class USEParser extends BaseParser {
                 throw mse;
             }
 
-            match(input,LPAREN,FOLLOW_LPAREN_in_collectionType4732); 
-            pushFollow(FOLLOW_type_in_collectionType4736);
+            match(input,LPAREN,FOLLOW_LPAREN_in_collectionType4780); 
+            pushFollow(FOLLOW_type_in_collectionType4784);
             elemType=type();
 
             state._fsp--;
 
-            match(input,RPAREN,FOLLOW_RPAREN_in_collectionType4738); 
+            match(input,RPAREN,FOLLOW_RPAREN_in_collectionType4786); 
              n = new ASTCollectionType(op, elemType); n.setStartToken(op);
 
             }
@@ -5505,7 +5557,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "tupleType"
-    // USE.g:1077:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
+    // USE.g:1088:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
     public final ASTTupleType tupleType() throws RecognitionException {
         ASTTupleType n = null;
 
@@ -5514,18 +5566,18 @@ public class USEParser extends BaseParser {
 
          List tpList = new ArrayList(); 
         try {
-            // USE.g:1079:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
-            // USE.g:1080:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
+            // USE.g:1090:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
+            // USE.g:1091:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
             {
-            match(input,107,FOLLOW_107_in_tupleType4772); 
-            match(input,LPAREN,FOLLOW_LPAREN_in_tupleType4774); 
-            pushFollow(FOLLOW_tuplePart_in_tupleType4783);
+            match(input,107,FOLLOW_107_in_tupleType4820); 
+            match(input,LPAREN,FOLLOW_LPAREN_in_tupleType4822); 
+            pushFollow(FOLLOW_tuplePart_in_tupleType4831);
             tp=tuplePart();
 
             state._fsp--;
 
              tpList.add(tp); 
-            // USE.g:1082:5: ( COMMA tp= tuplePart )*
+            // USE.g:1093:5: ( COMMA tp= tuplePart )*
             loop85:
             do {
                 int alt85=2;
@@ -5538,10 +5590,10 @@ public class USEParser extends BaseParser {
 
                 switch (alt85) {
             	case 1 :
-            	    // USE.g:1082:7: COMMA tp= tuplePart
+            	    // USE.g:1093:7: COMMA tp= tuplePart
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_tupleType4794); 
-            	    pushFollow(FOLLOW_tuplePart_in_tupleType4798);
+            	    match(input,COMMA,FOLLOW_COMMA_in_tupleType4842); 
+            	    pushFollow(FOLLOW_tuplePart_in_tupleType4846);
             	    tp=tuplePart();
 
             	    state._fsp--;
@@ -5556,7 +5608,7 @@ public class USEParser extends BaseParser {
                 }
             } while (true);
 
-            match(input,RPAREN,FOLLOW_RPAREN_in_tupleType4810); 
+            match(input,RPAREN,FOLLOW_RPAREN_in_tupleType4858); 
              n = new ASTTupleType(tpList); 
 
             }
@@ -5574,7 +5626,7 @@ public class USEParser extends BaseParser {
 
 
     // $ANTLR start "tuplePart"
-    // USE.g:1091:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
+    // USE.g:1102:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
     public final ASTTuplePart tuplePart() throws RecognitionException {
         ASTTuplePart n = null;
 
@@ -5583,12 +5635,12 @@ public class USEParser extends BaseParser {
 
 
         try {
-            // USE.g:1092:1: (name= IDENT COLON t= type )
-            // USE.g:1093:5: name= IDENT COLON t= type
+            // USE.g:1103:1: (name= IDENT COLON t= type )
+            // USE.g:1104:5: name= IDENT COLON t= type
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tuplePart4842); 
-            match(input,COLON,FOLLOW_COLON_in_tuplePart4844); 
-            pushFollow(FOLLOW_type_in_tuplePart4848);
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tuplePart4890); 
+            match(input,COLON,FOLLOW_COLON_in_tuplePart4892); 
+            pushFollow(FOLLOW_type_in_tuplePart4896);
             t=type();
 
             state._fsp--;
@@ -5658,14 +5710,14 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_set_in_associationClassDefinition756 = new BitSet(new long[]{0x0004000000000000L});
     public static final BitSet FOLLOW_50_in_associationClassDefinition785 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_attributeDefinition814 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_attributeDefinition816 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_attributeDefinition816 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_attributeDefinition820 = new BitSet(new long[]{0x0000000000000082L});
     public static final BitSet FOLLOW_SEMI_in_attributeDefinition824 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_operationDefinition862 = new BitSet(new long[]{0x0000000000080000L});
     public static final BitSet FOLLOW_paramList_in_operationDefinition870 = new BitSet(new long[]{0x8100000000000682L,0x0000000000000001L});
-    public static final BitSet FOLLOW_COLON_in_operationDefinition878 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_operationDefinition878 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_operationDefinition882 = new BitSet(new long[]{0x8100000000000482L,0x0000000000000001L});
-    public static final BitSet FOLLOW_EQUAL_in_operationDefinition892 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_EQUAL_in_operationDefinition892 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_operationDefinition896 = new BitSet(new long[]{0x8100000000000082L,0x0000000000000001L});
     public static final BitSet FOLLOW_56_in_operationDefinition904 = new BitSet(new long[]{0x0004000000000000L,0x0000000000148D5EL});
     public static final BitSet FOLLOW_alActionList_in_operationDefinition908 = new BitSet(new long[]{0x0004000000000000L});
@@ -5703,24 +5755,24 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_invariantClause_in_invariant1358 = new BitSet(new long[]{0x6000000000000002L});
     public static final BitSet FOLLOW_61_in_invariantClause1389 = new BitSet(new long[]{0x0000000000000210L});
     public static final BitSet FOLLOW_IDENT_in_invariantClause1395 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_invariantClause1400 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COLON_in_invariantClause1400 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_invariantClause1404 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_62_in_invariantClause1414 = new BitSet(new long[]{0x2000000000000000L});
     public static final BitSet FOLLOW_61_in_invariantClause1416 = new BitSet(new long[]{0x0000000000000210L});
     public static final BitSet FOLLOW_IDENT_in_invariantClause1422 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_invariantClause1427 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COLON_in_invariantClause1427 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_invariantClause1431 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_60_in_prePost1457 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_prePost1461 = new BitSet(new long[]{0x0000000000020000L});
     public static final BitSet FOLLOW_COLON_COLON_in_prePost1463 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_prePost1467 = new BitSet(new long[]{0x0000000000080000L});
     public static final BitSet FOLLOW_paramList_in_prePost1471 = new BitSet(new long[]{0x8000000000000200L,0x0000000000000001L});
-    public static final BitSet FOLLOW_COLON_in_prePost1475 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_prePost1475 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_prePost1479 = new BitSet(new long[]{0x8000000000000000L,0x0000000000000001L});
     public static final BitSet FOLLOW_prePostClause_in_prePost1498 = new BitSet(new long[]{0x8000000000000002L,0x0000000000000001L});
     public static final BitSet FOLLOW_set_in_prePostClause1537 = new BitSet(new long[]{0x0000000000000210L});
     public static final BitSet FOLLOW_IDENT_in_prePostClause1552 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_prePostClause1557 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COLON_in_prePostClause1557 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_prePostClause1561 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_alAction_in_alActionList1594 = new BitSet(new long[]{0x0000000000000002L,0x0000000000148D5EL});
     public static final BitSet FOLLOW_alCreateVar_in_alAction1620 = new BitSet(new long[]{0x0000000000000002L});
@@ -5735,73 +5787,73 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_alExec_in_alAction1728 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_alCreateVar1747 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_alCreateVar1755 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_alCreateVar1757 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_alCreateVar1757 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_alCreateVar1761 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_67_in_alSet1783 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_67_in_alSet1783 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alSet1787 = new BitSet(new long[]{0x0000000000040000L});
-    public static final BitSet FOLLOW_COLON_EQUAL_in_alSet1789 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COLON_EQUAL_in_alSet1789 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alSet1793 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_68_in_alSetCreate1817 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_68_in_alSetCreate1817 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alSetCreate1821 = new BitSet(new long[]{0x0000000000040000L});
     public static final BitSet FOLLOW_COLON_EQUAL_in_alSetCreate1823 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_alSetCreate1829 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_alSetCreate1833 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000020L});
-    public static final BitSet FOLLOW_69_in_alSetCreate1842 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_69_in_alSetCreate1842 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alSetCreate1846 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_70_in_alInsert1877 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_LPAREN_in_alInsert1879 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_LPAREN_in_alInsert1879 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alInsert1888 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_COMMA_in_alInsert1892 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COMMA_in_alInsert1892 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alInsert1900 = new BitSet(new long[]{0x0000000000102000L});
-    public static final BitSet FOLLOW_COMMA_in_alInsert1906 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COMMA_in_alInsert1906 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alInsert1910 = new BitSet(new long[]{0x0000000000102000L});
     public static final BitSet FOLLOW_RPAREN_in_alInsert1922 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000080L});
     public static final BitSet FOLLOW_71_in_alInsert1924 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_alInsert1928 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_72_in_alDelete1960 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_LPAREN_in_alDelete1962 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_LPAREN_in_alDelete1962 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alDelete1970 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_COMMA_in_alDelete1974 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COMMA_in_alDelete1974 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alDelete1982 = new BitSet(new long[]{0x0000000000102000L});
-    public static final BitSet FOLLOW_COMMA_in_alDelete1988 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COMMA_in_alDelete1988 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alDelete1992 = new BitSet(new long[]{0x0000000000102000L});
     public static final BitSet FOLLOW_RPAREN_in_alDelete2003 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000200L});
     public static final BitSet FOLLOW_73_in_alDelete2005 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_alDelete2009 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_74_in_alDestroy2038 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_74_in_alDestroy2038 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alDestroy2042 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_75_in_alIf2066 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_75_in_alIf2066 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alIf2070 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
     public static final BitSet FOLLOW_76_in_alIf2074 = new BitSet(new long[]{0x0000000000000000L,0x000000000014ED5EL});
     public static final BitSet FOLLOW_alActionList_in_alIf2078 = new BitSet(new long[]{0x0000000000000000L,0x0000000000006000L});
     public static final BitSet FOLLOW_77_in_alIf2082 = new BitSet(new long[]{0x0000000000000000L,0x000000000014CD5EL});
     public static final BitSet FOLLOW_alActionList_in_alIf2086 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
     public static final BitSet FOLLOW_78_in_alIf2091 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_79_in_alWhile2110 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_79_in_alWhile2110 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alWhile2114 = new BitSet(new long[]{0x0000000000000000L,0x0000000000010000L});
     public static final BitSet FOLLOW_80_in_alWhile2118 = new BitSet(new long[]{0x0000000000000000L,0x0000000000168D5EL});
     public static final BitSet FOLLOW_alActionList_in_alWhile2124 = new BitSet(new long[]{0x0000000000000000L,0x0000000000020000L});
     public static final BitSet FOLLOW_81_in_alWhile2127 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_82_in_alFor2146 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_alFor2150 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_alFor2152 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_alFor2152 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_alFor2156 = new BitSet(new long[]{0x0000000000000000L,0x0000000000080000L});
-    public static final BitSet FOLLOW_83_in_alFor2158 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_83_in_alFor2158 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alFor2162 = new BitSet(new long[]{0x0000000000000000L,0x0000000000010000L});
     public static final BitSet FOLLOW_80_in_alFor2166 = new BitSet(new long[]{0x0000000000000010L,0x0000000000148D5EL});
     public static final BitSet FOLLOW_alActionList_in_alFor2172 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_alFor2179 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_84_in_alExec2199 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_84_in_alExec2199 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_alExec2203 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_expression_in_expressionOnly2238 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_expressionOnly2240 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_85_in_expression2288 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_expression2292 = new BitSet(new long[]{0x0000000000000600L});
-    public static final BitSet FOLLOW_COLON_in_expression2296 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_expression2296 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_expression2300 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_EQUAL_in_expression2305 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_EQUAL_in_expression2305 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_expression2309 = new BitSet(new long[]{0x0000000000000000L,0x0000000000080000L});
-    public static final BitSet FOLLOW_83_in_expression2311 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_83_in_expression2311 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_conditionalImpliesExpression_in_expression2336 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_LPAREN_in_paramList2369 = new BitSet(new long[]{0x0000000000100010L});
     public static final BitSet FOLLOW_variableDeclaration_in_paramList2386 = new BitSet(new long[]{0x0000000000102000L});
@@ -5812,33 +5864,33 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_COMMA_in_idList2461 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_idList2465 = new BitSet(new long[]{0x0000000000002002L});
     public static final BitSet FOLLOW_IDENT_in_variableDeclaration2496 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_variableDeclaration2498 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_variableDeclaration2498 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_variableDeclaration2502 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression2538 = new BitSet(new long[]{0x0000000000000002L,0x0000000000400000L});
-    public static final BitSet FOLLOW_86_in_conditionalImpliesExpression2551 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_86_in_conditionalImpliesExpression2551 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression2555 = new BitSet(new long[]{0x0000000000000002L,0x0000000000400000L});
     public static final BitSet FOLLOW_conditionalXOrExpression_in_conditionalOrExpression2600 = new BitSet(new long[]{0x0000000000000002L,0x0000000000800000L});
-    public static final BitSet FOLLOW_87_in_conditionalOrExpression2613 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_87_in_conditionalOrExpression2613 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_conditionalXOrExpression_in_conditionalOrExpression2617 = new BitSet(new long[]{0x0000000000000002L,0x0000000000800000L});
     public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalXOrExpression2661 = new BitSet(new long[]{0x0000000000000002L,0x0000000001000000L});
-    public static final BitSet FOLLOW_88_in_conditionalXOrExpression2674 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_88_in_conditionalXOrExpression2674 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalXOrExpression2678 = new BitSet(new long[]{0x0000000000000002L,0x0000000001000000L});
     public static final BitSet FOLLOW_equalityExpression_in_conditionalAndExpression2722 = new BitSet(new long[]{0x0000000000000002L,0x0000000002000000L});
-    public static final BitSet FOLLOW_89_in_conditionalAndExpression2735 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_89_in_conditionalAndExpression2735 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_equalityExpression_in_conditionalAndExpression2739 = new BitSet(new long[]{0x0000000000000002L,0x0000000002000000L});
     public static final BitSet FOLLOW_relationalExpression_in_equalityExpression2787 = new BitSet(new long[]{0x0000000000200402L});
-    public static final BitSet FOLLOW_set_in_equalityExpression2806 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_set_in_equalityExpression2806 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_relationalExpression_in_equalityExpression2816 = new BitSet(new long[]{0x0000000000200402L});
     public static final BitSet FOLLOW_additiveExpression_in_relationalExpression2865 = new BitSet(new long[]{0x0000000001C00102L});
-    public static final BitSet FOLLOW_set_in_relationalExpression2883 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_set_in_relationalExpression2883 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_additiveExpression_in_relationalExpression2901 = new BitSet(new long[]{0x0000000001C00102L});
     public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression2951 = new BitSet(new long[]{0x0000000006000002L});
-    public static final BitSet FOLLOW_set_in_additiveExpression2969 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_set_in_additiveExpression2969 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression2979 = new BitSet(new long[]{0x0000000006000002L});
     public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression3029 = new BitSet(new long[]{0x0000000008010002L,0x0000000004000000L});
-    public static final BitSet FOLLOW_set_in_multiplicativeExpression3047 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_set_in_multiplicativeExpression3047 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression3061 = new BitSet(new long[]{0x0000000008010002L,0x0000000004000000L});
-    public static final BitSet FOLLOW_set_in_unaryExpression3123 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_set_in_unaryExpression3123 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_unaryExpression_in_unaryExpression3147 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_postfixExpression_in_unaryExpression3167 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_primaryExpression_in_postfixExpression3200 = new BitSet(new long[]{0x0000000030000002L});
@@ -5847,7 +5899,7 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_propertyCall_in_postfixExpression3235 = new BitSet(new long[]{0x0000000030000002L});
     public static final BitSet FOLLOW_literal_in_primaryExpression3275 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_propertyCall_in_primaryExpression3287 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_primaryExpression3298 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_LPAREN_in_primaryExpression3298 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_primaryExpression3302 = new BitSet(new long[]{0x0000000000100000L});
     public static final BitSet FOLLOW_RPAREN_in_primaryExpression3304 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ifExpression_in_primaryExpression3316 = new BitSet(new long[]{0x0000000000000002L});
@@ -5863,9 +5915,9 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_operationExpression_in_propertyCall3458 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_typeExpression_in_propertyCall3471 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_queryExpression3506 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_LPAREN_in_queryExpression3513 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_LPAREN_in_queryExpression3513 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_elemVarsDeclaration_in_queryExpression3524 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_BAR_in_queryExpression3528 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_BAR_in_queryExpression3528 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_queryExpression3539 = new BitSet(new long[]{0x0000000000100000L});
     public static final BitSet FOLLOW_RPAREN_in_queryExpression3545 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_93_in_iterateExpression3577 = new BitSet(new long[]{0x0000000000080000L});
@@ -5873,7 +5925,7 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_elemVarsDeclaration_in_iterateExpression3591 = new BitSet(new long[]{0x0000000000000080L});
     public static final BitSet FOLLOW_SEMI_in_iterateExpression3593 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_variableInitialization_in_iterateExpression3601 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_BAR_in_iterateExpression3603 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_BAR_in_iterateExpression3603 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_iterateExpression3611 = new BitSet(new long[]{0x0000000000100000L});
     public static final BitSet FOLLOW_RPAREN_in_iterateExpression3617 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_operationExpression3661 = new BitSet(new long[]{0x0000000040080802L});
@@ -5882,28 +5934,28 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_RBRACK_in_operationExpression3683 = new BitSet(new long[]{0x0000000040080002L});
     public static final BitSet FOLLOW_AT_in_operationExpression3696 = new BitSet(new long[]{0x8000000000000000L});
     public static final BitSet FOLLOW_63_in_operationExpression3698 = new BitSet(new long[]{0x0000000000080002L});
-    public static final BitSet FOLLOW_LPAREN_in_operationExpression3719 = new BitSet(new long[]{0x0000000706188010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_LPAREN_in_operationExpression3719 = new BitSet(new long[]{0x0000000706188010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_operationExpression3740 = new BitSet(new long[]{0x0000000000102000L});
-    public static final BitSet FOLLOW_COMMA_in_operationExpression3752 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_COMMA_in_operationExpression3752 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_operationExpression3756 = new BitSet(new long[]{0x0000000000102000L});
     public static final BitSet FOLLOW_RPAREN_in_operationExpression3776 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_typeExpression3819 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_LPAREN_in_typeExpression3835 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_LPAREN_in_typeExpression3835 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_typeExpression3839 = new BitSet(new long[]{0x0000000000100000L});
     public static final BitSet FOLLOW_RPAREN_in_typeExpression3841 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_idList_in_elemVarsDeclaration3880 = new BitSet(new long[]{0x0000000000000202L});
-    public static final BitSet FOLLOW_COLON_in_elemVarsDeclaration3888 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_elemVarsDeclaration3888 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_elemVarsDeclaration3892 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_variableInitialization3927 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_variableInitialization3929 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
+    public static final BitSet FOLLOW_COLON_in_variableInitialization3929 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
     public static final BitSet FOLLOW_type_in_variableInitialization3933 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_EQUAL_in_variableInitialization3935 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_EQUAL_in_variableInitialization3935 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_variableInitialization3939 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_75_in_ifExpression3971 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_75_in_ifExpression3971 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_ifExpression3975 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_76_in_ifExpression3977 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_76_in_ifExpression3977 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_ifExpression3981 = new BitSet(new long[]{0x0000000000000000L,0x0000000000002000L});
-    public static final BitSet FOLLOW_77_in_ifExpression3983 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
+    public static final BitSet FOLLOW_77_in_ifExpression3983 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
     public static final BitSet FOLLOW_expression_in_ifExpression3987 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
     public static final BitSet FOLLOW_78_in_ifExpression3989 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_97_in_literal4028 = new BitSet(new long[]{0x0000000000000002L});
@@ -5917,52 +5969,57 @@ public class USEParser extends BaseParser {
     public static final BitSet FOLLOW_emptyCollectionLiteral_in_literal4122 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_undefinedLiteral_in_literal4134 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_tupleLiteral_in_literal4146 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_collectionLiteral4184 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LBRACE_in_collectionLiteral4213 = new BitSet(new long[]{0x0000000706088050L,0x00000FFFE8200800L});
-    public static final BitSet FOLLOW_collectionItem_in_collectionLiteral4230 = new BitSet(new long[]{0x0000000000002040L});
-    public static final BitSet FOLLOW_COMMA_in_collectionLiteral4243 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
-    public static final BitSet FOLLOW_collectionItem_in_collectionLiteral4247 = new BitSet(new long[]{0x0000000000002040L});
-    public static final BitSet FOLLOW_RBRACE_in_collectionLiteral4266 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expression_in_collectionItem4295 = new BitSet(new long[]{0x0000000000004002L});
-    public static final BitSet FOLLOW_DOTDOT_in_collectionItem4306 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
-    public static final BitSet FOLLOW_expression_in_collectionItem4310 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_103_in_emptyCollectionLiteral4339 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_LPAREN_in_emptyCollectionLiteral4341 = new BitSet(new long[]{0x0000000000000000L,0x0000107800000000L});
-    public static final BitSet FOLLOW_collectionType_in_emptyCollectionLiteral4345 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_RPAREN_in_emptyCollectionLiteral4347 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_104_in_undefinedLiteral4377 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_LPAREN_in_undefinedLiteral4379 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
-    public static final BitSet FOLLOW_type_in_undefinedLiteral4383 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_RPAREN_in_undefinedLiteral4385 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_105_in_undefinedLiteral4399 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_106_in_undefinedLiteral4413 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_107_in_tupleLiteral4447 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LBRACE_in_tupleLiteral4453 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tupleItem_in_tupleLiteral4461 = new BitSet(new long[]{0x0000000000002040L});
-    public static final BitSet FOLLOW_COMMA_in_tupleLiteral4472 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tupleItem_in_tupleLiteral4476 = new BitSet(new long[]{0x0000000000002040L});
-    public static final BitSet FOLLOW_RBRACE_in_tupleLiteral4487 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_tupleItem4518 = new BitSet(new long[]{0x0000000000000600L});
-    public static final BitSet FOLLOW_set_in_tupleItem4520 = new BitSet(new long[]{0x0000000706088010L,0x00000FFFE8200800L});
-    public static final BitSet FOLLOW_expression_in_tupleItem4528 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_simpleType_in_type4581 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_collectionType_in_type4593 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_tupleType_in_type4605 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_typeOnly4637 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_typeOnly4639 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_simpleType4667 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_collectionType4705 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_LPAREN_in_collectionType4732 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
-    public static final BitSet FOLLOW_type_in_collectionType4736 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_RPAREN_in_collectionType4738 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_107_in_tupleType4772 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_LPAREN_in_tupleType4774 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tuplePart_in_tupleType4783 = new BitSet(new long[]{0x0000000000102000L});
-    public static final BitSet FOLLOW_COMMA_in_tupleType4794 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tuplePart_in_tupleType4798 = new BitSet(new long[]{0x0000000000102000L});
-    public static final BitSet FOLLOW_RPAREN_in_tupleType4810 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_tuplePart4842 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_in_tuplePart4844 = new BitSet(new long[]{0x0000000000000010L,0x0000187800000000L});
-    public static final BitSet FOLLOW_type_in_tuplePart4848 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_dateLiteral_in_literal4158 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_collectionLiteral4196 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LBRACE_in_collectionLiteral4225 = new BitSet(new long[]{0x0000000706088050L,0x00001FFFE8200800L});
+    public static final BitSet FOLLOW_collectionItem_in_collectionLiteral4242 = new BitSet(new long[]{0x0000000000002040L});
+    public static final BitSet FOLLOW_COMMA_in_collectionLiteral4255 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
+    public static final BitSet FOLLOW_collectionItem_in_collectionLiteral4259 = new BitSet(new long[]{0x0000000000002040L});
+    public static final BitSet FOLLOW_RBRACE_in_collectionLiteral4278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expression_in_collectionItem4307 = new BitSet(new long[]{0x0000000000004002L});
+    public static final BitSet FOLLOW_DOTDOT_in_collectionItem4318 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
+    public static final BitSet FOLLOW_expression_in_collectionItem4322 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_103_in_emptyCollectionLiteral4351 = new BitSet(new long[]{0x0000000000080000L});
+    public static final BitSet FOLLOW_LPAREN_in_emptyCollectionLiteral4353 = new BitSet(new long[]{0x0000000000000000L,0x0000207800000000L});
+    public static final BitSet FOLLOW_collectionType_in_emptyCollectionLiteral4357 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_RPAREN_in_emptyCollectionLiteral4359 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_104_in_undefinedLiteral4389 = new BitSet(new long[]{0x0000000000080000L});
+    public static final BitSet FOLLOW_LPAREN_in_undefinedLiteral4391 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
+    public static final BitSet FOLLOW_type_in_undefinedLiteral4395 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_RPAREN_in_undefinedLiteral4397 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_105_in_undefinedLiteral4411 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_106_in_undefinedLiteral4425 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_107_in_tupleLiteral4459 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LBRACE_in_tupleLiteral4465 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tupleItem_in_tupleLiteral4473 = new BitSet(new long[]{0x0000000000002040L});
+    public static final BitSet FOLLOW_COMMA_in_tupleLiteral4484 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tupleItem_in_tupleLiteral4488 = new BitSet(new long[]{0x0000000000002040L});
+    public static final BitSet FOLLOW_RBRACE_in_tupleLiteral4499 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_tupleItem4530 = new BitSet(new long[]{0x0000000000000600L});
+    public static final BitSet FOLLOW_set_in_tupleItem4532 = new BitSet(new long[]{0x0000000706088010L,0x00001FFFE8200800L});
+    public static final BitSet FOLLOW_expression_in_tupleItem4540 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_108_in_dateLiteral4571 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LBRACE_in_dateLiteral4573 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_STRING_in_dateLiteral4577 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RBRACE_in_dateLiteral4579 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_simpleType_in_type4629 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_collectionType_in_type4641 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_tupleType_in_type4653 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_typeOnly4685 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_typeOnly4687 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_simpleType4715 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_collectionType4753 = new BitSet(new long[]{0x0000000000080000L});
+    public static final BitSet FOLLOW_LPAREN_in_collectionType4780 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
+    public static final BitSet FOLLOW_type_in_collectionType4784 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_RPAREN_in_collectionType4786 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_107_in_tupleType4820 = new BitSet(new long[]{0x0000000000080000L});
+    public static final BitSet FOLLOW_LPAREN_in_tupleType4822 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tuplePart_in_tupleType4831 = new BitSet(new long[]{0x0000000000102000L});
+    public static final BitSet FOLLOW_COMMA_in_tupleType4842 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tuplePart_in_tupleType4846 = new BitSet(new long[]{0x0000000000102000L});
+    public static final BitSet FOLLOW_RPAREN_in_tupleType4858 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_tuplePart4890 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_COLON_in_tuplePart4892 = new BitSet(new long[]{0x0000000000000010L,0x0000287800000000L});
+    public static final BitSet FOLLOW_type_in_tuplePart4896 = new BitSet(new long[]{0x0000000000000002L});
 
 }

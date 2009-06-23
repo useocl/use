@@ -71,15 +71,17 @@ public final class BagType extends CollectionType {
      * this collection has type Bag(T) the result is the set of
      * all types Bag(T') and Collection(T') where T' <= T.
      */
-    public Set allSupertypes() {
-        Set res = new HashSet();
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
         res.addAll(super.allSupertypes());
-        Set elemSuper = elemType().allSupertypes();
-        Iterator typeIter = elemSuper.iterator();
+        Set<Type> elemSuper = elemType().allSupertypes();
+        Iterator<Type> typeIter = elemSuper.iterator();
+        
         while (typeIter.hasNext() ) {
-            Type t = (Type) typeIter.next();
+            Type t = typeIter.next();
             res.add(TypeFactory.mkBag(t));
         }
+        
         return res;
     }
 

@@ -44,7 +44,7 @@ import org.tzi.use.util.cmd.CommandFailedException;
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
-public final class MCmdCreateInsertObjects extends MCmd {
+public final class MCmdCreateInsertObjects extends MCmd implements CmdCreatesObjects {
     private MSystemState fSystemState;
     private String fVarNameCreate;  // (String) variable names
     private List fVarNamesInsert;   // (String) variable names
@@ -182,5 +182,12 @@ public final class MCmdCreateInsertObjects extends MCmd {
      */
     public String toString() {
         return "Create instance of an associationclass";
+    }
+    
+    public List<MObject> getObjects() {
+    	List<MObject> result = new ArrayList<MObject>();
+    	result.add(this.fLinkObject);
+    	
+    	return result;
     }
 }

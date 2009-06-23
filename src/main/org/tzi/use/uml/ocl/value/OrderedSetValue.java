@@ -37,14 +37,14 @@ import org.tzi.use.util.StringUtil;
  * @author  Lars Hamann
  */
 public class OrderedSetValue extends CollectionValue {
-    private ArrayList fElements;
+    private ArrayList<Value> fElements;
     
     /**
      * Constructs a new empty OrderedSet.
      */
     public OrderedSetValue(Type elemType) {
         super(TypeFactory.mkOrderedSet(elemType), elemType);
-        fElements = new ArrayList();
+        fElements = new ArrayList<Value>();
     }
 
     /**
@@ -63,13 +63,11 @@ public class OrderedSetValue extends CollectionValue {
      * Constructs an orderedset and adds all values. Elements are type checked
      * as they get inserted into the sequence.
      * 
-     * Duplicates are ignored after the first occurence.
+     * Duplicates are ignored after the first occurrence.
      */
-    public OrderedSetValue(Type elemType, Collection values) {
+    public OrderedSetValue(Type elemType, Collection<Value> values) {
         this(elemType);
-        Iterator it = values.iterator(); 
-        while (it.hasNext() )
-            add((Value) it.next());
+        addAll(values);
     }
 
     /**
@@ -88,7 +86,10 @@ public class OrderedSetValue extends CollectionValue {
         }
     }
 
-
+    @Override
+    public void doSetElemType() {
+        setType( TypeFactory.mkOrderedSet(fElemType));
+    }
 
     /**
      * Returns the element at the specified position in this orderedset.
@@ -100,11 +101,11 @@ public class OrderedSetValue extends CollectionValue {
      *        &lt; 1 || index &gt; size()).
      */
     public Value get(int index) {
-        return (Value) fElements.get(index);
+        return fElements.get(index);
     }
 
 
-    public Iterator iterator() {
+    public Iterator<Value> iterator() {
         return fElements.iterator();
     }
 
@@ -121,9 +122,9 @@ public class OrderedSetValue extends CollectionValue {
     }
 
     public boolean includesAll(CollectionValue v) {
-        Iterator it = v.iterator(); 
+        Iterator<Value> it = v.iterator(); 
         while (it.hasNext() ) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (! fElements.contains(elem) )
                 return false;
         }
@@ -131,9 +132,9 @@ public class OrderedSetValue extends CollectionValue {
     }
 
     public boolean excludesAll(CollectionValue v) {
-        Iterator it = v.iterator(); 
+        Iterator<Value> it = v.iterator(); 
         while (it.hasNext() ) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (fElements.contains(elem) )
                 return false;
         }
@@ -147,9 +148,9 @@ public class OrderedSetValue extends CollectionValue {
      */
     public OrderedSetValue excluding(Value v) {
         OrderedSetValue res = new OrderedSetValue(elemType());
-        Iterator it = fElements.iterator(); 
+        Iterator<Value> it = fElements.iterator(); 
         while (it.hasNext() ) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (! v.equals(elem) )
                 res.add(elem);
         }
@@ -174,7 +175,7 @@ public class OrderedSetValue extends CollectionValue {
     
     public int count(Value v) {
         int res = 0;
-        Iterator it = fElements.iterator(); 
+        Iterator<Value> it = fElements.iterator(); 
         while (it.hasNext() )
             if (v.equals(it.next()) )
                 res++;
@@ -217,7 +218,7 @@ public class OrderedSetValue extends CollectionValue {
     public OrderedSetValue subOrderedSet(int lower, int upper) {
         OrderedSetValue res = new OrderedSetValue(elemType());
         for (int i = lower; i < upper; i++) 
-            res.add((Value)fElements.get(i));
+            res.add(fElements.get(i));
         return res;
     }
 
@@ -227,17 +228,18 @@ public class OrderedSetValue extends CollectionValue {
      * Otherwise the result is nondeterministic, as in Set->asSequence
      */
     public OrderedSetValue flatten() {
-        if (! elemType().isCollection() ) 
+        if ( !elemType().isCollection() ) 
             return this;
     
         CollectionType c2 = (CollectionType) elemType();
         OrderedSetValue res = new OrderedSetValue(c2.elemType());
-        Iterator it = fElements.iterator(); 
+        Iterator<Value> it = fElements.iterator(); 
+        
         while (it.hasNext() ) {
             CollectionValue elem = (CollectionValue) it.next();
-            Iterator it2 = elem.iterator(); 
+            Iterator<Value> it2 = elem.iterator(); 
             while (it2.hasNext() ) {
-                Value elem2 = (Value) it2.next();
+                Value elem2 = it2.next();
                 res.add(elem2);
             }
         }
@@ -247,11 +249,11 @@ public class OrderedSetValue extends CollectionValue {
     public Object clone() throws CloneNotSupportedException {
         // TODO: why have OrderedSet and SequenceValue a clone method, while Set and BagValue don't?
         OrderedSetValue res = (OrderedSetValue)super.clone();
-        res.fElements = (ArrayList) fElements.clone();
+        res.fElements = new ArrayList<Value>(fElements);
         return res;
     }
 
-    public Collection collection() {
+    public Collection<Value> collection() {
         return fElements;
     }
 
@@ -265,7 +267,7 @@ public class OrderedSetValue extends CollectionValue {
 
     protected Integer getClassCompareNr()
     {
-    	return new Integer(2);
+    	return new Integer(4);
     }
     
     /** 
@@ -287,21 +289,6 @@ public class OrderedSetValue extends CollectionValue {
         return false;
     }
 
-//     public int compareTo(Object o) {
-//         if (o == this )
-//             return 0;
-//         if (o instanceof UndefinedValue )
-//             return +1;
-//         if (! (o instanceof SequenceValue) )
-//             throw new ClassCastException();
-//         SequenceValue seq2 = (SequenceValue) o;
-//         if (! seq2.type().isSubtypeOf(this.type()) )
-//             throw new ClassCastException("this.type() = " + this.type() + 
-//                                          ", seq2.type() = " + seq2.type());
-    
-//         return new CollectionComparator().compare(fElements, seq2.fElements);
-//     }
-
     void add(Value v) {
     	if (!fElements.contains(v)) {
     		fElements.add(v);
@@ -310,10 +297,10 @@ public class OrderedSetValue extends CollectionValue {
     }
 
 
-    void addAll(Collection v) {
-    	Iterator iter = v.iterator();
+    void addAll(Collection<Value> v) {
+    	Iterator<Value> iter = v.iterator();
     	while (iter.hasNext()) {
-    		Value element = (Value)iter.next();
+    		Value element = iter.next();
     		
     		if (!fElements.contains(element)) {
         		fElements.add(element);

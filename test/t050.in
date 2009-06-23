@@ -55,9 +55,9 @@
 ?Bag{Bag{1}}->including(Sequence{'a'})
 *-> Bag{Sequence{'a'},Bag{1}} : Bag(Collection(OclAny))
 ?Bag{Bag{1}}->including(OrderedSet{1})
-*-> Bag{OrderedSet{1},Bag{1}} : Bag(Collection(Integer))
+*-> Bag{Bag{1},OrderedSet{1}} : Bag(Collection(Integer))
 ?Bag{Bag{1}}->including(OrderedSet{'a'})
-*-> Bag{OrderedSet{'a'},Bag{1}} : Bag(Collection(OclAny))
+*-> Bag{Bag{1},OrderedSet{'a'}} : Bag(Collection(OclAny))
 
 ?Sequence{1, 2.1}
 *-> Sequence{1,2.1} : Sequence(Real)

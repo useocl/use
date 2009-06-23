@@ -76,8 +76,7 @@ public interface MClass extends MModelElement {
      *
      * @return List(MAttribute)
      */
-    public List attributes();
-    //public Set attributes();
+    public List<MAttribute> attributes();
 
     /**
      * Returns the set of all attributes (including inherited ones)
@@ -85,9 +84,7 @@ public interface MClass extends MModelElement {
      *
      * @return List(MAttribute)
      */
-    public List allAttributes();
-//    public Set allAttributes();
-
+    public List<MAttribute> allAttributes();
 
     /**
      * Returns the specified attribute. Attributes are also looked up
@@ -111,7 +108,7 @@ public interface MClass extends MModelElement {
      * Returns all operations defined for this class. Inherited
      * operations are not included.
      */
-    public List operations();
+    public List<MOperation> operations();
 
 
     /**
@@ -120,7 +117,7 @@ public interface MClass extends MModelElement {
      *
      * @return List(MOperation)
      */
-    public List allOperations();
+    public List<MOperation> allOperations();
 
     /**
      * Gets an operation by name. Operations are also looked up in
@@ -148,7 +145,7 @@ public interface MClass extends MModelElement {
      *
      * @return Map(String, MAssociationEnd)
      */
-    Map navigableEnds();
+    Map<String, MAssociationEnd> navigableEnds();
 
     public void deleteNavigableElements ();
     
@@ -161,7 +158,7 @@ public interface MClass extends MModelElement {
      * @param associationEnds List(MAssociationEnd)
      * @see MModel#addAssociation
      */
-    void registerNavigableEnds( List associationEnds );
+    void registerNavigableEnds( List<MAssociationEnd> associationEnds );
 
 
     /**
@@ -170,7 +167,7 @@ public interface MClass extends MModelElement {
      *
      * @return Set(MClass)
      */
-    public Set parents();
+    public Set<MClass> parents();
 
     /**
      * Returns the set of all parent classes (without this
@@ -179,7 +176,7 @@ public interface MClass extends MModelElement {
      *
      * @return Set(MClass)
      */
-    public Set allParents();
+    public Set<MClass> allParents();
 
     /**
      * Returns the set of all child classes (without this class). This
@@ -187,7 +184,7 @@ public interface MClass extends MModelElement {
      *
      * @return Set(MClass)
      */
-    public Set allChildren();
+    public Set<MClass> allChildren();
 
     /**
      * Returns the set of all direct child classes (without this
@@ -195,7 +192,7 @@ public interface MClass extends MModelElement {
      *
      * @return Set(MClass) 
      */
-    public Set children();
+    public Set<MClass> children();
     
     /**
      * Returns the set of associations this class directly
@@ -203,7 +200,7 @@ public interface MClass extends MModelElement {
      *
      * @return Set(MAssociation).
      */
-    public Set associations();
+    public Set<MAssociation> associations();
 
     /**
      * Returns the set of associations this class and all of its
@@ -211,7 +208,7 @@ public interface MClass extends MModelElement {
      *
      * @return Set(MAssociation).
      */
-    public Set allAssociations();
+    public Set<MAssociation> allAssociations();
 
     /**
      * Returns true if this class is a child of

@@ -67,7 +67,7 @@ public final class ObjectValue extends Value {
         return fObject.hashCode();
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
         if (o instanceof UndefinedValue )

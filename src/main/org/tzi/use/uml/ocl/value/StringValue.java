@@ -58,7 +58,7 @@ public final class StringValue extends Value {
         return fValue.hashCode();
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
         if (o instanceof UndefinedValue )

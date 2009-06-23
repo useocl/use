@@ -39,7 +39,7 @@ import org.tzi.use.util.TypedProperties;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "2.5.0";
+    public static final String RELEASE_VERSION = "2.5.1B2";
 
     
     // the copyright:

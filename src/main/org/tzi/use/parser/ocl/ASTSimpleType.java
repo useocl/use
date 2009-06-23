@@ -21,6 +21,9 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -37,29 +40,70 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 public class ASTSimpleType extends ASTType {
     private Token fName;
 
+    private interface CreateType {
+    	Type createType();
+    }
+    
+    private static Map<String, CreateType> typeFactory = new HashMap<String, CreateType>();
+    
+    static {
+    	typeFactory.put("Integer", new CreateType() {
+    		public Type createType() {
+    			return TypeFactory.mkInteger();
+    		}});
+    	
+    	typeFactory.put("String", new CreateType() {
+    		public Type createType() {
+    			return TypeFactory.mkString();
+    		}});
+    	
+    	typeFactory.put("Boolean", new CreateType() {
+    		public Type createType() {
+    			return TypeFactory.mkBoolean();
+    		}});
+    	
+    	typeFactory.put("Real", new CreateType() {
+    		public Type createType() {
+    			return TypeFactory.mkReal();
+    		}});
+    	
+    	typeFactory.put("OclAny", new CreateType() {
+    		public Type createType() {
+    			return TypeFactory.mkOclAny();
+    		}});
+    	
+    	typeFactory.put("OclVoid", new CreateType() {
+    		public Type createType() {
+    			return TypeFactory.mkVoidType();
+    		}});
+    	
+    	typeFactory.put("Date", new CreateType() {
+    		public Type createType() {
+    			return TypeFactory.mkDate();
+    		}});
+    }
+    
     public ASTSimpleType(Token name) {
         fName = name;
     }
 
+    private Type makeType(String name) {
+    	if (typeFactory.containsKey(name)) {
+    		return typeFactory.get(name).createType();
+    	}
+    	else {
+    		return null;
+    	}
+    }
+    
     public Type gen(Context ctx) throws SemanticException {
-        Type res;
         String name = fName.getText();
-        // simple type
-        if (name.equals("Integer") )
-            res = TypeFactory.mkInteger();
-        else if (name.equals("String") )
-            res = TypeFactory.mkString();
-        else if (name.equals("Boolean") )
-            res = TypeFactory.mkBoolean();
-        else if (name.equals("Real") )
-            res = TypeFactory.mkReal();
-        else if (name.equals("OclAny") )
-            res = TypeFactory.mkOclAny();
-        else if (name.equals("OclVoid") )
-        	res = TypeFactory.mkVoidType();
-        else { 
+        Type res = makeType(name);
+
+        if (res == null) { 
             // check for enumeration type
             res = ctx.model().enumType(name);
+            
             if (res == null ) {
                 // check for object type
                 MClass cls = ctx.model().getClass(name);
@@ -69,6 +113,7 @@ public class ASTSimpleType extends ASTType {
                 res = TypeFactory.mkObjectType(cls);
             }
         }
+        
         return res;
     }
 

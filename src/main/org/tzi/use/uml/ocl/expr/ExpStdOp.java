@@ -133,6 +133,10 @@ public final class ExpStdOp extends Expression {
             new Op_boolean_or(), new Op_boolean_xor(), new Op_boolean_and(),
             new Op_boolean_not(), new Op_boolean_implies(),
 
+            // operations on Date
+            new Op_Date_Lower(), new Op_Date_LowerEqual(), new Op_Date_Equal(),
+            new Op_Date_GreaterEqual(), new Op_Date_Greater(),
+            new Op_Date_Day(),
             // operations on enumeration types
 
             // operations on Collection

@@ -914,6 +914,7 @@ ifExpression returns [ASTExpression n]
     | REAL
     | STRING
     | "#" id
+    | dateLiteral
     | collectionLiteral
     | emptyCollectionLiteral
     | undefinedLiteral
@@ -931,6 +932,7 @@ literal returns [ASTExpression n]
     | nEColIt=emptyCollectionLiteral { $n = $nEColIt.n; }
     | nUndLit=undefinedLiteral {$n = $nUndLit.n; }
     | nTupleLit=tupleLiteral {$n = $nTupleLit.n; }
+    | nDateLit=dateLiteral {$n = $nDateLit.n; }
     ;
 
 
@@ -1020,6 +1022,15 @@ tupleItem returns [ASTTupleItem n]
     { $n = new ASTTupleItem($name, $e.n); } 
     ;
 
+/* ------------------------------------
+  dateLiteral ::=
+    "Date" "{" STRING "}"
+*/
+dateLiteral returns [ASTDateLiteral n]
+:
+    'Date' LBRACE v=STRING RBRACE
+    { $n = new ASTDateLiteral( $v ); }
+    ;
 
 /* ------------------------------------
   type ::= 

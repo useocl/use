@@ -22,7 +22,6 @@
 package org.tzi.use.uml.ocl.type;
 
 import java.util.List;
-
 import org.tzi.use.uml.mm.MClass;
 
 /**
@@ -44,6 +43,7 @@ public final class TypeFactory {
     private static BooleanType booleanType = new BooleanType();
     private static OclAnyType oclAnyType = new OclAnyType();
     private static VoidType voidType = new VoidType();
+    private static DateType dateType = new DateType();
     
     /**
      * No instances.
@@ -67,7 +67,11 @@ public final class TypeFactory {
         return booleanType;
     }
 
-    public static EnumType mkEnum(String name, List literals) {
+    public static DateType mkDate() {
+    	return dateType;
+    }
+    
+    public static EnumType mkEnum(String name, List<String> literals) {
         return new EnumType(name, literals);
     }
 

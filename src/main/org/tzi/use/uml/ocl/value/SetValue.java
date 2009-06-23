@@ -40,14 +40,14 @@ import org.tzi.use.util.StringUtil;
  * @author Mark Richters
  */
 public class SetValue extends CollectionValue {
-    private TreeSet fElements; // (Value)
+    private TreeSet<Value> fElements; // (Value)
 
     /**
      * Constructs a new empty set.
      */
     public SetValue(Type elemType) {
         super(TypeFactory.mkSet(elemType), elemType);
-        fElements = new TreeSet();
+        fElements = new TreeSet<Value>();
     }
 
     /**
@@ -70,11 +70,9 @@ public class SetValue extends CollectionValue {
      * @exception IllegalArgumentException
      *                the type of at least one value does not match
      */
-    public SetValue(Type elemType, Collection values) {
+    public SetValue(Type elemType, Collection<Value> values) {
         this(elemType);
-        Iterator it = values.iterator();
-        while (it.hasNext())
-            add((Value) it.next());
+        addAll(values);
     }
 
     /**
@@ -95,16 +93,11 @@ public class SetValue extends CollectionValue {
         }
     }
 
-    // /**
-    // * Constructs a set from a collection of values. No type checking
-    // * is done.
-    // */
-    // SetValue deepCopy() {
-    // SetValue res = new SetValue(elemType());
-    // res.fElements.addAll(fElements);
-    // return res;
-    // }
-
+    @Override
+    public void doSetElemType() {
+        setType( TypeFactory.mkSet(fElemType));
+    }
+    
     /**
      * Adds an element to the set. The element's type is checked.
      * 
@@ -112,7 +105,7 @@ public class SetValue extends CollectionValue {
     void add(Value v) {
         boolean needToDeriveRuntimeType = true;
         // performance optimization
-        for (Iterator it = fElements.iterator(); it.hasNext();) {
+        for (Iterator<Value> it = fElements.iterator(); it.hasNext();) {
             Value val = (Value) it.next();
             if (val.type().equals(v.type())) {
                 needToDeriveRuntimeType = false;
@@ -124,10 +117,7 @@ public class SetValue extends CollectionValue {
             deriveRuntimeType();
     }
 
-    void addAll(Collection v) {
-        // if (! v.type().isSubtypeOf(elemType()) )
-        // throw new IllegalArgumentException("type mismatch: " + v.type() +
-        // ", " + elemType());
+    void addAll(Collection<Value> v) {
         fElements.addAll(v);
         deriveRuntimeType();
     }
@@ -137,10 +127,6 @@ public class SetValue extends CollectionValue {
      * 
      */
     void remove(Value v) {
-        // if (! v.type().isSubtypeOf(elemType()) )
-        // throw new IllegalArgumentException("type mismatch: " + v.type() +
-        // ", " + elemType());
-
         fElements.remove(v);
         deriveRuntimeType();
     }
@@ -159,18 +145,9 @@ public class SetValue extends CollectionValue {
         // add elements of this set to result
         res.addAll(fElements);
 
-        // Iterator it = fElements.iterator();
-        // while (it.hasNext() ) {
-        // res.fElements.add(it.next());
-        // }
-
         // add elements of v set to result
         res.addAll(v.fElements);
 
-        // it = v.iterator();
-        // while (it.hasNext() ) {
-        // res.fElements.add(it.next());
-        // }
         return res;
     }
 
@@ -184,17 +161,10 @@ public class SetValue extends CollectionValue {
 
         // add elements of this set to result
         res.addAll(fElements);
-        // Iterator it = fElements.iterator();
-        // while (it.hasNext() ) {
-        // res.addUnchecked((Value) it.next());
-        // }
 
         // add elements of v set to result
         res.addAll(v.collection());
-        // it = v.iterator();
-        // while (it.hasNext() ) {
-        // res.addUnchecked((Value) it.next());
-        // }
+
         return res;
     }
 
@@ -218,9 +188,9 @@ public class SetValue extends CollectionValue {
             v2 = this;
         }
 
-        Iterator it = v1.fElements.iterator();
+        Iterator<Value> it = v1.fElements.iterator();
         while (it.hasNext()) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (v2.includes(elem))
                 res.add(elem);
         }
@@ -243,7 +213,7 @@ public class SetValue extends CollectionValue {
         SetValue res = new SetValue(elemType());
 
         // add elements of this set to result
-        Iterator it = fElements.iterator();
+        Iterator<Value> it = fElements.iterator();
         while (it.hasNext()) {
             Value elem = (Value) it.next();
             if (!v.includes(elem))
@@ -286,7 +256,7 @@ public class SetValue extends CollectionValue {
         return this.difference(v).union(v.difference(this));
     }
 
-    public Iterator iterator() {
+    public Iterator<Value> iterator() {
         return fElements.iterator();
     }
 
@@ -303,9 +273,9 @@ public class SetValue extends CollectionValue {
     }
 
     public boolean includesAll(CollectionValue v) {
-        Iterator it = v.iterator();
+        Iterator<Value> it = v.iterator();
         while (it.hasNext()) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (!fElements.contains(elem))
                 return false;
         }
@@ -313,7 +283,7 @@ public class SetValue extends CollectionValue {
     }
 
     public boolean excludesAll(CollectionValue v) {
-        Iterator it = v.iterator();
+        Iterator<Value> it = v.iterator();
         while (it.hasNext()) {
             Value elem = (Value) it.next();
             if (fElements.contains(elem))
@@ -343,19 +313,20 @@ public class SetValue extends CollectionValue {
 
         CollectionType c2 = (CollectionType) elemType();
         SetValue res = new SetValue(c2.elemType());
-        Iterator it = fElements.iterator();
+        Iterator<Value> it = fElements.iterator();
+        
         while (it.hasNext()) {
             CollectionValue elem = (CollectionValue) it.next();
-            Iterator it2 = elem.iterator();
+            Iterator<Value> it2 = elem.iterator();
             while (it2.hasNext()) {
-                Value elem2 = (Value) it2.next();
+                Value elem2 = it2.next();
                 res.add(elem2);
             }
         }
         return res;
     }
 
-    public Collection collection() {
+    public Collection<Value> collection() {
         return fElements;
     }
 
@@ -389,19 +360,4 @@ public class SetValue extends CollectionValue {
         }
         return false;
     }
-
-    // public int compareTo(Object o) {
-    // if (o == this )
-    // return 0;
-    // if (o instanceof UndefinedValue )
-    // return +1;
-    // if (! (o instanceof SetValue) )
-    // throw new ClassCastException();
-    // SetValue set2 = (SetValue) o;
-    // if (! set2.type().isSubtypeOf(this.type()) )
-    // throw new ClassCastException("this.type() = " + this.type() +
-    // ", set2.type() = " + set2.type());
-
-    // return new CollectionComparator().compare(fElements, set2.fElements);
-    // }
 }

@@ -30,7 +30,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  * @see     RealValue
  */
-public final class IntegerValue extends Value implements Comparable {
+public final class IntegerValue extends Value {
     int fValue;
     
     public IntegerValue(int n) {
@@ -62,7 +62,7 @@ public final class IntegerValue extends Value implements Comparable {
         return new Double(fValue).hashCode();
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
         if (o instanceof IntegerValue ) {

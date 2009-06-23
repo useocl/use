@@ -30,7 +30,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  * @see     Type
  */
-public abstract class Value implements Comparable {
+public abstract class Value implements Comparable<Value> {
 
     /* All values must implement the Comparable interface. This is
        mainly for having a well-defined order for printing values,

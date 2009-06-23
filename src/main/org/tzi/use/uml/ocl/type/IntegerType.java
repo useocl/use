@@ -54,8 +54,8 @@ public final class IntegerType extends BasicType {
     /** 
      * Returns the set of all supertypes (including this type).
      */
-    public Set allSupertypes() {
-        Set res = new HashSet(3);
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>(3);
         res.add(TypeFactory.mkOclAny());
         res.add(TypeFactory.mkReal());
         res.add(this);

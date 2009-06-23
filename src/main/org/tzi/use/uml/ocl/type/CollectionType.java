@@ -72,14 +72,16 @@ public class CollectionType extends Type {
      * this collection has type Collection(T) the result is the set of
      * all types Collection(T') where T' <= T.
      */
-    public Set allSupertypes() {
-        Set res = new HashSet();
-        Set elemSuper = fElemType.allSupertypes();
-        Iterator typeIter = elemSuper.iterator();
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
+        Set<Type> elemSuper = fElemType.allSupertypes();
+        Iterator<Type> typeIter = elemSuper.iterator();
+        
         while (typeIter.hasNext() ) {
-            Type t = (Type) typeIter.next();
+            Type t = typeIter.next();
             res.add(TypeFactory.mkCollection(t));
         }
+        
         return res;
     }
 

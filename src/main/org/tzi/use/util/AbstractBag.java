@@ -32,7 +32,7 @@ import java.util.Arrays;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public abstract class AbstractBag extends AbstractCollection implements Bag {
+public abstract class AbstractBag<T> extends AbstractCollection<T> implements Bag<T> {
     // Comparison and hashing
 
     /**
@@ -44,7 +44,8 @@ public abstract class AbstractBag extends AbstractCollection implements Bag {
 
         if (!(o instanceof Bag))
             return false;
-        Collection c = (Collection) o;
+        
+        Collection<?> c = (Collection<?>) o;
         if (c.size() != size()) {
             return false;
         }
@@ -72,7 +73,7 @@ public abstract class AbstractBag extends AbstractCollection implements Bag {
      */
     public int hashCode() {
         int h = 0;
-        Iterator i = iterator();
+        Iterator<T> i = iterator();
         while (i.hasNext()) {
             Object obj = i.next();
             if (obj != null)

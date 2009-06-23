@@ -35,7 +35,7 @@ import java.util.Iterator;
  */
 
 
-public interface Bag extends Collection {
+public interface Bag<T> extends Collection<T> {
     // Query Operations
 
     /**
@@ -59,14 +59,14 @@ public interface Bag extends Collection {
      *
      * @exception NullPointerException obj is null.
      */
-    boolean contains(Object obj);
+    boolean contains(T obj);
 
     /**
      * Returns the number of occurrences of the specified object in this Bag.
      *
      * @exception NullPointerException obj is null.
      */
-    int occurrences(Object obj);
+    int occurrences(T obj);
 
     /**
      * Returns an Iterator over the elements in this Bag. Different
@@ -74,7 +74,7 @@ public interface Bag extends Collection {
      * an instance of some class that provides a guarantee). However,
      * duplicate elements are guaranteed to be kept adjacent.
      */
-    Iterator iterator();
+    Iterator<T> iterator();
 
     /**
      * Returns an Iterator over the unique elements in this
@@ -82,7 +82,7 @@ public interface Bag extends Collection {
      * Bag is an instance of some class that provides a
      * guarantee). Duplicate elements are delivered just once.
      */
-    Iterator uniqueIterator();
+    Iterator<T> uniqueIterator();
 
 
     // Modification Operations
@@ -94,7 +94,7 @@ public interface Bag extends Collection {
      *
      * @return true if o != null.
      */
-    boolean add(Object o);
+    boolean add(T o);
 
     /** 
      * Adds the specified element <code>count</code> times to this
@@ -104,7 +104,7 @@ public interface Bag extends Collection {
      * @exception IllegalArgumentException count less than 1.
      * @return true if o != null.  
      */
-    boolean add(Object o, int count);
+    boolean add(T o, int count);
 
     /** 
      * Removes one occurrence of the given element in this
@@ -112,7 +112,7 @@ public interface Bag extends Collection {
      *
      * @return true if the Bag contained the specified element.
      */
-    boolean remove(Object o);
+    boolean remove(T o);
 
     /** 
      * Removes all occurrences of the given element in this
@@ -120,7 +120,7 @@ public interface Bag extends Collection {
      *
      * @return true if the Bag contained the specified element.
      */
-    boolean removeAll(Object o);
+    boolean removeAll(T o);
 
 
     // Bulk Operations

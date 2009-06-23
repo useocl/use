@@ -29,7 +29,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class UndefinedValue extends Value implements Comparable {
+public final class UndefinedValue extends Value {
     
     public UndefinedValue(Type type) {
         super(type);
@@ -51,14 +51,13 @@ public final class UndefinedValue extends Value implements Comparable {
         return type().hashCode();
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
-        // may compare to any value
-        if (! (o instanceof Value) )
-            throw new ClassCastException();
+        
         if (o instanceof UndefinedValue )
             return 0;
+        
         return -1;
     }
 }

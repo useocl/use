@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
-public class TreeBag extends AbstractBag implements Bag {
+public class TreeBag<T> extends AbstractBag<T> implements Bag<T> {
 
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
@@ -44,7 +44,7 @@ public class TreeBag extends AbstractBag implements Bag {
     }
 
     // private transient HashMap fMap;
-    private transient TreeMap fMap;
+    private transient TreeMap<T, MutableInteger> fMap;
 
     private transient int fSizeAll;
 
@@ -54,7 +54,7 @@ public class TreeBag extends AbstractBag implements Bag {
      */
     public TreeBag() {
         // TreeMaps are used because there the entries are ordered
-        fMap = new TreeMap();
+        fMap = new TreeMap<T, MutableInteger>();
     }
 
     /**
@@ -89,12 +89,12 @@ public class TreeBag extends AbstractBag implements Bag {
     /**
      * Returns the number of occurrences of the specified object in this Bag.
      */
-    public int occurrences(Object obj) {
-        Object count = fMap.get(obj);
+    public int occurrences(T obj) {
+        MutableInteger count = fMap.get(obj);
         if (count == null)
             return 0;
         else
-            return ((MutableInteger) count).fInt;
+            return count.fInt;
     }
 
     /**
@@ -103,8 +103,8 @@ public class TreeBag extends AbstractBag implements Bag {
      * class that provides a guarantee). However, duplicate elements are
      * guaranteed to be kept adjacent.
      */
-    public Iterator iterator() {
-        return new AllElementsIterator(this);
+    public Iterator<T> iterator() {
+        return new AllElementsIterator<T>(this);
     }
 
     /**
@@ -113,36 +113,41 @@ public class TreeBag extends AbstractBag implements Bag {
      * class that provides a guarantee). Duplicate elements are delivered just
      * once.
      */
-    public Iterator uniqueIterator() {
+    public Iterator<T> uniqueIterator() {
         return fMap.keySet().iterator();
     }
 
     // Modification Operations
 
-    public boolean add(Object obj) {
-        MutableInteger count = (MutableInteger) fMap.get(obj);
+    public boolean add(T obj) {
+        MutableInteger count = fMap.get(obj);
+        
         if (count == null)
             fMap.put(obj, new MutableInteger(1));
         else
             count.fInt++;
+        
         fSizeAll++;
         return obj != null;
     }
 
-    public boolean add(Object obj, int c) {
+    public boolean add(T obj, int c) {
         if (c < 1)
             throw new IllegalArgumentException("count: " + c);
-        MutableInteger count = (MutableInteger) fMap.get(obj);
+        
+        MutableInteger count = fMap.get(obj);
+        
         if (count == null)
             fMap.put(obj, new MutableInteger(c));
         else
             count.fInt += c;
+        
         fSizeAll += c;
         return obj != null;
     }
 
     public boolean remove(Object obj) {
-        MutableInteger count = (MutableInteger) fMap.get(obj);
+        MutableInteger count = fMap.get(obj);
         if (count == null)
             return false;
         else {
@@ -155,8 +160,9 @@ public class TreeBag extends AbstractBag implements Bag {
         }
     }
 
-    public boolean removeAll(Object obj) {
-        MutableInteger count = (MutableInteger) fMap.get(obj);
+    public boolean removeAll(T obj) {
+        MutableInteger count = fMap.get(obj);
+        
         if (count == null)
             return false;
         else {
@@ -179,16 +185,16 @@ public class TreeBag extends AbstractBag implements Bag {
     /**
      * HashBag Iterator.
      */
-    private class AllElementsIterator implements Iterator {
-        private Bag fBag;
+    private class AllElementsIterator<ET> implements Iterator<ET> {
+        private Bag<ET> fBag;
 
-        private Iterator fKeyIterator;
+        private Iterator<ET> fKeyIterator;
 
         private int fElemsLeft;
 
-        private Object fElem;
+        private ET fElem;
 
-        AllElementsIterator(Bag b) {
+        AllElementsIterator(Bag<ET> b) {
             fBag = b;
             fKeyIterator = fBag.uniqueIterator();
             fElemsLeft = 0;
@@ -199,7 +205,7 @@ public class TreeBag extends AbstractBag implements Bag {
             return fElemsLeft > 0 || fKeyIterator.hasNext();
         }
 
-        public Object next() throws NoSuchElementException {
+        public ET next() throws NoSuchElementException {
             if (fElemsLeft == 0) {
                 // need to get next element
                 if (!fKeyIterator.hasNext())

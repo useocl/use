@@ -54,8 +54,8 @@ public final class RealType extends BasicType {
     /** 
      * Returns the set of all supertypes (including this type).
      */
-    public Set allSupertypes() {
-        Set res = new HashSet(2);
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>(2);
         res.add(TypeFactory.mkOclAny());
         res.add(this);
         return res;

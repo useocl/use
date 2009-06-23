@@ -29,7 +29,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class BooleanValue extends Value implements Comparable {
+public final class BooleanValue extends Value {
     /** 
      * Constant value representing true.
      */
@@ -87,7 +87,7 @@ public final class BooleanValue extends Value implements Comparable {
         return fValue ? 1231 : 1237;
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
         if (o instanceof UndefinedValue )

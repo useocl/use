@@ -64,7 +64,7 @@ public final class EnumValue extends Value {
         return fLiteral.hashCode();
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
         if (o instanceof UndefinedValue )

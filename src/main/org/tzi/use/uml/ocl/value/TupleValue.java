@@ -36,7 +36,7 @@ import org.tzi.use.util.CollectionComparator;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class TupleValue extends Value implements Comparable {
+public final class TupleValue extends Value {
     /**
      * Map&lt;String, Value&gt;
      */
@@ -110,7 +110,7 @@ public final class TupleValue extends Value implements Comparable {
         return fParts.hashCode();
     }
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
         if (o instanceof UndefinedValue )

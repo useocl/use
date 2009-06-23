@@ -43,7 +43,7 @@ import org.tzi.use.util.CollectionComparator;
  * @see     BagValue
  */
 public abstract class CollectionValue extends Value {
-    private Type fElemType; // store frequently needed element type too
+    protected Type fElemType; // store frequently needed element type too
 
     CollectionValue(Type t, Type elemType) {
         super(t);
@@ -54,25 +54,17 @@ public abstract class CollectionValue extends Value {
         return fElemType;
     }            
 
-    public void setElemType( Type t ) {
+    public final void setElemType( Type t ) {
         fElemType = t;
-        // TODO: Use inheritance (LH)
-        if (this instanceof SetValue) {
-            setType( TypeFactory.mkSet(fElemType));
-        } else if (this instanceof BagValue) {
-            setType( TypeFactory.mkBag(fElemType));
-        } else if (this instanceof SequenceValue) {
-            setType( TypeFactory.mkSequence(fElemType));
-        } else if (this instanceof OrderedSetValue) {
-        	setType( TypeFactory.mkOrderedSet(fElemType));
-        } else {
-            setType( TypeFactory.mkCollection(fElemType));
-        } 
+        doSetElemType();
     }
     
-
-    //    public abstract void add(Value v);
-    public abstract Iterator iterator();
+    /**
+     * Primitive operation for template method setElemType() 
+     */
+    protected abstract void doSetElemType();
+    
+    public abstract Iterator<Value> iterator();
     public abstract int size();
     public abstract boolean isEmpty();
     public abstract boolean includes(Value v);
@@ -82,9 +74,9 @@ public abstract class CollectionValue extends Value {
 
     protected abstract Integer getClassCompareNr();
     
-    public abstract Collection collection();
+    public abstract Collection<Value> collection();
 
-    public int compareTo(Object o) {
+    public int compareTo(Value o) {
         if (o == this )
             return 0;
         if (o instanceof UndefinedValue )
@@ -140,10 +132,11 @@ public abstract class CollectionValue extends Value {
         return commonSuperType;
     }
 
-
+    
+    
     protected void deriveRuntimeType() {
         try {
-            setElemType(inferElementType()); 
+            setElemType(inferElementType());
         } catch( ExpInvalidException e) {
             throw new RuntimeException(e);
         }
@@ -158,20 +151,20 @@ public abstract class CollectionValue extends Value {
     	TupleType tupleType = TypeFactory.mkTuple(parts);
     	SetValue res = new SetValue(tupleType);
     	
-    	Iterator iter1 = this.iterator();
-    	Iterator iter2;
+    	Iterator<Value> iter1 = this.iterator();
+    	Iterator<Value> iter2;
     	Value elem1, elem2;
     	TupleValue tuple;
     	Map<String, Value> valueParts;
     	
     	while (iter1.hasNext())
     	{
-    		elem1 = (Value)iter1.next();
+    		elem1 = iter1.next();
     		iter2 = col.iterator();
     		
     		while(iter2.hasNext())
     		{
-    			elem2 = (Value)iter2.next();
+    			elem2 = iter2.next();
     			
     			valueParts = new HashMap<String, Value>(2);
     			valueParts.put("first", elem1);
