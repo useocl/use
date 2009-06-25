@@ -181,7 +181,7 @@ public class ActionSaveLayout extends AbstractAction {
         while (nodeIterator.hasNext()) {
             NodeBase n = (NodeBase) nodeIterator.next();
             xml.append(n.storePlacementInfo( false ));
-            xml.append(xml.append(LayoutTags.NL));
+            xml.append(LayoutTags.NL);
         }
 
         // store EdgePropertie positions in property object

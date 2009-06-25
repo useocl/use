@@ -188,38 +188,35 @@ public final class NodeOnEdge extends EdgeProperty {
 
     
     public String storePlacementInfo( boolean hidden ) {
-        String xml = "";
+        StringBuilder xml = new StringBuilder();
         String ident = LayoutTags.INDENT + LayoutTags.INDENT;
         
-        xml = LayoutTags.INDENT + LayoutTags.EDGEPROPERTY_O;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.EDGEPROPERTY_O);
         
-        xml += " type=\"NodeOnEdge\">" + LayoutTags.NL;
+        xml.append(" type=\"NodeOnEdge\">").append(LayoutTags.NL);
         
-//        xml += ident + LayoutTags.NAME_O + name() 
-//               + LayoutTags.NAME_C + LayoutTags.NL;
+        xml.append(ident).append(LayoutTags.ID_O).append(getID()) 
+               .append(LayoutTags.ID_C).append(LayoutTags.NL);
 
-        xml += ident + LayoutTags.ID_O + getID() 
-               + LayoutTags.ID_C + LayoutTags.NL;
-
-        xml += ident + LayoutTags.SPECIALID_O + getSpecialID() 
-               + LayoutTags.SPECIALID_C + LayoutTags.NL;
+        xml.append(ident).append(LayoutTags.SPECIALID_O).append(getSpecialID()) 
+               .append(LayoutTags.SPECIALID_C).append(LayoutTags.NL);
 
         // coordinates
         if ( isUserDefined() ) {
-            xml += ident + LayoutTags.X_COORD_O + Double.toString( x() ) 
-                   + LayoutTags.X_COORD_C + LayoutTags.NL;
-            xml += ident + LayoutTags.Y_COORD_O + Double.toString( y() ) 
-                   + LayoutTags.Y_COORD_C + LayoutTags.NL;
+            xml.append(ident).append(LayoutTags.X_COORD_O).append(Double.toString( x() )) 
+                   .append(LayoutTags.X_COORD_C).append( LayoutTags.NL );
+            xml.append(ident).append(LayoutTags.Y_COORD_O).append(Double.toString( y() )) 
+                   .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
         } else {
-            xml += ident + LayoutTags.X_COORD_O + "-1" 
-                   + LayoutTags.X_COORD_C + LayoutTags.NL;
-            xml += ident + LayoutTags.Y_COORD_O + "-1" 
-                   + LayoutTags.Y_COORD_C + LayoutTags.NL;
+            xml.append(ident).append(LayoutTags.X_COORD_O).append("-1") 
+                   .append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
+            xml.append(ident).append(LayoutTags.Y_COORD_O).append("-1") 
+                   .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
         }
-        xml += ident + LayoutTags.HIDDEN_O + hidden 
-               + LayoutTags.HIDDEN_C + LayoutTags.NL;
+        xml.append(ident).append(LayoutTags.HIDDEN_O).append(hidden) 
+               .append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
         
-        xml += LayoutTags.INDENT + LayoutTags.EDGEPROPERTY_C;
-        return xml;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.EDGEPROPERTY_C);
+        return xml.toString();
     }
 }

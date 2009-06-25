@@ -194,49 +194,49 @@ public class DiamondNode extends NodeBase {
     }
     
     public String storePlacementInfo( boolean hidden ) {
-        String xml = "";
+        StringBuilder xml = new StringBuilder();
         
-        xml = LayoutTags.NODE_O;
+        xml.append(LayoutTags.NODE_O);
         if ( fLink != null ) {
-            xml += " type=\"DiamondNode\" kind=\"link\">" + LayoutTags.NL;
+            xml.append(" type=\"DiamondNode\" kind=\"link\">").append(LayoutTags.NL);
         } else {
-            xml += " type=\"DiamondNode\" kind=\"association\">" + LayoutTags.NL;
+            xml.append(" type=\"DiamondNode\" kind=\"association\">").append(LayoutTags.NL);
         }
         
         Iterator it = fConnectedNodes.iterator();
         while ( it.hasNext() ) {
             String nodeName = (String) it.next();
-            xml += LayoutTags.INDENT + LayoutTags.CON_NODE_O + nodeName 
-                   + LayoutTags.CON_NODE_C + LayoutTags.NL;
+            xml.append(LayoutTags.INDENT).append(LayoutTags.CON_NODE_O).append(nodeName) 
+                   .append(LayoutTags.CON_NODE_C).append(LayoutTags.NL);
         }
         
-        xml += LayoutTags.INDENT + LayoutTags.NAME_O + name() 
-               + LayoutTags.NAME_C + LayoutTags.NL;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.NAME_O).append(name()) 
+               .append(LayoutTags.NAME_C).append(LayoutTags.NL);
         
-        xml += LayoutTags.INDENT + LayoutTags.X_COORD_O + Double.toString( x() ) 
-               + LayoutTags.X_COORD_C + LayoutTags.NL;
-        xml += LayoutTags.INDENT + LayoutTags.Y_COORD_O + Double.toString( y() ) 
-               + LayoutTags.Y_COORD_C + LayoutTags.NL;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.X_COORD_O).append(Double.toString( x() )) 
+               .append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
+        xml.append(LayoutTags.INDENT).append(LayoutTags.Y_COORD_O).append(Double.toString( y() )) 
+               .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
         
-        xml += fAssocName.storePlacementInfo( hidden ) + LayoutTags.NL;
+        xml.append(fAssocName.storePlacementInfo( hidden )).append(LayoutTags.NL);
         
-        xml += LayoutTags.INDENT + LayoutTags.HIDDEN_O + hidden 
-               + LayoutTags.HIDDEN_C + LayoutTags.NL;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.HIDDEN_O).append(hidden) 
+               .append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
     
         if ( fHalfEdges != null ) {
             Iterator itt = fHalfEdges.iterator();
             while ( itt.hasNext() ) {
                 EdgeBase e = (EdgeBase) itt.next();
                 if ( e instanceof NodeEdge ) {
-                    xml += ((NodeEdge) e).storeInfo( hidden ) + LayoutTags.NL;
+                    xml.append(((NodeEdge) e).storeInfo( hidden )).append(LayoutTags.NL);
                 } else {
-                    xml += e.storePlacementInfo( hidden ) + LayoutTags.NL;
+                    xml.append(e.storePlacementInfo( hidden )).append(LayoutTags.NL);
                 }
             }
         }
         
-        xml += LayoutTags.NODE_C + LayoutTags.NL;
-        return xml;
+        xml.append(LayoutTags.NODE_C).append(LayoutTags.NL);
+        return xml.toString();
     }
 
 }

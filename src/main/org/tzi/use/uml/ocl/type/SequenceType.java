@@ -62,6 +62,9 @@ public final class SequenceType extends CollectionType {
     	CollectionType cType = (CollectionType)type;
     	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
     	
+    	if (commonElementType == null) 
+    		return null;
+    	
     	if (type.isSequence())
     		return TypeFactory.mkSequence(commonElementType);
     	else

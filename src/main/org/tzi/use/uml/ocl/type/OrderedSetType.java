@@ -65,6 +65,9 @@ public final class OrderedSetType extends CollectionType {
     	CollectionType cType = (CollectionType)type;
     	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
     	
+    	if (commonElementType == null)
+    		return null;
+    	
     	if (type.isOrderedSet())
     		return TypeFactory.mkOrderedSet(commonElementType);
     	else

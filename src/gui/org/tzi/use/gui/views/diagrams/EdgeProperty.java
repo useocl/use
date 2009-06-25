@@ -211,48 +211,49 @@ public abstract class EdgeProperty extends PlaceableNode {
     }
     
     public String storePlacementInfo( boolean hidden ) {
-        String xml = "";
+        StringBuilder xml = new StringBuilder();
+        
         String ident = LayoutTags.INDENT + LayoutTags.INDENT;
         
-        xml = LayoutTags.INDENT + LayoutTags.EDGEPROPERTY_O;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.EDGEPROPERTY_O);
         if ( this instanceof Rolename ) {
             if ( fSide == SOURCE_SIDE ) {
-                xml += " type=\"rolename\" kind=\"source\">" + LayoutTags.NL;
+                xml.append(" type=\"rolename\" kind=\"source\">").append(LayoutTags.NL);
             } else {
-                xml += " type=\"rolename\" kind=\"target\">" + LayoutTags.NL;
+                xml.append(" type=\"rolename\" kind=\"target\">").append(LayoutTags.NL);
             }
         } else if ( this instanceof Multiplicity ) {
             if ( fSide == SOURCE_SIDE ) {
-                xml += " type=\"multiplicity\" kind=\"source\">" + LayoutTags.NL;
+                xml.append(" type=\"multiplicity\" kind=\"source\">").append(LayoutTags.NL);
             } else {
-                xml += " type=\"multiplicity\" kind=\"target\">" + LayoutTags.NL;
+                xml.append(" type=\"multiplicity\" kind=\"target\">").append(LayoutTags.NL);
             }
         } else if ( this instanceof AssociationName ) {
-            xml += " type=\"associationName\">" + LayoutTags.NL;
+            xml.append(" type=\"associationName\">").append(LayoutTags.NL);
         } else if ( this instanceof NodeOnEdge ) {
-            xml += " type=\"NodeOnEdge\">" + LayoutTags.NL;
+            xml.append(" type=\"NodeOnEdge\">").append(LayoutTags.NL);
         } else {
-            xml += " type=Something Went Wrong>" + LayoutTags.NL;
+            xml.append(" type=Something Went Wrong>").append(LayoutTags.NL);
         } 
         
-        xml += ident + LayoutTags.NAME_O + name() 
-               + LayoutTags.NAME_C + LayoutTags.NL;
+        xml.append(ident).append(LayoutTags.NAME_O).append(name()) 
+               .append(LayoutTags.NAME_C).append(LayoutTags.NL);
         if ( isUserDefined() ) {
-            xml += ident + LayoutTags.X_COORD_O + Double.toString( x() ) 
-                   + LayoutTags.X_COORD_C + LayoutTags.NL;
-            xml += ident + LayoutTags.Y_COORD_O + Double.toString( y() ) 
-                   + LayoutTags.Y_COORD_C + LayoutTags.NL;
+            xml.append(ident).append(LayoutTags.X_COORD_O).append(Double.toString( x() )) 
+                   .append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
+            xml.append(ident).append(LayoutTags.Y_COORD_O).append(Double.toString( y() )) 
+                   .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
         } else {
-            xml += ident + LayoutTags.X_COORD_O + "-1" 
-                   + LayoutTags.X_COORD_C + LayoutTags.NL;
-            xml += ident + LayoutTags.Y_COORD_O + "-1" 
-                   + LayoutTags.Y_COORD_C + LayoutTags.NL;
+            xml.append(ident).append(LayoutTags.X_COORD_O).append("-1") 
+                   .append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
+            xml.append(ident).append(LayoutTags.Y_COORD_O).append("-1") 
+                   .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
         }
-        xml += ident + LayoutTags.HIDDEN_O + hidden 
-               + LayoutTags.HIDDEN_C + LayoutTags.NL;
+        xml.append(ident).append(LayoutTags.HIDDEN_O).append(hidden) 
+               .append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
         
-        xml += LayoutTags.INDENT + LayoutTags.EDGEPROPERTY_C;
-        return xml;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.EDGEPROPERTY_C);
+        return xml.toString();
     }
     
     void setColor( Graphics g ) {

@@ -1888,6 +1888,8 @@ final class Op_collection_flatten extends OpGeneric {
             return ((SetValue) coll).flatten();
         else if (coll.isSequence())
             return ((SequenceValue) coll).flatten();
+        else if (coll.isOrderedSet())
+        	return ((OrderedSetValue) coll).flatten();
         else
             throw new RuntimeException("Unexpected collection type `"
                     + coll.type() + "'.");

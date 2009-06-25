@@ -4,10 +4,53 @@ $Id$
 
 Please send bug reports to mk@informatik.uni-bremen.de. See the file
 `README' for a description of how to report bugs.
-** Changes since version 2.4.0
-A detailed list of changes can be found here:
-http://sourceforge.net/apps/mantisbt/useocl/changelog_page.php 
 
+** Changes since version 2.5.0
+* [GUI] Sequence diagram now supports association classes.
+
+* [OCL] OrderedSet and Sequence with same elements were treated as equal. Fixed
+
+* [OCL] USE now checks for cycles and sharing of objects inside aggregations and
+  compositions. If an invalid cycle or sharing is found after an insert a warning is reported,
+  but the link is created. When using "check structure now" (GUI) or "check" (commandline) the
+  invalid links are reported as errors.
+
+
+** Changes since version 2.4.0
+* [OCL] The collection type OrderedSet is now supported.
+
+* [OCL] USE now allows to use more then one variable in invariants (Note that
+  this is not part of the standard):
+  
+  context p1, p2 : Person inv uniqueName:
+    p1.name = p2.name => p1 = p2
+	
+* [OCL] An invariant can be marked as existential to force the evaluation even
+  when there are no instances of the corresponding context.
+
+  context Person existential inv bossExists:
+   Person.allInstances()->exist(p | p.isBoss)
+
+  or short:
+  
+  context Person existential inv bossExists:
+   self.isBoss
+   
+* [OCL] Equality on Tuples now works correct. 
+
+* [ASSL] Try now works with compositions. Fixed issues with inheritance.
+  Set commands are now generated without extra @, so that they can be intepreted
+  by USE.
+  
+* [CMD] Destruction of object valued operation argument is now possible. Note that
+  self cannot be destroyed in an operation.
+  
+* [CMD] Insertion of an association class instance into an other association 
+  is now possible.
+  
+* [GUI] Improved object diagram support for aggregation and composition.
+
+
 ** Changes since version 2.3.1
 
 * [General] When no specification is given, USE starts with an empty model.

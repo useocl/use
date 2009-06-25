@@ -181,7 +181,7 @@ public abstract class Type {
         // determine the least common supertype
         // if there is only one common supertype return it
         if (cs.size() == 1 ) 
-            return (Type) cs.iterator().next();
+            return cs.iterator().next();
 
         // search for a type that is less than or equal to all other types
         Type cType = null;

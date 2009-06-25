@@ -1,9 +1,15 @@
-!create x:A
-!insert (x,x) into AC
-*Warning: Object `x' cannot be a part of itself.
-!create y:A
-!insert (x,y) into AC
-!insert (y,x) into AC
-*Warning: Insert has resulted in two aggregates for object `x'. Object `x' is already component of another object.
-*Warning: Insert has resulted in a cycle in the part-whole hierarchy. Object `y' is a direct or indirect part of `x'.
+?Set{Set{10},Bag{10}}->including(Bag{Bag{10}})
+* <input>:1:22: Undefined operation `Set(Collection(Integer))->including(Bag(Bag(Integer)))'.
+?Set{Set{10},Bag{10}}->including(Bag{Bag{Bag{10}}})
+* <input>:1:22: Undefined operation `Set(Collection(Integer))->including(Bag(Bag(Bag(Integer))))'.
+?Set{Set{Set{10}},Bag{Bag{10}}}->including(Bag{Bag{Bag{10}}})
+* <input>:1:22: Undefined operation `Set(Collection(Collection(Integer)))->including(Bag(Bag(Bag(Integer))))'.
+
+?OrderedSet{11,33,22}->flatten()
+*-> OrderedSet{11,33,22} : OrderedSet(Integer)
+?OrderedSet{Set{11},Set{33}}->flatten()
+-> OrderedSet{11,33} : OrderedSet(Integer)
+?OrderedSet{Set{OrderedSet{11}},Set{OrderedSet{33}}}->flatten()
+-> OrderedSet{OrderedSet{11},OrderedSet{33}} : OrderedSet(OrderedSet(Integer))
+
 exit

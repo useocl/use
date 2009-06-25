@@ -191,30 +191,35 @@ public abstract class PlaceableNode implements Selectable {
      * @return A XML representation of the layout information.
      */
     public String storePlacementInfo( boolean hidden ) {
-        String xml = "";
+        StringBuilder xml = new StringBuilder();
         String nl = "\n";
         
-        xml = LayoutTags.NODE_O;
+        xml.append(LayoutTags.NODE_O);
+        
         if ( this instanceof ObjectNode ) {
-            xml += " type=\"Object\">" + nl;
+            xml.append(" type=\"Object\">").append(nl);
         } else if ( this instanceof ClassNode ) {
-            xml += " type=\"Class\">" + nl;
+            xml.append(" type=\"Class\">").append(nl);
         } else if ( this instanceof EnumNode ) {
-            xml += " type=\"Enumeration\">" + nl;
+            xml.append(" type=\"Enumeration\">").append(nl);
         } else {
-            xml += " type=Something Went Wrong>" + nl;
+            xml.append(" type=Something Went Wrong>").append(nl);
         } 
         
-        xml += LayoutTags.INDENT + LayoutTags.NAME_O + name() 
-               + LayoutTags.NAME_C + nl;
-        xml += LayoutTags.INDENT + LayoutTags.X_COORD_O + Double.toString( x() ) 
-               + LayoutTags.X_COORD_C + nl;
-        xml += LayoutTags.INDENT + LayoutTags.Y_COORD_O + Double.toString( y() ) 
-               + LayoutTags.Y_COORD_C + nl;
-        xml += LayoutTags.INDENT + LayoutTags.HIDDEN_O + hidden 
-               + LayoutTags.HIDDEN_C + nl;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.NAME_O).append(name()) 
+               .append(LayoutTags.NAME_C).append(nl);
         
-        xml += LayoutTags.NODE_C + nl;
-        return xml;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.X_COORD_O)
+        	   .append( Double.toString( x() )).append(LayoutTags.X_COORD_C).append(nl);
+        	   
+        xml.append(LayoutTags.INDENT).append(LayoutTags.Y_COORD_O)
+        	   .append(Double.toString( y() )).append(LayoutTags.Y_COORD_C).append(nl);
+        
+        xml.append(LayoutTags.INDENT).append(LayoutTags.HIDDEN_O).append(hidden) 
+               .append(LayoutTags.HIDDEN_C).append(nl);
+        
+        xml.append(LayoutTags.NODE_C).append(nl);
+        
+        return xml.toString();
     }
 }

@@ -93,6 +93,10 @@ public abstract class Value implements Comparable<Value> {
         return (this instanceof ObjectValue);
     }
 
+    public boolean isOrderedSet() {
+		return (this instanceof OrderedSetValue);
+	}
+    
     public abstract String toString();
 
     public String toStringWithType() {

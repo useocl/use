@@ -1,9 +1,1 @@
-model TestAggregationComposition
-
-class A
-end
-
-composition AC between
-  A[0..*] role parent
-  A[0..*] role child
-end
+model t057

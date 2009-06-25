@@ -92,8 +92,11 @@ public class CollectionType extends Type {
     	
     	CollectionType cType = (CollectionType)type;
     	Type commonElementType = this.fElemType.getLeastCommonSupertype(cType.fElemType);
-    	
-    	return TypeFactory.mkCollection(commonElementType);
+
+    	if (commonElementType == null)
+    		return null;
+    	else
+    		return TypeFactory.mkCollection(commonElementType);
     }
         
     public String toString() {
