@@ -44,8 +44,9 @@ public final class Log {
     private static boolean fTrace = false;
     private static boolean fPrintStackTraces = true;
     private static boolean fDidOutput = false;
-
-    // utility class
+    private static boolean showWarnings = true;
+    
+	// utility class
     private Log() {}
     
 
@@ -61,6 +62,15 @@ public final class Log {
         return fVerbose;
     }
 
+    public static boolean isShowWarnings() {
+		return showWarnings;
+	}
+
+
+	public static void setShowWarnings(boolean showWarnings) {
+		Log.showWarnings = showWarnings;
+	}
+	
     /**
      * Sets print time flag. Determines whether messages are prefixed
      * with the current time.  
@@ -197,5 +207,12 @@ public final class Log {
             e.printStackTrace();
         fDidOutput = true;
     }
+
+	public static void warn(String string) {
+		if (Log.isShowWarnings()) {
+			Log.println(string);
+		}
+		
+	}
 
 }

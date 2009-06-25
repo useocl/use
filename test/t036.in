@@ -3,6 +3,6 @@
 !create z:B
 !insert (x,z) into ac1
 !insert (y,z) into ac2
-*Error: Object `z' is already a part of other composition.
+*Warning: Insert has resulted in two aggregates for object `z'. Object `z' is already component of another object.
 
 exit

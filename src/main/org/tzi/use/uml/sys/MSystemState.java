@@ -416,7 +416,7 @@ public final class MSystemState {
 			fWholePartLinkGraph.add(target);
 			// the link is irreflexive
 			if (wholePartLink.isReflexive())
-				Log.println("Warning: Object `" + source.name()
+				Log.warn("Warning: Object `" + source.name()
 						+ "' cannot be a part of itself.");
 			// check for SHARED OBJECT OF THE COMPOSION RELATIONSHIP
 			if (assoc.aggregationKind() == MAggregationKind.COMPOSITION) {
@@ -431,7 +431,7 @@ public final class MSystemState {
 						MLink l = (MLink) iter.next();
 						if (l.association().aggregationKind() == MAggregationKind.COMPOSITION) {
 							Log
-									.println("Warning: Insert would result in two aggregates for object `"
+									.warn("Warning: Insert has resulted in two aggregates for object `"
 											+ target.name()
 											+ "'. Object `"
 											+ target.name()
@@ -444,7 +444,7 @@ public final class MSystemState {
 			// whole/part link
 			if (fWholePartLinkGraph.existsPath(target, source))
 				Log
-						.println("Warning: Insert would result in a cycle in the part-whole hierarchy. Object `"
+						.warn("Warning: Insert has resulted in a cycle in the part-whole hierarchy. Object `"
 								+ source.name()
 								+ "' is a direct or indirect part of `"
 								+ target.name() + "'.");

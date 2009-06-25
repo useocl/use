@@ -100,7 +100,9 @@ public class GGenerator {
                                 Long randomNr,
                                 boolean checkStructure ) {
         fLastResult = null;
-
+        boolean didShowWarnigs = Log.isShowWarnings();
+        Log.setShowWarnings(false);
+        
         if (randomNr == null)
             randomNr = new Long( (new Random()).nextInt(10000) );
         if (limit == null)
@@ -148,9 +150,8 @@ public class GGenerator {
                         collector.setDetailPrintWriter(pw);
 
                     GChecker checker = new GChecker(fGModel, checkStructure);
-
                     Log.verbose(proc.toString() + " started...");
-
+                    
                     try {
                         GEvalProcedure evalproc = new GEvalProcedure( proc );
                         evalproc.eval(call.evaluateParams(fSystem.state()),
@@ -203,6 +204,8 @@ public class GGenerator {
             }
             if (resultPw != null )
                 resultPw.flush();
+            
+            Log.setShowWarnings(didShowWarnigs);
         }
     }
 

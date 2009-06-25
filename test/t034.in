@@ -2,6 +2,6 @@
 !create y:B
 !insert (x,y) into ac1
 !insert (y,x) into ac2
-*Error: Detected a cycle in aggregation hierarchy. Object `y' is already a part of `x'.
+*Warning: Insert has resulted in a cycle in the part-whole hierarchy. Object `y' is a direct or indirect part of `x'.
 
 exit

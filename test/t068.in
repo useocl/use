@@ -1,6 +1,7 @@
-!create x, y, z:A
-!insert (x,z) into ac
-!insert (y,z) into ac
+!create x:A
+!create y:A
+!create z:B
+!insert (x,z) into AC1
+!insert (y,z) into AC2
 *Warning: Insert has resulted in two aggregates for object `z'. Object `z' is already component of another object.
-
 exit
