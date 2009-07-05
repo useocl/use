@@ -24,18 +24,18 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import java.util.List;
+
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.util.HashMultiMap;
 import org.tzi.use.util.MultiMap;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
 public class GInstructionCreator { 
-    private MultiMap matchermap = null;   // (String -> IGInstructionMatcher)
+    private MultiMap<String, IGInstructionMatcher> matchermap = null;
 
     /**
      * A handle to the unique Singleton instance.
@@ -56,7 +56,7 @@ public class GInstructionCreator {
             new GMatcherTry_Assoc_LinkendSeqs(),
             new GMatcherSub_Seq_Integer()
         };
-        matchermap = new HashMultiMap();
+        matchermap = new HashMultiMap<String, IGInstructionMatcher>();
         for (int i = 0; i < matcherlist.length; i++)
             matchermap.put(matcherlist[i].name(), matcherlist[i]);
     }
@@ -70,24 +70,29 @@ public class GInstructionCreator {
         return _instance;
     }
 
+    /**
+     * 
+     * @param name
+     * @param params A list of strings or expressions. 
+     * String values are class or association names
+     * @param model
+     * @return
+     */
     public GInstruction create(String name,
-                               List params,
+                               List<Object> params,
                                MModel model) {
-        // params is a list over Strings or GOCLExpressions.
-        // A containing string is a classname or associationname
-
         // search by instruction symbol
-        List instructions = matchermap.get(name);
+        List<IGInstructionMatcher> instructions = matchermap.get(name);
         if (instructions.isEmpty() ) // unknown instruction symbol
             return null;
+        
         // search overloaded instructions for a match
-        Iterator instrIter = instructions.iterator();
-        while (instrIter.hasNext() ) {
-            IGInstructionMatcher i = (IGInstructionMatcher) instrIter.next();
+        for (IGInstructionMatcher i : instructions) {
             GInstruction result = i.createIfMatches(params, model);
             if (result != null )
                 return result;
         }
+        
         return null;
     }
 }

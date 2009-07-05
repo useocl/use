@@ -19,7 +19,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -38,10 +37,10 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  */
 public abstract class ASTALLinkAction extends ASTALAction {
 
-    protected List fExpressions;
+    protected List<ASTExpression> fExpressions;
     protected Token fAssociation;
 
-    public ASTALLinkAction(List exprList, Token assoc) {
+    public ASTALLinkAction(List<ASTExpression> exprList, Token assoc) {
         fExpressions = exprList;
         fAssociation = assoc;
     }
@@ -59,12 +58,11 @@ public abstract class ASTALLinkAction extends ASTALAction {
         return assoc;
     }
 
-    protected List getLinkElements(Context ctx, MAssociation assoc) throws SemanticException {
+    protected List<Expression> getLinkElements(Context ctx, MAssociation assoc) throws SemanticException {
         // generate expressions
-        List expressions = new ArrayList();
+        List<Expression> expressions = new ArrayList<Expression>();
         int index = 0;
-        for (Iterator it = fExpressions.iterator(); it.hasNext();) {
-            ASTExpression ast = (ASTExpression) it.next();
+        for (ASTExpression ast : fExpressions) {
             Expression exp = ast.gen(ctx);
             MAssociationEnd end = (MAssociationEnd) assoc.associationEnds().get(index);
             ObjectType t = TypeFactory.mkObjectType(end.cls());

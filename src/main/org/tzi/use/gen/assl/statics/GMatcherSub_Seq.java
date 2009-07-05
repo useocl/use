@@ -36,7 +36,7 @@ class GMatcherSub_Seq implements IGInstructionMatcher {
         return "Sub";
     }
 
-    public GInstruction createIfMatches( List param, MModel model ) {
+    public GInstruction createIfMatches( List<Object> param, MModel model ) {
         // param is a list over Strings or GValueInstructions.
         // A containing string is a classname or associationname
 
@@ -45,7 +45,7 @@ class GMatcherSub_Seq implements IGInstructionMatcher {
         return new GInstrSub_Seq(  (GValueInstruction) param.get(0)  );
     }
 
-    private boolean matches( List param, MModel model ) {
+    private boolean matches( List<Object> param, MModel model ) {
         return 
             (param.size() == 1 &&
              param.get(0) instanceof GValueInstruction &&

@@ -22,7 +22,6 @@
 package org.tzi.use.parser.ocl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -44,12 +43,12 @@ import org.tzi.use.util.StringUtil;
  */
 public class ASTCollectionLiteral extends ASTExpression {
     private Token fToken;
-    private List fItems;    // (ASTCollectionItem)
+    private List<ASTCollectionItem> fItems;
     private boolean fHasRanges;
 
     public ASTCollectionLiteral(Token token) {
         fToken = token;
-        fItems = new ArrayList();
+        fItems = new ArrayList<ASTCollectionItem>();
     }
 
     public void addItem(ASTCollectionItem item) {
@@ -64,10 +63,8 @@ public class ASTCollectionLiteral extends ASTExpression {
             opname += "Range";
 
         // produce argument list
-        ArrayList args = new ArrayList();
-        Iterator itemIter = fItems.iterator();
-        while (itemIter.hasNext() ) {
-            ASTCollectionItem item = (ASTCollectionItem) itemIter.next();
+        ArrayList<ASTExpression> args = new ArrayList<ASTExpression>();
+        for (ASTCollectionItem item : fItems) {
             args.add(item.fFirst);
             // if there is at least one range item, we generate all
             // arguments as ranges

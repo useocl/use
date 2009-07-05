@@ -22,7 +22,6 @@
 package org.tzi.use.parser.ocl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -43,16 +42,16 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTElemVarsDeclaration extends AST {
-    private List fIdList;   // (MyToken)
+    private List<Token> fIdList;
     private ASTType fType;  // optional: may be null
 
-    public ASTElemVarsDeclaration(List idList, ASTType type) {
+    public ASTElemVarsDeclaration(List<Token> idList, ASTType type) {
         fIdList = idList;
         fType = type;
     }
 
     public ASTElemVarsDeclaration() {
-        fIdList = new ArrayList();
+        fIdList = new ArrayList<Token>();
         fType = null;
     }
 
@@ -79,9 +78,8 @@ public class ASTElemVarsDeclaration extends AST {
 
         // build list of VarDecls, all vars have the same type
         VarDeclList varDeclList = new VarDeclList(true);
-        Iterator it = fIdList.iterator();
-        while (it.hasNext() ) {
-        	Token id = (Token) it.next();
+        
+        for (Token id : fIdList) {
         	
 		    if (varDeclList.containsName(id.getText())) {
 		      throw new SemanticException(id, "double declared variable");
@@ -96,9 +94,7 @@ public class ASTElemVarsDeclaration extends AST {
     void addVariablesToSymtable(Symtable vars, Type type) 
         throws SemanticException 
     {
-        Iterator it = fIdList.iterator();
-        while (it.hasNext() ) {
-        	Token id = (Token) it.next();
+        for (Token id : fIdList) {
             vars.add(id, type);
         }
     }

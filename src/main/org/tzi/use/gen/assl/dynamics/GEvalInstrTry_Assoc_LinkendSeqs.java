@@ -29,37 +29,35 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.expr.ExpVariable;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdInsertLink;
 import org.tzi.use.uml.sys.MCmdDeleteLink;
+import org.tzi.use.uml.sys.MCmdInsertLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.util.cmd.CommandFailedException;
-import org.tzi.use.util.cmd.CannotUndoException;
 import org.tzi.use.util.ListUtil;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.math.BigInteger;
-
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
+import org.tzi.use.util.cmd.CannotUndoException;
+import org.tzi.use.util.cmd.CommandFailedException;
 
 
 class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     implements IGCaller {
     private GInstrTry_Assoc_LinkendSeqs fInstr;
     private IGCaller fCaller;
-    private ListIterator fIterator;
-    private List fObjectLists;  // This is a List of Lists of MObjects
+    private ListIterator<GValueInstruction> fIterator;
+    private List<List<MObject>> fObjectLists;
     private GInstruction fLastEvaluatedInstruction;
     
     public GEvalInstrTry_Assoc_LinkendSeqs(GInstrTry_Assoc_LinkendSeqs instr ) {
@@ -72,7 +70,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
         fCaller = caller;
         fIterator = fInstr.linkendSequences().listIterator();
-        fObjectLists = new ArrayList();
+        fObjectLists = new ArrayList<List<MObject>>();
     
         // fIterator has a next element, because an association has at least
         // two linkends.
@@ -90,10 +88,9 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             return;
         }
     
-        List objects = new ArrayList();
-        Iterator it = ((CollectionValue) value).iterator();
-        while (it.hasNext()) {
-            Value elem = (Value) it.next();
+        List<MObject> objects = new ArrayList<MObject>();
+
+        for (Value elem : (CollectionValue)value) {
             if (elem.isUndefined()) {
                 collector.invalid( "Can't execute `" + fInstr +
                                    "', because the result of `" + 
@@ -125,7 +122,8 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         // years.
     
         // Just get combinations of objects and check its size.
-        List combinations = ListUtil.combinations(fObjectLists);
+        List<List<MObject>> combinations = ListUtil.<MObject>combinations(fObjectLists);
+        
         if (combinations.size() > MAX_LINKS) {
             collector.invalid("Can't execute `" + fInstr + "', because there" +
                               "are more than 2^" +MAX_LINKS+ "combinations.");
@@ -138,22 +136,19 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         // cmdsToRemoveExistingLinks:   these commands are used to remove
         //   existing links. They will be reinserted after the
         //   search. cmdsToRemoveExistingLinks is a subset of cmds.
-        List cmdList = new ArrayList( combinations.size() );
-        List cmdsToRemoveExistingLinks = new ArrayList();
-        Iterator combIt = combinations.iterator();
-        while (combIt.hasNext()) {
-            List objects = (List) combIt.next();
-            Iterator objectsIt = objects.iterator();
-            List names = new ArrayList( objects.size() );
-            while (objectsIt.hasNext())
-                names.add( ((MObject) objectsIt.next()).name() );
-
-            // generate expressions
+        List<MCmd> cmdList = new ArrayList<MCmd>( combinations.size() );
+        List<MCmd> cmdsToRemoveExistingLinks = new ArrayList<MCmd>();
+        
+        for (List<MObject> objects : combinations) {
+                        
             Expression[] exprs = new Expression[objects.size()];
-            Iterator it = objects.iterator();
-            int i = 0;
-            while (it.hasNext() ) {
-                MObject obj = (MObject) it.next(); 
+            List<String> names = new ArrayList<String>( objects.size() );
+            
+            for (MObject obj : objects) {
+                names.add( obj.name() );
+
+                // generate expressions
+                int i = 0;
                 exprs[i++] = new ExpVariable( obj.name(), obj.type() );
             }
           
@@ -175,10 +170,8 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         Object[] cmds = cmdList.toArray();
     
         // Remove existing links
-        Iterator toRemove = cmdsToRemoveExistingLinks.iterator();
         try {
-            while (toRemove.hasNext()) {
-                MCmd cmd = (MCmd) toRemove.next();
+            for(MCmd cmd : cmdsToRemoveExistingLinks) {
                 collector.basicPrintWriter().println(cmd.getUSEcmd());
                 cmd.execute();
             }
@@ -258,9 +251,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             }
 
             // reinsert removed links.
-            Iterator toReinsert = cmdsToRemoveExistingLinks.iterator();
-            while (toReinsert.hasNext()) {
-                MCmd cmd = (MCmd) toReinsert.next();
+            for (MCmd cmd : cmdsToRemoveExistingLinks) {
                 collector.basicPrintWriter().println("undo: " + cmd.getUSEcmd());
                 cmd.undo();
             }

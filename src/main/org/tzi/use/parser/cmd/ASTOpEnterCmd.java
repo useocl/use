@@ -22,7 +22,6 @@
 package org.tzi.use.parser.cmd;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -48,12 +47,12 @@ import org.tzi.use.uml.sys.MOperationCall;
 public class ASTOpEnterCmd extends ASTCmd {
     private ASTExpression fSrcExpr;
     private Token fOp;
-    private List fArgs;     // (ASTExpression) 
+    private List<ASTExpression> fArgs; 
 
     public ASTOpEnterCmd(ASTExpression source, Token op) {
         fSrcExpr = source;
         fOp = op;
-        fArgs = new ArrayList();
+        fArgs = new ArrayList<ASTExpression>();
     }
 
     public void addArg(ASTExpression arg) {
@@ -90,10 +89,9 @@ public class ASTOpEnterCmd extends ASTCmd {
 
         // generate argument expressions
         Expression[] argExprs = new Expression[fArgs.size()];
-        Iterator it = fArgs.iterator();
         int i = 0;
-        while (it.hasNext() ) {
-            ASTExpression astExpr = (ASTExpression) it.next();
+        
+        for (ASTExpression astExpr : fArgs) {
             argExprs[i] = astExpr.gen(ctx);
             if (! argExprs[i].type().isSubtypeOf(params.varDecl(i).type()) )
                 throw new SemanticException(fOp, "Type mismatch in argument " + i +

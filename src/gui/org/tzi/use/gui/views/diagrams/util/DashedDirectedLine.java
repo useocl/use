@@ -24,7 +24,6 @@ package org.tzi.use.gui.views.diagrams.util;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Represents a dashed directed line
@@ -89,15 +88,14 @@ public class DashedDirectedLine extends DirectedLine {
      * @return line
      */
     public I_DirectedLine draw(final Graphics graphic) {
-        final ArrayList fragments = fragmentLine();
-        for (final Iterator iterator = fragments.iterator(); iterator.hasNext();) {
-            final I_DirectedLine line = (I_DirectedLine) iterator.next();
+        final ArrayList<I_DirectedLine> fragments = fragmentLine();
+        for(final I_DirectedLine line : fragments) {
             line.draw(graphic);
         }
         return this;
     }
 
-    ArrayList fragmentLine() {
+    ArrayList<I_DirectedLine> fragmentLine() {
         final double length = calculateLength();
         final double numberOfSteps = length / (fragmentLength + intersectionLength);
         final double gradientAngle = calculateGradientAngle();
@@ -112,9 +110,9 @@ public class DashedDirectedLine extends DirectedLine {
         this.targetY = targetY;
     }
 
-    private ArrayList createFragments(final double numberOfSteps, final double gradientAngle,
+    private ArrayList<I_DirectedLine> createFragments(final double numberOfSteps, final double gradientAngle,
                                       double actualSourceX, double actualSourceY) {
-        final ArrayList fragments = new ArrayList();
+        final ArrayList<I_DirectedLine> fragments = new ArrayList<I_DirectedLine>();
         for (int times = 1; times <= numberOfSteps; times++) {
             final I_DirectedLine fragment = createFragment(actualSourceX, actualSourceY, gradientAngle);
             fragments.add(fragment);
@@ -127,7 +125,7 @@ public class DashedDirectedLine extends DirectedLine {
         return fragmentTail(fragments, gradientAngle, actualSourceX, actualSourceY);
     }
 
-    private ArrayList fragmentTail(final ArrayList fragments, final double gradientAngle, final double actualSourceX,
+    private ArrayList<I_DirectedLine> fragmentTail(final ArrayList<I_DirectedLine> fragments, final double gradientAngle, final double actualSourceX,
                                    final double actualSourceY) {
         final double tailLength = Util.calculateDistance(actualSourceX, actualSourceY, targetX, targetY);
         if (Math.round(tailLength) > 0) {

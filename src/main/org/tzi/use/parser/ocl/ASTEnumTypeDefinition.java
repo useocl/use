@@ -22,7 +22,6 @@
 package org.tzi.use.parser.ocl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -40,9 +39,9 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  */
 public class ASTEnumTypeDefinition extends AST {
     private Token fName;
-    private List fIdList;   // (MyToken)
+    private List<Token> fIdList;
 
-    public ASTEnumTypeDefinition(Token name, List idList) {
+    public ASTEnumTypeDefinition(Token name, List<Token> idList) {
         fName = name;
         fIdList = idList;
     }
@@ -52,10 +51,9 @@ public class ASTEnumTypeDefinition extends AST {
         String name = fName.getText();
 
         // map token list to string list
-        List literalList = new ArrayList();
-        Iterator it = fIdList.iterator();
-        while (it.hasNext() ) {
-        	Token tok = (Token) it.next();
+        List<String> literalList = new ArrayList<String>();
+        
+        for (Token tok : fIdList) {
             literalList.add(tok.getText());
         }
     

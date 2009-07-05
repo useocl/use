@@ -22,7 +22,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -59,20 +58,17 @@ public class ASTInvariantClause extends AST {
     }
 
 
-    void gen(Context ctx, List varTokens, MClass cls) {
+    void gen(Context ctx, List<Token> varTokens, MClass cls) {
         // enter context variable into scope of invariant
         ObjectType ot = TypeFactory.mkObjectType(cls);
         Symtable vars = ctx.varTable();
         vars.enterScope();
 
-        Token var = null;
-        List varNames = new ArrayList();
+        List<String> varNames = new ArrayList<String>();
         
         try {
-            if (varTokens != null && varTokens.size() > 0) {
-                Iterator iter = varTokens.iterator();
-            	while(iter.hasNext()) {
-            		var = (Token)iter.next();
+            if (varTokens != null && varTokens.size() > 0) {                
+            	for (Token var : varTokens) {
             		vars.add(var, ot);
             		ctx.exprContext().push(var.getText(), ot);
             		varNames.add(var.getText());
@@ -107,7 +103,7 @@ public class ASTInvariantClause extends AST {
     }
 
 	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClass cls,
-			List varNames, Expression expr, String invName)
+			List<String> varNames, Expression expr, String invName)
 			throws ExpInvalidException {
 		MClassInvariant inv = 
 		    ctx.modelFactory().createClassInvariant(invName, varNames, cls, expr, false);

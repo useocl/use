@@ -34,7 +34,7 @@ import java.util.Map;
 
 abstract class MModelElementImpl implements MModelElement {
     private String fName;
-    private static Map fNameMap = new HashMap(); // (String -> MutableInteger)
+    private static Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
 
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
@@ -56,7 +56,7 @@ abstract class MModelElementImpl implements MModelElement {
      */
     protected MModelElementImpl(String name, String prefix) {
         if (name == null || name.length() == 0 ) {
-            MutableInteger i = (MutableInteger) fNameMap.get(prefix);
+            MutableInteger i = fNameMap.get(prefix);
             if (i == null ) {
                 i = new MutableInteger();
                 fNameMap.put(prefix, i);

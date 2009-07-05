@@ -38,7 +38,7 @@ import java.util.ListIterator;
 class GEvalInstructionList implements IGCaller {
     private GInstructionList fInstr;
     private IGCaller fCaller;
-    private ListIterator fIterator;
+    private ListIterator<GInstruction> fIterator;
 
     private static int fIdentcounter =0;
 

@@ -23,7 +23,6 @@ package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +33,7 @@ import java.util.Set;
  * @author  Mark Richters
  */
 class MAssociationImpl extends MModelElementImpl implements MAssociation {
-    private List fAssociationEnds; // (MAssociationEnd)
+    private List<MAssociationEnd> fAssociationEnds;
     private int fPositionInModel;
     /**
      * The association is called reflexive if any participating class
@@ -51,7 +50,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      */
     MAssociationImpl(String name) {
         super(name);
-        fAssociationEnds = new ArrayList(2);
+        fAssociationEnds = new ArrayList<MAssociationEnd>(2);
     }
 
     /** 
@@ -71,9 +70,8 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
         // duplicate role names are ambiguos if they (1) refer to the
         // same class, or (2) are used in n-ary associations with n > 2
         String rolename = aend.name();
-        Iterator it = fAssociationEnds.iterator();
-        while (it.hasNext() ) {
-            MAssociationEnd aend2 = (MAssociationEnd) it.next();
+        
+        for (MAssociationEnd aend2 : fAssociationEnds) {
             if (rolename.equals(aend2.name()) )
                 if (fAssociationEnds.size() >= 2 || aend.cls().equals(aend2.cls()) )
                     throw new MInvalidModelException(
@@ -83,6 +81,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
             if (aend.cls().equals(aend2.cls()) )
                 fIsReflexive = true;
         }
+        
         fAssociationEnds.add(aend);
         aend.setAssociation(this);
     }
@@ -92,7 +91,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      *
      * @return List(MAssociationEnd)
      */
-    public List associationEnds() {
+    public List<MAssociationEnd> associationEnds() {
         return fAssociationEnds;
     }
 
@@ -102,7 +101,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      *
      * @return List(MAssociationEnd)
      */
-    public List reachableEnds() {
+    public List<MAssociationEnd> reachableEnds() {
         return associationEnds();
     }
 
@@ -111,11 +110,10 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      *
      * @return Set(MAssociationEnd)
      */
-    public Set associationEndsAt(MClass cls) {
-        Set res = new HashSet();
-        Iterator aendIter = fAssociationEnds.iterator();
-        while (aendIter.hasNext() ) {
-            MAssociationEnd aend = (MAssociationEnd) aendIter.next();
+    public Set<MAssociationEnd> associationEndsAt(MClass cls) {
+        Set<MAssociationEnd> res = new HashSet<MAssociationEnd>();
+
+        for (MAssociationEnd aend : fAssociationEnds) {
             if (aend.cls().equals(cls) )
                 res.add(aend);
         }
@@ -127,13 +125,13 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      *
      * @return Set(MClass).
      */
-    public Set associatedClasses() {
-        HashSet res = new HashSet();
-        Iterator aendIter = fAssociationEnds.iterator();
-        while (aendIter.hasNext() ) {
-            MAssociationEnd aend = (MAssociationEnd) aendIter.next();
+    public Set<MClass> associatedClasses() {
+        HashSet<MClass> res = new HashSet<MClass>();
+
+        for (MAssociationEnd aend : fAssociationEnds) {
             res.add(aend.cls());
         }
+        
         return res;
     }
 
@@ -143,9 +141,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      * composition.
      */
     public int aggregationKind() {
-        Iterator it = fAssociationEnds.iterator();
-        while (it.hasNext() ) {
-            MAssociationEnd aend = (MAssociationEnd) it.next();
+        for (MAssociationEnd aend : fAssociationEnds) {
             int k = aend.aggregationKind();
             if (k != MAggregationKind.NONE )
                 return k;
@@ -177,12 +173,11 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      * @return List(MAssociationEnd)
      * @exception IllegalArgumentException cls is not part of this association.  
      */
-    public List navigableEndsFrom(MClass cls) {
-        List res = new ArrayList();
+    public List<MNavigableElement> navigableEndsFrom(MClass cls) {
+        List<MNavigableElement> res = new ArrayList<MNavigableElement>();
         boolean partOfAssoc = false;
-        Iterator it = fAssociationEnds.iterator();
-        while (it.hasNext() ) {
-            MAssociationEnd aend = (MAssociationEnd) it.next();
+        
+        for (MAssociationEnd aend : fAssociationEnds) {
             if (! aend.cls().equals(cls) )
                 res.add(aend);
             else {
@@ -221,8 +216,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 
     public boolean isAssignableFrom(MClass[] classes) {
         int i=0;
-        for (Iterator it=associationEnds().iterator(); it.hasNext();) {
-            MAssociationEnd end = (MAssociationEnd)it.next();
+        for (MAssociationEnd end : fAssociationEnds) {
             if (!classes[i].isSubClassOf(end.cls())) return false;
             ++i;
         }

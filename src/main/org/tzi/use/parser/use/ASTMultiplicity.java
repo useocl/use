@@ -22,7 +22,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -38,11 +37,11 @@ import org.tzi.use.uml.mm.MMultiplicity;
  */
 public class ASTMultiplicity extends AST {
     private Token fStartToken; // for error position
-    private List fRanges;   // (ASTMultiplicityRange)
+    private List<ASTMultiplicityRange> fRanges;
 
     public ASTMultiplicity(Token t) {
         fStartToken = t;
-        fRanges = new ArrayList();
+        fRanges = new ArrayList<ASTMultiplicityRange>();
     }
 
     public void addRange(ASTMultiplicityRange mr) {
@@ -53,9 +52,7 @@ public class ASTMultiplicity extends AST {
         MMultiplicity mult = ctx.modelFactory().createMultiplicity();
 
         try {
-            Iterator it = fRanges.iterator();
-            while (it.hasNext() ) {
-                ASTMultiplicityRange mr = (ASTMultiplicityRange) it.next();
+            for (ASTMultiplicityRange mr : fRanges) {
                 mult.addRange(mr.fLow, mr.fHigh);
             }
         } catch (IllegalArgumentException ex) {

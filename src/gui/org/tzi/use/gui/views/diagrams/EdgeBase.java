@@ -48,7 +48,7 @@ import org.tzi.use.uml.mm.MAssociationEnd;
  * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Fabian Gutsche
  */
-public abstract class EdgeBase extends DirectedEdgeBase
+public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
                                implements Selectable {
     private final int DIRECTED_EDGE = 100; 
     private final int INHERITANCE_EDGE = 200;
@@ -114,14 +114,9 @@ public abstract class EdgeBase extends DirectedEdgeBase
     String fEdgeName;
     
     /**
-     * List of all nodes laying on the dashed edge of an 
-     * associationclass/objectlink.
-     */
-    List fNodesOnAssocClsEdge;
-    /**
      * List of all nodes laying on this edge.
      */
-    List fNodesOnEdge;
+    List<NodeOnEdge> fNodesOnEdge;
     /**
      * Source node of this edge (the drawn line starts here).
      */
@@ -219,7 +214,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
      * @param edgeName The name of the edge.
      * @param diagram The diagram this edge belongs to.
      */
-    public EdgeBase( Object source, Object target, String edgeName,
+    public EdgeBase( N source, N target, String edgeName,
                      DiagramView diagram, MAssociation assoc ) {
         super( source, target );
         fDiagram = diagram;
@@ -228,8 +223,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
         fAssoc = assoc;
         fSource = (NodeBase) source;
         fTarget = (NodeBase) target;
-        fNodesOnEdge = new ArrayList();
-        fNodesOnAssocClsEdge = new ArrayList();
+        fNodesOnEdge = new ArrayList<NodeOnEdge>();
         
         fX1 = (int) fSource.x();
         fY1 = (int) fSource.y();
@@ -272,76 +266,41 @@ public abstract class EdgeBase extends DirectedEdgeBase
         int inheritance = -1; // inheritance edge
         
         if ( fAssoc != null ) {        	
-            Iterator assocEndIt = fAssoc.associationEnds().iterator();
+            Iterator<MAssociationEnd> assocEndIt = fAssoc.associationEnds().iterator();
             MAssociationEnd assocEnd1, assocEnd2;
             
             //Fixed the error with aggregation when
             //fSource.cls() = fTarget.cls()
                 
             if ( assocEndIt.hasNext() ) {
-                assocEnd1 = (MAssociationEnd) assocEndIt.next();
+                assocEnd1 = assocEndIt.next();
                 source = assocEnd1.aggregationKind();
                 if ( assocEnd1.isExplicitNavigable() ) {
                 	sourceNav = DIRECTED_EDGE;
                 }
-                
             }    
             
             if ( assocEndIt.hasNext() ) {
-            	assocEnd2 = (MAssociationEnd) assocEndIt.next();                                	                	
+            	assocEnd2 = assocEndIt.next();                                	                	
                 target = assocEnd2.aggregationKind();
                 if ( assocEnd2.isExplicitNavigable() ) {
                 	targetNav = DIRECTED_EDGE;                
                 }                                   	                
-                
-            }
-	    /*Iterator assocEndIt = fAssoc.associationEnds().iterator();
-            while ( assocEndIt.hasNext() ) {
-               // MAssociationEnd assocEnd = (MAssociationEnd) assocEndIt.next();
-                
-                if ( isReflexive() ) {
-                    source = assocEnd.aggregationKind();
-                    if ( assocEnd.isExplicitNavigable() ) {
-                        sourceNav = DIRECTED_EDGE;
-                    }
-                    MAssociationEnd assocEnd2 = (MAssociationEnd) assocEndIt.next();
-                    target = assocEnd2.aggregationKind();
-                    if ( assocEnd2.isExplicitNavigable() ) {
-                        targetNav = DIRECTED_EDGE;
-                    }
-                    continue;
-                }
-                
-                if ( fSource.cls() != null 
-                     && fSource.cls().equals( assocEnd.cls() ) ) {
-                    source = assocEnd.aggregationKind();
-                    if ( assocEnd.isExplicitNavigable() ) {
-                        sourceNav = DIRECTED_EDGE;
-                    }
-                } else if ( fTarget.cls() != null 
-                            && fTarget.cls().equals( assocEnd.cls() ) ) {
-                    target = assocEnd.aggregationKind();
-                    if ( assocEnd.isExplicitNavigable() ) {
-                        targetNav = DIRECTED_EDGE;
-                    }
-                } */
-            
+            }            
         } else if ( fAssoc == null ) {
             inheritance = INHERITANCE_EDGE;
         }
         // draw all line segments
         
-        
-        
         if ( !fNodesOnEdge.isEmpty() ) {
-            Iterator it = fNodesOnEdge.iterator();
+            Iterator<NodeOnEdge> it = fNodesOnEdge.iterator();
             int counter = 0;
             if ( it.hasNext() ) {
-                n1 = (NodeOnEdge) it.next();
+                n1 = it.next();
                 counter++;
             }
             while( it.hasNext() ) {
-                n2 = (NodeOnEdge) it.next();
+                n2 = it.next();
                 counter++;
                 // draw nodeOnEdge
                 n2.draw( g, g.getFontMetrics() );
@@ -460,18 +419,19 @@ public abstract class EdgeBase extends DirectedEdgeBase
     public boolean isReflexive() {
         return fSource.equals( fTarget );
     }
-    public List getNodesOnEdge() {
+    public List<NodeOnEdge> getNodesOnEdge() {
         return fNodesOnEdge;
     }
+    
     public void resetNodesOnEdges() {
-        List nodes = new ArrayList();
-        Iterator it = getNodesOnEdge().iterator();
-        while ( it.hasNext() ) {
-            NodeOnEdge node = (NodeOnEdge) it.next();
+        List<NodeOnEdge> nodes = new ArrayList<NodeOnEdge>();
+
+        for (NodeOnEdge node : getNodesOnEdge()) {
             if ( isNodeSpecial( node ) ) {
                 nodes.add( node );
             }
         }
+        
         fNodesOnEdge = nodes;
     }
     
@@ -509,12 +469,13 @@ public abstract class EdgeBase extends DirectedEdgeBase
         NodeOnEdge n2 = null;
         
         // checking every line segmend of this edge.
-        Iterator it = fNodesOnEdge.iterator();
+        Iterator<NodeOnEdge> it = fNodesOnEdge.iterator();
         if ( it.hasNext() ) {
-            n1 = (NodeOnEdge) it.next();
+            n1 = it.next();
         }
+        
         while ( it.hasNext() ) {
-            n2 = (NodeOnEdge) it.next();
+            n2 = it.next();
             line = new Line2D.Double( n1.x(), n1.y(), n2.x(), n2.y() );
             occupies = line.intersects( x - 2, y - 2, 4, 4 );
             if ( occupies && clickCount == 2 ) {
@@ -560,9 +521,8 @@ public abstract class EdgeBase extends DirectedEdgeBase
      */
      void reIDNodes() {
         int counter = INITIAL_COUNTER;
-        Iterator it = fNodesOnEdge.iterator();
-        while ( it.hasNext() ) {
-            NodeOnEdge n = (NodeOnEdge) it.next();
+
+        for (NodeOnEdge n : fNodesOnEdge) {
             n.setID( counter );
             counter++;
         }
@@ -614,9 +574,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
      * @return true if the position occupies a node otherwise false.
      */
     public boolean occupiesNodeOnEdge( int x, int y ) {
-        Iterator it = fNodesOnEdge.iterator();
-        while ( it.hasNext() ) {
-            NodeOnEdge node = (NodeOnEdge) it.next();
+        for (NodeOnEdge node : fNodesOnEdge) {
             if ( node.occupies( x, y ) 
                  && ( !isNodeSpecial( node ) || shouldNodeBeMoveableRightNow( node ) ) ) {
                 return true;
@@ -630,9 +588,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
      * is returnd. 
      */
     public EdgeProperty getNodeOnEdge( int x, int y ) {
-        Iterator it = fNodesOnEdge.iterator();
-        while ( it.hasNext() ) {
-            NodeOnEdge node = (NodeOnEdge) it.next();
+        for (NodeOnEdge node : fNodesOnEdge) {
             if ( node.occupies( x, y ) ) {
                 return node;
             }
@@ -645,12 +601,12 @@ public abstract class EdgeBase extends DirectedEdgeBase
      * nodes.
      */
     private void updateNodeOnEdges() {
-        NodeOnEdge n1 = (NodeOnEdge) fNodesOnEdge.get( 1 );
+        NodeOnEdge n1 = fNodesOnEdge.get( 1 );
         Point2D sp = getIntersectionCoordinate( fSource, fX1, fY1, 
                                                 (int) n1.x(), (int) n1.y() );
         fSNode.setPosition( sp.getX(), sp.getY() );
         
-        NodeOnEdge n2 = (NodeOnEdge) fNodesOnEdge.get( fNodesOnEdge.size()-2 );
+        NodeOnEdge n2 = fNodesOnEdge.get( fNodesOnEdge.size()-2 );
         Point2D tp = getIntersectionCoordinate( fTarget, fX2, fY2,
                                                 (int) n2.x(), (int) n2.y() );
         fTNode.setPosition( tp.getX(), tp.getY() );
@@ -753,21 +709,20 @@ public abstract class EdgeBase extends DirectedEdgeBase
     /**
      * Checks if there is more than one edge between two nodes.
      */
-    public Set checkForNewPositionAndDraw( DirectedGraph graph, Graphics g, 
+    public Set<EdgeBase<NodeBase>> checkForNewPositionAndDraw( DirectedGraph<NodeBase, EdgeBase<NodeBase>> graph, Graphics g, 
                                            FontMetrics fm ) {
-        Set edges = null;
+        Set<EdgeBase<NodeBase>> edges = null;
         
         if ( graph.existsPath( fSource, fTarget ) ) {
             edges = graph.edgesBetween( fSource, fTarget );
             calculateNewPosition( edges );
         }
         if ( edges != null ) {
-            Iterator it = edges.iterator();
-            while ( it.hasNext() ) {
-                EdgeBase e = (EdgeBase) it.next();
+            for (EdgeBase<NodeBase> e : edges) {
                 e.draw( g, fm );
             }
         }
+        
         return edges;
     }
     
@@ -775,7 +730,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
      * Calculates the space between the lines if there are more than one
      * edge between two nodes.
      */
-    private double calculateSpaces( double length, Set edges ) {
+    private double calculateSpaces( double length, Set<EdgeBase<NodeBase>> edges ) {
         return length / ( (double) edges.size() + 1 );
     }
     
@@ -783,7 +738,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
      * Calculates and sets the new position of the edges between two
      * nodes.
      */
-    private void calculateNewPosition( Set edges ) {
+    private void calculateNewPosition( Set<EdgeBase<NodeBase>> edges ) {
         Polygon sourceRec = fSource.dimension();
         Polygon targetRec = fTarget.dimension();
         
@@ -820,9 +775,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
         // midpoint of the objects as start and end point of the
         // link. Otherwise calculate the new positions.
         if ( edges.size() == 1 ) {
-            Iterator it = edges.iterator();
-            while ( it.hasNext() ) {
-                EdgeBase e = (EdgeBase) it.next();
+            for (EdgeBase<NodeBase> e : edges) {
                 // edge is reflexive
                 if ( isReflexive() ) {
                     setCorrectPoints( sX + sWidth/3, sY - sHeight/2,
@@ -840,10 +793,9 @@ public abstract class EdgeBase extends DirectedEdgeBase
             
             // there are up to four reflexive edges 
             if ( isReflexive() ) {
-                Iterator it = edges.iterator();
                 int counter = 0;
-                while ( it.hasNext() ) {
-                    EdgeBase e = (EdgeBase) it.next();
+
+                for (EdgeBase<NodeBase> e : edges) {
                     counter++;
                     switch ( counter ) {
                     case 1:
@@ -893,9 +845,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
                 
                 // calculates the different x-coordinates of start and end
                 // point
-                Iterator it = edges.iterator();
-                while ( it.hasNext() ) {
-                    EdgeBase e = (EdgeBase) it.next();
+                for (EdgeBase<NodeBase> e : edges) {
                     // addition of space or projection to get the
                     // wanted space between the edges
                     if ( counter == 1 ) {
@@ -936,9 +886,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
                 
                 // calculates the different y-coordinates of start and end
                 // point
-                Iterator it = edges.iterator();
-                while ( it.hasNext() ) {
-                    EdgeBase e = (EdgeBase) it.next();
+                for (EdgeBase<NodeBase> e : edges) {
                     // addition of space or projection to get the
                     // wanted space between the edges
                     if ( counter == 1 ) {
@@ -971,7 +919,7 @@ public abstract class EdgeBase extends DirectedEdgeBase
      * @param e The points of this EdgeBase will be set.
      */
     private void setCorrectPoints( double sX, double sY, double tX, double tY,
-                                   EdgeBase e ) {
+                                   EdgeBase<NodeBase> e ) {
         if ( e.fSource.equals( fSource ) ) {
             e.setPoint( SOURCE, sX, sY );
             e.setPoint( TARGET, tX, tY );
@@ -1147,13 +1095,11 @@ public abstract class EdgeBase extends DirectedEdgeBase
         if ( fAssocName != null ) {
             xml += fAssocName.storePlacementInfo( hidden ) + LayoutTags.NL;
         }
-        if ( !fNodesOnEdge.isEmpty() ) {
-            Iterator it = fNodesOnEdge.iterator();
-            while ( it.hasNext() ) {
-                NodeOnEdge n = (NodeOnEdge) it.next();
-                xml += n.storePlacementInfo( hidden ) + LayoutTags.NL;
-            }
+
+        for (NodeOnEdge n : fNodesOnEdge) {
+            xml += n.storePlacementInfo( hidden ) + LayoutTags.NL;
         }
+
         xml += LayoutTags.INDENT + LayoutTags.HIDDEN_O + hidden 
                + LayoutTags.HIDDEN_C + LayoutTags.NL;
         

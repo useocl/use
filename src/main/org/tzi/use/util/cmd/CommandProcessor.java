@@ -21,8 +21,10 @@
 
 package org.tzi.use.util.cmd;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.tzi.use.uml.sys.MCmd;
 
 /** 
  * A CommandProcessor executes commands, stores them on a stack and
@@ -32,10 +34,10 @@ import java.util.ArrayList;
  * @author  Mark Richters
  */
 public class CommandProcessor {
-    private List fCommands; // (Command)
+    private List<Command> fCommands;
 
     public CommandProcessor() {
-        fCommands = new ArrayList();
+        fCommands = new ArrayList<Command>();
     }
 
     /** 
@@ -96,7 +98,21 @@ public class CommandProcessor {
      *
      * @return List(Command)
      */
-    public synchronized List commands() {
-        return new ArrayList(fCommands);
+    public synchronized List<Command> commands() {
+        return new ArrayList<Command>(fCommands);
+    }
+    
+    /**
+     * MSystem uses MCmds to get the text of the command.
+     * Maybe the use of the type Command is a bad idea.
+     * @return
+     */
+    public synchronized List<MCmd> useCommands() {
+    	List<MCmd> result = new ArrayList<MCmd>(fCommands.size());
+    	for (Command c : fCommands) {
+    		if (c instanceof MCmd)
+    			result.add((MCmd)c);
+    	}
+    	return result;
     }
 }

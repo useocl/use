@@ -24,12 +24,11 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import org.tzi.use.gen.assl.statics.GLoop;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-
 import java.util.ListIterator;
-import java.util.ArrayList;
+
+import org.tzi.use.gen.assl.statics.GLoop;
+import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * March 22th 2001 
@@ -39,7 +38,7 @@ class GEvalLoop extends GEvalInstruction
     implements IGCaller {
     private GLoop fInstr;
     private IGCaller fCaller;
-    private ListIterator fSeqIterator;
+    private ListIterator<Value> fSeqIterator;
 
     public GEvalLoop(GLoop instr) {
         fInstr = instr;
@@ -57,13 +56,12 @@ class GEvalLoop extends GEvalInstruction
     public void feedback(GConfiguration conf,
                          Value value,
                          IGCollector collector ) throws GEvaluationException {
-        if (fSeqIterator==null) {
+        if (fSeqIterator == null) {
             if (value.isUndefined())
                 collector.invalid(
                                   buildCantExecuteMessage( fInstr, fInstr.sequenceInstr()) );
             else {
-                fSeqIterator=((ArrayList) ((SequenceValue)value).collection())
-                    .listIterator();
+                fSeqIterator = ((SequenceValue)value).list().listIterator();
             }
         }
         if (fSeqIterator!=null) {

@@ -26,8 +26,9 @@ package org.tzi.use.uml.sys;
  *
  * @version     $ProjectVersion: 2-3-1-release.3 $
  * @author      Duc-Hanh
- */
+ * @param 		N The type of the connected Nodes
+ */ 
 import org.tzi.use.graph.DirectedEdge;
 
-public interface MWholePartLink extends MLink, DirectedEdge {    
+public interface MWholePartLink extends MLink, DirectedEdge<MObject> {    
 }

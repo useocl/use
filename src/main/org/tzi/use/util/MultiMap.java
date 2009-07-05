@@ -22,6 +22,7 @@
 package org.tzi.use.util;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /** 
@@ -33,7 +34,7 @@ import java.util.Set;
  */
 
 
-public interface MultiMap {
+public interface MultiMap<K, V> {
     // Query Operations
 
     /**
@@ -50,13 +51,13 @@ public interface MultiMap {
      * Returns <tt>true</tt> if this multimap contains a mapping for
      * the specified key.  
      */
-    boolean containsKey(Object key);
+    boolean containsKey(K key);
 
     /**
      * Returns <tt>true</tt> if this multimap maps one or more keys to
      * the specified value.  
      */
-    boolean containsValue(Object value);
+    boolean containsValue(V value);
 
     /**
      * Returns a list of values to which this multimap maps the specified
@@ -66,30 +67,30 @@ public interface MultiMap {
      *         key, the list may be empty if the multimap contains no
      *         mapping for this key. 
      */
-    List get(Object key);
+    List<V> get(K key);
 
     // Modification Operations
 
     /**
      * Adds the specified value with the specified key to this multimap.
      */
-    void put(Object key, Object value);
+    void put(K key, V value);
 
     /**
      * Copies all entries from the specified multimap to this
      * multimap.  
      */
-    void putAll(MultiMap t);
+    void putAll(MultiMap<K, V> t);
 
     /**
      * Removes all mappings for this key from this multimap if present.
      */
-    void remove(Object key);
+    void remove(K key);
 
     /**
      * Removes the specified key/value mapping from this multimap if present.
      */
-    void remove(Object key, Object value);
+    void remove(K key, V value);
 
 
     // Bulk Operations
@@ -105,8 +106,13 @@ public interface MultiMap {
     /**
      * Returns a set view of the keys contained in this multimap.
      */
-    Set keySet();
+    Set<K> keySet();
 
+    /*
+     * Returns a cop of the internal map (used for equals)
+     */
+    Map<K, List<V>> getMap();
+    
     /**
      * Returns a collection view of the values contained in this map.
      */

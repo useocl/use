@@ -40,9 +40,9 @@ public class GInstrTry_Assoc_LinkendSeqs extends GInstruction {
     // then endsetx must be of type Sequence(tx)
 
     private MAssociation fAssociation;
-    private List fLinkendSequences;  // GValueInstruction
+    private List<GValueInstruction> fLinkendSequences;
 
-    public GInstrTry_Assoc_LinkendSeqs( MAssociation assoc, List seqs ) {
+    public GInstrTry_Assoc_LinkendSeqs( MAssociation assoc, List<GValueInstruction> seqs ) {
         fAssociation = assoc;
         fLinkendSequences = seqs;
     }
@@ -51,7 +51,7 @@ public class GInstrTry_Assoc_LinkendSeqs extends GInstruction {
         return fAssociation;
     }
     
-    public List linkendSequences() {
+    public List<GValueInstruction> linkendSequences() {
         return fLinkendSequences;
     }
 

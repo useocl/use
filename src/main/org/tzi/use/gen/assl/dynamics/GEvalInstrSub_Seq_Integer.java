@@ -85,25 +85,27 @@ class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCaller {
     private void createSubSequence(GConfiguration conf,IGCollector collector)
         throws GEvaluationException {
         int origSize = fSequence.size();
-        if (wantedSize<0)
+        if (wantedSize < 0)
             collector.invalid( "Can't execute `" + fInstr + "', because `"
                                + fInstr.integerInstr() + "' has been "
                                + "evaluated to a negative integer.");
-        else if (wantedSize>origSize)
+        else if (wantedSize > origSize)
             collector.invalid( "Can't execute `" + fInstr + "', because `"
                                +fInstr.integerInstr() + "' is greater than "
                                +"the size of `"+ fInstr.sequenceInstr() +"'.");
         else {
-            List mappings = new ArrayList(origSize);
-            Collection values = new ArrayList(wantedSize);
-            for (int k=0; k<origSize; k++)
+            List<Integer> mappings = new ArrayList<Integer>(origSize);
+            Collection<Value> values = new ArrayList<Value>(wantedSize);
+            
+            for (int k=0; k < origSize; k++)
                 mappings.add( new Integer(k) );
-            for (int k=0; k<wantedSize; k++) {
+            
+            for (int k=0; k < wantedSize; k++) {
                 int r = conf.random().nextInt(origSize-k);
-                values.add( fSequence.get(
-                                          ((Integer) mappings.get(r)).intValue() ) );
+                values.add( fSequence.get(mappings.get(r).intValue() ) );
                 mappings.remove(r);
             }
+            
             Value subVal = new SequenceValue(fSequence.elemType(), values);
             collector.detailPrintWriter().println(
                                                   "`"+ fInstr + "' == " +subVal );

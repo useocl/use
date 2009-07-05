@@ -42,7 +42,7 @@ import org.tzi.use.util.CollectionComparator;
  * @see     SequenceValue
  * @see     BagValue
  */
-public abstract class CollectionValue extends Value {
+public abstract class CollectionValue extends Value implements Iterable<Value> {
     protected Type fElemType; // store frequently needed element type too
 
     CollectionValue(Type t, Type elemType) {

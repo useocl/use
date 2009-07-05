@@ -42,7 +42,7 @@ class GMatcherInsert_Assoc_Linkends implements IGInstructionMatcher {
         return "Insert";
     }
 
-    public GInstruction createIfMatches( List param, MModel model ) {
+    public GInstruction createIfMatches( List<Object> param, MModel model ) {
         // param is a list over Strings or GValueInstruction.
         // A containing string is a classname or associationname.
 
@@ -50,38 +50,37 @@ class GMatcherInsert_Assoc_Linkends implements IGInstructionMatcher {
             return null;
 
         Object first = param.get(0);
-        List rest = param.subList(1, param.size());
+        List<Object> rest = param.subList(1, param.size());
     
         if (!matches(first, rest, model))
             return null;
 
-        ArrayList ends = new ArrayList();
-        Iterator it = rest.iterator();
-        while (it.hasNext())
-            ends.add(  (GValueInstruction) it.next()  );
-
+        ArrayList<GValueInstruction> ends = new ArrayList<GValueInstruction>();
+        
+        for (Object o : rest) {
+            ends.add(  (GValueInstruction) o  );
+        }
+        
         return new GInstrInsert_Assoc_Linkends(
                                                model.getAssociation((String) first), ends );
     }
 
-    private boolean matches( Object first, List rest, MModel model ) {
+    private boolean matches( Object first, List<Object> rest, MModel model ) {
         if (!(first instanceof String)) 
             return false;
         MAssociation assoc = model.getAssociation((String) first);
         if (assoc == null )
             return false;
 
-        List ends = assoc.associationEnds();
+        List<MAssociationEnd> ends = assoc.associationEnds();
 
         if (ends.size() != rest.size() )
             return false;
     
-        Iterator endsIt = ends.iterator();
-        Iterator restIt = rest.iterator();
+        Iterator<Object> restIt = rest.iterator();
 
-        while (endsIt.hasNext()) {
-            Type endtype = TypeFactory.mkObjectType(
-                                                    ((MAssociationEnd) endsIt.next()).cls() );
+        for (MAssociationEnd end : ends) {
+            Type endtype = TypeFactory.mkObjectType( end.cls() );
             Object r = restIt.next();
 
             if (! (r instanceof GValueInstruction) ||

@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MPrePostCondition;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class UseFileOrderConditionComparator implements SortingComparator {
+public class UseFileOrderConditionComparator implements SortingComparator<MPrePostCondition> {
 
     private CompareUtil compareUtil;
 
@@ -47,9 +47,9 @@ public class UseFileOrderConditionComparator implements SortingComparator {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
-        final int firstPosition = ((MPrePostCondition)object1).getPositionInModel();
-        final int secondPosition = ((MPrePostCondition)object2).getPositionInModel();
+    public int compare(final MPrePostCondition object1, final MPrePostCondition object2) {
+        final int firstPosition = object1.getPositionInModel();
+        final int secondPosition = object2.getPositionInModel();
         return compareUtil.compareInt(firstPosition, secondPosition);
     }
 

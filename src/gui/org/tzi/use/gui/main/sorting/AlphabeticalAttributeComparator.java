@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MAttribute;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class AlphabeticalAttributeComparator implements SortingComparator {
+public class AlphabeticalAttributeComparator implements SortingComparator<MAttribute> {
 
     private CompareUtil compareUtil;
 
@@ -56,9 +56,9 @@ public class AlphabeticalAttributeComparator implements SortingComparator {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
-        final String nameOfAttribute1 = ((MAttribute) object1).name();
-        final String nameOfAttribute2 = ((MAttribute) object2).name();
+    public int compare(final MAttribute object1, final MAttribute object2) {
+        final String nameOfAttribute1 = object1.name();
+        final String nameOfAttribute2 = object2.name();
         return compareUtil.compareString(nameOfAttribute1, nameOfAttribute2);
     }
 }

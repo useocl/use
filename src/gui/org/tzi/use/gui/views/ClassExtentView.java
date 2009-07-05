@@ -89,6 +89,7 @@ import org.tzi.use.util.NullWriter;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
+@SuppressWarnings("serial")
 public class ClassExtentView extends JPanel implements View, ActionListener {
     // private MainWindow fMainWindow;
     private MSystem fSystem;
@@ -113,7 +114,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         fSystem.addChangeListener(this);
 
         // get a class
-        Collection classes = fSystem.model().classes();
+        Collection<MClass> classes = fSystem.model().classes();
         if (!classes.isEmpty()) {
             fClass = (MClass) classes.iterator().next();
         }
@@ -242,25 +243,25 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
      * The table model.
      */
     class TableModel extends AbstractTableModel {
-        private ArrayList fColumnNames;
+        private ArrayList<String> fColumnNames;
 
-        private ArrayList fObjects;
+		private ArrayList<MObject> fObjects;
 
         private MAttribute[] fAttributes;
 
         private MClassInvariant[] fClassInvariants;
 
-        private Map fObjectValueStrMap; // (MObject -> String)
+        private Map<MObject, String[]> fObjectValueStrMap;
 
-        private Map fInvBadObjects; // (MClassInvariant -> Set(MObject))
+        private Map<MClassInvariant, Set<MObject>> fInvBadObjects;
 
         // need to cache all data because getValueAt is called often.
 
         TableModel() {
-            fObjects = new ArrayList();
-            fColumnNames = new ArrayList();
-            fObjectValueStrMap = new HashMap();
-            fInvBadObjects = new HashMap();
+            fObjects = new ArrayList<MObject>();
+            fColumnNames = new ArrayList<String>();
+            fObjectValueStrMap = new HashMap<MObject, String[]>();
+            fInvBadObjects = new HashMap<MClassInvariant, Set<MObject>>();
             initStructure();
             initModel();
         }
@@ -272,7 +273,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                 return;
 
             // prepare table: get attributes of class
-            List attributes = fClass.allAttributes();
+            List<MAttribute> attributes = fClass.allAttributes();
             int n = attributes.size();
             fAttributes = new MAttribute[n];
             System.arraycopy(attributes.toArray(), 0, fAttributes, 0, n);
@@ -285,7 +286,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
 
             // get all invariants for selected class
             if (fShowInvResults) {
-                Set invSet = fSystem.model().allClassInvariants(fClass);
+                Set<MClassInvariant> invSet = fSystem.model().allClassInvariants(fClass);
                 n = invSet.size();
                 fClassInvariants = new MClassInvariant[n];
                 System.arraycopy(invSet.toArray(), 0, fClassInvariants, 0, n);
@@ -303,12 +304,10 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                 return;
 
             // get attribute values for all objects
-            Iterator objIter = fSystem.state().objectsOfClass(fClass)
-                    .iterator();
-            while (objIter.hasNext()) {
-                MObject obj = (MObject) objIter.next();
+            for (MObject obj : fSystem.state().objectsOfClass(fClass)) {
                 addObject(obj);
             }
+            
             sortRows();
         }
 
@@ -322,16 +321,16 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
             }
             for (int i = 0; i < fClassInvariants.length; i++) {
                 try {
-                    Set badObjects = new HashSet();
+                    Set<MObject> badObjects = new HashSet<MObject>();
                     Evaluator evaluator = new Evaluator();
                     Expression expr = fClassInvariants[i]
                             .getExpressionForViolatingInstances();
                     Value v = evaluator.eval(expr, fSystem.state(),
                             new VarBindings());
 
-                    Iterator valIter = ((SetValue) v).collection().iterator();
+                    Iterator<Value> valIter = ((SetValue) v).collection().iterator();
                     while (valIter.hasNext()) {
-                        ObjectValue oVal = (ObjectValue) valIter.next();
+                    	ObjectValue oVal = (ObjectValue) valIter.next();
                         badObjects.add(oVal.value());
                     }
                     fInvBadObjects.put(fClassInvariants[i], badObjects);
@@ -409,7 +408,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
             return fObjects.size();
         }
 
-        public Class getColumnClass(int col) {
+        public Class<?> getColumnClass(int col) {
             if (col <= fAttributes.length)
                 return String.class;
             else
@@ -417,7 +416,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         }
 
         public Object getValueAt(int row, int col) {
-            // System.err.println("*** getValueAt (" + row + ", " + col + ")");
+
             MObject obj = (MObject) fObjects.get(row);
             if (col == 0)
                 return obj.name();
@@ -427,7 +426,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
             } else {
                 MClassInvariant inv = fClassInvariants[col - fAttributes.length
                         - 1];
-                Set badObjects = (Set) fInvBadObjects.get(inv);
+                Set<MObject> badObjects = fInvBadObjects.get(inv);
                 if (badObjects == null)
                     return fNotAvailIcon;
                 else if (badObjects.contains(obj))
@@ -467,8 +466,8 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         }
 
         void sortRows() {
-            Collections.sort(fObjects, new Comparator() {
-                public int compare(Object o1, Object o2) {
+            Collections.sort(fObjects, new Comparator<MObject>() {
+                public int compare(MObject o1, MObject o2) {
                     return o1.toString().compareTo(o2.toString());
                 }
             });
@@ -480,26 +479,19 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
      * Called due to an external change of state.
      */
     public void stateChanged(StateChangeEvent e) {
-        Iterator it;
 
         // incremental update of table model
-        it = e.getNewObjects().iterator();
-        while (it.hasNext()) {
-            MObject obj = (MObject) it.next();
+        for (MObject obj : e.getNewObjects()) {
             if (obj.cls().equals(fClass))
                 fTableModel.addObject(obj);
         }
 
-        it = e.getDeletedObjects().iterator();
-        while (it.hasNext()) {
-            MObject obj = (MObject) it.next();
+        for (MObject obj : e.getDeletedObjects()) {
             if (obj.cls().equals(fClass))
                 fTableModel.removeObject(obj);
         }
 
-        it = e.getModifiedObjects().iterator();
-        while (it.hasNext()) {
-            MObject obj = (MObject) it.next();
+        for (MObject obj : e.getModifiedObjects()) {
             if (obj.cls().equals(fClass))
                 fTableModel.updateObject(obj);
         }

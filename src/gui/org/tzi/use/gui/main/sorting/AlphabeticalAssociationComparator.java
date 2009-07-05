@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MAssociation;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class AlphabeticalAssociationComparator implements SortingComparator {
+public class AlphabeticalAssociationComparator implements SortingComparator<MAssociation> {
     private CompareUtil compareUtil;
     /**
      * Constructor of AlphabeticalAssociationComparator
@@ -55,7 +55,7 @@ public class AlphabeticalAssociationComparator implements SortingComparator {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
+    public int compare(final MAssociation object1, final MAssociation object2) {
         final String nameOfAssociation1 = ((MAssociation) object1).name();
         final String nameOfAssociation2 = ((MAssociation) object2).name();
         return compareUtil.compareString(nameOfAssociation1, nameOfAssociation2);

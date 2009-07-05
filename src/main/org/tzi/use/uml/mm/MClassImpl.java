@@ -24,7 +24,6 @@ package org.tzi.use.uml.mm;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,22 +38,20 @@ import java.util.TreeMap;
  */
 public class MClassImpl extends MModelElementImpl implements MClass {
     private boolean fIsAbstract; // abstract class?
-    private Map fAttributes;    // (String attrname -> MAttribute)
-    private Map fOperations;    // (String opname -> MOperation)
+    private Map<String, MAttribute> fAttributes;    // (String attrname -> MAttribute)
+    private Map<String, MOperation> fOperations;    // (String opname -> MOperation)
     private MModel fModel;  // Owner of this class
     private int fPositionInModel;
     
     // other classes reachable by associations 
-    private Map fNavigableElements; // (String name -> MNavigableElements)
-    //    private Set fAssociations;    // associations this class is participating in
+    private Map<String, MNavigableElement> fNavigableElements;
 
     MClassImpl(String name, boolean isAbstract) {
         super(name);
         fIsAbstract = isAbstract;
-        fAttributes = new TreeMap();
-        fOperations = new TreeMap();
-        fNavigableElements = new HashMap();
-        //  fAssociations = new HashSet();
+        fAttributes = new TreeMap<String, MAttribute>();
+        fOperations = new TreeMap<String, MOperation>();
+        fNavigableElements = new HashMap<String, MNavigableElement>();
     }
     
     /**
@@ -114,9 +111,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
                                              "' already defined in a superclass.");
     
         // check if attribute of same name is defined in a subclass
-        Iterator it = allChildren().iterator();
-        while (it.hasNext() ) {
-            MClass cls = (MClass) it.next();
+        for (MClass cls : children() ) {
             if (cls.attribute(attrName, false) != null )
                 throw new MInvalidModelException("Attribute `" + 
                                                  attrName + "' conflicts with existing attribute " +
@@ -133,10 +128,8 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return List(MAttribute)
      */
-    public List attributes() {
-        //Set res = new HashSet(fAttributes.size());
-        //res.addAll(fAttributes.values());
-        return new ArrayList(fAttributes.values());
+    public List<MAttribute> attributes() {
+        return new ArrayList<MAttribute>(fAttributes.values());
     }
 
     /**
@@ -145,22 +138,19 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return List(MAttribute) 
      */
-    public List allAttributes() {
+    public List<MAttribute> allAttributes() {
         //Set result = new HashSet(fAttributes.size());
-        List result = new ArrayList();
+        List<MAttribute> result = new ArrayList<MAttribute>();
         
         // start with local attributes
         result.addAll(attributes());
 
         // add attributes from all superclasses
-        Iterator it = allParents().iterator();
-        while (it.hasNext() ) {
-            MClass cls = (MClass) it.next();
+        for (MClass cls : allParents() ) {
             result.addAll(cls.attributes());
         }
         return result;
     }
-
 
     /**
      * Returns the specified attribute. Attributes are also looked up
@@ -169,19 +159,16 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * @return null if attribute does not exist.  
      */
     public MAttribute attribute(String name, boolean searchInherited) {
-        MAttribute a = (MAttribute) fAttributes.get(name);
+        MAttribute a = fAttributes.get(name);
         if (a == null && searchInherited ) {
-            Iterator it = allParents().iterator();
-            while (it.hasNext() ) {
-                MClass cls = (MClass) it.next();
-                a = (MAttribute) cls.attribute(name, false);
+            for (MClass cls : allParents() ) {
+                a = cls.attribute(name, false);
                 if (a != null )
                     break;
             }
         }
         return a;
     }
-
 
     /** 
      * Adds an operation. The operation name must be unique among all
@@ -212,10 +199,8 @@ public class MClassImpl extends MModelElementImpl implements MClass {
         // check if operation with same signature is already defined
         // in a subclass. A redefinition is only allowed with same
         // number and types of arguments.
-        Iterator it = allChildren().iterator();
-        while (it.hasNext() ) {
-            MClass cls = (MClass) it.next();
-            MOperation subOp = (MOperation) cls.operation(opname, false);
+        for (MClass cls : allChildren()) {
+            MOperation subOp = cls.operation(opname, false);
             if (subOp != null )
                 if (! subOp.equals(op) )
                     throw new MInvalidModelException("Operation `" + op +
@@ -231,9 +216,8 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * Returns all operations defined for this class. Inherited
      * operations are not included.
      */
-    public List operations() {
-        //return fOperations.values();
-        return new ArrayList( fOperations.values() );
+    public List<MOperation> operations() {
+        return new ArrayList<MOperation>( fOperations.values() );
     }
 
 
@@ -243,18 +227,17 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return List(MOperation) 
      */
-    public List allOperations() {
-        List result = new ArrayList();
+    public List<MOperation> allOperations() {
+        List<MOperation> result = new ArrayList<MOperation>();
         
         // start with local operations
         result.addAll(operations());
 
         // add operations from all superclasses
-        Iterator it = allParents().iterator();
-        while (it.hasNext() ) {
-            MClass cls = (MClass) it.next();
+        for (MClass cls : allParents()) {
             result.addAll(cls.operations());
         }
+        
         return result;
     }
 
@@ -268,19 +251,18 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * @return null if operation does not exist. 
      */
     public MOperation operation(String name, boolean searchInherited) {
-        MOperation op = (MOperation) fOperations.get(name);
+        MOperation op = fOperations.get(name);
+        
         if (op == null && searchInherited ) {
-	        for (Iterator it=parents().iterator();it.hasNext();) {
-                MClass cls = (MClass) it.next();
-                op = (MOperation) cls.operation(name, false);
+	        for (MClass cls : parents()) {
+                op = cls.operation(name, false);
                 if (op != null )
                     return op;
             }
 	        // FIXME: The compiler has to check a unique binding in case
 	        //        of multiple inheritance
-	        for (Iterator it=parents().iterator();it.hasNext();) {
-                MClass cls = (MClass) it.next();
-                op = (MOperation) cls.operation(name, true);
+	        for (MClass cls : parents()) {
+                op = cls.operation(name, true);
                 if (op != null )
                     return op;
             }
@@ -297,8 +279,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * @return null if no such association end exists.
      */
     public MNavigableElement navigableEnd(String rolename) {
-        Map nav = navigableEnds();
-        return ( MNavigableElement ) nav.get( rolename );
+        return navigableEnds().get( rolename );
     }
 
     /**
@@ -307,13 +288,12 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return Map(String, MAssociationEnd) 
      */
-    public Map navigableEnds() {
-        Map res = new TreeMap();
+    public Map<String, MNavigableElement> navigableEnds() {
+        Map<String, MNavigableElement> res = new TreeMap<String, MNavigableElement>();
         res.putAll(fNavigableElements);
+        
         // recursively add association ends in superclasses
-        Iterator it = parents().iterator();
-        while (it.hasNext() ) {
-            MClass superclass = (MClass) it.next();
+        for (MClass superclass : parents() ) {
             res.putAll(superclass.navigableEnds());
         }
         return res;
@@ -327,10 +307,8 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * @param navigableElements List(MNavigableElement) 
      * @see MModel#addAssociation
      */
-    public void registerNavigableEnds(List navigableElements) {
-        Iterator it = navigableElements.iterator();
-        while (it.hasNext() ) {
-            MNavigableElement nav = (MNavigableElement) it.next();
+    public void registerNavigableEnds(List<MNavigableElement> navigableElements) {
+        for (MNavigableElement nav : navigableElements) {
             fNavigableElements.put(nav.nameAsRolename(), nav);
         }
     }
@@ -345,7 +323,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return Set(MClass) 
      */
-    public Set parents() {
+    public Set<MClass> parents() {
         return fModel.generalizationGraph().targetNodeSet(this);
     }
 
@@ -356,7 +334,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return Set(MClass) 
      */
-    public Set allParents() {
+    public Set<MClass> allParents() {
         return fModel.generalizationGraph().targetNodeClosureSet(this);
     }
 
@@ -366,7 +344,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return Set(MClass) 
      */
-    public Set allChildren() {
+    public Set<MClass> allChildren() {
         return fModel.generalizationGraph().sourceNodeClosureSet(this);
     }
 
@@ -376,7 +354,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return Set(MClass) 
      */
-    public Set children() {
+    public Set<MClass> children() {
         return fModel.generalizationGraph().sourceNodeSet(this);
     }
     
@@ -386,13 +364,13 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return Set(MAssociation).  
      */
-    public Set associations() {
-        Set res = new HashSet();
-        Iterator aendIter = fNavigableElements.values().iterator();
-        while (aendIter.hasNext() ) {
-            MNavigableElement aend = (MNavigableElement) aendIter.next();
+    public Set<MAssociation> associations() {
+        Set<MAssociation> res = new HashSet<MAssociation>();
+
+        for(MNavigableElement aend : fNavigableElements.values()) {
             res.add(aend.association());
         }
+        
         return res;
     }
 
@@ -402,14 +380,14 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      *
      * @return Set(MAssociation).  
      */
-    public Set allAssociations() {
-        Set res = new HashSet();
+    public Set<MAssociation> allAssociations() {
+        Set<MAssociation> res = new HashSet<MAssociation>();
         res.addAll(associations());
-        Iterator parentIter = allParents().iterator();
-        while (parentIter.hasNext() ) {
-            MClass cls = (MClass) parentIter.next();
+        
+        for (MClass cls : allParents()) {
             res.addAll(cls.associations());
         }
+        
         return res;
     }
 

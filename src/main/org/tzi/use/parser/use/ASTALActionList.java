@@ -19,7 +19,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.parser.Context;
@@ -34,7 +33,7 @@ import org.tzi.use.uml.al.ALActionList;
  */
 public class ASTALActionList extends ASTALAction {
 
-    private List fActions = new ArrayList();
+    private List<ASTALAction> fActions = new ArrayList<ASTALAction>();
     
     public void add(ASTALAction action) {
         fActions.add(action);
@@ -42,11 +41,12 @@ public class ASTALActionList extends ASTALAction {
     
     public ALAction gen(Context ctx) throws SemanticException {
         ALActionList list = new ALActionList();
-        for (Iterator it = fActions.iterator(); it.hasNext();) {
-            ASTALAction astAction = (ASTALAction) it.next();
+        
+        for (ASTALAction astAction : fActions) {
             ALAction action = astAction.gen(ctx);
             list.add(action);
         }
+        
         return list;
     }
 

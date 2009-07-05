@@ -56,7 +56,8 @@ class GEvalInstrCreate_C extends GEvalInstruction {
         collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
         MClass cls = fInstr.cls();
         ObjectType objectType = TypeFactory.mkObjectType( cls );
-        List names = new ArrayList();
+        List<String> names = new ArrayList<String>();
+        
         names.add(conf.systemState().uniqueObjectNameForClass( cls.name() ));
         MCmd cmd = new MCmdCreateObjects(conf.systemState(),
                                          names,

@@ -32,7 +32,7 @@ import java.util.List;
  * @author  Joern Bohling
  */
 public interface IGInstructionMatcher {
-    public GInstruction createIfMatches( List param, MModel model);
+    public GInstruction createIfMatches( List<Object> param, MModel model);
     public String name();
 }
 

@@ -26,34 +26,34 @@ package org.tzi.use.gen.assl.statics;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import java.util.*;
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
 public class GInstructionList {
-    private List fInstructions; // GInstruction
+    private List<GInstruction> fInstructions;
 
     public GInstructionList() {
-        fInstructions = new ArrayList();
+        fInstructions = new ArrayList<GInstruction>();
     }
 
     public void add( GInstruction instruction ) {
         fInstructions.add(instruction);
     }
 
-    public List instructions() {
+    public List<GInstruction> instructions() {
         return fInstructions;
     }
 
     public String toString() {
-        Iterator it = fInstructions.iterator();
-        String result="";
-        while (it.hasNext()) {
-            result = result+"\n"+it.next();
+        StringBuilder result = new StringBuilder();
+        
+        for (GInstruction instr : fInstructions) {
+            result.append("\n");
+            result.append(instr.toString());
         }
-        return result;
+        
+        return result.toString();
     }   
     
 }

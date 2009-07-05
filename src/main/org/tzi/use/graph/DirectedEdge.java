@@ -27,20 +27,21 @@ package org.tzi.use.graph;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     DirectedGraph
+ * @param N The Type of the Nodes
  */
 
 
-public interface DirectedEdge {
+public interface DirectedEdge<N> {
 
     /**
      * Returns the source node of this edge.
      */
-    Object source();
+    N source();
 
     /**
      * Returns the target node of this edge.
      */
-    Object target();
+    N target();
 
     /**
      * Returns true if source and target of this edge connect the same Node.

@@ -53,7 +53,7 @@ public class Context {
     private ModelFactory fModelFactory;
     private MSystemState fSystemState;
     private boolean fInsidePostCondition;
-    private List fLoopVarNames;  // (String)
+    private List<String> fLoopVarNames;
     
     // for UML AL
     private boolean fIsSideEffectFree;
@@ -67,12 +67,12 @@ public class Context {
         fTypeTable = new Symtable();
         fExprContext = new ExprContext();
         fModelFactory = factory;
-        fLoopVarNames = new ArrayList();
+        fLoopVarNames = new ArrayList<String>();
         fIsSideEffectFree = true;
      }
 
 
-    public List loopVarNames() {
+    public List<String> loopVarNames() {
         return fLoopVarNames;
     }
 

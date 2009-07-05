@@ -24,7 +24,6 @@ package org.tzi.use.gui.views.diagrams.classdiagram;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.gui.main.ModelBrowserSorting;
@@ -47,8 +46,8 @@ public class ClassNode extends NodeBase implements SortChangeListener {
     private DiagramOptions fOpt;
     private MClass fClass;
     private String fLabel;
-    private List fAttributes;
-    private List fOperations;
+    private List<MAttribute> fAttributes;
+    private List<MOperation> fOperations;
     private String[] fAttrValues;
     private String[] fOprSignatures;
     
@@ -62,7 +61,7 @@ public class ClassNode extends NodeBase implements SortChangeListener {
         fAttrValues = new String[fAttributes.size()];
         fOperations = cls.operations();
         fOprSignatures = new String[fOperations.size()];
-        fOperations = (ArrayList) ModelBrowserSorting.getInstance()
+        fOperations = ModelBrowserSorting.getInstance()
             .sortOperations( fOperations );
         ModelBrowserSorting.getInstance().addSortChangeListener( this );
     }
@@ -79,9 +78,9 @@ public class ClassNode extends NodeBase implements SortChangeListener {
      * After the occurence of an event the attribute list is updated.
      */
     public void stateChanged( SortChangeEvent e ) {
-        fAttributes = (ArrayList) ModelBrowserSorting.getInstance()
+        fAttributes = ModelBrowserSorting.getInstance()
              .sortAttributes( fAttributes );
-        fOperations = (ArrayList) ModelBrowserSorting.getInstance()
+        fOperations = ModelBrowserSorting.getInstance()
             .sortOperations( fOperations );
     }
     

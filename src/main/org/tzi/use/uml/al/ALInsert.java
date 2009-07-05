@@ -18,15 +18,16 @@
  */
 package org.tzi.use.uml.al;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.ocl.expr.EvalContext;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
+import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.util.Log;
 
@@ -36,16 +37,16 @@ import org.tzi.use.util.Log;
  */
 public class ALInsert extends ALLinkAction {
 
-    public ALInsert(List exprs, MAssociation assoc) {
+    public ALInsert(List<Expression> exprs, MAssociation assoc) {
         super(exprs, assoc);
     }
 
     public void exec(EvalContext ctx) throws MSystemException {
-        ArrayList link = getLinkElements(ctx);
+        List<MObject> link = getLinkElements(ctx);
         insertLink(ctx, link);
     }
     
-    protected void insertLink(EvalContext ctx, ArrayList link) throws MSystemException {
+    protected void insertLink(EvalContext ctx, List<MObject> link) throws MSystemException {
         MLink newLink = ctx.postState().createLink(getAssociation(), link);
         Log.verbose("INSERT (" + link + ") INTO " + getAssociation().name());
         if ( newLink instanceof MLinkObject ) {

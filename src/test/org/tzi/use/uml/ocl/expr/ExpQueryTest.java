@@ -269,8 +269,8 @@ public class ExpQueryTest extends TestCase {
             MObject b1 = state.createObject(b,"B1");
             MObject b2 = state.createObject(b,"B2");
 
-            state.createLink( r, Arrays.asList( new Object[] { a1, b1 } ));
-            state.createLink( r, Arrays.asList( new Object[] { a1, b2 } ));
+            state.createLink( r, Arrays.asList( new MObject[] { a1, b1 } ));
+            state.createLink( r, Arrays.asList( new MObject[] { a1, b2 } ));
 
             VarBindings bindings = new VarBindings();
             bindings.push( "A1", new ObjectValue(a1.type(), a1));

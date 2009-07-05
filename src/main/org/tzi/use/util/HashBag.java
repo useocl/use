@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class HashBag extends AbstractBag implements Bag {
+public class HashBag<T> extends AbstractBag<T> implements Bag<T> {
 
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
@@ -42,7 +42,7 @@ public class HashBag extends AbstractBag implements Bag {
         }
     }
 
-    private transient HashMap fMap;
+    private transient HashMap<T, MutableInteger> fMap;
     private transient int fSizeAll;
 
     /**
@@ -50,7 +50,7 @@ public class HashBag extends AbstractBag implements Bag {
      * capacity and load factor.
      */
     public HashBag() {
-        fMap = new HashMap();
+        fMap = new HashMap<T, MutableInteger>();
     }
 
     /**
@@ -87,11 +87,11 @@ public class HashBag extends AbstractBag implements Bag {
      * Returns the number of occurrences of the specified object in this Bag.
      */
     public int occurrences(Object obj) {
-        Object count = fMap.get(obj);
+        MutableInteger count = fMap.get(obj);
         if (count == null )
             return 0;
         else 
-            return ((MutableInteger) count).fInt;
+            return count.fInt;
     }
 
     /**
@@ -100,7 +100,7 @@ public class HashBag extends AbstractBag implements Bag {
      * an instance of some class that provides a guarantee). However,
      * duplicate elements are guaranteed to be kept adjacent.
      */
-    public Iterator iterator() {
+    public Iterator<T> iterator() {
         return new AllElementsIterator(this);
     }
 
@@ -110,24 +110,25 @@ public class HashBag extends AbstractBag implements Bag {
      * Bag is an instance of some class that provides a
      * guarantee). Duplicate elements are delivered just once.
      */
-    public Iterator uniqueIterator() {
+    public Iterator<T> uniqueIterator() {
         return fMap.keySet().iterator();
     }
 
 
     // Modification Operations
-
-    public boolean add(Object obj) {
-        MutableInteger count = (MutableInteger) fMap.get(obj);
+    
+    public boolean add(T obj) {
+        MutableInteger count = fMap.get(obj);
         if (count == null )
             fMap.put(obj, new MutableInteger(1));
         else
             count.fInt++;
+        
         fSizeAll++;
         return obj != null;
     }
 
-    public boolean add(Object obj, int c) {
+    public boolean add(T obj, int c) {
         if (c < 1 ) 
             throw new IllegalArgumentException("count: " + c);
         MutableInteger count = (MutableInteger) fMap.get(obj);
@@ -140,7 +141,8 @@ public class HashBag extends AbstractBag implements Bag {
     }
 
     public boolean remove(Object obj) {
-        MutableInteger count = (MutableInteger) fMap.get(obj);
+        MutableInteger count = fMap.get(obj);
+        
         if (count == null )
             return false;
         else {
@@ -154,7 +156,7 @@ public class HashBag extends AbstractBag implements Bag {
     }
 
     public boolean removeAll(Object obj) {
-        MutableInteger count = (MutableInteger) fMap.get(obj);
+        MutableInteger count = fMap.get(obj);
         if (count == null )
             return false;
         else {
@@ -178,13 +180,13 @@ public class HashBag extends AbstractBag implements Bag {
     /**
      * HashBag Iterator.
      */
-    private class AllElementsIterator implements Iterator {
-        private Bag fBag;
-        private Iterator fKeyIterator;
+    private class AllElementsIterator implements Iterator<T> {
+        private Bag<T> fBag;
+        private Iterator<T> fKeyIterator;
         private int fElemsLeft;
-        private Object fElem;
+        private T fElem;
 
-        AllElementsIterator(Bag b) {
+        AllElementsIterator(Bag<T> b) {
             fBag = b;
             fKeyIterator = fBag.uniqueIterator();
             fElemsLeft = 0;
@@ -195,11 +197,12 @@ public class HashBag extends AbstractBag implements Bag {
             return fElemsLeft > 0 || fKeyIterator.hasNext();
         }
 
-        public Object next() throws NoSuchElementException {
+        public T next() throws NoSuchElementException {
             if (fElemsLeft == 0 ) {
                 // need to get next element
                 if (! fKeyIterator.hasNext() )
                     throw new NoSuchElementException();
+                
                 fElem = fKeyIterator.next();
                 fElemsLeft = fBag.occurrences(fElem) - 1;
                 return fElem;

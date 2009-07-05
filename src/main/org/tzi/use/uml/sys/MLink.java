@@ -43,14 +43,14 @@ public interface MLink {
      *
      * @return Set(MLinkEnd)
      */
-    Set linkEnds();
+    Set<MLinkEnd> linkEnds();
 
     /**
      * Returns the set of objects participating in this link.
      *
      * @return Set(MObject).
      */
-    Set linkedObjects();
+    Set<MObject> linkedObjects();
 
     /**
      * Returns the set of objects participating in this link.

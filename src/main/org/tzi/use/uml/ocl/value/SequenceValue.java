@@ -24,6 +24,7 @@ package org.tzi.use.uml.ocl.value;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
@@ -67,7 +68,7 @@ public class SequenceValue extends CollectionValue {
      * @exception IllegalArgumentException the type of at least one
      *            value does not match 
      */
-    public SequenceValue(Type elemType, Collection<Value> values) {
+    public SequenceValue(Type elemType, final Collection<Value> values) {
         this(elemType);
         addAll(values);
     }
@@ -258,6 +259,11 @@ public class SequenceValue extends CollectionValue {
         return fElements;
     }
 
+    // For list access
+    public List<Value> list() {
+    	return fElements;
+    }
+    
     public String toString() {
         return "Sequence{" + StringUtil.fmtSeq(fElements.iterator(), ",") + "}";
     }

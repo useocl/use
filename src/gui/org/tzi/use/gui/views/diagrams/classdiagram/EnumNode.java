@@ -45,7 +45,7 @@ public class EnumNode extends NodeBase implements SortChangeListener {
     private DiagramOptions fOpt;
     private EnumType fEnum;
     private String fLabel;
-    private List fLiterals;
+    private List<String> fLiterals;
     private String[] fLiteralValues;
     
     private final String ENUMERATION = "<<enumeration>>";
@@ -55,11 +55,12 @@ public class EnumNode extends NodeBase implements SortChangeListener {
         fOpt = opt;
         fLabel = enumeration.name();
         
-        List allLiterals = new ArrayList();
-        Iterator it = enumeration.literals();
+        List<String> allLiterals = new ArrayList<String>();
+        Iterator<String> it = enumeration.literals();
         while ( it.hasNext() ) {
-            allLiterals.add( (String) it.next() );
+            allLiterals.add( it.next() );
         }
+        
         final int N = allLiterals.size();
         fLiteralValues = new String[N];
         fLiterals = allLiterals; //(ArrayList) ModelBrowserSorting.getInstance()
@@ -83,6 +84,7 @@ public class EnumNode extends NodeBase implements SortChangeListener {
      * After the occurence of an event the attribute list is updated.
      */
     public void stateChanged( SortChangeEvent e ) {
+    	//TODO: Implement sorting
         // the sort algorithem in the model browser is not implemented yet.
         //        fLiterals = (ArrayList) ModelBrowserSorting.getInstance()
         //                                                   .sortLiterals( fLiterals );
@@ -173,5 +175,4 @@ public class EnumNode extends NodeBase implements SortChangeListener {
             }
         }
     }
-    
 }

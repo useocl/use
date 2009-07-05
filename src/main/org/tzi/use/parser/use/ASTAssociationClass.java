@@ -20,7 +20,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -48,11 +47,11 @@ public class ASTAssociationClass extends ASTClass {
 
     private Token fKind = null;
     private MAssociationClass fAssocClass;  
-    private List fAssociationEnds;
+    private List<ASTAssociationEnd> fAssociationEnds;
 
     public ASTAssociationClass( Token name, boolean isAbstract ) {
         super( name, isAbstract );
-        fAssociationEnds = new ArrayList();
+        fAssociationEnds = new ArrayList<ASTAssociationEnd>();
     }
 
     public void addEnd( ASTAssociationEnd ae ) {
@@ -77,10 +76,7 @@ public class ASTAssociationClass extends ASTClass {
     public void genAttributesOperationSignaturesAndGenSpec( Context ctx ) {
         ctx.setCurrentClass( fAssocClass );
         if ( fSuperClasses != null ) {
-            Iterator it = fSuperClasses.iterator();
-            while ( it.hasNext() ) {
-            	Token id = ( Token ) it.next();
-
+            for(Token id : fSuperClasses) {
                 // lookup parent by name
                 MClass parent = ctx.model().getClass( id.getText() );
                 if ( parent == null )
@@ -99,9 +95,7 @@ public class ASTAssociationClass extends ASTClass {
         }
         
         // add attributes
-        Iterator it = fAttributes.iterator();
-        while ( it.hasNext() ) {
-            ASTAttribute a = ( ASTAttribute ) it.next();
+        for (ASTAttribute a : fAttributes) {
             try {
                 MAttribute attr = a.gen( ctx );
                 fAssocClass.addAttribute( attr );
@@ -114,9 +108,7 @@ public class ASTAssociationClass extends ASTClass {
 
         // add operation signatures, expressions have to be generated
         // later when all class interfaces are known
-        it = fOperations.iterator();
-        while ( it.hasNext() ) {
-            ASTOperation astOp = ( ASTOperation ) it.next();
+        for (ASTOperation astOp : fOperations) {
             try {
                 MOperation op = astOp.genSignature( ctx );
                 fAssocClass.addOperation( op );
@@ -142,12 +134,9 @@ public class ASTAssociationClass extends ASTClass {
             else if ( kindname.equals( "composition" ) )
                 kind = MAggregationKind.COMPOSITION;
         }
-
-        Iterator it = fAssociationEnds.iterator();
+        
         try {
-            while ( it.hasNext() ) {
-                ASTAssociationEnd ae = ( ASTAssociationEnd ) it.next();
-
+            for (ASTAssociationEnd ae : fAssociationEnds) {
                 // kind of association determines kind of first
                 // association end
                 MAssociationEnd aend = ae.gen( ctx, kind );
@@ -184,9 +173,7 @@ public class ASTAssociationClass extends ASTClass {
 
 
         // generate operation bodies
-        Iterator it = fOperations.iterator();
-        while ( it.hasNext() ) {
-            ASTOperation astOp = ( ASTOperation ) it.next();
+        for (ASTOperation astOp : fOperations) {
             try {
                 astOp.genFinal( ctx );
             } catch ( SemanticException ex ) {
@@ -195,9 +182,7 @@ public class ASTAssociationClass extends ASTClass {
         }
 
         // add class invariants
-        it = fInvariantClauses.iterator();
-        while ( it.hasNext() ) {
-            ASTInvariantClause astInv = ( ASTInvariantClause ) it.next();
+        for (ASTInvariantClause astInv : fInvariantClauses) {
             astInv.gen( ctx, null, fAssocClass );
         }
 

@@ -35,10 +35,10 @@ import org.tzi.use.uml.sys.MObjectState;
  */
 public abstract class ALLinkAction extends ALAction {
 
-    private List fExpressions;
+    private List<Expression> fExpressions;
     private MAssociation fAssociation;
 
-    public ALLinkAction(List exprList, MAssociation assoc) {
+    public ALLinkAction(List<Expression> exprList, MAssociation assoc) {
         fExpressions = exprList;
         fAssociation = assoc;
     }
@@ -50,10 +50,10 @@ public abstract class ALLinkAction extends ALAction {
     /**
      * Evals all expressions and returns the result tuple. 
      */
-    protected ArrayList getLinkElements(EvalContext ctx) {
-        ArrayList link = new ArrayList(fExpressions.size());
-        for (Iterator it = fExpressions.iterator(); it.hasNext();) {
-            Expression exp = (Expression) it.next();
+    protected List<MObject> getLinkElements(EvalContext ctx) {
+        List<MObject> link = new ArrayList<MObject>(fExpressions.size());
+        
+        for (Expression exp : fExpressions) {
             Value v = exp.eval(ctx);
             if (v.isDefined() && (v instanceof ObjectValue) ) {
                 ObjectValue oval = (ObjectValue) v;
@@ -71,7 +71,7 @@ public abstract class ALLinkAction extends ALAction {
 
     protected String getTupleForToString() {
         String res = "(";
-        for (Iterator it=fExpressions.iterator(); it.hasNext();) {
+        for (Iterator<Expression> it=fExpressions.iterator(); it.hasNext();) {
             res += it.next().toString();
             if (it.hasNext()) res += ", ";
         }

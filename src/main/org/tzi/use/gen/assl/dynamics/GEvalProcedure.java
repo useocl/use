@@ -49,7 +49,7 @@ public class GEvalProcedure implements IGCaller {
         fProcedure = proc;
     }
 
-    public void eval(List paramValues,
+    public void eval(List<Value> paramValues,
                      MSystemState state,
                      IGCollector collector,
                      IGChecker checker,
@@ -57,22 +57,21 @@ public class GEvalProcedure implements IGCaller {
         collector.detailPrintWriter().println("evaluating `" + fProcedure + "'");
         fChecker = checker;
         VarBindings varBindings = new VarBindings();
-        Iterator declIt;
-        declIt = fProcedure.parameterDecls().iterator();
-        Iterator valuesIt = paramValues.iterator();
-        while (declIt.hasNext()) {
-            String varName = ((VarDecl) declIt.next()).name();
-            Value value = (Value) valuesIt.next();
+        Iterator<Value> valuesIt = paramValues.iterator();
+
+        for (VarDecl parDecl : fProcedure.parameterDecls()) {	
+            String varName = parDecl.name();
+            Value value = valuesIt.next();
             varBindings.push(varName, value);
             collector.detailPrintWriter().println( varName + ":=" + value );
         }
-        declIt = fProcedure.localDecls().iterator();
-        while (declIt.hasNext()) {
-            VarDecl localDecl = (VarDecl) declIt.next();
+        
+        for (VarDecl localDecl : fProcedure.localDecls()) {
             Value value = new UndefinedValue(localDecl.type());
             varBindings.push(localDecl.name(), value);
             collector.detailPrintWriter().println(localDecl.name() + ":=" + value);
         }
+        
         GConfiguration conf = new GConfiguration( state,
                                                   varBindings,
                                                   randomNr );

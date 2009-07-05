@@ -145,7 +145,7 @@ public interface MClass extends MModelElement {
      *
      * @return Map(String, MAssociationEnd)
      */
-    Map<String, MAssociationEnd> navigableEnds();
+    Map<String, MNavigableElement> navigableEnds();
 
     public void deleteNavigableElements ();
     
@@ -158,7 +158,7 @@ public interface MClass extends MModelElement {
      * @param associationEnds List(MAssociationEnd)
      * @see MModel#addAssociation
      */
-    void registerNavigableEnds( List<MAssociationEnd> associationEnds );
+    void registerNavigableEnds( List<MNavigableElement> associationEnds );
 
 
     /**

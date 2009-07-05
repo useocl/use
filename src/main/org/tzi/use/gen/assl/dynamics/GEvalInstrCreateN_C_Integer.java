@@ -29,23 +29,21 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MCmdCreateObjects;
-
-import org.tzi.use.util.cmd.CommandFailedException;
 import org.tzi.use.util.cmd.CannotUndoException;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
+import org.tzi.use.util.cmd.CommandFailedException;
 
 class GEvalInstrCreateN_C_Integer extends GEvalInstruction
     implements IGCaller {
@@ -81,7 +79,7 @@ class GEvalInstrCreateN_C_Integer extends GEvalInstruction
             MClass cls = fInstr.cls();
             ObjectType objectType = TypeFactory.mkObjectType( cls );
         
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             for (int k=1; k <= count; k++)
                 names.add( conf.systemState().uniqueObjectNameForClass( cls.name() ) );
             try {
@@ -93,11 +91,13 @@ class GEvalInstrCreateN_C_Integer extends GEvalInstruction
                     collector.basicPrintWriter().println(cmd.getUSEcmd());
                     cmd.execute();
                 }
-                Iterator it = names.iterator();
-                List objects = new ArrayList();
-                while (it.hasNext() )
+                
+                List<Value> objects = new ArrayList<Value>();
+                for (String name : names) {
                     objects.add( new ObjectValue(objectType,
-                                                 conf.systemState().objectByName((String) it.next()) ));
+                                                 conf.systemState().objectByName(name) ));
+                }
+                
                 Value val = new SequenceValue(objectType, objects);
                 collector.detailPrintWriter().println(
                                                       "`"+ fInstr + "' == " + val);

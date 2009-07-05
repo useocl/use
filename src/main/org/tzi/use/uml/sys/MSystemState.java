@@ -76,18 +76,18 @@ public final class MSystemState {
 	/**
 	 * The set of all object states.
 	 */
-	private Map fObjectStates; // (MObject -> MObjectState)
+	private Map<MObject, MObjectState> fObjectStates;
 
 	/**
 	 * The set of objects partitioned by class. Must be kept in sync with
 	 * fObjectStates.
 	 */
-	private MultiMap fClassObjects; // (MClass -> list of MObject)
+	private MultiMap<MClass, MObject> fClassObjects;
 
 	/**
 	 * The set of all links partitioned by association.
 	 */
-	private Map fLinkSets; // (MAssociation -> MLinkSet)
+	private Map<MAssociation, MLinkSet> fLinkSets;
 
 	/**
 	 * Creates a new system state with no objects and links.
@@ -95,14 +95,12 @@ public final class MSystemState {
 	MSystemState(String name, MSystem system) {
 		fName = name;
 		fSystem = system;
-		fObjectStates = new HashMap();
-		fClassObjects = new HashMultiMap();
-		fLinkSets = new HashMap();
+		fObjectStates = new HashMap<MObject, MObjectState>();
+		fClassObjects = new HashMultiMap<MClass, MObject>();
+		fLinkSets = new HashMap<MAssociation, MLinkSet>();
 
 		// create empty link sets
-		Iterator it = fSystem.model().associations().iterator();
-		while (it.hasNext()) {
-			MAssociation assoc = (MAssociation) it.next();
+		for(MAssociation assoc : fSystem.model().associations()) {
 			MLinkSet linkSet = new MLinkSet(assoc);
 			fLinkSets.put(assoc, linkSet);
 		}
@@ -116,21 +114,18 @@ public final class MSystemState {
 		fSystem = x.fSystem;
 
 		// deep copy of object states
-		fObjectStates = new HashMap();
-		Iterator it = x.fObjectStates.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry e = (Map.Entry) it.next();
+		fObjectStates = new HashMap<MObject, MObjectState>();
+		
+		for (Map.Entry<MObject, MObjectState> e : x.fObjectStates.entrySet()) {
 			fObjectStates.put(e.getKey(), new MObjectState((MObjectState) e
 					.getValue()));
 		}
 
-		fClassObjects = new HashMultiMap();
+		fClassObjects = new HashMultiMap<MClass, MObject>();
 		fClassObjects.putAll(x.fClassObjects);
 
-		fLinkSets = new HashMap();
-		it = x.fLinkSets.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry e = (Map.Entry) it.next();
+		fLinkSets = new HashMap<MAssociation, MLinkSet>();
+		for(Map.Entry<MAssociation, MLinkSet> e : x.fLinkSets.entrySet()) {
 			fLinkSets.put(e.getKey(), new MLinkSet((MLinkSet) e.getValue()));
 		}
 	}
@@ -154,7 +149,7 @@ public final class MSystemState {
 	 * 
 	 * @return Set(MObject)
 	 */
-	public Set allObjects() {
+	public Set<MObject> allObjects() {
 		return fObjectStates.keySet();
 	}
 
@@ -164,8 +159,8 @@ public final class MSystemState {
 	 * 
 	 * @return Set(MObject)
 	 */
-	public Set objectsOfClass(MClass cls) {
-		Set res = new HashSet();
+	public Set<MObject> objectsOfClass(MClass cls) {
+		Set<MObject> res = new HashSet<MObject>();
 		res.addAll(fClassObjects.get(cls));
 		return res;
 	}
@@ -176,16 +171,15 @@ public final class MSystemState {
 	 * 
 	 * @return Set(MObject)
 	 */
-	public Set objectsOfClassAndSubClasses(MClass cls) {
-		Set res = new HashSet();
-		Set children = cls.allChildren();
+	public Set<MObject> objectsOfClassAndSubClasses(MClass cls) {
+		Set<MObject> res = new HashSet<MObject>();
+		Set<MClass> children = cls.allChildren();
 		children.add(cls);
 
-		Iterator it = children.iterator();
-		while (it.hasNext()) {
-			MClass c = (MClass) it.next();
+		for (MClass c : children) {
 			res.addAll(objectsOfClass(c));
 		}
+		
 		return res;
 	}
 
@@ -195,14 +189,13 @@ public final class MSystemState {
 	 * @return null if no object with the specified name exists.
 	 */
 	public MObject objectByName(String name) {
+		//FIXME: Use Hashing for faster access!
 		// this is a slow linear search over all objects
-		Set allObjects = allObjects();
-		Iterator it = allObjects.iterator();
-		while (it.hasNext()) {
-			MObject obj = (MObject) it.next();
+		for (MObject obj : allObjects()) {
 			if (obj.name().equals(name))
 				return obj;
 		}
+		
 		return null;
 	}
 
@@ -211,13 +204,13 @@ public final class MSystemState {
 	 * 
 	 * @return Set(MLink)
 	 */
-	public Set allLinks() {
-		Set res = new HashSet();
-		Iterator it = fLinkSets.values().iterator();
-		while (it.hasNext()) {
-			MLinkSet ls = (MLinkSet) it.next();
+	public Set<MLink> allLinks() {
+		Set<MLink> res = new HashSet<MLink>();
+
+		for(MLinkSet ls : fLinkSets.values()) {
 			res.addAll(ls.links());
 		}
+		
 		return res;
 	}
 
@@ -225,7 +218,7 @@ public final class MSystemState {
 	 * Returns the set of links of the specified association in this state.
 	 */
 	public MLinkSet linksOfAssociation(MAssociation assoc) {
-		return (MLinkSet) fLinkSets.get(assoc);
+		return fLinkSets.get(assoc);
 	}
 
 	/**
@@ -241,7 +234,7 @@ public final class MSystemState {
 	 * Returns the link if there is a link connecting the given set of objects,
 	 * otherwise null is returend.
 	 */
-	public MLink linkBetweenObjects(MAssociation assoc, Set objects) {
+	public MLink linkBetweenObjects(MAssociation assoc, Set<MObject> objects) {
 		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
 		return linkSet.linkBetweenObjects(objects);
 	}
@@ -250,9 +243,10 @@ public final class MSystemState {
 	 * Returns true if there is a link of the specified association connecting
 	 * the objects in the given sequence.
 	 */
-	public boolean hasLink(MAssociation assoc, List objects)
+	public boolean hasLink(MAssociation assoc, List<MObject> objects)
 			throws MSystemException {
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+		MLinkSet linkSet = fLinkSets.get(assoc);
+		
 		return linkSet.hasLink(objects);
 	}
 
@@ -264,7 +258,7 @@ public final class MSystemState {
 	 */
 	public MObject createObject(MClass cls, String name)
 			throws MSystemException {
-		// checks if cls is a associationclass, if yes then throw an exception,
+		// checks if cls is a association class, if yes then throw an exception,
 		// because this should not be allowed.
 		if (cls instanceof MAssociationClass) {
 			throw new MSystemException(
@@ -296,67 +290,79 @@ public final class MSystemState {
 	 * 
 	 * @return Set(MLink) the set of removed links
 	 */
-	public Set[] deleteObject(MObject obj) {
-		Set[] result = auxDeleteObject(obj);
+	public DeleteObjectResult deleteObject(MObject obj) {
+		DeleteObjectResult result = auxDeleteObject(obj);
 
-		// if obj is an linkobject it has to be deleted as a link too.
+		// if obj is a link object it has to be deleted as a link too.
 		if (obj instanceof MLinkObject) {
 			MLinkObject linkObject = (MLinkObject) obj;
 			auxDeleteLink(linkObject);
-			result[REMOVED_LINKS].add(linkObject);
+			result.getRemovedLinks().add(linkObject);
 		}
 
 		return result;
 	}
 
+	public class DeleteObjectResult {
+		private Set<MLink> removedLinks = new HashSet<MLink>();
+		private Set<MObject> removedObjects = new HashSet<MObject>();
+		private Set<MObjectState> removedObjectStates = new HashSet<MObjectState>();
+		
+		public Set<MLink> getRemovedLinks()
+		{
+			return removedLinks;
+		}
+		
+		public Set<MObject> getRemovedObjects()
+		{
+			return removedObjects;
+		}
+		
+		public Set<MObjectState> getRemovedObjectStates()
+		{
+			return removedObjectStates;
+		}
+	}
+	
 	/**
 	 * Deletes an object from the state. All links connected to the object are
 	 * removed.
 	 * 
-	 * @return Set(MLink) the set of removed links
+	 * @return DeleteObjectResult with information about removed elements
 	 */
-	private Set[] auxDeleteObject(MObject obj) {
-		Set[] res = new Set[3];
-		res[REMOVED_LINKS] = new HashSet();
-		res[REMOVED_OBJECTS] = new HashSet();
-		res[REMOVED_OBJECTSTATES] = new HashSet();
+	private DeleteObjectResult auxDeleteObject(MObject obj) {
+		DeleteObjectResult res = new DeleteObjectResult();
 		MClass objClass = obj.cls();
 
 		// get associations this object might be participating in
-		Set assocSet = objClass.allAssociations();
+		Set<MAssociation> assocSet = objClass.allAssociations();
 
-		Iterator assocIter = assocSet.iterator();
-		while (assocIter.hasNext()) {
-			MAssociation assoc = (MAssociation) assocIter.next();
-
-			MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+		for (MAssociation assoc :assocSet) {
+			MLinkSet linkSet = fLinkSets.get(assoc);
 
 			// check all association ends the objects' class is
 			// connected to
-			Iterator aendIter = assoc.associationEnds().iterator();
-			while (aendIter.hasNext()) {
-				MAssociationEnd aend = (MAssociationEnd) aendIter.next();
+			for (MAssociationEnd aend : assoc.associationEnds()) {
 				if (objClass.isSubClassOf(aend.cls())) {
-					Set removedLinks = linkSet.removeAll(aend, obj);
-					Iterator it = removedLinks.iterator();
-					while (it.hasNext()) {
-						Object o = it.next();
-						if (o instanceof MLinkObject) {
-							Set[] resLinkObject = auxDeleteObject((MLinkObject) o);
-							res[REMOVED_LINKS]
-									.addAll(resLinkObject[REMOVED_LINKS]);
-							res[REMOVED_OBJECTS]
-									.addAll(resLinkObject[REMOVED_OBJECTS]);
-							res[REMOVED_OBJECTSTATES]
-									.addAll(resLinkObject[REMOVED_OBJECTSTATES]);
+					Set<MLink> removedLinks = linkSet.removeAll(aend, obj);
+					
+					for (MLink removed : removedLinks) {
+						if (removed instanceof MLinkObject) {
+							DeleteObjectResult resLinkObject = auxDeleteObject((MLinkObject) removed);
+							
+							res.getRemovedLinks().addAll(resLinkObject.getRemovedLinks());
+							res.getRemovedObjects().addAll(resLinkObject.getRemovedObjects());
+							res.getRemovedObjectStates().addAll(resLinkObject.getRemovedObjectStates());
 						}
 					}
-					res[REMOVED_LINKS].addAll(removedLinks);
+					
+					res.getRemovedLinks().addAll(removedLinks);
 				}
 			}
 		}
-		res[REMOVED_OBJECTS].add(obj);
-		res[REMOVED_OBJECTSTATES].add(fObjectStates.get(obj));
+		
+		res.getRemovedObjects().add(obj);
+		res.getRemovedObjectStates().add(fObjectStates.get(obj));
 		fObjectStates.remove(obj);
 		fClassObjects.remove(objClass, obj);
 		fSystem.deleteObject(obj);
@@ -375,7 +381,7 @@ public final class MSystemState {
 	 *                link invalid or already existing
 	 * @return the newly created link.
 	 */
-	public MLink createLink(MAssociation assoc, List objects)
+	public MLink createLink(MAssociation assoc, List<MObject> objects)
 			throws MSystemException {
 		MLink link = null;
 
@@ -383,8 +389,7 @@ public final class MSystemState {
 		if (assoc instanceof MAssociationClass) {
 			// specifies if there is already an existing linkobject of this
 			// association class between the objects
-			if (hasLinkBetweenObjects(assoc, (MObject[]) objects
-					.toArray(new MObject[0]))) {
+			if (hasLinkBetweenObjects(assoc, objects.toArray(new MObject[objects.size()]))) {
 				throw new MSystemException(
 						"Cannot insert two linkobjects of the same type"
 								+ " between one set of objects!");
@@ -406,7 +411,7 @@ public final class MSystemState {
 						+ StringUtil.fmtSeq(objects.iterator(), ",")
 						+ ") already exist.");
 			// The graph to store the information of the whole/part hierachy
-			DirectedGraph fWholePartLinkGraph = getWholePartLinkGraph();
+			DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = getWholePartLinkGraph();
 			MWholePartLink wholePartLink = new MWholePartLinkImpl(link);
 			MObject source = null;
 			MObject target = null;
@@ -422,10 +427,10 @@ public final class MSystemState {
 			if (assoc.aggregationKind() == MAggregationKind.COMPOSITION) {
 				// finding all edges (links) whose target is the target object
 				// of the new link
-				Iterator sourceEdgeIter = fWholePartLinkGraph.sourceNodeSet(
-						target).iterator();
+				Iterator<MObject> sourceEdgeIter = fWholePartLinkGraph.sourceNodeSet(target).iterator();
+				
 				while (sourceEdgeIter.hasNext()) {
-					Iterator iter = fWholePartLinkGraph.edgesBetween(target,
+					Iterator<MWholePartLink> iter = fWholePartLinkGraph.edgesBetween(target,
 							sourceEdgeIter.next()).iterator();
 					while (iter.hasNext()) {
 						MLink l = (MLink) iter.next();
@@ -468,30 +473,28 @@ public final class MSystemState {
 	/**
 	 * The graph to store the information of the whole/part hierachy.
 	 */
-	private DirectedGraph getWholePartLinkGraph() {
-		DirectedGraph ret = new DirectedGraphBase();
+	private DirectedGraph<MObject, MWholePartLink> getWholePartLinkGraph() {
+		DirectedGraph<MObject, MWholePartLink> ret = new DirectedGraphBase<MObject, MWholePartLink>();
 		// Obtaining whole/part links from all links of the system state in
-		// fLinkSets
-		Iterator assocIter = fLinkSets.keySet().iterator();
-		MAssociation assocTemp = null;
+		// fLinkSets		
+
 		MWholePartLink wholePartLink = null;
 		MObject source = null;
 		MObject target = null;
-		while (assocIter.hasNext()) {
-			assocTemp = (MAssociation) assocIter.next();
+		
+		for (MAssociation assocTemp : fLinkSets.keySet()) {
 			if ((assocTemp.aggregationKind() == MAggregationKind.AGGREGATION)
 					|| (assocTemp.aggregationKind() == MAggregationKind.COMPOSITION)) {
-				MLinkSet linkSetTmp = (MLinkSet) fLinkSets.get(assocTemp);
-				Iterator it = linkSetTmp.links().iterator();
-				while (it.hasNext()) {
+				MLinkSet linkSetTmp = fLinkSets.get(assocTemp);
+				
+				for (MLink link : linkSetTmp.links()) {
 					try {
-						wholePartLink = new MWholePartLinkImpl((MLink) it
-								.next());
+						wholePartLink = new MWholePartLinkImpl(link);
 					} catch (MSystemException e) {
 						Log.println(e.toString());
 					}
-					source = (MObject) wholePartLink.source();
-					target = (MObject) wholePartLink.target();
+					source = wholePartLink.source();
+					target = wholePartLink.target();
 					ret.add(source);
 					ret.add(target);
 					ret.addEdge(wholePartLink);
@@ -506,7 +509,7 @@ public final class MSystemState {
 	 */
 	public void insertLink(MLink link) {
 		// get link set for association
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(link.association());
+		MLinkSet linkSet = fLinkSets.get(link.association());
 		linkSet.add(link);
 	}
 
@@ -530,19 +533,15 @@ public final class MSystemState {
 	 *                link does not exist
 	 * @return the removed link.
 	 */
-	public Set[] deleteLink(MAssociation assoc, List objects)
+	public DeleteObjectResult deleteLink(MAssociation assoc, List<MObject> objects)
 			throws MSystemException {
-		Set[] result = new Set[3];
-		result[REMOVED_LINKS] = new HashSet();
-		result[REMOVED_OBJECTS] = new HashSet();
-		result[REMOVED_OBJECTSTATES] = new HashSet();
+		
+		DeleteObjectResult result = new DeleteObjectResult();
 		MLink link = null;
 		MLinkSet linkSet = linksOfAssociation(assoc);
 
-		Iterator linkIter = linkSet.links().iterator();
-		while (linkIter.hasNext()) {
-			MLink l = (MLink) linkIter.next();
-			if (l.linkedObjects().equals(new HashSet(objects))) {
+		for (MLink l : linkSet.links()) {
+			if (l.linkedObjects().equals(new HashSet<MObject>(objects))) {
 				link = l;
 				break;
 			}
@@ -555,48 +554,18 @@ public final class MSystemState {
 		}
 
 		linkSet.remove(link);
-		result[REMOVED_LINKS].add(link);
+		result.getRemovedLinks().add(link);
 
 		if (link instanceof MLinkObject) {
-			Set[] res = auxDeleteObject((MLinkObject) link);
-			result[REMOVED_LINKS].addAll(res[REMOVED_LINKS]);
-			result[REMOVED_OBJECTS].addAll(res[REMOVED_OBJECTS]);
-			result[REMOVED_OBJECTSTATES].addAll(res[REMOVED_OBJECTSTATES]);
+			DeleteObjectResult res = auxDeleteObject((MLinkObject) link);
+			result.getRemovedLinks().addAll(res.getRemovedLinks());
+			result.getRemovedObjects().addAll(res.getRemovedObjects());
+			result.getRemovedObjectStates().addAll(res.getRemovedObjectStates());
 		}
+		
 		return result;
-
-		// if ( assoc instanceof MAssociationClass ) {
-		// MAssociationClass assocClass = ( MAssociationClass ) assoc;
-		// String assocClassName = getNameOfLinkObject( assocClass, objects );
-		// link = new MLinkObjectImpl( assocClass, assocClassName, objects );
-		// } else {
-		// link = new MLinkImpl( assoc, objects );
-		// }
-
-		// // get link set for association
-		// MLinkSet linkSet = ( MLinkSet ) fLinkSets.get( assoc );
-		// if ( !linkSet.contains( link ) )
-		// throw new MSystemException( "Link " + link + " does not exist." );
-		// linkSet.remove( link );
-		// if ( link instanceof MLinkObject ) {
-		// auxDeleteObject( ( MLinkObject ) link );
-		// }
-		// return link;
 	}
-
-	// private String getNameOfLinkObject( MAssociationClass assocClass, List
-	// objects ) {
-	// HashSet set = new HashSet( objects );
-	// Iterator it = linksOfAssociation( assocClass ).links().iterator();
-	// while ( it.hasNext() ) {
-	// MLinkObject linkObject = ( MLinkObject ) it.next();
-	// if ( linkObject.linkedObjects().equals( set ) ) {
-	// return linkObject.name();
-	// }
-	// }
-	// return "";
-	// }
-
+	
 	/**
 	 * Creates and adds a new link to the state.
 	 * 
@@ -605,11 +574,13 @@ public final class MSystemState {
 	 * @return the newly created link.
 	 */
 	public MLinkObject createLinkObject(MAssociationClass assocClass,
-			String name, List objects) throws MSystemException {
+			String name, List<MObject> objects) throws MSystemException {
+		
 		if (objectByName(name) != null) {
 			throw new MSystemException("An object with name `" + name
 					+ "' already exists.");
 		}
+		
 		MLinkObject linkobj = new MLinkObjectImpl(assocClass, name, objects);
 
 		// Part from createObject method
@@ -618,7 +589,7 @@ public final class MSystemState {
 		fClassObjects.put(assocClass, linkobj);
 
 		// Part from createLink method
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assocClass);
+		MLinkSet linkSet = fLinkSets.get(assocClass);
 		if (linkSet.contains(linkobj))
 			throw new MSystemException("Link " + linkobj + " already exists.");
 		linkSet.add(linkobj);
@@ -632,7 +603,7 @@ public final class MSystemState {
 	 * @return null if object does not exist in the state
 	 */
 	MObjectState getObjectState(MObject obj) {
-		return (MObjectState) fObjectStates.get(obj);
+		return fObjectStates.get(obj);
 	}
 
 	/**
@@ -641,9 +612,9 @@ public final class MSystemState {
 	 * 
 	 * @return List(MObject)
 	 */
-	List getLinkedObjects(MObject obj, MAssociationEnd srcEnd,
+	List<MObject> getLinkedObjects(MObject obj, MAssociationEnd srcEnd,
 			MAssociationEnd dstEnd) {
-		ArrayList res = new ArrayList();
+		ArrayList<MObject> res = new ArrayList<MObject>();
 
 		// get association
 		MAssociation assoc = dstEnd.association();
@@ -658,17 +629,16 @@ public final class MSystemState {
 			return res;
 
 		// select links with srcEnd == obj
-		Set links = linkSet.select(srcEnd, obj);
+		Set<MLink> links = linkSet.select(srcEnd, obj);
 		Log.trace(this, "linkSet.select for object `" + obj + "', size = "
 				+ links.size());
 
 		// project tuples to destination end component
-		Iterator it = links.iterator();
-		while (it.hasNext()) {
-			MLink link = (MLink) it.next();
+		for (MLink link : links) {
 			MLinkEnd linkEnd = link.linkEnd(dstEnd);
 			res.add(linkEnd.object());
 		}
+		
 		return res;
 	}
 
@@ -678,19 +648,20 @@ public final class MSystemState {
 	 * 
 	 * @return List(MObject)
 	 */
-	public List getNavigableObjects(MObject obj, MNavigableElement src,
+	public List<MObject> getNavigableObjects(MObject obj, MNavigableElement src,
 			MNavigableElement dst) {
-		ArrayList res = new ArrayList();
+		ArrayList<MObject> res = new ArrayList<MObject>();
 
 		// get association
 		MAssociation assoc = dst.association();
 
 		// get link set for association
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+		MLinkSet linkSet = fLinkSets.get(assoc);
 
 		// if link set is empty return empty result list
 		Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
 				+ linkSet.size());
+
 		if (linkSet.size() == 0)
 			return res;
 
@@ -708,19 +679,19 @@ public final class MSystemState {
 			}
 			MAssociationEnd srcEnd = (MAssociationEnd) src;
 			// select links with srcEnd == obj
-			Set links = linkSet.select(srcEnd, obj);
+			Set<MLink> links = linkSet.select(srcEnd, obj);
 			Log.trace(this, "linkSet.select for object `" + obj + "', size = "
 					+ links.size());
 
 			// navigation to a linkobject
 			if (dst instanceof MAssociationClass) {
-				return new ArrayList(links);
+				for (MLink link : links) {
+					res.add((MObject)link);					
+				}
 			} else {
 				MAssociationEnd dstEnd = (MAssociationEnd) dst;
 				// project tuples to destination end component
-				Iterator it = links.iterator();
-				while (it.hasNext()) {
-					MLink link = (MLink) it.next();
+				for (MLink link : links) {
 					MLinkEnd linkEnd = link.linkEnd(dstEnd);
 					res.add(linkEnd.object());
 				}
@@ -735,7 +706,7 @@ public final class MSystemState {
 	 * the log if traceEvaluation is true. - Checks the whole/part hierarchy.
 	 */
 	public boolean check(PrintWriter out, boolean traceEvaluation,
-			boolean showDetails, boolean allInvariants, List invNames) {
+			boolean showDetails, boolean allInvariants, List<String> invNames) {
 		boolean valid = true;
 		Evaluator evaluator = new Evaluator();
 		MModel model = fSystem.model();
@@ -743,7 +714,6 @@ public final class MSystemState {
 		// model inherent constraints: check whether cardinalities of
 		// association links match their declaration of multiplicities
 		if (!checkStructure(out)) {
-			// return false;
 			valid = false;
 		}
 
@@ -752,24 +722,25 @@ public final class MSystemState {
 					+ " concurrent threads)...");
 		else
 			out.println("checking invariants...");
+		
 		out.flush();
 		int numChecked = 0;
 		int numFailed = 0;
 		long tAll = System.currentTimeMillis();
 
-		ArrayList invList = new ArrayList();
-		ArrayList negatedList = new ArrayList();
-		ArrayList exprList = new ArrayList();
+		ArrayList<MClassInvariant> invList = new ArrayList<MClassInvariant>();
+		ArrayList<Boolean> negatedList = new ArrayList<Boolean>();
+		ArrayList<Expression> exprList = new ArrayList<Expression>();
+		
 		if (allInvariants) {
 			// get all invariants (loaded and normal classinvariants)
 			// it doesn't matter if specific invariants are given or not
 
 			// get all loaded Invariants (generator)
-			Iterator it = fSystem.generator().flaggedInvariants().iterator();
-			while (it.hasNext()) {
-				GFlaggedInvariant flaggedInv = (GFlaggedInvariant) it.next();
+			for (GFlaggedInvariant flaggedInv : fSystem.generator().flaggedInvariants()) {
 				MClassInvariant inv = flaggedInv.classInvariant();
 				Expression expr = inv.expandedExpression();
+				
 				// sanity check
 				if (!expr.type().isBoolean())
 					throw new RuntimeException("Expression " + expr
@@ -794,9 +765,7 @@ public final class MSystemState {
 			}
 		} else if (invNames.isEmpty()) {
 			// get all invariants
-			Iterator it = model.classInvariants().iterator();
-			while (it.hasNext()) {
-				MClassInvariant inv = (MClassInvariant) it.next();
+			for(MClassInvariant inv : model.classInvariants()) {
 				Expression expr = inv.expandedExpression();
 				// sanity check
 				if (!expr.type().isBoolean())
@@ -809,9 +778,7 @@ public final class MSystemState {
 			}
 		} else {
 			// get only specified invariants
-			Iterator it = invNames.iterator();
-			while (it.hasNext()) {
-				String invName = (String) it.next();
+			for (String invName : invNames) {
 				MClassInvariant inv = model.getClassInvariant(invName);
 				if (inv != null) {
 					Expression expr = inv.expandedExpression();
@@ -852,27 +819,6 @@ public final class MSystemState {
 					}
 				}
 			}
-
-			// /////////////////////////////////////////
-			// it's the same as above
-			// /////////////////////////////////////////
-			// } else {
-			// // get only specified invariants
-			// Iterator it = invNames.iterator();
-			// while ( it.hasNext() ) {
-			// String invName = (String) it.next();
-			// MClassInvariant inv = model.getClassInvariant(invName);
-			// if ( inv != null ) {
-			// Expression expr = inv.expandedExpression();
-			// // sanity check
-			// if ( ! expr.type().isBoolean() )
-			// throw new RuntimeException("Expression " + expr +
-			// "has type " + expr.type() +
-			// ", expected boolean type");
-			// invList.add(inv);
-			// exprList.add(expr);
-			// }
-			// }
 		}
 
 		// start (possibly concurrent) evaluation
@@ -951,16 +897,17 @@ public final class MSystemState {
 	private boolean checkWholePartLink(PrintWriter out) {
 		boolean valid = true;
 		boolean isCyclic = false;
-		DirectedGraph fWholePartLinkGraph = getWholePartLinkGraph();
-		List sharedObjects = new ArrayList();
+		DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = getWholePartLinkGraph();
+		List<MObject> sharedObjects = new ArrayList<MObject>();
+		
 		MWholePartLink wholePartLink = null;
 		MObject source = null;
 		MObject target = null;		
-		Iterator edgeIter = fWholePartLinkGraph.edgeIterator();
+		Iterator<MWholePartLink> edgeIter = fWholePartLinkGraph.edgeIterator();
 		while (edgeIter.hasNext()) {
-			wholePartLink = (MWholePartLink) edgeIter.next();
-			source = (MObject) wholePartLink.source();
-			target = (MObject) wholePartLink.target();
+			wholePartLink = edgeIter.next();
+			source = wholePartLink.source();
+			target = wholePartLink.target();
 			// ****************************************************************
 			// the link is irreflexive
 			// ****************************************************************
@@ -976,17 +923,10 @@ public final class MSystemState {
 					&& !sharedObjects.contains(target)) {
 				// finding all edges (links) whose target is the target object
 				// of the new link
-				Iterator sourceEdgeIter = fWholePartLinkGraph.sourceNodeSet(
-						target).iterator();
-				while (sourceEdgeIter.hasNext()) {
-					MObject tmpSource = (MObject) sourceEdgeIter.next();
-
-					Iterator iter = fWholePartLinkGraph.edgesBetween(tmpSource,
-							target).iterator();
-					while (iter.hasNext()) {
-						MWholePartLink tmpWholePartLink = (MWholePartLink) iter
-								.next();
-						MLink l = (MLink) tmpWholePartLink;
+				for (MObject tmpSource : fWholePartLinkGraph.sourceNodeSet(target)) {
+					
+					for (MWholePartLink tmpWholePartLink : fWholePartLinkGraph.edgesBetween(tmpSource, target)) {
+						MLink l = tmpWholePartLink;
 						if ((l.association().aggregationKind() == MAggregationKind.COMPOSITION)
 								&& (!wholePartLink.equals(l))
 								&& !sharedObjects.contains(target)
@@ -1031,18 +971,16 @@ public final class MSystemState {
 			res = false;
 		}
 		// check all associations
-		Iterator it = fSystem.model().associations().iterator();
-		while (it.hasNext()) {
-			MAssociation assoc = (MAssociation) it.next();
+		for (MAssociation assoc : fSystem.model().associations()) {
 			if (assoc.associationEnds().size() != 2) {
 				// check for n-ary links
 				if (!naryAssociationsAreValid(out, assoc))
 					res = false;
 			} else {
 				// check both association ends
-				Iterator it2 = assoc.associationEnds().iterator();
-				MAssociationEnd aend1 = (MAssociationEnd) it2.next();
-				MAssociationEnd aend2 = (MAssociationEnd) it2.next();
+				Iterator<MAssociationEnd> it2 = assoc.associationEnds().iterator();
+				MAssociationEnd aend1 = it2.next();
+				MAssociationEnd aend2 = it2.next();
 
 				if (!binaryAssociationsAreValid(out, assoc, aend1, aend2)
 						|| !binaryAssociationsAreValid(out, assoc, aend2, aend1))
@@ -1056,31 +994,26 @@ public final class MSystemState {
 
 	private boolean naryAssociationsAreValid(PrintWriter out, MAssociation assoc) {
 		boolean valid = true;
-		Set links = linksOfAssociation(assoc).links();
+		Set<MLink> links = linksOfAssociation(assoc).links();
 
-		Iterator aendIter1 = assoc.associationEnds().iterator();
-		while (aendIter1.hasNext()) {
-			MAssociationEnd selEnd = (MAssociationEnd) aendIter1.next();
-			List otherEnds = selEnd.getAllOtherAssociationEnds();
-			List classes = new ArrayList();
-			for (Iterator it = otherEnds.iterator(); it.hasNext();) {
-				MAssociationEnd end = (MAssociationEnd) it.next();
+		for (MAssociationEnd selEnd : assoc.associationEnds()) {
+			List<MAssociationEnd> otherEnds = selEnd.getAllOtherAssociationEnds();
+			List<MClass> classes = new ArrayList<MClass>();
+
+			for (MAssociationEnd end : otherEnds) {
 				classes.add(end.cls());
 			}
-			Bag crossProduct = getCrossProductOfInstanceSets(classes);
+			
+			Bag<MObject[]> crossProduct = getCrossProductOfInstanceSets(classes);
 
-			for (Iterator itTuples = crossProduct.iterator(); itTuples
-					.hasNext();) {
-				MObject[] tuple = (MObject[]) itTuples.next();
-
+			for (MObject[] tuple : crossProduct) {
 				int count = 0;
-				for (Iterator itLinks = links.iterator(); itLinks.hasNext();) {
-					MLink link = (MLink) itLinks.next();
+
+				for (MLink link : links) {
 					boolean ok = true;
 					int index = 0;
-					for (Iterator itEnds = otherEnds.iterator(); itEnds
-							.hasNext();) {
-						MAssociationEnd end = (MAssociationEnd) itEnds.next();
+
+					for (MAssociationEnd end : otherEnds) {
 						if (link.linkEnd(end).object() != tuple[index]) {
 							ok = false;
 						}
@@ -1113,15 +1046,15 @@ public final class MSystemState {
 	 * @param classes
 	 * @return a bag of object arrays (<code>Bag(MObject[])</code>)
 	 */
-	Bag getCrossProductOfInstanceSets(List classes) {
-		Bag bag = new HashBag();
+	Bag<MObject[]> getCrossProductOfInstanceSets(List<MClass> classes) {
+		Bag<MObject[]> bag = new HashBag<MObject[]>();
 		insertAllNMinusOneTuples(bag, (MClass[]) classes
 				.toArray(new MClass[classes.size()]), 0, new MObject[0]);
 		return bag;
 	}
 
 	// Helper method for getCrossProductOfInstanceSets.
-	private void insertAllNMinusOneTuples(Bag allNMinusOneTuples,
+	private void insertAllNMinusOneTuples(Bag<MObject[]> allNMinusOneTuples,
 			MClass[] classes, int index, MObject[] objects) {
 		if (index < classes.length) {
 			MClass next = classes[index];
@@ -1129,9 +1062,7 @@ public final class MSystemState {
 			for (int i = 0; i < objects.length; ++i)
 				objects1[i] = objects[i];
 
-			for (Iterator it = objectsOfClassAndSubClasses(next).iterator(); it
-					.hasNext();) {
-				MObject obj = (MObject) it.next();
+			for (MObject obj : objectsOfClassAndSubClasses(next)) {
 				objects1[objects.length] = obj;
 				insertAllNMinusOneTuples(allNMinusOneTuples, classes,
 						index + 1, objects1);
@@ -1148,11 +1079,10 @@ public final class MSystemState {
 		// for each object of the association end's type get
 		// the number of links in which the object participates
 		MClass cls = aend1.cls();
-		Set objects = objectsOfClassAndSubClasses(cls);
-		Iterator it = objects.iterator();
-		while (it.hasNext()) {
-			MObject obj = (MObject) it.next();
-			List objList = getLinkedObjects(obj, aend1, aend2);
+		Set<MObject> objects = objectsOfClassAndSubClasses(cls);
+
+		for (MObject obj : objects) {
+			List<MObject> objList = getLinkedObjects(obj, aend1, aend2);
 			int n = objList.size();
 			if (!aend2.multiplicity().contains(n)) {
 				out

@@ -37,6 +37,7 @@ import org.tzi.use.uml.sys.MSystem;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
+@SuppressWarnings("serial")
 class CreateObjectDialog extends JDialog {
     private MSystem fSystem;
     private MainWindow fParent;
@@ -148,7 +149,7 @@ class CreateObjectDialog extends JDialog {
         }
 
         MClass cls = (MClass) fClasses[i];
-        ArrayList names = new ArrayList(1);
+        ArrayList<String> names = new ArrayList<String>(1);
         names.add(name);
         fParent.createObject(cls.name(), names);
     }

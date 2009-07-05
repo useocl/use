@@ -18,12 +18,13 @@
  */
 package org.tzi.use.uml.al;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.ocl.expr.EvalContext;
+import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.util.Log;
 
@@ -33,16 +34,16 @@ import org.tzi.use.util.Log;
  */
 public class ALDelete extends ALLinkAction {
 
-    public ALDelete(List exprs, MAssociation assoc) {
+    public ALDelete(List<Expression> exprs, MAssociation assoc) {
         super(exprs, assoc);
     }
 
     public void exec(EvalContext ctx) throws MSystemException {
-        ArrayList link = getLinkElements(ctx);
+        List<MObject> link = getLinkElements(ctx);
         deleteLink(ctx, link);
     }
     
-    protected void deleteLink(EvalContext ctx, ArrayList link) throws MSystemException {
+    protected void deleteLink(EvalContext ctx, List<MObject> link) throws MSystemException {
         Log.verbose("DELETING LINK " + link);
         ctx.postState().deleteLink(getAssociation(), link);
         // TODO: verify that link objects are deleted as well

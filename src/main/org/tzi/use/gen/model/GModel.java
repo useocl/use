@@ -25,18 +25,22 @@
 
 package org.tzi.use.gen.model;
 
-import org.tzi.use.uml.mm.*;
-
-import org.tzi.use.uml.ocl.type.EnumType;
-import org.tzi.use.graph.DirectedGraph;
-
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Map;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import org.tzi.use.graph.DirectedGraph;
+import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassInvariant;
+import org.tzi.use.uml.mm.MGeneralization;
+import org.tzi.use.uml.mm.MInvalidModelException;
+import org.tzi.use.uml.mm.MMVisitor;
+import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.ocl.type.EnumType;
 
 /**
  * Decorates a <code>uml.mm.MModel</code>: Class invariants
@@ -45,15 +49,14 @@ import java.util.ArrayList;
  */
 public class GModel extends MModel {
     private MModel fModel;
-    private Map fFlaggedInvariants;  // (String name -> GFlaggedInvariant)
+    private Map<String, GFlaggedInvariant> fFlaggedInvariants;
     
     public GModel( MModel model ) {
         super( model.name() + "'" );
         fModel = model;
-        fFlaggedInvariants = new TreeMap();
-        Iterator it = fModel.classInvariants().iterator();
-        while (it.hasNext() ) {
-            MClassInvariant inv = (MClassInvariant) it.next();
+        fFlaggedInvariants = new TreeMap<String, GFlaggedInvariant>();
+        
+        for (MClassInvariant inv : fModel.classInvariants()) {
             String name = inv.cls().name() + "::" + inv.name();
             fFlaggedInvariants.put( name, new GFlaggedInvariant(inv) );
         }
@@ -63,11 +66,11 @@ public class GModel extends MModel {
         return (GFlaggedInvariant) fFlaggedInvariants.get(name);
     }
 
-    public Collection loadedClassInvariants() {
-        Collection result = new ArrayList(classInvariants());
+    public Collection<MClassInvariant> loadedClassInvariants() {
+        Collection<MClassInvariant> result = new ArrayList<MClassInvariant>(classInvariants());
         result.removeAll(fModel.classInvariants());
-        return
-            result;
+        
+        return result;
     }
 
     public MClassInvariant removeClassInvariant( String name ) {
@@ -83,7 +86,7 @@ public class GModel extends MModel {
         return inv;
     }
 
-    public Collection flaggedInvariants() {
+    public Collection<GFlaggedInvariant> flaggedInvariants() {
         return fFlaggedInvariants.values();
     }
 
@@ -99,11 +102,13 @@ public class GModel extends MModel {
             fFlaggedInvariants.put(name, new GFlaggedInvariant(inv));
     }
 
-    public Collection classInvariants() {
-        Iterator it = flaggedInvariants().iterator();
-        List invariants = new ArrayList();
-        while (it.hasNext())
-            invariants.add(((GFlaggedInvariant) it.next()).classInvariant());
+    public Collection<MClassInvariant> classInvariants() {
+        List<MClassInvariant> invariants = new ArrayList<MClassInvariant>();
+        
+        for (GFlaggedInvariant inv : flaggedInvariants()) {
+            invariants.add(inv.classInvariant());
+        }
+        
         return invariants;
     }
 
@@ -120,7 +125,7 @@ public class GModel extends MModel {
         return fModel.getClass(name);
     }
 
-    public Collection classes() {
+    public Collection<MClass> classes() {
         return fModel.classes();
     }
 
@@ -130,7 +135,7 @@ public class GModel extends MModel {
         fModel.addAssociation(assoc);
     }
     
-    public Collection associations() {
+    public Collection<MAssociation> associations() {
         return fModel.associations();
     }
 
@@ -138,11 +143,11 @@ public class GModel extends MModel {
         return fModel.getAssociation(name);
     }
 
-    public Set getAssociationsBetweenClasses(Set classes) {
+    public Set<MAssociation> getAssociationsBetweenClasses(Set<MClass> classes) {
         return fModel.getAssociationsBetweenClasses(classes);
     }
 
-    public Set getAllAssociationsBetweenClasses(Set classes) {
+    public Set<MAssociation> getAllAssociationsBetweenClasses(Set<MClass> classes) {
         return fModel.getAllAssociationsBetweenClasses(classes);
     }
 
@@ -152,7 +157,7 @@ public class GModel extends MModel {
         fModel.addGeneralization(gen);
     }
 
-    public DirectedGraph generalizationGraph() {
+    public DirectedGraph<MClass, MGeneralization> generalizationGraph() {
         return fModel.generalizationGraph();
     }
 
@@ -168,15 +173,15 @@ public class GModel extends MModel {
         return fModel.enumTypeForLiteral(literal);
     }
 
-    public Set enumTypes() {
+    public Set<EnumType> enumTypes() {
         return fModel.enumTypes();
     }
 
-    public Set classInvariants(MClass cls) {
+    public Set<MClassInvariant> classInvariants(MClass cls) {
         return fModel.classInvariants(cls);
     }
 
-    public Set allClassInvariants(MClass cls) {
+    public Set<MClassInvariant> allClassInvariants(MClass cls) {
         return fModel.allClassInvariants(cls);
     }
 
@@ -188,10 +193,3 @@ public class GModel extends MModel {
         fModel.processWithVisitor(v);
     }
 }
-
-
-
-
-
-
-

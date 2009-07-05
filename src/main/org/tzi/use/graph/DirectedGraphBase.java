@@ -36,17 +36,19 @@ import java.util.Set;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see         DirectedGraph
+ * @param N Type of the nodes
+ * @param E Type of the edges
  */
-public class DirectedGraphBase extends AbstractCollection implements DirectedGraph {
-    private Map fNodes;     // (Object -> NodeInfo)
-    private List fEdges;    // (DirectedEdge)
+public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCollection<N> implements DirectedGraph<N, E> {
+    private Map<N, NodeInfo> fNodes;
+    private List<E> fEdges;
 
     /**
      * Constructs an empty graph.
      */
     public DirectedGraphBase() {
-        fNodes = new HashMap();
-        fEdges = new ArrayList();
+        fNodes = new HashMap<N, NodeInfo>();
+        fEdges = new ArrayList<E>();
     }
 
     /**
@@ -54,8 +56,8 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * for nodes.
      */
     public DirectedGraphBase(int initialNodeCapacity) {
-        fNodes = new HashMap(initialNodeCapacity);
-        fEdges = new ArrayList();
+        fNodes = new HashMap<N, NodeInfo>(initialNodeCapacity);
+        fEdges = new ArrayList<E>();
     }
 
 
@@ -94,7 +96,7 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * 
      * @return an <tt>Iterator</tt> over the nodes in this graph
      */
-    public Iterator iterator() {
+    public Iterator<N> iterator() {
         return fNodes.keySet().iterator();
     }
 
@@ -109,9 +111,10 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      *          specified node.
      * @throws NullPointerException n is null.  
      */
-    public boolean add(Object o) {
+    public boolean add(N o) {
         if (o == null )
             throw new NullPointerException();
+
         if (fNodes.containsKey(o) )
             return false;
         else {
@@ -135,11 +138,14 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
             return false;
         if (! fNodes.containsKey(o) )
             return false;
+        
         NodeInfo ni = getNodeInfo(o);
+        
         // remove incident edges
         fEdges.removeAll(ni.fIncomingEdges);
         fEdges.removeAll(ni.fOutgoingEdges);
         fNodes.remove(o);
+        
         return true;
     }
 
@@ -161,9 +167,9 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      */
     public int numCycles() {
         int result = 0;
-        Iterator it = fEdges.iterator();
+        Iterator<E> it = fEdges.iterator();
         while (it.hasNext() ) {
-            DirectedEdge e = (DirectedEdge) it.next();
+            E e = it.next();
             if (e.isReflexive() )
                 result++;
         }
@@ -205,7 +211,7 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * @return an <tt>Iterator</tt> over the edges in this graph 
      * @see DirectedEdge
      */
-    public Iterator edgeIterator() {
+    public Iterator<E> edgeIterator() {
         return fEdges.iterator();
     }
 
@@ -221,17 +227,18 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      *            not part of this graph.
      * @exception NullPointerException e is null.
      */
-    public boolean addEdge(DirectedEdge e) {
+    public boolean addEdge(E e) {
         if (e == null )
             throw new NullPointerException();
+        
         if (fEdges.contains(e) )
             return false;
 
-        NodeInfo source = (NodeInfo) fNodes.get(e.source());
+        NodeInfo source = fNodes.get(e.source());
         if (source == null )
             throw new NodeDoesNotExistException(e.source().toString());
 
-        NodeInfo target = (NodeInfo) fNodes.get(e.target());
+        NodeInfo target = fNodes.get(e.target());
         if (target == null )
             throw new NodeDoesNotExistException(e.target().toString());
 
@@ -249,14 +256,15 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * @return <tt>true</tt> if the specified edge could be removed.
      * @throws NullPointerException e is null.
      */
-    public boolean removeEdge(DirectedEdge e) {
+    public boolean removeEdge(E e) {
         if (e == null )
             throw new NullPointerException();
+        
         if (! fEdges.contains(e) )
             return false;
 
-        NodeInfo source = (NodeInfo) fNodes.get(e.source());
-        NodeInfo target = (NodeInfo) fNodes.get(e.target());
+        NodeInfo source = fNodes.get(e.source());
+        NodeInfo target = fNodes.get(e.target());
 
         source.removeOutgoingEdge(e);
         target.removeIncomingEdge(e);
@@ -276,15 +284,18 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.
      */
-    public Set targetNodeSet(Object n) {
+    public Set<N> targetNodeSet(N n) {
         // check for existing node
-        NodeInfo ni = getNodeInfo(n);
-        Set result = new HashSet();
-        Iterator it = ni.outgoingEdgeIterator();
+        
+    	NodeInfo ni = getNodeInfo(n);
+        Set<N> result = new HashSet<N>();
+        Iterator<E> it = ni.outgoingEdgeIterator();
+        
         while (it.hasNext() ) {
-            DirectedEdge e = (DirectedEdge) it.next();
-            result.add(e.target());
+            E e = it.next();
+            result.add( e.target());
         }
+        
         return result;
     }
 
@@ -296,20 +307,20 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.
      */
-    public Set targetNodeClosureSet(Object n) {
+    public Set<N> targetNodeClosureSet(N n) {
         // check for existing node
         getNodeInfo(n);
-        Set closure = new HashSet();
+        Set<N> closure = new HashSet<N>();
         targetNodeClosureSet0(closure, n);
         return closure;
     }
 
-    private void targetNodeClosureSet0(Set closure, Object n) {
+    private void targetNodeClosureSet0(Set<N> closure, N n) {
         NodeInfo ni = (NodeInfo) fNodes.get(n);
         if ( ni != null ) {
-            Iterator it = ni.outgoingEdgeIterator();
+            Iterator<E> it = ni.outgoingEdgeIterator();
             while (it.hasNext() ) {
-                Object n2 = ((DirectedEdge) it.next()).target();
+                N n2 = it.next().target();
                 if (! closure.contains(n2) ) {
                     closure.add(n2);
                     targetNodeClosureSet0(closure, n2);
@@ -325,13 +336,13 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * @return a set view of connected source nodes.
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.  */
-    public Set sourceNodeSet(Object n) {
+    public Set<N> sourceNodeSet(N n) {
         // check for existing node
         NodeInfo ni = getNodeInfo(n);
-        Set result = new HashSet();
-        Iterator it = ni.incomingEdgeIterator();
+        Set<N> result = new HashSet<N>();
+        Iterator<E> it = ni.incomingEdgeIterator();
         while (it.hasNext() ) {
-            DirectedEdge e = (DirectedEdge) it.next();
+            E e = it.next();
             result.add(e.source());
         }
         return result;
@@ -345,19 +356,21 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.
      */
-    public Set sourceNodeClosureSet(Object n) {
+    public Set<N> sourceNodeClosureSet(N n) {
         // check for existing node
         getNodeInfo(n);
-        Set closure = new HashSet();
+        Set<N> closure = new HashSet<N>();
         sourceNodeClosureSet0(closure, n);
         return closure;
     }
 
-    private void sourceNodeClosureSet0(Set closure, Object n) {
+    private void sourceNodeClosureSet0(Set<N> closure, N n) {
         NodeInfo ni = (NodeInfo) fNodes.get(n);
-        Iterator it = ni.incomingEdgeIterator();
+        Iterator<E> it = ni.incomingEdgeIterator();
+        
         while (it.hasNext() ) {
-            Object n2 = ((DirectedEdge) it.next()).source();
+            N n2 = it.next().source();
+            
             if (! closure.contains(n2) ) {
                 closure.add(n2);
                 sourceNodeClosureSet0(closure, n2);
@@ -372,21 +385,22 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * @throws NodeDoesNotExistException node n1 or n2 is not in this graph.
      * @throws NullPointerException n1 or n2 is null.
      */
-    public Set edgesBetween(Object n1, Object n2) {
+    public Set<E> edgesBetween(N n1, N n2) {
         // check for existing nodes
         NodeInfo ni1 = getNodeInfo(n1);
         getNodeInfo(n2);
 
-        Set result = new HashSet();
-        Iterator edgeIter = ni1.outgoingEdgeIterator();
+        Set<E> result = new HashSet<E>();
+        Iterator<E> edgeIter = ni1.outgoingEdgeIterator();
+        
         while (edgeIter.hasNext() ) {
-            DirectedEdge e = (DirectedEdge) edgeIter.next();
+            E e = edgeIter.next();
             if (e.target().equals(n2) )
                 result.add(e);
         }
         edgeIter = ni1.incomingEdgeIterator();
         while (edgeIter.hasNext() ) {
-            DirectedEdge e = (DirectedEdge) edgeIter.next();
+            E e = (E) edgeIter.next();
             if (e.source().equals(n2) )
                 result.add(e);
         }
@@ -400,7 +414,7 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * @throws NodeDoesNotExistException node n1 or n2 is not in this graph.
      * @throws NullPointerException n1 or n2 is null.
      */
-    public boolean existsPath(Object n1, Object n2) {
+    public boolean existsPath(N n1, N n2) {
         // check for existing nodes
         getNodeInfo(n1);
         getNodeInfo(n2);
@@ -414,9 +428,9 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      */
     public boolean hasCycle() {
         // FIXME: this is inefficient
-        Iterator it = iterator();
+        Iterator<N> it = iterator();
         while (it.hasNext() ) {
-            Object n = it.next();
+            N n = it.next();
             if (targetNodeClosureSet(n).contains(n) )
                 return true;
         }
@@ -427,9 +441,11 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
         if (n == null )
             throw new NullPointerException();
 
-        NodeInfo ni = (NodeInfo) fNodes.get(n);
+        NodeInfo ni = fNodes.get(n);
+        
         if (ni == null )
             throw new NodeDoesNotExistException(n.toString());
+        
         return ni;
     }
 
@@ -437,35 +453,35 @@ public class DirectedGraphBase extends AbstractCollection implements DirectedGra
      * For each node we maintain a list of outgoing edges and incoming edges.
      */
     private class NodeInfo {
-        List fOutgoingEdges;    // (DirectedEdge)
-        List fIncomingEdges;    // (DirectedEdge)
+        List<E> fOutgoingEdges;
+        List<E> fIncomingEdges;
 
         NodeInfo() {
-            fOutgoingEdges = new ArrayList();
-            fIncomingEdges = new ArrayList();
+            fOutgoingEdges = new ArrayList<E>();
+            fIncomingEdges = new ArrayList<E>();
         }
 
-        void addOutgoingEdge(DirectedEdge e) {
+        void addOutgoingEdge(E e) {
             fOutgoingEdges.add(e);
         }
 
-        void removeOutgoingEdge(DirectedEdge e) {
+        void removeOutgoingEdge(E e) {
             fOutgoingEdges.remove(e);
         }
 
-        void addIncomingEdge(DirectedEdge e) {
+        void addIncomingEdge(E e) {
             fIncomingEdges.add(e);
         }
 
-        void removeIncomingEdge(DirectedEdge e) {
+        void removeIncomingEdge(E e) {
             fIncomingEdges.remove(e);
         }
 
-        Iterator outgoingEdgeIterator() {
+        Iterator<E> outgoingEdgeIterator() {
             return fOutgoingEdges.iterator();
         }
 
-        Iterator incomingEdgeIterator() {
+        Iterator<E> incomingEdgeIterator() {
             return fIncomingEdges.iterator();
         }
     }

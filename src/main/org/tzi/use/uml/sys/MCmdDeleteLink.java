@@ -23,7 +23,6 @@ package org.tzi.use.uml.sys;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +34,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.cmd.CannotUndoException;
 import org.tzi.use.util.cmd.CommandFailedException;
@@ -49,14 +49,11 @@ public final class MCmdDeleteLink extends MCmd {
     private MSystemState fSystemState;
     private Expression[] fObjectExprs;
     private MAssociation fAssociation;
-
-    // undo information
-//    private MLink fOldLink;
     
     // undo information
-    private List fObjectStates; // (MObjectState)
-    private Set fRemovedLinks;  // (MLink)
-    private Set fRemovedObjects; // (MObject)
+    private List<MObjectState> fObjectStates;
+    private Set<MLink> fRemovedLinks;
+    private Set<MObject> fRemovedObjects;
     
     protected MObject[] fObjects;
     
@@ -79,21 +76,23 @@ public final class MCmdDeleteLink extends MCmd {
      * @exception CommandFailedException if the command failed.
      */
     public void doExecute() throws CommandFailedException {
-        fObjectStates = new ArrayList();
-        fRemovedLinks = new HashSet();
-        fRemovedObjects = new HashSet();
+        fObjectStates = new ArrayList<MObjectState>();
+        fRemovedLinks = new HashSet<MLink>();
+        fRemovedObjects = new HashSet<MObject>();
         
         VarBindings varBindings = fSystemState.system().topLevelBindings();
-        List assocEnds = fAssociation.associationEnds();
+        List<MAssociationEnd> assocEnds = fAssociation.associationEnds();
 
         // map expression list to list of objects 
-        List objects = new ArrayList(fObjectExprs.length);
+        List<MObject> objects = new ArrayList<MObject>(fObjectExprs.length);
+        
         for (int i = 0; i < fObjectExprs.length; i++) {
             MAssociationEnd aend = (MAssociationEnd) assocEnds.get(i);
             Evaluator evaluator = new Evaluator();
             // evaluate in scope local to operation
             Value v = evaluator.eval(fObjectExprs[i], fSystemState, varBindings);
             boolean ok = false;
+            
             if (v.isDefined() && (v instanceof ObjectValue) ) {
                 ObjectValue oval = (ObjectValue) v;
                 MObject obj = oval.value();
@@ -101,22 +100,21 @@ public final class MCmdDeleteLink extends MCmd {
                 fObjects[i]=obj;
                 ok = obj.cls().isSubClassOf(aend.cls());
             }
+            
             if (! ok )
                 throw new CommandFailedException("Argument #" + (i+1) +
                                                  " of delete command does not evaluate to an object of class `" + 
                                                  aend.cls().name() + "', found `" +
                                                  v.toStringWithType() + "'.");
         }
-        try { 
-//            fOldLink  = fSystemState.deleteLink(fAssociation, objects);
-            
+        try {            
             // delete link
-            Set[] removed  = fSystemState.deleteLink(fAssociation, objects);
+            DeleteObjectResult result = fSystemState.deleteLink(fAssociation, objects);
             
             // store undo information
-            fRemovedObjects.addAll( removed[MSystemState.REMOVED_OBJECTS] );
-            fObjectStates.addAll( removed[MSystemState.REMOVED_OBJECTSTATES] );
-            fRemovedLinks.addAll( removed[MSystemState.REMOVED_LINKS] );
+            fRemovedObjects.addAll( result.getRemovedObjects() );
+            fObjectStates.addAll( result.getRemovedObjectStates() );
+            fRemovedLinks.addAll( result.getRemovedLinks() );
             
             
         } catch (MSystemException ex) {
@@ -131,13 +129,6 @@ public final class MCmdDeleteLink extends MCmd {
      *                                has not been executed before.
      */
     public void undo() throws CannotUndoException {
-//        // the CommandProcessor should prevent us from being called
-//        // without a successful prior execute, just be safe here
-//        if (fOldLink == null )
-//            throw new CannotUndoException("no undo information");
-//
-//        fSystemState.insertLink(fOldLink);
-//        
         // the CommandProcessor should prevent us from being called
         // without a successful prior execute, just be safe here
         if (fObjectStates == null )
@@ -145,9 +136,8 @@ public final class MCmdDeleteLink extends MCmd {
 
         // recreate objects
         VarBindings varBindings = fSystemState.system().varBindings();
-        Iterator objStateIter = fObjectStates.iterator();
-        while (objStateIter.hasNext() ) {
-            MObjectState objState = (MObjectState) objStateIter.next();
+
+        for (MObjectState objState : fObjectStates) {
             try {
                 fSystemState.restoreObject(objState);
                 MObject obj = objState.object();
@@ -160,9 +150,7 @@ public final class MCmdDeleteLink extends MCmd {
         }
 
         // restore links
-        Iterator linkIter = fRemovedLinks.iterator();
-        while (linkIter.hasNext() ) {
-            MLink link = (MLink) linkIter.next();
+        for (MLink link : fRemovedLinks) {
             fSystemState.insertLink(link);
         }
     }
@@ -174,21 +162,11 @@ public final class MCmdDeleteLink extends MCmd {
      * @param undoChanges get information about undo action of command.
      */
     public void getChanges(StateChangeEvent sce, boolean undoChanges) {
-//        if (fOldLink == null )
-//            throw new IllegalStateException("command not executed");
-//
-//        if (undoChanges )
-//            sce.addNewLink(fOldLink);
-//        else
-//            sce.addDeletedLink(fOldLink);
-        
-        
+              
         if ( fRemovedLinks == null )
             throw new IllegalStateException("command not executed");
     
-        Iterator objStateIter = fRemovedObjects.iterator();
-        while ( objStateIter.hasNext() ) {
-            MObject obj = ( MObject ) objStateIter.next();
+        for (MObject obj : fRemovedObjects) {
             if ( undoChanges ) {
                 if ( obj instanceof MLinkObject ) {
                     sce.addNewLink( ( MLinkObject ) obj );
@@ -203,9 +181,7 @@ public final class MCmdDeleteLink extends MCmd {
 
         }
 
-        Iterator linkIter = fRemovedLinks.iterator();
-        while (linkIter.hasNext() ) {
-            MLink link = (MLink) linkIter.next();
+        for (MLink link : fRemovedLinks) {
             if ( !( link instanceof MLinkObject ) ) {
                 if ( undoChanges ) {
                     sce.addNewLink( link );

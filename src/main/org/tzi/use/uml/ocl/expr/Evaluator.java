@@ -138,7 +138,7 @@ public final class Evaluator {
      * @return Queue(Value) a queue of result values for each expression.  
      */
     public Queue evalList(int numThreads, 
-                          ArrayList exprList, 
+                          ArrayList<Expression> exprList, 
                           MSystemState systemState) {
         if (numThreads < 1 )
             new IllegalArgumentException("numThreads == " + numThreads);
@@ -151,4 +151,3 @@ public final class Evaluator {
         return result;
     }
 }
-

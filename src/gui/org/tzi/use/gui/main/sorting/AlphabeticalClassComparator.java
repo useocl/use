@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MClass;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class AlphabeticalClassComparator implements SortingComparator {
+public class AlphabeticalClassComparator implements SortingComparator<MClass> {
 
     private CompareUtil compareUtil;
 
@@ -55,9 +55,9 @@ public class AlphabeticalClassComparator implements SortingComparator {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
-        final String nameOfClass1 = ((MClass) object1).name();
-        final String nameOfClass2 = ((MClass) object2).name();
+    public int compare(final MClass object1, final MClass object2) {
+        final String nameOfClass1 = object1.name();
+        final String nameOfClass2 = object2.name();
         return compareUtil.compareString(nameOfClass1, nameOfClass2);
     }
 }

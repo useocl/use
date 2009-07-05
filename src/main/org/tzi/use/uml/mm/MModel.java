@@ -41,22 +41,22 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @author Mark Richters
  */
 public class MModel extends MModelElementImpl {
-    private Map fEnumTypes; // (String enum -> EnumType)
-    private Map fClasses; // (String classname -> MClass)
-    private Map fAssociations; // (String assocName -> MAssociation)
-    private DirectedGraph fGenGraph; // (MClass/MGeneralization)
-    private Map fClassInvariants; // (String name -> MClassInvariant)
-    private Map fPrePostConditions; // (String name -> MPrePostCondition)
+    private Map<String, EnumType> fEnumTypes;
+    private Map<String, MClass>fClasses;
+    private Map<String, MAssociation> fAssociations;
+    private DirectedGraph<MClass, MGeneralization> fGenGraph;
+    private Map<String, MClassInvariant> fClassInvariants;
+    private Map<String, MPrePostCondition> fPrePostConditions;
     private String fFilename; // name of .use file
 
     protected MModel(String name) {
         super(name);
-        fEnumTypes = new TreeMap();
-        fClasses = new TreeMap();
-        fAssociations = new TreeMap();
-        fGenGraph = new DirectedGraphBase();
-        fClassInvariants = new TreeMap();
-        fPrePostConditions = new TreeMap();
+        fEnumTypes = new TreeMap<String, EnumType>();
+        fClasses = new TreeMap<String, MClass>();
+        fAssociations = new TreeMap<String, MAssociation>();
+        fGenGraph = new DirectedGraphBase<MClass, MGeneralization>();
+        fClassInvariants = new TreeMap<String, MClassInvariant>();
+        fPrePostConditions = new TreeMap<String, MPrePostCondition>();
         fFilename = "";
     }
 
@@ -115,14 +115,14 @@ public class MModel extends MModelElementImpl {
      * 
      * @return collection of MAssociationClass objects.
      */
-    public Collection getAssociationClassesOnly() {
-        Collection result = new ArrayList();
-        Iterator it = fClasses.values().iterator();
+    public Collection<MAssociationClass> getAssociationClassesOnly() {
+        Collection<MAssociationClass> result = new ArrayList<MAssociationClass>();
+        Iterator<MClass> it = fClasses.values().iterator();
 
         while (it.hasNext()) {
-            MClass elem = (MClass) it.next();
+            MClass elem = it.next();
             if (elem instanceof MAssociationClass) {
-                result.add(elem);
+                result.add((MAssociationClass)elem);
             }
         }
         return result;
@@ -133,7 +133,7 @@ public class MModel extends MModelElementImpl {
      * 
      * @return collection of MClass objects.
      */
-    public Collection classes() {
+    public Collection<MClass> classes() {
         return fClasses.values();
     }
 
@@ -158,17 +158,14 @@ public class MModel extends MModelElementImpl {
 
         // check for role name conflicts: for each class the set of
         // navigable classes must have unique role names
-        Iterator it = assoc.associatedClasses().iterator();
-        while (it.hasNext()) {
-            MClass cls = (MClass) it.next();
-            Map aends = cls.navigableEnds();
-            List newRolenames = new ArrayList();
-
-            Iterator it2 = assoc.navigableEndsFrom(cls).iterator();
-            while (it2.hasNext()) {
-                String newRolename = ((MNavigableElement) it2.next())
-                        .nameAsRolename();
+        for (MClass cls : assoc.associatedClasses()) {
+            Map<String, MNavigableElement> aends = cls.navigableEnds();
+            List<String> newRolenames = new ArrayList<String>();
+            
+            for (MNavigableElement elem : assoc.navigableEndsFrom(cls)) {
+                String newRolename = elem.nameAsRolename();
                 newRolenames.add( newRolename );
+                
                 if (aends.containsKey(newRolename)) {
                     throw new MInvalidModelException("Association end `"
                             + newRolename
@@ -181,11 +178,9 @@ public class MModel extends MModelElementImpl {
             }
             
             // tests if the rolenames are already used in one of the subclasses
-            Iterator it3 = cls.allChildren().iterator();
-            while ( it3.hasNext() ) {
-                MClass subCls = (MClass) it3.next();
+            for (MClass subCls : cls.allChildren()) {
                 for ( int i = 0; i < newRolenames.size(); i++ ) {
-                    String newRolename = (String) newRolenames.get(i);
+                    String newRolename = newRolenames.get(i);
                     if ( subCls.navigableEnds().containsKey( newRolename ) ) {
                         throw new MInvalidModelException("Association end `"
                                 + newRolename
@@ -202,11 +197,8 @@ public class MModel extends MModelElementImpl {
 
         // for each class register the association and the
         // reachable association ends
-        it = assoc.associationEnds().iterator();
-        while (it.hasNext()) {
-            MAssociationEnd aend = (MAssociationEnd) it.next();
+        for (MAssociationEnd aend : assoc.associationEnds()) {
             MClass cls = aend.cls();
-            // cls.addAssociation(assoc);
             cls.registerNavigableEnds(assoc.navigableEndsFrom(cls));
         }
 
@@ -218,7 +210,7 @@ public class MModel extends MModelElementImpl {
      * 
      * @return collection of MAssociation objects.
      */
-    public Collection associations() {
+    public Collection<MAssociation> associations() {
         return fAssociations.values();
     }
 
@@ -228,7 +220,7 @@ public class MModel extends MModelElementImpl {
      * @return null if association does not exist.
      */
     public MAssociation getAssociation(String name) {
-        return (MAssociation) fAssociations.get(name);
+        return fAssociations.get(name);
     }
 
     /**
@@ -238,13 +230,13 @@ public class MModel extends MModelElementImpl {
      * 
      * @return Set(MAssociation)
      */
-    public Set getAssociationsBetweenClasses(Set classes) {
-        Set res = new HashSet();
+    public Set<MAssociation> getAssociationsBetweenClasses(Set<MClass> classes) {
+        Set<MAssociation> res = new HashSet<MAssociation>();
 
         // search associations
-        Iterator assocIter = fAssociations.values().iterator();
+        Iterator<MAssociation> assocIter = fAssociations.values().iterator();
         while (assocIter.hasNext()) {
-            MAssociation assoc = (MAssociation) assocIter.next();
+            MAssociation assoc = assocIter.next();
             if (assoc.associatedClasses().equals(classes))
                 res.add(assoc);
         }
@@ -258,12 +250,10 @@ public class MModel extends MModelElementImpl {
      * 
      * @return Set(MAssociation)
      */
-    public Set getAllAssociationsBetweenClasses(Set classes) {
+    public Set<MAssociation> getAllAssociationsBetweenClasses(Set<MClass> classes) {
         // NOT IMPLEMENTED YET
         return getAssociationsBetweenClasses(classes);
     }
-
-        
 
     /**
      * Adds a generalization from <code>child</code> to <code>parent</code>
@@ -302,7 +292,7 @@ public class MModel extends MModelElementImpl {
      * 
      * @return a DirectedGraph with MClass nodes and MGeneralization edges
      */
-    public DirectedGraph generalizationGraph() {
+    public DirectedGraph<MClass, MGeneralization> generalizationGraph() {
         return fGenGraph;
     }
 
@@ -334,7 +324,8 @@ public class MModel extends MModelElementImpl {
      * @return null if enumeration type does not exist.
      */
     public EnumType enumTypeForLiteral(String literal) {
-        Iterator it = fEnumTypes.values().iterator();
+        Iterator<EnumType> it = fEnumTypes.values().iterator();
+        
         while (it.hasNext()) {
             EnumType t = (EnumType) it.next();
             if (t.contains(literal))
@@ -346,8 +337,8 @@ public class MModel extends MModelElementImpl {
     /**
      * Returns a set of all enumeration types.
      */
-    public Set enumTypes() {
-        Set s = new HashSet();
+    public Set<EnumType> enumTypes() {
+        Set<EnumType> s = new HashSet<EnumType>();
         s.addAll(fEnumTypes.values());
         return s;
     }
@@ -374,7 +365,7 @@ public class MModel extends MModelElementImpl {
      * 
      * @return collection of MClassInvariant objects.
      */
-    public Collection classInvariants() {
+    public Collection<MClassInvariant> classInvariants() {
         return fClassInvariants.values();
     }
 
@@ -383,11 +374,12 @@ public class MModel extends MModelElementImpl {
      * 
      * @return collection of MClassInvariant objects.
      */
-    public Set classInvariants(MClass cls) {
-        Set res = new HashSet();
-        Iterator it = fClassInvariants.values().iterator();
+    public Set<MClassInvariant> classInvariants(MClass cls) {
+        Set<MClassInvariant> res = new HashSet<MClassInvariant>();
+        Iterator<MClassInvariant> it = fClassInvariants.values().iterator();
+        
         while (it.hasNext()) {
-            MClassInvariant inv = (MClassInvariant) it.next();
+            MClassInvariant inv = it.next();
             if (inv.cls().equals(cls))
                 res.add(inv);
         }
@@ -400,13 +392,14 @@ public class MModel extends MModelElementImpl {
      * 
      * @return collection of MClassInvariant objects.
      */
-    public Set allClassInvariants(MClass cls) {
-        Set res = new HashSet();
-        Set parents = cls.allParents();
+    public Set<MClassInvariant> allClassInvariants(MClass cls) {
+        Set<MClassInvariant> res = new HashSet<MClassInvariant>();
+        Set<MClass> parents = cls.allParents();
         parents.add(cls);
-        Iterator it = fClassInvariants.values().iterator();
+        Iterator<MClassInvariant> it = fClassInvariants.values().iterator();
+        
         while (it.hasNext()) {
-            MClassInvariant inv = (MClassInvariant) it.next();
+            MClassInvariant inv = it.next();
             if (parents.contains(inv.cls()))
                 res.add(inv);
         }
@@ -419,7 +412,7 @@ public class MModel extends MModelElementImpl {
      * @return null if invariant <code>name</name> does not exist.
      */
     public MClassInvariant getClassInvariant(String name) {
-        return (MClassInvariant) fClassInvariants.get(name);
+        return fClassInvariants.get(name);
     }
 
     /**
@@ -445,7 +438,7 @@ public class MModel extends MModelElementImpl {
      * 
      * @return collection of MPrePostCondition objects.
      */
-    public Collection prePostConditions() {
+    public Collection<MPrePostCondition> prePostConditions() {
         return fPrePostConditions.values();
     }
 
@@ -469,9 +462,9 @@ public class MModel extends MModelElementImpl {
             stats += "s";
 
         n = 0;
-        Iterator it = classes().iterator();
+        Iterator<MClass> it = classes().iterator();
         while (it.hasNext()) {
-            MClass cls = (MClass) it.next();
+            MClass cls = it.next();
             n += cls.operations().size();
         }
         stats += ", " + n + " operation";

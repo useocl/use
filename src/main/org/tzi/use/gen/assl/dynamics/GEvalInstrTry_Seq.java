@@ -30,10 +30,8 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GInstrTry_Seq;
-import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.CollectionValue;
-
-import java.util.Iterator;
+import org.tzi.use.uml.ocl.value.Value;
 
 class GEvalInstrTry_Seq extends GEvalInstruction implements IGCaller {
     private GInstrTry_Seq fInstr;
@@ -57,9 +55,7 @@ class GEvalInstrTry_Seq extends GEvalInstruction implements IGCaller {
         if (value.isUndefined())
             collector.invalid( buildCantExecuteMessage(fInstr,fInstr.sequenceInstr()) );
         else {
-            Iterator it = ((CollectionValue) value).iterator();
-            while (it.hasNext() && !collector.canStop()) {
-                Value elem = (Value) it.next();
+            for (Value elem : (CollectionValue)value) {
                 collector.detailPrintWriter().println("`"+ fInstr + "' == "+elem);
                 fCaller.feedback( conf, elem, collector );
             }

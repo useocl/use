@@ -36,7 +36,7 @@ class GMatcherCreateN_C_Integer implements IGInstructionMatcher {
         return "CreateN";
     }
 
-    public GInstruction createIfMatches( List param, MModel model ) {
+    public GInstruction createIfMatches( List<Object> param, MModel model ) {
         // param is a list over Strings or GValueInstructions.
         // A containing string is a classname or associationname
 
@@ -47,7 +47,7 @@ class GMatcherCreateN_C_Integer implements IGInstructionMatcher {
                                          (GValueInstruction) param.get(1) );
     }
 
-    private boolean matches( List param, MModel model ) {
+    private boolean matches( List<Object> param, MModel model ) {
         return 
             param.size() == 2 &&
             param.get(0) instanceof String &&

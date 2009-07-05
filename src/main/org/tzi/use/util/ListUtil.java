@@ -19,9 +19,8 @@
 
 package org.tzi.use.util;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -34,16 +33,16 @@ public final class ListUtil {
     // no instances
     private ListUtil() {}
 
-    private static void combine(Stack elementStack,
-                                List listWithLists,
-                                List combinations) {
+    private static <T> void combine(Stack<T> elementStack,
+                                    List<List<T>> listWithLists,
+                                    List<List<T>> combinations) {
         if (elementStack.size() == listWithLists.size()) {
-            combinations.add( new ArrayList(elementStack));
+            combinations.add( new ArrayList<T>(elementStack));
         } else {
-            List currentList = (List) listWithLists.get(elementStack.size());
-            Iterator it = currentList.iterator();
-            while (it.hasNext()) {
-                elementStack.push( it.next() );
+            List<T> currentList = listWithLists.get(elementStack.size());
+
+            for (T item : currentList) {
+                elementStack.push( item );
                 combine( elementStack, listWithLists, combinations );
                 elementStack.pop();
             }
@@ -56,10 +55,11 @@ public final class ListUtil {
      * Result is: { {a,1,p} {a,1,q} {a,2,p} {a,2,q} {a,3,p}
      *              ... {b,2,q} {b,3,p} {b,3,q} }
      */
-    public static List combinations( List listWithLists ) {
+    public static <T> List<List<T>> combinations( List<List<T>> listWithLists ) {
         // the elements of listWithLists must be Lists
-        List combinations = new ArrayList();
-        Stack elementStack = new Stack();
+        List<List<T>> combinations = new ArrayList<List<T>>();
+        Stack<T> elementStack = new Stack<T>();
+        
         combine( elementStack, listWithLists, combinations );
         return combinations;
     }

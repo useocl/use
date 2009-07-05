@@ -30,7 +30,6 @@
 package org.tzi.use.parser.generator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -39,14 +38,15 @@ import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
+import org.tzi.use.uml.ocl.expr.Expression;
 
 public class ASTGProcedureCall extends AST {
     private Token fName;
-    private List fParameter;   // ASTExpression
+    private List<ASTExpression> fParameter;
 
     public ASTGProcedureCall(Token name) {
         fName = name;
-        fParameter = new ArrayList();
+        fParameter = new ArrayList<ASTExpression>();
     }
 
     public void addParameter( ASTExpression expr ) {
@@ -54,11 +54,12 @@ public class ASTGProcedureCall extends AST {
     }
 
     public GProcedureCall gen(Context ctx) throws SemanticException {
-        List params = new ArrayList();   // Expressions
-        Iterator it = fParameter.iterator();
-        while (it.hasNext()) {
-            params.add( ((ASTExpression) it.next()).gen(ctx) );
+        List<Expression> params = new ArrayList<Expression>();
+        
+        for (ASTExpression exp : fParameter) {
+            params.add( exp.gen(ctx) );
         }
+    
         return new GProcedureCall( fName.getText(), params );
     }    
 }

@@ -29,32 +29,30 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.expr.ExpVariable;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MCmdInsertLink;
-import org.tzi.use.util.cmd.CommandFailedException;
-import org.tzi.use.util.cmd.CannotUndoException;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.ListIterator;
-
-import java.util.Iterator;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.util.cmd.CannotUndoException;
+import org.tzi.use.util.cmd.CommandFailedException;
 
 
 class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
     implements IGCaller {
     private GInstrInsert_Assoc_Linkends fInstr;
     private IGCaller fCaller;
-    private ListIterator fIterator;
-    private List fObjectNames;  //String
+    private ListIterator<GValueInstruction> fIterator;
+    private List<String> fObjectNames;
 
     public GEvalInstrInsert_Assoc_Linkends(GInstrInsert_Assoc_Linkends instr ) {
         fInstr = instr;
@@ -66,7 +64,7 @@ class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
         collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
         fCaller = caller;
         fIterator = fInstr.linkEnds().listIterator();
-        fObjectNames = new ArrayList();
+        fObjectNames = new ArrayList<String>();
     
         // fIterator has a next element, because an association has at least
         // two linkends.
@@ -102,10 +100,10 @@ class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
 
         // generate expressions
         Expression[] exprs = new Expression[fObjectNames.size()];
-        Iterator it = fObjectNames.iterator();
         int i = 0;
-        while (it.hasNext() ) {
-            MObject obj =  conf.systemState().objectByName( (String) it.next() ); 
+        
+        for (String name : fObjectNames) {
+            MObject obj =  conf.systemState().objectByName( name ); 
             exprs[i++] = new ExpVariable( obj.name(), obj.type() );
         }
 
@@ -115,7 +113,7 @@ class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
         try {
             collector.basicPrintWriter().println(cmd.getUSEcmd());
             cmd.execute();
-            //collector.detailPrintWriter().println("`" + fInstr + "' == (no value)");
+            
             fCaller.feedback(conf, null, collector);
             if (collector.expectSubsequentReporting()) {
                 collector.subsequentlyPrependCmd( cmd );

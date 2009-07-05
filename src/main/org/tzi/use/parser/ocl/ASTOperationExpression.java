@@ -22,7 +22,6 @@
 package org.tzi.use.parser.ocl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -58,7 +57,7 @@ import org.tzi.use.util.StringUtil;
 public class ASTOperationExpression extends ASTExpression {
     private Token fOp;
     private ASTExpression fSrcExpr;
-    private List fArgs;     // (ASTExpression) 
+    private List<ASTExpression> fArgs; 
     private boolean fHasParentheses;
     private boolean fFollowsArrow;
     private Expression[] fArgExprs;
@@ -69,7 +68,7 @@ public class ASTOperationExpression extends ASTExpression {
                                   boolean followsArrow) {
         fOp = op;
         fSrcExpr = source;
-        fArgs = new ArrayList();
+        fArgs = new ArrayList<ASTExpression>();
         fHasParentheses = false;
         fFollowsArrow = followsArrow;
     }
@@ -191,10 +190,9 @@ public class ASTOperationExpression extends ASTExpression {
         // generate argument expressions
         fArgExprs = new Expression[fArgs.size() + 1];
         fArgExprs[0] = srcExpr;
-        Iterator it = fArgs.iterator();
         int i = 1;
-        while (it.hasNext() ) {
-            ASTExpression astExpr = (ASTExpression) it.next();
+
+        for (ASTExpression astExpr : fArgs) {
             fArgExprs[i++] = astExpr.gen(ctx);
         }
     

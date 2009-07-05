@@ -39,17 +39,17 @@ public class GInstrDelete_Assoc_Linkends extends GInstruction {
     // endx must be type of the xth association-end.
 
     private MAssociation fAssociation;
-    private List fLinkends;  // GValueInstruction
+    private List<GValueInstruction> fLinkends;
 
     public MAssociation association() {
         return fAssociation;
     }
     
-    public List linkEnds() {
+    public List<GValueInstruction> linkEnds() {
         return fLinkends;
     }
 
-    public GInstrDelete_Assoc_Linkends( MAssociation assoc, List ends ) {
+    public GInstrDelete_Assoc_Linkends( MAssociation assoc, List<GValueInstruction> ends ) {
         fAssociation = assoc;
         fLinkends = ends;
     }

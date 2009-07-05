@@ -25,13 +25,12 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import org.tzi.use.gen.assl.statics.GInstrSub_Seq;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-
-import java.util.Collection;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
+
+import org.tzi.use.gen.assl.statics.GInstrSub_Seq;
+import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * March 22th 2001 
@@ -61,14 +60,13 @@ class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
                                                       fInstr.sequenceInstr()));
         else {
             SequenceValue seq = (SequenceValue) value;
-            Iterator it = seq.iterator();
-
-            Collection values = new ArrayList( seq.size() );
-            while (it.hasNext())
+            Collection<Value> values = new ArrayList<Value>( seq.size() );
+            
+            for (Value v : seq) {
                 if (conf.random().nextBoolean() )
-                    values.add( it.next() );
-                else
-                    it.next();
+                    values.add( v );
+            }
+            
             Value subVal = new SequenceValue(seq.elemType(), values);
             collector.detailPrintWriter().println(
                                                   "`"+ fInstr + "' == " +subVal );

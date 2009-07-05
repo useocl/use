@@ -186,7 +186,8 @@ public class ExprNavigationTest extends TestCase {
             MModel model = system.model();
 
             // creation of an object (c2) of the class Company
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
+            
             names.add( "c2" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );

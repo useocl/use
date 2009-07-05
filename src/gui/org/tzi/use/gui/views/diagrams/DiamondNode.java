@@ -25,7 +25,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -46,22 +45,22 @@ public class DiamondNode extends NodeBase {
     private MAssociation fAssoc;
     private MLink fLink;
     private AssociationName fAssocName;
-    private List fConnectedNodes;
+    private List<String> fConnectedNodes;
     private String fName;
     private double fX_old;
     private double fY_old;
     
-    private List fHalfEdges; // participating edges
+    private List<EdgeBase> fHalfEdges; // participating edges
     
     public DiamondNode( MAssociation assoc, DiagramOptions opt ) {
         fAssoc = assoc;
         fName = assoc.name();
         fOpt = opt;
-        fConnectedNodes = new ArrayList();
-        Set classes = fAssoc.associatedClasses();
-        Iterator it = classes.iterator();
-        while ( it.hasNext() ) {
-            fConnectedNodes.add( ((MClass) it.next()).name() );
+        fConnectedNodes = new ArrayList<String>();
+        Set<MClass> classes = fAssoc.associatedClasses();
+        
+        for (MClass cls : classes) {
+            fConnectedNodes.add( cls.name() );
         }
         instanciateAssocName();
     }
@@ -71,11 +70,11 @@ public class DiamondNode extends NodeBase {
         fLink = link;
         fName = fAssoc.name();
         fOpt = opt;
-        fConnectedNodes = new ArrayList();
-        Set objects = link.linkedObjects();
-        Iterator it = objects.iterator();
-        while ( it.hasNext() ) {
-            fConnectedNodes.add( ((MObject) it.next()).name() );
+        fConnectedNodes = new ArrayList<String>();
+        Set<MObject> objects = link.linkedObjects();
+        
+        for (MObject obj : objects) {
+            fConnectedNodes.add( obj.name() );
         }
         instanciateAssocName();
     }
@@ -101,7 +100,7 @@ public class DiamondNode extends NodeBase {
         return fAssoc.name();
     }
     
-    public void setHalfEdges( List edges ) {
+    public void setHalfEdges( List<EdgeBase> edges ) {
         fHalfEdges = edges;
     }
     
@@ -203,9 +202,7 @@ public class DiamondNode extends NodeBase {
             xml.append(" type=\"DiamondNode\" kind=\"association\">").append(LayoutTags.NL);
         }
         
-        Iterator it = fConnectedNodes.iterator();
-        while ( it.hasNext() ) {
-            String nodeName = (String) it.next();
+        for(String nodeName : fConnectedNodes ) {
             xml.append(LayoutTags.INDENT).append(LayoutTags.CON_NODE_O).append(nodeName) 
                    .append(LayoutTags.CON_NODE_C).append(LayoutTags.NL);
         }
@@ -224,9 +221,7 @@ public class DiamondNode extends NodeBase {
                .append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
     
         if ( fHalfEdges != null ) {
-            Iterator itt = fHalfEdges.iterator();
-            while ( itt.hasNext() ) {
-                EdgeBase e = (EdgeBase) itt.next();
+            for (EdgeBase e : fHalfEdges) {
                 if ( e instanceof NodeEdge ) {
                     xml.append(((NodeEdge) e).storeInfo( hidden )).append(LayoutTags.NL);
                 } else {

@@ -148,8 +148,8 @@ public class BinaryEdge extends EdgeBase {
      * of the reflexive edge.
      * @return The poinst of the reflexive edge are returnd.
      */
-    private List calcReflexivePoints( FontMetrics fm ) {
-        List points = new ArrayList();
+    private List<Point2D.Double> calcReflexivePoints( FontMetrics fm ) {
+        List<Point2D.Double> points = new ArrayList<Point2D.Double>();
         
         Point2D.Double p1 = new Point2D.Double();
         Point2D.Double p2 = new Point2D.Double();

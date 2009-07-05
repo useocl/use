@@ -21,7 +21,6 @@
 
 package org.tzi.use.graph;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -31,10 +30,13 @@ import java.util.Set;
  *
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
+ * 
+ * @param N Type of the nodes
+ * @param E Type of the Edges 
  */
 
 
-public interface DirectedGraph extends Collection {
+public interface DirectedGraph<N, E extends DirectedEdge<N>> {
     // Query Operations (from Collection)
 
     /**
@@ -63,7 +65,7 @@ public interface DirectedGraph extends Collection {
      * @return <tt>true</tt> if this graph contains the specified
      *         node
      */
-    boolean contains(Object o);
+    boolean contains(N o);
 
     /**
      * Returns an iterator over the nodes in this collection.  There are no
@@ -71,7 +73,7 @@ public interface DirectedGraph extends Collection {
      * 
      * @return an <tt>Iterator</tt> over the nodes in this graph
      */
-    Iterator iterator();
+    Iterator<N> iterator();
 
     /**
      * Returns an array containing all of the nodes in this graph.
@@ -94,7 +96,7 @@ public interface DirectedGraph extends Collection {
      *          specified node.
      * @throws NullPointerException n is null.  
      */
-    boolean add(Object o);
+    boolean add(N o);
 
     /**
      * Removes the specified node and all incident edges from this
@@ -106,7 +108,7 @@ public interface DirectedGraph extends Collection {
      * @return <tt>true</tt> if this graph did contain the
      *          specified node and removed it.  
      */
-    boolean remove(Object o);
+    boolean remove(N o);
 
 
     // Graph specific Operations
@@ -132,7 +134,7 @@ public interface DirectedGraph extends Collection {
      * @throws NullPointerException n is null.
      * @throws NodeDoesNotExistException n is not part of this graph.
      */
-    int numIncomingEdges(Object n);
+    int numIncomingEdges(N n);
 
     /**
      * Returns the number of all outgoing edges of the specified node.
@@ -141,7 +143,7 @@ public interface DirectedGraph extends Collection {
      * @throws NullPointerException n is null.
      * @throws NodeDoesNotExistException n is not part of this graph.
      */
-    int numOutgoingEdges(Object n);
+    int numOutgoingEdges(N n);
 
     /**
      * Returns an iterator over the edges in this collection. There
@@ -152,7 +154,7 @@ public interface DirectedGraph extends Collection {
      * @return an <tt>Iterator</tt> over the edges in this graph 
      * @see DirectedEdge
      */
-    Iterator edgeIterator();
+    Iterator<E> edgeIterator();
 
     /** 
      * Adds the specified edge to this graph. Multiple edges between
@@ -166,7 +168,7 @@ public interface DirectedGraph extends Collection {
      *            not part of this graph.
      * @throws NullPointerException e is null.
      */
-    boolean addEdge(DirectedEdge e);
+    boolean addEdge(E e);
 
     /** 
      * Removes the specified edge from this graph.
@@ -175,7 +177,7 @@ public interface DirectedGraph extends Collection {
      * @return <tt>true</tt> if the specified edge could be removed.
      * @throws NullPointerException e is null.
      */
-    boolean removeEdge(DirectedEdge e);
+    boolean removeEdge(E e);
 
     // Views
 
@@ -187,7 +189,7 @@ public interface DirectedGraph extends Collection {
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.
      */
-    Set targetNodeSet(Object n);
+    Set<N> targetNodeSet(N n);
 
     /**
      * Returns a set view of nodes which are reachable by one ore more 
@@ -197,7 +199,7 @@ public interface DirectedGraph extends Collection {
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.
      */
-    Set targetNodeClosureSet(Object n);
+    Set<N> targetNodeClosureSet(N n);
 
     /**
      * Returns a set view of nodes which have directed edges targeting
@@ -206,7 +208,7 @@ public interface DirectedGraph extends Collection {
      * @return a set view of connected source nodes.
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.  */
-    Set sourceNodeSet(Object n);
+    Set<N> sourceNodeSet(N n);
 
     /**
      * Returns a set view of all nodes which have a path to
@@ -216,7 +218,7 @@ public interface DirectedGraph extends Collection {
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.
      */
-    Set sourceNodeClosureSet(Object n);
+    Set<N> sourceNodeClosureSet(N n);
 
     /**
      * Returns the set of edges between two nodes.
@@ -225,7 +227,7 @@ public interface DirectedGraph extends Collection {
      * @throws NodeDoesNotExistException node n1 or n2 is not in this graph.
      * @throws NullPointerException n1 or n2 is null.
      */
-    Set edgesBetween(Object n1, Object n2);
+    Set<E> edgesBetween(N n1, N n2);
 
     /**
      * Returns true if there is a set of directed edges from n1 to n2.
@@ -234,7 +236,7 @@ public interface DirectedGraph extends Collection {
      * @throws NodeDoesNotExistException node n1 or n2 is not in this graph.
      * @throws NullPointerException n1 or n2 is null.
      */
-    boolean existsPath(Object n1, Object n2);
+    boolean existsPath(N n1, N n2);
 
     /**
      * Returns true if the graph contains at least one cycle.

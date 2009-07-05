@@ -23,7 +23,6 @@
 package org.tzi.use.gui.views.diagrams.util;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Abstract class representing a graphic that consists of lines
@@ -31,14 +30,14 @@ import java.util.Iterator;
  * @see I_DirectedLine
  */
 public abstract class DirectedGraphic implements I_DirectedGraphic {
-    protected ArrayList containedLines = new ArrayList();
+    protected ArrayList<I_DirectedLine> containedLines = new ArrayList<I_DirectedLine>();
 
     /**
      * Getter for the contained lines
      *
      * @return contained lines
      */
-    public ArrayList getLines() {
+    public ArrayList<I_DirectedLine> getLines() {
         return containedLines;
     }
 
@@ -72,9 +71,8 @@ public abstract class DirectedGraphic implements I_DirectedGraphic {
         if (containedLines.isEmpty()) {
             return this;
         }
-        final ArrayList rotatedLines = new ArrayList();
-        for (final Iterator iterator = containedLines.iterator(); iterator.hasNext();) {
-            final I_DirectedLine line = (I_DirectedLine) iterator.next();
+        final ArrayList<I_DirectedLine> rotatedLines = new ArrayList<I_DirectedLine>();
+        for (final I_DirectedLine line : containedLines) {
             final I_DirectedLine rotatedLine
                     = line.rotateAroundAnyPoint(getPeakPointX(), getPeakPointY(), rotationAngle);
             rotatedLines.add(rotatedLine);
@@ -96,9 +94,8 @@ public abstract class DirectedGraphic implements I_DirectedGraphic {
         }
         final int deltaX = newX - getPeakPointX();
         final int deltaY = newY - getPeakPointY();
-        final ArrayList translatedLines = new ArrayList();
-        for (final Iterator iterator = containedLines.iterator(); iterator.hasNext();) {
-            final I_DirectedLine line = (I_DirectedLine) iterator.next();
+        final ArrayList<I_DirectedLine> translatedLines = new ArrayList<I_DirectedLine>();
+        for (final I_DirectedLine line : containedLines) {
             final I_DirectedLine translatedLine = line.translateBy(deltaX, deltaY);
             translatedLines.add(translatedLine);
         }
@@ -141,7 +138,7 @@ public abstract class DirectedGraphic implements I_DirectedGraphic {
      * @return true if graphic is closed, false otherwise
      */
     public boolean isClosed() {
-        final ArrayList lines = new ArrayList();
+        final ArrayList<I_DirectedLine> lines = new ArrayList<I_DirectedLine>();
         lines.addAll(getLines());
         return hasEnoughLines(lines) && isChain(lines);
     }
@@ -149,8 +146,7 @@ public abstract class DirectedGraphic implements I_DirectedGraphic {
     private double calculateWidthAuxiliary() {
         double minX = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
-        for (final Iterator iterator = containedLines.iterator(); iterator.hasNext();) {
-            final I_DirectedLine line = (I_DirectedLine) iterator.next();
+        for (final I_DirectedLine line : containedLines) {
             minX = calculateMinX(line, minX);
             maxX = calculateMaxX(line, maxX);
         }
@@ -178,14 +174,14 @@ public abstract class DirectedGraphic implements I_DirectedGraphic {
     }
 
 
-    abstract I_DirectedGraphic doCreateDirectedGraphic(final ArrayList containedLines);
+    abstract I_DirectedGraphic doCreateDirectedGraphic(final ArrayList<I_DirectedLine> containedLines);
 
 
-    private static boolean hasEnoughLines(final ArrayList lines) {
+    private static boolean hasEnoughLines(final ArrayList<I_DirectedLine> lines) {
         return (!lines.isEmpty() && lines.size() > 2);
     }
 
-    private static boolean isChain(final ArrayList lines) {
+    private static boolean isChain(final ArrayList<I_DirectedLine> lines) {
         lines.add(lines.get(0));
         for (int index = 0; index < lines.size() - 1; index++) {
             final I_DirectedLine line = (I_DirectedLine) lines.get(index);

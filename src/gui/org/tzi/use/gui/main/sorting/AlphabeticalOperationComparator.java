@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MOperation;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class AlphabeticalOperationComparator implements SortingComparator {
+public class AlphabeticalOperationComparator implements SortingComparator<MOperation> {
 
     private CompareUtil compareUtil;
 
@@ -56,9 +56,9 @@ public class AlphabeticalOperationComparator implements SortingComparator {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
-        final String nameOfOperation1 = ((MOperation) object1).name();
-        final String nameOfOperation2 = ((MOperation) object2).name();
+    public int compare(final MOperation object1, final MOperation object2) {
+        final String nameOfOperation1 = object1.name();
+        final String nameOfOperation2 = object2.name();
         return compareUtil.compareString(nameOfOperation1, nameOfOperation2);
     }
 }

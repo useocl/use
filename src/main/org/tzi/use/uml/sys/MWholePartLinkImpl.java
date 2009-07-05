@@ -56,7 +56,7 @@ final class MWholePartLinkImpl implements MWholePartLink {
      *
      * @return Set(MLinkEnd)
      */
-    public Set linkEnds() {        
+    public Set<MLinkEnd> linkEnds() {        
         return delegatesLink.linkEnds();
     }
 
@@ -65,7 +65,7 @@ final class MWholePartLinkImpl implements MWholePartLink {
      *
      * @return Set(MObject).
      */
-    public Set linkedObjects() {        
+    public Set<MObject> linkedObjects() {        
         return delegatesLink.linkedObjects();
     }
 
@@ -108,12 +108,13 @@ final class MWholePartLinkImpl implements MWholePartLink {
     /**
      * Returns the source node of this edge //parent or whole
      */
-    public Object source(){
+    public MObject source(){
         int aggregationKind = association().aggregationKind();
+        
         if ( (aggregationKind == MAggregationKind.AGGREGATION) || 
          (aggregationKind == MAggregationKind.COMPOSITION) ){            
-            MObject[] temp = linkedObjectsAsArray();                 
-            return temp[0];        
+            MObject[] temp = linkedObjectsAsArray();
+            return temp[0];
         }
         return null;
     }
@@ -121,13 +122,15 @@ final class MWholePartLinkImpl implements MWholePartLink {
     /**
      * Returns the target node of this edge. //child or part
      */
-    public Object target(){
+    public MObject target(){
         int aggregationKind = association().aggregationKind();
+        
         if ( (aggregationKind == MAggregationKind.AGGREGATION) || 
          (aggregationKind == MAggregationKind.COMPOSITION) ){       
             MObject[] temp = linkedObjectsAsArray();             
             return temp[1];            
         }
+        
         return null;        
     }
 
@@ -138,5 +141,4 @@ final class MWholePartLinkImpl implements MWholePartLink {
         MObject[] temp = linkedObjectsAsArray();
         return temp[0] == temp[1];
     }    
-    
 }

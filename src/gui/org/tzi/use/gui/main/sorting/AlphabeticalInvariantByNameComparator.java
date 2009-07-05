@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MClassInvariant;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class AlphabeticalInvariantByNameComparator implements SortingComparator {
+public class AlphabeticalInvariantByNameComparator implements SortingComparator<MClassInvariant> {
     private CompareUtil compareUtil;
 
     /**
@@ -46,9 +46,9 @@ public class AlphabeticalInvariantByNameComparator implements SortingComparator 
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
-        final String firstComparisonString = ((MClassInvariant) object1).getNameAndClassAsString();
-        final String secondComparisonString = ((MClassInvariant) object2).getNameAndClassAsString();
+    public int compare(final MClassInvariant object1, final MClassInvariant object2) {
+        final String firstComparisonString = object1.getNameAndClassAsString();
+        final String secondComparisonString = object2.getNameAndClassAsString();
         return compareUtil.compareString(firstComparisonString, secondComparisonString);
     }
 

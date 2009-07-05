@@ -67,6 +67,7 @@ import org.tzi.use.util.Queue;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
+@SuppressWarnings("serial")
 public class ClassInvariantView extends JPanel implements View {
     private JTable fTable;
 
@@ -115,7 +116,7 @@ public class ClassInvariantView extends JPanel implements View {
                 return fValues[row];
         }
 
-        public Class getColumnClass(int c) {
+        public Class<?> getColumnClass(int c) {
             if (c == 1)
                 return Value.class;
             else
@@ -221,7 +222,7 @@ public class ClassInvariantView extends JPanel implements View {
                     Evaluator evaluator = new Evaluator();
                     evaluator.enableEvalTree();
                     try {
-                        Value v = evaluator.eval(expr, fSystem.state());
+                        evaluator.eval(expr, fSystem.state());
                     } catch (MultiplicityViolationException ex) {
                         return;
                     }
@@ -240,7 +241,7 @@ public class ClassInvariantView extends JPanel implements View {
                     v = new MMPrintVisitor(new PrintWriter(sw));
                     fClassInvariants[fSelectedRow].processWithVisitor(v);
                     String spec = sw.toString();
-                    ExprEvalBrowser eb = ExprEvalBrowser.createPlus(evaluator
+                    ExprEvalBrowser.createPlus(evaluator
                             .getEvalNodeRoot(), fSystem, spec, htmlSpec);
                 }
             }
@@ -278,7 +279,7 @@ public class ClassInvariantView extends JPanel implements View {
         else
             fLabel.setText("Working...");
 
-        ArrayList exprList = new ArrayList();
+        ArrayList<Expression> exprList = new ArrayList<Expression>();
         for (int i = 0; i < fClassInvariants.length; i++)
             exprList.add(fClassInvariants[i].expandedExpression());
 

@@ -22,7 +22,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -48,17 +47,17 @@ import org.tzi.use.uml.ocl.type.Type;
 public class ASTPrePost extends AST {
     private Token fClassName;
     private Token fOpName;
-    private List fParamList;    // (ASTVariableDeclaration)
+    private List<ASTVariableDeclaration> fParamList;
     private ASTType fResultType; // optional
-    private List fPrePostClauses;
+    private List<ASTPrePostClause> fPrePostClauses;
 
     public ASTPrePost(Token classname, Token opname, 
-                      List paramList, ASTType resultType) {
+                      List<ASTVariableDeclaration> paramList, ASTType resultType) {
         fClassName = classname;
         fOpName = opname;
         fParamList = paramList;
         fResultType = resultType;
-        fPrePostClauses = new ArrayList();
+        fPrePostClauses = new ArrayList<ASTPrePostClause>();
     }
 
     public void addPrePostClause(ASTPrePostClause ppc) {
@@ -83,9 +82,8 @@ public class ASTPrePost extends AST {
 
         // map params to VarDeclList
         VarDeclList varDeclList = new VarDeclList(false);
-        Iterator it = fParamList.iterator();
-        while (it.hasNext() ) {
-            ASTVariableDeclaration astDecl = (ASTVariableDeclaration) it.next();
+        
+        for (ASTVariableDeclaration astDecl : fParamList) {
             VarDecl decl = astDecl.gen(ctx);
             try {
                 varDeclList.add(decl);
@@ -125,16 +123,13 @@ public class ASTPrePost extends AST {
         // enter parameters into scope of expression
         Symtable vars = ctx.varTable();
         vars.enterScope();
-        it = fParamList.iterator();
-        while (it.hasNext() ) {
-            ASTVariableDeclaration astDecl = (ASTVariableDeclaration) it.next();
+
+        for (ASTVariableDeclaration astDecl : fParamList) {
             VarDecl decl = astDecl.gen(ctx);
             vars.add(astDecl.name(), decl.type());
         }
 
-        it = fPrePostClauses.iterator();
-        while (it.hasNext() ) {
-            ASTPrePostClause ppc = (ASTPrePostClause) it.next();
+        for (ASTPrePostClause ppc : fPrePostClauses) {
             ppc.gen(ctx, cls, op);
         }
 

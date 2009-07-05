@@ -30,7 +30,6 @@
 package org.tzi.use.parser.generator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -43,11 +42,11 @@ import org.tzi.use.util.StringUtil;
 
 public class ASTGAtomicInstruction extends ASTGValueInstruction {
 	Token fName;
-    List fParameter;  // ASTGInstructionParameterInterface;
+    List<Object> fParameter;  // ASTGInstructionParameterInterface;
 
     public ASTGAtomicInstruction(Token name) {
         fName = name;
-        fParameter = new ArrayList();
+        fParameter = new ArrayList<Object>();
     }
 
     public void addParameter( Object parameter ) {
@@ -56,12 +55,10 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
 
     public GInstruction gen(Context ctx) throws SemanticException {
 
-        List params = new ArrayList();
-        List errParams = new ArrayList();
+        List<Object> params = new ArrayList<Object>();
+        List<Object> errParams = new ArrayList<Object>();
 
-        Iterator it = fParameter.iterator();
-        while (it.hasNext() ) {
-            Object param = it.next();
+        for (Object param : fParameter) {
             if (param instanceof Token ) {
                 String name = ((Token) param).getText();
                 boolean isClass = ctx.model().getClass(name)!=null;

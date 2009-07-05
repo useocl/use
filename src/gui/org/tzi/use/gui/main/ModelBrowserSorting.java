@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EventListener;
 import java.util.EventObject;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.event.EventListenerList;
@@ -48,6 +47,11 @@ import org.tzi.use.gui.main.sorting.UseFileOrderInvariantComparator;
 import org.tzi.use.gui.main.sorting.UseFileOrderOperationComparator;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassInvariant;
+import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.MPrePostCondition;
 
 
 /**
@@ -64,7 +68,8 @@ public class ModelBrowserSorting  {
      * A SortChangeEvent is used to notify interested listeners that the
      * sorting order has changed.  
      */
-    public class SortChangeEvent extends EventObject {
+    @SuppressWarnings("serial")
+	public class SortChangeEvent extends EventObject {
         public SortChangeEvent(Object source) {
             super(source);
         }
@@ -195,8 +200,8 @@ public class ModelBrowserSorting  {
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    public Collection sortClasses( Collection items) {
-        ArrayList classes = new ArrayList( items );
+    public Collection<MClass> sortClasses( Collection<MClass> items) {
+        ArrayList<MClass> classes = new ArrayList<MClass>( items );
         
         if (classes.size() > 0) {
             switch (clsOrder) {
@@ -218,8 +223,8 @@ public class ModelBrowserSorting  {
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    public List sortAttributes(Collection items) {
-        ArrayList attributes = new ArrayList( items );
+    public List<MAttribute> sortAttributes(Collection<MAttribute> items) {
+        ArrayList<MAttribute> attributes = new ArrayList<MAttribute>( items );
                 
         if ( attributes.size() > 0 ) {
             switch ( attrOrder ) {
@@ -242,8 +247,8 @@ public class ModelBrowserSorting  {
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    public List sortOperations(Collection items) {
-        ArrayList operations = new ArrayList( items );
+    public List<MOperation> sortOperations(Collection<MOperation> items) {
+        ArrayList<MOperation> operations = new ArrayList<MOperation>( items );
                 
         if ( operations.size() > 0 ) {
             switch ( oprOrder ) {
@@ -261,16 +266,14 @@ public class ModelBrowserSorting  {
     }
     
     /**
-     * Calls the specific algorithem in which way the tree will be sorted.
+     * Calls the specific algorithm in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    ArrayList sortAssociations(final ArrayList associations) {
-        ArrayList onlyAssocs = new ArrayList();
+    ArrayList<MAssociation> sortAssociations(final ArrayList<MAssociation> associations) {
+        ArrayList<MAssociation> onlyAssocs = new ArrayList<MAssociation>();
         if (associations.size() > 0) {
-            Iterator it = associations.iterator();
-            while ( it.hasNext() ) {
-                MAssociation assoc = (MAssociation) it.next();
+            for (MAssociation assoc : associations) {
                 if ( assoc instanceof MAssociationClass ) {
                     continue;
                 }
@@ -297,8 +300,8 @@ public class ModelBrowserSorting  {
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    public ArrayList sortInvariants(final Collection items) {
-        ArrayList sortedInvs = new ArrayList(items);
+    public ArrayList<MClassInvariant> sortInvariants(final Collection<MClassInvariant> items) {
+        ArrayList<MClassInvariant> sortedInvs = new ArrayList<MClassInvariant>(items);
 
         if (sortedInvs.size() > 0) {
             switch (invOrder) {
@@ -324,8 +327,8 @@ public class ModelBrowserSorting  {
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    Collection sortPrePostConditions(final Collection items) {
-        final ArrayList sortedConds = new ArrayList(items);
+    Collection<MPrePostCondition> sortPrePostConditions(final Collection<MPrePostCondition> items) {
+        final ArrayList<MPrePostCondition> sortedConds = new ArrayList<MPrePostCondition>(items);
 
         if (sortedConds.size() > 0) {
             switch (condOrder) {

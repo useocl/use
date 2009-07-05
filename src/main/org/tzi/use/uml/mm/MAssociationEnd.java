@@ -22,7 +22,6 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.uml.ocl.type.Type;
@@ -210,12 +209,13 @@ public final class MAssociationEnd extends MModelElementImpl
     /**
      * @return List(MAssociatioEnd)
      */
-    public List getAllOtherAssociationEnds() {
-        List nMinusOneClasses = new ArrayList();
-        for (Iterator it = fAssociation.associationEnds().iterator(); it.hasNext();) {
-            MAssociationEnd end = (MAssociationEnd) it.next();
+    public List<MAssociationEnd> getAllOtherAssociationEnds() {
+        List<MAssociationEnd> nMinusOneClasses = new ArrayList<MAssociationEnd>();
+        
+        for (MAssociationEnd end : fAssociation.associationEnds()) {
             if (end != this) nMinusOneClasses.add(end);
         }
+        
         return nMinusOneClasses;
     }
 

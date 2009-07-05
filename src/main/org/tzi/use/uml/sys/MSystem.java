@@ -21,13 +21,14 @@
 
 package org.tzi.use.uml.sys;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.event.EventListenerList;
 
 import org.tzi.use.gen.tool.GGenerator;
@@ -42,7 +43,10 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.UniqueNameGenerator;
-import org.tzi.use.util.cmd.*;
+import org.tzi.use.util.cmd.CannotUndoException;
+import org.tzi.use.util.cmd.Command;
+import org.tzi.use.util.cmd.CommandFailedException;
+import org.tzi.use.util.cmd.CommandProcessor;
 
 /**
  * A system maintains a system state and provides functionality for
@@ -54,11 +58,11 @@ import org.tzi.use.util.cmd.*;
 public final class MSystem {
     private MModel fModel;  // The model of this system. 
     private MSystemState fCurrentState; // The current system state. 
-    private Map fObjects;   // (String -> MObject) The set of all objects
+    private Map<String, MObject> fObjects;   // The set of all objects
     private UniqueNameGenerator fUniqueNameGenerator; // creation of object names
     private CommandProcessor fCommandProcessor; // executing state change commands
     protected EventListenerList fListenerList = new EventListenerList();
-    private List fOperationCallStack; // stack of active operations
+    private List<MOperationCall> fOperationCallStack; // stack of active operations
     private VarBindings fVarBindings; // top-level variable bindings
     private GGenerator fGenerator;    // snapshot generator
 
@@ -68,11 +72,11 @@ public final class MSystem {
     }
 
     private void init() {
-        fObjects = new HashMap();
+        fObjects = new HashMap<String, MObject>();
         fUniqueNameGenerator = new UniqueNameGenerator();
         fCommandProcessor = new CommandProcessor();
         fCurrentState = new MSystemState(fUniqueNameGenerator.generate("state#"), this);
-        fOperationCallStack = new ArrayList();
+        fOperationCallStack = new ArrayList<MOperationCall>();
         fVarBindings = new VarBindings();
         fGenerator = new GGenerator(this);
     }
@@ -193,9 +197,7 @@ public final class MSystem {
     public void writeUSEcmds(PrintWriter out) 
         throws IOException 
     {
-        Iterator cmdIter = fCommandProcessor.commands().iterator();
-        while (cmdIter.hasNext() ) {
-            MCmd cmd = (MCmd) cmdIter.next();
+        for (MCmd cmd : fCommandProcessor.useCommands()) {
             Log.trace(this, cmd.getUSEcmd());
             out.println(cmd.getUSEcmd());
         }
@@ -213,7 +215,7 @@ public final class MSystem {
      *
      * @return List(MCmd)
      */
-    public List commands() {
+    public List<Command> commands() {
         return fCommandProcessor.commands();
     }
 
@@ -236,10 +238,9 @@ public final class MSystem {
         // check preconditions
         boolean preOk = true;
         MOperation op = opcall.operation();
-        List preconds = op.preConditions();
-        Iterator it = preconds.iterator();
-        while (it.hasNext() ) {
-            MPrePostCondition ppc = (MPrePostCondition) it.next();
+        List<MPrePostCondition> preconds = op.preConditions();
+
+        for (MPrePostCondition ppc : preconds) {
             Expression expr = ppc.expression();
             Evaluator evaluator = new Evaluator();
             // evaluate in scope local to operation
@@ -292,12 +293,9 @@ public final class MSystem {
 
         // check postconditions
         boolean postOk = true;
-        List postconds = op.postConditions();
-        Iterator it = postconds.iterator();
-        while (it.hasNext() ) {
-            MPrePostCondition ppc = (MPrePostCondition) it.next();
-            //          System.out.println("*** checking postcondition `" + ppc.name() + "'");
-            //          System.out.println("*** prestate: " + opcall.preState());
+        List<MPrePostCondition> postconds = op.postConditions();
+
+        for (MPrePostCondition ppc : postconds) {
             Expression expr = ppc.expression();
             Evaluator evaluator = new Evaluator();
             // evaluate in scope local to operation
@@ -363,7 +361,7 @@ public final class MSystem {
      *
      * @return List(MOperationCall)
      */
-    public List callStack() {
+    public List<MOperationCall> callStack() {
         return fOperationCallStack;
     }
 

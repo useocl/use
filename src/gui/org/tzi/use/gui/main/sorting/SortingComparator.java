@@ -28,7 +28,7 @@ import java.util.Comparator;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public interface SortingComparator extends Comparator {
+public interface SortingComparator<T> extends Comparator<T> {
     /**
      * Sets the compareUtil, which supplies the basic comparison operations, 
      * to the given one

@@ -22,12 +22,12 @@
 package org.tzi.use.parser.cmd;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.sys.MCmd;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -36,25 +36,24 @@ import org.tzi.use.parser.SemanticException;
  * @author  Mark Richters
  */
 public class ASTCmdList extends AST {
-    private List fCmdList;  // (ASTCmd)
+    private List<ASTCmd> fCmdList;
 
     public ASTCmdList() {
-        fCmdList = new ArrayList();
+        fCmdList = new ArrayList<ASTCmd>();
     }
 
     public void add(ASTCmd cmd) {
         fCmdList.add(cmd);
     }
 
-    public List gen(Context ctx) 
+    public List<MCmd> gen(Context ctx) 
         throws SemanticException
     {
         // map list of ASTCmd to list of Cmd
-        List cmdList = new ArrayList(fCmdList.size());
-        Iterator it = fCmdList.iterator();
-        while (it.hasNext() ) {
-            ASTCmd cmd = (ASTCmd) it.next();
-            cmdList.add(cmd.gen(ctx));
+        List<MCmd> cmdList = new ArrayList<MCmd>(fCmdList.size());
+        
+        for (ASTCmd cmd : fCmdList) {
+            cmdList.add((MCmd)cmd.gen(ctx));
         }
         return cmdList;
     }

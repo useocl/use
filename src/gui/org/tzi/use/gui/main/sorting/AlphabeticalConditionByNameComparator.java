@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MPrePostCondition;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class AlphabeticalConditionByNameComparator implements SortingComparator {
+public class AlphabeticalConditionByNameComparator implements SortingComparator<MPrePostCondition> {
    private CompareUtil compareUtil;
 
     /**
@@ -54,9 +54,7 @@ public class AlphabeticalConditionByNameComparator implements SortingComparator 
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
-        final MPrePostCondition firstCondition = (MPrePostCondition) object1;
-        final MPrePostCondition secondCondition = (MPrePostCondition) object2;
+    public int compare(final MPrePostCondition firstCondition, final MPrePostCondition secondCondition) {
         final String firstString = createComparisonString(firstCondition);
         final String secondString = createComparisonString(secondCondition);
         return compareUtil.compareString(firstString, secondString);

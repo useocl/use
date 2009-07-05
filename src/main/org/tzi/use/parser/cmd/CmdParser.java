@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2009-06-16 14:38:33
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2009-07-01 15:58:19
  
 /*
  * USE - UML based specification environment
@@ -18,6 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
+ 
 package org.tzi.use.parser.cmd;
 
 import org.tzi.use.parser.base.BaseParser;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-
+@SuppressWarnings({ "unchecked", "unused" })
 public class CmdParser extends BaseParser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "SEMI", "COLON", "COLON_EQUAL", "IDENT", "LPAREN", "RPAREN", "COMMA", "EQUAL", "LBRACE", "RBRACE", "LESS", "LBRACK", "RBRACK", "DOTDOT", "INT", "STAR", "COLON_COLON", "NOT_EQUAL", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "SLASH", "ARROW", "DOT", "AT", "BAR", "REAL", "STRING", "HASH", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'create'", "'assign'", "'between'", "'destroy'", "'insert'", "'into'", "'delete'", "'from'", "'set'", "'openter'", "'opexit'", "'let'", "'execute'", "'model'", "'constraints'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'end'", "'associationClass'", "'associationclass'", "'aggregation'", "'composition'", "'begin'", "'association'", "'role'", "'ordered'", "'context'", "'inv'", "'existential'", "'pre'", "'post'", "'var'", "'declare'", "'namehint'", "'if'", "'then'", "'else'", "'endif'", "'while'", "'do'", "'wend'", "'for'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'iterate'", "'oclAsType'", "'oclIsKindOf'", "'oclIsTypeOf'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'OrderedSet'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Date'", "'Collection'"
@@ -740,7 +741,7 @@ public class CmdParser extends BaseParser {
 
     // $ANTLR start "deleteCmd"
     // Cmd.g:197:1: deleteCmd returns [ASTCmd n] : 'delete' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'from' id= IDENT ;
-	public final ASTCmd deleteCmd() throws RecognitionException {
+    public final ASTCmd deleteCmd() throws RecognitionException {
         ASTCmd n = null;
 
         Token id=null;
@@ -5372,7 +5373,7 @@ public class CmdParser extends BaseParser {
             switch ( input.LA(1) ) {
             case IDENT:
                 {
-				int LA80_1 = input.LA(2);
+                int LA80_1 = input.LA(2);
 
                 if ( (( org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) )) ) {
                     alt80=1;
@@ -7051,8 +7052,8 @@ public class CmdParser extends BaseParser {
     static final String DFA3_maxS =
         "\1\67\1\7\11\uffff\1\12\1\7\1\uffff\1\67\1\uffff";
     static final String DFA3_acceptS =
-        "\2\uffff\1\2\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\2\uffff\1\1\1\uffff"+
-        "\1\3";
+        "\2\uffff\1\2\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\2\uffff\1\1\1"+
+        "\uffff\1\3";
     static final String DFA3_specialS =
         "\20\uffff}>";
     static final String[] DFA3_transitionS = {
@@ -7121,10 +7122,10 @@ public class CmdParser extends BaseParser {
     static final String DFA9_specialS =
         "\1\0\1\1\36\uffff}>";
     static final String[] DFA9_transitionS = {
-            "\1\25\2\uffff\1\20\1\23\11\uffff\1\5\6\uffff\2\2\5\uffff\1\6"+
-            "\1\7\1\10\10\uffff\2\25\1\uffff\2\25\1\uffff\1\25\1\uffff\3"+
-            "\25\1\1\1\25\30\uffff\1\24\15\uffff\1\2\1\uffff\1\21\3\22\1"+
-            "\3\1\4\4\11\1\12\1\13\1\14\1\15\1\16\1\17",
+            "\1\25\2\uffff\1\20\1\23\11\uffff\1\5\6\uffff\2\2\5\uffff\1"+
+            "\6\1\7\1\10\10\uffff\2\25\1\uffff\2\25\1\uffff\1\25\1\uffff"+
+            "\3\25\1\1\1\25\30\uffff\1\24\15\uffff\1\2\1\uffff\1\21\3\22"+
+            "\1\3\1\4\4\11\1\12\1\13\1\14\1\15\1\16\1\17",
             "\1\uffff",
             "",
             "",

@@ -41,8 +41,8 @@ public final class MOperation extends MModelElementImpl {
     private Type fResultType;   // The declared result type (optional)
     private Expression fExpr;   // The operation's body (optional)
     private MClass fClass;  // owner
-    private List fPreConditions;
-    private List fPostConditions;
+    private List<MPrePostCondition> fPreConditions;
+    private List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
 
     // for UML AL
@@ -53,8 +53,8 @@ public final class MOperation extends MModelElementImpl {
         fVarDeclList = varDeclList;
         fResultType = resultType;
         fExpr = null;
-        fPreConditions = new ArrayList();
-        fPostConditions = new ArrayList();
+        fPreConditions = new ArrayList<MPrePostCondition>();
+        fPostConditions = new ArrayList<MPrePostCondition>();
     }
 
     /** 
@@ -146,7 +146,7 @@ public final class MOperation extends MModelElementImpl {
      * Returns a list of preconditions attached to this operation. Do
      * not modify this list.
      */
-    public List preConditions() {
+    public List<MPrePostCondition> preConditions() {
         return fPreConditions;
     }
 
@@ -154,7 +154,7 @@ public final class MOperation extends MModelElementImpl {
      * Returns a list of postconditions attached to this operation. Do
      * not modify this list.
      */
-    public List postConditions() {
+    public List<MPrePostCondition> postConditions() {
         return fPostConditions;
     }
 

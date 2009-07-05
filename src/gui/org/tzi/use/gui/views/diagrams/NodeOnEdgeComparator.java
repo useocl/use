@@ -32,7 +32,7 @@ import org.tzi.use.gui.main.sorting.CompareUtilImpl;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class NodeOnEdgeComparator implements Comparator {
+public class NodeOnEdgeComparator implements Comparator<NodeOnEdge> {
 
     private CompareUtil fCompareUtil;
     
@@ -47,9 +47,9 @@ public class NodeOnEdgeComparator implements Comparator {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare( Object obj1, Object obj2) {
-        int idOfNode1 = ((NodeOnEdge) obj1).getID();
-        int idOfNode2 = ((NodeOnEdge) obj2).getID();
+    public int compare( NodeOnEdge obj1, NodeOnEdge obj2) {
+        int idOfNode1 = obj1.getID();
+        int idOfNode2 = obj2.getID();
         return fCompareUtil.compareInt( idOfNode1, idOfNode2 );
     }
 }

@@ -30,16 +30,16 @@ package org.tzi.use.graph;
  */
 
 
-public class DirectedEdgeBase implements DirectedEdge {
-    private Object fSource;
-    private Object fTarget;
+public class DirectedEdgeBase<N> implements DirectedEdge<N> {
+    private N fSource;
+    private N fTarget;
 
     /**
      * Construct a new edge.
      *
      * @exception NullPointerException source or target is null.
      */
-    public DirectedEdgeBase(Object source, Object target) {
+    public DirectedEdgeBase(N source, N target) {
         if (source == null || target == null )
             throw new NullPointerException();
         fSource = source;
@@ -51,14 +51,14 @@ public class DirectedEdgeBase implements DirectedEdge {
     /**
      * Returns the source node of this edge.
      */
-    public Object source() {
+    public N source() {
         return fSource;
     }
 
     /**
      * Returns the target node of this edge.
      */
-    public Object target() {
+    public N target() {
         return fTarget;
     }
 

@@ -30,7 +30,7 @@ import org.tzi.use.graph.DirectedEdge;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public final class MGeneralization extends MModelElementImpl implements DirectedEdge {
+public final class MGeneralization extends MModelElementImpl implements DirectedEdge<MClass> {
     private MClass fParent;
     private MClass fChild;
 
@@ -62,14 +62,14 @@ public final class MGeneralization extends MModelElementImpl implements Directed
     /**
      * Returns the source node of this edge.
      */
-    public Object source() {
+    public MClass source() {
         return fChild;
     }
 
     /**
      * Returns the target node of this edge.
      */
-    public Object target() {
+    public MClass target() {
         return fParent;
     }
 

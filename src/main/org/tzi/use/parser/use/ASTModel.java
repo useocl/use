@@ -44,21 +44,21 @@ import org.tzi.use.uml.ocl.type.EnumType;
  */
 public class ASTModel extends AST {
     private Token fName;
-    private List fEnumTypeDefs; // (ASTEnumTypeDefinition)
-    private List fClasses;  // (ASTClass)
-    private List fAssociationClasses;   // (ASTAssociationClass)
-    private List fAssociations; // (ASTAssociation)
-    private List fConstraints;  // (ASTConstraintDefinition)
-    private List fPrePosts; // (ASTPrePost)
+    private List<ASTEnumTypeDefinition> fEnumTypeDefs;
+    private List<ASTClass> fClasses;
+    private List<ASTAssociationClass> fAssociationClasses;
+    private List<ASTAssociation> fAssociations;
+    private List<ASTConstraintDefinition> fConstraints;
+    private List<ASTPrePost> fPrePosts;
 
     public ASTModel(Token name) {
         fName = name;
-        fEnumTypeDefs = new ArrayList();
-        fClasses = new ArrayList();
-        fAssociationClasses = new ArrayList();
-        fAssociations = new ArrayList();
-        fConstraints = new ArrayList();
-        fPrePosts = new ArrayList();
+        fEnumTypeDefs = new ArrayList<ASTEnumTypeDefinition>();
+        fClasses = new ArrayList<ASTClass>();
+        fAssociationClasses = new ArrayList<ASTAssociationClass>();
+        fAssociations = new ArrayList<ASTAssociation>();
+        fConstraints = new ArrayList<ASTConstraintDefinition>();
+        fPrePosts = new ArrayList<ASTPrePost>();
     }
 
     public void addEnumTypeDef(ASTEnumTypeDefinition etd) {
@@ -91,9 +91,7 @@ public class ASTModel extends AST {
         ctx.setModel(model);
 
         // (1a) add user-defined types to model
-        Iterator it = fEnumTypeDefs.iterator();
-        while (it.hasNext() ) {
-            ASTEnumTypeDefinition e = (ASTEnumTypeDefinition) it.next();
+        for (ASTEnumTypeDefinition e : fEnumTypeDefs) {
             EnumType enm;
             try {
                 enm = e.gen(ctx);
@@ -106,25 +104,26 @@ public class ASTModel extends AST {
         }
 
         // (1b) add empty classes to model
-        it = fClasses.iterator();
-        while (it.hasNext() ) {
-            ASTClass c = (ASTClass) it.next();
+        Iterator<ASTClass> cIt = fClasses.iterator();
+        while(cIt.hasNext()) {
+        	ASTClass c = cIt.next();
+        	
             try {
                 MClass cls = c.genEmptyClass(ctx);
                 model.addClass(cls);
             } catch (SemanticException ex) {
                 ctx.reportError(ex);
-                it.remove();
+                cIt.remove();
             } catch (MInvalidModelException ex) {
                 ctx.reportError(fName, ex);
-                it.remove();
+                cIt.remove();
             }
         }
 
         // (1c) add empty associationclasses to model
-        it = fAssociationClasses.iterator();
-        while ( it.hasNext() ) {
-            ASTAssociationClass ac = ( ASTAssociationClass ) it.next();
+        Iterator<ASTAssociationClass> acIt = fAssociationClasses.iterator();
+        while ( acIt.hasNext() ) {
+            ASTAssociationClass ac = acIt.next();
             try {
                 // The associationclass can just be added as a class so far,
                 // because to keep the order of generating a model.
@@ -133,36 +132,30 @@ public class ASTModel extends AST {
                 model.addClass( assocCls );
             } catch ( SemanticException ex ) {
                 ctx.reportError( ex );
-                it.remove();
+                acIt.remove();
             } catch ( MInvalidModelException ex ) {
                 ctx.reportError( fName, ex );
-                it.remove();
+                acIt.remove();
             }
         }
 
         // (2a) add attributes and set generalization
         // relationships. The names of all classes are known at this
         // point
-        it = fClasses.iterator();
-        while (it.hasNext() ) {
-            ASTClass c = (ASTClass) it.next();
+        for (ASTClass c : fClasses) {
             c.genAttributesOperationSignaturesAndGenSpec(ctx);
         }
 
         // (2b) add attributes and set generalization
         // relationships of the associationclasses.
         // The names of all classes are known at this point
-        it = fAssociationClasses.iterator();
-        while ( it.hasNext() ) {
-            ASTAssociationClass ac = ( ASTAssociationClass ) it.next();
+        for (ASTAssociationClass ac : fAssociationClasses) {
             ac.genAttributesOperationSignaturesAndGenSpec( ctx );
         }
 
         // (3a) add associations. Classes are known and can be
         // referenced by role names.
-        it = fAssociations.iterator();
-        while (it.hasNext() ) {
-            ASTAssociation a = (ASTAssociation) it.next();
+        for (ASTAssociation a : fAssociations) {
             try {
                 a.gen(ctx, model);
             } catch (SemanticException ex) {
@@ -170,15 +163,13 @@ public class ASTModel extends AST {
             }
         }
 
-        // (3b) add associationsclasses as associations.
+        // (3b) add association classes as associations.
         // Classes are known and can be referenced by role names.
-        it = fAssociationClasses.iterator();
-        while ( it.hasNext() ) {
-            ASTAssociationClass ac = ( ASTAssociationClass ) it.next();
+        for (ASTAssociationClass ac : fAssociationClasses) {
             try {
-                // The associationclass is now added as an association.
+                // The association class is now added as an association.
                 // It is added here to keep the order of generating a model.
-                // The associationclass is already added as a class in step 1c.
+                // The association class is already added as a class in step 1c.
                 MAssociationClass assocClass = ac.genAssociation( ctx );
                 model.addAssociation( assocClass );
             } catch ( SemanticException ex ) {
@@ -190,34 +181,26 @@ public class ASTModel extends AST {
 
         // (4a) generate constraints. All class interfaces are known
         // and association features are available for expressions.
-        it = fClasses.iterator();
-        while (it.hasNext() ) {
-            ASTClass c = (ASTClass) it.next();
+        for (ASTClass c : fClasses) {
             c.genConstraintsAndOperationBodies(ctx);
         }
 
         // (4b) generate constraints of the associationclasses.
         // All class interfaces are known and association features
         // are available for expressions.
-        it = fAssociationClasses.iterator();
-        while ( it.hasNext() ) {
-            ASTAssociationClass ac = ( ASTAssociationClass ) it.next();
+        for (ASTAssociationClass ac : fAssociationClasses) {
             ac.genConstraintsAndOperationBodies( ctx );
         }
 
         // (5a) generate global constraints. All class interfaces are
         // known and association features are available for
         // expressions.
-        it = fConstraints.iterator();
-        while (it.hasNext() ) {
-            ASTConstraintDefinition c = (ASTConstraintDefinition) it.next();
+        for (ASTConstraintDefinition c : fConstraints) {
             c.gen(ctx);
         }
 
         // (5b) generate pre-/postconditions.
-        it = fPrePosts.iterator();
-        while (it.hasNext() ) {
-            ASTPrePost ppc = (ASTPrePost) it.next();
+        for (ASTPrePost ppc : fPrePosts) {
             try {
                 ppc.gen(ctx);
             } catch (SemanticException ex) {

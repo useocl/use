@@ -22,7 +22,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -44,12 +43,12 @@ import org.tzi.use.uml.mm.MModel;
 public class ASTAssociation extends AST {
     private Token fKind;
     private Token fName;
-    private List fAssociationEnds; // (ASTAssociationEnd)
+    private List<ASTAssociationEnd> fAssociationEnds;
 
     public ASTAssociation(Token kind, Token name) {
         fKind = kind;
         fName = name;
-        fAssociationEnds = new ArrayList();
+        fAssociationEnds = new ArrayList<ASTAssociationEnd>();
     }
 
     public void addEnd(ASTAssociationEnd ae) {
@@ -60,22 +59,19 @@ public class ASTAssociation extends AST {
         throws SemanticException 
     {
         MAssociation assoc = ctx.modelFactory().createAssociation(fName.getText());
+        
         // sets the line position of the USE-Model in this association
         assoc.setPositionInModel( fName.getLine() );
         String kindname = fKind.getText();
         int kind = MAggregationKind.NONE;
-        if (kindname.equals("association") ) {
-        }
-        else if (kindname.equals("aggregation") )
+        
+        if (kindname.equals("aggregation") )
             kind = MAggregationKind.AGGREGATION;
         else if (kindname.equals("composition") )
             kind = MAggregationKind.COMPOSITION;
 
-        Iterator it = fAssociationEnds.iterator();
         try {
-            while (it.hasNext() ) {
-                ASTAssociationEnd ae = (ASTAssociationEnd) it.next();
-
+            for (ASTAssociationEnd ae : fAssociationEnds) {
                 // kind of association determines kind of first
                 // association end
                 MAssociationEnd aend = ae.gen(ctx, kind);

@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MClassInvariant;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class UseFileOrderInvariantComparator implements SortingComparator {
+public class UseFileOrderInvariantComparator implements SortingComparator<MClassInvariant> {
     private CompareUtil compareUtil;
 
     /**
@@ -54,9 +54,9 @@ public class UseFileOrderInvariantComparator implements SortingComparator {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
-        final int positionOfClass1 = ((MClassInvariant) object1).getPositionInModel();
-        final int positionOfClass2 = ((MClassInvariant) object2).getPositionInModel();
+    public int compare(final MClassInvariant object1, final MClassInvariant object2) {
+        final int positionOfClass1 = object1.getPositionInModel();
+        final int positionOfClass2 = object2.getPositionInModel();
         return compareUtil.compareInt(positionOfClass1, positionOfClass2);
     }
 

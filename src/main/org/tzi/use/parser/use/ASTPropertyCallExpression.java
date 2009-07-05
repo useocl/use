@@ -38,11 +38,11 @@ import org.tzi.use.uml.ocl.expr.Expression;
  */
 public class ASTPropertyCallExpression extends ASTExpression {
     private Token fOp;
-    private List fArgs;     // (ASTExpression) may be empty!
+    private List<ASTExpression> fArgs;     // may be empty!
 
     public ASTPropertyCallExpression(Token token, ASTExpression source) {
         fOp = token;
-        fArgs = new ArrayList();
+        fArgs = new ArrayList<ASTExpression>();
         if (source != null )
             fArgs.add(source);
     }

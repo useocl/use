@@ -22,7 +22,6 @@
 package org.tzi.use.uml.sys;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -58,14 +57,14 @@ public class DeletionTest extends TestCase {
         try {
             MSystem system = ObjectCreation.getInstance()
                     .createModelWithObjectsAndLinkObject();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "c1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            
             int i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
+            for (String name : names) {
+                MObject obj =  system.state().objectByName( name ); 
                 exprs[i++] = new ExpVariable( obj.name(), obj.type() );
             }
             MAssociation assoc = system.model().getAssociation( "Job" );
@@ -88,13 +87,13 @@ public class DeletionTest extends TestCase {
     public void testDestroyLinkObject() {
         try {
             MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "j1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            
             int i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
+            for(String name : names) {
+                MObject obj =  system.state().objectByName( name ); 
                 exprs[i++] = new ExpVariable( obj.name(), obj.type() );
             }
             MCmd cmd = new MCmdDestroyObjects( system.state(), exprs );
@@ -125,13 +124,13 @@ public class DeletionTest extends TestCase {
         try {
             MSystem system = ObjectCreation.getInstance()
                     .createModelWithObjectsAndLinkObject();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            
             int i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
+            for (String name : names) {
+                MObject obj =  system.state().objectByName( name ); 
                 exprs[i++] = new ExpVariable( obj.name(), obj.type() );
             }
             MCmd cmd = new MCmdDestroyObjects( system.state(), exprs );

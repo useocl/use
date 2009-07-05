@@ -50,7 +50,7 @@ public class EvaluatorTest extends TestCase {
         int factor = 10; // higher values cause longer eval times per expression
         int numThreads = 4;
 
-        ArrayList expList = new ArrayList(numExpr);
+        ArrayList<Expression> expList = new ArrayList<Expression>(numExpr);
         for (int i = 0; i < numExpr; i++) {
             // Sequence { 1..i * factor }->iterate(e; acc : Integer= 0 | acc + e);
             Expression arg0 = new ExpConstInteger(1);

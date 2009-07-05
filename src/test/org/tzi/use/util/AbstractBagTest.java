@@ -308,7 +308,7 @@ public class AbstractBagTest extends TestCase {
             model.addClass(b);
             model.addClass(c);
 
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "a1" );        
             MCmd createObjects = new MCmdCreateObjects( system.state(), names, 
                                                         TypeFactory.mkObjectType( a ) );

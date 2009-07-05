@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MAssociation;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
  */
-public class UseFileOrderAssociationComparator implements SortingComparator {
+public class UseFileOrderAssociationComparator implements SortingComparator<MAssociation> {
 
     private CompareUtil compareUtil;
 
@@ -55,7 +55,7 @@ public class UseFileOrderAssociationComparator implements SortingComparator {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final Object object1, final Object object2) {
+    public int compare(final MAssociation object1, final MAssociation object2) {
         final int firstPosition = ((MAssociation) object1).getPositionInModel();
         final int secondPosition = ((MAssociation) object2).getPositionInModel();
         return compareUtil.compareInt(firstPosition, secondPosition);

@@ -21,7 +21,11 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -30,6 +34,7 @@ import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.cmd.CannotUndoException;
 import org.tzi.use.util.cmd.CommandFailedException;
@@ -45,11 +50,11 @@ public final class MCmdDestroyObjects extends MCmd {
     private Expression[] fObjectExprs;
     
     // undo information
-    private List fObjectStates; // (MObjectState)
-    private Set fRemovedLinks;  // (MLink)
-    private Set fRemovedObjects; // (MObject)
+    private List<MObjectState> fObjectStates;
+    private Set<MLink> fRemovedLinks;
+    private Set<MObject> fRemovedObjects;
 
-    private List fObjects;
+    private List<MObject> fObjects;
     
     /**
      * Creates a command for destroying objects whose names are given as
@@ -59,44 +64,39 @@ public final class MCmdDestroyObjects extends MCmd {
         super(true);
         fSystemState = systemState;
         fObjectExprs = exprs;
-        fObjects = new ArrayList();
+        fObjects = new ArrayList<MObject>();
     }
    
     private void destroyOne( VarBindings varBindings, MObject obj ) 
         throws CommandFailedException 
     {
-//        ObjectValue oval = (ObjectValue) v;
-//        MObject obj = oval.value();
         MObjectState objState = obj.state(fSystemState);
+        
         if ( objState == null ) {
             return;
-//            throw new CommandFailedException("Object `" + obj.name() +
-//                                             "' does not exist anymore.");
         }
         
-        //An object can only be destroyed, if there are no open operations 
-        //which have been started by this object
-        List operationCalls = fSystemState.system().callStack();
+        // An object can only be destroyed, if there are no open operations 
+        // which have been started by this object
+        List<MOperationCall> operationCalls = fSystemState.system().callStack();
         for(int i=0; i<operationCalls.size(); i++){
             MOperationCall opCall = (MOperationCall)operationCalls.get(i);
             MObject object = opCall.targetObject();
             if(obj==object)
                 throw new CommandFailedException("Object " + object.name() + " has open Operations.");
         }
-            
         
         // delete object
-        Set[] removed = fSystemState.deleteObject(obj);
+        DeleteObjectResult result = fSystemState.deleteObject(obj);
         
         // store undo information
-        fRemovedObjects.addAll( removed[MSystemState.REMOVED_OBJECTS] );
-        fObjectStates.addAll( removed[MSystemState.REMOVED_OBJECTSTATES] );
-        fRemovedLinks.addAll( removed[MSystemState.REMOVED_LINKS] );
+        fRemovedObjects.addAll( result.getRemovedObjects() );
+        fObjectStates.addAll( result.getRemovedObjectStates() );
+        fRemovedLinks.addAll( result.getRemovedLinks() );
         
-        Iterator it = fRemovedObjects.iterator();
         fObjects.add(obj);
-        while ( it.hasNext() ) {
-            String name = ( ( MObject ) it.next() ).name();
+        for (MObject o : fRemovedObjects) {
+            String name = o.name();
             // remove variable binding
             varBindings.remove( name );
         }
@@ -108,23 +108,22 @@ public final class MCmdDestroyObjects extends MCmd {
      * @exception CommandFailedException if the command failed.
      */
     public void doExecute() throws CommandFailedException {
-        fObjectStates = new ArrayList();
-        fRemovedLinks = new HashSet();
-        fRemovedObjects = new HashSet();
-        Set objects = new HashSet();
+        fObjectStates = new ArrayList<MObjectState>();
+        fRemovedLinks = new HashSet<MLink>();
+        fRemovedObjects = new HashSet<MObject>();
+        Set<MObject> objects = new HashSet<MObject>();
         
         Evaluator evaluator = new Evaluator();
         VarBindings varBindings = fSystemState.system().topLevelBindings();
-        Iterator objExprsIter = Arrays.asList(fObjectExprs).iterator();
-        while( objExprsIter.hasNext() ) { 
-            Expression expr = (Expression) objExprsIter.next();
+
+        for (Expression expr : fObjectExprs) {
             Value v = evaluator.eval(expr, fSystemState, varBindings);
             if (v.isObject() ) {
                 MObject obj = ((ObjectValue) v).value();
                 objects.add( obj );
             } else if (v.isCollection() ) {
                 CollectionValue coll = (CollectionValue) v;
-                Iterator elemIter = coll.iterator();
+                Iterator<Value> elemIter = coll.iterator();
                 while (elemIter.hasNext() ) {
                     Value elem = (Value) elemIter.next();
                     // additional check
@@ -142,9 +141,8 @@ public final class MCmdDestroyObjects extends MCmd {
                                                  "does not evaluate to an object, found `" + 
                                                  v.toStringWithType() + "'.");
         }
-        Iterator it = objects.iterator();
-        while ( it.hasNext() ) {
-            MObject obj = (MObject) it.next();
+        
+        for (MObject obj : objects) {
             destroyOne( varBindings, obj );
         }
     }
@@ -163,9 +161,8 @@ public final class MCmdDestroyObjects extends MCmd {
 
         // recreate objects
         VarBindings varBindings = fSystemState.system().varBindings();
-        Iterator objStateIter = fObjectStates.iterator();
-        while (objStateIter.hasNext() ) {
-            MObjectState objState = (MObjectState) objStateIter.next();
+        
+        for (MObjectState objState : fObjectStates) {
             try {
                 fSystemState.restoreObject(objState);
                 MObject obj = objState.object();
@@ -178,9 +175,7 @@ public final class MCmdDestroyObjects extends MCmd {
         }
 
         // restore links
-        Iterator linkIter = fRemovedLinks.iterator();
-        while (linkIter.hasNext() ) {
-            MLink link = (MLink) linkIter.next();
+        for (MLink link : fRemovedLinks) {
             fSystemState.insertLink(link);
         }
     }
@@ -195,9 +190,7 @@ public final class MCmdDestroyObjects extends MCmd {
         if (fObjectStates == null )
             throw new IllegalStateException("command not executed");
     
-        Iterator objStateIter = fRemovedObjects.iterator();
-        while ( objStateIter.hasNext() ) {
-            MObject obj = ( MObject ) objStateIter.next();
+        for (MObject obj : fRemovedObjects) {
             if ( undoChanges ) {
                 if ( obj instanceof MLinkObject ) {
                     sce.addNewLink( ( MLinkObject ) obj );
@@ -209,12 +202,9 @@ public final class MCmdDestroyObjects extends MCmd {
                 }
                 sce.addDeletedObject( obj );
             }
-
         }
-
-        Iterator linkIter = fRemovedLinks.iterator();
-        while (linkIter.hasNext() ) {
-            MLink link = (MLink) linkIter.next();
+        
+        for (MLink link : fRemovedLinks) {
             if ( !( link instanceof MLinkObject ) ) {
                 if ( undoChanges ) {
                     sce.addNewLink( link );
@@ -248,7 +238,7 @@ public final class MCmdDestroyObjects extends MCmd {
         return "Destroy object";
     }
     
-    public List getObjects() throws CommandFailedException{
+    public List<MObject> getObjects() throws CommandFailedException{
         return fObjects;
     }
 }

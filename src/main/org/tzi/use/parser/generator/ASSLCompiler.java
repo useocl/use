@@ -39,6 +39,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.use.ASTConstraintDefinition;
+import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.sys.MSystemState;
@@ -56,13 +57,13 @@ public class ASSLCompiler {
      * @param  err output stream for error messages
      * @return List the comiled procedures (GProcedure)
      */
-    public static List compileProcedures(MModel model,
+    public static List<GProcedure> compileProcedures(MModel model,
                                          InputStream in,
                                          String inName,
                                          PrintWriter err) {
         
-    	List astgProcList = new ArrayList();
-        List procedures = new ArrayList();  // GProcedure
+    	List<ASTGProcedure> astgProcList = new ArrayList<ASTGProcedure>();
+        List<GProcedure> procedures = new ArrayList<GProcedure>();
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
         
         ANTLRInputStream aInput;
@@ -87,7 +88,7 @@ public class ASSLCompiler {
             if (errHandler.errorCount() != 0 )
                 error = true;
             else {
-                Iterator astgproc = astgProcList.iterator();
+                Iterator<ASTGProcedure> astgproc = astgProcList.iterator();
                 while (astgproc.hasNext() && !error ) {
                     Context ctx = new Context(inName, err, null, null);
                     ctx.setModel(model);
@@ -98,7 +99,7 @@ public class ASSLCompiler {
                             error = true;
                         else {
                             boolean ignore = false;
-                            Iterator it = procedures.iterator();
+                            Iterator<GProcedure> it = procedures.iterator();
                             while (it.hasNext())
                                 if (((GProcedure) it.next()).getSignature().equals(proc.getSignature() ) ) {
                                     err.println("Warning: Ignoring redefinition of " + proc);
@@ -208,12 +209,12 @@ public class ASSLCompiler {
      * @param  err output stream for error messages
      * @return Collection the added invariants (MClassInvariant)
      */
-    public static Collection compileAndAddInvariants(MModel model,
+    public static Collection<MClassInvariant> compileAndAddInvariants(MModel model,
                                                      InputStream in,
                                                      String inName,
                                                      PrintWriter err) {
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
-        Collection addedInvs = null;
+        Collection<MClassInvariant> addedInvs = null;
         
         try {
         	ANTLRInputStream aInput = new ANTLRInputStream(in);
@@ -229,18 +230,21 @@ public class ASSLCompiler {
             // Parse the specification
             //Log.verbose("Parsing...");
             List consDefList = parser.invariantListOnly();
+            
             if (errHandler.errorCount() == 0 ) {
                 Context ctx = new Context(inName,
                                           err,
                                           null,
                                           new ModelFactory());
-                Collection existingInvs = model.classInvariants();
+                Collection<MClassInvariant> existingInvs = model.classInvariants();
                 ctx.setModel(model);
                 Iterator it = consDefList.iterator();
-                while (it.hasNext())
+                while (it.hasNext()) {
                     // adds the class invariants to the given model
                     ((ASTConstraintDefinition) it.next()).gen(ctx);
-                addedInvs = new ArrayList(model.classInvariants());
+                }
+                
+                addedInvs = new ArrayList<MClassInvariant>(model.classInvariants());
                 addedInvs.removeAll(existingInvs);
             }
         } catch (RecognitionException e) {

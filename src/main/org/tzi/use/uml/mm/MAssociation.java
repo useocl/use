@@ -44,7 +44,7 @@ public interface MAssociation extends MModelElement {
      *
      * @return List(MAssociationEnd)
      */
-    List associationEnds();
+    List<MAssociationEnd> associationEnds();
 
     /**
      * Returns the list of reachable navigation ends from
@@ -52,21 +52,21 @@ public interface MAssociation extends MModelElement {
      *
      * @return List(MAssociationEnd)
      */
-    List reachableEnds();
+    List<MAssociationEnd> reachableEnds();
     
     /**
      * Returns the set of association ends attached to <code>cls</code>.
      *
      * @return Set(MAssociationEnd)
      */
-    Set associationEndsAt(MClass cls);
+    Set<MAssociationEnd> associationEndsAt(MClass cls);
 
     /**
      * Returns the set of classes participating in this association.
      *
      * @return Set(MClass).
      */
-    Set associatedClasses();
+    Set<MClass> associatedClasses();
 
     /**
      * Returns kind of association. This operation returns aggregate
@@ -99,7 +99,7 @@ public interface MAssociation extends MModelElement {
      * @return List(MAssociationEnd)
      * @exception IllegalArgumentException cls is not part of this association.  
      */
-    List navigableEndsFrom(MClass cls);
+    List<MNavigableElement> navigableEndsFrom(MClass cls);
 
     /**
      * Returns the position in the defined USE-Model.

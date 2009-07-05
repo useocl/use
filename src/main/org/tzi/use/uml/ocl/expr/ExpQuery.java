@@ -100,16 +100,14 @@ public abstract class ExpQuery extends Expression {
         CollectionValue rangeVal = (CollectionValue) v;
 
         // prepare result value
-        ArrayList resValues = new ArrayList();
+        ArrayList<Value> resValues = new ArrayList<Value>();
         Type elemType = rangeVal.elemType();
         if (!rangeVal.type().isSetBagOrSequence())
             throw new RuntimeException("rangeVal is not of collection type: "
                     + rangeVal.type());
 
         // loop over range elements
-        Iterator collIter = rangeVal.iterator();
-        while (collIter.hasNext()) {
-            Value elemVal = (Value) collIter.next();
+        for (Value elemVal : rangeVal) {
 
             // bind element variable to range element, if variable was
             // declared
@@ -167,11 +165,9 @@ public abstract class ExpQuery extends Expression {
     private final boolean evalExistsOrForAll0(int nesting,
             CollectionValue rangeVal, EvalContext ctx, boolean doExists) {
         // loop over range elements
-        Iterator collIter = rangeVal.iterator();
         boolean res = !doExists;
-        // while (res != doExists && collIter.hasNext() ) {
-        while (collIter.hasNext()) {
-            Value elemVal = (Value) collIter.next();
+        
+        for (Value elemVal : rangeVal) {
 
             // bind element variable to range element, if variable was
             // declared
@@ -225,12 +221,10 @@ public abstract class ExpQuery extends Expression {
         CollectionValue rangeVal = (CollectionValue) v;
 
         // prepare result value
-        ArrayList resValues = new ArrayList();
+        ArrayList<Value> resValues = new ArrayList<Value>();
 
         // loop over range elements
-        Iterator collIter = rangeVal.iterator();
-        while (collIter.hasNext()) {
-            Value elemVal = (Value) collIter.next();
+        for (Value elemVal : rangeVal) {
 
             // bind element variable to range element, if variable was
             // declared
@@ -265,12 +259,10 @@ public abstract class ExpQuery extends Expression {
         CollectionValue rangeVal = (CollectionValue) v;
 
         // collect values for finding duplicates
-        Set values = new HashSet();
+        Set<Value> values = new HashSet<Value>();
 
         // loop over range elements
-        Iterator collIter = rangeVal.iterator();
-        while (collIter.hasNext()) {
-            Value elemVal = (Value) collIter.next();
+        for (Value elemVal : rangeVal) {
 
             // bind element variable to range element, if variable was
             // declared
@@ -304,12 +296,10 @@ public abstract class ExpQuery extends Expression {
             return new UndefinedValue(type());
         CollectionValue rangeVal = (CollectionValue) v;
 
-        ArrayList keyValList = new ArrayList();
+        ArrayList<KeyValPair> keyValList = new ArrayList<KeyValPair>();
 
         // loop over range elements
-        Iterator collIter = rangeVal.iterator();
-        while (collIter.hasNext()) {
-            Value elemVal = (Value) collIter.next();
+        for( Value elemVal : rangeVal) {
 
             // bind element variable to range element, if variable was
             // declared
@@ -326,21 +316,23 @@ public abstract class ExpQuery extends Expression {
         }
 
         // sort elements by key
-        Collections.sort(keyValList, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                return ((KeyValPair) o1).fKey.compareTo(((KeyValPair) o2).fKey);
+        Collections.sort(keyValList, new Comparator<KeyValPair>() {
+            public int compare(KeyValPair o1, KeyValPair o2) {
+                return o1.fKey.compareTo(o2.fKey);
             }
         });
 
         // drop the keys from the list
-        ListIterator listIter = keyValList.listIterator();
+        ListIterator<KeyValPair> listIter = keyValList.listIterator();
+        Collection<Value> result = new ArrayList<Value>(keyValList.size());
+        
         while (listIter.hasNext()) {
-            KeyValPair kvp = (KeyValPair) listIter.next();
-            listIter.set(kvp.fElem);
+            KeyValPair kvp = listIter.next();
+            result.add(kvp.fElem);
         }
 
         Type rangeElemType = ((CollectionType) fRangeExp.type()).elemType();
-        return new SequenceValue(rangeElemType, keyValList);
+        return new SequenceValue(rangeElemType, result);
     }
 
     // used by evalSortedBy

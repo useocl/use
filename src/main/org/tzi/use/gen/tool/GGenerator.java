@@ -238,10 +238,11 @@ public class GGenerator {
         return invs;
     }
 
-    public List flaggedInvariants() {
-        List invs = new ArrayList( fGModel.flaggedInvariants() );
-        return invs;    
-    }
+	public List<GFlaggedInvariant> flaggedInvariants() {
+		List<GFlaggedInvariant> invs = new ArrayList<GFlaggedInvariant>(fGModel
+				.flaggedInvariants());
+		return invs;
+	}
 
     public GFlaggedInvariant flaggedInvariant (String name) {
         GFlaggedInvariant inv = null;

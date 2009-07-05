@@ -22,7 +22,6 @@
 package org.tzi.use.parser.cmd;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -41,10 +40,10 @@ import org.tzi.use.uml.sys.MCmdCreateAssignObjects;
  * @author  Fabian Buettner
  */
 public class ASTCreateAssignCmd extends ASTCmd {
-    private List fIdList;   // (MyToken)
+    private List<Token> fIdList;   // (MyToken)
     private ASTType fType;
 
-    public ASTCreateAssignCmd(List idList, ASTType type) {
+    public ASTCreateAssignCmd(List<Token> idList, ASTType type) {
         fIdList = idList;
         fType = type;
     }
@@ -58,10 +57,9 @@ public class ASTCreateAssignCmd extends ASTCmd {
                                             "Expected object type, found `" + t + "'.");
             } else {
                 // map token list to string list
-                List nameList = new ArrayList();
-                Iterator it = fIdList.iterator();
-                while (it.hasNext() ) {
-                    Token tok = (Token) it.next();
+                List<String> nameList = new ArrayList<String>();
+                
+                for (Token tok : fIdList) {
                     nameList.add(tok.getText());
                 }
 

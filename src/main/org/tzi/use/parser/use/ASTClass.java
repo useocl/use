@@ -22,7 +22,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -47,20 +46,20 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 public class ASTClass extends AST {
     protected Token fName;
     protected boolean fIsAbstract;
-    protected List fSuperClasses; // (MyToken) optional: may be null
-    protected List fAttributes;   // (ASTAttribute)
-    protected List fOperations;   // (ASTOperation)
-    protected List fConstraints;  // (ASTConstraint)
+    protected List<Token> fSuperClasses;
+    protected List<ASTAttribute> fAttributes;
+    protected List<ASTOperation> fOperations;
+    protected List<ASTConstraintDefinition> fConstraints;
     private MClass fClass;  // the class is constructed in several passes, see genXXX methods below
-    protected ArrayList fInvariantClauses; // (ASTInvariantClause)
+    protected ArrayList<ASTInvariantClause> fInvariantClauses;
 
     public ASTClass(Token name, boolean isAbstract) {
         fName = name;
         fIsAbstract = isAbstract;
-        fAttributes = new ArrayList();
-        fOperations = new ArrayList();
-        fConstraints = new ArrayList();
-        fInvariantClauses = new ArrayList();
+        fAttributes = new ArrayList<ASTAttribute>();
+        fOperations = new ArrayList<ASTOperation>();
+        fConstraints = new ArrayList<ASTConstraintDefinition>();
+        fInvariantClauses = new ArrayList<ASTInvariantClause>();
     }
 
     public void addAttribute(ASTAttribute a) {
@@ -71,11 +70,7 @@ public class ASTClass extends AST {
         fOperations.add(op);
     }
 
-    //      public void addConstraint(ASTConstraint c) {
-    //      fConstraints.add(c);
-    //      }
-
-    public void addSuperClasses(List idList) {
+    public void addSuperClasses(List<Token> idList) {
         fSuperClasses = idList;
     }
 
@@ -103,12 +98,11 @@ public class ASTClass extends AST {
     public void genAttributesOperationSignaturesAndGenSpec(Context ctx) {
         ctx.setCurrentClass(fClass);
         if (fSuperClasses != null ) {
-            Iterator it = fSuperClasses.iterator();
-            while (it.hasNext() ) {
-            	Token id = (Token) it.next();
-
+        	
+            for(Token id : fSuperClasses) {
                 // lookup parent by name
                 MClass parent = ctx.model().getClass(id.getText());
+                
                 if (parent == null )
                     ctx.reportError(id, "Undefined class `" + id.getText() + "'.");
                 else {
@@ -127,9 +121,7 @@ public class ASTClass extends AST {
         }
 
         // add attributes
-        Iterator it = fAttributes.iterator();
-        while (it.hasNext() ) {
-            ASTAttribute a = (ASTAttribute) it.next();
+        for (ASTAttribute a : fAttributes ) {
             try {
                 MAttribute attr = a.gen(ctx);
                 fClass.addAttribute(attr);
@@ -142,9 +134,7 @@ public class ASTClass extends AST {
 
         // add operation signatures, expressions have to be generated
         // later when all class interfaces are known
-        it = fOperations.iterator();
-        while (it.hasNext() ) {
-            ASTOperation astOp = (ASTOperation) it.next();
+        for (ASTOperation astOp : fOperations ) {
             try {
                 MOperation op = astOp.genSignature(ctx);
                 fClass.addOperation(op);
@@ -161,13 +151,11 @@ public class ASTClass extends AST {
 
     private void checkForInheritanceConflicts(MClass parent) throws SemanticException {
         //check for inheritance conflicts
-        for(Iterator itx=fClass.parents().iterator();itx.hasNext();) {
-            MClass op = (MClass)itx.next();
+        for(MClass op : fClass.parents()) {
             // check attributes
-            for(Iterator it1=op.allAttributes().iterator();it1.hasNext();) {
-                MAttribute opa = (MAttribute)it1.next();
-                for(Iterator it2=parent.allAttributes().iterator();it2.hasNext();) {
-                    MAttribute pa = (MAttribute)it2.next();
+            for(MAttribute opa : op.allAttributes()) {
+                
+            	for(MAttribute pa : parent.allAttributes()) {
                     if (pa.name().equals(opa.name()) && !pa.type().equals(opa.type())) {
                         throw new SemanticException(fName,"Inheritance conflict: attribute " + pa.name() +
                                 " occurs with different types in the base classes of " + 
@@ -175,11 +163,10 @@ public class ASTClass extends AST {
                     }
                 }
             }
+            
             // check operations
-            for(Iterator it3=op.allOperations().iterator();it3.hasNext();) {
-                MOperation opo = (MOperation)it3.next();
-                for(Iterator it4=parent.allOperations().iterator();it4.hasNext();) {
-                    MOperation po = (MOperation)it4.next();
+            for(MOperation opo : op.allOperations()) {
+                for(MOperation po : parent.allOperations()) {
                     if (po.name().equals(opo.name()) && !po.signature().equals(opo.signature())) {
                         throw new SemanticException(fName,"Inheritance conflict: operation " + po.name() +
                                 " occurs with different signatures in the base classes of " + 
@@ -211,9 +198,7 @@ public class ASTClass extends AST {
 
 
         // generate operation bodies
-        Iterator it = fOperations.iterator();
-        while (it.hasNext() ) {
-            ASTOperation astOp = (ASTOperation) it.next();
+        for (ASTOperation astOp : fOperations) {
             try {
                 astOp.genFinal(ctx);
             } catch (SemanticException ex) {
@@ -222,9 +207,7 @@ public class ASTClass extends AST {
         }
 
         // add class invariants
-        it = fInvariantClauses.iterator();
-        while (it.hasNext() ) {
-            ASTInvariantClause astInv = (ASTInvariantClause) it.next();
+        for (ASTInvariantClause astInv : fInvariantClauses) {
             astInv.gen(ctx, null, fClass);
         }
 

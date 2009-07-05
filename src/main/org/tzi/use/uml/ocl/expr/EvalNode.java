@@ -39,13 +39,13 @@ import org.tzi.use.uml.ocl.value.VarBindings.Entry;
  * @author Mark Richters
  */
 public class EvalNode {
-    private List fChildren; // (EvalNode)
+    private List<EvalNode> fChildren;
 
     private Expression fExpr;
 
     private Value fResult;
 
-    private Vector fVarBindings; // for the var bindings window in the
+    private Vector<Entry> fVarBindings; // for the var bindings window in the
 
     // ExprEvalBrowser
 
@@ -73,7 +73,7 @@ public class EvalNode {
      * @param vars
      *            the var-bindings
      */
-    public EvalNode(Vector vars) {
+    public EvalNode(Vector<Entry> vars) {
         fVarBindings = vars;
     }
 
@@ -83,25 +83,24 @@ public class EvalNode {
      * @param fVarBindings
      */
     public EvalNode(VarBindings fVarBindings) {
-        this.fVarBindings = new Vector();
-        Iterator it = fVarBindings.iterator();
+        this.fVarBindings = new Vector<Entry>();
+        Iterator<Entry> it = fVarBindings.iterator();
         
         while (it.hasNext()) {
-            Entry entry = (Entry) it.next();
+            Entry entry = it.next();
             this.fVarBindings.add(entry);
         }
-
     }
 
     void addChild(EvalNode n) {
         if (fChildren == null)
-            fChildren = new ArrayList();
+            fChildren = new ArrayList<EvalNode>();
         fChildren.add(n);
     }
 
-    public List children() {
+    public List<EvalNode> children() {
         if (fChildren == null)
-            return new ArrayList();
+            return new ArrayList<EvalNode>();
         else
             return fChildren;
     }
@@ -221,7 +220,7 @@ public class EvalNode {
         return fVarAss != null;
     }
 
-    public Vector getVarBindings() {
+    public Vector<Entry> getVarBindings() {
         return fVarBindings;
     }
 
@@ -277,7 +276,7 @@ public class EvalNode {
                 return fVarAss;
 
         String ret = "";
-        HashSet stoken = new HashSet();
+        HashSet<Character> stoken = new HashSet<Character>();
         stoken.add(new Character(' '));
         stoken.add(new Character('<'));
         stoken.add(new Character('>'));
@@ -327,7 +326,7 @@ public class EvalNode {
      */
     public String substituteVariables(String term) {
         String ret = "";
-        HashSet stoken = new HashSet();
+        HashSet<Character> stoken = new HashSet<Character>();
         stoken.add(new Character(' '));
         stoken.add(new Character('<'));
         stoken.add(new Character('>'));

@@ -39,41 +39,41 @@ public class StateChangeEvent extends EventObject {
 	 */
 	private static final long serialVersionUID = 6548177260846525532L;
 	
-	private List fNewObjects;
-    private List fDeletedObjects;
-    private List fModifiedObjects;
-    private List fNewLinks;
-    private List fDeletedLinks;
+	private List<MObject> fNewObjects;
+    private List<MObject> fDeletedObjects;
+    private List<MObject> fModifiedObjects;
+    private List<MLink> fNewLinks;
+    private List<MLink> fDeletedLinks;
 
     /**
      * Constructs a StateChangeEvent object.
      */
     StateChangeEvent(Object source) {
         super(source);
-        fNewObjects = new ArrayList();
-        fDeletedObjects = new ArrayList();
-        fModifiedObjects = new ArrayList();
-        fNewLinks = new ArrayList();
-        fDeletedLinks = new ArrayList();
+        fNewObjects = new ArrayList<MObject>();
+        fDeletedObjects = new ArrayList<MObject>();
+        fModifiedObjects = new ArrayList<MObject>();
+        fNewLinks = new ArrayList<MLink>();
+        fDeletedLinks = new ArrayList<MLink>();
     }
 
-    public List getNewObjects() {
+    public List<MObject> getNewObjects() {
         return fNewObjects;
     }
 
-    public List getDeletedObjects() {
+    public List<MObject> getDeletedObjects() {
         return fDeletedObjects;
     }
 
-    public List getModifiedObjects() {
+    public List<MObject> getModifiedObjects() {
         return fModifiedObjects;
     }
 
-    public List getNewLinks() {
+    public List<MLink> getNewLinks() {
         return fNewLinks;
     }
 
-    public List getDeletedLinks() {
+    public List<MLink> getDeletedLinks() {
         return fDeletedLinks;
     }
 
@@ -115,4 +115,3 @@ public class StateChangeEvent extends EventObject {
             ", deleted links: " + fDeletedLinks;
     }
 }
-

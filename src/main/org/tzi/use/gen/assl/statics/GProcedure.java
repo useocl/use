@@ -24,13 +24,12 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.tzi.use.gen.tool.GSignature;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.util.StringUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -38,15 +37,15 @@ import java.util.Iterator;
  */
 public class GProcedure {
     private String fName;
-    private List fParameterDecls; // VarDecl
-    private List fLocalDecls; // VarDecl
+    private List<VarDecl> fParameterDecls;
+    private List<VarDecl> fLocalDecls;
     private GInstructionList fInstructionList;
     private GSignature signature = null;
     
     public GProcedure(String name) {
         fName = name;
-        fParameterDecls = new ArrayList();
-        fLocalDecls = new ArrayList();
+        fParameterDecls = new ArrayList<VarDecl>();
+        fLocalDecls = new ArrayList<VarDecl>();
         fInstructionList = new GInstructionList();
     }
 
@@ -66,11 +65,11 @@ public class GProcedure {
         fInstructionList.add(instruction);
     }
 
-    public List parameterDecls() {
+    public List<VarDecl> parameterDecls() {
         return fParameterDecls;
     }
     
-    public List localDecls() {
+    public List<VarDecl> localDecls() {
         return fLocalDecls;
     }
     
@@ -79,11 +78,11 @@ public class GProcedure {
     }
 
     private List<Type> getParameterTypes() {
-        Iterator it = parameterDecls().iterator();
         ArrayList<Type> types = new ArrayList<Type>();
-        
-        while (it.hasNext())
-            types.add( ((VarDecl) it.next()).type() );
+
+        for (VarDecl decl : parameterDecls()) {
+            types.add( decl.type() );
+        }
         
         return types;
     }

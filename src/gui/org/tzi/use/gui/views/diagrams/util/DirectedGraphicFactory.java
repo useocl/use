@@ -52,7 +52,7 @@ public class DirectedGraphicFactory {
         return new SimpleDirectedGraphic();
     }
 
-    public static I_DirectedGraphic createFilledDirectedGraphic(final ArrayList lines) {
+    public static I_DirectedGraphic createFilledDirectedGraphic(final ArrayList<I_DirectedLine> lines) {
         return new FilledDirectedGraphic(lines);
     }
 }

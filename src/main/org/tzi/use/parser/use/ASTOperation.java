@@ -22,7 +22,6 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -50,23 +49,23 @@ import org.tzi.use.uml.ocl.type.Type;
  */
 public class ASTOperation extends AST {
     private Token fName;
-    private List fParamList;    // (ASTVariableDeclaration)
+    private List<ASTVariableDeclaration> fParamList;
     private ASTType fType;  // (optional)
     private ASTExpression fExpr; // (optional)
     private MOperation fOperation; // the operation is generated in two passes
-    private List fPrePostClauses;
+    private List<ASTPrePostClause> fPrePostClauses;
     
     // for UML AL
     private ASTALAction fExecutableBody;
 
-    public ASTOperation(Token name, List paramList, 
+    public ASTOperation(Token name, List<ASTVariableDeclaration> paramList, 
                         ASTType t, ASTExpression expr, ASTALActionList list) {
         fName = name;
         fParamList = paramList;
         fType = t;
         fExpr = expr;
         fOperation = null;
-        fPrePostClauses = new ArrayList();
+        fPrePostClauses = new ArrayList<ASTPrePostClause>();
         fExecutableBody = list;
     }
 
@@ -79,9 +78,8 @@ public class ASTOperation extends AST {
     {
         // map params to VarDeclList
         VarDeclList varDeclList = new VarDeclList(false);
-        Iterator it = fParamList.iterator();
-        while (it.hasNext() ) {
-            ASTVariableDeclaration astDecl = (ASTVariableDeclaration) it.next();
+
+        for (ASTVariableDeclaration astDecl : fParamList) {
             VarDecl decl = astDecl.gen(ctx);
             try {
                 varDeclList.add(decl);
@@ -123,9 +121,7 @@ public class ASTOperation extends AST {
         Symtable vars = ctx.varTable();
         vars.enterScope();
 
-        Iterator it = fParamList.iterator();
-        while (it.hasNext() ) {
-            ASTVariableDeclaration astDecl = (ASTVariableDeclaration) it.next();
+        for (ASTVariableDeclaration astDecl : fParamList) {
             VarDecl decl = astDecl.gen(ctx);
             vars.add(astDecl.name(), decl.type());
         }
@@ -147,9 +143,7 @@ public class ASTOperation extends AST {
                 fOperation.setExpression(expr);
             }
 
-            it = fPrePostClauses.iterator();
-            while (it.hasNext() ) {
-                ASTPrePostClause ppc = (ASTPrePostClause) it.next();
+            for (ASTPrePostClause ppc : fPrePostClauses) {
                 ppc.gen(ctx, ctx.currentClass(), fOperation);
             }
         } catch (MInvalidModelException ex) {

@@ -19,7 +19,6 @@
 package org.tzi.use.uml.al;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MMVisitor;
@@ -33,27 +32,25 @@ import org.tzi.use.uml.sys.MSystemException;
  * @author green
  */
 public class ALActionList extends ALAction {
-    private List fActions = new ArrayList();
+    private List<ALAction> fActions = new ArrayList<ALAction>();
     
     public void add(ALAction action) {
         fActions.add(action);
     }
     
-    public List getActions() { 
+    public List<ALAction> getActions() { 
         return fActions;
     }
     
     public void exec(EvalContext ctx) throws MSystemException {
-        for (Iterator it = fActions.iterator(); it.hasNext();) {
-            ALAction action = (ALAction) it.next();
+        for (ALAction action : fActions) {
             action.exec(ctx);
         }
     }
 
     public String toString() {
         String res="";
-        for (Iterator it=fActions.iterator(); it.hasNext();) {
-            ALAction action = (ALAction)it.next();
+        for (ALAction action : fActions) {
             res = res + action.toString() + " ";
         }
         return res;

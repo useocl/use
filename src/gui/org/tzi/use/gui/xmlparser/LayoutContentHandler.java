@@ -524,8 +524,8 @@ public class LayoutContentHandler extends ContentHandler {
         if ( fCtx.getSource() != null && fCtx.getTarget() != null ) {
             // EDGE
             Set edges = 
-                fCtx.getSystem().model().generalizationGraph().edgesBetween( fCtx.getSource(),
-                                                                             fCtx.getTarget() );
+                fCtx.getSystem().model().generalizationGraph().edgesBetween( (MClass)fCtx.getSource(),
+                                                                             (MClass)fCtx.getTarget() );
 //            System.out.println("source: "+fCtx.getSource());
 //            System.out.println("target: "+fCtx.getTarget());
 //            System.out.println("edges: "+edges.size());
