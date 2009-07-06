@@ -81,7 +81,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
      */
     public void testDestroySingleObject() {   
         try{
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "a1" );        
             MCmd createObjects = new MCmdCreateObjects( system.state(), names, 
                                                        TypeFactory.mkObjectType( a ) );
@@ -112,7 +112,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
      */
     public void testDestroyObjectsWithDifferentTypes() {
         try{
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             // create two objects of class `A'
             names.add( "a1" );        
             names.add( "a2" );        
@@ -121,7 +121,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
             createObjects.execute();
 
             // create two objects of class `B'
-            names = new ArrayList();
+            names = new ArrayList<String>();
             names.add( "b1" );        
             names.add( "b2" );        
             createObjects = new MCmdCreateObjects( system.state(), names, 
@@ -129,7 +129,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
             createObjects.execute();
             
             // create two objects of class `C'
-            names = new ArrayList();
+            names = new ArrayList<String>();
             names.add( "c1" );        
             names.add( "c2" );        
             createObjects = new MCmdCreateObjects( system.state(), names, 

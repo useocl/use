@@ -56,18 +56,14 @@ class ModelToGraph {
         //              "splines: yes" + nl + 
 
         // add class vertices to graph
-        Iterator clsIter = model.classes().iterator();
-        while (clsIter.hasNext() ) {
-            MClass cls = (MClass) clsIter.next();
+        for (MClass cls : model.classes()) {
             String s = cls.name();
-            Iterator iter = cls.attributes().iterator();
-            while (iter.hasNext() ) {
-                MAttribute attr = (MAttribute) iter.next();
-                s += "\\n" + attr;
+
+            for (MAttribute attr : cls.attributes()) {
+                s += "\\n" + attr.toString();
             }
-            iter = cls.operations().iterator();
-            while (iter.hasNext() ) {
-                MOperation op = (MOperation) iter.next();
+        
+            for (MOperation op : cls.operations()) {
                 s += "\\n" + op.signature();
             }
             out.println("  node: { title: \"" + cls.name() + 
@@ -75,14 +71,13 @@ class ModelToGraph {
         }
 
         // add association edges to graph
-        Iterator assocIter = model.associations().iterator();
-        while (assocIter.hasNext() ) {
-            MAssociation assoc = (MAssociation) assocIter.next();
+        for (MAssociation assoc : model.associations()) {
             String aname = assoc.name();
-            List aendList = assoc.associationEnds();
+            List<MAssociationEnd> aendList = assoc.associationEnds();
             if (aendList.size() == 2 ) {
-                MAssociationEnd aend0 = (MAssociationEnd) aendList.get(0);
-                MAssociationEnd aend1 = (MAssociationEnd) aendList.get(1);
+                MAssociationEnd aend0 = aendList.get(0);
+                MAssociationEnd aend1 = aendList.get(1);
+                
                 out.println("  edge: { sourcename: \"" + aend0.cls().name() + 
                             "\" targetname: \"" + aend1.cls().name() + 
                             "\" label: \"" + aname +
@@ -94,9 +89,7 @@ class ModelToGraph {
                             "\" shape: rhomb }");
 
                 // edges from classes to diamond
-                Iterator aendIter = aendList.iterator();
-                while (aendIter.hasNext() ) {
-                    MAssociationEnd aend = (MAssociationEnd) aendIter.next();
+                for (MAssociationEnd aend : aendList) {
                     out.println("  edge: { sourcename: \"" + aend.cls().name() + 
                                 "\" targetname: \"" + aname +
                                 "\" arrowstyle : none }");
@@ -105,10 +98,11 @@ class ModelToGraph {
         }
 
         // add generalization edges to graph
-        DirectedGraph genGraph = model.generalizationGraph();
-        Iterator edgeIter = genGraph.edgeIterator();
+        DirectedGraph<MClass, MGeneralization> genGraph = model.generalizationGraph();
+        Iterator<MGeneralization> edgeIter = genGraph.edgeIterator();
+        
         while (edgeIter.hasNext() ) {
-            MGeneralization gen = (MGeneralization) edgeIter.next();
+            MGeneralization gen = edgeIter.next();
 
             out.println("  bentnearedge: { sourcename: \"" + gen.child().name() + 
                         "\" targetname: \"" + gen.parent().name() + 
@@ -119,4 +113,3 @@ class ModelToGraph {
         out.flush();
     }
 }
-

@@ -83,28 +83,28 @@ public final class MCmdExecute extends MCmd {
      * @param undoChanges get information about undo action of command.
      */
     public void getChanges(StateChangeEvent sce, boolean undoChanges) {
-        HashSet deletedObjects = new HashSet(fPreState.allObjects());
+        HashSet<MObject> deletedObjects = new HashSet<MObject>(fPreState.allObjects());
         deletedObjects.removeAll(fSystemState.allObjects());
-        for (Iterator it=deletedObjects.iterator(); it.hasNext();) {
-            sce.addDeletedObject((MObject)it.next());
+        for (MObject obj : deletedObjects) {
+            sce.addDeletedObject(obj);
         }
         
-        HashSet createdObjects = new HashSet(fSystemState.allObjects());
+        HashSet<MObject> createdObjects = new HashSet<MObject>(fSystemState.allObjects());
         createdObjects.removeAll(fPreState.allObjects());
-        for (Iterator it=createdObjects.iterator(); it.hasNext();) {
-            sce.addNewObject((MObject)it.next());
+        for (MObject obj : createdObjects) {
+            sce.addNewObject(obj);
         }
 
-        HashSet deletedLinks = new HashSet(fPreState.allLinks());
+        HashSet<MLink> deletedLinks = new HashSet<MLink>(fPreState.allLinks());
         deletedLinks.removeAll(fSystemState.allLinks());
-        for (Iterator it=deletedLinks.iterator(); it.hasNext();) {
-            sce.addDeletedLink((MLink)it.next());
+        for (MLink link : deletedLinks) {
+            sce.addDeletedLink(link);
         }
 
-        HashSet createdLinks = new HashSet(fSystemState.allLinks());
+        HashSet<MLink> createdLinks = new HashSet<MLink>(fSystemState.allLinks());
         createdLinks.removeAll(fPreState.allLinks());
-        for (Iterator it=createdLinks.iterator(); it.hasNext();) {
-            sce.addNewLink((MLink)it.next());
+        for (MLink link : createdLinks) {
+            sce.addNewLink(link);
         }
         
     }

@@ -22,8 +22,6 @@
 package org.tzi.use.uml.mm;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.uml.al.ALAction;
@@ -131,13 +129,12 @@ public class MMPrintVisitor implements MMVisitor {
 
     private void visitAssociationEnds( MAssociation e ) {
         // visit association ends
-        Iterator it = e.associationEnds().iterator();
-        while (it.hasNext() ) {
-            MAssociationEnd assocEnd = (MAssociationEnd) it.next();
+        for (MAssociationEnd assocEnd : e.associationEnds()) {
             assocEnd.processWithVisitor(this);
         }
+        
         decIndent();
-        indent();        
+        indent();
     }
     
     public void visitAssociationClass( MAssociationClass e ) {
@@ -147,7 +144,7 @@ public class MMPrintVisitor implements MMVisitor {
         }
         print( keyword( "associationclass" ) + ws() + id( e.name() ) );
 
-        Set parents = e.parents();
+        Set<MClass> parents = e.parents();
         if ( !parents.isEmpty() ) {
             fOut.print( ws() + other( "<" ) + ws() +
                         other( StringUtil.fmtSeq( parents.iterator(), "," ) ) );
@@ -187,23 +184,14 @@ public class MMPrintVisitor implements MMVisitor {
                 other(e.type().toString()));
     }
 
-    protected List getAttributesForClass( MClass e ) {
-        return e.attributes();
-    }
-    
-    protected List getOperationsForClass( MClass e ) {
-        return e.operations();
-    }
-
     private void visitAttributesAndOperations( MClass e ) {
         // visit attributes
         if (e.attributes().size() > 0 ) {
             indent();
             println(keyword("attributes"));
             incIndent();
-            Iterator it = getAttributesForClass(e).iterator();
-            while (it.hasNext() ) {
-                MAttribute attr = (MAttribute) it.next();
+            
+            for (MAttribute attr : e.attributes()) {
                 attr.processWithVisitor(this);
             }
             decIndent();
@@ -214,11 +202,11 @@ public class MMPrintVisitor implements MMVisitor {
             indent();
             println(keyword("operations"));
             incIndent();
-            Iterator it = getOperationsForClass(e).iterator();
-            while (it.hasNext() ) {
-                MOperation op = (MOperation) it.next();
+            
+            for (MOperation op : e.operations()) {
                 op.processWithVisitor(this);
             }
+            
             decIndent();
         }
     }
@@ -229,7 +217,7 @@ public class MMPrintVisitor implements MMVisitor {
             print(keyword("abstract") + ws());
         print(keyword("class") + ws() + id(e.name()));
 
-        Set parents = e.parents();
+        Set<MClass> parents = e.parents();
         if (! parents.isEmpty() ) {
             fOut.print(ws() + other("<") + ws() + 
                        other(StringUtil.fmtSeq(parents.iterator(), ",")));
@@ -237,46 +225,7 @@ public class MMPrintVisitor implements MMVisitor {
         println();
         
         visitAttributesAndOperations( e );
-
-//        // visit attributes
-//        if (e.attributes().size() > 0 ) {
-//            indent();
-//            println(keyword("attributes"));
-//            incIndent();
-//            Iterator it = e.attributes().iterator();
-//            while (it.hasNext() ) {
-//                MAttribute attr = (MAttribute) it.next();
-//                attr.processWithVisitor(this);
-//            }
-//            decIndent();
-//        }
-//
-//        // visit operations
-//        if (e.operations().size() > 0 ) {
-//            indent();
-//            println(keyword("operations"));
-//            incIndent();
-//            Iterator it = e.operations().iterator();
-//            while (it.hasNext() ) {
-//                MOperation op = (MOperation) it.next();
-//                op.processWithVisitor(this);
-//            }
-//            decIndent();
-//        }
-
-        // visit constraints
-        //      if (e.numConstraints() > 0 ) {
-        //          indent();
-        //          println(keyword("constraints"));
-        //          incIndent();
-        //          Iterator it = e.constraints();
-        //          while (it.hasNext() ) {
-        //          MConstraint cons = (MConstraint) it.next();
-        //          cons.processWithVisitor(this);
-        //          }
-        //          decIndent();
-        //      }
-
+        
         indent();
         println(keyword("end")); 
     }
@@ -303,9 +252,7 @@ public class MMPrintVisitor implements MMVisitor {
         println();
     
         // print user-defined data types
-        Iterator it = e.enumTypes().iterator();
-        while (it.hasNext() ) {
-            EnumType t = (EnumType) it.next();
+        for (EnumType t : e.enumTypes()) {
             indent();
             println(keyword("enum") + ws() + other(t.toString()) + ws() + 
                     other("{") + ws() +
@@ -315,17 +262,13 @@ public class MMPrintVisitor implements MMVisitor {
         println();
 
         // visit classes
-        it = e.classes().iterator();
-        while (it.hasNext() ) {
-            MClass cls = (MClass) it.next();
+        for (MClass cls : e.classes()) {
             cls.processWithVisitor(this);
             println();
         }
 
         // visit associations
-        it = e.associations().iterator();
-        while (it.hasNext() ) {
-            MAssociation assoc = (MAssociation) it.next();
+        for (MAssociation assoc : e.associations()) {
             assoc.processWithVisitor(this);
             println();
         }
@@ -335,17 +278,13 @@ public class MMPrintVisitor implements MMVisitor {
         println(keyword("constraints"));
 
         // invariants
-        it = e.classInvariants().iterator();
-        while (it.hasNext() ) {
-            MClassInvariant inv = (MClassInvariant) it.next();
+        for (MClassInvariant inv : e.classInvariants()) {
             inv.processWithVisitor(this);
             println();
         }
 
         // pre-/postconditions
-        it = e.prePostConditions().iterator();
-        while (it.hasNext() ) {
-            MPrePostCondition ppc = (MPrePostCondition) it.next();
+        for (MPrePostCondition ppc : e.prePostConditions()) {
             ppc.processWithVisitor(this);
             println();
         }
@@ -399,8 +338,7 @@ public class MMPrintVisitor implements MMVisitor {
     }
 
     public void visitALActionList(ALActionList e) {
-        for (Iterator it = e.getActions().iterator(); it.hasNext();) {
-            ALAction action = (ALAction) it.next();
+        for (ALAction action : e.getActions()) {
             action.processWithVisitor(this);
         }
     }

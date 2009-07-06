@@ -29,7 +29,6 @@
 
 package org.tzi.use.parser.generator;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -42,12 +41,15 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
 
 public class ASTGProcedure extends AST {
     private Token fName;
-    private List fParameterDecls; // ASTVariableDeclaration
-    private List fLocalDecls; // ASTVariableDeclaration
-    private List fInstructions; // ASTGInstruction
+    private List<ASTVariableDeclaration> fParameterDecls;
+    private List<ASTVariableDeclaration> fLocalDecls;
+    private List<ASTGInstruction> fInstructions;
 
     public ASTGProcedure (
-    		Token name, List parameterDecls, List localDecls, List instructions ) {
+    		Token name, 
+    		List<ASTVariableDeclaration> parameterDecls, 
+    		List<ASTVariableDeclaration> localDecls, 
+    		List<ASTGInstruction> instructions ) {
         fName = name;
         fParameterDecls = parameterDecls;
         fLocalDecls = localDecls;
@@ -56,39 +58,32 @@ public class ASTGProcedure extends AST {
 
     public GProcedure gen(Context ctx) throws SemanticException {
         GProcedure proc = new GProcedure(fName.getText());
-        Iterator it;
 
         ctx.varTable().enterScope();
         try {
-            it = fParameterDecls.iterator();
-            while (it.hasNext() ) {
-                ASTVariableDeclaration astvardecl = (ASTVariableDeclaration) it.next();
+            for (ASTVariableDeclaration astvardecl : fParameterDecls) {
                 VarDecl vardecl = astvardecl.gen(ctx);
                 ctx.varTable().add( astvardecl.name(), vardecl.type() );
                 // throws an exception when variable is redefined
                 proc.addParameterDecl( vardecl );
             }
-        
-            it = fLocalDecls.iterator();
-            while (it.hasNext() ) {
-                ASTVariableDeclaration astvardecl = (ASTVariableDeclaration) it.next();
+
+            for (ASTVariableDeclaration astvardecl : fLocalDecls) {
                 VarDecl vardecl = astvardecl.gen(ctx);
                 ctx.varTable().add( astvardecl.name(), vardecl.type() );
                 // throws an exception when variable is redefined
                 proc.addLocalDecl( vardecl );
             }
-        
-            it = fInstructions.iterator();
-            while (it.hasNext() ) {
-                proc.addInstruction(
-                                    ((ASTGInstruction) it.next()).gen(ctx) );
+            
+            for (ASTGInstruction ins : fInstructions) {
+                proc.addInstruction( ins.gen(ctx) );
             }
         
         } catch (SemanticException ex ) {
             ctx.reportError(ex);
         }
-        // Fixme: Decentralize the exception handling to allow more
-        // error messages at once?
+        
+        // FIXME: Decentralize the exception handling to allow more error messages at once?
 
         ctx.varTable().exitScope();
 

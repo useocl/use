@@ -101,8 +101,8 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      *
      * @return List(MAssociationEnd)
      */
-    public List<MAssociationEnd> reachableEnds() {
-        return associationEnds();
+    public List<MNavigableElement> reachableEnds() {
+        return new ArrayList<MNavigableElement>(associationEnds());
     }
 
     /**

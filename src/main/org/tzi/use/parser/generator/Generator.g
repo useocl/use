@@ -64,8 +64,8 @@ import org.tzi.use.parser.ParseErrorHandler;
 /* ------------------------------------
   invariantListOnly ::= { invariant }
 */
-invariantListOnly returns [List invariantList] 
-@init { $invariantList = new ArrayList(); } 
+invariantListOnly returns [List<ASTConstraintDefinition> invariantList] 
+@init { $invariantList = new ArrayList<ASTConstraintDefinition>(); } 
 :
     ( def=invariant { $invariantList.add($def.n); } )*
     EOF
@@ -116,8 +116,8 @@ oclExpression ::= "[" expression "]"
 /* ------------------------------------
 procedureListOnly ::= (procedure)*
 */
-procedureListOnly returns [List procedureList]
-@init{ $procedureList = new ArrayList(); }
+procedureListOnly returns [List<ASTGProcedure> procedureList]
+@init{ $procedureList = new ArrayList<ASTGProcedure>(); }
 :
     (
       proc=procedure { $procedureList.add($proc.proc); }

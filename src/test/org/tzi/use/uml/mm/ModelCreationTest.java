@@ -66,7 +66,7 @@ public class ModelCreationTest extends TestCase {
             MModel model = TestModelUtil.getInstance().createModelWithClasses();
             MSystem system = new MSystem( model );
 
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "p2" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
@@ -96,7 +96,7 @@ public class ModelCreationTest extends TestCase {
             MModel model = TestModelUtil.getInstance().createModelWithClassAndAssocs();
             MSystem system = new MSystem( model );
 
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "p2" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
@@ -113,10 +113,10 @@ public class ModelCreationTest extends TestCase {
             names.add( "p1" );
             names.add( "c1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
+                MObject obj =  system.state().objectByName( it.next() ); 
                 exprs[i++] = new ExpVariable( obj.name(), obj.type() );
             }
             cmd = new MCmdInsertLink( system.state(), exprs,

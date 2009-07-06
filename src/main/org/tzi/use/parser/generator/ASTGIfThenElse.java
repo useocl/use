@@ -30,7 +30,6 @@
 
 package org.tzi.use.parser.generator;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -43,13 +42,13 @@ import org.tzi.use.parser.SemanticException;
 public class ASTGIfThenElse extends ASTGInstruction {
     private Token fname;
     ASTGocl fCondition;
-    List fThenInstructions;
-    List fElseInstructions;
+    List<ASTGInstruction> fThenInstructions;
+    List<ASTGInstruction> fElseInstructions;
   
   
     public ASTGIfThenElse(ASTGocl condition,
-                          List thenInstructions,
-                          List elseInstructions,
+                          List<ASTGInstruction> thenInstructions,
+                          List<ASTGInstruction> elseInstructions,
                           Token t) {
         fCondition = condition;
         fThenInstructions = thenInstructions;
@@ -71,14 +70,12 @@ public class ASTGIfThenElse extends ASTGInstruction {
       
             ifThenElse.setConditionInstr( (GValueInstruction) condition );
       
-            Iterator it = fThenInstructions.iterator();
-            while (it.hasNext() ) {
-                ifThenElse.addThenInstruction( ((ASTGInstruction) it.next()).gen(ctx) );
+            for (ASTGInstruction ins : fThenInstructions) {
+                ifThenElse.addThenInstruction( ins.gen(ctx) );
             }
 
-            it = fElseInstructions.iterator();
-            while (it.hasNext() ) {
-                ifThenElse.addElseInstruction( ((ASTGInstruction) it.next()).gen(ctx) );
+            for (ASTGInstruction ins : fElseInstructions) {
+            	ifThenElse.addElseInstruction( ins.gen(ctx) );
             }
 
         } catch (SemanticException ex ) {

@@ -34,7 +34,7 @@ import org.tzi.use.util.StringUtil;
  * @author      Mark Richters 
  */
 public class VarDeclList {
-    private List fVarDecls;
+    private List<VarDecl> fVarDecls;
 
     /**
      * An additional constraint specifying that all declarations must
@@ -43,12 +43,12 @@ public class VarDeclList {
     private boolean fAllHaveSameType = false;
 
     public VarDeclList(boolean allHaveSameType) {
-        fVarDecls = new ArrayList();
+        fVarDecls = new ArrayList<VarDecl>();
         fAllHaveSameType = allHaveSameType;
     }
 
     public VarDeclList(VarDecl varDecl) {
-        fVarDecls = new ArrayList(1);
+        fVarDecls = new ArrayList<VarDecl>(1);
         if (varDecl == null )
             throw new NullPointerException();
         fVarDecls.add(varDecl);
@@ -102,12 +102,11 @@ public class VarDeclList {
      * <code>varName</code>.
      */
     public boolean containsName(String varName) {
-        Iterator it = fVarDecls.iterator();
-        while (it.hasNext() ) {
-            VarDecl decl = (VarDecl) it.next();
+        for (VarDecl decl : fVarDecls) {
             if (decl.name().equals(varName) )
                 return true;
         }
+        
         return false;
     }
 
@@ -126,10 +125,12 @@ public class VarDeclList {
     public String toString() {
         String res = "";
         if (fAllHaveSameType ) {
-            Iterator it = fVarDecls.iterator();
+            Iterator<VarDecl> it = fVarDecls.iterator();
+            
             while (it.hasNext() ) {
-                VarDecl decl = (VarDecl) it.next();
+                VarDecl decl = it.next();
                 res += decl.name();
+                
                 if (it.hasNext() )
                     res += ", ";
                 else
@@ -137,6 +138,7 @@ public class VarDeclList {
             }
         } else
             res = StringUtil.fmtSeq(fVarDecls.iterator(), ", ");
+        
         return res;
     }
 }

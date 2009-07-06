@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2009-07-01 15:58:20
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2009-07-05 22:40:19
  
 /*
  * USE - UML based specification environment
@@ -30,6 +30,7 @@ import org.antlr.runtime.*;
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
+
 @SuppressWarnings({ "unchecked", "unused" })
 public class GeneratorParser extends BaseParser {
     public static final String[] tokenNames = new String[] {
@@ -163,14 +164,14 @@ public class GeneratorParser extends BaseParser {
 
 
     // $ANTLR start "invariantListOnly"
-    // Generator.g:67:1: invariantListOnly returns [List invariantList] : (def= invariant )* EOF ;
-    public final List invariantListOnly() throws RecognitionException {
-        List invariantList = null;
+    // Generator.g:67:1: invariantListOnly returns [List<ASTConstraintDefinition> invariantList] : (def= invariant )* EOF ;
+    public final List<ASTConstraintDefinition> invariantListOnly() throws RecognitionException {
+        List<ASTConstraintDefinition> invariantList = null;
 
         ASTConstraintDefinition def = null;
 
 
-         invariantList = new ArrayList(); 
+         invariantList = new ArrayList<ASTConstraintDefinition>(); 
         try {
             // Generator.g:69:1: ( (def= invariant )* EOF )
             // Generator.g:70:5: (def= invariant )* EOF
@@ -222,14 +223,14 @@ public class GeneratorParser extends BaseParser {
 
 
     // $ANTLR start "procedureListOnly"
-    // Generator.g:119:1: procedureListOnly returns [List procedureList] : (proc= procedure )* EOF ;
-    public final List procedureListOnly() throws RecognitionException {
-        List procedureList = null;
+    // Generator.g:119:1: procedureListOnly returns [List<ASTGProcedure> procedureList] : (proc= procedure )* EOF ;
+    public final List<ASTGProcedure> procedureListOnly() throws RecognitionException {
+        List<ASTGProcedure> procedureList = null;
 
         ASTGProcedure proc = null;
 
 
-         procedureList = new ArrayList(); 
+         procedureList = new ArrayList<ASTGProcedure>(); 
         try {
             // Generator.g:121:1: ( (proc= procedure )* EOF )
             // Generator.g:122:5: (proc= procedure )* EOF

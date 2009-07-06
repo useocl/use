@@ -73,7 +73,7 @@ public final class ExpTupleLiteral extends Expression {
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = null;
-        Map parts = new HashMap(fParts.length);
+        Map<String, Value> parts = new HashMap<String, Value>(fParts.length);
         
         for (int i = 0; i < fParts.length; i++) {
             parts.put(fParts[i].fName, fParts[i].fExpr.eval(ctx));

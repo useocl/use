@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-07-01 15:58:16
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-07-05 22:40:14
  
 /*
  * USE - UML based specification environment
@@ -31,6 +31,7 @@ import org.antlr.runtime.*;
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
+
 @SuppressWarnings({ "unchecked", "unused" })
 public class OCLParser extends BaseParser {
     public static final String[] tokenNames = new String[] {

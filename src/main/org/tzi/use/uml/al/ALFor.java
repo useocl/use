@@ -18,8 +18,6 @@
  */
 package org.tzi.use.uml.al;
 
-import java.util.Iterator;
-
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -66,10 +64,10 @@ public class ALFor extends ALAction {
         Value v = fExpression.eval(ctx);
         assert v.isCollection() : "expression in for loop must be a collection";
         CollectionValue col = (CollectionValue)v;
-        for (Iterator it = col.iterator(); it.hasNext();) {
-            Value elem = (Value) it.next();
+
+        for (Value elem : col) {
             ctx.createStackFrame();
-// TODO: type check against fVariableType
+            // TODO: type check against fVariableType
             ctx.pushVarBinding(fVariable,elem);
             fBody.exec(ctx);
             ctx.dropStackFrame();

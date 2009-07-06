@@ -34,7 +34,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -105,7 +104,7 @@ public class USECompilerTest extends TestCase {
 
 
     public void testSpecification() {
-        List fileList = getFilesMatchingSuffix(".use", 27);
+        List<File> fileList = getFilesMatchingSuffix(".use", 27);
         // add all the example files which should have no errors
         File dir = new File(EXAMPLES_PATH);
         File[] files = dir.listFiles( new SuffixFileFilter(".use") );
@@ -116,8 +115,7 @@ public class USECompilerTest extends TestCase {
         StringOutputStream errStr = new StringOutputStream();
         PrintWriter newErr = new PrintWriter(errStr);
         // compile each file and compare with expected result
-        for (Iterator iter = fileList.iterator(); iter.hasNext(); ) {
-            File specFile = (File) iter.next();
+        for (File specFile : fileList) {
             String specFileName = specFile.getName();
             try {
                 MModel model = compileSpecification(specFile, newErr);
@@ -295,8 +293,8 @@ public class USECompilerTest extends TestCase {
 
 
 
-    private List getFilesMatchingSuffix(String suffix, int expected) {
-        List fileList = new ArrayList();
+    private List<File> getFilesMatchingSuffix(String suffix, int expected) {
+        List<File> fileList = new ArrayList<File>();
         File dir = new File(TEST_PATH);
         File[] files = dir.listFiles( new SuffixFileFilter(suffix) );
         assertNotNull(files);

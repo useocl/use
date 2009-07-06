@@ -53,13 +53,13 @@ import org.tzi.use.util.StringUtil;
  */
 public class MMInstanceGenerator implements MMVisitor {
     protected PrintWriter fOut;
-    private Set fDataTypes;
+    private Set<Type> fDataTypes;
     private boolean fPass1;
     private String fModelId;
 
     public MMInstanceGenerator(PrintWriter out) {
         fOut = out;
-        fDataTypes = new HashSet();
+        fDataTypes = new HashSet<Type>();
     }
 
     /**
@@ -90,9 +90,7 @@ public class MMInstanceGenerator implements MMVisitor {
         fOut.println();
 
         // visit association ends
-        Iterator it = e.associationEnds().iterator();
-        while (it.hasNext() ) {
-            MAssociationEnd assocEnd = (MAssociationEnd) it.next();
+        for (MAssociationEnd assocEnd : e.associationEnds()) {
             assocEnd.processWithVisitor(this);
         }
     }
@@ -113,16 +111,12 @@ public class MMInstanceGenerator implements MMVisitor {
         }
 
         // visit attributes
-        Iterator it = e.attributes().iterator();
-        while ( it.hasNext() ) {
-            MAttribute attr = ( MAttribute ) it.next();
+        for (MAttribute attr : e.attributes()) {
             attr.processWithVisitor( this );
         }
 
         // visit association ends
-        it = e.associationEnds().iterator();
-        while ( it.hasNext() ) {
-            MAssociationEnd assocEnd = ( MAssociationEnd ) it.next();
+        for (MAssociationEnd assocEnd : e.associationEnds()) {
             assocEnd.processWithVisitor( this );
         }
 
@@ -189,24 +183,9 @@ public class MMInstanceGenerator implements MMVisitor {
         }
 
         // visit attributes
-        Iterator it = e.attributes().iterator();
-        while (it.hasNext() ) {
-            MAttribute attr = (MAttribute) it.next();
+        for (MAttribute attr : e.attributes()) {
             attr.processWithVisitor(this);
         }
-
-        //      // visit operations
-        //      if (e.operations().size() > 0 ) {
-        //          indent();
-        //          println(keyword("operations"));
-        //          incIndent();
-        //          Iterator it = e.operations().iterator();
-        //          while (it.hasNext() ) {
-        //          MOperation op = (MOperation) it.next();
-        //          op.processWithVisitor(this);
-        //          }
-        //          decIndent();
-        //      }
     }
 
     public void visitClassInvariant(MClassInvariant e) {
@@ -253,17 +232,14 @@ public class MMInstanceGenerator implements MMVisitor {
 
         // visit classes in first pass only to gather required
         // DataTypes
-        Iterator it = e.classes().iterator();
-        while (it.hasNext() ) {
-            MClass cls = (MClass) it.next();
+        for (MClass cls : e.classes()) {
             cls.processWithVisitor(this);
         }
 
         // create all DataTypes that are required later
         fOut.println("-- DataTypes");
-        it = fDataTypes.iterator();
-        while (it.hasNext() ) {
-            Type t = (Type) it.next();
+        
+        for (Type t : fDataTypes) {
             if (e.getClass(t.toString()) == null ) {
                 String id = t.toString() + "DataType";
                 fOut.println("!create " + id + " : DataType");
@@ -278,30 +254,25 @@ public class MMInstanceGenerator implements MMVisitor {
         fPass1 = false;
 
         // visit classes
-        it = e.classes().iterator();
-        while (it.hasNext() ) {
-            MClass cls = (MClass) it.next();
+        for (MClass cls : e.classes()) {
             cls.processWithVisitor(this);
         }
 
         // visit associations
-        it = e.associations().iterator();
-        while (it.hasNext() ) {
-            MAssociation assoc = (MAssociation) it.next();
+        for (MAssociation assoc : e.associations()) {
             assoc.processWithVisitor(this);
         }
 
         // visit generalizations
-        it = e.generalizationGraph().edgeIterator();
+        Iterator<MGeneralization> it = e.generalizationGraph().edgeIterator();
+        
         while (it.hasNext() ) {
-            MGeneralization gen = (MGeneralization) it.next();
+            MGeneralization gen = it.next();
             gen.processWithVisitor(this);
         }
 
         // visit constraints
-        it = e.classInvariants().iterator();
-        while (it.hasNext() ) {
-            MClassInvariant inv = (MClassInvariant) it.next();
+        for (MClassInvariant inv : e.classInvariants()) {
             inv.processWithVisitor(this);
         }
     }

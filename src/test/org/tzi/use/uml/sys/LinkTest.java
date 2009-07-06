@@ -92,10 +92,10 @@ public class LinkTest extends TestCase {
                                                               objects ) );
 
 
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "j1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
                 MObject obj =  system.state().objectByName( (String) it.next() ); 
@@ -123,11 +123,11 @@ public class LinkTest extends TestCase {
     public void testLinkDeletion() {
         try {
             MSystem system = createModelWithObject();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "c1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
                 MObject obj =  system.state().objectByName( (String) it.next() ); 
@@ -188,11 +188,11 @@ public class LinkTest extends TestCase {
     public void testCreationLinkObjectWithCmdInsertLink() {
         try {
             MSystem system = createModelWithoutLinkObject();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "c1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
                 MObject obj =  system.state().objectByName( (String) it.next() ); 
@@ -223,7 +223,7 @@ public class LinkTest extends TestCase {
         MSystem system = null;
         try {
             system = createModelWithoutLinkObject();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "j1" );
             ObjectType type = TypeFactory.mkObjectType( system.model().getClass( "Job" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
@@ -252,7 +252,7 @@ public class LinkTest extends TestCase {
         MSystem system = null;
         try {
             system = createModelWithoutLinkObject();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "c1" );
             MAssociationClass assocClass = system.model().getAssociationClass( "Job" );
@@ -280,11 +280,11 @@ public class LinkTest extends TestCase {
         MAssociationClass assocClass = null;
         try {
             system = createModelWithoutLinkObject();
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "c1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
                 MObject obj =  system.state().objectByName( (String) it.next() ); 
@@ -304,12 +304,12 @@ public class LinkTest extends TestCase {
             // for counting the number of Instances between names
             int cnt = 0;
 
-            Iterator linkSet = system.state().linksOfAssociation( assocClass ).links().iterator();
+            Iterator<MLink> linkSet = system.state().linksOfAssociation( assocClass ).links().iterator();
             while ( linkSet.hasNext() ) {
                 MLink link = ( MLink ) linkSet.next();
-                Iterator it = link.linkedObjects().iterator();
-                MObject first = ( MObject ) it.next();
-                MObject second = ( MObject ) it.next();
+                Iterator<MObject> it = link.linkedObjects().iterator();
+                MObject first = it.next();
+                MObject second = it.next();
 
                 if ( ( first.name().equals( "p1" ) && second.name().equals( "c1" ) )
                         || ( first.name().equals( "c1" ) && second.name().equals( "p1" ) ) ) {
@@ -337,7 +337,7 @@ public class LinkTest extends TestCase {
             MSystem system = new MSystem( model );
 
             // creation of an object (p1) of the class Person
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
@@ -378,7 +378,7 @@ public class LinkTest extends TestCase {
             MSystem system = new MSystem( model );
 
             // creation of an object (p1) of the class Person
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );

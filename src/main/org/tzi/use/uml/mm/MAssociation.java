@@ -52,7 +52,7 @@ public interface MAssociation extends MModelElement {
      *
      * @return List(MAssociationEnd)
      */
-    List<MAssociationEnd> reachableEnds();
+    List<MNavigableElement> reachableEnds();
     
     /**
      * Returns the set of association ends attached to <code>cls</code>.

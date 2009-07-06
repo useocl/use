@@ -33,7 +33,7 @@ import java.util.HashMap;
  * @author      Mark Richters 
  */
 public class UniqueNameGenerator {
-    private Map fNameMap;   // (String -> MutableInteger)
+    private Map<String, MutableInteger> fNameMap;
 
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
@@ -42,7 +42,7 @@ public class UniqueNameGenerator {
     }
 
     public UniqueNameGenerator() {
-        fNameMap = new HashMap();
+        fNameMap = new HashMap<String, MutableInteger>();
     }
     
     /**
@@ -51,7 +51,7 @@ public class UniqueNameGenerator {
      * increment this number.
      */
     public String generate(String name) {
-        MutableInteger i = (MutableInteger) fNameMap.get(name);
+        MutableInteger i = fNameMap.get(name);
         if (i == null ) {
             i = new MutableInteger();
             fNameMap.put(name, i);

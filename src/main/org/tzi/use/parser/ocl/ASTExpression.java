@@ -21,7 +21,6 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -117,11 +116,12 @@ public abstract class ASTExpression extends AST {
     protected Expression genStdOperation(Context ctx,
     									 Token token, 
                                          String opname,
-                                         List args) 
+                                         List<ASTExpression> args) 
         throws SemanticException
     {
         ASTExpression[] exparr = new ASTExpression[args.size()];
-        System.arraycopy(args.toArray(), 0, exparr, 0, args.size());
+        args.toArray(exparr);
+        
         return genStdOperation(ctx, token, opname, exparr);
     }
 
@@ -144,10 +144,9 @@ public abstract class ASTExpression extends AST {
 
         // find source end
         MAssociation assoc = dst.association();
-        Iterator it = assoc.reachableEnds().iterator();
         MNavigableElement src = null;
-        while (it.hasNext() ) {
-            MNavigableElement nav = (MNavigableElement) it.next();
+
+        for (MNavigableElement nav : assoc.reachableEnds()) {
             if (! nav.equals( dst ) ) {
                 if (srcClass.isSubClassOf(nav.cls()) ) {
                     if ( explicitRolenameToken != null ) {

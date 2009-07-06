@@ -23,7 +23,6 @@ package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +47,6 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
     private MClassImpl fClassImpl;
     private int fPositionInModel;
 
-//    private int fPos;
     /**
      * Creates a new associationclass.
      *
@@ -151,9 +149,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      */
     public void addAttribute( MAttribute attr ) throws MInvalidModelException {
         // Well-Formedness Rule No. 1 of AssociationClass of OMG 1.4
-        Iterator it = associationEnds().iterator();
-        while ( it.hasNext() ) {
-            MAssociationEnd ae = ( MAssociationEnd ) it.next();
+        for (MAssociationEnd ae : associationEnds()) {
             if ( ae.name().equals( attr.name() ) ) {
                 throw new MInvalidModelException(
                         "Ambiguous attribute name `" + attr.name() + "'." );
@@ -168,7 +164,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return List(MAttribute)
      */
-    public List attributes() {
+    public List<MAttribute> attributes() {
         return fClassImpl.attributes();
     }
 
@@ -178,7 +174,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return List(MAttribute)
      */
-    public List allAttributes() {
+    public List<MAttribute> allAttributes() {
         return fClassImpl.allAttributes();
     }
 
@@ -209,7 +205,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * Returns all operations defined for this class. Inherited
      * operations are not included.
      */
-    public List operations() {
+    public List<MOperation> operations() {
         return fClassImpl.operations();
     }
 
@@ -219,7 +215,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return List(MOperation) 
      */
-    public List allOperations() {
+    public List<MOperation> allOperations() {
         return fClassImpl.allOperations();
     }
 
@@ -244,8 +240,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @return null if no such association end exists.
      */
     public MNavigableElement navigableEnd( String rolename ) {
-        Map nav = navigableEnds();
-        return ( MNavigableElement ) nav.get( rolename );
+        return navigableEnds().get( rolename );
     }
 
     /**
@@ -254,13 +249,13 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return Map(String, MNavigableElement)
      */
-    public Map navigableEnds() {
-        Map nav = fClassImpl.navigableEnds();
-        Iterator it = associationEnds().iterator();
-        while ( it.hasNext() ) {
-            MAssociationEnd ae = ( MAssociationEnd ) it.next();
+    public Map<String, MNavigableElement> navigableEnds() {
+        Map<String, MNavigableElement> nav = fClassImpl.navigableEnds();
+
+        for (MAssociationEnd ae : associationEnds()) {
             nav.put( ae.name(), ae );
         }
+        
         return nav;
     }
 
@@ -272,7 +267,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @param associationEnds List(MAssociationEnd)
      * @see MModel#addAssociation
      */
-    public void registerNavigableEnds( List associationEnds ) {
+    public void registerNavigableEnds( List<MNavigableElement> associationEnds ) {
         fClassImpl.registerNavigableEnds( associationEnds );
     }
 
@@ -280,15 +275,13 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
         fClassImpl.deleteNavigableElements();
     }
     
-
-
     /**
      * Returns the set of all direct parent classes (without this
      * class).
      *
      * @return Set(MClass)
      */
-    public Set parents() {
+    public Set<MClass> parents() {
         return fClassImpl.parents();
     }
 
@@ -299,7 +292,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return Set(MClass)
      */
-    public Set allParents() {
+    public Set<MClass> allParents() {
         return fClassImpl.allParents();
     }
 
@@ -309,7 +302,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return Set(MClass)
      */
-    public Set allChildren() {
+    public Set<MClass> allChildren() {
         return fClassImpl.allChildren();
     }
 
@@ -319,7 +312,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return Set(MClass) 
      */
-    public Set children() {
+    public Set<MClass> children() {
         return fClassImpl.children();
     }
     
@@ -329,7 +322,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return Set(MAssociation).
      */
-    public Set associations() {
+    public Set<MAssociation> associations() {
         return fClassImpl.associations();
     }
 
@@ -339,7 +332,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      *
      * @return Set(MAssociation).
      */
-    public Set allAssociations() {
+    public Set<MAssociation> allAssociations() {
         return fClassImpl.allAssociations();
     }
 
@@ -376,9 +369,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
         }
 
         // Well-Formedness Rule No. 1 of AssociationClass of OMG 1.4
-        Iterator it = attributes().iterator();
-        while ( it.hasNext() ) {
-            MAttribute attr = ( MAttribute ) it.next();
+        for (MAttribute attr : attributes()) {
             if ( aend.name().equals( attr.name() ) ) {
                 throw new MInvalidModelException(
                         "Ambiguous rolename `" + aend.name() + "'." );
@@ -395,8 +386,8 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
         aend.setAssociation( this );
     }
 
-    public List reachableEnds() {
-        List ends = new ArrayList( associationEnds() );
+    public List<MNavigableElement> reachableEnds() {
+        List<MNavigableElement> ends = new ArrayList<MNavigableElement>( associationEnds() );
         ends.add( this );
         return ends;
     }
@@ -407,7 +398,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @return  List(MAssociationEnd)
      * @see     MAssociation#associationEnds()
      */
-    public List associationEnds() {
+    public List<MAssociationEnd> associationEnds() {
         return fAssociationImpl.associationEnds();
     }
 
@@ -417,7 +408,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @return  Set(MAssociationEnd)
      * @see     MAssociation#associationEndsAt( MClass )
      */
-    public Set associationEndsAt( MClass cls ) {
+    public Set<MAssociationEnd> associationEndsAt( MClass cls ) {
         return fAssociationImpl.associationEndsAt( cls );
     }
 
@@ -427,7 +418,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @return  Set(MClass).
      * @see     MAssociation#associatedClasses()
      */
-    public Set associatedClasses() {
+    public Set<MClass> associatedClasses() {
         return fAssociationImpl.associatedClasses();
     }
 
@@ -467,14 +458,14 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @exception   IllegalArgumentException cls is not part of this association.
      * @see         MAssociation#navigableEndsFrom( MClass )
      */
-    public List navigableEndsFrom( MClass cls ) {
-        List nav = fAssociationImpl.navigableEndsFrom( cls );
+    public List<MNavigableElement> navigableEndsFrom( MClass cls ) {
+        List<MNavigableElement> nav = fAssociationImpl.navigableEndsFrom( cls );
         nav.add( this );
         return nav;
     }
 
-    public Collection navigableElements() {
-        List ne = new ArrayList( navigableEnds().values() );
+    public Collection<MNavigableElement> navigableElements() {
+        List<MNavigableElement> ne = new ArrayList<MNavigableElement>( navigableEnds().values() );
         ne.add( this );
         return ne;
     }

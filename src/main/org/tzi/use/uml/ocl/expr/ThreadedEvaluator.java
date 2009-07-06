@@ -44,7 +44,7 @@ class ThreadedEvaluator {
      */
     static class Controller extends Thread {
         private Queue fResultValueQueue;
-        private ArrayList fExprList;
+        private ArrayList<Expression> fExprList;
         MSystemState fSystemState;
 
         private int fNumWorkers; // number of parallel worker threads
@@ -55,7 +55,7 @@ class ThreadedEvaluator {
         private int fNextJob;
 
         Controller(int numWorkers, Queue resultQueue, 
-                   ArrayList exprList, MSystemState systemState) {
+                   ArrayList<Expression> exprList, MSystemState systemState) {
             fResultValueQueue = resultQueue;
             fExprList = exprList;
             fSystemState = systemState;
@@ -64,7 +64,7 @@ class ThreadedEvaluator {
             fWorkers = new Thread[fNumWorkers];
             fJobs = new Job[fNumJobs];
             for (int i = 0; i < fNumJobs; i++)
-                fJobs[i] = new Job((Expression) exprList.get(i));
+                fJobs[i] = new Job(exprList.get(i));
         }
 
         synchronized Job getNextJob() {
@@ -93,19 +93,6 @@ class ThreadedEvaluator {
                     System.err.println("Got result " + i + " of " + fNumJobs);
                 fResultValueQueue.append(v);
             }
-
-            // wait on worker threads to finish (not really needed)
-            //          for (int i = 0; i < fNumWorkers; i++) {
-            //          try {
-            //              if (DEBUG )
-            //              System.err.println("Waiting on Worker " + i);
-            //              fWorkers[i].join();
-            //              if (DEBUG )
-            //              System.err.println("Worker " + i + " joined");
-            //          } catch (InterruptedException e) {
-            //              System.err.println("Interrupted thread: " + fWorkers[i]);
-            //          }
-            //          }
         }
     }
 

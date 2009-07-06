@@ -191,8 +191,8 @@ public class MonitorAspectGenerator {
         void apply(Object obj, boolean isFirst, boolean isLast);
     }
 
-    private static void foreach(Collection coll, Function fun) {
-        Iterator it = coll.iterator();
+    private static void foreach(Collection<?> coll, Function fun) {
+        Iterator<?> it = coll.iterator();
         boolean isFirst = true;
         while (it.hasNext() ) {
             Object obj = it.next();

@@ -23,22 +23,24 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.al.ALAction;
 import org.tzi.use.uml.al.ALDelete;
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
  * @author green
  */
 public class ASTALDelete extends ASTALLinkAction {
 
-    public ASTALDelete(List exprList, Token assoc) {
+    public ASTALDelete(List<ASTExpression> exprList, Token assoc) {
         super(exprList, assoc);
     }
 
     public ALAction gen(Context ctx) throws SemanticException {
         MAssociation assoc = getAssociation(ctx);
-        List expressions = getLinkElements(ctx, assoc);
+        List<Expression> expressions = getLinkElements(ctx, assoc);
         return new ALDelete(expressions, assoc);        
     }
 

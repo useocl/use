@@ -24,28 +24,33 @@
 
 package org.tzi.use.gen.tool;
 
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MMVisitor;
-import org.tzi.use.uml.mm.MMPrintVisitor;
-import org.tzi.use.gen.model.GModel;
-import org.tzi.use.gen.assl.statics.GProcedure;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.tzi.use.config.Options;
 import org.tzi.use.gen.assl.dynamics.GEvalProcedure;
 import org.tzi.use.gen.assl.dynamics.GEvaluationException;
+import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.model.GFlaggedInvariant;
+import org.tzi.use.gen.model.GModel;
 import org.tzi.use.parser.generator.ASSLCompiler;
+import org.tzi.use.uml.mm.MClassInvariant;
+import org.tzi.use.uml.mm.MMPrintVisitor;
+import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.util.Log;
-import org.tzi.use.config.Options;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Random;
-import java.io.*;
 
 
 /**
@@ -108,14 +113,14 @@ public class GGenerator {
         if (limit == null)
             limit = new Long( Long.MAX_VALUE );
 
-        List procedures = null;
+        List<GProcedure> procedures = null;
         GProcedureCall call = null;
         PrintWriter pw = null;
         PrintWriter resultPw = null;
 
         try {
             Log.verbose("Compiling procedures from " + filename + ".");
-            procedures=ASSLCompiler.compileProcedures(
+            procedures = ASSLCompiler.compileProcedures(
                                                      fSystem.model(),
                                                      new FileInputStream(filename),
                                                      filename,
@@ -218,15 +223,14 @@ public class GGenerator {
             inv.setNegated( negated.booleanValue() );
     }
 
-    private List flaggedInvariants( Set names ) {
+    private List<GFlaggedInvariant> flaggedInvariants( Set<String> names ) {
         // if names==null all flaggedInvariants will be returned.
-        List invs = new ArrayList();
+        List<GFlaggedInvariant> invs = new ArrayList<GFlaggedInvariant>();
+        
         if (names.isEmpty())
-            invs = new ArrayList(fGModel.flaggedInvariants());
+            invs = new ArrayList<GFlaggedInvariant>(fGModel.flaggedInvariants());
         else {
-            Iterator it = names.iterator();
-            while (it.hasNext()) {
-                String name = (String) it.next();
+            for (String name : names) {
                 GFlaggedInvariant inv = fGModel.getFlaggedInvariant(name);
                 if (inv != null)
                     invs.add(inv);
@@ -254,25 +258,24 @@ public class GGenerator {
         return inv;
     }
   
-    public void setInvariantFlags( Set names,
+    public void setInvariantFlags( Set<String> names,
                                    Boolean disabled,
                                    Boolean negated ) {
-        Iterator it = flaggedInvariants(names).iterator();
-        while (it.hasNext())
-            setInvFlags((GFlaggedInvariant) it.next(), disabled, negated);
+        for (GFlaggedInvariant inv : flaggedInvariants(names)) {
+            setInvFlags(inv, disabled, negated);
+        }
     }
 
-    public void printInvariantFlags( Set names ) {
+    public void printInvariantFlags( Set<String> names ) {
         boolean found = false;
         if (!names.isEmpty())
             System.out.println(
                                "Listing only invariants given as parameter...");
     
-        List flInvs = flaggedInvariants(names);
+        List<GFlaggedInvariant> flInvs = flaggedInvariants(names);
         System.out.println("- disabled class invariants:");
-        Iterator disIt = flInvs.iterator();
-        while (disIt.hasNext()) {
-            GFlaggedInvariant flaggedInv = (GFlaggedInvariant) disIt.next();
+        
+        for (GFlaggedInvariant flaggedInv : flInvs) {
             if (flaggedInv.disabled()) {
                 System.out.println(flaggedInv.classInvariant().toString()+" "
                                    + (flaggedInv.negated() ? "(negated)" : "" ));
@@ -283,9 +286,8 @@ public class GGenerator {
             System.out.println("(none)");
         found = false;
         System.out.println("- enabled class invariants:");
-        Iterator enIt = flInvs.iterator();
-        while (enIt.hasNext()) {
-            GFlaggedInvariant flaggedInv = (GFlaggedInvariant) enIt.next();
+        	
+        for (GFlaggedInvariant flaggedInv : flInvs) {
             if (!flaggedInv.disabled()) {
                 System.out.println(flaggedInv.classInvariant().toString()+" "
                                    + (flaggedInv.negated() ? "(negated)" : "" ));
@@ -307,9 +309,10 @@ public class GGenerator {
         else {
             pw.println("Result: Valid state found.");
             pw.println("Commands to produce the valid state:");
-            Iterator it = lastResult().collector().commands().iterator();
-            while (it.hasNext())
-                pw.println( ((MCmd) it.next()).getUSEcmd() );
+            for (MCmd cmd : lastResult().collector().commands()) {
+                pw.println( cmd.getUSEcmd() );
+            }
+            
             if (lastResult().collector().commands().isEmpty())
                 pw.println("(none)");
         }
@@ -326,9 +329,9 @@ public class GGenerator {
             System.out.println("No commands available.");
         else {
             try {
-                Iterator it = lastResult().collector().commands().iterator();
-                while (it.hasNext())
-                    fSystem.executeCmd((MCmd) it.next());
+                for (MCmd cmd : lastResult().collector().commands()) {
+                    fSystem.executeCmd(cmd);
+                }
                 System.out.println(
                                    "Generated result (system state) accepted.");
             } catch (MSystemException e) {
@@ -338,7 +341,7 @@ public class GGenerator {
     }
 
     public void loadInvariants( String filename, boolean doEcho ) {
-        Collection addedInvs = null;
+        Collection<MClassInvariant> addedInvs = null;
         try {
             addedInvs = ASSLCompiler.compileAndAddInvariants(
                                                             fGModel,
@@ -348,29 +351,29 @@ public class GGenerator {
         } catch (FileNotFoundException e) {
             Log.error( e.getMessage() );
         }
+        
         if (addedInvs != null && doEcho) {
             System.out.println("Added invariants:");
-            Iterator it = addedInvs.iterator();
-            while (it.hasNext())
-                System.out.println( ((MClassInvariant) it.next()).toString() );
+            
+            for (MClassInvariant inv : addedInvs) {
+            	System.out.println( inv.toString() );
+            }
+            
             if (addedInvs.isEmpty())
                 System.out.println("(none)");
         }
     }
 
-    public void unloadInvariants(Set pNames) {
-        Set names = new TreeSet(pNames);
+    public void unloadInvariants(Set<String> pNames) {
+        Set<String> names = new TreeSet<String>(pNames);
+        
         if (names.isEmpty()) {
-            Iterator invIt = fGModel.loadedClassInvariants().iterator();
-            while (invIt.hasNext()) {
-                MClassInvariant inv = (MClassInvariant) invIt.next();
+            for (MClassInvariant inv : fGModel.loadedClassInvariants()) {
                 names.add( inv.cls().name() + "::" + inv.name() );
             }
         }
-    
-        Iterator nameIt = names.iterator();
-        while (nameIt.hasNext()) {
-            String name = (String) nameIt.next();
+
+        for (String name : names) {	
             if (fGModel.removeClassInvariant(name) == null )
                 Log.error("Invariant `" + name + "' does not exist or is " +
                           "an invariant of the original model. Ignoring.");
@@ -379,10 +382,12 @@ public class GGenerator {
     
     public void printLoadedInvariants() {
         MMVisitor v = new MMPrintVisitor(new PrintWriter(System.out, true));
-        Collection loadedInvs = fGModel.loadedClassInvariants();
-        Iterator it = loadedInvs.iterator();
-        while (it.hasNext())
-            ((MClassInvariant) it.next()).processWithVisitor(v);
+        Collection<MClassInvariant> loadedInvs = fGModel.loadedClassInvariants();
+        
+        for (MClassInvariant inv : loadedInvs) {
+            inv.processWithVisitor(v);
+        }
+        
         if (loadedInvs.isEmpty())
             System.out.println("(no loaded invariants)");
     }

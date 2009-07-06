@@ -45,24 +45,7 @@ final class MLinkImpl implements MLink {
     /**
      * For each association end we store the corresponding link end.
      */
-    private Map fLinkEnds;  // (aend : MAssociationEnd -> MLinkEnd)
-
-    //      /**
-    //       * Constructs a new binary link for the given association. 
-    //       *
-    //       * @exception MSystemException objects do not conform to the
-    //       *            association end.
-    //       * @see MSystemState#createBinaryLink */
-    //      public MLinkImpl(MAssociation assoc,
-    //           MAssociationEnd aend0, MObject obj0,
-    //           MAssociationEnd aend1, MObject obj1) 
-    //      throws MSystemException 
-    //      {
-    //      fAssociation = assoc;
-    //      fLinkEnds = new HashMap();
-    //      fLinkEnds.put(aend0, new MLinkEnd(aend0, obj0));
-    //      fLinkEnds.put(aend1, new MLinkEnd(aend1, obj1));
-    //      }
+    private Map<MAssociationEnd, MLinkEnd> fLinkEnds;
 
     /**
      * Creates a new link for the given association.
@@ -71,37 +54,24 @@ final class MLinkImpl implements MLink {
      * @exception MSystemException objects do not conform to the
      *            association ends.
      */
-    MLinkImpl(MAssociation assoc, List objects) throws MSystemException {
+    MLinkImpl(MAssociation assoc, List<MObject> objects) throws MSystemException {
         fAssociation = assoc;
         if (assoc.associationEnds().size() != objects.size() )
             throw new IllegalArgumentException("Number of association ends (" +
                                                assoc.associationEnds().size() +
                                                ") does not match number of passed objects (" +
                                                objects.size() + ")");
-        fLinkEnds = new HashMap();
-        Iterator it1 = assoc.associationEnds().iterator();
-        Iterator it2 = objects.iterator();
+        fLinkEnds = new HashMap<MAssociationEnd, MLinkEnd>();
+        
+        Iterator<MAssociationEnd> it1 = assoc.associationEnds().iterator();
+        Iterator<MObject> it2 = objects.iterator();
+        
         while (it1.hasNext() && it2.hasNext() ) {
-            MAssociationEnd aend = (MAssociationEnd) it1.next();
-            MObject obj = (MObject) it2.next();
+            MAssociationEnd aend = it1.next();
+            MObject obj = it2.next();
             fLinkEnds.put(aend, new MLinkEnd(aend, obj));
         }
     }
-
-    //      /** 
-    //       * Returns the size (arity) of the link.
-    //       */
-    //      public int size() {
-    //      return fLinkEnds.size();
-    //      }
-
-    //      /** 
-    //       * Returns the name of the link. We use the name of the defining
-    //       * association.  
-    //       */
-    //      public String name() {
-    //      return fAssociation.name();
-    //      }
 
     /**
      * Returns the association describing this link.
@@ -115,8 +85,8 @@ final class MLinkImpl implements MLink {
      *
      * @return Set(MLinkEnd)
      */
-    public Set linkEnds() {
-        Set s = new HashSet(fLinkEnds.size());
+    public Set<MLinkEnd> linkEnds() {
+        Set<MLinkEnd> s = new HashSet<MLinkEnd>(fLinkEnds.values());
         s.addAll(fLinkEnds.values());
         return s;
     }
@@ -126,13 +96,13 @@ final class MLinkImpl implements MLink {
      *
      * @return Set(MObject).
      */
-    public Set linkedObjects() {
-        Set s = new HashSet();
-        Iterator linkIter = fLinkEnds.values().iterator();
-        while (linkIter.hasNext() ) {
-            MLinkEnd lend = (MLinkEnd) linkIter.next();
+    public Set<MObject> linkedObjects() {
+        Set<MObject> s = new HashSet<MObject>();
+                
+        for (MLinkEnd lend : fLinkEnds.values()) {
             s.add(lend.object());
         }
+        
         return s;
     }
 
@@ -143,11 +113,13 @@ final class MLinkImpl implements MLink {
     public MObject[] linkedObjectsAsArray() {
         MObject[] objs = new MObject[fLinkEnds.size()];
         int i=0;
-        for(Iterator it=fAssociation.associationEnds().iterator();it.hasNext();) {
-            MLinkEnd lend = linkEnd((MAssociationEnd)it.next());
+
+        for (MAssociationEnd aend : fAssociation.associationEnds()) {
+            MLinkEnd lend = linkEnd(aend);
             objs[i] = lend.object();
             ++i;
         }
+        
         return objs;
     }
 
@@ -160,9 +132,7 @@ final class MLinkImpl implements MLink {
 
     public int hashCode() { 
         int hash = fAssociation.hashCode();
-        Iterator it = fLinkEnds.values().iterator();
-        while (it.hasNext() ) {
-            MLinkEnd lend = (MLinkEnd) it.next();
+        for (MLinkEnd lend : fLinkEnds.values()) {
             hash += lend.hashCode();
         }
         return hash;

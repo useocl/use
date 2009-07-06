@@ -21,7 +21,6 @@
 
 package org.tzi.use.parser.cmd;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -40,10 +39,10 @@ import org.tzi.use.uml.sys.MCmdDeleteLink;
  * @author  Mark Richters
  */
 public class ASTDeleteCmd extends ASTCmd {
-    private List fExprList; // (ASTExpression)
+    private List<ASTExpression> fExprList;
     private Token fAssocName;
 
-    public ASTDeleteCmd(List exprList, Token assocName) {
+    public ASTDeleteCmd(List<ASTExpression> exprList, Token assocName) {
         fExprList = exprList;
         fAssocName = assocName;
     }
@@ -64,10 +63,9 @@ public class ASTDeleteCmd extends ASTCmd {
 
         // generate expressions
         Expression[] exprs = new Expression[fExprList.size()];
-        Iterator it = fExprList.iterator();
+        
         int i = 0;
-        while (it.hasNext() ) {
-            ASTExpression astExpr = (ASTExpression) it.next();
+        for (ASTExpression astExpr : fExprList) {
             exprs[i++] = astExpr.gen(ctx);
         }
         return new MCmdDeleteLink(ctx.systemState(), exprs, assoc);

@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2009-07-01 15:58:19
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2009-07-05 22:40:18
 
 /*
  * USE - UML based specification environment
@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
+@SuppressWarnings({ "unused" })
 public class CmdLexer extends Lexer {
     public static final int STAR=19;
     public static final int EOF=-1;

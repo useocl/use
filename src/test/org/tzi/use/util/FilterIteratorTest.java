@@ -38,10 +38,10 @@ public class FilterIteratorTest extends TestCase {
         super(name);
     }
 
-    protected ArrayList fList;
+    protected ArrayList<Integer> fList;
 
     protected void setUp() {
-        fList = new ArrayList();
+        fList = new ArrayList<Integer>();
         for (int i = 0; i < 6; i++)
             fList.add(new Integer(i));
     }
@@ -51,7 +51,7 @@ public class FilterIteratorTest extends TestCase {
     }
 
     public void testModulo2Filter() {
-        Iterator iter = new FilterIterator(fList.iterator(), new UnaryPredicate() {
+        Iterator<Integer> iter = new FilterIterator<Integer>(fList.iterator(), new UnaryPredicate() {
                 public boolean isTrue(Object obj) {
                     return ((Integer) obj).intValue() % 2 == 0;
                 }
@@ -66,7 +66,7 @@ public class FilterIteratorTest extends TestCase {
     }
 
     public void testFalseFilter() {
-        Iterator iter = new FilterIterator(fList.iterator(), new UnaryPredicate() {
+        Iterator<Integer> iter = new FilterIterator<Integer>(fList.iterator(), new UnaryPredicate() {
                 public boolean isTrue(Object obj) {
                     return false;
                 }
@@ -76,7 +76,7 @@ public class FilterIteratorTest extends TestCase {
     }
 
     public void testTrueFilter() {
-        Iterator iter = new FilterIterator(fList.iterator(), new UnaryPredicate() {
+        Iterator<Integer> iter = new FilterIterator<Integer>(fList.iterator(), new UnaryPredicate() {
                 public boolean isTrue(Object obj) {
                     return true;
                 }

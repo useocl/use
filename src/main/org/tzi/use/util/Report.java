@@ -43,7 +43,7 @@ public class Report {
     public static final char FMT_RIGHT = 'r';
     public static final char FMT_CENTER = 'c';
 
-    private ArrayList fRows;    // (String[], String, or Character)
+    private ArrayList<Object> fRows;    // (String[], String, or Character)
     private String[] fCurrentRow;
     private int fColumns;
     private int fCurrentColumn;
@@ -86,7 +86,7 @@ public class Report {
      * @throws IllegalArgumentException the fmt string is not well-formed.  
      */
     public Report(int columns, String fmt) {
-        fRows = new ArrayList();
+        fRows = new ArrayList<Object>();
         fColumns = columns;
         fFiller = new String[columns + 1];
         Arrays.fill(fFiller, " ");
@@ -181,7 +181,7 @@ public class Report {
     public void printOn(PrintWriter out) {
         // determine column widths
         int[] widths = new int[fColumns];
-        Iterator rowIter = fRows.iterator();
+        Iterator<Object> rowIter = fRows.iterator();
         while (rowIter.hasNext() ) {
             Object r = rowIter.next();
             if (r instanceof String[] ) {

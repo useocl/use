@@ -25,16 +25,15 @@
 
 package org.tzi.use.gen.tool;
 
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.util.ListUtil;
-import org.tzi.use.util.StringUtil;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
+
+import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MSystemState;
 
 
 
@@ -44,20 +43,18 @@ import java.util.Iterator;
  */
 public class GProcedureCall {
     private String fName;
-    private List fParameter;  // Expressions    
+    private List<Expression> fParameter;    
     private GSignature signature = null;
     
-    public GProcedureCall (String name, List params) {
+    public GProcedureCall (String name, List<Expression> params) {
         fName = name;
         fParameter = params;
     }
 
-    private List<Type> getParameterTypes() {
-        Iterator it = fParameter.iterator();
-        
+    private List<Type> getParameterTypes() {       
         ArrayList<Type> types = new ArrayList<Type>();
-        while (it.hasNext()) {
-            types.add( ((Expression) it.next()).type() );
+        for (Expression exp : fParameter) {
+            types.add( exp.type() );
         }
         
         return types;
@@ -76,28 +73,28 @@ public class GProcedureCall {
         return getSignature().toString();
     }
     
-    public GProcedure findMatching( List procedures ) {
+    public GProcedure findMatching( List<GProcedure> procedures ) {
         GSignature sig = getSignature();
         
-        Iterator it = procedures.iterator();
-        while (it.hasNext() ) {
-            GProcedure proc = (GProcedure) it.next();
-            
+        for (GProcedure proc : procedures) {
             if (proc.getSignature().conformsTo(sig) )
                 return proc;
         }
+        
         return null;
     }
 
 
-    public List evaluateParams(MSystemState state) {
-        List values = new ArrayList();
+    public List<Value> evaluateParams(MSystemState state) {
+        List<Value> values = new ArrayList<Value>();
         Evaluator evaluator = new Evaluator();
-        Iterator it = fParameter.iterator();
-        while (it.hasNext() )
-            values.add( evaluator.eval( (Expression) it.next(),
+
+        for (Expression exp : fParameter) {
+            values.add( evaluator.eval( exp,
                                         state,
                                         state.system().topLevelBindings()) );
+        }
+        
         return values;
     }
 }

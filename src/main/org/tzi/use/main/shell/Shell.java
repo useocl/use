@@ -37,7 +37,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -387,7 +386,7 @@ public final class Shell implements Runnable {
         boolean details = false;
         boolean all = false;
         boolean noGenInv = true;
-        ArrayList invNames = new ArrayList();
+        ArrayList<String> invNames = new ArrayList<String>();
         StringTokenizer tokenizer = new StringTokenizer(line);
         // skip command
         tokenizer.nextToken();
@@ -440,7 +439,7 @@ public final class Shell implements Runnable {
 
         // compile command
         MSystem system = system();
-        List cmdList = CMDCompiler.compileCmdList(system.model(), system
+        List<MCmd> cmdList = CMDCompiler.compileCmdList(system.model(), system
                 .state(), line, "<input>", new PrintWriter(
                 System.err));
 
@@ -448,9 +447,7 @@ public final class Shell implements Runnable {
         if (cmdList == null)
             return;
 
-        Iterator it = cmdList.iterator();
-        while (it.hasNext()) {
-            MCmd cmd = (MCmd) it.next();
+        for (MCmd cmd : cmdList) {
             Log.trace(this, "--- Executing command: " + cmd);
             try {
                 system.executeCmd(cmd);
@@ -480,7 +477,6 @@ public final class Shell implements Runnable {
         }
         synchronized( fReadlineStack ) {
             fReadlineStack.closeAll();
-            fFinished = true;
             int exitCode = 0;
             if (Options.quiet && ! lastCheckResult() )
                 exitCode = 1;
@@ -665,7 +661,7 @@ public final class Shell implements Runnable {
      */
     private void cmdInfoOpStack() throws NoSystemException {
         MSystem system = system();
-        List opStack = system.callStack();
+        List<MOperationCall> opStack = system.callStack();
         if (opStack.isEmpty())
             Log.println("no active operations.");
         else {
@@ -719,11 +715,10 @@ public final class Shell implements Runnable {
         report.addRuler('-');
 
         // data
-        Iterator it = model.classes().iterator();
         long total = 0;
         int n;
-        while (it.hasNext()) {
-            MClass cls = (MClass) it.next();
+
+        for (MClass cls : model.classes()) {
             report.addRow();
             String clsname = cls.name();
             if (cls.isAbstract())
@@ -757,10 +752,9 @@ public final class Shell implements Runnable {
         report.addRuler('-');
 
         // data
-        it = model.associations().iterator();
         total = 0;
-        while (it.hasNext()) {
-            MAssociation assoc = (MAssociation) it.next();
+
+        for (MAssociation assoc : model.associations()) {
             report.addRow();
             report.addCell(assoc.name());
             n = state.linksOfAssociation(assoc).size();
@@ -783,9 +777,8 @@ public final class Shell implements Runnable {
      */
     private void cmdInfoVars() throws NoSystemException {
         MSystem system = system();
-        Iterator it = system.topLevelBindings().iterator();
-        while (it.hasNext()) {
-            VarBindings.Entry entry = (VarBindings.Entry) it.next();
+        
+        for(VarBindings.Entry entry : system.topLevelBindings()) {
             System.out.println(entry);
         }
     }
@@ -952,7 +945,7 @@ public final class Shell implements Runnable {
             System.out.println("-> " + val.toStringWithType());
             //            System.out.println("-> " + val.toString() + ":" + expr.type());
             if (verboseEval && Options.doGUI) {
-                Class exprEvalBrowserClass = null;
+                Class<?> exprEvalBrowserClass = null;
                 try {
                     exprEvalBrowserClass = Class
                             .forName("org.tzi.use.gui.views.ExprEvalBrowser");
@@ -996,27 +989,6 @@ public final class Shell implements Runnable {
         if (expr == null)
             return;
 
-        //         // evaluate it with current system state
-        //         PrintWriter output = null;
-        //         Evaluator evaluator = new Evaluator();
-        //         if ( verboseEval ) {
-        //             Log.println("Detailed results of subexpressions:");
-        //             output = new PrintWriter(Log.out());
-        //             evaluator.enableEvalTree();
-        //         }
-
-        //         try {
-        //             Value val = evaluator.eval(expr, system.state(),
-        //                                        system.topLevelBindings(),
-        //                                        output);
-        //             // print result
-        //             System.out.println("-> " + val.toStringWithType());
-        //             // System.out.println("-> " + val.toString() + ":" + expr.type());
-        //             if ( verboseEval && Options.doGUI )
-        //                 ExprEvalBrowser.create(evaluator.getEvalNodeRoot());
-        //         } catch (MultiplicityViolationException e) {
-        //             System.out.println("-> " + "Could not evaluate. " + e.getMessage());
-        //         }
         System.out.println("-> " + expr.type());
     }
 
@@ -1114,7 +1086,7 @@ public final class Shell implements Runnable {
      */
     private void cmdGenUnloadInvariants(String str, MSystem system) {
         StringTokenizer st = new StringTokenizer(str);
-        Set names = new TreeSet();
+        Set<String> names = new TreeSet<String>();
         try {
             while (st.hasMoreTokens())
                 names.add(st.nextToken());
@@ -1152,7 +1124,7 @@ public final class Shell implements Runnable {
     private void cmdGenInvariantFlags(String str, MSystem system) {
         // Syntax: gen flags (invariant)* [+d|-d] [+n|-n]
         StringTokenizer st = new StringTokenizer(str);
-        Set names = new TreeSet();
+        Set<String> names = new TreeSet<String>();
         Boolean disabled = null;
         Boolean negated = null;
         boolean error = false;

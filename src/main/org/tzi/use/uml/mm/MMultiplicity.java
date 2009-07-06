@@ -22,7 +22,6 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.tzi.use.util.StringUtil;
 
@@ -109,14 +108,14 @@ public final class MMultiplicity {
         }
     }
     
-    private ArrayList mRanges;  // (Range)
+    private ArrayList<Range> mRanges;
 
     /**
      * Creates a new multiplicity. You need to add ranges before the
      * multiplicity is actually valid.
      */
     public MMultiplicity() {
-        mRanges = new ArrayList();
+        mRanges = new ArrayList<Range>();
     }
 
     /**
@@ -140,9 +139,7 @@ public final class MMultiplicity {
      * Tests whether this multiplicity contains a specified value.
      */
     public boolean contains(int n) {
-        Iterator it = mRanges.iterator();
-        while (it.hasNext() ) {
-            Range r = (Range) it.next();
+        for (Range r : mRanges) {
             if (r.contains(n) )
                 return true;
         }
@@ -155,9 +152,7 @@ public final class MMultiplicity {
      * one.
      */
     public boolean isCollection() {
-        Iterator it = mRanges.iterator();
-        while (it.hasNext() ) {
-            Range r = (Range) it.next();
+        for (Range r : mRanges) {
             if (r.isGreaterOne() )
                 return true;
         }

@@ -51,7 +51,7 @@ public class MLinkObjectImpl implements MLinkObject {
      * Constructs a new object for the given class.
      */
     MLinkObjectImpl( MAssociationClass assocClass, String name,
-                     List objects ) throws MSystemException {
+                     List<MObject> objects ) throws MSystemException {
         delegatesLink = new MLinkImpl( assocClass, objects );
         delegatesObject = new MObjectImpl( assocClass, name );
     }
@@ -101,7 +101,7 @@ public class MLinkObjectImpl implements MLinkObject {
      *
      * @return List(MObject)
      */
-    public List getLinkedObjects( MSystemState systemState,
+    public List<MObject> getLinkedObjects( MSystemState systemState,
                                   MAssociationEnd srcEnd, MAssociationEnd dstEnd ) {
         return systemState.getLinkedObjects( this, srcEnd, dstEnd );
     }
@@ -112,19 +112,13 @@ public class MLinkObjectImpl implements MLinkObject {
      *
      * @return List(MObject)
      */
-    public List getNavigableObjects( MSystemState systemState,
+    public List<MObject> getNavigableObjects( MSystemState systemState,
                                      MNavigableElement src, MNavigableElement dst ) {
         return systemState.getNavigableObjects( this, src, dst );
     }
 
 
     public int hashCode() {
-/*        if ( name() == null ) {
-            return delegatesLink.hashCode();
-        } else {
-            return delegatesObject.hashCode();
-        }
-*/
         return delegatesObject.hashCode();
     }
 
@@ -141,7 +135,7 @@ public class MLinkObjectImpl implements MLinkObject {
      *
      * @return Set(MLinkEnd)
      */
-    public Set linkEnds() {
+    public Set<MLinkEnd> linkEnds() {
         return delegatesLink.linkEnds();
     }
 
@@ -150,7 +144,7 @@ public class MLinkObjectImpl implements MLinkObject {
      *
      * @return Set(MObject).
      */
-    public Set linkedObjects() {
+    public Set<MObject> linkedObjects() {
         return delegatesLink.linkedObjects();
     }
 

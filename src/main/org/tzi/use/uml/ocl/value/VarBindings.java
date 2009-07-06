@@ -31,7 +31,7 @@ import java.util.Iterator;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
-public final class VarBindings {
+public final class VarBindings implements Iterable<VarBindings.Entry> {
 
     public class Entry {
         String fVarname;

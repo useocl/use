@@ -61,7 +61,7 @@ public class MAssociationClassTest extends TestCase {
                     .createModelWithClassAndAssocClass();
             MSystem system = new MSystem( model );
 
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "p2" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );

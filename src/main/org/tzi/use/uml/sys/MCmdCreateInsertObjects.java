@@ -22,7 +22,6 @@
 package org.tzi.use.uml.sys;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -47,7 +46,7 @@ import org.tzi.use.util.cmd.CommandFailedException;
 public final class MCmdCreateInsertObjects extends MCmd implements CmdCreatesObjects {
     private MSystemState fSystemState;
     private String fVarNameCreate;  // (String) variable names
-    private List fVarNamesInsert;   // (String) variable names
+    private List<String> fVarNamesInsert;
     private MAssociationClass fAssocClass;
     private ObjectType fType;
 
@@ -59,7 +58,7 @@ public final class MCmdCreateInsertObjects extends MCmd implements CmdCreatesObj
      * binding them to identifiers which are given as a list of names.
      */
     public MCmdCreateInsertObjects( MSystemState systemState, String nameCreate,
-                                    MAssociationClass assocClass, List namesInsert ) {
+                                    MAssociationClass assocClass, List<String> namesInsert ) {
         super( true );
         fSystemState = systemState;
         fVarNameCreate = nameCreate;
@@ -84,10 +83,9 @@ public final class MCmdCreateInsertObjects extends MCmd implements CmdCreatesObj
 
         // create link for given objects (association class)
         // map list of variable names to list of objects
-        List objects = new ArrayList( fVarNamesInsert.size() );
-        Iterator it = fVarNamesInsert.iterator();
-        while ( it.hasNext() ) {
-            String varname = ( String ) it.next();
+        List<MObject> objects = new ArrayList<MObject>( fVarNamesInsert.size() );
+        
+        for (String varname : fVarNamesInsert) {
             Value value = varBindings.getValue( varname );
             if ( value == null )
                 throw new CommandFailedException( "Unbound variable `" +

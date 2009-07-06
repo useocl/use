@@ -228,8 +228,7 @@ public class ASSLCompiler {
             parser.init(errHandler);
     
             // Parse the specification
-            //Log.verbose("Parsing...");
-            List consDefList = parser.invariantListOnly();
+            List<ASTConstraintDefinition> consDefList = parser.invariantListOnly();
             
             if (errHandler.errorCount() == 0 ) {
                 Context ctx = new Context(inName,
@@ -238,10 +237,10 @@ public class ASSLCompiler {
                                           new ModelFactory());
                 Collection<MClassInvariant> existingInvs = model.classInvariants();
                 ctx.setModel(model);
-                Iterator it = consDefList.iterator();
-                while (it.hasNext()) {
+                
+                for (ASTConstraintDefinition cd : consDefList) {
                     // adds the class invariants to the given model
-                    ((ASTConstraintDefinition) it.next()).gen(ctx);
+                    cd.gen(ctx);
                 }
                 
                 addedInvs = new ArrayList<MClassInvariant>(model.classInvariants());
@@ -257,5 +256,4 @@ public class ASSLCompiler {
         err.flush();
         return addedInvs;
     }
-
 }

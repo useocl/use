@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.MClass;
@@ -62,20 +61,16 @@ public final class ExpAllInstances extends Expression {
         ctx.enter(this);
         MSystemState systemState = isPre() ? ctx.preState() : ctx.postState();
 
-        //      ObjectType ot = (ObjectType) fSourceType;
-        //      System.err.println("*** allSupertypes: " + ot.allSupertypes());
-
         // the result set will contain all instances of the specified
         // class plus all instances of subclasses
 
         // get set of objects 
         MClass cls = ((ObjectType) fSourceType).cls();
-        Set objSet = systemState.objectsOfClassAndSubClasses(cls);
+        Set<MObject> objSet = systemState.objectsOfClassAndSubClasses(cls);
         Value[] objValues = new Value[objSet.size()];
-        Iterator objects = objSet.iterator();
+
         int i = 0;
-        while (objects.hasNext() ) {
-            MObject obj = (MObject) objects.next();
+        for (MObject obj : objSet) {
             ObjectType t = TypeFactory.mkObjectType(obj.cls());
             objValues[i++] = new ObjectValue(t, obj);
         }

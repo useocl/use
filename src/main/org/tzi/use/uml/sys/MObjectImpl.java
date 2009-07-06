@@ -95,7 +95,7 @@ public final class MObjectImpl implements MObject {
      *
      * @return List(MObject)
      */
-    public List getLinkedObjects( MSystemState systemState,
+    public List<MObject> getLinkedObjects( MSystemState systemState,
                                   MAssociationEnd srcEnd, MAssociationEnd dstEnd ) {
         return systemState.getLinkedObjects( this, srcEnd, dstEnd );
     }
@@ -106,7 +106,7 @@ public final class MObjectImpl implements MObject {
      *
      * @return List(MObject)
      */
-    public List getNavigableObjects( MSystemState systemState, MNavigableElement src, 
+    public List<MObject> getNavigableObjects( MSystemState systemState, MNavigableElement src, 
                                      MNavigableElement dst ) {
         return systemState.getNavigableObjects( this, src, dst );
     }

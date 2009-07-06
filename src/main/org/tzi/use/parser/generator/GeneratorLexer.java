@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2009-07-01 15:58:21
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2009-07-05 22:40:20
 
 package org.tzi.use.parser.generator;
 
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+@SuppressWarnings("unused")
 public class GeneratorLexer extends Lexer {
     public static final int STAR=20;
     public static final int EOF=-1;

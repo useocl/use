@@ -37,35 +37,36 @@ public final class StringUtil {
 
     public static String fmtSeq(Object objarr[], 
                                 int beginIndex, String divider) {
-        String resString = new String();
+        StringBuilder resString = new StringBuilder();
+        
         if (objarr != null ) {
             boolean first = true;
             for (int i = beginIndex; i < objarr.length; i++) {
                 if (first )
                     first = false;
                 else
-                    resString += divider;
-                resString += objarr[i];
+                    resString.append(divider);
+                resString.append(objarr[i]);
             }
         }
-        return resString;
+        return resString.toString();
     }
 
     public static String fmtSeq(Object objarr[], String divider) {
         return fmtSeq(objarr, 0, divider);
     }
 
-    public static String fmtSeq(Iterator it, String divider) {
-        String resString = new String();
-        boolean first = true;
-        while (it.hasNext() ) {
-            if (first )
-                first = false;
-            else
-                resString += divider;
-            resString += it.next();
+    public static String fmtSeq(Iterator<?> it, String divider) {
+        StringBuilder resString = new StringBuilder();
+        
+        while (it.hasNext() ) {            
+            resString.append(it.next().toString());
+            
+            if (it.hasNext())
+            	resString.append(divider);
         }
-        return resString;
+        
+        return resString.toString();
     }
 
     /**

@@ -42,8 +42,6 @@ public class ASTExecuteCmd extends ASTCmd {
     }
 
     public MCmd gen(Context ctx) throws SemanticException {
-        MCmdExecute res = null;
-
         ctx.setIsSideEffectFree(false);
         Expression exp = fExpr.gen(ctx);
         ctx.setIsSideEffectFree(true);

@@ -44,11 +44,11 @@ public class EvalContext {
     private PrintWriter fEvalLog; // may be null
 
     private boolean fEnableEvalTree;
-    private Stack fNodeStack;
+    private Stack<EvalNode> fNodeStack;
     private EvalNode fRootNode;
 
     // used by UML AL
-    private Stack fFrames = new Stack();
+    private Stack<Integer> fFrames = new Stack<Integer>();
     
     /**
      * Creates new evaluation context. The parameter preState may be
@@ -71,7 +71,7 @@ public class EvalContext {
      */
     void enableEvalTree() {
         fEnableEvalTree = true;
-        fNodeStack = new Stack();
+        fNodeStack = new Stack<EvalNode>();
     }
 
     /**
@@ -154,11 +154,11 @@ public class EvalContext {
                              result.type() + " = " + result);
 
         if (fEnableEvalTree ) {
-            EvalNode n = (EvalNode) fNodeStack.pop();
+            EvalNode n = fNodeStack.pop();
             n.setExpression(expr);
             n.setResult(result);
             if (! fNodeStack.empty() )
-                ((EvalNode) fNodeStack.peek()).addChild(n);
+                (fNodeStack.peek()).addChild(n);
             else
                 fRootNode = n;
         }
@@ -179,7 +179,7 @@ public class EvalContext {
 
     // used by UML AL
     public void dropStackFrame() {
-        Integer oldSize = (Integer) fFrames.pop();
+        Integer oldSize = fFrames.pop();
         int i = oldSize.intValue();
         while (fVarBindings.getStackSize() > i)
             fVarBindings.pop();

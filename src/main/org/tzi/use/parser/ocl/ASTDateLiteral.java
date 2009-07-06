@@ -1,8 +1,5 @@
 package org.tzi.use.parser.ocl;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -12,7 +9,6 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpConstDate;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.value.DateValue;
 
 public class ASTDateLiteral extends ASTExpression {
 

@@ -21,7 +21,6 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.parser.Context;
@@ -37,9 +36,9 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTTupleType extends ASTType {
-    private List fParts;    // (ASTTuplePart)
+    private List<ASTTuplePart> fParts;    // (ASTTuplePart)
 
-    public ASTTupleType(List parts) {
+    public ASTTupleType(List<ASTTuplePart> parts) {
         fParts = parts;
     }
 
@@ -47,8 +46,8 @@ public class ASTTupleType extends ASTType {
         Type res = null;
         TupleType.Part[] parts = new TupleType.Part[fParts.size()];
         int i = 0;
-        for (Iterator it = fParts.iterator(); it.hasNext(); i++) {
-            ASTTuplePart tp = (ASTTuplePart) it.next();
+        
+        for (ASTTuplePart tp : fParts) {
             Type t = tp.type().gen(ctx);
             parts[i] = new TupleType.Part(tp.name().getText(), t);
         }

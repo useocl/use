@@ -72,15 +72,17 @@ public final class MCmdInsertLink extends MCmd {
      */
     public void doExecute() throws CommandFailedException {
         VarBindings varBindings = fSystemState.system().topLevelBindings();
-        List assocEnds = fAssociation.associationEnds();
+        List<MAssociationEnd> assocEnds = fAssociation.associationEnds();
 
         // map expression list to list of objects 
-        List objects = new ArrayList(fObjectExprs.length);
+        List<MObject> objects = new ArrayList<MObject>(fObjectExprs.length);
+        
         for (int i = 0; i < fObjectExprs.length; i++) {
-            MAssociationEnd aend = (MAssociationEnd) assocEnds.get(i);
+            MAssociationEnd aend = assocEnds.get(i);
             Evaluator evaluator = new Evaluator();
             Value v = evaluator.eval(fObjectExprs[i], fSystemState, varBindings);
             boolean ok = false;
+            
             if (v.isDefined() && (v instanceof ObjectValue) ) {
                 ObjectValue oval = (ObjectValue) v;
                 MObject obj = oval.value();
@@ -186,10 +188,10 @@ public final class MCmdInsertLink extends MCmd {
 
     public String[] getRoleNames(){
         String[] roleNames = new String[fObjectExprs.length];
-        List assocEnds = fAssociation.associationEnds();
+        List<MAssociationEnd> assocEnds = fAssociation.associationEnds();
 
         for (int i = 0; i < fObjectExprs.length; i++) {
-            MAssociationEnd aend = (MAssociationEnd) assocEnds.get(i);
+            MAssociationEnd aend = assocEnds.get(i);
             roleNames[i] = aend.name();
         }
         return roleNames;

@@ -73,7 +73,7 @@ public class ObjectCreation {
             MSystem system = new MSystem( model );
 
             // creation of an object (p1) of the class Person
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
@@ -91,7 +91,7 @@ public class ObjectCreation {
             names.add( "p1" );
             names.add( "c1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
                 MObject obj =  system.state().objectByName( (String) it.next() ); 
@@ -121,7 +121,7 @@ public class ObjectCreation {
             MSystem system = new MSystem( model );
 
             // creation of an object (p1) of the class Person
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
@@ -142,7 +142,7 @@ public class ObjectCreation {
             names.add( "p1" );
             names.add( "c1" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
                 MObject obj =  system.state().objectByName( (String) it.next() ); 
@@ -227,7 +227,7 @@ public class ObjectCreation {
             MSystem system = new MSystem( model );
 
             // creation of an object (p1) of the class Person
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
@@ -276,7 +276,7 @@ public class ObjectCreation {
             MSystem system = new MSystem( model );
 
             // creation of an objects (p1,p2) of the class Person
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             names.add( "p2" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
@@ -311,7 +311,7 @@ public class ObjectCreation {
             MSystem system = new MSystem( model );
 
             // creation of an object (p1) of the class Person
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
@@ -370,7 +370,7 @@ public class ObjectCreation {
             MSystem system = new MSystem( model );
 
             // creation of an object (p1) of the class Person
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "p1" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
@@ -388,7 +388,7 @@ public class ObjectCreation {
             names.add( "p1" );
             names.add( "p2" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
                 MObject obj =  system.state().objectByName( (String) it.next() ); 

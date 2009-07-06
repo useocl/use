@@ -21,12 +21,29 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.Iterator;
 import java.util.List;
 
-import org.tzi.use.uml.ocl.type.*;
+import org.tzi.use.uml.ocl.type.BagType;
+import org.tzi.use.uml.ocl.type.CollectionType;
+import org.tzi.use.uml.ocl.type.OrderedSetType;
+import org.tzi.use.uml.ocl.type.SequenceType;
+import org.tzi.use.uml.ocl.type.SetType;
+import org.tzi.use.uml.ocl.type.TupleType;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.type.TupleType.Part;
-import org.tzi.use.uml.ocl.value.*;
+import org.tzi.use.uml.ocl.value.BagValue;
+import org.tzi.use.uml.ocl.value.BooleanValue;
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.IntegerValue;
+import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.OrderedSetValue;
+import org.tzi.use.uml.ocl.value.RealValue;
+import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.SetValue;
+import org.tzi.use.uml.ocl.value.StringValue;
+import org.tzi.use.uml.ocl.value.UndefinedValue;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.util.HashMultiMap;
@@ -209,12 +226,12 @@ public final class ExpStdOp extends Expression {
             // generic operations on all object types
             new Op_oclIsNew(), };
 
-    // (String -> OpGeneric): opname/possible (overloaded) operations)
-    private static MultiMap opmap;
+    // opname / possible (overloaded) operations
+    private static MultiMap<String, OpGeneric> opmap;
 
     // initialize operation map
     static {
-        opmap = new HashMultiMap();
+        opmap = new HashMultiMap<String, OpGeneric>();
         for (int i = 0; i < oplist.length; i++)
             opmap.put(oplist[i].name(), oplist[i]);
     }
@@ -228,14 +245,12 @@ public final class ExpStdOp extends Expression {
                     "ExpStdOp.exists called with empty params array");
 
         // search by operation symbol
-        List ops = opmap.get(name);
+        List<OpGeneric> ops = opmap.get(name);
         if (ops.isEmpty()) // unknown operation symbol
             return false;
 
         // search overloaded operations for a match
-        Iterator opIter = ops.iterator();
-        while (opIter.hasNext()) {
-            OpGeneric op = (OpGeneric) opIter.next();
+        for (OpGeneric op : ops) {
             Type t = op.matches(params);
             if (t != null)
                 return true;
@@ -256,7 +271,7 @@ public final class ExpStdOp extends Expression {
                     "ExpOperation.create called with " + "empty args array");
 
         // search by operation symbol
-        List ops = opmap.get(name);
+        List<OpGeneric> ops = opmap.get(name);
         if (ops.isEmpty()) // unknown operation symbol
             throw new ExpInvalidException("Undefined operation named `" + name
                     + "' in expression `" + opCallSignature(name, args) + "'.");
@@ -266,9 +281,7 @@ public final class ExpStdOp extends Expression {
             params[i] = args[i].type();
 
         // search overloaded operations for a match
-        Iterator opIter = ops.iterator();
-        while (opIter.hasNext()) {
-            OpGeneric op = (OpGeneric) opIter.next();
+        for (OpGeneric op : ops) {
             Type t = op.matches(params);
             if (t != null)
                 return new ExpStdOp(op, args, t);
@@ -1770,11 +1783,10 @@ final class Op_collection_sum extends OpGeneric {
     public Value eval(EvalContext ctx, Value[] args, Type resultType) {
         CollectionValue coll = (CollectionValue) args[0];
         boolean isIntegerCollection = coll.elemType().isInteger();
-        Iterator it = coll.iterator();
+
         if (isIntegerCollection) {
             int isum = 0;
-            while (it.hasNext()) {
-                Value v = (Value) it.next();
+            for (Value v : coll) {
                 if (v.isUndefined())
                     return new UndefinedValue(TypeFactory.mkInteger());
                 isum += ((IntegerValue) v).value();
@@ -1782,8 +1794,8 @@ final class Op_collection_sum extends OpGeneric {
             return new IntegerValue(isum);
         } else {
             double rsum = 0.0;
-            while (it.hasNext()) {
-                Value v = (Value) it.next();
+
+            for (Value v : coll) {
                 if (v.isUndefined())
                     return new UndefinedValue(TypeFactory.mkReal());
                 if (v.isInteger())
@@ -1876,9 +1888,8 @@ final class Op_collection_flatten extends OpGeneric {
 
     public Value eval(EvalContext ctx, Value[] args, Type resultType) {
         CollectionValue coll = (CollectionValue) args[0];
-        Iterator collIter = coll.iterator();
-        while (collIter.hasNext()) {
-            Value elem = (Value) collIter.next();
+        
+        for (Value elem : coll) {
             if (elem.isUndefined())
                 return new UndefinedValue(resultType);
         }
@@ -2953,10 +2964,11 @@ final class Op_sequence_asBag extends OpGeneric {
     public Value eval(EvalContext ctx, Value[] args, Type resultType) {
         SequenceValue seq = (SequenceValue) args[0];
         Value[] elems = new Value[seq.size()];
-        Iterator it = seq.iterator();
         int i = 0;
-        while (it.hasNext())
-            elems[i++] = (Value) it.next();
+        
+        for (Value v : seq) {
+            elems[i++] = v;
+        }
 
         return new BagValue(seq.elemType(), elems);
     }
@@ -2989,11 +3001,12 @@ final class Op_sequence_asSet extends OpGeneric {
     public Value eval(EvalContext ctx, Value[] args, Type resultType) {
         SequenceValue seq = (SequenceValue) args[0];
         Value[] elems = new Value[seq.size()];
-        Iterator it = seq.iterator();
         int i = 0;
-        while (it.hasNext())
-            elems[i++] = (Value) it.next();
-
+        
+        for (Value v : seq) {
+            elems[i++] = v;
+        }
+        
         // the set constructor will remove duplicates
         return new SetValue(seq.elemType(), elems);
     }
@@ -3430,11 +3443,12 @@ final class Op_orderedSet_asBag extends OpGeneric {
     public Value eval(EvalContext ctx, Value[] args, Type resultType) {
     	OrderedSetValue oset = (OrderedSetValue) args[0];
         Value[] elems = new Value[oset.size()];
-        Iterator it = oset.iterator();
         int i = 0;
-        while (it.hasNext())
-            elems[i++] = (Value) it.next();
-
+        
+        for (Value v : oset) {
+            elems[i++] = v;
+        }
+        
         return new BagValue(oset.elemType(), elems);
     }
 }
@@ -3466,11 +3480,12 @@ final class Op_orderedSet_asSet extends OpGeneric {
     public Value eval(EvalContext ctx, Value[] args, Type resultType) {
     	OrderedSetValue oset = (OrderedSetValue) args[0];
         Value[] elems = new Value[oset.size()];
-        Iterator it = oset.iterator();
         int i = 0;
-        while (it.hasNext())
-            elems[i++] = (Value) it.next();
-
+        
+        for (Value v : oset) {
+            elems[i++] = v;
+        }
+        
         return new SetValue(oset.elemType(), elems);
     }
 }

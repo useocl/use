@@ -30,13 +30,13 @@ import java.util.Iterator;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public class FilterIterator implements Iterator {
-    private Iterator fIter;
+public class FilterIterator<T> implements Iterator<T> {
+    private Iterator<T> fIter;
     private UnaryPredicate fPred;
-    private Object fNext;
+    private T fNext;
     private boolean fHaveNext;
 
-    public FilterIterator(Iterator iter, UnaryPredicate pred) {
+    public FilterIterator(Iterator<T> iter, UnaryPredicate pred) {
         fIter = iter;
         fPred = pred;
     }
@@ -52,12 +52,12 @@ public class FilterIterator implements Iterator {
         return false;
     }
 
-    public Object next() {
+    public T next() {
         if (fHaveNext ) {
             fHaveNext = false;
             return fNext;
         } else {
-            Object n;
+            T n;
             do {
                 n = fIter.next();
             } while (! fPred.isTrue(n) );

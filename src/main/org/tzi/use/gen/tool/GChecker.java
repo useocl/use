@@ -24,24 +24,23 @@
 
 package org.tzi.use.gen.tool;
 
-import org.tzi.use.gen.assl.dynamics.IGChecker;
-import org.tzi.use.gen.model.GModel;
-import org.tzi.use.gen.model.GFlaggedInvariant;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.NullWriter;
-
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
 import java.util.Arrays;
+import java.util.List;
+
+import org.tzi.use.gen.assl.dynamics.IGChecker;
+import org.tzi.use.gen.model.GFlaggedInvariant;
+import org.tzi.use.gen.model.GModel;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.util.NullWriter;
 
 
 /**
  * Counts results (either valid or invalid).
  * @author  Joern Bohling
  */
-class GStatistic implements Comparable {
+class GStatistic implements Comparable<GStatistic> {
     protected long fCountValid;
     protected long fCountInvalid;
 
@@ -61,9 +60,8 @@ class GStatistic implements Comparable {
             fCountInvalid++;
     }
 
-    public int compareTo(Object o) {
-        return (new Long(diff())).compareTo(
-                                            new Long(((GStatistic) o).diff())   );
+    public int compareTo(GStatistic o) {
+        return (new Long(diff())).compareTo(new Long(o.diff()));
     }
 
     public String toStringForStatistics() {
@@ -118,13 +116,14 @@ class GChecker implements IGChecker {
 
     public GChecker(GModel model, boolean check) {
         fCheckStructure = check;
-        Iterator it = model.flaggedInvariants().iterator();
-        List stats = new ArrayList();
-        while (it.hasNext()) {
-            GFlaggedInvariant inv
-                = (GFlaggedInvariant) ((GFlaggedInvariant) it.next()).clone();
+        
+        List<GInvariantStatistic> stats = new ArrayList<GInvariantStatistic>();
+        
+        for (GFlaggedInvariant inv : model.flaggedInvariants()) {
+            inv = (GFlaggedInvariant)inv.clone();
             stats.add( new GInvariantStatistic(inv));
         }
+        
         sortCounter = 0;
         fInvariantStatistics = stats.toArray();
         fSize = stats.size();

@@ -71,7 +71,7 @@ public class ExprNavigationTest extends TestCase {
 
     public void testNavigationWithAssocs() {
         MSystem system = ObjectCreation.getInstance().createModelWithObjects();
-        List assocEnds = system.model().getAssociation( "Job" ).associationEnds();
+        List<MAssociationEnd> assocEnds = system.model().getAssociation( "Job" ).associationEnds();
         MAssociationEnd personEnd = null;
         MAssociationEnd companyEnd = null;
         for ( int i = 0; i < assocEnds.size(); i++ ) {
@@ -103,7 +103,7 @@ public class ExprNavigationTest extends TestCase {
 
     public void testNavigationWithAssocs1_MANY() {
         MSystem system = ObjectCreation.getInstance().createModelWithManyObjects();
-        List assocEnds = system.model().getAssociation( "Job" ).associationEnds();
+        List<MAssociationEnd> assocEnds = system.model().getAssociation( "Job" ).associationEnds();
         MAssociationEnd personEnd = null;
         MAssociationEnd companyEnd = null;
         for ( int i = 0; i < assocEnds.size(); i++ ) {
@@ -128,7 +128,8 @@ public class ExprNavigationTest extends TestCase {
 
             assertTrue( val.isSet() );
             assertEquals( 4, ( ( SetValue ) val ).size() );
-            Iterator it = ( ( SetValue ) val ).iterator();
+            
+            Iterator<Value> it = ( ( SetValue ) val ).iterator();
             assertEquals( "c1", ( ( ObjectValue ) it.next() ).value().name() );
             assertEquals( "c2", ( ( ObjectValue ) it.next() ).value().name() );
             assertEquals( "c3", ( ( ObjectValue ) it.next() ).value().name() );
@@ -146,7 +147,7 @@ public class ExprNavigationTest extends TestCase {
     public void testNavigationWithAssocClass() {
         MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
         MAssociationClass job = system.model().getAssociationClass( "Job" );
-        List assocEnds = job.associationEnds();
+        List<MAssociationEnd> assocEnds = job.associationEnds();
         MAssociationEnd personEnd = null;
         for ( int i = 0; i < assocEnds.size(); i++ ) {
             MAssociationEnd ae = ( MAssociationEnd ) assocEnds.get( i );
@@ -209,7 +210,7 @@ public class ExprNavigationTest extends TestCase {
             // navigation from p1 to linkobject j1
             MObject p1 = system.state().objectByName( "p1" );
 
-            List objects = system.state().getNavigableObjects( p1, ( MNavigableElement ) personEnd, 
+            List<MObject> objects = system.state().getNavigableObjects( p1, ( MNavigableElement ) personEnd, 
                                                                ( MNavigableElement ) job );
 
             assertEquals( 2, objects.size() );
@@ -233,7 +234,7 @@ public class ExprNavigationTest extends TestCase {
             // navigation from linkobject j1 to p1
             MObject j1 = system.state().objectByName( "j1" );
 
-            List objects = system.state().getNavigableObjects( j1, job, personEnd );
+            List<MObject> objects = system.state().getNavigableObjects( j1, job, personEnd );
 
             assertEquals( 1, objects.size() );
             assertEquals( "p1", ( ( MObject ) objects.get( 0 ) ).name() );
@@ -260,7 +261,7 @@ public class ExprNavigationTest extends TestCase {
             // navigation from linkobject j1 to p1
             MObject p1 = system.state().objectByName( "p1" );
 
-            List objects = system.state().getNavigableObjects( p1, personEnd, companyEnd );
+            List<MObject> objects = system.state().getNavigableObjects( p1, personEnd, companyEnd );
 
             assertEquals( 1, objects.size() );
             assertEquals( "c1", ( ( MObject ) objects.get( 0 ) ).name() );
@@ -279,7 +280,7 @@ public class ExprNavigationTest extends TestCase {
             MModel model = system.model();
 
             // creation of an object (c2) of the class Company
-            List names = new ArrayList();
+            List<String> names = new ArrayList<String>();
             names.add( "c2" );
             ObjectType type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
             MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
@@ -290,7 +291,7 @@ public class ExprNavigationTest extends TestCase {
             names.add( "p1" );
             names.add( "c2" );
             Expression[] exprs = new Expression[names.size()];
-            Iterator it = names.iterator();
+            Iterator<String> it = names.iterator();
             int i = 0;
             while (it.hasNext() ) {
                 MObject obj =  system.state().objectByName( (String) it.next() ); 
@@ -311,7 +312,7 @@ public class ExprNavigationTest extends TestCase {
             // navigation from p1 to linkobject j1
             MObject p1 = system.state().objectByName( "p1" );
 
-            List objects = system.state().getNavigableObjects( p1, personEnd, companyEnd );
+            List<MObject> objects = system.state().getNavigableObjects( p1, personEnd, companyEnd );
 
             assertEquals( 2, objects.size() );
             assertEquals( "c2", ( ( MObject ) objects.get( 1 ) ).name() );

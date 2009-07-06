@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.type.Type;
 public class ExprContext {
     private int fId;
 
-    /**
+    /** 
      * An entry has a name and a type.
      */
     public class Entry {
@@ -50,10 +50,10 @@ public class ExprContext {
     /**
      * The stack of entries.
      */
-    private Stack fEntries; // (Entry)
+    private Stack<Entry> fEntries;
     
     public ExprContext() {
-        fEntries = new Stack();
+        fEntries = new Stack<Entry>();
     }
 
     /** 

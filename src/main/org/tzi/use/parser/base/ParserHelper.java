@@ -5,7 +5,6 @@ import java.util.HashMap;
 import org.antlr.runtime.Token;
 
 public class ParserHelper {
-
 	final static String Q_COLLECT  = "collect";
     final static String Q_COLLECTNESTED  = "collectNested";
     final static String Q_SELECT   = "select";
@@ -28,7 +27,7 @@ public class ParserHelper {
     public final static int Q_ONE_ID      = 9;
     public final static int Q_COLLECTNESTED_ID  = 10;
     
-    public final static HashMap queryIdentMap = new HashMap();
+    public final static HashMap<String, Integer> queryIdentMap = new HashMap<String, Integer>();
 
     static {
         queryIdentMap.put(Q_COLLECT,  new Integer(Q_COLLECT_ID));
@@ -52,7 +51,7 @@ public class ParserHelper {
      * Because each language has an own lexer the token names
      * are mapped from string to string and not from integer to string
      */
-    public final static HashMap tokenParaphrases = new HashMap();
+    public final static HashMap<String, String> tokenParaphrases = new HashMap<String, String>();
     
     static {
     	tokenParaphrases.put("ARROW", "->");

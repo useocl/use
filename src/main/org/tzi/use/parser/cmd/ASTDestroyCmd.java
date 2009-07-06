@@ -21,7 +21,6 @@
 
 package org.tzi.use.parser.cmd;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.parser.Context;
@@ -40,19 +39,18 @@ import org.tzi.use.uml.sys.MCmdDestroyObjects;
  * @author  Mark Richters
  */
 public class ASTDestroyCmd extends ASTCmd {
-    private List fExprList; // (ASTExpression)
+    private List<ASTExpression> fExprList;
     
-    public ASTDestroyCmd(List exprList) {
+    public ASTDestroyCmd(List<ASTExpression> exprList) {
         fExprList = exprList;
     }
 
     public MCmd gen(Context ctx) throws SemanticException {
         // generate expressions
         Expression[] exprs = new Expression[fExprList.size()];
-        Iterator it = fExprList.iterator();
+
         int i = 0;
-        while (it.hasNext() ) {
-            ASTExpression astExpr = (ASTExpression) it.next();
+        for (ASTExpression astExpr : fExprList) {
             Expression expr = astExpr.gen(ctx);
             Type t = expr.type();
             if (t.isObjectType() 

@@ -21,7 +21,6 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.parser.Context;
@@ -36,20 +35,21 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTTupleLiteral extends ASTExpression {
-    private List fItems;    // (ASTTupleItem)
+    private List<ASTTupleItem> fItems;
 
-    public ASTTupleLiteral(List items) {
+    public ASTTupleLiteral(List<ASTTupleItem> items) {
         fItems = items;
     }
 
     public Expression gen(Context ctx) throws SemanticException {
         ExpTupleLiteral.Part[] parts = new ExpTupleLiteral.Part[fItems.size()];
         int i = 0;
-        for (Iterator it = fItems.iterator(); it.hasNext(); i++) {
-            ASTTupleItem ti = (ASTTupleItem) it.next();
+        
+        for (ASTTupleItem ti : fItems) {
             Expression e = ti.expression().gen(ctx);
             parts[i] = new ExpTupleLiteral.Part(ti.name().getText(), e);
         }
+        
         return new ExpTupleLiteral(parts);
     }
 }

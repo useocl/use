@@ -143,12 +143,11 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
                         
             Expression[] exprs = new Expression[objects.size()];
             List<String> names = new ArrayList<String>( objects.size() );
+            int i = 0;
             
             for (MObject obj : objects) {
                 names.add( obj.name() );
-
                 // generate expressions
-                int i = 0;
                 exprs[i++] = new ExpVariable( obj.name(), obj.type() );
             }
           

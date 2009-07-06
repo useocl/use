@@ -37,9 +37,9 @@ import junit.framework.TestCase;
 public class GraphTest extends TestCase {
 
     public void test1() {
-        DirectedGraph g;
+        DirectedGraph<Integer, DirectedEdgeBase<Integer>> g;
         Integer n0, n1, n2, n3, n4, n5;
-        DirectedEdge e23, e24a, e24b, e42;
+        DirectedEdgeBase<Integer> e23, e24a, e24b, e42;
 
         /*          +-------+
                     v       | ----\
@@ -50,7 +50,7 @@ public class GraphTest extends TestCase {
         
         // ----
         //      env.printHeader("testing graph creation...");
-        g = new DirectedGraphBase();
+        g = new DirectedGraphBase<Integer, DirectedEdgeBase<Integer>>();
         g.add(n0 = new Integer(0));
         g.add(n1 = new Integer(1));
         g.add(n2 = new Integer(2));
@@ -60,16 +60,16 @@ public class GraphTest extends TestCase {
         assertEquals(6, g.size());
 
         // connect nodes
-        g.addEdge(new DirectedEdgeBase(n0, n1));
-        g.addEdge(new DirectedEdgeBase(n1, n1));
-        g.addEdge(new DirectedEdgeBase(n1, n2));
-        g.addEdge(new DirectedEdgeBase(n2, n1));
-        g.addEdge(e23 = new DirectedEdgeBase(n2, n3));
-        g.addEdge(e24a = new DirectedEdgeBase(n2, n4));
-        g.addEdge(e24b = new DirectedEdgeBase(n2, n4));
-        g.addEdge(new DirectedEdgeBase(n3, n0));
-        g.addEdge(e42 = new DirectedEdgeBase(n4, n2));
-        g.addEdge(new DirectedEdgeBase(n4, n5));
+        g.addEdge(new DirectedEdgeBase<Integer>(n0, n1));
+        g.addEdge(new DirectedEdgeBase<Integer>(n1, n1));
+        g.addEdge(new DirectedEdgeBase<Integer>(n1, n2));
+        g.addEdge(new DirectedEdgeBase<Integer>(n2, n1));
+        g.addEdge(e23 = new DirectedEdgeBase<Integer>(n2, n3));
+        g.addEdge(e24a = new DirectedEdgeBase<Integer>(n2, n4));
+        g.addEdge(e24b = new DirectedEdgeBase<Integer>(n2, n4));
+        g.addEdge(new DirectedEdgeBase<Integer>(n3, n0));
+        g.addEdge(e42 = new DirectedEdgeBase<Integer>(n4, n2));
+        g.addEdge(new DirectedEdgeBase<Integer>(n4, n5));
         assertEquals(10, g.numEdges());
 
         // ----
@@ -99,7 +99,7 @@ public class GraphTest extends TestCase {
         assertEquals(1, g.sourceNodeSet(n4).size());
         assertEquals(1, g.sourceNodeSet(n5).size());
 
-        HashSet s = new HashSet();
+        HashSet<Integer> s = new HashSet<Integer>();
         Integer[] ia;
         ia = new Integer[] { n0, n1, n2, n3, n4, n5 };
         s.addAll(Arrays.asList(ia));
@@ -108,7 +108,7 @@ public class GraphTest extends TestCase {
         assertEquals(s, g.targetNodeClosureSet(n2));
         assertEquals(s, g.targetNodeClosureSet(n3));
         assertEquals(s, g.targetNodeClosureSet(n4));
-        s = new HashSet();
+        s = new HashSet<Integer>();
         assertEquals(s, g.targetNodeClosureSet(n5));
 
         ia = new Integer[] { n0, n1, n2, n3, n4 };
@@ -132,14 +132,15 @@ public class GraphTest extends TestCase {
         assertEquals(true, g.existsPath(n0, n5));
         assertEquals(false, g.existsPath(n5, n3));
 
-        s = new HashSet();
-        DirectedEdge[] ea = new DirectedEdge[] { e23 };
-        s.addAll(Arrays.asList(ea));
-        assertEquals(s, g.edgesBetween(n2, n3));
-        s = new HashSet();
-        ea = new DirectedEdge[] { e24a, e24b, e42 };
-        s.addAll(Arrays.asList(ea));
-        assertEquals(s, g.edgesBetween(n2, n4));
+        HashSet<DirectedEdge<Integer>> s2 = new HashSet<DirectedEdge<Integer>>();
+        s2.add(e23);
+        assertEquals(s2, g.edgesBetween(n2, n3));
+        
+        s2.clear();
+        s2.add(e24a);
+        s2.add(e24b);
+        s2.add(e42);
+        assertEquals(s2, g.edgesBetween(n2, n4));
 
         // ----
         //      env.printHeader("testing cycles...");

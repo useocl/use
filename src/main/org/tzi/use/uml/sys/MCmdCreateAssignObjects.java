@@ -41,17 +41,17 @@ import org.tzi.use.util.cmd.CommandFailedException;
  */
 public final class MCmdCreateAssignObjects extends MCmd {
     private MSystemState fSystemState;
-    private List fVarNames; // (String) variable names
+    private List<String> fVarNames;
     private ObjectType fType;
 
     // undo information
-    private List fObjects;
+    private List<MObject> fObjects;
 
     /**
      * Creates a command for creating objects of a given type and
      * binding them to identifiers which are given as a list of names.
      */
-    public MCmdCreateAssignObjects(MSystemState systemState, List names, ObjectType type) {
+    public MCmdCreateAssignObjects(MSystemState systemState, List<String> names, ObjectType type) {
         super(true);
         fSystemState = systemState;
         fVarNames = names;
@@ -64,11 +64,10 @@ public final class MCmdCreateAssignObjects extends MCmd {
      * @exception CommandFailedException if the command failed.
      */
     public void doExecute() throws CommandFailedException {
-        fObjects = new ArrayList();
+        fObjects = new ArrayList<MObject>();
         VarBindings varBindings = fSystemState.system().varBindings();
-        Iterator it = fVarNames.iterator();
-        while (it.hasNext() ) {
-            String varname = (String)it.next();
+        
+        for (String varname : fVarNames) {
             String objname = fSystemState.system().uniqueObjectNameForClass(fType.cls().name());
 
             // create object of specified type
@@ -100,11 +99,12 @@ public final class MCmdCreateAssignObjects extends MCmd {
             throw new CannotUndoException("no undo information");
     
         VarBindings varBindings = fSystemState.system().varBindings();
-        Iterator it1 = fObjects.iterator();
-        Iterator it2 = fVarNames.iterator();
+        Iterator<MObject> it1 = fObjects.iterator();
+        Iterator<String> it2 = fVarNames.iterator();
+        
         while (it1.hasNext() ) {
-            fSystemState.deleteObject((MObject) it1.next());
-            String varname = (String) it2.next();
+            fSystemState.deleteObject(it1.next());
+            String varname = it2.next();
             varBindings.remove(varname);
         }
     }
@@ -118,13 +118,13 @@ public final class MCmdCreateAssignObjects extends MCmd {
     public void getChanges(StateChangeEvent sce, boolean undoChanges) {
         if (fObjects == null )
             throw new IllegalStateException("command not executed");
-    
-        Iterator objIterator = fObjects.iterator();
-        while (objIterator.hasNext() )
+
+        for (MObject object : fObjects) {
             if (undoChanges )
-                sce.addDeletedObject((MObject) objIterator.next());
+                sce.addDeletedObject(object);
             else
-                sce.addNewObject((MObject) objIterator.next());
+                sce.addNewObject(object);
+        }
     }
 
     /**

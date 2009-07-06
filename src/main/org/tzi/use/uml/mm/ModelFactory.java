@@ -49,7 +49,7 @@ public final class ModelFactory {
         return new MAssociationClassImpl( name, isAbstract );
     }
 
-    public MClassInvariant createClassInvariant(String name, List vars, 
+    public MClassInvariant createClassInvariant(String name, List<String> vars, 
             									MClass cls, Expression inv, boolean isExistential) 
     	throws ExpInvalidException
 	{
@@ -102,15 +102,5 @@ public final class ModelFactory {
 
     public MMultiplicity createMultiplicity() {
         return new MMultiplicity();
-    }
-
-    /**
-     * Creates an association. The list <code>associationEnds</code> must
-     * contain at least two association ends.  
-     */
-    public MAssociation createAssociation(String name, List associationEnds) {
-        MAssociation assoc = new MAssociationImpl(name);
-        //  assoc.addEnd(associationEnds
-        return assoc;
     }
 }

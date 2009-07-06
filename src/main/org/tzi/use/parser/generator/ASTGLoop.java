@@ -29,7 +29,6 @@
 
 package org.tzi.use.parser.generator;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -46,11 +45,11 @@ public class ASTGLoop extends ASTGInstruction {
 	Token fName;
     ASTVariableDeclaration fDecl;
     ASTGocl fSequence;
-    List fInstructions;
+    List<ASTGInstruction> fInstructions;
     
     public ASTGLoop( ASTVariableDeclaration decl,
                      ASTGocl sequence,
-                     List instructions,
+                     List<ASTGInstruction> instructions,
                      Token t) {
         fDecl = decl;
         fSequence = sequence;
@@ -94,9 +93,8 @@ public class ASTGLoop extends ASTGInstruction {
 
             loop.setSequenceInstr( (GValueInstruction) sequence );
         
-            Iterator it = fInstructions.iterator();
-            while (it.hasNext() ) {
-                loop.addInstruction( ((ASTGInstruction) it.next()).gen(ctx) );
+            for (ASTGInstruction ins : fInstructions) {
+                loop.addInstruction( ins.gen(ctx) );
             }
         } catch (SemanticException ex ) {
             ctx.reportError(ex);

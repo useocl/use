@@ -21,8 +21,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.Iterator;
-
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -123,9 +121,7 @@ public class ExpIterate extends ExpQuery {
                               Value accuVal)
     {
         // loop over range elements
-        Iterator collIter = rangeVal.iterator();
-        while (collIter.hasNext() ) {
-            Value elemVal = (Value) collIter.next();
+        for (Value elemVal : rangeVal) {
 
             // bind element variable to range element, if variable was
             // declared

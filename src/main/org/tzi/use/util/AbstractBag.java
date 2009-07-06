@@ -42,7 +42,7 @@ public abstract class AbstractBag<T> extends AbstractCollection<T> implements Ba
         if (o == this)
             return true;
 
-        if (!(o instanceof Bag))
+        if (!(o instanceof Bag<?>))
             return false;
         
         Collection<?> c = (Collection<?>) o;

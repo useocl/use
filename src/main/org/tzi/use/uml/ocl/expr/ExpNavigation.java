@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MNavigableElement;
@@ -77,7 +76,8 @@ public final class ExpNavigation extends Expression {
     /**
      * Evaluates expression and returns result value.
      */
-    public Value eval(EvalContext ctx) {
+    @Override
+	public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = new UndefinedValue(type());
         Value val = fObjExp.eval(ctx);
@@ -90,7 +90,7 @@ public final class ExpNavigation extends Expression {
             MSystemState state = isPre() ? ctx.preState() : ctx.postState();
             
             // get objects at association end
-            List objList = obj.getNavigableObjects(state, fSrc, fDst);
+            List<MObject> objList = obj.getNavigableObjects(state, fSrc, fDst);
             Type resultType = type();
             if (resultType.isObjectType() ) {
                 if (objList.size() > 1 )
@@ -100,7 +100,7 @@ public final class ExpNavigation extends Expression {
                         "', found: " + 
                         objList.size());
                 if (objList.size() == 1 ) {
-                    obj = (MObject) objList.get(0);
+                    obj = objList.get(0);
                     if (obj.exists(state) )
                         res = new ObjectValue((ObjectType) type(), obj);
                 }
@@ -119,12 +119,11 @@ public final class ExpNavigation extends Expression {
         return res;
     }
 
-    private Value[] oidsToObjectValues(MSystemState state, List objList) {
+    private Value[] oidsToObjectValues(MSystemState state, List<MObject> objList) {
         Value[] res = new ObjectValue[objList.size()];
-        Iterator it = objList.iterator();
         int i = 0;
-        while (it.hasNext() ) {
-            MObject obj = (MObject) it.next();
+        
+        for (MObject obj : objList) {
             MObjectState objState = obj.state(state);
             if (objState != null )
                 res[i++] = new ObjectValue(obj.type(), obj);
@@ -133,7 +132,8 @@ public final class ExpNavigation extends Expression {
     }
 
 
-    public String toString() {
+    @Override
+	public String toString() {
         return fObjExp + "." + fDst.nameAsRolename() + atPre();
     }
 

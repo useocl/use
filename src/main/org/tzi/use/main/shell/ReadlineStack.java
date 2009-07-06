@@ -38,14 +38,14 @@ public class ReadlineStack {
     /**
      * Stack of input methods for reading user input.
      */
-    private Stack fReadlineStack;
+    private Stack<Readline> fReadlineStack;
 
     public ReadlineStack() {
-        fReadlineStack = new Stack();
+        fReadlineStack = new Stack<Readline>();
     }
     
     public synchronized void closeAll() {
-        for (Iterator it = fReadlineStack.iterator(); it.hasNext();) {
+        for (Iterator<Readline> it = fReadlineStack.iterator(); it.hasNext();) {
             Readline rl = (Readline) it.next();
             try {
                 rl.close();

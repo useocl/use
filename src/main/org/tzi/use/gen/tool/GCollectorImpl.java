@@ -40,7 +40,7 @@ import java.io.PrintWriter;
  */
 class GCollectorImpl implements IGCollector {
     private boolean fValidStateFound;
-    private List fCommands;   // MCmd
+    private List<MCmd> fCommands;
     private long fLimit;
     private PrintWriter fBasicPrintWriter;
     private PrintWriter fDetailPrintWriter;
@@ -49,7 +49,7 @@ class GCollectorImpl implements IGCollector {
 
     public GCollectorImpl() {
         fValidStateFound = false;
-        fCommands = new ArrayList();
+        fCommands = new ArrayList<MCmd>();
         fLimit = Long.MAX_VALUE;
         fLeafCount = 0;
         fBasicPrintWriter = new PrintWriter( new NullWriter() );
@@ -73,7 +73,7 @@ class GCollectorImpl implements IGCollector {
         fCommands.add(0, cmd);
     }
    
-    public List commands() {
+    public List<MCmd> commands() {
         return fCommands;
     }
 

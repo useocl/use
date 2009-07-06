@@ -75,7 +75,7 @@ public interface MObject {
      *
      * @return List(MObject)
      */
-    public List getLinkedObjects( MSystemState systemState,
+    public List<MObject> getLinkedObjects( MSystemState systemState,
                                   MAssociationEnd srcEnd, MAssociationEnd dstEnd );
 
     /**
@@ -84,7 +84,7 @@ public interface MObject {
      *
      * @return List(MObject)
      */
-    public List getNavigableObjects( MSystemState systemState,
+    public List<MObject> getNavigableObjects( MSystemState systemState,
                                      MNavigableElement src, MNavigableElement dst );
 
 

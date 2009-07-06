@@ -22,6 +22,7 @@
 package org.tzi.use.parser;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import org.antlr.runtime.Token;
@@ -57,7 +58,7 @@ public class Symtable {
     /**
      * The stack of scopes.
      */
-    private Stack fScopes;  // (Map(String name -> Entry))
+    private Stack<Map<String, Entry>> fScopes;
     
     /**
      * An optional set of externally defined global variable bindings.
@@ -65,12 +66,12 @@ public class Symtable {
     private VarBindings fGlobalBindings; // may be null
 
     public Symtable() {
-        fScopes = new Stack();
+        fScopes = new Stack<Map<String, Entry>>();
         enterScope();
     }
 
     public Symtable(VarBindings globalBindings) {
-        fScopes = new Stack();
+        fScopes = new Stack<Map<String, Entry>>();
         fGlobalBindings = globalBindings;
         enterScope();
     }
@@ -79,7 +80,7 @@ public class Symtable {
      * Creates a new scope level.
      */
     public void enterScope() {
-        fScopes.push(new HashMap());
+        fScopes.push(new HashMap<String, Entry>());
         // System.out.println("--- enterScope");
     }
     
@@ -98,8 +99,9 @@ public class Symtable {
      */
     public void add( String name, Type type, SrcPos pos )
             throws SemanticException {
-        HashMap names = (HashMap) fScopes.peek();
-        Entry e = (Entry) names.get( name );
+        Map<String, Entry> names = fScopes.peek();
+        Entry e = names.get( name );
+        
         if ( e != null ) {
             String msg = "Redefinition of `" + name + "'.";
             if ( e.fSrcPos != null )
@@ -108,62 +110,8 @@ public class Symtable {
             throw new SemanticException( pos, msg );
         }
         names.put( name, new Entry( name, type, pos ) );
-        // System.out.println("--- add: " + varName + " : " + type);
     }
-    
-    
- /*   public void add(String name, Type type, SrcPos pos) 
-    throws SemanticException 
-    {
-        HashMap names = (HashMap) fScopes.peek();
-        Entry e = (Entry) names.get(name);
         
-//        if ( e != null ) {
-//            if ( name.equals( "self" ) ) {
-//                buildErrorString( name, e, pos );
-//            } else {
-//                try { 
-//                    buildErrorString( name, e, pos );
-//                } catch ( SemanticException ex ) {
-//                    System.out.println( ex.getMessage() );
-//                    System.exit(1);
-//                    //throw new Error( ex.getMessage() );
-//                }
-//            }
-//        }
-        
-        if (e != null ) {
-            try {
-                String msg = "Redefinition of `" + name + "'.";
-                if (e.fSrcPos != null )
-                    msg += Options.LINE_SEPARATOR + e.fSrcPos + 
-                    "`" + name + "' previously declared here.";
-                throw new SemanticException(pos, msg);
-            } catch ( SemanticException ex ) {
-                ex.getMessage();
-            }
-        }
-        names.put(name, new Entry(name, type, pos));
-        // System.out.println("--- add: " + name + " : " + type);
-    }
-   */ 
-//    /**
-//     * Builds the error string for the SemanticException. This method is 
-//     * neccessarry because if name equals 'self' than the exception is 
-//     * just written into an error PrintWriter in Context.java. Ohterwiese
-//     * the exception will be printet in the calling method.
-//     * 
-//     * @throws SemanticException name to be added already exists.
-//     */
-//    private String buildErrorString( String name, Entry e, SrcPos pos ) 
-//    throws SemanticException {
-//        String msg = "Redefinition of `" + name + "'.";
-//        if (e.fSrcPos != null )
-//            msg += Options.LINE_SEPARATOR + e.fSrcPos + 
-//            "`" + name + "' previously declared here.";
-//        throw new SemanticException(pos, msg);
-//    }
-//    
     public void add(Token token, Type type) 
         throws SemanticException 
     {
@@ -179,7 +127,7 @@ public class Symtable {
     public Type lookup(String name) {
         // System.out.println("--- lookup: " + name);
         for (int i = fScopes.size() - 1; i >= 0; i--) {
-            HashMap names = (HashMap) fScopes.elementAt(i);
+            Map<String, Entry> names = fScopes.elementAt(i);
             Entry e = (Entry) names.get(name);
             if (e != null )
                 return e.fType;

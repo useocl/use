@@ -127,7 +127,7 @@ public final class Main {
 	} 
 
         if (Options.doGUI) {
-            Class mainWindowClass = null;
+            Class<?> mainWindowClass = null;
             try {
                 mainWindowClass = Class
                         .forName("org.tzi.use.gui.main.MainWindow");

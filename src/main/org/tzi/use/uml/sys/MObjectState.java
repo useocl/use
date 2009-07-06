@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -39,7 +38,7 @@ public final class MObjectState {
     /**
      * Slots holding a value for each attribute.
      */
-    private TreeMap fAttrSlots; // (attr : MAttribute -> Value)
+    private TreeMap<MAttribute, Value> fAttrSlots;
     private MObject fObject;    // owner object
 
     /**
@@ -49,10 +48,9 @@ public final class MObjectState {
         fObject = obj;
 
         // initialize attribute slots with undefined values
-        fAttrSlots = new TreeMap();
-        Iterator it = obj.cls().allAttributes().iterator();
-        while (it.hasNext() ) {
-            MAttribute attr = (MAttribute) it.next();
+        fAttrSlots = new TreeMap<MAttribute, Value>();
+        
+        for (MAttribute attr : obj.cls().allAttributes()) {
             fAttrSlots.put(attr, new UndefinedValue(attr.type()));
         }
     }
@@ -62,7 +60,7 @@ public final class MObjectState {
      */
     MObjectState(MObjectState x) {
         fObject = x.fObject;
-        fAttrSlots = (TreeMap) x.fAttrSlots.clone();
+        fAttrSlots = new TreeMap<MAttribute, Value>(x.fAttrSlots);
     }
 
     /**
@@ -110,7 +108,7 @@ public final class MObjectState {
      *
      * @return Map(MAttribute, Value) 
      */
-    public Map attributeValueMap() {
+    public Map<MAttribute, Value> attributeValueMap() {
         return fAttrSlots;
     }
 }

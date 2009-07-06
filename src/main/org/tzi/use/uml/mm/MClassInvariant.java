@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.uml.ocl.expr.ExpAllInstances;
@@ -57,7 +56,7 @@ public final class MClassInvariant extends MModelElementImpl {
     /**
      * Constructs a new invariant. The name and vars is optional.
      */
-    MClassInvariant(String name, List vars, MClass cls, Expression inv, boolean isExistential)
+    MClassInvariant(String name, List<String> vars, MClass cls, Expression inv, boolean isExistential)
         throws ExpInvalidException
     {
         super(name, "inv");
@@ -80,9 +79,8 @@ public final class MClassInvariant extends MModelElementImpl {
         else
         {
         	fHasVars = true;
-        	Iterator iter = vars.iterator();
-        	while(iter.hasNext()) {
-        		fVars.add(new VarDecl((String)iter.next(), t));
+        	for (String var : vars) {
+        		fVars.add(new VarDecl(var, t));
         	}
         }
         

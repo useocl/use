@@ -248,9 +248,9 @@ public class TypeTest extends TestCase {
         CollectionType collectiont3 = new CollectionType(it1);
         new EqualsTester(collectiont1, collectiont2, collectiont3, sett1);
 
-        EnumType enumt1 = new EnumType( "e1", new LinkedList() );
-        EnumType enumt2 = new EnumType( "e1", new LinkedList() );
-        EnumType enumt3 = new EnumType( "e2", new LinkedList() );
+        EnumType enumt1 = new EnumType( "e1", new LinkedList<String>() );
+        EnumType enumt2 = new EnumType( "e1", new LinkedList<String>() );
+        EnumType enumt3 = new EnumType( "e2", new LinkedList<String>() );
         new EqualsTester(enumt1, enumt2, enumt3, null);
 
         TupleType.Part part1 = new TupleType.Part("p1", sett1);
@@ -263,11 +263,9 @@ public class TypeTest extends TestCase {
                 
     }
   
-    private Set mkSet(Object[] elems) {
-        Set res = new HashSet(elems.length);
+    private Set<Object> mkSet(Object[] elems) {
+        Set<Object> res = new HashSet<Object>(elems.length);
         res.addAll(Arrays.asList(elems));
         return res;
     }
-    
-    
 }

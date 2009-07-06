@@ -74,7 +74,7 @@ public class TestModelUtil {
             ModelFactory mf = new ModelFactory();
             MModel model = mf.createModel( "Color" );
             
-            List literals = new ArrayList();
+            List<String> literals = new ArrayList<String>();
             literals.add( "blau" );
             literals.add( "gelb" );
             literals.add( "rot" );

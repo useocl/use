@@ -36,14 +36,14 @@ public class HashMultiMapTest extends TestCase {
         super(name);
     }
 
-    protected HashMultiMap m0;
-    protected HashMultiMap m1;
-    protected HashMultiMap m2;
+    protected HashMultiMap<String, String> m0;
+    protected HashMultiMap<String, String> m1;
+    protected HashMultiMap<String, String> m2;
 
     protected void setUp() {
-        m0 = new HashMultiMap();
-        m1 = new HashMultiMap();
-        m2 = new HashMultiMap();
+        m0 = new HashMultiMap<String, String>();
+        m1 = new HashMultiMap<String, String>();
+        m2 = new HashMultiMap<String, String>();
         m1.put("ab", "a");
         m1.put("ab", "b");
         m1.put("c", "c");

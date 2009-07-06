@@ -34,6 +34,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MSystemState;
 
 public class CMDCompiler {
@@ -48,7 +49,7 @@ public class CMDCompiler {
      * @param  err output stream for error messages
      * @return List(Cmd) or null if there were any errors
      */
-    public static List compileCmdList(MModel model,
+    public static List<MCmd> compileCmdList(MModel model,
                                       MSystemState systemState,
                                       String in, 
                                       String inName,
@@ -65,12 +66,12 @@ public class CMDCompiler {
      * @param  err output stream for error messages
      * @return List(Cmd) or null if there were any errors
      */
-    public static List compileCmdList(MModel model,
+    public static List<MCmd> compileCmdList(MModel model,
                                       MSystemState systemState,
                                       InputStream in, 
                                       String inName,
                                       PrintWriter err) {
-        List cmdList = null;
+        List<MCmd> cmdList = null;
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
         
         ANTLRInputStream aInput;
@@ -116,5 +117,4 @@ public class CMDCompiler {
         err.flush();
         return cmdList;
     }
-
 }
