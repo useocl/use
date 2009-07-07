@@ -49,7 +49,7 @@ public class ASTTupleType extends ASTType {
         
         for (ASTTuplePart tp : fParts) {
             Type t = tp.type().gen(ctx);
-            parts[i] = new TupleType.Part(tp.name().getText(), t);
+            parts[i++] = new TupleType.Part(tp.name().getText(), t);
         }
         res = TypeFactory.mkTuple(parts);
         return res;

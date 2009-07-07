@@ -47,7 +47,7 @@ public class ASTTupleLiteral extends ASTExpression {
         
         for (ASTTupleItem ti : fItems) {
             Expression e = ti.expression().gen(ctx);
-            parts[i] = new ExpTupleLiteral.Part(ti.name().getText(), e);
+            parts[i++] = new ExpTupleLiteral.Part(ti.name().getText(), e);
         }
         
         return new ExpTupleLiteral(parts);
