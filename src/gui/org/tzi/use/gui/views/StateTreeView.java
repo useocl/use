@@ -21,10 +21,12 @@
 
 package org.tzi.use.gui.views;
 
-import java.util.Iterator;
 import java.util.Map;
-import javax.swing.*;
-import javax.swing.tree.*;
+
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
@@ -42,6 +44,7 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class StateTreeView extends JTree implements View {
     private MSystem fSystem;
 
@@ -57,14 +60,6 @@ public class StateTreeView extends JTree implements View {
         fSystem.addChangeListener(this);
     }
 
-//    private void addChildNodes(DefaultMutableTreeNode parent, Iterator it) {
-//        DefaultMutableTreeNode child;
-//        while (it.hasNext() ) {
-//            child = new DefaultMutableTreeNode(it.next());
-//            parent.add(child);
-//        }
-//    }
-
     private void setTreeModel() {
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(fSystem.model().name());
 
@@ -72,43 +67,28 @@ public class StateTreeView extends JTree implements View {
         DefaultMutableTreeNode category = null;
         category = new DefaultMutableTreeNode("Objects");
         top.add(category);
-        Iterator classIterator = fSystem.model().classes().iterator();
-        while (classIterator.hasNext() ) {
-            MClass cls = (MClass) classIterator.next();
+        
+        for (MClass cls : fSystem.model().classes()) {
             DefaultMutableTreeNode classNode = new DefaultMutableTreeNode(cls);
             category.add(classNode);
-            Iterator objectIterator = systemState.objectsOfClass(cls).iterator();
-            while (objectIterator.hasNext() ) {
-                MObject obj = (MObject) objectIterator.next();
+            
+            for (MObject obj : systemState.objectsOfClass(cls)) {
                 DefaultMutableTreeNode objNode = new DefaultMutableTreeNode(obj);
                 classNode.add(objNode);
 
                 MObjectState objState = obj.state(fSystem.state());
-                Map attributeValueMap = objState.attributeValueMap();
-                Iterator attrIterator = attributeValueMap.entrySet().iterator();
-                while (attrIterator.hasNext() ) {
-                    Map.Entry entry = (Map.Entry) attrIterator.next();
-                    MAttribute attr = (MAttribute) entry.getKey();
-                    Value v = (Value) entry.getValue();
+                Map<MAttribute, Value> attributeValueMap = objState.attributeValueMap();
+
+                for (Map.Entry<MAttribute, Value> entry : attributeValueMap.entrySet()) {
+                    MAttribute attr = entry.getKey();
+                    Value v = entry.getValue();
                     DefaultMutableTreeNode attrNode = 
                         new DefaultMutableTreeNode(attr + " = " + v);
                     objNode.add(attrNode);
                 }
             }
         }
-
-
-
-
-
-
-        //          category = new DefaultMutableTreeNode("Associations");
-        //          top.add(category);
-        //      addChildNodes(category, fModel.associations().iterator());
-
-        //          category = new DefaultMutableTreeNode("Constraints");
-        //          top.add(category);
-        //      addChildNodes(category, fModel.classInvariants().iterator());
+        
         DefaultTreeModel treeModel = new DefaultTreeModel(top);
         setModel(treeModel);
     }

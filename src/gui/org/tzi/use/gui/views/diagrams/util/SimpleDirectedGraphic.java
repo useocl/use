@@ -24,7 +24,6 @@ package org.tzi.use.gui.views.diagrams.util;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Represents a simple graphic that consists of lines
@@ -50,7 +49,7 @@ public class SimpleDirectedGraphic extends DirectedGraphic {
      * @param lines to be added
      * @return graphic
      */
-    public I_DirectedGraphic addAllLines(final ArrayList lines) {
+    public I_DirectedGraphic addAllLines(final ArrayList<I_DirectedLine> lines) {
         final SimpleDirectedGraphic directedGraphic = new SimpleDirectedGraphic();
         directedGraphic.containedLines.addAll(containedLines);
         directedGraphic.containedLines.addAll(lines);
@@ -66,7 +65,7 @@ public class SimpleDirectedGraphic extends DirectedGraphic {
     public I_DirectedGraphic addDirectedGraphic(final I_DirectedGraphic graphic) {
         final SimpleDirectedGraphic directedGraphic = new SimpleDirectedGraphic();
         directedGraphic.containedLines.addAll(containedLines);
-        final ArrayList containedLinesGraphic = graphic.getLines();
+        final ArrayList<I_DirectedLine> containedLinesGraphic = graphic.getLines();
         directedGraphic.containedLines.addAll(containedLinesGraphic);
         return directedGraphic;
     }
@@ -78,14 +77,13 @@ public class SimpleDirectedGraphic extends DirectedGraphic {
      * @return this graphic
      */
     public I_DirectedGraphic draw(final Graphics graphic) {
-        for (final Iterator iterator = containedLines.iterator(); iterator.hasNext();) {
-            final I_DirectedLine line = (I_DirectedLine) iterator.next();
-            line.draw(graphic);
+        for (final I_DirectedLine line : containedLines) {
+        	line.draw(graphic);
         }
         return this;
     }
 
-    I_DirectedGraphic doCreateDirectedGraphic(final ArrayList containedLines) {
+    I_DirectedGraphic doCreateDirectedGraphic(final ArrayList<I_DirectedLine> containedLines) {
         return new SimpleDirectedGraphic().addAllLines(containedLines);
     }
 }

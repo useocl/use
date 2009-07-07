@@ -39,6 +39,7 @@ import org.tzi.use.util.StringUtil;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class CallStackView extends JPanel implements View {
     private MSystem fSystem;
     private JList fList;
@@ -93,13 +94,14 @@ public class CallStackView extends JPanel implements View {
 
     private void update() {
         fListModel.clear();
-        List callStack = fSystem.callStack();
+        List<MOperationCall> callStack = fSystem.callStack();
+        
         if (callStack.isEmpty() ) {
             fListModel.addElement("<empty>");
         } else {
             int j = 1;
             for (int i = callStack.size() - 1; i >= 0; i--) {
-                MOperationCall opcall = (MOperationCall) callStack.get(i);
+                MOperationCall opcall = callStack.get(i);
                 MOperation op = opcall.operation();
                 String s = j++ + ". " + 
                     ( fShowCall ? 

@@ -32,7 +32,7 @@ import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClsDiagramOptions;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramOptions;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjDiagramOptions;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
@@ -50,18 +50,18 @@ public class Context {
     /**
      * Contains all mappings in a diagram.
      */
-    private Map fAllMappings;
+    private Map<String, Map<?, ?>> fAllMappings;
     /**
      * The actual map which can contain ClassNodes, ObjectNodes, DiamondNodes,
      * BinaryEdges, HalfEdges, NodeEdges ...
      */
-    private Map fActualMap;
+    private Map<?, ?> fActualMap;
     /**
      * The type of elements which is parsed right now. Like class, object, 
      * binaryedge, halfedge, nodeedge, rolename, multiplity ...
      */
     private String fType;
-    private Stack fTypes;
+    private Stack<String> fTypes;
     /**
      * The kind of element which is parsed right now. Like association, link,
      * source, target ... 
@@ -107,7 +107,7 @@ public class Context {
     /**
      * All nodes which are participating in a t-nary edge.
      */
-    private Set fConnectedNodes;
+    private Set<Object> fConnectedNodes;
     /**
      * The ID of an nodeOnEdge (EdgeProperty)
      */
@@ -121,11 +121,11 @@ public class Context {
         fLayoutInfos = layoutInfos;
         fOpt = fLayoutInfos.getOpt();
         
-        fAllMappings = new HashMap();
+        fAllMappings = new HashMap<String, Map<?, ?>>();
         if ( fOpt instanceof ObjDiagramOptions ) {
             fAllMappings.put( LayoutTags.OBJECT, layoutInfos.getNodeToNodeMap() );
         }
-        if ( fOpt instanceof ClsDiagramOptions ) {
+        if ( fOpt instanceof ClassDiagramOptions ) {
             fAllMappings.put( LayoutTags.CLASS, layoutInfos.getNodeToNodeMap() );
         }
         fAllMappings.put( LayoutTags.BINARYEDGE, layoutInfos.getBinaryEdgeToEdgeMap() );
@@ -136,8 +136,8 @@ public class Context {
         fAllMappings.put( LayoutTags.INHERITANCE, layoutInfos.getGenToGeneralizationEdge() );
         
         fSystem = fLayoutInfos.getSystem();
-        fConnectedNodes = new HashSet();
-        fTypes = new Stack();
+        fConnectedNodes = new HashSet<Object>();
+        fTypes = new Stack<String>();
     }
     
     /**
@@ -179,21 +179,25 @@ public class Context {
     /**
      * Returns the actual Map with nodes or edges.
      */
-    public Map getActualMap() {
+    public Map<?, ?> getActualMap() {
         return fActualMap;
     }
-    public void setActualMap( Map actualMap ) {
+    
+    public void setActualMap( Map<?, ?> actualMap ) {
         fActualMap = actualMap;
     }
+    
     /**
      * Returns the actual Nodease. If no node is parsed it returns null.
      */
     public NodeBase getActualNode() {
         return fActualNode;
     }
+    
     public void setActualNode( NodeBase actualNode ) {
         fActualNode = actualNode;
     }
+    
     /**
      * Returns the actual object (MClass/MObject). If no node is parsed it 
      * returns null.
@@ -201,6 +205,7 @@ public class Context {
     public Object getActualObj() {
         return fActualObj;
     }
+    
     public void setActualObj( Object actualObj ) {
         fActualObj = actualObj;
     }
@@ -230,11 +235,11 @@ public class Context {
     public NodeBase getSourceNode() {
         NodeBase n = null;
         if ( fSource instanceof MObject ) {
-            Map objectsMap = (Map) fAllMappings.get( LayoutTags.OBJECT );
+            Map<?, ?> objectsMap = fAllMappings.get( LayoutTags.OBJECT );
             n = (NodeBase) objectsMap.get( fSource );
         }
         if ( fSource instanceof MClass ) {
-            Map clsMap = (Map) fAllMappings.get( LayoutTags.CLASS );
+            Map<?, ?> clsMap = fAllMappings.get( LayoutTags.CLASS );
             n = (NodeBase) clsMap.get( fSource );
         }
         return n;
@@ -246,20 +251,20 @@ public class Context {
     public NodeBase getTargetNode() {
         NodeBase n = null;
         if ( fTarget instanceof MObject ) {
-            Map objectsMap = (Map) fAllMappings.get( LayoutTags.OBJECT );
+            Map<?, ?> objectsMap = fAllMappings.get( LayoutTags.OBJECT );
             n = (NodeBase) objectsMap.get( fTarget );
         }
         if ( fTarget instanceof MClass ) {
-            Map clsMap = (Map) fAllMappings.get( LayoutTags.CLASS );
+            Map<?, ?> clsMap = fAllMappings.get( LayoutTags.CLASS );
             n = (NodeBase) clsMap.get( fTarget );
         }
         return n;
     }
     
-    public Map getAllMappings() {
+    public Map<String, Map<?, ?>> getAllMappings() {
         return fAllMappings;
     }
-    public void setAllMappings( Map allMappings ) {
+    public void setAllMappings( Map<String, Map<?, ?>> allMappings ) {
         fAllMappings = allMappings;
     }
     public LayoutInfos getLayoutInfos() {
@@ -285,7 +290,7 @@ public class Context {
     }
     public void setType( String type ) {
         fType = type;
-        setActualMap( (Map) fAllMappings.get( fType ) );
+        setActualMap( (Map<?, ?>) fAllMappings.get( fType ) );
     }
     public String getKind() {
         return fKind;
@@ -294,10 +299,10 @@ public class Context {
         fKind = kind;
     }
     
-    public Set getHiddenNodes() {
+    public Set<Object> getHiddenNodes() {
         return fLayoutInfos.getHiddenNodes();
     }
-    public Set getHiddenEdges() {
+    public Set<Object> getHiddenEdges() {
         return fLayoutInfos.getHiddenEdges();
     }
     public MModel getModel() {
@@ -307,7 +312,7 @@ public class Context {
         return fSystem.state();
     }
     
-    public Set getConnectedNodes() {
+    public Set<Object> getConnectedNodes() {
         return fConnectedNodes;
     }
     
@@ -331,12 +336,12 @@ public class Context {
         return (String) fTypes.peek();
     }
     public String pushType( String type ) {
-        setActualMap( (Map) fAllMappings.get( type ) );
-        return (String) fTypes.push( type );
+        setActualMap( fAllMappings.get( type ) );
+        return fTypes.push( type );
     }
     public String popType() {
-        String pop = (String) fTypes.pop();
-        setActualMap( (Map) fAllMappings.get( peekType() ) );
+        String pop = fTypes.pop();
+        setActualMap( fAllMappings.get( peekType() ) );
         return pop;
     }
     

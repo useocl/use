@@ -42,15 +42,16 @@ import org.tzi.use.gui.views.diagrams.Selectable;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public class Selection { 
-    private Set fSelection; // (Selectable) selected components
+public class Selection implements Iterable<Selectable> { 
+    private Set<Selectable> fSelection;  // selected components
     protected EventListenerList fListenerList = new EventListenerList();
 
     /**
      * A ChangeEvent is used to notify interested listeners that the
      * state of the selection has changed.  
      */
-    public class ChangeEvent extends EventObject {
+    @SuppressWarnings("serial")
+	public class ChangeEvent extends EventObject {
         public ChangeEvent(Object source) {
             super(source);
         }
@@ -61,7 +62,7 @@ public class Selection {
     }
 
     public Selection() {
-        fSelection = new HashSet();
+        fSelection = new HashSet<Selectable>();
     }
 
     public void add(Selectable sel) {
@@ -90,14 +91,16 @@ public class Selection {
      */
     public boolean clear() {
         boolean res = ! fSelection.isEmpty();
-        Iterator it = fSelection.iterator();
-        while (it.hasNext() ) {
-            Selectable sel = (Selectable) it.next();
+        
+        for (Selectable sel : fSelection) {
             sel.setSelected(false);
         }
+        
         fSelection.clear();
-        if (res )
+        
+        if (res)
             fireStateChanged();
+        
         return res;
     }
 
@@ -120,7 +123,7 @@ public class Selection {
      *
      * @return iterator over Selectable objects.
      */
-    public Iterator iterator() {
+    public Iterator<Selectable> iterator() {
         return fSelection.iterator();
     }
 

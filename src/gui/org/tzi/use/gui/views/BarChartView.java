@@ -34,6 +34,7 @@ import javax.swing.*;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class BarChartView extends JPanel {
     private String fHeader1;    // for name column
     private String fHeader2;    // for bar column

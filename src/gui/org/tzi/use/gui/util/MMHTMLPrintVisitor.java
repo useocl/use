@@ -25,8 +25,10 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import org.tzi.use.gui.main.ModelBrowserSorting;
+import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMPrintVisitor;
+import org.tzi.use.uml.mm.MOperation;
 
 /**
  * Visitor for dumping a HTML representation of model elements on an
@@ -88,12 +90,12 @@ public final class MMHTMLPrintVisitor extends MMPrintVisitor {
         return "&nbsp;";
     }
     
-    public List getAttributesForClass( MClass c ) {
+    public List<MAttribute> getAttributesForClass( MClass c ) {
         return ModelBrowserSorting.getInstance()
             .sortAttributes(c.attributes());
     }
 
-    public List getOperationsForClass( MClass c ) {
+    public List<MOperation> getOperationsForClass( MClass c ) {
         return ModelBrowserSorting.getInstance()
             .sortOperations(c.operations());
     }

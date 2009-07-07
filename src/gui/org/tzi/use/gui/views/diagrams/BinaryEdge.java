@@ -40,7 +40,7 @@ public class BinaryEdge extends EdgeBase {
 
     private String fLabel;
     
-    public BinaryEdge( String label, Object source, Object target,
+    public BinaryEdge( String label, NodeBase source, NodeBase target,
                        MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
                        DiagramView diagram, MAssociation assoc ) {
         super( source, target, label, diagram, assoc );
@@ -62,7 +62,7 @@ public class BinaryEdge extends EdgeBase {
                                this, fX1, fY1, fX2, fY2, fOpt,
                                Multiplicity.SOURCE_SIDE );
          fTargetMultiplicity = 
-             new Multiplicity( targetEnd, (NodeBase) target, (NodeBase) source,
+             new Multiplicity( targetEnd, target, source,
                                this, fX2, fY2, fX1, fY1, fOpt,
                                Multiplicity.TARGET_SIDE );
         
@@ -70,13 +70,13 @@ public class BinaryEdge extends EdgeBase {
         
     }
 
-    public BinaryEdge( String label, Object source, Object target,
+    public BinaryEdge( String label, NodeBase source, NodeBase target,
                        DiagramView diagram, MAssociation assoc ) {
         super( source, target, label, diagram, assoc );
         fLabel = label;
         
-        fAssocName = new AssociationName( label, (NodeBase) source,
-                                         (NodeBase) target, fX1, fY1, fX2, fY2,
+        fAssocName = new AssociationName( label, source,
+                                          target, fX1, fY1, fX2, fY2,
                                          fOpt, this, assoc );
         
         checkAndCreateReflexiveEdge( source.equals( target ) );
@@ -115,28 +115,28 @@ public class BinaryEdge extends EdgeBase {
     private void updateReflexiveNodes( FontMetrics fm ) {
         if ( ( fNodesOnEdge.size() <= 5 && !isReflexive() ) 
              || ( isReflexive() && fNodesOnEdge.size() <= 6 ) ) {
-            List points = calcReflexivePoints( fm );
+            List<Point2D.Double> points = calcReflexivePoints( fm );
             Point2D sp = 
                 getIntersectionCoordinate( fSource, 
-                                           (int) ((Point2D) points.get( 0 )).getX(),
-                                           (int) ((Point2D) points.get( 0 )).getY(),
-                                           (int) ((Point2D) points.get( 1 )).getX(),
-                                           (int) ((Point2D) points.get( 1 )).getY() );
+                                           (int) ( points.get( 0 )).getX(),
+                                           (int) ( points.get( 0 )).getY(),
+                                           (int) ( points.get( 1 )).getX(),
+                                           (int) ( points.get( 1 )).getY() );
             Point2D tp = 
                 getIntersectionCoordinate( fTarget, 
-                                           (int) ((Point2D) points.get( 4 )).getX(),
-                                           (int) ((Point2D) points.get( 4 )).getY(),
-                                           (int) ((Point2D) points.get( 3 )).getX(),
-                                           (int) ((Point2D) points.get( 3 )).getY() );
+                                           (int) ( points.get( 4 )).getX(),
+                                           (int) ( points.get( 4 )).getY(),
+                                           (int) ( points.get( 3 )).getX(),
+                                           (int) ( points.get( 3 )).getY() );
             
             fSNode.setX( sp.getX() );
             fSNode.setY( sp.getY() );
-            fRefNode1.setX( ((Point2D) points.get( 1 )).getX() );
-            fRefNode1.setY( ((Point2D) points.get( 1 )).getY() );
-            fRefNode2.setX( ((Point2D) points.get( 2 )).getX() );
-            fRefNode2.setY( ((Point2D) points.get( 2 )).getY() );
-            fRefNode3.setX( ((Point2D) points.get( 3 )).getX() );
-            fRefNode3.setY( ((Point2D) points.get( 3 )).getY() );
+            fRefNode1.setX( ( points.get( 1 )).getX() );
+            fRefNode1.setY( ( points.get( 1 )).getY() );
+            fRefNode2.setX( ( points.get( 2 )).getX() );
+            fRefNode2.setY( ( points.get( 2 )).getY() );
+            fRefNode3.setX( ( points.get( 3 )).getX() );
+            fRefNode3.setY( ( points.get( 3 )).getY() );
             fTNode.setX( tp.getX() );
             fTNode.setY( tp.getY() );
         }

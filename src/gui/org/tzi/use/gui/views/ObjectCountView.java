@@ -37,16 +37,17 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class ObjectCountView extends BarChartView implements View {
     private MSystem fSystem;
-    private Object[] fClasses;
+    private MClass[] fClasses;
     private int[] fValues;
 
     public ObjectCountView(MSystem system) {
         super("Class", "# Objects", Color.blue);
         fSystem = system;
-        Collection classes = fSystem.model().classes();
-        fClasses = classes.toArray();
+        Collection<MClass> classes = fSystem.model().classes();
+        fClasses = classes.toArray(new MClass[0]);
         Arrays.sort(fClasses);
         setNames(fClasses);
         fValues = new int[fClasses.length];
@@ -57,7 +58,7 @@ public class ObjectCountView extends BarChartView implements View {
     private void update() {
         MSystemState systemState = fSystem.state();
         for (int i = 0; i < fClasses.length; i++) {
-            fValues[i] = systemState.objectsOfClass((MClass) fClasses[i]).size();
+            fValues[i] = systemState.objectsOfClass(fClasses[i]).size();
         }
         setValues(fValues);
     }

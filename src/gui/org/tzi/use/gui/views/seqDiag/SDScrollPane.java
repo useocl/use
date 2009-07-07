@@ -39,6 +39,7 @@ import org.tzi.use.util.cmd.CommandFailedException;
  * @version $ProjectVersion: 0.393 $
  * @author Antje Werner
  */
+@SuppressWarnings("serial")
 public class SDScrollPane extends JScrollPane {
 
     /**
@@ -74,8 +75,6 @@ public class SDScrollPane extends JScrollPane {
 
         Dimension vDim = getPreferredSize();
 
-        int x = fHorizSB.getValue();
-        int y = fVertSB.getValue();
         setPreferredSize(vDim);
         // inform the SequenceDiagramView object about the new view bounds
         ((SequenceDiagramView) fComp).setViewBounds(new Rectangle(fHorizSB

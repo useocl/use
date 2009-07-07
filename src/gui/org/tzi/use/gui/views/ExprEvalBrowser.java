@@ -45,7 +45,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -86,7 +85,6 @@ import org.tzi.use.gui.util.CaptureTheWindow;
 import org.tzi.use.uml.ocl.expr.EvalNode;
 import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.VarBindings.Entry;
 import org.tzi.use.uml.sys.MSystem;
 
@@ -97,6 +95,7 @@ import org.tzi.use.uml.sys.MSystem;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
+@SuppressWarnings("serial")
 public class ExprEvalBrowser extends JPanel {
     private MSystem fSystem;
 
@@ -177,7 +176,7 @@ public class ExprEvalBrowser extends JPanel {
 
     boolean fFirstInvoke2 = true;
 
-    Vector fNeedlessVarBindings;
+    Vector<Entry> fNeedlessVarBindings;
 
     // DefaultFont for TreeCellRenderer
     Font fDefaultFont = getFont();
@@ -196,11 +195,9 @@ public class ExprEvalBrowser extends JPanel {
      */
     private void createNodes(DefaultMutableTreeNode treeParent, EvalNode node) {
         Expression parentExpr = node.getExpr();
-        Iterator it = node.children().iterator();
-        Vector parentVars = node.getVarBindings();
+        Vector<Entry> parentVars = node.getVarBindings();
 
-        breakLabel: while (it.hasNext()) {
-            EvalNode child = (EvalNode) it.next();
+        breakLabel: for(EvalNode child : node.children()) {
             Expression childExpr = child.getExpr();
             DefaultMutableTreeNode treeChild = new DefaultMutableTreeNode(child);
             // TreeHighlitings for the node
@@ -282,18 +279,16 @@ public class ExprEvalBrowser extends JPanel {
             // the term
             child.getVarBindings().removeAll(fNeedlessVarBindings);
             // VarBindings for the Early-Variable-Assignment-View
-            Vector childVars = child.getVarBindings();
-            Vector newVars = (Vector) childVars.clone();
-            // Vector addVars = (Vector)parentVars.clone();
+            Vector<Entry> childVars = child.getVarBindings();
+            Vector<Entry> newVars = new Vector<Entry>( childVars );
+
             newVars.removeAll(parentVars);
             DefaultMutableTreeNode paren = treeParent;
             // if new Variables appear in the term, they are added in the tree
             // before the child
             if (fEarlyVarEval && newVars.size() > 0) {
-                Entry e = (Entry) newVars.get(0);
-                // addVars.add(e);
-                Type t = e.getValue().type();
-                enode = new EvalNode((Vector) childVars.clone());
+                Entry e = newVars.get(0);
+                enode = new EvalNode(new Vector<Entry>(childVars));
                 ExpVariable expVar = new ExpVariable(e.getVarName(), e
                         .getValue().type());
                 enode.setExpression(expVar);
@@ -362,8 +357,11 @@ public class ExprEvalBrowser extends JPanel {
     public void updateEvalBrowser(EvalNode root) {
         // create the nodes for the JTree
         fTopNode = new DefaultMutableTreeNode(root);
-        fNeedlessVarBindings = (Vector) root.getVarBindings().clone();
+        
+        // TODO: The next two lines are stupid, aren't they?
+        fNeedlessVarBindings = new Vector<Entry>( root.getVarBindings() );
         root.getVarBindings().removeAll(fNeedlessVarBindings);
+        
         // the tree is created later when the default configuration is set
         createNodes(fTopNode, root);
         // highlitings informations for the root node
@@ -402,7 +400,7 @@ public class ExprEvalBrowser extends JPanel {
         else if (fTreeHighlitings[3].isSelected())
             fTree.setCellRenderer(new CompleteSubtreeRenderer());
         // reset the extra windows
-        fVarAssList.setListData(new Vector());
+        fVarAssList.setListData(new Vector<Entry>());
         fSubstituteWin.setText(null);
         // set new text for the top-label
         fTitle = root.getExpr().toString();
@@ -494,7 +492,8 @@ public class ExprEvalBrowser extends JPanel {
 
         // create the nodes for the JTree
         fTopNode = new DefaultMutableTreeNode(root);
-        fNeedlessVarBindings = (Vector) root.getVarBindings().clone();
+        //TODO: Check the next two lines
+        fNeedlessVarBindings = new Vector<Entry>(root.getVarBindings());
         root.getVarBindings().removeAll(fNeedlessVarBindings);
         // the tree is created later when the default configuration is set
         createNodes(fTopNode, root);
@@ -532,7 +531,7 @@ public class ExprEvalBrowser extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     Entry var = (Entry) fVarAssList.getSelectedValue();
-                    ObjectBrowser ob = new ObjectBrowser(fSystem, var);
+                    new ObjectBrowser(fSystem, var);
                 }
             }
         };
@@ -904,7 +903,7 @@ public class ExprEvalBrowser extends JPanel {
                     && e.getComponent() != fVarAssList
                     && e.getComponent() != fSubstituteWin) {
                 fTree.setSelectionRow(-1);
-                fVarAssList.setListData(new Vector());
+                fVarAssList.setListData(new Vector<Entry>());
                 fSubstituteWin.setText(null);
             }
 
@@ -986,15 +985,12 @@ public class ExprEvalBrowser extends JPanel {
             // Action for Checkbox ExtraEval
             else if (object == fVarAssListChk) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    int width = getWidth();
                     if (fSplit2.getBottomComponent() != null)
                         fSplit2.setDividerSize(fDefaultDividerSize);
                     fSplit2.setTopComponent(fScrollVarAssList);
                     if (fSplit1.getRightComponent() == null)
                         setSplitDivider();
                 } else {
-                    int divLocation = fSplit1.getDividerLocation()
-                            + fDefaultDividerSize;
                     fSplit2.remove(fScrollVarAssList);
                     fSplit2.setDividerSize(0);
                     if (fSplit2.getTopComponent() == null
@@ -1014,8 +1010,6 @@ public class ExprEvalBrowser extends JPanel {
                     if (fSplit1.getRightComponent() == null)
                         setSplitDivider();
                 } else {
-                    int divLocation = fSplit1.getDividerLocation()
-                            + fDefaultDividerSize;
                     fVarSubstituteWinChk.setSelected(false);
                     fSplit2.remove(fScrollSubstituteWin);
                     fSplit2.setDividerSize(0);
@@ -1735,7 +1729,7 @@ public class ExprEvalBrowser extends JPanel {
                     .getLastPathComponent();
             EvalNode enode = (EvalNode) dnode.getUserObject();
             // get the Varbindings
-            Vector bindings = enode.getVarBindings();
+            Vector<Entry> bindings = enode.getVarBindings();
             // set content to the variable window
             fVarAssList.setListData(bindings);
             // substitutes subexpressions with the values
@@ -1763,7 +1757,7 @@ public class ExprEvalBrowser extends JPanel {
         public String substituteSubExpr(String expr, String subExpr,
                 String subValue) {
             String ret = expr;
-            HashSet stoken = new HashSet();
+            HashSet<Character> stoken = new HashSet<Character>();
             stoken.add(new Character(' '));
             stoken.add(new Character('<'));
             stoken.add(new Character('>'));

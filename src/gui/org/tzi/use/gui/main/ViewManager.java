@@ -30,6 +30,7 @@ import javax.swing.JInternalFrame;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
+@SuppressWarnings("serial")
 public class ViewManager extends DefaultDesktopManager {
 
     /**

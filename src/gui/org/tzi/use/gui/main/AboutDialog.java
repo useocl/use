@@ -34,6 +34,7 @@ import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
+@SuppressWarnings("serial")
 class AboutDialog extends JDialog {
 
     AboutDialog(JFrame parent) {

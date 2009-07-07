@@ -25,7 +25,6 @@ package org.tzi.use.gui.views.diagrams.util;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Represents a filled graphic that consists of lines which form a closed shape
@@ -34,7 +33,7 @@ import java.util.Iterator;
  */
 public class FilledDirectedGraphic extends DirectedGraphic {
 
-    FilledDirectedGraphic(final ArrayList lines) {
+    FilledDirectedGraphic(final ArrayList<I_DirectedLine> lines) {
         this.containedLines.addAll(lines);
     }
 
@@ -79,7 +78,7 @@ public class FilledDirectedGraphic extends DirectedGraphic {
      *
      * @param lines
      */
-    public I_DirectedGraphic addAllLines(final ArrayList lines) {
+    public I_DirectedGraphic addAllLines(final ArrayList<I_DirectedLine> lines) {
         throw new UnsupportedOperationException("Method addAllLines not supported by FilledDirectedGraphic");
     }
 
@@ -94,14 +93,13 @@ public class FilledDirectedGraphic extends DirectedGraphic {
 
     Polygon createPolygon() {
         final Polygon polygon = new Polygon();
-        for (final Iterator iterator = containedLines.iterator(); iterator.hasNext();) {
-            final I_DirectedLine line = (I_DirectedLine) iterator.next();
+        for (final I_DirectedLine line : containedLines) {
             polygon.addPoint(line.getRoundedSourceX(), line.getRoundedSourceY());
         }
         return polygon;
     }
 
-    I_DirectedGraphic doCreateDirectedGraphic(final ArrayList containedLines) {
+    I_DirectedGraphic doCreateDirectedGraphic(final ArrayList<I_DirectedLine> containedLines) {
         return new FilledDirectedGraphic(containedLines);
     }
 

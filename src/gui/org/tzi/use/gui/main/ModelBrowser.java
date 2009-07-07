@@ -60,12 +60,14 @@ import org.tzi.use.gui.util.MMHTMLPrintVisitor;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.event.ModelBrowserMouseHandling;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
+import org.tzi.use.uml.mm.MPrePostCondition;
 
 /** 
  * A ModelBrowser provides a tree view of classes, associations, and
@@ -76,6 +78,7 @@ import org.tzi.use.uml.mm.MModelElement;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class ModelBrowser extends JPanel 
     implements DragSourceListener, DragGestureListener, SortChangeListener {
     private MModel fModel;
@@ -297,37 +300,29 @@ public class ModelBrowser extends JPanel
         element.processWithVisitor(v);
         sw.write("</body></html>");
         String spec = sw.toString();
-        // System.out.println(spec);
         fHtmlPane.setText(spec);
         sw = new StringWriter();
         MMVisitor w = new MMPrintVisitor(new PrintWriter(sw));
         element.processWithVisitor(w);
-        String spec1 = sw.toString();        
-        //System.out.println(spec1);
     }
 
     public void createNodes( final DefaultMutableTreeNode top ) {
-        final Collection sortedClasses = 
-            fMbs.sortClasses( new ArrayList(fModel.classes()) );
+        final Collection<MClass> sortedClasses = 
+            fMbs.sortClasses( new ArrayList<MClass>(fModel.classes()) );
         addChildNodes( top, "Classes", sortedClasses );
 
-        final ArrayList sortedAssociations = 
-            fMbs.sortAssociations(new ArrayList(fModel.associations()));
+        final ArrayList<MAssociation> sortedAssociations = 
+            fMbs.sortAssociations(new ArrayList<MAssociation>(fModel.associations()));
         addChildNodes( top, "Associations", sortedAssociations );
 
-        final Collection sortedInvariants = 
+        final Collection<MClassInvariant> sortedInvariants = 
             fMbs.sortInvariants( fModel.classInvariants() );
-        Iterator it = fModel.classInvariants().iterator();
-        while(it.hasNext()){
-            MClassInvariant mci = (MClassInvariant)it.next();
-            //System.out.println(mci.toString());
-        }
+        
         addChildNodes( top, "Invariants", sortedInvariants );
 
-        final Collection sortedConditions = 
+        final Collection<MPrePostCondition> sortedConditions = 
             fMbs.sortPrePostConditions(fModel.prePostConditions());
         addChildNodes( top, "Pre-/Postconditions", sortedConditions );
-
     }
 
     /**
@@ -335,10 +330,10 @@ public class ModelBrowser extends JPanel
      */
     private void addChildNodes(DefaultMutableTreeNode top, 
                                String name, 
-                               Collection items) {
+                               Collection<?> items) {
         DefaultMutableTreeNode category = new DefaultMutableTreeNode(name);
         top.add(category);
-        Iterator it = items.iterator();
+        Iterator<?> it = items.iterator();
         while (it.hasNext() ) {
             DefaultMutableTreeNode child = new DefaultMutableTreeNode(it.next());
             category.add(child);
@@ -349,7 +344,7 @@ public class ModelBrowser extends JPanel
      * If an event occures the tree will be reloaded.
      */
     public void stateChanged( SortChangeEvent e ) {
-        ArrayList pathWereExpanded = new ArrayList();
+        ArrayList<Integer> pathWereExpanded = new ArrayList<Integer>();
         int selectedRow = -1;
         
         // which nodes are expanded
@@ -370,7 +365,7 @@ public class ModelBrowser extends JPanel
 
         // expand all nodes that were expanded.
         for ( int i=0; i<pathWereExpanded.size(); i++ ){
-            fTree.expandRow( ((Integer)pathWereExpanded.get(i)).intValue() );
+            fTree.expandRow( pathWereExpanded.get(i).intValue() );
         }
         // set selected node again.
         if ( selectedRow >= 0 ) {

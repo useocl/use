@@ -31,16 +31,13 @@ import org.tzi.use.graph.*;
 
 
 public class Layout {
-    private DirectedGraph fGraph;
+    private DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> fGraph;
 
-    Layout(DirectedGraph g) {
+    Layout(DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> g) {
         fGraph = g;
     }
 
-    public DirectedGraph graph() {
+    public DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> graph() {
         return fGraph;
     }
-
-    //      DirectedGraph graph();
-    //      int[][] position(Object node);
 }

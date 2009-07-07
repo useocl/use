@@ -33,6 +33,7 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class StateEvolutionView extends LineChartView implements View {
     private MSystem fSystem;
 

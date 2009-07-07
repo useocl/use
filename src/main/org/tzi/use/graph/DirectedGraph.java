@@ -22,6 +22,7 @@
 package org.tzi.use.graph;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /** 
@@ -83,6 +84,12 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
      */
     Object[] toArray();
 
+    /**
+     * Returns a list containing all of the nodes in this graph.
+     * @return
+     */
+    List<N> getNodes();
+    
     // Modification Operations
 
     /**

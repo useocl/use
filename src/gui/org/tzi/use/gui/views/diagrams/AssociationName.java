@@ -38,7 +38,7 @@ import org.tzi.use.uml.mm.MAssociation;
  */
 public final class AssociationName extends EdgeProperty {
     private int fLabelWidth;
-    private List fConnectedNodes;
+    private List<String> fConnectedNodes;
     
     AssociationName( String name, NodeBase source, NodeBase target,
                      int x1, int y1, int x2, int y2, 
@@ -55,7 +55,7 @@ public final class AssociationName extends EdgeProperty {
         fY_TargetEdgePoint = y2;
     }
     
-    AssociationName( String name, List connectedNodes, DiagramOptions opt,
+    AssociationName( String name, List<String> connectedNodes, DiagramOptions opt,
                      NodeBase source, MAssociation assoc ) {
         fName = name;
         fSource = source;
@@ -243,9 +243,9 @@ public final class AssociationName extends EdgeProperty {
     public String ident() {
         String connectedNodes = "";
         if ( fConnectedNodes != null && !fConnectedNodes.isEmpty() ) {
-            Iterator it = fConnectedNodes.iterator();
+            Iterator<String> it = fConnectedNodes.iterator();
             while ( it.hasNext() ) {
-                connectedNodes += (String) it.next() + "_";
+                connectedNodes += it.next() + "_";
             }
         } else {
             connectedNodes = fSource.name() + "_" + fTarget.name();

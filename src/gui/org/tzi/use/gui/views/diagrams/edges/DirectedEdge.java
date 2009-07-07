@@ -57,7 +57,7 @@ public class DirectedEdge implements I_DirectedEdge {
      * @throws Exception
      *             thrown if an edge of the given type cannot be instantiated
      */
-    public DirectedEdge( final I_DirectedGraphic head, final Class tailType,
+    public DirectedEdge( final I_DirectedGraphic head, final Class<?> tailType,
                          final int sourceX, final int sourceY, final int targetX,
                          final int targetY ) throws Exception {
         fHead = head;
@@ -92,7 +92,7 @@ public class DirectedEdge implements I_DirectedEdge {
      *             thrown if an edge of the given type cannot be instantiated
      */
     public DirectedEdge( final I_DirectedGraphic head,
-                         final I_DirectedGraphic tail, final Class tailType,
+                         final I_DirectedGraphic tail, final Class<?> tailType,
                          final int sourceX, final int sourceY, final int targetX,
                          final int targetY ) throws Exception {
         fHead = head;
@@ -135,7 +135,7 @@ public class DirectedEdge implements I_DirectedEdge {
      * @throws Exception
      *             thrown if an edge of the given type cannot be instantiated
      */
-    public DirectedEdge( final I_DirectedGraphic head, final Class tailType,
+    public DirectedEdge( final I_DirectedGraphic head, final Class<?> tailType,
                          final int sourceX, final int sourceY, final int targetX,
                          final int targetY, final int fragmentLength,
                          final int intersectionLength ) throws Exception {
@@ -215,13 +215,13 @@ public class DirectedEdge implements I_DirectedEdge {
         
     }
     
-    private void createTailLine( final double headWidth, final Class tailType,
+    private void createTailLine( final double headWidth, final Class<?> tailType,
                                  final int sourceX, final int sourceY,
                                  final int targetX, final int targetY,
                                  final double gradientAngle,
                                  final int fragmentLength,
                                  final int intersectionLength ) throws Exception {
-        final Class[] parameterTypes = { double.class, double.class,
+        final Class<?>[] parameterTypes = { double.class, double.class,
                                          double.class, double.class, int.class,
                                          int.class };
         final int tailWidth = calculateTailWidth( sourceX, sourceY, targetX,
@@ -236,11 +236,11 @@ public class DirectedEdge implements I_DirectedEdge {
                                  gradientAngle );
     }
     
-    private void createTailLine( final double headWidth, final Class tailType,
+    private void createTailLine( final double headWidth, final Class<?> tailType,
                                  final int sourceX, final int sourceY,
                                  final int targetX, final int targetY,
                                  final double gradientAngle ) throws Exception {
-        final Class[] parameterTypes = { double.class, double.class,
+        final Class<?>[] parameterTypes = { double.class, double.class,
                                          double.class, double.class };
         final int tailWidth = calculateTailWidth( sourceX, sourceY, targetX,
                                                   targetY, headWidth );
@@ -252,12 +252,12 @@ public class DirectedEdge implements I_DirectedEdge {
                                  gradientAngle );
     }
     
-    private void createTailLineAuxiliary( final Class tailType,
-                                          final Class[] parameterTypes,
+    private void createTailLineAuxiliary( final Class<?> tailType,
+                                          final Class<?>[] parameterTypes,
                                           final Object[] parameters,
                                           final double gradientAngle )
     throws Exception {
-        final Constructor constructor = tailType
+        final Constructor<?> constructor = tailType
         .getConstructor( parameterTypes );
         final I_DirectedLine auxiliaryLine = (I_DirectedLine) constructor
         .newInstance( parameters );

@@ -75,11 +75,11 @@ import org.tzi.use.uml.sys.MSystem;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 class ClassInvariantDetailsDialog extends JDialog implements ItemListener {
     private MSystem fSystem;
-//    private MClassInvariant fInv;
-    private Set fGoodObjects;
-    private Set fBadObjects;
+    private Set<ObjectValue> fGoodObjects;
+    private Set<ObjectValue> fBadObjects;
     private Object[] fObjects;  // contents of fListObjects
     private JList fListObjects;
     private JLabel fLabelProperties;
@@ -171,7 +171,7 @@ class ClassInvariantDetailsDialog extends JDialog implements ItemListener {
      * Show objects satisfying and/or violating invariant.
      */
     private void changeListContents(boolean showGoodOnes, boolean showBadOnes) {
-        Set s = new HashSet();
+        Set<ObjectValue> s = new HashSet<ObjectValue>();
         if (showGoodOnes )
             s.addAll(fGoodObjects);
         if (showBadOnes )
@@ -188,12 +188,11 @@ class ClassInvariantDetailsDialog extends JDialog implements ItemListener {
     ClassInvariantDetailsDialog(MSystem system, MClassInvariant inv) {
         super((Frame) null, "Details of invariant " + inv.name(), true);
         fSystem = system;
-//        fInv = inv;
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         // prepare table: get attributes of class
-        List attributes = inv.cls().allAttributes();
+        List<MAttribute> attributes = inv.cls().allAttributes();
         final int N = attributes.size();
         fAttributes = new MAttribute[N];
         System.arraycopy(attributes.toArray(), 0, fAttributes, 0, N);
@@ -201,16 +200,21 @@ class ClassInvariantDetailsDialog extends JDialog implements ItemListener {
         fValues = new String[N];
 
         // initialize good/bad objects
-        fGoodObjects = new HashSet();
-        fBadObjects = new HashSet();
+        fGoodObjects = new HashSet<ObjectValue>();
+        fBadObjects = new HashSet<ObjectValue>();
         Evaluator evaluator = new Evaluator();
         Expression expr = inv.getExpressionForViolatingInstances();
         Value v = evaluator.eval(expr, fSystem.state(), new VarBindings());
-        fBadObjects.addAll(((SetValue) v).collection());
+        
+        for (Value objValue : ((SetValue) v).collection() ) {
+        	fBadObjects.add((ObjectValue)objValue);
+        }
         expr = inv.getExpressionForSatisfyingInstances();
         v = evaluator.eval(expr, fSystem.state(), new VarBindings());
-        fGoodObjects.addAll(((SetValue) v).collection());
-
+        
+        for (Value objValue : ((SetValue) v).collection()) {
+        	fGoodObjects.add((ObjectValue)objValue);
+        }
         // create object list and label
         fListObjects = new JList();
         fListObjects.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

@@ -74,7 +74,6 @@ import org.tzi.use.uml.sys.MCmdOpEnter;
 import org.tzi.use.uml.sys.MCmdOpExit;
 import org.tzi.use.uml.sys.MCmdSetAttribute;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectImpl;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.StringUtil;
@@ -86,6 +85,7 @@ import org.tzi.use.util.cmd.CommandFailedException;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters, Antje Werner
  */
+@SuppressWarnings("serial")
 public class SequenceDiagram extends JPanel implements Printable {
 
     /**
@@ -100,12 +100,12 @@ public class SequenceDiagram extends JPanel implements Printable {
      * of the involved objects, the association name and a specific number of
      * the Link.
      */
-    private Map fLifelines;
+    private Map<Object, Lifeline> fLifelines;
 
     /**
      * The list of all activations that should actually be drawn.
      */
-    private ArrayList fActivations;
+    private ArrayList<Activation> fActivations;
 
     /**
      * The context menu on right mouse click. Provides several illustration and
@@ -179,7 +179,7 @@ public class SequenceDiagram extends JPanel implements Printable {
     /**
      * Vector which contains all Lifelines that should be hidden in the diagram.
      */
-    private Vector fHiddenLifelines;
+    private Vector<Lifeline> fHiddenLifelines;
 
     /**
      * Constructs a new SequenceDiagram-Object.
@@ -194,9 +194,9 @@ public class SequenceDiagram extends JPanel implements Printable {
         fMainWindow = mainW;
         fProperties = new SDProperties();
         fObProperties = new OBProperties();
-        fLifelines = new HashMap();
-        fActivations = new ArrayList();
-        fHiddenLifelines = new Vector();
+        fLifelines = new HashMap<Object, Lifeline>();
+        fActivations = new ArrayList<Activation>();
+        fHiddenLifelines = new Vector<Lifeline>();
 
         // at the beginning no Lifeline is chosen
         fChoosedLl = null;
@@ -291,7 +291,7 @@ public class SequenceDiagram extends JPanel implements Printable {
     void createPopupMenu() {
         fPopupMenu = new JPopupMenu();
         // menu item "Anti-aliasing"
-        boolean manChanged = false;
+        
         final JCheckBoxMenuItem cbAntiAliasing = new JCheckBoxMenuItem(
                 "Anti-aliasing");
         cbAntiAliasing.setState(fProperties.getAntiAliasing());
@@ -389,7 +389,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 for (int i = 0; i < fHiddenLifelines.size(); i++) {
                     ((Lifeline) (fHiddenLifelines.get(i))).setHidden(false);
                 }
-                fHiddenLifelines = new Vector();
+                fHiddenLifelines = new Vector<Lifeline>();
                 // update diagram
                 try {
                     update();
@@ -510,8 +510,6 @@ public class SequenceDiagram extends JPanel implements Printable {
 
         r.x += insets.left;
         r.y += insets.top;
-        // r.width -= insets.left + insets.right;
-        // r.height -= insets.top + insets.bottom;
 
         g.setColor(Color.black);
 
@@ -541,18 +539,17 @@ public class SequenceDiagram extends JPanel implements Printable {
         }
 
         // draw all Lifelines which are involved in at least one message
-        Iterator lifelineIter = fLifelines.values().iterator();
-        while (lifelineIter.hasNext()) {
-            Lifeline ll = (Lifeline) lifelineIter.next();
+        for (Lifeline ll : fLifelines.values()) {
             // is lifeline involved in at least one message and is not marked as
             // hidden
             if (ll.drawLifeline() && !ll.isHidden()) {
                 ll.draw(g, 0);
             }
         }
+        
         // draw all activation-messages
         for (int i = 0; i < fActivations.size(); i++) {
-            Activation a = (Activation) fActivations.get(i);
+            Activation a = fActivations.get(i);
             a.drawMessageSend(g, getFontMetrics(fProperties.getFont()));
         }
 
@@ -580,10 +577,11 @@ public class SequenceDiagram extends JPanel implements Printable {
 
         g.setFont(fProperties.getFont());
         
-        Map lifelines = null;
+        Map<Object, Lifeline> lifelines = null;
         synchronized (this) {
-            lifelines = new HashMap(fLifelines);
+            lifelines = new HashMap<Object, Lifeline>(fLifelines);
         }
+        
         // the postition and dimension values of the visible view
         int fX = (int) fView.getX();
         int fY = (int) fView.getY();
@@ -704,9 +702,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         g.setClip((int) fView.getX(), (int) fView.getY(), (int) fView
                 .getWidth(), (int) fView.getHeight());
         // draw all visible lifelines which are involved in at least one message
-        Iterator lifelineIter = lifelines.values().iterator();
-        while (lifelineIter.hasNext()) {
-            Lifeline ll = (Lifeline) lifelineIter.next();
+        for (Lifeline ll : lifelines.values()) {
             if (ll.fObjectBox.getEnd() > fX
                     && ll.fObjectBox.getStart() < fX + fWidth) {
                 // is lifeline involved in at least one message and is not
@@ -765,7 +761,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         /**
          * The list of all activations sending a message to this lifeline.
          */
-        List fActivations;
+        List<Activation> fActivations;
 
         /**
          * The current activation nesting on this lifeline.
@@ -780,7 +776,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         /**
          * The list of all frames on this lifeline.
          */
-        List fFrames;
+        List<Frame> fFrames;
 
         /**
          * The antecessor lifeline.
@@ -1111,24 +1107,13 @@ public class SequenceDiagram extends JPanel implements Printable {
             // area on
             // which the diagram should be drawn -> depends on the value of
             // fOnlyView
-            int SB_xValue, SB_yValue, fViewHeight;
+            int SB_yValue;
             if (fOnlyView) {
                 // set values of the visible view
-                SB_xValue = (int) fView.getX();
                 SB_yValue = (int) fView.getY();
-                fViewHeight = (int) fView.getHeight();
             } else {
-                Rectangle size = getBounds();
                 // diagram starts and ends at 0
-                SB_xValue = 0;
                 SB_yValue = 0;
-                int y_height = fNumSteps * fProperties.actStep();
-                if (fProperties.getActManDist() != -1) {
-                    y_height = fNumSteps * fProperties.getActManDist();
-                }
-                // diagram ends under the last message + the bottom margin
-                fViewHeight = fProperties.yStart() + y_height
-                        + fProperties.getBottomMargin();
             }
 
             // y-position where lifeline starts
@@ -1137,9 +1122,9 @@ public class SequenceDiagram extends JPanel implements Printable {
             int y_start = 0, y_end = -1;
 
             // List of activation frames for this lifeline
-            fFrames = new ArrayList();
+            fFrames = new ArrayList<Frame>();
             // regard each actiovation of the lifeline
-            Iterator activationIter = fActivations.iterator();
+            Iterator<Activation> activationIter = fActivations.iterator();
             synchronized (this) {
                 while (activationIter.hasNext()) {
                     y_start = fObjectBox.getY();
@@ -1507,8 +1492,8 @@ public class SequenceDiagram extends JPanel implements Printable {
         public ObjLifeline(int col, MObject obj, Lifeline antecessor) {
             fColumn = col;
             fObj = obj;
-            fActivations = new ArrayList();
-            fObjectBox = new ObjectBox(-1, -1, this, fObj.name() + ":"
+            fActivations = new ArrayList<Activation>();
+            fObjectBox = new ObjectBox(-1, -1, fObj.name() + ":"
                     + fObj.cls().name());
             // calculate x-value subject to the column of the lifeline
             fXValue = fProperties.getLeftMargin() + fColumn
@@ -1526,10 +1511,10 @@ public class SequenceDiagram extends JPanel implements Printable {
          */
         public synchronized void restoreValues() {
             // resets the object box
-            fObjectBox = new ObjectBox(-1, -1, this, fObj.name() + ":"
+            fObjectBox = new ObjectBox(-1, -1, fObj.name() + ":"
                     + fObj.cls().name());
             // deletes all activations for this lifeline
-            fActivations = new ArrayList();
+            fActivations = new ArrayList<Activation>();
             fActivationNesting = 0;
             // the lifeline should not be drawn
             fDraw = false;
@@ -1579,8 +1564,8 @@ public class SequenceDiagram extends JPanel implements Printable {
                 MObject[] objects) {
             fColumn = col;
             fAss = ass;
-            fActivations = new ArrayList();
-            fObjectBox = new ObjectBox(-1, -1, this, " :" + fAss.name());
+            fActivations = new ArrayList<Activation>();
+            fObjectBox = new ObjectBox(-1, -1, " :" + fAss.name());
             fXValue = fProperties.getLeftMargin() + fColumn
                     * fProperties.llStep();
             fAntecessor = antecessor;
@@ -1617,8 +1602,8 @@ public class SequenceDiagram extends JPanel implements Printable {
          * correctly, when update is called.
          */
         public void restoreValues() {
-            fObjectBox = new ObjectBox(-1, -1, this, " :" + fAss.name());
-            fActivations = new ArrayList();
+            fObjectBox = new ObjectBox(-1, -1, " :" + fAss.name());
+            fActivations = new ArrayList<Activation>();
             fActivationNesting = 0;
             fDraw = false;
             fIsDeleted = false;
@@ -1686,10 +1671,7 @@ public class SequenceDiagram extends JPanel implements Printable {
          */
         int fYValue;
 
-        /**
-         * The corresponding lifeline.
-         */
-        Lifeline fLifeline;
+        
 
         /**
          * The name of the object which belongs to the object box.
@@ -1708,22 +1690,12 @@ public class SequenceDiagram extends JPanel implements Printable {
          * @param name
          *            the name of the corresponding object
          */
-        ObjectBox(int xValue, int yValue, Lifeline lifeline, String name) {
+        ObjectBox(int xValue, int yValue, String name) {
             fXValue = xValue;
             fYValue = yValue;
             fXStart = 0;
             fXEnd = 0;
-            fLifeline = lifeline;
             fName = name;
-        }
-
-        /**
-         * Returns the center x-value of the box.
-         * 
-         * @return the center x-value
-         */
-        int getX() {
-            return fXValue;
         }
 
         /**
@@ -2168,9 +2140,7 @@ public class SequenceDiagram extends JPanel implements Printable {
             // width of Activation-Message + 8 as distance to the lifelines
             int messLength = fm.stringWidth(message) + 8;
             // owner-lifeline of the activation
-            Lifeline ll = null;
-            if (fSrc != null)
-                ll = fSrc.owner();
+            
             // distance from goal-lifeline to the source-lifeline
             // (-> difference of the column-numbers)
             int srcDistance = fOwner.column();
@@ -2369,8 +2339,6 @@ public class SequenceDiagram extends JPanel implements Printable {
                 drawCreateMessage(g, fm, x_Src, x_ObjectBox, x_Src);
                 // if insert-command
             } else if (fCmd instanceof MCmdInsertLink) {
-                ObjectBox objectBox = fOwner.getObjectBox();
-                int x_ObjectBox = objectBox.getStart();
                 // draw message
                 drawInsertMessages(g, fm, x_Src, x_Goal, x_Goal);
                 // other command
@@ -2828,7 +2796,6 @@ public class SequenceDiagram extends JPanel implements Printable {
             super(start, owner, cmd, src, yValue);
             MObject[] objects = ((MCmdInsertLink) fCmd).getObjects();
             fNestings = new int[objects.length];
-            String[] roleNames = ((MCmdInsertLink) fCmd).getRoleNames();
             // calculate nestings of the object lifelines of the inserted
             // objects
             for (int i = 0; i < objects.length; i++) {
@@ -2995,13 +2962,13 @@ public class SequenceDiagram extends JPanel implements Printable {
             MOperationCall opcall = openter.operationCall();
             return opcall.targetObject();
         } else if (cmd instanceof CmdCreatesObjects) {
-            List fObjectList = ((CmdCreatesObjects) cmd).getObjects();
-            return (MObject) fObjectList.get(0); // (MObjectImpl)
+            List<MObject> fObjectList = ((CmdCreatesObjects) cmd).getObjects();
+            return fObjectList.get(0);
         } else if (cmd instanceof MCmdSetAttribute) {
             return ((MCmdSetAttribute) cmd).getObject();
         } else if (cmd instanceof MCmdDestroyObjects) {
-            List fObjectList = ((MCmdDestroyObjects) cmd).getObjects();
-            return (MObject) fObjectList.get(0);
+            List<MObject> fObjectList = ((MCmdDestroyObjects) cmd).getObjects();
+            return fObjectList.get(0);
         }
         return null;
     }
@@ -3012,9 +2979,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      */
     public synchronized void createLifelines() {
         // executed commands
-        List cmds = fSystem.commands();
-        // iterator over this commands
-        Iterator cmdIter = cmds.iterator();
+        List<MCmd> cmds = fSystem.useCommands();
         // first lifeline has column 1
         int column = 1;
         // antecessor lifeline
@@ -3026,18 +2991,17 @@ public class SequenceDiagram extends JPanel implements Printable {
         // last link key
         String lastAssKey = null;
         // List for saving deleted links
-        ArrayList deletedLls = new ArrayList();
+        ArrayList<AssLifeline> deletedLls = new ArrayList<AssLifeline>();
+        
         // view all commands
-        while (cmdIter.hasNext()) {
-            // current regarded command
-            MCmd cmd = (MCmd) cmdIter.next();
+        for (MCmd cmd : cmds) {
             // i create command
             if (cmd instanceof CmdCreatesObjects) {
                 // created objects
-                List fObjectList = ((CmdCreatesObjects) cmd).getObjects();
+                List<MObject> fObjectList = ((CmdCreatesObjects) cmd).getObjects();
                 // view each object
                 for (int i = 0; i < fObjectList.size(); i++) {
-                    MObject obj = (MObject) fObjectList.get(i);
+                    MObject obj = fObjectList.get(i);
                     ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
                     // need new lifeline?
                     if (ll == null) {
@@ -3060,7 +3024,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                         // lifeline already exists
                     } else {
                         // delete all saved activations for this lifeline
-                        ll.fActivations = new ArrayList();
+                        ll.fActivations = new ArrayList<Activation>();
                     }
                     // set ll as antecessor
                     antecessor = ll;
@@ -3101,7 +3065,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                     fLifelines.put(key, ll);
                     // fLifelines.put(key + String.valueOf(counter), ll);
                 } else {
-                    ll.fActivations = new ArrayList();
+                    ll.fActivations = new ArrayList<Activation>();
                 }
                 column++;
                 antecessor = ll;
@@ -3143,8 +3107,8 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // add Lifeline to deletedLls
                 deletedLls.add(ll);
             }
-            for (int i = 0; i < deletedLls.size(); i++) {
-                AssLifeline ll = (AssLifeline) deletedLls.get(i);
+
+            for (AssLifeline ll : deletedLls) {
                 ll.setDeleted(false);
             }
         }
@@ -3161,12 +3125,13 @@ public class SequenceDiagram extends JPanel implements Printable {
      */
     public void calculateLlPositions(FontMetrics fm) {
         // Map of all existing lifelines
-        Map lifelines = fLifelines;
-        Iterator lifelineIter = lifelines.values().iterator();
+        Map<Object, Lifeline> lifelines = fLifelines;
+        Iterator<Lifeline> lifelineIter = lifelines.values().iterator();
+        
         // view each lifeline
         if (lifelineIter.hasNext()) {
             // first lifeline in Map
-            Lifeline ll = (Lifeline) lifelineIter.next();
+            Lifeline ll = lifelineIter.next();
             // search first lifeline in the sequencediagram
             Lifeline ll2 = ll;
             while (ll2.getAntecessor() != null) {
@@ -3201,7 +3166,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         // restore all needed values to the default values
         restoreAllValues();
         // List of all executed commands
-        List toDraw = fSystem.commands();
+        List<MCmd> toDraw = fSystem.useCommands();
 
         // while reading a command file dont show
         // the following commands
@@ -3211,9 +3176,9 @@ public class SequenceDiagram extends JPanel implements Printable {
         // number of steps
         fNumSteps = 1;
         // Stack for new created activations
-        Stack activationStack = new Stack();
+        Stack<Activation> activationStack = new Stack<Activation>();
         // remove all activations created so far
-        fActivations = new ArrayList();
+        fActivations = new ArrayList<Activation>();
         // last created activation
         Activation lastAct = null;
         // last y-value on which an activation message should be drawn
@@ -3221,7 +3186,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         // int counter = 1;
         // view each command
         for (int i = 0; i < toDraw.size(); i++) {
-            MCmd cmd = (MCmd) toDraw.get(i);
+            MCmd cmd = toDraw.get(i);
 
             // create activations by calling other operations depending on
             // the
@@ -3251,10 +3216,10 @@ public class SequenceDiagram extends JPanel implements Printable {
                 synchronized (this) {
                     if (!activationStack.empty()) {
                         // finish current activation
-                        Activation a = (Activation) activationStack.pop();
+                        Activation a = activationStack.pop();
                         MCmdOpExit opexit = (MCmdOpExit) cmd;
                         MOperationCall opcall = opexit.operationCall();
-                        MObject obj = (MObject) opcall.targetObject();
+                        MObject obj = opcall.targetObject();
                         // MObject obj = getObj(a.getCmd());
                         ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
                         // if the lifeline and the source-lifeline is not marked
@@ -3302,9 +3267,6 @@ public class SequenceDiagram extends JPanel implements Printable {
                     lastYValue = drawInsert(cmd, activationStack, lastYValue,
                             lastAct);
                 }
-                // lastYValue = drawInsert(cmd, activationStack, lastYValue,
-                // lastAct, counter);
-                // counter++;
             } else if (cmd instanceof MCmdDeleteLink) {
                 synchronized (this) {
                     lastYValue = drawDelete(cmd, activationStack, lastYValue,
@@ -3404,14 +3366,14 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return int the y-value in the sequence diagram of the created activation
      */
-    public int drawCreate(MCmd cmd, Stack activationStack, int lastyValue,
+    public int drawCreate(MCmd cmd, Stack<Activation> activationStack, int lastyValue,
             Activation lastAct) {
         // created objects
-        List fObjectList = ((CmdCreatesObjects) cmd).getObjects();
+        List<MObject> fObjectList = ((CmdCreatesObjects) cmd).getObjects();
         int yValue = lastyValue;
         // view each object
         for (int i = 0; i < fObjectList.size(); i++) {
-            MObject obj = (MObject) fObjectList.get(i);
+            MObject obj = fObjectList.get(i);
             // Lifeline of the regarded object
             Lifeline ll = (ObjLifeline) fLifelines.get(obj);
             // if create should be drawn in the diagram
@@ -3497,10 +3459,10 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawDestroy(MCmd cmd, Stack activationStack, int lastYValue,
+    public int drawDestroy(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
             Activation lastAct) throws CommandFailedException {
         // see above
-        List fObjectList = ((MCmdDestroyObjects) cmd).getObjects();
+        List<MObject> fObjectList = ((MCmdDestroyObjects) cmd).getObjects();
         int yValue = lastYValue;
         for (int i = 0; i < fObjectList.size(); i++) {
             MObject obj = getObj(cmd);
@@ -3510,7 +3472,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 ll.drawLifeline(true);
                 Activation srcAct = null;
                 if (!activationStack.empty()) {
-                    srcAct = (Activation) activationStack.peek();
+                    srcAct = activationStack.peek();
                 }
                 if (srcAct == null || !srcAct.owner().isHidden()) {
                     ObjectBox objBox = ll.getObjectBox();
@@ -3528,7 +3490,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                     a.calculateMessLength();
                     activationStack.push(a);
 
-                    a = (Activation) activationStack.pop();
+                    a = activationStack.pop();
                     a.setEnd(0);
 
                     a.setY(yValue);
@@ -3577,7 +3539,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawSet(MCmd cmd, Stack activationStack, int lastYValue,
+    public int drawSet(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
             Activation lastAct) throws CommandFailedException {
         // see above
         MObject obj = getObj(cmd);
@@ -3659,7 +3621,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawOpEnter(MCmd cmd, Stack activationStack, int lastYValue,
+    public int drawOpEnter(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
             Activation lastAct) throws CommandFailedException {
         // see above
         MObject obj = getObj(cmd);
@@ -3670,7 +3632,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         Activation srcAct = null;
 
         if (!activationStack.empty())
-            srcAct = (Activation) activationStack.peek();
+            srcAct = activationStack.peek();
         if (!ll.isHidden() && (srcAct == null || !srcAct.owner().isHidden()))
             yValue = calculateNextMessPosition(yValue, cmd, ll);
 
@@ -3742,11 +3704,8 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawInsert(MCmd cmd, Stack activationStack, int lastYValue,
+    public int drawInsert(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
             Activation lastAct) throws CommandFailedException {
-        // public int drawInsert(MCmd cmd, Stack activationStack, int
-        // lastYValue,
-        // Activation lastAct, int counter) throws CommandFailedException {
         MAssociation ass = ((MCmdInsertLink) cmd).getAssociation();
         String key = "";
         MObject[] objects = ((MCmdInsertLink) cmd).getObjects();
@@ -3756,8 +3715,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         }
         key += ass.name();
         AssLifeline ll = (AssLifeline) fLifelines.get(key);
-        // AssLifeline ll = (AssLifeline) fLifelines.get(key
-        // + String.valueOf(counter));
+        
         int yValue = lastYValue;
         if ((fProperties.showInsert() && !ll.isHidden())
                 || !fProperties.compactDisplay()) {
@@ -3787,7 +3745,6 @@ public class SequenceDiagram extends JPanel implements Printable {
                         if (!oll.isHidden()) {
                             oll.drawLifeline(true);
                             if (oll.getObjectBox().getY() == -1) {
-                                int x = oll.xValue();
                                 oll.getObjectBox().setX(xValue);
                                 oll.getObjectBox().setY(
                                         fProperties.yStart() - 10
@@ -3804,9 +3761,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                             fNumSteps++;
                         }
                     }
-                    // }
-                    // fNumSteps += objects.length;
-                    // if (fProperties.showInsert()) {
+
                     ll.drawLifeline(true);
                     ll.enterActivation(a);
                     a.calculateMessLength();
@@ -3866,7 +3821,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawDelete(MCmd cmd, Stack activationStack, int lastYValue,
+    public int drawDelete(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
             Activation lastAct) throws CommandFailedException {
         // see above
         MAssociation ass = ((MCmdDeleteLink) cmd).getAssociation();
@@ -3881,8 +3836,6 @@ public class SequenceDiagram extends JPanel implements Printable {
         
         int yValue = lastYValue;
         AssLifeline ll = (AssLifeline) fLifelines.get(key);
-        // AssLifeline ll = (AssLifeline) fLifelines.get(key
-        // + String.valueOf(counter));
         if (fProperties.showDelete() && !ll.isHidden()) {
             Activation srcAct = null;
             if (!activationStack.empty()) {
@@ -3891,13 +3844,7 @@ public class SequenceDiagram extends JPanel implements Printable {
             if (srcAct == null || !srcAct.owner().isHidden()) {
                 if (srcAct == null || !srcAct.owner().isHidden()) {
                     yValue = calculateNextMessPosition(yValue, cmd, ll);
-                    // while (true) {
-                    // if (ll != null && !(ll.isDeleted()))
-                    // break;
-                    // counter++;
-                    // ll = (AssLifeline) fLifelines.get(key
-                    // + String.valueOf(counter));
-                    // }
+                    
                     ll.drawLifeline(true);
                     ll.setDeleted(true);
 
@@ -3961,9 +3908,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      */
     public Lifeline getLifeline(int x) {
         // view each lifeline
-        Iterator lifelineIter = fLifelines.values().iterator();
-        while (lifelineIter.hasNext()) {
-            Lifeline ll = (Lifeline) lifelineIter.next();
+        for (Lifeline ll : fLifelines.values()) {
             // object box of the lifeline
             ObjectBox ob = ll.getObjectBox();
             // if x-value is betwwen the start- and end-x-value of the object
@@ -3980,9 +3925,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      */
     public synchronized void restoreAllValues() {
         // view each lifeline and restore values
-        Iterator lifelineIter = fLifelines.values().iterator();
-        while (lifelineIter.hasNext()) {
-            Lifeline ll = (Lifeline) lifelineIter.next();
+        for (Lifeline ll : fLifelines.values()) {
             ll.restoreValues();
         }
         // reset value of fMaxActMess to 0

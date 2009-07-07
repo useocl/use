@@ -40,7 +40,9 @@ import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.EdgeProperty;
+import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.NodeOnEdge;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.Selectable;
@@ -58,7 +60,7 @@ public final class DiagramMouseHandling implements MouseListener,
     
     private Selection fNodeSelection;
     private Selection fEdgeSelection;
-    private DirectedGraph fGraph;
+    private DirectedGraph<NodeBase, EdgeBase> fGraph;
     private DiagramView fDiagram;
     
     // needed for mouse handling
@@ -70,8 +72,8 @@ public final class DiagramMouseHandling implements MouseListener,
     private Cursor fCursor;
     
     public DiagramMouseHandling( Selection nodeSelection, Selection edgeSelection,
-                                 DirectedGraph graph, HideAdministration hideAdmin,
-                                 Set hiddenNodes, DiagramOptions opt, 
+                                 DirectedGraph<NodeBase, EdgeBase> graph, HideAdministration hideAdmin,
+                                 Set<Object> hiddenNodes, DiagramOptions opt, 
                                  DiagramView diagram ) {
         
         fNodeSelection = nodeSelection;
@@ -184,9 +186,8 @@ public final class DiagramMouseHandling implements MouseListener,
             e.getComponent().setCursor(fCursor);
             fIsDragging = false;
             fDragMode = DRAG_NONE;
-            Iterator it = fNodeSelection.iterator();
-            while ( it.hasNext() ) {
-                Selectable sel = (Selectable) it.next();
+
+            for (Selectable sel : fNodeSelection) {
                 sel.setDragged( false );
             }
         }
@@ -215,16 +216,16 @@ public final class DiagramMouseHandling implements MouseListener,
         }
         
         if (fDragMode == DRAG_ITEMS) {
-            Iterator it = fNodeSelection.iterator();
-            while ( it.hasNext() ) {
-                Selectable sel = (Selectable) it.next();
+            for (Selectable sel : fNodeSelection) {
                 sel.setDragged( true );
             }
+            
             Point p = e.getPoint();
             int dx = p.x - fDragStart.x;
             int dy = p.y - fDragStart.y;
+            
             // move all selected components to new position.
-            Iterator nodeIterator = fNodeSelection.iterator();
+            Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
             while (nodeIterator.hasNext()) {
                 PlaceableNode node = (PlaceableNode) nodeIterator.next();
                 node.setPosition(node.x() + dx, node.y() + dy);

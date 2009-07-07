@@ -22,7 +22,9 @@
 package org.tzi.use.gui.graphlayout;
 
 import java.util.Iterator;
+import java.util.List;
 
+import org.tzi.use.graph.DirectedEdge;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 
@@ -33,14 +35,14 @@ import org.tzi.use.gui.views.diagrams.NodeBase;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public class SpringLayout {
-    private DirectedGraph fGraph; // the graph to be layouted
+public class SpringLayout<N extends NodeBase, E extends DirectedEdge<N>> {
+    private DirectedGraph<N, E> fGraph; // the graph to be layouted
     private double fWidth;  // maximum width of layout
     private double fHeight; // maximum height of layout
     private double fMarginX;    // margin on left/right side of the drawing area
     private double fMarginY;    // margin on top/bottom side of the drawing area
     private double fEdgeLen = 120.0;
-    private Object[] fNodes;
+    private List<N> fNodes;
     private double[] fXn;
     private double[] fYn;
 
@@ -52,7 +54,7 @@ public class SpringLayout {
      * @param marginx margin on left/right side of the drawing area
      * @param marginy margin on top/bottom side of the drawing area
      */
-    public SpringLayout(DirectedGraph g, 
+	public SpringLayout(DirectedGraph<N, E> g, 
                         double width, double height,
                         double marginx, double marginy) {
         fGraph = g;
@@ -60,10 +62,10 @@ public class SpringLayout {
         fHeight = height;
         fMarginX = marginx;
         fMarginY = marginy;
-
-        fNodes = fGraph.toArray();
-        fXn = new double[fNodes.length];
-        fYn = new double[fNodes.length];
+        
+        fNodes = fGraph.getNodes();
+        fXn = new double[fNodes.size()];
+        fYn = new double[fNodes.size()];
     }
 
     /**
@@ -78,29 +80,25 @@ public class SpringLayout {
      * refining the layout if the graph does not change between calls.
      */
     public void layout() {
-        final int N = fNodes.length;
+        final int N = fNodes.size();
         final double k1 = 1.0;
         final double k2 = 100.0 * 100.0;
 
         double xc = 0.0;
         double yc = 0.0;
         for (int i = 0; i < N; i++) {
-            NodeBase v = (NodeBase) fNodes[i];
+            N v = fNodes.get(i);
             
-//            System.out.println("v = " + v.name());
             double xv = v.x();
             double yv = v.y();
 
             // spring force
-
-//            System.out.println("  sourceNodeSet = " + fGraph.sourceNodeSet(v));
-            Iterator uIter = fGraph.sourceNodeSet(v).iterator();
+            Iterator<N> uIter = fGraph.sourceNodeSet(v).iterator();
             double sumfx1 = 0.0;
             double sumfy1 = 0.0;
             while (uIter.hasNext() ) {
                 NodeBase u = (NodeBase) uIter.next();
                 
-//                System.out.println("spring  u = " + u.name());
                 double xu = u.x();
                 double yu = u.y();
                 double dx = xv - xu;
@@ -111,10 +109,8 @@ public class SpringLayout {
                 sumfx1 += c * dx;
                 sumfy1 += c * dy;
             }
-            //          System.out.println("sumfx1 = " + sumfx1);
-            //          System.out.println("sumfy1 = " + sumfy1);
-        
 
+       
             // electrical force
 
             uIter = fGraph.iterator();
@@ -124,7 +120,7 @@ public class SpringLayout {
                 NodeBase u = (NodeBase) uIter.next();
                 if (u == v )
                     continue;
-//                System.out.println("electrical  u = " + u.name());
+
                 double xu = u.x();
                 double yu = u.y();
                 double dx = xv - xu;
@@ -136,8 +132,6 @@ public class SpringLayout {
                     sumfy2 += c * dy;
                 }
             }
-            //          System.out.println("sumfx2 = " + sumfx2);
-            //          System.out.println("sumfy2 = " + sumfy2);
 
             // store new positions
             fXn[i] = xv - Math.max(-5, Math.min(5, sumfx1 - sumfx2));
@@ -158,7 +152,7 @@ public class SpringLayout {
 
         // set new positions
         for (int i = 0; i < N; i++) {
-            NodeBase v = (NodeBase) fNodes[i];
+            NodeBase v = fNodes.get(i);
             // move each node towards center of drawing area and keep
             // it within bounds
             double x = Math.max(fMarginX, Math.min(fWidth - fMarginX, fXn[i] + dx));

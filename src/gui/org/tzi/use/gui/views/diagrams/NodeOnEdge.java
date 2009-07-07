@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Polygon;
-import java.util.Iterator;
 
 import org.tzi.use.gui.xmlparser.LayoutTags;
 
@@ -148,9 +147,7 @@ public final class NodeOnEdge extends EdgeProperty {
         if ( fEdge instanceof NodeEdge ) {
             if ( ( fEdge.isReflexive() && fEdge.getNodesOnEdge().size() <= 6 )
                     || ( !fEdge.isReflexive() && fEdge.getNodesOnEdge().size() <= 3 ) ) {
-                Iterator it = fEdge.getNodesOnEdge().iterator();
-                while ( it.hasNext() ) {
-                    NodeOnEdge node = (NodeOnEdge) it.next();
+                for (NodeOnEdge node : fEdge.getNodesOnEdge()) {
                     if ( node.getSpecialID() == EdgeBase.ASSOC_CLASS_CON ) {
                         node.setWasMoved( false );
                         ((NodeEdge) fEdge).update();

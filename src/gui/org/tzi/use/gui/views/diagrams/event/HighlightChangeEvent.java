@@ -30,6 +30,7 @@ import org.tzi.use.uml.mm.MModelElement;
  * A HighlightChangeEvent is used to notify interested listeners that 
  * another ModelElement is selected.
  */
+@SuppressWarnings("serial")
 public class HighlightChangeEvent extends EventObject {
     private MModelElement fElement;
     private boolean fHighlight;

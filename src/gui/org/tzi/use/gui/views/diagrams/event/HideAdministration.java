@@ -28,8 +28,10 @@ import javax.swing.Action;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
-import org.tzi.use.gui.views.diagrams.classdiagram.NewClassDiagram;
+import org.tzi.use.gui.views.diagrams.NodeBase;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 
 /**
@@ -44,7 +46,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
     /**
      * All actuall hidden nodes in a diagram.
      */
-    private Set fHiddenNodes;
+    private Set<Object> fHiddenNodes;
     /**
      * Actual selected nodes in the diagram.
      */
@@ -52,7 +54,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
     /**
      * This graph contains all nodes and edges of a diagram.  
      */
-    private DirectedGraph fGraph;
+    private DirectedGraph<NodeBase, EdgeBase> fGraph;
     /**
      * The diagram to which the graph, nodes and edges belong to.
      */
@@ -62,7 +64,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
      */    
     private LayoutInfos fLayoutInfos;
     
-    public HideAdministration( Selection nodeSelection, DirectedGraph graph, 
+    public HideAdministration( Selection nodeSelection, DirectedGraph<NodeBase, EdgeBase> graph, 
                                LayoutInfos layoutInfos ) {
         fNodeSelection = nodeSelection;
         fGraph = graph;
@@ -73,19 +75,19 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
             fHideAction = new ActionHideObjectDiagram( "Hide", fHiddenNodes,
                                                        fNodeSelection, fGraph,
                                                        fLayoutInfos );
-        } else if ( fDiagram instanceof NewClassDiagram ) {
+        } else if ( fDiagram instanceof ClassDiagram ) {
             fHideAction = new ActionHideClassDiagram( "Hide", fHiddenNodes,
                                                       fNodeSelection, fGraph,
                                                       fLayoutInfos );
         }
     }
 
-    public Action setValues( String text, Set selectedNodes ) {
+    public Action setValues( String text, Set<?> selectedNodes ) {
         if ( fDiagram instanceof NewObjectDiagram ) {
             fHideAction = new ActionHideObjectDiagram( text, selectedNodes,
                                                        fNodeSelection, fGraph,
                                                        fLayoutInfos );
-        } else if ( fDiagram instanceof NewClassDiagram ) {
+        } else if ( fDiagram instanceof ClassDiagram ) {
             fHideAction = new ActionHideClassDiagram( text, selectedNodes,
                                                       fNodeSelection, fGraph,
                                                       fLayoutInfos );
@@ -105,7 +107,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
     /**
      * Saves edges which are connected to the hidden nodes.
      */
-    public void saveEdges( Set nodesToHide ) {
+    public void saveEdges( Set<Object> nodesToHide ) {
         fHideAction.saveEdges( nodesToHide );
     }
 

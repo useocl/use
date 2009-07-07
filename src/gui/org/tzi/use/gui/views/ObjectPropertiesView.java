@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +62,7 @@ import org.tzi.use.util.Log;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
+@SuppressWarnings("serial")
 public class ObjectPropertiesView extends JPanel implements View {
     private static final String NO_OBJECTS_AVAILABLE = "(No objects available.)";
 
@@ -78,9 +78,9 @@ public class ObjectPropertiesView extends JPanel implements View {
     private TableModel fTableModel;
     private ObjectComboBoxActionListener fObjectComboBoxActionListener;
 
-    private List fAttributes;
+    private List<MAttribute> fAttributes;
     private String[] fValues;
-    private Map fAttributeValueMap;
+    private Map<MAttribute, Value> fAttributeValueMap;
 
     /**
      * The table model.
@@ -125,17 +125,17 @@ public class ObjectPropertiesView extends JPanel implements View {
                 MObjectState objState = fObject.state(fSystem.state());
                 fAttributeValueMap = objState.attributeValueMap();
                 final int N = fAttributeValueMap.size();
-                fAttributes = new ArrayList();
-                fAttributes = 
-                    (ArrayList) ModelBrowserSorting.getInstance().sortAttributes(
-                                  fAttributeValueMap.keySet() );
+                
+                fAttributes = ModelBrowserSorting.getInstance().sortAttributes( 
+                					fAttributeValueMap.keySet() );
+                
                 fValues = new String[N];
                 for (int i = 0; i < N; i++)
                     fValues[i] = 
                         ((Value) fAttributeValueMap
                                 .get((MAttribute) fAttributes.get(i))).toString();
             } else {
-                fAttributes = new ArrayList();
+                fAttributes = new ArrayList<MAttribute>();
                 fValues = new String[0];
             }
             fireTableDataChanged();
@@ -145,7 +145,7 @@ public class ObjectPropertiesView extends JPanel implements View {
          * After the occurence of an event the attribute list is updated.
          */
         public void stateChanged( SortChangeEvent e ) {
-            fAttributes = (ArrayList) ModelBrowserSorting.getInstance()
+            fAttributes = ModelBrowserSorting.getInstance()
                                           .sortAttributes( fAttributes );
             update();
         }
@@ -258,14 +258,14 @@ public class ObjectPropertiesView extends JPanel implements View {
 
         // build list of names of currently existing objects
         MSystemState state = fSystem.state();
-        Set allObjects = state.allObjects();
-        ArrayList livingObjects = new ArrayList();
-        Iterator objectIterator = allObjects.iterator();
-        while (objectIterator.hasNext() ) {
-            MObject obj = (MObject) objectIterator.next();
+        Set<MObject> allObjects = state.allObjects();
+        ArrayList<String> livingObjects = new ArrayList<String>();
+
+        for (MObject obj : allObjects) {
             if (obj.exists(state) )
                 livingObjects.add(obj.name());
         }
+        
         if (livingObjects.isEmpty() ) {
             livingObjects.add(NO_OBJECTS_AVAILABLE);
             fObjectComboBox.setEnabled(false);
@@ -278,6 +278,7 @@ public class ObjectPropertiesView extends JPanel implements View {
 
         // create combo box with available objects
         fObjectComboBox.setModel(new DefaultComboBoxModel(objNames));
+        
         // try to keep selection
         if (haveObject() )
             fObjectComboBox.setSelectedItem(fObject.name());

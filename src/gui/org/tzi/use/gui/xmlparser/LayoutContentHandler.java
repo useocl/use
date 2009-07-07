@@ -21,7 +21,6 @@
 
 package org.tzi.use.gui.xmlparser;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -250,9 +249,7 @@ public class LayoutContentHandler extends ContentHandler {
         }
         
         NodeOnEdge n = null;
-        Iterator it = fCtx.getActualEdge().getNodesOnEdge().iterator();
-        while ( it.hasNext() ) {
-            NodeOnEdge node = (NodeOnEdge) it.next();
+        for (NodeOnEdge node : fCtx.getActualEdge().getNodesOnEdge()) {
             if ( fCtx.getActualEdge().isNodeSpecial( node ) 
                  && node.getSpecialID() == fCtx.getSpecialID() ) {
                 node.setID( fCtx.getID() );
@@ -336,7 +333,13 @@ public class LayoutContentHandler extends ContentHandler {
         if ( tag.equals( LayoutTags.NAME ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
                 MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
-                MLink link = fCtx.getSystemState().linkBetweenObjects( assoc, fCtx.getConnectedNodes() );
+                Set<MObject> objSet = new HashSet<MObject>();
+                
+                for (Object obj : fCtx.getConnectedNodes())
+                	objSet.add((MObject)obj);
+                
+                MLink link = fCtx.getSystemState().linkBetweenObjects( assoc, objSet);
+                
                 fCtx.setActualNode( (NodeBase) fCtx.getActualMap().get( link ) );
                 fCtx.setActualObj( link );
             }
@@ -387,7 +390,7 @@ public class LayoutContentHandler extends ContentHandler {
         if ( tag.equals( LayoutTags.NAME ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
                 MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
-                Set objects = new HashSet();
+                Set<MObject> objects = new HashSet<MObject>();
                 objects.add( (MObject) fCtx.getSource() );
                 objects.add( (MObject) fCtx.getTarget() );
                 MLink link = fCtx.getSystemState().linkBetweenObjects( assoc, objects );
@@ -418,8 +421,13 @@ public class LayoutContentHandler extends ContentHandler {
         if ( tag.equals( LayoutTags.NAME ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
                 MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+                
+                Set<MObject> objSet = new HashSet<MObject>();
+                for (Object obj : fCtx.getConnectedNodes())
+                	objSet.add((MObject)obj);
+                
                 MLink link = fCtx.getSystemState().linkBetweenObjects( assoc,
-                                                                       fCtx.getConnectedNodes() );
+                                                                       objSet );
                 EdgeBase e = (EdgeBase) fCtx.getActualMap().get( link );
                 fCtx.setActualEdge( e );
                 fCtx.setActualObj( link );
@@ -447,15 +455,20 @@ public class LayoutContentHandler extends ContentHandler {
         if ( tag.equals( LayoutTags.SOURCE ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
                 MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+                
+                Set<MObject> objSet = new HashSet<MObject>();
+                for (Object obj : fCtx.getConnectedNodes())
+                	objSet.add((MObject) obj);
+                
                 MLink link = fCtx.getSystemState().linkBetweenObjects( assoc,
-                                                                       fCtx.getConnectedNodes() );
-                Map diamondMap = (Map) fCtx.getAllMappings().get( LayoutTags.DIAMONDNODE );
+                                                                       objSet );
+                Map<?, ?> diamondMap = fCtx.getAllMappings().get( LayoutTags.DIAMONDNODE );
                 fCtx.setSource( diamondMap.get( link ) );
                 fCtx.setActualObj( link );
             } 
             if ( fCtx.getKind().equals( LayoutTags.ASSOCIATION ) ) {
                 MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
-                Map diamondMap = (Map) fCtx.getAllMappings().get( LayoutTags.DIAMONDNODE );
+                Map<?, ?> diamondMap = fCtx.getAllMappings().get( LayoutTags.DIAMONDNODE );
                 fCtx.setSource( diamondMap.get( assoc ) );
             }
         }
@@ -472,8 +485,8 @@ public class LayoutContentHandler extends ContentHandler {
         if ( tag.equals( LayoutTags.NAME ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
                 MLink link = (MLink) fCtx.getActualObj();
-                List halfEdges = (ArrayList) fCtx.getActualMap().get( link );
-                Iterator it = halfEdges.iterator();
+                List<?> halfEdges = (List<?>)fCtx.getActualMap().get( link );
+                Iterator<?> it = halfEdges.iterator();
                 while ( it.hasNext() ) {
                     EdgeBase e = (EdgeBase) it.next();
                     if ( ((NodeBase) e.source()).name().equals( ((NodeBase) fCtx.getSource()).name() )
@@ -484,9 +497,9 @@ public class LayoutContentHandler extends ContentHandler {
             }
             if ( fCtx.getKind().equals( LayoutTags.ASSOCIATION ) ) {
                 MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
-                List halfEdges = (ArrayList) fCtx.getActualMap().get( assoc );
+                List<?> halfEdges = (List<?>) fCtx.getActualMap().get( assoc );
 
-                Iterator it = halfEdges.iterator();
+                Iterator<?> it = halfEdges.iterator();
                 while ( it.hasNext() ) {
                     EdgeBase e = (EdgeBase) it.next();
                     if ( ((NodeBase) e.source()).name().equals( ((NodeBase) fCtx.getSource()).name() )
@@ -508,10 +521,6 @@ public class LayoutContentHandler extends ContentHandler {
     }
     
     private void parseInheritance( String tag, String content ) {
-//        System.out.println("\n--------------------------------");
-//        System.out.println("type "+fCtx.peekType());
-//        System.out.println("tag: "+tag);
-//        System.out.println("content: "+content);
         // SOURCE
         if ( tag.equals( LayoutTags.SOURCE ) ) {
             fCtx.setSource( fCtx.getSystem().model().getClass( content ) );
@@ -523,16 +532,12 @@ public class LayoutContentHandler extends ContentHandler {
 
         if ( fCtx.getSource() != null && fCtx.getTarget() != null ) {
             // EDGE
-            Set edges = 
+            Set<MGeneralization> edges = 
                 fCtx.getSystem().model().generalizationGraph().edgesBetween( (MClass)fCtx.getSource(),
                                                                              (MClass)fCtx.getTarget() );
-//            System.out.println("source: "+fCtx.getSource());
-//            System.out.println("target: "+fCtx.getTarget());
-//            System.out.println("edges: "+edges.size());
-            Iterator it = edges.iterator();
-            while ( it.hasNext() ) {
-                // there should be just one inheritance between those to classes
-                MGeneralization gen = (MGeneralization) it.next();
+            
+            for (MGeneralization gen : edges) {
+            	// there should be just one inheritance between those two classes
                 fCtx.setActualEdge( (EdgeBase) fCtx.getActualMap()
                                     .get( gen ) );
                 fCtx.setActualObj( gen );

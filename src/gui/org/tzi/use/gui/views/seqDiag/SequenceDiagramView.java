@@ -42,6 +42,7 @@ import org.tzi.use.util.cmd.CommandFailedException;
  * @author Mark Richters, Antje Werner
  */
 
+@SuppressWarnings("serial")
 public class SequenceDiagramView extends JPanel implements View, PrintableView {
 
     private MSystem fSystem;

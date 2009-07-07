@@ -46,15 +46,9 @@ public class CaptureTheWindow extends Thread {
     }
 
     public void run() {
-        // JComponent jcomp = fSplit1;
-        // Container jcomp = fParent.getContentPane();
-        // Dimension size = jcomp.getSize();
+
         try {
-            // Rectangle rec = new
-            // Rectangle(fComponent.getX()+1,fComponent.getY()+1,
-            // fComponent.getWidth()-2,fComponent.getHeight()-2);
             Rectangle rec = fComponent.getBounds();
-            Robot robot = new Robot();
             sleep(100);
             BufferedImage img = new Robot().createScreenCapture(rec);
             // get file dialog
@@ -203,7 +197,8 @@ public class CaptureTheWindow extends Thread {
     /**
      * shows an error Frame for the user
      */
-    public class ErrorFrame extends JFrame {
+    @SuppressWarnings("serial")
+	public class ErrorFrame extends JFrame {
         public ErrorFrame(String labelTxt) {
             super("Error message");
             JLabel label = new JLabel(labelTxt);

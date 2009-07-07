@@ -219,6 +219,9 @@ public final class MSystem {
         return fCommandProcessor.commands();
     }
 
+    public List<MCmd> useCommands() {
+    	return fCommandProcessor.useCommands();
+    }
     /**
      * Resets the system to its initial state.
      */

@@ -60,20 +60,21 @@ import org.tzi.use.util.UnaryPredicate;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
+@SuppressWarnings("serial")
 public abstract class DiagramView extends JPanel 
                                   implements Printable {
-    protected DirectedGraph fGraph;
+    protected DirectedGraph<NodeBase, EdgeBase> fGraph;
     protected PrintWriter fLog;
     protected Selection fNodeSelection;
     protected Selection fEdgeSelection;
     
     // needed for autolayout
     protected LayoutThread fLayoutThread;
-    protected volatile SpringLayout fLayouter;
+    protected volatile SpringLayout<NodeBase, EdgeBase> fLayouter;
     protected final Object fLock = new Object();
 
-    protected Set fHiddenNodes;
-    protected Set fHiddenEdges;
+    protected Set<Object> fHiddenNodes;
+    protected Set<Object> fHiddenEdges;
     protected HideAdministration fHideAdmin; // coordinates the hiding of nodes
     protected ActionLoadLayout fActionLoadLayout;
     protected ActionSaveLayout fActionSaveLayout;
@@ -93,8 +94,8 @@ public abstract class DiagramView extends JPanel
     /**
      * Deletes all hidden elements form this diagram.
      */
-    public abstract void deleteHiddenElementsFromDiagram( Set nodesToHide, 
-                                                          Set edgesToHide );
+    public abstract void deleteHiddenElementsFromDiagram( Set<Object> nodesToHide, 
+                                                          Set<Object> edgesToHide );
     
     /**
      * Determinds if the popup menu of this diagram should be shown.
@@ -125,9 +126,9 @@ public abstract class DiagramView extends JPanel
         // after hiding an object which is participating in a two link
         // association, the two links won't be displayed in the right
         // way.
-        Iterator nodeIterator = fGraph.iterator();
+        Iterator<NodeBase> nodeIterator = fGraph.iterator();
         while (nodeIterator.hasNext()) {
-            NodeBase n = (NodeBase) nodeIterator.next();
+            NodeBase n = nodeIterator.next();
             n.setRectangleSize(g);
         }
 
@@ -135,11 +136,12 @@ public abstract class DiagramView extends JPanel
         // draw edges
         // they need to be drawn first otherwise the association will
         // be drawn above the nodes
-        Iterator edgeIterator = fGraph.edgeIterator();
-        Set drawnEdges = new HashSet();
-        Set edges = new HashSet();
+        Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
+        Set<EdgeBase> drawnEdges = new HashSet<EdgeBase>();
+        Set<EdgeBase> edges = new HashSet<EdgeBase>();
+        
         while ( edgeIterator.hasNext() ) {
-            EdgeBase e = (EdgeBase) edgeIterator.next();
+            EdgeBase e = edgeIterator.next();
             if ( !drawnEdges.contains( e ) ) {
                 edges = e.checkForNewPositionAndDraw( fGraph, g, fm );
                 if ( edges != null ) {
@@ -226,10 +228,11 @@ public abstract class DiagramView extends JPanel
      * @param y Y-coordinate.
      * @param clickCount The mouse click count.
      */
-    public void findEdge( DirectedGraph graph, int x, int y, int clickCount ) {
-        Iterator it = graph.edgeIterator();
+    public void findEdge( DirectedGraph<NodeBase, EdgeBase> graph, int x, int y, int clickCount ) {
+        Iterator<EdgeBase> it = graph.edgeIterator();
+        
         while ( it.hasNext() ) {
-            EdgeBase e = (EdgeBase) it.next();
+            EdgeBase e = it.next();
             e.occupiesThanAdd( x, y, clickCount );
             repaint();
         }
@@ -240,18 +243,18 @@ public abstract class DiagramView extends JPanel
      * 
      * @return null if no such node could be found.
      */
-    public PlaceableNode findNode(DirectedGraph graph, int x, int y) {
+    public PlaceableNode findNode(DirectedGraph<NodeBase, EdgeBase> graph, int x, int y) {
         PlaceableNode res = null;
         // ignore pseudo-nodes
-        Iterator iter = new FilterIterator(graph.iterator(),
+        Iterator<NodeBase> nIter = new FilterIterator<NodeBase>(graph.iterator(),
                 new UnaryPredicate() {
                     public boolean isTrue(Object obj) {
                         return obj instanceof NodeBase;
                     }
                 });
 
-        while (iter.hasNext()) {
-            NodeBase n = (NodeBase) iter.next();
+        while (nIter.hasNext()) {
+            NodeBase n = nIter.next();
             
             if ( n instanceof DiamondNode ) {
                 EdgeProperty an = ((DiamondNode) n).getAssocName();
@@ -269,14 +272,14 @@ public abstract class DiagramView extends JPanel
         }
         
         if ( res == null ) {
-            iter = new FilterIterator( graph.edgeIterator(), new UnaryPredicate() {
+            Iterator<EdgeBase> eIter = new FilterIterator<EdgeBase>( graph.edgeIterator(), new UnaryPredicate() {
                 public boolean isTrue( Object obj ) {
                     return obj instanceof EdgeBase;
                 }
             } );
 
-            while ( iter.hasNext() ) {
-                EdgeBase e = (EdgeBase) iter.next();
+            while ( eIter.hasNext() ) {
+                EdgeBase e = eIter.next();
                 EdgeProperty r1 = e.getTargetRolename();
                 EdgeProperty r2 = e.getSourceRolename();
                 EdgeProperty m1 = e.getTargetMultiplicity();
@@ -371,7 +374,6 @@ public abstract class DiagramView extends JPanel
             popupMenu.addSeparator();
             popupMenu.add(fActionLoadLayout);
             popupMenu.add(fActionSaveLayout);
-//            popupMenu.add(fActionSelectAll);
         }
 
         return popupMenu;
@@ -404,7 +406,7 @@ public abstract class DiagramView extends JPanel
             int h = getHeight();
             if (w == 0 || h == 0)
                 return;
-            fLayouter = new SpringLayout(fGraph, w, h, 80, 20);
+            fLayouter = new SpringLayout<NodeBase, EdgeBase>(fGraph, w, h, 80, 20);
             fLayouter.setEdgeLen(150);
         }
         fLayouter.layout();

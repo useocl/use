@@ -36,14 +36,14 @@ import org.tzi.use.graph.*;
  */
 public class LayeredLayout_test {
 
-    public static Object[] removeCycles(final DirectedGraph g) {
-        LinkedList sl = new LinkedList();
-        LinkedList sr = new LinkedList();
-        ArrayList rest = new ArrayList();
+    public static <N, E extends DirectedEdge<N>> Object[] removeCycles (final DirectedGraph<N, E> g) {
+        LinkedList<N> sl = new LinkedList<N>();
+        LinkedList<N> sr = new LinkedList<N>();
+        ArrayList<N> rest = new ArrayList<N>();
     
-        Iterator nodes = g.iterator();
+        Iterator<N> nodes = g.iterator();
         while (nodes.hasNext() ) {
-            Object node = nodes.next();
+            N node = nodes.next();
             int ind = g.numIncomingEdges(node);
             int outd = g.numOutgoingEdges(node);
             if (outd == 0 ) {
@@ -60,8 +60,8 @@ public class LayeredLayout_test {
         System.out.println("sr = " + sr);
     
         System.out.println("rest before sort = " + rest);
-        Collections.sort(rest, new Comparator() {
-                public int compare(Object node1, Object node2) {
+        Collections.sort(rest, new Comparator<N>() {
+                public int compare(N node1, N node2) {
                     int d1 = g.numOutgoingEdges(node1) - g.numIncomingEdges(node1);
                     int d2 = g.numOutgoingEdges(node2) - g.numIncomingEdges(node2);
                     return d2 - d1;
@@ -71,7 +71,7 @@ public class LayeredLayout_test {
 
         nodes = rest.iterator();
         while (nodes.hasNext() ) {
-            Object node = nodes.next();
+            N node = nodes.next();
             sl.addLast(node);
         }
 
@@ -81,9 +81,8 @@ public class LayeredLayout_test {
         return sl.toArray();
     }
 
-
     // p. 248
-    public static DirectedGraph graph1() {
+    public static DirectedGraph<Integer, DirectedEdgeBase<Integer>> graph1() {
         final int N = 13;
         int[][] edges = { 
             {1,2}, {1,4}, {1,5}, 
@@ -103,7 +102,7 @@ public class LayeredLayout_test {
     }
 
     // p. 295
-    public static DirectedGraph graph2() {
+    public static DirectedGraph<Integer, DirectedEdgeBase<Integer>> graph2() {
         final int N = 9;
         int[][] edges = { 
             {1,2}, {2,3}, {2,5}, {3,6}, {4,1}, {4,5}, {5,8},
@@ -112,7 +111,7 @@ public class LayeredLayout_test {
         return newGraph(N, edges);
     }
 
-    public static DirectedGraph graph3() {
+    public static DirectedGraph<Integer, DirectedEdgeBase<Integer>> graph3() {
         final int N = 5;
         int[][] edges = { 
             {1,2}, {1,3}, {1,4}, {1,5}, {2,3}, {2,4}, {3,4}
@@ -120,7 +119,7 @@ public class LayeredLayout_test {
         return newGraph(N, edges);
     }
 
-    public static DirectedGraph randomGraph(int N) {
+    public static DirectedGraph<Integer, DirectedEdgeBase<Integer>> randomGraph(int N) {
         int[][] edges = new int[1 * N][2];
 
         Random r = new Random(1);
@@ -133,9 +132,9 @@ public class LayeredLayout_test {
         return newGraph(N, edges);
     }
 
-    public static DirectedGraph newGraph(int N, int[][] edges) {
-        DirectedGraph g = new DirectedGraphBase(N);
-        Object[] nodes = new Object[N];
+    public static DirectedGraph<Integer, DirectedEdgeBase<Integer>> newGraph(int N, int[][] edges) {
+    	DirectedGraph<Integer, DirectedEdgeBase<Integer>> g = new DirectedGraphBase<Integer, DirectedEdgeBase<Integer>>(N);
+        Integer[] nodes = new Integer[N];
         for (int i = 0; i < N; i++) {
             nodes[i] = new Integer(i + 1);
             g.add(nodes[i]);
@@ -143,7 +142,7 @@ public class LayeredLayout_test {
         
         for (int i = 0; i < edges.length; i++) {
             // System.out.println(edges[i].length);
-            g.addEdge(new DirectedEdgeBase(nodes[edges[i][0] - 1], 
+            g.addEdge(new DirectedEdgeBase<Integer>(nodes[edges[i][0] - 1], 
                                            nodes[edges[i][1] - 1]));
         }
         return g;
@@ -151,7 +150,7 @@ public class LayeredLayout_test {
 
 
     public static void main(String[] args) {
-        DirectedGraph g;
+    	DirectedGraph<Integer, DirectedEdgeBase<Integer>> g;
         //      System.out.println(g);
         //      System.out.println();
         //      removeCycles(g);
@@ -161,7 +160,7 @@ public class LayeredLayout_test {
         g = graph1();
         System.out.println(g);
         System.out.println();
-        LayeredLayout l = new LayeredLayout(g);
+        LayeredLayout<Integer, DirectedEdgeBase<Integer>> l = new LayeredLayout<Integer, DirectedEdgeBase<Integer>>(g);
         Layout layout = l.layout();
         //Object[] orderedNodes = removeCycles(g);
         //layer(g, orderedNodes);

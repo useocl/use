@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 USE.g 2009-07-05 22:40:16
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 USE.g 2009-07-07 18:20:22
 
 /*
  * USE - UML based specification environment
@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-
-@SuppressWarnings({ "unused" })
-public class USELexer extends Lexer {
+@SuppressWarnings("all") public class USELexer extends Lexer {
     public static final int STAR=16;
     public static final int EOF=-1;
     public static final int T__93=93;

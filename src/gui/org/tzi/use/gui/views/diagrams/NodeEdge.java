@@ -24,7 +24,6 @@ package org.tzi.use.gui.views.diagrams;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
 
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.xmlparser.LayoutTags;
@@ -54,7 +53,7 @@ public class NodeEdge extends BinaryEdge {
     /**
      * Use this constructor if it is a binary associationclass/objectlink.
      */
-    public NodeEdge( String label, Object source, Object target,
+    public NodeEdge( String label, NodeBase source, NodeBase target,
                      MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
                      Object node, NodeBase nodeEdgeNode,
                      DiagramView diagram, MAssociation assoc ) {
@@ -65,7 +64,7 @@ public class NodeEdge extends BinaryEdge {
     /**
      * Use this constructor if it is an t-nary associationclass/objectlink.
      */
-    public NodeEdge( String label, Object source, Object target,
+    public NodeEdge( String label, NodeBase source, NodeBase target,
                      Object node, NodeBase nodeEdgeNode,
                      DiagramView diagram, MAssociation assoc ) {
         super( label, source, target, diagram, assoc );
@@ -281,9 +280,7 @@ public class NodeEdge extends BinaryEdge {
             xml += fTargetMultiplicity.storePlacementInfo( hidden ) + LayoutTags.NL;
         }
         if ( !fNodesOnEdge.isEmpty() ) {
-            Iterator it = fNodesOnEdge.iterator();
-            while ( it.hasNext() ) {
-                NodeOnEdge n = (NodeOnEdge) it.next();
+            for (NodeOnEdge n : fNodesOnEdge) {
                 xml += n.storePlacementInfo( hidden ) + LayoutTags.NL;
             }
         }

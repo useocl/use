@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 
+@SuppressWarnings("serial")
 public class GUI extends JFrame {
 
     public static void main(final String[] argv) {

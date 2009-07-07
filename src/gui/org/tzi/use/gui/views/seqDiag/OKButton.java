@@ -33,6 +33,7 @@ import javax.swing.KeyStroke;
  * 
  * @author Antje Werner
  */
+@SuppressWarnings("serial")
 public class OKButton extends JButton {
     public OKButton(String title) {
         super(title);

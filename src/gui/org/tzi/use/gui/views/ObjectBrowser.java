@@ -31,7 +31,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -65,12 +64,13 @@ import org.tzi.use.uml.sys.MSystemState;
 /**
  * Window for the Object Properties 
  */
+@SuppressWarnings("serial")
 class ObjectBrowser extends JFrame {
     private JTable fTable;
     private TableModel fTableModel;
     private JScrollPane fTablePane;
     private JLabel fTopLabel;
-    private Map fCellEditors;
+    private Map<String, DefaultCellEditor> fCellEditors;
     
     private MSystem fSystem;
     private MObject fObject;
@@ -78,9 +78,9 @@ class ObjectBrowser extends JFrame {
     private String[] fValues;
     private String[] fAssociations;
     private String[] fObjects;
-    private Map fAttributeValueMap;
-    private Vector fAssoc;
-    private Map fConnectedObject;
+    private Map<MAttribute, Value> fAttributeValueMap;
+    private Vector<String> fAssoc;
+    private Map<String, Set<MObject>> fConnectedObject;
     
     /**
      * The table model.
@@ -145,6 +145,7 @@ class ObjectBrowser extends JFrame {
                 MObjectState objState = fObject.state(fSystem.state());
                 fAttributeValueMap = objState.attributeValueMap();
                 final int N = fAttributeValueMap.size();
+                
                 fAttributes = new MAttribute[N];
                 fValues = new String[N];
                 
@@ -170,6 +171,7 @@ class ObjectBrowser extends JFrame {
             fireTableDataChanged();
         }
     }
+    
     private boolean haveObject() {
         return fObject != null && fObject.exists(fSystem.state());
     }
@@ -182,41 +184,42 @@ class ObjectBrowser extends JFrame {
         if(objName.charAt(0) == '@'){
             objName = objName.substring(1);
             fObject = state.objectByName(objName);
-            //fTableModel.update();
         }
     }
     
     public void calcLinks(){
         // Associations and connected Objects
-        fAssoc = new Vector();
-        fConnectedObject = new TreeMap();
+        fAssoc = new Vector<String>();
+        fConnectedObject = new TreeMap<String, Set<MObject>>();
         MClass objClass = fObject.cls();
+        
         // get associations this object might be participating in
-        Set assocSet = objClass.allAssociations();   
-        Iterator assocIter = assocSet.iterator();
-        while ( assocIter.hasNext() ) {
-            MAssociation assoc = ( MAssociation ) assocIter.next();
+        Set<MAssociation> assocSet = objClass.allAssociations();  
+                
+        for (MAssociation assoc : assocSet) {
             MLinkSet linkSet = fSystem.state().linksOfAssociation(assoc) ;
             // check all association ends the objects' class is
             // connected to
-            Iterator linkIter = linkSet.links().iterator();
-            Set connectedObjects = new HashSet();
-            while( linkIter.hasNext() ) {
-                MLink link = (MLink)linkIter.next();
+            Set<MObject> connectedObjects = new HashSet<MObject>();
+            
+            for (MLink link : linkSet.links()) {
                 if(link.linkedObjects().contains(fObject)) {
-                    //System.out.println("debugg "+link.linkedObjects().toString());
                     //add association if it's still not in the list
                     if(!fAssoc.contains(assoc.toString()))
                         fAssoc.add(assoc.toString());
-                    Set convertToSet = new HashSet(link.linkedObjects());
+                    
+                    Set<MObject> convertToSet = new HashSet<MObject>(link.linkedObjects());
+                    
                     // remove fObject from dummy if it is not connected reflexive
                     MObject[] objSet = {fObject};
                     if(!linkSet.hasLinkBetweenObjects(objSet))
                         convertToSet.remove(fObject);
+                    
                     connectedObjects.addAll(convertToSet);
                 }
             }
-            fConnectedObject.put(assoc.toString(),connectedObjects);
+            
+            fConnectedObject.put(assoc.toString(), connectedObjects);
             
         }
         
@@ -227,15 +230,15 @@ class ObjectBrowser extends JFrame {
             getContentPane().remove(fTablePane);
         calcLinks();
         //updateGUIState();
-        fCellEditors = new TreeMap();
+        fCellEditors = new TreeMap<String, DefaultCellEditor>();
         for(int i=0; i<fAssoc.size(); i++) {
-            JComboBox combo = new JComboBox(); 
-            HashSet objectsSet = (HashSet)fConnectedObject.get(fAssoc.get(i));
-            Iterator it = objectsSet.iterator();
-            while (it.hasNext()) {
-                MObject obj = (MObject)it.next();
+            JComboBox combo = new JComboBox();
+            
+            Set<MObject> objectsSet = fConnectedObject.get(fAssoc.get(i));
+            for (MObject obj : objectsSet) {
                 combo.addItem(obj);
             }
+            
             combo.setSelectedIndex(-1);
             combo.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e) {
@@ -246,7 +249,6 @@ class ObjectBrowser extends JFrame {
                         Object obj = selectedChoice.getSelectedItem();
                         if(obj instanceof MObject) {
                             MObject sel = (MObject)obj;
-                            //System.out.println("debugg: "+ sel.name());
                             selectObject("@"+sel.name());
                             setTopLabelText("@"+fObject.name()+" : "+fObject.type());
                             update();
@@ -257,7 +259,7 @@ class ObjectBrowser extends JFrame {
             });
             
             DefaultCellEditor editor = new DefaultCellEditor(combo);
-            fCellEditors.put(fAssoc.get(i).toString(),editor);
+            fCellEditors.put(fAssoc.get(i), editor);
         }
         
         fTableModel = new TableModel();

@@ -93,7 +93,7 @@ public final class MPrePostCondition extends MModelElementImpl {
     /**
      * Compares just the model element's name.
      */
-    public int compareTo(Object o) {
+    public int compareTo(MModelElement o) {
         if (o == this )
             return 0;
         if (! (o instanceof MPrePostCondition) )

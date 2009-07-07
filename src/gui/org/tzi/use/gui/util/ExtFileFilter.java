@@ -82,10 +82,7 @@ import javax.swing.filechooser.*;
  */
 public class ExtFileFilter extends FileFilter {
 
-//    private static String TYPE_UNKNOWN = "Type Unknown";
-//    private static String HIDDEN_FILE = "Hidden File";
-
-    private HashMap filters = null;
+    private HashMap<String, ExtFileFilter> filters = null;
     private String description = null;
     private String fullDescription = null;
     private boolean useExtensionsInDescription = true;
@@ -145,7 +142,7 @@ public class ExtFileFilter extends FileFilter {
      * @see #addExtension
      */
     public ExtFileFilter(String[] filters, String description) {
-        this.filters = new HashMap(filters.length);
+        this.filters = new HashMap<String, ExtFileFilter>(filters.length);
         for (int i = 0; i < filters.length; i++) {
             // add filters one by one
             addExtension(filters[i]);
@@ -206,7 +203,7 @@ public class ExtFileFilter extends FileFilter {
      */
     public void addExtension(String extension) {
         if (filters == null) {
-            filters = new HashMap(5);
+            filters = new HashMap<String, ExtFileFilter>(5);
         }
         filters.put(extension.toLowerCase(), this);
         fullDescription = null;
@@ -230,7 +227,7 @@ public class ExtFileFilter extends FileFilter {
                 }
                 fullDescription += " (";
                 // build the description from the extension list
-                Iterator extensions = filters.keySet().iterator();
+                Iterator<String> extensions = filters.keySet().iterator();
                 if (extensions != null) {
                     fullDescription += "." + (String) extensions.next();
                     while (extensions.hasNext()) {

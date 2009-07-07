@@ -22,11 +22,13 @@
 package org.tzi.use.gui.views.diagrams;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.gui.views.diagrams.classdiagram.EnumNode;
+import org.tzi.use.uml.mm.MGeneralization;
+import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.MSystem;
 
 /**
@@ -38,15 +40,15 @@ import org.tzi.use.uml.sys.MSystem;
  */
 public class LayoutInfos {
 
-    private Map fBinaryEdgeToEdgeMap; 
-    private Map fNodeToNodeMap; 
-    private Map fNaryEdgeToDiamondNodeMap;
-    private Map fNaryEdgeToHalfEdgeMap;
-    private Map fEdgeNodeToEdgeMap;
-    private Map fEnumToNodeMap;
-    private Map fGenToGeneralizationEdge;
-    private Set fHiddenNodes;
-    private Set fHiddenEdges;
+    private Map<?, BinaryEdge> fBinaryEdgeToEdgeMap;
+    private Map<?, ? extends NodeBase> fNodeToNodeMap; 
+    private Map<?, DiamondNode> fNaryEdgeToDiamondNodeMap;
+    private Map<?, List<EdgeBase>> fNaryEdgeToHalfEdgeMap;
+    private Map<?, NodeEdge> fEdgeNodeToEdgeMap;
+    private Map<EnumType, EnumNode> fEnumToNodeMap;
+    private Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
+    private Set<Object> fHiddenNodes;
+    private Set<Object> fHiddenEdges;
     
     private DiagramOptions fOpt;
     private DiagramView fDiagram;
@@ -56,14 +58,14 @@ public class LayoutInfos {
     private String fHiddenElementsXML;
     
     
-    public LayoutInfos( Map binaryEdgeToEdgeMap, 
-                        Map nodeToNodeMap, 
-                        Map naryEdgeToDiamondNodeMap,
-                        Map naryEdgeToHalfEdgeMap,
-                        Map edgeNodeToEdgeMap,
-                        Map enumToNodeMap,
-                        Map genToGeneralizationEdge,
-                        Set hiddenNodes, Set hiddenEdges,
+    public LayoutInfos( Map<?, BinaryEdge> binaryEdgeToEdgeMap, 
+                        Map<?, ? extends NodeBase> nodeToNodeMap, 
+                        Map<?, DiamondNode> naryEdgeToDiamondNodeMap,
+                        Map<?, List<EdgeBase>> naryEdgeToHalfEdgeMap,
+                        Map<?, NodeEdge> edgeNodeToEdgeMap,
+                        Map<EnumType, EnumNode> enumToNodeMap,
+                        Map<MGeneralization, GeneralizationEdge> genToGeneralizationEdge,
+                        Set<Object> hiddenNodes, Set<Object> hiddenEdges,
                         DiagramOptions opt, MSystem system,
                         DiagramView diagram, PrintWriter log ) {     
         fBinaryEdgeToEdgeMap = binaryEdgeToEdgeMap;
@@ -82,37 +84,37 @@ public class LayoutInfos {
         fLog = log;
     }
 
-    public Map getBinaryEdgeToEdgeMap() {
+    public Map<?, BinaryEdge> getBinaryEdgeToEdgeMap() {
         return fBinaryEdgeToEdgeMap;
     }
-    public Map getEdgeNodeToEdgeMap() {
+    public Map<?, NodeEdge> getEdgeNodeToEdgeMap() {
         return fEdgeNodeToEdgeMap;
     }
-    public Map getEnumToNodeMap() {
+    public Map<EnumType, EnumNode> getEnumToNodeMap() {
         return fEnumToNodeMap;
     }
-    public Map getGenToGeneralizationEdge() {
+    public Map<MGeneralization, GeneralizationEdge> getGenToGeneralizationEdge() {
         return fGenToGeneralizationEdge;
     }
-    public Set getHiddenEdges() {
+    public Set<Object> getHiddenEdges() {
         return fHiddenEdges;
     }
-    public void setHiddenEdges( Set hiddenEdges ) {
+    public void setHiddenEdges( Set<Object> hiddenEdges ) {
         fHiddenEdges = hiddenEdges;
     }
-    public Set getHiddenNodes() {
+    public Set<Object> getHiddenNodes() {
         return fHiddenNodes;
     }
-    public void setHiddenNodes( Set hiddenNodes ) {
+    public void setHiddenNodes( Set<Object> hiddenNodes ) {
         fHiddenNodes = hiddenNodes;
     }
-    public Map getNaryEdgeToDiamondNodeMap() {
+    public Map<?, DiamondNode> getNaryEdgeToDiamondNodeMap() {
         return fNaryEdgeToDiamondNodeMap;
     }
-    public Map getNaryEdgeToHalfEdgeMap() {
+    public Map<?, List<EdgeBase>> getNaryEdgeToHalfEdgeMap() {
         return fNaryEdgeToHalfEdgeMap;
     }
-    public Map getNodeToNodeMap() {
+    public Map<?, ? extends NodeBase> getNodeToNodeMap() {
         return fNodeToNodeMap;
     }
     public DiagramOptions getOpt() {
@@ -139,32 +141,29 @@ public class LayoutInfos {
     
     
     public void resetNodesOnEdges() {
-        Iterator it = null;
         if ( fBinaryEdgeToEdgeMap != null ) {
-            it = fBinaryEdgeToEdgeMap.values().iterator(); 
-            while ( it.hasNext() ) {
-                ((EdgeBase) it.next()).resetNodesOnEdges();
+            for (BinaryEdge edge : fBinaryEdgeToEdgeMap.values()) {
+                edge.resetNodesOnEdges();
             }
         }
+    
         if ( fNaryEdgeToHalfEdgeMap != null ) {
-            it = fNaryEdgeToHalfEdgeMap.values().iterator(); 
-            while ( it.hasNext() ) {
-            	List edges = (List) it.next();
-            	for (Iterator it1 = edges.iterator();it1.hasNext();)
-            		((EdgeBase) it1.next()).resetNodesOnEdges();
-            		
+            for (List<EdgeBase> edges : fNaryEdgeToHalfEdgeMap.values()) {
+            	for (EdgeBase edge : edges) {
+            		edge.resetNodesOnEdges();
+            	}
             }
         }
+        
         if ( fEdgeNodeToEdgeMap != null ) {
-            it = fEdgeNodeToEdgeMap.values().iterator(); 
-            while ( it.hasNext() ) {
-                ((EdgeBase) it.next()).resetNodesOnEdges();
+            for (EdgeBase edge : fEdgeNodeToEdgeMap.values()) {
+                edge.resetNodesOnEdges();
             }
         }
+        
         if ( fGenToGeneralizationEdge != null ) {
-            it = fGenToGeneralizationEdge.values().iterator(); 
-            while ( it.hasNext() ) {
-                ((EdgeBase) it.next()).resetNodesOnEdges();
+            for (EdgeBase edge : fGenToGeneralizationEdge.values()) {
+                edge.resetNodesOnEdges();
             }
         }
     }

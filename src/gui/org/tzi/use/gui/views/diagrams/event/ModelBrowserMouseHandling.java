@@ -59,7 +59,7 @@ public class ModelBrowserMouseHandling implements MouseListener {
     
     public ModelBrowserMouseHandling( ModelBrowser mb ) {
         fMB = mb;
-        fHighlightElements = new HashMap();
+        fHighlightElements = new HashMap<MModelElement, Boolean>();
     }
     
     /**
@@ -318,7 +318,7 @@ public class ModelBrowserMouseHandling implements MouseListener {
     
     private Rectangle fRectangle;
     private MModelElement fElem;
-    private Map fHighlightElements;
+    private Map<MModelElement, Boolean> fHighlightElements;
     
     public void setSelectedNodeRectangle( Rectangle rec ) {
         fRectangle = rec;

@@ -32,7 +32,7 @@ import java.util.Iterator;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public final class CollectionComparator implements Comparator {
+public final class CollectionComparator<I extends Comparable<I>> implements Comparator<Collection<I>> {
 
 
     /** 
@@ -42,16 +42,16 @@ public final class CollectionComparator implements Comparator {
      * defined order, and the collection elements must implement the
      * Comparable interface.  
      */
-    public int compare(Object o1, Object o2) {
-        Collection c1 = (Collection) o1;
-        Collection c2 = (Collection) o2;
+    public int compare(Collection<I> c1, Collection<I> c2) {
+        
         if (c1.size() != c2.size() )
             return c1.size() - c2.size();
 
-        Iterator it1 = c1.iterator();
-        Iterator it2 = c2.iterator();
+        Iterator<I> it1 = c1.iterator();
+        Iterator<I> it2 = c2.iterator();
+        
         while (it1.hasNext() && it2.hasNext() ) {
-            int comp = ((Comparable) it1.next()).compareTo(it2.next());
+            int comp = it1.next().compareTo(it2.next());
             if (comp != 0 )
                 return comp;
         }

@@ -23,7 +23,6 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.gui.main.ModelBrowserSorting;
@@ -49,7 +48,7 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
     private NewObjectDiagramView fParent;
     private MObject fObject;
     private String fLabel;
-    private List fAttributes;
+    private List<MAttribute> fAttributes;
     private String[] fValues;
     
     public ObjectNode( MObject obj, NewObjectDiagramView parent, 
@@ -59,14 +58,13 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
         fOpt = opt;
         MClass cls = obj.cls();
         fLabel = obj.name() + ":" + cls.name();
-        List allAttributes = cls.allAttributes();
+        List<MAttribute> allAttributes = cls.allAttributes();
         final int N = allAttributes.size();
         fValues = new String[N];
 
-        fAttributes = (ArrayList) ModelBrowserSorting.getInstance()
-                                                     .sortAttributes( allAttributes );
+        fAttributes = ModelBrowserSorting.getInstance()
+                                            .sortAttributes( allAttributes );
         ModelBrowserSorting.getInstance().addSortChangeListener( this );
-
     }
 
     public MObject object() {
@@ -87,8 +85,7 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
      */
     public void stateChanged( SortChangeEvent e ) {
         fAttributes = 
-            (ArrayList) ModelBrowserSorting.getInstance()
-            .sortAttributes( fAttributes );
+            ModelBrowserSorting.getInstance().sortAttributes( fAttributes );
     }
 
     /**

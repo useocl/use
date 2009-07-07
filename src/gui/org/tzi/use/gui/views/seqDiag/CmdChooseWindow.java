@@ -40,6 +40,7 @@ import javax.swing.JPanel;
  * default only operation calls are diagramed,but it is also possible to diagram
  * create-, destroy-, insert-, delete- and/or set-commands.
  */
+@SuppressWarnings("serial")
 public class CmdChooseWindow extends JDialog implements ActionListener {
     /**
      * A checkbox which contains the possible constructions (create, destroy,

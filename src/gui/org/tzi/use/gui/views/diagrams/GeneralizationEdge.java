@@ -35,7 +35,7 @@ import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
  */
 public final class GeneralizationEdge extends EdgeBase {
 
-    public GeneralizationEdge( Object source, Object target, 
+    public GeneralizationEdge( NodeBase source, NodeBase target, 
                                DiagramView diagram ) {
         super( source, target, "Inheritance", diagram, null );
     }
@@ -51,7 +51,7 @@ public final class GeneralizationEdge extends EdgeBase {
         
         // draw all line segments
         if ( !fNodesOnEdge.isEmpty() ) {
-            Iterator it = fNodesOnEdge.iterator();
+            Iterator<NodeOnEdge> it = fNodesOnEdge.iterator();
             int counter = 0;
             if ( it.hasNext() ) {
                 n1 = (NodeOnEdge) it.next();

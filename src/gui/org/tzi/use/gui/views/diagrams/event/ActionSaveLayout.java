@@ -50,19 +50,20 @@ import org.tzi.use.util.Log;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
+@SuppressWarnings("serial")
 public class ActionSaveLayout extends AbstractAction {
 	private static String LAST_PATH = "";
 	
 	private JFileChooser fChooser;
     private String fTitle = "";
     private String fAppendix = "";
-    private DirectedGraph fGraph;
+    private DirectedGraph<NodeBase, EdgeBase> fGraph;
     private DiagramOptions fOpt;
     private PrintWriter fLog;
     
     private LayoutInfos fLayoutInfos;
     
-    public ActionSaveLayout( String title, String appendix, DirectedGraph graph,
+    public ActionSaveLayout( String title, String appendix, DirectedGraph<NodeBase, EdgeBase> graph,
                              DiagramOptions opt, Properties properties,
                              PrintWriter log ) {
         super("Save layout...");
@@ -74,7 +75,7 @@ public class ActionSaveLayout extends AbstractAction {
         fLog = log;
     }
     
-    public ActionSaveLayout( String title, String appendix, DirectedGraph graph,
+    public ActionSaveLayout( String title, String appendix, DirectedGraph<NodeBase, EdgeBase> graph,
                              PrintWriter log, LayoutInfos layoutInfos ) {
         super("Save layout...");
         fTitle = title;
@@ -177,17 +178,17 @@ public class ActionSaveLayout extends AbstractAction {
         xml.append(LayoutTags.NL);
         
         // store node positions in property object
-        Iterator nodeIterator = fGraph.iterator();
+        Iterator<NodeBase> nodeIterator = fGraph.iterator();
         while (nodeIterator.hasNext()) {
-            NodeBase n = (NodeBase) nodeIterator.next();
+            NodeBase n = nodeIterator.next();
             xml.append(n.storePlacementInfo( false ));
             xml.append(LayoutTags.NL);
         }
 
         // store EdgePropertie positions in property object
-        Iterator edgeIterator = fGraph.edgeIterator();
+        Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
         while ( edgeIterator.hasNext() ) {
-            EdgeBase edge = (EdgeBase) edgeIterator.next();
+            EdgeBase edge = edgeIterator.next();
             if ( edge instanceof HalfEdge ) {
                 continue;
             }

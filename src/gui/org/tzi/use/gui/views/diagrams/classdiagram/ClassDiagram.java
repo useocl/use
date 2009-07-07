@@ -58,6 +58,7 @@ import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.NodeEdge;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
@@ -79,37 +80,37 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public class NewClassDiagram extends DiagramView 
+@SuppressWarnings("serial")
+public class ClassDiagram extends DiagramView 
                              implements HighlightChangeListener {
 
-    private NewClassDiagramView fParent;
-    private Map fClassToNodeMap; // (MClass -> ClassNode)
-    private Map fEnumToNodeMap; // (EnumType -> EnumNode)
-    private Map fBinaryAssocToEdgeMap; // (MAssociation -> BinaryAssocEdge)
-    private Map fAssocClassToEdgeMap; // (MAssociationClass -> ClassNode)
-    private Map fNaryAssocToDiamondNodeMap; // (MAssociation -> DiamondNode)
-    private Map fNaryAssocToHalfEdgeMap; // (MAssociation -> List(HalfEdge))
-    private Map fGenToGeneralizationEdge; // (MGeneralization -> GeneralizationEdge)
+    private ClassDiagramView fParent;
+    private Map<MClass, ClassNode> fClassToNodeMap;
+    private Map<EnumType, EnumNode> fEnumToNodeMap;
+    private Map<MAssociation, BinaryEdge> fBinaryAssocToEdgeMap;
+    private Map<MAssociationClass, NodeEdge> fAssocClassToEdgeMap;
+    private Map<MAssociation, DiamondNode> fNaryAssocToDiamondNodeMap;
+    private Map<MAssociation, List<EdgeBase>> fNaryAssocToHalfEdgeMap;
+    private Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
         
-    NewClassDiagram( NewClassDiagramView parent, PrintWriter log ) {
-        fOpt = new ClsDiagramOptions();
-        fGraph = new DirectedGraphBase();
-        fClassToNodeMap = new HashMap();
-        fEnumToNodeMap = new HashMap();
-        fBinaryAssocToEdgeMap = new HashMap();
-        fAssocClassToEdgeMap = new HashMap();
-        fNaryAssocToDiamondNodeMap = new HashMap();
-        fNaryAssocToHalfEdgeMap = new HashMap();
-        fGenToGeneralizationEdge = new HashMap();
+    ClassDiagram( ClassDiagramView parent, PrintWriter log ) {
+        fOpt = new ClassDiagramOptions();
+        fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
+        fClassToNodeMap = new HashMap<MClass, ClassNode>();
+        fEnumToNodeMap = new HashMap<EnumType, EnumNode>();
+        fBinaryAssocToEdgeMap = new HashMap<MAssociation, BinaryEdge>();
+        fAssocClassToEdgeMap = new HashMap<MAssociationClass, NodeEdge>();
+        fNaryAssocToDiamondNodeMap = new HashMap<MAssociation, DiamondNode>();
+        fNaryAssocToHalfEdgeMap = new HashMap<MAssociation, List<EdgeBase>>();
+        fGenToGeneralizationEdge = new HashMap<MGeneralization, GeneralizationEdge>();
         fParent = parent;
-        fHiddenNodes = new HashSet();
-        fHiddenEdges = new HashSet();
+        fHiddenNodes = new HashSet<Object>();
+        fHiddenEdges = new HashSet<Object>();
         fNodeSelection = new Selection();
         fEdgeSelection = new Selection();
         setLayout( null );
         setBackground( Color.white );
         fLog = log;
-//        setPreferredSize( new Dimension( 400, 400 ) );
         setPreferredSize( Options.fDiagramDimension );
         
         fLayoutInfos = new LayoutInfos( fBinaryAssocToEdgeMap, 
@@ -162,7 +163,7 @@ public class NewClassDiagram extends DiagramView
         }
         
         MModelElement elem = e.getModelElement();
-        List edges = new ArrayList();
+        List<EdgeBase> edges = new ArrayList<EdgeBase>();
         boolean allEdgesSelected = true;
         
         // elem is an association
@@ -170,19 +171,18 @@ public class NewClassDiagram extends DiagramView
             int size = ((MAssociation) elem).associationEnds().size();
             EdgeBase eb = null;
             if ( size == 2 ) {
-                    eb = (EdgeBase) fBinaryAssocToEdgeMap.get( (MAssociation) elem );
+                    eb = fBinaryAssocToEdgeMap.get( (MAssociation) elem );
                 if ( elem instanceof MAssociationClass ) {
-                    eb = (EdgeBase) fAssocClassToEdgeMap.get( (MAssociationClass) elem );
+                    eb = fAssocClassToEdgeMap.get( (MAssociationClass) elem );
                 }
                 edges.add( eb );
             } else {
-                List halfEdges = 
-                    (List) fNaryAssocToHalfEdgeMap.get( (MAssociation) elem );
+                List<EdgeBase> halfEdges =  fNaryAssocToHalfEdgeMap.get( (MAssociation) elem );
                 if ( edges != null && halfEdges != null ) {
                     edges.addAll( halfEdges );
                 }
                 if ( elem instanceof MAssociationClass ) {
-                    eb = (EdgeBase) fAssocClassToEdgeMap.get( (MAssociationClass) elem );
+                    eb = fAssocClassToEdgeMap.get( (MAssociationClass) elem );
                     if ( !edges.contains( eb ) ) {
                         edges.add( eb );
                     }
@@ -191,9 +191,7 @@ public class NewClassDiagram extends DiagramView
             
             // check all edges in the list if they are suppose to be selected 
             // or deselected.
-            Iterator it = edges.iterator();
-            while ( it.hasNext() ) {
-                EdgeBase edge = (EdgeBase) it.next();
+            for (EdgeBase edge : edges) {
                 if ( edge != null ) {
                     if ( fEdgeSelection.isSelected( edge ) ) {
                         fEdgeSelection.remove( edge );
@@ -208,7 +206,7 @@ public class NewClassDiagram extends DiagramView
         
         // elem is a class
         if ( elem != null && elem instanceof MClass ) {
-            NodeBase node = (NodeBase) fClassToNodeMap.get( (MClass) elem );
+            NodeBase node = fClassToNodeMap.get( (MClass) elem );
             if ( node != null ) {
                 if ( elem instanceof MAssociationClass ) {
                     if ( fNodeSelection.isSelected( node ) && allEdgesSelected ) {
@@ -341,9 +339,9 @@ public class NewClassDiagram extends DiagramView
     public void addAssociation( MAssociation assoc ) {
         String label = assoc.name();
         
-        Iterator assocEndIter = assoc.associationEnds().iterator();
-        MAssociationEnd assocEnd1 = (MAssociationEnd) assocEndIter.next();
-        MAssociationEnd assocEnd2 = (MAssociationEnd) assocEndIter.next();
+        Iterator<MAssociationEnd> assocEndIter = assoc.associationEnds().iterator();
+        MAssociationEnd assocEnd1 = assocEndIter.next();
+        MAssociationEnd assocEnd2 = assocEndIter.next();
         MClass cls1 = assocEnd1.cls();
         MClass cls2 = assocEnd2.cls();
 
@@ -358,7 +356,7 @@ public class NewClassDiagram extends DiagramView
                                   this, assoc );
                 synchronized (fLock) {
                     fGraph.addEdge(e);
-                    fAssocClassToEdgeMap.put( assoc, e );
+                    fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
                     fLayouter = null;
                 }
             } else {
@@ -396,13 +394,13 @@ public class NewClassDiagram extends DiagramView
                                       this, assoc );
                     synchronized (fLock) {
                         fGraph.addEdge(e);
-                        fAssocClassToEdgeMap.put( assoc, e );
+                        fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
                         fLayouter = null;
                     }
                 }
                 // connected to a "normal" class
                 fNaryAssocToDiamondNodeMap.put( assoc, node );
-                List halfEdges = new ArrayList();
+                List<EdgeBase> halfEdges = new ArrayList<EdgeBase>();
                 assocEndIter = assoc.associationEnds().iterator();
                 while ( assocEndIter.hasNext() ) {
                     MAssociationEnd assocEnd = (MAssociationEnd) assocEndIter.next();
@@ -426,12 +424,12 @@ public class NewClassDiagram extends DiagramView
         if ( assoc.associationEnds().size() == 2 ) {
             EdgeBase e = null;
             if ( assoc instanceof MAssociationClass ) { 
-                e = (NodeEdge) fAssocClassToEdgeMap.get( assoc );
+                e = fAssocClassToEdgeMap.get( assoc );
                 if (e == null) {
                     return;
                 }
             } else {
-                e = (BinaryEdge) fBinaryAssocToEdgeMap.get( assoc );
+                e = fBinaryAssocToEdgeMap.get( assoc );
             }
 
             if ( e != null && !loadingLayout 
@@ -524,7 +522,7 @@ public class NewClassDiagram extends DiagramView
         }
 
         synchronized ( fLock ) {
-            fGraph.remove( e );
+            fGraph.removeEdge( e );
             fGenToGeneralizationEdge.remove( gen );
             fLayouter = null;
         }
@@ -546,8 +544,9 @@ public class NewClassDiagram extends DiagramView
         int pos = 0;
         
         if ( !fNodeSelection.isEmpty() ) {
-            HashSet selectedClasses = new HashSet();
-            Iterator nodeIterator = fNodeSelection.iterator();
+            HashSet<Object> selectedClasses = new HashSet<Object>();
+            Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
+            
             while ( nodeIterator.hasNext() ) {
                 PlaceableNode node = (PlaceableNode) nodeIterator.next();
                 if ( node instanceof ClassNode && node.isDeletable() ) {
@@ -610,16 +609,7 @@ public class NewClassDiagram extends DiagramView
                 repaint();
             }
         } );
-//        final JCheckBoxMenuItem cbAttributes =
-//            new JCheckBoxMenuItem("Show attributes" );
-//        cbAttributes.setState( fOpt.isShowAttributes() );
-//        cbAttributes.addItemListener( new ItemListener() {
-//            public void itemStateChanged( ItemEvent ev ) {
-//                fOpt
-//                    .setShowAttributes( ev.getStateChange() == ItemEvent.SELECTED );
-//                repaint();
-//            }
-//        } );
+
         final JCheckBoxMenuItem cbOperations =
             new JCheckBoxMenuItem("Show operations" );
         cbOperations.setState( fOpt.isShowOperations() );
@@ -632,7 +622,6 @@ public class NewClassDiagram extends DiagramView
         } );
 
         popupMenu.insert( cbMultiplicities, pos++-1 );
-//        popupMenu.insert( cbAttributes, pos++ );
         popupMenu.insert( cbOperations, pos++ );
         
         popupMenu.show( e.getComponent(), e.getX(), e.getY() );
@@ -644,12 +633,12 @@ public class NewClassDiagram extends DiagramView
      * @param selectedNodes Nodes which are selected at this point in the diagram.
      * @return A HashSet of the none selected objects in the diagram.
      */
-    private Set getNoneSelectedNodes( Set selectedNodes ) {
-        Set noneSelectedNodes = new HashSet();
+    private Set<Object> getNoneSelectedNodes( Set<Object> selectedNodes ) {
+        Set<Object> noneSelectedNodes = new HashSet<Object>();
         
-        Iterator it = fGraph.iterator();
+        Iterator<NodeBase> it = fGraph.iterator();
         while ( it.hasNext() ) {
-            Object o = it.next();
+            NodeBase o = it.next();
             if ( o instanceof ClassNode ) {
                 MClass cls = ((ClassNode) o).cls();
                 if ( !selectedNodes.contains( cls ) ) {
@@ -663,9 +652,10 @@ public class NewClassDiagram extends DiagramView
     /**
      * Deletes all hidden elements form this diagram.
      */
-    public void deleteHiddenElementsFromDiagram( Set nodesToHide, 
-                                                 Set edgesToHide ) {
-        Iterator it = nodesToHide.iterator();
+    @Override
+    public void deleteHiddenElementsFromDiagram( Set<Object> nodesToHide, 
+                                                 Set<Object> edgesToHide ) {
+        Iterator<?> it = nodesToHide.iterator();
         while ( it.hasNext() ) {
             Object elem = it.next();
             if ( elem instanceof MClass ) {
@@ -675,27 +665,25 @@ public class NewClassDiagram extends DiagramView
             }
         }
         
-        Set assocsToDelete = new HashSet();
-        Set gensToDelete = new HashSet();
+        Set<MAssociation> assocsToDelete = new HashSet<MAssociation>();
+        Set<MGeneralization> gensToDelete = new HashSet<MGeneralization>();
         it = edgesToHide.iterator();
+        
         while ( it.hasNext() ) {
             MModelElement edge = (MModelElement) it.next();
             if ( edge instanceof MAssociation ) {
                 assocsToDelete.add( (MAssociation) edge );
-//                deleteAssociation( (MAssociation) edge );
             } else if ( edge instanceof MGeneralization ) {
                 gensToDelete.add( (MGeneralization) edge );
-//                deleteGeneralization( (MGeneralization) edge );
             }
         }
-        
-        it = assocsToDelete.iterator();
-        while ( it.hasNext() ) {
-            deleteAssociation( (MAssociation) it.next(), true );
+
+        for (MAssociation ass : assocsToDelete) {
+            deleteAssociation( ass, true );
         }
-        it = gensToDelete.iterator();
-        while ( it.hasNext() ) {
-            deleteGeneralization( (MGeneralization) it.next() );
+        
+        for (MGeneralization gen : gensToDelete) {
+            deleteGeneralization( gen );
         }
         
         fHiddenNodes.addAll( nodesToHide );

@@ -34,6 +34,7 @@ import javax.swing.Timer;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
+@SuppressWarnings("serial")
 public class StatusBar extends JPanel {
     private JLabel fMsgLabel;
     private Timer fTimer;

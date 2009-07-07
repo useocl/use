@@ -35,6 +35,7 @@ import org.tzi.use.gui.views.View;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
+@SuppressWarnings("serial")
 public class ViewFrame extends JInternalFrame {
     private View fView;
 

@@ -40,6 +40,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -78,7 +79,7 @@ import org.tzi.use.gui.views.ObjectCountView;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.StateEvolutionView;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.gui.views.diagrams.classdiagram.NewClassDiagramView;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
@@ -105,6 +106,7 @@ import org.tzi.use.util.USEWriter;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
+@SuppressWarnings("serial")
 public class MainWindow extends JFrame implements StateChangeListener {
     private Session fSession;
 
@@ -472,8 +474,6 @@ public class MainWindow extends JFrame implements StateChangeListener {
         final boolean isViewPrintable = (f.getView() instanceof SequenceDiagramView);
         f.addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameActivated(InternalFrameEvent ev) {
-                // jdk1.3: JInternalFrame jif = ev.getInternalFrame();
-                JInternalFrame jif = (JInternalFrame) ev.getSource();
                 fActionFilePrint.setEnabled(isPrintable);
                 fActionFilePrintView.setEnabled(isViewPrintable);
             }
@@ -580,8 +580,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
      * Creates a new object. Keeps track of undo information and handles errors
      * on the GUI level.
      */
-    public void createObject(String clsName, java.util.List names) {
-        // System.err.println("Creating " + name + " : " + cls.name());
+    public void createObject(String clsName, List<String> names) {
 
         // setup command for object creation
         MClass cls = fSession.system().model().getClass(clsName);
@@ -599,8 +598,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 if (cmd.canUndo())
                     enableUndo(cmd.name());
                 StringBuffer msg = new StringBuffer();
-                for (Iterator it = names.iterator(); it.hasNext();) {
-                    String name = (String) it.next();
+                for (Iterator<String> it = names.iterator(); it.hasNext();) {
+                    String name = it.next();
                     msg.append(name);
                     if (it.hasNext())
                         msg.append(", ");
@@ -610,7 +609,6 @@ public class MainWindow extends JFrame implements StateChangeListener {
             } catch (MSystemException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
-                // Log.error(ex.getMessage());
             }
         }
     }
@@ -627,7 +625,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
             return;
 
         MSystem system = fSession.system();
-        java.util.List cmdList = CMDCompiler.compileCmdList(system.model(),
+        List<MCmd> cmdList = CMDCompiler.compileCmdList(system.model(),
                 system.state(), line, "<input>", fLogWriter);
 
         // compile errors?
@@ -640,9 +638,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
             return;
         }
 
-        Iterator it = cmdList.iterator();
-        while (it.hasNext()) {
-            MCmd cmd = (MCmd) it.next();
+        for (MCmd cmd : cmdList) {
             Log.trace(this, "--- Executing command: " + cmd);
             try {
                 system.executeCmd(cmd);
@@ -1109,7 +1105,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            NewClassDiagramView cdv = new NewClassDiagramView(MainWindow.this,
+            ClassDiagramView cdv = new ClassDiagramView(MainWindow.this,
                     fSession.system());
             ViewFrame f = new ViewFrame("Class diagram", cdv,
                     "ClassDiagram.gif");

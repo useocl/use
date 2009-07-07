@@ -22,6 +22,7 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,8 +31,17 @@ import javax.swing.AbstractAction;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
+import org.tzi.use.gui.views.diagrams.BinaryEdge;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.DiamondNode;
+import org.tzi.use.gui.views.diagrams.EdgeBase;
+import org.tzi.use.gui.views.diagrams.GeneralizationEdge;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
+import org.tzi.use.gui.views.diagrams.NodeBase;
+import org.tzi.use.gui.views.diagrams.NodeEdge;
+import org.tzi.use.gui.views.diagrams.classdiagram.EnumNode;
+import org.tzi.use.uml.mm.MGeneralization;
+import org.tzi.use.uml.ocl.type.EnumType;
 
 /**
  * 
@@ -39,54 +49,55 @@ import org.tzi.use.gui.views.diagrams.LayoutInfos;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
+@SuppressWarnings("serial")
 public abstract class ActionHide extends AbstractAction {
     /**
      * All nodes which are suppose to be hidden in a diagram.
      */
-    Set fNodesToHide;
+    Set<Object> fNodesToHide;
     /**
      * All actuall hidden nodes in a diagram.
      */
-    Set fHiddenNodes;
+    Set<Object> fHiddenNodes;
     /**
      * All actuall hidden edges in a diagram.
      */
-    Set fHiddenEdges;
+    Set<Object> fHiddenEdges;
     /**
      * Mapping from an edge (Associaiton/Link) to a BinaryEdge.
      * (MAssociation -> BinaryEdge) or (MLink -> BinaryEdge)
      */
-    Map fEdgeToBinaryEdgeMap;
+    Map<?, BinaryEdge> fEdgeToBinaryEdgeMap;
     /**
      * Mapping from a node (Class/Object) to a NodeBase.
      * (MClass -> ClassNode) or (MObject -> ObjectNode)
      */
-    Map fNodeToNodeBaseMap;
+    Map<?, ? extends NodeBase> fNodeToNodeBaseMap;
     /**
      * Mapping from an n-ary edge (Associaiton/Link) to a DiamondNode.
      * (MAssociation -> DiamondNode) or (MLink -> DiamondNode)
      */
-    Map fNaryEdgeToDiamondNodeMap;
+    Map<?, DiamondNode> fNaryEdgeToDiamondNodeMap;
     /**
      * Mapping from an edge (Associaiton/Link) to a Set of HalfEdges.
      * (MAssociation -> Set(HalfEdge)) or (MLink -> Set(HalfEdge))
      */
-    Map fEdgeToHalfEdgeMap;
+    Map<?, List<EdgeBase>> fEdgeToHalfEdgeMap;
     /**
      * Mapping from an edge node (AssociaitonClass/LinkObject) to an NodeEdge.
      * (MAssociationClass -> NodeEdge) or (MLinkObject -> NodeEdge)
      */
-    Map fEdgeToNodeEdgeMap;
+    Map<?, NodeEdge> fEdgeToNodeEdgeMap;
     /**
      * Mapping from a generalization to an GeneralizationEdge.
      * (MGeneralization -> GeneralizationEdge)
      */
-    Map fGenToGeneralizationEdge;
+    Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
     /**
      * Mapping from an enumeration to an EnumNode.
      * (EnumType -> EnumNode)
      */
-    Map fEnumToNodeMap;
+    Map<EnumType, EnumNode> fEnumToNodeMap;
     /**
      * All hidden nodes or edges are saved into these properties.
      */
@@ -98,7 +109,7 @@ public abstract class ActionHide extends AbstractAction {
     /**
      * This graph contains all nodes and edges of a diagram.  
      */
-    DirectedGraph fGraph;
+    DirectedGraph<NodeBase, EdgeBase> fGraph;
     /**
      * The diagram the graph, nodes and edges belong to.
      */
@@ -117,9 +128,9 @@ public abstract class ActionHide extends AbstractAction {
     }
 
 
-    void setNodes( Set set ) {
+    void setNodes( Set<?> set ) {
         if ( set != null ) {
-            fNodesToHide = (HashSet) ((HashSet) set).clone();
+            fNodesToHide = new HashSet<Object>(set);
         }
     }
     
@@ -133,7 +144,7 @@ public abstract class ActionHide extends AbstractAction {
     /**
      * Saves edges which are connected to the hidden nodes.
      */
-    public abstract Set saveEdges( Set nodesToHide );
+    public abstract Set<Object> saveEdges( Set<Object> nodesToHide );
     
     /**
      * Hides all nodes with there connecting edges.

@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-07-05 22:40:15
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-07-07 18:20:21
 
 package org.tzi.use.parser.ocl; 
 
@@ -16,9 +16,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-
-@SuppressWarnings({ "unused" })
-public class OCLLexer extends Lexer {
+@SuppressWarnings("all") public class OCLLexer extends Lexer {
     public static final int T__68=68;
     public static final int T__69=69;
     public static final int T__66=66;

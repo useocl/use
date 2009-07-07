@@ -32,22 +32,21 @@ import org.tzi.use.graph.*;
  */
 
 
-public class LayeredLayout {
+public class LayeredLayout<N, E extends DirectedEdge<N>> {
     private static final boolean DO_TIMING = true;
 
-    private DirectedGraph fInGraph;
-    private DirectedGraph fOutGraph;
-    private HashMap fObjectToNode; // (Object -> LabeledNode)
-    private List fSinks;    // (LabeledNode)
+    private DirectedGraph<N, E> fInGraph;
+    private DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> fOutGraph;
+    private HashMap<N, LayoutNode> fObjectToNode; // (Object -> LabeledNode)
+    private List<LayoutNode> fSinks;    // (LabeledNode)
     private int fHeight;    // the number of layers
 
-    public LayeredLayout(DirectedGraph g) {
+    public LayeredLayout(DirectedGraph<N, E> g) {
         fInGraph = g;
-        fOutGraph = new DirectedGraphBase(fInGraph.size());
-        fObjectToNode = new HashMap();
-        fSinks = new ArrayList();
+        fOutGraph = new DirectedGraphBase<LayoutNode, DirectedEdge<LayoutNode>>(fInGraph.size());
+        fObjectToNode = new HashMap<N, LayoutNode>();
+        fSinks = new ArrayList<LayoutNode>();
     }
-
 
     /**
      * Calculates a layout.
@@ -86,9 +85,9 @@ public class LayeredLayout {
      */
     private void createInitialGraph() {
         // copy nodes
-        Iterator nodeIter = fInGraph.iterator();
+        Iterator<N> nodeIter = fInGraph.iterator();
         while (nodeIter.hasNext() ) {
-            Object node = nodeIter.next();
+            N node = nodeIter.next();
             LayoutNode layoutNode = new LayoutNode(node);
             fObjectToNode.put(node, layoutNode);
             fOutGraph.add(layoutNode);
@@ -97,33 +96,30 @@ public class LayeredLayout {
         }
     
         // copy edges
-        Iterator edgeIter = fInGraph.edgeIterator();
+        Iterator<E> edgeIter = fInGraph.edgeIterator();
         while (edgeIter.hasNext() ) {
-            DirectedEdge edge = (DirectedEdge) edgeIter.next();
-            LayoutNode source = (LayoutNode) fObjectToNode.get(edge.source());
-            LayoutNode target = (LayoutNode) fObjectToNode.get(edge.target());
-            fOutGraph.addEdge(new DirectedEdgeBase(source, target));
+            E edge = edgeIter.next();
+            LayoutNode source = fObjectToNode.get(edge.source());
+            LayoutNode target = fObjectToNode.get(edge.target());
+            fOutGraph.addEdge(new DirectedEdgeBase<LayoutNode>(source, target));
         }
-        //System.out.println("Init: " + fOutGraph);
-        //System.out.println("Sinks: " + fSinks);
     }
 
     /**
      */
     private void layer() {
         fHeight = 1;
-        Iterator sinkIter = fSinks.iterator();
+        Iterator<LayoutNode> sinkIter = fSinks.iterator();
         while (sinkIter.hasNext() ) {
-            LayoutNode node = (LayoutNode) sinkIter.next();
+            LayoutNode node = sinkIter.next();
             layerWalk(node, 1);
         }
-        //System.out.println("Layer: " + fOutGraph);
     }
 
     private void layerWalk(LayoutNode node, int layer) {
-        Set predecessors = fOutGraph.sourceNodeSet(node);
-        //System.out.println("node = " + node + ", predecessors = " + predecessors);
-        Iterator predIter = predecessors.iterator();
+        Set<LayoutNode> predecessors = fOutGraph.sourceNodeSet(node);
+        
+        Iterator<LayoutNode> predIter = predecessors.iterator();
         while (predIter.hasNext() ) {
             node = (LayoutNode) predIter.next();
             if (layer > node.fLayer )
@@ -139,15 +135,15 @@ public class LayeredLayout {
      * graph.  
      */
     private void insertDummyNodes() {
-        List dummyNodes = new ArrayList();
-        List dummyEdges = new ArrayList();
+        List<LayoutNode> dummyNodes = new ArrayList<LayoutNode>();
+        List<DirectedEdge<LayoutNode>> dummyEdges = new ArrayList<DirectedEdge<LayoutNode>>();
         int dummyNode = 0;
 
-        Iterator edgeIter = fOutGraph.edgeIterator();
+        Iterator<DirectedEdge<LayoutNode>> edgeIter = fOutGraph.edgeIterator();
         while (edgeIter.hasNext() ) {
-            DirectedEdge edge = (DirectedEdge) edgeIter.next();
-            LayoutNode source = (LayoutNode) edge.source();
-            LayoutNode target = (LayoutNode) edge.target();
+            DirectedEdge<LayoutNode> edge = edgeIter.next();
+            LayoutNode source = edge.source();
+            LayoutNode target = edge.target();
             int span = source.fLayer - target.fLayer;
 
             if (span > 1 ) {
@@ -158,24 +154,24 @@ public class LayeredLayout {
                     LayoutNode n2 = new LayoutNode(null, dummyNode++);
                     n2.fLayer = layer;
                     dummyNodes.add(n2);
-                    dummyEdges.add(new DirectedEdgeBase(n1, n2));
+                    dummyEdges.add(new DirectedEdgeBase<LayoutNode>(n1, n2));
                     n1 = n2;
                     layer--;
                 }
-                dummyEdges.add(new DirectedEdgeBase(n1, target));
+                dummyEdges.add(new DirectedEdgeBase<LayoutNode>(n1, target));
 
                 // remove direct edge
                 edgeIter.remove();
             }
         }
 
-        Iterator nodeIter = dummyNodes.iterator();
+        Iterator<LayoutNode> nodeIter = dummyNodes.iterator();
         while (nodeIter.hasNext() )
             fOutGraph.add(nodeIter.next());
 
         edgeIter = dummyEdges.iterator();
         while (edgeIter.hasNext() )
-            fOutGraph.addEdge((DirectedEdge) edgeIter.next());
+            fOutGraph.addEdge((DirectedEdge<LayoutNode>) edgeIter.next());
     }
 
     /**
@@ -188,9 +184,9 @@ public class LayeredLayout {
         // determine size of each layer and set a relative (arbitrary)
         // order for each node on its layer
         int[] layerSize = new int[fHeight];
-        Iterator nodeIter = fOutGraph.iterator();
+        Iterator<LayoutNode> nodeIter = fOutGraph.iterator();
         while (nodeIter.hasNext() ) {
-            LayoutNode node = (LayoutNode) nodeIter.next();
+            LayoutNode node = nodeIter.next();
             node.fX = node.fLayerX = layerSize[node.fLayer]++;
         }
 
@@ -228,7 +224,7 @@ public class LayeredLayout {
                 LayoutNode u = layers[i][j];
                 // calculate barycenter of neighbors
                 int sum = 0;
-                Set neighbors = fOutGraph.targetNodeSet(u);
+                Set<LayoutNode> neighbors = fOutGraph.targetNodeSet(u);
                 nodeIter = neighbors.iterator();
                 while (nodeIter.hasNext() ) {
                     LayoutNode v = (LayoutNode) nodeIter.next();

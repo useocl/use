@@ -48,7 +48,7 @@ import org.tzi.use.uml.mm.MAssociationEnd;
  * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Fabian Gutsche
  */
-public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
+public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
                                implements Selectable {
     private final int DIRECTED_EDGE = 100; 
     private final int INHERITANCE_EDGE = 200;
@@ -214,7 +214,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
      * @param edgeName The name of the edge.
      * @param diagram The diagram this edge belongs to.
      */
-    public EdgeBase( N source, N target, String edgeName,
+    public EdgeBase( NodeBase source, NodeBase target, String edgeName,
                      DiagramView diagram, MAssociation assoc ) {
         super( source, target );
         fDiagram = diagram;
@@ -554,7 +554,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
                                          && getNodesOnEdge().size() <= 6 ) ) {
              return false;
          } 
-         return true;         
+         return true;
      }
 
      /**
@@ -709,16 +709,16 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
     /**
      * Checks if there is more than one edge between two nodes.
      */
-    public Set<EdgeBase<NodeBase>> checkForNewPositionAndDraw( DirectedGraph<NodeBase, EdgeBase<NodeBase>> graph, Graphics g, 
+    public Set<EdgeBase> checkForNewPositionAndDraw( DirectedGraph<NodeBase, EdgeBase> graph, Graphics g, 
                                            FontMetrics fm ) {
-        Set<EdgeBase<NodeBase>> edges = null;
+        Set<EdgeBase> edges = null;
         
         if ( graph.existsPath( fSource, fTarget ) ) {
             edges = graph.edgesBetween( fSource, fTarget );
             calculateNewPosition( edges );
         }
         if ( edges != null ) {
-            for (EdgeBase<NodeBase> e : edges) {
+            for (EdgeBase e : edges) {
                 e.draw( g, fm );
             }
         }
@@ -730,7 +730,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
      * Calculates the space between the lines if there are more than one
      * edge between two nodes.
      */
-    private double calculateSpaces( double length, Set<EdgeBase<NodeBase>> edges ) {
+    private double calculateSpaces( double length, Set<EdgeBase> edges ) {
         return length / ( (double) edges.size() + 1 );
     }
     
@@ -738,7 +738,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
      * Calculates and sets the new position of the edges between two
      * nodes.
      */
-    private void calculateNewPosition( Set<EdgeBase<NodeBase>> edges ) {
+    private void calculateNewPosition( Set<EdgeBase> edges ) {
         Polygon sourceRec = fSource.dimension();
         Polygon targetRec = fTarget.dimension();
         
@@ -775,7 +775,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
         // midpoint of the objects as start and end point of the
         // link. Otherwise calculate the new positions.
         if ( edges.size() == 1 ) {
-            for (EdgeBase<NodeBase> e : edges) {
+            for (EdgeBase e : edges) {
                 // edge is reflexive
                 if ( isReflexive() ) {
                     setCorrectPoints( sX + sWidth/3, sY - sHeight/2,
@@ -795,7 +795,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
             if ( isReflexive() ) {
                 int counter = 0;
 
-                for (EdgeBase<NodeBase> e : edges) {
+                for (EdgeBase e : edges) {
                     counter++;
                     switch ( counter ) {
                     case 1:
@@ -845,7 +845,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
                 
                 // calculates the different x-coordinates of start and end
                 // point
-                for (EdgeBase<NodeBase> e : edges) {
+                for (EdgeBase e : edges) {
                     // addition of space or projection to get the
                     // wanted space between the edges
                     if ( counter == 1 ) {
@@ -886,7 +886,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
                 
                 // calculates the different y-coordinates of start and end
                 // point
-                for (EdgeBase<NodeBase> e : edges) {
+                for (EdgeBase e : edges) {
                     // addition of space or projection to get the
                     // wanted space between the edges
                     if ( counter == 1 ) {
@@ -919,7 +919,7 @@ public abstract class EdgeBase<N> extends DirectedEdgeBase<N>
      * @param e The points of this EdgeBase will be set.
      */
     private void setCorrectPoints( double sX, double sY, double tX, double tY,
-                                   EdgeBase<NodeBase> e ) {
+                                   EdgeBase e ) {
         if ( e.fSource.equals( fSource ) ) {
             e.setPoint( SOURCE, sX, sY );
             e.setPoint( TARGET, tX, tY );

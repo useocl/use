@@ -31,6 +31,7 @@ import javax.swing.*;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
+@SuppressWarnings("serial")
 class LogPanel extends JPanel {
     private JTextArea fTextLog;
     private JPopupMenu fPopupMenu; // context menu on right mouse click

@@ -36,6 +36,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.xmlparser.XMLParserAccess;
 import org.tzi.use.gui.xmlparser.XMLParserAccessImpl;
 import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.sys.MLinkEnd;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
 
@@ -45,6 +46,7 @@ import org.tzi.use.uml.sys.MObject;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
   */
+@SuppressWarnings("serial")
 public final class ActionHideObjectDiagram extends ActionHide {
  
     /**
@@ -52,9 +54,9 @@ public final class ActionHideObjectDiagram extends ActionHide {
      */
     private NewObjectDiagram fDiagram;
 
-    public ActionHideObjectDiagram( String text, Set nodesToHide,
+    public ActionHideObjectDiagram( String text, Set<?> nodesToHide,
                                     Selection nodeSelection,
-                                    DirectedGraph graph, LayoutInfos layoutInfos ) {
+                                    DirectedGraph<NodeBase, EdgeBase> graph, LayoutInfos layoutInfos ) {
         super(text);
         setNodes( nodesToHide );
         
@@ -78,7 +80,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
      */
     public void showAllHiddenElements() {
         // add all hidden objects
-        Iterator it = fHiddenNodes.iterator();
+        Iterator<Object> it = fHiddenNodes.iterator();
         MObject obj = null;
         while (it.hasNext()) {
             obj = (MObject) it.next();
@@ -103,11 +105,11 @@ public final class ActionHideObjectDiagram extends ActionHide {
     /**
      * Saves links which are connected to the hidden objects.
      */
-    public Set saveEdges( Set objectsToHide ) {
-        Set linksToHide = new HashSet();
-        Set additionalObjToHide = new HashSet();
+    public Set<Object> saveEdges( Set<Object> objectsToHide ) {
+        Set<Object> linksToHide = new HashSet<Object>();
+        Set<Object> additionalObjToHide = new HashSet<Object>();
         
-        Iterator it = objectsToHide.iterator();
+        Iterator<Object> it = objectsToHide.iterator();
         while ( it.hasNext() ) {
             MObject obj = (MObject) it.next();
             if ( obj instanceof MLinkObject ) {
@@ -122,7 +124,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
                 
                 // link object is participating in an nary link than save 
                 // location of diamond as well.
-                Set naryLinkSet = ((MLink) obj).linkEnds();
+                Set<MLinkEnd> naryLinkSet = ((MLink) obj).linkEnds();
                 if ( naryLinkSet.size() > 2 ) {
                     NodeBase dn = 
                         (NodeBase) fNaryEdgeToDiamondNodeMap.get( (MLink) obj );
@@ -138,7 +140,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
                 }
             } else {
                 // check if object is in one of the binary links
-                Iterator linkIt = fEdgeToBinaryEdgeMap.keySet().iterator();
+                Iterator<?> linkIt = fEdgeToBinaryEdgeMap.keySet().iterator();
                 while ( linkIt.hasNext() ) {
                     MLink link = (MLink) linkIt.next();
                     if ( link.linkedObjects().contains( obj ) ) {
@@ -157,7 +159,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
                 }
                 
                 // check if object is in one of the nary links
-                Iterator naryLinkIt = fNaryEdgeToDiamondNodeMap.keySet().iterator();
+                Iterator<?> naryLinkIt = fNaryEdgeToDiamondNodeMap.keySet().iterator();
                 while ( naryLinkIt.hasNext() ) {
                     MLink naryLink = (MLink) naryLinkIt.next();
                     
@@ -188,7 +190,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
                 }
                 
                 // check if object is participating in an link object
-                Iterator linkObjIt = fEdgeToNodeEdgeMap.keySet().iterator();
+                Iterator<?> linkObjIt = fEdgeToNodeEdgeMap.keySet().iterator();
                 while ( linkObjIt.hasNext() ) {
                     MLink linkObj = (MLink) linkObjIt.next();
                     if ( linkObj.linkedObjects().contains( obj ) ) {
@@ -217,18 +219,18 @@ public final class ActionHideObjectDiagram extends ActionHide {
      * Hides all objects with there connecting links.
      */
     public void hideNodesAndEdges() {
-        Set objectsToHide = new HashSet();
+        Set<Object> objectsToHide = new HashSet<Object>();
         
         // hide objects
-        Iterator it = fNodesToHide.iterator();
+        Iterator<Object> it = fNodesToHide.iterator();
         while (it.hasNext()) {
             MObject obj = (MObject) it.next();
             NodeBase objToHideNode = (NodeBase) fNodeToNodeBaseMap.get(obj);
             
             // save position information about object
-            Iterator nodeIt = fGraph.iterator();
+            Iterator<NodeBase> nodeIt = fGraph.iterator();
             while (nodeIt.hasNext()) {
-                NodeBase node = (NodeBase) nodeIt.next();
+                NodeBase node = nodeIt.next();
                 if (node.equals(objToHideNode)) {
                     fLayoutXMLForHiddenElements += objToHideNode.storePlacementInfo( true );
                 }
@@ -238,7 +240,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
         }
         
         // save links which are connected to the objects
-        Set linksToHide = saveEdges( objectsToHide );
+        Set<Object> linksToHide = saveEdges( objectsToHide );
         
         fDiagram.deleteHiddenElementsFromDiagram( objectsToHide, linksToHide );
         

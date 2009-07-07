@@ -54,6 +54,7 @@ import javax.swing.text.PlainDocument;
  * A window for choosing some properties, e.g. font, distance of lifelines, size
  * of object boxes and so on.
  */
+@SuppressWarnings("serial")
 public class PropertiesWindow extends JDialog implements ActionListener {
 
     /**

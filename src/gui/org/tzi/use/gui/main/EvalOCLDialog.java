@@ -59,6 +59,7 @@ import org.tzi.use.util.TeeWriter;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
+@SuppressWarnings("serial")
 class EvalOCLDialog extends JDialog {
     private MSystem fSystem;
 
@@ -107,7 +108,7 @@ class EvalOCLDialog extends JDialog {
         final JButton btnEvalBrowser = new JButton("Browser");
         JButton btnEval = new JButton("Evaluate");
         btnEval.setMnemonic('E');
-        final JDialog fOclDialog = this;
+        
         btnEval.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 evaluate(fTextIn.getText());

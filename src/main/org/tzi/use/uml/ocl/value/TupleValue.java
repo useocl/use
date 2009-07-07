@@ -119,8 +119,8 @@ public final class TupleValue extends Value {
             throw new ClassCastException();
         
         TupleValue other = (TupleValue) o;
-        return new CollectionComparator().compare(fParts.values(), 
-                                                  other.fParts.values());
+        return new CollectionComparator<Value>().compare(fParts.values(), 
+                                                   other.fParts.values());
     }
 
     

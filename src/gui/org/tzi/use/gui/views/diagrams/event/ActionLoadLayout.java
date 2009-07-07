@@ -29,12 +29,13 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
-import org.antlr.analysis.ActionLabel;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
+import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.xmlparser.XMLParserAccess;
 import org.tzi.use.gui.xmlparser.XMLParserAccessImpl;
 import org.tzi.use.util.Log;
@@ -45,6 +46,7 @@ import org.tzi.use.util.Log;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
+@SuppressWarnings("serial")
 public class ActionLoadLayout extends AbstractAction {
     
 	private static String LAST_PATH = "";
@@ -58,7 +60,7 @@ public class ActionLoadLayout extends AbstractAction {
     
     public ActionLoadLayout( String title, String appendix, DiagramView diagram,
                              PrintWriter log, DiagramOptions opt, 
-                             HideAdministration hideAdmin, DirectedGraph graph ) {
+                             HideAdministration hideAdmin, DirectedGraph<NodeBase, EdgeBase> graph ) {
         super("Load layout...");
         fTitle = title;
         fAppendix = appendix;
@@ -70,7 +72,7 @@ public class ActionLoadLayout extends AbstractAction {
 
     public ActionLoadLayout( String title, String appendix,
                              DiagramView diagram, PrintWriter log,
-                             HideAdministration hideAdmin, DirectedGraph graph,
+                             HideAdministration hideAdmin, DirectedGraph<NodeBase, EdgeBase> graph,
                              LayoutInfos layoutInfos ) {
         super("Load layout...");
         fTitle = title;
@@ -79,8 +81,6 @@ public class ActionLoadLayout extends AbstractAction {
         fDiagram = diagram;
         fLog = log;
         fHideAdmin = hideAdmin;
-
-        //        fGraph = graph;
     }
     
     public void actionPerformed(ActionEvent e) {

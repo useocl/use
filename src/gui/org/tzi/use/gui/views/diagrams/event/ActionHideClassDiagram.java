@@ -33,14 +33,14 @@ import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.NodeEdge;
-import org.tzi.use.gui.views.diagrams.classdiagram.NewClassDiagram;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.xmlparser.XMLParserAccess;
 import org.tzi.use.gui.xmlparser.XMLParserAccessImpl;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.ocl.type.EnumType;
 
 /**
@@ -49,15 +49,16 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
   */
+@SuppressWarnings("serial")
 public final class ActionHideClassDiagram extends ActionHide {
     
     /**
      * The diagram the graph, nodes and edges belong to.
      */
-    private NewClassDiagram fDiagram;
+    private ClassDiagram fDiagram;
     
-    public ActionHideClassDiagram( String text, Set nodesToHide,
-                                   Selection nodeSelection, DirectedGraph graph,
+    public ActionHideClassDiagram( String text, Set<?> nodesToHide,
+                                   Selection nodeSelection, DirectedGraph<NodeBase, EdgeBase> graph,
                                    LayoutInfos layoutInfos ) {
         super( text );
         setNodes( nodesToHide );
@@ -71,7 +72,7 @@ public final class ActionHideClassDiagram extends ActionHide {
         fEdgeToNodeEdgeMap = layoutInfos.getEdgeNodeToEdgeMap();
         fEnumToNodeMap = layoutInfos.getEnumToNodeMap();
         fGenToGeneralizationEdge = layoutInfos.getGenToGeneralizationEdge();
-        fDiagram = (NewClassDiagram) layoutInfos.getDiagram();
+        fDiagram = (ClassDiagram) layoutInfos.getDiagram();
         
         fNodeSelection = nodeSelection;
         fGraph = graph;
@@ -79,10 +80,8 @@ public final class ActionHideClassDiagram extends ActionHide {
 
     public void showAllHiddenElements() {
         // add all hidden nodes
-        Iterator it = fHiddenNodes.iterator();
         MClass cls = null;
-        while ( it.hasNext() ) {
-            Object elem = it.next();
+        for (Object elem : fHiddenNodes) {
             if ( elem instanceof MClass ) {
                 cls = (MClass) elem;
                 fDiagram.addClass( cls );
@@ -94,9 +93,7 @@ public final class ActionHideClassDiagram extends ActionHide {
         fHiddenNodes.clear();
 
         // add all hidden links
-        it = fHiddenEdges.iterator();
-        while ( it.hasNext() ) {
-            MModelElement edge = (MModelElement) it.next();
+        for (Object edge : fHiddenEdges) {
             if ( edge instanceof MAssociation ) {
                 MAssociation assoc = (MAssociation) edge;
                 fDiagram.addAssociation( assoc );
@@ -117,13 +114,11 @@ public final class ActionHideClassDiagram extends ActionHide {
     /**
      * Saves edges which are connected to the hidden nodes.
      */
-    public Set saveEdges( Set nodesToHide ) {
-        Set edgesToHide = new HashSet();
-        Set additionalNodesToHide = new HashSet();
+    public Set<Object> saveEdges( Set<Object> nodesToHide ) {
+        Set<Object> edgesToHide = new HashSet<Object>();
+        Set<Object> additionalNodesToHide = new HashSet<Object>();
         
-        Iterator it = nodesToHide.iterator();
-        while ( it.hasNext() ) {
-            Object elem = it.next();
+        for (Object elem : nodesToHide) {
             if ( elem instanceof EnumType ) {
                 continue;
             }
@@ -141,7 +136,7 @@ public final class ActionHideClassDiagram extends ActionHide {
                 
                 // associationclass is participating in an nary link than save 
                 // location of diamond as well.
-                List naryEdgeList = ((MAssociation) cls).associationEnds();
+                List<MAssociationEnd> naryEdgeList = ((MAssociation) cls).associationEnds();
                 if ( naryEdgeList.size() > 2 ) {
                     NodeBase dn = 
                         (NodeBase) fNaryEdgeToDiamondNodeMap.get( cls );
@@ -157,7 +152,7 @@ public final class ActionHideClassDiagram extends ActionHide {
                 }
             } else {
                 // check if node is in one of the binary edges
-                Iterator edgeIt = fEdgeToBinaryEdgeMap.keySet().iterator();
+                Iterator<?> edgeIt = fEdgeToBinaryEdgeMap.keySet().iterator();
                 while ( edgeIt.hasNext() ) {
                     MAssociation assoc = (MAssociation) edgeIt.next();
                     if ( assoc.associatedClasses().contains( cls ) ) {
@@ -176,7 +171,7 @@ public final class ActionHideClassDiagram extends ActionHide {
                 }
                 
                 // check if node is in one of the nary edges
-                Iterator naryEdgeIt = fNaryEdgeToDiamondNodeMap.keySet().iterator();
+                Iterator<?> naryEdgeIt = fNaryEdgeToDiamondNodeMap.keySet().iterator();
                 while ( naryEdgeIt.hasNext() ) {
                     MAssociation naryEdge = (MAssociation) naryEdgeIt.next();
                     
@@ -206,7 +201,7 @@ public final class ActionHideClassDiagram extends ActionHide {
                 }
                 
                 // check if node is participating in an associationclass
-                Iterator edgeNodeIt = fEdgeToNodeEdgeMap.keySet().iterator();
+                Iterator<?> edgeNodeIt = fEdgeToNodeEdgeMap.keySet().iterator();
                 while ( edgeNodeIt.hasNext() ) {
                     MAssociation assoc = (MAssociation) edgeNodeIt.next();
                     if ( assoc.associatedClasses().contains( cls ) ) {
@@ -231,14 +226,12 @@ public final class ActionHideClassDiagram extends ActionHide {
         return edgesToHide;
     }
     
-    private Set saveGeneralizations( Set nodesToHide ) {
-        Set genEdgesToHide = new HashSet();
-        DirectedGraph genGraph = null;
+    private Set<MGeneralization> saveGeneralizations( Set<Object> nodesToHide ) {
+        Set<MGeneralization> genEdgesToHide = new HashSet<MGeneralization>();
+        DirectedGraph<MClass, MGeneralization> genGraph = null;
         
         // just getting the generalization graph from the model.
-        Iterator it = nodesToHide.iterator();
-        while ( it.hasNext() ) {
-            Object elem = it.next();
+        for (Object elem : nodesToHide) {
             if ( elem instanceof MClass ) {
                 genGraph = ((MClass) elem).model().generalizationGraph();
                 break;
@@ -247,13 +240,13 @@ public final class ActionHideClassDiagram extends ActionHide {
         
         // saving the generalization edges.
         if ( genGraph != null ) {
-            it = genGraph.edgeIterator();
+            Iterator<MGeneralization> it = genGraph.edgeIterator();
             while ( it.hasNext() ) {
-                MGeneralization gen = (MGeneralization) it.next();
+                MGeneralization gen = it.next();
                 if ( nodesToHide.contains( gen.parent() ) 
                         || nodesToHide.contains( gen.child() ) ) {
                     genEdgesToHide.add( gen );
-                    EdgeBase e = (EdgeBase) fGenToGeneralizationEdge.get( gen );
+                    EdgeBase e = fGenToGeneralizationEdge.get( gen );
                     fLayoutXMLForHiddenElements += e.storePlacementInfo( true );
                 }
             }
@@ -265,12 +258,10 @@ public final class ActionHideClassDiagram extends ActionHide {
      * Hides all nodes with there connecting edges.
      */
     public void hideNodesAndEdges() {
-        Set nodesToHide = new HashSet();
+        Set<Object> nodesToHide = new HashSet<Object>();
         
         // hide objects
-        Iterator it = fNodesToHide.iterator();
-        while (it.hasNext()) {
-            Object elem = it.next();
+        for (Object elem : fNodesToHide) {
             NodeBase nodeToHide = null;
             
             if ( elem instanceof MClass ) {
@@ -282,9 +273,9 @@ public final class ActionHideClassDiagram extends ActionHide {
             }    
             
             // save position information of the node
-            Iterator nodeIt = fGraph.iterator();
+            Iterator<NodeBase> nodeIt = fGraph.iterator();
             while ( nodeIt.hasNext() ) {
-                NodeBase node = (NodeBase) nodeIt.next();
+                NodeBase node = nodeIt.next();
                 if ( node.equals( nodeToHide ) ) {
                     fLayoutXMLForHiddenElements += nodeToHide.storePlacementInfo( true );
                 }
@@ -293,7 +284,7 @@ public final class ActionHideClassDiagram extends ActionHide {
         }
         
         // save edges which are connected to the nodes
-        Set edgesToHide = saveEdges( nodesToHide );
+        Set<Object> edgesToHide = saveEdges( nodesToHide );
         
         fDiagram.deleteHiddenElementsFromDiagram( nodesToHide, edgesToHide );
         

@@ -37,15 +37,16 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
+@SuppressWarnings("serial")
 public class LinkCountView extends BarChartView implements View {
     private MSystem fSystem;
-    private Object[] fAssociations;
+    private MAssociation[] fAssociations;
 
     public LinkCountView(MSystem system) {
         super("Association", "# Links", Color.red);
         fSystem = system;
-        Collection associations = fSystem.model().associations();
-        fAssociations = associations.toArray();
+        Collection<MAssociation> associations = fSystem.model().associations();
+        fAssociations = associations.toArray(new MAssociation[0]);
         Arrays.sort(fAssociations);
         setNames(fAssociations);
         fSystem.addChangeListener(this);

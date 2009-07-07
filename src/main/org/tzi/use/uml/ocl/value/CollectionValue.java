@@ -83,7 +83,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
             return +1;
         if (o instanceof CollectionValue) {
             CollectionValue c = (CollectionValue)o;
-            int res = new CollectionComparator().compare(collection(), c.collection());
+            int res = new CollectionComparator<Value>().compare(collection(), c.collection());
             if (c.getClass().equals( getClass() ) ) {
                 return res;
             } else {

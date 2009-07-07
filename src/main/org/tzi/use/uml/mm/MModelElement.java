@@ -27,7 +27,7 @@ package org.tzi.use.uml.mm;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public interface MModelElement extends Comparable {
+public interface MModelElement extends Comparable<MModelElement> {
     /**
      * Returns the name of this model element.
      */

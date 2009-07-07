@@ -44,7 +44,7 @@ public interface I_DirectedGraphic {
      *
      * @return contained lines
      */
-    ArrayList getLines();
+    ArrayList<I_DirectedLine> getLines();
 
     /**
      * Getter for the x coordinate of the peak point
@@ -100,7 +100,7 @@ public interface I_DirectedGraphic {
      * @param lines to be added
      * @return graphic
      */
-    I_DirectedGraphic addAllLines(final ArrayList lines);
+    I_DirectedGraphic addAllLines(final ArrayList<I_DirectedLine> lines);
 
     /**
      * Adds lines from a given graphic to the graphic

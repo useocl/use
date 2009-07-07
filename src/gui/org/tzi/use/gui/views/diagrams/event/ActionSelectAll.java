@@ -22,7 +22,6 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -31,13 +30,14 @@ import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.Selectable;
 
+@SuppressWarnings("serial")
 public class ActionSelectAll extends AbstractAction {
     private Selection fNodeSelection;
-    private Map fNodes;
-    private Map fEnumNodes;
+    private Map<?, ? extends Selectable> fNodes;
+    private Map<?, ? extends Selectable> fEnumNodes;
     private DiagramView fDiagram;
     
-    public ActionSelectAll( Selection nodeSelection, Map nodes, Map enumNodes,
+    public ActionSelectAll( Selection nodeSelection, Map<?, ? extends Selectable> nodes, Map<?, ? extends Selectable> enumNodes,
                             DiagramView diagram ) {
         super( "Select all" );
         fNodeSelection = nodeSelection;
@@ -47,14 +47,14 @@ public class ActionSelectAll extends AbstractAction {
     }
     
     public void actionPerformed( ActionEvent e ) {
-        Iterator it = fNodes.values().iterator();
-        while ( it.hasNext() ) {
-            fNodeSelection.add( (Selectable) it.next() );    
+        for (Selectable s : fNodes.values()) {
+            fNodeSelection.add( s );
         }
-        it = fEnumNodes.values().iterator();
-        while ( it.hasNext() ) {
-            fNodeSelection.add( (Selectable) it.next() );    
+
+        for (Selectable s : fEnumNodes.values()) {
+            fNodeSelection.add( s );    
         }
+        
         fDiagram.repaint();
     }
     

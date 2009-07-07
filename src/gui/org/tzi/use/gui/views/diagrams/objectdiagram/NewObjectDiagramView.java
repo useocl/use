@@ -24,7 +24,6 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 import java.awt.BorderLayout;
 import java.awt.print.PageFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -37,10 +36,10 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.StateChangeEvent;
 
 /** 
@@ -50,6 +49,7 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class NewObjectDiagramView extends JPanel 
   implements View, PrintableView, SortChangeListener {
 
@@ -95,20 +95,15 @@ public class NewObjectDiagramView extends JPanel
     /**
      * Does a full update of the view.
      */
-    private void initState() {
-        MSystemState systemState = fSystem.state();
-        Set objects = systemState.allObjects();
-        Iterator it = objects.iterator();
-        while (it.hasNext() ) {
-            MObject obj = (MObject) it.next();
+    private void initState() {        
+        for (MObject obj : fSystem.state().allObjects()) {
             fObjectDiagram.addObject(obj);
         }
-        Set links = systemState.allLinks();
-        it = links.iterator();
-        while (it.hasNext() ) {
-            MLink link = (MLink) it.next();
+
+        for (MLink link : fSystem.state().allLinks()) {
             fObjectDiagram.addLink(link);
         }
+        
         fObjectDiagram.repaint();
     }
 
@@ -116,23 +111,18 @@ public class NewObjectDiagramView extends JPanel
      * Does an incremental update of the view.
      */
     public void stateChanged(StateChangeEvent e) {
-        Iterator it;
 
-        it = e.getNewObjects().iterator();
-        while (it.hasNext() )
-            fObjectDiagram.addObject((MObject) it.next());
+    	for (MObject obj : e.getNewObjects())
+            fObjectDiagram.addObject(obj);
 
-        it = e.getNewLinks().iterator();
-        while (it.hasNext() )
-            fObjectDiagram.addLink((MLink) it.next());
+        for (MLink link : e.getNewLinks())
+            fObjectDiagram.addLink(link);
 
-        it = e.getDeletedLinks().iterator();
-        while (it.hasNext() )
-            fObjectDiagram.deleteLink((MLink) it.next(), false);
+        for (MLink link : e.getDeletedLinks())
+            fObjectDiagram.deleteLink(link, false);
         
-        it = e.getDeletedObjects().iterator();
-        while (it.hasNext() )
-            fObjectDiagram.deleteObject((MObject) it.next());
+        for (MObject obj : e.getDeletedObjects())
+            fObjectDiagram.deleteObject(obj);
 
         // attribute value changes are always recognized since a
         // repaint forces object nodes to ask for the current
@@ -153,7 +143,7 @@ public class NewObjectDiagramView extends JPanel
      *
      * @return Set(MAssociation) 
      */
-    Set getAllAssociationsBetweenClasses(Set classes) {
+    Set<MAssociation> getAllAssociationsBetweenClasses(Set<MClass> classes) {
         return fSystem.model().getAllAssociationsBetweenClasses(classes);
     }
 
@@ -205,17 +195,17 @@ public class NewObjectDiagramView extends JPanel
     /**
      * Executes a command for deleting selected objects.
      */
-    void deleteObjects(Set objects) {
+    void deleteObjects(Set<MObject> objects) {
         String cmd = null;
-        Iterator it = objects.iterator();
-        while ( it.hasNext() ) {
-            MObject obj = ( MObject ) it.next();
+        
+        for (MObject obj : objects) {
             if ( cmd == null ) {
                 cmd = "destroy " + obj.name();
             } else {
                 cmd += "," + obj.name();
             }
         }
+        
         fMainWindow.execCmd( cmd );
     }
 
@@ -231,7 +221,7 @@ public class NewObjectDiagramView extends JPanel
     }
 
     void createObject(String clsName) {
-        ArrayList names = new ArrayList(1);
+        ArrayList<String> names = new ArrayList<String>(1);
         names.add(fSystem.uniqueObjectNameForClass(clsName));
         fMainWindow.createObject(clsName, names);
     }

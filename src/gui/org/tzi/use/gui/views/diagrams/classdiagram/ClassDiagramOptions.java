@@ -31,17 +31,9 @@ import org.tzi.use.gui.views.diagrams.DiagramOptions;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public final class ClsDiagramOptions extends DiagramOptions {
-//    private static ClsDiagramOptions INSTANCE = null;
-//
-//    public static synchronized ClsDiagramOptions getInstance() {
-//        if ( INSTANCE == null ) {
-//            INSTANCE = new ClsDiagramOptions();
-//        }
-//        return INSTANCE;
-//    }
+public final class ClassDiagramOptions extends DiagramOptions {
 
-    public ClsDiagramOptions() {
+    public ClassDiagramOptions() {
         // color Settings
         NODE_COLOR = new Color( 0xff, 0xf8, 0xb4 ); //new Color(0xe0, 0xe0, 0xe0);
         NODE_SELECTED_COLOR = Color.orange;

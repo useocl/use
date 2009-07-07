@@ -65,7 +65,7 @@ import org.tzi.use.parser.ParseErrorHandler;
 
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2004 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2009 University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -81,7 +81,7 @@ import org.tzi.use.parser.ParseErrorHandler;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
-
+ 
 /* $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $ */
 
 /* ------------------------------------

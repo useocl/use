@@ -33,6 +33,7 @@ import org.tzi.use.util.Log;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class GraphPanel extends JPanel {
     private Layout fLayout;
 
@@ -66,12 +67,12 @@ public class GraphPanel extends JPanel {
         // System.out.println("paintComponent" + count++);
 
         g.setColor(Color.black);
-        DirectedGraph graph = fLayout.graph();
+        DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> graph = fLayout.graph();
 
         // draw edges
-        Iterator edgeIter = graph.edgeIterator();
+        Iterator<DirectedEdge<LayoutNode>> edgeIter = graph.edgeIterator();
         while (edgeIter.hasNext() ) {
-            DirectedEdge edge = (DirectedEdge) edgeIter.next();
+            DirectedEdge<LayoutNode> edge = edgeIter.next();
             // Log.trace(this, edge.toString());
             LayoutNode source = (LayoutNode) edge.source();
             LayoutNode target = (LayoutNode) edge.target();
@@ -87,9 +88,9 @@ public class GraphPanel extends JPanel {
         }
 
         // draw nodes
-        Iterator nodeIter = graph.iterator();
+        Iterator<LayoutNode> nodeIter = graph.iterator();
         while (nodeIter.hasNext() ) {
-            LayoutNode node = (LayoutNode) nodeIter.next();
+            LayoutNode node = nodeIter.next();
             if (node.isDummy() ) 
                 continue;
             int x = node.getX() * 80 + 30;

@@ -37,6 +37,7 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class CommandView extends JPanel implements View {
     private MSystem fSystem;
     private JList fList;
@@ -57,14 +58,14 @@ public class CommandView extends JPanel implements View {
 
     private void update() {
         fListModel.clear();
-        List cmds = fSystem.commands();
+        List<MCmd> cmds = fSystem.useCommands();
         if (cmds.isEmpty() ) {
             fListModel.addElement("<empty>");
         } else {
             int j = 1;
-            Iterator cmdIter = cmds.iterator();
+            Iterator<MCmd> cmdIter = cmds.iterator();
             while (cmdIter.hasNext() ) {
-                MCmd cmd = (MCmd) cmdIter.next();
+                MCmd cmd = cmdIter.next();
                 String s = j++ + ". " + cmd.getUSEcmd();
                 fListModel.addElement(s);
             }

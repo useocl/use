@@ -74,6 +74,7 @@ import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.NodeEdge;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
@@ -82,8 +83,8 @@ import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModelElement;
@@ -101,6 +102,7 @@ import org.tzi.use.uml.sys.MObjectState;
  * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Mark Richters
  */
+@SuppressWarnings("serial")
 public class NewObjectDiagram extends DiagramView 
                               implements HighlightChangeListener {
 
@@ -129,11 +131,11 @@ public class NewObjectDiagram extends DiagramView
         
     }
 
-    private Map fObjectToNodeMap; // (MObject -> ObjectNode)
-    private Map fBinaryLinkToEdgeMap; // (MLink -> BinaryLinkEdge)
-    private Map fNaryLinkToDiamondNodeMap; // (MLink -> DiamondNode)
-    private Map fHalfLinkToEdgeMap; // (MLink -> List(HalfEdge))
-    private Map fLinkObjectToNodeEdge; // (MLinkObject -> NodeEdge)
+    private Map<MObject, ObjectNode> fObjectToNodeMap;
+    private Map<MLink, BinaryEdge> fBinaryLinkToEdgeMap;
+    private Map<MLink, DiamondNode> fNaryLinkToDiamondNodeMap;
+    private Map<MLink, List<EdgeBase>> fHalfLinkToEdgeMap;
+    private Map<MLinkObject, NodeEdge> fLinkObjectToNodeEdge;
     private NewObjectDiagramView fParent;
     
     private double fNextNodeX;
@@ -149,14 +151,14 @@ public class NewObjectDiagram extends DiagramView
      */
     NewObjectDiagram(NewObjectDiagramView parent, PrintWriter log) {
         fOpt = new ObjDiagramOptions();
-        fGraph = new DirectedGraphBase();
-        fObjectToNodeMap = new HashMap();
-        fBinaryLinkToEdgeMap = new HashMap();
-        fNaryLinkToDiamondNodeMap = new HashMap();
-        fHalfLinkToEdgeMap = new HashMap();
-        fLinkObjectToNodeEdge = new HashMap();
-        fHiddenNodes = new HashSet();
-        fHiddenEdges = new HashSet();
+        fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
+        fObjectToNodeMap = new HashMap<MObject, ObjectNode>();
+        fBinaryLinkToEdgeMap = new HashMap<MLink, BinaryEdge>();
+        fNaryLinkToDiamondNodeMap = new HashMap<MLink, DiamondNode>();
+        fHalfLinkToEdgeMap = new HashMap<MLink, List<EdgeBase>>();
+        fLinkObjectToNodeEdge = new HashMap<MLinkObject, NodeEdge>();
+        fHiddenNodes = new HashSet<Object>();
+        fHiddenEdges = new HashSet<Object>();
         fParent = parent;
         fNodeSelection = new Selection();
         fEdgeSelection = new Selection();
@@ -194,7 +196,6 @@ public class NewObjectDiagram extends DiagramView
         
         setLayout(null);
         setBackground(Color.white);
-//        setPreferredSize(new Dimension(400, 400));
         setPreferredSize( Options.fDiagramDimension );
         
         addMouseListener(mouseHandling);
@@ -218,32 +219,27 @@ public class NewObjectDiagram extends DiagramView
         }
         
         MModelElement elem = e.getModelElement();
-        List edges = new ArrayList();
+        List<EdgeBase> edges = new ArrayList<EdgeBase>();
         boolean allEdgesSelected = true;
    
         // elem is an association
         if ( elem != null && elem instanceof MAssociation ) {
             int size = ((MAssociation) elem).associationEnds().size();
-            Set links = 
+            Set<MLink> links = 
                 fParent.system().state().linksOfAssociation( (MAssociation) elem ).links();
+            
             EdgeBase eb = null;
             if ( size == 2 ) {
-                Iterator it = links.iterator();
-                while ( it.hasNext() ) {
-                    MLink link = (MLink) it.next();
-                    eb = (EdgeBase) fBinaryLinkToEdgeMap.get( link );
+                for (MLink link : links) {
+                    eb = fBinaryLinkToEdgeMap.get( link );
                     if ( elem instanceof MAssociationClass ) {
-                        eb = (EdgeBase) fLinkObjectToNodeEdge.get( (MLinkObject) link );
+                        eb = fLinkObjectToNodeEdge.get( (MLinkObject) link );
                     }
                     edges.add( eb );
                 }
             } else {
-                Iterator it = links.iterator();
-                while ( it.hasNext() ) {
-                    MLink link = (MLink) it.next();
-                    Iterator itLinkEnd = link.linkEnds().iterator();
-                    while ( itLinkEnd.hasNext() ) {
-                        MLinkEnd lEnd = (MLinkEnd) itLinkEnd.next();
+                for (MLink link : links) {
+                    for (MLinkEnd lEnd : link.linkEnds()) {
                         eb = (EdgeBase) fHalfLinkToEdgeMap.get( lEnd );
                         edges.add( eb );
                     }
@@ -258,9 +254,7 @@ public class NewObjectDiagram extends DiagramView
              
             // check all edges in the list if they are suppose to be selected 
             // or deselected.
-            Iterator it = edges.iterator();
-            while ( it.hasNext() ) {
-                EdgeBase edge = (EdgeBase) it.next();
+            for (EdgeBase edge : edges) {
                 if ( edge != null ) {
                     if ( e.getHighlight() ) {
                         fEdgeSelection.add( edge );
@@ -275,11 +269,8 @@ public class NewObjectDiagram extends DiagramView
 
         // elem is a class
         if ( elem != null && elem instanceof MClass ) {
-            Iterator it = 
-                fParent.system().state().objectsOfClass( (MClass) elem ).iterator();
-            while ( it.hasNext() ) {
-                MObject obj = (MObject) it.next();
-                NodeBase node = (NodeBase) fObjectToNodeMap.get( obj );
+            for (MObject obj : fParent.system().state().objectsOfClass( (MClass) elem )) {
+                NodeBase node = fObjectToNodeMap.get( obj );
                 if ( elem instanceof MAssociationClass ) {
                     if ( e.getHighlight() && allEdgesSelected ) {
                         fNodeSelection.add( node );
@@ -367,26 +358,27 @@ public class NewObjectDiagram extends DiagramView
      * Adds a link to the diagram.
      */
     public void addLink(MLink link) {
-	MAssociation assoc = link.association();
-        String label = assoc.name();
-	Iterator iter = assoc.associationEnds().iterator();
-	MLinkEnd linkEnd1 = null;
-	MLinkEnd linkEnd2 = null;
-        while (iter.hasNext()) {
-	  linkEnd1 = link.linkEnd((MAssociationEnd) iter.next());
-	  linkEnd2 = link.linkEnd((MAssociationEnd) iter.next());
-	  break;	  
-	}
-	if( (linkEnd1 == null) || (linkEnd2 == null)){
-	  throw new RuntimeException( "added link is invalidate" );
-	}
+		MAssociation assoc = link.association();
+	    String label = assoc.name();
+		Iterator<MAssociationEnd> iter = assoc.associationEnds().iterator();
+	
+		MLinkEnd linkEnd1 = null;
+		MLinkEnd linkEnd2 = null;
+	    if (iter.hasNext()) {
+		  linkEnd1 = link.linkEnd((MAssociationEnd) iter.next());
+		  linkEnd2 = link.linkEnd((MAssociationEnd) iter.next());	  
+		}
+	    
+		if( (linkEnd1 == null) || (linkEnd2 == null)){
+		  throw new RuntimeException( "added link is invalid" );
+		}
 		
         MObject obj1 = linkEnd1.object();
         MObject obj2 = linkEnd2.object();
         
         if (link.linkEnds().size() == 2) {
             // object link
-            if (link instanceof MObject) {
+            if (link instanceof MLinkObject) {
                 NodeEdge e = 
                     new NodeEdge(label, fObjectToNodeMap.get(obj1), 
                                  fObjectToNodeMap.get(obj2),
@@ -396,7 +388,7 @@ public class NewObjectDiagram extends DiagramView
                                  this, link.association() );
                 synchronized (fLock) {
                     fGraph.addEdge(e);
-                    fLinkObjectToNodeEdge.put(link, e);
+                    fLinkObjectToNodeEdge.put((MLinkObject)link, e);
                     fLayouter = null;
                 }
             } else {
@@ -427,7 +419,7 @@ public class NewObjectDiagram extends DiagramView
                 fGraph.add(node);
                 
                 // connected to an "object link"
-                if (link instanceof MObject) {
+                if (link instanceof MLinkObject) {
                     NodeEdge e = 
                         new NodeEdge(label, fObjectToNodeMap.get(obj1), 
                                      fObjectToNodeMap.get(obj2), node,
@@ -435,16 +427,15 @@ public class NewObjectDiagram extends DiagramView
                                      this, link.association() );
                     synchronized (fLock) {
                         fGraph.addEdge(e);
-                        fLinkObjectToNodeEdge.put(link, e);
+                        fLinkObjectToNodeEdge.put((MLinkObject)link, e);
                         fLayouter = null;
                     }
                 }
                 // connected to a "normal" link
                 fNaryLinkToDiamondNodeMap.put(link, node);
-                List halfEdges = new ArrayList();
-                Iterator linkEndIter = link.linkEnds().iterator();
-                while (linkEndIter.hasNext()) {
-                    MLinkEnd linkEnd = (MLinkEnd) linkEndIter.next();
+                List<EdgeBase> halfEdges = new ArrayList<EdgeBase>();
+                
+                for (MLinkEnd linkEnd : link.linkEnds()) {
                     MObject obj = linkEnd.object();
                     HalfEdge e = 
                         new HalfEdge( node, (NodeBase) fObjectToNodeMap.get(obj),
@@ -455,6 +446,7 @@ public class NewObjectDiagram extends DiagramView
                 if ( fLinkObjectToNodeEdge.get( link ) != null ) {
                     halfEdges.add( fLinkObjectToNodeEdge.get( link ) );
                 }
+                
                 node.setHalfEdges( halfEdges );
                 fHalfLinkToEdgeMap.put( link, halfEdges );
                 fLayouter = null;
@@ -589,9 +581,9 @@ public class NewObjectDiagram extends DiagramView
      * Deletes the selected objects.
      */
     class ActionDelete extends AbstractAction {
-        private Set fObjects;
+        private Set<MObject> fObjects;
 
-        ActionDelete(String text, Set objects) {
+        ActionDelete(String text, Set<MObject> objects) {
             super(text);
             fObjects = objects;
         }
@@ -624,26 +616,26 @@ public class NewObjectDiagram extends DiagramView
     /**
      * Deletes all hidden elements form this diagram.
      */
-    public void deleteHiddenElementsFromDiagram( Set objectsToHide, 
-                                          Set linksToHide ) {
-        Iterator it = objectsToHide.iterator();
+    @Override
+    public void deleteHiddenElementsFromDiagram( Set<Object> objectsToHide, 
+                                          		 Set<Object> linksToHide ) {
+        Iterator<Object> it = objectsToHide.iterator();
         while ( it.hasNext() ) {
             MObject obj = (MObject) it.next();
             deleteObject( obj );
         }
         
-        Set linksToDelete = new HashSet();
+        Set<MLink> linksToDelete = new HashSet<MLink>();
         it = linksToHide.iterator();
         while ( it.hasNext() ) {
             MLink link = (MLink) it.next();
             linksToDelete.add( link );
-//            deleteLink( link );
         }
-        
-        it = linksToDelete.iterator();
-        while ( it.hasNext() ) {
-            deleteLink( (MLink) it.next(), true );
+
+        for (MLink link : linksToDelete) {
+            deleteLink( link, true );
         }
+    
         fHiddenNodes.addAll( objectsToHide );
         fHiddenEdges.addAll( linksToHide );
     }
@@ -666,34 +658,48 @@ public class NewObjectDiagram extends DiagramView
         // get all associations that exist between the classes of the
         // selected objects
         if (!fNodeSelection.isEmpty()) {
-            HashSet selectedObjects = new HashSet();
-            for(Iterator it = fNodeSelection.iterator(); it.hasNext();) {
+            List<MObject> selectedObjects = new ArrayList<MObject>();
+            
+            for(Iterator<Selectable> it = fNodeSelection.iterator(); it.hasNext();) {
                 PlaceableNode node = (PlaceableNode) it.next();
+                
                 if (node instanceof ObjectNode && node.isDeletable()) 
                     selectedObjects.add(((ObjectNode) node).object());
             }
-            final MObject[] selectedObjs = (MObject[])selectedObjects.toArray(new MObject[0]);
-            if (selectedObjs.length==1) {
+
+            if (selectedObjects.size() == 1) {
                 popupMenu.insert( new ActionShowProperties("Edit properties of " + 
-                    selectedObjs[0].name(), selectedObjs[0]), pos++);
+                		selectedObjects.get(0).name(), selectedObjects.get(0)), pos++);
             }
-            int m = selectedObjs.length;
+            
+            int m = selectedObjects.size();
             boolean addedInsertLinkAction = false;
-            for (Iterator it=fParent.system().model().associations().iterator(); it.hasNext();) {
-                MAssociation assoc = (MAssociation)it.next();
+            
+            for (MAssociation assoc : fParent.system().model().associations()) {
                 int n = assoc.associationEnds().size();
-                if (m>n) continue;
-                int pow=1;for(int i=0;i<n;++i) pow*=m;
-                for(int i=0;i<pow;++i) {
+                if (m > n) continue;
+                
+                int pow = 1;
+                for(int i=0; i < n; ++i) 
+                	pow *= m;
+                
+                for(int i=0; i < pow; ++i) {
                     MObject[] l = new MObject[n];
                     MClass[] c = new MClass[n];
+                    
                     int[] digits = radixConversion(i,m,n);
-                    if (!isCompleteObjectCombination(digits, m)) continue;
-                    for(int j=0;j<n;++j) {
-                        l[j] = selectedObjs[digits[j]];
+                    
+                    if (!isCompleteObjectCombination(digits, m)) 
+                    	continue;
+                    
+                    for(int j=0; j < n; ++j) {
+                        l[j] = selectedObjects.get(digits[j]);
                         c[j] = l[j].cls();
                     }
-                    if (!assoc.isAssignableFrom(c)) continue;
+                    
+                    if (!assoc.isAssignableFrom(c))
+                    	continue;
+                    
                     if (!fParent.hasLinkBetweenObjects(assoc, l)) {
                         popupMenu.insert(new ActionInsertLink(l,assoc.name()), pos++ );
                         addedInsertLinkAction = true;
@@ -711,19 +717,22 @@ public class NewObjectDiagram extends DiagramView
 
             String txt = null;
             if (selectedObjects.size() == 1) {
-                txt = "'"+((MObject) selectedObjects.iterator().next()).name()+"'";
+                txt = "'" + selectedObjects.get(0).name() + "'";
             } else if (selectedObjects.size() > 1) {
                 txt = selectedObjects.size() + " objects";
             }
+            
+            Set<MObject> selectedObjectsSet = new HashSet<MObject>(selectedObjects);
+            
             if (txt != null && txt.length() > 0) {
                 popupMenu.insert( new ActionDelete("Delete " + txt, 
-                                                   selectedObjects),
+                                                   selectedObjectsSet),
                                                    pos++ );
                 popupMenu.insert( fHideAdmin.setValues("Hide " + txt,
-                                                       selectedObjects),
+                                                       selectedObjectsSet),
                                                        pos++ );
                 popupMenu.insert( fHideAdmin.setValues("Crop " + txt,
-                                                       getNoneSelectedNodes( selectedObjects )),
+                                                       getNoneSelectedNodes( selectedObjectsSet )),
                                                        pos++ );
                 separatorNeeded = true;
             }
@@ -756,12 +765,12 @@ public class NewObjectDiagram extends DiagramView
      * @param selectedNodes Nodes which are selected at this point in the diagram.
      * @return A HashSet of the none selected objects in the diagram.
      */
-    private Set getNoneSelectedNodes( Set selectedNodes ) {
-        Set noneSelectedNodes = new HashSet();
+    private Set<Object> getNoneSelectedNodes( Set<?> selectedNodes ) {
+        Set<Object> noneSelectedNodes = new HashSet<Object>();
         
-        Iterator it = fGraph.iterator();
+        Iterator<NodeBase> it = fGraph.iterator();
         while ( it.hasNext() ) {
-            Object o = it.next();
+        	NodeBase o = it.next();
             if ( o instanceof ObjectNode ) {
                 MObject obj = ((ObjectNode) o).object();
                 if ( !selectedNodes.contains( obj ) ) {
@@ -785,12 +794,11 @@ public class NewObjectDiagram extends DiagramView
         Box valueBox = Box.createVerticalBox();
 
         MObjectState objState = obj.state(fParent.system().state());
-        Map attributeValueMap = objState.attributeValueMap();
-        Iterator it = attributeValueMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            MAttribute attr = (MAttribute) entry.getKey();
-            Value v = (Value) entry.getValue();
+        Map<MAttribute, Value> attributeValueMap = objState.attributeValueMap();
+
+        for (Map.Entry<MAttribute, Value> entry : attributeValueMap.entrySet()) {
+            MAttribute attr = entry.getKey();
+            Value v = entry.getValue();
             attrBox.add(new JLabel(attr.name() + " = "));
             valueBox.add(new JLabel(v.toString()));
         }

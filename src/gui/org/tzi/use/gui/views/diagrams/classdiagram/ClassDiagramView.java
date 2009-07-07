@@ -47,20 +47,21 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  * */
-public class NewClassDiagramView extends JPanel 
+@SuppressWarnings("serial")
+public class ClassDiagramView extends JPanel 
                                  implements View, 
                                             PrintableView {
 
     private MainWindow fMainWindow;
     private MSystem fSystem;
-    private NewClassDiagram fClassDiagram;
+    private ClassDiagram fClassDiagram;
 
-    public NewClassDiagramView( MainWindow mainWindow, MSystem system ) { 
+    public ClassDiagramView( MainWindow mainWindow, MSystem system ) { 
         fMainWindow = mainWindow;
         fSystem = system;
         fSystem.addChangeListener( this );
         setLayout( new BorderLayout() );
-        fClassDiagram = new NewClassDiagram( this, mainWindow.logWriter() );
+        fClassDiagram = new ClassDiagram( this, mainWindow.logWriter() );
         add( "Center", fClassDiagram );
         initState();
     }
@@ -95,36 +96,30 @@ public class NewClassDiagramView extends JPanel
      */
     private void initState() {
         // read Classes
-        Collection allClasses = fSystem.model().classes();
-        Iterator itClass = allClasses.iterator();
-        while ( itClass.hasNext() ) {
-            MClass cls = ( MClass ) itClass.next();
+        Collection<MClass> allClasses = fSystem.model().classes();
+        for (MClass cls : allClasses) {
             fClassDiagram.addClass( cls );
         }
 
         // read Enumerations
-        Collection allEnums = fSystem.model().enumTypes();
-        Iterator itEnums = allEnums.iterator();
-        while ( itEnums.hasNext() ) {
-            EnumType enumeration = ( EnumType ) itEnums.next();
+        Collection<EnumType> allEnums = fSystem.model().enumTypes();
+        for (EnumType enumeration : allEnums) {
             fClassDiagram.addEnum( enumeration );
         }
 
         // read generalizations
-        DirectedGraph genGraph = fSystem.model().generalizationGraph();
-        Iterator edgeIter = genGraph.edgeIterator();
+        DirectedGraph<MClass, MGeneralization> genGraph = fSystem.model().generalizationGraph();
+        Iterator<MGeneralization> edgeIter = genGraph.edgeIterator();
         while ( edgeIter.hasNext() ) {
-            MGeneralization gen = ( MGeneralization ) edgeIter.next();
+            MGeneralization gen = edgeIter.next();
             fClassDiagram.addGeneralization( gen );
         }
  
         // read Associations
-        Collection allAssociations = fSystem.model().associations();
-        Iterator itAssoc = allAssociations.iterator();
-        while ( itAssoc.hasNext() ) {
-            MAssociation assoc = ( MAssociation ) itAssoc.next();
+        Collection<MAssociation> allAssociations = fSystem.model().associations();
+        for (MAssociation assoc : allAssociations) {
             fClassDiagram.addAssociation( assoc );
-        }  
+        }
     }
     
     public void printView( PageFormat pf ) {

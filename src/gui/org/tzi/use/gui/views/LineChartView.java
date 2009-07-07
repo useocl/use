@@ -30,6 +30,7 @@ import javax.swing.*;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
+@SuppressWarnings("serial")
 public class LineChartView extends JPanel {
     private int[][] fValues;    // y-values
     private int fRangeX;    // max. number of samples on x-axis

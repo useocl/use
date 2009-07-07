@@ -197,6 +197,47 @@
       <classpath path="${antlr.jar}"/>
       <arg line="Generator.g"/> 
     </java>
+  	
+  	<!-- Some patching to avoid Warnings for generated code -->
+  	<replaceregexp file="${parser.dir}/cmd/CmdLexer.java"
+  		    match="^public class"
+  		    replace="@SuppressWarnings(&quot;all&quot;) public class"
+  		    flags="m" />
+  	
+  	<replaceregexp file="${parser.dir}/cmd/CmdParser.java"
+  	  		match="^public class"
+  	  		replace="@SuppressWarnings(&quot;all&quot;) public class"
+  	  		flags="m" />
+  	
+  	<replaceregexp file="${parser.dir}/generator/GeneratorLexer.java"
+  	  		match="^public class"
+  	  		replace="@SuppressWarnings(&quot;all&quot;) public class"
+  	  		flags="m" />
+  	
+  	<replaceregexp file="${parser.dir}/generator/GeneratorParser.java"
+  	  	  	match="^public class"
+  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+  	  	  	flags="m" />
+  	
+  	<replaceregexp file="${parser.dir}/ocl/OCLParser.java"
+  	  	  	match="^public class"
+  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+  	  	  	flags="m" />
+  	
+  	<replaceregexp file="${parser.dir}/ocl/OCLLexer.java"
+  	  	  	match="^public class"
+  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+  	  	  	flags="m" />
+  	
+  	<replaceregexp file="${parser.dir}/use/USELexer.java"
+  	  	  	match="^public class"
+  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+  	  	  	flags="m" />
+  	
+  	<replaceregexp file="${parser.dir}/use/USEParser.java"
+  	  	  	match="^public class"
+  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+  	  	  	flags="m" />
   </target>
 
   <!-- compile USE sources -->
