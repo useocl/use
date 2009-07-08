@@ -231,12 +231,32 @@ public class MMPrintVisitor implements MMVisitor {
     }
 
     public void visitClassInvariant(MClassInvariant e) {
-        println(keyword("context") + ws() +
-                ( e.hasVar() ? id(e.var()) + ws() + other(":") + ws() : "") + 
-                other(e.cls().name()) + ws() +
-                keyword("inv") + 
-                ws() + id(e.name()) + 
-                other(":"));
+    	StringBuilder line = new StringBuilder();
+    	line.append(keyword("context"));
+    	line.append(ws());
+    	
+    	if (e.hasVar()) {
+    		line.append(id(e.var()));
+    		line.append(ws());
+    		line.append(other(":"));
+    		line.append(ws());
+    	}
+    	
+    	line.append(other(e.cls().name()));
+    	line.append(ws());
+    	
+    	if (e.isExistential()) {
+    		line.append(keyword("existential"));
+    		line.append(ws());
+    	}
+    	
+    	line.append(keyword("inv"));
+    	line.append(ws());
+    	line.append(id(e.name()));
+    	line.append(other(":"));
+        
+    	println(line.toString());
+        
         incIndent();
         indent();
         println(other(e.bodyExpression().toString()));
