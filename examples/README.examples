@@ -16,6 +16,10 @@ Example Path                             | Features covered
 Example in "Improvements in USE 2.2.0"   | Association classes
                                          | Attributes
                                          |
+/Documentation/AggregationAndComposition |
+Example in "Improvements in USE 2.5.1"   | Aggregation
+                                         | Composition
+                                         |                                         
 /Documentation/Demo                      | Classes
 Example in "USE Quick Tour" 1.           | Associations
                                          | Attributes
