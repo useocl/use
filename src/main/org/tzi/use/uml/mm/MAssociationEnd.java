@@ -41,7 +41,7 @@ public final class MAssociationEnd extends MModelElementImpl
     private MClass fClass;  // associated class
     private MMultiplicity fMultiplicity; // multiplicity spec
     private int fKind; // none, aggregation, or composition
-    private boolean fIsOrdered; // use as Set or Sequence
+    private boolean fIsOrdered; // use as Set or OrderedSet
     private boolean fIsNavigable = true; 
     private boolean fIsExplicitNavigable = false;
 
@@ -74,7 +74,7 @@ public final class MAssociationEnd extends MModelElementImpl
      * @param rolename  role that the class plays in this association.
      * @param mult      multiplicity of end.
      * @param kind      MAggregationKind
-     * @param isOrdered use as Set or Sequence
+     * @param isOrdered use as Set or OrderedSet
      * @param isExplicitNavigable needs to be true if this end is explicit
      *                            navigable
      **/
@@ -193,7 +193,7 @@ public final class MAssociationEnd extends MModelElementImpl
         }
         if ( multiplicity().isCollection() ) {
             if ( isOrdered() )
-                t = TypeFactory.mkSequence( t );
+                t = TypeFactory.mkOrderedSet( t );
             else
                 t = TypeFactory.mkSet( t );
         } else if ( association().associationEnds().size() > 2 ) {
