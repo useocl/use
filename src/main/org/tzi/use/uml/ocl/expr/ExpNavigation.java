@@ -25,11 +25,11 @@ import java.util.List;
 
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.SequenceType;
+import org.tzi.use.uml.ocl.type.OrderedSetType;
 import org.tzi.use.uml.ocl.type.SetType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -59,7 +59,7 @@ public final class ExpNavigation extends Expression {
         // let c be the class at dstEnd, then the result type is:
         // (1) c if the multiplicity is max. one and this is binary association
         // (2) Set(c) if the multiplicity is greater than 1 
-        // (3) Sequence(c) if the association end is marked as {ordered}
+        // (3) OrderedSet(c) if the association end is marked as {ordered}
 
         setResultType( dst.getType( src ) );
 
@@ -108,7 +108,7 @@ public final class ExpNavigation extends Expression {
                 res = new SetValue(((SetType) resultType).elemType(), 
                                    oidsToObjectValues(state, objList));
             } else if (resultType.isSequence() ) {
-                res = new SequenceValue(((SequenceType) resultType).elemType(), 
+                res = new OrderedSetValue(((OrderedSetType) resultType).elemType(), 
                                         oidsToObjectValues(state, objList));
             } else
                 throw new RuntimeException("Unexpected association end type `" + 
