@@ -488,14 +488,15 @@ associationDefinition returns [ASTAssociation n]
 
 /* ------------------------------------
   associationEnd ::= 
-    id "[" multiplicity "]" [ "role" id ] [ "ordered" ] [ ";" ]
+    id "[" multiplicity "]" [ "role" id ] [ "ordered" ] [ "subsets" id] [ "union" ] [ ";" ]
 */
 associationEnd returns [ASTAssociationEnd n]
 :
-    name=IDENT LBRACK m=multiplicity RBRACK 
-    { $n = new ASTAssociationEnd($name, $m.n); } 
+    name=IDENT LBRACK m=multiplicity RBRACK { $n = new ASTAssociationEnd($name, $m.n); } 
     ( 'role' rn=IDENT { $n.setRolename($rn); } )?
     ( 'ordered' { $n.setOrdered(); } )?
+    ( 'subsets' sr=IDENT { $n.addSubsetsRolename($sr); } )*
+    ( 'union' { $n.setUnion(true); } )?
     ( SEMI )?
     ;
 
@@ -1221,8 +1222,16 @@ tupleLiteral returns [ASTTupleLiteral n]
 */
 tupleItem returns [ASTTupleItem n]
 :
-    name=IDENT (COLON|EQUAL) e=expression 
-    { $n = new ASTTupleItem($name, $e.n); } 
+    name=IDENT
+    ( 
+      // For backward compatibility we have to look ahead,
+      // to check for a given type.
+      (COLON IDENT EQUAL) => COLON t=type EQUAL e=expression
+      { $n = new ASTTupleItem($name, $t.n, $e.n); }
+    |
+      (COLON | EQUAL) e=expression
+      { $n = new ASTTupleItem($name, $e.n); }       
+    ) 
     ;
 
 /* ------------------------------------

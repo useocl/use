@@ -266,7 +266,7 @@ public final class Shell implements Runnable {
                             + nl
                             + "due to an error in the program. The program will try to continue, but may"
                             + nl
-                            + "not be able to recover from the error. Please send a bug report to lhamann@tzi.org"
+                            + "not be able to recover from the error. Please send a bug report to grp-usedevel@informatik.uni-bremen.de"
                             + nl
                             + "with a description of your last input and include the following output:");
             System.err.println("Program version: " + Options.RELEASE_VERSION);

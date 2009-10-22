@@ -31,8 +31,12 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.MNavigableElement;
+import org.tzi.use.util.PermutationGenerator;
+import org.tzi.use.util.StringUtil;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -79,6 +83,9 @@ public class ASTAssociation extends AST {
 
                 // further ends are plain ends
                 kind = MAggregationKind.NONE;
+                
+                if (aend.isUnion())
+                	assoc.setUnion(true);
             }
             model.addAssociation(assoc);
         } catch (MInvalidModelException ex) {
@@ -90,7 +97,101 @@ public class ASTAssociation extends AST {
         return assoc;
     }
 
+    // Checks and generates additional constraints on the association, e. g. subsets
+    public void genConstraints(Context ctx, MModel model) throws SemanticException {
+    	
+    	MAssociation association = model.getAssociation(this.fName.getText());
+
+    	// Check subsetting on every association end    	
+		for (ASTAssociationEnd aEnd : fAssociationEnds) {
+    		// TODO: Subset of AssociationClass ?
+        	
+			if (aEnd.getSubsetsRolenames().size() > 0) {
+				// Get the MAssociationEnd from the name
+				MClass cls = model.getClass(aEnd.getClassName());
+				MAssociationEnd nSubsettingEnd = association.getAssociationEnd(cls, aEnd.getRolename(ctx));
+    		
+				// Find parent association end to subset
+				for (Token subsetsRolenameToken : aEnd.getSubsetsRolenames()) {
+					String subsetsRolename = subsetsRolenameToken.getText();
+					List<MAssociationEnd> possibleSubsettedEnds = cls.getAssociationEnd(subsetsRolename);
+
+					if (possibleSubsettedEnds.size() == 0) {
+						throw new SemanticException(subsetsRolenameToken, "No association end with name '" + subsetsRolename + "' to subset.");
+					}
+
+					boolean valid = false;
+        		
+					// Find a compatible association
+					// Duplicate role names are possible 
+					for (MAssociationEnd possibleSubsettedEnd : possibleSubsettedEnds) {
+	    				MAssociation parentAssociation = possibleSubsettedEnd.association();
+	    										
+	    				if (isSubsettingValid(association, parentAssociation)) {
+	    					assert(valid == false);
+	    					// Set subset information on this AssociationEnd
+	            			nSubsettingEnd.addSubsettedEnd(possibleSubsettedEnd);
+	            		
+	            			parentAssociation.addSubsettedBy(association);
+	            			association.addSubsets(parentAssociation);
+	            			
+	            			valid = true;
+	    				}
+	    			}
+					
+					if (!valid)
+						throw new SemanticException(subsetsRolenameToken, 
+								"Constraint {subsets " + subsetsRolename + 
+								"} on association end '" + nSubsettingEnd.nameAsRolename() + 
+								":" + association.name() + "' is invalid." +
+								StringUtil.NEWLINE +
+								"Either the parent association " +
+								"has another number of association ends or " +
+								StringUtil.NEWLINE +
+								"the types of connected by the subsetting association do not conform " +
+								"to the types connected by the subsetted association.");   
+        		}
+    		}
+		}
+    }
+
+	private boolean isSubsettingValid(MAssociation association, MAssociation parentAssociation) {
+		
+		if (association.reachableEnds().size() != parentAssociation.reachableEnds().size())
+			return false;
+
+		// Check every permutation of ends of first association to ends of parent association
+		PermutationGenerator<MNavigableElement> gen = new PermutationGenerator<MNavigableElement>(association.reachableEnds());
+		
+		boolean valid;
+		int index;
+		MNavigableElement parentEnd;
+		
+		while (gen.hasMore()) {
+			index = 0;
+			valid = true;
+			
+			for (MNavigableElement end : gen.getNextList()) {
+				parentEnd = parentAssociation.reachableEnds().get(index); 
+				
+				if (!end.cls().isSubClassOf(parentEnd.cls())) {
+					valid = false;
+					break;
+				}
+				
+				index++;
+			}
+			
+			// all combinations fit, so subsetting is allowed
+			// and we can exit
+			if (valid)
+				return true;
+		}
+		
+		return false;
+	}
+    
     public String toString() {
-        return "FIXME";
+        return "(" + fName + ", " + fKind.getText() + ")";
     }
 }

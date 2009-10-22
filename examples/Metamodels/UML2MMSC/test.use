@@ -1,0 +1,20 @@
+model TestDoubleRoles
+
+class A
+end
+
+class B
+end
+
+class C
+end
+
+association A_A_C between
+ A[*] role a
+ C[*] role c
+end
+
+association A_B_C between
+ B[*] role b
+ C[*] role c
+end

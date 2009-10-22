@@ -1,0 +1,58 @@
+model BoolExpr4Tap
+
+------------------------------------------------------------------------
+
+enum Comparison {equivalent, implication, provided, uncomparable}
+
+class Bool
+operations
+  not_implies_and_not_implies(i1:Boolean,i2:Boolean,i3:Boolean):Boolean=
+    not(i3 implies i1) and not(i3 implies i2)
+  not_implies_and(i1:Boolean,i2:Boolean,i3:Boolean):Boolean=
+    not(i3 implies (i1 and i2))
+  checkEq():Boolean=
+    Set{false,true}->iterate(i1,i2,i3:Boolean;
+      res:Sequence(Boolean)=oclEmpty(Sequence(Boolean))|
+      res->including(
+        ----------------------
+        -- not_implies_and_not_implies(i1,i2,i2) = -- false
+        -- not_implies_and(i1,i2,i3)
+        ----------------------
+        -- not_implies_and_not_implies(i1,i2,i2) implies -- true
+        -- not_implies_and(i1,i2,i3)
+        ----------------------
+        not_implies_and(i1,i2,i3) implies -- false
+        not_implies_and_not_implies(i1,i2,i2)
+        ----------------------
+      ))->forAll(e|e=true)
+  aux():Sequence(Boolean)=
+    Set{false,true}->iterate(i1,i2,i3:Boolean;
+      res:Sequence(Boolean)=oclEmpty(Sequence(Boolean))|
+      res->including(
+        not_implies_and_not_implies(i1,i2,i2)=
+        not_implies_and(i1,i2,i3)
+      ))
+end
+
+abstract class BoolExpr
+operations
+  numOfArgs():Integer=oclUndefined(Integer)
+  op(a:Sequence(Boolean)):Boolean=oclUndefined(Boolean)
+  /* truthTable():Sequence(Sequence(Boolean))=
+    if numOfArgs()=2
+      then Set{false,true}->iterate(b1,b2:Boolean;
+             res:Sequence(Sequence(Boolean))=
+               oclEmpty(Sequence(Sequence(Boolean)))|
+             res->including(Sequence{b1,b2,op(Sequence{b1,b2})}))
+      else oclUndefined(Sequence(Sequence(Boolean)))
+    endif
+  res():Sequence(Boolean)
+  compare(b:BoolExpr):Comparison */
+end
+
+class ImpliesDirect < BoolExpr
+operations
+  numOfArgs()=2 -- !!! hier fehlt der resultattyp; daher NullPointerExcep !!!
+  op(a:Sequence(Boolean)):Boolean=true
+    --let a1=a->at(1) in let a2=a->at(2) in a1 implies a2
+end

@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-07-07 18:20:20
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2009-10-13 14:59:29
  
 /*
  * USE - UML based specification environment
@@ -31,7 +31,8 @@ import org.antlr.runtime.*;
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.Map;
+import java.util.HashMap;
 @SuppressWarnings("all") public class OCLParser extends BaseParser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "IDENT", "COLON", "EQUAL", "LPAREN", "COMMA", "RPAREN", "NOT_EQUAL", "LESS", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "STAR", "SLASH", "ARROW", "DOT", "AT", "BAR", "SEMI", "LBRACK", "RBRACK", "INT", "REAL", "STRING", "HASH", "LBRACE", "RBRACE", "DOTDOT", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "COLON_COLON", "COLON_EQUAL", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'let'", "'in'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'pre'", "'iterate'", "'oclAsType'", "'oclIsKindOf'", "'oclIsTypeOf'", "'if'", "'then'", "'else'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'OrderedSet'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Date'", "'Collection'"
@@ -142,9 +143,11 @@ import java.util.ArrayList;
             nExp=expression();
 
             state._fsp--;
-
-            match(input,EOF,FOLLOW_EOF_in_expressionOnly71); 
-            n = nExp;
+            if (state.failed) return n;
+            match(input,EOF,FOLLOW_EOF_in_expressionOnly71); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nExp;
+            }
 
             }
 
@@ -182,7 +185,9 @@ import java.util.ArrayList;
             // OCL.g:106:1: ( ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression )
             // OCL.g:107:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression
             {
-             tok = input.LT(1); /* remember start of expression */ 
+            if ( state.backtracking==0 ) {
+               tok = input.LT(1); /* remember start of expression */ 
+            }
             // OCL.g:108:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )*
             loop2:
             do {
@@ -198,8 +203,8 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:109:7: 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in'
             	    {
-            	    match(input,43,FOLLOW_43_in_expression119); 
-            	    name=(Token)match(input,IDENT,FOLLOW_IDENT_in_expression123); 
+            	    match(input,43,FOLLOW_43_in_expression119); if (state.failed) return n;
+            	    name=(Token)match(input,IDENT,FOLLOW_IDENT_in_expression123); if (state.failed) return n;
             	    // OCL.g:109:24: ( COLON t= type )?
             	    int alt1=2;
             	    int LA1_0 = input.LA(1);
@@ -211,32 +216,34 @@ import java.util.ArrayList;
             	        case 1 :
             	            // OCL.g:109:26: COLON t= type
             	            {
-            	            match(input,COLON,FOLLOW_COLON_in_expression127); 
+            	            match(input,COLON,FOLLOW_COLON_in_expression127); if (state.failed) return n;
             	            pushFollow(FOLLOW_type_in_expression131);
             	            t=type();
 
             	            state._fsp--;
-
+            	            if (state.failed) return n;
 
             	            }
             	            break;
 
             	    }
 
-            	    match(input,EQUAL,FOLLOW_EQUAL_in_expression136); 
+            	    match(input,EQUAL,FOLLOW_EQUAL_in_expression136); if (state.failed) return n;
             	    pushFollow(FOLLOW_expression_in_expression140);
             	    e1=expression();
 
             	    state._fsp--;
-
-            	    match(input,44,FOLLOW_44_in_expression142); 
-            	     ASTLetExpression nextLet = new ASTLetExpression(name, t, e1);
-            	             if ( firstLet == null ) 
-            	                 firstLet = nextLet;
-            	             if ( prevLet != null ) 
-            	                 prevLet.setInExpr(nextLet);
-            	             prevLet = nextLet;
-            	           
+            	    if (state.failed) return n;
+            	    match(input,44,FOLLOW_44_in_expression142); if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       ASTLetExpression nextLet = new ASTLetExpression(name, t, e1);
+            	               if ( firstLet == null ) 
+            	                   firstLet = nextLet;
+            	               if ( prevLet != null ) 
+            	                   prevLet.setInExpr(nextLet);
+            	               prevLet = nextLet;
+            	             
+            	    }
 
             	    }
             	    break;
@@ -250,18 +257,20 @@ import java.util.ArrayList;
             nCndImplies=conditionalImpliesExpression();
 
             state._fsp--;
-
-             if ( nCndImplies != null ) {
-                	 n = nCndImplies;
-                     n.setStartToken(tok);
-                  }
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               if ( nCndImplies != null ) {
+                  	 n = nCndImplies;
+                       n.setStartToken(tok);
+                    }
+                    
+                    if ( prevLet != null ) { 
+                       prevLet.setInExpr(n);
+                       n = firstLet;
+                       n.setStartToken(tok);
+                    }
                   
-                  if ( prevLet != null ) { 
-                     prevLet.setInExpr(n);
-                     n = firstLet;
-                     n.setStartToken(tok);
-                  }
-                
+            }
 
             }
 
@@ -290,7 +299,7 @@ import java.util.ArrayList;
             // OCL.g:139:1: ( LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN )
             // OCL.g:140:5: LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN
             {
-            match(input,LPAREN,FOLLOW_LPAREN_in_paramList200); 
+            match(input,LPAREN,FOLLOW_LPAREN_in_paramList200); if (state.failed) return paramList;
             // OCL.g:141:5: (v= variableDeclaration ( COMMA v= variableDeclaration )* )?
             int alt4=2;
             int LA4_0 = input.LA(1);
@@ -306,8 +315,10 @@ import java.util.ArrayList;
                     v=variableDeclaration();
 
                     state._fsp--;
-
-                     paramList.add(v); 
+                    if (state.failed) return paramList;
+                    if ( state.backtracking==0 ) {
+                       paramList.add(v); 
+                    }
                     // OCL.g:143:7: ( COMMA v= variableDeclaration )*
                     loop3:
                     do {
@@ -323,13 +334,15 @@ import java.util.ArrayList;
                     	case 1 :
                     	    // OCL.g:143:9: COMMA v= variableDeclaration
                     	    {
-                    	    match(input,COMMA,FOLLOW_COMMA_in_paramList229); 
+                    	    match(input,COMMA,FOLLOW_COMMA_in_paramList229); if (state.failed) return paramList;
                     	    pushFollow(FOLLOW_variableDeclaration_in_paramList233);
                     	    v=variableDeclaration();
 
                     	    state._fsp--;
-
-                    	     paramList.add(v); 
+                    	    if (state.failed) return paramList;
+                    	    if ( state.backtracking==0 ) {
+                    	       paramList.add(v); 
+                    	    }
 
                     	    }
                     	    break;
@@ -345,7 +358,7 @@ import java.util.ArrayList;
 
             }
 
-            match(input,RPAREN,FOLLOW_RPAREN_in_paramList253); 
+            match(input,RPAREN,FOLLOW_RPAREN_in_paramList253); if (state.failed) return paramList;
 
             }
 
@@ -374,8 +387,10 @@ import java.util.ArrayList;
             // OCL.g:153:1: (id0= IDENT ( COMMA idn= IDENT )* )
             // OCL.g:154:5: id0= IDENT ( COMMA idn= IDENT )*
             {
-            id0=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList282); 
-             idList.add(id0); 
+            id0=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList282); if (state.failed) return idList;
+            if ( state.backtracking==0 ) {
+               idList.add(id0); 
+            }
             // OCL.g:155:5: ( COMMA idn= IDENT )*
             loop5:
             do {
@@ -391,9 +406,11 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:155:7: COMMA idn= IDENT
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_idList292); 
-            	    idn=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList296); 
-            	     idList.add(idn); 
+            	    match(input,COMMA,FOLLOW_COMMA_in_idList292); if (state.failed) return idList;
+            	    idn=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList296); if (state.failed) return idList;
+            	    if ( state.backtracking==0 ) {
+            	       idList.add(idn); 
+            	    }
 
             	    }
             	    break;
@@ -431,14 +448,16 @@ import java.util.ArrayList;
             // OCL.g:164:1: (name= IDENT COLON t= type )
             // OCL.g:165:5: name= IDENT COLON t= type
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableDeclaration327); 
-            match(input,COLON,FOLLOW_COLON_in_variableDeclaration329); 
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableDeclaration327); if (state.failed) return n;
+            match(input,COLON,FOLLOW_COLON_in_variableDeclaration329); if (state.failed) return n;
             pushFollow(FOLLOW_type_in_variableDeclaration333);
             t=type();
 
             state._fsp--;
-
-             n = new ASTVariableDeclaration(name, t); 
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTVariableDeclaration(name, t); 
+            }
 
             }
 
@@ -473,8 +492,10 @@ import java.util.ArrayList;
             nCndOrExp=conditionalOrExpression();
 
             state._fsp--;
-
-            n = nCndOrExp;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nCndOrExp;
+            }
             // OCL.g:176:5: (op= 'implies' n1= conditionalOrExpression )*
             loop6:
             do {
@@ -490,13 +511,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:176:7: op= 'implies' n1= conditionalOrExpression
             	    {
-            	    op=(Token)match(input,45,FOLLOW_45_in_conditionalImpliesExpression382); 
+            	    op=(Token)match(input,45,FOLLOW_45_in_conditionalImpliesExpression382); if (state.failed) return n;
             	    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression386);
             	    n1=conditionalOrExpression();
 
             	    state._fsp--;
-
-            	     n = new ASTBinaryExpression(op, n, n1); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
 
             	    }
             	    break;
@@ -540,8 +563,10 @@ import java.util.ArrayList;
             nCndXorExp=conditionalXOrExpression();
 
             state._fsp--;
-
-            n = nCndXorExp;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nCndXorExp;
+            }
             // OCL.g:188:5: (op= 'or' n1= conditionalXOrExpression )*
             loop7:
             do {
@@ -557,13 +582,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:188:7: op= 'or' n1= conditionalXOrExpression
             	    {
-            	    op=(Token)match(input,46,FOLLOW_46_in_conditionalOrExpression444); 
+            	    op=(Token)match(input,46,FOLLOW_46_in_conditionalOrExpression444); if (state.failed) return n;
             	    pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression448);
             	    n1=conditionalXOrExpression();
 
             	    state._fsp--;
-
-            	     n = new ASTBinaryExpression(op, n, n1); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
 
             	    }
             	    break;
@@ -607,8 +634,10 @@ import java.util.ArrayList;
             nCndAndExp=conditionalAndExpression();
 
             state._fsp--;
-
-            n = nCndAndExp;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nCndAndExp;
+            }
             // OCL.g:200:5: (op= 'xor' n1= conditionalAndExpression )*
             loop8:
             do {
@@ -624,13 +653,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:200:7: op= 'xor' n1= conditionalAndExpression
             	    {
-            	    op=(Token)match(input,47,FOLLOW_47_in_conditionalXOrExpression505); 
+            	    op=(Token)match(input,47,FOLLOW_47_in_conditionalXOrExpression505); if (state.failed) return n;
             	    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression509);
             	    n1=conditionalAndExpression();
 
             	    state._fsp--;
-
-            	     n = new ASTBinaryExpression(op, n, n1); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
 
             	    }
             	    break;
@@ -674,8 +705,10 @@ import java.util.ArrayList;
             nEqExp=equalityExpression();
 
             state._fsp--;
-
-            n = nEqExp;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nEqExp;
+            }
             // OCL.g:212:5: (op= 'and' n1= equalityExpression )*
             loop9:
             do {
@@ -691,13 +724,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:212:7: op= 'and' n1= equalityExpression
             	    {
-            	    op=(Token)match(input,48,FOLLOW_48_in_conditionalAndExpression566); 
+            	    op=(Token)match(input,48,FOLLOW_48_in_conditionalAndExpression566); if (state.failed) return n;
             	    pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression570);
             	    n1=equalityExpression();
 
             	    state._fsp--;
-
-            	     n = new ASTBinaryExpression(op, n, n1); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
 
             	    }
             	    break;
@@ -741,8 +776,10 @@ import java.util.ArrayList;
             nRelExp=relationalExpression();
 
             state._fsp--;
-
-            n = nRelExp;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nRelExp;
+            }
             // OCL.g:225:5: ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
             loop10:
             do {
@@ -758,12 +795,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:225:7: ( EQUAL | NOT_EQUAL ) n1= relationalExpression
             	    {
-            	     op = input.LT(1); 
+            	    if ( state.backtracking==0 ) {
+            	       op = input.LT(1); 
+            	    }
             	    if ( input.LA(1)==EQUAL||input.LA(1)==NOT_EQUAL ) {
             	        input.consume();
-            	        state.errorRecovery=false;
+            	        state.errorRecovery=false;state.failed=false;
             	    }
             	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        throw mse;
             	    }
@@ -772,8 +812,10 @@ import java.util.ArrayList;
             	    n1=relationalExpression();
 
             	    state._fsp--;
-
-            	     n = new ASTBinaryExpression(op, n, n1); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
 
             	    }
             	    break;
@@ -817,8 +859,10 @@ import java.util.ArrayList;
             nAddiExp=additiveExpression();
 
             state._fsp--;
-
-            n = nAddiExp;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nAddiExp;
+            }
             // OCL.g:239:5: ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
             loop11:
             do {
@@ -834,12 +878,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:239:7: ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression
             	    {
-            	     op = input.LT(1); 
+            	    if ( state.backtracking==0 ) {
+            	       op = input.LT(1); 
+            	    }
             	    if ( (input.LA(1)>=LESS && input.LA(1)<=GREATER_EQUAL) ) {
             	        input.consume();
-            	        state.errorRecovery=false;
+            	        state.errorRecovery=false;state.failed=false;
             	    }
             	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        throw mse;
             	    }
@@ -848,8 +895,10 @@ import java.util.ArrayList;
             	    n1=additiveExpression();
 
             	    state._fsp--;
-
-            	     n = new ASTBinaryExpression(op, n, n1); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
 
             	    }
             	    break;
@@ -893,8 +942,10 @@ import java.util.ArrayList;
             nMulExp=multiplicativeExpression();
 
             state._fsp--;
-
-            n = nMulExp;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nMulExp;
+            }
             // OCL.g:253:5: ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
             loop12:
             do {
@@ -910,12 +961,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:253:7: ( PLUS | MINUS ) n1= multiplicativeExpression
             	    {
-            	     op = input.LT(1); 
+            	    if ( state.backtracking==0 ) {
+            	       op = input.LT(1); 
+            	    }
             	    if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS) ) {
             	        input.consume();
-            	        state.errorRecovery=false;
+            	        state.errorRecovery=false;state.failed=false;
             	    }
             	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        throw mse;
             	    }
@@ -924,8 +978,10 @@ import java.util.ArrayList;
             	    n1=multiplicativeExpression();
 
             	    state._fsp--;
-
-            	     n = new ASTBinaryExpression(op, n, n1); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
 
             	    }
             	    break;
@@ -969,8 +1025,10 @@ import java.util.ArrayList;
             nUnExp=unaryExpression();
 
             state._fsp--;
-
-             n = nUnExp;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = nUnExp;
+            }
             // OCL.g:268:5: ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
             loop13:
             do {
@@ -986,12 +1044,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:268:7: ( STAR | SLASH | 'div' ) n1= unaryExpression
             	    {
-            	     op = input.LT(1); 
+            	    if ( state.backtracking==0 ) {
+            	       op = input.LT(1); 
+            	    }
             	    if ( (input.LA(1)>=STAR && input.LA(1)<=SLASH)||input.LA(1)==49 ) {
             	        input.consume();
-            	        state.errorRecovery=false;
+            	        state.errorRecovery=false;state.failed=false;
             	    }
             	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        throw mse;
             	    }
@@ -1000,8 +1061,10 @@ import java.util.ArrayList;
             	    n1=unaryExpression();
 
             	    state._fsp--;
-
-            	     n = new ASTBinaryExpression(op, n, n1); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
 
             	    }
             	    break;
@@ -1049,6 +1112,7 @@ import java.util.ArrayList;
                 alt14=2;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 14, 0, input);
 
@@ -1061,12 +1125,15 @@ import java.util.ArrayList;
                     // OCL.g:283:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
                     // OCL.g:283:9: ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression
                     {
-                     op = input.LT(1); 
+                    if ( state.backtracking==0 ) {
+                       op = input.LT(1); 
+                    }
                     if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS)||input.LA(1)==50 ) {
                         input.consume();
-                        state.errorRecovery=false;
+                        state.errorRecovery=false;state.failed=false;
                     }
                     else {
+                        if (state.backtracking>0) {state.failed=true; return n;}
                         MismatchedSetException mse = new MismatchedSetException(null,input);
                         throw mse;
                     }
@@ -1075,8 +1142,10 @@ import java.util.ArrayList;
                     nUnExp=unaryExpression();
 
                     state._fsp--;
-
-                     n = new ASTUnaryExpression(op, nUnExp); 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTUnaryExpression(op, nUnExp); 
+                    }
 
                     }
 
@@ -1090,8 +1159,10 @@ import java.util.ArrayList;
                     nPosExp=postfixExpression();
 
                     state._fsp--;
-
-                     n = nPosExp; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nPosExp; 
+                    }
 
                     }
                     break;
@@ -1128,8 +1199,10 @@ import java.util.ArrayList;
             nPrimExp=primaryExpression();
 
             state._fsp--;
-
-             n = nPrimExp; 
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = nPrimExp; 
+            }
             // OCL.g:299:5: ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
             loop16:
             do {
@@ -1156,6 +1229,7 @@ import java.util.ArrayList;
             	        alt15=2;
             	    }
             	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
             	        NoViableAltException nvae =
             	            new NoViableAltException("", 15, 0, input);
 
@@ -1165,16 +1239,20 @@ import java.util.ArrayList;
             	        case 1 :
             	            // OCL.g:300:8: ARROW
             	            {
-            	            match(input,ARROW,FOLLOW_ARROW_in_postfixExpression1049); 
-            	             arrow = true; 
+            	            match(input,ARROW,FOLLOW_ARROW_in_postfixExpression1049); if (state.failed) return n;
+            	            if ( state.backtracking==0 ) {
+            	               arrow = true; 
+            	            }
 
             	            }
             	            break;
             	        case 2 :
             	            // OCL.g:300:34: DOT
             	            {
-            	            match(input,DOT,FOLLOW_DOT_in_postfixExpression1055); 
-            	             arrow = false; 
+            	            match(input,DOT,FOLLOW_DOT_in_postfixExpression1055); if (state.failed) return n;
+            	            if ( state.backtracking==0 ) {
+            	               arrow = false; 
+            	            }
 
             	            }
             	            break;
@@ -1185,8 +1263,10 @@ import java.util.ArrayList;
             	    nPc=propertyCall(n, arrow);
 
             	    state._fsp--;
-
-            	     n = nPc; 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = nPc; 
+            	    }
 
             	    }
             	    break;
@@ -1267,6 +1347,7 @@ import java.util.ArrayList;
                         alt19=2;
                     }
                     else {
+                        if (state.backtracking>0) {state.failed=true; return n;}
                         NoViableAltException nvae =
                             new NoViableAltException("", 19, 6, input);
 
@@ -1274,6 +1355,7 @@ import java.util.ArrayList;
                     }
                 }
                 else {
+                    if (state.backtracking>0) {state.failed=true; return n;}
                     NoViableAltException nvae =
                         new NoViableAltException("", 19, 2, input);
 
@@ -1300,6 +1382,7 @@ import java.util.ArrayList;
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 19, 0, input);
 
@@ -1314,8 +1397,10 @@ import java.util.ArrayList;
                     nLit=literal();
 
                     state._fsp--;
-
-                     n = nLit; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nLit; 
+                    }
 
                     }
                     break;
@@ -1326,22 +1411,26 @@ import java.util.ArrayList;
                     nPc=propertyCall(null, false);
 
                     state._fsp--;
-
-                     n = nPc; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nPc; 
+                    }
 
                     }
                     break;
                 case 3 :
                     // OCL.g:320:7: LPAREN nExp= expression RPAREN
                     {
-                    match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression1129); 
+                    match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression1129); if (state.failed) return n;
                     pushFollow(FOLLOW_expression_in_primaryExpression1133);
                     nExp=expression();
 
                     state._fsp--;
-
-                    match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression1135); 
-                     n = nExp; 
+                    if (state.failed) return n;
+                    match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression1135); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nExp; 
+                    }
 
                     }
                     break;
@@ -1352,17 +1441,19 @@ import java.util.ArrayList;
                     nIfExp=ifExpression();
 
                     state._fsp--;
-
-                     n = nIfExp; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nIfExp; 
+                    }
 
                     }
                     break;
                 case 5 :
                     // OCL.g:323:7: id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )?
                     {
-                    id1=(Token)match(input,IDENT,FOLLOW_IDENT_in_primaryExpression1164); 
-                    match(input,DOT,FOLLOW_DOT_in_primaryExpression1166); 
-                    match(input,51,FOLLOW_51_in_primaryExpression1168); 
+                    id1=(Token)match(input,IDENT,FOLLOW_IDENT_in_primaryExpression1164); if (state.failed) return n;
+                    match(input,DOT,FOLLOW_DOT_in_primaryExpression1166); if (state.failed) return n;
+                    match(input,51,FOLLOW_51_in_primaryExpression1168); if (state.failed) return n;
                     // OCL.g:323:36: ( LPAREN RPAREN )?
                     int alt17=2;
                     int LA17_0 = input.LA(1);
@@ -1374,15 +1465,17 @@ import java.util.ArrayList;
                         case 1 :
                             // OCL.g:323:38: LPAREN RPAREN
                             {
-                            match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression1172); 
-                            match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression1174); 
+                            match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression1172); if (state.failed) return n;
+                            match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression1174); if (state.failed) return n;
 
                             }
                             break;
 
                     }
 
-                     n = new ASTAllInstancesExpression(id1); 
+                    if ( state.backtracking==0 ) {
+                       n = new ASTAllInstancesExpression(id1); 
+                    }
                     // OCL.g:325:7: ( AT 'pre' )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
@@ -1394,9 +1487,11 @@ import java.util.ArrayList;
                         case 1 :
                             // OCL.g:325:9: AT 'pre'
                             {
-                            match(input,AT,FOLLOW_AT_in_primaryExpression1195); 
-                            match(input,52,FOLLOW_52_in_primaryExpression1197); 
-                             n.setIsPre(); 
+                            match(input,AT,FOLLOW_AT_in_primaryExpression1195); if (state.failed) return n;
+                            match(input,52,FOLLOW_52_in_primaryExpression1197); if (state.failed) return n;
+                            if ( state.backtracking==0 ) {
+                               n.setIsPre(); 
+                            }
 
                             }
                             break;
@@ -1449,6 +1544,7 @@ import java.util.ArrayList;
                     alt20=3;
                 }
                 else {
+                    if (state.backtracking>0) {state.failed=true; return n;}
                     NoViableAltException nvae =
                         new NoViableAltException("", 20, 1, input);
 
@@ -1469,6 +1565,7 @@ import java.util.ArrayList;
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 20, 0, input);
 
@@ -1480,14 +1577,17 @@ import java.util.ArrayList;
                     // OCL.g:343:7: {...}?nExpQuery= queryExpression[source]
                     {
                     if ( !(( org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) )) ) {
+                        if (state.backtracking>0) {state.failed=true; return n;}
                         throw new FailedPredicateException(input, "propertyCall", " org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) ");
                     }
                     pushFollow(FOLLOW_queryExpression_in_propertyCall1263);
                     nExpQuery=queryExpression(source);
 
                     state._fsp--;
-
-                     n = nExpQuery; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nExpQuery; 
+                    }
 
                     }
                     break;
@@ -1498,8 +1598,10 @@ import java.util.ArrayList;
                     nExpIterate=iterateExpression(source);
 
                     state._fsp--;
-
-                     n = nExpIterate; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nExpIterate; 
+                    }
 
                     }
                     break;
@@ -1510,8 +1612,10 @@ import java.util.ArrayList;
                     nExpOperation=operationExpression(source, followsArrow);
 
                     state._fsp--;
-
-                     n = nExpOperation; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nExpOperation; 
+                    }
 
                     }
                     break;
@@ -1522,8 +1626,10 @@ import java.util.ArrayList;
                     nExpType=typeExpression(source, followsArrow);
 
                     state._fsp--;
-
-                     n = nExpType; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nExpType; 
+                    }
 
                     }
                     break;
@@ -1557,8 +1663,8 @@ import java.util.ArrayList;
             // OCL.g:357:69: (op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN )
             // OCL.g:358:5: op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN
             {
-            op=(Token)match(input,IDENT,FOLLOW_IDENT_in_queryExpression1337); 
-            match(input,LPAREN,FOLLOW_LPAREN_in_queryExpression1344); 
+            op=(Token)match(input,IDENT,FOLLOW_IDENT_in_queryExpression1337); if (state.failed) return n;
+            match(input,LPAREN,FOLLOW_LPAREN_in_queryExpression1344); if (state.failed) return n;
             // OCL.g:360:5: (decls= elemVarsDeclaration BAR )?
             int alt21=2;
             int LA21_0 = input.LA(1);
@@ -1578,9 +1684,11 @@ import java.util.ArrayList;
                     decls=elemVarsDeclaration();
 
                     state._fsp--;
-
-                    decl = decls;
-                    match(input,BAR,FOLLOW_BAR_in_queryExpression1359); 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                      decl = decls;
+                    }
+                    match(input,BAR,FOLLOW_BAR_in_queryExpression1359); if (state.failed) return n;
 
                     }
                     break;
@@ -1591,9 +1699,11 @@ import java.util.ArrayList;
             nExp=expression();
 
             state._fsp--;
-
-            match(input,RPAREN,FOLLOW_RPAREN_in_queryExpression1376); 
-             n = new ASTQueryExpression(op, range, decl, nExp); 
+            if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_queryExpression1376); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTQueryExpression(op, range, decl, nExp); 
+            }
 
             }
 
@@ -1626,27 +1736,29 @@ import java.util.ArrayList;
             // OCL.g:374:65: (i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN )
             // OCL.g:375:5: i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN
             {
-            i=(Token)match(input,53,FOLLOW_53_in_iterateExpression1408); 
-            match(input,LPAREN,FOLLOW_LPAREN_in_iterateExpression1414); 
+            i=(Token)match(input,53,FOLLOW_53_in_iterateExpression1408); if (state.failed) return n;
+            match(input,LPAREN,FOLLOW_LPAREN_in_iterateExpression1414); if (state.failed) return n;
             pushFollow(FOLLOW_elemVarsDeclaration_in_iterateExpression1422);
             decls=elemVarsDeclaration();
 
             state._fsp--;
-
-            match(input,SEMI,FOLLOW_SEMI_in_iterateExpression1424); 
+            if (state.failed) return n;
+            match(input,SEMI,FOLLOW_SEMI_in_iterateExpression1424); if (state.failed) return n;
             pushFollow(FOLLOW_variableInitialization_in_iterateExpression1432);
             init=variableInitialization();
 
             state._fsp--;
-
-            match(input,BAR,FOLLOW_BAR_in_iterateExpression1434); 
+            if (state.failed) return n;
+            match(input,BAR,FOLLOW_BAR_in_iterateExpression1434); if (state.failed) return n;
             pushFollow(FOLLOW_expression_in_iterateExpression1442);
             nExp=expression();
 
             state._fsp--;
-
-            match(input,RPAREN,FOLLOW_RPAREN_in_iterateExpression1448); 
-             n = new ASTIterateExpression(i, range, decls, init, nExp); 
+            if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_iterateExpression1448); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTIterateExpression(i, range, decls, init, nExp); 
+            }
 
             }
 
@@ -1676,8 +1788,10 @@ import java.util.ArrayList;
             // OCL.g:398:1: (name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? )
             // OCL.g:399:5: name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression1492); 
-             n = new ASTOperationExpression(name, source, followsArrow); 
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression1492); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTOperationExpression(name, source, followsArrow); 
+            }
             // OCL.g:402:5: ( LBRACK rolename= IDENT RBRACK )?
             int alt22=2;
             int LA22_0 = input.LA(1);
@@ -1689,10 +1803,12 @@ import java.util.ArrayList;
                 case 1 :
                     // OCL.g:402:7: LBRACK rolename= IDENT RBRACK
                     {
-                    match(input,LBRACK,FOLLOW_LBRACK_in_operationExpression1508); 
-                    rolename=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression1512); 
-                    match(input,RBRACK,FOLLOW_RBRACK_in_operationExpression1514); 
-                     n.setExplicitRolename(rolename); 
+                    match(input,LBRACK,FOLLOW_LBRACK_in_operationExpression1508); if (state.failed) return n;
+                    rolename=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression1512); if (state.failed) return n;
+                    match(input,RBRACK,FOLLOW_RBRACK_in_operationExpression1514); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n.setExplicitRolename(rolename); 
+                    }
 
                     }
                     break;
@@ -1710,9 +1826,11 @@ import java.util.ArrayList;
                 case 1 :
                     // OCL.g:404:7: AT 'pre'
                     {
-                    match(input,AT,FOLLOW_AT_in_operationExpression1527); 
-                    match(input,52,FOLLOW_52_in_operationExpression1529); 
-                     n.setIsPre(); 
+                    match(input,AT,FOLLOW_AT_in_operationExpression1527); if (state.failed) return n;
+                    match(input,52,FOLLOW_52_in_operationExpression1529); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n.setIsPre(); 
+                    }
 
                     }
                     break;
@@ -1730,8 +1848,10 @@ import java.util.ArrayList;
                 case 1 :
                     // OCL.g:406:7: LPAREN (e= expression ( COMMA e= expression )* )? RPAREN
                     {
-                    match(input,LPAREN,FOLLOW_LPAREN_in_operationExpression1550); 
-                     n.hasParentheses(); 
+                    match(input,LPAREN,FOLLOW_LPAREN_in_operationExpression1550); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n.hasParentheses(); 
+                    }
                     // OCL.g:407:7: (e= expression ( COMMA e= expression )* )?
                     int alt25=2;
                     int LA25_0 = input.LA(1);
@@ -1747,8 +1867,10 @@ import java.util.ArrayList;
                             e=expression();
 
                             state._fsp--;
-
-                             n.addArg(e); 
+                            if (state.failed) return n;
+                            if ( state.backtracking==0 ) {
+                               n.addArg(e); 
+                            }
                             // OCL.g:409:7: ( COMMA e= expression )*
                             loop24:
                             do {
@@ -1764,13 +1886,15 @@ import java.util.ArrayList;
                             	case 1 :
                             	    // OCL.g:409:9: COMMA e= expression
                             	    {
-                            	    match(input,COMMA,FOLLOW_COMMA_in_operationExpression1583); 
+                            	    match(input,COMMA,FOLLOW_COMMA_in_operationExpression1583); if (state.failed) return n;
                             	    pushFollow(FOLLOW_expression_in_operationExpression1587);
                             	    e=expression();
 
                             	    state._fsp--;
-
-                            	     n.addArg(e); 
+                            	    if (state.failed) return n;
+                            	    if ( state.backtracking==0 ) {
+                            	       n.addArg(e); 
+                            	    }
 
                             	    }
                             	    break;
@@ -1786,7 +1910,7 @@ import java.util.ArrayList;
 
                     }
 
-                    match(input,RPAREN,FOLLOW_RPAREN_in_operationExpression1607); 
+                    match(input,RPAREN,FOLLOW_RPAREN_in_operationExpression1607); if (state.failed) return n;
 
                     }
                     break;
@@ -1821,24 +1945,29 @@ import java.util.ArrayList;
             // OCL.g:424:1: ( ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN )
             // OCL.g:425:2: ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN
             {
-             opToken = input.LT(1); 
+            if ( state.backtracking==0 ) {
+               opToken = input.LT(1); 
+            }
             if ( (input.LA(1)>=54 && input.LA(1)<=56) ) {
                 input.consume();
-                state.errorRecovery=false;
+                state.errorRecovery=false;state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return n;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 throw mse;
             }
 
-            match(input,LPAREN,FOLLOW_LPAREN_in_typeExpression1666); 
+            match(input,LPAREN,FOLLOW_LPAREN_in_typeExpression1666); if (state.failed) return n;
             pushFollow(FOLLOW_type_in_typeExpression1670);
             t=type();
 
             state._fsp--;
-
-            match(input,RPAREN,FOLLOW_RPAREN_in_typeExpression1672); 
-             n = new ASTTypeArgExpression(opToken, source, t, followsArrow); 
+            if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_typeExpression1672); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTTypeArgExpression(opToken, source, t, followsArrow); 
+            }
 
             }
 
@@ -1873,7 +2002,7 @@ import java.util.ArrayList;
             idListRes=idList();
 
             state._fsp--;
-
+            if (state.failed) return n;
             // OCL.g:440:5: ( COLON t= type )?
             int alt27=2;
             int LA27_0 = input.LA(1);
@@ -1885,19 +2014,21 @@ import java.util.ArrayList;
                 case 1 :
                     // OCL.g:440:7: COLON t= type
                     {
-                    match(input,COLON,FOLLOW_COLON_in_elemVarsDeclaration1719); 
+                    match(input,COLON,FOLLOW_COLON_in_elemVarsDeclaration1719); if (state.failed) return n;
                     pushFollow(FOLLOW_type_in_elemVarsDeclaration1723);
                     t=type();
 
                     state._fsp--;
-
+                    if (state.failed) return n;
 
                     }
                     break;
 
             }
 
-             n = new ASTElemVarsDeclaration(idListRes, t); 
+            if ( state.backtracking==0 ) {
+               n = new ASTElemVarsDeclaration(idListRes, t); 
+            }
 
             }
 
@@ -1928,20 +2059,22 @@ import java.util.ArrayList;
             // OCL.g:450:1: (name= IDENT COLON t= type EQUAL e= expression )
             // OCL.g:451:5: name= IDENT COLON t= type EQUAL e= expression
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableInitialization1758); 
-            match(input,COLON,FOLLOW_COLON_in_variableInitialization1760); 
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableInitialization1758); if (state.failed) return n;
+            match(input,COLON,FOLLOW_COLON_in_variableInitialization1760); if (state.failed) return n;
             pushFollow(FOLLOW_type_in_variableInitialization1764);
             t=type();
 
             state._fsp--;
-
-            match(input,EQUAL,FOLLOW_EQUAL_in_variableInitialization1766); 
+            if (state.failed) return n;
+            match(input,EQUAL,FOLLOW_EQUAL_in_variableInitialization1766); if (state.failed) return n;
             pushFollow(FOLLOW_expression_in_variableInitialization1770);
             e=expression();
 
             state._fsp--;
-
-             n = new ASTVariableInitialization(name, t, e); 
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTVariableInitialization(name, t, e); 
+            }
 
             }
 
@@ -1974,26 +2107,28 @@ import java.util.ArrayList;
             // OCL.g:461:1: (i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' )
             // OCL.g:462:5: i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif'
             {
-            i=(Token)match(input,57,FOLLOW_57_in_ifExpression1802); 
+            i=(Token)match(input,57,FOLLOW_57_in_ifExpression1802); if (state.failed) return n;
             pushFollow(FOLLOW_expression_in_ifExpression1806);
             cond=expression();
 
             state._fsp--;
-
-            match(input,58,FOLLOW_58_in_ifExpression1808); 
+            if (state.failed) return n;
+            match(input,58,FOLLOW_58_in_ifExpression1808); if (state.failed) return n;
             pushFollow(FOLLOW_expression_in_ifExpression1812);
             t=expression();
 
             state._fsp--;
-
-            match(input,59,FOLLOW_59_in_ifExpression1814); 
+            if (state.failed) return n;
+            match(input,59,FOLLOW_59_in_ifExpression1814); if (state.failed) return n;
             pushFollow(FOLLOW_expression_in_ifExpression1818);
             e=expression();
 
             state._fsp--;
-
-            match(input,60,FOLLOW_60_in_ifExpression1820); 
-             n = new ASTIfExpression(i, cond, t, e); 
+            if (state.failed) return n;
+            match(input,60,FOLLOW_60_in_ifExpression1820); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTIfExpression(i, cond, t, e); 
+            }
 
             }
 
@@ -2096,6 +2231,7 @@ import java.util.ArrayList;
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 28, 0, input);
 
@@ -2106,49 +2242,61 @@ import java.util.ArrayList;
                 case 1 :
                     // OCL.g:483:7: t= 'true'
                     {
-                    t=(Token)match(input,61,FOLLOW_61_in_literal1859); 
-                     n = new ASTBooleanLiteral(true); 
+                    t=(Token)match(input,61,FOLLOW_61_in_literal1859); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTBooleanLiteral(true); 
+                    }
 
                     }
                     break;
                 case 2 :
                     // OCL.g:484:7: f= 'false'
                     {
-                    f=(Token)match(input,62,FOLLOW_62_in_literal1873); 
-                     n = new ASTBooleanLiteral(false); 
+                    f=(Token)match(input,62,FOLLOW_62_in_literal1873); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTBooleanLiteral(false); 
+                    }
 
                     }
                     break;
                 case 3 :
                     // OCL.g:485:7: i= INT
                     {
-                    i=(Token)match(input,INT,FOLLOW_INT_in_literal1886); 
-                     n = new ASTIntegerLiteral(i); 
+                    i=(Token)match(input,INT,FOLLOW_INT_in_literal1886); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTIntegerLiteral(i); 
+                    }
 
                     }
                     break;
                 case 4 :
                     // OCL.g:486:7: r= REAL
                     {
-                    r=(Token)match(input,REAL,FOLLOW_REAL_in_literal1901); 
-                     n = new ASTRealLiteral(r); 
+                    r=(Token)match(input,REAL,FOLLOW_REAL_in_literal1901); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTRealLiteral(r); 
+                    }
 
                     }
                     break;
                 case 5 :
                     // OCL.g:487:7: s= STRING
                     {
-                    s=(Token)match(input,STRING,FOLLOW_STRING_in_literal1915); 
-                     n = new ASTStringLiteral(s); 
+                    s=(Token)match(input,STRING,FOLLOW_STRING_in_literal1915); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTStringLiteral(s); 
+                    }
 
                     }
                     break;
                 case 6 :
                     // OCL.g:488:7: HASH enumLit= IDENT
                     {
-                    match(input,HASH,FOLLOW_HASH_in_literal1925); 
-                    enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal1929); 
-                     n = new ASTEnumLiteral(enumLit); 
+                    match(input,HASH,FOLLOW_HASH_in_literal1925); if (state.failed) return n;
+                    enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal1929); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTEnumLiteral(enumLit); 
+                    }
 
                     }
                     break;
@@ -2159,8 +2307,10 @@ import java.util.ArrayList;
                     nColIt=collectionLiteral();
 
                     state._fsp--;
-
-                     n = nColIt; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nColIt; 
+                    }
 
                     }
                     break;
@@ -2171,8 +2321,10 @@ import java.util.ArrayList;
                     nEColIt=emptyCollectionLiteral();
 
                     state._fsp--;
-
-                     n = nEColIt; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nEColIt; 
+                    }
 
                     }
                     break;
@@ -2183,8 +2335,10 @@ import java.util.ArrayList;
                     nUndLit=undefinedLiteral();
 
                     state._fsp--;
-
-                    n = nUndLit; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                      n = nUndLit; 
+                    }
 
                     }
                     break;
@@ -2195,8 +2349,10 @@ import java.util.ArrayList;
                     nTupleLit=tupleLiteral();
 
                     state._fsp--;
-
-                    n = nTupleLit; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                      n = nTupleLit; 
+                    }
 
                     }
                     break;
@@ -2207,8 +2363,10 @@ import java.util.ArrayList;
                     nDateLit=dateLiteral();
 
                     state._fsp--;
-
-                    n = nDateLit; 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                      n = nDateLit; 
+                    }
 
                     }
                     break;
@@ -2239,18 +2397,23 @@ import java.util.ArrayList;
             // OCL.g:503:1: ( ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE )
             // OCL.g:504:5: ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE
             {
-             op = input.LT(1); 
+            if ( state.backtracking==0 ) {
+               op = input.LT(1); 
+            }
             if ( (input.LA(1)>=63 && input.LA(1)<=66) ) {
                 input.consume();
-                state.errorRecovery=false;
+                state.errorRecovery=false;state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return n;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 throw mse;
             }
 
-             n = new ASTCollectionLiteral(op); 
-            match(input,LBRACE,FOLLOW_LBRACE_in_collectionLiteral2056); 
+            if ( state.backtracking==0 ) {
+               n = new ASTCollectionLiteral(op); 
+            }
+            match(input,LBRACE,FOLLOW_LBRACE_in_collectionLiteral2056); if (state.failed) return n;
             // OCL.g:508:5: (ci= collectionItem ( COMMA ci= collectionItem )* )?
             int alt30=2;
             int LA30_0 = input.LA(1);
@@ -2266,8 +2429,10 @@ import java.util.ArrayList;
                     ci=collectionItem();
 
                     state._fsp--;
-
-                     n.addItem(ci); 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n.addItem(ci); 
+                    }
                     // OCL.g:510:7: ( COMMA ci= collectionItem )*
                     loop29:
                     do {
@@ -2283,13 +2448,15 @@ import java.util.ArrayList;
                     	case 1 :
                     	    // OCL.g:510:9: COMMA ci= collectionItem
                     	    {
-                    	    match(input,COMMA,FOLLOW_COMMA_in_collectionLiteral2086); 
+                    	    match(input,COMMA,FOLLOW_COMMA_in_collectionLiteral2086); if (state.failed) return n;
                     	    pushFollow(FOLLOW_collectionItem_in_collectionLiteral2090);
                     	    ci=collectionItem();
 
                     	    state._fsp--;
-
-                    	     n.addItem(ci); 
+                    	    if (state.failed) return n;
+                    	    if ( state.backtracking==0 ) {
+                    	       n.addItem(ci); 
+                    	    }
 
                     	    }
                     	    break;
@@ -2305,7 +2472,7 @@ import java.util.ArrayList;
 
             }
 
-            match(input,RBRACE,FOLLOW_RBRACE_in_collectionLiteral2109); 
+            match(input,RBRACE,FOLLOW_RBRACE_in_collectionLiteral2109); if (state.failed) return n;
 
             }
 
@@ -2338,8 +2505,10 @@ import java.util.ArrayList;
             e=expression();
 
             state._fsp--;
-
-             n.setFirst(e); 
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n.setFirst(e); 
+            }
             // OCL.g:523:5: ( DOTDOT e= expression )?
             int alt31=2;
             int LA31_0 = input.LA(1);
@@ -2351,13 +2520,15 @@ import java.util.ArrayList;
                 case 1 :
                     // OCL.g:523:7: DOTDOT e= expression
                     {
-                    match(input,DOTDOT,FOLLOW_DOTDOT_in_collectionItem2149); 
+                    match(input,DOTDOT,FOLLOW_DOTDOT_in_collectionItem2149); if (state.failed) return n;
                     pushFollow(FOLLOW_expression_in_collectionItem2153);
                     e=expression();
 
                     state._fsp--;
-
-                     n.setSecond(e); 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n.setSecond(e); 
+                    }
 
                     }
                     break;
@@ -2391,15 +2562,17 @@ import java.util.ArrayList;
             // OCL.g:534:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
             // OCL.g:535:5: 'oclEmpty' LPAREN t= collectionType RPAREN
             {
-            match(input,67,FOLLOW_67_in_emptyCollectionLiteral2182); 
-            match(input,LPAREN,FOLLOW_LPAREN_in_emptyCollectionLiteral2184); 
+            match(input,67,FOLLOW_67_in_emptyCollectionLiteral2182); if (state.failed) return n;
+            match(input,LPAREN,FOLLOW_LPAREN_in_emptyCollectionLiteral2184); if (state.failed) return n;
             pushFollow(FOLLOW_collectionType_in_emptyCollectionLiteral2188);
             t=collectionType();
 
             state._fsp--;
-
-            match(input,RPAREN,FOLLOW_RPAREN_in_emptyCollectionLiteral2190); 
-             n = new ASTEmptyCollectionLiteral(t); 
+            if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_emptyCollectionLiteral2190); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTEmptyCollectionLiteral(t); 
+            }
 
             }
 
@@ -2443,6 +2616,7 @@ import java.util.ArrayList;
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 32, 0, input);
 
@@ -2453,31 +2627,37 @@ import java.util.ArrayList;
                 case 1 :
                     // OCL.g:548:5: 'oclUndefined' LPAREN t= type RPAREN
                     {
-                    match(input,68,FOLLOW_68_in_undefinedLiteral2220); 
-                    match(input,LPAREN,FOLLOW_LPAREN_in_undefinedLiteral2222); 
+                    match(input,68,FOLLOW_68_in_undefinedLiteral2220); if (state.failed) return n;
+                    match(input,LPAREN,FOLLOW_LPAREN_in_undefinedLiteral2222); if (state.failed) return n;
                     pushFollow(FOLLOW_type_in_undefinedLiteral2226);
                     t=type();
 
                     state._fsp--;
-
-                    match(input,RPAREN,FOLLOW_RPAREN_in_undefinedLiteral2228); 
-                     n = new ASTUndefinedLiteral(t); 
+                    if (state.failed) return n;
+                    match(input,RPAREN,FOLLOW_RPAREN_in_undefinedLiteral2228); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTUndefinedLiteral(t); 
+                    }
 
                     }
                     break;
                 case 2 :
                     // OCL.g:551:5: 'Undefined'
                     {
-                    match(input,69,FOLLOW_69_in_undefinedLiteral2242); 
-                     n = new ASTUndefinedLiteral(); 
+                    match(input,69,FOLLOW_69_in_undefinedLiteral2242); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTUndefinedLiteral(); 
+                    }
 
                     }
                     break;
                 case 3 :
                     // OCL.g:554:5: 'null'
                     {
-                    match(input,70,FOLLOW_70_in_undefinedLiteral2256); 
-                     n = new ASTUndefinedLiteral(); 
+                    match(input,70,FOLLOW_70_in_undefinedLiteral2256); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTUndefinedLiteral(); 
+                    }
 
                     }
                     break;
@@ -2508,14 +2688,16 @@ import java.util.ArrayList;
             // OCL.g:565:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
             // OCL.g:566:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
             {
-            match(input,71,FOLLOW_71_in_tupleLiteral2290); 
-            match(input,LBRACE,FOLLOW_LBRACE_in_tupleLiteral2296); 
+            match(input,71,FOLLOW_71_in_tupleLiteral2290); if (state.failed) return n;
+            match(input,LBRACE,FOLLOW_LBRACE_in_tupleLiteral2296); if (state.failed) return n;
             pushFollow(FOLLOW_tupleItem_in_tupleLiteral2304);
             ti=tupleItem();
 
             state._fsp--;
-
-             tiList.add(ti); 
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               tiList.add(ti); 
+            }
             // OCL.g:569:5: ( COMMA ti= tupleItem )*
             loop33:
             do {
@@ -2531,13 +2713,15 @@ import java.util.ArrayList;
             	case 1 :
             	    // OCL.g:569:7: COMMA ti= tupleItem
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_tupleLiteral2315); 
+            	    match(input,COMMA,FOLLOW_COMMA_in_tupleLiteral2315); if (state.failed) return n;
             	    pushFollow(FOLLOW_tupleItem_in_tupleLiteral2319);
             	    ti=tupleItem();
 
             	    state._fsp--;
-
-            	     tiList.add(ti); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       tiList.add(ti); 
+            	    }
 
             	    }
             	    break;
@@ -2547,8 +2731,10 @@ import java.util.ArrayList;
                 }
             } while (true);
 
-            match(input,RBRACE,FOLLOW_RBRACE_in_tupleLiteral2330); 
-             n = new ASTTupleLiteral(tiList); 
+            match(input,RBRACE,FOLLOW_RBRACE_in_tupleLiteral2330); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTTupleLiteral(tiList); 
+            }
 
             }
 
@@ -2565,34 +2751,101 @@ import java.util.ArrayList;
 
 
     // $ANTLR start "tupleItem"
-    // OCL.g:577:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( COLON | EQUAL ) e= expression ;
+    // OCL.g:577:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) ;
     public final ASTTupleItem tupleItem() throws RecognitionException {
         ASTTupleItem n = null;
 
         Token name=null;
+        ASTType t = null;
+
         ASTExpression e = null;
 
 
         try {
-            // OCL.g:578:1: (name= IDENT ( COLON | EQUAL ) e= expression )
-            // OCL.g:579:5: name= IDENT ( COLON | EQUAL ) e= expression
+            // OCL.g:578:1: (name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) )
+            // OCL.g:579:5: name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem2361); 
-            if ( (input.LA(1)>=COLON && input.LA(1)<=EQUAL) ) {
-                input.consume();
-                state.errorRecovery=false;
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem2361); if (state.failed) return n;
+            // OCL.g:580:5: ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
+            int alt34=2;
+            int LA34_0 = input.LA(1);
+
+            if ( (LA34_0==COLON) ) {
+                int LA34_1 = input.LA(2);
+
+                if ( (synpred1_OCL()) ) {
+                    alt34=1;
+                }
+                else if ( (true) ) {
+                    alt34=2;
+                }
+                else {
+                    if (state.backtracking>0) {state.failed=true; return n;}
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 34, 1, input);
+
+                    throw nvae;
+                }
+            }
+            else if ( (LA34_0==EQUAL) ) {
+                alt34=2;
             }
             else {
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                throw mse;
+                if (state.backtracking>0) {state.failed=true; return n;}
+                NoViableAltException nvae =
+                    new NoViableAltException("", 34, 0, input);
+
+                throw nvae;
+            }
+            switch (alt34) {
+                case 1 :
+                    // OCL.g:583:7: ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression
+                    {
+                    match(input,COLON,FOLLOW_COLON_in_tupleItem2400); if (state.failed) return n;
+                    pushFollow(FOLLOW_type_in_tupleItem2404);
+                    t=type();
+
+                    state._fsp--;
+                    if (state.failed) return n;
+                    match(input,EQUAL,FOLLOW_EQUAL_in_tupleItem2406); if (state.failed) return n;
+                    pushFollow(FOLLOW_expression_in_tupleItem2410);
+                    e=expression();
+
+                    state._fsp--;
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTTupleItem(name, t, e); 
+                    }
+
+                    }
+                    break;
+                case 2 :
+                    // OCL.g:586:7: ( COLON | EQUAL ) e= expression
+                    {
+                    if ( (input.LA(1)>=COLON && input.LA(1)<=EQUAL) ) {
+                        input.consume();
+                        state.errorRecovery=false;state.failed=false;
+                    }
+                    else {
+                        if (state.backtracking>0) {state.failed=true; return n;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        throw mse;
+                    }
+
+                    pushFollow(FOLLOW_expression_in_tupleItem2442);
+                    e=expression();
+
+                    state._fsp--;
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTTupleItem(name, e); 
+                    }
+
+                    }
+                    break;
+
             }
 
-            pushFollow(FOLLOW_expression_in_tupleItem2371);
-            e=expression();
-
-            state._fsp--;
-
-             n = new ASTTupleItem(name, e); 
 
             }
 
@@ -2609,21 +2862,23 @@ import java.util.ArrayList;
 
 
     // $ANTLR start "dateLiteral"
-    // OCL.g:587:1: dateLiteral returns [ASTDateLiteral n] : 'Date' LBRACE v= STRING RBRACE ;
+    // OCL.g:595:1: dateLiteral returns [ASTDateLiteral n] : 'Date' LBRACE v= STRING RBRACE ;
     public final ASTDateLiteral dateLiteral() throws RecognitionException {
         ASTDateLiteral n = null;
 
         Token v=null;
 
         try {
-            // OCL.g:588:1: ( 'Date' LBRACE v= STRING RBRACE )
-            // OCL.g:589:5: 'Date' LBRACE v= STRING RBRACE
+            // OCL.g:596:1: ( 'Date' LBRACE v= STRING RBRACE )
+            // OCL.g:597:5: 'Date' LBRACE v= STRING RBRACE
             {
-            match(input,72,FOLLOW_72_in_dateLiteral2402); 
-            match(input,LBRACE,FOLLOW_LBRACE_in_dateLiteral2404); 
-            v=(Token)match(input,STRING,FOLLOW_STRING_in_dateLiteral2408); 
-            match(input,RBRACE,FOLLOW_RBRACE_in_dateLiteral2410); 
-             n = new ASTDateLiteral( v ); 
+            match(input,72,FOLLOW_72_in_dateLiteral2487); if (state.failed) return n;
+            match(input,LBRACE,FOLLOW_LBRACE_in_dateLiteral2489); if (state.failed) return n;
+            v=(Token)match(input,STRING,FOLLOW_STRING_in_dateLiteral2493); if (state.failed) return n;
+            match(input,RBRACE,FOLLOW_RBRACE_in_dateLiteral2495); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTDateLiteral( v ); 
+            }
 
             }
 
@@ -2640,7 +2895,7 @@ import java.util.ArrayList;
 
 
     // $ANTLR start "type"
-    // OCL.g:599:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
+    // OCL.g:607:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
     public final ASTType type() throws RecognitionException {
         ASTType n = null;
 
@@ -2653,16 +2908,18 @@ import java.util.ArrayList;
 
          Token tok = null; 
         try {
-            // OCL.g:601:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
-            // OCL.g:602:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            // OCL.g:609:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
+            // OCL.g:610:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
             {
-             tok = input.LT(1); /* remember start of type */ 
-            // OCL.g:603:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
-            int alt34=3;
+            if ( state.backtracking==0 ) {
+               tok = input.LT(1); /* remember start of type */ 
+            }
+            // OCL.g:611:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            int alt35=3;
             switch ( input.LA(1) ) {
             case IDENT:
                 {
-                alt34=1;
+                alt35=1;
                 }
                 break;
             case 63:
@@ -2671,55 +2928,62 @@ import java.util.ArrayList;
             case 66:
             case 73:
                 {
-                alt34=2;
+                alt35=2;
                 }
                 break;
             case 71:
                 {
-                alt34=3;
+                alt35=3;
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 34, 0, input);
+                    new NoViableAltException("", 35, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt34) {
+            switch (alt35) {
                 case 1 :
-                    // OCL.g:604:7: nTSimple= simpleType
+                    // OCL.g:612:7: nTSimple= simpleType
                     {
-                    pushFollow(FOLLOW_simpleType_in_type2460);
+                    pushFollow(FOLLOW_simpleType_in_type2545);
                     nTSimple=simpleType();
 
                     state._fsp--;
-
-                     n = nTSimple; n.setStartToken(tok); 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nTSimple; n.setStartToken(tok); 
+                    }
 
                     }
                     break;
                 case 2 :
-                    // OCL.g:605:7: nTCollection= collectionType
+                    // OCL.g:613:7: nTCollection= collectionType
                     {
-                    pushFollow(FOLLOW_collectionType_in_type2472);
+                    pushFollow(FOLLOW_collectionType_in_type2557);
                     nTCollection=collectionType();
 
                     state._fsp--;
-
-                     n = nTCollection; n.setStartToken(tok); 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nTCollection; n.setStartToken(tok); 
+                    }
 
                     }
                     break;
                 case 3 :
-                    // OCL.g:606:7: nTTuple= tupleType
+                    // OCL.g:614:7: nTTuple= tupleType
                     {
-                    pushFollow(FOLLOW_tupleType_in_type2484);
+                    pushFollow(FOLLOW_tupleType_in_type2569);
                     nTTuple=tupleType();
 
                     state._fsp--;
-
-                     n = nTTuple; n.setStartToken(tok); 
+                    if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = nTTuple; n.setStartToken(tok); 
+                    }
 
                     }
                     break;
@@ -2742,7 +3006,7 @@ import java.util.ArrayList;
 
 
     // $ANTLR start "typeOnly"
-    // OCL.g:611:1: typeOnly returns [ASTType n] : nT= type EOF ;
+    // OCL.g:619:1: typeOnly returns [ASTType n] : nT= type EOF ;
     public final ASTType typeOnly() throws RecognitionException {
         ASTType n = null;
 
@@ -2750,16 +3014,18 @@ import java.util.ArrayList;
 
 
         try {
-            // OCL.g:612:1: (nT= type EOF )
-            // OCL.g:613:5: nT= type EOF
+            // OCL.g:620:1: (nT= type EOF )
+            // OCL.g:621:5: nT= type EOF
             {
-            pushFollow(FOLLOW_type_in_typeOnly2516);
+            pushFollow(FOLLOW_type_in_typeOnly2601);
             nT=type();
 
             state._fsp--;
-
-            match(input,EOF,FOLLOW_EOF_in_typeOnly2518); 
-             n = nT; 
+            if (state.failed) return n;
+            match(input,EOF,FOLLOW_EOF_in_typeOnly2603); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = nT; 
+            }
 
             }
 
@@ -2776,18 +3042,20 @@ import java.util.ArrayList;
 
 
     // $ANTLR start "simpleType"
-    // OCL.g:623:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
+    // OCL.g:631:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
     public final ASTSimpleType simpleType() throws RecognitionException {
         ASTSimpleType n = null;
 
         Token name=null;
 
         try {
-            // OCL.g:624:1: (name= IDENT )
-            // OCL.g:625:5: name= IDENT
+            // OCL.g:632:1: (name= IDENT )
+            // OCL.g:633:5: name= IDENT
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_simpleType2546); 
-             n = new ASTSimpleType(name); 
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_simpleType2631); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTSimpleType(name); 
+            }
 
             }
 
@@ -2804,7 +3072,7 @@ import java.util.ArrayList;
 
 
     // $ANTLR start "collectionType"
-    // OCL.g:633:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN ;
+    // OCL.g:641:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN ;
     public final ASTCollectionType collectionType() throws RecognitionException {
         ASTCollectionType n = null;
 
@@ -2813,27 +3081,32 @@ import java.util.ArrayList;
 
          Token op = null; 
         try {
-            // OCL.g:635:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN )
-            // OCL.g:636:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN
+            // OCL.g:643:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN )
+            // OCL.g:644:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN
             {
-             op = input.LT(1); 
+            if ( state.backtracking==0 ) {
+               op = input.LT(1); 
+            }
             if ( (input.LA(1)>=63 && input.LA(1)<=66)||input.LA(1)==73 ) {
                 input.consume();
-                state.errorRecovery=false;
+                state.errorRecovery=false;state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return n;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 throw mse;
             }
 
-            match(input,LPAREN,FOLLOW_LPAREN_in_collectionType2611); 
-            pushFollow(FOLLOW_type_in_collectionType2615);
+            match(input,LPAREN,FOLLOW_LPAREN_in_collectionType2696); if (state.failed) return n;
+            pushFollow(FOLLOW_type_in_collectionType2700);
             elemType=type();
 
             state._fsp--;
-
-            match(input,RPAREN,FOLLOW_RPAREN_in_collectionType2617); 
-             n = new ASTCollectionType(op, elemType); n.setStartToken(op);
+            if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_collectionType2702); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTCollectionType(op, elemType); n.setStartToken(op);
+            }
 
             }
 
@@ -2850,7 +3123,7 @@ import java.util.ArrayList;
 
 
     // $ANTLR start "tupleType"
-    // OCL.g:646:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
+    // OCL.g:654:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
     public final ASTTupleType tupleType() throws RecognitionException {
         ASTTupleType n = null;
 
@@ -2859,50 +3132,56 @@ import java.util.ArrayList;
 
          List tpList = new ArrayList(); 
         try {
-            // OCL.g:648:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
-            // OCL.g:649:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
+            // OCL.g:656:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
+            // OCL.g:657:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
             {
-            match(input,71,FOLLOW_71_in_tupleType2651); 
-            match(input,LPAREN,FOLLOW_LPAREN_in_tupleType2653); 
-            pushFollow(FOLLOW_tuplePart_in_tupleType2662);
+            match(input,71,FOLLOW_71_in_tupleType2736); if (state.failed) return n;
+            match(input,LPAREN,FOLLOW_LPAREN_in_tupleType2738); if (state.failed) return n;
+            pushFollow(FOLLOW_tuplePart_in_tupleType2747);
             tp=tuplePart();
 
             state._fsp--;
-
-             tpList.add(tp); 
-            // OCL.g:651:5: ( COMMA tp= tuplePart )*
-            loop35:
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               tpList.add(tp); 
+            }
+            // OCL.g:659:5: ( COMMA tp= tuplePart )*
+            loop36:
             do {
-                int alt35=2;
-                int LA35_0 = input.LA(1);
+                int alt36=2;
+                int LA36_0 = input.LA(1);
 
-                if ( (LA35_0==COMMA) ) {
-                    alt35=1;
+                if ( (LA36_0==COMMA) ) {
+                    alt36=1;
                 }
 
 
-                switch (alt35) {
+                switch (alt36) {
             	case 1 :
-            	    // OCL.g:651:7: COMMA tp= tuplePart
+            	    // OCL.g:659:7: COMMA tp= tuplePart
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_tupleType2673); 
-            	    pushFollow(FOLLOW_tuplePart_in_tupleType2677);
+            	    match(input,COMMA,FOLLOW_COMMA_in_tupleType2758); if (state.failed) return n;
+            	    pushFollow(FOLLOW_tuplePart_in_tupleType2762);
             	    tp=tuplePart();
 
             	    state._fsp--;
-
-            	     tpList.add(tp); 
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       tpList.add(tp); 
+            	    }
 
             	    }
             	    break;
 
             	default :
-            	    break loop35;
+            	    break loop36;
                 }
             } while (true);
 
-            match(input,RPAREN,FOLLOW_RPAREN_in_tupleType2689); 
-             n = new ASTTupleType(tpList); 
+            match(input,RPAREN,FOLLOW_RPAREN_in_tupleType2774); if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTTupleType(tpList); 
+            }
 
             }
 
@@ -2919,7 +3198,7 @@ import java.util.ArrayList;
 
 
     // $ANTLR start "tuplePart"
-    // OCL.g:660:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
+    // OCL.g:668:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
     public final ASTTuplePart tuplePart() throws RecognitionException {
         ASTTuplePart n = null;
 
@@ -2928,17 +3207,19 @@ import java.util.ArrayList;
 
 
         try {
-            // OCL.g:661:1: (name= IDENT COLON t= type )
-            // OCL.g:662:5: name= IDENT COLON t= type
+            // OCL.g:669:1: (name= IDENT COLON t= type )
+            // OCL.g:670:5: name= IDENT COLON t= type
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tuplePart2721); 
-            match(input,COLON,FOLLOW_COLON_in_tuplePart2723); 
-            pushFollow(FOLLOW_type_in_tuplePart2727);
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tuplePart2806); if (state.failed) return n;
+            match(input,COLON,FOLLOW_COLON_in_tuplePart2808); if (state.failed) return n;
+            pushFollow(FOLLOW_type_in_tuplePart2812);
             t=type();
 
             state._fsp--;
-
-             n = new ASTTuplePart(name, t); 
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+               n = new ASTTuplePart(name, t); 
+            }
 
             }
 
@@ -2953,7 +3234,35 @@ import java.util.ArrayList;
     }
     // $ANTLR end "tuplePart"
 
+    // $ANTLR start synpred1_OCL
+    public final void synpred1_OCL_fragment() throws RecognitionException {   
+        // OCL.g:583:7: ( COLON IDENT EQUAL )
+        // OCL.g:583:8: COLON IDENT EQUAL
+        {
+        match(input,COLON,FOLLOW_COLON_in_synpred1_OCL2391); if (state.failed) return ;
+        match(input,IDENT,FOLLOW_IDENT_in_synpred1_OCL2393); if (state.failed) return ;
+        match(input,EQUAL,FOLLOW_EQUAL_in_synpred1_OCL2395); if (state.failed) return ;
+
+        }
+    }
+    // $ANTLR end synpred1_OCL
+
     // Delegated rules
+
+    public final boolean synpred1_OCL() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred1_OCL_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
 
 
  
@@ -3109,30 +3418,37 @@ import java.util.ArrayList;
     public static final BitSet FOLLOW_tupleItem_in_tupleLiteral2319 = new BitSet(new long[]{0x0000000080000100L});
     public static final BitSet FOLLOW_RBRACE_in_tupleLiteral2330 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_tupleItem2361 = new BitSet(new long[]{0x0000000000000060L});
-    public static final BitSet FOLLOW_set_in_tupleItem2363 = new BitSet(new long[]{0xE3E408003C018090L,0x00000000000001FFL});
-    public static final BitSet FOLLOW_expression_in_tupleItem2371 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_72_in_dateLiteral2402 = new BitSet(new long[]{0x0000000040000000L});
-    public static final BitSet FOLLOW_LBRACE_in_dateLiteral2404 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_STRING_in_dateLiteral2408 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_RBRACE_in_dateLiteral2410 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_simpleType_in_type2460 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_collectionType_in_type2472 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_tupleType_in_type2484 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_typeOnly2516 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_typeOnly2518 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_simpleType2546 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_collectionType2584 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_LPAREN_in_collectionType2611 = new BitSet(new long[]{0x8000000000000010L,0x0000000000000287L});
-    public static final BitSet FOLLOW_type_in_collectionType2615 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_RPAREN_in_collectionType2617 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_71_in_tupleType2651 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_LPAREN_in_tupleType2653 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tuplePart_in_tupleType2662 = new BitSet(new long[]{0x0000000000000300L});
-    public static final BitSet FOLLOW_COMMA_in_tupleType2673 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tuplePart_in_tupleType2677 = new BitSet(new long[]{0x0000000000000300L});
-    public static final BitSet FOLLOW_RPAREN_in_tupleType2689 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_tuplePart2721 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_COLON_in_tuplePart2723 = new BitSet(new long[]{0x8000000000000010L,0x0000000000000287L});
-    public static final BitSet FOLLOW_type_in_tuplePart2727 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_COLON_in_tupleItem2400 = new BitSet(new long[]{0x8000000000000010L,0x0000000000000287L});
+    public static final BitSet FOLLOW_type_in_tupleItem2404 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_EQUAL_in_tupleItem2406 = new BitSet(new long[]{0xE3E408003C018090L,0x00000000000001FFL});
+    public static final BitSet FOLLOW_expression_in_tupleItem2410 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_tupleItem2432 = new BitSet(new long[]{0xE3E408003C018090L,0x00000000000001FFL});
+    public static final BitSet FOLLOW_expression_in_tupleItem2442 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_72_in_dateLiteral2487 = new BitSet(new long[]{0x0000000040000000L});
+    public static final BitSet FOLLOW_LBRACE_in_dateLiteral2489 = new BitSet(new long[]{0x0000000010000000L});
+    public static final BitSet FOLLOW_STRING_in_dateLiteral2493 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_RBRACE_in_dateLiteral2495 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_simpleType_in_type2545 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_collectionType_in_type2557 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_tupleType_in_type2569 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_typeOnly2601 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_typeOnly2603 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_simpleType2631 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_collectionType2669 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_LPAREN_in_collectionType2696 = new BitSet(new long[]{0x8000000000000010L,0x0000000000000287L});
+    public static final BitSet FOLLOW_type_in_collectionType2700 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_RPAREN_in_collectionType2702 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_71_in_tupleType2736 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_LPAREN_in_tupleType2738 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tuplePart_in_tupleType2747 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_COMMA_in_tupleType2758 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tuplePart_in_tupleType2762 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_RPAREN_in_tupleType2774 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_tuplePart2806 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_COLON_in_tuplePart2808 = new BitSet(new long[]{0x8000000000000010L,0x0000000000000287L});
+    public static final BitSet FOLLOW_type_in_tuplePart2812 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_COLON_in_synpred1_OCL2391 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_synpred1_OCL2393 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_EQUAL_in_synpred1_OCL2395 = new BitSet(new long[]{0x0000000000000002L});
 
 }

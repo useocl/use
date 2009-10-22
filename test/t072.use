@@ -1,0 +1,7 @@
+model test
+
+class A
+end
+
+class B<A
+end

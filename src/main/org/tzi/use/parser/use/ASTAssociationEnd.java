@@ -21,6 +21,9 @@
 
 package org.tzi.use.parser.use;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
@@ -40,21 +43,69 @@ public class ASTAssociationEnd extends AST {
     private ASTMultiplicity fMultiplicity;
     private Token fRolename;  // optional: may be null!
     private boolean fOrdered;
-
+    private boolean isUnion = false;
+    private List<Token> subsetsRolename = new ArrayList<Token>();
+    
     public ASTAssociationEnd(Token name, ASTMultiplicity mult) {
         fName = name;
         fMultiplicity = mult;
         fOrdered = false;
     }
 
+    /**
+     * The name of the class this association end targets
+     * @return
+     */
+    public String getClassName()
+    {
+    	return fName.getText();
+    }
+    
     public void setRolename(Token rolename) {
         fRolename = rolename;
     }
 
+    public Token getRolename() {
+    	return fRolename;
+    }
+
+    /**
+     * Returns the specified rolename or if none specified
+     * computes it.
+     * The existence of the class used for the default rolename is not checked.
+     * @param ctx
+     * @return
+     */
+    public String getRolename(Context ctx) {
+    	if (this.fRolename != null) {
+    		return fRolename.getText();
+    	}
+    	else
+    	{
+    		return ctx.model().getClass(fName.getText()).nameAsRolename();
+    	}
+    }
+    
     public void setOrdered() {
         fOrdered = true;
     }
 
+    public void setUnion(boolean newValue) {
+    	isUnion = newValue;
+    }
+    
+    public boolean isUnion() {
+    	return isUnion;
+    }
+    
+    public void addSubsetsRolename(Token rolename) {
+    	subsetsRolename.add(rolename);
+    }
+    
+    public List<Token> getSubsetsRolenames() {
+    	return subsetsRolename;
+    }
+    
     public MAssociationEnd gen(Context ctx, int kind) throws SemanticException {
         // lookup class at association end in current model
         MClass cls = ctx.model().getClass(fName.getText());
@@ -69,15 +120,15 @@ public class ASTAssociationEnd extends AST {
                               "an association end targeting single objects has no effect.");
             fOrdered = false;
         }
-
+        
         MAssociationEnd aend = ctx.modelFactory().createAssociationEnd(cls, 
-            ( fRolename != null ) ? fRolename.getText() : cls.nameAsRolename(),
-            mult, kind, fOrdered);
+            getRolename(ctx), mult, kind, fOrdered);
 
+        aend.setUnion(this.isUnion);
         return aend;
     }
 
     public String toString() {
-        return "FIXME";
+        return (fRolename == null ? "unnamed end on " + getClassName() : fRolename.getText());
     }
 }

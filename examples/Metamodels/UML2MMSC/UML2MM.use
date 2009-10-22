@@ -1,0 +1,979 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model OCL2MM
+
+enum VisibilityKind {
+  public,
+  private,
+  protected,
+  package
+}
+
+enum ParameterDirectionKind {
+  _in, -- Keyword!
+  inout,
+  out,
+  return
+}
+
+enum AggregationKind {
+  none,
+  shared,
+  composite
+}
+
+enum ConnectorKind {
+  assembly,
+  delegation
+}
+
+--------------------------------------------
+-- Package: UML::Classes::Kernel::Classifier
+--------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Fig. 7.3: Root diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class Element
+end
+
+abstract class Relationship < Element
+end
+
+abstract class DirectedRelationship < Relationship
+end
+
+class Comment < Element
+  attributes
+    body : String
+end
+
+composition A_Element_Owner_Element_OwnedElement between
+  Element[0..1] role owner union
+  Element[*] role ownedElement union
+end
+
+composition C_Element_OwningElement_Comment_OwningComments between
+  Element[0..1] role owningElement subsets owner
+  Comment[*] role ownedComments subsets ownedElement
+end
+
+association A_Element_AnnotatedElement_Comment_Comment between
+  Element[*] role annotatedElement
+  Comment[*] role notNavigableAnnotatedElement
+end
+ 
+association A_Relationship_Relationship_Element_RelatedElement between
+  Relationship[*] role relationship
+  Element[1..*] role relatedElement union
+end
+
+association A_DirectedRelationship_DirectedRelationship_Element_Target between
+  DirectedRelationship[*] role notNavigableTarget subsets relationship
+  Element[1..*] role target subsets relatedElement union
+end
+
+association A_DirectedRelationship_DirectedRelationship_Element_Source between
+  DirectedRelationship[*] role notNavigableSource subsets relationship
+  Element[1..*] role source subsets relatedElement union
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End: Fig. 7.3
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Fig. 7.4: Namespaces diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class NamedElement < Element
+attributes
+  name : String
+  visibility : VisibilityKind
+  -- Abgeleitetes Attribut
+  qualifiedName : String  
+end
+
+abstract class PackageableElement < NamedElement
+  attributes
+    
+  constraints
+    inv visibilityDefined:
+	  self.visibility.isDefined()
+end
+
+abstract class Namespace < NamedElement
+end
+
+abstract class RedefinableElement < NamedElement
+  attributes
+    isLeaf : Boolean
+end
+
+class ElementImport < DirectedRelationship
+  attributes
+    visibility : VisibilityKind
+    alias : String
+  constraints
+    inv visibilityDefined:
+	  self.visibility.isDefined()
+end
+
+class PackageImport < DirectedRelationship
+  attributes
+    visibility : VisibilityKind
+  constraints
+    inv visibilityDefined:
+	  self.visibility.isDefined()
+end
+
+association A_Namespace_Namespace_PackageableElement_ImportedMember between
+  Namespace[*] role notNavigableImportedMember subsets notNavigableMember
+  PackageableElement[*] role importedMember subsets member
+end
+
+association A_Namespace_Namespace_NamedElement_Member between
+  Namespace[*] role notNavigableMember union
+  NamedElement[*] role member union
+end
+
+composition C_Namespace_Namespace_NamedElement_OwnedMember between
+  Namespace[0..1] role namespace subsets notNavigableMember subsets owner union
+  NamedElement[*] role ownedMember subsets member subsets ownedElement union
+end
+
+composition C_Namespace_ImportingNamespace_ElementImport_ElementImport between
+  Namespace[1] role importingNamespace subsets source subsets owner
+  ElementImport[*] role elementImport subsets notNavigableSource subsets ownedElement
+end
+
+association A_ElementImport_ElementImport_PackageableElement_ImportedElement between
+  ElementImport[*] role notNavigableImportedElement subsets notNavigableTarget -- Spec says: 1
+  PackageableElement[1] role importedElement subsets target
+end
+
+composition C_Namespace_ImportingNamespace_PackageImport_PackageImport between
+  Namespace[1] role importingNamespace subsets source subsets owner
+  PackageImport[*] role packageImport subsets notNavigableSource subsets ownedElement
+end
+
+association A_PackageImport_PackageImport_Package_ImportedPackage between
+  PackageImport[*] role notNavigableImportedPackage subsets notNavigableTarget
+  Package[1] role importedPackage subsets target
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.4
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.5: Multiplicities diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class MultiplicityElement < Element
+  attributes
+    isOrdered : Boolean
+	isUnique : Boolean
+	upper : Integer // Derived
+	lower : Integer // Derived
+end
+
+abstract class ValueSpecification < PackageableElement, TypedElement
+end
+
+abstract class TypedElement < NamedElement
+end
+
+abstract class Type < PackageableElement
+  operations
+    conformsTo(other : Type) : Boolean = false
+end
+
+composition C_MultiplicityElement_OwningUpper_ValueSpecification_UpperValue between
+  MultiplicityElement[0..1] role owningUpper subsets ownedElement
+  ValueSpecification[0..1] role upperValue subsets owner
+end
+
+composition C_MultiplicityElement_OwningLower_ValueSpecification_LowerValue between
+  MultiplicityElement[0..1] role owningLower subsets ownedElement
+  ValueSpecification[0..1] role lowerValue subsets owner
+end
+
+association A_TypedElement_TypedElement_Type_Type between
+  TypedElement[*]
+  Type[0..1]
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.5
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.6: Expressions diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class Expression < ValueSpecification
+  attributes
+    symbol : String
+end
+
+class OpaqueExpression < ValueSpecification
+  attributes
+    body : String
+	language : String
+end
+
+abstract class LiteralSpecification < ValueSpecification
+end
+
+class InstanceValue < ValueSpecification
+end
+
+class LiteralBoolean < LiteralSpecification
+  attributes
+    value : Boolean
+end
+
+class LiteralInteger < LiteralSpecification
+  attributes
+    value : Integer
+end
+
+class LiteralString < LiteralSpecification
+  attributes
+    value : String
+end
+
+class LiteralUnlimitedNatural < LiteralSpecification
+  attributes
+    value : Integer -- Should be UnlimitedNatural
+end
+
+class LiteralNull < LiteralSpecification
+end
+
+composition C_Expression_Expression_ValueSpecification_Operand between
+  Expression[0..1] role expression subsets owner
+  ValueSpecification[*] role operand ordered subsets ownedElement
+end
+
+association A_InstanceValue_InstanceValue_InstanceSpecification_Instance between
+  InstanceValue[*] role notNavigableInstance
+  InstanceSpecification[1] role instance
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.6
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.7: Constraints diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class Constraint < PackageableElement
+end
+
+composition C_Namespace_Context_Constraint_OwnedRule between
+  Namespace[0..1] role _context subsets namespace // context is Keyword!
+  Constraint[*] role ownedRule subsets ownedMember
+end
+
+association A_Constraint_Constraint_Element_ConstrainedElement between
+  Constraint[*] role notNavigableConstrainedElement
+  Element[*] role constrainedElement ordered
+end
+
+composition C_Constraint_OwningConstraint_ValueSpecification_Specification between
+  Constraint[0..1] role owningConstraint subsets owner
+  ValueSpecification[1] role specification subsets ownedElement
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.7
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.8: Instances diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class InstanceSpecification < PackageableElement
+end
+
+class Slot < Element
+end
+
+composition C_InstanceSpecification_OwningInctance_Slot_OwnedElement between
+  InstanceSpecification[1] role owningInstance subsets owner
+  Slot[*] role slot subsets ownedElement
+end
+
+composition C_Slot_OwningSlot_ValueSpecification_Value between
+  Slot[0..1] role owningSlot subsets owner
+  ValueSpecification[*] role value ordered subsets ownedElement
+end
+
+association A_Slot_Slot_StructuralFeature_DefiningFeature between
+  Slot[*] role notNavigableDefiningFeature
+  StructuralFeature[1] role definingFeature
+end
+
+composition C_InstanceSpecification_OwningInstanceSpec_ValueSpecification_Specification between
+  InstanceSpecification[0..1] role owningInstanceSpec subsets owner
+  ValueSpecification[0..1] role specification subsets ownedElement
+end
+
+association A_InstanceSpecification_InstanceSpecification_Classifier_Classifier between
+  InstanceSpecification[*] role notNavigableClassifier
+  Classifier[*] role classifier
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.8
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.9: Classifiers diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class Classifier < RedefinableElement, Type, Namespace
+  attributes
+    isAbstract : Boolean
+  constraints
+    inv isAbstractDefined:
+	  self.isAbstract.isDefined()
+end
+
+class Generalization < DirectedRelationship
+  attributes
+    isSubstitutable : Boolean
+end
+
+association A_RedefinableElement_RedefinableElement_RedefinableElement_RedefinedElement between
+  RedefinableElement[*] role notNavigableRedefinedElement
+  RedefinableElement[*] role redefinedElement union
+end
+
+association A_RedefinableElement_RedefinableElement_Classifier_RedefinitionContext between
+  RedefinableElement[*] role notNavigableRedefinitionContext
+  Classifier[*] role redefinitionContext union
+end
+
+association A_Classifier_Classifier_Property_Attribute between
+  Classifier[0..1] role classifier subsets featuringClassifier -- Err in Spec?: redefinitionContext
+  Property[*] role attribute subsets feature union
+end
+
+association A_Classifier_General_Generalization_Generalization between
+  Classifier[1] role general subsets target
+  Generalization[*] role allGeneralizations subsets notNavigableTarget
+end
+
+composition C_Classifier_Specific_Generalization_Generalization between
+  Classifier[1] role specific subsets source subsets owner
+  Generalization[*]	role directGeneralizations subsets notNavigableSource subsets ownedElement
+end
+
+association A_Classifier_Classifier_NamedElement_InheritedMember between
+  Classifier[*] role notNavigableInheritedMember subsets notNavigableMember
+  NamedElement[*] role inheritedMember subsets member
+end
+
+association A_Classifier_Classifier_Classifier_RedefinedClassifier between
+  Classifier[*] role notNavigableRedefinedClassifier subsets notNavigableRedefinedElement
+  Classifier[*] role redefinedClassifier subsets redefinedElement
+end
+
+association A_Classifier_Classifier_Classifier_General between
+  Classifier[*] role notNavigableGeneral
+  Classifier[*] role general --derived
+end
+
+------------------------------------------------------------------
+-- End Figure 7.9
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.10: Features diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class Feature < RedefinableElement
+  attributes
+    isStatic : Boolean
+end
+
+abstract class StructuralFeature < MultiplicityElement, TypedElement, Feature
+  attributes
+    isReadOnly : Boolean
+end
+
+abstract class BehavioralFeature < Feature, Namespace
+end
+
+class Parameter < TypedElement, MultiplicityElement
+  attributes
+    direction : ParameterDirectionKind
+	default : String -- derived
+end
+
+association A_Classifier_FeaturingClassifier_Feature_Feature between
+  Classifier[*] role featuringClassifier union
+  Feature[*] role feature union
+end
+
+composition C_BehavioralFeature_OwnerFormalParam_Parameter_OwnedParameter between
+  BehavioralFeature[0..1] role ownerFormalParam subsets namespace
+  Parameter[*] role ownedParameter ordered subsets ownedMember
+end
+
+association A_BehavioralFeature_BehavioralFeature_Type_RaisedException between
+  BehavioralFeature[*] role notNavigableRaisedException
+  Type[*] role raisedException
+end
+
+composition C_Parameter_OwningParameter_ValueSpecification_DefaultValue between
+  Parameter[0..1] role owningParameter subsets owner
+  ValueSpecification[0..1] role defaultValue subsets ownedElement
+end
+
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.10
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.11: Operations diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class Operation < BehavioralFeature
+  attributes
+    isQuery : Boolean
+	isOrdered : Boolean -- derived
+	isUnique : Boolean  -- derived
+	lower : Integer     -- derived
+	upper : Integer     -- derived
+end 
+
+composition C_Operation_Operation_Parameter_OwnedParameter between
+  Operation[0..1] role operationRedefined -- subsets namespace
+  Parameter[*] role ownedParameterRedefined -- redefines ownedParameter
+end
+
+composition C_Operation_PreContext_Constraint_Precondition between
+  Operation[0..1] role preContext subsets _context
+  Constraint[*] role precondition subsets ownedRule
+end
+
+composition C_Operation_PostContext_Constraint_Postcondition between
+  Operation[0..1] role postContext subsets _context
+  Constraint[*] role postcondition subsets ownedRule
+end
+
+composition C_Operation_BodyContext_Constraint_BodyCondition between
+  Operation[0..1] role bodyContext subsets _context
+  Constraint[0..1] role bodyCondition subsets ownedRule
+end
+
+association A_Operation_Operation_Type_Type between
+  Operation[*] role notNavigableType
+  Type[0..1] role type
+end
+
+association Operation_Operation_Type_RaisedException between
+  Operation[*] role notNavigableRaisedException_Redefined -- subsets redefinedElement
+  Type[*] role raisedException_redefined -- redefines raisedException
+end
+
+association Operation_Operation_Operation_RedefinedOperation between
+  Operation[*] role notNavigableRedefinedOperation
+  Operation[*] role redefinedOperation
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.11
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.12: Classes diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class Property < StructuralFeature, ConnectableElement /* From Fig. 9.2: */ 
+  attributes
+	isDerived : Boolean
+	-- already defined: isReadOnly : Boolean
+	isDerivedUnion : Boolean
+	default : String -- derived
+	_aggregation : AggregationKind   -- Keyword !
+	isComposite : Boolean -- derived
+end
+
+class Class < Classifier
+end
+
+class Association < Relationship, Classifier
+  attributes
+    isDerived : Boolean
+end
+
+association A_Class_Class_Class_SuperClass between
+  Class[*] role notNavigableSuperClass_RedefinesGeneral
+  Class[*] role superClass_redefinesGeneral
+end
+
+composition C_Class_Class_Property_OwnedAttribute between
+  Class[0..1] role _class subsets classifier subsets namespace subsets featuringClassifier
+  Property[*] role ownedAttribute ordered subsets attribute subsets ownedMember subsets feature
+end
+
+composition C_Class_Class_Classifier_NestedClassifier between
+  Class[0..1] role notNavigableNestedClassifier subsets namespace subsets redefinitionContext
+  Classifier[*] role nestedClassifier ordered subsets ownedMember subsets notNavigableRedefinitionContext
+end
+
+composition C_Class_Class_Operation_OwnedOperation between
+  Class[0..1] role notNavigableOwnedOperation subsets redefinitionContext subsets namespace subsets featuringClassifier
+  Operation[*] role ownedOperation subsets feature subsets ownedMember subsets notNavigableRedefinitionContext
+end
+
+association A_Property_Property_Property_SubsettedProperty between
+  Property[*] role notNavigableSubsettedProperty
+  Property[*] role subsettedProperty
+end
+
+association A_Property_Property_Property_RedefinedProperty between
+  Property[*] role notNavigableredefinedProperty
+  Property[*] role redefinedProperty
+end
+
+association A_Property_Property_Property_Opposite between
+  Property[0..1] role notNavigableOpposite
+  Property[0..1] role opposite
+end
+
+association A_Property_MemberEnd_Association_Association between
+  Property[2..*] role memberEnd ordered subsets member
+  Association[0..1] role _association subsets notNavigableMember
+end
+
+composition C_Association_OwningAssociation_Property_OwnedEnd between
+  Association[0..1] role owningAssociation subsets _association subsets namespace subsets featuringClassifier
+  Property[*] role ownedEnd ordered subsets memberEnd subsets feature subsets ownedMember  
+end
+
+association A_Association_Association_Property_NavigableOwnedEnd between
+  Association[0..1] role notNavigableAssociation subsets owningAssociation -- Not marked in Spec
+  Property[*] role navigableOwnedEnd subsets ownedEnd
+end
+
+composition C_Property_OwningProperty_ValueSpecification_DefaultValue between
+  Property[0..1] role owningProperty subsets owner
+  ValueSpecification[0..1] role defaultValue subsets ownedElement
+end
+
+association A_Association_Association_Type_EndType between
+  Association[*] role notNavigableEndType subsets relationship -- Not marked in Spec
+  Type[1..*] role endType ordered subsets relatedElement
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.12
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.13: DataTypes diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class DataType < Classifier
+end
+
+class PrimitiveType < DataType
+end
+
+class Enumeration < DataType
+end
+
+class EnumerationLiteral < InstanceSpecification
+end
+
+composition C_DataType_Datatype_Property_OwnedAttribute between
+  DataType[0..1] role datatype subsets namespace subsets featuringClassifier subsets classifier
+  Property[*] role ownedAttribute ordered subsets ownedMember subsets feature subsets attribute -- subsets feature not in Spec!
+end
+
+composition C_DataType_Datatype_Operation_OwnedOperation between
+  DataType[0..1] role datatype subsets namespace subsets redefinitionContext subsets featuringClassifier
+  Operation[*] role ownedOperation ordered subsets ownedMember subsets notNavigableRedefinitionContext subsets feature
+end
+
+composition C_Enumeration_Enumeration_EnumerationLiteral_OwnedLiteral between
+  Enumeration[0..1] role enumeration subsets namespace
+  EnumerationLiteral[*] role ownedLiteral ordered subsets ownedMember
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.13
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.14 - The Packages diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class Package < Namespace, PackageableElement
+end
+
+class PackageMerge < DirectedRelationship
+end
+
+composition C_Package_OwningPackage_PackagableElement_PackagedElement between
+  Package[0..1] role owningPackage subsets namespace
+  PackageableElement[*] role packagedElement subsets ownedMember
+end
+
+composition C_Package_Package_Type_OwnedType between
+  Package[0..1] role package subsets owningPackage -- Spec says: namespace
+  Type[*] role ownedType subsets packagedElement
+end
+
+composition C_Package_ReceivingPackage_PackageMerge_PackageMerge between
+  Package[1] role receivingPackage subsets source subsets owner
+  PackageMerge[*] role packageMerge subsets notNavigableSource subsets ownedElement
+end
+
+association A_PackageMerge_PackageMerge_Package_MergedPackage between
+  PackageMerge[*] role notNavigableMergedPackage subsets notNavigableTarget
+  Package[1] role mergedPackage subsets target
+end
+
+composition C_Package_NestingPackage_Package_Nestedpackage between
+  Package[0..1] role nestingPackage subsets owningPackage -- spec says: namespace
+  Package[*] role nestedPackage subsets packagedElement
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.14
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.15 - Contents of Dependencies package
+--------------------------------------------------------------------------------------------------------
+class Dependency < DirectedRelationship, PackageableElement
+end
+
+class Abstraction < Dependency
+end
+
+class Usage < Dependency
+end
+
+class Realization < Abstraction
+end
+
+class Substitution < Realization
+end
+
+-- In the specification the subsets constraint is on the wrong end?!?
+association A_Dependency_SupplierDependency_NamedElement_Supplier between
+  Dependency[*] role supplierDependency subsets notNavigableTarget -- not mentioned in Spec.
+  NamedElement[1..*] role supplier subsets target
+end
+
+-- In the specification the subsets constraint is on the wrong end?!?
+association A_Dependency_ClientDependency_NamedElement_Client between
+  Dependency[*] role clientDependency subsets notNavigableSource -- not mentioned in Spec.
+  NamedElement[1..*] role client subsets source
+end
+
+composition C_Abstraction_Abstraction_OpaqueExpression_Mapping between
+  Abstraction[0..1] role abstraction subsets owner -- not mentioned in Spec.
+  OpaqueExpression[0..1] role mapping subsets ownedElement
+end
+
+association A_Substitution_Substitution_Classifier_Contract between
+  Substitution[*] role notNavigableSubstitution subsets supplierDependency -- not mentioned in Spec.
+  Classifier[1] role contract subsets supplier
+end
+
+composition C_Classifier_SubstitutingClassifier_Substitution_Substitution between
+  Classifier[1] role substitutingClassifier subsets client subsets owner -- owner not mentioned in Spec.
+  Substitution[*] role substitution subsets ownedElement subsets clientDependency
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.15
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.16 - Contents of Interfaces package
+--------------------------------------------------------------------------------------------------------
+class Interface < Classifier
+end
+
+class InterfaceRealization < Realization
+end
+
+class BehavioredClassifier < Classifier
+end
+
+composition C_Interface_Interface_Classifier_NestedClassifier between
+  Interface[0..1] role notNavigableNestedClassifier2 subsets namespace subsets redefinitionContext
+  Classifier[*] role nestedClassifer ordered subsets ownedMember -- not mentioned in Spec.: subsets notNavigableRedefinitionContext
+end
+
+composition C_Interface_Interface_Property_OwnedAttribute between
+  Interface[0..1] role notNavigableOwnedAttribute subsets classifier subsets namespace subsets featuringClassifier
+  Property[*] role ownedAttribute ordered subsets attribute subsets ownedMember -- not mentioned in Spec.: subsets feature
+end
+
+composition C_Interface_Interface_Operation_OwnedOperation between
+  Interface[0..1] role interface subsets redefinitionContext -- not mentioned in Spec.: subsets namespace subsets featuringClassifier
+  Operation[*] role ownedOperation ordered subsets notNavigableRedefinitionContext subsets ownedMember subsets feature
+end
+
+association A_Interface_Interface_Interface_RedefinedInterface between
+  Interface[*] role notNavigableRedefinedInterface -- not mentioned in Spec.: subsets notNavigableRedefinedElement
+  Interface[*] role redefinedInterface subsets redefinedElement
+end
+
+association InterfaceRealization_InterfaceRealization_Interface_Contract between
+  InterfaceRealization[*] role notNavigableContract -- not mentioned in Spec.: subsets supplierDependency
+  Interface[1] role contract subsets supplier
+end
+
+composition C_BehavioredClassifier_ImplementingClassifier_InterfaceRealization_InterfaceRealization between
+  BehavioredClassifier[1] role implementingClassifier subsets client -- not mentioned in Spec.: subsets owner
+  InterfaceRealization[*] role interfaceRealization subsets clientDependency subsets ownedElement
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.16
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.17 - Contents of AssociationClasses package
+--------------------------------------------------------------------------------------------------------
+class AssociationClass < Class, Association
+end
+
+composition C_Property_AssociationEnd_Property_Qualifier between
+  Property[0..1] role associationEnd subsets owner
+  Property[*] role qualifier ordered subsets ownedElement
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.17
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.18 - Contents of PowerTypes package
+--------------------------------------------------------------------------------------------------------
+class GeneralizationSet < PackageableElement
+  attributes
+    isCovering : Boolean
+	isDisjoint : Boolean
+end
+
+association A_Classifier_Powertype_GeneralizationSet_PowertypeExtend between
+  Classifier[0..1] role powertype
+  GeneralizationSet[*] role powertypeExtent
+end
+
+association A_Generalization_Generalization_GeneralizationSet_GeneralizationSet between
+  Generalization[*] role generalization
+  GeneralizationSet[*] role generalizationSet
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.18
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 8.2 - The metaclasses that define the basic Component construct
+--------------------------------------------------------------------------------------------------------
+/* 
+Class is from UML::CompositeStructured::StructuredClasses::Class, 
+but due package merge, this can be ignored 
+*/
+class Component < NamedElement, Class 
+  attributes
+    isIndirectlyInstantiated : Boolean
+end
+
+class ComponentRealization < Realization
+end
+
+composition C_Component_Abstraction_ComponentRealization_Realization between
+  Component[0..1] role abstraction subsets owner subsets client
+  ComponentRealization[*] role realization subsets ownedElement -- not mentioned in Spec.: subsets clientDependency
+end
+
+association A_Component_Component_Interface_Required between
+  Component[*] role notNavigableRequired
+  Interface[*] role required -- derived
+end
+
+association A_Component_Component_Interface_Provided between
+  Component[*] role notNavigableProvided
+  Interface[*] role provided -- derived
+end
+
+association A_ComponentRealization_ComponentRealization_Classifier_RealizingClassifier between
+  ComponentRealization[*] role notNavigableRealizingClassifier -- not mentioned in Spec.: subsets supplierDependency
+  Classifier[1..*] role realizingClassifier subsets supplier
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 8.2
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 8.3 - The metaclasses that define the component wiring constructs
+--------------------------------------------------------------------------------------------------------
+-- Inheritance from Fig. 9.3
+class Connector < Feature
+  attributes
+    kind:ConnectorKind
+end
+
+association A_Connector_Connector_Behavior_Contract between
+  Connector[*] role notNavigableContract
+  Behavior[*] role contract
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 8.3
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 8.4 - The packaging capabilities of Components
+--------------------------------------------------------------------------------------------------------
+composition C_Component_Component_PackageableElement_packagedElement between
+  Component[0..1] role notNavigablePackagedElement -- not mentioned in Spec.: subsets namespace
+  PackageableElement[*] role packagedElement subsets ownedMember
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 8.4
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.2 - Structured classifier
+--------------------------------------------------------------------------------------------------------
+class StructuredClassifier < Classifier
+end
+
+class ConnectableElement < TypedElement
+end
+
+association A_StructuredClassifier_StructuredClassifier_ConnectableElement_Role between
+  StructuredClassifier[*] role notNavigableRole -- not mentioned in Spec.: subsets notNavigableMember
+  ConnectableElement[*] role _role subsets member -- derived
+end
+
+composition C_StructuredClassifier_StructuredClassifier_Property_OwnedAttribute between
+  StructuredClassifier[0..1] role notNavigableOwnedAttribute2 
+	/* not mentioned in Spec.: */ subsets notNavigableRole subsets namespace subsets classifier
+  Property[*] role ownedAttribute ordered subsets _role subsets ownedMember subsets attribute
+end
+
+association A_StructuredClassifier_StructuredClassifier_Property_Part between
+  StructuredClassifier[0..1] role notNavigablePart
+  Property[*] role part -- derived
+end
+
+composition C_StructuredClassifier_StructuredClassifier_Connector_OwnedConnector between
+  StructuredClassifier[0..1] role notNavigableOwnedConnector 
+    subsets redefinitionContext 
+	-- not mentioned in Spec.: subsets namespace
+	-- not mentioned in Spec.: subsets featuringClassifier
+  Connector[*] role ownedConnector 
+	-- not mentioned in Spec.: subsets notNavigableRedefinitionContext 
+	subsets ownedMember
+	subsets feature
+end
+
+/*
+This association is already defined in Fig. 7.9
+*/
+/* association A_Classifier_Classifier_Property_Attribute between
+  Classifier[0..1] role classifier
+  Property[*] role attribute
+end */
+
+association A_Connector_Connector_Connector_RedefinedConnector between
+  Connector[*] role notNavigableRedefinedConnector -- not mentioned in Spec.: subsets notNavigableRedefinedElement
+  Connector[*] role redefinedConnector subsets redefinedElement
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.2
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.3 - Connectors
+--------------------------------------------------------------------------------------------------------
+class ConnectorEnd < MultiplicityElement
+end
+
+association A_ConnectableElement_Role_ConnectorEnd_End between
+  ConnectableElement[1] role _role -- derived
+  ConnectorEnd[*] role _end -- derived
+end
+
+composition C_Connector_Connector_ConnectorEnd_End between
+  Connector[1] role notNavigableEnd -- not mentioned in Spec.: subsets owner
+  ConnectorEnd[2..*] role _end ordered subsets ownedElement
+end
+
+association A_ConnectorEnd_ConnectorEnd_Property_DefiningEnd between
+  ConnectorEnd[*] role notNavigableDefiningEnd
+  Property[0..1] role definingEnd -- derived, readonly
+end
+
+association A_Connector_Connector_Association_Type between
+  Connector[*] role notNavigableType2
+  Association[0..1] role type
+end  
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.3
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.4 - The Port metaclass
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.4
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.5 - Classes with internal structure
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.5
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.6 - Collaboration
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.6
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.7 - Collaboration.use and role binding
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.7
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.8 - Actions specific to composite structures
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.8
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.9 - Extension to Variable
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.9
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 13.6 - Common Behavior
+--------------------------------------------------------------------------------------------------------
+class Behavior < Class
+  attributes
+    isReentrant:Boolean
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 13.6
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure x.xx - zzzzzzz
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure x.xx
+--------------------------------------------------------------------------------------------------------

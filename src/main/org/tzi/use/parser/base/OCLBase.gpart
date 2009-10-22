@@ -516,8 +516,16 @@ tupleLiteral returns [ASTTupleLiteral n]
 */
 tupleItem returns [ASTTupleItem n]
 :
-    name=IDENT (COLON|EQUAL) e=expression 
-    { $n = new ASTTupleItem($name, $e.n); } 
+    name=IDENT
+    ( 
+      // For backward compatibility we have to look ahead,
+      // to check for a given type.
+      (COLON IDENT EQUAL) => COLON t=type EQUAL e=expression
+      { $n = new ASTTupleItem($name, $t.n, $e.n); }
+    |
+      (COLON | EQUAL) e=expression
+      { $n = new ASTTupleItem($name, $e.n); }       
+    ) 
     ;
 
 /* ------------------------------------

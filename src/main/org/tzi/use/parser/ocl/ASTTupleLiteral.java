@@ -27,6 +27,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpTupleLiteral;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -47,7 +48,18 @@ public class ASTTupleLiteral extends ASTExpression {
         
         for (ASTTupleItem ti : fItems) {
             Expression e = ti.expression().gen(ctx);
-            parts[i++] = new ExpTupleLiteral.Part(ti.name().getText(), e);
+            
+            // If a type was given, check conformance
+            if (ti.getType() != null) {
+            	Type itemType = ti.getType().gen(ctx);
+            	if (!e.type().isSubtypeOf(itemType)) {
+            		throw new SemanticException(ti.name(), "Tuple part expression does not match the given part type");
+            	}
+            	parts[i++] = new ExpTupleLiteral.Part(ti.name().getText(), e, itemType);
+            }
+            else {
+            	parts[i++] = new ExpTupleLiteral.Part(ti.name().getText(), e);
+            }
         }
         
         return new ExpTupleLiteral(parts);

@@ -245,9 +245,12 @@ public final class ActionHideClassDiagram extends ActionHide {
                 MGeneralization gen = it.next();
                 if ( nodesToHide.contains( gen.parent() ) 
                         || nodesToHide.contains( gen.child() ) ) {
-                    genEdgesToHide.add( gen );
                     EdgeBase e = fGenToGeneralizationEdge.get( gen );
-                    fLayoutXMLForHiddenElements += e.storePlacementInfo( true );
+                    // Could be removed before
+                    if (e != null) {
+                    	genEdgesToHide.add( gen );
+                    	fLayoutXMLForHiddenElements += e.storePlacementInfo( true );
+                    }
                 }
             }
         }

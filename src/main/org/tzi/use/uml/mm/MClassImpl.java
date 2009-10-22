@@ -419,4 +419,24 @@ public class MClassImpl extends MModelElementImpl implements MClass {
     public void processWithVisitor(MMVisitor v) {
         v.visitClass(this);
     }
+
+	@Override
+	public List<MAssociationEnd> getAssociationEnd(String roleName) {
+		List<MAssociationEnd> result = new ArrayList<MAssociationEnd>();
+		
+		Set<MClass> allClasses = this.allParents();
+		allClasses.add(this);
+		
+		for (MAssociation assoc : this.allAssociations()) {
+			for (MClass cls : allClasses) {
+				Set<MAssociationEnd> ends = assoc.associationEndsAt(cls);
+				for (MAssociationEnd end : ends) {
+					if (end.nameAsRolename().equals(roleName))
+						result.add(end);
+				}
+			}
+		}
+		
+		return result;
+	}
 }

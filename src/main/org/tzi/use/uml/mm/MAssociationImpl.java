@@ -35,6 +35,10 @@ import java.util.Set;
 class MAssociationImpl extends MModelElementImpl implements MAssociation {
     private List<MAssociationEnd> fAssociationEnds;
     private int fPositionInModel;
+    private Set<MAssociation> subsets = new HashSet<MAssociation>();;
+    private Set<MAssociation> subsettedBy = new HashSet<MAssociation>();
+    private boolean isUnion;
+    
     /**
      * The association is called reflexive if any participating class
      * occurs more than once, e.g. R(C,C) is reflexive but also
@@ -222,4 +226,42 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
         }
         return true;
     }
+
+	@Override
+	public void addSubsets(MAssociation asso) {
+		subsets.add(asso);
+	}
+
+	@Override
+	public Set<MAssociation> getSubsets() {
+		return subsets;
+	}
+	
+	public void setUnion(boolean newValue) {
+		isUnion = newValue;
+	}
+	
+	public boolean isUnion() {
+		return isUnion;
+	}
+
+	@Override
+	public void addSubsettedBy(MAssociation asso) {
+		this.subsettedBy.add(asso);
+	}
+
+	@Override
+	public Set<MAssociation> getSubsettedBy() {
+		return this.subsettedBy;
+	}
+
+	@Override
+	public MAssociationEnd getAssociationEnd(MClass endCls, String rolename) {
+		for (MAssociationEnd end : this.associationEndsAt(endCls)) {
+			if (end.nameAsRolename().equals(rolename))
+				return end;
+		}
+		
+		return null;
+	}
 }

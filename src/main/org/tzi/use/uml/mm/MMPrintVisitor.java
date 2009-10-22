@@ -172,10 +172,35 @@ public class MMPrintVisitor implements MMVisitor {
 
     public void visitAssociationEnd(MAssociationEnd e) {
         indent();
-        println(id(e.cls().name()) + 
-                other("[" + e.multiplicity() + "]") + ws() +
-                keyword("role") + ws() + id(e.name()) + 
-                ( e.isOrdered() ? ws() + keyword("ordered") : ""));
+        StringBuilder result = new StringBuilder();
+        
+        result.append(id(e.cls().name()));
+        result.append(other("[" + e.multiplicity() + "]"));
+        result.append(ws());
+        result.append(keyword("role"));
+        result.append(ws());
+        result.append(id(e.name()));
+        
+        if (e.getSubsettedEnds().size() > 0) {
+        	for (MAssociationEnd end : e.getSubsettedEnds()) {
+        		result.append(ws());
+        		result.append(keyword("subsets"));
+        		result.append(ws());
+        		result.append(end.nameAsRolename());
+        	}
+        }
+        
+        if (e.isUnion()) {
+        	result.append(ws());
+        	result.append(keyword("union"));
+        }
+        
+        if (e.isOrdered()) {
+        	result.append(ws());
+        	result.append(keyword("ordered"));
+        }
+                
+        println(result.toString());
     }
 
     public void visitAttribute(MAttribute e) {

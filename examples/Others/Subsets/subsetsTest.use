@@ -1,0 +1,17 @@
+model subsetsTest
+
+class T1
+end
+
+class T2 < T1
+end
+
+association ac between
+  T2[*] role c subsets d
+  T1[*] role a
+end
+
+association bd between
+  T1[*] role b
+  T2[*] role d
+end

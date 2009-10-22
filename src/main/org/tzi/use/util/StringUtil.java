@@ -35,6 +35,8 @@ public final class StringUtil {
     // no instances
     private StringUtil() {}
 
+    public static String NEWLINE = System.getProperty("line.separator");
+    
     public static String fmtSeq(Object objarr[], 
                                 int beginIndex, String divider) {
         StringBuilder resString = new StringBuilder();

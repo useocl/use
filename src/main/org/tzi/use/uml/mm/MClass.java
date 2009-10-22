@@ -229,5 +229,12 @@ public interface MClass extends MModelElement {
     /**
      * Process this element with visitor.
      */
-    public void processWithVisitor( MMVisitor v );        
+    public void processWithVisitor( MMVisitor v );
+
+    /**
+     * Searches for the AssociationEnds owned by this class or its parent with the given rolename
+     * @param subsetsRolename
+     * @return
+     */
+	public List<MAssociationEnd> getAssociationEnd(String name);
 }

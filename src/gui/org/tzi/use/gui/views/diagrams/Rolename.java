@@ -23,8 +23,11 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.util.StringUtil;
 
 /**
  * Represents a rolename node in a diagram. 
@@ -39,7 +42,7 @@ public final class Rolename extends EdgeProperty {
               int x1, int y1, int x2, int y2, DiagramOptions opt, 
               int side, EdgeBase edge ) {
         fAssocEnd = assocEnd;
-        fName = fAssocEnd.name();
+        setName();
         fSource = source;
         fTarget = target;
         fAssoc = fAssocEnd.association();
@@ -50,6 +53,28 @@ public final class Rolename extends EdgeProperty {
         fY_SourceEdgePoint = y1;
         fX_TargetEdgePoint = x2;
         fY_TargetEdgePoint = y2;
+    }
+    
+    private void setName() {
+    	List<String> constraints = new ArrayList<String>();
+    	
+    	if (fAssocEnd.isOrdered()) {
+    		constraints.add("ordered");
+    	}
+    	
+    	if (fAssocEnd.isUnion()) {
+    		constraints.add("union");
+    	}
+    	
+		for (MAssociationEnd subsettedEnd : fAssocEnd.getSubsettedEnds()) {
+			constraints.add("subsets " + subsettedEnd.nameAsRolename());    			
+		}
+    	    	
+    	fName = fAssocEnd.nameAsRolename();
+    	
+    	if (constraints.size() > 0) {
+    		fName = fName + " {" + StringUtil.fmtSeq(constraints.iterator(), ", ") + "}";
+    	}
     }
     
     /**

@@ -1096,10 +1096,43 @@ public final class MSystemState {
 						+ aend2.multiplicity() + "'.");
 				valid = false;
 			}
+			
+			if (aend1.getSubsettedEnds().size() > 0) {
+				if (!checkSubsets(out, obj, objList, aend1))
+					valid = false;
+			}
 		}
 		return valid;
 	}
 
+	private boolean checkSubsets(PrintWriter out, MObject obj, List<MObject> linkedObjects, MAssociationEnd aend) {
+		boolean valid = true;
+		
+		for (MAssociationEnd subEnd1 : aend.getSubsettedEnds()) {
+			List<MAssociationEnd> ends = subEnd1.getAllOtherAssociationEnds();
+			
+			// TODO: n-Ary
+			assert ends.size() == 1;
+			MAssociationEnd subEnd2 = ends.get(0);
+			
+			List<MObject> parentObjectList = getLinkedObjects(obj, subEnd1, subEnd2);
+			
+			if (!parentObjectList.containsAll(linkedObjects)) {
+				// Which objects are missing?
+				linkedObjects.removeAll(parentObjectList);
+				
+				out.println("Constraint 'subsets " + subEnd1.association().name() + ":" + subEnd1.nameAsRolename() + "' on association end " + aend.nameAsRolename() + 
+						    ":" + aend.association().name() + " is violated on object " + obj.toString() + ":" + obj.cls().name());
+				
+				out.println("Missing linked objects: " + StringUtil.fmtSeq(linkedObjects.iterator(), ", "));
+				
+				valid = false;
+			}
+		}
+		
+		return valid;
+	}
+	
 	/**
 	 * Returns a unique name that can be used for a new object of the given
 	 * class. Checks whether the name is used in this state. BigFix for USE

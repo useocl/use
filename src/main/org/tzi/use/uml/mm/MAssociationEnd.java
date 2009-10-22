@@ -22,7 +22,9 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -44,7 +46,9 @@ public final class MAssociationEnd extends MModelElementImpl
     private boolean fIsOrdered; // use as Set or OrderedSet
     private boolean fIsNavigable = true; 
     private boolean fIsExplicitNavigable = false;
-
+    private boolean isUnion;
+    // All Ends this End subsets
+    private Set<MAssociationEnd> subsettedEnds = new HashSet<MAssociationEnd>();
     
     /** 
      * Creates a new association end. 
@@ -219,4 +223,19 @@ public final class MAssociationEnd extends MModelElementImpl
         return nMinusOneClasses;
     }
 
+	public void addSubsettedEnd(MAssociationEnd subsetsEnd) {
+		this.subsettedEnds.add(subsetsEnd);
+	}
+
+	public Set<MAssociationEnd> getSubsettedEnds() {
+		return this.subsettedEnds;
+	}
+	
+	public boolean isUnion() {
+		return isUnion;
+	}
+	
+	public void setUnion(boolean newValue) {
+		isUnion = newValue;
+	}
 }

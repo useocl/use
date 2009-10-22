@@ -31,7 +31,8 @@ import org.tzi.use.parser.AST;
  * @author  Mark Richters
  */
 public class ASTTupleItem extends AST {
-    private Token fName;
+    private ASTType type = null;
+	private Token fName;
     private ASTExpression fExpr;
 
     public ASTTupleItem(Token name, ASTExpression expr) {
@@ -39,12 +40,21 @@ public class ASTTupleItem extends AST {
         fExpr = expr;
     }
 
+    public ASTTupleItem(Token name, ASTType type, ASTExpression expr) {
+        this(name, expr);
+        this.type = type;
+    }
+    
     public Token name() {
         return fName;
     }
 
     public ASTExpression expression() {
         return fExpr;
+    }
+    
+    public ASTType getType() {
+    	return type;
     }
 }
 

@@ -1,0 +1,23 @@
+model SimpleSubset
+
+class A
+end
+
+class B
+end
+
+class C < A
+end
+
+class D < B
+end
+
+association ab between
+  A[*] role a union
+  B[*] role b union
+end
+
+association cd between
+  C[*] role c subsets a
+  D[*] role d subsets b
+end

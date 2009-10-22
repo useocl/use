@@ -488,4 +488,50 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
         return fAssociationImpl.isAssignableFrom(classes);
     }
 
+	@Override
+	public void addSubsets(MAssociation asso) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public Set<MAssociation> getSubsets() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	@Override
+	public List<MAssociationEnd> getAssociationEnd(String subsetsRolename) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isUnion() {
+		// TODO Union with AssociationClass
+		return false;
+	}
+
+	@Override
+	public void setUnion(boolean newValue) {
+		// TODO Union with AssociationClass
+	}
+	
+	@Override
+	public void addSubsettedBy(MAssociation asso) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<MAssociation> getSubsettedBy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MAssociationEnd getAssociationEnd(MClass endCls, String rolename) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -100,7 +100,23 @@ public final class TupleType extends Type {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-        return equals(t);
+    	if(!t.isTupleType()){
+    		return false;
+    	}
+
+    	TupleType otherType = (TupleType)t;
+    	
+    	for(TupleType.Part part : fParts.values()){
+    		if (!otherType.fParts.containsKey(part.name()))
+    			return false;
+    		
+    		TupleType.Part otherPart = otherType.fParts.get(part.name());
+    		
+    		if (!part.type().isSubtypeOf(otherPart.type()))
+    			return false;
+    	}
+    	
+    	return true;
     }
 
     /** 

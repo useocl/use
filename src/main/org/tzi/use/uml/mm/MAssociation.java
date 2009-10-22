@@ -69,6 +69,31 @@ public interface MAssociation extends MModelElement {
     Set<MClass> associatedClasses();
 
     /**
+     * All associations, which are subsetted by this
+     * @return
+     */
+    Set<MAssociation> getSubsets();
+    
+    /**
+     * Adds an association that is subsetted by this association
+     * @param asso
+     */
+    void addSubsets(MAssociation asso);
+    
+    
+    /**
+     * Adds an association that this association is subsetted by
+     * @param asso
+     */
+    void addSubsettedBy(MAssociation asso);
+    
+    /**
+     * All associations this association is subsetted by
+     * @return
+     */
+    Set<MAssociation> getSubsettedBy();
+    
+    /**
      * Returns kind of association. This operation returns aggregate
      * or composition if one of the association ends is aggregate or
      * composition.
@@ -122,4 +147,9 @@ public interface MAssociation extends MModelElement {
      */
     boolean isAssignableFrom(MClass[] classes);
     
+    boolean isUnion();
+    
+    void setUnion(boolean newValue);
+
+	MAssociationEnd getAssociationEnd(MClass endCls, String rolename);
 }

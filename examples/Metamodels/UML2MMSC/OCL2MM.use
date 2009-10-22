@@ -1,0 +1,364 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model OCL2MM
+
+enum VisibilityKind {
+  public,
+  private,
+  protected,
+  package
+}
+
+--------------------------------------------
+-- Package: UML::Classes::Kernel::Classifier
+--------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Fig. 7.3: Root diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class Element
+end
+
+abstract class Relationship < Element
+end
+
+abstract class DirectedRelationship < Relationship
+end
+
+class Comment < Element
+  attributes
+    body : String
+end
+
+composition A_Element_Owner_Element_OwnedElement between
+  Element[0..1] role owner
+  Element[*] role ownedElement
+end
+
+composition A_Element_OwningElement_Comment_OwningComments between
+  Element[0..1] role owningElement  								// {subsets owner}
+  Comment[*] role ownedComments     								// {subsets owned element}
+end
+
+association A_Element_AnnotatedElement_Comment_Comment between
+  Element[*] role annotatedElement
+  Comment[*]
+end
+ 
+association A_Relationship_Relationship_Element_RelatedElement between
+  Relationship[*]
+  Element[1..*] 													//{readonly, union}
+end
+
+association A_DirectedRelationship_DirectedRelationship_Element_Target between
+  DirectedRelationship[*] role directedRelationship_subTarget 		// must be named, because of rolename conflict
+  Element[1..*] role target 										// {readonly, union, subsets relatedElement}
+end
+
+association A_DirectedRelationship_DirectedRelationship_Element_Source between
+  DirectedRelationship[*] role directedRelationship_subSource 		// must be named, because of rolename conflict
+  Element[1..*] role source 										// {readonly, union, subsets relatedElement}
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End: Fig. 7.3
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Fig. 7.4: Namespaces diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class NamedElement < Element
+attributes
+  name : String
+  visibility : VisibilityKind
+  -- Abgeleitetes Attribut
+  qualifiedName : String  
+end
+
+abstract class PackageableElement < NamedElement
+  attributes
+    
+  constraints
+    inv visibilityDefined:
+	  self.visibility.isDefined()
+end
+
+abstract class Namespace < NamedElement
+end
+
+abstract class RedefinableElement < NamedElement
+  attributes
+    isLeaf : Boolean
+end
+
+class ElementImport < DirectedRelationship
+  attributes
+    visibility : VisibilityKind
+    alias : String
+  constraints
+    inv visibilityDefined:
+	  self.visibility.isDefined()
+end
+
+class PackageImport < DirectedRelationship
+  attributes
+    visibility : VisibilityKind
+  constraints
+    inv visibilityDefined:
+	  self.visibility.isDefined()
+end
+
+class Package
+end
+
+association A_Namespace_Namespace_PackageableElement_ImportedMember between
+  Namespace[*] role namespace_subImportedMember
+  PackageableElement[*] role importedMember 						// {readonly, subsets member}
+end
+
+association A_Namespace_Namespace_NamedElement_Member between
+  Namespace[*]
+  NamedElement[*] role member 										// {readonly, union}
+end
+
+composition A_Namespace_Namespace_NamedElement_OwnedMember between
+  Namespace[0..1] role namespace_subMember_subOwnedElement 			// {readonly, union, subsets owner}
+  NamedElement[*] role ownedMember 									// {readonly, union, subsets member, subsets ownedElement}
+end
+
+composition A_Namespace_ImportingNamespace_ElementImport_ElementImport between
+  Namespace[1] role importingNamespace 								// {subsets source, subsets owner}
+  ElementImport[*] role elementImport_subOwnedElement  				// {subsets ownedElement}
+end
+
+association A_ElementImport_ElementImport_PackageableElement_ImportedElement between
+  ElementImport[1]
+  PackageableElement[1] role importedElement 						// {subsets target}
+end
+
+composition A_Namespace_ImportingNamespace_PackageImport_PackageImport between
+  Namespace[1] role importingNamespace_subSource_subOwner			// {subsets source, subsets owner}
+  PackageImport[*] role packageImport_subOwnedElement				// {subsets ownedElement}
+end
+
+association A_PackageImport_PackageImport_Package_ImportedPackage between
+  PackageImport[*]
+  Package[1] role importedPackage_subTarget							// {subsets target}
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.4
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.5: Multiplicities diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class MultiplicityElement < Element
+  attributes
+    isOrdered : Boolean
+	isUnique : Boolean
+	upper : Integer // Derived
+	lower : Integer // Derived
+end
+
+abstract class ValueSpecification < PackageableElement, TypedElement
+end
+
+abstract class TypedElement < NamedElement
+end
+
+abstract class Type < PackageableElement
+  operations
+    conformsTo(other : Type) : Boolean = false
+end
+
+composition C_MultiplicityElement_OwningUpper_ValueSpecification_UpperValue between
+  MultiplicityElement[0..1] role owningUpper						// {subsets ownedElement}
+  ValueSpecification[0..1] role upperValue							// {subsets owner}
+end
+
+composition C_MultiplicityElement_OwningLower_ValueSpecification_LowerValue between
+  MultiplicityElement[0..1] role owningLower						// {subsets ownedElement}
+  ValueSpecification[0..1] role lowerValue							// {subsets owner}
+end
+
+association TypedElement_TypedElement_Type_Type between
+  TypedElement[*]
+  Type[0..1]
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.5
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.6: Expressions diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class Expression < ValueSpecification
+  attributes
+    symbol : String
+end
+
+class OpaqueExpression < ValueSpecification
+  attributes
+    body : String
+	language : String
+end
+
+abstract class LiteralSpecification < ValueSpecification
+end
+
+class InstanceValue < ValueSpecification
+end
+
+class LiteralBoolean < LiteralSpecification
+  attributes
+    value : Boolean
+end
+
+class LiteralInteger < LiteralSpecification
+  attributes
+    value : Integer
+end
+
+class LiteralString < LiteralSpecification
+  attributes
+    value : String
+end
+
+class LiteralUnlimitedNatural < LiteralSpecification
+  attributes
+    value : Integer // Should be UnlimitedNatural
+end
+
+class LiteralNull < LiteralSpecification
+end
+
+composition Expression_Expression_ValueSpecification_Operand between
+  Expression[0..1]													// {subsets owner}
+  ValueSpecification[*] role operand								// {subsets ownedElement, ordered}
+end
+
+association InstanceValue_InstanceValue_InstanceSpecification_Instance between
+  InstanceValue[*]
+  InstanceSpecification[1] role instance
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.6
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.7: Constraints diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class Constraint < PackageableElement
+end
+
+composition C_Namespace_Context_Constraint_OwnedRule between
+  Namespace[0..1] role _context										// {subsets namespace}
+  Constraint[*] role ownedRule										// {subsets ownedMember}
+end
+
+association A_Constraint_Constraint_Element_ConstrainedElement between
+  Constraint[*]
+  Element[*] role constrainedElement ordered
+end
+
+composition Constraint_OwningConstraint_ValueSpecification_Specification between
+  Constraint[0..1] role owningConstraint
+  ValueSpecification[1] role specification
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.7
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.8: Instances diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+class InstanceSpecification < PackageableElement
+end
+
+class Slot
+end
+
+composition C_InstanceSpecification_OwningInctance_Slot_OwnedElement between
+  InstanceSpecification[1] role OwningInstance						// {subsets owner}
+  Slot[*]															// {subsets ownedElement}
+end
+
+composition C_Slot_OwningSlot_ValueSpecification_Value between
+  Slot[0..1] role owningSlot										// {subsets owner}
+  ValueSpecification[*] role value ordered							// {subsets ownedElement}
+end
+
+association A_Slot_Slot_StructuralFeature_DefiningFeature between
+  Slot[*]
+  StructuralFeature[1] role definingFeature
+end
+
+composition C_InstanceSpecification_OwningInstanceSpec_ValueSpecification_Specification between
+  InstanceSpecification[0..1] role owningInstanceSpec				// {subsets owner}
+  ValueSpecification[0..1] role specification						// {subsets ownedElement}
+end
+
+association A_InstanceSpecification_InstanceSpecification_Classifier_Classifier between
+  InstanceSpecification[*]
+  Classifier[*]
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.8
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.9: Classifiers diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class Classifier < RedefinableElement, Type, Namespace
+  attributes
+    isAbstract : Boolean
+  constraints
+    inv isAbstractDefined:
+	  self.isAbstract.isDefined()
+end
+
+class Generalization < DirectedRelationship
+  attributes
+    isSubstitutable : Boolean
+end
+
+association A_Classifier_General_Generalization_Generalization between
+  Classifier[1] role general										// {subsets target}
+  Generalization[*] role allGeneralizations
+end
+
+composition C_Classifier_Specific_Generalization_Generalization between
+  Classifier[1] role specific										// {subsets source, subsets owner}
+  Generalization[*]	role directGeneralizations						// {subsets ownedElement}
+end
+
+association A_Classifier_Classifier_NamedElement_InheritedMember between
+  Classifier[*] role inheritedBy
+  NamedElement[*] role inheritedMember								// {readOnly, subsets member}
+end
+
+association A_Classifier_Classifier_Classifier_RedefinedClassifier between
+  Classifier[*] role redefinedBy
+  Classifier[*] role redefinedElement
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.9
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.10: Features diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class Feature < RedefinableElement
+  attributes
+    isStatic : Boolean
+end
+
+abstract class StructuralFeature < MultiplicityElement, TypedElement
+  attributes
+    isReadOnly : Boolean
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.10
+--------------------------------------------------------------------------------------------------------

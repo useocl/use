@@ -179,6 +179,16 @@ public class ASTModel extends AST {
             }
         }
 
+        // (3c) add associationEnd specific constraints, e. g. subsets
+        // Role names are known and can be subset
+        for (ASTAssociation a : fAssociations) {
+        	try {
+        		a.genConstraints(ctx, model);
+        	} catch (SemanticException ex) {
+        		ctx.reportError(ex);
+        	}
+        }
+        
         // (4a) generate constraints. All class interfaces are known
         // and association features are available for expressions.
         for (ASTClass c : fClasses) {

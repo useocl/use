@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.tzi.use.uml.ocl.type.TupleType;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.TupleValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -42,12 +43,31 @@ public final class ExpTupleLiteral extends Expression {
     public static class Part {
         private String fName;
         private Expression fExpr;
-
+        // Maybe a type was given by the user
+        private Type givenType = null;
+        
         public Part(String name, Expression expr) {
             fName = name;
             fExpr = expr;
         }
 
+        public Part(String name, Expression expr, Type givenType) {
+            this(name, expr);
+            this.givenType = givenType;
+        }
+        
+        /**
+         * Returns the type of the TuplePart. Either the one given by the user
+         * or if not given the type of the expression. 
+         * @return
+         */
+        public Type getType() {
+        	if (givenType == null)
+        		return fExpr.type();
+        	else
+        		return givenType;
+        }
+        
         public String toString() {
             return fName + ":" + fExpr;
         }
@@ -62,7 +82,7 @@ public final class ExpTupleLiteral extends Expression {
         TupleType.Part[] typeParts = new TupleType.Part[fParts.length];
         
         for (int i = 0; i < fParts.length; i++)
-            typeParts[i] = new TupleType.Part(fParts[i].fName, fParts[i].fExpr.type());
+            typeParts[i] = new TupleType.Part(fParts[i].fName, fParts[i].getType());
         
         setResultType(TypeFactory.mkTuple(typeParts));
     }
