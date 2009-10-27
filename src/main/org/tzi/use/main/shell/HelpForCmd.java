@@ -32,15 +32,13 @@ import org.tzi.use.config.Options;
 import org.tzi.use.util.Log;
 
 /**
- * Singleton helper class for the command line help.
- * The actual help texts are taken from a property file.
+ * Singleton helper class for the command line help. The actual help texts are
+ * taken from a property file.
  * 
- * The property is organized in keys.
- * For each key, three entries must exist in the property file.
+ * The property is organized in keys. For each key, three entries must exist in
+ * the property file.
  *
- * Example:
- * help.net.syntax=net
- * help.net=Read commands from socket
+ * Example: help.net.syntax=net help.net=Read commands from socket
  * help.net.detail=Read commands from a socket. Socket number is 1777.
  * 
  * @version $ProjectVersion: 0.393 $
@@ -80,7 +78,9 @@ public class HelpForCmd {
 
     /**
      * Prints a detailed help for the command/concept identified by key.
-     * @param key The help key
+	 * 
+	 * @param key
+	 *            The help key
      */
     private void printDetailedHelpByKey(String key) {
         try {
@@ -104,7 +104,9 @@ public class HelpForCmd {
 
     /**
      * Prints a one line help for the command/concept identified by key.
-     * @param key The help key
+	 * 
+	 * @param key
+	 *            The help key
      */
     private void printOneLineHelpByKey(String key) {
         try {
@@ -118,6 +120,7 @@ public class HelpForCmd {
     
     /**
      * Prints a header (used in the help overview).
+	 * 
      * @param header
      */
     private void printHeader(String header) {
@@ -147,6 +150,7 @@ public class HelpForCmd {
     
     /**
      * Print help for a command. If cmd is null, a help overview is printed.
+	 * 
      * @param cmd
      */
     public void printHelp(String cmd) {
@@ -231,6 +235,8 @@ public class HelpForCmd {
             printDetailedHelpByKey("help.gen.result.inv");
         } else if (cmd.startsWith("gen result")) {
             printDetailedHelpByKey("help.gen.result");   
+		} else if (cmd.startsWith("plugins")) {
+			printDetailedHelpByKey("help.plugins");
         } else
             Log.error("Unknown command `" + cmd + "'. " + "Try `help'.");
     }
@@ -280,6 +286,7 @@ public class HelpForCmd {
         printOneLineHelpByKey("help.gen.result");
         printOneLineHelpByKey("help.gen.result.inv");
         printOneLineHelpByKey("help.gen.result.accept");
+		printHeader("Plugin commands");
+		printOneLineHelpByKey("help.plugins");
     }
 }
-

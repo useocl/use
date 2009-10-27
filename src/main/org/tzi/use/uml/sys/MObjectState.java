@@ -44,7 +44,7 @@ public final class MObjectState {
     /**
      * Constructs a new object state. 
      */
-    MObjectState(MObject obj) {
+	public MObjectState(MObject obj) {
         fObject = obj;
 
         // initialize attribute slots with undefined values
@@ -73,38 +73,37 @@ public final class MObjectState {
     /**
      * Returns the value of the specified attribute.
      *
-     * @exception IllegalArgumentException attr is not part of this object.
+	 * @exception IllegalArgumentException
+	 *                attr is not part of this object.
      */
     public Value attributeValue(MAttribute attr) {
         Value val = (Value) fAttrSlots.get(attr);
         if (val == null )
-            throw new IllegalArgumentException("Attribute `" + attr + 
-                                               "' does not exist in object `" + fObject.name() + "'.");
+			throw new IllegalArgumentException("Attribute `" + attr
+					+ "' does not exist in object `" + fObject.name() + "'.");
         return val;
     }
 
     /**
      * Assigns a new value to the specified attribute.
      *
-     * @exception IllegalArgumentException attr is not part of this
-     *            object or types don't match.
+	 * @exception IllegalArgumentException
+	 *                attr is not part of this object or types don't match.
      */
     public void setAttributeValue(MAttribute attr, Value newVal) {
         Value oldVal = (Value) fAttrSlots.get(attr);
         if (oldVal == null )
-            throw new IllegalArgumentException("Attribute `" + attr + 
-                                               "' does not exist in object `" + fObject.name() + "'.");
+			throw new IllegalArgumentException("Attribute `" + attr
+					+ "' does not exist in object `" + fObject.name() + "'.");
         if (! newVal.type().isSubtypeOf(attr.type()) )
-            throw new IllegalArgumentException("Expected type `" + 
-                                               attr.type() + "' for attribute `" + 
-                                               attr.name() + "', found type `" +
-                                               newVal.type() + "'.");
+			throw new IllegalArgumentException("Expected type `" + attr.type()
+					+ "' for attribute `" + attr.name() + "', found type `"
+					+ newVal.type() + "'.");
         fAttrSlots.put(attr, newVal);
     }
 
     /**
-     * Returns a map with attribute/value pairs. Do not modify this
-     * map!
+	 * Returns a map with attribute/value pairs. Do not modify this map!
      *
      * @return Map(MAttribute, Value) 
      */

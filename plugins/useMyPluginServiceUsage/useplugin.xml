@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?use version="2.4.0"?>
+<plugin name="My Plugin" version="0.1" publisher="Roman Asendorf">
+	<services>
+		<service class="org.tzi.use.myPluginServiceUsage.MyPluginService"
+			id="org.tzi.use.myPluginServiceUsage.MyPluginService">
+		</service>
+	</services>
+<commands>
+		<command class="org.tzi.use.myPluginServiceUsage.MyPluginUsageCmd"
+            id="org.tzi.use.myPluginServiceUsage.MyPluginUsageCmd" shellcmd="runService"
+            label="Runs My Plugin Service" help="Calls the own and the example service">
+        </command>
+	</commands>
+</plugin>

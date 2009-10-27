@@ -21,13 +21,13 @@
 
 package org.tzi.use.util;
 
-import java.io.*;
-import java.util.Date;
+import java.io.PrintStream;
 import java.text.DateFormat;
+import java.util.Date;
 
 /** 
- * Class Log provides a set of static methods for writing log messages
- * on output streams.
+ * Class Log provides a set of static methods for writing log messages on output
+ * streams.
  *
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
@@ -36,6 +36,7 @@ public final class Log {
 
     private static PrintStream fOut = System.out;
     private static PrintStream fErr = System.err;
+    private static PrintStream fDbg = System.out;
 
     private static DateFormat fDateFormat = null;
 
@@ -45,14 +46,14 @@ public final class Log {
     private static boolean fPrintStackTraces = true;
     private static boolean fDidOutput = false;
     private static boolean showWarnings = true;
+    private static boolean fDebug = false;
     
 	// utility class
-    private Log() {}
+    private Log() {
+    }
     
-
     /**
-     * Sets verbose flag. Determines whether verbose messages are
-     * printed.
+     * Sets verbose flag. Determines whether verbose messages are printed.
      */
     public static void setVerbose(boolean onOff) {
         fVerbose = onOff;
@@ -72,8 +73,8 @@ public final class Log {
 	}
 	
     /**
-     * Sets print time flag. Determines whether messages are prefixed
-     * with the current time.  
+     * Sets print time flag. Determines whether messages are prefixed with the
+     * current time.
      */
     public static void setPrintTime(boolean onOff) {
         fPrintTime = onOff;
@@ -84,8 +85,7 @@ public final class Log {
     }
 
     /**
-     * Sets trace flag. Determines whether trace messages are
-     * printed.
+     * Sets trace flag. Determines whether trace messages are printed.
      */
     public static void setTrace(boolean onOff) {
         fTrace = onOff;
@@ -107,10 +107,9 @@ public final class Log {
     }
 
     /**
-     * Resets flag indicating that output occurred. Flag is set by
-     * output methods. After some complex operations clients can ask
-     * if some output occurred without bothering about verbosity
-     * settings.
+     * Resets flag indicating that output occurred. Flag is set by output
+     * methods. After some complex operations clients can ask if some output
+     * occurred without bothering about verbosity settings.
      */
     public static void resetOutputFlag() {
         fDidOutput = false;
@@ -118,6 +117,17 @@ public final class Log {
 
     public static boolean didOutput() {
         return fDidOutput;
+    }
+
+    /**
+     * Sets debug flag. Determines whether debug messages are printed.
+     */
+    public static void setDebug(boolean onOff) {
+	fDebug = onOff;
+    }
+
+    public static boolean isDebug() {
+	return fDebug;
     }
 
     public static PrintStream out() {
@@ -201,8 +211,8 @@ public final class Log {
 
     public static void error(String s, Exception e) {
         String className = e.getClass().getName();
-        fErr.println("exception " + className + ": " + s + 
-                     " reason: " + e.getMessage());
+	fErr.println("exception " + className + ": " + s + " reason: "
+		+ e.getMessage());
         if (fPrintStackTraces )
             e.printStackTrace();
         fDidOutput = true;
@@ -212,7 +222,16 @@ public final class Log {
 		if (Log.isShowWarnings()) {
 			Log.println(string);
 		}
+	}
 		
+    /**
+     * Print debug messages.
+     */
+    public static void debug(String s) {
+		if (fDebug) {
+		    fDbg.println("Debug: " + s);
+		    fDidOutput = true;
+	}
 	}
 
 }

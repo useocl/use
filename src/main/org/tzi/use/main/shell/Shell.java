@@ -37,11 +37,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.model.GFlaggedInvariant;
@@ -49,9 +52,13 @@ import org.tzi.use.gen.tool.GNoResultException;
 import org.tzi.use.main.DaVinciProcess;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
+import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.main.shell.runtime.IPluginShellCmd;
+import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
 import org.tzi.use.parser.cmd.CMDCompiler;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.use.USECompiler;
+import org.tzi.use.runtime.shell.impl.PluginShellCmdProxy;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
@@ -101,7 +108,6 @@ public final class Shell implements Runnable {
 
     public static final String CONTINUE_PROMPT = "> ";
 
-    
     /**
      * Run program until true. Set by exit command.
      */
@@ -141,20 +147,35 @@ public final class Shell implements Runnable {
 
     private static Shell fShell = null;
 
+	private IPluginShellExtensionPoint shellExtensionPoint;
+
+	private Map<Map<String, String>, PluginShellCmdProxy> pluginCommands = new HashMap<Map<String, String>, PluginShellCmdProxy>();
+
+	private IRuntime fPluginRuntime;
+
     /**
      * Constructs a new shell.
      */
-    private Shell(Session session) {
+	private Shell(Session session, IRuntime pluginRuntime) {
         fReadlineStack = new ReadlineStack();
         // no need to listen on session changes since every command
         // explicitly retrieves the current system
         fSession = session;
+		this.fPluginRuntime = pluginRuntime;
         fDaVinci = new DaVinciProcess(Options.DAVINCI_PATH);
-    }
+		// integrate plugin commands
+		if (Options.doPLUGIN) {
+			this.shellExtensionPoint = (IPluginShellExtensionPoint) this.fPluginRuntime
+					.getExtensionPoint("shell");
 
-    public static Shell getInstance(Session session) {
+			this.pluginCommands = this.shellExtensionPoint.createPluginCmds(
+					this.fSession, this);
+    }
+	}
+
+	public static Shell getInstance(Session session, IRuntime pluginRuntime) {
         if (fShell == null) {
-            fShell = new Shell(session);
+			fShell = new Shell(session, pluginRuntime);
         }
         return fShell;
     }
@@ -176,7 +197,11 @@ public final class Shell implements Runnable {
             cmdOpen(Options.cmdFilename);
         } else {
             Log.verbose("Enter `help' for a list of available commands.");
+			if (Options.doPLUGIN) {
+				Log
+						.verbose("Enter `plugins' for a list of available plugin commands.");
         }
+		}
 
         while (!fFinished) {
             Thread.yield();
@@ -187,6 +212,7 @@ public final class Shell implements Runnable {
             // get current readline (may be e.g. console or file)
             //fReadline = (Readline) fReadlineStack.peek();
             fReadline = fReadlineStack.getCurrentReadline();
+
             try {
                 if (fMultiLineMode) {
                     while (true) {
@@ -257,7 +283,8 @@ public final class Shell implements Runnable {
             }
             processLine(line);
         } catch (NoSystemException ex) {
-            Log.error("No System available. Please load a model before executing this command.");
+			Log
+					.error("No System available. Please load a model before executing this command.");
         } catch (Exception ex) {
             System.err.println();
             String nl = Options.LINE_SEPARATOR;
@@ -270,7 +297,8 @@ public final class Shell implements Runnable {
                             + nl
                             + "with a description of your last input and include the following output:");
             System.err.println("Program version: " + Options.RELEASE_VERSION);
-            //System.err.println("Project version: " + Options.PROJECT_VERSION);
+			// System.err.println("Project version: " +
+			// Options.PROJECT_VERSION);
             System.err.print("Stack trace: ");
             ex.printStackTrace();
         }
@@ -287,7 +315,8 @@ public final class Shell implements Runnable {
         try {
             processLine("exit");
         } catch (NoSystemException ex) {
-            Log.error("No System available. Please load a model before executing this command.");
+			Log
+					.error("No System available. Please load a model before executing this command.");
         }
     }
 
@@ -374,9 +403,43 @@ public final class Shell implements Runnable {
             cmdGenInvariantFlags(line.substring(9), system());
         else if (line.startsWith("gen result") || line.equals("gen result"))
             cmdGenResult(line.substring(10), system());
-        else
-            Log.error("Unknown command `" + line + "'. " + "Try `help'.");
+		else if (line.startsWith("plugins") || line.equals("plugins"))
+			cmdShowPlugins();
+		else if (Options.doPLUGIN) {
+			Set<Entry<Map<String, String>, PluginShellCmdProxy>> cmdEntrySet = this.pluginCommands.entrySet();
+			boolean cmdFound = false;
+			
+			for (Entry<Map<String, String>, PluginShellCmdProxy> currentCmdMapEntry : cmdEntrySet) {
+				Map<String, String> currentCmdDescMap = currentCmdMapEntry.getKey();
+
+				if (line.startsWith(currentCmdDescMap.get("cmd"))
+						|| line.equals(currentCmdDescMap.get("cmd"))) {
+					IPluginShellCmd currentCmd = currentCmdMapEntry.getValue();
+					currentCmd.executeCmd(currentCmdDescMap.get("cmd"), 
+							line.substring(currentCmdDescMap.get("cmd").length()));
+					cmdFound = true;
+					break;
     }
+			}
+
+			if (!cmdFound)
+				Log.error("Unknown command `" + line + "'. Try `help'.");
+		} else
+			Log.error("Unknown command `" + line + "'. Try `help'.");
+	}
+
+	private void cmdShowPlugins() {
+		System.out
+				.println("================== Plugin commands available ====================");
+		
+		for (Entry<Map<String, String>, PluginShellCmdProxy> currentCmdMapEntry : this.pluginCommands.entrySet()) {
+			Map<String, String> currentCmdDescMap = currentCmdMapEntry.getKey();
+			System.out.println(currentCmdDescMap.get("cmd") + " : "
+					+ currentCmdDescMap.get("help"));
+		}
+		System.out
+				.println("=================================================================");
+	}
 
     /**
      * Checks integrity constraints of current system state.
@@ -440,8 +503,7 @@ public final class Shell implements Runnable {
         // compile command
         MSystem system = system();
         List<MCmd> cmdList = CMDCompiler.compileCmdList(system.model(), system
-                .state(), line, "<input>", new PrintWriter(
-                System.err));
+				.state(), line, "<input>", new PrintWriter(System.err));
 
         // compile errors?
         if (cmdList == null)
@@ -482,7 +544,8 @@ public final class Shell implements Runnable {
                 exitCode = 1;
     
             if (Options.readlineTest) {
-                System.err.println("readline balance: "+ ReadlineTestReadlineDecorator.getBalance());
+				System.err.println("readline balance: "
+						+ ReadlineTestReadlineDecorator.getBalance());
                 System.err.flush();
                 exitCode = ReadlineTestReadlineDecorator.getBalance();
             }
@@ -921,9 +984,9 @@ public final class Shell implements Runnable {
         MSystem system = system();
         InputStream stream = new ByteArrayInputStream(line.getBytes());
         
-        Expression expr = OCLCompiler.compileExpression(system.model(),
-                stream, "<input>", new PrintWriter(System.err),
-                system.topLevelBindings());
+		Expression expr = OCLCompiler.compileExpression(system.model(), stream,
+				"<input>", new PrintWriter(System.err), system
+						.topLevelBindings());
 
         // compile errors?
         if (expr == null)
@@ -950,13 +1013,17 @@ public final class Shell implements Runnable {
                     exprEvalBrowserClass = Class
                             .forName("org.tzi.use.gui.views.ExprEvalBrowser");
                 } catch (ClassNotFoundException e) {
-                    Log.error("Could not load GUI. Probably use-gui-...jar is missing.", e);
+					Log
+							.error(
+									"Could not load GUI. Probably use-gui-...jar is missing.",
+									e);
                     System.exit(1);
                 }
                 try {
                     Method create = exprEvalBrowserClass.getMethod("create",
                             new Class[] { EvalNode.class, MSystem.class });
-                    create.invoke(null, new Object[] { evaluator.getEvalNodeRoot(), system() });
+					create.invoke(null, new Object[] {
+							evaluator.getEvalNodeRoot(), system() });
                 } catch (Exception e) {
                     Log.error("FATAL ERROR.", e);
                     System.exit(1);
@@ -981,9 +1048,9 @@ public final class Shell implements Runnable {
         MSystem system = system();
         InputStream stream = new ByteArrayInputStream(line.getBytes());
         
-        Expression expr = OCLCompiler.compileExpression(system.model(),
-                stream, "<input>", new PrintWriter(System.err),
-                system.topLevelBindings());
+		Expression expr = OCLCompiler.compileExpression(system.model(), stream,
+				"<input>", new PrintWriter(System.err), system
+						.topLevelBindings());
 
         // compile errors?
         if (expr == null)
@@ -1001,9 +1068,11 @@ public final class Shell implements Runnable {
             // read from file, echo each line as it is read
             Readline fReadline;
             if (Options.quiet || !doEcho)
-                fReadline = LineInput.getStreamReadline(reader, false, false, "");
+				fReadline = LineInput.getStreamReadline(reader, false, false,
+						"");
             else
-                fReadline = LineInput.getStreamReadline(reader, true, true, filename + "> ");
+				fReadline = LineInput.getStreamReadline(reader, true, true,
+						filename + "> ");
             fReadlineStack.push(fReadline);
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");

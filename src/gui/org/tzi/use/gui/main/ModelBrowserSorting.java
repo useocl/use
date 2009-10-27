@@ -53,11 +53,9 @@ import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 
-
 /**
- * ModelBrowserSorting is used to put the tree nodes of the
- * ModelBrowser in a specific order. It provides all the
- * sorting algorithem.
+ * ModelBrowserSorting is used to put the tree nodes of the ModelBrowser in a
+ * specific order. It provides all the sorting algorithem.
  *
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @version $ProjectVersion: 0.393 $
@@ -65,8 +63,8 @@ import org.tzi.use.uml.mm.MPrePostCondition;
 public class ModelBrowserSorting  {
     
     /**
-     * A SortChangeEvent is used to notify interested listeners that the
-     * sorting order has changed.  
+	 * A SortChangeEvent is used to notify interested listeners that the sorting
+	 * order has changed.
      */
     @SuppressWarnings("serial")
 	public class SortChangeEvent extends EventObject {
@@ -79,7 +77,6 @@ public class ModelBrowserSorting  {
         void stateChanged(ModelBrowserSorting.SortChangeEvent e);
     }
 
-    
     private static ModelBrowserSorting fModelBrowserSorting = null;
     private EventListenerList fListenerList;
     
@@ -114,8 +111,8 @@ public class ModelBrowserSorting  {
     public final int CLS_ALPHABETIC = 1;
 
     /**
-     * Signals that the classes will be sorted in the
-     * way they were written in the USE-File.
+	 * Signals that the classes will be sorted in the way they were written in
+	 * the USE-File.
      */
     public final int CLS_USE_ORDER = 2;
 
@@ -125,8 +122,8 @@ public class ModelBrowserSorting  {
     public final int ATTR_ALPHABETIC = 1;
 
     /**
-     * Signals that the attributes will be sorted in the
-     * way they were written in the USE-File.
+	 * Signals that the attributes will be sorted in the way they were written
+	 * in the USE-File.
      */
     public final int ATTR_USE_ORDER = 2;
 
@@ -136,8 +133,8 @@ public class ModelBrowserSorting  {
     public final int OPR_ALPHABETIC = 1;
 
     /**
-     * Signals that the operations will be sorted in the
-     * way they were written in the USE-File.
+	 * Signals that the operations will be sorted in the way they were written
+	 * in the USE-File.
      */
     public final int OPR_USE_ORDER = 2;
 
@@ -146,26 +143,26 @@ public class ModelBrowserSorting  {
      */
     public final int ASSOC_ALPHABETIC = 1;
     /**
-     * Signals that the associations will be sorted in the
-     * way they were written in the USE-File.
+	 * Signals that the associations will be sorted in the way they were written
+	 * in the USE-File.
      */
     public final int ASSOC_USE_ORDER = 2;
 
     /**
-     * Signals that all invarants will be sorted in alphabetic order 
-     * by class name first
+	 * Signals that all invarants will be sorted in alphabetic order by class
+	 * name first
      */
     public final int INV_ALPHABETIC_BY_CLASS = 1;
 
     /**
-     * Signals that the invariants will be sorted in the
-     * way they were written in the USE-File.
+	 * Signals that the invariants will be sorted in the way they were written
+	 * in the USE-File.
      */
     public final int INV_USE_ORDER = 2;
 
     /**
-     * Signals that all invarants will be sorted in alphabetic order 
-     * by invariant name first
+	 * Signals that all invarants will be sorted in alphabetic order by
+	 * invariant name first
      */
     public final int INV_ALPHABETIC_INV_NAME = 5;
     public int condOrder = 10;
@@ -173,7 +170,6 @@ public class ModelBrowserSorting  {
     public final int COND_ALPHABETIC_BY_NAME = 8;
     public final int COND_ALPHABETIC_BY_PRE = 9;
     public final int COND_USE_ORDER = 10;
-
 
     private ModelBrowserSorting() {
         fListenerList = new EventListenerList();
@@ -186,10 +182,11 @@ public class ModelBrowserSorting  {
         return fModelBrowserSorting;
     }
     
-    
     /**
      * Adds Listeners who are interrested on a change event of sorting.
-     * @param l The listener who is interrested
+	 * 
+	 * @param l
+	 *            The listener who is interrested
      */
     public void addSortChangeListener( SortChangeListener l ) {
         fListenerList.add( SortChangeListener.class, l );
@@ -229,10 +226,12 @@ public class ModelBrowserSorting  {
         if ( attributes.size() > 0 ) {
             switch ( attrOrder ) {
                 case ATTR_ALPHABETIC:
-                    Collections.sort(attributes, new AlphabeticalAttributeComparator());
+				Collections.sort(attributes,
+						new AlphabeticalAttributeComparator());
                     break;
                 case ATTR_USE_ORDER:
-                    Collections.sort(attributes, new UseFileOrderAttributeComparator());
+				Collections.sort(attributes,
+						new UseFileOrderAttributeComparator());
                     break;
                 default:
                     break;
@@ -253,10 +252,12 @@ public class ModelBrowserSorting  {
         if ( operations.size() > 0 ) {
             switch ( oprOrder ) {
                 case OPR_ALPHABETIC:
-                    Collections.sort(operations, new AlphabeticalOperationComparator());
+				Collections.sort(operations,
+						new AlphabeticalOperationComparator());
                     break;
                 case OPR_USE_ORDER:
-                    Collections.sort(operations, new UseFileOrderOperationComparator());
+				Collections.sort(operations,
+						new UseFileOrderOperationComparator());
                     break;
                 default:
                     break;
@@ -282,10 +283,12 @@ public class ModelBrowserSorting  {
             
             switch (assocOrder) {
                 case ASSOC_ALPHABETIC:
-                    Collections.sort(onlyAssocs, new AlphabeticalAssociationComparator());
+				Collections.sort(onlyAssocs,
+						new AlphabeticalAssociationComparator());
                     break;
                 case ASSOC_USE_ORDER:
-                    Collections.sort(onlyAssocs, new UseFileOrderAssociationComparator());
+				Collections.sort(onlyAssocs,
+						new UseFileOrderAssociationComparator());
                     break;
                 default:
                     break;
@@ -306,13 +309,16 @@ public class ModelBrowserSorting  {
         if (sortedInvs.size() > 0) {
             switch (invOrder) {
             case INV_ALPHABETIC_BY_CLASS:
-                Collections.sort(sortedInvs, new AlphabeticalInvariantByClassComparator());
+				Collections.sort(sortedInvs,
+						new AlphabeticalInvariantByClassComparator());
                 break;
             case INV_USE_ORDER:
-                Collections.sort(sortedInvs, new UseFileOrderInvariantComparator());
+				Collections.sort(sortedInvs,
+						new UseFileOrderInvariantComparator());
                 break;
             case INV_ALPHABETIC_INV_NAME:
-                Collections.sort(sortedInvs, new AlphabeticalInvariantByNameComparator());
+				Collections.sort(sortedInvs,
+						new AlphabeticalInvariantByNameComparator());
                 break;
             default:
                 break;
@@ -333,16 +339,20 @@ public class ModelBrowserSorting  {
         if (sortedConds.size() > 0) {
             switch (condOrder) {
                 case COND_ALPHABETIC_BY_OPERATION:
-                    Collections.sort(sortedConds, new AlphabeticalConditionByOperationComparator());
+				Collections.sort(sortedConds,
+						new AlphabeticalConditionByOperationComparator());
                     break;
                 case COND_ALPHABETIC_BY_NAME:
-                    Collections.sort(sortedConds, new AlphabeticalConditionByNameComparator());
+				Collections.sort(sortedConds,
+						new AlphabeticalConditionByNameComparator());
                     break;
                 case COND_ALPHABETIC_BY_PRE:
-                    Collections.sort(sortedConds, new AlphabeticalConditionByPreComparator());
+				Collections.sort(sortedConds,
+						new AlphabeticalConditionByPreComparator());
                     break;
                 case COND_USE_ORDER:
-                    Collections.sort(sortedConds, new UseFileOrderConditionComparator());
+				Collections.sort(sortedConds,
+						new UseFileOrderConditionComparator());
                     break;
                 default:
                     break;
@@ -352,13 +362,14 @@ public class ModelBrowserSorting  {
         return sortedConds;
     }
 
+	Collection<?> sortPluginCollection(Collection<?> value) {
+		return value;
+	}
 
-    
     /*
-     * Notify all listeners that have registered interest for
-     * notification on this event type.  The event instance 
-     * is lazily created using the parameters passed into 
-     * the fire method.
+	 * Notify all listeners that have registered interest for notification on
+	 * this event type. The event instance is lazily created using the
+	 * parameters passed into the fire method.
      */
     public void fireStateChanged() {
         // Guaranteed to return a non-null array
@@ -376,4 +387,5 @@ public class ModelBrowserSorting  {
             }          
         }
     }
+
 }

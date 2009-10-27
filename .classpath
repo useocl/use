@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/.svn/**" kind="src" path="src/main"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src/runtime"/>
 	<classpathentry excluding="**/.svn/**" kind="src" path="src/gui"/>
 	<classpathentry excluding="**/.svn/**" kind="src" path="src/test"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>

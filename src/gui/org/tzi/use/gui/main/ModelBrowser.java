@@ -37,7 +37,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -56,24 +59,24 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
-import org.tzi.use.gui.util.MMHTMLPrintVisitor;
+import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
+import org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.event.ModelBrowserMouseHandling;
+import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MMPrintVisitor;
-import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MPrePostCondition;
 
 /** 
- * A ModelBrowser provides a tree view of classes, associations, and
- * constraints in a model. The definition of a selected element is
- * shown in an HTML pane. A class can be dragged onto an object
- * diagram to create a new object of this class.
+ * A ModelBrowser provides a tree view of classes, associations, and constraints
+ * in a model. The definition of a selected element is shown in an HTML pane. A
+ * class can be dragged onto an object diagram to create a new object of this
+ * class.
  *
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
@@ -93,30 +96,45 @@ public class ModelBrowser extends JPanel
     
     private EventListenerList fListenerList;
     private ModelBrowserMouseHandling fMouseHandler;
+    private Map<String, Collection<?>> modelCollections = new HashMap<String, Collection<?>>();
+    private MainWindow mainWindow;
     
-
     // implementation of interface DragSourceListener
     public void dragEnter(DragSourceDragEvent dsde) {
         //Log.trace(this, "dragEnter");
     }
+
     public void dragOver(DragSourceDragEvent dsde) {
         //Log.trace(this, "dragOver");
     }
+
     public void dropActionChanged(DragSourceDragEvent dsde) {
         //Log.trace(this, "dropActionChanged");
     }
+
     public void dragExit(DragSourceEvent dse) {
         //Log.trace(this, "dragExit");
     }
+
     public void dragDropEnd(DragSourceDropEvent dsde) {
         //Log.trace(this, "dragDropEnd");
+    }
+
+    private static IRuntime fPluginRuntime;
+
+    public JEditorPane getHTMLPane() {
+	return this.fHtmlPane;
+    }
+
+    public Map<String, Collection<?>> getModelCollections() {
+    	return this.modelCollections;
     }
 
     // implementation of interface DragSourceListener
     public void dragGestureRecognized(DragGestureEvent dge) {
         //Log.trace(this, "dragGestureRecognized");
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-            fTree.getLastSelectedPathComponent();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) fTree
+			.getLastSelectedPathComponent();
 
         if (fModel == null || node == null ) 
             return;
@@ -132,24 +150,25 @@ public class ModelBrowser extends JPanel
     /** 
      * Creates a browser with no model.
      */
-    public ModelBrowser() {
-        this(null);
+    public ModelBrowser(MainWindow mainWindow, IRuntime pluginRuntime) {
+	this(null, mainWindow, pluginRuntime);
         fListenerList = new EventListenerList();
     }
 
     /** 
      * Creates a model browser. The model may be null.
      */
-    public ModelBrowser(MModel model) {
+    public ModelBrowser(MModel model, MainWindow mainWindow,
+	    IRuntime pluginRuntime) {
         fListenerList = new EventListenerList();
         // Create tree and nodes.
+	setMainWindow(mainWindow);
+	setPluginRuntime(pluginRuntime);
         setModel(model);
 
         fDragSource = new DragSource();
         fDragSource.createDefaultDragGestureRecognizer(fTree, 
-                                                       DnDConstants.ACTION_MOVE,
-                                                       this);
-
+		DnDConstants.ACTION_MOVE, this);
 
         // Allow one selection at a time.
         fTree.getSelectionModel().setSelectionMode(
@@ -163,8 +182,8 @@ public class ModelBrowser extends JPanel
         // Listen for when the selection changes.
         fTree.addTreeSelectionListener(new TreeSelectionListener() {
                 public void valueChanged(TreeSelectionEvent e) {
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                        fTree.getLastSelectedPathComponent();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) fTree
+			.getLastSelectedPathComponent();
 
                     if (fModel == null || node == null ) 
                         return;
@@ -180,12 +199,12 @@ public class ModelBrowser extends JPanel
                                 selectedRow = i;
                             }
                         }
-                        fMouseHandler.setSelectedNodeRectangle( fTree.getRowBounds( selectedRow ) );
+		    fMouseHandler.setSelectedNodeRectangle(fTree
+			    .getRowBounds(selectedRow));
                         fMouseHandler.setSelectedModelElement( me );
                     } 
                 }
             });
-
 
         // Create the scroll pane and add the tree to it. 
         JScrollPane treeView = new JScrollPane(fTree);
@@ -210,22 +229,29 @@ public class ModelBrowser extends JPanel
         add(splitPane, BorderLayout.CENTER);
     }
 
+    private void setMainWindow(MainWindow mainWindow) {
+	this.mainWindow = mainWindow;
+    }
+
+    private void setPluginRuntime(IRuntime pluginRuntime) {
+	ModelBrowser.fPluginRuntime = pluginRuntime;
+
+    }
+
+    public MainWindow mainWindow() {
+	return this.mainWindow;
+    }
 
     /**
-     * This renderer always displays root and categories as non-leaf
-     * nodes even if they are empty.  
+     * This renderer always displays root and categories as non-leaf nodes even
+     * if they are empty.
      */
     class CellRenderer extends DefaultTreeCellRenderer {
-        public Component getTreeCellRendererComponent(JTree tree,
-                                                      Object value,
-                                                      boolean sel,
-                                                      boolean expanded,
-                                                      boolean leaf,
-                                                      int row,
+	public Component getTreeCellRendererComponent(JTree tree, Object value,
+		boolean sel, boolean expanded, boolean leaf, int row,
                                                       boolean hasFocus) {
-            super.getTreeCellRendererComponent(tree, value, sel,
-                                               expanded, leaf, row,
-                                               hasFocus);
+	    super.getTreeCellRendererComponent(tree, value, sel, expanded,
+		    leaf, row, hasFocus);
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
             int level = node.getLevel();
             this.setToolTipText(null);
@@ -244,15 +270,15 @@ public class ModelBrowser extends JPanel
                 Object nodeInfo = node.getUserObject();
                 if (nodeInfo instanceof MClass ) {
                     MClass cls = (MClass) nodeInfo;
-                    this.setToolTipText("Drag onto object diagram to create a new " +
-                                        cls.name() + " object.");
+		    this
+			    .setToolTipText("Drag onto object diagram to create a new "
+				    + cls.name() + " object.");
                 }
 
             }
             return this;
         }
     }
-
 
     /** 
      * Initializes the browser to a new model. The model may be null.  
@@ -292,18 +318,21 @@ public class ModelBrowser extends JPanel
      * Displays info about the selected model element in the HTML pane.
      */
     private void displayInfo(MModelElement element) {
+	IPluginMModelExtensionPoint modelExtensionPoint = (IPluginMModelExtensionPoint) fPluginRuntime
+		.getExtensionPoint("model");
         StringWriter sw = new StringWriter();
         sw.write("<html><head>");
         sw.write("<style> <!-- body { font-family: sansserif; } --> </style>");
         sw.write("</head><body><font size=\"-1\">");
-        MMVisitor v = new MMHTMLPrintVisitor(new PrintWriter(sw));
+
+	IPluginMMVisitor v = modelExtensionPoint.createMMHTMLPrintVisitor(
+		new PrintWriter(sw), this);
+
         element.processWithVisitor(v);
+
         sw.write("</body></html>");
         String spec = sw.toString();
         fHtmlPane.setText(spec);
-        sw = new StringWriter();
-        MMVisitor w = new MMPrintVisitor(new PrintWriter(sw));
-        element.processWithVisitor(w);
     }
 
     public void createNodes( final DefaultMutableTreeNode top ) {
@@ -313,6 +342,7 @@ public class ModelBrowser extends JPanel
 
         final ArrayList<MAssociation> sortedAssociations = 
             fMbs.sortAssociations(new ArrayList<MAssociation>(fModel.associations()));
+	    
         addChildNodes( top, "Associations", sortedAssociations );
 
         final Collection<MClassInvariant> sortedInvariants = 
@@ -323,21 +353,41 @@ public class ModelBrowser extends JPanel
         final Collection<MPrePostCondition> sortedConditions = 
             fMbs.sortPrePostConditions(fModel.prePostConditions());
         addChildNodes( top, "Pre-/Postconditions", sortedConditions );
+		
+		Set<Map.Entry<String, Collection<?>>> modelCollectionEntrySet = this.modelCollections.entrySet();
+				
+		for (Map.Entry<String, Collection<?>> modelCollectionMapEntry : modelCollectionEntrySet) {
+		    String modelCollectionName = modelCollectionMapEntry.getKey()
+			    .toString();
+		    Collection<?> modelCollection = fMbs
+			    .sortPluginCollection((Collection<?>) modelCollectionMapEntry
+				    .getValue());
+		    addChildNodes(top, modelCollectionName, modelCollection);
+    }
+
     }
 
     /**
      * Adds the childs nodes to the top node.
      */
-    private void addChildNodes(DefaultMutableTreeNode top, 
-                               String name, 
+    private void addChildNodes(DefaultMutableTreeNode top, String name,
                                Collection<?> items) {
         DefaultMutableTreeNode category = new DefaultMutableTreeNode(name);
         top.add(category);
         Iterator<?> it = items.iterator();
+	    
         while (it.hasNext() ) {
             DefaultMutableTreeNode child = new DefaultMutableTreeNode(it.next());
             category.add(child);
         }
+    }
+
+    public void addPluginCollection(String modelCollectionName, Collection<?> modelCollection) {
+    	this.modelCollections.put(modelCollectionName, modelCollection);
+    	fTop.removeAllChildren();
+    	createNodes(fTop);
+    	fTreeModel.reload();
+    	fHtmlPane.setText("");
     }
 
     /**
@@ -371,25 +421,22 @@ public class ModelBrowser extends JPanel
         if ( selectedRow >= 0 ) {
             fTree.setSelectionRow( selectedRow );    
         }
-        
     }
     
-    
-
     /**
-     * Adds Listeners who are interrested on a change event of 
-     * highlighting.
-     * @param l The listener who is interrested
+     * Adds Listeners who are interrested on a change event of highlighting.
+     * 
+     * @param l
+     *            The listener who is interrested
      */
     public void addHighlightChangeListener( HighlightChangeListener l ) {
         fListenerList.add( HighlightChangeListener.class, l );
     }
     
     /*
-     * Notify all listeners that have registered interest for
-     * notification on this event type.  The event instance 
-     * is lazily created using the parameters passed into 
-     * the fire method.
+     * Notify all listeners that have registered interest for notification on
+     * this event type. The event instance is lazily created using the
+     * parameters passed into the fire method.
      */
     public void fireStateChanged( MModelElement elem, boolean highlight ) {
         // Guaranteed to return a non-null array
@@ -409,5 +456,4 @@ public class ModelBrowser extends JPanel
             }          
         }
     }
-
 }

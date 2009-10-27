@@ -39,7 +39,7 @@ import org.tzi.use.gui.views.View;
 public class ViewFrame extends JInternalFrame {
     private View fView;
 
-    ViewFrame(String title, View view, String iconFilename) {
+    public ViewFrame(String title, View view, String iconFilename) {
         super(title, true, true, true, true);
         fView = view;
         setFrameIcon(new ImageIcon(Options.iconDir + iconFilename));

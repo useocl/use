@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Plugin-Name: Example Plugin Service Usage
+Plugin-Version: 0.1
+Main-Class: org.tzi.use.myPluginServiceUsage.MyPlugin
+Plugin-Publisher: Roman Asendorf

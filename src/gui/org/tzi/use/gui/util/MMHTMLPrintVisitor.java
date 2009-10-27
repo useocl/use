@@ -31,13 +31,13 @@ import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MOperation;
 
 /**
- * Visitor for dumping a HTML representation of model elements on an
- * output stream. 
+ * Visitor for dumping a HTML representation of model elements on an output
+ * stream.
  *
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public final class MMHTMLPrintVisitor extends MMPrintVisitor {
+public class MMHTMLPrintVisitor extends MMPrintVisitor {
 
     public MMHTMLPrintVisitor(PrintWriter out) {
         super(out);
@@ -58,8 +58,12 @@ public final class MMHTMLPrintVisitor extends MMPrintVisitor {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             switch ( c ) {
-            case '<': b.append("&lt;"); break;
-            case '>': b.append("&gt;"); break;
+			case '<':
+				b.append("&lt;");
+				break;
+			case '>':
+				b.append("&gt;");
+				break;
             default:
                 b.append(c); 
             }
@@ -91,13 +95,11 @@ public final class MMHTMLPrintVisitor extends MMPrintVisitor {
     }
     
     public List<MAttribute> getAttributesForClass( MClass c ) {
-        return ModelBrowserSorting.getInstance()
-            .sortAttributes(c.attributes());
+		return ModelBrowserSorting.getInstance().sortAttributes(c.attributes());
     }
 
     public List<MOperation> getOperationsForClass( MClass c ) {
-        return ModelBrowserSorting.getInstance()
-            .sortOperations(c.operations());
+		return ModelBrowserSorting.getInstance().sortOperations(c.operations());
     }
 
 }

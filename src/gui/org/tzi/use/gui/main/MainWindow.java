@@ -22,6 +22,7 @@
 package org.tzi.use.gui.main;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
@@ -39,8 +40,11 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -67,6 +71,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.StatusBar;
 import org.tzi.use.gui.util.TextComponentWriter;
@@ -84,9 +89,11 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
 import org.tzi.use.main.Session;
+import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.cmd.CMDCompiler;
 import org.tzi.use.parser.use.USECompiler;
+import org.tzi.use.runtime.gui.impl.PluginActionProxy;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -124,6 +131,10 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
     private JMenuItem fMenuItemEditUndo;
 
+	private JToolBar fToolBar;
+
+	private JMenuBar fMenuBar;
+
     private JButton fBtnEditUndo;
 
     private JCheckBoxMenuItem fCbMenuItemCheckStructure;
@@ -144,11 +155,16 @@ public class MainWindow extends JFrame implements StateChangeListener {
         return tb;
     }
 
-    MainWindow(Session session) {
+	private static IRuntime fPluginRuntime;
+
+	private Map<Map<String, String>, PluginActionProxy> pluginActions = new HashMap<Map<String, String>, PluginActionProxy>();
+
+	MainWindow(Session session, IRuntime pluginRuntime) {
         super("USE");
-
+		if (pluginRuntime != null) {
+			fPluginRuntime = pluginRuntime;
+		}
         fInstance = this;
-
         fSession = session;
         // the session may be changed from the shell
         fSession.addChangeListener(new ChangeListener() {
@@ -174,54 +190,54 @@ public class MainWindow extends JFrame implements StateChangeListener {
         });
 
         // create toolbar
-        JToolBar toolBar = new JToolBar();
-        addToToolBar(toolBar, fActionFileOpenSpec, "Open specification");
-        addToToolBar(toolBar, fActionFilePrint, "Print diagram");
-        addToToolBar(toolBar, fActionFilePrintView, "Print view");
-        toolBar.addSeparator();
+		fToolBar = new JToolBar();
+		addToToolBar(fToolBar, fActionFileOpenSpec, "Open specification");
+		addToToolBar(fToolBar, fActionFilePrint, "Print diagram");
+		addToToolBar(fToolBar, fActionFilePrintView, "Print view");
+		fToolBar.addSeparator();
 
-        fBtnEditUndo = addToToolBar(toolBar, fActionEditUndo, DEFAULT_UNDO_TEXT);
-        addToToolBar(toolBar, fActionStateEvalOCL, STATE_EVAL_OCL);
-        toolBar.addSeparator();
+		fBtnEditUndo = addToToolBar(fToolBar, fActionEditUndo,
+				DEFAULT_UNDO_TEXT);
+		addToToolBar(fToolBar, fActionStateEvalOCL, STATE_EVAL_OCL);
+		fToolBar.addSeparator();
 
-        addToToolBar(toolBar, fActionViewCreateClassDiagram,
+		addToToolBar(fToolBar, fActionViewCreateClassDiagram,
                 "Create class diagram view");
-        addToToolBar(toolBar, fActionViewCreateObjectDiagram,
+		addToToolBar(fToolBar, fActionViewCreateObjectDiagram,
                 "Create object diagram view");
-        addToToolBar(toolBar, fActionViewCreateClassInvariant,
+		addToToolBar(fToolBar, fActionViewCreateClassInvariant,
                 "Create class invariant view");
-        addToToolBar(toolBar, fActionViewCreateObjectCount,
+		addToToolBar(fToolBar, fActionViewCreateObjectCount,
                 "Create object count view");
-        addToToolBar(toolBar, fActionViewCreateLinkCount,
+		addToToolBar(fToolBar, fActionViewCreateLinkCount,
                 "Create link count view");
-        addToToolBar(toolBar, fActionViewCreateStateEvolution,
+		addToToolBar(fToolBar, fActionViewCreateStateEvolution,
                 "Create state evolution view");
         addToToolBar(
-                toolBar,
+				fToolBar,
                 fActionViewCreateObjectProperties,
                 "Create object properties view <br>"
                         + "(double click on object to show properties for a specific object)");
-        addToToolBar(toolBar, fActionViewCreateClassExtent,
+		addToToolBar(fToolBar, fActionViewCreateClassExtent,
                 "Create class extent view");
-        addToToolBar(toolBar, fActionViewCreateSequenceDiagram,
+		addToToolBar(fToolBar, fActionViewCreateSequenceDiagram,
                 "Create sequence diagram view");
-        addToToolBar(toolBar, fActionViewCreateCallStack,
+		addToToolBar(fToolBar, fActionViewCreateCallStack,
                 "Create call stack view");
-        addToToolBar(toolBar, fActionViewCreateCommandList,
+		addToToolBar(fToolBar, fActionViewCreateCommandList,
                 "Create command list view");
         // addToToolBar(toolBar, fActionViewCreateStateTree, "Create state tree
         // view");
 
         // create the menubar
-
-        JMenuBar menuBar = new JMenuBar();
-        getRootPane().setJMenuBar(menuBar);
+		fMenuBar = new JMenuBar();
+		getRootPane().setJMenuBar(fMenuBar);
 
         // `File' submenu
         JMenuItem mi;
         JMenu menu = new JMenu("File");
         menu.setMnemonic('F');
-        menuBar.add(menu);
+		fMenuBar.add(menu);
 
         mi = menu.add(fActionFileOpenSpec);
         mi.setAccelerator(KeyStroke
@@ -247,7 +263,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         // `Edit' submenu
         menu = new JMenu("Edit");
         menu.setMnemonic('E');
-        menuBar.add(menu);
+		fMenuBar.add(menu);
 
         fMenuItemEditUndo = menu.add(fActionEditUndo);
         fMenuItemEditUndo.setMnemonic('U');
@@ -257,7 +273,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         // `State' submenu
         menu = new JMenu("State");
         menu.setMnemonic('S');
-        menuBar.add(menu);
+		fMenuBar.add(menu);
 
         mi = menu.add(fActionStateCreateObject);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
@@ -283,7 +299,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         // `View' submenu
         menu = new JMenu("View");
         menu.setMnemonic('V');
-        menuBar.add(menu);
+		fMenuBar.add(menu);
 
         JMenu submenu = new JMenu("Create View");
         submenu.setMnemonic('C');
@@ -317,16 +333,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         mi = menu.add(fActionViewCloseAll);
         mi.setMnemonic('a');
 
-        // `Help' submenu
-        menu = new JMenu("Help");
-        menu.setMnemonic('H');
-        menuBar.add(menu);
-        // not yet implemented in swing: menuBar.setHelpMenu(menu);
-        mi = menu.add(fActionHelpAbout);
-        mi.setMnemonic('A');
-
         // create the browser panel
-        fModelBrowser = new ModelBrowser();
+		fModelBrowser = new ModelBrowser(this, fPluginRuntime);
 
         // create the desktop
         fDesk = new JDesktopPane();
@@ -352,7 +360,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
         contentPane.setPreferredSize(new Dimension(800, 550));
-        contentPane.add(toolBar, BorderLayout.NORTH);
+		contentPane.add(fToolBar, BorderLayout.NORTH);
         contentPane.add(fTopSplitPane, BorderLayout.CENTER);
         contentPane.add(fStatusBar, BorderLayout.SOUTH);
         setContentPane(contentPane);
@@ -364,6 +372,92 @@ public class MainWindow extends JFrame implements StateChangeListener {
         });
 
         setBounds(10, 20, 900, 700);
+
+		// GUI Plugin integration
+		if (Options.doPLUGIN) {
+			MainWindow.instance().fToolBar.addSeparator();
+			// `Plugins' submenu
+			menu = new JMenu("Plugins");
+			menu.setMnemonic('P');
+			this.fMenuBar.add(menu);
+
+			IPluginActionExtensionPoint actionExtensionPoint = (IPluginActionExtensionPoint) fPluginRuntime
+					.getExtensionPoint("action");
+
+			this.pluginActions = actionExtensionPoint.createPluginActions(session, this);
+
+			Set<Map.Entry<Map<String, String>, PluginActionProxy>> pluginActionSet = this.pluginActions.entrySet();
+
+			for (Map.Entry<Map<String, String>, PluginActionProxy> currentActionMapEntry : pluginActionSet) {
+				Map<String, String> currentActionDescMap = currentActionMapEntry.getKey();
+				AbstractAction currentAction = currentActionMapEntry.getValue();
+				addToToolBar(this.fToolBar, currentAction, currentActionDescMap.get("tooltip"));
+
+				// Creating submenu and menu entries
+				if (currentActionDescMap.get("menu").toString() == null) {
+					// No submenu needed
+					Log.debug("Adding ["
+							+ currentActionDescMap.get("menuitem").toString()
+							+ "] to plugins menu");
+					menu.add(currentAction);
+				} else {
+					// Check if submenu already exists
+					Component[] menuItems = menu.getMenuComponents();
+					boolean createNewMenu = true;
+					Log
+							.debug("Menu item length was [" + menuItems.length
+									+ "]");
+					for (int iterateMenuItems = 0; iterateMenuItems < menuItems.length;) {
+						Log.debug("Menu item is of type ["
+								+ menuItems[iterateMenuItems].getClass() + "]");
+						if (menuItems[iterateMenuItems] instanceof JMenu) {
+							JMenu currentMenu = (JMenu) menuItems[iterateMenuItems];
+							Log.debug("Compairing menu ["
+									+ currentMenu.getText()
+									+ "] and ["
+									+ currentActionDescMap.get("menu")
+											.toString() + "]");
+							if (currentMenu.getText()
+									.equals(
+											currentActionDescMap.get("menu")
+													.toString())) {
+								Log.debug("Adding ["
+										+ currentActionDescMap.get("menuitem")
+												.toString() + "] to submenu ["
+										+ currentMenu.getText() + "]");
+								currentMenu.add(currentAction);
+								createNewMenu = false;
+								break;
+							}
+						}
+						iterateMenuItems++;
+					}
+					if (createNewMenu) {
+						Log.debug("Creating new Menu ["
+								+ currentActionDescMap.get("menuitem")
+										.toString() + "]");
+						JMenu pluginSubmenu = new JMenu(currentActionDescMap
+								.get("menu").toString());
+						Log.debug("Adding ["
+								+ currentActionDescMap.get("menu").toString()
+								+ "] to new submenu ["
+								+ pluginSubmenu.getText() + "]");
+						pluginSubmenu.add(currentAction);
+						menu.add(pluginSubmenu);
+					}
+				}
+			}
+		}
+
+		// -- GUI Plugin integration (end)
+
+		// `Help' submenu
+		menu = new JMenu("Help");
+		menu.setMnemonic('H');
+		fMenuBar.add(menu);
+		// not yet implemented in swing: menuBar.setHelpMenu(menu);
+		mi = menu.add(fActionHelpAbout);
+		mi.setMnemonic('A');
 
         // initialize application state to current system
         sessionChanged();
@@ -390,7 +484,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     private void close() {
         setVisible(false);
         dispose();
-        Shell.getInstance(fSession).exit();
+		Shell.getInstance(fSession, fPluginRuntime).exit();
     }
 
     /**
@@ -456,7 +550,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     /**
      * Adds a new view (internal frame) to the desktop.
      */
-    private void addNewViewFrame(ViewFrame f) {
+	public void addNewViewFrame(ViewFrame f) {
         f.setBounds(fViewFrameX, fViewFrameY, 300, 200);
         fDesk.add(f, JDesktopPane.DEFAULT_LAYER);
         fDesk.moveToFront(f);
@@ -508,6 +602,11 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fActionViewCreateCallStack.setEnabled(on);
         fActionViewCreateCommandList.setEnabled(on);
         fActionViewClassDiagram.setEnabled(on);
+		if (Options.doPLUGIN) {
+			for (AbstractAction currentAction : pluginActions.values()) {
+				currentAction.setEnabled(on);
+			}
+		}
         disableUndo();
         closeAllViews();
 
@@ -788,7 +887,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         private JFileChooser fChooser;
 
         ActionFileSaveScript() {
-            super("Save script (.cmd)...", new ImageIcon(Options.iconDir + "Save.gif"));
+			super("Save script (.cmd)...", new ImageIcon(Options.iconDir
+					+ "Save.gif"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -807,7 +907,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
             path = fChooser.getCurrentDirectory().toString();
             String filename = fChooser.getSelectedFile().getName();
-            if (!filename.endsWith(".cmd")) filename += ".cmd";
+			if (!filename.endsWith(".cmd"))
+				filename += ".cmd";
             File f = new File(path, filename);
             Log.verbose("File " + f);
 
@@ -863,7 +964,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
             path = fChooser.getCurrentDirectory().toString();
             String filename = fChooser.getSelectedFile().getName();
-            if (!filename.endsWith(".protocol")) filename += ".protocol";
+			if (!filename.endsWith(".protocol"))
+				filename += ".protocol";
             File f = new File(path, filename);
             Log.verbose("File " + f);
 
@@ -1442,6 +1544,11 @@ public class MainWindow extends JFrame implements StateChangeListener {
     // fDesk.revalidate();
     // }
     public static MainWindow create(Session session) {
+
+		return create(session, null);
+	}
+
+	public static MainWindow create(Session session, IRuntime pluginRuntime) {
         // Object[] arr =
         // GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         // //Object[] arr =
@@ -1450,7 +1557,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         // System.out.println(arr[i]);
         // }
 
-        final MainWindow win = new MainWindow(session);
+		final MainWindow win = new MainWindow(session, pluginRuntime);
+
         win.pack();
         // win.createInitialViews();
         win.setVisible(true);

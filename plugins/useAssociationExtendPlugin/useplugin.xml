@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?use version="2.4.0"?>
+<plugin name="AssociationExtent" version="0.1">
+	<actions>
+		<action label="Create Association Extent" icon="resources/AssociationExtentView.gif"
+			class="org.tzi.use.gui.plugins.ActionAssociationExtent" tooltip="Create Association Extent"
+			menu="View" menuitem="Association Extent" toolbaritem="plugins"
+			id="org.tzi.use.gui.plugins.ActionAssociationExtent">
+		</action>
+	</actions>
+</plugin>

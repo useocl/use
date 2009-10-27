@@ -8,21 +8,31 @@
 
 <!-- This program is free software; you can redistribute it and/or -->
 <!-- modify it under the terms of the GNU General Public License as -->
-<!-- published by the Free Software Foundation; either version 2 of the -->
+	<!--
+		published by the Free Software Foundation; either version 2 of the
+	-->
 <!-- License, or (at your option) any later version. -->
 
-<!-- This program is distributed in the hope that it will be useful, but -->
+	<!--
+		This program is distributed in the hope that it will be useful, but
+	-->
 <!-- WITHOUT ANY WARRANTY; without even the implied warranty of -->
-<!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU -->
+	<!--
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+	-->
 <!-- General Public License for more details. -->
 
-<!-- You should have received a copy of the GNU General Public License -->
+	<!--
+		You should have received a copy of the GNU General Public License
+	-->
 <!-- along with this program; if not, write to the Free Software -->
 <!-- Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.   -->
 
 <!-- This is a configuration file for the checkstyle utility -->
 <!-- Based on examples/conf/BlochEffectiveJava.xml -->
-<!-- Most checks are disabled due to the already existing USE src code -->
+	<!--
+		Most checks are disabled due to the already existing USE src code
+	-->
   
 <module name="Checker">
 
@@ -85,7 +95,10 @@
 	<module name="UnusedImports"/>
     
     <!--    <module name="AvoidStarImport"> -->
-    <!--       <property name="excludes" value="java.io,java.util,org.apache.bcel.generic"/> -->
+		<!--
+			<property name="excludes"
+			value="java.io,java.util,org.apache.bcel.generic"/>
+		-->
     <!--     </module> -->
 	
 	<module name="EmptyStatement"/>
@@ -113,7 +126,9 @@
     <!--     <module name="AbstractClassName"/> -->
     
     <!--     <module name="Header"> -->
-    <!--       <property name="headerFile" value="./etc/java-header-generator.txt"/> -->
+		<!--
+			<property name="headerFile" value="./etc/java-header-generator.txt"/>
+		-->
     <!--       <property name="ignoreLines" value="2"/> -->
     <!--     </module> -->
       

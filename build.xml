@@ -23,6 +23,7 @@
   <property name="src.dir"            location="${basedir}/src"/>
   <property name="src.main.dir"       location="${src.dir}/main"/>
   <property name="src.gui.dir"        location="${src.dir}/gui"/>
+	<property name="src.runtime.dir" location="${src.dir}/runtime" />
   <property name="src.test.dir"       location="${src.dir}/test"/>
   <property name="test.dir"           location="${basedir}/test"/>
   <property name="intern.dir"         value="${basedir}/intern"/>
@@ -36,6 +37,7 @@
   <property name="build.doc.dir"      location="${build.dir}/doc"/>
   <property name="use.jar"            location="${build.lib.dir}/use.jar"/>
   <property name="use-gui.jar"        location="${build.lib.dir}/use-gui.jar"/>
+	<property name="use-runtime.jar" location="${build.lib.dir}/use-runtime.jar" />
 
   <property name="antlr.jar"          location="${lib.dir}/antlr-3.1.3.jar"/>
   <property name="junit.jar"          location="${lib.dir}/junit.jar"/>
@@ -55,8 +57,7 @@
   <!-- perform all major targets. Should be done before a checkin to
        avoid broken snapshots.  -->
 
-  <target name="all" description="perform clean, build, test-junit, javadoc"
-    depends="clean, build, test-junit, javadoc" />
+	<target name="all" description="perform clean, build, test-junit, javadoc" depends="clean, build, test-junit, javadoc" />
 
   <!-- compile with jikes. Use like "ant with.jikes build" -->
 
@@ -69,8 +70,7 @@
 
   <!-- help -->
 
-  <target name="help" 
-    description="Shows how to get a list of available targets">
+	<target name="help" description="Shows how to get a list of available targets">
     <echo>run "ant -projecthelp" for a list of available targets</echo>
   </target>
 
@@ -141,8 +141,7 @@
 
   <!-- create ANTLR generated parser -->
 
-  <target name="create-parser" depends="check-parser-uptodate" 
-    unless="parser.uptodate">
+	<target name="create-parser" depends="check-parser-uptodate" unless="parser.uptodate">
  
     <!-- ocl parser -->
     <echo>Generating ocl parser</echo>
@@ -242,7 +241,7 @@
 
   <!-- compile USE sources -->
 
-  <target name="compile-use" depends="compile-use-gui"/>
+	<target name="compile-use" depends="compile-use-runtime" />
 
   <target name="compile-use-main" depends="create-parser">
     <mkdir dir="${build.classes.dir}"/>
@@ -274,6 +273,11 @@
     </javac>
   </target>
   
+	<target name="compile-use-runtime" depends="compile-use-gui">
+		<mkdir dir="${build.classes.dir}" />
+		<javac srcdir="${src.runtime.dir}" destdir="${build.classes.dir}" deprecation="on" debug="on" listfiles="off" classpath="${antlr.jar}:${junit.jar}:${xerces.jar}" source="1.4" target="1.4">
+		</javac>
+	</target>
 
   <!-- create USE jar -->
 
@@ -281,39 +285,55 @@
     <mkdir dir="${build.lib.dir}"/>
     <jar jarfile="${use.jar}" basedir="${build.classes.dir}">
        <exclude name="**/*Test.class"/>
+			<exclude name="org/tzi/use/runtime/**" />
        <exclude name="org/tzi/use/gui/**"/>
     </jar> 
+		
     <copy todir="${build.lib.dir}">
       <fileset dir="${lib.dir}"/>
     </copy>
+		
     <jar jarfile="${use-gui.jar}" basedir="${build.classes.dir}">
        <exclude name="**/*Test.class"/>
+			<exclude name="org/tzi/use/runtime/**" />
        <include name="org/tzi/use/gui/**"/>
     </jar> 
+		
     <copy todir="${build.lib.dir}">
       <fileset dir="${lib.dir}"/>
     </copy>
+
+		<jar jarfile="${use-runtime.jar}" basedir="${build.classes.dir}">
+			<exclude name="**/*Test.class" />
+			<exclude name="org/tzi/use/gui/**" />
+			<include name="org/tzi/use/runtime/**" />
+		</jar>
+		
+		<copy todir="${build.lib.dir}">
+			<fileset dir="${lib.dir}" />
+		</copy>
   </target>
 
   <!-- check whether the native readline wrapper lib must be build -->
   <target name="check-nativelib-needcompile" depends="init">
-     <uptodate property="nativelib.uptodate"
-       srcfile="${readline.src.dir}/natGNUReadline.c" 
-       targetfile="${build.lib.dir}/libnatGNUReadline.so"/>
+		<uptodate property="nativelib.uptodate" srcfile="${readline.src.dir}/natGNUReadline.c" targetfile="${build.lib.dir}/libnatGNUReadline.so" />
     
     <condition property="nativelib.needcompile">
       <and>
         <!-- no readline on windows -->
-        <not><isset property="nativelib.uptodate"/></not>
-        <not><isset property="os.windows"/></not>
+				<not>
+					<isset property="nativelib.uptodate" />
+				</not>
+				<not>
+					<isset property="os.windows" />
+				</not>
       </and>
     </condition>
   </target>
 
   <!-- create native readline wrapper -->
 
-  <target name="create-nativelib" depends="compile-use,check-nativelib-needcompile" 
-    if="nativelib.needcompile">
+	<target name="create-nativelib" depends="compile-use,check-nativelib-needcompile" if="nativelib.needcompile">
     <echo>executing javah</echo>
     <exec executable="javah" failonerror="true">
       <arg value="-jni"/>
@@ -359,8 +379,7 @@
 
   <!-- create all jars -->
 
-  <target name="build" depends="jar-use, create-nativelib" 
-    description="build everything "/>
+	<target name="build" depends="jar-use, create-nativelib" description="build everything " />
 
 
   <!-- delete the build tree -->
@@ -387,21 +406,12 @@
 
   <!-- generate javadoc -->
 
-  <target name="javadoc" depends="create-parser"
-    description="generates javadoc API documentation" >
+	<target name="javadoc" depends="create-parser" description="generates javadoc API documentation">
     <mkdir dir="${build.javadoc.dir}"/>
-    <javadoc packagenames="org.*"
-             sourcepath="${src.main.dir}"
-	     classpath="${antlr.jar}:${junit.jar}"
-             destdir="${build.javadoc.dir}"
-             author="true"
-             version="true"
-             private="true"
-             use="true"
-             windowtitle="${ant.project.name} API"
-             doctitle="${release.name}">
+		<javadoc packagenames="org.*" sourcepath="${src.main.dir}" classpath="${antlr.jar}:${junit.jar}" destdir="${build.javadoc.dir}" author="true" version="true" private="true" use="true" windowtitle="${ant.project.name} API" doctitle="${release.name}">
       <tag name="pre" scope="constructors,methods" description="Precondition:" />
-      <bottom><![CDATA[<i>Copyright &#169; 1999-2004 Mark Richters. All Rights
+			<bottom>
+				<![CDATA[<i>Copyright &#169; 1999-2004 Mark Richters. All Rights
 	     Reserved.</i>]]></bottom>
     </javadoc>
   </target>
@@ -409,8 +419,7 @@
 
   <!-- generate html code from the USE grammar -->
 
-  <target name="generate-grammar-html" depends="init" 
-    description="generates html code from the USE grammar">
+<target name="generate-grammar-html" depends="init" description="generates html code from the USE grammar">
     <java classname="antlr.Tool" dir="${parser.dir}" fork="yes">
       <classpath path="${antlr.jar}"/>
       <arg value="-html"/> 
@@ -420,8 +429,7 @@
 
   <!-- generate diagnostic files from the USE grammar -->
 
-  <target name="generate-grammar-diagnostic" depends="init" 
-    description="generates diagnostic files from the USE grammar">
+<target name="generate-grammar-diagnostic" depends="init" description="generates diagnostic files from the USE grammar">
     <java classname="antlr.Tool" dir="${parser.dir}" fork="yes">
       <classpath path="${antlr.jar}"/>
       <arg value="-diagnostic"/> 
@@ -480,8 +488,7 @@
 
   <target name="checkstyle" depends="init">
 	<taskdef resource="checkstyletask.properties" classpath="${checkstyle.jar}"/>
-	<checkstyle config="etc/checkstyle-use.xml" 
-      failOnViolation="yes"  classpath="${antlr.jar}:${build.classes.dir}">
+	<checkstyle config="etc/checkstyle-use.xml" failOnViolation="yes" classpath="${antlr.jar}:${build.classes.dir}">
 	  <fileset dir="${src.dir}">
         <include name="**/*.java"/>
         <exclude name="main/org/tzi/use/parser/**/G*.java"/>
@@ -490,8 +497,7 @@
         <exclude name="main/org/tzi/use/gen/**/*.java"/>
       </fileset>
 	</checkstyle>
-	<checkstyle config="etc/checkstyle-generator.xml" 
-      failOnViolation="yes"  classpath="${antlr.jar}:${build.classes.dir}">
+	<checkstyle config="etc/checkstyle-generator.xml" failOnViolation="yes" classpath="${antlr.jar}:${build.classes.dir}">
 	  <fileset dir="${src.dir}">
         <include name="main/org/tzi/use/parser/generator/ASTG*.java"/>
         <include name="main/org/tzi/use/gen/**/*.java"/>
@@ -502,16 +508,13 @@
   <!-- Maintainance target: Enforces correct line breaks and replaces tabs -->
 
   <target name="fixcrlf" depends="init">
-    <fixcrlf srcDir="${src.dir}" eol="lf" javafiles="yes"
-      includes="**/*.java"
-      tab="remove" tablength="4"/>
+	<fixcrlf srcDir="${src.dir}" eol="lf" javafiles="yes" includes="**/*.java" tab="remove" tablength="4" />
   </target>
 
   <!-- create www docs -->
 
   <target name="doc" description="create www documentation">
-    <fail unless="intern.dir.present"
-      message="This target requires files that are not part of the release distribution." />
+	<fail unless="intern.dir.present" message="This target requires files that are not part of the release distribution." />
     <mkdir dir="${build.doc.dir}"/>
     <copy todir="${build.doc.dir}">
       <fileset dir="${basedir}" includes="INSTALL,NEWS,README"/>
@@ -528,9 +531,7 @@
 
   <!-- create release -->
 
-  <target name="release" 
-    description="create release distribution"
-    depends="maintainer-clean, build, doc">
+<target name="release" description="create release distribution" depends="maintainer-clean, build, doc">
 
     <!-- clean up example and test directories -->
     <exec executable="make" dir="${test.dir}" failonerror="true">

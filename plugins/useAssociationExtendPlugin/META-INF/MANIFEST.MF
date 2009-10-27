@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Plugin-Name: AssociationExtentPlugin
+Plugin-Version: 0.1
+Main-Class: org.tzi.use.gui.plugins.AssociationExtentPlugin
+Plugin-Publisher: Roman Asendorf

@@ -27,6 +27,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.UIDefaults;
@@ -35,6 +37,7 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.uml.mm.MMPrintVisitor;
@@ -74,8 +77,46 @@ public final class Main {
         }
 
         Session session = new Session();
+	IRuntime pluginRuntime = null;
         MModel model = null;
         MSystem system = null;
+
+	// Plugin Framework
+	if (Options.doPLUGIN) {
+	    // create URL from plugin directory
+	    URL pluginDirURL = null;
+	    try {
+		pluginDirURL = new URL(Options.pluginDir);
+		Log.println("Plugin path: [" + pluginDirURL + "]");
+		Class<?> mainPluginRuntimeClass = null;
+		try {
+		    mainPluginRuntimeClass = Class
+			    .forName("org.tzi.use.runtime.MainPluginRuntime");
+		} catch (ClassNotFoundException e) {
+		    Log
+			    .error("Could not load PluginRuntime. Probably use-runtime-...jar is missing.\n"
+				    + "Try starting use with -noplugins switch.\n"
+				    + e.getMessage());
+		    System.exit(1);
+		}
+		try {
+		    Method run = mainPluginRuntimeClass.getMethod("run",
+			    new Class[] { pluginDirURL.getClass() });
+		    pluginRuntime = (IRuntime) run.invoke(null,
+			    new Object[] { pluginDirURL });
+		    Log.debug("Starting plugin runtime, got class ["
+			    + pluginRuntime.getClass() + "]");
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    Log.error("FATAL ERROR.");
+		    System.exit(1);
+		}
+	    } catch (MalformedURLException mfue) {
+		Log.error("Plugin path " + Options.pluginDir
+			+ " invalid! Please check your configuration: " + mfue);
+		Log.error("Plugin framework disabled!");
+	    }
+	}
 
         // compile spec if filename given as argument
         if (Options.specFilename != null) {
@@ -131,16 +172,36 @@ public final class Main {
             try {
                 mainWindowClass = Class
                         .forName("org.tzi.use.gui.main.MainWindow");
+		Log.debug("Initializing [" + mainWindowClass.toString() + "]");
             } catch (ClassNotFoundException e) {
-                Log.error("Could not load GUI. Probably use-gui-...jar is missing.\n" + 
-                          "Try starting use with -nogui switch.\n" +
-                          e.getMessage());
+		Log
+			.error("Could not load GUI. Probably use-gui-...jar is missing.\n"
+				+ "Try starting use with -nogui switch.\n" + e);
                 System.exit(1);
             }
+	    if (mainWindowClass == null) {
+		Log.error("MainWindow could not be initialized! Exiting!");
+		System.exit(1);
+	    }
             try {
+		if (pluginRuntime == null) {
+		    Log.debug("Starting gui without plugin runtime!");
                 Method create = mainWindowClass.getMethod("create",
                         new Class[] { Session.class });
+		    Log.debug("Invoking method create with ["
+			    + session.toString() + "]");
                 create.invoke(null, new Object[] { session });
+		} else {
+		    Log.debug("Starting gui with plugin runtime.");
+		    Method create = mainWindowClass.getMethod("create",
+			    new Class[] { Session.class, IRuntime.class });
+		    Log.debug("Invoking method create with ["
+			    + session.toString() + "] ["
+			    + pluginRuntime.toString() + "]");
+		    create
+			    .invoke(null,
+				    new Object[] { session, pluginRuntime });
+		}
             } catch (Exception e) {
                 Log.error("FATAL ERROR.", e);
                 System.exit(1);
@@ -149,7 +210,7 @@ public final class Main {
 
         //      create thread for shell
         // Shell sh = new Shell(session);
-        Shell sh = Shell.getInstance(session);
+	Shell sh = Shell.getInstance(session, pluginRuntime);
         Thread t = new Thread(sh);
         t.start();
 
@@ -226,4 +287,5 @@ class MyTheme extends DefaultMetalTheme {
     private void initIcon(UIDefaults table, String property, String iconFilename) {
         table.put(property, new ImageIcon(Options.iconDir + iconFilename));
     }
+
 }

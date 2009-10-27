@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Parses the content of a layout xml file.
+ * 
  * @version     $ProjectVersion: 0.393 $
  * @author      Fabian Gutsche 
  */
@@ -63,8 +64,7 @@ public class LayoutContentHandler extends ContentHandler {
     public void startElement( String nsURI, String localName, String qName,
                               Attributes atts ) throws SAXException {
         fTagContent = "";
-        if ( qName.equals( LayoutTags.NODE ) 
-             || qName.equals( LayoutTags.EDGE ) 
+		if (qName.equals(LayoutTags.NODE) || qName.equals(LayoutTags.EDGE)
              || qName.equals( LayoutTags.EDGEPROPERTY ) ) {
             String type = atts.getValue( "type" );
             fCtx.pushType( type );
@@ -89,40 +89,46 @@ public class LayoutContentHandler extends ContentHandler {
     public void endElement( String nsURI, String ln, String qName )
     throws SAXException {
         if ( qName.equals( LayoutTags.NODE )
-             || ( qName.equals( LayoutTags.EDGE ) 
-                  && fCtx.peekType() != null 
-                  && !fCtx.peekType().equals( LayoutTags.DIAMONDNODE ) ) ) {
-//            System.out.println( "qName: " + qName + " type: " + fCtx.peekType()
+				|| (qName.equals(LayoutTags.EDGE) && fCtx.peekType() != null && !fCtx
+						.peekType().equals(LayoutTags.DIAMONDNODE))) {
+			// System.out.println( "qName: " + qName + " type: " +
+			// fCtx.peekType()
 //                                + " RESET" );
             fCtx.reset();
         }
         
-        if ( qName.equals( LayoutTags.NODE )
-             || qName.equals( LayoutTags.EDGE )
+		if (qName.equals(LayoutTags.NODE) || qName.equals(LayoutTags.EDGE)
              || qName.equals( LayoutTags.EDGEPROPERTY ) ) {
                fCtx.popType();
         }
 
         if ( qName.equals( LayoutTags.ANTIALIASING ) ) {
-            fCtx.getOpt().setDoAntiAliasing( Boolean.valueOf( fTagContent.trim() ).booleanValue() );
+			fCtx.getOpt().setDoAntiAliasing(
+					Boolean.valueOf(fTagContent.trim()).booleanValue());
         }
         if ( qName.equals( LayoutTags.AUTOLAYOUT ) ) {
-            fCtx.getOpt().setDoAutoLayout( Boolean.valueOf( fTagContent.trim() ).booleanValue() );
+			fCtx.getOpt().setDoAutoLayout(
+					Boolean.valueOf(fTagContent.trim()).booleanValue());
         }
         if ( qName.equals( LayoutTags.SHOWASSOCNAMES ) ) {
-            fCtx.getOpt().setShowAssocNames( Boolean.valueOf( fTagContent.trim() ).booleanValue() );
+			fCtx.getOpt().setShowAssocNames(
+					Boolean.valueOf(fTagContent.trim()).booleanValue());
         }
         if ( qName.equals( LayoutTags.SHOWATTRIBUTES ) ) {
-            fCtx.getOpt().setShowAttributes( Boolean.valueOf( fTagContent.trim() ).booleanValue() );
+			fCtx.getOpt().setShowAttributes(
+					Boolean.valueOf(fTagContent.trim()).booleanValue());
         }
         if ( qName.equals( LayoutTags.SHOWMULTIPLICITIES ) ) {
-            fCtx.getOpt().setShowMutliplicities( Boolean.valueOf( fTagContent.trim() ).booleanValue() );
+			fCtx.getOpt().setShowMutliplicities(
+					Boolean.valueOf(fTagContent.trim()).booleanValue());
         }
         if ( qName.equals( LayoutTags.SHOWOPERATIONS ) ) {
-            fCtx.getOpt().setShowOperations( Boolean.valueOf( fTagContent.trim() ).booleanValue() );
+			fCtx.getOpt().setShowOperations(
+					Boolean.valueOf(fTagContent.trim()).booleanValue());
         }
         if ( qName.equals( LayoutTags.SHOWROLENAMES ) ) {
-            fCtx.getOpt().setShowRolenames( Boolean.valueOf( fTagContent.trim() ).booleanValue() );
+			fCtx.getOpt().setShowRolenames(
+					Boolean.valueOf(fTagContent.trim()).booleanValue());
         }
         
         if ( fCtx.peekType() != null ) {
@@ -139,7 +145,8 @@ public class LayoutContentHandler extends ContentHandler {
             // OBJECT
             if ( fCtx.peekType().equals( LayoutTags.OBJECT ) ) {
                 if ( qName.equals( LayoutTags.NAME ) ) {
-                    MObject obj = fCtx.getSystemState().objectByName( fTagContent.trim() ); 
+					MObject obj = fCtx.getSystemState().objectByName(
+							fTagContent.trim());
                     fCtx.setActualNode( (NodeBase) fCtx.getActualMap().get( obj ) );
                     fCtx.setActualObj( obj );
                 } else {
@@ -149,8 +156,10 @@ public class LayoutContentHandler extends ContentHandler {
             // ENUMERATION
             if ( fCtx.peekType().equals( LayoutTags.ENUMERATION ) ) {
                 if ( qName.equals( LayoutTags.NAME ) ) {
-                    EnumType enumeration =  fCtx.getModel().enumType( fTagContent.trim() ); 
-                    fCtx.setActualNode( (NodeBase) fCtx.getActualMap().get( enumeration ) );
+					EnumType enumeration = fCtx.getModel().enumType(
+							fTagContent.trim());
+					fCtx.setActualNode((NodeBase) fCtx.getActualMap().get(
+							enumeration));
                     fCtx.setActualObj( enumeration );
                 } else {
                     parseNode( qName, fTagContent.trim() );
@@ -183,17 +192,18 @@ public class LayoutContentHandler extends ContentHandler {
                 parseInheritance( qName, fTagContent.trim() );
             }
 
-
             // EDGEPROPERTY
             // ROLENAME
             if ( fCtx.peekType().equals( LayoutTags.ROLENAME ) ) {
                 if ( fCtx.getKind().equals( LayoutTags.SOURCE ) 
                      && fCtx.getActualEdge() != null ) {
-                    fCtx.setActualEdgeProperty( fCtx.getActualEdge().getSourceRolename() );
+					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+							.getSourceRolename());
                 }
                 if ( fCtx.getKind().equals( LayoutTags.TARGET )
                      && fCtx.getActualEdge() != null ) {
-                    fCtx.setActualEdgeProperty( fCtx.getActualEdge().getTargetRolename() );
+					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+							.getTargetRolename());
                 }
                 parseEdgeProperty( qName, fTagContent.trim() );       
             }
@@ -201,22 +211,26 @@ public class LayoutContentHandler extends ContentHandler {
             if ( fCtx.peekType().equals( LayoutTags.MULTIPLICITY ) ) {
                 if ( fCtx.getKind().equals( LayoutTags.SOURCE )
                      && fCtx.getActualEdge() != null ) {
-                    fCtx.setActualEdgeProperty( fCtx.getActualEdge().getSourceMultiplicity() );
+					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+							.getSourceMultiplicity());
                 }
                 if ( fCtx.getKind().equals( LayoutTags.TARGET )
                      && fCtx.getActualEdge() != null ) {
-                    fCtx.setActualEdgeProperty( fCtx.getActualEdge().getTargetMultiplicity() );
+					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+							.getTargetMultiplicity());
                 }
                 parseEdgeProperty( qName, fTagContent.trim() );
             }
             // ASSOCNAME
             if ( fCtx.peekType().equals( LayoutTags.ASSOCNAME ) ) {
                 if ( fCtx.getActualEdge() != null ) {
-                    fCtx.setActualEdgeProperty( fCtx.getActualEdge().getAssocName() );
+					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+							.getAssocName());
                     parseEdgeProperty( qName, fTagContent.trim() );
                 } else if ( fCtx.getActualNode() != null
                             && fCtx.getActualNode() instanceof DiamondNode ) {
-                    fCtx.setActualEdgeProperty( ((DiamondNode) fCtx.getActualNode()).getAssocName() );
+					fCtx.setActualEdgeProperty(((DiamondNode) fCtx
+							.getActualNode()).getAssocName());
                     parseEdgeProperty( qName, fTagContent.trim() );
                 }
             }
@@ -239,9 +253,8 @@ public class LayoutContentHandler extends ContentHandler {
     }
     
     /**
-     * Finds the NodeOnEdge which needs to be placed correctly. If 
-     * the NodeOnEdge does not exists so far a new NodeOnEdge will 
-     * be created.
+	 * Finds the NodeOnEdge which needs to be placed correctly. If the
+	 * NodeOnEdge does not exists so far a new NodeOnEdge will be created.
      */
     private NodeOnEdge findNodeOnEdge() {
         if ( fCtx.getActualEdge() == null ) {
@@ -266,14 +279,9 @@ public class LayoutContentHandler extends ContentHandler {
         } else {
             fCtx.getActualEdge().getAssocName().name();
         }
-        n = new NodeOnEdge( 0.0, 0.0, 
-                            (NodeBase) fCtx.getSourceNode(),
-                            (NodeBase) fCtx.getTargetNode(),
-                            fCtx.getActualEdge(),
-                            fCtx.getID(),
-                            fCtx.getSpecialID(), 
-                            name,
-                            fCtx.getOpt() );
+		n = new NodeOnEdge(0.0, 0.0, (NodeBase) fCtx.getSourceNode(),
+				(NodeBase) fCtx.getTargetNode(), fCtx.getActualEdge(), fCtx
+						.getID(), fCtx.getSpecialID(), name, fCtx.getOpt());
         fCtx.getActualEdge().getNodesOnEdge().add( n );
         fCtx.getActualEdge().sortNodesOnEdge();
         fCtx.setSpecialID( -1 );
@@ -282,10 +290,13 @@ public class LayoutContentHandler extends ContentHandler {
     }
      
     /**
-     * Parses a NodeBase and sets its position correctly, if the NodeBase
-     * is hidden, the node is added to the hidden nodes list.
-     * @param tag The actual parsed xml tag.
-     * @param content The content of the actual parsed xml tag.
+	 * Parses a NodeBase and sets its position correctly, if the NodeBase is
+	 * hidden, the node is added to the hidden nodes list.
+	 * 
+	 * @param tag
+	 *            The actual parsed xml tag.
+	 * @param content
+	 *            The content of the actual parsed xml tag.
      */
     private void parseNode( String tag, String content ) {
         if ( fCtx.getActualNode() == null ) {
@@ -315,17 +326,22 @@ public class LayoutContentHandler extends ContentHandler {
      * Parses a DiamondNode and sets its position correctly, if the DiamondNode
      * is hidden, the node is added to the hidden nodes list. The EdgeProperty
      * AssocName is set as well.
-     * @param tag The actual parsed xml tag.
-     * @param content The content of the actual parsed xml tag.
+	 * 
+	 * @param tag
+	 *            The actual parsed xml tag.
+	 * @param content
+	 *            The content of the actual parsed xml tag.
      */
     private void parseDiamondNode( String tag, String content ) {
         // Connected Nodes
         if ( tag.equals( LayoutTags.CON_NODE ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
-                fCtx.getConnectedNodes().add( fCtx.getSystemState().objectByName( content ) );    
+				fCtx.getConnectedNodes().add(
+						fCtx.getSystemState().objectByName(content));
             } 
             if ( fCtx.getKind().equals( LayoutTags.ASSOCIATION ) ) {
-                fCtx.getConnectedNodes().add( fCtx.getSystem().model().getClass( content ) );
+				fCtx.getConnectedNodes().add(
+						fCtx.getSystem().model().getClass(content));
             }
         }
 
@@ -344,7 +360,8 @@ public class LayoutContentHandler extends ContentHandler {
                 fCtx.setActualObj( link );
             }
             if ( fCtx.getKind().equals( LayoutTags.ASSOCIATION ) ) {
-                MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+				MAssociation assoc = fCtx.getSystem().model().getAssociation(
+						content);
                 fCtx.setActualNode( (NodeBase) fCtx.getActualMap().get( assoc ) );
                 fCtx.setActualObj( assoc );
             }
@@ -389,16 +406,19 @@ public class LayoutContentHandler extends ContentHandler {
         // EDGE
         if ( tag.equals( LayoutTags.NAME ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
-                MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+				MAssociation assoc = fCtx.getSystem().model().getAssociation(
+						content);
                 Set<MObject> objects = new HashSet<MObject>();
                 objects.add( (MObject) fCtx.getSource() );
                 objects.add( (MObject) fCtx.getTarget() );
-                MLink link = fCtx.getSystemState().linkBetweenObjects( assoc, objects );
+				MLink link = fCtx.getSystemState().linkBetweenObjects(assoc,
+						objects);
                 fCtx.setActualEdge( (EdgeBase) fCtx.getActualMap().get( link ) );
                 fCtx.setActualObj( link );
             }
             if ( fCtx.getKind().equals( LayoutTags.ASSOCIATION ) ) {
-                MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+				MAssociation assoc = fCtx.getSystem().model().getAssociation(
+						content);
                 fCtx.setActualEdge( (EdgeBase) fCtx.getActualMap().get( assoc ) );
                 fCtx.setActualObj( assoc );
             }
@@ -420,7 +440,8 @@ public class LayoutContentHandler extends ContentHandler {
         // EDGENODE
         if ( tag.equals( LayoutTags.NAME ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
-                MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+				MAssociation assoc = fCtx.getSystem().model().getAssociation(
+						content);
                 
                 Set<MObject> objSet = new HashSet<MObject>();
                 for (Object obj : fCtx.getConnectedNodes())
@@ -433,7 +454,8 @@ public class LayoutContentHandler extends ContentHandler {
                 fCtx.setActualObj( link );
             } 
             if ( fCtx.getKind().equals( LayoutTags.ASSOCIATION ) ) {
-                MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+				MAssociation assoc = fCtx.getSystem().model().getAssociation(
+						content);
                 EdgeBase e = (EdgeBase) fCtx.getActualMap().get( assoc );
                 fCtx.setActualEdge( e );
                 fCtx.setActualObj( assoc );
@@ -454,7 +476,8 @@ public class LayoutContentHandler extends ContentHandler {
         // SOURCE is allways a diamond node (only in halfEdge)
         if ( tag.equals( LayoutTags.SOURCE ) ) {
             if ( fCtx.getKind().equals( LayoutTags.LINK ) ) {
-                MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+				MAssociation assoc = fCtx.getSystem().model().getAssociation(
+						content);
                 
                 Set<MObject> objSet = new HashSet<MObject>();
                 for (Object obj : fCtx.getConnectedNodes())
@@ -489,21 +512,26 @@ public class LayoutContentHandler extends ContentHandler {
                 Iterator<?> it = halfEdges.iterator();
                 while ( it.hasNext() ) {
                     EdgeBase e = (EdgeBase) it.next();
-                    if ( ((NodeBase) e.source()).name().equals( ((NodeBase) fCtx.getSource()).name() )
-                            && ((NodeBase) e.target()).name().equals( ((MObject) fCtx.getTarget()).name() ) ) {
+					if (((NodeBase) e.source()).name().equals(
+							((NodeBase) fCtx.getSource()).name())
+							&& ((NodeBase) e.target()).name().equals(
+									((MObject) fCtx.getTarget()).name())) {
                           fCtx.setActualEdge( e );        
                     }
                 }
             }
             if ( fCtx.getKind().equals( LayoutTags.ASSOCIATION ) ) {
-                MAssociation assoc = fCtx.getSystem().model().getAssociation( content );
+				MAssociation assoc = fCtx.getSystem().model().getAssociation(
+						content);
                 List<?> halfEdges = (List<?>) fCtx.getActualMap().get( assoc );
 
                 Iterator<?> it = halfEdges.iterator();
                 while ( it.hasNext() ) {
                     EdgeBase e = (EdgeBase) it.next();
-                    if ( ((NodeBase) e.source()).name().equals( ((NodeBase) fCtx.getSource()).name() )
-                          && ((NodeBase) e.target()).name().equals( ((MClass) fCtx.getTarget()).name() ) ) {
+					if (((NodeBase) e.source()).name().equals(
+							((NodeBase) fCtx.getSource()).name())
+							&& ((NodeBase) e.target()).name().equals(
+									((MClass) fCtx.getTarget()).name())) {
                             fCtx.setActualEdge( e );        
                     }
                 }
@@ -538,8 +566,7 @@ public class LayoutContentHandler extends ContentHandler {
             
             for (MGeneralization gen : edges) {
             	// there should be just one inheritance between those two classes
-                fCtx.setActualEdge( (EdgeBase) fCtx.getActualMap()
-                                    .get( gen ) );
+				fCtx.setActualEdge((EdgeBase) fCtx.getActualMap().get(gen));
                 fCtx.setActualObj( gen );
             }
         
@@ -555,7 +582,6 @@ public class LayoutContentHandler extends ContentHandler {
             }
         }
     }
-    
     
     private void parseEdgeProperty( String tag, String content ) {
         if ( fCtx.getActualEdgeProperty() == null ) {
