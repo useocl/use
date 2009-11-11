@@ -9,6 +9,7 @@ import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
 import org.tzi.use.runtime.impl.PluginRuntime;
 import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
 
 /**
  * This is the Plugin Runtime's main class. It will be called from the USE main
@@ -49,10 +50,7 @@ public class MainPluginRuntime {
 		fileNames = pluginDir.list(jarFilter);
 		if (fileNames != null) {
 			Log.print("Plugin filename(s) [");
-			for (int i = 0; i < fileNames.length;) {
-				Log.print(fileNames[i].toString() + ", ");
-				i++;
-			}
+			Log.print(StringUtil.fmtSeq(fileNames, ","));
 			Log.println("]");
 		}
 		return fileNames;

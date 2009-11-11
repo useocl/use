@@ -47,8 +47,14 @@ public final class MAssociationEnd extends MModelElementImpl
     private boolean fIsNavigable = true; 
     private boolean fIsExplicitNavigable = false;
     private boolean isUnion;
-    // All Ends this End subsets
+    // All ends this end subsets
     private Set<MAssociationEnd> subsettedEnds = new HashSet<MAssociationEnd>();
+    // All ends this end is subsetted by
+    private Set<MAssociationEnd> subsettingEnds = new HashSet<MAssociationEnd>();
+    // All ends this end redefines
+    private Set<MAssociationEnd> redefinedEnds = new HashSet<MAssociationEnd>();
+    // All ends this end is redefined by
+    private Set<MAssociationEnd> redefiningEnds = new HashSet<MAssociationEnd>();
     
     /** 
      * Creates a new association end. 
@@ -237,5 +243,29 @@ public final class MAssociationEnd extends MModelElementImpl
 	
 	public void setUnion(boolean newValue) {
 		isUnion = newValue;
+	}
+
+	public void addSubsettingEnd(MAssociationEnd nSubsettingEnd) {
+		this.subsettingEnds.add(nSubsettingEnd);
+	}
+	
+	public Set<MAssociationEnd> getSubsettingEnds() {
+		return this.subsettingEnds;
+	}
+
+	public void addRedefinedEnd(MAssociationEnd redefinedEnd) {
+		this.redefinedEnds.add(redefinedEnd);		
+	}
+
+	public Set<MAssociationEnd> getRedefinedEnds() {
+		return this.redefinedEnds;
+	}
+	
+	public void addRedefiningEnd(MAssociationEnd redefiningEnd) {
+		this.redefiningEnds.add(redefiningEnd);	
+	}
+	
+	public Set<MAssociationEnd> getRedefiningEnds() {
+		return this.redefiningEnds;
 	}
 }

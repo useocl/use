@@ -152,4 +152,8 @@ public interface MAssociation extends MModelElement {
     void setUnion(boolean newValue);
 
 	MAssociationEnd getAssociationEnd(MClass endCls, String rolename);
+
+	void addRedefinedBy(MAssociation association);
+
+	void addRedefines(MAssociation parentAssociation);
 }

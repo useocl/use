@@ -45,6 +45,7 @@ public class ASTAssociationEnd extends AST {
     private boolean fOrdered;
     private boolean isUnion = false;
     private List<Token> subsetsRolename = new ArrayList<Token>();
+    private List<Token> redefinesRolenames = new ArrayList<Token>();
     
     public ASTAssociationEnd(Token name, ASTMultiplicity mult) {
         fName = name;
@@ -104,6 +105,14 @@ public class ASTAssociationEnd extends AST {
     
     public List<Token> getSubsetsRolenames() {
     	return subsetsRolename;
+    }
+    
+    public void addRedefinesRolename(Token rolename) {
+    	redefinesRolenames.add(rolename);
+    }
+    
+    public List<Token> getRedefinesRolenames() {
+    	return redefinesRolenames;
     }
     
     public MAssociationEnd gen(Context ctx, int kind) throws SemanticException {

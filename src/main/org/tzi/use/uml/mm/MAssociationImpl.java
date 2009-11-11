@@ -35,8 +35,13 @@ import java.util.Set;
 class MAssociationImpl extends MModelElementImpl implements MAssociation {
     private List<MAssociationEnd> fAssociationEnds;
     private int fPositionInModel;
-    private Set<MAssociation> subsets = new HashSet<MAssociation>();;
+    
+    private Set<MAssociation> subsets = new HashSet<MAssociation>();
     private Set<MAssociation> subsettedBy = new HashSet<MAssociation>();
+    
+    private Set<MAssociation> redefines = new HashSet<MAssociation>();
+    private Set<MAssociation> redefinedBy = new HashSet<MAssociation>();
+    
     private boolean isUnion;
     
     /**
@@ -263,5 +268,15 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public void addRedefinedBy(MAssociation association) {
+		this.redefinedBy.add(association);
+	}
+
+	@Override
+	public void addRedefines(MAssociation parentAssociation) {
+		this.redefines.add(parentAssociation);
 	}
 }

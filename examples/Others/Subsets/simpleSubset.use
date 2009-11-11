@@ -16,8 +16,8 @@ class E
 end
 
 association ab between
-  A[*] role a
-  B[*] role b
+  A[*] role a union
+  B[*] role b union
 end
 
 association de between
@@ -26,6 +26,6 @@ association de between
 end
 
 association cd between
-  C[*] role c
+  C[*] role c subsets a
   D[*] role d subsets b
 end

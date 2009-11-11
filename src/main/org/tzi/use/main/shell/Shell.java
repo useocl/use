@@ -191,16 +191,16 @@ public final class Shell implements Runnable {
      * Main loop for accepting input and processing it.
      */
     public void run() {
-        setupReadline();
+		setupReadline();
 
-        if (Options.cmdFilename != null) {
-            cmdOpen(Options.cmdFilename);
-        } else {
-            Log.verbose("Enter `help' for a list of available commands.");
+		if (Options.cmdFilename != null) {
+			cmdOpen(Options.cmdFilename);
+		} else {
+			Log.verbose("Enter `help' for a list of available commands.");
+			
 			if (Options.doPLUGIN) {
-				Log
-						.verbose("Enter `plugins' for a list of available plugin commands.");
-        }
+				Log.verbose("Enter `plugins' for a list of available plugin commands.");
+			}
 		}
 
         while (!fFinished) {

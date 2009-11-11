@@ -56,236 +56,236 @@ import org.tzi.use.util.USEWriter;
  */
 public final class Main {
 
-    // utility class
-    private Main() {
-    }
-
-    private static void initGUIdefaults() {
-        MetalLookAndFeel.setCurrentTheme(new MyTheme());
-    }
-
-    public static void main(String args[]) {
-        // set System.out to the OldUSEWriter to protocol the output.
-        System.setOut(USEWriter.getInstance().getOut());
-        // set System.err to the OldUSEWriter to protocol the output.
-        System.setErr(USEWriter.getInstance().getErr());
-
-        // read and set global options, setup application properties
-        Options.processArgs(args);
-        if (Options.doGUI) {
-            initGUIdefaults();
-        }
-
-        Session session = new Session();
-	IRuntime pluginRuntime = null;
-        MModel model = null;
-        MSystem system = null;
-
-	// Plugin Framework
-	if (Options.doPLUGIN) {
-	    // create URL from plugin directory
-	    URL pluginDirURL = null;
-	    try {
-		pluginDirURL = new URL(Options.pluginDir);
-		Log.println("Plugin path: [" + pluginDirURL + "]");
-		Class<?> mainPluginRuntimeClass = null;
-		try {
-		    mainPluginRuntimeClass = Class
-			    .forName("org.tzi.use.runtime.MainPluginRuntime");
-		} catch (ClassNotFoundException e) {
-		    Log
-			    .error("Could not load PluginRuntime. Probably use-runtime-...jar is missing.\n"
-				    + "Try starting use with -noplugins switch.\n"
-				    + e.getMessage());
-		    System.exit(1);
-		}
-		try {
-		    Method run = mainPluginRuntimeClass.getMethod("run",
-			    new Class[] { pluginDirURL.getClass() });
-		    pluginRuntime = (IRuntime) run.invoke(null,
-			    new Object[] { pluginDirURL });
-		    Log.debug("Starting plugin runtime, got class ["
-			    + pluginRuntime.getClass() + "]");
-		} catch (Exception e) {
-		    e.printStackTrace();
-		    Log.error("FATAL ERROR.");
-		    System.exit(1);
-		}
-	    } catch (MalformedURLException mfue) {
-		Log.error("Plugin path " + Options.pluginDir
-			+ " invalid! Please check your configuration: " + mfue);
-		Log.error("Plugin framework disabled!");
-	    }
+	// utility class
+	private Main() {
 	}
 
-        // compile spec if filename given as argument
-        if (Options.specFilename != null) {
-        	FileInputStream specStream = null;
-            try {
-                Log.verbose("compiling specification...");
-                specStream = new FileInputStream(Options.specFilename);
-                model = USECompiler.compileSpecification(specStream,
-                        Options.specFilename, new PrintWriter(System.err),
-                        new ModelFactory());
-            } catch (FileNotFoundException e) {
-                Log.error("File `" + Options.specFilename + "' not found.");
-                System.exit(1);
-            } finally {
-                if (specStream != null)
-                    try {
-                    	specStream.close();
-                    } catch (IOException ex) {
-                        // ignored
-                    }
-            }
+	private static void initGUIdefaults() {
+		MetalLookAndFeel.setCurrentTheme(new MyTheme());
+	}
 
-            // compile errors?
-            if (model == null) {
-                System.exit(1);
-            }
+	public static void main(String args[]) {
+		// set System.out to the OldUSEWriter to protocol the output.
+		System.setOut(USEWriter.getInstance().getOut());
+		// set System.err to the OldUSEWriter to protocol the output.
+		System.setErr(USEWriter.getInstance().getErr());
 
-            if (Options.compileOnly) {
-                Log.verbose("no errors.");
-                if (Options.compileAndPrint) {
-                    MMVisitor v = new MMPrintVisitor(new PrintWriter(
-                            System.out, true));
-                    model.processWithVisitor(v);
-                }
-                System.exit(0);
-            }
-
-            // print some info about model
-            Log.verbose(model.getStats());
-
-            // create system
-            system = new MSystem(model);
-            session.setSystem(system);
-        } else {
-	  model = new ModelFactory().createModel("empty model");
-	  system = new MSystem(model);
-	  Log.verbose("using empty model.");
-	  session.setSystem(system);
-	} 
-
-        if (Options.doGUI) {
-            Class<?> mainWindowClass = null;
-            try {
-                mainWindowClass = Class
-                        .forName("org.tzi.use.gui.main.MainWindow");
-		Log.debug("Initializing [" + mainWindowClass.toString() + "]");
-            } catch (ClassNotFoundException e) {
-		Log
-			.error("Could not load GUI. Probably use-gui-...jar is missing.\n"
-				+ "Try starting use with -nogui switch.\n" + e);
-                System.exit(1);
-            }
-	    if (mainWindowClass == null) {
-		Log.error("MainWindow could not be initialized! Exiting!");
-		System.exit(1);
-	    }
-            try {
-		if (pluginRuntime == null) {
-		    Log.debug("Starting gui without plugin runtime!");
-                Method create = mainWindowClass.getMethod("create",
-                        new Class[] { Session.class });
-		    Log.debug("Invoking method create with ["
-			    + session.toString() + "]");
-                create.invoke(null, new Object[] { session });
-		} else {
-		    Log.debug("Starting gui with plugin runtime.");
-		    Method create = mainWindowClass.getMethod("create",
-			    new Class[] { Session.class, IRuntime.class });
-		    Log.debug("Invoking method create with ["
-			    + session.toString() + "] ["
-			    + pluginRuntime.toString() + "]");
-		    create
-			    .invoke(null,
-				    new Object[] { session, pluginRuntime });
+		// read and set global options, setup application properties
+		Options.processArgs(args);
+		if (Options.doGUI) {
+			initGUIdefaults();
 		}
-            } catch (Exception e) {
-                Log.error("FATAL ERROR.", e);
-                System.exit(1);
-            }
-        }
 
-        //      create thread for shell
-        // Shell sh = new Shell(session);
-	Shell sh = Shell.getInstance(session, pluginRuntime);
-        Thread t = new Thread(sh);
-        t.start();
+		Session session = new Session();
+		IRuntime pluginRuntime = null;
+		MModel model = null;
+		MSystem system = null;
 
-        // wait on exit from shell (this thread never returns)
-        try {
-            t.join();
-        } catch (InterruptedException ex) {
-            // ignored
-        }
-    }
+		// Plugin Framework
+		if (Options.doPLUGIN) {
+			// create URL from plugin directory
+			URL pluginDirURL = null;
+			try {
+				pluginDirURL = new URL(Options.pluginDir);
+				Log.println("Plugin path: [" + pluginDirURL + "]");
+				Class<?> mainPluginRuntimeClass = null;
+				try {
+					mainPluginRuntimeClass = Class
+							.forName("org.tzi.use.runtime.MainPluginRuntime");
+				} catch (ClassNotFoundException e) {
+					Log
+							.error("Could not load PluginRuntime. Probably use-runtime-...jar is missing.\n"
+									+ "Try starting use with -noplugins switch.\n"
+									+ e.getMessage());
+					System.exit(1);
+				}
+				try {
+					Method run = mainPluginRuntimeClass.getMethod("run",
+							new Class[] { pluginDirURL.getClass() });
+					pluginRuntime = (IRuntime) run.invoke(null,
+							new Object[] { pluginDirURL });
+					Log.debug("Starting plugin runtime, got class ["
+							+ pluginRuntime.getClass() + "]");
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.error("FATAL ERROR.");
+					System.exit(1);
+				}
+			} catch (MalformedURLException mfue) {
+				Log.error("Plugin path " + Options.pluginDir
+						+ " invalid! Please check your configuration: " + mfue);
+				Log.error("Plugin framework disabled!");
+			}
+		}
+
+		// compile spec if filename given as argument
+		if (Options.specFilename != null) {
+			FileInputStream specStream = null;
+			try {
+				Log.verbose("compiling specification...");
+				specStream = new FileInputStream(Options.specFilename);
+				model = USECompiler.compileSpecification(specStream,
+						Options.specFilename, new PrintWriter(System.err),
+						new ModelFactory());
+			} catch (FileNotFoundException e) {
+				Log.error("File `" + Options.specFilename + "' not found.");
+				System.exit(1);
+			} finally {
+				if (specStream != null)
+					try {
+						specStream.close();
+					} catch (IOException ex) {
+						// ignored
+					}
+			}
+
+			// compile errors?
+			if (model == null) {
+				System.exit(1);
+			}
+
+			if (Options.compileOnly) {
+				Log.verbose("no errors.");
+				if (Options.compileAndPrint) {
+					MMVisitor v = new MMPrintVisitor(new PrintWriter(
+							System.out, true));
+					model.processWithVisitor(v);
+				}
+				System.exit(0);
+			}
+
+			// print some info about model
+			Log.verbose(model.getStats());
+
+			// create system
+			system = new MSystem(model);
+			session.setSystem(system);
+		} else {
+			model = new ModelFactory().createModel("empty model");
+			system = new MSystem(model);
+			Log.verbose("using empty model.");
+			session.setSystem(system);
+		}
+
+		if (Options.doGUI) {
+			Class<?> mainWindowClass = null;
+			try {
+				mainWindowClass = Class
+						.forName("org.tzi.use.gui.main.MainWindow");
+				Log.debug("Initializing [" + mainWindowClass.toString() + "]");
+			} catch (ClassNotFoundException e) {
+				Log
+						.error("Could not load GUI. Probably use-gui-...jar is missing.\n"
+								+ "Try starting use with -nogui switch.\n" + e);
+				System.exit(1);
+			}
+			if (mainWindowClass == null) {
+				Log.error("MainWindow could not be initialized! Exiting!");
+				System.exit(1);
+			}
+			try {
+				if (pluginRuntime == null) {
+					Log.debug("Starting gui without plugin runtime!");
+					Method create = mainWindowClass.getMethod("create",
+							new Class[] { Session.class });
+					Log.debug("Invoking method create with ["
+							+ session.toString() + "]");
+					create.invoke(null, new Object[] { session });
+				} else {
+					Log.debug("Starting gui with plugin runtime.");
+					Method create = mainWindowClass.getMethod("create",
+							new Class[] { Session.class, IRuntime.class });
+					Log.debug("Invoking method create with ["
+							+ session.toString() + "] ["
+							+ pluginRuntime.toString() + "]");
+					create
+							.invoke(null,
+									new Object[] { session, pluginRuntime });
+				}
+			} catch (Exception e) {
+				Log.error("FATAL ERROR.", e);
+				System.exit(1);
+			}
+		}
+
+		// create thread for shell
+		// Shell sh = new Shell(session);
+		Shell sh = Shell.getInstance(session, pluginRuntime);
+		Thread t = new Thread(sh);
+		t.start();
+
+		// wait on exit from shell (this thread never returns)
+		try {
+			t.join();
+		} catch (InterruptedException ex) {
+			// ignored
+		}
+	}
 }
 
 /**
  * A theme with full control over fonts and customized tree display.
  */
 class MyTheme extends DefaultMetalTheme {
-    private FontUIResource controlFont;
+	private FontUIResource controlFont;
 
-    private FontUIResource systemFont;
+	private FontUIResource systemFont;
 
-    private FontUIResource userFont;
+	private FontUIResource userFont;
 
-    private FontUIResource smallFont;
+	private FontUIResource smallFont;
 
-    MyTheme() {
-        // System.out.println("font: " + Font.getFont("use.gui.controlFont"));
-        controlFont = new FontUIResource(Font.getFont("use.gui.controlFont",
-                super.getControlTextFont()));
-        systemFont = new FontUIResource(Font.getFont("use.gui.systemFont",
-                super.getSystemTextFont()));
-        userFont = new FontUIResource(Font.getFont("use.gui.userFont", super
-                .getUserTextFont()));
-        smallFont = new FontUIResource(Font.getFont("use.gui.smallFont", super
-                .getSubTextFont()));
-    }
+	MyTheme() {
+		// System.out.println("font: " + Font.getFont("use.gui.controlFont"));
+		controlFont = new FontUIResource(Font.getFont("use.gui.controlFont",
+				super.getControlTextFont()));
+		systemFont = new FontUIResource(Font.getFont("use.gui.systemFont",
+				super.getSystemTextFont()));
+		userFont = new FontUIResource(Font.getFont("use.gui.userFont", super
+				.getUserTextFont()));
+		smallFont = new FontUIResource(Font.getFont("use.gui.smallFont", super
+				.getSubTextFont()));
+	}
 
-    public String getName() {
-        return "USE";
-    }
+	public String getName() {
+		return "USE";
+	}
 
-    public FontUIResource getControlTextFont() {
-        return controlFont;
-    }
+	public FontUIResource getControlTextFont() {
+		return controlFont;
+	}
 
-    public FontUIResource getSystemTextFont() {
-        return systemFont;
-    }
+	public FontUIResource getSystemTextFont() {
+		return systemFont;
+	}
 
-    public FontUIResource getUserTextFont() {
-        return userFont;
-    }
+	public FontUIResource getUserTextFont() {
+		return userFont;
+	}
 
-    public FontUIResource getMenuTextFont() {
-        return controlFont;
-    }
+	public FontUIResource getMenuTextFont() {
+		return controlFont;
+	}
 
-    public FontUIResource getWindowTitleFont() {
-        return controlFont;
-    }
+	public FontUIResource getWindowTitleFont() {
+		return controlFont;
+	}
 
-    public FontUIResource getSubTextFont() {
-        return smallFont;
-    }
+	public FontUIResource getSubTextFont() {
+		return smallFont;
+	}
 
-    public void addCustomEntriesToTable(UIDefaults table) {
-        initIcon(table, "Tree.expandedIcon", "TreeExpanded.gif");
-        initIcon(table, "Tree.collapsedIcon", "TreeCollapsed.gif");
-        initIcon(table, "Tree.leafIcon", "TreeLeaf.gif");
-        initIcon(table, "Tree.openIcon", "TreeOpen.gif");
-        initIcon(table, "Tree.closedIcon", "TreeClosed.gif");
-        table.put("Desktop.background", table.get("Menu.background"));
-    }
+	public void addCustomEntriesToTable(UIDefaults table) {
+		initIcon(table, "Tree.expandedIcon", "TreeExpanded.gif");
+		initIcon(table, "Tree.collapsedIcon", "TreeCollapsed.gif");
+		initIcon(table, "Tree.leafIcon", "TreeLeaf.gif");
+		initIcon(table, "Tree.openIcon", "TreeOpen.gif");
+		initIcon(table, "Tree.closedIcon", "TreeClosed.gif");
+		table.put("Desktop.background", table.get("Menu.background"));
+	}
 
-    private void initIcon(UIDefaults table, String property, String iconFilename) {
-        table.put(property, new ImageIcon(Options.iconDir + iconFilename));
-    }
+	private void initIcon(UIDefaults table, String property, String iconFilename) {
+		table.put(property, new ImageIcon(Options.iconDir + iconFilename));
+	}
 
 }

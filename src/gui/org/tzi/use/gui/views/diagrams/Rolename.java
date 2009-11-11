@@ -70,6 +70,10 @@ public final class Rolename extends EdgeProperty {
 			constraints.add("subsets " + subsettedEnd.nameAsRolename());    			
 		}
     	    	
+		for (MAssociationEnd redefinedEnd : fAssocEnd.getRedefinedEnds()) {
+			constraints.add("redefines " + redefinedEnd.nameAsRolename());    			
+		}
+		
     	fName = fAssocEnd.nameAsRolename();
     	
     	if (constraints.size() > 0) {

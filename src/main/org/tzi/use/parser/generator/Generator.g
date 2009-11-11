@@ -488,15 +488,18 @@ associationDefinition returns [ASTAssociation n]
 
 /* ------------------------------------
   associationEnd ::= 
-    id "[" multiplicity "]" [ "role" id ] [ "ordered" ] [ "subsets" id] [ "union" ] [ ";" ]
+    id "[" multiplicity "]" [ "role" id ] ( "ordered" | "subsets" id | "union" | "redefines" )* [ ";" ]
 */
 associationEnd returns [ASTAssociationEnd n]
 :
     name=IDENT LBRACK m=multiplicity RBRACK { $n = new ASTAssociationEnd($name, $m.n); } 
     ( 'role' rn=IDENT { $n.setRolename($rn); } )?
-    ( 'ordered' { $n.setOrdered(); } )?
-    ( 'subsets' sr=IDENT { $n.addSubsetsRolename($sr); } )*
-    ( 'union' { $n.setUnion(true); } )?
+    (
+        'ordered' { $n.setOrdered(); }
+      | 'subsets' sr=IDENT { $n.addSubsetsRolename($sr); }
+      | 'union' { $n.setUnion(true); }
+      | 'redefines' rd=IDENT { $n.addRedefinesRolename($rd); }
+    )*
     ( SEMI )?
     ;
 

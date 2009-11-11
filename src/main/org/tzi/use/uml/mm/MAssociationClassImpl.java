@@ -534,4 +534,16 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void addRedefinedBy(MAssociation association) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addRedefines(MAssociation parentAssociation) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -33,14 +33,16 @@ public class PluginActionProxy extends PluginAction {
 			IPluginActionDescriptor pluginActionDescriptor) {
 		String fallBackImage = Options.iconDir + "New.gif";
 		URL imageUrl = null;
-		try {
-			imageUrl = new URL("jar:"
-					+ pluginActionDescriptor.getParent().getPluginLocation()
-					+ "!" + System.getProperty("file.separator")
-					+ pluginActionDescriptor.getPluginActionModel().getIcon());
+		String urlString = "jar:"
+			+ pluginActionDescriptor.getParent().getPluginLocation()
+			+ "!/" // + System.getProperty("file.separator")
+			+ pluginActionDescriptor.getPluginActionModel().getIcon();
+		
+		try {	
+			imageUrl = new URL(urlString);
 		} catch (MalformedURLException e) {
 			Log.error("The URL to the image ["
-					+ pluginActionDescriptor.getPluginActionModel().getIcon()
+					+ urlString
 					+ "] was malformed!");
 		}
 		if (imageUrl == null) {

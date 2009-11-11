@@ -618,10 +618,19 @@ public final class MSystemState {
 
 		// get association
 		MAssociation assoc = dstEnd.association();
-
-		// get link set for association
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
-
+		MLinkSet linkSet;
+		
+		if (dstEnd.isUnion()) {
+			// TODO: Caching
+			linkSet = new MLinkSet(assoc);
+			for (MAssociationEnd subsettingDestEnd : dstEnd.getSubsettingEnds()) {
+				linkSet.addAll(fLinkSets.get(subsettingDestEnd));
+			}
+		} else {
+			// get link set for association
+			linkSet = fLinkSets.get(assoc);
+		}
+		
 		// if link set is empty return empty result list
 		Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
 				+ linkSet.size());
@@ -1124,7 +1133,7 @@ public final class MSystemState {
 				out.println("Constraint 'subsets " + subEnd1.association().name() + ":" + subEnd1.nameAsRolename() + "' on association end " + aend.nameAsRolename() + 
 						    ":" + aend.association().name() + " is violated on object " + obj.toString() + ":" + obj.cls().name());
 				
-				out.println("Missing linked objects: " + StringUtil.fmtSeq(linkedObjects.iterator(), ", "));
+				out.println("Missing linked object" + (linkedObjects.size() > 1 ? "s" : "") + ": " + StringUtil.fmtSeq(linkedObjects.iterator(), ", "));
 				
 				valid = false;
 			}

@@ -104,57 +104,126 @@ public class ASTAssociation extends AST {
 
     	// Check subsetting on every association end    	
 		for (ASTAssociationEnd aEnd : fAssociationEnds) {
-    		// TODO: Subset of AssociationClass ?
-        	
-			if (aEnd.getSubsetsRolenames().size() > 0) {
-				// Get the MAssociationEnd from the name
-				MClass cls = model.getClass(aEnd.getClassName());
-				MAssociationEnd nSubsettingEnd = association.getAssociationEnd(cls, aEnd.getRolename(ctx));
-    		
-				// Find parent association end to subset
-				for (Token subsetsRolenameToken : aEnd.getSubsetsRolenames()) {
-					String subsetsRolename = subsetsRolenameToken.getText();
-					List<MAssociationEnd> possibleSubsettedEnds = cls.getAssociationEnd(subsetsRolename);
-
-					if (possibleSubsettedEnds.size() == 0) {
-						throw new SemanticException(subsetsRolenameToken, "No association end with name '" + subsetsRolename + "' to subset.");
-					}
-
-					boolean valid = false;
-        		
-					// Find a compatible association
-					// Duplicate role names are possible 
-					for (MAssociationEnd possibleSubsettedEnd : possibleSubsettedEnds) {
-	    				MAssociation parentAssociation = possibleSubsettedEnd.association();
-	    										
-	    				if (isSubsettingValid(association, parentAssociation)) {
-	    					assert(valid == false);
-	    					// Set subset information on this AssociationEnd
-	            			nSubsettingEnd.addSubsettedEnd(possibleSubsettedEnd);
-	            		
-	            			parentAssociation.addSubsettedBy(association);
-	            			association.addSubsets(parentAssociation);
-	            			
-	            			valid = true;
-	    				}
-	    			}
-					
-					if (!valid)
-						throw new SemanticException(subsetsRolenameToken, 
-								"Constraint {subsets " + subsetsRolename + 
-								"} on association end '" + nSubsettingEnd.nameAsRolename() + 
-								":" + association.name() + "' is invalid." +
-								StringUtil.NEWLINE +
-								"Either the parent association " +
-								"has another number of association ends or " +
-								StringUtil.NEWLINE +
-								"the types of connected by the subsetting association do not conform " +
-								"to the types connected by the subsetted association.");   
-        		}
-    		}
+			genSubsetsConstraints(ctx, model, association, aEnd);
+			
+			genRedefinesConstraints(ctx, model, association, aEnd);
 		}
     }
 
+	private void genSubsetsConstraints(Context ctx, MModel model,
+			MAssociation association, ASTAssociationEnd aEnd)
+			throws SemanticException {
+		// TODO: Subset of AssociationClass ?
+		
+		if (aEnd.getSubsetsRolenames().size() > 0) {
+			// Get the MAssociationEnd from the name
+			MClass cls = model.getClass(aEnd.getClassName());
+			MAssociationEnd nSubsettingEnd = association.getAssociationEnd(cls, aEnd.getRolename(ctx));
+		
+			// Find parent association end to subset
+			for (Token subsetsRolenameToken : aEnd.getSubsetsRolenames()) {
+				String subsetsRolename = subsetsRolenameToken.getText();
+				List<MAssociationEnd> possibleSubsettedEnds = cls.getAssociationEnd(subsetsRolename);
+
+				if (possibleSubsettedEnds.size() == 0) {
+					throw new SemanticException(subsetsRolenameToken, "No association end with name '" + subsetsRolename + "' to subset.");
+				}
+
+				boolean valid = false;
+			
+				// Find a compatible association
+				// Duplicate role names are possible 
+				for (MAssociationEnd possibleSubsettedEnd : possibleSubsettedEnds) {
+					MAssociation parentAssociation = possibleSubsettedEnd.association();
+											
+					if (isSubsettingValid(association, parentAssociation)) {
+						assert(valid == false);
+						// Set subset information on this AssociationEnd
+						
+						// More readable
+						MAssociationEnd subsettedEnd = possibleSubsettedEnd;
+		    			nSubsettingEnd.addSubsettedEnd(subsettedEnd);
+		    		    subsettedEnd.addSubsettingEnd(nSubsettingEnd);
+		    		    
+		    			parentAssociation.addSubsettedBy(association);
+		    			association.addSubsets(parentAssociation);
+		    			
+		    			valid = true;
+					}
+				}
+				
+				if (!valid)
+					throw new SemanticException(subsetsRolenameToken, 
+							"Constraint {subsets " + subsetsRolename + 
+							"} on association end '" + nSubsettingEnd.nameAsRolename() + 
+							":" + association.name() + "' is invalid." +
+							StringUtil.NEWLINE +
+							"Either the parent association " +
+							"has another number of association ends or " +
+							StringUtil.NEWLINE +
+							"the types connected by the subsetting association do not conform " +
+							"to the types connected by the subsetted association.");   
+			}
+		}
+	}
+
+	private void genRedefinesConstraints(Context ctx, MModel model,
+			MAssociation association, ASTAssociationEnd aEnd)
+			throws SemanticException {
+		// TODO: Redefines on AssociationClass ?
+		
+		if (aEnd.getRedefinesRolenames().size() > 0) {
+			// Get the MAssociationEnd from the name
+			MClass cls = model.getClass(aEnd.getClassName());
+			MAssociationEnd redefiningEnd = association.getAssociationEnd(cls, aEnd.getRolename(ctx));
+		
+			// Find parent association end to subset
+			for (Token redefinesRolenameToken : aEnd.getRedefinesRolenames()) {
+				String redefinesRolename = redefinesRolenameToken.getText();
+				List<MAssociationEnd> possibleRedefinedEnds = cls.getAssociationEnd(redefinesRolename);
+
+				if (possibleRedefinedEnds.size() == 0) {
+					throw new SemanticException(redefinesRolenameToken, "No association end with name '" + redefinesRolename + "' to redefine.");
+				}
+
+				boolean valid = false;
+			
+				// Find a compatible association
+				// Duplicate role names are possible 
+				for (MAssociationEnd possibleRedefinedEnd : possibleRedefinedEnds) {
+					MAssociation parentAssociation = possibleRedefinedEnd.association();
+											
+					if (isSubsettingValid(association, parentAssociation)) {
+						assert(valid == false);
+						// Set redefined information on this AssociationEnd
+						
+						// More readable
+						MAssociationEnd redefinedEnd = possibleRedefinedEnd;
+		    			redefiningEnd.addRedefinedEnd(redefinedEnd);
+		    		    redefinedEnd.addRedefiningEnd(redefiningEnd);
+		    		    
+		    			parentAssociation.addRedefinedBy(association);
+		    			association.addRedefines(parentAssociation);
+		    			
+		    			valid = true;
+					}
+				}
+				
+				if (!valid)
+					throw new SemanticException(redefinesRolenameToken, 
+							"Constraint {redefines " + redefinesRolename + 
+							"} on association end '" + redefiningEnd.nameAsRolename() + 
+							":" + association.name() + "' is invalid." +
+							StringUtil.NEWLINE +
+							"Either the parent association " +
+							"has another number of association ends or " +
+							StringUtil.NEWLINE +
+							"the types connected by the redefining association do not conform " +
+							"to the types connected by the redefined association.");   
+			}
+		}
+	}
+	
 	private boolean isSubsettingValid(MAssociation association, MAssociation parentAssociation) {
 		
 		if (association.reachableEnds().size() != parentAssociation.reachableEnds().size())
@@ -172,7 +241,7 @@ public class ASTAssociation extends AST {
 			valid = true;
 			
 			for (MNavigableElement end : gen.getNextList()) {
-				parentEnd = parentAssociation.reachableEnds().get(index); 
+				parentEnd = parentAssociation.reachableEnds().get(index);
 				
 				if (!end.cls().isSubClassOf(parentEnd.cls())) {
 					valid = false;

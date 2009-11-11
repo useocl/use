@@ -188,6 +188,15 @@ public final class MLinkSet {
         return fLinks.add(link);
     }
 
+    void addAll(MLinkSet linkSet) {
+    	if (linkSet == null)
+    		return;
+    	
+    	for (MLink newLink : linkSet.links()) {
+    		add(newLink);
+    	}
+    }
+    
     /**
      * Returns true if there is a link connecting the given set of
      * objects.  
