@@ -61,12 +61,12 @@ operations
   -- Thats why we need indexIn.
   -- preconditions:
   --  seq->includes(self)
-  indexIn( seq: Sequence(Station) ) : Integer =
-    if seq->at(1) = self
+  indexIn( oSet: OrderedSet(Station) ) : Integer =
+    if oSet->at(1) = self
     then
       1
     else 
-      self.indexIn( seq->subSequence(2, seq->size) )+1
+      self.indexIn( oSet->subOrderedSet(2, oSet->size) )+1
     endif;
 end
 

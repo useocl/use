@@ -35,24 +35,24 @@ gen result
 *Result: Valid state found.
 *Commands to produce the valid state:
 *!create Person1 : Person
-*!set @Person1.name := 'Cam'
-*!set @Person1.civstat := #divorced
-*!set @Person1.gender := #female
-*!set @Person1.alive := true
+*!set Person1.name := 'Cam'
+*!set Person1.civstat := #divorced
+*!set Person1.gender := #female
+*!set Person1.alive := true
 *!create Snapshot1 : Snapshot
 *!insert (Snapshot1,Person1) into SnapshotPerson
 *!create Person2 : Person
-*!set @Person2.name := 'Cam'
-*!set @Person2.civstat := #divorced
-*!set @Person2.gender := #female
-*!set @Person2.alive := true
+*!set Person2.name := 'Cam'
+*!set Person2.civstat := #divorced
+*!set Person2.gender := #female
+*!set Person2.alive := true
 *!create Snapshot2 : Snapshot
 *!insert (Snapshot2,Person2) into SnapshotPerson
 *!insert (Person1,Person2) into PredSuccPerson
 *!create deathC1 : deathC
-*!set @deathC1.aSelf := @Person1
+*!set deathC1.aSelf := @Person1
 *!insert (Snapshot1,Snapshot2,deathC1) into PredSuccOpC
-*!set @Person2.alive := false
+*!set Person2.alive := false
 gen result accept
 *Generated result (system state) accepted.
 check

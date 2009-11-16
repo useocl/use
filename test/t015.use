@@ -62,13 +62,13 @@ operations
   -- indexIn wird benoetigt, da keine Operation
   --   Sequence(T)>>indexOf(T): Integer existiert!
   -- preconditions:
-  --   seq->includes(self)
-  indexIn( seq: Sequence(Bahnhof) ) : Integer =
-    if seq->at(1) = self
+  --   oSet->includes(self)
+  indexIn( oSet: OrderedSet(Bahnhof) ) : Integer =
+    if oSet->at(1) = self
     then
       1
     else 
-      self.indexIn( seq->subSequence(2, seq->size) )+1
+      self.indexIn( oSet->subOrderedSet(2, oSet->size) )+1
     endif;
 end
 

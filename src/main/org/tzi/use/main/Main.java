@@ -87,7 +87,7 @@ public final class Main {
 			URL pluginDirURL = null;
 			try {
 				pluginDirURL = new URL(Options.pluginDir);
-				Log.println("Plugin path: [" + pluginDirURL + "]");
+				Log.verbose("Plugin path: [" + pluginDirURL + "]");
 				Class<?> mainPluginRuntimeClass = null;
 				try {
 					mainPluginRuntimeClass = Class

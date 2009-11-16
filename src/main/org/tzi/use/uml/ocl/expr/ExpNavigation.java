@@ -107,7 +107,7 @@ public final class ExpNavigation extends Expression {
             } else if (resultType.isSet() ) {
                 res = new SetValue(((SetType) resultType).elemType(), 
                                    oidsToObjectValues(state, objList));
-            } else if (resultType.isSequence() ) {
+            } else if (resultType.isOrderedSet() ) {
                 res = new OrderedSetValue(((OrderedSetType) resultType).elemType(), 
                                         oidsToObjectValues(state, objList));
             } else

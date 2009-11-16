@@ -49,9 +49,10 @@ public class MainPluginRuntime {
 		JarFilter jarFilter = new JarFilter();
 		fileNames = pluginDir.list(jarFilter);
 		if (fileNames != null) {
-			Log.print("Plugin filename(s) [");
-			Log.print(StringUtil.fmtSeq(fileNames, ","));
-			Log.println("]");
+			String verboseMsg = "Plugin filename(s) [";
+			verboseMsg += StringUtil.fmtSeq(fileNames, ",");
+			verboseMsg += "]";
+			Log.verbose(verboseMsg);
 		}
 		return fileNames;
 	}

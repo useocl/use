@@ -1563,7 +1563,7 @@ operations
   currentSnapshotOf(a : Action_) : ActionExecutionSnapshot =
     self.current(self.executionOf(a)).oclAsType(ActionExecutionSnapshot)
 -- [6] This operation returns the value of a given pin for this snapshot.
-  valueOf(p : Pin) : Sequence(InstanceIdentity) =
+  valueOf(p : Pin) : OrderedSet(InstanceIdentity) =
     self.pinValue->select(pv:PinValue|pv.pin=p)->
       iterate(p;acc:PinValue = oclUndefined(PinValue)|p).value
 -- [7] This operation returns the source value for a given input pin.
@@ -1595,7 +1595,7 @@ operations
 --                              collect(pv:PinValue| pv.value)
 -- [9] This operation returns the value of an output pin of the action being executed,
 -- identified by index.
-  pinValueAt(i : Integer) : Sequence(InstanceIdentity)=
+  pinValueAt(i : Integer) : OrderedSet(InstanceIdentity)=
     self.valueOf(self.executionID.action.outputPin->at(i))
 -- [10] This operation asserts that the current snapshot of the given action-execution
 -- identity has status complete.
@@ -1627,12 +1627,12 @@ operations
     self.current(self.executionID.actionExecution).oclAsType(ActionExecutionSnapshot)
 -- [2] This operation returns the value of a given pin for this procedure-execution snapshot.
 -- FIXME:  Expression type `Set(PinValue)' does not match declared result type `Sequence(InstanceIdentity)'.
-  valueOf(p : Pin) : Sequence(InstanceIdentity) =
+  valueOf(p : Pin) : OrderedSet(InstanceIdentity) =
     self.pinValue->select(pv:PinValue|pv.pin=p)->
       iterate(p;acc:PinValue = oclUndefined(PinValue)|p).value
 
 -- [3] This operation returns the source value for a given result pin (as a "pre" value).
-   sourceValueFor(p : InputPin) : Sequence(InstanceIdentity) =
+   sourceValueFor(p : InputPin) : OrderedSet(InstanceIdentity) =
      self.currentActionSnapshot().valueOf(p.flow.source)
 -- [4] This operation asserts that the execution of the procedure action has been started.
   actionExecutionStarted(): Boolean =
