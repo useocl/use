@@ -294,7 +294,7 @@ associationEnd returns [ASTAssociationEnd n]
     (
         'ordered' { $n.setOrdered(); }
       | 'subsets' sr=IDENT { $n.addSubsetsRolename($sr); }
-      | 'union' { $n.setUnion(true); }
+      | keyUnion { $n.setUnion(true); }
       | 'redefines' rd=IDENT { $n.addRedefinesRolename($rd); }
     )*
     ( SEMI )?
@@ -505,6 +505,9 @@ alExec returns [ASTALExecute c]
     'execute' op=expression
     { $c = new ASTALExecute($op.n); }
 ;
+
+keyUnion:
+  {input.LT(1).getText().equals("union")}? IDENT ;
 /*
 --------- Start of file OCLBase.gpart -------------------- 
 */
