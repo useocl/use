@@ -48,6 +48,10 @@ public final class BagType extends CollectionType {
     public boolean isTrueCollection() {
     	return false;
     }
+    
+    public boolean isInstantiableCollection() {
+    	return true;
+    }
 
     public boolean isBag() {
     	return true;

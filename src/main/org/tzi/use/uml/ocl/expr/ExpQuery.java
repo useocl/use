@@ -102,7 +102,7 @@ public abstract class ExpQuery extends Expression {
         // prepare result value
         ArrayList<Value> resValues = new ArrayList<Value>();
         Type elemType = rangeVal.elemType();
-        if (!rangeVal.type().isSetBagOrSequence())
+        if (!rangeVal.type().isInstantiableCollection())
             throw new RuntimeException("rangeVal is not of collection type: "
                     + rangeVal.type());
 
@@ -135,6 +135,8 @@ public abstract class ExpQuery extends Expression {
             res = new SequenceValue(elemType, resValues);
         else if (rangeVal.type().isBag())
             res = new BagValue(elemType, resValues);
+        else if (rangeVal.type().isOrderedSet())
+        	res = new OrderedSetValue(elemType, resValues);
         else {
             // should not happen
             throw new RuntimeException("rangeVal is not of collection type: "

@@ -38,6 +38,10 @@ public final class SequenceType extends CollectionType {
     public SequenceType(Type elemType) {
         super(elemType);
     }
+    
+    public boolean isInstantiableCollection() {
+    	return true;
+    }
 
     public String shortName() {
         if (elemType().isCollection() )

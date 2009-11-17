@@ -105,12 +105,6 @@ public abstract class Type {
     	return false;
     }
 
-    public boolean isSetBagOrSequence() {
-        return (this.isSet())
-            || (this.isBag())
-            || (this.isSequence());
-    }
-
     public boolean isSet() {
     	return false;
     }
@@ -124,6 +118,10 @@ public abstract class Type {
 	}
     
     public boolean isBag() {
+    	return false;
+    }
+    
+    public boolean isInstantiableCollection() {
     	return false;
     }
 

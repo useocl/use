@@ -53,6 +53,10 @@ public final class SetType extends CollectionType {
     	return true;
     }
     
+    public boolean isInstantiableCollection() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */

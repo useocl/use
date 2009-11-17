@@ -57,6 +57,11 @@ public final class OrderedSetType extends CollectionType {
     public boolean isOrderedSet() {
     	return true;
     }
+    
+    public boolean isInstantiableCollection() {
+    	return true;
+    }
+    
     public Type getLeastCommonSupertype(Type type)
     {
     	if (!type.isCollection())
