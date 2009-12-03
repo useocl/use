@@ -210,7 +210,6 @@ public final class Shell implements Runnable {
             String line = "";
 
             // get current readline (may be e.g. console or file)
-            //fReadline = (Readline) fReadlineStack.peek();
             fReadline = fReadlineStack.getCurrentReadline();
 
             try {
@@ -232,6 +231,9 @@ public final class Shell implements Runnable {
                 Log.error("Cannot read line: " + ex.getMessage());
             }
             if (line != null) {
+            	if (!fReadline.doEcho())
+            		USEWriter.getInstance().protocol(line);
+            	
                 processLineSafely(line);
             } else {
                 fFinished = fReadlineStack.popCurrentReadline();
@@ -275,12 +277,7 @@ public final class Shell implements Runnable {
      * Analyses a line of input and calls the method implementing a command.
      */
     private void processLineSafely(String line) {
-        try {
-            // protocol the input line
-            if (fReadline.doProtocol()) {
-                // add prompt to line, because it is not included
-                USEWriter.getInstance().protocol(PROMPT + line);
-            }
+        try {            
             processLine(line);
         } catch (NoSystemException ex) {
 			Log
@@ -1067,12 +1064,12 @@ public final class Shell implements Runnable {
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             // read from file, echo each line as it is read
             Readline fReadline;
+            
             if (Options.quiet || !doEcho)
-				fReadline = LineInput.getStreamReadline(reader, false, false,
-						"");
+				fReadline = LineInput.getStreamReadline(reader, false, "");
             else
-				fReadline = LineInput.getStreamReadline(reader, true, true,
-						filename + "> ");
+				fReadline = LineInput.getStreamReadline(reader, true, filename + "> ");
+            
             fReadlineStack.push(fReadline);
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");

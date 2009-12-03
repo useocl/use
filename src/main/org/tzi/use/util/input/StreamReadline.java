@@ -37,7 +37,6 @@ public class StreamReadline implements Readline {
     private BufferedReader fBufferedReader;
     private String fStaticPrompt;
     private boolean fDoEcho;
-    private boolean fDoProtocol;
 
     /**
      * Constructs a new StreamReadline. If echoInput is true, each
@@ -46,26 +45,18 @@ public class StreamReadline implements Readline {
      */
      StreamReadline(BufferedReader reader,
                           boolean doEcho,
-                          boolean doProtocol,
                           String staticPrompt) {
         fBufferedReader = reader;
         fStaticPrompt = staticPrompt;
         fDoEcho = doEcho;
-        fDoProtocol = doProtocol;
-        //OldUSEWriter.getInstance().setCmdReadPrompt( fStaticPrompt );
     }
 
-    public StreamReadline(BufferedReader reader,
-                          boolean doEcho,boolean doProtocol) {
-        this(reader, doEcho, doProtocol, null);
+    public StreamReadline(BufferedReader reader, boolean doEcho) {
+        this(reader, doEcho, null);
     }
 
     public boolean doEcho() {
         return fDoEcho;
-    }
-    
-    public boolean doProtocol() {
-        return fDoProtocol;
     }
     
     /**
@@ -79,15 +70,20 @@ public class StreamReadline implements Readline {
      */
     public String readline(String prompt) throws IOException {
         if (fStaticPrompt != null ) {
-            USEWriter.getInstance().getNoProtocolOut().print(fStaticPrompt);
+            USEWriter.getInstance().getOut().print(fStaticPrompt);
         } else
-            USEWriter.getInstance().getNoProtocolOut().print(prompt);
+            USEWriter.getInstance().getOut().print(prompt);
+        
         String line = fBufferedReader.readLine();
-        if (fDoEcho )
+        
+        if ( fDoEcho ) {
             if (line != null ) {
                 System.out.println(line);
-            } else 
-            System.out.println();
+            } else {
+            	System.out.println();
+            }
+        }
+        
         return line;
     }   
 

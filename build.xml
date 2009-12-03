@@ -2,7 +2,7 @@
 
 <project name="use" default="build" basedir=".">
   <description>Build file for USE</description>
-
+	
   <property name="release.version" value="2.6.0"/>
   
   <!-- set release name to "use-x.y.z" -->
@@ -437,7 +437,6 @@
   <target name="test" description="run all tests" depends="test-junit, test-other" />
 
   <!-- run unit tests -->
-
   <target name="test-junit" description="run unit tests" depends="build">
     <junit haltonfailure="yes">
       <jvmarg value="-Dbasedir=${basedir}"/>
@@ -452,7 +451,6 @@
   </target>
 
   <!-- run unit tests with gui  -->
-
   <target name="test-junit-swing" description="runs unit tests with gui" depends="build">
     <java classname="junit.swingui.TestRunner" fork="yes">
       <jvmarg value="-Dbasedir=${basedir}"/>
@@ -462,7 +460,6 @@
 
 
   <!-- run other tests via make -->
-
   <target name="test-other" description="run scripted tests" depends="build">
     <exec executable="make" dir="${test.dir}" failonerror="true">
       <arg value="clean"/>
@@ -478,9 +475,32 @@
     </exec>
   </target>
 
+  <!-- perform classcycle checks -->
+  <property name="package" value="org.tzi.use"/>
 
+  <target name="test-classcycles">
+    <taskdef name="classycleDependencyCheck" 
+             classname="classycle.ant.DependencyCheckingTask" classpath="lib_build/Classycle1.3.3/classycle.jar"/>
+	
+    <classycleDependencyCheck failOnUnwantedDependencies="true"
+                              excludingClasses="*Test,*.All*Tests">
+      <fileset dir="${build.classes.dir}">
+        <include name="**/*.class"/>
+      </fileset>
+      show allResults
+      [gui] = ${package}.gui.*
+      [runtimeGui] = ${package}.runtime.gui.*
+      [runtime] = ${package}.runtime excluding [runtimeGui]
+      [noGui] = ${package}.* excluding [gui] [runtimeGui]
+    	
+      check [noGui] independentOf [gui]
+      check [runtime] independentOf [runtimeGui]
+      check [noGui] independentOf [runtimeGui]
+    </classycleDependencyCheck>
+  </target>
+
+	
   <!-- Performs several coding style checks (project specific) -->
-
   <target name="checkstyle" depends="init">
 	<taskdef resource="checkstyletask.properties" classpath="${checkstyle.jar}"/>
 	<checkstyle config="etc/checkstyle-use.xml" failOnViolation="yes" classpath="${antlr.jar}:${build.classes.dir}">
@@ -501,13 +521,11 @@
   </target>
 
   <!-- Maintainance target: Enforces correct line breaks and replaces tabs -->
-
   <target name="fixcrlf" depends="init">
 	<fixcrlf srcDir="${src.dir}" eol="lf" javafiles="yes" includes="**/*.java" tab="remove" tablength="4" />
   </target>
 
   <!-- create www docs -->
-
   <target name="doc" description="create www documentation">
 	<fail unless="intern.dir.present" message="This target requires files that are not part of the release distribution." />
     <mkdir dir="${build.doc.dir}"/>

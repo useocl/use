@@ -21,12 +21,10 @@
 
 package org.tzi.use.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 
 /**
  * Replaces System.out and System.err by decorators that record all 
@@ -45,15 +43,17 @@ public class USEWriter {
     private PrintStream out;
     private PrintStream noProtocolOut;
     private PrintStream err;
-    private StringWriter log;
-    private PrintWriter logWriter;
+    
+    private ByteArrayOutputStream log;
+    private PrintStream logWriter;
     
     private USEWriter() {
         noProtocolOut = System.out;
         out = new PrintStream(new LoggingOutputStreamDecorator(System.out));
         err = new PrintStream(new LoggingOutputStreamDecorator(System.err));
-        log = new StringWriter();
-        logWriter = new PrintWriter(log);
+        
+        log = new ByteArrayOutputStream();
+        logWriter = new PrintStream(log);
     }
 
     public PrintStream getOut() {
@@ -73,9 +73,9 @@ public class USEWriter {
         logWriter.flush();
     }
     
-    public void writeProtocolFile(Writer writer) throws IOException  {
+    public void writeProtocolFile(OutputStream out) throws IOException  {
         log.flush();
-        writer.write(log.getBuffer().toString());
+        out.write(log.toByteArray());
     }
 
     

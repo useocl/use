@@ -60,7 +60,7 @@ public class LineInput {
             }
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             // no echo, do protocol
-            rl = new StreamReadline(reader, false, true);
+            rl = new StreamReadline(reader, false);
         }
         if (Options.readlineTest) {
             return new ReadlineTestReadlineDecorator(rl);
@@ -68,8 +68,8 @@ public class LineInput {
         return rl;
     }
 
-    public static Readline getStreamReadline(BufferedReader reader, boolean b, boolean c, String string) {
-        Readline rl = new StreamReadline(reader, b, c, string);
+    public static Readline getStreamReadline(BufferedReader reader, boolean doEcho, String string) {
+        Readline rl = new StreamReadline(reader, doEcho, string);
         if (Options.readlineTest) {
             return new ReadlineTestReadlineDecorator(rl);
         }

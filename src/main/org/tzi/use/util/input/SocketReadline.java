@@ -101,8 +101,4 @@ public class SocketReadline implements Readline {
     public boolean doEcho() {
         return true;
     }
-    
-    public boolean doProtocol() {
-        return true;
-    }
 }

@@ -71,7 +71,7 @@ public final class Log {
 	public static void setShowWarnings(boolean showWarnings) {
 		Log.showWarnings = showWarnings;
 	}
-	
+
     /**
      * Sets print time flag. Determines whether messages are prefixed with the
      * current time.
@@ -156,7 +156,7 @@ public final class Log {
         fOut.println();
         fDidOutput = true;
     }
-    
+     
     /**
      * Print messages only if verbose flag is on.
      */
@@ -178,13 +178,14 @@ public final class Log {
     }
 
     public static void trace(Object location, String msg, boolean flush) {
-        if (fTrace ) {
+        if (fTrace) {
             String className = location.getClass().getName();
             if (className.startsWith("org.tzi.use") )
                 className = className.substring("org.tzi.use".length());
             println("* " + className + ": " + msg);
-            if (flush )
+            if (flush) {
                 fOut.flush();
+            }
         }
     }
 
@@ -198,23 +199,33 @@ public final class Log {
 
     public static void error(Object location, String msg) {
         String className = location.getClass().getName();
-        fErr.println("error in " + className + ": " + msg);
+        String err = "error in " + className + ": " + msg;
+        
+        fErr.println(err);
     }
 
     public static void error(Exception e) {
         String className = e.getClass().getName();
-        fErr.println("exception " + className + ": " + e.getMessage());
-        if (fPrintStackTraces )
+        String err = "exception " + className + ": " + e.getMessage();
+        
+        fErr.println(err);
+        
+        if (fPrintStackTraces ) {
             e.printStackTrace();
+        }
         fDidOutput = true;
     }
 
     public static void error(String s, Exception e) {
         String className = e.getClass().getName();
-	fErr.println("exception " + className + ": " + s + " reason: "
-		+ e.getMessage());
-        if (fPrintStackTraces )
+        String err = "exception " + className + ": " + s + " reason: " + e.getMessage();
+        
+        fErr.println(err);
+        
+        if ( fPrintStackTraces ) {
             e.printStackTrace();
+        }
+        
         fDidOutput = true;
     }
 
@@ -231,7 +242,7 @@ public final class Log {
 		if (fDebug) {
 		    fDbg.println("Debug: " + s);
 		    fDidOutput = true;
-	}
+		}
 	}
 
 }

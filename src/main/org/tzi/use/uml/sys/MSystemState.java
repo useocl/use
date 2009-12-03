@@ -28,23 +28,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.model.GFlaggedInvariant;
+import org.tzi.use.graph.DirectedGraph;
+import org.tzi.use.graph.DirectedGraphBase;
+import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.graph.DirectedGraphBase;
-import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
@@ -434,7 +436,8 @@ public final class MSystemState {
 							sourceEdgeIter.next()).iterator();
 					while (iter.hasNext()) {
 						MLink l = (MLink) iter.next();
-						if (l.association().aggregationKind() == MAggregationKind.COMPOSITION) {
+						if (l.association().aggregationKind() == MAggregationKind.COMPOSITION && 
+							!associationsHaveSubsetsRelation(l.association(), assoc)) {
 							Log
 									.warn("Warning: Insert has resulted in two aggregates for object `"
 											+ target.name()
@@ -614,41 +617,55 @@ public final class MSystemState {
 	 */
 	List<MObject> getLinkedObjects(MObject obj, MAssociationEnd srcEnd,
 			MAssociationEnd dstEnd) {
-		ArrayList<MObject> res = new ArrayList<MObject>();
+		List<MObject> res = new ArrayList<MObject>();
 
 		// get association
 		MAssociation assoc = dstEnd.association();
 		MLinkSet linkSet;
 		
-		if (dstEnd.isUnion()) {
-			// TODO: Caching
-			linkSet = new MLinkSet(assoc);
+		if (dstEnd.isUnion()) {			
+			Set<MObject> tmpResult = new HashSet<MObject>();
+			
+			// add subsetting ends
 			for (MAssociationEnd subsettingDestEnd : dstEnd.getSubsettingEnds()) {
-				linkSet.addAll(fLinkSets.get(subsettingDestEnd));
+				
+				// TODO: n-ary!
+				MAssociationEnd subsettingSrcEnd = subsettingDestEnd.getAllOtherAssociationEnds().get(0);
+				tmpResult.addAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
 			}
+			
+			// add redefining ends
+			for (MAssociationEnd redefiningDestEnd : dstEnd.getRedefiningEnds()) {
+				MAssociationEnd redefiningSrcEnd = redefiningDestEnd.getAllOtherAssociationEnds().get(0);
+				tmpResult.addAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
+			}
+			
+			res.addAll(tmpResult);
+			return res;
 		} else {
 			// get link set for association
 			linkSet = fLinkSets.get(assoc);
-		}
 		
-		// if link set is empty return empty result list
-		Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
-				+ linkSet.size());
-		if (linkSet.size() == 0)
+		
+			// if link set is empty return empty result list
+			Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
+					+ linkSet.size());
+			if (linkSet.size() == 0)
+				return res;
+	
+			// select links with srcEnd == obj
+			Set<MLink> links = linkSet.select(srcEnd, obj);
+			Log.trace(this, "linkSet.select for object `" + obj + "', size = "
+					+ links.size());
+	
+			// project tuples to destination end component
+			for (MLink link : links) {
+				MLinkEnd linkEnd = link.linkEnd(dstEnd);
+				res.add(linkEnd.object());
+			}
+			
 			return res;
-
-		// select links with srcEnd == obj
-		Set<MLink> links = linkSet.select(srcEnd, obj);
-		Log.trace(this, "linkSet.select for object `" + obj + "', size = "
-				+ links.size());
-
-		// project tuples to destination end component
-		for (MLink link : links) {
-			MLinkEnd linkEnd = link.linkEnd(dstEnd);
-			res.add(linkEnd.object());
 		}
-		
-		return res;
 	}
 
 	/**
@@ -933,19 +950,21 @@ public final class MSystemState {
 				// finding all edges (links) whose target is the target object
 				// of the new link
 				for (MObject tmpSource : fWholePartLinkGraph.sourceNodeSet(target)) {
-					
 					for (MWholePartLink tmpWholePartLink : fWholePartLinkGraph.edgesBetween(tmpSource, target)) {
 						MLink l = tmpWholePartLink;
 						if ((l.association().aggregationKind() == MAggregationKind.COMPOSITION)
 								&& (!wholePartLink.equals(l))
 								&& !sharedObjects.contains(target)
 								&& tmpWholePartLink.target().equals(target)) {
-							out.println("Error: Object `" + target.name()
-									+ "' is shared by object `" + source.name()
-									+ "' and object `" + tmpSource.name()
-									+ "'.");
-							sharedObjects.add(target);
-							valid = false;
+							
+							if (!associationsHaveSubsetsRelation(l.association(), wholePartLink.association())) {
+								out.println("Error: Object `" + target.name()
+										+ "' is shared by object `" + source.name()
+										+ "' and object `" + tmpSource.name()
+										+ "'.");
+								sharedObjects.add(target);
+								valid = false;
+							}
 						}
 					}
 				}
@@ -965,6 +984,26 @@ public final class MSystemState {
 			}
 		}
 		return valid;
+	}
+
+	private boolean associationsHaveSubsetsRelation(MAssociation association, MAssociation association2) {
+		boolean related = false;
+		
+		Stack<MAssociation> workStack = new Stack<MAssociation>();
+		workStack.push(association2);
+		
+		while (!workStack.isEmpty()) {
+			MAssociation a = workStack.pop();
+			
+			if (association.getSubsets().contains(a) || association.getSubsettedBy().contains(a) ) {
+				related = true;
+				break;
+			}
+			
+			workStack.addAll(a.getSubsets());
+		}
+
+		return related;
 	}
 
 	/**
@@ -1094,9 +1133,8 @@ public final class MSystemState {
 			List<MObject> objList = getLinkedObjects(obj, aend1, aend2);
 			int n = objList.size();
 			if (!aend2.multiplicity().contains(n)) {
-				out
-						.println("Multiplicity constraint violation in association `"
-								+ assoc.name() + "':");
+				out.println("Multiplicity constraint violation in association `"
+							+ assoc.name() + "':");
 				out.println("  Object `" + obj.name() + "' of class `"
 						+ obj.cls().name() + "' is connected to " + n
 						+ " object" + ((n == 1) ? "" : "s") + " of class `"
@@ -1110,10 +1148,46 @@ public final class MSystemState {
 				if (!checkSubsets(out, obj, objList, aend1))
 					valid = false;
 			}
+			
+			if (aend1.getRedefiningEnds().size() > 0) {
+				if (!checkRedefineBinary(out, obj, objList, aend1))
+					valid = false;
+			}
 		}
 		return valid;
 	}
 
+	
+	private boolean checkRedefineBinary(PrintWriter out, MObject obj, List<MObject> linkedObjects, MAssociationEnd aend) {
+		boolean valid = true;
+		List<MAssociationEnd> endsToCheck = new ArrayList<MAssociationEnd>();
+		
+		// Find all redefining ends, which are of the same type or a subtype of obj 
+		for (MAssociationEnd end : aend.getRedefiningEnds()) {
+			if (aend.getType(aend.getAllOtherAssociationEnds().get(0)).isSubtypeOf(obj.type())) {
+				endsToCheck.add(end);
+			}
+		}
+		
+		// All objects linked with obj must conform to the type at the redefining end
+		for (MAssociationEnd end : endsToCheck) {
+			// Get the type, the objects must conform to			
+			Type destType = aend.getAllOtherAssociationEnds().get(0).getType(aend);
+			
+			for (MObject dstObj : linkedObjects) {
+				if (!dstObj.type().isSubtypeOf(destType)) {
+					out.println("constraint {redefines " + aend.nameAsRolename() + "} on association end " 
+							+ end.nameAsRolename() + ":" + end.association().name() + " is violated!");
+					out.println("Object " + obj.name() + " is linked with object " + dstObj.name() + 
+							    " whichs type does not conform to the type " + destType.shortName());
+					valid = false;
+				}
+			}
+		}
+		
+		return valid;
+	}
+	
 	private boolean checkSubsets(PrintWriter out, MObject obj, List<MObject> linkedObjects, MAssociationEnd aend) {
 		boolean valid = true;
 		

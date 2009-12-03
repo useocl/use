@@ -79,9 +79,4 @@ public class ReadlineTestReadlineDecorator implements Readline {
     public boolean doEcho() {
         return fDecoratedReadline.doEcho();
     }
-
-    public boolean doProtocol() {
-        return fDecoratedReadline.doProtocol();
-    }
-
 }

@@ -47,8 +47,4 @@ public class GNUReadline implements Readline {
     public boolean doEcho() {
         return false;
     }
-    public boolean doProtocol() {
-        return true;
-    }
-   
 }

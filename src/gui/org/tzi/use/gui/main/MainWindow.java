@@ -37,6 +37,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -953,8 +954,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
             if (fChooser == null) {
                 path = System.getProperty("user.dir");
                 fChooser = new JFileChooser(path);
-                ExtFileFilter filter = new ExtFileFilter("protocol",
-                        "USE protocols");
+                ExtFileFilter filter = new ExtFileFilter("txt",
+                        "Textfiles");
                 fChooser.setFileFilter(filter);
                 fChooser.setDialogTitle("Save protocol");
             }
@@ -964,11 +965,12 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
             path = fChooser.getCurrentDirectory().toString();
             String filename = fChooser.getSelectedFile().getName();
-			if (!filename.endsWith(".protocol"))
-				filename += ".protocol";
+            
+			if (!(filename.lastIndexOf(".") > filename.lastIndexOf("\\")))
+				filename += ".txt";
+			
             File f = new File(path, filename);
-            Log.verbose("File " + f);
-
+            
             if (f.exists()) {
                 int n = JOptionPane.showConfirmDialog(MainWindow.this,
                         "Overwrite existing file " + f + "?", "Please confirm",
@@ -978,10 +980,10 @@ public class MainWindow extends JFrame implements StateChangeListener {
             }
 
             try {
-                // OldUSEWriter.getInstance().writeProtocolFile( f );
-                FileWriter fw = new FileWriter(f);
-                USEWriter.getInstance().writeProtocolFile(fw);
-                fw.flush();
+                FileOutputStream fOut = new FileOutputStream(f);
+                USEWriter.getInstance().writeProtocolFile(fOut);
+                fOut.flush();
+                fOut.close();
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();

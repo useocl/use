@@ -84,21 +84,21 @@ public class USECompilerTest extends TestCase {
     // java.io has a StringWriter but we need an OutputStream for
     // System.err
     class StringOutputStream extends OutputStream {
-        private String fBuffer = "";
+        private StringBuilder fBuffer = new StringBuilder();
 
 
         public void write(int b) {
-            fBuffer += (char) b;
+            fBuffer.append((char) b);
         }
 
 
         public void reset() {
-            fBuffer = "";
+            fBuffer = new StringBuilder();
         }
 
 
         public String toString() {
-            return fBuffer;
+            return fBuffer.toString();
         }
     }
 

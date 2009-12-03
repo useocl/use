@@ -76,12 +76,5 @@ public interface Readline {
      * the console
      */
     boolean doEcho();
-    
-    /*
-     * Determines if the input from this readline needs to be recorded.
-     */
-    boolean doProtocol();
-    
-    
 }
 
