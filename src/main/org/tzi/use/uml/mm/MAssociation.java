@@ -80,6 +80,12 @@ public interface MAssociation extends MModelElement {
      */
     void addSubsets(MAssociation asso);
     
+    /**
+     * Returns the transitive closure of all association, this
+     * association subsets.
+     * @return
+     */
+    Set<MAssociation> getSubsetsClosure();
     
     /**
      * Adds an association that this association is subsetted by
@@ -92,6 +98,13 @@ public interface MAssociation extends MModelElement {
      * @return
      */
     Set<MAssociation> getSubsettedBy();
+    
+    /**
+     * Returns the transitive closure of all association, this
+     * association is subsetted by.
+     * @return
+     */
+    Set<MAssociation> getSubsettedByClosure();
     
     /**
      * Returns kind of association. This operation returns aggregate
@@ -155,5 +168,13 @@ public interface MAssociation extends MModelElement {
 
 	void addRedefinedBy(MAssociation association);
 
+	Set<MAssociation> getRedefinedBy();
+	
+	Set<MAssociation> getRedefinedByClosure();
+		
 	void addRedefines(MAssociation parentAssociation);
+
+	Set<MAssociation> getRedefines();
+	
+	Set<MAssociation> getRedefinesClosure();	
 }

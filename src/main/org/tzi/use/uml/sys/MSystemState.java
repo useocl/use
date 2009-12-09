@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.model.GFlaggedInvariant;
@@ -437,7 +436,8 @@ public final class MSystemState {
 					while (iter.hasNext()) {
 						MLink l = (MLink) iter.next();
 						if (l.association().aggregationKind() == MAggregationKind.COMPOSITION && 
-							!associationsHaveSubsetsRelation(l.association(), assoc)) {
+							!associationsHaveSubsetsRelation(l.association(), assoc) &&
+							!associationsHaveRedefinitionRelation(l.association(), wholePartLink.association())) {
 							Log
 									.warn("Warning: Insert has resulted in two aggregates for object `"
 											+ target.name()
@@ -957,7 +957,8 @@ public final class MSystemState {
 								&& !sharedObjects.contains(target)
 								&& tmpWholePartLink.target().equals(target)) {
 							
-							if (!associationsHaveSubsetsRelation(l.association(), wholePartLink.association())) {
+							if (!associationsHaveSubsetsRelation(l.association(), wholePartLink.association()) &&
+								!associationsHaveRedefinitionRelation(l.association(), wholePartLink.association())) {
 								out.println("Error: Object `" + target.name()
 										+ "' is shared by object `" + source.name()
 										+ "' and object `" + tmpSource.name()
@@ -987,23 +988,29 @@ public final class MSystemState {
 	}
 
 	private boolean associationsHaveSubsetsRelation(MAssociation association, MAssociation association2) {
-		boolean related = false;
 		
-		Stack<MAssociation> workStack = new Stack<MAssociation>();
-		workStack.push(association2);
+		Set<MAssociation> allSubsettingAssociations = association.getSubsettedByClosure();
+		if (allSubsettingAssociations.contains(association2))
+			return true;
 		
-		while (!workStack.isEmpty()) {
-			MAssociation a = workStack.pop();
-			
-			if (association.getSubsets().contains(a) || association.getSubsettedBy().contains(a) ) {
-				related = true;
-				break;
-			}
-			
-			workStack.addAll(a.getSubsets());
-		}
+		Set<MAssociation> allSubsettedAssociations = association.getSubsetsClosure();		
+		if (allSubsettedAssociations.contains(association2))
+			return true;
+		
+		return false;
+	}
 
-		return related;
+	private boolean associationsHaveRedefinitionRelation(MAssociation association, MAssociation association2) {
+		
+		Set<MAssociation> allRedefiningAssociations = association.getRedefinedByClosure();
+		if (allRedefiningAssociations.contains(association2))
+			return true;
+		
+		Set<MAssociation> allRedefinedAssociations = association.getRedefinesClosure();		
+		if (allRedefinedAssociations.contains(association2))
+			return true;
+		
+		return false;
 	}
 
 	/**
@@ -1164,7 +1171,7 @@ public final class MSystemState {
 		
 		// Find all redefining ends, which are of the same type or a subtype of obj 
 		for (MAssociationEnd end : aend.getRedefiningEnds()) {
-			if (aend.getType(aend.getAllOtherAssociationEnds().get(0)).isSubtypeOf(obj.type())) {
+			if (aend.getType(obj.type(), aend.getAllOtherAssociationEnds().get(0)).isSubtypeOf(obj.type())) {
 				endsToCheck.add(end);
 			}
 		}
@@ -1172,7 +1179,7 @@ public final class MSystemState {
 		// All objects linked with obj must conform to the type at the redefining end
 		for (MAssociationEnd end : endsToCheck) {
 			// Get the type, the objects must conform to			
-			Type destType = aend.getAllOtherAssociationEnds().get(0).getType(aend);
+			Type destType = aend.getAllOtherAssociationEnds().get(0).getType(obj.type(), aend);
 			
 			for (MObject dstObj : linkedObjects) {
 				if (!dstObj.type().isSubtypeOf(destType)) {

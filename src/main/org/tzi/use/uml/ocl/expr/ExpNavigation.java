@@ -56,21 +56,21 @@ public final class ExpNavigation extends Expression {
         // set result type later
         super(null);
 
+        if ( !objExp.type().isObjectType() )
+            throw new ExpInvalidException(
+                    "Target expression of navigation operation must have " +
+                    "object type, found `" + objExp.type() + "'." );
+        
         // let c be the class at dstEnd, then the result type is:
         // (1) c if the multiplicity is max. one and this is binary association
         // (2) Set(c) if the multiplicity is greater than 1 
         // (3) OrderedSet(c) if the association end is marked as {ordered}
 
-        setResultType( dst.getType( src ) );
+        setResultType( dst.getType( objExp.type(), src ) );
 
         fSrc = src;
         fDst = dst;
         fObjExp = objExp;
-        if ( !objExp.type().isObjectType() )
-            throw new ExpInvalidException(
-                    "Target expression of navigation operation must have " +
-                    "object type, found `" + objExp.type() + "'." );
-
     }
 
     /**

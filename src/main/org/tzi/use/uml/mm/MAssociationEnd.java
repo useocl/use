@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 
@@ -196,8 +197,15 @@ public final class MAssociationEnd extends MModelElementImpl
     // IMPLEMENTATION OF MNavigableElement
     //////////////////////////////////////////////////
 
-    public Type getType( MNavigableElement src ) {
-        Type t = TypeFactory.mkObjectType( cls() );
+    public Type getType( Type sourceObjectType, MNavigableElement src ) {
+    	Type t;
+    	
+    	if (this.getRedefiningEnds().size() > 0) {
+    		t = getRedefinedType((ObjectType)sourceObjectType);
+    	} else {
+    		t = TypeFactory.mkObjectType( cls() );
+    	}
+    	
         if ( src.equals( src.association() ) ) {
             return t;
         }
@@ -211,6 +219,44 @@ public final class MAssociationEnd extends MModelElementImpl
         }
         return t;
     }
+
+	private Type getRedefinedType(ObjectType sourceObjectType) {
+		Type resultType = null;
+		
+		// If another association end redefines this end with 
+		// source from the type of sourceObjectExp or a subtype of sourceObjectExp
+		boolean foundDirectEnd = false;
+
+		// No redefinition possible, because source type is the opposite of this end
+		if (this.getAllOtherAssociationEnds().get(0).cls().equals(sourceObjectType.cls()) )
+			return TypeFactory.mkObjectType(this.cls());
+			
+		for (MAssociationEnd redefiningEnd : this.getRedefiningEnds()) {
+			// TODO: n-ary
+			MAssociationEnd redefiningEndSrc = redefiningEnd.getAllOtherAssociationEnds().get(0);
+			Type redefiningEndSrcType = TypeFactory.mkObjectType(redefiningEndSrc.cls());
+			
+			if (redefiningEndSrcType.equals(sourceObjectType)) {
+				resultType = TypeFactory.mkObjectType(redefiningEnd.cls());
+				foundDirectEnd = true;
+				break;
+			}
+		}
+
+		// No redefinitions with euqal type found.
+		// We need to check inheritance
+		if (!foundDirectEnd) {
+			for (MClass parent : sourceObjectType.cls().parents()) {
+				resultType = getRedefinedType(TypeFactory.mkObjectType(parent));
+				
+				if (resultType != null) {
+					break;
+				}
+			}
+		}
+		
+		return resultType;
+	}
 
     public String nameAsRolename() {
         return name();

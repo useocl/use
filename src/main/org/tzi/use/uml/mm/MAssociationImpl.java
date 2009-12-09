@@ -242,6 +242,19 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 		return subsets;
 	}
 	
+	@Override
+	public Set<MAssociation> getSubsetsClosure() {
+		Set<MAssociation> result = new HashSet<MAssociation>();
+		
+		for (MAssociation ass : getSubsets()) {
+			result.add(ass);
+			result.addAll(ass.getSubsetsClosure());
+		}
+		
+		return result;
+	}
+	
+	
 	public void setUnion(boolean newValue) {
 		isUnion = newValue;
 	}
@@ -261,6 +274,18 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 	}
 
 	@Override
+	public Set<MAssociation> getSubsettedByClosure() {
+		Set<MAssociation> result = new HashSet<MAssociation>();
+		
+		for (MAssociation ass : getSubsettedBy()) {
+			result.add(ass);
+			result.addAll(ass.getSubsettedByClosure());
+		}
+		
+		return result;
+	}
+
+	@Override
 	public MAssociationEnd getAssociationEnd(MClass endCls, String rolename) {
 		for (MAssociationEnd end : this.associationEndsAt(endCls)) {
 			if (end.nameAsRolename().equals(rolename))
@@ -276,7 +301,41 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 	}
 
 	@Override
+	public Set<MAssociation> getRedefinedBy() {
+		return this.redefinedBy;
+	}
+	
+	@Override
+	public Set<MAssociation> getRedefinedByClosure() {
+		Set<MAssociation> result = new HashSet<MAssociation>();
+		
+		for (MAssociation ass : this.getRedefinedBy()) {
+			result.add(ass);
+			result.addAll(ass.getRedefinedByClosure());
+		}
+		
+		return result;
+	}
+	
+	@Override
 	public void addRedefines(MAssociation parentAssociation) {
 		this.redefines.add(parentAssociation);
+	}
+
+	@Override
+	public Set<MAssociation> getRedefines() {
+		return this.redefines;
+	}
+	
+	@Override
+	public Set<MAssociation> getRedefinesClosure() {
+		Set<MAssociation> result = new HashSet<MAssociation>();
+		
+		for (MAssociation ass : this.getRedefines()) {
+			result.add(ass);
+			result.addAll(ass.getRedefinesClosure());
+		}
+		
+		return result;
 	}
 }

@@ -35,7 +35,7 @@ public interface MNavigableElement {
 
     public MClass cls();
 
-    public Type getType( MNavigableElement src );
+    public Type getType( Type sourceObjectType, MNavigableElement src );
 
     public MAssociation association();
 

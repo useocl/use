@@ -76,7 +76,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
         return this;
     }
 
-    public Type getType( MNavigableElement src ) {
+    public Type getType( Type sourceObjectType, MNavigableElement src ) {
         MAssociation assoc = src.association();
         if (assoc.associationEnds().size() > 2) 
             return TypeFactory.mkSet( TypeFactory.mkObjectType( this ) );
@@ -545,5 +545,41 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 	public void addRedefines(MAssociation parentAssociation) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Set<MAssociation> getSubsettedByClosure() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<MAssociation> getSubsetsClosure() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<MAssociation> getRedefinedByClosure() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<MAssociation> getRedefinesClosure() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<MAssociation> getRedefinedBy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<MAssociation> getRedefines() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
