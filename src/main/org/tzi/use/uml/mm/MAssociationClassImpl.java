@@ -582,4 +582,16 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Set<MAssociationEnd> getSubsettingEnds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<MAssociationEnd> getRedefiningEnds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -678,51 +678,69 @@ public final class MSystemState {
 			MNavigableElement dst) {
 		ArrayList<MObject> res = new ArrayList<MObject>();
 
-		// get association
-		MAssociation assoc = dst.association();
-
-		// get link set for association
-		MLinkSet linkSet = fLinkSets.get(assoc);
-
-		// if link set is empty return empty result list
-		Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
-				+ linkSet.size());
-
-		if (linkSet.size() == 0)
-			return res;
-
-		// navigation from a linkobject
-		if (src instanceof MAssociationClass) {
-			if (dst instanceof MAssociationClass) {
-				throw new RuntimeException("Wrong navigation expression.");
+		if (dst.isUnion()) {			
+			Set<MObject> tmpResult = new HashSet<MObject>();
+			
+			// add subsetting ends
+			for (MAssociationEnd subsettingDestEnd : dst.getSubsettingEnds()) {
+				
+				// TODO: n-ary!
+				MAssociationEnd subsettingSrcEnd = subsettingDestEnd.getAllOtherAssociationEnds().get(0);
+				tmpResult.addAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
 			}
-			MLinkEnd linkEnd = ((MLinkObject) obj)
-					.linkEnd((MAssociationEnd) dst);
-			res.add(linkEnd.object());
+			
+			// add redefining ends
+			for (MAssociationEnd redefiningDestEnd : dst.getRedefiningEnds()) {
+				MAssociationEnd redefiningSrcEnd = redefiningDestEnd.getAllOtherAssociationEnds().get(0);
+				tmpResult.addAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
+			}
+			
+			res.addAll(tmpResult);
 		} else {
+			// get association
+			MAssociation assoc = dst.association();
+	
+			// get link set for association
+			MLinkSet linkSet = fLinkSets.get(assoc);
+	
+			// if link set is empty return empty result list
+			Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
+					+ linkSet.size());
+	
+			if (linkSet.size() == 0)
+				return res;
+	
+			// navigation from a linkobject
 			if (src instanceof MAssociationClass) {
-				throw new RuntimeException("Wrong navigation expression.");
-			}
-			MAssociationEnd srcEnd = (MAssociationEnd) src;
-			// select links with srcEnd == obj
-			Set<MLink> links = linkSet.select(srcEnd, obj);
-			Log.trace(this, "linkSet.select for object `" + obj + "', size = "
-					+ links.size());
-
-			// navigation to a linkobject
-			if (dst instanceof MAssociationClass) {
-				for (MLink link : links) {
-					res.add((MObject)link);					
+				// TODO: Why is navigation from AssociationClass to AssociationClass not allowed?
+				if (dst instanceof MAssociationClass) {
+					throw new RuntimeException("Wrong navigation expression.");
 				}
+				MLinkEnd linkEnd = ((MLinkObject)obj).linkEnd((MAssociationEnd) dst);
+				res.add(linkEnd.object());
 			} else {
-				MAssociationEnd dstEnd = (MAssociationEnd) dst;
-				// project tuples to destination end component
-				for (MLink link : links) {
-					MLinkEnd linkEnd = link.linkEnd(dstEnd);
-					res.add(linkEnd.object());
+				MAssociationEnd srcEnd = (MAssociationEnd) src;
+				// select links with srcEnd == obj
+				Set<MLink> links = linkSet.select(srcEnd, obj);
+				Log.trace(this, "linkSet.select for object `" + obj + "', size = "
+						+ links.size());
+	
+				// navigation to a linkobject
+				if (dst instanceof MAssociationClass) {
+					for (MLink link : links) {
+						res.add((MObject)link);					
+					}
+				} else {
+					MAssociationEnd dstEnd = (MAssociationEnd) dst;
+					// project tuples to destination end component
+					for (MLink link : links) {
+						MLinkEnd linkEnd = link.linkEnd(dstEnd);
+						res.add(linkEnd.object());
+					}
 				}
 			}
 		}
+		
 		return res;
 	}
 

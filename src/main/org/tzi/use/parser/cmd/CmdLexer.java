@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2009-11-16 16:45:56
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2009-12-21 11:54:57
 
 /*
  * USE - UML based specification environment
@@ -1689,10 +1689,10 @@ import java.util.HashMap;
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1297:3: ( ( ' ' | '\\t' | '\\f' | NEWLINE ) )
-            // Cmd.g:1298:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
+            // Cmd.g:1299:3: ( ( ' ' | '\\t' | '\\f' | NEWLINE ) )
+            // Cmd.g:1300:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
             {
-            // Cmd.g:1298:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
+            // Cmd.g:1300:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
             int alt1=4;
             switch ( input.LA(1) ) {
             case ' ':
@@ -1726,28 +1726,28 @@ import java.util.HashMap;
 
             switch (alt1) {
                 case 1 :
-                    // Cmd.g:1298:7: ' '
+                    // Cmd.g:1300:7: ' '
                     {
                     match(' '); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // Cmd.g:1299:7: '\\t'
+                    // Cmd.g:1301:7: '\\t'
                     {
                     match('\t'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // Cmd.g:1300:7: '\\f'
+                    // Cmd.g:1302:7: '\\f'
                     {
                     match('\f'); if (state.failed) return ;
 
                     }
                     break;
                 case 4 :
-                    // Cmd.g:1301:7: NEWLINE
+                    // Cmd.g:1303:7: NEWLINE
                     {
                     mNEWLINE(); if (state.failed) return ;
 
@@ -1775,10 +1775,10 @@ import java.util.HashMap;
         try {
             int _type = SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1307:11: ( ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE )
-            // Cmd.g:1308:5: ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE
+            // Cmd.g:1309:11: ( ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE )
+            // Cmd.g:1310:5: ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE
             {
-            // Cmd.g:1308:5: ( '//' | '--' )
+            // Cmd.g:1310:5: ( '//' | '--' )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -1797,7 +1797,7 @@ import java.util.HashMap;
             }
             switch (alt2) {
                 case 1 :
-                    // Cmd.g:1308:6: '//'
+                    // Cmd.g:1310:6: '//'
                     {
                     match("//"); if (state.failed) return ;
 
@@ -1805,7 +1805,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Cmd.g:1308:13: '--'
+                    // Cmd.g:1310:13: '--'
                     {
                     match("--"); if (state.failed) return ;
 
@@ -1815,7 +1815,7 @@ import java.util.HashMap;
 
             }
 
-            // Cmd.g:1309:5: (~ ( '\\n' | '\\r' ) )*
+            // Cmd.g:1311:5: (~ ( '\\n' | '\\r' ) )*
             loop3:
             do {
                 int alt3=2;
@@ -1828,7 +1828,7 @@ import java.util.HashMap;
 
                 switch (alt3) {
             	case 1 :
-            	    // Cmd.g:1309:6: ~ ( '\\n' | '\\r' )
+            	    // Cmd.g:1311:6: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1869,12 +1869,12 @@ import java.util.HashMap;
         try {
             int _type = ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1314:11: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // Cmd.g:1315:5: '/*' ( options {greedy=false; } : . )* '*/'
+            // Cmd.g:1316:11: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // Cmd.g:1317:5: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); if (state.failed) return ;
 
-            // Cmd.g:1315:10: ( options {greedy=false; } : . )*
+            // Cmd.g:1317:10: ( options {greedy=false; } : . )*
             loop4:
             do {
                 int alt4=2;
@@ -1899,7 +1899,7 @@ import java.util.HashMap;
 
                 switch (alt4) {
             	case 1 :
-            	    // Cmd.g:1315:38: .
+            	    // Cmd.g:1317:38: .
             	    {
             	    matchAny(); if (state.failed) return ;
 
@@ -1930,7 +1930,7 @@ import java.util.HashMap;
     // $ANTLR start "NEWLINE"
     public final void mNEWLINE() throws RecognitionException {
         try {
-            // Cmd.g:1318:9: ( '\\r\\n' | '\\r' | '\\n' )
+            // Cmd.g:1320:9: ( '\\r\\n' | '\\r' | '\\n' )
             int alt5=3;
             int LA5_0 = input.LA(1);
 
@@ -1955,7 +1955,7 @@ import java.util.HashMap;
             }
             switch (alt5) {
                 case 1 :
-                    // Cmd.g:1319:5: '\\r\\n'
+                    // Cmd.g:1321:5: '\\r\\n'
                     {
                     match("\r\n"); if (state.failed) return ;
 
@@ -1963,14 +1963,14 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Cmd.g:1319:14: '\\r'
+                    // Cmd.g:1321:14: '\\r'
                     {
                     match('\r'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // Cmd.g:1319:21: '\\n'
+                    // Cmd.g:1321:21: '\\n'
                     {
                     match('\n'); if (state.failed) return ;
 
@@ -1989,8 +1989,8 @@ import java.util.HashMap;
         try {
             int _type = ARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1322:10: ( '->' )
-            // Cmd.g:1322:12: '->'
+            // Cmd.g:1324:10: ( '->' )
+            // Cmd.g:1324:12: '->'
             {
             match("->"); if (state.failed) return ;
 
@@ -2010,8 +2010,8 @@ import java.util.HashMap;
         try {
             int _type = AT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1323:11: ( '@' )
-            // Cmd.g:1323:13: '@'
+            // Cmd.g:1325:11: ( '@' )
+            // Cmd.g:1325:13: '@'
             {
             match('@'); if (state.failed) return ;
 
@@ -2030,8 +2030,8 @@ import java.util.HashMap;
         try {
             int _type = BAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1324:8: ( '|' )
-            // Cmd.g:1324:10: '|'
+            // Cmd.g:1326:8: ( '|' )
+            // Cmd.g:1326:10: '|'
             {
             match('|'); if (state.failed) return ;
 
@@ -2050,8 +2050,8 @@ import java.util.HashMap;
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1325:10: ( ':' )
-            // Cmd.g:1325:12: ':'
+            // Cmd.g:1327:10: ( ':' )
+            // Cmd.g:1327:12: ':'
             {
             match(':'); if (state.failed) return ;
 
@@ -2070,8 +2070,8 @@ import java.util.HashMap;
         try {
             int _type = COLON_COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1326:14: ( '::' )
-            // Cmd.g:1326:16: '::'
+            // Cmd.g:1328:14: ( '::' )
+            // Cmd.g:1328:16: '::'
             {
             match("::"); if (state.failed) return ;
 
@@ -2091,8 +2091,8 @@ import java.util.HashMap;
         try {
             int _type = COLON_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1327:14: ( ':=' )
-            // Cmd.g:1327:16: ':='
+            // Cmd.g:1329:14: ( ':=' )
+            // Cmd.g:1329:16: ':='
             {
             match(":="); if (state.failed) return ;
 
@@ -2112,8 +2112,8 @@ import java.util.HashMap;
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1328:10: ( ',' )
-            // Cmd.g:1328:12: ','
+            // Cmd.g:1330:10: ( ',' )
+            // Cmd.g:1330:12: ','
             {
             match(','); if (state.failed) return ;
 
@@ -2132,8 +2132,8 @@ import java.util.HashMap;
         try {
             int _type = DOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1329:8: ( '.' )
-            // Cmd.g:1329:10: '.'
+            // Cmd.g:1331:8: ( '.' )
+            // Cmd.g:1331:10: '.'
             {
             match('.'); if (state.failed) return ;
 
@@ -2152,8 +2152,8 @@ import java.util.HashMap;
         try {
             int _type = DOTDOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1330:11: ( '..' )
-            // Cmd.g:1330:13: '..'
+            // Cmd.g:1332:11: ( '..' )
+            // Cmd.g:1332:13: '..'
             {
             match(".."); if (state.failed) return ;
 
@@ -2173,8 +2173,8 @@ import java.util.HashMap;
         try {
             int _type = EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1331:10: ( '=' )
-            // Cmd.g:1331:12: '='
+            // Cmd.g:1333:10: ( '=' )
+            // Cmd.g:1333:12: '='
             {
             match('='); if (state.failed) return ;
 
@@ -2193,8 +2193,8 @@ import java.util.HashMap;
         try {
             int _type = GREATER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1332:11: ( '>' )
-            // Cmd.g:1332:13: '>'
+            // Cmd.g:1334:11: ( '>' )
+            // Cmd.g:1334:13: '>'
             {
             match('>'); if (state.failed) return ;
 
@@ -2213,8 +2213,8 @@ import java.util.HashMap;
         try {
             int _type = GREATER_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1333:15: ( '>=' )
-            // Cmd.g:1333:17: '>='
+            // Cmd.g:1335:15: ( '>=' )
+            // Cmd.g:1335:17: '>='
             {
             match(">="); if (state.failed) return ;
 
@@ -2234,8 +2234,8 @@ import java.util.HashMap;
         try {
             int _type = HASH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1334:9: ( '#' )
-            // Cmd.g:1334:11: '#'
+            // Cmd.g:1336:9: ( '#' )
+            // Cmd.g:1336:11: '#'
             {
             match('#'); if (state.failed) return ;
 
@@ -2254,8 +2254,8 @@ import java.util.HashMap;
         try {
             int _type = LBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1335:11: ( '{' )
-            // Cmd.g:1335:13: '{'
+            // Cmd.g:1337:11: ( '{' )
+            // Cmd.g:1337:13: '{'
             {
             match('{'); if (state.failed) return ;
 
@@ -2274,8 +2274,8 @@ import java.util.HashMap;
         try {
             int _type = LBRACK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1336:11: ( '[' )
-            // Cmd.g:1336:13: '['
+            // Cmd.g:1338:11: ( '[' )
+            // Cmd.g:1338:13: '['
             {
             match('['); if (state.failed) return ;
 
@@ -2294,8 +2294,8 @@ import java.util.HashMap;
         try {
             int _type = LESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1337:9: ( '<' )
-            // Cmd.g:1337:11: '<'
+            // Cmd.g:1339:9: ( '<' )
+            // Cmd.g:1339:11: '<'
             {
             match('<'); if (state.failed) return ;
 
@@ -2314,8 +2314,8 @@ import java.util.HashMap;
         try {
             int _type = LESS_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1338:14: ( '<=' )
-            // Cmd.g:1338:16: '<='
+            // Cmd.g:1340:14: ( '<=' )
+            // Cmd.g:1340:16: '<='
             {
             match("<="); if (state.failed) return ;
 
@@ -2335,8 +2335,8 @@ import java.util.HashMap;
         try {
             int _type = LPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1339:11: ( '(' )
-            // Cmd.g:1339:13: '('
+            // Cmd.g:1341:11: ( '(' )
+            // Cmd.g:1341:13: '('
             {
             match('('); if (state.failed) return ;
 
@@ -2355,8 +2355,8 @@ import java.util.HashMap;
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1340:10: ( '-' )
-            // Cmd.g:1340:12: '-'
+            // Cmd.g:1342:10: ( '-' )
+            // Cmd.g:1342:12: '-'
             {
             match('-'); if (state.failed) return ;
 
@@ -2375,8 +2375,8 @@ import java.util.HashMap;
         try {
             int _type = NOT_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1341:13: ( '<>' )
-            // Cmd.g:1341:15: '<>'
+            // Cmd.g:1343:13: ( '<>' )
+            // Cmd.g:1343:15: '<>'
             {
             match("<>"); if (state.failed) return ;
 
@@ -2396,8 +2396,8 @@ import java.util.HashMap;
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1342:9: ( '+' )
-            // Cmd.g:1342:11: '+'
+            // Cmd.g:1344:9: ( '+' )
+            // Cmd.g:1344:11: '+'
             {
             match('+'); if (state.failed) return ;
 
@@ -2416,8 +2416,8 @@ import java.util.HashMap;
         try {
             int _type = RBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1343:11: ( '}' )
-            // Cmd.g:1343:13: '}'
+            // Cmd.g:1345:11: ( '}' )
+            // Cmd.g:1345:13: '}'
             {
             match('}'); if (state.failed) return ;
 
@@ -2436,8 +2436,8 @@ import java.util.HashMap;
         try {
             int _type = RBRACK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1344:11: ( ']' )
-            // Cmd.g:1344:13: ']'
+            // Cmd.g:1346:11: ( ']' )
+            // Cmd.g:1346:13: ']'
             {
             match(']'); if (state.failed) return ;
 
@@ -2456,8 +2456,8 @@ import java.util.HashMap;
         try {
             int _type = RPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1345:10: ( ')' )
-            // Cmd.g:1345:12: ')'
+            // Cmd.g:1347:10: ( ')' )
+            // Cmd.g:1347:12: ')'
             {
             match(')'); if (state.failed) return ;
 
@@ -2476,8 +2476,8 @@ import java.util.HashMap;
         try {
             int _type = SEMI;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1346:8: ( ';' )
-            // Cmd.g:1346:10: ';'
+            // Cmd.g:1348:8: ( ';' )
+            // Cmd.g:1348:10: ';'
             {
             match(';'); if (state.failed) return ;
 
@@ -2496,8 +2496,8 @@ import java.util.HashMap;
         try {
             int _type = SLASH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1347:10: ( '/' )
-            // Cmd.g:1347:12: '/'
+            // Cmd.g:1349:10: ( '/' )
+            // Cmd.g:1349:12: '/'
             {
             match('/'); if (state.failed) return ;
 
@@ -2516,8 +2516,8 @@ import java.util.HashMap;
         try {
             int _type = STAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1348:9: ( '*' )
-            // Cmd.g:1348:11: '*'
+            // Cmd.g:1350:9: ( '*' )
+            // Cmd.g:1350:11: '*'
             {
             match('*'); if (state.failed) return ;
 
@@ -2534,10 +2534,10 @@ import java.util.HashMap;
     // $ANTLR start "INT"
     public final void mINT() throws RecognitionException {
         try {
-            // Cmd.g:1351:4: ( ( '0' .. '9' )+ )
-            // Cmd.g:1352:5: ( '0' .. '9' )+
+            // Cmd.g:1353:4: ( ( '0' .. '9' )+ )
+            // Cmd.g:1354:5: ( '0' .. '9' )+
             {
-            // Cmd.g:1352:5: ( '0' .. '9' )+
+            // Cmd.g:1354:5: ( '0' .. '9' )+
             int cnt6=0;
             loop6:
             do {
@@ -2551,7 +2551,7 @@ import java.util.HashMap;
 
                 switch (alt6) {
             	case 1 :
-            	    // Cmd.g:1352:6: '0' .. '9'
+            	    // Cmd.g:1354:6: '0' .. '9'
             	    {
             	    matchRange('0','9'); if (state.failed) return ;
 
@@ -2580,11 +2580,11 @@ import java.util.HashMap;
     // $ANTLR start "REAL"
     public final void mREAL() throws RecognitionException {
         try {
-            // Cmd.g:1356:5: ( INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT ) )
-            // Cmd.g:1357:5: INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
+            // Cmd.g:1358:5: ( INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT ) )
+            // Cmd.g:1359:5: INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
             {
             mINT(); if (state.failed) return ;
-            // Cmd.g:1357:9: ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
+            // Cmd.g:1359:9: ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -2603,11 +2603,11 @@ import java.util.HashMap;
             }
             switch (alt10) {
                 case 1 :
-                    // Cmd.g:1357:10: '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
+                    // Cmd.g:1359:10: '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
                     {
                     match('.'); if (state.failed) return ;
                     mINT(); if (state.failed) return ;
-                    // Cmd.g:1357:18: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
+                    // Cmd.g:1359:18: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
                     int alt8=2;
                     int LA8_0 = input.LA(1);
 
@@ -2616,7 +2616,7 @@ import java.util.HashMap;
                     }
                     switch (alt8) {
                         case 1 :
-                            // Cmd.g:1357:19: ( 'e' | 'E' ) ( '+' | '-' )? INT
+                            // Cmd.g:1359:19: ( 'e' | 'E' ) ( '+' | '-' )? INT
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -2628,7 +2628,7 @@ import java.util.HashMap;
                                 recover(mse);
                                 throw mse;}
 
-                            // Cmd.g:1357:31: ( '+' | '-' )?
+                            // Cmd.g:1359:31: ( '+' | '-' )?
                             int alt7=2;
                             int LA7_0 = input.LA(1);
 
@@ -2666,7 +2666,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Cmd.g:1357:52: ( 'e' | 'E' ) ( '+' | '-' )? INT
+                    // Cmd.g:1359:52: ( 'e' | 'E' ) ( '+' | '-' )? INT
                     {
                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                         input.consume();
@@ -2678,7 +2678,7 @@ import java.util.HashMap;
                         recover(mse);
                         throw mse;}
 
-                    // Cmd.g:1357:64: ( '+' | '-' )?
+                    // Cmd.g:1359:64: ( '+' | '-' )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -2726,7 +2726,7 @@ import java.util.HashMap;
         try {
             int _type = RANGE_OR_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1360:13: ( ( INT '..' )=> INT | ( REAL )=> REAL | INT )
+            // Cmd.g:1362:13: ( ( INT '..' )=> INT | ( REAL )=> REAL | INT )
             int alt11=3;
             int LA11_0 = input.LA(1);
 
@@ -2765,7 +2765,7 @@ import java.util.HashMap;
             }
             switch (alt11) {
                 case 1 :
-                    // Cmd.g:1361:7: ( INT '..' )=> INT
+                    // Cmd.g:1363:7: ( INT '..' )=> INT
                     {
                     mINT(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2775,7 +2775,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Cmd.g:1362:7: ( REAL )=> REAL
+                    // Cmd.g:1364:7: ( REAL )=> REAL
                     {
                     mREAL(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2785,7 +2785,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 3 :
-                    // Cmd.g:1363:9: INT
+                    // Cmd.g:1365:9: INT
                     {
                     mINT(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2809,11 +2809,11 @@ import java.util.HashMap;
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1368:7: ( '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\'' )
-            // Cmd.g:1369:5: '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\''
+            // Cmd.g:1370:7: ( '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\'' )
+            // Cmd.g:1371:5: '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\''
             {
             match('\''); if (state.failed) return ;
-            // Cmd.g:1369:10: (~ ( '\\'' | '\\\\' ) | ESC )*
+            // Cmd.g:1371:10: (~ ( '\\'' | '\\\\' ) | ESC )*
             loop12:
             do {
                 int alt12=3;
@@ -2829,7 +2829,7 @@ import java.util.HashMap;
 
                 switch (alt12) {
             	case 1 :
-            	    // Cmd.g:1369:12: ~ ( '\\'' | '\\\\' )
+            	    // Cmd.g:1371:12: ~ ( '\\'' | '\\\\' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2845,7 +2845,7 @@ import java.util.HashMap;
             	    }
             	    break;
             	case 2 :
-            	    // Cmd.g:1369:27: ESC
+            	    // Cmd.g:1371:27: ESC
             	    {
             	    mESC(); if (state.failed) return ;
 
@@ -2872,11 +2872,11 @@ import java.util.HashMap;
     // $ANTLR start "ESC"
     public final void mESC() throws RecognitionException {
         try {
-            // Cmd.g:1381:1: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
-            // Cmd.g:1382:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // Cmd.g:1383:1: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
+            // Cmd.g:1384:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             {
             match('\\'); if (state.failed) return ;
-            // Cmd.g:1383:6: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // Cmd.g:1385:6: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             int alt16=11;
             switch ( input.LA(1) ) {
             case 'n':
@@ -2950,63 +2950,63 @@ import java.util.HashMap;
 
             switch (alt16) {
                 case 1 :
-                    // Cmd.g:1383:8: 'n'
+                    // Cmd.g:1385:8: 'n'
                     {
                     match('n'); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // Cmd.g:1384:8: 'r'
+                    // Cmd.g:1386:8: 'r'
                     {
                     match('r'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // Cmd.g:1385:8: 't'
+                    // Cmd.g:1387:8: 't'
                     {
                     match('t'); if (state.failed) return ;
 
                     }
                     break;
                 case 4 :
-                    // Cmd.g:1386:8: 'b'
+                    // Cmd.g:1388:8: 'b'
                     {
                     match('b'); if (state.failed) return ;
 
                     }
                     break;
                 case 5 :
-                    // Cmd.g:1387:8: 'f'
+                    // Cmd.g:1389:8: 'f'
                     {
                     match('f'); if (state.failed) return ;
 
                     }
                     break;
                 case 6 :
-                    // Cmd.g:1388:8: '\"'
+                    // Cmd.g:1390:8: '\"'
                     {
                     match('\"'); if (state.failed) return ;
 
                     }
                     break;
                 case 7 :
-                    // Cmd.g:1389:8: '\\''
+                    // Cmd.g:1391:8: '\\''
                     {
                     match('\''); if (state.failed) return ;
 
                     }
                     break;
                 case 8 :
-                    // Cmd.g:1390:8: '\\\\'
+                    // Cmd.g:1392:8: '\\\\'
                     {
                     match('\\'); if (state.failed) return ;
 
                     }
                     break;
                 case 9 :
-                    // Cmd.g:1391:8: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+                    // Cmd.g:1393:8: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                     {
                     match('u'); if (state.failed) return ;
                     mHEX_DIGIT(); if (state.failed) return ;
@@ -3017,10 +3017,10 @@ import java.util.HashMap;
                     }
                     break;
                 case 10 :
-                    // Cmd.g:1392:8: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
+                    // Cmd.g:1394:8: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
                     {
                     matchRange('0','3'); if (state.failed) return ;
-                    // Cmd.g:1392:17: ( '0' .. '7' ( '0' .. '7' )? )?
+                    // Cmd.g:1394:17: ( '0' .. '7' ( '0' .. '7' )? )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -3029,10 +3029,10 @@ import java.util.HashMap;
                     }
                     switch (alt14) {
                         case 1 :
-                            // Cmd.g:1392:18: '0' .. '7' ( '0' .. '7' )?
+                            // Cmd.g:1394:18: '0' .. '7' ( '0' .. '7' )?
                             {
                             matchRange('0','7'); if (state.failed) return ;
-                            // Cmd.g:1392:27: ( '0' .. '7' )?
+                            // Cmd.g:1394:27: ( '0' .. '7' )?
                             int alt13=2;
                             int LA13_0 = input.LA(1);
 
@@ -3041,7 +3041,7 @@ import java.util.HashMap;
                             }
                             switch (alt13) {
                                 case 1 :
-                                    // Cmd.g:1392:28: '0' .. '7'
+                                    // Cmd.g:1394:28: '0' .. '7'
                                     {
                                     matchRange('0','7'); if (state.failed) return ;
 
@@ -3060,10 +3060,10 @@ import java.util.HashMap;
                     }
                     break;
                 case 11 :
-                    // Cmd.g:1392:45: '4' .. '7' ( '0' .. '7' )?
+                    // Cmd.g:1394:45: '4' .. '7' ( '0' .. '7' )?
                     {
                     matchRange('4','7'); if (state.failed) return ;
-                    // Cmd.g:1392:54: ( '0' .. '7' )?
+                    // Cmd.g:1394:54: ( '0' .. '7' )?
                     int alt15=2;
                     int LA15_0 = input.LA(1);
 
@@ -3072,7 +3072,7 @@ import java.util.HashMap;
                     }
                     switch (alt15) {
                         case 1 :
-                            // Cmd.g:1392:55: '0' .. '7'
+                            // Cmd.g:1394:55: '0' .. '7'
                             {
                             matchRange('0','7'); if (state.failed) return ;
 
@@ -3099,8 +3099,8 @@ import java.util.HashMap;
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // Cmd.g:1398:10: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
-            // Cmd.g:1399:5: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
+            // Cmd.g:1400:10: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
+            // Cmd.g:1401:5: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f') ) {
                 input.consume();
@@ -3126,8 +3126,8 @@ import java.util.HashMap;
         try {
             int _type = IDENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Cmd.g:1406:6: ( ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // Cmd.g:1407:5: ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // Cmd.g:1408:6: ( ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // Cmd.g:1409:5: ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
             if ( input.LA(1)=='$'||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -3139,7 +3139,7 @@ import java.util.HashMap;
                 recover(mse);
                 throw mse;}
 
-            // Cmd.g:1407:39: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // Cmd.g:1409:39: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop17:
             do {
                 int alt17=2;
@@ -3187,8 +3187,8 @@ import java.util.HashMap;
     // $ANTLR start "VOCAB"
     public final void mVOCAB() throws RecognitionException {
         try {
-            // Cmd.g:1414:6: ( '\\U0003' .. '\\U0377' )
-            // Cmd.g:1415:5: '\\U0003' .. '\\U0377'
+            // Cmd.g:1416:6: ( '\\U0003' .. '\\U0377' )
+            // Cmd.g:1417:5: '\\U0003' .. '\\U0377'
             {
             matchRange('\u0003','\u0377'); if (state.failed) return ;
 
@@ -3947,8 +3947,8 @@ import java.util.HashMap;
 
     // $ANTLR start synpred1_Cmd
     public final void synpred1_Cmd_fragment() throws RecognitionException {   
-        // Cmd.g:1361:7: ( INT '..' )
-        // Cmd.g:1361:9: INT '..'
+        // Cmd.g:1363:7: ( INT '..' )
+        // Cmd.g:1363:9: INT '..'
         {
         mINT(); if (state.failed) return ;
         match(".."); if (state.failed) return ;
@@ -3960,8 +3960,8 @@ import java.util.HashMap;
 
     // $ANTLR start synpred2_Cmd
     public final void synpred2_Cmd_fragment() throws RecognitionException {   
-        // Cmd.g:1362:7: ( REAL )
-        // Cmd.g:1362:9: REAL
+        // Cmd.g:1364:7: ( REAL )
+        // Cmd.g:1364:9: REAL
         {
         mREAL(); if (state.failed) return ;
 

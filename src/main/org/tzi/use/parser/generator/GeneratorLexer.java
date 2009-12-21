@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2009-11-16 16:45:57
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2009-12-21 11:55:00
 
 package org.tzi.use.parser.generator;
 
@@ -1626,10 +1626,10 @@ import java.util.HashMap;
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1330:3: ( ( ' ' | '\\t' | '\\f' | NEWLINE ) )
-            // Generator.g:1331:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
+            // Generator.g:1332:3: ( ( ' ' | '\\t' | '\\f' | NEWLINE ) )
+            // Generator.g:1333:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
             {
-            // Generator.g:1331:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
+            // Generator.g:1333:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
             int alt1=4;
             switch ( input.LA(1) ) {
             case ' ':
@@ -1663,28 +1663,28 @@ import java.util.HashMap;
 
             switch (alt1) {
                 case 1 :
-                    // Generator.g:1331:7: ' '
+                    // Generator.g:1333:7: ' '
                     {
                     match(' '); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // Generator.g:1332:7: '\\t'
+                    // Generator.g:1334:7: '\\t'
                     {
                     match('\t'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // Generator.g:1333:7: '\\f'
+                    // Generator.g:1335:7: '\\f'
                     {
                     match('\f'); if (state.failed) return ;
 
                     }
                     break;
                 case 4 :
-                    // Generator.g:1334:7: NEWLINE
+                    // Generator.g:1336:7: NEWLINE
                     {
                     mNEWLINE(); if (state.failed) return ;
 
@@ -1712,10 +1712,10 @@ import java.util.HashMap;
         try {
             int _type = SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1340:11: ( ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE )
-            // Generator.g:1341:5: ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE
+            // Generator.g:1342:11: ( ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE )
+            // Generator.g:1343:5: ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE
             {
-            // Generator.g:1341:5: ( '//' | '--' )
+            // Generator.g:1343:5: ( '//' | '--' )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -1734,7 +1734,7 @@ import java.util.HashMap;
             }
             switch (alt2) {
                 case 1 :
-                    // Generator.g:1341:6: '//'
+                    // Generator.g:1343:6: '//'
                     {
                     match("//"); if (state.failed) return ;
 
@@ -1742,7 +1742,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:1341:13: '--'
+                    // Generator.g:1343:13: '--'
                     {
                     match("--"); if (state.failed) return ;
 
@@ -1752,7 +1752,7 @@ import java.util.HashMap;
 
             }
 
-            // Generator.g:1342:5: (~ ( '\\n' | '\\r' ) )*
+            // Generator.g:1344:5: (~ ( '\\n' | '\\r' ) )*
             loop3:
             do {
                 int alt3=2;
@@ -1765,7 +1765,7 @@ import java.util.HashMap;
 
                 switch (alt3) {
             	case 1 :
-            	    // Generator.g:1342:6: ~ ( '\\n' | '\\r' )
+            	    // Generator.g:1344:6: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1806,12 +1806,12 @@ import java.util.HashMap;
         try {
             int _type = ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1347:11: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // Generator.g:1348:5: '/*' ( options {greedy=false; } : . )* '*/'
+            // Generator.g:1349:11: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // Generator.g:1350:5: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); if (state.failed) return ;
 
-            // Generator.g:1348:10: ( options {greedy=false; } : . )*
+            // Generator.g:1350:10: ( options {greedy=false; } : . )*
             loop4:
             do {
                 int alt4=2;
@@ -1836,7 +1836,7 @@ import java.util.HashMap;
 
                 switch (alt4) {
             	case 1 :
-            	    // Generator.g:1348:38: .
+            	    // Generator.g:1350:38: .
             	    {
             	    matchAny(); if (state.failed) return ;
 
@@ -1867,7 +1867,7 @@ import java.util.HashMap;
     // $ANTLR start "NEWLINE"
     public final void mNEWLINE() throws RecognitionException {
         try {
-            // Generator.g:1351:9: ( '\\r\\n' | '\\r' | '\\n' )
+            // Generator.g:1353:9: ( '\\r\\n' | '\\r' | '\\n' )
             int alt5=3;
             int LA5_0 = input.LA(1);
 
@@ -1892,7 +1892,7 @@ import java.util.HashMap;
             }
             switch (alt5) {
                 case 1 :
-                    // Generator.g:1352:5: '\\r\\n'
+                    // Generator.g:1354:5: '\\r\\n'
                     {
                     match("\r\n"); if (state.failed) return ;
 
@@ -1900,14 +1900,14 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:1352:14: '\\r'
+                    // Generator.g:1354:14: '\\r'
                     {
                     match('\r'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // Generator.g:1352:21: '\\n'
+                    // Generator.g:1354:21: '\\n'
                     {
                     match('\n'); if (state.failed) return ;
 
@@ -1926,8 +1926,8 @@ import java.util.HashMap;
         try {
             int _type = ARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1355:10: ( '->' )
-            // Generator.g:1355:12: '->'
+            // Generator.g:1357:10: ( '->' )
+            // Generator.g:1357:12: '->'
             {
             match("->"); if (state.failed) return ;
 
@@ -1947,8 +1947,8 @@ import java.util.HashMap;
         try {
             int _type = AT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1356:11: ( '@' )
-            // Generator.g:1356:13: '@'
+            // Generator.g:1358:11: ( '@' )
+            // Generator.g:1358:13: '@'
             {
             match('@'); if (state.failed) return ;
 
@@ -1967,8 +1967,8 @@ import java.util.HashMap;
         try {
             int _type = BAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1357:8: ( '|' )
-            // Generator.g:1357:10: '|'
+            // Generator.g:1359:8: ( '|' )
+            // Generator.g:1359:10: '|'
             {
             match('|'); if (state.failed) return ;
 
@@ -1987,8 +1987,8 @@ import java.util.HashMap;
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1358:10: ( ':' )
-            // Generator.g:1358:12: ':'
+            // Generator.g:1360:10: ( ':' )
+            // Generator.g:1360:12: ':'
             {
             match(':'); if (state.failed) return ;
 
@@ -2007,8 +2007,8 @@ import java.util.HashMap;
         try {
             int _type = COLON_COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1359:14: ( '::' )
-            // Generator.g:1359:16: '::'
+            // Generator.g:1361:14: ( '::' )
+            // Generator.g:1361:16: '::'
             {
             match("::"); if (state.failed) return ;
 
@@ -2028,8 +2028,8 @@ import java.util.HashMap;
         try {
             int _type = COLON_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1360:14: ( ':=' )
-            // Generator.g:1360:16: ':='
+            // Generator.g:1362:14: ( ':=' )
+            // Generator.g:1362:16: ':='
             {
             match(":="); if (state.failed) return ;
 
@@ -2049,8 +2049,8 @@ import java.util.HashMap;
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1361:10: ( ',' )
-            // Generator.g:1361:12: ','
+            // Generator.g:1363:10: ( ',' )
+            // Generator.g:1363:12: ','
             {
             match(','); if (state.failed) return ;
 
@@ -2069,8 +2069,8 @@ import java.util.HashMap;
         try {
             int _type = DOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1362:8: ( '.' )
-            // Generator.g:1362:10: '.'
+            // Generator.g:1364:8: ( '.' )
+            // Generator.g:1364:10: '.'
             {
             match('.'); if (state.failed) return ;
 
@@ -2089,8 +2089,8 @@ import java.util.HashMap;
         try {
             int _type = DOTDOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1363:11: ( '..' )
-            // Generator.g:1363:13: '..'
+            // Generator.g:1365:11: ( '..' )
+            // Generator.g:1365:13: '..'
             {
             match(".."); if (state.failed) return ;
 
@@ -2110,8 +2110,8 @@ import java.util.HashMap;
         try {
             int _type = EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1364:10: ( '=' )
-            // Generator.g:1364:12: '='
+            // Generator.g:1366:10: ( '=' )
+            // Generator.g:1366:12: '='
             {
             match('='); if (state.failed) return ;
 
@@ -2130,8 +2130,8 @@ import java.util.HashMap;
         try {
             int _type = GREATER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1365:11: ( '>' )
-            // Generator.g:1365:13: '>'
+            // Generator.g:1367:11: ( '>' )
+            // Generator.g:1367:13: '>'
             {
             match('>'); if (state.failed) return ;
 
@@ -2150,8 +2150,8 @@ import java.util.HashMap;
         try {
             int _type = GREATER_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1366:15: ( '>=' )
-            // Generator.g:1366:17: '>='
+            // Generator.g:1368:15: ( '>=' )
+            // Generator.g:1368:17: '>='
             {
             match(">="); if (state.failed) return ;
 
@@ -2171,8 +2171,8 @@ import java.util.HashMap;
         try {
             int _type = HASH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1367:9: ( '#' )
-            // Generator.g:1367:11: '#'
+            // Generator.g:1369:9: ( '#' )
+            // Generator.g:1369:11: '#'
             {
             match('#'); if (state.failed) return ;
 
@@ -2191,8 +2191,8 @@ import java.util.HashMap;
         try {
             int _type = LBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1368:11: ( '{' )
-            // Generator.g:1368:13: '{'
+            // Generator.g:1370:11: ( '{' )
+            // Generator.g:1370:13: '{'
             {
             match('{'); if (state.failed) return ;
 
@@ -2211,8 +2211,8 @@ import java.util.HashMap;
         try {
             int _type = LBRACK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1369:11: ( '[' )
-            // Generator.g:1369:13: '['
+            // Generator.g:1371:11: ( '[' )
+            // Generator.g:1371:13: '['
             {
             match('['); if (state.failed) return ;
 
@@ -2231,8 +2231,8 @@ import java.util.HashMap;
         try {
             int _type = LESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1370:9: ( '<' )
-            // Generator.g:1370:11: '<'
+            // Generator.g:1372:9: ( '<' )
+            // Generator.g:1372:11: '<'
             {
             match('<'); if (state.failed) return ;
 
@@ -2251,8 +2251,8 @@ import java.util.HashMap;
         try {
             int _type = LESS_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1371:14: ( '<=' )
-            // Generator.g:1371:16: '<='
+            // Generator.g:1373:14: ( '<=' )
+            // Generator.g:1373:16: '<='
             {
             match("<="); if (state.failed) return ;
 
@@ -2272,8 +2272,8 @@ import java.util.HashMap;
         try {
             int _type = LPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1372:11: ( '(' )
-            // Generator.g:1372:13: '('
+            // Generator.g:1374:11: ( '(' )
+            // Generator.g:1374:13: '('
             {
             match('('); if (state.failed) return ;
 
@@ -2292,8 +2292,8 @@ import java.util.HashMap;
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1373:10: ( '-' )
-            // Generator.g:1373:12: '-'
+            // Generator.g:1375:10: ( '-' )
+            // Generator.g:1375:12: '-'
             {
             match('-'); if (state.failed) return ;
 
@@ -2312,8 +2312,8 @@ import java.util.HashMap;
         try {
             int _type = NOT_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1374:13: ( '<>' )
-            // Generator.g:1374:15: '<>'
+            // Generator.g:1376:13: ( '<>' )
+            // Generator.g:1376:15: '<>'
             {
             match("<>"); if (state.failed) return ;
 
@@ -2333,8 +2333,8 @@ import java.util.HashMap;
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1375:9: ( '+' )
-            // Generator.g:1375:11: '+'
+            // Generator.g:1377:9: ( '+' )
+            // Generator.g:1377:11: '+'
             {
             match('+'); if (state.failed) return ;
 
@@ -2353,8 +2353,8 @@ import java.util.HashMap;
         try {
             int _type = RBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1376:11: ( '}' )
-            // Generator.g:1376:13: '}'
+            // Generator.g:1378:11: ( '}' )
+            // Generator.g:1378:13: '}'
             {
             match('}'); if (state.failed) return ;
 
@@ -2373,8 +2373,8 @@ import java.util.HashMap;
         try {
             int _type = RBRACK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1377:11: ( ']' )
-            // Generator.g:1377:13: ']'
+            // Generator.g:1379:11: ( ']' )
+            // Generator.g:1379:13: ']'
             {
             match(']'); if (state.failed) return ;
 
@@ -2393,8 +2393,8 @@ import java.util.HashMap;
         try {
             int _type = RPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1378:10: ( ')' )
-            // Generator.g:1378:12: ')'
+            // Generator.g:1380:10: ( ')' )
+            // Generator.g:1380:12: ')'
             {
             match(')'); if (state.failed) return ;
 
@@ -2413,8 +2413,8 @@ import java.util.HashMap;
         try {
             int _type = SEMI;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1379:8: ( ';' )
-            // Generator.g:1379:10: ';'
+            // Generator.g:1381:8: ( ';' )
+            // Generator.g:1381:10: ';'
             {
             match(';'); if (state.failed) return ;
 
@@ -2433,8 +2433,8 @@ import java.util.HashMap;
         try {
             int _type = SLASH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1380:10: ( '/' )
-            // Generator.g:1380:12: '/'
+            // Generator.g:1382:10: ( '/' )
+            // Generator.g:1382:12: '/'
             {
             match('/'); if (state.failed) return ;
 
@@ -2453,8 +2453,8 @@ import java.util.HashMap;
         try {
             int _type = STAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1381:9: ( '*' )
-            // Generator.g:1381:11: '*'
+            // Generator.g:1383:9: ( '*' )
+            // Generator.g:1383:11: '*'
             {
             match('*'); if (state.failed) return ;
 
@@ -2471,10 +2471,10 @@ import java.util.HashMap;
     // $ANTLR start "INT"
     public final void mINT() throws RecognitionException {
         try {
-            // Generator.g:1384:4: ( ( '0' .. '9' )+ )
-            // Generator.g:1385:5: ( '0' .. '9' )+
+            // Generator.g:1386:4: ( ( '0' .. '9' )+ )
+            // Generator.g:1387:5: ( '0' .. '9' )+
             {
-            // Generator.g:1385:5: ( '0' .. '9' )+
+            // Generator.g:1387:5: ( '0' .. '9' )+
             int cnt6=0;
             loop6:
             do {
@@ -2488,7 +2488,7 @@ import java.util.HashMap;
 
                 switch (alt6) {
             	case 1 :
-            	    // Generator.g:1385:6: '0' .. '9'
+            	    // Generator.g:1387:6: '0' .. '9'
             	    {
             	    matchRange('0','9'); if (state.failed) return ;
 
@@ -2517,11 +2517,11 @@ import java.util.HashMap;
     // $ANTLR start "REAL"
     public final void mREAL() throws RecognitionException {
         try {
-            // Generator.g:1389:5: ( INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT ) )
-            // Generator.g:1390:5: INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
+            // Generator.g:1391:5: ( INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT ) )
+            // Generator.g:1392:5: INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
             {
             mINT(); if (state.failed) return ;
-            // Generator.g:1390:9: ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
+            // Generator.g:1392:9: ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -2540,11 +2540,11 @@ import java.util.HashMap;
             }
             switch (alt10) {
                 case 1 :
-                    // Generator.g:1390:10: '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
+                    // Generator.g:1392:10: '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
                     {
                     match('.'); if (state.failed) return ;
                     mINT(); if (state.failed) return ;
-                    // Generator.g:1390:18: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
+                    // Generator.g:1392:18: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
                     int alt8=2;
                     int LA8_0 = input.LA(1);
 
@@ -2553,7 +2553,7 @@ import java.util.HashMap;
                     }
                     switch (alt8) {
                         case 1 :
-                            // Generator.g:1390:19: ( 'e' | 'E' ) ( '+' | '-' )? INT
+                            // Generator.g:1392:19: ( 'e' | 'E' ) ( '+' | '-' )? INT
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -2565,7 +2565,7 @@ import java.util.HashMap;
                                 recover(mse);
                                 throw mse;}
 
-                            // Generator.g:1390:31: ( '+' | '-' )?
+                            // Generator.g:1392:31: ( '+' | '-' )?
                             int alt7=2;
                             int LA7_0 = input.LA(1);
 
@@ -2603,7 +2603,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:1390:52: ( 'e' | 'E' ) ( '+' | '-' )? INT
+                    // Generator.g:1392:52: ( 'e' | 'E' ) ( '+' | '-' )? INT
                     {
                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                         input.consume();
@@ -2615,7 +2615,7 @@ import java.util.HashMap;
                         recover(mse);
                         throw mse;}
 
-                    // Generator.g:1390:64: ( '+' | '-' )?
+                    // Generator.g:1392:64: ( '+' | '-' )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -2663,7 +2663,7 @@ import java.util.HashMap;
         try {
             int _type = RANGE_OR_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1393:13: ( ( INT '..' )=> INT | ( REAL )=> REAL | INT )
+            // Generator.g:1395:13: ( ( INT '..' )=> INT | ( REAL )=> REAL | INT )
             int alt11=3;
             int LA11_0 = input.LA(1);
 
@@ -2702,7 +2702,7 @@ import java.util.HashMap;
             }
             switch (alt11) {
                 case 1 :
-                    // Generator.g:1394:7: ( INT '..' )=> INT
+                    // Generator.g:1396:7: ( INT '..' )=> INT
                     {
                     mINT(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2712,7 +2712,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:1395:7: ( REAL )=> REAL
+                    // Generator.g:1397:7: ( REAL )=> REAL
                     {
                     mREAL(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2722,7 +2722,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 3 :
-                    // Generator.g:1396:9: INT
+                    // Generator.g:1398:9: INT
                     {
                     mINT(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2746,11 +2746,11 @@ import java.util.HashMap;
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1401:7: ( '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\'' )
-            // Generator.g:1402:5: '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\''
+            // Generator.g:1403:7: ( '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\'' )
+            // Generator.g:1404:5: '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\''
             {
             match('\''); if (state.failed) return ;
-            // Generator.g:1402:10: (~ ( '\\'' | '\\\\' ) | ESC )*
+            // Generator.g:1404:10: (~ ( '\\'' | '\\\\' ) | ESC )*
             loop12:
             do {
                 int alt12=3;
@@ -2766,7 +2766,7 @@ import java.util.HashMap;
 
                 switch (alt12) {
             	case 1 :
-            	    // Generator.g:1402:12: ~ ( '\\'' | '\\\\' )
+            	    // Generator.g:1404:12: ~ ( '\\'' | '\\\\' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2782,7 +2782,7 @@ import java.util.HashMap;
             	    }
             	    break;
             	case 2 :
-            	    // Generator.g:1402:27: ESC
+            	    // Generator.g:1404:27: ESC
             	    {
             	    mESC(); if (state.failed) return ;
 
@@ -2809,11 +2809,11 @@ import java.util.HashMap;
     // $ANTLR start "ESC"
     public final void mESC() throws RecognitionException {
         try {
-            // Generator.g:1414:1: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
-            // Generator.g:1415:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // Generator.g:1416:1: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
+            // Generator.g:1417:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             {
             match('\\'); if (state.failed) return ;
-            // Generator.g:1416:6: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // Generator.g:1418:6: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             int alt16=11;
             switch ( input.LA(1) ) {
             case 'n':
@@ -2887,63 +2887,63 @@ import java.util.HashMap;
 
             switch (alt16) {
                 case 1 :
-                    // Generator.g:1416:8: 'n'
+                    // Generator.g:1418:8: 'n'
                     {
                     match('n'); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // Generator.g:1417:8: 'r'
+                    // Generator.g:1419:8: 'r'
                     {
                     match('r'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // Generator.g:1418:8: 't'
+                    // Generator.g:1420:8: 't'
                     {
                     match('t'); if (state.failed) return ;
 
                     }
                     break;
                 case 4 :
-                    // Generator.g:1419:8: 'b'
+                    // Generator.g:1421:8: 'b'
                     {
                     match('b'); if (state.failed) return ;
 
                     }
                     break;
                 case 5 :
-                    // Generator.g:1420:8: 'f'
+                    // Generator.g:1422:8: 'f'
                     {
                     match('f'); if (state.failed) return ;
 
                     }
                     break;
                 case 6 :
-                    // Generator.g:1421:8: '\"'
+                    // Generator.g:1423:8: '\"'
                     {
                     match('\"'); if (state.failed) return ;
 
                     }
                     break;
                 case 7 :
-                    // Generator.g:1422:8: '\\''
+                    // Generator.g:1424:8: '\\''
                     {
                     match('\''); if (state.failed) return ;
 
                     }
                     break;
                 case 8 :
-                    // Generator.g:1423:8: '\\\\'
+                    // Generator.g:1425:8: '\\\\'
                     {
                     match('\\'); if (state.failed) return ;
 
                     }
                     break;
                 case 9 :
-                    // Generator.g:1424:8: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+                    // Generator.g:1426:8: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                     {
                     match('u'); if (state.failed) return ;
                     mHEX_DIGIT(); if (state.failed) return ;
@@ -2954,10 +2954,10 @@ import java.util.HashMap;
                     }
                     break;
                 case 10 :
-                    // Generator.g:1425:8: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
+                    // Generator.g:1427:8: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
                     {
                     matchRange('0','3'); if (state.failed) return ;
-                    // Generator.g:1425:17: ( '0' .. '7' ( '0' .. '7' )? )?
+                    // Generator.g:1427:17: ( '0' .. '7' ( '0' .. '7' )? )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -2966,10 +2966,10 @@ import java.util.HashMap;
                     }
                     switch (alt14) {
                         case 1 :
-                            // Generator.g:1425:18: '0' .. '7' ( '0' .. '7' )?
+                            // Generator.g:1427:18: '0' .. '7' ( '0' .. '7' )?
                             {
                             matchRange('0','7'); if (state.failed) return ;
-                            // Generator.g:1425:27: ( '0' .. '7' )?
+                            // Generator.g:1427:27: ( '0' .. '7' )?
                             int alt13=2;
                             int LA13_0 = input.LA(1);
 
@@ -2978,7 +2978,7 @@ import java.util.HashMap;
                             }
                             switch (alt13) {
                                 case 1 :
-                                    // Generator.g:1425:28: '0' .. '7'
+                                    // Generator.g:1427:28: '0' .. '7'
                                     {
                                     matchRange('0','7'); if (state.failed) return ;
 
@@ -2997,10 +2997,10 @@ import java.util.HashMap;
                     }
                     break;
                 case 11 :
-                    // Generator.g:1425:45: '4' .. '7' ( '0' .. '7' )?
+                    // Generator.g:1427:45: '4' .. '7' ( '0' .. '7' )?
                     {
                     matchRange('4','7'); if (state.failed) return ;
-                    // Generator.g:1425:54: ( '0' .. '7' )?
+                    // Generator.g:1427:54: ( '0' .. '7' )?
                     int alt15=2;
                     int LA15_0 = input.LA(1);
 
@@ -3009,7 +3009,7 @@ import java.util.HashMap;
                     }
                     switch (alt15) {
                         case 1 :
-                            // Generator.g:1425:55: '0' .. '7'
+                            // Generator.g:1427:55: '0' .. '7'
                             {
                             matchRange('0','7'); if (state.failed) return ;
 
@@ -3036,8 +3036,8 @@ import java.util.HashMap;
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // Generator.g:1431:10: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
-            // Generator.g:1432:5: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
+            // Generator.g:1433:10: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
+            // Generator.g:1434:5: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f') ) {
                 input.consume();
@@ -3063,8 +3063,8 @@ import java.util.HashMap;
         try {
             int _type = IDENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Generator.g:1439:6: ( ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // Generator.g:1440:5: ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // Generator.g:1441:6: ( ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // Generator.g:1442:5: ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
             if ( input.LA(1)=='$'||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -3076,7 +3076,7 @@ import java.util.HashMap;
                 recover(mse);
                 throw mse;}
 
-            // Generator.g:1440:39: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // Generator.g:1442:39: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop17:
             do {
                 int alt17=2;
@@ -3124,8 +3124,8 @@ import java.util.HashMap;
     // $ANTLR start "VOCAB"
     public final void mVOCAB() throws RecognitionException {
         try {
-            // Generator.g:1447:6: ( '\\U0003' .. '\\U0377' )
-            // Generator.g:1448:5: '\\U0003' .. '\\U0377'
+            // Generator.g:1449:6: ( '\\U0003' .. '\\U0377' )
+            // Generator.g:1450:5: '\\U0003' .. '\\U0377'
             {
             matchRange('\u0003','\u0377'); if (state.failed) return ;
 
@@ -3870,8 +3870,8 @@ import java.util.HashMap;
 
     // $ANTLR start synpred1_Generator
     public final void synpred1_Generator_fragment() throws RecognitionException {   
-        // Generator.g:1394:7: ( INT '..' )
-        // Generator.g:1394:9: INT '..'
+        // Generator.g:1396:7: ( INT '..' )
+        // Generator.g:1396:9: INT '..'
         {
         mINT(); if (state.failed) return ;
         match(".."); if (state.failed) return ;
@@ -3883,8 +3883,8 @@ import java.util.HashMap;
 
     // $ANTLR start synpred2_Generator
     public final void synpred2_Generator_fragment() throws RecognitionException {   
-        // Generator.g:1395:7: ( REAL )
-        // Generator.g:1395:9: REAL
+        // Generator.g:1397:7: ( REAL )
+        // Generator.g:1397:9: REAL
         {
         mREAL(); if (state.failed) return ;
 

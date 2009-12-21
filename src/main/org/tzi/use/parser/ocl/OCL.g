@@ -340,7 +340,8 @@ propertyCall[ASTExpression source, boolean followsArrow] returns [ASTExpression 
       // this semantic predicate disambiguates operations from
       // iterate-based expressions which have a different syntax (the
       // OCL grammar is very loose here).
-      { org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) }? 
+      { org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) }?
+      { input.LA(2) == LPAREN }?
       nExpQuery=queryExpression[source] { $n = $nExpQuery.n; }
     | nExpIterate=iterateExpression[source] { $n = $nExpIterate.n; }
     | nExpOperation=operationExpression[source, followsArrow] { $n = $nExpOperation.n; }
@@ -670,6 +671,7 @@ tuplePart returns [ASTTuplePart n]
     name=IDENT COLON t=type
     { $n = new ASTTuplePart($name, $t.n); }
     ;
+
 /*
 --------- Start of file OCLLexerRules.gpart -------------------- 
 */

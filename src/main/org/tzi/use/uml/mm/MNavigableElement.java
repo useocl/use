@@ -21,10 +21,12 @@
 
 package org.tzi.use.uml.mm;
 
+import java.util.Set;
+
 import org.tzi.use.uml.ocl.type.Type;
 
 /**
- * MNavigableElement instances represent modelelements which can be
+ * MNavigableElement instances represent model elements which can be
  * used for navigation in OCL.
  *
  * @version     $ProjectVersion: 0.393 $
@@ -41,6 +43,14 @@ public interface MNavigableElement {
 
     public String nameAsRolename();
 
+    boolean isUnion();
+    
+    void setUnion(boolean newValue);
+    
+    Set<MAssociationEnd> getSubsettingEnds();
+    
+    Set<MAssociationEnd> getRedefiningEnds();
+    
     public boolean equals( Object obj );
 
     public int hashCode();
