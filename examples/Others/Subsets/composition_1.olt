@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<diagram_Layout> 
+
+<diagramOptions>
+   <autolayout>false</autolayout>
+   <antialiasing>false</antialiasing>
+   <showassocnames>true</showassocnames>
+   <showattributes>false</showattributes>
+   <showmultiplicities>false</showmultiplicities>
+   <showoperations>false</showoperations>
+   <showrolenames>false</showrolenames>
+</diagramOptions>
+
+<node type="Object">
+   <name>e1</name>
+   <x_coord>251.0</x_coord>
+   <y_coord>173.5</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Object">
+   <name>w3</name>
+   <x_coord>55.0</x_coord>
+   <y_coord>60.5</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Object">
+   <name>car</name>
+   <x_coord>251.0</x_coord>
+   <y_coord>57.5</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Object">
+   <name>w2</name>
+   <x_coord>55.0</x_coord>
+   <y_coord>90.5</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Object">
+   <name>w1</name>
+   <x_coord>55.0</x_coord>
+   <y_coord>120.5</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Object">
+   <name>w4</name>
+   <x_coord>55.0</x_coord>
+   <y_coord>29.5</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<edge type="BinaryEdge" kind="link">
+   <source>car</source>
+   <target>w4</target>
+   <name>DrivesOn</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>car</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>wheel</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>1</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>4</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>DrivesOn</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>227.0</x_coord>
+      <y_coord>53.550898203592816</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>84.0</x_coord>
+      <y_coord>33.04651162790698</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="BinaryEdge" kind="link">
+   <source>car</source>
+   <target>w3</target>
+   <name>DrivesOn</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>car</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>wheel</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>1</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>4</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>DrivesOn</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>227.0</x_coord>
+      <y_coord>57.287425149700596</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>84.0</x_coord>
+      <y_coord>59.49418604651163</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="BinaryEdge" kind="link">
+   <source>car</source>
+   <target>w2</target>
+   <name>DrivesOn</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>car</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>wheel</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>1</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>4</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>DrivesOn</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>227.0</x_coord>
+      <y_coord>61.02395209580838</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>84.0</x_coord>
+      <y_coord>85.11046511627907</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="BinaryEdge" kind="link">
+   <source>car</source>
+   <target>w1</target>
+   <name>DrivesOn</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>car</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>wheel</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>1</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>4</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>DrivesOn</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>227.0</x_coord>
+      <y_coord>64.66863905325444</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>82.64285714285714</x_coord>
+      <y_coord>111.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="BinaryEdge" kind="link">
+   <source>e1</source>
+   <target>w1</target>
+   <name>PowersWheel</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>engine</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>wheel</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>1</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>2</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>PowersWheel</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>220.0</x_coord>
+      <y_coord>164.46107784431138</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>84.0</x_coord>
+      <y_coord>127.73333333333333</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="BinaryEdge" kind="link">
+   <source>e1</source>
+   <target>w2</target>
+   <name>PowersWheel</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>engine</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>wheel</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>1</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>2</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>PowersWheel</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>229.71621621621622</x_coord>
+      <y_coord>164.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>76.16216216216216</x_coord>
+      <y_coord>99.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="BinaryEdge" kind="link">
+   <source>car</source>
+   <target>e1</target>
+   <name>CarPoweredBy</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>car</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>engine</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>0..1</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>1</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>CarPoweredBy</name>
+      <x_coord>-1</x_coord>
+      <y_coord>-1</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>251.0</x_coord>
+      <y_coord>66.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>251.0</x_coord>
+      <y_coord>164.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+
+</diagram_Layout>

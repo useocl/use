@@ -1,0 +1,23 @@
+model MissingConstraints
+
+class A
+end
+
+class B
+end
+
+class C < A
+end
+
+class D < B
+end
+
+association ab between
+  A[*] union
+  B[*] union
+end
+
+association cd between
+  C[*]
+  D[*] subsets b
+end

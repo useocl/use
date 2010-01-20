@@ -1,0 +1,86 @@
+-- This sample is taken from the Paper "UML 2 Composition Model" by
+-- Conrad Bock, published in the "Journal of Object Technology" 
+-- Vol. 3, No. 10, November - December 2004
+
+model Composition2
+
+abstract class Vehicle
+  operations
+    getWeight() : Integer =
+	  self.part.weight->sum()
+end
+
+abstract class VehiclePart
+  attributes
+    weight : Integer
+end
+
+abstract class PowerTransmitter < VehiclePart
+  attributes
+    allowedHP : Integer
+end
+
+class Car < Vehicle
+end
+
+class Boat < Vehicle
+end
+
+class Wheel < PowerTransmitter
+end
+
+class Propeller < PowerTransmitter
+end
+
+class Chain < PowerTransmitter
+end
+
+class Engine < VehiclePart
+  attributes
+    hp : Integer
+end
+
+class SmallCar < Car
+end
+
+composition C_InVehicle_Part between
+  Vehicle[1] role inVehicle union
+  VehiclePart[1..*] role part union
+end
+
+association powers between
+  Engine[0..1] role source
+  PowerTransmitter[1..*] role transmitter
+end
+
+composition C_InVehicle_PowerSource between
+  Vehicle[1] role powers subsets inVehicle
+  Engine[1] role powerSource subsets part
+end
+
+composition C_InVehicle_PowerTransmitter between
+  Vehicle[0..1] role powers subsets inVehicle
+  PowerTransmitter[1..*] role powerTransmitter subsets part
+end
+
+composition C_InCarAsFront_Front between
+  Car[0..1] role inCarAsFront subsets inVehicle
+  Wheel[2] role front redefines powerTransmitter
+end
+
+composition C_InCarAsBack_Back between
+  Car[0..1] role inCarAsBack subsets inVehicle
+  Wheel[2] role back subsets part
+end
+
+composition C_InBoat_P between
+  Boat[1] role inBoat subsets inVehicle
+  Propeller[1..4] role p redefines powerTransmitter
+end
+
+constraints
+
+context Engine inv noOverkill:
+    self.transmitter->forAll(pt:PowerTransmitter | 
+      pt.allowedHP >= self.hp)
+	  

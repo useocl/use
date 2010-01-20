@@ -1,0 +1,51 @@
+-- This sample is token from the Paper "UML 2 Composition Model" by
+-- Conrad Bock, published in the "Journal of Object Technology" 
+-- Vol. 3, No. 10, November - December 2004
+
+model Composition1
+
+class Car
+end
+
+class Wheel
+end
+
+class Engine
+end
+
+class Boat
+end
+
+class Propeller
+end
+
+composition DrivesOn between
+  Car[1]
+  Wheel[4] ordered
+end
+
+composition CarPoweredBy between
+  Car[0..1]
+  Engine[1]
+end
+
+composition BoatPoweredBy between
+  Boat[0..1]
+  Engine[1]
+end
+
+composition DrivesWith between
+  Boat[1]
+  Propeller[1..4]
+end
+
+association PowersWheel between
+  Engine[1]
+  Wheel[2]
+end
+
+association PowersPropeller between
+  Engine[1]
+  Propeller[1]
+end
+

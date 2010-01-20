@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<diagram_Layout> 
+
+<diagramOptions>
+   <autolayout>false</autolayout>
+   <antialiasing>false</antialiasing>
+   <showassocnames>true</showassocnames>
+   <showattributes>false</showattributes>
+   <showmultiplicities>true</showmultiplicities>
+   <showoperations>false</showoperations>
+   <showrolenames>true</showrolenames>
+</diagramOptions>
+
+<node type="Class">
+   <name>D</name>
+   <x_coord>174.98649587928017</x_coord>
+   <y_coord>71.56959913962795</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
+   <name>C</name>
+   <x_coord>19.989548823310827</x_coord>
+   <y_coord>71.61927001525808</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
+   <name>B</name>
+   <x_coord>174.75100990321215</x_coord>
+   <y_coord>24.22965732033498</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
+   <name>A</name>
+   <x_coord>18.973495983252974</x_coord>
+   <y_coord>23.199842555814833</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<edge type="Inheritance">
+   <source>C</source>
+   <target>A</target>
+   <name>Inheritance</name>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>18.76923076923077</x_coord>
+      <y_coord>62.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>18.0</x_coord>
+      <y_coord>32.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="Inheritance">
+   <source>D</source>
+   <target>B</target>
+   <name>Inheritance</name>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>174.0</x_coord>
+      <y_coord>62.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>174.0</x_coord>
+      <y_coord>33.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="BinaryEdge" kind="association">
+   <source>A</source>
+   <target>B</target>
+   <name>ab</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>a {union}</name>
+      <x_coord>30.973495983252974</x_coord>
+      <y_coord>35.19984255581483</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>b {union}</name>
+      <x_coord>120.75100990321215</x_coord>
+      <y_coord>36.22965732033498</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>*</name>
+      <x_coord>31.973495983252974</x_coord>
+      <y_coord>23.199842555814833</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>*</name>
+      <x_coord>158.75100990321215</x_coord>
+      <y_coord>24.22965732033498</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>ab</name>
+      <x_coord>80.86225294323256</x_coord>
+      <y_coord>20.714749938074903</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>27.0</x_coord>
+      <y_coord>23.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>166.0</x_coord>
+      <y_coord>23.945578231292515</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="BinaryEdge" kind="association">
+   <source>C</source>
+   <target>D</target>
+   <name>cd</name>
+   <edgeproperty type="rolename" kind="source">
+      <name>c</name>
+      <x_coord>33.98954882331083</x_coord>
+      <y_coord>82.61927001525808</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="rolename" kind="target">
+      <name>d {subsets b}</name>
+      <x_coord>99.98649587928017</x_coord>
+      <y_coord>84.56959913962795</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="source">
+      <name>*</name>
+      <x_coord>34.98954882331083</x_coord>
+      <y_coord>71.61927001525808</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="multiplicity" kind="target">
+      <name>*</name>
+      <x_coord>159.98649587928017</x_coord>
+      <y_coord>71.56959913962795</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="associationName">
+      <name>cd</name>
+      <x_coord>81.4880223512955</x_coord>
+      <y_coord>68.59443457744302</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>27.0</x_coord>
+      <y_coord>71.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>2</specialid>
+      <x_coord>166.0</x_coord>
+      <y_coord>71.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+
+</diagram_Layout>
