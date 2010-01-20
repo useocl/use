@@ -511,8 +511,10 @@ public final class Shell implements Runnable {
        
         // compile errors?
         String message = (new ShowHideExec(line)).exec();// jjjj
-        System.out.println(message);
-//        System.out.println("");
+        
+        if (!"".equals(message))
+        	System.out.println(message);
+        
         if (cmdList == null){
             return;
         }
