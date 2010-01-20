@@ -47,6 +47,9 @@ import org.tzi.use.gui.views.diagrams.NodeOnEdge;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.selection.classselection.SelectionClassTableModel;
+import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
+import org.tzi.use.uml.mm.MClass;
 
 /**
  * Handels the mouse movements of the class and object diagram.
@@ -70,10 +73,11 @@ public final class DiagramMouseHandling implements MouseListener,
     private int fDragMode;
     private boolean fIsDragging = false;
     private Cursor fCursor;
+    private SelectionClassView opv ;
     
     public DiagramMouseHandling( Selection nodeSelection, Selection edgeSelection,
-                                 DirectedGraph<NodeBase, EdgeBase> graph, HideAdministration hideAdmin,
-                                 Set<Object> hiddenNodes, DiagramOptions opt, 
+                                 DirectedGraph graph, HideAdministration hideAdmin,
+                                 Set hiddenNodes, DiagramOptions opt, 
                                  DiagramView diagram ) {
         
         fNodeSelection = nodeSelection;
@@ -84,8 +88,9 @@ public final class DiagramMouseHandling implements MouseListener,
         new DropTarget(fDiagram, this);
     }
     
-    
-    
+    public void setSelectionClassView(SelectionClassView opv){//jj
+    	this.opv = opv;
+    }
     public void mouseClicked(MouseEvent e) {
                 
     }
@@ -149,6 +154,8 @@ public final class DiagramMouseHandling implements MouseListener,
             } else {
                 // click in background, clear selection
                 if ( fNodeSelection.clear() | fEdgeSelection.clear() ) {
+                	if(opv!= null)
+                	 ((SelectionClassTableModel)(opv.fTableModel)).clearSelection(); // jj
                     fDiagram.repaint();
                 }
             }
@@ -158,6 +165,15 @@ public final class DiagramMouseHandling implements MouseListener,
         if (pickedObjectNode != null) {
             // add this component to the selection
             fNodeSelection.add( pickedObjectNode );
+//            System.out.println("add seleted"); //jj
+            if(opv!= null)
+            ((SelectionClassTableModel)(opv.fTableModel)).addSelected(pickedObjectNode);//jj
+//            System.out.println("fDiagram.getComponents().length = " + fGraph.);
+//            fDiagram.
+//            for(int i = 0; i< fDiagram.getComponents().length; i++){
+//            	System.out.println("getcomponent = " + fDiagram.getComponent(i));
+//            }
+//            opv.addSelected(pickedObjectNode);
             fDiagram.repaint();
         }
         break;
@@ -219,11 +235,9 @@ public final class DiagramMouseHandling implements MouseListener,
             for (Selectable sel : fNodeSelection) {
                 sel.setDragged( true );
             }
-            
             Point p = e.getPoint();
             int dx = p.x - fDragStart.x;
             int dy = p.y - fDragStart.y;
-            
             // move all selected components to new position.
             Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
             while (nodeIterator.hasNext()) {

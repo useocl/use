@@ -100,6 +100,21 @@ public final class MCmdInsertLink extends MCmd {
                                                  aend.cls().name() + "', found `" +
                                                  v.toStringWithType() + "'.");
         }
+        
+        // TODO: n-ary
+        if (assocEnds.size() == 2) {
+        	// If one association end is redefined, then only the class at the redefining end is
+        	// allowed.
+        	MAssociationEnd aend1 = assocEnds.get(0);
+        	MAssociationEnd aend2 = assocEnds.get(1);
+        	
+        	if (aend1.getRedefiningEnds().size() > 0) {
+        		// Association end 1 is redefined, so me have to check the type
+        		// of the redefining end and the type of the opposite end
+        		
+        	}
+        }
+        
         try { 
             fNewLink = fSystemState.createLink(fAssociation, objects);
             if ( fNewLink instanceof MLinkObject ) {

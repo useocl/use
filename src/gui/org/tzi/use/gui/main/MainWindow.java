@@ -42,6 +42,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,7 @@ import javax.swing.event.InternalFrameEvent;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.gui.util.ExtFileFilter;
+import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.util.StatusBar;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.CallStackView;
@@ -85,7 +87,9 @@ import org.tzi.use.gui.views.ObjectCountView;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.StateEvolutionView;
 import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
+import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
@@ -107,6 +111,15 @@ import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.uml.sys.StateChangeListener;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.USEWriter;
+import org.tzi.use.gui.views.selection.classselection.SelectedAssociationPathView;
+import org.tzi.use.gui.views.selection.classselection.SelectedClassPathView;
+import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
+import org.tzi.use.gui.views.selection.objectselection.SelectedLinkPathView;
+import org.tzi.use.gui.views.selection.objectselection.SelectedObjectPathView;
+import org.tzi.use.gui.views.selection.objectselection.SelectionOCLView;
+import org.tzi.use.gui.views.selection.objectselection.SelectionObjectView;
+import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
+import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 
 /**
  * The main application window of USE.
@@ -133,9 +146,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     private JMenuItem fMenuItemEditUndo;
 
 	private JToolBar fToolBar;
-
 	private JMenuBar fMenuBar;
-
     private JButton fBtnEditUndo;
 
     private JCheckBoxMenuItem fCbMenuItemCheckStructure;
@@ -333,6 +344,14 @@ public class MainWindow extends JFrame implements StateChangeListener {
         mi.setMnemonic('T');
         mi = menu.add(fActionViewCloseAll);
         mi.setMnemonic('a');
+
+        // `Help' submenu
+        menu = new JMenu("Help");
+        menu.setMnemonic('H');
+        fMenuBar.add(menu);
+        // not yet implemented in swing: menuBar.setHelpMenu(menu);
+        mi = menu.add(fActionHelpAbout);
+        mi.setMnemonic('A');
 
         // create the browser panel
 		fModelBrowser = new ModelBrowser(this, fPluginRuntime);
@@ -970,7 +989,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
 				filename += ".txt";
 			
             File f = new File(path, filename);
-            
+
             if (f.exists()) {
                 int n = JOptionPane.showConfirmDialog(MainWindow.this,
                         "Overwrite existing file " + f + "?", "Please confirm",
@@ -1566,4 +1585,106 @@ public class MainWindow extends JFrame implements StateChangeListener {
         win.setVisible(true);
         return win;
     }
+    
+    //von hier jj
+    public SelectionClassView showClassSelectionClassView(HashSet selectedClasses, ClassDiagram classDiagram, DiagramMouseHandling mouseHandling, 
+    		Map fClassToNodeMap, Selection fNodeSelection) { // jj object selection class 
+    	SelectionClassView opv = new SelectionClassView(MainWindow.this,
+                fSession.system(), selectedClasses, classDiagram, mouseHandling, fClassToNodeMap, fNodeSelection);
+    	mouseHandling.setSelectionClassView(opv);
+        ViewFrame f = new ViewFrame("Selection classes", opv,
+                "ObjectProperties.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(opv, BorderLayout.CENTER);
+        addNewViewFrame(f);
+        f.setSize(580,230);
+        return opv;
+    }
+    
+    /**
+     * Creates a new assocation path length view.
+     */
+    public SelectedAssociationPathView showSelectedAssociationPathView(HashSet selectedClasses, HashSet anames) { // jj object selection class 
+    	SelectedAssociationPathView opv = new SelectedAssociationPathView(MainWindow.this,
+                fSession.system(), selectedClasses, anames);
+        ViewFrame f = new ViewFrame("Selection association path length", opv,
+                "ObjectProperties.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(opv, BorderLayout.CENTER);
+        addNewViewFrame(f);
+        f.setSize(450,200);
+        return opv;
+    }
+    
+    //selection class path view
+    public SelectedClassPathView showSelectedClassPathView(HashSet selectedClasses) { // jj object selection class 
+    	SelectedClassPathView opv = new SelectedClassPathView(MainWindow.this,
+                fSession.system(), selectedClasses);
+        ViewFrame f = new ViewFrame("Selection classes path length", opv,
+                "ObjectProperties.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(opv, BorderLayout.CENTER);
+        addNewViewFrame(f);
+        f.setSize(450,200);
+        return opv;
+    }
+    
+//  selection class path view
+    public SelectedLinkPathView showSelectedLinkPathView(Set selectedClasses, Set anames) { // jj object selection class 
+    	SelectedLinkPathView opv = new SelectedLinkPathView(MainWindow.this,
+                fSession.system(), selectedClasses, anames);
+        ViewFrame f = new ViewFrame("Selection link path length", opv,
+                "ObjectProperties.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(opv, BorderLayout.CENTER);
+        addNewViewFrame(f);
+        f.setSize(450,200);
+        return opv;
+    }
+    
+    //selection object path view
+    public SelectedObjectPathView showSelectedObjectPathView(Set selectedClasses) { // jj object selection class 
+    	SelectedObjectPathView opv = new SelectedObjectPathView(MainWindow.this,
+                fSession.system(), selectedClasses);
+        ViewFrame f = new ViewFrame("Selection objects path length", opv,
+                "ObjectProperties.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(opv, BorderLayout.CENTER);
+        addNewViewFrame(f);
+        f.setSize(450,200);
+        return opv;
+    }
+    
+    public SelectionObjectView showSelectionObjectView() { // jj object selection class 
+    	SelectionObjectView opv = new SelectionObjectView(MainWindow.this,
+                fSession.system());
+        ViewFrame f = new ViewFrame("Selection objects", opv,
+                "ObjectProperties.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(opv, BorderLayout.CENTER);
+        addNewViewFrame(f);
+        f.setSize(530,230);
+        return opv;
+    }
+    
+    public SelectionOCLView showSelectionOCLView() { // jj ocl selection class 
+    	SelectionOCLView opv = new SelectionOCLView(MainWindow.this,
+                fSession.system());
+        ViewFrame f = new ViewFrame("Selection OCL expression", opv,
+                "ObjectProperties.gif");
+        JComponent c = (JComponent) f.getContentPane();
+       
+        c.setLayout(new BorderLayout());
+        c.add(opv, BorderLayout.CENTER);
+        addNewViewFrame(f);
+        f.setSize(370,250);
+        return opv;
+    }
+    
 }

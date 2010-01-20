@@ -111,4 +111,9 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
         fHideAction.saveEdges( nodesToHide );
     }
 
+    // anfangs jj
+    public void showHiddenElements(Set hiddenNodes){
+    	fHideAction.showHiddenElements(hiddenNodes);
+    }
+
 }

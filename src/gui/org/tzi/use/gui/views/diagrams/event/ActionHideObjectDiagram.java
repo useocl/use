@@ -254,6 +254,42 @@ public final class ActionHideObjectDiagram extends ActionHide {
                      + fLayoutXMLForHiddenElements;
         fLayoutInfos.setHiddenElementsXML( xml );
     }
-
+    
+    /** anfangs jj
+     * Displays all hidden objects again. The objects have to be added
+     * again, because they were deleted from the view before.
+     */
+    public void showHiddenElements(Set hiddenElements) {
+        // add hidden objects
+    	
+    	HashSet classes = new HashSet();
+    	Iterator t1 = fHiddenNodes.iterator();
+    	while(t1.hasNext()){ // add schon gehiddenene Nodes
+//    		classes.add(t1.next());
+    		MObject node = (MObject)t1.next();
+    		classes.add(node);
+    	}
+    	
+    	Iterator t2 = hiddenElements.iterator();
+    	while(t2.hasNext()){
+    		MObject node = (MObject)t2.next();
+    		classes.remove(node); // remove vorher schon gehidden nodes-> show
+    	}
+    	this.showAllHiddenElements();
+    	
+    	Iterator t3 = classes.iterator();
+    	fNodesToHide.clear();
+    	while(t3.hasNext()){
+    		MObject node = (MObject)t3.next(); //aktuelle zustand nach fNodesToHide copieren
+    		fNodesToHide.add(node);
+    	}
+//    	fNodesToHide =classes;
+//    	fNodesToHidehiddenElements;
+    	this.hideNodesAndEdges();
+    	String xml = fLayoutInfos.getHiddenElementsXML()
+        + fLayoutXMLForHiddenElements;
+    	fLayoutInfos.setHiddenElementsXML( xml );
+    }    
+    //end jj
 
 }

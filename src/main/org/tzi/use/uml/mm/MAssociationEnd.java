@@ -243,7 +243,7 @@ public final class MAssociationEnd extends MModelElementImpl
 			}
 		}
 
-		// No redefinitions with euqal type found.
+		// No redefinitions with equal type found.
 		// We need to check inheritance
 		if (!foundDirectEnd) {
 			for (MClass parent : sourceObjectType.cls().parents()) {

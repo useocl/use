@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
+/* $ProjectHeader: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green $ */
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
@@ -57,6 +57,7 @@ public class NewObjectDiagramView extends JPanel
     private MainWindow fMainWindow;
 
     NewObjectDiagram fObjectDiagram;
+    public static int viewcount=0; // jj
 
     public NewObjectDiagramView(MainWindow mainWindow, MSystem system) {
         fMainWindow = mainWindow;
@@ -95,7 +96,7 @@ public class NewObjectDiagramView extends JPanel
     /**
      * Does a full update of the view.
      */
-    private void initState() {        
+    private void initState() {
         for (MObject obj : fSystem.state().allObjects()) {
             fObjectDiagram.addObject(obj);
         }
@@ -103,8 +104,9 @@ public class NewObjectDiagramView extends JPanel
         for (MLink link : fSystem.state().allLinks()) {
             fObjectDiagram.addLink(link);
         }
-        
         fObjectDiagram.repaint();
+        
+        viewcount++; // jj
     }
 
     /**
@@ -205,11 +207,10 @@ public class NewObjectDiagramView extends JPanel
                 cmd += "," + obj.name();
             }
         }
-        
         fMainWindow.execCmd( cmd );
     }
 
-    MSystem system() {
+    public MSystem system() { // jj add public
         return fSystem;
     }
 
@@ -218,6 +219,7 @@ public class NewObjectDiagramView extends JPanel
      */
     public void detachModel() {
         fSystem.removeChangeListener(this);
+        viewcount--; // jj
     }
 
     void createObject(String clsName) {

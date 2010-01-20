@@ -61,10 +61,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.ObjectPropertiesView;
+import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.BinaryEdge;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
@@ -82,6 +84,8 @@ import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
 import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
+import org.tzi.use.gui.views.selection.classselection.ClassSelection;
+import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
@@ -102,7 +106,6 @@ import org.tzi.use.uml.sys.MObjectState;
  * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Mark Richters
  */
-@SuppressWarnings("serial")
 public class NewObjectDiagram extends DiagramView 
                               implements HighlightChangeListener {
 
@@ -144,7 +147,14 @@ public class NewObjectDiagram extends DiagramView
         showObjectPropertiesViewMouseListener 
             = new ShowObjectPropertiesViewMouseListener();
 
-    
+    // jj anfangen
+    public static DirectedGraph ffGraph; 
+	public static Set ffHiddenNodes;
+	public static Set ffHiddenEdges;
+	public static HideAdministration ffHideAdmin;
+	public static NewObjectDiagramView aaaParent;
+	private ObjectSelection fSelection;
+	// jj end
 
     /**
      * Creates a new empty diagram.
@@ -177,6 +187,16 @@ public class NewObjectDiagram extends DiagramView
         
         fHideAdmin = new HideAdministration( fNodeSelection, fGraph, fLayoutInfos );
         
+        //      anfangs jj
+        ffGraph = fGraph;
+        ffHiddenNodes = fHiddenNodes;
+        ffHiddenEdges = fHiddenEdges;
+        ffHideAdmin = fHideAdmin;
+        aaaParent = fParent;
+        
+        fSelection = new ObjectSelection(fGraph, fHiddenNodes, fHiddenEdges, fHideAdmin);
+        // end jj
+        
         fActionSaveLayout = new ActionSaveLayout( "USE object diagram layout",
                                                   "olt", fGraph, fLog, fLayoutInfos );
         
@@ -208,6 +228,7 @@ public class NewObjectDiagram extends DiagramView
         });
 
         startLayoutThread();
+//        ffParent = fParent;
     }
 
     /**
@@ -227,7 +248,6 @@ public class NewObjectDiagram extends DiagramView
             int size = ((MAssociation) elem).associationEnds().size();
             Set<MLink> links = 
                 fParent.system().state().linksOfAssociation( (MAssociation) elem ).links();
-            
             EdgeBase eb = null;
             if ( size == 2 ) {
                 for (MLink link : links) {
@@ -446,7 +466,6 @@ public class NewObjectDiagram extends DiagramView
                 if ( fLinkObjectToNodeEdge.get( link ) != null ) {
                     halfEdges.add( fLinkObjectToNodeEdge.get( link ) );
                 }
-                
                 node.setHalfEdges( halfEdges );
                 fHalfLinkToEdgeMap.put( link, halfEdges );
                 fLayouter = null;
@@ -631,11 +650,10 @@ public class NewObjectDiagram extends DiagramView
             MLink link = (MLink) it.next();
             linksToDelete.add( link );
         }
-
+        
         for (MLink link : linksToDelete) {
             deleteLink( link, true );
         }
-    
         fHiddenNodes.addAll( objectsToHide );
         fHiddenEdges.addAll( linksToHide );
     }
@@ -654,6 +672,8 @@ public class NewObjectDiagram extends DiagramView
 
         // position for the popupMenu items 
         int pos = 0;
+        HashSet selectedObjectsOfAssociation = new HashSet(); //jj
+		HashSet anames = new HashSet(); // jj
         
         // get all associations that exist between the classes of the
         // selected objects
@@ -662,38 +682,40 @@ public class NewObjectDiagram extends DiagramView
             
             for(Iterator<Selectable> it = fNodeSelection.iterator(); it.hasNext();) {
                 PlaceableNode node = (PlaceableNode) it.next();
-                
                 if (node instanceof ObjectNode && node.isDeletable()) 
                     selectedObjects.add(((ObjectNode) node).object());
+                else if (node instanceof AssociationName) { // anfangs jj 
+                	selectedObjectsOfAssociation.addAll(fSelection.getSelectedObjectsofAssociation(((AssociationName)node)
+							,selectedObjectsOfAssociation)); // end jj
+                	anames.add(node);
+                } 
             }
-
-            if (selectedObjects.size() == 1) {
+            final MObject[] selectedObjs = (MObject[])selectedObjects.toArray(new MObject[0]);
+            if (selectedObjs.length==1) {
                 popupMenu.insert( new ActionShowProperties("Edit properties of " + 
                 		selectedObjects.get(0).name(), selectedObjects.get(0)), pos++);
             }
-            
-            int m = selectedObjects.size();
+            int m = selectedObjs.length;
             boolean addedInsertLinkAction = false;
             
             for (MAssociation assoc : fParent.system().model().associations()) {
                 int n = assoc.associationEnds().size();
-                if (m > n) continue;
+                if (m>n) continue;
                 
                 int pow = 1;
                 for(int i=0; i < n; ++i) 
                 	pow *= m;
                 
-                for(int i=0; i < pow; ++i) {
+                for(int i=0;i<pow;++i) {
                     MObject[] l = new MObject[n];
                     MClass[] c = new MClass[n];
-                    
                     int[] digits = radixConversion(i,m,n);
                     
                     if (!isCompleteObjectCombination(digits, m)) 
                     	continue;
                     
-                    for(int j=0; j < n; ++j) {
-                        l[j] = selectedObjects.get(digits[j]);
+                    for(int j=0;j<n;++j) {
+                        l[j] = selectedObjs[digits[j]];
                         c[j] = l[j].cls();
                     }
                     
@@ -714,6 +736,27 @@ public class NewObjectDiagram extends DiagramView
 
             if ( addedInsertLinkAction )
                 popupMenu.insert( new JSeparator(), pos++ );
+            
+//          anfangs jj
+            if(selectedObjects.size()<=0 && selectedObjectsOfAssociation.size() > 0){ 
+				String info;
+				if(anames.size() == 1){
+					info =((AssociationName) anames.iterator().next()).name();
+				}
+				else{
+					info = "" + anames.size();
+				}
+				popupMenu.insert(fHideAdmin.setValues("Hide link " + info + "",
+						selectedObjectsOfAssociation), pos++);  //fixxx
+				popupMenu.insert(fHideAdmin.setValues("Crop link " + info,
+						getNoneSelectedNodes(selectedObjectsOfAssociation)), pos++);
+				popupMenu.insert(new JSeparator(),pos++);
+				popupMenu.insert(fSelection.getSelectedLinkPathView("Selection link path length...", selectedObjectsOfAssociation, anames), pos++);
+				popupMenu.insert(new JSeparator(),pos++);
+				
+			} 
+            // end jj
+
 
             String txt = null;
             if (selectedObjects.size() == 1) {
@@ -721,9 +764,7 @@ public class NewObjectDiagram extends DiagramView
             } else if (selectedObjects.size() > 1) {
                 txt = selectedObjects.size() + " objects";
             }
-            
             Set<MObject> selectedObjectsSet = new HashSet<MObject>(selectedObjects);
-            
             if (txt != null && txt.length() > 0) {
                 popupMenu.insert( new ActionDelete("Delete " + txt, 
                                                    selectedObjectsSet),
@@ -735,6 +776,9 @@ public class NewObjectDiagram extends DiagramView
                                                        getNoneSelectedNodes( selectedObjectsSet )),
                                                        pos++ );
                 separatorNeeded = true;
+            	popupMenu.insert(new JSeparator(), pos++); // anfangs jj
+				popupMenu.insert(fSelection.getSelectedObjectPathView("Selection "
+						+ txt + " path length...", selectedObjectsSet), pos++); // end jj
             }
         }
 
@@ -755,6 +799,90 @@ public class NewObjectDiagram extends DiagramView
             popupMenu.insert( new JSeparator(), pos++ );
             separatorNeeded = false;
         }
+        
+//      anfangs jj
+        if (fGraph.size() > 0 || fHiddenNodes.size() > 0) { 
+			popupMenu.addSeparator();
+			Iterator it = null;
+			MObject object = null;
+
+			if (fGraph.size() > 0) {
+				popupMenu.add(fSelection.getSubMenuHideObject());
+				it = fGraph.iterator();
+
+				while (it.hasNext()) { // erst Class auszufinden
+					Object node = it.next();
+
+					if (node instanceof ObjectNode) {
+						object = ((ObjectNode) node).object();
+						break;
+					}
+				}
+			}
+			if (fHiddenNodes.size() > 0) {
+				popupMenu.add(fSelection.getSubMenuShowObject());
+				it = fHiddenNodes.iterator();
+				while (it.hasNext()) { // erst Class auszufinden
+					Object node = it.next();
+
+					if (node instanceof MObject) {
+						object = ((MObject) node);
+						break;
+					}
+				}
+			}
+
+//			popupMenu.add(fSelection.getSelectionObjectView("Selection objects...",
+//					object));
+			// add selection class view jjj
+
+			int nodesize = 0;
+			List classes = new ArrayList();
+			List submenus = new ArrayList();
+//			System.out.println("size = " + fHiddenNodes.size());
+
+			// popupMenu.insert(new ActionShowProperties("Edit properties of "
+			// + selectedObjs[0].name(), selectedObjs[0]), pos++);
+		}
+		// jj end this
+
+		// jj anfangen this Association
+		// etwas seleted
+//		if (fGraph.edgeIterator().hasNext() || fHiddenEdges.size() > 0) { //associationmenu
+//
+//			boolean have = false;
+//			if (fGraph.edgeIterator().hasNext()) {
+//				Iterator ito = fGraph.edgeIterator();
+//				while (ito.hasNext()) {
+//					Object o = ito.next();
+////					System.out.println("o = " + o.getClass());
+//					if (o instanceof EdgeBase && !(o instanceof HalfEdge)) {
+//						popupMenu.addSeparator();
+//						popupMenu.add(subMenuSelectionLink("hide"));
+//						// System.out.println("..hshfadfasfds = "+
+//						// ((EdgeBase)o).);
+//						have = true;
+//						break;
+//					}
+//				}
+//			}
+//			if (fHiddenEdges.size() > 0) {
+//				if (!have) {
+//					popupMenu.addSeparator();
+//				}
+//				popupMenu.add(subMenuSelectionLink("show"));
+//				have = true;
+//			}
+//			if (have) {
+//				popupMenu.add(new ActionShowSelectionObject(
+//						"Selection associations...", null));
+//			}
+//			// add selection association view jjj
+//
+//		}
+
+		popupMenu.addSeparator();
+		popupMenu.add(fSelection.getSelectionOCLView("OCL Selection...")); // end jj
 
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
         return true;

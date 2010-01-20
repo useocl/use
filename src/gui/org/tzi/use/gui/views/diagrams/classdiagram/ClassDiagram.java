@@ -46,8 +46,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.util.Selection;
+import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.BinaryEdge;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
@@ -66,6 +68,13 @@ import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
 import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
+import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
+import org.tzi.use.gui.views.selection.SelectionComparator;
+import org.tzi.use.gui.views.selection.classselection.ClassSelection;
+import org.tzi.use.gui.views.selection.classselection.SelectedClassPathView;
+import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
@@ -73,11 +82,13 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.sys.MObject;
+
 
 /**
  * A panel drawing UML class diagrams.
  * 
- * @version $ProjectVersion: 0.393 $
+ * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Fabian Gutsche
  */
 @SuppressWarnings("serial")
@@ -92,6 +103,15 @@ public class ClassDiagram extends DiagramView
     private Map<MAssociation, DiamondNode> fNaryAssocToDiamondNodeMap;
     private Map<MAssociation, List<EdgeBase>> fNaryAssocToHalfEdgeMap;
     private Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
+    
+    // jj anfangen
+    public static DirectedGraph ffGraph; 
+	public static Set ffHiddenNodes;
+	public static Set ffHiddenEdges;
+	public static HideAdministration ffHideAdmin;
+	private ClassSelection fSelection;
+	private DiagramMouseHandling mouseHandling;
+	// jj end
         
     ClassDiagram( ClassDiagramView parent, PrintWriter log ) {
         fOpt = new ClassDiagramOptions();
@@ -108,6 +128,7 @@ public class ClassDiagram extends DiagramView
         fHiddenEdges = new HashSet<Object>();
         fNodeSelection = new Selection();
         fEdgeSelection = new Selection();
+        
         setLayout( null );
         setBackground( Color.white );
         fLog = log;
@@ -126,6 +147,19 @@ public class ClassDiagram extends DiagramView
         
         fHideAdmin = new HideAdministration( fNodeSelection, fGraph, fLayoutInfos );
         
+        mouseHandling = 
+            new DiagramMouseHandling( fNodeSelection, fEdgeSelection,
+                                      fGraph, fHideAdmin, fHiddenNodes, 
+                                      fOpt, this);
+        
+        // anfangs jj
+        ffGraph = fGraph;
+        ffHiddenNodes = fHiddenNodes;
+        ffHiddenEdges = fHiddenEdges;
+        ffHideAdmin = fHideAdmin;
+        fSelection = new ClassSelection(fGraph, fHiddenNodes, fHideAdmin, mouseHandling, fClassToNodeMap, fNodeSelection);
+        // end jj
+        
         fActionSaveLayout = new ActionSaveLayout( "USE class diagram layout",
                                                   "clt", fGraph, fLog, fLayoutInfos );
         
@@ -136,11 +170,7 @@ public class ClassDiagram extends DiagramView
         
         fActionSelectAll = new ActionSelectAll( fNodeSelection, fClassToNodeMap,
                                                 fEnumToNodeMap, this );
-        
-        DiagramMouseHandling mouseHandling = 
-            new DiagramMouseHandling( fNodeSelection, fEdgeSelection,
-                                      fGraph, fHideAdmin, fHiddenNodes, 
-                                      fOpt, this);
+
         addMouseListener( mouseHandling );
         
         fParent.getModelBrowser().addHighlightChangeListener( this );
@@ -542,18 +572,23 @@ public class ClassDiagram extends DiagramView
         
         // position for the popupMenu items 
         int pos = 0;
+        HashSet selectedClassesOfAssociation = new HashSet(); //jj
+		HashSet anames = new HashSet(); // jj
         
+		final HashSet selectedClasses = new HashSet(); // jj add final
         if ( !fNodeSelection.isEmpty() ) {
-            HashSet<Object> selectedClasses = new HashSet<Object>();
             Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
-            
             while ( nodeIterator.hasNext() ) {
                 PlaceableNode node = (PlaceableNode) nodeIterator.next();
                 if ( node instanceof ClassNode && node.isDeletable() ) {
                     selectedClasses.add( ((ClassNode) node).cls() );
                 } else if ( node instanceof EnumNode && node.isDeletable() ) {
                     selectedClasses.add( ((EnumNode) node).getEnum() );
-                }
+                } else if (node instanceof AssociationName) { //jj
+					selectedClassesOfAssociation.addAll(fSelection.getSelectedClassesOfAssociation(((AssociationName)node)//jj
+							,selectedClassesOfAssociation));//jj
+					anames.add(node);//jj
+                } //jj
             }
             
             String txt = null;
@@ -566,13 +601,76 @@ public class ClassDiagram extends DiagramView
             } else if ( selectedClasses.size() > 1 ) {
                 txt = selectedClasses.size() + " classes";
             }
+            
+            //anfangen jj
+			if(selectedClasses.size()<=0 && selectedClassesOfAssociation.size() > 0){
+				String info;
+				if(anames.size() == 1){
+					info =((AssociationName) anames.iterator().next()).name();
+				}
+				else{
+					info = "" + anames.size();
+				}
+				
+				popupMenu.insert(fHideAdmin.setValues("Crop association " + info,
+						getNoneSelectedNodes(selectedClassesOfAssociation)), pos++);
+				popupMenu.insert(fHideAdmin.setValues("Hide association " + info + "",
+						selectedClassesOfAssociation), pos++);  //fixxx
+				
+				popupMenu.insert(new JSeparator(),pos++);
+				popupMenu.insert(fSelection.getSelectedAssociationPathView("Selection association path length...", selectedClassesOfAssociation, anames), pos++);
+				popupMenu.insert(new JSeparator(),pos++);
+				
+			}
+			//end jj
+            
             if ( txt != null && txt.length() > 0 ) {
+            	popupMenu.insert( fHideAdmin.setValues( "Crop " + txt,
+                         getNoneSelectedNodes( selectedClasses ) ),
+                         pos++ );
                 popupMenu.insert( fHideAdmin.setValues( "Hide " + txt,
                                                         selectedClasses ),
                                                         pos++ );
-                popupMenu.insert( fHideAdmin.setValues( "Crop " + txt,
-                                                        getNoneSelectedNodes( selectedClasses ) ),
-                                                        pos++ );
+                
+				// pathlength view anfangs jj
+				MObject oo = null;
+				popupMenu.insert(new JSeparator(),pos++);
+				popupMenu.insert(fSelection.getSelectedClassPathView("Selection "+ txt +
+						" path length...", selectedClasses), pos++);
+				popupMenu.insert(new JSeparator(),pos++);
+				
+				boolean havehide = fSelection.haveHideInObjectDiagram(fSelection.getAllKindClasses(selectedClasses));
+				boolean haveshow = fSelection.haveShowInObjectDiagram(fSelection.getAllKindClasses(selectedClasses));
+				
+				if((haveshow || havehide)&&(NewObjectDiagramView.viewcount>0)){
+					if(haveshow){
+						popupMenu.insert(NewObjectDiagram.ffHideAdmin.setValues("Hide all objects of " 
+											+ txt, fSelection.getHideObjects(fSelection.getAllKindClasses(selectedClasses))), pos++);
+					}
+					
+					if(havehide){
+						final JMenuItem showobj = new JMenuItem("Show all objects of " + txt);
+						showobj.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent ev) {
+								NewObjectDiagram.ffHideAdmin.showHiddenElements(fSelection.getShowObjects(fSelection.getAllKindClasses(selectedClasses)));
+								repaint();
+							}
+						});
+						popupMenu.insert(showobj,pos++);
+					}
+					//crop all objects von selected classes
+					final JMenuItem cropobj = new JMenuItem("Crop all objects of " + txt);
+					cropobj.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent ev) {
+							NewObjectDiagram.ffHideAdmin.setValues("Hide", fSelection.getCropHideObjects(fSelection.getAllKindClasses(selectedClasses))).actionPerformed(ev);
+							
+							NewObjectDiagram.ffHideAdmin.showHiddenElements(fSelection.getShowObjects(fSelection.getAllKindClasses(selectedClasses)));
+
+							repaint();
+						}
+					});
+					popupMenu.insert(cropobj,pos++);
+				} // end jj
                 separatorNeeded = true;
             }
         }
@@ -624,6 +722,21 @@ public class ClassDiagram extends DiagramView
         popupMenu.insert( cbMultiplicities, pos++-1 );
         popupMenu.insert( cbOperations, pos++ );
         
+//      jj anfangen this
+		// etwas seleted
+		if (fGraph.size() > 0 || fHiddenNodes.size() > 0) {
+			popupMenu.addSeparator();
+			if (fHiddenNodes.size() > 0) {
+				popupMenu.add(fSelection.getSubMenuShowClass());
+			}
+			if (fGraph.size() > 0) {
+				popupMenu.add(fSelection.getSubMenuHideClass());
+			}
+			
+			popupMenu.add(fSelection.getSelectionClassView("Selection classes...", mouseHandling, selectedClasses, this));
+			
+		} // end jj
+        
         popupMenu.show( e.getComponent(), e.getX(), e.getY() );
         return true;
     }
@@ -668,7 +781,6 @@ public class ClassDiagram extends DiagramView
         Set<MAssociation> assocsToDelete = new HashSet<MAssociation>();
         Set<MGeneralization> gensToDelete = new HashSet<MGeneralization>();
         it = edgesToHide.iterator();
-        
         while ( it.hasNext() ) {
             MModelElement edge = (MModelElement) it.next();
             if ( edge instanceof MAssociation ) {
@@ -677,7 +789,7 @@ public class ClassDiagram extends DiagramView
                 gensToDelete.add( (MGeneralization) edge );
             }
         }
-
+        
         for (MAssociation ass : assocsToDelete) {
             deleteAssociation( ass, true );
         }

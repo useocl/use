@@ -108,6 +108,7 @@ public final class Shell implements Runnable {
 
     public static final String CONTINUE_PROMPT = "> ";
 
+    
     /**
      * Run program until true. Set by exit command.
      */
@@ -168,10 +169,9 @@ public final class Shell implements Runnable {
 			this.shellExtensionPoint = (IPluginShellExtensionPoint) this.fPluginRuntime
 					.getExtensionPoint("shell");
 
-			this.pluginCommands = this.shellExtensionPoint.createPluginCmds(
-					this.fSession, this);
+			this.pluginCommands = this.shellExtensionPoint.createPluginCmds(this.fSession, this);
+		}
     }
-	}
 
 	public static Shell getInstance(Session session, IRuntime pluginRuntime) {
         if (fShell == null) {
@@ -191,16 +191,16 @@ public final class Shell implements Runnable {
      * Main loop for accepting input and processing it.
      */
     public void run() {
-		setupReadline();
+        setupReadline();
 
-		if (Options.cmdFilename != null) {
-			cmdOpen(Options.cmdFilename);
-		} else {
-			Log.verbose("Enter `help' for a list of available commands.");
+        if (Options.cmdFilename != null) {
+            cmdOpen(Options.cmdFilename);
+        } else {
+            Log.verbose("Enter `help' for a list of available commands.");
 			
 			if (Options.doPLUGIN) {
 				Log.verbose("Enter `plugins' for a list of available plugin commands.");
-			}
+        }
 		}
 
         while (!fFinished) {
@@ -210,8 +210,8 @@ public final class Shell implements Runnable {
             String line = "";
 
             // get current readline (may be e.g. console or file)
+            //fReadline = (Readline) fReadlineStack.peek();
             fReadline = fReadlineStack.getCurrentReadline();
-
             try {
                 if (fMultiLineMode) {
                     while (true) {
@@ -277,7 +277,7 @@ public final class Shell implements Runnable {
      * Analyses a line of input and calls the method implementing a command.
      */
     private void processLineSafely(String line) {
-        try {            
+        try {
             processLine(line);
         } catch (NoSystemException ex) {
 			Log
@@ -337,7 +337,6 @@ public final class Shell implements Runnable {
                 //TODO: should this be silently ignored? [throw new Error(ex)?]
             }
         }
-
         if (line.startsWith("help") || line.endsWith("--help"))
             cmdHelp(line);
         else if (line.equals("q") || line.equals("quit") || line.equals("exit"))
@@ -346,6 +345,14 @@ public final class Shell implements Runnable {
             cmdQuery(line.substring(2).trim(), true);
         else if (line.startsWith("?"))
             cmdQuery(line.substring(1).trim(), false);
+        //jj anfangen
+//        else if (line.startsWith("!hide")){
+//        	System.out.println("hhhhhhh");
+//        }
+//        //jj end
+//        else if (line.startsWith("!show")){
+//        	System.out.println("ssssssssssshhhhhhh");
+//        }
         else if (line.startsWith(":"))
             cmdDeriveStaticType(line.substring(1).trim());
         else if (line.startsWith("!"))
@@ -501,10 +508,14 @@ public final class Shell implements Runnable {
         MSystem system = system();
         List<MCmd> cmdList = CMDCompiler.compileCmdList(system.model(), system
 				.state(), line, "<input>", new PrintWriter(System.err));
-
+       
         // compile errors?
-        if (cmdList == null)
+        String message = (new ShowHideExec(line)).exec();// jjjj
+        System.out.println(message);
+//        System.out.println("");
+        if (cmdList == null){
             return;
+        }
 
         for (MCmd cmd : cmdList) {
             Log.trace(this, "--- Executing command: " + cmd);
@@ -536,13 +547,13 @@ public final class Shell implements Runnable {
         }
         synchronized( fReadlineStack ) {
             fReadlineStack.closeAll();
+            fFinished = true;
             int exitCode = 0;
             if (Options.quiet && ! lastCheckResult() )
                 exitCode = 1;
     
             if (Options.readlineTest) {
-				System.err.println("readline balance: "
-						+ ReadlineTestReadlineDecorator.getBalance());
+                System.err.println("readline balance: "+ ReadlineTestReadlineDecorator.getBalance());
                 System.err.flush();
                 exitCode = ReadlineTestReadlineDecorator.getBalance();
             }
@@ -1069,7 +1080,6 @@ public final class Shell implements Runnable {
 				fReadline = LineInput.getStreamReadline(reader, false, "");
             else
 				fReadline = LineInput.getStreamReadline(reader, true, filename + "> ");
-            
             fReadlineStack.push(fReadline);
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");
