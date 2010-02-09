@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2009-12-21 11:54:59
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2010-02-09 15:14:27
  
 /*
  * USE - UML based specification environment
@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.HashMap;
 @SuppressWarnings("all") public class GeneratorParser extends BaseParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "IDENT", "LPAREN", "RPAREN", "SEMI", "COMMA", "COLON_EQUAL", "DOT", "LBRACK", "RBRACK", "LBRACE", "RBRACE", "LESS", "COLON", "EQUAL", "DOTDOT", "INT", "STAR", "COLON_COLON", "NOT_EQUAL", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "SLASH", "ARROW", "AT", "BAR", "REAL", "STRING", "HASH", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'procedure'", "'var'", "'begin'", "'end'", "'for'", "'in'", "'if'", "'then'", "'else'", "'model'", "'constraints'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'association'", "'role'", "'ordered'", "'subsets'", "'redefines'", "'context'", "'inv'", "'existential'", "'pre'", "'post'", "'declare'", "'set'", "'create'", "'namehint'", "'insert'", "'into'", "'delete'", "'from'", "'destroy'", "'endif'", "'while'", "'do'", "'wend'", "'execute'", "'let'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'iterate'", "'oclAsType'", "'oclIsKindOf'", "'oclIsTypeOf'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'OrderedSet'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Date'", "'Collection'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "IDENT", "LPAREN", "RPAREN", "SEMI", "COMMA", "COLON_EQUAL", "DOT", "LBRACK", "RBRACK", "LBRACE", "RBRACE", "LESS", "COLON", "EQUAL", "DOTDOT", "INT", "STAR", "COLON_COLON", "NOT_EQUAL", "GREATER", "LESS_EQUAL", "GREATER_EQUAL", "PLUS", "MINUS", "SLASH", "ARROW", "AT", "BAR", "REAL", "STRING", "HASH", "NEWLINE", "WS", "SL_COMMENT", "ML_COMMENT", "RANGE_OR_INT", "ESC", "HEX_DIGIT", "VOCAB", "'procedure'", "'var'", "'begin'", "'end'", "'for'", "'in'", "'if'", "'then'", "'else'", "'model'", "'constraints'", "'enum'", "'abstract'", "'class'", "'attributes'", "'operations'", "'associationClass'", "'associationclass'", "'between'", "'aggregation'", "'composition'", "'role'", "'ordered'", "'subsets'", "'redefines'", "'context'", "'inv'", "'existential'", "'pre'", "'post'", "'let'", "'implies'", "'or'", "'xor'", "'and'", "'div'", "'not'", "'allInstances'", "'iterate'", "'oclAsType'", "'oclIsKindOf'", "'oclIsTypeOf'", "'endif'", "'true'", "'false'", "'Set'", "'Sequence'", "'Bag'", "'OrderedSet'", "'oclEmpty'", "'oclUndefined'", "'Undefined'", "'null'", "'Tuple'", "'Date'", "'Collection'"
     };
     public static final int STAR=20;
     public static final int EOF=-1;
@@ -47,7 +47,6 @@ import java.util.HashMap;
     public static final int T__90=90;
     public static final int NOT_EQUAL=22;
     public static final int LESS=15;
-    public static final int T__99=99;
     public static final int T__98=98;
     public static final int T__97=97;
     public static final int T__96=96;
@@ -94,33 +93,23 @@ import java.util.HashMap;
     public static final int T__61=61;
     public static final int T__60=60;
     public static final int LPAREN=5;
-    public static final int AT=30;
     public static final int T__55=55;
+    public static final int AT=30;
     public static final int ML_COMMENT=38;
     public static final int T__56=56;
     public static final int T__57=57;
     public static final int T__58=58;
-    public static final int SLASH=28;
     public static final int T__51=51;
     public static final int COLON_EQUAL=9;
+    public static final int SLASH=28;
     public static final int T__52=52;
     public static final int T__53=53;
     public static final int T__54=54;
-    public static final int T__107=107;
-    public static final int T__108=108;
     public static final int COMMA=8;
-    public static final int T__109=109;
     public static final int T__59=59;
-    public static final int T__103=103;
-    public static final int T__104=104;
     public static final int EQUAL=17;
-    public static final int T__105=105;
-    public static final int T__106=106;
-    public static final int T__111=111;
-    public static final int T__110=110;
     public static final int IDENT=4;
     public static final int PLUS=26;
-    public static final int T__112=112;
     public static final int RANGE_OR_INT=39;
     public static final int DOT=10;
     public static final int T__50=50;
@@ -133,10 +122,7 @@ import java.util.HashMap;
     public static final int T__49=49;
     public static final int HASH=34;
     public static final int HEX_DIGIT=41;
-    public static final int T__102=102;
     public static final int COLON_COLON=21;
-    public static final int T__101=101;
-    public static final int T__100=100;
     public static final int MINUS=27;
     public static final int SEMI=7;
     public static final int COLON=16;
@@ -184,7 +170,7 @@ import java.util.HashMap;
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( (LA1_0==69) ) {
+                if ( (LA1_0==68) ) {
                     alt1=1;
                 }
 
@@ -1200,7 +1186,7 @@ import java.util.HashMap;
             int alt14=2;
             int LA14_0 = input.LA(1);
 
-            if ( ((LA14_0>=IDENT && LA14_0<=LPAREN)||LA14_0==INT||(LA14_0>=PLUS && LA14_0<=MINUS)||(LA14_0>=REAL && LA14_0<=HASH)||LA14_0==49||LA14_0==88||LA14_0==94||(LA14_0>=96 && LA14_0<=111)) ) {
+            if ( ((LA14_0>=IDENT && LA14_0<=LPAREN)||LA14_0==INT||(LA14_0>=PLUS && LA14_0<=MINUS)||(LA14_0>=REAL && LA14_0<=HASH)||LA14_0==49||LA14_0==73||LA14_0==79||(LA14_0>=81 && LA14_0<=84)||(LA14_0>=86 && LA14_0<=97)) ) {
                 alt14=1;
             }
             switch (alt14) {
@@ -1340,9 +1326,9 @@ import java.util.HashMap;
                     alt17=1;
                     }
                     break;
+                case IDENT:
                 case 62:
                 case 63:
-                case 64:
                     {
                     alt17=2;
                     }
@@ -1406,7 +1392,7 @@ import java.util.HashMap;
             	        int alt16=3;
             	        int LA16_0 = input.LA(1);
 
-            	        if ( (LA16_0==69) ) {
+            	        if ( (LA16_0==68) ) {
             	            int LA16_2 = input.LA(2);
 
             	            if ( (LA16_2==IDENT) ) {
@@ -1415,7 +1401,7 @@ import java.util.HashMap;
             	                if ( (LA16_3==COLON_COLON) ) {
             	                    alt16=2;
             	                }
-            	                else if ( (LA16_3==EOF||LA16_3==COMMA||LA16_3==COLON||LA16_3==53||(LA16_3>=55 && LA16_3<=56)||(LA16_3>=59 && LA16_3<=60)||(LA16_3>=62 && LA16_3<=64)||(LA16_3>=69 && LA16_3<=71)) ) {
+            	                else if ( (LA16_3==EOF||LA16_3==IDENT||LA16_3==COMMA||LA16_3==COLON||LA16_3==53||(LA16_3>=55 && LA16_3<=56)||(LA16_3>=59 && LA16_3<=60)||(LA16_3>=62 && LA16_3<=63)||(LA16_3>=68 && LA16_3<=70)) ) {
             	                    alt16=1;
             	                }
 
@@ -1828,7 +1814,7 @@ import java.util.HashMap;
                         int alt26=2;
                         int LA26_0 = input.LA(1);
 
-                        if ( ((LA26_0>=70 && LA26_0<=71)) ) {
+                        if ( ((LA26_0>=69 && LA26_0<=70)) ) {
                             alt26=1;
                         }
 
@@ -2113,7 +2099,7 @@ import java.util.HashMap;
                         int alt34=2;
                         int LA34_0 = input.LA(1);
 
-                        if ( ((LA34_0>=70 && LA34_0<=71)) ) {
+                        if ( ((LA34_0>=69 && LA34_0<=70)) ) {
                             alt34=1;
                         }
 
@@ -2251,7 +2237,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "operationDefinition"
-    // Generator.g:456:1: operationDefinition returns [ASTOperation n] : name= IDENT pl= paramList ( COLON t= type )? ( EQUAL e= expression )? ( 'begin' al= alActionList 'end' )? (ppc= prePostClause )* ( SEMI )? ;
+    // Generator.g:456:1: operationDefinition returns [ASTOperation n] : name= IDENT pl= paramList ( COLON t= type )? ( EQUAL e= expression )? (ppc= prePostClause )* ( SEMI )? ;
     public final ASTOperation operationDefinition() throws RecognitionException {
         ASTOperation n = null;
 
@@ -2262,14 +2248,12 @@ import java.util.HashMap;
 
         ASTExpression e = null;
 
-        ASTALActionList al = null;
-
         ASTPrePostClause ppc = null;
 
 
         try {
-            // Generator.g:457:1: (name= IDENT pl= paramList ( COLON t= type )? ( EQUAL e= expression )? ( 'begin' al= alActionList 'end' )? (ppc= prePostClause )* ( SEMI )? )
-            // Generator.g:458:5: name= IDENT pl= paramList ( COLON t= type )? ( EQUAL e= expression )? ( 'begin' al= alActionList 'end' )? (ppc= prePostClause )* ( SEMI )?
+            // Generator.g:457:1: (name= IDENT pl= paramList ( COLON t= type )? ( EQUAL e= expression )? (ppc= prePostClause )* ( SEMI )? )
+            // Generator.g:458:5: name= IDENT pl= paramList ( COLON t= type )? ( EQUAL e= expression )? (ppc= prePostClause )* ( SEMI )?
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationDefinition1818); if (state.failed) return n;
             pushFollow(FOLLOW_paramList_in_operationDefinition1826);
@@ -2323,49 +2307,25 @@ import java.util.HashMap;
 
             }
 
-            // Generator.g:462:2: ( 'begin' al= alActionList 'end' )?
-            int alt40=2;
-            int LA40_0 = input.LA(1);
-
-            if ( (LA40_0==45) ) {
-                alt40=1;
-            }
-            switch (alt40) {
-                case 1 :
-                    // Generator.g:462:3: 'begin' al= alActionList 'end'
-                    {
-                    match(input,45,FOLLOW_45_in_operationDefinition1860); if (state.failed) return n;
-                    pushFollow(FOLLOW_alActionList_in_operationDefinition1864);
-                    al=alActionList();
-
-                    state._fsp--;
-                    if (state.failed) return n;
-                    match(input,46,FOLLOW_46_in_operationDefinition1866); if (state.failed) return n;
-
-                    }
-                    break;
-
-            }
-
             if ( state.backtracking==0 ) {
-               n = new ASTOperation(name, pl, t, e, al); 
+               n = new ASTOperation(name, pl, t, e); 
             }
-            // Generator.g:464:5: (ppc= prePostClause )*
-            loop41:
+            // Generator.g:463:5: (ppc= prePostClause )*
+            loop40:
             do {
-                int alt41=2;
-                int LA41_0 = input.LA(1);
+                int alt40=2;
+                int LA40_0 = input.LA(1);
 
-                if ( ((LA41_0>=72 && LA41_0<=73)) ) {
-                    alt41=1;
+                if ( ((LA40_0>=71 && LA40_0<=72)) ) {
+                    alt40=1;
                 }
 
 
-                switch (alt41) {
+                switch (alt40) {
             	case 1 :
-            	    // Generator.g:464:7: ppc= prePostClause
+            	    // Generator.g:463:7: ppc= prePostClause
             	    {
-            	    pushFollow(FOLLOW_prePostClause_in_operationDefinition1885);
+            	    pushFollow(FOLLOW_prePostClause_in_operationDefinition1872);
             	    ppc=prePostClause();
 
             	    state._fsp--;
@@ -2378,22 +2338,22 @@ import java.util.HashMap;
             	    break;
 
             	default :
-            	    break loop41;
+            	    break loop40;
                 }
             } while (true);
 
-            // Generator.g:465:5: ( SEMI )?
-            int alt42=2;
-            int LA42_0 = input.LA(1);
+            // Generator.g:464:5: ( SEMI )?
+            int alt41=2;
+            int LA41_0 = input.LA(1);
 
-            if ( (LA42_0==SEMI) ) {
-                alt42=1;
+            if ( (LA41_0==SEMI) ) {
+                alt41=1;
             }
-            switch (alt42) {
+            switch (alt41) {
                 case 1 :
-                    // Generator.g:465:7: SEMI
+                    // Generator.g:464:7: SEMI
                     {
-                    match(input,SEMI,FOLLOW_SEMI_in_operationDefinition1898); if (state.failed) return n;
+                    match(input,SEMI,FOLLOW_SEMI_in_operationDefinition1885); if (state.failed) return n;
 
                     }
                     break;
@@ -2416,7 +2376,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "associationDefinition"
-    // Generator.g:475:1: associationDefinition returns [ASTAssociation n] : ( 'association' | 'aggregation' | 'composition' ) name= IDENT 'between' ae= associationEnd (ae= associationEnd )+ 'end' ;
+    // Generator.g:474:1: associationDefinition returns [ASTAssociation n] : ( keyAssociation | 'aggregation' | 'composition' ) name= IDENT 'between' ae= associationEnd (ae= associationEnd )+ 'end' ;
     public final ASTAssociation associationDefinition() throws RecognitionException {
         ASTAssociation n = null;
 
@@ -2426,28 +2386,73 @@ import java.util.HashMap;
 
          Token t = null; 
         try {
-            // Generator.g:477:1: ( ( 'association' | 'aggregation' | 'composition' ) name= IDENT 'between' ae= associationEnd (ae= associationEnd )+ 'end' )
-            // Generator.g:478:5: ( 'association' | 'aggregation' | 'composition' ) name= IDENT 'between' ae= associationEnd (ae= associationEnd )+ 'end'
+            // Generator.g:476:1: ( ( keyAssociation | 'aggregation' | 'composition' ) name= IDENT 'between' ae= associationEnd (ae= associationEnd )+ 'end' )
+            // Generator.g:477:5: ( keyAssociation | 'aggregation' | 'composition' ) name= IDENT 'between' ae= associationEnd (ae= associationEnd )+ 'end'
             {
             if ( state.backtracking==0 ) {
                t = input.LT(1); 
             }
-            if ( (input.LA(1)>=62 && input.LA(1)<=64) ) {
-                input.consume();
-                state.errorRecovery=false;state.failed=false;
-            }
-            else {
+            // Generator.g:478:5: ( keyAssociation | 'aggregation' | 'composition' )
+            int alt42=3;
+            switch ( input.LA(1) ) {
+            case IDENT:
+                {
+                alt42=1;
+                }
+                break;
+            case 62:
+                {
+                alt42=2;
+                }
+                break;
+            case 63:
+                {
+                alt42=3;
+                }
+                break;
+            default:
                 if (state.backtracking>0) {state.failed=true; return n;}
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                throw mse;
+                NoViableAltException nvae =
+                    new NoViableAltException("", 42, 0, input);
+
+                throw nvae;
             }
 
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationDefinition1959); if (state.failed) return n;
+            switch (alt42) {
+                case 1 :
+                    // Generator.g:478:7: keyAssociation
+                    {
+                    pushFollow(FOLLOW_keyAssociation_in_associationDefinition1923);
+                    keyAssociation();
+
+                    state._fsp--;
+                    if (state.failed) return n;
+
+                    }
+                    break;
+                case 2 :
+                    // Generator.g:478:24: 'aggregation'
+                    {
+                    match(input,62,FOLLOW_62_in_associationDefinition1927); if (state.failed) return n;
+
+                    }
+                    break;
+                case 3 :
+                    // Generator.g:478:40: 'composition'
+                    {
+                    match(input,63,FOLLOW_63_in_associationDefinition1931); if (state.failed) return n;
+
+                    }
+                    break;
+
+            }
+
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationDefinition1946); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTAssociation(t, name); 
             }
-            match(input,61,FOLLOW_61_in_associationDefinition1967); if (state.failed) return n;
-            pushFollow(FOLLOW_associationEnd_in_associationDefinition1975);
+            match(input,61,FOLLOW_61_in_associationDefinition1954); if (state.failed) return n;
+            pushFollow(FOLLOW_associationEnd_in_associationDefinition1962);
             ae=associationEnd();
 
             state._fsp--;
@@ -2455,7 +2460,7 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                n.addEnd(ae); 
             }
-            // Generator.g:484:5: (ae= associationEnd )+
+            // Generator.g:483:5: (ae= associationEnd )+
             int cnt43=0;
             loop43:
             do {
@@ -2469,9 +2474,9 @@ import java.util.HashMap;
 
                 switch (alt43) {
             	case 1 :
-            	    // Generator.g:484:7: ae= associationEnd
+            	    // Generator.g:483:7: ae= associationEnd
             	    {
-            	    pushFollow(FOLLOW_associationEnd_in_associationDefinition1987);
+            	    pushFollow(FOLLOW_associationEnd_in_associationDefinition1974);
             	    ae=associationEnd();
 
             	    state._fsp--;
@@ -2493,7 +2498,7 @@ import java.util.HashMap;
                 cnt43++;
             } while (true);
 
-            match(input,46,FOLLOW_46_in_associationDefinition1998); if (state.failed) return n;
+            match(input,46,FOLLOW_46_in_associationDefinition1985); if (state.failed) return n;
 
             }
 
@@ -2510,7 +2515,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "associationEnd"
-    // Generator.g:493:1: associationEnd returns [ASTAssociationEnd n] : name= IDENT LBRACK m= multiplicity RBRACK ( 'role' rn= IDENT )? ( 'ordered' | 'subsets' sr= IDENT | keyUnion | 'redefines' rd= IDENT )* ( SEMI )? ;
+    // Generator.g:492:1: associationEnd returns [ASTAssociationEnd n] : name= IDENT LBRACK m= multiplicity RBRACK ( 'role' rn= IDENT )? ( 'ordered' | 'subsets' sr= IDENT | keyUnion | 'redefines' rd= IDENT )* ( SEMI )? ;
     public final ASTAssociationEnd associationEnd() throws RecognitionException {
         ASTAssociationEnd n = null;
 
@@ -2522,33 +2527,33 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:494:1: (name= IDENT LBRACK m= multiplicity RBRACK ( 'role' rn= IDENT )? ( 'ordered' | 'subsets' sr= IDENT | keyUnion | 'redefines' rd= IDENT )* ( SEMI )? )
-            // Generator.g:495:5: name= IDENT LBRACK m= multiplicity RBRACK ( 'role' rn= IDENT )? ( 'ordered' | 'subsets' sr= IDENT | keyUnion | 'redefines' rd= IDENT )* ( SEMI )?
+            // Generator.g:493:1: (name= IDENT LBRACK m= multiplicity RBRACK ( 'role' rn= IDENT )? ( 'ordered' | 'subsets' sr= IDENT | keyUnion | 'redefines' rd= IDENT )* ( SEMI )? )
+            // Generator.g:494:5: name= IDENT LBRACK m= multiplicity RBRACK ( 'role' rn= IDENT )? ( 'ordered' | 'subsets' sr= IDENT | keyUnion | 'redefines' rd= IDENT )* ( SEMI )?
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd2024); if (state.failed) return n;
-            match(input,LBRACK,FOLLOW_LBRACK_in_associationEnd2026); if (state.failed) return n;
-            pushFollow(FOLLOW_multiplicity_in_associationEnd2030);
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd2011); if (state.failed) return n;
+            match(input,LBRACK,FOLLOW_LBRACK_in_associationEnd2013); if (state.failed) return n;
+            pushFollow(FOLLOW_multiplicity_in_associationEnd2017);
             m=multiplicity();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,RBRACK,FOLLOW_RBRACK_in_associationEnd2032); if (state.failed) return n;
+            match(input,RBRACK,FOLLOW_RBRACK_in_associationEnd2019); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTAssociationEnd(name, m); 
             }
-            // Generator.g:496:5: ( 'role' rn= IDENT )?
+            // Generator.g:495:5: ( 'role' rn= IDENT )?
             int alt44=2;
             int LA44_0 = input.LA(1);
 
-            if ( (LA44_0==65) ) {
+            if ( (LA44_0==64) ) {
                 alt44=1;
             }
             switch (alt44) {
                 case 1 :
-                    // Generator.g:496:7: 'role' rn= IDENT
+                    // Generator.g:495:7: 'role' rn= IDENT
                     {
-                    match(input,65,FOLLOW_65_in_associationEnd2043); if (state.failed) return n;
-                    rn=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd2047); if (state.failed) return n;
+                    match(input,64,FOLLOW_64_in_associationEnd2030); if (state.failed) return n;
+                    rn=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd2034); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n.setRolename(rn); 
                     }
@@ -2558,7 +2563,7 @@ import java.util.HashMap;
 
             }
 
-            // Generator.g:497:5: ( 'ordered' | 'subsets' sr= IDENT | keyUnion | 'redefines' rd= IDENT )*
+            // Generator.g:496:5: ( 'ordered' | 'subsets' sr= IDENT | keyUnion | 'redefines' rd= IDENT )*
             loop45:
             do {
                 int alt45=5;
@@ -2567,24 +2572,24 @@ import java.util.HashMap;
                     {
                     int LA45_2 = input.LA(2);
 
-                    if ( (LA45_2==IDENT||LA45_2==SEMI||LA45_2==46||LA45_2==53||(LA45_2>=57 && LA45_2<=58)||(LA45_2>=62 && LA45_2<=63)||(LA45_2>=66 && LA45_2<=68)) ) {
+                    if ( (LA45_2==IDENT||LA45_2==SEMI||LA45_2==46||LA45_2==53||(LA45_2>=57 && LA45_2<=58)||(LA45_2>=62 && LA45_2<=63)||(LA45_2>=65 && LA45_2<=67)) ) {
                         alt45=3;
                     }
 
 
                     }
                     break;
-                case 66:
+                case 65:
                     {
                     alt45=1;
                     }
                     break;
-                case 67:
+                case 66:
                     {
                     alt45=2;
                     }
                     break;
-                case 68:
+                case 67:
                     {
                     alt45=4;
                     }
@@ -2594,9 +2599,9 @@ import java.util.HashMap;
 
                 switch (alt45) {
             	case 1 :
-            	    // Generator.g:498:9: 'ordered'
+            	    // Generator.g:497:9: 'ordered'
             	    {
-            	    match(input,66,FOLLOW_66_in_associationEnd2068); if (state.failed) return n;
+            	    match(input,65,FOLLOW_65_in_associationEnd2055); if (state.failed) return n;
             	    if ( state.backtracking==0 ) {
             	       n.setOrdered(); 
             	    }
@@ -2604,10 +2609,10 @@ import java.util.HashMap;
             	    }
             	    break;
             	case 2 :
-            	    // Generator.g:499:9: 'subsets' sr= IDENT
+            	    // Generator.g:498:9: 'subsets' sr= IDENT
             	    {
-            	    match(input,67,FOLLOW_67_in_associationEnd2080); if (state.failed) return n;
-            	    sr=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd2084); if (state.failed) return n;
+            	    match(input,66,FOLLOW_66_in_associationEnd2067); if (state.failed) return n;
+            	    sr=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd2071); if (state.failed) return n;
             	    if ( state.backtracking==0 ) {
             	       n.addSubsetsRolename(sr); 
             	    }
@@ -2615,9 +2620,9 @@ import java.util.HashMap;
             	    }
             	    break;
             	case 3 :
-            	    // Generator.g:500:9: keyUnion
+            	    // Generator.g:499:9: keyUnion
             	    {
-            	    pushFollow(FOLLOW_keyUnion_in_associationEnd2096);
+            	    pushFollow(FOLLOW_keyUnion_in_associationEnd2083);
             	    keyUnion();
 
             	    state._fsp--;
@@ -2629,10 +2634,10 @@ import java.util.HashMap;
             	    }
             	    break;
             	case 4 :
-            	    // Generator.g:501:9: 'redefines' rd= IDENT
+            	    // Generator.g:500:9: 'redefines' rd= IDENT
             	    {
-            	    match(input,68,FOLLOW_68_in_associationEnd2108); if (state.failed) return n;
-            	    rd=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd2112); if (state.failed) return n;
+            	    match(input,67,FOLLOW_67_in_associationEnd2095); if (state.failed) return n;
+            	    rd=(Token)match(input,IDENT,FOLLOW_IDENT_in_associationEnd2099); if (state.failed) return n;
             	    if ( state.backtracking==0 ) {
             	       n.addRedefinesRolename(rd); 
             	    }
@@ -2645,7 +2650,7 @@ import java.util.HashMap;
                 }
             } while (true);
 
-            // Generator.g:503:5: ( SEMI )?
+            // Generator.g:502:5: ( SEMI )?
             int alt46=2;
             int LA46_0 = input.LA(1);
 
@@ -2654,9 +2659,9 @@ import java.util.HashMap;
             }
             switch (alt46) {
                 case 1 :
-                    // Generator.g:503:7: SEMI
+                    // Generator.g:502:7: SEMI
                     {
-                    match(input,SEMI,FOLLOW_SEMI_in_associationEnd2129); if (state.failed) return n;
+                    match(input,SEMI,FOLLOW_SEMI_in_associationEnd2116); if (state.failed) return n;
 
                     }
                     break;
@@ -2679,7 +2684,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "multiplicity"
-    // Generator.g:517:1: multiplicity returns [ASTMultiplicity n] : mr= multiplicityRange ( COMMA mr= multiplicityRange )* ;
+    // Generator.g:516:1: multiplicity returns [ASTMultiplicity n] : mr= multiplicityRange ( COMMA mr= multiplicityRange )* ;
     public final ASTMultiplicity multiplicity() throws RecognitionException {
         ASTMultiplicity n = null;
 
@@ -2687,8 +2692,8 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:518:1: (mr= multiplicityRange ( COMMA mr= multiplicityRange )* )
-            // Generator.g:519:5: mr= multiplicityRange ( COMMA mr= multiplicityRange )*
+            // Generator.g:517:1: (mr= multiplicityRange ( COMMA mr= multiplicityRange )* )
+            // Generator.g:518:5: mr= multiplicityRange ( COMMA mr= multiplicityRange )*
             {
             if ( state.backtracking==0 ) {
                
@@ -2696,7 +2701,7 @@ import java.util.HashMap;
               	n = new ASTMultiplicity(t);
                   
             }
-            pushFollow(FOLLOW_multiplicityRange_in_multiplicity2164);
+            pushFollow(FOLLOW_multiplicityRange_in_multiplicity2151);
             mr=multiplicityRange();
 
             state._fsp--;
@@ -2704,7 +2709,7 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                n.addRange(mr); 
             }
-            // Generator.g:524:5: ( COMMA mr= multiplicityRange )*
+            // Generator.g:523:5: ( COMMA mr= multiplicityRange )*
             loop47:
             do {
                 int alt47=2;
@@ -2717,10 +2722,10 @@ import java.util.HashMap;
 
                 switch (alt47) {
             	case 1 :
-            	    // Generator.g:524:7: COMMA mr= multiplicityRange
+            	    // Generator.g:523:7: COMMA mr= multiplicityRange
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_multiplicity2174); if (state.failed) return n;
-            	    pushFollow(FOLLOW_multiplicityRange_in_multiplicity2178);
+            	    match(input,COMMA,FOLLOW_COMMA_in_multiplicity2161); if (state.failed) return n;
+            	    pushFollow(FOLLOW_multiplicityRange_in_multiplicity2165);
             	    mr=multiplicityRange();
 
             	    state._fsp--;
@@ -2753,7 +2758,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "multiplicityRange"
-    // Generator.g:527:1: multiplicityRange returns [ASTMultiplicityRange n] : ms1= multiplicitySpec ( DOTDOT ms2= multiplicitySpec )? ;
+    // Generator.g:526:1: multiplicityRange returns [ASTMultiplicityRange n] : ms1= multiplicitySpec ( DOTDOT ms2= multiplicitySpec )? ;
     public final ASTMultiplicityRange multiplicityRange() throws RecognitionException {
         ASTMultiplicityRange n = null;
 
@@ -2763,10 +2768,10 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:528:1: (ms1= multiplicitySpec ( DOTDOT ms2= multiplicitySpec )? )
-            // Generator.g:529:5: ms1= multiplicitySpec ( DOTDOT ms2= multiplicitySpec )?
+            // Generator.g:527:1: (ms1= multiplicitySpec ( DOTDOT ms2= multiplicitySpec )? )
+            // Generator.g:528:5: ms1= multiplicitySpec ( DOTDOT ms2= multiplicitySpec )?
             {
-            pushFollow(FOLLOW_multiplicitySpec_in_multiplicityRange2207);
+            pushFollow(FOLLOW_multiplicitySpec_in_multiplicityRange2194);
             ms1=multiplicitySpec();
 
             state._fsp--;
@@ -2774,7 +2779,7 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                n = new ASTMultiplicityRange(ms1); 
             }
-            // Generator.g:530:5: ( DOTDOT ms2= multiplicitySpec )?
+            // Generator.g:529:5: ( DOTDOT ms2= multiplicitySpec )?
             int alt48=2;
             int LA48_0 = input.LA(1);
 
@@ -2783,10 +2788,10 @@ import java.util.HashMap;
             }
             switch (alt48) {
                 case 1 :
-                    // Generator.g:530:7: DOTDOT ms2= multiplicitySpec
+                    // Generator.g:529:7: DOTDOT ms2= multiplicitySpec
                     {
-                    match(input,DOTDOT,FOLLOW_DOTDOT_in_multiplicityRange2217); if (state.failed) return n;
-                    pushFollow(FOLLOW_multiplicitySpec_in_multiplicityRange2221);
+                    match(input,DOTDOT,FOLLOW_DOTDOT_in_multiplicityRange2204); if (state.failed) return n;
+                    pushFollow(FOLLOW_multiplicitySpec_in_multiplicityRange2208);
                     ms2=multiplicitySpec();
 
                     state._fsp--;
@@ -2816,7 +2821,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "multiplicitySpec"
-    // Generator.g:533:1: multiplicitySpec returns [int m] : (i= INT | STAR );
+    // Generator.g:532:1: multiplicitySpec returns [int m] : (i= INT | STAR );
     public final int multiplicitySpec() throws RecognitionException {
         int m = 0;
 
@@ -2824,7 +2829,7 @@ import java.util.HashMap;
 
          m = -1; 
         try {
-            // Generator.g:535:1: (i= INT | STAR )
+            // Generator.g:534:1: (i= INT | STAR )
             int alt49=2;
             int LA49_0 = input.LA(1);
 
@@ -2843,9 +2848,9 @@ import java.util.HashMap;
             }
             switch (alt49) {
                 case 1 :
-                    // Generator.g:536:7: i= INT
+                    // Generator.g:535:7: i= INT
                     {
-                    i=(Token)match(input,INT,FOLLOW_INT_in_multiplicitySpec2255); if (state.failed) return m;
+                    i=(Token)match(input,INT,FOLLOW_INT_in_multiplicitySpec2242); if (state.failed) return m;
                     if ( state.backtracking==0 ) {
                        m = Integer.parseInt((i!=null?i.getText():null)); 
                     }
@@ -2853,9 +2858,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:537:7: STAR
+                    // Generator.g:536:7: STAR
                     {
-                    match(input,STAR,FOLLOW_STAR_in_multiplicitySpec2265); if (state.failed) return m;
+                    match(input,STAR,FOLLOW_STAR_in_multiplicitySpec2252); if (state.failed) return m;
                     if ( state.backtracking==0 ) {
                        m = -1; 
                     }
@@ -2877,7 +2882,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "invariant"
-    // Generator.g:558:1: invariant returns [ASTConstraintDefinition n] : 'context' (v= IDENT ( ',' v= IDENT )* COLON )? t= simpleType (inv= invariantClause )* ;
+    // Generator.g:557:1: invariant returns [ASTConstraintDefinition n] : 'context' (v= IDENT ( ',' v= IDENT )* COLON )? t= simpleType (inv= invariantClause )* ;
     public final ASTConstraintDefinition invariant() throws RecognitionException {
         ASTConstraintDefinition n = null;
 
@@ -2888,14 +2893,14 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:559:1: ( 'context' (v= IDENT ( ',' v= IDENT )* COLON )? t= simpleType (inv= invariantClause )* )
-            // Generator.g:560:5: 'context' (v= IDENT ( ',' v= IDENT )* COLON )? t= simpleType (inv= invariantClause )*
+            // Generator.g:558:1: ( 'context' (v= IDENT ( ',' v= IDENT )* COLON )? t= simpleType (inv= invariantClause )* )
+            // Generator.g:559:5: 'context' (v= IDENT ( ',' v= IDENT )* COLON )? t= simpleType (inv= invariantClause )*
             {
             if ( state.backtracking==0 ) {
                n = new ASTConstraintDefinition(); 
             }
-            match(input,69,FOLLOW_69_in_invariant2306); if (state.failed) return n;
-            // Generator.g:562:5: (v= IDENT ( ',' v= IDENT )* COLON )?
+            match(input,68,FOLLOW_68_in_invariant2293); if (state.failed) return n;
+            // Generator.g:561:5: (v= IDENT ( ',' v= IDENT )* COLON )?
             int alt51=2;
             int LA51_0 = input.LA(1);
 
@@ -2908,13 +2913,13 @@ import java.util.HashMap;
             }
             switch (alt51) {
                 case 1 :
-                    // Generator.g:562:7: v= IDENT ( ',' v= IDENT )* COLON
+                    // Generator.g:561:7: v= IDENT ( ',' v= IDENT )* COLON
                     {
-                    v=(Token)match(input,IDENT,FOLLOW_IDENT_in_invariant2316); if (state.failed) return n;
+                    v=(Token)match(input,IDENT,FOLLOW_IDENT_in_invariant2303); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n.addVarName(v); 
                     }
-                    // Generator.g:563:8: ( ',' v= IDENT )*
+                    // Generator.g:562:8: ( ',' v= IDENT )*
                     loop50:
                     do {
                         int alt50=2;
@@ -2927,10 +2932,10 @@ import java.util.HashMap;
 
                         switch (alt50) {
                     	case 1 :
-                    	    // Generator.g:563:9: ',' v= IDENT
+                    	    // Generator.g:562:9: ',' v= IDENT
                     	    {
-                    	    match(input,COMMA,FOLLOW_COMMA_in_invariant2329); if (state.failed) return n;
-                    	    v=(Token)match(input,IDENT,FOLLOW_IDENT_in_invariant2333); if (state.failed) return n;
+                    	    match(input,COMMA,FOLLOW_COMMA_in_invariant2316); if (state.failed) return n;
+                    	    v=(Token)match(input,IDENT,FOLLOW_IDENT_in_invariant2320); if (state.failed) return n;
                     	    if ( state.backtracking==0 ) {
                     	       n.addVarName(v); 
                     	    }
@@ -2943,14 +2948,14 @@ import java.util.HashMap;
                         }
                     } while (true);
 
-                    match(input,COLON,FOLLOW_COLON_in_invariant2341); if (state.failed) return n;
+                    match(input,COLON,FOLLOW_COLON_in_invariant2328); if (state.failed) return n;
 
                     }
                     break;
 
             }
 
-            pushFollow(FOLLOW_simpleType_in_invariant2353);
+            pushFollow(FOLLOW_simpleType_in_invariant2340);
             t=simpleType();
 
             state._fsp--;
@@ -2958,22 +2963,22 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                n.setType(t); 
             }
-            // Generator.g:565:5: (inv= invariantClause )*
+            // Generator.g:564:5: (inv= invariantClause )*
             loop52:
             do {
                 int alt52=2;
                 int LA52_0 = input.LA(1);
 
-                if ( ((LA52_0>=70 && LA52_0<=71)) ) {
+                if ( ((LA52_0>=69 && LA52_0<=70)) ) {
                     alt52=1;
                 }
 
 
                 switch (alt52) {
             	case 1 :
-            	    // Generator.g:565:7: inv= invariantClause
+            	    // Generator.g:564:7: inv= invariantClause
             	    {
-            	    pushFollow(FOLLOW_invariantClause_in_invariant2365);
+            	    pushFollow(FOLLOW_invariantClause_in_invariant2352);
             	    inv=invariantClause();
 
             	    state._fsp--;
@@ -3006,7 +3011,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "invariantClause"
-    // Generator.g:572:1: invariantClause returns [ASTInvariantClause n] : ( 'inv' (name= IDENT )? COLON e= expression | 'existential' 'inv' (name= IDENT )? COLON e= expression );
+    // Generator.g:571:1: invariantClause returns [ASTInvariantClause n] : ( 'inv' (name= IDENT )? COLON e= expression | 'existential' 'inv' (name= IDENT )? COLON e= expression );
     public final ASTInvariantClause invariantClause() throws RecognitionException {
         ASTInvariantClause n = null;
 
@@ -3015,14 +3020,14 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:573:1: ( 'inv' (name= IDENT )? COLON e= expression | 'existential' 'inv' (name= IDENT )? COLON e= expression )
+            // Generator.g:572:1: ( 'inv' (name= IDENT )? COLON e= expression | 'existential' 'inv' (name= IDENT )? COLON e= expression )
             int alt55=2;
             int LA55_0 = input.LA(1);
 
-            if ( (LA55_0==70) ) {
+            if ( (LA55_0==69) ) {
                 alt55=1;
             }
-            else if ( (LA55_0==71) ) {
+            else if ( (LA55_0==70) ) {
                 alt55=2;
             }
             else {
@@ -3034,10 +3039,10 @@ import java.util.HashMap;
             }
             switch (alt55) {
                 case 1 :
-                    // Generator.g:574:7: 'inv' (name= IDENT )? COLON e= expression
+                    // Generator.g:573:7: 'inv' (name= IDENT )? COLON e= expression
                     {
-                    match(input,70,FOLLOW_70_in_invariantClause2396); if (state.failed) return n;
-                    // Generator.g:574:13: (name= IDENT )?
+                    match(input,69,FOLLOW_69_in_invariantClause2383); if (state.failed) return n;
+                    // Generator.g:573:13: (name= IDENT )?
                     int alt53=2;
                     int LA53_0 = input.LA(1);
 
@@ -3046,17 +3051,17 @@ import java.util.HashMap;
                     }
                     switch (alt53) {
                         case 1 :
-                            // Generator.g:574:15: name= IDENT
+                            // Generator.g:573:15: name= IDENT
                             {
-                            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_invariantClause2402); if (state.failed) return n;
+                            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_invariantClause2389); if (state.failed) return n;
 
                             }
                             break;
 
                     }
 
-                    match(input,COLON,FOLLOW_COLON_in_invariantClause2407); if (state.failed) return n;
-                    pushFollow(FOLLOW_expression_in_invariantClause2411);
+                    match(input,COLON,FOLLOW_COLON_in_invariantClause2394); if (state.failed) return n;
+                    pushFollow(FOLLOW_expression_in_invariantClause2398);
                     e=expression();
 
                     state._fsp--;
@@ -3068,11 +3073,11 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:575:7: 'existential' 'inv' (name= IDENT )? COLON e= expression
+                    // Generator.g:574:7: 'existential' 'inv' (name= IDENT )? COLON e= expression
                     {
-                    match(input,71,FOLLOW_71_in_invariantClause2421); if (state.failed) return n;
-                    match(input,70,FOLLOW_70_in_invariantClause2423); if (state.failed) return n;
-                    // Generator.g:575:27: (name= IDENT )?
+                    match(input,70,FOLLOW_70_in_invariantClause2408); if (state.failed) return n;
+                    match(input,69,FOLLOW_69_in_invariantClause2410); if (state.failed) return n;
+                    // Generator.g:574:27: (name= IDENT )?
                     int alt54=2;
                     int LA54_0 = input.LA(1);
 
@@ -3081,17 +3086,17 @@ import java.util.HashMap;
                     }
                     switch (alt54) {
                         case 1 :
-                            // Generator.g:575:29: name= IDENT
+                            // Generator.g:574:29: name= IDENT
                             {
-                            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_invariantClause2429); if (state.failed) return n;
+                            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_invariantClause2416); if (state.failed) return n;
 
                             }
                             break;
 
                     }
 
-                    match(input,COLON,FOLLOW_COLON_in_invariantClause2434); if (state.failed) return n;
-                    pushFollow(FOLLOW_expression_in_invariantClause2438);
+                    match(input,COLON,FOLLOW_COLON_in_invariantClause2421); if (state.failed) return n;
+                    pushFollow(FOLLOW_expression_in_invariantClause2425);
                     e=expression();
 
                     state._fsp--;
@@ -3117,7 +3122,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "prePost"
-    // Generator.g:586:1: prePost returns [ASTPrePost n] : 'context' classname= IDENT COLON_COLON opname= IDENT pl= paramList ( COLON rt= type )? (ppc= prePostClause )+ ;
+    // Generator.g:585:1: prePost returns [ASTPrePost n] : 'context' classname= IDENT COLON_COLON opname= IDENT pl= paramList ( COLON rt= type )? (ppc= prePostClause )+ ;
     public final ASTPrePost prePost() throws RecognitionException {
         ASTPrePost n = null;
 
@@ -3131,19 +3136,19 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:587:1: ( 'context' classname= IDENT COLON_COLON opname= IDENT pl= paramList ( COLON rt= type )? (ppc= prePostClause )+ )
-            // Generator.g:588:5: 'context' classname= IDENT COLON_COLON opname= IDENT pl= paramList ( COLON rt= type )? (ppc= prePostClause )+
+            // Generator.g:586:1: ( 'context' classname= IDENT COLON_COLON opname= IDENT pl= paramList ( COLON rt= type )? (ppc= prePostClause )+ )
+            // Generator.g:587:5: 'context' classname= IDENT COLON_COLON opname= IDENT pl= paramList ( COLON rt= type )? (ppc= prePostClause )+
             {
-            match(input,69,FOLLOW_69_in_prePost2464); if (state.failed) return n;
-            classname=(Token)match(input,IDENT,FOLLOW_IDENT_in_prePost2468); if (state.failed) return n;
-            match(input,COLON_COLON,FOLLOW_COLON_COLON_in_prePost2470); if (state.failed) return n;
-            opname=(Token)match(input,IDENT,FOLLOW_IDENT_in_prePost2474); if (state.failed) return n;
-            pushFollow(FOLLOW_paramList_in_prePost2478);
+            match(input,68,FOLLOW_68_in_prePost2451); if (state.failed) return n;
+            classname=(Token)match(input,IDENT,FOLLOW_IDENT_in_prePost2455); if (state.failed) return n;
+            match(input,COLON_COLON,FOLLOW_COLON_COLON_in_prePost2457); if (state.failed) return n;
+            opname=(Token)match(input,IDENT,FOLLOW_IDENT_in_prePost2461); if (state.failed) return n;
+            pushFollow(FOLLOW_paramList_in_prePost2465);
             pl=paramList();
 
             state._fsp--;
             if (state.failed) return n;
-            // Generator.g:588:69: ( COLON rt= type )?
+            // Generator.g:587:69: ( COLON rt= type )?
             int alt56=2;
             int LA56_0 = input.LA(1);
 
@@ -3152,10 +3157,10 @@ import java.util.HashMap;
             }
             switch (alt56) {
                 case 1 :
-                    // Generator.g:588:71: COLON rt= type
+                    // Generator.g:587:71: COLON rt= type
                     {
-                    match(input,COLON,FOLLOW_COLON_in_prePost2482); if (state.failed) return n;
-                    pushFollow(FOLLOW_type_in_prePost2486);
+                    match(input,COLON,FOLLOW_COLON_in_prePost2469); if (state.failed) return n;
+                    pushFollow(FOLLOW_type_in_prePost2473);
                     rt=type();
 
                     state._fsp--;
@@ -3169,23 +3174,23 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                n = new ASTPrePost(classname, opname, pl, rt); 
             }
-            // Generator.g:590:5: (ppc= prePostClause )+
+            // Generator.g:589:5: (ppc= prePostClause )+
             int cnt57=0;
             loop57:
             do {
                 int alt57=2;
                 int LA57_0 = input.LA(1);
 
-                if ( ((LA57_0>=72 && LA57_0<=73)) ) {
+                if ( ((LA57_0>=71 && LA57_0<=72)) ) {
                     alt57=1;
                 }
 
 
                 switch (alt57) {
             	case 1 :
-            	    // Generator.g:590:7: ppc= prePostClause
+            	    // Generator.g:589:7: ppc= prePostClause
             	    {
-            	    pushFollow(FOLLOW_prePostClause_in_prePost2505);
+            	    pushFollow(FOLLOW_prePostClause_in_prePost2492);
             	    ppc=prePostClause();
 
             	    state._fsp--;
@@ -3223,7 +3228,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "prePostClause"
-    // Generator.g:597:1: prePostClause returns [ASTPrePostClause n] : ( 'pre' | 'post' ) (name= IDENT )? COLON e= expression ;
+    // Generator.g:596:1: prePostClause returns [ASTPrePostClause n] : ( 'pre' | 'post' ) (name= IDENT )? COLON e= expression ;
     public final ASTPrePostClause prePostClause() throws RecognitionException {
         ASTPrePostClause n = null;
 
@@ -3233,13 +3238,13 @@ import java.util.HashMap;
 
          Token t = null; 
         try {
-            // Generator.g:599:1: ( ( 'pre' | 'post' ) (name= IDENT )? COLON e= expression )
-            // Generator.g:600:5: ( 'pre' | 'post' ) (name= IDENT )? COLON e= expression
+            // Generator.g:598:1: ( ( 'pre' | 'post' ) (name= IDENT )? COLON e= expression )
+            // Generator.g:599:5: ( 'pre' | 'post' ) (name= IDENT )? COLON e= expression
             {
             if ( state.backtracking==0 ) {
                t = input.LT(1); 
             }
-            if ( (input.LA(1)>=72 && input.LA(1)<=73) ) {
+            if ( (input.LA(1)>=71 && input.LA(1)<=72) ) {
                 input.consume();
                 state.errorRecovery=false;state.failed=false;
             }
@@ -3249,7 +3254,7 @@ import java.util.HashMap;
                 throw mse;
             }
 
-            // Generator.g:601:25: (name= IDENT )?
+            // Generator.g:600:25: (name= IDENT )?
             int alt58=2;
             int LA58_0 = input.LA(1);
 
@@ -3258,17 +3263,17 @@ import java.util.HashMap;
             }
             switch (alt58) {
                 case 1 :
-                    // Generator.g:601:27: name= IDENT
+                    // Generator.g:600:27: name= IDENT
                     {
-                    name=(Token)match(input,IDENT,FOLLOW_IDENT_in_prePostClause2559); if (state.failed) return n;
+                    name=(Token)match(input,IDENT,FOLLOW_IDENT_in_prePostClause2546); if (state.failed) return n;
 
                     }
                     break;
 
             }
 
-            match(input,COLON,FOLLOW_COLON_in_prePostClause2564); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_prePostClause2568);
+            match(input,COLON,FOLLOW_COLON_in_prePostClause2551); if (state.failed) return n;
+            pushFollow(FOLLOW_expression_in_prePostClause2555);
             e=expression();
 
             state._fsp--;
@@ -3291,908 +3296,18 @@ import java.util.HashMap;
     // $ANTLR end "prePostClause"
 
 
-    // $ANTLR start "alActionList"
-    // Generator.g:605:1: alActionList returns [ASTALActionList al] : (action= alAction )* ;
-    public final ASTALActionList alActionList() throws RecognitionException {
-        ASTALActionList al = null;
-
-        ASTALAction action = null;
-
-
-
-        	al = new ASTALActionList();
-
-        try {
-            // Generator.g:609:1: ( (action= alAction )* )
-            // Generator.g:610:2: (action= alAction )*
-            {
-            // Generator.g:610:2: (action= alAction )*
-            loop59:
-            do {
-                int alt59=2;
-                int LA59_0 = input.LA(1);
-
-                if ( (LA59_0==44||LA59_0==47||LA59_0==49||(LA59_0>=74 && LA59_0<=76)||LA59_0==78||LA59_0==80||LA59_0==82||LA59_0==84||LA59_0==87) ) {
-                    alt59=1;
-                }
-
-
-                switch (alt59) {
-            	case 1 :
-            	    // Generator.g:610:4: action= alAction
-            	    {
-            	    pushFollow(FOLLOW_alAction_in_alActionList2601);
-            	    action=alAction();
-
-            	    state._fsp--;
-            	    if (state.failed) return al;
-            	    if ( state.backtracking==0 ) {
-            	      al.add(action);
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop59;
-                }
-            } while (true);
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return al;
-    }
-    // $ANTLR end "alActionList"
-
-
-    // $ANTLR start "alAction"
-    // Generator.g:613:1: alAction returns [ASTALAction action] : (aCV= alCreateVar | aDl= alDelete | aSe= alSet | aSC= alSetCreate | aIn= alInsert | aDe= alDestroy | aIf= alIf | aWh= alWhile | aFo= alFor | aEx= alExec );
-    public final ASTALAction alAction() throws RecognitionException {
-        ASTALAction action = null;
-
-        ASTALCreateVar aCV = null;
-
-        ASTALDelete aDl = null;
-
-        ASTALSet aSe = null;
-
-        ASTALSetCreate aSC = null;
-
-        ASTALInsert aIn = null;
-
-        ASTALDestroy aDe = null;
-
-        ASTALIf aIf = null;
-
-        ASTALWhile aWh = null;
-
-        ASTALFor aFo = null;
-
-        ASTALExecute aEx = null;
-
-
-        try {
-            // Generator.g:614:1: (aCV= alCreateVar | aDl= alDelete | aSe= alSet | aSC= alSetCreate | aIn= alInsert | aDe= alDestroy | aIf= alIf | aWh= alWhile | aFo= alFor | aEx= alExec )
-            int alt60=10;
-            switch ( input.LA(1) ) {
-            case 44:
-            case 74:
-                {
-                alt60=1;
-                }
-                break;
-            case 80:
-                {
-                alt60=2;
-                }
-                break;
-            case 75:
-                {
-                alt60=3;
-                }
-                break;
-            case 76:
-                {
-                alt60=4;
-                }
-                break;
-            case 78:
-                {
-                alt60=5;
-                }
-                break;
-            case 82:
-                {
-                alt60=6;
-                }
-                break;
-            case 49:
-                {
-                alt60=7;
-                }
-                break;
-            case 84:
-                {
-                alt60=8;
-                }
-                break;
-            case 47:
-                {
-                alt60=9;
-                }
-                break;
-            case 87:
-                {
-                alt60=10;
-                }
-                break;
-            default:
-                if (state.backtracking>0) {state.failed=true; return action;}
-                NoViableAltException nvae =
-                    new NoViableAltException("", 60, 0, input);
-
-                throw nvae;
-            }
-
-            switch (alt60) {
-                case 1 :
-                    // Generator.g:615:5: aCV= alCreateVar
-                    {
-                    pushFollow(FOLLOW_alCreateVar_in_alAction2627);
-                    aCV=alCreateVar();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aCV; 
-                    }
-
-                    }
-                    break;
-                case 2 :
-                    // Generator.g:616:5: aDl= alDelete
-                    {
-                    pushFollow(FOLLOW_alDelete_in_alAction2639);
-                    aDl=alDelete();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aDl; 
-                    }
-
-                    }
-                    break;
-                case 3 :
-                    // Generator.g:617:5: aSe= alSet
-                    {
-                    pushFollow(FOLLOW_alSet_in_alAction2651);
-                    aSe=alSet();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aSe; 
-                    }
-
-                    }
-                    break;
-                case 4 :
-                    // Generator.g:618:5: aSC= alSetCreate
-                    {
-                    pushFollow(FOLLOW_alSetCreate_in_alAction2663);
-                    aSC=alSetCreate();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aSC; 
-                    }
-
-                    }
-                    break;
-                case 5 :
-                    // Generator.g:619:5: aIn= alInsert
-                    {
-                    pushFollow(FOLLOW_alInsert_in_alAction2675);
-                    aIn=alInsert();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aIn; 
-                    }
-
-                    }
-                    break;
-                case 6 :
-                    // Generator.g:620:5: aDe= alDestroy
-                    {
-                    pushFollow(FOLLOW_alDestroy_in_alAction2687);
-                    aDe=alDestroy();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aDe; 
-                    }
-
-                    }
-                    break;
-                case 7 :
-                    // Generator.g:621:5: aIf= alIf
-                    {
-                    pushFollow(FOLLOW_alIf_in_alAction2699);
-                    aIf=alIf();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aIf; 
-                    }
-
-                    }
-                    break;
-                case 8 :
-                    // Generator.g:622:5: aWh= alWhile
-                    {
-                    pushFollow(FOLLOW_alWhile_in_alAction2711);
-                    aWh=alWhile();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aWh; 
-                    }
-
-                    }
-                    break;
-                case 9 :
-                    // Generator.g:623:5: aFo= alFor
-                    {
-                    pushFollow(FOLLOW_alFor_in_alAction2723);
-                    aFo=alFor();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aFo; 
-                    }
-
-                    }
-                    break;
-                case 10 :
-                    // Generator.g:624:5: aEx= alExec
-                    {
-                    pushFollow(FOLLOW_alExec_in_alAction2735);
-                    aEx=alExec();
-
-                    state._fsp--;
-                    if (state.failed) return action;
-                    if ( state.backtracking==0 ) {
-                       action = aEx; 
-                    }
-
-                    }
-                    break;
-
-            }
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return action;
-    }
-    // $ANTLR end "alAction"
-
-
-    // $ANTLR start "alCreateVar"
-    // Generator.g:629:1: alCreateVar returns [ASTALCreateVar var] : ( 'var' | 'declare' ) name= IDENT COLON t= type ;
-    public final ASTALCreateVar alCreateVar() throws RecognitionException {
-        ASTALCreateVar var = null;
-
-        Token name=null;
-        ASTType t = null;
-
-
-        try {
-            // Generator.g:630:1: ( ( 'var' | 'declare' ) name= IDENT COLON t= type )
-            // Generator.g:631:2: ( 'var' | 'declare' ) name= IDENT COLON t= type
-            {
-            if ( input.LA(1)==44||input.LA(1)==74 ) {
-                input.consume();
-                state.errorRecovery=false;state.failed=false;
-            }
-            else {
-                if (state.backtracking>0) {state.failed=true; return var;}
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                throw mse;
-            }
-
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_alCreateVar2762); if (state.failed) return var;
-            match(input,COLON,FOLLOW_COLON_in_alCreateVar2764); if (state.failed) return var;
-            pushFollow(FOLLOW_type_in_alCreateVar2768);
-            t=type();
-
-            state._fsp--;
-            if (state.failed) return var;
-            if ( state.backtracking==0 ) {
-               var = new ASTALCreateVar(name, t); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return var;
-    }
-    // $ANTLR end "alCreateVar"
-
-
-    // $ANTLR start "alSet"
-    // Generator.g:635:1: alSet returns [ASTALSet set] : 'set' lval= expression COLON_EQUAL rval= expression ;
-    public final ASTALSet alSet() throws RecognitionException {
-        ASTALSet set = null;
-
-        ASTExpression lval = null;
-
-        ASTExpression rval = null;
-
-
-        try {
-            // Generator.g:636:1: ( 'set' lval= expression COLON_EQUAL rval= expression )
-            // Generator.g:638:5: 'set' lval= expression COLON_EQUAL rval= expression
-            {
-            match(input,75,FOLLOW_75_in_alSet2790); if (state.failed) return set;
-            pushFollow(FOLLOW_expression_in_alSet2794);
-            lval=expression();
-
-            state._fsp--;
-            if (state.failed) return set;
-            match(input,COLON_EQUAL,FOLLOW_COLON_EQUAL_in_alSet2796); if (state.failed) return set;
-            pushFollow(FOLLOW_expression_in_alSet2800);
-            rval=expression();
-
-            state._fsp--;
-            if (state.failed) return set;
-            if ( state.backtracking==0 ) {
-               set = new ASTALSet(lval, rval); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return set;
-    }
-    // $ANTLR end "alSet"
-
-
-    // $ANTLR start "alSetCreate"
-    // Generator.g:642:1: alSetCreate returns [ASTALSetCreate setcreate] : 'create' lval= expression COLON_EQUAL {...}?new_= IDENT cls= IDENT ( 'namehint' nameExpr= expression )? ;
-    public final ASTALSetCreate alSetCreate() throws RecognitionException {
-        ASTALSetCreate setcreate = null;
-
-        Token new_=null;
-        Token cls=null;
-        ASTExpression lval = null;
-
-        ASTExpression nameExpr = null;
-
-
-        try {
-            // Generator.g:643:1: ( 'create' lval= expression COLON_EQUAL {...}?new_= IDENT cls= IDENT ( 'namehint' nameExpr= expression )? )
-            // Generator.g:644:5: 'create' lval= expression COLON_EQUAL {...}?new_= IDENT cls= IDENT ( 'namehint' nameExpr= expression )?
-            {
-            match(input,76,FOLLOW_76_in_alSetCreate2824); if (state.failed) return setcreate;
-            pushFollow(FOLLOW_expression_in_alSetCreate2828);
-            lval=expression();
-
-            state._fsp--;
-            if (state.failed) return setcreate;
-            match(input,COLON_EQUAL,FOLLOW_COLON_EQUAL_in_alSetCreate2830); if (state.failed) return setcreate;
-            if ( !(( input.LT(1).getText().equals("new") )) ) {
-                if (state.backtracking>0) {state.failed=true; return setcreate;}
-                throw new FailedPredicateException(input, "alSetCreate", " input.LT(1).getText().equals(\"new\") ");
-            }
-            new_=(Token)match(input,IDENT,FOLLOW_IDENT_in_alSetCreate2836); if (state.failed) return setcreate;
-            cls=(Token)match(input,IDENT,FOLLOW_IDENT_in_alSetCreate2840); if (state.failed) return setcreate;
-            // Generator.g:645:5: ( 'namehint' nameExpr= expression )?
-            int alt61=2;
-            int LA61_0 = input.LA(1);
-
-            if ( (LA61_0==77) ) {
-                alt61=1;
-            }
-            switch (alt61) {
-                case 1 :
-                    // Generator.g:645:7: 'namehint' nameExpr= expression
-                    {
-                    match(input,77,FOLLOW_77_in_alSetCreate2849); if (state.failed) return setcreate;
-                    pushFollow(FOLLOW_expression_in_alSetCreate2853);
-                    nameExpr=expression();
-
-                    state._fsp--;
-                    if (state.failed) return setcreate;
-
-                    }
-                    break;
-
-            }
-
-            if ( state.backtracking==0 ) {
-               setcreate = new ASTALSetCreate(lval, cls, nameExpr);
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return setcreate;
-    }
-    // $ANTLR end "alSetCreate"
-
-
-    // $ANTLR start "alInsert"
-    // Generator.g:650:1: alInsert returns [ASTALInsert insert] : 'insert' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'into' id= IDENT ;
-    public final ASTALInsert alInsert() throws RecognitionException {
-        ASTALInsert insert = null;
-
-        Token id=null;
-        ASTExpression e = null;
-
-
-        List exprList = new ArrayList(); 
-        try {
-            // Generator.g:652:1: ( 'insert' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'into' id= IDENT )
-            // Generator.g:653:5: 'insert' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'into' id= IDENT
-            {
-            match(input,78,FOLLOW_78_in_alInsert2884); if (state.failed) return insert;
-            match(input,LPAREN,FOLLOW_LPAREN_in_alInsert2886); if (state.failed) return insert;
-            pushFollow(FOLLOW_expression_in_alInsert2895);
-            e=expression();
-
-            state._fsp--;
-            if (state.failed) return insert;
-            if ( state.backtracking==0 ) {
-               exprList.add(e); 
-            }
-            match(input,COMMA,FOLLOW_COMMA_in_alInsert2899); if (state.failed) return insert;
-            pushFollow(FOLLOW_expression_in_alInsert2907);
-            e=expression();
-
-            state._fsp--;
-            if (state.failed) return insert;
-            if ( state.backtracking==0 ) {
-               exprList.add(e); 
-            }
-            // Generator.g:655:42: ( COMMA e= expression )*
-            loop62:
-            do {
-                int alt62=2;
-                int LA62_0 = input.LA(1);
-
-                if ( (LA62_0==COMMA) ) {
-                    alt62=1;
-                }
-
-
-                switch (alt62) {
-            	case 1 :
-            	    // Generator.g:655:44: COMMA e= expression
-            	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_alInsert2913); if (state.failed) return insert;
-            	    pushFollow(FOLLOW_expression_in_alInsert2917);
-            	    e=expression();
-
-            	    state._fsp--;
-            	    if (state.failed) return insert;
-            	    if ( state.backtracking==0 ) {
-            	       exprList.add(e); 
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop62;
-                }
-            } while (true);
-
-            match(input,RPAREN,FOLLOW_RPAREN_in_alInsert2929); if (state.failed) return insert;
-            match(input,79,FOLLOW_79_in_alInsert2931); if (state.failed) return insert;
-            id=(Token)match(input,IDENT,FOLLOW_IDENT_in_alInsert2935); if (state.failed) return insert;
-            if ( state.backtracking==0 ) {
-               insert = new ASTALInsert(exprList, id); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return insert;
-    }
-    // $ANTLR end "alInsert"
-
-
-    // $ANTLR start "alDelete"
-    // Generator.g:661:1: alDelete returns [ASTALDelete n] : 'delete' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'from' id= IDENT ;
-    public final ASTALDelete alDelete() throws RecognitionException {
-        ASTALDelete n = null;
-
-        Token id=null;
-        ASTExpression e = null;
-
-
-         List exprList = new ArrayList(); 
-        try {
-            // Generator.g:663:1: ( 'delete' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'from' id= IDENT )
-            // Generator.g:664:5: 'delete' LPAREN e= expression COMMA e= expression ( COMMA e= expression )* RPAREN 'from' id= IDENT
-            {
-            match(input,80,FOLLOW_80_in_alDelete2967); if (state.failed) return n;
-            match(input,LPAREN,FOLLOW_LPAREN_in_alDelete2969); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_alDelete2977);
-            e=expression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-               exprList.add(e); 
-            }
-            match(input,COMMA,FOLLOW_COMMA_in_alDelete2981); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_alDelete2989);
-            e=expression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-               exprList.add(e); 
-            }
-            // Generator.g:666:42: ( COMMA e= expression )*
-            loop63:
-            do {
-                int alt63=2;
-                int LA63_0 = input.LA(1);
-
-                if ( (LA63_0==COMMA) ) {
-                    alt63=1;
-                }
-
-
-                switch (alt63) {
-            	case 1 :
-            	    // Generator.g:666:44: COMMA e= expression
-            	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_alDelete2995); if (state.failed) return n;
-            	    pushFollow(FOLLOW_expression_in_alDelete2999);
-            	    e=expression();
-
-            	    state._fsp--;
-            	    if (state.failed) return n;
-            	    if ( state.backtracking==0 ) {
-            	       exprList.add(e); 
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop63;
-                }
-            } while (true);
-
-            match(input,RPAREN,FOLLOW_RPAREN_in_alDelete3010); if (state.failed) return n;
-            match(input,81,FOLLOW_81_in_alDelete3012); if (state.failed) return n;
-            id=(Token)match(input,IDENT,FOLLOW_IDENT_in_alDelete3016); if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-               n = new ASTALDelete(exprList, id); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return n;
-    }
-    // $ANTLR end "alDelete"
-
-
-    // $ANTLR start "alDestroy"
-    // Generator.g:672:1: alDestroy returns [ASTALDestroy n] : 'destroy' e= expression ;
-    public final ASTALDestroy alDestroy() throws RecognitionException {
-        ASTALDestroy n = null;
-
-        ASTExpression e = null;
-
-
-        try {
-            // Generator.g:673:1: ( 'destroy' e= expression )
-            // Generator.g:674:6: 'destroy' e= expression
-            {
-            match(input,82,FOLLOW_82_in_alDestroy3045); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_alDestroy3049);
-            e=expression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-               n = new ASTALDestroy(e); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return n;
-    }
-    // $ANTLR end "alDestroy"
-
-
-    // $ANTLR start "alIf"
-    // Generator.g:678:1: alIf returns [ASTALIf i] : 'if' ifexpr= expression 'then' thenlist= alActionList ( 'else' elselist= alActionList )? 'endif' ;
-    public final ASTALIf alIf() throws RecognitionException {
-        ASTALIf i = null;
-
-        ASTExpression ifexpr = null;
-
-        ASTALActionList thenlist = null;
-
-        ASTALActionList elselist = null;
-
-
-        try {
-            // Generator.g:679:1: ( 'if' ifexpr= expression 'then' thenlist= alActionList ( 'else' elselist= alActionList )? 'endif' )
-            // Generator.g:680:2: 'if' ifexpr= expression 'then' thenlist= alActionList ( 'else' elselist= alActionList )? 'endif'
-            {
-            match(input,49,FOLLOW_49_in_alIf3073); if (state.failed) return i;
-            pushFollow(FOLLOW_expression_in_alIf3077);
-            ifexpr=expression();
-
-            state._fsp--;
-            if (state.failed) return i;
-            match(input,50,FOLLOW_50_in_alIf3081); if (state.failed) return i;
-            pushFollow(FOLLOW_alActionList_in_alIf3085);
-            thenlist=alActionList();
-
-            state._fsp--;
-            if (state.failed) return i;
-            // Generator.g:682:2: ( 'else' elselist= alActionList )?
-            int alt64=2;
-            int LA64_0 = input.LA(1);
-
-            if ( (LA64_0==51) ) {
-                alt64=1;
-            }
-            switch (alt64) {
-                case 1 :
-                    // Generator.g:682:3: 'else' elselist= alActionList
-                    {
-                    match(input,51,FOLLOW_51_in_alIf3089); if (state.failed) return i;
-                    pushFollow(FOLLOW_alActionList_in_alIf3093);
-                    elselist=alActionList();
-
-                    state._fsp--;
-                    if (state.failed) return i;
-
-                    }
-                    break;
-
-            }
-
-            match(input,83,FOLLOW_83_in_alIf3098); if (state.failed) return i;
-            if ( state.backtracking==0 ) {
-               i = new ASTALIf(ifexpr, thenlist, elselist); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return i;
-    }
-    // $ANTLR end "alIf"
-
-
-    // $ANTLR start "alWhile"
-    // Generator.g:687:1: alWhile returns [ASTALWhile w] : 'while' expr= expression 'do' body= alActionList 'wend' ;
-    public final ASTALWhile alWhile() throws RecognitionException {
-        ASTALWhile w = null;
-
-        ASTExpression expr = null;
-
-        ASTALActionList body = null;
-
-
-        try {
-            // Generator.g:688:1: ( 'while' expr= expression 'do' body= alActionList 'wend' )
-            // Generator.g:689:2: 'while' expr= expression 'do' body= alActionList 'wend'
-            {
-            match(input,84,FOLLOW_84_in_alWhile3117); if (state.failed) return w;
-            pushFollow(FOLLOW_expression_in_alWhile3121);
-            expr=expression();
-
-            state._fsp--;
-            if (state.failed) return w;
-            match(input,85,FOLLOW_85_in_alWhile3125); if (state.failed) return w;
-            pushFollow(FOLLOW_alActionList_in_alWhile3131);
-            body=alActionList();
-
-            state._fsp--;
-            if (state.failed) return w;
-            match(input,86,FOLLOW_86_in_alWhile3134); if (state.failed) return w;
-            if ( state.backtracking==0 ) {
-               w = new ASTALWhile(expr, body); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return w;
-    }
-    // $ANTLR end "alWhile"
-
-
-    // $ANTLR start "alFor"
-    // Generator.g:697:1: alFor returns [ASTALFor f] : 'for' var= IDENT COLON t= type 'in' expr= expression 'do' body= alActionList {...}?next= IDENT ;
-    public final ASTALFor alFor() throws RecognitionException {
-        ASTALFor f = null;
-
-        Token var=null;
-        Token next=null;
-        ASTType t = null;
-
-        ASTExpression expr = null;
-
-        ASTALActionList body = null;
-
-
-        try {
-            // Generator.g:698:1: ( 'for' var= IDENT COLON t= type 'in' expr= expression 'do' body= alActionList {...}?next= IDENT )
-            // Generator.g:699:2: 'for' var= IDENT COLON t= type 'in' expr= expression 'do' body= alActionList {...}?next= IDENT
-            {
-            match(input,47,FOLLOW_47_in_alFor3153); if (state.failed) return f;
-            var=(Token)match(input,IDENT,FOLLOW_IDENT_in_alFor3157); if (state.failed) return f;
-            match(input,COLON,FOLLOW_COLON_in_alFor3159); if (state.failed) return f;
-            pushFollow(FOLLOW_type_in_alFor3163);
-            t=type();
-
-            state._fsp--;
-            if (state.failed) return f;
-            match(input,48,FOLLOW_48_in_alFor3165); if (state.failed) return f;
-            pushFollow(FOLLOW_expression_in_alFor3169);
-            expr=expression();
-
-            state._fsp--;
-            if (state.failed) return f;
-            match(input,85,FOLLOW_85_in_alFor3173); if (state.failed) return f;
-            pushFollow(FOLLOW_alActionList_in_alFor3179);
-            body=alActionList();
-
-            state._fsp--;
-            if (state.failed) return f;
-            if ( !(( input.LT(1).getText().equals("next") )) ) {
-                if (state.backtracking>0) {state.failed=true; return f;}
-                throw new FailedPredicateException(input, "alFor", " input.LT(1).getText().equals(\"next\") ");
-            }
-            next=(Token)match(input,IDENT,FOLLOW_IDENT_in_alFor3186); if (state.failed) return f;
-            if ( state.backtracking==0 ) {
-               f = new ASTALFor(var, t, expr, body); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return f;
-    }
-    // $ANTLR end "alFor"
-
-
-    // $ANTLR start "alExec"
-    // Generator.g:706:1: alExec returns [ASTALExecute c] : 'execute' op= expression ;
-    public final ASTALExecute alExec() throws RecognitionException {
-        ASTALExecute c = null;
-
-        ASTExpression op = null;
-
-
-        try {
-            // Generator.g:707:1: ( 'execute' op= expression )
-            // Generator.g:708:5: 'execute' op= expression
-            {
-            match(input,87,FOLLOW_87_in_alExec3206); if (state.failed) return c;
-            pushFollow(FOLLOW_expression_in_alExec3210);
-            op=expression();
-
-            state._fsp--;
-            if (state.failed) return c;
-            if ( state.backtracking==0 ) {
-               c = new ASTALExecute(op); 
-            }
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return c;
-    }
-    // $ANTLR end "alExec"
-
-
     // $ANTLR start "keyUnion"
-    // Generator.g:712:1: keyUnion : {...}? IDENT ;
+    // Generator.g:604:1: keyUnion : {...}? IDENT ;
     public final void keyUnion() throws RecognitionException {
         try {
-            // Generator.g:712:9: ({...}? IDENT )
-            // Generator.g:713:3: {...}? IDENT
+            // Generator.g:604:9: ({...}? IDENT )
+            // Generator.g:605:3: {...}? IDENT
             {
             if ( !((input.LT(1).getText().equals("union"))) ) {
                 if (state.backtracking>0) {state.failed=true; return ;}
                 throw new FailedPredicateException(input, "keyUnion", "input.LT(1).getText().equals(\"union\")");
             }
-            match(input,IDENT,FOLLOW_IDENT_in_keyUnion3228); if (state.failed) return ;
+            match(input,IDENT,FOLLOW_IDENT_in_keyUnion2577); if (state.failed) return ;
 
             }
 
@@ -4208,8 +3323,35 @@ import java.util.HashMap;
     // $ANTLR end "keyUnion"
 
 
+    // $ANTLR start "keyAssociation"
+    // Generator.g:607:1: keyAssociation : {...}? IDENT ;
+    public final void keyAssociation() throws RecognitionException {
+        try {
+            // Generator.g:607:15: ({...}? IDENT )
+            // Generator.g:608:3: {...}? IDENT
+            {
+            if ( !((input.LT(1).getText().equals("association"))) ) {
+                if (state.backtracking>0) {state.failed=true; return ;}
+                throw new FailedPredicateException(input, "keyAssociation", "input.LT(1).getText().equals(\"association\")");
+            }
+            match(input,IDENT,FOLLOW_IDENT_in_keyAssociation2591); if (state.failed) return ;
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return ;
+    }
+    // $ANTLR end "keyAssociation"
+
+
     // $ANTLR start "expressionOnly"
-    // Generator.g:743:1: expressionOnly returns [ASTExpression n] : nExp= expression EOF ;
+    // Generator.g:638:1: expressionOnly returns [ASTExpression n] : nExp= expression EOF ;
     public final ASTExpression expressionOnly() throws RecognitionException {
         ASTExpression n = null;
 
@@ -4217,15 +3359,15 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:744:1: (nExp= expression EOF )
-            // Generator.g:745:5: nExp= expression EOF
+            // Generator.g:639:1: (nExp= expression EOF )
+            // Generator.g:640:5: nExp= expression EOF
             {
-            pushFollow(FOLLOW_expression_in_expressionOnly3258);
+            pushFollow(FOLLOW_expression_in_expressionOnly2621);
             nExp=expression();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,EOF,FOLLOW_EOF_in_expressionOnly3260); if (state.failed) return n;
+            match(input,EOF,FOLLOW_EOF_in_expressionOnly2623); if (state.failed) return n;
             if ( state.backtracking==0 ) {
               n = nExp;
             }
@@ -4245,7 +3387,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "expression"
-    // Generator.g:752:1: expression returns [ASTExpression n] : ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression ;
+    // Generator.g:647:1: expression returns [ASTExpression n] : ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression ;
     public final ASTExpression expression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -4263,42 +3405,42 @@ import java.util.HashMap;
           Token tok = null;
 
         try {
-            // Generator.g:758:1: ( ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression )
-            // Generator.g:759:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression
+            // Generator.g:653:1: ( ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression )
+            // Generator.g:654:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )* nCndImplies= conditionalImpliesExpression
             {
             if ( state.backtracking==0 ) {
                tok = input.LT(1); /* remember start of expression */ 
             }
-            // Generator.g:760:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )*
-            loop66:
+            // Generator.g:655:5: ( 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in' )*
+            loop60:
             do {
-                int alt66=2;
-                int LA66_0 = input.LA(1);
+                int alt60=2;
+                int LA60_0 = input.LA(1);
 
-                if ( (LA66_0==88) ) {
-                    alt66=1;
+                if ( (LA60_0==73) ) {
+                    alt60=1;
                 }
 
 
-                switch (alt66) {
+                switch (alt60) {
             	case 1 :
-            	    // Generator.g:761:7: 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in'
+            	    // Generator.g:656:7: 'let' name= IDENT ( COLON t= type )? EQUAL e1= expression 'in'
             	    {
-            	    match(input,88,FOLLOW_88_in_expression3308); if (state.failed) return n;
-            	    name=(Token)match(input,IDENT,FOLLOW_IDENT_in_expression3312); if (state.failed) return n;
-            	    // Generator.g:761:24: ( COLON t= type )?
-            	    int alt65=2;
-            	    int LA65_0 = input.LA(1);
+            	    match(input,73,FOLLOW_73_in_expression2671); if (state.failed) return n;
+            	    name=(Token)match(input,IDENT,FOLLOW_IDENT_in_expression2675); if (state.failed) return n;
+            	    // Generator.g:656:24: ( COLON t= type )?
+            	    int alt59=2;
+            	    int LA59_0 = input.LA(1);
 
-            	    if ( (LA65_0==COLON) ) {
-            	        alt65=1;
+            	    if ( (LA59_0==COLON) ) {
+            	        alt59=1;
             	    }
-            	    switch (alt65) {
+            	    switch (alt59) {
             	        case 1 :
-            	            // Generator.g:761:26: COLON t= type
+            	            // Generator.g:656:26: COLON t= type
             	            {
-            	            match(input,COLON,FOLLOW_COLON_in_expression3316); if (state.failed) return n;
-            	            pushFollow(FOLLOW_type_in_expression3320);
+            	            match(input,COLON,FOLLOW_COLON_in_expression2679); if (state.failed) return n;
+            	            pushFollow(FOLLOW_type_in_expression2683);
             	            t=type();
 
             	            state._fsp--;
@@ -4309,13 +3451,13 @@ import java.util.HashMap;
 
             	    }
 
-            	    match(input,EQUAL,FOLLOW_EQUAL_in_expression3325); if (state.failed) return n;
-            	    pushFollow(FOLLOW_expression_in_expression3329);
+            	    match(input,EQUAL,FOLLOW_EQUAL_in_expression2688); if (state.failed) return n;
+            	    pushFollow(FOLLOW_expression_in_expression2692);
             	    e1=expression();
 
             	    state._fsp--;
             	    if (state.failed) return n;
-            	    match(input,48,FOLLOW_48_in_expression3331); if (state.failed) return n;
+            	    match(input,48,FOLLOW_48_in_expression2694); if (state.failed) return n;
             	    if ( state.backtracking==0 ) {
             	       ASTLetExpression nextLet = new ASTLetExpression(name, t, e1);
             	               if ( firstLet == null ) 
@@ -4330,11 +3472,11 @@ import java.util.HashMap;
             	    break;
 
             	default :
-            	    break loop66;
+            	    break loop60;
                 }
             } while (true);
 
-            pushFollow(FOLLOW_conditionalImpliesExpression_in_expression3356);
+            pushFollow(FOLLOW_conditionalImpliesExpression_in_expression2719);
             nCndImplies=conditionalImpliesExpression();
 
             state._fsp--;
@@ -4368,7 +3510,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "paramList"
-    // Generator.g:789:1: paramList returns [List paramList] : LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN ;
+    // Generator.g:684:1: paramList returns [List paramList] : LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN ;
     public final List paramList() throws RecognitionException {
         List paramList = null;
 
@@ -4377,22 +3519,22 @@ import java.util.HashMap;
 
          paramList = new ArrayList(); 
         try {
-            // Generator.g:791:1: ( LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN )
-            // Generator.g:792:5: LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN
+            // Generator.g:686:1: ( LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN )
+            // Generator.g:687:5: LPAREN (v= variableDeclaration ( COMMA v= variableDeclaration )* )? RPAREN
             {
-            match(input,LPAREN,FOLLOW_LPAREN_in_paramList3389); if (state.failed) return paramList;
-            // Generator.g:793:5: (v= variableDeclaration ( COMMA v= variableDeclaration )* )?
-            int alt68=2;
-            int LA68_0 = input.LA(1);
+            match(input,LPAREN,FOLLOW_LPAREN_in_paramList2752); if (state.failed) return paramList;
+            // Generator.g:688:5: (v= variableDeclaration ( COMMA v= variableDeclaration )* )?
+            int alt62=2;
+            int LA62_0 = input.LA(1);
 
-            if ( (LA68_0==IDENT) ) {
-                alt68=1;
+            if ( (LA62_0==IDENT) ) {
+                alt62=1;
             }
-            switch (alt68) {
+            switch (alt62) {
                 case 1 :
-                    // Generator.g:794:7: v= variableDeclaration ( COMMA v= variableDeclaration )*
+                    // Generator.g:689:7: v= variableDeclaration ( COMMA v= variableDeclaration )*
                     {
-                    pushFollow(FOLLOW_variableDeclaration_in_paramList3406);
+                    pushFollow(FOLLOW_variableDeclaration_in_paramList2769);
                     v=variableDeclaration();
 
                     state._fsp--;
@@ -4400,23 +3542,23 @@ import java.util.HashMap;
                     if ( state.backtracking==0 ) {
                        paramList.add(v); 
                     }
-                    // Generator.g:795:7: ( COMMA v= variableDeclaration )*
-                    loop67:
+                    // Generator.g:690:7: ( COMMA v= variableDeclaration )*
+                    loop61:
                     do {
-                        int alt67=2;
-                        int LA67_0 = input.LA(1);
+                        int alt61=2;
+                        int LA61_0 = input.LA(1);
 
-                        if ( (LA67_0==COMMA) ) {
-                            alt67=1;
+                        if ( (LA61_0==COMMA) ) {
+                            alt61=1;
                         }
 
 
-                        switch (alt67) {
+                        switch (alt61) {
                     	case 1 :
-                    	    // Generator.g:795:9: COMMA v= variableDeclaration
+                    	    // Generator.g:690:9: COMMA v= variableDeclaration
                     	    {
-                    	    match(input,COMMA,FOLLOW_COMMA_in_paramList3418); if (state.failed) return paramList;
-                    	    pushFollow(FOLLOW_variableDeclaration_in_paramList3422);
+                    	    match(input,COMMA,FOLLOW_COMMA_in_paramList2781); if (state.failed) return paramList;
+                    	    pushFollow(FOLLOW_variableDeclaration_in_paramList2785);
                     	    v=variableDeclaration();
 
                     	    state._fsp--;
@@ -4429,7 +3571,7 @@ import java.util.HashMap;
                     	    break;
 
                     	default :
-                    	    break loop67;
+                    	    break loop61;
                         }
                     } while (true);
 
@@ -4439,7 +3581,7 @@ import java.util.HashMap;
 
             }
 
-            match(input,RPAREN,FOLLOW_RPAREN_in_paramList3442); if (state.failed) return paramList;
+            match(input,RPAREN,FOLLOW_RPAREN_in_paramList2805); if (state.failed) return paramList;
 
             }
 
@@ -4456,7 +3598,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "idList"
-    // Generator.g:803:1: idList returns [List idList] : id0= IDENT ( COMMA idn= IDENT )* ;
+    // Generator.g:698:1: idList returns [List idList] : id0= IDENT ( COMMA idn= IDENT )* ;
     public final List idList() throws RecognitionException {
         List idList = null;
 
@@ -4465,30 +3607,30 @@ import java.util.HashMap;
 
          idList = new ArrayList(); 
         try {
-            // Generator.g:805:1: (id0= IDENT ( COMMA idn= IDENT )* )
-            // Generator.g:806:5: id0= IDENT ( COMMA idn= IDENT )*
+            // Generator.g:700:1: (id0= IDENT ( COMMA idn= IDENT )* )
+            // Generator.g:701:5: id0= IDENT ( COMMA idn= IDENT )*
             {
-            id0=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList3471); if (state.failed) return idList;
+            id0=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList2834); if (state.failed) return idList;
             if ( state.backtracking==0 ) {
                idList.add(id0); 
             }
-            // Generator.g:807:5: ( COMMA idn= IDENT )*
-            loop69:
+            // Generator.g:702:5: ( COMMA idn= IDENT )*
+            loop63:
             do {
-                int alt69=2;
-                int LA69_0 = input.LA(1);
+                int alt63=2;
+                int LA63_0 = input.LA(1);
 
-                if ( (LA69_0==COMMA) ) {
-                    alt69=1;
+                if ( (LA63_0==COMMA) ) {
+                    alt63=1;
                 }
 
 
-                switch (alt69) {
+                switch (alt63) {
             	case 1 :
-            	    // Generator.g:807:7: COMMA idn= IDENT
+            	    // Generator.g:702:7: COMMA idn= IDENT
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_idList3481); if (state.failed) return idList;
-            	    idn=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList3485); if (state.failed) return idList;
+            	    match(input,COMMA,FOLLOW_COMMA_in_idList2844); if (state.failed) return idList;
+            	    idn=(Token)match(input,IDENT,FOLLOW_IDENT_in_idList2848); if (state.failed) return idList;
             	    if ( state.backtracking==0 ) {
             	       idList.add(idn); 
             	    }
@@ -4497,7 +3639,7 @@ import java.util.HashMap;
             	    break;
 
             	default :
-            	    break loop69;
+            	    break loop63;
                 }
             } while (true);
 
@@ -4517,7 +3659,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "variableDeclaration"
-    // Generator.g:815:1: variableDeclaration returns [ASTVariableDeclaration n] : name= IDENT COLON t= type ;
+    // Generator.g:710:1: variableDeclaration returns [ASTVariableDeclaration n] : name= IDENT COLON t= type ;
     public final ASTVariableDeclaration variableDeclaration() throws RecognitionException {
         ASTVariableDeclaration n = null;
 
@@ -4526,12 +3668,12 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:816:1: (name= IDENT COLON t= type )
-            // Generator.g:817:5: name= IDENT COLON t= type
+            // Generator.g:711:1: (name= IDENT COLON t= type )
+            // Generator.g:712:5: name= IDENT COLON t= type
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableDeclaration3516); if (state.failed) return n;
-            match(input,COLON,FOLLOW_COLON_in_variableDeclaration3518); if (state.failed) return n;
-            pushFollow(FOLLOW_type_in_variableDeclaration3522);
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableDeclaration2879); if (state.failed) return n;
+            match(input,COLON,FOLLOW_COLON_in_variableDeclaration2881); if (state.failed) return n;
+            pushFollow(FOLLOW_type_in_variableDeclaration2885);
             t=type();
 
             state._fsp--;
@@ -4555,7 +3697,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "conditionalImpliesExpression"
-    // Generator.g:825:1: conditionalImpliesExpression returns [ASTExpression n] : nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* ;
+    // Generator.g:720:1: conditionalImpliesExpression returns [ASTExpression n] : nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* ;
     public final ASTExpression conditionalImpliesExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -4566,10 +3708,10 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:826:1: (nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* )
-            // Generator.g:827:5: nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )*
+            // Generator.g:721:1: (nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )* )
+            // Generator.g:722:5: nCndOrExp= conditionalOrExpression (op= 'implies' n1= conditionalOrExpression )*
             {
-            pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression3558);
+            pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression2921);
             nCndOrExp=conditionalOrExpression();
 
             state._fsp--;
@@ -4577,24 +3719,486 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
               n = nCndOrExp;
             }
-            // Generator.g:828:5: (op= 'implies' n1= conditionalOrExpression )*
+            // Generator.g:723:5: (op= 'implies' n1= conditionalOrExpression )*
+            loop64:
+            do {
+                int alt64=2;
+                int LA64_0 = input.LA(1);
+
+                if ( (LA64_0==74) ) {
+                    alt64=1;
+                }
+
+
+                switch (alt64) {
+            	case 1 :
+            	    // Generator.g:723:7: op= 'implies' n1= conditionalOrExpression
+            	    {
+            	    op=(Token)match(input,74,FOLLOW_74_in_conditionalImpliesExpression2934); if (state.failed) return n;
+            	    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression2938);
+            	    n1=conditionalOrExpression();
+
+            	    state._fsp--;
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop64;
+                }
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return n;
+    }
+    // $ANTLR end "conditionalImpliesExpression"
+
+
+    // $ANTLR start "conditionalOrExpression"
+    // Generator.g:732:1: conditionalOrExpression returns [ASTExpression n] : nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* ;
+    public final ASTExpression conditionalOrExpression() throws RecognitionException {
+        ASTExpression n = null;
+
+        Token op=null;
+        ASTExpression nCndXorExp = null;
+
+        ASTExpression n1 = null;
+
+
+        try {
+            // Generator.g:733:1: (nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* )
+            // Generator.g:734:5: nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )*
+            {
+            pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression2983);
+            nCndXorExp=conditionalXOrExpression();
+
+            state._fsp--;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nCndXorExp;
+            }
+            // Generator.g:735:5: (op= 'or' n1= conditionalXOrExpression )*
+            loop65:
+            do {
+                int alt65=2;
+                int LA65_0 = input.LA(1);
+
+                if ( (LA65_0==75) ) {
+                    alt65=1;
+                }
+
+
+                switch (alt65) {
+            	case 1 :
+            	    // Generator.g:735:7: op= 'or' n1= conditionalXOrExpression
+            	    {
+            	    op=(Token)match(input,75,FOLLOW_75_in_conditionalOrExpression2996); if (state.failed) return n;
+            	    pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression3000);
+            	    n1=conditionalXOrExpression();
+
+            	    state._fsp--;
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop65;
+                }
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return n;
+    }
+    // $ANTLR end "conditionalOrExpression"
+
+
+    // $ANTLR start "conditionalXOrExpression"
+    // Generator.g:744:1: conditionalXOrExpression returns [ASTExpression n] : nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* ;
+    public final ASTExpression conditionalXOrExpression() throws RecognitionException {
+        ASTExpression n = null;
+
+        Token op=null;
+        ASTExpression nCndAndExp = null;
+
+        ASTExpression n1 = null;
+
+
+        try {
+            // Generator.g:745:1: (nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* )
+            // Generator.g:746:5: nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )*
+            {
+            pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression3044);
+            nCndAndExp=conditionalAndExpression();
+
+            state._fsp--;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nCndAndExp;
+            }
+            // Generator.g:747:5: (op= 'xor' n1= conditionalAndExpression )*
+            loop66:
+            do {
+                int alt66=2;
+                int LA66_0 = input.LA(1);
+
+                if ( (LA66_0==76) ) {
+                    alt66=1;
+                }
+
+
+                switch (alt66) {
+            	case 1 :
+            	    // Generator.g:747:7: op= 'xor' n1= conditionalAndExpression
+            	    {
+            	    op=(Token)match(input,76,FOLLOW_76_in_conditionalXOrExpression3057); if (state.failed) return n;
+            	    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression3061);
+            	    n1=conditionalAndExpression();
+
+            	    state._fsp--;
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop66;
+                }
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return n;
+    }
+    // $ANTLR end "conditionalXOrExpression"
+
+
+    // $ANTLR start "conditionalAndExpression"
+    // Generator.g:756:1: conditionalAndExpression returns [ASTExpression n] : nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* ;
+    public final ASTExpression conditionalAndExpression() throws RecognitionException {
+        ASTExpression n = null;
+
+        Token op=null;
+        ASTExpression nEqExp = null;
+
+        ASTExpression n1 = null;
+
+
+        try {
+            // Generator.g:757:1: (nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* )
+            // Generator.g:758:5: nEqExp= equalityExpression (op= 'and' n1= equalityExpression )*
+            {
+            pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression3105);
+            nEqExp=equalityExpression();
+
+            state._fsp--;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nEqExp;
+            }
+            // Generator.g:759:5: (op= 'and' n1= equalityExpression )*
+            loop67:
+            do {
+                int alt67=2;
+                int LA67_0 = input.LA(1);
+
+                if ( (LA67_0==77) ) {
+                    alt67=1;
+                }
+
+
+                switch (alt67) {
+            	case 1 :
+            	    // Generator.g:759:7: op= 'and' n1= equalityExpression
+            	    {
+            	    op=(Token)match(input,77,FOLLOW_77_in_conditionalAndExpression3118); if (state.failed) return n;
+            	    pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression3122);
+            	    n1=equalityExpression();
+
+            	    state._fsp--;
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop67;
+                }
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return n;
+    }
+    // $ANTLR end "conditionalAndExpression"
+
+
+    // $ANTLR start "equalityExpression"
+    // Generator.g:768:1: equalityExpression returns [ASTExpression n] : nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* ;
+    public final ASTExpression equalityExpression() throws RecognitionException {
+        ASTExpression n = null;
+
+        ASTExpression nRelExp = null;
+
+        ASTExpression n1 = null;
+
+
+         Token op = null; 
+        try {
+            // Generator.g:770:1: (nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* )
+            // Generator.g:771:5: nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
+            {
+            pushFollow(FOLLOW_relationalExpression_in_equalityExpression3170);
+            nRelExp=relationalExpression();
+
+            state._fsp--;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nRelExp;
+            }
+            // Generator.g:772:5: ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
+            loop68:
+            do {
+                int alt68=2;
+                int LA68_0 = input.LA(1);
+
+                if ( (LA68_0==EQUAL||LA68_0==NOT_EQUAL) ) {
+                    alt68=1;
+                }
+
+
+                switch (alt68) {
+            	case 1 :
+            	    // Generator.g:772:7: ( EQUAL | NOT_EQUAL ) n1= relationalExpression
+            	    {
+            	    if ( state.backtracking==0 ) {
+            	       op = input.LT(1); 
+            	    }
+            	    if ( input.LA(1)==EQUAL||input.LA(1)==NOT_EQUAL ) {
+            	        input.consume();
+            	        state.errorRecovery=false;state.failed=false;
+            	    }
+            	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        throw mse;
+            	    }
+
+            	    pushFollow(FOLLOW_relationalExpression_in_equalityExpression3199);
+            	    n1=relationalExpression();
+
+            	    state._fsp--;
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop68;
+                }
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return n;
+    }
+    // $ANTLR end "equalityExpression"
+
+
+    // $ANTLR start "relationalExpression"
+    // Generator.g:782:1: relationalExpression returns [ASTExpression n] : nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* ;
+    public final ASTExpression relationalExpression() throws RecognitionException {
+        ASTExpression n = null;
+
+        ASTExpression nAddiExp = null;
+
+        ASTExpression n1 = null;
+
+
+         Token op = null; 
+        try {
+            // Generator.g:784:1: (nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* )
+            // Generator.g:785:5: nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
+            {
+            pushFollow(FOLLOW_additiveExpression_in_relationalExpression3248);
+            nAddiExp=additiveExpression();
+
+            state._fsp--;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nAddiExp;
+            }
+            // Generator.g:786:5: ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
+            loop69:
+            do {
+                int alt69=2;
+                int LA69_0 = input.LA(1);
+
+                if ( (LA69_0==LESS||(LA69_0>=GREATER && LA69_0<=GREATER_EQUAL)) ) {
+                    alt69=1;
+                }
+
+
+                switch (alt69) {
+            	case 1 :
+            	    // Generator.g:786:7: ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression
+            	    {
+            	    if ( state.backtracking==0 ) {
+            	       op = input.LT(1); 
+            	    }
+            	    if ( input.LA(1)==LESS||(input.LA(1)>=GREATER && input.LA(1)<=GREATER_EQUAL) ) {
+            	        input.consume();
+            	        state.errorRecovery=false;state.failed=false;
+            	    }
+            	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        throw mse;
+            	    }
+
+            	    pushFollow(FOLLOW_additiveExpression_in_relationalExpression3284);
+            	    n1=additiveExpression();
+
+            	    state._fsp--;
+            	    if (state.failed) return n;
+            	    if ( state.backtracking==0 ) {
+            	       n = new ASTBinaryExpression(op, n, n1); 
+            	    }
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop69;
+                }
+            } while (true);
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+        }
+        return n;
+    }
+    // $ANTLR end "relationalExpression"
+
+
+    // $ANTLR start "additiveExpression"
+    // Generator.g:796:1: additiveExpression returns [ASTExpression n] : nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* ;
+    public final ASTExpression additiveExpression() throws RecognitionException {
+        ASTExpression n = null;
+
+        ASTExpression nMulExp = null;
+
+        ASTExpression n1 = null;
+
+
+         Token op = null; 
+        try {
+            // Generator.g:798:1: (nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* )
+            // Generator.g:799:5: nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
+            {
+            pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression3334);
+            nMulExp=multiplicativeExpression();
+
+            state._fsp--;
+            if (state.failed) return n;
+            if ( state.backtracking==0 ) {
+              n = nMulExp;
+            }
+            // Generator.g:800:5: ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
             loop70:
             do {
                 int alt70=2;
                 int LA70_0 = input.LA(1);
 
-                if ( (LA70_0==89) ) {
+                if ( ((LA70_0>=PLUS && LA70_0<=MINUS)) ) {
                     alt70=1;
                 }
 
 
                 switch (alt70) {
             	case 1 :
-            	    // Generator.g:828:7: op= 'implies' n1= conditionalOrExpression
+            	    // Generator.g:800:7: ( PLUS | MINUS ) n1= multiplicativeExpression
             	    {
-            	    op=(Token)match(input,89,FOLLOW_89_in_conditionalImpliesExpression3571); if (state.failed) return n;
-            	    pushFollow(FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression3575);
-            	    n1=conditionalOrExpression();
+            	    if ( state.backtracking==0 ) {
+            	       op = input.LT(1); 
+            	    }
+            	    if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS) ) {
+            	        input.consume();
+            	        state.errorRecovery=false;state.failed=false;
+            	    }
+            	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        throw mse;
+            	    }
+
+            	    pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression3362);
+            	    n1=multiplicativeExpression();
 
             	    state._fsp--;
             	    if (state.failed) return n;
@@ -4622,50 +4226,62 @@ import java.util.HashMap;
         }
         return n;
     }
-    // $ANTLR end "conditionalImpliesExpression"
+    // $ANTLR end "additiveExpression"
 
 
-    // $ANTLR start "conditionalOrExpression"
-    // Generator.g:837:1: conditionalOrExpression returns [ASTExpression n] : nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* ;
-    public final ASTExpression conditionalOrExpression() throws RecognitionException {
+    // $ANTLR start "multiplicativeExpression"
+    // Generator.g:811:1: multiplicativeExpression returns [ASTExpression n] : nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* ;
+    public final ASTExpression multiplicativeExpression() throws RecognitionException {
         ASTExpression n = null;
 
-        Token op=null;
-        ASTExpression nCndXorExp = null;
+        ASTExpression nUnExp = null;
 
         ASTExpression n1 = null;
 
 
+         Token op = null; 
         try {
-            // Generator.g:838:1: (nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )* )
-            // Generator.g:839:5: nCndXorExp= conditionalXOrExpression (op= 'or' n1= conditionalXOrExpression )*
+            // Generator.g:813:1: (nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* )
+            // Generator.g:814:5: nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
             {
-            pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression3620);
-            nCndXorExp=conditionalXOrExpression();
+            pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression3412);
+            nUnExp=unaryExpression();
 
             state._fsp--;
             if (state.failed) return n;
             if ( state.backtracking==0 ) {
-              n = nCndXorExp;
+               n = nUnExp;
             }
-            // Generator.g:840:5: (op= 'or' n1= conditionalXOrExpression )*
+            // Generator.g:815:5: ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
             loop71:
             do {
                 int alt71=2;
                 int LA71_0 = input.LA(1);
 
-                if ( (LA71_0==90) ) {
+                if ( (LA71_0==STAR||LA71_0==SLASH||LA71_0==78) ) {
                     alt71=1;
                 }
 
 
                 switch (alt71) {
             	case 1 :
-            	    // Generator.g:840:7: op= 'or' n1= conditionalXOrExpression
+            	    // Generator.g:815:7: ( STAR | SLASH | 'div' ) n1= unaryExpression
             	    {
-            	    op=(Token)match(input,90,FOLLOW_90_in_conditionalOrExpression3633); if (state.failed) return n;
-            	    pushFollow(FOLLOW_conditionalXOrExpression_in_conditionalOrExpression3637);
-            	    n1=conditionalXOrExpression();
+            	    if ( state.backtracking==0 ) {
+            	       op = input.LT(1); 
+            	    }
+            	    if ( input.LA(1)==STAR||input.LA(1)==SLASH||input.LA(1)==78 ) {
+            	        input.consume();
+            	        state.errorRecovery=false;state.failed=false;
+            	    }
+            	    else {
+            	        if (state.backtracking>0) {state.failed=true; return n;}
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        throw mse;
+            	    }
+
+            	    pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression3444);
+            	    n1=unaryExpression();
 
             	    state._fsp--;
             	    if (state.failed) return n;
@@ -4693,485 +4309,11 @@ import java.util.HashMap;
         }
         return n;
     }
-    // $ANTLR end "conditionalOrExpression"
-
-
-    // $ANTLR start "conditionalXOrExpression"
-    // Generator.g:849:1: conditionalXOrExpression returns [ASTExpression n] : nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* ;
-    public final ASTExpression conditionalXOrExpression() throws RecognitionException {
-        ASTExpression n = null;
-
-        Token op=null;
-        ASTExpression nCndAndExp = null;
-
-        ASTExpression n1 = null;
-
-
-        try {
-            // Generator.g:850:1: (nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )* )
-            // Generator.g:851:5: nCndAndExp= conditionalAndExpression (op= 'xor' n1= conditionalAndExpression )*
-            {
-            pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression3681);
-            nCndAndExp=conditionalAndExpression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-              n = nCndAndExp;
-            }
-            // Generator.g:852:5: (op= 'xor' n1= conditionalAndExpression )*
-            loop72:
-            do {
-                int alt72=2;
-                int LA72_0 = input.LA(1);
-
-                if ( (LA72_0==91) ) {
-                    alt72=1;
-                }
-
-
-                switch (alt72) {
-            	case 1 :
-            	    // Generator.g:852:7: op= 'xor' n1= conditionalAndExpression
-            	    {
-            	    op=(Token)match(input,91,FOLLOW_91_in_conditionalXOrExpression3694); if (state.failed) return n;
-            	    pushFollow(FOLLOW_conditionalAndExpression_in_conditionalXOrExpression3698);
-            	    n1=conditionalAndExpression();
-
-            	    state._fsp--;
-            	    if (state.failed) return n;
-            	    if ( state.backtracking==0 ) {
-            	       n = new ASTBinaryExpression(op, n, n1); 
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop72;
-                }
-            } while (true);
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return n;
-    }
-    // $ANTLR end "conditionalXOrExpression"
-
-
-    // $ANTLR start "conditionalAndExpression"
-    // Generator.g:861:1: conditionalAndExpression returns [ASTExpression n] : nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* ;
-    public final ASTExpression conditionalAndExpression() throws RecognitionException {
-        ASTExpression n = null;
-
-        Token op=null;
-        ASTExpression nEqExp = null;
-
-        ASTExpression n1 = null;
-
-
-        try {
-            // Generator.g:862:1: (nEqExp= equalityExpression (op= 'and' n1= equalityExpression )* )
-            // Generator.g:863:5: nEqExp= equalityExpression (op= 'and' n1= equalityExpression )*
-            {
-            pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression3742);
-            nEqExp=equalityExpression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-              n = nEqExp;
-            }
-            // Generator.g:864:5: (op= 'and' n1= equalityExpression )*
-            loop73:
-            do {
-                int alt73=2;
-                int LA73_0 = input.LA(1);
-
-                if ( (LA73_0==92) ) {
-                    alt73=1;
-                }
-
-
-                switch (alt73) {
-            	case 1 :
-            	    // Generator.g:864:7: op= 'and' n1= equalityExpression
-            	    {
-            	    op=(Token)match(input,92,FOLLOW_92_in_conditionalAndExpression3755); if (state.failed) return n;
-            	    pushFollow(FOLLOW_equalityExpression_in_conditionalAndExpression3759);
-            	    n1=equalityExpression();
-
-            	    state._fsp--;
-            	    if (state.failed) return n;
-            	    if ( state.backtracking==0 ) {
-            	       n = new ASTBinaryExpression(op, n, n1); 
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop73;
-                }
-            } while (true);
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return n;
-    }
-    // $ANTLR end "conditionalAndExpression"
-
-
-    // $ANTLR start "equalityExpression"
-    // Generator.g:873:1: equalityExpression returns [ASTExpression n] : nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* ;
-    public final ASTExpression equalityExpression() throws RecognitionException {
-        ASTExpression n = null;
-
-        ASTExpression nRelExp = null;
-
-        ASTExpression n1 = null;
-
-
-         Token op = null; 
-        try {
-            // Generator.g:875:1: (nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )* )
-            // Generator.g:876:5: nRelExp= relationalExpression ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
-            {
-            pushFollow(FOLLOW_relationalExpression_in_equalityExpression3807);
-            nRelExp=relationalExpression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-              n = nRelExp;
-            }
-            // Generator.g:877:5: ( ( EQUAL | NOT_EQUAL ) n1= relationalExpression )*
-            loop74:
-            do {
-                int alt74=2;
-                int LA74_0 = input.LA(1);
-
-                if ( (LA74_0==EQUAL||LA74_0==NOT_EQUAL) ) {
-                    alt74=1;
-                }
-
-
-                switch (alt74) {
-            	case 1 :
-            	    // Generator.g:877:7: ( EQUAL | NOT_EQUAL ) n1= relationalExpression
-            	    {
-            	    if ( state.backtracking==0 ) {
-            	       op = input.LT(1); 
-            	    }
-            	    if ( input.LA(1)==EQUAL||input.LA(1)==NOT_EQUAL ) {
-            	        input.consume();
-            	        state.errorRecovery=false;state.failed=false;
-            	    }
-            	    else {
-            	        if (state.backtracking>0) {state.failed=true; return n;}
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        throw mse;
-            	    }
-
-            	    pushFollow(FOLLOW_relationalExpression_in_equalityExpression3836);
-            	    n1=relationalExpression();
-
-            	    state._fsp--;
-            	    if (state.failed) return n;
-            	    if ( state.backtracking==0 ) {
-            	       n = new ASTBinaryExpression(op, n, n1); 
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop74;
-                }
-            } while (true);
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return n;
-    }
-    // $ANTLR end "equalityExpression"
-
-
-    // $ANTLR start "relationalExpression"
-    // Generator.g:887:1: relationalExpression returns [ASTExpression n] : nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* ;
-    public final ASTExpression relationalExpression() throws RecognitionException {
-        ASTExpression n = null;
-
-        ASTExpression nAddiExp = null;
-
-        ASTExpression n1 = null;
-
-
-         Token op = null; 
-        try {
-            // Generator.g:889:1: (nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )* )
-            // Generator.g:890:5: nAddiExp= additiveExpression ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
-            {
-            pushFollow(FOLLOW_additiveExpression_in_relationalExpression3885);
-            nAddiExp=additiveExpression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-              n = nAddiExp;
-            }
-            // Generator.g:891:5: ( ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression )*
-            loop75:
-            do {
-                int alt75=2;
-                int LA75_0 = input.LA(1);
-
-                if ( (LA75_0==LESS||(LA75_0>=GREATER && LA75_0<=GREATER_EQUAL)) ) {
-                    alt75=1;
-                }
-
-
-                switch (alt75) {
-            	case 1 :
-            	    // Generator.g:891:7: ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) n1= additiveExpression
-            	    {
-            	    if ( state.backtracking==0 ) {
-            	       op = input.LT(1); 
-            	    }
-            	    if ( input.LA(1)==LESS||(input.LA(1)>=GREATER && input.LA(1)<=GREATER_EQUAL) ) {
-            	        input.consume();
-            	        state.errorRecovery=false;state.failed=false;
-            	    }
-            	    else {
-            	        if (state.backtracking>0) {state.failed=true; return n;}
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        throw mse;
-            	    }
-
-            	    pushFollow(FOLLOW_additiveExpression_in_relationalExpression3921);
-            	    n1=additiveExpression();
-
-            	    state._fsp--;
-            	    if (state.failed) return n;
-            	    if ( state.backtracking==0 ) {
-            	       n = new ASTBinaryExpression(op, n, n1); 
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop75;
-                }
-            } while (true);
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return n;
-    }
-    // $ANTLR end "relationalExpression"
-
-
-    // $ANTLR start "additiveExpression"
-    // Generator.g:901:1: additiveExpression returns [ASTExpression n] : nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* ;
-    public final ASTExpression additiveExpression() throws RecognitionException {
-        ASTExpression n = null;
-
-        ASTExpression nMulExp = null;
-
-        ASTExpression n1 = null;
-
-
-         Token op = null; 
-        try {
-            // Generator.g:903:1: (nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )* )
-            // Generator.g:904:5: nMulExp= multiplicativeExpression ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
-            {
-            pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression3971);
-            nMulExp=multiplicativeExpression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-              n = nMulExp;
-            }
-            // Generator.g:905:5: ( ( PLUS | MINUS ) n1= multiplicativeExpression )*
-            loop76:
-            do {
-                int alt76=2;
-                int LA76_0 = input.LA(1);
-
-                if ( ((LA76_0>=PLUS && LA76_0<=MINUS)) ) {
-                    alt76=1;
-                }
-
-
-                switch (alt76) {
-            	case 1 :
-            	    // Generator.g:905:7: ( PLUS | MINUS ) n1= multiplicativeExpression
-            	    {
-            	    if ( state.backtracking==0 ) {
-            	       op = input.LT(1); 
-            	    }
-            	    if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS) ) {
-            	        input.consume();
-            	        state.errorRecovery=false;state.failed=false;
-            	    }
-            	    else {
-            	        if (state.backtracking>0) {state.failed=true; return n;}
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        throw mse;
-            	    }
-
-            	    pushFollow(FOLLOW_multiplicativeExpression_in_additiveExpression3999);
-            	    n1=multiplicativeExpression();
-
-            	    state._fsp--;
-            	    if (state.failed) return n;
-            	    if ( state.backtracking==0 ) {
-            	       n = new ASTBinaryExpression(op, n, n1); 
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop76;
-                }
-            } while (true);
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return n;
-    }
-    // $ANTLR end "additiveExpression"
-
-
-    // $ANTLR start "multiplicativeExpression"
-    // Generator.g:916:1: multiplicativeExpression returns [ASTExpression n] : nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* ;
-    public final ASTExpression multiplicativeExpression() throws RecognitionException {
-        ASTExpression n = null;
-
-        ASTExpression nUnExp = null;
-
-        ASTExpression n1 = null;
-
-
-         Token op = null; 
-        try {
-            // Generator.g:918:1: (nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )* )
-            // Generator.g:919:5: nUnExp= unaryExpression ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
-            {
-            pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression4049);
-            nUnExp=unaryExpression();
-
-            state._fsp--;
-            if (state.failed) return n;
-            if ( state.backtracking==0 ) {
-               n = nUnExp;
-            }
-            // Generator.g:920:5: ( ( STAR | SLASH | 'div' ) n1= unaryExpression )*
-            loop77:
-            do {
-                int alt77=2;
-                int LA77_0 = input.LA(1);
-
-                if ( (LA77_0==STAR||LA77_0==SLASH||LA77_0==93) ) {
-                    alt77=1;
-                }
-
-
-                switch (alt77) {
-            	case 1 :
-            	    // Generator.g:920:7: ( STAR | SLASH | 'div' ) n1= unaryExpression
-            	    {
-            	    if ( state.backtracking==0 ) {
-            	       op = input.LT(1); 
-            	    }
-            	    if ( input.LA(1)==STAR||input.LA(1)==SLASH||input.LA(1)==93 ) {
-            	        input.consume();
-            	        state.errorRecovery=false;state.failed=false;
-            	    }
-            	    else {
-            	        if (state.backtracking>0) {state.failed=true; return n;}
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        throw mse;
-            	    }
-
-            	    pushFollow(FOLLOW_unaryExpression_in_multiplicativeExpression4081);
-            	    n1=unaryExpression();
-
-            	    state._fsp--;
-            	    if (state.failed) return n;
-            	    if ( state.backtracking==0 ) {
-            	       n = new ASTBinaryExpression(op, n, n1); 
-            	    }
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop77;
-                }
-            } while (true);
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return n;
-    }
     // $ANTLR end "multiplicativeExpression"
 
 
     // $ANTLR start "unaryExpression"
-    // Generator.g:932:1: unaryExpression returns [ASTExpression n] : ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression );
+    // Generator.g:827:1: unaryExpression returns [ASTExpression n] : ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression );
     public final ASTExpression unaryExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -5182,34 +4324,34 @@ import java.util.HashMap;
 
          Token op = null; 
         try {
-            // Generator.g:934:1: ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression )
-            int alt78=2;
-            int LA78_0 = input.LA(1);
+            // Generator.g:829:1: ( ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression ) | nPosExp= postfixExpression )
+            int alt72=2;
+            int LA72_0 = input.LA(1);
 
-            if ( ((LA78_0>=PLUS && LA78_0<=MINUS)||LA78_0==94) ) {
-                alt78=1;
+            if ( ((LA72_0>=PLUS && LA72_0<=MINUS)||LA72_0==79) ) {
+                alt72=1;
             }
-            else if ( ((LA78_0>=IDENT && LA78_0<=LPAREN)||LA78_0==INT||(LA78_0>=REAL && LA78_0<=HASH)||LA78_0==49||(LA78_0>=96 && LA78_0<=111)) ) {
-                alt78=2;
+            else if ( ((LA72_0>=IDENT && LA72_0<=LPAREN)||LA72_0==INT||(LA72_0>=REAL && LA72_0<=HASH)||LA72_0==49||(LA72_0>=81 && LA72_0<=84)||(LA72_0>=86 && LA72_0<=97)) ) {
+                alt72=2;
             }
             else {
                 if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 78, 0, input);
+                    new NoViableAltException("", 72, 0, input);
 
                 throw nvae;
             }
-            switch (alt78) {
+            switch (alt72) {
                 case 1 :
-                    // Generator.g:935:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
+                    // Generator.g:830:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
                     {
-                    // Generator.g:935:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
-                    // Generator.g:935:9: ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression
+                    // Generator.g:830:7: ( ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression )
+                    // Generator.g:830:9: ( 'not' | MINUS | PLUS ) nUnExp= unaryExpression
                     {
                     if ( state.backtracking==0 ) {
                        op = input.LT(1); 
                     }
-                    if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS)||input.LA(1)==94 ) {
+                    if ( (input.LA(1)>=PLUS && input.LA(1)<=MINUS)||input.LA(1)==79 ) {
                         input.consume();
                         state.errorRecovery=false;state.failed=false;
                     }
@@ -5219,7 +4361,7 @@ import java.util.HashMap;
                         throw mse;
                     }
 
-                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression4167);
+                    pushFollow(FOLLOW_unaryExpression_in_unaryExpression3530);
                     nUnExp=unaryExpression();
 
                     state._fsp--;
@@ -5234,9 +4376,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:939:7: nPosExp= postfixExpression
+                    // Generator.g:834:7: nPosExp= postfixExpression
                     {
-                    pushFollow(FOLLOW_postfixExpression_in_unaryExpression4187);
+                    pushFollow(FOLLOW_postfixExpression_in_unaryExpression3550);
                     nPosExp=postfixExpression();
 
                     state._fsp--;
@@ -5262,7 +4404,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "postfixExpression"
-    // Generator.g:947:1: postfixExpression returns [ASTExpression n] : nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* ;
+    // Generator.g:842:1: postfixExpression returns [ASTExpression n] : nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* ;
     public final ASTExpression postfixExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -5273,10 +4415,10 @@ import java.util.HashMap;
 
          boolean arrow = false; 
         try {
-            // Generator.g:949:1: (nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* )
-            // Generator.g:950:5: nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
+            // Generator.g:844:1: (nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )* )
+            // Generator.g:845:5: nPrimExp= primaryExpression ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
             {
-            pushFollow(FOLLOW_primaryExpression_in_postfixExpression4220);
+            pushFollow(FOLLOW_primaryExpression_in_postfixExpression3583);
             nPrimExp=primaryExpression();
 
             state._fsp--;
@@ -5284,43 +4426,43 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                n = nPrimExp; 
             }
-            // Generator.g:951:5: ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
-            loop80:
+            // Generator.g:846:5: ( ( ARROW | DOT ) nPc= propertyCall[$n, arrow] )*
+            loop74:
             do {
-                int alt80=2;
-                int LA80_0 = input.LA(1);
+                int alt74=2;
+                int LA74_0 = input.LA(1);
 
-                if ( (LA80_0==DOT||LA80_0==ARROW) ) {
-                    alt80=1;
+                if ( (LA74_0==DOT||LA74_0==ARROW) ) {
+                    alt74=1;
                 }
 
 
-                switch (alt80) {
+                switch (alt74) {
             	case 1 :
-            	    // Generator.g:952:6: ( ARROW | DOT ) nPc= propertyCall[$n, arrow]
+            	    // Generator.g:847:6: ( ARROW | DOT ) nPc= propertyCall[$n, arrow]
             	    {
-            	    // Generator.g:952:6: ( ARROW | DOT )
-            	    int alt79=2;
-            	    int LA79_0 = input.LA(1);
+            	    // Generator.g:847:6: ( ARROW | DOT )
+            	    int alt73=2;
+            	    int LA73_0 = input.LA(1);
 
-            	    if ( (LA79_0==ARROW) ) {
-            	        alt79=1;
+            	    if ( (LA73_0==ARROW) ) {
+            	        alt73=1;
             	    }
-            	    else if ( (LA79_0==DOT) ) {
-            	        alt79=2;
+            	    else if ( (LA73_0==DOT) ) {
+            	        alt73=2;
             	    }
             	    else {
             	        if (state.backtracking>0) {state.failed=true; return n;}
             	        NoViableAltException nvae =
-            	            new NoViableAltException("", 79, 0, input);
+            	            new NoViableAltException("", 73, 0, input);
 
             	        throw nvae;
             	    }
-            	    switch (alt79) {
+            	    switch (alt73) {
             	        case 1 :
-            	            // Generator.g:952:8: ARROW
+            	            // Generator.g:847:8: ARROW
             	            {
-            	            match(input,ARROW,FOLLOW_ARROW_in_postfixExpression4238); if (state.failed) return n;
+            	            match(input,ARROW,FOLLOW_ARROW_in_postfixExpression3601); if (state.failed) return n;
             	            if ( state.backtracking==0 ) {
             	               arrow = true; 
             	            }
@@ -5328,9 +4470,9 @@ import java.util.HashMap;
             	            }
             	            break;
             	        case 2 :
-            	            // Generator.g:952:34: DOT
+            	            // Generator.g:847:34: DOT
             	            {
-            	            match(input,DOT,FOLLOW_DOT_in_postfixExpression4244); if (state.failed) return n;
+            	            match(input,DOT,FOLLOW_DOT_in_postfixExpression3607); if (state.failed) return n;
             	            if ( state.backtracking==0 ) {
             	               arrow = false; 
             	            }
@@ -5340,7 +4482,7 @@ import java.util.HashMap;
 
             	    }
 
-            	    pushFollow(FOLLOW_propertyCall_in_postfixExpression4255);
+            	    pushFollow(FOLLOW_propertyCall_in_postfixExpression3618);
             	    nPc=propertyCall(n, arrow);
 
             	    state._fsp--;
@@ -5353,7 +4495,7 @@ import java.util.HashMap;
             	    break;
 
             	default :
-            	    break loop80;
+            	    break loop74;
                 }
             } while (true);
 
@@ -5373,7 +4515,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "primaryExpression"
-    // Generator.g:968:1: primaryExpression returns [ASTExpression n] : (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? );
+    // Generator.g:863:1: primaryExpression returns [ASTExpression n] : (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? );
     public final ASTExpression primaryExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -5388,93 +4530,146 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:969:1: (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? )
-            int alt83=5;
+            // Generator.g:864:1: (nLit= literal | nPc= propertyCall[null, false] | LPAREN nExp= expression RPAREN | nIfExp= ifExpression | id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )? )
+            int alt77=5;
             switch ( input.LA(1) ) {
             case INT:
             case REAL:
             case STRING:
             case HASH:
-            case 100:
-            case 101:
-            case 102:
-            case 103:
-            case 104:
-            case 105:
-            case 106:
-            case 107:
-            case 108:
-            case 109:
-            case 110:
-            case 111:
+            case 86:
+            case 87:
+            case 88:
+            case 89:
+            case 90:
+            case 91:
+            case 92:
+            case 93:
+            case 94:
+            case 95:
+            case 96:
+            case 97:
                 {
-                alt83=1;
+                alt77=1;
                 }
                 break;
             case IDENT:
                 {
-                int LA83_2 = input.LA(2);
-
-                if ( (LA83_2==EOF||(LA83_2>=IDENT && LA83_2<=COLON_EQUAL)||(LA83_2>=LBRACK && LA83_2<=RBRACK)||(LA83_2>=RBRACE && LA83_2<=LESS)||(LA83_2>=EQUAL && LA83_2<=DOTDOT)||LA83_2==STAR||(LA83_2>=NOT_EQUAL && LA83_2<=BAR)||(LA83_2>=44 && LA83_2<=51)||LA83_2==53||(LA83_2>=55 && LA83_2<=56)||(LA83_2>=59 && LA83_2<=60)||(LA83_2>=62 && LA83_2<=64)||(LA83_2>=69 && LA83_2<=76)||LA83_2==78||LA83_2==80||(LA83_2>=82 && LA83_2<=87)||(LA83_2>=89 && LA83_2<=93)) ) {
-                    alt83=2;
-                }
-                else if ( (LA83_2==DOT) ) {
-                    int LA83_6 = input.LA(3);
-
-                    if ( (LA83_6==95) ) {
-                        alt83=5;
+                switch ( input.LA(2) ) {
+                case COLON_COLON:
+                    {
+                    alt77=1;
                     }
-                    else if ( (LA83_6==IDENT||(LA83_6>=96 && LA83_6<=99)) ) {
-                        alt83=2;
+                    break;
+                case EOF:
+                case IDENT:
+                case LPAREN:
+                case RPAREN:
+                case SEMI:
+                case COMMA:
+                case LBRACK:
+                case RBRACK:
+                case RBRACE:
+                case LESS:
+                case EQUAL:
+                case DOTDOT:
+                case STAR:
+                case NOT_EQUAL:
+                case GREATER:
+                case LESS_EQUAL:
+                case GREATER_EQUAL:
+                case PLUS:
+                case MINUS:
+                case SLASH:
+                case ARROW:
+                case AT:
+                case BAR:
+                case 46:
+                case 48:
+                case 50:
+                case 51:
+                case 53:
+                case 55:
+                case 56:
+                case 59:
+                case 60:
+                case 62:
+                case 63:
+                case 68:
+                case 69:
+                case 70:
+                case 71:
+                case 72:
+                case 74:
+                case 75:
+                case 76:
+                case 77:
+                case 78:
+                case 85:
+                    {
+                    alt77=2;
+                    }
+                    break;
+                case DOT:
+                    {
+                    int LA77_6 = input.LA(3);
+
+                    if ( (LA77_6==80) ) {
+                        alt77=5;
+                    }
+                    else if ( (LA77_6==IDENT||(LA77_6>=81 && LA77_6<=84)) ) {
+                        alt77=2;
                     }
                     else {
                         if (state.backtracking>0) {state.failed=true; return n;}
                         NoViableAltException nvae =
-                            new NoViableAltException("", 83, 6, input);
+                            new NoViableAltException("", 77, 6, input);
 
                         throw nvae;
                     }
-                }
-                else {
+                    }
+                    break;
+                default:
                     if (state.backtracking>0) {state.failed=true; return n;}
                     NoViableAltException nvae =
-                        new NoViableAltException("", 83, 2, input);
+                        new NoViableAltException("", 77, 2, input);
 
                     throw nvae;
                 }
+
                 }
                 break;
-            case 96:
-            case 97:
-            case 98:
-            case 99:
+            case 81:
+            case 82:
+            case 83:
+            case 84:
                 {
-                alt83=2;
+                alt77=2;
                 }
                 break;
             case LPAREN:
                 {
-                alt83=3;
+                alt77=3;
                 }
                 break;
             case 49:
                 {
-                alt83=4;
+                alt77=4;
                 }
                 break;
             default:
                 if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 83, 0, input);
+                    new NoViableAltException("", 77, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt83) {
+            switch (alt77) {
                 case 1 :
-                    // Generator.g:970:7: nLit= literal
+                    // Generator.g:865:7: nLit= literal
                     {
-                    pushFollow(FOLLOW_literal_in_primaryExpression4295);
+                    pushFollow(FOLLOW_literal_in_primaryExpression3658);
                     nLit=literal();
 
                     state._fsp--;
@@ -5486,9 +4681,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:971:7: nPc= propertyCall[null, false]
+                    // Generator.g:866:7: nPc= propertyCall[null, false]
                     {
-                    pushFollow(FOLLOW_propertyCall_in_primaryExpression4307);
+                    pushFollow(FOLLOW_propertyCall_in_primaryExpression3670);
                     nPc=propertyCall(null, false);
 
                     state._fsp--;
@@ -5500,15 +4695,15 @@ import java.util.HashMap;
                     }
                     break;
                 case 3 :
-                    // Generator.g:972:7: LPAREN nExp= expression RPAREN
+                    // Generator.g:867:7: LPAREN nExp= expression RPAREN
                     {
-                    match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression4318); if (state.failed) return n;
-                    pushFollow(FOLLOW_expression_in_primaryExpression4322);
+                    match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression3681); if (state.failed) return n;
+                    pushFollow(FOLLOW_expression_in_primaryExpression3685);
                     nExp=expression();
 
                     state._fsp--;
                     if (state.failed) return n;
-                    match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression4324); if (state.failed) return n;
+                    match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression3687); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = nExp; 
                     }
@@ -5516,9 +4711,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 4 :
-                    // Generator.g:973:7: nIfExp= ifExpression
+                    // Generator.g:868:7: nIfExp= ifExpression
                     {
-                    pushFollow(FOLLOW_ifExpression_in_primaryExpression4336);
+                    pushFollow(FOLLOW_ifExpression_in_primaryExpression3699);
                     nIfExp=ifExpression();
 
                     state._fsp--;
@@ -5530,24 +4725,24 @@ import java.util.HashMap;
                     }
                     break;
                 case 5 :
-                    // Generator.g:975:7: id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )?
+                    // Generator.g:870:7: id1= IDENT DOT 'allInstances' ( LPAREN RPAREN )? ( AT 'pre' )?
                     {
-                    id1=(Token)match(input,IDENT,FOLLOW_IDENT_in_primaryExpression4353); if (state.failed) return n;
-                    match(input,DOT,FOLLOW_DOT_in_primaryExpression4355); if (state.failed) return n;
-                    match(input,95,FOLLOW_95_in_primaryExpression4357); if (state.failed) return n;
-                    // Generator.g:975:36: ( LPAREN RPAREN )?
-                    int alt81=2;
-                    int LA81_0 = input.LA(1);
+                    id1=(Token)match(input,IDENT,FOLLOW_IDENT_in_primaryExpression3716); if (state.failed) return n;
+                    match(input,DOT,FOLLOW_DOT_in_primaryExpression3718); if (state.failed) return n;
+                    match(input,80,FOLLOW_80_in_primaryExpression3720); if (state.failed) return n;
+                    // Generator.g:870:36: ( LPAREN RPAREN )?
+                    int alt75=2;
+                    int LA75_0 = input.LA(1);
 
-                    if ( (LA81_0==LPAREN) ) {
-                        alt81=1;
+                    if ( (LA75_0==LPAREN) ) {
+                        alt75=1;
                     }
-                    switch (alt81) {
+                    switch (alt75) {
                         case 1 :
-                            // Generator.g:975:38: LPAREN RPAREN
+                            // Generator.g:870:38: LPAREN RPAREN
                             {
-                            match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression4361); if (state.failed) return n;
-                            match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression4363); if (state.failed) return n;
+                            match(input,LPAREN,FOLLOW_LPAREN_in_primaryExpression3724); if (state.failed) return n;
+                            match(input,RPAREN,FOLLOW_RPAREN_in_primaryExpression3726); if (state.failed) return n;
 
                             }
                             break;
@@ -5557,19 +4752,19 @@ import java.util.HashMap;
                     if ( state.backtracking==0 ) {
                        n = new ASTAllInstancesExpression(id1); 
                     }
-                    // Generator.g:977:7: ( AT 'pre' )?
-                    int alt82=2;
-                    int LA82_0 = input.LA(1);
+                    // Generator.g:872:7: ( AT 'pre' )?
+                    int alt76=2;
+                    int LA76_0 = input.LA(1);
 
-                    if ( (LA82_0==AT) ) {
-                        alt82=1;
+                    if ( (LA76_0==AT) ) {
+                        alt76=1;
                     }
-                    switch (alt82) {
+                    switch (alt76) {
                         case 1 :
-                            // Generator.g:977:9: AT 'pre'
+                            // Generator.g:872:9: AT 'pre'
                             {
-                            match(input,AT,FOLLOW_AT_in_primaryExpression4384); if (state.failed) return n;
-                            match(input,72,FOLLOW_72_in_primaryExpression4386); if (state.failed) return n;
+                            match(input,AT,FOLLOW_AT_in_primaryExpression3747); if (state.failed) return n;
+                            match(input,71,FOLLOW_71_in_primaryExpression3749); if (state.failed) return n;
                             if ( state.backtracking==0 ) {
                                n.setIsPre(); 
                             }
@@ -5597,7 +4792,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "propertyCall"
-    // Generator.g:990:1: propertyCall[ASTExpression source, boolean followsArrow] returns [ASTExpression n] : ({...}?{...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] );
+    // Generator.g:885:1: propertyCall[ASTExpression source, boolean followsArrow] returns [ASTExpression n] : ({...}?{...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] );
     public final ASTExpression propertyCall(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTExpression n = null;
 
@@ -5611,51 +4806,51 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:991:1: ({...}?{...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] )
-            int alt84=4;
+            // Generator.g:886:1: ({...}?{...}?nExpQuery= queryExpression[source] | nExpIterate= iterateExpression[source] | nExpOperation= operationExpression[source, followsArrow] | nExpType= typeExpression[source, followsArrow] )
+            int alt78=4;
             switch ( input.LA(1) ) {
             case IDENT:
                 {
-                int LA84_1 = input.LA(2);
+                int LA78_1 = input.LA(2);
 
                 if ( ((( org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) )&&( input.LA(2) == LPAREN ))) ) {
-                    alt84=1;
+                    alt78=1;
                 }
                 else if ( (true) ) {
-                    alt84=3;
+                    alt78=3;
                 }
                 else {
                     if (state.backtracking>0) {state.failed=true; return n;}
                     NoViableAltException nvae =
-                        new NoViableAltException("", 84, 1, input);
+                        new NoViableAltException("", 78, 1, input);
 
                     throw nvae;
                 }
                 }
                 break;
-            case 96:
+            case 81:
                 {
-                alt84=2;
+                alt78=2;
                 }
                 break;
-            case 97:
-            case 98:
-            case 99:
+            case 82:
+            case 83:
+            case 84:
                 {
-                alt84=4;
+                alt78=4;
                 }
                 break;
             default:
                 if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 84, 0, input);
+                    new NoViableAltException("", 78, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt84) {
+            switch (alt78) {
                 case 1 :
-                    // Generator.g:995:7: {...}?{...}?nExpQuery= queryExpression[source]
+                    // Generator.g:890:7: {...}?{...}?nExpQuery= queryExpression[source]
                     {
                     if ( !(( org.tzi.use.parser.base.ParserHelper.isQueryIdent(input.LT(1)) )) ) {
                         if (state.backtracking>0) {state.failed=true; return n;}
@@ -5665,7 +4860,7 @@ import java.util.HashMap;
                         if (state.backtracking>0) {state.failed=true; return n;}
                         throw new FailedPredicateException(input, "propertyCall", " input.LA(2) == LPAREN ");
                     }
-                    pushFollow(FOLLOW_queryExpression_in_propertyCall4459);
+                    pushFollow(FOLLOW_queryExpression_in_propertyCall3822);
                     nExpQuery=queryExpression(source);
 
                     state._fsp--;
@@ -5677,9 +4872,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:998:7: nExpIterate= iterateExpression[source]
+                    // Generator.g:893:7: nExpIterate= iterateExpression[source]
                     {
-                    pushFollow(FOLLOW_iterateExpression_in_propertyCall4472);
+                    pushFollow(FOLLOW_iterateExpression_in_propertyCall3835);
                     nExpIterate=iterateExpression(source);
 
                     state._fsp--;
@@ -5691,9 +4886,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 3 :
-                    // Generator.g:999:7: nExpOperation= operationExpression[source, followsArrow]
+                    // Generator.g:894:7: nExpOperation= operationExpression[source, followsArrow]
                     {
-                    pushFollow(FOLLOW_operationExpression_in_propertyCall4485);
+                    pushFollow(FOLLOW_operationExpression_in_propertyCall3848);
                     nExpOperation=operationExpression(source, followsArrow);
 
                     state._fsp--;
@@ -5705,9 +4900,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 4 :
-                    // Generator.g:1000:7: nExpType= typeExpression[source, followsArrow]
+                    // Generator.g:895:7: nExpType= typeExpression[source, followsArrow]
                     {
-                    pushFollow(FOLLOW_typeExpression_in_propertyCall4498);
+                    pushFollow(FOLLOW_typeExpression_in_propertyCall3861);
                     nExpType=typeExpression(source, followsArrow);
 
                     state._fsp--;
@@ -5733,7 +4928,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "queryExpression"
-    // Generator.g:1009:1: queryExpression[ASTExpression range] returns [ASTExpression n] : op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN ;
+    // Generator.g:904:1: queryExpression[ASTExpression range] returns [ASTExpression n] : op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN ;
     public final ASTExpression queryExpression(ASTExpression range) throws RecognitionException {
         ASTExpression n = null;
 
@@ -5745,27 +4940,27 @@ import java.util.HashMap;
 
         ASTElemVarsDeclaration decl = new ASTElemVarsDeclaration(); 
         try {
-            // Generator.g:1010:69: (op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN )
-            // Generator.g:1011:5: op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN
+            // Generator.g:905:69: (op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN )
+            // Generator.g:906:5: op= IDENT LPAREN (decls= elemVarsDeclaration BAR )? nExp= expression RPAREN
             {
-            op=(Token)match(input,IDENT,FOLLOW_IDENT_in_queryExpression4533); if (state.failed) return n;
-            match(input,LPAREN,FOLLOW_LPAREN_in_queryExpression4540); if (state.failed) return n;
-            // Generator.g:1013:5: (decls= elemVarsDeclaration BAR )?
-            int alt85=2;
-            int LA85_0 = input.LA(1);
+            op=(Token)match(input,IDENT,FOLLOW_IDENT_in_queryExpression3896); if (state.failed) return n;
+            match(input,LPAREN,FOLLOW_LPAREN_in_queryExpression3903); if (state.failed) return n;
+            // Generator.g:908:5: (decls= elemVarsDeclaration BAR )?
+            int alt79=2;
+            int LA79_0 = input.LA(1);
 
-            if ( (LA85_0==IDENT) ) {
-                int LA85_1 = input.LA(2);
+            if ( (LA79_0==IDENT) ) {
+                int LA79_1 = input.LA(2);
 
-                if ( (LA85_1==COMMA||LA85_1==COLON||LA85_1==BAR) ) {
-                    alt85=1;
+                if ( (LA79_1==COMMA||LA79_1==COLON||LA79_1==BAR) ) {
+                    alt79=1;
                 }
             }
-            switch (alt85) {
+            switch (alt79) {
                 case 1 :
-                    // Generator.g:1013:7: decls= elemVarsDeclaration BAR
+                    // Generator.g:908:7: decls= elemVarsDeclaration BAR
                     {
-                    pushFollow(FOLLOW_elemVarsDeclaration_in_queryExpression4551);
+                    pushFollow(FOLLOW_elemVarsDeclaration_in_queryExpression3914);
                     decls=elemVarsDeclaration();
 
                     state._fsp--;
@@ -5773,19 +4968,19 @@ import java.util.HashMap;
                     if ( state.backtracking==0 ) {
                       decl = decls;
                     }
-                    match(input,BAR,FOLLOW_BAR_in_queryExpression4555); if (state.failed) return n;
+                    match(input,BAR,FOLLOW_BAR_in_queryExpression3918); if (state.failed) return n;
 
                     }
                     break;
 
             }
 
-            pushFollow(FOLLOW_expression_in_queryExpression4566);
+            pushFollow(FOLLOW_expression_in_queryExpression3929);
             nExp=expression();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,RPAREN,FOLLOW_RPAREN_in_queryExpression4572); if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_queryExpression3935); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTQueryExpression(op, range, decl, nExp); 
             }
@@ -5805,7 +5000,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "iterateExpression"
-    // Generator.g:1027:1: iterateExpression[ASTExpression range] returns [ASTExpression n] : i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN ;
+    // Generator.g:922:1: iterateExpression[ASTExpression range] returns [ASTExpression n] : i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN ;
     public final ASTExpression iterateExpression(ASTExpression range) throws RecognitionException {
         ASTExpression n = null;
 
@@ -5818,29 +5013,29 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1027:65: (i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN )
-            // Generator.g:1028:5: i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN
+            // Generator.g:922:65: (i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN )
+            // Generator.g:923:5: i= 'iterate' LPAREN decls= elemVarsDeclaration SEMI init= variableInitialization BAR nExp= expression RPAREN
             {
-            i=(Token)match(input,96,FOLLOW_96_in_iterateExpression4604); if (state.failed) return n;
-            match(input,LPAREN,FOLLOW_LPAREN_in_iterateExpression4610); if (state.failed) return n;
-            pushFollow(FOLLOW_elemVarsDeclaration_in_iterateExpression4618);
+            i=(Token)match(input,81,FOLLOW_81_in_iterateExpression3967); if (state.failed) return n;
+            match(input,LPAREN,FOLLOW_LPAREN_in_iterateExpression3973); if (state.failed) return n;
+            pushFollow(FOLLOW_elemVarsDeclaration_in_iterateExpression3981);
             decls=elemVarsDeclaration();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,SEMI,FOLLOW_SEMI_in_iterateExpression4620); if (state.failed) return n;
-            pushFollow(FOLLOW_variableInitialization_in_iterateExpression4628);
+            match(input,SEMI,FOLLOW_SEMI_in_iterateExpression3983); if (state.failed) return n;
+            pushFollow(FOLLOW_variableInitialization_in_iterateExpression3991);
             init=variableInitialization();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,BAR,FOLLOW_BAR_in_iterateExpression4630); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_iterateExpression4638);
+            match(input,BAR,FOLLOW_BAR_in_iterateExpression3993); if (state.failed) return n;
+            pushFollow(FOLLOW_expression_in_iterateExpression4001);
             nExp=expression();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,RPAREN,FOLLOW_RPAREN_in_iterateExpression4644); if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_iterateExpression4007); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTIterateExpression(i, range, decls, init, nExp); 
             }
@@ -5860,7 +5055,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "operationExpression"
-    // Generator.g:1049:1: operationExpression[ASTExpression source, boolean followsArrow] returns [ASTOperationExpression n] : name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? ;
+    // Generator.g:944:1: operationExpression[ASTExpression source, boolean followsArrow] returns [ASTOperationExpression n] : name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? ;
     public final ASTOperationExpression operationExpression(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTOperationExpression n = null;
 
@@ -5870,27 +5065,27 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1051:1: (name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? )
-            // Generator.g:1052:5: name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
+            // Generator.g:946:1: (name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )? )
+            // Generator.g:947:5: name= IDENT ( LBRACK rolename= IDENT RBRACK )? ( AT 'pre' )? ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression4688); if (state.failed) return n;
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression4051); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTOperationExpression(name, source, followsArrow); 
             }
-            // Generator.g:1055:5: ( LBRACK rolename= IDENT RBRACK )?
-            int alt86=2;
-            int LA86_0 = input.LA(1);
+            // Generator.g:950:5: ( LBRACK rolename= IDENT RBRACK )?
+            int alt80=2;
+            int LA80_0 = input.LA(1);
 
-            if ( (LA86_0==LBRACK) ) {
-                alt86=1;
+            if ( (LA80_0==LBRACK) ) {
+                alt80=1;
             }
-            switch (alt86) {
+            switch (alt80) {
                 case 1 :
-                    // Generator.g:1055:7: LBRACK rolename= IDENT RBRACK
+                    // Generator.g:950:7: LBRACK rolename= IDENT RBRACK
                     {
-                    match(input,LBRACK,FOLLOW_LBRACK_in_operationExpression4704); if (state.failed) return n;
-                    rolename=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression4708); if (state.failed) return n;
-                    match(input,RBRACK,FOLLOW_RBRACK_in_operationExpression4710); if (state.failed) return n;
+                    match(input,LBRACK,FOLLOW_LBRACK_in_operationExpression4067); if (state.failed) return n;
+                    rolename=(Token)match(input,IDENT,FOLLOW_IDENT_in_operationExpression4071); if (state.failed) return n;
+                    match(input,RBRACK,FOLLOW_RBRACK_in_operationExpression4073); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n.setExplicitRolename(rolename); 
                     }
@@ -5900,19 +5095,19 @@ import java.util.HashMap;
 
             }
 
-            // Generator.g:1057:5: ( AT 'pre' )?
-            int alt87=2;
-            int LA87_0 = input.LA(1);
+            // Generator.g:952:5: ( AT 'pre' )?
+            int alt81=2;
+            int LA81_0 = input.LA(1);
 
-            if ( (LA87_0==AT) ) {
-                alt87=1;
+            if ( (LA81_0==AT) ) {
+                alt81=1;
             }
-            switch (alt87) {
+            switch (alt81) {
                 case 1 :
-                    // Generator.g:1057:7: AT 'pre'
+                    // Generator.g:952:7: AT 'pre'
                     {
-                    match(input,AT,FOLLOW_AT_in_operationExpression4723); if (state.failed) return n;
-                    match(input,72,FOLLOW_72_in_operationExpression4725); if (state.failed) return n;
+                    match(input,AT,FOLLOW_AT_in_operationExpression4086); if (state.failed) return n;
+                    match(input,71,FOLLOW_71_in_operationExpression4088); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n.setIsPre(); 
                     }
@@ -5922,33 +5117,33 @@ import java.util.HashMap;
 
             }
 
-            // Generator.g:1058:5: ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
-            int alt90=2;
-            int LA90_0 = input.LA(1);
+            // Generator.g:953:5: ( LPAREN (e= expression ( COMMA e= expression )* )? RPAREN )?
+            int alt84=2;
+            int LA84_0 = input.LA(1);
 
-            if ( (LA90_0==LPAREN) ) {
-                alt90=1;
+            if ( (LA84_0==LPAREN) ) {
+                alt84=1;
             }
-            switch (alt90) {
+            switch (alt84) {
                 case 1 :
-                    // Generator.g:1059:7: LPAREN (e= expression ( COMMA e= expression )* )? RPAREN
+                    // Generator.g:954:7: LPAREN (e= expression ( COMMA e= expression )* )? RPAREN
                     {
-                    match(input,LPAREN,FOLLOW_LPAREN_in_operationExpression4746); if (state.failed) return n;
+                    match(input,LPAREN,FOLLOW_LPAREN_in_operationExpression4109); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n.hasParentheses(); 
                     }
-                    // Generator.g:1060:7: (e= expression ( COMMA e= expression )* )?
-                    int alt89=2;
-                    int LA89_0 = input.LA(1);
+                    // Generator.g:955:7: (e= expression ( COMMA e= expression )* )?
+                    int alt83=2;
+                    int LA83_0 = input.LA(1);
 
-                    if ( ((LA89_0>=IDENT && LA89_0<=LPAREN)||LA89_0==INT||(LA89_0>=PLUS && LA89_0<=MINUS)||(LA89_0>=REAL && LA89_0<=HASH)||LA89_0==49||LA89_0==88||LA89_0==94||(LA89_0>=96 && LA89_0<=111)) ) {
-                        alt89=1;
+                    if ( ((LA83_0>=IDENT && LA83_0<=LPAREN)||LA83_0==INT||(LA83_0>=PLUS && LA83_0<=MINUS)||(LA83_0>=REAL && LA83_0<=HASH)||LA83_0==49||LA83_0==73||LA83_0==79||(LA83_0>=81 && LA83_0<=84)||(LA83_0>=86 && LA83_0<=97)) ) {
+                        alt83=1;
                     }
-                    switch (alt89) {
+                    switch (alt83) {
                         case 1 :
-                            // Generator.g:1061:7: e= expression ( COMMA e= expression )*
+                            // Generator.g:956:7: e= expression ( COMMA e= expression )*
                             {
-                            pushFollow(FOLLOW_expression_in_operationExpression4767);
+                            pushFollow(FOLLOW_expression_in_operationExpression4130);
                             e=expression();
 
                             state._fsp--;
@@ -5956,23 +5151,23 @@ import java.util.HashMap;
                             if ( state.backtracking==0 ) {
                                n.addArg(e); 
                             }
-                            // Generator.g:1062:7: ( COMMA e= expression )*
-                            loop88:
+                            // Generator.g:957:7: ( COMMA e= expression )*
+                            loop82:
                             do {
-                                int alt88=2;
-                                int LA88_0 = input.LA(1);
+                                int alt82=2;
+                                int LA82_0 = input.LA(1);
 
-                                if ( (LA88_0==COMMA) ) {
-                                    alt88=1;
+                                if ( (LA82_0==COMMA) ) {
+                                    alt82=1;
                                 }
 
 
-                                switch (alt88) {
+                                switch (alt82) {
                             	case 1 :
-                            	    // Generator.g:1062:9: COMMA e= expression
+                            	    // Generator.g:957:9: COMMA e= expression
                             	    {
-                            	    match(input,COMMA,FOLLOW_COMMA_in_operationExpression4779); if (state.failed) return n;
-                            	    pushFollow(FOLLOW_expression_in_operationExpression4783);
+                            	    match(input,COMMA,FOLLOW_COMMA_in_operationExpression4142); if (state.failed) return n;
+                            	    pushFollow(FOLLOW_expression_in_operationExpression4146);
                             	    e=expression();
 
                             	    state._fsp--;
@@ -5985,7 +5180,7 @@ import java.util.HashMap;
                             	    break;
 
                             	default :
-                            	    break loop88;
+                            	    break loop82;
                                 }
                             } while (true);
 
@@ -5995,7 +5190,7 @@ import java.util.HashMap;
 
                     }
 
-                    match(input,RPAREN,FOLLOW_RPAREN_in_operationExpression4803); if (state.failed) return n;
+                    match(input,RPAREN,FOLLOW_RPAREN_in_operationExpression4166); if (state.failed) return n;
 
                     }
                     break;
@@ -6018,7 +5213,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "typeExpression"
-    // Generator.g:1074:1: typeExpression[ASTExpression source, boolean followsArrow] returns [ASTTypeArgExpression n] : ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN ;
+    // Generator.g:969:1: typeExpression[ASTExpression source, boolean followsArrow] returns [ASTTypeArgExpression n] : ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN ;
     public final ASTTypeArgExpression typeExpression(ASTExpression source, boolean followsArrow) throws RecognitionException {
         ASTTypeArgExpression n = null;
 
@@ -6027,13 +5222,13 @@ import java.util.HashMap;
 
          Token opToken = null; 
         try {
-            // Generator.g:1077:1: ( ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN )
-            // Generator.g:1078:2: ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN
+            // Generator.g:972:1: ( ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN )
+            // Generator.g:973:2: ( 'oclAsType' | 'oclIsKindOf' | 'oclIsTypeOf' ) LPAREN t= type RPAREN
             {
             if ( state.backtracking==0 ) {
                opToken = input.LT(1); 
             }
-            if ( (input.LA(1)>=97 && input.LA(1)<=99) ) {
+            if ( (input.LA(1)>=82 && input.LA(1)<=84) ) {
                 input.consume();
                 state.errorRecovery=false;state.failed=false;
             }
@@ -6043,13 +5238,13 @@ import java.util.HashMap;
                 throw mse;
             }
 
-            match(input,LPAREN,FOLLOW_LPAREN_in_typeExpression4862); if (state.failed) return n;
-            pushFollow(FOLLOW_type_in_typeExpression4866);
+            match(input,LPAREN,FOLLOW_LPAREN_in_typeExpression4225); if (state.failed) return n;
+            pushFollow(FOLLOW_type_in_typeExpression4229);
             t=type();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,RPAREN,FOLLOW_RPAREN_in_typeExpression4868); if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_typeExpression4231); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTTypeArgExpression(opToken, source, t, followsArrow); 
             }
@@ -6069,7 +5264,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "elemVarsDeclaration"
-    // Generator.g:1089:1: elemVarsDeclaration returns [ASTElemVarsDeclaration n] : idListRes= idList ( COLON t= type )? ;
+    // Generator.g:984:1: elemVarsDeclaration returns [ASTElemVarsDeclaration n] : idListRes= idList ( COLON t= type )? ;
     public final ASTElemVarsDeclaration elemVarsDeclaration() throws RecognitionException {
         ASTElemVarsDeclaration n = null;
 
@@ -6080,27 +5275,27 @@ import java.util.HashMap;
 
          List idList; 
         try {
-            // Generator.g:1091:1: (idListRes= idList ( COLON t= type )? )
-            // Generator.g:1092:5: idListRes= idList ( COLON t= type )?
+            // Generator.g:986:1: (idListRes= idList ( COLON t= type )? )
+            // Generator.g:987:5: idListRes= idList ( COLON t= type )?
             {
-            pushFollow(FOLLOW_idList_in_elemVarsDeclaration4907);
+            pushFollow(FOLLOW_idList_in_elemVarsDeclaration4270);
             idListRes=idList();
 
             state._fsp--;
             if (state.failed) return n;
-            // Generator.g:1093:5: ( COLON t= type )?
-            int alt91=2;
-            int LA91_0 = input.LA(1);
+            // Generator.g:988:5: ( COLON t= type )?
+            int alt85=2;
+            int LA85_0 = input.LA(1);
 
-            if ( (LA91_0==COLON) ) {
-                alt91=1;
+            if ( (LA85_0==COLON) ) {
+                alt85=1;
             }
-            switch (alt91) {
+            switch (alt85) {
                 case 1 :
-                    // Generator.g:1093:7: COLON t= type
+                    // Generator.g:988:7: COLON t= type
                     {
-                    match(input,COLON,FOLLOW_COLON_in_elemVarsDeclaration4915); if (state.failed) return n;
-                    pushFollow(FOLLOW_type_in_elemVarsDeclaration4919);
+                    match(input,COLON,FOLLOW_COLON_in_elemVarsDeclaration4278); if (state.failed) return n;
+                    pushFollow(FOLLOW_type_in_elemVarsDeclaration4282);
                     t=type();
 
                     state._fsp--;
@@ -6130,7 +5325,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "variableInitialization"
-    // Generator.g:1102:1: variableInitialization returns [ASTVariableInitialization n] : name= IDENT COLON t= type EQUAL e= expression ;
+    // Generator.g:997:1: variableInitialization returns [ASTVariableInitialization n] : name= IDENT COLON t= type EQUAL e= expression ;
     public final ASTVariableInitialization variableInitialization() throws RecognitionException {
         ASTVariableInitialization n = null;
 
@@ -6141,18 +5336,18 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1103:1: (name= IDENT COLON t= type EQUAL e= expression )
-            // Generator.g:1104:5: name= IDENT COLON t= type EQUAL e= expression
+            // Generator.g:998:1: (name= IDENT COLON t= type EQUAL e= expression )
+            // Generator.g:999:5: name= IDENT COLON t= type EQUAL e= expression
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableInitialization4954); if (state.failed) return n;
-            match(input,COLON,FOLLOW_COLON_in_variableInitialization4956); if (state.failed) return n;
-            pushFollow(FOLLOW_type_in_variableInitialization4960);
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_variableInitialization4317); if (state.failed) return n;
+            match(input,COLON,FOLLOW_COLON_in_variableInitialization4319); if (state.failed) return n;
+            pushFollow(FOLLOW_type_in_variableInitialization4323);
             t=type();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,EQUAL,FOLLOW_EQUAL_in_variableInitialization4962); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_variableInitialization4966);
+            match(input,EQUAL,FOLLOW_EQUAL_in_variableInitialization4325); if (state.failed) return n;
+            pushFollow(FOLLOW_expression_in_variableInitialization4329);
             e=expression();
 
             state._fsp--;
@@ -6176,7 +5371,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "ifExpression"
-    // Generator.g:1113:1: ifExpression returns [ASTExpression n] : i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' ;
+    // Generator.g:1008:1: ifExpression returns [ASTExpression n] : i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' ;
     public final ASTExpression ifExpression() throws RecognitionException {
         ASTExpression n = null;
 
@@ -6189,28 +5384,28 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1114:1: (i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' )
-            // Generator.g:1115:5: i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif'
+            // Generator.g:1009:1: (i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif' )
+            // Generator.g:1010:5: i= 'if' cond= expression 'then' t= expression 'else' e= expression 'endif'
             {
-            i=(Token)match(input,49,FOLLOW_49_in_ifExpression4998); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_ifExpression5002);
+            i=(Token)match(input,49,FOLLOW_49_in_ifExpression4361); if (state.failed) return n;
+            pushFollow(FOLLOW_expression_in_ifExpression4365);
             cond=expression();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,50,FOLLOW_50_in_ifExpression5004); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_ifExpression5008);
+            match(input,50,FOLLOW_50_in_ifExpression4367); if (state.failed) return n;
+            pushFollow(FOLLOW_expression_in_ifExpression4371);
             t=expression();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,51,FOLLOW_51_in_ifExpression5010); if (state.failed) return n;
-            pushFollow(FOLLOW_expression_in_ifExpression5014);
+            match(input,51,FOLLOW_51_in_ifExpression4373); if (state.failed) return n;
+            pushFollow(FOLLOW_expression_in_ifExpression4377);
             e=expression();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,83,FOLLOW_83_in_ifExpression5016); if (state.failed) return n;
+            match(input,85,FOLLOW_85_in_ifExpression4379); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTIfExpression(i, cond, t, e); 
             }
@@ -6230,7 +5425,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "literal"
-    // Generator.g:1134:1: literal returns [ASTExpression n] : (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral | nDateLit= dateLiteral );
+    // Generator.g:1030:1: literal returns [ASTExpression n] : (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | enumName= IDENT '::' enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral | nDateLit= dateLiteral );
     public final ASTExpression literal() throws RecognitionException {
         ASTExpression n = null;
 
@@ -6240,6 +5435,7 @@ import java.util.HashMap;
         Token r=null;
         Token s=null;
         Token enumLit=null;
+        Token enumName=null;
         ASTCollectionLiteral nColIt = null;
 
         ASTEmptyCollectionLiteral nEColIt = null;
@@ -6252,82 +5448,87 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1135:1: (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral | nDateLit= dateLiteral )
-            int alt92=11;
+            // Generator.g:1031:1: (t= 'true' | f= 'false' | i= INT | r= REAL | s= STRING | HASH enumLit= IDENT | enumName= IDENT '::' enumLit= IDENT | nColIt= collectionLiteral | nEColIt= emptyCollectionLiteral | nUndLit= undefinedLiteral | nTupleLit= tupleLiteral | nDateLit= dateLiteral )
+            int alt86=12;
             switch ( input.LA(1) ) {
-            case 100:
+            case 86:
                 {
-                alt92=1;
+                alt86=1;
                 }
                 break;
-            case 101:
+            case 87:
                 {
-                alt92=2;
+                alt86=2;
                 }
                 break;
             case INT:
                 {
-                alt92=3;
+                alt86=3;
                 }
                 break;
             case REAL:
                 {
-                alt92=4;
+                alt86=4;
                 }
                 break;
             case STRING:
                 {
-                alt92=5;
+                alt86=5;
                 }
                 break;
             case HASH:
                 {
-                alt92=6;
+                alt86=6;
                 }
                 break;
-            case 102:
-            case 103:
-            case 104:
-            case 105:
+            case IDENT:
                 {
-                alt92=7;
+                alt86=7;
                 }
                 break;
-            case 106:
+            case 88:
+            case 89:
+            case 90:
+            case 91:
                 {
-                alt92=8;
+                alt86=8;
                 }
                 break;
-            case 107:
-            case 108:
-            case 109:
+            case 92:
                 {
-                alt92=9;
+                alt86=9;
                 }
                 break;
-            case 110:
+            case 93:
+            case 94:
+            case 95:
                 {
-                alt92=10;
+                alt86=10;
                 }
                 break;
-            case 111:
+            case 96:
                 {
-                alt92=11;
+                alt86=11;
+                }
+                break;
+            case 97:
+                {
+                alt86=12;
                 }
                 break;
             default:
                 if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 92, 0, input);
+                    new NoViableAltException("", 86, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt92) {
+            switch (alt86) {
                 case 1 :
-                    // Generator.g:1136:7: t= 'true'
+                    // Generator.g:1032:7: t= 'true'
                     {
-                    t=(Token)match(input,100,FOLLOW_100_in_literal5055); if (state.failed) return n;
+                    t=(Token)match(input,86,FOLLOW_86_in_literal4418); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = new ASTBooleanLiteral(true); 
                     }
@@ -6335,9 +5536,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:1137:7: f= 'false'
+                    // Generator.g:1033:7: f= 'false'
                     {
-                    f=(Token)match(input,101,FOLLOW_101_in_literal5069); if (state.failed) return n;
+                    f=(Token)match(input,87,FOLLOW_87_in_literal4432); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = new ASTBooleanLiteral(false); 
                     }
@@ -6345,9 +5546,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 3 :
-                    // Generator.g:1138:7: i= INT
+                    // Generator.g:1034:7: i= INT
                     {
-                    i=(Token)match(input,INT,FOLLOW_INT_in_literal5082); if (state.failed) return n;
+                    i=(Token)match(input,INT,FOLLOW_INT_in_literal4445); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = new ASTIntegerLiteral(i); 
                     }
@@ -6355,9 +5556,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 4 :
-                    // Generator.g:1139:7: r= REAL
+                    // Generator.g:1035:7: r= REAL
                     {
-                    r=(Token)match(input,REAL,FOLLOW_REAL_in_literal5097); if (state.failed) return n;
+                    r=(Token)match(input,REAL,FOLLOW_REAL_in_literal4460); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = new ASTRealLiteral(r); 
                     }
@@ -6365,9 +5566,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 5 :
-                    // Generator.g:1140:7: s= STRING
+                    // Generator.g:1036:7: s= STRING
                     {
-                    s=(Token)match(input,STRING,FOLLOW_STRING_in_literal5111); if (state.failed) return n;
+                    s=(Token)match(input,STRING,FOLLOW_STRING_in_literal4474); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = new ASTStringLiteral(s); 
                     }
@@ -6375,20 +5576,32 @@ import java.util.HashMap;
                     }
                     break;
                 case 6 :
-                    // Generator.g:1141:7: HASH enumLit= IDENT
+                    // Generator.g:1037:7: HASH enumLit= IDENT
                     {
-                    match(input,HASH,FOLLOW_HASH_in_literal5121); if (state.failed) return n;
-                    enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal5125); if (state.failed) return n;
+                    match(input,HASH,FOLLOW_HASH_in_literal4484); if (state.failed) return n;
+                    enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal4488); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
-                       n = new ASTEnumLiteral(enumLit); 
+                       n = new ASTEnumLiteral(enumLit);  reportWarning("the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");
                     }
 
                     }
                     break;
                 case 7 :
-                    // Generator.g:1142:7: nColIt= collectionLiteral
+                    // Generator.g:1038:7: enumName= IDENT '::' enumLit= IDENT
                     {
-                    pushFollow(FOLLOW_collectionLiteral_in_literal5137);
+                    enumName=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal4500); if (state.failed) return n;
+                    match(input,COLON_COLON,FOLLOW_COLON_COLON_in_literal4502); if (state.failed) return n;
+                    enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal4506); if (state.failed) return n;
+                    if ( state.backtracking==0 ) {
+                       n = new ASTEnumLiteral(enumName, enumLit); 
+                    }
+
+                    }
+                    break;
+                case 8 :
+                    // Generator.g:1039:7: nColIt= collectionLiteral
+                    {
+                    pushFollow(FOLLOW_collectionLiteral_in_literal4518);
                     nColIt=collectionLiteral();
 
                     state._fsp--;
@@ -6399,10 +5612,10 @@ import java.util.HashMap;
 
                     }
                     break;
-                case 8 :
-                    // Generator.g:1143:7: nEColIt= emptyCollectionLiteral
+                case 9 :
+                    // Generator.g:1040:7: nEColIt= emptyCollectionLiteral
                     {
-                    pushFollow(FOLLOW_emptyCollectionLiteral_in_literal5149);
+                    pushFollow(FOLLOW_emptyCollectionLiteral_in_literal4530);
                     nEColIt=emptyCollectionLiteral();
 
                     state._fsp--;
@@ -6413,10 +5626,10 @@ import java.util.HashMap;
 
                     }
                     break;
-                case 9 :
-                    // Generator.g:1144:7: nUndLit= undefinedLiteral
+                case 10 :
+                    // Generator.g:1041:7: nUndLit= undefinedLiteral
                     {
-                    pushFollow(FOLLOW_undefinedLiteral_in_literal5161);
+                    pushFollow(FOLLOW_undefinedLiteral_in_literal4542);
                     nUndLit=undefinedLiteral();
 
                     state._fsp--;
@@ -6427,10 +5640,10 @@ import java.util.HashMap;
 
                     }
                     break;
-                case 10 :
-                    // Generator.g:1145:7: nTupleLit= tupleLiteral
+                case 11 :
+                    // Generator.g:1042:7: nTupleLit= tupleLiteral
                     {
-                    pushFollow(FOLLOW_tupleLiteral_in_literal5173);
+                    pushFollow(FOLLOW_tupleLiteral_in_literal4554);
                     nTupleLit=tupleLiteral();
 
                     state._fsp--;
@@ -6441,10 +5654,10 @@ import java.util.HashMap;
 
                     }
                     break;
-                case 11 :
-                    // Generator.g:1146:7: nDateLit= dateLiteral
+                case 12 :
+                    // Generator.g:1043:7: nDateLit= dateLiteral
                     {
-                    pushFollow(FOLLOW_dateLiteral_in_literal5185);
+                    pushFollow(FOLLOW_dateLiteral_in_literal4566);
                     nDateLit=dateLiteral();
 
                     state._fsp--;
@@ -6470,7 +5683,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "collectionLiteral"
-    // Generator.g:1154:1: collectionLiteral returns [ASTCollectionLiteral n] : ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE ;
+    // Generator.g:1051:1: collectionLiteral returns [ASTCollectionLiteral n] : ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE ;
     public final ASTCollectionLiteral collectionLiteral() throws RecognitionException {
         ASTCollectionLiteral n = null;
 
@@ -6479,13 +5692,13 @@ import java.util.HashMap;
 
          Token op = null; 
         try {
-            // Generator.g:1156:1: ( ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE )
-            // Generator.g:1157:5: ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE
+            // Generator.g:1053:1: ( ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE )
+            // Generator.g:1054:5: ( 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LBRACE (ci= collectionItem ( COMMA ci= collectionItem )* )? RBRACE
             {
             if ( state.backtracking==0 ) {
                op = input.LT(1); 
             }
-            if ( (input.LA(1)>=102 && input.LA(1)<=105) ) {
+            if ( (input.LA(1)>=88 && input.LA(1)<=91) ) {
                 input.consume();
                 state.errorRecovery=false;state.failed=false;
             }
@@ -6498,19 +5711,19 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                n = new ASTCollectionLiteral(op); 
             }
-            match(input,LBRACE,FOLLOW_LBRACE_in_collectionLiteral5252); if (state.failed) return n;
-            // Generator.g:1161:5: (ci= collectionItem ( COMMA ci= collectionItem )* )?
-            int alt94=2;
-            int LA94_0 = input.LA(1);
+            match(input,LBRACE,FOLLOW_LBRACE_in_collectionLiteral4633); if (state.failed) return n;
+            // Generator.g:1058:5: (ci= collectionItem ( COMMA ci= collectionItem )* )?
+            int alt88=2;
+            int LA88_0 = input.LA(1);
 
-            if ( ((LA94_0>=IDENT && LA94_0<=LPAREN)||LA94_0==INT||(LA94_0>=PLUS && LA94_0<=MINUS)||(LA94_0>=REAL && LA94_0<=HASH)||LA94_0==49||LA94_0==88||LA94_0==94||(LA94_0>=96 && LA94_0<=111)) ) {
-                alt94=1;
+            if ( ((LA88_0>=IDENT && LA88_0<=LPAREN)||LA88_0==INT||(LA88_0>=PLUS && LA88_0<=MINUS)||(LA88_0>=REAL && LA88_0<=HASH)||LA88_0==49||LA88_0==73||LA88_0==79||(LA88_0>=81 && LA88_0<=84)||(LA88_0>=86 && LA88_0<=97)) ) {
+                alt88=1;
             }
-            switch (alt94) {
+            switch (alt88) {
                 case 1 :
-                    // Generator.g:1162:7: ci= collectionItem ( COMMA ci= collectionItem )*
+                    // Generator.g:1059:7: ci= collectionItem ( COMMA ci= collectionItem )*
                     {
-                    pushFollow(FOLLOW_collectionItem_in_collectionLiteral5269);
+                    pushFollow(FOLLOW_collectionItem_in_collectionLiteral4650);
                     ci=collectionItem();
 
                     state._fsp--;
@@ -6518,23 +5731,23 @@ import java.util.HashMap;
                     if ( state.backtracking==0 ) {
                        n.addItem(ci); 
                     }
-                    // Generator.g:1163:7: ( COMMA ci= collectionItem )*
-                    loop93:
+                    // Generator.g:1060:7: ( COMMA ci= collectionItem )*
+                    loop87:
                     do {
-                        int alt93=2;
-                        int LA93_0 = input.LA(1);
+                        int alt87=2;
+                        int LA87_0 = input.LA(1);
 
-                        if ( (LA93_0==COMMA) ) {
-                            alt93=1;
+                        if ( (LA87_0==COMMA) ) {
+                            alt87=1;
                         }
 
 
-                        switch (alt93) {
+                        switch (alt87) {
                     	case 1 :
-                    	    // Generator.g:1163:9: COMMA ci= collectionItem
+                    	    // Generator.g:1060:9: COMMA ci= collectionItem
                     	    {
-                    	    match(input,COMMA,FOLLOW_COMMA_in_collectionLiteral5282); if (state.failed) return n;
-                    	    pushFollow(FOLLOW_collectionItem_in_collectionLiteral5286);
+                    	    match(input,COMMA,FOLLOW_COMMA_in_collectionLiteral4663); if (state.failed) return n;
+                    	    pushFollow(FOLLOW_collectionItem_in_collectionLiteral4667);
                     	    ci=collectionItem();
 
                     	    state._fsp--;
@@ -6547,7 +5760,7 @@ import java.util.HashMap;
                     	    break;
 
                     	default :
-                    	    break loop93;
+                    	    break loop87;
                         }
                     } while (true);
 
@@ -6557,7 +5770,7 @@ import java.util.HashMap;
 
             }
 
-            match(input,RBRACE,FOLLOW_RBRACE_in_collectionLiteral5305); if (state.failed) return n;
+            match(input,RBRACE,FOLLOW_RBRACE_in_collectionLiteral4686); if (state.failed) return n;
 
             }
 
@@ -6574,7 +5787,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "collectionItem"
-    // Generator.g:1172:1: collectionItem returns [ASTCollectionItem n] : e= expression ( DOTDOT e= expression )? ;
+    // Generator.g:1069:1: collectionItem returns [ASTCollectionItem n] : e= expression ( DOTDOT e= expression )? ;
     public final ASTCollectionItem collectionItem() throws RecognitionException {
         ASTCollectionItem n = null;
 
@@ -6583,10 +5796,10 @@ import java.util.HashMap;
 
          n = new ASTCollectionItem(); 
         try {
-            // Generator.g:1174:1: (e= expression ( DOTDOT e= expression )? )
-            // Generator.g:1175:5: e= expression ( DOTDOT e= expression )?
+            // Generator.g:1071:1: (e= expression ( DOTDOT e= expression )? )
+            // Generator.g:1072:5: e= expression ( DOTDOT e= expression )?
             {
-            pushFollow(FOLLOW_expression_in_collectionItem5334);
+            pushFollow(FOLLOW_expression_in_collectionItem4715);
             e=expression();
 
             state._fsp--;
@@ -6594,19 +5807,19 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                n.setFirst(e); 
             }
-            // Generator.g:1176:5: ( DOTDOT e= expression )?
-            int alt95=2;
-            int LA95_0 = input.LA(1);
+            // Generator.g:1073:5: ( DOTDOT e= expression )?
+            int alt89=2;
+            int LA89_0 = input.LA(1);
 
-            if ( (LA95_0==DOTDOT) ) {
-                alt95=1;
+            if ( (LA89_0==DOTDOT) ) {
+                alt89=1;
             }
-            switch (alt95) {
+            switch (alt89) {
                 case 1 :
-                    // Generator.g:1176:7: DOTDOT e= expression
+                    // Generator.g:1073:7: DOTDOT e= expression
                     {
-                    match(input,DOTDOT,FOLLOW_DOTDOT_in_collectionItem5345); if (state.failed) return n;
-                    pushFollow(FOLLOW_expression_in_collectionItem5349);
+                    match(input,DOTDOT,FOLLOW_DOTDOT_in_collectionItem4726); if (state.failed) return n;
+                    pushFollow(FOLLOW_expression_in_collectionItem4730);
                     e=expression();
 
                     state._fsp--;
@@ -6636,7 +5849,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "emptyCollectionLiteral"
-    // Generator.g:1186:1: emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n] : 'oclEmpty' LPAREN t= collectionType RPAREN ;
+    // Generator.g:1083:1: emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n] : 'oclEmpty' LPAREN t= collectionType RPAREN ;
     public final ASTEmptyCollectionLiteral emptyCollectionLiteral() throws RecognitionException {
         ASTEmptyCollectionLiteral n = null;
 
@@ -6644,17 +5857,17 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1187:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
-            // Generator.g:1188:5: 'oclEmpty' LPAREN t= collectionType RPAREN
+            // Generator.g:1084:1: ( 'oclEmpty' LPAREN t= collectionType RPAREN )
+            // Generator.g:1085:5: 'oclEmpty' LPAREN t= collectionType RPAREN
             {
-            match(input,106,FOLLOW_106_in_emptyCollectionLiteral5378); if (state.failed) return n;
-            match(input,LPAREN,FOLLOW_LPAREN_in_emptyCollectionLiteral5380); if (state.failed) return n;
-            pushFollow(FOLLOW_collectionType_in_emptyCollectionLiteral5384);
+            match(input,92,FOLLOW_92_in_emptyCollectionLiteral4759); if (state.failed) return n;
+            match(input,LPAREN,FOLLOW_LPAREN_in_emptyCollectionLiteral4761); if (state.failed) return n;
+            pushFollow(FOLLOW_collectionType_in_emptyCollectionLiteral4765);
             t=collectionType();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,RPAREN,FOLLOW_RPAREN_in_emptyCollectionLiteral5386); if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_emptyCollectionLiteral4767); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTEmptyCollectionLiteral(t); 
             }
@@ -6674,7 +5887,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "undefinedLiteral"
-    // Generator.g:1199:1: undefinedLiteral returns [ASTUndefinedLiteral n] : ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' );
+    // Generator.g:1096:1: undefinedLiteral returns [ASTUndefinedLiteral n] : ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' );
     public final ASTUndefinedLiteral undefinedLiteral() throws RecognitionException {
         ASTUndefinedLiteral n = null;
 
@@ -6682,44 +5895,44 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1200:1: ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' )
-            int alt96=3;
+            // Generator.g:1097:1: ( 'oclUndefined' LPAREN t= type RPAREN | 'Undefined' | 'null' )
+            int alt90=3;
             switch ( input.LA(1) ) {
-            case 107:
+            case 93:
                 {
-                alt96=1;
+                alt90=1;
                 }
                 break;
-            case 108:
+            case 94:
                 {
-                alt96=2;
+                alt90=2;
                 }
                 break;
-            case 109:
+            case 95:
                 {
-                alt96=3;
+                alt90=3;
                 }
                 break;
             default:
                 if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 96, 0, input);
+                    new NoViableAltException("", 90, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt96) {
+            switch (alt90) {
                 case 1 :
-                    // Generator.g:1201:5: 'oclUndefined' LPAREN t= type RPAREN
+                    // Generator.g:1098:5: 'oclUndefined' LPAREN t= type RPAREN
                     {
-                    match(input,107,FOLLOW_107_in_undefinedLiteral5416); if (state.failed) return n;
-                    match(input,LPAREN,FOLLOW_LPAREN_in_undefinedLiteral5418); if (state.failed) return n;
-                    pushFollow(FOLLOW_type_in_undefinedLiteral5422);
+                    match(input,93,FOLLOW_93_in_undefinedLiteral4797); if (state.failed) return n;
+                    match(input,LPAREN,FOLLOW_LPAREN_in_undefinedLiteral4799); if (state.failed) return n;
+                    pushFollow(FOLLOW_type_in_undefinedLiteral4803);
                     t=type();
 
                     state._fsp--;
                     if (state.failed) return n;
-                    match(input,RPAREN,FOLLOW_RPAREN_in_undefinedLiteral5424); if (state.failed) return n;
+                    match(input,RPAREN,FOLLOW_RPAREN_in_undefinedLiteral4805); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = new ASTUndefinedLiteral(t); 
                     }
@@ -6727,9 +5940,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:1204:5: 'Undefined'
+                    // Generator.g:1101:5: 'Undefined'
                     {
-                    match(input,108,FOLLOW_108_in_undefinedLiteral5438); if (state.failed) return n;
+                    match(input,94,FOLLOW_94_in_undefinedLiteral4819); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = new ASTUndefinedLiteral(); 
                     }
@@ -6737,9 +5950,9 @@ import java.util.HashMap;
                     }
                     break;
                 case 3 :
-                    // Generator.g:1207:5: 'null'
+                    // Generator.g:1104:5: 'null'
                     {
-                    match(input,109,FOLLOW_109_in_undefinedLiteral5452); if (state.failed) return n;
+                    match(input,95,FOLLOW_95_in_undefinedLiteral4833); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
                        n = new ASTUndefinedLiteral(); 
                     }
@@ -6761,7 +5974,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "tupleLiteral"
-    // Generator.g:1216:1: tupleLiteral returns [ASTTupleLiteral n] : 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE ;
+    // Generator.g:1113:1: tupleLiteral returns [ASTTupleLiteral n] : 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE ;
     public final ASTTupleLiteral tupleLiteral() throws RecognitionException {
         ASTTupleLiteral n = null;
 
@@ -6770,12 +5983,12 @@ import java.util.HashMap;
 
          List tiList = new ArrayList(); 
         try {
-            // Generator.g:1218:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
-            // Generator.g:1219:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
+            // Generator.g:1115:1: ( 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE )
+            // Generator.g:1116:5: 'Tuple' LBRACE ti= tupleItem ( COMMA ti= tupleItem )* RBRACE
             {
-            match(input,110,FOLLOW_110_in_tupleLiteral5486); if (state.failed) return n;
-            match(input,LBRACE,FOLLOW_LBRACE_in_tupleLiteral5492); if (state.failed) return n;
-            pushFollow(FOLLOW_tupleItem_in_tupleLiteral5500);
+            match(input,96,FOLLOW_96_in_tupleLiteral4867); if (state.failed) return n;
+            match(input,LBRACE,FOLLOW_LBRACE_in_tupleLiteral4873); if (state.failed) return n;
+            pushFollow(FOLLOW_tupleItem_in_tupleLiteral4881);
             ti=tupleItem();
 
             state._fsp--;
@@ -6783,23 +5996,23 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                tiList.add(ti); 
             }
-            // Generator.g:1222:5: ( COMMA ti= tupleItem )*
-            loop97:
+            // Generator.g:1119:5: ( COMMA ti= tupleItem )*
+            loop91:
             do {
-                int alt97=2;
-                int LA97_0 = input.LA(1);
+                int alt91=2;
+                int LA91_0 = input.LA(1);
 
-                if ( (LA97_0==COMMA) ) {
-                    alt97=1;
+                if ( (LA91_0==COMMA) ) {
+                    alt91=1;
                 }
 
 
-                switch (alt97) {
+                switch (alt91) {
             	case 1 :
-            	    // Generator.g:1222:7: COMMA ti= tupleItem
+            	    // Generator.g:1119:7: COMMA ti= tupleItem
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_tupleLiteral5511); if (state.failed) return n;
-            	    pushFollow(FOLLOW_tupleItem_in_tupleLiteral5515);
+            	    match(input,COMMA,FOLLOW_COMMA_in_tupleLiteral4892); if (state.failed) return n;
+            	    pushFollow(FOLLOW_tupleItem_in_tupleLiteral4896);
             	    ti=tupleItem();
 
             	    state._fsp--;
@@ -6812,11 +6025,11 @@ import java.util.HashMap;
             	    break;
 
             	default :
-            	    break loop97;
+            	    break loop91;
                 }
             } while (true);
 
-            match(input,RBRACE,FOLLOW_RBRACE_in_tupleLiteral5526); if (state.failed) return n;
+            match(input,RBRACE,FOLLOW_RBRACE_in_tupleLiteral4907); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTTupleLiteral(tiList); 
             }
@@ -6836,7 +6049,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "tupleItem"
-    // Generator.g:1230:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) ;
+    // Generator.g:1127:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) ;
     public final ASTTupleItem tupleItem() throws RecognitionException {
         ASTTupleItem n = null;
 
@@ -6847,53 +6060,53 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1231:1: (name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) )
-            // Generator.g:1232:5: name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
+            // Generator.g:1128:1: (name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) )
+            // Generator.g:1129:5: name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem5557); if (state.failed) return n;
-            // Generator.g:1233:5: ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
-            int alt98=2;
-            int LA98_0 = input.LA(1);
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem4938); if (state.failed) return n;
+            // Generator.g:1130:5: ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
+            int alt92=2;
+            int LA92_0 = input.LA(1);
 
-            if ( (LA98_0==COLON) ) {
-                int LA98_1 = input.LA(2);
+            if ( (LA92_0==COLON) ) {
+                int LA92_1 = input.LA(2);
 
                 if ( (synpred1_Generator()) ) {
-                    alt98=1;
+                    alt92=1;
                 }
                 else if ( (true) ) {
-                    alt98=2;
+                    alt92=2;
                 }
                 else {
                     if (state.backtracking>0) {state.failed=true; return n;}
                     NoViableAltException nvae =
-                        new NoViableAltException("", 98, 1, input);
+                        new NoViableAltException("", 92, 1, input);
 
                     throw nvae;
                 }
             }
-            else if ( (LA98_0==EQUAL) ) {
-                alt98=2;
+            else if ( (LA92_0==EQUAL) ) {
+                alt92=2;
             }
             else {
                 if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 98, 0, input);
+                    new NoViableAltException("", 92, 0, input);
 
                 throw nvae;
             }
-            switch (alt98) {
+            switch (alt92) {
                 case 1 :
-                    // Generator.g:1236:7: ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression
+                    // Generator.g:1133:7: ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression
                     {
-                    match(input,COLON,FOLLOW_COLON_in_tupleItem5596); if (state.failed) return n;
-                    pushFollow(FOLLOW_type_in_tupleItem5600);
+                    match(input,COLON,FOLLOW_COLON_in_tupleItem4977); if (state.failed) return n;
+                    pushFollow(FOLLOW_type_in_tupleItem4981);
                     t=type();
 
                     state._fsp--;
                     if (state.failed) return n;
-                    match(input,EQUAL,FOLLOW_EQUAL_in_tupleItem5602); if (state.failed) return n;
-                    pushFollow(FOLLOW_expression_in_tupleItem5606);
+                    match(input,EQUAL,FOLLOW_EQUAL_in_tupleItem4983); if (state.failed) return n;
+                    pushFollow(FOLLOW_expression_in_tupleItem4987);
                     e=expression();
 
                     state._fsp--;
@@ -6905,7 +6118,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // Generator.g:1239:7: ( COLON | EQUAL ) e= expression
+                    // Generator.g:1136:7: ( COLON | EQUAL ) e= expression
                     {
                     if ( (input.LA(1)>=COLON && input.LA(1)<=EQUAL) ) {
                         input.consume();
@@ -6917,7 +6130,7 @@ import java.util.HashMap;
                         throw mse;
                     }
 
-                    pushFollow(FOLLOW_expression_in_tupleItem5638);
+                    pushFollow(FOLLOW_expression_in_tupleItem5019);
                     e=expression();
 
                     state._fsp--;
@@ -6947,20 +6160,20 @@ import java.util.HashMap;
 
 
     // $ANTLR start "dateLiteral"
-    // Generator.g:1248:1: dateLiteral returns [ASTDateLiteral n] : 'Date' LBRACE v= STRING RBRACE ;
+    // Generator.g:1145:1: dateLiteral returns [ASTDateLiteral n] : 'Date' LBRACE v= STRING RBRACE ;
     public final ASTDateLiteral dateLiteral() throws RecognitionException {
         ASTDateLiteral n = null;
 
         Token v=null;
 
         try {
-            // Generator.g:1249:1: ( 'Date' LBRACE v= STRING RBRACE )
-            // Generator.g:1250:5: 'Date' LBRACE v= STRING RBRACE
+            // Generator.g:1146:1: ( 'Date' LBRACE v= STRING RBRACE )
+            // Generator.g:1147:5: 'Date' LBRACE v= STRING RBRACE
             {
-            match(input,111,FOLLOW_111_in_dateLiteral5683); if (state.failed) return n;
-            match(input,LBRACE,FOLLOW_LBRACE_in_dateLiteral5685); if (state.failed) return n;
-            v=(Token)match(input,STRING,FOLLOW_STRING_in_dateLiteral5689); if (state.failed) return n;
-            match(input,RBRACE,FOLLOW_RBRACE_in_dateLiteral5691); if (state.failed) return n;
+            match(input,97,FOLLOW_97_in_dateLiteral5064); if (state.failed) return n;
+            match(input,LBRACE,FOLLOW_LBRACE_in_dateLiteral5066); if (state.failed) return n;
+            v=(Token)match(input,STRING,FOLLOW_STRING_in_dateLiteral5070); if (state.failed) return n;
+            match(input,RBRACE,FOLLOW_RBRACE_in_dateLiteral5072); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTDateLiteral( v ); 
             }
@@ -6980,7 +6193,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "type"
-    // Generator.g:1260:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
+    // Generator.g:1157:1: type returns [ASTType n] : (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) ;
     public final ASTType type() throws RecognitionException {
         ASTType n = null;
 
@@ -6993,81 +6206,81 @@ import java.util.HashMap;
 
          Token tok = null; 
         try {
-            // Generator.g:1262:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
-            // Generator.g:1263:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            // Generator.g:1159:1: ( (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType ) )
+            // Generator.g:1160:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
             {
             if ( state.backtracking==0 ) {
                tok = input.LT(1); /* remember start of type */ 
             }
-            // Generator.g:1264:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
-            int alt99=3;
+            // Generator.g:1161:5: (nTSimple= simpleType | nTCollection= collectionType | nTTuple= tupleType )
+            int alt93=3;
             switch ( input.LA(1) ) {
             case IDENT:
                 {
-                alt99=1;
+                alt93=1;
                 }
                 break;
-            case 102:
-            case 103:
-            case 104:
-            case 105:
-            case 112:
+            case 88:
+            case 89:
+            case 90:
+            case 91:
+            case 98:
                 {
-                alt99=2;
+                alt93=2;
                 }
                 break;
-            case 110:
+            case 96:
                 {
-                alt99=3;
+                alt93=3;
                 }
                 break;
             default:
                 if (state.backtracking>0) {state.failed=true; return n;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 99, 0, input);
+                    new NoViableAltException("", 93, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt99) {
+            switch (alt93) {
                 case 1 :
-                    // Generator.g:1265:7: nTSimple= simpleType
+                    // Generator.g:1162:7: nTSimple= simpleType
                     {
-                    pushFollow(FOLLOW_simpleType_in_type5741);
+                    pushFollow(FOLLOW_simpleType_in_type5122);
                     nTSimple=simpleType();
 
                     state._fsp--;
                     if (state.failed) return n;
                     if ( state.backtracking==0 ) {
-                       n = nTSimple; n.setStartToken(tok); 
+                       n = nTSimple; if (n != null) n.setStartToken(tok); 
                     }
 
                     }
                     break;
                 case 2 :
-                    // Generator.g:1266:7: nTCollection= collectionType
+                    // Generator.g:1163:7: nTCollection= collectionType
                     {
-                    pushFollow(FOLLOW_collectionType_in_type5753);
+                    pushFollow(FOLLOW_collectionType_in_type5134);
                     nTCollection=collectionType();
 
                     state._fsp--;
                     if (state.failed) return n;
                     if ( state.backtracking==0 ) {
-                       n = nTCollection; n.setStartToken(tok); 
+                       n = nTCollection; if (n != null) n.setStartToken(tok); 
                     }
 
                     }
                     break;
                 case 3 :
-                    // Generator.g:1267:7: nTTuple= tupleType
+                    // Generator.g:1164:7: nTTuple= tupleType
                     {
-                    pushFollow(FOLLOW_tupleType_in_type5765);
+                    pushFollow(FOLLOW_tupleType_in_type5146);
                     nTTuple=tupleType();
 
                     state._fsp--;
                     if (state.failed) return n;
                     if ( state.backtracking==0 ) {
-                       n = nTTuple; n.setStartToken(tok); 
+                       n = nTTuple; if (n != null) n.setStartToken(tok); 
                     }
 
                     }
@@ -7091,7 +6304,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "typeOnly"
-    // Generator.g:1272:1: typeOnly returns [ASTType n] : nT= type EOF ;
+    // Generator.g:1169:1: typeOnly returns [ASTType n] : nT= type EOF ;
     public final ASTType typeOnly() throws RecognitionException {
         ASTType n = null;
 
@@ -7099,15 +6312,15 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1273:1: (nT= type EOF )
-            // Generator.g:1274:5: nT= type EOF
+            // Generator.g:1170:1: (nT= type EOF )
+            // Generator.g:1171:5: nT= type EOF
             {
-            pushFollow(FOLLOW_type_in_typeOnly5797);
+            pushFollow(FOLLOW_type_in_typeOnly5178);
             nT=type();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,EOF,FOLLOW_EOF_in_typeOnly5799); if (state.failed) return n;
+            match(input,EOF,FOLLOW_EOF_in_typeOnly5180); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = nT; 
             }
@@ -7127,17 +6340,17 @@ import java.util.HashMap;
 
 
     // $ANTLR start "simpleType"
-    // Generator.g:1284:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
+    // Generator.g:1181:1: simpleType returns [ASTSimpleType n] : name= IDENT ;
     public final ASTSimpleType simpleType() throws RecognitionException {
         ASTSimpleType n = null;
 
         Token name=null;
 
         try {
-            // Generator.g:1285:1: (name= IDENT )
-            // Generator.g:1286:5: name= IDENT
+            // Generator.g:1182:1: (name= IDENT )
+            // Generator.g:1183:5: name= IDENT
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_simpleType5827); if (state.failed) return n;
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_simpleType5208); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTSimpleType(name); 
             }
@@ -7157,7 +6370,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "collectionType"
-    // Generator.g:1294:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN ;
+    // Generator.g:1191:1: collectionType returns [ASTCollectionType n] : ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN ;
     public final ASTCollectionType collectionType() throws RecognitionException {
         ASTCollectionType n = null;
 
@@ -7166,13 +6379,13 @@ import java.util.HashMap;
 
          Token op = null; 
         try {
-            // Generator.g:1296:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN )
-            // Generator.g:1297:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN
+            // Generator.g:1193:1: ( ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN )
+            // Generator.g:1194:5: ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) LPAREN elemType= type RPAREN
             {
             if ( state.backtracking==0 ) {
                op = input.LT(1); 
             }
-            if ( (input.LA(1)>=102 && input.LA(1)<=105)||input.LA(1)==112 ) {
+            if ( (input.LA(1)>=88 && input.LA(1)<=91)||input.LA(1)==98 ) {
                 input.consume();
                 state.errorRecovery=false;state.failed=false;
             }
@@ -7182,15 +6395,15 @@ import java.util.HashMap;
                 throw mse;
             }
 
-            match(input,LPAREN,FOLLOW_LPAREN_in_collectionType5892); if (state.failed) return n;
-            pushFollow(FOLLOW_type_in_collectionType5896);
+            match(input,LPAREN,FOLLOW_LPAREN_in_collectionType5273); if (state.failed) return n;
+            pushFollow(FOLLOW_type_in_collectionType5277);
             elemType=type();
 
             state._fsp--;
             if (state.failed) return n;
-            match(input,RPAREN,FOLLOW_RPAREN_in_collectionType5898); if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_collectionType5279); if (state.failed) return n;
             if ( state.backtracking==0 ) {
-               n = new ASTCollectionType(op, elemType); n.setStartToken(op);
+               n = new ASTCollectionType(op, elemType); if (n != null) n.setStartToken(op);
             }
 
             }
@@ -7208,7 +6421,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "tupleType"
-    // Generator.g:1307:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
+    // Generator.g:1204:1: tupleType returns [ASTTupleType n] : 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN ;
     public final ASTTupleType tupleType() throws RecognitionException {
         ASTTupleType n = null;
 
@@ -7217,12 +6430,12 @@ import java.util.HashMap;
 
          List tpList = new ArrayList(); 
         try {
-            // Generator.g:1309:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
-            // Generator.g:1310:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
+            // Generator.g:1206:1: ( 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN )
+            // Generator.g:1207:5: 'Tuple' LPAREN tp= tuplePart ( COMMA tp= tuplePart )* RPAREN
             {
-            match(input,110,FOLLOW_110_in_tupleType5932); if (state.failed) return n;
-            match(input,LPAREN,FOLLOW_LPAREN_in_tupleType5934); if (state.failed) return n;
-            pushFollow(FOLLOW_tuplePart_in_tupleType5943);
+            match(input,96,FOLLOW_96_in_tupleType5313); if (state.failed) return n;
+            match(input,LPAREN,FOLLOW_LPAREN_in_tupleType5315); if (state.failed) return n;
+            pushFollow(FOLLOW_tuplePart_in_tupleType5324);
             tp=tuplePart();
 
             state._fsp--;
@@ -7230,23 +6443,23 @@ import java.util.HashMap;
             if ( state.backtracking==0 ) {
                tpList.add(tp); 
             }
-            // Generator.g:1312:5: ( COMMA tp= tuplePart )*
-            loop100:
+            // Generator.g:1209:5: ( COMMA tp= tuplePart )*
+            loop94:
             do {
-                int alt100=2;
-                int LA100_0 = input.LA(1);
+                int alt94=2;
+                int LA94_0 = input.LA(1);
 
-                if ( (LA100_0==COMMA) ) {
-                    alt100=1;
+                if ( (LA94_0==COMMA) ) {
+                    alt94=1;
                 }
 
 
-                switch (alt100) {
+                switch (alt94) {
             	case 1 :
-            	    // Generator.g:1312:7: COMMA tp= tuplePart
+            	    // Generator.g:1209:7: COMMA tp= tuplePart
             	    {
-            	    match(input,COMMA,FOLLOW_COMMA_in_tupleType5954); if (state.failed) return n;
-            	    pushFollow(FOLLOW_tuplePart_in_tupleType5958);
+            	    match(input,COMMA,FOLLOW_COMMA_in_tupleType5335); if (state.failed) return n;
+            	    pushFollow(FOLLOW_tuplePart_in_tupleType5339);
             	    tp=tuplePart();
 
             	    state._fsp--;
@@ -7259,11 +6472,11 @@ import java.util.HashMap;
             	    break;
 
             	default :
-            	    break loop100;
+            	    break loop94;
                 }
             } while (true);
 
-            match(input,RPAREN,FOLLOW_RPAREN_in_tupleType5970); if (state.failed) return n;
+            match(input,RPAREN,FOLLOW_RPAREN_in_tupleType5351); if (state.failed) return n;
             if ( state.backtracking==0 ) {
                n = new ASTTupleType(tpList); 
             }
@@ -7283,7 +6496,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "tuplePart"
-    // Generator.g:1321:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
+    // Generator.g:1218:1: tuplePart returns [ASTTuplePart n] : name= IDENT COLON t= type ;
     public final ASTTuplePart tuplePart() throws RecognitionException {
         ASTTuplePart n = null;
 
@@ -7292,12 +6505,12 @@ import java.util.HashMap;
 
 
         try {
-            // Generator.g:1322:1: (name= IDENT COLON t= type )
-            // Generator.g:1323:5: name= IDENT COLON t= type
+            // Generator.g:1219:1: (name= IDENT COLON t= type )
+            // Generator.g:1220:5: name= IDENT COLON t= type
             {
-            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tuplePart6002); if (state.failed) return n;
-            match(input,COLON,FOLLOW_COLON_in_tuplePart6004); if (state.failed) return n;
-            pushFollow(FOLLOW_type_in_tuplePart6008);
+            name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tuplePart5383); if (state.failed) return n;
+            match(input,COLON,FOLLOW_COLON_in_tuplePart5385); if (state.failed) return n;
+            pushFollow(FOLLOW_type_in_tuplePart5389);
             t=type();
 
             state._fsp--;
@@ -7321,12 +6534,12 @@ import java.util.HashMap;
 
     // $ANTLR start synpred1_Generator
     public final void synpred1_Generator_fragment() throws RecognitionException {   
-        // Generator.g:1236:7: ( COLON IDENT EQUAL )
-        // Generator.g:1236:8: COLON IDENT EQUAL
+        // Generator.g:1133:7: ( COLON IDENT EQUAL )
+        // Generator.g:1133:8: COLON IDENT EQUAL
         {
-        match(input,COLON,FOLLOW_COLON_in_synpred1_Generator5587); if (state.failed) return ;
-        match(input,IDENT,FOLLOW_IDENT_in_synpred1_Generator5589); if (state.failed) return ;
-        match(input,EQUAL,FOLLOW_EQUAL_in_synpred1_Generator5591); if (state.failed) return ;
+        match(input,COLON,FOLLOW_COLON_in_synpred1_Generator4968); if (state.failed) return ;
+        match(input,IDENT,FOLLOW_IDENT_in_synpred1_Generator4970); if (state.failed) return ;
+        match(input,EQUAL,FOLLOW_EQUAL_in_synpred1_Generator4972); if (state.failed) return ;
 
         }
     }
@@ -7352,7 +6565,7 @@ import java.util.HashMap;
 
  
 
-    public static final BitSet FOLLOW_invariant_in_invariantListOnly79 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000020L});
+    public static final BitSet FOLLOW_invariant_in_invariantListOnly79 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000010L});
     public static final BitSet FOLLOW_EOF_in_invariantListOnly90 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_procedure_in_procedureListOnly135 = new BitSet(new long[]{0x0000080000000000L});
     public static final BitSet FOLLOW_EOF_in_procedureListOnly150 = new BitSet(new long[]{0x0000000000000002L});
@@ -7414,24 +6627,24 @@ import java.util.HashMap;
     public static final BitSet FOLLOW_oclExpression_in_instructionParameter836 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_instrParameterIdent_in_instructionParameter848 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_instrParameterIdent876 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LBRACK_in_oclExpression904 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
+    public static final BitSet FOLLOW_LBRACK_in_oclExpression904 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
     public static final BitSet FOLLOW_expression_in_oclExpression908 = new BitSet(new long[]{0x0000000000001000L});
     public static final BitSet FOLLOW_RBRACK_in_oclExpression910 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_procedureCallOnly945 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_procedureCallOnly953 = new BitSet(new long[]{0x000200070C080070L,0x0000FFFF41000000L});
+    public static final BitSet FOLLOW_LPAREN_in_procedureCallOnly953 = new BitSet(new long[]{0x000200070C080070L,0x00000003FFDE8200L});
     public static final BitSet FOLLOW_expression_in_procedureCallOnly964 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_COMMA_in_procedureCallOnly974 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
+    public static final BitSet FOLLOW_COMMA_in_procedureCallOnly974 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
     public static final BitSet FOLLOW_expression_in_procedureCallOnly978 = new BitSet(new long[]{0x0000000000000140L});
     public static final BitSet FOLLOW_RPAREN_in_procedureCallOnly992 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_procedureCallOnly998 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_52_in_model1025 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_model1029 = new BitSet(new long[]{0xD9E0000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_enumTypeDefinition_in_model1041 = new BitSet(new long[]{0xD9E0000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_generalClassDefinition_in_model1058 = new BitSet(new long[]{0xD9A0000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_associationDefinition_in_model1075 = new BitSet(new long[]{0xD9A0000000000000L,0x0000000000000001L});
-    public static final BitSet FOLLOW_53_in_model1091 = new BitSet(new long[]{0xD9A0000000000000L,0x0000000000000021L});
-    public static final BitSet FOLLOW_invariant_in_model1109 = new BitSet(new long[]{0xD9A0000000000000L,0x0000000000000021L});
-    public static final BitSet FOLLOW_prePost_in_model1130 = new BitSet(new long[]{0xD9A0000000000000L,0x0000000000000021L});
+    public static final BitSet FOLLOW_IDENT_in_model1029 = new BitSet(new long[]{0xD9E0000000000010L});
+    public static final BitSet FOLLOW_enumTypeDefinition_in_model1041 = new BitSet(new long[]{0xD9E0000000000010L});
+    public static final BitSet FOLLOW_generalClassDefinition_in_model1058 = new BitSet(new long[]{0xD9A0000000000010L});
+    public static final BitSet FOLLOW_associationDefinition_in_model1075 = new BitSet(new long[]{0xD9A0000000000010L});
+    public static final BitSet FOLLOW_53_in_model1091 = new BitSet(new long[]{0xD9A0000000000010L,0x0000000000000010L});
+    public static final BitSet FOLLOW_invariant_in_model1109 = new BitSet(new long[]{0xD9A0000000000010L,0x0000000000000010L});
+    public static final BitSet FOLLOW_prePost_in_model1130 = new BitSet(new long[]{0xD9A0000000000010L,0x0000000000000010L});
     public static final BitSet FOLLOW_EOF_in_model1171 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_54_in_enumTypeDefinition1198 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_enumTypeDefinition1202 = new BitSet(new long[]{0x0000000000002000L});
@@ -7450,8 +6663,8 @@ import java.util.HashMap;
     public static final BitSet FOLLOW_attributeDefinition_in_classDefinition1374 = new BitSet(new long[]{0x0420400000000010L});
     public static final BitSet FOLLOW_58_in_classDefinition1395 = new BitSet(new long[]{0x0020400000000010L});
     public static final BitSet FOLLOW_operationDefinition_in_classDefinition1408 = new BitSet(new long[]{0x0020400000000010L});
-    public static final BitSet FOLLOW_53_in_classDefinition1429 = new BitSet(new long[]{0x0000400000000000L,0x00000000000000C0L});
-    public static final BitSet FOLLOW_invariantClause_in_classDefinition1449 = new BitSet(new long[]{0x0000400000000000L,0x00000000000000C0L});
+    public static final BitSet FOLLOW_53_in_classDefinition1429 = new BitSet(new long[]{0x0000400000000000L,0x0000000000000060L});
+    public static final BitSet FOLLOW_invariantClause_in_classDefinition1449 = new BitSet(new long[]{0x0000400000000000L,0x0000000000000060L});
     public static final BitSet FOLLOW_46_in_classDefinition1473 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_set_in_associationClassDefinition1506 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_IDENT_in_associationClassDefinition1532 = new BitSet(new long[]{0x2000000000008000L});
@@ -7464,334 +6677,266 @@ import java.util.HashMap;
     public static final BitSet FOLLOW_attributeDefinition_in_associationClassDefinition1603 = new BitSet(new long[]{0xC420400000000010L});
     public static final BitSet FOLLOW_58_in_associationClassDefinition1624 = new BitSet(new long[]{0xC020400000000010L});
     public static final BitSet FOLLOW_operationDefinition_in_associationClassDefinition1637 = new BitSet(new long[]{0xC020400000000010L});
-    public static final BitSet FOLLOW_53_in_associationClassDefinition1658 = new BitSet(new long[]{0xC000400000000000L,0x00000000000000C0L});
-    public static final BitSet FOLLOW_invariantClause_in_associationClassDefinition1678 = new BitSet(new long[]{0xC000400000000000L,0x00000000000000C0L});
+    public static final BitSet FOLLOW_53_in_associationClassDefinition1658 = new BitSet(new long[]{0xC000400000000000L,0x0000000000000060L});
+    public static final BitSet FOLLOW_invariantClause_in_associationClassDefinition1678 = new BitSet(new long[]{0xC000400000000000L,0x0000000000000060L});
     public static final BitSet FOLLOW_set_in_associationClassDefinition1712 = new BitSet(new long[]{0x0000400000000000L});
     public static final BitSet FOLLOW_46_in_associationClassDefinition1741 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_attributeDefinition1770 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_attributeDefinition1772 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
+    public static final BitSet FOLLOW_COLON_in_attributeDefinition1772 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
     public static final BitSet FOLLOW_type_in_attributeDefinition1776 = new BitSet(new long[]{0x0000000000000082L});
     public static final BitSet FOLLOW_SEMI_in_attributeDefinition1780 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_IDENT_in_operationDefinition1818 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_paramList_in_operationDefinition1826 = new BitSet(new long[]{0x0000200000030082L,0x0000000000000300L});
-    public static final BitSet FOLLOW_COLON_in_operationDefinition1834 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_operationDefinition1838 = new BitSet(new long[]{0x0000200000020082L,0x0000000000000300L});
-    public static final BitSet FOLLOW_EQUAL_in_operationDefinition1848 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_operationDefinition1852 = new BitSet(new long[]{0x0000200000000082L,0x0000000000000300L});
-    public static final BitSet FOLLOW_45_in_operationDefinition1860 = new BitSet(new long[]{0x0002D00000000000L,0x0000000000955C00L});
-    public static final BitSet FOLLOW_alActionList_in_operationDefinition1864 = new BitSet(new long[]{0x0000400000000000L});
-    public static final BitSet FOLLOW_46_in_operationDefinition1866 = new BitSet(new long[]{0x0000000000000082L,0x0000000000000300L});
-    public static final BitSet FOLLOW_prePostClause_in_operationDefinition1885 = new BitSet(new long[]{0x0000000000000082L,0x0000000000000300L});
-    public static final BitSet FOLLOW_SEMI_in_operationDefinition1898 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_associationDefinition1934 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_associationDefinition1959 = new BitSet(new long[]{0x2000000000000000L});
-    public static final BitSet FOLLOW_61_in_associationDefinition1967 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_associationEnd_in_associationDefinition1975 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_associationEnd_in_associationDefinition1987 = new BitSet(new long[]{0x0000400000000010L});
-    public static final BitSet FOLLOW_46_in_associationDefinition1998 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_associationEnd2024 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_LBRACK_in_associationEnd2026 = new BitSet(new long[]{0x0000000000180000L});
-    public static final BitSet FOLLOW_multiplicity_in_associationEnd2030 = new BitSet(new long[]{0x0000000000001000L});
-    public static final BitSet FOLLOW_RBRACK_in_associationEnd2032 = new BitSet(new long[]{0x0000000000000092L,0x000000000000001EL});
-    public static final BitSet FOLLOW_65_in_associationEnd2043 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_associationEnd2047 = new BitSet(new long[]{0x0000000000000092L,0x000000000000001CL});
-    public static final BitSet FOLLOW_66_in_associationEnd2068 = new BitSet(new long[]{0x0000000000000092L,0x000000000000001CL});
-    public static final BitSet FOLLOW_67_in_associationEnd2080 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_associationEnd2084 = new BitSet(new long[]{0x0000000000000092L,0x000000000000001CL});
-    public static final BitSet FOLLOW_keyUnion_in_associationEnd2096 = new BitSet(new long[]{0x0000000000000092L,0x000000000000001CL});
-    public static final BitSet FOLLOW_68_in_associationEnd2108 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_associationEnd2112 = new BitSet(new long[]{0x0000000000000092L,0x000000000000001CL});
-    public static final BitSet FOLLOW_SEMI_in_associationEnd2129 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_multiplicityRange_in_multiplicity2164 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_COMMA_in_multiplicity2174 = new BitSet(new long[]{0x0000000000180000L});
-    public static final BitSet FOLLOW_multiplicityRange_in_multiplicity2178 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_multiplicitySpec_in_multiplicityRange2207 = new BitSet(new long[]{0x0000000000040002L});
-    public static final BitSet FOLLOW_DOTDOT_in_multiplicityRange2217 = new BitSet(new long[]{0x0000000000180000L});
-    public static final BitSet FOLLOW_multiplicitySpec_in_multiplicityRange2221 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_multiplicitySpec2255 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STAR_in_multiplicitySpec2265 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_69_in_invariant2306 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_invariant2316 = new BitSet(new long[]{0x0000000000010100L});
-    public static final BitSet FOLLOW_COMMA_in_invariant2329 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_invariant2333 = new BitSet(new long[]{0x0000000000010100L});
-    public static final BitSet FOLLOW_COLON_in_invariant2341 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_simpleType_in_invariant2353 = new BitSet(new long[]{0x0000000000000002L,0x00000000000000C0L});
-    public static final BitSet FOLLOW_invariantClause_in_invariant2365 = new BitSet(new long[]{0x0000000000000002L,0x00000000000000C0L});
-    public static final BitSet FOLLOW_70_in_invariantClause2396 = new BitSet(new long[]{0x0000000000010010L});
-    public static final BitSet FOLLOW_IDENT_in_invariantClause2402 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_invariantClause2407 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_invariantClause2411 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_71_in_invariantClause2421 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_70_in_invariantClause2423 = new BitSet(new long[]{0x0000000000010010L});
-    public static final BitSet FOLLOW_IDENT_in_invariantClause2429 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_invariantClause2434 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_invariantClause2438 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_69_in_prePost2464 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_prePost2468 = new BitSet(new long[]{0x0000000000200000L});
-    public static final BitSet FOLLOW_COLON_COLON_in_prePost2470 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_prePost2474 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_paramList_in_prePost2478 = new BitSet(new long[]{0x0000000000010000L,0x0000000000000300L});
-    public static final BitSet FOLLOW_COLON_in_prePost2482 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_prePost2486 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000300L});
-    public static final BitSet FOLLOW_prePostClause_in_prePost2505 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000300L});
-    public static final BitSet FOLLOW_set_in_prePostClause2544 = new BitSet(new long[]{0x0000000000010010L});
-    public static final BitSet FOLLOW_IDENT_in_prePostClause2559 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_prePostClause2564 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_prePostClause2568 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alAction_in_alActionList2601 = new BitSet(new long[]{0x0002900000000002L,0x0000000000955C00L});
-    public static final BitSet FOLLOW_alCreateVar_in_alAction2627 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alDelete_in_alAction2639 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alSet_in_alAction2651 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alSetCreate_in_alAction2663 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alInsert_in_alAction2675 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alDestroy_in_alAction2687 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alIf_in_alAction2699 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alWhile_in_alAction2711 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alFor_in_alAction2723 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_alExec_in_alAction2735 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_alCreateVar2754 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_alCreateVar2762 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_alCreateVar2764 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_alCreateVar2768 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_75_in_alSet2790 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alSet2794 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_EQUAL_in_alSet2796 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alSet2800 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_76_in_alSetCreate2824 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alSetCreate2828 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_COLON_EQUAL_in_alSetCreate2830 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_alSetCreate2836 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_alSetCreate2840 = new BitSet(new long[]{0x0000000000000002L,0x0000000000002000L});
-    public static final BitSet FOLLOW_77_in_alSetCreate2849 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alSetCreate2853 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_78_in_alInsert2884 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_alInsert2886 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alInsert2895 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_COMMA_in_alInsert2899 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alInsert2907 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_COMMA_in_alInsert2913 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alInsert2917 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_RPAREN_in_alInsert2929 = new BitSet(new long[]{0x0000000000000000L,0x0000000000008000L});
-    public static final BitSet FOLLOW_79_in_alInsert2931 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_alInsert2935 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_80_in_alDelete2967 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_alDelete2969 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alDelete2977 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_COMMA_in_alDelete2981 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alDelete2989 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_COMMA_in_alDelete2995 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alDelete2999 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_RPAREN_in_alDelete3010 = new BitSet(new long[]{0x0000000000000000L,0x0000000000020000L});
-    public static final BitSet FOLLOW_81_in_alDelete3012 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_alDelete3016 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_82_in_alDestroy3045 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alDestroy3049 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_49_in_alIf3073 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alIf3077 = new BitSet(new long[]{0x0004000000000000L});
-    public static final BitSet FOLLOW_50_in_alIf3081 = new BitSet(new long[]{0x000A900000000000L,0x00000000009D5C00L});
-    public static final BitSet FOLLOW_alActionList_in_alIf3085 = new BitSet(new long[]{0x0008000000000000L,0x0000000000080000L});
-    public static final BitSet FOLLOW_51_in_alIf3089 = new BitSet(new long[]{0x0002900000000000L,0x00000000009D5C00L});
-    public static final BitSet FOLLOW_alActionList_in_alIf3093 = new BitSet(new long[]{0x0000000000000000L,0x0000000000080000L});
-    public static final BitSet FOLLOW_83_in_alIf3098 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_84_in_alWhile3117 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alWhile3121 = new BitSet(new long[]{0x0000000000000000L,0x0000000000200000L});
-    public static final BitSet FOLLOW_85_in_alWhile3125 = new BitSet(new long[]{0x0002900000000000L,0x0000000000D55C00L});
-    public static final BitSet FOLLOW_alActionList_in_alWhile3131 = new BitSet(new long[]{0x0000000000000000L,0x0000000000400000L});
-    public static final BitSet FOLLOW_86_in_alWhile3134 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_47_in_alFor3153 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_alFor3157 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_alFor3159 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_alFor3163 = new BitSet(new long[]{0x0001000000000000L});
-    public static final BitSet FOLLOW_48_in_alFor3165 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alFor3169 = new BitSet(new long[]{0x0000000000000000L,0x0000000000200000L});
-    public static final BitSet FOLLOW_85_in_alFor3173 = new BitSet(new long[]{0x0002900000000010L,0x0000000000955C00L});
-    public static final BitSet FOLLOW_alActionList_in_alFor3179 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_alFor3186 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_87_in_alExec3206 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_alExec3210 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_keyUnion3228 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expression_in_expressionOnly3258 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_expressionOnly3260 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_88_in_expression3308 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_expression3312 = new BitSet(new long[]{0x0000000000030000L});
-    public static final BitSet FOLLOW_COLON_in_expression3316 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_expression3320 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_EQUAL_in_expression3325 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_expression3329 = new BitSet(new long[]{0x0001000000000000L});
-    public static final BitSet FOLLOW_48_in_expression3331 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_conditionalImpliesExpression_in_expression3356 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_paramList3389 = new BitSet(new long[]{0x0000000000000050L});
-    public static final BitSet FOLLOW_variableDeclaration_in_paramList3406 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_COMMA_in_paramList3418 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_variableDeclaration_in_paramList3422 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_RPAREN_in_paramList3442 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_idList3471 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_COMMA_in_idList3481 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_idList3485 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_IDENT_in_variableDeclaration3516 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_variableDeclaration3518 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_variableDeclaration3522 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression3558 = new BitSet(new long[]{0x0000000000000002L,0x0000000002000000L});
-    public static final BitSet FOLLOW_89_in_conditionalImpliesExpression3571 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression3575 = new BitSet(new long[]{0x0000000000000002L,0x0000000002000000L});
-    public static final BitSet FOLLOW_conditionalXOrExpression_in_conditionalOrExpression3620 = new BitSet(new long[]{0x0000000000000002L,0x0000000004000000L});
-    public static final BitSet FOLLOW_90_in_conditionalOrExpression3633 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_conditionalXOrExpression_in_conditionalOrExpression3637 = new BitSet(new long[]{0x0000000000000002L,0x0000000004000000L});
-    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalXOrExpression3681 = new BitSet(new long[]{0x0000000000000002L,0x0000000008000000L});
-    public static final BitSet FOLLOW_91_in_conditionalXOrExpression3694 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalXOrExpression3698 = new BitSet(new long[]{0x0000000000000002L,0x0000000008000000L});
-    public static final BitSet FOLLOW_equalityExpression_in_conditionalAndExpression3742 = new BitSet(new long[]{0x0000000000000002L,0x0000000010000000L});
-    public static final BitSet FOLLOW_92_in_conditionalAndExpression3755 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_equalityExpression_in_conditionalAndExpression3759 = new BitSet(new long[]{0x0000000000000002L,0x0000000010000000L});
-    public static final BitSet FOLLOW_relationalExpression_in_equalityExpression3807 = new BitSet(new long[]{0x0000000000420002L});
-    public static final BitSet FOLLOW_set_in_equalityExpression3826 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_relationalExpression_in_equalityExpression3836 = new BitSet(new long[]{0x0000000000420002L});
-    public static final BitSet FOLLOW_additiveExpression_in_relationalExpression3885 = new BitSet(new long[]{0x0000000003808002L});
-    public static final BitSet FOLLOW_set_in_relationalExpression3903 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_additiveExpression_in_relationalExpression3921 = new BitSet(new long[]{0x0000000003808002L});
-    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression3971 = new BitSet(new long[]{0x000000000C000002L});
-    public static final BitSet FOLLOW_set_in_additiveExpression3989 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression3999 = new BitSet(new long[]{0x000000000C000002L});
-    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression4049 = new BitSet(new long[]{0x0000000010100002L,0x0000000020000000L});
-    public static final BitSet FOLLOW_set_in_multiplicativeExpression4067 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression4081 = new BitSet(new long[]{0x0000000010100002L,0x0000000020000000L});
-    public static final BitSet FOLLOW_set_in_unaryExpression4143 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression4167 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_postfixExpression_in_unaryExpression4187 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_primaryExpression_in_postfixExpression4220 = new BitSet(new long[]{0x0000000020000402L});
-    public static final BitSet FOLLOW_ARROW_in_postfixExpression4238 = new BitSet(new long[]{0x0000000000000010L,0x0000000F00000000L});
-    public static final BitSet FOLLOW_DOT_in_postfixExpression4244 = new BitSet(new long[]{0x0000000000000010L,0x0000000F00000000L});
-    public static final BitSet FOLLOW_propertyCall_in_postfixExpression4255 = new BitSet(new long[]{0x0000000020000402L});
-    public static final BitSet FOLLOW_literal_in_primaryExpression4295 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_propertyCall_in_primaryExpression4307 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_primaryExpression4318 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_primaryExpression4322 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RPAREN_in_primaryExpression4324 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ifExpression_in_primaryExpression4336 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_primaryExpression4353 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_DOT_in_primaryExpression4355 = new BitSet(new long[]{0x0000000000000000L,0x0000000080000000L});
-    public static final BitSet FOLLOW_95_in_primaryExpression4357 = new BitSet(new long[]{0x0000000040000022L});
-    public static final BitSet FOLLOW_LPAREN_in_primaryExpression4361 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RPAREN_in_primaryExpression4363 = new BitSet(new long[]{0x0000000040000002L});
-    public static final BitSet FOLLOW_AT_in_primaryExpression4384 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000100L});
-    public static final BitSet FOLLOW_72_in_primaryExpression4386 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_queryExpression_in_propertyCall4459 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_iterateExpression_in_propertyCall4472 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_operationExpression_in_propertyCall4485 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_typeExpression_in_propertyCall4498 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_queryExpression4533 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_queryExpression4540 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_elemVarsDeclaration_in_queryExpression4551 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_BAR_in_queryExpression4555 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_queryExpression4566 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RPAREN_in_queryExpression4572 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_96_in_iterateExpression4604 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_iterateExpression4610 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_elemVarsDeclaration_in_iterateExpression4618 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_SEMI_in_iterateExpression4620 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_variableInitialization_in_iterateExpression4628 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_BAR_in_iterateExpression4630 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_iterateExpression4638 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RPAREN_in_iterateExpression4644 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_operationExpression4688 = new BitSet(new long[]{0x0000000040000822L});
-    public static final BitSet FOLLOW_LBRACK_in_operationExpression4704 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_operationExpression4708 = new BitSet(new long[]{0x0000000000001000L});
-    public static final BitSet FOLLOW_RBRACK_in_operationExpression4710 = new BitSet(new long[]{0x0000000040000022L});
-    public static final BitSet FOLLOW_AT_in_operationExpression4723 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000100L});
-    public static final BitSet FOLLOW_72_in_operationExpression4725 = new BitSet(new long[]{0x0000000000000022L});
-    public static final BitSet FOLLOW_LPAREN_in_operationExpression4746 = new BitSet(new long[]{0x000200070C080070L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_operationExpression4767 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_COMMA_in_operationExpression4779 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_operationExpression4783 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_RPAREN_in_operationExpression4803 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_typeExpression4846 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_typeExpression4862 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_typeExpression4866 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RPAREN_in_typeExpression4868 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_idList_in_elemVarsDeclaration4907 = new BitSet(new long[]{0x0000000000010002L});
-    public static final BitSet FOLLOW_COLON_in_elemVarsDeclaration4915 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_elemVarsDeclaration4919 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_variableInitialization4954 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_variableInitialization4956 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_variableInitialization4960 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_EQUAL_in_variableInitialization4962 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_variableInitialization4966 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_49_in_ifExpression4998 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_ifExpression5002 = new BitSet(new long[]{0x0004000000000000L});
-    public static final BitSet FOLLOW_50_in_ifExpression5004 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_ifExpression5008 = new BitSet(new long[]{0x0008000000000000L});
-    public static final BitSet FOLLOW_51_in_ifExpression5010 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_ifExpression5014 = new BitSet(new long[]{0x0000000000000000L,0x0000000000080000L});
-    public static final BitSet FOLLOW_83_in_ifExpression5016 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_100_in_literal5055 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_101_in_literal5069 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_literal5082 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_REAL_in_literal5097 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_STRING_in_literal5111 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_HASH_in_literal5121 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_literal5125 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_collectionLiteral_in_literal5137 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_emptyCollectionLiteral_in_literal5149 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_undefinedLiteral_in_literal5161 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_tupleLiteral_in_literal5173 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_dateLiteral_in_literal5185 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_collectionLiteral5223 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_LBRACE_in_collectionLiteral5252 = new BitSet(new long[]{0x000200070C084030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_collectionItem_in_collectionLiteral5269 = new BitSet(new long[]{0x0000000000004100L});
-    public static final BitSet FOLLOW_COMMA_in_collectionLiteral5282 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_collectionItem_in_collectionLiteral5286 = new BitSet(new long[]{0x0000000000004100L});
-    public static final BitSet FOLLOW_RBRACE_in_collectionLiteral5305 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expression_in_collectionItem5334 = new BitSet(new long[]{0x0000000000040002L});
-    public static final BitSet FOLLOW_DOTDOT_in_collectionItem5345 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_collectionItem5349 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_106_in_emptyCollectionLiteral5378 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_emptyCollectionLiteral5380 = new BitSet(new long[]{0x0000000000000000L,0x000103C000000000L});
-    public static final BitSet FOLLOW_collectionType_in_emptyCollectionLiteral5384 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RPAREN_in_emptyCollectionLiteral5386 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_107_in_undefinedLiteral5416 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_undefinedLiteral5418 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_undefinedLiteral5422 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RPAREN_in_undefinedLiteral5424 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_108_in_undefinedLiteral5438 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_109_in_undefinedLiteral5452 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_110_in_tupleLiteral5486 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_LBRACE_in_tupleLiteral5492 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tupleItem_in_tupleLiteral5500 = new BitSet(new long[]{0x0000000000004100L});
-    public static final BitSet FOLLOW_COMMA_in_tupleLiteral5511 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tupleItem_in_tupleLiteral5515 = new BitSet(new long[]{0x0000000000004100L});
-    public static final BitSet FOLLOW_RBRACE_in_tupleLiteral5526 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_tupleItem5557 = new BitSet(new long[]{0x0000000000030000L});
-    public static final BitSet FOLLOW_COLON_in_tupleItem5596 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_tupleItem5600 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_EQUAL_in_tupleItem5602 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_tupleItem5606 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_tupleItem5628 = new BitSet(new long[]{0x000200070C080030L,0x0000FFFF41000000L});
-    public static final BitSet FOLLOW_expression_in_tupleItem5638 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_111_in_dateLiteral5683 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_LBRACE_in_dateLiteral5685 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_STRING_in_dateLiteral5689 = new BitSet(new long[]{0x0000000000004000L});
-    public static final BitSet FOLLOW_RBRACE_in_dateLiteral5691 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_simpleType_in_type5741 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_collectionType_in_type5753 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_tupleType_in_type5765 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_typeOnly5797 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_typeOnly5799 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_simpleType5827 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_set_in_collectionType5865 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_collectionType5892 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_collectionType5896 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RPAREN_in_collectionType5898 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_110_in_tupleType5932 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_LPAREN_in_tupleType5934 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tuplePart_in_tupleType5943 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_COMMA_in_tupleType5954 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_tuplePart_in_tupleType5958 = new BitSet(new long[]{0x0000000000000140L});
-    public static final BitSet FOLLOW_RPAREN_in_tupleType5970 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_IDENT_in_tuplePart6002 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_COLON_in_tuplePart6004 = new BitSet(new long[]{0x0000000000000010L,0x000143C000000000L});
-    public static final BitSet FOLLOW_type_in_tuplePart6008 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_COLON_in_synpred1_Generator5587 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_synpred1_Generator5589 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_EQUAL_in_synpred1_Generator5591 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_paramList_in_operationDefinition1826 = new BitSet(new long[]{0x0000000000030082L,0x0000000000000180L});
+    public static final BitSet FOLLOW_COLON_in_operationDefinition1834 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_operationDefinition1838 = new BitSet(new long[]{0x0000000000020082L,0x0000000000000180L});
+    public static final BitSet FOLLOW_EQUAL_in_operationDefinition1848 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_operationDefinition1852 = new BitSet(new long[]{0x0000000000000082L,0x0000000000000180L});
+    public static final BitSet FOLLOW_prePostClause_in_operationDefinition1872 = new BitSet(new long[]{0x0000000000000082L,0x0000000000000180L});
+    public static final BitSet FOLLOW_SEMI_in_operationDefinition1885 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_keyAssociation_in_associationDefinition1923 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_62_in_associationDefinition1927 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_63_in_associationDefinition1931 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_associationDefinition1946 = new BitSet(new long[]{0x2000000000000000L});
+    public static final BitSet FOLLOW_61_in_associationDefinition1954 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_associationEnd_in_associationDefinition1962 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_associationEnd_in_associationDefinition1974 = new BitSet(new long[]{0x0000400000000010L});
+    public static final BitSet FOLLOW_46_in_associationDefinition1985 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_associationEnd2011 = new BitSet(new long[]{0x0000000000000800L});
+    public static final BitSet FOLLOW_LBRACK_in_associationEnd2013 = new BitSet(new long[]{0x0000000000180000L});
+    public static final BitSet FOLLOW_multiplicity_in_associationEnd2017 = new BitSet(new long[]{0x0000000000001000L});
+    public static final BitSet FOLLOW_RBRACK_in_associationEnd2019 = new BitSet(new long[]{0x0000000000000092L,0x000000000000000FL});
+    public static final BitSet FOLLOW_64_in_associationEnd2030 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_associationEnd2034 = new BitSet(new long[]{0x0000000000000092L,0x000000000000000EL});
+    public static final BitSet FOLLOW_65_in_associationEnd2055 = new BitSet(new long[]{0x0000000000000092L,0x000000000000000EL});
+    public static final BitSet FOLLOW_66_in_associationEnd2067 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_associationEnd2071 = new BitSet(new long[]{0x0000000000000092L,0x000000000000000EL});
+    public static final BitSet FOLLOW_keyUnion_in_associationEnd2083 = new BitSet(new long[]{0x0000000000000092L,0x000000000000000EL});
+    public static final BitSet FOLLOW_67_in_associationEnd2095 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_associationEnd2099 = new BitSet(new long[]{0x0000000000000092L,0x000000000000000EL});
+    public static final BitSet FOLLOW_SEMI_in_associationEnd2116 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_multiplicityRange_in_multiplicity2151 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_COMMA_in_multiplicity2161 = new BitSet(new long[]{0x0000000000180000L});
+    public static final BitSet FOLLOW_multiplicityRange_in_multiplicity2165 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_multiplicitySpec_in_multiplicityRange2194 = new BitSet(new long[]{0x0000000000040002L});
+    public static final BitSet FOLLOW_DOTDOT_in_multiplicityRange2204 = new BitSet(new long[]{0x0000000000180000L});
+    public static final BitSet FOLLOW_multiplicitySpec_in_multiplicityRange2208 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_multiplicitySpec2242 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STAR_in_multiplicitySpec2252 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_68_in_invariant2293 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_invariant2303 = new BitSet(new long[]{0x0000000000010100L});
+    public static final BitSet FOLLOW_COMMA_in_invariant2316 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_invariant2320 = new BitSet(new long[]{0x0000000000010100L});
+    public static final BitSet FOLLOW_COLON_in_invariant2328 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_simpleType_in_invariant2340 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000060L});
+    public static final BitSet FOLLOW_invariantClause_in_invariant2352 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000060L});
+    public static final BitSet FOLLOW_69_in_invariantClause2383 = new BitSet(new long[]{0x0000000000010010L});
+    public static final BitSet FOLLOW_IDENT_in_invariantClause2389 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_COLON_in_invariantClause2394 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_invariantClause2398 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_70_in_invariantClause2408 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000020L});
+    public static final BitSet FOLLOW_69_in_invariantClause2410 = new BitSet(new long[]{0x0000000000010010L});
+    public static final BitSet FOLLOW_IDENT_in_invariantClause2416 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_COLON_in_invariantClause2421 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_invariantClause2425 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_68_in_prePost2451 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_prePost2455 = new BitSet(new long[]{0x0000000000200000L});
+    public static final BitSet FOLLOW_COLON_COLON_in_prePost2457 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_prePost2461 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_paramList_in_prePost2465 = new BitSet(new long[]{0x0000000000010000L,0x0000000000000180L});
+    public static final BitSet FOLLOW_COLON_in_prePost2469 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_prePost2473 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000180L});
+    public static final BitSet FOLLOW_prePostClause_in_prePost2492 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000180L});
+    public static final BitSet FOLLOW_set_in_prePostClause2531 = new BitSet(new long[]{0x0000000000010010L});
+    public static final BitSet FOLLOW_IDENT_in_prePostClause2546 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_COLON_in_prePostClause2551 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_prePostClause2555 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_keyUnion2577 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_keyAssociation2591 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expression_in_expressionOnly2621 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_expressionOnly2623 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_73_in_expression2671 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_expression2675 = new BitSet(new long[]{0x0000000000030000L});
+    public static final BitSet FOLLOW_COLON_in_expression2679 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_expression2683 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_EQUAL_in_expression2688 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_expression2692 = new BitSet(new long[]{0x0001000000000000L});
+    public static final BitSet FOLLOW_48_in_expression2694 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_conditionalImpliesExpression_in_expression2719 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_paramList2752 = new BitSet(new long[]{0x0000000000000050L});
+    public static final BitSet FOLLOW_variableDeclaration_in_paramList2769 = new BitSet(new long[]{0x0000000000000140L});
+    public static final BitSet FOLLOW_COMMA_in_paramList2781 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_variableDeclaration_in_paramList2785 = new BitSet(new long[]{0x0000000000000140L});
+    public static final BitSet FOLLOW_RPAREN_in_paramList2805 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_idList2834 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_COMMA_in_idList2844 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_idList2848 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_IDENT_in_variableDeclaration2879 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_COLON_in_variableDeclaration2881 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_variableDeclaration2885 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression2921 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000400L});
+    public static final BitSet FOLLOW_74_in_conditionalImpliesExpression2934 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_conditionalOrExpression_in_conditionalImpliesExpression2938 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000400L});
+    public static final BitSet FOLLOW_conditionalXOrExpression_in_conditionalOrExpression2983 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000800L});
+    public static final BitSet FOLLOW_75_in_conditionalOrExpression2996 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_conditionalXOrExpression_in_conditionalOrExpression3000 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000800L});
+    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalXOrExpression3044 = new BitSet(new long[]{0x0000000000000002L,0x0000000000001000L});
+    public static final BitSet FOLLOW_76_in_conditionalXOrExpression3057 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_conditionalAndExpression_in_conditionalXOrExpression3061 = new BitSet(new long[]{0x0000000000000002L,0x0000000000001000L});
+    public static final BitSet FOLLOW_equalityExpression_in_conditionalAndExpression3105 = new BitSet(new long[]{0x0000000000000002L,0x0000000000002000L});
+    public static final BitSet FOLLOW_77_in_conditionalAndExpression3118 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_equalityExpression_in_conditionalAndExpression3122 = new BitSet(new long[]{0x0000000000000002L,0x0000000000002000L});
+    public static final BitSet FOLLOW_relationalExpression_in_equalityExpression3170 = new BitSet(new long[]{0x0000000000420002L});
+    public static final BitSet FOLLOW_set_in_equalityExpression3189 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_relationalExpression_in_equalityExpression3199 = new BitSet(new long[]{0x0000000000420002L});
+    public static final BitSet FOLLOW_additiveExpression_in_relationalExpression3248 = new BitSet(new long[]{0x0000000003808002L});
+    public static final BitSet FOLLOW_set_in_relationalExpression3266 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_additiveExpression_in_relationalExpression3284 = new BitSet(new long[]{0x0000000003808002L});
+    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression3334 = new BitSet(new long[]{0x000000000C000002L});
+    public static final BitSet FOLLOW_set_in_additiveExpression3352 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_multiplicativeExpression_in_additiveExpression3362 = new BitSet(new long[]{0x000000000C000002L});
+    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression3412 = new BitSet(new long[]{0x0000000010100002L,0x0000000000004000L});
+    public static final BitSet FOLLOW_set_in_multiplicativeExpression3430 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_unaryExpression_in_multiplicativeExpression3444 = new BitSet(new long[]{0x0000000010100002L,0x0000000000004000L});
+    public static final BitSet FOLLOW_set_in_unaryExpression3506 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_unaryExpression_in_unaryExpression3530 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_postfixExpression_in_unaryExpression3550 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_primaryExpression_in_postfixExpression3583 = new BitSet(new long[]{0x0000000020000402L});
+    public static final BitSet FOLLOW_ARROW_in_postfixExpression3601 = new BitSet(new long[]{0x0000000000000010L,0x00000000001E0000L});
+    public static final BitSet FOLLOW_DOT_in_postfixExpression3607 = new BitSet(new long[]{0x0000000000000010L,0x00000000001E0000L});
+    public static final BitSet FOLLOW_propertyCall_in_postfixExpression3618 = new BitSet(new long[]{0x0000000020000402L});
+    public static final BitSet FOLLOW_literal_in_primaryExpression3658 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_propertyCall_in_primaryExpression3670 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_primaryExpression3681 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_primaryExpression3685 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RPAREN_in_primaryExpression3687 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ifExpression_in_primaryExpression3699 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_primaryExpression3716 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_DOT_in_primaryExpression3718 = new BitSet(new long[]{0x0000000000000000L,0x0000000000010000L});
+    public static final BitSet FOLLOW_80_in_primaryExpression3720 = new BitSet(new long[]{0x0000000040000022L});
+    public static final BitSet FOLLOW_LPAREN_in_primaryExpression3724 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RPAREN_in_primaryExpression3726 = new BitSet(new long[]{0x0000000040000002L});
+    public static final BitSet FOLLOW_AT_in_primaryExpression3747 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_71_in_primaryExpression3749 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_queryExpression_in_propertyCall3822 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_iterateExpression_in_propertyCall3835 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_operationExpression_in_propertyCall3848 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_typeExpression_in_propertyCall3861 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_queryExpression3896 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LPAREN_in_queryExpression3903 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_elemVarsDeclaration_in_queryExpression3914 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_BAR_in_queryExpression3918 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_queryExpression3929 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RPAREN_in_queryExpression3935 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_81_in_iterateExpression3967 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LPAREN_in_iterateExpression3973 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_elemVarsDeclaration_in_iterateExpression3981 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_SEMI_in_iterateExpression3983 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_variableInitialization_in_iterateExpression3991 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_BAR_in_iterateExpression3993 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_iterateExpression4001 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RPAREN_in_iterateExpression4007 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_operationExpression4051 = new BitSet(new long[]{0x0000000040000822L});
+    public static final BitSet FOLLOW_LBRACK_in_operationExpression4067 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_operationExpression4071 = new BitSet(new long[]{0x0000000000001000L});
+    public static final BitSet FOLLOW_RBRACK_in_operationExpression4073 = new BitSet(new long[]{0x0000000040000022L});
+    public static final BitSet FOLLOW_AT_in_operationExpression4086 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_71_in_operationExpression4088 = new BitSet(new long[]{0x0000000000000022L});
+    public static final BitSet FOLLOW_LPAREN_in_operationExpression4109 = new BitSet(new long[]{0x000200070C080070L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_operationExpression4130 = new BitSet(new long[]{0x0000000000000140L});
+    public static final BitSet FOLLOW_COMMA_in_operationExpression4142 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_operationExpression4146 = new BitSet(new long[]{0x0000000000000140L});
+    public static final BitSet FOLLOW_RPAREN_in_operationExpression4166 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_typeExpression4209 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LPAREN_in_typeExpression4225 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_typeExpression4229 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RPAREN_in_typeExpression4231 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_idList_in_elemVarsDeclaration4270 = new BitSet(new long[]{0x0000000000010002L});
+    public static final BitSet FOLLOW_COLON_in_elemVarsDeclaration4278 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_elemVarsDeclaration4282 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_variableInitialization4317 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_COLON_in_variableInitialization4319 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_variableInitialization4323 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_EQUAL_in_variableInitialization4325 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_variableInitialization4329 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_49_in_ifExpression4361 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_ifExpression4365 = new BitSet(new long[]{0x0004000000000000L});
+    public static final BitSet FOLLOW_50_in_ifExpression4367 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_ifExpression4371 = new BitSet(new long[]{0x0008000000000000L});
+    public static final BitSet FOLLOW_51_in_ifExpression4373 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_ifExpression4377 = new BitSet(new long[]{0x0000000000000000L,0x0000000000200000L});
+    public static final BitSet FOLLOW_85_in_ifExpression4379 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_86_in_literal4418 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_87_in_literal4432 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_literal4445 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_REAL_in_literal4460 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_STRING_in_literal4474 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_HASH_in_literal4484 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_literal4488 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_literal4500 = new BitSet(new long[]{0x0000000000200000L});
+    public static final BitSet FOLLOW_COLON_COLON_in_literal4502 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_literal4506 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_collectionLiteral_in_literal4518 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_emptyCollectionLiteral_in_literal4530 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_undefinedLiteral_in_literal4542 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_tupleLiteral_in_literal4554 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_dateLiteral_in_literal4566 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_collectionLiteral4604 = new BitSet(new long[]{0x0000000000002000L});
+    public static final BitSet FOLLOW_LBRACE_in_collectionLiteral4633 = new BitSet(new long[]{0x000200070C084030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_collectionItem_in_collectionLiteral4650 = new BitSet(new long[]{0x0000000000004100L});
+    public static final BitSet FOLLOW_COMMA_in_collectionLiteral4663 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_collectionItem_in_collectionLiteral4667 = new BitSet(new long[]{0x0000000000004100L});
+    public static final BitSet FOLLOW_RBRACE_in_collectionLiteral4686 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expression_in_collectionItem4715 = new BitSet(new long[]{0x0000000000040002L});
+    public static final BitSet FOLLOW_DOTDOT_in_collectionItem4726 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_collectionItem4730 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_92_in_emptyCollectionLiteral4759 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LPAREN_in_emptyCollectionLiteral4761 = new BitSet(new long[]{0x0000000000000000L,0x000000040F000000L});
+    public static final BitSet FOLLOW_collectionType_in_emptyCollectionLiteral4765 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RPAREN_in_emptyCollectionLiteral4767 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_93_in_undefinedLiteral4797 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LPAREN_in_undefinedLiteral4799 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_undefinedLiteral4803 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RPAREN_in_undefinedLiteral4805 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_94_in_undefinedLiteral4819 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_95_in_undefinedLiteral4833 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_96_in_tupleLiteral4867 = new BitSet(new long[]{0x0000000000002000L});
+    public static final BitSet FOLLOW_LBRACE_in_tupleLiteral4873 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tupleItem_in_tupleLiteral4881 = new BitSet(new long[]{0x0000000000004100L});
+    public static final BitSet FOLLOW_COMMA_in_tupleLiteral4892 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tupleItem_in_tupleLiteral4896 = new BitSet(new long[]{0x0000000000004100L});
+    public static final BitSet FOLLOW_RBRACE_in_tupleLiteral4907 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_tupleItem4938 = new BitSet(new long[]{0x0000000000030000L});
+    public static final BitSet FOLLOW_COLON_in_tupleItem4977 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_tupleItem4981 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_EQUAL_in_tupleItem4983 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_tupleItem4987 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_tupleItem5009 = new BitSet(new long[]{0x000200070C080030L,0x00000003FFDE8200L});
+    public static final BitSet FOLLOW_expression_in_tupleItem5019 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_97_in_dateLiteral5064 = new BitSet(new long[]{0x0000000000002000L});
+    public static final BitSet FOLLOW_LBRACE_in_dateLiteral5066 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_STRING_in_dateLiteral5070 = new BitSet(new long[]{0x0000000000004000L});
+    public static final BitSet FOLLOW_RBRACE_in_dateLiteral5072 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_simpleType_in_type5122 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_collectionType_in_type5134 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_tupleType_in_type5146 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_typeOnly5178 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_typeOnly5180 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_simpleType5208 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_set_in_collectionType5246 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LPAREN_in_collectionType5273 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_collectionType5277 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RPAREN_in_collectionType5279 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_96_in_tupleType5313 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_LPAREN_in_tupleType5315 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tuplePart_in_tupleType5324 = new BitSet(new long[]{0x0000000000000140L});
+    public static final BitSet FOLLOW_COMMA_in_tupleType5335 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_tuplePart_in_tupleType5339 = new BitSet(new long[]{0x0000000000000140L});
+    public static final BitSet FOLLOW_RPAREN_in_tupleType5351 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_IDENT_in_tuplePart5383 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_COLON_in_tuplePart5385 = new BitSet(new long[]{0x0000000000000010L,0x000000050F000000L});
+    public static final BitSet FOLLOW_type_in_tuplePart5389 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_COLON_in_synpred1_Generator4968 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_IDENT_in_synpred1_Generator4970 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_EQUAL_in_synpred1_Generator4972 = new BitSet(new long[]{0x0000000000000002L});
 
 }

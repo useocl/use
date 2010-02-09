@@ -27,10 +27,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Iterator;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -65,6 +65,7 @@ import org.tzi.use.util.TeeWriter;
  * @author   Jun Zhang 
  * @author   Jie Xu
  */
+@SuppressWarnings("serial")
 public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 	public static MSystem fSystem;
@@ -139,9 +140,6 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 		radioButtonPane.add(fRadioHideButton);
 		radioButtonPane.add(Box.createVerticalGlue());
 		add(radioButtonPane, BorderLayout.WEST);
-
-		JLabel show = new JLabel("show");
-		JLabel hide = new JLabel("hide");
 
 		// create panel on the left and add text components
 		JPanel textPane = new JPanel();

@@ -24,19 +24,6 @@ package org.tzi.use.uml.mm;
 import java.io.PrintWriter;
 import java.util.Set;
 
-import org.tzi.use.uml.al.ALAction;
-import org.tzi.use.uml.al.ALActionList;
-import org.tzi.use.uml.al.ALCreateObject;
-import org.tzi.use.uml.al.ALCreateVar;
-import org.tzi.use.uml.al.ALDelete;
-import org.tzi.use.uml.al.ALDestroyObject;
-import org.tzi.use.uml.al.ALExecute;
-import org.tzi.use.uml.al.ALFor;
-import org.tzi.use.uml.al.ALIf;
-import org.tzi.use.uml.al.ALInsert;
-import org.tzi.use.uml.al.ALSet;
-import org.tzi.use.uml.al.ALSetCreate;
-import org.tzi.use.uml.al.ALWhile;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.util.StringUtil;
 
@@ -349,14 +336,7 @@ public class MMPrintVisitor implements MMVisitor {
                 decIndent();
             }
         }
-        if (e.getAction()!=null) {
-            println(" begin");
-            incIndent();
-            e.getAction().processWithVisitor(this);
-            decIndent();
-            indent();
-            println("end");
-        }
+        
         println();
     }
 
@@ -380,97 +360,5 @@ public class MMPrintVisitor implements MMVisitor {
         if (fIndent < 2 )
             throw new RuntimeException("unbalanced indentation");
         fIndent -= 2;
-    }
-
-    public void visitALActionList(ALActionList e) {
-        for (ALAction action : e.getActions()) {
-            action.processWithVisitor(this);
-        }
-    }
-
-    public void visitALFor(ALFor e) {
-        indent();
-        print("for ");
-        print(e.getVariableName());
-        print(" : ");
-        print(e.getVariableType().toString());
-        print(" in ");
-        print(e.getRangeExpression().toString());
-        println(" do");
-        incIndent();
-        e.getBody().processWithVisitor(this);
-        decIndent();
-        indent();
-        println("next");
-        
-    }
-
-    public void visitALIf(ALIf e) {
-        indent();
-        print("if ");
-        print(e.getCondition().toString());
-        println(" then");
-        incIndent();
-        e.getThen().processWithVisitor(this);
-        decIndent();
-        if (e.getElse()!=null) {
-            indent();
-            println(" else");
-            incIndent();
-            e.getElse().processWithVisitor(this);
-            decIndent();
-        }
-        indent();
-        println("endif");
-    }
-
-    public void visitALSet(ALSet e) {
-        indent();
-        println(e.toString());
-    }
-
-    public void visitALSetCreate(ALSetCreate e) {
-        indent();
-        println(e.toString());
-    }
-
-    public void visitALInsert(ALInsert e) {
-        indent();
-        println(e.toString());
-    }
-
-    public void visitALDelete(ALDelete e) {
-        indent();
-        println(e.toString());
-    }
-
-    public void visitALExecute(ALExecute e) {
-        indent();
-        println(e.toString());
-    }
-
-    public void visitALCreateVar(ALCreateVar e) {
-        indent();
-        println(e.toString());
-    }
-
-    public void visitALCreateObject(ALCreateObject e) {
-        indent();
-        println(e.toString());
-    }
-
-    public void visitALWhile(ALWhile e) {
-        indent();
-        print("while ");
-        print(e.getCondition().toString());
-        println(" do");
-        incIndent();
-        e.getBody().processWithVisitor(this);
-        decIndent();
-        println("wend");
-    }
-
-    public void visitALDestroyObject(ALDestroyObject e) {
-        println(e.toString());
     }
 }

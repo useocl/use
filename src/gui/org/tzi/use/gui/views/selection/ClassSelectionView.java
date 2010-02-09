@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -32,6 +33,7 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  * @author   Jun Zhang 
  * @author   Jie Xu
  */
+@SuppressWarnings("serial")
 public abstract class ClassSelectionView extends JPanel implements View {
 	public JScrollPane fTablePane;
 
@@ -140,9 +142,10 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	 * Method getShowClasses takes a HashSet as parameter, which defines itself as 
 	 * a set of the class MObject. 
 	 */
-	public HashSet getShowClasses(HashSet classes) {
-		HashSet showclasses = new HashSet();
-		Iterator itshow = ClassDiagram.ffHiddenNodes.iterator(); // hidenode
+	public Set<MClass> getShowClasses(Set classes) {
+		Set<MClass> showclasses = new HashSet<MClass>();
+		Iterator itshow = ClassDiagram.ffHiddenNodes.iterator();
+		
 		// add Instance of MClass
 		while (itshow.hasNext()) {
 			Object node = itshow.next();
@@ -160,9 +163,10 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	 * Method getHideClasses takes two parameters: HashSet and a boolean value. 
 	 * The boolean value "true" means that the function "crop" is selected.
 	 */
-	public HashSet getHideClasses(HashSet classes, boolean isCrop) {
-		HashSet hideclasses = new HashSet();
-		Iterator ithide = ClassDiagram.ffGraph.iterator(); 
+	public Set<MClass> getHideClasses(Set classes, boolean isCrop) {
+		Set<MClass> hideclasses = new HashSet<MClass>();
+		Iterator ithide = ClassDiagram.ffGraph.iterator();
+		
 		// add Instance of MClass
 		while (ithide.hasNext()) {
 			Object node = ithide.next();
@@ -187,7 +191,7 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	 */
 	public void applyHideAllChanges(ActionEvent ev) {
 		Iterator it = ClassDiagram.ffGraph.iterator();
-		HashSet hideClass = new HashSet();
+		Set<MClass> hideClass = new HashSet<MClass>();
 		while (it.hasNext()) {
 			Object node = it.next();
 			if (node instanceof ClassNode) {

@@ -34,11 +34,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.EdgeProperty;
@@ -49,7 +47,6 @@ import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.selection.classselection.SelectionClassTableModel;
 import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
-import org.tzi.use.uml.mm.MClass;
 
 /**
  * Handels the mouse movements of the class and object diagram.
@@ -76,8 +73,7 @@ public final class DiagramMouseHandling implements MouseListener,
     private SelectionClassView opv ;
     
     public DiagramMouseHandling( Selection nodeSelection, Selection edgeSelection,
-                                 DirectedGraph graph, HideAdministration hideAdmin,
-                                 Set hiddenNodes, DiagramOptions opt, 
+                                 DirectedGraph<NodeBase, EdgeBase> graph, 
                                  DiagramView diagram ) {
         
         fNodeSelection = nodeSelection;

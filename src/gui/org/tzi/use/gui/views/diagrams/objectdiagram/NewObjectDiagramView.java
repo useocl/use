@@ -57,7 +57,7 @@ public class NewObjectDiagramView extends JPanel
     private MainWindow fMainWindow;
 
     NewObjectDiagram fObjectDiagram;
-    public static int viewcount=0; // jj
+    public static int viewcount = 0; // jj
 
     public NewObjectDiagramView(MainWindow mainWindow, MSystem system) {
         fMainWindow = mainWindow;

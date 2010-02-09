@@ -1,13 +1,8 @@
 package org.tzi.use.gui.views.selection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
-
-import org.tzi.use.gui.main.ModelBrowserSorting;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 
 
 /**  	
@@ -17,10 +12,11 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
  * @author   Jie Xu
  */
 
-public abstract class TableModel extends AbstractTableModel implements SortChangeListener {
+@SuppressWarnings("serial")
+public abstract class TableModel extends AbstractTableModel {
 	private String[] columnNames = { "null", "null" };
-	public List fAttributes;
-	public List fValues;
+	public List<String> fAttributes;
+	public List<Object> fValues;
 
 	/**
 	 * Constructor for TableModel.
@@ -29,10 +25,9 @@ public abstract class TableModel extends AbstractTableModel implements SortChang
 	 * for example all values of class name.
 	 * @param fValues contains all values of the second column.
 	 */
-	public TableModel( List fAttributes, List fValues) {
+	public TableModel( List<String> fAttributes, List<Object> fValues) {
 		this.fAttributes = fAttributes;
 		this.fValues = fValues;
-		ModelBrowserSorting.getInstance().addSortChangeListener(this);
 	}
 
 	/**
@@ -87,7 +82,7 @@ public abstract class TableModel extends AbstractTableModel implements SortChang
 			return true;
 		}
 	}
-
+	
 	/**
 	 * Method setValueAt takes the user input. 
 	 * 
@@ -110,16 +105,4 @@ public abstract class TableModel extends AbstractTableModel implements SortChang
 
 	
 	public abstract void update();
-	
-	/**
-	 * Method stateChanged update the attribute list after change of state.
-	 * 
-	 * @see org.tzi.use.gui.main.ModelBrowserSorting$SortChangeListener#stateChanged(SortChangeEvent)
-	 */
-	public void stateChanged(SortChangeEvent e) {
-		fAttributes = (ArrayList) ModelBrowserSorting.getInstance()
-				.sortAttributes(fAttributes);
-		update();
-	}
-	
 }

@@ -47,7 +47,8 @@ public final class ExpIf extends Expression {
         fCondition.assertBoolean();
         fThenExp = thenExp;
         fElseExp = elseExp;
-        if (! fThenExp.type().equals(fElseExp.type()) )
+         
+        if (fThenExp.type().getLeastCommonSupertype(fElseExp.type()) == null)
             throw new ExpInvalidException(
                                           "Branches of if expression have different type, " +
                                           "found `" + fThenExp.type() + 

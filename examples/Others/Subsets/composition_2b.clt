@@ -13,41 +13,6 @@
 </diagramOptions>
 
 <node type="Class">
-   <name>Boat</name>
-   <x_coord>68.45701506430328</x_coord>
-   <y_coord>196.6125449848859</y_coord>
-   <hidden>false</hidden>
-</node>
-
-<node type="Class">
-   <name>SmallCar</name>
-   <x_coord>172.765435204639</x_coord>
-   <y_coord>315.6492432676009</y_coord>
-   <hidden>false</hidden>
-</node>
-
-<node type="Class">
-   <name>Car</name>
-   <x_coord>172.31076076369317</x_coord>
-   <y_coord>267.1557336843737</y_coord>
-   <hidden>false</hidden>
-</node>
-
-<node type="Class">
-   <name>PowerTransmitter</name>
-   <x_coord>470.4829268090357</x_coord>
-   <y_coord>96.29139272659802</y_coord>
-   <hidden>false</hidden>
-</node>
-
-<node type="Class">
-   <name>Engine</name>
-   <x_coord>238.0196702731409</x_coord>
-   <y_coord>142.63784274580644</y_coord>
-   <hidden>false</hidden>
-</node>
-
-<node type="Class">
    <name>VehiclePart</name>
    <x_coord>264.54491321575074</x_coord>
    <y_coord>41.96879081237424</y_coord>
@@ -62,6 +27,13 @@
 </node>
 
 <node type="Class">
+   <name>Chain</name>
+   <x_coord>590.8956972481748</x_coord>
+   <y_coord>268.4281625777638</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
    <name>Propeller</name>
    <x_coord>420.0990717186062</x_coord>
    <y_coord>195.67170887226908</y_coord>
@@ -69,9 +41,44 @@
 </node>
 
 <node type="Class">
+   <name>SmallCar</name>
+   <x_coord>172.765435204639</x_coord>
+   <y_coord>315.6492432676009</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
+   <name>Engine</name>
+   <x_coord>238.0196702731409</x_coord>
+   <y_coord>142.63784274580644</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
+   <name>PowerTransmitter</name>
+   <x_coord>470.4829268090357</x_coord>
+   <y_coord>96.29139272659802</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
+   <name>Car</name>
+   <x_coord>172.31076076369317</x_coord>
+   <y_coord>267.1557336843737</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
    <name>Wheel</name>
    <x_coord>532.4488283444631</x_coord>
    <y_coord>267.5612396831614</y_coord>
+   <hidden>false</hidden>
+</node>
+
+<node type="Class">
+   <name>Boat</name>
+   <x_coord>68.45701506430328</x_coord>
+   <y_coord>196.6125449848859</y_coord>
    <hidden>false</hidden>
 </node>
 
@@ -230,6 +237,41 @@
       <id>1</id>
       <specialid>0</specialid>
       <x_coord>420.0</x_coord>
+      <y_coord>164.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>2</id>
+      <specialid>0</specialid>
+      <x_coord>470.0</x_coord>
+      <y_coord>164.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>3</id>
+      <specialid>2</specialid>
+      <x_coord>470.0</x_coord>
+      <y_coord>105.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <hidden>false</hidden>
+</edge>
+
+<edge type="Inheritance">
+   <source>Chain</source>
+   <target>PowerTransmitter</target>
+   <name>Inheritance</name>
+   <edgeproperty type="NodeOnEdge">
+      <id>0</id>
+      <specialid>1</specialid>
+      <x_coord>589.9134615384615</x_coord>
+      <y_coord>259.0</y_coord>
+      <hidden>false</hidden>
+   </edgeproperty>
+   <edgeproperty type="NodeOnEdge">
+      <id>1</id>
+      <specialid>0</specialid>
+      <x_coord>589.0</x_coord>
       <y_coord>164.0</y_coord>
       <hidden>false</hidden>
    </edgeproperty>

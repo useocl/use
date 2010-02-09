@@ -106,6 +106,7 @@ import org.tzi.use.uml.sys.MObjectState;
  * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Mark Richters
  */
+@SuppressWarnings("serial")
 public class NewObjectDiagram extends DiagramView 
                               implements HighlightChangeListener {
 
@@ -209,8 +210,7 @@ public class NewObjectDiagram extends DiagramView
                                                 null, this );
         
         DiagramMouseHandling mouseHandling = 
-            new DiagramMouseHandling( fNodeSelection, fEdgeSelection, fGraph,
-                                      fHideAdmin, fHiddenNodes, fOpt, this);
+            new DiagramMouseHandling( fNodeSelection, fEdgeSelection, fGraph, this);
         
         fParent.getModelBrowser().addHighlightChangeListener( this );
         

@@ -27,8 +27,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -50,6 +51,7 @@ import org.tzi.use.uml.sys.MSystem;
  * @author   Jie Xu
  */
 
+@SuppressWarnings("serial")
 public class SelectedAssociationPathView extends SelectedClassPathView {
 
 	private HashSet anames;
@@ -88,45 +90,45 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 		add(buttonPane, BorderLayout.SOUTH);
 	}
 
-	public HashSet getSelectedPathClasses() {
-		HashSet classes = new HashSet();
+	public Set<MClass> getSelectedPathClasses() {
+		
+		Set<MClass> classes = new HashSet<MClass>();
+		
 		for (int i = 0; i < fAttributes.size(); i++) {
+			// TODO: Use Associations instead of parsing 
 			String cname = fAttributes.get(i).toString().substring(0,
 					fAttributes.get(i).toString().indexOf("(")).trim();
-			HashSet assclasses = getSelectedClassesOfAssociation(cname);
-
-			Iterator it = assclasses.iterator();
-			while(it.hasNext()){ 
-				MClass mc = (MClass)(it.next());
-				List note[] = getAllPathClasses(mc);
-				for (int j = 0; j < note[0].size(); j++) {
-					if (Integer.parseInt(note[1].get(j).toString()) <= Integer
-							.parseInt(fValues.get(i).toString())) {
-						if (!classes.contains((MClass) (note[0].get(j)))) {
-							classes.add((MClass) (note[0].get(j)));
-						}
+			
+			Set<MClass> assclasses = getSelectedClassesOfAssociation(cname);
+			int enteredValue = Integer.parseInt(fValues.get(i).toString());
+			
+			for (MClass mc : assclasses) {
+				Map<MClass, Integer> allPathes = getAllPathClasses(mc);
+				
+				for (Entry<MClass, Integer> entry : allPathes.entrySet()) {
+					if (entry.getValue().intValue() <= enteredValue) {
+						classes.add(entry.getKey());
 					}
 				}
 			}
 		}
+		
 		return classes;
 	}
 	
 	/**
-	 * Method getAssociationDepth obtaine maximally attainable Depth based on starting point(aname)
+	 * Method getAssociationDepth obtains maximally attainable Depth based on starting point(aname)
 	 */
 	public int getAssociationDepth(AssociationName aname) {
 
-		HashSet classes = getSelectedClassesOfAssociation(aname.name());
+		Set<MClass> classes = getSelectedClassesOfAssociation(aname.name());
 		int maxdepth = -1;
-		Iterator it = classes.iterator();
-		while(it.hasNext()){
-			MClass mc = (MClass)(it.next());
+				
+		for (MClass mc : classes) {
 			int max = getDepth(mc);
-			if(maxdepth<0 || maxdepth > max){
-				maxdepth = max;
-			}
+			maxdepth = Math.max(max, maxdepth);
 		}
+		
 		return maxdepth;
 	}
 	
@@ -134,25 +136,27 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
      * Method getSelectedClassesOfAssociation calls twice Method getSelectedClassesofAssociationHS(), 
      * in order to find relevant classes both in "Hidden" and in "Show". 
 	 */
-	private HashSet getSelectedClassesOfAssociation(String name){
-		HashSet classes = new HashSet();
-		classes = getSelectedClassesofAssociationHS(name,true);
-		classes.addAll(getSelectedClassesofAssociationHS(name,false));
+	private Set<MClass> getSelectedClassesOfAssociation(String name) {
+		Set<MClass> classes = getSelectedClassesofAssociationHS(name, true);
+		classes.addAll(getSelectedClassesofAssociationHS(name, false));
+		
 		return classes;
 	}
 	
 	/**
 	 * Method getSelectedClassesOfAssociationHS returns selected classes of Association in "Show" oder "Hidden"
 	 */
-	private HashSet getSelectedClassesofAssociationHS(String name, boolean isshow){
-		HashSet classes = new HashSet();
+	private Set<MClass> getSelectedClassesofAssociationHS(String name, boolean isshow){
+		Set<MClass> classes = new HashSet<MClass>();
 		Iterator it;
+		
 		if(isshow){
 			it = ClassDiagram.ffGraph.edgeIterator();
 		}
 		else{
 			it = ClassDiagram.ffHiddenEdges.iterator();
 		}
+		
 		boolean have = false;
 		while(it.hasNext() && !have){
 			Object o = it.next();

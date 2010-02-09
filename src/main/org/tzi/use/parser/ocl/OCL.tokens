@@ -81,6 +81,7 @@ STRING=28
 'Tuple'=71
 'Date'=72
 'oclAsType'=54
+'::'=37
 'Bag'=65
 'Undefined'=69
 'pre'=52

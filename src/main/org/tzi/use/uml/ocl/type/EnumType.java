@@ -74,6 +74,14 @@ public final class EnumType extends Type {
         return fLiterals.iterator();
     }
 
+    /**
+     * Returns the list of literals for the enumeration
+     * @return
+     */
+    public List<String> getLiterals() {
+    	return fLiterals;
+    }
+    
     /** 
      * Returns true if this enumeration type contains the given literal.
      */

@@ -95,6 +95,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
             fDiagram.addLink(link);
         }
         fHiddenEdges.clear();
+        fDiagram.repaint();
         
         XMLParserAccess xmlParser = new XMLParserAccessImpl( fLayoutInfos );
         xmlParser.loadXMLString( fLayoutInfos.getHiddenElementsXML(), false );
@@ -255,41 +256,29 @@ public final class ActionHideObjectDiagram extends ActionHide {
         fLayoutInfos.setHiddenElementsXML( xml );
     }
     
-    /** anfangs jj
+    /*
      * Displays all hidden objects again. The objects have to be added
      * again, because they were deleted from the view before.
      */
-    public void showHiddenElements(Set hiddenElements) {
-        // add hidden objects
-    	
-    	HashSet classes = new HashSet();
-    	Iterator t1 = fHiddenNodes.iterator();
-    	while(t1.hasNext()){ // add schon gehiddenene Nodes
-//    		classes.add(t1.next());
-    		MObject node = (MObject)t1.next();
-    		classes.add(node);
-    	}
-    	
-    	Iterator t2 = hiddenElements.iterator();
-    	while(t2.hasNext()){
-    		MObject node = (MObject)t2.next();
-    		classes.remove(node); // remove vorher schon gehidden nodes-> show
-    	}
+    public void showHiddenElements(Set<?> hiddenElements) {
+        
+    	// Add all already hidden nodes
+    	Set<Object> nodesToHide = new HashSet<Object>(fHiddenNodes);
+
+    	// Remove all supplied nodes (don't hide them anymore)
+    	nodesToHide.removeAll(hiddenElements);
+
+    	// Shows all Nodes and Edges
+    	// (Copies hiddenObjects to objects...)
     	this.showAllHiddenElements();
     	
-    	Iterator t3 = classes.iterator();
     	fNodesToHide.clear();
-    	while(t3.hasNext()){
-    		MObject node = (MObject)t3.next(); //aktuelle zustand nach fNodesToHide copieren
-    		fNodesToHide.add(node);
-    	}
-//    	fNodesToHide =classes;
-//    	fNodesToHidehiddenElements;
+    	fNodesToHide.addAll(nodesToHide);
+
     	this.hideNodesAndEdges();
+    	
     	String xml = fLayoutInfos.getHiddenElementsXML()
         + fLayoutXMLForHiddenElements;
     	fLayoutInfos.setHiddenElementsXML( xml );
-    }    
-    //end jj
-
+    }
 }

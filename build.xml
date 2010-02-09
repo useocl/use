@@ -234,7 +234,7 @@
   </target>
 
   <!-- compile USE sources -->
-  <target name="compile-use" depends="compile-use-runtime" />
+  <target name="compile-use" depends="compile-use-runtime, test-classcycles" />
 
   <target name="compile-use-main" depends="create-parser">
     <mkdir dir="${build.classes.dir}"/>
@@ -374,7 +374,7 @@
 
   <!-- create all jars -->
 
-	<target name="build" depends="jar-use, create-nativelib" description="build everything " />
+	<target name="build" depends="jar-use, create-nativelib" description="build everything" />
 
 
   <!-- delete the build tree -->
@@ -482,7 +482,7 @@
     <taskdef name="classycleDependencyCheck" 
              classname="classycle.ant.DependencyCheckingTask" classpath="lib_build/Classycle1.3.3/classycle.jar"/>
 	
-    <classycleDependencyCheck failOnUnwantedDependencies="true"
+    <classycleDependencyCheck failOnUnwantedDependencies="false"
                               excludingClasses="*Test,*.All*Tests">
       <fileset dir="${build.classes.dir}">
         <include name="**/*.class"/>

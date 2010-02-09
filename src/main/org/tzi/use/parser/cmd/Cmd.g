@@ -119,7 +119,6 @@ cmdStmt returns [ASTCmd n]
     | nC = opEnterCmd
     | nC = opExitCmd
     | nC = letCmd
-    | nC = executeCmd
 	) { $n = $nC.n; }
     ;
 
@@ -259,13 +258,6 @@ letCmd returns [ASTCmd n]
     'let' name=IDENT ( COLON t=type )? EQUAL e=expression
      { $n = new ASTLetCmd($name, $t.n, $e.n); }
     ;
-
-executeCmd returns [ASTCmd n]
-:
-	'execute' 
-    e=expression 
-    { $n = new ASTExecuteCmd($e.n); }
-;
 
 
 /*
@@ -426,8 +418,7 @@ operationDefinition returns [ASTOperation n]
     pl=paramList
     ( COLON t=type )?
     (EQUAL e=expression )? 
-	('begin' al=alActionList 'end' )?
-    { $n = new ASTOperation($name, $pl.paramList, $t.n, $e.n, $al.al); }
+    { $n = new ASTOperation($name, $pl.paramList, $t.n, $e.n); }
     ( ppc=prePostClause { $n.addPrePostClause($ppc.n); } )*
     ( SEMI )?
     ;
@@ -443,7 +434,7 @@ associationDefinition returns [ASTAssociation n]
 @init{ Token t = null; }
 :
     { t = input.LT(1); }
-    ( 'association' | 'aggregation' | 'composition' )
+    ( keyAssociation | 'aggregation' | 'composition' )
     //    ( classDefinition | (name:IDENT { n = new ASTAssociation(t, $name); }) )
     name=IDENT { $n = new ASTAssociation(t, $name); }
     'between'
@@ -569,115 +560,11 @@ prePostClause returns [ASTPrePostClause n]
     { $n = new ASTPrePostClause(t, $name, $e.n); }
     ;
 
-alActionList returns [ASTALActionList al] 
-@init{
-	$al = new ASTALActionList();
-}
-:
-	( action=alAction {$al.add($action.action);})*
-;
-
-alAction returns [ASTALAction action] 
-:
-    aCV = alCreateVar { $action = $aCV.var; }
-|   aDl = alDelete { $action = $aDl.n; }
-|   aSe = alSet { $action = $aSe.set; }
-|   aSC = alSetCreate { $action = $aSC.setcreate; }
-|   aIn = alInsert { $action = $aIn.insert; }
-|   aDe = alDestroy { $action = $aDe.n; }
-|   aIf = alIf { $action = $aIf.i; }
-|   aWh = alWhile { $action = $aWh.w; }
-|   aFo = alFor { $action = $aFo.f; }
-|   aEx = alExec { $action = $aEx.c; }
-;
-
-
-
-alCreateVar returns [ASTALCreateVar var] 
-:
-	('var'|'declare') name=IDENT COLON t=type 
-	{ $var = new ASTALCreateVar($name, $type.n); }
-;
-
-alSet returns [ASTALSet set]
-:
-
-    'set' lval=expression COLON_EQUAL rval=expression
-    { $set = new ASTALSet($lval.n, $rval.n); }
-; 
-
-alSetCreate returns [ASTALSetCreate setcreate]
-:
-    'create' lval=expression COLON_EQUAL { input.LT(1).getText().equals("new") }? new_=IDENT cls=IDENT 
-    ( 'namehint' nameExpr=expression )?
-    { setcreate = new ASTALSetCreate($lval.n, $cls, $nameExpr.n);}
-;
-
-
-alInsert returns [ASTALInsert insert]
-@init{List exprList = new ArrayList(); }
-:
-    'insert' LPAREN 
-    e=expression { exprList.add($e.n); } COMMA
-    e=expression { exprList.add($e.n); } ( COMMA e=expression { exprList.add($e.n); } )* 
-    RPAREN 'into' id=IDENT
-    { $insert = new ASTALInsert(exprList, $id); }
-    ;
-
-
-alDelete returns [ASTALDelete n]
-@init{ List exprList = new ArrayList(); }
-:
-    'delete' LPAREN
-    e=expression { exprList.add($e.n); } COMMA
-    e=expression { exprList.add($e.n); } ( COMMA e=expression { exprList.add($e.n); } )*
-    RPAREN 'from' id=IDENT
-    { $n = new ASTALDelete(exprList, $id); }
-    ;
-
-
-alDestroy returns [ASTALDestroy n]
-:
-     'destroy' e=expression
-    { $n = new ASTALDestroy($e.n); }
-    ;
-
-alIf returns [ASTALIf i]
-:
-	'if' ifexpr=expression 
-	'then' thenlist=alActionList
-	('else' elselist=alActionList)?
-	'endif' 
-	{ $i = new ASTALIf($ifexpr.n, $thenlist.al, $elselist.al); }
-;
-
-alWhile returns [ASTALWhile w]
-: 
-	'while' expr=expression 
-	'do' 
-	body=alActionList
-	'wend'
-	{ $w = new ASTALWhile($expr.n, $body.al); }
-;
-
-
-alFor returns [ASTALFor f]
-: 
-	'for' var=IDENT COLON t=type 'in' expr=expression 
-	'do' 
-	body=alActionList
-	{ input.LT(1).getText().equals("next") }? next=IDENT
-	{ $f = new ASTALFor($var, $t.n, $expr.n, $body.al); }
-;
-
-alExec returns [ASTALExecute c]
-:
-    'execute' op=expression
-    { $c = new ASTALExecute($op.n); }
-;
-
 keyUnion:
   {input.LT(1).getText().equals("union")}? IDENT ;
+  
+keyAssociation:
+  {input.LT(1).getText().equals("association")}? IDENT ;
 /*
 --------- Start of file OCLBase.gpart -------------------- 
 */
@@ -1092,6 +979,7 @@ ifExpression returns [ASTExpression n]
     | REAL
     | STRING
     | "#" id
+    | id "::" id
     | dateLiteral
     | collectionLiteral
     | emptyCollectionLiteral
@@ -1105,7 +993,8 @@ literal returns [ASTExpression n]
     | i=INT    { $n = new ASTIntegerLiteral($i); }
     | r=REAL   { $n = new ASTRealLiteral($r); }
     | s=STRING { $n = new ASTStringLiteral($s); }
-    | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit); }
+    | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit);  reportWarning("the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");}
+    | enumName=IDENT '::' enumLit=IDENT { $n = new ASTEnumLiteral($enumName, $enumLit); }
     | nColIt=collectionLiteral { $n = $nColIt.n; }
     | nEColIt=emptyCollectionLiteral { $n = $nEColIt.n; }
     | nUndLit=undefinedLiteral {$n = $nUndLit.n; }
@@ -1229,9 +1118,9 @@ type returns [ASTType n]
 :
     { tok = input.LT(1); /* remember start of type */ }
     (
-      nTSimple=simpleType { $n = $nTSimple.n; $n.setStartToken(tok); }
-    | nTCollection=collectionType { $n = $nTCollection.n; $n.setStartToken(tok); }
-    | nTTuple=tupleType { $n = $nTTuple.n; $n.setStartToken(tok); }
+      nTSimple=simpleType { $n = $nTSimple.n; if ($n != null) $n.setStartToken(tok); }
+    | nTCollection=collectionType { $n = $nTCollection.n; if ($n != null) $n.setStartToken(tok); }
+    | nTTuple=tupleType { $n = $nTTuple.n; if ($n != null) $n.setStartToken(tok); }
     )
     ;
 
@@ -1264,7 +1153,7 @@ collectionType returns [ASTCollectionType n]
     { op = input.LT(1); } 
     ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) 
     LPAREN elemType=type RPAREN
-    { $n = new ASTCollectionType(op, $elemType.n); $n.setStartToken(op);}
+    { $n = new ASTCollectionType(op, $elemType.n); if ($n != null) $n.setStartToken(op);}
     ;
 
 

@@ -473,6 +473,7 @@ ifExpression returns [ASTExpression n]
     | REAL
     | STRING
     | "#" id
+    | id "::" id
     | dateLiteral
     | collectionLiteral
     | emptyCollectionLiteral
@@ -486,7 +487,8 @@ literal returns [ASTExpression n]
     | i=INT    { $n = new ASTIntegerLiteral($i); }
     | r=REAL   { $n = new ASTRealLiteral($r); }
     | s=STRING { $n = new ASTStringLiteral($s); }
-    | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit); }
+    | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit);  reportWarning("the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");}
+    | enumName=IDENT '::' enumLit=IDENT { $n = new ASTEnumLiteral($enumName, $enumLit); }
     | nColIt=collectionLiteral { $n = $nColIt.n; }
     | nEColIt=emptyCollectionLiteral { $n = $nEColIt.n; }
     | nUndLit=undefinedLiteral {$n = $nUndLit.n; }
@@ -610,9 +612,9 @@ type returns [ASTType n]
 :
     { tok = input.LT(1); /* remember start of type */ }
     (
-      nTSimple=simpleType { $n = $nTSimple.n; $n.setStartToken(tok); }
-    | nTCollection=collectionType { $n = $nTCollection.n; $n.setStartToken(tok); }
-    | nTTuple=tupleType { $n = $nTTuple.n; $n.setStartToken(tok); }
+      nTSimple=simpleType { $n = $nTSimple.n; if ($n != null) $n.setStartToken(tok); }
+    | nTCollection=collectionType { $n = $nTCollection.n; if ($n != null) $n.setStartToken(tok); }
+    | nTTuple=tupleType { $n = $nTTuple.n; if ($n != null) $n.setStartToken(tok); }
     )
     ;
 
@@ -645,7 +647,7 @@ collectionType returns [ASTCollectionType n]
     { op = input.LT(1); } 
     ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) 
     LPAREN elemType=type RPAREN
-    { $n = new ASTCollectionType(op, $elemType.n); $n.setStartToken(op);}
+    { $n = new ASTCollectionType(op, $elemType.n); if ($n != null) $n.setStartToken(op);}
     ;
 
 

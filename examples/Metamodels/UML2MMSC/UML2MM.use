@@ -127,7 +127,7 @@ class PackageImport < DirectedRelationship
 end
 
 association A_Namespace_Namespace_PackageableElement_ImportedMember between
-  Namespace[*] role notNavigableImportedMember subsets notNavigableMember
+  Namespace[*] role notNavigableImportedMember
   PackageableElement[*] role importedMember subsets member
 end
 
@@ -137,27 +137,27 @@ association A_Namespace_Namespace_NamedElement_Member between
 end
 
 composition C_Namespace_Namespace_NamedElement_OwnedMember between
-  Namespace[0..1] role namespace subsets notNavigableMember subsets owner union
+  Namespace[0..1] role namespace subsets owner union
   NamedElement[*] role ownedMember subsets member subsets ownedElement union
 end
 
 composition C_Namespace_ImportingNamespace_ElementImport_ElementImport between
   Namespace[1] role importingNamespace subsets source subsets owner
-  ElementImport[*] role elementImport subsets notNavigableSource subsets ownedElement
+  ElementImport[*] role elementImport subsets ownedElement
 end
 
 association A_ElementImport_ElementImport_PackageableElement_ImportedElement between
-  ElementImport[*] role notNavigableImportedElement subsets notNavigableTarget -- Spec says: 1
+  ElementImport[*] role notNavigableImportedElement -- Spec says: 1
   PackageableElement[1] role importedElement subsets target
 end
 
 composition C_Namespace_ImportingNamespace_PackageImport_PackageImport between
   Namespace[1] role importingNamespace subsets source subsets owner
-  PackageImport[*] role packageImport subsets notNavigableSource subsets ownedElement
+  PackageImport[*] role packageImport subsets ownedElement
 end
 
 association A_PackageImport_PackageImport_Package_ImportedPackage between
-  PackageImport[*] role notNavigableImportedPackage subsets notNavigableTarget
+  PackageImport[*] role notNavigableImportedPackage
   Package[1] role importedPackage subsets target
 end
 --------------------------------------------------------------------------------------------------------
@@ -349,27 +349,27 @@ association A_RedefinableElement_RedefinableElement_Classifier_RedefinitionConte
 end
 
 association A_Classifier_Classifier_Property_Attribute between
-  Classifier[0..1] role classifier subsets featuringClassifier -- Err in Spec?: redefinitionContext
+  Classifier[0..1] role classifier subsets featuringClassifier union -- Err in Spec?: redefinitionContext
   Property[*] role attribute subsets feature union
 end
 
 association A_Classifier_General_Generalization_Generalization between
   Classifier[1] role general subsets target
-  Generalization[*] role allGeneralizations subsets notNavigableTarget
+  Generalization[*] role allGeneralizations
 end
 
 composition C_Classifier_Specific_Generalization_Generalization between
   Classifier[1] role specific subsets source subsets owner
-  Generalization[*]	role directGeneralizations subsets notNavigableSource subsets ownedElement
+  Generalization[*]	role directGeneralizations subsets ownedElement
 end
 
 association A_Classifier_Classifier_NamedElement_InheritedMember between
-  Classifier[*] role notNavigableInheritedMember subsets notNavigableMember
+  Classifier[*] role notNavigableInheritedMember
   NamedElement[*] role inheritedMember subsets member
 end
 
 association A_Classifier_Classifier_Classifier_RedefinedClassifier between
-  Classifier[*] role notNavigableRedefinedClassifier subsets notNavigableRedefinedElement
+  Classifier[*] role notNavigableRedefinedClassifier
   Classifier[*] role redefinedClassifier subsets redefinedElement
 end
 
@@ -468,7 +468,7 @@ end
 
 association Operation_Operation_Type_RaisedException between
   Operation[*] role notNavigableRaisedException_Redefined -- subsets redefinedElement
-  Type[*] role raisedException_redefined -- redefines raisedException
+  Type[*] role raisedException_redefined redefines raisedException
 end
 
 association Operation_Operation_Operation_RedefinedOperation between
@@ -491,6 +491,20 @@ class Property < StructuralFeature, ConnectableElement /* From Fig. 9.2: */
 	default : String -- derived
 	_aggregation : AggregationKind   -- Keyword !
 	isComposite : Boolean -- derived
+  operations
+    subsettingContext() : Set(Type) = 
+	  if association->notEmpty() then 
+		association.endType->asSet() -- -type
+	  else 
+	    if classifier->notEmpty() then 
+		  Set{classifier} else Set{}
+	    endif
+      endif
+constraints
+  inv subsettingConformsToContext:
+    subsettedProperty->notEmpty() implies
+	  (subsettingContext()->notEmpty() and subsettingContext()->forAll (sc |
+		  subsettedProperty->forAll(sp | sp.subsettingContext()->exists(c | sc.conformsTo(c)))))
 end
 
 class Class < Classifier
@@ -538,11 +552,11 @@ end
 
 association A_Property_MemberEnd_Association_Association between
   Property[2..*] role memberEnd ordered subsets member
-  Association[0..1] role _association subsets notNavigableMember
+  Association[0..1] role association subsets notNavigableMember
 end
 
 composition C_Association_OwningAssociation_Property_OwnedEnd between
-  Association[0..1] role owningAssociation subsets _association subsets namespace subsets featuringClassifier
+  Association[0..1] role owningAssociation subsets association subsets namespace subsets featuringClassifier
   Property[*] role ownedEnd ordered subsets memberEnd subsets feature subsets ownedMember  
 end
 
@@ -581,7 +595,7 @@ end
 
 composition C_DataType_Datatype_Property_OwnedAttribute between
   DataType[0..1] role datatype subsets namespace subsets featuringClassifier subsets classifier
-  Property[*] role ownedAttribute ordered subsets ownedMember subsets feature subsets attribute -- subsets feature not in Spec!
+  Property[*] role ownedAttribute ordered subsets ownedMember subsets attribute
 end
 
 composition C_DataType_Datatype_Operation_OwnedOperation between
@@ -655,13 +669,13 @@ end
 
 -- In the specification the subsets constraint is on the wrong end?!?
 association A_Dependency_SupplierDependency_NamedElement_Supplier between
-  Dependency[*] role supplierDependency subsets notNavigableTarget -- not mentioned in Spec.
+  Dependency[*] role supplierDependency
   NamedElement[1..*] role supplier subsets target
 end
 
 -- In the specification the subsets constraint is on the wrong end?!?
 association A_Dependency_ClientDependency_NamedElement_Client between
-  Dependency[*] role clientDependency subsets notNavigableSource -- not mentioned in Spec.
+  Dependency[*] role clientDependency
   NamedElement[1..*] role client subsets source
 end
 

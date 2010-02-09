@@ -25,10 +25,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -47,8 +50,10 @@ import org.tzi.use.uml.sys.MSystem;
  * @author   Jie Xu
  */
 
+@SuppressWarnings("serial")
 public class SelectedClassPathView extends ClassSelectionView {
 
+	//TODO: Is the a Set<MClass>?
 	HashSet selectedClasses;
 
 	private JButton fBtnReset;
@@ -89,11 +94,14 @@ public class SelectedClassPathView extends ClassSelectionView {
 		add(buttonPane, BorderLayout.SOUTH);
 	}
 
-	public HashSet getSelectedPathClasses() {
-		HashSet classes = new HashSet();
+	public Set<MClass> getSelectedPathClasses() {
+		Set<MClass> classes = new HashSet<MClass>();
+		
 		for (int i = 0; i < fAttributes.size(); i++) {
-			String cname = fAttributes.get(i).toString().substring(0,
-					fAttributes.get(i).toString().indexOf("(")).trim();
+			String att = fAttributes.get(i).toString();
+			
+			// TODO: Use MClass instead of parsing
+			String className = att.substring(0, att.indexOf("(")).trim();
 
 			Iterator it = selectedClasses.iterator();
 			MClass mc = null;
@@ -101,95 +109,93 @@ public class SelectedClassPathView extends ClassSelectionView {
 			// find out, which mclass selected 
 			while (it.hasNext()) { 
 				mc = (MClass) (it.next());
-				if (mc.name().equals(cname)) {
+				if (mc.name().equals(className)) {
 					break;
 				}
 			}
-			List note[] = getAllPathClasses(mc);
-			for (int j = 0; j < note[0].size(); j++) {
-				if (Integer.parseInt(note[1].get(j).toString()) <= Integer
-						.parseInt(fValues.get(i).toString())) {
-					if (!classes.contains((MClass) (note[0].get(j)))) {
-						classes.add((MClass) (note[0].get(j)));
-					}
+			
+			Map<MClass, Integer> allPathes = getAllPathClasses(mc);
+			int maxDepth = Integer.parseInt(fValues.get(i).toString());
+
+			for (Entry<MClass, Integer> entry : allPathes.entrySet()) {
+				if (entry.getValue() <= maxDepth) {
+					classes.add(entry.getKey());
 				}
 			}
 		}
+		
 		return classes;
 	}
 
 	/**
-	 * Method getAllPathClasses return all attainable classe based on mc
+	 * Method getAllPathClasses return all attainable classes from the given class mc
 	 */
-	public List[] getAllPathClasses(MClass mc) {
-		List[] note = new List[2];
-		List classes = new ArrayList();
-		List index = new ArrayList();
-		note[0] = classes;
-		note[1] = index;
-		classes.add(mc);
-		index.add(new Integer(0));
+	public Map<MClass, Integer> getAllPathClasses(MClass mc) {
+		
+		Map<MClass, Integer> result = new HashMap<MClass, Integer>();
+		
+		// For FIFO handling of remaining classes to process
+		LinkedList<MClass> buffer = new LinkedList<MClass>();
+		
+		buffer.addLast(mc);
+		result.put(mc, new Integer(0));
+		
+		MClass currentClass;
+		Set<MClass> relatedClasses;
+		int depth;
+		
+		while (buffer.size() > 0) {
+			currentClass = buffer.poll();
+			depth = result.get(currentClass).intValue() + 1;
+			
+			// Check generalizations
+			relatedClasses = currentClass.parents();
+			addNewClassesWithDepth(buffer, result, relatedClasses, depth);
+			
+			// Check the subclasses
+			relatedClasses = currentClass.children();
+			addNewClassesWithDepth(buffer, result, relatedClasses, depth);
 
-		int actual = 0;
-		while (classes.size() > actual) {
-			if (((MClass) classes.get(actual)).parents() != null) {
-				Iterator itp = ((MClass) classes.get(actual)).parents()
-						.iterator();
-				while (itp.hasNext()) {
-					MClass mcp = (MClass) (itp.next());
-					if (!classes.contains(mcp)) {
-						classes.add(mcp);
-						index.add(new Integer(((Integer) (index.get(actual)))
-								.intValue() + 1));
-					}
-				}
+			// Check classes related from associations
+			for (MAssociation association : currentClass.associations()) {
+				relatedClasses = association.associatedClasses();
+				addNewClassesWithDepth(buffer, result, relatedClasses, depth);
 			}
-			if (((MClass) classes.get(actual)).children() != null) {
-				Iterator itc = ((MClass) classes.get(actual)).children()
-						.iterator();
-				while (itc.hasNext()) {
-					MClass mcc = (MClass) (itc.next());
-					if (!classes.contains(mcc)) {
-						classes.add(mcc);
-						index.add(new Integer(((Integer) (index.get(actual)))
-								.intValue() + 1));
-					}
-				}
-			}
-
-			Iterator it = ((MClass) classes.get(actual)).associations()
-					.iterator();
-			while (it.hasNext()) {
-				MAssociation ma = (MAssociation) (it.next());
-
-				Iterator itt = ma.associatedClasses().iterator();
-				while (itt.hasNext()) {
-					MClass mcc = (MClass) (itt.next());
-					if (!classes.contains(mcc)) {
-						classes.add(mcc);
-						index.add(new Integer(((Integer) (index.get(actual)))
-								.intValue() + 1));
-					}
-				}
-			}
-			actual++;
 		}
-		return note;
+		
+		return result;
 	}
 
 	/**
-	 * Method getDepth obtaine maximally attainable Depth based on starting point(mc)
+	 * Helper function for getAllPathClasses
+	 * @param result buffer with already handled classes and depth
+	 * @param relatedClasses classes to evantually at to buffer
+	 * @param depth depth to set
 	 */
-	public int getDepth(MClass mc) {
-		List note[] = getAllPathClasses(mc);
-
-		int maxdepth = 0;
-		for (int i = 0; i < note[1].size(); i++) {
-			if (maxdepth < ((Integer) (note[1].get(i))).intValue()) {
-				maxdepth = ((Integer) (note[1].get(i))).intValue();
+	private void addNewClassesWithDepth(LinkedList<MClass> buffer, Map<MClass, Integer> result,
+										Set<MClass> relatedClasses, int depth) {
+		if (relatedClasses != null) {
+			for (MClass cls : relatedClasses) {
+				if (!result.containsKey(cls)) {
+					result.put(cls, new Integer(depth));
+					buffer.add(cls);
+				}
 			}
 		}
-		return maxdepth;
+	}
+
+	/**
+	 * Method getDepth obtains maximally attainable Depth based on starting point(mc)
+	 */
+	public int getDepth(MClass mc) {
+		Map<MClass, Integer> allClasses = getAllPathClasses(mc);
+
+		int maxDepth = 0;
+		for (Integer val : allClasses.values()) {
+			maxDepth = Math.max(maxDepth, val.intValue());
+		}
+		
+		return maxDepth;
 	}
 
 	/**

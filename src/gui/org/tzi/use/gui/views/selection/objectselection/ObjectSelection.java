@@ -17,6 +17,8 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.BinaryEdge;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
+import org.tzi.use.gui.views.diagrams.EdgeBase;
+import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.SelectionComparator;
@@ -31,7 +33,7 @@ import org.tzi.use.uml.sys.MObject;
  */
 public class ObjectSelection {
 
-	private DirectedGraph fGraph;
+	private DirectedGraph<NodeBase, EdgeBase> fGraph;
 
 	private Set fHiddenNodes;
 
@@ -42,7 +44,7 @@ public class ObjectSelection {
 	/**
 	 * Constructor for ObjectSelection.
 	 */
-	public ObjectSelection(DirectedGraph fGraph, Set fHiddenNodes,
+	public ObjectSelection(DirectedGraph<NodeBase, EdgeBase> fGraph, Set fHiddenNodes,
 			Set fHiddenEdges, HideAdministration fHideAdmin) {
 		this.fGraph = fGraph;
 		this.fHiddenNodes = fHiddenNodes;

@@ -42,7 +42,7 @@ public final class EnumValue extends Value {
     }
     
     public String toString() {
-        return "#" + fLiteral;
+        return type().toString() + "::" + fLiteral;
     }
 
     public String value() {

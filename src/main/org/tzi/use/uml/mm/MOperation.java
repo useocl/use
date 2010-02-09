@@ -24,7 +24,6 @@ package org.tzi.use.uml.mm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.uml.al.ALAction;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
@@ -44,9 +43,6 @@ public final class MOperation extends MModelElementImpl {
     private List<MPrePostCondition> fPreConditions;
     private List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
-
-    // for UML AL
-    private ALAction fAction;
 
     MOperation(String name, VarDeclList varDeclList, Type resultType) {
         super(name);
@@ -177,15 +173,5 @@ public final class MOperation extends MModelElementImpl {
      */
     public void processWithVisitor(MMVisitor v) {
         v.visitOperation(this);
-    }
-
-    // for UML AL
-    public void setAction(ALAction action) {
-        fAction = action;
-    }
-    
-    // for UML AL
-    public ALAction getAction() {
-        return fAction;
     }
 }

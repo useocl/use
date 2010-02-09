@@ -36,17 +36,41 @@ import org.tzi.use.uml.ocl.type.EnumType;
  */
 public class ASTEnumLiteral extends ASTExpression {
     private Token fValue;
-
+    private Token fEnumType = null;
+    
     public ASTEnumLiteral(Token token) {
         fValue = token;
     }
 
+    public ASTEnumLiteral(Token enumType, Token enumLiteral) {
+        fEnumType = enumType;
+    	fValue = enumLiteral;
+    }
+    
     public Expression gen(Context ctx) throws SemanticException {
         String literal = fValue.getText();
-        EnumType t = ctx.model().enumTypeForLiteral(literal);
-        if (t == null )
-            throw new SemanticException(fValue,
-                                        "Undefined enumeration literal `" + literal + "'.");
+        EnumType t;
+        
+        if (fEnumType == null) {
+        	t = ctx.model().enumTypeForLiteral(literal);
+        	if (t == null )
+        		throw new SemanticException(fValue,
+        									"Undefined enumeration literal `" + literal + "'.");
+        } else {
+        	String enumType = fEnumType.getText();
+        	t = ctx.model().enumType(enumType);
+        	
+        	if (t == null) {
+        		throw new SemanticException(fEnumType,
+						"Undefined enumeration `" + enumType + "'.");
+        	}
+        	
+        	if (!t.getLiterals().contains(literal)) {
+        		throw new SemanticException(fEnumType,
+						"Undefined enumeration literal `" + literal + "' for enumeration `" + enumType + "'.");
+        	}
+        }
+        
         return new ExpConstEnum(t, literal); 
     }
 

@@ -1,13 +1,12 @@
 package org.tzi.use.gui.views.selection.classselection;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.selection.SelectionComparator;
 import org.tzi.use.gui.views.selection.TableModel;
 
 /**  	
@@ -17,18 +16,18 @@ import org.tzi.use.gui.views.selection.TableModel;
  * @author   Jie Xu
  */
 
+@SuppressWarnings("serial")
 public class AssociationPathTableModel extends TableModel {
-	SelectedAssociationPathView fView;
-
-	HashSet anames;
+	protected SelectedAssociationPathView fView;
+	protected Set<AssociationName> anames;
 
 	/**
 	 * Constructor for AssociationPathTableModel
 	 * 
 	 * @param anames stores the names of the associations, which are selected by the user.
 	 */
-	public AssociationPathTableModel(List fAttributes, List fValues,
-			HashSet anames, SelectedAssociationPathView fView) {
+	public AssociationPathTableModel(List<String> fAttributes, List<Object> fValues,
+			Set<AssociationName> anames, SelectedAssociationPathView fView) {
 		super(fAttributes, fValues);
 		this.fView = fView;
 		this.anames = anames;
@@ -43,14 +42,18 @@ public class AssociationPathTableModel extends TableModel {
 		if (anames.size() > 0) {
 			fAttributes.clear();
 			fValues.clear();
+			
 			// add all class
-			SelectionComparator so = new SelectionComparator();
-			TreeSet sortedClasses = new TreeSet(so);
-			sortedClasses.addAll(anames);
-			Iterator it = sortedClasses.iterator();
-			while (it.hasNext()) {
-				AssociationName aname = (AssociationName) (it.next());
-
+			TreeSet<AssociationName> sortedAssociationnames = new TreeSet<AssociationName>(new Comparator<AssociationName>() {
+				@Override
+				public int compare(AssociationName o1, AssociationName o2) {
+					return o1.name().compareTo(o2.name());
+				}
+			});
+			
+			sortedAssociationnames.addAll(anames);
+			
+			for (AssociationName aname : sortedAssociationnames) {
 				int depth = fView.getAssociationDepth(aname);
 				String one = aname.name() + " (0-" + depth + ")";
 
@@ -59,8 +62,8 @@ public class AssociationPathTableModel extends TableModel {
 
 			}
 		} else {
-			fAttributes = new ArrayList();
-			fValues = new ArrayList();
+			fAttributes = new ArrayList<String>();
+			fValues = new ArrayList<Object>();
 		}
 		fireTableDataChanged();
 	}

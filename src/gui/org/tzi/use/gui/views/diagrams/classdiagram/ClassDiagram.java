@@ -149,15 +149,14 @@ public class ClassDiagram extends DiagramView
         
         mouseHandling = 
             new DiagramMouseHandling( fNodeSelection, fEdgeSelection,
-                                      fGraph, fHideAdmin, fHiddenNodes, 
-                                      fOpt, this);
+                                      fGraph, this);
         
         // anfangs jj
         ffGraph = fGraph;
         ffHiddenNodes = fHiddenNodes;
         ffHiddenEdges = fHiddenEdges;
         ffHideAdmin = fHideAdmin;
-        fSelection = new ClassSelection(fGraph, fHiddenNodes, fHideAdmin, mouseHandling, fClassToNodeMap, fNodeSelection);
+        fSelection = new ClassSelection(fGraph, fHiddenNodes, fHideAdmin, fClassToNodeMap, fNodeSelection);
         // end jj
         
         fActionSaveLayout = new ActionSaveLayout( "USE class diagram layout",
@@ -603,7 +602,7 @@ public class ClassDiagram extends DiagramView
             }
             
             //anfangen jj
-			if(selectedClasses.size()<=0 && selectedClassesOfAssociation.size() > 0){
+			if(selectedClasses.size() <= 0 && selectedClassesOfAssociation.size() > 0){
 				String info;
 				if(anames.size() == 1){
 					info =((AssociationName) anames.iterator().next()).name();
@@ -642,7 +641,7 @@ public class ClassDiagram extends DiagramView
 				boolean havehide = fSelection.haveHideInObjectDiagram(fSelection.getAllKindClasses(selectedClasses));
 				boolean haveshow = fSelection.haveShowInObjectDiagram(fSelection.getAllKindClasses(selectedClasses));
 				
-				if((haveshow || havehide)&&(NewObjectDiagramView.viewcount>0)){
+				if((haveshow || havehide) && (NewObjectDiagramView.viewcount > 0)){
 					if(haveshow){
 						popupMenu.insert(NewObjectDiagram.ffHideAdmin.setValues("Hide all objects of " 
 											+ txt, fSelection.getHideObjects(fSelection.getAllKindClasses(selectedClasses))), pos++);

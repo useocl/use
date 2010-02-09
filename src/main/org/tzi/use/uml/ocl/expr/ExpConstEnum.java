@@ -54,7 +54,7 @@ public final class ExpConstEnum extends Expression {
     }
 
     public String toString() {
-        return "#" + fValue;
+        return type().toString() + "::" + fValue;
     }
 }
 

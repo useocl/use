@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.uml.al.ALAction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.value.ObjectValue;
@@ -30,7 +29,6 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
-import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -107,18 +105,10 @@ public final class ExpObjOp extends Expression {
                 if (op.expression() != null) {
                     Expression opExpr = op.expression();
                     res = opExpr.eval(newCtx);
-                } else {
-                    ALAction action = op.getAction();
-                    try {
-                        action.exec(newCtx);
-                        res = newCtx.getVarValue("result");
-                        assert (op.resultType() == null) || (res != null); 
-                    } catch (MSystemException e) {
-                        throw new RuntimeException(e);
-                    }
                 }
 
                 popVarBindings(newCtx, stackSize);
+                
                 assert newCtx.varBindings().getStackSize() == debugOldSize;
                 assert debugOldResultVal == newCtx.varBindings().getValue("result");
                 
@@ -148,11 +138,6 @@ public final class ExpObjOp extends Expression {
             newCtx.pushVarBinding(decl.name(), argValues[i]);
         }
 
-        // if this is an action language operation that has a return type
-        if (op.getAction()!=null && op.resultType() != null) {
-            newCtx.pushVarBinding("result", new UndefinedValue(op.resultType()));
-        }
-        
         // the operation's expression must be evaluated in context
         // of the target object. The "self" variable is bound to
         // the receiver object.

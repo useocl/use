@@ -118,10 +118,7 @@ public class Options {
     public static boolean disableCollectShorthand = false;
 
     public static boolean readlineTest = false;
-    
-    // non-standard extensions
-    public static boolean extensionActionLanguage = false;
-    
+
     /**
 	 * New Plugin Architecture Parameter
 	 */
@@ -262,8 +259,6 @@ public class Options {
                         setDimension( args[i+1], args[i+2] );
                         i = i+2;
                     }
-                } else if (arg.equals("XenableActionLanguage")){
-                    extensionActionLanguage = true;
                 } else {
 					System.out.println("invalid argument `" + arg
 							+ "\', try `use -h' for help.");

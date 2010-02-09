@@ -55,18 +55,14 @@ public class ASTOperation extends AST {
     private MOperation fOperation; // the operation is generated in two passes
     private List<ASTPrePostClause> fPrePostClauses;
     
-    // for UML AL
-    private ASTALAction fExecutableBody;
-
     public ASTOperation(Token name, List<ASTVariableDeclaration> paramList, 
-                        ASTType t, ASTExpression expr, ASTALActionList list) {
+                        ASTType t, ASTExpression expr) {
         fName = name;
         fParamList = paramList;
         fType = t;
         fExpr = expr;
         fOperation = null;
         fPrePostClauses = new ArrayList<ASTPrePostClause>();
-        fExecutableBody = list;
     }
 
     public void addPrePostClause(ASTPrePostClause ppc) {
@@ -126,17 +122,6 @@ public class ASTOperation extends AST {
             vars.add(astDecl.name(), decl.type());
         }
 
-        // for UML AL
-        if (fExecutableBody != null) {
-            if (fOperation.resultType() != null) {
-                vars.add("result", fOperation.resultType(),null);
-            }
-            boolean sideEffectFree = ctx.isSideEffectFree();
-            ctx.setIsSideEffectFree(false);
-            fOperation.setAction(fExecutableBody.gen(ctx));
-            ctx.setIsSideEffectFree(sideEffectFree);
-        }
-        
         try {
             if (fExpr != null ) {
                 Expression expr = fExpr.gen(ctx);

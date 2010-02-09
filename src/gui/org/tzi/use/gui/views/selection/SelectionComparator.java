@@ -15,7 +15,7 @@ import org.tzi.use.uml.sys.MObject;
  * @author   Jie Xu
  */
 
-public class SelectionComparator implements Comparator{
+public class SelectionComparator implements Comparator {
 	
 	public int compare(Object o1, Object o2) {
 		if(o1 instanceof MObject){
@@ -26,9 +26,6 @@ public class SelectionComparator implements Comparator{
 		}
 		else if(o1 instanceof ClassNode){
 			return ((ClassNode)o1).name().compareTo(((ClassNode)o2).name());
-		}
-		else if(o1 instanceof AssociationName){
-			return ((AssociationName)o1).name().compareTo(((AssociationName)o2).name());
 		}
 		else
 			return ((ObjectNode)o1).name().compareTo(((ObjectNode)o2).name());

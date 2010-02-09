@@ -1173,12 +1173,13 @@ public final class MSystemState {
 				if (!checkSubsets(out, obj, objList, aend1))
 					valid = false;
 			}
-			
+
 			if (aend1.getRedefiningEnds().size() > 0) {
 				if (!checkRedefineBinary(out, obj, objList, aend1))
 					valid = false;
 			}
 		}
+		
 		return valid;
 	}
 

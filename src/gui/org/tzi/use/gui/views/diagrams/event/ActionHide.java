@@ -144,10 +144,9 @@ public abstract class ActionHide extends AbstractAction {
     /**
      * Displays hidden elements again. The hidden elements need to be 
      * added to the diagram again, because they were deleted from the 
-     * view before. ...jj
+     * view before.
      */
-    public abstract void showHiddenElements(Set set);
-    //...jj
+    public abstract void showHiddenElements(Set<?> set);
     
     /**
      * Saves edges which are connected to the hidden nodes.

@@ -104,6 +104,7 @@ public final class ActionHideClassDiagram extends ActionHide {
 
         }
         fHiddenEdges.clear();
+        fDiagram.repaint();
         
         XMLParserAccess xmlParser = new XMLParserAccessImpl( fLayoutInfos );
         xmlParser.loadXMLString( fLayoutInfos.getHiddenElementsXML(), false );
@@ -302,35 +303,24 @@ public final class ActionHideClassDiagram extends ActionHide {
         fLayoutInfos.setHiddenElementsXML( xml );
     }
 
-    //anfangs jj
-    public void showHiddenElements(Set hiddenElements) {
-//    	ArrayList ss = fNodesToHide.toArray().;
-    	HashSet classes = new HashSet();
-    	Iterator t1 = fHiddenNodes.iterator();
-    	while(t1.hasNext()){ // add schon gehiddenene Nodes
-//    		classes.add(t1.next());
-    		MClass node = (MClass)t1.next();
-    		classes.add(node);
-    	}
+    public void showHiddenElements(Set<?> hiddenElements) {
     	
-    	Iterator t2 = hiddenElements.iterator();
-    	while(t2.hasNext()){
-    		MClass node = (MClass)t2.next();
-    		classes.remove(node); // remove vorher schon gehidden nodes-> show
-    	}
+    	// New set with currently hidden nodes
+    	Set<Object> objectsToHide = new HashSet<Object>(fHiddenNodes);
+    	
+    	// Remove elements that should be shown
+    	objectsToHide.removeAll(hiddenElements);
+    	
+    	// Resets the view
     	this.showAllHiddenElements();
-    	
-    	Iterator t3 = classes.iterator();
-    	fNodesToHide.clear();
-    	while(t3.hasNext()){
-    		MClass node = (MClass)t3.next(); //aktuelle zustand nach fNodesToHide copieren
-    		fNodesToHide.add(node);
-    	}
-    	this.hideNodesAndEdges();
-    	String xml = fLayoutInfos.getHiddenElementsXML()
-        + fLayoutXMLForHiddenElements;
-    	fLayoutInfos.setHiddenElementsXML( xml );
 
+    	// Set objects to hide
+    	fNodesToHide.clear();
+    	fNodesToHide.addAll(objectsToHide);
+
+    	this.hideNodesAndEdges();
+    	
+    	String xml = fLayoutInfos.getHiddenElementsXML() + fLayoutXMLForHiddenElements;
+    	fLayoutInfos.setHiddenElementsXML( xml );
     }
-   // jj end
 }

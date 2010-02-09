@@ -345,14 +345,6 @@ public final class Shell implements Runnable {
             cmdQuery(line.substring(2).trim(), true);
         else if (line.startsWith("?"))
             cmdQuery(line.substring(1).trim(), false);
-        //jj anfangen
-//        else if (line.startsWith("!hide")){
-//        	System.out.println("hhhhhhh");
-//        }
-//        //jj end
-//        else if (line.startsWith("!show")){
-//        	System.out.println("ssssssssssshhhhhhh");
-//        }
         else if (line.startsWith(":"))
             cmdDeriveStaticType(line.substring(1).trim());
         else if (line.startsWith("!"))

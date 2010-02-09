@@ -21,18 +21,6 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.al.ALActionList;
-import org.tzi.use.uml.al.ALCreateObject;
-import org.tzi.use.uml.al.ALCreateVar;
-import org.tzi.use.uml.al.ALDelete;
-import org.tzi.use.uml.al.ALDestroyObject;
-import org.tzi.use.uml.al.ALExecute;
-import org.tzi.use.uml.al.ALFor;
-import org.tzi.use.uml.al.ALIf;
-import org.tzi.use.uml.al.ALInsert;
-import org.tzi.use.uml.al.ALSet;
-import org.tzi.use.uml.al.ALSetCreate;
-import org.tzi.use.uml.al.ALWhile;
 
 /**
  * Visitor interface for model elements.
@@ -51,18 +39,4 @@ public interface MMVisitor {
     void visitModel(MModel e);
     void visitOperation(MOperation e);
     void visitPrePostCondition(MPrePostCondition e);
-    
-    // AL
-    void visitALActionList(ALActionList e);
-    void visitALFor(ALFor e);
-    void visitALDestroyObject(ALDestroyObject e);
-    void visitALIf(ALIf e);
-    void visitALSet(ALSet e);
-    void visitALSetCreate(ALSetCreate e);
-    void visitALInsert(ALInsert e);
-    void visitALDelete(ALDelete e);
-    void visitALExecute(ALExecute e);
-    void visitALCreateVar(ALCreateVar e);
-    void visitALCreateObject(ALCreateObject e);
-    void visitALWhile(ALWhile e);
 }

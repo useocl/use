@@ -27,18 +27,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.uml.al.ALActionList;
-import org.tzi.use.uml.al.ALCreateObject;
-import org.tzi.use.uml.al.ALCreateVar;
-import org.tzi.use.uml.al.ALDelete;
-import org.tzi.use.uml.al.ALDestroyObject;
-import org.tzi.use.uml.al.ALExecute;
-import org.tzi.use.uml.al.ALFor;
-import org.tzi.use.uml.al.ALIf;
-import org.tzi.use.uml.al.ALInsert;
-import org.tzi.use.uml.al.ALSet;
-import org.tzi.use.uml.al.ALSetCreate;
-import org.tzi.use.uml.al.ALWhile;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
@@ -284,41 +272,4 @@ public class MMInstanceGenerator implements MMVisitor {
     public void visitPrePostCondition(MPrePostCondition e) {
         //FIXME: implement
     }
-
-    public void visitALActionList(ALActionList e) {
-    }
-
-    public void visitALFor(ALFor e) {
-    }
-
-    public void visitALDestroyObject(ALDestroyObject e) {
-    }
-
-    public void visitALIf(ALIf e) {
-    }
-
-    public void visitALSet(ALSet e) {
-    }
-
-    public void visitALSetCreate(ALSetCreate e) {
-    }
-
-    public void visitALInsert(ALInsert e) {
-    }
-
-    public void visitALDelete(ALDelete e) {
-    }
-
-    public void visitALExecute(ALExecute e) {
-    }
-
-    public void visitALCreateVar(ALCreateVar e) {
-    }
-
-    public void visitALCreateObject(ALCreateObject e) {
-    }
-
-    public void visitALWhile(ALWhile e) {
-    }
-
 }

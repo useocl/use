@@ -74,6 +74,16 @@ public final class MCmdInsertLink extends MCmd {
         VarBindings varBindings = fSystemState.system().topLevelBindings();
         List<MAssociationEnd> assocEnds = fAssociation.associationEnds();
 
+        // Check for readonly
+        for (MAssociationEnd end: assocEnds) {
+        	if (end.isUnion())
+        		throw new CommandFailedException("Cannot insert link into union association ends because they are readonly!");
+        	
+        	if (end.getRedefiningEnds().size() > 0) {
+        		throw new CommandFailedException("Cannot insert link into redefined association ends because they are readonly!");
+        	}
+        }
+        
         // map expression list to list of objects 
         List<MObject> objects = new ArrayList<MObject>(fObjectExprs.length);
         

@@ -18,8 +18,9 @@ import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
+import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
 import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
@@ -36,23 +37,22 @@ import org.tzi.use.uml.sys.MObject;
  */
 
 public class ClassSelection {
-	private DirectedGraph fGraph;
+	private DirectedGraph<NodeBase, EdgeBase> fGraph;
 	private Set fHiddenNodes;
 	private HideAdministration fHideAdmin;
 	
-	private DiagramMouseHandling mouseHandling;
-	private Map fClassToNodeMap; // (MClass -> ClassNode)
+	private Map<MClass, ClassNode> fClassToNodeMap;
 	private Selection fNodeSelection;
 	
 	/**
 	 * Constructor for ClassSelection.
 	 */
-	public ClassSelection(DirectedGraph fGraph, Set fHiddenNodes, HideAdministration fHideAdmin, 
-			DiagramMouseHandling mouseHandling, Map fClassToNodeMap, Selection fNodeSelection){
+	public ClassSelection(DirectedGraph<NodeBase, EdgeBase> fGraph, 
+						  Set fHiddenNodes, HideAdministration fHideAdmin, 
+						  Map<MClass, ClassNode> fClassToNodeMap, Selection fNodeSelection) {
 		this.fGraph = fGraph;
 		this.fHiddenNodes = fHiddenNodes;
 		this.fHideAdmin = fHideAdmin;
-		this.mouseHandling = mouseHandling;
 		this.fClassToNodeMap = fClassToNodeMap;
 		this.fNodeSelection = fNodeSelection;
 	}
@@ -177,14 +177,10 @@ public class ClassSelection {
 		Set<Object> all = new HashSet<Object>();
 		all.addAll(selectedClasses);
 
-		for (Object obj : all) {
+		for (Object obj : selectedClasses) {
 			if (obj instanceof MClass) {
 				MClass mc = (MClass)obj;
-				
-				for (MClass child : mc.children()) {
-					if(!all.contains(child))
-						all.add(child);
-				}
+				all.addAll(mc.allChildren());
 			}
 		}
 		

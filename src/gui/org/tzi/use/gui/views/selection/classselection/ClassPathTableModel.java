@@ -1,12 +1,11 @@
 package org.tzi.use.gui.views.selection.classselection;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
-import org.tzi.use.gui.views.selection.SelectionComparator;
 import org.tzi.use.gui.views.selection.TableModel;
 import org.tzi.use.uml.mm.MClass;
 
@@ -18,11 +17,12 @@ import org.tzi.use.uml.mm.MClass;
  * @author   Jie Xu
  */
 
+@SuppressWarnings("serial")
 public class ClassPathTableModel extends TableModel {
-	HashSet selectedClasses;
+	Set<MClass> selectedClasses;
 	SelectedClassPathView fView;
 	
-	public ClassPathTableModel( List fAttributes, List fValues, HashSet selectedClasses, SelectedClassPathView fView) {
+	public ClassPathTableModel( List<String> fAttributes, List<Object> fValues, Set<MClass> selectedClasses, SelectedClassPathView fView) {
 		super(fAttributes, fValues);
 		this.selectedClasses = selectedClasses;
 		this.fView = fView;
@@ -38,22 +38,26 @@ public class ClassPathTableModel extends TableModel {
 		if (selectedClasses.size() > 0) {
 			fAttributes.clear();
 			fValues.clear();
+			
 			// add all class
-			SelectionComparator so = new SelectionComparator();
-			TreeSet sortedClasses = new TreeSet(so);
+			TreeSet<MClass> sortedClasses = new TreeSet<MClass>(new Comparator<MClass>(){
+				@Override
+				public int compare(MClass o1, MClass o2) {
+					return o1.name().compareTo(o2.name());
+				}});
+			
 			sortedClasses.addAll(selectedClasses);
-			Iterator it = sortedClasses.iterator();
 
-			while (it.hasNext()) {
-				MClass mc = (MClass)(it.next());
+			for (MClass mc : sortedClasses) {
 				int depth = fView.getDepth(mc); 
 				fAttributes.add(mc.name() + " (0-" + depth + ")");
 				fValues.add(new Integer(depth));
 			}
 		} else {
-			fAttributes = new ArrayList();
-			fValues = new ArrayList();
+			fAttributes = new ArrayList<String>();
+			fValues = new ArrayList<Object>();
 		}
+		
 		fireTableDataChanged();
 	}
 
