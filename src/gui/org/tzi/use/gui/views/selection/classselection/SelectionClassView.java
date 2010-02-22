@@ -28,11 +28,13 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
@@ -47,19 +49,16 @@ import org.tzi.use.uml.sys.MSystem;
  * @author   Jun Zhang 
  * @author   Jie Xu
  */
+@SuppressWarnings("serial")
 public class SelectionClassView extends ClassSelectionView {
 
 	private JButton fBtnSelectAll;
 
 	private JButton fBtnClear;
 
-	private HashSet selectedClasses;
+	private Set<MClass> selectedClasses;
 
-	private DiagramMouseHandling mouseHandling;
-
-	private ClassDiagram classDiagram;
-
-	private Map fClassToNodeMap; // (MClass -> ClassNode)
+	private Map<MClass, ClassNode> fClassToNodeMap; // (MClass -> ClassNode)
 
 	private Selection fNodeSelection;
 
@@ -67,25 +66,19 @@ public class SelectionClassView extends ClassSelectionView {
 	 * Constructor for SelectionClassView.
 	 */
 	public SelectionClassView(MainWindow parent, MSystem system,
-			HashSet selectedClasses, ClassDiagram classDiagram,
-			DiagramMouseHandling mouseHandling, Map fClassToNodeMap,
+			Set<MClass> selectedClasses, ClassDiagram classDiagram,
+			DiagramMouseHandling mouseHandling, Map<MClass, ClassNode> fClassToNodeMap,
 			Selection fNodeSelection) {
-		super(new BorderLayout(), parent, system);
+		super(new BorderLayout(), parent, system, classDiagram);
 		this.fClassToNodeMap = fClassToNodeMap;
 		this.fNodeSelection = fNodeSelection;
-		this.classDiagram = classDiagram;
 		this.selectedClasses = selectedClasses;
-		this.mouseHandling = mouseHandling;
 		initSelectionClassView();
-	}
-
-	public void setMouseHandling(DiagramMouseHandling mouseHandling) {
-		this.mouseHandling = mouseHandling;
 	}
 
 	void initSelectionClassView() {
 		fTableModel = new SelectionClassTableModel(fAttributes, fValues,
-				selectedClasses, classDiagram, mouseHandling, fClassToNodeMap,
+				selectedClasses, diagram, fClassToNodeMap,
 				fNodeSelection);
 		fTable = new JTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
@@ -119,13 +112,13 @@ public class SelectionClassView extends ClassSelectionView {
 	/**
 	 * Method getSelectedClasses return selected classes.
 	 */
-	private HashSet getSelectedClasses() {
-		HashSet selected = new HashSet();
+	private Set<MClass> getSelectedClasses() {
+		Set<MClass> selected = new HashSet<MClass>();
 		for (int i = 0; i < fAttributes.size(); i++) {
 			if (fValues.get(i) != null
 					&& ((Boolean) fValues.get(i)).booleanValue()) {
 				String name = fAttributes.get(i).toString();
-				Iterator it = ClassDiagram.ffGraph.iterator();
+				Iterator<?> it = diagram.getGraph().iterator();
 				boolean find = false;
 				while (it.hasNext()) {
 					Object node = it.next();
@@ -139,7 +132,7 @@ public class SelectionClassView extends ClassSelectionView {
 					}
 				}
 				if (!find) {
-					it = ClassDiagram.ffHiddenNodes.iterator();
+					it = diagram.getHiddenNodes().iterator();
 					while (it.hasNext()) {
 						Object node = it.next();
 						if (node instanceof MClass) {
@@ -175,13 +168,13 @@ public class SelectionClassView extends ClassSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedClasses(), true).size() > 0) {
-			ClassDiagram.ffHideAdmin.setValues("Hide",
+			diagram.getHideAdmin().setValues("Hide",
 					getHideClasses(getSelectedClasses(), true))
 					.actionPerformed(ev);
 		}
-		if (getShowClasses(getSelectedClasses()).size() > 0) {
-			ClassDiagram.ffHideAdmin
-					.showHiddenElements(getShowClasses(getSelectedClasses()));
+		if (getClassesToShow(getSelectedClasses()).size() > 0) {
+			diagram.getHideAdmin()
+					.showHiddenElements(getClassesToShow(getSelectedClasses()));
 		}
 		((SelectionClassTableModel) fTableModel).refreshAll();
 	}
@@ -190,9 +183,9 @@ public class SelectionClassView extends ClassSelectionView {
 	 * Method applyShowChanges shows the appropriate marked classes.
 	 */
 	public void applyShowChanges(ActionEvent ev) {
-		if (getShowClasses(getSelectedClasses()).size() > 0) {
-			ClassDiagram.ffHideAdmin
-					.showHiddenElements(getShowClasses(getSelectedClasses()));
+		if (getClassesToShow(getSelectedClasses()).size() > 0) {
+			diagram.getHideAdmin()
+					.showHiddenElements(getClassesToShow(getSelectedClasses()));
 			((SelectionClassTableModel) fTableModel).refreshAll();
 		}
 	}
@@ -202,7 +195,7 @@ public class SelectionClassView extends ClassSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedClasses(), false).size() > 0) {
-			ClassDiagram.ffHideAdmin.setValues("Hide",
+			diagram.getHideAdmin().setValues("Hide",
 					getHideClasses(getSelectedClasses(), false))
 					.actionPerformed(ev);
 		}
@@ -212,7 +205,7 @@ public class SelectionClassView extends ClassSelectionView {
 	 * Method applyShowAllChanges show all classes.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
-		ClassDiagram.ffHideAdmin.showAllHiddenElements();
+		diagram.getHideAdmin().showAllHiddenElements();
 		MainWindow.instance().repaint();
 		((SelectionClassTableModel) fTableModel).refreshAll();
 	}

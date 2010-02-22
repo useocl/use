@@ -22,11 +22,25 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import org.jruby.embed.EvalFailedException;
+import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.util.Log;
+import org.tzi.use.util.NullWriter;
+import org.tzi.use.util.rubyintegration.RubyHelper;
 
 /**
  * An operation is a parameterized expression. Evaluation of the
@@ -44,6 +58,8 @@ public final class MOperation extends MModelElementImpl {
     private List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
 
+    private String script;
+    
     MOperation(String name, VarDeclList varDeclList, Type resultType) {
         super(name);
         fVarDeclList = varDeclList;
@@ -110,9 +126,9 @@ public final class MOperation extends MModelElementImpl {
     	if (fResultType == null)
     		fResultType = expr.type();
     	else if (! expr.type().isSubtypeOf(fResultType) )
-            throw new MInvalidModelException("Expression type `" + 
+            throw new MInvalidModelException("Expression type `" +
                                              expr.type() + 
-                                             "' does not match declared result type `" + fResultType + "'.");
+                                             "' does not match declared result type `" + fResultType + "'."); //$NON-NLS-1$ //$NON-NLS-2$
         fExpr = expr;
     }
 
@@ -174,4 +190,52 @@ public final class MOperation extends MModelElementImpl {
     public void processWithVisitor(MMVisitor v) {
         v.visitOperation(this);
     }
+
+    public String getScripBody() {
+    	return script;
+    }
+    
+    public boolean hasScript() {
+    	return this.script != null;
+    }
+    
+	public void setScript(String scriptBody) {
+		this.script = scriptBody;
+	}
+
+	public Value evaluateScript(EvalContext ctx) {
+		ScriptEngineManager m = new ScriptEngineManager();
+        ScriptEngine rubyEngine = m.getEngineByName("jruby");
+                
+        if (rubyEngine == null)
+            throw new RuntimeException("Did not find the ruby engine. Please verify your classpath");
+       
+        StringBuilder wholeScript = new StringBuilder(ExtensionManager.getInstance().getRubyMethodCallLibrary());
+        wholeScript.append(System.getProperty("line.separator"));
+        wholeScript.append(script);
+        
+        ScriptContext context = rubyEngine.getContext();
+        context.setErrorWriter(new NullWriter());
+
+        context.setAttribute("ctx", ctx, ScriptContext.ENGINE_SCOPE);
+        
+        Iterator<VarBindings.Entry> it = ctx.varBindings().iterator();
+        // This includes self
+        while(it.hasNext()) {
+        	VarBindings.Entry e = it.next();
+        	context.setAttribute(e.getVarName(), RubyHelper.useValueToRubyValue(e.getValue()), ScriptContext.ENGINE_SCOPE);
+        }
+
+        try{
+            Object result = rubyEngine.eval(wholeScript.toString(), context);
+            return RubyHelper.rubyValueToUseValue(result);
+            
+        } catch (ScriptException e) {
+            Log.error("Line " + e.getLineNumber() + ": " + e.getMessage());
+        } catch (EvalFailedException e) {
+        	Log.error(e.getMessage());
+        }
+        
+        return RubyHelper.rubyValueToUseValue(null);
+	}
 }

@@ -732,6 +732,9 @@ SEMI		 : ';';
 SLASH 		 : '/';
 STAR 		 : '*';
 
+SCRIPTBODY:
+  '<<' ( options {greedy=false;} : . )* '>>';
+  
 fragment
 INT:
     ('0'..'9')+

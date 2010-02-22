@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -20,6 +21,7 @@ import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.uml.sys.MObject;
@@ -35,6 +37,11 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  */
 
 public abstract class ObjectSelectionView extends JPanel implements View{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public JScrollPane fTablePane;
 
 	public JButton fBtnShowAll;
@@ -57,16 +64,18 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 
 	public TableModel fTableModel;
 
-	public List fAttributes = new ArrayList();
+	public List<String> fAttributes = new ArrayList<String>();
 
-	public List fValues = new ArrayList();
+	public List<Object> fValues = new ArrayList<Object>();
 
+	protected NewObjectDiagram diagram;
 	
-	public ObjectSelectionView(BorderLayout layout, MainWindow parent, MSystem system){
+	public ObjectSelectionView(BorderLayout layout, MainWindow parent, MSystem system, NewObjectDiagram diagram) {
 		super(layout);
 		this.fSystem = system;
-		fMainWindow = parent;
-		fSystem = system;
+		this.fMainWindow = parent;
+		this.diagram = diagram;
+		
 		fSystem.addChangeListener(this);
 		initClassSelectionView();
 	}
@@ -136,32 +145,35 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	}
 
 	/**
-	 * Method getShowObjects takes a HashSet as parameter, 
-	 * which defines itself as a set of the class MObject. 
+	 * Returns all objects from objectsToShow that are
+	 * currently hidden, e. g. all objects which have
+	 * to be shown again.
 	 */
-	public HashSet getShowObjects(HashSet objects) {
-		HashSet showobjects = new HashSet();
-		Iterator itshow = NewObjectDiagram.ffHiddenNodes.iterator(); 
-																	
-		while (itshow.hasNext()) {
-			Object node = itshow.next();
+	public Set<MObject> getShowObjects(Set<MObject> objectsToShow) {
+		Set<MObject> showObjects = new HashSet<MObject>();
+		Iterator<Object> itHiddenNodes = this.diagram.getHiddenNodes().iterator(); 
+
+		while (itHiddenNodes.hasNext()) {
+			Object node = itHiddenNodes.next();
+			
 			if (node instanceof MObject) {
 				MObject mo = (MObject) node;
-				if (objects.contains(mo)) {
-					showobjects.add(mo);
+				if (objectsToShow.contains(mo)) {
+					showObjects.add(mo);
 				}
 			}
 		}
-		return showobjects;
+		return showObjects;
 	}
 	
 	/**
-	 * Method getHideObjects takes two parameters: HashSet and a boolean value. 
-	 * The boolean value "true" means that the function "crop" is selected.
+	 * Returns all objects that must be hidden.
+	 * 
+	 * @param isCrop Specifies, if the function "Crop" oder "Hide" is executed.
 	 */	
-	public HashSet getHideObjects(HashSet objects, boolean isCrop) {
-		HashSet hideobjects = new HashSet();
-		Iterator ithide = NewObjectDiagram.ffGraph.iterator(); 
+	public Set<MObject> getHideObjects(Set<?> objects, boolean isCrop) {
+		Set<MObject> hideobjects = new HashSet<MObject>();
+		Iterator<NodeBase> ithide = this.diagram.getGraph().iterator(); 
 																
 		while (ithide.hasNext()) {
 			Object node = ithide.next();
@@ -179,23 +191,25 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 				}
 			}
 		}
+		
 		return hideobjects;
 	}
 	
 	/**
-	 * Method applyShowAllChange is responsible for show all objects and Links.
+	 * Shows all objects and links.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
-		NewObjectDiagram.ffHideAdmin.showAllHiddenElements();
+		this.diagram.getHideAdmin().showAllHiddenElements();
 		MainWindow.instance().repaint();
 	}
 
 	/**
-	 * Method applyHideAllChange is responsible for hiding all objects and Links.
+	 * Hides all objects and links.
 	 */
 	public void applyHideAllChanges(ActionEvent ev) {
-		Iterator it = NewObjectDiagram.ffGraph.iterator();
-		HashSet hideojects = new HashSet();
+		Iterator<NodeBase> it = this.diagram.getGraph().iterator();
+		Set<MObject> hideojects = new HashSet<MObject>();
+		
 		while (it.hasNext()) {
 			Object node = it.next();
 			if (node instanceof ObjectNode) {
@@ -203,8 +217,8 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 				hideojects.add(mo);
 			}
 		}
-		NewObjectDiagram.ffHideAdmin.setValues("Hide all objects", hideojects)
-				.actionPerformed(ev);
+		
+		this.diagram.getHideAdmin().setValues("Hide all objects", hideojects).actionPerformed(ev);
 	}
 	
 	public abstract void applyCropChanges(ActionEvent ev);

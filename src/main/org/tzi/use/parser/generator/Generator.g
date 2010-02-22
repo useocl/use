@@ -458,8 +458,16 @@ operationDefinition returns [ASTOperation n]
     name=IDENT
     pl=paramList
     ( COLON t=type )?
-    (EQUAL e=expression )? 
-    { $n = new ASTOperation($name, $pl.paramList, $t.n, $e.n); }
+    { $n = new ASTOperation($name, $pl.paramList, $t.n); }
+    
+    ( 
+    	EQUAL e=expression 
+    	{ $n.setExpression($e.n); } 
+    |
+    	EQUAL 'script' body=SCRIPTBODY 
+    	{ $n.setScript($body); } 
+    )?
+    
     ( ppc=prePostClause { $n.addPrePostClause($ppc.n); } )*
     ( SEMI )?
     ;
@@ -1279,6 +1287,9 @@ SEMI		 : ';';
 SLASH 		 : '/';
 STAR 		 : '*';
 
+SCRIPTBODY:
+  '<<' ( options {greedy=false;} : . )* '>>';
+  
 fragment
 INT:
     ('0'..'9')+

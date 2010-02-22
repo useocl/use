@@ -1,9 +1,5 @@
 package org.tzi.use.main.shell;
 
-import java.awt.event.ActionEvent;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,23 +7,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.swing.JTextArea;
-
-import org.tzi.use.config.Options;
-import org.tzi.use.gui.util.TextComponentWriter;
+import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
-import org.tzi.use.gui.views.selection.objectselection.SelectionOCLView;
-import org.tzi.use.parser.ocl.OCLCompiler;
+import org.tzi.use.main.Session;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.TeeWriter;
 
 /**
  * responsibly for new functions in console
@@ -35,7 +23,9 @@ import org.tzi.use.util.TeeWriter;
  * @author   Jie Xu
  */
 public class ShowHideExec {
-	String line;
+	
+	protected Session session;
+	protected String line;
 
 	/**
 	 * Constructor for ShowHideExec.
@@ -47,12 +37,14 @@ public class ShowHideExec {
 	/**
 	 * Method exec analyze input instruction of user
 	 */
-	public String exec() {
-
-		if (line.trim().equals("show all")) { 
-			NewObjectDiagram.ffHideAdmin.showAllHiddenElements();
-			
-			NewObjectDiagram.aaaParent.repaint();
+	public String exec(Session session) {
+		this.session = session;
+		
+		if (line.trim().equals("show all")) {
+			for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
+				view.getDiagram().getHideAdmin().showAllHiddenElements();
+				view.repaint();
+			}
 			return "";
 		} else if (line.trim().equalsIgnoreCase("hide all")) {
 			hideAll();
@@ -80,67 +72,23 @@ public class ShowHideExec {
 	}
 
 	/**
-	 * Method hideAll hide all objects.
+	 * Method hideAll hides all objects.
 	 */
 	void hideAll() {
-		Iterator itt = NewObjectDiagram.ffGraph.iterator();
-		final HashSet toHideObjects = new HashSet(); 
+		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
+			Iterator<?> itt = view.getDiagram().getGraph().iterator();
+			final HashSet<MObject> toHideObjects = new HashSet<MObject>();
 		
-		while (itt.hasNext()) { 
-			Object node = itt.next();
-			if (node instanceof ObjectNode) {
-				MObject mobj = ((ObjectNode) node).object();
-				toHideObjects.add(mobj);
-			}
-		}
-		NewObjectDiagram.ffHideAdmin.setValues("", toHideObjects)
-				.actionPerformed(null);
-	}
-
-	/**
-	 * Method isObjectsInSystem examines whether the given objects are in the system.
-	 */
-	String isObjectsInSystem() {
-		String msg = "";
-		if (!isObjectFormatOk())
-			return "forma error";
-
-		List objectNames = getObjectNames();
-		for (Iterator it2 = objectNames.iterator(); it2.hasNext();) {
-			String oname = (String) it2.next();
-			boolean have = false;
-			if (NewObjectDiagram.ffHiddenNodes != null) {
-				Iterator it = NewObjectDiagram.ffHiddenNodes.iterator();
-				while (it.hasNext()) {
-					Object node = it.next();
-					if (node instanceof MObject) {
-						MObject mobj = (MObject) node;
-						if (oname.equals(mobj.name())) {
-							have = true;
-							break;
-						}
-					}
+			while (itt.hasNext()) { 
+				Object node = itt.next();
+				if (node instanceof ObjectNode) {
+					MObject mobj = ((ObjectNode) node).object();
+					toHideObjects.add(mobj);
 				}
 			}
-			if (!have)
-				if (NewObjectDiagram.ffGraph != null) {
-					Iterator it = NewObjectDiagram.ffGraph.iterator();
-					boolean haveObject = false;
-					while (it.hasNext()) {
-						Object node = it.next();
-						if (node instanceof ObjectNode) {
-							MObject mobj = ((ObjectNode) node).object();
-							if (oname.equals(mobj.name())) {
-								have = true;
-								break;
-							}
-						}
-					}
-				}
-			if (!have)
-				return  "";
+			
+			view.getDiagram().getHideAdmin().setValues("", toHideObjects).actionPerformed(null);
 		}
-		return msg;
 	}
 
 	/**
@@ -152,54 +100,63 @@ public class ShowHideExec {
 			return "error command format";
 		}
 
-		List objectNames = getObjectNames();
-		String cname = getClassName();
-		msg = isObjectsInSystem(objectNames, cname);
+		List<String> objectNames = getObjectNames();		
+		msg = checkObjectNames(objectNames);
+		
 		if (msg.length() > 0) {
 			return msg;
 		}
-		HashSet objects = new HashSet();
-		if (NewObjectDiagram.ffHiddenNodes != null) {
-			Iterator it = NewObjectDiagram.ffHiddenNodes.iterator();
-			while (it.hasNext()) {
-				Object node = it.next();
-				if (node instanceof MObject) {
-					MObject mobj = (MObject) node;
-					if (isContainName(objectNames, mobj.name())) {
-						objects.add(mobj);
+		
+		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			HashSet<MObject> objects = new HashSet<MObject>();
+			
+			if (diag.getHiddenNodes() != null) {
+				Iterator<?> it = diag.getHiddenNodes().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof MObject) {
+						MObject mobj = (MObject) node;
+						if (isContainName(objectNames, mobj.name())) {
+							objects.add(mobj);
+						}
 					}
 				}
 			}
-		}
-		if (NewObjectDiagram.ffGraph != null) {
-			Iterator it = NewObjectDiagram.ffGraph.iterator();
-			boolean haveObject = false;
-			while (it.hasNext()) {
-				Object node = it.next();
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					if (isContainName(objectNames, mobj.name())) {
-						objects.add(mobj);
-						haveObject = true;
-					}
-				}
-			}
-		}
+			if (diag.getGraph() != null) {
+				Iterator<?> it = diag.getGraph().iterator();
 
-		if (getHideObjects(objects, true).size() > 0) {
-			NewObjectDiagram.ffHideAdmin.setValues("Hide",
-					getHideObjects(objects, true)).actionPerformed(null);
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof ObjectNode) {
+						MObject mobj = ((ObjectNode) node).object();
+						if (isContainName(objectNames, mobj.name())) {
+							objects.add(mobj);
+						}
+					}
+				}
+			}
+	
+			Set<MObject> objectsToHide = getObjectsToHide(diag, objects, true);
+			
+			if (objectsToHide.size() > 0) {
+				diag.getHideAdmin().setValues("Hide", objectsToHide).actionPerformed(null);
+			}
+			
+			Set<MObject> objectsToShow = getObjectsToShow(diag, objects);
+			
+			if (objectsToShow.size() > 0) {
+				diag.getHideAdmin().showHiddenElements(objectsToShow);
+			}
 		}
-		if (getShowObjects(objects).size() > 0) {
-			NewObjectDiagram.ffHideAdmin
-					.showHiddenElements(getShowObjects(objects));
-		}
+		
 		return msg;
 	}
 
-	public HashSet getHideObjects(HashSet objects, boolean isCrop) {
-		HashSet hideobjects = new HashSet();
-		Iterator ithide = NewObjectDiagram.ffGraph.iterator(); 
+	public Set<MObject> getObjectsToHide(NewObjectDiagram diag, Set<MObject> objects, boolean isCrop) {
+		HashSet<MObject> objectsToHide = new HashSet<MObject>();
+		Iterator<?> ithide = diag.getGraph().iterator(); 
 	
 		while (ithide.hasNext()) {
 			Object node = ithide.next();
@@ -207,32 +164,34 @@ public class ShowHideExec {
 				MObject mo = ((ObjectNode) node).object();
 				if (isCrop) {
 					if (!objects.contains(mo)) {
-						hideobjects.add(mo);
+						objectsToHide.add(mo);
 					}
 				} else {
 					if (objects.contains(mo)) {
-						hideobjects.add(mo);
+						objectsToHide.add(mo);
 					}
 				}
 			}
 		}
-		return hideobjects;
+		
+		return objectsToHide;
 	}
 
-	public HashSet getShowObjects(HashSet objects) {
-		HashSet showobjects = new HashSet();
-		Iterator itshow = NewObjectDiagram.ffHiddenNodes.iterator(); // hidenode
+	public Set<MObject> getObjectsToShow(NewObjectDiagram diag, Set<MObject> objects) {
+		Set<MObject> objectsToShow = new HashSet<MObject>();
+		Iterator<?> itshow = diag.getHiddenNodes().iterator(); // hidenode
 		
 		while (itshow.hasNext()) {
 			Object node = itshow.next();
 			if (node instanceof MObject) {
 				MObject mo = (MObject) node;
 				if (objects.contains(mo)) {
-					showobjects.add(mo);
+					objectsToShow.add(mo);
 				}
 			}
 		}
-		return showobjects;
+		
+		return objectsToShow;
 	}
 
 	/**
@@ -243,113 +202,148 @@ public class ShowHideExec {
 		if (!line.contains(":")) {
 			return "error command format";
 		}
-		List objectNames = getObjectNames();
+		
+		List<String> objectNames = getObjectNames();
 		String className = getClassName();
-		Set toShowObjects = new HashSet();
-	
-		String msg = isObjectsInSystem(objectNames, className);
+		
+		// Check class and object names
+		if (session.system().model().getClass(className) == null)
+			return "Class '" + className + "' does not exist";
+
+		String msg = checkObjectNames(objectNames);
 		if (msg.length() > 0) {
 			return msg;
 		}
-		if (NewObjectDiagram.ffHiddenNodes != null) {
-			Iterator it = NewObjectDiagram.ffHiddenNodes.iterator();
-			boolean haveClass = false;
-			boolean haveObject = false;
-			while (it.hasNext()) {
-				Object node = it.next();
-				if (node instanceof MObject) {
-					MObject mobj = (MObject) node;
-					if (className.equals(mobj.cls().name())) {
-						haveClass = true;
-						if (isContainName(objectNames, mobj.name())) {
-							toShowObjects.add(mobj);
-							haveObject = true;
+				
+		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) { 
+			NewObjectDiagram diag = view.getDiagram();
+			Set<MObject> objectsToShow = new HashSet<MObject>();
+			
+			if (diag.getHiddenNodes() != null) {
+				Iterator<?> it = diag.getHiddenNodes().iterator();
+							
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof MObject) {
+						MObject mobj = (MObject) node;
+						if (className.equals(mobj.cls().name())) {
+							if (isContainName(objectNames, mobj.name())) {
+								objectsToShow.add(mobj);
+							}
 						}
 					}
 				}
+				
+				if (!objectsToShow.isEmpty()) {
+					diag.getHideAdmin().showHiddenElements(objectsToShow);
+				}
 			}
-			if (haveClass) {
-				if (haveObject)
-					NewObjectDiagram.ffHideAdmin
-							.showHiddenElements(toShowObjects);
-				else
-					err = "have no this object in hide";
-			} else
-				err = "have no this class in hide";
 		}
+
 		return err;
 	}
 
+	private List<String> getUndefinedObjects(List<String> objectNames) {
+		List<String> objectsNotDefined = new ArrayList<String>();
+		for (String objName : objectNames) {
+			if (session.system().state().objectByName(objName) == null)
+				objectsNotDefined.add(objName);
+		}
+		return objectsNotDefined;
+	}
+
+	private String checkObjectNames(List<String> objectNames) {
+		List<String> objectsNotDefined = getUndefinedObjects(objectNames);
+		
+		if (!objectsNotDefined.isEmpty()) {
+			return "The following objects do not exist: " + StringUtil.fmtSeq(objectsNotDefined, ",");
+		} else {
+			return "";
+		}
+	}
+	
 	/**
 	 * Method hideObjects hide the appropriate given objects.
 	 */
 	String hideObjects() {
-		String err = "";
 		if (!line.contains(":")) {
 			return "error command format";
 		}
-		List objectNames = getObjectNames();
+		
+		List<String> objectNames = getObjectNames();
 		String className = getClassName();
-		Set toHideObjects = new HashSet();
-		String msg = isObjectsInSystem(objectNames, className);
+		
+		if (session.system().model().getClass(className) == null)
+			return "Class '" + className + "' does not exist";
+		
+		String msg = checkObjectNames(objectNames);
+		
 		if (msg.length() > 0) {
 			return msg;
 		}
 
-		if (NewObjectDiagram.ffGraph != null) {
-			Iterator it = NewObjectDiagram.ffGraph.iterator();
-			boolean haveClass = false;
-			boolean haveObject = false;
-			while (it.hasNext()) {
-				Object node = it.next();
+		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			Set<MObject> objectsToHide = new HashSet<MObject>();
+			
+			if (diag.getGraph() != null) {
+				Iterator<?> it = diag.getGraph().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+	
+					if (node instanceof ObjectNode) {
+						MObject mobj = ((ObjectNode) node).object();
 
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					if (className.equals(mobj.cls().name())) {
-						haveClass = true;
 						if (isContainName(objectNames, mobj.name())) {
-							toHideObjects.add(mobj);
-							haveObject = true;
+							objectsToHide.add(mobj);
 						}
 					}
 				}
+			
+				if (!objectsToHide.isEmpty()) {
+					diag.getHideAdmin().setValues("", objectsToHide).actionPerformed(null);
+				}
 			}
-			if (haveClass) {
-				if (haveObject)
-					NewObjectDiagram.ffHideAdmin.setValues("", toHideObjects)
-							.actionPerformed(null);
-				else
-					err = "have no this object in hide";
-			} else
-				err = "have no this class in hide";
 		}
-		return err;
+		
+		return "";
 	}
 
 	/**
-	 * Method showLinks show the appropriate given links.
+	 * Method showLinks show the given links.
 	 */
 	String showLinks() {
 		String message = isLinksInSystem();
 		if (message.length() > 0) {
 			return message;
 		}
-		List objectNames = getAssoObjectNames();
-		Set toShowObjects = new HashSet();
-		if (NewObjectDiagram.ffHiddenNodes != null) {
-			Iterator it = NewObjectDiagram.ffHiddenNodes.iterator();
-			while (it.hasNext()) {
-				Object node = it.next();
-
-				if (node instanceof MObject) {
-					MObject mobj = (MObject) node;
-					if (isContainName(objectNames, mobj.name())) {
-						toShowObjects.add(mobj);
+		List<String> objectNames = getAssoObjectNames();
+		
+		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			Set<MObject> toShowObjects = new HashSet<MObject>();
+			
+			if (diag.getHiddenNodes() != null) {
+				Iterator<?> it = diag.getHiddenNodes().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+	
+					if (node instanceof MObject) {
+						MObject mobj = (MObject) node;
+						if (isContainName(objectNames, mobj.name())) {
+							toShowObjects.add(mobj);
+						}
 					}
 				}
 			}
+			
+			if (!toShowObjects.isEmpty()) {
+				diag.getHideAdmin().showHiddenElements(toShowObjects);
+			}
 		}
-		NewObjectDiagram.ffHideAdmin.showHiddenElements(toShowObjects);
+				
 		return message;
 	}
 
@@ -361,29 +355,32 @@ public class ShowHideExec {
 		if (message.length() > 0) {
 			return message;
 		}
-		List objectNames = getAssoObjectNames();
-		Set toHideObjects = new HashSet();
-		if (NewObjectDiagram.ffGraph != null) {
-			Iterator it = NewObjectDiagram.ffGraph.iterator();
-			boolean haveObject = false;
-			while (it.hasNext()) {
-				Object node = it.next();
+		
+		List<String> objectNames = getAssoObjectNames();
+		
+		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			Set<MObject> objectsToHide = new HashSet<MObject>();
+			
+			if (diag.getGraph() != null) {
+				Iterator<?> it = diag.getGraph().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
 
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					if (isContainName(objectNames, mobj.name())) {
-						toHideObjects.add(mobj);
-						haveObject = true;
+					if (node instanceof ObjectNode) {
+						MObject mobj = ((ObjectNode) node).object();
+						if (isContainName(objectNames, mobj.name())) {
+							objectsToHide.add(mobj);
+						}
 					}
 				}
+				
+				if (!objectsToHide.isEmpty())
+					diag.getHideAdmin().setValues("", objectsToHide).actionPerformed(null);
 			}
-			if (haveObject)
-				NewObjectDiagram.ffHideAdmin.setValues("", toHideObjects)
-						.actionPerformed(null);
-			else
-				message = "have no this object to hide";
 		}
-
+		
 		return message;
 	}
 
@@ -396,43 +393,52 @@ public class ShowHideExec {
 			System.out.println(message);
 			return message;
 		}
-		List objectNames = getAssoObjectNames();
-		HashSet objects = new HashSet();
-		if (NewObjectDiagram.ffHiddenNodes != null) {
-			Iterator it = NewObjectDiagram.ffHiddenNodes.iterator();
-			while (it.hasNext()) {
-				Object node = it.next();
-				if (node instanceof MObject) {
-					MObject mobj = (MObject) node;
-					if (isContainName(objectNames, mobj.name())) {
-						objects.add(mobj);
-					}
-				}
-			}
-		}
-		if (NewObjectDiagram.ffGraph != null) {
-			Iterator it = NewObjectDiagram.ffGraph.iterator();
-			boolean haveObject = false;
-			while (it.hasNext()) {
-				Object node = it.next();
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					if (isContainName(objectNames, mobj.name())) {
-						objects.add(mobj);
-						haveObject = true;
-					}
-				}
-			}
-		}
+		
+		List<String> objectNames = getAssoObjectNames();
 
-		if (getHideObjects(objects, true).size() > 0) {
-			NewObjectDiagram.ffHideAdmin.setValues("Hide",
-					getHideObjects(objects, true)).actionPerformed(null);
+		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			HashSet<MObject> objects = new HashSet<MObject>();
+			
+			if (diag.getHiddenNodes() != null) {
+				Iterator<?> it = diag.getHiddenNodes().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof MObject) {
+						MObject mobj = (MObject) node;
+						if (isContainName(objectNames, mobj.name())) {
+							objects.add(mobj);
+						}
+					}
+				}
+			}
+			
+			if (diag.getGraph() != null) {
+				Iterator<?> it = diag.getGraph().iterator();
+
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof ObjectNode) {
+						MObject mobj = ((ObjectNode) node).object();
+						if (isContainName(objectNames, mobj.name())) {
+							objects.add(mobj);
+						}
+					}
+				}
+			}
+
+			Set<MObject> objectsToHide = getObjectsToHide(diag, objects, true);
+			if (!objectsToHide.isEmpty()) {
+				diag.getHideAdmin().setValues("Hide", objectsToHide).actionPerformed(null);
+			}
+			
+			Set<MObject> objectsToShow = getObjectsToShow(diag, objects);
+			if (!objectsToShow.isEmpty()) {
+				diag.getHideAdmin().showHiddenElements(objectsToShow);
+			}
 		}
-		if (getShowObjects(objects).size() > 0) {
-			NewObjectDiagram.ffHideAdmin
-					.showHiddenElements(getShowObjects(objects));
-		}
+		
 		return message;
 	}
 
@@ -445,15 +451,15 @@ public class ShowHideExec {
 	}
 
 	/**
-	 * Method getAssoObjectNames return all objectnames as list.
+	 * Method getAssoObjectNames returns all object names as list.
 	 * @return List
 	 */
-	private List getAssoObjectNames() {
-		String objects = line.substring(line.indexOf("(") + 1, line
-				.indexOf(")"));
+	private List<String> getAssoObjectNames() {
+		String objects = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
+		
 		StringTokenizer ob = new StringTokenizer(objects, ",");
-		List objectNames = new ArrayList();
-		String associationName = getAssociationName();
+		List<String> objectNames = new ArrayList<String>();
+
 		while (ob.hasMoreTokens()) {
 			objectNames.add(ob.nextToken().trim());
 		}
@@ -464,74 +470,34 @@ public class ShowHideExec {
 	 * Method isLinksInSystem examines whether the given links are in the system.
 	 */
 	String isLinksInSystem() {
-		String msg = "";
 		if (!isLinkFormatOk())
-			return "forma error";
-		Object ff = NewObjectDiagram.aaaParent;
-		if (NewObjectDiagram.aaaParent == null)
-			return "bitte zuerst ObjectDiagramm oeffnen!";
-		MAssociation assoc = null;
-		boolean haveAssoc = false;
+			return "format error";
 
-		List assocs = new ArrayList();
-		for (Iterator it = NewObjectDiagram.aaaParent.system().model()
-				.associations().iterator(); it.hasNext();) {
-			assoc = (MAssociation) it.next();
-			if (assoc.name().equals(getAssociationName())) {
-				haveAssoc = true;
-				break;
-			}
-		}
-		if (!haveAssoc) {
-			return "have no this association " + getAssociationName()
-					+ " in system";
+		MAssociation assoc = session.system().model().getAssociation(getAssociationName());
+		
+		if (assoc == null) {
+			return "The association " + getAssociationName() + " does not exist in system";
 		}
 
-		List objectNames = getAssoObjectNames();
+		List<String> objectNames = getAssoObjectNames();
 
 		if (objectNames.size() != assoc.associatedClasses().size())
-			return "anzahl stimmt nicht!";
+			return "The given number of objects is invalid for the association!";
 	
-		for (Iterator it = objectNames.iterator(); it.hasNext();) {
-			boolean have = false;
-			String oname = (String) (it.next());
-			for (Iterator it2 = assoc.associatedClasses().iterator(); it2
-					.hasNext();) {
-				MClass mc = (MClass) (it2.next());
-				String cname = mc.name();
-				List onames = new ArrayList();
-				onames.add(oname);
-				String msgg = isObjectsInSystem(onames, cname);
-				if (msgg.length() == 0) {
-					have = true;
-					break;
-				}
-			}
-			if (!have) {
-				return "have no this object " + oname;
-			}
+		List<MObject> objects = new ArrayList<MObject>();
+		for (String oname : objectNames) {
+			MObject obj = session.system().state().objectByName(oname);
+			objects.add(obj);
 		}
-		for (Iterator it = assoc.associatedClasses().iterator(); it.hasNext();) {
-			boolean have = false;
-			MClass mc = (MClass) (it.next());
-			String cname = mc.name();
-
-			for (Iterator it2 = objectNames.iterator(); it2.hasNext();) {
-				String oname = (String) (it2.next());
-				List onames = new ArrayList();
-				onames.add(oname);
-
-				if (!(isObjectsInSystem(onames, cname).length() > 0)) {
-					have = true;
-					break;
-				}
-			}
-			if (!have) {
-				return "have no object von class " + cname;
-			}
+		
+		try {
+			if (!session.system().state().hasLink(assoc, objects))
+				return "Link does not exist in current system state";
+		} catch (MSystemException e) {
+			return "Link does not exist in current system state";
 		}
-
-		return msg;
+		
+		return "";
 	}
 
 	/**
@@ -573,64 +539,9 @@ public class ShowHideExec {
 		return false;
 	}
 
-	/**
-	 * Method isObjectsInSystem examines whether there are the given objects in the system.
-	 */
-	String isObjectsInSystem(List objectNames, String className) {
-		String message = "";
-		Iterator it;
-		List objects = new ArrayList();
-		if (NewObjectDiagram.ffHiddenNodes != null) {
-			it = NewObjectDiagram.ffHiddenNodes.iterator();
-		
-			while (it.hasNext()) {
-				Object node = it.next();
-				if (node instanceof MObject) {
-					MObject mobj = (MObject) node;
-					if (className.equals(mobj.cls().name())) {
-						objects.add(mobj);
-					}
-				}
-			}
-		}
-
-		if (NewObjectDiagram.ffGraph != null) {
-			it = NewObjectDiagram.ffGraph.iterator();
-
-			while (it.hasNext()) {
-				Object node = it.next();
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					if (className.equals(mobj.cls().name())) {
-						objects.add(mobj);
-					}
-				}
-			}
-		}
-
-		if (objects.size() == 0)
-			return "no this class: " + className;
-		else {
-			for (int i = 0; i < objectNames.size(); i++) {
-				boolean have = false;
-				for (int j = 0; j < objects.size(); j++) {
-					if (((String) objectNames.get(i)).equals(((MObject) objects
-							.get(j)).name())) {
-						have = true;
-						break;
-					}
-				}
-				if (!have) {
-					return "no this object: " + objectNames.get(i);
-				}
-			}
-		}
-		return message;
-	}
-
-	private boolean isContainName(List names, String name) {
-		for (int i = 0; i < names.size(); i++) {
-			if (((String) (names.get(i))).equalsIgnoreCase(name)) {
+	private boolean isContainName(List<String> names, String name) {
+		for (String itemName : names) {
+			if (itemName.equalsIgnoreCase(name)) {
 				return true;
 			}
 		}
@@ -647,14 +558,15 @@ public class ShowHideExec {
 	/**
 	 * Method getObjectNames returns all names as list
 	 */
-	private List getObjectNames() {
-
+	private List<String> getObjectNames() {
 		String objectsLine = line.substring(4, line.indexOf(":"));
 		StringTokenizer ob = new StringTokenizer(objectsLine, ",");
-		List objectNames = new ArrayList();
+		List<String> objectNames = new ArrayList<String>();
+		
 		while (ob.hasMoreTokens()) {
 			objectNames.add(ob.nextToken().trim());
 		}
+		
 		return objectNames;
 	}
 }

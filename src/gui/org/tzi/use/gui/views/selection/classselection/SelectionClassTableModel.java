@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.tzi.use.gui.util.Selection;
@@ -11,7 +12,6 @@ import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
 import org.tzi.use.gui.views.selection.SelectionComparator;
 import org.tzi.use.gui.views.selection.TableModel;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -25,29 +25,27 @@ import org.tzi.use.util.Log;
  * @author   Jun Zhang 
  * @author   Jie Xu
  */
+@SuppressWarnings("serial")
 public class SelectionClassTableModel extends TableModel {
 	
-	private HashSet selectedClasses;
-	
-	private DiagramMouseHandling mouseHandling;
-	
+	private Set<MClass> selectedClasses;
+		
 	private ClassDiagram classDiagram;
 	
-    private Map fClassToNodeMap; // (MClass -> ClassNode)
+    private Map<MClass, ClassNode> fClassToNodeMap; // (MClass -> ClassNode)
     private Selection fNodeSelection;
     
     
 	/**
 	 * Constructor for SelectionClassTableModel
 	 */
-	public SelectionClassTableModel( List fAttributes, List fValues, HashSet selectedClasses, ClassDiagram classDiagram, DiagramMouseHandling mouseHandling,
-			Map fClassToNodeMap, Selection fNodeSelection) {
+	public SelectionClassTableModel( List<String> fAttributes, List<Object> fValues, Set<MClass> selectedClasses, ClassDiagram classDiagram,
+									 Map<MClass, ClassNode> fClassToNodeMap, Selection fNodeSelection) {
 		super(fAttributes, fValues);
 		this.fClassToNodeMap = fClassToNodeMap;
 		this.fNodeSelection = fNodeSelection;
 		this.classDiagram = classDiagram;
 		this.selectedClasses = selectedClasses;
-		this.mouseHandling = mouseHandling;
 		this.setColumnName("class name", "select");
 		update();
 	}
@@ -56,7 +54,7 @@ public class SelectionClassTableModel extends TableModel {
 	 * Method getColumnClass determine the default renderer/ editor for
 	 * each cell. 
 	 */
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		return getValueAt(0, c).getClass();
 	}
 	
@@ -93,20 +91,22 @@ public class SelectionClassTableModel extends TableModel {
 	}
 	
 	public void changeSelection(int row, boolean isAdd){
-		TreeSet sortedNodes = getAllNodes();
-		Iterator it = sortedNodes.iterator();
+		Set<MClass> sortedNodes = getAllNodes();
+		Iterator<MClass> it = sortedNodes.iterator();
+		
 		MClass elem = null;
-		boolean have = false;
+		boolean foundClass = false;
+		
 		while(it.hasNext()){
-			elem = (MClass)(it.next());
+			elem = it.next();
 			if(elem.name().equals(fAttributes.get(row))){
-				have = true;
+				foundClass = true;
 				break;
 			}
 		}
 		
-		 if ( have && elem instanceof MClass ) {
-	            NodeBase node = (NodeBase) fClassToNodeMap.get( (MClass) elem );
+		 if ( foundClass ) {
+	            NodeBase node = fClassToNodeMap.get( elem );
 	            if ( node != null ) {
 	                if ( elem instanceof MAssociationClass ) {
 	                    if ( fNodeSelection.isSelected( node ) ){
@@ -129,21 +129,23 @@ public class SelectionClassTableModel extends TableModel {
 	        }
 	}
 	
-	public TreeSet getAllNodes(){
+	public Set<MClass> getAllNodes(){
 		SelectionComparator sort = new SelectionComparator();
-		TreeSet sortedNodes = new TreeSet(sort);
-		Iterator it = ClassDiagram.ffGraph.iterator();
+		TreeSet<MClass> sortedNodes = new TreeSet<MClass>(sort);
+		Iterator<?> it = classDiagram.getGraph().iterator();
+		
 		while (it.hasNext()) {
 			Object o = it.next();
 			if (o instanceof ClassNode) {
 				sortedNodes.add(((ClassNode) o).cls());
 			}
 		}
-		it = ClassDiagram.ffHiddenNodes.iterator();
+		
+		it = classDiagram.getHiddenNodes().iterator();
 		while (it.hasNext()) {
 			Object o = it.next();
 			if (o instanceof MClass) {
-				sortedNodes.add(o);
+				sortedNodes.add((MClass)o);
 			}
 		}
 		
@@ -155,13 +157,15 @@ public class SelectionClassTableModel extends TableModel {
 	 */
 	public void update() {
 		// initialize table model
-		TreeSet sortedNodes = getAllNodes();
+		Set<MClass> sortedNodes = getAllNodes();
 			
-		Iterator it = sortedNodes.iterator();
-		HashSet classNames = getClassNames(selectedClasses);
+		Iterator<MClass> it = sortedNodes.iterator();
+		Set<String> classNames = getClassNames(selectedClasses);
+		
 		while (it.hasNext()) {
-			MClass cs = (MClass) (it.next());
+			MClass cs = it.next();
 			fAttributes.add(cs.name());
+			
 			if(classNames.contains(cs.name()))
 				fValues.add(Boolean.valueOf(true));
 			else
@@ -208,10 +212,10 @@ public class SelectionClassTableModel extends TableModel {
 			}
 	}
 	
-	private HashSet getClassNames(HashSet selectedClasses){
-		HashSet classNames = new HashSet();
+	private Set<String> getClassNames(Set<MClass> selectedClasses) {
+		Set<String> classNames = new HashSet<String>();
 		
-		Iterator it = selectedClasses.iterator();
+		Iterator<?> it = selectedClasses.iterator();
 		while(it.hasNext()){
 			Object o = it.next();
 			if ( o instanceof MClass ) {

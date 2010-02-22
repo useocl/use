@@ -203,7 +203,7 @@ public final class MLinkSet {
      */
     public boolean hasLinkBetweenObjects(MObject[] objects) {
         for (MLink link : fLinks) {
-            if (Arrays.equals(link.linkedObjectsAsArray(),objects))
+            if (Arrays.equals(link.linkedObjectsAsArray(), objects))
             	return true;
         }
         return false;

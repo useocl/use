@@ -54,17 +54,24 @@ public class ASTOperation extends AST {
     private ASTExpression fExpr; // (optional)
     private MOperation fOperation; // the operation is generated in two passes
     private List<ASTPrePostClause> fPrePostClauses;
+    private Token scriptBody = null;
     
-    public ASTOperation(Token name, List<ASTVariableDeclaration> paramList, 
-                        ASTType t, ASTExpression expr) {
+    public ASTOperation(Token name, List<ASTVariableDeclaration> paramList, ASTType t) {
         fName = name;
         fParamList = paramList;
         fType = t;
-        fExpr = expr;
         fOperation = null;
         fPrePostClauses = new ArrayList<ASTPrePostClause>();
     }
 
+    public void setExpression(ASTExpression exp) {
+    	fExpr = exp;
+    }
+    
+    public void setScript(Token body) {
+    	scriptBody = body;
+    }
+    
     public void addPrePostClause(ASTPrePostClause ppc) {
         fPrePostClauses.add(ppc);
     }
@@ -128,6 +135,13 @@ public class ASTOperation extends AST {
                 fOperation.setExpression(expr);
             }
 
+            if (scriptBody != null) {
+            	String body = scriptBody.getText();
+            	body = body.substring(2, body.length() - 3);
+            	
+            	fOperation.setScript(body);
+            }
+            
             for (ASTPrePostClause ppc : fPrePostClauses) {
                 ppc.gen(ctx, ctx.currentClass(), fOperation);
             }

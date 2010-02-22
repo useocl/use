@@ -41,8 +41,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -87,10 +87,20 @@ import org.tzi.use.gui.views.ObjectCountView;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.StateEvolutionView;
 import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
+import org.tzi.use.gui.views.selection.classselection.SelectedAssociationPathView;
+import org.tzi.use.gui.views.selection.classselection.SelectedClassPathView;
+import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
+import org.tzi.use.gui.views.selection.objectselection.SelectedLinkPathView;
+import org.tzi.use.gui.views.selection.objectselection.SelectedObjectPathView;
+import org.tzi.use.gui.views.selection.objectselection.SelectionOCLView;
+import org.tzi.use.gui.views.selection.objectselection.SelectionObjectView;
 import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
 import org.tzi.use.main.Session;
@@ -105,21 +115,13 @@ import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MCmdCreateObjects;
+import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.uml.sys.StateChangeListener;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.USEWriter;
-import org.tzi.use.gui.views.selection.classselection.SelectedAssociationPathView;
-import org.tzi.use.gui.views.selection.classselection.SelectedClassPathView;
-import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
-import org.tzi.use.gui.views.selection.objectselection.SelectedLinkPathView;
-import org.tzi.use.gui.views.selection.objectselection.SelectedObjectPathView;
-import org.tzi.use.gui.views.selection.objectselection.SelectionOCLView;
-import org.tzi.use.gui.views.selection.objectselection.SelectionObjectView;
-import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
-import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 
 /**
  * The main application window of USE.
@@ -151,6 +153,9 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
     private JCheckBoxMenuItem fCbMenuItemCheckStructure;
 
+    private List<ClassDiagramView> classDiagrams = new ArrayList<ClassDiagramView>();
+    private List<NewObjectDiagramView> objectDiagrams = new ArrayList<NewObjectDiagramView>();
+    
     private static final String DEFAULT_UNDO_TEXT = "Undo last state command";
 
     private static final String STATE_EVAL_OCL = "Evaluate OCL expression";
@@ -501,6 +506,22 @@ public class MainWindow extends JFrame implements StateChangeListener {
         return fModelBrowser;
     }
 
+    /**
+     * A list of all displayed class diagrams 
+     * @return
+     */
+    public List<ClassDiagramView> getClassDiagrams() {
+    	return this.classDiagrams;
+    }
+    
+    /**
+     * A list of all displayed object diagrams 
+     * @return
+     */
+    public List<NewObjectDiagramView> getObjectDiagrams() {
+    	return this.objectDiagrams;
+    }
+    
     private void close() {
         setVisible(false);
         dispose();
@@ -621,7 +642,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fActionViewCreateSequenceDiagram.setEnabled(on);
         fActionViewCreateCallStack.setEnabled(on);
         fActionViewCreateCommandList.setEnabled(on);
-        fActionViewClassDiagram.setEnabled(on);
+        
 		if (Options.doPLUGIN) {
 			for (AbstractAction currentAction : pluginActions.values()) {
 				currentAction.setEnabled(on);
@@ -820,8 +841,6 @@ public class MainWindow extends JFrame implements StateChangeListener {
     private ActionViewCreateCallStack fActionViewCreateCallStack = new ActionViewCreateCallStack();
 
     private ActionViewCreateCommandList fActionViewCreateCommandList = new ActionViewCreateCommandList();
-
-    private ActionViewClassDiagram fActionViewClassDiagram = new ActionViewClassDiagram();
 
     private ActionViewTile fActionViewTile = new ActionViewTile();
 
@@ -1242,12 +1261,19 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 public void internalFrameDeactivated(InternalFrameEvent ev) {
                     fStatusBar.clearMessage();
                 }
+
+				@Override
+				public void internalFrameClosed(InternalFrameEvent e) {
+					super.internalFrameClosed(e);
+					classDiagrams.remove((ClassDiagramView)((ViewFrame)e.getSource()).getView());
+				}
             });
+            
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
-            // c.add(new JScrollPane(cdv), BorderLayout.CENTER);
             c.add(cdv, BorderLayout.CENTER);
             addNewViewFrame(f);
+            classDiagrams.add(cdv);
         }
     }
 
@@ -1261,10 +1287,10 @@ public class MainWindow extends JFrame implements StateChangeListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            NewObjectDiagramView odv = new NewObjectDiagramView(
-                    MainWindow.this, fSession.system());
-            ViewFrame f = new ViewFrame("Object diagram", odv,
-                    "ObjectDiagram.gif");
+            NewObjectDiagramView odv = new NewObjectDiagramView(MainWindow.this, fSession.system());
+            ViewFrame f = new ViewFrame("Object diagram " + (NewObjectDiagramView.viewcount + 1), 
+            					odv, "ObjectDiagram.gif");
+            
             // give some help information
             f.addInternalFrameListener(new InternalFrameAdapter() {
                 public void internalFrameActivated(InternalFrameEvent ev) {
@@ -1275,12 +1301,19 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 public void internalFrameDeactivated(InternalFrameEvent ev) {
                     fStatusBar.clearMessage();
                 }
+                
+                @Override
+				public void internalFrameClosed(InternalFrameEvent e) {
+					super.internalFrameClosed(e);
+					objectDiagrams.remove((NewObjectDiagramView)((ViewFrame)e.getSource()).getView());
+				}
             });
+            
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
-            // c.add(new JScrollPane(odv), BorderLayout.CENTER);
             c.add(odv, BorderLayout.CENTER);
             addNewViewFrame(f);
+            objectDiagrams.add(odv);
         }
     }
 
@@ -1442,20 +1475,6 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
 
     /**
-     * Show class diagram.
-     */
-    private class ActionViewClassDiagram extends AbstractAction {
-        ActionViewClassDiagram() {
-            super("Class diagram");
-        }
-
-        public void actionPerformed(ActionEvent ev) {
-            // FIXME: ClassDiagramView cdv = new
-            // ClassDiagramView(fSession.system().model());
-        }
-    }
-
-    /**
      * Close all internal frames.
      */
     private class ActionViewCloseAll extends AbstractAction {
@@ -1587,8 +1606,10 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
     
     //von hier jj
-    public SelectionClassView showClassSelectionClassView(HashSet selectedClasses, ClassDiagram classDiagram, DiagramMouseHandling mouseHandling, 
-    		Map fClassToNodeMap, Selection fNodeSelection) { // jj object selection class 
+    public SelectionClassView showClassSelectionClassView (Set<MClass> selectedClasses, 
+    								ClassDiagram classDiagram, DiagramMouseHandling mouseHandling, 
+    								Map<MClass, ClassNode> fClassToNodeMap, Selection fNodeSelection) { // jj object selection class 
+    	
     	SelectionClassView opv = new SelectionClassView(MainWindow.this,
                 fSession.system(), selectedClasses, classDiagram, mouseHandling, fClassToNodeMap, fNodeSelection);
     	mouseHandling.setSelectionClassView(opv);
@@ -1605,9 +1626,9 @@ public class MainWindow extends JFrame implements StateChangeListener {
     /**
      * Creates a new assocation path length view.
      */
-    public SelectedAssociationPathView showSelectedAssociationPathView(HashSet selectedClasses, HashSet anames) { // jj object selection class 
-    	SelectedAssociationPathView opv = new SelectedAssociationPathView(MainWindow.this,
-                fSession.system(), selectedClasses, anames);
+    public SelectedAssociationPathView showSelectedAssociationPathView(ClassDiagram diagram, Set<MClass> selectedClasses, Set<AssociationName> anames) { // jj object selection class 
+    	SelectedAssociationPathView opv = new SelectedAssociationPathView(MainWindow.this, fSession.system(), diagram,
+    			selectedClasses, anames);
         ViewFrame f = new ViewFrame("Selection association path length", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
@@ -1619,9 +1640,9 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
     
     //selection class path view
-    public SelectedClassPathView showSelectedClassPathView(HashSet selectedClasses) { // jj object selection class 
-    	SelectedClassPathView opv = new SelectedClassPathView(MainWindow.this,
-                fSession.system(), selectedClasses);
+    public SelectedClassPathView showSelectedClassPathView(ClassDiagram diagram, Set<MClass> selectedClasses) { // jj object selection class 
+    	SelectedClassPathView opv = new SelectedClassPathView(MainWindow.this, fSession.system(),
+    									diagram, selectedClasses);
         ViewFrame f = new ViewFrame("Selection classes path length", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
@@ -1632,11 +1653,12 @@ public class MainWindow extends JFrame implements StateChangeListener {
         return opv;
     }
     
-//  selection class path view
-    public SelectedLinkPathView showSelectedLinkPathView(Set selectedClasses, Set anames) { // jj object selection class 
-    	SelectedLinkPathView opv = new SelectedLinkPathView(MainWindow.this,
-                fSession.system(), selectedClasses, anames);
-        ViewFrame f = new ViewFrame("Selection link path length", opv,
+    //  selection class path view
+    public SelectedLinkPathView showSelectedLinkPathView(NewObjectDiagram diagram, Set<MObject> selectedClasses, Set<AssociationName> anames) { // jj object selection class 
+    	SelectedLinkPathView opv = 
+    		new SelectedLinkPathView(MainWindow.this, fSession.system(), diagram, selectedClasses, anames);
+        
+    	ViewFrame f = new ViewFrame("Selection link path length", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());
@@ -1647,9 +1669,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
     
     //selection object path view
-    public SelectedObjectPathView showSelectedObjectPathView(Set selectedClasses) { // jj object selection class 
-    	SelectedObjectPathView opv = new SelectedObjectPathView(MainWindow.this,
-                fSession.system(), selectedClasses);
+    public SelectedObjectPathView showSelectedObjectPathView(NewObjectDiagram diagram, Set<MObject> selectedObjects) { // jj object selection class 
+    	SelectedObjectPathView opv = new SelectedObjectPathView(MainWindow.this, fSession.system(), diagram, selectedObjects);
         ViewFrame f = new ViewFrame("Selection objects path length", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
@@ -1660,9 +1681,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         return opv;
     }
     
-    public SelectionObjectView showSelectionObjectView() { // jj object selection class 
-    	SelectionObjectView opv = new SelectionObjectView(MainWindow.this,
-                fSession.system());
+    public SelectionObjectView showSelectionObjectView(NewObjectDiagram diagram) { // jj object selection class 
+    	SelectionObjectView opv = new SelectionObjectView(MainWindow.this, fSession.system(), diagram);
         ViewFrame f = new ViewFrame("Selection objects", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
@@ -1673,10 +1693,9 @@ public class MainWindow extends JFrame implements StateChangeListener {
         return opv;
     }
     
-    public SelectionOCLView showSelectionOCLView() { // jj ocl selection class 
-    	SelectionOCLView opv = new SelectionOCLView(MainWindow.this,
-                fSession.system());
-        ViewFrame f = new ViewFrame("Selection OCL expression", opv,
+    public SelectionOCLView showSelectionOCLView(NewObjectDiagram diagram) { // jj ocl selection class 
+    	SelectionOCLView opv = new SelectionOCLView(MainWindow.this, fSession.system(), diagram);
+    	ViewFrame f = new ViewFrame("Selection OCL expression", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
        

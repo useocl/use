@@ -57,19 +57,22 @@ public abstract class ClassSelectionView extends JPanel implements View {
 
 	public TableModel fTableModel;
 
-	public List fAttributes = new ArrayList();
+	public List<String> fAttributes = new ArrayList<String>();
 
-	public List fValues = new ArrayList();
+	public List<Object> fValues = new ArrayList<Object>();
 
+	protected ClassDiagram diagram;
+	
 	/**
 	 * Constructor for ClassSelectionView.
 	 */
-	public ClassSelectionView(BorderLayout layout, MainWindow parent,
-			MSystem system) {
+	public ClassSelectionView(BorderLayout layout, MainWindow parent, MSystem system, ClassDiagram diagram) {
 		super(layout);
+		
 		this.fSystem = system;
-		fMainWindow = parent;
-		fSystem = system;
+		this.fMainWindow = parent;
+		this.diagram = diagram;
+		
 		fSystem.addChangeListener(this);
 		initClassSelectionView();
 	}
@@ -139,12 +142,11 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	}
 
 	/**
-	 * Method getShowClasses takes a HashSet as parameter, which defines itself as 
-	 * a set of the class MObject. 
+	 * Returns all MClass objects from classes which are hidden.
 	 */
-	public Set<MClass> getShowClasses(Set classes) {
+	public Set<MClass> getClassesToShow(Set<MClass> classes) {
 		Set<MClass> showclasses = new HashSet<MClass>();
-		Iterator itshow = ClassDiagram.ffHiddenNodes.iterator();
+		Iterator<?> itshow = diagram.getHiddenNodes().iterator();
 		
 		// add Instance of MClass
 		while (itshow.hasNext()) {
@@ -156,6 +158,7 @@ public abstract class ClassSelectionView extends JPanel implements View {
 				}
 			}
 		}
+		
 		return showclasses;
 	}
 
@@ -163,9 +166,9 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	 * Method getHideClasses takes two parameters: HashSet and a boolean value. 
 	 * The boolean value "true" means that the function "crop" is selected.
 	 */
-	public Set<MClass> getHideClasses(Set classes, boolean isCrop) {
+	public Set<MClass> getHideClasses(Set<MClass> classes, boolean isCrop) {
 		Set<MClass> hideclasses = new HashSet<MClass>();
-		Iterator ithide = ClassDiagram.ffGraph.iterator();
+		Iterator<?> ithide = diagram.getGraph().iterator();
 		
 		// add Instance of MClass
 		while (ithide.hasNext()) {
@@ -190,7 +193,8 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	 * Method applyHideAllChanges is responsible for hiding all classes and associations.
 	 */
 	public void applyHideAllChanges(ActionEvent ev) {
-		Iterator it = ClassDiagram.ffGraph.iterator();
+		Iterator<?> it = diagram.getGraph().iterator();
+		
 		Set<MClass> hideClass = new HashSet<MClass>();
 		while (it.hasNext()) {
 			Object node = it.next();
@@ -200,15 +204,14 @@ public abstract class ClassSelectionView extends JPanel implements View {
 			}
 		}
 
-		ClassDiagram.ffHideAdmin.setValues("Hide all classes", hideClass)
-				.actionPerformed(ev);
+		diagram.getHideAdmin().setValues("Hide all classes", hideClass).actionPerformed(ev);
 	}
 
 	/**
 	 * Method applyShowAllChanges is responsible for show all classes and associations.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
-		ClassDiagram.ffHideAdmin.showAllHiddenElements();
+		diagram.getHideAdmin().showAllHiddenElements();
 		MainWindow.instance().repaint();
 	}
 

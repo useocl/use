@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -98,12 +99,16 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 	private ButtonGroup buttonGroup = new ButtonGroup();
 
+	private NewObjectDiagram diagram;
+	
 	/**
 	 * Constructor for SelectionOCLView.
 	 */
-	public SelectionOCLView(MainWindow parent, MSystem system) {
+	public SelectionOCLView(MainWindow parent, MSystem system, NewObjectDiagram diagram) {
 		super(new BorderLayout());
 		fSystem = system;
+		this.diagram = diagram;
+		
 		// create text components and labels
 		fTextIn = new JTextArea();
 		fTextIn.setSize(new Dimension(300, 100));
@@ -210,8 +215,9 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 	}
 
 	protected void applyHideAllObjects(ActionEvent ev) {
-		Iterator it = NewObjectDiagram.ffGraph.iterator();
-		HashSet hideObjects = new HashSet();
+		Iterator<?> it = this.diagram.getGraph().iterator();
+		
+		Set<MObject> hideObjects = new HashSet<MObject>();
 		while (it.hasNext()) {
 			Object node = it.next();
 			if (node instanceof ObjectNode) {
@@ -219,12 +225,12 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 				hideObjects.add(mo);
 			}
 		}
-		NewObjectDiagram.ffHideAdmin.setValues("Hide all classes", hideObjects)
+		this.diagram.getHideAdmin().setValues("Hide all classes", hideObjects)
 				.actionPerformed(ev);
 	}
 
 	protected void applyShowAllObjects() {
-		NewObjectDiagram.ffHideAdmin.showAllHiddenElements();
+		this.diagram.getHideAdmin().showAllHiddenElements();
 		MainWindow.instance().repaint();
 	}
 
@@ -288,15 +294,15 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 			fTextOut.setText(val.toStringWithType());
 			if (showart.equalsIgnoreCase("crop")) {
-				NewObjectDiagram.ffHideAdmin.setValues("Hide",
+				this.diagram.getHideAdmin().setValues("Hide",
 						getCropHideObjects(str)).actionPerformed(ev);
-				NewObjectDiagram.ffHideAdmin
+				this.diagram.getHideAdmin()
 						.showHiddenElements(getShowObjects(str));
 			} else if (showart.equalsIgnoreCase("show")) {
-				NewObjectDiagram.ffHideAdmin
+				this.diagram.getHideAdmin()
 						.showHiddenElements(getShowObjects(str));
 			} else if (showart.equalsIgnoreCase("hide")) {
-				NewObjectDiagram.ffHideAdmin.setValues("Hide",
+				this.diagram.getHideAdmin().setValues("Hide",
 						getHideObjects(str)).actionPerformed(ev);
 			}
 		} catch (MultiplicityViolationException e) {
@@ -304,11 +310,11 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 		}
 	}
 
-	HashSet getShowObjects(String[] str) {
-		HashSet objects = new HashSet();
+	Set<MObject> getShowObjects(String[] str) {
+		Set<MObject> objects = new HashSet<MObject>();
 		for (int i = 0; i < str.length; i++) {
 			String oname = str[i];
-			Iterator ithide = NewObjectDiagram.ffHiddenNodes.iterator();
+			Iterator<?> ithide = this.diagram.getHiddenNodes().iterator();
 
 			while (ithide.hasNext()) {
 				Object node = ithide.next();
@@ -324,11 +330,11 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 		return objects;
 	}
 
-	HashSet getCropHideObjects(String[] str) {
-		HashSet objects = new HashSet();
+	Set<MObject> getCropHideObjects(String[] str) {
+		Set<MObject> objects = new HashSet<MObject>();
 		for (int i = 0; i < str.length; i++) {
 			String oname = str[i];
-			Iterator itobject = NewObjectDiagram.ffGraph.iterator(); 
+			Iterator<?> itobject = this.diagram.getGraph().iterator(); 
 
 			while (itobject.hasNext()) {
 				Object node = itobject.next();
@@ -343,11 +349,11 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 		return objects;
 	}
 
-	HashSet getHideObjects(String[] str) {
-		HashSet objects = new HashSet();
+	Set<MObject> getHideObjects(String[] str) {
+		Set<MObject> objects = new HashSet<MObject>();
 		for (int i = 0; i < str.length; i++) {
 			String oname = str[i];
-			Iterator itobject = NewObjectDiagram.ffGraph.iterator();
+			Iterator<?> itobject = this.diagram.getGraph().iterator();
 
 			while (itobject.hasNext()) {
 				Object node = itobject.next();

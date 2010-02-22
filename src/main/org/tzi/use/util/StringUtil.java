@@ -21,6 +21,7 @@
 
 package org.tzi.use.util;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -58,6 +59,10 @@ public final class StringUtil {
         return fmtSeq(objarr, 0, divider);
     }
 
+    public static String fmtSeq(Collection<?> seq, String divider) {
+    	return fmtSeq(seq.iterator(), divider);
+    }
+    
     public static String fmtSeq(Iterator<?> it, String divider) {
         StringBuilder resString = new StringBuilder();
         

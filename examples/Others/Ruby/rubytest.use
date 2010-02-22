@@ -1,0 +1,36 @@
+model DateLibrary
+
+class RDate
+  attributes
+    year : Integer
+	month : Integer
+	day : Integer
+	
+  operations
+    setDate(y:Integer, m:Integer, d:Integer) = script <<
+	  dateValue = Date.new($y, $m, $d)
+	  $self.year = dateValue.year
+	  $self.month = dateValue.month
+	  $self.day = dateValue.day
+	>>
+	
+	addDays(i:Integer) = script <<
+	  require 'date'
+	  date = Date.new($self.year, $self.month, $self.day) + $i
+	  $self.year = date.year
+	  $self.month = date.month
+	  $self.day = date.day
+	>>
+	
+	addDays2(i:Integer) = script <<
+	  $self.addDays($i)
+	>>
+	
+	getString() : String = script <<
+	  return Date.new($self.year, $self.month, $self.day).to_s
+	>>
+	
+	successor() = script <<
+	  $self.day = $self.day + 1
+	>>
+end

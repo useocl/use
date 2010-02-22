@@ -23,6 +23,7 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -82,6 +83,7 @@ public final class ExpObjOp extends Expression {
             MObject obj = objVal.value();
             MObjectState objState = isPre() ? 
                 obj.state(ctx.preState()) : obj.state(ctx.postState());
+                
             if (objState != null ) {
                 // the object's type may be a subtype of the declared
                 // type. The operation may be redefined in this
@@ -90,13 +92,12 @@ public final class ExpObjOp extends Expression {
                 MClass cls = obj.cls();
                 MOperation op = cls.operation(fOp.name(), true);
 
-                
-                
                 EvalContext newCtx = ctx;
                 if (op.expression() == null) {
                     //  TODO: Reuse existing eval context!
                     newCtx = new EvalContext(ctx.preState(), ctx.postState(), new VarBindings(), null);
                 }
+                
                 int debugOldSize = newCtx.varBindings().getStackSize();
                 Value debugOldResultVal = newCtx.varBindings().getValue("result");
                 
@@ -107,6 +108,14 @@ public final class ExpObjOp extends Expression {
                     res = opExpr.eval(newCtx);
                 }
 
+                if (op.hasScript()) {
+                	res = op.evaluateScript(newCtx);
+                	
+                	if (res == null) {
+                		res = new UndefinedValue(TypeFactory.mkVoidType());
+                	}
+                }
+                
                 popVarBindings(newCtx, stackSize);
                 
                 assert newCtx.varBindings().getStackSize() == debugOldSize;

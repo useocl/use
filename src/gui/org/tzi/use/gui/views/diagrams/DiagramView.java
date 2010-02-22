@@ -173,6 +173,38 @@ public abstract class DiagramView extends JPanel
     }
     
     /**
+     * All currently hidden nodes in this view
+     * @return
+     */
+    public Set<Object> getHiddenNodes() {
+    	return this.fHiddenNodes;
+    }
+    
+    /**
+     * All currently hidden edges in this view
+     * @return
+     */
+    public Set<Object> getHiddenEdges() {
+    	return this.fHiddenEdges;
+    }
+    
+    /**
+     * The graph of the diagram
+     * @return
+     */
+    public DirectedGraph<NodeBase, EdgeBase> getGraph() {
+    	return this.fGraph;
+    }
+    
+    /**
+     * The hide administration of this diagram
+     * @return
+     */
+    public HideAdministration getHideAdmin() {
+    	return this.fHideAdmin;
+    }
+    
+    /**
      * Prints the diagram. Implementation of Printable interface.
      */
     public int print(Graphics g, PageFormat pf, int pi) throws PrinterException {

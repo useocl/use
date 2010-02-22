@@ -1,7 +1,6 @@
 package org.tzi.use.gui.views.selection.objectselection;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,11 +16,12 @@ import org.tzi.use.uml.sys.MObject;
  * @author   Jun Zhang 
  * @author   Jie Xu
  */
+@SuppressWarnings("serial")
 public class ObjectPathTableModel extends TableModel{
-	Set selectedObjects;
+	Set<MObject> selectedObjects;
 	SelectedObjectPathView fView;
 	
-	public ObjectPathTableModel( List fAttributes, List fValues, Set selectedObjects, SelectedObjectPathView fView) {
+	public ObjectPathTableModel( List<String> fAttributes, List<Object> fValues, Set<MObject> selectedObjects, SelectedObjectPathView fView) {
 		super(fAttributes, fValues);
 		this.selectedObjects = selectedObjects;
 		this.fView = fView;
@@ -39,19 +39,17 @@ public class ObjectPathTableModel extends TableModel{
 			fValues.clear();
 			// add all classe
 			SelectionComparator sort = new SelectionComparator();
-			TreeSet sortedObjects = new TreeSet(sort);
+			TreeSet<MObject> sortedObjects = new TreeSet<MObject>(sort);
 			sortedObjects.addAll(selectedObjects);
-			Iterator it = sortedObjects.iterator();
-			int index = 0;
-			while (it.hasNext()) {
-				MObject mo = (MObject)(it.next());
+			
+			for (MObject mo : sortedObjects) {
 				int depth = fView.getDepth(mo);
 				fAttributes.add(mo.name() + " (0-" + depth + ")");
 				fValues.add(new Integer(depth));
 			}
 		} else {
-			fAttributes = new ArrayList();
-			fValues = new ArrayList();
+			fAttributes = new ArrayList<String>();
+			fValues = new ArrayList<Object>();
 		}
 		fireTableDataChanged();
 	}

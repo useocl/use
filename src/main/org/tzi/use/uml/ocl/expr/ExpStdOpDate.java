@@ -29,17 +29,17 @@ abstract class ExpStdOpDate extends OpGeneric {
 abstract class ExpStdOpDate_Date_Bool extends ExpStdOpDate
 {
 	@Override
-	boolean isInfixOrPrefix() {
+	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
 	@Override
-	int kind() {
+	public int kind() {
 		return PREDICATE;
 	}
 	
 	@Override
-	Type matches(Type[] params) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 &&
 			params[0].isDate() &&
 			params[1].isDate())
@@ -54,12 +54,12 @@ abstract class ExpStdOpDate_Date_Bool extends ExpStdOpDate
 final class Op_Date_Lower extends ExpStdOpDate_Date_Bool {
 
 	@Override
-	String name() {
+	public String name() {
 		return "<";
 	}
 
 	@Override
-	Value eval(EvalContext ctx, Value[] args, Type resultType) {
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		DateValue d1 = (DateValue)args[0];
 		DateValue d2 = (DateValue)args[1];
 
@@ -70,12 +70,12 @@ final class Op_Date_Lower extends ExpStdOpDate_Date_Bool {
 final class Op_Date_LowerEqual extends ExpStdOpDate_Date_Bool {
 
 	@Override
-	String name() {
+	public String name() {
 		return "<=";
 	}
 
 	@Override
-	Value eval(EvalContext ctx, Value[] args, Type resultType) {
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		DateValue d1 = (DateValue)args[0];
 		DateValue d2 = (DateValue)args[1];
 
@@ -86,12 +86,12 @@ final class Op_Date_LowerEqual extends ExpStdOpDate_Date_Bool {
 final class Op_Date_Equal extends ExpStdOpDate_Date_Bool {
 
 	@Override
-	String name() {
+	public String name() {
 		return "=";
 	}
 
 	@Override
-	Value eval(EvalContext ctx, Value[] args, Type resultType) {
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		DateValue d1 = (DateValue)args[0];
 		DateValue d2 = (DateValue)args[1];
 
@@ -102,12 +102,12 @@ final class Op_Date_Equal extends ExpStdOpDate_Date_Bool {
 final class Op_Date_GreaterEqual extends ExpStdOpDate_Date_Bool {
 
 	@Override
-	String name() {
+	public String name() {
 		return ">=";
 	}
 
 	@Override
-	Value eval(EvalContext ctx, Value[] args, Type resultType) {
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		DateValue d1 = (DateValue)args[0];
 		DateValue d2 = (DateValue)args[1];
 
@@ -118,12 +118,12 @@ final class Op_Date_GreaterEqual extends ExpStdOpDate_Date_Bool {
 final class Op_Date_Greater extends ExpStdOpDate_Date_Bool {
 
 	@Override
-	String name() {
+	public String name() {
 		return ">";
 	}
 
 	@Override
-	Value eval(EvalContext ctx, Value[] args, Type resultType) {
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		DateValue d1 = (DateValue)args[0];
 		DateValue d2 = (DateValue)args[1];
 
@@ -134,27 +134,27 @@ final class Op_Date_Greater extends ExpStdOpDate_Date_Bool {
 final class Op_Date_Day extends ExpStdOpDate
 {
 	@Override
-	String name() {
+	public String name() {
 		return "Day";
 	}
 	
 	@Override
-	boolean isInfixOrPrefix() {
+	public boolean isInfixOrPrefix() {
 		return false;
 	}
 
 	@Override
-	int kind() {
+	public int kind() {
 		return OPERATION;
 	}
 
 	@Override
-	Type matches(Type[] params) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isDate()) ? TypeFactory.mkInteger() : null;
 	}
 
 	@Override
-	Value eval(EvalContext ctx, Value[] args, Type resultType) {
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		Calendar c = new GregorianCalendar();
 		c.setTime(((DateValue)args[0]).getValue());
 		

@@ -51,71 +51,6 @@ import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
 
 /**
- * OpGeneric is the base class of a large group of individual operations. Each
- * operation is implemented by its own class deriving from OpGeneric. New
- * Operations can easily be added by writing a new operation class and adding a
- * single instance of the new class to the static list of operations in Class
- * ExpOperation (see below). Also, this way the new operation symbol is
- * immediately available to the specification compiler.
- * 
- * @version $ProjectVersion: 0.393 $
- * @author Mark Richters
- */
-
-abstract class OpGeneric {
-    // These constants define different groups of operations. The
-    // groups mainly differ wrt their behavior in case of undefined
-    // arguments. The effects of passing any undefined argument to an
-    // operation are as follows:
-    //
-    // OPERATION -> UndefinedValue(T) with T being the result type
-    // of the operation
-    // PREDICATE -> BooleanValue(false)
-    // SPECIAL -> operation needs special treatment of undefined arguments
-    public static final int OPERATION = 0;
-
-    public static final int PREDICATE = 1;
-
-    public static final int SPECIAL = 3;
-
-    abstract String name();
-
-    abstract int kind();
-
-    abstract boolean isInfixOrPrefix();
-
-    abstract Type matches(Type params[]);
-
-    abstract Value eval(EvalContext ctx, Value args[], Type resultType);
-
-    public String stringRep(Expression args[], String atPre) {
-        String res;
-        if (isInfixOrPrefix()) {
-            if (args.length == 1) {
-                // e.g. `not true', -2, +3
-                // insert blank between operator and expression to
-                // avoid `--' which would be interpreted as comment
-                res = name() + " " + args[0];
-            } else
-                // e.g. `3 + 4'
-                res = "(" + StringUtil.fmtSeq(args, " " + name() + " ") + ")";
-        } else {
-            // translate into dot notation, e.g. foo->union(bla)
-            res = name() + atPre;
-            if (args.length > 0) {
-                if (args[0].type().isCollection())
-                    res = args[0] + "->" + res;
-                else
-                    res = args[0] + "." + res;
-                if (args.length > 1)
-                    res += "(" + StringUtil.fmtSeq(args, 1, ",") + ")";
-            }
-        }
-        return res;
-    }
-}
-
-/**
  * General operation expressions. Each operation is implemented by its own
  * class. New Operations are easily introduced by writing a new operation class
  * and adding a single instance of the new class to the list of operations (see
@@ -227,7 +162,7 @@ public final class ExpStdOp extends Expression {
             new Op_oclIsNew(), };
 
     // opname / possible (overloaded) operations
-    private static MultiMap<String, OpGeneric> opmap;
+    public static MultiMap<String, OpGeneric> opmap;
 
     // initialize operation map
     static {
@@ -236,6 +171,24 @@ public final class ExpStdOp extends Expression {
             opmap.put(oplist[i].name(), oplist[i]);
     }
 
+    /***
+     * Adds an operation to the standard operations
+     * @param op
+     */
+    public static void addOperation(OpGeneric op) {
+    	opmap.put(op.name(), op);
+    }
+    
+    /***
+     * Removes all given operations from list ops
+     * @param ops
+     */
+    public static void removeAllOperations(List<OpGeneric> ops) {
+    	for (OpGeneric op : ops) {
+    		opmap.remove(op.name(), op);
+    	}
+    }
+    
     /**
      * Returns true if a standard operation exists matching name and params.
      */

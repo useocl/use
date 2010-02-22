@@ -29,9 +29,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.BinaryEdge;
@@ -48,16 +50,21 @@ import org.tzi.use.uml.sys.MSystem;
  */
 public class SelectedLinkPathView extends SelectedObjectPathView {
 
-	private Set anames;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Set<AssociationName> anames;
 
 	private JButton fBtnReset;
-
+	
 	/**
 	 * Constructor for SelectedLinkPathView.
 	 */
-	public SelectedLinkPathView(MainWindow parent, MSystem system,
-			Set selectedClasses, Set anames) {
-		super(parent, system, selectedClasses);
+	public SelectedLinkPathView(MainWindow parent, MSystem system, NewObjectDiagram diagram, 
+				Set<MObject> selectedObjects, Set<AssociationName> anames) {
+		super(parent, system, diagram, selectedObjects);
 		this.anames = anames;
 		initSelectedAssociationPathView();
 	}
@@ -85,17 +92,17 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 		add(buttonPane, BorderLayout.SOUTH);
 	}
 
-	public HashSet getSelectedPathObjects() {
-		HashSet objects = new HashSet();
+	public Set<MObject> getSelectedPathObjects() {
+		Set<MObject> objects = new HashSet<MObject>();
 		for (int i = 0; i < fAttributes.size(); i++) {
 			String cname = fAttributes.get(i).toString().substring(0,
 					fAttributes.get(i).toString().indexOf("(")).trim();
 
-			Iterator it = getSelectedObjectsOfLink(cname).iterator();
+			Iterator<MObject> it = getSelectedObjectsOfLink(cname).iterator();
 			MObject mo = null;
-			int maxdepth = Integer.parseInt(fValues.get(i).toString());
+						
 			while (it.hasNext()) {
-				mo = (MObject) (it.next());
+				mo = it.next();
 				if (mo.name().equals(cname)) {
 					break;
 				}
@@ -115,18 +122,15 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 	}
 
 	/**
-	 * Method getLinkDepth obtaine maximally attainable Depth based on starting point(aname)
+	 * Method getLinkDepth obtain maximally attainable Depth based on starting point(aname)
 	 */
 	public int getLinkDepth(AssociationName aname) {
-		HashSet objects = getSelectedObjectsOfLink(aname.name());
-		int maxdepth = -1;
-		Iterator it = objects.iterator();
-		while (it.hasNext()) {
-			MObject mo = (MObject) (it.next());
+		Set<MObject> objects = getSelectedObjectsOfLink(aname.name());
+		int maxdepth = 0;
+		
+		for (MObject mo : objects) {
 			int max = getDepth(mo);
-			if (maxdepth < 0 || maxdepth > max) {
-				maxdepth = max;
-			}
+			maxdepth = Math.max(max, maxdepth);
 		}
 		return maxdepth;
 	}
@@ -135,9 +139,8 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
      * Method getSelectedObjectsOfLink calls twice Method getSelectedObjectsOfLinkHS(), 
      * in order to find relevant objects both in "Hidden" and in "Show". 
 	 */
-	private HashSet getSelectedObjectsOfLink(String name) {
-		HashSet objects = new HashSet();
-		objects = getSelectedObjectsOfLinkHS(name, objects, true);
+	private Set<MObject> getSelectedObjectsOfLink(String name) {
+		Set<MObject> objects = getSelectedObjectsOfLinkHS(name, new HashSet<MObject>(), true);
 		objects.addAll(getSelectedObjectsOfLinkHS(name, objects, false));
 		return objects;
 	}
@@ -145,21 +148,25 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 	/**
 	 * Method getSelectedObjectsOfLinkHS returns selected objects of Association in "Show" oder "Hidden"
 	 */
-	private HashSet getSelectedObjectsOfLinkHS(String node,
-			HashSet selectedObjectsOfLink, boolean isshow) {
-		HashSet objects = new HashSet();
-		Iterator it;
+	private Set<MObject> getSelectedObjectsOfLinkHS(String node,
+													Set<MObject> selectedObjectsOfLink, boolean isshow) {
+		
+		Set<MObject> objects = new HashSet<MObject>();
+		Iterator<?> it;
+		
 		if (isshow) {
-			it = NewObjectDiagram.ffGraph.edgeIterator();
+			it = this.diagram.getGraph().edgeIterator();
 		} else {
-			it = NewObjectDiagram.ffHiddenEdges.iterator();
+			it = this.diagram.getHiddenEdges().iterator();
 		}
+		
 		String name = node;
-		boolean have = false;
-		while (it.hasNext() && !have) {
+		
+		while (it.hasNext()) {
 			Object o = it.next();
 			if (o instanceof BinaryEdge) {
 				BinaryEdge edge = (BinaryEdge) o;
+				
 				if (edge.getAssocName() != null
 						&& edge.getAssocName().name().equals(name)) {
 					MObject mo = ((ObjectNode) (edge.source())).object();
@@ -175,31 +182,31 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 				}
 			}
 		}
-		if (!have) {
-			if (isshow) {
-				it = NewObjectDiagram.ffGraph.iterator();
-			} else {
-				it = NewObjectDiagram.ffHiddenNodes.iterator();
-			}
-			while (it.hasNext()) {
-				Object o = it.next();
-				if (o instanceof DiamondNode) {
-					if (((DiamondNode) o).name().equalsIgnoreCase(name)) {
-						DiamondNode dnode = (DiamondNode) o;
-						Set set = dnode.link().linkedObjects();
-						Iterator it2 = set.iterator();
-						while (it2.hasNext()) {
-							MObject mo = (MObject) (it2.next());
-							if (!selectedObjectsOfLink.contains(mo)
-									&& !objects.contains(mo)) {
-								objects.add(mo);
-							}
+
+		if (isshow) {
+			it = this.diagram.getGraph().iterator();
+		} else {
+			it = this.diagram.getHiddenNodes().iterator();
+		}
+		
+		while (it.hasNext()) {
+			Object o = it.next();
+			if (o instanceof DiamondNode) {
+				if (((DiamondNode) o).name().equalsIgnoreCase(name)) {
+					DiamondNode dnode = (DiamondNode) o;
+					
+					Set<MObject> set = dnode.link().linkedObjects();
+					for (MObject mo : set) {
+						if (!selectedObjectsOfLink.contains(mo)
+								&& !objects.contains(mo)) {
+							objects.add(mo);
 						}
-						return objects;
 					}
+					return objects;
 				}
 			}
 		}
+		
 		return objects;
 	}
 

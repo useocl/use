@@ -116,7 +116,7 @@ public class Options {
     public static boolean quiet = false;
     public static boolean quietAndVerboseConstraintCheck = false;
     public static boolean disableCollectShorthand = false;
-
+    public static boolean disableExtensions = false;
     public static boolean readlineTest = false;
 
     /**

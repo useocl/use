@@ -56,7 +56,7 @@ public class NewObjectDiagramView extends JPanel
     private MSystem fSystem;
     private MainWindow fMainWindow;
 
-    NewObjectDiagram fObjectDiagram;
+    protected NewObjectDiagram fObjectDiagram;
     public static int viewcount = 0; // jj
 
     public NewObjectDiagramView(MainWindow mainWindow, MSystem system) {
@@ -78,6 +78,14 @@ public class NewObjectDiagramView extends JPanel
      */
     public ModelBrowser getModelBrowser() {
         return fMainWindow.getModelBrowser();
+    }
+    
+    /**
+     * The managed diagram
+     * @return
+     */
+    public NewObjectDiagram getDiagram() {
+    	return this.fObjectDiagram;
     }
     
     /**

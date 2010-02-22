@@ -46,18 +46,18 @@ import org.tzi.use.uml.sys.MSystem;
  * @author   Jun Zhang 
  * @author   Jie Xu
  */
+@SuppressWarnings("serial")
 public class SelectedObjectPathView extends ObjectSelectionView {
 
-	Set selectedObjects;
+	Set<MObject> selectedObjects;
 
 	private JButton fBtnReset;
 
 	/**
 	 * Constructor for SelectedObjectPathView.
 	 */
-	public SelectedObjectPathView(MainWindow parent, MSystem system,
-			Set selectedObjects) {
-		super(new BorderLayout(), parent, system);
+	public SelectedObjectPathView(MainWindow parent, MSystem system, NewObjectDiagram diagram, Set<MObject> selectedObjects) {
+		super(new BorderLayout(), parent, system, diagram);
 
 		this.selectedObjects = selectedObjects;
 		initSelectedClassPathView();
@@ -87,22 +87,24 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 		add(buttonPane, BorderLayout.SOUTH);
 	}
 
-	public HashSet getSelectedPathObjects() {
-		HashSet objects = new HashSet();
+	public Set<MObject> getSelectedPathObjects() {
+		Set<MObject> objects = new HashSet<MObject>();
+		
 		for (int i = 0; i < fAttributes.size(); i++) {
 			String cname = fAttributes.get(i).toString().substring(0,
 					fAttributes.get(i).toString().indexOf("(")).trim();
 
-			Iterator it = selectedObjects.iterator();
+			Iterator<MObject> it = selectedObjects.iterator();
 			MObject mo = null;
 			
-			//find out, which mobject selected 
+			//find out, which MObject is selected 
 			while (it.hasNext()) {
-				mo = (MObject) (it.next());
+				mo = it.next();
 				if (mo.name().equals(cname)) {
 					break;
 				}
 			}
+			
 			List note[] = getAllPathObjects(mo);
 			for (int j = 0; j < note[0].size(); j++) {
 				if (Integer.parseInt(note[1].get(j).toString()) <= Integer
@@ -121,25 +123,22 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 */
 	public List[] getAllPathObjects(MObject mo) {
 		List[] note = new List[2];
-		List objects = new ArrayList();
-		List index = new ArrayList();
+		List<MObject> objects = new ArrayList<MObject>();
+		List<Integer> index = new ArrayList<Integer>();
 		note[0] = objects;
 		note[1] = index;
 		objects.add(mo);
 		index.add(new Integer(0));
 
 		int actual = 0;
-		Set alllinks = fSystem.state().allLinks();
+		Set<MLink> allLinks = fSystem.state().allLinks();
+		
 		while (objects.size() > actual) {
-			Iterator it = alllinks.iterator();
-			while (it.hasNext()) {
-				MLink link = (MLink) (it.next());
-				Set linkedobjects = link.linkedObjects();
+			for (MLink link : allLinks) {
+				Set<MObject> linkedobjects = link.linkedObjects();
 
 				if (linkedobjects.contains(objects.get(actual))) {
-					Iterator lit = linkedobjects.iterator();
-					while (lit.hasNext()) {
-						MObject object = (MObject) (lit.next());
+					for (MObject object : linkedobjects) {
 						if (!objects.contains(object)) {
 							objects.add(object);
 							index
@@ -173,12 +172,12 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideObjects(getSelectedPathObjects(), true).size() > 0) {
-			NewObjectDiagram.ffHideAdmin.setValues("Hide",
+			this.diagram.getHideAdmin().setValues("Hide",
 					getHideObjects(getSelectedPathObjects(), true))
 					.actionPerformed(ev);
 		}
 		if (getShowObjects(getSelectedPathObjects()).size() > 0) {
-			NewObjectDiagram.ffHideAdmin
+			this.diagram.getHideAdmin()
 					.showHiddenElements(getShowObjects(getSelectedPathObjects()));
 		}
 	}
@@ -188,7 +187,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 */
 	public void applyShowChanges(ActionEvent ev) {
 		if (getShowObjects(getSelectedPathObjects()).size() > 0) {
-			NewObjectDiagram.ffHideAdmin
+			this.diagram.getHideAdmin()
 					.showHiddenElements(getShowObjects(getSelectedPathObjects()));
 		}
 	}
@@ -198,7 +197,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideObjects(getSelectedPathObjects(), false).size() > 0) {
-			NewObjectDiagram.ffHideAdmin.setValues("Hide",
+			this.diagram.getHideAdmin().setValues("Hide",
 					getHideObjects(getSelectedPathObjects(), false))
 					.actionPerformed(ev);
 		}

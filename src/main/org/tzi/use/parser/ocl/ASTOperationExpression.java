@@ -408,7 +408,7 @@ public class ASTOperationExpression extends ASTExpression {
             MOperation op = srcClass.operation(opname, true);
             if (op != null ) {
                 // check for isQuery operation with OCL body
-                if (! op.hasExpression() )
+                if (!op.hasExpression())
                     throw new SemanticException
                         (fOp, "Operation `" + srcClass.name() + "::" + 
                          op.signature() + "' cannot be used in OCL expression " +
@@ -494,7 +494,7 @@ public class ASTOperationExpression extends ASTExpression {
         if (op != null ) {
             
             // check for isQuery operation with OCL body
-            if (ctx.isSideEffectFree() && !op.hasExpression() )
+            if (ctx.isSideEffectFree() && !(op.hasExpression() || op.hasScript()))
                 throw new SemanticException
                     (fOp,"Operation `" + srcClass.name() + "::" + 
                      op.signature() + "' cannot be used in OCL expression " +

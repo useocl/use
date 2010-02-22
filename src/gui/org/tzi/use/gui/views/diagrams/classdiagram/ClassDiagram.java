@@ -40,14 +40,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
+import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.BinaryEdge;
@@ -70,11 +72,7 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
-import org.tzi.use.gui.views.selection.SelectionComparator;
 import org.tzi.use.gui.views.selection.classselection.ClassSelection;
-import org.tzi.use.gui.views.selection.classselection.SelectedClassPathView;
-import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
@@ -105,10 +103,6 @@ public class ClassDiagram extends DiagramView
     private Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
     
     // jj anfangen
-    public static DirectedGraph ffGraph; 
-	public static Set ffHiddenNodes;
-	public static Set ffHiddenEdges;
-	public static HideAdministration ffHideAdmin;
 	private ClassSelection fSelection;
 	private DiagramMouseHandling mouseHandling;
 	// jj end
@@ -152,11 +146,7 @@ public class ClassDiagram extends DiagramView
                                       fGraph, this);
         
         // anfangs jj
-        ffGraph = fGraph;
-        ffHiddenNodes = fHiddenNodes;
-        ffHiddenEdges = fHiddenEdges;
-        ffHideAdmin = fHideAdmin;
-        fSelection = new ClassSelection(fGraph, fHiddenNodes, fHideAdmin, fClassToNodeMap, fNodeSelection);
+        fSelection = new ClassSelection(this, fGraph, fHiddenNodes, fHideAdmin, fClassToNodeMap, fNodeSelection);
         // end jj
         
         fActionSaveLayout = new ActionSaveLayout( "USE class diagram layout",
@@ -571,54 +561,69 @@ public class ClassDiagram extends DiagramView
         
         // position for the popupMenu items 
         int pos = 0;
-        HashSet selectedClassesOfAssociation = new HashSet(); //jj
-		HashSet anames = new HashSet(); // jj
+        Set<MClass> selectedClassesOfAssociation = new HashSet<MClass>(); //jj
+		Set<AssociationName> anames = new HashSet<AssociationName>(); // jj
         
-		final HashSet selectedClasses = new HashSet(); // jj add final
+		final Set<MClass> selectedClasses = new HashSet<MClass>(); // jj add final
+		final Set<EnumType> selectedEnumeration = new HashSet<EnumType>();
+		final Set<Object> selectedObjects = new HashSet<Object>();
+		
         if ( !fNodeSelection.isEmpty() ) {
             Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
+            
             while ( nodeIterator.hasNext() ) {
                 PlaceableNode node = (PlaceableNode) nodeIterator.next();
                 if ( node instanceof ClassNode && node.isDeletable() ) {
-                    selectedClasses.add( ((ClassNode) node).cls() );
+                	ClassNode cn = (ClassNode)node;
+                	selectedClasses.add( cn.cls() );
+                    selectedObjects.add( cn.cls() );
                 } else if ( node instanceof EnumNode && node.isDeletable() ) {
-                    selectedClasses.add( ((EnumNode) node).getEnum() );
+                    EnumNode eNode = (EnumNode)node;
+                	selectedEnumeration.add(eNode.getEnum());
+                	selectedObjects.add(eNode.getEnum());
                 } else if (node instanceof AssociationName) { //jj
-					selectedClassesOfAssociation.addAll(fSelection.getSelectedClassesOfAssociation(((AssociationName)node)//jj
-							,selectedClassesOfAssociation));//jj
-					anames.add(node);//jj
+					selectedClassesOfAssociation.addAll(
+							fSelection.getSelectedClassesOfAssociation(((AssociationName)node)));
+					
+					anames.add((AssociationName)node);//jj
                 } //jj
             }
             
             String txt = null;
-            if ( selectedClasses.size() == 1 ) {
-                if ( selectedClasses.iterator().next() instanceof MClass ) {
+            if ( selectedObjects.size() == 1 ) {
+                if ( selectedObjects.iterator().next() instanceof MClass ) {
                     txt = "'" + ((MClass) selectedClasses.iterator().next()).name() + "'";
-                } else if ( selectedClasses.iterator().next() instanceof EnumType ) {
-                    txt = "'" + ((EnumType) selectedClasses.iterator().next()).name() + "'";
+                } else if ( selectedObjects.iterator().next() instanceof EnumType ) {
+                    txt = "'" + ((EnumType) selectedObjects.iterator().next()).name() + "'";
                 }
             } else if ( selectedClasses.size() > 1 ) {
                 txt = selectedClasses.size() + " classes";
             }
             
             //anfangen jj
-			if(selectedClasses.size() <= 0 && selectedClassesOfAssociation.size() > 0){
+			if(selectedClasses.isEmpty() && !selectedClassesOfAssociation.isEmpty()) {
 				String info;
-				if(anames.size() == 1){
-					info =((AssociationName) anames.iterator().next()).name();
+				if (anames.size() == 1) {
+					info = anames.iterator().next().name();
 				}
 				else{
 					info = "" + anames.size();
 				}
 				
-				popupMenu.insert(fHideAdmin.setValues("Crop association " + info,
-						getNoneSelectedNodes(selectedClassesOfAssociation)), pos++);
-				popupMenu.insert(fHideAdmin.setValues("Hide association " + info + "",
-						selectedClassesOfAssociation), pos++);  //fixxx
+				popupMenu.insert(
+						fHideAdmin.setValues("Crop association " + info, 
+								getNoneSelectedNodes(selectedClassesOfAssociation)), pos++);
+				
+				popupMenu.insert(
+						fHideAdmin.setValues("Hide association " + info, 
+								selectedClassesOfAssociation), pos++);  //fixxx
 				
 				popupMenu.insert(new JSeparator(),pos++);
-				popupMenu.insert(fSelection.getSelectedAssociationPathView("Selection association path length...", selectedClassesOfAssociation, anames), pos++);
-				popupMenu.insert(new JSeparator(),pos++);
+				popupMenu.insert(fSelection.getSelectedAssociationPathView(
+								"Selection association path length...", 
+								selectedClassesOfAssociation, anames), pos++);
+				
+				popupMenu.insert(new JSeparator(), pos++);
 				
 			}
 			//end jj
@@ -632,40 +637,73 @@ public class ClassDiagram extends DiagramView
                                                         pos++ );
                 
 				// pathlength view anfangs jj
-				MObject oo = null;
 				popupMenu.insert(new JSeparator(),pos++);
-				popupMenu.insert(fSelection.getSelectedClassPathView("Selection "+ txt +
-						" path length...", selectedClasses), pos++);
+				popupMenu.insert(fSelection.getSelectedClassPathView("Selection " + txt + " path length...", 
+								 selectedClasses), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
 				
+				// TODO: Rename variable
 				boolean havehide = fSelection.haveHideInObjectDiagram(fSelection.getAllKindClasses(selectedClasses));
 				boolean haveshow = fSelection.haveShowInObjectDiagram(fSelection.getAllKindClasses(selectedClasses));
 				
-				if((haveshow || havehide) && (NewObjectDiagramView.viewcount > 0)){
-					if(haveshow){
-						popupMenu.insert(NewObjectDiagram.ffHideAdmin.setValues("Hide all objects of " 
-											+ txt, fSelection.getHideObjects(fSelection.getAllKindClasses(selectedClasses))), pos++);
+				if ( (haveshow || havehide) && MainWindow.instance().getObjectDiagrams().size() > 0) {
+					if(haveshow) {
+						
+						popupMenu.insert(new AbstractAction("Hide all objects of " + txt) {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								// Hide objects in all object diagrams
+								Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
+																
+								for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
+									NewObjectDiagram diagram = oDiagView.getDiagram();
+									Set<MObject> allObjectsToHide = diagram.getObjectSelection().getDisplayedObjectsForClasses(allClasses);
+									
+									// If allObjects contains an object which is not shown, this
+									// is handled by the HideAdministration
+									Action hide = diagram.getHideAdmin().setValues("Internal", allObjectsToHide);
+									hide.actionPerformed(null);
+								}
+							}}, pos++);
 					}
 					
 					if(havehide){
 						final JMenuItem showobj = new JMenuItem("Show all objects of " + txt);
 						showobj.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent ev) {
-								NewObjectDiagram.ffHideAdmin.showHiddenElements(fSelection.getShowObjects(fSelection.getAllKindClasses(selectedClasses)));
-								repaint();
+								// Show objects in all object diagrams
+								Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
+
+								for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
+									NewObjectDiagram diagram = oDiagView.getDiagram();
+									Set<MObject> allObjects = diagram.getObjectSelection().getHiddenObjects(allClasses);
+									
+									// If allObjects contains an object which is not hidden, this
+									// is handled by the HideAdministration
+									diagram.getHideAdmin().showHiddenElements(allObjects);
+									diagram.repaint();
+								}
 							}
 						});
 						popupMenu.insert(showobj,pos++);
 					}
-					//crop all objects von selected classes
+					
+					//crop all objects of selected classes
 					final JMenuItem cropobj = new JMenuItem("Crop all objects of " + txt);
 					cropobj.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent ev) {
-							NewObjectDiagram.ffHideAdmin.setValues("Hide", fSelection.getCropHideObjects(fSelection.getAllKindClasses(selectedClasses))).actionPerformed(ev);
+							Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
 							
-							NewObjectDiagram.ffHideAdmin.showHiddenElements(fSelection.getShowObjects(fSelection.getAllKindClasses(selectedClasses)));
+							for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
+								NewObjectDiagram diagram = oDiagView.getDiagram();
+								Set<MObject> objectsToHide = diagram.getObjectSelection().getCropHideObjects(allClasses);
+								Set<MObject> objectsToShow = diagram.getObjectSelection().getHiddenObjects(allClasses);
+								
+								diagram.getHideAdmin().setValues("Hide", objectsToHide).actionPerformed(ev);							
+								diagram.getHideAdmin().showHiddenElements(objectsToShow);
 
-							repaint();
+								diagram.repaint();
+							}
 						}
 					});
 					popupMenu.insert(cropobj,pos++);
@@ -732,7 +770,7 @@ public class ClassDiagram extends DiagramView
 				popupMenu.add(fSelection.getSubMenuHideClass());
 			}
 			
-			popupMenu.add(fSelection.getSelectionClassView("Selection classes...", mouseHandling, selectedClasses, this));
+			popupMenu.add(fSelection.getSelectionClassView("Selection classes...", mouseHandling, selectedClasses));
 			
 		} // end jj
         
@@ -743,21 +781,29 @@ public class ClassDiagram extends DiagramView
     /**
      * Finds all nodes which are not selected.
      * @param selectedNodes Nodes which are selected at this point in the diagram.
-     * @return A HashSet of the none selected objects in the diagram.
+     * @return A Set of the none selected objects in the diagram.
      */
-    private Set<Object> getNoneSelectedNodes( Set<Object> selectedNodes ) {
+    private Set<Object> getNoneSelectedNodes( Set<?> selectedNodes ) {
         Set<Object> noneSelectedNodes = new HashSet<Object>();
         
         Iterator<NodeBase> it = fGraph.iterator();
         while ( it.hasNext() ) {
             NodeBase o = it.next();
+            Object obj;
+            
             if ( o instanceof ClassNode ) {
-                MClass cls = ((ClassNode) o).cls();
-                if ( !selectedNodes.contains( cls ) ) {
-                    noneSelectedNodes.add( cls );
-                }    
+                obj = ((ClassNode) o).cls();
+            } else if (o instanceof EnumNode) {
+            	obj = ((EnumNode)o).getEnum();
+            } else {
+            	continue;
+        	}
+            
+            if ( !selectedNodes.contains( obj ) ) {
+                noneSelectedNodes.add( obj );
             }
         }
+        
         return noneSelectedNodes;
     }
 

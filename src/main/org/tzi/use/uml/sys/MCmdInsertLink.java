@@ -116,7 +116,7 @@ public final class MCmdInsertLink extends MCmd {
         	// If one association end is redefined, then only the class at the redefining end is
         	// allowed.
         	MAssociationEnd aend1 = assocEnds.get(0);
-        	MAssociationEnd aend2 = assocEnds.get(1);
+        	// MAssociationEnd aend2 = assocEnds.get(1);
         	
         	if (aend1.getRedefiningEnds().size() > 0) {
         		// Association end 1 is redefined, so me have to check the type

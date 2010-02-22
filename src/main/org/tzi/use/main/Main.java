@@ -44,6 +44,7 @@ import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.USEWriter;
@@ -81,6 +82,11 @@ public final class Main {
 		MModel model = null;
 		MSystem system = null;
 
+		if (!Options.disableExtensions) {
+			ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + "/oclextensions";
+			ExtensionManager.getInstance().loadExtensions();
+		}
+		
 		// Plugin Framework
 		if (Options.doPLUGIN) {
 			// create URL from plugin directory

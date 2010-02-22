@@ -53,17 +53,15 @@ import org.tzi.use.uml.sys.MSystem;
 @SuppressWarnings("serial")
 public class SelectedClassPathView extends ClassSelectionView {
 
-	//TODO: Is the a Set<MClass>?
-	HashSet selectedClasses;
+	Set<MClass> selectedClasses;
 
 	private JButton fBtnReset;
 
 	/**
 	 * Constructor for SelectedClassPathView.
 	 */
-	public SelectedClassPathView(MainWindow parent, MSystem system,
-			HashSet selectedClasses) {
-		super(new BorderLayout(), parent, system);
+	public SelectedClassPathView(MainWindow parent, MSystem system, ClassDiagram diagram, Set<MClass> selectedClasses) {
+		super(new BorderLayout(), parent, system, diagram);
 
 		this.selectedClasses = selectedClasses;
 		initSelectedClassPathView();
@@ -103,7 +101,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 			// TODO: Use MClass instead of parsing
 			String className = att.substring(0, att.indexOf("(")).trim();
 
-			Iterator it = selectedClasses.iterator();
+			Iterator<MClass> it = selectedClasses.iterator();
 			MClass mc = null;
 			
 			// find out, which mclass selected 
@@ -203,13 +201,13 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedPathClasses(), true).size() > 0) {
-			ClassDiagram.ffHideAdmin.setValues("Hide",
+			diagram.getHideAdmin().setValues("Hide",
 					getHideClasses(getSelectedPathClasses(), true))
 					.actionPerformed(ev);
 		}
-		if (getShowClasses(getSelectedPathClasses()).size() > 0) {
-			ClassDiagram.ffHideAdmin
-					.showHiddenElements(getShowClasses(getSelectedPathClasses()));
+		if (getClassesToShow(getSelectedPathClasses()).size() > 0) {
+			diagram.getHideAdmin()
+					.showHiddenElements(getClassesToShow(getSelectedPathClasses()));
 		}
 	}
 
@@ -217,9 +215,9 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 * Method applyShowChanges shows the appropriate marked classes.
 	 */
 	public void applyShowChanges(ActionEvent ev) {
-		if (getShowClasses(getSelectedPathClasses()).size() > 0) {
-			ClassDiagram.ffHideAdmin
-					.showHiddenElements(getShowClasses(getSelectedPathClasses()));
+		if (getClassesToShow(getSelectedPathClasses()).size() > 0) {
+			diagram.getHideAdmin()
+					.showHiddenElements(getClassesToShow(getSelectedPathClasses()));
 		}
 	}
 
@@ -228,7 +226,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedPathClasses(), false).size() > 0) {
-			ClassDiagram.ffHideAdmin.setValues("Hide",
+			diagram.getHideAdmin().setValues("Hide",
 					getHideClasses(getSelectedPathClasses(), false))
 					.actionPerformed(ev);
 		}

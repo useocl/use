@@ -1,0 +1,13 @@
+<extensions>
+	<operation source="Set(Integer)" name="avg" returnType="Real">
+		<body><![CDATA[
+			sum = 0
+			$self.each {|i|
+				sum += i
+			}
+			
+			return (sum.to_f / $self.length.to_f)
+		]]>
+		</body>
+	</operation>
+</extensions>

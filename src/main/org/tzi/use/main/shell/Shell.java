@@ -72,6 +72,7 @@ import org.tzi.use.uml.ocl.expr.EvalNode;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
+import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MCmd;
@@ -399,6 +400,8 @@ public final class Shell implements Runnable {
             cmdGenInvariantFlags(line.substring(9), system());
         else if (line.startsWith("gen result") || line.equals("gen result"))
             cmdGenResult(line.substring(10), system());
+        else if (line.startsWith("reload extensions"))
+        	cmdReloadExtensions();
 		else if (line.startsWith("plugins") || line.equals("plugins"))
 			cmdShowPlugins();
 		else if (Options.doPLUGIN) {
@@ -415,7 +418,7 @@ public final class Shell implements Runnable {
 							line.substring(currentCmdDescMap.get("cmd").length()));
 					cmdFound = true;
 					break;
-    }
+				}
 			}
 
 			if (!cmdFound)
@@ -502,7 +505,7 @@ public final class Shell implements Runnable {
 				.state(), line, "<input>", new PrintWriter(System.err));
        
         // compile errors?
-        String message = (new ShowHideExec(line)).exec();// jjjj
+        String message = (new ShowHideExec(line)).exec(fSession);// jjjj
         
         if (!"".equals(message))
         	System.out.println(message);
@@ -1087,6 +1090,11 @@ public final class Shell implements Runnable {
         fSession.reset();
     }
 
+    private void cmdReloadExtensions() {
+    	ExtensionManager.getInstance().unloadExtensions();
+    	ExtensionManager.getInstance().loadExtensions();
+    }
+    
     /**
      * Activates step mode.
      */

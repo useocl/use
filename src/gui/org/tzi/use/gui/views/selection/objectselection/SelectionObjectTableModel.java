@@ -19,6 +19,7 @@ import org.tzi.use.util.Log;
  * @author   Jun Zhang 
  * @author   Jie Xu
  */
+@SuppressWarnings("serial")
 public class SelectionObjectTableModel extends TableModel {
 	public MClass fClass;
 	MSystem fSystem;
@@ -26,7 +27,7 @@ public class SelectionObjectTableModel extends TableModel {
 	/**
 	 * Constructor for SelectionObjectTableModel.
 	 */
-	public SelectionObjectTableModel( List fAttributes, List fValues, MClass fClass, MSystem system) {
+	public SelectionObjectTableModel( List<String> fAttributes, List<Object> fValues, MClass fClass, MSystem system) {
 		super(fAttributes, fValues);
 		this.fClass = fClass;
 		this.fSystem = system;
@@ -38,7 +39,7 @@ public class SelectionObjectTableModel extends TableModel {
 	 * Method getColumnClass determine the default renderer/ editor for
 	 * each cell. 
 	 */
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		return getValueAt(0, c).getClass();
 	}
 
@@ -75,26 +76,29 @@ public class SelectionObjectTableModel extends TableModel {
 			
 			MClass cls = fClass;
 			MSystemState state = fSystem.state();
-			Set allObjects = state.allObjects();
-			Iterator objectIterator = allObjects.iterator();
+			Set<MObject> allObjects = state.allObjects();
+			Iterator<MObject> objectIterator = allObjects.iterator();
 			int i = 0;
 
 			SelectionComparator sort = new SelectionComparator();
-			TreeSet sortedNodes = new TreeSet(sort);
-			 while (objectIterator.hasNext()) {
-				MObject obj = (MObject) objectIterator.next();
-				if (cls.name().equals(obj.cls().name())) {
+			TreeSet<MObject> sortedNodes = new TreeSet<MObject>(sort);
+			
+			while (objectIterator.hasNext()) {
+				MObject obj = objectIterator.next();
+				if (cls.equals(obj.cls())) {
 					 sortedNodes.add(obj);
 					i++;
 				}
 			}
-			Iterator it = sortedNodes.iterator();
+			
+			Iterator<MObject> it = sortedNodes.iterator();
 			while(it.hasNext()){
 				MObject obj = (MObject) it.next();
 				 fAttributes.add(obj.name());
 				 fValues.add(Boolean.valueOf(false));
 			}
 		}
+		
 		fireTableDataChanged();
 	}
 

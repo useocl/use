@@ -52,6 +52,7 @@ import org.tzi.use.util.Log;
  * @author   Jun Zhang 
  * @author   Jie Xu
  */
+@SuppressWarnings("serial")
 public class SelectionObjectView extends ObjectSelectionView {
 	private static final String NO_CLASSES_AVAILABLE = "(No classes available.)";
 
@@ -70,8 +71,8 @@ public class SelectionObjectView extends ObjectSelectionView {
 	/**
 	 * Constructor for SelectionObjectView.
 	 */
-	public SelectionObjectView(MainWindow parent, MSystem system) {
-		super(new BorderLayout(), parent, system);
+	public SelectionObjectView(MainWindow parent, MSystem system, NewObjectDiagram diagram) {
+		super(new BorderLayout(), parent, system, diagram);
 		this.fSystem = system;
 		initSelectionObjectView();
 		updateGUIState();
@@ -125,13 +126,14 @@ public class SelectionObjectView extends ObjectSelectionView {
 	/**
 	 * Method getSelectedObjects return selected objects.
 	 */
-	private HashSet getSelectedObjects() {
-		HashSet selected = new HashSet();
+	private Set<MObject> getSelectedObjects() {
+		Set<MObject> selected = new HashSet<MObject>();
+		
 		for (int i = 0; i < fAttributes.size(); i++) {
 			if (fValues.get(i) != null
 					&& ((Boolean) fValues.get(i)).booleanValue()) {
 				String name = fAttributes.get(i).toString();
-				Iterator it = NewObjectDiagram.ffGraph.iterator();
+				Iterator<?> it = this.diagram.getGraph().iterator();
 				boolean find = false;
 				while (it.hasNext()) {
 					Object node = it.next();
@@ -145,7 +147,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 					}
 				}
 				if (!find) {
-					it = NewObjectDiagram.ffHiddenNodes.iterator();
+					it = this.diagram.getHiddenNodes().iterator();
 					while (it.hasNext()) {
 						Object node = it.next();
 						if (node instanceof MObject) {
@@ -185,11 +187,11 @@ public class SelectionObjectView extends ObjectSelectionView {
 		fClassComboBox.removeActionListener(fClassComboBoxActionListener);
 
 		MSystemState state = fSystem.state();
-		Set allObjects = state.allObjects();
-		ArrayList livingClasses = new ArrayList();
-		Iterator objectIterator = allObjects.iterator();
-		while (objectIterator.hasNext()) {
-			MObject obj = (MObject) objectIterator.next();
+		Set<MObject> allObjects = state.allObjects();
+		
+		ArrayList<String> livingClasses = new ArrayList<String>();
+		
+		for (MObject obj : allObjects) {
 			MClass cls = obj.cls();
 			if (obj.exists(state) && !livingClasses.contains(cls.name()))
 				livingClasses.add(cls.name());
@@ -220,16 +222,14 @@ public class SelectionObjectView extends ObjectSelectionView {
 	public void selectClass(String clsName) {
 		MSystemState state = fSystem.state();
 		String objectName = "";
-		Iterator objects = state.allObjects().iterator();
-		while (objects.hasNext()) {
-			Object obj = objects.next();
-			if (obj instanceof MObject) {
-				if (((MObject) obj).name().contains(clsName)) {
-					objectName = ((MObject) obj).name();
-					break;
-				}
+				
+		for (MObject obj : state.allObjects()) {
+			if (obj.name().contains(clsName)) {
+				objectName = obj.name();
+				break;
 			}
 		}
+		
 		fClass = (state.objectByName(objectName)).cls();
 
 		if (!fClassComboBox.getSelectedItem().equals(objectName)) {
@@ -244,12 +244,12 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideObjects(getSelectedObjects(), true).size() > 0) {
-			NewObjectDiagram.ffHideAdmin.setValues("Hide",
+			this.diagram.getHideAdmin().setValues("Hide",
 					getHideObjects(getSelectedObjects(), true))
 					.actionPerformed(ev);
 		}
 		if (getShowObjects(getSelectedObjects()).size() > 0) {
-			NewObjectDiagram.ffHideAdmin
+			this.diagram.getHideAdmin()
 					.showHiddenElements(getShowObjects(getSelectedObjects()));
 		}
 	}
@@ -259,7 +259,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 */
 	public void applyShowChanges(ActionEvent ev) {
 		if (getShowObjects(getSelectedObjects()).size() > 0) {
-			NewObjectDiagram.ffHideAdmin
+			this.diagram.getHideAdmin()
 					.showHiddenElements(getShowObjects(getSelectedObjects()));
 		}
 	}
@@ -269,7 +269,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideObjects(getSelectedObjects(), false).size() > 0) {
-			NewObjectDiagram.ffHideAdmin.setValues("Hide",
+			this.diagram.getHideAdmin().setValues("Hide",
 					getHideObjects(getSelectedObjects(), false))
 					.actionPerformed(ev);
 		}

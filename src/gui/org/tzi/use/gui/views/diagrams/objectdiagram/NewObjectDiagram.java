@@ -61,7 +61,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.Selection;
@@ -84,7 +83,6 @@ import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
 import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
-import org.tzi.use.gui.views.selection.classselection.ClassSelection;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -149,11 +147,6 @@ public class NewObjectDiagram extends DiagramView
             = new ShowObjectPropertiesViewMouseListener();
 
     // jj anfangen
-    public static DirectedGraph ffGraph; 
-	public static Set ffHiddenNodes;
-	public static Set ffHiddenEdges;
-	public static HideAdministration ffHideAdmin;
-	public static NewObjectDiagramView aaaParent;
 	private ObjectSelection fSelection;
 	// jj end
 
@@ -188,14 +181,8 @@ public class NewObjectDiagram extends DiagramView
         
         fHideAdmin = new HideAdministration( fNodeSelection, fGraph, fLayoutInfos );
         
-        //      anfangs jj
-        ffGraph = fGraph;
-        ffHiddenNodes = fHiddenNodes;
-        ffHiddenEdges = fHiddenEdges;
-        ffHideAdmin = fHideAdmin;
-        aaaParent = fParent;
-        
-        fSelection = new ObjectSelection(fGraph, fHiddenNodes, fHiddenEdges, fHideAdmin);
+        // anfangs jj
+        fSelection = new ObjectSelection(this);
         // end jj
         
         fActionSaveLayout = new ActionSaveLayout( "USE object diagram layout",
@@ -228,9 +215,12 @@ public class NewObjectDiagram extends DiagramView
         });
 
         startLayoutThread();
-//        ffParent = fParent;
     }
 
+    public ObjectSelection getObjectSelection() {
+    	return this.fSelection;
+    }
+    
     /**
      * Displays objects of the selected class in the modelbrowser.
      */
@@ -672,8 +662,8 @@ public class NewObjectDiagram extends DiagramView
 
         // position for the popupMenu items 
         int pos = 0;
-        HashSet selectedObjectsOfAssociation = new HashSet(); //jj
-		HashSet anames = new HashSet(); // jj
+        HashSet<MObject> selectedObjectsOfAssociation = new HashSet<MObject>(); //jj
+		HashSet<AssociationName> anames = new HashSet<AssociationName>(); // jj
         
         // get all associations that exist between the classes of the
         // selected objects
@@ -687,7 +677,7 @@ public class NewObjectDiagram extends DiagramView
                 else if (node instanceof AssociationName) { // anfangs jj 
                 	selectedObjectsOfAssociation.addAll(fSelection.getSelectedObjectsofAssociation(((AssociationName)node)
 							,selectedObjectsOfAssociation)); // end jj
-                	anames.add(node);
+                	anames.add((AssociationName)node);
                 } 
             }
             final MObject[] selectedObjs = (MObject[])selectedObjects.toArray(new MObject[0]);
@@ -800,86 +790,20 @@ public class NewObjectDiagram extends DiagramView
             separatorNeeded = false;
         }
         
-//      anfangs jj
+        // anfangs jj
         if (fGraph.size() > 0 || fHiddenNodes.size() > 0) { 
-			popupMenu.addSeparator();
-			Iterator it = null;
-			MObject object = null;
+			popupMenu.addSeparator();			
 
 			if (fGraph.size() > 0) {
 				popupMenu.add(fSelection.getSubMenuHideObject());
-				it = fGraph.iterator();
-
-				while (it.hasNext()) { // erst Class auszufinden
-					Object node = it.next();
-
-					if (node instanceof ObjectNode) {
-						object = ((ObjectNode) node).object();
-						break;
-					}
-				}
 			}
+			
 			if (fHiddenNodes.size() > 0) {
 				popupMenu.add(fSelection.getSubMenuShowObject());
-				it = fHiddenNodes.iterator();
-				while (it.hasNext()) { // erst Class auszufinden
-					Object node = it.next();
-
-					if (node instanceof MObject) {
-						object = ((MObject) node);
-						break;
-					}
-				}
 			}
-
-//			popupMenu.add(fSelection.getSelectionObjectView("Selection objects...",
-//					object));
-			// add selection class view jjj
-
-			int nodesize = 0;
-			List classes = new ArrayList();
-			List submenus = new ArrayList();
-//			System.out.println("size = " + fHiddenNodes.size());
-
-			// popupMenu.insert(new ActionShowProperties("Edit properties of "
-			// + selectedObjs[0].name(), selectedObjs[0]), pos++);
 		}
+        
 		// jj end this
-
-		// jj anfangen this Association
-		// etwas seleted
-//		if (fGraph.edgeIterator().hasNext() || fHiddenEdges.size() > 0) { //associationmenu
-//
-//			boolean have = false;
-//			if (fGraph.edgeIterator().hasNext()) {
-//				Iterator ito = fGraph.edgeIterator();
-//				while (ito.hasNext()) {
-//					Object o = ito.next();
-////					System.out.println("o = " + o.getClass());
-//					if (o instanceof EdgeBase && !(o instanceof HalfEdge)) {
-//						popupMenu.addSeparator();
-//						popupMenu.add(subMenuSelectionLink("hide"));
-//						// System.out.println("..hshfadfasfds = "+
-//						// ((EdgeBase)o).);
-//						have = true;
-//						break;
-//					}
-//				}
-//			}
-//			if (fHiddenEdges.size() > 0) {
-//				if (!have) {
-//					popupMenu.addSeparator();
-//				}
-//				popupMenu.add(subMenuSelectionLink("show"));
-//				have = true;
-//			}
-//			if (have) {
-//				popupMenu.add(new ActionShowSelectionObject(
-//						"Selection associations...", null));
-//			}
-//			// add selection association view jjj
-//
-//		}
 
 		popupMenu.addSeparator();
 		popupMenu.add(fSelection.getSelectionOCLView("OCL Selection...")); // end jj

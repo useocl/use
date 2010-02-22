@@ -229,13 +229,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
             NodeBase objToHideNode = (NodeBase) fNodeToNodeBaseMap.get(obj);
             
             // save position information about object
-            Iterator<NodeBase> nodeIt = fGraph.iterator();
-            while (nodeIt.hasNext()) {
-                NodeBase node = nodeIt.next();
-                if (node.equals(objToHideNode)) {
-                    fLayoutXMLForHiddenElements += objToHideNode.storePlacementInfo( true );
-                }
-            }
+            fLayoutXMLForHiddenElements += objToHideNode.storePlacementInfo( true );
             
             objectsToHide.add( obj );
         }

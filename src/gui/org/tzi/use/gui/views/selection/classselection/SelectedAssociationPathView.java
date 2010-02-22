@@ -54,16 +54,17 @@ import org.tzi.use.uml.sys.MSystem;
 @SuppressWarnings("serial")
 public class SelectedAssociationPathView extends SelectedClassPathView {
 
-	private HashSet anames;
+	private Set<AssociationName> anames;
 	private JButton fBtnReset;
-
+	
 	/**
 	 * Constructor for SelectedAssociationPathView.
 	 */
-	public SelectedAssociationPathView(MainWindow parent, MSystem system,
-			HashSet selectedClasses, HashSet anames) {
-		super(parent, system, selectedClasses);
+	public SelectedAssociationPathView(MainWindow parent, MSystem system, ClassDiagram diagram,
+			Set<MClass> selectedClasses, Set<AssociationName> anames) {
+		super(parent, system, diagram, selectedClasses);
 		this.anames = anames;
+				
 		initSelectedAssociationPathView();
 	}
    
@@ -148,13 +149,13 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 	 */
 	private Set<MClass> getSelectedClassesofAssociationHS(String name, boolean isshow){
 		Set<MClass> classes = new HashSet<MClass>();
-		Iterator it;
+		Iterator<?> it;
 		
 		if(isshow){
-			it = ClassDiagram.ffGraph.edgeIterator();
+			it = diagram.getGraph().edgeIterator();
 		}
 		else{
-			it = ClassDiagram.ffHiddenEdges.iterator();
+			it = diagram.getHiddenEdges().iterator();
 		}
 		
 		boolean have = false;
@@ -178,10 +179,9 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 				if(o instanceof MAssociation){
 					MAssociation ma = ((MAssociation) o);
 					if(ma.name().equalsIgnoreCase(name)){
-						Set set = ((MAssociation) o).associatedClasses();
-						Iterator itset = set.iterator();
-						while(itset.hasNext()){
-							MClass mc = (MClass)(itset.next());
+						Set<MClass> set = ((MAssociation) o).associatedClasses();
+						
+						for (MClass mc : set) {
 							if(!classes.contains(mc)){
 								classes.add(mc);
 							}
@@ -192,16 +192,15 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 			}
 		}
 		if(!have){
-			it = ClassDiagram.ffGraph.iterator();
+			it = diagram.getGraph().iterator();
+			
 			while(it.hasNext()){
 				Object o = it.next();
 				if(o instanceof DiamondNode){
 					if(((DiamondNode)o).name().equalsIgnoreCase(name)){
 						DiamondNode dnode = (DiamondNode)o;
-						Set set = dnode.association().associatedClasses();
-						Iterator it2 = set.iterator();
-						while(it2.hasNext()){
-							MClass mc = (MClass)(it2.next());
+						Set<MClass> set = dnode.association().associatedClasses();
+						for (MClass mc : set) {
 							if(!classes.contains(mc)){
 								classes.add(mc);
 							}

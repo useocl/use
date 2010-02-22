@@ -2,7 +2,6 @@ package org.tzi.use.gui.views.selection;
 
 import java.util.Comparator;
 
-import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.uml.mm.MClass;
@@ -15,7 +14,7 @@ import org.tzi.use.uml.sys.MObject;
  * @author   Jie Xu
  */
 
-public class SelectionComparator implements Comparator {
+public class SelectionComparator implements Comparator<Object> {
 	
 	public int compare(Object o1, Object o2) {
 		if(o1 instanceof MObject){
