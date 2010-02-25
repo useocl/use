@@ -177,5 +177,21 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     	
     	return res;
     }
+    
+    public BagValue asBag() {
+    	return new BagValue(elemType(), collection());
+    }
+    
+    public SetValue asSet() {
+    	return new SetValue(elemType(), collection());
+    }
+    
+    public OrderedSetValue asOrderedSet() {
+    	return new OrderedSetValue(elemType(), collection());
+    }
+    
+    public SequenceValue asSequence() {
+    	return new SequenceValue(elemType(), collection());
+    }
 }
 

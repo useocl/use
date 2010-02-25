@@ -217,7 +217,7 @@ public class Report {
                         out.print(StringUtil.leftPad(row[i], widths[i]));
                         break;
                     default:
-                        // TODO: should skip here?
+                        // This cannot happen ;-)
                     }
                     out.print(fFiller[i + 1]);
                 }

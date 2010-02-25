@@ -358,7 +358,6 @@ public class ExprEvalBrowser extends JPanel {
         // create the nodes for the JTree
         fTopNode = new DefaultMutableTreeNode(root);
         
-        // TODO: The next two lines are stupid, aren't they?
         fNeedlessVarBindings = new Vector<Entry>( root.getVarBindings() );
         root.getVarBindings().removeAll(fNeedlessVarBindings);
         
@@ -492,7 +491,7 @@ public class ExprEvalBrowser extends JPanel {
 
         // create the nodes for the JTree
         fTopNode = new DefaultMutableTreeNode(root);
-        //TODO: Check the next two lines
+        
         fNeedlessVarBindings = new Vector<Entry>(root.getVarBindings());
         root.getVarBindings().removeAll(fNeedlessVarBindings);
         // the tree is created later when the default configuration is set

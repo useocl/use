@@ -27,7 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -107,14 +107,11 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 					break;
 				}
 			}
-
-			List note[] = getAllPathObjects(mo);
-			for (int j = 0; j < note[0].size(); j++) {
-				if (Integer.parseInt(note[1].get(j).toString()) <= Integer
-						.parseInt(fValues.get(i).toString())) {
-					if (!objects.contains((MObject) (note[0].get(j)))) {
-						objects.add((MObject) (note[0].get(j)));
-					}
+			
+			Map<MObject, Integer> paths = getAllPathObjects(mo);
+			for (Map.Entry<MObject, Integer> entry : paths.entrySet()) {
+				if (entry.getValue().intValue() <= Integer.parseInt(fValues.get(i).toString())) {
+					objects.add(entry.getKey());
 				}
 			}
 		}

@@ -158,5 +158,57 @@ public class GraphTest extends TestCase {
         assertEquals(5, g.size());
         assertEquals(7, g.numEdges());
     }
+    
+    public void test2() {
+        DirectedGraph<Integer, DirectedEdgeBase<Integer>> g;
+        Integer n0, n1, n2, n3, n4, n5;
+
+        /*                   
+                                   
+                    0 -----> 1 ----> 2 -----> 4 ----> 5
+                                     |        ^
+                                     v        |
+                                     3 -------| */
+        
+        // ----
+        //      env.printHeader("testing graph creation...");
+        g = new DirectedGraphBase<Integer, DirectedEdgeBase<Integer>>();
+        g.add(n0 = new Integer(0));
+        g.add(n1 = new Integer(1));
+        g.add(n2 = new Integer(2));
+        g.add(n3 = new Integer(3));
+        g.add(n4 = new Integer(4));
+        g.add(n5 = new Integer(5));
+        assertEquals(6, g.size());
+
+        // connect nodes
+        g.addEdge(new DirectedEdgeBase<Integer>(n0, n1));
+        g.addEdge(new DirectedEdgeBase<Integer>(n1, n2));
+        g.addEdge(new DirectedEdgeBase<Integer>(n2, n3));
+        g.addEdge(new DirectedEdgeBase<Integer>(n2, n4));
+        g.addEdge(new DirectedEdgeBase<Integer>(n4, n5));
+        g.addEdge(new DirectedEdgeBase<Integer>(n3, n4));
+        assertEquals(6, g.numEdges());
+
+        // ----
+        //      env.printHeader("testing graph connectivity...");
+        assertEquals(0, g.numIncomingEdges(n0));
+        assertEquals(1, g.numIncomingEdges(n1));
+        assertEquals(1, g.numIncomingEdges(n2));
+        assertEquals(1, g.numIncomingEdges(n3));
+        assertEquals(2, g.numIncomingEdges(n4));
+        assertEquals(1, g.numIncomingEdges(n5));
+
+        assertEquals(1, g.numOutgoingEdges(n0));
+        assertEquals(1, g.numOutgoingEdges(n1));
+        assertEquals(2, g.numOutgoingEdges(n2));
+        assertEquals(1, g.numOutgoingEdges(n3));
+        assertEquals(1, g.numOutgoingEdges(n4));
+        assertEquals(0, g.numOutgoingEdges(n5));
+
+        // ----
+        //      env.printHeader("testing cycles...");
+        assertEquals(false, g.hasCycle());
+    }
 }
 

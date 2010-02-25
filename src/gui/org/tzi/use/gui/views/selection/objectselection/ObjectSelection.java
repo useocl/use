@@ -473,7 +473,6 @@ public class ObjectSelection {
 	}
 	
 	public Set<MObject> getHiddenObjects(Set<MClass> classes){ 
-		// TODO: Was: getShowObjects
 		final Set<MObject> objects = new HashSet<MObject>();
 		
 		for (MClass mc : classes) {

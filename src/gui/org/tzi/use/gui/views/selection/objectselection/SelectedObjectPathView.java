@@ -25,11 +25,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
+
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -105,65 +107,65 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 				}
 			}
 			
-			List note[] = getAllPathObjects(mo);
-			for (int j = 0; j < note[0].size(); j++) {
-				if (Integer.parseInt(note[1].get(j).toString()) <= Integer
-						.parseInt(fValues.get(i).toString())) {
-					if (!objects.contains((MObject) (note[0].get(j)))) {
-						objects.add((MObject) (note[0].get(j)));
-					}
+			Map<MObject, Integer> paths = getAllPathObjects(mo);
+			for (Map.Entry<MObject, Integer> entry : paths.entrySet()) {
+				if (entry.getValue().intValue() <= Integer.parseInt(fValues.get(i).toString())) {
+					objects.add(entry.getKey());
 				}
 			}
 		}
+	
 		return objects;
 	}
 
 	/**
 	 * Method getAllPathObjects return all attainable objects based on mo
 	 */
-	public List[] getAllPathObjects(MObject mo) {
-		List[] note = new List[2];
-		List<MObject> objects = new ArrayList<MObject>();
-		List<Integer> index = new ArrayList<Integer>();
-		note[0] = objects;
-		note[1] = index;
-		objects.add(mo);
-		index.add(new Integer(0));
+	public Map<MObject, Integer> getAllPathObjects(MObject mo) {
+		Map<MObject, Integer> result = new HashMap<MObject, Integer>();
+		
+		// For FIFO handling of remaining classes to process
+		LinkedList<MObject> buffer = new LinkedList<MObject>();
+		
+		buffer.addLast(mo);
+		result.put(mo, new Integer(0));
+		
+		MObject currentObject;
+		int depth;
 
-		int actual = 0;
 		Set<MLink> allLinks = fSystem.state().allLinks();
 		
-		while (objects.size() > actual) {
+		while (buffer.size() > 0) {
+			currentObject = buffer.poll();
+			depth = result.get(currentObject).intValue() + 1;
+
 			for (MLink link : allLinks) {
 				Set<MObject> linkedobjects = link.linkedObjects();
 
-				if (linkedobjects.contains(objects.get(actual))) {
+				if (linkedobjects.contains(currentObject)) {
 					for (MObject object : linkedobjects) {
-						if (!objects.contains(object)) {
-							objects.add(object);
-							index
-									.add(new Integer(((Integer) (index
-											.get(actual))).intValue() + 1));
+						if (!result.containsKey(object)) {
+							result.put(object, new Integer(depth));
 						}
 					}
 				}
 			}
-			actual++;
 		}
-		return note;
+		
+		return result;
 	}
 
 	/**
 	 * Method getDepth obtaine maximally attainable Depth based on starting point(mo)
 	 */
 	public int getDepth(MObject mo) {
-		List note[] = getAllPathObjects(mo);
+		Map<MObject, Integer> paths = getAllPathObjects(mo);
+		
 		int maxdepth = 0;
-		for (int i = 0; i < note[1].size(); i++) {
-			if (maxdepth < ((Integer) (note[1].get(i))).intValue()) {
-				maxdepth = ((Integer) (note[1].get(i))).intValue();
-			}
+		for (Integer depth : paths.values()) {
+			maxdepth = Math.max(maxdepth, depth.intValue());
 		}
+		
 		return maxdepth;
 	}
 

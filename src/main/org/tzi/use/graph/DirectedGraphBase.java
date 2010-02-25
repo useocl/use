@@ -430,17 +430,41 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      *
      * @return true if the graph contains at least one cycle.
      */
-    public boolean hasCycle() {
-        // FIXME: this is inefficient
-        Iterator<N> it = iterator();
-        while (it.hasNext() ) {
-            N n = it.next();
-            if (targetNodeClosureSet(n).contains(n) )
-                return true;
-        }
+    public boolean hasCycle() {    	
+    	// Depth-first search from "Data Structures and Algorithms" (Aho, Hopcroft and Ullman, 1987)
+    	Set<N> visitedNodes = new HashSet<N>();
+    	    	
+    	for (N node : fNodes.keySet()) {
+    		if (!visitedNodes.contains(node)) {
+    			if (dfs_cycle(node, visitedNodes, new HashSet<N>())) return true;
+    		}
+    	}
+    	
         return false;
     }
 
+    /**
+     * Depth-First search in the graph
+     * @param node The current node
+     * @param visitedNodes All visited nodes of the graph
+     * @param visitedNodesTree All visited nodes in this search path
+     * @return
+     */
+    private boolean dfs_cycle(N node, Set<N> visitedNodes, Set<N> visitedNodesTree) {
+    	visitedNodes.add(node);
+    	visitedNodesTree.add(node);
+    	
+    	for (N n : targetNodeSet(node)) {
+    		if (!visitedNodes.contains(n)) {
+    			if (dfs_cycle(n, visitedNodes, new HashSet<N>(visitedNodesTree))) return true;
+    		} else if (visitedNodesTree.contains(n)) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
+    
     private NodeInfo getNodeInfo(Object n) {
         if (n == null )
             throw new NullPointerException();

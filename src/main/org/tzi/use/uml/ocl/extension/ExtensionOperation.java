@@ -10,7 +10,7 @@ import javax.script.ScriptException;
 
 import org.jruby.embed.EvalFailedException;
 import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.ocl.expr.OpGeneric;
+import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;

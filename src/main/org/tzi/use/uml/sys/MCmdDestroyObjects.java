@@ -114,7 +114,7 @@ public final class MCmdDestroyObjects extends MCmd {
         Set<MObject> objects = new HashSet<MObject>();
         
         Evaluator evaluator = new Evaluator();
-        VarBindings varBindings = fSystemState.system().topLevelBindings();
+        VarBindings varBindings = fSystemState.system().varBindings();
 
         for (Expression expr : fObjectExprs) {
             Value v = evaluator.eval(expr, fSystemState, varBindings);

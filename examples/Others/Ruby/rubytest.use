@@ -33,4 +33,10 @@ class RDate
 	successor() = script <<
 	  $self.day = $self.day + 1
 	>>
+	
+	newDates(amount : Integer) : RDate = script <<
+	  1.upto($amount) do |y|
+		USE.createObject("d" + y.to_s, "RDate")
+	  end
+	>>
 end

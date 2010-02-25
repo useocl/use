@@ -68,7 +68,7 @@ public class SequenceValue extends CollectionValue {
      * @exception IllegalArgumentException the type of at least one
      *            value does not match 
      */
-    public SequenceValue(Type elemType, final Collection<Value> values) {
+    public SequenceValue(Type elemType, final Collection<? extends Value> values) {
         this(elemType);
         addAll(values);
     }
@@ -302,7 +302,7 @@ public class SequenceValue extends CollectionValue {
     }
 
 
-    void addAll(Collection<Value> v) {
+    void addAll(Collection<? extends Value> v) {
         fElements.addAll(v);
         deriveRuntimeType();
     }

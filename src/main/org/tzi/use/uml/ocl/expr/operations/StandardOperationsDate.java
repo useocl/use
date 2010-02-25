@@ -1,14 +1,16 @@
-package org.tzi.use.uml.ocl.expr;
+package org.tzi.use.uml.ocl.expr.operations;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.DateValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.MultiMap;
 
 /**
  * Base class for standard operations on Dates.
@@ -16,8 +18,15 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author lhamann
  *
  */
-abstract class ExpStdOpDate extends OpGeneric {
-
+abstract class StandardOperationsDate extends OpGeneric {
+	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
+		OpGeneric.registerOperation(new Op_Date_Lower(), opmap);
+		OpGeneric.registerOperation(new Op_Date_LowerEqual(), opmap);
+		OpGeneric.registerOperation(new Op_Date_Equal(), opmap);
+		OpGeneric.registerOperation(new Op_Date_GreaterEqual(), opmap);
+		OpGeneric.registerOperation(new Op_Date_Greater(), opmap);
+		OpGeneric.registerOperation(new Op_Date_Day(), opmap);		
+	}
 }
 
 /**
@@ -26,7 +35,7 @@ abstract class ExpStdOpDate extends OpGeneric {
  * @author lhamann
  *
  */
-abstract class ExpStdOpDate_Date_Bool extends ExpStdOpDate
+abstract class ExpStdOpDate_Date_Bool extends StandardOperationsDate
 {
 	@Override
 	public boolean isInfixOrPrefix() {
@@ -131,7 +140,7 @@ final class Op_Date_Greater extends ExpStdOpDate_Date_Bool {
 	}	
 }
 
-final class Op_Date_Day extends ExpStdOpDate
+final class Op_Date_Day extends StandardOperationsDate
 {
 	@Override
 	public String name() {

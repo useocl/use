@@ -1,7 +1,10 @@
-package org.tzi.use.uml.ocl.expr;
+package org.tzi.use.uml.ocl.expr.operations;
 
+import org.tzi.use.uml.ocl.expr.EvalContext;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -67,4 +70,29 @@ public abstract class OpGeneric {
         }
         return res;
     }
+
+	public static void registerOperations(MultiMap<String, OpGeneric> opmap) {
+		// Basic operations
+		StandardOperationsAny.registerTypeOperations(opmap);
+		StandardOperationsObject.registerTypeOperations(opmap);
+		
+		// Basic types
+		StandardOperationsNumber.registerTypeOperations(opmap);
+		StandardOperationsString.registerTypeOperations(opmap);
+		StandardOperationsBoolean.registerTypeOperations(opmap);
+		
+		// Collections
+		StandardOperationsCollection.registerTypeOperations(opmap);
+		StandardOperationsSet.registerTypeOperations(opmap);
+		StandardOperationsBag.registerTypeOperations(opmap);
+		StandardOperationsSequence.registerTypeOperations(opmap);
+		StandardOperationsOrderedSet.registerTypeOperations(opmap);
+		
+		// Extensions
+		StandardOperationsDate.registerTypeOperations(opmap);
+	}
+	
+	public static void registerOperation(OpGeneric op, MultiMap<String, OpGeneric> opmap) {
+		opmap.put(op.name(), op);
+	}
 }

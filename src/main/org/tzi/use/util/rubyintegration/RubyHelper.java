@@ -18,6 +18,7 @@ import org.tzi.use.uml.ocl.value.DateValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.RealValue;
+import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -52,6 +53,17 @@ public class RubyHelper {
 		if (rubyValue instanceof MObject) {
 			MObject obj = (MObject)rubyValue;
 			return new ObjectValue(TypeFactory.mkObjectType(obj.cls()), obj);
+		}
+		if (rubyValue instanceof List<?>) {
+			List<?> list = (List<?>)rubyValue;
+			Value[] elements = new Value[list.size()];
+			
+			for (int index = 0; index < list.size(); index++) {
+				elements[index] = rubyValueToUseValue(list.get(index));
+			}
+			
+			SequenceValue result = new SequenceValue(TypeFactory.mkVoidType(), elements);
+			return result;
 		}
 		if (rubyValue != null) {
 			Log.warn("rubyValueToUseValue: Unhandeled Ruby value: " + rubyValue.toString());

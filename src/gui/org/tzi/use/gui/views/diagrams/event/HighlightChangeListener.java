@@ -25,9 +25,6 @@ import java.util.EventListener;
 
 /**
  * @author gutsche
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public interface HighlightChangeListener extends EventListener {
     void stateChanged(HighlightChangeEvent e);

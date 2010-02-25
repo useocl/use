@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,9 +12,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
@@ -23,7 +20,6 @@ import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
-import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
@@ -39,26 +35,12 @@ import org.tzi.use.uml.sys.MObject;
  */
 
 public class ClassSelection {
-	private DirectedGraph<NodeBase, EdgeBase> fGraph;
-	private Set<Object> fHiddenNodes;
-	private HideAdministration fHideAdmin;
-	
-	private Map<MClass, ClassNode> fClassToNodeMap;
-	private Selection fNodeSelection;
 	protected ClassDiagram diagram;
 		
 	/**
 	 * Constructor for ClassSelection.
-	 */
-	//TODO: Remove parameter, they are reachable through diagram 
-	public ClassSelection(ClassDiagram diagram, DirectedGraph<NodeBase, EdgeBase> fGraph, 
-						  Set<Object> fHiddenNodes, HideAdministration fHideAdmin, 
-						  Map<MClass, ClassNode> fClassToNodeMap, Selection fNodeSelection) {
-		this.fGraph = fGraph;
-		this.fHiddenNodes = fHiddenNodes;
-		this.fHideAdmin = fHideAdmin;
-		this.fClassToNodeMap = fClassToNodeMap;
-		this.fNodeSelection = fNodeSelection;
+	 */ 
+	public ClassSelection(ClassDiagram diagram) {
 		this.diagram = diagram;
 	}
 	
@@ -78,7 +60,7 @@ public class ClassSelection {
 		 * @see java.awt.event.ActionListener#actionPerformed(ActionEvent)
 		 */
 		public void actionPerformed(ActionEvent e) {  
-			MainWindow.instance().showClassSelectionClassView(selectedClasses, diagram, mouseHandling, fClassToNodeMap, fNodeSelection); 
+			MainWindow.instance().showClassSelectionClassView(selectedClasses, diagram, mouseHandling, diagram.getClassToNodeMap(), diagram.getNodeSelection()); 
 		}
 	}
 	
@@ -131,7 +113,7 @@ public class ClassSelection {
 	 */
 	public Set<MClass> getSelectedClassesOfAssociation(AssociationName node) {
 		Set<MClass> classes = new HashSet<MClass>();
-		Iterator<EdgeBase> it = fGraph.edgeIterator();
+		Iterator<EdgeBase> it = diagram.getGraph().edgeIterator();
 		String name = node.name();
 				
 		while (it.hasNext()) {
@@ -148,7 +130,7 @@ public class ClassSelection {
 			}
 		}
 		
-		Iterator<NodeBase> it2 = fGraph.iterator();
+		Iterator<NodeBase> it2 = diagram.getGraph().iterator();
 		
 		while (it2.hasNext()) {
 			Object o = it2.next();
@@ -186,8 +168,7 @@ public class ClassSelection {
 	 * Returns true, if at least one object of a class given by the set classes
 	 * is displayed in any object diagram 
 	 */
-	public boolean haveShowInObjectDiagram(Set<MClass> classes) {
-		//TODO: Rename method!
+	public boolean classHasDisplayedObjects(Set<MClass> classes) {
 		List<NewObjectDiagramView> objDiagrams = MainWindow.instance().getObjectDiagrams();
 		
 		for (NewObjectDiagramView diagView : objDiagrams) {
@@ -218,8 +199,7 @@ public class ClassSelection {
 	 * Returns true, if at least one object of a class given by the set classes
 	 * is hidden in any object diagram 
 	 */
-	public boolean haveHideInObjectDiagram(Set<MClass> classes) {
-		//TODO: rename method!
+	public boolean classHasHiddenObjects(Set<MClass> classes) {
 		List<NewObjectDiagramView> diagrams = MainWindow.instance().getObjectDiagrams();
 		
 		for (NewObjectDiagramView diagView : diagrams) {
@@ -254,7 +234,7 @@ public class ClassSelection {
 
 		SelectionComparator sort = new SelectionComparator();
 		TreeSet<ClassNode> sortedNodes = new TreeSet<ClassNode>(sort);
-		Iterator<?> it = fGraph.iterator();
+		Iterator<?> it = diagram.getGraph().iterator();
 		
 		while(it.hasNext()){
 			Object node = it.next();
@@ -272,13 +252,13 @@ public class ClassSelection {
 			
 			Set<MClass> hideClass = new HashSet<MClass>();
 			hideClass.add(cls);
-			subMenuSelectionClassHide.add(fHideAdmin.setValues("hide "
+			subMenuSelectionClassHide.add(diagram.getHideAdmin().setValues("hide "
 						+ classname, hideClass));
 		}
 		
 		if (nodesize > 1) {
 			subMenuSelectionClassHide.addSeparator();
-			it = fGraph.iterator();
+			it = diagram.getGraph().iterator();
 			Set<MClass> hideClass = new HashSet<MClass>();
 			while(it.hasNext()){
 				Object node = it.next();
@@ -287,7 +267,7 @@ public class ClassSelection {
 					hideClass.add(cls);
 				}
 			}
-			subMenuSelectionClassHide.add(fHideAdmin.setValues("Hide all classes", hideClass));
+			subMenuSelectionClassHide.add(diagram.getHideAdmin().setValues("Hide all classes", hideClass));
 		}
 		return subMenuSelectionClassHide;
 	}
@@ -300,7 +280,7 @@ public class ClassSelection {
 	public JMenu getSubMenuShowClass() {
 		JMenu subMenuSelectionClassShow = new JMenu("Selection show class");
 
-		Iterator<?> it = fHiddenNodes.iterator();
+		Iterator<?> it = diagram.getHiddenNodes().iterator();
 		SelectionComparator sort = new SelectionComparator();
 		
 		TreeSet<MClass> sortedNodes = new TreeSet<MClass>(sort);
@@ -321,19 +301,19 @@ public class ClassSelection {
 							"Show " + classname);
 			showClasses.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
-							fHideAdmin.showHiddenElements(sclasses);
+							diagram.getHideAdmin().showHiddenElements(sclasses);
 						}
 					});
 				subMenuSelectionClassShow.add(showClasses);
 		}
 
-		if (fHiddenNodes.size() > 1) {
+		if (diagram.getHiddenNodes().size() > 1) {
 			subMenuSelectionClassShow.addSeparator();
 			final JMenuItem showAllClasses = new JMenuItem(
 			"Show all classes");
 			showAllClasses.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
-					fHideAdmin.showAllHiddenElements();
+					diagram.getHideAdmin().showAllHiddenElements();
 				}
 			});
 			subMenuSelectionClassShow.add(showAllClasses);

@@ -86,6 +86,12 @@ public final class MSystemState {
 	private MultiMap<MClass, MObject> fClassObjects;
 
 	/**
+	 * Mapping of object names to objects to get
+	 * objects by name faster 
+	 */
+	private Map<String, MObject> fObjectNames;
+	
+	/**
 	 * The set of all links partitioned by association.
 	 */
 	private Map<MAssociation, MLinkSet> fLinkSets;
@@ -98,6 +104,7 @@ public final class MSystemState {
 		fSystem = system;
 		fObjectStates = new HashMap<MObject, MObjectState>();
 		fClassObjects = new HashMultiMap<MClass, MObject>();
+		fObjectNames = new HashMap<String, MObject>();
 		fLinkSets = new HashMap<MAssociation, MLinkSet>();
 
 		// create empty link sets
@@ -116,10 +123,11 @@ public final class MSystemState {
 
 		// deep copy of object states
 		fObjectStates = new HashMap<MObject, MObjectState>();
+		fObjectNames = new HashMap<String, MObject>();
 		
 		for (Map.Entry<MObject, MObjectState> e : x.fObjectStates.entrySet()) {
-			fObjectStates.put(e.getKey(), new MObjectState((MObjectState) e
-					.getValue()));
+			fObjectStates.put(e.getKey(), new MObjectState(e.getValue()));
+			fObjectNames.put(e.getKey().name(), e.getKey());
 		}
 
 		fClassObjects = new HashMultiMap<MClass, MObject>();
@@ -190,11 +198,8 @@ public final class MSystemState {
 	 * @return null if no object with the specified name exists.
 	 */
 	public MObject objectByName(String name) {
-		//FIXME: Use Hashing for faster access!
-		// this is a slow linear search over all objects
-		for (MObject obj : allObjects()) {
-			if (obj.name().equals(name))
-				return obj;
+		if (fObjectNames.containsKey(name)) {
+			return fObjectNames.get(name);
 		}
 		
 		return null;
@@ -271,6 +276,8 @@ public final class MSystemState {
 		MObjectState objState = new MObjectState(obj);
 		fObjectStates.put(obj, objState);
 		fClassObjects.put(cls, obj);
+		fObjectNames.put(obj.name(), obj);
+		
 		return obj;
 	}
 
@@ -282,6 +289,8 @@ public final class MSystemState {
 		MObject obj = objState.object();
 		fObjectStates.put(obj, objState);
 		fClassObjects.put(obj.cls(), obj);
+		fObjectNames.put(obj.name(), obj);
+		
 		fSystem.addObject(obj);
 	}
 
@@ -366,6 +375,7 @@ public final class MSystemState {
 		res.getRemovedObjectStates().add(fObjectStates.get(obj));
 		fObjectStates.remove(obj);
 		fClassObjects.remove(objClass, obj);
+		fObjectNames.remove(obj.name());
 		fSystem.deleteObject(obj);
 		return res;
 	}
@@ -590,7 +600,8 @@ public final class MSystemState {
 		MObjectState objState = new MObjectState(linkobj);
 		fObjectStates.put(linkobj, objState);
 		fClassObjects.put(assocClass, linkobj);
-
+		fObjectNames.put(linkobj.name(), linkobj);
+		
 		// Part from createLink method
 		MLinkSet linkSet = fLinkSets.get(assocClass);
 		if (linkSet.contains(linkobj))

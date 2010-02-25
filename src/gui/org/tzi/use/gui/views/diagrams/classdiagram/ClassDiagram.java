@@ -145,9 +145,7 @@ public class ClassDiagram extends DiagramView
             new DiagramMouseHandling( fNodeSelection, fEdgeSelection,
                                       fGraph, this);
         
-        // anfangs jj
-        fSelection = new ClassSelection(this, fGraph, fHiddenNodes, fHideAdmin, fClassToNodeMap, fNodeSelection);
-        // end jj
+        fSelection = new ClassSelection(this);
         
         fActionSaveLayout = new ActionSaveLayout( "USE class diagram layout",
                                                   "clt", fGraph, fLog, fLayoutInfos );
@@ -173,6 +171,14 @@ public class ClassDiagram extends DiagramView
         startLayoutThread();
     }
 
+    public Map<MClass, ClassNode> getClassToNodeMap() {
+    	return this.fClassToNodeMap;
+    }
+    
+    public Selection getNodeSelection() {
+		return this.fNodeSelection;
+	}
+    
     /**
      * Displays the selected class of the modelbrowser in the class diagram.
      */
@@ -642,12 +648,11 @@ public class ClassDiagram extends DiagramView
 								 selectedClasses), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
 				
-				// TODO: Rename variable
-				boolean havehide = fSelection.haveHideInObjectDiagram(fSelection.getAllKindClasses(selectedClasses));
-				boolean haveshow = fSelection.haveShowInObjectDiagram(fSelection.getAllKindClasses(selectedClasses));
+				boolean hasHiddenObjects = fSelection.classHasHiddenObjects(fSelection.getAllKindClasses(selectedClasses));
+				boolean hasShownObjects = fSelection.classHasDisplayedObjects(fSelection.getAllKindClasses(selectedClasses));
 				
-				if ( (haveshow || havehide) && MainWindow.instance().getObjectDiagrams().size() > 0) {
-					if(haveshow) {
+				if ( (hasShownObjects || hasHiddenObjects) && MainWindow.instance().getObjectDiagrams().size() > 0) {
+					if(hasShownObjects) {
 						
 						popupMenu.insert(new AbstractAction("Hide all objects of " + txt) {
 							@Override
@@ -667,7 +672,7 @@ public class ClassDiagram extends DiagramView
 							}}, pos++);
 					}
 					
-					if(havehide){
+					if(hasHiddenObjects){
 						final JMenuItem showobj = new JMenuItem("Show all objects of " + txt);
 						showobj.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent ev) {

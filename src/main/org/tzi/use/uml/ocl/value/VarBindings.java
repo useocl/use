@@ -92,16 +92,6 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
         fBindings.remove(fBindings.size() - 1);
     }
 
-    // set in current binding (needed for UML AL)
-    public void setValue(String name, Value value) {
-        // search in reverse order
-        for (int i = fBindings.size() - 1; i >= 0; i--) {
-            Entry b = (Entry) fBindings.get(i);
-            if (b.fVarname.equals(name))
-                b.fValue = value;
-        }
-    }
-
     /**
      * Removes the latest added entry with given name.
      */

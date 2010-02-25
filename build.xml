@@ -43,6 +43,7 @@
   <property name="gsbase.jar"         location="${lib.dir}/gsbase.jar"/>
   <property name="checkstyle.jar"     location="${lib.dir}/checkstyle-all-3.4.jar"/>
   <property name="xerces.jar"         location="${lib.dir}/xerces.jar"/>
+  <property name="jruby.jar"          location="${lib.dir}/jruby-complete-1.4.0.jar"/>
 	
   <property name="readline.src.dir"   location="${src.main.dir}/org/tzi/use/util/input"/>
   <property name="parser.dir"         location="${src.main.dir}/org/tzi/use/parser"/>
@@ -240,7 +241,7 @@
     <mkdir dir="${build.classes.dir}"/>
     <javac srcdir="${src.main.dir}:${src.runtime.dir}:${src.gui.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off" 
-       classpath="${antlr.jar}:${junit.jar}:${xerces.jar}" 
+       classpath="${antlr.jar}:${junit.jar}:${xerces.jar}:${jruby.jar}" 
        source="${java.sourceversion}" target="${java.targetversion}">
     </javac>  
     <javac srcdir="${src.test.dir}" destdir="${build.classes.dir}" 

@@ -105,7 +105,7 @@ public class EvalContext {
     /**
      * Returns the prestate.
      */
-    MSystemState preState() {
+    public MSystemState preState() {
         return fPreState;
     }
 

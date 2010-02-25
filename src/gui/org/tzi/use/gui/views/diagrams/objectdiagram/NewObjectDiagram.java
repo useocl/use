@@ -469,7 +469,7 @@ public class NewObjectDiagram extends DiagramView
         if (link.linkEnds().size() == 2) {
             EdgeBase e = null;
             if (link instanceof MObject) { // MLinkObject ???
-                e = (NodeEdge) fLinkObjectToNodeEdge.get(link);
+                e = fLinkObjectToNodeEdge.get(link);
                 // TODO: this is just a tempory solution
                 if (e == null) {
                     return;
