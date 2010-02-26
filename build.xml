@@ -442,7 +442,7 @@
     <junit haltonfailure="yes">
       <jvmarg value="-Dbasedir=${basedir}"/>
       <formatter type="brief" usefile="no"/>
-      <classpath path="${antlr.jar}:${build.classes.dir}:${gsbase.jar}"/>
+      <classpath path="${antlr.jar}:${build.classes.dir}:${gsbase.jar}:${jruby.jar}"/>
       <batchtest fork="yes">
         <fileset dir="${src.test.dir}">
           <include name="**/*Test.java"/>
@@ -455,7 +455,7 @@
   <target name="test-junit-swing" description="runs unit tests with gui" depends="build">
     <java classname="junit.swingui.TestRunner" fork="yes">
       <jvmarg value="-Dbasedir=${basedir}"/>
-      <classpath path="${antlr.jar}:${build.classes.dir}:${gsbase.jar}:${junit.jar}"/>
+      <classpath path="${antlr.jar}:${build.classes.dir}:${gsbase.jar}:${junit.jar}:${jruby.jar}"/>
     </java>
   </target>
 
