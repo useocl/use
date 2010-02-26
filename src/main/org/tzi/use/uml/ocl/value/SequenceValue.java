@@ -279,19 +279,17 @@ public class SequenceValue extends CollectionValue {
     
     /** 
      * Two sequences are equal iff they contain the same elements in
-     * same order. However, the declared types may be different if the
-     * second is a subtype of the first.
+     * same order. However, the declared types may be different.
      *
-     * @pre T2 <= T1, if this has type Sequence(T1) and 
+     * @pre T2 and T1 have common supertype, if this has type Sequence(T1) and 
      *      obj has type Sequence(T2). 
      */
     public boolean equals(Object obj) {
-        // FIXME: this equals is not symmetric (ocl-equals != java-equals?)
+        
         if (obj == null) return false;
         if (obj.getClass().equals(getClass()) ) {
             SequenceValue seq2 = (SequenceValue) obj;
-            return seq2.type().isSubtypeOf(this.type()) 
-                && fElements.equals(seq2.fElements);
+            return fElements.equals(seq2.fElements);
         }
         return false;
     }

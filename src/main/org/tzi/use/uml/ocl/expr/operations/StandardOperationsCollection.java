@@ -1,6 +1,10 @@
 package org.tzi.use.uml.ocl.expr.operations;
 
 import org.tzi.use.uml.ocl.expr.EvalContext;
+import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.ocl.expr.ExpStdOp;
+import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
@@ -16,6 +20,7 @@ import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
 
 public class StandardOperationsCollection {
@@ -29,6 +34,8 @@ public class StandardOperationsCollection {
 		OpGeneric.registerOperation(new Op_collection_excludesAll(), opmap);
 		OpGeneric.registerOperation(new Op_collection_isEmpty(), opmap);
 		OpGeneric.registerOperation(new Op_collection_notEmpty(), opmap);
+		OpGeneric.registerOperation(new Op_collection_max(), opmap);
+		OpGeneric.registerOperation(new Op_collection_min(), opmap);
 		OpGeneric.registerOperation(new Op_collection_sum(), opmap);
 		OpGeneric.registerOperation(new Op_collection_product(), opmap);
 		OpGeneric.registerOperation(new Op_collection_asSet(), opmap);
@@ -565,5 +572,109 @@ final class Op_collection_asOrderedSet extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		CollectionValue col = (CollectionValue) args[0];
 		return col.asOrderedSet();
+	}
+}
+
+/* max : Collection(T) -> T */
+final class Op_collection_max extends OpGeneric {
+	public String name() {
+		return "max";
+	}
+
+	public int kind() {
+		return OPERATION;
+	}
+
+	public boolean isInfixOrPrefix() {
+		return false;
+	}
+
+	public Type matches(Type params[]) {
+		if (params.length == 1 && params[0].isCollection()) {
+			CollectionType t = (CollectionType)params[0];
+
+			// Check if basic type supports max operation
+			if (ExpStdOp.exists("max", new Type[]{t.elemType(), t.elemType()}))
+				return t.elemType();
+		}
+		
+		return null;
+	}
+
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		CollectionValue col = (CollectionValue) args[0];
+		
+		Value max = new UndefinedValue(resultType);
+		boolean first = true;
+		
+		for (Value v : col) {
+			if (first) {
+				max = v;
+				first = false;
+			} else {
+				try {
+					ExpStdOp op = ExpStdOp.create("max", 
+							new Expression[]{new ExpressionWithValue(max), new ExpressionWithValue(v)});
+					max = op.eval(ctx);
+				} catch (ExpInvalidException e) {
+					Log.error(e);
+					return new UndefinedValue(resultType);
+				}
+			}
+		}
+		
+		return max;
+	}
+}
+
+/* min : Collection(T) -> T */
+final class Op_collection_min extends OpGeneric {
+	public String name() {
+		return "min";
+	}
+
+	public int kind() {
+		return OPERATION;
+	}
+
+	public boolean isInfixOrPrefix() {
+		return false;
+	}
+
+	public Type matches(Type params[]) {
+		if (params.length == 1 && params[0].isCollection()) {
+			CollectionType t = (CollectionType)params[0];
+
+			// Check if basic type supports max operation
+			if (ExpStdOp.exists("min", new Type[]{t.elemType(), t.elemType()}))
+				return t.elemType();
+		}
+		
+		return null;
+	}
+
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		CollectionValue col = (CollectionValue) args[0];
+		
+		Value max = new UndefinedValue(resultType);
+		boolean first = true;
+		
+		for (Value v : col) {
+			if (first) {
+				max = v;
+				first = false;
+			} else {
+				try {
+					ExpStdOp op = ExpStdOp.create("min", 
+							new Expression[]{new ExpressionWithValue(max), new ExpressionWithValue(v)});
+					max = op.eval(ctx);
+				} catch (ExpInvalidException e) {
+					Log.error(e);
+					return new UndefinedValue(resultType);
+				}
+			}
+		}
+		
+		return max;
 	}
 }

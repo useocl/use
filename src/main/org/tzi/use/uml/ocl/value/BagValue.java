@@ -275,18 +275,16 @@ public class BagValue extends CollectionValue {
     
     /**
      * Two bags are equal iff they contain the same elements. The declared types
-     * may be different if the second is a subtype of the first.
+     * may be different.
      * 
-     * @pre T2 <= T1, if this has type Bag(T1) and obj has type Bag(T2).
+     * @pre T2 and T1 have a common supertype, if this has type Bag(T1) and obj has type Bag(T2).
      */
     public boolean equals(Object obj) {
-        // FIXME: this equals is not symmetric (ocl-equals != java-equals?)
         if (obj == null)
             return false;
         if (obj.getClass().equals(getClass())) {
             BagValue bag2 = (BagValue) obj;
-            return bag2.type().isSubtypeOf(this.type())
-                    && fElements.equals(bag2.fElements);
+            return fElements.equals(bag2.fElements);
         }
         return false;
     }

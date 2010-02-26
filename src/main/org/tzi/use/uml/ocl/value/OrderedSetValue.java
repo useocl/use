@@ -272,19 +272,16 @@ public class OrderedSetValue extends CollectionValue {
     
     /** 
      * Two ordered sets are equal iff they contain the same elements in
-     * same order. However, the declared types may be different if the
-     * second is a subtype of the first.
+     * same order. However, the declared types may be different.
      *
-     * @pre T2 <= T1, if this has type OrderedSet(T1) and 
+     * @pre T2 and T1 have common supertype, if this has type OrderedSet(T1) and 
      *      obj has type OrderedSet(T2). 
      */
     public boolean equals(Object obj) {
-        // FIXME: this equals is not symmetric (ocl-equals != java-equals?)
         if (obj == null) return false;
         if (obj.getClass().equals(getClass()) ) {
             OrderedSetValue os2 = (OrderedSetValue) obj;
-            return os2.type().isSubtypeOf(this.type()) 
-                && fElements.equals(os2.fElements);
+            return fElements.equals(os2.fElements);
         }
         return false;
     }

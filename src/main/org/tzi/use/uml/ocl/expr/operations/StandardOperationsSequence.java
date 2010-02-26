@@ -1,5 +1,8 @@
 package org.tzi.use.uml.ocl.expr.operations;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.SequenceType;
@@ -19,14 +22,15 @@ public class StandardOperationsSequence {
 		OpGeneric.registerOperation(new Op_sequence_union(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_append(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_prepend(), opmap);
+		OpGeneric.registerOperation(new Op_sequence_insertAt(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_subSequence(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_at(), opmap);
+		OpGeneric.registerOperation(new Op_sequence_indexOf(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_first(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_last(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_including(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_excluding(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_indexOf(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_insertAt(), opmap);
+		OpGeneric.registerOperation(new Op_sequence_reverse(), opmap);
 		
 		// Constructors
 		OpGeneric.registerOperation(new Op_mkSequence(), opmap);
@@ -531,5 +535,35 @@ final class Op_sequence_indexOf extends OpGeneric {
 			return new UndefinedValue(resultType);
 		else
 			return new IntegerValue(index + 1);
+	}
+}
+
+/* reverse : Sequence(T) -> Sequence(T) */
+final class Op_sequence_reverse extends OpGeneric {
+	public String name() {
+		return "reverse";
+	}
+
+	public int kind() {
+		return SPECIAL;
+	}
+
+	public boolean isInfixOrPrefix() {
+		return false;
+	}
+
+	public Type matches(Type params[]) {
+		if (params.length == 1 && params[0].isSequence()) {
+			return params[0];
+		}
+		return null;
+	}
+
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		SequenceValue col = (SequenceValue)args[0];
+		ArrayList<Value> elements = new ArrayList<Value>(col.collection());
+		Collections.reverse(elements);
+		
+		return new SequenceValue(col.elemType(), elements);
 	}
 }

@@ -42,6 +42,7 @@ public class StandardOperationsSet {
 //
 // --------------------------------------------------------
 /* mkSet : T x T x ... x T -> Set(T) */
+// TODO: Check if this operation can be deleted. 
 final class Op_mkSet extends OpGeneric {
 	public String name() {
 		return "mkSet";

@@ -1,5 +1,8 @@
 package org.tzi.use.uml.ocl.expr.operations;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.OrderedSetType;
@@ -15,17 +18,20 @@ import org.tzi.use.util.StringUtil;
 public class StandardOperationsOrderedSet {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
 		// operations on OrderedSet
-		OpGeneric.registerOperation(new Op_orderedSet_union(), opmap);
 		OpGeneric.registerOperation(new Op_orderedSet_append(), opmap);
 		OpGeneric.registerOperation(new Op_orderedSet_prepend(), opmap);
-		OpGeneric.registerOperation(new Op_orderedSet_subSequence(), opmap);
+		OpGeneric.registerOperation(new Op_orderedSet_insertAt(), opmap);
+		OpGeneric.registerOperation(new Op_orderedSet_subOrderedSet(), opmap);
 		OpGeneric.registerOperation(new Op_orderedSet_at(), opmap);
+		OpGeneric.registerOperation(new Op_orderedSet_indexOf(), opmap);
 		OpGeneric.registerOperation(new Op_orderedSet_first(), opmap);
 		OpGeneric.registerOperation(new Op_orderedSet_last(), opmap);
+		OpGeneric.registerOperation(new Op_orderedSet_reverse(), opmap);
+		
+		// Not mentioned in OCL 2.2 specification
+		OpGeneric.registerOperation(new Op_orderedSet_union(), opmap);		
 		OpGeneric.registerOperation(new Op_orderedSet_including(), opmap);
 		OpGeneric.registerOperation(new Op_orderedSet_excluding(), opmap);
-		OpGeneric.registerOperation(new Op_orderedSet_indexOf(), opmap);
-		OpGeneric.registerOperation(new Op_orderedSet_insertAt(), opmap);
 		
 		// Constructors
 		OpGeneric.registerOperation(new Op_mkOrderedSet(), opmap);
@@ -278,7 +284,7 @@ final class Op_orderedSet_insertAt extends OpGeneric {
 // --------------------------------------------------------
 
 /* subOrderedSet : OrderedSet(T) x Integer x Integer -> OrderedSet(T) */
-final class Op_orderedSet_subSequence extends OpGeneric {
+final class Op_orderedSet_subOrderedSet extends OpGeneric {
 	public String name() {
 		return "subOrderedSet";
 	}
@@ -530,5 +536,35 @@ final class Op_orderedSet_indexOf extends OpGeneric {
 			return new UndefinedValue(resultType);
 		else
 			return new IntegerValue(index + 1);
+	}
+}
+
+/* reverse : OrderedSet(T) -> OrderedSet(T) */
+final class Op_orderedSet_reverse extends OpGeneric {
+	public String name() {
+		return "reverse";
+	}
+
+	public int kind() {
+		return SPECIAL;
+	}
+
+	public boolean isInfixOrPrefix() {
+		return false;
+	}
+
+	public Type matches(Type params[]) {
+		if (params.length == 1 && params[0].isOrderedSet()) {
+			return params[0];
+		}
+		return null;
+	}
+
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		OrderedSetValue col = (OrderedSetValue)args[0];
+		ArrayList<Value> elements = new ArrayList<Value>(col.collection());
+		Collections.reverse(elements);
+		
+		return new OrderedSetValue(col.elemType(), elements);
 	}
 }

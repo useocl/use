@@ -345,18 +345,16 @@ public class SetValue extends CollectionValue {
     
     /**
      * Two sets are equal iff they contain the same elements. However, the
-     * declared types may be different if the second is a subtype of the first.
+     * declared types may be different.
      * 
-     * @pre T2 <= T1, if this has type Set(T1) and obj has type Set(T2).
+     * @pre T2 and T1 have common supertype, if this has type Set(T1) and obj has type Set(T2).
      */
     public boolean equals(Object obj) {
-        // FIXME: this equals is not symmetric (ocl-equals != java-equals?)
         if (obj == null)
             return false;
         if (obj.getClass().equals(getClass())) {
             SetValue set2 = (SetValue) obj;
-            return set2.type().isSubtypeOf(this.type())
-                    && fElements.equals(set2.fElements);
+            return fElements.equals(set2.fElements);
         }
         return false;
     }
