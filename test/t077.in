@@ -1,0 +1,144 @@
+-- test new operation from OCL 2.2
+
+-- Integer.toString()
+?123.toString()
+*-> '123' : String
+
+-- Real.toString()
+?12.3.toString()
+*-> '12.3' : String
+?let i:Integer = null in i.toString()
+*-> Undefined : String
+
+-- New operations on String
+-- +
+?'a' + 'b'
+*-> 'ab' : String
+?'' + 'a'
+*-> 'a' : String
+?'' + ''
+*-> '' : String
+?'a' + 'b' + 'c'
+*-> 'abc' : String
+
+-- toInteger
+?'120'.toInteger()
+*-> 120 : Integer
+?'0'.toInteger()
+*-> 0 : Integer
+?''.toInteger()
+*-> Undefined : Integer
+?'-120'.toInteger()
+*-> -120 : Integer
+?'120.5'.toInteger()
+*-> Undefined : Integer
+
+-- toReal
+?'120.5'.toReal()
+*-> 120.5 : Real
+?'0'.toReal()
+*-> 0.0 : Real
+?''.toReal()
+*-> Undefined : Real
+?'-120.3'.toReal()
+*-> -120.3 : Real
+?'120'.toReal()
+*-> 120.0 : Real
+
+-- indexOf
+?'abcd'.indexOf('a')
+*-> 1 : Integer
+?'abcd'.indexOf('d')
+*-> 4 : Integer
+?'abcd'.indexOf('x')
+*-> 0 : Integer
+?'abcd'.indexOf('')
+*-> 1 : Integer
+?''.indexOf('a')
+*-> 0 : Integer
+?''.indexOf('')
+*-> 0 : Integer
+
+-- equalsIgnoreCase
+?'abcd'.equalsIgnoreCase('ABCD')
+*-> true : Boolean
+?'abcd'.equalsIgnoreCase('AbcD')
+*-> true : Boolean
+?'abcd'.equalsIgnoreCase('ABBD')
+*-> false : Boolean
+?''.equalsIgnoreCase('')
+*-> true : Boolean
+?'abcd'.equalsIgnoreCase('')
+*-> false : Boolean
+
+-- at
+?'abcd'.at(0)
+*-> Undefined : String
+?'abcd'.at(1)
+*-> 'a' : String
+?'abcd'.at(2)
+*-> 'b' : String
+?'abcd'.at(3)
+*-> 'c' : String
+?'abcd'.at(4)
+*-> 'd' : String
+?'abcd'.at(5)
+*-> Undefined : String
+
+-- characters
+?'abcda'.characters()
+*-> Sequence{'a','b','c','d','a'} : Sequence(String)
+?''.characters()
+*-> Sequence{} : Sequence(String)
+
+-- toBoolean
+?'true'.toBoolean()
+*-> true : Boolean
+?'false'.toBoolean()
+*-> false : Boolean
+?'askfds'.toBoolean()
+*-> false : Boolean
+
+-- new Boolean operations
+-- toString
+?true.toString()
+*-> 'true' : String
+?false.toString()
+*-> 'false' : String
+
+-- new Collection operations
+-- min
+?Set{1, 2, 3, 4}->min()
+*-> 1 : Integer
+?Set{1.0, 2.0, 3.0, 4.0}->min()
+*-> 1.0 : Real
+?Set{}->min()
+*-> Undefined : OclVoid
+?Bag{1, 2, 3, 4}->min()
+*-> 1 : Integer
+?Bag{1.0, 2.0, 3.0, 4.0}->min()
+*-> 1.0 : Real
+?Bag{}->min()
+*-> Undefined : OclVoid
+?OrderedSet{1, 2, 3, 4}->min()
+*-> 1 : Integer
+?OrderedSet{1.0, 2.0, 3.0, 4.0}->min()
+*-> 1.0 : Real
+?OrderedSet{}->min()
+*-> Undefined : OclVoid
+?Sequence{1, 2, 3, 4}->min()
+*-> 1 : Integer
+?Sequence{1.0, 2.0, 3.0, 4.0}->min()
+*-> 1.0 : Real
+?Sequence{}->min()
+*-> Undefined : OclVoid
+-- max
+
+-- toSet
+
+-- toSequence
+
+-- toOrderedSet
+
+-- toBag
+exit

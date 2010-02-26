@@ -36,15 +36,15 @@ gen result
 *Commands to produce the valid state:
 *!create Person1 : Person
 *!set Person1.name := 'Cam'
-*!set Person1.civstat := #divorced
-*!set Person1.gender := #female
+*!set Person1.civstat := CivilStatus::divorced
+*!set Person1.gender := Gender::female
 *!set Person1.alive := true
 *!create Snapshot1 : Snapshot
 *!insert (Snapshot1,Person1) into SnapshotPerson
 *!create Person2 : Person
 *!set Person2.name := 'Cam'
-*!set Person2.civstat := #divorced
-*!set Person2.gender := #female
+*!set Person2.civstat := CivilStatus::divorced
+*!set Person2.gender := Gender::female
 *!set Person2.alive := true
 *!create Snapshot2 : Snapshot
 *!insert (Snapshot2,Person2) into SnapshotPerson

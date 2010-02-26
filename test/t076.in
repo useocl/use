@@ -1,0 +1,385 @@
+-- Test Set comparsion
+?Set{} = Bag{}
+*-> false : Boolean
+?Set{} <> Bag{}
+*-> true : Boolean
+?Set{} = OrderedSet{}
+*-> false : Boolean
+?Set{} <> OrderedSet{}
+*-> true : Boolean
+?Set{} = Sequence{}
+*-> false : Boolean
+?Set{} <> Sequence{}
+*-> true : Boolean
+?Set{} = Set{}
+*-> true : Boolean
+?Set{} <> Set{}
+*-> false : Boolean
+?Set{1,2,2,1} = Sequence{1,2,2,1}
+*-> false : Boolean
+?Set{1,2,2,1} <> Sequence{1,2,2,1}
+*-> true : Boolean
+?Set{1,2,2,1} = Bag{1,2,2,1}
+*-> false : Boolean
+?Set{1,2,2,1} <> Bag{1,2,2,1}
+*-> true : Boolean
+?Set{1,2,2,1} = OrderedSet{1,2,2,1}
+*-> false : Boolean
+?Set{1,2,2,1} <> OrderedSet{1,2,2,1}
+*-> true : Boolean
+?Set{1,2,2,1}=Set{1,2,2,1}
+*-> true : Boolean
+?Set{1,2,2,1} <> Set{1,2,2,1}
+*-> false : Boolean
+?Set{1, 2} = Set{2, 1}
+*-> true : Boolean
+?Set{1, 2} <> Set{2, 1}
+*-> false : Boolean
+?Set{1, 'a'} = Set{1}
+*-> false : Boolean
+?Set{1, 'a'} <> Set{1}
+*-> true : Boolean
+!create ada,bob:Person
+?Set{ada, bob} = Set{ada, bob}
+*-> true : Boolean
+?Set{ada, bob} <> Set{ada, bob}
+*-> false : Boolean
+?Set{ada, bob} = Set{ada}
+*-> false : Boolean
+?Set{ada, bob} <> Set{ada}
+*-> true : Boolean
+?Set{ada, bob} = Set{}
+*-> false : Boolean
+?Set{ada, bob} <> Set{}
+*-> true : Boolean
+?Set{} = Set{ada, bob}
+*-> false : Boolean
+?Set{} <> Set{ada, bob}
+*-> true : Boolean
+-- test OrderedSet comparsion
+?OrderedSet{} = Bag{}
+*-> false : Boolean
+?OrderedSet{} <> Bag{}
+*-> true : Boolean
+?OrderedSet{} = OrderedSet{}
+*-> true : Boolean
+?OrderedSet{} <> OrderedSet{}
+*-> false : Boolean
+?OrderedSet{} = Sequence{}
+*-> false : Boolean
+?OrderedSet{} <> Sequence{}
+*-> true : Boolean
+?OrderedSet{} = Set{}
+*-> false : Boolean
+?OrderedSet{} <> Set{}
+*-> true : Boolean
+?OrderedSet{1,2,2,1} = Sequence{1,2,2,1}
+*-> false : Boolean
+?OrderedSet{1,2,2,1} <> Sequence{1,2,2,1}
+*-> true : Boolean
+?OrderedSet{1,2,2,1} = Bag{1,2,2,1}
+*-> false : Boolean
+?OrderedSet{1,2,2,1} <> Bag{1,2,2,1}
+*-> true : Boolean
+?OrderedSet{1,2,2,1} = OrderedSet{1,2,2,1}
+*-> true : Boolean
+?OrderedSet{1,2,2,1} <> OrderedSet{1,2,2,1}
+*-> false : Boolean
+?OrderedSet{1,2,2,1}=Set{1,2,2,1}
+*-> false : Boolean
+?OrderedSet{1,2,2,1} <> Set{1,2,2,1}
+*-> true : Boolean
+?OrderedSet{1, 2} = OrderedSet{2, 1}
+*-> false : Boolean
+?OrderedSet{1, 2} <> OrderedSet{2, 1}
+*-> true : Boolean
+?OrderedSet{1, 'a'} = OrderedSet{1}
+*-> false : Boolean
+?OrderedSet{1, 'a'} <> OrderedSet{1}
+*-> true : Boolean
+?OrderedSet{ada, bob} = OrderedSet{ada, bob}
+*-> true : Boolean
+?OrderedSet{ada, bob} <> OrderedSet{ada, bob}
+*-> false : Boolean
+?OrderedSet{ada, bob} = OrderedSet{ada}
+*-> false : Boolean
+?OrderedSet{ada, bob} <> OrderedSet{ada}
+*-> true : Boolean
+?OrderedSet{ada, bob} = OrderedSet{}
+*-> false : Boolean
+?OrderedSet{ada, bob} <> OrderedSet{}
+*-> true : Boolean
+?OrderedSet{} = OrderedSet{ada, bob}
+*-> false : Boolean
+?OrderedSet{} <> OrderedSet{ada, bob}
+*-> true : Boolean
+?OrderedSet{ada, bob, ada} = OrderedSet{ada, bob}
+*-> true : Boolean
+?OrderedSet{ada, bob} <> OrderedSet{bob, ada}
+*-> true : Boolean
+-- test Sequence comparsion
+?Sequence{} = Bag{}
+*-> false : Boolean
+?Sequence{} <> Bag{}
+*-> true : Boolean
+?Sequence{} = OrderedSet{}
+*-> false : Boolean
+?Sequence{} <> OrderedSet{}
+*-> true : Boolean
+?Sequence{} = Sequence{}
+*-> true : Boolean
+?Sequence{} <> Sequence{}
+*-> false : Boolean
+?Sequence{} = Set{}
+*-> false : Boolean
+?Sequence{} <> Set{}
+*-> true : Boolean
+?Sequence{1,2,2,1} = Sequence{1,2,2,1}
+*-> true : Boolean
+?Sequence{1,2,2,1} <> Sequence{1,2,2,1}
+*-> false : Boolean
+?Sequence{1,2,2,1} = Bag{1,2,2,1}
+*-> false : Boolean
+?Sequence{1,2,2,1} <> Bag{1,2,2,1}
+*-> true : Boolean
+?Sequence{1,2,2,1} = OrderedSet{1,2,2,1}
+*-> false : Boolean
+?Sequence{1,2,2,1} <> OrderedSet{1,2,2,1}
+*-> true : Boolean
+?Sequence{1,2,2,1}=Set{1,2,2,1}
+*-> false : Boolean
+?Sequence{1,2,2,1} <> Set{1,2,2,1}
+*-> true : Boolean
+?Sequence{1, 2} = Sequence{2, 1}
+*-> false : Boolean
+?Sequence{1, 2} <> Sequence{2, 1}
+*-> true : Boolean
+?Sequence{1, 'a'} = Sequence{1}
+*-> false : Boolean
+?Sequence{1, 'a'} <> Sequence{1}
+*-> true : Boolean
+?Sequence{ada, bob} = Sequence{ada, bob}
+*-> true : Boolean
+?Sequence{ada, bob} <> Sequence{ada, bob}
+*-> false : Boolean
+?Sequence{ada, bob} = Sequence{ada}
+*-> false : Boolean
+?Sequence{ada, bob} <> Sequence{ada}
+*-> true : Boolean
+?Sequence{ada, bob} = Sequence{}
+*-> false : Boolean
+?Sequence{ada, bob} <> Sequence{}
+*-> true : Boolean
+?Sequence{} = Sequence{ada, bob}
+*-> false : Boolean
+?Sequence{} <> Sequence{ada, bob}
+*-> true : Boolean
+?Sequence{ada, bob, ada} = Sequence{ada, bob}
+*-> false : Boolean
+?Sequence{ada, bob} <> Sequence{bob, ada}
+*-> true : Boolean
+-- test Bag comparsion
+?Bag{} = Bag{}
+*-> true : Boolean
+?Bag{} <> Bag{}
+*-> false : Boolean
+?Bag{} = OrderedSet{}
+*-> false : Boolean
+?Bag{} <> OrderedSet{}
+*-> true : Boolean
+?Bag{} = Sequence{}
+*-> false : Boolean
+?Bag{} <> Sequence{}
+*-> true : Boolean
+?Bag{} = Set{}
+*-> false : Boolean
+?Bag{} <> Set{}
+*-> true : Boolean
+?Bag{1,2,2,1} = Sequence{1,2,2,1}
+*-> false : Boolean
+?Bag{1,2,2,1} <> Sequence{1,2,2,1}
+*-> true : Boolean
+?Bag{1,2,2,1} = Bag{1,2,2,1}
+*-> true : Boolean
+?Bag{1,2,2,1} <> Bag{1,2,2,1}
+*-> false : Boolean
+?Bag{1,2,2,1} = OrderedSet{1,2,2,1}
+*-> false : Boolean
+?Bag{1,2,2,1} <> OrderedSet{1,2,2,1}
+*-> true : Boolean
+?Bag{1,2,2,1}=Set{1,2,2,1}
+*-> false : Boolean
+?Bag{1,2,2,1} <> Set{1,2,2,1}
+*-> true : Boolean
+?Bag{1, 2} = Bag{2, 1}
+*-> true : Boolean
+?Bag{1, 2} <> Bag{2, 1}
+*-> false : Boolean
+?Bag{1, 'a'} = Bag{1}
+*-> false : Boolean
+?Bag{1, 'a'} <> Bag{1}
+*-> true : Boolean
+?Bag{1, 'a', 'a'} = Bag{1, 'a', 'a'}
+*-> true : Boolean
+?Bag{1, 'a', 'a'} <> Bag{1, 'a', 'a'}
+*-> false : Boolean
+?Bag{ada, bob} = Bag{ada, bob}
+*-> true : Boolean
+?Bag{ada, bob} <> Bag{ada, bob}
+*-> false : Boolean
+?Bag{ada, bob} = Bag{ada}
+*-> false : Boolean
+?Bag{ada, bob} <> Bag{ada}
+*-> true : Boolean
+?Bag{ada, bob} = Bag{}
+*-> false : Boolean
+?Bag{ada, bob} <> Bag{}
+*-> true : Boolean
+?Bag{} = Bag{ada, bob}
+*-> false : Boolean
+?Bag{} <> Bag{ada, bob}
+*-> true : Boolean
+?Bag{ada, bob, ada} = Bag{ada, bob}
+*-> false : Boolean
+?Bag{ada, bob} <> Bag{bob, ada}
+*-> false : Boolean
+?Bag{ada, bob, ada} = Bag{ada, ada, bob}
+*-> true : Boolean
+-- test with collection
+-- Collection against Set
+?let c:Collection(Integer) = Set{1, 2} in c = Set{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in c = Set{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in c = Set{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in c = Set{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Set{1, 2} in c <> Set{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in c <> Set{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in c <> Set{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in c <> Set{1, 2}
+*-> true : Boolean
+-- Collection against Bag
+?let c:Collection(Integer) = Set{1, 2} in c = Bag{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in c = Bag{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in c = Bag{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in c = Bag{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Set{1, 2} in c <> Bag{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in c <> Bag{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in c <> Bag{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in c <> Bag{1, 2}
+*-> true : Boolean
+-- Collection against Sequence
+?let c:Collection(Integer) = Set{1, 2} in c = Sequence{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in c = Sequence{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in c = Sequence{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in c = Sequence{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Set{1, 2} in c <> Sequence{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in c <> Sequence{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in c <> Sequence{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in c <> Sequence{1, 2}
+*-> true : Boolean
+-- Collection against OrderedSet
+?let c:Collection(Integer) = Set{1, 2} in c = OrderedSet{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in c = OrderedSet{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in c = OrderedSet{1, 2}
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in c = OrderedSet{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Set{1, 2} in c <> OrderedSet{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in c <> OrderedSet{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in c <> OrderedSet{1, 2}
+*-> true : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in c <> OrderedSet{1, 2}
+*-> false : Boolean
+-- Set against Collection
+?let c:Collection(Integer) = Set{1, 2} in Set{1, 2} = c
+*-> true : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in Set{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in Set{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in Set{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Set{1, 2} in Set{1, 2} <> c
+*-> false : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in Set{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in Set{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in Set{1, 2} <> c
+*-> true : Boolean
+-- Bag against Collection
+?let c:Collection(Integer) = Set{1, 2} in Bag{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in Bag{1, 2} = c
+*-> true : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in Bag{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in Bag{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Set{1, 2} in Bag{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in Bag{1, 2} <> c
+*-> false : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in Bag{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in Bag{1, 2} <> c
+*-> true : Boolean
+-- Sequence against Collection
+?let c:Collection(Integer) = Set{1, 2} in Sequence{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in Sequence{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in Sequence{1, 2} = c
+*-> true : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in Sequence{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Set{1, 2} in Sequence{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in Sequence{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in Sequence{1, 2} <> c
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in Sequence{1, 2} <> c
+*-> true : Boolean
+-- OrderedSet against Collection
+?let c:Collection(Integer) = Set{1, 2} in OrderedSet{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in OrderedSet{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in OrderedSet{1, 2} = c
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in OrderedSet{1, 2} = c
+*-> true : Boolean
+?let c:Collection(Integer) = Set{1, 2} in OrderedSet{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = Bag{1, 2} in OrderedSet{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = Sequence{1, 2} in OrderedSet{1, 2} <> c
+*-> true : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2} in OrderedSet{1, 2} <> c
+*-> false : Boolean
+exit
