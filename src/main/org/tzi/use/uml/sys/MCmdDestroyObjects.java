@@ -114,7 +114,7 @@ public final class MCmdDestroyObjects extends MCmd {
         Set<MObject> objects = new HashSet<MObject>();
         
         Evaluator evaluator = new Evaluator();
-        VarBindings varBindings = fSystemState.system().varBindings();
+        VarBindings varBindings = fSystemState.system().topLevelBindings();
 
         for (Expression expr : fObjectExprs) {
             Value v = evaluator.eval(expr, fSystemState, varBindings);
@@ -143,7 +143,8 @@ public final class MCmdDestroyObjects extends MCmd {
         }
         
         for (MObject obj : objects) {
-            destroyOne( varBindings, obj );
+        	// Here varBindings is used because modifying topLevelBindings has no effect
+            destroyOne( fSystemState.system().varBindings(), obj );
         }
     }
 
