@@ -341,7 +341,7 @@ final class Op_string_toReal extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		return params.length == 1 && params[0].isString() ? params[0]: null;
+		return params.length == 1 && params[0].isString() ? TypeFactory.mkReal() : null;
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
