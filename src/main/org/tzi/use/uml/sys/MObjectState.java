@@ -51,7 +51,7 @@ public final class MObjectState {
         fAttrSlots = new TreeMap<MAttribute, Value>();
         
         for (MAttribute attr : obj.cls().allAttributes()) {
-            fAttrSlots.put(attr, new UndefinedValue(attr.type()));
+            fAttrSlots.put(attr, UndefinedValue.instance);
         }
     }
 

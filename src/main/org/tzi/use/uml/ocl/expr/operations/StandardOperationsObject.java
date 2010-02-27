@@ -47,7 +47,7 @@ final class Op_oclIsNew extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		Value res;
 		if (args[0].isUndefined())
-			res = new UndefinedValue(resultType);
+			res = UndefinedValue.instance;
 		else {
 			// get object
 			ObjectValue objVal = (ObjectValue) args[0];

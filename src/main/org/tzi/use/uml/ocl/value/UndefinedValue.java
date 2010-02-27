@@ -22,6 +22,7 @@
 package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * The undefined value.
@@ -30,9 +31,18 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public final class UndefinedValue extends Value {
+    public static UndefinedValue instance = new UndefinedValue();
     
+	/**
+	 * @deprecated The type of undefined is always OclVoid 
+	 * @param type
+	 */
     public UndefinedValue(Type type) {
-        super(type);
+        super(TypeFactory.mkVoidType());
+    }
+
+    private UndefinedValue() {
+        super(TypeFactory.mkVoidType());
     }
 
     public String toString() {
@@ -43,7 +53,8 @@ public final class UndefinedValue extends Value {
         if (obj == this )
             return true;
         else if (obj instanceof UndefinedValue )
-            return ((UndefinedValue) obj).type().equals(type());
+            return true;
+        
         return false;
     }
 

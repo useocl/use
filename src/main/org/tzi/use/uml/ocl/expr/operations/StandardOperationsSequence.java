@@ -274,7 +274,7 @@ final class Op_sequence_insertAt extends OpGeneric {
 				(Value) args[2]);
 
 		if (res == null)
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		else
 			return res;
 	}
@@ -307,13 +307,13 @@ final class Op_sequence_subSequence extends OpGeneric {
 		int lower = ((IntegerValue) args[1]).value();
 		int upper = ((IntegerValue) args[2]).value();
 		if (lower > upper)
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 
 		Value res = null;
 		try {
 			res = seq.subSequence(lower - 1, upper);
 		} catch (IndexOutOfBoundsException e) {
-			res = new UndefinedValue(resultType);
+			res = UndefinedValue.instance;
 		}
 		return res;
 	}
@@ -351,7 +351,7 @@ final class Op_sequence_at extends OpGeneric {
 		try {
 			res = seq.get(n.value() - 1);
 		} catch (IndexOutOfBoundsException e) {
-			res = new UndefinedValue(resultType);
+			res = UndefinedValue.instance;
 		}
 		return res;
 	}
@@ -384,7 +384,7 @@ final class Op_sequence_first extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SequenceValue seq = (SequenceValue) args[0];
 		if (seq.isEmpty())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		return seq.get(0);
 	}
 }
@@ -416,7 +416,7 @@ final class Op_sequence_last extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SequenceValue seq = (SequenceValue) args[0];
 		if (seq.isEmpty())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		return seq.get(seq.size() - 1);
 	}
 }
@@ -453,7 +453,7 @@ final class Op_sequence_including extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		SequenceValue seq = (SequenceValue) args[0];
 		return seq.append(args[1]);
 	}
@@ -490,7 +490,7 @@ final class Op_sequence_excluding extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		SequenceValue seq = (SequenceValue) args[0];
 		return seq.excluding(args[1]);
 	}
@@ -526,13 +526,13 @@ final class Op_sequence_indexOf extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 
 		SequenceValue seq = (SequenceValue) args[0];
 
 		int index = seq.indexOf(args[1]);
 		if (index == -1)
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		else
 			return new IntegerValue(index + 1);
 	}

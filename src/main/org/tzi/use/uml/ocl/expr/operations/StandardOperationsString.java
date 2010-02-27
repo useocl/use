@@ -351,7 +351,7 @@ final class Op_string_toReal extends OpGeneric {
 			double d = Double.parseDouble(v.value());
 			return new RealValue(d);
 		} catch (NumberFormatException e) {
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		}
 	}
 }
@@ -383,7 +383,7 @@ final class Op_string_toInteger extends OpGeneric {
 			int i = Integer.parseInt(v.value());
 			return new IntegerValue(i);
 		} catch (NumberFormatException e) {
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		}
 	}
 }
@@ -482,8 +482,8 @@ final class Op_string_at extends OpGeneric {
 		String self = ((StringValue)args[0]).value();
 		int i = ((IntegerValue)args[1]).value();
 		
-		if (i <= 0) return new UndefinedValue(resultType);
-		if (i > self.length()) return new UndefinedValue(resultType);
+		if (i <= 0) return UndefinedValue.instance;
+		if (i > self.length()) return UndefinedValue.instance;
 		
 		return new StringValue(self.substring(i - 1, i));
 	}
@@ -553,7 +553,7 @@ final class Op_string_toBoolean extends OpGeneric {
 			boolean b = Boolean.parseBoolean(v.value());
 			return BooleanValue.get(b);
 		} catch (NumberFormatException e) {
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		}
 	}
 }

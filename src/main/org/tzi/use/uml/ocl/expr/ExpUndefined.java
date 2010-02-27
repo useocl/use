@@ -42,7 +42,7 @@ public final class ExpUndefined extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = new UndefinedValue(type());
+        Value res = UndefinedValue.instance;
         ctx.exit(this, res);
         return res;
     }

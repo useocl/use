@@ -61,7 +61,7 @@ final class Op_boolean_or extends BooleanOperation {
 				if (b2)
 					return BooleanValue.TRUE;
 			}
-			return new UndefinedValue(TypeFactory.mkBoolean());
+			return UndefinedValue.instance;
 		}
 	}
 }
@@ -136,7 +136,7 @@ final class Op_boolean_and extends BooleanOperation {
 				if (!b2)
 					return BooleanValue.FALSE;
 			}
-			return new UndefinedValue(TypeFactory.mkBoolean());
+			return UndefinedValue.instance;
 		}
 	}
 }
@@ -201,7 +201,7 @@ final class Op_boolean_implies extends BooleanOperation {
 				if (b2)
 					return BooleanValue.TRUE;
 			}
-			return new UndefinedValue(TypeFactory.mkBoolean());
+			return UndefinedValue.instance;
 		}
 	}
 }

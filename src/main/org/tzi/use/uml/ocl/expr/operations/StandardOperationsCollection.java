@@ -345,7 +345,7 @@ final class Op_collection_sum extends OpGeneric {
 			int isum = 0;
 			for (Value v : coll) {
 				if (v.isUndefined())
-					return new UndefinedValue(TypeFactory.mkInteger());
+					return UndefinedValue.instance;
 				isum += ((IntegerValue) v).value();
 			}
 			return new IntegerValue(isum);
@@ -354,7 +354,7 @@ final class Op_collection_sum extends OpGeneric {
 
 			for (Value v : coll) {
 				if (v.isUndefined())
-					return new UndefinedValue(TypeFactory.mkReal());
+					return UndefinedValue.instance;
 				if (v.isInteger())
 					rsum += ((IntegerValue) v).value();
 				else
@@ -397,7 +397,7 @@ final class Op_collection_product extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined() || args[1].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 
 		CollectionValue col1 = (CollectionValue) args[0];
 		CollectionValue col2 = (CollectionValue) args[1];
@@ -447,7 +447,7 @@ final class Op_collection_flatten extends OpGeneric {
 
 		for (Value elem : coll) {
 			if (elem.isUndefined())
-				return new UndefinedValue(resultType);
+				return UndefinedValue.instance;
 		}
 		if (coll.isBag())
 			return ((BagValue) coll).flatten();
@@ -604,7 +604,7 @@ final class Op_collection_max extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		CollectionValue col = (CollectionValue) args[0];
 		
-		Value max = new UndefinedValue(resultType);
+		Value max = UndefinedValue.instance;
 		boolean first = true;
 		
 		for (Value v : col) {
@@ -618,7 +618,7 @@ final class Op_collection_max extends OpGeneric {
 					max = op.eval(ctx);
 				} catch (ExpInvalidException e) {
 					Log.error(e);
-					return new UndefinedValue(resultType);
+					return UndefinedValue.instance;
 				}
 			}
 		}
@@ -656,7 +656,7 @@ final class Op_collection_min extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		CollectionValue col = (CollectionValue) args[0];
 		
-		Value max = new UndefinedValue(resultType);
+		Value max = UndefinedValue.instance;
 		boolean first = true;
 		
 		for (Value v : col) {
@@ -670,7 +670,7 @@ final class Op_collection_min extends OpGeneric {
 					max = op.eval(ctx);
 				} catch (ExpInvalidException e) {
 					Log.error(e);
-					return new UndefinedValue(resultType);
+					return UndefinedValue.instance;
 				}
 			}
 		}

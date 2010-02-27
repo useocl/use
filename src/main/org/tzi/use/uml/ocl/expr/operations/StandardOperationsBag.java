@@ -305,7 +305,7 @@ final class Op_bag_including extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		BagValue bag = (BagValue) args[0];
 		return bag.including(args[1]);
 	}
@@ -341,7 +341,7 @@ final class Op_bag_excluding extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		BagValue bag = (BagValue) args[0];
 		return bag.excluding(args[1]);
 	}

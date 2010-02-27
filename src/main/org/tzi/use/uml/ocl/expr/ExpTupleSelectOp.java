@@ -55,7 +55,7 @@ public final class ExpTupleSelectOp extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = new UndefinedValue(type());
+        Value res = UndefinedValue.instance;
         Value val = fTupleExp.eval(ctx);
         if (! val.isUndefined() ) {
             TupleValue tupleVal = (TupleValue) val;

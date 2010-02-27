@@ -340,7 +340,7 @@ final class Op_set_including extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		SetValue set1 = (SetValue) args[0];
 		return set1.including(args[1]);
 	}
@@ -376,7 +376,7 @@ final class Op_set_excluding extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		SetValue set1 = (SetValue) args[0];
 		return set1.excluding(args[1]);
 	}

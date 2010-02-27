@@ -64,7 +64,7 @@ public final class ExpIf extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = new UndefinedValue(type());
+        Value res = UndefinedValue.instance;
         Value condValue = fCondition.eval(ctx);
         // condition may be undefined
         if (condValue.isDefined() ) {

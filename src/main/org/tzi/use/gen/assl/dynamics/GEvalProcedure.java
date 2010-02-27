@@ -67,7 +67,7 @@ public class GEvalProcedure implements IGCaller {
         }
         
         for (VarDecl localDecl : fProcedure.localDecls()) {
-            Value value = new UndefinedValue(localDecl.type());
+            Value value = UndefinedValue.instance;
             varBindings.push(localDecl.name(), value);
             collector.detailPrintWriter().println(localDecl.name() + ":=" + value);
         }

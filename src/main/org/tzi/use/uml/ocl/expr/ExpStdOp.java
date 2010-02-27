@@ -193,7 +193,7 @@ public final class ExpStdOp extends Expression {
                     case OpGeneric.OPERATION:
                         // strict evaluation, result is undefined, no
                         // need to call the operation's eval() method.
-                        res = new UndefinedValue(type());
+                        res = UndefinedValue.instance;
                         break;
                     case OpGeneric.PREDICATE:
                         // predicates are by default false when passed
@@ -215,7 +215,7 @@ public final class ExpStdOp extends Expression {
                     res = fOp.eval(ctx, argValues, type());
                 } catch (ArithmeticException ex) {
                     // catch e.g. division by zero
-                    res = new UndefinedValue(type());
+                    res = UndefinedValue.instance;
                 }
             }
         }

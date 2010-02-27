@@ -63,7 +63,7 @@ public class ExpAny extends ExpQuery {
      * Evaluates expression and returns result value.
      */
     public Value eval(EvalContext ctx) {
-        Value res = new UndefinedValue(type());
+        Value res = UndefinedValue.instance;
         ctx.enter(this);
         Value v = evalSelectOrReject(ctx, true);
         if (! v.isUndefined() ) {

@@ -73,7 +73,7 @@ public class ExpCollect extends ExpQuery {
         Value res = evalCollectNested(ctx);
         
         if (res.isUndefined()) 
-        	res = new UndefinedValue(type());
+        	res = UndefinedValue.instance;
         else if (res.isBag())           
         	res = ((BagValue) res).flatten();
         else if (res.isSet())      

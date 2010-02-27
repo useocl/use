@@ -69,7 +69,7 @@ public class RubyHelper {
 			Log.warn("rubyValueToUseValue: Unhandeled Ruby value: " + rubyValue.toString());
 		}
 		
-		return new UndefinedValue(TypeFactory.mkVoidType());
+		return UndefinedValue.instance;
 	}
 	
 	public static Object useValueToRubyValue(Value useValue) {

@@ -68,7 +68,7 @@ public class ExpOne extends ExpQuery {
         ctx.enter(this);
         Value v = evalSelectOrReject(ctx, true);
         if (v.isUndefined() )
-            res = new UndefinedValue(type());
+            res = UndefinedValue.instance;
         else {
             CollectionValue coll = (CollectionValue) evalSelectOrReject(ctx, true);
             res = BooleanValue.get(coll.size() == 1);

@@ -23,7 +23,6 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -74,7 +73,7 @@ public final class ExpObjOp extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = new UndefinedValue(type());
+        Value res = UndefinedValue.instance;
         Value val = fArgs[0].eval(ctx);
         // if we don't have an object we can't call its operation
         if (! val.isUndefined() ) {
@@ -112,7 +111,7 @@ public final class ExpObjOp extends Expression {
                 	res = op.evaluateScript(newCtx);
                 	
                 	if (res == null) {
-                		res = new UndefinedValue(TypeFactory.mkVoidType());
+                		res = UndefinedValue.instance;
                 	}
                 }
                 

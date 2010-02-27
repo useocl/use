@@ -275,7 +275,7 @@ final class Op_orderedSet_insertAt extends OpGeneric {
 				(Value) args[2]);
 
 		if (res == null)
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		else
 			return res;
 	}
@@ -308,13 +308,13 @@ final class Op_orderedSet_subOrderedSet extends OpGeneric {
 		int lower = ((IntegerValue) args[1]).value();
 		int upper = ((IntegerValue) args[2]).value();
 		if (lower > upper)
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 
 		Value res = null;
 		try {
 			res = seq.subOrderedSet(lower - 1, upper);
 		} catch (IndexOutOfBoundsException e) {
-			res = new UndefinedValue(resultType);
+			res = UndefinedValue.instance;
 		}
 		return res;
 	}
@@ -352,7 +352,7 @@ final class Op_orderedSet_at extends OpGeneric {
 		try {
 			res = oset.get(n.value() - 1);
 		} catch (IndexOutOfBoundsException e) {
-			res = new UndefinedValue(resultType);
+			res = UndefinedValue.instance;
 		}
 		return res;
 	}
@@ -385,7 +385,7 @@ final class Op_orderedSet_first extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		OrderedSetValue oset = (OrderedSetValue) args[0];
 		if (oset.isEmpty())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		return oset.get(0);
 	}
 }
@@ -417,7 +417,7 @@ final class Op_orderedSet_last extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		OrderedSetValue oset = (OrderedSetValue) args[0];
 		if (oset.isEmpty())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		return oset.get(oset.size() - 1);
 	}
 }
@@ -454,7 +454,7 @@ final class Op_orderedSet_including extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		OrderedSetValue oset = (OrderedSetValue) args[0];
 		return oset.append(args[1]);
 	}
@@ -491,7 +491,7 @@ final class Op_orderedSet_excluding extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		OrderedSetValue oset = (OrderedSetValue) args[0];
 		return oset.excluding(args[1]);
 	}
@@ -527,13 +527,13 @@ final class Op_orderedSet_indexOf extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 
 		OrderedSetValue oset = (OrderedSetValue) args[0];
 
 		int index = oset.indexOf(args[1]);
 		if (index == -1)
-			return new UndefinedValue(resultType);
+			return UndefinedValue.instance;
 		else
 			return new IntegerValue(index + 1);
 	}

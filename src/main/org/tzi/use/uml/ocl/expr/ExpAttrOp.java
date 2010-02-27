@@ -61,7 +61,7 @@ public final class ExpAttrOp extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = new UndefinedValue(type());
+        Value res = UndefinedValue.instance;
         Value val = fObjExp.eval(ctx);
         // if we don't have an object we can't deliver an attribute value
         if (! val.isUndefined() ) {

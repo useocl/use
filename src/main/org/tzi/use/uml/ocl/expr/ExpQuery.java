@@ -96,7 +96,7 @@ public abstract class ExpQuery extends Expression {
         // evaluate range
         Value v = fRangeExp.eval(ctx);
         if (v.isUndefined())
-            return new UndefinedValue(type());
+            return UndefinedValue.instance;
         CollectionValue rangeVal = (CollectionValue) v;
 
         // prepare result value
@@ -155,7 +155,7 @@ public abstract class ExpQuery extends Expression {
         // evaluate range
         Value v = fRangeExp.eval(ctx);
         if (v.isUndefined())
-            return new UndefinedValue(type());
+            return UndefinedValue.instance;
         CollectionValue rangeVal = (CollectionValue) v;
 
         // we need recursion for the permutation of assignments of
@@ -219,7 +219,7 @@ public abstract class ExpQuery extends Expression {
         // evaluate range
         Value v = fRangeExp.eval(ctx);
         if (v.isUndefined())
-            return new UndefinedValue(type());
+            return UndefinedValue.instance;
         CollectionValue rangeVal = (CollectionValue) v;
 
         // prepare result value
@@ -257,7 +257,7 @@ public abstract class ExpQuery extends Expression {
         // evaluate range
         Value v = fRangeExp.eval(ctx);
         if (v.isUndefined())
-            return new UndefinedValue(type());
+            return UndefinedValue.instance;
         CollectionValue rangeVal = (CollectionValue) v;
 
         // collect values for finding duplicates
@@ -295,7 +295,7 @@ public abstract class ExpQuery extends Expression {
         // evaluate range
         Value v = fRangeExp.eval(ctx);
         if (v.isUndefined())
-            return new UndefinedValue(type());
+            return UndefinedValue.instance;
         CollectionValue rangeVal = (CollectionValue) v;
 
         ArrayList<KeyValPair> keyValList = new ArrayList<KeyValPair>();

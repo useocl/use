@@ -79,7 +79,7 @@ public final class ExpNavigation extends Expression {
     @Override
 	public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = new UndefinedValue(type());
+        Value res = UndefinedValue.instance;
         Value val = fObjExp.eval(ctx);
 
         // if we don't have an object we can't navigate 

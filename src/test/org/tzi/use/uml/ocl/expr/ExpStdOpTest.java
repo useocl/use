@@ -138,14 +138,14 @@ public class ExpStdOpTest extends TestCase {
         op = ExpStdOp.create("div", args);
         assertEquals(
                      op.toString(),
-                     new UndefinedValue(TypeFactory.mkInteger()),
+                     UndefinedValue.instance,
                      e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(7), new ExpConstInteger(0)};
         op = ExpStdOp.create("/", args);
         assertEquals(
                      op.toString(),
-                     new UndefinedValue(TypeFactory.mkReal()),
+                     UndefinedValue.instance,
                      e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(3)};
@@ -419,14 +419,14 @@ public class ExpStdOpTest extends TestCase {
         assertEquals(
                      op.toString(),
                      e.eval(op, state),
-                     new UndefinedValue(TypeFactory.mkInteger()));
+                     UndefinedValue.instance);
 
         args = new Expression[] { op1, new ExpConstInteger(3)};
         op = ExpStdOp.create("at", args);
         assertEquals(
                      op.toString(),
                      e.eval(op, state),
-                     new UndefinedValue(TypeFactory.mkInteger()));
+                     UndefinedValue.instance);
     }
 
     public void testLargeSetsAndSequences() throws ExpInvalidException {

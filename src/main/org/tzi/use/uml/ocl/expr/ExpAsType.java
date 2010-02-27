@@ -61,7 +61,7 @@ public final class ExpAsType extends Expression {
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Type targetType = type();
-        Value res = new UndefinedValue(targetType);
+        Value res = UndefinedValue.instance;
         Value v = fSourceExpr.eval(ctx);
         if (v.isObject() ) {
             ObjectValue ov = (ObjectValue) v;
