@@ -48,6 +48,9 @@ final class Op_equal extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		boolean res;
 
+		if (args[0].isUndefined())
+			return BooleanValue.get(args[1].isUndefined());
+		
 		if (args[1].type().isSubtypeOf(args[0].type()))
 			res = args[0].equals(args[1]);
 		else if (args[0].type().isSubtypeOf(args[1].type()))
@@ -84,6 +87,9 @@ final class Op_notequal extends OpGeneric {
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		if (args[0].isUndefined())
+			return BooleanValue.get(!args[1].isUndefined());
+		
 		boolean res = !args[0].equals(args[1]);
 		return BooleanValue.get(res);
 	}
