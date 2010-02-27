@@ -583,6 +583,12 @@
       <fileset dir="${etc.dir}"/>
     </copy>
 
+	<!-- copy extension files -->
+    <mkdir dir="${build.release.dir}/oclextensions"/>
+    <copy todir="${build.release.dir}/oclextensions">
+      <fileset dir="${basedir}/oclextensions" />
+    </copy>
+	
     <!-- copy example files -->
     <mkdir dir="${build.release.dir}/examples"/>
     <copy todir="${build.release.dir}/examples">
