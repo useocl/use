@@ -10,4 +10,14 @@
 		]]>
 		</body>
 	</operation>
+	<operation source="Set(OclAny)" name="single" returnType="OclAny">
+		<body><![CDATA[
+			if $self.size == 1
+			  $self.first
+			else
+			  nil
+			end
+		]]>
+		</body>
+	</operation>
 </extensions>
