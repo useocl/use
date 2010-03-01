@@ -20,7 +20,7 @@
 *-> @b1 : B
 
 ? a2.b
-*-> Undefined : B
+*-> Undefined : OclVoid
 
 ? a1.b->isEmpty()
 *-> false : Boolean

@@ -11,9 +11,9 @@
 *-> 1 : Integer
 
 ?c.var2.y
-*-> Undefined : Tuple(y:Integer)
+*-> Undefined : OclVoid
 
 ?c.var2.y.y
-*-> Undefined : Integer
+*-> Undefined : OclVoid
 
 quit

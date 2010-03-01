@@ -24,7 +24,7 @@
 
 # ..., however an attempt to access the object results in undefined
 ? a.aAttr.bAttr
-*-> Undefined : Integer
+*-> Undefined : OclVoid
 
 exit
 

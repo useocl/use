@@ -1,7 +1,7 @@
 ? oclUndefined(String)
-*-> Undefined : String
+*-> Undefined : OclVoid
 ? oclUndefined(Set(String))
-*-> Undefined : Set(String)
+*-> Undefined : OclVoid
 ?Set{}
 *-> Set{} : Set(OclVoid)
 ?Set{}->including(1)
