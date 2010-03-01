@@ -10,7 +10,7 @@
 		]]>
 		</body>
 	</operation>
-	<operation source="Set(OclAny)" name="single" returnType="OclAny">
+	<operation source="Collection(OclAny)" name="single" returnType="OclAny">
 		<body><![CDATA[
 			if $self.size == 1
 			  $self.first

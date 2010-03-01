@@ -269,7 +269,13 @@ public class ASTOperationExpression extends ASTExpression {
             // must be a role name
             MNavigableElement dst =
                 srcClass3.navigableEnd( opname );
-            res = genNavigation( fOp, srcClass3, srcExpr, dst, fExplicitRolename );
+            if (dst == null) {
+            	//TODO: Handle error!!!
+            	System.out.println("");
+            } else {
+            	res = genNavigation( fOp, srcClass3, srcExpr, dst, fExplicitRolename );
+            }
+            
             break;
 
         case SRC_OBJECT_TYPE + DOT + PARENTHESES:

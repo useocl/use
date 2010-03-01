@@ -297,7 +297,7 @@ associationDefinition returns [ASTAssociation n]
 associationEnd returns [ASTAssociationEnd n]
 :
     name=IDENT LBRACK m=multiplicity RBRACK { $n = new ASTAssociationEnd($name, $m.n); } 
-    ( 'role' rn=IDENT { $n.setRolename($rn); } )?
+    ( keyRole rn=IDENT { $n.setRolename($rn); } )?
     (
         'ordered' { $n.setOrdered(); }
       | 'subsets' sr=IDENT { $n.addSubsetsRolename($sr); }
@@ -411,6 +411,9 @@ keyUnion:
   
 keyAssociation:
   {input.LT(1).getText().equals("association")}? IDENT ;
+  
+keyRole:
+  {input.LT(1).getText().equals("role")}? IDENT ;
 /*
 --------- Start of file OCLBase.gpart -------------------- 
 */
