@@ -80,8 +80,8 @@ public class RubyHelper {
 		} else {
 			Log.warn("rubyValueToUseValue: converted type of value (`"
 					+ result.type().toString()
-					+ "´) is not a subtype of the expected result type (`"
-					+ expectedType.toString() + "´");
+					+ "') is not a subtype of the expected result type (`"
+					+ expectedType.toString() + "'");
 			return UndefinedValue.instance;
 		}
 	}
