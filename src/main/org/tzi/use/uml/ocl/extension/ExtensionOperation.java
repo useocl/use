@@ -95,8 +95,11 @@ public class ExtensionOperation extends OpGeneric {
             
             // Wrong result type!
             if (!resultValue.type().isSubtypeOf(this.resultType)) {
-            	Log.warn("Extension method `" + name + "´ returned wrong type! Expected `" + this.resultType.toString() + "´ got `" + resultValue.type().toString() + "´");
-            	return UndefinedValue.instance;
+				Log.warn("Extension method `" + name
+						+ "' returned wrong type! Expected `"
+						+ this.resultType.toString() + "' got `"
+						+ resultValue.type().toString() + "'");
+				return UndefinedValue.instance;
             } else {
             	return resultValue;
             }
