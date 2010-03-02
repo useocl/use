@@ -32,10 +32,12 @@ public class StandardOperationsString {
 		OpGeneric.registerOperation(new Op_string_characters(), opmap);
 		OpGeneric.registerOperation(new Op_string_toBoolean(), opmap);
 		
-		OpGeneric.registerOperation(new Op_string_less(), opmap); 			// OCL extension!
-		OpGeneric.registerOperation(new Op_string_greater(), opmap); 		// OCL extension!
-		OpGeneric.registerOperation(new Op_string_lessequal(), opmap); 		// OCL extension!
-		OpGeneric.registerOperation(new Op_string_greaterequal(), opmap); 	// OCL extension!
+		// OCL extensions!
+		OpGeneric.registerOperation(new Op_string_less(), opmap);
+		OpGeneric.registerOperation(new Op_string_greater(), opmap);
+		OpGeneric.registerOperation(new Op_string_lessequal(), opmap);
+		OpGeneric.registerOperation(new Op_string_greaterequal(), opmap);
+		OpGeneric.registerOperation(new Op_string_split(), opmap);
 	}
 }
 
@@ -552,6 +554,45 @@ final class Op_string_toBoolean extends OpGeneric {
 		try {
 			boolean b = Boolean.parseBoolean(v.value());
 			return BooleanValue.get(b);
+		} catch (NumberFormatException e) {
+			return UndefinedValue.instance;
+		}
+	}
+}
+
+/* split : String x String -> Sequence(String) */
+final class Op_string_split extends OpGeneric {
+	public String name() {
+		return "split";
+	}
+
+	public int kind() {
+		return OPERATION;
+	}
+
+	public boolean isInfixOrPrefix() {
+		return false;
+	}
+
+	public Type matches(Type params[]) {
+		return params.length == 2 && params[0].isString() && params[1].isString() ? 
+				TypeFactory.mkSequence(TypeFactory.mkString()) : null;
+	}
+
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		String source = ((StringValue)args[0]).value();
+		String separator = ((StringValue)args[1]).value();
+		
+		try {
+			String[] parts = source.split(separator);
+			Value[] values = new Value[parts.length];
+			
+			for (int i = 0; i < parts.length; i++) {
+				values[i] = new StringValue(parts[i]);
+			}
+			
+			return new SequenceValue(TypeFactory.mkString(), values);
+			
 		} catch (NumberFormatException e) {
 			return UndefinedValue.instance;
 		}

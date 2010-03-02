@@ -36,6 +36,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.util.Log;
@@ -228,7 +229,7 @@ public final class MOperation extends MModelElementImpl {
 
         try{
             Object result = rubyEngine.eval(wholeScript.toString(), context);
-            return RubyHelper.rubyValueToUseValue(result);
+            return RubyHelper.rubyValueToUseValue(result, fResultType);
             
         } catch (ScriptException e) {
             Log.error("Line " + e.getLineNumber() + ": " + e.getMessage());
@@ -236,6 +237,6 @@ public final class MOperation extends MModelElementImpl {
         	Log.error(e.getMessage());
         }
         
-        return RubyHelper.rubyValueToUseValue(null);
+        return UndefinedValue.instance;
 	}
 }

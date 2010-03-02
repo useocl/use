@@ -11,14 +11,19 @@ import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.ocl.type.CollectionType;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.DateValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.RealValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -28,48 +33,57 @@ import org.tzi.use.util.Log;
 public class RubyHelper {
 	private RubyHelper() {}
 	
-	public static Value rubyValueToUseValue(Object rubyValue) {
+	public static Value rubyValueToUseValue(Object rubyValue, Type expectedType) {
+		Value result = UndefinedValue.instance;
+		
 		if (rubyValue instanceof Value) {
-			return (Value)rubyValue;
-		}
-		if (rubyValue instanceof Long) {
-        	return new IntegerValue(((Long) rubyValue).intValue());
-        }
-		if (rubyValue instanceof Integer) {
-        	return new IntegerValue(((Integer) rubyValue).intValue());
-        }
-		if (rubyValue instanceof String) {
-			return new StringValue((String)rubyValue);
-		}
-		if (rubyValue instanceof Boolean) {
-			return BooleanValue.get(((Boolean)rubyValue).booleanValue());
-		}
-		if (rubyValue instanceof Double) {
-			return new RealValue(((Double)rubyValue).doubleValue());
-		}
-		if (rubyValue instanceof Date) {
-			return new DateValue(((Date)rubyValue));
-		}
-		if (rubyValue instanceof MObject) {
+			result = (Value)rubyValue;
+		} else if (rubyValue instanceof Long) {
+			result = new IntegerValue(((Long) rubyValue).intValue());
+        } else if (rubyValue instanceof Integer) {
+			result = new IntegerValue(((Integer) rubyValue).intValue());
+        } else if (rubyValue instanceof String) {
+			result = new StringValue((String)rubyValue);
+		} else if (rubyValue instanceof Boolean) {
+			result = BooleanValue.get(((Boolean)rubyValue).booleanValue());
+		} else if (rubyValue instanceof Double) {
+			result = new RealValue(((Double)rubyValue).doubleValue());
+		} else if (rubyValue instanceof Date) {
+			result = new DateValue(((Date)rubyValue));
+		} else if (rubyValue instanceof MObject) {
 			MObject obj = (MObject)rubyValue;
-			return new ObjectValue(TypeFactory.mkObjectType(obj.cls()), obj);
-		}
-		if (rubyValue instanceof List<?>) {
+			result = new ObjectValue(TypeFactory.mkObjectType(obj.cls()), obj);
+		} else if (rubyValue instanceof List<?> && expectedType.isCollection()) {
 			List<?> list = (List<?>)rubyValue;
 			Value[] elements = new Value[list.size()];
 			
 			for (int index = 0; index < list.size(); index++) {
-				elements[index] = rubyValueToUseValue(list.get(index));
+				elements[index] = rubyValueToUseValue(list.get(index), ((CollectionType)expectedType).elemType());
 			}
 			
-			SequenceValue result = new SequenceValue(TypeFactory.mkVoidType(), elements);
-			return result;
-		}
-		if (rubyValue != null) {
+			CollectionType expectedCollectionType = (CollectionType)expectedType;
+			if (expectedCollectionType.isSet()) {
+				result = new SetValue(expectedCollectionType.elemType(), elements);
+			} else if (expectedCollectionType.isSequence() || expectedCollectionType.isTrueCollection()) {
+				result = new SequenceValue(expectedCollectionType.elemType(), elements);
+			} else if (expectedCollectionType.isBag()) {
+				result = new BagValue(expectedCollectionType.elemType(), elements);
+			} else if (expectedCollectionType.isOrderedSet()) {
+				result = new OrderedSetValue(expectedCollectionType.elemType(), elements);
+			}
+		} else {
 			Log.warn("rubyValueToUseValue: Unhandeled Ruby value: " + rubyValue.toString());
 		}
 		
-		return UndefinedValue.instance;
+		if (result.type().isSubtypeOf(expectedType)) {
+			return result;
+		} else {
+			Log.warn("rubyValueToUseValue: converted type of value (`"
+					+ result.type().toString()
+					+ "´) is not a subtype of the expected result type (`"
+					+ expectedType.toString() + "´");
+			return UndefinedValue.instance;
+		}
 	}
 	
 	public static Object useValueToRubyValue(Value useValue) {

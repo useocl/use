@@ -20,16 +20,12 @@
 		</body>
 	</operation>
 	
-	<operation source="String" name="toLowerCase" returnType="String">
+	<operation source="String" name="splitR" returnType="Sequence(String)">
+		<parameter>
+			<par name="separator" type="String" />
+		</parameter>
 		<body><![CDATA[
-			$self.downcase
-		]]>
-		</body>
-	</operation>
-	
-	<operation source="String" name="toInteger" returnType="Integer">
-		<body><![CDATA[
-			$self.to_i
+			$self.split($separator)
 		]]>
 		</body>
 	</operation>

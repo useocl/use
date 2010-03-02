@@ -980,6 +980,7 @@ public final class Shell implements Runnable {
     private void cmdQuery(String line, boolean verboseEval)
             throws NoSystemException {
         Log.trace(this, line);
+        
         if (line.length() == 0) {
             Log.error("Expression expected after `?'. Try `help'.");
             return;
@@ -1011,7 +1012,6 @@ public final class Shell implements Runnable {
                     .topLevelBindings(), output);
             // print result
             System.out.println("-> " + val.toStringWithType());
-            //            System.out.println("-> " + val.toString() + ":" + expr.type());
             if (verboseEval && Options.doGUI) {
                 Class<?> exprEvalBrowserClass = null;
                 try {

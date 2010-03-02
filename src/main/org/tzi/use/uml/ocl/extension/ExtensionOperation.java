@@ -12,6 +12,7 @@ import org.jruby.embed.EvalFailedException;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.NullWriter;
@@ -90,8 +91,15 @@ public class ExtensionOperation extends OpGeneric {
 
         try{
             Object result = rubyEngine.eval(operationBody, context);
-                        
-            return RubyHelper.rubyValueToUseValue(result);
+            Value resultValue = RubyHelper.rubyValueToUseValue(result, resultType);
+            
+            // Wrong result type!
+            if (!resultValue.type().isSubtypeOf(this.resultType)) {
+            	Log.warn("Extension method `" + name + "´ returned wrong type! Expected `" + this.resultType.toString() + "´ got `" + resultValue.type().toString() + "´");
+            	return UndefinedValue.instance;
+            } else {
+            	return resultValue;
+            }
             
         } catch (ScriptException e) {
             Log.error(e.getMessage());
@@ -99,7 +107,7 @@ public class ExtensionOperation extends OpGeneric {
         	Log.error(e.getMessage());
         }
         
-        return RubyHelper.rubyValueToUseValue(null);
+        return UndefinedValue.instance;
 	}
 
 	@Override

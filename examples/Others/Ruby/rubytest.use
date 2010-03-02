@@ -39,4 +39,21 @@ class RDate
 		USE.createObject("d" + y.to_s, "RDate")
 	  end
 	>>
+	
+	splitString(pars:Tuple(aString : String, splitChar : String)):Sequence(String) =
+	  Sequence{1..pars.aString.size()}->iterate(index ; result : Sequence(String) = Sequence{''} |
+		  if pars.aString.substring(index, index) = pars.splitChar then
+		    result->including('')
+		  else
+			let sTemp:String = result->last() in
+			  let subSeq:Sequence(String) =  
+			    if result->size() = 1 then
+				  oclEmpty(Sequence(String))
+				else
+				  result->subSequence(1, (result->size() - 1))
+				endif
+			  in
+			    subSeq->including(sTemp.concat(pars.aString.substring(index, index)))
+		  endif
+		)
 end
