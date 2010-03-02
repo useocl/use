@@ -36,6 +36,4 @@ public abstract class AST {
             className = className.substring("org.tzi.use.parser.".length());
         return className;
     }
-
-    // FIXME: find a general way for all AST nodes?
 }

@@ -29,8 +29,8 @@ public class StandardOperationsBag {
 		// collect
 		// count: inherited from Collection		
 		// Constructors
-		OpGeneric.registerOperation(new Op_mkBag(), opmap);
-		OpGeneric.registerOperation(new Op_mkBagRange(), opmap);
+		// OpGeneric.registerOperation(new Op_mkBag(), opmap);
+		// OpGeneric.registerOperation(new Op_mkBagRange(), opmap);
 	}
 }
 
