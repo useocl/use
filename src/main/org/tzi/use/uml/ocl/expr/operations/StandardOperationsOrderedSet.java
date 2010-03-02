@@ -13,7 +13,6 @@ import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.MultiMap;
-import org.tzi.use.util.StringUtil;
 
 public class StandardOperationsOrderedSet {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
@@ -34,7 +33,6 @@ public class StandardOperationsOrderedSet {
 		OpGeneric.registerOperation(new Op_orderedSet_excluding(), opmap);
 		
 		// Constructors
-		OpGeneric.registerOperation(new Op_mkOrderedSet(), opmap);
 		OpGeneric.registerOperation(new Op_mkOrderedSetRange(), opmap);
 	}
 }
@@ -43,44 +41,6 @@ public class StandardOperationsOrderedSet {
 //
 // OrderedSet constructors.
 //
-// --------------------------------------------------------
-/* mkOrderedSet : T x T x ... x T -> OrderedSet(T) */
-final class Op_mkOrderedSet extends OpGeneric {
-	public String name() {
-		return "mkOrderedSet";
-	}
-
-	// may include undefined elements
-	public int kind() {
-		return SPECIAL;
-	}
-
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
-
-	public Type matches(Type params[]) {
-		if (params.length > 0) {
-			final Type elemType = params[0];
-			// all arguments of set constructor must have equal type
-			// FIXME: relax to common base type?
-			for (int i = 1; i < params.length; i++)
-				if (!params[i].equals(elemType))
-					return null;
-			return TypeFactory.mkOrderedSet(elemType);
-		}
-		return null;
-	}
-
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		return new OrderedSetValue(args[0].type(), args);
-	}
-
-	public String stringRep(Expression args[], String atPre) {
-		return "OrderedSet{" + StringUtil.fmtSeq(args, ",") + "}";
-	}
-}
-
 // --------------------------------------------------------
 
 /* mkSequenceRange : Integer x Integer, ... -> OrderedSet(Integer) */

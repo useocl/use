@@ -12,7 +12,6 @@ import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.MultiMap;
-import org.tzi.use.util.StringUtil;
 
 public class StandardOperationsSet {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
@@ -31,7 +30,6 @@ public class StandardOperationsSet {
 		// collect
 		// count: inherited from Collection		
 		// Constructors
-		OpGeneric.registerOperation(new Op_mkSet(), opmap);
 		OpGeneric.registerOperation(new Op_mkSetRange(), opmap);
 	}
 }
@@ -41,47 +39,6 @@ public class StandardOperationsSet {
 // Set constructors.
 //
 // --------------------------------------------------------
-/* mkSet : T x T x ... x T -> Set(T) */
-// TODO: Check if this operation can be deleted. 
-final class Op_mkSet extends OpGeneric {
-	public String name() {
-		return "mkSet";
-	}
-
-	// may include undefined elements
-	public int kind() {
-		return SPECIAL;
-	}
-
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
-
-	public Type matches(Type params[]) {
-		if (params.length > 0) {
-			final Type elemType = params[0];
-
-			// all arguments of set constructor must have equal type
-			// FIXME: relax to common base type?
-			for (int i = 1; i < params.length; i++)
-				if (!params[i].equals(elemType))
-					return null;
-			return TypeFactory.mkSet(elemType);
-		}
-		return null;
-	}
-
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		return new SetValue(args[0].type(), args);
-	}
-
-	public String stringRep(Expression args[], String atPre) {
-		return "Set{" + StringUtil.fmtSeq(args, ",") + "}";
-	}
-}
-
-// --------------------------------------------------------
-
 /* mkSetRange : Integer x Integer, ... -> Set(Integer) */
 final class Op_mkSetRange extends OpGeneric {
 	public String name() {

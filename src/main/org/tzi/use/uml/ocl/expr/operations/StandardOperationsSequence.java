@@ -13,7 +13,6 @@ import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.MultiMap;
-import org.tzi.use.util.StringUtil;
 
 public class StandardOperationsSequence {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
@@ -33,7 +32,6 @@ public class StandardOperationsSequence {
 		OpGeneric.registerOperation(new Op_sequence_reverse(), opmap);
 		
 		// Constructors
-		OpGeneric.registerOperation(new Op_mkSequence(), opmap);
 		OpGeneric.registerOperation(new Op_mkSequenceRange(), opmap);
 	}
 }
@@ -43,45 +41,6 @@ public class StandardOperationsSequence {
 // Sequence constructors.
 //
 // --------------------------------------------------------
-/* mkSequence : T x T x ... x T -> Sequence(T) */
-final class Op_mkSequence extends OpGeneric {
-	public String name() {
-		return "mkSequence";
-	}
-
-	// may include undefined elements
-	public int kind() {
-		return SPECIAL;
-	}
-
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
-
-	public Type matches(Type params[]) {
-		if (params.length > 0) {
-			final Type elemType = params[0];
-			// all arguments of set constructor must have equal type
-			// FIXME: relax to common base type?
-			for (int i = 1; i < params.length; i++)
-				if (!params[i].equals(elemType))
-					return null;
-			return TypeFactory.mkSequence(elemType);
-		}
-		return null;
-	}
-
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		return new SequenceValue(args[0].type(), args);
-	}
-
-	public String stringRep(Expression args[], String atPre) {
-		return "Sequence{" + StringUtil.fmtSeq(args, ",") + "}";
-	}
-}
-
-// --------------------------------------------------------
-
 /* mkSequenceRange : Integer x Integer, ... -> Sequence(Integer) */
 final class Op_mkSequenceRange extends OpGeneric {
 	public String name() {

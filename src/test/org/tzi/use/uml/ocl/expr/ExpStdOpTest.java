@@ -158,16 +158,9 @@ public class ExpStdOpTest extends TestCase {
     }
 
     public void testSetConstruction() throws ExpInvalidException {
-        Expression[] args;
+        Expression[] args;        
         ExpStdOp op;
         Value values[];
-        args = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op = ExpStdOp.create("mkSet", args);
-        values = new Value[] { new IntegerValue(2), new IntegerValue(3)};
-        assertEquals(
-                     op.toString(),
-                     new SetValue(TypeFactory.mkInteger(), values),
-                     e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(1), new ExpConstInteger(10)};
         op = ExpStdOp.create("mkSetRange", args);
@@ -184,13 +177,6 @@ public class ExpStdOpTest extends TestCase {
         Expression[] args;
         ExpStdOp op;
         Value values[];
-        args = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op = ExpStdOp.create("mkSequence", args);
-        values = new Value[] { new IntegerValue(2), new IntegerValue(3)};
-        assertEquals(
-                     op.toString(),
-                     new SequenceValue(TypeFactory.mkInteger(), values),
-                     e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(1), new ExpConstInteger(10)};
         op = ExpStdOp.create("mkSequenceRange", args);
@@ -207,13 +193,6 @@ public class ExpStdOpTest extends TestCase {
         Expression[] args;
         ExpStdOp op;
         Value values[];
-        args = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op = ExpStdOp.create("mkBag", args);
-        values = new Value[] { new IntegerValue(2), new IntegerValue(3)};
-        assertEquals(
-                     op.toString(),
-                     new BagValue(TypeFactory.mkInteger(), values),
-                     e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(1), new ExpConstInteger(10)};
         op = ExpStdOp.create("mkBagRange", args);
@@ -226,16 +205,35 @@ public class ExpStdOpTest extends TestCase {
                      e.eval(op, state));
     }
 
+    private Expression mkSet(int[] values) {
+    	 Value[] elements = new Value[values.length];
+    	 
+    	 for (int i = 0; i < values.length; i++) {
+    		 elements[i] = new IntegerValue(values[i]);
+    	 }
+    
+         return new ExpressionWithValue(new SetValue(TypeFactory.mkInteger(), elements));
+    }
+    
+	private Expression mkBag(int[] values) {
+		Value[] elements = new Value[values.length];
+
+		for (int i = 0; i < values.length; i++) {
+			elements[i] = new IntegerValue(values[i]);
+		}
+
+		return new ExpressionWithValue(new BagValue(TypeFactory.mkInteger(),
+				elements));
+	}
+    
     public void testCollectionOperations() throws ExpInvalidException {
         Expression[] args;
-        Expression[] args1;
-        Expression[] args2;
         ExpStdOp op;
-        ExpStdOp op1;
-        ExpStdOp op2;
-        args1 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op1 = ExpStdOp.create("mkSet", args1);
-        args = new Expression[] { op1 };
+        Expression setValue;
+        Expression setValue2;
+        
+        setValue = mkSet(new int[]{2, 3});
+        args = new Expression[] { setValue };
 
         op = ExpStdOp.create("size", args);
         assertEquals(op.toString(), new IntegerValue(2), e.eval(op, state));
@@ -246,55 +244,49 @@ public class ExpStdOpTest extends TestCase {
         op = ExpStdOp.create("notEmpty", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
-        args = new Expression[] { op1, new ExpConstInteger(3)};
+        args = new Expression[] { setValue, new ExpConstInteger(3)};
         op = ExpStdOp.create("includes", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
-        args = new Expression[] { op1, new ExpConstInteger(5)};
+        args = new Expression[] { setValue, new ExpConstInteger(5)};
         op = ExpStdOp.create("includes", args);
         assertEquals(op.toString(), BooleanValue.FALSE, e.eval(op, state));
 
-        args = new Expression[] { op1, new ExpConstInteger(3)};
+        args = new Expression[] { setValue, new ExpConstInteger(3)};
         op = ExpStdOp.create("count", args);
         assertEquals(op.toString(), new IntegerValue(1), e.eval(op, state));
 
-        args = new Expression[] { op1, new ExpConstInteger(5)};
+        args = new Expression[] { setValue, new ExpConstInteger(5)};
         op = ExpStdOp.create("count", args);
         assertEquals(op.toString(), new IntegerValue(0), e.eval(op, state));
 
-        args2 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op2 = ExpStdOp.create("mkSet", args2);
-        args = new Expression[] { op1, op2 };
+        setValue2 = mkSet(new int[] {2, 3});
+        args = new Expression[] { setValue, setValue2 };
         op = ExpStdOp.create("includesAll", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
-        args2 = new Expression[] { new ExpConstInteger(2)};
-        op2 = ExpStdOp.create("mkSet", args2);
-        args = new Expression[] { op1, op2 };
+        setValue2 = mkSet(new int[]{2});
+        
+        args = new Expression[] { setValue, setValue2 };
         op = ExpStdOp.create("includesAll", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
-        args2 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(5)};
-        op2 = ExpStdOp.create("mkSet", args2);
-        args = new Expression[] { op1, op2 };
+        setValue2 = mkSet(new int[]{2, 5});
+        args = new Expression[] { setValue, setValue2 };
         op = ExpStdOp.create("includesAll", args);
         assertEquals(op.toString(), BooleanValue.FALSE, e.eval(op, state));
     }
 
     public void testSetOperations() throws ExpInvalidException {
         Expression[] args;
-        Expression[] args1;
-        Expression[] args2;
         ExpStdOp op;
-        ExpStdOp op1;
-        ExpStdOp op2;
+        Expression op1;
+        Expression op2;
         Value values[];
-        args1 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op1 = ExpStdOp.create("mkSet", args1);
+        op1 = mkSet(new int[]{2, 3});
         args = new Expression[] { op1 };
 
-        args2 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(5)};
-        op2 = ExpStdOp.create("mkSet", args2);
+        op2 = mkSet(new int[]{2, 5});
         args = new Expression[] { op1, op2 };
         op = ExpStdOp.create("union", args);
         values =
@@ -304,8 +296,7 @@ public class ExpStdOpTest extends TestCase {
                      new SetValue(TypeFactory.mkInteger(), values),
                      e.eval(op, state));
 
-        args2 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(5)};
-        op2 = ExpStdOp.create("mkSet", args2);
+        op2 = mkSet(new int[]{2, 5});
         args = new Expression[] { op1, op2 };
         op = ExpStdOp.create("intersection", args);
         values = new Value[] { new IntegerValue(2)};
@@ -314,8 +305,7 @@ public class ExpStdOpTest extends TestCase {
                      new SetValue(TypeFactory.mkInteger(), values),
                      e.eval(op, state));
 
-        args2 = new Expression[] { new ExpConstInteger(4), new ExpConstInteger(5)};
-        op2 = ExpStdOp.create("mkSet", args2);
+        op2 = mkSet(new int[]{4, 5});
         args = new Expression[] { op1, op2 };
         op = ExpStdOp.create("intersection", args);
         assertEquals(
@@ -323,8 +313,7 @@ public class ExpStdOpTest extends TestCase {
                      new SetValue(TypeFactory.mkInteger()),
                      e.eval(op, state));
 
-        args2 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(5)};
-        op2 = ExpStdOp.create("mkSet", args2);
+        op2 = mkSet(new int[]{2, 5});
         args = new Expression[] { op1, op2 };
         op = ExpStdOp.create("-", args);
         values = new Value[] { new IntegerValue(3)};
@@ -366,8 +355,7 @@ public class ExpStdOpTest extends TestCase {
                      new SetValue(TypeFactory.mkInteger(), values),
                      e.eval(op, state));
 
-        args2 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(5)};
-        op2 = ExpStdOp.create("mkSet", args2);
+        op2 = mkSet(new int[]{2, 5});
         args = new Expression[] { op1, op2 };
         op = ExpStdOp.create("symmetricDifference", args);
         values = new Value[] { new IntegerValue(3), new IntegerValue(5)};
@@ -379,16 +367,11 @@ public class ExpStdOpTest extends TestCase {
 
     public void testBagOperations() throws ExpInvalidException {
         Expression[] args;
-        Expression[] args1;
-        ExpStdOp op;
-        ExpStdOp op1;
+        Expression op;
+        Expression op1;
         Value values[];
-        args1 =
-            new Expression[] {
-                new ExpConstInteger(2),
-                new ExpConstInteger(3),
-                new ExpConstInteger(2)};
-        op1 = ExpStdOp.create("mkBag", args1);
+        
+        op1 = mkBag(new int[]{2, 3, 2});
         args = new Expression[] { op1 };
         op = ExpStdOp.create("asSet", args);
         values = new Value[] { new IntegerValue(2), new IntegerValue(3)};
@@ -400,12 +383,13 @@ public class ExpStdOpTest extends TestCase {
 
     public void testSequenceOperations() throws ExpInvalidException {
         Expression[] args;
-        Expression[] args1;
-        ExpStdOp op;
-        ExpStdOp op1;
+        Value[] args1;
+        Expression op;
+        Expression op1;
 
-        args1 = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op1 = ExpStdOp.create("mkSequence", args1);
+        args1 = new Value[] { new IntegerValue(2), new IntegerValue(3)};
+        op1 = new ExpressionWithValue(new SequenceValue(TypeFactory.mkInteger(), args1));
+        
         args = new Expression[] { op1, new ExpConstInteger(1)};
         op = ExpStdOp.create("at", args);
         assertEquals(op.toString(), e.eval(op, state), new IntegerValue(2));
@@ -431,15 +415,17 @@ public class ExpStdOpTest extends TestCase {
 
     public void testLargeSetsAndSequences() throws ExpInvalidException {
         Expression[] args;
-        Expression[] args1;
-        ExpStdOp op;
-        ExpStdOp op1;
+        int[] args1;
+        Value[] args2;
+        Expression op;
+        Expression op1;
 
         final int SET_SIZE = 5000;
-        args1 = new Expression[SET_SIZE];
+        args1 = new int[SET_SIZE];
         for (int i = 0; i < SET_SIZE; i++)
-            args1[i] = new ExpConstInteger(i);
-        op1 = ExpStdOp.create("mkSet", args1);
+            args1[i] = i;
+        op1 = mkSet(args1);
+        
         args = new Expression[] { op1 };
         op = ExpStdOp.create("size", args);
         assertEquals(
@@ -447,10 +433,11 @@ public class ExpStdOpTest extends TestCase {
                      new IntegerValue(SET_SIZE),
                      e.eval(op, state));
 
-        args1 = new Expression[SET_SIZE];
+        args2 = new Value[SET_SIZE];
         for (int i = 0; i < SET_SIZE; i++)
-            args1[i] = new ExpConstInteger(i);
-        op1 = ExpStdOp.create("mkSequence", args1);
+            args2[i] = new IntegerValue(i);
+        op1 = new ExpressionWithValue(new SequenceValue(TypeFactory.mkInteger(), args2));
+        
         args = new Expression[] { op1 };
         op = ExpStdOp.create("size", args);
         assertEquals(

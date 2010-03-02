@@ -67,12 +67,12 @@ public class ExpQueryTest extends TestCase {
     protected void setUp() throws Exception {
         fState = new MSystem(new ModelFactory().createModel("Test")).state();
         // create range
-        Expression[] args1 =
-            new Expression[] {
-                new ExpConstInteger(1),
-                new ExpConstInteger(2),
-                new ExpConstInteger(3)};
-        fSet123 = ExpStdOp.create("mkSet", args1);
+        Value[] args1 =
+            new Value[] {
+                new IntegerValue(1),
+                new IntegerValue(2),
+                new IntegerValue(3)};
+        fSet123 = new ExpressionWithValue(new SetValue(TypeFactory.mkInteger(), args1));
 
         // create query expression
         Expression[] args2 =
@@ -177,10 +177,10 @@ public class ExpQueryTest extends TestCase {
 
     public void testIterate1() throws ExpInvalidException {
         // Set { 1..100 }->iterate(e; acc : Integer= 0 | acc + e);
-        Expression[] args1 = new Expression[100];
+        Value[] args1 = new Value[100];
         for (int i = 0; i < 100; i++)
-            args1[i] = new ExpConstInteger(i + 1);
-        Expression set1To100 = ExpStdOp.create("mkSet", args1);
+            args1[i] = new IntegerValue(i + 1);
+        Expression set1To100 = new ExpressionWithValue(new SetValue(TypeFactory.mkInteger(), args1));
 
         // create query expression
         Expression[] args2 =
@@ -203,10 +203,10 @@ public class ExpQueryTest extends TestCase {
 
     public void testIterate2() throws ExpInvalidException {
         // Set { 1..3 }->iterate(e1, e2; acc : Integer= 0 | acc + e1 * e2));
-        Expression[] args1 = new Expression[3];
+        Value[] args1 = new Value[3];
         for (int i = 0; i < 3; i++)
-            args1[i] = new ExpConstInteger(i + 1);
-        Expression set1To3 = ExpStdOp.create("mkSet", args1);
+            args1[i] = new IntegerValue(i + 1);
+        Expression set1To3 = new ExpressionWithValue(new SetValue(TypeFactory.mkInteger(), args1));
 
         // create query expression
         Expression[] args2 =

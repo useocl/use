@@ -10,4 +10,4 @@ end
 constraints
 
 context Point inv:
-  self.c = #Red  -- failed in 1.2.0
+  self.c = Color::Red  -- failed in 1.2.0

@@ -46,10 +46,10 @@ false
 -> 105 : Integer
 
 3 / 0
--> Undefined : Real
+-> Undefined : OclVoid
 
 3 div 0
--> Undefined : Integer
+-> Undefined : OclVoid
 
 10.mod(3)
 -> 1 : Integer
