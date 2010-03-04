@@ -54,6 +54,10 @@ public final class SequenceType extends CollectionType {
     	return false;
     }
     
+    public boolean isTrueSequence() {
+    	return true;
+    }
+    
     public boolean isSequence() {
     	return true;
     }
@@ -82,7 +86,7 @@ public final class SequenceType extends CollectionType {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-        if (! t.isTrueCollection() && ! t.isSequence() )
+        if (! t.isTrueCollection() && ! t.isTrueSequence() )
             return false;
 
         CollectionType t2 = (CollectionType) t;

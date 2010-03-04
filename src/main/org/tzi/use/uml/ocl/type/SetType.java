@@ -53,6 +53,10 @@ public final class SetType extends CollectionType {
     	return true;
     }
     
+    public boolean isTrueSet() {
+    	return true;
+    }
+    
     public boolean isInstantiableCollection() {
     	return true;
     }
@@ -61,7 +65,7 @@ public final class SetType extends CollectionType {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-        if (! t.isTrueCollection() && ! t.isSet() )
+        if (! t.isTrueCollection() && ! t.isTrueSet() )
             return false;
 
         CollectionType t2 = (CollectionType) t;

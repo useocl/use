@@ -109,15 +109,31 @@ public abstract class Type {
     	return false;
     }
 
+    public boolean isTrueSet() {
+    	return false;
+    }
+    
     public boolean isSequence() {
     	return false;
     }
 
+    public boolean isTrueSequence() {
+    	return false;
+    }
+    
     public boolean isOrderedSet() {
 		return false;
 	}
     
+    public boolean isTrueOrderedSet() {
+		return false;
+	}
+    
     public boolean isBag() {
+    	return false;
+    }
+    
+    public boolean isTrueBag() {
     	return false;
     }
     

@@ -57,11 +57,15 @@ public final class BagType extends CollectionType {
     	return true;
     }
     
+    public boolean isTrueBag() {
+    	return true;
+    }
+    
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-        if (! t.isTrueCollection() && ! t.isBag() )
+        if (! t.isTrueCollection() && ! t.isTrueBag() )
             return false;
 
         CollectionType t2 = (CollectionType) t;
