@@ -153,7 +153,7 @@ final class Op_number_mult extends ArithOperation {
 		return true;
 	}
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {		
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = ((IntegerValue) args[0]).value()
 					* ((IntegerValue) args[1]).value();
