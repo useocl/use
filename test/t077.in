@@ -113,50 +113,50 @@
 ?Set{1.0, 2.0, 3.0, 4.0}->min()
 *-> 1.0 : Real
 ?Set{}->min()
-*<input>:1:7: Undefined operation `Set(OclVoid)->min()'.
+*-> Undefined : OclVoid
 ?Bag{1, 2, 3, 4}->min()
 *-> 1 : Integer
 ?Bag{1.0, 2.0, 3.0, 4.0}->min()
 *-> 1.0 : Real
 ?Bag{}->min()
-*<input>:1:7: Undefined operation `Bag(OclVoid)->min()'.
+*-> Undefined : OclVoid
 ?OrderedSet{1, 2, 3, 4}->min()
 *-> 1 : Integer
 ?OrderedSet{1.0, 2.0, 3.0, 4.0}->min()
 *-> 1.0 : Real
 ?OrderedSet{}->min()
-*<input>:1:14: Undefined operation `OrderedSet(OclVoid)->min()'.
+*-> Undefined : OclVoid
 ?Sequence{1, 2, 3, 4}->min()
 *-> 1 : Integer
 ?Sequence{1.0, 2.0, 3.0, 4.0}->min()
 *-> 1.0 : Real
 ?Sequence{}->min()
-*<input>:1:12: Undefined operation `Sequence(OclVoid)->min()'.
+*-> Undefined : OclVoid
 -- max
 ?Set{1, 2, 3, 4}->max()
 *-> 4 : Integer
 ?Set{1.0, 2.0, 3.0, 4.0}->max()
 *-> 4.0 : Real
 ?Set{}->max()
-*<input>:1:7: Undefined operation `Set(OclVoid)->max()'.
+*-> Undefined : OclVoid
 ?Bag{1, 2, 3, 4}->max()
 *-> 4 : Integer
 ?Bag{1.0, 2.0, 3.0, 4.0}->max()
 *-> 4.0 : Real
 ?Bag{}->max()
-*<input>:1:7: Undefined operation `Bag(OclVoid)->max()'.
+*-> Undefined : OclVoid
 ?OrderedSet{1, 2, 3, 4}->max()
 *-> 4 : Integer
 ?OrderedSet{1.0, 2.0, 3.0, 4.0}->max()
 *-> 4.0 : Real
 ?OrderedSet{}->max()
-*<input>:1:14: Undefined operation `OrderedSet(OclVoid)->max()'.
+*-> Undefined : OclVoid
 ?Sequence{1, 2, 3, 4}->max()
 *-> 4 : Integer
 ?Sequence{1.0, 2.0, 3.0, 4.0}->max()
 *-> 4.0 : Real
 ?Sequence{}->max()
-*<input>:1:12: Undefined operation `Sequence(OclVoid)->max()'.
+*-> Undefined : OclVoid
 -- #################################
 -- asSet
 -- #################################
