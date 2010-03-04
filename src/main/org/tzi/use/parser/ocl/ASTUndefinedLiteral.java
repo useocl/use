@@ -25,7 +25,6 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.VoidType;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -34,21 +33,12 @@ import org.tzi.use.uml.ocl.type.VoidType;
  * @author  Mark Richters
  */
 public class ASTUndefinedLiteral extends ASTExpression {
-    private ASTType fType;
 
-    public ASTUndefinedLiteral(ASTType t) {
-        fType = t;
-    }
+    public ASTUndefinedLiteral(ASTType t) { }
 
-    public ASTUndefinedLiteral() {
-        fType = null;
-    }
+    public ASTUndefinedLiteral() { }
 
     public Expression gen(Context ctx) throws SemanticException {
-    	if (fType == null) {
-    		 return new ExpUndefined(new VoidType());
-    	} else {
-    		 return new ExpUndefined(fType.gen(ctx));
-    	}
+    	return new ExpUndefined();
     }
 }

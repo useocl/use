@@ -146,7 +146,7 @@ public class RubyHelper {
 			Log.warn("makeUSEExpression: Unhandeled Ruby value: " + rubyValue.toString() + ":" + rubyValue.getClass().getName());
 		}
 		
-		return new ExpUndefined(TypeFactory.mkVoidType());
+		return new ExpUndefined();
 	}
 	
 	public static Expression[] makeExpArray(Object[] exp) {

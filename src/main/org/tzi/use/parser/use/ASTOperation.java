@@ -105,7 +105,7 @@ public class ASTOperation extends AST {
         // made to another operation
         if (fExpr != null ) {
             try {
-                fOperation.setExpression(new ExpUndefined(fOperation.resultType()));
+                fOperation.setExpression(new ExpUndefined());
             } catch (MInvalidModelException ex) {
                 throw new RuntimeException("setting temporary expression failed");
             }

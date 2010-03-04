@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 
@@ -32,9 +31,9 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpUndefined extends Expression {
-    public ExpUndefined(Type sourceType) {
+    public ExpUndefined() {
         // result type is sourceType
-        super(sourceType);
+        super(UndefinedValue.instance.type());
     }
 
     /**
