@@ -79,8 +79,7 @@ final class Op_notequal extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2
-				&& params[0].getLeastCommonSupertype(params[1]) != null)
+		if (params.length == 2 && params[0].getLeastCommonSupertype(params[1]) != null)
 			return TypeFactory.mkBoolean();
 		else
 			return null;
