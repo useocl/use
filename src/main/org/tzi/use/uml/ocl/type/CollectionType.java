@@ -90,6 +90,9 @@ public class CollectionType extends Type {
     	if (!type.isCollection())
     		return null;
     	
+    	if (type.isVoidType())
+    		return this;
+    	
     	CollectionType cType = (CollectionType)type;
     	Type commonElementType = this.fElemType.getLeastCommonSupertype(cType.fElemType);
 
