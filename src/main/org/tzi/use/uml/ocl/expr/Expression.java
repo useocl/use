@@ -22,6 +22,7 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
 
 /**
@@ -86,7 +87,7 @@ public abstract class Expression {
      *                not a boolean expression
      */
     public void assertBoolean() throws ExpInvalidException {
-        if (!fType.isBoolean())
+        if (!fType.isSubtypeOf(TypeFactory.mkBoolean()))
             throw new ExpInvalidException("Boolean expression expected, "
                     + "found expression of type `" + this.toString() + "'.");
     }
