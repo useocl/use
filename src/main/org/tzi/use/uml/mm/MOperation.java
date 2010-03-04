@@ -32,6 +32,7 @@ import javax.script.ScriptException;
 
 import org.jruby.embed.EvalFailedException;
 import org.tzi.use.uml.ocl.expr.EvalContext;
+import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.extension.ExtensionManager;
@@ -133,6 +134,15 @@ public final class MOperation extends MModelElementImpl {
         fExpr = expr;
     }
 
+    /** 
+     * Sets a temporary expression
+     * 
+     */
+    public void setTempExpression() {
+        // If no result type is set, use type of the expression
+        fExpr = new ExpUndefined();
+    }
+    
     void setClass(MClass cls) {
         fClass = cls;
     }

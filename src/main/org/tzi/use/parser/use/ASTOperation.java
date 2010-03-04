@@ -34,7 +34,6 @@ import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
@@ -94,8 +93,10 @@ public class ASTOperation extends AST {
         Type resultType = null;
         if (fType != null )
             resultType = fType.gen(ctx);
+
         fOperation = ctx.modelFactory().createOperation(fName.getText(), varDeclList,
                                                         resultType);
+        
         // sets the line position of the USE-Model in this attribute
         fOperation.setPositionInModel( fName.getLine() );
         
@@ -104,11 +105,7 @@ public class ASTOperation extends AST {
         // recursive call to this operation, or a forward reference is
         // made to another operation
         if (fExpr != null ) {
-            try {
-                fOperation.setExpression(new ExpUndefined());
-            } catch (MInvalidModelException ex) {
-                throw new RuntimeException("setting temporary expression failed");
-            }
+        	fOperation.setTempExpression();
         }
         return fOperation;
     }
