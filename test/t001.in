@@ -1026,13 +1026,13 @@
 *-> Bag{1,1,1,1,2,2,3} : Bag(Integer)
 
 ? Bag{oclUndefined(Bag(Integer))}->flatten
-*-> Undefined : OclVoid
+*-> Bag{Undefined} : Bag(OclVoid)
 
 ? Bag{Sequence{1,2}, Sequence{2,1}, Sequence{2,3}}->flatten
 *-> Bag{1,1,2,2,2,3} : Bag(Integer)
 
 ? Bag{oclUndefined(Sequence(Integer))}->flatten
-*-> Undefined : OclVoid
+*-> Bag{Undefined} : Bag(OclVoid)
 
 ? Set{Set{1}, Set{2}, Set{2}, Set{3}}->flatten
 *-> Set{1,2,3} : Set(Integer)
