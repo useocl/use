@@ -64,7 +64,7 @@ public class ASTConstraintDefinition extends AST {
     public void gen(Context ctx) {
         try {
             Type t = fType.gen(ctx);
-            if (! t.isObjectType() )
+            if (! t.isTrueObjectType() )
                 throw new SemanticException(fType.getStartToken(), 
                                             "Expected an object type, found `" +
                                             t + "'");

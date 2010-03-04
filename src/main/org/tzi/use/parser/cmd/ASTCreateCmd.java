@@ -52,7 +52,7 @@ public class ASTCreateCmd extends ASTCmd {
         Type t = null;
         try {
             t = fType.gen(ctx);
-            if (! t.isObjectType() ) {
+            if (! t.isTrueObjectType() ) {
                 throw new SemanticException(fType.getStartToken(), 
                                             "Expected object type, found `" + t + "'.");
             } else {

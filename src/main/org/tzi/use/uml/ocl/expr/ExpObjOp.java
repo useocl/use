@@ -47,7 +47,7 @@ public final class ExpObjOp extends Expression {
         super(op.resultType());
         fOp = op;
         fArgs = args;
-        if (! args[0].type().isObjectType() )
+        if (! args[0].type().isTrueObjectType() )
             throw new ExpInvalidException(
                                           "Target expression of object operation must have " +
                                           "object type, found `" + args[0].type() + "'.");

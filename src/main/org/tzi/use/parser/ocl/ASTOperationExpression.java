@@ -212,7 +212,7 @@ public class ASTOperationExpression extends ASTExpression {
         final int PARENTHESES         = 0x0001;
 
         int opcase;
-        if (srcType.isObjectType() )
+        if (srcType.isTrueObjectType() )
             opcase = SRC_OBJECT_TYPE;
         else if (srcType.isCollection(true) )
             opcase = SRC_COLLECTION_TYPE;
@@ -366,7 +366,7 @@ public class ASTOperationExpression extends ASTExpression {
         // c.op    200 (5) with implicit (2,4,1)
         CollectionType cType = (CollectionType ) srcExpr.type();
         Type elemType = cType.elemType();
-        if (elemType.isObjectType() ) {
+        if (elemType.isTrueObjectType() ) {
             MClass srcClass = ((ObjectType) elemType).cls();
             MAttribute attr = srcClass.attribute(opname, true);
             if (attr != null ) {
@@ -409,7 +409,7 @@ public class ASTOperationExpression extends ASTExpression {
         // c.op()  201 (5) with implicit (3,1)
         CollectionType cType = (CollectionType ) srcExpr.type();
         Type elemType = cType.elemType();
-        if (elemType.isObjectType() ) {
+        if (elemType.isTrueObjectType() ) {
             MClass srcClass = ((ObjectType) elemType).cls();
             MOperation op = srcClass.operation(opname, true);
             if (op != null ) {

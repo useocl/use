@@ -49,6 +49,6 @@ class GMatcherDelete_Object implements IGInstructionMatcher {
         return 
             (param.size() == 1 &&
              param.get(0) instanceof GValueInstruction &&
-             ((GValueInstruction) param.get(0)).type().isObjectType() );
+             ((GValueInstruction) param.get(0)).type().isTrueObjectType() );
     }
 }

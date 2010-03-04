@@ -56,7 +56,7 @@ public final class ExpNavigation extends Expression {
         // set result type later
         super(null);
 
-        if ( !objExp.type().isObjectType() )
+        if ( !objExp.type().isTrueObjectType() )
             throw new ExpInvalidException(
                     "Target expression of navigation operation must have " +
                     "object type, found `" + objExp.type() + "'." );
@@ -92,7 +92,7 @@ public final class ExpNavigation extends Expression {
             // get objects at association end
             List<MObject> objList = obj.getNavigableObjects(state, fSrc, fDst);
             Type resultType = type();
-            if (resultType.isObjectType() ) {
+            if (resultType.isTrueObjectType() ) {
                 if (objList.size() > 1 )
                     throw new MultiplicityViolationException(
                         "expected link set size 1 at " + 

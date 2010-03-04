@@ -71,6 +71,7 @@ public final class SetType extends CollectionType {
         CollectionType t2 = (CollectionType) t;
         if (elemType().isSubtypeOf(t2.elemType()) )
             return true;
+        
         return false;
     }
 

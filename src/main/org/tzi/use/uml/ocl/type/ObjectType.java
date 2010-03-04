@@ -44,6 +44,10 @@ public final class ObjectType extends Type {
         return fClass;
     }
     
+    public boolean isTrueObjectType() {
+    	return true;
+    }
+    
     public boolean isObjectType() {
     	return true;
     }
@@ -52,7 +56,7 @@ public final class ObjectType extends Type {
      * Test subtype relation between this and <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-        if (t.isObjectType() ) {
+        if (t.isTrueObjectType() ) {
             MClass cls2 = ((ObjectType) t).cls();
             return fClass.isSubClassOf(cls2);
         }

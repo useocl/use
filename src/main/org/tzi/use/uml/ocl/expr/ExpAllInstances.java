@@ -49,7 +49,7 @@ public final class ExpAllInstances extends Expression {
         super(TypeFactory.mkSet(sourceType));
         fSourceType = sourceType;
 
-        if (! sourceType.isObjectType() )
+        if (! sourceType.isTrueObjectType() )
             throw new ExpInvalidException(
                                           "Expected an object type, found `" + sourceType + "'.");
     }

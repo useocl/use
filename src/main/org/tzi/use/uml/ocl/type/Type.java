@@ -141,10 +141,14 @@ public abstract class Type {
     	return false;
     }
 
-    public boolean isObjectType() {
+    public boolean isTrueObjectType() {
     	return false;
     }
 
+    public boolean isObjectType() {
+    	return false;
+    }
+    
     public boolean isTrueOclAny() {
     	return false;
     }

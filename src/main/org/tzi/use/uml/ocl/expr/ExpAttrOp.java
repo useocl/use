@@ -42,7 +42,7 @@ public final class ExpAttrOp extends Expression {
         super(a.type());
         fAttr = a;
         fObjExp = objExp;
-        if (! objExp.type().isObjectType() )
+        if (! objExp.type().isTrueObjectType() )
             throw new IllegalArgumentException(
                                                "Target expression of attribute operation must have " +
                                                "object type, found `" + objExp.type() + "'.");

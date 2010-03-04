@@ -90,7 +90,7 @@ public final class MCmdCreateInsertObjects extends MCmd implements CmdCreatesObj
             if ( value == null )
                 throw new CommandFailedException( "Unbound variable `" +
                                                   varname + "'." );
-            if ( !value.type().isObjectType() )
+            if ( !value.type().isTrueObjectType() )
                 throw new CommandFailedException( "Expected variable of object " +
                                                   "type, found type `" + value.type() + "'." );
             MObject obj = ( ( ObjectValue ) value ).value();

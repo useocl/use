@@ -53,8 +53,8 @@ public class ASTDestroyCmd extends ASTCmd {
         for (ASTExpression astExpr : fExprList) {
             Expression expr = astExpr.gen(ctx);
             Type t = expr.type();
-            if (t.isObjectType() 
-                || ( t.isCollection(true) && ((CollectionType) t).elemType().isObjectType()) ) {
+            if (t.isTrueObjectType() 
+                || ( t.isCollection(true) && ((CollectionType) t).elemType().isTrueObjectType()) ) {
                 exprs[i++] = expr;
             } else {
                 throw new SemanticException(astExpr.getStartToken(), 

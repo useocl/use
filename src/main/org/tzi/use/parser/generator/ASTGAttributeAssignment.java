@@ -56,7 +56,7 @@ public class ASTGAttributeAssignment extends ASTGInstruction {
     public GInstruction gen(Context ctx) throws SemanticException {
         GValueInstruction targetinstr
             = (GValueInstruction) fTargetObject.gen(ctx);
-        if (! targetinstr.type().isObjectType()) {
+        if (! targetinstr.type().isTrueObjectType()) {
             String err = "The type of `" + targetinstr 
                 + "' must be an object type.";
             throw new SemanticException( fAttributeName, err );

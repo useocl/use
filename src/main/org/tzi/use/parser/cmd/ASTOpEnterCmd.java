@@ -65,7 +65,7 @@ public class ASTOpEnterCmd extends ASTCmd {
         // source of operation call must denote object
         Expression objExp = fSrcExpr.gen(ctx);
         Type t = objExp.type();
-        if (! t.isObjectType() )
+        if (! t.isTrueObjectType() )
             throw new SemanticException(fSrcExpr.getStartToken(), 
                                         "Expected expression with object type, " + 
                                         "found type `" + t + "'.");

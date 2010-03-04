@@ -38,7 +38,7 @@ final class Op_oclIsNew extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isObjectType())
+		if (params.length == 1 && params[0].isTrueObjectType())
 			return TypeFactory.mkBoolean();
 		else
 			return null;
