@@ -86,7 +86,7 @@ public class ASTQueryExpression extends ASTExpression {
                                             opname + "'.");
         }
 
-        if (! range.type().isCollection() )
+        if (! range.type().isCollection(false) )
             throw new SemanticException(fOp, 
                                         "Source of `" + opname + "' expression must be a collection, " + 
                                         "found source expression of type `" + range.type() + "'.");

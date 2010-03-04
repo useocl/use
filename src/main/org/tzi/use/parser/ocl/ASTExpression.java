@@ -202,9 +202,9 @@ public abstract class ASTExpression extends AST {
             res = eCollect;
         
             // is result a nested collection?
-            if (res.type().isCollection() ) {
+            if (res.type().isCollection(true) ) {
                 CollectionType t = (CollectionType) res.type();
-                if (t.elemType().isCollection() ) {
+                if (t.elemType().isCollection(true) ) {
                     // add flatten
                     Expression[] args = { res };
                     res = ExpStdOp.create("flatten", args);

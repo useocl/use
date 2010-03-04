@@ -60,7 +60,7 @@ public abstract class OpGeneric {
             // translate into dot notation, e.g. foo->union(bla)
             res = name() + atPre;
             if (args.length > 0) {
-                if (args[0].type().isCollection())
+                if (args[0].type().isCollection(true))
                     res = args[0] + "->" + res;
                 else
                     res = args[0] + "." + res;

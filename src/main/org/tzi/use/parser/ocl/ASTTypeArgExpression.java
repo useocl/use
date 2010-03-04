@@ -85,7 +85,7 @@ public class ASTTypeArgExpression extends ASTExpression {
         // is a valid shorthand for `c->collect(e |
         // e.oclIsKindOf(Employee))'
 
-        if (! expr.type().isCollection() ) {
+        if (! expr.type().isCollection(true) ) {
             res = genExpr(expr, t);
             if (! expr.type().isSubtypeOf(t) && ! t.isSubtypeOf(expr.type()) )
                 ctx.reportWarning(fTargetType.getStartToken(), 
@@ -99,7 +99,7 @@ public class ASTTypeArgExpression extends ASTExpression {
         
             CollectionType cType = (CollectionType ) expr.type();
             Type elemType = cType.elemType();
-            if (elemType.isCollection() ) // nested collection?
+            if (elemType.isCollection(true) ) // nested collection?
                 throw new SemanticException(fOpToken, "Operation `" +
                                             fOpToken.getText() + 
                                             "' cannot be applied to collection.");

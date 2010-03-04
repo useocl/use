@@ -229,7 +229,7 @@ public class BagValue extends CollectionValue {
      * Returns a new "flattened" bag. This bag must have collection elements.
      */
     public BagValue flatten() {
-        if (!elemType().isCollection())
+        if (!elemType().isCollection(true))
            return this;
 
         CollectionType c2 = (CollectionType) elemType();

@@ -49,9 +49,9 @@ public class ExpCollect extends ExpQuery {
         // result type is bag or sequence of query expression type
         super( rangeExp.type().isSequence() || rangeExp.type().isOrderedSet()
                ? (Type) TypeFactory.mkSequence(
-            		   (queryExp.type().isCollection() ? ((CollectionType)queryExp.type()).elemType() : queryExp.type()))
+            		   (queryExp.type().isCollection(true) ? ((CollectionType)queryExp.type()).elemType() : queryExp.type()))
                : (Type) TypeFactory.mkBag(
-            		   (queryExp.type().isCollection() ? ((CollectionType)queryExp.type()).elemType() : queryExp.type())), 
+            		   (queryExp.type().isCollection(true) ? ((CollectionType)queryExp.type()).elemType() : queryExp.type())), 
                ( elemVarDecl != null ) 
                ? new VarDeclList(elemVarDecl) 
                : new VarDeclList(true),

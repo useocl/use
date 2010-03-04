@@ -154,7 +154,7 @@ public class ASTOperationExpression extends ASTExpression {
                     // construct source expression
                     ExprContext.Entry e = ec.peek();
                     srcExpr = new ExpVariable(e.fName, e.fType);
-                    if (e.fType.isCollection() )
+                    if (e.fType.isCollection(true) )
                         fFollowsArrow = true;
                     res = gen1(ctx, srcExpr);
                 } else
@@ -214,7 +214,7 @@ public class ASTOperationExpression extends ASTExpression {
         int opcase;
         if (srcType.isObjectType() )
             opcase = SRC_OBJECT_TYPE;
-        else if (srcType.isCollection() )
+        else if (srcType.isCollection(true) )
             opcase = SRC_COLLECTION_TYPE;
         else if (srcType.isTupleType() ) 
             opcase = SRC_TUPLE_TYPE;

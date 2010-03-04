@@ -46,7 +46,8 @@ public class CollectionType extends Type {
         return fElemType;
     }
 
-    public boolean isCollection() {
+    @Override
+    public boolean isCollection(boolean excludeVoid) {
     	return true;
     }
     
@@ -87,7 +88,7 @@ public class CollectionType extends Type {
 
     public Type getLeastCommonSupertype(Type type)
     {
-    	if (!type.isCollection())
+    	if (!type.isCollection(false))
     		return null;
     	
     	if (type.isVoidType())

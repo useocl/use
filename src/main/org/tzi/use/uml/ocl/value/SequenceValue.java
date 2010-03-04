@@ -229,7 +229,7 @@ public class SequenceValue extends CollectionValue {
      * Otherwise the result is nondeterministic, as in Set->asSequence
      */
     public SequenceValue flatten() {
-        if (! elemType().isCollection() ) 
+        if (! elemType().isCollection(true) ) 
             return this;
     
         CollectionType c2 = (CollectionType) elemType();

@@ -44,7 +44,7 @@ public final class SequenceType extends CollectionType {
     }
 
     public String shortName() {
-        if (elemType().isCollection() )
+        if (elemType().isCollection(true) )
             return "Sequence(...)";
         else 
             return "Sequence(" + elemType() + ")";
@@ -60,7 +60,7 @@ public final class SequenceType extends CollectionType {
     
     public Type getLeastCommonSupertype(Type type)
     {
-    	if (!type.isCollection())
+    	if (!type.isCollection(false))
     		return null;
     	
     	if (type.isVoidType())

@@ -44,7 +44,7 @@ public final class ExpAsType extends Expression {
         super(targetType);
         fSourceExpr = sourceExpr;
 
-        if (targetType.isCollection() )
+        if (targetType.isCollection(true) )
             throw new ExpInvalidException("Operation oclAsType " + 
                                           "cannot be applied to collections.");
 

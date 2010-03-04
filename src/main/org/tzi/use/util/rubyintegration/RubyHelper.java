@@ -53,7 +53,7 @@ public class RubyHelper {
 		} else if (rubyValue instanceof MObject) {
 			MObject obj = (MObject)rubyValue;
 			result = new ObjectValue(TypeFactory.mkObjectType(obj.cls()), obj);
-		} else if (rubyValue instanceof List<?> && expectedType.isCollection()) {
+		} else if (rubyValue instanceof List<?> && expectedType.isCollection(true)) {
 			List<?> list = (List<?>)rubyValue;
 			Value[] elements = new Value[list.size()];
 			

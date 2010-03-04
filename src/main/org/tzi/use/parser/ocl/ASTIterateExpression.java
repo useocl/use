@@ -76,7 +76,7 @@ public class ASTIterateExpression extends ASTExpression {
                                             "Need a collection to apply `iterate'.");
         }
 
-        if (! range.type().isCollection() )
+        if (! range.type().isCollection(false) )
             throw new SemanticException(fIterateToken, 
                                         "Source of `iterate' expression must be a collection, " + 
                                         "found source expression of type `" + range.type() + "'.");

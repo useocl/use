@@ -63,7 +63,7 @@ public abstract class ExpQuery extends Expression {
 
         // type of rangeExp must be a subtype of Collection, i.e. Set,
         // Sequence or Bag
-        if (!fRangeExp.type().isCollection())
+        if (!fRangeExp.type().isCollection(false))
             throw new ExpInvalidException("Range expression must be of type "
                     + "`Collection', found `" + fRangeExp.type() + "'.");
 

@@ -97,7 +97,7 @@ public abstract class Type {
     	return false;
     }
 
-    public boolean isCollection() {
+    public boolean isCollection(boolean excludeVoid) {
     	return false;
     }
 

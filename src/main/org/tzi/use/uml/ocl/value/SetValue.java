@@ -308,7 +308,7 @@ public class SetValue extends CollectionValue {
      * Returns a new "flattened" set. This set must have collection elements.
      */
     public SetValue flatten() {
-        if (!elemType().isCollection())
+        if (!elemType().isCollection(true))
             return this;
 
         CollectionType c2 = (CollectionType) elemType();

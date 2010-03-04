@@ -131,7 +131,7 @@ public final class ExpStdOp extends Expression {
         // build error message with type names of arguments
         Type srcType = args[0].type();
         StringBuffer s = new StringBuffer(srcType
-                + (srcType.isCollection() ? "->" : ".") + name + "(");
+                + (srcType.isCollection(true) ? "->" : ".") + name + "(");
         for (int i = 1; i < args.length; i++) {
             if (i > 1)
                 s.append(", ");

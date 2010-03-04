@@ -35,8 +35,11 @@ public class VoidType extends Type {
 	}
 
 	@Override
-	public boolean isCollection() {
-		return true;
+	public boolean isCollection(boolean excludeVoid) {
+		if (excludeVoid)
+			return false;
+		else
+			return true;
 	}
 
 	@Override

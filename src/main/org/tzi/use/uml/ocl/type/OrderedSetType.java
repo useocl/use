@@ -40,7 +40,7 @@ public final class OrderedSetType extends CollectionType {
     }
 
     public String shortName() {
-        if (elemType().isCollection() )
+        if (elemType().isCollection(true) )
             return "OrderedSet(...)";
         else 
             return "OrderedSet(" + elemType() + ")";
@@ -64,7 +64,7 @@ public final class OrderedSetType extends CollectionType {
     
     public Type getLeastCommonSupertype(Type type)
     {
-    	if (!type.isCollection())
+    	if (!type.isCollection(false))
     		return null;
     	
     	if (type.isVoidType())
