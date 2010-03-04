@@ -48,7 +48,7 @@ public final class IntegerType extends BasicType {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-        return t.isNumber() || t.isOclAny();
+        return t.isNumber() || t.isTrueOclAny();
     }
 
     /** 

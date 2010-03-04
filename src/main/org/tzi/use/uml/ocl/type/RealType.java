@@ -48,7 +48,7 @@ public final class RealType extends BasicType {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-        return equals(t) || t.isOclAny();
+        return equals(t) || t.isTrueOclAny();
     }
 
     /** 

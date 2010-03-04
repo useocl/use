@@ -40,7 +40,7 @@ public final class OclAnyType extends Type {
         return equals(t);
     }
 
-    public boolean isOclAny() {
+    public boolean isTrueOclAny() {
     	return true;
     }
     

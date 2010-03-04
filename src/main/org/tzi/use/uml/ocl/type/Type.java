@@ -129,7 +129,7 @@ public abstract class Type {
     	return false;
     }
 
-    public boolean isOclAny() {
+    public boolean isTrueOclAny() {
     	return false;
     }
 

@@ -24,6 +24,81 @@ public class VoidType extends Type {
 		return true;
 	}
 
+	@Override
+	public boolean isBag() {
+		return true;
+	}
+
+	@Override
+	public boolean isBoolean() {
+		return true;
+	}
+
+	@Override
+	public boolean isCollection() {
+		return true;
+	}
+
+	@Override
+	public boolean isDate() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnum() {
+		return true;
+	}
+
+	@Override
+	public boolean isInstantiableCollection() {
+		return true;
+	}
+
+	@Override
+	public boolean isInteger() {
+		return true;
+	}
+
+	@Override
+	public boolean isNumber() {
+		return true;
+	}
+
+	@Override
+	public boolean isObjectType() {
+		return true;
+	}
+
+	@Override
+	public boolean isOrderedSet() {
+		return true;
+	}
+
+	@Override
+	public boolean isReal() {
+		return true;
+	}
+
+	@Override
+	public boolean isSequence() {
+		return true;
+	}
+
+	@Override
+	public boolean isSet() {
+		return true;
+	}
+
+	@Override
+	public boolean isString() {
+		return true;
+	}
+
+	@Override
+	public boolean isTupleType() {
+		return true;
+	}
+
 	public String toString() {
 		return "OclVoid";
 	}

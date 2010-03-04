@@ -56,7 +56,7 @@ public final class ObjectType extends Type {
             MClass cls2 = ((ObjectType) t).cls();
             return fClass.isSubClassOf(cls2);
         }
-        return t.isOclAny();
+        return t.isTrueOclAny();
     }
 
     /** 
