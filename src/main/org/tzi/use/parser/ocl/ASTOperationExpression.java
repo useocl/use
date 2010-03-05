@@ -375,6 +375,7 @@ public class ASTOperationExpression extends ASTExpression {
                 // transform c.a into c->collect($e | $e.a)
                 ExpVariable eVar = new ExpVariable("$e", elemType);
                 ExpAttrOp eAttr = new ExpAttrOp(attr, eVar);
+                eAttr.setIsPre(this.isPre());
                 res = genImplicitCollect(srcExpr, eAttr, elemType);
             } else {
                 MNavigableElement dst = srcClass.navigableEnd(opname);
@@ -385,6 +386,7 @@ public class ASTOperationExpression extends ASTExpression {
                     // transform c.r into c->collect($e | $e.r)
                     ExpVariable eVar = new ExpVariable("$e", elemType);
                     Expression eNav = genNavigation(fOp, srcClass, eVar, dst);
+                    eNav.setIsPre(this.isPre());
                     res = genImplicitCollect(srcExpr, eNav, elemType);
                 }
             }

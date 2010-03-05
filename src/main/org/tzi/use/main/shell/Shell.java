@@ -24,6 +24,7 @@ package org.tzi.use.main.shell;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Map.Entry;
@@ -238,6 +240,8 @@ public final class Shell implements Runnable {
                 processLineSafely(line);
             } else {
                 fFinished = fReadlineStack.popCurrentReadline();
+                setFileClosed();
+                
                 if (fFinished && Options.quiet)
                     processLineSafely("check");
             }
@@ -878,6 +882,38 @@ public final class Shell implements Runnable {
     }
 
     /**
+     * Saves pathname of the currently opened file and returns the absolute path.
+     * All other files can be opened relatively to it.
+     */
+    private Stack<File> openFiles = new Stack<File>();
+    
+    private String getFilenameToOpen(String filename) {
+    	if (filename.startsWith("\"") && filename.startsWith("\""))
+    		filename = filename.substring(1, filename.length() - 1);
+    		
+    	File f = new File(filename);
+    	String result;
+    	
+    	if (f.isAbsolute()) {
+    		result = filename;
+    	} else {
+    		File currentFile = openFiles.peek();
+    		f = new File(currentFile.getParentFile(), filename);
+    		result = f.getAbsolutePath();
+    	}
+    	
+    	openFiles.push(f);
+    	return result;
+    }
+    
+    /**
+     * Removes the currently opened file from the stack of opened files.
+     */
+    private void setFileClosed() {
+    	openFiles.pop();
+    }
+    
+    /**
      * Checks which file type is to be opened and calls the specific open
      * command (<code>cmdOpenUseFile</code>,<code>cmdRead</code>,
      * <code>cmdLoad</code>).
@@ -888,7 +924,7 @@ public final class Shell implements Runnable {
     private void cmdOpen(String line) {
         boolean doEcho = true;
         StringTokenizer st = new StringTokenizer(line);
-
+        
         // if there is no filename and option
         if (!st.hasMoreTokens()) {
             Log.error("Unknown command `open " + line + "'. " + "Try `help'.");
@@ -911,7 +947,10 @@ public final class Shell implements Runnable {
 
         // to find out what command will be needed
         try {
-            String firstWord = getFirstWordOfFile(token);
+        	String filename = getFilenameToOpen(token);
+            String firstWord = getFirstWordOfFile(filename);
+            setFileClosed();
+            
             // if getFirstWordOfFile returned with error code, than
             // end this method.
             if (firstWord != null && firstWord.equals("ERROR: -1")) {
@@ -944,9 +983,12 @@ public final class Shell implements Runnable {
     /**
      * Reads a specification file.
      */
-    private void cmdOpenUseFile(String filename) {
+    private void cmdOpenUseFile(String file) {
         MModel model = null;
         FileInputStream specStream = null;
+
+        String filename = getFilenameToOpen(file);
+        
         try {
             Log.verbose("compiling specification...");
             specStream = new FileInputStream(filename);
@@ -958,10 +1000,7 @@ public final class Shell implements Runnable {
             if (specStream != null)
                 try {
                 	specStream.close();
-                } catch (IOException ex) {
-                    //TODO: Should this be silently ignored? [throw new
-                    // Error(ex)?]
-                }
+                } catch (IOException ex) {}
         }
 
         // compile ok?
@@ -972,6 +1011,8 @@ public final class Shell implements Runnable {
             // create system
             fSession.setSystem(new MSystem(model));
         }
+        
+        setFileClosed();
     }
 
     /**
@@ -1069,6 +1110,8 @@ public final class Shell implements Runnable {
      */
     public void cmdRead(String filename, boolean doEcho) {
         try {
+        	filename = getFilenameToOpen(filename);
+        	
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             // read from file, echo each line as it is read
             Readline fReadline;
@@ -1078,6 +1121,7 @@ public final class Shell implements Runnable {
             else
 				fReadline = LineInput.getStreamReadline(reader, true, filename + "> ");
             fReadlineStack.push(fReadline);
+            
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");
         }
@@ -1155,8 +1199,11 @@ public final class Shell implements Runnable {
         String filename = str.trim();
         if (filename.length() == 0)
             Log.error("syntax is `load FILE'");
-        else
+        else {
+        	filename = getFilenameToOpen(filename);
             system.generator().loadInvariants(str.trim(), doEcho);
+            setFileClosed();
+        }
     }
 
     /**

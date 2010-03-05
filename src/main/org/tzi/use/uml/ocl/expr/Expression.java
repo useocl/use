@@ -67,6 +67,13 @@ public abstract class Expression {
     }
 
     /**
+     * Set value of "@pre".
+     */
+    public void setIsPre(boolean isPre) {
+        fIsPre = isPre;
+    }
+    
+    /**
      * Returns the string "@pre" if this expression has the
      * 
      * @pre modifier, otherwise returns "".
