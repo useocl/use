@@ -30,7 +30,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import org.jruby.embed.EvalFailedException;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -243,7 +242,7 @@ public final class MOperation extends MModelElementImpl {
             
         } catch (ScriptException e) {
             Log.error("Line " + e.getLineNumber() + ": " + e.getMessage());
-        } catch (EvalFailedException e) {
+        } catch (RuntimeException e) {
         	Log.error(e.getMessage());
         }
         
