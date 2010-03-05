@@ -1,0 +1,10 @@
+?oclUndefined(OclVoid)=oclUndefined(Integer)
+*-> true : Boolean
+?oclUndefined(OclVoid)<>oclUndefined(Integer)
+*-> false : Boolean
+?OrderedSet{oclUndefined(OclVoid),oclUndefined(Integer)}
+*-> OrderedSet{Undefined} : OrderedSet(OclVoid)
+?Set{oclUndefined(OclVoid),oclUndefined(Integer)}
+*-> Set{Undefined} : Set(OclVoid)
+exit
+
