@@ -1,1 +1,182 @@
-!create ada:User!openter ada init('Ada','NY')!set self.name:=aName!set self.address:=anAddress!opexit------------------------------------------------------------------------!create date:Book!openter date init('Intro to DBS',Sequence{'Date'},1983)!set self.title:=aTitle!set self.authSeq:=anAuthSeq!set self.year:=aYear!opexit!create elNa:Book!openter elNa init('Funds of DBS',Sequence{'Elmasri','Navathe'},1994)!set self.title:=aTitle!set self.authSeq:=anAuthSeq!set self.year:=aYear!opexit------------------------------------------------------------------------!create dbs42:Copy!openter dbs42 init('DBS42',date)!set self.signature:=aSignature!set self.numReturns:=0!insert (self,aBook) into BelongsTo!opexit!create dbs43:Copy!openter dbs43 init('DBS43',date)!set self.signature:=aSignature!set self.numReturns:=0!insert (self,aBook) into BelongsTo!opexit!create dbs52:Copy!openter dbs52 init('DBS52',elNa)!set self.signature:=aSignature!set self.numReturns:=0!insert (self,aBook) into BelongsTo!opexit!create dbs53:Copy!openter dbs53 init('DBS53',elNa)!set self.signature:=aSignature!set self.numReturns:=0!insert (self,aBook) into BelongsTo!opexit------------------------------------------------------------------------!openter dbs42 borrow(ada)!insert (aUser,self) into Borrows!opexit!openter dbs42 return()!insert (aUser,self) into Borrows!opexit!openter dbs42 borrow(ada)!insert (aUser,self) into Borrows!opexit!openter dbs42 return()!insert (aUser,self) into Borrows!opexit!openter dbs43 borrow(ada)!insert (aUser,self) into Borrows!opexit!openter dbs43 return()!insert (aUser,self) into Borrows!opexit!openter dbs43 borrow(ada)!insert (aUser,self) into Borrows!opexit!openter dbs43 return()!insert (aUser,self) into Borrows!opexit!openter dbs43 borrow(ada)!insert (aUser,self) into Borrows!opexit!openter dbs52 borrow(ada)!insert (aUser,self) into Borrows!opexit!openter dbs52 return()!insert (aUser,self) into Borrows!opexit!openter dbs52 borrow(ada)!insert (aUser,self) into Borrows!opexit!openter dbs52 return()!insert (aUser,self) into Borrows!opexit!openter dbs52 borrow(ada)!insert (aUser,self) into Borrows!opexit------------------------------------------------------------------------!create c:Clean!set c.threshold:=2!openter c exec()!set c.signaturesOfDeletedCopies:=Set{'DBS42'}!destroy dbs42!set c.copiesToBeDeleted:=Set{dbs43,dbs52}!opexit
+!create ada:User
+!openter ada init('Ada','NY')
+*precondition `freshUser' is true
+!set self.name:=aName
+!set self.address:=anAddress
+!opexit
+*postcondition `attrsAssigned' is true
+
+!create date:Book
+!openter date init('Intro to DBS',Sequence{'Date'},1983)
+*precondition `freshBook' is true
+!set self.title:=aTitle
+!set self.authSeq:=anAuthSeq
+!set self.year:=aYear
+!opexit
+*postcondition `attrsAssigned' is true
+
+!create elNa:Book
+!openter elNa init('Funds of DBS',Sequence{'Elmasri','Navathe'},1994)
+*precondition `freshBook' is true
+!set self.title:=aTitle
+!set self.authSeq:=anAuthSeq
+!set self.year:=aYear
+!opexit
+*postcondition `attrsAssigned' is true
+
+!create dbs42:Copy
+!openter dbs42 init('DBS42',date)
+*precondition `freshCopy' is true
+*precondition `bookOk' is true
+!set self.signature:=aSignature
+!set self.numReturns:=0
+!insert (self,aBook) into BelongsTo
+!opexit
+*postcondition `attrsAndLinkAssigned' is true
+
+!create dbs43:Copy
+!openter dbs43 init('DBS43',date)
+*precondition `freshCopy' is true
+*precondition `bookOk' is true
+!set self.signature:=aSignature
+!set self.numReturns:=0
+!insert (self,aBook) into BelongsTo
+!opexit
+*postcondition `attrsAndLinkAssigned' is true
+
+!create dbs52:Copy
+!openter dbs52 init('DBS52',elNa)
+*precondition `freshCopy' is true
+*precondition `bookOk' is true
+!set self.signature:=aSignature
+!set self.numReturns:=0
+!insert (self,aBook) into BelongsTo
+!opexit
+*postcondition `attrsAndLinkAssigned' is true
+
+!create dbs53:Copy
+!openter dbs53 init('DBS53',elNa)
+*precondition `freshCopy' is true
+*precondition `bookOk' is true
+!set self.signature:=aSignature
+!set self.numReturns:=0
+!insert (self,aBook) into BelongsTo
+!opexit
+*postcondition `attrsAndLinkAssigned' is true
+
+!openter dbs42 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+!insert (aUser,self) into Borrows
+!opexit
+*postcondition `linkAssigned' is true
+
+!openter dbs42 return()
+*precondition `copyOk' is true
+!set self.numReturns:=self.numReturns+1
+!delete (self.user,self) from Borrows
+!opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+
+!openter dbs42 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+!insert (aUser,self) into Borrows
+!opexit
+*postcondition `linkAssigned' is true
+
+!openter dbs42 return()
+*precondition `copyOk' is true
+!set self.numReturns:=self.numReturns+1
+!delete (self.user,self) from Borrows
+!opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+
+!openter dbs43 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+!insert (aUser,self) into Borrows
+!opexit
+*postcondition `linkAssigned' is true
+
+!openter dbs43 return()
+*precondition `copyOk' is true
+!set self.numReturns:=self.numReturns+1
+!delete (self.user,self) from Borrows
+!opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+
+!openter dbs43 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+!insert (aUser,self) into Borrows
+!opexit
+*postcondition `linkAssigned' is true
+
+!openter dbs43 return()
+*precondition `copyOk' is true
+!set self.numReturns:=self.numReturns+1
+!delete (self.user,self) from Borrows
+!opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+
+!openter dbs43 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+!insert (aUser,self) into Borrows
+!opexit
+*postcondition `linkAssigned' is true
+
+!openter dbs52 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+!insert (aUser,self) into Borrows
+!opexit
+*postcondition `linkAssigned' is true
+
+!openter dbs52 return()
+*precondition `copyOk' is true
+!set self.numReturns:=self.numReturns+1
+!delete (self.user,self) from Borrows
+!opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+
+!openter dbs52 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+!insert (aUser,self) into Borrows
+!opexit
+*postcondition `linkAssigned' is true
+
+!openter dbs52 return()
+*precondition `copyOk' is true
+!set self.numReturns:=self.numReturns+1
+!delete (self.user,self) from Borrows
+!opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+
+!openter dbs52 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+!insert (aUser,self) into Borrows
+!opexit
+*postcondition `linkAssigned' is true
+
+!create c:Clean
+!set c.threshold:=2
+!openter c exec()
+*precondition `thresholdPositive' is true
+!set c.signaturesOfDeletedCopies:=Set{'DBS42'}
+!destroy dbs42
+!set c.copiesToBeDeleted:=Set{dbs43,dbs52}
+!opexit
+*postcondition `oldAvailableCopiesDeletedImp' is true
+*postcondition `oldAvailableCopiesDeleted' is true
+*postcondition `oldUnavailableCopiesNoted' is true
+exit
