@@ -897,8 +897,12 @@ public final class Shell implements Runnable {
     	if (f.isAbsolute()) {
     		result = filename;
     	} else {
-    		File currentFile = openFiles.peek();
-    		f = new File(currentFile.getParentFile(), filename);
+    		if (openFiles.isEmpty()) {
+    			f = new File(filename);
+    		} else {
+    			File currentFile = openFiles.peek();
+    			f = new File(currentFile.getParentFile(), filename);
+    		}
     		result = f.getAbsolutePath();
     	}
     	
