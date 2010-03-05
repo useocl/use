@@ -899,11 +899,12 @@ public final class Shell implements Runnable {
     	} else {
     		if (openFiles.isEmpty()) {
     			f = new File(filename);
+    			result = filename;
     		} else {
     			File currentFile = openFiles.peek();
     			f = new File(currentFile.getParentFile(), filename);
+    			result = f.getAbsolutePath();
     		}
-    		result = f.getAbsolutePath();
     	}
     	
     	openFiles.push(f);
