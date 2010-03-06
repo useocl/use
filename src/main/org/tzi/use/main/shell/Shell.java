@@ -929,7 +929,10 @@ public final class Shell implements Runnable {
     	lastDirSep = file.lastIndexOf("\\");
     	lastDirSep = Math.max(lastDirSep, file.lastIndexOf("/"));
     	
-    	return file.substring(0, lastDirSep);
+    	if (lastDirSep == -1)
+    		return "";
+    	else
+    		return file.substring(0, lastDirSep);
     }
     
     /**
