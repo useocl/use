@@ -897,17 +897,17 @@ public final class Shell implements Runnable {
     	
     	if (f.isAbsolute()) {
     		result = filename;
-    		relativeNames.push(result);
+    		relativeNames.push("");
     	} else {
     		if (openFiles.isEmpty()) {
     			f = new File(filename);
     			result = filename;
-    			relativeNames.push(result);
+    			relativeNames.push(getPathWithoutFile(result));
     		} else {
     			File currentFile = openFiles.peek();
     			f = new File(currentFile.getParentFile(), filename);
     			
-    			relativeNames.push(relativeNames.peek() + filename);
+    			relativeNames.push(getPathWithoutFile(relativeNames.peek() + filename));
     			result = f.getAbsolutePath();
     		}
     	}
@@ -922,6 +922,14 @@ public final class Shell implements Runnable {
     	} else {
     		return relativeNames.peek();
     	}
+    }
+    
+    private String getPathWithoutFile(String file) {
+    	int lastDirSep = -1;
+    	lastDirSep = file.lastIndexOf("\\");
+    	lastDirSep = Math.max(lastDirSep, file.lastIndexOf("/"));
+    	
+    	return file.substring(0, lastDirSep);
     }
     
     /**
