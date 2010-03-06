@@ -920,7 +920,7 @@ public final class Shell implements Runnable {
     	if (relativeNames.isEmpty()) {
     		return "";
     	} else {
-    		return relativeNames.peek();
+    		return relativeNames.peek() + openFiles.peek().getName();
     	}
     }
     
