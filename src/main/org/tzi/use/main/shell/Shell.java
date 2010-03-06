@@ -886,6 +886,7 @@ public final class Shell implements Runnable {
      * All other files can be opened relatively to it.
      */
     private Stack<File> openFiles = new Stack<File>();
+    private Stack<String> relativeNames = new Stack<String>();
     
     private String getFilenameToOpen(String filename) {
     	if (filename.startsWith("\"") && filename.startsWith("\""))
@@ -896,19 +897,31 @@ public final class Shell implements Runnable {
     	
     	if (f.isAbsolute()) {
     		result = filename;
+    		relativeNames.push(result);
     	} else {
     		if (openFiles.isEmpty()) {
     			f = new File(filename);
     			result = filename;
+    			relativeNames.push(result);
     		} else {
     			File currentFile = openFiles.peek();
     			f = new File(currentFile.getParentFile(), filename);
+    			
+    			relativeNames.push(relativeNames.peek() + filename);
     			result = f.getAbsolutePath();
     		}
     	}
     	
     	openFiles.push(f);
     	return result;
+    }
+    
+    private String getRelativeFileNameOfCurrentFile() {
+    	if (relativeNames.isEmpty()) {
+    		return "";
+    	} else {
+    		return relativeNames.peek();
+    	}
     }
     
     /**
@@ -1124,7 +1137,7 @@ public final class Shell implements Runnable {
             if (Options.quiet || !doEcho)
 				fReadline = LineInput.getStreamReadline(reader, false, "");
             else
-				fReadline = LineInput.getStreamReadline(reader, true, filename + "> ");
+				fReadline = LineInput.getStreamReadline(reader, true, getRelativeFileNameOfCurrentFile() + "> ");
             fReadlineStack.push(fReadline);
             
         } catch (FileNotFoundException e) {
