@@ -932,7 +932,7 @@ public final class Shell implements Runnable {
     	if (lastDirSep == -1)
     		return "";
     	else
-    		return file.substring(0, lastDirSep);
+    		return file.substring(0, lastDirSep + 1);
     }
     
     /**
@@ -940,6 +940,7 @@ public final class Shell implements Runnable {
      */
     private void setFileClosed() {
     	openFiles.pop();
+    	relativeNames.pop();
     }
     
     /**
