@@ -1,0 +1,258 @@
+-- read library01.cmd
+
+open relativepath/library.use
+read relativepath/Szenario1/szenario1.cmd
+*relativepath/Szenario1/szenario1.cmd> !create ada:User
+*relativepath/Szenario1/szenario1.cmd> !openter ada init('Ada','NY')
+*precondition `freshUser' is true
+*relativepath/Szenario1/szenario1.cmd> read ../User/User_init.cmd
+*relativepath/Szenario1/../User/User_init.cmd> -- - - - - - - - - - - - - -  User::init(aName:String, anAddress:String)
+*relativepath/Szenario1/../User/User_init.cmd> !set self.name:=aName
+*relativepath/Szenario1/../User/User_init.cmd> !set self.address:=anAddress
+*relativepath/Szenario1/../User/User_init.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `attrsAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> ------------------------------------------------------------------------
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !create date:Book
+*relativepath/Szenario1/szenario1.cmd> !openter date init('Intro to DBS',Sequence{'Date'},1983)
+*precondition `freshBook' is true
+*relativepath/Szenario1/szenario1.cmd> open ../Book/Book_init.cmd
+*relativepath/Szenario1/../Book/Book_init.cmd> --  Book::init(aTitle:String, anAuthSeq:Sequence(String), aYear:Integer)
+*relativepath/Szenario1/../Book/Book_init.cmd> !set self.title:=aTitle
+*relativepath/Szenario1/../Book/Book_init.cmd> !set self.authSeq:=anAuthSeq
+*relativepath/Szenario1/../Book/Book_init.cmd> !set self.year:=aYear
+*relativepath/Szenario1/../Book/Book_init.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `attrsAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !create elNa:Book
+*relativepath/Szenario1/szenario1.cmd> !openter elNa init('Funds of DBS',Sequence{'Elmasri','Navathe'},1994)
+*precondition `freshBook' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Book/Book_init.cmd
+*relativepath/Szenario1/../Book/Book_init.cmd> --  Book::init(aTitle:String, anAuthSeq:Sequence(String), aYear:Integer)
+*relativepath/Szenario1/../Book/Book_init.cmd> !set self.title:=aTitle
+*relativepath/Szenario1/../Book/Book_init.cmd> !set self.authSeq:=anAuthSeq
+*relativepath/Szenario1/../Book/Book_init.cmd> !set self.year:=aYear
+*relativepath/Szenario1/../Book/Book_init.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `attrsAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> ------------------------------------------------------------------------
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !create dbs42:Copy
+*relativepath/Szenario1/szenario1.cmd> !openter dbs42 init('DBS42',date)
+*precondition `freshCopy' is true
+*precondition `bookOk' is true
+*relativepath/Szenario1/szenario1.cmd> open ../Copy/Copy_init.cmd
+*relativepath/Szenario1/../Copy/Copy_init.cmd> -- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !set self.signature:=aSignature
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !set self.numReturns:=0
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !insert (self,aBook) into BelongsTo
+*relativepath/Szenario1/../Copy/Copy_init.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `attrsAndLinkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !create dbs43:Copy
+*relativepath/Szenario1/szenario1.cmd> !openter dbs43 init('DBS43',date)
+*precondition `freshCopy' is true
+*precondition `bookOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_init.cmd
+*relativepath/Szenario1/../Copy/Copy_init.cmd> -- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !set self.signature:=aSignature
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !set self.numReturns:=0
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !insert (self,aBook) into BelongsTo
+*relativepath/Szenario1/../Copy/Copy_init.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `attrsAndLinkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !create dbs52:Copy
+*relativepath/Szenario1/szenario1.cmd> !openter dbs52 init('DBS52',elNa)
+*precondition `freshCopy' is true
+*precondition `bookOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_init.cmd
+*relativepath/Szenario1/../Copy/Copy_init.cmd> -- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !set self.signature:=aSignature
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !set self.numReturns:=0
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !insert (self,aBook) into BelongsTo
+*relativepath/Szenario1/../Copy/Copy_init.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `attrsAndLinkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !create dbs53:Copy
+*relativepath/Szenario1/szenario1.cmd> !openter dbs53 init('DBS53',elNa)
+*precondition `freshCopy' is true
+*precondition `bookOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_init.cmd
+*relativepath/Szenario1/../Copy/Copy_init.cmd> -- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !set self.signature:=aSignature
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !set self.numReturns:=0
+*relativepath/Szenario1/../Copy/Copy_init.cmd> !insert (self,aBook) into BelongsTo
+*relativepath/Szenario1/../Copy/Copy_init.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `attrsAndLinkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> ------------------------------------------------------------------------
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs42 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_borrow.cmd
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> !insert (aUser,self) into Borrows
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs42 return()
+*precondition `copyOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_return.cmd
+*relativepath/Szenario1/../Copy/Copy_return.cmd> -- - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return()
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !set self.numReturns:=self.numReturns+1
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !delete (self.user,self) from Borrows
+*relativepath/Szenario1/../Copy/Copy_return.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs42 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_borrow.cmd
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> !insert (aUser,self) into Borrows
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs42 return()
+*precondition `copyOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_return.cmd
+*relativepath/Szenario1/../Copy/Copy_return.cmd> -- - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return()
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !set self.numReturns:=self.numReturns+1
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !delete (self.user,self) from Borrows
+*relativepath/Szenario1/../Copy/Copy_return.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs43 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_borrow.cmd
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> !insert (aUser,self) into Borrows
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs43 return()
+*precondition `copyOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_return.cmd
+*relativepath/Szenario1/../Copy/Copy_return.cmd> -- - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return()
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !set self.numReturns:=self.numReturns+1
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !delete (self.user,self) from Borrows
+*relativepath/Szenario1/../Copy/Copy_return.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs43 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_borrow.cmd
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> !insert (aUser,self) into Borrows
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs43 return()
+*precondition `copyOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_return.cmd
+*relativepath/Szenario1/../Copy/Copy_return.cmd> -- - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return()
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !set self.numReturns:=self.numReturns+1
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !delete (self.user,self) from Borrows
+*relativepath/Szenario1/../Copy/Copy_return.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs43 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_borrow.cmd
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> !insert (aUser,self) into Borrows
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs52 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_borrow.cmd
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> !insert (aUser,self) into Borrows
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs52 return()
+*precondition `copyOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_return.cmd
+*relativepath/Szenario1/../Copy/Copy_return.cmd> -- - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return()
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !set self.numReturns:=self.numReturns+1
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !delete (self.user,self) from Borrows
+*relativepath/Szenario1/../Copy/Copy_return.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs52 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_borrow.cmd
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> !insert (aUser,self) into Borrows
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs52 return()
+*precondition `copyOk' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_return.cmd
+*relativepath/Szenario1/../Copy/Copy_return.cmd> -- - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return()
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !set self.numReturns:=self.numReturns+1
+*relativepath/Szenario1/../Copy/Copy_return.cmd> !delete (self.user,self) from Borrows
+*relativepath/Szenario1/../Copy/Copy_return.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkRemoved' is true
+*postcondition `numReturnsIncreased' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !openter dbs52 borrow(ada)
+*precondition `userOk' is true
+*precondition `notBorrowed' is true
+*relativepath/Szenario1/szenario1.cmd> read ../Copy/Copy_borrow.cmd
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> !insert (aUser,self) into Borrows
+*relativepath/Szenario1/../Copy/Copy_borrow.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `linkAssigned' is true
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> ------------------------------------------------------------------------
+*relativepath/Szenario1/szenario1.cmd> 
+*relativepath/Szenario1/szenario1.cmd> !create c:Clean
+*relativepath/Szenario1/szenario1.cmd> !set c.threshold:=2
+*relativepath/Szenario1/szenario1.cmd> !openter c exec()
+*precondition `thresholdPositive' is true
+*relativepath/Szenario1/szenario1.cmd> !set c.signaturesOfDeletedCopies:=Set{'DBS42'}
+*relativepath/Szenario1/szenario1.cmd> !destroy dbs42
+*relativepath/Szenario1/szenario1.cmd> !set c.copiesToBeDeleted:=Set{dbs43,dbs52}
+*relativepath/Szenario1/szenario1.cmd> !opexit
+*postcondition `oldAvailableCopiesDeletedImp' is true
+*postcondition `oldAvailableCopiesDeleted' is true
+*postcondition `oldUnavailableCopiesNoted' is true
+*relativepath/Szenario1/szenario1.cmd> 
+exit
