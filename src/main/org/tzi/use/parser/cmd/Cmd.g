@@ -28,6 +28,7 @@ package org.tzi.use.parser.cmd;
 import org.tzi.use.parser.base.BaseParser;
 import org.tzi.use.parser.use.*;
 import org.tzi.use.parser.ocl.*;
+import org.tzi.use.uml.sys.MShowHideCropCmd.Mode;
 }
 
 @lexer::header {
@@ -119,6 +120,9 @@ cmdStmt returns [ASTCmd n]
     | nC = opEnterCmd
     | nC = opExitCmd
     | nC = letCmd
+    | nC = showCmd
+    | nC = hideCmd
+    | nC = cropCmd
 	) { $n = $nC.n; }
     ;
 
@@ -259,7 +263,37 @@ letCmd returns [ASTCmd n]
      { $n = new ASTLetCmd($name, $t.n, $e.n); }
     ;
 
-
+/* --------------------------------------
+  Command to hide objects in diagrams
+*/
+hideCmd returns [ASTCmd n]
+:
+	'hide' (
+	    'all' { $n = new ASTShowHideAllCmd(Mode.HIDE); }
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.HIDE, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.HIDE, $ass, $objList.idList); }
+	  );
+	  
+/* --------------------------------------
+  Command to show objects in diagrams
+*/
+showCmd returns [ASTCmd n]
+:
+	'show' (
+	    'all' { $n = new ASTShowHideAllCmd(Mode.SHOW); }
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.SHOW, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.SHOW, $ass, $objList.idList); }
+	  );
+	  
+/* --------------------------------------
+  Command to crop objects in diagrams
+*/
+cropCmd returns [ASTCmd n]
+:
+	'crop' (
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.CROP, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.CROP, $ass, $objList.idList); }
+	  );
 /*
 --------- Start of file USEBase.gpart -------------------- 
 */

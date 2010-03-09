@@ -215,7 +215,8 @@ public final class Main {
 		}
 
 		// create thread for shell
-		Shell sh = Shell.getInstance(session, pluginRuntime);
+		Shell.createInstance(session, pluginRuntime);
+		Shell sh = Shell.getInstance();
 		Thread t = new Thread(sh);
 		t.start();
 

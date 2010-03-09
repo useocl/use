@@ -201,6 +201,8 @@ public abstract class Type {
         if (cs.size() == 1 ) 
             return cs.iterator().next();
 
+        // FIXME: Handle multiple inheritance
+        
         // search for a type that is less than or equal to all other types
         Type cType = null;
         Iterator<Type> it1 = cs.iterator();
@@ -211,7 +213,7 @@ public abstract class Type {
             
             while (it2.hasNext() ) {
                 Type t2 = it2.next();
-                if (! t1.isSubtypeOf(t2) )
+                if (! t2.isSubtypeOf(t1) )
                     continue outerLoop;
             }
             

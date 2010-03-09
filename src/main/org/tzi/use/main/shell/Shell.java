@@ -156,7 +156,7 @@ public final class Shell implements Runnable {
 	private Map<Map<String, String>, PluginShellCmdProxy> pluginCommands = new HashMap<Map<String, String>, PluginShellCmdProxy>();
 
 	private IRuntime fPluginRuntime;
-
+	
     /**
      * Constructs a new shell.
      */
@@ -176,10 +176,11 @@ public final class Shell implements Runnable {
 		}
     }
 
-	public static Shell getInstance(Session session, IRuntime pluginRuntime) {
-        if (fShell == null) {
-			fShell = new Shell(session, pluginRuntime);
-        }
+	public static void createInstance(Session session, IRuntime pluginRuntime) {
+		fShell = new Shell(session, pluginRuntime);
+	}
+	
+	public static Shell getInstance() {
         return fShell;
     }
 
@@ -213,7 +214,6 @@ public final class Shell implements Runnable {
             String line = "";
 
             // get current readline (may be e.g. console or file)
-            //fReadline = (Readline) fReadlineStack.peek();
             fReadline = fReadlineStack.getCurrentReadline();
             try {
                 if (fMultiLineMode) {
@@ -285,8 +285,7 @@ public final class Shell implements Runnable {
         try {
             processLine(line);
         } catch (NoSystemException ex) {
-			Log
-					.error("No System available. Please load a model before executing this command.");
+			Log.error("No System available. Please load a model before executing this command.");
         } catch (Exception ex) {
             System.err.println();
             String nl = Options.LINE_SEPARATOR;
@@ -302,7 +301,7 @@ public final class Shell implements Runnable {
 			// System.err.println("Project version: " +
 			// Options.PROJECT_VERSION);
             System.err.print("Stack trace: ");
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -317,8 +316,7 @@ public final class Shell implements Runnable {
         try {
             processLine("exit");
         } catch (NoSystemException ex) {
-			Log
-					.error("No System available. Please load a model before executing this command.");
+			Log.error("No System available. Please load a model before executing this command.");
         }
     }
 
@@ -338,9 +336,7 @@ public final class Shell implements Runnable {
                 int c = System.in.read();
                 if (c == 0x1b)
                     fStepMode = false;
-            } catch (IOException ex) {
-                //TODO: should this be silently ignored? [throw new Error(ex)?]
-            }
+            } catch (IOException ex) { }
         }
         if (line.startsWith("help") || line.endsWith("--help"))
             cmdHelp(line);
@@ -507,19 +503,14 @@ public final class Shell implements Runnable {
         MSystem system = system();
         List<MCmd> cmdList = CMDCompiler.compileCmdList(system.model(), system
 				.state(), line, "<input>", new PrintWriter(System.err));
-       
-        // compile errors?
-        String message = (new ShowHideExec(line)).exec(fSession);// jjjj
-        
-        if (!"".equals(message))
-        	System.out.println(message);
-        
+
         if (cmdList == null){
             return;
         }
 
         for (MCmd cmd : cmdList) {
             Log.trace(this, "--- Executing command: " + cmd);
+            
             try {
                 system.executeCmd(cmd);
                 fSession.executedCmd(cmd);

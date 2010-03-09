@@ -137,7 +137,7 @@ public final class Log {
     /**
      * Output routines.
      */
-    public static void println(String s) {
+    public static synchronized void println(String s) {
         if (fPrintTime ) {
             if (fDateFormat == null )
                 fDateFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM);
@@ -147,12 +147,12 @@ public final class Log {
         fDidOutput = true;
     }
     
-    public static void print(String s) {
+    public static synchronized void print(String s) {
         fOut.print(s);
         fDidOutput = true;
     }
     
-    public static void println() {
+    public static synchronized void println() {
         fOut.println();
         fDidOutput = true;
     }
@@ -160,7 +160,7 @@ public final class Log {
     /**
      * Print messages only if verbose flag is on.
      */
-    public static void verbose(String s) {
+    public static synchronized void verbose(String s) {
         if (fVerbose )
             println(s);
     }
@@ -168,16 +168,16 @@ public final class Log {
     /**
      * Print messages only if trace flag is on.
      */
-    public static void trace(String msg) {
+    public static synchronized void trace(String msg) {
         if (fTrace )
             println("* " + msg);
     }
 
-    public static void trace(Object location, String msg) {
+    public static synchronized void trace(Object location, String msg) {
         trace(location, msg, false);
     }
 
-    public static void trace(Object location, String msg, boolean flush) {
+    public static synchronized void trace(Object location, String msg, boolean flush) {
         if (fTrace) {
             String className = location.getClass().getName();
             if (className.startsWith("org.tzi.use") )
@@ -192,19 +192,19 @@ public final class Log {
     /**
      * Print error messages.
      */
-    public static void error(String s) {
+    public static synchronized void error(String s) {
         fErr.println("Error: " + s);
         fDidOutput = true;
     }
 
-    public static void error(Object location, String msg) {
+    public static synchronized void error(Object location, String msg) {
         String className = location.getClass().getName();
         String err = "error in " + className + ": " + msg;
         
         fErr.println(err);
     }
 
-    public static void error(Exception e) {
+    public static synchronized void error(Exception e) {
         String className = e.getClass().getName();
         String err = "exception " + className + ": " + e.getMessage();
         
@@ -216,7 +216,7 @@ public final class Log {
         fDidOutput = true;
     }
 
-    public static void error(String s, Exception e) {
+    public static synchronized void error(String s, Exception e) {
         String className = e.getClass().getName();
         String err = "exception " + className + ": " + s + " reason: " + e.getMessage();
         
@@ -229,7 +229,7 @@ public final class Log {
         fDidOutput = true;
     }
 
-	public static void warn(String string) {
+	public static synchronized void warn(String string) {
 		if (Log.isShowWarnings()) {
 			Log.println(string);
 		}
@@ -238,7 +238,7 @@ public final class Log {
     /**
      * Print debug messages.
      */
-    public static void debug(String s) {
+    public static synchronized void debug(String s) {
 		if (fDebug) {
 		    fDbg.println("Debug: " + s);
 		    fDidOutput = true;

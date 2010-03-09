@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,7 @@ import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
+import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.classselection.SelectedAssociationPathView;
 import org.tzi.use.gui.views.selection.classselection.SelectedClassPathView;
 import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
@@ -109,6 +111,7 @@ import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.cmd.CMDCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -116,6 +119,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MCmdCreateObjects;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MShowHideCropCmd;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StateChangeEvent;
@@ -203,6 +207,14 @@ public class MainWindow extends JFrame implements StateChangeListener {
                             enableUndo(cmd.name());
                     }
                 });
+                
+                if (cmd instanceof MShowHideCropCmd) {
+	                SwingUtilities.invokeLater(new Runnable() {
+	                    public void run() {
+	                    	handleShowHide(cmd);
+	                    }
+	                });
+                }
             }
         });
 
@@ -525,7 +537,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     private void close() {
         setVisible(false);
         dispose();
-		Shell.getInstance(fSession, fPluginRuntime).exit();
+		Shell.getInstance().exit();
     }
 
     /**
@@ -1573,34 +1585,15 @@ public class MainWindow extends JFrame implements StateChangeListener {
     /**
      * Creates some initial views and tiles them.
      */
-    // private void createInitialViews() {
-    // ActionEvent ev =
-    // new ActionEvent(this, 0, null);
-    // fActionViewCreateObjectCount.actionPerformed(ev);
-    // fActionViewCreateLinkCount.actionPerformed(ev);
-    // fActionViewCreateObjectDiagram.actionPerformed(ev);
-    // fActionViewCreateClassInvariant.actionPerformed(ev);
-    // fActionViewTile.actionPerformed(ev);
-    // fDesk.revalidate();
-    // }
     public static MainWindow create(Session session) {
 
 		return create(session, null);
 	}
 
 	public static MainWindow create(Session session, IRuntime pluginRuntime) {
-        // Object[] arr =
-        // GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-        // //Object[] arr =
-        // GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-        // for (int i = 0; i < arr.length; i++) {
-        // System.out.println(arr[i]);
-        // }
-
 		final MainWindow win = new MainWindow(session, pluginRuntime);
 
         win.pack();
-        // win.createInitialViews();
         win.setVisible(true);
         return win;
     }
@@ -1706,4 +1699,324 @@ public class MainWindow extends JFrame implements StateChangeListener {
         return opv;
     }
     
+    /**
+     * Executes a show hide command
+     * @param cmd
+     */
+    private void handleShowHide(MCmd cmd) {
+		MShowHideCropCmd command = (MShowHideCropCmd)cmd;
+		
+		switch (command.getMode()) {
+			case SHOW:
+				if (command.handleAll()) {
+					showAllObjects();
+				} else if (command.handleLink()) {
+					showLink(command.getAssociation(), command.getObjects());
+				} else {
+					showObjects(command.getObjects());
+				}
+				break;
+				
+			case HIDE:
+				if (command.handleAll()) {
+					hideAllObjects();
+				} else if (command.handleLink()) {
+					hideLink(command.getAssociation(), command.getObjects());
+				} else {
+					hideObjects(command.getObjects());
+				}
+				break;
+				
+			case CROP:
+				if (command.handleLink()) {
+					cropLink(command.getAssociation(), command.getObjects());
+				} else {
+					cropObjects(command.getObjects());
+				}
+				break;
+		};
+	}
+    
+    /**
+     * Shows all objects in every object diagram
+     */
+    private void showAllObjects() {
+    	for (NewObjectDiagramView view : this.getObjectDiagrams()) {
+			view.getDiagram().getHideAdmin().showAllHiddenElements();
+		}
+    }
+    
+    /**
+	 * Method hideAll hides all objects.
+	 */
+	void hideAllObjects() {
+		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
+			Iterator<?> itt = view.getDiagram().getGraph().iterator();
+			final HashSet<MObject> toHideObjects = new HashSet<MObject>();
+		
+			while (itt.hasNext()) { 
+				Object node = itt.next();
+				if (node instanceof ObjectNode) {
+					MObject mobj = ((ObjectNode) node).object();
+					toHideObjects.add(mobj);
+				}
+			}
+			
+			view.getDiagram().getHideAdmin().setValues("", toHideObjects).actionPerformed(null);
+		}
+	}
+	
+	/**
+	 * Method showLinks show the given links.
+	 */
+	private void showLink(MAssociation ass, List<MObject> objects) {
+		
+		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			Set<MObject> objectsToShow = new HashSet<MObject>();
+			
+			if (diag.getHiddenNodes() != null) {
+				Iterator<?> it = diag.getHiddenNodes().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+	
+					if (node instanceof MObject) {
+						MObject mobj = (MObject) node;
+						if (objects.contains(mobj)) {
+							objectsToShow.add(mobj);
+						}
+					}
+				}
+			}
+			
+			if (!objectsToShow.isEmpty()) {
+				diag.getHideAdmin().showHiddenElements(objectsToShow);
+			}
+		}
+	}
+	
+	private void hideLink(MAssociation association, List<MObject> objects) {
+		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			Set<MObject> objectsToHide = new HashSet<MObject>();
+			
+			if (diag.getGraph() != null) {
+				Iterator<?> it = diag.getGraph().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+
+					if (node instanceof ObjectNode) {
+						MObject mobj = ((ObjectNode) node).object();
+						if (objects.contains(mobj)) {
+							objectsToHide.add(mobj);
+						}
+					}
+				}
+				
+				if (!objectsToHide.isEmpty())
+					diag.getHideAdmin().setValues("", objectsToHide).actionPerformed(null);
+			}
+		}
+	}
+	
+	/**
+	 * Shows the given objects in all object diagrams
+	 * @param objects
+	 */
+	private void showObjects(List<MObject> objects) {
+		for (NewObjectDiagramView view : this.getObjectDiagrams()) { 
+			NewObjectDiagram diag = view.getDiagram();
+			Set<MObject> objectsToShow = new HashSet<MObject>();
+			
+			if (diag.getHiddenNodes() != null) {
+				Iterator<?> it = diag.getHiddenNodes().iterator();
+							
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof MObject) {
+						MObject mobj = (MObject) node;
+						
+						if (objects.contains(mobj)) {
+							objectsToShow.add(mobj);
+						}
+					}
+				}
+				
+				if (!objectsToShow.isEmpty()) {
+					diag.getHideAdmin().showHiddenElements(objectsToShow);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Hides the given objects in all object diagrams
+	 * @param objects
+	 */
+	private void hideObjects(List<MObject> objects) {
+		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			Set<MObject> objectsToHide = new HashSet<MObject>();
+			
+			if (diag.getGraph() != null) {
+				Iterator<?> it = diag.getGraph().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+	
+					if (node instanceof ObjectNode) {
+						MObject mobj = ((ObjectNode) node).object();
+
+						if (objects.contains(mobj)) {
+							objectsToHide.add(mobj);
+						}
+					}
+				}
+			
+				if (!objectsToHide.isEmpty()) {
+					diag.getHideAdmin().setValues("", objectsToHide).actionPerformed(null);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Shows only the given link in any object diagram
+	 * @param association
+	 * @param objects
+	 */
+	private void cropLink(MAssociation association, List<MObject> linkObjects) {
+		
+		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			HashSet<MObject> objects = new HashSet<MObject>();
+			
+			if (diag.getHiddenNodes() != null) {
+				Iterator<?> it = diag.getHiddenNodes().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof MObject) {
+						MObject mobj = (MObject) node;
+						if (linkObjects.contains(mobj)) {
+							objects.add(mobj);
+						}
+					}
+				}
+			}
+			
+			if (diag.getGraph() != null) {
+				Iterator<?> it = diag.getGraph().iterator();
+
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof ObjectNode) {
+						MObject mobj = ((ObjectNode) node).object();
+						if (linkObjects.contains(mobj)) {
+							objects.add(mobj);
+						}
+					}
+				}
+			}
+
+			Set<MObject> objectsToHide = getObjectsToHide(diag, objects, true);
+			if (!objectsToHide.isEmpty()) {
+				diag.getHideAdmin().setValues("Hide", objectsToHide).actionPerformed(null);
+			}
+			
+			Set<MObject> objectsToShow = getObjectsToShow(diag, objects);
+			if (!objectsToShow.isEmpty()) {
+				diag.getHideAdmin().showHiddenElements(objectsToShow);
+			}
+		}
+	}
+	
+	private void cropObjects(List<MObject> objectsToCrop) {
+		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
+			NewObjectDiagram diag = view.getDiagram();
+			HashSet<MObject> objects = new HashSet<MObject>();
+			
+			if (diag.getHiddenNodes() != null) {
+				Iterator<?> it = diag.getHiddenNodes().iterator();
+				
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof MObject) {
+						MObject mobj = (MObject) node;
+						if (objectsToCrop.contains(mobj)) {
+							objects.add(mobj);
+						}
+					}
+				}
+			}
+			
+			if (diag.getGraph() != null) {
+				Iterator<?> it = diag.getGraph().iterator();
+
+				while (it.hasNext()) {
+					Object node = it.next();
+					if (node instanceof ObjectNode) {
+						MObject mobj = ((ObjectNode) node).object();
+						if (objectsToCrop.contains(mobj)) {
+							objects.add(mobj);
+						}
+					}
+				}
+			}
+	
+			Set<MObject> objectsToHide = getObjectsToHide(diag, objects, true);
+			
+			if (objectsToHide.size() > 0) {
+				diag.getHideAdmin().setValues("Hide", objectsToHide).actionPerformed(null);
+			}
+			
+			Set<MObject> objectsToShow = getObjectsToShow(diag, objects);
+			
+			if (objectsToShow.size() > 0) {
+				diag.getHideAdmin().showHiddenElements(objectsToShow);
+			}
+		}
+	}
+	
+	private Set<MObject> getObjectsToHide(NewObjectDiagram diag, Set<MObject> objects, boolean isCrop) {
+		HashSet<MObject> objectsToHide = new HashSet<MObject>();
+		Iterator<?> ithide = diag.getGraph().iterator(); 
+	
+		while (ithide.hasNext()) {
+			Object node = ithide.next();
+			if (node instanceof ObjectNode) {
+				MObject mo = ((ObjectNode) node).object();
+				if (isCrop) {
+					if (!objects.contains(mo)) {
+						objectsToHide.add(mo);
+					}
+				} else {
+					if (objects.contains(mo)) {
+						objectsToHide.add(mo);
+					}
+				}
+			}
+		}
+		
+		return objectsToHide;
+	}
+
+	private Set<MObject> getObjectsToShow(NewObjectDiagram diag, Set<MObject> objects) {
+		Set<MObject> objectsToShow = new HashSet<MObject>();
+		Iterator<?> itshow = diag.getHiddenNodes().iterator(); // hidenode
+		
+		while (itshow.hasNext()) {
+			Object node = itshow.next();
+			if (node instanceof MObject) {
+				MObject mo = (MObject) node;
+				if (objects.contains(mo)) {
+					objectsToShow.add(mo);
+				}
+			}
+		}
+		
+		return objectsToShow;
+	}
 }

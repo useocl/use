@@ -83,6 +83,10 @@ public class Session {
         return fSystem != null;
     }
 
+    /**
+     * Raises executed event
+     * @param cmd
+     */
     public void executedCmd(MCmd cmd) {
         fireExecutedCmd(cmd);
     }

@@ -114,6 +114,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
         
         // Two or more values
+        Type lastCommonSupertype = values[0].type();
         Type commonSuperType = values[0].type();
     	Type t2;
     	
@@ -121,11 +122,14 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     		t2 = values[i].type();
     		commonSuperType = commonSuperType.getLeastCommonSupertype(t2);
     		
-    		if (commonSuperType == null)
-    			throw new ExpInvalidException("Type mismatch, " + this.getClass().toString() + " element " + 
-                        (i + 1) +
+    		if (commonSuperType == null) {
+    			throw new ExpInvalidException("Type mismatch, " + this.type().toString() + " element " + 
+                        (i + 1) + " (" + t2.toString() + ")" +
                         " does not have a common supertype " + 
-                        "with previous elements.");
+                        "with previous elements (" + lastCommonSupertype.toString() + ").");
+    		}
+    		
+    		lastCommonSupertype = commonSuperType;
     	}
     	
         // FIXME: deal with other cases: t1 < t, t2 < t, t1 and t2 unrelated.
