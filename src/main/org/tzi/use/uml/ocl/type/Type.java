@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 
 /**
@@ -200,27 +201,70 @@ public abstract class Type {
         // if there is only one common supertype return it
         if (cs.size() == 1 ) 
             return cs.iterator().next();
-
-        // FIXME: Handle multiple inheritance
+        
+        // For performance reasons: if oclAny and another type then the other type 
+        // is the least common supertype 
+        if (cs.size() == 2 && cs.contains(TypeFactory.mkOclAny())) {
+        	cs.remove(TypeFactory.mkOclAny());
+        	// Returns the only element
+        	return cs.iterator().next();
+        }
         
         // search for a type that is less than or equal to all other types
         Type cType = null;
-        Iterator<Type> it1 = cs.iterator();
-        outerLoop: 
-        while (it1.hasNext() ) {
-            Type t1 = it1.next();
-            Iterator<Type> it2 = cs.iterator();
-            
-            while (it2.hasNext() ) {
-                Type t2 = it2.next();
-                if (! t2.isSubtypeOf(t1) )
-                    continue outerLoop;
-            }
-            
-            cType = t1;
-            break;
+        if (this.isObjectType()) {
+        	// Object type and build in type have OclAny
+        	if (!type.isObjectType()) {
+        		// Collections are no subtypes of OclAny
+        		if (type.isCollection(true)) {
+        			return null;
+        		} else {
+        			return TypeFactory.mkOclAny();
+        		}
+        	}
+        	ObjectType oTypeThis = (ObjectType)this;
+        	ObjectType oTypeOther = (ObjectType)type;
+        	        	
+        	Set<MClass> superClassesThis = oTypeThis.cls().parents();
+        	Set<MClass> allSuperClassesOther = oTypeOther.cls().allParents();
+        	Set<MClass> commonClasses;
+        	
+        	while (!superClassesThis.isEmpty()) {
+        		commonClasses = new HashSet<MClass>(superClassesThis);
+        		commonClasses.retainAll(allSuperClassesOther);
+        		
+        		if (commonClasses.isEmpty()) {
+        			Set<MClass> nextIteration = new HashSet<MClass>();
+        			for (MClass cls : superClassesThis) {
+        				nextIteration.addAll(cls.parents());
+        			}
+        			
+        			superClassesThis = nextIteration;
+        		} else {
+        			// NOTE: We use the first class common to both!
+        			cType = TypeFactory.mkObjectType(commonClasses.iterator().next());
+        			break;
+        		}
+        	}
+        	
+        } else {
+	        Iterator<Type> it1 = cs.iterator();
+	        outerLoop: 
+	        while (it1.hasNext() ) {
+	            Type t1 = it1.next();
+	            Iterator<Type> it2 = cs.iterator();
+	            
+	            while (it2.hasNext() ) {
+	                Type t2 = it2.next();
+	                if (! t1.isSubtypeOf(t2) )
+	                    continue outerLoop;
+	            }
+	            
+	            cType = t1;
+	            break;
+	        }
         }
-    
+        
         return cType;
 	}
 }
