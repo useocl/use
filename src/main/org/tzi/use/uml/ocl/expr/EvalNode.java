@@ -304,7 +304,7 @@ public class EvalNode {
                     if (parts[j].length() > 0)
                         first = parts[j].charAt(parts[j].length() - 1);
                     char second = ' ';
-                    if (parts[j + 1] != null)
+                    if (parts[j + 1] != null && parts[j + 1].length() > 0)
                         second = parts[j + 1].charAt(0);
                     if (stoken.contains(new Character(first))
                             && stoken.contains(new Character(second)))
