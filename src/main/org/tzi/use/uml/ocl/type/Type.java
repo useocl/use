@@ -225,7 +225,9 @@ public abstract class Type {
         	ObjectType oTypeThis = (ObjectType)this;
         	ObjectType oTypeOther = (ObjectType)type;
         	        	
-        	Set<MClass> superClassesThis = oTypeThis.cls().parents();
+        	Set<MClass> superClassesThis = new HashSet<MClass>();
+        	superClassesThis.add(oTypeThis.cls());
+        	
         	Set<MClass> allSuperClassesOther = oTypeOther.cls().allParents();
         	allSuperClassesOther.add(oTypeOther.cls());
         	
