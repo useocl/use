@@ -2,8 +2,11 @@ package org.tzi.use.parser.base;
 
 import org.antlr.runtime.Parser;
 import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.tzi.use.parser.ParseErrorHandler;
+import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.Log;
 
 public class BaseParser extends Parser {
 
@@ -47,11 +50,21 @@ public class BaseParser extends Parser {
     
     /** Parser warning-reporting function */
     public void reportWarning(String s) {
-        if (getSourceName() == null) {
-            System.err.println("warning: " + s);
+        reportWarning(null, s);
+    }
+    
+    public void reportWarning(Token pos, String s) {
+    	StringBuilder warning = new StringBuilder();
+    	
+    	if (pos != null) {
+    		warning.append(new SrcPos(pos).toString()); 
+    	} else if (getSourceName() != null) {
+        	warning.append(getSourceName());
+        	warning.append(": ");
         }
-        else {
-            System.err.println(getSourceName() + ": warning: " + s);
-        }
+        
+    	warning.append("warning: ");
+        warning.append(s);
+        Log.warn(warning.toString());
     }
 }

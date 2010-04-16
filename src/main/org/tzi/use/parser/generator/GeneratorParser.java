@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2010-03-09 12:39:03
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Generator.g 2010-04-16 10:49:31
  
 /*
  * USE - UML based specification environment
@@ -5644,7 +5644,7 @@ import java.util.HashMap;
                     match(input,HASH,FOLLOW_HASH_in_literal4555); if (state.failed) return n;
                     enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal4559); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
-                       n = new ASTEnumLiteral(enumLit);  reportWarning("the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");
+                       n = new ASTEnumLiteral(enumLit);  reportWarning(enumLit, "the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");
                     }
 
                     }

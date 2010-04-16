@@ -55,6 +55,9 @@ public class Context {
     private boolean fInsidePostCondition;
     private List<String> fLoopVarNames;
     
+    // for test cases: in assert expressions invariant names are replaced by their expression
+    private boolean fIsAssertExpression;
+    
     // for UML AL
     private boolean fIsSideEffectFree;
 
@@ -162,5 +165,15 @@ public class Context {
     public void setIsSideEffectFree(boolean b) {
         fIsSideEffectFree = b;
     }
+
+
+	public boolean isAssertExpression() {
+		return fIsAssertExpression;
+	}
+
+
+	public void setIsAssertExpression(boolean fIsAssertExpression) {
+		this.fIsAssertExpression = fIsAssertExpression;
+	}
 
 }

@@ -70,9 +70,7 @@ import org.tzi.use.parser.ParseErrorHandler;
     public void init(ParseErrorHandler handler) {
         fParseErrorHandler = handler;
     }
-}
-
-// grammar for commands
+}// grammar for commands
 
 /* ------------------------------------
   cmdList ::= cmd { cmd }
@@ -85,7 +83,12 @@ cmdList returns [ASTCmdList cmdList]
     EOF
     ;
 
-
+embeddedCmdList returns [ASTCmdList cmdList]
+@init{ $cmdList = new ASTCmdList(); }
+:
+    ( c=cmd { cmdList.add($c.n); })+
+    ;
+    
 /* ------------------------------------
   cmd ::= cmdStmt [ ";" ]
 */
@@ -1038,7 +1041,7 @@ literal returns [ASTExpression n]
     | i=INT    { $n = new ASTIntegerLiteral($i); }
     | r=REAL   { $n = new ASTRealLiteral($r); }
     | s=STRING { $n = new ASTStringLiteral($s); }
-    | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit);  reportWarning("the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");}
+    | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit);  reportWarning($enumLit, "the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");}
     | enumName=IDENT '::' enumLit=IDENT { $n = new ASTEnumLiteral($enumName, $enumLit); }
     | nColIt=collectionLiteral { $n = $nColIt.n; }
     | nEColIt=emptyCollectionLiteral { $n = $nEColIt.n; }

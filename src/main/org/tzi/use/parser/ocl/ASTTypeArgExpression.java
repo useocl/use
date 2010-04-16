@@ -87,7 +87,8 @@ public class ASTTypeArgExpression extends ASTExpression {
 
         if (! expr.type().isCollection(true) ) {
             res = genExpr(expr, t);
-            if (! expr.type().isSubtypeOf(t) && ! t.isSubtypeOf(expr.type()) )
+            // Because of multiple inheritance only oclIsTypeOf results always in false when no relation is given  
+            if ((res instanceof ExpIsTypeOf) && ! expr.type().isSubtypeOf(t) && ! t.isSubtypeOf(expr.type()) )
                 ctx.reportWarning(fTargetType.getStartToken(), 
                                   "Expression is always false since the expression's type `" +
                                   expr.type() + 

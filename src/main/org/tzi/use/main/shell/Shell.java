@@ -59,6 +59,7 @@ import org.tzi.use.main.shell.runtime.IPluginShellCmd;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
 import org.tzi.use.parser.cmd.CMDCompiler;
 import org.tzi.use.parser.ocl.OCLCompiler;
+import org.tzi.use.parser.testsuite.TestSuiteCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.shell.impl.PluginShellCmdProxy;
 import org.tzi.use.uml.mm.MAssociation;
@@ -82,6 +83,7 @@ import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.testsuite.MTestSuite;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.NullWriter;
 import org.tzi.use.util.Report;
@@ -992,6 +994,8 @@ public final class Shell implements Runnable {
                 cmdOpenUseFile(token);
             } else if (firstWord.startsWith("context")) {
                 cmdGenLoadInvariants(token, system(), doEcho);
+            } else if (firstWord.startsWith("testsuite")) {
+            	cmdRunTestSuite(token);
             } else {
                 cmdRead(token, doEcho);
             }
@@ -1036,6 +1040,44 @@ public final class Shell implements Runnable {
         setFileClosed();
     }
 
+    private void cmdRunTestSuite(String file) {
+    	FileInputStream specStream = null;
+        String filename = getFilenameToOpen(file);
+        MTestSuite testSuite = null;
+        MModel model = null;
+        
+        try {
+        	model = system().model();
+        } catch (NoSystemException e) {
+        	Log.error("Cannot run test suite without a loaded model");
+        	return;
+        }
+        
+        try {
+            Log.verbose("compiling test suite...");
+            specStream = new FileInputStream(filename);
+            testSuite = TestSuiteCompiler.compileTestSuite(specStream, filename,
+                    new PrintWriter(System.err), model);
+        } catch (FileNotFoundException e) {
+            Log.error("File `" + filename + "' not found.");
+        } finally {
+            if (specStream != null)
+                try {
+                	specStream.close();
+                } catch (IOException ex) {}
+        }
+
+        // compile ok?
+        if (testSuite != null) {
+            PrintWriter output = new PrintWriter(Log.out());
+            Log.println(testSuite.getStats());
+            // create system
+            testSuite.run(output);
+        }
+        
+        setFileClosed();
+    }
+    
     /**
      * Performs a query.
      */
@@ -1053,8 +1095,7 @@ public final class Shell implements Runnable {
         InputStream stream = new ByteArrayInputStream(line.getBytes());
         
 		Expression expr = OCLCompiler.compileExpression(system.model(), stream,
-				"<input>", new PrintWriter(System.err), system
-						.topLevelBindings());
+				"<input>", new PrintWriter(System.err), system.topLevelBindings());
 
         // compile errors?
         if (expr == null)

@@ -29,18 +29,18 @@ import org.antlr.runtime.Token;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-class SrcPos {
+public class SrcPos {
     private String fSrcName;
     private int fLine;
     private int fColumn;
 
-    SrcPos(String srcName, int line, int column) {
+    public SrcPos(String srcName, int line, int column) {
         fSrcName = srcName;
         fLine = line;
         fColumn = column;
     }
 
-    SrcPos(Token token) {
+    public SrcPos(Token token) {
         fSrcName = token.getInputStream().getSourceName();
         fLine = token.getLine();
         fColumn = token.getCharPositionInLine();

@@ -24,6 +24,7 @@ package org.tzi.use.parser.ocl;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.ocl.expr.ExpConstEnum;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -51,6 +52,14 @@ public class ASTEnumLiteral extends ASTExpression {
         String literal = fValue.getText();
         EnumType t;
         
+        if (ctx.isAssertExpression() && fEnumType != null) {
+        	MClassInvariant inv = ctx.model().getClassInvariant(fEnumType.getText() + "::" + fValue.getText());
+        	
+        	if (inv != null) {
+        		return inv.expandedExpression();
+        	}
+        }
+        
         if (fEnumType == null) {
         	t = ctx.model().enumTypeForLiteral(literal);
         	if (t == null )
@@ -62,12 +71,12 @@ public class ASTEnumLiteral extends ASTExpression {
         	
         	if (t == null) {
         		throw new SemanticException(fEnumType,
-						"Undefined enumeration `" + enumType + "'.");
+						"Undefined enumeration " + (ctx.isAssertExpression() ? " or invariant " : "") + "`" + enumType + "'.");
         	}
         	
         	if (!t.getLiterals().contains(literal)) {
         		throw new SemanticException(fEnumType,
-						"Undefined enumeration literal `" + literal + "' for enumeration `" + enumType + "'.");
+						"Undefined enumeration literal " + (ctx.isAssertExpression() ? " or invariant " : "") + "`" + literal + "' for enumeration `" + enumType + "'.");
         	}
         }
         

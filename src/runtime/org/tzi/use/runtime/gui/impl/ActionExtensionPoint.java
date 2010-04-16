@@ -14,7 +14,7 @@ import org.tzi.use.runtime.util.ActionRegistry;
 
 /**
  * This class provides the implementation of the Action Extension Point.The
- * referenced interface should be locatd in the application elsewhere.
+ * referenced interface should be located in the application elsewhere.
  * 
  * @author Roman Asendorf
  */

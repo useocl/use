@@ -116,19 +116,29 @@
         <uptodate srcfile="${parser.dir}/base/USEBase.gpart" 
                   targetfile="${parser.dir}/use/USEParser.java"/>
 
-      	<!-- ocl parser grammar exists -->
+      	<!-- command language parser grammar exists -->
       	<available file="${parser.dir}/cmd/Cmd.g" />
       	
       	<!-- command language parser -->
         <uptodate srcfile="${parser.dir}/cmd/Cmd.gpart" 
                   targetfile="${parser.dir}/cmd/CmdParser.java"/>
 
-      	<!-- ocl parser grammar exists -->
+      	<uptodate srcfile="${parser.dir}/base/CmdBase.gpart" 
+      	                  targetfile="${parser.dir}/cmd/CmdParser.java"/>
+        	
+      	<!-- generator parser grammar exists -->
       	<available file="${parser.dir}/generator/Generator.g" />
       	
         <!-- generator parser -->
         <uptodate srcfile="${parser.dir}/generator/Generator.gpart" 
                   targetfile="${parser.dir}/generator/GeneratorParser.java"/>
+      	
+      	<!-- testsuite parser grammar exists -->
+      	<available file="${parser.dir}/testsuite/TestSuite.g" />
+      	
+        <!-- generator parser -->
+        <uptodate srcfile="${parser.dir}/testsuite/TestSuite.gpart" 
+                  targetfile="${parser.dir}/testsuite/TestSuiteParser.java"/>
 
       </and>
     </condition>
@@ -169,6 +179,7 @@
     <echo>Generating command line parser</echo>
   	<concat destfile="${parser.dir}/cmd/Cmd.g">
   		<fileset file="${parser.dir}/cmd/Cmd.gpart" />
+  		<fileset file="${parser.dir}/base/CmdBase.gpart" />
   		<fileset file="${parser.dir}/base/USEBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
@@ -192,6 +203,20 @@
       <arg line="Generator.g"/> 
     </java>
   	
+	<!-- test suite parser -->
+    <echo>Generating testsuite parser</echo>
+  	<concat destfile="${parser.dir}/testsuite/TestSuite.g">
+  	   <fileset file="${parser.dir}/testsuite/TestSuite.gpart" />
+  	   <fileset file="${parser.dir}/base/OCLBase.gpart" />
+  	   <fileset file="${parser.dir}/base/CmdBase.gpart" />
+  	   <fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
+  	</concat>
+  	
+    <java classname="org.antlr.Tool" dir="${parser.dir}/testsuite" fork="yes">
+      <classpath path="${antlr.jar}"/>
+      <arg line="-lib ../base TestSuite.g"/> 
+    </java>
+		
   	<!-- Some patching to avoid Warnings for generated code -->
   	<replaceregexp file="${parser.dir}/cmd/CmdLexer.java"
   		    match="^public class"
@@ -232,6 +257,16 @@
   	  	  	match="^public class"
   	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
   	  	  	flags="m" />
+		
+	<replaceregexp file="${parser.dir}/testsuite/TestSuiteLexer.java"
+	  	  	  	match="^public class"
+	  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+	  	  	  	flags="m" />
+		
+	<replaceregexp file="${parser.dir}/testsuite/TestSuiteParser.java"
+	  	  	  	match="^public class"
+	  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+	  	  	  	flags="m" />
   </target>
 
   <!-- compile USE sources -->

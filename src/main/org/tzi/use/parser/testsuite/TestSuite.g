@@ -1,10 +1,37 @@
-grammar OCL;
-
+grammar TestSuite;
 options {
   superClass = BaseParser;
 }
 
 @header { 
+/*
+ * USE - UML based specification environment
+ * Copyright (C) 1999-2010 Mark Richters, University of Bremen
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
+ */
+ 
+package org.tzi.use.parser.testsuite;
+
+import org.tzi.use.parser.base.BaseParser;
+import org.tzi.use.parser.cmd.*;
+import org.tzi.use.parser.ocl.*;
+import org.tzi.use.uml.sys.MShowHideCropCmd.Mode;
+}
+
+@lexer::header {
 /*
  * USE - UML based specification environment
  * Copyright (C) 1999-2004 Mark Richters, University of Bremen
@@ -23,24 +50,9 @@ options {
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
+ 
+package org.tzi.use.parser.testsuite;
 
-package org.tzi.use.parser.ocl; 
-
-// ------------------------------------
-//  USE OCL parser
-// ------------------------------------
-import org.tzi.use.parser.base.BaseParser;
-}
-
-@lexer::header
-{
-package org.tzi.use.parser.ocl; 
-
-// ------------------------------------
-// OCL lexer
-// ------------------------------------
-
-import java.io.PrintWriter;
 import org.tzi.use.parser.ParseErrorHandler;
 }
 
@@ -59,6 +71,56 @@ import org.tzi.use.parser.ParseErrorHandler;
         fParseErrorHandler = handler;
     }
 }
+
+// grammar for testsuite
+
+/* ------------------------------------
+  testSuite ::= 'testsuite' IDENT 'for' 'model' filename
+  				['setup'  cmdList 'end']
+  				['finish' cmdList 'end']
+  				tests*
+*/
+testSuite returns [ASTTestSuite suite]
+@init{
+  List setupStatements = new ArrayList();
+}
+:
+  'testsuite'
+    suiteName = IDENT { $suite = new ASTTestSuite($suiteName); }
+    
+  'for' 'model' 
+    modelFile=filename { $suite.setModelFile($suiteName); }
+    
+  ('setup' 
+  	('!' c = cmd { setupStatements.add($c.n); })* 'end' { $suite.setSetupStatements(setupStatements); }
+  )?
+     
+  tests = testCases { $suite.setTestCases($tests.testCases); }
+  
+  EOF
+;
+
+filename returns [String filename]
+:
+   name=IDENT '.' suffix=IDENT {$filename = $name.text + "." + $suffix.text;}
+;
+
+testCases returns [List testCases]
+@init { $testCases = new ArrayList(); }
+:
+  (test = testCase { $testCases.add($test.n); })+
+;
+
+testCase returns [ASTTestCase n]
+:
+  'testcase' name=IDENT { $n = new ASTTestCase($name); }
+  (
+      '!' c = cmd { $n.addStatement($c.n); } 
+    |
+      'assert' exp=expression { $n.addStatement(new ASTAssert($exp.n, input.LT(-1))); }
+   )*
+  'end'
+;
 /*
 --------- Start of file OCLBase.gpart -------------------- 
 */
@@ -673,7 +735,233 @@ tuplePart returns [ASTTuplePart n]
     name=IDENT COLON t=type
     { $n = new ASTTuplePart($name, $t.n); }
     ;
+// grammar for commands
 
+/* ------------------------------------
+  cmdList ::= cmd { cmd }
+*/
+cmdList returns [ASTCmdList cmdList]
+@init{ $cmdList = new ASTCmdList(); }
+:
+    c=cmd { cmdList.add($c.n); }
+    ( c=cmd { cmdList.add($c.n); } )*
+    EOF
+    ;
+
+embeddedCmdList returns [ASTCmdList cmdList]
+@init{ $cmdList = new ASTCmdList(); }
+:
+    ( c=cmd { cmdList.add($c.n); })+
+    ;
+    
+/* ------------------------------------
+  cmd ::= cmdStmt [ ";" ]
+*/
+cmd returns [ASTCmd n]
+:
+    stmt=cmdStmt { $n = $stmt.n; }( SEMI )?;
+
+
+/* ------------------------------------
+  cmdStmt ::= 
+      createCmd
+    | createAssignCmd 
+    | createInsertCmd
+    | destroyCmd 
+    | insertCmd 
+    | deleteCmd 
+    | setCmd 
+    | opEnterCmd
+    | opExitCmd
+    | letCmd
+*/
+cmdStmt returns [ASTCmd n]
+:
+	(
+      nC = createCmd
+    | nC = createAssignCmd 
+    | nC = createInsertCmd
+    | nC = destroyCmd
+    | nC = insertCmd
+    | nC = deleteCmd
+    | nC = setCmd
+    | nC = opEnterCmd
+    | nC = opExitCmd
+    | nC = letCmd
+    | nC = showCmd
+    | nC = hideCmd
+    | nC = cropCmd
+	) { $n = $nC.n; }
+    ;
+
+
+/* ------------------------------------
+  Creates one or more objects and binds variables to them.
+
+  createCmd ::= "create" idList ":" simpleType
+*/
+createCmd returns [ASTCmd n]
+:
+    'create' nIdList=idList 
+    COLON t=simpleType
+    { $n = new ASTCreateCmd($nIdList.idList, $t.n); }
+    ;
+
+/* ------------------------------------
+  Creates an anonymous object and assigns it to a variable.
+
+  createAssignCmd ::= "assign" idList ":=" "create" simpleType
+*/
+createAssignCmd returns [ASTCmd n]
+:
+    'assign' nIdList=idList COLON_EQUAL 'create' t=simpleType{ $n = new ASTCreateAssignCmd($nIdList.idList, $t.n); };
+
+
+/* ------------------------------------
+  Creates one or more objects and binds variables to them.
+
+  create ::= "create" id ":" simpleType "between" "(" idList ")"
+*/
+createInsertCmd returns [ASTCmd n]
+:
+    'create' id=IDENT COLON idAssoc=IDENT
+    'between' LPAREN idListInsert=idList RPAREN
+    { $n = new ASTCreateInsertCmd( $id, $idAssoc, $idListInsert.idList); }
+    ;
+
+
+/* ------------------------------------
+  Destroys one or more objects (expression may be a collection)
+
+  destroyCmd ::= "destroy" expression { "," expression }
+*/
+destroyCmd returns [ASTCmd n]
+@init { List exprList = new ArrayList(); }
+:
+     'destroy' e=expression { exprList.add($e.n); } 
+               ( COMMA e=expression { exprList.add($e.n); } )*
+    { $n = new ASTDestroyCmd(exprList); }
+    ;
+
+
+/* ------------------------------------
+  Inserts a link (tuple of objects) into an association.
+
+  insertCmd ::= "insert" "(" expression "," expression { "," expression } ")" "into" id
+*/
+insertCmd returns [ASTCmd n]
+@init{ List exprList = new ArrayList(); }
+:
+    'insert' LPAREN 
+    e=expression { exprList.add($e.n); } COMMA
+    e=expression { exprList.add($e.n); } ( COMMA e=expression { exprList.add($e.n); } )* 
+    RPAREN 'into' id=IDENT
+    { $n = new ASTInsertCmd(exprList, $id); }
+    ;
+
+
+/* ------------------------------------
+  Deletes a link (tuple of objects) from an association.
+
+  deleteCmd ::= "delete" "(" expression "," expression { "," expression } ")" "from" id
+*/
+deleteCmd returns [ASTCmd n]
+@init { List exprList = new ArrayList(); }
+:
+    'delete' LPAREN
+    e=expression { exprList.add($e.n); } COMMA
+    e=expression { exprList.add($e.n); } ( COMMA e=expression { exprList.add($e.n); } )*
+    RPAREN 'from' id=IDENT
+    { $n = new ASTDeleteCmd(exprList, $id); }
+    ;
+
+
+/* ------------------------------------
+
+  Assigns a value to an attribute of an object. The first "expression"
+  must be an attribute access expression giving an "l-value" for an
+  attribute.
+
+  setCmd ::= "set" expression ":=" expression 
+*/
+setCmd returns [ASTCmd n]
+:
+    'set' e1=expression COLON_EQUAL e2=expression
+    { $n = new ASTSetCmd($e1.n, $e2.n); }
+    ;
+
+
+/* ------------------------------------
+  A call of an operation which may have side-effects. The first
+  expression must have an object type.
+
+  opEnterCmd ::= 
+    "openter" expression id "(" [ expression { "," expression } ] ")" 
+*/
+opEnterCmd returns [ASTCmd n]
+@init{ASTOpEnterCmd nOpEnter = null;}
+:
+    'openter' 
+    e=expression id=IDENT { nOpEnter = new ASTOpEnterCmd($e.n, $id); $n = nOpEnter;}
+    LPAREN
+    ( e=expression { nOpEnter.addArg($e.n); } ( COMMA e=expression { nOpEnter.addArg($e.n); } )* )?
+    RPAREN 
+    ;
+
+/* ------------------------------------
+  Command to exit an operation. A result expression is required if the
+  operation to be exited declared a result type.
+
+  opExitCmd ::= "opexit" [ expression ]
+*/
+opExitCmd returns [ASTCmd n]
+:
+    'opexit' ((expression)=> e=expression | )
+    { $n = new ASTOpExitCmd($e.n); }
+    ;
+
+/* ------------------------------------
+  Command to bind a toplevel variable.
+
+  letCmd ::= "let" id [ ":" type ] "=" expression
+*/
+letCmd returns [ASTCmd n]
+:
+    'let' name=IDENT ( COLON t=type )? EQUAL e=expression
+     { $n = new ASTLetCmd($name, $t.n, $e.n); }
+    ;
+
+/* --------------------------------------
+  Command to hide objects in diagrams
+*/
+hideCmd returns [ASTCmd n]
+:
+	'hide' (
+	    'all' { $n = new ASTShowHideAllCmd(Mode.HIDE); }
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.HIDE, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.HIDE, $ass, $objList.idList); }
+	  );
+	  
+/* --------------------------------------
+  Command to show objects in diagrams
+*/
+showCmd returns [ASTCmd n]
+:
+	'show' (
+	    'all' { $n = new ASTShowHideAllCmd(Mode.SHOW); }
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.SHOW, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.SHOW, $ass, $objList.idList); }
+	  );
+	  
+/* --------------------------------------
+  Command to crop objects in diagrams
+*/
+cropCmd returns [ASTCmd n]
+:
+	'crop' (
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.CROP, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.CROP, $ass, $objList.idList); }
+	  );
 /*
 --------- Start of file OCLLexerRules.gpart -------------------- 
 */

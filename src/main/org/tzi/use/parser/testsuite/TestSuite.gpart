@@ -1,4 +1,4 @@
-grammar Cmd;
+grammar TestSuite;
 options {
   superClass = BaseParser;
 }
@@ -6,7 +6,7 @@ options {
 @header { 
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2004 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2010 Mark Richters, University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,10 +23,10 @@ options {
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
  
-package org.tzi.use.parser.cmd;
+package org.tzi.use.parser.testsuite;
 
 import org.tzi.use.parser.base.BaseParser;
-import org.tzi.use.parser.use.*;
+import org.tzi.use.parser.cmd.*;
 import org.tzi.use.parser.ocl.*;
 import org.tzi.use.uml.sys.MShowHideCropCmd.Mode;
 }
@@ -51,7 +51,7 @@ import org.tzi.use.uml.sys.MShowHideCropCmd.Mode;
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
  
-package org.tzi.use.parser.cmd;
+package org.tzi.use.parser.testsuite;
 
 import org.tzi.use.parser.ParseErrorHandler;
 }
@@ -71,3 +71,53 @@ import org.tzi.use.parser.ParseErrorHandler;
         fParseErrorHandler = handler;
     }
 }
+
+// grammar for testsuite
+
+/* ------------------------------------
+  testSuite ::= 'testsuite' IDENT 'for' 'model' filename
+  				['setup'  cmdList 'end']
+  				['finish' cmdList 'end']
+  				tests*
+*/
+testSuite returns [ASTTestSuite suite]
+@init{
+  List setupStatements = new ArrayList();
+}
+:
+  'testsuite'
+    suiteName = IDENT { $suite = new ASTTestSuite($suiteName); }
+    
+  'for' 'model' 
+    modelFile=filename { $suite.setModelFile($suiteName); }
+    
+  ('setup' 
+  	('!' c = cmd { setupStatements.add($c.n); })* 'end' { $suite.setSetupStatements(setupStatements); }
+  )?
+     
+  tests = testCases { $suite.setTestCases($tests.testCases); }
+  
+  EOF
+;
+
+filename returns [String filename]
+:
+   name=IDENT '.' suffix=IDENT {$filename = $name.text + "." + $suffix.text;}
+;
+
+testCases returns [List testCases]
+@init { $testCases = new ArrayList(); }
+:
+  (test = testCase { $testCases.add($test.n); })+
+;
+
+testCase returns [ASTTestCase n]
+:
+  'testcase' name=IDENT { $n = new ASTTestCase($name); }
+  (
+      '!' c = cmd { $n.addStatement($c.n); } 
+    |
+      'assert' exp=expression { $n.addStatement(new ASTAssert($exp.n, input.LT(-1))); }
+   )*
+  'end'
+;
