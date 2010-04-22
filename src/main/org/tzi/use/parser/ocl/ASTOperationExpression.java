@@ -165,7 +165,7 @@ public class ASTOperationExpression extends ASTExpression {
         }
 
         if (isPre() ) {
-            if (! ctx.insidePostCondition() ) 
+            if (! (ctx.insidePostCondition() || ctx.isInsideTestCase() )) 
                 throw new SemanticException(fOp, 
                                             "Modifier @pre is only allowed in postconditions.");
             res.setIsPre();

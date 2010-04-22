@@ -24,7 +24,6 @@ package org.tzi.use.parser.ocl;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.ocl.expr.ExpConstEnum;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -51,14 +50,6 @@ public class ASTEnumLiteral extends ASTExpression {
     public Expression gen(Context ctx) throws SemanticException {
         String literal = fValue.getText();
         EnumType t;
-        
-        if (ctx.isAssertExpression() && fEnumType != null) {
-        	MClassInvariant inv = ctx.model().getClassInvariant(fEnumType.getText() + "::" + fValue.getText());
-        	
-        	if (inv != null) {
-        		return inv.expandedExpression();
-        	}
-        }
         
         if (fEnumType == null) {
         	t = ctx.model().enumTypeForLiteral(literal);

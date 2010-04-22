@@ -21,6 +21,7 @@
 
 package org.tzi.use.parser.cmd;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
@@ -36,8 +37,9 @@ import org.tzi.use.uml.sys.MCmdOpExit;
  */
 public class ASTOpExitCmd extends ASTCmd {
     private ASTExpression fResultExpr; // (may be null)
-
-    public ASTOpExitCmd(ASTExpression result) {
+        
+    public ASTOpExitCmd(Token start, ASTExpression result) {
+    	super(start);
         fResultExpr = result;
     }
 
@@ -47,7 +49,7 @@ public class ASTOpExitCmd extends ASTCmd {
         if (fResultExpr != null )
             resultExpr = fResultExpr.gen(ctx);
 
-        res = new MCmdOpExit(ctx.systemState(), resultExpr);
+        res = new MCmdOpExit(getPosition(), ctx.systemState(), ctx.getOut(), resultExpr);
         return res;
     }
 }

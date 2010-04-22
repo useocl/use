@@ -64,7 +64,7 @@ association A_Element_AnnotatedElement_Comment_Comment between
 end
  
 association A_Relationship_Relationship_Element_RelatedElement between
-  Relationship[*] role relationship
+  Relationship[*] role relationship union
   Element[1..*] role relatedElement union
 end
 
@@ -328,6 +328,16 @@ end
 abstract class Classifier < RedefinableElement, Type, Namespace
   attributes
     isAbstract : Boolean
+  operations
+    parents(): Set(Classifier) =
+	  self.generalization.general->asSet()
+
+	allParents() : Set(Classifier) =
+	  self.parents()->union(self.parents()->collect(p | p.allParents()))->asSet()
+	  
+    conformsTo(other:Classifier) : Boolean = 
+	  (self=other) or (self.allParents()->includes(other))
+	
   constraints
     inv isAbstractDefined:
 	  self.isAbstract.isDefined()
@@ -360,7 +370,7 @@ end
 
 composition C_Classifier_Specific_Generalization_Generalization between
   Classifier[1] role specific subsets source subsets owner
-  Generalization[*]	role directGeneralizations subsets ownedElement
+  Generalization[*]	role generalization subsets ownedElement
 end
 
 association A_Classifier_Classifier_NamedElement_InheritedMember between
@@ -745,7 +755,7 @@ end
 --------------------------------------------------------------------------------------------------------
 -- Figure 7.17 - Contents of AssociationClasses package
 --------------------------------------------------------------------------------------------------------
-class AssociationClass < Class, Association
+class AssociationClass < Class --, Association
 end
 
 composition C_Property_AssociationEnd_Property_Qualifier between

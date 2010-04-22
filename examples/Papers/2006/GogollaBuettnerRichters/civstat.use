@@ -18,7 +18,7 @@ pre  freshUnlinkedPerson: name.isUndefined and civstat.isUndefined and
      gender.isUndefined and alive.isUndefined and
      wife.isUndefined and husband.isUndefined
 post nameAssigned: name=aName -- equivalent to 'aName=name'
-post civstatAssigned: civstat=#single
+post civstatAssigned: civstat=CivilStatus::single
 post genderAssigned: gender=aGender
 post isAliveAssigned: alive=true -- equivalent to 'alive'
 
@@ -26,35 +26,35 @@ marry(aSpouse:Person)
 pre  aSpouseDefined: aSpouse.isDefined
 pre  isAlive: alive
 pre  aSpouseAlive: aSpouse.alive
-pre  isUnmarried: civstat<>#married
-pre  aSpouseUnmarried: aSpouse.civstat<>#married
+pre  isUnmarried: civstat<>CivilStatus::married
+pre  aSpouseUnmarried: aSpouse.civstat<>CivilStatus::married
 pre  differentGenders: gender<>aSpouse.gender
-post isMarried: civstat=#married
-post femaleHasMarriedHusband: gender=#female implies
-     husband=aSpouse and husband.civstat=#married
-post maleHasMarriedWife: gender=#male implies
-     wife=aSpouse and wife.civstat=#married
+post isMarried: civstat=CivilStatus::married
+post femaleHasMarriedHusband: gender=Gender::female implies
+     husband=aSpouse and husband.civstat=CivilStatus::married
+post maleHasMarriedWife: gender=Gender::male implies
+     wife=aSpouse and wife.civstat=CivilStatus::married
 
 divorce()
-pre  isMarried: civstat=#married
+pre  isMarried: civstat=CivilStatus::married
 pre  isAlive: alive
-pre  husbandAlive: gender=#female implies husband.alive
-pre  wifeAlive: gender=#male implies wife.alive
-post isDivorced: civstat=#divorced
-post husbandDivorced: gender=#female implies
-     husband.isUndefined and husband@pre.civstat=#divorced
-post wifeDivorced: gender=#male implies
-     wife.isUndefined and wife@pre.civstat=#divorced
+pre  husbandAlive: gender=Gender::female implies husband.alive
+pre  wifeAlive: gender=Gender::male implies wife.alive
+post isDivorced: civstat=CivilStatus::divorced
+post husbandDivorced: gender=Gender::female implies
+     husband.isUndefined and husband@pre.civstat=CivilStatus::divorced
+post wifeDivorced: gender=Gender::male implies
+     wife.isUndefined and wife@pre.civstat=CivilStatus::divorced
 
 death()
 pre  isAlive: alive
 post notAlive: not(alive)
-post husbandWidowed: gender=#female and husband.isDefined implies
-     husband@pre.wife.isUndefined and husband@pre.civstat=#widowed
-post wifeWidowed: gender=#male and wife.isDefined implies
-     wife@pre.husband.isUndefined and wife@pre.civstat=#widowed
+post husbandWidowed: gender=Gender::female and husband.isDefined implies
+     husband@pre.wife.isUndefined and husband@pre.civstat=CivilStatus::widowed
+post wifeWidowed: gender=Gender::male and wife.isDefined implies
+     wife@pre.husband.isUndefined and wife@pre.civstat=CivilStatus::widowed
 
-spouse():Person=if gender=#female then husband else wife endif
+spouse():Person=if gender=Gender::female then husband else wife endif
 
 constraints
   inv attributesDefined: name.isDefined and civstat.isDefined and
@@ -71,8 +71,8 @@ constraints
         small->includes(name.substring(i,i)))
   inv nameIsUnique: Person.allInstances->forAll(self2|
       self<>self2 implies self.name<>self2.name)
-  inv femaleHasNoWife: gender=#female implies wife.isUndefined
-  inv maleHasNoHusband: gender=#male implies husband.isUndefined
+  inv femaleHasNoWife: gender=Gender::female implies wife.isUndefined
+  inv maleHasNoHusband: gender=Gender::male implies husband.isUndefined
 
 end
 

@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -61,7 +62,15 @@ public final class MCmdDestroyObjects extends MCmd {
      * a list of expressions.
      */
     public MCmdDestroyObjects(MSystemState systemState, Expression[] exprs) {
-        super(true);
+    	this(null, systemState, exprs);
+    }
+    
+    /**
+     * Creates a command for destroying objects whose names are given as
+     * a list of expressions.
+     */
+    public MCmdDestroyObjects(SrcPos pos, MSystemState systemState, Expression[] exprs) {
+        super(pos, true);
         fSystemState = systemState;
         fObjectExprs = exprs;
         fObjects = new ArrayList<MObject>();

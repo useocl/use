@@ -24,6 +24,7 @@ package org.tzi.use.uml.sys;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -54,12 +55,21 @@ public final class MCmdCreateInsertObjects extends MCmd implements CmdCreatesObj
     private MLinkObject fLinkObject;
 
     /**
-     * Creates a command for creating an instance of an associationclass and
+     * Creates a command for creating an instance of an association class and
      * binding them to identifiers which are given as a list of names.
      */
     public MCmdCreateInsertObjects( MSystemState systemState, String nameCreate,
                                     MAssociationClass assocClass, List<String> namesInsert ) {
-        super( true );
+    	this(null, systemState, nameCreate, assocClass, namesInsert);
+    }
+    
+    /**
+     * Creates a command for creating an instance of an association class and
+     * binding them to identifiers which are given as a list of names.
+     */
+    public MCmdCreateInsertObjects( SrcPos pos, MSystemState systemState, String nameCreate,
+                                    MAssociationClass assocClass, List<String> namesInsert ) {
+        super( pos, true );
         fSystemState = systemState;
         fVarNameCreate = nameCreate;
         fAssocClass = assocClass;

@@ -47,7 +47,10 @@ public class Context {
     private ExprContext fExprContext; 
     private int fErrorCount;
     private String fFilename;
+    
     private PrintWriter fErr;
+    private PrintWriter fOut;
+    
     private MModel fModel;
     private MClass fCurrentClass;
     private ModelFactory fModelFactory;
@@ -55,8 +58,11 @@ public class Context {
     private boolean fInsidePostCondition;
     private List<String> fLoopVarNames;
     
-    // for test cases: in assert expressions invariant names are replaced by their expression
+    // for test cases: in assert expressions invariant names 
+    // are replaced by their expression
     private boolean fIsAssertExpression;
+    
+    private boolean fIsInsideTestCase;
     
     // for UML AL
     private boolean fIsSideEffectFree;
@@ -66,15 +72,23 @@ public class Context {
                    ModelFactory factory) {
         fFilename = filename;
         fErr = err;
+        fOut = err;
         fVarTable = new Symtable(globalBindings);
         fTypeTable = new Symtable();
         fExprContext = new ExprContext();
         fModelFactory = factory;
         fLoopVarNames = new ArrayList<String>();
         fIsSideEffectFree = true;
-     }
+    }
 
-
+    public void setOut(PrintWriter out) {
+    	fOut = out;
+    }
+    
+    public PrintWriter getOut() {
+    	return fOut;
+    }
+    
     public List<String> loopVarNames() {
         return fLoopVarNames;
     }
@@ -153,6 +167,7 @@ public class Context {
     public void reportError(SemanticException ex) {
         fErrorCount++;
         fErr.println(ex.getMessage());
+        fErr.flush();
     }
     
 
@@ -176,4 +191,11 @@ public class Context {
 		this.fIsAssertExpression = fIsAssertExpression;
 	}
 
+	public void setIsInsideTestCase(boolean newValue) {
+		this.fIsInsideTestCase = newValue;
+	}
+	
+	public boolean isInsideTestCase() {
+		return this.fIsInsideTestCase;
+	}
 }

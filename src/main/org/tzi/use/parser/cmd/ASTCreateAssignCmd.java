@@ -37,13 +37,14 @@ import org.tzi.use.uml.sys.MCmdCreateAssignObjects;
  * Node of the abstract syntax tree constructed by the parser.
  *
  * @version     $ProjectVersion: 0.393 $
- * @author  Fabian Buettner
+ * @author  	Fabian Buettner
  */
 public class ASTCreateAssignCmd extends ASTCmd {
-    private List<Token> fIdList;   // (MyToken)
+	private List<Token> fIdList;
     private ASTType fType;
 
-    public ASTCreateAssignCmd(List<Token> idList, ASTType type) {
+    public ASTCreateAssignCmd(Token start, List<Token> idList, ASTType type) {
+    	super(start);
         fIdList = idList;
         fType = type;
     }
@@ -63,7 +64,7 @@ public class ASTCreateAssignCmd extends ASTCmd {
                     nameList.add(tok.getText());
                 }
 
-                return new MCmdCreateAssignObjects(ctx.systemState(), 
+                return new MCmdCreateAssignObjects(getPosition(), ctx.systemState(), 
                                              nameList, (ObjectType) t);
             }
         } catch (SemanticException ex) {
@@ -72,7 +73,8 @@ public class ASTCreateAssignCmd extends ASTCmd {
         return null;
     }
 
+    @Override
     public String toString() {
-        return "FIXME";
+        return "assign create";
     }
 }

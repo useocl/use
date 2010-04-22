@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -63,7 +64,17 @@ public final class MCmdDeleteLink extends MCmd {
     public MCmdDeleteLink(MSystemState systemState,
                           Expression[] exprs, 
                           MAssociation assoc) {
-        super(true);
+    	this(null, systemState, exprs, assoc);
+    }
+    
+    /**
+     * Creates a command for deleting a link.
+     */
+    public MCmdDeleteLink(SrcPos pos, 
+    					  MSystemState systemState,
+                          Expression[] exprs, 
+                          MAssociation assoc) {
+        super(pos, true);
         fSystemState = systemState;
         fObjectExprs = exprs;
         fAssociation = assoc;

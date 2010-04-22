@@ -28,6 +28,7 @@ import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.swing.event.EventListenerList;
 
@@ -63,9 +64,13 @@ public final class MSystem {
     private CommandProcessor fCommandProcessor; // executing state change commands
     protected EventListenerList fListenerList = new EventListenerList();
     private List<MOperationCall> fOperationCallStack; // stack of active operations
+    private MOperationCall lastOperationCall; // last called operation (used by test suite)
     private VarBindings fVarBindings; // top-level variable bindings
     private GGenerator fGenerator;    // snapshot generator
 
+    private Stack<MSystemState> variationPointsStates = new Stack<MSystemState>();
+    private Stack<VarBindings> variationPointsVars = new Stack<VarBindings>();
+    
     public MSystem(MModel model) {
         fModel = model;
         init();
@@ -315,6 +320,8 @@ public final class MSystem {
             }
         }
         opcall.exit(optionalResult, postOk);
+        lastOperationCall = opcall;
+        
         out.flush();
         try {
             opcall = popOperation();
@@ -323,6 +330,10 @@ public final class MSystem {
         }
     }
 
+    public MOperationCall getLastOperationCall() {
+    	return lastOperationCall;
+    }
+    
     /**
      * Notify all listeners that have registered interest for
      * notification on this event type.
@@ -456,4 +467,28 @@ public final class MSystem {
         fOperationCallStack.remove(stackSize - 1);
         return opcall;
     }
+    
+    /**
+     * Starts a new variation in a test case
+     */
+    public void beginVariation() {
+		// Store current system state on stack
+		variationPointsStates.push(this.fCurrentState);
+		variationPointsVars.push(this.fVarBindings);
+		
+		this.fCurrentState = new MSystemState(new UniqueNameGenerator().generate("variation#"), this.fCurrentState);
+		this.fVarBindings = new VarBindings(fVarBindings);
+	}
+	
+    /**
+     * Ends a variation in a test case
+     */
+	public void endVariation() throws MSystemException {
+		if (variationPointsStates.isEmpty()) {
+			throw new MSystemException("No Variation to end!");
+		}
+		
+		this.fCurrentState = variationPointsStates.pop();
+		this.fVarBindings = variationPointsVars.pop();
+	}
 }

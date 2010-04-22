@@ -1,0 +1,89 @@
+testsuite CivilStatus
+for model CivStat.use
+
+setup
+  !create ada:Person
+  !set ada.name := 'Ada'
+  !set ada.gender := Gender::female
+  !set ada.civstat := CivilStatus::single
+  !set ada.alive := true
+  
+  !create bob:Person
+  !set bob.name := 'Bob'
+  !set bob.gender := Gender::male
+  !set bob.civstat := CivilStatus::single
+  !set bob.alive := true
+  
+  !create cyd:Person
+  !set cyd.name := 'Cyd'
+  !set cyd.gender := Gender::male
+  !set cyd.civstat := CivilStatus::single
+  !set cyd.alive := true
+  
+  !create eve:Person
+  !set eve.name := 'Eve'
+  !set eve.gender := Gender::female
+  !set eve.civstat := CivilStatus::single
+  !set eve.alive := true
+end
+
+testcase testSetUp
+   assert valid Person.allInstances()->size() = 4, 'Four persons created'
+   
+   assert valid Person.allInstances()->select(p | 
+     p.gender = Gender::female)->size() = 2
+   
+   assert valid Person.allInstances()->select(p | 
+     p.gender = Gender::male)->size() = 2
+   
+   assert valid Person::attributesDefined
+   assert valid Person::nameCapitalThenSmallLetters
+   
+   assert valid invs
+end
+
+testcase uniqueNames
+  beginVariation
+	!create ada2:Person
+	!set ada2.name := 'Ada'
+	assert invalid inv Person::nameIsUnique
+	assert valid Person.allInstances()->size() = 5
+	beginVariation
+	  !create ada3:Person
+	  !set ada3.name := 'Ada'
+	  assert invalid inv Person::nameIsUnique
+	  assert valid Person.allInstances()->size() = 6
+	endVariation
+	assert valid Person.allInstances()->size() = 5
+  endVariation
+  
+  assert valid inv Person::nameIsUnique
+  assert valid Person.allInstances()->size() = 4
+end
+
+testcase excludeBigamie
+  !insert (bob, cyd) into Marriage
+  assert invalid inv Person::maleHasNoHusband
+  !insert (eve, ada) into Marriage
+  assert invalid Person::femaleHasNoWife
+  !delete (bob, cyd) from Marriage
+  !delete (eve, ada) from Marriage
+  
+  !insert (ada, cyd) into Marriage
+  assert valid inv Person::maleHasNoHusband
+  assert valid inv Person::femaleHasNoWife
+end
+
+testcase marriageKeepsGender
+  !openter ada marry(bob)
+    !insert (ada, bob) into Marriage
+    assert valid ada.husband.isDefined()
+    assert valid ada.husband = bob
+    !set ada.civstat := CivilStatus::married
+    !set bob.civstat := CivilStatus::married
+  !opexit
+  
+  assert valid bob.gender@pre=bob.gender, 'Husband gender did not change'
+  assert valid bob.wife@pre.isUndefined(), 'Husband had no wife'
+  assert valid Person.allInstances->forAll(p|p.gender@pre=p.gender)
+end

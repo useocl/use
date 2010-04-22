@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2010-04-16 10:49:28
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2010-04-22 16:12:28
 
 package org.tzi.use.parser.ocl; 
 

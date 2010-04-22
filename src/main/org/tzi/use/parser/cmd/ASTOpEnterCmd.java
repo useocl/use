@@ -49,8 +49,9 @@ public class ASTOpEnterCmd extends ASTCmd {
     private Token fOp;
     private List<ASTExpression> fArgs; 
 
-    public ASTOpEnterCmd(ASTExpression source, Token op) {
-        fSrcExpr = source;
+    public ASTOpEnterCmd(Token start, ASTExpression source, Token op) {
+        super(start);
+    	fSrcExpr = source;
         fOp = op;
         fArgs = new ArrayList<ASTExpression>();
     }
@@ -101,7 +102,12 @@ public class ASTOpEnterCmd extends ASTCmd {
         }
 
         MOperationCall opcall = new MOperationCall(objExp, op, argExprs);
-        res = new MCmdOpEnter(ctx.systemState(), opcall);
+        res = new MCmdOpEnter(getPosition(), ctx, opcall);
         return res;
     }
+
+	@Override
+	public String toString() {
+		return "openter";
+	}
 }

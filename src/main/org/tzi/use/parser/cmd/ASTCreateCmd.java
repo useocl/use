@@ -40,11 +40,12 @@ import org.tzi.use.uml.sys.MCmdCreateObjects;
  * @author  Mark Richters
  */
 public class ASTCreateCmd extends ASTCmd {
-    private List<Token> fIdList;   // (MyToken)
+	private List<Token> fIdList;
     private ASTType fType;
 
-    public ASTCreateCmd(List<Token> idList, ASTType type) {
-        fIdList = idList;
+    public ASTCreateCmd(Token start, List<Token> idList, ASTType type) {
+        super(start);
+    	fIdList = idList;
         fType = type;
     }
 
@@ -62,7 +63,7 @@ public class ASTCreateCmd extends ASTCmd {
                     nameList.add(tok.getText());
                 }
 
-                return new MCmdCreateObjects(ctx.systemState(), 
+                return new MCmdCreateObjects(getPosition(), ctx.systemState(), 
                                                    nameList, (ObjectType) t);
             }
         } catch (SemanticException ex) {
@@ -71,7 +72,8 @@ public class ASTCreateCmd extends ASTCmd {
         return null;
     }
 
+    @Override
     public String toString() {
-        return "FIXME";
+        return "create";
     }
 }

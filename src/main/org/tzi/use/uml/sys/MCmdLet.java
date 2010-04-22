@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
@@ -41,8 +42,14 @@ public final class MCmdLet extends MCmd {
     private Expression fExpr;
 
     public MCmdLet(MSystemState systemState, 
+            	   String var, Type type, Expression expr) {
+    	this(null, systemState, var, type, expr);
+    }
+    
+    public MCmdLet(SrcPos pos, 
+    			   MSystemState systemState, 
                    String var, Type type, Expression expr) {
-        super(true);
+        super(pos, true);
         fSystemState = systemState;
         fVar = var;
         fType = type;

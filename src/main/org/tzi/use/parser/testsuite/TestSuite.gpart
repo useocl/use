@@ -28,7 +28,7 @@ package org.tzi.use.parser.testsuite;
 import org.tzi.use.parser.base.BaseParser;
 import org.tzi.use.parser.cmd.*;
 import org.tzi.use.parser.ocl.*;
-import org.tzi.use.uml.sys.MShowHideCropCmd.Mode;
+import org.tzi.use.uml.sys.MCmdShowHideCrop.Mode;
 }
 
 @lexer::header {
@@ -117,7 +117,50 @@ testCase returns [ASTTestCase n]
   (
       '!' c = cmd { $n.addStatement($c.n); } 
     |
-      'assert' exp=expression { $n.addStatement(new ASTAssert($exp.n, input.LT(-1))); }
+      a=assertStatement { $n.addStatement($a.n); }
+    |
+      b='beginVariation' { $n.addStatement(new ASTVariationStart($b)); }
+    |
+      e='endVariation' { $n.addStatement(new ASTVariationEnd($e)); }
    )*
   'end'
+;
+
+assertStatement returns [ASTAssert n]
+@init{ boolean valid = true; }
+:
+  s='assert'
+  ('valid' { valid = true; } | 'invalid' {valid = false; })
+  (
+      exp = expression { $n = new ASTAssertOclExpression($exp.n.getStartToken(), input.LT(-1), valid, $exp.n); }
+    |
+      'invs' { $n = new ASTAssertGlobalInvariants($s, input.LT(-1), valid); }
+    |
+      'invs' classname=IDENT { $n = new ASTAssertClassInvariants($s, input.LT(-1), valid, $classname); }
+    |
+      'inv' classname=IDENT COLON_COLON invname=IDENT { $n = new ASTAssertSingleInvariant($s, input.LT(-1), valid, $classname, $invname); }
+    |
+      pre = assertionStatementPre[s=$s, valid=valid] {$n = $pre.n; }
+    |
+      post = assertionStatementPost[s=$s, valid=valid] {$n = $post.n; }
+  )
+  (
+    COMMA msg=STRING { $n.setMessage($msg); }
+  )?
+;
+
+assertionStatementPre[Token s, boolean valid] returns [ASTAssertPre n]
+:
+  'pre' objExp=expression opName=IDENT { $n = new ASTAssertPre($s, null, $valid, $objExp.n, $opName); }
+  LPAREN 
+    ( e=expression { $n.addArg($e.n); } ( COMMA e=expression { $n.addArg($e.n); } )* )? 
+  RPAREN (COLON_COLON name=IDENT { $n.setConditionName($name); } )?
+  { $n.setEnd(input.LT(-1)); }
+;
+
+assertionStatementPost[Token s, boolean valid] returns [ASTAssertPost n]
+:
+  'post' { $n = new ASTAssertPost($s, null, $valid); }
+  (name=IDENT { $n.setConditionName($name); } )?
+  { $n.setEnd(input.LT(-1)); }
 ;

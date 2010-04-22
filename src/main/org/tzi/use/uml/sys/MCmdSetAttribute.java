@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.ExpAttrOp;
@@ -55,7 +56,17 @@ public final class MCmdSetAttribute extends MCmd {
     public MCmdSetAttribute(MSystemState systemState, 
                             ExpAttrOp attrExpr,
                             Expression setExpr) {
-        super(true);
+    	this(null, systemState, attrExpr, setExpr);
+    }
+    
+    /**
+     * Creates a command for setting an attribute values.
+     */
+    public MCmdSetAttribute(SrcPos pos, 
+    						MSystemState systemState, 
+                            ExpAttrOp attrExpr,
+                            Expression setExpr) {
+        super(pos, true);
         fSystemState = systemState;
         fAttrExpr = attrExpr;
         fSetExpr = setExpr;

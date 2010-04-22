@@ -23,10 +23,10 @@ package org.tzi.use.uml.sys;
 
 import java.io.PrintWriter;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.cmd.CannotUndoException;
 import org.tzi.use.util.cmd.CommandFailedException;
 
@@ -44,10 +44,17 @@ public final class MCmdOpExit extends MCmd {
     private MOperationCall fOpCall;
     private MSystemState fSystemStateBeforeExit;
 
-    public MCmdOpExit(MSystemState systemState, Expression resultExpr) {
-        super(true);
+    private PrintWriter output;
+    
+    public MCmdOpExit(MSystemState systemState, PrintWriter output, Expression resultExpr) {
+    	this(null, systemState, output, resultExpr);
+    }
+    
+    public MCmdOpExit(SrcPos pos, MSystemState systemState, PrintWriter output, Expression resultExpr) {
+        super(pos, true);
         fSystemState = systemState;
         fResultExpr = resultExpr;
+        this.output = output; 
     }
 
     /** 
@@ -66,7 +73,7 @@ public final class MCmdOpExit extends MCmd {
         try {
             fOpCall = system.activeOperation();
             fSystemStateBeforeExit = system.state();
-            system.exitOperation(result, new PrintWriter(Log.out()));
+            system.exitOperation(result, output);
         } catch (MSystemException ex) {
             throw new CommandFailedException(ex.getMessage());
         }

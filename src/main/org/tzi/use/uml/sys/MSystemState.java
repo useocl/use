@@ -117,7 +117,7 @@ public final class MSystemState {
 	/**
 	 * Creates a copy of an existing system state.
 	 */
-	MSystemState(String name, MSystemState x) {
+	public MSystemState(String name, MSystemState x) {
 		fName = name;
 		fSystem = x.fSystem;
 
@@ -816,7 +816,7 @@ public final class MSystemState {
 				}
 				invList.add(inv);
 				exprList.add(expr);
-				System.out.println("GeneratorInvariants: " + inv);
+				out.println("GeneratorInvariants: " + inv);
 			}
 		} else if (invNames.isEmpty()) {
 			// get all invariants

@@ -119,7 +119,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MCmdCreateObjects;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MShowHideCropCmd;
+import org.tzi.use.uml.sys.MCmdShowHideCrop;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StateChangeEvent;
@@ -208,7 +208,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
                     }
                 });
                 
-                if (cmd instanceof MShowHideCropCmd) {
+                if (cmd instanceof MCmdShowHideCrop) {
 	                SwingUtilities.invokeLater(new Runnable() {
 	                    public void run() {
 	                    	handleShowHide(cmd);
@@ -1704,7 +1704,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
      * @param cmd
      */
     private void handleShowHide(MCmd cmd) {
-		MShowHideCropCmd command = (MShowHideCropCmd)cmd;
+		MCmdShowHideCrop command = (MCmdShowHideCrop)cmd;
 		
 		switch (command.getMode()) {
 			case SHOW:

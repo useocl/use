@@ -21,21 +21,41 @@
 
 package org.tzi.use.parser.cmd;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.sys.MCmd;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
  * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author  	Mark Richters
  */
 
 public abstract class ASTCmd extends AST {
-    /**
+	
+	/**
+	 * Start position of the command 
+	 */
+	private SrcPos start;
+	
+	/**
+	 * Default constructor with position information
+	 * @param start
+	 */
+	public ASTCmd(Token start) {
+		this.start = new SrcPos(start);
+	}
+	
+	/**
      * Generates a command.
      */
     public abstract MCmd gen(Context ctx) throws SemanticException;
+    
+    public SrcPos getPosition() {
+    	return this.start;
+    }
 }

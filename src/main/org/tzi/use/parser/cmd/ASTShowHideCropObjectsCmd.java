@@ -9,8 +9,8 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MShowHideCropCmd;
-import org.tzi.use.uml.sys.MShowHideCropCmd.Mode;
+import org.tzi.use.uml.sys.MCmdShowHideCrop;
+import org.tzi.use.uml.sys.MCmdShowHideCrop.Mode;
 
 public class ASTShowHideCropObjectsCmd extends ASTCmd {
 
@@ -18,7 +18,8 @@ public class ASTShowHideCropObjectsCmd extends ASTCmd {
 	private Token className;
 	private Mode mode;
 	
-	public ASTShowHideCropObjectsCmd(Mode mode, List<Token> objectNames, Token className) {
+	public ASTShowHideCropObjectsCmd(Token start, Mode mode, List<Token> objectNames, Token className) {
+		super(start);
 		this.objectNames = objectNames;
 		this.mode = mode;
 		this.className = className;
@@ -51,7 +52,7 @@ public class ASTShowHideCropObjectsCmd extends ASTCmd {
 			 objects.add(obj);
 		}
 		
-		return new MShowHideCropCmd(mode, objects);
+		return new MCmdShowHideCrop(getPosition(), mode, objects);
 	}
 
 }

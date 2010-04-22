@@ -23,6 +23,7 @@ package org.tzi.use.parser.cmd;
 
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
@@ -36,12 +37,13 @@ import org.tzi.use.uml.sys.MCmdDestroyObjects;
  * Node of the abstract syntax tree constructed by the parser.
  *
  * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author		Mark Richters
  */
 public class ASTDestroyCmd extends ASTCmd {
     private List<ASTExpression> fExprList;
     
-    public ASTDestroyCmd(List<ASTExpression> exprList) {
+    public ASTDestroyCmd(Token start, List<ASTExpression> exprList) {
+    	super(start);
         fExprList = exprList;
     }
 
@@ -62,6 +64,11 @@ public class ASTDestroyCmd extends ASTCmd {
                                             "found `" + expr.type() + "'."); 
             }   
         }
-        return new MCmdDestroyObjects(ctx.systemState(), exprs); 
-    }        
+        return new MCmdDestroyObjects(getPosition(), ctx.systemState(), exprs); 
+    }
+
+	@Override
+	public String toString() {
+		return "destroy";
+	}
 }

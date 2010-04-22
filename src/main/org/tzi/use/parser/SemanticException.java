@@ -61,8 +61,21 @@ public class SemanticException extends Exception {
     public SemanticException(Token token, Exception ex) {
         this(token, ex.getMessage());
     }
+
     
+    /**
+     * Returns the source informations and the description of the exception 
+     */
+    @Override
     public String getMessage() {
         return fSrcPos + super.getMessage();
+    }
+    
+    /**
+     * Returns only the exception message without source information.
+     * @return description of the exception 
+     */
+    public String getShortMessage() {
+        return super.getMessage();
     }
 }

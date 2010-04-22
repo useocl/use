@@ -39,12 +39,13 @@ import org.tzi.use.uml.sys.MCmdCreateInsertObjects;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
 public class ASTCreateInsertCmd extends ASTCmd {
-    private Token fNameCreate;
+	private Token fNameCreate;
     private List<Token> fIdListInsert;
     private Token fAssocClassName;
 
-    public ASTCreateInsertCmd( Token nameCreate, Token assocClassName, 
+    public ASTCreateInsertCmd( Token start, Token nameCreate, Token assocClassName, 
                                List<Token> idListInsert ) {
+    	super(start);
         fNameCreate = nameCreate;
         fAssocClassName = assocClassName;
         fIdListInsert = idListInsert;
@@ -72,7 +73,8 @@ public class ASTCreateInsertCmd extends ASTCmd {
             for (Token tok : fIdListInsert) {
                 nameListInsert.add( tok.getText() );
             }
-            return new MCmdCreateInsertObjects( ctx.systemState(),
+            return new MCmdCreateInsertObjects( getPosition(), 
+            									ctx.systemState(),
                                                 fNameCreate.getText(),
                                                 assocClass, nameListInsert );
         } catch ( SemanticException ex ) {
@@ -81,7 +83,8 @@ public class ASTCreateInsertCmd extends ASTCmd {
         return null;
     }
 
+    @Override
     public String toString() {
-        return "FIXME";
+        return "create insert";
     }
 }

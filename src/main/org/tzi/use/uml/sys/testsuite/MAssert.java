@@ -1,36 +1,41 @@
 package org.tzi.use.uml.sys.testsuite;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MSystemException;
 
-public class MAssert {
-	private Expression expression;
+public abstract class MAssert {
 	private String expressionString;
+	private String message;
+	private SrcPos position;
+	private boolean shouldBeValid;
 	
-	private int line;
-	
-	public MAssert(int line, String expressionString, Expression exp) {
-		this.expression = exp;
-		this.line = line;
+	public MAssert(SrcPos position, String expressionString, String message, boolean shouldBeValid) {
+		this.position = position;
 		this.expressionString = expressionString;
+		this.message = (message == null ? null : message.substring(1, message.length() - 1));
+		this.shouldBeValid = shouldBeValid;
 	}
 	
 	public String getExpressionString() {
 		return expressionString;
 	}
 	
-	public int getLine() {
-		return this.line;
+	public SrcPos getPosition() {
+		return this.position;
 	}
 	
-	public boolean eval(EvalContext ctx) {
-		Value v = this.expression.eval(ctx);
-		
-		if (v.isBoolean())
-			return ((BooleanValue)v).value();
-		else
-			return false;
+	public String getMessage() {
+		return this.message;
+	}
+	
+	public boolean shouldBeValid() {
+		return this.shouldBeValid;
+	}
+	
+	protected abstract boolean doEval(EvalContext ctx) throws MSystemException;
+	
+	public boolean eval(EvalContext ctx) throws MSystemException {
+		return shouldBeValid == doEval(ctx);
 	}
 }

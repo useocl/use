@@ -23,8 +23,9 @@ package org.tzi.use.uml.sys;
 
 import java.io.PrintWriter;
 
+import org.tzi.use.parser.Context;
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.cmd.CannotUndoException;
 import org.tzi.use.util.cmd.CommandFailedException;
@@ -42,11 +43,18 @@ public final class MCmdOpEnter extends MCmd {
 
     private boolean fSuccessful;
 
-    public MCmdOpEnter(MSystemState systemState, MOperationCall opCall) {
-        super(true);
-        fSystemState = systemState;
+    private PrintWriter output;
+    
+    public MCmdOpEnter(Context ctx, MOperationCall opCall) {
+    	this(null, ctx, opCall);
+    }
+    
+    public MCmdOpEnter(SrcPos pos, Context ctx, MOperationCall opCall) {
+        super(pos, true);
+        fSystemState = ctx.systemState();
         fOpCall = opCall;
         fSuccessful = false;
+        output = ctx.getOut();
     }
 
     public MOperationCall operationCall() {
@@ -64,10 +72,7 @@ public final class MCmdOpEnter extends MCmd {
      *                if the command failed.
      */
     public void doExecute() throws CommandFailedException {
-        fSuccessful = fSystemState.system().enterOperation(fOpCall,
-                new PrintWriter(Log.out()));
-        // fSystemState.system().enterOperation(fOpCall, new
-        // PrintWriter(Log.out()));
+        fSuccessful = fSystemState.system().enterOperation(fOpCall, output);
     }
 
     /**

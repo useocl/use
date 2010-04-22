@@ -42,7 +42,8 @@ public class ASTDeleteCmd extends ASTCmd {
     private List<ASTExpression> fExprList;
     private Token fAssocName;
 
-    public ASTDeleteCmd(List<ASTExpression> exprList, Token assocName) {
+    public ASTDeleteCmd(Token start, List<ASTExpression> exprList, Token assocName) {
+    	super(start);
         fExprList = exprList;
         fAssocName = assocName;
     }
@@ -68,6 +69,11 @@ public class ASTDeleteCmd extends ASTCmd {
         for (ASTExpression astExpr : fExprList) {
             exprs[i++] = astExpr.gen(ctx);
         }
-        return new MCmdDeleteLink(ctx.systemState(), exprs, assoc);
+        return new MCmdDeleteLink(getPosition(), ctx.systemState(), exprs, assoc);
+    }
+    
+    @Override
+    public String toString() {
+    	return "delete";
     }
 }

@@ -28,7 +28,7 @@ package org.tzi.use.parser.cmd;
 import org.tzi.use.parser.base.BaseParser;
 import org.tzi.use.parser.use.*;
 import org.tzi.use.parser.ocl.*;
-import org.tzi.use.uml.sys.MShowHideCropCmd.Mode;
+import org.tzi.use.uml.sys.MCmdShowHideCrop.Mode;
 }
 
 @lexer::header {
@@ -82,13 +82,7 @@ cmdList returns [ASTCmdList cmdList]
     ( c=cmd { cmdList.add($c.n); } )*
     EOF
     ;
-
-embeddedCmdList returns [ASTCmdList cmdList]
-@init{ $cmdList = new ASTCmdList(); }
-:
-    ( c=cmd { cmdList.add($c.n); })+
-    ;
-    
+        
 /* ------------------------------------
   cmd ::= cmdStmt [ ";" ]
 */
@@ -137,9 +131,9 @@ cmdStmt returns [ASTCmd n]
 */
 createCmd returns [ASTCmd n]
 :
-    'create' nIdList=idList 
+    s='create' nIdList=idList 
     COLON t=simpleType
-    { $n = new ASTCreateCmd($nIdList.idList, $t.n); }
+    { $n = new ASTCreateCmd($s, $nIdList.idList, $t.n); }
     ;
 
 /* ------------------------------------
@@ -149,7 +143,7 @@ createCmd returns [ASTCmd n]
 */
 createAssignCmd returns [ASTCmd n]
 :
-    'assign' nIdList=idList COLON_EQUAL 'create' t=simpleType{ $n = new ASTCreateAssignCmd($nIdList.idList, $t.n); };
+    s='assign' nIdList=idList COLON_EQUAL 'create' t=simpleType{ $n = new ASTCreateAssignCmd($s, $nIdList.idList, $t.n); };
 
 
 /* ------------------------------------
@@ -159,9 +153,9 @@ createAssignCmd returns [ASTCmd n]
 */
 createInsertCmd returns [ASTCmd n]
 :
-    'create' id=IDENT COLON idAssoc=IDENT
+    s='create' id=IDENT COLON idAssoc=IDENT
     'between' LPAREN idListInsert=idList RPAREN
-    { $n = new ASTCreateInsertCmd( $id, $idAssoc, $idListInsert.idList); }
+    { $n = new ASTCreateInsertCmd( $s, $id, $idAssoc, $idListInsert.idList); }
     ;
 
 
@@ -173,9 +167,9 @@ createInsertCmd returns [ASTCmd n]
 destroyCmd returns [ASTCmd n]
 @init { List exprList = new ArrayList(); }
 :
-     'destroy' e=expression { exprList.add($e.n); } 
+     s='destroy' e=expression { exprList.add($e.n); } 
                ( COMMA e=expression { exprList.add($e.n); } )*
-    { $n = new ASTDestroyCmd(exprList); }
+    { $n = new ASTDestroyCmd($s, exprList); }
     ;
 
 
@@ -187,11 +181,11 @@ destroyCmd returns [ASTCmd n]
 insertCmd returns [ASTCmd n]
 @init{ List exprList = new ArrayList(); }
 :
-    'insert' LPAREN 
+    s='insert' LPAREN 
     e=expression { exprList.add($e.n); } COMMA
     e=expression { exprList.add($e.n); } ( COMMA e=expression { exprList.add($e.n); } )* 
     RPAREN 'into' id=IDENT
-    { $n = new ASTInsertCmd(exprList, $id); }
+    { $n = new ASTInsertCmd($s, exprList, $id); }
     ;
 
 
@@ -203,11 +197,11 @@ insertCmd returns [ASTCmd n]
 deleteCmd returns [ASTCmd n]
 @init { List exprList = new ArrayList(); }
 :
-    'delete' LPAREN
+    s='delete' LPAREN
     e=expression { exprList.add($e.n); } COMMA
     e=expression { exprList.add($e.n); } ( COMMA e=expression { exprList.add($e.n); } )*
     RPAREN 'from' id=IDENT
-    { $n = new ASTDeleteCmd(exprList, $id); }
+    { $n = new ASTDeleteCmd($s, exprList, $id); }
     ;
 
 
@@ -221,8 +215,8 @@ deleteCmd returns [ASTCmd n]
 */
 setCmd returns [ASTCmd n]
 :
-    'set' e1=expression COLON_EQUAL e2=expression
-    { $n = new ASTSetCmd($e1.n, $e2.n); }
+    s='set' e1=expression COLON_EQUAL e2=expression
+    { $n = new ASTSetCmd($s, $e1.n, $e2.n); }
     ;
 
 
@@ -236,8 +230,8 @@ setCmd returns [ASTCmd n]
 opEnterCmd returns [ASTCmd n]
 @init{ASTOpEnterCmd nOpEnter = null;}
 :
-    'openter' 
-    e=expression id=IDENT { nOpEnter = new ASTOpEnterCmd($e.n, $id); $n = nOpEnter;}
+    s='openter' 
+    e=expression id=IDENT { nOpEnter = new ASTOpEnterCmd($s, $e.n, $id); $n = nOpEnter;}
     LPAREN
     ( e=expression { nOpEnter.addArg($e.n); } ( COMMA e=expression { nOpEnter.addArg($e.n); } )* )?
     RPAREN 
@@ -251,8 +245,8 @@ opEnterCmd returns [ASTCmd n]
 */
 opExitCmd returns [ASTCmd n]
 :
-    'opexit' ((expression)=> e=expression | )
-    { $n = new ASTOpExitCmd($e.n); }
+    s='opexit' ((expression)=> e=expression | )
+    { $n = new ASTOpExitCmd($s, $e.n); }
     ;
 
 /* ------------------------------------
@@ -262,8 +256,8 @@ opExitCmd returns [ASTCmd n]
 */
 letCmd returns [ASTCmd n]
 :
-    'let' name=IDENT ( COLON t=type )? EQUAL e=expression
-     { $n = new ASTLetCmd($name, $t.n, $e.n); }
+    s='let' name=IDENT ( COLON t=type )? EQUAL e=expression
+     { $n = new ASTLetCmd($s, $name, $t.n, $e.n); }
     ;
 
 /* --------------------------------------
@@ -271,10 +265,10 @@ letCmd returns [ASTCmd n]
 */
 hideCmd returns [ASTCmd n]
 :
-	'hide' (
-	    'all' { $n = new ASTShowHideAllCmd(Mode.HIDE); }
-	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.HIDE, $objList.idList, $classname); }
-	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.HIDE, $ass, $objList.idList); }
+	s='hide' (
+	    'all' { $n = new ASTShowHideAllCmd($s, Mode.HIDE); }
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd($s, Mode.HIDE, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd($s, Mode.HIDE, $ass, $objList.idList); }
 	  );
 	  
 /* --------------------------------------
@@ -282,10 +276,10 @@ hideCmd returns [ASTCmd n]
 */
 showCmd returns [ASTCmd n]
 :
-	'show' (
-	    'all' { $n = new ASTShowHideAllCmd(Mode.SHOW); }
-	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.SHOW, $objList.idList, $classname); }
-	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.SHOW, $ass, $objList.idList); }
+	s='show' (
+	    'all' { $n = new ASTShowHideAllCmd($s, Mode.SHOW); }
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd($s, Mode.SHOW, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd($s, Mode.SHOW, $ass, $objList.idList); }
 	  );
 	  
 /* --------------------------------------
@@ -293,9 +287,9 @@ showCmd returns [ASTCmd n]
 */
 cropCmd returns [ASTCmd n]
 :
-	'crop' (
-	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd(Mode.CROP, $objList.idList, $classname); }
-	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd(Mode.CROP, $ass, $objList.idList); }
+	s='crop' (
+	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd($s, Mode.CROP, $objList.idList, $classname); }
+	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd($s, Mode.CROP, $ass, $objList.idList); }
 	  );
 /*
 --------- Start of file USEBase.gpart -------------------- 

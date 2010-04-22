@@ -73,11 +73,15 @@ public final class MOperationCall {
         return fOp;
     }
 
+    public MSystemState getPreState() {
+    	return fPreState;
+    }
+    
     /**
      * Evaluates source and argument expressions, inserts "self" and
      * parameters into local scope.
      */
-    void enter(MSystemState state) {
+    public void enter(MSystemState state) {
         //System.out.println("*** fTargetExpr: " + fTargetExpr);
         Evaluator evaluator = new Evaluator();
         Value v = evaluator.eval(fTargetExpr, state, 
@@ -147,14 +151,14 @@ public final class MOperationCall {
      * bindings contain the "self" variable and operation parameters
      * and are available for pre- and postconditions.  
      */
-    VarBindings varBindings() {
+    public VarBindings varBindings() {
         return fVarBindings;
     }
 
     /**
      * Returns the state in which the operation has been entered.
      */
-    MSystemState preState() {
+    public MSystemState preState() {
         return fPreState;
     }
 }

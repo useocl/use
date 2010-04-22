@@ -10,8 +10,8 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MShowHideCropCmd;
-import org.tzi.use.uml.sys.MShowHideCropCmd.Mode;
+import org.tzi.use.uml.sys.MCmdShowHideCrop;
+import org.tzi.use.uml.sys.MCmdShowHideCrop.Mode;
 
 public class ASTShowHideCropLinkObjectsCmd extends ASTCmd {
 
@@ -19,7 +19,8 @@ public class ASTShowHideCropLinkObjectsCmd extends ASTCmd {
 	private Token associationName;
 	private List<Token> objectNames;
 		
-	public ASTShowHideCropLinkObjectsCmd(Mode mode, Token associationName, List<Token> objectNames) {
+	public ASTShowHideCropLinkObjectsCmd(Token start, Mode mode, Token associationName, List<Token> objectNames) {
+		super(start);
 		this.associationName = associationName;
 		this.objectNames = objectNames;
 		this.mode = mode;
@@ -51,6 +52,6 @@ public class ASTShowHideCropLinkObjectsCmd extends ASTCmd {
 			throw new SemanticException(associationName, "The specified link does not exist");
 		}
 		
-		return new MShowHideCropCmd(mode, ass, objects);
+		return new MCmdShowHideCrop(getPosition(), mode, ass, objects);
 	}
 }

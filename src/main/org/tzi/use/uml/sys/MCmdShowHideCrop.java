@@ -2,12 +2,13 @@ package org.tzi.use.uml.sys;
 
 import java.util.List;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.cmd.CannotUndoException;
 import org.tzi.use.util.cmd.CommandFailedException;
 
-public class MShowHideCropCmd extends MCmd {
+public class MCmdShowHideCrop extends MCmd {
 	public enum Mode {
 		SHOW,
 		HIDE,
@@ -24,8 +25,19 @@ public class MShowHideCropCmd extends MCmd {
 	 * @param association The referenced association
 	 * @param objects The objects participating the link
 	 */
-	public MShowHideCropCmd(Mode mode, MAssociation association, List<MObject> objects) {
-		super(false);
+	public MCmdShowHideCrop(Mode mode, MAssociation association, List<MObject> objects) {
+		this(null, mode, association, objects);
+	}
+	
+	/**
+	 * Creates a show/hide/crop command for a link
+	 * @param pos Source position
+	 * @param mode Show, hide or crop
+	 * @param association The referenced association
+	 * @param objects The objects participating the link
+	 */
+	public MCmdShowHideCrop(SrcPos pos, Mode mode, MAssociation association, List<MObject> objects) {
+		super(pos, false);
 		this.mode = mode;
 		this.association = association;
 		this.objects = objects;
@@ -36,8 +48,8 @@ public class MShowHideCropCmd extends MCmd {
 	 * @param mode
 	 * @param objects
 	 */
-	public MShowHideCropCmd(Mode mode, List<MObject> objects) {
-		super(false);
+	public MCmdShowHideCrop(SrcPos pos, Mode mode, List<MObject> objects) {
+		super(pos, false);
 		this.mode = mode;
 		this.objects = objects;
 	}
@@ -46,8 +58,8 @@ public class MShowHideCropCmd extends MCmd {
 	 * Creates a command to show or hide all objects.
 	 * @param mode Show or hide
 	 */
-	public MShowHideCropCmd(Mode mode) {
-		super(false);
+	public MCmdShowHideCrop(SrcPos pos, Mode mode) {
+		super(pos, false);
 		this.mode = mode;
 	}
 

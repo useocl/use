@@ -42,7 +42,8 @@ public class ASTLetCmd extends ASTCmd {
     private ASTType fType; // (may be null)
     private ASTExpression fExpr;
 
-    public ASTLetCmd(Token var, ASTType type, ASTExpression expr) {
+    public ASTLetCmd(Token start, Token var, ASTType type, ASTExpression expr) {
+    	super(start);
         fVar = var;
         fType = type;
         fExpr = expr;
@@ -60,8 +61,13 @@ public class ASTLetCmd extends ASTCmd {
                                             "Expected `" + type + 
                                             "', found `" + expr.type() + "'.");
         }
-        res = new MCmdLet(ctx.systemState(), fVar.getText(), 
+        res = new MCmdLet(getPosition(), ctx.systemState(), fVar.getText(), 
                           type, expr);
         return res;
     }
+
+	@Override
+	public String toString() {
+		return "let";
+	}
 }

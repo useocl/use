@@ -24,6 +24,7 @@ package org.tzi.use.uml.sys;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -31,7 +32,6 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.cmd.CannotUndoException;
 import org.tzi.use.util.cmd.CommandFailedException;
@@ -58,7 +58,17 @@ public final class MCmdInsertLink extends MCmd {
     public MCmdInsertLink(MSystemState systemState, 
                           Expression[] exprs, 
                           MAssociation assoc) {
-        super(true);
+    	this(null, systemState, exprs, assoc);
+    }
+    
+    /**
+     * Creates a command for adding a link.
+     */
+    public MCmdInsertLink(SrcPos pos, 
+    					  MSystemState systemState, 
+                          Expression[] exprs, 
+                          MAssociation assoc) {
+        super(pos, true);
         fSystemState = systemState;
         fObjectExprs = exprs;
         fObjects = new MObject[fObjectExprs.length];

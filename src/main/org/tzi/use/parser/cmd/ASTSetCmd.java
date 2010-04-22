@@ -21,8 +21,10 @@
 
 package org.tzi.use.parser.cmd;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.ExpAttrOp;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -39,8 +41,9 @@ public class ASTSetCmd extends ASTCmd {
     private ASTExpression fAttrExpr;
     private ASTExpression fSetExpr;
 
-    public ASTSetCmd(ASTExpression attrExpr, ASTExpression setExpr) {
-        fAttrExpr = attrExpr;
+    public ASTSetCmd(Token start, ASTExpression attrExpr, ASTExpression setExpr) {
+        super(start);
+    	fAttrExpr = attrExpr;
         fSetExpr = setExpr;
     }
 
@@ -61,8 +64,17 @@ public class ASTSetCmd extends ASTCmd {
                                         "Expected type `" + attrExpr.type() + "', found `" +
                                         setExpr.type() + "'.");    
 
-        return new MCmdSetAttribute(ctx.systemState(),
+        return new MCmdSetAttribute(getPosition(), ctx.systemState(),
                                     attrExpr, 
                                     setExpr);
     }
+
+    public SrcPos getPosition() {
+    	return new SrcPos(fAttrExpr.getStartToken());
+    }
+    
+	@Override
+	public String toString() {
+		return "set";
+	}
 }

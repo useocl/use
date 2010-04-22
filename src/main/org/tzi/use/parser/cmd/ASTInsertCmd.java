@@ -42,8 +42,9 @@ public class ASTInsertCmd extends ASTCmd {
     private List<ASTExpression> fExprList;
     private Token fAssocName;
 
-    public ASTInsertCmd(List<ASTExpression> exprList, Token assocName) {
-        fExprList = exprList;
+    public ASTInsertCmd(Token start, List<ASTExpression> exprList, Token assocName) {
+        super(start);
+    	fExprList = exprList;
         fAssocName = assocName;
     }
 
@@ -68,6 +69,11 @@ public class ASTInsertCmd extends ASTCmd {
         for (ASTExpression astExpr : fExprList) {
             exprs[i++] = astExpr.gen(ctx);
         }
-        return new MCmdInsertLink(ctx.systemState(), exprs, assoc);
+        return new MCmdInsertLink(getPosition(), ctx.systemState(), exprs, assoc);
     }
+
+	@Override
+	public String toString() {
+		return "insert";
+	}
 }

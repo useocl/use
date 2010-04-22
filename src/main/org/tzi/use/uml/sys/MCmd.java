@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.util.cmd.Command;
 
 /**
@@ -30,8 +31,12 @@ import org.tzi.use.util.cmd.Command;
  * @author      Mark Richters 
  */
 public abstract class MCmd extends Command {
-    protected MCmd(boolean canUndo) {
+	
+	private SrcPos position;
+	
+    protected MCmd(SrcPos position, boolean canUndo) {
         super(canUndo);
+        this.position = position;
     }
 
     /**
@@ -47,4 +52,13 @@ public abstract class MCmd extends Command {
      * achieving the same effect of this command.  
      */
     public abstract String getUSEcmd();
+    
+    /**
+     * Gets the position of the command.
+     * Maybe null if command was not parsed.
+     * @return
+     */
+    public SrcPos getPosition() {
+    	return this.position;
+    }
 }

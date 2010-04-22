@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.VarBindings;
@@ -52,7 +53,15 @@ public final class MCmdCreateAssignObjects extends MCmd {
      * binding them to identifiers which are given as a list of names.
      */
     public MCmdCreateAssignObjects(MSystemState systemState, List<String> names, ObjectType type) {
-        super(true);
+    	this(null, systemState, names, type);
+    }
+    
+    /**
+     * Creates a command for creating objects of a given type and
+     * binding them to identifiers which are given as a list of names.
+     */
+    public MCmdCreateAssignObjects(SrcPos pos, MSystemState systemState, List<String> names, ObjectType type) {
+        super(pos, true);
         fSystemState = systemState;
         fVarNames = names;
         fType = type;
