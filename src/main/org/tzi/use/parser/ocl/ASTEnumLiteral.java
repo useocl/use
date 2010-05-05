@@ -62,12 +62,12 @@ public class ASTEnumLiteral extends ASTExpression {
         	
         	if (t == null) {
         		throw new SemanticException(fEnumType,
-						"Undefined enumeration " + (ctx.isAssertExpression() ? " or invariant " : "") + "`" + enumType + "'.");
+						"Undefined enumeration `" + enumType + "'.");
         	}
         	
         	if (!t.getLiterals().contains(literal)) {
         		throw new SemanticException(fEnumType,
-						"Undefined enumeration literal " + (ctx.isAssertExpression() ? " or invariant " : "") + "`" + literal + "' for enumeration `" + enumType + "'.");
+						"Undefined enumeration literal `" + literal + "' for enumeration `" + enumType + "'.");
         	}
         }
         

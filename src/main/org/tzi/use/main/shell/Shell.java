@@ -970,6 +970,13 @@ public final class Shell implements Runnable {
 
         // to find out what command will be needed
         try {
+        	// if quoted add remaining tokens
+        	if (token.startsWith("\"")) {
+        		while (st.hasMoreTokens()) {
+        			token += " " + st.nextToken();
+        		}
+        	}
+        	
         	String filename = getFilenameToOpen(token);
             String firstWord = getFirstWordOfFile(filename);
             setFileClosed();

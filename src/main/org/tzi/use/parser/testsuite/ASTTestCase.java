@@ -1,5 +1,6 @@
 package org.tzi.use.parser.testsuite;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.testsuite.MAssert;
+import org.tzi.use.util.StringUtil;
 
 public class ASTTestCase extends AST {
 	public enum TestResult {
@@ -65,7 +67,7 @@ public class ASTTestCase extends AST {
 				
 				MAssert mAss = ass.gen(ctx);
 				if (!mAss.eval(eCtx)) {
-					reportAssertionError(mAss);
+					reportAssertionError(mAss, ctx);
 					return TestResult.FAILURE;
 				}
 			} else {
@@ -100,9 +102,32 @@ public class ASTTestCase extends AST {
 	
 	private String failureDetails;
 	
-	private void reportAssertionError(MAssert ass) {
-		failureDetails = "Line " + ass.getPosition().line() +  ": Assertion `" + 
-			(ass.getMessage() == null ? ass.getExpressionString() : ass.getMessage()) + "' failed.";
+	private void reportAssertionError(MAssert ass, Context ctx) {
+		StringBuilder details = new StringBuilder();
+		
+		details.append("Line ");
+		details.append(ass.getPosition().line());
+		details.append(": Assertion `");
+		if (ass.getMessage() == null) {
+			details.append(ass.getExpressionString());
+		} else {
+			details.append(ass.getMessage());
+		}
+		details.append("' failed.");
+		
+		details.append(StringUtil.NEWLINE);
+		details.append("Commands to reproduce state:");
+		details.append(StringUtil.NEWLINE);
+		
+		StringWriter sw = new StringWriter();
+		PrintWriter out = new PrintWriter(sw);
+		try {
+			ctx.systemState().system().writeUSEcmds(out);
+		} catch (IOException e) {
+		}
+		
+		details.append(sw.toString());
+		this.failureDetails = details.toString();
 	}
 	
 	public String getFailureDetails() {
