@@ -10,6 +10,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
+import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.sys.testsuite.MTestSuite;
 
@@ -66,13 +67,8 @@ public class TestSuiteCompiler {
         parser.init(errHandler);
         
         try {
-            // Parse the specification
-            //Log.verbose("Parsing...");
             ASTTestSuite astTestSuite = parser.testSuite();
             if (errHandler.errorCount() == 0 ) {
-
-                // Generate code
-                //Log.verbose("Translating...");
                 Context ctx = new Context(inName, err, null, null);
                 ctx.setModel(model);
                 testSuite = astTestSuite.gen(ctx);
@@ -82,7 +78,9 @@ public class TestSuiteCompiler {
                         e.line + ":" +
                         e.charPositionInLine + ": " + 
                         e.getMessage());
-        }
+        } catch (SemanticException e) {
+			err.println(e.getMessage());
+		}
         
         err.flush();
         return testSuite;

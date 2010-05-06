@@ -22,6 +22,10 @@ public class MAssertClassInvariants extends MAssert {
 		this.invariants = invariants;
 	}
 
+	public MClass getMClass() {
+		return cls;
+	}
+	
 	@Override
 	protected boolean doEval(EvalContext ctx) {
 		List<String> invs = new ArrayList<String>();
