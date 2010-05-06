@@ -24,8 +24,19 @@ public class StandardOperationsString {
 		OpGeneric.registerOperation(new Op_string_substring(), opmap);
 		OpGeneric.registerOperation(new Op_string_toInteger(), opmap);
 		OpGeneric.registerOperation(new Op_string_toReal(), opmap);
-		OpGeneric.registerOperation(new Op_string_toUpper(), opmap); 
-		OpGeneric.registerOperation(new Op_string_toLower(), opmap);
+		
+		OpGeneric temp = new Op_string_toUpper();
+		// Register as toUpper
+		OpGeneric.registerOperation(temp, opmap);
+		// Register as toUpperCase
+		OpGeneric.registerOperation("toUpperCase", temp, opmap);
+		
+		temp = new Op_string_toLower();
+		// Register as toLower
+		OpGeneric.registerOperation(temp, opmap);
+		// Register as toLowerCase
+		OpGeneric.registerOperation("toLowerCase", temp, opmap);
+		
 		OpGeneric.registerOperation(new Op_string_indexOf(), opmap);
 		OpGeneric.registerOperation(new Op_string_equalsIgnoreCase(), opmap);
 		OpGeneric.registerOperation(new Op_string_at(), opmap);

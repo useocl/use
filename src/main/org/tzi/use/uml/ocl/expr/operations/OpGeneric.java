@@ -92,7 +92,22 @@ public abstract class OpGeneric {
 		StandardOperationsDate.registerTypeOperations(opmap);
 	}
 	
+	/**
+	 * Puts an operation into the given MultiMap 
+	 * @param op The operation to register
+	 * @param opmap The multi map holding the operations
+	 */
 	public static void registerOperation(OpGeneric op, MultiMap<String, OpGeneric> opmap) {
 		opmap.put(op.name(), op);
+	}
+	
+	/**
+	 * Puts an operation into the given MultiMap under the given name
+	 * @param name The name under which the operation is referred to
+	 * @param op The operation to register
+	 * @param opmap The multi map holding the operations
+	 */
+	public static void registerOperation(String name, OpGeneric op, MultiMap<String, OpGeneric> opmap) {
+		opmap.put(name, op);
 	}
 }
