@@ -1300,7 +1300,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
         public void actionPerformed(ActionEvent e) {
             NewObjectDiagramView odv = new NewObjectDiagramView(MainWindow.this, fSession.system());
-            ViewFrame f = new ViewFrame("Object diagram " + (NewObjectDiagramView.viewcount + 1), 
+            ViewFrame f = new ViewFrame("Object diagram " + (NewObjectDiagramView.viewcount), 
             					odv, "ObjectDiagram.gif");
             
             // give some help information
