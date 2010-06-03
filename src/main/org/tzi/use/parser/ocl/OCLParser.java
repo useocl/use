@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2010-04-22 16:12:28
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 OCL.g 2010-05-15 10:49:22
  
 /*
  * USE - UML based specification environment
@@ -2343,7 +2343,7 @@ import java.util.HashMap;
                     match(input,HASH,FOLLOW_HASH_in_literal1932); if (state.failed) return n;
                     enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal1936); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
-                       n = new ASTEnumLiteral(enumLit);  reportWarning(enumLit, "the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");
+                       n = new ASTEnumLiteral(enumLit);
                     }
 
                     }
@@ -2811,7 +2811,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "tupleItem"
-    // OCL.g:580:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) ;
+    // OCL.g:580:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( ( COLON type EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) ;
     public final ASTTupleItem tupleItem() throws RecognitionException {
         ASTTupleItem n = null;
 
@@ -2822,11 +2822,11 @@ import java.util.HashMap;
 
 
         try {
-            // OCL.g:581:1: (name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) )
-            // OCL.g:582:5: name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
+            // OCL.g:581:1: (name= IDENT ( ( COLON type EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) )
+            // OCL.g:582:5: name= IDENT ( ( COLON type EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem2386); if (state.failed) return n;
-            // OCL.g:583:5: ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
+            // OCL.g:583:5: ( ( COLON type EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
             int alt34=2;
             int LA34_0 = input.LA(1);
 
@@ -2859,7 +2859,7 @@ import java.util.HashMap;
             }
             switch (alt34) {
                 case 1 :
-                    // OCL.g:586:7: ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression
+                    // OCL.g:586:7: ( COLON type EQUAL )=> COLON t= type EQUAL e= expression
                     {
                     match(input,COLON,FOLLOW_COLON_in_tupleItem2425); if (state.failed) return n;
                     pushFollow(FOLLOW_type_in_tupleItem2429);
@@ -3296,11 +3296,15 @@ import java.util.HashMap;
 
     // $ANTLR start synpred1_OCL
     public final void synpred1_OCL_fragment() throws RecognitionException {   
-        // OCL.g:586:7: ( COLON IDENT EQUAL )
-        // OCL.g:586:8: COLON IDENT EQUAL
+        // OCL.g:586:7: ( COLON type EQUAL )
+        // OCL.g:586:8: COLON type EQUAL
         {
         match(input,COLON,FOLLOW_COLON_in_synpred1_OCL2416); if (state.failed) return ;
-        match(input,IDENT,FOLLOW_IDENT_in_synpred1_OCL2418); if (state.failed) return ;
+        pushFollow(FOLLOW_type_in_synpred1_OCL2418);
+        type();
+
+        state._fsp--;
+        if (state.failed) return ;
         match(input,EQUAL,FOLLOW_EQUAL_in_synpred1_OCL2420); if (state.failed) return ;
 
         }
@@ -3510,8 +3514,8 @@ import java.util.HashMap;
     public static final BitSet FOLLOW_IDENT_in_tuplePart2831 = new BitSet(new long[]{0x0000000000000020L});
     public static final BitSet FOLLOW_COLON_in_tuplePart2833 = new BitSet(new long[]{0x0000000000000010L,0x000000000000050FL});
     public static final BitSet FOLLOW_type_in_tuplePart2837 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_COLON_in_synpred1_OCL2416 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_IDENT_in_synpred1_OCL2418 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_COLON_in_synpred1_OCL2416 = new BitSet(new long[]{0x0000000000000010L,0x000000000000050FL});
+    public static final BitSet FOLLOW_type_in_synpred1_OCL2418 = new BitSet(new long[]{0x0000000000000040L});
     public static final BitSet FOLLOW_EQUAL_in_synpred1_OCL2420 = new BitSet(new long[]{0x0000000000000002L});
 
 }

@@ -1473,13 +1473,9 @@ public final class Shell implements Runnable {
             return;
         }
 
-        //System.out.println(filename);
-        //System.out.println(callstr);
-        //System.out.println("limit:"+limit);
-        //System.out.println("printBasics:"+printBasics);
-        //System.out.println("printDetails:"+printDetails);
-        //System.out.println("printFilename:"+printFilename);
-
+        filename = this.getFilenameToOpen(filename);
+        this.setFileClosed();
+        
         system.generator().startProcedure(filename, callstr, limit,
                 printFilename, printBasics, printDetails, randomNr,
                 checkStructure);

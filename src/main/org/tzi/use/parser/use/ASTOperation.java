@@ -130,6 +130,10 @@ public class ASTOperation extends AST {
             if (fExpr != null ) {
                 Expression expr = fExpr.gen(ctx);
                 fOperation.setExpression(expr);
+                
+                if (fOperation.resultType() == null) {
+                	fOperation.setResultType(expr.type());
+                }
             }
 
             if (scriptBody != null) {

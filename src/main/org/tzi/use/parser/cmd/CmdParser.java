@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2010-04-22 16:12:30
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 Cmd.g 2010-05-15 10:49:24
  
 /*
  * USE - UML based specification environment
@@ -5892,7 +5892,7 @@ import java.util.HashMap;
                     match(input,HASH,FOLLOW_HASH_in_literal4713); if (state.failed) return n;
                     enumLit=(Token)match(input,IDENT,FOLLOW_IDENT_in_literal4717); if (state.failed) return n;
                     if ( state.backtracking==0 ) {
-                       n = new ASTEnumLiteral(enumLit);  reportWarning(enumLit, "the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");
+                       n = new ASTEnumLiteral(enumLit);
                     }
 
                     }
@@ -6360,7 +6360,7 @@ import java.util.HashMap;
 
 
     // $ANTLR start "tupleItem"
-    // Cmd.g:1128:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) ;
+    // Cmd.g:1128:1: tupleItem returns [ASTTupleItem n] : name= IDENT ( ( COLON type EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) ;
     public final ASTTupleItem tupleItem() throws RecognitionException {
         ASTTupleItem n = null;
 
@@ -6371,11 +6371,11 @@ import java.util.HashMap;
 
 
         try {
-            // Cmd.g:1129:1: (name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) )
-            // Cmd.g:1130:5: name= IDENT ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
+            // Cmd.g:1129:1: (name= IDENT ( ( COLON type EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression ) )
+            // Cmd.g:1130:5: name= IDENT ( ( COLON type EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
             {
             name=(Token)match(input,IDENT,FOLLOW_IDENT_in_tupleItem5167); if (state.failed) return n;
-            // Cmd.g:1131:5: ( ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
+            // Cmd.g:1131:5: ( ( COLON type EQUAL )=> COLON t= type EQUAL e= expression | ( COLON | EQUAL ) e= expression )
             int alt94=2;
             int LA94_0 = input.LA(1);
 
@@ -6408,7 +6408,7 @@ import java.util.HashMap;
             }
             switch (alt94) {
                 case 1 :
-                    // Cmd.g:1134:7: ( COLON IDENT EQUAL )=> COLON t= type EQUAL e= expression
+                    // Cmd.g:1134:7: ( COLON type EQUAL )=> COLON t= type EQUAL e= expression
                     {
                     match(input,COLON,FOLLOW_COLON_in_tupleItem5206); if (state.failed) return n;
                     pushFollow(FOLLOW_type_in_tupleItem5210);
@@ -6860,11 +6860,15 @@ import java.util.HashMap;
 
     // $ANTLR start synpred2_Cmd
     public final void synpred2_Cmd_fragment() throws RecognitionException {   
-        // Cmd.g:1134:7: ( COLON IDENT EQUAL )
-        // Cmd.g:1134:8: COLON IDENT EQUAL
+        // Cmd.g:1134:7: ( COLON type EQUAL )
+        // Cmd.g:1134:8: COLON type EQUAL
         {
         match(input,COLON,FOLLOW_COLON_in_synpred2_Cmd5197); if (state.failed) return ;
-        match(input,IDENT,FOLLOW_IDENT_in_synpred2_Cmd5199); if (state.failed) return ;
+        pushFollow(FOLLOW_type_in_synpred2_Cmd5199);
+        type();
+
+        state._fsp--;
+        if (state.failed) return ;
         match(input,EQUAL,FOLLOW_EQUAL_in_synpred2_Cmd5201); if (state.failed) return ;
 
         }
@@ -7554,8 +7558,8 @@ import java.util.HashMap;
     public static final BitSet FOLLOW_COLON_in_tuplePart5614 = new BitSet(new long[]{0x0000000000000080L,0x000050F000000000L});
     public static final BitSet FOLLOW_type_in_tuplePart5618 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_expression_in_synpred1_Cmd844 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_COLON_in_synpred2_Cmd5197 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_IDENT_in_synpred2_Cmd5199 = new BitSet(new long[]{0x0000000000000800L});
+    public static final BitSet FOLLOW_COLON_in_synpred2_Cmd5197 = new BitSet(new long[]{0x0000000000000080L,0x000050F000000000L});
+    public static final BitSet FOLLOW_type_in_synpred2_Cmd5199 = new BitSet(new long[]{0x0000000000000800L});
     public static final BitSet FOLLOW_EQUAL_in_synpred2_Cmd5201 = new BitSet(new long[]{0x0000000000000002L});
 
 }

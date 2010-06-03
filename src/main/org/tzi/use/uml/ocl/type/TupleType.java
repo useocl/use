@@ -119,7 +119,34 @@ public final class TupleType extends Type {
     	return true;
     }
 
-    /** 
+    @Override
+	public Type getLeastCommonSupertype(Type type) {
+    	if(!type.isTupleType()){
+    		return TypeFactory.mkOclAny();
+    	}
+
+    	TupleType otherType = (TupleType)type;
+    	if (otherType.fParts.size() != this.fParts.size()) {
+    		return TypeFactory.mkOclAny();
+    	}
+    	
+    	Part[] commonParts = new Part[this.fParts.size()];
+    	int index = 0;
+    	
+    	for(TupleType.Part part : fParts.values()){
+    		if (!otherType.fParts.containsKey(part.name()))
+    			return TypeFactory.mkOclAny();
+    		
+    		TupleType.Part otherPart = otherType.fParts.get(part.name());
+    		commonParts[index] = new Part(part.fName, part.fType.getLeastCommonSupertype(otherPart.fType));
+    		index++;
+    	}
+    	
+    	TupleType commonType = TypeFactory.mkTuple(commonParts);
+    	return commonType;
+	}
+
+	/** 
      * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'. 
      */
     public String toString() {

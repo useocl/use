@@ -101,6 +101,13 @@ public final class MOperation extends MModelElementImpl {
     }
 
     /** 
+     * Sets the result type of the operation.
+     */
+    public void setResultType(Type newType) {
+        fResultType = newType;
+    }
+    
+    /** 
      * Returns true if the operation has an expression body.
      */
     public boolean hasExpression() {

@@ -1045,7 +1045,7 @@ literal returns [ASTExpression n]
     | i=INT    { $n = new ASTIntegerLiteral($i); }
     | r=REAL   { $n = new ASTRealLiteral($r); }
     | s=STRING { $n = new ASTStringLiteral($s); }
-    | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit);  reportWarning($enumLit, "the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead");}
+    | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit);}
     | enumName=IDENT '::' enumLit=IDENT { $n = new ASTEnumLiteral($enumName, $enumLit); }
     | nColIt=collectionLiteral { $n = $nColIt.n; }
     | nEColIt=emptyCollectionLiteral { $n = $nEColIt.n; }
@@ -1141,7 +1141,7 @@ tupleItem returns [ASTTupleItem n]
     ( 
       // For backward compatibility we have to look ahead,
       // to check for a given type.
-      (COLON IDENT EQUAL) => COLON t=type EQUAL e=expression
+      (COLON type EQUAL) => COLON t=type EQUAL e=expression
       { $n = new ASTTupleItem($name, $t.n, $e.n); }
     |
       (COLON | EQUAL) e=expression

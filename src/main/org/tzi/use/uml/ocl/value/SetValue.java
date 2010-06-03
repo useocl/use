@@ -23,6 +23,7 @@ package org.tzi.use.uml.ocl.value;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
@@ -40,7 +41,7 @@ import org.tzi.use.util.StringUtil;
  * @author Mark Richters
  */
 public class SetValue extends CollectionValue {
-    private TreeSet<Value> fElements; // (Value)
+    private Set<Value> fElements; // (Value)
 
     /**
      * Constructs a new empty set.

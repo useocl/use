@@ -64,6 +64,7 @@ end
 testcase excludeBigamie
   !insert (bob, cyd) into Marriage
   assert invalid inv Person::maleHasNoHusband
+  
   !insert (eve, ada) into Marriage
   assert invalid Person::femaleHasNoWife
   !delete (bob, cyd) from Marriage
