@@ -56,6 +56,8 @@ class GEvalInstrTry_Seq extends GEvalInstruction implements IGCaller {
             collector.invalid( buildCantExecuteMessage(fInstr,fInstr.sequenceInstr()) );
         else {
             for (Value elem : (CollectionValue)value) {
+            	if (collector.canStop()) break;
+            	
                 collector.detailPrintWriter().println("`"+ fInstr + "' == "+elem);
                 fCaller.feedback( conf, elem, collector );
             }
