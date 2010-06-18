@@ -110,6 +110,8 @@ public final class ActionHideObjectDiagram extends ActionHide {
         Set<Object> linksToHide = new HashSet<Object>();
         Set<Object> additionalObjToHide = new HashSet<Object>();
         
+        StringBuilder layoutXml = new StringBuilder(this.fLayoutXMLForHiddenElements);
+        
         Iterator<Object> it = objectsToHide.iterator();
         while ( it.hasNext() ) {
             MObject obj = (MObject) it.next();
@@ -120,8 +122,9 @@ public final class ActionHideObjectDiagram extends ActionHide {
                     (NodeEdge) fEdgeToNodeEdgeMap.get( (MLinkObject) obj );
                 NodeBase n = 
                     (NodeBase) fNodeToNodeBaseMap.get( (MObject) obj );
-                fLayoutXMLForHiddenElements += ne.storePlacementInfo( true );
-                fLayoutXMLForHiddenElements += n.storePlacementInfo( true );
+                
+                layoutXml.append(ne.storePlacementInfo( true ));
+                layoutXml.append(n.storePlacementInfo( true ));
                 
                 // link object is participating in an nary link than save 
                 // location of diamond as well.
@@ -129,7 +132,8 @@ public final class ActionHideObjectDiagram extends ActionHide {
                 if ( naryLinkSet.size() > 2 ) {
                     NodeBase dn = 
                         (NodeBase) fNaryEdgeToDiamondNodeMap.get( (MLink) obj );
-                    fLayoutXMLForHiddenElements += dn.storePlacementInfo( true );
+                    
+                    layoutXml.append(dn.storePlacementInfo( true ));
                     
 //                    // save HalfEdges
 //                    Iterator naryLinkEndIt = naryLinkSet.iterator();
@@ -150,11 +154,11 @@ public final class ActionHideObjectDiagram extends ActionHide {
                         if ( link instanceof MLinkObject ) {
                             NodeEdge ne = 
                                 (NodeEdge) fEdgeToNodeEdgeMap.get( (MLinkObject) link );
-                            fLayoutXMLForHiddenElements += ne.storePlacementInfo( true );
+                            layoutXml.append(ne.storePlacementInfo( true ));
                         } else {
                             EdgeBase e = 
                                 (EdgeBase) fEdgeToBinaryEdgeMap.get( link );
-                            fLayoutXMLForHiddenElements += e.storePlacementInfo( true );
+                            layoutXml.append(e.storePlacementInfo( true ));
                         }
                     }
                 }
@@ -171,13 +175,13 @@ public final class ActionHideObjectDiagram extends ActionHide {
                         if ( naryLink instanceof MLinkObject ) {
                             NodeEdge ne = 
                                 (NodeEdge) fEdgeToNodeEdgeMap.get( (MLinkObject) naryLink );
-                            fLayoutXMLForHiddenElements += ne.storePlacementInfo( true );
+                            layoutXml.append(ne.storePlacementInfo( true ));
                         } 
                         
                         // save diamond node
                         NodeBase n = 
                             (NodeBase) fNaryEdgeToDiamondNodeMap.get( naryLink );
-                        fLayoutXMLForHiddenElements += n.storePlacementInfo( true );
+                        layoutXml.append(n.storePlacementInfo( true ));
                         
 //                        // save HalfEdges
 //                        List halfEdges = (ArrayList) fEdgeToHalfEdgeMap.get( naryLink );
@@ -203,14 +207,15 @@ public final class ActionHideObjectDiagram extends ActionHide {
                             NodeEdge ne = 
                                 (NodeEdge) fEdgeToNodeEdgeMap.get( (MLinkObject) linkObj );
                             NodeBase n = (NodeBase) fNodeToNodeBaseMap.get( (MObject) linkObj );
-                            fLayoutXMLForHiddenElements += ne.storePlacementInfo( true );
-                            fLayoutXMLForHiddenElements += n.storePlacementInfo( true );
+                            layoutXml.append(ne.storePlacementInfo( true ));
+                            layoutXml.append(n.storePlacementInfo( true ));
                         }
                     }
                 }
             }
         }
         
+        this.fLayoutXMLForHiddenElements = layoutXml.toString();
         objectsToHide.addAll( additionalObjToHide );
         return linksToHide;
     }
@@ -221,6 +226,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
      */
     public void hideNodesAndEdges() {
         Set<Object> objectsToHide = new HashSet<Object>();
+        StringBuilder layoutXml = new StringBuilder(this.fLayoutXMLForHiddenElements);
         
         // hide objects
         Iterator<Object> it = fNodesToHide.iterator();
@@ -229,10 +235,12 @@ public final class ActionHideObjectDiagram extends ActionHide {
             NodeBase objToHideNode = (NodeBase) fNodeToNodeBaseMap.get(obj);
             
             // save position information about object
-            fLayoutXMLForHiddenElements += objToHideNode.storePlacementInfo( true );
+            layoutXml.append(objToHideNode.storePlacementInfo( true ));
             
             objectsToHide.add( obj );
         }
+        
+        this.fLayoutXMLForHiddenElements = layoutXml.toString();
         
         // save links which are connected to the objects
         Set<Object> linksToHide = saveEdges( objectsToHide );

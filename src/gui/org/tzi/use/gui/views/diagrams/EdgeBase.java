@@ -1039,72 +1039,74 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      * @return A XML representation of the layout information.
      */
     public String storePlacementInfo( boolean hidden ) {
-        String xml = "";
+        StringBuilder xml = new StringBuilder();
 
         if ( this instanceof NodeEdge && fAssoc.associationEnds().size() > 2 ) {
             // xml tag will be written in NodeEdge itself. 
             // Will be called from DiamondNode.
-            return xml;
+            return xml.toString();
         }
         
-        xml = LayoutTags.EDGE_O;
+        xml.append(LayoutTags.EDGE_O);
         if ( this instanceof NodeEdge ) {
             if ( isLink() ) {
-                xml += " type=\"NodeEdge\" kind=\"link\">" + LayoutTags.NL;
+                xml.append(" type=\"NodeEdge\" kind=\"link\">").append(LayoutTags.NL);
             } else {
-                xml += " type=\"NodeEdge\" kind=\"association\">" + LayoutTags.NL;
+                xml.append(" type=\"NodeEdge\" kind=\"association\">").append(LayoutTags.NL);
             }
         } else if ( this instanceof BinaryEdge ) {
             if ( isLink() ) {
-                xml += " type=\"BinaryEdge\" kind=\"link\">" + LayoutTags.NL;
+                xml.append(" type=\"BinaryEdge\" kind=\"link\">").append(LayoutTags.NL);
             } else {
-                xml += " type=\"BinaryEdge\" kind=\"association\">" + LayoutTags.NL;
+                xml.append(" type=\"BinaryEdge\" kind=\"association\">").append(LayoutTags.NL);
             } 
         } else if ( this instanceof HalfEdge ) {
             if ( isLink() ) {
-                xml += " type=\"HalfEdge\" kind=\"link\">" + LayoutTags.NL;
+                xml.append(" type=\"HalfEdge\" kind=\"link\">").append(LayoutTags.NL);
             } else { 
-                xml += " type=\"HalfEdge\" kind=\"association\">" + LayoutTags.NL;
+                xml.append(" type=\"HalfEdge\" kind=\"association\">").append(LayoutTags.NL);
             }
         } else if ( this instanceof GeneralizationEdge ) { 
-            xml += " type=\"Inheritance\">" + LayoutTags.NL;
+            xml.append(" type=\"Inheritance\">").append(LayoutTags.NL);
         } else {
-            xml += " type=\"EdgeBase\">" + LayoutTags.NL;
+            xml.append(" type=\"EdgeBase\">").append(LayoutTags.NL);
         } 
         
-        xml += LayoutTags.INDENT + LayoutTags.SOURCE_O + fSource.name() 
-               + LayoutTags.SOURCE_C + LayoutTags.NL;
-        xml += LayoutTags.INDENT + LayoutTags.TARGET_O + fTarget.name() 
-               + LayoutTags.TARGET_C + LayoutTags.NL;
-        xml += LayoutTags.INDENT + LayoutTags.NAME_O + fEdgeName 
-               + LayoutTags.NAME_C + LayoutTags.NL;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.SOURCE_O).append(fSource.name()).
+        	append(LayoutTags.SOURCE_C).append(LayoutTags.NL);
+        
+        xml.append(LayoutTags.INDENT).append(LayoutTags.TARGET_O).append(fTarget.name()).
+            append(LayoutTags.TARGET_C).append(LayoutTags.NL);
+        
+        xml.append(LayoutTags.INDENT).append(LayoutTags.NAME_O).append(fEdgeName).
+            append(LayoutTags.NAME_C).append(LayoutTags.NL);
 
         
         if ( fSourceRolename != null ) {
-            xml += fSourceRolename.storePlacementInfo( hidden ) + LayoutTags.NL;
+            xml.append(fSourceRolename.storePlacementInfo( hidden )).append(LayoutTags.NL);
         }
         if ( fTargetRolename != null ) {
-            xml += fTargetRolename.storePlacementInfo( hidden ) + LayoutTags.NL;
+            xml.append(fTargetRolename.storePlacementInfo( hidden )).append(LayoutTags.NL);
         }
         if ( fSourceMultiplicity != null ) {
-            xml += fSourceMultiplicity.storePlacementInfo( hidden ) + LayoutTags.NL;
+            xml.append(fSourceMultiplicity.storePlacementInfo( hidden )).append(LayoutTags.NL);
         }
         if ( fTargetMultiplicity != null ) {
-            xml += fTargetMultiplicity.storePlacementInfo( hidden ) + LayoutTags.NL;
+            xml.append(fTargetMultiplicity.storePlacementInfo( hidden )).append(LayoutTags.NL);
         }
         if ( fAssocName != null ) {
-            xml += fAssocName.storePlacementInfo( hidden ) + LayoutTags.NL;
+            xml.append(fAssocName.storePlacementInfo( hidden )).append(LayoutTags.NL);
         }
 
         for (NodeOnEdge n : fNodesOnEdge) {
-            xml += n.storePlacementInfo( hidden ) + LayoutTags.NL;
+            xml.append(n.storePlacementInfo( hidden )).append(LayoutTags.NL);
         }
 
-        xml += LayoutTags.INDENT + LayoutTags.HIDDEN_O + hidden 
-               + LayoutTags.HIDDEN_C + LayoutTags.NL;
+        xml.append(LayoutTags.INDENT).append(LayoutTags.HIDDEN_O).append(hidden).
+            append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
         
-        xml += LayoutTags.EDGE_C + LayoutTags.NL;
-        return xml;
+        xml.append(LayoutTags.EDGE_C).append(LayoutTags.NL);
+        return xml.toString();
     }
     
     /**

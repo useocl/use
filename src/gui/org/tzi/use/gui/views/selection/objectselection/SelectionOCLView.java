@@ -47,12 +47,15 @@ import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
@@ -290,101 +293,86 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 			Evaluator evaluator = new Evaluator();
 			Value val = evaluator.eval(expr, fSystem.state(), fSystem
 					.topLevelBindings());
-			String[] str = getNames(val.toString());
+			
+			Set<MObject> objects = new HashSet<MObject>();
+			boolean validResult = true;
+			
+			if (val.isCollection()) {
+				CollectionValue col = (CollectionValue)val;
+				
+				if (!col.elemType().isObjectType()) {
+					validResult = false;
+				} else {
+					for (Value objVal : col.collection()) {
+						objects.add(((ObjectValue)objVal).value());
+					}
+				}
+			} else if (val.isObject()) {
+				objects.add(((ObjectValue)val).value());
+			} else {
+				validResult = false;
+			}
+				
+			if (!validResult) {
+				fTextOut.setText("Expression must result in a collection of objects or in a single object");
+				return;
+			}
 
 			fTextOut.setText(val.toStringWithType());
+			
 			if (showart.equalsIgnoreCase("crop")) {
 				this.diagram.getHideAdmin().setValues("Hide",
-						getCropHideObjects(str)).actionPerformed(ev);
+						getCropHideObjects(objects)).actionPerformed(ev);
 				this.diagram.getHideAdmin()
-						.showHiddenElements(getShowObjects(str));
+						.showHiddenElements(getShowObjects(objects));
 			} else if (showart.equalsIgnoreCase("show")) {
 				this.diagram.getHideAdmin()
-						.showHiddenElements(getShowObjects(str));
+						.showHiddenElements(getShowObjects(objects));
 			} else if (showart.equalsIgnoreCase("hide")) {
 				this.diagram.getHideAdmin().setValues("Hide",
-						getHideObjects(str)).actionPerformed(ev);
+						getHideObjects(objects)).actionPerformed(ev);
 			}
 		} catch (MultiplicityViolationException e) {
 			fTextOut.setText("Could not evaluate. " + e.getMessage());
 		}
 	}
 
-	Set<MObject> getShowObjects(String[] str) {
-		Set<MObject> objects = new HashSet<MObject>();
-		for (int i = 0; i < str.length; i++) {
-			String oname = str[i];
-			Iterator<?> ithide = this.diagram.getHiddenNodes().iterator();
+	Set<MObject> getShowObjects(Set<MObject> objects) {
+		Set<MObject> result = new HashSet<MObject>(objects);
+		result.retainAll(this.diagram.getHiddenNodes()); 
+		
+		return result;
+	}
 
-			while (ithide.hasNext()) {
-				Object node = ithide.next();
-				if (node instanceof MObject) {
-					MObject mobj = (MObject) (node);
-					if (mobj.name().equals(oname)) {
-						objects.add(mobj);
-						break;
-					}
+	Set<MObject> getCropHideObjects(Set<MObject> cropObjects) {
+		Set<MObject> objects = new HashSet<MObject>();
+		
+		for (NodeBase node : this.diagram.getGraph().getNodes()) {
+			if (node instanceof ObjectNode) {
+				MObject mobj = ((ObjectNode) node).object();
+				if (!cropObjects.contains(mobj)) {
+					objects.add(mobj);
 				}
 			}
 		}
+		
 		return objects;
 	}
 
-	Set<MObject> getCropHideObjects(String[] str) {
-		Set<MObject> objects = new HashSet<MObject>();
-		for (int i = 0; i < str.length; i++) {
-			String oname = str[i];
-			Iterator<?> itobject = this.diagram.getGraph().iterator(); 
-
-			while (itobject.hasNext()) {
-				Object node = itobject.next();
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					if (!mobj.name().equals(oname)) {
-						objects.add(mobj);
-					}
+	Set<MObject> getHideObjects(Set<MObject> objects) {
+		
+		Set<MObject> result = new HashSet<MObject>();
+		
+		for (NodeBase node : this.diagram.getGraph().getNodes()) {
+			if (node instanceof ObjectNode) {
+				MObject mobj = ((ObjectNode) node).object();
+				if (objects.contains(mobj)) {
+					result.add(mobj);
 				}
 			}
 		}
-		return objects;
-	}
-
-	Set<MObject> getHideObjects(String[] str) {
-		Set<MObject> objects = new HashSet<MObject>();
-		for (int i = 0; i < str.length; i++) {
-			String oname = str[i];
-			Iterator<?> itobject = this.diagram.getGraph().iterator();
-
-			while (itobject.hasNext()) {
-				Object node = itobject.next();
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					if (mobj.name().equals(oname)) {
-						objects.add(mobj);
-					}
-				}
-			}
-		}
-		return objects;
-	}
-
-	/**
-	 * Method getNames give all names as array
-	 */
-	private String[] getNames(String ss) {
-		if (ss.contains("{")) {
-			ss = ss.substring(ss.indexOf("@") + 1, ss.indexOf("}"));
-		}
-		String[] st = ss.split(",");
-		String[] str = new String[st.length];
-		for (int j = 0; j < st.length; j++) {
-			if (st[j].contains("@")) {
-				str[j] = st[j].substring(1);
-			} else {
-				str[j] = st[j];
-			}
-		}
-		return str;
+		
+		return result;
 	}
 
 	public void actionPerformed(ActionEvent ev) {
