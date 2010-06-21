@@ -1,5 +1,3 @@
--- read c:/mg/library/Invs2Super/library02.cmd
-
 open ../library.use
 
 !create ada:User

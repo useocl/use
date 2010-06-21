@@ -32,7 +32,7 @@ test-out2: t2.out
 # Die Zeit, die der Generator benötigt, wird aus dem Ergebnis herausgenommen.
 %.result: %.in %.use %.cmd
 	-rm -f $@
-	dos2unix $(basename $<).out
+	fromdos $(basename $<).out
 	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | diff -u $(basename $<).out - > $(basename $<).result
 
 clean:

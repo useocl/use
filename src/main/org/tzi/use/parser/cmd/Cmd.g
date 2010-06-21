@@ -454,7 +454,7 @@ operationDefinition returns [ASTOperation n]
     	EQUAL e=expression 
     	{ $n.setExpression($e.n); } 
     |
-    	EQUAL 'script' body=SCRIPTBODY 
+    	EQUAL keyScript body=SCRIPTBODY 
     	{ $n.setScript($body); } 
     )?
     
@@ -607,6 +607,10 @@ keyAssociation:
   
 keyRole:
   {input.LT(1).getText().equals("role")}? IDENT ;
+  
+keyScript:
+  {input.LT(1).getText().equals("script")}? IDENT ;
+  
 /*
 --------- Start of file OCLBase.gpart -------------------- 
 */

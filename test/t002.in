@@ -115,17 +115,10 @@
 #
 
 ? Set{#red, #green, #blue}->size
-*<input>: warning: the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead
-*<input>: warning: the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead
-*<input>: warning: the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead
 *-> 3 : Integer
 ? Set{colorEnum::red, colorEnum::green, colorEnum::blue}->size
 *-> 3 : Integer
 ? Set{#red, #green, #blue}->select(c : colorEnum | c = #green)
-*<input>: warning: the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead
-*<input>: warning: the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead
-*<input>: warning: the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead
-*<input>: warning: the usage of #enumerationLiteral is deprecated and will not be supported in the future, use 'Enumeration::Literal' instead
 *-> Set{colorEnum::green} : Set(colorEnum)
 
 #

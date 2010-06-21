@@ -11,7 +11,7 @@
 *<input>:1:65: Collection operation not applicable to tuple type.
 
 ?Set{Tuple{s:'zxy',b:false},Tuple{a:'xyz',b:true}}
-*<input>:1:0: Type mismatch, Set element 2 does not have a common supertype with previous elements.
+*-> Set{Tuple{a='xyz',b=true},Tuple{b=false,s='zxy'}} : Set(OclAny)
 
 ?Set{Tuple{one=10,two='ten',three='a'},Tuple{one=10,two='ten',three='b'}}->isUnique(Tuple{aOne=one,aTwo=two})
 *-> false : Boolean

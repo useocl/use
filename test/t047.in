@@ -38,7 +38,7 @@
 ?Tuple{f:Person1.firstName,l:Person1.lastName}=Tuple{f:Person4.firstName,l:Person4.lastName}
 *-> false : Boolean
 ?Tuple{a='a'} = Tuple{b='a'}
-*<input>:1:13: Undefined operation `Tuple(a:String).=(Tuple(b:String))'.
+*-> false : Boolean
 ?Tuple{a='a', b='b'} = Tuple{b='b', a='a'}
 *-> true : Boolean
 exit
