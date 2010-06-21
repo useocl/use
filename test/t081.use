@@ -1,0 +1,10 @@
+model test
+
+class Fox
+end
+
+class Chicken
+end
+
+class Grain
+end
