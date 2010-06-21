@@ -126,12 +126,11 @@ public final class MLinkSet {
             if (linkEnd.object().equals(obj) ) {
                 res.add(link);
                 it.remove();
-                CacheEntry e = new CacheEntry(aend, obj);
-                
-                if (selectCache.containsKey(e)) 
-                	selectCache.remove(e);
             }
         }
+        
+        selectCache.clear();
+        
         return res;
     }
 
