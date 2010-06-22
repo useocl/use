@@ -1,10 +1,13 @@
-model test
+model t081
 
-class Fox
+class A
 end
 
-class Chicken
+class B
 end
 
-class Grain
+association AB between
+  A[*]
+  B[*]
 end
+
