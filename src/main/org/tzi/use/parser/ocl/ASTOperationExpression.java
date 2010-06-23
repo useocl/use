@@ -192,9 +192,9 @@ public class ASTOperationExpression extends ASTExpression {
         fArgExprs[0] = srcExpr;
         int i = 1;
 
-        for (ASTExpression astExpr : fArgs)
+        for (ASTExpression astExpr : fArgs) {
             fArgExprs[i++] = astExpr.gen(ctx);
-        
+        }
     
         // flags for various cases
         final int SRC_SIMPLE_TYPE      = 0x0100;
