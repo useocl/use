@@ -197,19 +197,19 @@ public class ASTOperationExpression extends ASTExpression {
         }
     
         // flags for various cases
-        final int SRC_SIMPLE_TYPE     = 0x0100;
-        final int SRC_OBJECT_TYPE     = 0x0200;
-        final int SRC_COLLECTION_TYPE = 0x0400;
-        final int SRC_TUPLE_TYPE      = 0x0800;
+        final int SRC_SIMPLE_TYPE      = 0x0100;
+        final int SRC_OBJECT_TYPE      = 0x0200;
+        final int SRC_COLLECTION_TYPE  = 0x0400;
+        final int SRC_TUPLE_TYPE       = 0x0800;
 
-        final int DOT                 = 0x0010;
-        final int ARROW               = 0x0020;
+        final int DOT                  = 0x0010;
+        final int ARROW                = 0x0020;
 
         final int NO_EXPLICIT_ROLENAME = 0x0000;
-        final int EXPLICIT_ROLENAME = 0x1000;
+        final int EXPLICIT_ROLENAME    = 0x1000;
 
-        final int NO_PARENTHESES      = 0x0000;
-        final int PARENTHESES         = 0x0001;
+        final int NO_PARENTHESES       = 0x0000;
+        final int PARENTHESES          = 0x0001;
 
         int opcase;
         if (srcType.isTrueObjectType() )
@@ -322,7 +322,8 @@ public class ASTOperationExpression extends ASTExpression {
             if (Options.disableCollectShorthand )
                 throw new SemanticException(fOp, MSG_DISABLE_COLLECT_SHORTHAND);
             res = collectShorthandWithArgs(opname, srcExpr);
-        break;
+            break;
+            
         case SRC_TUPLE_TYPE + DOT + PARENTHESES:
         case SRC_TUPLE_TYPE + DOT + NO_PARENTHESES:
             TupleType t = (TupleType)srcType;
@@ -333,18 +334,12 @@ public class ASTOperationExpression extends ASTExpression {
             } else {
                 res = new ExpTupleSelectOp(p, srcExpr);
             }
-        break;
+            break;
+            
         case SRC_TUPLE_TYPE + ARROW + PARENTHESES:
         case SRC_TUPLE_TYPE + ARROW + NO_PARENTHESES:
-	    throw new SemanticException(fOp, "Collection operation not applicable to tuple type.");
+        	throw new SemanticException(fOp, "Collection operation not applicable to tuple type.");
 
-        //          throw new SemanticException(fOp,
-        /*          "If you want to apply an operation to a
-         *          collection, please use an `->' instead of a
-         *          `.'. If you are trying to apply the shorthand
-         *          notation for `collect' - sorry, this is not yet
-         *          supported. Please use the explicit notation.");
-         */
         default:
             throw new RuntimeException("case " + Integer.toHexString(opcase) + 
                                        " not handled");
