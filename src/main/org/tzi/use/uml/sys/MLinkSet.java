@@ -133,20 +133,26 @@ public final class MLinkSet {
             }
         }
         
-        // Remove all links to this object from cache
-        for (Set<MLink> links : selectCache.values()) {
-        	MLink link;
-        	
-        	for (Iterator<MLink> linkIter = links.iterator(); linkIter.hasNext();) {
-        		link = linkIter.next();
-        		if (link.linkedObjects().contains(obj)) {
-        			linkIter.remove();
-        		}
-        	}
-        }
-        
         return res;
     }
+
+	public void clearCache(MObject obj) {
+		// Remove all links to this object from cache
+        for (Iterator<Map.Entry<CacheEntry, Set<MLink>>> entryIter = selectCache.entrySet().iterator(); entryIter.hasNext(); ) {
+        	MLink link;
+        	Map.Entry<CacheEntry, Set<MLink>> entry = entryIter.next();
+        	if (entry.getKey().object.equals(obj)) {
+        		entryIter.remove();
+        	} else {
+	        	for (Iterator<MLink> linkIter = entry.getValue().iterator(); linkIter.hasNext();) {
+	        		link = linkIter.next();
+	        		if (link.linkedObjects().contains(obj)) {
+	        			linkIter.remove();
+	        		}
+	        	}
+        	}
+        }
+	}
 
 
     /**

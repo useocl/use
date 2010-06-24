@@ -369,6 +369,8 @@ public final class MSystemState {
 					res.getRemovedLinks().addAll(removedLinks);
 				}
 			}
+			
+			linkSet.clearCache(obj);
 		}
 		
 		res.getRemovedObjects().add(obj);
