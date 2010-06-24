@@ -126,10 +126,24 @@ public final class MLinkSet {
             if (linkEnd.object().equals(obj) ) {
                 res.add(link);
                 it.remove();
+                CacheEntry e = new CacheEntry(aend, obj);
+                
+                if (selectCache.containsKey(e)) 
+                	selectCache.remove(e);
             }
         }
         
-        selectCache.clear();
+        // Remove all links to this object from cache
+        for (Set<MLink> links : selectCache.values()) {
+        	MLink link;
+        	
+        	for (Iterator<MLink> linkIter = links.iterator(); linkIter.hasNext();) {
+        		link = linkIter.next();
+        		if (link.linkedObjects().contains(obj)) {
+        			linkIter.remove();
+        		}
+        	}
+        }
         
         return res;
     }
