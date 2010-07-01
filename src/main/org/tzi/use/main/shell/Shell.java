@@ -1378,6 +1378,7 @@ public final class Shell implements Runnable {
         Long limit = null; // default: no limit
         boolean printBasics = false; // print flow of control (to understand)
         boolean printDetails = false; // print flow of control in detail
+        boolean printDuration = true; // print information about execution time
         String printFilename = null; // null-> prints to System.out
         Long randomNr = null; // null-> choose a random number
 
@@ -1434,7 +1435,8 @@ public final class Shell implements Runnable {
                 } else if (optionOrFilename.equals("-b")
                         || optionOrFilename.equals("-d")
                         || optionOrFilename.equals("-bf")
-                        || optionOrFilename.equals("-df")) {
+                        || optionOrFilename.equals("-df")
+                        || optionOrFilename.equals("-t")) {
                     // an output option
                     if (outputOptionFound)
                         error = true;
@@ -1448,6 +1450,8 @@ public final class Shell implements Runnable {
                     } else if (optionOrFilename.equals("-df")) {
                         printDetails = true;
                         printFilename = st.nextToken();
+                    } else if (optionOrFilename.equals("-t")) {
+                    	printDuration = false;
                     }
                     outputOptionFound = true;
                 } else {
@@ -1479,7 +1483,7 @@ public final class Shell implements Runnable {
                 Log.error(message);
             else {
                 Log.error("syntax is `start [-l <num>][-r <num>]"
-                        + "[-b|-d|-bf <FILE>|-df <FILE>] "
+                        + "[-b|-d|-bf <FILE>|-df <FILE>|-t] "
                         + "FILE PROCNAME([paramlist])'");
             }
             return;
@@ -1493,7 +1497,9 @@ public final class Shell implements Runnable {
                 checkStructure);
 
         long duration = System.currentTimeMillis() - start;
-        Log.println("Duration: " + duration + "ms");
+        if (printDuration) {
+        	Log.println("Duration: " + duration + "ms");
+        }
     }
 
     private MSystem system() throws NoSystemException {
