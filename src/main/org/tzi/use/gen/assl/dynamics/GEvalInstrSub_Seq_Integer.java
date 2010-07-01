@@ -54,7 +54,7 @@ class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCaller {
                      IGCollector collector) throws GEvaluationException {
         fSequence = null;
         wantedSize = 0;
-        collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
+        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
         GCreator.createFor(fInstr.sequenceInstr()).eval(conf,this,collector );
     }

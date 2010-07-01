@@ -178,11 +178,13 @@ public final class MCmdCreateInsertObjects extends MCmd implements CmdCreatesObj
      * achieving the same effect of this command.
      */
     public String getUSEcmd() {
-        return "!create "
-                + fVarNameCreate + ":"
-                + fType + " between ("
-                + StringUtil.fmtSeq( fVarNamesInsert.iterator(), "," )
-                + ")";
+        return new StringBuilder("!create ")
+        		   .append(fVarNameCreate)
+        		   .append(":")
+        		   .append(fType)
+        		   .append(" between (")
+        		   .append(StringUtil.fmtSeq( fVarNamesInsert.iterator(), "," ))
+        		   .append(")").toString();
     }
 
     /**

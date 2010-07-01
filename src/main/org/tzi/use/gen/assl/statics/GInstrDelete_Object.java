@@ -44,6 +44,6 @@ public class GInstrDelete_Object extends GInstruction {
     }
 
     public String toString() {
-        return "Delete(" + fObjectInstr + ")";
+        return new StringBuilder("Delete(").append(fObjectInstr).append(")").toString();
     }
 }

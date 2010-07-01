@@ -106,9 +106,12 @@ public final class MCmdLet extends MCmd {
      * achieving the same effect of this command.  
      */
     public String getUSEcmd() {
-        return "!let " + fVar + " : " +
-            ( fType == null ? fExpr.type() : fType ) +
-            " = " + fExpr;
+        return new StringBuilder("!let ")
+        			.append(fVar)
+        			.append(" : ")
+        			.append(( fType == null ? fExpr.type() : fType ))
+        			.append(" = ")
+        			.append(fExpr).toString();
     }
 
     /**

@@ -66,6 +66,6 @@ public class GLoop extends GInstruction {
     }   
 
     public String toString() {
-        return "for " + fDecl + " in " + fSequenceInstr + " ...";
+        return new StringBuilder("for ").append(fDecl).append(" in ").append(fSequenceInstr).append(" ...").toString();
     }
 }

@@ -49,6 +49,6 @@ public class GInstrSub_Seq extends GValueInstruction {
     }
     
     public String toString() {
-        return "Sub(" + fSequenceInstr + ")";
+        return new StringBuilder("Sub(").append(fSequenceInstr).append(")").toString();
     }
 }

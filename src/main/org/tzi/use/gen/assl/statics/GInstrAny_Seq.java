@@ -50,6 +50,6 @@ public class GInstrAny_Seq extends GValueInstruction {
     }
     
     public String toString() {
-        return "Any(" + fSequenceInstr + ")";
+        return new StringBuilder("Any(").append(fSequenceInstr).append(")").toString();
     }
 }

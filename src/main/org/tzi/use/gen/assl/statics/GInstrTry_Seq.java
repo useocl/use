@@ -50,6 +50,6 @@ public class GInstrTry_Seq extends GValueInstruction {
     }
     
     public String toString() {
-        return "Try(" + fSequenceInstr + ")";
+        return new StringBuilder("Try(").append(fSequenceInstr).append(")").toString();
     }
 }

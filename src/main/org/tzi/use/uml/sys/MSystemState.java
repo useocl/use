@@ -717,8 +717,10 @@ public final class MSystemState {
 			MLinkSet linkSet = fLinkSets.get(assoc);
 	
 			// if link set is empty return empty result list
-			Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
-					+ linkSet.size());
+                        if (Log.isTracing()) {
+                            Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
+					    + linkSet.size());
+                        }
 	
 			if (linkSet.size() == 0)
 				return res;
@@ -735,9 +737,12 @@ public final class MSystemState {
 				MAssociationEnd srcEnd = (MAssociationEnd) src;
 				// select links with srcEnd == obj
 				Set<MLink> links = linkSet.select(srcEnd, obj);
-				Log.trace(this, "linkSet.select for object `" + obj + "', size = "
-						+ links.size());
-	
+
+                                if (Log.isTracing()) {
+                                    Log.trace(this, "linkSet.select for object `" + obj + "', size = "
+                                                    + links.size());
+                                }
+                                
 				// navigation to a linkobject
 				if (dst instanceof MAssociationClass) {
 					for (MLink link : links) {

@@ -77,7 +77,7 @@ public final class ExpNavigation extends Expression {
      * Evaluates expression and returns result value.
      */
     @Override
-	public Value eval(EvalContext ctx) {
+    public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = UndefinedValue.instance;
         Value val = fObjExp.eval(ctx);

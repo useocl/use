@@ -55,7 +55,6 @@ public class GInstrInsert_Assoc_Linkends extends GInstruction {
     }
 
     public String toString() {
-        return "Insert(" + fAssociation + "," +
-            StringUtil.fmtSeq(fLinkends.iterator(), ",") + ")";
+        return new StringBuilder("Insert(").append(fAssociation).append(",").append(StringUtil.fmtSeq(fLinkends.iterator(), ",")).append(")").toString();
     }
 }

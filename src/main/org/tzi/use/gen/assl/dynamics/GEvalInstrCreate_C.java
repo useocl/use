@@ -53,7 +53,7 @@ class GEvalInstrCreate_C extends GEvalInstruction {
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
+        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         MClass cls = fInstr.cls();
         ObjectType objectType = TypeFactory.mkObjectType( cls );
         List<String> names = new ArrayList<String>();
@@ -63,17 +63,22 @@ class GEvalInstrCreate_C extends GEvalInstruction {
                                          names,
                                          objectType);
         try {
-            collector.basicPrintWriter().println(cmd.getUSEcmd());
+        	String sCmd = cmd.getUSEcmd();
+            collector.basicPrintWriter().println(sCmd);
             cmd.execute();
+            
             ObjectValue ov = new ObjectValue(objectType,
                                              conf.systemState()
                                              .objectByName((String) names.get(0)));
             collector.detailPrintWriter().println("`"+ fInstr + "' == "+ov);
             caller.feedback(conf, ov, collector);
+            
             if (collector.expectSubsequentReporting()) {
                 collector.subsequentlyPrependCmd( cmd );
             }
-            collector.basicPrintWriter().println("undo: " + cmd.getUSEcmd());
+            
+            collector.basicPrintWriter().print("undo: ");
+            collector.basicPrintWriter().println(sCmd);
             cmd.undo();
         } catch (CommandFailedException e) {
             throw new GEvaluationException(e);

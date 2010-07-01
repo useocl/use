@@ -238,7 +238,7 @@ public final class MCmdDestroyObjects extends MCmd {
      * achieving the same effect of this command.  
      */
     public String getUSEcmd() {
-        return "!destroy " + StringUtil.fmtSeq( fObjectExprs, "," );
+        return new StringBuilder("!destroy ").append(StringUtil.fmtSeq( fObjectExprs, "," )).toString();
     }
 
     /**

@@ -56,7 +56,10 @@ public final class MAssociationEnd extends MModelElementImpl
     private Set<MAssociationEnd> redefinedEnds = new HashSet<MAssociationEnd>();
     // All ends this end is redefined by
     private Set<MAssociationEnd> redefiningEnds = new HashSet<MAssociationEnd>();
-    
+
+    // For performance reasons
+    private int hashCode;
+
     /** 
      * Creates a new association end. 
      *
@@ -119,6 +122,7 @@ public final class MAssociationEnd extends MModelElementImpl
      */
     public void setAssociation(MAssociation assoc) {
         fAssociation = assoc;
+        setHashCode();
     }
 
     /**
@@ -173,8 +177,12 @@ public final class MAssociationEnd extends MModelElementImpl
         v.visitAssociationEnd(this);
     }
 
+    private void setHashCode() {
+        this.hashCode = name().hashCode() + fAssociation.hashCode() + fClass.hashCode();
+    }
+
     public int hashCode() { 
-        return name().hashCode() + fAssociation.hashCode() + fClass.hashCode();
+        return hashCode;
     }
 
     /**

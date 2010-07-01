@@ -1371,6 +1371,8 @@ public final class Shell implements Runnable {
      *  
      */
     private void cmdGenStartProcedure(String str, MSystem system) {
+    	long start = System.currentTimeMillis();
+    	
         String filename = null; // the file which contains procedures
         String callstr = null; // the call of the procedure
         Long limit = null; // default: no limit
@@ -1391,6 +1393,7 @@ public final class Shell implements Runnable {
         try {
             while (!allOptionsFound && !error) {
                 String optionOrFilename = st.nextToken();
+                
                 if (optionOrFilename.equals("-s")) {
                     if (!checkStructure)
                         error = true;
@@ -1453,6 +1456,15 @@ public final class Shell implements Runnable {
                         error = true;
                     else {
                         allOptionsFound = true;
+                        if (optionOrFilename.startsWith("\"")) {
+                        	// Quoted filename
+                        	while (st.hasMoreElements()) {
+                        		optionOrFilename += " " + st.nextToken();
+                        		if (optionOrFilename.endsWith("\""))
+                        			break;
+                        	}
+                        }
+                        
                         filename = optionOrFilename;
                         callstr = st.nextToken("");
                     }
@@ -1480,6 +1492,8 @@ public final class Shell implements Runnable {
                 printFilename, printBasics, printDetails, randomNr,
                 checkStructure);
 
+        long duration = System.currentTimeMillis() - start;
+        Log.println("Duration: " + duration + "ms");
     }
 
     private MSystem system() throws NoSystemException {

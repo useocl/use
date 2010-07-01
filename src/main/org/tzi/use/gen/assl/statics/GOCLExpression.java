@@ -47,6 +47,6 @@ public class GOCLExpression extends GValueInstruction {
     }
 
     public String toString() {
-        return "["+ fExpression.toString() +"]";
+        return new StringBuilder("[").append(fExpression.toString()).append("]").toString();
     }
 }

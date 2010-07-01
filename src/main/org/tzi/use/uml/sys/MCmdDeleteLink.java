@@ -216,9 +216,10 @@ public final class MCmdDeleteLink extends MCmd {
      * achieving the same effect of this command.  
      */
     public String getUSEcmd() {
-        return "!delete (" + 
-            StringUtil.fmtSeq(fObjectExprs, ",") + 
-            ") from " + fAssociation.name();
+        return new StringBuilder("!delete (")
+        			.append(StringUtil.fmtSeq(fObjectExprs, ","))
+        			.append(") from ")
+        			.append(fAssociation.name()).toString();
     }
 
     /**

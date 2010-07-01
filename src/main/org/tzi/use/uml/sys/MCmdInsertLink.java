@@ -200,9 +200,10 @@ public final class MCmdInsertLink extends MCmd {
      * achieving the same effect of this command.  
      */
     public String getUSEcmd() {
-        return "!insert (" + 
-            StringUtil.fmtSeq(fObjectExprs, ",") + 
-            ") into " + fAssociation.name();
+        return new StringBuilder("!insert (")
+        			 .append(StringUtil.fmtSeq(fObjectExprs, ","))
+        			 .append(") into ")
+        			 .append(fAssociation.name()).toString();
     }
 
     /**

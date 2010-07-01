@@ -47,6 +47,9 @@ final class MLinkImpl implements MLink {
      */
     private Map<MAssociationEnd, MLinkEnd> fLinkEnds;
 
+    // For performance reasons
+    private int hashCode;
+
     /**
      * Creates a new link for the given association.
      *
@@ -65,11 +68,15 @@ final class MLinkImpl implements MLink {
         
         Iterator<MAssociationEnd> it1 = assoc.associationEnds().iterator();
         Iterator<MObject> it2 = objects.iterator();
-        
+
+        hashCode = fAssociation.hashCode();
+
         while (it1.hasNext() && it2.hasNext() ) {
             MAssociationEnd aend = it1.next();
             MObject obj = it2.next();
-            fLinkEnds.put(aend, new MLinkEnd(aend, obj));
+            MLinkEnd lend = new MLinkEnd(aend, obj);
+            hashCode += lend.hashCode();
+            fLinkEnds.put(aend, lend);
         }
     }
 
@@ -131,11 +138,7 @@ final class MLinkImpl implements MLink {
     }
 
     public int hashCode() { 
-        int hash = fAssociation.hashCode();
-        for (MLinkEnd lend : fLinkEnds.values()) {
-            hash += lend.hashCode();
-        }
-        return hash;
+        return hashCode;
     }
 
     /**

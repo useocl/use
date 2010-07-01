@@ -56,6 +56,6 @@ public class GInstrSub_Seq_Integer extends GValueInstruction {
     }
     
     public String toString() {
-        return "Sub(" + fSequenceInstr + "," + fIntegerInstr + ")";
+        return new StringBuilder("Sub(").append(fSequenceInstr).append(",").append(fIntegerInstr).append(")").toString();
     }
 }

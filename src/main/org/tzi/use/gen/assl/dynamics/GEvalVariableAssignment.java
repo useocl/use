@@ -44,7 +44,7 @@ class GEvalVariableAssignment extends GEvalInstruction
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
+        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
         GCreator.createFor(fInstr.sourceInstr()).eval( conf, this, collector );
     }

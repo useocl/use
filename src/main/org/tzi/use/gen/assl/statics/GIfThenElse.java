@@ -40,6 +40,6 @@ public class GIfThenElse extends GInstruction {
     }   
 
     public String toString() {
-        return "if " + fConditionInstr + " then begin ... end else begin ... end";
+        return new StringBuilder("if ").append(fConditionInstr).append(" then begin ... end else begin ... end").toString();
     }
 }

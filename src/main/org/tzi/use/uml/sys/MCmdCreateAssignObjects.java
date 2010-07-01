@@ -152,9 +152,7 @@ public final class MCmdCreateAssignObjects extends MCmd {
      * achieving the same effect of this command.  
      */
     public String getUSEcmd() {
-        return "!create " + 
-            StringUtil.fmtSeq(fVarNames.iterator(), ",") + 
-            " : " + fType;
+        return new StringBuilder("!create ").append(StringUtil.fmtSeq(fVarNames.iterator(), ",")).append(" : ").append(fType).toString();
     }
 
     /**

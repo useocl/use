@@ -55,7 +55,6 @@ public class GInstrDelete_Assoc_Linkends extends GInstruction {
     }
     
     public String toString() {
-        return "Delete(" + fAssociation + "," +
-            StringUtil.fmtSeq(fLinkends.iterator(), ",") + ")";
+        return new StringBuilder("Delete(").append(fAssociation).append(",").append(StringUtil.fmtSeq(fLinkends.iterator(), ",")).append(")").toString();
     }
 }

@@ -29,54 +29,164 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import org.tzi.use.gen.assl.statics.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.tzi.use.gen.assl.statics.GAttributeAssignment;
+import org.tzi.use.gen.assl.statics.GIfThenElse;
+import org.tzi.use.gen.assl.statics.GInstrAny_Seq;
+import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
+import org.tzi.use.gen.assl.statics.GInstrCreate_C;
+import org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends;
+import org.tzi.use.gen.assl.statics.GInstrDelete_Object;
+import org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends;
+import org.tzi.use.gen.assl.statics.GInstrSub_Seq;
+import org.tzi.use.gen.assl.statics.GInstrSub_Seq_Integer;
+import org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs;
+import org.tzi.use.gen.assl.statics.GInstrTry_Seq;
+import org.tzi.use.gen.assl.statics.GInstruction;
+import org.tzi.use.gen.assl.statics.GInstructionList;
+import org.tzi.use.gen.assl.statics.GLoop;
+import org.tzi.use.gen.assl.statics.GOCLExpression;
+import org.tzi.use.gen.assl.statics.GVariableAssignment;
 
 class GCreator {
 
     // utility class
     private GCreator() {}
     
-
+    private static Map<Class<? extends GInstruction>, IInstCreator> createMap = new HashMap<Class<? extends GInstruction>, IInstCreator>(15);
+    
     public static GEvalInstructionList createFor(GInstructionList instrlist) {
         return new GEvalInstructionList(instrlist);
     }
-
+     
+    static {
+    	createMap.put(GInstrTry_Seq.class, new CreateGEvalInstrTry_Seq());
+    	createMap.put(GOCLExpression.class, new CreateGEvalOCLExpression());
+    	createMap.put(GVariableAssignment.class, new CreateGEvalVariableAssignment());
+    	createMap.put(GLoop.class, new CreateGEvalLoop());
+    	createMap.put(GIfThenElse.class, new CreateGEvalIfThenElse());
+    	createMap.put(GInstrCreate_C.class, new CreateGEvalInstrCreate_C());
+    	createMap.put(GInstrCreateN_C_Integer.class, new CreateGEvalInstrCreateN_C_Integer());
+    	createMap.put(GInstrInsert_Assoc_Linkends.class, new CreateGEvalInstrInsert_Assoc_Linkends());
+    	createMap.put(GInstrDelete_Assoc_Linkends.class, new CreateGEvalInstrDelete_Assoc_Linkends());
+    	createMap.put(GInstrAny_Seq.class, new CreateGEvalInstrAny_Seq());
+    	createMap.put(GInstrSub_Seq.class, new CreateGEvalInstrSub_Seq());
+    	createMap.put(GInstrSub_Seq_Integer.class, new CreateGEvalInstrSub_Seq_Integer());
+    	createMap.put(GAttributeAssignment.class, new CreateGEvalAttributeAssignment());
+    	createMap.put(GInstrTry_Assoc_LinkendSeqs.class, new CreateGEvalInstrTry_Assoc_LinkendSeqs());
+    	createMap.put(GInstrDelete_Object.class, new CreateGEvalInstrDelete_Object());
+    }
+    
     public static GEvalInstruction createFor(GInstruction instr)
         throws GEvaluationException {
-        if (instr instanceof GInstrTry_Seq)
-            return new GEvalInstrTry_Seq( (GInstrTry_Seq) instr );
-        else if (instr instanceof GOCLExpression)
-            return new GEvalOCLExpression( (GOCLExpression) instr );
-        else if (instr instanceof GVariableAssignment)
-            return new GEvalVariableAssignment( (GVariableAssignment) instr );
-        else if (instr instanceof GLoop)
-            return new GEvalLoop( (GLoop) instr );
-        else if (instr instanceof GIfThenElse)
-            return new GEvalIfThenElse( (GIfThenElse) instr );
-        else if (instr instanceof GInstrCreate_C)
-            return new GEvalInstrCreate_C( (GInstrCreate_C) instr );
-        else if (instr instanceof GInstrCreateN_C_Integer)
-            return new GEvalInstrCreateN_C_Integer( (GInstrCreateN_C_Integer) instr );
-        else if (instr instanceof GInstrInsert_Assoc_Linkends)
-            return new GEvalInstrInsert_Assoc_Linkends( (GInstrInsert_Assoc_Linkends) instr );
-        else if (instr instanceof GInstrDelete_Assoc_Linkends)
-            return new GEvalInstrDelete_Assoc_Linkends( (GInstrDelete_Assoc_Linkends) instr );
-        else if (instr instanceof GInstrAny_Seq)
-            return new GEvalInstrAny_Seq( (GInstrAny_Seq) instr );
-        else if (instr instanceof GInstrSub_Seq)
-            return new GEvalInstrSub_Seq( (GInstrSub_Seq) instr );
-        else if (instr instanceof GInstrSub_Seq_Integer)
-            return new GEvalInstrSub_Seq_Integer( (GInstrSub_Seq_Integer) instr );
-        else if (instr instanceof GAttributeAssignment)
-            return new GEvalAttributeAssignment( (GAttributeAssignment) instr );
-        else if (instr instanceof GInstrTry_Assoc_LinkendSeqs)
-            return new GEvalInstrTry_Assoc_LinkendSeqs( (GInstrTry_Assoc_LinkendSeqs) instr );
-        else if (instr instanceof GInstrDelete_Object)
-            return new GEvalInstrDelete_Object( (GInstrDelete_Object) instr );
-        else if (instr == null)
-            return null;
-        else
-            throw new GEvaluationException("The execution of the instruction `"
-                                           + instr + "' is not implemented.");
+         
+    	if (instr == null) {
+    		return null;
+    	} else {
+    		IInstCreator creator = createMap.get(instr.getClass());
+    	
+    		if (creator == null) {
+    			throw new GEvaluationException("The execution of the instruction `"
+    										   + instr + "' is not implemented.");
+    		}
+    		
+    		return creator.create(instr);
+    	}
     }
+}
+
+interface IInstCreator {
+	GEvalInstruction create(GInstruction instr);
+}
+
+final class CreateGEvalInstrTry_Seq implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrTry_Seq( (GInstrTry_Seq) instr );
+	}
+}
+
+final class CreateGEvalOCLExpression implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalOCLExpression( (GOCLExpression) instr );
+	}
+}
+
+final class CreateGEvalVariableAssignment implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalVariableAssignment( (GVariableAssignment) instr );
+	}
+}
+
+final class CreateGEvalLoop implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalLoop( (GLoop) instr );
+	}
+}
+
+final class CreateGEvalIfThenElse implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalIfThenElse( (GIfThenElse) instr );
+	}
+}
+
+final class CreateGEvalInstrCreate_C implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrCreate_C( (GInstrCreate_C) instr );
+	}
+}
+
+final class CreateGEvalInstrCreateN_C_Integer implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrCreateN_C_Integer( (GInstrCreateN_C_Integer) instr );
+	}
+}
+
+final class CreateGEvalInstrInsert_Assoc_Linkends implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrInsert_Assoc_Linkends( (GInstrInsert_Assoc_Linkends) instr );
+	}
+}
+
+final class CreateGEvalInstrDelete_Assoc_Linkends implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrDelete_Assoc_Linkends( (GInstrDelete_Assoc_Linkends) instr );
+	}
+}
+
+final class CreateGEvalInstrAny_Seq implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrAny_Seq( (GInstrAny_Seq) instr );
+	}
+}
+
+final class CreateGEvalInstrSub_Seq implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrSub_Seq( (GInstrSub_Seq) instr );
+	}
+}
+
+final class CreateGEvalInstrSub_Seq_Integer implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrSub_Seq_Integer( (GInstrSub_Seq_Integer) instr );
+	}
+}
+
+final class CreateGEvalAttributeAssignment implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalAttributeAssignment( (GAttributeAssignment) instr );
+	}
+}
+
+final class CreateGEvalInstrTry_Assoc_LinkendSeqs implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrTry_Assoc_LinkendSeqs( (GInstrTry_Assoc_LinkendSeqs) instr );
+	}
+}
+
+final class CreateGEvalInstrDelete_Object implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+		return new GEvalInstrDelete_Object( (GInstrDelete_Object) instr );
+	}
 }

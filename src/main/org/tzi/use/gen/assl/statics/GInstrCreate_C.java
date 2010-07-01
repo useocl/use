@@ -51,6 +51,6 @@ public class GInstrCreate_C extends GValueInstruction {
     }
     
     public String toString() {
-        return "Create(" + fClass + ")";
+        return new StringBuilder("Create(").append(fClass).append(")").toString();
     }
 }

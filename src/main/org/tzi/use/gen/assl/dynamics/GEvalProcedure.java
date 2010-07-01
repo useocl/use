@@ -54,7 +54,7 @@ public class GEvalProcedure implements IGCaller {
                      IGCollector collector,
                      IGChecker checker,
                      long randomNr) throws GEvaluationException {
-        collector.detailPrintWriter().println("evaluating `" + fProcedure + "'");
+        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fProcedure).append("'").toString());
         fChecker = checker;
         VarBindings varBindings = new VarBindings();
         Iterator<Value> valuesIt = paramValues.iterator();

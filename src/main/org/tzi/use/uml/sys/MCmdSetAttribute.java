@@ -166,7 +166,10 @@ public final class MCmdSetAttribute extends MCmd {
         // replaces('$', ' ') is used in case there was an implicit
         // collect than variables like `$e' are inserted and can not
         // be read by USE again.
-        return ("!set " + attExp + " := " + fSetExpr).replace('$', ' ');
+        return new StringBuilder("!set ")
+        			.append(attExp)
+        			.append(" := ")
+        			.append(fSetExpr).toString().replace('$', ' ');
     }
 
     /**

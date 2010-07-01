@@ -55,10 +55,12 @@ class GEvalAttributeAssignment extends GEvalInstruction
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
+
+        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
         fObjectName = null;
-        GCreator.createFor(fInstr.targetObjectInstr()).eval( conf,this,collector );
+        
+        GCreator.createFor(fInstr.targetObjectInstr()).eval( conf, this, collector );
     }
 
     public void feedback( GConfiguration conf,
@@ -93,7 +95,8 @@ class GEvalAttributeAssignment extends GEvalInstruction
                                           new ExpressionWithValue( value ) );
 
             try {
-                collector.basicPrintWriter().println(cmd.getUSEcmd());
+            	String sCmd = cmd.getUSEcmd();
+                collector.basicPrintWriter().println(sCmd);
                 cmd.execute();
                 //collector.detailPrintWriter().println("`"+ fInstr + "' == (no value)");
 
@@ -101,7 +104,8 @@ class GEvalAttributeAssignment extends GEvalInstruction
                 if (collector.expectSubsequentReporting()) {
                     collector.subsequentlyPrependCmd( cmd );
                 }
-                collector.basicPrintWriter().println("undo: " + cmd.getUSEcmd());
+                collector.basicPrintWriter().print("undo:");
+                collector.basicPrintWriter().println(sCmd);
                 cmd.undo();
             } catch (CommandFailedException e) {
                 throw new GEvaluationException(e);

@@ -41,6 +41,6 @@ public class GVariableAssignment extends GAssignment {
     }
 
     public String toString() {
-        return fTarget + " := " + fSourceInstr;
+        return new StringBuilder(fTarget).append(" := ").append(fSourceInstr).toString();
     }
 }

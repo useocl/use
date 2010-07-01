@@ -34,6 +34,9 @@ public final class MLinkEnd {
     private MAssociationEnd fAssociationEnd; // The type of the link end
     private MObject fObject;    // The linked object
 
+    // For performance reasons
+    private int hashCode;
+
     /**
      * Constructs a new link end. 
      *
@@ -54,6 +57,7 @@ public final class MLinkEnd {
                                        "' or its subclasses.");
         fAssociationEnd = aend;
         fObject = obj;
+        hashCode = fAssociationEnd.hashCode() + fObject.hashCode();
     }
 
     /**
@@ -71,7 +75,7 @@ public final class MLinkEnd {
     }
 
     public int hashCode() { 
-        return fAssociationEnd.hashCode() + fObject.hashCode();
+        return hashCode;
     }
 
     /**

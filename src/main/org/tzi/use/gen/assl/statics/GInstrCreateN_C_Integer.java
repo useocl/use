@@ -58,6 +58,6 @@ public class GInstrCreateN_C_Integer extends GValueInstruction {
     }
     
     public String toString() {
-        return "CreateN(" + fClass + ", " + fIntegerInstr + ")";
+        return new StringBuilder("CreateN(").append(fClass).append(", ").append(fIntegerInstr).append(")").toString();
     }
 }
