@@ -32,6 +32,7 @@ import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.ocl.value.EnumValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
@@ -99,14 +100,23 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
         setWidth( fm.stringWidth( fLabel ) );
         setHeight( fm.getHeight() );
 
+        String value;
+        
         if ( fOpt.isShowAttributes() ) {
             MObjectState objState = fObject.state( fParent.system().state() );
             for ( int i = 0; i < fAttributes.size(); i++ ) {
                 MAttribute attr = (MAttribute) fAttributes.get( i );
+                Value val = (Value) objState.attributeValue( attr );
+                
+                if (val instanceof EnumValue) {
+                	value = "#" + ((EnumValue)val).value();
+                } else {
+                	value = val.toString();
+                }
+                
                 fValues[i] = attr.name()
-                             + "="
-                             + ( (Value) objState.attributeValue( attr ) )
-                                                                          .toString();
+                             + "=" + value; 
+                
                 setWidth( Math.max( getWidth(), fm.stringWidth( fValues[i] ) ) );
             }
             setHeight( getHeight() * ( fAttributes.size() + 1 ) + 3 );

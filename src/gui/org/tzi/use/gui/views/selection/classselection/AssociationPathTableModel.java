@@ -45,7 +45,6 @@ public class AssociationPathTableModel extends TableModel {
 			
 			// add all class
 			TreeSet<AssociationName> sortedAssociationnames = new TreeSet<AssociationName>(new Comparator<AssociationName>() {
-				@Override
 				public int compare(AssociationName o1, AssociationName o2) {
 					return o1.name().compareTo(o2.name());
 				}

@@ -216,7 +216,7 @@ public class ASTOperationExpression extends ASTExpression {
             opcase = SRC_OBJECT_TYPE;
         else if (srcType.isCollection(true) )
             opcase = SRC_COLLECTION_TYPE;
-        else if (srcType.isTupleType() ) 
+        else if (srcType.isTupleType(true) ) 
             opcase = SRC_TUPLE_TYPE;
         else
             opcase = SRC_SIMPLE_TYPE;

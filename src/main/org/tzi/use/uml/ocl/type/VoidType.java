@@ -98,8 +98,8 @@ public class VoidType extends Type {
 	}
 
 	@Override
-	public boolean isTupleType() {
-		return true;
+	public boolean isTupleType(boolean excludeVoid) {
+		return !excludeVoid;
 	}
 
 	public String toString() {

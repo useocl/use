@@ -40,7 +40,7 @@ public final class ExpTupleSelectOp extends Expression {
         super(part.type());
         fPart = part;
         fTupleExp = tupleExp;
-        if (! tupleExp.type().isTupleType() )
+        if (! tupleExp.type().isTupleType(false) )
             throw new IllegalArgumentException("Target expression of tuple selection operation " +
                                                "must have tuple type, found `" + 
                                                fTupleExp.type() + "'.");

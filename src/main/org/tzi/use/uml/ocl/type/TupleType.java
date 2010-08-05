@@ -84,7 +84,8 @@ public final class TupleType extends Type {
         }
     }
 
-    public boolean isTupleType() {
+    @Override
+    public boolean isTupleType(boolean excludeVoid) {
     	return true;
     }
     
@@ -100,7 +101,7 @@ public final class TupleType extends Type {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
-    	if(!t.isTupleType()){
+    	if(!t.isTupleType(true)){
     		return false;
     	}
 
@@ -121,7 +122,10 @@ public final class TupleType extends Type {
 
     @Override
 	public Type getLeastCommonSupertype(Type type) {
-    	if(!type.isTupleType()){
+    	if (type.isVoidType())
+    		return this;
+    	
+    	if(!type.isTupleType(true)){
     		return TypeFactory.mkOclAny();
     	}
 

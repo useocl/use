@@ -655,7 +655,6 @@ public class ClassDiagram extends DiagramView
 					if(hasShownObjects) {
 						
 						popupMenu.insert(new AbstractAction("Hide all objects of " + txt) {
-							@Override
 							public void actionPerformed(ActionEvent e) {
 								// Hide objects in all object diagrams
 								Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);

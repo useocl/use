@@ -154,7 +154,7 @@ public abstract class Type {
     	return false;
     }
 
-    public boolean isTupleType() {
+    public boolean isTupleType(boolean excludeVoid) {
     	return false;
     }
     

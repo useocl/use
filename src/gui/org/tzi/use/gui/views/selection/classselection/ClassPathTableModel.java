@@ -41,7 +41,6 @@ public class ClassPathTableModel extends TableModel {
 			
 			// add all class
 			TreeSet<MClass> sortedClasses = new TreeSet<MClass>(new Comparator<MClass>(){
-				@Override
 				public int compare(MClass o1, MClass o2) {
 					return o1.name().compareTo(o2.name());
 				}});
