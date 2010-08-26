@@ -1,8 +1,0 @@
-$Bug: Linkobject is not correct shown in a tenary link.$
-$Category: GUI$
-$State: Closed$
-$BugAuthor: gutsche$
-$Tests: $
-
-Creating a linkobject in a tenary link, the linkobject is not
-connected to the DiamondNode like expected.

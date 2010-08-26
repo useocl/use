@@ -1,4 +1,0 @@
-- allow Collection(T) with T = OclAny?
-  this would be almost equal to an untyped Collection
-
-- allow complex types for attributes?

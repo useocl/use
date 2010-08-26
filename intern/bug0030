@@ -1,7 +1,0 @@
-$Bug: Errors with multiple inheritance of attributes and operations$
-$Category: OCL$
-$State: Closed$
-$BugAuthor: green$
-$Tests: USECompilerTests.java/t18,t19$
-
-Multiple inheritance of attributes and operations having differing signatures leads to errors.

@@ -1,5 +1,0 @@
-$Bug: Self associated association class is not displayed correct$
-$Category: GUI$
-$State: Closed$
-$BugAuthor: gutsche$
-$Tests: examples/AssociationClass.[use|cmd]$
