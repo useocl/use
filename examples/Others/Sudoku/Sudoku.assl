@@ -1,0 +1,71 @@
+procedure setupBoard( board : Board )
+  var rows: Sequence(Row),
+      columns: Sequence(Column),
+      fields: Sequence(Field),
+	  squares: Sequence(Square),
+	  row : Row,
+	  col : Column,
+	  square : Square,
+	  field : Field;
+begin
+  rows := CreateN( Row, [9] );
+  columns := CreateN( Column, [9] );
+  squares := CreateN( Square, [9] );
+  fields := CreateN( Field, [81] );
+  
+  for iCol : Integer in [Sequence{1..9}] begin
+    col := [columns->at(iCol)];
+	[col].index := [iCol];
+	Insert (BoardColumns, [board], [col]);
+  end;
+  
+  for iRow : Integer in [Sequence{1..9}] begin
+	row := [rows->at(iRow)];
+	[row].index := [iRow];
+	Insert (BoardRows, [board], [row]);
+  end;
+
+  for iSquare : Integer in [Sequence{1..9}] begin
+	square := [squares->at(iSquare)];
+	[square].index := [iSquare];
+	Insert (BoardSquares, [board], [square]);
+  end;
+  
+  for iCol : Integer in [Sequence{1..9}] begin
+    col := [columns->at(iCol)];
+	
+    for iRow : Integer in [Sequence{1..9}] begin
+      row := [rows->at(iRow)];	
+	  field := [fields->at( (iRow - 1) * 9 + iCol)];
+	  square := [squares->at ( ((iRow - 1).mod(3)) * 3 + ((iCol - 1).mod(3)) + 1 )];
+	  	  
+	  Insert ( BoardFields, [board], [field] );
+	  Insert ( RowFields, [row], [field] );
+	  Insert ( ColumnFields, [col], [field] );
+	  Insert ( SquareFields, [square], [field] );
+	end;
+  end;
+end;
+
+procedure solveBoard( board : Board )
+  var
+    field : Field,
+	fields : Sequence(Field),
+	unsetFields : Sequence(Field),
+	possibleValues : Sequence(Integer),
+	otherPossibleValues : Sequence(Integer),
+	allValues : Set(Integer);
+  begin
+  
+  allValues := [Set{1..9}];
+  fields := [Field.allInstances()->asSequence()];
+  unsetFields := [Field.allInstances()->select(f | f.value.isUndefined())->asSequence()];
+  field := Try([unsetFields]);
+  possibleValues := [(allValues - field.row.getValues() - field.column.getValues() - field.square.getValues())->asSequence()];
+  [field].value := Try([possibleValues]);
+  
+  for otherField : Field in [unsetFields->excluding(field)] begin
+	otherPossibleValues := [(allValues - field.row.getValues() - field.column.getValues() - field.square.getValues())->asSequence()];
+	[otherField].value := Try([otherPossibleValues]);
+  end;
+end;

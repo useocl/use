@@ -1,0 +1,103 @@
+model Sudoku
+
+class Board
+  operations
+    getField(iRow : Integer, iCol : Integer) : Field =
+	  self.rows->any(index = iRow).fields->any(column.index = iCol)
+end
+
+class Row
+  attributes
+    index : Integer
+  operations
+    getValues() : Set(Integer) = 
+	  fields.value->asSet()
+end
+
+class Column
+  attributes
+    index : Integer
+  operations
+    getValues() : Set(Integer) = 
+	  fields.value->asSet()
+end
+
+class Square
+  attributes
+    index : Integer
+  operations
+    getValues() : Set(Integer) = 
+	  fields.value->asSet()
+end
+
+class Field
+  attributes
+	value : Integer	
+end
+
+composition BoardRows between
+  Board[1]
+  Row[9] role rows
+end
+
+composition BoardColumns between
+  Board[1]
+  Column[9] role columns
+end
+
+composition BoardSquares between
+  Board[1]
+  Square[9] role squares
+end
+
+composition BoardFields between
+  Board[1]
+  Field[81] role fields
+end
+
+association RowFields between
+  Row[1]
+  Field[9] role fields
+end
+
+association ColumnFields between
+  Column[1]
+  Field[9] role fields
+end
+
+association SquareFields between
+  Square[1]
+  Field[9] role fields
+end
+
+constraints
+
+context Field inv allowedValue:
+  self.value >= 1 and self.value <= 9
+ 
+context Row inv uniqueValuesRow:
+  self.fields->isUnique(value)
+  
+context Column inv uniqueValuesColumn:
+  self.fields->isUnique(value)
+
+context Square inv uniqueValuesSquare:
+  self.fields->isUnique(value)
+  
+--context Column inv allowedColumnIndex:
+--  self.index >= 1 and self.index <= 9
+
+--context Column inv columnIndexUnique:
+--  Column.allInstances()->isUnique(index)
+  
+--context Column inv fieldUniqueColumns:
+--   self.fields->forAll(f1, f2 : Field | f1.column = f2.column)
+   
+--context Row inv allowedRowIndex:
+--  self.index >= 1 and self.index <= 9
+  
+--context Row inv rowIndexUnique:
+--  Row.allInstances()->isUnique(index)
+  
+--context Row inv fieldUniqueRows:
+--  self.fields->forAll(f1, f2 : Field | f1.row = f2.row)
