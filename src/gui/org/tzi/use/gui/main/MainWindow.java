@@ -699,7 +699,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fActionEditUndo.setEnabled(true);
         // change text of menu item, leave toolbar button untouched
         String s = "Undo: " + name;
-        // FIXME: apparently enableUndo is sometimes called before GUI setup
+
         if (fMenuItemEditUndo != null) {
             fMenuItemEditUndo.setText(s);
         }
