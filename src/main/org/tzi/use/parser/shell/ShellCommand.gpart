@@ -1,0 +1,361 @@
+grammar ShellCommand;
+options {
+  superClass = BaseParser;
+}
+
+@header {
+/*
+ * USE - UML based specification environment
+ * Copyright (C) 1999-2010 University of Bremen
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
+ */
+ 
+ 
+package org.tzi.use.parser.shell;
+
+import org.tzi.use.parser.base.BaseParser;
+import org.tzi.use.parser.ocl.*;
+import org.tzi.use.parser.soil.ast.*;
+}
+
+
+@lexer::header {
+/*
+ * USE - UML based specification environment
+ * Copyright (C) 1999-2010 Mark Richters, University of Bremen
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
+ */
+ 
+package org.tzi.use.parser.shell;
+
+import org.tzi.use.parser.ParseErrorHandler;
+}
+
+@lexer::members {
+    private ParseErrorHandler fParseErrorHandler;
+
+    public String getFilename() {
+        return fParseErrorHandler.getFileName();
+    }
+    
+    public void emitErrorMessage(String msg) {
+        fParseErrorHandler.reportError(msg);
+    }
+ 
+    public void init(ParseErrorHandler handler) {
+        fParseErrorHandler = handler;
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// the shell understands soil statements and a set of "legacy statements", which
+// maps CMD language constructs to equivalent soil statements
+////////////////////////////////////////////////////////////////////////////////
+shellCommand returns [ASTStatement n]
+:
+  (stat EOF)=> s = stat EOF
+  { $n = $s.n; }
+  |
+  l = legacyStat EOF
+  { $n = $l.n; }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Sequence of legacy Cmds
+//
+// Cmds could be parsed as sequence of Cmds delimited by whitespaces
+////////////////////////////////////////////////////////////////////////////////
+legacyStat returns [ASTStatement n]
+@init {
+  ASTSequenceStatement seq = new ASTSequenceStatement();
+}
+:
+  loe = legacyOpEnter
+  { 
+    $n = $loe.n;
+    if ($n != null) {
+      $n.setSourcePosition($start);
+      $n.setParsedText($text);
+    }
+  }
+  |
+  lox = legacyOpExit
+   { 
+    $n = $lox.n; 
+    if ($n != null) {
+      $n.setSourcePosition($start);
+      $n.setParsedText($text);
+    }
+  }
+  |
+  nextLegacyStat[seq]
+  (
+    nextLegacyStat[seq]
+  )* 
+  
+  { 
+    $n = seq.simplify();
+    $n.setSourcePosition($start);
+    $n.setParsedText($text);
+  }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// parses the next legacy statement and adds it to seq
+////////////////////////////////////////////////////////////////////////////////
+nextLegacyStat[ASTSequenceStatement seq]
+:
+  s = singleLegacyStat
+  SEMI?
+  
+  {
+    if (($s.n != null) && (!$s.n.isEmptyStatement())) { 
+      seq.addStatement($s.n, $start, $text);
+    }
+  }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// the concrete legacy statements
+////////////////////////////////////////////////////////////////////////////////
+singleLegacyStat returns [ASTStatement n]
+:
+    lcr = legacyCreate        { $n = $lcr.n; }
+  | lca = legacyCreateAssign  { $n = $lca.n; }
+  | lci = legacyCreateInsert  { $n = $lci.n; }
+  | llt = legacyLet           { $n = $llt.n; }
+  //| loe = legacyOpEnter       { $n = $loe.n; }
+  //| lox = legacyOpExit        { $n = $lox.n; }
+  | lex = legacyExecute       { $n = $lex.n; }
+  | ods = objDestroyStat      { $n = $ods.n; }
+  | 'set' aas = attAssignStat { $n = $aas.n; }
+  | lis = lnkInsStat          { $n = $lis.n; }
+  | lds = lnkDelStat          { $n = $lds.n; }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// object creation without explicit variable binding
+//
+// syntax:
+// 'create' objectNames ':' objectType
+//
+// semantics:
+// for each object name a new object of class objectType is created 
+////////////////////////////////////////////////////////////////////////////////
+legacyCreate returns [ASTStatement n]
+:
+  'create'
+  objNames = identListMin1
+  COLON
+  objType = simpleType
+  
+  { 
+    ASTSequenceStatement seq = new ASTSequenceStatement();
+    
+    for (String objName : $objNames.n) {
+      seq.addStatement(
+        new ASTNewObjectStatement(
+          objType, 
+          new ASTStringLiteral(objName)), 
+        $start,
+        $text);
+    }
+    
+    $n = seq.simplify();
+  }
+;    
+
+
+////////////////////////////////////////////////////////////////////////////////
+// object creation with explicit variable binding
+//
+// syntax:
+// 'assign' variableNames ':= create' objectType
+//
+// semantics:
+// for each variable name supplied, an object of class objectType and with a 
+// unique object name is created and bound to that variable
+////////////////////////////////////////////////////////////////////////////////
+legacyCreateAssign returns [ASTStatement n]
+:
+  'assign'
+  varNames = identListMin1
+  COLON_EQUAL
+  'create'
+  objType = simpleType
+  
+  {
+    ASTSequenceStatement seq = new ASTSequenceStatement();
+    
+    for (String varName : $varNames.n) {
+      seq.addStatement(
+        new ASTVariableAssignmentStatement(
+          varName, 
+          new ASTRValueNewObject(objType)),
+        $start,
+        $text);
+    }
+    
+    $n = seq.simplify();
+  }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// link object creation
+//
+// syntax:
+// 'create' name ':' asClassName 'between' '(' participants ')'
+//
+// semantics:
+// creates a link object of type 'asClassName' with object name 'name' 
+// between some participating objects defined by 'participants' and assigns the 
+// created object to variable 'name'
+////////////////////////////////////////////////////////////////////////////////
+legacyCreateInsert returns [ASTVariableAssignmentStatement n]
+:
+  'create'
+  name = IDENT
+  COLON
+  asClassName = IDENT
+  'between'
+  LPAREN
+    participants = rValListMin2
+  RPAREN
+  
+  {
+    ASTNewLinkObjectStatement nlo = 
+      new ASTNewLinkObjectStatement(
+        $asClassName.text, 
+        $participants.n, 
+        new ASTStringLiteral($name.text));
+        
+    nlo.setSourcePosition($start);
+    nlo.setParsedText($text);
+  
+    $n = new ASTVariableAssignmentStatement(
+      $name.text,
+      new ASTRValueNewLinkObject(nlo));
+  }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// variable assignment with mandatory type
+//
+// syntax:
+// 'let' varName [':' varType] '=' e
+//
+// semantics:
+// creates a variable with name 'varname' and type 'varType' (if supplied) and
+// assigns the value of ocl expression 'e' to it
+////////////////////////////////////////////////////////////////////////////////
+legacyLet returns [ASTVariableAssignmentStatement n]
+:
+  'let'
+  varName = IDENT
+  (
+    COLON
+    varType = type
+  )?
+  EQUAL
+  e = inSoilExpression
+ 
+  { $n = new ASTVariableAssignmentStatement($varName.text, $e.n, $varType.n); }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// enter operation
+//
+// syntax:
+// 'openter' object '.' operation '(' arguments ')'
+//
+// semantics:
+// prepares execution of an operation by preparing the stack (e.g. pushes the
+// arguments). NOTE: there is no equivalent construct in the soil language, 
+// i.e. there is no soil statement which achieves this effect.
+////////////////////////////////////////////////////////////////////////////////
+legacyOpEnter returns [ASTEnterOperationStatement n]
+:
+  'openter'
+  obj = inSoilExpression
+  op = IDENT
+  LPAREN
+    args = exprList
+  RPAREN
+  
+  { $n = new ASTEnterOperationStatement($obj.n, $op.text, $args.n); }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// exit operation
+// 
+// syntax:
+// 'opexit' [retVal]
+//
+// semantics:
+// stops the execution of the currently active operation (pops the stack, etc)
+// the result of the operation (i.e. the return value) can optionally be 
+// supplied. NOTE: there is no equivalent construct in the soil language, 
+// i.e. there is no soil statement which achieves this effect.
+////////////////////////////////////////////////////////////////////////////////
+legacyOpExit returns [ASTStatement n]
+:
+  'opexit' ((inSoilExpression)=> retVal = inSoilExpression | nothing)
+  
+  { $n = new ASTExitOperationStatement($retVal.n); }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// execute operation with side effects
+//
+// syntax:
+// 'execute' expression
+//
+// semantics:
+// leftover construct from UML AL experiments. essentially a no op
+////////////////////////////////////////////////////////////////////////////////
+legacyExecute returns [ASTStatement n]
+:
+  'execute'
+  expression
+  
+  { 
+    reportWarning("the execute command is not supported in this version"); 
+    $n = new ASTEmptyStatement();
+  }
+;

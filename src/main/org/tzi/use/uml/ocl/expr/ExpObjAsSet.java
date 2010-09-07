@@ -39,7 +39,7 @@ public final class ExpObjAsSet extends Expression {
     private Type fElemType;
 
     public ExpObjAsSet(Expression objExp) {
-        super(TypeFactory.mkSet(objExp.type()));
+        super(TypeFactory.mkSet(objExp.type()), objExp);
         fObjExp = objExp;
         fElemType = objExp.type();
     }

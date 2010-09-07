@@ -21,11 +21,15 @@
 
 package org.tzi.use.uml.sys;
 
-import java.io.IOException;
+import static org.tzi.use.util.StringUtil.inQuotes;
+
 import java.io.PrintWriter;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.EmptyStackException;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -38,16 +42,24 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
+import org.tzi.use.uml.sys.ppcHandling.PostConditionCheckFailedException;
+import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
+import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.sys.soil.SoilEvaluationContext;
 import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.UniqueNameGenerator;
-import org.tzi.use.util.cmd.CannotUndoException;
-import org.tzi.use.util.cmd.Command;
-import org.tzi.use.util.cmd.CommandFailedException;
-import org.tzi.use.util.cmd.CommandProcessor;
+import org.tzi.use.util.soil.StateDifference;
+import org.tzi.use.util.soil.VariableEnvironment;
+import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
 
 /**
  * A system maintains a system state and provides functionality for
@@ -61,16 +73,30 @@ public final class MSystem {
     private MSystemState fCurrentState; // The current system state. 
     private Map<String, MObject> fObjects;   // The set of all objects
     private UniqueNameGenerator fUniqueNameGenerator; // creation of object names
-    private CommandProcessor fCommandProcessor; // executing state change commands
     protected EventListenerList fListenerList = new EventListenerList();
-    private List<MOperationCall> fOperationCallStack; // stack of active operations
     private MOperationCall lastOperationCall; // last called operation (used by test suite)
-    private VarBindings fVarBindings; // top-level variable bindings
     private GGenerator fGenerator;    // snapshot generator
+    /** the variables of this system */
+    private VariableEnvironment fVariableEnvironment;
+    /** TODO */
+    private PPCHandler fPPCHandlerOverride;
+    /** the stack of evaluation results of statements */
+    private Deque<StatementEvaluationResult> fStatementEvaluationResults;
+    /** the operation-call stack */
+    private Deque<MOperationCall> fCallStack;
+    /** TODO */
+    private Deque<MStatement> fRedoStack;
+    /** TODO */
+    private int fStateLock = 0;
+    /** TODO */
+    private Deque<MStatement> fCurrentlyEvaluatedStatements;
 
     private Stack<MSystemState> variationPointsStates = new Stack<MSystemState>();
     private Stack<VarBindings> variationPointsVars = new Stack<VarBindings>();
-    
+    /**
+     * constructs a new MSystem
+     * @param model the model of this system
+     */
     public MSystem(MModel model) {
         fModel = model;
         init();
@@ -79,14 +105,23 @@ public final class MSystem {
     private void init() {
         fObjects = new HashMap<String, MObject>();
         fUniqueNameGenerator = new UniqueNameGenerator();
-        fCommandProcessor = new CommandProcessor();
         fCurrentState = new MSystemState(fUniqueNameGenerator.generate("state#"), this);
-        fOperationCallStack = new ArrayList<MOperationCall>();
-        fVarBindings = new VarBindings();
         fGenerator = new GGenerator(this);
+        fVariableEnvironment = new VariableEnvironment(fCurrentState);
+        fStatementEvaluationResults = new ArrayDeque<StatementEvaluationResult>();
+        fCallStack = new ArrayDeque<MOperationCall>();
+        fRedoStack = new ArrayDeque<MStatement>();
+        fCurrentlyEvaluatedStatements = new ArrayDeque<MStatement>();
     }
 
     /**
+	 * Resets the system to its initial state.
+	 */
+	public void reset() {
+	    init();
+	}
+
+	/**
      * Returns the current system state.
      */
     public MSystemState state() {
@@ -106,7 +141,16 @@ public final class MSystem {
     public GGenerator generator() {
         return fGenerator;
     }
+    
+    public VarBindings varBindings() {
+		return fVariableEnvironment.constructVarBindings();
+	}
 
+	public VariableEnvironment getVariableEnvironment() {
+    	return fVariableEnvironment;
+    }
+    
+    
     public void addChangeListener(StateChangeListener l) {
         fListenerList.add(StateChangeListener.class, l);
     }
@@ -114,7 +158,11 @@ public final class MSystem {
     public void removeChangeListener(StateChangeListener l) {
         fListenerList.remove(StateChangeListener.class, l);
     }
-
+    
+    public void registerPPCHandlerOverride(PPCHandler ppcHandlerOverride) {
+    	fPPCHandlerOverride = ppcHandlerOverride;
+    }
+    
     /**
      * Creates and adds a new object to the system. The name of the
      * object may be null in which case a unique name is automatically
@@ -146,349 +194,721 @@ public final class MSystem {
     void deleteObject(MObject obj) {
         fObjects.remove(obj.name());
     }
+    
+    /**
+     * TODO
+     * @param operationCall
+     */
+    private void evaluatePreConditions(MOperationCall operationCall) {
+    	
+    	List<MPrePostCondition> preConditions = 
+			operationCall.getOperation().preConditions();
+    	
+    	LinkedHashMap<MPrePostCondition, Boolean> results = 
+    		new LinkedHashMap<MPrePostCondition, Boolean>(preConditions.size());
+    	
+    	for (MPrePostCondition preCondition : preConditions) {
+			Evaluator oclEvaluator = new Evaluator();
+			Value evalResult = 
+				oclEvaluator.eval(
+						preCondition.expression(), 
+						fCurrentState,
+						fVariableEnvironment.constructVarBindings());
+			
+			boolean conditionPassed = 
+				(evalResult.isDefined() && 
+						evalResult.type().isBoolean() &&
+						((BooleanValue)evalResult).isTrue());
+			
+			results.put(preCondition, conditionPassed);
+    	}
+    	
+    	operationCall.setPreConditionsCheckResult(results);
+    }
+    
+    
+    /**
+     * TODO
+     * @param operationCall
+     */
+    private void evaluatePostConditions(MOperationCall operationCall) {
+    	
+    	List<MPrePostCondition> postConditions = 
+			operationCall.getOperation().postConditions();
+    	
+    	LinkedHashMap<MPrePostCondition, Boolean> results = 
+    		new LinkedHashMap<MPrePostCondition, Boolean>(postConditions.size());
+    	
+    	operationCall.setVarBindings(fVariableEnvironment.constructVarBindings());
+    	
+    	for (MPrePostCondition postCondition : postConditions) {
+			Evaluator oclEvaluator = new Evaluator();
+			Value evalResult = 
+				oclEvaluator.eval(
+						postCondition.expression(), 
+						operationCall.getPreState(),
+						fCurrentState,
+						operationCall.getVarBindings());
+			
+			boolean conditionPassed = 
+				(evalResult.isDefined() && 
+						evalResult.type().isBoolean() &&
+						((BooleanValue)evalResult).isTrue());
+			
+			results.put(postCondition, conditionPassed);
+    	}
+    	
+    	operationCall.setPostConditionsCheckResult(results);
+    }
+    
+    
+    /**
+     * TODO
+     * @return
+     */
+    public MOperationCall getCurrentOperation() {
+    	return fCallStack.peek();
+    }
+    
 
     /**
+	 * TODO
+	 * @param self
+	 * @param operation
+	 * @param arguments
+	 * @param ppcHandler
+	 * @param output
+	 * @throws MSystemException 
+	 */
+	public void enterOperation(MOperationCall operationCall, boolean isOpenter) throws MSystemException {
+						
+		MOperation operation = operationCall.getOperation();
+		MObject self = operationCall.getSelf();
+		Value[] arguments = operationCall.getArguments();
+		VarDeclList parameters = operation.paramList();
+		
+		// check parameters
+		
+		int numArguments = arguments.length;
+		int numParameters = parameters.size();
+		
+		if (numArguments != numParameters) {
+			throw new MSystemException(
+					"Number of arguments does not match declaration of " +
+					" operation " +
+					StringUtil.inQuotes(operation.name()) +
+					" in class " +
+					StringUtil.inQuotes(self.cls().name()) +
+					". Expected " +
+					numParameters +
+					" arguments" + ((numArguments == 1) ? "" : "s") +
+					", found " +
+					numArguments +
+					".");
+		}
+		
+		for (int i = 0; i < numParameters; ++i) {
+			
+			VarDecl parameter = parameters.varDecl(i);
+			Value argument = arguments[i];
+			
+			Type expectedType = parameter.type();
+			Type foundType = argument.type();
+			
+			if (!foundType.isSubtypeOf(expectedType)) {
+	
+				throw new MSystemException(
+						"Type mismatch in argument " +
+						i +
+						". Expected type " +
+						StringUtil.inQuotes(expectedType) +
+						", found " +
+						StringUtil.inQuotes(foundType) +
+						".");
+			}				
+		}
+		
+		// set up variable environment
+		fVariableEnvironment.pushFrame(isOpenter);
+		fVariableEnvironment.assign("self", self.value());
+		for (int i = 0; i < parameters.size();++i) {
+			fVariableEnvironment.assign(parameters.varDecl(i).name(), arguments[i]);
+		}
+		
+		// make sure we have a ppc handler
+		PPCHandler ppcHandler;
+		if (fPPCHandlerOverride != null) {
+			ppcHandler = fPPCHandlerOverride;
+		} else if (operationCall.hasPreferredPPCHandler()) {
+			ppcHandler = operationCall.getPreferredPPCHandler();
+		} else {
+			ppcHandler = operationCall.getDefaultPPCHandler();
+		}
+		
+		// check pre conditions
+		
+		MStatement currentStatement = getCurrentStatement();
+		if (currentStatement != null) {
+			if (!stateIsLocked()) {
+				currentStatement.enteredOperationDuringEvaluation(
+						operationCall);
+			}
+		}
+		
+		fCallStack.push(operationCall);
+		evaluatePreConditions(operationCall);
+		lockState();
+		try {
+			ppcHandler.handlePreConditions(this, operationCall);
+		} catch (PreConditionCheckFailedException e) {
+			fCallStack.pop();
+			fVariableEnvironment.popFrame();
+			throw new MSystemException(e.getMessage(), e);
+		} finally {
+			unlockState();
+		}
+		
+		// if the post conditions of this operations require a pre state 
+		// require a state copy, create it
+		if (operationCall.hasPostConditions()
+			    && operationCall.getOperation().postConditionsRequirePreState()) {
+			
+			operationCall.setPreState(
+					new MSystemState(
+							fUniqueNameGenerator.generate("state#"), 
+							fCurrentState));
+		} else {
+			operationCall.setPreState(fCurrentState);
+		}
+		
+		operationCall.setEnteredSuccessfully(true);
+	}
+
+
+	/**
+	 * TODO
+	 * @param resultValue
+	 * @param ppcHandler
+	 * @param force
+	 * @return
+	 * @throws MSystemException
+	 */
+	public MOperationCall exitOperation(
+			Value resultValue,
+			boolean forceExit) throws MSystemException {
+		
+		/////
+		// 1. Determine which operation is to be exited
+		
+		MOperationCall operationCall = getCurrentOperation();
+		
+		if (operationCall == null) {
+			throw new MSystemException("Call stack is empty.");
+		}
+		
+		/////
+		// 2. was the operation call successful? If not, we're
+		//    not interested in the result value
+		
+		if (operationCall.executionHasFailed()) {
+			exitCurrentOperation();
+			
+			return operationCall;
+		}
+		
+		MOperation operation = operationCall.getOperation();
+		
+		/////
+		// 3. Handle return value
+		//    If the operation requires a return value, we need
+		//    a value of a compatible type. If none was supplied
+		//    to this method, the operation is not exited, unless
+		//    the forceExit flag was set.
+		
+		// operation has a return value
+		if (operation.hasResultType()) {
+			// result value is missing
+			if (resultValue == null) {
+				
+				if (forceExit) {
+					exitCurrentOperation();
+				}
+	        	
+				throw new MSystemException(
+	            		"Result value of type " +
+	            		inQuotes(operation.resultType()) +
+	            		" required on exit of operation " +
+	            		inQuotes(operation) +
+	            		"." + 
+	            		(forceExit ? "" : " Operation is still active."));
+				
+			// result value has incompatible type
+	        } else if (!resultValue.type().isSubtypeOf(operation.resultType())) {
+	        	
+	        	if (forceExit) {
+					exitCurrentOperation();
+				}
+	        	
+	        	throw new MSystemException(
+	        			"Result value type " +
+	        			inQuotes(resultValue.type()) +
+	        			" does not match operation result type " +
+	        			inQuotes(operation.resultType()) +
+	        			"." +
+	        			(forceExit ? "" : " Operation is still active."));
+	        // result value is of correct type
+	        } else {
+	        	fVariableEnvironment.assign("result", resultValue);
+	        	operationCall.setResultValue(resultValue);	
+	        }
+		// operation has no return value
+	    } else {
+	    	// redundant result value, just give a warning
+	    	if (resultValue != null) {
+	    		Log.out().println(
+	    				"Warning: Result value " + 
+	    				inQuotes(resultValue) + 
+	    				" is ignored, since operation " + 
+	    				inQuotes(operation) +
+	    				" is not defined to return a value.");
+	    	}
+	    }
+		
+		/////
+		// 4. Handle post conditions
+		//    The operation's post conditions are evaluated and the 
+		//    results are inspected by a PPC handler. Even if not all
+		//    post conditions hold, the operation is exited.
+		
+		// make sure we have a ppc handler
+		PPCHandler ppcHandler;
+		if (fPPCHandlerOverride != null) {
+			ppcHandler = fPPCHandlerOverride;
+		} else if (operationCall.hasPreferredPPCHandler()) {
+			ppcHandler = operationCall.getPreferredPPCHandler();
+		} else {
+			ppcHandler = operationCall.getDefaultPPCHandler();
+		}
+		
+		evaluatePostConditions(operationCall);
+		
+		try {
+			ppcHandler.handlePostConditions(this, operationCall);
+		} catch (PostConditionCheckFailedException e) {
+			throw(new MSystemException(e.getMessage()));
+		} finally {
+			exitCurrentOperation();
+		}
+		
+		operationCall.setExitedSuccessfully(true);
+		
+		return operationCall;
+	}
+	
+	
+	/**
+	 * TODO
+	 */
+	private void exitCurrentOperation() {
+		MOperationCall currentOperation = getCurrentOperation();
+		currentOperation.setExited(true);
+		MStatement currentStatement = getCurrentStatement();
+		if (currentStatement != null && !stateIsLocked()) {
+			currentStatement.exitedOperationDuringEvaluation(
+					getCurrentOperation());
+		}
+		fCallStack.pop();
+		fVariableEnvironment.popFrame();
+	}
+	
+	
+	/**
      * Returns a unique name that can be used for a new object of the
      * given class.  
      */
     public String uniqueObjectNameForClass(String clsName) {
         return fUniqueNameGenerator.generate(clsName);
     }
-
+    
+    
     /**
-     * Executes a state manipulation command.
+     * TODO
+     * @param statement
+     * @param undoOnFailure
+     * @param storeResult
+     * @return
+     * @throws MSystemException
      */
-    public void executeCmd(MCmd cmd) throws MSystemException {
-        Log.trace(this, "executing command: " + cmd);
-        try {
-            fCommandProcessor.execute(cmd);
-            fireStateChanged(cmd, false);
-        } catch (CommandFailedException ex) {
-            throw new MSystemException(ex.getMessage());
-        }
+    private StatementEvaluationResult evaluate(
+			MStatement statement,
+			boolean undoOnFailure,
+			boolean storeResult) throws MSystemException {
+    	
+    	return evaluate(
+    			statement, 
+    			new SoilEvaluationContext(this),
+    			undoOnFailure, 
+    			storeResult);
     }
-
+    
+   
     /**
-     * Undoes the last state manipulation command.
-     */
-    public void undoCmd() throws MSystemException {
-        Log.trace(this, "undoing last command");
-        try {
-            MCmd cmd = (MCmd) fCommandProcessor.undoLast();
-            fireStateChanged(cmd, true);
-        } catch (CannotUndoException ex) {
-            throw new MSystemException(ex.getMessage());
-        }
-    }
+	 * TODO
+	 * @param statement
+	 * @throws EvaluationFailedException
+	 */
+	private StatementEvaluationResult evaluate(
+			MStatement statement,
+			SoilEvaluationContext context,
+			boolean undoOnFailure,
+			boolean storeResult) throws MSystemException {
+		
+		if (stateIsLocked()) {
+			throw new MSystemException(
+					"The system currently cannot be modified.");
+		}
+		
+		fCurrentlyEvaluatedStatements.push(statement);
+		
+		if (context.isUndo()) {
+			fUniqueNameGenerator.popState();
+		} else {
+			fUniqueNameGenerator.pushState();
+		}
+		
+		StatementEvaluationResult result = statement.evaluate(context);
+		
+		//fVariableEnvironment.setObjectVariables(fCurrentState.allObjects());
+		
+		fCurrentlyEvaluatedStatements.pop();
+		
+		if (storeResult) {
+			fStatementEvaluationResults.push(result);
+		}
+		
+		fireStateChanged(result.getStateDifference());
+		
+		if (!result.wasSuccessfull()) {
+			if (undoOnFailure) {
+				fStatementEvaluationResults.pop();
+				evaluate(result.getInverseStatement(), false, false);
+			}
+			
+			throw new MSystemException(
+					result.getException().getMessage(),
+					result.getException());
+		}
+		
+		return result;
+	}
 
-    /** 
-     * Returns the name of the next command that can be undone.
-     *
-     * @return null, if there is no command for undo.
-     */
-    public String nextUndoableCmdName() {
-        Command cmd = fCommandProcessor.nextUndoableCmd();
-        String name = null;
-        if (cmd != null )
-            name = cmd.name();
-        return name;
-    }
+	/**
+	 * TODO
+	 * @param differences
+	 */
+	private void fireStateChanged(StateDifference differences) {
+		Object[] listeners = fListenerList.getListenerList();
+		for (int i = listeners.length-2; i >= 0; i -= 2) {
+	        if (listeners[i] == StateChangeListener.class) {
+	        	StateChangeEvent sce = new StateChangeEvent(this);
+	        	differences.fillStateChangeEvent(sce);
+	            ((StateChangeListener)listeners[i+1]).stateChanged(sce);
+	        }          
+	    }
+		
+		differences.clear();
+	}
 
+	/**
+     * TODO
+     * @param statement
+     * @throws EvaluationFailedException
+     */
+    public StatementEvaluationResult evaluateStatement(
+    		MStatement statement) throws MSystemException {
+    	    	   	
+    	return evaluateStatement(statement, true, true);
+    }
+    
+    
     /**
-     * Writes a sequence of commands that can be read and executed by
-     * the USE shell to reproduce the same effects of all command
-     * executed so far.  
+     * TODO
+     * @param statement
+     * @param undoOnFailure
+     * @param storeResult
+     * @return
+     * @throws EvaluationFailedException
      */
-    public void writeUSEcmds(PrintWriter out) 
-        throws IOException 
-    {
-        for (MCmd cmd : fCommandProcessor.useCommands()) {
-            Log.trace(this, cmd.getUSEcmd());
-            out.println(cmd.getUSEcmd());
-        }
+    public StatementEvaluationResult evaluateStatement(
+    		MStatement statement,
+    		boolean undoOnFailure,
+    		boolean storeResult) throws MSystemException {
+    	
+    	fRedoStack.clear();
+    	
+    	Log.trace(this, "evaluating " + statement.getShellCommand());
+    	StatementEvaluationResult result = 
+    		evaluate(statement, undoOnFailure, storeResult);
+    	
+    	return result;
     }
-
+    
+    
+    public Value evaluateStatementInExpression(
+    		MStatement statement) throws MSystemException {
+    	
+    	MStatement currentStatement = getCurrentStatement();
+    	
+    	if (currentStatement == null) {
+    		evaluate(statement, false, false);
+    	} else {
+    		try {
+    			currentStatement.evaluateSubStatement(statement);
+    		} catch (EvaluationFailedException e) {
+    			throw new MSystemException(e.getMessage(), e);
+    		}
+    	}
+    	
+		return fVariableEnvironment.lookUp("result");
+    }
+    
+    
     /**
-     * Returns the number of commands executed so far.
+     * TODO
+     * @return
+     * @throws MSystemException
+     * @throws EvaluationFailedException
      */
-    public int numExecutedCmds() {
-        return fCommandProcessor.commands().size();
+    public StatementEvaluationResult undoLastStatement() 
+    throws MSystemException {
+    	
+    	if (fStatementEvaluationResults.isEmpty()) {
+    		throw new MSystemException("nothing to undo");
+    	}
+    	
+    	StatementEvaluationResult lastResult = 
+    		fStatementEvaluationResults.pop();
+    	
+    	MStatement lastStatement = lastResult.getEvaluatedStatement();
+    	MStatement inverseStatement = lastResult.getInverseStatement();
+    	
+    	fRedoStack.push(lastStatement);
+    	Log.trace(this, "undoing a statement");
+    	
+    	SoilEvaluationContext context = new SoilEvaluationContext(this);
+    	context.setIsUndo(true);
+    	
+    	return evaluate(inverseStatement, context, false, false);
     }
-
+    
+    
     /**
-     * Returns the list of commands executed so far.
-     *
-     * @return List(MCmd)
+	 * TODO
+	 * @throws MSystemException
+	 * @throws EvaluationFailedException
+	 */
+	public StatementEvaluationResult redoStatement() throws MSystemException {
+		
+		if (fRedoStack.isEmpty()) {
+			throw new MSystemException("nothing to redo");
+		}
+		
+		MStatement redoStatement = fRedoStack.pop();
+		
+		Log.trace(this, "redoing a statement");
+		
+		SoilEvaluationContext context = new SoilEvaluationContext(this);
+		context.setIsRedo(true);
+		
+		StatementEvaluationResult result = 
+			evaluate(
+					redoStatement, 
+					context, 
+					false, 
+					true);
+		
+		return result;
+	}
+
+//        lastOperationCall = opcall;
+	/**
+     * TODO
+     * @return
      */
-    public List<Command> commands() {
-        return fCommandProcessor.commands();
+    public String getUndoDescription() {
+    	if (fStatementEvaluationResults.isEmpty()) {
+    		return null;
+    	} else {
+    		StatementEvaluationResult lastResult = 
+    			fStatementEvaluationResults.peek();
+    		
+    		MStatement lastEvaluatedStatement = 
+    			lastResult.getEvaluatedStatement();
+    		
+    		return lastEvaluatedStatement.getShellCommand();
+    	}
     }
-
-    public List<MCmd> useCommands() {
-    	return fCommandProcessor.useCommands();
+    
+    
+    public MStatement nextToRedo() {
+    	return fRedoStack.peek();
     }
-    /**
-     * Resets the system to its initial state.
-     */
-    public void reset() {
-        init();
-    }
-
-    /**
-     * Simulate entry of an operation. The preconditions of the
-     * operation are checked with the current state. If all
-     * preconditions are satisfied, the current state is saved and the
-     * operation is pushed on an internal call stack.  
-     */
-    public boolean enterOperation(MOperationCall opcall, PrintWriter out) {
-        opcall.enter(fCurrentState);
-
-        // check preconditions
-        boolean preOk = true;
-        MOperation op = opcall.operation();
-        List<MPrePostCondition> preconds = op.preConditions();
-
-        for (MPrePostCondition ppc : preconds) {
-            Expression expr = ppc.expression();
-            Evaluator evaluator = new Evaluator();
-            // evaluate in scope local to operation
-            Value v = evaluator.eval(expr, fCurrentState, opcall.varBindings());
-            boolean ok = v.isDefined() && ((BooleanValue) v).isTrue();
-            out.println("precondition `" + ppc.name() + "' is " + ok);
-            if (! ok )
-                preOk = false;
-        }
-
-        if (preOk ) {
-            pushOperation(opcall);
-            fCurrentState = new MSystemState(fUniqueNameGenerator.generate("state#"), 
-                                             fCurrentState);
-        }
-        out.flush();
-        return preOk;
-    }
-
-    /**
-     * Exits the least recently entered operation. If the operation
-     * signature specifies a result type, a result value must be
-     * given. This value is bound to the special OCL variable
-     * result. Finally, all postconditions are checked with the system
-     * state saved at operation entry time and the current system
-     * state.  
-     */
-    public void exitOperation(Value optionalResult, PrintWriter out) 
-        throws MSystemException 
-    {
-        MOperationCall opcall = activeOperation();
-        if (opcall == null )
-            throw new MSystemException("Call stack is empty.");
-
-        MOperation op = opcall.operation();
-
-        // bind result value to result variable
-        VarBindings vb = opcall.varBindings();
-        if (op.hasResultType() ) {
-            if (optionalResult == null )
-                throw new MSystemException("Result value required on exit of " + 
-                                           "operation `" + op + "'.");
-            if (! optionalResult.type().isSubtypeOf(op.resultType()) )
-                throw new MSystemException("Result value type `" + 
-                                           optionalResult.type() +
-                                           "' does not match operation result type `" + 
-                                           op.resultType() + "'.");
-            vb.push("result", optionalResult);
-        }
-
-        // check postconditions
-        boolean postOk = true;
-        List<MPrePostCondition> postconds = op.postConditions();
-
-        for (MPrePostCondition ppc : postconds) {
-            Expression expr = ppc.expression();
-            Evaluator evaluator = new Evaluator();
-            // evaluate in scope local to operation
-            Value v = evaluator.eval(expr, opcall.preState(), 
-                                     fCurrentState, vb,
-                                     null);
-            boolean ok = v.isDefined() && ((BooleanValue) v).isTrue();
-            out.println("postcondition `" + ppc.name() + "' is " + ok);
-            if (! ok ) {
-                postOk = false;
-                out.println("evaluation results:");
-                evaluator.eval(expr, opcall.preState(), 
-                               fCurrentState, vb, out);
-            }
-        }
-        opcall.exit(optionalResult, postOk);
-        lastOperationCall = opcall;
-        
-        out.flush();
-        try {
-            opcall = popOperation();
-        } catch (EmptyStackException ex) {
-            throw new MSystemException("Call stack is empty.");
-        }
-    }
-
+    
+    
     public MOperationCall getLastOperationCall() {
     	return lastOperationCall;
     }
     
     /**
-     * Notify all listeners that have registered interest for
-     * notification on this event type.
+     * TODO
+     * @return
      */
-    private void fireStateChanged(MCmd cmd, boolean cmdWasUndone) {
-        // Guaranteed to return a non-null array
-        Object[] listeners = fListenerList.getListenerList();
-        StateChangeEvent e = null;
-        // Process the listeners last to first, notifying
-        // those that are interested in this event
-        for (int i = listeners.length-2; i >= 0; i -= 2) {
-            if (listeners[i] == StateChangeListener.class ) {
-                // Lazily create the event:
-                if (e == null) {
-                    e = new StateChangeEvent(this);
-                    cmd.getChanges(e, cmdWasUndone);
-                }
-                ((StateChangeListener) listeners[i+1]).stateChanged(e);
+    public String getRedoDescription() {
+    	
+    	if (fRedoStack.isEmpty()) {
+    		return null;
+    	}
+    	
+    	return fRedoStack.peek().getShellCommand();
+    }
 
-                //System.out.println("Notifying: " + ((StateChangeListener) listeners[i+1]).getClass());
-            }          
-        }
+	
+	/**
+     * TODO
+     * @param out
+     */
+    public void writeSoilStatements(PrintWriter out) {
+    	for (MStatement statement : getEvaluatedStatements()) {
+    		out.println(statement.getShellCommand());
+    	}
     }
 
     /**
-     * Returns the currently active operation or null if no operation
-     * is active.
+     * TODO
+     * @return
      */
-    public MOperationCall activeOperation() {
-        MOperationCall res = null;
-        int activeOperations = fOperationCallStack.size();
-        if (activeOperations > 0 )
-            res = (MOperationCall) fOperationCallStack.get(activeOperations - 1);
-        return res;
+    public int numEvaluatedStatements() {
+    	return fStatementEvaluationResults.size();
     }
-
+    
     /**
-     * Returns the operation call stack.
-     *
-     * @return List(MOperationCall)
+     * TODO
+     * @return
      */
-    public List<MOperationCall> callStack() {
-        return fOperationCallStack;
+    public List<MStatement> getEvaluatedStatements() {
+    	List<MStatement> evaluatedStatements = 
+    		new ArrayList<MStatement>(fStatementEvaluationResults.size());
+    	
+    	for (StatementEvaluationResult result : fStatementEvaluationResults) {
+    		evaluatedStatements.add(0, result.getEvaluatedStatement());
+    	}
+    	
+    	return evaluatedStatements;
     }
-
+    
+    
     /**
-     * Returns the current top-level bindings. Changes to the
-     * returned value do NOT affect the bindings of the system.
+     * TODO
+     * @return
      */
-    public VarBindings topLevelBindings() {
-        VarBindings vb = new VarBindings(fVarBindings);
-        // add bindings from the currently active operation
-        int activeOperations = fOperationCallStack.size();
-        if (activeOperations > 0 ) {
-            MOperationCall opcall = 
-                (MOperationCall) fOperationCallStack.get(activeOperations - 1);
-            vb.add(opcall.varBindings());
-        }
-        return vb;
+    private MStatement getCurrentStatement() {
+    	return fCurrentlyEvaluatedStatements.peek();
     }
-
+    
+    
     /**
-     * Returns the top-level bindings of object names. Changes to the
-     * returned value affect the bindings of the system.
+	 * TODO
+	 * @return
+	 */
+	public Deque<MOperationCall> getCallStack() {
+		return fCallStack;
+	}
+	
+	
+	/**
+	 * TODO
+	 * @param object
+	 * @return
+	 */
+	public boolean hasActiveOperation(MObject object) {
+		
+		for (MOperationCall operationCAll : fCallStack) {
+			if (operationCAll.getSelf() == object) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+
+	/**
+     * TODO
+     * @return
      */
-    public VarBindings varBindings() {
-        return fVarBindings;
+    public List<Event> getAllEvents() {
+    	List<Event> result = new ArrayList<Event>();
+    	
+    	Iterator<StatementEvaluationResult> it = 
+    		fStatementEvaluationResults.descendingIterator();
+    	while (it.hasNext()) {
+    		result.addAll(it.next().getEvents());
+    	}
+    	
+    	MStatement currentStatement = fCurrentlyEvaluatedStatements.peek();
+    	if (currentStatement != null) {
+    		result.addAll(currentStatement.getResult().getEvents());
+    	}
+    	
+    	return result;
     }
-
-
-    /**
-     * Adds a variable binding to the current scope. If we are inside
-     * of an operation call, the variable is bound in the operation's
-     * scope and will be unbound on operation exit. Top-level
-     * variables are persistent.
-     */
-    void addVarBindingToCurrentScope(String var, Value v) {
-        int activeOperations = fOperationCallStack.size();
-        if (activeOperations == 0 ) {
-            // add to top-level
-            fVarBindings.push(var, v);
-        } else {
-            // add to current scope
-            MOperationCall opcall = 
-                (MOperationCall) fOperationCallStack.get(activeOperations - 1);
-            opcall.varBindings().push(var, v);
-        }
+    
+    private void lockState() {
+    	++fStateLock;
     }
-
-    /**
-     * This is the inverse to addVarBindingToCurrentScope. It is only
-     * here for purposes of undo functionality.
-     */
-    void removeLastVarBindingFromCurrentScope() {
-        int activeOperations = fOperationCallStack.size();
-        if (activeOperations == 0 ) {
-            // remove from
-            fVarBindings.pop();
-        } else {
-            // remove from current scope
-            MOperationCall opcall = 
-                (MOperationCall) fOperationCallStack.get(activeOperations - 1);
-            opcall.varBindings().pop();
-        }
+    
+    private void unlockState() {
+    	--fStateLock;
     }
-
-
-    void setCurrentState(MSystemState state) {
-        fCurrentState = state;
+    
+    private boolean stateIsLocked() {
+    	return fStateLock > 0;
     }
-
-    /**
-     * Pushes an operation onto the call stack.
-     */
-    void pushOperation(MOperationCall opcall) {
-        fOperationCallStack.add(opcall);
-    }
-
-    /**
-     * Pops the currently active operation from the call stack and
-     * returns the operation call object. 
-     *
-     * @throws EmptyStackException
-     */
-    MOperationCall popOperation() {
-        int stackSize = fOperationCallStack.size();
-        if (stackSize == 0 )
-            throw new EmptyStackException();
-
-        MOperationCall opcall = (MOperationCall) fOperationCallStack.get(stackSize - 1);
-        fOperationCallStack.remove(stackSize - 1);
-        return opcall;
+    
+    public void updateListeners() {
+    	MStatement currentStatement = fCurrentlyEvaluatedStatements.peek();
+    	
+    	if (currentStatement != null) {
+    		fireStateChanged(
+					currentStatement.getResult().getStateDifference());
+		}
     }
     
     /**
      * Starts a new variation in a test case
      */
     public void beginVariation() {
-		// Store current system state on stack
+		/*
+    	// Store current system state on stack
 		variationPointsStates.push(this.fCurrentState);
 		variationPointsVars.push(this.fVarBindings);
 		
 		this.fCurrentState = new MSystemState(new UniqueNameGenerator().generate("variation#"), this.fCurrentState);
 		this.fVarBindings = new VarBindings(fVarBindings);
+		*/
 	}
 	
     /**
      * Ends a variation in a test case
      */
 	public void endVariation() throws MSystemException {
+		/*
 		if (variationPointsStates.isEmpty()) {
 			throw new MSystemException("No Variation to end!");
 		}
 		
 		this.fCurrentState = variationPointsStates.pop();
 		this.fVarBindings = variationPointsVars.pop();
+		*/
 	}
 }

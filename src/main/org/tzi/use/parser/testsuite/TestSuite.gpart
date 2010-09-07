@@ -26,9 +26,9 @@ options {
 package org.tzi.use.parser.testsuite;
 
 import org.tzi.use.parser.base.BaseParser;
-import org.tzi.use.parser.cmd.*;
+import org.tzi.use.parser.soil.*;
+import org.tzi.use.parser.soil.ast.*;
 import org.tzi.use.parser.ocl.*;
-import org.tzi.use.uml.sys.MCmdShowHideCrop.Mode;
 }
 
 @lexer::header {
@@ -92,7 +92,7 @@ testSuite returns [ASTTestSuite suite]
     modelFile=filename { $suite.setModelFile($suiteName); }
     
   ('setup' 
-  	('!' c = cmd { setupStatements.add($c.n); })* 'end' { $suite.setSetupStatements(setupStatements); }
+  	('!' c = stat { setupStatements.add($c.n); })* 'end' { $suite.setSetupStatements(setupStatements); }
   )?
      
   tests = testCases { $suite.setTestCases($tests.testCases); }
@@ -115,7 +115,7 @@ testCase returns [ASTTestCase n]
 :
   'testcase' name=IDENT { $n = new ASTTestCase($name); }
   (
-      '!' c = cmd { $n.addStatement($c.n); } 
+      '!' c = stat { $n.addStatement($c.n); } 
     |
       a=assertStatement { $n.addStatement($a.n); }
     |

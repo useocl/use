@@ -1,0 +1,3 @@
+t22b.use:8:4: 
+Could not compile soil defined operation `op1() : Integer' due to the following error:
+Operation must return a value, but variable `result' might be unbound.

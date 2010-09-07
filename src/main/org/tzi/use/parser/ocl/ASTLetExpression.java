@@ -21,6 +21,9 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -87,4 +90,12 @@ public class ASTLetExpression extends ASTExpression {
 
         return res;
     }
+
+	@Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		Set<String> freeVarsInSubExpr = fInExpr.getFreeVariables();
+		freeVarsInSubExpr.remove(fVarToken.getText());
+		freeVars.addAll(freeVarsInSubExpr);
+		fVarExpr.getFreeVariables(freeVars);
+	}
 }

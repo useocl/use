@@ -118,6 +118,6 @@ public class ASTSimpleType extends ASTType {
     }
 
     public String toString() {
-        return fName.toString();
+        return fName.getText();
     }
 }

@@ -37,7 +37,7 @@ public final class ExpTupleSelectOp extends Expression {
     private Expression fTupleExp;
     
     public ExpTupleSelectOp(TupleType.Part part, Expression tupleExp) {
-        super(part.type());
+        super(part.type(), tupleExp);
         fPart = part;
         fTupleExp = tupleExp;
         if (! tupleExp.type().isTupleType(false) )

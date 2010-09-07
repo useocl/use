@@ -64,15 +64,40 @@ public final class Evaluator {
                       MSystemState preState,
                       MSystemState postState,
                       VarBindings bindings, 
-                      PrintWriter evalLog)
-    {
-        fEvalContext = new EvalContext(preState, postState, bindings, evalLog);
+                      PrintWriter evalLog,
+                      String evalLogIndent) {
+        fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent);
         Value res = evaluate(expr);
         if (evalLog != null )
             evalLog.flush();
         return res;
     }
+    
+    /**
+     * Evaluates an expression in the specified system state context
+     * with a set of initial variable bindings. Detailed information
+     * is printed to evalLog.
+     */
+    public Value eval(Expression expr, 
+            MSystemState preState,
+            MSystemState postState,
+            VarBindings bindings, 
+            PrintWriter evalLog) {
+		fEvalContext = new EvalContext(preState, postState, bindings, evalLog);
+		Value res = evaluate(expr);
+		if (evalLog != null )
+		  evalLog.flush();
+		return res;
+	}
 
+    /**
+     * TODO
+     * @param expr
+     * @param postState
+     * @param bindings
+     * @param evalLog
+     * @return
+     */
     public Value eval(Expression expr, 
                       MSystemState postState,
                       VarBindings bindings, 
@@ -91,7 +116,20 @@ public final class Evaluator {
     {
         return eval(expr, postState, bindings, null);
     }
-
+    
+    /**
+     * Evaluates an expression in the specified system state context
+     * with a set of initial variable bindings.
+     */
+    public Value eval(
+    		Expression expr,
+    		MSystemState preState,
+    		MSystemState postState,
+    		VarBindings bindings) {
+    	
+    	return eval(expr, preState, postState, bindings, null);
+    }
+    
     /**
      * Evaluates an expression in the specified system state context.
      */

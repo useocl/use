@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
+import org.tzi.use.config.Options;
+import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -189,17 +191,32 @@ public class ASTModel extends AST {
         	}
         }
         
-        // (4a) generate constraints. All class interfaces are known
-        // and association features are available for expressions.
-        for (ASTClass c : fClasses) {
-            c.genConstraintsAndOperationBodies(ctx);
-        }
-
-        // (4b) generate constraints of the associationclasses.
+        // (4a) generate bodies of association and non-association classes
         // All class interfaces are known and association features
         // are available for expressions.
+        for (ASTClass c : fClasses) {
+            c.genOperationBodies(ctx);
+        }
+        
         for (ASTAssociationClass ac : fAssociationClasses) {
-            ac.genConstraintsAndOperationBodies( ctx );
+            ac.genOperationBodies(ctx);
+        }
+        
+        // constraints may not have side effects
+        SoilPermissionLevel permissionLevel = Options.soilFromOCL;
+        if (permissionLevel == SoilPermissionLevel.ALL) {
+        	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
+        }
+
+        // (4b) generate constraints of association and non-association classes
+        // All class interfaces are known and association features
+        // are available for expressions.
+        for (ASTClass c : fClasses) {
+            c.genConstraints(ctx);
+        }
+        
+        for (ASTAssociationClass ac : fAssociationClasses) {
+            ac.genConstraints(ctx);
         }
 
         // (5a) generate global constraints. All class interfaces are
@@ -217,6 +234,9 @@ public class ASTModel extends AST {
                 ctx.reportError(ex);
             }
         }
+        
+        // restore permission level
+        Options.soilFromOCL = permissionLevel;
 
         return model;
     }

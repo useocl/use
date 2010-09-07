@@ -25,6 +25,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +39,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -47,13 +50,17 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.util.Log;
 
 /** 
@@ -218,27 +225,58 @@ public class ObjectPropertiesView extends JPanel implements View {
      * arbitrary OCL expressions. 
      */
     private void applyChanges() {
-        if (fTable.getCellEditor()!=null) fTable.getCellEditor().stopCellEditing();
-        if (! haveObject() )
-            return;
-        // build command for changed attributes
-        String line = null;
-        for (int i = 0; i < fAttributes.size(); i++) {
-            String oldValue = 
-                ((Value) fAttributeValueMap.get(
-                            (MAttribute)fAttributes.get(i))).toString();
-            if (! oldValue.equals(fValues[i]) ) {
-                if (line == null )
-                    line = "";
-                else
-                    line += "; ";
-                line += "set " + fObject.name() + "." 
-                        + ((MAttribute) fAttributes.get(i)).name() 
-                        +  " := " + fValues[i];
-            }
+        
+    	if (fTable.getCellEditor() != null) { 
+        	fTable.getCellEditor().stopCellEditing();
         }
-        fMainWindow.execCmd(line);
-        update();
+        
+        if (!haveObject()) { 
+        	return;
+        }
+        
+        for (int i = 0; i < fValues.length; ++i) {
+        	MAttribute attribute = fAttributes.get(i);
+        	String newValue = fValues[i];
+        	String oldValue = fAttributeValueMap.get(attribute).toString();
+        	
+        	if (!newValue.equals(oldValue)) {
+        		
+        		StringWriter errorOutput = new StringWriter();
+        		Expression valueAsExpression = 
+        			OCLCompiler.compileExpression(
+        					fSystem.model(),
+        					fSystem.state(),
+        					newValue, 
+        					"<input>", 
+        					new PrintWriter(errorOutput, true), 
+        					fSystem.varBindings());
+        		
+        		if (valueAsExpression == null) {
+        			JOptionPane.showMessageDialog(
+        					fMainWindow, 
+        					errorOutput, 
+        					"Error", 
+        					JOptionPane.ERROR_MESSAGE);
+        			
+        			continue;
+        		}
+        		
+        		try {
+        			fSystem.evaluateStatement(
+        					new MAttributeAssignmentStatement(
+        							fObject, 
+        							attribute, 
+        							valueAsExpression));
+        			
+        		} catch (MSystemException e) {
+        			JOptionPane.showMessageDialog(
+        					fMainWindow, 
+        					e.getMessage(), 
+        					"Error", 
+        					JOptionPane.ERROR_MESSAGE);
+        		}
+        	}
+        }
     }
 
     private boolean haveObject() {

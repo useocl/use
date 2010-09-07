@@ -21,17 +21,14 @@
 
 package org.tzi.use.uml.mm;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.SystemManipulator;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.MCmdCreateInsertObjects;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
-import java.util.List;
-import java.util.ArrayList;
 
 
 /**
@@ -60,29 +57,15 @@ public class MAssociationClassTest extends TestCase {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
             MSystem system = new MSystem( model );
+            
+            SystemManipulator manipulator = new SystemManipulator(system);
 
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            names.add( "p2" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmdCreateObjects cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            names.clear();
-            names.add( "c1" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            names.clear();
-            names.add( "p1" );
-            names.add( "c1" );
-            MAssociationClass assocClass = model.getAssociationClass( "Job" );
-            MCmdCreateInsertObjects cmdAssocClass = new MCmdCreateInsertObjects( system.state(),
-                                                                                 "j1", assocClass, names );
-
-            system.executeCmd( cmdAssocClass );
-
+            manipulator.createObjects("Person", "p1", "p2");
+            
+            manipulator.createObjects("Company", "c1");
+            
+            manipulator.createLinkObject("Job", "j1", "p1", "c1");
+      
             assertEquals( system.state().objectByName( "p1" ).name(), "p1" );
             assertEquals( system.state().objectByName( "p2" ).name(), "p2" );
             assertEquals( system.state().objectByName( "c1" ).name(), "c1" );

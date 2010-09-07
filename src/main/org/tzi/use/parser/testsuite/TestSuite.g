@@ -26,9 +26,9 @@ options {
 package org.tzi.use.parser.testsuite;
 
 import org.tzi.use.parser.base.BaseParser;
-import org.tzi.use.parser.cmd.*;
+import org.tzi.use.parser.soil.*;
+import org.tzi.use.parser.soil.ast.*;
 import org.tzi.use.parser.ocl.*;
-import org.tzi.use.uml.sys.MCmdShowHideCrop.Mode;
 }
 
 @lexer::header {
@@ -92,7 +92,7 @@ testSuite returns [ASTTestSuite suite]
     modelFile=filename { $suite.setModelFile($suiteName); }
     
   ('setup' 
-  	('!' c = cmd { setupStatements.add($c.n); })* 'end' { $suite.setSetupStatements(setupStatements); }
+  	('!' c = stat { setupStatements.add($c.n); })* 'end' { $suite.setSetupStatements(setupStatements); }
   )?
      
   tests = testCases { $suite.setTestCases($tests.testCases); }
@@ -115,7 +115,7 @@ testCase returns [ASTTestCase n]
 :
   'testcase' name=IDENT { $n = new ASTTestCase($name); }
   (
-      '!' c = cmd { $n.addStatement($c.n); } 
+      '!' c = stat { $n.addStatement($c.n); } 
     |
       a=assertStatement { $n.addStatement($a.n); }
     |
@@ -421,6 +421,7 @@ postfixExpression returns [ASTExpression n]
 primaryExpression returns [ASTExpression n]
 : 
       nLit=literal { $n = $nLit.n; }
+    | nOr = objectReference { $n = $nOr.n; }
     | nPc=propertyCall[null, false] { $n = $nPc.n; }
     | LPAREN nExp=expression RPAREN { $n = $nExp.n; }
     | nIfExp=ifExpression { $n = $nIfExp.n; }
@@ -430,6 +431,14 @@ primaryExpression returns [ASTExpression n]
       ( AT 'pre' { $n.setIsPre(); } ) ? 
     ;
 
+
+objectReference returns [ASTExpression n]
+:
+  AT
+  objectName = IDENT
+  
+  { n = new ASTObjectReferenceExpression(objectName); }
+;
 
 /* ------------------------------------
   propertyCall ::= 
@@ -516,6 +525,7 @@ operationExpression[ASTExpression source, boolean followsArrow]
 	  )?
       RPAREN
     )?
+    { $n.setStartToken($start); }
     ;
 
 
@@ -778,227 +788,582 @@ tuplePart returns [ASTTuplePart n]
     name=IDENT COLON t=type
     { $n = new ASTTuplePart($name, $t.n); }
     ;
-// grammar for commands
 
-/* ------------------------------------
-  cmdList ::= cmd { cmd }
-*/
-cmdList returns [ASTCmdList cmdList]
-@init{ $cmdList = new ASTCmdList(); }
+
+/* -----------------------------------------------------------------------------
+------------------------- start of file SoilBase.gpart ------------------------- 
+----------------------------------------------------------------------------- */
+
+/*
+ * USE - UML based specification environment
+ * Copyright (C) 1999-2010 University of Bremen
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
+ */
+ 
+/* $Id: SoilBase.gpart 1565 2010-07-19 00:55:57Z deg $ */
+
+////////////////////////////////////////////////////////////////////////////////
+// Soil grammar
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// statOnly ::= statement followed by EOF
+////////////////////////////////////////////////////////////////////////////////
+statOnly returns [ASTStatement n]
 :
-    c=cmd { cmdList.add($c.n); }
-    ( c=cmd { cmdList.add($c.n); } )*
-    EOF
-    ;
-        
-/* ------------------------------------
-  cmd ::= cmdStmt [ ";" ]
-*/
-cmd returns [ASTCmd n]
+  s = stat
+  EOF
+  
+  { $n = $s.n; }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// single statement or component statement
+////////////////////////////////////////////////////////////////////////////////
+stat returns [ASTStatement n]
+@init {
+  ASTSequenceStatement seq = new ASTSequenceStatement();
+}
 :
-    stmt=cmdStmt { $n = $stmt.n; }( SEMI )?;
+  nextStat[seq]
+  (
+    SEMI
+    nextStat[seq]
+  )* 
+  
+  { 
+    $n = seq.simplify();
+    if (($n != null) && (!$n.isEmptyStatement())) {
+      $n.setSourcePosition($start);
+      $n.setParsedText($text);
+    }
+  }
+;
 
 
-/* ------------------------------------
-  cmdStmt ::= 
-      createCmd
-    | createAssignCmd 
-    | createInsertCmd
-    | destroyCmd 
-    | insertCmd 
-    | deleteCmd 
-    | setCmd 
-    | opEnterCmd
-    | opExitCmd
-    | letCmd
-*/
-cmdStmt returns [ASTCmd n]
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+nextStat[ASTSequenceStatement seq]
 :
-	(
-      nC = createCmd
-    | nC = createAssignCmd 
-    | nC = createInsertCmd
-    | nC = destroyCmd
-    | nC = insertCmd
-    | nC = deleteCmd
-    | nC = setCmd
-    | nC = opEnterCmd
-    | nC = opExitCmd
-    | nC = letCmd
-    | nC = showCmd
-    | nC = hideCmd
-    | nC = cropCmd
-	) { $n = $nC.n; }
-    ;
+  s = singleStat
+  
+  {
+    if (($s.n != null) && (!$s.n.isEmptyStatement())) {
+      seq.addStatement($s.n, $start, $text);
+    }
+  }
+;
+
+////////////////////////////////////////////////////////////////////////////////
+// 
+////////////////////////////////////////////////////////////////////////////////
+singleStat returns [ASTStatement n]
+options { 
+  backtrack = true;
+  memoize = true;
+}
+: 
+    emp = emptyStat      { $n = $emp.n; } // i.    (empty statement)
+  // handled in stat rule                 // ii.   (sequence)
+  | vas = varAssignStat  { $n = $vas.n; } // iii.  (variable assignment)
+  | aas = attAssignStat  { $n = $aas.n; } // iv.   (attribute assignment)
+  | lcs = lobjCreateStat { $n = $lcs.n; } //       (link object creation)
+  | ocs = objCreateStat  { $n = $ocs.n; } // v.    (object creation)
+  | ods = objDestroyStat { $n = $ods.n; } // vi.   (object destruction)
+  | lis = lnkInsStat     { $n = $lis.n; } // vii.  (link insertion)
+  | lds = lnkDelStat     { $n = $lds.n; } // viii. (link deletion)
+  | ces = condExStat     { $n = $ces.n; } // ix.   (conditional execution)
+  | its = iterStat       { $n = $its.n; } // x.    (iteration)
+  | ops = callStat       { $n = $ops.n; } // xi.   (operation call without result)
+  // handled in varAssignStat rule        // xii.  (operation call with result)
+;
 
 
-/* ------------------------------------
-  Creates one or more objects and binds variables to them.
-
-  createCmd ::= "create" idList ":" simpleType
-*/
-createCmd returns [ASTCmd n]
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+emptyStat returns [ASTEmptyStatement n]
 :
-    s='create' nIdList=idList 
-    COLON t=simpleType
-    { $n = new ASTCreateCmd($s, $nIdList.idList, $t.n); }
-    ;
-
-/* ------------------------------------
-  Creates an anonymous object and assigns it to a variable.
-
-  createAssignCmd ::= "assign" idList ":=" "create" simpleType
-*/
-createAssignCmd returns [ASTCmd n]
-:
-    s='assign' nIdList=idList COLON_EQUAL 'create' t=simpleType{ $n = new ASTCreateAssignCmd($s, $nIdList.idList, $t.n); };
+  nothing
+  
+  { $n = new ASTEmptyStatement(); }
+;
 
 
-/* ------------------------------------
-  Creates one or more objects and binds variables to them.
-
-  create ::= "create" id ":" simpleType "between" "(" idList ")"
-*/
-createInsertCmd returns [ASTCmd n]
-:
-    s='create' id=IDENT COLON idAssoc=IDENT
-    'between' LPAREN idListInsert=idList RPAREN
-    { $n = new ASTCreateInsertCmd( $s, $id, $idAssoc, $idListInsert.idList); }
-    ;
-
-
-/* ------------------------------------
-  Destroys one or more objects (expression may be a collection)
-
-  destroyCmd ::= "destroy" expression { "," expression }
-*/
-destroyCmd returns [ASTCmd n]
-@init { List exprList = new ArrayList(); }
-:
-     s='destroy' e=expression { exprList.add($e.n); } 
-               ( COMMA e=expression { exprList.add($e.n); } )*
-    { $n = new ASTDestroyCmd($s, exprList); }
-    ;
-
-
-/* ------------------------------------
-  Inserts a link (tuple of objects) into an association.
-
-  insertCmd ::= "insert" "(" expression "," expression { "," expression } ")" "into" id
-*/
-insertCmd returns [ASTCmd n]
-@init{ List exprList = new ArrayList(); }
-:
-    s='insert' LPAREN 
-    e=expression { exprList.add($e.n); } COMMA
-    e=expression { exprList.add($e.n); } ( COMMA e=expression { exprList.add($e.n); } )* 
-    RPAREN 'into' id=IDENT
-    { $n = new ASTInsertCmd($s, exprList, $id); }
-    ;
-
-
-/* ------------------------------------
-  Deletes a link (tuple of objects) from an association.
-
-  deleteCmd ::= "delete" "(" expression "," expression { "," expression } ")" "from" id
-*/
-deleteCmd returns [ASTCmd n]
-@init { List exprList = new ArrayList(); }
-:
-    s='delete' LPAREN
-    e=expression { exprList.add($e.n); } COMMA
-    e=expression { exprList.add($e.n); } ( COMMA e=expression { exprList.add($e.n); } )*
-    RPAREN 'from' id=IDENT
-    { $n = new ASTDeleteCmd($s, exprList, $id); }
-    ;
-
-
-/* ------------------------------------
-
-  Assigns a value to an attribute of an object. The first "expression"
-  must be an attribute access expression giving an "l-value" for an
-  attribute.
-
-  setCmd ::= "set" expression ":=" expression 
-*/
-setCmd returns [ASTCmd n]
-:
-    s='set' e1=expression COLON_EQUAL e2=expression
-    { $n = new ASTSetCmd($s, $e1.n, $e2.n); }
-    ;
-
-
-/* ------------------------------------
-  A call of an operation which may have side-effects. The first
-  expression must have an object type.
-
-  opEnterCmd ::= 
-    "openter" expression id "(" [ expression { "," expression } ] ")" 
-*/
-opEnterCmd returns [ASTCmd n]
-@init{ASTOpEnterCmd nOpEnter = null;}
-:
-    s='openter' 
-    e=expression id=IDENT { nOpEnter = new ASTOpEnterCmd($s, $e.n, $id); $n = nOpEnter;}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+varAssignStat returns [ASTStatement n]
+options {
+  backtrack = true;
+  memoize = true;
+}
+: 
+  varName = IDENT
+  COLON_EQUAL
+  rVal = rValue
+  
+  { $n = new ASTVariableAssignmentStatement($varName.text, $rVal.n); }
+  |
+  vNames = identListMin1
+  COLON_EQUAL
+  'new'
+  oType = simpleType
+  (
     LPAREN
-    ( e=expression { nOpEnter.addArg($e.n); } ( COMMA e=expression { nOpEnter.addArg($e.n); } )* )?
-    RPAREN 
-    ;
+      oNames = exprList
+    RPAREN
+  )?
+  
+  {
+    ASTSimpleType objType = $oType.n;
+    List<String> varNames = $vNames.n;
+    int numVars = varNames.size();
+    
+    List<ASTExpression> objNames = null;
+    int numNames = 0;
+    
+    if (oNames != null) {
+      objNames = $oNames.n;
+      numNames = objNames.size();
+    }
+    
+    if (numNames > numVars) {
+      StringBuilder sb = new StringBuilder();
+      sb.append("ignoring superfluous object name");
+      if ((numNames - numVars) > 1) {
+        sb.append("s");
+      }
+      sb.append(": ");
+      for (int i = numVars; i < numNames; ) {
+        sb.append(objNames.get(i).getStringRep());
+        if (++i < numNames) {
+          sb.append(", ");
+        }
+      }
+      sb.append(" in statement `");
+      sb.append($text); 
+      sb.append("'");
+      
+      reportWarning(sb.toString());
+    }
+    
+    ASTSequenceStatement seq = new ASTSequenceStatement(numVars);
+    for (int i = 0; i < numVars; ++i) {     
+      seq.addStatement(
+        new ASTVariableAssignmentStatement(
+          varNames.get(i),
+          new ASTRValueNewObject(
+            objType, 
+            ((i < numNames) ? objNames.get(i) : null))),
+        $start,
+        $text);  
+    }
+       
+    $n = seq.simplify();
+  }
+;
 
-/* ------------------------------------
-  Command to exit an operation. A result expression is required if the
-  operation to be exited declared a result type.
 
-  opExitCmd ::= "opexit" [ expression ]
-*/
-opExitCmd returns [ASTCmd n]
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+attAssignStat returns [ASTAttributeAssignmentStatement n]
 :
-    s='opexit' ((expression)=> e=expression | )
-    { $n = new ASTOpExitCmd($s, $e.n); }
-    ;
+  obj = inSoilExpression 
+  DOT 
+  attName = IDENT
+  COLON_EQUAL
+  r = rValue
+  
+  { $n = new ASTAttributeAssignmentStatement($obj.n, $attName.text, $r.n); }
+;
 
-/* ------------------------------------
-  Command to bind a toplevel variable.
 
-  letCmd ::= "let" id [ ":" type ] "=" expression
-*/
-letCmd returns [ASTCmd n]
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+objCreateStat returns [ASTStatement n]
 :
-    s='let' name=IDENT ( COLON t=type )? EQUAL e=expression
-     { $n = new ASTLetCmd($s, $name, $t.n, $e.n); }
-    ;
+  'new'
+  objType = simpleType
+  (
+    LPAREN
+      objNames = exprListMin1
+    RPAREN
+  )?
+  
+  {
+    if (objNames == null) {
+      $n = new ASTNewObjectStatement($objType.n);
+    } else {
+      ASTSequenceStatement seq = new ASTSequenceStatement();
+      
+      for (ASTExpression objName : $objNames.n){    
+        seq.addStatement(
+          new ASTNewObjectStatement($objType.n, objName),
+          $start,
+          $text);
+      }
+      
+      $n = seq.simplify();
+    }
+  }
+;
 
-/* --------------------------------------
-  Command to hide objects in diagrams
-*/
-hideCmd returns [ASTCmd n]
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+lobjCreateStat returns [ASTNewLinkObjectStatement n]
 :
-	s='hide' (
-	    'all' { $n = new ASTShowHideAllCmd($s, Mode.HIDE); }
-	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd($s, Mode.HIDE, $objList.idList, $classname); }
-	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd($s, Mode.HIDE, $ass, $objList.idList); }
-	  );
-	  
-/* --------------------------------------
-  Command to show objects in diagrams
-*/
-showCmd returns [ASTCmd n]
+  'new'
+  assoc = IDENT
+  (
+    LPAREN
+      name = inSoilExpression
+    RPAREN
+  )?
+  'between'
+  LPAREN
+    p = rValListMin2
+  RPAREN
+  
+  { 
+    $n = 
+      new ASTNewLinkObjectStatement(
+        $assoc.text, $p.n, $name.n); 
+  }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+objDestroyStat returns [ASTStatement n]
 :
-	s='show' (
-	    'all' { $n = new ASTShowHideAllCmd($s, Mode.SHOW); }
-	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd($s, Mode.SHOW, $objList.idList, $classname); }
-	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd($s, Mode.SHOW, $ass, $objList.idList); }
-	  );
-	  
-/* --------------------------------------
-  Command to crop objects in diagrams
-*/
-cropCmd returns [ASTCmd n]
+  'destroy'
+  el = exprListMin1
+  
+  {
+    ASTSequenceStatement seq = new ASTSequenceStatement();
+    
+    for (ASTExpression expression : $el.n) {
+      seq.addStatement(
+        new ASTObjectDestructionStatement(expression),
+        $start,
+        $text);
+    }
+    
+    $n = seq.simplify();
+  }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// link insertion statement
+////////////////////////////////////////////////////////////////////////////////
+lnkInsStat returns [ASTLinkInsertionStatement n]
 :
-	s='crop' (
-	  | objList = idList (COLON classname = IDENT)? { $n = new ASTShowHideCropObjectsCmd($s, Mode.CROP, $objList.idList, $classname); }
-	  | 'link' LPAREN objList = idList RPAREN 'from' ass=IDENT { $n = new ASTShowHideCropLinkObjectsCmd($s, Mode.CROP, $ass, $objList.idList); }
-	  );
+  'insert'
+  LPAREN
+    p = rValListMin2
+  RPAREN
+  'into'
+  ass = IDENT
+
+  { $n = new ASTLinkInsertionStatement($ass.text, $p.n); }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// link deletion statement
+////////////////////////////////////////////////////////////////////////////////
+lnkDelStat returns [ASTLinkDeletionStatement n]
+:
+  'delete'
+  LPAREN
+    p = rValListMin2
+  RPAREN
+  'from' 
+  ass = IDENT
+  
+  { $n = new ASTLinkDeletionStatement($ass.text, $p.n); }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// conditional execution statement
+////////////////////////////////////////////////////////////////////////////////
+condExStat returns [ASTConditionalExecutionStatement n]
+@init {
+  ASTStatement elseStat = new ASTEmptyStatement();
+}
+:
+  'if' 
+  con = inSoilExpression
+  'then' 
+  ts = stat 
+  (
+    'else' 
+     es = stat { elseStat = $es.n; }
+  )?
+  'end'
+  
+  { $n = new ASTConditionalExecutionStatement($con.n, $ts.n, elseStat); }
+;
+
+////////////////////////////////////////////////////////////////////////////////
+// iteration statement
+////////////////////////////////////////////////////////////////////////////////
+iterStat returns [ASTIterationStatement n]
+:
+  'for'
+  var = IDENT
+  'in'
+  set = inSoilExpression
+  'do'
+  s = stat
+  'end'
+  
+  { $n = new ASTIterationStatement($var.text, $set.n, $s.n); }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+callStat returns [ASTOperationCallStatement n]
+:
+  e = inSoilExpression
+  
+  { $n = new ASTOperationCallStatement($e.n); }
+;
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// MISC HELPER RULES
+//
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// dummy rule to make "nothing" choices more visible
+////////////////////////////////////////////////////////////////////////////////
+nothing
+:
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+rValue returns [ASTRValue n]
+options {
+  backtrack = true;
+  memoize = true;
+}
+:
+  e = inSoilExpression
+  { $n = new ASTRValueExpressionOrOpCall($e.n); }
+  |
+  loc = lobjCreateStat
+  { 
+    $loc.n.setSourcePosition($start);
+    $loc.n.setParsedText($text);
+    $n = new ASTRValueNewLinkObject($loc.n);
+  }
+  |
+  'new' 
+  objType = simpleType
+  (
+    LPAREN
+      objName = inSoilExpression
+    RPAREN
+  )?
+  { 
+    ASTNewObjectStatement nos = 
+      new ASTNewObjectStatement($objType.n, $objName.n);
+    
+    nos.setSourcePosition($start);
+    nos.setParsedText($text);
+      
+    $n = new ASTRValueNewObject(nos); 
+  }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+rValList returns [List<ASTRValue> n]
+:
+  nothing           
+  { $n = new ArrayList<ASTRValue>(); }
+  |
+  rl = rValListMin1 
+  { $n = $rl.n; }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+rValListMin1 returns [List<ASTRValue> n]
+@init {
+  $n = new ArrayList<ASTRValue>();
+}
+:
+  r = rValue
+  { $n.add($r.n); }
+  (
+    COMMA
+    r = rValue
+    { $n.add($r.n); }
+  )*
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+rValListMin2 returns [List<ASTRValue> n]
+@init {
+  $n = new ArrayList<ASTRValue>();
+}
+:
+  r = rValue
+  { $n.add($r.n); }
+  COMMA
+  r = rValue
+  { $n.add($r.n); }
+  (
+    COMMA
+    r = rValue
+    { $n.add($r.n); }
+  )*
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// 
+////////////////////////////////////////////////////////////////////////////////
+inSoilExpression returns [ASTExpression n]
+:
+  e = expression { if ($e.n != null) $e.n.setStringRep($e.text); } 
+  
+  { $n = $e.n; }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+exprList returns [List<ASTExpression> n]
+:
+  nothing 
+  { $n = new ArrayList<ASTExpression>(); }
+  | 
+  el = exprListMin1 
+  { $n = $el.n; }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// 
+////////////////////////////////////////////////////////////////////////////////
+exprListMin1 returns [List<ASTExpression> n]
+@init {
+  $n = new ArrayList<ASTExpression>();
+}
+:
+  e = inSoilExpression 
+  { if ($e.n != null) $n.add($e.n); }
+  (
+    COMMA
+    e = inSoilExpression 
+    { if ($e.n != null) $n.add($e.n); }
+  )*
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// 
+////////////////////////////////////////////////////////////////////////////////
+exprListMin2 returns [List<ASTExpression> n]
+@init {
+  $n = new ArrayList<ASTExpression>();
+}
+:
+  e = inSoilExpression
+  { if ($e.n != null) $n.add($e.n); }
+  COMMA
+  e = inSoilExpression
+  { if ($e.n != null) $n.add($e.n); }
+  (
+    COMMA
+    e = inSoilExpression
+    { if ($e.n != null) $n.add($e.n); }
+  )*
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// collects a list of comma separated identifiers. may be empty
+////////////////////////////////////////////////////////////////////////////////
+identList returns [List<String> n]
+:
+  nothing
+  { $n = new ArrayList<String>(); }
+  | 
+  il = identListMin1 
+  { $n = $il.n; }
+;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// collects a list of comma separated identifiers. may not be empty
+////////////////////////////////////////////////////////////////////////////////
+identListMin1 returns [List<String> n]
+@init {
+  $n = new ArrayList<String>();
+}
+: 
+  id = IDENT
+  { $n.add($id.text); }
+  (
+    COMMA
+    id = IDENT {
+    $n.add($id.text); }
+  )*
+;
+
+
+
+/* -----------------------------------------------------------------------------
+-------------------------- end of file SoilBase.gpart --------------------------
+----------------------------------------------------------------------------- */
+
 /*
 --------- Start of file OCLLexerRules.gpart -------------------- 
 */

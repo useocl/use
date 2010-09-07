@@ -458,11 +458,11 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     		if (!visitedNodes.contains(n)) {
     			if (dfs_cycle(n, visitedNodes, new HashSet<N>(visitedNodesTree))) return true;
     		} else if (visitedNodesTree.contains(n)) {
-    			return true;
-    		}
+                return true;
+        }
     	}
     	
-    	return false;
+        return false;
     }
     
     private NodeInfo getNodeInfo(Object n) {

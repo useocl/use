@@ -29,6 +29,7 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -36,15 +37,18 @@ import java.util.ListIterator;
 import org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdInsertLink;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.util.cmd.CannotUndoException;
-import org.tzi.use.util.cmd.CommandFailedException;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MRValueExpression;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 
 class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
@@ -98,37 +102,53 @@ class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
     private void createLink(GConfiguration conf,
                             IGCollector collector) throws GEvaluationException {
 
-        // generate expressions
-        Expression[] exprs = new Expression[fObjectNames.size()];
-        int i = 0;
+    	MSystemState state = conf.systemState();
+        MSystem system = state.system();
+        PrintWriter basicOutput = collector.basicPrintWriter();
+        //PrintWriter detailOutput = collector.detailPrintWriter();
         
-        for (String name : fObjectNames) {
-            MObject obj =  conf.systemState().objectByName( name ); 
-            exprs[i++] = new ExpVariable( obj.name(), obj.type() );
+        MAssociation association = fInstr.association();
+        List<MRValue> participants = 
+        	new ArrayList<MRValue>(fObjectNames.size());
+        
+        for (String objectName : fObjectNames) {
+        	MObject object = state.objectByName(objectName);
+        	participants.add(
+        			new MRValueExpression(object));	
         }
+        
+        MStatement statement = 
+        	new MLinkInsertionStatement(association, participants);
+        
+        MStatement inverseStatement;
 
-        MCmd cmd = new MCmdInsertLink(conf.systemState(),
-                                      exprs,
-                                      fInstr.association());
+        basicOutput.println(statement.getShellCommand());
         try {
-            collector.basicPrintWriter().println(cmd.getUSEcmd());
-            cmd.execute();
-            
-            fCaller.feedback(conf, null, collector);
-            if (collector.expectSubsequentReporting()) {
-                collector.subsequentlyPrependCmd( cmd );
-            }
-            collector.basicPrintWriter().println("undo: " + cmd.getUSEcmd());
-            cmd.undo();
-        } catch (CommandFailedException e) {
-            collector.invalid(e);
-        } catch (CannotUndoException e) {
-            throw new GEvaluationException(e);
+        	StatementEvaluationResult evaluationResult = 
+        		system.evaluateStatement(statement, true, false);
+        	
+        	inverseStatement = evaluationResult.getInverseStatement();
+		} catch (MSystemException e) {
+			collector.invalid(e);
+			return;
+		}
+		
+		//detailOutput.println("`" + fInstr + "' == (no value)");
+		
+		fCaller.feedback(conf, null, collector);
+        if (collector.expectSubsequentReporting()) {
+        	collector.subsequentlyPrependStatement(statement);
         }
+         
+        basicOutput.println("undo: " + statement.getShellCommand());
+        try {
+        	system.evaluateStatement(inverseStatement, true, false);
+		} catch (MSystemException e) {
+			collector.invalid(e);
+		}
     }
 
     public String toString() {
         return "GEvalInstrInsert_Assoc_Linkends";
     }
-
 }

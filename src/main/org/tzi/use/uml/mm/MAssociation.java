@@ -45,6 +45,13 @@ public interface MAssociation extends MModelElement {
      * @return List(MAssociationEnd)
      */
     List<MAssociationEnd> associationEnds();
+    
+    
+    /**
+     * TODO
+     * @return
+     */
+    List<String> roleNames();
 
     /**
      * Returns the list of reachable navigation ends from

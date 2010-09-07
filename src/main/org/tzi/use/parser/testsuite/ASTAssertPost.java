@@ -32,7 +32,7 @@ public class ASTAssertPost extends ASTAssert {
 			MPrePostCondition condition = null;
 			String cndName = conditionName.getText();
 			
-			for (MPrePostCondition post :  opCall.operation().postConditions()) {
+			for (MPrePostCondition post :  opCall.getOperation().postConditions()) {
 				if (cndName.equals(post.name())) {
 					condition = post;
 					break;
@@ -43,7 +43,7 @@ public class ASTAssertPost extends ASTAssert {
 				throw new SemanticException(conditionName,
 						"Unknown post condition `" + cndName
 								+ "' for operation `"
-								+ opCall.operation().toString() + "'");
+								+ opCall.getOperation().toString() + "'");
 			}
 			
 			result.setCondition(condition);

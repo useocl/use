@@ -47,9 +47,9 @@ import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
-import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.Log;
 
 
@@ -309,11 +309,10 @@ public class GGenerator {
         else {
             pw.println("Result: Valid state found.");
             pw.println("Commands to produce the valid state:");
-            for (MCmd cmd : lastResult().collector().commands()) {
-                pw.println( cmd.getUSEcmd() );
-            }
-            
-            if (lastResult().collector().commands().isEmpty())
+            for (MStatement statement : lastResult().collector().statements()) {
+            	pw.println(statement.getShellCommand());
+            }     
+            if (lastResult().collector().statements().isEmpty())
                 pw.println("(none)");
         }
     }
@@ -329,14 +328,15 @@ public class GGenerator {
             System.out.println("No commands available.");
         else {
             try {
-                for (MCmd cmd : lastResult().collector().commands()) {
-                    fSystem.executeCmd(cmd);
+               
+                for (MStatement statement : lastResult().collector().statements()) {
+                	fSystem.evaluateStatement(statement);
                 }
-                System.out.println(
-                                   "Generated result (system state) accepted.");
+                
+                System.out.println("Generated result (system state) accepted.");
             } catch (MSystemException e) {
-                Log.error(e.getMessage());
-            }
+            	Log.error(e.getMessage());
+			}
         }
     }
 

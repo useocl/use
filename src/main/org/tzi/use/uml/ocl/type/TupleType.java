@@ -150,7 +150,7 @@ public final class TupleType extends Type {
     	return commonType;
 	}
 
-	/** 
+    /** 
      * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'. 
      */
     public String toString() {

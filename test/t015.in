@@ -4,7 +4,7 @@
 # format.
 gen flags +d
 !create z:Zug
-gen start t015.assl waggonkette(z, 4)
+gen start -t t015.assl waggonkette(z, 4)
 gen result accept
 *Generated result (system state) accepted.
 ? z.waggon->size

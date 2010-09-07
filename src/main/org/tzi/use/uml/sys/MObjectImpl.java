@@ -26,6 +26,7 @@ import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 
 import java.util.List;
 
@@ -69,7 +70,8 @@ public final class MObjectImpl implements MObject {
     public ObjectType type() {
         return fType;
     }
-
+    
+    
     /**
      * Returns a name for this object.
      */
@@ -77,7 +79,17 @@ public final class MObjectImpl implements MObject {
         return fName;
     }
 
+    
     /**
+     * returns the value of this object
+     * @return the value of this object
+     */
+    public ObjectValue value() {
+    	return new ObjectValue(TypeFactory.mkObjectType(fClass), this);
+	}
+
+    
+	/**
      * Returns the state of an object in a specific system state.
      *
      * @return null if object does not exist in the state

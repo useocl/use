@@ -22,26 +22,14 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
-import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.util.Log;
-import org.tzi.use.util.NullWriter;
-import org.tzi.use.util.rubyintegration.RubyHelper;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 /**
  * An operation is a parameterized expression. Evaluation of the
@@ -52,23 +40,89 @@ import org.tzi.use.util.rubyintegration.RubyHelper;
  */
 public final class MOperation extends MModelElementImpl {
     private VarDeclList fVarDeclList; // A list of parameters
-    private Type fResultType;   // The declared result type (optional)
-    private Expression fExpr;   // The operation's body (optional)
+    private Type fResultType;         // The declared result type (optional)
+    private Expression fExpr;         // The operation's body (optional)
+    private MStatement fStatement;    // might be null
     private MClass fClass;  // owner
     private List<MPrePostCondition> fPreConditions;
     private List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
-
-    private String script;
+    private boolean fIsCheckingSideEffects = false;
     
-    MOperation(String name, VarDeclList varDeclList, Type resultType) {
-        super(name);
-        fVarDeclList = varDeclList;
-        fResultType = resultType;
-        fExpr = null;
-        fPreConditions = new ArrayList<MPrePostCondition>();
-        fPostConditions = new ArrayList<MPrePostCondition>();
+
+    public MOperation(String name, VarDeclList varDeclList, Type resultType) {
+	    super(name);
+	    fVarDeclList = varDeclList;
+	    fResultType = resultType;
+	    fExpr = null;
+	    fPreConditions = new ArrayList<MPrePostCondition>();
+	    fPostConditions = new ArrayList<MPrePostCondition>();
+	}
+
+    /**
+     * TODO
+     * @return
+     */
+	public boolean hasStatement() {
+    	return fStatement != null;
     }
+    
+	/**
+	 * TODO
+	 * @return
+	 */
+    public MStatement getStatement() {
+    	return fStatement;
+    }
+    
+    
+    /**
+     * TODO
+     * @return
+     */
+    public boolean hasBody() {
+    	return (hasExpression() || hasStatement());
+    }
+    
+    
+    /**
+     * TODO
+     * @param statement
+     */
+    public void setStatement(MStatement statement) {
+    	fStatement = statement;
+    }
+    
+    /**
+     * TODO
+     * @return
+     */
+    public synchronized boolean hasSideEffects() {
+    	if (fIsCheckingSideEffects) {
+    		return false;
+    	} else {
+    		fIsCheckingSideEffects = true;
+    		boolean hasSideEffects = 
+    			((hasExpression() && fExpr.hasSideEffects()) ||
+    			    	 (hasStatement() && fStatement.hasSideEffects()));
+    		fIsCheckingSideEffects = false;
+    		
+    		return hasSideEffects;
+    	}
+    }
+    
+    
+    /**
+     * TODO
+     * @return
+     */
+    public boolean isCallableFromOCL() {
+    	return (
+    			(fExpr != null) || 
+    			((fStatement != null) && 
+    					fStatement.isCallableInOCL()));
+    }
+    
 
     /** 
      * Returns the owner class of this operation.
@@ -82,6 +136,39 @@ public final class MOperation extends MModelElementImpl {
      */
     public VarDeclList paramList() {
         return fVarDeclList;
+    }
+    
+    /**
+     * TODO
+     * @return
+     */
+    public List<VarDecl> allParams() {
+    	List<VarDecl> result = new ArrayList<VarDecl>();
+    	
+    	int numVarDecls = fVarDeclList.size();
+    	for (int i = 0; i < numVarDecls; ++i) {
+    		result.add(fVarDeclList.varDecl(i));
+    	}
+    	
+    	return result;
+    }
+    
+    
+    /**
+     * returns a list of all parameter names
+     * @return
+     */
+    public List<String> paramNames() {
+    	
+    	ArrayList<String> parameterNames = 
+    		new ArrayList<String>(fVarDeclList.size());
+    	
+    	int numVarDecls = fVarDeclList.size();
+    	for (int i = 0; i < numVarDecls; ++i) {
+    		parameterNames.add(fVarDeclList.varDecl(i).name());
+    	}
+    	
+    	return parameterNames;
     }
 
     /** 
@@ -186,6 +273,19 @@ public final class MOperation extends MModelElementImpl {
     public List<MPrePostCondition> postConditions() {
         return fPostConditions;
     }
+    
+    /**
+     * Returns true if any of the post conditions contain the @pre modifier
+     * @return true if any of the post conditions contain the @pre modifier
+     */
+    public boolean postConditionsRequirePreState() {
+    	for (MPrePostCondition postCondition : fPostConditions) {
+    		if (postCondition.expression().containsPre()) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 
     /**
      * Returns the position in the defined USE-Model.
@@ -207,52 +307,6 @@ public final class MOperation extends MModelElementImpl {
     public void processWithVisitor(MMVisitor v) {
         v.visitOperation(this);
     }
-
-    public String getScripBody() {
-    	return script;
-    }
     
-    public boolean hasScript() {
-    	return this.script != null;
-    }
-    
-	public void setScript(String scriptBody) {
-		this.script = scriptBody;
-	}
-
-	public Value evaluateScript(EvalContext ctx) {
-		ScriptEngineManager m = new ScriptEngineManager();
-        ScriptEngine rubyEngine = m.getEngineByName("jruby");
-                
-        if (rubyEngine == null)
-            throw new RuntimeException("Did not find the ruby engine. Please verify your classpath");
-       
-        StringBuilder wholeScript = new StringBuilder(ExtensionManager.getInstance().getRubyMethodCallLibrary());
-        wholeScript.append(System.getProperty("line.separator"));
-        wholeScript.append(script);
-        
-        ScriptContext context = rubyEngine.getContext();
-        context.setErrorWriter(new NullWriter());
-
-        context.setAttribute("ctx", ctx, ScriptContext.ENGINE_SCOPE);
-        
-        Iterator<VarBindings.Entry> it = ctx.varBindings().iterator();
-        // This includes self
-        while(it.hasNext()) {
-        	VarBindings.Entry e = it.next();
-        	context.setAttribute(e.getVarName(), RubyHelper.useValueToRubyValue(e.getValue()), ScriptContext.ENGINE_SCOPE);
-        }
-
-        try{
-            Object result = rubyEngine.eval(wholeScript.toString(), context);
-            return RubyHelper.rubyValueToUseValue(result, fResultType);
-            
-        } catch (ScriptException e) {
-            Log.error("Line " + e.getLineNumber() + ": " + e.getMessage());
-        } catch (RuntimeException e) {
-        	Log.error(e.getMessage());
-        }
-        
-        return UndefinedValue.instance;
-	}
+	
 }

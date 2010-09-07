@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 
@@ -118,6 +119,14 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      */
     public String nameAsRolename() {
         return fClassImpl.nameAsRolename();
+    }
+    
+    /**
+     * returns the corresponding type
+     * @return the corresponding type
+     */
+    public ObjectType type() {
+    	return TypeFactory.mkObjectType(this);
     }
 
     /**
@@ -400,6 +409,14 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      */
     public List<MAssociationEnd> associationEnds() {
         return fAssociationImpl.associationEnds();
+    }
+    
+    
+    /**
+     * TODO
+     */
+    public List<String> roleNames() {
+    	return fAssociationImpl.roleNames();
     }
 
     /**

@@ -54,7 +54,7 @@ public final class ExpNavigation extends Expression {
         throws ExpInvalidException
     {
         // set result type later
-        super(null);
+        super(null, objExp);
 
         if ( !objExp.type().isTrueObjectType() )
             throw new ExpInvalidException(
@@ -77,7 +77,7 @@ public final class ExpNavigation extends Expression {
      * Evaluates expression and returns result value.
      */
     @Override
-    public Value eval(EvalContext ctx) {
+	public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = UndefinedValue.instance;
         Value val = fObjExp.eval(ctx);

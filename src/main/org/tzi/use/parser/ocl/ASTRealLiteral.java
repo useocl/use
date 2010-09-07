@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.uml.ocl.expr.ExpConstReal;
@@ -43,8 +45,13 @@ public class ASTRealLiteral extends ASTExpression {
         return new ExpConstReal(fValue); 
     }
 
-    public String toString() {
+    @Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		
+	}
+
+    @Override
+	public String toString() {
         return Double.toString(fValue);
     }
-
 }

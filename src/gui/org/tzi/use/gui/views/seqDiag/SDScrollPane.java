@@ -31,8 +31,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 
-import org.tzi.use.util.cmd.CommandFailedException;
-
 /**
  * A special ScrollPane for the sequence diagram.
  * 
@@ -81,11 +79,7 @@ public class SDScrollPane extends JScrollPane {
                 .getValue(), fVertSB.getValue(), (int) vDim.getWidth(),
                 (int) vDim.getHeight()));
         // update sequence diagram
-        try {
-            ((SequenceDiagramView) fComp).update();
-        } catch (CommandFailedException cfe) {
-            // ignored
-        }
+        ((SequenceDiagramView) fComp).update();
         // set viewport of the scrollpane
         SDViewport viewport = new SDViewport();
         viewport.setSize(fComp.getSize());
@@ -138,11 +132,7 @@ public class SDScrollPane extends JScrollPane {
                     (int) fHorizSB.getValue(), (int) fVertSB.getValue(),
                     getExtentSize().width, getExtentSize().height));
             // update sequence diagram
-            try {
-                ((SequenceDiagramView) fComp).update();
-            } catch (CommandFailedException cfe) {
-                // ignored
-            }
+            ((SequenceDiagramView) fComp).update();
             super.paintChildren(g);
         }
 

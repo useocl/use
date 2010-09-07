@@ -127,8 +127,8 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                         (i + 1) + " (" + t2.toString() + ")" +
                         " does not have a common supertype " + 
                         "with previous elements (" + lastCommonSupertype.toString() + ").");
-    		}
-    		
+    	}
+    	
     		lastCommonSupertype = commonSuperType;
     	}
     	

@@ -1,0 +1,15 @@
+-- operation defined by a soil statement and an ocl expression
+-- can't be both at the same time
+
+model t22a
+
+class A
+
+  operations
+
+    op1() : Integer = 42
+      begin
+        result := 42
+      end
+    
+end

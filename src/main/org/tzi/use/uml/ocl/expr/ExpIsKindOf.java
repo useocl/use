@@ -39,7 +39,7 @@ public final class ExpIsKindOf extends Expression {
     public ExpIsKindOf(Expression sourceExpr, Type targetType)
         throws ExpInvalidException
     {
-        super(TypeFactory.mkBoolean());
+        super(TypeFactory.mkBoolean(), sourceExpr);
         fSourceExpr = sourceExpr;
         fTargetType = targetType;
     }

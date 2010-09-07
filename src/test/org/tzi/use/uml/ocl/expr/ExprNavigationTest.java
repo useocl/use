@@ -27,27 +27,31 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdCreateInsertObjects;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
-import org.tzi.use.uml.sys.MCmdInsertLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.ObjectCreation;
+import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
+import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
+import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MRValueExpression;
+import org.tzi.use.uml.sys.soil.MSequenceStatement;
 
 
 /**
@@ -186,21 +190,41 @@ public class ExprNavigationTest extends TestCase {
             MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             MModel model = system.model();
 
-            // creation of an object (c2) of the class Company
             List<String> names = new ArrayList<String>();
+            MSequenceStatement seq = new MSequenceStatement();
+            
+            // creation of an object (c2) of the class Company
             
             names.add( "c2" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
+            MClass companyClass = model.getClass("Company");
+            
+            for (String name : names) {
+            	seq.appendStatement(
+            			new MNewObjectStatement(
+            					companyClass, 
+            					name));
+            }
+            system.evaluateStatement(seq);
+            seq.clear();
 
             // creation of a link between p1 and c2 of an association
             names.clear();
             names.add( "p1" );
             names.add( "c2" );
             MAssociationClass assoc = model.getAssociationClass( "Job" );
-            cmd = new MCmdCreateInsertObjects( system.state(), "j2", assoc, names );
-            system.executeCmd( cmd );
+            
+            List<MRValue> participants = new ArrayList<MRValue>();
+            for (String name : names) {
+            	participants.add(
+            			new MRValueExpression(
+            					system.state().objectByName(name)));
+            }
+            
+            system.evaluateStatement(
+            		new MNewLinkObjectStatement(
+            				assoc, 
+            				participants, 
+            				"j2"));
 
             MAssociationClass job = system.model().getAssociationClass( "Job" );
             MAssociationEnd personEnd =
@@ -279,12 +303,22 @@ public class ExprNavigationTest extends TestCase {
             MSystem system = ObjectCreation.getInstance().createModelWithObjects();
             MModel model = system.model();
 
-            // creation of an object (c2) of the class Company
             List<String> names = new ArrayList<String>();
+            MSequenceStatement seq = new MSequenceStatement();
+            
+            // creation of an object (c2) of the class Company
             names.add( "c2" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
+            MClass companyClass = model.getClass("Company");
+            
+            for (String name : names) {
+            	seq.appendStatement(
+            			new MNewObjectStatement(
+            					companyClass, 
+            					name));
+            }
+            system.evaluateStatement(seq);
+            seq.clear();
+
 
             // creation of a link between p1 and c2 of an association
             names.clear();
@@ -298,9 +332,9 @@ public class ExprNavigationTest extends TestCase {
                 exprs[i++] = new ExpVariable( obj.name(), obj.type() );
             }
             MAssociation assoc = model.getAssociation( "Job" );
-            cmd = new MCmdInsertLink( system.state(), exprs, assoc );
-            system.executeCmd( cmd );
-
+            
+            system.evaluateStatement(new MLinkInsertionStatement(assoc, exprs));
+            
             MAssociation job = system.model().getAssociation( "Job" );
             MAssociationEnd personEnd =
                 ( MAssociationEnd ) job.associationEndsAt( 
@@ -317,7 +351,7 @@ public class ExprNavigationTest extends TestCase {
             assertEquals( 2, objects.size() );
             assertEquals( "c2", ( ( MObject ) objects.get( 1 ) ).name() );
             assertEquals( "c1", ( ( MObject ) objects.get( 0 ) ).name() );
-        } catch ( Exception e ) {
+        } catch ( MSystemException e ) {
             fail( "Exception was thrown: " + e.getMessage() );
         }
     }
@@ -337,7 +371,7 @@ public class ExprNavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
 
         Evaluator eval = new Evaluator();
         Value value = eval.eval( navExpr, system.state(), system.varBindings() );
@@ -359,7 +393,7 @@ public class ExprNavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
 
         Evaluator eval = new Evaluator();
         Value value = eval.eval( navExpr, system.state(), system.varBindings() );
@@ -381,7 +415,7 @@ public class ExprNavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
 
         Evaluator eval = new Evaluator();
         Value value = eval.eval( navExpr, system.state(), system.varBindings() );
@@ -407,7 +441,7 @@ public class ExprNavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
 
         Evaluator eval = new Evaluator();
         Value value = eval.eval( navExpr, system.state(), system.varBindings() );
@@ -421,7 +455,7 @@ public class ExprNavigationTest extends TestCase {
         navExpr = OCLCompiler.compileExpression( system.model(),
                                                  expr,
                                                  "<input>", pw,
-                                                 system.topLevelBindings() );
+                                                 system.varBindings() );
         assertNull( navExpr );
         String expected = "<input>:1:3: The navigation path is ambiguous. "
             +"A qualification of the source association is required.";
@@ -433,7 +467,7 @@ public class ExprNavigationTest extends TestCase {
         navExpr = OCLCompiler.compileExpression( system.model(),
                                                  expr,
                                                  "<input>", pw,
-                                                 system.topLevelBindings() );
+                                                 system.varBindings() );
 
         eval = new Evaluator();
         value = eval.eval( navExpr, system.state(), system.varBindings() );

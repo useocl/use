@@ -83,6 +83,25 @@ public final class MObjectState {
 					+ "' does not exist in object `" + fObject.name() + "'.");
         return val;
     }
+    
+    /**
+     * Returns the value of the specified attribute.
+     *
+	 * @exception IllegalArgumentException
+	 *                attributeName is not a name of an attribute of this object.
+     */
+    public Value attributeValue(String attributeName) {
+    	MAttribute attribute = null;
+    	
+    	for (MAttribute att : fAttrSlots.keySet()) {
+    		if (att.name().equals(attributeName)) {
+    			attribute = att;
+    			break;
+    		}
+    	}
+    	
+    	return attributeValue(attribute);
+    }
 
     /**
      * Assigns a new value to the specified attribute.

@@ -675,7 +675,7 @@ public class ExprEvalBrowser extends JPanel {
                 dchild = (DefaultMutableTreeNode) dchild.getChildAt(0);
                 echild = (EvalNode) dchild.getUserObject();
             }
-            if (echild.getResult() == stop)
+            if (echild.getResult().equals(stop))
                 return;
         }
         fTree.expandPath(path);

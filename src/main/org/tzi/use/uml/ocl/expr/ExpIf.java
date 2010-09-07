@@ -42,7 +42,7 @@ public final class ExpIf extends Expression {
         throws ExpInvalidException
     {
         // result type is type of then/else branch (must be identical)
-        super(thenExp.type());
+        super(thenExp.type(), condition, thenExp, elseExp);
         fCondition = condition;
         fCondition.assertBoolean();
         fThenExp = thenExp;

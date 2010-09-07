@@ -30,6 +30,8 @@ import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.util.StringUtil;
 
 
@@ -78,7 +80,17 @@ public class MLinkObjectImpl implements MLinkObject {
     public String name() {
         return delegatesObject.name();
     }
+    
+    
+    /**
+     * returns the value of this object
+     * @return the value of this object
+     */
+    public ObjectValue value() {
+    	return new ObjectValue(TypeFactory.mkObjectType(cls()), this);
+    }
 
+    
     /**
      * Returns the state of an linkobject in a specific system state.
      *

@@ -21,14 +21,19 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.uml.mm.MClass;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map.Entry;
+
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -44,7 +49,7 @@ public final class ExpObjOp extends Expression {
     public ExpObjOp(MOperation op, Expression[] args) 
         throws ExpInvalidException
     {
-        super(op.resultType());
+        super(op.resultType(), args);
         fOp = op;
         fArgs = args;
         if (! args[0].type().isTrueObjectType() )
@@ -67,11 +72,99 @@ public final class ExpObjOp extends Expression {
                                               "'. Expected type `" + params.varDecl(i - 1).type() + 
                                               "', found `" + args[i].type() + "'.");
     }
+    
+    public Value eval(EvalContext ctx) {
+    	ctx.enter(this);
+    	
+    	Value result = new UndefinedValue(type());
+    	
+    	Value selfVal = fArgs[0].eval(ctx);
+    	
+    	if (selfVal.isUndefined() || 
+    			!(selfVal instanceof ObjectValue)) {
+    		
+    		ctx.exit(this, result);
+    		return result;
+    	}
+    	
+    	MObject self = ((ObjectValue)selfVal).value();
+    	
+    	if ((isPre() && (self.state(ctx.preState()) == null)) ||
+    			(!isPre() && (self.state(ctx.postState()) == null))) {
+    		
+    		ctx.exit(this, result);
+    		return result;
+    	}
+    	
+    	MOperation operation = 
+    		self.cls().operation(fOp.name(), true);
+    	
+    	if (!operation.isCallableFromOCL()) {
+    		throw new RuntimeException("Cannot call operation " + operation);
+    	}
+    	 	
+    	List<String> parameterNames = operation.paramNames();
+    	Value[] arguments = new Value[parameterNames.size()];
+    	for (int i = 1; i < fArgs.length; ++i) {
+    		arguments[i-1]= fArgs[i].eval(ctx);
+    	}
+    	
+    	// this must be done _after_ all parameters have been evaluated, 
+    	// since the parameter names could shadow values which are 
+    	// needed for a later parameter (see test\t005.*) 
+    	ctx.pushVarBinding("self", selfVal);
+    	for(int i = 0; i < parameterNames.size(); ++i) {
+    		ctx.pushVarBinding(
+    				parameterNames.get(i), 
+    				arguments[i]);
+    	}
+    	
+    	MOperationCall operationCall = 
+    		new MOperationCall(this, self, operation, arguments);
+    	
+    	operationCall.setPreferredPPCHandler(new ExpressionPPCHandler());
+    	
+    	MSystem system = ctx.postState().system();
+    	
+    	try {
+    		try {
+    			system.enterOperation(operationCall, false);
+    		} catch (MSystemException e) {
+    			throw new RuntimeException(e.getMessage());
+    		}
+    		
+    		try {
+    			if (operation.hasExpression()) {
+    				result = operation.expression().eval(ctx);
+    			} else if (operation.hasStatement()) {
+    				result = 
+						system.evaluateStatementInExpression(
+								operation.getStatement());
+    			}
+    		} catch (Exception e) {
+    			operationCall.setExecutionFailed(true);
+    			throw new RuntimeException(e.getMessage());
+    		} finally {
+    			try {
+    				system.exitOperation(
+    						result,
+    						true);
+    			} catch (MSystemException e) {
+    				throw new RuntimeException(e.getMessage());
+    			}
+    		}
+    	} finally {
+    		ctx.popVarBindings(fArgs.length);
+	    	ctx.exit(this, result);
+    	}
+    	
+    	return result;
+    }
 
     /**
      * Evaluates expression and returns result value.
      */
-    public Value eval(EvalContext ctx) {
+    /*public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = UndefinedValue.instance;
         Value val = fArgs[0].eval(ctx);
@@ -105,6 +198,10 @@ public final class ExpObjOp extends Expression {
                 if (op.expression() != null) {
                     Expression opExpr = op.expression();
                     res = opExpr.eval(newCtx);
+                } else {
+                	throw new RuntimeException(
+                			"Unexpected non-query operation in OCL expression "
+                			+ "(should have been caught by the compiler)");
                 }
 
                 if (op.hasScript()) {
@@ -151,7 +248,7 @@ public final class ExpObjOp extends Expression {
         // the receiver object.
         newCtx.pushVarBinding("self", self);
         return oldStackSize;
-    }
+    }*/
 
     public String toString() {
         return fArgs[0] + "." + fOp.name() + atPre() +
@@ -166,5 +263,18 @@ public final class ExpObjOp extends Expression {
         return fArgs;
     }
 
+	@Override
+	public boolean hasSideEffects() {
+		if (fOp.hasSideEffects()) {
+			return true;
+		}
+		
+		for (Expression arg : fArgs) {
+			if (arg.hasSideEffects()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }
-

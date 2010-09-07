@@ -29,6 +29,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 /**
  * Visitor for dumping a HTML representation of model elements on an output
@@ -101,5 +102,16 @@ public class MMHTMLPrintVisitor extends MMPrintVisitor {
     public List<MOperation> getOperationsForClass( MClass c ) {
 		return ModelBrowserSorting.getInstance().sortOperations(c.operations());
     }
-
+    
+    @Override
+    protected String getStatementVisitorString(MStatement statement) {
+    	String visitorString = super.getStatementVisitorString(statement);
+    	
+    	String result = 
+    		visitorString.
+    		replaceAll("\n", "<br>").
+    		replaceAll("\\s", "&nbsp;");
+    	
+    	return result; 
+    }
 }

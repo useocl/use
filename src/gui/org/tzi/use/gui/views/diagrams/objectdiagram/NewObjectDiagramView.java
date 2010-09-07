@@ -23,9 +23,9 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import java.awt.BorderLayout;
 import java.awt.print.PageFormat;
-import java.util.ArrayList;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.tzi.use.gui.main.MainWindow;
@@ -40,7 +40,12 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
+import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
+import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
+import org.tzi.use.uml.sys.soil.MSequenceStatement;
 
 /** 
  * A graph showing an object diagram with objects and links in the
@@ -104,7 +109,7 @@ public class NewObjectDiagramView extends JPanel
     /**
      * Does a full update of the view.
      */
-    private void initState() {
+    private void initState() {        
         for (MObject obj : fSystem.state().allObjects()) {
             fObjectDiagram.addObject(obj);
         }
@@ -169,53 +174,59 @@ public class NewObjectDiagramView extends JPanel
      * Executes a command for deleting a link between selected 
      * objects.
      */
-    void deleteLink( String assocName, MObject[] objects ) {
-        String objNameList = objectNameList( objects );
-        String cmd = "delete (" + objNameList + ") from " + assocName;
-        fMainWindow.execCmd( cmd );
+    void deleteLink(MAssociation association, MObject[] objects) {
+    	try {
+			fSystem.evaluateStatement(
+					new MLinkDeletionStatement(association, objects));
+		} catch (MSystemException e) {
+			JOptionPane.showMessageDialog(
+					fMainWindow, 
+					e.getMessage(), 
+					"Error", 
+					JOptionPane.ERROR_MESSAGE);
+		}
     }
     
     /**
      * Executes a command for inserting a new link.
      */
-    void insertLink(String assocName, MObject[] objects) {
-        String objNameList = objectNameList( objects );
+    void insertLink(MAssociation association, MObject[] objects) {
+    	try {
+			fSystem.evaluateStatement(
+					new MLinkInsertionStatement(association, objects));
+		} catch (MSystemException e) {
+			JOptionPane.showMessageDialog(
+					fMainWindow, 
+					e.getMessage(), 
+					"Error", 
+					JOptionPane.ERROR_MESSAGE);
+		}
+    }
+
     
-        String cmd = "insert (" + objNameList + ") into " + assocName;
-        fMainWindow.execCmd(cmd);
-    }
-
-    /**
-     * Writes all objects participating in an association into a 
-     * String seperated by a comma. 
-     * @param assocName Name of the association.
-     * @param objects Selected objects. 
-     * @return The list of object names separated by a comma.
-     */
-    private String objectNameList(MObject[] objects ) {
-        String txt ="";
-        for (int i=0;i<objects.length;++i) {
-            if (i>0) txt = txt + ",";
-            MObject o = objects[i];
-            txt = txt + o.name();
-        }
-        return txt;
-    }
-
     /**
      * Executes a command for deleting selected objects.
      */
     void deleteObjects(Set<MObject> objects) {
-        String cmd = null;
+        MSequenceStatement sequence = new MSequenceStatement();
         
         for (MObject obj : objects) {
-            if ( cmd == null ) {
-                cmd = "destroy " + obj.name();
-            } else {
-                cmd += "," + obj.name();
-            }
+        	sequence.appendStatement(
+        			new MObjectDestructionStatement(obj.value()));
         }
-        fMainWindow.execCmd( cmd );
+        
+        if (sequence.isEmpty()) {
+        	return;
+        }
+        try {
+			fSystem.evaluateStatement(sequence.simplify());
+		} catch (MSystemException e) {
+			JOptionPane.showMessageDialog(
+					fMainWindow, 
+					e.getMessage(), 
+					"Error", 
+					JOptionPane.ERROR_MESSAGE);
+		}
     }
 
     public MSystem system() { // jj add public
@@ -231,9 +242,7 @@ public class NewObjectDiagramView extends JPanel
     }
 
     void createObject(String clsName) {
-        ArrayList<String> names = new ArrayList<String>(1);
-        names.add(fSystem.uniqueObjectNameForClass(clsName));
-        fMainWindow.createObject(clsName, names);
+        fMainWindow.createObject(clsName);
     }
 
     public void printView(PageFormat pf) {

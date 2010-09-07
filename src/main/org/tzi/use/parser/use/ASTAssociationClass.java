@@ -156,8 +156,8 @@ public class ASTAssociationClass extends ASTClass {
         return fAssocClass;
     }
 
-    public void genConstraintsAndOperationBodies( Context ctx ) {
-        ctx.setCurrentClass( fAssocClass );
+    public void genOperationBodies(Context ctx) {
+    	ctx.setCurrentClass( fAssocClass );
 
         // enter pseudo-variable "self" into scope of expressions
         ObjectType ot = TypeFactory.mkObjectType( fAssocClass );
@@ -180,6 +180,36 @@ public class ASTAssociationClass extends ASTClass {
                 ctx.reportError( ex );
             }
         }
+
+        vars.exitScope();
+        ctx.exprContext().pop();
+        ctx.setCurrentClass( null );
+    }
+    
+    public void genConstraints( Context ctx ) {
+        ctx.setCurrentClass( fAssocClass );
+
+        // enter pseudo-variable "self" into scope of expressions
+        ObjectType ot = TypeFactory.mkObjectType( fAssocClass );
+        ctx.exprContext().push( "self", ot );
+        Symtable vars = ctx.varTable();
+        vars.enterScope();
+        try {
+            vars.add( "self", ot, null );
+        } catch ( SemanticException ex ) {
+            // fatal error?
+            throw new Error(ex);
+        }
+
+
+        // generate operation bodies
+        /*for (ASTOperation astOp : fOperations) {
+            try {
+                astOp.genFinal( ctx );
+            } catch ( SemanticException ex ) {
+                ctx.reportError( ex );
+            }
+        }*/
 
         // add class invariants
         for (ASTInvariantClause astInv : fInvariantClauses) {

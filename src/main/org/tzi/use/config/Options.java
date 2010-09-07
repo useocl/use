@@ -30,6 +30,7 @@ import java.io.IOException;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.TypedProperties;
 
+
 /**
  * Global options for all packages.
  *
@@ -39,7 +40,7 @@ import org.tzi.use.util.TypedProperties;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "2.6.0B5";
+    public static final String RELEASE_VERSION = "2.5.1B2_SOIL";
 
     // the copyright:
     public static final String COPYRIGHT = "Copyright (C) 1999-2010 University of Bremen";
@@ -118,6 +119,13 @@ public class Options {
     public static boolean disableCollectShorthand = false;
     public static boolean disableExtensions = false;
     public static boolean readlineTest = false;
+    
+    // soil in ocl operation calls
+    public enum SoilPermissionLevel {
+    	NONE, SIDEEFFECT_FREE_ONLY, ALL
+    }
+    
+    public static SoilPermissionLevel soilFromOCL = SoilPermissionLevel.NONE;
 
     /**
 	 * New Plugin Architecture Parameter
@@ -211,56 +219,71 @@ public class Options {
             if (args[i].startsWith("-") ) {
                 String arg = args[i].substring(1);
                 
-                if (arg.equals("c") ) 
-                    Options.compileOnly = true;
-                else if (arg.equals("cp") ) {
+                if (arg.equals("c")) {
+                	Options.compileOnly = true;
+                } else if (arg.equals("cp") ) {
                     Options.compileOnly = true;
                     Options.compileAndPrint = true;
-                } else if (arg.equals("daVinciClass") ) 
-                    Options.daVinciClassDiagram = true;
-                else if (arg.equals("disableCollectShorthand") ) 
-                    Options.disableCollectShorthand = true;
-                else if (arg.equals("nogui") ) 
-                    Options.doGUI = false;
-				else if (arg.equals("noplugins"))
+                } else if (arg.equals("daVinciClass")) {
+                	Options.daVinciClassDiagram = true;
+                } else if (arg.equals("disableCollectShorthand")) {
+                	Options.disableCollectShorthand = true;
+                } else if (arg.equals("nogui")) {
+                	Options.doGUI = false;
+                } else if (arg.equals("noplugins")) {
 					Options.doPLUGIN = false;
-                else if (arg.equals("readlineTest") ) 
+                } else if (arg.equals("readlineTest")) { 
                     Options.readlineTest = true;
-                else if (arg.startsWith("H=") ) 
+                } else if (arg.startsWith("H=")) { 
                     homeDir = arg.substring(2);
-                else if (arg.equals("nr") ) 
+                } else if (arg.equals("nr")) { 
                     suppressWarningsAboutMissingReadlineLibrary = true;
-                else if (arg.equals("q") ) {
+                } else if (arg.equals("q")) {
                     Options.quiet = true;
                     Options.doGUI = false;
-                } else if (arg.equals("qv") ) {
+                } else if (arg.equals("qv")) {
                     Options.quiet = true;
                     Options.quietAndVerboseConstraintCheck = true;
                     Options.doGUI = false;
-                } else if (arg.equals("v") ) 
+                } else if (arg.equals("v")) 
                     Log.setVerbose(true);
-                else if (arg.equals("vt") ) {
+                else if (arg.equals("vt")) {
                     Log.setVerbose(true);
                     Log.setPrintTime(true);
-                } else if (arg.equals("V") ) {
+                } else if (arg.equals("V")) {
                     System.out.println("release " + RELEASE_VERSION);
                     System.exit(0);
-                } else if (arg.equals("debug") ) {
+                } else if (arg.equals("debug")) {
 					Log.setDebug(true);
                     Log.setTrace(true);
                     Log.setPrintStackTrace(true);
                     Log.setVerbose(true);
-                } else if (arg.equals("p") ) 
+                } else if (arg.equals("p")) { 
                     Log.setPrintStackTrace(true);
-                else if (arg.equals("h") ) 
+                } else if (arg.equals("h")) {
                     printHelp();
-                else if ( arg.equals("dimension") ) {
+                } else if ( arg.equals("dimension") ) {
                     if ( args.length > i+2 ) {
                         setDimension( args[i+1], args[i+2] );
                         i = i+2;
                     }
+                } else if (arg.startsWith("XsoilOpInOCL:")) {
+                	String option = arg.substring(13);
+                	if (option.equals("NONE") || option.equals("0")) {
+                		soilFromOCL = SoilPermissionLevel.NONE;
+                	} else if (option.equals("SIDEEFFECT_FREE_ONLY") || option.equals("1")) {
+                		soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
+                	} else if (option.equals("ALL") || option.equals("2")) {
+                		soilFromOCL = SoilPermissionLevel.ALL;
+                	} else {
+                		System.out.println(
+                				"invalid option " + 
+                				option + 
+                				" for argument `soilOpAsOCL', defaulting to `NONE'");
+                		soilFromOCL = SoilPermissionLevel.NONE;
+                	}
                 } else {
-					System.out.println("invalid argument `" + arg
+                	System.out.println("invalid argument `" + arg
 							+ "\', try `use -h' for help.");
                     System.exit(1);
                 }

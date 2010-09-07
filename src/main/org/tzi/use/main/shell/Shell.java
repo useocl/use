@@ -38,17 +38,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.gen.model.GFlaggedInvariant;
 import org.tzi.use.gen.tool.GNoResultException;
 import org.tzi.use.main.DaVinciProcess;
@@ -57,8 +58,8 @@ import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellCmd;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
-import org.tzi.use.parser.cmd.CMDCompiler;
 import org.tzi.use.parser.ocl.OCLCompiler;
+import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.shell.impl.PluginShellCmdProxy;
@@ -69,7 +70,6 @@ import org.tzi.use.uml.mm.MMInstanceGenerator;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.expr.EvalNode;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -77,12 +77,16 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
+import org.tzi.use.uml.sys.ppcHandling.PostConditionCheckFailedException;
+import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
+import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.sys.soil.MExitOperationStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.testsuite.MTestSuite;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.NullWriter;
@@ -93,6 +97,7 @@ import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.ReadlineTestReadlineDecorator;
 import org.tzi.use.util.input.SocketReadline;
+import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
 
 class NoSystemException extends Exception {
 	/**
@@ -108,7 +113,7 @@ class NoSystemException extends Exception {
  * @author Mark Richters
  */
 
-public final class Shell implements Runnable {
+public final class Shell implements Runnable, PPCHandler {
     public static final String PROMPT = "use> ";
 
     public static final String CONTINUE_PROMPT = "> ";
@@ -158,7 +163,7 @@ public final class Shell implements Runnable {
 	private Map<Map<String, String>, PluginShellCmdProxy> pluginCommands = new HashMap<Map<String, String>, PluginShellCmdProxy>();
 
 	private IRuntime fPluginRuntime;
-	
+
     /**
      * Constructs a new shell.
      */
@@ -167,6 +172,13 @@ public final class Shell implements Runnable {
         // no need to listen on session changes since every command
         // explicitly retrieves the current system
         fSession = session;
+        
+        try {
+			system().registerPPCHandlerOverride(this);
+		} catch (NoSystemException e) {
+			// out of luck...
+		}
+        
 		this.fPluginRuntime = pluginRuntime;
         fDaVinci = new DaVinciProcess(Options.DAVINCI_PATH);
 		// integrate plugin commands
@@ -175,12 +187,12 @@ public final class Shell implements Runnable {
 					.getExtensionPoint("shell");
 
 			this.pluginCommands = this.shellExtensionPoint.createPluginCmds(this.fSession, this);
-		}
     }
+	}
 
 	public static void createInstance(Session session, IRuntime pluginRuntime) {
-		fShell = new Shell(session, pluginRuntime);
-	}
+			fShell = new Shell(session, pluginRuntime);
+        }
 	
 	public static Shell getInstance() {
         return fShell;
@@ -197,16 +209,16 @@ public final class Shell implements Runnable {
      * Main loop for accepting input and processing it.
      */
     public void run() {
-        setupReadline();
+		setupReadline();
 
-        if (Options.cmdFilename != null) {
-            cmdOpen(Options.cmdFilename);
-        } else {
-            Log.verbose("Enter `help' for a list of available commands.");
+		if (Options.cmdFilename != null) {
+			cmdOpen(Options.cmdFilename);
+		} else {
+			Log.verbose("Enter `help' for a list of available commands.");
 			
 			if (Options.doPLUGIN) {
 				Log.verbose("Enter `plugins' for a list of available plugin commands.");
-        }
+			}
 		}
 
         while (!fFinished) {
@@ -284,7 +296,7 @@ public final class Shell implements Runnable {
      * Analyses a line of input and calls the method implementing a command.
      */
     private void processLineSafely(String line) {
-        try {
+        try {            
             processLine(line);
         } catch (NoSystemException ex) {
 			Log.error("No System available. Please load a model before executing this command.");
@@ -339,7 +351,8 @@ public final class Shell implements Runnable {
                 if (c == 0x1b)
                     fStepMode = false;
             } catch (IOException ex) { }
-        }
+            }
+
         if (line.startsWith("help") || line.endsWith("--help"))
             cmdHelp(line);
         else if (line.equals("q") || line.equals("quit") || line.equals("exit"))
@@ -350,8 +363,10 @@ public final class Shell implements Runnable {
             cmdQuery(line.substring(1).trim(), false);
         else if (line.startsWith(":"))
             cmdDeriveStaticType(line.substring(1).trim());
+        else if (line.startsWith("!!"))
+        	cmdExec(line.substring(2).trim(), true);
         else if (line.startsWith("!"))
-            cmdExec(line.substring(1).trim());
+        	cmdExec(line.substring(1).trim(), false);
         else if (line.equals("\\"))
             cmdMultiLine();
         else if (line.equals("check") || line.startsWith("check "))
@@ -384,6 +399,8 @@ public final class Shell implements Runnable {
             cmdStepOn();
         else if (line.equals("undo"))
             cmdUndo();
+        else if (line.equals("redo"))
+            cmdRedo();
         else if (line.equals("write"))
             cmdWrite(null);
         else if (line.startsWith("write "))
@@ -420,7 +437,7 @@ public final class Shell implements Runnable {
 							line.substring(currentCmdDescMap.get("cmd").length()));
 					cmdFound = true;
 					break;
-				}
+    }
 			}
 
 			if (!cmdFound)
@@ -491,37 +508,66 @@ public final class Shell implements Runnable {
         fLastCheckResult = system().state().check(out, verbose, details, all,
                 invNames);
     }
-
+    
+    
     /**
-     * Executes an object manipulation command.
+     * TODO
+     * @param line
+     * @param verbose
+     * @throws NoSystemException
      */
-    private void cmdExec(String line) throws NoSystemException {
-        if (line.length() == 0) {
-            Log.error("Command expected after `!'. Try `help'.");
-            return;
-        }
-
-        // compile command
-        MSystem system = system();
-        List<MCmd> cmdList = CMDCompiler.compileCmdList(system.model(), system
-				.state(), line, "<input>", new PrintWriter(System.err));
-
-        if (cmdList == null){
-            return;
-        }
-
-        for (MCmd cmd : cmdList) {
-            Log.trace(this, "--- Executing command: " + cmd);
+    private void cmdExec(
+    		String line, 
+    		boolean verbose) throws NoSystemException {
+    	
+    	if (line.length() == 0) {
+    		Log.error("ERROR: Statement expected.");
+    		return;
+    	}
+    	
+    	MSystem system = system();
+    	MStatement statement = ShellCommandCompiler.compileShellCommand(
+    			system.model(),
+    			system.state(),
+    			system.getVariableEnvironment(),
+    			line,
+    			"<input>",
+    			new PrintWriter(System.err),
+    			verbose);
+    	
+    	if (statement == null) {
+    		return;
+    	}
+    	
+		Log.trace(this, "--- Executing shell command: " + statement.getShellCommand());
+		
             
-            try {
-                system.executeCmd(cmd);
-                fSession.executedCmd(cmd);
-            } catch (MSystemException ex) {
-                Log.error(ex.getMessage());
-            }
-        }
-    }
-
+		try {
+			if ((statement instanceof MEnterOperationStatement)
+					|| (statement instanceof MExitOperationStatement)) {
+				
+				system.evaluateStatement(statement, false, true);
+			} else {
+				system.evaluateStatement(statement);
+			}
+		} catch (MSystemException e) {
+			String message = e.getMessage();
+			
+			if ((e.getCause() != null) && 
+					(e.getCause() instanceof EvaluationFailedException)) {
+				
+				EvaluationFailedException exception = 
+					(EvaluationFailedException)e.getCause();
+			
+				message = exception.getMessage(statement);
+			}
+			
+			Log.error(message);
+		} finally {
+			fSession.evaluatedStatement(statement);
+		}
+    } 
+    
     /**
      * Terminates the program.
      */
@@ -551,7 +597,7 @@ public final class Shell implements Runnable {
                 System.err.flush();
                 exitCode = ReadlineTestReadlineDecorator.getBalance();
             }
-            
+           
             System.exit(exitCode);
         }
     }
@@ -725,23 +771,16 @@ public final class Shell implements Runnable {
      * Prints the stack of active operations.
      */
     private void cmdInfoOpStack() throws NoSystemException {
-        MSystem system = system();
-        List<MOperationCall> opStack = system.callStack();
-        if (opStack.isEmpty())
-            Log.println("no active operations.");
-        else {
-            Log.println("active operations: ");
-            int j = 1;
-            for (int i = opStack.size() - 1; i >= 0; i--) {
-                MOperationCall opcall = (MOperationCall) opStack.get(i);
-                MOperation op = opcall.operation();
-                String s = j++ + ". " + op.cls().name() + "::" + op.signature()
-                        + " | " + opcall.targetObject().name() + "."
-                        + op.name() + "("
-                        + StringUtil.fmtSeq(opcall.argValues(), ",") + ")";
-                Log.println(s);
-            }
-        }
+        MSystem system = system();  
+        Deque<MOperationCall> callStack = system.getCallStack();
+        int index = callStack.size();
+		for (MOperationCall call : callStack) {
+			Log.print(index-- + ". ");
+			Log.println(call.toString() + " " + call.getCallerString());
+		}
+		if (callStack.isEmpty()) {
+			Log.println("no active operations.");
+		}
     }
 
     /**
@@ -843,9 +882,7 @@ public final class Shell implements Runnable {
     private void cmdInfoVars() throws NoSystemException {
         MSystem system = system();
         
-        for(VarBindings.Entry entry : system.topLevelBindings()) {
-            System.out.println(entry);
-        }
+        System.out.print(system.getVariableEnvironment());
     }
 
     /**
@@ -947,7 +984,7 @@ public final class Shell implements Runnable {
     private void cmdOpen(String line) {
         boolean doEcho = true;
         StringTokenizer st = new StringTokenizer(line);
-        
+
         // if there is no filename and option
         if (!st.hasMoreTokens()) {
             Log.error("Unknown command `open " + line + "'. " + "Try `help'.");
@@ -1033,7 +1070,7 @@ public final class Shell implements Runnable {
                 try {
                 	specStream.close();
                 } catch (IOException ex) {}
-        }
+                }
 
         // compile ok?
         if (model != null) {
@@ -1096,14 +1133,26 @@ public final class Shell implements Runnable {
             Log.error("Expression expected after `?'. Try `help'.");
             return;
         }
+        
+        SoilPermissionLevel permissionLevel = Options.soilFromOCL;
+        if (permissionLevel == SoilPermissionLevel.ALL) {
+        	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
+        }
 
         // compile query
         MSystem system = system();
         InputStream stream = new ByteArrayInputStream(line.getBytes());
+            
+		Expression expr = OCLCompiler.compileExpression(
+				system.model(), 
+				system.state(),
+				stream,
+				"<input>", 
+				new PrintWriter(System.err), 
+				system.varBindings());
+		
+		Options.soilFromOCL = permissionLevel;
         
-		Expression expr = OCLCompiler.compileExpression(system.model(), stream,
-				"<input>", new PrintWriter(System.err), system.topLevelBindings());
-
         // compile errors?
         if (expr == null)
             return;
@@ -1119,7 +1168,7 @@ public final class Shell implements Runnable {
 
         try {
             Value val = evaluator.eval(expr, system.state(), system
-                    .topLevelBindings(), output);
+                    .varBindings(), output);
             // print result
             System.out.println("-> " + val.toStringWithType());
             if (verboseEval && Options.doGUI) {
@@ -1159,13 +1208,24 @@ public final class Shell implements Runnable {
             return;
         }
 
+        SoilPermissionLevel permissionLevel = Options.soilFromOCL;
+        if (permissionLevel == SoilPermissionLevel.ALL) {
+        	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
+        }
+        
         // compile query
         MSystem system = system();
         InputStream stream = new ByteArrayInputStream(line.getBytes());
-        
-		Expression expr = OCLCompiler.compileExpression(system.model(), stream,
-				"<input>", new PrintWriter(System.err), system
-						.topLevelBindings());
+           
+		Expression expr = OCLCompiler.compileExpression(
+				system.model(), 
+				system.state(),
+				stream,
+				"<input>", 
+				new PrintWriter(System.err), 
+				system.varBindings());
+		
+		Options.soilFromOCL = permissionLevel;
 
         // compile errors?
         if (expr == null)
@@ -1217,16 +1277,30 @@ public final class Shell implements Runnable {
     }
 
     /**
-     * Undoes the last object manipulation command.
+     * Undoes the last command.
      */
     private void cmdUndo() throws NoSystemException {
-        MSystem system = system();
-        try {
-            system.undoCmd();
-        } catch (MSystemException ex) {
-            Log.error(ex.getMessage());
-        }
+    	try {
+			system().undoLastStatement();
+		} catch (MSystemException e) {
+			Log.error(e.getMessage());
+		}
     }
+    
+    
+    /**
+     * Redoes the last undone command.
+     */
+    private void cmdRedo() throws NoSystemException {
+    	try {
+			system().redoStatement();
+		} catch (MSystemException e) {
+			Log.error(e.getMessage());
+		}
+    }
+    
+    
+    
 
     /**
      * Prints commands executed so far.
@@ -1245,7 +1319,7 @@ public final class Shell implements Runnable {
                     .println("-- Script generated by USE "
                             + Options.RELEASE_VERSION);
             out.println();
-            system.writeUSEcmds(out);
+            system.writeSoilStatements(out);
         } catch (IOException ex) {
             Log.error(ex.getMessage());
         } finally {
@@ -1272,7 +1346,7 @@ public final class Shell implements Runnable {
         	filename = getFilenameToOpen(filename);
             system.generator().loadInvariants(str.trim(), doEcho);
             setFileClosed();
-        }
+    }
     }
 
     /**
@@ -1491,7 +1565,7 @@ public final class Shell implements Runnable {
 
         filename = this.getFilenameToOpen(filename);
         this.setFileClosed();
-        
+
         system.generator().startProcedure(filename, callstr, limit,
                 printFilename, printBasics, printDetails, randomNr,
                 checkStructure);
@@ -1499,12 +1573,13 @@ public final class Shell implements Runnable {
         long duration = System.currentTimeMillis() - start;
         if (printDuration) {
         	Log.println("Duration: " + duration + "ms");
-        }
+    }
     }
 
     private MSystem system() throws NoSystemException {
         if (!fSession.hasSystem())
             throw new NoSystemException();
+        fSession.system().registerPPCHandlerOverride(this);
         return fSession.system();
     }
 
@@ -1567,4 +1642,125 @@ public final class Shell implements Runnable {
         return null;
     }
 
+    
+	@Override
+	public void handlePreConditions(
+			MSystem system,
+			MOperationCall operationCall) throws PreConditionCheckFailedException {
+		
+		PPCHandler ppcHandler;
+		if (operationCall.hasPreferredPPCHandler()) {
+			ppcHandler = operationCall.getPreferredPPCHandler();
+		} else {
+			ppcHandler = operationCall.getDefaultPPCHandler();
+		}
+		
+		// we don't want to take care of openter/opexit
+		if (!operationCall.getOperation().hasBody()) {
+			ppcHandler.handlePreConditions(system, operationCall);
+			return;
+		}
+		
+		try {
+			ppcHandler.handlePreConditions(system, operationCall);
+		} catch (PreConditionCheckFailedException e) {
+			
+			try {
+				ppcShell(system);
+				throw e;
+			} catch (NoSystemException e1) {
+				throw e;
+			} catch (IOException e1) {
+				throw e;
+			}
+		}	
+    }
+
+	
+	@Override
+	public void handlePostConditions(
+			MSystem system, 
+			MOperationCall operationCall) throws PostConditionCheckFailedException {
+		
+		PPCHandler ppcHandler;
+		if (operationCall.hasPreferredPPCHandler()) {
+			ppcHandler = operationCall.getPreferredPPCHandler();
+		} else {
+			ppcHandler = operationCall.getDefaultPPCHandler();
+		}
+		
+		// we don't want to take care of openter/opexit
+		if (!operationCall.getOperation().hasBody()) {
+			ppcHandler.handlePostConditions(system, operationCall);
+			return;
+		}
+		
+		try {
+			ppcHandler.handlePostConditions(system, operationCall);
+		} catch (PostConditionCheckFailedException e) {
+			
+			try {
+				ppcShell(system);
+				throw e;
+			} catch (NoSystemException e1) {
+				throw e;
+			} catch (IOException e1) {
+				throw e;
+			}
+		}
+	}
+	
+	
+	private void ppcShell(MSystem system) throws NoSystemException, IOException {
+		PrintWriter output = new PrintWriter(Log.out(), true);
+
+    	final String PROMPT = "> ";
+    	final String HELP = 
+    		"\nCurrently only commands starting with " + 
+    		StringUtil.inQuotes("?") +
+    		", " +
+    		StringUtil.inQuotes(":") +
+    		", " +
+    		StringUtil.inQuotes("help") +
+    		" or " +
+    		StringUtil.inQuotes("info") +
+    		" are allowed.\n" +
+    		StringUtil.inQuotes("c") + 
+    		" continues the evaluation (i.e. unwinds the stack).\n";
+    	
+    	system.updateListeners();
+    	
+    	output.println();
+    	output.println("+-------------------------------------------------------------------+");
+    	output.println("| Evaluation is paused. You may inspect, but not modifiy the state. |");
+    	output.println("+-------------------------------------------------------------------+");
+    	output.println(HELP);
+    	
+    	String input;
+    	do {
+    		
+			input = fReadline.readline(PROMPT);
+			if (input == null) {
+				return;
+			}
+			
+			input = input.trim();
+			
+			if (input.equals("c")) {
+				return;
+			}
+			if (
+					input.startsWith("?") || 
+					input.startsWith(":") ||
+					input.startsWith("info") ||
+					input.startsWith("help")) {
+				output.println();
+				processLine(input);
+				output.println();
+			} else {
+				output.println(HELP);
+			}
+			
+    	} while (!input.equals("c"));
+	}
 }

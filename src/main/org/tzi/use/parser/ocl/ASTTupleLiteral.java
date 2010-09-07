@@ -21,6 +21,7 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.tzi.use.parser.Context;
@@ -64,4 +65,11 @@ public class ASTTupleLiteral extends ASTExpression {
         
         return new ExpTupleLiteral(parts);
     }
+
+	@Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		for (ASTTupleItem item : fItems) {
+			item.getFreeVariables(freeVars);
+		}
+	}
 }

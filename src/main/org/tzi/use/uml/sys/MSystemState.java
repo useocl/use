@@ -22,12 +22,15 @@ package org.tzi.use.uml.sys;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.model.GFlaggedInvariant;
@@ -161,7 +164,52 @@ public final class MSystemState {
 	public Set<MObject> allObjects() {
 		return fObjectStates.keySet();
 	}
+	
+	
+	/**
+	 * returns the names of all objects in this state
+	 * 
+	 * @return the set of names (empty set if there are no objects)
+	 */
+	public Set<String> allObjectNames() {
+		Set<String> result = new HashSet<String>();
+		for (MObject object : allObjects()) {
+			result.add(object.name());
+		}
+		
+		return result;
+	}
+	
+	
+	/**
+	 * returns the number of objects in this state
+	 * 
+	 * @return the number of objects in this state
+	 */
+	public int numObjects() {
+		return allObjects().size();
+	}
+	
+	
+	/**
+	 * @return true if there are objects in this state, false else
+	 */
+	public boolean hasObjects() {
+		return !allObjects().isEmpty();
+	}
+	
+	
+	/**
+	 * returns true if there is an object with the supplied name
+	 * 
+	 * @param name the name to test
+	 * @return true if there is an object with that name, false else
+	 */
+	public boolean hasObjectWithName(String name) {
+		return allObjectNames().contains(name);
+	}
 
+	
 	/**
 	 * Returns the set of objects of class <code>cls</code> currently existing
 	 * in this state.
@@ -231,9 +279,20 @@ public final class MSystemState {
 	 * Returns true if there is a link of the specified association connecting
 	 * the given set of objects.
 	 */
-	public boolean hasLinkBetweenObjects(MAssociation assoc, MObject[] objects) {
+	public boolean hasLinkBetweenObjects(MAssociation assoc, MObject... objects) {
 		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
 		return linkSet.hasLinkBetweenObjects(objects);
+	}
+	
+	/**
+	 * Returns true if there is a link of the specified association connecting
+	 * the given set of objects.
+	 */
+	public boolean hasLinkBetweenObjects(
+			MAssociation assoc, 
+			Collection<MObject> objects) {
+		
+		return hasLinkBetweenObjects(assoc, objects.toArray(new MObject[0]));
 	}
 
 	/**
@@ -255,6 +314,16 @@ public final class MSystemState {
 		
 		return linkSet.hasLink(objects);
 	}
+	
+	/**
+	 * TODO
+	 * @param objectName
+	 * @return
+	 */
+	private boolean isValidObjectName(String objectName) {
+		return Pattern.matches("[$a-zA-Z_][a-zA-Z_0-9]*", objectName);
+	}
+	
 
 	/**
 	 * Creates and adds a new object to the state. The name of the object may be
@@ -264,6 +333,13 @@ public final class MSystemState {
 	 */
 	public MObject createObject(MClass cls, String name)
 			throws MSystemException {
+		
+		if ((name != null) && !isValidObjectName(name)) {
+			throw new MSystemException(
+					StringUtil.inQuotes(name) + 
+					" is not a valid object name");
+		}
+		
 		// checks if cls is a association class, if yes then throw an exception,
 		// because this should not be allowed.
 		if (cls instanceof MAssociationClass) {
@@ -293,6 +369,53 @@ public final class MSystemState {
 		
 		fSystem.addObject(obj);
 	}
+	
+	
+	/**
+	 * TODO
+	 * @param object
+	 * @return
+	 */
+	public Set<MObject> getObjectsAffectedByDestruction(MObject object) {
+		Set<MObject> result = new HashSet<MObject>();
+		
+		getObjectsAffectedByDestruction(object, result);
+		
+		return result;
+	}
+	
+
+	/**
+	 * TODO
+	 * @param object
+	 * @param result
+	 */
+	private void getObjectsAffectedByDestruction(
+			MObject object, 
+			Set<MObject> result) {
+		
+		result.add(object);
+		
+		MClass objectClass = object.cls();
+		
+		for (MAssociation association : objectClass.allAssociations()) {
+			if (association instanceof MAssociationClass) {			
+				for (MLink link : fLinkSets.get(association).links()) {
+					if ((link instanceof MLinkObject) && 
+							link.linkedObjects().contains(object)) {
+						
+						MLinkObject linkObject = (MLinkObject)link;
+						
+						if (!result.contains(linkObject)) {
+							getObjectsAffectedByDestruction(linkObject, result);
+						}
+					}
+				}	
+			}
+		}
+	}
+	
+	
 
 	/**
 	 * Deletes an object from the state. All links connected to the object are
@@ -331,6 +454,12 @@ public final class MSystemState {
 		public Set<MObjectState> getRemovedObjectStates()
 		{
 			return removedObjectStates;
+		}
+		
+		public void add(DeleteObjectResult other) {
+			removedLinks.addAll(other.removedLinks);
+			removedObjects.addAll(other.removedObjects);
+			removedObjectStates.addAll(other.removedObjectStates);
 		}
 	}
 	
@@ -484,7 +613,22 @@ public final class MSystemState {
 		}
 		return link;
 	}
+	
+	
+	/**
+	 * Creates and adds a new link to the state.
+	 * 
+	 * @exception MSystemException
+	 *                link invalid or already existing
+	 * @return the newly created link.
+	 */
+	public MLink createLink(MAssociation assoc, MObject... objects)
+	throws MSystemException {
+		
+		return createLink(assoc, Arrays.asList(objects));
+	}
 
+	
 	/**
 	 * The graph to store the information of the whole/part hierachy.
 	 */
@@ -553,10 +697,22 @@ public final class MSystemState {
 		
 		DeleteObjectResult result = new DeleteObjectResult();
 		MLink link = null;
+		
 		MLinkSet linkSet = linksOfAssociation(assoc);
-
+		List<MAssociationEnd> assocEnds = assoc.associationEnds();
+		int numObjects = objects.size();
+		
 		for (MLink l : linkSet.links()) {
-			if (l.linkedObjects().equals(new HashSet<MObject>(objects))) {
+			boolean found = true;
+			for (int i = 0; i < numObjects; ++i) {
+				MLinkEnd le = l.linkEnd(assocEnds.get(i));
+				if (le.object() != objects.get(i)) {
+					found = false;
+					break;
+				}
+			}
+			
+			if (found) {
 				link = l;
 				break;
 			}
@@ -591,9 +747,21 @@ public final class MSystemState {
 	public MLinkObject createLinkObject(MAssociationClass assocClass,
 			String name, List<MObject> objects) throws MSystemException {
 		
+		if ((name != null) && !isValidObjectName(name)) {
+			throw new MSystemException(
+					StringUtil.inQuotes(name) + 
+					" is not a valid object name");
+		}
+		
 		if (objectByName(name) != null) {
 			throw new MSystemException("An object with name `" + name
 					+ "' already exists.");
+		}
+		
+		if (hasLinkBetweenObjects(assocClass, objects.toArray(new MObject[objects.size()]))) {
+			throw new MSystemException(
+					"Cannot insert two linkobjects of the same type"
+							+ " between one set of objects!");
 		}
 		
 		MLinkObject linkobj = new MLinkObjectImpl(assocClass, name, objects);
@@ -611,6 +779,20 @@ public final class MSystemState {
 		linkSet.add(linkobj);
 
 		return linkobj;
+	}
+	
+	
+	/**
+	 * Creates and adds a new link to the state.
+	 * 
+	 * @exception MSystemException
+	 *                link invalid or already existing
+	 * @return the newly created link.
+	 */
+	public MLinkObject createLinkObject(MAssociationClass assocClass,
+			String name, MObject... objects) throws MSystemException {
+		
+		return createLinkObject(assocClass, name, Arrays.asList(objects));
 	}
 
 	/**
@@ -710,53 +892,53 @@ public final class MSystemState {
 			
 			res.addAll(tmpResult);
 		} else {
-			// get association
-			MAssociation assoc = dst.association();
+		// get association
+		MAssociation assoc = dst.association();
 	
-			// get link set for association
-			MLinkSet linkSet = fLinkSets.get(assoc);
+		// get link set for association
+		MLinkSet linkSet = fLinkSets.get(assoc);
 	
-			// if link set is empty return empty result list
+		// if link set is empty return empty result list
                         if (Log.isTracing()) {
-                            Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
-					    + linkSet.size());
+		Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
+				+ linkSet.size());
                         }
 	
-			if (linkSet.size() == 0)
-				return res;
+		if (linkSet.size() == 0)
+			return res;
 	
-			// navigation from a linkobject
-			if (src instanceof MAssociationClass) {
+		// navigation from a linkobject
+		if (src instanceof MAssociationClass) {
 				// TODO: Why is navigation from AssociationClass to AssociationClass not allowed?
-				if (dst instanceof MAssociationClass) {
-					throw new RuntimeException("Wrong navigation expression.");
-				}
+			if (dst instanceof MAssociationClass) {
+				throw new RuntimeException("Wrong navigation expression.");
+			}
 				MLinkEnd linkEnd = ((MLinkObject)obj).linkEnd((MAssociationEnd) dst);
-				res.add(linkEnd.object());
-			} else {
-				MAssociationEnd srcEnd = (MAssociationEnd) src;
-				// select links with srcEnd == obj
-				Set<MLink> links = linkSet.select(srcEnd, obj);
+			res.add(linkEnd.object());
+		} else {
+			MAssociationEnd srcEnd = (MAssociationEnd) src;
+			// select links with srcEnd == obj
+			Set<MLink> links = linkSet.select(srcEnd, obj);
 
                                 if (Log.isTracing()) {
-                                    Log.trace(this, "linkSet.select for object `" + obj + "', size = "
-                                                    + links.size());
+			Log.trace(this, "linkSet.select for object `" + obj + "', size = "
+					+ links.size());
                                 }
                                 
-				// navigation to a linkobject
-				if (dst instanceof MAssociationClass) {
-					for (MLink link : links) {
-						res.add((MObject)link);					
-					}
-				} else {
-					MAssociationEnd dstEnd = (MAssociationEnd) dst;
-					// project tuples to destination end component
-					for (MLink link : links) {
-						MLinkEnd linkEnd = link.linkEnd(dstEnd);
-						res.add(linkEnd.object());
-					}
+			// navigation to a linkobject
+			if (dst instanceof MAssociationClass) {
+				for (MLink link : links) {
+					res.add((MObject)link);					
+				}
+			} else {
+				MAssociationEnd dstEnd = (MAssociationEnd) dst;
+				// project tuples to destination end component
+				for (MLink link : links) {
+					MLinkEnd linkEnd = link.linkEnd(dstEnd);
+					res.add(linkEnd.object());
 				}
 			}
+		}
 		}
 		
 		return res;
@@ -1032,12 +1214,12 @@ public final class MSystemState {
 		Set<MAssociation> allSubsettedAssociations = association.getSubsetsClosure();		
 		if (allSubsettedAssociations.contains(association2))
 			return true;
-		
+			
 		return false;
-	}
+			}
 
 	private boolean associationsHaveRedefinitionRelation(MAssociation association, MAssociation association2) {
-		
+			
 		Set<MAssociation> allRedefiningAssociations = association.getRedefinedByClosure();
 		if (allRedefiningAssociations.contains(association2))
 			return true;
@@ -1047,7 +1229,7 @@ public final class MSystemState {
 			return true;
 		
 		return false;
-	}
+		}
 
 	/**
 	 * Checks model inherent constraints, i.e., checks whether cardinalities of
@@ -1271,6 +1453,15 @@ public final class MSystemState {
 			name = system().uniqueObjectNameForClass(clsName);
 		while (objectByName(name) != null);
 		return name;
+	}
+	
+	/**
+	 * wrapper for {@link #uniqueObjectNameForClass(String)}
+	 * @param cls the class
+	 * @return available unique object name for an object of the supplied class
+	 */
+	public String uniqueObjectNameForClass(MClass cls) {
+		return uniqueObjectNameForClass(cls.name());
 	}
 
 }

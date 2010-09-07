@@ -29,6 +29,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.type.TypeFactory;
+
 
 /**
  * MClass instances represent classes in a model.
@@ -66,6 +69,14 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      */
     public String nameAsRolename() {
         return Character.toLowerCase(name().charAt(0)) + name().substring(1);
+    }
+    
+    /**
+     * returns the corresponding type
+     * @return the corresponding type
+     */
+    public ObjectType type() {
+    	return TypeFactory.mkObjectType(this);
     }
 
     /**

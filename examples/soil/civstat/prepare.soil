@@ -1,0 +1,5 @@
+!! Ada := new Person;
+!! Bob := new Person;
+!! call Ada.birth('Ada', #female);
+!! call Bob.birth('Bob', #male);
+!! call Ada.marry(Bob)

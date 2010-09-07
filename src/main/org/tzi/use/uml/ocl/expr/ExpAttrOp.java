@@ -39,7 +39,7 @@ public final class ExpAttrOp extends Expression {
     private Expression fObjExp;
     
     public ExpAttrOp(MAttribute a, Expression objExp) {
-        super(a.type());
+        super(a.type(), objExp);
         fAttr = a;
         fObjExp = objExp;
         if (! objExp.type().isTrueObjectType() )
@@ -78,7 +78,7 @@ public final class ExpAttrOp extends Expression {
         return res;
     }
 
-    public String toString() {
+	public String toString() {
         return fObjExp + "." + fAttr.name() + atPre();
     }
 }

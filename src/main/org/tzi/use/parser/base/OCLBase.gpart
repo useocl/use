@@ -256,6 +256,7 @@ postfixExpression returns [ASTExpression n]
 primaryExpression returns [ASTExpression n]
 : 
       nLit=literal { $n = $nLit.n; }
+    | nOr = objectReference { $n = $nOr.n; }
     | nPc=propertyCall[null, false] { $n = $nPc.n; }
     | LPAREN nExp=expression RPAREN { $n = $nExp.n; }
     | nIfExp=ifExpression { $n = $nIfExp.n; }
@@ -265,6 +266,14 @@ primaryExpression returns [ASTExpression n]
       ( AT 'pre' { $n.setIsPre(); } ) ? 
     ;
 
+
+objectReference returns [ASTExpression n]
+:
+  AT
+  objectName = IDENT
+  
+  { n = new ASTObjectReferenceExpression(objectName); }
+;
 
 /* ------------------------------------
   propertyCall ::= 
@@ -351,6 +360,7 @@ operationExpression[ASTExpression source, boolean followsArrow]
 	  )?
       RPAREN
     )?
+    { $n.setStartToken($start); }
     ;
 
 

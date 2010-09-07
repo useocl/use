@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.Set;
 
 import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -39,6 +40,7 @@ import org.tzi.use.util.StringUtil;
 public class MMPrintVisitor implements MMVisitor {
     protected PrintWriter fOut;
     private int fIndent;    // number of columns to indent output
+    private int fIndentStep = 2;
 
     public MMPrintVisitor(PrintWriter out) {
         fOut = out;
@@ -326,20 +328,36 @@ public class MMPrintVisitor implements MMVisitor {
         indent(); 
         print(id(e.name()) + 
               other("(" + e.paramList() + ")"));
+        
         if (e.hasResultType() ) {
             print(ws() + other(":") + ws() + other(e.resultType().toString()));
-            if (e.hasExpression() ) {
-                println(ws() + other("=") + ws());
-                incIndent();
-                indent(); 
-                print(other(e.expression().toString()));
-                decIndent();
-            }
         }
         
-        println();
+        if (e.hasExpression() ) {
+        	println(ws() + other("=") + ws());
+            incIndent();
+            indent(); 
+            print(other(e.expression().toString()));
+            decIndent();
+            println();
+        } else if (e.hasStatement()) {
+        	println();
+        	incIndent();
+        	indent();
+        	println(keyword("begin"));
+        	incIndent();
+        	println(getStatementVisitorString(e.getStatement()));
+            decIndent();
+            indent();
+            println(keyword("end"));
+            decIndent();
+        }
     }
-
+    
+    protected String getStatementVisitorString(MStatement statement) {
+    	return statement.toVisitorString(fIndent, fIndentStep);
+    }
+    
     public void visitPrePostCondition(MPrePostCondition e) {
         println(keyword("context") + ws() +
                 other(e.cls().name()) + other("::") +
@@ -353,12 +371,12 @@ public class MMPrintVisitor implements MMVisitor {
     }
 
     private void incIndent() {
-        fIndent += 2;
+        fIndent += fIndentStep;
     }
 
     private void decIndent() {
-        if (fIndent < 2 )
+        if (fIndent < fIndentStep )
             throw new RuntimeException("unbalanced indentation");
-        fIndent -= 2;
+        fIndent -= fIndentStep;
     }
 }

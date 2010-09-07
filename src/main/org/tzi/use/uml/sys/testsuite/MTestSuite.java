@@ -5,26 +5,26 @@ import java.util.List;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.cmd.ASTCmd;
+import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.parser.testsuite.ASTTestCase;
 import org.tzi.use.parser.testsuite.ASTTestCase.TestResult;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullWriter;
+import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
 
 public class MTestSuite {
 	private Token name;
 	private MModel model;
 	
-	private List<ASTCmd> setupStatements;
+	private List<ASTStatement> setupStatements;
 	private List<ASTTestCase> testCases;
 	
 	private PrintWriter output = null;
 	
-	public MTestSuite(Token name, MModel model, List<ASTCmd> setup, List<ASTTestCase> testCases) {
+	public MTestSuite(Token name, MModel model, List<ASTStatement> setup, List<ASTTestCase> testCases) {
 		this.name = name;
 		this.setupStatements = setup;
 		this.testCases = testCases;
@@ -87,19 +87,19 @@ public class MTestSuite {
 		}
 	}
 	
-	private MSystem setUp() throws MSystemException, SemanticException {
+	private MSystem setUp() throws MSystemException, CompilationFailedException {
 		MSystem system = new MSystem(model);
 		Context ctx = new Context(name.getText(), output, system.varBindings(), null);
 		ctx.setOut(new PrintWriter(new NullWriter()));
 		ctx.setModel(model);
 		ctx.setSystemState(system.state());
 		
-		for (ASTCmd cmd : this.setupStatements) {
-			MCmd c = cmd.gen(ctx);
+		for (ASTStatement cmd : this.setupStatements) {
+			MStatement c = cmd.generateStatement(ctx, system.getVariableEnvironment().constructSymbolTable());
 			if (c == null)
 				return null;
 			
-			system.executeCmd(c);
+			system.evaluateStatement(c);
 		}
 				
 		return system;

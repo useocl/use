@@ -22,6 +22,7 @@
 package org.tzi.use.uml.sys;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class StateChangeEvent extends EventObject {
     /**
      * Constructs a StateChangeEvent object.
      */
-    StateChangeEvent(Object source) {
+    public StateChangeEvent(Object source) {
         super(source);
         fNewObjects = new ArrayList<MObject>();
         fDeletedObjects = new ArrayList<MObject>();
@@ -87,26 +88,48 @@ public class StateChangeEvent extends EventObject {
             || ! fDeletedLinks.isEmpty();
     }
 
-    void addNewObject(MObject obj) {
+    public void addNewObject(MObject obj) {
         fNewObjects.add(obj);
     }
-
-    void addDeletedObject(MObject obj) {
+    
+    public void addNewObjects(Collection<MObject> objects) {
+    	fNewObjects.addAll(objects);
+    }
+    
+    public void addDeletedObject(MObject obj) {
         fDeletedObjects.add(obj);
     }
+    
+    public void addDeletedObjects(Collection<MObject> objects) {
+    	fDeletedObjects.addAll(objects);
+    }
 
-    void addModifiedObject(MObject obj) {
+    public void addModifiedObject(MObject obj) {
         fModifiedObjects.add(obj);
     }
+    
+    
+    public void addModifiedObjects(Collection<MObject> objects) {
+    	fModifiedObjects.addAll(objects);
+    }
 
-    void addNewLink(MLink link) {
+    public void addNewLink(MLink link) {
         fNewLinks.add(link);
     }
-
-    void addDeletedLink(MLink link) {
-        fDeletedLinks.add(link);
+    
+    
+    public void addNewLinks(Collection<MLink> links) {
+    	fNewLinks.addAll(links);
     }
 
+    public void addDeletedLink(MLink link) {
+        fDeletedLinks.add(link);
+    }
+    
+    public void addDeletedLinks(Collection<MLink> links) {
+    	fDeletedLinks.addAll(links);
+    }
+    
     public String toString() {
         return "new objects: " + fNewObjects +
             ", deleted objects: " + fDeletedObjects +

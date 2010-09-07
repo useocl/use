@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
@@ -74,14 +76,14 @@ public class ASTQueryExpression extends ASTExpression {
         // check for empty range: do we have a context expression that
         // is implicitly assumed to be the source expression?
         if (fRange != null ) {
-           range = fRange.gen(ctx);
-        } else {
+            range = fRange.gen(ctx);
+       } else {
            ExprContext ec = ctx.exprContext();
-           if (! ec.isEmpty() ) {
+            if (! ec.isEmpty() ) {
                 // construct source expression
                 ExprContext.Entry e = ec.peek();
                 range = new ExpVariable(e.fName, e.fType);
-           } else
+            } else
                 throw new SemanticException(fOp, "Need a collection to apply `" +
                                             opname + "'.");
         }
@@ -189,7 +191,20 @@ public class ASTQueryExpression extends ASTExpression {
         return res;
     }
 
-    public String toString() {
-        return "(" + fOp + " " + fRange + " " + fDeclList + " " + fExpr + ")";
-    }
+    @Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		if (fRange != null) {
+			fRange.getFreeVariables(freeVars);
+		}
+	
+		HashSet<String> freeVarsInExpr = fExpr.getFreeVariables();
+		freeVarsInExpr.removeAll(fDeclList.getVarNames());
+	
+		freeVars.addAll(freeVarsInExpr);	
+	}
+
+    @Override
+	public String toString() {
+	    return "(" + fOp + " " + fRange + " " + fDeclList + " " + fExpr + ")";
+	}
 }

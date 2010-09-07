@@ -1,5 +1,7 @@
 package org.tzi.use.parser.base;
 
+import java.io.PrintWriter;
+
 import org.antlr.runtime.Parser;
 import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.Token;
@@ -9,6 +11,8 @@ import org.tzi.use.parser.SrcPos;
 import org.tzi.use.util.Log;
 
 public class BaseParser extends Parser {
+	
+	private PrintWriter fWarWriter = new PrintWriter(System.err);
 
 	public BaseParser(TokenStream input) {
 		super(input);
@@ -39,6 +43,7 @@ public class BaseParser extends Parser {
     
     public void init(ParseErrorHandler handler) {
         fParseErrorHandler = handler;
+        fWarWriter = handler.getErrorWriter();
     }
 
     /* Overridden methods. */
@@ -50,21 +55,10 @@ public class BaseParser extends Parser {
     
     /** Parser warning-reporting function */
     public void reportWarning(String s) {
-        reportWarning(null, s);
-    }
-    
-    public void reportWarning(Token pos, String s) {
-    	StringBuilder warning = new StringBuilder();
-    	
-    	if (pos != null) {
-    		warning.append(new SrcPos(pos).toString()); 
-    	} else if (getSourceName() != null) {
-        	warning.append(getSourceName());
-        	warning.append(": ");
-        }
         
-    	warning.append("warning: ");
-        warning.append(s);
-        Log.warn(warning.toString());
+    	fWarWriter.println(
+    			(getSourceName() == null ? "" : getSourceName() + ": ") +
+    			"warning: " +
+    			s);
     }
 }

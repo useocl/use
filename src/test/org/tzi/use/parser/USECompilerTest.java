@@ -104,7 +104,7 @@ public class USECompilerTest extends TestCase {
 
 
     public void testSpecification() {
-        List<File> fileList = getFilesMatchingSuffix(".use", 27);
+        List<File> fileList = getFilesMatchingSuffix(".use", 33);
         // add all the example files which should have no errors
         File dir = new File(EXAMPLES_PATH);
         File[] files = dir.listFiles( new SuffixFileFilter(".use") );

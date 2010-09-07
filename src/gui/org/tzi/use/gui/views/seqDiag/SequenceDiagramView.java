@@ -33,7 +33,6 @@ import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.StateChangeEvent;
-import org.tzi.use.util.cmd.CommandFailedException;
 
 /**
  * A SequenceDiagramView shows a UML sequence diagramm of events.
@@ -76,7 +75,7 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView {
      * 
      * @throws CommandFailedException
      */
-    public void update() throws CommandFailedException {
+    public void update() {
         fSeqDiag.update();
     }
 
@@ -90,11 +89,7 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView {
     }
 
     public void stateChanged(StateChangeEvent e) {
-        try {
-            fSeqDiag.update();
-        } catch (CommandFailedException cnfe) {
-            System.out.println(cnfe);
-        }
+    	fSeqDiag.update();
     }
 
     /**

@@ -22,6 +22,8 @@
 package org.tzi.use.parser.ocl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -97,5 +99,14 @@ public class ASTElemVarsDeclaration extends AST {
         for (Token id : fIdList) {
             vars.add(id, type);
         }
+    }
+    
+    public HashSet<String> getVarNames() {
+    	HashSet<String> result = new HashSet<String>();
+    	Iterator<Token> it = fIdList.iterator();
+    	while (it.hasNext()) {
+    		result.add(it.next().getText());    		
+    	}
+    	return result;
     }
 }

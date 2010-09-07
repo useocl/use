@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.uml.ocl.type.ObjectType;
+
 /**
  * Instances of the type MClass represent classes in a model.
  *
@@ -45,6 +47,14 @@ public interface MClass extends MModelElement {
      */
     public String nameAsRolename();
 
+    
+    /**
+     * returns the corresponding type
+     * @return the corresponding type
+     */
+    public ObjectType type();
+    
+    
     /**
      * Returns the model owning this class.
      */

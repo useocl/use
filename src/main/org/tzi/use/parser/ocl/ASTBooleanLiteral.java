@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.tzi.use.parser.Context;
 import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -38,11 +40,16 @@ public class ASTBooleanLiteral extends ASTExpression {
         fValue = val;
     }
 
-    public String toString() {
-        return fValue ? "true" : "false";
-    }
-
     public Expression gen(Context ctx) {
         return new ExpConstBoolean(fValue); 
     }
+
+	@Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		
+	}
+
+	public String toString() {
+	    return fValue ? "true" : "false";
+	}
 }

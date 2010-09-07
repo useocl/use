@@ -92,7 +92,7 @@ public class GProcedureCall {
         for (Expression exp : fParameter) {
             values.add( evaluator.eval( exp,
                                         state,
-                                        state.system().topLevelBindings()) );
+                                        state.system().varBindings()) );
         }
         
         return values;

@@ -42,14 +42,11 @@ public class EvalContext {
     private VarBindings fVarBindings;
     private int fNesting;   // for indentation during trace
     private PrintWriter fEvalLog; // may be null
-
+    private String fEvalLogIndent;
     private boolean fEnableEvalTree;
     private Stack<EvalNode> fNodeStack;
     private EvalNode fRootNode;
 
-    // used by UML AL
-    private Stack<Integer> fFrames = new Stack<Integer>();
-    
     /**
      * Creates new evaluation context. The parameter preState may be
      * null in which case it is set to postState.
@@ -57,13 +54,25 @@ public class EvalContext {
     public EvalContext(MSystemState preState,
                 MSystemState postState,
                 VarBindings globalBindings,
-                PrintWriter evalLog) {
+                PrintWriter evalLog,
+                String evalLogIndent) {
         fPreState = preState;
         fPostState = postState;
         fVarBindings = new VarBindings(globalBindings);
         fNesting = 0;
         fEvalLog = evalLog;
+        fEvalLogIndent = evalLogIndent;
     }
+    
+    
+    public EvalContext(MSystemState preState,
+            MSystemState postState,
+            VarBindings globalBindings,
+            PrintWriter evalLog) {
+    	
+    	this(preState, postState, globalBindings, evalLog, "  ");
+    }
+    
 
     /**
      * Turns on building an evaluation tree. The tree is used, e.g.,
@@ -86,6 +95,15 @@ public class EvalContext {
      */
     void popVarBinding() {
         fVarBindings.pop();
+    }
+    
+    /**
+     * Pops the last numToPop added variable bindings from the binding stack 
+     */
+    void popVarBindings(int numToPop) {
+    	for (int i = 0; i < numToPop; ++i) {
+    		popVarBinding();
+    	}
     }
 
     /**
@@ -150,7 +168,7 @@ public class EvalContext {
         // print the results sequentially from the innermost
         // subexpression to the outermost expression
         if (fEvalLog != null )
-            fEvalLog.println("  " + expr + " : " + 
+            fEvalLog.println(fEvalLogIndent + expr + " : " + 
                              result.type() + " = " + result);
 
         if (fEnableEvalTree ) {
@@ -169,20 +187,6 @@ public class EvalContext {
         for (int i = 0; i < fNesting; i++)
             indent[i] = ' ';
         return new String(indent);
-    }
-
-    // used by UML AL
-    public void createStackFrame()  {
-        int currentSize = varBindings().getStackSize();
-        fFrames.push( new Integer(currentSize) );
-    }
-
-    // used by UML AL
-    public void dropStackFrame() {
-        Integer oldSize = fFrames.pop();
-        int i = oldSize.intValue();
-        while (fVarBindings.getStackSize() > i)
-            fVarBindings.pop();
     }
 }
 

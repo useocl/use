@@ -177,11 +177,41 @@ public class ASTClass extends AST {
 
         }
     }
+    
+    public void genOperationBodies(Context ctx) {
+    	ctx.setCurrentClass(fClass);
+
+        // enter pseudo-variable "self" into scope of expressions
+        ObjectType ot = TypeFactory.mkObjectType(fClass);
+        ctx.exprContext().push("self", ot);
+        Symtable vars = ctx.varTable();
+        vars.enterScope();
+        try {
+            vars.add("self", ot, null);
+        } catch (SemanticException ex) { 
+            // fatal error?
+            throw new Error(ex);
+        }
+
+        // generate operation bodies
+        for (ASTOperation astOp : fOperations) {
+            try {
+                astOp.genFinal(ctx);
+            } catch (SemanticException ex) {
+                ctx.reportError(ex);
+            }
+        }
+
+        vars.exitScope(); 
+        ctx.exprContext().pop();
+        ctx.setCurrentClass(null);
+    }
+    
 
     /**
      * Adds constraints to the class.
      */
-    public void genConstraintsAndOperationBodies(Context ctx) {
+    public void genConstraints(Context ctx) {
         ctx.setCurrentClass(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
@@ -198,13 +228,13 @@ public class ASTClass extends AST {
 
 
         // generate operation bodies
-        for (ASTOperation astOp : fOperations) {
+        /*for (ASTOperation astOp : fOperations) {
             try {
                 astOp.genFinal(ctx);
             } catch (SemanticException ex) {
                 ctx.reportError(ex);
             }
-        }
+        }*/
 
         // add class invariants
         for (ASTInvariantClause astInv : fInvariantClauses) {

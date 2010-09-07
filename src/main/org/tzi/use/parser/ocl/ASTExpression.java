@@ -21,6 +21,7 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -55,6 +56,21 @@ public abstract class ASTExpression extends AST {
     private Token fStartToken; 
 
     private boolean fIsPre;
+    
+    // the text that was parsed to build this expression
+    // is not set automatically while parsing at the moment
+    private String fStringRep;
+      
+    
+    public String getStringRep() {
+    	// TODO: Sollte eigentlich nicht passieren
+    	if (fStringRep == null) return "<no string representation>";
+    	return fStringRep;
+    }
+    
+    public void setStringRep(String stringRep) {
+    	fStringRep = stringRep.trim().replaceAll("  ", " ");
+    }
 
     public void setIsPre() {
         fIsPre = true;
@@ -73,8 +89,23 @@ public abstract class ASTExpression extends AST {
         return fStartToken;
     }
 
-
     public abstract Expression gen(Context ctx) throws SemanticException;
+        
+    /**
+     * TODO
+     * @param freeVars
+     */
+    public abstract void getFreeVariables(HashSet<String> freeVars);
+    
+    /**
+     * TODO
+     * @return
+     */
+    public HashSet<String> getFreeVariables() {
+    	HashSet<String> result = new HashSet<String>();
+    	getFreeVariables(result);
+    	return result;
+    }
 
 
     /**

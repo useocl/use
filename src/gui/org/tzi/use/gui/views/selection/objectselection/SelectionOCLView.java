@@ -256,7 +256,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 		// compile query
 		Expression expr = OCLCompiler.compileExpression(fSystem.model(), in, 
-														"Error", out, fSystem.topLevelBindings());
+														"Error", out, fSystem.varBindings());
 		out.flush();
 		fTextIn.requestFocus();
 
@@ -292,7 +292,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 			// evaluate it with current system state
 			Evaluator evaluator = new Evaluator();
 			Value val = evaluator.eval(expr, fSystem.state(), fSystem
-					.topLevelBindings());
+					.varBindings());
 			
 			Set<MObject> objects = new HashSet<MObject>();
 			boolean validResult = true;

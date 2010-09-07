@@ -21,14 +21,17 @@
 
 package org.tzi.use.gui.views;
 
-import java.awt.*;
-import java.util.Iterator;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.util.List;
-import javax.swing.*;
 
-import org.tzi.use.uml.sys.MCmd;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 /** 
  * A CommandView shows the sequence of executed state manipulation
@@ -58,7 +61,22 @@ public class CommandView extends JPanel implements View {
 
     private void update() {
         fListModel.clear();
-        List<MCmd> cmds = fSystem.useCommands();
+        
+        List<MStatement> evaluatedStatements = fSystem.getEvaluatedStatements();
+        int numEvaluatedStatements = evaluatedStatements.size();
+        
+        if (numEvaluatedStatements == 0) {
+        	fListModel.addElement("<empty>");
+        } else {
+        	for (int i = 0; i < numEvaluatedStatements; ++i) {
+        		fListModel.addElement(
+        				(i + 1) + 
+        				". " + 
+        				evaluatedStatements.get(i).getShellCommand());
+        	}
+        }
+        // TODO cmd version
+        /*List<MCmd> cmds = fSystem.useCommands();
         if (cmds.isEmpty() ) {
             fListModel.addElement("<empty>");
         } else {
@@ -69,7 +87,7 @@ public class CommandView extends JPanel implements View {
                 String s = j++ + ". " + cmd.getUSEcmd();
                 fListModel.addElement(s);
             }
-        }
+        }*/
         fList.ensureIndexIsVisible(fListModel.size() - 1);
         repaint();
     }

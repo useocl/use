@@ -53,6 +53,10 @@ public class ParseErrorHandler {
         return fFileName;
     }
     
+    public PrintWriter getErrorWriter() {
+    	return fErrWriter;
+    }
+    
     public int errorCount() {
         return fErrorCount;
     }

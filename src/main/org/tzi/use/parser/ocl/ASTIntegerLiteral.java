@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.uml.ocl.expr.ExpConstInteger;
@@ -39,11 +41,18 @@ public class ASTIntegerLiteral extends ASTExpression {
         fValue = Integer.parseInt(token.getText());
     }
 
+    @Override
     public Expression gen(Context ctx) {
         return new ExpConstInteger(fValue); 
     }
 
-    public String toString() {
+    @Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+	
+	}
+
+    @Override
+	public String toString() {
         return Integer.toString(fValue);
     }
 }

@@ -62,22 +62,20 @@ import javax.swing.JPopupMenu;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.CmdCreatesObjects;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdCreateInsertObjects;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
-import org.tzi.use.uml.sys.MCmdDeleteLink;
-import org.tzi.use.uml.sys.MCmdDestroyObjects;
-import org.tzi.use.uml.sys.MCmdInsertLink;
-import org.tzi.use.uml.sys.MCmdOpEnter;
-import org.tzi.use.uml.sys.MCmdOpExit;
-import org.tzi.use.uml.sys.MCmdSetAttribute;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
+import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
+import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.sys.events.OperationExitedEvent;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.cmd.CommandFailedException;
 
 /**
  * A SequenceDiagram shows an UML sequence diagramm of events.
@@ -226,11 +224,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // unmark lifeline
                 fChoosedLl = null;
                 // update and repaint the whole diagram
-                try {
-                    update();
-                } catch (CommandFailedException cfe) {
-                    // ignored
-                }
+                update();
                 repaint();
             }
         };
@@ -349,11 +343,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 fProperties
                         .showDelete(ev.getStateChange() == ItemEvent.SELECTED);
                 restoreAllValues();
-                try {
-                    update();
-                } catch (CommandFailedException cfe) {
-                    // ignored
-                }
+                update();
                 repaint();
             }
         });
@@ -367,11 +357,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // open CmdChooseWindow
                 createCmdChooseWindow();
                 // after closing update diagram
-                try {
-                    update();
-                } catch (CommandFailedException cfe) {
-                    // ignored
-                }
+                update();
                 // repaint diagram
                 repaint();
             }
@@ -391,11 +377,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 }
                 fHiddenLifelines = new Vector<Lifeline>();
                 // update diagram
-                try {
-                    update();
-                } catch (CommandFailedException cfe) {
-                    // ignored
-                }
+                update();
                 // repaint diagram
                 repaint();
             }
@@ -411,11 +393,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // open PropertiesWindow
                 createPropertiesWindow();
                 // after closing update diagram
-                try {
-                    update();
-                } catch (CommandFailedException cfe) {
-                    // ignored
-                }
+                update();
                 // repaint diagram
                 repaint();
             }
@@ -1135,8 +1113,8 @@ public class SequenceDiagram extends JPanel implements Printable {
                     // if insert- or create-command-> calculate correct position
                     // for
                     // the object box
-                    if (a.getCmd() instanceof MCmdInsertLink
-                            || a.getCmd() instanceof MCmdCreateObjects) {
+                    if (a.getEvent() instanceof LinkInsertedEvent
+                            || a.getEvent() instanceof ObjectCreatedEvent) {
                         // if object box was not scrolled to the top so far
                         if (y - fObjectBox.getHeight() / 2 > y_start)
                             y_start = y + fObjectBox.getHeight() / 2;
@@ -1151,13 +1129,13 @@ public class SequenceDiagram extends JPanel implements Printable {
                                 - fObjectBox.getHeight();
                     }
                     // is delete- or destroy-command
-                    if (a.getCmd() instanceof MCmdDeleteLink
-                            || a.getCmd() instanceof MCmdDestroyObjects) {
+                    if (a.getEvent() instanceof LinkDeletedEvent
+                            || a.getEvent() instanceof ObjectDestroyedEvent) {
                         // lifeline ends at the position of the corresponding
                         // message
                         y_end = y;
                         // otherwise if not create-command
-                    } else if (!(a.getCmd() instanceof CmdCreatesObjects)) {
+                    } else if (!(a.getEvent() instanceof ObjectCreatedEvent)) {
                         // position of return arrow of the current activation
                         int fEnd = a.getEnd();
                         // if frame still active
@@ -1177,14 +1155,14 @@ public class SequenceDiagram extends JPanel implements Printable {
                         // add new Frame to fFrames; in case of insert consider
                         // the
                         // 'inserted as' messages
-                        if (a.getCmd() instanceof MCmdInsertLink)
+                        if (a.getEvent() instanceof LinkInsertedEvent)
                             fFrames.add(new Frame(fXValue, y
                                     + fObjectBox.getHeight() / 2, fEnd - 10, a
                                     .getNesting()));
                         // in case of openter-command -> draw only frame if
                         // operation call was successful
-                        else if (!(a.getCmd() instanceof MCmdOpEnter && !((MCmdOpEnter) a
-                                .getCmd()).successful()))
+                        else if (!(a.getEvent() instanceof OperationEnteredEvent && !((OperationEnteredEvent) a
+                                .getEvent()).getOperationCall().enteredSuccessfully()))
                             fFrames.add(new Frame(fXValue, y, fEnd, a
                                     .getNesting()));
                     }
@@ -1294,8 +1272,8 @@ public class SequenceDiagram extends JPanel implements Printable {
                     y = a.getY();
 
                     // if Object destroyed or Link deleted -> draw cross
-                    if (a.getCmd() instanceof MCmdDeleteLink
-                            || a.getCmd() instanceof MCmdDestroyObjects) {
+                    if (a.getEvent() instanceof LinkDeletedEvent
+                            || a.getEvent() instanceof ObjectDestroyedEvent) {
                         y_end = y;
 
                         Stroke oldStroke = g.getStroke();
@@ -1545,7 +1523,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         /**
          * The list of the objects involved in the association of this lifeline.
          */
-        private MObject[] fObjects;
+        private List<MObject> fObjects;
 
         /**
          * Costructs a new AssLifeline-Object.
@@ -1561,7 +1539,7 @@ public class SequenceDiagram extends JPanel implements Printable {
          *            ass
          */
         AssLifeline(int col, MAssociation ass, Lifeline antecessor,
-                MObject[] objects) {
+                List<MObject> objects) {
             fColumn = col;
             fAss = ass;
             fActivations = new ArrayList<Activation>();
@@ -1620,24 +1598,8 @@ public class SequenceDiagram extends JPanel implements Printable {
          *         objects and if each object in objects equals exactly one
          *         object of fObjects; false otherwise
          */
-        public boolean sameObjects(MObject[] objects) {
-            boolean answer = false;
-            // if the size of the objects is the same
-            if (fObjects.length == objects.length) {
-                // regard all objects
-                for (int i = 0; i < fObjects.length; i++) {
-                    // if the objects are the same -> answer is true
-                    if (fObjects[i] == objects[i])
-                        answer = true;
-                    // if only one object differs from the corresponding in
-                    // objects -> answer is false
-                    else {
-                        answer = false;
-                        break;
-                    }
-                }
-            }
-            return answer;
+        public boolean sameObjects(List<MObject> objects) {
+        	return fObjects.containsAll(objects) && objects.containsAll(fObjects);
         }
     }
 
@@ -1942,7 +1904,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         /**
          * The command of this activation.
          */
-        protected MCmd fCmd;
+        protected Event fEvent;
 
         /**
          * The position on the time axis on which the activation message is
@@ -1997,11 +1959,11 @@ public class SequenceDiagram extends JPanel implements Printable {
          *            the y-value on which the activation message should be
          *            drawn
          */
-        public Activation(int start, Lifeline owner, MCmd cmd, Activation src,
+        public Activation(int start, Lifeline owner, Event event, Activation src,
                 int yValue) {
             fStart = start;
             fOwner = owner;
-            fCmd = cmd;
+            fEvent = event;
             fSrc = src;
             fYEnd = 0;
         }
@@ -2011,8 +1973,8 @@ public class SequenceDiagram extends JPanel implements Printable {
          * 
          * @return the command of this activation.
          */
-        public MCmd getCmd() {
-            return fCmd;
+        public Event getEvent() {
+            return fEvent;
         }
 
         /**
@@ -2164,12 +2126,13 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // if there is a return arrow
                 if (fEnd > 0) {
                     // if openter-command
-                    if (fCmd instanceof MCmdOpEnter) {
+                    if (fEvent instanceof OperationEnteredEvent) {
                         // calculate length of the result message
-                        MOperationCall fOpCall = ((MCmdOpEnter) fCmd)
-                                .operationCall();
+                    	MOperationCall opCall = 
+                    		((OperationEnteredEvent)fEvent).getOperationCall();
+                    	
                         if (fProperties.showValues()) {
-                            Value result = fOpCall.resultValue();
+                            Value result = opCall.getResultValue();
                             if (result != null) {
                                 String resultLabel = result.toString();
                                 if (fm.stringWidth(resultLabel) + 14 > messLength)
@@ -2195,8 +2158,8 @@ public class SequenceDiagram extends JPanel implements Printable {
                     messLength += fProperties.frWidth() / 2;
                 }
 
-                if (!(fCmd instanceof MCmdDestroyObjects)
-                        && !(fCmd instanceof MCmdDeleteLink)) {
+                if (!(fEvent instanceof ObjectDestroyedEvent)
+                        && !(fEvent instanceof LinkDeletedEvent)) {
                     if (fNesting > 0) {
                         messLength += fProperties.frWidth() / 2;
                     }
@@ -2287,8 +2250,8 @@ public class SequenceDiagram extends JPanel implements Printable {
                     x_Src += fProperties.frWidth() / 2;
                 }
 
-                if (!(fCmd instanceof MCmdDestroyObjects)
-                        && !(fCmd instanceof MCmdDeleteLink)) {
+                if (!(fEvent instanceof ObjectDestroyedEvent)
+                        && !(fEvent instanceof LinkDeletedEvent)) {
 
                     if (fNesting > 0) {
                         x_Goal -= fProperties.frWidth() / 2;
@@ -2298,8 +2261,8 @@ public class SequenceDiagram extends JPanel implements Printable {
                     }
                 }
             } else if (x_Src > x_Goal) {
-                if (!(fCmd instanceof MCmdDestroyObjects)
-                        && !(fCmd instanceof MCmdDeleteLink)) {
+                if (!(fEvent instanceof ObjectDestroyedEvent)
+                        && !(fEvent instanceof LinkDeletedEvent)) {
                     if (fNesting > 0)
                         x_Goal += fProperties.frWidth() / 2;
                     if (fNesting > 1)
@@ -2329,7 +2292,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 
             }
             // if create-command
-            if (fCmd instanceof CmdCreatesObjects) {
+            if (fEvent instanceof ObjectCreatedEvent) {
                 // object box of the owner-lifeline
                 ObjectBox objectBox = fOwner.getObjectBox();
                 // x-value of the object box
@@ -2338,16 +2301,20 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // draw message
                 drawCreateMessage(g, fm, x_Src, x_ObjectBox, x_Src);
                 // if insert-command
-            } else if (fCmd instanceof MCmdInsertLink) {
+            } else if (fEvent instanceof LinkInsertedEvent) {
                 // draw message
                 drawInsertMessages(g, fm, x_Src, x_Goal, x_Goal);
                 // other command
             } else {
-                if (fCmd instanceof MCmdOpEnter) {
+                if (fEvent instanceof OperationEnteredEvent) {
                     // if operation result was not coorect -> change color to
                     // red
-                    if (!((MCmdOpEnter) fCmd).successful())
-                        g.setColor(Color.red);
+                	OperationEnteredEvent event = (OperationEnteredEvent)fEvent;
+                	MOperationCall operationCall = event.getOperationCall();
+                	
+                	if (!operationCall.enteredSuccessfully()) {
+                		g.setColor(Color.red);
+                	}
                 }
                 // recursive message
                 if (isRecursive) {
@@ -2381,7 +2348,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // position of goal lifeline
                 int x_Goal2 = x_Goal;
                 // if insert-command
-                if (fCmd instanceof MCmdInsertLink) {
+                if (fEvent instanceof LinkInsertedEvent) {
                     // calculate position of goal lifeline
                     if (x_Goal > x_Src)
                         x_Goal2 = fOwner.getObjectBox().getStart();
@@ -2401,8 +2368,8 @@ public class SequenceDiagram extends JPanel implements Printable {
             }
             g.setColor(Color.black);
             // openter- or opexit-command
-            if ((fCmd instanceof MCmdOpEnter)
-                    && ((MCmdOpEnter) fCmd).successful()) {
+            if ((fEvent instanceof OperationEnteredEvent)
+                    && ((OperationEnteredEvent) fEvent).getOperationCall().enteredSuccessfully()) {
                 // draw answer message in black color
                 drawAnswer(g, fm, x_Src, x_Goal, fYEnd);
             }
@@ -2450,12 +2417,13 @@ public class SequenceDiagram extends JPanel implements Printable {
             g.fillPolygon(xp, yp, xp.length);
 
             // List of involved objects
-            MObject[] objects = ((MCmdInsertLink) fCmd).getObjects();
-            // rolenames of the roles of the link
-            String[] roleNames = ((MCmdInsertLink) fCmd).getRoleNames();
+            LinkInsertedEvent event = (LinkInsertedEvent)fEvent; 
+            List<MObject> objects = event.getParticipants();
+            List<String> roleNames = event.getAssociation().roleNames();
+           
             // regard each object
-            for (int i = 0; i < objects.length; i++) {
-                MObject object = objects[i];
+            for (int i = 0; i < objects.size(); i++) {
+                MObject object = objects.get(i);
                 // lifeline of the object
                 ObjLifeline oll = (ObjLifeline) fLifelines.get(object);
                 // if the lifeline is not marked to be hidden
@@ -2525,7 +2493,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                     g.drawLine(x3, y3, x3 - xd, y3 + 4);
 
                     // 'inserted as'-message
-                    String message = "inserted as " + roleNames[i];
+                    String message = "inserted as " + roleNames.get(i);
                     int labelWidth = fm.stringWidth(message);
                     // calculate position to draw the message
                     int x_value = 0;
@@ -2612,17 +2580,18 @@ public class SequenceDiagram extends JPanel implements Printable {
             Value result = null;
 
             // if openter-command
-            if (fCmd instanceof MCmdOpEnter) {
-                // OperationCall-object of the openter-command
-                MOperationCall fOpCall = ((MCmdOpEnter) fCmd).operationCall();
+            if (fEvent instanceof OperationEnteredEvent) {
+                // OperationCall-object of the openter-command    	
+                MOperationCall fOpCall = ((OperationEnteredEvent)fEvent).getOperationCall();
                 // one ore more postconditions of the activation is false
                 // -> arrow in red color
-                if (!fOpCall.postconditionsOkOnExit())
+                if (!fOpCall.exitedSuccessfully())
                     g.setColor(Color.red);
                 // user has activated 'Show values'
-                if (fProperties.showValues()) {
+                if (fProperties.showValues() && 
+                		fOpCall.getOperation().hasResultType()) {
                     // result value of the operation call
-                    result = fOpCall.resultValue();
+                    result = fOpCall.getResultValue();
                     // if there was a result label -> calculate textual
                     // description
                     if (result != null)
@@ -2693,61 +2662,62 @@ public class SequenceDiagram extends JPanel implements Printable {
          */
         public String createMessage() {
             String msgLabel = "";
-            if (fCmd instanceof MCmdOpEnter) {
-                MOperationCall fOpCall = ((MCmdOpEnter) fCmd).operationCall();
-                msgLabel = fOpCall.operation().name();
-                if (fProperties.showValues())
-                    msgLabel += "("
-                            + StringUtil.fmtSeq(fOpCall.argValues(), ",") + ")";
-            } else if (fCmd instanceof MCmdCreateObjects) {
-                msgLabel = "create";
-            } else if (fCmd instanceof MCmdCreateInsertObjects) {
-                msgLabel = "create link";
+            if (fEvent instanceof OperationEnteredEvent) {
+                MOperationCall fOpCall = ((OperationEnteredEvent)fEvent).getOperationCall();
+                msgLabel = fOpCall.getOperation().name();
                 if (fProperties.showValues()) {
-                    List<MObject> objects = ((MCmdCreateInsertObjects) fCmd).getObjects();
-                    msgLabel = msgLabel + "(@";
-                    Iterator<MObject> iter = objects.iterator();
-                    
-                    while(iter.hasNext()) {
-                        MObject object = iter.next();
-                        msgLabel = msgLabel + object.toString();
-                        if (iter.hasNext())
-                            msgLabel = msgLabel + ",@";
-                        else
-                            msgLabel = msgLabel + ")";
-                    }
+                	StringBuilder argMsg = new StringBuilder();
+                	argMsg.append("(");
+                	StringUtil.addToStringBuilder(argMsg, ",", fOpCall.getArgumentsAsNamesAndValues().values());
+                	argMsg.append(")");
+                	msgLabel += argMsg;
                 }
-            } else if (fCmd instanceof MCmdDestroyObjects) {
+            } else if (fEvent instanceof ObjectCreatedEvent) {
+                msgLabel = "create";
+            } else if (fEvent instanceof ObjectDestroyedEvent) {
                 msgLabel = "destroy";
-            } else if (fCmd instanceof MCmdSetAttribute) {
-                String attribute = ((MCmdSetAttribute) fCmd).getAttribute();
-                String value = ((MCmdSetAttribute) fCmd).getValue();
+            } else if (fEvent instanceof AttributeAssignedEvent) {
+                String attribute = ((AttributeAssignedEvent)fEvent).getAttribute().name();
+                String value = ((AttributeAssignedEvent)fEvent).getValue().toString();
                 msgLabel = "set " + attribute;
                 if (fProperties.showValues())
                     msgLabel = msgLabel + " := " + value;
-            } else if (fCmd instanceof MCmdInsertLink) {
-                msgLabel = "insert";
+            } else if (fEvent instanceof LinkInsertedEvent) {
+            	
+            	boolean isLinkObject = 
+            		(((LinkInsertedEvent)fEvent).getAssociation() instanceof MAssociationClass);
+            	
+            	if (isLinkObject) {
+            		msgLabel = "create";
+            	} else {
+            		msgLabel = "insert";
+            	}	
+            	
                 if (fProperties.showValues()) {
-                    MObject[] objects = ((MCmdInsertLink) fCmd).getObjects();
+                    if (isLinkObject) {
+                    	msgLabel = msgLabel + " between ";
+                    }
+                	
+                	List<MObject> objects = ((LinkInsertedEvent)fEvent).getParticipants();
                     msgLabel = msgLabel + "(@";
-                    for (int i = 0; i < objects.length; i++) {
-                        MObject object = objects[i];
+                    for (int i = 0; i < objects.size(); i++) {
+                        MObject object = objects.get(i);
                         msgLabel = msgLabel + object.toString();
-                        if (i < (objects.length - 1))
+                        if (i < (objects.size() - 1))
                             msgLabel = msgLabel + ",@";
                         else
                             msgLabel = msgLabel + ")";
                     }
                 }
-            } else if (fCmd instanceof MCmdDeleteLink) {
+            } else if (fEvent instanceof LinkDeletedEvent) {
                 msgLabel = "delete";
                 if (fProperties.showValues()) {
-                    MObject[] objects = ((MCmdDeleteLink) fCmd).getObjects();
+                    List<MObject> objects = ((LinkDeletedEvent)fEvent).getParticipants();
                     msgLabel = msgLabel + "(@";
-                    for (int i = 0; i < objects.length; i++) {
-                        MObject object = objects[i];
+                    for (int i = 0; i < objects.size(); i++) {
+                        MObject object = objects.get(i);
                         msgLabel = msgLabel + object.toString();
-                        if (i < (objects.length - 1))
+                        if (i < (objects.size() - 1))
                             msgLabel = msgLabel + ",@";
                         else
                             msgLabel = msgLabel + ")";
@@ -2791,15 +2761,16 @@ public class SequenceDiagram extends JPanel implements Printable {
          *            the y-value on which the activation message should be
          *            drawn
          */
-        public InsertActivation(int start, Lifeline owner, MCmd cmd,
+        public InsertActivation(int start, Lifeline owner, LinkInsertedEvent event,
                 Activation src, int yValue) {
-            super(start, owner, cmd, src, yValue);
-            MObject[] objects = ((MCmdInsertLink) fCmd).getObjects();
-            fNestings = new int[objects.length];
+            super(start, owner, event, src, yValue);
+            List<MObject> objects = event.getParticipants();
+            //MObject[] objects = ((MCmdInsertLink) fEvent).getObjects();
+            fNestings = new int[objects.size()];
             // calculate nestings of the object lifelines of the inserted
             // objects
-            for (int i = 0; i < objects.length; i++) {
-                MObject object = objects[i];
+            for (int i = 0; i < fNestings.length; i++) {
+                MObject object = objects.get(i);
                 ObjLifeline oll = (ObjLifeline) fLifelines.get(object);
                 fNestings[i] = oll.fActivationNesting;
             }
@@ -2815,15 +2786,16 @@ public class SequenceDiagram extends JPanel implements Printable {
          */
         public int calculateEnd() {
             // objects which are involved in the insert-command
-            MObject[] objects = ((MCmdInsertLink) fCmd).getObjects();
+            List<MObject> objects = ((LinkInsertedEvent)fEvent).getParticipants();
+            int numObjects = objects.size();
             // y-value of the insert-message
             int value = fYValue;
             // consider the 'inserted as'-messages an the user settings
             // for the distance between two messages
             if (fProperties.getActManDist() != -1) {
-                value += (objects.length + 1) * fProperties.getActManDist();
+                value += (numObjects + 1) * fProperties.getActManDist();
             } else {
-                value += (objects.length + 1) * fProperties.actStep();
+                value += (numObjects + 1) * fProperties.actStep();
             }
             // set y-value for the end
             fYEnd = value;
@@ -2867,16 +2839,20 @@ public class SequenceDiagram extends JPanel implements Printable {
                 }
 
                 // List of all objects that take part in the new link
-                MObject[] objects = ((MCmdInsertLink) fCmd).getObjects();
+                //MObject[] objects = ((MCmdInsertLink) fEvent).getObjects();
+                List<MObject> objects = ((LinkInsertedEvent)fEvent).getParticipants();
+                
                 // List of all role-names
-                String[] roleNames = ((MCmdInsertLink) fCmd).getRoleNames();
+                List<String> roleNames = 
+                	((LinkInsertedEvent)fEvent).getAssociation().roleNames();
+                
                 // view each role-name
-                for (int i = 0; i < roleNames.length; i++) {
+                for (int i = 0; i < roleNames.size(); i++) {
                     // the message from this lifline to the
                     // object-lifelines
-                    String insertedMess = "inserted as " + roleNames[i];
+                    String insertedMess = "inserted as " + roleNames.get(i);
                     // the regarded object
-                    MObject object = objects[i];
+                    MObject object = objects.get(i);
                     // find out the according lifeline
                     ObjLifeline oll = (ObjLifeline) fLifelines.get(object);
                     if (!oll.isHidden()) {
@@ -2950,36 +2926,12 @@ public class SequenceDiagram extends JPanel implements Printable {
     }
 
     /**
-     * Calculates the MObject-object of the given MCmd-Object cmd.
-     * 
-     * @param cmd
-     *            the comand for which the object should be calculated
-     * @return MObjectImpl the object to the given command cmd.
-     */
-    public MObject getObj(MCmd cmd) throws CommandFailedException {
-        if (cmd instanceof MCmdOpEnter) {
-            MCmdOpEnter openter = (MCmdOpEnter) cmd;
-            MOperationCall opcall = openter.operationCall();
-            return opcall.targetObject();
-        } else if (cmd instanceof CmdCreatesObjects) {
-            List<MObject> fObjectList = ((CmdCreatesObjects) cmd).getObjects();
-            return fObjectList.get(0);
-        } else if (cmd instanceof MCmdSetAttribute) {
-            return ((MCmdSetAttribute) cmd).getObject();
-        } else if (cmd instanceof MCmdDestroyObjects) {
-            List<MObject> fObjectList = ((MCmdDestroyObjects) cmd).getObjects();
-            return fObjectList.get(0);
-        }
-        return null;
-    }
-
-    /**
      * Creates all possible lifelines for the current system state and adds them
      * to the fLifelines-Map.
      */
     public synchronized void createLifelines() {
-        // executed commands
-        List<MCmd> cmds = fSystem.useCommands();
+        // executed commands    	
+        List<Event> events = fSystem.getAllEvents();
         // first lifeline has column 1
         int column = 1;
         // antecessor lifeline
@@ -2994,56 +2946,50 @@ public class SequenceDiagram extends JPanel implements Printable {
         ArrayList<AssLifeline> deletedLls = new ArrayList<AssLifeline>();
         
         // view all commands
-        for (MCmd cmd : cmds) {
+        for (Event event : events) {
             // i create command
-            if (cmd instanceof CmdCreatesObjects) {
-                // created objects
-                List<MObject> fObjectList = ((CmdCreatesObjects) cmd).getObjects();
-                // view each object
-                for (int i = 0; i < fObjectList.size(); i++) {
-                    MObject obj = fObjectList.get(i);
-                    ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
-                    // need new lifeline?
-                    if (ll == null) {
-                        // create new lifeline
-                        ll = new ObjLifeline(column, obj, antecessor);
-                        // set new lifeline as successor of last created
-                        // lifeline
-                        if (!(antecessor == null)) {
-                            if (antecessor instanceof ObjLifeline) {
-                                ((ObjLifeline) fLifelines.get(lastObject))
-                                        .setSuccessor(ll);
-                            } else {
-                                ((AssLifeline) fLifelines.get(lastAssKey))
-                                        .setSuccessor(ll);
-                            }
-
+            if (event instanceof ObjectCreatedEvent) {
+            	MObject obj = ((ObjectCreatedEvent)event).getCreatedObject();
+                ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
+                // need new lifeline?
+                if (ll == null) {
+                    // create new lifeline
+                    ll = new ObjLifeline(column, obj, antecessor);
+                    // set new lifeline as successor of last created
+                    // lifeline
+                    if (!(antecessor == null)) {
+                        if (antecessor instanceof ObjLifeline) {
+                            ((ObjLifeline) fLifelines.get(lastObject))
+                                    .setSuccessor(ll);
+                        } else {
+                            ((AssLifeline) fLifelines.get(lastAssKey))
+                                    .setSuccessor(ll);
                         }
-                        // put new lifeline in fLifelines
-                        fLifelines.put(obj, ll);
-                        // lifeline already exists
-                    } else {
-                        // delete all saved activations for this lifeline
-                        ll.fActivations = new ArrayList<Activation>();
+
                     }
-                    // set ll as antecessor
-                    antecessor = ll;
-                    // set created object as lastObject
-                    lastObject = obj;
-                    // next new lifeline is positioned next to tis lifeline
-                    column++;
+                    // put new lifeline in fLifelines
+                    fLifelines.put(obj, ll);
+                    // lifeline already exists
+                } else {
+                    // delete all saved activations for this lifeline
+                    ll.fActivations = new ArrayList<Activation>();
                 }
+                // set ll as antecessor
+                antecessor = ll;
+                // set created object as lastObject
+                lastObject = obj;
+                // next new lifeline is positioned next to tis lifeline
+                column++;
                 // insert-command
-            } else if (cmd instanceof MCmdInsertLink) {
+            } else if (event instanceof LinkInsertedEvent) {
                 // association which is affected
-                MAssociation ass = ((MCmdInsertLink) cmd).getAssociation();
+                MAssociation ass = ((LinkInsertedEvent)event).getAssociation();
                 String key = "";
                 // affected objects
-                MObject[] objects = ((MCmdInsertLink) cmd).getObjects();
+                List<MObject> objects = ((LinkInsertedEvent)event).getParticipants();
                 // generate key for the link lifeline
-                for (int i = 0; i < objects.length; i++) {
-                    MObject obj = objects[i];
-                    key = key + obj.name();
+                for (MObject object : objects) {
+                	key += object.name();
                 }
                 key += ass.name();
                 // get Link-Lifeline
@@ -3075,14 +3021,14 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // increase counter
                 // counter++;
                 // delete-command?
-            } else if (cmd instanceof MCmdDeleteLink) {
+            } else if (event instanceof LinkDeletedEvent) {
                 // see above
-                MAssociation ass = ((MCmdDeleteLink) cmd).getAssociation();
+                MAssociation ass = ((LinkDeletedEvent)event).getAssociation();
                 String key = "";
-                MObject[] objects = ((MCmdDeleteLink) cmd).getObjects();
-                for (int i = 0; i < objects.length; i++) {
-                    MObject obj = objects[i];
-                    key = key + obj.name();
+                List<MObject> objects = ((LinkDeletedEvent)event).getParticipants();
+                // generate key for the link lifeline
+                for (MObject object : objects) {
+                	key += object.name();
                 }
                 key += ass.name();
                 // counter for counting equivalent links
@@ -3158,15 +3104,14 @@ public class SequenceDiagram extends JPanel implements Printable {
      * creating all (new) lifelines, creates all activations and repaints the
      * sequence diagram.
      * 
-     * @throws CommandFailedException
      */
-    public void update() throws CommandFailedException {
+    public void update() {
         // refresh popup menu
         createPopupMenu();
         // restore all needed values to the default values
         restoreAllValues();
         // List of all executed commands
-        List<MCmd> toDraw = fSystem.useCommands();
+        List<Event> toDraw = fSystem.getAllEvents();
 
         // while reading a command file dont show
         // the following commands
@@ -3186,40 +3131,51 @@ public class SequenceDiagram extends JPanel implements Printable {
         // int counter = 1;
         // view each command
         for (int i = 0; i < toDraw.size(); i++) {
-            MCmd cmd = toDraw.get(i);
+            Event event = toDraw.get(i);
 
             // create activations by calling other operations depending on
             // the
             // command
-            if (cmd instanceof CmdCreatesObjects) {
+            if (event instanceof ObjectCreatedEvent) {
                 synchronized (this) {
-                    lastYValue = drawCreate(cmd, activationStack, lastYValue,
+                    lastYValue = drawCreate(
+                    		(ObjectCreatedEvent)event, 
+                    		activationStack, 
+                    		lastYValue,
                             lastAct);
                 }
-            } else if (cmd instanceof MCmdDestroyObjects) {
+            } else if (event instanceof ObjectDestroyedEvent) {
                 synchronized (this) {
-                    lastYValue = drawDestroy(cmd, activationStack, lastYValue,
+                    lastYValue = drawDestroy(
+                    		(ObjectDestroyedEvent)event, 
+                    		activationStack, 
+                    		lastYValue,
                             lastAct);
                 }
-            } else if (cmd instanceof MCmdOpEnter) {
+            } else if (event instanceof OperationEnteredEvent) {
                 synchronized (this) {
-                    lastYValue = drawOpEnter(cmd, activationStack, lastYValue,
+                    lastYValue = drawOpEnter(
+                    		(OperationEnteredEvent)event, 
+                    		activationStack, 
+                    		lastYValue,
                             lastAct);
                 }
-            } else if (cmd instanceof MCmdSetAttribute) {
+            } else if (event instanceof AttributeAssignedEvent) {
                 synchronized (this) {
-                    lastYValue = drawSet(cmd, activationStack, lastYValue,
+                    lastYValue = drawSet(
+                    		(AttributeAssignedEvent)event, 
+                    		activationStack, 
+                    		lastYValue,
                             lastAct);
                 }
 
-            } else if (cmd instanceof MCmdOpExit) {
+            } else if (event instanceof OperationExitedEvent) {
                 synchronized (this) {
                     if (!activationStack.empty()) {
                         // finish current activation
                         Activation a = activationStack.pop();
-                        MCmdOpExit opexit = (MCmdOpExit) cmd;
-                        MOperationCall opcall = opexit.operationCall();
-                        MObject obj = opcall.targetObject();
+                        MOperationCall opcall = ((OperationExitedEvent)event).getOperationCall();
+                        MObject obj = opcall.getSelf();
                         // MObject obj = getObj(a.getCmd());
                         ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
                         // if the lifeline and the source-lifeline is not marked
@@ -3262,14 +3218,20 @@ public class SequenceDiagram extends JPanel implements Printable {
                         }
                     }
                 }
-            } else if (cmd instanceof MCmdInsertLink) {
+            } else if (event instanceof LinkInsertedEvent) {
                 synchronized (this) {
-                    lastYValue = drawInsert(cmd, activationStack, lastYValue,
+                    lastYValue = drawInsert(
+                    		(LinkInsertedEvent)event, 
+                    		activationStack, 
+                    		lastYValue,
                             lastAct);
                 }
-            } else if (cmd instanceof MCmdDeleteLink) {
+            } else if (event instanceof LinkDeletedEvent) {
                 synchronized (this) {
-                    lastYValue = drawDelete(cmd, activationStack, lastYValue,
+                    lastYValue = drawDelete(
+                    		(LinkDeletedEvent)event, 
+                    		activationStack, 
+                    		lastYValue,
                             lastAct);
                 }
                 // if user disabled 'compact display'
@@ -3317,14 +3279,14 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the owner lifeline of the command message
      * @return the position of the next message
      */
-    public int calculateNextMessPosition(int lastYValue, MCmd cmd,
+    public int calculateNextMessPosition(int lastYValue, Event event,
             Lifeline owner) {
         int value = lastYValue;
         // if there has not been drawn a message so far
         // -> caculate position of forst message in the sequence diagram
         if (lastYValue == 0) {
-            if (cmd instanceof CmdCreatesObjects
-                    || cmd instanceof MCmdInsertLink) {
+            if (event instanceof ObjectCreatedEvent
+                    || event instanceof LinkInsertedEvent) {
                 value = fProperties.yStart() + owner.getObjectBox().getHeight()
                         / 2 + fProperties.getFontSize();
             } else {
@@ -3366,79 +3328,80 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return int the y-value in the sequence diagram of the created activation
      */
-    public int drawCreate(MCmd cmd, Stack<Activation> activationStack, int lastyValue,
+    public int drawCreate(
+    		ObjectCreatedEvent event, 
+    		Stack<Activation> activationStack, 
+    		int lastyValue,
             Activation lastAct) {
-        // created objects
-        List<MObject> fObjectList = ((CmdCreatesObjects) cmd).getObjects();
+        
         int yValue = lastyValue;
-        // view each object
-        for (int i = 0; i < fObjectList.size(); i++) {
-            MObject obj = fObjectList.get(i);
-            // Lifeline of the regarded object
-            Lifeline ll = (ObjLifeline) fLifelines.get(obj);
-            // if create should be drawn in the diagram
-            if (fProperties.showCreate() && !ll.isHidden()) {
-                // calculate position of the create-message
-                yValue = calculateNextMessPosition(yValue, cmd, ll);
-                // mark lifeline to draw
-                ll.drawLifeline(true);
-                // get last activation
-                Activation srcAct = null;
-                if (!activationStack.empty()) {
-                    srcAct = (Activation) activationStack.peek();
-                }
-                // if the source-lifeline is not marked to be hidden
-                if (srcAct == null || !srcAct.owner().isHidden()) {
-                    // create new activation
-                    Activation a = new Activation(fNumSteps, ll, cmd, srcAct,
-                            yValue);
-                    // object box of the lifeline
-                    ObjectBox objBox = ll.getObjectBox();
-                    // get x-value on which the lifeline is positiones
-                    int xValue = ll.xValue();
-                    // add new actiavtion to the lifeline
-                    ll.addActivation(a);
-                    // calculate length og activation message
-                    a.calculateMessLength();
-                    
-                    // there is no answer message for create messages
-                    a.setEnd(0);
-                    // set x-value of object box
-                    objBox.setX(xValue);
+        
+        MObject obj = event.getCreatedObject();
+        // Lifeline of the regarded object
+        Lifeline ll = (ObjLifeline) fLifelines.get(obj);
+        // if create should be drawn in the diagram
+        if (fProperties.showCreate() && !ll.isHidden()) {
+            // calculate position of the create-message
+            yValue = calculateNextMessPosition(yValue, event, ll);
+            // mark lifeline to draw
+            ll.drawLifeline(true);
+            // get last activation
+            Activation srcAct = null;
+            if (!activationStack.empty()) {
+                srcAct = (Activation) activationStack.peek();
+            }
+            // if the source-lifeline is not marked to be hidden
+            if (srcAct == null || !srcAct.owner().isHidden()) {
+                // create new activation
+                Activation a = new Activation(fNumSteps, ll, event, srcAct,
+                        yValue);
+                // object box of the lifeline
+                ObjectBox objBox = ll.getObjectBox();
+                // get x-value on which the lifeline is positiones
+                int xValue = ll.xValue();
+                // add new actiavtion to the lifeline
+                ll.addActivation(a);
+                // calculate length og activation message
+                a.calculateMessLength();
+                
+                // there is no answer message for create messages
+                a.setEnd(0);
+                // set x-value of object box
+                objBox.setX(xValue);
 
-                    // set y-position of the new activation
-                    a.setY(yValue);
-                    // only visible view should be drawn -> add only the visible
-                    // activations
-                    // to the fActivations-List
-                    if (fOnlyView) {
-                        if ((a.getY() > fView.getY() && a.getY() < fView.getY()
-                                + fView.getHeight())
-                                || (a.getEnd() > fView.getY() && a.getYEnd() < fView
-                                        .getY()
-                                        + fView.getHeight())) {
-                            fActivations.add(a);
-                        }
-                    } else {
+                // set y-position of the new activation
+                a.setY(yValue);
+                // only visible view should be drawn -> add only the visible
+                // activations
+                // to the fActivations-List
+                if (fOnlyView) {
+                    if ((a.getY() > fView.getY() && a.getY() < fView.getY()
+                            + fView.getHeight())
+                            || (a.getEnd() > fView.getY() && a.getYEnd() < fView
+                                    .getY()
+                                    + fView.getHeight())) {
                         fActivations.add(a);
                     }
-                    // set y value of the object box
-                    objBox.setY(yValue - objBox.getHeight() / 2);
-                    // see above
-                    int messLength = a.getMessLength();
-                    if (messLength > 0 && messLength > fProperties.maxActMess()) {
-                        fProperties.setMaxActMess(messLength);
-                    } else if (messLength < 0
-                            && -messLength > fProperties.maxActMess()) {
-                        fProperties.setMaxActMess(-messLength);
-                    }
-                    fNumSteps++;
-                } else if (!fProperties.compactDisplay()) {
-                    yValue = calculateNextMessPosition(yValue, cmd, ll);
-                    fNumSteps++;
+                } else {
+                    fActivations.add(a);
                 }
+                // set y value of the object box
+                objBox.setY(yValue - objBox.getHeight() / 2);
+                // see above
+                int messLength = a.getMessLength();
+                if (messLength > 0 && messLength > fProperties.maxActMess()) {
+                    fProperties.setMaxActMess(messLength);
+                } else if (messLength < 0
+                        && -messLength > fProperties.maxActMess()) {
+                    fProperties.setMaxActMess(-messLength);
+                }
+                fNumSteps++;
+            } else if (!fProperties.compactDisplay()) {
+                yValue = calculateNextMessPosition(yValue, event, ll);
+                fNumSteps++;
             }
         }
+        
         return yValue;
     }
 
@@ -3459,67 +3422,70 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawDestroy(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
-            Activation lastAct) throws CommandFailedException {
-        // see above
-        List<MObject> fObjectList = ((MCmdDestroyObjects) cmd).getObjects();
+    public int drawDestroy(
+    		ObjectDestroyedEvent event, 
+    		Stack<Activation> activationStack, 
+    		int lastYValue,
+            Activation lastAct) {
+        
+    	
         int yValue = lastYValue;
-        for (int i = 0; i < fObjectList.size(); i++) {
-            MObject obj = getObj(cmd);
-            ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
-            if (fProperties.showDestroy() && !ll.isHidden()) {
-                yValue = calculateNextMessPosition(yValue, cmd, ll);
-                ll.drawLifeline(true);
-                Activation srcAct = null;
-                if (!activationStack.empty()) {
-                    srcAct = activationStack.peek();
+        
+        MObject obj = event.getDestroyedObject();
+        ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
+        if (fProperties.showDestroy() && !ll.isHidden()) {
+            yValue = calculateNextMessPosition(yValue, event, ll);
+            ll.drawLifeline(true);
+            Activation srcAct = null;
+            if (!activationStack.empty()) {
+                srcAct = activationStack.peek();
+            }
+            if (srcAct == null || !srcAct.owner().isHidden()) {
+                ObjectBox objBox = ll.getObjectBox();
+                if (objBox.getY() == -1) {
+                    int xValue = ll.xValue();
+                    fNumSteps++;
+                    objBox.setX(xValue);
+                    objBox.setY(fProperties.yStart() - 10
+                            - objBox.getHeight());
                 }
-                if (srcAct == null || !srcAct.owner().isHidden()) {
-                    ObjectBox objBox = ll.getObjectBox();
-                    if (objBox.getY() == -1) {
-                        int xValue = ll.xValue();
-                        fNumSteps++;
-                        objBox.setX(xValue);
-                        objBox.setY(fProperties.yStart() - 10
-                                - objBox.getHeight());
-                    }
 
-                    Activation a = new Activation(fNumSteps, ll, cmd, srcAct,
-                            yValue);
-                    ll.addActivation(a);
-                    a.calculateMessLength();
-                    activationStack.push(a);
+                Activation a = new Activation(fNumSteps, ll, event, srcAct,
+                        yValue);
+                ll.addActivation(a);
+                a.calculateMessLength();
+                activationStack.push(a);
 
-                    a = activationStack.pop();
-                    a.setEnd(0);
+                a = activationStack.pop();
+                a.setEnd(0);
 
-                    a.setY(yValue);
-                    yValue = a.calculateEnd();
-                    if (fOnlyView) {
-                        if ((a.getY() > fView.getY() && a.getY() < fView.getY()
-                                + fView.getHeight())
-                                || (a.getEnd() > fView.getY() && a.getYEnd() < fView
-                                        .getY()
-                                        + fView.getHeight())) {
-                            fActivations.add(a);
-                        }
-                    } else {
+                a.setY(yValue);
+                yValue = a.calculateEnd();
+                if (fOnlyView) {
+                    if ((a.getY() > fView.getY() && a.getY() < fView.getY()
+                            + fView.getHeight())
+                            || (a.getEnd() > fView.getY() && a.getYEnd() < fView
+                                    .getY()
+                                    + fView.getHeight())) {
                         fActivations.add(a);
                     }
-                    int messLength = a.getMessLength(); // a.calculateMessLength();
-                    if (messLength > 0 && messLength > fProperties.maxActMess()) {
-                        fProperties.setMaxActMess(messLength);
-                    } else if (messLength < 0
-                            && -messLength > fProperties.maxActMess()) {
-                        fProperties.setMaxActMess(-messLength);
-                    }
-                    fNumSteps++;
-                } else if (!fProperties.compactDisplay()) {
-                    yValue = calculateNextMessPosition(yValue, cmd, ll);
-                    fNumSteps++;
+                } else {
+                    fActivations.add(a);
                 }
+                int messLength = a.getMessLength(); // a.calculateMessLength();
+                if (messLength > 0 && messLength > fProperties.maxActMess()) {
+                    fProperties.setMaxActMess(messLength);
+                } else if (messLength < 0
+                        && -messLength > fProperties.maxActMess()) {
+                    fProperties.setMaxActMess(-messLength);
+                }
+                fNumSteps++;
+            } else if (!fProperties.compactDisplay()) {
+                yValue = calculateNextMessPosition(yValue, event, ll);
+                fNumSteps++;
             }
         }
+        
         return yValue;
     }
 
@@ -3539,10 +3505,14 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawSet(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
-            Activation lastAct) throws CommandFailedException {
-        // see above
-        MObject obj = getObj(cmd);
+    public int drawSet(
+    		AttributeAssignedEvent event, 
+    		Stack<Activation> activationStack, 
+    		int lastYValue,
+            Activation lastAct) {
+        
+    	// see above
+        MObject obj = event.getObject();
         ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
         int yValue = lastYValue;
         if ((fProperties.showSet() && !ll.isHidden())
@@ -3559,7 +3529,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                     objBox.setY(fProperties.yStart() - 10 - objBox.getHeight());
                 }
 
-                Activation a = new Activation(fNumSteps, ll, cmd, srcAct,
+                Activation a = new Activation(fNumSteps, ll, event, srcAct,
                         yValue);
 
                 if (fProperties.showSet()) {
@@ -3573,7 +3543,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 fNumSteps++;
 
                 a.setEnd(fNumSteps);
-                yValue = calculateNextMessPosition(lastYValue, cmd, ll);
+                yValue = calculateNextMessPosition(lastYValue, event, ll);
                 a.setY(yValue);
                 int messLength = a.getMessLength();
                 if (messLength > 0 && messLength > fProperties.maxActMess()) {
@@ -3621,10 +3591,16 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawOpEnter(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
-            Activation lastAct) throws CommandFailedException {
-        // see above
-        MObject obj = getObj(cmd);
+    public int drawOpEnter(
+    		OperationEnteredEvent event, 
+    		Stack<Activation> activationStack, 
+    		int lastYValue,
+            Activation lastAct) {
+        
+    	// see above
+    	MOperationCall operationCall = event.getOperationCall();
+    	
+        MObject obj = operationCall.getSelf();
         ObjLifeline ll = (ObjLifeline) fLifelines.get(obj);
         int yValue = lastYValue;
 
@@ -3634,7 +3610,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         if (!activationStack.empty())
             srcAct = activationStack.peek();
         if (!ll.isHidden() && (srcAct == null || !srcAct.owner().isHidden()))
-            yValue = calculateNextMessPosition(yValue, cmd, ll);
+            yValue = calculateNextMessPosition(yValue, event, ll);
 
         ObjectBox objBox = ll.getObjectBox();
 
@@ -3644,7 +3620,7 @@ public class SequenceDiagram extends JPanel implements Printable {
             objBox.setY(fProperties.yStart() - 10 - objBox.getHeight());
         }
 
-        Activation a = new Activation(fNumSteps, ll, cmd, srcAct, yValue);
+        Activation a = new Activation(fNumSteps, ll, event, srcAct, yValue);
 
         a.calculateMessLength();
         if (!ll.isHidden() && (srcAct == null || !srcAct.owner().isHidden())) {
@@ -3654,7 +3630,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         // operation call was successful -> increase activation nesting of
         // lifeline
         // -> call enterActivation
-        if (((MCmdOpEnter) cmd).successful()) {
+        if (event.getOperationCall().enteredSuccessfully()) {
             activationStack.push(a);
             ll.enterActivation(a);
             // otherwise do not increase activationNesting -> call
@@ -3692,7 +3668,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      * Creates the activations following from a insert command and calculates
      * the y-position of this activation in the sequence diagram.
      * 
-     * @param cmd
+     * @param event
      *            the insert command for which the activations should be created
      * @param activationStack
      *            the Stack of all activations created so far
@@ -3704,14 +3680,17 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawInsert(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
-            Activation lastAct) throws CommandFailedException {
-        MAssociation ass = ((MCmdInsertLink) cmd).getAssociation();
-        String key = "";
-        MObject[] objects = ((MCmdInsertLink) cmd).getObjects();
-        for (int i = 0; i < objects.length; i++) {
-            MObject obj = objects[i];
-            key = key + obj.name();
+    public int drawInsert(
+    		LinkInsertedEvent event, 
+    		Stack<Activation> activationStack, 
+    		int lastYValue,
+            Activation lastAct) {
+        
+    	MAssociation ass = event.getAssociation();
+        
+    	String key = "";
+        for (MObject object : event.getParticipants()) {
+        	key += object.name();
         }
         key += ass.name();
         AssLifeline ll = (AssLifeline) fLifelines.get(key);
@@ -3725,7 +3704,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 srcAct = (Activation) activationStack.peek();
             }
             if (srcAct == null || !srcAct.owner().isHidden()) {
-                yValue = calculateNextMessPosition(yValue, cmd, ll);
+                yValue = calculateNextMessPosition(yValue, event, ll);
                 if (ll.getAntecessor() != null) {
                     ObjectBox antBox = ll.getAntecessor().getObjectBox();
                     int antEnd = antBox.getY() + antBox.getHeight();
@@ -3733,14 +3712,14 @@ public class SequenceDiagram extends JPanel implements Printable {
                         yValue = antEnd;
                 }
 
-                InsertActivation a = new InsertActivation(fNumSteps, ll, cmd,
+                InsertActivation a = new InsertActivation(fNumSteps, ll, event,
                         srcAct, yValue);
                 ObjectBox objBox = ll.getObjectBox();
                 int xValue = ll.xValue();
-                objects = ((MCmdInsertLink) cmd).getObjects();
+                
                 if (fProperties.showInsert()) {
-                    for (int i = 0; i < objects.length; i++) {
-                        MObject object = objects[i];
+                	int numObjects = event.getNumParticipants();
+                    for (MObject object : event.getParticipants()) {
                         ObjLifeline oll = (ObjLifeline) fLifelines.get(object);
                         if (!oll.isHidden()) {
                             oll.drawLifeline(true);
@@ -3752,10 +3731,10 @@ public class SequenceDiagram extends JPanel implements Printable {
                             }
 
                             if (fProperties.getActManDist() != -1) {
-                                yValue += objects.length
+                                yValue += numObjects
                                         * fProperties.getActManDist();
                             } else {
-                                yValue += objects.length
+                                yValue += numObjects
                                         * fProperties.actStep();
                             }
                             fNumSteps++;
@@ -3772,7 +3751,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 fNumSteps++;
                 a.setEnd(fNumSteps);
                 objBox.setX(xValue);
-                yValue = calculateNextMessPosition(lastYValue, cmd, ll);
+                yValue = calculateNextMessPosition(lastYValue, event, ll);
                 a.setY(yValue);
                 objBox.setY(yValue - objBox.getHeight() / 2);
                 fNumSteps++;
@@ -3808,7 +3787,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      * Creates the activations following from a destroy command and calculates
      * the y-position of this activation in the sequence diagram.
      * 
-     * @param cmd
+     * @param event
      *            the destroy command for which the activations should be
      *            created
      * @param activationStack
@@ -3821,15 +3800,17 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawDelete(MCmd cmd, Stack<Activation> activationStack, int lastYValue,
-            Activation lastAct) throws CommandFailedException {
-        // see above
-        MAssociation ass = ((MCmdDeleteLink) cmd).getAssociation();
-        String key = "";
-        MObject[] objects = ((MCmdDeleteLink) cmd).getObjects();
-        for (int i = 0; i < objects.length; i++) {
-            MObject obj = objects[i];
-            key = key + obj.name();
+    public int drawDelete(
+    		LinkDeletedEvent event, 
+    		Stack<Activation> activationStack, 
+    		int lastYValue,
+            Activation lastAct) {
+        
+    	MAssociation ass = event.getAssociation();
+        
+    	String key = "";
+        for (MObject object : event.getParticipants()) {
+        	key += object.name();
         }
         key += ass.name();
         // int counter = 1;
@@ -3843,7 +3824,7 @@ public class SequenceDiagram extends JPanel implements Printable {
             }
             if (srcAct == null || !srcAct.owner().isHidden()) {
                 if (srcAct == null || !srcAct.owner().isHidden()) {
-                    yValue = calculateNextMessPosition(yValue, cmd, ll);
+                    yValue = calculateNextMessPosition(yValue, event, ll);
                     
                     ll.drawLifeline(true);
                     ll.setDeleted(true);
@@ -3859,7 +3840,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 
                     ll.setNesting(0);
 
-                    Activation a = new Activation(fNumSteps, ll, cmd, srcAct,
+                    Activation a = new Activation(fNumSteps, ll, event, srcAct,
                             yValue);
                     ll.addActivation(a);
                     a.calculateMessLength();
@@ -3868,7 +3849,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 
                     a = (Activation) activationStack.pop();
                     a.setEnd(0);
-                    yValue = calculateNextMessPosition(lastYValue, cmd, ll);
+                    yValue = calculateNextMessPosition(lastYValue, event, ll);
 
                     a.setY(yValue);
                     yValue = a.calculateEnd();
@@ -3891,7 +3872,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                         fProperties.setMaxActMess(-messLength);
                     }
                 } else if (!fProperties.compactDisplay()) {
-                    yValue = calculateNextMessPosition(yValue, cmd, ll);
+                    yValue = calculateNextMessPosition(yValue, event, ll);
                     fNumSteps++;
                 }
             }
@@ -3969,11 +3950,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         g2d.setFont(f);
 
         // update the sequence diagram
-        try {
-            update();
-        } catch (CommandFailedException cfe) {
-            // ignored
-        }
+        update();
         // if only the visible view should be printed -> call drawView
         // otherwise -> call method drawDiagram
         if (fOnlyView)
@@ -4067,11 +4044,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 // there is no longer a lifeline choosed
                 // fChoosedLl = null;
                 // update the sequence diagram
-                try {
-                    update();
-                } catch (CommandFailedException cfe) {
-                    // ignored
-                }
+            	update();
             }
         }
     }

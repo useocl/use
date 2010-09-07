@@ -29,17 +29,22 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
+import java.io.PrintWriter;
+
 import org.tzi.use.gen.assl.statics.GAttributeAssignment;
+import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.ocl.expr.ExpAttrOp;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdSetAttribute;
-import org.tzi.use.util.cmd.CannotUndoException;
-import org.tzi.use.util.cmd.CommandFailedException;
+import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 
 class GEvalAttributeAssignment extends GEvalInstruction
@@ -63,56 +68,68 @@ class GEvalAttributeAssignment extends GEvalInstruction
         GCreator.createFor(fInstr.targetObjectInstr()).eval( conf, this, collector );
     }
 
-    public void feedback( GConfiguration conf,
-                          Value value,
-                          IGCollector collector ) throws GEvaluationException {
-        if (fObjectName==null) {
-            if (value.isUndefined())
-                collector.invalid(
-                                  buildCantExecuteMessage( fInstr, fInstr.targetObjectInstr()) );
-            else {
-                fObjectName = ((ObjectValue) value).value().name();
-                GCreator.createFor(fInstr.sourceInstr()).eval(conf,this,collector );
-            }
-        } else {
-            //      MCmd cmd=new MCmdSetAttribute(conf.systemState(),
-            //                    fObjectName,
-            //                    fInstr.targetAttribute().name(),
-            //                    new ExpressionWithValue(value) );
-
-            // um ExprAttrOp zu generieren.
-            MAttribute a = fInstr.targetAttribute();
-            Value v = new ObjectValue( TypeFactory.mkObjectType( a.owner() ), 
-                                       conf.systemState().objectByName( fObjectName ) );
-
-            // this value (`v') needs to be a different value than the given value from
-            // the method siganture (`value').
-            // I have no clue why!
-            ExpAttrOp expA = new ExpAttrOp( a, new ExpressionWithValue( v ) );
-
-            MCmd cmd=new MCmdSetAttribute(conf.systemState(),
-                                          expA,
-                                          new ExpressionWithValue( value ) );
-
-            try {
-            	String sCmd = cmd.getUSEcmd();
-                collector.basicPrintWriter().println(sCmd);
-                cmd.execute();
-                //collector.detailPrintWriter().println("`"+ fInstr + "' == (no value)");
-
-                fCaller.feedback(conf, null, collector);
-                if (collector.expectSubsequentReporting()) {
-                    collector.subsequentlyPrependCmd( cmd );
-                }
-                collector.basicPrintWriter().print("undo:");
-                collector.basicPrintWriter().println(sCmd);
-                cmd.undo();
-            } catch (CommandFailedException e) {
-                throw new GEvaluationException(e);
-            } catch (CannotUndoException e) {
-                throw new GEvaluationException(e);
-            }
-        }
+    public void feedback(
+    		GConfiguration conf, 
+    		Value value, 
+    		IGCollector collector ) throws GEvaluationException {
+        
+    	if (fObjectName == null) {
+    		if (value.isUndefined()) {   			
+    			GValueInstruction culprit = fInstr.targetObjectInstr();
+    			collector.invalid(buildCantExecuteMessage(fInstr, culprit));
+    		} else {
+    			fObjectName = ((ObjectValue)value).value().name();
+                GEvalInstruction instruction = 
+                	GCreator.createFor(fInstr.sourceInstr());
+    			
+                instruction.eval(conf, this, collector);
+    		}
+    		
+    		return;
+    	}
+    	
+    	MSystemState state = conf.systemState();
+    	MSystem system = state.system();
+    	PrintWriter basicOutput = collector.basicPrintWriter();
+    	
+    	MObject object = state.objectByName(fObjectName);
+    	
+    	Expression objectExpression = 
+    		new ExpressionWithValue(object.value());
+    		//new ExpVariable(fObjectName, object.type());
+    	MAttribute attribute = fInstr.targetAttribute();
+    	Expression valueExpression = new ExpressionWithValue(value);
+    	
+    	MStatement statement = 
+    		new MAttributeAssignmentStatement(
+    				objectExpression, 
+    				attribute, 
+    				valueExpression);
+    	
+    	MStatement inverseStatement;
+    	
+    	basicOutput.println(statement.getShellCommand());
+    	try {
+    		StatementEvaluationResult evaluationResult = 
+    			system.evaluateStatement(statement, true, false);
+    		
+    		inverseStatement = evaluationResult.getInverseStatement();
+    		
+		} catch (MSystemException e) {
+			throw new GEvaluationException(e);
+		}
+		
+		fCaller.feedback(conf, null, collector);
+		if (collector.expectSubsequentReporting()) {
+			collector.subsequentlyPrependStatement(statement);
+		}
+         
+		basicOutput.println("undo: " + statement.getShellCommand());
+		try {
+			system.evaluateStatement(inverseStatement, true, false);
+		} catch (MSystemException e) {
+			throw new GEvaluationException(e);
+		}
     }
 
     public String toString() {

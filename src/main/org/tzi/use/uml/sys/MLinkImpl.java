@@ -139,7 +139,7 @@ final class MLinkImpl implements MLink {
 
     public int hashCode() { 
         return hashCode;
-    }
+        }
 
     /**
      * Two links are equal iff they connect the same objects.

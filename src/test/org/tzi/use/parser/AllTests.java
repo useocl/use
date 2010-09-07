@@ -32,11 +32,16 @@ import junit.framework.TestSuite;
  */
 public class AllTests {
 
-    private AllTests(){}
+    private AllTests() {
+    	
+    }
 
     public static Test suite() {
         final TestSuite test = new TestSuite( "All parser tests" );
         test.addTestSuite( org.tzi.use.parser.USECompilerTest.class );
+        test.addTest(org.tzi.use.parser.soil.AllTests.suite());
+        test.addTest(org.tzi.use.parser.shell.AllTests.suite());
+        
         return test;
     }
 }

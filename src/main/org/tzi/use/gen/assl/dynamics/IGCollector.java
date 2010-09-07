@@ -29,13 +29,14 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import org.tzi.use.uml.sys.MCmd;
 import java.io.PrintWriter;
+
+import org.tzi.use.uml.sys.soil.MStatement;
 
 public interface IGCollector {
     public boolean canStop();
     public void setValidStateFound();
-    public void subsequentlyPrependCmd( MCmd cmd );
+    public void subsequentlyPrependStatement(MStatement statement);
     public boolean expectSubsequentReporting();
     public void leaf();
 

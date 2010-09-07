@@ -3,6 +3,7 @@ package org.tzi.use.parser.ocl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
@@ -53,5 +54,15 @@ public class ASTDateLiteral extends ASTExpression {
 		} catch (Exception ex) {
 			return null;
 		}		
+	}
+
+	@Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		
+	}
+	
+	@Override
+	public String toString() {
+		return token.getText();
 	}
 }

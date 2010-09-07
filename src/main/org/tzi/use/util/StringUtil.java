@@ -241,4 +241,67 @@ public final class StringUtil {
         }
         return res.toString();
     }
+    
+    
+    /**
+     * 
+     * @param o
+     * @return
+     */
+    public static String inQuotes(Object o) {
+    	return "`" + o.toString() + "'";
+    }
+    
+    
+    /**
+     * TODO
+     * @param target
+     * @param separator
+     * @param objects
+     */
+    public static void addToStringBuilder(
+    		StringBuilder target, 
+    		String separator, 
+    		Collection<?> objects) {
+    	
+    	for (Object object : objects) {
+    		target.append(object);
+    		target.append(separator);
+    	}
+    	
+    	if (!objects.isEmpty()) {
+    		target.delete(
+    				target.length() - separator.length(), 
+    				target.length());
+    	}
+    }
+    
+    
+    /**
+     * TODO
+     * @param input
+     * @param num
+     * @return
+     */
+    public static String repeat(String input, int num) {
+    	StringBuilder result = new StringBuilder(num * input.length());
+    	for (int i = 0; i < num; ++i) {
+    		result.append(input);
+    	}
+    	
+    	return result.toString();
+    }
+    
+    
+    /**
+     * TODO
+     * @param target
+     * @param objects
+     */
+    public static void addToStringBuilder(
+    		StringBuilder target, 
+    		Collection<?> objects) {
+    	
+    	addToStringBuilder(target, ", ", objects);
+    }
 }

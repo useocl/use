@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 USE.g 2010-06-21 12:49:34
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 USE.g 2010-09-07 16:42:52
 
 /*
  * USE - UML based specification environment
@@ -34,37 +34,42 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 @SuppressWarnings("all") public class USELexer extends Lexer {
-    public static final int STAR=17;
+    public static final int STAR=16;
     public static final int EOF=-1;
     public static final int T__93=93;
     public static final int T__94=94;
     public static final int T__91=91;
-    public static final int RPAREN=20;
+    public static final int RPAREN=19;
     public static final int T__92=92;
-    public static final int GREATER=22;
+    public static final int GREATER=21;
     public static final int T__90=90;
-    public static final int NOT_EQUAL=21;
+    public static final int NOT_EQUAL=20;
     public static final int LESS=8;
-    public static final int RBRACK=13;
+    public static final int T__99=99;
+    public static final int T__98=98;
+    public static final int T__97=97;
+    public static final int T__96=96;
+    public static final int T__95=95;
+    public static final int RBRACK=12;
     public static final int T__80=80;
     public static final int T__81=81;
-    public static final int T__82=82;
     public static final int RBRACE=6;
+    public static final int T__82=82;
     public static final int T__83=83;
-    public static final int INT=16;
+    public static final int INT=15;
     public static final int T__85=85;
     public static final int T__84=84;
     public static final int T__87=87;
     public static final int T__86=86;
     public static final int T__89=89;
     public static final int T__88=88;
-    public static final int REAL=32;
-    public static final int WS=36;
+    public static final int REAL=31;
     public static final int T__71=71;
+    public static final int WS=36;
     public static final int T__72=72;
     public static final int T__70=70;
     public static final int SL_COMMENT=37;
-    public static final int LESS_EQUAL=23;
+    public static final int LESS_EQUAL=22;
     public static final int T__76=76;
     public static final int T__75=75;
     public static final int T__74=74;
@@ -77,55 +82,59 @@ import java.util.HashMap;
     public static final int T__66=66;
     public static final int T__67=67;
     public static final int T__64=64;
-    public static final int LBRACK=12;
+    public static final int LBRACK=11;
     public static final int T__65=65;
     public static final int T__62=62;
     public static final int T__63=63;
     public static final int ESC=41;
     public static final int LBRACE=5;
-    public static final int DOTDOT=15;
+    public static final int DOTDOT=14;
     public static final int T__61=61;
     public static final int T__60=60;
-    public static final int LPAREN=19;
+    public static final int LPAREN=18;
     public static final int T__55=55;
-    public static final int AT=30;
-    public static final int T__56=56;
+    public static final int AT=29;
     public static final int ML_COMMENT=38;
+    public static final int T__56=56;
     public static final int T__57=57;
     public static final int T__58=58;
+    public static final int COLON_EQUAL=34;
     public static final int T__51=51;
-    public static final int SLASH=27;
-    public static final int COLON_EQUAL=39;
+    public static final int SLASH=26;
     public static final int T__52=52;
     public static final int T__53=53;
     public static final int T__54=54;
-    public static final int COMMA=14;
+    public static final int COMMA=13;
     public static final int T__59=59;
+    public static final int T__103=103;
     public static final int EQUAL=10;
     public static final int IDENT=4;
-    public static final int PLUS=25;
+    public static final int PLUS=24;
     public static final int RANGE_OR_INT=40;
-    public static final int DOT=29;
+    public static final int DOT=28;
+    public static final int SCRIPTBODY=39;
     public static final int T__50=50;
-    public static final int SCRIPTBODY=11;
     public static final int T__46=46;
     public static final int T__47=47;
     public static final int T__44=44;
     public static final int T__45=45;
     public static final int T__48=48;
     public static final int T__49=49;
-    public static final int HASH=34;
+    public static final int HASH=33;
     public static final int HEX_DIGIT=42;
-    public static final int COLON_COLON=18;
-    public static final int MINUS=26;
+    public static final int COLON_COLON=17;
+    public static final int T__102=102;
+    public static final int T__101=101;
+    public static final int T__100=100;
+    public static final int MINUS=25;
     public static final int SEMI=7;
     public static final int COLON=9;
     public static final int NEWLINE=35;
     public static final int VOCAB=43;
-    public static final int ARROW=28;
-    public static final int GREATER_EQUAL=24;
-    public static final int BAR=31;
-    public static final int STRING=33;
+    public static final int ARROW=27;
+    public static final int GREATER_EQUAL=23;
+    public static final int BAR=30;
+    public static final int STRING=32;
 
         private ParseErrorHandler fParseErrorHandler;
 
@@ -433,10 +442,10 @@ import java.util.HashMap;
         try {
             int _type = T__57;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:59:7: ( 'ordered' )
-            // USE.g:59:9: 'ordered'
+            // USE.g:59:7: ( 'begin' )
+            // USE.g:59:9: 'begin'
             {
-            match("ordered"); if (state.failed) return ;
+            match("begin"); if (state.failed) return ;
 
 
             }
@@ -454,10 +463,10 @@ import java.util.HashMap;
         try {
             int _type = T__58;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:60:7: ( 'subsets' )
-            // USE.g:60:9: 'subsets'
+            // USE.g:60:7: ( 'ordered' )
+            // USE.g:60:9: 'ordered'
             {
-            match("subsets"); if (state.failed) return ;
+            match("ordered"); if (state.failed) return ;
 
 
             }
@@ -475,10 +484,10 @@ import java.util.HashMap;
         try {
             int _type = T__59;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:61:7: ( 'redefines' )
-            // USE.g:61:9: 'redefines'
+            // USE.g:61:7: ( 'subsets' )
+            // USE.g:61:9: 'subsets'
             {
-            match("redefines"); if (state.failed) return ;
+            match("subsets"); if (state.failed) return ;
 
 
             }
@@ -496,10 +505,10 @@ import java.util.HashMap;
         try {
             int _type = T__60;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:62:7: ( 'context' )
-            // USE.g:62:9: 'context'
+            // USE.g:62:7: ( 'redefines' )
+            // USE.g:62:9: 'redefines'
             {
-            match("context"); if (state.failed) return ;
+            match("redefines"); if (state.failed) return ;
 
 
             }
@@ -517,10 +526,10 @@ import java.util.HashMap;
         try {
             int _type = T__61;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:63:7: ( 'inv' )
-            // USE.g:63:9: 'inv'
+            // USE.g:63:7: ( 'context' )
+            // USE.g:63:9: 'context'
             {
-            match("inv"); if (state.failed) return ;
+            match("context"); if (state.failed) return ;
 
 
             }
@@ -538,10 +547,10 @@ import java.util.HashMap;
         try {
             int _type = T__62;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:64:7: ( 'existential' )
-            // USE.g:64:9: 'existential'
+            // USE.g:64:7: ( 'inv' )
+            // USE.g:64:9: 'inv'
             {
-            match("existential"); if (state.failed) return ;
+            match("inv"); if (state.failed) return ;
 
 
             }
@@ -559,10 +568,10 @@ import java.util.HashMap;
         try {
             int _type = T__63;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:65:7: ( 'pre' )
-            // USE.g:65:9: 'pre'
+            // USE.g:65:7: ( 'existential' )
+            // USE.g:65:9: 'existential'
             {
-            match("pre"); if (state.failed) return ;
+            match("existential"); if (state.failed) return ;
 
 
             }
@@ -580,10 +589,10 @@ import java.util.HashMap;
         try {
             int _type = T__64;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:66:7: ( 'post' )
-            // USE.g:66:9: 'post'
+            // USE.g:66:7: ( 'pre' )
+            // USE.g:66:9: 'pre'
             {
-            match("post"); if (state.failed) return ;
+            match("pre"); if (state.failed) return ;
 
 
             }
@@ -601,10 +610,10 @@ import java.util.HashMap;
         try {
             int _type = T__65;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:67:7: ( 'let' )
-            // USE.g:67:9: 'let'
+            // USE.g:67:7: ( 'post' )
+            // USE.g:67:9: 'post'
             {
-            match("let"); if (state.failed) return ;
+            match("post"); if (state.failed) return ;
 
 
             }
@@ -622,10 +631,10 @@ import java.util.HashMap;
         try {
             int _type = T__66;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:68:7: ( 'in' )
-            // USE.g:68:9: 'in'
+            // USE.g:68:7: ( 'let' )
+            // USE.g:68:9: 'let'
             {
-            match("in"); if (state.failed) return ;
+            match("let"); if (state.failed) return ;
 
 
             }
@@ -643,10 +652,10 @@ import java.util.HashMap;
         try {
             int _type = T__67;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:69:7: ( 'implies' )
-            // USE.g:69:9: 'implies'
+            // USE.g:69:7: ( 'in' )
+            // USE.g:69:9: 'in'
             {
-            match("implies"); if (state.failed) return ;
+            match("in"); if (state.failed) return ;
 
 
             }
@@ -664,10 +673,10 @@ import java.util.HashMap;
         try {
             int _type = T__68;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:70:7: ( 'or' )
-            // USE.g:70:9: 'or'
+            // USE.g:70:7: ( 'implies' )
+            // USE.g:70:9: 'implies'
             {
-            match("or"); if (state.failed) return ;
+            match("implies"); if (state.failed) return ;
 
 
             }
@@ -685,10 +694,10 @@ import java.util.HashMap;
         try {
             int _type = T__69;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:71:7: ( 'xor' )
-            // USE.g:71:9: 'xor'
+            // USE.g:71:7: ( 'or' )
+            // USE.g:71:9: 'or'
             {
-            match("xor"); if (state.failed) return ;
+            match("or"); if (state.failed) return ;
 
 
             }
@@ -706,10 +715,10 @@ import java.util.HashMap;
         try {
             int _type = T__70;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:72:7: ( 'and' )
-            // USE.g:72:9: 'and'
+            // USE.g:72:7: ( 'xor' )
+            // USE.g:72:9: 'xor'
             {
-            match("and"); if (state.failed) return ;
+            match("xor"); if (state.failed) return ;
 
 
             }
@@ -727,10 +736,10 @@ import java.util.HashMap;
         try {
             int _type = T__71;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:73:7: ( 'div' )
-            // USE.g:73:9: 'div'
+            // USE.g:73:7: ( 'and' )
+            // USE.g:73:9: 'and'
             {
-            match("div"); if (state.failed) return ;
+            match("and"); if (state.failed) return ;
 
 
             }
@@ -748,10 +757,10 @@ import java.util.HashMap;
         try {
             int _type = T__72;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:74:7: ( 'not' )
-            // USE.g:74:9: 'not'
+            // USE.g:74:7: ( 'div' )
+            // USE.g:74:9: 'div'
             {
-            match("not"); if (state.failed) return ;
+            match("div"); if (state.failed) return ;
 
 
             }
@@ -769,10 +778,10 @@ import java.util.HashMap;
         try {
             int _type = T__73;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:75:7: ( 'allInstances' )
-            // USE.g:75:9: 'allInstances'
+            // USE.g:75:7: ( 'not' )
+            // USE.g:75:9: 'not'
             {
-            match("allInstances"); if (state.failed) return ;
+            match("not"); if (state.failed) return ;
 
 
             }
@@ -790,10 +799,10 @@ import java.util.HashMap;
         try {
             int _type = T__74;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:76:7: ( 'iterate' )
-            // USE.g:76:9: 'iterate'
+            // USE.g:76:7: ( 'allInstances' )
+            // USE.g:76:9: 'allInstances'
             {
-            match("iterate"); if (state.failed) return ;
+            match("allInstances"); if (state.failed) return ;
 
 
             }
@@ -811,10 +820,10 @@ import java.util.HashMap;
         try {
             int _type = T__75;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:77:7: ( 'oclAsType' )
-            // USE.g:77:9: 'oclAsType'
+            // USE.g:77:7: ( 'iterate' )
+            // USE.g:77:9: 'iterate'
             {
-            match("oclAsType"); if (state.failed) return ;
+            match("iterate"); if (state.failed) return ;
 
 
             }
@@ -832,10 +841,10 @@ import java.util.HashMap;
         try {
             int _type = T__76;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:78:7: ( 'oclIsKindOf' )
-            // USE.g:78:9: 'oclIsKindOf'
+            // USE.g:78:7: ( 'oclAsType' )
+            // USE.g:78:9: 'oclAsType'
             {
-            match("oclIsKindOf"); if (state.failed) return ;
+            match("oclAsType"); if (state.failed) return ;
 
 
             }
@@ -853,10 +862,10 @@ import java.util.HashMap;
         try {
             int _type = T__77;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:79:7: ( 'oclIsTypeOf' )
-            // USE.g:79:9: 'oclIsTypeOf'
+            // USE.g:79:7: ( 'oclIsKindOf' )
+            // USE.g:79:9: 'oclIsKindOf'
             {
-            match("oclIsTypeOf"); if (state.failed) return ;
+            match("oclIsKindOf"); if (state.failed) return ;
 
 
             }
@@ -874,10 +883,10 @@ import java.util.HashMap;
         try {
             int _type = T__78;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:80:7: ( 'if' )
-            // USE.g:80:9: 'if'
+            // USE.g:80:7: ( 'oclIsTypeOf' )
+            // USE.g:80:9: 'oclIsTypeOf'
             {
-            match("if"); if (state.failed) return ;
+            match("oclIsTypeOf"); if (state.failed) return ;
 
 
             }
@@ -895,10 +904,10 @@ import java.util.HashMap;
         try {
             int _type = T__79;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:81:7: ( 'then' )
-            // USE.g:81:9: 'then'
+            // USE.g:81:7: ( 'if' )
+            // USE.g:81:9: 'if'
             {
-            match("then"); if (state.failed) return ;
+            match("if"); if (state.failed) return ;
 
 
             }
@@ -916,10 +925,10 @@ import java.util.HashMap;
         try {
             int _type = T__80;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:82:7: ( 'else' )
-            // USE.g:82:9: 'else'
+            // USE.g:82:7: ( 'then' )
+            // USE.g:82:9: 'then'
             {
-            match("else"); if (state.failed) return ;
+            match("then"); if (state.failed) return ;
 
 
             }
@@ -937,10 +946,10 @@ import java.util.HashMap;
         try {
             int _type = T__81;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:83:7: ( 'endif' )
-            // USE.g:83:9: 'endif'
+            // USE.g:83:7: ( 'else' )
+            // USE.g:83:9: 'else'
             {
-            match("endif"); if (state.failed) return ;
+            match("else"); if (state.failed) return ;
 
 
             }
@@ -958,10 +967,10 @@ import java.util.HashMap;
         try {
             int _type = T__82;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:84:7: ( 'true' )
-            // USE.g:84:9: 'true'
+            // USE.g:84:7: ( 'endif' )
+            // USE.g:84:9: 'endif'
             {
-            match("true"); if (state.failed) return ;
+            match("endif"); if (state.failed) return ;
 
 
             }
@@ -979,10 +988,10 @@ import java.util.HashMap;
         try {
             int _type = T__83;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:85:7: ( 'false' )
-            // USE.g:85:9: 'false'
+            // USE.g:85:7: ( 'true' )
+            // USE.g:85:9: 'true'
             {
-            match("false"); if (state.failed) return ;
+            match("true"); if (state.failed) return ;
 
 
             }
@@ -1000,10 +1009,10 @@ import java.util.HashMap;
         try {
             int _type = T__84;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:86:7: ( 'Set' )
-            // USE.g:86:9: 'Set'
+            // USE.g:86:7: ( 'false' )
+            // USE.g:86:9: 'false'
             {
-            match("Set"); if (state.failed) return ;
+            match("false"); if (state.failed) return ;
 
 
             }
@@ -1021,10 +1030,10 @@ import java.util.HashMap;
         try {
             int _type = T__85;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:87:7: ( 'Sequence' )
-            // USE.g:87:9: 'Sequence'
+            // USE.g:87:7: ( 'Set' )
+            // USE.g:87:9: 'Set'
             {
-            match("Sequence"); if (state.failed) return ;
+            match("Set"); if (state.failed) return ;
 
 
             }
@@ -1042,10 +1051,10 @@ import java.util.HashMap;
         try {
             int _type = T__86;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:88:7: ( 'Bag' )
-            // USE.g:88:9: 'Bag'
+            // USE.g:88:7: ( 'Sequence' )
+            // USE.g:88:9: 'Sequence'
             {
-            match("Bag"); if (state.failed) return ;
+            match("Sequence"); if (state.failed) return ;
 
 
             }
@@ -1063,10 +1072,10 @@ import java.util.HashMap;
         try {
             int _type = T__87;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:89:7: ( 'OrderedSet' )
-            // USE.g:89:9: 'OrderedSet'
+            // USE.g:89:7: ( 'Bag' )
+            // USE.g:89:9: 'Bag'
             {
-            match("OrderedSet"); if (state.failed) return ;
+            match("Bag"); if (state.failed) return ;
 
 
             }
@@ -1084,10 +1093,10 @@ import java.util.HashMap;
         try {
             int _type = T__88;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:90:7: ( 'oclEmpty' )
-            // USE.g:90:9: 'oclEmpty'
+            // USE.g:90:7: ( 'OrderedSet' )
+            // USE.g:90:9: 'OrderedSet'
             {
-            match("oclEmpty"); if (state.failed) return ;
+            match("OrderedSet"); if (state.failed) return ;
 
 
             }
@@ -1105,10 +1114,10 @@ import java.util.HashMap;
         try {
             int _type = T__89;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:91:7: ( 'oclUndefined' )
-            // USE.g:91:9: 'oclUndefined'
+            // USE.g:91:7: ( 'oclEmpty' )
+            // USE.g:91:9: 'oclEmpty'
             {
-            match("oclUndefined"); if (state.failed) return ;
+            match("oclEmpty"); if (state.failed) return ;
 
 
             }
@@ -1126,10 +1135,10 @@ import java.util.HashMap;
         try {
             int _type = T__90;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:92:7: ( 'Undefined' )
-            // USE.g:92:9: 'Undefined'
+            // USE.g:92:7: ( 'oclUndefined' )
+            // USE.g:92:9: 'oclUndefined'
             {
-            match("Undefined"); if (state.failed) return ;
+            match("oclUndefined"); if (state.failed) return ;
 
 
             }
@@ -1147,10 +1156,10 @@ import java.util.HashMap;
         try {
             int _type = T__91;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:93:7: ( 'null' )
-            // USE.g:93:9: 'null'
+            // USE.g:93:7: ( 'Undefined' )
+            // USE.g:93:9: 'Undefined'
             {
-            match("null"); if (state.failed) return ;
+            match("Undefined"); if (state.failed) return ;
 
 
             }
@@ -1168,10 +1177,10 @@ import java.util.HashMap;
         try {
             int _type = T__92;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:94:7: ( 'Tuple' )
-            // USE.g:94:9: 'Tuple'
+            // USE.g:94:7: ( 'null' )
+            // USE.g:94:9: 'null'
             {
-            match("Tuple"); if (state.failed) return ;
+            match("null"); if (state.failed) return ;
 
 
             }
@@ -1189,10 +1198,10 @@ import java.util.HashMap;
         try {
             int _type = T__93;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:95:7: ( 'Date' )
-            // USE.g:95:9: 'Date'
+            // USE.g:95:7: ( 'Tuple' )
+            // USE.g:95:9: 'Tuple'
             {
-            match("Date"); if (state.failed) return ;
+            match("Tuple"); if (state.failed) return ;
 
 
             }
@@ -1210,10 +1219,10 @@ import java.util.HashMap;
         try {
             int _type = T__94;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:96:7: ( 'Collection' )
-            // USE.g:96:9: 'Collection'
+            // USE.g:96:7: ( 'Date' )
+            // USE.g:96:9: 'Date'
             {
-            match("Collection"); if (state.failed) return ;
+            match("Date"); if (state.failed) return ;
 
 
             }
@@ -1226,15 +1235,204 @@ import java.util.HashMap;
     }
     // $ANTLR end "T__94"
 
+    // $ANTLR start "T__95"
+    public final void mT__95() throws RecognitionException {
+        try {
+            int _type = T__95;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:97:7: ( 'Collection' )
+            // USE.g:97:9: 'Collection'
+            {
+            match("Collection"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__95"
+
+    // $ANTLR start "T__96"
+    public final void mT__96() throws RecognitionException {
+        try {
+            int _type = T__96;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:98:7: ( 'new' )
+            // USE.g:98:9: 'new'
+            {
+            match("new"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__96"
+
+    // $ANTLR start "T__97"
+    public final void mT__97() throws RecognitionException {
+        try {
+            int _type = T__97;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:99:7: ( 'destroy' )
+            // USE.g:99:9: 'destroy'
+            {
+            match("destroy"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__97"
+
+    // $ANTLR start "T__98"
+    public final void mT__98() throws RecognitionException {
+        try {
+            int _type = T__98;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:100:7: ( 'insert' )
+            // USE.g:100:9: 'insert'
+            {
+            match("insert"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__98"
+
+    // $ANTLR start "T__99"
+    public final void mT__99() throws RecognitionException {
+        try {
+            int _type = T__99;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:101:7: ( 'into' )
+            // USE.g:101:9: 'into'
+            {
+            match("into"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__99"
+
+    // $ANTLR start "T__100"
+    public final void mT__100() throws RecognitionException {
+        try {
+            int _type = T__100;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:102:8: ( 'delete' )
+            // USE.g:102:10: 'delete'
+            {
+            match("delete"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__100"
+
+    // $ANTLR start "T__101"
+    public final void mT__101() throws RecognitionException {
+        try {
+            int _type = T__101;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:103:8: ( 'from' )
+            // USE.g:103:10: 'from'
+            {
+            match("from"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__101"
+
+    // $ANTLR start "T__102"
+    public final void mT__102() throws RecognitionException {
+        try {
+            int _type = T__102;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:104:8: ( 'for' )
+            // USE.g:104:10: 'for'
+            {
+            match("for"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__102"
+
+    // $ANTLR start "T__103"
+    public final void mT__103() throws RecognitionException {
+        try {
+            int _type = T__103;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // USE.g:105:8: ( 'do' )
+            // USE.g:105:10: 'do'
+            {
+            match("do"); if (state.failed) return ;
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__103"
+
     // $ANTLR start "WS"
     public final void mWS() throws RecognitionException {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1041:3: ( ( ' ' | '\\t' | '\\f' | NEWLINE ) )
-            // USE.g:1042:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
+            // USE.g:1619:3: ( ( ' ' | '\\t' | '\\f' | NEWLINE ) )
+            // USE.g:1620:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
             {
-            // USE.g:1042:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
+            // USE.g:1620:5: ( ' ' | '\\t' | '\\f' | NEWLINE )
             int alt1=4;
             switch ( input.LA(1) ) {
             case ' ':
@@ -1268,28 +1466,28 @@ import java.util.HashMap;
 
             switch (alt1) {
                 case 1 :
-                    // USE.g:1042:7: ' '
+                    // USE.g:1620:7: ' '
                     {
                     match(' '); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // USE.g:1043:7: '\\t'
+                    // USE.g:1621:7: '\\t'
                     {
                     match('\t'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // USE.g:1044:7: '\\f'
+                    // USE.g:1622:7: '\\f'
                     {
                     match('\f'); if (state.failed) return ;
 
                     }
                     break;
                 case 4 :
-                    // USE.g:1045:7: NEWLINE
+                    // USE.g:1623:7: NEWLINE
                     {
                     mNEWLINE(); if (state.failed) return ;
 
@@ -1317,10 +1515,10 @@ import java.util.HashMap;
         try {
             int _type = SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1051:11: ( ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE )
-            // USE.g:1052:5: ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE
+            // USE.g:1629:11: ( ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE )
+            // USE.g:1630:5: ( '//' | '--' ) (~ ( '\\n' | '\\r' ) )* NEWLINE
             {
-            // USE.g:1052:5: ( '//' | '--' )
+            // USE.g:1630:5: ( '//' | '--' )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -1339,7 +1537,7 @@ import java.util.HashMap;
             }
             switch (alt2) {
                 case 1 :
-                    // USE.g:1052:6: '//'
+                    // USE.g:1630:6: '//'
                     {
                     match("//"); if (state.failed) return ;
 
@@ -1347,7 +1545,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // USE.g:1052:13: '--'
+                    // USE.g:1630:13: '--'
                     {
                     match("--"); if (state.failed) return ;
 
@@ -1357,7 +1555,7 @@ import java.util.HashMap;
 
             }
 
-            // USE.g:1053:5: (~ ( '\\n' | '\\r' ) )*
+            // USE.g:1631:5: (~ ( '\\n' | '\\r' ) )*
             loop3:
             do {
                 int alt3=2;
@@ -1370,7 +1568,7 @@ import java.util.HashMap;
 
                 switch (alt3) {
             	case 1 :
-            	    // USE.g:1053:6: ~ ( '\\n' | '\\r' )
+            	    // USE.g:1631:6: ~ ( '\\n' | '\\r' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1411,12 +1609,12 @@ import java.util.HashMap;
         try {
             int _type = ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1058:11: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // USE.g:1059:5: '/*' ( options {greedy=false; } : . )* '*/'
+            // USE.g:1636:11: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // USE.g:1637:5: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); if (state.failed) return ;
 
-            // USE.g:1059:10: ( options {greedy=false; } : . )*
+            // USE.g:1637:10: ( options {greedy=false; } : . )*
             loop4:
             do {
                 int alt4=2;
@@ -1441,7 +1639,7 @@ import java.util.HashMap;
 
                 switch (alt4) {
             	case 1 :
-            	    // USE.g:1059:38: .
+            	    // USE.g:1637:38: .
             	    {
             	    matchAny(); if (state.failed) return ;
 
@@ -1472,7 +1670,7 @@ import java.util.HashMap;
     // $ANTLR start "NEWLINE"
     public final void mNEWLINE() throws RecognitionException {
         try {
-            // USE.g:1062:9: ( '\\r\\n' | '\\r' | '\\n' )
+            // USE.g:1640:9: ( '\\r\\n' | '\\r' | '\\n' )
             int alt5=3;
             int LA5_0 = input.LA(1);
 
@@ -1497,7 +1695,7 @@ import java.util.HashMap;
             }
             switch (alt5) {
                 case 1 :
-                    // USE.g:1063:5: '\\r\\n'
+                    // USE.g:1641:5: '\\r\\n'
                     {
                     match("\r\n"); if (state.failed) return ;
 
@@ -1505,14 +1703,14 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // USE.g:1063:14: '\\r'
+                    // USE.g:1641:14: '\\r'
                     {
                     match('\r'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // USE.g:1063:21: '\\n'
+                    // USE.g:1641:21: '\\n'
                     {
                     match('\n'); if (state.failed) return ;
 
@@ -1531,8 +1729,8 @@ import java.util.HashMap;
         try {
             int _type = ARROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1066:10: ( '->' )
-            // USE.g:1066:12: '->'
+            // USE.g:1644:10: ( '->' )
+            // USE.g:1644:12: '->'
             {
             match("->"); if (state.failed) return ;
 
@@ -1552,8 +1750,8 @@ import java.util.HashMap;
         try {
             int _type = AT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1067:11: ( '@' )
-            // USE.g:1067:13: '@'
+            // USE.g:1645:11: ( '@' )
+            // USE.g:1645:13: '@'
             {
             match('@'); if (state.failed) return ;
 
@@ -1572,8 +1770,8 @@ import java.util.HashMap;
         try {
             int _type = BAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1068:8: ( '|' )
-            // USE.g:1068:10: '|'
+            // USE.g:1646:8: ( '|' )
+            // USE.g:1646:10: '|'
             {
             match('|'); if (state.failed) return ;
 
@@ -1592,8 +1790,8 @@ import java.util.HashMap;
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1069:10: ( ':' )
-            // USE.g:1069:12: ':'
+            // USE.g:1647:10: ( ':' )
+            // USE.g:1647:12: ':'
             {
             match(':'); if (state.failed) return ;
 
@@ -1612,8 +1810,8 @@ import java.util.HashMap;
         try {
             int _type = COLON_COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1070:14: ( '::' )
-            // USE.g:1070:16: '::'
+            // USE.g:1648:14: ( '::' )
+            // USE.g:1648:16: '::'
             {
             match("::"); if (state.failed) return ;
 
@@ -1633,8 +1831,8 @@ import java.util.HashMap;
         try {
             int _type = COLON_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1071:14: ( ':=' )
-            // USE.g:1071:16: ':='
+            // USE.g:1649:14: ( ':=' )
+            // USE.g:1649:16: ':='
             {
             match(":="); if (state.failed) return ;
 
@@ -1654,8 +1852,8 @@ import java.util.HashMap;
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1072:10: ( ',' )
-            // USE.g:1072:12: ','
+            // USE.g:1650:10: ( ',' )
+            // USE.g:1650:12: ','
             {
             match(','); if (state.failed) return ;
 
@@ -1674,8 +1872,8 @@ import java.util.HashMap;
         try {
             int _type = DOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1073:8: ( '.' )
-            // USE.g:1073:10: '.'
+            // USE.g:1651:8: ( '.' )
+            // USE.g:1651:10: '.'
             {
             match('.'); if (state.failed) return ;
 
@@ -1694,8 +1892,8 @@ import java.util.HashMap;
         try {
             int _type = DOTDOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1074:11: ( '..' )
-            // USE.g:1074:13: '..'
+            // USE.g:1652:11: ( '..' )
+            // USE.g:1652:13: '..'
             {
             match(".."); if (state.failed) return ;
 
@@ -1715,8 +1913,8 @@ import java.util.HashMap;
         try {
             int _type = EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1075:10: ( '=' )
-            // USE.g:1075:12: '='
+            // USE.g:1653:10: ( '=' )
+            // USE.g:1653:12: '='
             {
             match('='); if (state.failed) return ;
 
@@ -1735,8 +1933,8 @@ import java.util.HashMap;
         try {
             int _type = GREATER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1076:11: ( '>' )
-            // USE.g:1076:13: '>'
+            // USE.g:1654:11: ( '>' )
+            // USE.g:1654:13: '>'
             {
             match('>'); if (state.failed) return ;
 
@@ -1755,8 +1953,8 @@ import java.util.HashMap;
         try {
             int _type = GREATER_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1077:15: ( '>=' )
-            // USE.g:1077:17: '>='
+            // USE.g:1655:15: ( '>=' )
+            // USE.g:1655:17: '>='
             {
             match(">="); if (state.failed) return ;
 
@@ -1776,8 +1974,8 @@ import java.util.HashMap;
         try {
             int _type = HASH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1078:9: ( '#' )
-            // USE.g:1078:11: '#'
+            // USE.g:1656:9: ( '#' )
+            // USE.g:1656:11: '#'
             {
             match('#'); if (state.failed) return ;
 
@@ -1796,8 +1994,8 @@ import java.util.HashMap;
         try {
             int _type = LBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1079:11: ( '{' )
-            // USE.g:1079:13: '{'
+            // USE.g:1657:11: ( '{' )
+            // USE.g:1657:13: '{'
             {
             match('{'); if (state.failed) return ;
 
@@ -1816,8 +2014,8 @@ import java.util.HashMap;
         try {
             int _type = LBRACK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1080:11: ( '[' )
-            // USE.g:1080:13: '['
+            // USE.g:1658:11: ( '[' )
+            // USE.g:1658:13: '['
             {
             match('['); if (state.failed) return ;
 
@@ -1836,8 +2034,8 @@ import java.util.HashMap;
         try {
             int _type = LESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1081:9: ( '<' )
-            // USE.g:1081:11: '<'
+            // USE.g:1659:9: ( '<' )
+            // USE.g:1659:11: '<'
             {
             match('<'); if (state.failed) return ;
 
@@ -1856,8 +2054,8 @@ import java.util.HashMap;
         try {
             int _type = LESS_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1082:14: ( '<=' )
-            // USE.g:1082:16: '<='
+            // USE.g:1660:14: ( '<=' )
+            // USE.g:1660:16: '<='
             {
             match("<="); if (state.failed) return ;
 
@@ -1877,8 +2075,8 @@ import java.util.HashMap;
         try {
             int _type = LPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1083:11: ( '(' )
-            // USE.g:1083:13: '('
+            // USE.g:1661:11: ( '(' )
+            // USE.g:1661:13: '('
             {
             match('('); if (state.failed) return ;
 
@@ -1897,8 +2095,8 @@ import java.util.HashMap;
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1084:10: ( '-' )
-            // USE.g:1084:12: '-'
+            // USE.g:1662:10: ( '-' )
+            // USE.g:1662:12: '-'
             {
             match('-'); if (state.failed) return ;
 
@@ -1917,8 +2115,8 @@ import java.util.HashMap;
         try {
             int _type = NOT_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1085:13: ( '<>' )
-            // USE.g:1085:15: '<>'
+            // USE.g:1663:13: ( '<>' )
+            // USE.g:1663:15: '<>'
             {
             match("<>"); if (state.failed) return ;
 
@@ -1938,8 +2136,8 @@ import java.util.HashMap;
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1086:9: ( '+' )
-            // USE.g:1086:11: '+'
+            // USE.g:1664:9: ( '+' )
+            // USE.g:1664:11: '+'
             {
             match('+'); if (state.failed) return ;
 
@@ -1958,8 +2156,8 @@ import java.util.HashMap;
         try {
             int _type = RBRACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1087:11: ( '}' )
-            // USE.g:1087:13: '}'
+            // USE.g:1665:11: ( '}' )
+            // USE.g:1665:13: '}'
             {
             match('}'); if (state.failed) return ;
 
@@ -1978,8 +2176,8 @@ import java.util.HashMap;
         try {
             int _type = RBRACK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1088:11: ( ']' )
-            // USE.g:1088:13: ']'
+            // USE.g:1666:11: ( ']' )
+            // USE.g:1666:13: ']'
             {
             match(']'); if (state.failed) return ;
 
@@ -1998,8 +2196,8 @@ import java.util.HashMap;
         try {
             int _type = RPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1089:10: ( ')' )
-            // USE.g:1089:12: ')'
+            // USE.g:1667:10: ( ')' )
+            // USE.g:1667:12: ')'
             {
             match(')'); if (state.failed) return ;
 
@@ -2018,8 +2216,8 @@ import java.util.HashMap;
         try {
             int _type = SEMI;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1090:8: ( ';' )
-            // USE.g:1090:10: ';'
+            // USE.g:1668:8: ( ';' )
+            // USE.g:1668:10: ';'
             {
             match(';'); if (state.failed) return ;
 
@@ -2038,8 +2236,8 @@ import java.util.HashMap;
         try {
             int _type = SLASH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1091:10: ( '/' )
-            // USE.g:1091:12: '/'
+            // USE.g:1669:10: ( '/' )
+            // USE.g:1669:12: '/'
             {
             match('/'); if (state.failed) return ;
 
@@ -2058,8 +2256,8 @@ import java.util.HashMap;
         try {
             int _type = STAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1092:9: ( '*' )
-            // USE.g:1092:11: '*'
+            // USE.g:1670:9: ( '*' )
+            // USE.g:1670:11: '*'
             {
             match('*'); if (state.failed) return ;
 
@@ -2078,12 +2276,12 @@ import java.util.HashMap;
         try {
             int _type = SCRIPTBODY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1094:11: ( '<<' ( options {greedy=false; } : . )* '>>' )
-            // USE.g:1095:3: '<<' ( options {greedy=false; } : . )* '>>'
+            // USE.g:1672:11: ( '<<' ( options {greedy=false; } : . )* '>>' )
+            // USE.g:1673:3: '<<' ( options {greedy=false; } : . )* '>>'
             {
             match("<<"); if (state.failed) return ;
 
-            // USE.g:1095:8: ( options {greedy=false; } : . )*
+            // USE.g:1673:8: ( options {greedy=false; } : . )*
             loop6:
             do {
                 int alt6=2;
@@ -2108,7 +2306,7 @@ import java.util.HashMap;
 
                 switch (alt6) {
             	case 1 :
-            	    // USE.g:1095:36: .
+            	    // USE.g:1673:36: .
             	    {
             	    matchAny(); if (state.failed) return ;
 
@@ -2136,10 +2334,10 @@ import java.util.HashMap;
     // $ANTLR start "INT"
     public final void mINT() throws RecognitionException {
         try {
-            // USE.g:1098:4: ( ( '0' .. '9' )+ )
-            // USE.g:1099:5: ( '0' .. '9' )+
+            // USE.g:1676:4: ( ( '0' .. '9' )+ )
+            // USE.g:1677:5: ( '0' .. '9' )+
             {
-            // USE.g:1099:5: ( '0' .. '9' )+
+            // USE.g:1677:5: ( '0' .. '9' )+
             int cnt7=0;
             loop7:
             do {
@@ -2153,7 +2351,7 @@ import java.util.HashMap;
 
                 switch (alt7) {
             	case 1 :
-            	    // USE.g:1099:6: '0' .. '9'
+            	    // USE.g:1677:6: '0' .. '9'
             	    {
             	    matchRange('0','9'); if (state.failed) return ;
 
@@ -2182,11 +2380,11 @@ import java.util.HashMap;
     // $ANTLR start "REAL"
     public final void mREAL() throws RecognitionException {
         try {
-            // USE.g:1103:5: ( INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT ) )
-            // USE.g:1104:5: INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
+            // USE.g:1681:5: ( INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT ) )
+            // USE.g:1682:5: INT ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
             {
             mINT(); if (state.failed) return ;
-            // USE.g:1104:9: ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
+            // USE.g:1682:9: ( '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )? | ( 'e' | 'E' ) ( '+' | '-' )? INT )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -2205,11 +2403,11 @@ import java.util.HashMap;
             }
             switch (alt11) {
                 case 1 :
-                    // USE.g:1104:10: '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
+                    // USE.g:1682:10: '.' INT ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
                     {
                     match('.'); if (state.failed) return ;
                     mINT(); if (state.failed) return ;
-                    // USE.g:1104:18: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
+                    // USE.g:1682:18: ( ( 'e' | 'E' ) ( '+' | '-' )? INT )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -2218,7 +2416,7 @@ import java.util.HashMap;
                     }
                     switch (alt9) {
                         case 1 :
-                            // USE.g:1104:19: ( 'e' | 'E' ) ( '+' | '-' )? INT
+                            // USE.g:1682:19: ( 'e' | 'E' ) ( '+' | '-' )? INT
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -2230,7 +2428,7 @@ import java.util.HashMap;
                                 recover(mse);
                                 throw mse;}
 
-                            // USE.g:1104:31: ( '+' | '-' )?
+                            // USE.g:1682:31: ( '+' | '-' )?
                             int alt8=2;
                             int LA8_0 = input.LA(1);
 
@@ -2268,7 +2466,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // USE.g:1104:52: ( 'e' | 'E' ) ( '+' | '-' )? INT
+                    // USE.g:1682:52: ( 'e' | 'E' ) ( '+' | '-' )? INT
                     {
                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                         input.consume();
@@ -2280,7 +2478,7 @@ import java.util.HashMap;
                         recover(mse);
                         throw mse;}
 
-                    // USE.g:1104:64: ( '+' | '-' )?
+                    // USE.g:1682:64: ( '+' | '-' )?
                     int alt10=2;
                     int LA10_0 = input.LA(1);
 
@@ -2328,7 +2526,7 @@ import java.util.HashMap;
         try {
             int _type = RANGE_OR_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1107:13: ( ( INT '..' )=> INT | ( REAL )=> REAL | INT )
+            // USE.g:1685:13: ( ( INT '..' )=> INT | ( REAL )=> REAL | INT )
             int alt12=3;
             int LA12_0 = input.LA(1);
 
@@ -2367,7 +2565,7 @@ import java.util.HashMap;
             }
             switch (alt12) {
                 case 1 :
-                    // USE.g:1108:7: ( INT '..' )=> INT
+                    // USE.g:1686:7: ( INT '..' )=> INT
                     {
                     mINT(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2377,7 +2575,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 2 :
-                    // USE.g:1109:7: ( REAL )=> REAL
+                    // USE.g:1687:7: ( REAL )=> REAL
                     {
                     mREAL(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2387,7 +2585,7 @@ import java.util.HashMap;
                     }
                     break;
                 case 3 :
-                    // USE.g:1110:9: INT
+                    // USE.g:1688:9: INT
                     {
                     mINT(); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
@@ -2411,11 +2609,11 @@ import java.util.HashMap;
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1115:7: ( '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\'' )
-            // USE.g:1116:5: '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\''
+            // USE.g:1693:7: ( '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\'' )
+            // USE.g:1694:5: '\\'' (~ ( '\\'' | '\\\\' ) | ESC )* '\\''
             {
             match('\''); if (state.failed) return ;
-            // USE.g:1116:10: (~ ( '\\'' | '\\\\' ) | ESC )*
+            // USE.g:1694:10: (~ ( '\\'' | '\\\\' ) | ESC )*
             loop13:
             do {
                 int alt13=3;
@@ -2431,7 +2629,7 @@ import java.util.HashMap;
 
                 switch (alt13) {
             	case 1 :
-            	    // USE.g:1116:12: ~ ( '\\'' | '\\\\' )
+            	    // USE.g:1694:12: ~ ( '\\'' | '\\\\' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2447,7 +2645,7 @@ import java.util.HashMap;
             	    }
             	    break;
             	case 2 :
-            	    // USE.g:1116:27: ESC
+            	    // USE.g:1694:27: ESC
             	    {
             	    mESC(); if (state.failed) return ;
 
@@ -2474,11 +2672,11 @@ import java.util.HashMap;
     // $ANTLR start "ESC"
     public final void mESC() throws RecognitionException {
         try {
-            // USE.g:1128:1: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
-            // USE.g:1129:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // USE.g:1706:1: ( '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? ) )
+            // USE.g:1707:5: '\\\\' ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             {
             match('\\'); if (state.failed) return ;
-            // USE.g:1130:6: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
+            // USE.g:1708:6: ( 'n' | 'r' | 't' | 'b' | 'f' | '\"' | '\\'' | '\\\\' | 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT | '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )? | '4' .. '7' ( '0' .. '7' )? )
             int alt17=11;
             switch ( input.LA(1) ) {
             case 'n':
@@ -2552,63 +2750,63 @@ import java.util.HashMap;
 
             switch (alt17) {
                 case 1 :
-                    // USE.g:1130:8: 'n'
+                    // USE.g:1708:8: 'n'
                     {
                     match('n'); if (state.failed) return ;
 
                     }
                     break;
                 case 2 :
-                    // USE.g:1131:8: 'r'
+                    // USE.g:1709:8: 'r'
                     {
                     match('r'); if (state.failed) return ;
 
                     }
                     break;
                 case 3 :
-                    // USE.g:1132:8: 't'
+                    // USE.g:1710:8: 't'
                     {
                     match('t'); if (state.failed) return ;
 
                     }
                     break;
                 case 4 :
-                    // USE.g:1133:8: 'b'
+                    // USE.g:1711:8: 'b'
                     {
                     match('b'); if (state.failed) return ;
 
                     }
                     break;
                 case 5 :
-                    // USE.g:1134:8: 'f'
+                    // USE.g:1712:8: 'f'
                     {
                     match('f'); if (state.failed) return ;
 
                     }
                     break;
                 case 6 :
-                    // USE.g:1135:8: '\"'
+                    // USE.g:1713:8: '\"'
                     {
                     match('\"'); if (state.failed) return ;
 
                     }
                     break;
                 case 7 :
-                    // USE.g:1136:8: '\\''
+                    // USE.g:1714:8: '\\''
                     {
                     match('\''); if (state.failed) return ;
 
                     }
                     break;
                 case 8 :
-                    // USE.g:1137:8: '\\\\'
+                    // USE.g:1715:8: '\\\\'
                     {
                     match('\\'); if (state.failed) return ;
 
                     }
                     break;
                 case 9 :
-                    // USE.g:1138:8: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+                    // USE.g:1716:8: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                     {
                     match('u'); if (state.failed) return ;
                     mHEX_DIGIT(); if (state.failed) return ;
@@ -2619,10 +2817,10 @@ import java.util.HashMap;
                     }
                     break;
                 case 10 :
-                    // USE.g:1139:8: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
+                    // USE.g:1717:8: '0' .. '3' ( '0' .. '7' ( '0' .. '7' )? )?
                     {
                     matchRange('0','3'); if (state.failed) return ;
-                    // USE.g:1139:17: ( '0' .. '7' ( '0' .. '7' )? )?
+                    // USE.g:1717:17: ( '0' .. '7' ( '0' .. '7' )? )?
                     int alt15=2;
                     int LA15_0 = input.LA(1);
 
@@ -2631,10 +2829,10 @@ import java.util.HashMap;
                     }
                     switch (alt15) {
                         case 1 :
-                            // USE.g:1139:18: '0' .. '7' ( '0' .. '7' )?
+                            // USE.g:1717:18: '0' .. '7' ( '0' .. '7' )?
                             {
                             matchRange('0','7'); if (state.failed) return ;
-                            // USE.g:1139:27: ( '0' .. '7' )?
+                            // USE.g:1717:27: ( '0' .. '7' )?
                             int alt14=2;
                             int LA14_0 = input.LA(1);
 
@@ -2643,7 +2841,7 @@ import java.util.HashMap;
                             }
                             switch (alt14) {
                                 case 1 :
-                                    // USE.g:1139:28: '0' .. '7'
+                                    // USE.g:1717:28: '0' .. '7'
                                     {
                                     matchRange('0','7'); if (state.failed) return ;
 
@@ -2662,10 +2860,10 @@ import java.util.HashMap;
                     }
                     break;
                 case 11 :
-                    // USE.g:1139:45: '4' .. '7' ( '0' .. '7' )?
+                    // USE.g:1717:45: '4' .. '7' ( '0' .. '7' )?
                     {
                     matchRange('4','7'); if (state.failed) return ;
-                    // USE.g:1139:54: ( '0' .. '7' )?
+                    // USE.g:1717:54: ( '0' .. '7' )?
                     int alt16=2;
                     int LA16_0 = input.LA(1);
 
@@ -2674,7 +2872,7 @@ import java.util.HashMap;
                     }
                     switch (alt16) {
                         case 1 :
-                            // USE.g:1139:55: '0' .. '7'
+                            // USE.g:1717:55: '0' .. '7'
                             {
                             matchRange('0','7'); if (state.failed) return ;
 
@@ -2701,8 +2899,8 @@ import java.util.HashMap;
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // USE.g:1145:10: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
-            // USE.g:1146:5: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
+            // USE.g:1723:10: ( ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' ) )
+            // USE.g:1724:5: ( '0' .. '9' | 'A' .. 'F' | 'a' .. 'f' )
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f') ) {
                 input.consume();
@@ -2728,8 +2926,8 @@ import java.util.HashMap;
         try {
             int _type = IDENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // USE.g:1153:6: ( ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // USE.g:1154:5: ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // USE.g:1731:6: ( ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // USE.g:1732:5: ( '$' | 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
             if ( input.LA(1)=='$'||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -2741,7 +2939,7 @@ import java.util.HashMap;
                 recover(mse);
                 throw mse;}
 
-            // USE.g:1154:39: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // USE.g:1732:39: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop18:
             do {
                 int alt18=2;
@@ -2789,8 +2987,8 @@ import java.util.HashMap;
     // $ANTLR start "VOCAB"
     public final void mVOCAB() throws RecognitionException {
         try {
-            // USE.g:1161:6: ( '\\U0003' .. '\\U0377' )
-            // USE.g:1162:5: '\\U0003' .. '\\U0377'
+            // USE.g:1739:6: ( '\\U0003' .. '\\U0377' )
+            // USE.g:1740:5: '\\U0003' .. '\\U0377'
             {
             matchRange('\u0003','\u0377'); if (state.failed) return ;
 
@@ -2803,8 +3001,8 @@ import java.util.HashMap;
     // $ANTLR end "VOCAB"
 
     public void mTokens() throws RecognitionException {
-        // USE.g:1:8: ( T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | T__80 | T__81 | T__82 | T__83 | T__84 | T__85 | T__86 | T__87 | T__88 | T__89 | T__90 | T__91 | T__92 | T__93 | T__94 | WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | SCRIPTBODY | RANGE_OR_INT | STRING | IDENT )
-        int alt19=85;
+        // USE.g:1:8: ( T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | T__80 | T__81 | T__82 | T__83 | T__84 | T__85 | T__86 | T__87 | T__88 | T__89 | T__90 | T__91 | T__92 | T__93 | T__94 | T__95 | T__96 | T__97 | T__98 | T__99 | T__100 | T__101 | T__102 | T__103 | WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | SCRIPTBODY | RANGE_OR_INT | STRING | IDENT )
+        int alt19=94;
         alt19 = dfa19.predict(input);
         switch (alt19) {
             case 1 :
@@ -3165,238 +3363,301 @@ import java.util.HashMap;
                 }
                 break;
             case 52 :
-                // USE.g:1:316: WS
+                // USE.g:1:316: T__95
+                {
+                mT__95(); if (state.failed) return ;
+
+                }
+                break;
+            case 53 :
+                // USE.g:1:322: T__96
+                {
+                mT__96(); if (state.failed) return ;
+
+                }
+                break;
+            case 54 :
+                // USE.g:1:328: T__97
+                {
+                mT__97(); if (state.failed) return ;
+
+                }
+                break;
+            case 55 :
+                // USE.g:1:334: T__98
+                {
+                mT__98(); if (state.failed) return ;
+
+                }
+                break;
+            case 56 :
+                // USE.g:1:340: T__99
+                {
+                mT__99(); if (state.failed) return ;
+
+                }
+                break;
+            case 57 :
+                // USE.g:1:346: T__100
+                {
+                mT__100(); if (state.failed) return ;
+
+                }
+                break;
+            case 58 :
+                // USE.g:1:353: T__101
+                {
+                mT__101(); if (state.failed) return ;
+
+                }
+                break;
+            case 59 :
+                // USE.g:1:360: T__102
+                {
+                mT__102(); if (state.failed) return ;
+
+                }
+                break;
+            case 60 :
+                // USE.g:1:367: T__103
+                {
+                mT__103(); if (state.failed) return ;
+
+                }
+                break;
+            case 61 :
+                // USE.g:1:374: WS
                 {
                 mWS(); if (state.failed) return ;
 
                 }
                 break;
-            case 53 :
-                // USE.g:1:319: SL_COMMENT
+            case 62 :
+                // USE.g:1:377: SL_COMMENT
                 {
                 mSL_COMMENT(); if (state.failed) return ;
 
                 }
                 break;
-            case 54 :
-                // USE.g:1:330: ML_COMMENT
+            case 63 :
+                // USE.g:1:388: ML_COMMENT
                 {
                 mML_COMMENT(); if (state.failed) return ;
 
                 }
                 break;
-            case 55 :
-                // USE.g:1:341: ARROW
+            case 64 :
+                // USE.g:1:399: ARROW
                 {
                 mARROW(); if (state.failed) return ;
 
                 }
                 break;
-            case 56 :
-                // USE.g:1:347: AT
+            case 65 :
+                // USE.g:1:405: AT
                 {
                 mAT(); if (state.failed) return ;
 
                 }
                 break;
-            case 57 :
-                // USE.g:1:350: BAR
+            case 66 :
+                // USE.g:1:408: BAR
                 {
                 mBAR(); if (state.failed) return ;
 
                 }
                 break;
-            case 58 :
-                // USE.g:1:354: COLON
+            case 67 :
+                // USE.g:1:412: COLON
                 {
                 mCOLON(); if (state.failed) return ;
 
                 }
                 break;
-            case 59 :
-                // USE.g:1:360: COLON_COLON
+            case 68 :
+                // USE.g:1:418: COLON_COLON
                 {
                 mCOLON_COLON(); if (state.failed) return ;
 
                 }
                 break;
-            case 60 :
-                // USE.g:1:372: COLON_EQUAL
+            case 69 :
+                // USE.g:1:430: COLON_EQUAL
                 {
                 mCOLON_EQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 61 :
-                // USE.g:1:384: COMMA
+            case 70 :
+                // USE.g:1:442: COMMA
                 {
                 mCOMMA(); if (state.failed) return ;
 
                 }
                 break;
-            case 62 :
-                // USE.g:1:390: DOT
+            case 71 :
+                // USE.g:1:448: DOT
                 {
                 mDOT(); if (state.failed) return ;
 
                 }
                 break;
-            case 63 :
-                // USE.g:1:394: DOTDOT
+            case 72 :
+                // USE.g:1:452: DOTDOT
                 {
                 mDOTDOT(); if (state.failed) return ;
 
                 }
                 break;
-            case 64 :
-                // USE.g:1:401: EQUAL
+            case 73 :
+                // USE.g:1:459: EQUAL
                 {
                 mEQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 65 :
-                // USE.g:1:407: GREATER
+            case 74 :
+                // USE.g:1:465: GREATER
                 {
                 mGREATER(); if (state.failed) return ;
 
                 }
                 break;
-            case 66 :
-                // USE.g:1:415: GREATER_EQUAL
+            case 75 :
+                // USE.g:1:473: GREATER_EQUAL
                 {
                 mGREATER_EQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 67 :
-                // USE.g:1:429: HASH
+            case 76 :
+                // USE.g:1:487: HASH
                 {
                 mHASH(); if (state.failed) return ;
 
                 }
                 break;
-            case 68 :
-                // USE.g:1:434: LBRACE
+            case 77 :
+                // USE.g:1:492: LBRACE
                 {
                 mLBRACE(); if (state.failed) return ;
 
                 }
                 break;
-            case 69 :
-                // USE.g:1:441: LBRACK
+            case 78 :
+                // USE.g:1:499: LBRACK
                 {
                 mLBRACK(); if (state.failed) return ;
 
                 }
                 break;
-            case 70 :
-                // USE.g:1:448: LESS
+            case 79 :
+                // USE.g:1:506: LESS
                 {
                 mLESS(); if (state.failed) return ;
 
                 }
                 break;
-            case 71 :
-                // USE.g:1:453: LESS_EQUAL
+            case 80 :
+                // USE.g:1:511: LESS_EQUAL
                 {
                 mLESS_EQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 72 :
-                // USE.g:1:464: LPAREN
+            case 81 :
+                // USE.g:1:522: LPAREN
                 {
                 mLPAREN(); if (state.failed) return ;
 
                 }
                 break;
-            case 73 :
-                // USE.g:1:471: MINUS
+            case 82 :
+                // USE.g:1:529: MINUS
                 {
                 mMINUS(); if (state.failed) return ;
 
                 }
                 break;
-            case 74 :
-                // USE.g:1:477: NOT_EQUAL
+            case 83 :
+                // USE.g:1:535: NOT_EQUAL
                 {
                 mNOT_EQUAL(); if (state.failed) return ;
 
                 }
                 break;
-            case 75 :
-                // USE.g:1:487: PLUS
+            case 84 :
+                // USE.g:1:545: PLUS
                 {
                 mPLUS(); if (state.failed) return ;
 
                 }
                 break;
-            case 76 :
-                // USE.g:1:492: RBRACE
+            case 85 :
+                // USE.g:1:550: RBRACE
                 {
                 mRBRACE(); if (state.failed) return ;
 
                 }
                 break;
-            case 77 :
-                // USE.g:1:499: RBRACK
+            case 86 :
+                // USE.g:1:557: RBRACK
                 {
                 mRBRACK(); if (state.failed) return ;
 
                 }
                 break;
-            case 78 :
-                // USE.g:1:506: RPAREN
+            case 87 :
+                // USE.g:1:564: RPAREN
                 {
                 mRPAREN(); if (state.failed) return ;
 
                 }
                 break;
-            case 79 :
-                // USE.g:1:513: SEMI
+            case 88 :
+                // USE.g:1:571: SEMI
                 {
                 mSEMI(); if (state.failed) return ;
 
                 }
                 break;
-            case 80 :
-                // USE.g:1:518: SLASH
+            case 89 :
+                // USE.g:1:576: SLASH
                 {
                 mSLASH(); if (state.failed) return ;
 
                 }
                 break;
-            case 81 :
-                // USE.g:1:524: STAR
+            case 90 :
+                // USE.g:1:582: STAR
                 {
                 mSTAR(); if (state.failed) return ;
 
                 }
                 break;
-            case 82 :
-                // USE.g:1:529: SCRIPTBODY
+            case 91 :
+                // USE.g:1:587: SCRIPTBODY
                 {
                 mSCRIPTBODY(); if (state.failed) return ;
 
                 }
                 break;
-            case 83 :
-                // USE.g:1:540: RANGE_OR_INT
+            case 92 :
+                // USE.g:1:598: RANGE_OR_INT
                 {
                 mRANGE_OR_INT(); if (state.failed) return ;
 
                 }
                 break;
-            case 84 :
-                // USE.g:1:553: STRING
+            case 93 :
+                // USE.g:1:611: STRING
                 {
                 mSTRING(); if (state.failed) return ;
 
                 }
                 break;
-            case 85 :
-                // USE.g:1:560: IDENT
+            case 94 :
+                // USE.g:1:618: IDENT
                 {
                 mIDENT(); if (state.failed) return ;
 
@@ -3409,8 +3670,8 @@ import java.util.HashMap;
 
     // $ANTLR start synpred1_USE
     public final void synpred1_USE_fragment() throws RecognitionException {   
-        // USE.g:1108:7: ( INT '..' )
-        // USE.g:1108:9: INT '..'
+        // USE.g:1686:7: ( INT '..' )
+        // USE.g:1686:9: INT '..'
         {
         mINT(); if (state.failed) return ;
         match(".."); if (state.failed) return ;
@@ -3422,8 +3683,8 @@ import java.util.HashMap;
 
     // $ANTLR start synpred2_USE
     public final void synpred2_USE_fragment() throws RecognitionException {   
-        // USE.g:1109:7: ( REAL )
-        // USE.g:1109:9: REAL
+        // USE.g:1687:7: ( REAL )
+        // USE.g:1687:9: REAL
         {
         mREAL(); if (state.failed) return ;
 
@@ -3463,101 +3724,113 @@ import java.util.HashMap;
 
     protected DFA19 dfa19 = new DFA19(this);
     static final String DFA19_eotS =
-        "\1\uffff\27\57\1\uffff\1\131\1\133\2\uffff\1\136\1\uffff\1\140\1"+
-        "\uffff\1\142\3\uffff\1\146\12\uffff\15\57\1\167\4\57\1\175\2\57"+
-        "\1\u0080\21\57\20\uffff\5\57\1\u009a\6\57\1\u00a1\3\57\1\uffff\4"+
-        "\57\1\u00ac\1\uffff\2\57\1\uffff\1\u00af\1\57\1\u00b1\1\u00b2\1"+
-        "\u00b3\1\u00b4\4\57\1\u00b9\1\57\1\u00bb\12\57\1\u00c6\1\57\1\uffff"+
-        "\1\57\1\u00c9\4\57\1\uffff\12\57\1\uffff\2\57\1\uffff\1\u00da\4"+
-        "\uffff\1\u00db\1\u00dc\1\u00dd\1\57\1\uffff\1\57\1\uffff\3\57\1"+
-        "\u00e3\1\57\1\u00e5\3\57\1\u00e9\1\uffff\1\u00ea\1\57\1\uffff\20"+
-        "\57\4\uffff\1\u00fd\3\57\1\u0101\1\uffff\1\57\1\uffff\3\57\2\uffff"+
-        "\22\57\1\uffff\3\57\1\uffff\2\57\1\u011d\10\57\1\u0126\5\57\1\u012c"+
-        "\1\u012d\1\57\1\u012f\1\u0130\5\57\1\uffff\2\57\1\u0138\5\57\1\uffff"+
-        "\3\57\1\u0141\1\57\2\uffff\1\57\2\uffff\1\u0144\6\57\1\uffff\5\57"+
-        "\1\u0150\2\57\1\uffff\1\57\1\u0154\1\uffff\1\57\1\u0156\4\57\1\u015b"+
-        "\3\57\1\u015f\1\uffff\3\57\1\uffff\1\u0163\1\uffff\1\u0164\1\u0165"+
-        "\1\u0166\1\u0167\1\uffff\1\57\1\u016a\1\57\1\uffff\1\u016c\1\u016d"+
-        "\1\57\5\uffff\2\57\1\uffff\1\u0171\2\uffff\1\u0172\2\57\2\uffff"+
-        "\4\57\1\u0179\1\u017a\2\uffff";
+        "\1\uffff\27\57\1\uffff\1\136\1\140\2\uffff\1\143\1\uffff\1\145\1"+
+        "\uffff\1\147\3\uffff\1\153\12\uffff\15\57\1\174\4\57\1\u0085\2\57"+
+        "\1\u0088\6\57\1\u0090\17\57\20\uffff\5\57\1\u00a8\6\57\1\u00af\3"+
+        "\57\1\uffff\5\57\1\u00bb\2\57\1\uffff\2\57\1\uffff\1\u00c0\1\57"+
+        "\1\u00c2\1\u00c3\1\u00c4\2\57\1\uffff\1\u00c7\1\57\1\u00c9\4\57"+
+        "\1\u00ce\1\u00cf\1\57\1\u00d1\12\57\1\u00dc\1\57\1\uffff\1\57\1"+
+        "\u00df\4\57\1\uffff\13\57\1\uffff\1\57\1\u00f0\2\57\1\uffff\1\u00f3"+
+        "\3\uffff\2\57\1\uffff\1\u00f6\1\uffff\1\u00f7\1\u00f8\1\57\1\u00fa"+
+        "\2\uffff\1\57\1\uffff\3\57\1\u00ff\1\57\1\u0101\3\57\1\u0105\1\uffff"+
+        "\1\u0106\1\57\1\uffff\14\57\1\u0115\3\57\1\uffff\2\57\1\uffff\2"+
+        "\57\3\uffff\1\u011d\1\uffff\3\57\1\u0121\1\uffff\1\57\1\uffff\3"+
+        "\57\2\uffff\16\57\1\uffff\2\57\1\u0136\3\57\1\u013a\1\uffff\3\57"+
+        "\1\uffff\2\57\1\u0140\10\57\1\u0149\5\57\1\u014f\1\u0150\1\57\1"+
+        "\uffff\1\u0152\1\u0153\1\u0154\1\uffff\5\57\1\uffff\2\57\1\u015c"+
+        "\5\57\1\uffff\3\57\1\u0165\1\57\2\uffff\1\57\3\uffff\1\u0168\6\57"+
+        "\1\uffff\5\57\1\u0174\2\57\1\uffff\1\57\1\u0178\1\uffff\1\57\1\u017a"+
+        "\4\57\1\u017f\3\57\1\u0183\1\uffff\3\57\1\uffff\1\u0187\1\uffff"+
+        "\1\u0188\1\u0189\1\u018a\1\u018b\1\uffff\1\57\1\u018e\1\57\1\uffff"+
+        "\1\u0190\1\u0191\1\57\5\uffff\2\57\1\uffff\1\u0195\2\uffff\1\u0196"+
+        "\2\57\2\uffff\4\57\1\u019d\1\u019e\2\uffff";
     static final String DFA19_eofS =
-        "\u017b\uffff";
+        "\u019f\uffff";
     static final String DFA19_minS =
         "\1\11\1\157\2\154\1\142\1\143\1\145\1\165\1\145\1\146\1\157\1\145"+
-        "\1\157\1\151\1\157\1\150\1\141\1\145\1\141\1\162\1\156\1\165\1\141"+
-        "\1\157\1\uffff\1\52\1\55\2\uffff\1\72\1\uffff\1\56\1\uffff\1\75"+
-        "\3\uffff\1\74\12\uffff\1\144\1\155\1\141\1\144\1\151\2\163\1\164"+
-        "\1\163\1\147\1\144\1\154\1\145\1\60\1\154\1\164\1\142\1\144\1\60"+
-        "\1\160\1\145\1\60\1\145\1\163\1\164\1\162\1\166\1\164\1\154\1\145"+
-        "\1\165\1\154\1\161\1\147\2\144\1\160\1\164\1\154\20\uffff\1\145"+
-        "\1\163\1\160\1\163\1\155\1\60\1\163\1\145\1\164\1\162\1\157\1\162"+
-        "\1\60\1\111\1\162\1\145\1\uffff\1\101\1\167\1\163\1\145\1\60\1\uffff"+
-        "\1\154\1\162\1\uffff\1\60\1\164\4\60\1\154\1\156\1\145\1\163\1\60"+
-        "\1\165\1\60\2\145\1\154\1\145\2\154\1\164\1\145\1\157\1\163\1\60"+
-        "\1\146\1\uffff\1\164\1\60\1\162\1\151\1\143\1\145\1\uffff\1\156"+
-        "\1\141\1\162\2\163\1\155\1\156\2\145\1\146\1\uffff\1\151\1\141\1"+
-        "\uffff\1\60\4\uffff\3\60\1\145\1\uffff\1\145\1\uffff\1\162\1\146"+
-        "\1\145\1\60\1\145\1\60\1\162\1\170\1\163\1\60\1\uffff\1\60\1\145"+
-        "\1\uffff\1\141\1\142\1\151\1\147\1\163\1\164\1\145\1\124\1\113\1"+
-        "\160\1\144\1\145\1\164\1\151\1\145\1\164\4\uffff\1\60\1\156\1\145"+
-        "\1\151\1\60\1\uffff\1\143\1\uffff\1\141\1\164\1\151\2\uffff\1\156"+
-        "\1\143\1\165\2\141\1\164\1\151\1\144\1\171\1\151\1\171\1\164\1\145"+
-        "\1\156\1\163\1\156\1\163\1\145\1\uffff\1\143\1\144\1\156\1\uffff"+
-        "\1\164\1\151\1\60\6\164\1\141\1\157\1\60\1\160\1\156\1\160\1\171"+
-        "\1\146\2\60\1\145\2\60\1\145\1\123\1\145\1\151\1\156\1\uffff\2\151"+
-        "\1\60\1\145\2\151\2\156\1\uffff\1\145\1\144\1\145\1\60\1\151\2\uffff"+
-        "\1\163\2\uffff\1\60\1\145\1\144\1\157\1\164\1\157\1\141\1\uffff"+
-        "\1\163\2\157\1\143\1\163\1\60\2\117\1\uffff\1\156\1\60\1\uffff\1"+
-        "\164\1\60\1\156\1\163\1\156\1\154\1\60\2\156\1\145\1\60\1\uffff"+
-        "\2\146\1\145\1\uffff\1\60\1\uffff\4\60\1\uffff\1\103\1\60\1\163"+
-        "\1\uffff\2\60\1\144\5\uffff\2\154\1\uffff\1\60\2\uffff\1\60\2\141"+
-        "\2\uffff\4\163\2\60\2\uffff";
+        "\1\157\2\145\1\150\1\141\1\145\1\141\1\162\1\156\1\165\1\141\1\157"+
+        "\1\uffff\1\52\1\55\2\uffff\1\72\1\uffff\1\56\1\uffff\1\75\3\uffff"+
+        "\1\74\12\uffff\1\144\1\155\1\141\1\144\1\151\2\163\1\164\1\163\1"+
+        "\147\1\144\1\154\1\145\1\60\1\154\1\147\1\142\1\144\1\60\1\160\1"+
+        "\145\1\60\1\145\1\163\1\164\1\162\1\166\1\154\1\60\1\164\1\154\1"+
+        "\167\1\145\1\165\1\154\1\157\1\162\1\161\1\147\2\144\1\160\1\164"+
+        "\1\154\20\uffff\1\145\1\163\1\160\1\163\1\155\1\60\1\163\1\145\1"+
+        "\164\1\162\1\157\1\162\1\60\1\111\1\162\1\145\1\uffff\1\101\1\167"+
+        "\1\151\1\163\1\145\1\60\1\145\1\157\1\uffff\1\154\1\162\1\uffff"+
+        "\1\60\1\164\3\60\1\164\1\145\1\uffff\1\60\1\154\1\60\1\156\1\145"+
+        "\1\163\1\155\2\60\1\165\1\60\2\145\1\154\1\145\2\154\1\164\1\145"+
+        "\1\157\1\163\1\60\1\146\1\uffff\1\164\1\60\1\162\1\151\1\143\1\145"+
+        "\1\uffff\1\156\1\141\1\162\2\163\1\155\1\156\1\145\1\156\1\145\1"+
+        "\146\1\uffff\1\162\1\60\1\151\1\141\1\uffff\1\60\3\uffff\1\162\1"+
+        "\164\1\uffff\1\60\1\uffff\2\60\1\145\1\60\2\uffff\1\145\1\uffff"+
+        "\1\162\1\146\1\145\1\60\1\145\1\60\1\162\1\170\1\163\1\60\1\uffff"+
+        "\1\60\1\145\1\uffff\1\141\1\142\1\151\1\147\1\163\1\164\1\145\1"+
+        "\124\1\113\1\160\1\144\1\145\1\60\1\164\1\151\1\164\1\uffff\1\145"+
+        "\1\164\1\uffff\1\157\1\145\3\uffff\1\60\1\uffff\1\156\1\145\1\151"+
+        "\1\60\1\uffff\1\143\1\uffff\1\141\1\164\1\151\2\uffff\1\156\1\143"+
+        "\1\165\2\141\1\164\1\151\1\144\1\171\1\151\1\171\1\164\1\145\1\156"+
+        "\1\uffff\1\163\1\156\1\60\1\163\1\145\1\171\1\60\1\uffff\1\143\1"+
+        "\144\1\156\1\uffff\1\164\1\151\1\60\6\164\1\141\1\157\1\60\1\160"+
+        "\1\156\1\160\1\171\1\146\2\60\1\145\1\uffff\3\60\1\uffff\1\145\1"+
+        "\123\1\145\1\151\1\156\1\uffff\2\151\1\60\1\145\2\151\2\156\1\uffff"+
+        "\1\145\1\144\1\145\1\60\1\151\2\uffff\1\163\3\uffff\1\60\1\145\1"+
+        "\144\1\157\1\164\1\157\1\141\1\uffff\1\163\2\157\1\143\1\163\1\60"+
+        "\2\117\1\uffff\1\156\1\60\1\uffff\1\164\1\60\1\156\1\163\1\156\1"+
+        "\154\1\60\2\156\1\145\1\60\1\uffff\2\146\1\145\1\uffff\1\60\1\uffff"+
+        "\4\60\1\uffff\1\103\1\60\1\163\1\uffff\2\60\1\144\5\uffff\2\154"+
+        "\1\uffff\1\60\2\uffff\1\60\2\141\2\uffff\4\163\2\60\2\uffff";
     static final String DFA19_maxS =
         "\1\175\2\157\1\170\1\164\1\162\1\145\1\165\1\145\1\164\1\162\1\145"+
-        "\1\157\1\151\1\165\1\162\1\141\1\145\1\141\1\162\1\156\1\165\1\141"+
-        "\1\157\1\uffff\1\57\1\76\2\uffff\1\75\1\uffff\1\56\1\uffff\1\75"+
-        "\3\uffff\1\76\12\uffff\1\144\1\156\1\141\1\165\1\151\2\163\1\164"+
-        "\1\163\1\147\1\144\1\154\1\145\1\172\1\154\1\164\1\142\1\144\1\172"+
-        "\1\160\1\145\1\172\1\145\1\163\1\164\1\162\1\166\1\164\1\154\1\145"+
-        "\1\165\1\154\1\164\1\147\2\144\1\160\1\164\1\154\20\uffff\1\145"+
-        "\1\164\1\160\1\163\1\155\1\172\1\163\1\145\1\164\1\162\1\157\1\162"+
-        "\1\172\1\111\1\162\1\145\1\uffff\1\125\1\167\1\163\1\145\1\172\1"+
-        "\uffff\1\154\1\162\1\uffff\1\172\1\164\4\172\1\154\1\156\1\145\1"+
-        "\163\1\172\1\165\1\172\2\145\1\154\1\145\2\154\1\164\1\145\1\157"+
+        "\2\157\1\165\2\162\1\145\1\141\1\162\1\156\1\165\1\141\1\157\1\uffff"+
+        "\1\57\1\76\2\uffff\1\75\1\uffff\1\56\1\uffff\1\75\3\uffff\1\76\12"+
+        "\uffff\1\144\1\156\1\141\1\165\1\151\2\163\1\164\1\163\1\147\1\144"+
+        "\1\154\1\145\1\172\1\154\1\164\1\142\1\144\1\172\1\160\1\145\1\172"+
+        "\1\145\1\163\1\164\1\162\1\166\1\163\1\172\1\164\1\154\1\167\1\145"+
+        "\1\165\1\154\1\157\1\162\1\164\1\147\2\144\1\160\1\164\1\154\20"+
+        "\uffff\1\145\1\164\1\160\1\163\1\155\1\172\1\163\1\145\1\164\1\162"+
+        "\1\157\1\162\1\172\1\111\1\162\1\145\1\uffff\1\125\1\167\1\151\1"+
+        "\163\1\145\1\172\1\145\1\157\1\uffff\1\154\1\162\1\uffff\1\172\1"+
+        "\164\3\172\1\164\1\145\1\uffff\1\172\1\154\1\172\1\156\1\145\1\163"+
+        "\1\155\2\172\1\165\1\172\2\145\1\154\1\145\2\154\1\164\1\145\1\157"+
         "\1\163\1\172\1\146\1\uffff\1\164\1\172\1\162\1\151\1\143\1\145\1"+
-        "\uffff\1\156\1\141\1\162\2\163\1\155\1\156\2\145\1\146\1\uffff\1"+
-        "\151\1\141\1\uffff\1\172\4\uffff\3\172\1\145\1\uffff\1\145\1\uffff"+
-        "\1\162\1\146\1\145\1\172\1\145\1\172\1\162\1\170\1\163\1\172\1\uffff"+
+        "\uffff\1\156\1\141\1\162\2\163\1\155\1\156\1\145\1\156\1\145\1\146"+
+        "\1\uffff\1\162\1\172\1\151\1\141\1\uffff\1\172\3\uffff\1\162\1\164"+
+        "\1\uffff\1\172\1\uffff\2\172\1\145\1\172\2\uffff\1\145\1\uffff\1"+
+        "\162\1\146\1\145\1\172\1\145\1\172\1\162\1\170\1\163\1\172\1\uffff"+
         "\1\172\1\145\1\uffff\1\141\1\142\1\151\1\147\1\163\1\164\1\145\2"+
-        "\124\1\160\1\144\1\145\1\164\1\151\1\145\1\164\4\uffff\1\172\1\156"+
-        "\1\145\1\151\1\172\1\uffff\1\143\1\uffff\1\141\1\164\1\151\2\uffff"+
-        "\1\156\1\143\1\165\2\141\1\164\1\151\1\144\1\171\1\151\1\171\1\164"+
-        "\1\145\1\156\1\163\1\156\1\163\1\145\1\uffff\1\143\1\144\1\156\1"+
-        "\uffff\1\164\1\151\1\172\6\164\1\141\1\157\1\172\1\160\1\156\1\160"+
-        "\1\171\1\146\2\172\1\145\2\172\1\145\1\123\1\145\1\151\1\156\1\uffff"+
-        "\2\151\1\172\1\145\2\151\2\156\1\uffff\1\145\1\144\1\145\1\172\1"+
-        "\151\2\uffff\1\163\2\uffff\1\172\1\145\1\144\1\157\1\164\1\157\1"+
-        "\141\1\uffff\1\163\2\157\1\143\1\163\1\172\2\117\1\uffff\1\156\1"+
-        "\172\1\uffff\1\164\1\172\1\156\1\163\1\156\1\154\1\172\2\156\1\145"+
-        "\1\172\1\uffff\2\146\1\145\1\uffff\1\172\1\uffff\4\172\1\uffff\1"+
-        "\143\1\172\1\163\1\uffff\2\172\1\144\5\uffff\2\154\1\uffff\1\172"+
-        "\2\uffff\1\172\2\141\2\uffff\4\163\2\172\2\uffff";
+        "\124\1\160\1\144\1\145\1\172\1\164\1\151\1\164\1\uffff\1\145\1\164"+
+        "\1\uffff\1\157\1\145\3\uffff\1\172\1\uffff\1\156\1\145\1\151\1\172"+
+        "\1\uffff\1\143\1\uffff\1\141\1\164\1\151\2\uffff\1\156\1\143\1\165"+
+        "\2\141\1\164\1\151\1\144\1\171\1\151\1\171\1\164\1\145\1\156\1\uffff"+
+        "\1\163\1\156\1\172\1\163\1\145\1\171\1\172\1\uffff\1\143\1\144\1"+
+        "\156\1\uffff\1\164\1\151\1\172\6\164\1\141\1\157\1\172\1\160\1\156"+
+        "\1\160\1\171\1\146\2\172\1\145\1\uffff\3\172\1\uffff\1\145\1\123"+
+        "\1\145\1\151\1\156\1\uffff\2\151\1\172\1\145\2\151\2\156\1\uffff"+
+        "\1\145\1\144\1\145\1\172\1\151\2\uffff\1\163\3\uffff\1\172\1\145"+
+        "\1\144\1\157\1\164\1\157\1\141\1\uffff\1\163\2\157\1\143\1\163\1"+
+        "\172\2\117\1\uffff\1\156\1\172\1\uffff\1\164\1\172\1\156\1\163\1"+
+        "\156\1\154\1\172\2\156\1\145\1\172\1\uffff\2\146\1\145\1\uffff\1"+
+        "\172\1\uffff\4\172\1\uffff\1\143\1\172\1\163\1\uffff\2\172\1\144"+
+        "\5\uffff\2\154\1\uffff\1\172\2\uffff\1\172\2\141\2\uffff\4\163\2"+
+        "\172\2\uffff";
     static final String DFA19_acceptS =
-        "\30\uffff\1\64\2\uffff\1\70\1\71\1\uffff\1\75\1\uffff\1\100\1\uffff"+
-        "\1\103\1\104\1\105\1\uffff\1\110\1\113\1\114\1\115\1\116\1\117\1"+
-        "\121\1\123\1\124\1\125\47\uffff\1\65\1\66\1\120\1\67\1\111\1\73"+
-        "\1\74\1\72\1\77\1\76\1\102\1\101\1\107\1\112\1\122\1\106\20\uffff"+
-        "\1\31\5\uffff\1\27\2\uffff\1\43\31\uffff\1\10\6\uffff\1\33\12\uffff"+
-        "\1\22\2\uffff\1\24\1\uffff\1\26\1\32\1\34\1\35\4\uffff\1\51\1\uffff"+
-        "\1\53\12\uffff\1\3\2\uffff\1\45\20\uffff\1\25\1\60\1\44\1\47\5\uffff"+
-        "\1\62\1\uffff\1\1\3\uffff\1\5\1\46\22\uffff\1\50\3\uffff\1\61\33"+
-        "\uffff\1\21\10\uffff\1\16\5\uffff\1\13\1\17\1\uffff\1\30\1\37\7"+
-        "\uffff\1\4\10\uffff\1\55\2\uffff\1\52\13\uffff\1\40\3\uffff\1\20"+
-        "\1\uffff\1\57\4\uffff\1\6\3\uffff\1\7\3\uffff\1\54\1\63\1\2\1\15"+
-        "\1\23\2\uffff\1\14\1\uffff\1\41\1\42\3\uffff\1\36\1\56\6\uffff\1"+
-        "\11\1\12";
+        "\30\uffff\1\75\2\uffff\1\101\1\102\1\uffff\1\106\1\uffff\1\111\1"+
+        "\uffff\1\114\1\115\1\116\1\uffff\1\121\1\124\1\125\1\126\1\127\1"+
+        "\130\1\132\1\134\1\135\1\136\54\uffff\1\76\1\77\1\131\1\100\1\122"+
+        "\1\104\1\105\1\103\1\110\1\107\1\113\1\112\1\120\1\123\1\133\1\117"+
+        "\20\uffff\1\32\10\uffff\1\30\2\uffff\1\44\7\uffff\1\74\27\uffff"+
+        "\1\10\6\uffff\1\34\13\uffff\1\23\4\uffff\1\25\1\uffff\1\27\1\33"+
+        "\1\35\2\uffff\1\36\1\uffff\1\65\4\uffff\1\73\1\52\1\uffff\1\54\12"+
+        "\uffff\1\3\2\uffff\1\46\20\uffff\1\70\2\uffff\1\26\2\uffff\1\61"+
+        "\1\45\1\50\1\uffff\1\72\4\uffff\1\63\1\uffff\1\1\3\uffff\1\5\1\47"+
+        "\16\uffff\1\16\7\uffff\1\51\3\uffff\1\62\24\uffff\1\67\3\uffff\1"+
+        "\71\5\uffff\1\22\10\uffff\1\17\5\uffff\1\13\1\20\1\uffff\1\31\1"+
+        "\40\1\66\7\uffff\1\4\10\uffff\1\56\2\uffff\1\53\13\uffff\1\41\3"+
+        "\uffff\1\21\1\uffff\1\60\4\uffff\1\6\3\uffff\1\7\3\uffff\1\55\1"+
+        "\64\1\2\1\15\1\24\2\uffff\1\14\1\uffff\1\42\1\43\3\uffff\1\37\1"+
+        "\57\6\uffff\1\11\1\12";
     static final String DFA19_specialS =
-        "\u017b\uffff}>";
+        "\u019f\uffff}>";
     static final String[] DFA19_transitionS = {
             "\2\30\1\uffff\2\30\22\uffff\1\30\2\uffff\1\42\1\57\2\uffff\1"+
             "\56\1\46\1\52\1\54\1\47\1\36\1\32\1\37\1\31\12\55\1\35\1\53"+
@@ -3578,231 +3851,219 @@ import java.util.HashMap;
             "\1\107\2\uffff\1\106",
             "\1\110",
             "\1\111",
-            "\1\112",
-            "\1\113\5\uffff\1\114",
-            "\1\115\11\uffff\1\116",
-            "\1\117",
-            "\1\120",
-            "\1\121",
-            "\1\122",
-            "\1\123",
-            "\1\124",
+            "\1\113\3\uffff\1\112\5\uffff\1\114",
+            "\1\117\11\uffff\1\115\5\uffff\1\116",
+            "\1\120\11\uffff\1\121",
+            "\1\122\15\uffff\1\124\2\uffff\1\123",
             "\1\125",
             "\1\126",
+            "\1\127",
+            "\1\130",
+            "\1\131",
+            "\1\132",
+            "\1\133",
             "",
-            "\1\130\4\uffff\1\127",
-            "\1\127\20\uffff\1\132",
-            "",
-            "",
-            "\1\134\2\uffff\1\135",
-            "",
-            "\1\137",
-            "",
-            "\1\141",
+            "\1\135\4\uffff\1\134",
+            "\1\134\20\uffff\1\137",
             "",
             "",
+            "\1\141\2\uffff\1\142",
             "",
-            "\1\145\1\143\1\144",
+            "\1\144",
             "",
-            "",
-            "",
+            "\1\146",
             "",
             "",
             "",
+            "\1\152\1\150\1\151",
             "",
             "",
             "",
             "",
-            "\1\147",
-            "\1\151\1\150",
-            "\1\152",
-            "\1\154\20\uffff\1\153",
-            "\1\155",
-            "\1\156",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\154",
+            "\1\156\1\155",
             "\1\157",
-            "\1\160",
-            "\1\161",
+            "\1\161\20\uffff\1\160",
             "\1\162",
             "\1\163",
             "\1\164",
             "\1\165",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\3\57\1\166\26\57",
+            "\1\166",
+            "\1\167",
             "\1\170",
             "\1\171",
             "\1\172",
-            "\1\173",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\25\57\1\174\4\57",
-            "\1\176",
-            "\1\177",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\3\57\1\173\26\57",
+            "\1\175",
+            "\1\177\14\uffff\1\176",
+            "\1\u0080",
             "\1\u0081",
-            "\1\u0082",
-            "\1\u0083",
-            "\1\u0084",
-            "\1\u0085",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\22\57\1\u0083\1\u0084"+
+            "\1\57\1\u0082\4\57",
             "\1\u0086",
             "\1\u0087",
-            "\1\u0088",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u0089",
             "\1\u008a",
-            "\1\u008c\2\uffff\1\u008b",
+            "\1\u008b",
+            "\1\u008c",
             "\1\u008d",
-            "\1\u008e",
-            "\1\u008f",
-            "\1\u0090",
+            "\1\u008f\6\uffff\1\u008e",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u0091",
             "\1\u0092",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "\1\u0093",
-            "\1\u0094\1\u0095",
+            "\1\u0094",
+            "\1\u0095",
             "\1\u0096",
             "\1\u0097",
             "\1\u0098",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\10\57\1\u0099\21"+
-            "\57",
+            "\1\u009a\2\uffff\1\u0099",
             "\1\u009b",
             "\1\u009c",
             "\1\u009d",
             "\1\u009e",
             "\1\u009f",
             "\1\u00a0",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\1\u00a2",
-            "\1\u00a3",
-            "\1\u00a4",
             "",
-            "\1\u00a5\3\uffff\1\u00a7\3\uffff\1\u00a6\13\uffff\1\u00a8",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\u00a1",
+            "\1\u00a2\1\u00a3",
+            "\1\u00a4",
+            "\1\u00a5",
+            "\1\u00a6",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\10\57\1\u00a7\21"+
+            "\57",
             "\1\u00a9",
             "\1\u00aa",
             "\1\u00ab",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "",
+            "\1\u00ac",
             "\1\u00ad",
             "\1\u00ae",
-            "",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00b0",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\1\u00b5",
-            "\1\u00b6",
+            "\1\u00b1",
+            "\1\u00b2",
+            "",
+            "\1\u00b3\3\uffff\1\u00b5\3\uffff\1\u00b4\13\uffff\1\u00b6",
             "\1\u00b7",
             "\1\u00b8",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u00b9",
             "\1\u00ba",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00bc",
             "\1\u00bd",
+            "",
             "\1\u00be",
             "\1\u00bf",
-            "\1\u00c0",
-            "\1\u00c1",
-            "\1\u00c2",
-            "\1\u00c3",
-            "\1\u00c4",
-            "\1\u00c5",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\1\u00c7",
             "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u00c1",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u00c5",
+            "\1\u00c6",
+            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00c8",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00ca",
             "\1\u00cb",
             "\1\u00cc",
             "\1\u00cd",
-            "",
-            "\1\u00ce",
-            "\1\u00cf",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00d0",
-            "\1\u00d1",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00d2",
             "\1\u00d3",
             "\1\u00d4",
             "\1\u00d5",
             "\1\u00d6",
             "\1\u00d7",
-            "",
             "\1\u00d8",
             "\1\u00d9",
-            "",
+            "\1\u00da",
+            "\1\u00db",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u00dd",
             "",
-            "",
-            "",
-            "",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00de",
-            "",
-            "\1\u00df",
-            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00e0",
             "\1\u00e1",
             "\1\u00e2",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u00e3",
+            "",
             "\1\u00e4",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u00e5",
             "\1\u00e6",
             "\1\u00e7",
             "\1\u00e8",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u00e9",
+            "\1\u00ea",
             "\1\u00eb",
-            "",
             "\1\u00ec",
             "\1\u00ed",
             "\1\u00ee",
+            "",
             "\1\u00ef",
-            "\1\u00f0",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u00f1",
             "\1\u00f2",
-            "\1\u00f3",
-            "\1\u00f4\10\uffff\1\u00f5",
-            "\1\u00f6",
-            "\1\u00f7",
-            "\1\u00f8",
-            "\1\u00f9",
-            "\1\u00fa",
-            "\1\u00fb",
-            "\1\u00fc",
-            "",
-            "",
-            "",
             "",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "",
+            "",
+            "\1\u00f4",
+            "\1\u00f5",
+            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u00f9",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "",
+            "\1\u00fb",
+            "",
+            "\1\u00fc",
+            "\1\u00fd",
             "\1\u00fe",
-            "\1\u00ff",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u0100",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "",
             "\1\u0102",
-            "",
             "\1\u0103",
             "\1\u0104",
-            "\1\u0105",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "",
-            "",
-            "\1\u0106",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u0107",
+            "",
             "\1\u0108",
             "\1\u0109",
             "\1\u010a",
@@ -3811,136 +4072,185 @@ import java.util.HashMap;
             "\1\u010d",
             "\1\u010e",
             "\1\u010f",
-            "\1\u0110",
-            "\1\u0111",
+            "\1\u0110\10\uffff\1\u0111",
             "\1\u0112",
             "\1\u0113",
             "\1\u0114",
-            "\1\u0115",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u0116",
             "\1\u0117",
-            "",
             "\1\u0118",
+            "",
             "\1\u0119",
             "\1\u011a",
             "",
             "\1\u011b",
             "\1\u011c",
+            "",
+            "",
+            "",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
             "\1\u011e",
             "\1\u011f",
             "\1\u0120",
-            "\1\u0121",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
             "\1\u0122",
+            "",
             "\1\u0123",
             "\1\u0124",
             "\1\u0125",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "",
+            "\1\u0126",
             "\1\u0127",
             "\1\u0128",
             "\1\u0129",
             "\1\u012a",
             "\1\u012b",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u012c",
+            "\1\u012d",
             "\1\u012e",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u012f",
+            "\1\u0130",
             "\1\u0131",
             "\1\u0132",
             "\1\u0133",
+            "",
             "\1\u0134",
             "\1\u0135",
-            "",
-            "\1\u0136",
-            "\1\u0137",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0137",
+            "\1\u0138",
             "\1\u0139",
-            "\1\u013a",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
             "\1\u013b",
             "\1\u013c",
             "\1\u013d",
             "",
             "\1\u013e",
             "\1\u013f",
-            "\1\u0140",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0141",
             "\1\u0142",
-            "",
-            "",
             "\1\u0143",
-            "",
-            "",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0144",
             "\1\u0145",
             "\1\u0146",
             "\1\u0147",
             "\1\u0148",
-            "\1\u0149",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u014a",
-            "",
             "\1\u014b",
             "\1\u014c",
             "\1\u014d",
             "\1\u014e",
-            "\1\u014f",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u0151",
-            "\1\u0152",
             "",
-            "\1\u0153",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "",
             "\1\u0155",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0156",
             "\1\u0157",
             "\1\u0158",
             "\1\u0159",
+            "",
             "\1\u015a",
+            "\1\u015b",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\1\u015c",
             "\1\u015d",
             "\1\u015e",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "",
+            "\1\u015f",
             "\1\u0160",
             "\1\u0161",
+            "",
             "\1\u0162",
+            "\1\u0163",
+            "\1\u0164",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0166",
+            "",
+            "",
+            "\1\u0167",
+            "",
+            "",
             "",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "",
-            "\1\u0168\37\uffff\1\u0169",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0169",
+            "\1\u016a",
             "\1\u016b",
-            "",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u016c",
+            "\1\u016d",
             "\1\u016e",
-            "",
-            "",
-            "",
-            "",
             "",
             "\1\u016f",
             "\1\u0170",
-            "",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
-            "",
-            "",
-            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0171",
+            "\1\u0172",
             "\1\u0173",
-            "\1\u0174",
-            "",
-            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\1\u0175",
             "\1\u0176",
+            "",
             "\1\u0177",
-            "\1\u0178",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "\1\u0179",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u017b",
+            "\1\u017c",
+            "\1\u017d",
+            "\1\u017e",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0180",
+            "\1\u0181",
+            "\1\u0182",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "\1\u0184",
+            "\1\u0185",
+            "\1\u0186",
+            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "\1\u018c\37\uffff\1\u018d",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u018f",
+            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0192",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\u0193",
+            "\1\u0194",
+            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "",
+            "",
+            "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
+            "\1\u0197",
+            "\1\u0198",
+            "",
+            "",
+            "\1\u0199",
+            "\1\u019a",
+            "\1\u019b",
+            "\1\u019c",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "\12\57\7\uffff\32\57\4\uffff\1\57\1\uffff\32\57",
             "",
@@ -3977,7 +4287,7 @@ import java.util.HashMap;
             this.transition = DFA19_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | T__80 | T__81 | T__82 | T__83 | T__84 | T__85 | T__86 | T__87 | T__88 | T__89 | T__90 | T__91 | T__92 | T__93 | T__94 | WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | SCRIPTBODY | RANGE_OR_INT | STRING | IDENT );";
+            return "1:1: Tokens : ( T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | T__80 | T__81 | T__82 | T__83 | T__84 | T__85 | T__86 | T__87 | T__88 | T__89 | T__90 | T__91 | T__92 | T__93 | T__94 | T__95 | T__96 | T__97 | T__98 | T__99 | T__100 | T__101 | T__102 | T__103 | WS | SL_COMMENT | ML_COMMENT | ARROW | AT | BAR | COLON | COLON_COLON | COLON_EQUAL | COMMA | DOT | DOTDOT | EQUAL | GREATER | GREATER_EQUAL | HASH | LBRACE | LBRACK | LESS | LESS_EQUAL | LPAREN | MINUS | NOT_EQUAL | PLUS | RBRACE | RBRACK | RPAREN | SEMI | SLASH | STAR | SCRIPTBODY | RANGE_OR_INT | STRING | IDENT );";
         }
     }
  

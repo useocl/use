@@ -21,13 +21,15 @@
 
 package org.tzi.use.main;
 
-import java.util.*;
+import java.util.EventListener;
+import java.util.EventObject;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
-import org.tzi.use.uml.sys.MCmd;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 /**
  * A session manages a system and its model. System and model may
@@ -40,29 +42,21 @@ public class Session {
     private MSystem fSystem;
     private EventListenerList fListenerList;
 
-    /**
-     * Event triggered when a command has been executed.
-     */
-    public class ExecutedCmd extends EventObject {
-    	/**
-    	 * To get rid of the warning...
-    	 */
-    	private static final long serialVersionUID = 1L;
-    	
-        private MCmd fCmd;
-        public ExecutedCmd(Object source, MCmd cmd) {
-            super(source);
-            fCmd = cmd;
-        }
-        public MCmd cmd() {
-            return fCmd;
-        }
-    }
+    public class EvaluatedStatement extends EventObject {
+		private static final long serialVersionUID = 1L;
 
-    public interface ExecutedCmdListener extends EventListener {
-        void executedCmd(Session.ExecutedCmd event);
-    }
+		public EvaluatedStatement(Object source) {
+			super(source);
 
+		}    	
+    }
+    
+    public interface EvaluatedStatementListener extends EventListener {
+    	void evaluatedStatement(EvaluatedStatement event);
+    }
+    
+    
+    
     public Session() {
         fListenerList = new EventListenerList();
     }
@@ -83,12 +77,8 @@ public class Session {
         return fSystem != null;
     }
 
-    /**
-     * Raises executed event
-     * @param cmd
-     */
-    public void executedCmd(MCmd cmd) {
-        fireExecutedCmd(cmd);
+    public void evaluatedStatement(MStatement statement) {
+    	fireEvaluatedStatement(statement);
     }
 
     /**
@@ -120,12 +110,12 @@ public class Session {
         fListenerList.remove(ChangeListener.class, l);
     }
 
-    public void addExecutedCmdListener(ExecutedCmdListener l) {
-        fListenerList.add(ExecutedCmdListener.class, l);
+    public void addEvaluatedStatementListener(EvaluatedStatementListener l) {
+    	fListenerList.add(EvaluatedStatementListener.class, l);
     }
-
-    public void removeExecutedCmdListener(ExecutedCmdListener l) {
-        fListenerList.remove(ExecutedCmdListener.class, l);
+    
+    public void removeEvaluatedStatementListener(EvaluatedStatementListener l) {
+    	fListenerList.remove(EvaluatedStatementListener.class, l);
     }
     
     /**
@@ -147,27 +137,29 @@ public class Session {
                 // System.out.println("Notifying: " + ((ChangeListener) listeners[i+1]).getClass());
             }          
         }
-    }
-
+    } 
+    
     /**
-     * Notify all listeners that have registered interest for
-     * notification on this event type.  
+     * TODO
+     * @param statement
      */
-    private void fireExecutedCmd(MCmd cmd) {
-        // Guaranteed to return a non-null array
-        Object[] listeners = fListenerList.getListenerList();
-        // Process the listeners last to first, notifying
-        // those that are interested in this event
-        ExecutedCmd event = null;
-        for (int i = listeners.length-2; i >= 0; i -= 2) {
-            if (listeners[i] == ExecutedCmdListener.class ) {
-                if (event == null )
-                    event = new ExecutedCmd(this, cmd);
-                ((ExecutedCmdListener) listeners[i+1]).executedCmd(event);
+    private void fireEvaluatedStatement(MStatement statement) {
+    	Object[] listeners = fListenerList.getListenerList();
+    	EvaluatedStatement event = null;
+
+    	for (int i = (listeners.length - 2); i >= 0; i -= 2) {
+            if (listeners[i] == EvaluatedStatementListener.class) {
+            	if (event == null) {
+            		event = new EvaluatedStatement(this);
+            	}
+            	
+            	EvaluatedStatementListener listener = 
+            		(EvaluatedStatementListener)listeners[i + 1];
+            	
+            	listener.evaluatedStatement(event);
             }          
         }
     }
-
 }
 
 

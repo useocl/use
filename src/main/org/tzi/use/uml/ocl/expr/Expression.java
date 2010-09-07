@@ -21,6 +21,10 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
@@ -32,14 +36,52 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author Mark Richters
  */
 public abstract class Expression {
+	private ASTExpression fSourceExpression;
     private Type fType; // result type
+    private List<Expression> fChildExpressions = new ArrayList<Expression>();
 
     private boolean fIsPre = false; // marked "@pre"?
 
     protected Expression(Type t) {
         fType = t;
     }
+    
+    
+    protected Expression(Type t, Expression... childExpressions) {
+    	this(t);
+    	addChildExpressions(childExpressions);
+    }
+    
+    
+    /**
+     * TODO
+     * @param expressions
+     */
+    protected void addChildExpressions(Expression... expressions) {
+    	for (Expression e : expressions) {
+    		fChildExpressions.add(e);
+    	}
+    }
+    
+    
+    /**
+     * TODO
+     * @param expression
+     */
+    public void setSourceExpression(ASTExpression expression) {
+    	fSourceExpression = expression;
+    }
+    
+    
+    /**
+     * TODO
+     * @return
+     */
+    public ASTExpression getSourceExpression() {
+    	return fSourceExpression;
+    }
 
+    
     /**
      * Returns the result type of the expression.
      */
@@ -81,7 +123,27 @@ public abstract class Expression {
     protected String atPre() {
         return fIsPre ? "@pre" : "";
     }
+    
+    
+    /**
+     * TODO
+     * @return
+     */
+    public boolean containsPre() {
+    	if (fIsPre) {
+    		return true;
+    	} else {
+    		for (Expression childExpression : fChildExpressions) {
+    			if (childExpression.containsPre()) {
+    				return true;
+    			}
+    		}
+    	}
+    	
+    	return false;
+    }
 
+    
     /**
      * Every expression can print itself.
      */
@@ -114,5 +176,20 @@ public abstract class Expression {
      */
     public String name() {
         return null;
+    }
+    
+    /**
+     * TODO
+     * @return
+     */
+    public boolean hasSideEffects() {
+    	
+    	for (Expression child : fChildExpressions) {
+    		if (child.hasSideEffects()) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
     }
 }

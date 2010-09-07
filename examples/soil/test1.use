@@ -1,0 +1,76 @@
+model Test1
+
+class C1
+  ----------
+  attributes
+    str  : String
+    num  : Integer
+    bool : Boolean
+  ----------
+  operations
+
+    -- soil defined operations
+
+    -- no return value
+    s1()
+    begin
+      result := 42;
+    end
+
+    -- some args
+    s2(p1 : Integer, p2 : Integer) : Integer
+    begin
+      result := p1 * p2;
+    end
+
+    -- factorial
+      s3(n : Integer) : Integer
+    begin
+      result := 1;
+      if n > 1 then
+	    tmp := call self.s3(n-1);
+	    result := n * tmp;
+      end;
+    end
+
+    -- query defined operations
+
+    q1()            : String  = 'q1'
+    q2(n : Integer) : Integer = n * n
+    q3(other : C1)  : String  = other.q1()
+
+    -- undefined operations
+
+    u1()            : Integer
+    u2(p1 : String)
+
+-- end C1
+end
+
+class C2 < C1
+
+-- end C2
+end
+
+
+association a1 between
+  C1 [0..1] role cone
+  C2 [0..1] role ctwo
+end
+
+
+associationclass ac1 between
+  C2 [0..1] role r1
+  C2 [0..1] role r2
+  
+  attributes
+    num : Integer
+	
+  operations
+    destroyParticipants()
+	begin
+	  destroy self[r1];
+	  destroy self[r2];
+	end
+
+end

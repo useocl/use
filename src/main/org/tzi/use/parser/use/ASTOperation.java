@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.Token;
+import org.tzi.use.config.Options;
+import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -32,12 +34,17 @@ import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
+import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.sys.soil.MEmptyStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
 
 
 /**
@@ -49,26 +56,33 @@ import org.tzi.use.uml.ocl.type.Type;
 public class ASTOperation extends AST {
     private Token fName;
     private List<ASTVariableDeclaration> fParamList;
-    private ASTType fType;  // (optional)
-    private ASTExpression fExpr; // (optional)
+    private ASTType fType;           // (optional)
+    private ASTExpression fExpr;     // (optional)
+    private ASTStatement fStatement; // optional
     private MOperation fOperation; // the operation is generated in two passes
     private List<ASTPrePostClause> fPrePostClauses;
-    private Token scriptBody = null;
+  
     
-    public ASTOperation(Token name, List<ASTVariableDeclaration> paramList, ASTType t) {
-        fName = name;
+    public ASTOperation(
+    		Token name, 
+    		List<ASTVariableDeclaration> paramList,
+    		ASTType t) {
+    	
+    	fName = name;
         fParamList = paramList;
         fType = t;
         fOperation = null;
         fPrePostClauses = new ArrayList<ASTPrePostClause>();
     }
-
-    public void setExpression(ASTExpression exp) {
-    	fExpr = exp;
+    
+    
+    public void setStatement(ASTStatement statement) {
+    	fStatement = statement;
     }
     
-    public void setScript(Token body) {
-    	scriptBody = body;
+    
+    public void setExpression(ASTExpression exp) {
+    	fExpr = exp;
     }
     
     public void addPrePostClause(ASTPrePostClause ppc) {
@@ -106,7 +120,10 @@ public class ASTOperation extends AST {
         // made to another operation
         if (fExpr != null ) {
         	fOperation.setTempExpression();
+        } else if (fStatement != null) {
+        	fOperation.setStatement(MEmptyStatement.getInstance());
         }
+        
         return fOperation;
     }
 
@@ -116,7 +133,7 @@ public class ASTOperation extends AST {
         // fOperation is null if genSignature exited with an Exception
         if (fOperation == null )
             return;
-
+        
         // enter parameters into scope of expression
         Symtable vars = ctx.varTable();
         vars.enterScope();
@@ -125,7 +142,16 @@ public class ASTOperation extends AST {
             VarDecl decl = astDecl.gen(ctx);
             vars.add(astDecl.name(), decl.type());
         }
-
+        
+        
+        ///////////////////////
+        // BEGIN SOIL EXTENSION
+        if (fStatement != null) {
+        	fOperation.setStatement(genStatement(ctx));
+        }
+        // END SOIL EXTENSION
+        /////////////////////
+        
         try {
             if (fExpr != null ) {
                 Expression expr = fExpr.gen(ctx);
@@ -135,22 +161,40 @@ public class ASTOperation extends AST {
                 	fOperation.setResultType(expr.type());
                 }
             }
-
-            if (scriptBody != null) {
-            	String body = scriptBody.getText();
-            	body = body.substring(2, body.length() - 3);
-            	
-            	fOperation.setScript(body);
-            }
             
+            // ppcs may not have side effects
+            SoilPermissionLevel permissionLevel = Options.soilFromOCL;
+            if (permissionLevel == SoilPermissionLevel.ALL) {
+            	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
+            }
+
             for (ASTPrePostClause ppc : fPrePostClauses) {
                 ppc.gen(ctx, ctx.currentClass(), fOperation);
             }
+            
+            // restore permission level
+            Options.soilFromOCL = permissionLevel;
+            
         } catch (MInvalidModelException ex) {
             throw new SemanticException(fName, ex);
         } finally {
             vars.exitScope(); 
         }
     }
+
+
+	private MStatement genStatement(Context context) throws SemanticException {
+		try {
+			return fStatement.generateStatement(context, fOperation);
+		} catch (CompilationFailedException e) {
+			StringBuilder message = new StringBuilder();
+			message.append("\nCould not compile soil defined operation ");
+			message.append(StringUtil.inQuotes(fOperation.signature()));
+			message.append(" due to the following error:\n");
+			message.append(e.getMessage());
+			
+			throw new SemanticException(fName, message.toString());
+		}
+	}
 }
 

@@ -35,12 +35,12 @@ public class MAssertPost extends MAssert {
         if (opcall == null )
             throw new MSystemException("Call stack is empty.");
 
-        MOperation op = opcall.operation();
+        MOperation op = opcall.getOperation();
 
         // bind result value to result variable
-        VarBindings vb = opcall.varBindings();
+        VarBindings vb = opcall.getVarBindings();
         if (op.hasResultType() ) {
-            vb.push("result", opcall.resultValue());
+            vb.push("result", opcall.getResultValue());
         }
 
         // check postconditions
@@ -58,7 +58,7 @@ public class MAssertPost extends MAssert {
             Expression expr = ppc.expression();
             Evaluator evaluator = new Evaluator();
             // evaluate in scope local to operation
-            Value v = evaluator.eval(expr, opcall.preState(), ctx.postState(), vb, null);
+            Value v = evaluator.eval(expr, opcall.getPreState(), ctx.postState(), vb, null);
             boolean ok = v.isDefined() && ((BooleanValue) v).isTrue();
             
             if (! ok ) {

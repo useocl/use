@@ -1,0 +1,22 @@
+model Test2
+
+class C
+  operations
+    s1() : Integer
+	begin
+	  result := 42
+	end
+	
+	pre alwaysFalse : false
+	
+	s2() : Integer
+	begin
+	  result := self.s1()
+	end
+	
+	s3() : Integer
+	begin
+	  result := self.s2()
+	end
+  
+end

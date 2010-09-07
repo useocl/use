@@ -177,7 +177,7 @@ public class ASSLCompiler {
     
                 Context ctx=new Context(inName,
                                         err,
-                                        systemState.system().topLevelBindings(),
+                                        systemState.system().varBindings(),
                                         null);
                 ctx.setModel(model);
                 ctx.setSystemState(systemState);

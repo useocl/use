@@ -11,6 +11,7 @@
    "association"
    "aggregation"
    "attributes"
+   "begin"
    "between"
    "class"
    "composition"

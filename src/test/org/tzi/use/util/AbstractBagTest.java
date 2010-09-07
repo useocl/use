@@ -23,21 +23,19 @@ package org.tzi.use.util;
 
 import junit.framework.TestCase;
 
+import org.tzi.use.SystemManipulator;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MInvalidModelException;
+import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MClass;
-import java.util.List;
-import org.tzi.use.util.cmd.CommandFailedException;
 import org.tzi.use.uml.ocl.value.ObjectValue;
-import java.util.ArrayList;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+
 
 /**
  * Test comparing Bags with each other.
@@ -307,25 +305,16 @@ public class AbstractBagTest extends TestCase {
             model.addClass(a);
             model.addClass(b);
             model.addClass(c);
-
-            List<String> names = new ArrayList<String>();
-            names.add( "a1" );        
-            MCmd createObjects = new MCmdCreateObjects( system.state(), names, 
-                                                        TypeFactory.mkObjectType( a ) );
-            createObjects.execute();
-            names.clear();
-            names.add( "b1" );        
-            createObjects = new MCmdCreateObjects( system.state(), names, 
-                                                   TypeFactory.mkObjectType( b ) );
-            createObjects.execute();
-            names.clear();
-            names.add( "c1" );        
-            createObjects = new MCmdCreateObjects( system.state(), names, 
-                                                   TypeFactory.mkObjectType( c ) );
-            createObjects.execute();
+            
+            SystemManipulator testHelper = new SystemManipulator(system);
+            
+            testHelper.createObjects(a, "a1");
+            testHelper.createObjects(b, "b1");
+            testHelper.createObjects(c, "c1");
+            
         } catch ( MInvalidModelException ex ) {
             fail( ex.getMessage() );
-        } catch ( CommandFailedException ex ) {
+        } catch ( MSystemException ex ) {
             fail( ex.getMessage() );
         }
     }

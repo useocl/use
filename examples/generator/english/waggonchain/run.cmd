@@ -6,6 +6,7 @@
 
 gen flags +d
 
-!create t:Train
+--!create t:Train
+! t := new Train
 gen start examples/generator/english/train.assl waggonchain(t, 10)
 gen result accept

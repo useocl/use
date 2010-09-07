@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -47,7 +49,13 @@ public class ASTUnaryExpression extends ASTExpression {
         return genStdOperation(ctx, fToken, fToken.getText(), args);
     }
 
-    public String toString() {
+    @Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		fExpr.getFreeVariables(freeVars);
+	}
+
+    @Override
+	public String toString() {
         return "(" + fToken + " " + fExpr + ")";
     }
 }

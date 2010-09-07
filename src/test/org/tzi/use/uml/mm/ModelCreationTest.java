@@ -22,21 +22,16 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
-import org.tzi.use.uml.sys.MCmdInsertLink;
-import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
+import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MRValueExpression;
 
 /**
  * The class <code>ModelCreationTest</code> try to instanciate Objects
@@ -64,25 +59,27 @@ public class ModelCreationTest extends TestCase {
     public void testCreateModelWithClasses() {
         try {
             MModel model = TestModelUtil.getInstance().createModelWithClasses();
-            MSystem system = new MSystem( model );
-
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            names.add( "p2" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmdCreateObjects cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            names.clear();
-            names.add( "c1" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
+            MSystem system = new MSystem(model);
+            
+            MClass personClass = model.getClass("Person");
+            MClass companyClass = model.getClass("Company");
+            
+            system.evaluateStatement(
+            		new MNewObjectStatement(
+            				personClass, "p1"));
+            
+            system.evaluateStatement(
+            		new MNewObjectStatement(
+            				personClass, "p2"));
+            
+            system.evaluateStatement(
+            		new MNewObjectStatement(
+            				companyClass, "c1"));
+            
             assertEquals( system.state().objectByName( "p1" ).name(), "p1" );
             assertEquals( system.state().objectByName( "p2" ).name(), "p2" );
             assertEquals( system.state().objectByName( "c1" ).name(), "c1" );
-        } catch ( MSystemException e ) {
+        } catch (MSystemException e) {
             throw ( new Error( e ) );
         }
     }
@@ -95,49 +92,45 @@ public class ModelCreationTest extends TestCase {
         try {
             MModel model = TestModelUtil.getInstance().createModelWithClassAndAssocs();
             MSystem system = new MSystem( model );
+            
+            MClass personClass = model.getClass("Person");
+            MClass companyClass = model.getClass("Company");
+            
+            system.evaluateStatement(
+            		new MNewObjectStatement(
+            				personClass, "p1"));
+            
+            system.evaluateStatement(
+            		new MNewObjectStatement(
+            				personClass, "p2"));
+            
+            system.evaluateStatement(
+            		new MNewObjectStatement(
+            				companyClass, "c1"));
 
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            names.add( "p2" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
+            
+            List<MRValue> participants = new ArrayList<MRValue>(2);
+            participants.add(
+            		new MRValueExpression(system.state().objectByName("p1")));
+            participants.add(
+            		new MRValueExpression(system.state().objectByName("c1")));
+           
+            system.evaluateStatement(
+            		new MLinkInsertionStatement(
+            				model.getAssociation("Job"), 
+            				participants));
 
-            names.clear();
-            names.add( "c1" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
+            participants.clear();
+            participants.add(
+            		new MRValueExpression(system.state().objectByName("p1")));
+            participants.add(
+            		new MRValueExpression(system.state().objectByName("p2")));
 
-            names.clear();
-            names.add( "p1" );
-            names.add( "c1" );
-            Expression[] exprs = new Expression[names.size()];
-            Iterator<String> it = names.iterator();
-            int i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            cmd = new MCmdInsertLink( system.state(), exprs,
-                                      model.getAssociation( "Job" ) );
-            system.executeCmd( cmd );
-
-            names.clear();
-            names.add( "p1" );
-            names.add( "p2" );
-            exprs = new Expression[names.size()];
-            it = names.iterator();
-            i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            cmd = new MCmdInsertLink( system.state(), exprs,
-                                      model.getAssociation( "isBoss" ) );
-            system.executeCmd( cmd );
-
-
+            system.evaluateStatement(
+            		new MLinkInsertionStatement(
+            				model.getAssociation("isBoss"), 
+            				participants));
+            
             assertEquals( system.state().objectByName( "p1" ).name(), "p1" );
             assertEquals( system.state().objectByName( "p2" ).name(), "p2" );
             assertEquals( system.state().objectByName( "c1" ).name(), "c1" );
@@ -145,7 +138,5 @@ public class ModelCreationTest extends TestCase {
             throw ( new Error( e ) );
         }
     }
-
-
 }
 

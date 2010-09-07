@@ -147,7 +147,7 @@ public final class ExpStdOp extends Expression {
     private Expression fArgs[];
 
     private ExpStdOp(OpGeneric op, Expression args[], Type t) {
-        super(t);
+        super(t, args);
         fOp = op;
         fArgs = args;
     }

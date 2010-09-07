@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
@@ -102,8 +104,22 @@ public class ASTIterateExpression extends ASTExpression {
         return res;
     }
 
-    public String toString() {
-        return "(\"iterate\" " + fRange + " " + fDeclList + " " + fInit + " " + fExpr + ")";
-    }
+    @Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		if (fRange != null) {
+			fRange.getFreeVariables(freeVars);
+		}
+	
+		HashSet<String> freeVarsInExpr = new HashSet<String>();
+		fExpr.getFreeVariables(freeVarsInExpr);
+		HashSet<String> declaredVars = fDeclList.getVarNames();
+		freeVarsInExpr.removeAll(declaredVars);
+	
+		freeVars.addAll(freeVarsInExpr);	
+	}
 
+    @Override
+	public String toString() {
+	    return "(\"iterate\" " + fRange + " " + fDeclList + " " + fInit + " " + fExpr + ")";
+	}
 }

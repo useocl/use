@@ -348,7 +348,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                         String invName = fTable.getColumnName(fTable
                                 .getSelectedColumn());
                         for (int i = 0; i < fClassInvariants.length; i++) {
-                            if (fClassInvariants[i].name() == invName) {
+                            if (fClassInvariants[i].name().equals(invName)) {
                                 expr = fClassInvariants[i].expandedExpression();
                                 Evaluator evaluator = new Evaluator();
                                 evaluator.enableEvalTree();

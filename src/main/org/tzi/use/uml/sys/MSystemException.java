@@ -37,6 +37,12 @@ public class MSystemException extends Exception {
 	public MSystemException() {
         super();
     }
+	
+
+	public MSystemException(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
 
     public MSystemException(String s) {
         super(s);

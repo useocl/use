@@ -80,11 +80,15 @@ public final class ExpTupleLiteral extends Expression {
         // determine tuple type
         fParts = parts;
         TupleType.Part[] typeParts = new TupleType.Part[fParts.length];
+        Expression[] childExpressions = new Expression[fParts.length];
         
-        for (int i = 0; i < fParts.length; i++)
-            typeParts[i] = new TupleType.Part(fParts[i].fName, fParts[i].getType());
+        for (int i = 0; i < fParts.length; i++) {
+        	 typeParts[i] = new TupleType.Part(fParts[i].fName, fParts[i].getType());
+        	 childExpressions[i] = fParts[i].fExpr;
+        }
         
         setResultType(TypeFactory.mkTuple(typeParts));
+        addChildExpressions(childExpressions);
     }
 
     /**

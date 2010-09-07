@@ -24,12 +24,13 @@
 
 package org.tzi.use.gen.tool;
 
-import org.tzi.use.gen.assl.dynamics.IGCollector;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.util.NullWriter;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.tzi.use.gen.assl.dynamics.IGCollector;
+import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.NullWriter;
 
 /**
  * Collects information which can be printed using the -d and -b options
@@ -40,7 +41,7 @@ import java.io.PrintWriter;
  */
 class GCollectorImpl implements IGCollector {
     private boolean fValidStateFound;
-    private List<MCmd> fCommands;
+    private List<MStatement> fStatements;
     private long fLimit;
     private PrintWriter fBasicPrintWriter;
     private PrintWriter fDetailPrintWriter;
@@ -49,7 +50,7 @@ class GCollectorImpl implements IGCollector {
 
     public GCollectorImpl() {
         fValidStateFound = false;
-        fCommands = new ArrayList<MCmd>();
+        fStatements = new ArrayList<MStatement>();
         fLimit = Long.MAX_VALUE;
         fLeafCount = 0;
         fBasicPrintWriter = new PrintWriter( new NullWriter() );
@@ -69,12 +70,12 @@ class GCollectorImpl implements IGCollector {
         return fValidStateFound;
     }
     
-    public void subsequentlyPrependCmd( MCmd cmd ) {
-        fCommands.add(0, cmd);
+    public void subsequentlyPrependStatement(MStatement statement) {
+    	fStatements.add(0, statement);
     }
-   
-    public List<MCmd> commands() {
-        return fCommands;
+    
+    public List<MStatement> statements() {
+    	return fStatements;
     }
 
     public PrintWriter basicPrintWriter() {

@@ -1,6 +1,5 @@
 package org.tzi.use.parser.testsuite;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -10,15 +9,16 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.cmd.ASTCmd;
+import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdOpExit;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.soil.MExitOperationStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.testsuite.MAssert;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
 
 public class ASTTestCase extends AST {
 	public enum TestResult {
@@ -38,7 +38,7 @@ public class ASTTestCase extends AST {
 		return name;
 	}
 	
-	public void addStatement(ASTCmd cmd) {
+	public void addStatement(AST cmd) {
 		this.statements.add(cmd);
 	}
 	
@@ -51,7 +51,7 @@ public class ASTTestCase extends AST {
 		MSystemState preState = system.state();
 				
 		for (AST cmd : statements) {
-			Context ctx = new Context(name.getText(), null, system.topLevelBindings(), null);
+			Context ctx = new Context(name.getText(), null, system.varBindings(), null);
 			ctx.setModel(system.model());
 			ctx.setIsInsideTestCase(true);
 			
@@ -61,7 +61,7 @@ public class ASTTestCase extends AST {
 			
 			// TODO: Generic Interface!
 			if (cmd instanceof ASTAssert) {
-				EvalContext eCtx = new EvalContext(preState, system.state(), system.topLevelBindings(), null);
+				EvalContext eCtx = new EvalContext(preState, system.state(), system.varBindings(), null);
 				ASTAssert ass = (ASTAssert)cmd;
 				ctx.setIsAssertExpression(true);
 				
@@ -70,29 +70,32 @@ public class ASTTestCase extends AST {
 					reportAssertionError(mAss, ctx);
 					return TestResult.FAILURE;
 				}
+			} else if (cmd instanceof ASTVariation) {
+				ASTVariation aVar = (ASTVariation)cmd;
+				aVar.gen(ctx).doExecute();
 			} else {
-				ASTCmd astCmd = (ASTCmd)cmd;
-				MCmd mCmd;
+				ASTStatement astCmd = (ASTStatement)cmd;
+				MStatement mCmd;
 				
 				try {
-					mCmd = astCmd.gen(ctx);
-				} catch (SemanticException e) {
-					failureDetails = "Line " + astCmd.getPosition().line() + ": " + astCmd.toString() + " command failed: " + e.getShortMessage();
+					mCmd = astCmd.generateStatement(ctx, system.getVariableEnvironment().constructSymbolTable());
+				} catch (CompilationFailedException e) {
+					failureDetails = "Line " + astCmd.getSourcePosition().line() + ": " + astCmd.toString() + " command failed: " + e.getMessage();
 					return TestResult.ERROR;
 				}
 				
 				if (mCmd == null) {
-					failureDetails = "Line " + astCmd.getPosition().line() + ": " + astCmd.toString() + " command failed!";
+					failureDetails = "Line " + astCmd.getSourcePosition().line() + ": " + astCmd.toString() + " command failed!";
 					return TestResult.ERROR;
 				}
 				
-				system.executeCmd(mCmd);
+				system.evaluateStatement(mCmd);
 				
-				if (mCmd instanceof MCmdOpExit) {
+				if (mCmd instanceof MExitOperationStatement) {
 					// We keep track of the last pre state to allow asserts after
 					// an operation call
-					MCmdOpExit opExit = (MCmdOpExit)mCmd;
-					preState = opExit.operationCall().getPreState();
+					MExitOperationStatement opExit = (MExitOperationStatement)mCmd;
+					preState = opExit.getOperationCall().getPreState();
 				}
 			}
 		}
@@ -121,11 +124,9 @@ public class ASTTestCase extends AST {
 		
 		StringWriter sw = new StringWriter();
 		PrintWriter out = new PrintWriter(sw);
-		try {
-			ctx.systemState().system().writeUSEcmds(out);
-		} catch (IOException e) {
-		}
 		
+		ctx.systemState().system().writeSoilStatements(out);
+				
 		details.append(sw.toString());
 		this.failureDetails = details.toString();
 	}

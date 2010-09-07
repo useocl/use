@@ -29,10 +29,14 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
+import static org.tzi.use.util.StringUtil.inQuotes;
+
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
+import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -40,10 +44,14 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
-import org.tzi.use.util.cmd.CannotUndoException;
-import org.tzi.use.util.cmd.CommandFailedException;
+import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.sys.soil.MSequenceStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 class GEvalInstrCreateN_C_Integer extends GEvalInstruction
     implements IGCaller {
@@ -62,59 +70,91 @@ class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         GCreator.createFor(fInstr.integerInstr()).eval(conf,this,collector );
     }
 
-    public void feedback( GConfiguration conf,
-                          Value value,
-                          IGCollector collector ) throws GEvaluationException {
-        if (value.isUndefined()) {
-            collector.invalid(
-                              buildCantExecuteMessage(fInstr,fInstr.integerInstr()) );
-            return;
+    public void feedback(
+    		GConfiguration conf, 
+    		Value value, 
+    		IGCollector collector ) throws GEvaluationException {
+    	
+    	if (value.isUndefined()) {
+    		GValueInstruction culprit = fInstr.integerInstr();
+    		collector.invalid(buildCantExecuteMessage(fInstr, culprit));
+    		
+    		return;
         }
-        int count = ((IntegerValue) value).value();
-        if (count < 0)
-            collector.invalid( "Can't execute `" + fInstr + "', because `"
-                               + fInstr.integerInstr() + "' has been "
-                               + "evaluated to a negative integer.");
-        if (count >= 0) {
-            MClass cls = fInstr.cls();
-            ObjectType objectType = TypeFactory.mkObjectType( cls );
+    	
+        int count = ((IntegerValue)value).value();
         
-            List<String> names = new ArrayList<String>();
-            for (int k=1; k <= count; k++)
-                names.add( conf.systemState().uniqueObjectNameForClass( cls.name() ) );
-            try {
-                MCmd cmd = null;
-                if (!names.isEmpty()) {
-                    cmd = new MCmdCreateObjects(conf.systemState(),
-                                                names,
-                                                objectType);
-                    collector.basicPrintWriter().println(cmd.getUSEcmd());
-                    cmd.execute();
-                }
-                
-                List<Value> objects = new ArrayList<Value>();
-                for (String name : names) {
-                    objects.add( new ObjectValue(objectType,
-                                                 conf.systemState().objectByName(name) ));
-                }
-                
-                Value val = new SequenceValue(objectType, objects);
-                collector.detailPrintWriter().println(
-                                                      "`"+ fInstr + "' == " + val);
-                fCaller.feedback( conf, val, collector );
-                if (cmd!=null) {
-                    if (collector.expectSubsequentReporting())
-                        collector.subsequentlyPrependCmd( cmd );
-                    collector.basicPrintWriter().println(
-                                                         "undo: " + cmd.getUSEcmd());
-                    cmd.undo();
-                }
-            } catch (CommandFailedException e) {
-                throw new GEvaluationException(e);
-            } catch (CannotUndoException e) {
-                throw new GEvaluationException(e);
-            }
+        if (count < 0) {
+        	collector.invalid(
+        			"Can't execute " + 
+        			inQuotes(fInstr) +
+        			", because " + 
+        			inQuotes(fInstr.integerInstr()) +
+        			" has been evaluated to a negative integer.");
+        	
+        	return;
         }
+        
+        MSystemState state = conf.systemState();
+        MSystem system = state.system();
+        PrintWriter basicOutput = collector.basicPrintWriter();
+        PrintWriter detailOutput = collector.detailPrintWriter();
+              
+        MClass objectClass = fInstr.cls();
+        ObjectType objectType = TypeFactory.mkObjectType(objectClass);
+        
+        MSequenceStatement statement = new MSequenceStatement();
+        List<String> objectNames = new ArrayList<String>();
+        for (int i = 0; i < count; ++i) {
+        	String objectName = 
+        		state.uniqueObjectNameForClass(objectClass.name());
+        
+        	objectNames.add(objectName);
+        	
+        	statement.prependStatement(
+        			new MNewObjectStatement(
+        					objectClass, 
+        					objectName));
+        }
+        MStatement inverseStatement;
+        
+        basicOutput.println(statement.getShellCommand());
+        
+        try {
+        	StatementEvaluationResult evaluationResult = 
+        		system.evaluateStatement(statement, true, false);
+        	
+        	inverseStatement = evaluationResult.getInverseStatement();
+        	
+		} catch (MSystemException e) {
+			throw new GEvaluationException(e);
+		}
+        
+        List<Value> objectValues = new ArrayList<Value>();
+        for (String objectName : objectNames) {
+        	MObject object = state.objectByName(objectName);
+        	objectValues.add(new ObjectValue(objectType, object));
+        }
+        
+        Value objects = new SequenceValue(objectType, objectValues);
+        
+        detailOutput.println(inQuotes(fInstr) + " == " + objects);
+        
+        fCaller.feedback(conf, objects, collector);
+        if (collector.expectSubsequentReporting()) {
+        	for (MStatement s : statement.getStatements()) {
+        		if (!s.isEmptyStatement()) {
+        			collector.subsequentlyPrependStatement(s);
+        		}
+        	}
+        }
+            
+        basicOutput.println("undo: " + statement.getShellCommand());
+        try {
+        	system.evaluateStatement(inverseStatement, true, false);
+		} catch (MSystemException e) {
+			throw new GEvaluationException(e);
+		}
     }
 
     public String toString() {

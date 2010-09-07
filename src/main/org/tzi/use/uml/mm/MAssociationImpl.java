@@ -103,6 +103,19 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
     public List<MAssociationEnd> associationEnds() {
         return fAssociationEnds;
     }
+    
+    /**
+     * TODO
+     */
+    public List<String> roleNames() {
+    	
+    	List<String> result = new ArrayList<String>(fAssociationEnds.size());
+    	for (MAssociationEnd assocEnd : fAssociationEnds) {
+    		result.add(assocEnd.name());
+    	}
+    	
+    	return result;
+    }
 
     /**
      * Returns the list of reachable navigation ends from

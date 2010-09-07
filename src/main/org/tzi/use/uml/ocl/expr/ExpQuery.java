@@ -56,7 +56,7 @@ public abstract class ExpQuery extends Expression {
     protected ExpQuery(Type resultType, VarDeclList elemVarDecls,
             Expression rangeExp, Expression queryExp)
             throws ExpInvalidException {
-        super(resultType);
+        super(resultType, rangeExp, queryExp);
         fElemVarDecls = elemVarDecls;
         fRangeExp = rangeExp;
         fQueryExp = queryExp;

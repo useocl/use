@@ -24,11 +24,14 @@ package org.tzi.use.parser;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 
@@ -64,9 +67,6 @@ public class Context {
     
     private boolean fIsInsideTestCase;
     
-    // for UML AL
-    private boolean fIsSideEffectFree;
-
     public Context(String filename, PrintWriter err, 
                    VarBindings globalBindings,
                    ModelFactory factory) {
@@ -78,13 +78,12 @@ public class Context {
         fExprContext = new ExprContext();
         fModelFactory = factory;
         fLoopVarNames = new ArrayList<String>();
-        fIsSideEffectFree = true;
-    }
+     }
 
     public void setOut(PrintWriter out) {
     	fOut = out;
     }
-    
+
     public PrintWriter getOut() {
     	return fOut;
     }
@@ -101,6 +100,29 @@ public class Context {
         return fModelFactory;
     }
 
+    public void setVarTable(Symtable varTable) {
+    	fVarTable = varTable;
+    }
+    
+    public void buildVarTable(Map<String, Type> symTable)
+    {
+    	Symtable newSymtable = new Symtable();
+    	try {
+	    	for (Entry<String, Type> entry : symTable.entrySet()) {
+	    		newSymtable.add(entry.getKey(), entry.getValue(), null);
+	    	}
+    	} catch (SemanticException e) {
+			// since the exception gets thrown if we add something with
+    		// the same name as an existing entry, and we're adding stuff
+    		// from a map (in which keys are unique), we can safely assume
+    		// that we won't end up here unless someone changes the behavior
+    		// of the .add method
+    		System.err.println("please check org.tzi.use.parser.Context:buildVarTable()");
+		}	
+    
+    	fVarTable = newSymtable;
+    }
+    
     public Symtable varTable() {
         return fVarTable;
     }
@@ -136,7 +158,7 @@ public class Context {
     public MClass currentClass() {
         return fCurrentClass;
     }
-
+    
     public void setInsidePostCondition(boolean state) {
         fInsidePostCondition = state;
     }
@@ -144,7 +166,7 @@ public class Context {
     public boolean insidePostCondition() {
         return fInsidePostCondition;
     }
-
+        
     public int errorCount() {
         return fErrorCount;
     }
@@ -169,18 +191,6 @@ public class Context {
         fErr.println(ex.getMessage());
         fErr.flush();
     }
-    
-
-    // for UML AL
-    public boolean isSideEffectFree() {
-        return fIsSideEffectFree;
-    }
-
-    // for UML AL
-    public void setIsSideEffectFree(boolean b) {
-        fIsSideEffectFree = b;
-    }
-
 
 	public boolean isAssertExpression() {
 		return fIsAssertExpression;

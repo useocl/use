@@ -21,23 +21,15 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestCase;
 
+import org.tzi.use.SystemManipulator;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.expr.ExpAllInstances;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.util.cmd.CommandFailedException;
 
 
 /**
@@ -55,6 +47,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
     private MClass a;
     private MClass b;
     private MClass c;
+    private SystemManipulator systemManipulator;
     
     /**
      * Creates the model and system every test is working with.
@@ -74,6 +67,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
         } catch ( MInvalidModelException ex ) {
             fail( ex.getMessage() );
         }
+        systemManipulator = new SystemManipulator(system);
     }
     
     /**
@@ -81,24 +75,19 @@ public class MCmdDestroyObjectsTest extends TestCase {
      */
     public void testDestroySingleObject() {   
         try{
-            List<String> names = new ArrayList<String>();
-            names.add( "a1" );        
-            MCmd createObjects = new MCmdCreateObjects( system.state(), names, 
-                                                       TypeFactory.mkObjectType( a ) );
-            createObjects.execute();
-            
-            // aspect one object of class a
-            assertEquals( 1, system.state().objectsOfClass( a ).size() );
-            
-            Expression[] exprs = { new ExpAllInstances( TypeFactory.mkObjectType( a ) ) };
-            
-            MCmd destroyObjects = new MCmdDestroyObjects( system.state(), exprs );
-            destroyObjects.execute();
+        	// create one object of class a
+        	systemManipulator.createObjects(a, "a1");
+        	
+            // expect one object of class a       
+            assertEquals(1, system.state().objectsOfClass(a).size());
+           
+            // destroy all objects of class a
+            systemManipulator.destroyObjects(new ExpAllInstances(a.type()));
+           
+            // expect no objects of class a
+            assertEquals(0, system.state().objectsOfClass(a).size());
 
-            // aspect no objects of class a
-            assertEquals( 0, system.state().objectsOfClass( a ).size() );
-
-        } catch ( CommandFailedException ex ) {
+        } catch ( MSystemException ex ) {
             fail( ex.getMessage() );
         } catch ( ExpInvalidException ex ) {
             fail( ex.getMessage() );
@@ -107,59 +96,39 @@ public class MCmdDestroyObjectsTest extends TestCase {
 
 
     /**
-     * Tests the destruction of six objects. Two objects are allways 
+     * Tests the destruction of six objects. Two objects are always 
      * from the same type.
      */
     public void testDestroyObjectsWithDifferentTypes() {
         try{
-            List<String> names = new ArrayList<String>();
-            // create two objects of class `A'
-            names.add( "a1" );        
-            names.add( "a2" );        
-            MCmd createObjects = new MCmdCreateObjects( system.state(), names, 
-                                                       TypeFactory.mkObjectType( a ) );
-            createObjects.execute();
-
-            // create two objects of class `B'
-            names = new ArrayList<String>();
-            names.add( "b1" );        
-            names.add( "b2" );        
-            createObjects = new MCmdCreateObjects( system.state(), names, 
-                                                   TypeFactory.mkObjectType( b ) );
-            createObjects.execute();
+        	// create two objects of class `A'
+        	systemManipulator.createObjects(a, "a1", "a2");
+        	// create two objects of class `B'
+        	systemManipulator.createObjects(b, "b1", "b2");
+        	// create two objects of class `C'
+        	systemManipulator.createObjects(c, "c1", "c2");
+        	
+            // expect two objects of class a
+            assertEquals(2, system.state().objectsOfClass(a).size());
+            // expect two objects of class b
+            assertEquals(2, system.state().objectsOfClass(b).size());
+            // expect two objects of class c
+            assertEquals(2, system.state().objectsOfClass(c).size());
             
-            // create two objects of class `C'
-            names = new ArrayList<String>();
-            names.add( "c1" );        
-            names.add( "c2" );        
-            createObjects = new MCmdCreateObjects( system.state(), names, 
-                                                   TypeFactory.mkObjectType( c ) );
-            createObjects.execute();
-
-            // aspect two objects of class a
-            assertEquals( 2, system.state().objectsOfClass( a ).size() );
-            // aspect two objects of class b
-            assertEquals( 2, system.state().objectsOfClass( b ).size() );
-            // aspect two objects of class c
-            assertEquals( 2, system.state().objectsOfClass( c ).size() );
-            
-
             // Destruction of all objects!
-            Expression[] exprs = { new ExpAllInstances( TypeFactory.mkObjectType( a ) ),
-                                   new ExpAllInstances( TypeFactory.mkObjectType( b ) ),
-                                   new ExpAllInstances( TypeFactory.mkObjectType( c ) ) };
-            
-            MCmd destroyObjects = new MCmdDestroyObjects( system.state(), exprs );
-            destroyObjects.execute();
+            systemManipulator.destroyObjects(
+            		new ExpAllInstances(a.type()),
+            		new ExpAllInstances(b.type()),
+            		new ExpAllInstances(c.type()));
+          
+            // expect no objects of class a
+            assertEquals(0, system.state().objectsOfClass(a).size());
+            // expect no objects of class b
+            assertEquals(0, system.state().objectsOfClass(b).size());
+            // expect no objects of class c
+            assertEquals(0, system.state().objectsOfClass(c).size());
 
-            // aspect no objects of class a
-            assertEquals( 0, system.state().objectsOfClass( a ).size() );
-            // aspect no objects of class b
-            assertEquals( 0, system.state().objectsOfClass( b ).size() );
-            // aspect no objects of class c
-            assertEquals( 0, system.state().objectsOfClass( c ).size() );
-
-        } catch ( CommandFailedException ex ) {
+        } catch ( MSystemException ex ) {
             fail( ex.getMessage() );
         } catch ( ExpInvalidException ex ) {
             fail( ex.getMessage() );

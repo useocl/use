@@ -37,7 +37,7 @@ public abstract class ExpCollectionLiteral extends Expression {
     protected Expression[] fElemExpr;
 
     protected ExpCollectionLiteral(String kind, Expression[] elemExpr) {
-        super(null);
+        super(null, elemExpr);
         fKind = kind;
         fElemExpr = elemExpr;
     }

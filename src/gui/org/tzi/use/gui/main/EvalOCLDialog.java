@@ -41,6 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.ExprEvalBrowser;
@@ -114,7 +115,7 @@ class EvalOCLDialog extends JDialog {
                 evaluate(fTextIn.getText());
                 String out = fTextOut.getText();
                 if (out != null && out.length() > 4
-                        && out.substring(0, 4) != "Error") {
+                        && !out.substring(0, 4).equals("Error")) {
                     btnEvalBrowser.setEnabled(true);
                     if (fEvalBrowser != null
                             && fEvalBrowser.getFrame().isVisible()) {
@@ -217,9 +218,22 @@ class EvalOCLDialog extends JDialog {
         PrintWriter out = new PrintWriter(new TeeWriter(
                 new TextComponentWriter(fTextOut), msgWriter), true);
 
+        SoilPermissionLevel permissionLevel = Options.soilFromOCL;
+        if (permissionLevel == SoilPermissionLevel.ALL) {
+        	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
+        }
+        
         // compile query
-        Expression expr = OCLCompiler.compileExpression(fSystem.model(),
-                in, "Error", out, fSystem.topLevelBindings());
+        Expression expr = OCLCompiler.compileExpression(
+        		fSystem.model(),
+        		fSystem.state(),
+                in, 
+                "Error", 
+                out, 
+                fSystem.varBindings());
+        
+        Options.soilFromOCL = permissionLevel;
+        
         out.flush();
         fTextIn.requestFocus();
 
@@ -262,7 +276,7 @@ class EvalOCLDialog extends JDialog {
             evaluator = new Evaluator();
             evaluator.enableEvalTree();
             Value val = evaluator.eval(expr, fSystem.state(), fSystem
-                    .topLevelBindings());
+                    .varBindings());
             // print result
             fTextOut.setText(val.toStringWithType());
 

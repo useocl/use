@@ -6,7 +6,7 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.cmd.ASTCmd;
+import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.sys.testsuite.MTestSuite;
 
 public class ASTTestSuite extends AST {
@@ -14,7 +14,7 @@ public class ASTTestSuite extends AST {
 	private Token name;
 	private Token modelFile;
 	private List<ASTTestCase> testCases;
-	private List<ASTCmd> setupStatements;
+	private List<ASTStatement> setupStatements;
 	
 	public Token getModelFile() {
 		return modelFile;
@@ -32,11 +32,11 @@ public class ASTTestSuite extends AST {
 		this.testCases = testCases;
 	}
 
-	public List<ASTCmd> getSetupStatements() {
+	public List<ASTStatement> getSetupStatements() {
 		return setupStatements;
 	}
 
-	public void setSetupStatements(List<ASTCmd> setupStatements) {
+	public void setSetupStatements(List<ASTStatement> setupStatements) {
 		this.setupStatements = setupStatements;
 	}
 

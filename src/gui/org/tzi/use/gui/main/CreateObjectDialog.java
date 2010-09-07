@@ -21,10 +21,22 @@
 
 package org.tzi.use.gui.main;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.GridBagHelper;
@@ -148,10 +160,7 @@ class CreateObjectDialog extends JDialog {
             return;
         }
 
-        MClass cls = (MClass) fClasses[i];
-        ArrayList<String> names = new ArrayList<String>(1);
-        names.add(name);
-        fParent.createObject(cls.name(), names);
+        fParent.createObject((MClass)fClasses[i], name);
     }
 }
 

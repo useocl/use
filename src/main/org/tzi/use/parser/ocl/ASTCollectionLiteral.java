@@ -22,6 +22,8 @@
 package org.tzi.use.parser.ocl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -96,7 +98,15 @@ public class ASTCollectionLiteral extends ASTExpression {
         }
     }
 
-    public String toString() {
+    @Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		Iterator<ASTCollectionItem> it = fItems.iterator();
+		while (it.hasNext()) {
+			it.next().getFreeVariables(freeVars);
+		}	
+	}
+
+	public String toString() {
         return "(" + fToken + " " + 
             StringUtil.fmtSeq(fItems.iterator(), " ") + ")";
     }

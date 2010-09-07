@@ -153,19 +153,14 @@ attributeDefinition returns [ASTAttribute n]
 */
 operationDefinition returns [ASTOperation n]
 :
-    name=IDENT
-    pl=paramList
-    ( COLON t=type )?
+    name = IDENT
+    pl = paramList
+    ( COLON t = type )?
     { $n = new ASTOperation($name, $pl.paramList, $t.n); }
-    
-    ( 
-    	EQUAL e=expression 
-    	{ $n.setExpression($e.n); } 
-    |
-    	EQUAL keyScript body=SCRIPTBODY 
-    	{ $n.setScript($body); } 
+    (
+        ( EQUAL e = expression   { $n.setExpression($e.n); } )
+      | ( 'begin' s = stat 'end' { $n.setStatement($s.n);  } )
     )?
-    
     ( ppc=prePostClause { $n.addPrePostClause($ppc.n); } )*
     ( SEMI )?
     ;
@@ -315,7 +310,4 @@ keyAssociation:
   
 keyRole:
   {input.LT(1).getText().equals("role")}? IDENT ;
-  
-keyScript:
-  {input.LT(1).getText().equals("script")}? IDENT ;
   

@@ -21,10 +21,19 @@
 
 package org.tzi.use.gui.views;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.util.Deque;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.uml.mm.MOperation;
@@ -94,25 +103,40 @@ public class CallStackView extends JPanel implements View {
 
     private void update() {
         fListModel.clear();
-        List<MOperationCall> callStack = fSystem.callStack();
         
-        if (callStack.isEmpty() ) {
-            fListModel.addElement("<empty>");
+        Deque<MOperationCall> callStack = fSystem.getCallStack();
+        
+        if (callStack.isEmpty()) {
+        	fListModel.addElement("<empty>");
         } else {
-            int j = 1;
-            for (int i = callStack.size() - 1; i >= 0; i--) {
-                MOperationCall opcall = callStack.get(i);
-                MOperation op = opcall.operation();
-                String s = j++ + ". " + 
-                    ( fShowCall ? 
-                      opcall.targetObject().name() + "." : 
-                      op.cls().name() + "::" ) + 
-                    op.name() + "(" + 
-                    ( fShowCall ? StringUtil.fmtSeq(opcall.argValues(), ",") : "" ) +
-                    ")";
-                fListModel.addElement(s);
-            }
+        	
+        	int current = 1;
+        	for (MOperationCall oc : callStack) {
+        		MOperation op = oc.getOperation();
+        		
+        		StringBuilder line = new StringBuilder();
+        		line.append(current++);
+        		line.append(". ");
+        		if (fShowCall) {
+        			line.append(oc.getSelf().name());
+        			line.append(".");
+        		} else {
+        			line.append(op.cls().name());
+        			line.append("::");
+        		}
+        		line.append(op.name());
+        		line.append("(");
+        		if (fShowCall) {
+        			StringUtil.addToStringBuilder(
+        					line, 
+        					",", 
+        					oc.getArgumentsAsNamesAndValues().values());
+        		}
+        		line.append(")");
+        		fListModel.addElement(line);
+        	}	
         }
+        
         repaint();
     }
 

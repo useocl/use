@@ -62,10 +62,10 @@ public class NavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
 
         Evaluator eval = new Evaluator();
-        Value value = eval.eval( navExpr, system.state(), system.varBindings() );
+        Value value = eval.eval( navExpr, system.state(), system.varBindings());
 
         assertTrue( value.isInteger() );
         IntegerValue val = ( IntegerValue ) value;
@@ -85,7 +85,7 @@ public class NavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
         Evaluator eval = new Evaluator();
         Value value = eval.eval( navExpr, system.state(), system.varBindings() );
 
@@ -105,7 +105,7 @@ public class NavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
 
         Evaluator eval = new Evaluator();
         Value value = eval.eval( navExpr, system.state(), system.varBindings() );
@@ -127,10 +127,10 @@ public class NavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
 
         Evaluator eval = new Evaluator();
-        Value value = eval.eval( navExpr, system.state(), system.varBindings() );
+        Value value = eval.eval( navExpr, system.state(), system.varBindings());
 
         assertTrue( value.isBoolean() );
         assertTrue( ( ( BooleanValue ) value ).value() );
@@ -149,7 +149,7 @@ public class NavigationTest extends TestCase {
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
                                                             "<input>", pw,
-                                                            system.topLevelBindings() );
+                                                            system.varBindings() );
 
         Evaluator eval = new Evaluator();
         Value value = eval.eval( navExpr, system.state(), system.varBindings() );

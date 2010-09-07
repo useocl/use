@@ -27,6 +27,7 @@ import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 
 
 /**
@@ -56,7 +57,14 @@ public interface MObject {
      */
     public String name();
 
+    
+    /**
+     * returns the value for this object
+     * @return the value for this object
+     */
+    public ObjectValue value();
 
+    
     /**
      * Returns the state of an object in a specific system state.
      *

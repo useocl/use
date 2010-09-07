@@ -101,7 +101,7 @@ public class ClassDiagram extends DiagramView
     private Map<MAssociation, DiamondNode> fNaryAssocToDiamondNodeMap;
     private Map<MAssociation, List<EdgeBase>> fNaryAssocToHalfEdgeMap;
     private Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
-    
+        
     // jj anfangen
 	private ClassSelection fSelection;
 	private DiagramMouseHandling mouseHandling;
@@ -593,7 +593,7 @@ public class ClassDiagram extends DiagramView
 					
 					anames.add((AssociationName)node);//jj
                 } //jj
-            }
+                }
             
             String txt = null;
             if ( selectedObjects.size() == 1 ) {
@@ -801,11 +801,11 @@ public class ClassDiagram extends DiagramView
             	obj = ((EnumNode)o).getEnum();
             } else {
             	continue;
-        	}
+            }
             
             if ( !selectedNodes.contains( obj ) ) {
                 noneSelectedNodes.add( obj );
-            }
+        }
         }
         
         return noneSelectedNodes;

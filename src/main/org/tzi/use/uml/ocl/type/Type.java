@@ -252,23 +252,23 @@ public abstract class Type {
         	}
         	
         } else {
-	        Iterator<Type> it1 = cs.iterator();
-	        outerLoop: 
-	        while (it1.hasNext() ) {
-	            Type t1 = it1.next();
-	            Iterator<Type> it2 = cs.iterator();
-	            
-	            while (it2.hasNext() ) {
-	                Type t2 = it2.next();
-	                if (! t1.isSubtypeOf(t2) )
-	                    continue outerLoop;
-	            }
-	            
-	            cType = t1;
-	            break;
-	        }
+        Iterator<Type> it1 = cs.iterator();
+        outerLoop: 
+        while (it1.hasNext() ) {
+            Type t1 = it1.next();
+            Iterator<Type> it2 = cs.iterator();
+            
+            while (it2.hasNext() ) {
+                Type t2 = it2.next();
+                if (! t1.isSubtypeOf(t2) )
+                    continue outerLoop;
+            }
+            
+            cType = t1;
+            break;
         }
-        
+        }
+    
         return cType;
 	}
 }

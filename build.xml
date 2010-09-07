@@ -116,15 +116,13 @@
         <uptodate srcfile="${parser.dir}/base/USEBase.gpart" 
                   targetfile="${parser.dir}/use/USEParser.java"/>
 
-      	<!-- command language parser grammar exists -->
-      	<available file="${parser.dir}/cmd/Cmd.g" />
+      	<!-- shell grammar exists -->
+      	<available file="${parser.dir}/shell/ShellCommand.g" />
       	
-      	<!-- command language parser -->
-        <uptodate srcfile="${parser.dir}/cmd/Cmd.gpart" 
-                  targetfile="${parser.dir}/cmd/CmdParser.java"/>
+      	<!-- shell language parser -->
+        <uptodate srcfile="${parser.dir}/shell/ShellCommand.gpart" 
+                  targetfile="${parser.dir}/shell/ShellCommandParser.java"/>
 
-      	<uptodate srcfile="${parser.dir}/base/CmdBase.gpart" 
-      	                  targetfile="${parser.dir}/cmd/CmdParser.java"/>
         	
       	<!-- generator parser grammar exists -->
       	<available file="${parser.dir}/generator/Generator.g" />
@@ -133,6 +131,16 @@
         <uptodate srcfile="${parser.dir}/generator/Generator.gpart" 
                   targetfile="${parser.dir}/generator/GeneratorParser.java"/>
       	
+      	<!-- soil parser grammar exists -->
+      	<available file="${parser.dir}/soil/Soil.g" />
+      	
+      	<!-- soil parser -->
+      	<uptodate srcfile="${parser.dir}/soil/Soil.gpart"
+      	          targetfile="${parser.dir}/soil/SoilParser.java"/>
+      	
+      	<uptodate srcfile="${parser.dir}/base/SoilBase.gpart"
+      	          targetfile="${parser.dir}/soil/SoilParser.java"/>
+
       	<!-- testsuite parser grammar exists -->
       	<available file="${parser.dir}/testsuite/TestSuite.g" />
       	
@@ -160,6 +168,19 @@
       <classpath path="${antlr.jar}"/>
       <arg line="OCL.g"/>
     </java>
+		
+	<!-- soil parser -->
+    <echo>Generating soil parser</echo>
+    <concat destfile="${parser.dir}/soil/Soil.g">
+        <fileset file="${parser.dir}/soil/Soil.gpart" />
+        <fileset file="${parser.dir}/base/SoilBase.gpart" />
+        <fileset file="${parser.dir}/base/OCLBase.gpart" />
+        <fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
+    </concat>
+    <java classname="org.antlr.Tool" dir="${parser.dir}/soil" fork="yes">
+      <classpath path="${antlr.jar}"/>
+      <arg line="Soil.g"/> 
+    </java>
 
     <!-- use parser -->
     <echo>Generating use parser</echo>
@@ -167,6 +188,7 @@
   		<fileset file="${parser.dir}/use/USE.gpart" />
   		<fileset file="${parser.dir}/base/USEBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLBase.gpart" />
+  		<fileset file="${parser.dir}/base/SoilBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
   	</concat>
   	
@@ -175,19 +197,18 @@
       <arg line="USE.g"/> 
     </java>
 
-    <!-- command line parser -->
-    <echo>Generating command line parser</echo>
-  	<concat destfile="${parser.dir}/cmd/Cmd.g">
-  		<fileset file="${parser.dir}/cmd/Cmd.gpart" />
-  		<fileset file="${parser.dir}/base/CmdBase.gpart" />
-  		<fileset file="${parser.dir}/base/USEBase.gpart" />
+    <!-- shell command parser -->
+    <echo>Generating shell command parser</echo>
+  	<concat destfile="${parser.dir}/shell/ShellCommand.g">
+  		<fileset file="${parser.dir}/shell/ShellCommand.gpart" />
   		<fileset file="${parser.dir}/base/OCLBase.gpart" />
+  		<fileset file="${parser.dir}/base/SoilBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
   	</concat>
   	
-    <java classname="org.antlr.Tool" dir="${parser.dir}/cmd" fork="yes">
+    <java classname="org.antlr.Tool" dir="${parser.dir}/shell" fork="yes">
       <classpath path="${antlr.jar}"/>
-      <arg line="-lib ../base Cmd.g"/> 
+      <arg line="-lib ../base ShellCommand.g"/> 
     </java>
 
     <!-- generator parser -->
@@ -196,19 +217,20 @@
   		<fileset file="${parser.dir}/generator/Generator.gpart" />
   		<fileset file="${parser.dir}/base/USEBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLBase.gpart" />
+  		<fileset file="${parser.dir}/base/SoilBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
   	</concat>
     <java classname="org.antlr.Tool" dir="${parser.dir}/generator" fork="yes">
       <classpath path="${antlr.jar}"/>
       <arg line="Generator.g"/> 
     </java>
-  	
+		
 	<!-- test suite parser -->
     <echo>Generating testsuite parser</echo>
   	<concat destfile="${parser.dir}/testsuite/TestSuite.g">
   	   <fileset file="${parser.dir}/testsuite/TestSuite.gpart" />
   	   <fileset file="${parser.dir}/base/OCLBase.gpart" />
-  	   <fileset file="${parser.dir}/base/CmdBase.gpart" />
+  	   <fileset file="${parser.dir}/base/SoilBase.gpart" />
   	   <fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
   	</concat>
   	
@@ -218,12 +240,12 @@
     </java>
 		
   	<!-- Some patching to avoid Warnings for generated code -->
-  	<replaceregexp file="${parser.dir}/cmd/CmdLexer.java"
+  	<replaceregexp file="${parser.dir}/shell/ShellCommandLexer.java"
   		    match="^public class"
   		    replace="@SuppressWarnings(&quot;all&quot;) public class"
   		    flags="m" />
   	
-  	<replaceregexp file="${parser.dir}/cmd/CmdParser.java"
+  	<replaceregexp file="${parser.dir}/shell/ShellCommandParser.java"
   	  		match="^public class"
   	  		replace="@SuppressWarnings(&quot;all&quot;) public class"
   	  		flags="m" />
@@ -237,6 +259,16 @@
   	  	  	match="^public class"
   	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
   	  	  	flags="m" />
+	
+	<replaceregexp file="${parser.dir}/soil/SoilLexer.java"
+		  	match="^public class"
+		  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+		  	flags="m" />
+		  	
+	<replaceregexp file="${parser.dir}/soil/SoilParser.java"
+		  	match="^public class"
+		  	replace="@SuppressWarnings(&quot;all&quot;) public class"
+		  	flags="m" />
   	
   	<replaceregexp file="${parser.dir}/ocl/OCLParser.java"
   	  	  	match="^public class"
@@ -410,7 +442,7 @@
 
   <!-- create all jars -->
 
-	<target name="build" depends="jar-use, create-nativelib" description="build everything" />
+	<target name="build" depends="jar-use, create-nativelib" description="build everything " />
 
 
   <!-- delete the build tree -->
@@ -477,7 +509,7 @@
     <junit haltonfailure="yes">
       <jvmarg value="-Dbasedir=${basedir}"/>
       <formatter type="brief" usefile="no"/>
-      <classpath path="${antlr.jar}:${build.classes.dir}:${gsbase.jar}:${jruby.jar}"/>
+      <classpath path="${antlr.jar}:${build.classes.dir}:${gsbase.jar}:${jruby.jar}:${junit.jar}"/>
       <batchtest fork="yes">
         <fileset dir="${src.test.dir}">
           <include name="**/*Test.java"/>

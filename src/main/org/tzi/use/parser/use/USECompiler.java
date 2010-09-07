@@ -94,6 +94,7 @@ public class USECompiler {
         
         lexer.init(errHandler);
         parser.init(errHandler);
+        
         try {
             // Parse the specification
             //Log.verbose("Parsing...");
@@ -117,6 +118,4 @@ public class USECompiler {
         err.flush();
         return model;
     }
-
-   
 }

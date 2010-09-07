@@ -1,0 +1,13 @@
+-- one soil defined operation with result value and parameters
+model t21b
+
+class A
+
+  operations
+
+    op1(n : Integer) : Integer
+      begin
+        result := n * n
+      end
+    
+end

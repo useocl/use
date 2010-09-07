@@ -21,21 +21,10 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.SystemManipulator;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.TestModelUtil;
-import org.tzi.use.uml.ocl.expr.ExpAttrOp;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 
 
 /**
@@ -60,7 +49,7 @@ public class ObjectCreation {
     }
 
     /**
-     * Creates a model with two classes and an associationclass. It creates
+     * Creates a model with two classes and an association class. It creates
      * instances of those as well.
      *
      * @return returns the actual System.
@@ -71,36 +60,18 @@ public class ObjectCreation {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocs();
             MSystem system = new MSystem( model );
-
+            
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
             // creation of an object (p1) of the class Person
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
+            systemManipulator.createObjects("Person", "p1");
+            
             // creation of an object (c1) of the class Company
-            names.clear();
-            names.add( "c1" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
+            systemManipulator.createObjects("Company", "c1");
+            
             // creation of a link between p1 and c1 of an association
-            names.clear();
-            names.add( "p1" );
-            names.add( "c1" );
-            Expression[] exprs = new Expression[names.size()];
-            Iterator<String> it = names.iterator();
-            int i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            MAssociation assoc = model.getAssociation( "Job" );
-            cmd = new MCmdInsertLink( system.state(), exprs, assoc );
-            system.executeCmd( cmd );
-
+            systemManipulator.insertLink("Job", "p1", "c1");
+            
             return system;
         } catch ( Exception e ) {
             throw ( new Error( e ) );
@@ -108,7 +79,7 @@ public class ObjectCreation {
     }
 
     /**
-     * Creates a model with two classes and an associationclass. It creates
+     * Creates a model with two classes and an association class. It creates
      * instances of those as well.
      *
      * @return returns the actual System.
@@ -119,102 +90,34 @@ public class ObjectCreation {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocs2();
             MSystem system = new MSystem( model );
-
+            
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
             // creation of an object (p1) of the class Person
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            // creation of an object (c1) of the class Company
-            names.clear();
-            names.add( "c1" );
-            names.add( "c2" );
-            names.add( "c3" );
-            names.add( "c4" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
+            systemManipulator.createObjects("Person", "p1");
+            
+            // creation of four objects (c1-c4) of the class Company
+            systemManipulator.createObjects(
+            		"Company", 
+            		"c1", "c2", "c3", "c4");
+             
             // creation of a link between p1 and c1 of an association
-            names.clear();
-            names.add( "p1" );
-            names.add( "c1" );
-            Expression[] exprs = new Expression[names.size()];
-            Iterator<String> it = names.iterator();
-            int i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            MAssociation assoc = model.getAssociation( "Job" );
-            cmd = new MCmdInsertLink( system.state(), exprs, assoc );
-            system.executeCmd( cmd );
-
-            // creation of a link between p1 and c2 of an association
-            names.clear();
-            names.add( "p1" );
-            names.add( "c2" );
-            exprs = new Expression[names.size()];
-            it = names.iterator();
-            i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            assoc = model.getAssociation( "Job" );
-            cmd = new MCmdInsertLink( system.state(), exprs, assoc );
-            system.executeCmd( cmd );
-
-            // creation of a link between p1 and c3 of an association
-            names.clear();
-            names.add( "p1" );
-            names.add( "c3" );
-            exprs = new Expression[names.size()];
-            it = names.iterator();
-            i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            assoc = model.getAssociation( "Job" );
-            cmd = new MCmdInsertLink( system.state(), exprs, assoc );
-            system.executeCmd( cmd );
-
-            // creation of a link between p1 and c4 of an association
-            names.clear();
-            names.add( "p1" );
-            names.add( "c4" );
-            exprs = new Expression[names.size()];
-            it = names.iterator();
-            i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            assoc = model.getAssociation( "Job" );
-            cmd = new MCmdInsertLink( system.state(), exprs, assoc );
-            system.executeCmd( cmd );
-
+            systemManipulator.insertLink("Job", "p1", "c1");
+            systemManipulator.insertLink("Job", "p1", "c2");
+            systemManipulator.insertLink("Job", "p1", "c3");
+            systemManipulator.insertLink("Job", "p1", "c4");
+            
             // set an attribute value in c1
-            ExpConstString expr = new ExpConstString( "IBM" );
-            MObject obj = system.state().objectByName( "c1" );
-            MAttribute attr = obj.cls().attribute( "name", false );
-            ExpVariable exprVar = new ExpVariable( obj.name(), obj.type() );
-            ExpAttrOp attrOpExp = new ExpAttrOp( attr, exprVar );
-            cmd = new MCmdSetAttribute( system.state(), attrOpExp, expr );
-            system.executeCmd( cmd );
-
-
+            systemManipulator.setAttribute("c1", "name", new ExpConstString("IBM"));
+                   
             return system;
-        } catch ( Exception e ) {
+        } catch ( MSystemException e ) {
             throw ( new Error( e ) );
         }
     }
 
     /**
-     * Creates a model with two classes and an associationclass. It creates
+     * Creates a model with two classes and an association class. It creates
      * instances of those as well.
      *
      * @return returns the actual System.
@@ -225,46 +128,32 @@ public class ObjectCreation {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
             MSystem system = new MSystem( model );
-
+            
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
             // creation of an object (p1) of the class Person
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
+            systemManipulator.createObjects("Person", "p1");
+            
             // creation of an object (c1) of the class Company
-            names.clear();
-            names.add( "c1" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            // creation of a link between p1 and c1 of an association
-            names.clear();
-            names.add( "p1" );
-            names.add( "c1" );
-            MAssociationClass assoc = model.getAssociationClass( "Job" );
-            cmd = new MCmdCreateInsertObjects( system.state(), "j1", assoc, names );
-            system.executeCmd( cmd );
-
+            systemManipulator.createObjects("Company", "c1");
+            
+            // creation of a link object (j1) of class Job between p1 and c1
+            systemManipulator.createLinkObject(
+            		"Job", 
+            		"j1",
+            		"p1", "c1");
+            
             // set an attribute value in c1
-            ExpConstString expr = new ExpConstString( "IBM" );
-            MObject obj = system.state().objectByName( "c1" );
-            MAttribute attr = obj.cls().attribute( "name", false );
-            ExpVariable exprVar = new ExpVariable( obj.name(), obj.type() );
-            ExpAttrOp attrOpExp = new ExpAttrOp( attr, exprVar );
-            cmd = new MCmdSetAttribute( system.state(), attrOpExp, expr );
-            system.executeCmd( cmd );
-
+            systemManipulator.setAttribute("c1", "name", new ExpConstString("IBM"));
+            
             return system;
-        } catch ( Exception e ) {
+        } catch ( MSystemException e ) {
             throw ( new Error( e ) );
         }
     }
 
     /**
-     * Creates an instance of a model with one class and one associationclass. 
+     * Creates an instance of a model with one class and one association class. 
      *
      * @return returns the actual System.
      */
@@ -274,31 +163,26 @@ public class ObjectCreation {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithOneClassAndOneAssocClass();
             MSystem system = new MSystem( model );
-
+            
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
             // creation of an objects (p1,p2) of the class Person
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            names.add( "p2" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            // creation of a link between p1 and p2 of an associationclass
-            names.clear();
-            names.add( "p1" );
-            names.add( "p2" );
-            MAssociationClass assoc = model.getAssociationClass( "Job" );
-            cmd = new MCmdCreateInsertObjects( system.state(), "j1", assoc, names );
-            system.executeCmd( cmd );
-
+            systemManipulator.createObjects("Person", "p1", "p2");
+            
+            // creation of a link object (j1) of class Job between p1 and p2
+            systemManipulator.createLinkObject(
+            		"Job", 
+            		"j1", 
+            		"p1", "p2");
+            
             return system;
-        } catch ( Exception e ) {
+        } catch ( MSystemException e ) {
             throw ( new Error( e ) );
         }
     }
 
     /**
-     * Creates a model with two classes and an associationclass. It creates
+     * Creates a model with two classes and an association class. It creates
      * instances of those as well.
      *
      * @return returns the actual System.
@@ -309,55 +193,36 @@ public class ObjectCreation {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndTenaryAssocClass();
             MSystem system = new MSystem( model );
-
+            
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
             // creation of an object (p1) of the class Person
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
+            systemManipulator.createObjects("Person", "p1");
+            
             // creation of an object (c1) of the class Company
-            names.clear();
-            names.add( "c1" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            // creation of an object (s1) of the class Company
-            names.clear();
-            names.add( "s1" );
-            type = TypeFactory.mkObjectType( model.getClass( "Salary" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            // creation of a link between p1, s1 and c1 of an association
-            names.clear();
-            names.add( "p1" );
-            names.add( "c1" );
-            names.add( "s1" );
-            MAssociationClass assoc = model.getAssociationClass( "Job" );
-            cmd = new MCmdCreateInsertObjects( system.state(), "j1", assoc, names );
-            system.executeCmd( cmd );
+            systemManipulator.createObjects("Company", "c1");
+            
+            // creation of an object (s1) of the class Salary
+            systemManipulator.createObjects("Salary", "s1");
+            
+            // creation of a link object (j1) of class Job between p1, s1 and c1
+            systemManipulator.createLinkObject(
+            		"Job",
+            		"j1", 
+            		"p1", "c1", "s1");
 
             // set an attribute value in c1
-            ExpConstString expr = new ExpConstString( "IBM" );
-            MObject obj = system.state().objectByName( "c1" );
-            MAttribute attr = obj.cls().attribute( "name", false );
-            ExpVariable exprVar = new ExpVariable( obj.name(), obj.type() );
-            ExpAttrOp attrOpExp = new ExpAttrOp( attr, exprVar );
-            cmd = new MCmdSetAttribute( system.state(), attrOpExp, expr );
-            system.executeCmd( cmd );
+            systemManipulator.setAttribute("c1", "name", new ExpConstString("IBM"));
 
             return system;
-        } catch ( Exception e ) {
+        } catch ( MSystemException e ) {
             throw ( new Error( e ) );
         }
     }
 
 
     /**
-     * Creates a model with two classes, an associationclass and an association.
+     * Creates a model with two classes, an association class and an association.
      * It creates instances of those as well.
      *
      * @return returns the actual System.
@@ -368,92 +233,39 @@ public class ObjectCreation {
             MModel model = TestModelUtil.getInstance()
                     .createComplexModel();
             MSystem system = new MSystem( model );
-
-            // creation of an object (p1) of the class Person
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            ObjectType type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            MCmd cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            // creation of an object (p2) of the class Person
-            names.clear();
-            names.add( "p2" );
-            type = TypeFactory.mkObjectType( model.getClass( "Person" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
+            
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
+            // creation of two objects (p1, p2) of the class Person
+            systemManipulator.createObjects("Person", "p1", "p2");
+            
             // creation of a link between p1 and p2 (p1 is boss of p2)
-            names.clear();
-            names.add( "p1" );
-            names.add( "p2" );
-            Expression[] exprs = new Expression[names.size()];
-            Iterator<String> it = names.iterator();
-            int i = 0;
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            MAssociation ass = model.getAssociation( "isBoss" );
-            cmd = new MCmdInsertLink( system.state(), exprs, ass );
-            system.executeCmd( cmd );
-
-            // creation of an object (c1) of the class Company
-            names.clear();
-            names.add( "c1" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            // creation of an object (c2) of the class Company
-            names.clear();
-            names.add( "c2" );
-            type = TypeFactory.mkObjectType( model.getClass( "Company" ) );
-            cmd = new MCmdCreateObjects( system.state(), names, type );
-            system.executeCmd( cmd );
-
-            // creation of a link object between p1 and c1 of an association
-            names.clear();
-            names.add( "p1" );
-            names.add( "c1" );
-            MAssociationClass assoc = model.getAssociationClass( "Job" );
-            cmd = new MCmdCreateInsertObjects( system.state(), "j1", assoc, names );
-            system.executeCmd( cmd );
-
-            // creation of a link object between p2 and c1 of an association
-            names.clear();
-            names.add( "p2" );
-            names.add( "c1" );
-            assoc = model.getAssociationClass( "Job" );
-            cmd = new MCmdCreateInsertObjects( system.state(), "j2", assoc, names );
-            system.executeCmd( cmd );
-
+            systemManipulator.insertLink("isBoss", "p1", "p2");
+                 
+            // creation of two objects (c1, c2) of the class Company
+            systemManipulator.createObjects("Company", "c1", "c2");
+            
+            // creation of a link object (j1) of class Job between p1 and c1
+            systemManipulator.createLinkObject(
+            		"Job", 
+            		"j1",
+            		"p1", "c1");
+            
+            // creation of a link object (j2) of class Job between p2 and c1
+            systemManipulator.createLinkObject(
+            		"Job", 
+            		"j2",
+            		"p2", "c1");                      
+            
             // set an attribute value in c1
-            ExpConstString expr = new ExpConstString( "IBM" );
-            MObject obj = system.state().objectByName( "c1" );
-            MAttribute attr = obj.cls().attribute( "name", false );
-            ExpVariable exprVar = new ExpVariable( obj.name(), obj.type() );
-            ExpAttrOp attrOpExp = new ExpAttrOp( attr, exprVar );
-            cmd = new MCmdSetAttribute( system.state(), attrOpExp, expr );
-            system.executeCmd( cmd );
-
+            systemManipulator.setAttribute("c1", "name", new ExpConstString("IBM"));
+            
             // set an attribute value in c2
-            expr = new ExpConstString( "SUN" );
-            obj = system.state().objectByName( "c2" );
-            attr = obj.cls().attribute( "name", false );
-            exprVar = new ExpVariable( obj.name(), obj.type() );
-            attrOpExp = new ExpAttrOp( attr, exprVar );
-            cmd = new MCmdSetAttribute( system.state(), attrOpExp, expr );
-            system.executeCmd( cmd );
-
+            systemManipulator.setAttribute("c2", "name", new ExpConstString("SUN"));
 
             return system;
-        } catch ( Exception e ) {
+        } catch ( MSystemException e ) {
             throw ( new Error( e ) );
         }
     }
-
-
-    
-
 }

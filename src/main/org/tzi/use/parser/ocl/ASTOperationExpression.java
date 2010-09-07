@@ -22,10 +22,13 @@
 package org.tzi.use.parser.ocl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
+import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
@@ -76,9 +79,29 @@ public class ASTOperationExpression extends ASTExpression {
     public void addArg(ASTExpression arg) {
         fArgs.add(arg);
     }
+    
+    public Token getOpToken() {
+    	return fOp;
+    }
+    
+    public ASTExpression getSourceExpression() {
+    	return fSrcExpr;
+    }
+    
+    public List<ASTExpression> getArgs() {
+    	return fArgs;
+    }
+    
+    public Expression[] getArgExpressions() {
+    	return fArgExprs;
+    }
 
     public void hasParentheses() {
         fHasParentheses = true;
+    }
+    
+    public boolean isObjectOperation() {
+    	return (fHasParentheses && (fSrcExpr != null) && !fFollowsArrow);
     }
 
     public void setExplicitRolename( Token rolename ) {
@@ -176,6 +199,7 @@ public class ASTOperationExpression extends ASTExpression {
                 throw new SemanticException(fOp, 
                                             "Operation oclIsNew is only allowed in postconditions.");
         }
+        
         return res;
     }
     
@@ -187,6 +211,19 @@ public class ASTOperationExpression extends ASTExpression {
         String opname = fOp.getText();
         Type srcType = srcExpr.type();
         
+        // handles cases like 
+        // !! set C.f().a := 2 (= set attribute a of object C.f() to 2)
+        // where f() is an operation without return value.
+        if (srcType == null) {
+        	throw new SemanticException(
+        			fOp, 
+        			"'" +
+        			opname +
+        			"' cannot be applied to '" +
+        			srcExpr + 
+        			"', since the latter doesn't evaluate to something with a type.");
+        }
+        
         // generate argument expressions
         fArgExprs = new Expression[fArgs.size() + 1];
         fArgExprs[0] = srcExpr;
@@ -197,19 +234,19 @@ public class ASTOperationExpression extends ASTExpression {
         }
     
         // flags for various cases
-        final int SRC_SIMPLE_TYPE      = 0x0100;
-        final int SRC_OBJECT_TYPE      = 0x0200;
-        final int SRC_COLLECTION_TYPE  = 0x0400;
-        final int SRC_TUPLE_TYPE       = 0x0800;
+        final int SRC_SIMPLE_TYPE     = 0x0100;
+        final int SRC_OBJECT_TYPE     = 0x0200;
+        final int SRC_COLLECTION_TYPE = 0x0400;
+        final int SRC_TUPLE_TYPE      = 0x0800;
 
-        final int DOT                  = 0x0010;
-        final int ARROW                = 0x0020;
+        final int DOT                 = 0x0010;
+        final int ARROW               = 0x0020;
 
         final int NO_EXPLICIT_ROLENAME = 0x0000;
-        final int EXPLICIT_ROLENAME    = 0x1000;
+        final int EXPLICIT_ROLENAME = 0x1000;
 
-        final int NO_PARENTHESES       = 0x0000;
-        final int PARENTHESES          = 0x0001;
+        final int NO_PARENTHESES      = 0x0000;
+        final int PARENTHESES         = 0x0001;
 
         int opcase;
         if (srcType.isTrueObjectType() )
@@ -273,7 +310,7 @@ public class ASTOperationExpression extends ASTExpression {
             	//TODO: Handle error!!!
             	System.out.println("");
             } else {
-            	res = genNavigation( fOp, srcClass3, srcExpr, dst, fExplicitRolename );
+            res = genNavigation( fOp, srcClass3, srcExpr, dst, fExplicitRolename );
             }
             
             break;
@@ -321,8 +358,8 @@ public class ASTOperationExpression extends ASTExpression {
             // c.op()  201 (5) with implicit (3,1)
             if (Options.disableCollectShorthand )
                 throw new SemanticException(fOp, MSG_DISABLE_COLLECT_SHORTHAND);
-            res = collectShorthandWithArgs(opname, srcExpr);
-            break;
+            res = collectShorthandWithArgs(ctx, opname, srcExpr);
+        break;
             
         case SRC_TUPLE_TYPE + DOT + PARENTHESES:
         case SRC_TUPLE_TYPE + DOT + NO_PARENTHESES:
@@ -334,11 +371,11 @@ public class ASTOperationExpression extends ASTExpression {
             } else {
                 res = new ExpTupleSelectOp(p, srcExpr);
             }
-            break;
+        break;
             
         case SRC_TUPLE_TYPE + ARROW + PARENTHESES:
         case SRC_TUPLE_TYPE + ARROW + NO_PARENTHESES:
-        	throw new SemanticException(fOp, "Collection operation not applicable to tuple type.");
+	    throw new SemanticException(fOp, "Collection operation not applicable to tuple type.");
 
         default:
             throw new RuntimeException("case " + Integer.toHexString(opcase) + 
@@ -399,7 +436,7 @@ public class ASTOperationExpression extends ASTExpression {
      * Handles shorthand notation for collect and expands to an
      * explicit collect expression. 
      */
-    private Expression collectShorthandWithArgs(String opname, Expression srcExpr) 
+    private Expression collectShorthandWithArgs(Context ctx, String opname, Expression srcExpr) 
         throws SemanticException
     {
         Expression res = null;
@@ -410,13 +447,44 @@ public class ASTOperationExpression extends ASTExpression {
             MClass srcClass = ((ObjectType) elemType).cls();
             MOperation op = srcClass.operation(opname, true);
             if (op != null ) {
-                // check for isQuery operation with OCL body
-                if (!op.hasExpression())
-                    throw new SemanticException
-                        (fOp, "Operation `" + srcClass.name() + "::" + 
-                         op.signature() + "' cannot be used in OCL expression " +
-                         "(only side effect-free operations with a return type" +
-                         " and an OCL expression as body may be used).");
+                
+            	// operation must have a body
+            	if (!op.hasBody()) {
+            		throw new SemanticException(
+            				fOp, 
+            				"Operation " +
+            				srcClass.name() +
+            				"::" + 
+            				opname +
+            				" has no body.");
+            	}
+            	
+            	// if the body is a soil statement, evaluating soil statements 
+            	// must be allowed
+            	if (op.hasStatement() && 
+            			Options.soilFromOCL == SoilPermissionLevel.NONE) {
+            		
+            		throw new SemanticException(
+            				fOp, 
+            				"Operation " +
+            				srcClass.name() +
+            				"::" + 
+            				opname +
+            				" is defined by a soil statement.");
+            	}
+            	
+            	// if the operation has side effects, this must be allowed
+            	if (op.hasSideEffects() && 
+            			Options.soilFromOCL != SoilPermissionLevel.ALL) {
+            		
+            		throw new SemanticException(
+            				fOp, 
+            				"Operation " +
+            				srcClass.name() +
+            				"::" + 
+            				opname +
+            				" is not side effect free.");
+            	}
                 
                 // transform c.op(...) into c->collect($e | $e.op(...))
                 ExpVariable eVar = new ExpVariable("$e", elemType);
@@ -424,6 +492,7 @@ public class ASTOperationExpression extends ASTExpression {
                 try { 
                     // constructor performs additional checks
                     res = new ExpObjOp(op, fArgExprs);
+                    res.setSourceExpression(this);
                 } catch (ExpInvalidException ex) {
                     throw new SemanticException(fOp, 
                                                 "In operation call `" + srcClass.name() + "::" + 
@@ -495,18 +564,49 @@ public class ASTOperationExpression extends ASTExpression {
         String opname = fOp.getText();
         MOperation op = srcClass.operation(opname, true);
         if (op != null ) {
-            
-            // check for isQuery operation with OCL body
-            if (ctx.isSideEffectFree() && !(op.hasExpression() || op.hasScript()))
-                throw new SemanticException
-                    (fOp,"Operation `" + srcClass.name() + "::" + 
-                     op.signature() + "' cannot be used in OCL expression " +
-                     "(only side effect-free operations with a return type" + 
-                     " and an OCL expression as body may be used).");
-            
+        	
+        	// operation must have a body
+        	if (!op.hasBody()) {
+        		throw new SemanticException(
+        				fOp, 
+        				"Operation " +
+        				srcClass.name() +
+        				"::" + 
+        				opname +
+        				" has no body.");
+        	}
+        	
+        	// if the body is a soil statement, evaluating soil statements 
+        	// must be allowed
+        	if (op.hasStatement() && 
+        			Options.soilFromOCL == SoilPermissionLevel.NONE) {
+        		
+        		throw new SemanticException(
+        				fOp, 
+        				"Operation " +
+        				srcClass.name() +
+        				"::" + 
+        				opname +
+        				" is defined by a soil statement.");
+        	}
+        	
+        	// if the operation has side effects, this must be allowed
+        	if (op.hasSideEffects() && 
+        			Options.soilFromOCL != SoilPermissionLevel.ALL) {
+        		
+        		throw new SemanticException(
+        				fOp, 
+        				"Operation " +
+        				srcClass.name() +
+        				"::" + 
+        				opname +
+        				" is not side effect free.");
+        	}
+        	      
             try { 
                 // constructor performs additional checks
                 res = new ExpObjOp(op, fArgExprs);
+                res.setSourceExpression(this);
             } catch (ExpInvalidException ex) {
                 throw new SemanticException(fOp, 
                                             "In operation call `" + srcClass.name() + "::" + 
@@ -522,4 +622,19 @@ public class ASTOperationExpression extends ASTExpression {
     public String toString() {
         return "(" + fOp + " " + StringUtil.fmtSeq(fArgs.iterator(), " ") + ")";
     }
+
+	@Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		if (fSrcExpr != null) {
+			fSrcExpr.getFreeVariables(freeVars);
+			Iterator<ASTExpression> it = fArgs.iterator();
+			while (it.hasNext()) {
+				it.next().getFreeVariables(freeVars);
+			}
+		} else {
+			if (!fHasParentheses) {
+				freeVars.add(fOp.getText());
+			}
+		}
+	}
 }

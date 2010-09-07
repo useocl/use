@@ -29,19 +29,21 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
+import static org.tzi.use.util.StringUtil.inQuotes;
+
+import java.io.PrintWriter;
+
 import org.tzi.use.gen.assl.statics.GInstrCreate_C;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
-
-import org.tzi.use.util.cmd.CommandFailedException;
-import org.tzi.use.util.cmd.CannotUndoException;
-
-import java.util.List;
-import java.util.ArrayList;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 class GEvalInstrCreate_C extends GEvalInstruction {
     private GInstrCreate_C fInstr;
@@ -53,37 +55,53 @@ class GEvalInstrCreate_C extends GEvalInstruction {
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
-        MClass cls = fInstr.cls();
-        ObjectType objectType = TypeFactory.mkObjectType( cls );
-        List<String> names = new ArrayList<String>();
         
-        names.add(conf.systemState().uniqueObjectNameForClass( cls.name() ));
-        MCmd cmd = new MCmdCreateObjects(conf.systemState(),
-                                         names,
-                                         objectType);
-        try {
-        	String sCmd = cmd.getUSEcmd();
-            collector.basicPrintWriter().println(sCmd);
-            cmd.execute();
+    	MSystemState state = conf.systemState();
+    	MSystem system = state.system();
+    	PrintWriter basicOutput = collector.basicPrintWriter();
+    	PrintWriter detailOutput = collector.detailPrintWriter();
+    	
+    	detailOutput.println("evaluating " + inQuotes(fInstr));
+    			
+    	MClass objectClass = fInstr.cls();
+    	ObjectType objectType = TypeFactory.mkObjectType(objectClass);
+    	String objectName = state.uniqueObjectNameForClass(objectClass.name());
+    	
+    	MStatement statement = new MNewObjectStatement(
+    			objectClass, 
+    			objectName);
+    	
+    	MStatement inverseStatement;
+    	
+    	basicOutput.println(statement.getShellCommand());
+    	try {
+    		
+    		StatementEvaluationResult evaluationResult = 
+    			system.evaluateStatement(statement, true, false);
+    		
+    		inverseStatement = evaluationResult.getInverseStatement();
+    		
+		} catch (MSystemException e) {
+			throw new GEvaluationException(e);
+		}
+		
+		ObjectValue objectValue = 
+			new ObjectValue(objectType, state.objectByName(objectName));
+		
+		detailOutput.println(inQuotes(fInstr) + " == " + objectValue);
+		
+		caller.feedback(conf, objectValue, collector);
             
-            ObjectValue ov = new ObjectValue(objectType,
-                                             conf.systemState()
-                                             .objectByName((String) names.get(0)));
-            collector.detailPrintWriter().println("`"+ fInstr + "' == "+ov);
-            caller.feedback(conf, ov, collector);
-            
-            if (collector.expectSubsequentReporting()) {
-                collector.subsequentlyPrependCmd( cmd );
-            }
-            
-            collector.basicPrintWriter().print("undo: ");
-            collector.basicPrintWriter().println(sCmd);
-            cmd.undo();
-        } catch (CommandFailedException e) {
-            throw new GEvaluationException(e);
-        } catch (CannotUndoException e) {
-            throw new GEvaluationException(e);
-        }
+		if (collector.expectSubsequentReporting()) {
+			collector.subsequentlyPrependStatement(statement);
+		}
+		
+		basicOutput.println("undo: " + statement.getShellCommand());
+		
+		try {
+			system.evaluateStatement(inverseStatement, true, false);
+		} catch (MSystemException e) {
+			throw new GEvaluationException(e);
+		}
     }
 }

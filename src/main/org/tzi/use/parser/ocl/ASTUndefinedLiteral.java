@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
@@ -40,5 +42,10 @@ public class ASTUndefinedLiteral extends ASTExpression {
 
     public Expression gen(Context ctx) throws SemanticException {
     	return new ExpUndefined();
-    }
+    	}
+
+	@Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		
+	}
 }

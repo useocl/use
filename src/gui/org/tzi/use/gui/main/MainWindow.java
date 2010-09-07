@@ -43,8 +43,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -95,7 +93,6 @@ import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.classselection.SelectedAssociationPathView;
 import org.tzi.use.gui.views.selection.classselection.SelectedClassPathView;
 import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
@@ -106,24 +103,23 @@ import org.tzi.use.gui.views.selection.objectselection.SelectionObjectView;
 import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
 import org.tzi.use.main.Session;
+import org.tzi.use.main.Session.EvaluatedStatement;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
-import org.tzi.use.parser.cmd.CMDCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
-import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdCreateObjects;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MCmdShowHideCrop;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.uml.sys.StateChangeListener;
+import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.sys.soil.MExitOperationStatement;
+import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.USEWriter;
 
@@ -150,17 +146,19 @@ public class MainWindow extends JFrame implements StateChangeListener {
     private ModelBrowser fModelBrowser;
 
     private JMenuItem fMenuItemEditUndo;
+    private JMenuItem fMenuItemEditRedo;
 
 	private JToolBar fToolBar;
 	private JMenuBar fMenuBar;
     private JButton fBtnEditUndo;
+    private JButton fBtnEditRedo;
 
     private JCheckBoxMenuItem fCbMenuItemCheckStructure;
 
     private List<ClassDiagramView> classDiagrams = new ArrayList<ClassDiagramView>();
+    private static final String DEFAULT_UNDO_TEXT = "Undo last statement";
     private List<NewObjectDiagramView> objectDiagrams = new ArrayList<NewObjectDiagramView>();
-    
-    private static final String DEFAULT_UNDO_TEXT = "Undo last state command";
+    private static final String DEFAULT_REDO_TEXT = "Redo last undone statement";
 
     private static final String STATE_EVAL_OCL = "Evaluate OCL expression";
 
@@ -178,7 +176,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
 	private static IRuntime fPluginRuntime;
 
-	private Map<Map<String, String>, PluginActionProxy> pluginActions = new HashMap<Map<String, String>, PluginActionProxy>();
+	private Map<Map<String, String>, PluginActionProxy> pluginActions = 
+		new HashMap<Map<String, String>, PluginActionProxy>();
 
 	MainWindow(Session session, IRuntime pluginRuntime) {
         super("USE");
@@ -192,42 +191,41 @@ public class MainWindow extends JFrame implements StateChangeListener {
             public void stateChanged(ChangeEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        sessionChanged();
+                    	sessionChanged();
                     }
                 });
             }
-        });
-
-        fSession.addExecutedCmdListener(new Session.ExecutedCmdListener() {
-            public void executedCmd(Session.ExecutedCmd e) {
-                final MCmd cmd = e.cmd();
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        if (cmd.canUndo())
-                            enableUndo(cmd.name());
-                    }
-                });
-                
-                if (cmd instanceof MCmdShowHideCrop) {
-	                SwingUtilities.invokeLater(new Runnable() {
-	                    public void run() {
-	                    	handleShowHide(cmd);
-	                    }
-	                });
-                }
-            }
-        });
+        }); 
+        
+        /**
+         * for soil statements
+         */
+        fSession.addEvaluatedStatementListener(
+        		new Session.EvaluatedStatementListener(){
+        			@Override
+        			public void evaluatedStatement(EvaluatedStatement event) {
+        				SwingUtilities.invokeLater(new Runnable(){
+        					@Override
+        					public void run() {
+        						setUndoRedoButtons();
+        					}
+        				});
+        			}});
 
         // create toolbar
 		fToolBar = new JToolBar();
-		addToToolBar(fToolBar, fActionFileOpenSpec, "Open specification");
-		addToToolBar(fToolBar, fActionFilePrint, "Print diagram");
+		addToToolBar(fToolBar, fActionFileOpenSpec,  "Open specification");
+		addToToolBar(fToolBar, fActionFilePrint,     "Print diagram");
 		addToToolBar(fToolBar, fActionFilePrintView, "Print view");
 		fToolBar.addSeparator();
 
-		fBtnEditUndo = addToToolBar(fToolBar, fActionEditUndo,
-				DEFAULT_UNDO_TEXT);
+		fBtnEditUndo = addToToolBar(fToolBar, fActionEditUndo, DEFAULT_UNDO_TEXT);
+		fBtnEditRedo = addToToolBar(fToolBar, fActionEditRedo, DEFAULT_REDO_TEXT);
+		
+		fToolBar.addSeparator();
+		
 		addToToolBar(fToolBar, fActionStateEvalOCL, STATE_EVAL_OCL);
+		
 		fToolBar.addSeparator();
 
 		addToToolBar(fToolBar, fActionViewCreateClassDiagram,
@@ -298,7 +296,12 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fMenuItemEditUndo.setMnemonic('U');
         fMenuItemEditUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
                 Event.CTRL_MASK));
-
+        
+        fMenuItemEditRedo = menu.add(fActionEditRedo);
+        fMenuItemEditRedo.setMnemonic('R');
+        fMenuItemEditRedo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+                Event.CTRL_MASK + Event.SHIFT_MASK));
+        
         // `State' submenu
         menu = new JMenu("State");
         menu.setMnemonic('S');
@@ -590,10 +593,14 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
 
     public void stateChanged(StateChangeEvent e) {
-        if (e.structureHasChanged() && fCbMenuItemCheckStructure.isSelected())
-            checkStructure();
-        fActionFileSaveScript
-                .setEnabled(fSession.system().numExecutedCmds() > 0);
+    	setUndoRedoButtons();
+    	
+        if (e.structureHasChanged() && fCbMenuItemCheckStructure.isSelected()) {
+        	 checkStructure();
+        }
+        
+        fActionFileSaveScript.setEnabled(
+        		fSession.system().numEvaluatedStatements() > 0);
     }
 
     private int fViewFrameX = 0;
@@ -691,6 +698,26 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fViewFrameX = 0;
         fViewFrameY = 0;
     }
+    
+    private void setUndoRedoButtons() {
+    	String nextToUndo = 
+			fSession.system().getUndoDescription();
+		
+		if (nextToUndo != null) {
+			enableUndo(nextToUndo);
+		} else {
+			disableUndo();
+		}
+		
+		String nextToRedo =
+			fSession.system().getRedoDescription();
+		
+		if (nextToRedo != null) {
+			enableRedo(nextToRedo);
+		} else {
+			disableRedo();
+		}
+    }
 
     /**
      * Enables the undo command.
@@ -717,6 +744,32 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fMenuItemEditUndo.setText("Undo");
         fBtnEditUndo.setToolTipText(DEFAULT_UNDO_TEXT);
     }
+    
+    /**
+     * Enables the redo command.
+     */
+    void enableRedo(String name) {
+    	 fActionEditRedo.setEnabled(true);
+         // change text of menu item, leave toolbar button untouched
+         String s = "Redo: " + name;
+         // FIXME: apparently enableUndo is sometimes called before GUI setup
+         if (fMenuItemEditRedo != null) {
+             fMenuItemEditRedo.setText(s);
+         }
+         if (fBtnEditRedo != null) {
+             fBtnEditRedo.setToolTipText(s);
+         }
+    }
+    
+    /**
+     * Disables the undo command.
+     */
+    void disableRedo() {
+        fActionEditRedo.setEnabled(false);
+        // change text of menu item, leave toolbar button untouched
+        fMenuItemEditRedo.setText("Redo");
+        fBtnEditRedo.setToolTipText(DEFAULT_REDO_TEXT);
+    }
 
     /**
      * Shows the log panel.
@@ -728,82 +781,47 @@ public class MainWindow extends JFrame implements StateChangeListener {
             fTopSplitPane.setDividerLocation(0.75);
     }
 
+    public void createObject(String clsName) {
+    	MClass objectClass = fSession.system().model().getClass(clsName);
+    	
+    	if (objectClass == null) {
+            JOptionPane.showMessageDialog(
+            		this, 
+            		"No class named `" + clsName + "' defined in model.", 
+            		"Error", 
+            		JOptionPane.ERROR_MESSAGE);
+            
+            return;
+        } 
+    	
+    	createObject(objectClass, null);
+    }
+    
     /**
      * Creates a new object. Keeps track of undo information and handles errors
      * on the GUI level.
      */
-    public void createObject(String clsName, List<String> names) {
-
-        // setup command for object creation
-        MClass cls = fSession.system().model().getClass(clsName);
-        if (cls == null) {
-            JOptionPane
-                    .showMessageDialog(this, "No class named `" + clsName
-                            + "' defined in model.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-        } else {
-            MSystem system = fSession.system();
-            MCmdCreateObjects cmd = new MCmdCreateObjects(system.state(),
-                    names, TypeFactory.mkObjectType(cls));
-            try {
-                system.executeCmd(cmd);
-                if (cmd.canUndo())
-                    enableUndo(cmd.name());
-                StringBuffer msg = new StringBuffer();
-                for (Iterator<String> it = names.iterator(); it.hasNext();) {
-                    String name = it.next();
-                    msg.append(name);
-                    if (it.hasNext())
-                        msg.append(", ");
-                }
-                USEWriter.getInstance().protocol(
-                        "[GUI] create " + msg + ":" + clsName);
-            } catch (MSystemException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
+    public void createObject(MClass objectClass, String objectName) {
+    	 
+        try {
+        	MNewObjectStatement statement = 
+        		new MNewObjectStatement(objectClass, objectName);
+        	
+        	USEWriter.getInstance().protocol(
+					"[GUI] " + statement.getShellCommand().substring(1));
+        	
+        	fSession.system().evaluateStatement(statement);
+        			
+        } catch (MSystemException e) {
+        	JOptionPane.showMessageDialog(
+					this, 
+					e.getMessage(), 
+					"Error", 
+					JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    /**
-     * Applies changes by setting new attribute values. Entries may be arbitrary
-     * OCL expressions.
-     */
-    public void execCmd(String line) {
-        Log.trace(this, "line = " + line);
-
-        // exit if no changes
-        if (line == null)
-            return;
-
-        MSystem system = fSession.system();
-        List<MCmd> cmdList = CMDCompiler.compileCmdList(system.model(),
-                system.state(), line, "<input>", fLogWriter);
-
-        // compile errors?
-        if (cmdList == null) {
-            JOptionPane.showMessageDialog(this,
-                    "One of the values you entered contains an error. "
-                            + Options.LINE_SEPARATOR
-                            + "See the Log for more information.", "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        for (MCmd cmd : cmdList) {
-            Log.trace(this, "--- Executing command: " + cmd);
-            try {
-                system.executeCmd(cmd);
-                USEWriter.getInstance().protocol("[GUI] " + line);
-                if (cmd.canUndo())
-                    enableUndo(cmd.name());
-            } catch (MSystemException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
+    
+    
     // Actions
 
     private ActionFileOpenSpec fActionFileOpenSpec = new ActionFileOpenSpec();
@@ -821,6 +839,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     private ActionFileExit fActionFileExit = new ActionFileExit();
 
     private ActionEditUndo fActionEditUndo = new ActionEditUndo();
+    private ActionEditRedo fActionEditRedo = new ActionEditRedo();
 
     private ActionStateCreateObject fActionStateCreateObject = new ActionStateCreateObject();
 
@@ -938,8 +957,10 @@ public class MainWindow extends JFrame implements StateChangeListener {
         private JFileChooser fChooser;
 
         ActionFileSaveScript() {
-			super("Save script (.cmd)...", new ImageIcon(Options.iconDir
+			super("Save script (.soil)...", new ImageIcon(Options.iconDir
 					+ "Save.gif"));
+			
+			setEnabled(false);
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -948,7 +969,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
             if (fChooser == null) {
                 path = System.getProperty("user.dir");
                 fChooser = new JFileChooser(path);
-                ExtFileFilter filter = new ExtFileFilter("cmd", "USE scripts");
+                ExtFileFilter filter = new ExtFileFilter("soil", "soil scripts");
                 fChooser.setFileFilter(filter);
                 fChooser.setDialogTitle("Save script");
             }
@@ -958,8 +979,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
             path = fChooser.getCurrentDirectory().toString();
             String filename = fChooser.getSelectedFile().getName();
-			if (!filename.endsWith(".cmd"))
-				filename += ".cmd";
+			if (!filename.endsWith(".soil"))
+				filename += ".soil";
             File f = new File(path, filename);
             Log.verbose("File " + f);
 
@@ -978,7 +999,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 out.println("-- Script generated by USE "
                         + Options.RELEASE_VERSION);
                 out.println();
-                fSession.system().writeUSEcmds(out);
+                //fSession.system().writeUSEcmds(out);
+                fSession.system().writeSoilStatements(out);
                 fLogWriter.println("Wrote script " + f);
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(MainWindow.this, ex.getMessage(),
@@ -1020,7 +1042,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
 				filename += ".txt";
 			
             File f = new File(path, filename);
-
+            
             if (f.exists()) {
                 int n = JOptionPane.showConfirmDialog(MainWindow.this,
                         "Overwrite existing file " + f + "?", "Please confirm",
@@ -1133,18 +1155,70 @@ public class MainWindow extends JFrame implements StateChangeListener {
         }
 
         public void actionPerformed(ActionEvent e) {
+        	
+        	MSystem system = fSession.system();
+        	
             try {
-                fSession.system().undoCmd();
+                /*fSession.system().undoCmd();
                 String name = fSession.system().nextUndoableCmdName();
                 if (name != null)
                     enableUndo(name);
                 else
-                    disableUndo();
+                    disableUndo();*/
+            	
+            	system.undoLastStatement();
+            	
+            	setUndoRedoButtons();
+            	
             } catch (MSystemException ex) {
-                JOptionPane.showMessageDialog(MainWindow.this, ex.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(
+                		MainWindow.this, 
+                		ex.getMessage(),
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+    
+    
+    class ActionEditRedo extends AbstractAction {
+    	
+    	ActionEditRedo() {
+    		super("Redo", new ImageIcon(Options.iconDir + "Redo.gif"));
+            this.setEnabled(false);
+    	}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			MSystem system = fSession.system();
+			
+			MStatement nextToRedo = system.nextToRedo();
+			if ((nextToRedo instanceof MEnterOperationStatement) ||
+					(nextToRedo instanceof MExitOperationStatement)) {
+				
+				JOptionPane.showMessageDialog(
+            			MainWindow.this, 
+            			"openter/opexit can only be redone in the shell",
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+				
+				return;
+			}
+			
+			try {    	
+            	system.redoStatement();
+            	
+            	setUndoRedoButtons();
+            	
+            } catch (MSystemException ex) {
+            	JOptionPane.showMessageDialog(
+            			MainWindow.this, 
+            			ex.getMessage(),
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+			}
+		}
     }
 
     /**
@@ -1614,7 +1688,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         addNewViewFrame(f);
         f.setSize(580,230);
         return opv;
-    }
+}
     
     /**
      * Creates a new assocation path length view.
@@ -1698,325 +1772,4 @@ public class MainWindow extends JFrame implements StateChangeListener {
         f.setSize(370,250);
         return opv;
     }
-    
-    /**
-     * Executes a show hide command
-     * @param cmd
-     */
-    private void handleShowHide(MCmd cmd) {
-		MCmdShowHideCrop command = (MCmdShowHideCrop)cmd;
-		
-		switch (command.getMode()) {
-			case SHOW:
-				if (command.handleAll()) {
-					showAllObjects();
-				} else if (command.handleLink()) {
-					showLink(command.getAssociation(), command.getObjects());
-				} else {
-					showObjects(command.getObjects());
-				}
-				break;
-				
-			case HIDE:
-				if (command.handleAll()) {
-					hideAllObjects();
-				} else if (command.handleLink()) {
-					hideLink(command.getAssociation(), command.getObjects());
-				} else {
-					hideObjects(command.getObjects());
-				}
-				break;
-				
-			case CROP:
-				if (command.handleLink()) {
-					cropLink(command.getAssociation(), command.getObjects());
-				} else {
-					cropObjects(command.getObjects());
-				}
-				break;
-		};
-	}
-    
-    /**
-     * Shows all objects in every object diagram
-     */
-    private void showAllObjects() {
-    	for (NewObjectDiagramView view : this.getObjectDiagrams()) {
-			view.getDiagram().getHideAdmin().showAllHiddenElements();
-		}
-    }
-    
-    /**
-	 * Method hideAll hides all objects.
-	 */
-	void hideAllObjects() {
-		for (NewObjectDiagramView view : MainWindow.instance().getObjectDiagrams()) {
-			Iterator<?> itt = view.getDiagram().getGraph().iterator();
-			final HashSet<MObject> toHideObjects = new HashSet<MObject>();
-		
-			while (itt.hasNext()) { 
-				Object node = itt.next();
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					toHideObjects.add(mobj);
-				}
-			}
-			
-			view.getDiagram().getHideAdmin().setValues("", toHideObjects).actionPerformed(null);
-		}
-	}
-	
-	/**
-	 * Method showLinks show the given links.
-	 */
-	private void showLink(MAssociation ass, List<MObject> objects) {
-		
-		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
-			NewObjectDiagram diag = view.getDiagram();
-			Set<MObject> objectsToShow = new HashSet<MObject>();
-			
-			if (diag.getHiddenNodes() != null) {
-				Iterator<?> it = diag.getHiddenNodes().iterator();
-				
-				while (it.hasNext()) {
-					Object node = it.next();
-	
-					if (node instanceof MObject) {
-						MObject mobj = (MObject) node;
-						if (objects.contains(mobj)) {
-							objectsToShow.add(mobj);
-						}
-					}
-				}
-			}
-			
-			if (!objectsToShow.isEmpty()) {
-				diag.getHideAdmin().showHiddenElements(objectsToShow);
-			}
-		}
-	}
-	
-	private void hideLink(MAssociation association, List<MObject> objects) {
-		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
-			NewObjectDiagram diag = view.getDiagram();
-			Set<MObject> objectsToHide = new HashSet<MObject>();
-			
-			if (diag.getGraph() != null) {
-				Iterator<?> it = diag.getGraph().iterator();
-				
-				while (it.hasNext()) {
-					Object node = it.next();
-
-					if (node instanceof ObjectNode) {
-						MObject mobj = ((ObjectNode) node).object();
-						if (objects.contains(mobj)) {
-							objectsToHide.add(mobj);
-						}
-					}
-				}
-				
-				if (!objectsToHide.isEmpty())
-					diag.getHideAdmin().setValues("", objectsToHide).actionPerformed(null);
-			}
-		}
-	}
-	
-	/**
-	 * Shows the given objects in all object diagrams
-	 * @param objects
-	 */
-	private void showObjects(List<MObject> objects) {
-		for (NewObjectDiagramView view : this.getObjectDiagrams()) { 
-			NewObjectDiagram diag = view.getDiagram();
-			Set<MObject> objectsToShow = new HashSet<MObject>();
-			
-			if (diag.getHiddenNodes() != null) {
-				Iterator<?> it = diag.getHiddenNodes().iterator();
-							
-				while (it.hasNext()) {
-					Object node = it.next();
-					if (node instanceof MObject) {
-						MObject mobj = (MObject) node;
-						
-						if (objects.contains(mobj)) {
-							objectsToShow.add(mobj);
-						}
-					}
-				}
-				
-				if (!objectsToShow.isEmpty()) {
-					diag.getHideAdmin().showHiddenElements(objectsToShow);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Hides the given objects in all object diagrams
-	 * @param objects
-	 */
-	private void hideObjects(List<MObject> objects) {
-		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
-			NewObjectDiagram diag = view.getDiagram();
-			Set<MObject> objectsToHide = new HashSet<MObject>();
-			
-			if (diag.getGraph() != null) {
-				Iterator<?> it = diag.getGraph().iterator();
-				
-				while (it.hasNext()) {
-					Object node = it.next();
-	
-					if (node instanceof ObjectNode) {
-						MObject mobj = ((ObjectNode) node).object();
-
-						if (objects.contains(mobj)) {
-							objectsToHide.add(mobj);
-						}
-					}
-				}
-			
-				if (!objectsToHide.isEmpty()) {
-					diag.getHideAdmin().setValues("", objectsToHide).actionPerformed(null);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Shows only the given link in any object diagram
-	 * @param association
-	 * @param objects
-	 */
-	private void cropLink(MAssociation association, List<MObject> linkObjects) {
-		
-		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
-			NewObjectDiagram diag = view.getDiagram();
-			HashSet<MObject> objects = new HashSet<MObject>();
-			
-			if (diag.getHiddenNodes() != null) {
-				Iterator<?> it = diag.getHiddenNodes().iterator();
-				
-				while (it.hasNext()) {
-					Object node = it.next();
-					if (node instanceof MObject) {
-						MObject mobj = (MObject) node;
-						if (linkObjects.contains(mobj)) {
-							objects.add(mobj);
-						}
-					}
-				}
-			}
-			
-			if (diag.getGraph() != null) {
-				Iterator<?> it = diag.getGraph().iterator();
-
-				while (it.hasNext()) {
-					Object node = it.next();
-					if (node instanceof ObjectNode) {
-						MObject mobj = ((ObjectNode) node).object();
-						if (linkObjects.contains(mobj)) {
-							objects.add(mobj);
-						}
-					}
-				}
-			}
-
-			Set<MObject> objectsToHide = getObjectsToHide(diag, objects, true);
-			if (!objectsToHide.isEmpty()) {
-				diag.getHideAdmin().setValues("Hide", objectsToHide).actionPerformed(null);
-			}
-			
-			Set<MObject> objectsToShow = getObjectsToShow(diag, objects);
-			if (!objectsToShow.isEmpty()) {
-				diag.getHideAdmin().showHiddenElements(objectsToShow);
-			}
-		}
-	}
-	
-	private void cropObjects(List<MObject> objectsToCrop) {
-		for (NewObjectDiagramView view : this.getObjectDiagrams()) {
-			NewObjectDiagram diag = view.getDiagram();
-			HashSet<MObject> objects = new HashSet<MObject>();
-			
-			if (diag.getHiddenNodes() != null) {
-				Iterator<?> it = diag.getHiddenNodes().iterator();
-				
-				while (it.hasNext()) {
-					Object node = it.next();
-					if (node instanceof MObject) {
-						MObject mobj = (MObject) node;
-						if (objectsToCrop.contains(mobj)) {
-							objects.add(mobj);
-						}
-					}
-				}
-			}
-			
-			if (diag.getGraph() != null) {
-				Iterator<?> it = diag.getGraph().iterator();
-
-				while (it.hasNext()) {
-					Object node = it.next();
-					if (node instanceof ObjectNode) {
-						MObject mobj = ((ObjectNode) node).object();
-						if (objectsToCrop.contains(mobj)) {
-							objects.add(mobj);
-						}
-					}
-				}
-			}
-	
-			Set<MObject> objectsToHide = getObjectsToHide(diag, objects, true);
-			
-			if (objectsToHide.size() > 0) {
-				diag.getHideAdmin().setValues("Hide", objectsToHide).actionPerformed(null);
-			}
-			
-			Set<MObject> objectsToShow = getObjectsToShow(diag, objects);
-			
-			if (objectsToShow.size() > 0) {
-				diag.getHideAdmin().showHiddenElements(objectsToShow);
-			}
-		}
-	}
-	
-	private Set<MObject> getObjectsToHide(NewObjectDiagram diag, Set<MObject> objects, boolean isCrop) {
-		HashSet<MObject> objectsToHide = new HashSet<MObject>();
-		Iterator<?> ithide = diag.getGraph().iterator(); 
-	
-		while (ithide.hasNext()) {
-			Object node = ithide.next();
-			if (node instanceof ObjectNode) {
-				MObject mo = ((ObjectNode) node).object();
-				if (isCrop) {
-					if (!objects.contains(mo)) {
-						objectsToHide.add(mo);
-					}
-				} else {
-					if (objects.contains(mo)) {
-						objectsToHide.add(mo);
-					}
-				}
-			}
-		}
-		
-		return objectsToHide;
-	}
-
-	private Set<MObject> getObjectsToShow(NewObjectDiagram diag, Set<MObject> objects) {
-		Set<MObject> objectsToShow = new HashSet<MObject>();
-		Iterator<?> itshow = diag.getHiddenNodes().iterator(); // hidenode
-		
-		while (itshow.hasNext()) {
-			Object node = itshow.next();
-			if (node instanceof MObject) {
-				MObject mo = (MObject) node;
-				if (objects.contains(mo)) {
-					objectsToShow.add(mo);
-				}
-			}
-		}
-		
-		return objectsToShow;
-	}
 }

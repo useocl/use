@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
@@ -41,6 +43,10 @@ public class ASTStringLiteral extends ASTExpression {
         fValue = st.substring(1, st.length() - 1);
         // Read Escape Characters
         convertString();
+    }
+    
+    public ASTStringLiteral(String value) {
+    	fValue = value;
     }
 
     public Expression gen(Context ctx) {
@@ -100,4 +106,9 @@ public class ASTStringLiteral extends ASTExpression {
         }
         fValue = buf.toString();
     }
+
+	@Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		
+	}
 }

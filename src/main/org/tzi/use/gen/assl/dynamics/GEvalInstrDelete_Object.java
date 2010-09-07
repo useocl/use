@@ -29,16 +29,17 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
+import java.io.PrintWriter;
+
 import org.tzi.use.gen.assl.statics.GInstrDelete_Object;
+import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MCmd;
-import org.tzi.use.uml.sys.MCmdDestroyObjects;
-
-import org.tzi.use.util.cmd.CommandFailedException;
-import org.tzi.use.util.cmd.CannotUndoException;
-
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 
 class GEvalInstrDelete_Object extends GEvalInstruction
@@ -58,41 +59,55 @@ class GEvalInstrDelete_Object extends GEvalInstruction
         GCreator.createFor(fInstr.objectInstr()).eval(conf,this,collector );
     }
 
-    public void feedback( GConfiguration conf,
-                          Value value,
-                          IGCollector collector ) throws GEvaluationException {
-        if (value.isUndefined()) {
-            collector.invalid(
-                              buildCantExecuteMessage(fInstr,fInstr.objectInstr()) );
+    public void feedback(
+    		GConfiguration conf, 
+    		Value value, 
+    		IGCollector collector) throws GEvaluationException {
+    	
+    	if (value.isUndefined()) {
+    		GValueInstruction culprit = fInstr.objectInstr();
+            collector.invalid(buildCantExecuteMessage(fInstr, culprit));
             return;
         }
-
-        Expression[] exprs = {new ExpressionWithValue( value )};
-        MCmd cmd = new MCmdDestroyObjects(conf.systemState(), exprs );
-
-        try {
-            collector.basicPrintWriter().println(cmd.getUSEcmd());
-            cmd.execute();
-
-            //conf.varBindings().push(fInstr.target(), value);
-
-            fCaller.feedback( conf, null, collector );
-            if (collector.expectSubsequentReporting()) {
-                collector.subsequentlyPrependCmd( cmd );
-            }
-            collector.basicPrintWriter().println("undo: " + cmd.getUSEcmd());
-            cmd.undo();
-        } catch (CommandFailedException e) {
-            collector.invalid(e);
-        } catch (CannotUndoException e) {
-            throw new GEvaluationException(e);
-        }
+    	
+    	MSystemState state = conf.systemState();
+    	MSystem system = state.system();
+    	PrintWriter basicOutput = collector.basicPrintWriter();
+    	
+    	MStatement statement = new MObjectDestructionStatement(value);
+    	MStatement inverseStatement;
+    	
+    	basicOutput.println(statement.getShellCommand());
+    	
+    	try {
+    		StatementEvaluationResult evaluationResult = 
+    			system.evaluateStatement(statement, true, false);
+    		inverseStatement = evaluationResult.getInverseStatement();
+    		
+		} catch (MSystemException e) {
+			collector.invalid(e);
+			return;
+		}
+		
+		//conf.varBindings().push(fInstr.target(), value);
+		
+		fCaller.feedback(conf, null, collector);
+		if (collector.expectSubsequentReporting()) {
+			collector.subsequentlyPrependStatement(statement);
+		}
+		
+		basicOutput.println("undo: " + statement.getShellCommand());
+		
+		try {
+			system.evaluateStatement(inverseStatement, true, false);
+		} catch (MSystemException e) {
+			collector.invalid(e);
+		}
     }
 
     public String toString() {
         return "GEvalInstrDelete_Object";
     }
-
 }
 
     

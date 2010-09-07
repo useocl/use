@@ -1,0 +1,44 @@
+model ppcTest2
+
+class C
+
+  operations
+    
+    -- soil -> soil
+    op_s1(n : Integer, m : Integer) : Integer
+    begin
+	  result := self.op_s2(n, m)
+    end
+    pre  pre1 : n > 2
+    post pst1 : m > 2
+  
+    -- soil -> ocl
+    op_s2(n : Integer, m : Integer) : Integer
+    begin
+ 	  result := self.op_o3(n, m)
+    end
+    pre  pre1 : n > 3
+    post pst1 : m > 3
+	
+    -- ocl -> ocl
+    op_o1(n : Integer, m : Integer) : Integer =  self.op_o2(n, m)
+    pre  pre1 : n > 0
+    post pst1 : m > 0
+  
+    -- ocl -> soil
+    op_o2(n : Integer, m : Integer) : Integer = self.op_s1(n, m)
+    pre  pre1 : n > 3
+    post pst1 : m > 3
+  
+    -- ocl
+    op_o3(n : Integer, m : Integer) : Integer = n * m
+    pre  pre1 : n > 4
+    post pst1 : m > 4
+
+	-- for openter/opexit
+    op_u(n : Integer, m : Integer) : Integer
+    pre  pre1 : n > 0
+    pre  pre2 : true
+    post pst1 : m > 0
+    post pst2 : true
+end

@@ -21,15 +21,11 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.tzi.use.SystemManipulator;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
 
 
 /**
@@ -50,57 +46,38 @@ public class DeletionTest extends TestCase {
     }
 
     /**
-     * Tests if a linkobject is deleted with the command 'delete', which
-     * is normaly for deleting links.
+     * Tests if a link object is deleted with the command 'delete', which
+     * is normally for deleting links.
      */
     public void testDeleteLinkObject() {
         try {
             MSystem system = ObjectCreation.getInstance()
                     .createModelWithObjectsAndLinkObject();
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            names.add( "c1" );
-            Expression[] exprs = new Expression[names.size()];
             
-            int i = 0;
-            for (String name : names) {
-                MObject obj =  system.state().objectByName( name ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            MAssociation assoc = system.model().getAssociation( "Job" );
-            MCmd cmd = new MCmdDeleteLink( system.state(), exprs, assoc );
-
-            system.executeCmd( cmd );
-
-            assertNull( system.state().objectByName( "j1" ) );
-            assertEquals( "p1", system.state().objectByName( "p1" ).name() );
-            assertEquals( "c1", system.state().objectByName( "c1" ).name() );
-        } catch ( MSystemException e ) {
-            fail( e.getMessage() );
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
+            systemManipulator.deleteLink("Job", "p1", "c1");
+            
+            assertNull(system.state().objectByName("j1"));
+            assertEquals("p1", system.state().objectByName("p1").name());
+            assertEquals("c1", system.state().objectByName("c1").name());
+        } catch (MSystemException e) {
+            fail(e.getMessage());
         }
     }
 
     /**
-     * Tests if a linkobject is deleted with the command 'destroy',
+     * Tests if a link object is deleted with the command 'destroy',
      * which is normally used for deleting links.
      */
     public void testDestroyLinkObject() {
         try {
-            MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
-            List<String> names = new ArrayList<String>();
-            names.add( "j1" );
-            Expression[] exprs = new Expression[names.size()];
+            MSystem system = 
+            	ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             
-            int i = 0;
-            for(String name : names) {
-                MObject obj =  system.state().objectByName( name ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            MCmd cmd = new MCmdDestroyObjects( system.state(), exprs );
-
-            system.executeCmd( cmd );
-
-
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
+            systemManipulator.destroyObjects("j1");
             assertNull( system.state().objectByName( "j1" ) );
 
             MAssociation assoc = system.model().getAssociation( "Job" );
@@ -117,26 +94,18 @@ public class DeletionTest extends TestCase {
     }
 
     /**
-     * Tests if an object, which is connected to a linkobject,
+     * Tests if an object, which is connected to a link object,
      * is deleted with the command 'destroy'.
      */
     public void testDestroyConnectedObject() {
         try {
-            MSystem system = ObjectCreation.getInstance()
-                    .createModelWithObjectsAndLinkObject();
-            List<String> names = new ArrayList<String>();
-            names.add( "p1" );
-            Expression[] exprs = new Expression[names.size()];
+            MSystem system = 
+            	ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             
-            int i = 0;
-            for (String name : names) {
-                MObject obj =  system.state().objectByName( name ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
-            }
-            MCmd cmd = new MCmdDestroyObjects( system.state(), exprs );
-
-            system.executeCmd( cmd );
-
+            SystemManipulator systemManipulator = new SystemManipulator(system);
+            
+            systemManipulator.destroyObjects("p1");
+            
             assertNull( system.state().objectByName( "j1" ) );
             assertNull( system.state().objectByName( "p1" ) );
             assertEquals( "c1", system.state().objectByName( "c1" ).name() );
@@ -151,6 +120,4 @@ public class DeletionTest extends TestCase {
     public static void main( String[] args ) {
         junit.textui.TestRunner.run( new TestSuite( DeletionTest.class ) );
     }
-
-
 }

@@ -537,24 +537,27 @@ public class NewObjectDiagram extends DiagramView
      * Adds a new Link to the objectdiagram.
      */
     class ActionInsertLink extends AbstractAction {
-        private MObject[] fObjects;
-        private String fAssocName;
+        private MAssociation fAssociation;
+    	private MObject[] fParticipants;
+        
+        ActionInsertLink(MAssociation association, MObject[] participants) {
+        	fAssociation = association;
+            fParticipants = participants;
 
-        ActionInsertLink(MObject[] objects, String assocName) {
-            fObjects = objects;
-            fAssocName = assocName;
-            String txt = "insert (";
-            for (int i=0;i<objects.length;++i) {
-                if (i>0) txt = txt + ",";
-                MObject o = objects[i];
-                txt = txt + o.name();
+        	String txt = "insert (";
+            for (int i = 0; i < participants.length; ++i) {
+                if (i > 0) {
+                	txt = txt + ",";
+                }
+                txt = txt + participants[i].name();
             }
-            txt = txt + ") into " + assocName;
+            txt = txt + ") into " + association.name();
+            
             putValue(Action.NAME, txt);
         }
 
         public void actionPerformed(ActionEvent e) {
-            fParent.insertLink(fAssocName, fObjects);
+            fParent.insertLink(fAssociation, fParticipants);
         }
     }
 
@@ -562,26 +565,27 @@ public class NewObjectDiagram extends DiagramView
      * Deletes a Link from the objectdiagram.
      */
     class ActionDeleteLink extends AbstractAction {
-        private MObject[] fObjects;
-        private String fAssocName;
+    	private MAssociation fAssociation;
+    	private MObject[] fParticipants;
 
-        ActionDeleteLink(MObject[] objects, String assocName) {
-            fObjects = objects;
-            fAssocName = assocName;
+        ActionDeleteLink(MAssociation association, MObject[] participants) {
+            fAssociation = association;
+            fParticipants = participants;
+        	
             String txt = "delete (";
-            for (int i=0;i<objects.length;++i) {
-                if (i>0) txt = txt + ",";
-                MObject o = objects[i];
-                txt = txt + o.name();
+            for (int i = 0; i < participants.length; ++i) {
+                if (i > 0) {
+                	txt = txt + ",";
+                }
+                txt = txt + participants[i].name();
             }
-            txt = txt + ") from " + assocName;
+            txt = txt + ") from " + association.name();
+            
             putValue(Action.NAME, txt);
-            fObjects = objects;
-            fAssocName = assocName;
         }
 
         public void actionPerformed(ActionEvent e) {
-            fParent.deleteLink( fAssocName, fObjects );
+            fParent.deleteLink(fAssociation, fParticipants);
             fEdgeSelection.clear();
         }
     }
@@ -713,11 +717,11 @@ public class NewObjectDiagram extends DiagramView
                     	continue;
                     
                     if (!fParent.hasLinkBetweenObjects(assoc, l)) {
-                        popupMenu.insert(new ActionInsertLink(l,assoc.name()), pos++ );
+                        popupMenu.insert(new ActionInsertLink(assoc, l), pos++ );
                         addedInsertLinkAction = true;
                     } 
                     if (fParent.hasLinkBetweenObjects(assoc, l)) {
-                        popupMenu.insert(new ActionDeleteLink(l,assoc.name()),pos++);
+                        popupMenu.insert(new ActionDeleteLink(assoc, l),pos++);
                         addedInsertLinkAction = true;
                     }
                 }

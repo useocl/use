@@ -36,27 +36,85 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MSystemState;
 
 public class OCLCompiler {
 
     private OCLCompiler() {} // no instances
     
+    
     /**
-     * Compiles an expression.
-     *
-     * @param  input the source to be compiled
-     * @param  inName name of the source stream
-     * @param  err output stream for error messages
-     * @return Expression null if there were any errors
-     */
-    public static Expression compileExpression(MModel model, 
+	 * Compiles an expression.
+	 * @param model the model
+	 * @param input the source to compile
+	 * @param inName name of the source stream
+	 * @param err output stream for error messages
+	 * @param globalBindings the variable bindings
+	 * @return null if there were any errors
+	 */
+    public static Expression compileExpression(MModel model,
+	                                           String in, 
+	                                           String inName, 
+	                                           PrintWriter err,
+	                                           VarBindings globalBindings) {
+		
+		return compileExpression(
+				model,  
+				new ByteArrayInputStream(in.getBytes()), 
+				inName, 
+				err, 
+				globalBindings);
+	}
+    
+    /**
+	 * Compiles an expression.
+	 * @param model the model
+	 * @param input the source to compile
+	 * @param inName name of the source stream
+	 * @param err output stream for error messages
+	 * @param globalBindings the variable bindings
+	 * @return null if there were any errors
+	 */
+    public static Expression compileExpression(MModel model,
+	                                           InputStream in, 
+	                                           String inName, 
+	                                           PrintWriter err,
+	                                           VarBindings globalBindings) {
+		
+		return compileExpression(
+				model, 
+				null, 
+				in, 
+				inName, 
+				err, 
+				globalBindings);
+	}
+    
+
+	/**
+	 * Compiles an expression.
+	 * @param model the model
+	 * @param state the system state
+	 * @param input the source to compile
+	 * @param inName name of the source stream
+	 * @param err output stream for error messages
+	 * @param globalBindings the variable bindings
+	 * @return null if there were any errors
+	 */
+    public static Expression compileExpression(MModel model,
+    		                                   MSystemState state,
             								   String input, 
             								   String inName, 
             								   PrintWriter err,
             								   VarBindings globalBindings)
     {
-    	InputStream stream = new ByteArrayInputStream(input.getBytes());
-    	return OCLCompiler.compileExpression(model, stream, inName, err, globalBindings);
+    	return OCLCompiler.compileExpression(
+    			model, 
+    			state, 
+    			new ByteArrayInputStream(input.getBytes()), 
+    			inName, 
+    			err, 
+    			globalBindings);
     }
     
     /**
@@ -67,7 +125,8 @@ public class OCLCompiler {
      * @param  err output stream for error messages
      * @return Expression null if there were any errors
      */
-    public static Expression compileExpression(MModel model, 
+    public static Expression compileExpression(MModel model,
+                                               MSystemState state,
                                                InputStream in, 
                                                String inName, 
                                                PrintWriter err,
@@ -92,6 +151,8 @@ public class OCLCompiler {
         lexer.init(errHandler);
         parser.init(errHandler);
         
+        
+        
         try {
             // Parse the input expression
             ASTExpression astExpr = parser.expressionOnly();
@@ -101,6 +162,7 @@ public class OCLCompiler {
                 // Generate code
                 Context ctx = new Context(inName, err, globalBindings, null);
                 ctx.setModel(model);
+                ctx.setSystemState(state);
                 expr = astExpr.gen(ctx);
     
                 // check for semantic errors

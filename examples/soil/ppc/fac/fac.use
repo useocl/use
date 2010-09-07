@@ -1,0 +1,31 @@
+model NestedOperationCalls
+
+---------
+class Rec
+
+  operations
+    
+	fac_q(n : Integer) : Integer =
+      if n <= 1 then 
+	    1 
+     else 
+	   n * self.fac_q(n - 1) 
+	 endif
+	 
+	fac_s(n : Integer) : Integer
+	  begin
+	    result := 1;
+		if n > 1 then
+		  tmp := call self.fac_s(n-1);
+		  result := (n * tmp);
+		end;
+    end
+
+end
+
+-----------
+constraints
+
+context Rec::fac_s(n : Integer) : Integer
+  pre:  n > 0
+  post: result = n * fac_q(n - 1)

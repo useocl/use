@@ -42,7 +42,7 @@ public final class ExpLet extends Expression {
                   Expression inExpr)
         throws ExpInvalidException
     {
-        super(inExpr.type());
+        super(inExpr.type(), varExpr, inExpr);
         fVarname = varname;
         fVarType = varType;
         fVarExpr = varExpr;
@@ -87,6 +87,4 @@ public final class ExpLet extends Expression {
     public Expression getVarExpression() {
         return fVarExpr;
     }
-
-
 }

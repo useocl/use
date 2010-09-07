@@ -41,7 +41,7 @@ public final class ExpAsType extends Expression {
         throws ExpInvalidException
     {
         // result type is the specified target type
-        super(targetType);
+        super(targetType, sourceExpr);
         fSourceExpr = sourceExpr;
 
         if (targetType.isCollection(true) )

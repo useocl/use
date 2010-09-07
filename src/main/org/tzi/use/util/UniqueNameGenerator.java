@@ -21,8 +21,10 @@
 
 package org.tzi.use.util;
 
-import java.util.Map;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A generator for creating unique names. Given a name a it produces
@@ -33,16 +35,14 @@ import java.util.HashMap;
  * @author      Mark Richters 
  */
 public class UniqueNameGenerator {
-    private Map<String, MutableInteger> fNameMap;
+	private Deque<Map<String, Integer>> fStack;
+    private Map<String, Integer> fNameMap;
 
-    // We don't want to allocate a new Integer object each time we
-    // have to increment the value in a map.
-    class MutableInteger {
-        int fInt = 1;
-    }
-
+    
     public UniqueNameGenerator() {
-        fNameMap = new HashMap<String, MutableInteger>();
+        fNameMap = new HashMap<String, Integer>();
+        fStack = new ArrayDeque<Map<String, Integer>>();
+        fStack.push(fNameMap);
     }
     
     /**
@@ -51,12 +51,30 @@ public class UniqueNameGenerator {
      * increment this number.
      */
     public String generate(String name) {
-        MutableInteger i = fNameMap.get(name);
+        Integer i = fNameMap.get(name);
+                
         if (i == null ) {
-            i = new MutableInteger();
-            fNameMap.put(name, i);
-        } else
-            i.fInt++;
-        return name + String.valueOf(i.fInt);
+        	i = 1;
+        } else {
+        	i = i + 1;
+        }
+        
+        fNameMap.put(name, i);
+        
+        return name + i;
+    }
+    
+    public void pushState() {
+    	fNameMap = new HashMap<String, Integer>(fNameMap);
+    	fStack.push(fNameMap);
+    }
+    
+    public void popState() {
+    	fStack.pop();
+    	fNameMap = fStack.peek();
+    }
+    
+    public String toString() {
+    	return fStack.toString();
     }
 }

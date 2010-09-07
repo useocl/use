@@ -1,0 +1,3 @@
+t22c.use:8:4: 
+Could not compile soil defined operation `op1() : Integer' due to the following error:
+Operation returns a value of type `String', which is not a subtype of the declared return type `Integer'.

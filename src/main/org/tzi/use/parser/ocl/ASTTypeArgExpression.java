@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
@@ -137,4 +139,11 @@ public class ASTTypeArgExpression extends ASTExpression {
             throw new SemanticException(fTargetType.getStartToken(), ex.getMessage());
         }
     }
+
+	@Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+		if (fSourceExpr != null) {
+			fSourceExpr.getFreeVariables(freeVars);
+		}
+	}
 }

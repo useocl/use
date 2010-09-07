@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.HashSet;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -53,9 +55,9 @@ public class ASTEnumLiteral extends ASTExpression {
         
         if (fEnumType == null) {
         	t = ctx.model().enumTypeForLiteral(literal);
-        	if (t == null )
-        		throw new SemanticException(fValue,
-        									"Undefined enumeration literal `" + literal + "'.");
+        if (t == null )
+            throw new SemanticException(fValue,
+                                        "Undefined enumeration literal `" + literal + "'.");
         } else {
         	String enumType = fEnumType.getText();
         	t = ctx.model().enumType(enumType);
@@ -74,7 +76,12 @@ public class ASTEnumLiteral extends ASTExpression {
         return new ExpConstEnum(t, literal); 
     }
 
-    public String toString() {
-        return fValue.getText();
-    }
+    @Override
+	public void getFreeVariables(HashSet<String> freeVars) {
+
+	}
+
+	public String toString() {
+	    return fValue.getText();
+	}
 }

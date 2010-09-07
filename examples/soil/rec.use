@@ -1,0 +1,70 @@
+model recTest
+
+class rec
+  operations
+ 
+  -------------------
+  -- factorial ocl --
+  -------------------
+  fac_ocl(n : Integer) : Integer = 
+    if n <= 1 then 
+	  1 
+	else 
+	  n * self.fac_ocl(n - 1) 
+	endif
+ 
+  pre notOne : n > 1
+	
+  --------------------
+  -- factorial soil	--
+  --------------------
+  fac_soil(n : Integer) : Integer
+  begin
+    result := 1;
+    if n > 1 then
+	  tmp := self.fac_soil(n - 1);
+	  result := n * tmp;
+    end;
+  end
+  
+  pre notOne : n > 1
+  
+  ---------------------------
+  -- factorial soilOpAsOCL --
+  --------------------------- 
+  fac_mixed(n : Integer) : Integer
+  begin
+    result := 1;
+	if n > 1 then
+	  result := n * self.fac_mixed(n - 1)
+	end;
+  end
+  
+  pre notOne : n > 1
+  
+  --------------------
+  -- soil calls ocl --
+  --------------------
+  fac_s2o(n : Integer) : Integer
+  begin
+    result := 1;
+	if n > 1 then
+	  result := n * self.fac_o2s(n - 1)
+	end;
+  end
+  
+  pre notOne : n > 1
+  
+  --------------------
+  -- ocl calls soil --
+  --------------------
+  fac_o2s(n : Integer) : Integer =
+    if n <= 1 then 
+	  1 
+	else 
+	  n * self.fac_s2o(n - 1) 
+	endif
+  
+  pre notOne : n > 1
+  
+end
