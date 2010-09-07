@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 TestSuite.g 2010-09-07 16:42:56
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 TestSuite.g 2010-09-07 17:10:52
  
 /*
  * USE - UML based specification environment
@@ -6309,8 +6309,8 @@ import java.util.HashMap;
         "\11\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1"+
         "\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\12\uffff}>";
     static final String[] DFA49_transitionS = {
-            "\1\11\2\uffff\1\20\1\34\10\uffff\2\13\4\uffff\1\31\1\uffff\1"+
-            "\1\2\uffff\1\16\1\17\1\21\16\uffff\1\42\2\uffff\2\1\1\uffff"+
+            "\1\11\2\uffff\1\20\1\34\10\uffff\2\13\4\uffff\1\31\1\uffff"+
+            "\1\1\2\uffff\1\16\1\17\1\21\16\uffff\1\42\2\uffff\2\1\1\uffff"+
             "\3\1\6\uffff\1\12\6\uffff\1\13\1\uffff\1\32\3\33\1\35\1\uffff"+
             "\1\1\1\uffff\1\14\1\15\4\22\1\23\1\24\1\25\1\26\1\27\1\30\1"+
             "\uffff\1\36\1\uffff\1\37\1\40\1\uffff\1\41",

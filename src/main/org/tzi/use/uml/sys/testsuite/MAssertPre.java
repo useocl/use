@@ -13,7 +13,6 @@ import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.util.soil.VariableEnvironment;
 
 public class MAssertPre extends MAssert {

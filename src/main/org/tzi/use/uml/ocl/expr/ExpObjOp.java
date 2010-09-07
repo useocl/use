@@ -21,9 +21,7 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.value.ObjectValue;
@@ -76,7 +74,7 @@ public final class ExpObjOp extends Expression {
     public Value eval(EvalContext ctx) {
     	ctx.enter(this);
     	
-    	Value result = new UndefinedValue(type());
+    	Value result = UndefinedValue.instance;
     	
     	Value selfVal = fArgs[0].eval(ctx);
     	

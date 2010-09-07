@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 ShellCommand.g 2010-09-07 16:42:53
+// $ANTLR 3.1.3 Mar 18, 2009 10:09:25 ShellCommand.g 2010-09-07 17:10:49
 
 /*
  * USE - UML based specification environment
@@ -6728,9 +6728,9 @@ import java.util.HashMap;
     static final String DFA7_specialS =
         "\1\0\26\uffff}>";
     static final String[] DFA7_transitionS = {
-            "\1\11\1\24\10\uffff\2\2\4\uffff\1\21\3\uffff\1\5\1\6\1\7\1\10"+
-            "\21\uffff\1\1\11\uffff\1\2\2\uffff\1\22\3\23\1\25\3\uffff\1"+
-            "\3\1\4\4\12\1\13\1\14\1\15\1\16\1\17\1\20",
+            "\1\11\1\24\10\uffff\2\2\4\uffff\1\21\3\uffff\1\5\1\6\1\7\1"+
+            "\10\21\uffff\1\1\11\uffff\1\2\2\uffff\1\22\3\23\1\25\3\uffff"+
+            "\1\3\1\4\4\12\1\13\1\14\1\15\1\16\1\17\1\20",
             "",
             "",
             "",
@@ -6866,8 +6866,8 @@ import java.util.HashMap;
         "\1\uffff\1\1\31\uffff\1\6\1\7\1\10\1\12\1\2\1\3\1\13\1\11\1\4\1"+
         "\5";
     static final String DFA45_specialS =
-        "\5\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14"+
-        "\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\12\uffff}>";
+        "\5\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1"+
+        "\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\12\uffff}>";
     static final String[] DFA45_transitionS = {
             "\1\1\2\uffff\1\5\1\30\10\uffff\2\7\4\uffff\1\25\3\uffff\1\12"+
             "\1\13\1\14\1\15\21\uffff\1\6\11\uffff\1\7\2\uffff\1\26\3\27"+

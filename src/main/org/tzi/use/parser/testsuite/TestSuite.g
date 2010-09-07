@@ -813,7 +813,7 @@ tuplePart returns [ASTTuplePart n]
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
  
-/* $Id: SoilBase.gpart 1565 2010-07-19 00:55:57Z deg $ */
+/* $Id: SoilBase.gpart 1734 2010-09-07 14:56:17Z lhamann $ */
 
 ////////////////////////////////////////////////////////////////////////////////
 // Soil grammar

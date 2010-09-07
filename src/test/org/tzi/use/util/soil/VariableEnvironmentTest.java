@@ -188,7 +188,7 @@ public class VariableEnvironmentTest extends TestCase {
 		}
 		
 		Value vO = object.value();
-		Value vU = new UndefinedValue(cls.type());
+		Value vU = UndefinedValue.instance;
 		
 		// [n1 -> vO1]
 		ve.assign(n1, vO);

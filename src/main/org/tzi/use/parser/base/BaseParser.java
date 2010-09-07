@@ -4,11 +4,8 @@ import java.io.PrintWriter;
 
 import org.antlr.runtime.Parser;
 import org.antlr.runtime.RecognizerSharedState;
-import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.tzi.use.parser.ParseErrorHandler;
-import org.tzi.use.parser.SrcPos;
-import org.tzi.use.util.Log;
 
 public class BaseParser extends Parser {
 	

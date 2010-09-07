@@ -149,7 +149,6 @@ public class MOperationCallStatement extends MStatement {
 		Value[] arguments = new Value[fArguments.size()];
 		int i=0;
 		for (Entry<String, Expression> argument : fArguments.entrySet()) {
-			String argName = argument.getKey();
 			Value argValue = evaluateExpression(argument.getValue(), false);
 			arguments[i] = argValue;
 			++i;

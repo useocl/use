@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -124,8 +123,7 @@ public class MEnterOperationStatement extends MStatement {
 		
 		if (fOperation.hasResultType()) {
 			resultExpression = 
-				new ExpressionWithValue(
-						new UndefinedValue(fOperation.resultType()));
+				new ExpressionWithValue(UndefinedValue.instance);
 		}
 		
 		fResult.prependToInverseStatement(

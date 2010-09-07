@@ -265,7 +265,7 @@ public class VariableEnvironment {
 					// 'undefined' value; the object type might be more 
 					// specific, and we want to preserve type of this 
 					// variable
-					entry.setValue(new UndefinedValue(value.type()));
+					entry.setValue(UndefinedValue.instance);
 				}
 			}
 		}	
