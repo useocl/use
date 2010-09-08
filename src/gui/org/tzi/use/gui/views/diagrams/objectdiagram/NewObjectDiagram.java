@@ -319,7 +319,6 @@ public class NewObjectDiagram extends DiagramView
             Font f = Font.getFont("use.gui.view.objectdiagram", getFont());
             g.setFont(f);
             drawDiagram(g);
-            //drawDiagram(g);
         }
     }
 

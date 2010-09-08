@@ -91,6 +91,7 @@ public class MExitOperationStatement extends MStatement {
 					result, 
 					fCustomPPCHandler == null ? 
 							new OpEnterOpExitPPCHandler() : fCustomPPCHandler);
+			fSystem.setLastOperationCall(operationCall);
 		} catch (ExceptionOccuredException e) {
 			caughtException = e;
 		}

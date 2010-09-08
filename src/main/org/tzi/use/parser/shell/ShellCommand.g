@@ -71,8 +71,18 @@ import org.tzi.use.parser.ParseErrorHandler;
     public void init(ParseErrorHandler handler) {
         fParseErrorHandler = handler;
     }
-}
-
+}////////////////////////////////////////////////////////////////////////////////
+// the shell understands soil statements and a set of "legacy statements", which
+// maps CMD language constructs to equivalent soil statements
+////////////////////////////////////////////////////////////////////////////////
+shellCommandOnly returns [ASTStatement n]
+:
+  (stat)=> s = stat
+  { $n = $s.n; }
+  |
+  l = legacyStat
+  { $n = $l.n; }
+;
 
 ////////////////////////////////////////////////////////////////////////////////
 // the shell understands soil statements and a set of "legacy statements", which

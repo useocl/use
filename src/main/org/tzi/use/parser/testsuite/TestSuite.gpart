@@ -92,7 +92,7 @@ testSuite returns [ASTTestSuite suite]
     modelFile=filename { $suite.setModelFile($suiteName); }
     
   ('setup' 
-  	('!' c = stat { setupStatements.add($c.n); })* 'end' { $suite.setSetupStatements(setupStatements); }
+  	('!' c = shellCommandOnly { setupStatements.add($c.n); })* 'end' { $suite.setSetupStatements(setupStatements); }
   )?
      
   tests = testCases { $suite.setTestCases($tests.testCases); }
@@ -115,7 +115,7 @@ testCase returns [ASTTestCase n]
 :
   'testcase' name=IDENT { $n = new ASTTestCase($name); }
   (
-      '!' c = stat { $n.addStatement($c.n); } 
+      '!' c = shellCommandOnly { $n.addStatement($c.n); } 
     |
       a=assertStatement { $n.addStatement($a.n); }
     |

@@ -92,7 +92,9 @@ public final class MSystem {
     private Deque<MStatement> fCurrentlyEvaluatedStatements;
 
     private Stack<MSystemState> variationPointsStates = new Stack<MSystemState>();
-    private Stack<VarBindings> variationPointsVars = new Stack<VarBindings>();
+    
+    private Stack<VariableEnvironment> variationPointsVars = new Stack<VariableEnvironment>();
+    
     /**
      * constructs a new MSystem
      * @param model the model of this system
@@ -780,6 +782,9 @@ public final class MSystem {
     	return fRedoStack.peek();
     }
     
+    public void setLastOperationCall(MOperationCall lastCall) {
+    	this.lastOperationCall = lastCall;
+    }
     
     public MOperationCall getLastOperationCall() {
     	return lastOperationCall;
@@ -914,27 +919,24 @@ public final class MSystem {
      * Starts a new variation in a test case
      */
     public void beginVariation() {
-		/*
+		
     	// Store current system state on stack
 		variationPointsStates.push(this.fCurrentState);
-		variationPointsVars.push(this.fVarBindings);
+		variationPointsVars.push(this.fVariableEnvironment);
 		
 		this.fCurrentState = new MSystemState(new UniqueNameGenerator().generate("variation#"), this.fCurrentState);
-		this.fVarBindings = new VarBindings(fVarBindings);
-		*/
+		this.fVariableEnvironment = new VariableEnvironment(this.fVariableEnvironment, this.fCurrentState);
 	}
 	
     /**
      * Ends a variation in a test case
      */
 	public void endVariation() throws MSystemException {
-		/*
 		if (variationPointsStates.isEmpty()) {
 			throw new MSystemException("No Variation to end!");
 		}
 		
 		this.fCurrentState = variationPointsStates.pop();
-		this.fVarBindings = variationPointsVars.pop();
-		*/
+		this.fVariableEnvironment = variationPointsVars.pop();
 	}
 }

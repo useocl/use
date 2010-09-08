@@ -427,14 +427,14 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     	Set<N> visitedNodes = new HashSet<N>();
     	    	
     	for (N node : targetNodeSet(n1)) {
+    		if (node.equals(n2)) return true;
+    		
     		if (!visitedNodes.contains(node)) {
     			if (dfs_path(node, n2, visitedNodes, new HashSet<N>())) return true;
     		}
     	}
     	
         return false;
-        
-        //return targetNodeClosureSet(n1).contains(n2);
     }
 
     /**

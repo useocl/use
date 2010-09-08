@@ -117,6 +117,7 @@ public class NewObjectDiagramView extends JPanel
         for (MLink link : fSystem.state().allLinks()) {
             fObjectDiagram.addLink(link);
         }
+        
         fObjectDiagram.repaint();
         
         viewcount++; // jj

@@ -144,7 +144,7 @@
       	<!-- testsuite parser grammar exists -->
       	<available file="${parser.dir}/testsuite/TestSuite.g" />
       	
-        <!-- generator parser -->
+        <!-- testsuite parser -->
         <uptodate srcfile="${parser.dir}/testsuite/TestSuite.gpart" 
                   targetfile="${parser.dir}/testsuite/TestSuiteParser.java"/>
 
@@ -201,6 +201,7 @@
     <echo>Generating shell command parser</echo>
   	<concat destfile="${parser.dir}/shell/ShellCommand.g">
   		<fileset file="${parser.dir}/shell/ShellCommand.gpart" />
+  		<fileset file="${parser.dir}/base/ShellCommandBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLBase.gpart" />
   		<fileset file="${parser.dir}/base/SoilBase.gpart" />
   		<fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
@@ -230,6 +231,7 @@
   	<concat destfile="${parser.dir}/testsuite/TestSuite.g">
   	   <fileset file="${parser.dir}/testsuite/TestSuite.gpart" />
   	   <fileset file="${parser.dir}/base/OCLBase.gpart" />
+  	   <fileset file="${parser.dir}/base/ShellCommandBase.gpart" />
   	   <fileset file="${parser.dir}/base/SoilBase.gpart" />
   	   <fileset file="${parser.dir}/base/OCLLexerRules.gpart" />
   	</concat>

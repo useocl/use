@@ -101,6 +101,12 @@ public class VariableEnvironment {
 		fObjectVisibility = new ArrayDeque<Boolean>(other.fObjectVisibility);
 	}
 
+	public VariableEnvironment(VariableEnvironment other, MSystemState systemState) {
+		fSystemState = systemState;
+		fFrames = new ArrayDeque<Map<String, Value>>(other.fFrames);
+		fCurrentFrame = fFrames.peek();
+		fObjectVisibility = new ArrayDeque<Boolean>(other.fObjectVisibility);
+	}
 	
 	/**
 	 * Restores the initial state, which consists of one level, with one
