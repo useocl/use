@@ -107,7 +107,13 @@ public class ASTCollectionLiteral extends ASTExpression {
 	}
 
 	public String toString() {
-        return "(" + fToken + " " + 
-            StringUtil.fmtSeq(fItems.iterator(), " ") + ")";
+		StringBuilder res = new StringBuilder();
+		res.append("(");
+		res.append(fToken);
+		res.append(" ");
+		StringUtil.fmtSeq(res, fItems.iterator(), " ");
+		res.append(")");
+		
+        return res.toString();
     }
 }

@@ -47,6 +47,12 @@ final class MLinkImpl implements MLink {
      */
     private Map<MAssociationEnd, MLinkEnd> fLinkEnds;
 
+    /**
+     * Other representation of linked objects,
+     * because of performance improvements
+     */
+    MObject[] linkedObjects;
+
     // For performance reasons
     private int hashCode;
 
@@ -70,6 +76,8 @@ final class MLinkImpl implements MLink {
         Iterator<MObject> it2 = objects.iterator();
 
         hashCode = fAssociation.hashCode();
+        linkedObjects = new MObject[objects.size()];
+        int i = 0;
 
         while (it1.hasNext() && it2.hasNext() ) {
             MAssociationEnd aend = it1.next();
@@ -77,6 +85,8 @@ final class MLinkImpl implements MLink {
             MLinkEnd lend = new MLinkEnd(aend, obj);
             hashCode += lend.hashCode();
             fLinkEnds.put(aend, lend);
+            linkedObjects[i] = obj;
+            ++i;
         }
     }
 
@@ -117,24 +127,15 @@ final class MLinkImpl implements MLink {
      * Returns the set of objects participating in this link.
      *
      */
-    public MObject[] linkedObjectsAsArray() {
-        MObject[] objs = new MObject[fLinkEnds.size()];
-        int i=0;
-
-        for (MAssociationEnd aend : fAssociation.associationEnds()) {
-            MLinkEnd lend = linkEnd(aend);
-            objs[i] = lend.object();
-            ++i;
-        }
-        
-        return objs;
+    public MObject[] linkedObjectsAsArray() {        
+        return linkedObjects;
     }
 
     /** 
      * Returns the link end for the given association end.
      */
     public MLinkEnd linkEnd(MAssociationEnd aend) {
-        return (MLinkEnd) fLinkEnds.get(aend);
+        return fLinkEnds.get(aend);
     }
 
     public int hashCode() { 
@@ -153,6 +154,7 @@ final class MLinkImpl implements MLink {
         return false;
     }
 
+    @Override
     public String toString() {
         return "[" + fAssociation.name() + " : (" +
             StringUtil.fmtSeq(fLinkEnds.values().iterator(), ", ") +

@@ -1,0 +1,1 @@
+model Inheritanceclass Personendclass Employeeendclass Professor < Person, Employeeendclass Assistance < Person, Employeeendclass Student < Personend

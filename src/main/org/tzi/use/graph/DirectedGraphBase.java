@@ -422,9 +422,44 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         // check for existing nodes
         getNodeInfo(n1);
         getNodeInfo(n2);
-        return targetNodeClosureSet(n1).contains(n2);
+        
+        // Depth-first search from "Data Structures and Algorithms" (Aho, Hopcroft and Ullman, 1987)
+    	Set<N> visitedNodes = new HashSet<N>();
+    	    	
+    	for (N node : targetNodeSet(n1)) {
+    		if (!visitedNodes.contains(node)) {
+    			if (dfs_path(node, n2, visitedNodes, new HashSet<N>())) return true;
+    		}
+    	}
+    	
+        return false;
+        
+        //return targetNodeClosureSet(n1).contains(n2);
     }
 
+    /**
+     * Depth-First search in the graph
+     * @param node The current node
+     * @param targetNode The node to reach
+     * @param visitedNodes All visited nodes of the graph
+     * @param visitedNodesTree All visited nodes in this search path
+     * @return
+     */
+    private boolean dfs_path(N node, N targetNode, Set<N> visitedNodes, Set<N> visitedNodesTree) {
+    	visitedNodes.add(node);
+    	visitedNodesTree.add(node);
+    	
+    	for (N n : targetNodeSet(node)) {
+    		if (n.equals(targetNode)) return true;
+    		
+    		if (!visitedNodes.contains(n)) {
+    			if (dfs_cycle(n, visitedNodes, new HashSet<N>(visitedNodesTree))) return true;
+    		}
+    	}
+    	
+        return false;
+    }
+    
     /**
      * Returns true if the graph contains at least one cycle.
      *

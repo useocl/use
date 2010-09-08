@@ -312,8 +312,8 @@ public class VariableEnvironment {
 		SymbolTable result = new SymbolTable();
 		
 		if (fObjectVisibility.peek()) {
-			for (String objectName : fSystemState.allObjectNames()) {
-				result.setType(objectName, fSystemState.objectByName(objectName).type());
+			for (MObject obj : fSystemState.allObjects()) {
+				result.setType(obj.name(), obj.type());
 			}
 		}
 		
@@ -343,24 +343,19 @@ public class VariableEnvironment {
 	 * @return the constructed object
 	 */
 	public VarBindings constructVarBindings() {
-		VarBindings result = new VarBindings();
+		VarBindings result = null;
 		
 		if (fObjectVisibility.peek()) {
-			for (String objectName : fSystemState.allObjectNames()) {
-				result.push(objectName, fSystemState.objectByName(objectName).value());
-			}
+			result = new VarBindings(fSystemState);
+		} else {
+			result = new VarBindings();
 		}
-		
-		//Set<String> pushedNames = new HashSet<String>();
 		
 		for (Entry<String, Value> entry : fCurrentFrame.entrySet()) {
 			String name = entry.getKey();
 			Value value = entry.getValue();
 			
-			//if (!pushedNames.contains(name)) {
-				result.push(name, value);
-				//pushedNames.add(name);
-			//}
+			result.push(name, value);
 		}
 		
 		return result;

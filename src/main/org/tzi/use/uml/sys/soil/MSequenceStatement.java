@@ -23,6 +23,7 @@ package org.tzi.use.uml.sys.soil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.tzi.use.util.StringUtil;
@@ -43,17 +44,9 @@ public class MSequenceStatement extends MStatement {
 	 * TODO
 	 */
 	public MSequenceStatement() {
-		fStatements = new ArrayList<MStatement>();
+		fStatements = new LinkedList<MStatement>();
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param initialCapacity
-	 */
-	public MSequenceStatement(int initialCapacity) {
-		fStatements = new ArrayList<MStatement>(initialCapacity);
-	}
 	
 	
 	/**
@@ -158,7 +151,7 @@ public class MSequenceStatement extends MStatement {
 			shellCommands.add(statement.shellCommand());
 		}
 		
-		StringUtil.addToStringBuilder(result, "; ", shellCommands);
+		StringUtil.fmtSeq(result, shellCommands, "; ");
 		
 		return result.toString();
 	}

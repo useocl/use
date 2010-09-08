@@ -38,42 +38,61 @@ public final class StringUtil {
 
     public static String NEWLINE = System.getProperty("line.separator");
     
+    public static void fmtSeq(StringBuilder target, Object objarr[], 
+                                int beginIndex, String divider) {
+    	
+    	if (objarr != null ) {
+            boolean first = true;
+            for (int i = beginIndex; i < objarr.length; i++) {
+                if (first)
+                    first = false;
+                else
+                	target.append(divider);
+                target.append(objarr[i]);
+            }
+        }
+    }
+    
+    @Deprecated
     public static String fmtSeq(Object objarr[], 
                                 int beginIndex, String divider) {
         StringBuilder resString = new StringBuilder();
-        
-        if (objarr != null ) {
-            boolean first = true;
-            for (int i = beginIndex; i < objarr.length; i++) {
-                if (first )
-                    first = false;
-                else
-                    resString.append(divider);
-                resString.append(objarr[i]);
-            }
-        }
+        fmtSeq(resString, objarr, beginIndex, divider);        
         return resString.toString();
     }
 
+    public static void fmtSeq(StringBuilder target, Object objarr[], String divider) {
+        fmtSeq(target, objarr, 0, divider);
+    }
+    
+    @Deprecated
     public static String fmtSeq(Object objarr[], String divider) {
         return fmtSeq(objarr, 0, divider);
     }
 
+    public static void fmtSeq(StringBuilder target, Collection<?> seq, String divider) {
+    	fmtSeq(target, seq.iterator(), divider);
+    }
+    
+    @Deprecated
     public static String fmtSeq(Collection<?> seq, String divider) {
     	return fmtSeq(seq.iterator(), divider);
     }
     
+    @Deprecated
     public static String fmtSeq(Iterator<?> it, String divider) {
-        StringBuilder resString = new StringBuilder();
-        
+    	StringBuilder resString = new StringBuilder();
+    	fmtSeq(resString, it, divider);
+    	return resString.toString();
+    }
+    
+    public static void fmtSeq(StringBuilder target, Iterator<?> it, String divider) {
         while (it.hasNext() ) {            
-            resString.append(it.next().toString());
+        	target.append(it.next().toString());
             
             if (it.hasNext())
-            	resString.append(divider);
+            	target.append(divider);
         }
-        
-        return resString.toString();
     }
 
     /**
@@ -252,31 +271,6 @@ public final class StringUtil {
     	return "`" + o.toString() + "'";
     }
     
-    
-    /**
-     * TODO
-     * @param target
-     * @param separator
-     * @param objects
-     */
-    public static void addToStringBuilder(
-    		StringBuilder target, 
-    		String separator, 
-    		Collection<?> objects) {
-    	
-    	for (Object object : objects) {
-    		target.append(object);
-    		target.append(separator);
-    	}
-    	
-    	if (!objects.isEmpty()) {
-    		target.delete(
-    				target.length() - separator.length(), 
-    				target.length());
-    	}
-    }
-    
-    
     /**
      * TODO
      * @param input
@@ -290,18 +284,5 @@ public final class StringUtil {
     	}
     	
     	return result.toString();
-    }
-    
-    
-    /**
-     * TODO
-     * @param target
-     * @param objects
-     */
-    public static void addToStringBuilder(
-    		StringBuilder target, 
-    		Collection<?> objects) {
-    	
-    	addToStringBuilder(target, ", ", objects);
     }
 }

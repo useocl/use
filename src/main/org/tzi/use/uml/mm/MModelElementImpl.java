@@ -35,7 +35,8 @@ import java.util.Map;
 abstract class MModelElementImpl implements MModelElement {
     private String fName;
     private static Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
-
+    private int hashCode;
+    
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
     class MutableInteger {
@@ -46,6 +47,7 @@ abstract class MModelElementImpl implements MModelElement {
         if (name == null || name.length() == 0 )
             throw new IllegalArgumentException("Modelelement without name");
         fName = name;
+        hashCode = fName.hashCode();
     }
     
     /**
@@ -65,6 +67,7 @@ abstract class MModelElementImpl implements MModelElement {
             name = prefix + String.valueOf(i.fInt);
         }
         fName = name;
+        hashCode = fName.hashCode();
     }
     
     /**
@@ -75,19 +78,12 @@ abstract class MModelElementImpl implements MModelElement {
     }
 
     /**
-     * Sets the name of this model element.
-     */
-    //      public void setName(String name) {
-    //      fName = name;
-    //      }
-
-    /**
      * Process this element with visitor.
      */
     public abstract void processWithVisitor(MMVisitor v);
 
     public int hashCode() { 
-        return fName.hashCode();
+        return hashCode;
     }
 
     /**

@@ -542,13 +542,15 @@ public final class MSystem {
     private StatementEvaluationResult evaluate(
 			MStatement statement,
 			boolean undoOnFailure,
-			boolean storeResult) throws MSystemException {
+			boolean storeResult,
+			boolean notifyUpdateStateListeners) throws MSystemException {
     	
     	return evaluate(
     			statement, 
     			new SoilEvaluationContext(this),
     			undoOnFailure, 
-    			storeResult);
+    			storeResult,
+    			notifyUpdateStateListeners);
     }
     
    
@@ -561,7 +563,8 @@ public final class MSystem {
 			MStatement statement,
 			SoilEvaluationContext context,
 			boolean undoOnFailure,
-			boolean storeResult) throws MSystemException {
+			boolean storeResult,
+			boolean notifyUpdateStateListeners) throws MSystemException {
 		
 		if (stateIsLocked()) {
 			throw new MSystemException(
@@ -577,21 +580,20 @@ public final class MSystem {
 		}
 		
 		StatementEvaluationResult result = statement.evaluate(context);
-		
-		//fVariableEnvironment.setObjectVariables(fCurrentState.allObjects());
-		
+				
 		fCurrentlyEvaluatedStatements.pop();
 		
 		if (storeResult) {
 			fStatementEvaluationResults.push(result);
 		}
 		
-		fireStateChanged(result.getStateDifference());
+		if (notifyUpdateStateListeners)
+			fireStateChanged(result.getStateDifference());
 		
 		if (!result.wasSuccessfull()) {
 			if (undoOnFailure) {
 				fStatementEvaluationResults.pop();
-				evaluate(result.getInverseStatement(), false, false);
+				evaluate(result.getInverseStatement(), false, false, notifyUpdateStateListeners);
 			}
 			
 			throw new MSystemException(
@@ -627,9 +629,26 @@ public final class MSystem {
     public StatementEvaluationResult evaluateStatement(
     		MStatement statement) throws MSystemException {
     	    	   	
-    	return evaluateStatement(statement, true, true);
+    	return evaluateStatement(statement, true, true, true);
     }
     
+    /**
+     * TODO
+     * @param statement
+     * @throws EvaluationFailedException
+     */
+    public StatementEvaluationResult evaluateStatement(
+    		MStatement statement, boolean notifyUpdateStateListeners) throws MSystemException {
+    	    	   	
+    	return evaluateStatement(statement, true, true, notifyUpdateStateListeners);
+    }
+    
+    public StatementEvaluationResult evaluateStatement(
+    		MStatement statement,
+    		boolean undoOnFailure,
+    		boolean storeResult) throws MSystemException {
+    	return evaluateStatement(statement, undoOnFailure, storeResult, true);
+    }
     
     /**
      * TODO
@@ -642,13 +661,16 @@ public final class MSystem {
     public StatementEvaluationResult evaluateStatement(
     		MStatement statement,
     		boolean undoOnFailure,
-    		boolean storeResult) throws MSystemException {
+    		boolean storeResult,
+    		boolean notifyUpdateStateListeners) throws MSystemException {
     	
     	fRedoStack.clear();
     	
-    	Log.trace(this, "evaluating " + statement.getShellCommand());
+    	if (Log.isTracing())
+    		Log.trace(this, "evaluating " + statement.getShellCommand());
+    	
     	StatementEvaluationResult result = 
-    		evaluate(statement, undoOnFailure, storeResult);
+    		evaluate(statement, undoOnFailure, storeResult, notifyUpdateStateListeners);
     	
     	return result;
     }
@@ -660,7 +682,7 @@ public final class MSystem {
     	MStatement currentStatement = getCurrentStatement();
     	
     	if (currentStatement == null) {
-    		evaluate(statement, false, false);
+    		evaluate(statement, false, false, false);
     	} else {
     		try {
     			currentStatement.evaluateSubStatement(statement);
@@ -693,12 +715,14 @@ public final class MSystem {
     	MStatement inverseStatement = lastResult.getInverseStatement();
     	
     	fRedoStack.push(lastStatement);
-    	Log.trace(this, "undoing a statement");
+    	
+    	if (Log.isTracing())
+    		Log.trace(this, "undoing a statement");
     	
     	SoilEvaluationContext context = new SoilEvaluationContext(this);
     	context.setIsUndo(true);
     	
-    	return evaluate(inverseStatement, context, false, false);
+    	return evaluate(inverseStatement, context, false, false, true);
     }
     
     
@@ -715,7 +739,8 @@ public final class MSystem {
 		
 		MStatement redoStatement = fRedoStack.pop();
 		
-		Log.trace(this, "redoing a statement");
+		if (Log.isTracing())
+			Log.trace(this, "redoing a statement");
 		
 		SoilEvaluationContext context = new SoilEvaluationContext(this);
 		context.setIsRedo(true);
@@ -725,6 +750,7 @@ public final class MSystem {
 					redoStatement, 
 					context, 
 					false, 
+					true,
 					true);
 		
 		return result;

@@ -77,7 +77,7 @@ class GEvalInstrCreate_C extends GEvalInstruction {
     	try {
     		
     		StatementEvaluationResult evaluationResult = 
-    			system.evaluateStatement(statement, true, false);
+    			system.evaluateStatement(statement, true, false, false);
     		
     		inverseStatement = evaluationResult.getInverseStatement();
     		

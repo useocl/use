@@ -122,7 +122,7 @@ class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         
         try {
         	StatementEvaluationResult evaluationResult = 
-        		system.evaluateStatement(statement, true, false);
+        		system.evaluateStatement(statement, true, false, false);
         	
         	inverseStatement = evaluationResult.getInverseStatement();
         	

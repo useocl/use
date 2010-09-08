@@ -461,7 +461,7 @@ public class MOperationCall {
 		result.append(".");
 		result.append(fOperation.name());
 		result.append("(");
-		StringUtil.addToStringBuilder(result, getArgumentsAsNamesAndValues().values());
+		StringUtil.fmtSeq(result, getArgumentsAsNamesAndValues().values(), ", ");
 		result.append(")");
 		return result.toString();
 	}
@@ -483,7 +483,7 @@ public class MOperationCall {
 		for (Entry<String, Value> entry : getArgumentsAsNamesAndValues().entrySet()) {
 			argStrings.add(entry.getKey() + ":" + entry.getValue());
 		}
-		StringUtil.addToStringBuilder(result, argStrings);
+		StringUtil.fmtSeq(result, argStrings, ", ");
 		result.append(")");
 		
 		return result.toString();

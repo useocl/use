@@ -125,7 +125,7 @@ public class MLinkDeletionStatement extends MStatement {
 		
 		StringBuilder result = new StringBuilder();
 		result.append("delete (");
-		StringUtil.addToStringBuilder(result, ",", fParticipants);
+		StringUtil.fmtSeq(result, fParticipants, ",");
 		result.append(") from ");
 		result.append(fAssociation);
 			

@@ -165,19 +165,13 @@ public final class MSystemState {
 		return fObjectStates.keySet();
 	}
 	
-	
 	/**
 	 * returns the names of all objects in this state
 	 * 
 	 * @return the set of names (empty set if there are no objects)
 	 */
 	public Set<String> allObjectNames() {
-		Set<String> result = new HashSet<String>();
-		for (MObject object : allObjects()) {
-			result.add(object.name());
-		}
-		
-		return result;
+		return this.fObjectNames.keySet();
 	}
 	
 	
@@ -206,7 +200,7 @@ public final class MSystemState {
 	 * @return true if there is an object with that name, false else
 	 */
 	public boolean hasObjectWithName(String name) {
-		return allObjectNames().contains(name);
+		return this.fObjectNames.containsKey(name);
 	}
 
 	
@@ -217,9 +211,7 @@ public final class MSystemState {
 	 * @return Set(MObject)
 	 */
 	public Set<MObject> objectsOfClass(MClass cls) {
-		Set<MObject> res = new HashSet<MObject>();
-		res.addAll(fClassObjects.get(cls));
-		return res;
+		return new HashSet<MObject>(fClassObjects.get(cls));
 	}
 
 	/*
@@ -231,10 +223,11 @@ public final class MSystemState {
 	public Set<MObject> objectsOfClassAndSubClasses(MClass cls) {
 		Set<MObject> res = new HashSet<MObject>();
 		Set<MClass> children = cls.allChildren();
-		children.add(cls);
-
+		
+		res.addAll(fClassObjects.get(cls));
+		
 		for (MClass c : children) {
-			res.addAll(objectsOfClass(c));
+			res.addAll(fClassObjects.get(c));
 		}
 		
 		return res;
@@ -246,11 +239,7 @@ public final class MSystemState {
 	 * @return null if no object with the specified name exists.
 	 */
 	public MObject objectByName(String name) {
-		if (fObjectNames.containsKey(name)) {
-			return fObjectNames.get(name);
-		}
-		
-		return null;
+		return fObjectNames.get(name);
 	}
 
 	/**
@@ -315,15 +304,17 @@ public final class MSystemState {
 		return linkSet.hasLink(objects);
 	}
 	
+	private static Pattern validObjectNamePattern = Pattern.compile("[$a-zA-Z_][a-zA-Z_0-9]*");
+	
 	/**
-	 * TODO
+	 * Checks for a valid object name.
+	 * Valid pattern: [$a-zA-Z_][a-zA-Z_0-9]*
 	 * @param objectName
 	 * @return
 	 */
 	private boolean isValidObjectName(String objectName) {
-		return Pattern.matches("[$a-zA-Z_][a-zA-Z_0-9]*", objectName);
+		return validObjectNamePattern.matcher(objectName).matches();
 	}
-	
 
 	/**
 	 * Creates and adds a new object to the state. The name of the object may be
@@ -347,6 +338,7 @@ public final class MSystemState {
 					"Creation of a linkobject is not allowed with the command create. \n"
 							+ "Use 'create ... between ...' or 'insert' instead.");
 		}
+		
 		// create new object and initial state
 		MObject obj = fSystem.createObject(cls, name);
 		MObjectState objState = new MObjectState(obj);
@@ -843,15 +835,19 @@ public final class MSystemState {
 		
 		
 			// if link set is empty return empty result list
-			Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
-					+ linkSet.size());
+			if (Log.isTracing())
+				Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
+						  + linkSet.size());
+			
 			if (linkSet.size() == 0)
 				return res;
 	
 			// select links with srcEnd == obj
 			Set<MLink> links = linkSet.select(srcEnd, obj);
-			Log.trace(this, "linkSet.select for object `" + obj + "', size = "
-					+ links.size());
+			
+			if (Log.isTracing())
+				Log.trace(this, "linkSet.select for object `" + obj + "', size = "
+						  + links.size());
 	
 			// project tuples to destination end component
 			for (MLink link : links) {

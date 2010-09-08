@@ -45,15 +45,18 @@ public final class MLinkSet {
     private static class CacheEntry {
         final MAssociationEnd end;
         final MObject         object;
-        final int hashCode;
+        final int 			  hashCode;
+        
         public CacheEntry(MAssociationEnd end, MObject object) {
             this.end = end;
             this.object = object;
             hashCode = end.hashCode() + 19 * object.hashCode();
         }
+        
         public final int hashCode() {
             return hashCode;
         }
+        
         public final boolean equals(Object o) {
             CacheEntry e = (CacheEntry)o;
             return e.end == end && e.object.equals( object );

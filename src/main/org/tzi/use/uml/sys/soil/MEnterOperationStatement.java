@@ -142,7 +142,7 @@ public class MEnterOperationStatement extends MStatement {
 		result.append(" ");
 		result.append(fOperation);
 		result.append("(");
-		StringUtil.addToStringBuilder(result, fArguments.values());
+		StringUtil.fmtSeq(result, fArguments.values(), ", ");
 		result.append(")");
 		
 		return result.toString();

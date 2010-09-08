@@ -162,13 +162,19 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      * or composition if one of the association ends is aggregate or
      * composition.
      */
+    private int aggregationKind = -1;
     public int aggregationKind() {
-        for (MAssociationEnd aend : fAssociationEnds) {
-            int k = aend.aggregationKind();
-            if (k != MAggregationKind.NONE )
-                return k;
-        }
-        return MAggregationKind.NONE;
+    	if (aggregationKind == -1) {
+	        for (MAssociationEnd aend : fAssociationEnds) {
+	            int k = aend.aggregationKind();
+	            if (k != MAggregationKind.NONE ) {
+	            	aggregationKind = k;
+	            }
+	        }
+	        aggregationKind = MAggregationKind.NONE;
+    	}
+    	
+    	return aggregationKind;
     }
 
     /** 

@@ -180,6 +180,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         					insertStatements, 
         					deleteStatements), 
         			true, 
+        			false,
         			false);
         } catch (MSystemException e) {
         	throw new GEvaluationException(e);
@@ -342,7 +343,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             	
             	basicOutput.println(statement.getShellCommand());
             	try {
-            		system.evaluateStatement(statement, true, false);
+            		system.evaluateStatement(statement, true, false, false);
     			} catch (MSystemException e) {
     				// this shadows the original exception thrown in 
     				// tryLinkCombinations
@@ -394,7 +395,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
 	    	
 	    	basicOutput.println(statement.getShellCommand());
 	    	try {
-	    		system.evaluateStatement(statement, true, false);
+	    		system.evaluateStatement(statement, true, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}

@@ -127,10 +127,10 @@ public class CallStackView extends JPanel implements View {
         		line.append(op.name());
         		line.append("(");
         		if (fShowCall) {
-        			StringUtil.addToStringBuilder(
+        			StringUtil.fmtSeq(
         					line, 
-        					",", 
-        					oc.getArgumentsAsNamesAndValues().values());
+        					oc.getArgumentsAsNamesAndValues().values(),
+        					",");
         		}
         		line.append(")");
         		fListModel.addElement(line);

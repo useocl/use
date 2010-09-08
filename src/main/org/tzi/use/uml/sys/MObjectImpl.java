@@ -44,6 +44,8 @@ public final class MObjectImpl implements MObject {
     private ObjectType fType;   // type of object
     private String fName;   // unique object name
 
+    private ObjectValue objectValue;
+
     // For performance reasons
     private int hashCode;
 
@@ -55,6 +57,7 @@ public final class MObjectImpl implements MObject {
         fType = TypeFactory.mkObjectType( fClass );
         fName = name;
         hashCode = fName.hashCode();
+        objectValue = new ObjectValue(TypeFactory.mkObjectType(fClass), this);
     }
 
     /**
@@ -85,8 +88,8 @@ public final class MObjectImpl implements MObject {
      * @return the value of this object
      */
     public ObjectValue value() {
-    	return new ObjectValue(TypeFactory.mkObjectType(fClass), this);
-	}
+    	return objectValue;
+    }
 
     
 	/**

@@ -154,7 +154,7 @@ public class MNewLinkObjectStatement extends MStatement {
 			sb.append(")");
 		}
 		sb.append(" between (");
-		StringUtil.addToStringBuilder(sb, fParticipants);
+		StringUtil.fmtSeq(sb, fParticipants, ",");
 		sb.append(")");
 		
 		return sb.toString();

@@ -24,6 +24,9 @@ package org.tzi.use.uml.ocl.value;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemState;
+
 /**
  * Variable bindings bind names to values. Bindings are kept on a stack and can
  * be retrieved by name. Main use is for expression evaluation.
@@ -62,6 +65,8 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
 
     private ArrayList<Entry> fBindings;
 
+    private MSystemState fVisibleState;
+    
     /**
      * Creates an empty VarBindings.
      */
@@ -70,11 +75,20 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
     }
 
     /**
+     * Creates an empty VarBindings.
+     */
+    public VarBindings(MSystemState visibleState) {
+        fBindings = new ArrayList<Entry>();
+        fVisibleState = visibleState;
+    }
+
+    /**
      * Creates a VarBindings object and initializes it with the VarBindings
      * object passed as parameter.
      */
     public VarBindings(VarBindings bindings) {
         fBindings = new ArrayList<Entry>(bindings.fBindings);
+        fVisibleState = bindings.fVisibleState;
     }
 
     /**
@@ -82,6 +96,9 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
      */
     public void add(VarBindings bindings) {
         fBindings.addAll(bindings.fBindings);
+        
+        if (this.fVisibleState == null)
+        	this.fVisibleState = bindings.fVisibleState;
     }
 
     public void push(String varname, Value value) {
@@ -120,6 +137,11 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
             if (b.fVarname.equals(name))
                 return b.fValue;
         }
+        if (fVisibleState != null) {
+        	for (MObject o : fVisibleState.allObjects()) {
+        		if (o.name().equals(name)) return o.value();
+        	}
+        }
         return null;
     }
 
@@ -127,6 +149,7 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
      * Returns an iterator over VarBindings.Entry objects.
      */
     public Iterator<Entry> iterator() {
+    	if (fVisibleState != null) throw new RuntimeException("Not Implemented...");
         return fBindings.iterator();
     }
 
@@ -136,10 +159,4 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
     public String toString() {
         return "VarBindings: " + fBindings.toString();
     }
-
-    // used by UML AL
-    public int getStackSize() {
-        return fBindings.size();
-    }
-
 }

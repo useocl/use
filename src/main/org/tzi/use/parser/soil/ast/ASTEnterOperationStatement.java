@@ -128,7 +128,7 @@ public class ASTEnterOperationStatement extends ASTStatement {
 		sb.append("openter ");
 		sb.append(fOperationName);
 		sb.append("(");
-		StringUtil.addToStringBuilder(sb, fArguments);
+		StringUtil.fmtSeq(sb, fArguments, ", ");
 		sb.append(")");
 		
 		return sb.toString();

@@ -2668,7 +2668,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 if (fProperties.showValues()) {
                 	StringBuilder argMsg = new StringBuilder();
                 	argMsg.append("(");
-                	StringUtil.addToStringBuilder(argMsg, ",", fOpCall.getArgumentsAsNamesAndValues().values());
+                	StringUtil.fmtSeq(argMsg, fOpCall.getArgumentsAsNamesAndValues().values(),",");
                 	argMsg.append(")");
                 	msgLabel += argMsg;
                 }

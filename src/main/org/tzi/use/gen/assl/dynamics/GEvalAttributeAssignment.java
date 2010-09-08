@@ -111,7 +111,7 @@ class GEvalAttributeAssignment extends GEvalInstruction
     	basicOutput.println(statement.getShellCommand());
     	try {
     		StatementEvaluationResult evaluationResult = 
-    			system.evaluateStatement(statement, true, false);
+    			system.evaluateStatement(statement, true, false, false);
     		
     		inverseStatement = evaluationResult.getInverseStatement();
     		
@@ -126,7 +126,7 @@ class GEvalAttributeAssignment extends GEvalInstruction
          
 		basicOutput.println("undo: " + statement.getShellCommand());
 		try {
-			system.evaluateStatement(inverseStatement, true, false);
+			system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}

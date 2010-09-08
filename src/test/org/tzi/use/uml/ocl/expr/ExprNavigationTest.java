@@ -224,7 +224,7 @@ public class ExprNavigationTest extends TestCase {
             		new MNewLinkObjectStatement(
             				assoc, 
             				participants, 
-            				"j2"));
+            				"j2"), false);
 
             MAssociationClass job = system.model().getAssociationClass( "Job" );
             MAssociationEnd personEnd =
@@ -333,7 +333,7 @@ public class ExprNavigationTest extends TestCase {
             }
             MAssociation assoc = model.getAssociation( "Job" );
             
-            system.evaluateStatement(new MLinkInsertionStatement(assoc, exprs));
+            system.evaluateStatement(new MLinkInsertionStatement(assoc, exprs), true);
             
             MAssociation job = system.model().getAssociation( "Job" );
             MAssociationEnd personEnd =

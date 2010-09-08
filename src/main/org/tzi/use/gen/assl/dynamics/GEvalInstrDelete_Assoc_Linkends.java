@@ -126,7 +126,7 @@ class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
         basicOutput.println(statement.getShellCommand());
         try {
         	StatementEvaluationResult evaluationResult = 
-        		system.evaluateStatement(statement, true, false);
+        		system.evaluateStatement(statement, true, false, false);
         	
         	inverseStatement = evaluationResult.getInverseStatement();
 		} catch (MSystemException e) {

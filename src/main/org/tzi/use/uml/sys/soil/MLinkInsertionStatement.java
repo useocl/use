@@ -148,7 +148,7 @@ public class MLinkInsertionStatement extends MStatement {
 		
 		StringBuilder result = new StringBuilder();
 		result.append("insert (");
-		StringUtil.addToStringBuilder(result, ",", fParticipants);
+		StringUtil.fmtSeq(result, fParticipants, ",");
 		result.append(") into ");
 		result.append(fAssociation);
 			
