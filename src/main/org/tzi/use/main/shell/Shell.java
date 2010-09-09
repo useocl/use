@@ -293,7 +293,7 @@ public final class Shell implements Runnable, PPCHandler {
     }
 
     /**
-     * Analyses a line of input and calls the method implementing a command.
+     * Analyzes a line of input and calls the method implementing a command.
      */
     private void processLineSafely(String line) {
         try {            
