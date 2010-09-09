@@ -119,7 +119,10 @@
       	<!-- shell grammar exists -->
       	<available file="${parser.dir}/shell/ShellCommand.g" />
       	
-      	<!-- shell language parser -->
+      	<!-- shell language parser to required grammars -->
+		<uptodate srcfile="${parser.dir}/base/ShellCommandBase.gpart" 
+      			  targetfile="${parser.dir}/shell/ShellCommandParser.java"/>
+
         <uptodate srcfile="${parser.dir}/shell/ShellCommand.gpart" 
                   targetfile="${parser.dir}/shell/ShellCommandParser.java"/>
 
