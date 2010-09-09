@@ -9,8 +9,12 @@ import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.parser.testsuite.ASTTestCase;
 import org.tzi.use.parser.testsuite.ASTTestCase.TestResult;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
+import org.tzi.use.uml.sys.ppcHandling.PostConditionCheckFailedException;
+import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullWriter;
 import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
@@ -44,7 +48,7 @@ public class MTestSuite {
 		MSystem system;
 		int testNr = 1;
 		int failedTests = 0;
-				
+		
 		for (ASTTestCase test : testCases) {
 			// execute the setup statements
 			try {
@@ -88,7 +92,25 @@ public class MTestSuite {
 	}
 	
 	private MSystem setUp() throws MSystemException, CompilationFailedException {
+		
 		MSystem system = new MSystem(model);
+		system.registerPPCHandlerOverride(new PPCHandler() {
+			
+			@Override
+			public void handlePreConditions(MSystem system, MOperationCall operationCall)
+					throws PreConditionCheckFailedException {
+				// we ignore the messages in tests				
+			}
+			
+			@Override
+			public void handlePostConditions(MSystem system,
+					MOperationCall operationCall)
+					throws PostConditionCheckFailedException {
+				// we ignore the messages in tests
+				
+			}
+		});
+		
 		Context ctx = new Context(name.getText(), output, system.varBindings(), null);
 		ctx.setOut(new PrintWriter(new NullWriter()));
 		ctx.setModel(model);
