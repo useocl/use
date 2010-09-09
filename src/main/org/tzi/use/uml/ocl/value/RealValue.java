@@ -42,8 +42,9 @@ public final class RealValue extends Value {
         return fValue;
     }
 
-    public String toString() {
-        return Double.toString(fValue);
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fValue);
     }
 
     public boolean equals(Object obj) {

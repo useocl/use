@@ -30,9 +30,9 @@ public class DateValue extends Value {
 	}
 
 	@Override
-	public String toString() {
+    public StringBuilder toString(StringBuilder sb) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		return df.format(value);
+		return sb.append(df.format(value));
 	}
 
 	@Override

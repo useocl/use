@@ -71,7 +71,10 @@ public final class ExpEmptyCollection extends Expression {
         return res;
     }
 
-    public String toString() {
-        return "oclEmpty(" + type() + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("oclEmpty(");
+        type().toString(sb);
+        return sb.append(")");
     }
 }

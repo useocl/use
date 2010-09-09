@@ -26,10 +26,10 @@ public class ExpConstDate extends Expression {
 	}
 
 	@Override
-	public String toString() {
+	public StringBuilder toString(StringBuilder sb) {
 		//TODO: Move DateFormat to Options
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		return df.format(value);
+		return sb.append(df.format(value));
 	}
 
 }

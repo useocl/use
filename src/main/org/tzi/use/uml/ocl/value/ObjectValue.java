@@ -39,8 +39,9 @@ public final class ObjectValue extends Value {
         fObject = obj;
     }
     
-    public String toString() {
-        return "@" + fObject.name();
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append("@").append(fObject.name());
     }
 
     public MObject value() {

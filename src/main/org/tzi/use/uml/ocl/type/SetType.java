@@ -113,7 +113,10 @@ public final class SetType extends CollectionType {
     		return TypeFactory.mkCollection(commonElementType);
     }
     
-    public String toString() {
-        return "Set(" + elemType() + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Set(");
+        elemType().toString(sb);
+        return sb.append(")");
     }
 }

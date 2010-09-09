@@ -45,8 +45,9 @@ public final class UndefinedValue extends Value {
         super(TypeFactory.mkVoidType());
     }
 
-    public String toString() {
-        return "Undefined";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append("Undefined");
     }
 
     public boolean equals(Object obj) {

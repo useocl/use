@@ -29,6 +29,7 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.TupleValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.BufferedToString;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -40,7 +41,7 @@ import org.tzi.use.util.StringUtil;
 public final class ExpTupleLiteral extends Expression {
     private Part[] fParts;
 
-    public static class Part {
+    public static class Part implements BufferedToString {
         private String fName;
         private Expression fExpr;
         // Maybe a type was given by the user
@@ -68,8 +69,14 @@ public final class ExpTupleLiteral extends Expression {
         		return givenType;
         }
         
+        @Override
         public String toString() {
-            return fName + ":" + fExpr;
+        	return this.toString(new StringBuilder()).toString();
+        }
+        
+        @Override
+        public StringBuilder toString(StringBuilder sb) {
+            return sb.append(fName).append(":").append(fExpr);
         }
     }
 
@@ -108,7 +115,10 @@ public final class ExpTupleLiteral extends Expression {
         return res;
     }
 
-    public String toString() {
-        return "Tuple {" + StringUtil.fmtSeq(fParts, ",") + "}";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Tuple {");
+        StringUtil.fmtSeqBuffered(sb, fParts, ",");
+        return sb.append("}");
     }
 }

@@ -124,7 +124,8 @@ public final class EnumType extends Type {
     /** 
      * Return complete printable type name, e.g. 'Set(Bag(Integer))'. 
      */
-    public String toString() {
-        return fName;
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fName);
     }
 }

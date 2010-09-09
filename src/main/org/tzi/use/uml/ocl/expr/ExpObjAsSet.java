@@ -64,10 +64,11 @@ public final class ExpObjAsSet extends Expression {
         return res;
     }
 
-    public String toString() {
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
         // the operation has no explicit representation since it
         // results from a shorthand notation, e.g., a.b->isEmpty. It
         // is hidden in the "->".
-        return fObjExp.toString();
+        return fObjExp.toString(sb);
     }
 }

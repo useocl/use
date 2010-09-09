@@ -152,8 +152,9 @@ public final class ExpStdOp extends Expression {
         fArgs = args;
     }
 
-    public String toString() {
-        return fOp.stringRep(fArgs, atPre());
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fOp.stringRep(fArgs, atPre()));
     }
 
     public String opname() {

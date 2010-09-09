@@ -266,8 +266,11 @@ public class SequenceValue extends CollectionValue {
     	return fElements;
     }
     
-    public String toString() {
-        return "Sequence{" + StringUtil.fmtSeq(fElements.iterator(), ",") + "}";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Sequence{");
+        StringUtil.fmtSeqBuffered(sb, fElements.iterator(), ",");
+        return sb.append("}");
     }
 
     public int hashCode() {

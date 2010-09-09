@@ -53,8 +53,11 @@ public final class ExpConstEnum extends Expression {
         return res;
     }
 
-    public String toString() {
-        return type().toString() + "::" + fValue;
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        type().toString(sb);
+        sb.append("::");
+        return sb.append(fValue);
     }
 }
 

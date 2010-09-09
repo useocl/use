@@ -103,8 +103,11 @@ public class CollectionType extends Type {
     		return TypeFactory.mkCollection(commonElementType);
     }
         
-    public String toString() {
-        return "Collection(" + elemType() + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Collection(");
+        elemType().toString(sb);
+        return sb.append(")");
     }
 
     public boolean equals(Object obj) {

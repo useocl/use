@@ -71,29 +71,25 @@ public final class TupleValue extends Value {
         }
     }
 
-    public String toString() {
-        StringBuilder s = new StringBuilder("Tuple{");
-        Iterator<String> iter = fParts.keySet().iterator();
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Tuple{");
         boolean first = true;
-        
-        while(iter.hasNext())
-        {
-        	String name = iter.next();
-        	Value value = fParts.get(name);
-        	
+
+        for (Map.Entry<String, Value> entry : fParts.entrySet()) {	
         	if (!first)
-        		s.append(",");
+        		sb.append(",");
         	else
         		first = false;
         	
-        	s.append(name);
-        	s.append("=");
-        	s.append(value.toString());
+        	sb.append(entry.getKey());
+        	sb.append("=");
+        	entry.getValue().toString(sb);
         }
         
-        s.append("}");
+        sb.append("}");
         
-        return s.toString();
+        return sb;
     }
 
     public boolean equals(Object obj) {

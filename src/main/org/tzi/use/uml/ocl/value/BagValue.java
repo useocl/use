@@ -260,12 +260,16 @@ public class BagValue extends CollectionValue {
     }
 
     /**
-     * Returns a string representation of this bag. The elements are sorted.
+     * Adds a string representation of this bag to the <code>StringBuilder</code>.
+     * The elements are sorted.
      */
-    public String toString() {
-        return "Bag{"
-                + StringUtil.fmtSeq(iterator(), ",")
-                + "}";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Bag{");
+        StringUtil.fmtSeqBuffered(sb, iterator(), ",");
+        sb.append("}");
+        
+        return sb;
     }
 
     protected Integer getClassCompareNr()

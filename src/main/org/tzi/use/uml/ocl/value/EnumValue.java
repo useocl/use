@@ -41,8 +41,9 @@ public final class EnumValue extends Value {
                                                "' not part of enumeration type `" + t + "'");
     }
     
-    public String toString() {
-        return type().toString() + "::" + fLiteral;
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return type().toString(sb).append("::").append(fLiteral);
     }
 
     public String value() {

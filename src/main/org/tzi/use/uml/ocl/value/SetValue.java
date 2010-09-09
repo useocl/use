@@ -331,8 +331,11 @@ public class SetValue extends CollectionValue {
         return fElements;
     }
 
-    public String toString() {
-        return "Set{" + StringUtil.fmtSeq(fElements.iterator(), ",") + "}";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Set{");
+        StringUtil.fmtSeqBuffered(sb, fElements.iterator(), ",");
+        return sb.append("}");
     }
 
     public int hashCode() {

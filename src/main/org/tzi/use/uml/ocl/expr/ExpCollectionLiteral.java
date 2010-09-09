@@ -84,8 +84,12 @@ public abstract class ExpCollectionLiteral extends Expression {
         return argValues;
     }
 
-    public String toString() {
-        return fKind + " {" + StringUtil.fmtSeq(fElemExpr, ",") + "}";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append(fKind)
+          .append(" {");
+        StringUtil.fmtSeq(sb, fElemExpr, ",");
+        return sb.append("}");
     }
 
     public Expression[] getElemExpr() {

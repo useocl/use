@@ -59,7 +59,11 @@ public final class ExpIsTypeOf extends Expression {
         return res;
     }
 
-    public String toString() {
-        return fSourceExpr + ".oclIsTypeOf(" + fTargetType + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        fSourceExpr.toString(sb);
+        sb.append(".oclIsTypeOf(");
+        fTargetType.toString(sb);
+        return sb.append(")");
     }
 }

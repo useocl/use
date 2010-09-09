@@ -42,8 +42,9 @@ public final class StringValue extends Value {
         return fValue;
     }
 
-    public String toString() {
-        return "'" + fValue + "'";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append("'").append(fValue).append("'");
     }
 
     public boolean equals(Object obj) {

@@ -102,8 +102,9 @@ public class VoidType extends Type {
 		return !excludeVoid;
 	}
 
-	public String toString() {
-		return "OclVoid";
+	@Override
+    public StringBuilder toString(StringBuilder sb) {
+		return sb.append("OclVoid");
 	}
 
 }

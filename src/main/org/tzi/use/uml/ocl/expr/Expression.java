@@ -28,6 +28,7 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.BufferedToString;
 
 /**
  * Abstract base class of all expressions.
@@ -35,7 +36,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
-public abstract class Expression {
+public abstract class Expression implements BufferedToString {
 	private ASTExpression fSourceExpression;
     private Type fType; // result type
     private List<Expression> fChildExpressions = new ArrayList<Expression>();
@@ -147,8 +148,17 @@ public abstract class Expression {
     /**
      * Every expression can print itself.
      */
-    public abstract String toString();
+    public final String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	this.toString(sb);
+    	return sb.toString();
+    }
 
+    /**
+     * Every expression can print itself to a StringBuilder.
+     */
+    public abstract StringBuilder toString(StringBuilder sb);
+    
     /**
      * Makes sure this is a boolean expression.
      * 

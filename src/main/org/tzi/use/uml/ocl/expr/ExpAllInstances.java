@@ -82,8 +82,10 @@ public final class ExpAllInstances extends Expression {
         return res;
     }
 
-	@Override	
-	public String toString() {
-        return fSourceType + ".allInstances" + atPre();
+	@Override
+    public StringBuilder toString(StringBuilder sb) {
+		fSourceType.toString(sb);
+		sb.append(".allInstances");
+		return sb.append(atPre());
     }
 }

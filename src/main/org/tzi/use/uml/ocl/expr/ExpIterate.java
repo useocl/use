@@ -83,13 +83,22 @@ public class ExpIterate extends ExpQuery {
         return "iterate";
     }
 
-    public String toString() {
-        String res = fRangeExp + "->" + this.name() + "(";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        fRangeExp.toString(sb);
+        sb.append("->")
+          .append(this.name())
+          .append("(");
+        
         if (! fElemVarDecls.isEmpty() ) {
-            res += fElemVarDecls + "; ";
+            fElemVarDecls.toString(sb);
+            sb.append("; ");
         }
-        res += fAccuInitializer + " | " + fQueryExp + ")";
-        return res;
+        
+        fAccuInitializer.toString(sb);
+        sb.append(" | ");
+        fQueryExp.toString(sb);
+        return sb.append(")");
     }
 
     /**

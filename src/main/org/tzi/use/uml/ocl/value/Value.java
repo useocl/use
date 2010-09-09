@@ -22,21 +22,21 @@
 package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.util.BufferedToString;
 
 /**
- * Abstract base class of all values.
- *
+ * <p>Abstract base class of all values.</p>
+ * <p>All values must implement the <code>Comparable</code> interface.
+ * This is mainly for having a well-defined order for printing values,
+ * e.g. sets. It does not impose an order with respect to the
+ * abstract semantics of values, however. Note that all values
+ * must be able of being compared with an <code>UndefinedValue</code>.</p>
+ * 
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     Type
  */
-public abstract class Value implements Comparable<Value> {
-
-    /* All values must implement the Comparable interface. This is
-       mainly for having a well-defined order for printing values,
-       e.g. sets. It does not impose an order with respect to the
-       abstract semantics of values, however. Note that all values
-       must be able of being compared with an UndefinedValue. */
+public abstract class Value implements Comparable<Value>, BufferedToString {
 
     private Type fType; // every value has a type
     
@@ -96,13 +96,28 @@ public abstract class Value implements Comparable<Value> {
     public boolean isOrderedSet() {
 		return (this instanceof OrderedSetValue);
 	}
-    
-    public abstract String toString();
 
-    public String toStringWithType() {
-        return toString() + " : " + fType;
+    public final String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	this.toString(sb);
+    	return sb.toString();
     }
 
+    @Override
+    public abstract StringBuilder toString(StringBuilder sb);
+    
+    public String toStringWithType() {
+    	StringBuilder sb = new StringBuilder();
+    	this.toStringWithType(sb);
+    	return sb.toString();
+    }
+
+    public void toStringWithType(StringBuilder sb) {
+        this.toString(sb);
+        sb.append(" : ");
+        fType.toString(sb);
+    }
+    
     public abstract int hashCode();
 
     /**

@@ -113,7 +113,10 @@ public final class SequenceType extends CollectionType {
         return res;
     }
 
-    public String toString() {
-        return "Sequence(" + elemType() + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Sequence(");
+        elemType().toString(sb);
+        return sb.append(")");
     }
 }

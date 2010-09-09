@@ -67,9 +67,16 @@ public final class ExpLet extends Expression {
         return res;
     }
 
-    public String toString() {
-        return "let " + fVarname + " : " + fVarType + " = " + 
-            fVarExpr + " in " + fInExpr;
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("let ")
+          .append(fVarname)
+          .append(" : ");
+        fVarType.toString(sb);
+        sb.append(" = ");
+        fVarExpr.toString(sb);
+        sb.append(" in ");
+        return fInExpr.toString(sb);
     }
 
     public String getVarname() {

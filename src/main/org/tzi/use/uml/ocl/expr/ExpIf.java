@@ -78,11 +78,15 @@ public final class ExpIf extends Expression {
         return res;
     }
 
-    public String toString() {
-        return "if " + fCondition + 
-            " then " + fThenExp + 
-            " else " + fElseExp +
-            " endif";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("if ");
+        fCondition.toString(sb);
+        sb.append(" then ");
+        fThenExp.toString(sb);
+        sb.append(" else ");
+        fElseExp.toString(sb);
+        return sb.append(" endif");
     }
 
     public Expression getCondition() {

@@ -57,7 +57,15 @@ public class VarInitializer {
     }
 
     public String toString() {
-        return fVarDecl + " = " + fInitExpr;
+        return this.toString(new StringBuilder()).toString();
+    }
+    
+    public StringBuilder toString(StringBuilder sb) {
+    	sb.append(fVarDecl);
+    	sb.append(" = ");
+    	fInitExpr.toString(sb);
+    	
+    	return sb;
     }
 }
 

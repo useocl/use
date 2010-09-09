@@ -42,17 +42,16 @@ public class MainPluginRuntime {
 		File pluginDir;
 
 		pluginDir = new File(pluginDirURL.getPath());
-		Log
-				.debug("Searching for plugins in: [" + pluginDirURL.toString()
-						+ "]");
+		Log.debug("Searching for plugins in: [" + pluginDirURL.toString()+ "]");
 		Log.debug("Plugin path validity: [" + pluginDir.exists() + "]");
+		
 		JarFilter jarFilter = new JarFilter();
 		fileNames = pluginDir.list(jarFilter);
 		if (fileNames != null) {
-			String verboseMsg = "Plugin filename(s) [";
-			verboseMsg += StringUtil.fmtSeq(fileNames, ",");
-			verboseMsg += "]";
-			Log.verbose(verboseMsg);
+			StringBuilder verboseMsg = new StringBuilder("Plugin filename(s) [");
+			StringUtil.fmtSeq(verboseMsg, fileNames, ",");
+			verboseMsg.append("]");
+			Log.verbose(verboseMsg.toString());
 		}
 		return fileNames;
 	}

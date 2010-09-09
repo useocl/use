@@ -51,8 +51,9 @@ public final class ExpVariable extends Expression  {
         return res;
     }
 
-    public String toString() {
-        return fVarname + atPre();
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fVarname).append(atPre());
     }
     
     public String name(){

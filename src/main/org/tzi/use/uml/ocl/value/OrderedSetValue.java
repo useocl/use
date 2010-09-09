@@ -257,8 +257,13 @@ public class OrderedSetValue extends CollectionValue {
         return fElements;
     }
 
-    public String toString() {
-        return "OrderedSet{" + StringUtil.fmtSeq(fElements.iterator(), ",") + "}";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("OrderedSet{");
+        StringUtil.fmtSeqBuffered(sb, fElements.iterator(), ",");
+        sb.append("}");
+        
+        return sb;
     }
 
     public int hashCode() {

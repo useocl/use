@@ -60,7 +60,11 @@ public final class ExpIsKindOf extends Expression {
         return res;
     }
 
-    public String toString() {
-        return fSourceExpr + ".oclIsKindOf(" + fTargetType + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        fSourceExpr.toString(sb);
+        sb.append(".oclIsKindOf(");
+        fTargetType.toString();
+        return sb.append(")");
     }
 }

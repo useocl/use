@@ -36,8 +36,9 @@ public abstract class BasicType extends Type {
         fTypename = t;
     }
     
-    public String toString() {
-        return fTypename;
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fTypename);
     }
 
     /**

@@ -159,98 +159,17 @@ public final class ExpObjOp extends Expression {
     	return result;
     }
 
-    /**
-     * Evaluates expression and returns result value.
-     */
-    /*public Value eval(EvalContext ctx) {
-        ctx.enter(this);
-        Value res = UndefinedValue.instance;
-        Value val = fArgs[0].eval(ctx);
-        // if we don't have an object we can't call its operation
-        if (! val.isUndefined() ) {
-            // get object
-            ObjectValue objVal = (ObjectValue) val;
-            MObject obj = objVal.value();
-            MObjectState objState = isPre() ? 
-                obj.state(ctx.preState()) : obj.state(ctx.postState());
-                
-            if (objState != null ) {
-                // the object's type may be a subtype of the declared
-                // type. The operation may be redefined in this
-                // subclass. We have to get the possibly redefined
-                // operation.
-                MClass cls = obj.cls();
-                MOperation op = cls.operation(fOp.name(), true);
-
-                EvalContext newCtx = ctx;
-                if (op.expression() == null) {
-                    //  TODO: Reuse existing eval context!
-                    newCtx = new EvalContext(ctx.preState(), ctx.postState(), new VarBindings(), null);
-                }
-                
-                int debugOldSize = newCtx.varBindings().getStackSize();
-                Value debugOldResultVal = newCtx.varBindings().getValue("result");
-                
-                int stackSize = pushVarBindings(ctx, newCtx, objVal, op);
-                
-                if (op.expression() != null) {
-                    Expression opExpr = op.expression();
-                    res = opExpr.eval(newCtx);
-                } else {
-                	throw new RuntimeException(
-                			"Unexpected non-query operation in OCL expression "
-                			+ "(should have been caught by the compiler)");
-                }
-
-                if (op.hasScript()) {
-                	res = op.evaluateScript(newCtx);
-                	
-                	if (res == null) {
-                		res = UndefinedValue.instance;
-                	}
-                }
-                
-                popVarBindings(newCtx, stackSize);
-                
-                assert newCtx.varBindings().getStackSize() == debugOldSize;
-                assert debugOldResultVal == newCtx.varBindings().getValue("result");
-                
-            }
-        }
-        ctx.exit(this, res);
-        return res;
-    }
-
-    private void popVarBindings(EvalContext ctx, int oldStackSize) {
-        while(ctx.varBindings().getStackSize() > oldStackSize)
-            ctx.popVarBinding();
-    }
-
-    private int pushVarBindings(EvalContext oldCtx, EvalContext newCtx, ObjectValue self, MOperation op) {
-        int oldStackSize = newCtx.varBindings().getStackSize();
-        // evaluate arguments
-        Value [] argValues = new Value[fArgs.length - 1];
-        for (int i = 0; i < fArgs.length - 1; i++)
-            argValues[i] = fArgs[i + 1].eval(oldCtx);
-
-        // bind the argument values to the operation's
-        // parameters
-        VarDeclList params = op.paramList();
-        for (int i = 0; i < fArgs.length - 1; i++) {
-            VarDecl decl = params.varDecl(i);
-            newCtx.pushVarBinding(decl.name(), argValues[i]);
-        }
-
-        // the operation's expression must be evaluated in context
-        // of the target object. The "self" variable is bound to
-        // the receiver object.
-        newCtx.pushVarBinding("self", self);
-        return oldStackSize;
-    }*/
-
-    public String toString() {
-        return fArgs[0] + "." + fOp.name() + atPre() +
-            "(" + StringUtil.fmtSeq(fArgs, 1, ", ") + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+    	fArgs[0].toString(sb);
+    	sb.append(".")
+    	  .append(fOp.name())
+    	  .append(atPre())
+    	  .append("(");
+    	
+        StringUtil.fmtSeqBuffered(sb, fArgs, 1, ", ");
+        
+        return sb.append(")");
     }
     
     public MOperation getOperation() {

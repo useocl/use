@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.util.BufferedToString;
 
 /**
  * Abstract base class of all types. Types should be created only by
@@ -35,7 +36,7 @@ import org.tzi.use.uml.ocl.expr.ExpInvalidException;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public abstract class Type {
+public abstract class Type implements BufferedToString {
 
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
@@ -51,10 +52,20 @@ public abstract class Type {
     }
 
     /** 
-     * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'. 
+     * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'.
+     * For complex string operations see {@link toString(StringBuilder)}
      */
-    public abstract String toString();
+    public final String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	this.toString(sb);
+    	return sb.toString();
+    }
 
+    /** 
+     * Adds a complete printable type name, e.g. 'Set(Bag(Integer))' to
+     * the StringBuilder 
+     */
+    public abstract StringBuilder toString(StringBuilder sb);
 
     /** 
      * Overwrite to determine equality of types.

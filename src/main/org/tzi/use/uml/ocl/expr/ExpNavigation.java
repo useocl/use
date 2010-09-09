@@ -133,8 +133,11 @@ public final class ExpNavigation extends Expression {
 
 
     @Override
-	public String toString() {
-        return fObjExp + "." + fDst.nameAsRolename() + atPre();
+    public StringBuilder toString(StringBuilder sb) {
+        fObjExp.toString(sb);
+        return sb.append(".")
+          		 .append(fDst.nameAsRolename())
+          		 .append(atPre());
     }
 
     public MNavigableElement getSource() {

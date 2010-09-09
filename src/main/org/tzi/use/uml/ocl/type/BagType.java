@@ -113,7 +113,10 @@ public final class BagType extends CollectionType {
     		return TypeFactory.mkCollection(commonElementType);
     }
     
-    public String toString() {
-        return "Bag(" + elemType() + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Bag(");
+        elemType().toString(sb);
+        return sb.append(")");
     }
 }

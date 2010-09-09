@@ -53,8 +53,9 @@ public final class ExpConstBoolean extends Expression {
         return res;
     }
 
-    public String toString() {
-        return Boolean.toString(fValue);
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fValue);
     }
 }
 

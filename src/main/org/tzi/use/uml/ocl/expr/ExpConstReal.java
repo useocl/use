@@ -58,8 +58,9 @@ public final class ExpConstReal extends Expression {
         return res;
     }
 
-    public String toString() {
-        return String.valueOf(fValue);
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fValue);
     }
 }
 

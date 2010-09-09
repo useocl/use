@@ -122,24 +122,31 @@ public class VarDeclList {
         return false;
     }
 
+    @Override
     public String toString() {
-        String res = "";
+    	StringBuilder res = new StringBuilder();
+    	this.toString(res);
+    	return res.toString();
+    }
+    
+    public void toString(StringBuilder sb) {
         if (fAllHaveSameType ) {
             Iterator<VarDecl> it = fVarDecls.iterator();
             
             while (it.hasNext() ) {
                 VarDecl decl = it.next();
-                res += decl.name();
+                sb.append(decl.name());
                 
-                if (it.hasNext() )
-                    res += ", ";
-                else
-                    res += " : " + decl.type();
+                if (it.hasNext() ) {
+                    sb.append(", ");
+                } else {
+                    sb.append(" : ");
+                    decl.type().toString(sb);
+                }
             }
-        } else
-            res = StringUtil.fmtSeq(fVarDecls.iterator(), ", ");
-        
-        return res;
+        } else {
+            StringUtil.fmtSeq(sb, fVarDecls.iterator(), ", ");
+        }
     }
 }
 

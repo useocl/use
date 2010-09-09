@@ -93,9 +93,9 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
                                                        params, 
                                                        ctx.model() );
         if (instr == null) {
-            String err = "Instruction `"+ fName.getText() +"(" + 
-                StringUtil.fmtSeq(errParams.iterator(), ",") +
-                ")' not found.";
+            String err = "Instruction `" + fName.getText() + "(" + 
+                	     StringUtil.fmtSeq(errParams.iterator(), ",") +
+                         ")' not found.";
             throw new SemanticException(fName, err);
         }
         return (GInstruction) instr;

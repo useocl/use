@@ -83,8 +83,9 @@ public final class ObjectType extends Type {
     /** 
      * Return complete printable type name, e.g. 'Set(Bag(Integer))'. 
      */
-    public String toString() {
-        return fClass.name();
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fClass.name());
     }
 
     public boolean equals(Object obj) {

@@ -29,7 +29,8 @@ import java.util.Iterator;
  * Objects.
  * 
  * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
+ * @author 		Lars Hamann 
  */
 public final class StringUtil {
 
@@ -37,10 +38,144 @@ public final class StringUtil {
     private StringUtil() {}
 
     public static String NEWLINE = System.getProperty("line.separator");
+  
     
-    public static void fmtSeq(StringBuilder target, Object objarr[], 
-                                int beginIndex, String divider) {
-    	
+    /*
+     * Buffered methods which use a StringBuilder and call BufferedString.toString(StringBuffer) 
+     */
+    
+    /**
+     * <p>
+     * Appends all string representations of the elements of the <code>Array</code> 
+     * starting at beginIndex to the <code>StringBuilder</code> by calling the method 
+     * <code>{@link BufferedToString#toString(StringBuilder)}</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the String provided by the parameter divider.
+     * </p>
+     * 
+     * @author Lars Hamann
+     * @since 3.0.0
+     * 
+     * @param target The target StringBuffer
+     * @param objarr The elements to append to the buffer
+     * @param beginIndex Index to start appending from
+     * @param divider String to be used as a separator between elements
+     * 
+     */
+	public static void fmtSeqBuffered(StringBuilder target,
+			final BufferedToString[] objarr, final int beginIndex,
+			final String divider) {
+		if (objarr != null) {
+			boolean first = true;
+			for (int i = beginIndex; i < objarr.length; i++) {
+				if (first)
+					first = false;
+				else
+					target.append(divider);
+
+				objarr[i].toString(target);
+			}
+		}
+	}
+
+    /**
+     * <p>
+     * Appends all elements of the <code>Array</code> to the <code>StringBuilder</code> by
+     * calling the method <code>{@link BufferedToString#toString(StringBuilder)}</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the String provided by the parameter divider.
+     * </p>
+     * 
+     * @author Lars Hamann
+     * @since 3.0.0
+     * 
+     * @param target The StringBuffer the elements are appended
+     * @param objarr The elements to append to the buffer
+     * @param beginIndex Index to start appending from
+     * @param divider String to be used as a separator between elements
+     * 
+     */
+	public static void fmtSeqBuffered(StringBuilder target,
+			final BufferedToString[] objarr, final String divider) {
+    	fmtSeqBuffered(target, objarr, 0, divider);
+    }
+
+    /**
+     * <p>
+     * Appends all elements of the <code>Collection</code> to the <code>StringBuilder</code> by
+     * calling the method <code>{@link BufferedToString#toString(StringBuilder)}</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the String provided by the parameter divider.
+     * </p>
+     * 
+     * @author Lars Hamann
+     * @since 3.0.0
+     * 
+     * @param target The StringBuffer to append to
+     * @param seq The Collection to get the elements from
+     * @param divider The separator between elements
+     */
+	public static void fmtSeqBuffered(StringBuilder target,
+			final Collection<? extends BufferedToString> seq, final String divider) {
+		fmtSeqBuffered(target, seq.iterator(), divider);
+	}
+
+	/**
+     * <p>
+     * Appends all elements returned by the <code>Iterator</code> to the <code>StringBuilder</code> by
+     * calling the method <code>{@link BufferedToString#toString(StringBuilder)}</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the String provided by the parameter divider.
+     * </p>
+     * 
+     * @author Lars Hamann
+     * @since 3.0.0
+     * 
+     * @param target The StringBuffer to append to
+     * @param it The Iterator to get the elements from
+     * @param divider The separator between elements
+     */
+	public static void fmtSeqBuffered(StringBuilder target,
+			Iterator<? extends BufferedToString> it, final String divider) {
+		while (it.hasNext()) {
+			it.next().toString(target);
+
+			if (it.hasNext())
+				target.append(divider);
+		}
+	}
+    
+	/*
+	 * Buffered methods, which use a StringBuilder and the regular toString Method
+	 */
+	
+	/**
+     * <p>
+     * Appends all string representations of the elements of the <code>Array</code> 
+     * starting at beginIndex to the <code>StringBuilder</code> by calling <code>toString</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the String provided by the parameter divider.
+     * </p>
+     * <p>
+     * If possible the methods <code>fmtSeqBuffered</code> should be used to avoid
+     * copying of characters. 
+     * </p>
+     * @author Lars Hamann
+     * @since 3.0.0
+     * 
+     * @param target The target StringBuffer
+     * @param objarr The elements to append to the buffer
+     * @param beginIndex Index to start appending from
+     * @param divider String to be used as a separator between elements
+     * 
+     * @see #fmtSeqBuffered(StringBuilder, BufferedToString[], int, String)
+     */
+    public static void fmtSeq(StringBuilder target, Object objarr[], int beginIndex, String divider) {
     	if (objarr != null ) {
             boolean first = true;
             for (int i = beginIndex; i < objarr.length; i++) {
@@ -53,39 +188,53 @@ public final class StringUtil {
         }
     }
     
-    @Deprecated
-    public static String fmtSeq(Object objarr[], 
-                                int beginIndex, String divider) {
-        StringBuilder resString = new StringBuilder();
-        fmtSeq(resString, objarr, beginIndex, divider);        
-        return resString.toString();
-    }
-
+    /**
+     * <p>
+     * Appends all string representations of the elements of the <code>Array</code> 
+     * to the <code>StringBuilder</code> by calling <code>toString</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the String provided by the parameter divider.
+     * </p>
+     * <p>
+     * If possible the methods <code>fmtSeqBuffered</code> should be used to avoid
+     * copying of characters. 
+     * </p>
+     * @author Lars Hamann
+     * @since 3.0.0
+     * 
+     * @param target The target StringBuffer
+     * @param objarr The elements to append to the buffer
+     * @param divider String to be used as a separator between elements
+     * 
+     * @see #fmtSeqBuffered(StringBuilder, BufferedToString[], String)
+     */
     public static void fmtSeq(StringBuilder target, Object objarr[], String divider) {
         fmtSeq(target, objarr, 0, divider);
     }
     
-    @Deprecated
-    public static String fmtSeq(Object objarr[], String divider) {
-        return fmtSeq(objarr, 0, divider);
-    }
-
-    public static void fmtSeq(StringBuilder target, Collection<?> seq, String divider) {
-    	fmtSeq(target, seq.iterator(), divider);
-    }
-    
-    @Deprecated
-    public static String fmtSeq(Collection<?> seq, String divider) {
-    	return fmtSeq(seq.iterator(), divider);
-    }
-    
-    @Deprecated
-    public static String fmtSeq(Iterator<?> it, String divider) {
-    	StringBuilder resString = new StringBuilder();
-    	fmtSeq(resString, it, divider);
-    	return resString.toString();
-    }
-    
+    /**
+     * <p>
+     * Appends all elements returned by the <code>Iterator</code> to the <code>StringBuilder</code> by
+     * calling <code>toString</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the String provided by the parameter divider.
+     * </p>
+     * <p>
+     * If possible the methods <code>fmtSeqBuffered</code> should be used to avoid
+     * copying of characters. 
+     * </p>
+     * 
+     * @author Lars Hamann
+     * @since 3.0.0
+     * 
+     * @param target The StringBuffer to append to
+     * @param it The Iterator to get the elements from
+     * @param divider The separator between elements
+     * 
+     * @see #fmtSeqBuffered(StringBuilder, Iterator, String)
+     */
     public static void fmtSeq(StringBuilder target, Iterator<?> it, String divider) {
         while (it.hasNext() ) {            
         	target.append(it.next().toString());
@@ -93,6 +242,129 @@ public final class StringUtil {
             if (it.hasNext())
             	target.append(divider);
         }
+    }
+    
+    /**
+     * <p>
+     * Appends all elements of the <code>Collection</code> to the <code>StringBuilder</code> by
+     * calling <code>toString</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the string provided by the parameter <code>divider</code>.
+     * </p>
+     * <p>
+     * If possible the methods <code>fmtSeqBuffered</code> should be used to avoid
+     * copying of characters. 
+     * </p>
+     * 
+     * @author Lars Hamann
+     * @since 3.0.0
+     * 
+     * @param target The StringBuffer to append to
+     * @param it The Iterator to get the elements from
+     * @param divider The separator between elements
+     * @see #fmtSeqBuffered(StringBuilder, Collection, String)
+     */
+    public static void fmtSeq(StringBuilder target, Collection<?> seq, String divider) {
+    	fmtSeq(target, seq.iterator(), divider);
+    }
+    
+    /**
+     * <p>
+     * Returns a <code>String</code> of the string representations of the elements of the <code>Array</code> 
+     * starting at <code>beginIndex</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the string provided by the parameter <code>divider</code>.
+     * </p>
+     * <p>
+     * If possible, the methods <code>fmtSeqBuffered</code> or <code>fmtSeq(StringBuilder, ...)</code> should be used to avoid
+     * copying of characters. 
+     * </p>
+     * @param objarr The elements to append to the buffer
+     * @param beginIndex Index to start appending from
+     * @param divider String to be used as a separator between elements
+     * @return A <code>String</code> with all elements separated by <code>divider</code> 
+     * 
+     * @see #fmtSeqBuffered(StringBuilder, BufferedToString[], int, String)
+     * @see #fmtSeq(StringBuilder, Object[], int, String)
+     */
+    public static String fmtSeq(Object objarr[], 
+                                int beginIndex, String divider) {
+        StringBuilder resString = new StringBuilder();
+        fmtSeq(resString, objarr, beginIndex, divider);        
+        return resString.toString();
+    }
+
+    /**
+     * <p>
+     * Returns a <code>String</code> of all string representations of the elements of the <code>Array</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the string provided by the parameter <code>divider</code>.
+     * </p>
+     * <p>
+     * If possible, the methods <code>fmtSeqBuffered</code> or <code>fmtSeq(StringBuilder, ...)</code> should be used to avoid
+     * copying of characters. 
+     * </p>
+     * @param objarr The elements to print
+     * @param beginIndex The index to start printing from
+     * @param divider String that separates the elements
+     * @return A <code>String</code> with all elements separated by <code>divider</code> 
+     * 
+     * @see #fmtSeqBuffered(StringBuilder, BufferedToString[], String)
+     * @see #fmtSeq(StringBuilder, Object[], String)
+     */
+    public static String fmtSeq(Object objarr[], String divider) {
+        return fmtSeq(objarr, 0, divider);
+    }
+
+    /**
+     * <p>
+     * Returns a <code>String</code> of all <code>toString</code> representations 
+     * of the elements of the <code>Collection</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the string provided by the parameter <code>divider</code>.
+     * </p>
+     * <p>
+     * If possible, the methods <code>fmtSeqBuffered</code> or <code>fmtSeq(StringBuilder, ...)</code>
+     * should be used to avoid copying of characters. 
+     * </p>
+     * @param seq The <code>Collection</code> to be printed. 
+     * @param divider The <code>String</code> to be used as a separator between elements
+     * @return A <code>String</code> with all elements separated by <code>divider</code> 
+     * 
+     * @see #fmtSeqBuffered(StringBuilder, Collection, String)
+     * @see #fmtSeq(StringBuilder, Collection, String)
+     */
+    public static String fmtSeq(Collection<?> seq, String divider) {
+    	return fmtSeq(seq.iterator(), divider);
+    }
+    
+    /**
+     * <p>
+     * Returns a <code>String</code> of all <code>toString</code> representations 
+     * of the elements returned by <code>it</code>.
+     * </p>
+     * <p>
+     * The elements are separated by the string provided by the parameter <code>divider</code>.
+     * </p>
+     * <p>
+     * If possible, the methods <code>fmtSeqBuffered</code> or <code>fmtSeq(StringBuilder, ...)</code>
+     * should be used to avoid copying of characters. 
+     * </p>
+     * @param it The <code>Iterator</code> over the elements to be printed. 
+     * @param divider The <code>String</code> to be used as a separator between elements
+     * @return A <code>String</code> with all elements separated by <code>divider</code> 
+     * 
+     * @see #fmtSeqBuffered(StringBuilder, Iterator, String)
+     * @see #fmtSeq(StringBuilder, Iterator, String)
+     */
+    public static String fmtSeq(Iterator<?> it, String divider) {
+    	StringBuilder resString = new StringBuilder();
+    	fmtSeq(resString, it, divider);
+    	return resString.toString();
     }
 
     /**
@@ -224,7 +496,7 @@ public final class StringUtil {
      * Returns a string representation of the given character that
      * takes care of special characters by escaping them.
      *
-     * @param quoteToEscape  the quote character needing escaping
+     * @param quoteToEscape  the quote character that needs escaping (either " or ')
      */
     public static String escapeChar(char c, char quoteToEscape) {
         switch ( c ) {
@@ -251,7 +523,10 @@ public final class StringUtil {
 
     /** 
      * Converts a String into a representation that can be use as a
-     * literal when surrounded by quotes.  
+     * literal when surrounded by quotes. 
+     * @param s
+     * @param quoteToEscape  the quote character that needs escaping (either " or ')
+     * @return
      */
     public static String escapeString(String s, char quoteToEscape) {
         StringBuffer res = new StringBuffer();
@@ -263,19 +538,20 @@ public final class StringUtil {
     
     
     /**
-     * 
-     * @param o
-     * @return
+     * Returns <code>o</code> in the quoted format for USE messages, e.g., Unknown identifier `hello'.
+     * @param o String to be quoted
+     * @return The String <code>o</code> in quotes `{o}'
      */
     public static String inQuotes(Object o) {
     	return "`" + o.toString() + "'";
     }
     
     /**
-     * TODO
-     * @param input
-     * @param num
-     * @return
+     * Creates a <code>String</code> from <code>input</code> which is repeated <code>num</code> times.
+     * @since 3.0.0
+     * @param input String to be repeated
+     * @param num Number of times <code>input</code> should be repeated.
+     * @return String with <code>input</code> repeated <code>num</code> times.
      */
     public static String repeat(String input, int num) {
     	StringBuilder result = new StringBuilder(num * input.length());

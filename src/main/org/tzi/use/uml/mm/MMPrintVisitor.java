@@ -127,11 +127,15 @@ public class MMPrintVisitor implements MMVisitor {
     }
     
     public void visitAssociationClass( MAssociationClass e ) {
-        indent();
+    	indent();
         if ( e.isAbstract() ) {
-            print( keyword( "abstract" ) + ws() );
+            print( keyword( "abstract" ) );
+            print( ws() );
         }
-        print( keyword( "associationclass" ) + ws() + id( e.name() ) );
+        
+        print( keyword( "associationclass" ) );
+        print( ws() );
+        print( id( e.name() ) );
 
         Set<MClass> parents = e.parents();
         if ( !parents.isEmpty() ) {

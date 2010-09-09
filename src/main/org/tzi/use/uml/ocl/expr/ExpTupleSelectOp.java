@@ -46,8 +46,11 @@ public final class ExpTupleSelectOp extends Expression {
                                                fTupleExp.type() + "'.");
     }
 
-    public String toString() {
-        return fTupleExp.toString() + "." + fPart.name();
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        fTupleExp.toString(sb);
+        sb.append(".");
+        return sb.append(fPart.name());
     }
     
     /**

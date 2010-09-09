@@ -42,8 +42,9 @@ public final class IntegerValue extends Value {
         return fValue;
     }
 
-    public String toString() {
-        return String.valueOf(fValue);
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append(fValue);
     }
 
     public boolean equals(Object obj) {

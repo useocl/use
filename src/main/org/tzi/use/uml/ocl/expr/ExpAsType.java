@@ -81,7 +81,11 @@ public final class ExpAsType extends Expression {
         return res;
     }
 
-    public String toString() {
-        return fSourceExpr + ".oclAsType(" + type() + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        fSourceExpr.toString(sb);
+        sb.append(".oclAsType(");
+        type().toString(sb);
+        return sb.append(")");
     }
 }

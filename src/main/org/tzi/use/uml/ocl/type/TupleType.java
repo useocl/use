@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.tzi.use.util.BufferedToString;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -38,7 +39,7 @@ import org.tzi.use.util.StringUtil;
 public final class TupleType extends Type {
     private Map<String, Part> fParts = new TreeMap<String, Part>();
 
-    public static class Part {
+    public static class Part implements BufferedToString {
         private String fName;
         private Type fType;
 
@@ -47,10 +48,16 @@ public final class TupleType extends Type {
             fType = type;
         }
 
+        @Override
         public String toString() {
-            return fName + ":" + fType;
+            return this.toString(new StringBuilder()).toString();
         }
 
+        @Override
+        public StringBuilder toString(StringBuilder sb) {
+        	return sb.append(fName).append(":").append(fType);
+        }
+        
         public String name() {
             return fName;
         }
@@ -153,8 +160,11 @@ public final class TupleType extends Type {
     /** 
      * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'. 
      */
-    public String toString() {
-        return "Tuple(" + StringUtil.fmtSeq(fParts.values().iterator(), ",") + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("Tuple(");
+        StringUtil.fmtSeqBuffered(sb, fParts.values().iterator(), ",");
+        return sb.append(")");
     }
 
     /** 

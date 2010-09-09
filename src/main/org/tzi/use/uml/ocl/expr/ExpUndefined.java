@@ -46,7 +46,10 @@ public final class ExpUndefined extends Expression {
         return res;
     }
 
-    public String toString() {
-        return "oclUndefined(" + type() + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("oclUndefined(");
+        type().toString(sb);
+        return sb.append(")");
     }
 }

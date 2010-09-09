@@ -78,8 +78,12 @@ public final class ExpAttrOp extends Expression {
         return res;
     }
 
-	public String toString() {
-        return fObjExp + "." + fAttr.name() + atPre();
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        fObjExp.toString(sb);
+        sb.append(".");
+        sb.append(fAttr.name());
+        return sb.append(atPre());
     }
 }
 

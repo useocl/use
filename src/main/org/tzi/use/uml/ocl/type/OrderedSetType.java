@@ -117,7 +117,10 @@ public final class OrderedSetType extends CollectionType {
         return res;
     }
 
-    public String toString() {
-        return "OrderedSet(" + elemType() + ")";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("OrderedSet(");
+        elemType().toString(sb);
+        return sb.append(")");
     }
 }

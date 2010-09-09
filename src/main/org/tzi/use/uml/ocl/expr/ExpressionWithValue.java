@@ -41,8 +41,9 @@ public class ExpressionWithValue extends Expression  {
         return fValue;
     }
     
-    public String toString() {
-        return fValue.toString();
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+    	return sb.append(fValue.toString());
     }
 }
 

@@ -19,44 +19,27 @@
 
 // $Id$
 
-package org.tzi.use.uml.ocl.expr;
-
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.sys.MObject;
-
+package org.tzi.use.util;
 
 /**
- * TODO
- * @author Daniel Gent
- *
+ * Interface for objects that can be translated
+ * to string via a StringBuffer.
+ * 
+ * @author Lars Hamann
+ * @since 3.0.0
  */
-public class ExpObjRef extends Expression {
-	/** TODO */
-	private MObject fObject;
-	
-	
+public interface BufferedToString {
 	/**
-	 * TODO
-	 * @param object
+	 * <p>
+	 * Appends the string representation of this objects
+	 * to the StringBuffer.
+	 * </p>
+	 * <p>
+	 * The result should be the same as the operation toString()
+	 * </P>
+	 * @since 3.0.0
+	 * @param sb The buffer to append
+	 * @return The same StringBuilder that was provided which allows shorter implementations (cf. {@link StringBuilder#append(String))} 
 	 */
-	public ExpObjRef(MObject object) {
-		super(object.type());
-		fObject = object;
-	}
-
-	
-	@Override
-	public ObjectValue eval(EvalContext ctx) {
-		ctx.enter(this);
-		ObjectValue result  = fObject.value();
-		ctx.exit(this, result);
-		return result;
-	}
-	
-
-	@Override
-	public StringBuilder toString(StringBuilder sb) {
-		return sb.append("@")
-		  		 .append(fObject.name());
-	}
+	StringBuilder toString(StringBuilder sb);
 }

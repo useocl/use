@@ -70,7 +70,8 @@ public final class OclAnyType extends Type {
     /** 
      * Returns a complete printable type name.
      */
-    public String toString() {
-        return "OclAny";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        return sb.append("OclAny");
     }
 }

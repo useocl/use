@@ -53,8 +53,11 @@ public final class ExpConstString extends Expression {
         return res;
     }
 
-    public String toString() {
-        return "'" + fValue + "'";
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        sb.append("'");
+        sb.append(fValue);
+        return sb.append("'");
     }
 }
 

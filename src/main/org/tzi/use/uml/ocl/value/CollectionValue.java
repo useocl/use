@@ -60,7 +60,10 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
     
     /**
-     * Primitive operation for template method setElemType() 
+     * This method must set the type of the value.
+     * It is called by the template method <code>setElemType()</code>, which
+     * sets the element type.
+     * So implementors are guaranteed to be able to use <code>fElemtType</code>.   
      */
     protected abstract void doSetElemType();
     
