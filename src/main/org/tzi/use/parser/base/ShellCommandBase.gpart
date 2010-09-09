@@ -17,7 +17,7 @@ shellCommandOnly returns [ASTStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 shellCommand returns [ASTStatement n]
 :
-  (stat)=> s = stat EOF
+  (stat EOF)=> s = stat EOF
   { $n = $s.n; }
   |
   l = legacyStat EOF

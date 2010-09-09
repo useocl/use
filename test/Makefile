@@ -3,9 +3,9 @@
 TOPDIR = ..
 
 ifeq ($(OS), Windows_NT)
-	USE = $(TOPDIR)/bin/use.bat -nogui -nr
+	USE = $(TOPDIR)/bin/use.bat -nogui -nr -t
 else
-	USE = $(TOPDIR)/bin/use -nogui -nr
+	USE = $(TOPDIR)/bin/use -nogui -nr -t
 endif
 
 INFILES := $(wildcard *.in)
@@ -32,8 +32,8 @@ test-out2: t2.out
 # Die Zeit, die der Generator benötigt, wird aus dem Ergebnis herausgenommen.
 %.result: %.in %.use %.cmd
 	-rm -f $@
-	fromdos $(basename $<).out
-	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | diff -u $(basename $<).out - > $(basename $<).result
+	unix2dos $<
+	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | diff --strip-trailing-cr --ignore-blank-lines -u $(basename $<).out - > $(basename $<).result
 
 clean:
 	rm -f $(RESULTFILES) *~ core

@@ -419,7 +419,14 @@ public class MOperationCall {
 	public void setVarBindings(VarBindings varBindings) {
 		this.varBindings = varBindings;
 	}
-
+	
+	/**
+	 * Does this operation call require a new variable frame?
+	 * @return
+	 */
+	public boolean requiresVariableFrameInEnvironment() {
+		return fOperation.expression() == null;
+	}
 
 	/**
 	 * TODO

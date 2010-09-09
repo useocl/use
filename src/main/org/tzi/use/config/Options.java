@@ -190,6 +190,7 @@ public class Options {
         System.out.println("diagnostics:");
         System.out.println("  -debug        print lots of messages");
         System.out.println("  -p            print stack traces on errors");
+        System.out.println("  -t            testing mode (less user-centric output)");
         System.exit(1);
     }
 
@@ -207,6 +208,8 @@ public class Options {
      * The name of the file containing diagram information.
      */
     public static String diagramFilename = null;
+
+	public static boolean testMode;
 
     /**
      * Parses command line arguments and sets options accordingly.
@@ -245,9 +248,11 @@ public class Options {
                     Options.quiet = true;
                     Options.quietAndVerboseConstraintCheck = true;
                     Options.doGUI = false;
-                } else if (arg.equals("v")) 
+                } else if (arg.equals("t")) { 
+                	Options.testMode = true;
+                } else if (arg.equals("v")) {
                     Log.setVerbose(true);
-                else if (arg.equals("vt")) {
+                } else if (arg.equals("vt")) {
                     Log.setVerbose(true);
                     Log.setPrintTime(true);
                 } else if (arg.equals("V")) {

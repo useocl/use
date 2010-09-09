@@ -914,7 +914,7 @@ public abstract class MStatement {
 		}
 		
 		try {
-			fSystem.exitOperation(resultValue, false);
+			fSystem.exitOperation(resultValue);
 		} catch (MSystemException e) {
 			throw new ExceptionOccuredException(this, e);
 		}

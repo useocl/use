@@ -85,7 +85,7 @@ public class SoilPPCHandler implements PPCHandler {
 		
 		if (numFailedPreConditions > 0) {
 			fOutput.println(
-					"\n[Error] " +
+					"[Error] " +
 					numFailedPreConditions +
 					" precondition" +
 					(numFailedPreConditions > 1 ? "s " : " ") +
@@ -137,7 +137,7 @@ public class SoilPPCHandler implements PPCHandler {
 		
 		if (numFailedPostConditions > 0) {
 			fOutput.println(
-					"\n[Error] " +
+					"[Error] " +
 					numFailedPostConditions +
 					" postcondition" +
 					(numFailedPostConditions > 1 ? "s " : " ") +

@@ -284,35 +284,153 @@ public final class MSystem {
 	 */
 	public void enterOperation(MOperationCall operationCall, boolean isOpenter) throws MSystemException {
 						
-		MOperation operation = operationCall.getOperation();
-		MObject self = operationCall.getSelf();
-		Value[] arguments = operationCall.getArguments();
-		VarDeclList parameters = operation.paramList();
+		assertParametersValid(operationCall);
 		
-		// check parameters
+		if (operationCall.requiresVariableFrameInEnvironment()) {
+			pushParametersOnVariableEnvironment(operationCall, isOpenter);
+		}
 		
-		int numArguments = arguments.length;
-		int numParameters = parameters.size();
 		
-		if (numArguments != numParameters) {
+		if (operationCall.requiresVariableFrameInEnvironment()) {
+			if (getCurrentStatement() != null) {
+				if (!stateIsLocked()) {
+					getCurrentStatement().enteredOperationDuringEvaluation(operationCall);
+				}
+			}
+		}
+	
+		fCallStack.push(operationCall);
+		assertPreConditions(operationCall);
+		
+		copyPreStateIfNeccessary(operationCall);
+		operationCall.setEnteredSuccessfully(true);
+	}
+
+	public MOperationCall exitOperation(Value resultValue) throws MSystemException {
+		
+		MOperationCall operationCall = getCurrentOperation();
+		if (operationCall == null) {
+			throw new MSystemException("Call stack is empty.");
+		}
+		
+		if (operationCall.executionHasFailed()) {
+			exitCurrentOperation();
+			return operationCall;
+		}
+		
+		try {
+			assertResultValueValid(resultValue, operationCall.getOperation());
+			if (resultValue != null) operationCall.setResultValue(resultValue);	
+		
+			assertPostConditions(operationCall);
+		
+			operationCall.setExitedSuccessfully(true);
+		
+			return operationCall;
+		} finally {
+			exitCurrentOperation();
+		}
+	}
+
+	
+	/**
+	 * Evaluate and check all preconditions of an operation call. 
+	 * If any is not fulfilled, an exception is raised.
+	 * Before the exception is raised, the PPC handler (if any) is invoked.
+	 * @param operationCall
+	 * @throws MSystemException
+	 */
+	private void assertPreConditions(MOperationCall operationCall)
+			throws MSystemException {
+		evaluatePreConditions(operationCall);
+		lockState();
+		PPCHandler ppcHandler = determinePPCHandler(operationCall);
+		try {
+			ppcHandler.handlePreConditions(this, operationCall);
+		} catch (PreConditionCheckFailedException e) {
+			fCallStack.pop();
+			if (operationCall.requiresVariableFrameInEnvironment()) {
+				fVariableEnvironment.popFrame();
+			}
+			throw new MSystemException(e.getMessage(), e);
+		} finally {
+			unlockState();
+		}
+	}
+
+	private PPCHandler determinePPCHandler(MOperationCall operationCall) {
+		// make sure we have a ppc handler
+		PPCHandler ppcHandler;
+		if (fPPCHandlerOverride != null) {
+			ppcHandler = fPPCHandlerOverride;
+		} else if (operationCall.hasPreferredPPCHandler()) {
+			ppcHandler = operationCall.getPreferredPPCHandler();
+		} else {
+			ppcHandler = operationCall.getDefaultPPCHandler();
+		}
+		return ppcHandler;
+	}
+
+	/**
+	 * Push a new frame on the variable environment and assign all 
+	 * parameters of this operation call, including "self".
+	 */
+	private void pushParametersOnVariableEnvironment(
+			MOperationCall operationCall, boolean isOpenter) {
+		// set up variable environment
+		fVariableEnvironment.pushFrame(isOpenter);
+		fVariableEnvironment.assign("self", operationCall.getSelf().value());
+		for (int i = 0; i < operationCall.getOperation().paramList().size();++i) {
+			fVariableEnvironment.assign(operationCall.getOperation().paramList().varDecl(i).name(), operationCall.getArguments()[i]);
+		}
+	}
+
+	/**
+	 * Create a copy of this state, if there are any postconditions in this operation.
+	 * @param operationCall
+	 */
+	private void copyPreStateIfNeccessary(MOperationCall operationCall) {
+		// if the post conditions of this operations require a pre state 
+		// require a state copy, create it
+		if (operationCall.hasPostConditions()
+			    && operationCall.getOperation().postConditionsRequirePreState()) {
+			
+			operationCall.setPreState(
+					new MSystemState(
+							fUniqueNameGenerator.generate("state#"), 
+							fCurrentState));
+		} else {
+			operationCall.setPreState(fCurrentState);
+		}
+	}
+
+	
+	/**
+	 * Assert that the actual parameter values in this opcall are consistent with the operation.
+	 * @param operationCall
+	 * @throws MSystemException
+	 */
+	private void assertParametersValid(MOperationCall operationCall)
+			throws MSystemException {
+		if (operationCall.getArguments().length != operationCall.getOperation().paramList().size()) {
 			throw new MSystemException(
 					"Number of arguments does not match declaration of " +
 					" operation " +
-					StringUtil.inQuotes(operation.name()) +
+					StringUtil.inQuotes(operationCall.getOperation().name()) +
 					" in class " +
-					StringUtil.inQuotes(self.cls().name()) +
+					StringUtil.inQuotes(operationCall.getSelf().cls().name()) +
 					". Expected " +
-					numParameters +
-					" arguments" + ((numArguments == 1) ? "" : "s") +
+					operationCall.getOperation().paramList().size() +
+					" arguments" + ((operationCall.getArguments().length == 1) ? "" : "s") +
 					", found " +
-					numArguments +
+					operationCall.getArguments().length +
 					".");
 		}
 		
-		for (int i = 0; i < numParameters; ++i) {
+		for (int i = 0; i < operationCall.getOperation().paramList().size(); ++i) {
 			
-			VarDecl parameter = parameters.varDecl(i);
-			Value argument = arguments[i];
+			VarDecl parameter = operationCall.getOperation().paramList().varDecl(i);
+			Value argument = operationCall.getArguments()[i];
 			
 			Type expectedType = parameter.type();
 			Type foundType = argument.type();
@@ -329,140 +447,36 @@ public final class MSystem {
 						".");
 			}				
 		}
-		
-		// set up variable environment
-		fVariableEnvironment.pushFrame(isOpenter);
-		fVariableEnvironment.assign("self", self.value());
-		for (int i = 0; i < parameters.size();++i) {
-			fVariableEnvironment.assign(parameters.varDecl(i).name(), arguments[i]);
-		}
-		
-		// make sure we have a ppc handler
-		PPCHandler ppcHandler;
-		if (fPPCHandlerOverride != null) {
-			ppcHandler = fPPCHandlerOverride;
-		} else if (operationCall.hasPreferredPPCHandler()) {
-			ppcHandler = operationCall.getPreferredPPCHandler();
-		} else {
-			ppcHandler = operationCall.getDefaultPPCHandler();
-		}
-		
-		// check pre conditions
-		
-		MStatement currentStatement = getCurrentStatement();
-		if (currentStatement != null) {
-			if (!stateIsLocked()) {
-				currentStatement.enteredOperationDuringEvaluation(
-						operationCall);
-			}
-		}
-		
-		fCallStack.push(operationCall);
-		evaluatePreConditions(operationCall);
-		lockState();
-		try {
-			ppcHandler.handlePreConditions(this, operationCall);
-		} catch (PreConditionCheckFailedException e) {
-			fCallStack.pop();
-			fVariableEnvironment.popFrame();
-			throw new MSystemException(e.getMessage(), e);
-		} finally {
-			unlockState();
-		}
-		
-		// if the post conditions of this operations require a pre state 
-		// require a state copy, create it
-		if (operationCall.hasPostConditions()
-			    && operationCall.getOperation().postConditionsRequirePreState()) {
-			
-			operationCall.setPreState(
-					new MSystemState(
-							fUniqueNameGenerator.generate("state#"), 
-							fCurrentState));
-		} else {
-			operationCall.setPreState(fCurrentState);
-		}
-		
-		operationCall.setEnteredSuccessfully(true);
 	}
 
 
-	/**
-	 * TODO
+	/** 
+	 * Assert that the result value of this operation call is consistent with the operation.
 	 * @param resultValue
-	 * @param ppcHandler
-	 * @param force
-	 * @return
+	 * @param forceExit
+	 * @param operation
 	 * @throws MSystemException
 	 */
-	public MOperationCall exitOperation(
-			Value resultValue,
-			boolean forceExit) throws MSystemException {
-		
-		/////
-		// 1. Determine which operation is to be exited
-		
-		MOperationCall operationCall = getCurrentOperation();
-		
-		if (operationCall == null) {
-			throw new MSystemException("Call stack is empty.");
-		}
-		
-		/////
-		// 2. was the operation call successful? If not, we're
-		//    not interested in the result value
-		
-		if (operationCall.executionHasFailed()) {
-			exitCurrentOperation();
-			
-			return operationCall;
-		}
-		
-		MOperation operation = operationCall.getOperation();
-		
-		/////
-		// 3. Handle return value
-		//    If the operation requires a return value, we need
-		//    a value of a compatible type. If none was supplied
-		//    to this method, the operation is not exited, unless
-		//    the forceExit flag was set.
-		
-		// operation has a return value
+	private void assertResultValueValid(Value resultValue, MOperation operation) throws MSystemException {
 		if (operation.hasResultType()) {
-			// result value is missing
 			if (resultValue == null) {
-				
-				if (forceExit) {
-					exitCurrentOperation();
-				}
-	        	
 				throw new MSystemException(
 	            		"Result value of type " +
 	            		inQuotes(operation.resultType()) +
 	            		" required on exit of operation " +
 	            		inQuotes(operation) +
-	            		"." + 
-	            		(forceExit ? "" : " Operation is still active."));
+	            		"." );
 				
 			// result value has incompatible type
 	        } else if (!resultValue.type().isSubtypeOf(operation.resultType())) {
-	        	
-	        	if (forceExit) {
-					exitCurrentOperation();
-				}
-	        	
 	        	throw new MSystemException(
 	        			"Result value type " +
 	        			inQuotes(resultValue.type()) +
 	        			" does not match operation result type " +
 	        			inQuotes(operation.resultType()) +
-	        			"." +
-	        			(forceExit ? "" : " Operation is still active."));
+	        			"." );
 	        // result value is of correct type
-	        } else {
-	        	fVariableEnvironment.assign("result", resultValue);
-	        	operationCall.setResultValue(resultValue);	
-	        }
+	        } 
 		// operation has no return value
 	    } else {
 	    	// redundant result value, just give a warning
@@ -475,36 +489,24 @@ public final class MSystem {
 	    				" is not defined to return a value.");
 	    	}
 	    }
-		
-		/////
-		// 4. Handle post conditions
-		//    The operation's post conditions are evaluated and the 
-		//    results are inspected by a PPC handler. Even if not all
-		//    post conditions hold, the operation is exited.
-		
-		// make sure we have a ppc handler
-		PPCHandler ppcHandler;
-		if (fPPCHandlerOverride != null) {
-			ppcHandler = fPPCHandlerOverride;
-		} else if (operationCall.hasPreferredPPCHandler()) {
-			ppcHandler = operationCall.getPreferredPPCHandler();
-		} else {
-			ppcHandler = operationCall.getDefaultPPCHandler();
-		}
-		
+	}
+
+	/**
+	 * Evaluate and check all postconditions of an operation call. 
+	 * If any is not fulfilled, an exception is raised.
+	 * Before the exception is raised, the PPC handler (if any) is invoked.
+	 * @param operationCall
+	 * @throws MSystemException
+	 */
+	private void assertPostConditions(MOperationCall operationCall)
+			throws MSystemException {
 		evaluatePostConditions(operationCall);
-		
+		PPCHandler ppcHandler = determinePPCHandler(operationCall);
 		try {
 			ppcHandler.handlePostConditions(this, operationCall);
 		} catch (PostConditionCheckFailedException e) {
 			throw(new MSystemException(e.getMessage()));
-		} finally {
-			exitCurrentOperation();
 		}
-		
-		operationCall.setExitedSuccessfully(true);
-		
-		return operationCall;
 	}
 	
 	
@@ -513,14 +515,17 @@ public final class MSystem {
 	 */
 	private void exitCurrentOperation() {
 		MOperationCall currentOperation = getCurrentOperation();
+		if (currentOperation == null) throw new RuntimeException("Cannot exit without a current operation!");
 		currentOperation.setExited(true);
-		MStatement currentStatement = getCurrentStatement();
-		if (currentStatement != null && !stateIsLocked()) {
-			currentStatement.exitedOperationDuringEvaluation(
-					getCurrentOperation());
-		}
 		fCallStack.pop();
-		fVariableEnvironment.popFrame();
+		MStatement currentStatement = getCurrentStatement();
+		if (currentOperation.requiresVariableFrameInEnvironment()) {
+			if (currentStatement != null && !stateIsLocked()) {
+				currentStatement.exitedOperationDuringEvaluation(
+						currentOperation);
+			}
+			fVariableEnvironment.popFrame();
+		}
 	}
 	
 	

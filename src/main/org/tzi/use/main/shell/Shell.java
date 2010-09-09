@@ -1729,13 +1729,13 @@ public final class Shell implements Runnable, PPCHandler {
     		" continues the evaluation (i.e. unwinds the stack).\n";
     	
     	system.updateListeners();
-    	
+    	if (!Options.testMode) {
     	output.println();
     	output.println("+-------------------------------------------------------------------+");
     	output.println("| Evaluation is paused. You may inspect, but not modifiy the state. |");
     	output.println("+-------------------------------------------------------------------+");
     	output.println(HELP);
-    	
+    	}
     	String input;
     	do {
     		
@@ -1754,9 +1754,7 @@ public final class Shell implements Runnable, PPCHandler {
 					input.startsWith(":") ||
 					input.startsWith("info") ||
 					input.startsWith("help")) {
-				output.println();
 				processLine(input);
-				output.println();
 			} else {
 				output.println(HELP);
 			}
