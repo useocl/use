@@ -62,7 +62,7 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
             return fVarname + " : " + fValue.type() + " = " + fValue;
         }
     }
-
+    
     private ArrayList<Entry> fBindings;
 
     private MSystemState fVisibleState;
@@ -149,7 +149,25 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
      * Returns an iterator over VarBindings.Entry objects.
      */
     public Iterator<Entry> iterator() {
-    	if (fVisibleState != null) throw new RuntimeException("Not Implemented...");
+    	if (fVisibleState != null) { 
+    		ArrayList<Entry> tmp = new ArrayList<Entry>(fVisibleState.numObjects() + fBindings.size());
+    		// add all object names which are not shadowed by variable names
+    		for( MObject obj : fVisibleState.allObjects()) {
+    			boolean shadowed = false;
+    			for (int i = fBindings.size() - 1; i >= 0; i--) {
+    	            if (fBindings.get(i).fVarname.equals(obj.name())) {
+    	            	shadowed = true;
+    	            	break;
+    	            }
+    	        }
+    			if (!shadowed) {
+    				tmp.add( new Entry(obj.name(),obj.value()) );
+    			}
+    		}
+    		// all variable names
+    		tmp.addAll(fBindings);
+    		return tmp.iterator();
+    	}
         return fBindings.iterator();
     }
 
