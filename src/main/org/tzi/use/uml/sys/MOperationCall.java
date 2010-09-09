@@ -353,11 +353,11 @@ public class MOperationCall {
 	 */
 	public PPCHandler getDefaultPPCHandler() {
 		if (fOperation.hasExpression()) {
-			return new ExpressionPPCHandler();
+			return ExpressionPPCHandler.getDefaultOutputHandler();
 		} else if (fOperation.hasStatement()) {
-			return new SoilPPCHandler();
+			return SoilPPCHandler.getDefaultOutputHandler();
 		} else if (!fOperation.hasBody()) {
-			return new OpEnterOpExitPPCHandler();
+			return OpEnterOpExitPPCHandler.getDefaultOutputHandler();
 		} else {
 			return DoNothingPPCHandler.getInstance();
 		}

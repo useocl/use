@@ -41,9 +41,23 @@ import org.tzi.use.util.Log;
  *
  */
 public class ExpressionPPCHandler implements PPCHandler {
-	/** TODO */
+	
+	private static ExpressionPPCHandler defaultHandlerToLog;
+	
+	/**
+	 * Get the singleton default <code>ExpressionPPCHandler</code>
+	 * which outputs to <code>{@link Log#out}</code>.
+	 * @return Default handler to <code>Log.out</code> 
+	 */
+	public static ExpressionPPCHandler getDefaultOutputHandler() {
+		if (defaultHandlerToLog == null) {
+			defaultHandlerToLog = new ExpressionPPCHandler();
+		}
+		
+		return defaultHandlerToLog;
+	}
+	
 	private PrintWriter fOutput;
-
 	
 	/**
 	 * TODO
@@ -55,9 +69,10 @@ public class ExpressionPPCHandler implements PPCHandler {
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new handler with default output to <code>{@link Log#out}</code>.
+	 * Only used by singleton instance getter.
 	 */
-	public ExpressionPPCHandler() {
+	private ExpressionPPCHandler() {
 		fOutput = new PrintWriter(Log.out(), true);
 	}
 

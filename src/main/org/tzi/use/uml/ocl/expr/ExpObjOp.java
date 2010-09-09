@@ -120,7 +120,7 @@ public final class ExpObjOp extends Expression {
     	MOperationCall operationCall = 
     		new MOperationCall(this, self, operation, arguments);
     	
-    	operationCall.setPreferredPPCHandler(new ExpressionPPCHandler());
+    	operationCall.setPreferredPPCHandler(ExpressionPPCHandler.getDefaultOutputHandler());
     	
     	MSystem system = ctx.postState().system();
     	

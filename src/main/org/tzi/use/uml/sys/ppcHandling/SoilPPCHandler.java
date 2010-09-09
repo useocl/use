@@ -42,13 +42,24 @@ import org.tzi.use.util.Log;
  *
  */
 public class SoilPPCHandler implements PPCHandler {
-	/** TODO */
+	
+	private static SoilPPCHandler defaultHandlerToLog;
+	
+	public static SoilPPCHandler getDefaultOutputHandler() {
+		if (defaultHandlerToLog == null) {
+			defaultHandlerToLog = new SoilPPCHandler();
+		}
+		
+		return defaultHandlerToLog;
+	}
+	
 	protected PrintWriter fOutput;
 	
 	/**
-	 * TODO
+	 * Private constructor for default handler.
+	 * Use getDefaultOutputHandler()
 	 */
-	public SoilPPCHandler() {
+	private SoilPPCHandler() {
 		fOutput = new PrintWriter(Log.out(), true);
 	}
 	

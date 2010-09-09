@@ -160,9 +160,7 @@ public class MOperationCallStatement extends MStatement {
 					fOperation, 
 					arguments, 
 					fContext.isInExpression() ? 
-							new ExpressionPPCHandler() : 
-								new SoilPPCHandler(),
-					false);
+							ExpressionPPCHandler.getDefaultOutputHandler() : SoilPPCHandler.getDefaultOutputHandler(), false);
 		
 		try {
 			evaluateSubStatement(operationBody);

@@ -38,14 +38,27 @@ import org.tzi.use.util.StringUtil;
  *
  */
 public class OpEnterOpExitPPCHandler implements PPCHandler {
-	/** TODO */
-	private PrintWriter fOutput;
 	
+	private static OpEnterOpExitPPCHandler defaultHandlerToLog;
 	
 	/**
-	 * TODO
+	 * Singleton instance of the default handler which outputs to {@link Log#out}.
+	 * @return Default handler which outputs to {@link Log#out}.
 	 */
-	public OpEnterOpExitPPCHandler() {
+	public static OpEnterOpExitPPCHandler getDefaultOutputHandler() {
+		if (defaultHandlerToLog == null) {
+			defaultHandlerToLog = new OpEnterOpExitPPCHandler();
+		}
+		
+		return defaultHandlerToLog;
+	}
+	
+	private PrintWriter fOutput;
+	
+	/**
+	 * Constructs a default handler which outputs to {@link Log#out}.
+	 */
+	private OpEnterOpExitPPCHandler() {
 		fOutput = new PrintWriter(Log.out(), true);
 	}
 	

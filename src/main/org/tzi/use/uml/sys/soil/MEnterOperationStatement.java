@@ -110,7 +110,7 @@ public class MEnterOperationStatement extends MStatement {
 				fOperation, 
 				arguments, 
 				fCustomPPCHandler == null ? 
-						new OpEnterOpExitPPCHandler() : fCustomPPCHandler,
+						OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler,
 				true);
 		
 		// build inverse statement if necessary
