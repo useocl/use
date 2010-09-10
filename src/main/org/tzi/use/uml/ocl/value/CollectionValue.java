@@ -79,6 +79,12 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     
     public abstract Collection<Value> collection();
 
+    @Override
+    public boolean isCollection() {
+    	return true;
+    }
+    
+    @Override
     public int compareTo(Value o) {
         if (o == this )
             return 0;

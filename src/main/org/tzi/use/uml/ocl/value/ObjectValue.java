@@ -44,6 +44,11 @@ public final class ObjectValue extends Value {
         return sb.append("@").append(fObject.name());
     }
 
+    @Override
+    public boolean isObject() {
+    	return true;
+    }
+    
     public MObject value() {
         return fObject;
     }
@@ -69,12 +74,13 @@ public final class ObjectValue extends Value {
     }
 
     public int compareTo(Value o) {
-        if (o == this )
+        if (o == this)
             return 0;
-        if (o instanceof UndefinedValue )
+        if (o.isUndefined())
             return +1;
-        if (! (o instanceof ObjectValue) )
+        if (!o.isObject())
             return toString().compareTo(o.toString());
+        
         return fObject.name().compareTo(((ObjectValue) o).fObject.name());
     }
 }

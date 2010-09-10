@@ -53,49 +53,89 @@ public abstract class Value implements Comparable<Value>, BufferedToString {
     }
     
 
+    /**
+     * True if value is an <code>{@link IntegerValue}</code> 
+     * @return True if value is an instance of <code>{@link IntegerValue}</code>
+     */
     public boolean isInteger() {
-        return (this instanceof IntegerValue);
+        return false;
     }
 
+    /**
+     * True if value is a <code>{@link RealValue}</code> 
+     * @return True if value is an instance of <code>{@link RealValue}</code>
+     */
     public boolean isReal() {
-        return (this instanceof RealValue);
+        return false;
     }
 
+    /**
+     * True if value is a <code>{@link BooleanValue}</code> 
+     * @return True if value is an instance of <code>{@link BooleanValue}</code>
+     */
     public boolean isBoolean() {
-        return (this instanceof BooleanValue);
+        return false;
     }
 
     public boolean isDefined() {
         return ! isUndefined();
     }
 
+    /**
+     * True if value is an <code>{@link UndefinedValue}</code> 
+     * @return True if value is an instance of <code>{@link UndefinedValue}</code>
+     */
     public boolean isUndefined() {
-        return (this instanceof UndefinedValue);
+        return false;
     }
 
+    /**
+     * True if value is an instance of <code>{@link CollectionValue}</code> 
+     * @return True if value is an instance of <code>{@link CollectionValue}</code>
+     */
     public boolean isCollection() {
-        return (this instanceof CollectionValue);
+        return false;
     }
 
+    /**
+     * True if value is an instance of <code>{@link BagValue}</code> 
+     * @return True if value is an instance of <code>{@link BagValue}</code>
+     */
     public boolean isBag() {
-        return (this instanceof BagValue);
+        return false;
     }
 
+    /**
+     * True if value is an instance of <code>{@link SetValue}</code> 
+     * @return True if value is an instance of <code>{@link SetValue}</code>
+     */
     public boolean isSet() {
-        return (this instanceof SetValue);
+        return false;
     }
 
+    /**
+     * True if value is an instance of <code>{@link SequenceValue}</code> 
+     * @return True if value is an instance of <code>{@link SequenceValue}</code>
+     */
     public boolean isSequence() {
-        return (this instanceof SequenceValue);
+        return false;
     }
 
-    public boolean isObject() {
-        return (this instanceof ObjectValue);
-    }
-
+    /**
+     * True if value is an instance of <code>{@link OrderedSetValue}</code> 
+     * @return True if value is an instance of <code>{@link OrderedSetValue}</code>
+     */
     public boolean isOrderedSet() {
-		return (this instanceof OrderedSetValue);
+		return false;
 	}
+    
+    /**
+     * True if value is an instance of <code>{@link ObjectValue}</code> 
+     * @return True if value is an instance of <code>{@link ObjectValue}</code>
+     */
+    public boolean isObject() {
+        return false;
+    }
 
     public final String toString() {
     	StringBuilder sb = new StringBuilder();

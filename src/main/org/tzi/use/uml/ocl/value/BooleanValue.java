@@ -71,10 +71,17 @@ public final class BooleanValue extends Value {
         return fValue;
     }
 
+    @Override
+    public boolean isBoolean() {
+    	return true;
+    }
+    
+    @Override
     public StringBuilder toString(StringBuilder sb) {
         return sb.append(fValue);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == this )
             return true;
@@ -83,10 +90,12 @@ public final class BooleanValue extends Value {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return fValue ? 1231 : 1237;
     }
 
+    @Override
     public int compareTo(Value o) {
         if (o == this )
             return 0;

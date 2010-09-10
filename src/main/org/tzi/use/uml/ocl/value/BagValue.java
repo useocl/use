@@ -94,6 +94,11 @@ public class BagValue extends CollectionValue {
     }
 
     @Override
+    public boolean isBag() {
+    	return true;
+    }
+    
+    @Override
     public void doSetElemType() {
         setType( TypeFactory.mkBag(fElemType));
     }

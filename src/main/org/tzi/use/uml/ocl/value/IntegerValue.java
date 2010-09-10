@@ -43,10 +43,16 @@ public final class IntegerValue extends Value {
     }
 
     @Override
+    public boolean isInteger() {
+    	return true;
+    }
+    
+    @Override
     public StringBuilder toString(StringBuilder sb) {
         return sb.append(fValue);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == this )
             return true;
@@ -57,12 +63,14 @@ public final class IntegerValue extends Value {
         return false;
     }
 
+    @Override
     public int hashCode() {
         // Note: this must be the same hash code as for RealValue if
         // we want to treat, e.g., 1.0 equal to 1 in collections.
         return new Double(fValue).hashCode();
     }
 
+    @Override
     public int compareTo(Value o) {
         if (o == this )
             return 0;

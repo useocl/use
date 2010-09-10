@@ -95,6 +95,11 @@ public class SetValue extends CollectionValue {
     }
 
     @Override
+    public boolean isSet() {
+    	return true;
+    }
+    
+    @Override
     public void doSetElemType() {
         setType( TypeFactory.mkSet(fElemType));
     }

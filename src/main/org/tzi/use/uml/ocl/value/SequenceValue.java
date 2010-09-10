@@ -94,6 +94,11 @@ public class SequenceValue extends CollectionValue {
     }
 
     @Override
+    public boolean isSequence() {
+    	return true;
+    }
+    
+    @Override
     public void doSetElemType() {
         setType( TypeFactory.mkSequence(fElemType));
     }

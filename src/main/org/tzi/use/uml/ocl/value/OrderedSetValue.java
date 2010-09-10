@@ -31,7 +31,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 
 /**
- * Sequence values.
+ * Ordered set values.
  *
  * @version     $ProjectVersion: 0.393 $
  * @author  Lars Hamann
@@ -48,10 +48,10 @@ public class OrderedSetValue extends CollectionValue {
     }
 
     /**
-     * Constructs an orderedset and adds all values. Elements are type checked
-     * as they get inserted into the orderedset.
+     * Constructs an ordered set and adds all values. Elements are type checked
+     * as they get inserted into the ordered set.
      * 
-     * Duplicates are ignored after the first occurence.
+     * Duplicates are ignored after the first occurrence.
      */
     public OrderedSetValue(Type elemType, Value[] values) {
         this(elemType);
@@ -86,6 +86,11 @@ public class OrderedSetValue extends CollectionValue {
         }
     }
 
+    @Override
+    public boolean isOrderedSet() {
+    	return true;
+    }
+    
     @Override
     public void doSetElemType() {
         setType( TypeFactory.mkOrderedSet(fElemType));
