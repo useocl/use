@@ -117,7 +117,7 @@ public class StatementEffectTest extends TestCase {
 		
 		// 1 new variable
 		List<String> newVars = getNewVars();
-		assertEquals(newVars.size(), 1);
+		assertEquals(1, newVars.size());
 		assertTrue(getNewVars().contains(varName));
 		// with the desired value
 		assertEquals(lookUpVar(varName), val1);
@@ -165,7 +165,7 @@ public class StatementEffectTest extends TestCase {
 		evaluateStatement(statement);
 		
 		// 2 new variables
-		assertEquals(getNewVars().size(), 2);
+		assertEquals(1, getNewVars().size());
 		// explicit variable refers to object
 		assertNotNull(lookUpVar(varName));
 		varVal = lookUpVar(varName);
@@ -200,8 +200,8 @@ public class StatementEffectTest extends TestCase {
 			")";
 		
 		evaluateStatement(statement);
-		// 2 new variables
-		assertEquals(getNewVars().size(), 2);
+		// 1 new variable
+		assertEquals(1, getNewVars().size());
 		// explicit variable referring to the new link object
 		varVal = lookUpVar(varName);
 		assertNotNull(varVal);
@@ -299,7 +299,7 @@ public class StatementEffectTest extends TestCase {
 		assertEquals(fState.numObjects(), (fOldState.numObjects() + 3));
 		// 4 new variables
 		newVars = getNewVars();
-		assertEquals(newVars.size(), 4);
+		assertEquals(3, newVars.size());
 		
 		//////////////////////////////////////////////////////////////
 		// assignment of multiple objects with more mandatory names //
@@ -419,7 +419,7 @@ public class StatementEffectTest extends TestCase {
 		MObject newObject = newObjects.get(0);
 		assertEquals(newObject.cls().name(), className);
 		// there is a variable with the same name as the object name
-		assertEquals(getNewVars().size(), 1);
+		assertEquals(0, getNewVars().size());
 		String objectName = newObject.name();
 		Value varVal = lookUpVar(objectName);
 		assertNotNull(varVal);
@@ -467,7 +467,7 @@ public class StatementEffectTest extends TestCase {
 		evaluateStatement(statement);
 		
 		// 1 new variable
-		assertEquals(getNewVars().size(), 1);
+		assertEquals(0, getNewVars().size());
 		newObjects = getNewObjects();
 		// 1 new object
 		assertEquals(newObjects.size(), 1);
@@ -505,7 +505,7 @@ public class StatementEffectTest extends TestCase {
 		assertTrue(newObjects.contains(newObject2));
 		assertEquals(newObject2.cls().name(), className); 
 		// 2 new variables referring to the new objects
-		assertEquals(getNewVars().size(), 2);
+		assertEquals(0, getNewVars().size());
 		Value varVal1 = lookUpVar(name1);
 		assertNotNull(varVal1);
 		assertEquals(varVal1, newObject1.value());
@@ -619,11 +619,10 @@ public class StatementEffectTest extends TestCase {
 		
 		evaluateStatement(statement);
 		
-		// 1 new variable
-		assertEquals(getNewVars().size(), 1);
+		assertEquals(0, getNewVars().size());
 		List<MObject> newObjects = getNewObjects();
 		// 1 new object
-		assertEquals(newObjects.size(), 1);
+		assertEquals(1, newObjects.size());
 		MObject newObject = newObjects.get(0);
 		// must be a link object
 		assertTrue(newObject instanceof MLinkObject);
@@ -647,10 +646,6 @@ public class StatementEffectTest extends TestCase {
 		// which refers to the new link object
 		assertEquals(varVal, newLinkObject.value());
 		
-		//////////
-		// undo //
-		//////////
-	
 		undo();
 		
 		// should remove the new object, the new link and the variable
@@ -664,12 +659,9 @@ public class StatementEffectTest extends TestCase {
 		
 		redo();
 		
-		// should restore the original effect
-		// 1 new variable
-		assertEquals(getNewVars().size(), 1);
-		// 1 new object
+		assertEquals(0, getNewVars().size());
 		newObjects = getNewObjects();
-		assertEquals(newObjects.size(), 1);
+		assertEquals(1, newObjects.size());
 		newObject = newObjects.get(0);
 		// must have the same name again
 		assertEquals(newObject.name(), linkObjectName);
@@ -708,9 +700,7 @@ public class StatementEffectTest extends TestCase {
 		
 		evaluateStatement(statement);
 		
-		// 1 new variable
-		assertEquals(getNewVars().size(), 1);
-		// 1 new object
+		assertEquals(0, getNewVars().size());
 		newObjects = getNewObjects();
 		assertEquals(newObjects.size(), 1);
 		newObject = newObjects.get(0);	
@@ -762,15 +752,15 @@ public class StatementEffectTest extends TestCase {
 		
 		evaluateStatement(statement);
 		
-		// 3 new variables
+		// no new variables
 		List<String> newVars = getNewVars();
-		assertEquals(newVars.size(), 3);
-		assertTrue(newVars.contains(mandatoryName));
-		assertTrue(newVars.contains(pMName1));
-		assertTrue(newVars.contains(pMName2));		
+		assertEquals(0, newVars.size());
+		assertFalse(newVars.contains(mandatoryName));
+		assertFalse(newVars.contains(pMName1));
+		assertFalse(newVars.contains(pMName2));		
 		// 3 new objects
 		newObjects = getNewObjects();
-		assertEquals(newObjects.size(), 3);
+		assertEquals(3, newObjects.size());
 		linkedObject1 = getObject(pMName1);
 		assertTrue(newObjects.contains(linkedObject1));
 		assertEquals(linkedObject1.cls().name(), pClass1);
@@ -820,10 +810,10 @@ public class StatementEffectTest extends TestCase {
 		
 		// 3 new variables
 		newVars = getNewVars();
-		assertEquals(newVars.size(), 3);
-		assertTrue(newVars.contains(mandatoryName));
-		assertTrue(newVars.contains(pMName1));
-		assertTrue(newVars.contains(pMName2));		
+		assertEquals(0, newVars.size());
+		assertFalse(newVars.contains(mandatoryName));
+		assertFalse(newVars.contains(pMName1));
+		assertFalse(newVars.contains(pMName2));		
 		// 3 new objects
 		newObjects = getNewObjects();
 		assertEquals(newObjects.size(), 3);
@@ -883,7 +873,7 @@ public class StatementEffectTest extends TestCase {
 		// variable should be undefined, but still exist
 		Value varVal1 = lookUpVar(vNameObj1);
 		assertNotNull(varVal1);
-		assertEquals(varVal1.type(), fOldVarEnv.lookUp(vNameObj1).type());
+		assertTrue(varVal1.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj1).type()));
 		assertTrue(varVal1.isUndefined());
 		
 		//////////
@@ -914,7 +904,7 @@ public class StatementEffectTest extends TestCase {
 		// variable should be undefined, but still exist
 		varVal1 = lookUpVar(vNameObj1);
 		assertNotNull(varVal1);
-		assertEquals(varVal1.type(), fOldVarEnv.lookUp(vNameObj1).type());
+		assertTrue(varVal1.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj1).type()));
 		assertTrue(varVal1.isUndefined());
 		
 		/////////////////////////////////////
@@ -947,11 +937,11 @@ public class StatementEffectTest extends TestCase {
 		// variables should undefined
 		varVal1 = lookUpVar(vNameObj1);
 		assertNotNull(varVal1);
-		assertEquals(varVal1.type(), fOldVarEnv.lookUp(vNameObj1).type());
+		assertTrue(varVal1.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj1).type()));
 		assertTrue(varVal1.isUndefined());
 		Value varVal2 = lookUpVar(vNameObj2);
 		assertNotNull(varVal2);
-		assertEquals(varVal2.type(), fOldVarEnv.lookUp(vNameObj2).type());
+		assertTrue(varVal2.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj2).type()));
 		assertTrue(varVal2.isUndefined());
 		
 		///////////////////////////////////////////////
@@ -975,11 +965,11 @@ public class StatementEffectTest extends TestCase {
 		// variables should undefined
 		varVal1 = lookUpVar(vNameObj1);
 		assertNotNull(varVal1);
-		assertEquals(varVal1.type(), fOldVarEnv.lookUp(vNameObj1).type());
+		assertTrue(varVal1.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj1).type()));
 		assertTrue(varVal1.isUndefined());
 		varVal2 = lookUpVar(vNameObj2);
 		assertNotNull(varVal2);
-		assertEquals(varVal2.type(), fOldVarEnv.lookUp(vNameObj2).type());
+		assertTrue(varVal2.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj2).type()));
 		assertTrue(varVal2.isUndefined());
 		
 		//////////////////////////////////////////////
@@ -1369,7 +1359,7 @@ public class StatementEffectTest extends TestCase {
 		
 		assertNull(lookUpVar(varName));
 		evaluateStatement(statement);
-		assertNull(lookUpVar(varName));
+		assertNotNull(lookUpVar(varName));
 	}
 	
 	
@@ -1421,7 +1411,7 @@ public class StatementEffectTest extends TestCase {
 		
 		assertNull(lookUpVar("y"));
 		evaluateStatement(statement);
-		assertNull(lookUpVar("y"));
+		assertNotNull(lookUpVar("y"));
 	}
 	
 	
