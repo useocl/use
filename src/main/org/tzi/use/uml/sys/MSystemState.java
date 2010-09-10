@@ -506,6 +506,22 @@ public final class MSystemState {
 	private void auxDeleteLink(MLink link) {
 		MLinkSet linkSet = (MLinkSet) fLinkSets.get(link.association());
 		linkSet.remove(link);
+		
+		if (   link.association().aggregationKind() == MAggregationKind.AGGREGATION 
+			|| link.association().aggregationKind() == MAggregationKind.COMPOSITION ) {
+			MWholePartLink wpLink = new MWholePartLinkImpl(link);
+			fWholePartLinkGraph.removeEdge(wpLink);
+			
+			if (fWholePartLinkGraph.numIncomingEdges(wpLink.source()) == 0 &&
+				fWholePartLinkGraph.numOutgoingEdges(wpLink.source()) == 0) {
+					fWholePartLinkGraph.remove(wpLink.source());
+			}
+			
+			if (fWholePartLinkGraph.numIncomingEdges(wpLink.target()) == 0 &&
+				fWholePartLinkGraph.numOutgoingEdges(wpLink.target()) == 0) {
+					fWholePartLinkGraph.remove(wpLink.target());
+			}
+		}
 	}
 
 	/**
@@ -530,13 +546,13 @@ public final class MSystemState {
 			}
 
 			String name = fSystem.uniqueObjectNameForClass(assoc.name());
-			// Log.println( "Information: The name '" + name +
-			// "' was automatically generated for the "
-			// + "linkobject." );
+			
 			// creates a linkobject with a generated name
 			link = createLinkObject((MAssociationClass) assoc, name, objects);
+			
 		} else if ((assoc.aggregationKind() == MAggregationKind.AGGREGATION)
 				|| (assoc.aggregationKind() == MAggregationKind.COMPOSITION)) {
+			
 			MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
 			link = new MLinkImpl(assoc, objects);
 			if (linkSet.contains(link))
@@ -544,19 +560,21 @@ public final class MSystemState {
 						+ "' between ("
 						+ StringUtil.fmtSeq(objects.iterator(), ",")
 						+ ") already exist.");
+			
 			// The graph to store the information of the whole/part hierachy
 			DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = getWholePartLinkGraph();
 			MWholePartLink wholePartLink = new MWholePartLinkImpl(link);
-			MObject source = null;
-			MObject target = null;
-			source = (MObject) wholePartLink.source();
-			target = (MObject) wholePartLink.target();
+			MObject source = wholePartLink.source();
+			MObject target = wholePartLink.target();
+			 
 			fWholePartLinkGraph.add(source);
 			fWholePartLinkGraph.add(target);
+			
 			// the link is irreflexive
 			if (wholePartLink.isReflexive())
 				Log.warn("Warning: Object `" + source.name()
 						+ "' cannot be a part of itself.");
+			
 			// check for SHARED OBJECT OF THE COMPOSION RELATIONSHIP
 			if (assoc.aggregationKind() == MAggregationKind.COMPOSITION) {
 				// finding all edges (links) whose target is the target object
@@ -566,17 +584,17 @@ public final class MSystemState {
 				while (sourceEdgeIter.hasNext()) {
 					Iterator<MWholePartLink> iter = fWholePartLinkGraph.edgesBetween(target,
 							sourceEdgeIter.next()).iterator();
+					
 					while (iter.hasNext()) {
 						MLink l = (MLink) iter.next();
 						if (l.association().aggregationKind() == MAggregationKind.COMPOSITION && 
 							!associationsHaveSubsetsRelation(l.association(), assoc) &&
 							!associationsHaveRedefinitionRelation(l.association(), wholePartLink.association())) {
-							Log
-									.warn("Warning: Insert has resulted in two aggregates for object `"
-											+ target.name()
-											+ "'. Object `"
-											+ target.name()
-											+ "' is already component of another object.");
+							Log.warn("Warning: Insert has resulted in two aggregates for object `"
+									 + target.name()
+									 + "'. Object `"
+									 + target.name()
+									 + "' is already component of another object.");
 						}
 					}
 				}
@@ -584,8 +602,7 @@ public final class MSystemState {
 			// check for cycles that might be occured when adding the new
 			// whole/part link
 			if (fWholePartLinkGraph.existsPath(target, source))
-				Log
-						.warn("Warning: Insert has resulted in a cycle in the part-whole hierarchy. Object `"
+				Log.warn("Warning: Insert has resulted in a cycle in the part-whole hierarchy. Object `"
 								+ source.name()
 								+ "' is a direct or indirect part of `"
 								+ target.name() + "'.");
@@ -620,39 +637,13 @@ public final class MSystemState {
 		return createLink(assoc, Arrays.asList(objects));
 	}
 
+	private DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = new DirectedGraphBase<MObject, MWholePartLink>();
 	
 	/**
 	 * The graph to store the information of the whole/part hierachy.
 	 */
-	private DirectedGraph<MObject, MWholePartLink> getWholePartLinkGraph() {
-		DirectedGraph<MObject, MWholePartLink> ret = new DirectedGraphBase<MObject, MWholePartLink>();
-		// Obtaining whole/part links from all links of the system state in
-		// fLinkSets		
-
-		MWholePartLink wholePartLink = null;
-		MObject source = null;
-		MObject target = null;
-		
-		for (MAssociation assocTemp : fLinkSets.keySet()) {
-			if ((assocTemp.aggregationKind() == MAggregationKind.AGGREGATION)
-					|| (assocTemp.aggregationKind() == MAggregationKind.COMPOSITION)) {
-				MLinkSet linkSetTmp = fLinkSets.get(assocTemp);
-				
-				for (MLink link : linkSetTmp.links()) {
-					try {
-						wholePartLink = new MWholePartLinkImpl(link);
-					} catch (MSystemException e) {
-						Log.println(e.toString());
-					}
-					source = wholePartLink.source();
-					target = wholePartLink.target();
-					ret.add(source);
-					ret.add(target);
-					ret.addEdge(wholePartLink);
-				}
-			}
-		}
-		return ret;
+	private DirectedGraph<MObject, MWholePartLink> getWholePartLinkGraph() {		
+		return fWholePartLinkGraph;
 	}
 
 	/**

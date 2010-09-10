@@ -40,7 +40,7 @@ final class MWholePartLinkImpl implements MWholePartLink {
     /**
      * Constructor.     
      */
-    MWholePartLinkImpl(MLink link) throws MSystemException {
+    MWholePartLinkImpl(MLink link) {
         delegatesLink = link;
     }
     
