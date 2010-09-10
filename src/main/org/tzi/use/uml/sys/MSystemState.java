@@ -507,6 +507,10 @@ public final class MSystemState {
 		MLinkSet linkSet = (MLinkSet) fLinkSets.get(link.association());
 		linkSet.remove(link);
 		
+		removeLinkFromWholePartGraph(link);
+	}
+
+	private void removeLinkFromWholePartGraph(MLink link) {
 		if (   link.association().aggregationKind() == MAggregationKind.AGGREGATION 
 			|| link.association().aggregationKind() == MAggregationKind.COMPOSITION ) {
 			MWholePartLink wpLink = new MWholePartLinkImpl(link);
@@ -709,6 +713,7 @@ public final class MSystemState {
 		}
 
 		linkSet.remove(link);
+		removeLinkFromWholePartGraph(link);
 		result.getRemovedLinks().add(link);
 
 		if (link instanceof MLinkObject) {
