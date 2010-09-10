@@ -34,21 +34,21 @@ import java.util.Set;
  * Basic implementation of directed graphs.
  *
  * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author  	Mark Richters
  * @see         DirectedGraph
  * @param N Type of the nodes
  * @param E Type of the edges
  */
 public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCollection<N> implements DirectedGraph<N, E> {
     private Map<N, NodeInfo> fNodes;
-    private List<E> fEdges;
+    private Set<E> fEdges;
 
     /**
      * Constructs an empty graph.
      */
     public DirectedGraphBase() {
         fNodes = new HashMap<N, NodeInfo>();
-        fEdges = new ArrayList<E>();
+        fEdges = new HashSet<E>();
     }
 
     /**
@@ -57,7 +57,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      */
     public DirectedGraphBase(int initialNodeCapacity) {
         fNodes = new HashMap<N, NodeInfo>(initialNodeCapacity);
-        fEdges = new ArrayList<E>();
+        fEdges = new HashSet<E>();
     }
 
 

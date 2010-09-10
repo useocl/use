@@ -608,6 +608,7 @@ public final class MSystemState {
 								+ target.name() + "'.");
 			// silently ignore duplicates
 			linkSet.add(link);
+			fWholePartLinkGraph.addEdge(wholePartLink);
 		} else {
 			// create a normal link
 			link = new MLinkImpl(assoc, objects);
