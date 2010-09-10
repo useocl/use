@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,12 +49,20 @@ final class MLinkImpl implements MLink {
     private Map<MAssociationEnd, MLinkEnd> fLinkEnds;
 
     /**
+     * The Set of all link ends to avoid copying.
+     */
+    private Set<MLinkEnd> linkEndsSet;
+    
+    /**
      * Other representation of linked objects,
      * because of performance improvements
      */
     MObject[] linkedObjects;
 
-    // For performance reasons
+    /**
+     * Links are immutable. Therefore the hash code can
+     * be stored.
+     */
     private int hashCode;
 
     /**
@@ -70,7 +79,9 @@ final class MLinkImpl implements MLink {
                                                assoc.associationEnds().size() +
                                                ") does not match number of passed objects (" +
                                                objects.size() + ")");
-        fLinkEnds = new HashMap<MAssociationEnd, MLinkEnd>();
+        
+        fLinkEnds = new HashMap<MAssociationEnd, MLinkEnd>(assoc.associationEnds().size());
+        linkEndsSet = new HashSet<MLinkEnd>(assoc.associationEnds().size());
         
         Iterator<MAssociationEnd> it1 = assoc.associationEnds().iterator();
         Iterator<MObject> it2 = objects.iterator();
@@ -85,6 +96,7 @@ final class MLinkImpl implements MLink {
             MLinkEnd lend = new MLinkEnd(aend, obj);
             hashCode += lend.hashCode();
             fLinkEnds.put(aend, lend);
+            linkEndsSet.add(lend);
             linkedObjects[i] = obj;
             ++i;
         }
@@ -98,12 +110,12 @@ final class MLinkImpl implements MLink {
     }
 
     /** 
-     * Returns all link ends of this link.
+     * Returns a read only set of all link ends of this link.
      *
-     * @return Set(MLinkEnd)
+     * @return read only set of the link ends
      */
     public Set<MLinkEnd> linkEnds() {
-        return new HashSet<MLinkEnd>(fLinkEnds.values());
+    	return Collections.unmodifiableSet(linkEndsSet);
     }
 
     /**
@@ -112,7 +124,7 @@ final class MLinkImpl implements MLink {
      * @return Set(MObject).
      */
     public Set<MObject> linkedObjects() {
-        Set<MObject> s = new HashSet<MObject>();
+    	Set<MObject> s = new HashSet<MObject>();
                 
         for (MLinkEnd lend : fLinkEnds.values()) {
             s.add(lend.object());
@@ -143,12 +155,23 @@ final class MLinkImpl implements MLink {
     /**
      * Two links are equal iff they connect the same objects.
      */
+    @Override
     public boolean equals(Object obj) { 
         if (obj == this )
             return true;
-        if (obj instanceof MLink )
-            return association().equals(((MLink) obj).association())
-                && linkEnds().equals(((MLink) obj).linkEnds());
+
+        // MLinkImpl implements hashCode() so
+        // when the hash codes differ they are not equal
+        if (this.hashCode() != obj.hashCode())
+                return false;
+
+        if (obj instanceof MLink ) {
+            MLink other = (MLink)obj;
+            
+            return association().equals(other.association())
+                   && linkEnds().equals(other.linkEnds());
+        }
+
         return false;
     }
 
