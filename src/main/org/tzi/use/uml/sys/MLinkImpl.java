@@ -103,9 +103,7 @@ final class MLinkImpl implements MLink {
      * @return Set(MLinkEnd)
      */
     public Set<MLinkEnd> linkEnds() {
-        Set<MLinkEnd> s = new HashSet<MLinkEnd>(fLinkEnds.values());
-        s.addAll(fLinkEnds.values());
-        return s;
+        return new HashSet<MLinkEnd>(fLinkEnds.values());
     }
 
     /**
