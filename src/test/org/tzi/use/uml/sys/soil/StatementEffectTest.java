@@ -54,7 +54,7 @@ import org.tzi.use.util.soil.VariableEnvironment;
  * @author Daniel Gent
  *
  */
-public class StatementEffectTests extends TestCase {
+public class StatementEffectTest extends TestCase {
 	/** TODO */
 	private TestSystem fTestSystem;
 	/** TODO */
