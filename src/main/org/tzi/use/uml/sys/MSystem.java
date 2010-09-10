@@ -43,7 +43,6 @@ import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
