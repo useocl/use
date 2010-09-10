@@ -91,6 +91,10 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
                 fIsReflexive = true;
         }
         
+        // Set the aggregation kind if necessary
+        if (this.aggregationKind == MAggregationKind.NONE)
+        	this.aggregationKind = aend.aggregationKind();
+        
         fAssociationEnds.add(aend);
         aend.setAssociation(this);
     }
@@ -162,18 +166,8 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      * or composition if one of the association ends is aggregate or
      * composition.
      */
-    private int aggregationKind = -1;
+    private int aggregationKind = MAggregationKind.NONE;
     public int aggregationKind() {
-    	if (aggregationKind == -1) {
-	        for (MAssociationEnd aend : fAssociationEnds) {
-	            int k = aend.aggregationKind();
-	            if (k != MAggregationKind.NONE ) {
-	            	aggregationKind = k;
-	            }
-	        }
-	        aggregationKind = MAggregationKind.NONE;
-    	}
-    	
     	return aggregationKind;
     }
 
