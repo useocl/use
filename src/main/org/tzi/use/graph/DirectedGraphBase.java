@@ -430,7 +430,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     		if (node.equals(n2)) return true;
     		
     		if (!visitedNodes.contains(node)) {
-    			if (dfs_path(node, n2, visitedNodes, new HashSet<N>())) return true;
+    			if (dfs_path(node, n2, visitedNodes)) return true;
     		}
     	}
     	
@@ -445,15 +445,14 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * @param visitedNodesTree All visited nodes in this search path
      * @return
      */
-    private boolean dfs_path(N node, N targetNode, Set<N> visitedNodes, Set<N> visitedNodesTree) {
+    private boolean dfs_path(N node, N targetNode, Set<N> visitedNodes) {
     	visitedNodes.add(node);
-    	visitedNodesTree.add(node);
     	
     	for (N n : targetNodeSet(node)) {
     		if (n.equals(targetNode)) return true;
     		
     		if (!visitedNodes.contains(n)) {
-    			if (dfs_cycle(n, visitedNodes, new HashSet<N>(visitedNodesTree))) return true;
+    			if (dfs_path(n, targetNode, visitedNodes)) return true;
     		}
     	}
     	
