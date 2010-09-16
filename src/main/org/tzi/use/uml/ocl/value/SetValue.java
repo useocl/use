@@ -22,9 +22,9 @@
 package org.tzi.use.uml.ocl.value;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
@@ -48,7 +48,7 @@ public class SetValue extends CollectionValue {
      */
     public SetValue(Type elemType) {
         super(TypeFactory.mkSet(elemType), elemType);
-        fElements = new TreeSet<Value>();
+        fElements = new HashSet<Value>();
     }
 
     /**
@@ -302,14 +302,6 @@ public class SetValue extends CollectionValue {
         return fElements.contains(v) ? 1 : 0;
     }
 
-    public SequenceValue asSequence() {
-        return new SequenceValue(elemType(), fElements);
-    }
-
-    public BagValue asBag() {
-        return new BagValue(elemType(), fElements);
-    }
-
     /**
      * Returns a new "flattened" set. This set must have collection elements.
      */
@@ -339,7 +331,7 @@ public class SetValue extends CollectionValue {
     @Override
     public StringBuilder toString(StringBuilder sb) {
         sb.append("Set{");
-        StringUtil.fmtSeqBuffered(sb, fElements.iterator(), ",");
+        StringUtil.fmtSeqBuffered(sb, this.getSortedElements().iterator(), ",");
         return sb.append("}");
     }
 

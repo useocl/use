@@ -133,7 +133,8 @@ public class ExprNavigationTest extends TestCase {
             assertTrue( val.isSet() );
             assertEquals( 4, ( ( SetValue ) val ).size() );
             
-            Iterator<Value> it = ( ( SetValue ) val ).iterator();
+            Iterator<Value> it = ( ( SetValue ) val ).getSortedElements().iterator();
+            
             assertEquals( "c1", ( ( ObjectValue ) it.next() ).value().name() );
             assertEquals( "c2", ( ( ObjectValue ) it.next() ).value().name() );
             assertEquals( "c3", ( ( ObjectValue ) it.next() ).value().name() );

@@ -21,9 +21,12 @@
 
 package org.tzi.use.uml.ocl.value;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -191,6 +194,19 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     	return res;
     }
     
+    /**
+     * Creates a sorted list of the elements included in the collection.
+     * This is especially used for messages to the user and for tests to
+     * get a natural output.
+     * @return Sorted <code>List</code> of the elements of the set.
+     */
+    public List<Value> getSortedElements() {
+    	//TODO: Check performance of linked list
+    	List<Value> result = new ArrayList<Value>(collection());
+    	Collections.sort(result);
+    	return result;
+    }
+    
     public BagValue asBag() {
     	return new BagValue(elemType(), collection());
     }
@@ -200,11 +216,11 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
     
     public OrderedSetValue asOrderedSet() {
-    	return new OrderedSetValue(elemType(), collection());
+    	return new OrderedSetValue(elemType(), this.getSortedElements());
     }
     
     public SequenceValue asSequence() {
-    	return new SequenceValue(elemType(), collection());
+    	return new SequenceValue(elemType(), this.getSortedElements());
     }
 }
 

@@ -27,8 +27,9 @@ import java.util.Iterator;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.util.Bag;
+import org.tzi.use.util.HashBag;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.TreeBag;
 
 /**
  * Bag value. The bag is read-only outside of this package. Changes always
@@ -40,14 +41,14 @@ import org.tzi.use.util.TreeBag;
  * @author Mark Richters
  */
 public class BagValue extends CollectionValue {
-    private TreeBag<Value> fElements; // (Value)
+    private Bag<Value> fElements;
 
     /**
      * Constructs a new empty bag.
      */
     public BagValue(Type elemType) {
         super(TypeFactory.mkBag(elemType), elemType);
-        fElements = new TreeBag<Value>();
+        fElements = new HashBag<Value>();
     }
 
     /**
@@ -221,15 +222,6 @@ public class BagValue extends CollectionValue {
         return res;
     }
 
-    public SequenceValue asSequence() {
-        return new SequenceValue(elemType(), fElements);
-    }
-
-    public SetValue asSet() {
-        // the set constructor will remove duplicates
-        return new SetValue(elemType(), fElements);
-    }
-
     /**
      * Returns a new "flattened" bag. This bag must have collection elements.
      */
@@ -271,7 +263,7 @@ public class BagValue extends CollectionValue {
     @Override
     public StringBuilder toString(StringBuilder sb) {
         sb.append("Bag{");
-        StringUtil.fmtSeqBuffered(sb, iterator(), ",");
+        StringUtil.fmtSeqBuffered(sb, this.getSortedElements().iterator(), ",");
         sb.append("}");
         
         return sb;
