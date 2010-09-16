@@ -90,6 +90,13 @@ public final class MSystem {
     /** TODO */
     private Deque<MStatement> fCurrentlyEvaluatedStatements;
 
+    /**
+     * True, if this system is used inside a test suite.
+     * Some operations need this information, e.g., the pre state
+     * has to be saved when there is no post condition  
+     */
+    private boolean isRunningTestSuite;
+    
     private Stack<MSystemState> variationPointsStates = new Stack<MSystemState>();
     
     private Stack<VariableEnvironment> variationPointsVars = new Stack<VariableEnvironment>();
@@ -385,14 +392,16 @@ public final class MSystem {
 	}
 
 	/**
-	 * Create a copy of this state, if there are any postconditions in this operation.
+	 * Creates a copy of the current system state, if there are any postconditions for this operation or
+	 * if currently a test suite is executed.
 	 * @param operationCall
 	 */
 	private void copyPreStateIfNeccessary(MOperationCall operationCall) {
 		// if the post conditions of this operations require a pre state 
 		// require a state copy, create it
-		if (operationCall.hasPostConditions()
-			    && operationCall.getOperation().postConditionsRequirePreState()) {
+		if (isRunningTestSuite 
+			|| operationCall.hasPostConditions()
+			&& operationCall.getOperation().postConditionsRequirePreState()) {
 			
 			operationCall.setPreState(
 					new MSystemState(
@@ -794,7 +803,15 @@ public final class MSystem {
     	return lastOperationCall;
     }
     
-    /**
+    public boolean isRunningTestSuite() {
+		return isRunningTestSuite;
+	}
+
+	public void setRunningTestSuite(boolean isRunningTestSuite) {
+		this.isRunningTestSuite = isRunningTestSuite;
+	}
+
+	/**
      * TODO
      * @return
      */

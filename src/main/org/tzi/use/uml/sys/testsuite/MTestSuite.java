@@ -94,6 +94,7 @@ public class MTestSuite {
 	private MSystem setUp() throws MSystemException, CompilationFailedException {
 		
 		MSystem system = new MSystem(model);
+		system.setRunningTestSuite(true);
 		system.registerPPCHandlerOverride(new PPCHandler() {
 			
 			@Override
