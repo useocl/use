@@ -201,7 +201,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
      * @return Sorted <code>List</code> of the elements of the set.
      */
     public List<Value> getSortedElements() {
-    	//TODO: Check performance of linked list
     	List<Value> result = new ArrayList<Value>(collection());
     	Collections.sort(result);
     	return result;
