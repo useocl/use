@@ -21,10 +21,8 @@
 
 package org.tzi.use.util;
 
-import java.util.Collection;
 import java.util.AbstractCollection;
 import java.util.Iterator;
-import java.util.Arrays;
 
 /**
  * Skeleton for implementations of the Bag interface.
@@ -45,26 +43,22 @@ public abstract class AbstractBag<T> extends AbstractCollection<T> implements Ba
         if (!(o instanceof Bag<?>))
             return false;
         
-        Collection<?> c = (Collection<?>) o;
-        if (c.size() != size()) {
+        Bag<?> otherBag = (Bag<?>) o;
+        if (otherBag.size() != size()) {
             return false;
         }
 
-        // Since the `contains' methods do not work in one way
-        // (e.g. Bag{1,1}=Bag{1,0} `contains' returns true;
-        // Bag{1,0}=Bag{1,1} `contains' returns false). Both Bags are
-        // transformed into an array and are sorted. This way every
-        // value can be compared seperatly.
-        Object[] thisBagAsArray =  toArray();
-        Object[] objBagAsArray = c.toArray();
-        Arrays.sort( thisBagAsArray );
-        Arrays.sort( objBagAsArray );
-        
-        for ( int i=0; i<thisBagAsArray.length; i++ ) {
-            if ( !thisBagAsArray[i].equals( objBagAsArray[i] ) ) {
-                return false;
-            }
+        // Both objects are bags, therefore they are equal
+        // if they
+        // (1) have the same size (already checked)
+        // (2) contain the same elements (3) the same number of times
+        for (T element : this) {
+        	if (!(otherBag.contains(element) && 
+        		  otherBag.occurrences(element) == this.occurrences(element))) {
+        		return false;
+        	}
         }
+
         return true;
     }
 

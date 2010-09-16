@@ -89,7 +89,7 @@ public class TreeBag<T> extends AbstractBag<T> implements Bag<T> {
     /**
      * Returns the number of occurrences of the specified object in this Bag.
      */
-    public int occurrences(T obj) {
+    public int occurrences(Object obj) {
         MutableInteger count = fMap.get(obj);
         if (count == null)
             return 0;

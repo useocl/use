@@ -66,7 +66,7 @@ public interface Bag<T> extends Collection<T> {
      *
      * @exception NullPointerException obj is null.
      */
-    int occurrences(T obj);
+    int occurrences(Object obj);
 
     /**
      * Returns an Iterator over the elements in this Bag. Different
