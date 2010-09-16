@@ -215,11 +215,17 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
     
     public OrderedSetValue asOrderedSet() {
-    	return new OrderedSetValue(elemType(), this.getSortedElements());
+    	if (this.isOrderedSet() || this.isSequence())
+    		return new OrderedSetValue(elemType(), this.collection());
+    	else
+    		return new OrderedSetValue(elemType(), this.getSortedElements());
     }
     
     public SequenceValue asSequence() {
-    	return new SequenceValue(elemType(), this.getSortedElements());
+    	if (this.isOrderedSet() || this.isSequence())
+    		return new SequenceValue(elemType(), this.collection());
+    	else
+    		return new SequenceValue(elemType(), this.getSortedElements());
     }
 }
 
