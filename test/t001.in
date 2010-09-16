@@ -1144,7 +1144,7 @@
 ? Set{'c','ca','cc','a','aa'}->sortedBy(e | e)
 *-> Sequence{'a','aa','c','ca','cc'} : Sequence(String)
 
-? Set{'c','ca','cc','a','aa'}->sortedBy(e | e.size())
+? Set{'c','ca','cc','a','aa'}->sortedBy(e | e)->sortedBy(e | e.size())
 *-> Sequence{'a','c','aa','ca','cc'} : Sequence(String)
 
 ? Bag{4,4,2,3,1,4,6,1,5}->sortedBy(e | e)
