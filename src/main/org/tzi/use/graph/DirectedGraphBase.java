@@ -115,12 +115,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         if (o == null )
             throw new NullPointerException();
 
-        if (fNodes.containsKey(o) )
-            return false;
-        else {
-            fNodes.put(o, new NodeInfo());
-            return true;
-        }
+        return fNodes.put(o, new NodeInfo()) == null;
     }
 
     /**
