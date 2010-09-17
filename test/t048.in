@@ -46,4 +46,3 @@ check
 *  -> false : Boolean
 *checked 2 invariants , 2 failures.
 exit
-

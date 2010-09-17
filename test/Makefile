@@ -19,7 +19,7 @@ all: $(OUTFILES) $(CMDFILES)
 	./mkcmd.pl < $< > $@
 
 %.out: %.in mkout.pl
-	./mkout.pl $(basename $<) < $< > $@
+	./mkout.pl $(basename $<) < $< | dos2unix > $@
 
 test: all $(RESULTFILES)
 
@@ -27,13 +27,12 @@ test-out1: t1.out
 	$(USE) $(basename $<).use $(basename $<).cmd
 
 test-out2: t2.out
-	$(USE) $(basename $<).use $(basename $<).cmd
+	$(USE) $(basename $<).use $(basename $<).cmd 
 
 # Die Zeit, die der Generator benötigt, wird aus dem Ergebnis herausgenommen.
 %.result: %.in %.use %.cmd
 	-rm -f $@
-	unix2dos $<
-	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | diff --strip-trailing-cr --ignore-blank-lines -u $(basename $<).out - > $(basename $<).result
+	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | dos2unix | diff -u --strip-trailing-cr --ignore-blank-lines --ignore-all-space  $(basename $<).out - > $(basename $<).result
 
 clean:
 	rm -f $(RESULTFILES) *~ core
