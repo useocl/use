@@ -39,6 +39,8 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
 
+import com.sun.swing.internal.plaf.metal.resources.metal;
+
 
 /**
  * Holds variables and their values
@@ -96,7 +98,12 @@ public class VariableEnvironment {
 	 */
 	public VariableEnvironment(VariableEnvironment other) {
 		fSystemState = other.fSystemState;
-		fFrames = new ArrayDeque<Map<String, Value>>(other.fFrames);
+		fFrames = new ArrayDeque<Map<String, Value>>();
+		for (Map<String,Value> b : other.fFrames) {
+			Map<String, Value> b1 = new HashMap<String,Value>();
+			b1.putAll(b);
+			fFrames.add(b1);
+		}
 		fCurrentFrame = fFrames.peek();
 		fObjectVisibility = new ArrayDeque<Boolean>(other.fObjectVisibility);
 	}
