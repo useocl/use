@@ -39,8 +39,6 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
 
-import com.sun.swing.internal.plaf.metal.resources.metal;
-
 
 /**
  * Holds variables and their values
