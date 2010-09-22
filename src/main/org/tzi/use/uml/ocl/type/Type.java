@@ -198,6 +198,13 @@ public abstract class Type implements BufferedToString {
         if (type.isVoidType())
         	return this;
         
+        // Collection types have theire own implementation of
+        // getLeastCommonSupertype and have no common type to
+        // simple types
+        if (type.isCollection(true)) {
+        	return null;
+        }
+        
         // determine common supertypes = intersection of all
         // supertypes of all elements
         Set<Type> cs = new HashSet<Type>();
