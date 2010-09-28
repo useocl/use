@@ -28,9 +28,14 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.Symtable;
+import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMultiplicity;
+import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.util.StringUtil;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -46,6 +51,15 @@ public class ASTAssociationEnd extends AST {
     private boolean isUnion = false;
     private List<Token> subsetsRolename = new ArrayList<Token>();
     private List<Token> redefinesRolenames = new ArrayList<Token>();
+    /**
+     * Ost for the optional derive expression
+     */
+    private ASTExpression derivedExpression = null;
+    /**
+     * Saves the generated association end for a second
+     * "compile run".
+     */
+    private MAssociationEnd mAend;
     
     public ASTAssociationEnd(Token name, ASTMultiplicity mult) {
         fName = name;
@@ -115,6 +129,10 @@ public class ASTAssociationEnd extends AST {
     	return redefinesRolenames;
     }
     
+    public void setDerived(ASTExpression exp) {
+    	this.derivedExpression = exp;
+    }
+    
     public MAssociationEnd gen(Context ctx, int kind) throws SemanticException {
         // lookup class at association end in current model
         MClass cls = ctx.model().getClass(fName.getText());
@@ -130,13 +148,49 @@ public class ASTAssociationEnd extends AST {
             fOrdered = false;
         }
         
-        MAssociationEnd aend = ctx.modelFactory().createAssociationEnd(cls, 
-            getRolename(ctx), mult, kind, fOrdered);
+         mAend = ctx.modelFactory().createAssociationEnd(cls, 
+        		 	getRolename(ctx), mult, kind, fOrdered);
 
-        aend.setUnion(this.isUnion);
-        return aend;
+        mAend.setUnion(this.isUnion);
+        return mAend;
     }
 
+    /**
+     * If given generates the expression that is linked to 
+     * this association end as a derive expression.
+     * @param ctx
+     */
+    public void genDerived(Context ctx) throws SemanticException {
+    	if (this.derivedExpression == null) return;
+    	
+    	if (mAend.association().associationEnds().size() == 2) {
+    		// When an association end of a binary association is derived the
+    		// source of the navigation is fixed and can be accesed by self
+    		Symtable vars = ctx.varTable();
+            vars.enterScope();
+            Type otherType = mAend.getAllOtherAssociationEnds().get(0).cls().type();
+            vars.add("self", otherType, null);
+            ctx.exprContext().push("self", otherType);
+    	}
+    	
+    	Expression exp = derivedExpression.gen(ctx);
+    	
+    	// We can ignore redefinition here
+    	if (!exp.type().isSubtypeOf(mAend.getType())) {
+    		throw new SemanticException(derivedExpression.getStartToken(), 
+    				"The type " +
+    				StringUtil.inQuotes(exp.type().toString()) + " of the derive expression at association end " +
+    				StringUtil.inQuotes(mAend.association().toString() + "::" + getRolename(ctx)) + " does not conform to the end type " + StringUtil.inQuotes(mAend.getType()) + ".");
+    	}
+    	
+    	mAend.setDeriveExpression(exp);
+    	
+    	if (mAend.association().associationEnds().size() == 2) {
+    		ctx.varTable().exitScope();
+    		ctx.exprContext().pop();
+    	}
+    }
+    
     public String toString() {
         return (fRolename == null ? "unnamed end on " + getClassName() : fRolename.getText());
     }

@@ -102,11 +102,14 @@ public class ASTAssociation extends AST {
     	
     	MAssociation association = model.getAssociation(this.fName.getText());
 
+    	// if the association could not be generated in the first step
+    	if (association == null) return;
+    	
     	// Check subsetting on every association end    	
 		for (ASTAssociationEnd aEnd : fAssociationEnds) {
 			genSubsetsConstraints(ctx, model, association, aEnd);
-			
 			genRedefinesConstraints(ctx, model, association, aEnd);
+			aEnd.genDerived(ctx);
 		}
     }
 

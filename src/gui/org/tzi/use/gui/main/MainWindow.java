@@ -77,6 +77,7 @@ import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.util.StatusBar;
 import org.tzi.use.gui.util.TextComponentWriter;
+import org.tzi.use.gui.views.AssociationEndsInfo;
 import org.tzi.use.gui.views.CallStackView;
 import org.tzi.use.gui.views.ClassExtentView;
 import org.tzi.use.gui.views.ClassInvariantView;
@@ -358,7 +359,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         mi.setMnemonic('a');
         mi = submenu.add(fActionViewCreateCommandList);
         mi.setMnemonic('i');
-
+        mi = submenu.add(fActionViewAssociationInfo);
+        
         menu.addSeparator();
         mi = menu.add(fActionViewTile);
         mi.setMnemonic('T');
@@ -873,6 +875,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
     private ActionViewCreateCommandList fActionViewCreateCommandList = new ActionViewCreateCommandList();
 
+    private ActionViewAssociationInfo fActionViewAssociationInfo = new ActionViewAssociationInfo();
+    
     private ActionViewTile fActionViewTile = new ActionViewTile();
 
     private ActionViewCloseAll fActionViewCloseAll = new ActionViewCloseAll();
@@ -1560,6 +1564,26 @@ public class MainWindow extends JFrame implements StateChangeListener {
         }
     }
 
+    /**
+     * Creates a new association info view.
+     */
+    private class ActionViewAssociationInfo extends AbstractAction {
+    	ActionViewAssociationInfo() {
+            super("Association ends informations", new ImageIcon(Options.iconDir
+                    + "Association.gif"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+        	AssociationEndsInfo v = new AssociationEndsInfo(MainWindow.this, fSession.system());
+            ViewFrame f = new ViewFrame("Association ends info", v, "Association.gif");
+            JComponent c = (JComponent) f.getContentPane();
+            c.setLayout(new BorderLayout());
+            c.add(new JScrollPane(v), BorderLayout.CENTER);
+            addNewViewFrame(f);
+        }
+    }
+
+    
     /**
      * Close all internal frames.
      */

@@ -151,13 +151,13 @@ public class ASTClass extends AST {
 
     private void checkForInheritanceConflicts(MClass parent) throws SemanticException {
         //check for inheritance conflicts
-        for(MClass op : fClass.parents()) {
+        for(MClass otherParent : fClass.parents()) {
             // check attributes
-            for(MAttribute opa : op.allAttributes()) {
+            for(MAttribute otherParentAttribute : otherParent.allAttributes()) {
                 
-            	for(MAttribute pa : parent.allAttributes()) {
-                    if (pa.name().equals(opa.name()) && !pa.type().equals(opa.type())) {
-                        throw new SemanticException(fName,"Inheritance conflict: attribute " + pa.name() +
+            	for(MAttribute parentAttribute : parent.allAttributes()) {
+                    if (parentAttribute.name().equals(otherParentAttribute.name()) && !parentAttribute.type().equals(otherParentAttribute.type())) {
+                        throw new SemanticException(fName,"Inheritance conflict: attribute " + parentAttribute.name() +
                                 " occurs with different types in the base classes of " + 
                                 fClass.name());
                     }
@@ -165,10 +165,13 @@ public class ASTClass extends AST {
             }
             
             // check operations
-            for(MOperation opo : op.allOperations()) {
-                for(MOperation po : parent.allOperations()) {
-                    if (po.name().equals(opo.name()) && !po.signature().equals(opo.signature())) {
-                        throw new SemanticException(fName,"Inheritance conflict: operation " + po.name() +
+            for(MOperation otherParentOperation : otherParent.allOperations()) {
+                for(MOperation parentOperation : parent.allOperations()) {
+                    if (parentOperation.name().equals(otherParentOperation.name()) && 
+                    	!parentOperation.signature().equals(otherParentOperation.signature()) &&
+                    	// the operations could be overloaded
+                    	!(parentOperation.cls().isSubClassOf(otherParentOperation.cls()) || otherParentOperation.cls().isSubClassOf(parentOperation.cls()))) {
+                        throw new SemanticException(fName,"Inheritance conflict: operation " + parentOperation.name() +
                                 " occurs with different signatures in the base classes of " + 
                                 fClass.name());
                     }

@@ -44,12 +44,15 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MNavigableElement;
+import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.BooleanValue;
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.util.Bag;
@@ -799,8 +802,7 @@ public final class MSystemState {
 	 * 
 	 * @return List(MObject)
 	 */
-	List<MObject> getLinkedObjects(MObject obj, MAssociationEnd srcEnd,
-			MAssociationEnd dstEnd) {
+	List<MObject> getLinkedObjects(MObject obj, MAssociationEnd srcEnd, MAssociationEnd dstEnd) {
 		List<MObject> res = new ArrayList<MObject>();
 
 		// get association
@@ -812,20 +814,43 @@ public final class MSystemState {
 			
 			// add subsetting ends
 			for (MAssociationEnd subsettingDestEnd : dstEnd.getSubsettingEnds()) {
-				
 				// TODO: n-ary!
 				MAssociationEnd subsettingSrcEnd = subsettingDestEnd.getAllOtherAssociationEnds().get(0);
-				tmpResult.addAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
+				// Add only if src end is generalization relationship with cls of obj
+				if (subsettingSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
+					tmpResult.addAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
+				}
 			}
 			
 			// add redefining ends
 			for (MAssociationEnd redefiningDestEnd : dstEnd.getRedefiningEnds()) {
 				MAssociationEnd redefiningSrcEnd = redefiningDestEnd.getAllOtherAssociationEnds().get(0);
-				tmpResult.addAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
+				// Add only if src end is generalization relationship with cls of obj
+				if (redefiningSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(redefiningSrcEnd.cls())) {				
+					tmpResult.addAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
+				}
 			}
 			
 			res.addAll(tmpResult);
 			return res;
+		} else if (dstEnd.isDerived()) {
+			EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null);
+			
+			ctx.pushVarBinding("self", obj.value());
+        	Value evalRes = dstEnd.getDeriveExpression().eval(ctx);
+        	
+        	if (evalRes.isUndefined()) {
+        		return new ArrayList<MObject>();
+        	} else {
+        		CollectionValue col = (CollectionValue)evalRes;
+        		res = new ArrayList<MObject>(col.size());
+        		for (Value v : col) {
+        			ObjectValue oVal = (ObjectValue)v;
+        			res.add(oVal.value());
+        		}
+        		
+        		return res;
+        	}
 		} else {
 			// get link set for association
 			linkSet = fLinkSets.get(assoc);
@@ -868,19 +893,24 @@ public final class MSystemState {
 
 		if (dst.isUnion()) {			
 			Set<MObject> tmpResult = new HashSet<MObject>();
+			// TODO: n-ary!
 			
 			// add subsetting ends
 			for (MAssociationEnd subsettingDestEnd : dst.getSubsettingEnds()) {
-				
-				// TODO: n-ary!
 				MAssociationEnd subsettingSrcEnd = subsettingDestEnd.getAllOtherAssociationEnds().get(0);
-				tmpResult.addAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
+				// Check only if src end is generalization relationship with cls of obj
+				if (subsettingSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
+					tmpResult.addAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
+				}
 			}
 			
 			// add redefining ends
 			for (MAssociationEnd redefiningDestEnd : dst.getRedefiningEnds()) {
 				MAssociationEnd redefiningSrcEnd = redefiningDestEnd.getAllOtherAssociationEnds().get(0);
-				tmpResult.addAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
+				// Check only if src end is generalization relationship with cls of obj
+				if (redefiningSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(redefiningSrcEnd.cls())) {
+					tmpResult.addAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
+				}
 			}
 			
 			res.addAll(tmpResult);

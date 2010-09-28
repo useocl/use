@@ -351,4 +351,15 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 		
 		return result;
 	}
+	
+	@Override
+	public boolean isReadOnly() {
+		if (this.isUnion) return true;
+		
+		for (MAssociationEnd end : fAssociationEnds) {
+			if (end.isDerived()) return true;
+		}
+		
+		return false;
+	}
 }

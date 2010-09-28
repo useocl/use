@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -38,7 +39,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public final class MAssociationEnd extends MModelElementImpl 
-    implements MNavigableElement{
+    implements MNavigableElement {
     
     private MAssociation fAssociation; // Owner of this association end
     private MClass fClass;  // associated class
@@ -56,9 +57,12 @@ public final class MAssociationEnd extends MModelElementImpl
     private Set<MAssociationEnd> redefinedEnds = new HashSet<MAssociationEnd>();
     // All ends this end is redefined by
     private Set<MAssociationEnd> redefiningEnds = new HashSet<MAssociationEnd>();
-
+    // For calculating derived values
+    private Expression deriveExpression = null;
+    
     // For performance reasons
     private int hashCode;
+    
 
     /** 
      * Creates a new association end. 
@@ -205,6 +209,14 @@ public final class MAssociationEnd extends MModelElementImpl
     // IMPLEMENTATION OF MNavigableElement
     //////////////////////////////////////////////////
 
+    /**
+     * Calculates the type if the association end when
+     * navigated to from <code>src</code>. <code>src</code> is required
+     * because redefined ends can change the type of the navigation.
+     * 
+     * @param sourceObjectType
+     * @param src
+     */
     public Type getType( Type sourceObjectType, MNavigableElement src ) {
     	Type t;
     	
@@ -217,7 +229,19 @@ public final class MAssociationEnd extends MModelElementImpl
         if ( src.equals( src.association() ) ) {
             return t;
         }
-        if ( multiplicity().isCollection() ) {
+        
+        return getType(t);
+    }
+
+    /**
+     * Used internally to create a the correct collection 
+     * type (OrderedSet, Set) if multiplicity is greater then 1. 
+     * @param t The Type at the association end (maybe different from <code>cls().type()</code>
+     * 			because of redefinition. 
+     * @return The Type t or a collection with t as element type 
+     */
+    private Type getType(Type t) {
+    	if ( multiplicity().isCollection() ) {
             if ( isOrdered() )
                 t = TypeFactory.mkOrderedSet( t );
             else
@@ -225,9 +249,19 @@ public final class MAssociationEnd extends MModelElementImpl
         } else if ( association().associationEnds().size() > 2 ) {
             t = TypeFactory.mkSet(t);
         }
-        return t;
+    	
+    	return t;
     }
 
+    /**
+     * Returns the type of this association end without taking
+     * redefinition into account.
+     * @return The type at this association end.
+     */
+    public Type getType() {
+    	return this.getType(cls().type());
+    }
+    
 	private Type getRedefinedType(ObjectType sourceObjectType) {
 		Type resultType = null;
 		
@@ -307,6 +341,15 @@ public final class MAssociationEnd extends MModelElementImpl
 		return this.subsettingEnds;
 	}
 
+	public Set<MAssociationEnd> getSubsettingEndsClosure() {
+		Set<MAssociationEnd> closure = new HashSet<MAssociationEnd>();
+		for (MAssociationEnd end : this.subsettingEnds) {
+			closure.add(end);
+			closure.addAll(end.getSubsettingEndsClosure());
+		}
+		return closure;
+	}
+	
 	public void addRedefinedEnd(MAssociationEnd redefinedEnd) {
 		this.redefinedEnds.add(redefinedEnd);		
 	}
@@ -321,5 +364,48 @@ public final class MAssociationEnd extends MModelElementImpl
 	
 	public Set<MAssociationEnd> getRedefiningEnds() {
 		return this.redefiningEnds;
+	}
+
+	/**
+	 * Returns the transitive closure of all
+	 * redefining association ends of this end without this.
+	 * @return
+	 */
+	public Set<MAssociationEnd> getRedefiningEndsClosure() {
+		Set<MAssociationEnd> closure = new HashSet<MAssociationEnd>();
+		for (MAssociationEnd end : this.redefiningEnds) {
+			closure.add(end);
+			closure.addAll(end.getRedefiningEndsClosure());
+		}
+		return closure;
+	}
+	
+	/**
+	 * Sets the expression to calculate the derived value
+	 * of this association end.
+	 * Type has to be checked before!
+	 * @param exp
+	 */
+	public void setDeriveExpression(Expression exp) {
+		this.deriveExpression = exp;
+	}
+	
+	/**
+	 * Returns the expression to calcualte the derived value
+	 * of this association end if any.
+	 * @return Expression to calculate the derived value if present otherwise <code>null</code>
+	 */
+	public Expression getDeriveExpression() {
+		return this.deriveExpression;
+	}
+	
+	/**
+	 * Returns <code>true</code> if the values at this
+	 * association end are calculated by an expression. 
+	 * @return true if this end is derived
+	 * @see MAssociationEnd#getDeriveExpression()
+	 */
+	public boolean isDerived() {
+		return this.deriveExpression != null;
 	}
 }

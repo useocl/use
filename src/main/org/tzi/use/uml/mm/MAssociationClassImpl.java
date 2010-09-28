@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -610,5 +611,20 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 	public Set<MAssociationEnd> getRedefiningEnds() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override 
+	public boolean isDerived() {
+		return false;
+	}
+	
+	@Override
+	public Expression getDeriveExpression() {
+		return null;
+	}
+	
+	@Override
+	public boolean isReadOnly() {
+		return false;
 	}
 }

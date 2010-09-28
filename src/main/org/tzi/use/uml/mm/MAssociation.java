@@ -183,5 +183,14 @@ public interface MAssociation extends MModelElement {
 
 	Set<MAssociation> getRedefines();
 	
-	Set<MAssociation> getRedefinesClosure();	
+	Set<MAssociation> getRedefinesClosure();
+	
+	/**
+	 * True, if links can be inserted into this association otherwise
+	 * false, e.g., an association with a derived union at at least
+	 * one association end is read only.
+	 * 
+	 * @return
+	 */
+	boolean isReadOnly();
 }

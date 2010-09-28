@@ -171,7 +171,7 @@ generalClassDefinition[ASTModel n]
 classDefinition[boolean isAbstract] returns [ASTClass n]
 @init{ List idList; }
 :
-    'class' name=IDENT { $n = new ASTClass($name, $isAbstract); }
+    keyClass name=IDENT { $n = new ASTClass($name, $isAbstract); }
     ( LESS idListRes=idList { $n.addSuperClasses($idListRes.idList); } )?
     ( 'attributes' 
       ( a=attributeDefinition { $n.addAttribute($a.n); } )* 
@@ -230,7 +230,7 @@ associationClassDefinition[boolean isAbstract] returns [ASTAssociationClass n]
       )*
     )?
     ( { t = input.LT(1); }
-      ( 'aggregation' | 'composition' )
+      ( keyAggregation | keyComposition )
       { $n.setKind(t); }
     )?
     'end'
@@ -276,7 +276,7 @@ associationDefinition returns [ASTAssociation n]
 @init{ Token t = null; }
 :
     { t = input.LT(1); }
-    ( keyAssociation | 'aggregation' | 'composition' )
+    ( keyAssociation | keyAggregation | keyComposition )
     //    ( classDefinition | (name:IDENT { n = new ASTAssociation(t, $name); }) )
     name=IDENT { $n = new ASTAssociation(t, $name); }
     'between'
@@ -299,6 +299,7 @@ associationEnd returns [ASTAssociationEnd n]
       | 'subsets' sr=IDENT { $n.addSubsetsRolename($sr); }
       | keyUnion { $n.setUnion(true); }
       | 'redefines' rd=IDENT { $n.addRedefinesRolename($rd); }
+      | 'derived' EQUAL exp=expression { $n.setDerived($exp.n); }
     )*
     ( SEMI )?
     ;
@@ -410,7 +411,15 @@ keyAssociation:
   
 keyRole:
   {input.LT(1).getText().equals("role")}? IDENT ;
+
+keyComposition:
+  {input.LT(1).getText().equals("composition")}? IDENT ;
+
+keyAggregation:
+  {input.LT(1).getText().equals("aggregation")}? IDENT ;
   
+keyClass:
+  {input.LT(1).getText().equals("class")}? IDENT ;
 /*
 --------- Start of file OCLBase.gpart -------------------- 
 */

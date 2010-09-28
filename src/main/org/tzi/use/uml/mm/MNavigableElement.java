@@ -23,6 +23,7 @@ package org.tzi.use.uml.mm;
 
 import java.util.Set;
 
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 
 /**
@@ -45,6 +46,10 @@ public interface MNavigableElement {
 
     boolean isUnion();
     
+    boolean isDerived();
+    
+    Expression getDeriveExpression();
+    	
     void setUnion(boolean newValue);
     
     Set<MAssociationEnd> getSubsettingEnds();

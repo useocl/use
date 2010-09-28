@@ -65,7 +65,6 @@ public final class ExpNavigation extends Expression {
         // (1) c if the multiplicity is max. one and this is binary association
         // (2) Set(c) if the multiplicity is greater than 1 
         // (3) OrderedSet(c) if the association end is marked as {ordered}
-
         setResultType( dst.getType( objExp.type(), src ) );
 
         fSrc = src;
@@ -88,31 +87,46 @@ public final class ExpNavigation extends Expression {
             ObjectValue objVal = (ObjectValue) val;
             MObject obj = objVal.value();
             MSystemState state = isPre() ? ctx.preState() : ctx.postState();
-            
-            // get objects at association end
-            List<MObject> objList = obj.getNavigableObjects(state, fSrc, fDst);
             Type resultType = type();
-            if (resultType.isTrueObjectType() ) {
-                if (objList.size() > 1 )
-                    throw new MultiplicityViolationException(
-                        "expected link set size 1 at " + 
-                        "association end `" + fDst + 
-                        "', found: " + 
-                        objList.size());
-                if (objList.size() == 1 ) {
-                    obj = objList.get(0);
-                    if (obj.exists(state) )
-                        res = new ObjectValue((ObjectType) type(), obj);
-                }
-            } else if (resultType.isSet() ) {
-                res = new SetValue(((SetType) resultType).elemType(), 
-                                   oidsToObjectValues(state, objList));
-            } else if (resultType.isOrderedSet() ) {
-                res = new OrderedSetValue(((OrderedSetType) resultType).elemType(), 
-                                        oidsToObjectValues(state, objList));
-            } else
-                throw new RuntimeException("Unexpected association end type `" + 
-                                           resultType + "'");
+            
+            // if dst is derived evaluate the derive expression with obj as source
+            // TODO: calculate the opposite direction T.allInstances()->select(t | t.deriveExpression->includes(self))
+            if (fDst.isDerived()) {
+            	ctx.pushVarBinding("self", objVal);
+            	res = fDst.getDeriveExpression().eval(ctx);
+            	
+            	if (val.isUndefined()) {
+            		if (resultType.isSet()) {
+            			res = new SetValue(((SetType) resultType).elemType());
+            		} else if (resultType.isOrderedSet()) {
+            			res =  new OrderedSetValue(((OrderedSetType) resultType).elemType());
+            		}
+            	}
+            } else {  
+	            // get objects at association end
+	            List<MObject> objList = obj.getNavigableObjects(state, fSrc, fDst);
+	            if (resultType.isTrueObjectType() ) {
+	                if (objList.size() > 1 )
+	                    throw new MultiplicityViolationException(
+	                        "expected link set size 1 at " + 
+	                        "association end `" + fDst + 
+	                        "', found: " + 
+	                        objList.size());
+	                if (objList.size() == 1 ) {
+	                    obj = objList.get(0);
+	                    if (obj.exists(state) )
+	                        res = new ObjectValue((ObjectType) type(), obj);
+	                }
+	            } else if (resultType.isSet() ) {
+	                res = new SetValue(((SetType) resultType).elemType(), 
+	                                   oidsToObjectValues(state, objList));
+	            } else if (resultType.isOrderedSet() ) {
+	                res = new OrderedSetValue(((OrderedSetType) resultType).elemType(), 
+	                                        oidsToObjectValues(state, objList));
+	            } else
+	                throw new RuntimeException("Unexpected association end type `" + 
+	                                           resultType + "'");
+            }
         }
 
         ctx.exit(this, res);
