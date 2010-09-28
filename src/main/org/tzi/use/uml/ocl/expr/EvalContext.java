@@ -50,6 +50,11 @@ public class EvalContext {
     /**
      * Creates new evaluation context. The parameter preState may be
      * null in which case it is set to postState.
+     * @param preState the pre <code>MSystemState</code> for the evaluation. May be <code>null</code>
+     * @param postState the current <code>MSystemState</code> for the evaluation
+     * @param globalBindings the global <code>VarBindings</code>
+     * @param evalLog <code>PrintWriter</code> to print evaluation informations. May be <code>null</code>
+     * @param evalLogIndent used indent for the output, e.g., "   "
      */
     public EvalContext(MSystemState preState,
                 MSystemState postState,
@@ -64,7 +69,15 @@ public class EvalContext {
         fEvalLogIndent = evalLogIndent;
     }
     
-    
+    /**
+     * Creates new evaluation context. The parameter preState may be
+     * null in which case it is set to postState.
+     * A default of two spaces for indent of evaluation log is used.
+     * @param preState the pre <code>MSystemState</code> for the evaluation. May be <code>null</code>
+     * @param postState the current <code>MSystemState</code> for the evaluation
+     * @param globalBindings the global <code>VarBindings</code>
+     * @param evalLog <code>PrintWriter</code> to print evaluation informations. May be <code>null</code>
+     */
     public EvalContext(MSystemState preState,
             MSystemState postState,
             VarBindings globalBindings,

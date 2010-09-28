@@ -692,8 +692,11 @@ public class NewObjectDiagram extends DiagramView
             boolean addedInsertLinkAction = false;
             
             for (MAssociation assoc : fParent.system().model().associations()) {
-                int n = assoc.associationEnds().size();
-                if (m>n) continue;
+                if (assoc.isReadOnly()) continue;
+                
+            	int n = assoc.associationEnds().size();
+                // More objects then ends selected
+            	if (m > n) continue;
                 
                 int pow = 1;
                 for(int i=0; i < n; ++i) 

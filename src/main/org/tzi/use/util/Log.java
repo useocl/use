@@ -123,11 +123,11 @@ public final class Log {
      * Sets debug flag. Determines whether debug messages are printed.
      */
     public static void setDebug(boolean onOff) {
-	fDebug = onOff;
+    	fDebug = onOff;
     }
 
     public static boolean isDebug() {
-	return fDebug;
+    	return fDebug;
     }
 
     public static PrintStream out() {

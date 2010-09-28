@@ -91,7 +91,7 @@ import org.tzi.use.util.NullWriter;
  */
 @SuppressWarnings("serial")
 public class ClassExtentView extends JPanel implements View, ActionListener {
-    // private MainWindow fMainWindow;
+
     private MSystem fSystem;
 
     private MClass fClass;
@@ -109,7 +109,6 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
     public ClassExtentView(MainWindow parent, MSystem system) {
         super(new BorderLayout());
 
-        // fMainWindow = parent;
         fSystem = system;
         fSystem.addChangeListener(this);
 
