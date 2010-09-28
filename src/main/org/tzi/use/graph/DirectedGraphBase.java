@@ -140,10 +140,27 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
             return false;
         
         NodeInfo ni = getNodeInfo(o);
+
+        // remove incoming edges from graph and node info 
+        for (E edge : ni.fIncomingEdges) {
+        	// we ignore reflexive edges because 
+        	// the node info is removed from the graph        	
+        	if (!edge.isReflexive()) {
+        		getNodeInfo(edge.source()).removeOutgoingEdge(edge);
+        	}
+        	fEdges.remove(edge);
+        }
         
-        // remove incident edges
-        fEdges.removeAll(ni.fIncomingEdges);
-        fEdges.removeAll(ni.fOutgoingEdges);
+        // remove outgoing edges from graph and node info
+        for (E edge : ni.fOutgoingEdges) {
+        	// we ignore reflexive edges because 
+        	// the node info is removed from the graph        	
+        	if (!edge.isReflexive()) {
+        		getNodeInfo(edge.target()).removeIncomingEdge(edge);
+        	}
+        	fEdges.remove(edge);
+        }
+                
         fNodes.remove(o);
         
         return true;
