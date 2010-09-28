@@ -199,4 +199,9 @@ public class ClassNode extends NodeBase implements SortChangeListener {
             }
         }
     }
+    
+    @Override
+    public String toString() {
+    	return fClass.name() + "(ClassNode)";
+    }
 }
