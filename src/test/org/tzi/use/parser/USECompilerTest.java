@@ -286,6 +286,8 @@ public class USECompilerTest extends TestCase {
             }
         } catch (IOException ex) {
             ok = false;
+        } catch (IndexOutOfBoundsException ex) {
+        	ok = false;
         }
         return ok;
     }
