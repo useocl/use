@@ -51,7 +51,11 @@
   <available file="${intern.dir}" type="dir" property="intern.dir.present"/>
 
   <condition property="os.windows">
-    <os family="windows"/>
+  	<os family="windows"/>
+  </condition>
+
+  <condition property="os.mac">
+	<os family="mac" />
   </condition>
 
   <!-- perform all major targets. Should be done before a checkin to
@@ -389,12 +393,15 @@
     <condition property="nativelib.needcompile">
       <and>
         <!-- no readline on windows -->
-				<not>
-					<isset property="nativelib.uptodate" />
-				</not>
-				<not>
-					<isset property="os.windows" />
-				</not>
+		<not>
+			<isset property="nativelib.uptodate" />
+		</not>
+		<not>
+			<or>
+				<isset property="os.windows" />
+				<isset property="os.mac" />
+			</or>
+		</not>
       </and>
     </condition>
   </target>
