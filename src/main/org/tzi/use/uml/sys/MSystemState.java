@@ -36,6 +36,7 @@ import org.tzi.use.config.Options;
 import org.tzi.use.gen.model.GFlaggedInvariant;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
+import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -851,6 +852,54 @@ public final class MSystemState {
         		
         		return res;
         	}
+        } else if (dstEnd.getAllOtherAssociationEnds().size() == 1 && 
+        		   dstEnd.getAllOtherAssociationEnds().get(0).isDerived()) {
+	       /* The opposite side of a derived end of a binary association can be calculated:
+	     	   T = 
+	     	   T.allInstances()->select(t | t.deriveExpression->includes(self))
+	     	   
+	     	*/
+        	EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null);
+						
+	     	MClass endClass = dstEnd.cls();
+	     	MNavigableElement otherEnd = dstEnd.getAllOtherAssociationEnds().get(0);
+	     	StringBuilder query = new StringBuilder();
+	     	query.append(endClass.name()).append(".allInstances()->select(self | ");
+	     	otherEnd.getDeriveExpression().toString(query);
+	     	query.append("->includes(sourceObject)");
+	     	query.append(")");
+	     	
+	     	ctx.pushVarBinding("sourceObject", obj.value());
+	     	
+	     	Expression linkExpression = OCLCompiler.compileExpression(
+	     			ctx.postState().system().model(), 
+	     			query.toString(), 
+	     			"opposite derived end", 
+	     			new PrintWriter(Log.out()),
+	     			ctx.varBindings());
+	     	
+	     	if (linkExpression == null) {
+	     		Log.error("Calculated opposite derive expression had compile errors!");
+	     		return new ArrayList<MObject>();
+	     	}
+	     	
+	     	Value expResult; 
+	     	expResult = linkExpression.eval(ctx);
+	     	
+	     	if (expResult.isUndefined()) {
+	     		return new ArrayList<MObject>();
+	     	} else {
+        		CollectionValue col = (CollectionValue)expResult;
+        		res = new ArrayList<MObject>(col.size());
+        		for (Value v : col) {
+        			ObjectValue oVal = (ObjectValue)v;
+        			res.add(oVal.value());
+        		}
+        		
+        		return res;
+        	}
+	     	
+	     	
 		} else {
 			// get link set for association
 			linkSet = fLinkSets.get(assoc);

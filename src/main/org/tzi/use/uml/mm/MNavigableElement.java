@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.mm;
 
+import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -46,8 +47,17 @@ public interface MNavigableElement {
 
     boolean isUnion();
     
+    /**
+     * Returns true, if this navigable element is derived.
+     * That is it has a derive expression.
+     * @return
+     */
     boolean isDerived();
     
+    /**
+     * Returns the derive expression of this navigable end if any
+     * @return
+     */
     Expression getDeriveExpression();
     	
     void setUnion(boolean newValue);
@@ -55,6 +65,8 @@ public interface MNavigableElement {
     Set<MAssociationEnd> getSubsettingEnds();
     
     Set<MAssociationEnd> getRedefiningEnds();
+    
+    public List<MAssociationEnd> getAllOtherAssociationEnds();
     
     public boolean equals( Object obj );
 

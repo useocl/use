@@ -133,6 +133,10 @@ public class ASTAssociationEnd extends AST {
     	this.derivedExpression = exp;
     }
     
+    public boolean isDerived() {
+    	return derivedExpression != null;
+    }
+    
     public MAssociationEnd gen(Context ctx, int kind) throws SemanticException {
         // lookup class at association end in current model
         MClass cls = ctx.model().getClass(fName.getText());
@@ -161,17 +165,13 @@ public class ASTAssociationEnd extends AST {
      * @param ctx
      */
     public void genDerived(Context ctx) throws SemanticException {
-    	if (this.derivedExpression == null) return;
+    	if (!this.isDerived()) return;
     	
-    	if (mAend.association().associationEnds().size() == 2) {
-    		// When an association end of a binary association is derived the
-    		// source of the navigation is fixed and can be accesed by self
-    		Symtable vars = ctx.varTable();
-            vars.enterScope();
-            Type otherType = mAend.getAllOtherAssociationEnds().get(0).cls().type();
-            vars.add("self", otherType, null);
-            ctx.exprContext().push("self", otherType);
-    	}
+		Symtable vars = ctx.varTable();
+        vars.enterScope();
+        Type otherType = mAend.getAllOtherAssociationEnds().get(0).cls().type();
+        vars.add("self", otherType, null);
+        ctx.exprContext().push("self", otherType);
     	
     	Expression exp = derivedExpression.gen(ctx);
     	
@@ -185,10 +185,8 @@ public class ASTAssociationEnd extends AST {
     	
     	mAend.setDeriveExpression(exp);
     	
-    	if (mAend.association().associationEnds().size() == 2) {
-    		ctx.varTable().exitScope();
-    		ctx.exprContext().pop();
-    	}
+		ctx.varTable().exitScope();
+		ctx.exprContext().pop();
     }
     
     public String toString() {

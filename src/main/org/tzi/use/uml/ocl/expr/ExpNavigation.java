@@ -21,8 +21,11 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import java.io.PrintWriter;
 import java.util.List;
 
+import org.tzi.use.parser.ocl.OCLCompiler;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.OrderedSetType;
@@ -36,6 +39,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.util.Log;
 
 /**
  * Navigation expression from one class to another.
@@ -90,12 +94,49 @@ public final class ExpNavigation extends Expression {
             Type resultType = type();
             
             // if dst is derived evaluate the derive expression with obj as source
-            // TODO: calculate the opposite direction T.allInstances()->select(t | t.deriveExpression->includes(self))
             if (fDst.isDerived()) {
             	ctx.pushVarBinding("self", objVal);
             	res = fDst.getDeriveExpression().eval(ctx);
             	
-            	if (val.isUndefined()) {
+            	if (res.isUndefined()) {
+            		if (resultType.isSet()) {
+            			res = new SetValue(((SetType) resultType).elemType());
+            		} else if (resultType.isOrderedSet()) {
+            			res =  new OrderedSetValue(((OrderedSetType) resultType).elemType());
+            		}
+            	}
+            } else if (fDst.getAllOtherAssociationEnds().size() == 1 && 
+            		   fDst.getAllOtherAssociationEnds().get(0).isDerived()) {
+            	/* The opposite side of a derived end of a binary association can be calculated:
+            	   T = 
+            	   T.allInstances()->select(t | t.deriveExpression->includes(self))
+            	   
+            	*/
+            	MClass endClass = fDst.cls();
+            	MNavigableElement otherEnd = fDst.getAllOtherAssociationEnds().get(0);
+            	StringBuilder query = new StringBuilder();
+            	query.append(endClass.name()).append(".allInstances()->select(self | ");
+            	otherEnd.getDeriveExpression().toString(query);
+            	query.append("->includes(sourceObject)");
+            	query.append(")");
+            	
+            	ctx.pushVarBinding("sourceObject", objVal);
+            	
+            	Expression linkExpression = OCLCompiler.compileExpression(
+            			ctx.postState().system().model(), 
+            			query.toString(), 
+            			"opposite derived end", 
+            			new PrintWriter(Log.out()),
+            			ctx.varBindings());
+            	
+            	if (linkExpression == null) {
+            		Log.error("Calculated opposite derive expression had compile errors!");
+            		return UndefinedValue.instance;
+            	}
+            	
+            	res = linkExpression.eval(ctx);
+            	
+            	if (res.isUndefined()) {
             		if (resultType.isSet()) {
             			res = new SetValue(((SetType) resultType).elemType());
             		} else if (resultType.isOrderedSet()) {

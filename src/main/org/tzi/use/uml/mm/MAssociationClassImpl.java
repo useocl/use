@@ -627,4 +627,13 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 	public boolean isReadOnly() {
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MNavigableElement#getAllOtherAssociationEnds()
+	 */
+	@Override
+	public List<MAssociationEnd> getAllOtherAssociationEnds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

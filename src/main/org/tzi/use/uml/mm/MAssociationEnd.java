@@ -305,6 +305,8 @@ public final class MAssociationEnd extends MModelElementImpl
     }
 
     /**
+     * Returns the list of all other association ends participating
+     * in the same association.
      * @return List(MAssociatioEnd)
      */
     public List<MAssociationEnd> getAllOtherAssociationEnds() {

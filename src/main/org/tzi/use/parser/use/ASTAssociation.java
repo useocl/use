@@ -62,6 +62,8 @@ public class ASTAssociation extends AST {
     public MAssociation gen(Context ctx, MModel model) 
         throws SemanticException 
     {
+    	checkDerive();
+    	
         MAssociation assoc = ctx.modelFactory().createAssociation(fName.getText());
         
         // sets the line position of the USE-Model in this association
@@ -76,7 +78,7 @@ public class ASTAssociation extends AST {
 
         try {
             for (ASTAssociationEnd ae : fAssociationEnds) {
-                // kind of association determines kind of first
+            	// kind of association determines kind of first
                 // association end
                 MAssociationEnd aend = ae.gen(ctx, kind);
                 assoc.addAssociationEnd(aend);
@@ -113,6 +115,19 @@ public class ASTAssociation extends AST {
 		}
     }
 
+    private void checkDerive() throws SemanticException {
+    	// We only allow redefine on one end of a binary association
+		if (fAssociationEnds.size() > 2) {
+			throw new SemanticException(fName, "A derive expressions on an association end is only allowed on binary associations.");
+		}
+		
+		// We know it is binary
+		if ( fAssociationEnds.get(0).isDerived()  &&
+			 fAssociationEnds.get(1).isDerived() ) {
+			throw new SemanticException(fName, "Only one association end can be derived. One direction is always calculated by USE.");
+		}
+    }
+    
 	private void genSubsetsConstraints(Context ctx, MModel model,
 			MAssociation association, ASTAssociationEnd aEnd)
 			throws SemanticException {
