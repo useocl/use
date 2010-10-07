@@ -105,7 +105,8 @@ public final class ExpNavigation extends Expression {
             			res =  new OrderedSetValue(((OrderedSetType) resultType).elemType());
             		}
             	}
-            } else if (fDst.getAllOtherAssociationEnds().size() == 1 && 
+            } else if (fDst.getAllOtherAssociationEnds() != null &&
+            		   fDst.getAllOtherAssociationEnds().size() == 1 && 
             		   fDst.getAllOtherAssociationEnds().get(0).isDerived()) {
             	/* The opposite side of a derived end of a binary association can be calculated:
             	   T = 
