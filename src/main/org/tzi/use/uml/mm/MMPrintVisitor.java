@@ -192,7 +192,16 @@ public class MMPrintVisitor implements MMVisitor {
         	result.append(ws());
         	result.append(keyword("ordered"));
         }
-                
+        
+        if (e.isDerived()) {
+        	result.append(ws());
+        	result.append(keyword("derived"));
+        	result.append(ws());
+        	result.append(other("="));
+        	result.append(ws());
+        	e.getDeriveExpression().toString(result);
+        }
+        	
         println(result.toString());
     }
 

@@ -318,15 +318,15 @@ public class ModelBrowser extends JPanel
      * Displays info about the selected model element in the HTML pane.
      */
     private void displayInfo(MModelElement element) {
-	IPluginMModelExtensionPoint modelExtensionPoint = (IPluginMModelExtensionPoint) fPluginRuntime
-		.getExtensionPoint("model");
-        StringWriter sw = new StringWriter();
-        sw.write("<html><head>");
-        sw.write("<style> <!-- body { font-family: sansserif; } --> </style>");
-        sw.write("</head><body><font size=\"-1\">");
-
-	IPluginMMVisitor v = modelExtensionPoint.createMMHTMLPrintVisitor(
-		new PrintWriter(sw), this);
+		IPluginMModelExtensionPoint modelExtensionPoint = (IPluginMModelExtensionPoint) fPluginRuntime
+			.getExtensionPoint("model");
+	        StringWriter sw = new StringWriter();
+	        sw.write("<html><head>");
+	        sw.write("<style> <!-- body { font-family: sansserif; } --> </style>");
+	        sw.write("</head><body><font size=\"-1\">");
+	
+		IPluginMMVisitor v = modelExtensionPoint.createMMHTMLPrintVisitor(
+			new PrintWriter(sw), this);
 
         element.processWithVisitor(v);
 
