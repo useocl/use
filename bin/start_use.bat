@@ -42,7 +42,7 @@ for %%i in (%BASEDIR%\build\lib\*.jar) do call %BASEDIR%\bin\lcp.bat "%%i"
 for %%i in (%BASEDIR%\lib\*.jar) do call %BASEDIR%\bin\lcp.bat "%%i"
 
 :runApp
-set VM_ARGS=-cp %LOCALCLASSPATH% -Xms128m -Xmx512m
+set VM_ARGS=-cp %LOCALCLASSPATH% -Xms128m -Xmx512m -Xss20m
 java %VM_ARGS% org.tzi.use.main.Main -H=%BASEDIR% -nr %CMD_LINE_ARGS%
 
 set LOCALCLASSPATH=

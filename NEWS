@@ -15,6 +15,18 @@ Please send bug reports to mk@informatik.uni-bremen.de. See the file
   but the link is created. When using "check structure now" (GUI) or "check" (commandline) the
   invalid links are reported as errors.
 
+* [CMD] USE now has a new action language called SOIL (simple OCL based imperative language)
+  which allows to use procedural statements in the command line and inside operations.
+
+* [UML] Association ends can be marked with the constraints subsets, union, redefines.
+
+* [UML] Association ends from binary associations can be derived.
+
+* [GUI] New view "Association end information" to get an overview of dependencies between 
+  associations and their subsets, union, redefines relations.
+
+*
+  
 
 ** Changes since version 2.4.0
 * [OCL] The collection type OrderedSet is now supported.

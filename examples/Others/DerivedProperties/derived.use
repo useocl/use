@@ -1,0 +1,19 @@
+model Derived
+
+class A
+end
+
+class B
+	attributes
+		value : Integer
+end
+
+association AllLinks between
+	A[0..*] role allAs
+	B[*] role allBs
+end
+
+association SmallBs between
+	A[0..1] role aOfSmallB subsets allAs
+	B[*] role smallBs subsets allBs derived = self.allBs->select(b | b.value < 10)
+end
