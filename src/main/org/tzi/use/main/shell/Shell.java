@@ -661,13 +661,10 @@ public final class Shell implements Runnable, PPCHandler {
         String filename = "USEMonitor.java";
         PrintWriter out = null;
         try {
-            if (filename == null)
-                out = new PrintWriter(System.out);
-            else {
-                out = new PrintWriter(new BufferedWriter(new FileWriter(
-                        filename)));
-                Log.verbose("writing file `" + filename + "'...");
-            }
+            out = new PrintWriter(new BufferedWriter(new FileWriter(
+                    filename)));
+            Log.verbose("writing file `" + filename + "'...");
+            
             new MonitorAspectGenerator(out, system.model()).write();
             Log.verbose("done.");
         } catch (IOException ex) {
