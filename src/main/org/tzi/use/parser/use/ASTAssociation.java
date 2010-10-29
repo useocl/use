@@ -116,14 +116,18 @@ public class ASTAssociation extends AST {
     }
 
     private void checkDerive() throws SemanticException {
+    	int derived = 0;
+    	for (ASTAssociationEnd aend : fAssociationEnds) {
+    		if (aend.isDerived()) derived++;
+    	}
+    	
     	// We only allow redefine on one end of a binary association
-		if (fAssociationEnds.size() > 2) {
+		if (derived > 0 && fAssociationEnds.size() > 2) {
 			throw new SemanticException(fName, "A derive expressions on an association end is only allowed on binary associations.");
 		}
 		
 		// We know it is binary
-		if ( fAssociationEnds.get(0).isDerived()  &&
-			 fAssociationEnds.get(1).isDerived() ) {
+		if ( derived > 1 ) {
 			throw new SemanticException(fName, "Only one association end can be derived. One direction is always calculated by USE.");
 		}
     }
