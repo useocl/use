@@ -300,9 +300,18 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 			if (val.isCollection()) {
 				CollectionValue col = (CollectionValue)val;
 				
+				// If the element type is OclAny it is still possible
+				// that all elements are object types.
 				if (!col.elemType().isObjectType()) {
-					validResult = false;
-				} else {
+					for (Value elem : col.collection()) {
+						if (!elem.isObject()) {
+							validResult = false;
+							break;
+						}
+					}
+				}
+				
+				if (validResult) {
 					for (Value objVal : col.collection()) {
 						objects.add(((ObjectValue)objVal).value());
 					}
