@@ -3,7 +3,7 @@
 <project name="use" default="build" basedir=".">
   <description>Build file for USE</description>
 	
-  <property name="release.version" value="3.0.0RC1"/>
+  <property name="release.version" value="3.0.0RC2"/>
   
   <!-- set release name to "use-x.y.z" -->
   <property name="release.name"       value="${ant.project.name}-${release.version}"/>
@@ -313,7 +313,7 @@
   <!-- compile USE sources -->
   <target name="compile-use" depends="compile-use-runtime, test-classcycles" />
 
-  <target name="compile-use-main" depends="create-parser">
+  <target name="compile-use-main" depends="create-parser, setversion">
     <mkdir dir="${build.classes.dir}"/>
     <javac srcdir="${src.main.dir}:${src.runtime.dir}:${src.gui.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off" 
@@ -352,6 +352,15 @@
 	</javac>
   </target>
 
+  <target name="setversion">
+  	<replaceregexp
+  		file="${src.main.dir}/org/tzi/use/config/Options.java"
+  		match='RELEASE_VERSION = ".*"'
+  		replace='RELEASE_VERSION = "${release.version}"'
+  		>
+  	</replaceregexp>
+  </target>
+  	
   <!-- create USE jar -->
   <target name="jar-use" depends="compile-use">
     <mkdir dir="${build.lib.dir}"/>
@@ -453,8 +462,7 @@
   </target>
 
   <!-- create all jars -->
-
-	<target name="build" depends="jar-use, create-nativelib" description="build everything " />
+  <target name="build" depends="jar-use, create-nativelib" description="build everything " />
 
 
   <!-- delete the build tree -->
