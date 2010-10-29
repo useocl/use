@@ -1354,4 +1354,16 @@
 ? let x=1 in let x=2 in let x=3 in x
 *-> 3 : Integer
 
+? 42.oclIsKindOf(OclVoid)
+*-> false : Boolean
+
+? '123'.oclIsKindOf(OclVoid)
+*-> false : Boolean
+
+? 42.0.oclIsKindOf(OclVoid)
+*-> false : Boolean
+
+? true.oclIsKindOf(OclVoid)
+*-> false : Boolean
+
 exit
