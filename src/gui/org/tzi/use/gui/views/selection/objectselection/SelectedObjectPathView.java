@@ -146,6 +146,8 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 					for (MObject object : linkedobjects) {
 						if (!result.containsKey(object)) {
 							result.put(object, new Integer(depth));
+							// Check objects reachable by this object
+							buffer.add(object);
 						}
 					}
 				}
