@@ -21,10 +21,10 @@ operations
 
 birth(aName:String, aGender:Gender)
 begin
-  set self.name    := aName;
-  set self.gender  := aGender;
-  set self.civstat := #single;
-  set self.alive   := true
+  self.name    := aName;
+  self.gender  := aGender;
+  self.civstat := #single;
+  self.alive   := true
 end
 
 pre  freshUnlinkedPerson: 
@@ -52,8 +52,8 @@ begin
   else
     insert (aSpouse, self) into Marriage
   end;
-  set self.civstat    := #married;
-  set aSpouse.civstat := #married
+  self.civstat    := #married;
+  aSpouse.civstat := #married
 end
 
 pre  aSpouseDefined:   aSpouse.isDefined
@@ -80,8 +80,8 @@ begin
   
   --spouse := self;
   spouse := self.spouse();
-  set self.civstat          := #divorced;
-  set spouse.civstat := #divorced;
+  self.civstat          := #divorced;
+  spouse.civstat := #divorced;
   if (self.gender = #female) then
     delete (self, spouse) from Marriage
   else
@@ -108,9 +108,9 @@ post wifeDivorced:   gender = #male implies
 					   
 death()
 begin
-  set self.alive := false;
+  self.alive := false;
   if (self.civstat = #married) then
-    set self.spouse().civstat := #widowed;
+    self.spouse().civstat := #widowed;
 	if (self.gender = #female) then
 	  delete (self, self.spouse()) from Marriage
 	else
