@@ -1,4 +1,0 @@
-!! ibm := new Company
-!! joe := new Person
-!! set joe.name := 'Joe'
-!! set joe.age := 23
