@@ -1,0 +1,47 @@
+!create IBM : Company
+!set IBM.name := 'International Business Machines'
+
+!create Programming : Qualification
+!create Documentation : Qualification
+!create Medicine : Qualification
+
+!create MediAid : Project
+!set MediAid.name := 'Medi Aid'
+!set MediAid.size := #big
+!set MediAid.status := #active
+!insert (IBM,MediAid) into CarriesOut
+
+!create Tetris2 : Project
+!set Tetris2.name := 'Tetris 2.0'
+!set Tetris2.size := #small
+!set Tetris2.status := #active
+!insert (IBM,Tetris2) into CarriesOut
+
+!insert (MediAid, Programming) into Requires
+!insert (MediAid, Documentation) into Requires
+!insert (MediAid, Medicine) into Requires
+
+!insert (Tetris2, Programming) into Requires
+!insert (Tetris2, Documentation) into Requires
+
+!create Ada : Worker
+!set Ada.nickname := 'Ada Amazing'
+!insert (Ada,Programming) into IsQualified
+!insert (Ada,Medicine) into IsQualified
+
+!create Bob : Worker
+!set Bob.nickname := 'Bob the Builder'
+!insert (Bob,Programming) into IsQualified
+!insert (Bob,Documentation) into IsQualified
+
+!create Cher : Worker
+!insert (Cher,Documentation) into IsQualified
+!insert (Cher,Medicine) into IsQualified
+
+!insert (IBM,Ada) into Employs
+!insert (IBM,Bob) into Employs
+!insert (IBM,Cher) into Employs
+
+!insert (MediAid,Ada) into Member
+!insert (MediAid,Cher) into Member
+!insert (Tetris2,Bob) into Member

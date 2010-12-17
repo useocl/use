@@ -1,0 +1,13 @@
+!create IBM : Company
+!IBM.name := 'International Business Machines'
+
+!create Programming : Qualification
+!create Documentation : Qualification
+!create Medicine : Qualification
+
+!Ada := IBM.createWorker(Set{Programming,Documentation,Medicine})
+!Bob := IBM.createWorker(Set{Programming,Documentation})
+!Cher := IBM.createWorker(Set{Documentation,Medicine})
+
+!MediAid := IBM.createProject('Medi Aid', Set{Ada,Bob},Set{Programming,Documentation,Medicine},#big)
+!Tetris2 := IBM.createProject('Tetris 2.0', Set{Bob, Cher},Set{Programming,Documentation},#small)
