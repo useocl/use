@@ -42,7 +42,7 @@ public final class ExpIf extends Expression {
         throws ExpInvalidException
     {
         // result type is type of then/else branch (must be identical)
-        super(thenExp.type(), condition, thenExp, elseExp);
+        super(thenExp.type().getLeastCommonSupertype(elseExp.type()), condition, thenExp, elseExp);
         fCondition = condition;
         fCondition.assertBoolean();
         fThenExp = thenExp;
@@ -50,7 +50,7 @@ public final class ExpIf extends Expression {
          
         if (fThenExp.type().getLeastCommonSupertype(fElseExp.type()) == null)
             throw new ExpInvalidException(
-                                          "Branches of if expression have different type, " +
+                                          "Branches of if expression have different unrelated types, " +
                                           "found `" + fThenExp.type() + 
                                           "' and `" + fElseExp.type() + "'.");
     }
