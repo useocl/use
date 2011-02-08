@@ -12,8 +12,10 @@ public class StandardOperationsAny {
 		// generic operations on all types
 		OpGeneric.registerOperation(new Op_equal(), opmap);
 		OpGeneric.registerOperation(new Op_notequal(), opmap);
-		OpGeneric.registerOperation(new Op_isDefined(), opmap);
-		OpGeneric.registerOperation(new Op_isUndefined(), opmap);
+		OpGeneric.registerOperation(new Op_isDefined(), opmap);;
+		OpGeneric op = new Op_isUndefined();
+		OpGeneric.registerOperation(op, opmap);;
+		OpGeneric.registerOperation("oclIsUndefined", op, opmap);
 	}
 }
 
