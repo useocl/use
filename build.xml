@@ -38,7 +38,7 @@
   <property name="use-gui.jar"        location="${build.lib.dir}/use-gui.jar"/>
   <property name="use-runtime.jar" location="${build.lib.dir}/use-runtime.jar" />
 
-  <property name="antlr.jar"          location="${lib.dir}/antlr-3.1.3.jar"/>
+  <property name="antlr.jar"          location="${lib.dir}/antlr-3.3.jar"/>
   <property name="junit.jar"          location="${lib.dir}/junit.jar"/>
   <property name="gsbase.jar"         location="${lib.dir}/gsbase.jar"/>
   <property name="checkstyle.jar"     location="${lib.dir}/checkstyle-all-3.4.jar"/>
