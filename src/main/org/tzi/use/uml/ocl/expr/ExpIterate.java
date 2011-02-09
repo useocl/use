@@ -47,10 +47,6 @@ public class ExpIterate extends ExpQuery {
         super(accuInitializer.type(), elemVarDecls, rangeExp, queryExp);
         fAccuInitializer = accuInitializer;
 
-        if (accuInitializer == null )
-            throw new ExpInvalidException(
-                                          "Need an accumulator declaration.");
-
         if (elemVarDecls.containsName(accuInitializer.name()) ) 
             throw new ExpInvalidException("Redefinition of variable `" + 
                                           accuInitializer.name() + "'.");
