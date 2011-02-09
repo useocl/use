@@ -1,0 +1,8 @@
+<extensions>
+  <operation source="Real" name="ceil" returnType="Integer">
+	<body><![CDATA[
+		$self.ceil
+	]]>
+	</body>
+	</operation>
+</extensions>
