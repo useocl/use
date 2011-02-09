@@ -104,10 +104,7 @@ final class Op_set_union extends OpGeneric {
 
 	public Type matches(Type params[]) {
 		if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
-			SetType set1 = (SetType) params[0];
-			SetType set2 = (SetType) params[1];
-
-			return set1.getLeastCommonSupertype(set2);
+			return params[0].getLeastCommonSupertype(params[1]);
 		}
 
 		return null;
