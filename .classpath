@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/xerces.jar"/>
 	<classpathentry kind="lib" path="lib/jruby-complete-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-3.3.jar"/>
+	<classpathentry kind="lib" path="lib/jgraphx.jar" sourcepath="D:/JavaDoc/jgraphx-1_5_1_5/jgraphx/src"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
