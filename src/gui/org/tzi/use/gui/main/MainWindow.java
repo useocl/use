@@ -176,7 +176,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
 
 	private static IRuntime fPluginRuntime;
-
+ 
 	private Map<Map<String, String>, PluginActionProxy> pluginActions = 
 		new HashMap<Map<String, String>, PluginActionProxy>();
 
