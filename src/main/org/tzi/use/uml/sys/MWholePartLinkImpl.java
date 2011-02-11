@@ -108,6 +108,7 @@ final class MWholePartLinkImpl implements MWholePartLink {
     /**
      * Returns the source node of this edge //parent or whole
      */
+    @Override
     public MObject source(){
         int aggregationKind = association().aggregationKind();
         
@@ -122,6 +123,7 @@ final class MWholePartLinkImpl implements MWholePartLink {
     /**
      * Returns the target node of this edge. //child or part
      */
+    @Override
     public MObject target(){
         int aggregationKind = association().aggregationKind();
         

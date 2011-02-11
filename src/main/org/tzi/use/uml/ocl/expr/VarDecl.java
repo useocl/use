@@ -71,6 +71,11 @@ public class VarDecl {
         return false;
     }
 
+    /**
+     * Returns the name and the type of the declaration.<br/>
+     * E. g. <code>foo : String</code>
+     */
+    @Override
     public String toString() {
         return fVar + " : " + fType;
     }

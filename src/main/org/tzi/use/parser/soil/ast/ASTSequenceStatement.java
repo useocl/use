@@ -137,7 +137,6 @@ public class ASTSequenceStatement extends ASTStatement {
 		
 		addStatement(statement);
 		statement.setSourcePosition(sourcePosition);
-		statement.setParsedText(parsedText);
 	}
 	
 	

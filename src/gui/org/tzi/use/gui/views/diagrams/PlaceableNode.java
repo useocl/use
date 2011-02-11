@@ -40,19 +40,19 @@ public abstract class PlaceableNode implements Selectable {
     /**
      * X cooradinate of the placeable node.
      */
-    private double fX;
+    protected double fX;
     /**
      * Y cooradinate of the placeable node.
      */
-    private double fY;;
+    protected double fY;;
     /**
      * Height of the placeable node.
      */
-    private int fHeight;
+    protected int fHeight;
     /**
      * Width of the placeable node.
      */
-    private int fWidth;
+    protected int fWidth;
     /**
      * Indicates if the node is selected.
      */
@@ -61,7 +61,14 @@ public abstract class PlaceableNode implements Selectable {
      * Indicates if the node is dragged.
      */
     private boolean fIsDragged;
-    
+    /**
+     * The height this node should at least occupy
+     */
+    protected double minHeight;
+    /**
+     * The width this node should at least occupy
+     */
+    protected double minWidth;
     /**
      * Draws the placeable node to the given Graphics object.
      * @param g Graphics object the node is drawn to.
@@ -107,7 +114,40 @@ public abstract class PlaceableNode implements Selectable {
     public void setWidth( int width ) {
         fWidth = width;
     }
+    
     /**
+     * Returns the height this node should at least occupy.
+     * @return The set value.
+     */
+    public double getMinHeight() {
+		return minHeight;
+	}
+
+    /**
+     * Sets the height this node should at least occupy.
+     * @param minHeight the new minimum height
+     */
+	public void setMinHeight(double minHeight) {
+		this.minHeight = minHeight;
+	}
+
+	/**
+     * Returns the width this node should at least occupy.
+     * @return The set value.
+     */
+	public double getMinWidth() {
+		return minWidth;
+	}
+
+	/**
+     * Sets the width this node should at least occupy.
+     * @param minWidth the new minimum width
+     */
+	public void setMinWidth(double minWidth) {
+		this.minWidth = minWidth;
+	}
+
+	/**
      * Sets the position of this node to x and y.
      */
     public void setPosition( double x, double y ) {

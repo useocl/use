@@ -24,6 +24,7 @@ package org.tzi.use.uml.sys.soil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -599,7 +600,8 @@ public abstract class MStatement {
 	protected MLinkObject createLinkObject(
 			MAssociationClass associationClass, 
 			String linkObjectName, 
-			List<MObject> participants) throws EvaluationFailedException {
+			List<MObject> participants,
+			List<List<Value>> qualifierValues) throws EvaluationFailedException {
 		
 		MLinkObject newLinkObject;
 		try {
@@ -607,7 +609,8 @@ public abstract class MStatement {
 				fState.createLinkObject(
 					associationClass, 
 					linkObjectName, 
-					participants);
+					participants,
+					qualifierValues);
 			
 		} catch (MSystemException e) {
 			throw new ExceptionOccuredException(this, e);
@@ -754,15 +757,17 @@ public abstract class MStatement {
 	 * TODO
 	 * @param association
 	 * @param participants
+	 * @param qualifierValues
 	 * @throws EvaluationFailedException 
 	 */
 	protected MLink insertLink(
 			MAssociation association, 
-			List<MObject> participants) throws EvaluationFailedException {
+			List<MObject> participants,
+			List<List<Value>> qualifierValues) throws EvaluationFailedException {
 		
 		MLink newLink;
 		try {
-			newLink = fState.createLink(association, participants);
+			newLink = fState.createLink(association, participants, qualifierValues);
 		} catch (MSystemException e) {
 			throw new ExceptionOccuredException(this, e);
 		}
@@ -798,7 +803,8 @@ public abstract class MStatement {
 	 */
 	protected void deleteLink(
 			MAssociation association, 
-			List<MObject> participants) throws EvaluationFailedException {
+			List<MObject> participants,
+			List<List<Value>> qualifierValues) throws EvaluationFailedException {
 		
 		// we need to find out if this is actually a link object, since we need
 		// to call destroyObject in that case to get the correct undo 
@@ -828,8 +834,29 @@ public abstract class MStatement {
 					new MRValueExpression(participant));
 		}
 		
+		List<List<MRValue>> wrappedQualifier;
+		if (qualifierValues == null || qualifierValues.isEmpty()) {
+			wrappedQualifier = Collections.emptyList(); 
+		} else {
+			wrappedQualifier = new ArrayList<List<MRValue>>(qualifierValues.size());
+		
+			for (List<Value> endQualifier : qualifierValues) {
+				List<MRValue> endQualifierValues;
+				
+				if (endQualifier == null || endQualifier.isEmpty()) {
+					endQualifierValues = Collections.emptyList();
+				} else {
+					endQualifierValues = new ArrayList<MRValue>();
+					for (Value v : endQualifier) {
+						endQualifierValues.add(new MRValueExpression(v));
+					}
+				}
+				
+				wrappedQualifier.add(endQualifierValues);
+			}
+		}
 		fResult.prependToInverseStatement(
-				new MLinkInsertionStatement(association, wrappedParticipants));
+				new MLinkInsertionStatement(association, wrappedParticipants, wrappedQualifier));
 		
 		fResult.appendEvent(
 				new LinkDeletedEvent(

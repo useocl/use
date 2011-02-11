@@ -21,14 +21,15 @@
 
 package org.tzi.use.uml.sys;
 
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-
 import java.util.List;
+
+import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MNavigableElement;
+import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.Value;
 
 
 /**
@@ -60,83 +61,54 @@ public final class MObjectImpl implements MObject {
         objectValue = new ObjectValue(TypeFactory.mkObjectType(fClass), this);
     }
 
-    /**
-     * Returns the class of this object.
-     */
+    @Override
     public MClass cls() {
         return fClass;
     }
 
-    /**
-     * Returns the type of this object.
-     */
+    @Override
     public ObjectType type() {
         return fType;
     }
     
-    
-    /**
-     * Returns a name for this object.
-     */
+    @Override
     public String name() {
         return fName;
     }
 
-    
-    /**
-     * returns the value of this object
-     * @return the value of this object
-     */
+    @Override
     public ObjectValue value() {
     	return objectValue;
     }
 
-    
-	/**
-     * Returns the state of an object in a specific system state.
-     *
-     * @return null if object does not exist in the state
-     */
+    @Override
     public MObjectState state( MSystemState systemState ) {
         return systemState.getObjectState( this );
     }
 
-    /**
-     * Returns true if this object exists in a specific system state.
-     */
+    @Override
     public boolean exists( MSystemState systemState ) {
         return systemState.getObjectState( this ) != null;
     }
 
-    /**
-     * Returns a list of objects at <code>dstEnd</code> which are
-     * linked to this object at <code>srcEnd</code>.
-     *
-     * @return List(MObject)
-     */
+    @Override
     public List<MObject> getLinkedObjects( MSystemState systemState,
-                                  MAssociationEnd srcEnd, MAssociationEnd dstEnd ) {
-        return systemState.getLinkedObjects( this, srcEnd, dstEnd );
+                                  MAssociationEnd srcEnd, MAssociationEnd dstEnd, List<Value> qualifierValues ) {
+        return systemState.getLinkedObjects( this, srcEnd, dstEnd, qualifierValues );
     }
 
-    /**
-     * Returns a list of objects at <code>dst</code> which are
-     * connected to this object at <code>src</code>. This is needed for navigation.
-     *
-     * @return List(MObject)
-     */
+    @Override
     public List<MObject> getNavigableObjects( MSystemState systemState, MNavigableElement src, 
-                                     MNavigableElement dst ) {
-        return systemState.getNavigableObjects( this, src, dst );
+                                     MNavigableElement dst, List<Value> qualifierValues ) {
+        return systemState.getNavigableObjects( this, src, dst, qualifierValues );
     }
 
+    @Override
     public int hashCode() {
         return hashCode;
     }
 
-    /**
-     * Two objects are equal iff they have the same name.
-     */
+    @Override
     public boolean equals( Object obj ) {
         if ( obj == this )
             return true;
@@ -145,6 +117,7 @@ public final class MObjectImpl implements MObject {
         return false;
     }
 
+    @Override
     public String toString() {
         return name();
     }

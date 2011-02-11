@@ -1,0 +1,42 @@
+-- Test for qualified asscoiations
+model QA
+
+class Bank
+end
+
+class Person
+end
+
+association BankPerson between
+  Bank[*] qualifier (accountNo:String)
+  Person[0..1] role customer
+end
+
+class Map
+end
+
+class Tile
+end
+
+association MapTile between
+  Map[1]
+  Tile[1..*] qualifier (x:Integer, y:Integer)
+end
+
+class HashMap
+end
+
+class HashMapEntry
+  attributes
+    hashValue : Integer
+end
+
+association HashMapEntries between
+  HashMap[0..*] role container
+  HashMapEntry[0..*] role element qualifier (index:Integer)
+end
+
+association Test between
+  Bank[*] role myBank
+  Person[*] role myBank
+end

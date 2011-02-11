@@ -21,7 +21,13 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.StringUtil;
 
 /**
  * A link end keeps a reference to an object as defined by an
@@ -31,19 +37,36 @@ import org.tzi.use.uml.mm.MAssociationEnd;
  * @author      Mark Richters 
  */
 public final class MLinkEnd {
-    private MAssociationEnd fAssociationEnd; // The type of the link end
-    private MObject fObject;    // The linked object
+    /**
+     * The type of the link end
+     */
+	private MAssociationEnd fAssociationEnd;
+	
+	/**
+	 * The linked object
+	 */
+    private MObject fObject;
 
-    // For performance reasons
+    /**
+     * Possible defined qualifier values.
+     * Maybe <code>null</code>.
+     */
+    private List<Value> qualifierValues;
+    
+    /**
+     * Saved hash value for performance reasons
+     */
     private int hashCode;
 
     /**
      * Constructs a new link end. 
-     *
+     * @param aend
+     * @param obj
+     * @param qualifierValues The <code>Value</code>s for the qualifiers. Can be null 
      * @exception MSystemException object does not conform to the
-     *            association end.
+     *            association end or the provided qualifier values do not match.
      */
-    public MLinkEnd(MAssociationEnd aend, MObject obj) 
+    public MLinkEnd(MAssociationEnd aend, MObject obj, List<Value> qualifierValues) 
         throws MSystemException 
     {
         // make sure objects match the expected type of the
@@ -55,9 +78,32 @@ public final class MLinkEnd {
                                        "' can only hold objects of class `" +
                                        aend.cls() + 
                                        "' or its subclasses.");
-        fAssociationEnd = aend;
-        fObject = obj;
-        hashCode = fAssociationEnd.hashCode() + fObject.hashCode();
+        
+        // Makes life easier...
+        if (qualifierValues == null)
+        	qualifierValues = Collections.emptyList();
+        
+        if (aend.getQualifiers().size() < qualifierValues.size()) {
+        	throw new MSystemException("To many qualifer values!");
+        } else if (aend.getQualifiers().size() > qualifierValues.size()) {
+        	throw new MSystemException("Insufficient qualifer values!");
+        }
+        
+        for (int index = 0; index < qualifierValues.size(); ++index) {
+        	Value value = qualifierValues.get(index);
+        	Type expectedType = aend.getQualifiers().get(index).type();
+        	
+        	if (!value.type().isSubtypeOf(expectedType))
+        		throw new MSystemException(
+        			"Type of qualifier value (" + StringUtil.inQuotes(value.toStringWithType()) + 
+        			") does not conform to expected qualifier type (" + StringUtil.inQuotes(expectedType.toString()) + ")!");
+        }
+        
+        this.fAssociationEnd = aend;
+        this.fObject = obj;
+        this.qualifierValues = qualifierValues;
+        
+        this.hashCode = fAssociationEnd.hashCode() + 19 * fObject.hashCode() + 23 * this.qualifierValues.hashCode();
     }
 
     /**
@@ -79,19 +125,54 @@ public final class MLinkEnd {
     }
 
     /**
-     * Two link ends are equal iff they connect the same object and
-     * have the same type.
+     * Two link ends are equal iff they connect the same object,
+     * have the same type and if the qualifier values (if present)
+     * are equal.
      */
     public boolean equals(Object obj) { 
         if (obj == this )
             return true;
-        if (obj instanceof MLinkEnd )
-            return fAssociationEnd.equals(((MLinkEnd) obj).fAssociationEnd)
-                && fObject.equals(((MLinkEnd) obj).fObject);
+        
+        if (obj instanceof MLinkEnd ) {
+        	MLinkEnd oEnd = (MLinkEnd) obj;
+            return fAssociationEnd.equals(oEnd.fAssociationEnd)
+                && fObject.equals(oEnd.fObject)
+                && qualifierValues.equals(oEnd.qualifierValues);
+        }
+        
         return false;
     }
 
     public String toString() {
-        return fAssociationEnd + ":" + fObject;
+		return fAssociationEnd
+				+ ":"
+				+ fObject
+				+ (qualifierValues.size() > 0 ? "["
+						+ StringUtil.fmtSeq(qualifierValues, ",") + "]" : "");
     }
+
+	/**
+	 * Checks if the provided qualifier values match the
+	 * qualifier values at this end.
+	 * @param qualifiers The <code>List</code> of the qualifier values to check. May be <code>null</code>
+	 * @return True, if the qualifiers (if any) match
+	 */
+	public boolean qualifierValuesEqual(List<Value> qualifiers) {
+		return qualifierValues.equals(qualifiers);
+	}
+
+	/**
+	 * The unmodifiable List of the qualifier values of this end.
+	 * @return The <code>List</code> of all qualifier values.
+	 */
+	public List<Value> getQualifierValues() {
+		return Collections.unmodifiableList(qualifierValues);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean hasQualifiers() {
+		return fAssociationEnd.hasQualifiers();
+	}
 }

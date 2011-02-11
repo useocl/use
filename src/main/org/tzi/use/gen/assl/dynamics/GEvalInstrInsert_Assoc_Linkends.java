@@ -31,6 +31,7 @@ package org.tzi.use.gen.assl.dynamics;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -117,8 +118,9 @@ class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
         			new MRValueExpression(object));	
         }
         
+        //FIXME: Support qualified associations in generator!
         MStatement statement = 
-        	new MLinkInsertionStatement(association, participants);
+        	new MLinkInsertionStatement(association, participants, Collections.<List<MRValue>>emptyList());
         
         MStatement inverseStatement;
 

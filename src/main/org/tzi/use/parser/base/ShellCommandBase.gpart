@@ -40,7 +40,6 @@ legacyStat returns [ASTStatement n]
     $n = $loe.n;
     if ($n != null) {
       $n.setSourcePosition($start);
-      $n.setParsedText($text);
     }
   }
   |
@@ -49,7 +48,6 @@ legacyStat returns [ASTStatement n]
     $n = $lox.n; 
     if ($n != null) {
       $n.setSourcePosition($start);
-      $n.setParsedText($text);
     }
   }
   |
@@ -61,7 +59,6 @@ legacyStat returns [ASTStatement n]
   { 
     $n = seq.simplify();
     $n.setSourcePosition($start);
-    $n.setParsedText($text);
   }
 ;
 
@@ -199,7 +196,6 @@ legacyCreateInsert returns [ASTVariableAssignmentStatement n]
         new ASTStringLiteral($name.text));
         
     nlo.setSourcePosition($start);
-    nlo.setParsedText($text);
   
     $n = new ASTVariableAssignmentStatement(
       $name.text,

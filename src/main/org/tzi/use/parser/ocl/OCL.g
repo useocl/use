@@ -134,8 +134,8 @@ expression returns [ASTExpression n]
   paramList ::= 
     "(" [ variableDeclaration { "," variableDeclaration } ] ")"
 */
-paramList returns [List paramList]
-@init{ $paramList = new ArrayList(); }
+paramList returns [List<ASTVariableDeclaration> paramList]
+@init{ $paramList = new ArrayList<ASTVariableDeclaration>(); }
 :
     LPAREN
     ( 
@@ -320,7 +320,6 @@ primaryExpression returns [ASTExpression n]
     | nPc=propertyCall[null, false] { $n = $nPc.n; }
     | LPAREN nExp=expression RPAREN { $n = $nExp.n; }
     | nIfExp=ifExpression { $n = $nIfExp.n; }
-    // HACK: the following requires k=3
     | id1=IDENT DOT 'allInstances' ( LPAREN RPAREN )?
       { $n = new ASTAllInstancesExpression($id1); }
       ( AT 'pre' { $n.setIsPre(); } ) ? 
@@ -331,7 +330,6 @@ objectReference returns [ASTExpression n]
 :
   AT
   objectName = IDENT
-  
   { n = new ASTObjectReferenceExpression(objectName); }
 ;
 
@@ -409,9 +407,22 @@ operationExpression[ASTExpression source, boolean followsArrow]
     name=IDENT 
     { $n = new ASTOperationExpression($name, $source, $followsArrow); }
 
-    ( LBRACK rolename=IDENT RBRACK { $n.setExplicitRolename($rolename); })?
+	// This is a little dirty, because either it is a navigation
+	// along a m-ary association or a navigation over a qualified association 
+	// or both.
+    ( LBRACK 
+        rolename=expression { $n.addExplicitRolenameOrQualifier($rolename.n); }
+        (COMMA rolename=expression { $n.addExplicitRolenameOrQualifier($rolename.n); })*
+      RBRACK
+      
+      ( LBRACK 
+          rolename=expression { $n.addQualifier($rolename.n); }
+          (COMMA rolename=expression { $n.addQualifier($rolename.n); })*
+        RBRACK
+      )?
+    )?
 
-    ( AT 'pre' { $n.setIsPre(); } ) ? 
+    ( AT 'pre' { $n.setIsPre(); } ) ?
     (
       LPAREN { $n.hasParentheses(); }
       ( 

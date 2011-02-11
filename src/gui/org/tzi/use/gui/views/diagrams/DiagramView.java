@@ -105,6 +105,7 @@ public abstract class DiagramView extends JPanel
      */
     public abstract boolean maybeShowPopup( MouseEvent e );
     
+    private boolean firstDraw = true;
     
     /**
      * Draws the diagram.
@@ -120,6 +121,22 @@ public abstract class DiagramView extends JPanel
         g.fillRect(0, 0, d.width, d.height);
  
         FontMetrics fm = g.getFontMetrics();
+        Iterator<EdgeBase> edgeIterator;
+        // Calculates the min height of classifiers
+        if (firstDraw) {
+	        edgeIterator = fGraph.edgeIterator();
+	        while (edgeIterator.hasNext()) {
+	        	EdgeBase e = edgeIterator.next();
+	        	if (e.getSourceQualifier() != null) {
+	        		e.getSourceQualifier().setRectangleSize(g);
+	        	}
+	        	
+	        	if (e.getTargetQualifier() != null) {
+	        		e.getTargetQualifier().setRectangleSize(g);
+	        	}
+	        }
+        }
+        
         // set rectangle size for nodes
         // It is important to do this first, otherwise rolenames will
         // not be dynamically moved after displaying attributes! And
@@ -129,6 +146,20 @@ public abstract class DiagramView extends JPanel
         Iterator<NodeBase> nodeIterator = fGraph.iterator();
         while (nodeIterator.hasNext()) {
             NodeBase n = nodeIterator.next();
+            // Set min height wrt. displayed qualifiers
+            if (firstDraw) {
+            	int minHeight = 0;
+            	Set<EdgeBase> myEdges = fGraph.allEdges(n);
+            	for (EdgeBase e : myEdges) {
+            		if (e.getSourceQualifier() != null && e.source().equals(this)) {
+            			minHeight += e.getSourceQualifier().getHeight() + 4;
+            		}
+            		if (e.getTargetQualifier() != null && e.target().equals(this)) {
+            			minHeight += e.getTargetQualifier().getHeight() + 4;
+            		}
+            	}
+            	n.setMinHeight(Math.max(minHeight, n.getMinHeight()));
+            }
             n.setRectangleSize(g);
         }
 
@@ -136,7 +167,7 @@ public abstract class DiagramView extends JPanel
         // draw edges
         // they need to be drawn first otherwise the association will
         // be drawn above the nodes
-        Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
+        edgeIterator = fGraph.edgeIterator();
         Set<EdgeBase> drawnEdges = new HashSet<EdgeBase>();
         Set<EdgeBase> edges = new HashSet<EdgeBase>();
         
@@ -156,6 +187,8 @@ public abstract class DiagramView extends JPanel
             NodeBase n = (NodeBase) nodeIterator.next();
             n.draw(g, fm);
         }
+        
+        firstDraw = false;
     }
     
     /**

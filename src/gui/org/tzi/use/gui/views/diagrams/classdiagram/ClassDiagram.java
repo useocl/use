@@ -107,6 +107,18 @@ public class ClassDiagram extends DiagramView
 	private DiagramMouseHandling mouseHandling;
 	// jj end
         
+	/**
+	 * This value is read from the system properties file.
+	 * It determines the minimum width of a class node 
+	 */
+	private int minClassNodeWidth;
+	
+	/**
+	 * This value is read from the system properties file.
+	 * It determines the minimum height of a class node 
+	 */
+	private int minClassNodeHeight;
+	
     ClassDiagram( ClassDiagramView parent, PrintWriter log ) {
         fOpt = new ClassDiagramOptions();
         fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
@@ -127,6 +139,8 @@ public class ClassDiagram extends DiagramView
         setBackground( Color.white );
         fLog = log;
         setPreferredSize( Options.fDiagramDimension );
+        minClassNodeHeight = Integer.parseInt(System.getProperty("use.gui.view.classdiagram.class.minheight"));
+        minClassNodeWidth = Integer.parseInt(System.getProperty("use.gui.view.classdiagram.class.minwidth"));
         
         fLayoutInfos = new LayoutInfos( fBinaryAssocToEdgeMap, 
                                         fClassToNodeMap, 
@@ -284,6 +298,9 @@ public class ClassDiagram extends DiagramView
         double fNextNodeY = Math.random() * Math.max( 100, getHeight() );
         ClassNode n = new ClassNode( cls, fOpt );
         n.setPosition( fNextNodeX, fNextNodeY );
+        n.setMinWidth(minClassNodeWidth);
+        n.setMinHeight(minClassNodeHeight);
+        
         synchronized ( fLock ) {
             fGraph.add( n );
             fClassToNodeMap.put( cls, n );
@@ -375,7 +392,7 @@ public class ClassDiagram extends DiagramView
             if ( assoc instanceof MAssociationClass ) {
                 NodeEdge e = 
                     new NodeEdge( label, fClassToNodeMap.get( cls1 ),
-                                  fClassToNodeMap.get( cls2),
+                                  fClassToNodeMap.get( cls2 ),
                                   assocEnd1, assocEnd2, assoc,
                                   (NodeBase) fClassToNodeMap.get( assoc ),
                                   this, assoc );

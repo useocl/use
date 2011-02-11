@@ -21,10 +21,14 @@
 
 package org.tzi.use.uml.mm;
 
+import java.util.Collections;
+import java.util.List;
+
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.tzi.use.SystemManipulator;
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MSystem;
@@ -41,6 +45,8 @@ import org.tzi.use.uml.sys.MSystemException;
  */
 public class MAssociationClassTest extends TestCase {
 
+	static List<VarDecl> emptyQualifiers = Collections.emptyList();
+	
     /**
      * Creates a model with classes and an associationclass.
      */
@@ -97,10 +103,10 @@ public class MAssociationClassTest extends TestCase {
             m2.addRange( 0, 1 );
             MAssociationEnd endPerson = mf.createAssociationEnd( person, "employee", m1,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false, emptyQualifiers );
             MAssociationEnd endCompany = mf.createAssociationEnd( company, "company", m2,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             job.addAssociationEnd( endPerson );
             job.addAssociationEnd( endCompany );
 
@@ -142,7 +148,8 @@ public class MAssociationClassTest extends TestCase {
             m1.addRange( 0, 1 );
             MAssociationEnd endPerson = mf.createAssociationEnd( person, "employee", m1,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false,
+                                                                 emptyQualifiers);
             job.addAssociationEnd( endPerson );
 
             fail( "MInvalidModelException was not thrown." );
@@ -160,6 +167,7 @@ public class MAssociationClassTest extends TestCase {
         // Test for Well-Formedness Rule No. 2 of AssociationClass of OMG 1.4
         MAssociationClass job = null;
         MAssociationEnd endPerson = null;
+        
         try {
             ModelFactory mf = new ModelFactory();
             MModel model = mf.createModel( "PersonCompany" );
@@ -177,10 +185,11 @@ public class MAssociationClassTest extends TestCase {
             m2.addRange( 0, 1 );
             endPerson = mf.createAssociationEnd( person, "employee", m1,
                                                  MAggregationKind.NONE,
-                                                 false );
+                                                 false, emptyQualifiers );
             MAssociationEnd endJob = mf.createAssociationEnd( job, "employee", m1,
                                                               MAggregationKind.NONE,
-                                                              false );
+                                                              false,
+                                                              emptyQualifiers);
 
 
             job.addAssociationEnd( endPerson );
@@ -228,13 +237,13 @@ public class MAssociationClassTest extends TestCase {
 
             endPerson = mf.createAssociationEnd( person, "employee", m1,
                                                  MAggregationKind.AGGREGATION,
-                                                 false );
+                                                 false, emptyQualifiers );
             endCompany = mf.createAssociationEnd( company, "employer", m2,
                                                   MAggregationKind.NONE,
-                                                  false );
+                                                  false, emptyQualifiers );
             endSalary = mf.createAssociationEnd( salary, "salary", m3,
                                                  MAggregationKind.NONE,
-                                                 false );
+                                                 false, emptyQualifiers );
 
             job.addAssociationEnd( endPerson );
             job.addAssociationEnd( endCompany );

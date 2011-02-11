@@ -31,6 +31,7 @@ package org.tzi.use.gen.assl.dynamics;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -54,11 +55,13 @@ import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.ListUtil;
+import org.tzi.use.util.CollectionUtil;
 
 
 class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     implements IGCaller {
+	static List<List<Value>> emptyQualifiers = Collections.emptyList();
+	
     private GInstrTry_Assoc_LinkendSeqs fInstr;
     private IGCaller fCaller;
     private ListIterator<GValueInstruction> fIterator;
@@ -131,7 +134,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     	
         // Just get combinations of objects and check its size.
         List<List<MObject>> combinations = 
-        	ListUtil.<MObject>combinations(fObjectLists);
+        	CollectionUtil.<MObject>combinations(fObjectLists);
         
         int numLinks = combinations.size();
         
@@ -278,7 +281,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     	
         // Just get combinations of objects and check its size.
         List<List<MObject>> combinations = 
-        	ListUtil.<MObject>combinations(fObjectLists);
+        	CollectionUtil.<MObject>combinations(fObjectLists);
         
         int numLinks = combinations.size();
           
@@ -458,13 +461,15 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         		participants.add(participant);
         	}
         	
+        	//FIXME: Support qualified associations in generator!
         	insertStatements.add(
-        			new MLinkInsertionStatement(association, participants));
+        			new MLinkInsertionStatement(association, participants, Collections.<List<MRValue>>emptyList()));
         	deleteStatements.add(
         			new MLinkDeletionStatement(association, participants));
         	
         	try {
-				if (state.hasLink(association, objects)) {
+        		// FIXME: Support qualifiers in generator
+				if (state.hasLink(association, objects, emptyQualifiers)) {
 					// "turn on" bit i
 					initConfiguration |= (1 << i);
 				}

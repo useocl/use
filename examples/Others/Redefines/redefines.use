@@ -1,0 +1,23 @@
+model Redefines
+
+class A
+end
+
+class B
+end
+
+class C < A
+end
+
+class D < B
+end
+
+association AB between
+  A[*] role a
+  B[*] role b
+end
+
+association CD between
+  C[*] role c redefines a
+  D[*] role d redefines b
+end

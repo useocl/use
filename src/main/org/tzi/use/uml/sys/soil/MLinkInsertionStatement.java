@@ -22,11 +22,12 @@
 package org.tzi.use.uml.sys.soil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
@@ -38,11 +39,22 @@ import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
  *
  */
 public class MLinkInsertionStatement extends MStatement {
-	/** TODO */
+	/**
+	 * The association the link is created for.
+	 */
 	private MAssociation fAssociation;
-	/** TODO */
+	/**
+	 * List of the objects that participate in the link in the same order as association ends. 
+	 */
 	private List<MRValue> fParticipants;
-	/** TODO */
+	/**
+	 * List of the qualifier values for the association ends. 
+	 */
+	private List<List<MRValue>> qualifiers;
+	/**
+	 * When creating an association class instance, this is the name
+	 * of the instance.
+	 */
 	private String fLinkObjectName;
 	
 	
@@ -53,30 +65,13 @@ public class MLinkInsertionStatement extends MStatement {
 	 */
 	public MLinkInsertionStatement(
 			MAssociation association, 
-			List<MRValue> participants) {
+			List<MRValue> participants,
+			List<List<MRValue>> qualifiers) {
 		
-		fAssociation = association;
-		fParticipants = participants;
+		this.fAssociation = association;
+		this.fParticipants = participants;
+		this.qualifiers = qualifiers;
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param association
-	 * @param participants
-	 */
-	public MLinkInsertionStatement(
-			MAssociation association, 
-			Expression... participants) {
-		
-		fAssociation = association;
-		
-		fParticipants = new ArrayList<MRValue>(participants.length);
-		for (Expression participant : participants) {
-			fParticipants.add(new MRValueExpression(participant));
-		}
-	}
-	
 	
 	/**
 	 * TODO
@@ -85,13 +80,30 @@ public class MLinkInsertionStatement extends MStatement {
 	 */
 	public MLinkInsertionStatement(
 			MAssociation association,
-			MObject... participants) {
+			MObject[] participants,
+			List<List<Value>> qualifiers) {
 		
 		fAssociation = association;
 		
 		fParticipants = new ArrayList<MRValue>(participants.length);
 		for (MObject participant : participants) {
 			fParticipants.add(new MRValueExpression(participant));
+		}
+		
+		this.qualifiers = new ArrayList<List<MRValue>>();
+		for (List<Value> endQualifiers : qualifiers) {
+			List<MRValue> endQualifierValues;
+			
+			if (endQualifiers == null || endQualifiers.isEmpty() ) {
+				endQualifierValues = Collections.emptyList();
+			} else {
+				endQualifierValues = new ArrayList<MRValue>();
+				for (Value v : endQualifiers) {
+					endQualifierValues.add(new MRValueExpression(v));
+				}
+			}
+			
+			this.qualifiers.add(endQualifierValues);
 		}
 	}
 	
@@ -118,7 +130,23 @@ public class MLinkInsertionStatement extends MStatement {
 	protected void evaluate() throws EvaluationFailedException {
 		
 		List<MObject> participants = evaluateObjectRValues(fParticipants);
-			
+		List<List<Value>> qualifierValues = new ArrayList<List<Value>>();
+		List<Value> empty = Collections.emptyList();
+		
+		if (qualifiers != null) {
+			for (List<MRValue> values : qualifiers) {
+				if (values == null) {
+					qualifierValues.add(empty);
+				} else {
+					List<Value> thisQualifierValues = new ArrayList<Value>();
+					for (MRValue v : values) {
+						thisQualifierValues.add(evaluateRValue(v));
+					}
+					qualifierValues.add(thisQualifierValues);
+				}
+			}
+		}
+		
 		// we want to make sure that if this creates an association class
 		// instance, it always gets the same name, to enable redo
 		if (fAssociation instanceof MAssociationClass) {
@@ -135,10 +163,11 @@ public class MLinkInsertionStatement extends MStatement {
 			createLinkObject(
 					associationClass, 
 					fLinkObjectName, 
-					participants);
+					participants,
+					qualifierValues);
 			
 		} else {
-			insertLink(fAssociation, participants);
+			insertLink(fAssociation, participants, qualifierValues);
 		}
 	}
 	

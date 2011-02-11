@@ -193,4 +193,34 @@ public interface MAssociation extends MModelElement {
 	 * @return
 	 */
 	boolean isReadOnly();
+
+	/**
+	 * True if any of the end of this association has defined qualifiers.
+	 * @return A <code>Boolean</code> value indicating, if this association has end with qualified values.
+	 */
+	boolean hasQualifiedEnds();
+
+	/**
+	 * Returns the first association end that is a possible source of a navigation, e.g.,
+	 * if <code>srcClass</code> is a subtype of the navigable end and if provided 
+	 * the name of the end matches the given explicit role name. 
+	 * @param srcClass The source class of the navigation
+	 * @param dst The destination navigable end
+	 * @param explicitRolename Optional an explicit rolename. May be <code>null</code>.
+	 * @return The matching source end or <code>null</code>.
+	 */
+	MNavigableElement getSourceEnd(MClass srcClass, MNavigableElement dst,
+			String explicitRolename);
+
+	/**
+	 * Because the ordering of association ends is important for validating
+	 * relations between associations (subsets, redefines, etc.) but the order of 
+	 * association ends can be changed in related associations this operation
+	 * can be used to retrieve an ordered list of association ends which sorts
+	 * the related ends in the same order as specified in the parent association
+	 * <code>parent</code>. 
+	 * @param parentAssociation The <code>MAssociation</code> which defines the order
+	 * @return A sorted <code>List</code> of the owned association ends.
+	 */
+	//List<MAssociationEnd> getParentAlignedEnds(MAssociation parentAssociation);
 }

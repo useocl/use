@@ -21,6 +21,10 @@
 
 package org.tzi.use;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -279,6 +283,7 @@ public class TestSystem {
 		model.addClass(c2);
 		c2.addAttribute(factory.createAttribute("str", TypeFactory.mkString()));	
 		
+		List<VarDecl> emptyQualifiers = Collections.emptyList();
 		
 		MAssociation a1 = factory.createAssociation("A1");
 		a1.addAssociationEnd(
@@ -287,7 +292,7 @@ public class TestSystem {
 					"E1", 
 					new MMultiplicity(0, 1), 
 					MAggregationKind.NONE, 
-					false));
+					false, emptyQualifiers));
 		
 		a1.addAssociationEnd( 
 			factory.createAssociationEnd(
@@ -295,7 +300,7 @@ public class TestSystem {
 					"E2", 
 					new MMultiplicity(0, 1), 
 					MAggregationKind.NONE, 
-					false));
+					false, emptyQualifiers));
 		
 		model.addAssociation(a1);
 		
@@ -306,7 +311,7 @@ public class TestSystem {
 						"role1", 
 						new MMultiplicity(0, 1), 
 						MAggregationKind.NONE, 
-						false));
+						false, emptyQualifiers));
 		
 		ac1.addAssociationEnd( 
 				factory.createAssociationEnd(
@@ -314,7 +319,7 @@ public class TestSystem {
 						"role2", 
 						new MMultiplicity(0, 1), 
 						MAggregationKind.NONE, 
-						false));
+						false, emptyQualifiers));
 		
 		model.addClass(ac1);
 		model.addAssociation(ac1);
@@ -353,9 +358,9 @@ public class TestSystem {
 		varEnv.assign("v", new IntegerValue(42));
 		
 		state.createLink(
-				getModel().getAssociation("A1"), 
-				state.objectByName("O3"), 
-				state.objectByName("O4"));
+				getModel().getAssociation("A1"),
+				Arrays.asList(state.objectByName("O3"),
+						state.objectByName("O4")), null);
 		
 		MAssociationClass AC1 = getModel().getAssociationClass("AC1");
 		
@@ -363,8 +368,10 @@ public class TestSystem {
 				"lo1", state.createLinkObject(
 						AC1, 
 						"LO1", 
-						getState().objectByName("O5"),
-						getState().objectByName("O6")
+						Arrays.asList(
+							getState().objectByName("O5"),
+							getState().objectByName("O6")),
+						null
 						).value());
 		
 		varEnv.assign("LO1", varEnv.lookUp("lo1"));

@@ -24,6 +24,8 @@ package org.tzi.use.uml.ocl.expr;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,6 +65,8 @@ import org.tzi.use.uml.sys.soil.MSequenceStatement;
  */
 public class ExprNavigationTest extends TestCase {
 
+	static List<Value> emptyQualiferValues = Collections.emptyList();
+	
     public void testModelWithObjects() {
         ObjectCreation.getInstance().createModelWithObjects();
         ObjectCreation.getInstance().createModelWithManyObjects();
@@ -93,7 +97,7 @@ public class ExprNavigationTest extends TestCase {
             Expression srcExpr = new ExpVariable( "p1", TypeFactory.mkObjectType(
                     system.model().getClass( "Person" ) ) );
 
-            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd );
+            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd, Collections.<Expression>emptyList() );
             Value val = nav.eval( new EvalContext( null, system.state(),
                                                    system.varBindings(), 
                                                    new PrintWriter( new StringWriter() ) ) );
@@ -125,7 +129,7 @@ public class ExprNavigationTest extends TestCase {
             Expression srcExpr = new ExpVariable( "p1", TypeFactory.mkObjectType(
                     system.model().getClass( "Person" ) ) );
 
-            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd );
+            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd, Collections.<Expression>emptyList() );
             Value val = nav.eval( new EvalContext( null, system.state(),
                                                    system.varBindings(),
                                                    new PrintWriter( new StringWriter() ) ) );
@@ -167,7 +171,7 @@ public class ExprNavigationTest extends TestCase {
             Expression srcExpr = new ExpVariable( "p1", TypeFactory.mkObjectType(
                     system.model().getClass( "Person" ) ) );
 
-            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, job );
+            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, job, Collections.<Expression>emptyList() );
             Value val = nav.eval( new EvalContext( null, system.state(),
                                                    system.varBindings(), 
                                                    new PrintWriter( new StringWriter() ) ) );
@@ -236,7 +240,7 @@ public class ExprNavigationTest extends TestCase {
             MObject p1 = system.state().objectByName( "p1" );
 
             List<MObject> objects = system.state().getNavigableObjects( p1, ( MNavigableElement ) personEnd, 
-                                                               ( MNavigableElement ) job );
+                                                               ( MNavigableElement ) job, emptyQualiferValues );
 
             assertEquals( 2, objects.size() );
             assertEquals( "j2", ( ( MObject ) objects.get( 0 ) ).name() );
@@ -259,7 +263,7 @@ public class ExprNavigationTest extends TestCase {
             // navigation from linkobject j1 to p1
             MObject j1 = system.state().objectByName( "j1" );
 
-            List<MObject> objects = system.state().getNavigableObjects( j1, job, personEnd );
+            List<MObject> objects = system.state().getNavigableObjects( j1, job, personEnd, emptyQualiferValues );
 
             assertEquals( 1, objects.size() );
             assertEquals( "p1", ( ( MObject ) objects.get( 0 ) ).name() );
@@ -286,7 +290,7 @@ public class ExprNavigationTest extends TestCase {
             // navigation from linkobject j1 to p1
             MObject p1 = system.state().objectByName( "p1" );
 
-            List<MObject> objects = system.state().getNavigableObjects( p1, personEnd, companyEnd );
+            List<MObject> objects = system.state().getNavigableObjects( p1, personEnd, companyEnd, emptyQualiferValues );
 
             assertEquals( 1, objects.size() );
             assertEquals( "c1", ( ( MObject ) objects.get( 0 ) ).name() );
@@ -325,16 +329,18 @@ public class ExprNavigationTest extends TestCase {
             names.clear();
             names.add( "p1" );
             names.add( "c2" );
-            Expression[] exprs = new Expression[names.size()];
+            List<MRValue> exprs = new ArrayList<MRValue>();
+            List<List<MRValue>> qualifier = new ArrayList<List<MRValue>>();
+            
             Iterator<String> it = names.iterator();
-            int i = 0;
+            
             while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() ); 
-                exprs[i++] = new ExpVariable( obj.name(), obj.type() );
+                MObject obj =  system.state().objectByName( (String) it.next() );
+                exprs.add(new MRValueExpression(new ExpVariable( obj.name(), obj.type() )));
             }
             MAssociation assoc = model.getAssociation( "Job" );
             
-            system.evaluateStatement(new MLinkInsertionStatement(assoc, exprs), true);
+            system.evaluateStatement(new MLinkInsertionStatement(assoc, exprs, qualifier), true);
             
             MAssociation job = system.model().getAssociation( "Job" );
             MAssociationEnd personEnd =
@@ -347,11 +353,12 @@ public class ExprNavigationTest extends TestCase {
             // navigation from p1 to linkobject j1
             MObject p1 = system.state().objectByName( "p1" );
 
-            List<MObject> objects = system.state().getNavigableObjects( p1, personEnd, companyEnd );
+            List<MObject> objects = system.state().getNavigableObjects( p1, personEnd, companyEnd, emptyQualiferValues );
 
+            names = Arrays.asList("c1", "c2");
             assertEquals( 2, objects.size() );
-            assertEquals( "c2", ( ( MObject ) objects.get( 1 ) ).name() );
-            assertEquals( "c1", ( ( MObject ) objects.get( 0 ) ).name() );
+            assertTrue( names.contains(( ( MObject ) objects.get( 1 ) ).name() ) );
+            assertTrue( names.contains(( ( MObject ) objects.get( 0 ) ).name() ) );
         } catch ( MSystemException e ) {
             fail( "Exception was thrown: " + e.getMessage() );
         }

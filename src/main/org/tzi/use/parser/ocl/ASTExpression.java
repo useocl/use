@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.ocl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -28,7 +30,6 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.expr.ExpCollectNested;
@@ -39,6 +40,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.util.StringUtil;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -161,57 +163,121 @@ public abstract class ASTExpression extends AST {
                                         Expression srcExpr,
                                         MNavigableElement dst ) 
             throws SemanticException {
-        return genNavigation( rolenameToken, srcClass, srcExpr, dst, null );
+        return genNavigation( null, rolenameToken, srcClass, srcExpr, dst, Collections.<ASTExpression>emptyList(), Collections.<ASTExpression>emptyList() );
     }
 
-    protected Expression genNavigation(Token rolenameToken,
+    protected Expression genNavigation(Context ctx, Token rolenameToken,
                                        MClass srcClass,
                                        Expression srcExpr,
                                        MNavigableElement dst,
-                                       Token explicitRolenameToken )
+                                       List<ASTExpression> explicitRolenameOrQualifiers,
+                                       List<ASTExpression> qualifiers )
         throws SemanticException
     {
         Expression res = null;
 
         // find source end
-        MAssociation assoc = dst.association();
         MNavigableElement src = null;
+        
+        if (navigationNeedsExplicitRolename(srcClass, dst)) {
+        	if (explicitRolenameOrQualifiers.size() == 0) {
+        		// an explicit rolename is needed, but not provided
+                throw new SemanticException(rolenameToken,
+                                            "The navigation path from " + StringUtil.inQuotes(srcClass.name()) + " to " + StringUtil.inQuotes(dst.nameAsRolename()) + " is ambiguous, " +
+                                            "but no qualification of the source association was given.");
+        	}
+        	
+        	if (explicitRolenameOrQualifiers.size() > 1) {
+        		// an explicit rolename is needed, but more then one was provided
+        		throw new SemanticException(rolenameToken,
+                        "More then one qualification for the ambiguous navigation path from " + StringUtil.inQuotes(srcClass.name()) + " to " + StringUtil.inQuotes(dst.nameAsRolename()) +
+                        " was given. May be you interchanged it with qualifier values?");
+        	}
+        	
+        	ASTExpression explicitRolenameExp = explicitRolenameOrQualifiers.get(0);
+        	
+        	if (!(explicitRolenameExp instanceof ASTOperationExpression)) {
+        		// Must be a OperationExpression which encapsulates an IDENT
+        		throw new SemanticException(rolenameToken,
+                        "Invalid qualification given");
+        	}
+        	
+        	ASTOperationExpression explicitRolenameOpExp = (ASTOperationExpression)explicitRolenameExp;
+        	Token explicitRolenameToken = explicitRolenameOpExp.getOpToken();
 
-        for (MNavigableElement nav : assoc.reachableEnds()) {
-            if (! nav.equals( dst ) ) {
-                if (srcClass.isSubClassOf(nav.cls()) ) {
-                    if ( explicitRolenameToken != null ) {
-                        if ( ! (nav.nameAsRolename().equals( explicitRolenameToken.getText() )) ) {
-                            continue;
-                        }
-                    }
-                    if (src != null ) {
-                        // if already set, the navigation path is not unique
-                        throw new SemanticException(rolenameToken,
-                                                    "The navigation path is ambiguous. " +
-                                                    "A qualification of the source association is required.");
-                    }
-                    src = nav;
-                }
+        	src = dst.association().getSourceEnd(srcClass, dst, explicitRolenameToken.getText());
+        	
+        	if ( src == null ) {
+                throw new SemanticException( explicitRolenameToken,
+                                             "Identifier `" + explicitRolenameToken.getText() + "' is not a correct"
+                                             + " rolename which is associated with `" + srcClass.name() + "'" );
             }
+        } else {
+        	if (!explicitRolenameOrQualifiers.isEmpty()) {
+	        	if (!qualifiers.isEmpty()) {
+					throw new SemanticException(rolenameToken,
+							"No qualification required for navigation path from "
+									+ StringUtil.inQuotes(srcClass.name()) + " to "
+									+ StringUtil.inQuotes(dst.nameAsRolename())
+									+ "required!");
+	        	}
+	        	
+	        	// Qualifiers are provided
+	        	qualifiers = explicitRolenameOrQualifiers;
+        	}
+        	
+        	src = dst.association().getSourceEnd(srcClass, dst, null);
         }
-        if ( src == null && explicitRolenameToken != null ) {
-            throw new SemanticException( explicitRolenameToken,
-                                         "Identifier `" + explicitRolenameToken.getText() + "' is not a correct"
-                                         + " rolename which is associated with `" + srcClass.name() + "'" );
+        
+        List<Expression> qualifierExpressions;
+        if (qualifiers.isEmpty()) {
+        	qualifierExpressions = Collections.emptyList();
+        } else {
+        	qualifierExpressions = new ArrayList<Expression>();
+        	for (ASTExpression qualifierExp : qualifiers) {
+        		qualifierExpressions.add(qualifierExp.gen(ctx));
+        	}
         }
+                
         if ( src == null )
             throw new SemanticException(rolenameToken,
                                         "Identifier `" + rolenameToken.getText() +
                                         "' is not a role name.");
         try { 
-            res = new ExpNavigation(srcExpr, src, dst);
+            res = new ExpNavigation(srcExpr, src, dst, qualifierExpressions);
         } catch (ExpInvalidException ex) {
             throw new SemanticException(rolenameToken, ex);
         }
         return res;
     }
 
+    /**
+	 * True if a navigation from an object of class <code>srcClass</code> to
+	 * the association end <code>dst</code> needs an explicit rolename.
+	 * 
+	 * Only reflexive associations with more then two reachable ends
+     * can have an ambiguous path.
+	 * @param srcClass The <code>MClass</code> to navigate from
+	 * @param dst The <code>MNavigableElement</code> to navigate to.
+	 * @return <code>true</code> if the navigation needs a rolename, otherwise <code>false</code>.
+	 */
+	protected boolean navigationNeedsExplicitRolename(MClass srcClass, MNavigableElement dst) {
+		// Only associations with ends > 2 can have ambiguous navigation expressions.
+		if (dst.association().reachableEnds().size() == 2) return false;
+		
+		int possibleSourceEnds = 0;
+		
+		for (MNavigableElement nav : dst.association().reachableEnds()) {
+            if (! nav.equals( dst ) ) {
+                if (srcClass.isSubClassOf(nav.cls()) ) {
+                    possibleSourceEnds++;
+                }
+            }
+        }
+		
+		return possibleSourceEnds > 1;
+	}
+	
     /**
      * Transforms an expression <code>$e.foo</code> into an expression
      * <code>c->collect($e | $e.foo)</code> or <code>c->collect($e |

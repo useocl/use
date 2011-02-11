@@ -21,11 +21,14 @@
 
 package org.tzi.use.uml.sys.soil;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.util.StringUtil;
@@ -40,14 +43,19 @@ import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
 public class MNewLinkObjectStatement extends MStatement {
 	/** TODO */
 	private MAssociationClass fAssociationClass;
-	/** TODO */
+	/**
+	 * List of the objects that participate in the link in the same order as association ends. 
+	 */
 	private List<MRValue> fParticipants;
+	/**
+	 * List of the qualifier values for the association ends. 
+	 */
+	private List<List<MRValue>> qualifier;
 	/** TODO */
 	private Expression fObjectName;
 	/** TODO */
 	private MLinkObject fCreatedLinkObject;
-
-	
+		
 	/**
 	 * TODO
 	 * @param associationClass
@@ -122,6 +130,22 @@ public class MNewLinkObjectStatement extends MStatement {
 	
 	@Override
 	protected void evaluate() throws EvaluationFailedException {
+		List<List<Value>> qualifierValues = new ArrayList<List<Value>>();
+		List<Value> empty = Collections.emptyList();
+		
+		if (qualifier != null) {
+			for (List<MRValue> values : qualifier) {
+				if (values == null) {
+					qualifierValues.add(empty);
+				} else {
+					List<Value> thisQualifierValues = new ArrayList<Value>();
+					for (MRValue v : values) {
+						thisQualifierValues.add(evaluateRValue(v));
+					}
+					qualifierValues.add(thisQualifierValues);
+				}
+			}
+		}
 		
 		// evaluate participants
 		List<MObject> participants = 
@@ -139,7 +163,8 @@ public class MNewLinkObjectStatement extends MStatement {
 			createLinkObject(
 					fAssociationClass, 
 					objectName, 
-					participants);
+					participants,
+					qualifierValues);
 	}
 
 

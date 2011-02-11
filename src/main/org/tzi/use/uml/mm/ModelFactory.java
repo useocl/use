@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 
@@ -86,18 +87,20 @@ public final class ModelFactory {
     /** 
      * Creates a new association end. 
      *
-     * @param cls       the class to be connected.
-     * @param rolename  role that the class plays in this association.
-     * @param mult      multiplicity of end.
-     * @param kind      MAggregationKind
-     * @param isOrdered use as Set or Sequence
+     * @param cls        the class to be connected.
+     * @param rolename   role that the class plays in this association.
+     * @param mult       multiplicity of end.
+     * @param kind       MAggregationKind
+     * @param isOrdered  use as Set or Sequence
+     * @param qualifiers List of qualifier declarations
      */
     public MAssociationEnd createAssociationEnd(MClass cls, 
                                                 String rolename, 
                                                 MMultiplicity mult, 
                                                 int kind,
-                                                boolean isOrdered) {
-        return new MAssociationEnd(cls, rolename, mult, kind, isOrdered);
+                                                boolean isOrdered,
+                                                List<VarDecl> qualifiers) {
+        return new MAssociationEnd(cls, rolename, mult, kind, isOrdered, qualifiers);
     }
 
     public MMultiplicity createMultiplicity() {

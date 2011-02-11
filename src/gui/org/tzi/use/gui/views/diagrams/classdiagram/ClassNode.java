@@ -126,6 +126,9 @@ public class ClassNode extends NodeBase implements SortChangeListener {
         
         setWidth( getWidth() + 10 );
         setHeight( attrHeight + oprHeight + fm.getHeight() + 4 );
+        
+        setHeight(Math.max(getHeight(), (int)getMinHeight()));
+        setWidth(Math.max(getWidth(), (int)getMinWidth()));
     }
     
     /**

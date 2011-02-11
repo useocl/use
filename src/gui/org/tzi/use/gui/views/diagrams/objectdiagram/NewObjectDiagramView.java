@@ -23,6 +23,8 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import java.awt.BorderLayout;
 import java.awt.print.PageFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -37,6 +39,7 @@ import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
@@ -194,7 +197,7 @@ public class NewObjectDiagramView extends JPanel
     void insertLink(MAssociation association, MObject[] objects) {
     	try {
 			fSystem.evaluateStatement(
-					new MLinkInsertionStatement(association, objects));
+					new MLinkInsertionStatement(association, objects, Collections.<List<Value>>emptyList()));
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
 					fMainWindow, 

@@ -22,7 +22,8 @@
 package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
@@ -37,12 +38,20 @@ import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
  *
  */
 public class ASTLinkInsertionStatement extends ASTStatement {
-	/** TODO */
+	/**
+	 * The name of the association to insert a link into
+	 */
 	private String fAssociationName;
-	/** TODO */
+	
+	/**
+	 * The ASTRValues of the participating objects
+	 */
 	private List<ASTRValue> fParticipants;
-	
-	
+		
+	/**
+	 * The List of the provided qualifiers
+	 */
+	private List<List<ASTRValue>> qualifierValues;
 	
 	/**
 	 * TODO
@@ -51,26 +60,14 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 	 */
 	public ASTLinkInsertionStatement(
 			String associationName,
-			List<ASTRValue> participants) {
+			List<ASTRValue> participants,
+			List<List<ASTRValue>> qualifierValues ) {
 		
-		fAssociationName = associationName;
-		fParticipants = participants;
+		this.fAssociationName = associationName;
+		this.fParticipants = participants;
+		this.qualifierValues = qualifierValues;
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param associationName
-	 * @param participants
-	 */
-	public ASTLinkInsertionStatement(
-			String associationName,
-			ASTRValue... participants) {
-		
-		this(associationName, Arrays.asList(participants));
-	}
-	
-	
+
 	/**
 	 * TODO
 	 * @return
@@ -102,7 +99,29 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 					association, 
 					fParticipants);
 		
-		return new MLinkInsertionStatement(association, participants);
+		List<List<MRValue>> qualifierRValues;
+		if (this.qualifierValues == null || this.qualifierValues.isEmpty()) {
+			qualifierRValues = Collections.emptyList();
+		} else {
+			qualifierRValues = new ArrayList<List<MRValue>>();
+			
+			for (List<ASTRValue> endQualifierValues : this.qualifierValues ) {
+				List<MRValue> endQualifierRValues;
+				
+				if (endQualifierValues == null || endQualifierValues.isEmpty()) {
+					endQualifierRValues = Collections.emptyList();
+				} else {
+					endQualifierRValues = new ArrayList<MRValue>();
+					
+					for (ASTRValue value : endQualifierValues) {
+						endQualifierRValues.add(this.generateRValue(value));
+					}
+				}
+				qualifierRValues.add(endQualifierRValues);
+			}
+		}
+		
+		return new MLinkInsertionStatement(association, participants, qualifierRValues);
 	}
 
 	

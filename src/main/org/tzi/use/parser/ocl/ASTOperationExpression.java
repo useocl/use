@@ -22,6 +22,7 @@
 package org.tzi.use.parser.ocl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.util.CollectionUtil;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -64,8 +66,18 @@ public class ASTOperationExpression extends ASTExpression {
     private boolean fHasParentheses;
     private boolean fFollowsArrow;
     private Expression[] fArgExprs;
-    private Token fExplicitRolename;
-
+    /**
+     * This list may contain an explicit rolename or several qualifiers 
+     */
+    private List<ASTExpression> fExplicitRolenameOrQualifiers = Collections.emptyList();
+    /**
+     * This list can only contain qualifiers, because it is filled after
+     * the list fExplicitRolenameOrQualifiers. Which is equal to a navigation from
+     * a reflexive association class with qualifiers, e. g., 
+     * self.employeeRanking[employee]['123']
+     */
+    private List<ASTExpression> fQualifiers = Collections.emptyList();
+    
     public ASTOperationExpression(Token op, 
                                   ASTExpression source, 
                                   boolean followsArrow) {
@@ -104,16 +116,22 @@ public class ASTOperationExpression extends ASTExpression {
     	return (fHasParentheses && (fSrcExpr != null) && !fFollowsArrow);
     }
 
-    public void setExplicitRolename( Token rolename ) {
-        fExplicitRolename = rolename;
+    public void addExplicitRolenameOrQualifier( ASTExpression rolename ) {
+    	this.fExplicitRolenameOrQualifiers = CollectionUtil.initAsArrayList(this.fExplicitRolenameOrQualifiers);
+    	this.fExplicitRolenameOrQualifiers.add(rolename);
     }
 
+    public void addQualifier( ASTExpression qualifier ) {
+    	this.fQualifiers = CollectionUtil.initAsArrayList(this.fQualifiers);
+    	this.fQualifiers.add(qualifier);
+    }
+    
     /*
       operation may be one of: 
       (1) predefined OCL operation
       (2) attribute operation on object type (no arguments)
       (3) "isQuery" operation on object type (possibly with arguments)
-      (4) navigation operation on object type
+      (4) navigation operation on object type (with possibly with rolename or qualifiers)
       (5) shorthand for collect
       (6) set operation on single object resulting from
       navigation over associations with multiplicity zero or one
@@ -260,7 +278,7 @@ public class ASTOperationExpression extends ASTExpression {
 
         opcase += fFollowsArrow ? ARROW : DOT;
         opcase += fHasParentheses ? PARENTHESES : NO_PARENTHESES;
-        opcase += fExplicitRolename != null ? EXPLICIT_ROLENAME : NO_EXPLICIT_ROLENAME;
+        opcase += fExplicitRolenameOrQualifiers.size() > 0 ? EXPLICIT_ROLENAME : NO_EXPLICIT_ROLENAME;
 
         switch ( opcase ) {
         case SRC_SIMPLE_TYPE + DOT + NO_PARENTHESES: 
@@ -304,13 +322,13 @@ public class ASTOperationExpression extends ASTExpression {
             MClass srcClass3 = ( ( ObjectType ) srcType ).cls();
             // (4) navigation operation on object type
             // must be a role name
-            MNavigableElement dst =
-                srcClass3.navigableEnd( opname );
+            MNavigableElement dst = srcClass3.navigableEnd( opname );
+            
             if (dst == null) {
             	//TODO: Handle error!!!
             	System.out.println("");
             } else {
-            res = genNavigation( fOp, srcClass3, srcExpr, dst, fExplicitRolename );
+            	res = genNavigation( ctx, fOp, srcClass3, srcExpr, dst, fExplicitRolenameOrQualifiers, fQualifiers );
             }
             
             break;

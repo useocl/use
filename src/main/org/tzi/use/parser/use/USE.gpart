@@ -54,6 +54,7 @@ package org.tzi.use.parser.use;
 import org.tzi.use.parser.base.BaseParser;
 import org.tzi.use.parser.ocl.*;
 import org.tzi.use.parser.soil.ast.*;
+import java.util.Collections;
 }
 
 @lexer::header {

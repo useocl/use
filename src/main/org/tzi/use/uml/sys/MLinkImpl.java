@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -72,7 +73,7 @@ final class MLinkImpl implements MLink {
      * @exception MSystemException objects do not conform to the
      *            association ends.
      */
-    MLinkImpl(MAssociation assoc, List<MObject> objects) throws MSystemException {
+    MLinkImpl(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues) throws MSystemException {
         fAssociation = assoc;
         if (assoc.associationEnds().size() != objects.size() )
             throw new IllegalArgumentException("Number of association ends (" +
@@ -82,10 +83,12 @@ final class MLinkImpl implements MLink {
         
         fLinkEnds = new HashMap<MAssociationEnd, MLinkEnd>(assoc.associationEnds().size());
         linkEndsSet = new HashSet<MLinkEnd>(assoc.associationEnds().size());
-        
+
         Iterator<MAssociationEnd> it1 = assoc.associationEnds().iterator();
         Iterator<MObject> it2 = objects.iterator();
-
+        boolean hasQualifiers = (qualifierValues != null && qualifierValues.size() > 0);
+        Iterator<List<Value>> it3 = (hasQualifiers ? qualifierValues.iterator() : null);
+        
         hashCode = fAssociation.hashCode();
         linkedObjects = new MObject[objects.size()];
         int i = 0;
@@ -93,7 +96,14 @@ final class MLinkImpl implements MLink {
         while (it1.hasNext() && it2.hasNext() ) {
             MAssociationEnd aend = it1.next();
             MObject obj = it2.next();
-            MLinkEnd lend = new MLinkEnd(aend, obj);
+            List<Value> endQualifierValues;
+            
+            if (hasQualifiers)
+            	endQualifierValues = it3.next();
+            else
+            	endQualifierValues = null;
+            
+            MLinkEnd lend = new MLinkEnd(aend, obj, endQualifierValues);
             hashCode += lend.hashCode();
             fLinkEnds.put(aend, lend);
             linkEndsSet.add(lend);
@@ -150,7 +160,7 @@ final class MLinkImpl implements MLink {
 
     public int hashCode() { 
         return hashCode;
-        }
+    }
 
     /**
      * Two links are equal iff they connect the same objects.

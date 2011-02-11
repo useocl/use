@@ -22,24 +22,32 @@
 package org.tzi.use.uml.ocl.expr;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
+import org.tzi.use.uml.ocl.type.BagType;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.OrderedSetType;
+import org.tzi.use.uml.ocl.type.SequenceType;
 import org.tzi.use.uml.ocl.type.SetType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.OrderedSetValue;
+import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.util.CollectionUtil;
 import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
 
 /**
  * Navigation expression from one class to another.
@@ -51,29 +59,35 @@ public final class ExpNavigation extends Expression {
     private MNavigableElement fSrc;
     private MNavigableElement fDst;
     private Expression fObjExp;
+    private List<Expression> qualifierExpressions;
     
     public ExpNavigation(Expression objExp,
                          MNavigableElement src,
-                         MNavigableElement dst)
+                         MNavigableElement dst,
+                         List<Expression> theQualifierExpressions)
         throws ExpInvalidException
     {
         // set result type later
         super(null, objExp);
-
+        
+        this.qualifierExpressions = CollectionUtil.emptyListIfNull(theQualifierExpressions);
+                
         if ( !objExp.type().isTrueObjectType() )
             throw new ExpInvalidException(
                     "Target expression of navigation operation must have " +
                     "object type, found `" + objExp.type() + "'." );
         
-        // let c be the class at dstEnd, then the result type is:
-        // (1) c if the multiplicity is max. one and this is binary association
-        // (2) Set(c) if the multiplicity is greater than 1 
-        // (3) OrderedSet(c) if the association end is marked as {ordered}
-        setResultType( dst.getType( objExp.type(), src ) );
+        if (!src.hasQualifiers() && !theQualifierExpressions.isEmpty()) {
+        	throw new ExpInvalidException("The navigation end " + StringUtil.inQuotes(dst.nameAsRolename()) +
+        			" has no defined qualifiers, but qualifer values were provided.");
+        }
+        
+        setResultType( dst.getType( objExp.type(), src, !qualifierExpressions.isEmpty() ) );
 
-        fSrc = src;
-        fDst = dst;
-        fObjExp = objExp;
+        this.fSrc = src;
+        this.fDst = dst;
+        this.fObjExp = objExp;
+        this.qualifierExpressions = theQualifierExpressions;
     }
 
     /**
@@ -146,7 +160,17 @@ public final class ExpNavigation extends Expression {
             	}
             } else {  
 	            // get objects at association end
-	            List<MObject> objList = obj.getNavigableObjects(state, fSrc, fDst);
+            	List<Value> qualifierValues;
+            	if (this.qualifierExpressions.isEmpty()) {
+            		qualifierValues = Collections.emptyList();
+            	} else {
+            		qualifierValues = new ArrayList<Value>();
+            		for (Expression exp : this.qualifierExpressions) {
+            			qualifierValues.add(exp.eval(ctx));
+            		}
+            	}
+            	
+	            List<MObject> objList = obj.getNavigableObjects(state, fSrc, fDst, qualifierValues);
 	            if (resultType.isTrueObjectType() ) {
 	                if (objList.size() > 1 )
 	                    throw new MultiplicityViolationException(
@@ -165,6 +189,12 @@ public final class ExpNavigation extends Expression {
 	            } else if (resultType.isOrderedSet() ) {
 	                res = new OrderedSetValue(((OrderedSetType) resultType).elemType(), 
 	                                        oidsToObjectValues(state, objList));
+	            } else if (resultType.isBag() ) {
+	            	res = new BagValue(((BagType) resultType).elemType(), 
+                            oidsToObjectValues(state, objList));
+	            } else if (resultType.isSequence() ) {
+	            	res = new SequenceValue(((SequenceType) resultType).elemType(), 
+                            oidsToObjectValues(state, objList));
 	            } else
 	                throw new RuntimeException("Unexpected association end type `" + 
 	                                           resultType + "'");

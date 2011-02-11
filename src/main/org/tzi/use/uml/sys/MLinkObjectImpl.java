@@ -32,11 +32,12 @@ import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
 
 /**
- * An linkobject is an instance of an associationclass. It usually has different
+ * An link object is an instance of an association class. It usually has different
  * object states over time and is connected to several objects.
  *
  * @version     $ProjectVersion: 0.393 $
@@ -53,83 +54,74 @@ public class MLinkObjectImpl implements MLinkObject {
      * Constructs a new object for the given class.
      */
     MLinkObjectImpl( MAssociationClass assocClass, String name,
-                     List<MObject> objects ) throws MSystemException {
-        delegatesLink = new MLinkImpl( assocClass, objects );
+                     List<MObject> objects, List<List<Value>> qualifierValues ) throws MSystemException {
+        delegatesLink = new MLinkImpl( assocClass, objects, qualifierValues );
         delegatesObject = new MObjectImpl( assocClass, name );
     }
 
 
     // Methods of MObject
     /**
-     * Returns the class of this linkobject.
+     * Returns the class of this link object.
      */
+    @Override
     public MClass cls() {
         return delegatesObject.cls();
     }
 
     /**
-     * Returns the type of this linkobject.
+     * Returns the type of this link object.
      */
+    @Override
     public ObjectType type() {
         return delegatesObject.type();
     }
 
     /**
-     * Returns a name for this linkobject.
+     * Returns a name for this link object.
      */
+    @Override
     public String name() {
         return delegatesObject.name();
     }
     
-    
-    /**
-     * returns the value of this object
-     * @return the value of this object
-     */
+    @Override
     public ObjectValue value() {
     	return new ObjectValue(TypeFactory.mkObjectType(cls()), this);
     }
 
     
     /**
-     * Returns the state of an linkobject in a specific system state.
+     * Returns the state of an link object in a specific system state.
      *
      * @return null if object does not exist in the state
      */
+    @Override
     public MObjectState state( MSystemState systemState ) {
         return systemState.getObjectState( this );
     }
 
     /**
-     * Returns true if this linkobject exists in a specific system state.
+     * Returns true if this link object exists in a specific system state.
      */
+    @Override
     public boolean exists( MSystemState systemState ) {
         return systemState.getObjectState( this ) != null;
     }
 
-    /**
-     * Returns a list of objects at <code>dstEnd</code> which are
-     * linked to this linkobject at <code>srcEnd</code>.
-     *
-     * @return List(MObject)
-     */
+    @Override
     public List<MObject> getLinkedObjects( MSystemState systemState,
-                                  MAssociationEnd srcEnd, MAssociationEnd dstEnd ) {
-        return systemState.getLinkedObjects( this, srcEnd, dstEnd );
+                                  MAssociationEnd srcEnd, MAssociationEnd dstEnd, List<Value> qualifierValues ) {
+        return systemState.getLinkedObjects( this, srcEnd, dstEnd, qualifierValues );
     }
 
-    /**
-     * Returns a list of objects at <code>dst</code> which are
-     * connected to this object at <code>src</code>. This is needed for navigation.
-     *
-     * @return List(MObject)
-     */
+    @Override
     public List<MObject> getNavigableObjects( MSystemState systemState,
-                                     MNavigableElement src, MNavigableElement dst ) {
-        return systemState.getNavigableObjects( this, src, dst );
+                                     MNavigableElement src, MNavigableElement dst, List<Value> qualifierValues ) {
+        return systemState.getNavigableObjects( this, src, dst, qualifierValues );
     }
 
-
+    @Override
     public int hashCode() {
         return delegatesObject.hashCode();
     }
@@ -173,7 +165,7 @@ public class MLinkObjectImpl implements MLinkObject {
 
 
     /**
-     * Two linkobjects are equal iff they have the same name.
+     * Two link objects are equal iff they have the same name.
      */
     public boolean equals( Object obj ) {
         if ( obj == this ) {

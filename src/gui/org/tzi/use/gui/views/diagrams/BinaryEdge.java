@@ -40,35 +40,50 @@ public class BinaryEdge extends EdgeBase {
 
     private String fLabel;
     
-    public BinaryEdge( String label, NodeBase source, NodeBase target,
-                       MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
-                       DiagramView diagram, MAssociation assoc ) {
-        super( source, target, label, diagram, assoc );
-        fLabel = label;
-        
-        fAssocName = new AssociationName( label, (NodeBase) source,
-                                          (NodeBase) target, fX1, fY1, fX2, fY2,
-                                          fOpt, this, assoc );
-         
-         fSourceRolename = new Rolename( sourceEnd, (NodeBase) source,
-                                         (NodeBase) target, fX1, fY1, fX2, fY2,
-                                         fOpt, Rolename.SOURCE_SIDE, this );
-         fTargetRolename = new Rolename( targetEnd, (NodeBase) target,
-                                         (NodeBase) source, fX2, fY2, fX1, fY1,
-                                         fOpt, Rolename.TARGET_SIDE, this );
-         
-         fSourceMultiplicity = 
-             new Multiplicity( sourceEnd, (NodeBase) source, (NodeBase) target, 
-                               this, fX1, fY1, fX2, fY2, fOpt,
-                               Multiplicity.SOURCE_SIDE );
-         fTargetMultiplicity = 
-             new Multiplicity( targetEnd, target, source,
-                               this, fX2, fY2, fX1, fY1, fOpt,
-                               Multiplicity.TARGET_SIDE );
-        
-        checkAndCreateReflexiveEdge( source.equals( target ) );
-        
-    }
+	public BinaryEdge(String label, NodeBase source, NodeBase target,
+			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
+			DiagramView diagram, MAssociation assoc) {
+		super();
+		
+		this.fLabel = label;
+		this.fDiagram = diagram;
+		this.fAssoc = assoc;
+		this.fOpt = fDiagram.fOpt;
+		
+		this.setSource(source);
+		this.setTarget(target);
+		
+		if (sourceEnd.hasQualifiers()) {
+			this.setSourceQualifier(new QualifierNode(target, source, sourceEnd));
+			
+		}
+
+		if (targetEnd.hasQualifiers()) {
+			this.setTargetQualifier(new QualifierNode(source, target, targetEnd));
+		}
+				
+		this.initEdge();
+		
+		fAssocName = new AssociationName(label, (NodeBase) source,
+				(NodeBase) target, fX1, fY1, fX2, fY2, fOpt, this, assoc);
+
+		fSourceRolename = new Rolename(sourceEnd, (NodeBase) source,
+				(NodeBase) target, fX1, fY1, fX2, fY2, fOpt,
+				Rolename.SOURCE_SIDE, this);
+		fTargetRolename = new Rolename(targetEnd, (NodeBase) target,
+				(NodeBase) source, fX2, fY2, fX1, fY1, fOpt,
+				Rolename.TARGET_SIDE, this);
+
+		fSourceMultiplicity = new Multiplicity(sourceEnd, (NodeBase) source,
+				(NodeBase) target, this, fX1, fY1, fX2, fY2, fOpt,
+				Multiplicity.SOURCE_SIDE);
+		
+		fTargetMultiplicity = new Multiplicity(targetEnd, target, source, this,
+				fX2, fY2, fX1, fY1, fOpt, Multiplicity.TARGET_SIDE);
+
+		checkAndCreateReflexiveEdge(source.equals(target));
+
+	}
 
     public BinaryEdge( String label, NodeBase source, NodeBase target,
                        DiagramView diagram, MAssociation assoc ) {

@@ -37,6 +37,7 @@ import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
+import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
@@ -153,13 +154,15 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
     DiagramOptions fOpt;
     
     /**
-     * Source node of this edge.
+     * Possible node for qualifier
      */
-    NodeBase fSource;
+    QualifierNode fSourceQualifier = null;
+    
     /**
-     * Target node of this edge.
+     * Possible node for qualifier
      */
-    NodeBase fTarget;
+    QualifierNode fTargetQualifier = null;
+    
     /**
      * Rolename which is on the source side of this edge.
      */
@@ -208,6 +211,14 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
     MAssociation fAssoc;
 
     /**
+     * Constructs an empty edge without information.
+     * After all informations required by the constructor 
+     * {@link #EdgeBase(NodeBase, NodeBase, String, DiagramView, MAssociation)}
+     * are set the operation {@link #initEdge()} <strong>must</strong> be called. 
+     */
+    public EdgeBase() {}
+    
+    /**
      * Constructs a new edge.
      * @param source The source node of the edge.
      * @param target The target node of the edge.
@@ -221,31 +232,84 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
         fOpt = fDiagram.getOptions();
         fEdgeName = edgeName;
         fAssoc = assoc;
-        fSource = (NodeBase) source;
-        fTarget = (NodeBase) target;
-        fNodesOnEdge = new ArrayList<NodeOnEdge>();
+        fSource = source;
+        fTarget = target;
         
-        fX1 = (int) fSource.x();
-        fY1 = (int) fSource.y();
-        fX2 = (int) fTarget.x();
-        fY2 = (int) fTarget.y();
-        
-        Point2D sp = getIntersectionCoordinate( fSource, fX1, fY1, 
-                                                fX2, fY2 );
-        Point2D tp = getIntersectionCoordinate( fTarget, fX2, fY2, 
-                                                fX1, fY1 );
+        initEdge();
+    }
+
+	/**
+	 * Sets up the edge information.<br/>
+	 * All information which is required by the constructor 
+	 * {@link #EdgeBase(NodeBase, NodeBase, String, DiagramView, MAssociation)} 
+	 * must set before.
+	 * This operation is automatically called when using this constructor. 
+	 */
+	public void initEdge() {
+		fNodesOnEdge = new ArrayList<NodeOnEdge>();
+		Point2D sp = null;
+		Point2D tp = null;
+		NodeBase source;
+		NodeBase target;
+		
+		if (fSourceQualifier != null) {
+			fSourceQualifier.calculatePosition();
+			source = fSourceQualifier;
+			if (fSourceQualifier.getQualifierLocation() == Direction.EAST) {
+				fX1 = (int) fSourceQualifier.x() + (fSourceQualifier.getWidth() / 2);
+			} else {
+				fX1 = (int) fSourceQualifier.x() - (fSourceQualifier.getWidth() / 2);
+			}
+			fY1 = (int) fSourceQualifier.y();
+			sp = new Point2D.Double(fX1, fY1);
+		} else {
+			source = fSource;
+			fX1 = (int) source.x();
+	        fY1 = (int) source.y();
+		}
+		
+		if (fTargetQualifier != null) {
+			fTargetQualifier.calculatePosition();
+			target = fTargetQualifier;
+			if (fTargetQualifier.getQualifierLocation() == Direction.EAST) {
+				fX2 = (int) fTargetQualifier.x() + (fTargetQualifier.getWidth() / 2);
+			} else {
+				fX2 = (int) fTargetQualifier.x() - (fTargetQualifier.getWidth() / 2);
+			}
+			fY2 = (int) fTargetQualifier.y();
+			tp = new Point2D.Double(fX2, fY2);
+		} else {
+			target = fTarget;
+			fX2 = (int) target.x();
+	        fY2 = (int) target.y();
+		}
+		
+		if (sp == null) {
+	        sp = getIntersectionCoordinate( source, fX1, fY1, 
+	                                                fX2, fY2 );
+		}
+		
+		if (tp == null) {
+	        tp = getIntersectionCoordinate( target, fX2, fY2, 
+	                                                fX1, fY1 );
+		}
+		
+        source = fSource;
+        target = fTarget;
         
         fSNode = new NodeOnEdge( sp.getX(), sp.getY(),
-                                 fSource, fTarget, this, 
+                                 source, target, this, 
                                  fNodesOnEdgeCounter++,
-                                 EdgeBase.SOURCE, edgeName, fOpt );
+                                 EdgeBase.SOURCE, fEdgeName, fOpt );
+        
         fTNode = new NodeOnEdge( tp.getX(), tp.getY(), 
-                                 fSource, fTarget, this, 
+                                 source, target, this, 
                                  fNodesOnEdgeCounter++,
-                                 EdgeBase.TARGET, edgeName, fOpt ); 
+                                 EdgeBase.TARGET, fEdgeName, fOpt ); 
+        
         fNodesOnEdge.add( fSNode );
         fNodesOnEdge.add( fTNode );
-    }
+	}
     
     /**
      * Draws the edge in a given graphic object.
@@ -343,6 +407,14 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
                     ex.printStackTrace();
                 }
             }
+        }
+        
+        if (fSourceQualifier != null) {
+        	fSourceQualifier.draw(g, g.getFontMetrics());
+        }
+        
+        if (fTargetQualifier != null) {
+        	fTargetQualifier.draw(g, g.getFontMetrics());
         }
     }
 
@@ -453,6 +525,22 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
         return fDiagram instanceof NewObjectDiagram;
     }
     
+    public QualifierNode getSourceQualifier() {
+    	return this.fSourceQualifier;
+    }
+    
+    public void setSourceQualifier(QualifierNode node) {
+    	fSourceQualifier = node;
+    }
+    
+    public QualifierNode getTargetQualifier() {
+    	return fTargetQualifier;
+    }
+    
+    public void setTargetQualifier(QualifierNode node) {
+    	fTargetQualifier = node;
+    }
+
     /**
      * Is beneith the x,y position an edge, than an additional node
      * will be added on this edge.
@@ -712,11 +800,12 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
     public Set<EdgeBase> checkForNewPositionAndDraw( DirectedGraph<NodeBase, EdgeBase> graph, Graphics g, 
                                            FontMetrics fm ) {
         Set<EdgeBase> edges = null;
-        
+
         if ( graph.existsPath( fSource, fTarget ) ) {
             edges = graph.edgesBetween( fSource, fTarget );
             calculateNewPosition( edges );
         }
+        
         if ( edges != null ) {
             for (EdgeBase e : edges) {
                 e.draw( g, fm );
@@ -739,8 +828,11 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      * nodes.
      */
     private void calculateNewPosition( Set<EdgeBase> edges ) {
-        Polygon sourceRec = fSource.dimension();
-        Polygon targetRec = fTarget.dimension();
+    	NodeBase source = (fTargetQualifier == null ? fSource : fTargetQualifier);
+        NodeBase target = (fSourceQualifier == null ? fTarget : fSourceQualifier);
+        
+    	Polygon sourceRec = source.dimension();
+        Polygon targetRec = target.dimension();
         
         double sWidth = sourceRec.getBounds().getWidth();
         double sHeight = sourceRec.getBounds().getHeight();
@@ -748,10 +840,10 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
         double tHeight = targetRec.getBounds().getHeight();
         
         // midpoints
-        double sX = fSource.x();
-        double sY = fSource.y();
-        double tX = fTarget.x();
-        double tY = fTarget.y();
+        double sX = source.x();
+        double sY = source.y();
+        double tX = target.x();
+        double tY = target.y();
         
         // source corner points
         double uLeftX = sX - sWidth / 2.0;
@@ -768,22 +860,25 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
         double projection = 0;
         
         // line from midpoint to midpoint
-        Line2D.Double line = new Line2D.Double( fSource.x(), fSource.y(),
-                                                fTarget.x(), fTarget.y() );
+        Line2D.Double line = new Line2D.Double( source.x(), source.y(),
+                                                target.x(), target.y() );
         
         // if there is just one link between two objects set the
         // midpoint of the objects as start and end point of the
         // link. Otherwise calculate the new positions.
         if ( edges.size() == 1 ) {
             for (EdgeBase e : edges) {
+            	if (fSourceQualifier != null) fSourceQualifier.calculatePosition();
+                if (fTargetQualifier != null) fTargetQualifier.calculatePosition();
+                
                 // edge is reflexive
                 if ( isReflexive() ) {
                     setCorrectPoints( sX + sWidth/3, sY - sHeight/2,
                                       tX + tWidth/2, tY - 4, e );   
                     updateNodeOnEdges();
                 } else {
-                    setCorrectPoints( fSource.x(), fSource.y(),
-                                      fTarget.x(), fTarget.y(), e );
+                    setCorrectPoints( source.x(), source.y(),
+                                      target.x(), target.y(), e );
                     updateNodeOnEdges();
                 }
             }
@@ -862,6 +957,10 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
                     }
                     setCorrectPoints( sStartX, sStartY, tStartX, tStartY, e );   
                     updateNodeOnEdges();
+                    
+                    if (fSourceQualifier != null) fSourceQualifier.calculatePosition();
+                    if (fTargetQualifier != null) fTargetQualifier.calculatePosition();
+                    
                     counter++;
                 }
             // ... use the height
@@ -903,6 +1002,10 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
                     }
                     setCorrectPoints( sStartX, sStartY, tStartX, tStartY, e );   
                     updateNodeOnEdges();
+                    
+                    if (fSourceQualifier != null) fSourceQualifier.calculatePosition();
+                    if (fTargetQualifier != null) fTargetQualifier.calculatePosition();
+                    
                     counter++;
                 }
             }

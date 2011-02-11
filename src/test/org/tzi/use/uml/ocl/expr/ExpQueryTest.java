@@ -24,6 +24,8 @@ package org.tzi.use.uml.ocl.expr;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -58,7 +60,9 @@ import org.tzi.use.uml.sys.MSystemState;
  */
 
 public class ExpQueryTest extends TestCase {
-    private MSystemState fState;
+    static List<Value> emptyQualifierValues = Collections.emptyList();
+    
+	private MSystemState fState;
     private Expression fSet123;
     private Expression fEGreater1;
     private Expression fE1NotEqualsE2;
@@ -240,7 +244,8 @@ public class ExpQueryTest extends TestCase {
      * the proper exception (and no RuntimeException).
      */
     public void testNavigationWithMultiplicityFailure() {
-
+    	List<VarDecl> emptyQualifiers = Collections.emptyList();
+    	
         try {
             ModelFactory f = new ModelFactory();
             MModel model =  f.createModel("Test");
@@ -256,10 +261,10 @@ public class ExpQueryTest extends TestCase {
             MAssociation r = f.createAssociation("R");
             MAssociationEnd ra = f.createAssociationEnd(a, "a", MMultiplicity.ZERO_MANY,
                                                         MAggregationKind.NONE, 
-                                                        false);
+                                                        false, emptyQualifiers);
             MAssociationEnd rb = f.createAssociationEnd(b, "b", MMultiplicity.ONE,  
                                                         MAggregationKind.NONE, 
-                                                        false);
+                                                        false, emptyQualifiers);
             r.addAssociationEnd(ra);
             r.addAssociationEnd(rb);
             model.addAssociation(r);
@@ -269,8 +274,8 @@ public class ExpQueryTest extends TestCase {
             MObject b1 = state.createObject(b,"B1");
             MObject b2 = state.createObject(b,"B2");
 
-            state.createLink( r, Arrays.asList( new MObject[] { a1, b1 } ));
-            state.createLink( r, Arrays.asList( new MObject[] { a1, b2 } ));
+            state.createLink( r, Arrays.asList( new MObject[] { a1, b1 } ), null);
+            state.createLink( r, Arrays.asList( new MObject[] { a1, b2 } ), null);
 
             VarBindings bindings = new VarBindings();
             bindings.push( "A1", new ObjectValue(a1.type(), a1));
@@ -279,7 +284,7 @@ public class ExpQueryTest extends TestCase {
             
            
             ExpVariable expVar = new ExpVariable( "A1", TypeFactory.mkObjectType(a) );
-            ExpNavigation nav = new ExpNavigation( expVar, ra, rb );
+            ExpNavigation nav = new ExpNavigation( expVar, ra, rb, Collections.<Expression>emptyList() );
             
             try {
                 e.eval(nav, state, bindings);

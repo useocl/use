@@ -23,11 +23,13 @@ package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -78,7 +80,8 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
         return this;
     }
 
-    public Type getType( Type sourceObjectType, MNavigableElement src ) {
+    @Override
+    public Type getType( Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
         MAssociation assoc = src.association();
         if (assoc.associationEnds().size() > 2) 
             return TypeFactory.mkSet( TypeFactory.mkObjectType( this ) );
@@ -508,109 +511,93 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 
 	@Override
 	public void addSubsets(MAssociation asso) {
-		// TODO Auto-generated method stub
+		this.fAssociationImpl.addSubsets(asso);
 	}
 
 	@Override
 	public Set<MAssociation> getSubsets() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getSubsets();
 	}
 
 	
 	@Override
 	public List<MAssociationEnd> getAssociationEnd(String subsetsRolename) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fClassImpl.getAssociationEnd(subsetsRolename);
 	}
 
 	@Override
 	public boolean isUnion() {
-		// TODO Union with AssociationClass
-		return false;
+		return this.fAssociationImpl.isUnion();
 	}
 
 	@Override
 	public void setUnion(boolean newValue) {
-		// TODO Union with AssociationClass
+		this.fAssociationImpl.setUnion(newValue);
 	}
 	
 	@Override
 	public void addSubsettedBy(MAssociation asso) {
-		// TODO Auto-generated method stub
-		
+		this.fAssociationImpl.addSubsettedBy(asso);
 	}
 
 	@Override
 	public Set<MAssociation> getSubsettedBy() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getSubsettedBy();
 	}
 
 	@Override
 	public MAssociationEnd getAssociationEnd(MClass endCls, String rolename) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getAssociationEnd(endCls, rolename);
 	}
 
 	@Override
 	public void addRedefinedBy(MAssociation association) {
-		// TODO Auto-generated method stub
-		
+		this.fAssociationImpl.addRedefinedBy(association);		
 	}
 
 	@Override
 	public void addRedefines(MAssociation parentAssociation) {
-		// TODO Auto-generated method stub
-		
+		this.addRedefines(parentAssociation);
 	}
 
 	@Override
 	public Set<MAssociation> getSubsettedByClosure() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getSubsettedByClosure();
 	}
 
 	@Override
 	public Set<MAssociation> getSubsetsClosure() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getSubsetsClosure();
 	}
 
 	@Override
 	public Set<MAssociation> getRedefinedByClosure() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getRedefinedBy();
 	}
 
 	@Override
 	public Set<MAssociation> getRedefinesClosure() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getRedefinesClosure();
 	}
 
 	@Override
 	public Set<MAssociation> getRedefinedBy() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getRedefinedBy();
 	}
 
 	@Override
 	public Set<MAssociation> getRedefines() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.getRedefines();
 	}
 
 	@Override
 	public Set<MAssociationEnd> getSubsettingEnds() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Set<MAssociationEnd> getRedefiningEnds() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 	
 	@Override 
@@ -633,7 +620,39 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 	 */
 	@Override
 	public List<MAssociationEnd> getAllOtherAssociationEnds() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.fAssociationImpl.associationEnds();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#hasQualifiedEnds()
+	 */
+	@Override
+	public boolean hasQualifiedEnds() {
+		return this.fAssociationImpl.hasQualifiedEnds();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MNavigableElement#getQualifiers()
+	 */
+	@Override
+	public List<VarDecl> getQualifiers() {
+		return Collections.emptyList();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MNavigableElement#hasQualifiers()
+	 */
+	@Override
+	public boolean hasQualifiers() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#getSourceEnd(org.tzi.use.uml.mm.MClass, org.tzi.use.uml.mm.MNavigableElement, java.lang.String)
+	 */
+	@Override
+	public MNavigableElement getSourceEnd(MClass srcClass,
+			MNavigableElement dst, String explicitRolename) {
+		return this.fAssociationImpl.getSourceEnd(srcClass, dst, explicitRolename);
 	}
 }

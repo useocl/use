@@ -30,6 +30,7 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.StringUtil;
 
 /**
  * An operation is a parameterized expression. Evaluation of the
@@ -218,12 +219,17 @@ public final class MOperation extends MModelElementImpl {
      */
     public void setExpression(Expression expr) throws MInvalidModelException {
         // If no result type is set, use type of the expression
-    	if (fResultType == null)
+    	if (fResultType == null) {
     		fResultType = expr.type();
-    	else if (! expr.type().isSubtypeOf(fResultType) )
+    	} else if (expr.type() == null) {
+    		throw new MInvalidModelException("The operation " + StringUtil.inQuotes(this.cls().name() + "." + this.name()) + 
+    				" does not have a declared result type and the result type of the defined expression could not be calcuated. This" +
+    				" can happen when an operation without a declared result type is calling itself recursively.");
+    	} else if (! expr.type().isSubtypeOf(fResultType) ) {
             throw new MInvalidModelException("Expression type `" +
                                              expr.type() + 
-                                             "' does not match declared result type `" + fResultType + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+                                             "' does not match declared result type `" + fResultType + "'.");
+    	}
         fExpr = expr;
     }
 

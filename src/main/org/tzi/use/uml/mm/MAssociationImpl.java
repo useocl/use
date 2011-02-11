@@ -102,17 +102,17 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
     /**
      * Returns the list of association ends.
      *
-     * @return List(MAssociationEnd)
+     * @return The list of association ends.
      */
     public List<MAssociationEnd> associationEnds() {
         return fAssociationEnds;
     }
     
     /**
-     * TODO
+     * Returns the lust of all rolen ames of the association ends.
+     * @return
      */
     public List<String> roleNames() {
-    	
     	List<String> result = new ArrayList<String>(fAssociationEnds.size());
     	for (MAssociationEnd assocEnd : fAssociationEnds) {
     		result.add(assocEnd.name());
@@ -362,4 +362,61 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 		
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#hasQualifiedEnds()
+	 */
+	@Override
+	public boolean hasQualifiedEnds() {
+		// TODO Save information?
+		for (MAssociationEnd end : this.associationEnds()) {
+			if (end.hasQualifiers())
+				return true;
+		}
+		
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#getSourceEnd(org.tzi.use.uml.mm.MClass, org.tzi.use.uml.mm.MNavigableElement, java.lang.String)
+	 */
+	@Override
+	public MNavigableElement getSourceEnd(MClass srcClass,
+			MNavigableElement dst, String explicitRolename) {
+				
+		for (MAssociationEnd end : this.associationEnds()) {
+			if (end.equals(dst)) continue;
+			
+			if (srcClass.isSubClassOf(end.cls())) {
+				if (explicitRolename == null) {
+					return end;
+				} else {
+					if (end.nameAsRolename().equals(explicitRolename))
+						return end;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#getParentAlignedEnds(org.tzi.use.uml.mm.MAssociation)
+	 */
+	//@Override
+	public List<MAssociationEnd> getParentAlignedEnds(MAssociation parentAssociation) {
+		List<MAssociationEnd> ownEnds = new ArrayList<MAssociationEnd>(this.associationEnds());
+		
+		for (MAssociationEnd parentEnd : parentAssociation.associationEnds()) {
+			for (MAssociationEnd end : ownEnds) {
+				if (end.getRedefinedEnds().isEmpty()) {
+					
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	
 }

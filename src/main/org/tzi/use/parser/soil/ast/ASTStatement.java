@@ -141,26 +141,7 @@ public abstract class ASTStatement extends AST {
 	public void setSourcePosition(Token token) {
 		setSourcePosition(new SrcPos(token));
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param parsedText
-	 */
-	public void setParsedText(String parsedText) {
-		fParsedText = parsedText;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public String getParsedText() {
-		return fParsedText;
-	}
-	
-	
+
 	/**
 	 * TODO
 	 * @param childStatement

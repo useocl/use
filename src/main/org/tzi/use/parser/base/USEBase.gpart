@@ -199,7 +199,8 @@ associationEnd returns [ASTAssociationEnd n]
       | 'subsets' sr=IDENT { $n.addSubsetsRolename($sr); }
       | keyUnion { $n.setUnion(true); }
       | 'redefines' rd=IDENT { $n.addRedefinesRolename($rd); }
-      | 'derived' EQUAL exp=expression { $n.setDerived($exp.n); }
+      | keyDerived EQUAL exp=expression { $n.setDerived($exp.n); }
+      | keyQualifier qualifiers = paramList {$n.setQualifiers($qualifiers.paramList); }
     )*
     ( SEMI )?
     ;
@@ -320,3 +321,9 @@ keyAggregation:
   
 keyClass:
   {input.LT(1).getText().equals("class")}? IDENT ;
+
+keyDerived:
+  {input.LT(1).getText().equals("derived")}? IDENT ;
+  
+keyQualifier:
+  {input.LT(1).getText().equals("qualifier")}? IDENT ;

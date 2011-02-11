@@ -236,6 +236,15 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         return fEdges.iterator();
     }
 
+    @Override
+    public Set<E> allEdges(N n) {
+    	NodeInfo ni = getNodeInfo(n);
+    	Set<E> result = new HashSet<E>(ni.fIncomingEdges);
+    	result.addAll(ni.fOutgoingEdges);
+    	
+    	return result;
+    }
+    
     /** 
      * Adds the specified edge to this graph. Multiple edges between
      * the same nodes may exist but they must be distinct, i.e. their 

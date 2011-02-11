@@ -21,6 +21,10 @@
 
 package org.tzi.use.parser.shell;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -139,6 +143,8 @@ public class StatementGenerationTest extends TestCase {
 	 * @throws Exception
 	 */
 	private void generateModelAndState() throws Exception {
+		List<VarDecl> emptyQualifiers = Collections.emptyList();
+		
 		ModelFactory factory = new ModelFactory();
 		fModel = factory.createModel("testModel");
 		
@@ -202,7 +208,7 @@ public class StatementGenerationTest extends TestCase {
 					"E1", 
 					new MMultiplicity(0, 1), 
 					MAggregationKind.NONE, 
-					false));
+					false, emptyQualifiers));
 		
 		a1.addAssociationEnd( 
 			factory.createAssociationEnd(
@@ -210,7 +216,7 @@ public class StatementGenerationTest extends TestCase {
 					"E2", 
 					new MMultiplicity(0, 1), 
 					MAggregationKind.NONE, 
-					false));
+					false, emptyQualifiers));
 		
 		fModel.addAssociation(a1);
 		
@@ -221,7 +227,7 @@ public class StatementGenerationTest extends TestCase {
 						"role1", 
 						new MMultiplicity(0, 1), 
 						MAggregationKind.NONE, 
-						false));
+						false, emptyQualifiers));
 		
 		ac1.addAssociationEnd( 
 				factory.createAssociationEnd(
@@ -229,7 +235,7 @@ public class StatementGenerationTest extends TestCase {
 						"role2", 
 						new MMultiplicity(0, 1), 
 						MAggregationKind.NONE, 
-						false));
+						false, emptyQualifiers));
 		
 		fModel.addClass(ac1);
 		fModel.addAssociation(ac1);
@@ -249,7 +255,7 @@ public class StatementGenerationTest extends TestCase {
 		fO4 = fState.createObject(c2, "O4");
 		system.getVariableEnvironment().assign("o4", fO4.value());
 		
-		fState.createLink(a1, fO3, fO4);
+		fState.createLink(a1, Arrays.asList(fO3, fO4), null);
 	}
 	
 	

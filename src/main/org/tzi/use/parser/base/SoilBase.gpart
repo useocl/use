@@ -61,7 +61,6 @@ stat returns [ASTStatement n]
     $n = seq.simplify();
     if (($n != null) && (!$n.isEmptyStatement())) {
       $n.setSourcePosition($start);
-      $n.setParsedText($text);
     }
   }
 ;
@@ -294,14 +293,62 @@ lnkInsStat returns [ASTLinkInsertionStatement n]
 :
   'insert'
   LPAREN
-    p = rValListMin2
+    p = rValListMin2WithOptionalQualifiers
   RPAREN
   'into'
   ass = IDENT
 
-  { $n = new ASTLinkInsertionStatement($ass.text, $p.n); }
+  { $n = new ASTLinkInsertionStatement($ass.text, $p.participans, $p.qualifiers); }
 ;
 
+rValListMin2WithOptionalQualifiers returns [List<ASTRValue> participans, List<List<ASTRValue>> qualifiers]
+@init {
+  $participans = new ArrayList<ASTRValue>();
+  $qualifiers = new ArrayList<List<ASTRValue>>();
+  List<ASTRValue> currentQualifiers = Collections.emptyList();
+}
+:
+  r = rValue { $participans.add($r.n); }
+  (
+  	LBRACE
+  	qualifierValues = rValList {currentQualifiers = $qualifierValues.n;}
+  	RBRACE
+  )?
+  {
+    $qualifiers.add(currentQualifiers);
+    currentQualifiers = Collections.emptyList();
+  }
+  
+  COMMA
+  
+  r = rValue { $participans.add($r.n); }
+  (
+  	LBRACE
+  	qualifierValues = rValList {currentQualifiers = $qualifierValues.n;}
+  	RBRACE
+  )?
+  {
+    $qualifiers.add(currentQualifiers);
+    currentQualifiers = Collections.emptyList();
+  }
+  
+  (
+    COMMA
+    
+    r = rValue { $participans.add($r.n); }
+    
+    (
+  	  LBRACE
+  	  qualifierValues = rValList {currentQualifiers = $qualifierValues.n;}
+  	  RBRACE
+  	)?
+    
+    {
+      $qualifiers.add(currentQualifiers);
+      currentQualifiers = Collections.emptyList();
+    }	
+  )*
+;
 
 ////////////////////////////////////////////////////////////////////////////////
 // link deletion statement
@@ -400,7 +447,6 @@ options {
   loc = lobjCreateStat
   { 
     $loc.n.setSourcePosition($start);
-    $loc.n.setParsedText($text);
     $n = new ASTRValueNewLinkObject($loc.n);
   }
   |
@@ -416,7 +462,6 @@ options {
       new ASTNewObjectStatement($objType.n, $objName.n);
     
     nos.setSourcePosition($start);
-    nos.setParsedText($text);
       
     $n = new ASTRValueNewObject(nos); 
   }
@@ -429,7 +474,7 @@ options {
 rValList returns [List<ASTRValue> n]
 :
   nothing           
-  { $n = new ArrayList<ASTRValue>(); }
+  { $n = Collections.<ASTRValue>emptyList(); }
   |
   rl = rValListMin1 
   { $n = $rl.n; }

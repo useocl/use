@@ -22,6 +22,7 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -42,9 +43,9 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  */
 public class TestModelUtil {
     private static TestModelUtil util = null;
-
-    private TestModelUtil() {
-    }
+    private static List<VarDecl> emptyQualifiers = Collections.emptyList();
+    
+    private TestModelUtil() { }
 
     /**
      * This method is for creating an instance of this class. It
@@ -166,21 +167,21 @@ public class TestModelUtil {
             MAssociationEnd endPerson = mf.createAssociationEnd( person,
                                                                  "employee", m1,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false, emptyQualifiers );
             MAssociationEnd endCompany = mf.createAssociationEnd( company,
                                                                   "company", m2,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             job.addAssociationEnd( endPerson );
             job.addAssociationEnd( endCompany );
             model.addAssociation( job );
             MAssociation isBoss = mf.createAssociation( "isBoss" );
             MAssociationEnd endPerson1 = mf.createAssociationEnd( person, "boss", m1,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             MAssociationEnd endPerson2 = mf.createAssociationEnd( person, "worker", m2,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             isBoss.addAssociationEnd( endPerson1 );
             isBoss.addAssociationEnd( endPerson2 );
             model.addAssociation( isBoss );
@@ -215,11 +216,11 @@ public class TestModelUtil {
             MAssociationEnd endPerson = mf.createAssociationEnd( person,
                                                                  "employee", m1,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false, emptyQualifiers );
             MAssociationEnd endCompany = mf.createAssociationEnd( company,
                                                                   "company", m2,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             job.addAssociationEnd( endPerson );
             job.addAssociationEnd( endCompany );
             model.addAssociation( job );
@@ -254,10 +255,10 @@ public class TestModelUtil {
             m2.addRange( 0, 1 );
             MAssociationEnd endPerson = mf.createAssociationEnd( person, "person", m1,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false, emptyQualifiers );
             MAssociationEnd endCompany = mf.createAssociationEnd( company, "company", m2,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             job.addAssociationEnd( endPerson );
             job.addAssociationEnd( endCompany );
             model.addClass( job );
@@ -291,10 +292,10 @@ public class TestModelUtil {
             m2.addRange( 0, 1 );
             MAssociationEnd endPerson1 = mf.createAssociationEnd( person, "boss", m1,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             MAssociationEnd endPerson2 = mf.createAssociationEnd( person, "worker", m2,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             job.addAssociationEnd( endPerson1 );
             job.addAssociationEnd( endPerson2 );
             model.addClass( job );
@@ -334,13 +335,13 @@ public class TestModelUtil {
             m3.addRange( 0, 1 );
             MAssociationEnd endPerson = mf.createAssociationEnd( person, "person", m1,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false, emptyQualifiers );
             MAssociationEnd endCompany = mf.createAssociationEnd( company, "company", m2,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             MAssociationEnd endSalary = mf.createAssociationEnd( salary, "salary", m3,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false, emptyQualifiers );
             job.addAssociationEnd( endPerson );
             job.addAssociationEnd( endCompany );
             job.addAssociationEnd( endSalary );
@@ -354,6 +355,46 @@ public class TestModelUtil {
     }
 
 
+    /**
+     * This method creates a model with two classes (Bank and Person)
+     * and one qualified association (Account).
+     */
+    public MModel createModelWithClassAndQualifiedAssoc() {
+        try {
+            ModelFactory mf = new ModelFactory();
+            MModel model = mf.createModel( "BankModel" );
+            MClass person = mf.createClass( "Person", false );
+            MClass bank = mf.createClass( "Bank", false );
+            model.addClass( person );
+            model.addClass( bank );
+            MAssociation account = mf.createAssociation( "Account" );
+            MMultiplicity m1 = mf.createMultiplicity();
+            m1.addRange( 0, 1 );
+            MMultiplicity m2 = mf.createMultiplicity();
+            m2.addRange( 0, MMultiplicity.MANY );
+            List<VarDecl> qualifier = new ArrayList<VarDecl>();
+            qualifier.add(new VarDecl("accountNr", TypeFactory.mkString()));
+            
+            MAssociationEnd endPerson = mf.createAssociationEnd( person,
+                                                                 "account", m1,
+                                                                 MAggregationKind.NONE,
+                                                                 false, emptyQualifiers);
+            
+            MAssociationEnd endBank = mf.createAssociationEnd( bank,
+                                                                  "bank", m2,
+                                                                  MAggregationKind.NONE,
+                                                                  false, qualifier );
+            account.addAssociationEnd( endBank );
+            account.addAssociationEnd( endPerson );
+            
+            model.addAssociation( account );
+            return model;
+        } catch ( MInvalidModelException e ) {
+            //e.printStackTrace();
+            throw new Error( e );
+        }
+    }
+    
     /**
      * This method creates a model with two classes (Person and Company),
      * an associationclass (Job) and an association (isBoss).
@@ -380,10 +421,10 @@ public class TestModelUtil {
             m2.addRange( 0, 1 );
             MAssociationEnd endPerson = mf.createAssociationEnd( person, "employee", m1,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false, emptyQualifiers );
             MAssociationEnd endCompany = mf.createAssociationEnd( company, "company", m2,
                                                                   MAggregationKind.NONE,
-                                                                  false );
+                                                                  false, emptyQualifiers );
             job.addAssociationEnd( endPerson );
             job.addAssociationEnd( endCompany );
             model.addClass( job );
@@ -395,10 +436,10 @@ public class TestModelUtil {
             m2.addRange( 0, 1 );
             MAssociationEnd endWorker = mf.createAssociationEnd( person, "worker", m1,
                                                                  MAggregationKind.NONE,
-                                                                 false );
+                                                                 false, emptyQualifiers );
             MAssociationEnd endBoss = mf.createAssociationEnd( person, "boss", m2,
                                                                MAggregationKind.NONE,
-                                                               false );
+                                                               false, emptyQualifiers );
             isBoss.addAssociationEnd( endWorker );
             isBoss.addAssociationEnd( endBoss );
             model.addAssociation( isBoss );

@@ -21,16 +21,19 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Arrays;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.StringUtil;
 
 /**
  * A link set contains instances of an association.
@@ -46,11 +49,15 @@ public final class MLinkSet {
         final MAssociationEnd end;
         final MObject         object;
         final int 			  hashCode;
+        final List<Value>	  qualifiers;
         
-        public CacheEntry(MAssociationEnd end, MObject object) {
+        public CacheEntry(MAssociationEnd end, MObject object, List<Value> qualifiers) {
             this.end = end;
             this.object = object;
-            hashCode = end.hashCode() + 19 * object.hashCode();
+            // We set qualifier to null, if no elements are given
+            // This makes comparison easier.
+            this.qualifiers = (qualifiers != null && qualifiers.size() == 0) ? null : qualifiers;
+            hashCode = end.hashCode() + 19 * object.hashCode() + (this.qualifiers == null ? 0 : 23 * this.qualifiers.hashCode());
         }
         
         public final int hashCode() {
@@ -59,7 +66,19 @@ public final class MLinkSet {
         
         public final boolean equals(Object o) {
             CacheEntry e = (CacheEntry)o;
-            return e.end == end && e.object.equals( object );
+            
+            return e.end == end && 
+            	   e.object.equals( object ) && 
+            	   (qualifiers == null ? e.qualifiers == null : qualifiers.equals(e.qualifiers));
+        }
+        
+        @Override
+        public String toString() {
+			return end.nameAsRolename()
+					+ ":"
+					+ object.name()
+					+ (qualifiers != null ? "["
+							+ StringUtil.fmtSeq(qualifiers, ",") + "]" : "");
         }
     }
     
@@ -87,16 +106,17 @@ public final class MLinkSet {
 
     /**
      * Selects all links whose link ends at <code>aend</code> connect
-     * <code>obj</code>. 
+     * <code>obj</code> with the given qualifier values.
+     * The Set is immutable.
      *
-     * @return Set(MLink)
+     * @return Set(MLink) An immutable <code>Set</code> of the corresponding links. 
      */
-    Set<MLink> select(MAssociationEnd aend, MObject obj) {
+    Set<MLink> select(MAssociationEnd aend, MObject obj, List<Value> qualifierValues) {
         Set<MLink> res;
         if (selectCache != null) {
-            CacheEntry e = new CacheEntry(aend, obj);
+            CacheEntry e = new CacheEntry(aend, obj, qualifierValues);
             res = selectCache.get(e);
-            if (res==null) res = new HashSet<MLink>();
+            if (res==null) res = Collections.emptySet();
             
             return res;
         }
@@ -105,7 +125,7 @@ public final class MLinkSet {
 
         for(MLink link : fLinks) {
             MLinkEnd linkEnd = link.linkEnd(aend);
-            if (linkEnd.object().equals(obj) )
+            if (linkEnd.object().equals(obj) && linkEnd.qualifierValuesEqual(qualifierValues))
                 res.add(link);
         }
         
@@ -113,9 +133,28 @@ public final class MLinkSet {
     }
 
     /**
+     * Selects all links whose link ends at <code>aend</code> connect
+     * <code>obj</code>.
+     *
+     * @return Set(MLink) A <code>Set</code> of the corresponding links. 
+     */
+    Set<MLink> select(MAssociationEnd aend, MObject obj) {
+        Set<MLink> res;
+        res = new HashSet<MLink>();
+
+        for(MLink link : fLinks) {
+            MLinkEnd linkEnd = link.linkEnd(aend);
+            if (linkEnd.object().equals(obj))
+                res.add(link);
+        }
+        
+        return res;
+    }
+    
+    /**
      * Removes all links whose link ends at <code>aend</code> connect
      * <code>obj</code>. 
-     *
+     * <strong>Note:</strong> The <code>selectCache</code> is not changed. Use {@link MLinkSet#clearCache} afterwards.
      * @return Set(MLink) the set of removed links
      */
     Set<MLink> removeAll(MAssociationEnd aend, MObject obj) {
@@ -129,18 +168,18 @@ public final class MLinkSet {
             if (linkEnd.object().equals(obj) ) {
                 res.add(link);
                 it.remove();
-                CacheEntry e = new CacheEntry(aend, obj);
-                
-                if (selectCache.containsKey(e)) 
-                	selectCache.remove(e);
             }
         }
         
         return res;
     }
 
+    /**
+     * Removes all links to object <code>obj</code> from cache.
+     * @param obj
+     */
 	public void clearCache(MObject obj) {
-		// Remove all links to this object from cache
+		
         for (Iterator<Map.Entry<CacheEntry, Set<MLink>>> entryIter = selectCache.entrySet().iterator(); entryIter.hasNext(); ) {
         	MLink link;
         	Map.Entry<CacheEntry, Set<MLink>> entry = entryIter.next();
@@ -197,16 +236,30 @@ public final class MLinkSet {
      */
     boolean add(MLink link) {
         for (MLinkEnd end : link.linkEnds()) {
-            CacheEntry e = new CacheEntry(end.associationEnd(), end.object());
+            CacheEntry e = new CacheEntry(end.associationEnd(), end.object(), end.getQualifierValues());
             Set<MLink> links = selectCache.get(e);
             
-            if (links==null) {
+            if (links == null) {
                 links = new HashSet<MLink>();
                 selectCache.put(e, links);
             }
             
             links.add(link);
+            
+            // we add to entries for ends with qualifiers
+            if (end.hasQualifiers()) {
+            	e = new CacheEntry(end.associationEnd(), end.object(), null);
+                links = selectCache.get(e);
+                
+                if (links == null) {
+                    links = new HashSet<MLink>();
+                    selectCache.put(e, links);
+                }
+                
+                links.add(link);
+            }
         }
+        
         return fLinks.add(link);
     }
 
@@ -233,7 +286,7 @@ public final class MLinkSet {
 
     /**
      * Returns the link if there is a link connecting the given set of
-     * objects, otherwise null is returend.  
+     * objects, otherwise null is returned.  
      */
     public MLink linkBetweenObjects(Set<MObject> objects) {
         for (MLink link : fLinks) {
@@ -246,10 +299,10 @@ public final class MLinkSet {
     
     /**
      * Returns true if there is a link connecting the objects
-     * in the given sequence.
+     * in the given sequence with the given qualifier values.
      */
-    public boolean hasLink(List<MObject> objects) throws MSystemException {
-        return contains(new MLinkImpl(fAssociation, objects));
+    public boolean hasLink(List<MObject> objects, List<List<Value>> qualifierValues) throws MSystemException {
+        return contains(new MLinkImpl(fAssociation, objects, qualifierValues));
     }
 
     /**
@@ -259,7 +312,7 @@ public final class MLinkSet {
      */
     boolean remove(MLink link) {
         for (MLinkEnd end : link.linkEnds()) {
-            CacheEntry e = new CacheEntry(end.associationEnd(), end.object());
+            CacheEntry e = new CacheEntry(end.associationEnd(), end.object(), end.getQualifierValues());
             Set<MLink> links = selectCache.get(e);
             
             if (links!=null) {
@@ -272,4 +325,3 @@ public final class MLinkSet {
         return fLinks.remove(link);
     }
 }
-

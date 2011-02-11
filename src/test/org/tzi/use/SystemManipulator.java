@@ -22,6 +22,7 @@
 package org.tzi.use;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.parser.shell.ShellCommandCompiler;
@@ -31,6 +32,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
@@ -231,12 +233,14 @@ public class SystemManipulator {
      */
     public void insertLink(
     		MAssociation association, 
-    		MObject... participants) throws MSystemException {
+    		MObject[] participants,
+    		List<List<Value>> qualifierValues) throws MSystemException {
     	  	
     	evaluateStatement(
     			new MLinkInsertionStatement(
     					association, 
-    					participants));
+    					participants,
+    					qualifierValues));
     }
          
     
@@ -259,7 +263,7 @@ public class SystemManipulator {
     		objects.add(fSystem.state().objectByName(participant));
     	}
     	
-    	insertLink(association, objects.toArray(new MObject[0]));
+    	insertLink(association, objects.toArray(new MObject[objects.size()]), Collections.<List<Value>>emptyList());
     }
     
     

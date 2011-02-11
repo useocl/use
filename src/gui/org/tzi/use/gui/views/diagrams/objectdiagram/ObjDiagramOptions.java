@@ -31,16 +31,7 @@ import org.tzi.use.gui.views.diagrams.DiagramOptions;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public final class ObjDiagramOptions extends DiagramOptions {
-//    private static ObjDiagramOptions INSTANCE = null;
-//
-//    public static synchronized ObjDiagramOptions getInstance() {
-//        if ( INSTANCE == null ) {
-//            INSTANCE = new ObjDiagramOptions();
-//        }
-//        return INSTANCE;
-//    }
-    
+public final class ObjDiagramOptions extends DiagramOptions {    
     public ObjDiagramOptions() {
         // color settings
         NODE_COLOR = new Color(0xe0, 0xe0, 0xe0);

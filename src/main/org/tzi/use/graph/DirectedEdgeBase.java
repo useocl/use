@@ -31,9 +31,15 @@ package org.tzi.use.graph;
 
 
 public class DirectedEdgeBase<N> implements DirectedEdge<N> {
-    private N fSource;
-    private N fTarget;
+    protected N fSource;
+    protected N fTarget;
 
+    /**
+     * Constructs an empty edge.
+     * Source and target must be set later.
+     */
+    public DirectedEdgeBase() {}
+    
     /**
      * Construct a new edge.
      *
@@ -46,8 +52,14 @@ public class DirectedEdgeBase<N> implements DirectedEdge<N> {
         fTarget = target;
     }
 
-    // Query Operations
-
+    /**
+     * Sets the source node of this edge.
+     * Should only be done while constructing a graph.
+     */
+    public void setSource(N source) {
+        fSource = source;
+    }
+    
     /**
      * Returns the source node of this edge.
      */
@@ -55,6 +67,14 @@ public class DirectedEdgeBase<N> implements DirectedEdge<N> {
         return fSource;
     }
 
+    /**
+     * Sets the target node of this edge.
+     * Should only be done while constructing a graph.
+     */
+    public void setTarget(N target) {
+        fTarget = target;
+    }
+    
     /**
      * Returns the target node of this edge.
      */

@@ -25,12 +25,15 @@ import java.util.List;
 
 import org.tzi.use.uml.ocl.expr.operations.BooleanOperation;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
+import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.HashMultiMap;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.StringUtil;
 
 /**
  * General operation expressions. Each operation is implemented by its own
@@ -87,8 +90,10 @@ public final class ExpStdOp extends Expression {
         // search overloaded operations for a match
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
-            if (t != null)
+            if (t != null) {
+            	checkOclAnyWarning(op, t);
                 return true;
+            }
         }
         return false;
     }
@@ -118,8 +123,10 @@ public final class ExpStdOp extends Expression {
         // search overloaded operations for a match
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
-            if (t != null)
+            if (t != null) {
+            	checkOclAnyWarning(op, t);
                 return new ExpStdOp(op, args, t);
+            }
         }
 
         // operation name matches but arguments don't
@@ -127,7 +134,18 @@ public final class ExpStdOp extends Expression {
                 + opCallSignature(name, args) + "'.");
     }
 
-    private static String opCallSignature(String name, Expression args[]) {
+    /**
+	 * @param op
+	 * @param t
+	 */
+	private static void checkOclAnyWarning(OpGeneric op, Type t) {
+		if (t.isCollection(true) && ((CollectionType)t).elemType().isTrueOclAny()) {
+			Log.warn("Operation call " + StringUtil.inQuotes(op.name()) + 
+					 " results in type " + StringUtil.inQuotes(t.toString()) + " which might cause errors.");
+		}
+	}
+
+	private static String opCallSignature(String name, Expression args[]) {
         // build error message with type names of arguments
         Type srcType = args[0].type();
         StringBuffer s = new StringBuffer(srcType

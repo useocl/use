@@ -29,6 +29,8 @@ import org.tzi.use.parser.base.BaseParser;
 import org.tzi.use.parser.use.*;
 import org.tzi.use.parser.ocl.*;
 import org.tzi.use.parser.soil.ast.*;
+
+import java.util.Collections;
 }
 
 @lexer::header {
@@ -133,7 +135,6 @@ stat returns [ASTStatement n]
     $n = seq.simplify();
     if (($n != null) && (!$n.isEmptyStatement())) {
       $n.setSourcePosition($start);
-      $n.setParsedText($text);
     }
   }
 ;
@@ -366,14 +367,62 @@ lnkInsStat returns [ASTLinkInsertionStatement n]
 :
   'insert'
   LPAREN
-    p = rValListMin2
+    p = rValListMin2WithOptionalQualifiers
   RPAREN
   'into'
   ass = IDENT
 
-  { $n = new ASTLinkInsertionStatement($ass.text, $p.n); }
+  { $n = new ASTLinkInsertionStatement($ass.text, $p.participans, $p.qualifiers); }
 ;
 
+rValListMin2WithOptionalQualifiers returns [List<ASTRValue> participans, List<List<ASTRValue>> qualifiers]
+@init {
+  $participans = new ArrayList<ASTRValue>();
+  $qualifiers = new ArrayList<List<ASTRValue>>();
+  List<ASTRValue> currentQualifiers = Collections.emptyList();
+}
+:
+  r = rValue { $participans.add($r.n); }
+  (
+  	LBRACE
+  	qualifierValues = rValList {currentQualifiers = $qualifierValues.n;}
+  	RBRACE
+  )?
+  {
+    $qualifiers.add(currentQualifiers);
+    currentQualifiers = Collections.emptyList();
+  }
+  
+  COMMA
+  
+  r = rValue { $participans.add($r.n); }
+  (
+  	LBRACE
+  	qualifierValues = rValList {currentQualifiers = $qualifierValues.n;}
+  	RBRACE
+  )?
+  {
+    $qualifiers.add(currentQualifiers);
+    currentQualifiers = Collections.emptyList();
+  }
+  
+  (
+    COMMA
+    
+    r = rValue { $participans.add($r.n); }
+    
+    (
+  	  LBRACE
+  	  qualifierValues = rValList {currentQualifiers = $qualifierValues.n;}
+  	  RBRACE
+  	)?
+    
+    {
+      $qualifiers.add(currentQualifiers);
+      currentQualifiers = Collections.emptyList();
+    }	
+  )*
+;
 
 ////////////////////////////////////////////////////////////////////////////////
 // link deletion statement
@@ -472,7 +521,6 @@ options {
   loc = lobjCreateStat
   { 
     $loc.n.setSourcePosition($start);
-    $loc.n.setParsedText($text);
     $n = new ASTRValueNewLinkObject($loc.n);
   }
   |
@@ -488,7 +536,6 @@ options {
       new ASTNewObjectStatement($objType.n, $objName.n);
     
     nos.setSourcePosition($start);
-    nos.setParsedText($text);
       
     $n = new ASTRValueNewObject(nos); 
   }
@@ -501,7 +548,7 @@ options {
 rValList returns [List<ASTRValue> n]
 :
   nothing           
-  { $n = new ArrayList<ASTRValue>(); }
+  { $n = Collections.<ASTRValue>emptyList(); }
   |
   rl = rValListMin1 
   { $n = $rl.n; }
@@ -721,8 +768,8 @@ expression returns [ASTExpression n]
   paramList ::= 
     "(" [ variableDeclaration { "," variableDeclaration } ] ")"
 */
-paramList returns [List paramList]
-@init{ $paramList = new ArrayList(); }
+paramList returns [List<ASTVariableDeclaration> paramList]
+@init{ $paramList = new ArrayList<ASTVariableDeclaration>(); }
 :
     LPAREN
     ( 
@@ -907,7 +954,6 @@ primaryExpression returns [ASTExpression n]
     | nPc=propertyCall[null, false] { $n = $nPc.n; }
     | LPAREN nExp=expression RPAREN { $n = $nExp.n; }
     | nIfExp=ifExpression { $n = $nIfExp.n; }
-    // HACK: the following requires k=3
     | id1=IDENT DOT 'allInstances' ( LPAREN RPAREN )?
       { $n = new ASTAllInstancesExpression($id1); }
       ( AT 'pre' { $n.setIsPre(); } ) ? 
@@ -918,7 +964,6 @@ objectReference returns [ASTExpression n]
 :
   AT
   objectName = IDENT
-  
   { n = new ASTObjectReferenceExpression(objectName); }
 ;
 
@@ -996,9 +1041,22 @@ operationExpression[ASTExpression source, boolean followsArrow]
     name=IDENT 
     { $n = new ASTOperationExpression($name, $source, $followsArrow); }
 
-    ( LBRACK rolename=IDENT RBRACK { $n.setExplicitRolename($rolename); })?
+	// This is a little dirty, because either it is a navigation
+	// along a m-ary association or a navigation over a qualified association 
+	// or both.
+    ( LBRACK 
+        rolename=expression { $n.addExplicitRolenameOrQualifier($rolename.n); }
+        (COMMA rolename=expression { $n.addExplicitRolenameOrQualifier($rolename.n); })*
+      RBRACK
+      
+      ( LBRACK 
+          rolename=expression { $n.addQualifier($rolename.n); }
+          (COMMA rolename=expression { $n.addQualifier($rolename.n); })*
+        RBRACK
+      )?
+    )?
 
-    ( AT 'pre' { $n.setIsPre(); } ) ? 
+    ( AT 'pre' { $n.setIsPre(); } ) ?
     (
       LPAREN { $n.hasParentheses(); }
       ( 

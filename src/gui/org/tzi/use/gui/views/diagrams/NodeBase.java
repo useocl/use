@@ -32,9 +32,7 @@ import org.tzi.use.uml.mm.MClass;
  * @author Fabian Gutsche
  */
 public abstract class NodeBase extends PlaceableNode {
-    double fX = 200;
-    double fY = 200;
-
+    
     public abstract String name();
     
     public abstract MClass cls();

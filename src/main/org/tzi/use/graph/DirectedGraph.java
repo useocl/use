@@ -153,6 +153,13 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
     int numOutgoingEdges(N n);
 
     /**
+     * Returns all edges a node is connected with.
+     * @param n
+     * @return
+     */
+    Set<E> allEdges(N n);
+    
+    /**
      * Returns an iterator over the edges in this collection. There
      * are no guarantees concerning the order in which the edges are
      * returned. The iterator delivers instances of type

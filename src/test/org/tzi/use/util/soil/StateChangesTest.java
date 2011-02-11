@@ -22,6 +22,8 @@
 package org.tzi.use.util.soil;
 
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -76,8 +78,8 @@ public class StateChangesTest extends TestCase {
 		try {
 			fObject = state.createObject(person, "P");
 			MObject c = state.createObject(company, "C");
-			fLink = state.createLink(isBoss, fObject, fObject);
-			fLinkObject = state.createLinkObject(job, "J", fObject, c);
+			fLink = state.createLink(isBoss, Arrays.asList(fObject, fObject), null);
+			fLinkObject = state.createLinkObject(job, "J", Arrays.asList(fObject, c), null);
 		} catch (MSystemException e) {
 			fail(e.getMessage());
 		}

@@ -22,10 +22,12 @@
 package org.tzi.use.uml.sys.soil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
@@ -37,11 +39,20 @@ import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
  *
  */
 public class MLinkDeletionStatement extends MStatement {
-	/** TODO */
+	/**
+	 * The name of the association to delete the link from. 
+	 */
 	private MAssociation fAssociation;
-	/** TODO */
+	
+	/**
+	 * The List of objects that form the link which is deleted
+	 */
 	private List<MRValue> fParticipants;
 	
+	/**
+	 * The qualifier values of the associations ends.
+	 */
+	private List<List<MRValue>> qualifierRValues;
 	
 	/**
 	 * TODO
@@ -103,11 +114,11 @@ public class MLinkDeletionStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns an unmodifiable List of the objects that participate in the link which is going to be deleted.
+	 * @return An unmodifiable <code>List</code> of the objects of the link to delete.
 	 */
 	public List<MRValue> getParticipants() {
-		return fParticipants;
+		return Collections.unmodifiableList(fParticipants);
 	}
 	
 	
@@ -115,8 +126,27 @@ public class MLinkDeletionStatement extends MStatement {
 	protected void evaluate() throws EvaluationFailedException {
 		
 		List<MObject> participants = evaluateObjectRValues(fParticipants);
+		List<List<Value>> qualifierValues;
 		
-		deleteLink(fAssociation, participants);
+		if (this.qualifierRValues == null || this.qualifierRValues.isEmpty()) {
+			qualifierValues = Collections.emptyList();
+		} else {
+			qualifierValues = new ArrayList<List<Value>>();
+			for (List<MRValue> endRValues : qualifierRValues ) {
+				List<Value> endQualifierValues;
+				if (endRValues == null || endRValues.isEmpty() ) {
+					endQualifierValues = Collections.emptyList();
+				} else {
+					endQualifierValues = new ArrayList<Value>();
+					for (MRValue endRValue : endRValues) {
+						endQualifierValues.add(this.evaluateRValue(endRValue));
+					}
+				}
+				qualifierValues.add(endQualifierValues);
+			}
+		}
+		
+		deleteLink(fAssociation, participants, qualifierValues);
 	}
 	
 	

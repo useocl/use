@@ -28,6 +28,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.Value;
 
 
 /**
@@ -79,21 +80,32 @@ public interface MObject {
 
     /**
      * Returns a list of objects at <code>dstEnd</code> which are
-     * linked to this object at <code>srcEnd</code>.
+     * linked to this object at <code>srcEnd</code> with the (possible) given qualifier values.
      *
+     * @param systemState The <code>MSystemState</code> used to evaluate
+     * @param srcEnd The association end to navigate from
+     * @param dstEnd The association end to navigate to
+     * @param qualifierValues The <code>List</code> of qualifier values which determines the objects. May be <code>null</code>. 
      * @return List(MObject)
      */
-    public List<MObject> getLinkedObjects( MSystemState systemState,
-                                  MAssociationEnd srcEnd, MAssociationEnd dstEnd );
+	public List<MObject> getLinkedObjects(MSystemState systemState,
+			MAssociationEnd srcEnd, MAssociationEnd dstEnd,
+			List<Value> qualifierValues);
 
     /**
      * Returns a list of objects at <code>dst</code> which are
-     * connected to this object at <code>src</code>. This is needed for navigation.
+     * connected to this object at <code>src</code> by the (possible) given qualifiers.
+     * This is needed for navigation.
      *
+     * @param systemState The <code>MSystemState</code> used to evaluate
+     * @param src The navigable element to navigate from
+     * @param dst The navigable element to navigate to
+     * @param qualifierValues The <code>List</code> of qualifier values which determines the objects. May be <code>null</code>.
+     * 
      * @return List(MObject)
      */
     public List<MObject> getNavigableObjects( MSystemState systemState,
-                                     MNavigableElement src, MNavigableElement dst );
+                                     MNavigableElement src, MNavigableElement dst, List<Value> qualifierValues );
 
 
     public int hashCode();
@@ -104,5 +116,4 @@ public interface MObject {
     public boolean equals( Object obj );
 
     public String toString();
-
 }
