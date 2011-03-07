@@ -261,7 +261,7 @@ public class ASTOperationExpression extends ASTExpression {
         final int ARROW               = 0x0020;
 
         final int NO_EXPLICIT_ROLENAME = 0x0000;
-        final int EXPLICIT_ROLENAME = 0x1000;
+        final int EXPLICIT_ROLENAME   = 0x1000;
 
         final int NO_PARENTHESES      = 0x0000;
         final int PARENTHESES         = 0x0001;
@@ -325,8 +325,7 @@ public class ASTOperationExpression extends ASTExpression {
             MNavigableElement dst = srcClass3.navigableEnd( opname );
             
             if (dst == null) {
-            	//TODO: Handle error!!!
-            	System.out.println("");
+            	throw new SemanticException(fOp, StringUtil.inQuotes(opname) + " is not a valid rolename that is reachable from class " + StringUtil.inQuotes(srcClass3.name()));
             } else {
             	res = genNavigation( ctx, fOp, srcClass3, srcExpr, dst, fExplicitRolenameOrQualifiers, fQualifiers );
             }
