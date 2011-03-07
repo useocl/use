@@ -59,7 +59,7 @@ public class ASTOperation extends AST {
     private ASTType fType;           // (optional)
     private ASTExpression fExpr;     // (optional)
     private ASTStatement fStatement; // optional
-    private MOperation fOperation; // the operation is generated in two passes
+    private MOperation fOperation;   // the operation is generated in two passes
     private List<ASTPrePostClause> fPrePostClauses;
   
     
@@ -105,9 +105,12 @@ public class ASTOperation extends AST {
             }
         }
         Type resultType = null;
-        if (fType != null )
+        if (fType == null ) {
+        	throw new SemanticException(fName, "Missing return type for operation " + StringUtil.inQuotes(fName.getText()) + ".");
+        } else {
             resultType = fType.gen(ctx);
-
+        }
+        
         fOperation = ctx.modelFactory().createOperation(fName.getText(), varDeclList,
                                                         resultType);
         
@@ -156,10 +159,6 @@ public class ASTOperation extends AST {
             if (fExpr != null ) {
                 Expression expr = fExpr.gen(ctx);
                 fOperation.setExpression(expr);
-                
-                if (fOperation.resultType() == null) {
-                	fOperation.setResultType(expr.type());
-                }
             }
             
             // ppcs may not have side effects

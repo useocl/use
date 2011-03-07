@@ -148,14 +148,17 @@ attributeDefinition returns [ASTAttribute n]
 
 /* ------------------------------------
   operationDefinition ::= 
-    id paramList [ ":" type [ "=" expression ] ] 
+    id paramList ":" type [ "=" expression ] 
     { prePostClause } [ ";" ]
 */
 operationDefinition returns [ASTOperation n]
 :
     name = IDENT
     pl = paramList
-    ( COLON t = type )?
+    /* For a readable error message the required type
+       is checked during compilation.
+     */
+    ( COLON t = type )? 
     { $n = new ASTOperation($name, $pl.paramList, $t.n); }
     (
         ( EQUAL e = expression   { $n.setExpression($e.n); } )
