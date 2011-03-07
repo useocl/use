@@ -23,7 +23,6 @@ package org.tzi.use.uml.ocl.expr;
 
 import java.util.ArrayList;
 
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Queue;
@@ -163,7 +162,7 @@ class ThreadedEvaluator {
                 Value v = null;
                 try {
                     v = evaluator.eval(job.fExpr, fController.fSystemState);
-                } catch (MultiplicityViolationException ex) {
+                } catch (Exception ex) {
                     if (DEBUG) {
                         System.err.println("Caught: " + ex.getMessage());
                     }
