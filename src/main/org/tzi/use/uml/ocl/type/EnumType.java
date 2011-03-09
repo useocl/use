@@ -22,6 +22,7 @@
 package org.tzi.use.uml.ocl.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -75,11 +76,11 @@ public final class EnumType extends Type {
     }
 
     /**
-     * Returns the list of literals for the enumeration
+     * Returns an unmodifiable list of literals for the enumeration
      * @return
      */
     public List<String> getLiterals() {
-    	return fLiterals;
+    	return Collections.unmodifiableList(fLiterals);
     }
     
     /** 
