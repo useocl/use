@@ -221,6 +221,8 @@ public class HelpForCmd {
             printDetailedHelpByKey("help.undo");
         } else if (cmd.startsWith("write")) {
             printDetailedHelpByKey("help.write");
+        } else if (cmd.startsWith("gen load")) {
+            printDetailedHelpByKey("help.gen.load");
         } else if (cmd.startsWith("gen unload")) {
             printDetailedHelpByKey("help.gen.unload");
         } else if (cmd.startsWith("gen loaded")) {
@@ -279,6 +281,7 @@ public class HelpForCmd {
         printOneLineHelpByKey("help.info.prog");
         printOneLineHelpByKey("help.info.vars");
         printHeader("Generator commands");
+        printOneLineHelpByKey("help.gen.load");
         printOneLineHelpByKey("help.gen.unload");
         printOneLineHelpByKey("help.gen.loaded");
         printOneLineHelpByKey("help.gen.flags");
