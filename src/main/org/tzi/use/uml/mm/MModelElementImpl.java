@@ -21,8 +21,11 @@
 
 package org.tzi.use.uml.mm;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.tzi.use.util.CollectionUtil;
 
 
 /**
@@ -32,10 +35,24 @@ import java.util.Map;
  * @author  Mark Richters
  */
 
-abstract class MModelElementImpl implements MModelElement {
-    private String fName;
-    private static Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
+public abstract class MModelElementImpl implements MModelElement {
+	//TODO: Use delegation for Annotatable?
+	
+	private static Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
+	
+	private String fName;
+	
+	/**
+	 * The hash code of an model elements does not change after loading,
+	 * therefore we don't need to calculate it every time.
+	 * 
+	 */
     private int hashCode;
+    
+    /**
+     * Possible annotations of this model element.
+     */
+    private Map<String, MElementAnnotation> annotations = Collections.emptyMap();
     
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
@@ -82,6 +99,47 @@ abstract class MModelElementImpl implements MModelElement {
      */
     public abstract void processWithVisitor(MMVisitor v);
 
+    @Override
+    public boolean isAnnotatable() {
+    	return true;
+    }
+    
+    @Override
+    public Map<String, MElementAnnotation> getAllAnnotations() {
+    	return this.annotations;
+    }
+    
+    @Override
+    public boolean isAnnotated() {
+    	return !this.annotations.isEmpty();
+    }
+    
+    @Override
+    public MElementAnnotation getAnnotation(String name) {
+    	if (this.annotations.containsKey(name)) {
+    		return this.annotations.get(name);
+    	} else {
+    		return null;
+    	}
+    }
+    
+    @Override
+    public String getAnnotationValue(String annotationName, String attributeName) {
+    	MElementAnnotation ann = getAnnotation(annotationName);
+    	
+    	if (ann == null) return "";
+    	
+    	String value = ann.getAnnotationValue(attributeName); 
+    	return (value == null ? "" : value);
+    }
+    
+    @Override
+    public void addAnnotation(MElementAnnotation annotation) {
+    	this.annotations = CollectionUtil.initAsHashMap(this.annotations);
+    	this.annotations.put(annotation.getName(), annotation);
+    }
+    
+    @Override
     public int hashCode() { 
         return hashCode;
     }
@@ -90,6 +148,7 @@ abstract class MModelElementImpl implements MModelElement {
      * The default method defines model elements to be equal if their
      * names are equal.
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == this )
             return true;
@@ -112,6 +171,7 @@ abstract class MModelElementImpl implements MModelElement {
     /**
      * Returns the name of this model element.
      */
+    @Override
     public String toString() {
         return fName;
     }

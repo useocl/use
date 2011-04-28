@@ -23,20 +23,14 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.util.Comparator;
 
-import org.tzi.use.gui.main.sorting.CompareUtil;
-import org.tzi.use.gui.main.sorting.CompareUtilImpl;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 
 /**
  * @author gutsche
  *
  */
-public class NodeOnEdgeComparator implements Comparator<NodeOnEdge> {
-
-    private CompareUtil fCompareUtil;
-    
-    public NodeOnEdgeComparator() {
-        fCompareUtil = new CompareUtilImpl();
-    }
+public class WayPointComparator implements Comparator<WayPoint> {    
+    public WayPointComparator() {}
     /**
      * Compares two NodeOnEdges by their ID.
      * @param obj1 first NodeOnEdge 
@@ -45,9 +39,7 @@ public class NodeOnEdgeComparator implements Comparator<NodeOnEdge> {
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare( NodeOnEdge obj1, NodeOnEdge obj2) {
-        int idOfNode1 = obj1.getID();
-        int idOfNode2 = obj2.getID();
-        return fCompareUtil.compareInt( idOfNode1, idOfNode2 );
+    public int compare( WayPoint obj1, WayPoint obj2) {
+        return new Integer(obj1.getID()).compareTo(new Integer(obj2.getID()));
     }
 }

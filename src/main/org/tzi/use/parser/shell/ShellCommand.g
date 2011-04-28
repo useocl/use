@@ -1027,7 +1027,7 @@ tuplePart returns [ASTTuplePart n]
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
  
-/* $Id: SoilBase.gpart 1734 2010-09-07 14:56:17Z lhamann $ */
+/* $Id: SoilBase.gpart 2048 2011-02-11 15:32:33Z lhamann $ */
 
 ////////////////////////////////////////////////////////////////////////////////
 // Soil grammar
@@ -1680,9 +1680,6 @@ RPAREN		 : ')';
 SEMI		 : ';';
 SLASH 		 : '/';
 STAR 		 : '*';
-
-SCRIPTBODY:
-  '<<' ( options {greedy=false;} : . )* '>>';
   
 fragment
 INT:
@@ -1701,10 +1698,12 @@ RANGE_OR_INT:
     ;
 
 // String literals
-
 STRING:	
     '\'' ( ~('\''|'\\') | ESC)* '\'';
 
+NON_OCL_STRING:	
+    '"' ( ~('"'|'\\') | ESC)* '"';
+    
 // escape sequence -- note that this is protected; it can only be called
 //   from another lexer rule -- it will not ever directly return a token to
 //   the parser

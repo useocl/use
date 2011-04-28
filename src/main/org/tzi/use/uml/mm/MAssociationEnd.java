@@ -455,4 +455,12 @@ public final class MAssociationEnd extends MModelElementImpl
 	public boolean hasQualifiers() {
 		return getQualifiers().size() > 0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MNavigableElement#isCollection()
+	 */
+	@Override
+	public boolean isCollection() {
+		return multiplicity().isCollection();
+	}
 }

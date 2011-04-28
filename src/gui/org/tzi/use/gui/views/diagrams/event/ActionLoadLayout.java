@@ -113,7 +113,7 @@ public class ActionLoadLayout extends AbstractAction {
         fDiagram.deleteHiddenElementsFromDiagram( fLayoutInfos.getHiddenNodes(),
                                                   fLayoutInfos.getHiddenEdges() );
         
-        fDiagram.repaint();
+        fDiagram.invalidateContent();
     }
  
 }

@@ -36,7 +36,7 @@ import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.HalfEdge;
+import org.tzi.use.gui.views.diagrams.AssociationOrLinkPartEdge;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.xmlparser.LayoutTags;
@@ -189,7 +189,7 @@ public class ActionSaveLayout extends AbstractAction {
         Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
         while ( edgeIterator.hasNext() ) {
             EdgeBase edge = edgeIterator.next();
-            if ( edge instanceof HalfEdge ) {
+            if ( edge instanceof AssociationOrLinkPartEdge ) {
                 continue;
             }
             xml.append(edge.storePlacementInfo( false ));

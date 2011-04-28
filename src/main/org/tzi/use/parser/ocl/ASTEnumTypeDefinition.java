@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.use.ASTAnnotatable;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 
@@ -37,7 +37,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTEnumTypeDefinition extends AST {
+public class ASTEnumTypeDefinition extends ASTAnnotatable {
     private Token fName;
     private List<Token> fIdList;
 
@@ -65,6 +65,9 @@ public class ASTEnumTypeDefinition extends AST {
             throw new SemanticException(fName, "Error in enumeration type: " +
                                         ex.getMessage() + ".");
         }
+        
+        this.genAnnotations(res);
+        
         return res;
     }
 }

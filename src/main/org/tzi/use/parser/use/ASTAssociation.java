@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAggregationKind;
@@ -44,9 +43,11 @@ import org.tzi.use.util.StringUtil;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTAssociation extends AST {
+public class ASTAssociation extends ASTAnnotatable {
     private Token fKind;
+    
     private Token fName;
+    
     private List<ASTAssociationEnd> fAssociationEnds;
 
     public ASTAssociation(Token kind, Token name) {
@@ -65,6 +66,7 @@ public class ASTAssociation extends AST {
     	checkDerive();
     	
         MAssociation assoc = ctx.modelFactory().createAssociation(fName.getText());
+        this.genAnnotations(assoc);
         
         // sets the line position of the USE-Model in this association
         assoc.setPositionInModel( fName.getLine() );
@@ -78,6 +80,11 @@ public class ASTAssociation extends AST {
 
         try {
             for (ASTAssociationEnd ae : fAssociationEnds) {
+            	if (!ae.getQualifiers().isEmpty() && this.fAssociationEnds.size() > 2) {
+            		throw new SemanticException(fName,
+                            "Error in " + MAggregationKind.name(assoc.aggregationKind()) + " `" +
+                            assoc.name() + "': Only binary associations can be qualified.");
+            	}
             	// kind of association determines kind of first
                 // association end
                 MAssociationEnd aend = ae.gen(ctx, kind);

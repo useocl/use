@@ -21,13 +21,14 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
 
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjDiagramOptions;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.uml.mm.MAssociation;
 
 /**
@@ -37,22 +38,17 @@ import org.tzi.use.uml.mm.MAssociation;
  * @author Fabian Gutsche
  */
 public final class AssociationName extends EdgeProperty {
-    private int fLabelWidth;
+	
     private List<String> fConnectedNodes;
     
     AssociationName( String name, NodeBase source, NodeBase target,
-                     int x1, int y1, int x2, int y2, 
+                     WayPoint sourceNode, WayPoint targetNode, 
                      DiagramOptions opt, EdgeBase edge, MAssociation assoc ) {
+    	super(source, sourceNode, target, targetNode);
         fName = name;
-        fSource = source;
-        fTarget = target;
         fAssoc = assoc;
         fOpt = opt;
         fEdge = edge;
-        fX_SourceEdgePoint = x1;
-        fY_SourceEdgePoint = y1;
-        fX_TargetEdgePoint = x2;
-        fY_TargetEdgePoint = y2;
     }
     
     AssociationName( String name, List<String> connectedNodes, DiagramOptions opt,
@@ -68,177 +64,48 @@ public final class AssociationName extends EdgeProperty {
         return fName;
     }
     
-    /**
-     * Draws a association name on a reflexive edge.
-     */
-    public void drawEdgePropertyOnReflexiveEdge( Graphics g, FontMetrics fm,
-                                                 int maxWidth, int maxHeight ) {
-        setRectangleSize( g );
+    @Override
+    protected void onDraw( Graphics2D g ) {
+        if ( isSelected() ) {
+        	drawSelected( g );
+        }
         
         setColor( g );
-        
-        fLabelWidth = fm.stringWidth( fName );
-        if ( isSelected() ) {
-            movingEdgeProperty( g );
-        } else {
-            // has the user moved the association name use the user
-            // defined position.
-            if ( !isUserDefined() ) {
-                int labelHeight = fm.getHeight();
-                
-                // simple approximation of association name placement
-                setX( fX_SourceEdgePoint + ( maxWidth / 2 - fLabelWidth / 2 ) );
-                setY( fY_SourceEdgePoint - maxHeight - 4 );
-                
-                if ( fX_SourceEdgePoint < fSource.x() ) {
-                    setX( fX_SourceEdgePoint - fLabelWidth 
-                          - ( maxWidth / 2 - fLabelWidth / 2 ) );
-                }
-                if ( fY_SourceEdgePoint > fSource.y() ) {
-                    setY( fY_SourceEdgePoint + maxHeight + labelHeight - 4 );
-                }
-                            
-            } else {
-                moveEdgePropertyDynamicaly();
-            }
-        }
-        g.drawString( fName, (int) x(), (int) y() );
-
-        // underline association name
-        if ( fEdge.isUnderlinedLabel() ) {
-            g.drawLine( (int) x(), (int) y()+1, (int) x()+fLabelWidth,
-                        (int) y()+1 );       
-        }
-        fLoadingLayout = false;
-        resetColor( g );
-    }
-    
-    /**
-     * Draws a association name on a binary edge.
-     */
-    public void draw( Graphics g, FontMetrics fm ) {
-        setRectangleSize( g );
-        
-        setColor( g );
-        
-        fLabelWidth = fm.stringWidth( fName );
-        if ( isSelected() ) {
-            movingEdgeProperty( g );
-        } else {
-            // has the user moved the association name use the user
-            // defined position.
-            if ( !isUserDefined() ) {
-                // simple approximation of association name placement
-                setX( fX_SourceEdgePoint
-                      + ( fX_TargetEdgePoint - fX_SourceEdgePoint ) / 2
-                      - fLabelWidth / 2 );
-                
-                
-//                setY( fY_SourceEdgePoint
-//                      + ( ( fY_TargetEdgePoint - fY_SourceEdgePoint ) / 2 )
-//                      + ( labelHeight / 2 ) - 3 );
-    
-//              if ( isSideBySide() ) {
-                    setY( fY_SourceEdgePoint
-                          + ( fY_TargetEdgePoint - fY_SourceEdgePoint ) / 2 - 4 );
-//                }
-                    
-            } else {
-                moveEdgePropertyDynamicaly();
-            }
-        }
-        
-        g.drawString( fName, (int) x(), (int) y() );
-        // underline association name
-        if ( fEdge.isUnderlinedLabel() ) {
-            g.drawLine( (int) x(), (int) y()+1, 
-                        (int) x()+fLabelWidth, (int) y()+1 );
-        }
-        fLoadingLayout = false;
+        drawText(g);
         resetColor( g );
     }
 
     /**
-     * Draws a association name above a diamond node.
-     */
-    public void drawOnDiamondNode( Graphics g, FontMetrics fm ) {
-        setRectangleSize( g );
-        
-        setColor( g );
-        
-        fLabelWidth = fm.stringWidth( fName );
-        
-        if ( isSelected() ) {
-            movingEdgeProperty( g );
-        } else {
-            // has the user moved the association name use the user
-            // defined position.
-            if ( !isUserDefined() ) {
-                double x = fSource.x() - fLabelWidth / 2;
-                setX( x );
-                setY( fSource.y() - 14 );
-            }else {
-                moveEdgePropertyDynamicalyOnDiamondNode();
-            }
-        }
-        
-        g.drawString( fName, (int) x(), (int) y() );
-        
-        if ( fOpt instanceof ObjDiagramOptions ) {
-            g.drawLine( (int) x(), (int) y()+2, (int) x()+fLabelWidth,
-                        (int) y()+2 );    
-        }    
-        fLoadingLayout = false;
-        resetColor( g );
-    }
-    
-    /**
-     * Moves the edge property dynamicaly on the user defined position
-     * if the diamond node is moved (allways the source node).
-     */
-    private void moveEdgePropertyDynamicalyOnDiamondNode() {
-        if ( !fLoadingLayout ) {   
-            Point2D.Double p = vectorBetweenPositions( fSource.x(), fSource.y(),
-                                                       ((DiamondNode) fSource).oldX(),
-                                                       ((DiamondNode) fSource).oldY() );
-            setX( fX_UserDefined + p.x );
-            setY( fY_UserDefined + p.y );
-            fLoadingLayout = false;
-        }
-        fX_UserDefined = x();
-        fY_UserDefined = y();
-    }
-    
-    /**
-     * Moves the edge property dynamicaly on the user defined position
-     * if the source or target node is moved.
-     */
-    void moveEdgePropertyDynamicaly() {
-        if ( !fLoadingLayout ) {
-            double x_old = fX_SourceEdgePoint_old 
-            + ( fX_TargetEdgePoint_old - fX_SourceEdgePoint_old ) / 2 
-            - fLabelWidth/2 ;
-            double y_old = fY_SourceEdgePoint_old 
-            + ( fY_TargetEdgePoint_old - fY_SourceEdgePoint_old ) / 2 
-            - 4 ;
-            
-            Point2D.Double v_old = vectorBetweenPositions( fX_UserDefined, 
-                                                           fY_UserDefined,
-                                                           x_old, y_old );
-            
-            double x = fX_SourceEdgePoint
-            + ( fX_TargetEdgePoint - fX_SourceEdgePoint ) / 2 
-            - fLabelWidth/2 ;
-            double y = fY_SourceEdgePoint 
-            + ( fY_TargetEdgePoint - fY_SourceEdgePoint ) / 2 
-            - 4 ;
-            setX( x + v_old.x );
-            setY( y + v_old.y );
-            fLoadingLayout = false;
-        }
-        fX_UserDefined = x();
-        fY_UserDefined = y();
-    }
+	 * Draws the text centered inside the bounds returned by {@link #getBounds()}.
+	 * The text is underlined if {@link fEdge#isUnderlinedLabel()} returns true.
+	 * @param g
+	 */
+	protected void drawText(Graphics2D g) {
+		TextLayout layout = getTextLayout(g);
+		
+		Rectangle2D textBounds = layout.getBounds();
+		Rectangle2D bounds = getBounds();
+		
+		float x = Math.round((bounds.getCenterX() - textBounds.getWidth()  / 2));
+		
+		float y = Math.round((float)
+				(bounds.getCenterY() + (layout.getAscent() + layout.getDescent()) / 2 - layout.getDescent()));
+		
+		layout.draw(g, x, y);
+	}
+
+	/**
+	 * Calculates the default label position that is
+	 * the center of the given points.
+	 * @return
+	 */
+    @Override
+	public Point2D.Double getDefaultPosition() {
+		Point2D.Double result = new Point2D.Double();
+		result.x = sourceWayPoint.getX() + ( targetWayPoint.getX() - sourceWayPoint.getX() ) / 2 - getBounds().getWidth() / 2 ;
+		result.y = sourceWayPoint.getY() + ( targetWayPoint.getY() - sourceWayPoint.getY() ) / 2 - 4 ;
+		return result;
+	}
  
     public String ident() {
         String connectedNodes = "";

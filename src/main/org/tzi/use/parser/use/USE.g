@@ -55,6 +55,8 @@ import org.tzi.use.parser.base.BaseParser;
 import org.tzi.use.parser.ocl.*;
 import org.tzi.use.parser.soil.ast.*;
 import java.util.Collections;
+import java.util.Set;
+import java.util.HashSet;
 }
 
 @lexer::header {
@@ -117,7 +119,8 @@ import org.tzi.use.parser.ParseErrorHandler;
 */
 model returns [ASTModel n]
 :
-    'model' modelName=IDENT { $n = new ASTModel($modelName); }
+	as = annotationSet
+    'model' modelName=IDENT { $n = new ASTModel($modelName); $n.setAnnotations($as.annotations); }
     ( e=enumTypeDefinition { $n.addEnumTypeDef($e.n); } )*
     (   ( generalClassDefinition[$n] )
       | ( a=associationDefinition { $n.addAssociation($a.n); } )
@@ -136,8 +139,9 @@ model returns [ASTModel n]
 */
 enumTypeDefinition returns [ASTEnumTypeDefinition n]
 :
+	as = annotationSet
     'enum' name=IDENT LBRACE idListRes=idList RBRACE ( SEMI )?
-        { $n = new ASTEnumTypeDefinition($name, $idListRes.idList); }
+        { $n = new ASTEnumTypeDefinition($name, $idListRes.idList); $n.setAnnotations($as.annotations); }
     ;
 
 /* ------------------------------------
@@ -150,9 +154,10 @@ generalClassDefinition[ASTModel n]
   boolean isAbstract = false;
 }
 :
+	as = annotationSet
     ( 'abstract' { isAbstract = true; } )? 
-    ( ( c=classDefinition[isAbstract] { $n.addClass($c.n); } ) | 
-      ( ac=associationClassDefinition[isAbstract] { $n.addAssociationClass($ac.n); } ) )
+    ( ( c=classDefinition[isAbstract] { $n.addClass($c.n); $c.n.setAnnotations($as.annotations); } ) | 
+      ( ac=associationClassDefinition[isAbstract] { $n.addAssociationClass($ac.n); $ac.n.setAnnotations($as.annotations); } ) )
        
 ;
 
@@ -243,21 +248,26 @@ associationClassDefinition[boolean isAbstract] returns [ASTAssociationClass n]
 */
 attributeDefinition returns [ASTAttribute n]
 :
+	as = annotationSet
     name=IDENT COLON t=type ( SEMI )?
-        { $n = new ASTAttribute($name, $t.n); }
+        { $n = new ASTAttribute($name, $t.n); $n.setAnnotations($as.annotations); }
     ;
 
 /* ------------------------------------
   operationDefinition ::= 
-    id paramList [ ":" type [ "=" expression ] ] 
+    id paramList ":" type [ "=" expression ] 
     { prePostClause } [ ";" ]
 */
 operationDefinition returns [ASTOperation n]
 :
+	as = annotationSet
     name = IDENT
     pl = paramList
-    ( COLON t = type )?
-    { $n = new ASTOperation($name, $pl.paramList, $t.n); }
+    /* For a readable error message the required type
+       is checked during compilation.
+     */
+    ( COLON t = type )? 
+    { $n = new ASTOperation($name, $pl.paramList, $t.n); $n.setAnnotations($as.annotations); }
     (
         ( EQUAL e = expression   { $n.setExpression($e.n); } )
       | ( 'begin' s = stat 'end' { $n.setStatement($s.n);  } )
@@ -276,10 +286,10 @@ operationDefinition returns [ASTOperation n]
 associationDefinition returns [ASTAssociation n]
 @init{ Token t = null; }
 :
+	as = annotationSet
     { t = input.LT(1); }
     ( keyAssociation | keyAggregation | keyComposition )
-    //    ( classDefinition | (name:IDENT { n = new ASTAssociation(t, $name); }) )
-    name=IDENT { $n = new ASTAssociation(t, $name); }
+    name=IDENT { $n = new ASTAssociation(t, $name); $n.setAnnotations($as.annotations); }
     'between'
     ae=associationEnd { $n.addEnd($ae.n); }
     ( ae=associationEnd { $n.addEnd($ae.n); } )+
@@ -293,7 +303,8 @@ associationDefinition returns [ASTAssociation n]
 */
 associationEnd returns [ASTAssociationEnd n]
 :
-    name=IDENT LBRACK m=multiplicity RBRACK { $n = new ASTAssociationEnd($name, $m.n); } 
+	as = annotationSet
+    name=IDENT LBRACK m=multiplicity RBRACK { $n = new ASTAssociationEnd($name, $m.n); $n.setAnnotations($as.annotations); } 
     ( keyRole rn=IDENT { $n.setRolename($rn); } )?
     (
         'ordered' { $n.setOrdered(); }
@@ -403,7 +414,33 @@ prePostClause returns [ASTPrePostClause n]
     { t = input.LT(1); }
     ( 'pre' | 'post' )  ( name=IDENT )? COLON e=expression
     { $n = new ASTPrePostClause(t, $name, $e.n); }
-    ;
+;
+
+annotationSet returns [Set<ASTAnnotation> annotations]
+@init{ $annotations = new HashSet<ASTAnnotation>(); }
+:
+	(an=annotation { $annotations.add($an.n); } )*
+;
+ 
+annotation returns [ASTAnnotation n]:
+	AT name=IDENT {$n = new ASTAnnotation($name);} 
+	LPAREN 
+		values = annotationValues { $n.setValues($values.values); }
+	RPAREN
+;
+
+annotationValues returns [Map<Token, Token> values]
+@init{ $values = new HashMap<Token, Token>(); }
+:
+	(firstVal = annotationValue { $values.put($firstVal.name, $firstVal.value); })?
+	(COMMA val=annotationValue { $values.put($val.name, $val.value); })*
+;
+
+annotationValue returns [Token name, Token value]:
+	aName=IDENT { $name = $aName; }
+	EQUAL 
+	aValue=NON_OCL_STRING { $value = $aValue; }
+;
 
 keyUnion:
   {input.LT(1).getText().equals("union")}? IDENT ;
@@ -1088,7 +1125,7 @@ tuplePart returns [ASTTuplePart n]
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
  
-/* $Id: SoilBase.gpart 1734 2010-09-07 14:56:17Z lhamann $ */
+/* $Id: SoilBase.gpart 2048 2011-02-11 15:32:33Z lhamann $ */
 
 ////////////////////////////////////////////////////////////////////////////////
 // Soil grammar
@@ -1741,9 +1778,6 @@ RPAREN		 : ')';
 SEMI		 : ';';
 SLASH 		 : '/';
 STAR 		 : '*';
-
-SCRIPTBODY:
-  '<<' ( options {greedy=false;} : . )* '>>';
   
 fragment
 INT:
@@ -1762,10 +1796,12 @@ RANGE_OR_INT:
     ;
 
 // String literals
-
 STRING:	
     '\'' ( ~('\''|'\\') | ESC)* '\'';
 
+NON_OCL_STRING:	
+    '"' ( ~('"'|'\\') | ESC)* '"';
+    
 // escape sequence -- note that this is protected; it can only be called
 //   from another lexer rule -- it will not ever directly return a token to
 //   the parser

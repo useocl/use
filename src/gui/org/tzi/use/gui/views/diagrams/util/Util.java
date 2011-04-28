@@ -22,6 +22,10 @@
 
 package org.tzi.use.gui.views.diagrams.util;
 
+import java.awt.Point;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+
 /**
  * Class providing mathematical calculations
  */
@@ -93,5 +97,52 @@ public class Util {
         return y1 < y2;
     }
 
+    /** 
+     * Calculates the intersection point of to lines.
+     * 
+     * @param line1 the first line.
+     * @param line2 the second line.
+     * @return the intersection point of both lines.
+     */    
+    public static Point intersectionPoint( Line2D line1, Line2D line2) {
+        // getting the intersection coordinate by vector arithmetic
+        // example for the top line:
+        //   sx over sy + r * (tx - sx) over (ty - sy)
+        // = line2.getX1() over line2.getY1() + v * (line2.getX2() - line2.getX1()) over (line2.getY2() - line2.getY1())
+        
+        double numerator = 1.0;
+        double denominator = 1.0;
+        
+        numerator = ( line1.getX2() - line1.getX1()) * (line1.getY1() - line2.getY1()) + (line1.getY2() - line1.getY1()) * (line2.getX1() - line1.getX1());
+        denominator = (line2.getY2() - line2.getY1()) * (line1.getX2() - line1.getX1()) 
+        - (line2.getX2() - line2.getX1()) * (line1.getY2() - line1.getY1()); 
+        
+        double v = numerator / denominator;
+        
+        double intersection_X = line2.getX1() + v * (line2.getX2() - line2.getX1());
+        double intersection_Y = line2.getY1() + v * (line2.getY2() - line2.getY1());
+        
+        return new Point( (int)intersection_X, (int)intersection_Y );
+    }
+    
+    /**
+     * Calculates the mid point of two given points which form a straight line.
+     * @param x1 x-coordinate of the first point.
+     * @param y1 y-coordinate of the first point.
+     * @param x2 x-coordinate of the second point.
+     * @param y2 y-coordinate of the second point.
+     */
+    public static Point2D calculateMidPoint( double x1, double y1, double x2, double y2 ) {
+    	Point2D.Double result = new Point2D.Double();
+    	
+    	double deltaX = Math.abs(x1 - x2) / 2;
+        double deltaY = Math.abs(y1 - y2) / 2;
 
+        // Either add or subtract (multiply by one or minus one)
+        // the delta value. This depends on the location of the points
+        result.x = x1 + deltaX * (x1 < x2 ? 1 : -1);
+        result.y = y1 + deltaY * (y1 < y2 ? 1 : -1);
+        
+        return result;
+    }
 }

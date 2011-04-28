@@ -22,8 +22,10 @@
 
 package org.tzi.use.gui.views.diagrams.util;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics;
-import java.util.ArrayList;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 
 /**
  * Represents a dashed directed line
@@ -88,19 +90,18 @@ public class DashedDirectedLine extends DirectedLine {
      * @return line
      */
     public I_DirectedLine draw(final Graphics graphic) {
-        final ArrayList<I_DirectedLine> fragments = fragmentLine();
-        for(final I_DirectedLine line : fragments) {
-            line.draw(graphic);
-        }
+    	Graphics2D g = (Graphics2D)graphic;
+    	
+    	Stroke oldStroke = g.getStroke();
+		BasicStroke newStroke = new BasicStroke(1.0F, BasicStroke.CAP_SQUARE,
+				BasicStroke.JOIN_MITER, 10.0F, new float[] { fragmentLength,
+						intersectionLength }, 0.0F);
+
+		g.setStroke(newStroke);		
+		g.drawLine((int)sourceX, (int)sourceY, (int)targetX, (int)targetY );
+		g.setStroke(oldStroke);
+		
         return this;
-    }
-
-    ArrayList<I_DirectedLine> fragmentLine() {
-        final double length = calculateLength();
-        final double numberOfSteps = length / (fragmentLength + intersectionLength);
-        final double gradientAngle = calculateGradientAngle();
-
-        return createFragments(numberOfSteps, gradientAngle, sourceX, sourceY);
     }
 
     private void init(final double sourceX, final double sourceY, final double targetX, final double targetY) {
@@ -108,49 +109,5 @@ public class DashedDirectedLine extends DirectedLine {
         this.sourceY = sourceY;
         this.targetX = targetX;
         this.targetY = targetY;
-    }
-
-    private ArrayList<I_DirectedLine> createFragments(final double numberOfSteps, final double gradientAngle,
-                                      double actualSourceX, double actualSourceY) {
-        final ArrayList<I_DirectedLine> fragments = new ArrayList<I_DirectedLine>();
-        for (int times = 1; times <= numberOfSteps; times++) {
-            final I_DirectedLine fragment = createFragment(actualSourceX, actualSourceY, gradientAngle);
-            fragments.add(fragment);
-
-            final I_DirectedLine intersection =
-                    createIntersection(fragment.getTargetX(), fragment.getTargetY(), gradientAngle);
-            actualSourceX = intersection.getTargetX();
-            actualSourceY = intersection.getTargetY();
-        }
-        return fragmentTail(fragments, gradientAngle, actualSourceX, actualSourceY);
-    }
-
-    private ArrayList<I_DirectedLine> fragmentTail(final ArrayList<I_DirectedLine> fragments, final double gradientAngle, final double actualSourceX,
-                                   final double actualSourceY) {
-        final double tailLength = Util.calculateDistance(actualSourceX, actualSourceY, targetX, targetY);
-        if (Math.round(tailLength) > 0) {
-            final I_DirectedLine fragment = createLastFragment(actualSourceX, actualSourceY, gradientAngle, tailLength);
-            fragments.add(fragment);
-        }
-        return fragments;
-    }
-
-    private I_DirectedLine createIntersection(final double actualTargetX, final double actualTargetY,
-                                              final double gradientAngle) {
-        return DirectedLineFactory.createSolidDirectedLine(actualTargetX, actualTargetY,
-                actualTargetX + intersectionLength, actualTargetY).rotateAroundSourcePoint(gradientAngle);
-    }
-
-    private I_DirectedLine createFragment(final double actualSourceX, final double actualSourceY,
-                                          final double gradientAngle) {
-        return DirectedLineFactory.createSolidDirectedLine(actualSourceX, actualSourceY,
-                actualSourceX + fragmentLength, actualSourceY).rotateAroundSourcePoint(gradientAngle);
-    }
-
-    private I_DirectedLine createLastFragment(final double actualSourceX, final double actualSourceY,
-                                              final double gradientAngle, final double tailLength) {
-        return DirectedLineFactory.createSolidDirectedLine(actualSourceX, actualSourceY,
-                actualSourceX + Math.min(tailLength, fragmentLength), actualSourceY)
-                .rotateAroundSourcePoint(gradientAngle);
     }
 }

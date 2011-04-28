@@ -21,9 +21,7 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.Polygon;
 
-import org.tzi.use.uml.mm.MClass;
 
 /** 
  * Base class of all node types in the diagram.
@@ -31,25 +29,4 @@ import org.tzi.use.uml.mm.MClass;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public abstract class NodeBase extends PlaceableNode {
-    
-    public abstract String name();
-    
-    public abstract MClass cls();
-    
-    public Polygon dimension() { 
-        int x = (int) x();
-        int y = (int) y();
-        int halfWidth = (int) (getWidth() / 2);
-        int halfHeight = (int) (getHeight() / 2);
-        
-        int[] xpoints = { x - halfWidth, x + halfWidth, 
-                          x + halfWidth, x - halfWidth };
-        int[] ypoints = { y - halfHeight, y - halfHeight,
-                          y + halfHeight, y + halfHeight };
-        
-        int npoints = xpoints.length;
-        return new Polygon( xpoints, ypoints, npoints );
-    }
-
-}
+public abstract class NodeBase extends PlaceableNode {}

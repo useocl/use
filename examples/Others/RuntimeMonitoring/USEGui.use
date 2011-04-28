@@ -1,0 +1,31 @@
+model USEGui
+
+class Graphics2D
+end
+
+class Rectangle2D
+  attributes
+    x : Real
+    y : Real
+    width : Real
+    height : Real
+  operations
+    getCenterX():Real
+	post: result.round(2) = (self.x + self.width / 2).rounds(2)
+	
+	getCenterY():Real
+end
+
+abstract class PlaceableNode
+  attributes
+    bounds : Rectangle2D
+	minWidth : Real
+	minHeight : Real
+  operations
+    draw(Graphics2D g)
+	onDraw(Graphics2D g)
+	onFirstDraw(Graphics2D g)
+	setRectangleSize( Graphics2D g )
+end
+
+

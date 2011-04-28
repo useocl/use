@@ -21,16 +21,18 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tzi.use.gui.views.diagrams.util.Direction;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.util.StringUtil;
 
 /**
- * Represents a rolename node in a diagram. 
+ * Represents a role name node in a diagram. 
  * 
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
@@ -38,21 +40,27 @@ import org.tzi.use.util.StringUtil;
 public final class Rolename extends EdgeProperty {
     MAssociationEnd fAssocEnd;
     
+    /**
+     * 
+     * @param assocEnd The <code>MAassociationEnd</code> this role name belongs to.
+     * @param source The <code>NodeBase</code> which represents the class or object node this role name is attached to. 
+     * @param target The <code>NodeBase</code> which represents the class, object or diamond node of the opposite end.
+     * @param sourceWayPoint
+     * @param targetWayPoint
+     * @param opt
+     * @param side
+     * @param edge
+     */
     Rolename( MAssociationEnd assocEnd, NodeBase source, NodeBase target, 
-              int x1, int y1, int x2, int y2, DiagramOptions opt, 
-              int side, EdgeBase edge ) {
+              WayPoint sourceWayPoint, WayPoint targetWayPoint, DiagramOptions opt, int side, EdgeBase edge ) {
+    	super(source, sourceWayPoint, target, targetWayPoint);
+    	
         fAssocEnd = assocEnd;
         setName();
-        fSource = source;
-        fTarget = target;
         fAssoc = fAssocEnd.association();
         fEdge = edge;
         fOpt = opt;
         fSide = side;
-        fX_SourceEdgePoint = x1;
-        fY_SourceEdgePoint = y1;
-        fX_TargetEdgePoint = x2;
-        fY_TargetEdgePoint = y2;
     }
     
     private void setName() {
@@ -82,112 +90,47 @@ public final class Rolename extends EdgeProperty {
     }
     
     /**
-     * Draws a rolename on a reflexive edge.
+     * Draws a role name on a binary edge.
      */
-    public void drawEdgePropertyOnReflexiveEdge( Graphics g, FontMetrics fm,
-                                                 int maxHeight, int furthestX ) {
-        setRectangleSize( g );
-        
+    @Override
+    protected void onDraw( Graphics2D g ) {
         setColor( g );
-        
-        if ( isSelected() ) {
-            movingEdgeProperty( g );
-        } else {
-            // has the user moved the rolename use the user
-            // defined position.
-            if ( !isUserDefined() ) {
-                // simple approximation of role name placement
-                
-                int labelWidth = fm.stringWidth( fName );
-                int labelHeight = fm.getHeight();
-                final int spaceToEdge = 5;
-                
-                switch ( fSide ) {
-                case SOURCE_SIDE:
-                    if ( fX_SourceEdgePoint > fSource.x() ) {
-                        setX( fX_SourceEdgePoint - labelWidth );    
-                    } else {
-                        setX( fX_SourceEdgePoint + spaceToEdge );
-                    }
-                    if ( fY_SourceEdgePoint < fSource.y() ) {
-                        setY( fY_SourceEdgePoint - (maxHeight/2) + (labelHeight/3) );    
-                    } else {
-                        setY( fY_SourceEdgePoint + (maxHeight/2) + (labelHeight/3) );
-                    }
-                    break;
-                case TARGET_SIDE:
-                    int sY = (int) fY_SourceEdgePoint - maxHeight;
-                    int tY = (int) fY_SourceEdgePoint + maxHeight;
                     
-                    if ( fX_TargetEdgePoint > fTarget.x() ) {
-                        setX( furthestX + spaceToEdge );    
-                    } else {
-                        setX( furthestX - labelWidth - spaceToEdge );
-                    }
-                    if ( fY_TargetEdgePoint < fTarget.y() ) {
-                        setY( (fY_TargetEdgePoint 
-                                - (( fY_TargetEdgePoint-sY )/2))
-                                + (labelHeight/3) );    
-                    } else {
-                        setY( (fY_TargetEdgePoint 
-                                - (( fY_TargetEdgePoint-tY )/2))
-                                + (labelHeight/3) );
-                    }
-                    break;
-                default:
-                    break;
-                }
-            } else {
-                moveEdgePropertyDynamicaly();
-            }
-        }
         if ( fAssocEnd != null && fAssocEnd.isNavigable() ) {
-            g.drawString( fName, (int) x(), (int) y() );
+        	if ( isSelected() ) {
+            	drawSelected(g);
+            }
+        	
+            g.drawString( fName, (int) getX() + 4, (int) getBounds().getMaxY() - 4 );
         }
-        fLoadingLayout = false;
+
         resetColor( g );
     }
-    
-    /**
-     * Draws a rolename on a binary edge.
-     */
-    public void draw( Graphics g, FontMetrics fm ) {
-        setRectangleSize( g );
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.EdgeProperty#getDefaultPosition()
+	 */
+	@Override
+	protected Point2D getDefaultPosition() {
+		// simple approximation of role name placement
+		Point2D.Double result = new Point2D.Double();
+		
+        int fn1H = (int)fSource.getHeight() / 2;
+        Direction targetLocation = Direction.getDirection(sourceWayPoint.getCenter(), targetWayPoint.getCenter());
         
-        setColor( g );
-        
-        if ( isSelected() ) {
-            movingEdgeProperty( g );
+        if ( targetLocation.isLocatedSouth() ) {
+            result.y = sourceWayPoint.getY() + fn1H + 15;
         } else {
-            
-            // has the user moved the rolename use the user
-            // defined position.
-            if ( !isUserDefined() ) {
-                
-                // simple approximation of role name placement
-                int fn1H = fSource.getHeight() / 2;
-                //int fn2H = fTarget.getHeight() / 2;
-                
-                if ( fY_TargetEdgePoint > fY_SourceEdgePoint ) {
-                    setY( fY_SourceEdgePoint + fn1H + 15 );
-                } else {
-                    setY( fY_SourceEdgePoint - fn1H - 10 );
-                }
-                if ( fX_TargetEdgePoint < fX_SourceEdgePoint ) {
-                    setX( fX_SourceEdgePoint - fm.stringWidth( fName ) -2 );
-                } else {
-                    setX( fX_SourceEdgePoint+2 );
-                }
-                
-            } else {
-                moveEdgePropertyDynamicaly();
-            }
+            result.y = sourceWayPoint.getY() - fn1H - 10;
         }
-        if ( fAssocEnd != null && fAssocEnd.isNavigable() ) {
-            g.drawString( fName, (int) x(), (int) y() );
+        
+        if ( targetLocation.isLocatedWest() ) {
+            result.x = sourceWayPoint.getX() - getBounds().getWidth() - 2;
+        } else {
+            result.x = sourceWayPoint.getX() + 2;
         }
-        fLoadingLayout = false;
-        resetColor( g );
-    }
+        
+        return result;
+	}
 
 }

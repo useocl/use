@@ -43,28 +43,20 @@ import org.tzi.use.util.NullPrintWriter;
 
 
 /**
- * TODO
+ * Tests several AST constructions
  * @author Daniel
  *
  */
 public class ASTConstructionTest extends TestCase {
-	/** TODO */
+
 	private ASTStatement fResult;
 
-	
-	/**
-	 * TODO
-	 */
 	@Override
 	@Before
 	public void setUp() {
 		fResult = null;
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testLegacyCreate() {
 		fResult = constructAST("create v : C");
@@ -79,11 +71,7 @@ public class ASTConstructionTest extends TestCase {
 			assertTrue(statement instanceof ASTNewObjectStatement);
 		}
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testLegacyCreateAssign() {
 		fResult = constructAST("assign v := create C");
@@ -104,10 +92,6 @@ public class ASTConstructionTest extends TestCase {
 		}
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testLegacyCreateInsert() {
 		fResult = constructAST("create v : AC between (o1, o2)");
@@ -117,10 +101,6 @@ public class ASTConstructionTest extends TestCase {
 				instanceof ASTRValueNewLinkObject);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testLegacySet() {
 		fResult = constructAST("set o1.att1 := 42");
@@ -128,10 +108,6 @@ public class ASTConstructionTest extends TestCase {
 		assertTrue(fResult instanceof ASTAttributeAssignmentStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testOpEnter() {
 		// enter operation with arguments
@@ -156,10 +132,6 @@ public class ASTConstructionTest extends TestCase {
 		assertNull(fResult);	
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testOpExit() {
 		// exit operation without result value
@@ -173,11 +145,7 @@ public class ASTConstructionTest extends TestCase {
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTExitOperationStatement);
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testLegacyLet() {
 		fResult = constructAST("let v = 42");
@@ -189,13 +157,7 @@ public class ASTConstructionTest extends TestCase {
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTVariableAssignmentStatement);
 	}
-	
-	
 
-
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testExecute() {
 		
@@ -204,10 +166,6 @@ public class ASTConstructionTest extends TestCase {
 		assertTrue(fResult instanceof ASTEmptyStatement);
 	}
 
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testLegacyCommandList() {
 		
@@ -253,12 +211,6 @@ public class ASTConstructionTest extends TestCase {
 		}
 	}
 
-
-	/**
-	 * TODO
-	 * @param input
-	 * @return
-	 */
 	private ASTStatement constructAST(String input) {
 		return ShellCommandCompiler.constructAST(
 				new ByteArrayInputStream(input.getBytes()), 

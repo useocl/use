@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
@@ -43,7 +42,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTClass extends AST {
+public class ASTClass extends ASTAnnotatable {
     protected Token fName;
     protected boolean fIsAbstract;
     protected List<Token> fSuperClasses;
@@ -87,6 +86,7 @@ public class ASTClass extends AST {
         fClass = ctx.modelFactory().createClass(fName.getText(), fIsAbstract);
         // sets the line position of the USE-Model in this class
         fClass.setPositionInModel( fName.getLine() );
+        this.genAnnotations(fClass);
         // makes sure we have a unique class name
         ctx.typeTable().add(fName, TypeFactory.mkObjectType(fClass));
         return fClass;

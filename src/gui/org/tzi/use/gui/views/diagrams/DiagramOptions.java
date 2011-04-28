@@ -126,4 +126,16 @@ public abstract class DiagramOptions {
         return NODE_SELECTED_COLOR;
     }
     
+    protected boolean fIsLoadingLayout = false;
+    
+	/**
+	 * @return
+	 */
+	public boolean isLoadingLayout() {
+		return fIsLoadingLayout;
+	}
+    
+	public void setIsLoadingLayout(boolean isLoading) {
+		fIsLoadingLayout = isLoading;
+	}
 }

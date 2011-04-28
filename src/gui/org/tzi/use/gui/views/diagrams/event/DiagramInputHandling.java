@@ -30,6 +30,8 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -41,22 +43,24 @@ import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.NodeOnEdge;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.selection.classselection.SelectionClassTableModel;
 import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
 
 /**
- * Handels the mouse movements of the class and object diagram.
+ * Handles the mouse movements and keyboard inputs 
+ * of the class and object diagram.
  *  
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public final class DiagramMouseHandling implements MouseListener,
+public final class DiagramInputHandling implements MouseListener,
                                                    MouseMotionListener, 
-                                                   DropTargetListener {
+                                                   DropTargetListener,
+                                                   KeyListener {
     
     private Selection fNodeSelection;
     private Selection fEdgeSelection;
@@ -72,7 +76,7 @@ public final class DiagramMouseHandling implements MouseListener,
     private Cursor fCursor;
     private SelectionClassView opv ;
     
-    public DiagramMouseHandling( Selection nodeSelection, Selection edgeSelection,
+    public DiagramInputHandling( Selection nodeSelection, Selection edgeSelection,
                                  DirectedGraph<NodeBase, EdgeBase> graph, 
                                  DiagramView diagram ) {
         
@@ -104,14 +108,12 @@ public final class DiagramMouseHandling implements MouseListener,
         fDiagram.stopLayoutThread();
         int modifiers = e.getModifiers();
         
-        if ( e.getClickCount() == 1 
-                && modifiers == InputEvent.BUTTON1_MASK ) {
+        if ( e.getClickCount() == 1  && modifiers == InputEvent.BUTTON1_MASK ) {
                fDiagram.findEdge( fGraph, e.getX(), e.getY(), 1 );
         }
         
         // mouse over node?
-        PlaceableNode pickedObjectNode = fDiagram.findNode( fGraph, e.getX(), 
-                                                            e.getY());
+        PlaceableNode pickedObjectNode = fDiagram.findNode( fGraph, e.getX(), e.getY());
         
         // double click on EdgeProperty than reposition.
         if ( e.getClickCount() == 2 
@@ -158,21 +160,15 @@ public final class DiagramMouseHandling implements MouseListener,
         break;
         case InputEvent.SHIFT_MASK + InputEvent.BUTTON1_MASK:
             fDragMode = DRAG_NONE;
-        if (pickedObjectNode != null) {
-            // add this component to the selection
-            fNodeSelection.add( pickedObjectNode );
-//            System.out.println("add seleted"); //jj
-            if(opv!= null)
-            ((SelectionClassTableModel)(opv.fTableModel)).addSelected(pickedObjectNode);//jj
-//            System.out.println("fDiagram.getComponents().length = " + fGraph.);
-//            fDiagram.
-//            for(int i = 0; i< fDiagram.getComponents().length; i++){
-//            	System.out.println("getcomponent = " + fDiagram.getComponent(i));
-//            }
-//            opv.addSelected(pickedObjectNode);
-            fDiagram.repaint();
-        }
-        break;
+		    if (pickedObjectNode != null) {
+		        // add this component to the selection
+		        fNodeSelection.add( pickedObjectNode );
+		        if(opv != null)
+		        	((SelectionClassTableModel)(opv.fTableModel)).addSelected(pickedObjectNode);
+		
+		        fDiagram.repaint();
+		    }
+		break;
         case InputEvent.BUTTON2_MASK:
             if ( fDiagram instanceof NewObjectDiagram ) {
                 ((NewObjectDiagram) fDiagram).mayBeShowObjectInfo( e );
@@ -215,7 +211,7 @@ public final class DiagramMouseHandling implements MouseListener,
     public void mouseExited(MouseEvent e) {
     }
     
-    public void mouseDragged(MouseEvent e) {
+    public synchronized void mouseDragged(MouseEvent e) {
         // ignore dragging events which we are not interested in
         if (fDragMode == DRAG_NONE)
             return;
@@ -228,25 +224,36 @@ public final class DiagramMouseHandling implements MouseListener,
         }
         
         if (fDragMode == DRAG_ITEMS) {
-            for (Selectable sel : fNodeSelection) {
-                sel.setDragged( true );
-            }
             Point p = e.getPoint();
             int dx = p.x - fDragStart.x;
             int dy = p.y - fDragStart.y;
-            // move all selected components to new position.
-            Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
-            while (nodeIterator.hasNext()) {
-                PlaceableNode node = (PlaceableNode) nodeIterator.next();
-                node.setPosition(node.x() + dx, node.y() + dy);
-                if ( node instanceof NodeOnEdge ) {
-                    ((NodeOnEdge) node).setWasMoved( true );
-                }
-            }
+            
+            moveSelectedObjects(dx, dy);
+            
             fDragStart = p;
         }
         fDiagram.repaint();
     }
+
+	/**
+	 * @param dx
+	 * @param dy
+	 */
+	public void moveSelectedObjects(int dx, int dy) {
+		for (Selectable sel : fNodeSelection) {
+		    sel.setDragged( true );
+		}
+		
+		// move all selected components to new position.
+		Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
+		while (nodeIterator.hasNext()) {
+		    PlaceableNode node = (PlaceableNode) nodeIterator.next();
+		    node.setDraggedPosition(dx, dy);
+		    if ( node instanceof WayPoint ) {
+		        ((WayPoint) node).setWasMoved( true );
+		    }
+		}
+	}
     
     public void mouseMoved(MouseEvent e) {
     }
@@ -280,4 +287,50 @@ public final class DiagramMouseHandling implements MouseListener,
             ((NewObjectDiagram) fDiagram).dropObjectFromModelBrowser( dtde );
         }
     }
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyTyped(KeyEvent e) { }
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (!e.isActionKey()) return;
+		int dX = 0;
+		int dY = 0;
+		int slowDown = 1;
+		
+		if (e.isAltDown())
+			slowDown = 10;
+		
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_LEFT:
+				dX = -10;
+				break;
+			case KeyEvent.VK_UP:
+				dY = -10;
+				break;
+			case KeyEvent.VK_RIGHT:
+				dX = 10;
+				break;
+			case KeyEvent.VK_DOWN:
+				dY = 10;
+				break;
+		}
+		
+		if (dX != 0 || dY != 0) {
+			moveSelectedObjects(dX / slowDown, dY / slowDown);
+			fDiagram.repaint();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyReleased(KeyEvent e) { }
 }

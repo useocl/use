@@ -74,7 +74,7 @@ public class SelectionClassTableModel extends TableModel {
 			changeSelection(row,false);
 		}
 		
-		classDiagram.repaint();
+		classDiagram.invalidateContent();
 		fireTableCellUpdated(row, col);
 	}
 	

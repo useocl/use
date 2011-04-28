@@ -40,6 +40,8 @@ public class SimpleDirectedGraphic extends DirectedGraphic {
         final SimpleDirectedGraphic directedGraphic = new SimpleDirectedGraphic();
         directedGraphic.containedLines.addAll(containedLines);
         directedGraphic.containedLines.add(line);
+        
+        
         return directedGraphic;
     }
 

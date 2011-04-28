@@ -34,6 +34,7 @@ import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramOptions;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjDiagramOptions;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.sys.MObject;
@@ -115,7 +116,7 @@ public class Context {
     /**
      * The SpecialID of an nodeOnEdge (EdgeProperty)
      */
-    private int fSpecialID = -1;
+    private WayPointType fSpecialID = null;
     
     public Context( LayoutInfos layoutInfos ) {
         fLayoutInfos = layoutInfos;
@@ -155,7 +156,7 @@ public class Context {
         setSource( null );
         setTarget( null );
         setID( -1 );
-        setSpecialID( -1 );
+        setSpecialID( null );
     }
     
     /**
@@ -322,10 +323,10 @@ public class Context {
     public int getID() {
         return fID;
     }
-    public void setSpecialID( int specialId ) {
+    public void setSpecialID( WayPointType specialId ) {
         fSpecialID = specialId;
     }
-    public int getSpecialID() {
+    public WayPointType getSpecialID() {
         return fSpecialID;
     }
     

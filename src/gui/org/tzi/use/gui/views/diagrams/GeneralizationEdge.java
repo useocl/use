@@ -21,11 +21,12 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.Iterator;
 
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 
 /**
  * An Edge representing the generalisation between to nodes.
@@ -35,39 +36,43 @@ import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
  */
 public final class GeneralizationEdge extends EdgeBase {
 
-    public GeneralizationEdge( NodeBase source, NodeBase target, 
+    public GeneralizationEdge( ClassNode source, ClassNode target, 
                                DiagramView diagram ) {
-        super( source, target, "Inheritance", diagram, null );
+        super( source, target, "Inheritance", diagram );
     }
 
+    @Override
+    public boolean isLink() { return false; }
+    
     /**
      * Draws a straightline edge between source and target node.
      */
-    public void draw( Graphics g, FontMetrics fm ) {
+    @Override
+    protected void onDraw( Graphics2D g ) {
         g.setColor( fOpt.getEDGE_COLOR() );
     
-        NodeOnEdge n1 = null;
-        NodeOnEdge n2 = null;
+        WayPoint n1 = null;
+        WayPoint n2 = null;
         
         // draw all line segments
-        if ( !fNodesOnEdge.isEmpty() ) {
-            Iterator<NodeOnEdge> it = fNodesOnEdge.iterator();
+        if ( !fWayPoints.isEmpty() ) {
+            Iterator<WayPoint> it = fWayPoints.iterator();
             int counter = 0;
             if ( it.hasNext() ) {
-                n1 = (NodeOnEdge) it.next();
+                n1 = (WayPoint) it.next();
                 counter++;
             }
             while( it.hasNext() ) {
-                n2 = (NodeOnEdge) it.next();
+                n2 = (WayPoint) it.next();
                 counter++;
-                n2.draw( g, g.getFontMetrics() );
+                n2.draw(g);
                 try {
-                    if ( counter < fNodesOnEdge.size() ) {
+                    if ( counter < fWayPoints.size() ) {
                         DirectedEdgeFactory.drawAssociation( g,
-                                                             (int) n1.x(),
-                                                             (int) n1.y(),
-                                                             (int) n2.x(),
-                                                             (int) n2.y() );
+                                                             (int) n1.getCenter().getX(),
+                                                             (int) n1.getCenter().getY(),
+                                                             (int) n2.getCenter().getX(),
+                                                             (int) n2.getCenter().getY() );
                         n1 = n2;
                     }
                     
@@ -79,13 +84,18 @@ public final class GeneralizationEdge extends EdgeBase {
         
         // draw the last line segment, as an inheritance
         try {
-            DirectedEdgeFactory.drawInheritance( g, (int) n1.x(), 
-                                                 (int) n1.y(), 
-                                                 (int) n2.x(), 
-                                                 (int) n2.y() );
+            DirectedEdgeFactory.drawInheritance( g, (int) n1.getCenter().getX(), 
+                                                    (int) n1.getCenter().getY(), 
+                                                    (int) n2.getCenter().getX(), 
+                                                    (int) n2.getCenter().getY() );
         } catch ( Exception ex ) {
             //ignore
         }
     }
 
+    @Override
+    protected boolean storeHasKind() { return false; }
+    
+    @Override
+    protected String storeGetType() { return "Generalization"; }
 }

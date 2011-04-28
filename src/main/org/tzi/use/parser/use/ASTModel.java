@@ -28,7 +28,6 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.SoilPermissionLevel;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTEnumTypeDefinition;
@@ -44,7 +43,7 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTModel extends AST {
+public class ASTModel extends ASTAnnotatable {
     private Token fName;
     private List<ASTEnumTypeDefinition> fEnumTypeDefs;
     private List<ASTClass> fClasses;
@@ -92,6 +91,8 @@ public class ASTModel extends AST {
         model.setFilename(ctx.filename());
         ctx.setModel(model);
 
+        this.genAnnotations(model);
+        
         // (1a) add user-defined types to model
         for (ASTEnumTypeDefinition e : fEnumTypeDefs) {
             EnumType enm;

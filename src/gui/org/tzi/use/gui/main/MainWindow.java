@@ -91,7 +91,7 @@ import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
+import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.selection.classselection.SelectedAssociationPathView;
@@ -1378,7 +1378,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
         public void actionPerformed(ActionEvent e) {
             NewObjectDiagramView odv = new NewObjectDiagramView(MainWindow.this, fSession.system());
-            ViewFrame f = new ViewFrame("Object diagram " + (NewObjectDiagramView.viewcount), 
+            ViewFrame f = new ViewFrame("Object diagram", 
             					odv, "ObjectDiagram.gif");
             
             // give some help information
@@ -1698,7 +1698,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     
     //von hier jj
     public SelectionClassView showClassSelectionClassView (Set<MClass> selectedClasses, 
-    								ClassDiagram classDiagram, DiagramMouseHandling mouseHandling, 
+    								ClassDiagram classDiagram, DiagramInputHandling mouseHandling, 
     								Map<MClass, ClassNode> fClassToNodeMap, Selection fNodeSelection) { // jj object selection class 
     	
     	SelectionClassView opv = new SelectionClassView(MainWindow.this,

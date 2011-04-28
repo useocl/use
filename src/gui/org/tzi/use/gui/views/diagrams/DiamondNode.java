@@ -21,8 +21,7 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,10 +91,6 @@ public class DiamondNode extends NodeBase {
         return fLink;
     }
     
-    public MClass cls() {
-        return null;
-    }
-    
     public String name() {
         return fAssoc.name();
     }
@@ -107,9 +102,10 @@ public class DiamondNode extends NodeBase {
     /**
      * Draws a diamond with an underlined label in the object diagram.
      */
-    public void draw( Graphics g, FontMetrics fm ) {
-        int x = (int) x();
-        int y = (int) y();
+    @Override
+    public void onDraw( Graphics2D g ) {
+        int x = (int) getX();
+        int y = (int) getY();
         int[] xpoints = { x, x + 20, x, x - 20 };
         int[] ypoints = { y - 10, y, y + 10, y };
         
@@ -131,25 +127,26 @@ public class DiamondNode extends NodeBase {
         }
         if ( fOpt.isShowAssocNames() ) {
             g.setColor( fOpt.getEDGE_LABEL_COLOR() );
-            fAssocName.drawOnDiamondNode( g, fm );
+            fAssocName.draw( g );
         }
         g.setColor( fOpt.getDIAMONDNODE_COLOR() );
-        fX_old = x();
-        fY_old = y();
+        fX_old = getX();
+        fY_old = getY();
     }
 
     public Polygon dimension() {
-        int x1 = (int) x();
-        int y1 = (int) y();
+        int x1 = (int) getX();
+        int y1 = (int) getY();
         int[] xpoints = { x1, x1 + 20, x1, x1 - 20 };
         int[] ypoints = { y1 - 10, y1, y1 + 10, y1 };
         return new Polygon( xpoints, ypoints, xpoints.length );
     }
 
     /**
-     * Returns if the point x,y is containt in this polygon.
+     * Returns if the point x,y is contained in this polygon.
      */
-    public boolean occupies( int x, int y ) {
+    @Override
+    public boolean occupies( double x, double y ) {
         return dimension().contains( x, y );
     }
 
@@ -166,8 +163,8 @@ public class DiamondNode extends NodeBase {
     }
     
     public void setPosition( double x, double y ) {
-        fX_old = x();
-        fY_old = y();
+        fX_old = getX();
+        fY_old = getY();
         setX( x );
         setY( y );
     }
@@ -179,13 +176,14 @@ public class DiamondNode extends NodeBase {
         return fY_old;
     }
     
-    public void setRectangleSize( Graphics g ) {}
+    @Override
+    public void setRectangleSize( Graphics2D g ) { }
     
-    public int getWidth() {
-        return (int) dimension().getBounds().getWidth();
+    public double getWidth() {
+        return getBounds().getWidth();
     }
-    public int getHeight() {
-        return (int) dimension().getBounds().getHeight();
+    public double getHeight() {
+        return getBounds().getHeight();
     }
     
     public EdgeProperty getAssocName() {
@@ -210,9 +208,9 @@ public class DiamondNode extends NodeBase {
         xml.append(LayoutTags.INDENT).append(LayoutTags.NAME_O).append(name()) 
                .append(LayoutTags.NAME_C).append(LayoutTags.NL);
         
-        xml.append(LayoutTags.INDENT).append(LayoutTags.X_COORD_O).append(Double.toString( x() )) 
+        xml.append(LayoutTags.INDENT).append(LayoutTags.X_COORD_O).append(Double.toString( getX() )) 
                .append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
-        xml.append(LayoutTags.INDENT).append(LayoutTags.Y_COORD_O).append(Double.toString( y() )) 
+        xml.append(LayoutTags.INDENT).append(LayoutTags.Y_COORD_O).append(Double.toString( getY() )) 
                .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
         
         xml.append(fAssocName.storePlacementInfo( hidden )).append(LayoutTags.NL);
@@ -222,8 +220,8 @@ public class DiamondNode extends NodeBase {
     
         if ( fHalfEdges != null ) {
             for (EdgeBase e : fHalfEdges) {
-                if ( e instanceof NodeEdge ) {
-                    xml.append(((NodeEdge) e).storeInfo( hidden )).append(LayoutTags.NL);
+                if ( e instanceof NAryAssociationClassOrObjectEdge ) {
+                    xml.append(((NAryAssociationClassOrObjectEdge) e).storeInfo( hidden )).append(LayoutTags.NL);
                 } else {
                     xml.append(e.storePlacementInfo( hidden )).append(LayoutTags.NL);
                 }

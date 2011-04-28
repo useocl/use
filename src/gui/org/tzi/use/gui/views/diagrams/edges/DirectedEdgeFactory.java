@@ -590,7 +590,7 @@ public class DirectedEdgeFactory {
                                  .draw(
                                        graphic );
     }
-    
+        
     /**
      * Creates and draws an UML associtation edge between the given coordinates into the given graphic
      *

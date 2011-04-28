@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
@@ -46,7 +45,7 @@ import org.tzi.use.util.StringUtil;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTAssociationEnd extends AST {
+public class ASTAssociationEnd extends ASTAnnotatable {
     private Token fName;
     private ASTMultiplicity fMultiplicity;
     private Token fRolename;  // optional: may be null!
@@ -216,6 +215,14 @@ public class ASTAssociationEnd extends AST {
     	this.qualifiers = qualifier;
     }
     
+    /**
+     * Gets the list of defined qualifiers at this end. 
+     * @param qualifier
+     */
+    public List<ASTVariableDeclaration> getQualifiers() {
+    	return this.qualifiers;
+    }
+    
     public MAssociationEnd gen(Context ctx, int kind) throws SemanticException {
         // lookup class at association end in current model
         MClass cls = ctx.model().getClass(fName.getText());
@@ -248,6 +255,8 @@ public class ASTAssociationEnd extends AST {
 
         mAend.setUnion(this.isUnion);
                 
+        this.genAnnotations(mAend);
+        
         return mAend;
     }
 

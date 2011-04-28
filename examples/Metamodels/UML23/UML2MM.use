@@ -1824,13 +1824,6 @@ class Association < Relationship, Classifier
 
 		/*
 		UML 2.3 p. 39:
-		[3] endType is derived from the types of the member ends.
-		*/
-		inv rndTypeIsDerived:
-			self.endType = self.memberEnd->collect(e | e.type)
-
-		/*
-		UML 2.3 p. 39:
 		[4] Only binary associations can be aggregations.
 		*/
 		inv onlyBinaryAssociationsCanBeAggregations:
@@ -1904,9 +1897,13 @@ composition C_Property_OwningProperty_ValueSpecification_DefaultValue between
   ValueSpecification[0..1] role defaultValue subsets ownedElement
 end
 
+/*
+  UML 2.3 p. 39:
+  [3] endType is derived from the types of the member ends.
+*/
 association A_Association_Association_Type_EndType between
   Association[*] role notNavigableEndType subsets relationship -- Not marked in Spec
-  Type[1..*] role endType ordered subsets relatedElement
+  Type[1..*] role endType ordered subsets relatedElement derived = self.memberEnd->collect(e | e.type)
 end
 --------------------------------------------------------------------------------------------------------
 -- End Figure 7.12

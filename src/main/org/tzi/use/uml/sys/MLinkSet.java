@@ -300,6 +300,7 @@ public final class MLinkSet {
     /**
      * Returns true if there is a link connecting the objects
      * in the given sequence with the given qualifier values.
+     * @throws MSystemException objects do not conform to the association ends.
      */
     public boolean hasLink(List<MObject> objects, List<List<Value>> qualifierValues) throws MSystemException {
         return contains(new MLinkImpl(fAssociation, objects, qualifierValues));

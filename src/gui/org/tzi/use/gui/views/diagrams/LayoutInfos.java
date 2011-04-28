@@ -40,11 +40,11 @@ import org.tzi.use.uml.sys.MSystem;
  */
 public class LayoutInfos {
 
-    private Map<?, BinaryEdge> fBinaryEdgeToEdgeMap;
+    private Map<?, BinaryAssociationOrLinkEdge> fBinaryEdgeToEdgeMap;
     private Map<?, ? extends NodeBase> fNodeToNodeMap; 
     private Map<?, DiamondNode> fNaryEdgeToDiamondNodeMap;
     private Map<?, List<EdgeBase>> fNaryEdgeToHalfEdgeMap;
-    private Map<?, NodeEdge> fEdgeNodeToEdgeMap;
+    private Map<?, EdgeBase> fEdgeNodeToEdgeMap;
     private Map<EnumType, EnumNode> fEnumToNodeMap;
     private Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
     private Set<Object> fHiddenNodes;
@@ -58,11 +58,11 @@ public class LayoutInfos {
     private String fHiddenElementsXML;
     
     
-    public LayoutInfos( Map<?, BinaryEdge> binaryEdgeToEdgeMap, 
+    public LayoutInfos( Map<?, BinaryAssociationOrLinkEdge> binaryEdgeToEdgeMap, 
                         Map<?, ? extends NodeBase> nodeToNodeMap, 
                         Map<?, DiamondNode> naryEdgeToDiamondNodeMap,
                         Map<?, List<EdgeBase>> naryEdgeToHalfEdgeMap,
-                        Map<?, NodeEdge> edgeNodeToEdgeMap,
+                        Map<?, EdgeBase> edgeNodeToEdgeMap,
                         Map<EnumType, EnumNode> enumToNodeMap,
                         Map<MGeneralization, GeneralizationEdge> genToGeneralizationEdge,
                         Set<Object> hiddenNodes, Set<Object> hiddenEdges,
@@ -84,10 +84,10 @@ public class LayoutInfos {
         fLog = log;
     }
 
-    public Map<?, BinaryEdge> getBinaryEdgeToEdgeMap() {
+    public Map<?, BinaryAssociationOrLinkEdge> getBinaryEdgeToEdgeMap() {
         return fBinaryEdgeToEdgeMap;
     }
-    public Map<?, NodeEdge> getEdgeNodeToEdgeMap() {
+    public Map<?, EdgeBase> getEdgeNodeToEdgeMap() {
         return fEdgeNodeToEdgeMap;
     }
     public Map<EnumType, EnumNode> getEnumToNodeMap() {
@@ -142,7 +142,7 @@ public class LayoutInfos {
     
     public void resetNodesOnEdges() {
         if ( fBinaryEdgeToEdgeMap != null ) {
-            for (BinaryEdge edge : fBinaryEdgeToEdgeMap.values()) {
+            for (BinaryAssociationOrLinkEdge edge : fBinaryEdgeToEdgeMap.values()) {
                 edge.resetNodesOnEdges();
             }
         }

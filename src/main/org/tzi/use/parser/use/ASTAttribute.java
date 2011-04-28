@@ -22,7 +22,6 @@
 package org.tzi.use.parser.use;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTType;
@@ -34,7 +33,7 @@ import org.tzi.use.uml.mm.MAttribute;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTAttribute extends AST {
+public class ASTAttribute extends ASTAnnotatable {
     private Token fName;
     private ASTType fType;
 
@@ -47,6 +46,9 @@ public class ASTAttribute extends AST {
         MAttribute attr = ctx.modelFactory().createAttribute(fName.getText(), fType.gen(ctx));
         // sets the line position of the USE-Model in this attribute
         attr.setPositionInModel( fName.getLine() );
+        
+        this.genAnnotations(attr);
+        
         return attr;
     }
 

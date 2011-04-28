@@ -21,9 +21,11 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 
+import org.tzi.use.gui.views.diagrams.util.Direction;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.uml.mm.MAssociationEnd;
 
 /**
@@ -36,121 +38,63 @@ public final class Multiplicity extends EdgeProperty {
     MAssociationEnd fAssocEnd;
     
     Multiplicity( MAssociationEnd assocEnd, NodeBase source, NodeBase target,
-                  EdgeBase edge, int x1, int y1, int x2, int y2, 
+                  EdgeBase edge, WayPoint sourceNode, WayPoint targetNode, 
                   DiagramOptions opt, int side ) {
+    	super(source, sourceNode, target, targetNode);
+    	
         fAssocEnd = assocEnd;
         fName = fAssocEnd.multiplicity().toString();
-        fSource = source;
-        fTarget = target;
+        
         fAssoc = fAssocEnd.association();
         fEdge = edge;
         fOpt = opt;
         fSide = side;
-        fX_SourceEdgePoint = x1;
-        fY_SourceEdgePoint = y1;
-        fX_TargetEdgePoint = x2;
-        fY_TargetEdgePoint = y2;
+        
     }
     
-    /**
-     * Draws a multiplicity on a reflexive edge.
-     */
-    public void drawEdgePropertyOnReflexiveEdge( Graphics g, FontMetrics fm,
-                                                 int maxHeight, int furthestX ) {
-        setRectangleSize( g );
+    @Override
+    protected void onFirstDraw( Graphics2D g ) {
+    	setRectangleSize( g );
+    }
+    
+    @Override
+    protected Point2D getDefaultPosition() {
+		Direction targetLocation = Direction.getDirection(
+				sourceWayPoint.getCenter(),
+				targetWayPoint.getCenter());
+		Point2D.Double result = new Point2D.Double(); 
+		
+		// simple approximation of multiplicity placement
+        double fn1H = fSource.getHeight() / 2;
         
-        setColor( g );
-        
-        if ( isSelected() ) {
-            movingEdgeProperty( g );
+        if ( targetLocation.isLocatedSouth() ) {
+            result.y = sourceWayPoint.getY() + fn1H + 15;
         } else {
-            // has the user moved the multiplicity use the user
-            // defined position.
-            if ( !isUserDefined() ) {
-                // simple approximation of multiplicity placement
-                int labelWidth = fm.stringWidth( fName );
-                int labelHeight = fm.getHeight();
-                final int spaceToEdge = 5;
-                
-                switch ( fSide ) {
-                case SOURCE_SIDE:
-                    if ( fX_SourceEdgePoint > fSource.x() ) {
-                        setX( fX_SourceEdgePoint + spaceToEdge );    
-                    } else {
-                        setX( fX_SourceEdgePoint - labelWidth - spaceToEdge );
-                    }
-                    if ( fY_SourceEdgePoint < fSource.y() ) {
-                        setY( fY_SourceEdgePoint - (maxHeight/2) + (labelHeight/3) );    
-                    } else {
-                        setY( fY_SourceEdgePoint + (maxHeight/2) + (labelHeight/3) );
-                    }
-                    break;
-                case TARGET_SIDE:
-                    int sY = (int) fY_SourceEdgePoint - maxHeight;
-                    int tY = (int) fY_SourceEdgePoint + maxHeight;
-                    
-                    if ( fX_TargetEdgePoint > fTarget.x() ) {
-                        setX( furthestX - labelWidth - spaceToEdge);    
-                    } else {
-                        setX( furthestX + spaceToEdge );
-                    }
-                    if ( fY_TargetEdgePoint < fTarget.y() ) {
-                        setY( (fY_TargetEdgePoint 
-                                - (( fY_TargetEdgePoint-sY )/2))
-                                + (labelHeight/3) );    
-                    } else {
-                        setY( (fY_TargetEdgePoint 
-                                - (( fY_TargetEdgePoint-tY )/2))
-                                + (labelHeight/3) );
-                    }
-                    break;
-                default:
-                    break;
-                }
-            } else {
-                moveEdgePropertyDynamicaly();
-            }
+            result.y = sourceWayPoint.getY() - fn1H - 10;
         }
-        g.drawString( fName, (int) x(), (int) y() );
-        fLoadingLayout = false;
-        resetColor( g );
+        
+        if ( targetLocation.isLocatedEast() ) {
+            result.x = sourceWayPoint.getX() - getBounds().getWidth() - 2;
+        } else {
+            result.x = sourceWayPoint.getX() + 2;
+        }
+        
+        return result;
     }
     
     /**
      * Draws a multiplicity on a binary edge.
      */
-    public void draw( Graphics g, FontMetrics fm ) {
-        setRectangleSize( g );
-        
+    @Override
+    protected void onDraw( Graphics2D g ) {
         setColor( g );
         
         if ( isSelected() ) {
-            movingEdgeProperty( g );
-        } else {
-            // has the user moved the multiplicity use the user
-            // defined position.
-            if ( !isUserDefined() ) {
-                
-                // simple approximation of multiplicity placement
-                int fn1H = fSource.getHeight() / 2;
-                if ( fY_TargetEdgePoint > fY_SourceEdgePoint ) {
-                    setY( fY_SourceEdgePoint + fn1H + 15 );
-                } else {
-                    setY( fY_SourceEdgePoint - fn1H - 10 );
-                }
-                
-                if ( fX_TargetEdgePoint > fX_SourceEdgePoint ) {
-                    setX( fX_SourceEdgePoint - fm.stringWidth( fName ) - 2 );
-                } else {
-                    setX( fX_SourceEdgePoint + 2 );
-                }
-                
-            } else {
-                moveEdgePropertyDynamicaly();
-            }
+        	drawSelected(g);
         }
-        g.drawString( fName, (int) x(), (int) y() );
-        fLoadingLayout = false;
+        
+        g.drawString( fName, (int) getX() + 2, (int) getBounds().getMaxY() - 4 );
+        
         resetColor( g );
     }
 

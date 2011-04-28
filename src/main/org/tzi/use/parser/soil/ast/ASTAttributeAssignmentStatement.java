@@ -38,11 +38,11 @@ import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
  *
  */
 public class ASTAttributeAssignmentStatement extends ASTStatement {
-	/** TODO */
+	
 	private ASTExpression fObject;
-	/** TODO */
+	
 	private String fAttributeName;
-	/** TODO */
+	
 	private ASTRValue fRValue;
 		
 	

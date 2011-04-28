@@ -36,7 +36,7 @@ import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.diagrams.BinaryEdge;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
@@ -161,8 +161,8 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 		
 		while (it.hasNext()) {
 			Object o = it.next();
-			if (o instanceof BinaryEdge) {
-				BinaryEdge edge = (BinaryEdge) o;
+			if (o instanceof BinaryAssociationOrLinkEdge) {
+				BinaryAssociationOrLinkEdge edge = (BinaryAssociationOrLinkEdge) o;
 				
 				if (edge.getAssocName() != null
 						&& edge.getAssocName().name().equals(name)) {

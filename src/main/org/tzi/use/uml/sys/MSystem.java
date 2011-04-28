@@ -681,9 +681,6 @@ public final class MSystem {
     	
     	fRedoStack.clear();
     	
-    	if (Log.isTracing())
-    		Log.trace(this, "evaluating " + statement.getShellCommand());
-    	
     	StatementEvaluationResult result = 
     		evaluate(statement, undoOnFailure, storeResult, notifyUpdateStateListeners);
     	

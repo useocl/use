@@ -39,7 +39,7 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
+import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.selection.ClassSelectionView;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MSystem;
@@ -67,7 +67,7 @@ public class SelectionClassView extends ClassSelectionView {
 	 */
 	public SelectionClassView(MainWindow parent, MSystem system,
 			Set<MClass> selectedClasses, ClassDiagram classDiagram,
-			DiagramMouseHandling mouseHandling, Map<MClass, ClassNode> fClassToNodeMap,
+			DiagramInputHandling mouseHandling, Map<MClass, ClassNode> fClassToNodeMap,
 			Selection fNodeSelection) {
 		super(new BorderLayout(), parent, system, classDiagram);
 		this.fClassToNodeMap = fClassToNodeMap;

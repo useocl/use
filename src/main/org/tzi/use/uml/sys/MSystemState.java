@@ -300,6 +300,7 @@ public final class MSystemState {
 	/**
 	 * Returns true if there is a link of the specified association connecting
 	 * the objects in the given sequence.
+	 * @throws MSystemException objects do not conform to the association ends.
 	 */
 	public boolean hasLink(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues)
 			throws MSystemException {
@@ -711,7 +712,11 @@ public final class MSystemState {
 				}
 			}
 		} else if (qualifiers != null && !qualifiers.isEmpty()) {
-			throw new MSystemException("No association end of association " + StringUtil.inQuotes(assoc.toString()) + " has qualifier.");
+			// All qualifier values must be null or empty
+			for (int index = 0; index < assoc.associationEnds().size(); ++index) {
+				if (!(qualifiers.get(index) == null || qualifiers.get(index).isEmpty()))
+					throw new MSystemException("No association end of association " + StringUtil.inQuotes(assoc.toString()) + " has qualifier.");
+			}
 		}
 	}
 	
@@ -1642,14 +1647,16 @@ public final class MSystemState {
 							+ StringUtil.inQuotes(obj.cls().name()) + " is connected to " + n
 							+ " object" + ((n == 1) ? "" : "s") + " of class "
 							+ StringUtil.inQuotes(aend2.cls().name()));
+					out.print("  at association end " + StringUtil.inQuotes(aend2.nameAsRolename()) + " ");
 					if (aend1.hasQualifiers()) {
-						out.print("  with the qualifier value");
+						out.print(" with the qualifier value");
 						if (entry.getKey().size() > 1) out.print("s");
 						out.print(" [");
 						out.print(StringUtil.fmtSeq(entry.getKey(), ","));
 						out.println("]");
+						out.print("  ");
 					}
-					out.println("  but the multiplicity is specified as `"
+					out.println("but the multiplicity is specified as `"
 							+ aend2.multiplicity() + "'.");
 					valid = false;
 				}

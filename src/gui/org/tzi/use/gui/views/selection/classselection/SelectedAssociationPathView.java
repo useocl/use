@@ -28,8 +28,8 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -37,8 +37,8 @@ import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.AssociationName;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.uml.mm.MAssociation;
@@ -162,8 +162,8 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 		while(it.hasNext() && !have){
 			Object o = it.next();
 			if(isshow){
-			if(o instanceof EdgeBase){
-				EdgeBase edge = (EdgeBase)o;
+			if(o instanceof BinaryAssociationOrLinkEdge){
+				BinaryAssociationOrLinkEdge edge = (BinaryAssociationOrLinkEdge)o;
 				if(edge.getAssocName()!= null && edge.getAssocName().name().equalsIgnoreCase(name)){
 					MClass mc = ((ClassNode)(edge.source())).cls();
 						classes.add(mc);

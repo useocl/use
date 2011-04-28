@@ -655,4 +655,12 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 			MNavigableElement dst, String explicitRolename) {
 		return this.fAssociationImpl.getSourceEnd(srcClass, dst, explicitRolename);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MNavigableElement#isCollection()
+	 */
+	@Override
+	public boolean isCollection() {
+		return false;
+	}
 }

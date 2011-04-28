@@ -133,7 +133,7 @@ public class MLinkInsertionStatement extends MStatement {
 		List<List<Value>> qualifierValues = new ArrayList<List<Value>>();
 		List<Value> empty = Collections.emptyList();
 		
-		if (qualifiers != null) {
+		if (qualifiers != null && !qualifiers.isEmpty()) {
 			for (List<MRValue> values : qualifiers) {
 				if (values == null) {
 					qualifierValues.add(empty);

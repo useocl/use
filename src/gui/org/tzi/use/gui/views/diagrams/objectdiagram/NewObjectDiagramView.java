@@ -78,6 +78,8 @@ public class NewObjectDiagramView extends JPanel
         fObjectDiagram = new NewObjectDiagram(this, mainWindow.logWriter());
         add("Center", fObjectDiagram);
 
+        this.setFocusable(true);
+        
         initState();
     }
 
@@ -121,7 +123,7 @@ public class NewObjectDiagramView extends JPanel
             fObjectDiagram.addLink(link);
         }
         
-        fObjectDiagram.repaint();
+        fObjectDiagram.invalidateContent();
         
         viewcount++; // jj
     }
@@ -146,14 +148,14 @@ public class NewObjectDiagramView extends JPanel
         // attribute value changes are always recognized since a
         // repaint forces object nodes to ask for the current
         // attribute values.
-        fObjectDiagram.repaint();
+        fObjectDiagram.invalidateContent();
     }
     
     /**
      * After the occurence of an event the view is updated.
      */
     public void stateChanged( SortChangeEvent e ) {
-        fObjectDiagram.repaint();
+        fObjectDiagram.invalidateContent();
     }
 
     /**

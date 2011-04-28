@@ -23,7 +23,6 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -51,11 +50,9 @@ import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
 import org.tzi.use.gui.views.diagrams.event.HideAdministration;
-import org.tzi.use.util.FilterIterator;
-import org.tzi.use.util.UnaryPredicate;
 
 /**
- * Combines everything that the class and object diagram have in commen.
+ * Combines everything that the class and object diagram have in common.
  * 
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
@@ -70,7 +67,7 @@ public abstract class DiagramView extends JPanel
     
     // needed for autolayout
     protected LayoutThread fLayoutThread;
-    protected volatile SpringLayout<NodeBase, EdgeBase> fLayouter;
+    protected volatile SpringLayout<NodeBase> fLayouter;
     protected final Object fLock = new Object();
 
     protected Set<Object> fHiddenNodes;
@@ -85,6 +82,23 @@ public abstract class DiagramView extends JPanel
     protected LayoutInfos fLayoutInfos;
 
     /**
+	 * This value is read from the system properties file.
+	 * It determines the minimum width of a class node 
+	 */
+	protected int minClassNodeWidth;
+	
+	/**
+	 * This value is read from the system properties file.
+	 * It determines the minimum height of a class node 
+	 */
+	protected int minClassNodeHeight;
+	
+	public DiagramView() {
+		minClassNodeHeight = Integer.parseInt(System.getProperty("use.gui.view.classdiagram.class.minheight"));
+        minClassNodeWidth = Integer.parseInt(System.getProperty("use.gui.view.classdiagram.class.minwidth"));
+	}
+	
+    /**
      * Determinds if the auto layout of the diagram is on or off.
      * @return <code>true</code> if the auto layout is on, otherwise
      * <code>false</code>
@@ -98,42 +112,52 @@ public abstract class DiagramView extends JPanel
                                                           Set<Object> edgesToHide );
     
     /**
-     * Determinds if the popup menu of this diagram should be shown.
+     * Determines if the popup menu of this diagram should be shown.
      * @param e MouseEvent.
      * @return <code>true</code> if the popup menu should be shown,
      * otherwise <code>false</code>.
      */
     public abstract boolean maybeShowPopup( MouseEvent e );
     
-    private boolean firstDraw = true;
+    /**
+     * When the content of the diagram changes,e.g., after hiding or showing
+     * a node, additional calculations are needed, which are not required
+     * when "just" redrawing.
+     */
+    private boolean isDiagramContentChanged = true;
+
+    /**
+     * When the content of the diagram changes,e.g., after hiding or showing
+     * a node, additional calculations are needed, which are not required
+     * when "just" redrawing.
+     */
+    public void invalidateContent() {
+    	this.isDiagramContentChanged = true;
+    	this.repaint();
+    }
     
     /**
      * Draws the diagram.
      * @param g The diagram is drawn into this Graphics object.
      */
     public synchronized void drawDiagram(Graphics g) {
-        if ( fOpt.isDoAntiAliasing() )
-            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                              RenderingHints.VALUE_ANTIALIAS_ON);
+    	Graphics2D g2d = (Graphics2D)g;
+    	
+    	if ( fOpt.isDoAntiAliasing() )
+    		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         Dimension d = getSize();
-        g.setColor(getBackground());
-        g.fillRect(0, 0, d.width, d.height);
+        g2d.setColor(getBackground());
+        g2d.fillRect(0, 0, d.width, d.height);
  
-        FontMetrics fm = g.getFontMetrics();
         Iterator<EdgeBase> edgeIterator;
         // Calculates the min height of classifiers
-        if (firstDraw) {
+        if (isDiagramContentChanged) {
 	        edgeIterator = fGraph.edgeIterator();
 	        while (edgeIterator.hasNext()) {
 	        	EdgeBase e = edgeIterator.next();
-	        	if (e.getSourceQualifier() != null) {
-	        		e.getSourceQualifier().setRectangleSize(g);
-	        	}
-	        	
-	        	if (e.getTargetQualifier() != null) {
-	        		e.getTargetQualifier().setRectangleSize(g);
-	        	}
+	        	e.onFirstDraw(g2d);
 	        }
         }
         
@@ -144,23 +168,63 @@ public abstract class DiagramView extends JPanel
         // association, the two links won't be displayed in the right
         // way.
         Iterator<NodeBase> nodeIterator = fGraph.iterator();
+        double heightHint;
         while (nodeIterator.hasNext()) {
             NodeBase n = nodeIterator.next();
+            
             // Set min height wrt. displayed qualifiers
-            if (firstDraw) {
+
+            // These variables are used to set the offset only when more then
+            // one special end, e.g., a qualifier are present.
+            // Otherwise they should be centered (offset == 0)
+            EdgeBase firstSpecial = null;
+            int specialCounter = 0;
+            boolean firstWasSource = true;
+                        
+            if (isDiagramContentChanged) {
+            	n.setMinHeight(minClassNodeHeight);
             	int minHeight = 0;
             	Set<EdgeBase> myEdges = fGraph.allEdges(n);
             	for (EdgeBase e : myEdges) {
-            		if (e.getSourceQualifier() != null && e.source().equals(this)) {
-            			minHeight += e.getSourceQualifier().getHeight() + 4;
+            		heightHint = 0;
+            		if (e.source().equals(n) && e.hasSpecialSource()) {
+            			if (specialCounter > 0) {
+            				e.setSpecialSourceYOffSet(minHeight + 4);
+            			} else {
+            				e.setSpecialSourceYOffSet(0);
+            				firstSpecial = e;
+            				firstWasSource = true;
+            			}
+            			
+            			heightHint = e.getSourceHeightHint();
+            			++specialCounter;
             		}
-            		if (e.getTargetQualifier() != null && e.target().equals(this)) {
-            			minHeight += e.getTargetQualifier().getHeight() + 4;
+            		if (e.target().equals(n) && e.hasSpecialTarget()) {
+            			if (specialCounter > 0) {
+            				e.setSpecialTargetYOffSet(minHeight + 4);
+            			} else {
+            				firstSpecial = e;
+            				firstWasSource = false;
+            			}
+            			
+            			heightHint = e.getTargetHeightHint();
+            			++specialCounter;
             		}
+            		
+            		if (specialCounter == 2) {
+            			if (firstWasSource) {
+            				firstSpecial.setSpecialSourceYOffSet(4);
+            			} else {
+            				firstSpecial.setSpecialTargetYOffSet(4);
+            			}
+            		}
+            		
+            		if (heightHint > 0)
+        				minHeight += heightHint + 4;
             	}
-            	n.setMinHeight(Math.max(minHeight, n.getMinHeight()));
+            	n.setMinHeight(Math.max(minHeight + 4, n.getMinHeight()));
             }
-            n.setRectangleSize(g);
+            n.setRectangleSize(g2d);
         }
 
         
@@ -174,7 +238,7 @@ public abstract class DiagramView extends JPanel
         while ( edgeIterator.hasNext() ) {
             EdgeBase e = edgeIterator.next();
             if ( !drawnEdges.contains( e ) ) {
-                edges = e.checkForNewPositionAndDraw( fGraph, g, fm );
+                edges = e.checkForNewPositionAndDraw( fGraph, g2d);
                 if ( edges != null ) {
                     drawnEdges.addAll( edges );
                 }
@@ -185,12 +249,12 @@ public abstract class DiagramView extends JPanel
         nodeIterator = fGraph.iterator();
         while (nodeIterator.hasNext()) {
             NodeBase n = (NodeBase) nodeIterator.next();
-            n.draw(g, fm);
+            n.draw(g2d);
         }
         
-        firstDraw = false;
+        isDiagramContentChanged = false;
     }
-    
+        
     /**
      * Returns the options of a specific diagram.
      */
@@ -310,13 +374,7 @@ public abstract class DiagramView extends JPanel
      */
     public PlaceableNode findNode(DirectedGraph<NodeBase, EdgeBase> graph, int x, int y) {
         PlaceableNode res = null;
-        // ignore pseudo-nodes
-        Iterator<NodeBase> nIter = new FilterIterator<NodeBase>(graph.iterator(),
-                new UnaryPredicate() {
-                    public boolean isTrue(Object obj) {
-                        return obj instanceof NodeBase;
-                    }
-                });
+        Iterator<NodeBase> nIter = graph.iterator();
 
         while (nIter.hasNext()) {
             NodeBase n = nIter.next();
@@ -337,37 +395,13 @@ public abstract class DiagramView extends JPanel
         }
         
         if ( res == null ) {
-            Iterator<EdgeBase> eIter = new FilterIterator<EdgeBase>( graph.edgeIterator(), new UnaryPredicate() {
-                public boolean isTrue( Object obj ) {
-                    return obj instanceof EdgeBase;
-                }
-            } );
-
+            Iterator<EdgeBase> eIter = graph.edgeIterator();
+            
             while ( eIter.hasNext() ) {
                 EdgeBase e = eIter.next();
-                EdgeProperty r1 = e.getTargetRolename();
-                EdgeProperty r2 = e.getSourceRolename();
-                EdgeProperty m1 = e.getTargetMultiplicity();
-                EdgeProperty m2 = e.getSourceMultiplicity();
-                EdgeProperty an = e.getAssocName();
+                res = e.getWayPoint(x, y);
                 
-                if ( r1 != null && r1.occupies( x, y ) ) {
-                    // Do not break here. We search in the same order
-                    // which is used for drawing. There may be another
-                    // node drawn on top of this node. That node should be
-                    // picked.
-                    res = r1;
-                } else if ( r2 != null && r2.occupies( x, y ) ) {
-                    res = r2;
-                } else if ( m1 != null && m1.occupies( x, y ) ) {
-                    res = m1;
-                } else if ( m2 != null && m2.occupies( x, y ) ) {
-                    res = m2;
-                } else if ( an != null && an.occupies( x, y ) ) {
-                    res = an;
-                } else if ( e.occupiesNodeOnEdge( x, y ) ) {
-                    res = e.getNodeOnEdge(x, y);
-                }
+                if (res != null) break;
             }
         }      
         return res;
@@ -471,7 +505,7 @@ public abstract class DiagramView extends JPanel
             int h = getHeight();
             if (w == 0 || h == 0)
                 return;
-            fLayouter = new SpringLayout<NodeBase, EdgeBase>(fGraph, w, h, 80, 20);
+            fLayouter = new SpringLayout<NodeBase>(fGraph, w, h, 80, 20);
             fLayouter.setEdgeLen(150);
         }
         fLayouter.layout();

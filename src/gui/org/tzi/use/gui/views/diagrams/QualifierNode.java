@@ -23,14 +23,19 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.sys.MLinkEnd;
 
 /**
  * A QualifierNode represents the rectangle placed at the
@@ -47,16 +52,27 @@ public class QualifierNode extends NodeBase {
 	private NodeBase attachedClassifier;
 	
 	/**
-	 * The node the line points to. May be a classifier or diamond
-	 * node of a n-ary association.
-	 */
-	private NodeBase oppositeNode;
-	
-	/**
 	 * The association end containing informations about the
 	 * qualifiers.
 	 */
 	private MAssociationEnd qualifiedEnd;
+	
+	/**
+	 * Saves the displayed informations. Because qualifier values cannot be
+	 * changed yet they can be stored when creating a qualifier node
+	 */
+	private List<String> displayedEntries;
+	
+	/**
+	 * When multiple qualifier nodes are present at
+	 * one classifier they are displayed one below the other 
+	 */
+	private double yOffset = 0;
+	
+	/**
+	 * Relative position when used on a reflexive association
+	 */
+	private Direction relativePosition = Direction.UNKNOWN;
 	
 	/**
 	 * 
@@ -64,35 +80,92 @@ public class QualifierNode extends NodeBase {
 	 * @param target
 	 * @param qualifiedEnd
 	 */
-	public QualifierNode(NodeBase attachedClassifier, NodeBase oppositeNode, MAssociationEnd qualifiedEnd) {
+	public QualifierNode(NodeBase attachedClassifier, MAssociationEnd qualifiedEnd) {
 		this.attachedClassifier = attachedClassifier;
 		this.qualifiedEnd = qualifiedEnd;
-		this.oppositeNode = oppositeNode;
-		calculatePosition();
+		this.displayedEntries = new ArrayList<String>(qualifiedEnd.getQualifiers().size());
+		
+		for (VarDecl qualifier : qualifiedEnd.getQualifiers()) {
+        	displayedEntries.add(qualifier.toString());
+        }
 	}
 	
 	/**
-	 * Calculates the position of the qualifier rectangle
-	 * wrt. the source and opposite node
+	 * 
+	 * @param attachedClassifier
+	 * @param target
+	 * @param qualifiedEnd
 	 */
-	public void calculatePosition() {
-		Rectangle classifierBounds = this.attachedClassifier.dimension().getBounds();
+	public QualifierNode(NodeBase attachedClassifier, MAssociationEnd qualifiedEnd, MLink link) {
+		this.attachedClassifier = attachedClassifier;
+		this.qualifiedEnd = qualifiedEnd;
+		this.displayedEntries = new ArrayList<String>(qualifiedEnd.getQualifiers().size());
 		
-		this.fY = classifierBounds.getCenterY();
+		MLinkEnd linkEnd = link.linkEnd(qualifiedEnd);
+		int index = 0;
 		
-		double halfWidth = ((double)this.getWidth()) / 2;
-		if (this.getQualifierLocation() == Direction.EAST) {
-			this.fX = classifierBounds.getMaxX() + halfWidth - 1;
+		for (VarDecl qualifier : qualifiedEnd.getQualifiers()) {
+			Value v = linkEnd.getQualifierValues().get(index);
+        	displayedEntries.add(qualifier.name() + " = " + v.toString());
+        	++index;
+        }
+	}
+	
+	/**
+	 * Gets the offset of this qualifier node from the top position of the
+	 * attached classifier.
+	 * @return The offset from the top of the attached classifier.
+	 */
+	public double getYOffset() {
+		return yOffset;
+	}
+
+	/**
+	 * Sets the offset of this qualifier node from the top position of the
+	 * attached classifier.
+	 * @param yOffset The offset from the top of the attached classifier.
+	 */
+	public void setYOffset(double yOffset) {
+		this.yOffset = yOffset;
+	}
+
+	/**
+	 * Calculates the position of the qualifier rectangle
+	 * wrt. {@link #attachedClassifier} source and <code>nextWayPoint</code>. 
+	 */
+	public void calculatePosition(Point2D nextWayPoint) {
+		
+		Rectangle2D classifierBounds = this.attachedClassifier.getBounds();
+		
+		if (this.relativePosition != Direction.UNKNOWN) {
+			if (this.relativePosition.isLocatedNorth()) {
+				// TODO: Common spacing
+				this.setY(classifierBounds.getMinY() + 5);
+			} else {
+				this.setY(classifierBounds.getMaxY() - this.getHeight() - 5);
+			}
+		}
+		else if (this.yOffset == 0) {
+			this.setCenterY(classifierBounds.getCenterY());
 		} else {
-			this.fX = classifierBounds.getMinX() - halfWidth;
+			this.setY(classifierBounds.getY() + getYOffset());
+		}
+		
+		if (relativePosition.isLocatedEast()
+				|| (relativePosition == Direction.UNKNOWN && Direction
+						.getDirection(this.attachedClassifier.getCenter(),
+								nextWayPoint).isLocatedEast())) {
+			this.setX(classifierBounds.getMaxX());
+		} else {
+			this.setX(classifierBounds.getMinX() - getWidth());
 		}
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#draw(java.awt.Graphics, java.awt.FontMetrics)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#onDraw(java.awt.Graphics)
 	 */
 	@Override
-	public void draw(Graphics g, FontMetrics fm) {
+	public void onDraw(Graphics2D g) {
 		Rectangle dimension = this.dimension().getBounds();
 		
 		int x = dimension.x;
@@ -105,40 +178,24 @@ public class QualifierNode extends NodeBase {
 		g.drawRect(dimension.x, dimension.y, dimension.width, dimension.height);
 		x += 3;
 				
-		for (VarDecl qualifier : qualifiedEnd.getQualifiers()) {
-			y += fm.getStringBounds(qualifier.toString(), g).getHeight();
-			g.drawString(qualifier.toString(), x, y);
+		for (String displayedEntry : this.displayedEntries) {
+			y += g.getFontMetrics().getStringBounds(displayedEntry, g).getHeight();
+			g.drawString(displayedEntry.toString(), x, y);
 		}
-	}
-
-	/**
-	 * Determine location of qualifier node relative
-	 * to attached classifier and opposite node.
-	 * @return
-	 */
-	public Direction getQualifierLocation() {
-		Direction qualifierLocation;
-		
-		if (attachedClassifier.x() < oppositeNode.x()) {
-			qualifierLocation = Direction.EAST;
-		} else {
-			qualifierLocation = Direction.WEST;
-		}
-		return qualifierLocation;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setRectangleSize(java.awt.Graphics)
 	 */
 	@Override
-	public void setRectangleSize(Graphics g) {
+	public void setRectangleSize(Graphics2D g) {
 		FontMetrics fm = g.getFontMetrics();
                 
         double width = 0;
         double height = 4;
         
-        for (VarDecl qualifier : qualifiedEnd.getQualifiers()) {
-        	Rectangle2D rec = fm.getStringBounds(qualifier.toString(), g);
+        for (String displayedEntry : this.displayedEntries) {
+        	Rectangle2D rec = fm.getStringBounds(displayedEntry, g);
         	width = Math.max(width, rec.getWidth());
         	height += rec.getHeight();
         }
@@ -164,12 +221,13 @@ public class QualifierNode extends NodeBase {
 		return qualifiedEnd.name() + " qualifier node";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.NodeBase#cls()
+	/**
+	 * Reflexive associations have a relative position to
+	 * the classifier.
+	 * This values is used when calculating the position of the qualifier. 
+	 * @param reflexivePosition
 	 */
-	@Override
-	public MClass cls() {
-		return null;
+	public void setRelativePosition(Direction relativePosition) {
+		this.relativePosition = relativePosition;
 	}
-
 }

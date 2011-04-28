@@ -31,14 +31,13 @@ import javax.swing.AbstractAction;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.BinaryEdge;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.GeneralizationEdge;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.NodeEdge;
 import org.tzi.use.gui.views.diagrams.classdiagram.EnumNode;
 import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -67,7 +66,7 @@ public abstract class ActionHide extends AbstractAction {
      * Mapping from an edge (Associaiton/Link) to a BinaryEdge.
      * (MAssociation -> BinaryEdge) or (MLink -> BinaryEdge)
      */
-    Map<?, BinaryEdge> fEdgeToBinaryEdgeMap;
+    Map<?, BinaryAssociationOrLinkEdge> fEdgeToBinaryEdgeMap;
     /**
      * Mapping from a node (Class/Object) to a NodeBase.
      * (MClass -> ClassNode) or (MObject -> ObjectNode)
@@ -87,7 +86,7 @@ public abstract class ActionHide extends AbstractAction {
      * Mapping from an edge node (AssociaitonClass/LinkObject) to an NodeEdge.
      * (MAssociationClass -> NodeEdge) or (MLinkObject -> NodeEdge)
      */
-    Map<?, NodeEdge> fEdgeToNodeEdgeMap;
+    Map<?, EdgeBase> fEdgeToNodeEdgeMap;
     /**
      * Mapping from a generalization to an GeneralizationEdge.
      * (MGeneralization -> GeneralizationEdge)

@@ -752,9 +752,6 @@ RPAREN		 : ')';
 SEMI		 : ';';
 SLASH 		 : '/';
 STAR 		 : '*';
-
-SCRIPTBODY:
-  '<<' ( options {greedy=false;} : . )* '>>';
   
 fragment
 INT:
@@ -773,10 +770,12 @@ RANGE_OR_INT:
     ;
 
 // String literals
-
 STRING:	
     '\'' ( ~('\''|'\\') | ESC)* '\'';
 
+NON_OCL_STRING:	
+    '"' ( ~('"'|'\\') | ESC)* '"';
+    
 // escape sequence -- note that this is protected; it can only be called
 //   from another lexer rule -- it will not ever directly return a token to
 //   the parser

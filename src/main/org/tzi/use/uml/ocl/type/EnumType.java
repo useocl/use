@@ -26,7 +26,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.tzi.use.uml.mm.Annotatable;
+import org.tzi.use.uml.mm.MElementAnnotation;
+import org.tzi.use.util.CollectionUtil;
 
 /**
  * An enumeration type.
@@ -34,11 +39,25 @@ import java.util.Set;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class EnumType extends Type {
-    private String fName;
-    private ArrayList<String> fLiterals; // list of enumeration literals
-    private HashSet<String> fLiteralSet; // for fast access
-
+public final class EnumType extends Type implements Annotatable {
+    //TODO: Use delegation for Annotatable?
+	private String fName;
+    
+    /**
+     * list of enumeration literals
+     */
+    private ArrayList<String> fLiterals;
+    
+    /**
+     * for fast access
+     */
+    private HashSet<String> fLiteralSet;
+    
+    /**
+     * Possible annotations of this model element.
+     */
+    private Map<String, MElementAnnotation> annotations = Collections.emptyMap();
+    
     /**
      * Constructs an enumeration type with name and list of literals
      * (String objects). The list of literals is checked for
@@ -107,6 +126,45 @@ public final class EnumType extends Type {
         return res;
     }
 
+    @Override
+    public boolean isAnnotatable() {
+    	return true;
+    }
+    
+    @Override
+    public Map<String, MElementAnnotation> getAllAnnotations() {
+    	return this.annotations;
+    }
+    
+    @Override
+    public boolean isAnnotated() {
+    	return !this.annotations.isEmpty();
+    }
+    
+    @Override
+    public MElementAnnotation getAnnotation(String name) {
+    	if (this.annotations.containsKey(name)) {
+    		return this.annotations.get(name);
+    	} else {
+    		return null;
+    	}
+    }
+    
+    @Override
+    public String getAnnotationValue(String annotationName, String attributeName) {
+    	MElementAnnotation ann = getAnnotation(annotationName);
+    	
+    	if (ann == null) return null;
+    	
+    	return ann.getAnnotationValue(attributeName);
+    }
+    
+    @Override
+    public void addAnnotation(MElementAnnotation annotation) {
+    	this.annotations = CollectionUtil.initAsHashMap(this.annotations);
+    	this.annotations.put(annotation.getName(), annotation);
+    }
+    
     /**
      * Returns true if the passed type is equal.
      */

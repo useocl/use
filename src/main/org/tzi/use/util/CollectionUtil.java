@@ -21,8 +21,10 @@ package org.tzi.use.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -83,6 +85,21 @@ public final class CollectionUtil {
     }
     
     /**
+     * Returns <code>theMap</code> if it is not <code>null</code> or
+     * an unmodifiable singleton empty map (see {@link Collections#emptyMap()}).
+     * @param <TK>
+     * @param <TV>
+     * @param theMap
+     * @return
+     */
+    public static <TK, TV> Map<TK, TV> emptyMapIfNull(Map<TK, TV> theMap) {
+    	if (theMap == null)
+    		return Collections.emptyMap();
+    	else
+    		return theMap;
+    }
+    
+    /**
      * Returns <code>theSet</code> if it is not <code>null</code> or
      * an unmodifiable singleton empty set (see {@link Collections#emptySet()}).
      * @param <T>
@@ -115,6 +132,28 @@ public final class CollectionUtil {
     		return new ArrayList<T>();
     	else
     		return theList;
+    }
+    
+    /**
+     * Returns the same map <code>theMap</code> if it has elements,
+     * otherwise it returns a new <code>HashMap</code>.
+     * Can be used in combination with {@link CollectionUtil#emptyMapIfNull(List)} to
+     * use a singleton empty map as initial value.
+     * <p>
+     * <strong>Pre:</strong> <code>theMap != null</code>
+     * </p>
+     * <p>
+     * <strong>Post:</strong> <code>result</code> is writable. 
+     * @param <TK> Element type of the keys
+     * @param <TV> Element type of the values
+     * @param theList A <code>List</code>
+     * @return The same <code>Map</code> if <code>theMap.size() > 0</code> or a new <code>HashMap</code>  
+     */
+    public static <TK, TV> Map<TK,TV> initAsHashMap(Map<TK,TV> theMap) {
+    	if (theMap.size() == 0)
+    		return new HashMap<TK,TV>();
+    	else
+    		return theMap;
     }
     
     /**

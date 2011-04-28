@@ -14,7 +14,7 @@ import javax.swing.JMenuItem;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.diagrams.BinaryEdge;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
@@ -130,8 +130,8 @@ public class ObjectSelection {
 		while (it.hasNext()) {
 			Object o = it.next();
 
-			if (o instanceof BinaryEdge) {
-				BinaryEdge edge = (BinaryEdge) o;
+			if (o instanceof BinaryAssociationOrLinkEdge) {
+				BinaryAssociationOrLinkEdge edge = (BinaryAssociationOrLinkEdge) o;
 
 				if (edge.getAssocName() != null
 						&& edge.getAssocName().equals(node)) {

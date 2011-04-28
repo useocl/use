@@ -66,20 +66,21 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.diagrams.BinaryEdge;
+import org.tzi.use.gui.views.diagrams.AssociationOrLinkPartEdge;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationClassOrObject;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.HalfEdge;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
+import org.tzi.use.gui.views.diagrams.NAryAssociationClassOrObjectEdge;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.NodeEdge;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
-import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
+import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
@@ -134,10 +135,10 @@ public class NewObjectDiagram extends DiagramView
     }
 
     private Map<MObject, ObjectNode> fObjectToNodeMap;
-    private Map<MLink, BinaryEdge> fBinaryLinkToEdgeMap;
+    private Map<MLink, BinaryAssociationOrLinkEdge> fBinaryLinkToEdgeMap;
     private Map<MLink, DiamondNode> fNaryLinkToDiamondNodeMap;
     private Map<MLink, List<EdgeBase>> fHalfLinkToEdgeMap;
-    private Map<MLinkObject, NodeEdge> fLinkObjectToNodeEdge;
+    private Map<MLinkObject, EdgeBase> fLinkObjectToNodeEdge;
     private NewObjectDiagramView fParent;
     
     private double fNextNodeX;
@@ -157,10 +158,10 @@ public class NewObjectDiagram extends DiagramView
         fOpt = new ObjDiagramOptions();
         fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
         fObjectToNodeMap = new HashMap<MObject, ObjectNode>();
-        fBinaryLinkToEdgeMap = new HashMap<MLink, BinaryEdge>();
+        fBinaryLinkToEdgeMap = new HashMap<MLink, BinaryAssociationOrLinkEdge>();
         fNaryLinkToDiamondNodeMap = new HashMap<MLink, DiamondNode>();
         fHalfLinkToEdgeMap = new HashMap<MLink, List<EdgeBase>>();
-        fLinkObjectToNodeEdge = new HashMap<MLinkObject, NodeEdge>();
+        fLinkObjectToNodeEdge = new HashMap<MLinkObject, EdgeBase>();
         fHiddenNodes = new HashSet<Object>();
         fHiddenEdges = new HashSet<Object>();
         fParent = parent;
@@ -196,8 +197,8 @@ public class NewObjectDiagram extends DiagramView
         fActionSelectAll = new ActionSelectAll( fNodeSelection, fObjectToNodeMap,
                                                 null, this );
         
-        DiagramMouseHandling mouseHandling = 
-            new DiagramMouseHandling( fNodeSelection, fEdgeSelection, fGraph, this);
+        DiagramInputHandling inputHandling = 
+            new DiagramInputHandling( fNodeSelection, fEdgeSelection, fGraph, this);
         
         fParent.getModelBrowser().addHighlightChangeListener( this );
         
@@ -205,8 +206,10 @@ public class NewObjectDiagram extends DiagramView
         setBackground(Color.white);
         setPreferredSize( Options.fDiagramDimension );
         
-        addMouseListener(mouseHandling);
+        addMouseListener(inputHandling);
         addMouseListener(showObjectPropertiesViewMouseListener);
+        fParent.addKeyListener( inputHandling );
+        
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 // need a new layouter to adapt to new window size
@@ -297,7 +300,7 @@ public class NewObjectDiagram extends DiagramView
             }
         }
         
-        repaint();
+        invalidateContent();
     }
     
     /**
@@ -333,6 +336,9 @@ public class NewObjectDiagram extends DiagramView
   
         ObjectNode n = new ObjectNode( obj, fParent, fOpt);
         n.setPosition( fNextNodeX, fNextNodeY );
+        n.setMinWidth(minClassNodeWidth);
+        n.setMinHeight(minClassNodeHeight);
+        
         synchronized (fLock) {
             fGraph.add(n);
             fObjectToNodeMap.put(obj, n);
@@ -368,7 +374,6 @@ public class NewObjectDiagram extends DiagramView
      */
     public void addLink(MLink link) {
 		MAssociation assoc = link.association();
-	    String label = assoc.name();
 		Iterator<MAssociationEnd> iter = assoc.associationEnds().iterator();
 	
 		MLinkEnd linkEnd1 = null;
@@ -388,13 +393,14 @@ public class NewObjectDiagram extends DiagramView
         if (link.linkEnds().size() == 2) {
             // object link
             if (link instanceof MLinkObject) {
-                NodeEdge e = 
-                    new NodeEdge(label, fObjectToNodeMap.get(obj1), 
+                BinaryAssociationClassOrObject e = 
+                    new BinaryAssociationClassOrObject(fObjectToNodeMap.get(obj1), 
                                  fObjectToNodeMap.get(obj2),
                                  linkEnd1.associationEnd(), 
-                                 linkEnd2.associationEnd(), link,
-                                 (NodeBase) fObjectToNodeMap.get(link),
-                                 this, link.association() );
+                                 linkEnd2.associationEnd(),
+                                 fObjectToNodeMap.get(link),
+                                 this, link.association(), true );
+                
                 synchronized (fLock) {
                     fGraph.addEdge(e);
                     fLinkObjectToNodeEdge.put((MLinkObject)link, e);
@@ -402,12 +408,11 @@ public class NewObjectDiagram extends DiagramView
                 }
             } else {
                 // binary link
-                BinaryEdge e = 
-                    new BinaryEdge( label, fObjectToNodeMap.get(obj1), 
-                                    fObjectToNodeMap.get(obj2), 
-                                    linkEnd1.associationEnd(), 
-                                    linkEnd2.associationEnd(), this, 
-                                    link.association() );
+				BinaryAssociationOrLinkEdge e = new BinaryAssociationOrLinkEdge(
+						fObjectToNodeMap.get(obj1), fObjectToNodeMap.get(obj2),
+						linkEnd1.associationEnd(), linkEnd2.associationEnd(),
+						this, link);
+				
                 synchronized (fLock) {
                     fGraph.addEdge(e);
                     fBinaryLinkToEdgeMap.put(link, e);
@@ -429,11 +434,11 @@ public class NewObjectDiagram extends DiagramView
                 
                 // connected to an "object link"
                 if (link instanceof MLinkObject) {
-                    NodeEdge e = 
-                        new NodeEdge(label, fObjectToNodeMap.get(obj1), 
+                    NAryAssociationClassOrObjectEdge e = 
+                        new NAryAssociationClassOrObjectEdge(fObjectToNodeMap.get(obj1), 
                                      fObjectToNodeMap.get(obj2), node,
-                                     (ObjectNode) fObjectToNodeMap.get(link),
-                                     this, link.association() );
+                                     fObjectToNodeMap.get(link),
+                                     this, link.association(), true );
                     synchronized (fLock) {
                         fGraph.addEdge(e);
                         fLinkObjectToNodeEdge.put((MLinkObject)link, e);
@@ -446,9 +451,9 @@ public class NewObjectDiagram extends DiagramView
                 
                 for (MLinkEnd linkEnd : link.linkEnds()) {
                     MObject obj = linkEnd.object();
-                    HalfEdge e = 
-                        new HalfEdge( node, (NodeBase) fObjectToNodeMap.get(obj),
-                                      linkEnd.associationEnd(), this );
+                    AssociationOrLinkPartEdge e = 
+                        new AssociationOrLinkPartEdge( node, fObjectToNodeMap.get(obj), linkEnd.associationEnd(), this, link.association(), true );
+                    
                     fGraph.addEdge(e);
                     halfEdges.add( e );
                 }
@@ -474,7 +479,7 @@ public class NewObjectDiagram extends DiagramView
                     return;
                 }
             } else {
-                e = (BinaryEdge) fBinaryLinkToEdgeMap.get(link);
+                e = (BinaryAssociationOrLinkEdge) fBinaryLinkToEdgeMap.get(link);
             }
 
             if ( e != null && !loadingLayout 
@@ -521,8 +526,8 @@ public class NewObjectDiagram extends DiagramView
 
             synchronized (fLock) {
                 if (link instanceof MObject) {
-                    NodeEdge edge = 
-                        (NodeEdge) fLinkObjectToNodeEdge.get( link );
+                    BinaryAssociationClassOrObject edge = 
+                        (BinaryAssociationClassOrObject) fLinkObjectToNodeEdge.get( link );
                     if (edge != null) {
                         fGraph.removeEdge( edge );
                         fLinkObjectToNodeEdge.remove( link );

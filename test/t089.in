@@ -1,0 +1,6 @@
+!create c1:Company
+!create p1:Person
+!create worksFor1: WorksFor between(c1,p1)
+!set worksFor1.salary := 200
+?c1.worksFor1[employer].salary
+*-><input>:1:9: `worksFor1' is not a valid rolename that is reachable from class `Company'

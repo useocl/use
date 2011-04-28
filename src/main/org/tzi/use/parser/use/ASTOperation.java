@@ -27,7 +27,6 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.SoilPermissionLevel;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
@@ -53,7 +52,7 @@ import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTOperation extends AST {
+public class ASTOperation extends ASTAnnotatable {
     private Token fName;
     private List<ASTVariableDeclaration> fParamList;
     private ASTType fType;           // (optional)
@@ -105,8 +104,10 @@ public class ASTOperation extends AST {
             }
         }
         Type resultType = null;
-        if (fType == null ) {
-        	throw new SemanticException(fName, "Missing return type for operation " + StringUtil.inQuotes(fName.getText()) + ".");
+        if (fType == null) {
+        	if (this.fStatement != null) {
+        		throw new SemanticException(fName, "Missing return type for operation " + StringUtil.inQuotes(fName.getText()) + ".");
+        	}
         } else {
             resultType = fType.gen(ctx);
         }
@@ -126,6 +127,8 @@ public class ASTOperation extends AST {
         } else if (fStatement != null) {
         	fOperation.setStatement(MEmptyStatement.getInstance());
         }
+        
+        this.genAnnotations(fOperation);
         
         return fOperation;
     }

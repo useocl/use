@@ -14,16 +14,15 @@ import javax.swing.JMenuItem;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.diagrams.DiamondNode;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.gui.views.diagrams.event.DiagramMouseHandling;
+import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.SelectionComparator;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
 
@@ -48,9 +47,9 @@ public class ClassSelection {
 	class ActionSelectionClassView extends AbstractAction {
 		
 		Set<MClass> selectedClasses;
-		DiagramMouseHandling mouseHandling;
+		DiagramInputHandling mouseHandling;
 
-		ActionSelectionClassView(String text, Set<MClass> selectedClasses, DiagramMouseHandling mouseHandling) {
+		ActionSelectionClassView(String text, Set<MClass> selectedClasses, DiagramInputHandling mouseHandling) {
 			super(text);
 			this.mouseHandling = mouseHandling;
 			this.selectedClasses = selectedClasses;
@@ -64,7 +63,7 @@ public class ClassSelection {
 		}
 	}
 	
-	public ActionSelectionClassView getSelectionClassView(String text, DiagramMouseHandling mouseHandling, Set<MClass> selectedClasses){
+	public ActionSelectionClassView getSelectionClassView(String text, DiagramInputHandling mouseHandling, Set<MClass> selectedClasses){
 		return new ActionSelectionClassView(text, selectedClasses, mouseHandling);
 	}
 	
@@ -111,42 +110,8 @@ public class ClassSelection {
 	 * Method getSelectedClassesOfAssociation returns all relevant classes, 
 	 * which are connected with the Association selected by the user. 
 	 */
-	public Set<MClass> getSelectedClassesOfAssociation(AssociationName node) {
-		Set<MClass> classes = new HashSet<MClass>();
-		Iterator<EdgeBase> it = diagram.getGraph().edgeIterator();
-		String name = node.name();
-				
-		while (it.hasNext()) {
-			EdgeBase edge = it.next();
-			
-			if (edge.getAssocName() != null && edge.getAssocName().equals(node)){
-				MClass mc = ((ClassNode)(edge.source())).cls();
-				classes.add(mc);
-				
-				mc = ((ClassNode)(edge.target())).cls();
-				classes.add(mc);
-								
-				return classes;
-			}
-		}
-		
-		Iterator<NodeBase> it2 = diagram.getGraph().iterator();
-		
-		while (it2.hasNext()) {
-			Object o = it2.next();
-			if(o instanceof DiamondNode) {
-				DiamondNode dnode = (DiamondNode)o;
-				if (dnode.name().equalsIgnoreCase(name)){
-					for (MClass mc : dnode.association().associatedClasses()) {
-						classes.add(mc);
-					}
-					
-					return classes;
-				}
-			}
-		}
-
-		return classes;
+	public Set<MClass> getSelectedClassesOfAssociation(MAssociation ass) {
+		return ass.associatedClasses();
 	}
 	
 	

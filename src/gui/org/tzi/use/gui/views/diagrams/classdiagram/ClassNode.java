@@ -23,7 +23,9 @@ package org.tzi.use.gui.views.diagrams.classdiagram;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import org.tzi.use.gui.main.ModelBrowserSorting;
@@ -75,7 +77,7 @@ public class ClassNode extends NodeBase implements SortChangeListener {
     }
     
     /**
-     * After the occurence of an event the attribute list is updated.
+     * After the occurrence of an event the attribute list is updated.
      */
     public void stateChanged( SortChangeEvent e ) {
         fAttributes = ModelBrowserSorting.getInstance()
@@ -90,7 +92,7 @@ public class ClassNode extends NodeBase implements SortChangeListener {
      * (Width and height are needed from other methods before the nodes are
      * drawn.)
      */
-    public void setRectangleSize( Graphics g ) { //FontMetrics fm ) {
+    public void setRectangleSize( Graphics2D g ) { //FontMetrics fm ) {
         FontMetrics fm = g.getFontMetrics();
         Font normalFont = fm.getFont();
         if ( fClass.isAbstract() ) {
@@ -148,9 +150,13 @@ public class ClassNode extends NodeBase implements SortChangeListener {
     /**
      * Draws a box with a label.
      */
-    public void draw( Graphics g, FontMetrics fm ) {
-        int x = (int) x();
-        int y = (int) y();
+    protected void onDraw( Graphics2D g ) {
+        int x = (int) getCenter().getX();
+        int y;
+        
+        Rectangle2D bounds = this.getBounds();
+        Polygon dimension = dimension();
+        FontMetrics fm = g.getFontMetrics();
         
         Font oldFont = g.getFont();
         if ( fClass.isAbstract() ) {
@@ -165,12 +171,12 @@ public class ClassNode extends NodeBase implements SortChangeListener {
         } else {
             g.setColor( fOpt.getNODE_COLOR() );
         }
-        g.fillRect( x - getWidth() / 2, y - getHeight() / 2, getWidth(), getHeight() );
+        g.fillPolygon( dimension );
         g.setColor( fOpt.getNODE_FRAME_COLOR() );
-        g.drawRect( x - getWidth() / 2, y - getHeight() / 2, getWidth() - 1, getHeight() - 1 );
+        g.drawPolygon( dimension );
         
         x -= labelWidth / 2;
-        y = y - ( getHeight() / 2 ) + fm.getAscent() + 2;
+        y = (int)bounds.getY() + fm.getAscent() + 2;
         g.setColor( fOpt.getNODE_LABEL_COLOR() );
         
         g.drawString( fLabel, x, y );
@@ -180,9 +186,9 @@ public class ClassNode extends NodeBase implements SortChangeListener {
         
         if ( fOpt.isShowAttributes() ) {
             // compartment divider
-            x = (int) x();
-            g.drawLine( x - getWidth() / 2, y + 3, x + getWidth() / 2 - 1, y + 3 );
-            x -= ( getWidth() - 10 ) / 2;
+            g.drawLine( (int)bounds.getX(), y + 3, (int)bounds.getMaxX() - 1, y + 3 );
+            // add insets
+            x = (int)bounds.getX() + 5;
             y += 3;
             for ( int i = 0; i < fAttributes.size(); i++ ) {
                 y += fm.getHeight();
@@ -192,9 +198,9 @@ public class ClassNode extends NodeBase implements SortChangeListener {
         
         if ( fOpt.isShowOperations() ) {
             // compartment divider
-            x = (int) x();
-            g.drawLine( x - getWidth() / 2, y + 3, x + getWidth() / 2 - 1, y + 3 );
-            x -= ( getWidth() - 10 ) / 2;
+            g.drawLine( (int)bounds.getX(), y + 3, (int)bounds.getMaxX() - 1, y + 3 );
+            // add insets
+            x = (int)bounds.getX() + 5;
             y += 3;
             for ( int i = 0; i < fOperations.size(); i++ ) {
                 y += fm.getHeight();

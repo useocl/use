@@ -21,11 +21,10 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Polygon;
+import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -34,14 +33,13 @@ import java.util.Set;
 
 import org.tzi.use.graph.DirectedEdgeBase;
 import org.tzi.use.graph.DirectedGraph;
-import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.util.Direction;
+import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
+import org.tzi.use.gui.views.diagrams.waypoints.SourceWayPoint;
+import org.tzi.use.gui.views.diagrams.waypoints.TargetWayPoint;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.gui.xmlparser.LayoutTags;
-import org.tzi.use.uml.mm.MAggregationKind;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
 
 /**
  * Base class of all edge types in the diagram.
@@ -49,40 +47,7 @@ import org.tzi.use.uml.mm.MAssociationEnd;
  * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Fabian Gutsche
  */
-public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
-                               implements Selectable {
-    private final int DIRECTED_EDGE = 100; 
-    private final int INHERITANCE_EDGE = 200;
-    /**
-     * Special identification for the source node on this edge.
-     */
-    static final int SOURCE = 1;
-    /**
-     * Special identification for the target node on this edge.
-     */
-    static final int TARGET = 2;
-    /**
-     * Special identification for the first reflexive node on this edge.
-     */
-    static final int REFLEXIVE_1 = 3;
-    /**
-     * Special identification for the second reflexive node on this edge.
-     */
-    static final int REFLEXIVE_2 = 4;
-    /**
-     * Special identification for the third reflexive node on this edge.
-     */
-    static final int REFLEXIVE_3 = 5;
-    /**
-     * Special identification for the associationclass/objectlink node 
-     * on this edge.
-     */
-    static final int ASSOC_CLASS = 6;
-    /**
-     * Special identification for the connection point from the dashed to 
-     * the solid line of an associationclass/objectlink.
-     */
-    static final int ASSOC_CLASS_CON = 7;
+public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Selectable {
     
     /**
      * Initial counter for the IDs for the nodes which are laying on 
@@ -100,12 +65,12 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
     private int fClickCount = -1; // ==1 than show nodes on edge
     
     /**
-     * Determinds if this edge is selected or not.
+     * Determines if this edge is selected or not.
      */
     private boolean fIsSelected;
     
     /**
-     * Determinds if this edge is dragged or not.
+     * Determines if this edge is dragged or not.
      */
     private boolean fIsDragged;
     
@@ -115,108 +80,22 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
     String fEdgeName;
     
     /**
-     * List of all nodes laying on this edge.
+     * List of all way points laying on this edge.
      */
-    List<NodeOnEdge> fNodesOnEdge;
+    List<WayPoint> fWayPoints;
     /**
-     * Source node of this edge (the drawn line starts here).
+     * Source way point of this edge (the drawn line starts here).
      */
-    NodeOnEdge fSNode;
+    SourceWayPoint fSourceWayPoint;
     /**
-     * Target node of this edge (the drawn line ends here).
+     * Target way point of this edge (the drawn line ends here).
      */
-    NodeOnEdge fTNode;
-    /**
-     * First reflexiv node on an reflexive edge.
-     */
-    NodeOnEdge fRefNode1;
-    /**
-     * Second reflexiv node on an reflexive edge.
-     */
-    NodeOnEdge fRefNode2;
-    /**
-     * Third reflexiv node on an reflexive edge.
-     */
-    NodeOnEdge fRefNode3;
-    /**
-     * Associationclass/Objectlink node.
-     */
-    NodeOnEdge fNENode; 
-    /**
-     * Point which connects the dashed line of an associationclass/objectlink
-     * to the solid line.
-     */
-    NodeOnEdge fConNode; 
+    TargetWayPoint fTargetWayPoint;
     
     /**
      * Options of the diagram in which this edge is drawn.
      */
     DiagramOptions fOpt;
-    
-    /**
-     * Possible node for qualifier
-     */
-    QualifierNode fSourceQualifier = null;
-    
-    /**
-     * Possible node for qualifier
-     */
-    QualifierNode fTargetQualifier = null;
-    
-    /**
-     * Rolename which is on the source side of this edge.
-     */
-    EdgeProperty fSourceRolename;
-    /**
-     * Rolename which is on the target side of this edge.
-     */
-    EdgeProperty fTargetRolename;
-    /**
-     * Multiplicity which is on the source side of this edge.
-     */
-    EdgeProperty fSourceMultiplicity;
-    /**
-     * Multiplicity which is on the target side of this edge.
-     */
-    EdgeProperty fTargetMultiplicity;
-    /**
-     * Associationname/Linkname of this edge.
-     */
-    EdgeProperty fAssocName;
-    /**
-     * X-coordinate of the source node.
-     */
-    int fX1;
-    /**
-     * Y-coordinate of the source node.
-     */
-    int fY1;
-    /**
-     * X-coordinate of the target node.
-     */
-    int fX2;
-    /**
-     * Y-coordinate of the target node.
-     */
-    int fY2;
-    
-    /**
-     * The diagram the edge belongs to.
-     */
-    DiagramView fDiagram;
-    
-    /**
-     * Association this edge belongs to.
-     */
-    MAssociation fAssoc;
-
-    /**
-     * Constructs an empty edge without information.
-     * After all informations required by the constructor 
-     * {@link #EdgeBase(NodeBase, NodeBase, String, DiagramView, MAssociation)}
-     * are set the operation {@link #initEdge()} <strong>must</strong> be called. 
-     */
-    public EdgeBase() {}
     
     /**
      * Constructs a new edge.
@@ -226,285 +105,172 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      * @param diagram The diagram this edge belongs to.
      */
     public EdgeBase( NodeBase source, NodeBase target, String edgeName,
-                     DiagramView diagram, MAssociation assoc ) {
+                     DiagramView diagram ) {
         super( source, target );
-        fDiagram = diagram;
-        fOpt = fDiagram.getOptions();
+        fOpt = diagram.getOptions();
         fEdgeName = edgeName;
-        fAssoc = assoc;
         fSource = source;
         fTarget = target;
         
-        initEdge();
+        fWayPoints = new ArrayList<WayPoint>();
+        
+        fSourceWayPoint = new SourceWayPoint(fSource, fTarget, this, 
+                                 	   fNodesOnEdgeCounter++, fEdgeName, fOpt );
+        
+        fTargetWayPoint = new TargetWayPoint(fSource, fTarget, this, 
+                                 	   fNodesOnEdgeCounter++, fEdgeName, fOpt ); 
+        
+        fWayPoints.add( fSourceWayPoint );
+        fWayPoints.add( fTargetWayPoint );
     }
 
 	/**
-	 * Sets up the edge information.<br/>
-	 * All information which is required by the constructor 
-	 * {@link #EdgeBase(NodeBase, NodeBase, String, DiagramView, MAssociation)} 
-	 * must set before.
-	 * This operation is automatically called when using this constructor. 
+	 * An edge can return a value here to give
+	 * the drawing engine a hint for the minimum height
+	 * of the source node
+	 * @return a hint for the height or 0
 	 */
-	public void initEdge() {
-		fNodesOnEdge = new ArrayList<NodeOnEdge>();
-		Point2D sp = null;
-		Point2D tp = null;
-		NodeBase source;
-		NodeBase target;
-		
-		if (fSourceQualifier != null) {
-			fSourceQualifier.calculatePosition();
-			source = fSourceQualifier;
-			if (fSourceQualifier.getQualifierLocation() == Direction.EAST) {
-				fX1 = (int) fSourceQualifier.x() + (fSourceQualifier.getWidth() / 2);
-			} else {
-				fX1 = (int) fSourceQualifier.x() - (fSourceQualifier.getWidth() / 2);
-			}
-			fY1 = (int) fSourceQualifier.y();
-			sp = new Point2D.Double(fX1, fY1);
-		} else {
-			source = fSource;
-			fX1 = (int) source.x();
-	        fY1 = (int) source.y();
-		}
-		
-		if (fTargetQualifier != null) {
-			fTargetQualifier.calculatePosition();
-			target = fTargetQualifier;
-			if (fTargetQualifier.getQualifierLocation() == Direction.EAST) {
-				fX2 = (int) fTargetQualifier.x() + (fTargetQualifier.getWidth() / 2);
-			} else {
-				fX2 = (int) fTargetQualifier.x() - (fTargetQualifier.getWidth() / 2);
-			}
-			fY2 = (int) fTargetQualifier.y();
-			tp = new Point2D.Double(fX2, fY2);
-		} else {
-			target = fTarget;
-			fX2 = (int) target.x();
-	        fY2 = (int) target.y();
-		}
-		
-		if (sp == null) {
-	        sp = getIntersectionCoordinate( source, fX1, fY1, 
-	                                                fX2, fY2 );
-		}
-		
-		if (tp == null) {
-	        tp = getIntersectionCoordinate( target, fX2, fY2, 
-	                                                fX1, fY1 );
-		}
-		
-        source = fSource;
-        target = fTarget;
-        
-        fSNode = new NodeOnEdge( sp.getX(), sp.getY(),
-                                 source, target, this, 
-                                 fNodesOnEdgeCounter++,
-                                 EdgeBase.SOURCE, fEdgeName, fOpt );
-        
-        fTNode = new NodeOnEdge( tp.getX(), tp.getY(), 
-                                 source, target, this, 
-                                 fNodesOnEdgeCounter++,
-                                 EdgeBase.TARGET, fEdgeName, fOpt ); 
-        
-        fNodesOnEdge.add( fSNode );
-        fNodesOnEdge.add( fTNode );
+	public double getSourceHeightHint() { return 0; }
+	
+	/**
+	 * An edge can return a value here to give
+	 * the drawing engine a hint for the minimum height
+	 * of the target node
+	 * @return a hint for the height or 0
+	 */
+	public double getTargetHeightHint() { return 0; }
+	
+	/**
+	 * The way point the drawing starts
+	 * @return
+	 */
+	public WayPoint getSourceWayPoint() {
+		return fSourceWayPoint;
 	}
-    
-    /**
-     * Draws the edge in a given graphic object.
-     */
-    public abstract void draw( Graphics g, FontMetrics fm );
-    
-    /**
-     * Draws the edge segments of this edge.
-     * @param g The edge is drawn in this graphics object.
-     */
-    void drawEdge( Graphics g ) {
-        NodeOnEdge n1 = null;
-        NodeOnEdge n2 = null;
-        int source = MAggregationKind.NONE;
-        int target = MAggregationKind.NONE;
-        int sourceNav = -1; // end navigable??
-        int targetNav = -1; // end navigable??
-        int inheritance = -1; // inheritance edge
-        
-        if ( fAssoc != null ) {        	
-            Iterator<MAssociationEnd> assocEndIt = fAssoc.associationEnds().iterator();
-            MAssociationEnd assocEnd1, assocEnd2;
-            
-            //Fixed the error with aggregation when
-            //fSource.cls() = fTarget.cls()
-                
-            if ( assocEndIt.hasNext() ) {
-                assocEnd1 = assocEndIt.next();
-                source = assocEnd1.aggregationKind();
-                if ( assocEnd1.isExplicitNavigable() ) {
-                	sourceNav = DIRECTED_EDGE;
-                }
-            }    
-            
-            if ( assocEndIt.hasNext() ) {
-            	assocEnd2 = assocEndIt.next();                                	                	
-                target = assocEnd2.aggregationKind();
-                if ( assocEnd2.isExplicitNavigable() ) {
-                	targetNav = DIRECTED_EDGE;                
-                }                                   	                
-            }            
-        } else if ( fAssoc == null ) {
-            inheritance = INHERITANCE_EDGE;
-        }
-        // draw all line segments
-        
-        if ( !fNodesOnEdge.isEmpty() ) {
-            Iterator<NodeOnEdge> it = fNodesOnEdge.iterator();
-            int counter = 0;
-            if ( it.hasNext() ) {
-                n1 = it.next();
-                counter++;
-            }
-            while( it.hasNext() ) {
-                n2 = it.next();
-                counter++;
-                // draw nodeOnEdge
-                n2.draw( g, g.getFontMetrics() );
-                
-                try {
-                    if ( source != MAggregationKind.NONE
-                         && ( n1.getSpecialID() == SOURCE || n1.getSpecialID() == TARGET )) {
-                        if ( targetNav == DIRECTED_EDGE 
-                             && n1.getSpecialID() == SOURCE 
-                             && n2.getSpecialID() == TARGET ) {
-                            drawAssociationKind( g, n2, n1, source+DIRECTED_EDGE );
-                        } else {
-                            drawAssociationKind( g, n2, n1, source );
-                        }
-                    } else if ( target != MAggregationKind.NONE
-                                && ( n2.getSpecialID() == TARGET || n2.getSpecialID() == SOURCE )) {
-                        if ( sourceNav == DIRECTED_EDGE 
-                             && n1.getSpecialID() == SOURCE 
-                             && n2.getSpecialID() == TARGET ) {
-                            drawAssociationKind( g, n1, n2, target+DIRECTED_EDGE );
-                        } else {
-                            drawAssociationKind( g, n1, n2, target );
-                        }
-                    } else if ( sourceNav == DIRECTED_EDGE 
-                                && n1.getSpecialID() == SOURCE ) {
-                        drawAssociationKind( g, n2, n1, DIRECTED_EDGE );
-                    } else if ( targetNav == DIRECTED_EDGE 
-                                && n2.getSpecialID() == TARGET ) {
-                        drawAssociationKind( g, n1, n2, DIRECTED_EDGE );
-                    } else if ( inheritance == INHERITANCE_EDGE ) {
-                        drawAssociationKind( g, n1, n2, INHERITANCE_EDGE );
-                    } else {
-                        DirectedEdgeFactory.drawAssociation( g, (int) n1.x(),
-                                                             (int) n1.y(),
-                                                             (int) n2.x(),
-                                                             (int) n2.y() );
-                    }
-                    n1 = n2;
-                } catch ( Exception ex ) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-        
-        if (fSourceQualifier != null) {
-        	fSourceQualifier.draw(g, g.getFontMetrics());
-        }
-        
-        if (fTargetQualifier != null) {
-        	fTargetQualifier.draw(g, g.getFontMetrics());
-        }
-    }
+	
+	/**
+	 * The way point the drawing ends
+	 * @return
+	 */
+	public WayPoint getTargetWayPoint() {
+		return fTargetWayPoint;
+	}
+	
+	/**
+	 * Gets the source node the first edge part is
+	 * drawn from. Can be another source the the semantic source node, e.g., a qualifier node.  
+	 * @return
+	 */
+	public NodeBase getDrawingSource() {
+		return fSource;
+	}
+	
+	public NodeBase getDrawingTarget() {
+		return fTarget;
+	}
 
-    /**
-     * Draws the last line segment, as an association, 
-     * composition, aggregation, directed edge etc.
+	/**
+	 * True if a special drawing source is attached to this edge.
+	 * When true {@link #getDrawingSource()} differs from {@link #fSource}
+	 * @return
+	 */
+	public boolean hasSpecialSource() { return false; }
+	
+	/**
+	 * True if a special drawing target is attached to this edge.
+	 * When true {@link #getDrawingTarget()} differs from {@link #fTarget}
+	 * @return
+	 */
+	public boolean hasSpecialTarget() { return false; }
+	
+	/**
+	 * Sets an offset value for the vertical placement of a special source.
+	 * It is left to concrete implementations how to handle the value 0.
+	 * For example it could mean to center the special source. 
+	 */
+	public void setSpecialSourceYOffSet(double newOffset) { return; }
+	
+	/**
+	 * Gets the offset value for the vertical placement of a special source.
+	 * It is left to concrete implementations how to handle the value 0.
+	 * For example it could mean to center the special source.
+	 */
+	public double getSpecialSourceYOffSet() { return 0; }
+	
+	/**
+	 * Sets an offset value for the vertical placement of a special target.
+	 * It is left to concrete implementations how to handle the value 0.
+	 * For example it could mean to center the special source.
+	 */
+	public void setSpecialTargetYOffSet(double newOffset) { return; }
+	
+	/**
+	 * Gets the offset value for the vertical placement of a special source.
+	 * It is left to concrete implementations how to handle the value 0.
+	 * For example it could mean to center the special source. 	
+	 */
+	public double getSpecialTargetYOffSet() { return 0; }
+	
+	/**
+     * Most objects need to do extra calculations
+     * when drawn the first time.
      */
-    private void drawAssociationKind( Graphics g, NodeOnEdge n1, NodeOnEdge n2,
-                                      int kind ) {
-        
-        try {
-            // draw association
-            switch ( kind ) {
-            case MAggregationKind.NONE:
-                DirectedEdgeFactory.drawAssociation( g, (int) n1.x(),
-                                                     (int) n1.y(),
-                                                     (int) n2.x(),
-                                                     (int) n2.y() );
-                break;
-            case MAggregationKind.AGGREGATION:
-                DirectedEdgeFactory.drawAggregation( g, (int) n1.x(),
-                                                     (int) n1.y(),
-                                                     (int) n2.x(),
-                                                     (int) n2.y() );
-                break;
-            case MAggregationKind.AGGREGATION + DIRECTED_EDGE:
-                DirectedEdgeFactory.drawDirectedAggregation( g, (int) n1.x(),
-                                                             (int) n1.y(),
-                                                             (int) n2.x(),
-                                                             (int) n2.y() );
-                break;
-            case MAggregationKind.COMPOSITION:
-                DirectedEdgeFactory.drawComposition( g, (int) n1.x(),
-                                                     (int) n1.y(),
-                                                     (int) n2.x(),
-                                                     (int) n2.y() );
-                break;
-            case MAggregationKind.COMPOSITION + DIRECTED_EDGE:
-                DirectedEdgeFactory.drawDirectedComposition( g, (int) n1.x(),
-                                                             (int) n1.y(),
-                                                             (int) n2.x(),
-                                                             (int) n2.y() );
-                break;
-            case DIRECTED_EDGE:
-                DirectedEdgeFactory.drawDirectedEdge( g, (int) n1.x(),
-                                                      (int) n1.y(),
-                                                      (int) n2.x(),
-                                                      (int) n2.y() );
-                break;
-            case INHERITANCE_EDGE:
-                DirectedEdgeFactory.drawInheritance( g, (int) n1.x(),
-                                                     (int) n1.y(),
-                                                     (int) n2.x(),
-                                                     (int) n2.y() );
-                break;
-            default:
-                DirectedEdgeFactory.drawAssociation( g, (int) n1.x(),
-                                                     (int) n1.y(),
-                                                     (int) n2.x(),
-                                                     (int) n2.y() );
-                break;
-            }
-        } catch ( Exception ex ) {
-            ex.printStackTrace();
-        }
+    protected boolean firstDraw = true;
+    
+    /**
+     * Draws the edge to the given Graphics object.
+     * When first drawn {@link #onFirstDraw(Graphics2D)} is called
+     * and afterwards {@link #onDraw(Graphics2D)}.
+     * After the first draw only {@link #onDraw(Graphics2D)} is called. 
+     * @param g Graphics object the node is drawn to.
+     */
+    public final void draw(Graphics2D g) {
+    	if (firstDraw) {
+    		onFirstDraw(g);
+    		firstDraw = false;
+    	}
+    	onDraw(g);
     }
     
+    /**
+     * Called once when the edge is drawn the first time.
+     * Can be used for example to calculate the width
+     * with respect to text.  
+     * @param g
+     */
+    protected void onFirstDraw(Graphics2D g) {}
+    
+    /**
+     * Called when the edge is drawn.
+     * @param g
+     */
+    protected abstract void onDraw(Graphics2D g);
+    
+
     public int getClickCount() {
         return fClickCount;
     }
+    
     public void setClickCount( int clickCount ) {
         fClickCount = clickCount;
     }
-    public boolean isReflexive() {
-        return fSource.equals( fTarget );
-    }
-    public List<NodeOnEdge> getNodesOnEdge() {
-        return fNodesOnEdge;
+    
+    public List<WayPoint> getNodesOnEdge() {
+        return fWayPoints;
     }
     
+    public List<EdgeProperty> getProperties() { return Collections.emptyList(); }
+    
     public void resetNodesOnEdges() {
-        List<NodeOnEdge> nodes = new ArrayList<NodeOnEdge>();
+        List<WayPoint> nodes = new ArrayList<WayPoint>();
 
-        for (NodeOnEdge node : getNodesOnEdge()) {
-            if ( isNodeSpecial( node ) ) {
+        for (WayPoint node : getNodesOnEdge()) {
+            if ( node.isSpecial() ) {
                 nodes.add( node );
             }
         }
         
-        fNodesOnEdge = nodes;
+        fWayPoints = nodes;
     }
     
     public boolean isSelected() {
@@ -521,60 +287,48 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
         fIsDragged = dragging;
     }
     
-    public boolean isLink() {
-        return fDiagram instanceof NewObjectDiagram;
-    }
-    
-    public QualifierNode getSourceQualifier() {
-    	return this.fSourceQualifier;
-    }
-    
-    public void setSourceQualifier(QualifierNode node) {
-    	fSourceQualifier = node;
-    }
-    
-    public QualifierNode getTargetQualifier() {
-    	return fTargetQualifier;
-    }
-    
-    public void setTargetQualifier(QualifierNode node) {
-    	fTargetQualifier = node;
-    }
+    public abstract boolean isLink();
 
+    public String getName() {
+    	return fEdgeName;
+    }
+    
     /**
-     * Is beneith the x,y position an edge, than an additional node
+     * Is beneath the x,y position an edge, than an additional node
      * will be added on this edge.
      *  
      * @param x x position to check
      * @param y y position to check
-     * @return The new NodeOnEdge if there was an edge beneith this location
-     * otherwise null is returnd.
+     * @return The new NodeOnEdge if there was an edge beneath this location
+     * otherwise null is returned.
      */
-    public NodeOnEdge occupiesThanAdd( int x, int y, int clickCount ) {
+    public WayPoint occupiesThanAdd( int x, int y, int clickCount ) {
         boolean occupies = false;
         Line2D line = new Line2D.Double();
-        NodeOnEdge n1 = null;
-        NodeOnEdge n2 = null;
+        WayPoint n1 = null;
+        WayPoint n2 = null;
         
-        // checking every line segmend of this edge.
-        Iterator<NodeOnEdge> it = fNodesOnEdge.iterator();
+        // checking every line segment of this edge.
+        Iterator<WayPoint> it = fWayPoints.iterator();
         if ( it.hasNext() ) {
             n1 = it.next();
         }
         
         while ( it.hasNext() ) {
             n2 = it.next();
-            line = new Line2D.Double( n1.x(), n1.y(), n2.x(), n2.y() );
+            line = new Line2D.Double( n1.getCenter().getX(), n1.getCenter().getY(), n2.getCenter().getX(), n2.getCenter().getY() );
             occupies = line.intersects( x - 2, y - 2, 4, 4 );
             if ( occupies && clickCount == 2 ) {
-                // are the coordinates abouve another node do not add another 
-                // node.
+                // are the coordinates above another node do not add another node.
                 if ( !n2.dimension().contains( x, y ) 
                      || !n1.dimension().contains( x, y ) ) {
                     
-                    NodeOnEdge newNode = new NodeOnEdge( x, y, fSource, fTarget, 
-                                                         this, fNodesOnEdgeCounter++,
-                                                         0, fEdgeName, fOpt );
+                    WayPoint newNode = new WayPoint( fSource, fTarget, 
+                                                     this, fNodesOnEdgeCounter++,
+                                                     WayPointType.USER, fEdgeName, fOpt );
+                    newNode.setX_UserDefined(x);
+                    newNode.setY_UserDefined(y);
+                    
                     addNode( newNode, n1 );
                     fClickCount = clickCount;
                     return newNode;    
@@ -598,8 +352,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      * @param n1 Behind this node <code>node</code> will be added to 
      *           the list of nodes.
      */
-    private void addNode( NodeOnEdge node, NodeOnEdge n1 ) {
-        fNodesOnEdge.add( fNodesOnEdge.indexOf( n1 )+1, node );
+    private void addNode( WayPoint node, WayPoint n1 ) {
+        fWayPoints.add( fWayPoints.indexOf(n1) + 1, node );
         reIDNodes();
     }
     
@@ -610,35 +364,20 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      void reIDNodes() {
         int counter = INITIAL_COUNTER;
 
-        for (NodeOnEdge n : fNodesOnEdge) {
+        for (WayPoint n : fWayPoints) {
             n.setID( counter );
             counter++;
         }
     }
-     
-     public boolean isNodeSpecial( NodeOnEdge node )  {
-         if ( node.getSpecialID() == EdgeBase.SOURCE 
-                 || node.getSpecialID() == EdgeBase.TARGET
-                 || node.getSpecialID() == EdgeBase.ASSOC_CLASS
-                 || node.getSpecialID() == EdgeBase.ASSOC_CLASS_CON
-                 || node.getSpecialID() == EdgeBase.REFLEXIVE_1 
-                 || node.getSpecialID() == EdgeBase.REFLEXIVE_2
-                 || node.getSpecialID() == EdgeBase.REFLEXIVE_3 ) {
-             return true;
-         }
-         return false;
-     }
-     
 
-     private boolean shouldNodeBeMoveableRightNow( NodeOnEdge node ) {
-         if ( node.getSpecialID() == EdgeBase.SOURCE                     // source node
-                 || node.getSpecialID() == EdgeBase.TARGET                  // target node
-                 || node.getSpecialID() == EdgeBase.ASSOC_CLASS             // associactioclass node
-                 || ( node.getSpecialID() == EdgeBase.ASSOC_CLASS_CON       // associationclass
+     private boolean shouldNodeBeMoveableRightNow( WayPoint node ) {
+         if ( // node.getSpecialID() == WayPointType.SOURCE                     // source node
+              //   || node.getSpecialID() == WayPointType.TARGET                  // target node
+                  node.getSpecialID() == WayPointType.ASSOC_CLASS             // associactioclass node
+                 || ( node.getSpecialID() == WayPointType.ASSOC_CLASS_CON       // associationclass
                          && getNodesOnEdge().size() <= 3 )
-                         || ( isReflexive()                              // reflexive edge
-                                 && getNodesOnEdge().size() <= 5 ) 
-                                 || ( isReflexive() && this instanceof NodeEdge // selfreflexive associationclass 
+                         || ( isReflexive() && getNodesOnEdge().size() <= 5 ) 
+                                 || ( isReflexive() && this instanceof BinaryAssociationClassOrObject // selfreflexive associationclass 
                                          && getNodesOnEdge().size() <= 6 ) ) {
              return false;
          } 
@@ -649,141 +388,79 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      * Removes a node from the edge.
      * @param node Node to be removed.
      */
-    public void removeNodeOnEdge( NodeOnEdge node ) {
-        if ( isNodeSpecial( node ) ) {
+    public void removeNodeOnEdge( WayPoint node ) {
+        if ( node.isSpecial() ) {
             return;
         }
-        fNodesOnEdge.remove( node );
+        fWayPoints.remove( node );
     }
     
     /**
-     * Checkes if there is a node laying under the x,y coordinate.
+     * Checks if there is a node laying under the x,y coordinate.
      * 
      * @return true if the position occupies a node otherwise false.
      */
-    public boolean occupiesNodeOnEdge( int x, int y ) {
-        for (NodeOnEdge node : fNodesOnEdge) {
-            if ( node.occupies( x, y ) 
-                 && ( !isNodeSpecial( node ) || shouldNodeBeMoveableRightNow( node ) ) ) {
-                return true;
-            }
-        }
-        return false;
+    public boolean occupiesNodeOnEdge( double x, double y ) {
+        return getWayPoint(x, y) != null;
+    }
+    
+    /**
+     * Checks if there is a node laying under the x,y coordinate.
+     * 
+     * @return true if the position occupies a node otherwise false.
+     */
+    protected boolean occupiesNonSpecialNodeOnEdge( double x, double y ) {
+        return getNonSpecialWayPoint(x, y) != null;
     }
     
     /**
      * Returns the node laying under the x,y coordinate, otherwise null
-     * is returnd. 
+     * is returned.
      */
-    public EdgeProperty getNodeOnEdge( int x, int y ) {
-        for (NodeOnEdge node : fNodesOnEdge) {
-            if ( node.occupies( x, y ) ) {
+    public PlaceableNode getWayPoint( double x, double y ) {
+        return getNonSpecialWayPoint(x, y);
+    }
+    
+    /**
+     * Returns the node laying under the x,y coordinate, otherwise null
+     * is returned.
+     */
+    protected PlaceableNode getNonSpecialWayPoint( double x, double y ) {
+        for (WayPoint node : fWayPoints) {
+            if ( node.occupies( x, y ) && ( !node.isSpecial() || shouldNodeBeMoveableRightNow( node ) ) ) {
                 return node;
             }
         }
+        
         return null;
     }
     
     /**
-     * Sets the correct intersection points on the target and source
-     * nodes.
+     * Hook for edges to position related elements
+     * when source point changes.
      */
-    private void updateNodeOnEdges() {
-        NodeOnEdge n1 = fNodesOnEdge.get( 1 );
-        Point2D sp = getIntersectionCoordinate( fSource, fX1, fY1, 
-                                                (int) n1.x(), (int) n1.y() );
-        fSNode.setPosition( sp.getX(), sp.getY() );
+    void onSourcePointChanged(Point2D sourcePoint) {}
         
-        NodeOnEdge n2 = fNodesOnEdge.get( fNodesOnEdge.size()-2 );
-        Point2D tp = getIntersectionCoordinate( fTarget, fX2, fY2,
-                                                (int) n2.x(), (int) n2.y() );
-        fTNode.setPosition( tp.getX(), tp.getY() );
+    /**
+     * Hook for edges to position related elements
+     * when target point changes.
+     */
+    void onTargetPointChanged(Point2D targetPoint) {}
+    
+    /**
+     * Sets the start point of this Edge.
+     */
+    void setSourcePoint( double x, double y ) {
+        fSourceWayPoint.setCenter(x, y);
+        onSourcePointChanged(fSourceWayPoint.getPosition());
     }
     
     /**
-     * Sets the start and end point of this Edge.
+     * Sets the end point of this Edge.
      */
-    void setPoint( int side, double x, double y ) {
-        switch ( side ) {
-        case SOURCE: 
-            fX1 = (int) x;
-            fY1 = (int) y;
-            fSNode.setPosition( fX1, fY1 );
-            
-            if ( fAssocName != null ) {
-                fAssocName.updateSourceEdgePoint( x, y );
-            }
-            if ( fSourceRolename != null ) {
-                fSourceRolename.updateSourceEdgePoint( x, y );    
-            }
-            if ( fTargetRolename != null ) {
-                fTargetRolename.updateTargetEdgePoint( x, y );
-            }
-            if ( fSourceMultiplicity != null ) {
-                fSourceMultiplicity.updateSourceEdgePoint( x, y );        
-            }
-            if ( fTargetMultiplicity != null ) {
-                fTargetMultiplicity.updateTargetEdgePoint( x, y );
-            }
-            break;
-        case TARGET:
-            fX2 = (int) x;
-            fY2 = (int) y;
-            fTNode.setPosition( fX2, fY2 );
-            
-            if ( fAssocName != null ) {
-                fAssocName.updateTargetEdgePoint( x, y );
-            }
-            if ( fSourceRolename != null ) {
-                fSourceRolename.updateTargetEdgePoint( x, y );
-            }
-            if ( fTargetRolename != null ) {            
-                fTargetRolename.updateSourceEdgePoint( x, y );
-            }
-            if ( fSourceMultiplicity != null ) {
-                fSourceMultiplicity.updateTargetEdgePoint( x, y );        
-            }
-            if ( fTargetMultiplicity != null ) {
-                fTargetMultiplicity.updateSourceEdgePoint( x, y );
-            }
-            break;
-        default:
-            break;
-        }
-        
-    }
-    
-    /**
-     * @return Returns the fSourceRolename.
-     */
-    public EdgeProperty getSourceRolename() {
-        return fSourceRolename;
-    }
-    /**
-     * @return Returns the fTargetRolename.
-     */
-    public EdgeProperty getTargetRolename() {
-        return fTargetRolename;
-    }
-    
-    /**
-     * @return Returns the fSourceMultiplicity.
-     */
-    public EdgeProperty getSourceMultiplicity() {
-        return fSourceMultiplicity;
-    }
-    /**
-     * @return Returns the fTargetMultiplicity.
-     */
-    public EdgeProperty getTargetMultiplicity() {
-        return fTargetMultiplicity;
-    }
-    
-    /**
-     * @return Returns the fAssocName.
-     */
-    public EdgeProperty getAssocName() {
-        return fAssocName;
+    void setTargetPoint( double x, double y ) {
+        fTargetWayPoint.setCenter( x, y );
+        onTargetPointChanged(fTargetWayPoint.getPosition());        
     }
     
     /**
@@ -791,24 +468,23 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      * ObjectNode otherwise the method returns false.
      */
     protected boolean isUnderlinedLabel() {
-        return fSource instanceof ObjectNode || fTarget instanceof ObjectNode;
+        return isLink();
     }
     
     /**
      * Checks if there is more than one edge between two nodes.
      */
-    public Set<EdgeBase> checkForNewPositionAndDraw( DirectedGraph<NodeBase, EdgeBase> graph, Graphics g, 
-                                           FontMetrics fm ) {
+    public Set<EdgeBase> checkForNewPositionAndDraw( DirectedGraph<NodeBase, EdgeBase> graph, Graphics2D g ) {
         Set<EdgeBase> edges = null;
 
         if ( graph.existsPath( fSource, fTarget ) ) {
             edges = graph.edgesBetween( fSource, fTarget );
-            calculateNewPosition( edges );
+            calculateNewPositions( edges );
         }
         
         if ( edges != null ) {
             for (EdgeBase e : edges) {
-                e.draw( g, fm );
+                e.draw( g );
             }
         }
         
@@ -819,322 +495,248 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      * Calculates the space between the lines if there are more than one
      * edge between two nodes.
      */
-    private double calculateSpaces( double length, Set<EdgeBase> edges ) {
-        return length / ( (double) edges.size() + 1 );
+    private double calculateSpaces( double length, double numEdges ) {
+        return length / ( numEdges + 1 );
+    }
+    
+    /**
+     * Before the new position of an edge is calculated by {@link #calculateNewPositions(Set)}
+     * this can be used by an edge to calculate positions of additional related elements.
+     * Currently used for <code>QualierNode</code>s.
+     */
+    protected void beforeCalculateNewPosition() { }
+    
+    /**
+     * Returns the successor way point of p
+     * @param p
+     * @return
+     */
+    public WayPoint getNextWayPoint(WayPoint p) {
+    	return fWayPoints.get(fWayPoints.indexOf(p) + 1);
+    }
+    
+    /**
+     * Returns the predecessor way point of p
+     * @param p
+     * @return
+     */
+    public WayPoint getPreviousWayPoint(WayPoint p) {
+    	return fWayPoints.get(fWayPoints.indexOf(p) - 1);
+    }
+
+    /**
+     * Calculates the position of a single edge (from center to center) or 
+     * multiple edges (with space between edges) between two nodes. 
+     * Primitive operation (see TemplateMethod in GOF) for template method
+     * {@link #calculateNewPositions(Set)}. 
+     * @param edges All edges between to given nodes.
+     */
+    protected void doCalculateNewPositions(Set<EdgeBase> edges) {
+    	// if there is just one link between two objects set the
+        // intersection points from center to center with the node bounds 
+    	// of the objects as start and end point of the link. 
+    	// Otherwise calculate the new positions.
+        if ( edges.size() == 1 ) {
+        	fSourceWayPoint.updatePosition(getNextWayPoint(fSourceWayPoint));
+        	onSourcePointChanged(fSourceWayPoint.getCenter());
+        	
+        	fTargetWayPoint.updatePosition(getPreviousWayPoint(fTargetWayPoint));
+        	onTargetPointChanged(fTargetWayPoint.getCenter());
+        } else {
+            // there are more then just one link between source and target node.
+        	NodeBase source = fSource;
+        	Rectangle2D sourceRec = source.getBounds();
+                        
+            NodeBase target = fTarget;
+            Rectangle2D targetRec = target.getBounds();
+            double space = 0;
+            double projection = 0;
+
+            // Where is the position of the opposite node?
+            Direction intersection = source.getIntersectionDirection(target.getCenter());
+            			
+            // to get a approiate separation of the links ...
+            // ... use the width
+            if ( intersection.isLocatedNorth() || intersection.isLocatedSouth() ) {
+            	// calculates the different x-coordinates of start and end
+                // point
+              
+            	// calculates the length of the space between the edges
+                space = calculateSpaces( Math.min( sourceRec.getWidth(), targetRec.getWidth() ), edges.size() );
+                // calculates the length of the space to the first edge
+                // for the bigger rectangle
+                projection = ( Math.max( sourceRec.getWidth(), targetRec.getWidth() ) - space
+                        * ( edges.size() - 1 ) ) / 2.0;
+	                
+	            double counter = 1.0;
+	            // The delta is later calculated from the center, therefore we start
+	            // with a negative delta
+	            double sDeltaX = source.getBounds().getMinX() - source.getBounds().getCenterX();
+                double tDeltaX = target.getBounds().getMinX() - target.getBounds().getCenterX();
+                
+                boolean sourceIsSmaller = sourceRec.getWidth() <= targetRec.getWidth();
+                
+	            for (EdgeBase e : edges) {	            	
+	            	AlignedObjects aligned = alignEdge(e);
+	            
+                	boolean drawingSourceEqualsSource = aligned.drawingSource.equals(e.fSource);
+                	boolean drawingTargetEqualsTarget = aligned.drawingTarget.equals(e.fTarget);
+                	
+                    // addition of space or projection to get the
+                    // wanted space between the edges
+                    if ( counter == 1 ) {
+                        if ( sourceIsSmaller ) {
+                            sDeltaX += (drawingSourceEqualsSource ? space : 0 );
+                            tDeltaX += (drawingTargetEqualsTarget ? projection : 0);
+                        } else {
+                            sDeltaX += (drawingSourceEqualsSource ? projection : 0);
+                            tDeltaX += (drawingTargetEqualsTarget ? space : 0);
+                        }
+                    } else {
+                        sDeltaX += (drawingSourceEqualsSource ? space : 0 );
+                        tDeltaX += (drawingTargetEqualsTarget ? space : 0 );
+                    }
+                    
+                    aligned.sourceWayPoint.updatePosition((drawingSourceEqualsSource ? sDeltaX : 0), 0, aligned.sourceWayPointNext);
+                    aligned.targetWayPoint.updatePosition((drawingTargetEqualsTarget ? tDeltaX : 0), 0, aligned.targetWayPointNext);
+
+                    e.onSourcePointChanged(aligned.getUnalignedSourceWayPoint().getCenter());
+                    e.onTargetPointChanged(aligned.getUnalignedTargetWayPoint().getCenter());
+                    
+                    counter++;
+                }
+            // ... use the height
+            } else {
+                // calculates the length of the space between the edges
+                space = calculateSpaces( Math.min( sourceRec.getHeight(), targetRec.getHeight() ), edges.size() );
+                // calculates the length of the space to the first edge
+                // for the bigger rectangle
+                projection = ( Math.max( sourceRec.getHeight(), targetRec.getHeight() ) - space
+                        * ( edges.size() - 1 ) ) / 2.0;
+                
+                double counter = 1.0;
+                
+	            // The delta is later calculated from the center, therefore we start
+	            // with a negative delta
+                double sDeltaY = source.getBounds().getMinY() - source.getBounds().getCenterY();
+                double tDeltaY = target.getBounds().getMinY() - target.getBounds().getCenterY();
+                
+                boolean sourceIsSmaller = sourceRec.getHeight() <= targetRec.getHeight();
+                
+                // calculates the different y-coordinates of start and end
+                // point
+                for (EdgeBase e : edges) {
+                	AlignedObjects aligned = alignEdge(e);
+
+                	boolean drawingSourceEqualsSource = aligned.drawingSource.equals(e.fSource);
+                	boolean drawingTargetEqualsTarget = aligned.drawingTarget.equals(e.fTarget);
+                	
+                    // addition of space or projection to get the
+                    // wanted space between the edges
+                    if ( counter == 1 ) {
+                        if ( sourceIsSmaller ) {
+                            sDeltaY += space;
+                            tDeltaY += projection;
+                        } else {
+                            sDeltaY += projection;
+                            tDeltaY += space;
+                        }
+                    } else {
+                        sDeltaY += space;
+                        tDeltaY += space;
+                    }
+                    
+                    aligned.sourceWayPoint.updatePosition(0, (drawingSourceEqualsSource ? sDeltaY : 0), aligned.sourceWayPointNext);
+                    aligned.targetWayPoint.updatePosition(0, (drawingTargetEqualsTarget ? tDeltaY : 0), aligned.targetWayPointNext);
+    
+                    e.onSourcePointChanged(aligned.getUnalignedSourceWayPoint().getCenter());
+                    e.onTargetPointChanged(aligned.getUnalignedTargetWayPoint().getCenter());
+                    
+                    counter++;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Saves information about the aligned objects of another edge, i.e.,
+     * the correct source objects when two edges between two nodes save source and
+     * target the other way round.
+     * 
+     * @author lhamann
+     *
+     */
+    private class AlignedObjects {
+		boolean wasSwitched;
+    	NodeBase drawingSource;
+		NodeBase drawingTarget;
+		AttachedWayPoint sourceWayPoint;
+		WayPoint sourceWayPointNext;
+		AttachedWayPoint targetWayPoint;
+		WayPoint targetWayPointNext;
+		
+		public WayPoint getUnalignedSourceWayPoint() {
+			return (wasSwitched ? targetWayPoint : sourceWayPoint);
+		}
+		
+		public WayPoint getUnalignedTargetWayPoint() {
+			return (wasSwitched ? sourceWayPoint : targetWayPoint);
+		}
+    }
+    
+    /**
+     * Returns the informations of the other edge aligned to this edge, e.g.,
+     * the returned source is equal to the source of this edge.
+     * @param e The <code>EdgeBase</code> to be aligned
+     * @return
+     */
+    protected AlignedObjects alignEdge(EdgeBase e) {
+    	AlignedObjects result = new AlignedObjects();
+    	
+    	if (e.fSource.equals(fSource)) {
+    		result.wasSwitched = false;
+    		result.drawingSource = e.getDrawingSource();
+    		result.drawingTarget = e.getDrawingTarget();
+    		result.sourceWayPoint = e.fSourceWayPoint;
+    		result.sourceWayPointNext = e.getNextWayPoint(e.fSourceWayPoint);
+    		result.targetWayPoint = e.fTargetWayPoint;
+    		result.targetWayPointNext = e.getPreviousWayPoint(e.fTargetWayPoint);
+    	} else {
+    		result.wasSwitched = true;
+    		result.drawingSource = e.getDrawingTarget();
+    		result.drawingTarget = e.getDrawingSource();
+    		result.sourceWayPoint = e.fTargetWayPoint;
+    		result.sourceWayPointNext = e.getPreviousWayPoint(e.fTargetWayPoint);
+    		result.targetWayPoint = e.fSourceWayPoint;
+    		result.targetWayPointNext = e.getNextWayPoint(e.fSourceWayPoint);
+    	}
+    	
+    	return result;
     }
     
     /**
      * Calculates and sets the new position of the edges between two
      * nodes.
      */
-    private void calculateNewPosition( Set<EdgeBase> edges ) {
-    	NodeBase source = (fTargetQualifier == null ? fSource : fTargetQualifier);
-        NodeBase target = (fSourceQualifier == null ? fTarget : fSourceQualifier);
-        
-    	Polygon sourceRec = source.dimension();
-        Polygon targetRec = target.dimension();
-        
-        double sWidth = sourceRec.getBounds().getWidth();
-        double sHeight = sourceRec.getBounds().getHeight();
-        double tWidth = targetRec.getBounds().getWidth();
-        double tHeight = targetRec.getBounds().getHeight();
-        
-        // midpoints
-        double sX = source.x();
-        double sY = source.y();
-        double tX = target.x();
-        double tY = target.y();
-        
-        // source corner points
-        double uLeftX = sX - sWidth / 2.0;
-        double uRightX = sX + sWidth / 2.0;
-        double lLeftX = sX - sWidth / 2.0;
-        double lRightX = sX + sWidth / 2.0;
-        
-        double uLeftY = sY - sHeight / 2.0;
-        double uRightY = sY - sHeight / 2.0;
-        double lLeftY = sY + sHeight / 2.0;
-        double lRightY = sY + sHeight / 2.0;
-        
-        double space = 0;
-        double projection = 0;
-        
-        // line from midpoint to midpoint
-        Line2D.Double line = new Line2D.Double( source.x(), source.y(),
-                                                target.x(), target.y() );
-        
-        // if there is just one link between two objects set the
-        // midpoint of the objects as start and end point of the
-        // link. Otherwise calculate the new positions.
-        if ( edges.size() == 1 ) {
-            for (EdgeBase e : edges) {
-            	if (fSourceQualifier != null) fSourceQualifier.calculatePosition();
-                if (fTargetQualifier != null) fTargetQualifier.calculatePosition();
-                
-                // edge is reflexive
-                if ( isReflexive() ) {
-                    setCorrectPoints( sX + sWidth/3, sY - sHeight/2,
-                                      tX + tWidth/2, tY - 4, e );   
-                    updateNodeOnEdges();
-                } else {
-                    setCorrectPoints( source.x(), source.y(),
-                                      target.x(), target.y(), e );
-                    updateNodeOnEdges();
-                }
-            }
-        } else {
-            // there are more then just one link between source and target
-            // node.
-            
-            // there are up to four reflexive edges 
-            if ( isReflexive() ) {
-                int counter = 0;
-
-                for (EdgeBase e : edges) {
-                    counter++;
-                    switch ( counter ) {
-                    case 1:
-                        setCorrectPoints( sX + sWidth/3, sY - sHeight/2,
-                                          tX + tWidth/2, tY - 4, e );
-                        break;
-                    case 2:
-                        setCorrectPoints( sX + sWidth/3, sY + sHeight/2,
-                                          tX + tWidth/2, tY + 4, e );
-                        break;
-                    case 3:
-                        setCorrectPoints( sX - sWidth/3, sY - sHeight/2,
-                                          tX - tWidth/2, tY - 4, e );
-                        break;
-                    case 4:
-                        setCorrectPoints( sX - sWidth/3, sY + sHeight/2,
-                                          tX - tWidth/2, tY + 4, e );
-                        break;
-                    default:
-                        setCorrectPoints( sX + sWidth/3, sY - sHeight/2,
-                                          tX + tWidth/2, tY - 4, e );
-                        break;
-                    }
-                }
-            }
-            
-            
-            // to get a approiate separation of the links ...
-            // ... use the width
-            if ( line.intersectsLine( uLeftX, uLeftY, uRightX, uRightY )
-                    || line.intersectsLine( lLeftX, lLeftY, lRightX, lRightY ) ) {
-                // calculates the length of the space between the edges
-                space = calculateSpaces( Math.min( sWidth, tWidth ), edges );
-                // calculates the length of the space to the first edge
-                // for the bigger rectangle
-                projection = ( Math.max( sWidth, tWidth ) - space
-                        * ( edges.size() - 1 ) ) / 2.0;
-                
-                double counter = 1.0;
-                
-                // y-coordinates of start and end point for all lines
-                double sStartY = sY;
-                double tStartY = tY;
-                
-                double sStartX = sX - sWidth / 2.0;
-                double tStartX = tX - tWidth / 2.0;
-                
-                // calculates the different x-coordinates of start and end
-                // point
-                for (EdgeBase e : edges) {
-                    // addition of space or projection to get the
-                    // wanted space between the edges
-                    if ( counter == 1 ) {
-                        if ( sWidth <= tWidth ) {
-                            sStartX += space;
-                            tStartX += projection;
-                        } else {
-                            sStartX += projection;
-                            tStartX += space;
-                        }
-                    } else {
-                        sStartX += space;
-                        tStartX += space;
-                    }
-                    setCorrectPoints( sStartX, sStartY, tStartX, tStartY, e );   
-                    updateNodeOnEdges();
-                    
-                    if (fSourceQualifier != null) fSourceQualifier.calculatePosition();
-                    if (fTargetQualifier != null) fTargetQualifier.calculatePosition();
-                    
-                    counter++;
-                }
-            // ... use the height
-            } else if ( line.intersectsLine( uLeftX, uLeftY, lLeftX, lLeftY )
-                    || line.intersectsLine( uRightX, uRightY, lRightX,
-                                            lRightY ) ) {
-                // calculates the length of the space between the edges
-                space = calculateSpaces( Math.min( sHeight, tHeight ), edges );
-                // calculates the length of the space to the first edge
-                // for the bigger rectangle
-                projection = ( Math.max( sHeight, tHeight ) - space
-                        * ( edges.size() - 1 ) ) / 2.0;
-                
-                double counter = 1.0;
-                
-                // x-coordinates of start and end point for all lines
-                double sStartX = sX;
-                double tStartX = tX;
-                
-                double sStartY = sY - sHeight / 2.0;
-                double tStartY = tY - tHeight / 2.0;
-                
-                // calculates the different y-coordinates of start and end
-                // point
-                for (EdgeBase e : edges) {
-                    // addition of space or projection to get the
-                    // wanted space between the edges
-                    if ( counter == 1 ) {
-                        if ( sHeight <= tHeight ) {
-                            sStartY += space;
-                            tStartY += projection;
-                        } else {
-                            sStartY += projection;
-                            tStartY += space;
-                        }
-                    } else {
-                        sStartY += space;
-                        tStartY += space;
-                    }
-                    setCorrectPoints( sStartX, sStartY, tStartX, tStartY, e );   
-                    updateNodeOnEdges();
-                    
-                    if (fSourceQualifier != null) fSourceQualifier.calculatePosition();
-                    if (fTargetQualifier != null) fTargetQualifier.calculatePosition();
-                    
-                    counter++;
-                }
-            }
-        }
+    protected final void calculateNewPositions( Set<EdgeBase> edges ) {
+    	// Allow the edges to do additional calculations
+    	for (EdgeBase e : edges) {
+    		e.beforeCalculateNewPosition();
+    	}
+    	
+    	doCalculateNewPositions(edges);
     }
     
     /**
-     * Determinds the correct source side and sets the specific points.
-     * 
-     * @param sX X-coordinate for the source point.
-     * @param sY Y-coordinate for the source point.
-     * @param tX X-coordinate for the target point.
-     * @param tY Y-coordinate for the target point.
-     * @param e The points of this EdgeBase will be set.
+     * Type written into element tag
      */
-    private void setCorrectPoints( double sX, double sY, double tX, double tY,
-                                   EdgeBase e ) {
-        if ( e.fSource.equals( fSource ) ) {
-            e.setPoint( SOURCE, sX, sY );
-            e.setPoint( TARGET, tX, tY );
-        } else {
-            e.setPoint( TARGET, sX, sY );
-            e.setPoint( SOURCE, tX, tY );
-        }
-        e.updateNodeOnEdges();
-    }
+    protected abstract String storeGetType();
     
     /**
-     * This method calculates the intersection point of the given line and 
-     * one of the four lines of the nodes polygon.
-     * 
-     * @param node the source node.
-     * @param sX the source x-coordinate of the line.
-     * @param sY the source y-coordinate of the line.
-     * @param tX the target x-coordinate of the line.
-     * @param tY the target y-coordinate of the line.
+     * If true, the attribute <code>kind</code> will be written into the store info
+     * @return
      */
-    Point2D.Double getIntersectionCoordinate( NodeBase node, int sX, int sY,
-                                              int tX, int tY ) {
-        Polygon polygon = node.dimension();
-        
-        int[] xpoints = polygon.xpoints;
-        int[] ypoints = polygon.ypoints;
-        
-        // source corner points
-        // corner 1  ---------------  corner 2              
-        //           |             |
-        //           |             |
-        // corner 4  ---------------  corner 3
-        //
-        //                  /\ corner 1
-        //       corner 4  /  \ 
-        //                 \  /  corner 2
-        //       corner 3   \/
-        double x_corner1 = xpoints[0];
-        double x_corner2 = xpoints[1];
-        double x_corner3 = xpoints[2];
-        double x_corner4 = xpoints[3];
-        double y_corner1 = ypoints[0];
-        double y_corner2 = ypoints[1];
-        double y_corner3 = ypoints[2];
-        double y_corner4 = ypoints[3];
-        
-        // line from source node to target node
-        Line2D.Double line = new Line2D.Double( sX, sY, tX, tY );
-        
-        // getting the intersection coordinate 
-        if ( line.intersectsLine( x_corner1, y_corner1, x_corner2, y_corner2 ) ) {
-            // cuts the line between corner 1 and 2 of the node
-            return intersectionPoint( sX, sY, tX, tY, 
-                                      x_corner1, y_corner1, 
-                                      x_corner2, y_corner2 );
-        } else if ( line.intersectsLine( x_corner3, y_corner3, x_corner4, y_corner4 ) ) {
-            // cuts the line between corner 3 and 4 of the node
-            return intersectionPoint( sX, sY, tX, tY, 
-                                      x_corner3, y_corner3, 
-                                      x_corner4, y_corner4 );
-        } else if ( line.intersectsLine( x_corner1, y_corner1, x_corner4, y_corner4 ) ) {
-            // cuts the line between corner 1 and 4 of the node
-            return intersectionPoint( sX, sY, tX, tY, 
-                                      x_corner1, y_corner1, 
-                                      x_corner4, y_corner4 );
-        } else if ( line.intersectsLine( x_corner2, y_corner2, x_corner3, y_corner3 ) ) {
-            // cuts the line between corner 2 and 3 of the node
-            return intersectionPoint( sX, sY, tX, tY, 
-                                      x_corner2, y_corner2, 
-                                      x_corner3, y_corner3 );
-        }
-        
-        // if no line is cut return the start point 
-        // (both nodes lay on top of each other.
-        return new Point2D.Double( sX, sY );
-    }
-    
-    /** 
-     * Calculates the intersection point of to lines.
-     * 
-     * @param sX source x-coordinate of the first line.
-     * @param sY source y-coordinate of the first line.
-     * @param tX target x-coordinate of the first line.
-     * @param tY target y-coordinate of the first line.
-     * @param x_corner1 source x-coordinate of the second line.
-     * @param y_corner1 source y-coordinate of the second line.
-     * @param x_corner2 target x-coordinate of the second line.
-     * @param y_corner2 target y-coordinate of the second line.
-     * @return the intersection point of both lines.
-     */    
-    private Point2D.Double intersectionPoint( int sX, int sY, int tX, int tY, 
-                                              double x_corner1, double y_corner1, 
-                                              double x_corner2, double y_corner2 ) {
-        // getting the intersection coordinate by vector arithmetic
-        // example for the top line:
-        //   sx over sy + r * (tx - sx) over (ty - sy)
-        // = x_corner1 over y_corner1 + v * (x_corner2 - x_corner1) over (y_corner2 - y_corner1)
-        
-        double numerator = 1.0;
-        double denominator = 1.0;
-        
-        numerator = (tX - sX) * (sY - y_corner1) + (tY - sY) * (x_corner1 - sX);
-        denominator = (y_corner2 - y_corner1) * (tX - sX) 
-        - (x_corner2 - x_corner1) * (tY - sY); 
-        
-        double v = numerator / denominator;
-        
-        double intersection_X = x_corner1 + v * (x_corner2 - x_corner1);
-        double intersection_Y = y_corner1 + v * (y_corner2 - y_corner1);
-        
-        return new Point2D.Double( intersection_X, intersection_Y );
-    }
+    protected boolean storeHasKind() { return true; }
     
     /**
      * Saves placement information about this edge.
@@ -1143,37 +745,20 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      */
     public String storePlacementInfo( boolean hidden ) {
         StringBuilder xml = new StringBuilder();
-
-        if ( this instanceof NodeEdge && fAssoc.associationEnds().size() > 2 ) {
-            // xml tag will be written in NodeEdge itself. 
-            // Will be called from DiamondNode.
-            return xml.toString();
-        }
         
         xml.append(LayoutTags.EDGE_O);
-        if ( this instanceof NodeEdge ) {
-            if ( isLink() ) {
-                xml.append(" type=\"NodeEdge\" kind=\"link\">").append(LayoutTags.NL);
-            } else {
-                xml.append(" type=\"NodeEdge\" kind=\"association\">").append(LayoutTags.NL);
-            }
-        } else if ( this instanceof BinaryEdge ) {
-            if ( isLink() ) {
-                xml.append(" type=\"BinaryEdge\" kind=\"link\">").append(LayoutTags.NL);
-            } else {
-                xml.append(" type=\"BinaryEdge\" kind=\"association\">").append(LayoutTags.NL);
-            } 
-        } else if ( this instanceof HalfEdge ) {
-            if ( isLink() ) {
-                xml.append(" type=\"HalfEdge\" kind=\"link\">").append(LayoutTags.NL);
-            } else { 
-                xml.append(" type=\"HalfEdge\" kind=\"association\">").append(LayoutTags.NL);
-            }
-        } else if ( this instanceof GeneralizationEdge ) { 
-            xml.append(" type=\"Inheritance\">").append(LayoutTags.NL);
-        } else {
-            xml.append(" type=\"EdgeBase\">").append(LayoutTags.NL);
-        } 
+        xml.append(" type=\"");
+        xml.append(storeGetType());
+        xml.append("\"");
+        
+        if (storeHasKind()) {
+        	xml.append(" kind=\"");
+        	xml.append((isLink() ? "link" : "association"));
+        	xml.append("\"");
+        }
+        
+        xml.append(">");
+        xml.append(LayoutTags.NL);
         
         xml.append(LayoutTags.INDENT).append(LayoutTags.SOURCE_O).append(fSource.name()).
         	append(LayoutTags.SOURCE_C).append(LayoutTags.NL);
@@ -1185,23 +770,11 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
             append(LayoutTags.NAME_C).append(LayoutTags.NL);
 
         
-        if ( fSourceRolename != null ) {
-            xml.append(fSourceRolename.storePlacementInfo( hidden )).append(LayoutTags.NL);
-        }
-        if ( fTargetRolename != null ) {
-            xml.append(fTargetRolename.storePlacementInfo( hidden )).append(LayoutTags.NL);
-        }
-        if ( fSourceMultiplicity != null ) {
-            xml.append(fSourceMultiplicity.storePlacementInfo( hidden )).append(LayoutTags.NL);
-        }
-        if ( fTargetMultiplicity != null ) {
-            xml.append(fTargetMultiplicity.storePlacementInfo( hidden )).append(LayoutTags.NL);
-        }
-        if ( fAssocName != null ) {
-            xml.append(fAssocName.storePlacementInfo( hidden )).append(LayoutTags.NL);
+        for (EdgeProperty prop : getProperties()) {
+        	xml.append(prop.storePlacementInfo(hidden)).append(LayoutTags.NL);
         }
 
-        for (NodeOnEdge n : fNodesOnEdge) {
+        for (WayPoint n : fWayPoints) {
             xml.append(n.storePlacementInfo( hidden )).append(LayoutTags.NL);
         }
 
@@ -1216,6 +789,6 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase>
      * Sorts the nodes on this edge according to their id.
      */
     public void sortNodesOnEdge() {
-        Collections.sort( fNodesOnEdge, new NodeOnEdgeComparator() );
+        Collections.sort( fWayPoints, new WayPointComparator() );
     }
 }

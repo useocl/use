@@ -27,11 +27,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.gui.views.diagrams.AssociationOrLinkPartEdge;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.NodeOnEdge;
+import org.tzi.use.gui.views.diagrams.waypoints.SourceWayPoint;
+import org.tzi.use.gui.views.diagrams.waypoints.TargetWayPoint;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MGeneralization;
@@ -197,12 +202,12 @@ public class LayoutContentHandler extends ContentHandler {
             if ( fCtx.peekType().equals( LayoutTags.ROLENAME ) ) {
                 if ( fCtx.getKind().equals( LayoutTags.SOURCE ) 
                      && fCtx.getActualEdge() != null ) {
-					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+					fCtx.setActualEdgeProperty(((BinaryAssociationOrLinkEdge)fCtx.getActualEdge())
 							.getSourceRolename());
                 }
                 if ( fCtx.getKind().equals( LayoutTags.TARGET )
                      && fCtx.getActualEdge() != null ) {
-					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+					fCtx.setActualEdgeProperty(((AssociationOrLinkPartEdge)fCtx.getActualEdge())
 							.getTargetRolename());
                 }
                 parseEdgeProperty( qName, fTagContent.trim() );       
@@ -211,12 +216,12 @@ public class LayoutContentHandler extends ContentHandler {
             if ( fCtx.peekType().equals( LayoutTags.MULTIPLICITY ) ) {
                 if ( fCtx.getKind().equals( LayoutTags.SOURCE )
                      && fCtx.getActualEdge() != null ) {
-					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+					fCtx.setActualEdgeProperty(((BinaryAssociationOrLinkEdge)fCtx.getActualEdge())
 							.getSourceMultiplicity());
                 }
                 if ( fCtx.getKind().equals( LayoutTags.TARGET )
                      && fCtx.getActualEdge() != null ) {
-					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+					fCtx.setActualEdgeProperty(((AssociationOrLinkPartEdge)fCtx.getActualEdge())
 							.getTargetMultiplicity());
                 }
                 parseEdgeProperty( qName, fTagContent.trim() );
@@ -224,7 +229,7 @@ public class LayoutContentHandler extends ContentHandler {
             // ASSOCNAME
             if ( fCtx.peekType().equals( LayoutTags.ASSOCNAME ) ) {
                 if ( fCtx.getActualEdge() != null ) {
-					fCtx.setActualEdgeProperty(fCtx.getActualEdge()
+					fCtx.setActualEdgeProperty(((AssociationOrLinkPartEdge)fCtx.getActualEdge())
 							.getAssocName());
                     parseEdgeProperty( qName, fTagContent.trim() );
                 } else if ( fCtx.getActualNode() != null
@@ -240,9 +245,9 @@ public class LayoutContentHandler extends ContentHandler {
                     fCtx.setID( Integer.parseInt( fTagContent.trim() ) );
                 }
                 if ( qName.equals( LayoutTags.SPECIALID ) ) {
-                    fCtx.setSpecialID( Integer.parseInt( fTagContent.trim() ) );
+                    fCtx.setSpecialID( WayPointType.values()[Integer.parseInt( fTagContent.trim() )] );
                 }
-                if ( fCtx.getID() != -1 && fCtx.getSpecialID() != -1 ) {
+                if ( fCtx.getID() != -1 && fCtx.getSpecialID() != null ) {
                     fCtx.setActualEdgeProperty( findNodeOnEdge() );
                 }
                 if ( fCtx.getActualEdgeProperty() != null ) {
@@ -256,35 +261,41 @@ public class LayoutContentHandler extends ContentHandler {
 	 * Finds the NodeOnEdge which needs to be placed correctly. If the
 	 * NodeOnEdge does not exists so far a new NodeOnEdge will be created.
      */
-    private NodeOnEdge findNodeOnEdge() {
+    private WayPoint findNodeOnEdge() {
         if ( fCtx.getActualEdge() == null ) {
             return null;
         }
         
-        NodeOnEdge n = null;
-        for (NodeOnEdge node : fCtx.getActualEdge().getNodesOnEdge()) {
-            if ( fCtx.getActualEdge().isNodeSpecial( node ) 
-                 && node.getSpecialID() == fCtx.getSpecialID() ) {
+        WayPoint n = null;
+        for (WayPoint node : fCtx.getActualEdge().getNodesOnEdge()) {
+            if ( node.isSpecial() && node.getSpecialID() == fCtx.getSpecialID() ) {
                 node.setID( fCtx.getID() );
                 fCtx.getActualEdge().sortNodesOnEdge();
-                fCtx.setSpecialID( -1 );
+                fCtx.setSpecialID( null );
                 fCtx.setID( -1 );
                 return node;
             } 
         }
         
-        String name = null;
-        if ( fCtx.getActualEdge().getAssocName() == null ) {
-            name = "Inheritance";
+        String name = fCtx.getActualEdge().getName();
+        
+        if (fCtx.getSpecialID() == WayPointType.SOURCE) {
+        	n = new SourceWayPoint(fCtx.getSourceNode(),
+    				fCtx.getTargetNode(), fCtx.getActualEdge(), fCtx.getID(), 
+    				name, fCtx.getOpt());
+        } else if (fCtx.getSpecialID() == WayPointType.TARGET) {
+        	n = new TargetWayPoint(fCtx.getSourceNode(),
+    				fCtx.getTargetNode(), fCtx.getActualEdge(), fCtx.getID(), 
+    				name, fCtx.getOpt());
         } else {
-            fCtx.getActualEdge().getAssocName().name();
+			n = new WayPoint(fCtx.getSourceNode(),
+					fCtx.getTargetNode(), fCtx.getActualEdge(), fCtx.getID(), 
+					fCtx.getSpecialID(), name, fCtx.getOpt());
         }
-		n = new NodeOnEdge(0.0, 0.0, (NodeBase) fCtx.getSourceNode(),
-				(NodeBase) fCtx.getTargetNode(), fCtx.getActualEdge(), fCtx
-						.getID(), fCtx.getSpecialID(), name, fCtx.getOpt());
+        
         fCtx.getActualEdge().getNodesOnEdge().add( n );
         fCtx.getActualEdge().sortNodesOnEdge();
-        fCtx.setSpecialID( -1 );
+        fCtx.setSpecialID( null );
         fCtx.setID( -1 );
         return n;
     }
@@ -587,7 +598,8 @@ public class LayoutContentHandler extends ContentHandler {
         if ( fCtx.getActualEdgeProperty() == null ) {
             return;
         }
-        fCtx.getActualEdgeProperty().setLoadingLayout( true );
+        fCtx.getOpt().setIsLoadingLayout(true);
+        
         if ( tag.equals( LayoutTags.X_COORD ) ) {
             double x = Double.parseDouble( content );
             if ( x >= 0 ) {
@@ -603,7 +615,7 @@ public class LayoutContentHandler extends ContentHandler {
             } 
         }  
 
-        fCtx.getActualEdgeProperty().setLoadingLayout( false );
+        fCtx.getOpt().setIsLoadingLayout(false);
     }
 
 }

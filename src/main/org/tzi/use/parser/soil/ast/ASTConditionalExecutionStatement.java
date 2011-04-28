@@ -37,11 +37,17 @@ import org.tzi.use.util.soil.exceptions.compilation.ConditionNotBooleanException
  *
  */
 public class ASTConditionalExecutionStatement extends ASTStatement {
-	/** TODO */
+	/** 
+	 * The AST of the OCL expression representing the condition 
+	 */
 	private ASTExpression fCondition;
-	/** TODO */
+	/**
+	 * The statement which is executed when <code>fCondition</code> is <code>true</code> 
+	 */
 	private ASTStatement fThenStatement;
-	/** TODO */
+	/**
+	 * The statement which is executed when <code>fCondition</code> is <code>false</code> 
+	 */
 	private ASTStatement fElseStatement;
 	
 	
@@ -66,8 +72,8 @@ public class ASTConditionalExecutionStatement extends ASTStatement {
 
 	
 	/**
-	 * TODO
-	 * @return
+	 * The AST of the OCL expression representing the condition
+	 * @return The AST of the condition
 	 */
 	public ASTExpression getCondition()
 	{
@@ -76,8 +82,8 @@ public class ASTConditionalExecutionStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Gets the AST of the statement which is executed when the condition evaluates to <code>true</code>.
+	 * @return The AST of the then-statement
 	 */
 	public ASTStatement getThenStatement() {
 		return fThenStatement;
@@ -85,8 +91,8 @@ public class ASTConditionalExecutionStatement extends ASTStatement {
 
 	
 	/**
-	 * TODO
-	 * @return
+	 * Gets the AST of the statement which is executed when the condition evaluates to <code>false</code>.
+	 * @return The AST of the else-statement
 	 */
 	public ASTStatement getElseStatement() {
 		return fElseStatement;

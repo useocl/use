@@ -102,6 +102,8 @@ public interface MNavigableElement {
     
     public List<MAssociationEnd> getAllOtherAssociationEnds();
     
+    public boolean isCollection();
+    
     public boolean equals( Object obj );
 
     public int hashCode();

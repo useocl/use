@@ -24,8 +24,8 @@ package org.tzi.use.gui.graphlayout;
 import java.util.Iterator;
 import java.util.List;
 
-import org.tzi.use.graph.DirectedEdge;
 import org.tzi.use.graph.DirectedGraph;
+import org.tzi.use.gui.views.diagrams.Layoutable;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 
 /**
@@ -35,8 +35,8 @@ import org.tzi.use.gui.views.diagrams.NodeBase;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public class SpringLayout<N extends NodeBase, E extends DirectedEdge<N>> {
-    private DirectedGraph<N, E> fGraph; // the graph to be layouted
+public class SpringLayout<N extends Layoutable> {
+    private DirectedGraph<N, ?> fGraph; // the graph to be layouted
     private double fWidth;  // maximum width of layout
     private double fHeight; // maximum height of layout
     private double fMarginX;    // margin on left/right side of the drawing area
@@ -54,7 +54,7 @@ public class SpringLayout<N extends NodeBase, E extends DirectedEdge<N>> {
      * @param marginx margin on left/right side of the drawing area
      * @param marginy margin on top/bottom side of the drawing area
      */
-	public SpringLayout(DirectedGraph<N, E> g, 
+	public SpringLayout(DirectedGraph<N, ?> g, 
                         double width, double height,
                         double marginx, double marginy) {
         fGraph = g;
@@ -89,8 +89,8 @@ public class SpringLayout<N extends NodeBase, E extends DirectedEdge<N>> {
         for (int i = 0; i < N; i++) {
             N v = fNodes.get(i);
             
-            double xv = v.x();
-            double yv = v.y();
+            double xv = v.getCenter().getX();
+            double yv = v.getCenter().getY();
 
             // spring force
             Iterator<N> uIter = fGraph.sourceNodeSet(v).iterator();
@@ -99,8 +99,8 @@ public class SpringLayout<N extends NodeBase, E extends DirectedEdge<N>> {
             while (uIter.hasNext() ) {
                 NodeBase u = (NodeBase) uIter.next();
                 
-                double xu = u.x();
-                double yu = u.y();
+                double xu = u.getCenter().getX();
+                double yu = u.getCenter().getY();
                 double dx = xv - xu;
                 double dy = yv - yu;
                 double d = Math.sqrt(dx * dx + dy * dy);
@@ -117,12 +117,12 @@ public class SpringLayout<N extends NodeBase, E extends DirectedEdge<N>> {
             double sumfx2 = 0.0;
             double sumfy2 = 0.0;
             while (uIter.hasNext() ) {
-                NodeBase u = (NodeBase) uIter.next();
+                N u = uIter.next();
                 if (u == v )
                     continue;
 
-                double xu = u.x();
-                double yu = u.y();
+                double xu = u.getCenter().getX();
+                double yu = u.getCenter().getY();
                 double dx = xv - xu;
                 double dy = yv - yu;
                 double d = dx * dx + dy * dy;
@@ -152,12 +152,12 @@ public class SpringLayout<N extends NodeBase, E extends DirectedEdge<N>> {
 
         // set new positions
         for (int i = 0; i < N; i++) {
-            NodeBase v = fNodes.get(i);
+            N v = fNodes.get(i);
             // move each node towards center of drawing area and keep
             // it within bounds
             double x = Math.max(fMarginX, Math.min(fWidth - fMarginX, fXn[i] + dx));
             double y = Math.max(fMarginY, Math.min(fHeight - fMarginY, fYn[i] + dy));
-            v.setPosition(x, y);
+            v.setCenter(x, y);
         }
     }
 }

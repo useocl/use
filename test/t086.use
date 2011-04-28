@@ -1,6 +1,13 @@
 -- Test for qualified asscoiations
+@Monitor(host="localhost",port="6000")
 model QA
 
+enum NodeType {
+  Left,
+  Right
+}
+
+@Monitor(package="org.tzi.test")
 class Bank
 end
 
@@ -12,15 +19,20 @@ association BankPerson between
   Person[0..1] role customer
 end
 
+association Test between
+  Bank[*] role myBank
+  Person[*] role myBank
+end
+
 class Map
 end
 
 class Tile
 end
 
-association MapTile between
-  Map[1]
-  Tile[1..*] qualifier (x:Integer, y:Integer)
+composition MapTile between
+  Map[1] qualifier (x:Integer, y:Integer)
+  Tile[1..*]
 end
 
 class HashMap
@@ -32,11 +44,84 @@ class HashMapEntry
 end
 
 association HashMapEntries between
-  HashMap[0..*] role container
-  HashMapEntry[0..*] role element qualifier (index:Integer)
+  HashMap[0..*] role container qualifier (index:Integer)
+  HashMapEntry[0..*] role element
 end
 
-association Test between
-  Bank[*] role myBank
-  Person[*] role myBank
+association ALeague between
+  League[0..*] role nextLevel
+  League[*] role subLevel
+end
+
+class League
+end
+
+class Player
+end
+
+class Team
+end
+
+association Plays between
+  League[1] qualifier (playerNr:Integer)
+  Player[*]
+end
+
+association Member between
+  League[1] qualifier (teamNr:Integer)
+  Team[*]
+end
+
+class Node
+end
+
+association Childs between
+  Node[0..1] role parent qualifier (nodeType:NodeType)
+  Node[0..1] role child
+end
+
+-- Test association class
+class Employee
+end
+
+class Company
+end
+
+associationclass Job between
+  Employee[*]
+  Company[*]
+attributes
+  salary : Integer
+end
+
+-- Test with four qualified reflexive associations
+class A
+end
+
+association A1 between
+  A[*] role a1s qualifier (a1:Integer)
+  A[*] role a1t
+end
+
+association A2 between
+  A[*] role a2s 
+  A[*] role a2t qualifier (a2:Integer)
+end
+
+association A3 between
+  A[*] role a3s 
+  A[*] role a3t qualifier (a3:Integer)
+end
+
+association A4 between
+  A[*] role a4s qualifier (a4:Integer)
+  A[*] role a4t
+end
+
+class B
+end
+
+association B1 between
+  B[*] role b1s qualifier (b1:Integer)
+  B[*] role b1t qualifier (b1:Integer)
 end

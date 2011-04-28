@@ -279,9 +279,9 @@ public class MModel extends MModelElementImpl {
                             + "' is already a subclass of `"
                             + gen.child().name() + "'.");
 
-        // FIXME: check for any conflicts that might be introduced by
-        // the generalization: (1) attributes with same name, (2)
-        // inherited associations??
+        /* FIXME: check for any conflicts that might be introduced by
+           the generalization: (1) attributes with same name, (2)
+           inherited associations?? */
 
         // silently ignore duplicates
         fGenGraph.addEdge(gen);
