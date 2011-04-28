@@ -3,6 +3,7 @@ package org.tzi.use.parser.base;
 import java.io.PrintWriter;
 
 import org.antlr.runtime.Parser;
+import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.TokenStream;
 import org.tzi.use.parser.ParseErrorHandler;
@@ -46,7 +47,12 @@ public class BaseParser extends Parser {
     /* Overridden methods. */
 	private ParseErrorHandler fParseErrorHandler;
     
-    public void emitErrorMessage(String msg) {
+    @Override
+	public String getErrorHeader(RecognitionException e) {
+		return "line " + e.line + ":" + e.charPositionInLine;
+	}
+
+	public void emitErrorMessage(String msg) {
        	fParseErrorHandler.reportError(msg);
 	}
     
