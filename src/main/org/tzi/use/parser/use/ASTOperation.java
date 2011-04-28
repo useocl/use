@@ -105,8 +105,8 @@ public class ASTOperation extends ASTAnnotatable {
         }
         Type resultType = null;
         if (fType == null) {
-        	if (this.fStatement != null) {
-        		throw new SemanticException(fName, "Missing return type for operation " + StringUtil.inQuotes(fName.getText()) + ".");
+        	if (this.fExpr != null) {
+        		throw new SemanticException(fName, "Missing return type for OCL query operation " + StringUtil.inQuotes(fName.getText()) + ".");
         	}
         } else {
             resultType = fType.gen(ctx);
