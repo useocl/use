@@ -25,14 +25,17 @@ import org.tzi.use.uml.sys.soil.MStatement;
 
 
 /**
- * TODO
+ * Exception to throw when the evaluation of a statement has failed.
  * @author Daniel Gent
  *
  */
 public abstract class EvaluationFailedException extends Exception {
-	/** TODO */
+	
 	private static final long serialVersionUID = 1L;
-	/** TODO */
+	
+	/** 
+	 * Reference to the statement that failed to execute.
+	 */
 	private MStatement fFailedStatement;
 	
 	
@@ -67,8 +70,8 @@ public abstract class EvaluationFailedException extends Exception {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The statement that failed.
+	 * @return The <code>MStatement</code> that failed.
 	 */
 	public MStatement getFailedStatement() {
 		return fFailedStatement;
@@ -82,14 +85,5 @@ public abstract class EvaluationFailedException extends Exception {
 	 */
 	public String getMessage(MStatement topLevelStatement) {
 		return getMessage();
-		/*StringBuilder message = new StringBuilder();
-	
-		message.append("   Evaluation of statement failed.\n");
-		
-		message.append("Reason:   ");
-		message.append(getMessage());
-		message.append("\n");
-		
-		return message.toString();*/
 	}
 }

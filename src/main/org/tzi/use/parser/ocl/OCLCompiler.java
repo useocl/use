@@ -156,7 +156,7 @@ public class OCLCompiler {
         try {
             // Parse the input expression
             ASTExpression astExpr = parser.expressionOnly();
-            //System.err.println("***" + astExpr.toString());
+
             if (errHandler.errorCount() == 0 ) {
     
                 // Generate code

@@ -75,7 +75,7 @@ public final class ExpStdOp extends Expression {
     }
     
     /**
-     * Returns true if a standard operation exists matching name and params.
+     * Returns true if a standard operation exists matching <code>name</code> and <code>params</code>.
      */
     public static boolean exists(String name, Type params[]) {
         if (params.length == 0)
@@ -91,7 +91,7 @@ public final class ExpStdOp extends Expression {
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
             if (t != null) {
-            	checkOclAnyWarning(op, t);
+            	checkOclAnyWarning(op, params, t);
                 return true;
             }
         }
@@ -124,7 +124,7 @@ public final class ExpStdOp extends Expression {
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
             if (t != null) {
-            	checkOclAnyWarning(op, t);
+            	checkOclAnyWarning(op, params, t);
                 return new ExpStdOp(op, args, t);
             }
         }
@@ -135,13 +135,48 @@ public final class ExpStdOp extends Expression {
     }
 
     /**
-	 * @param op
-	 * @param t
+     * Validates if an operation call on a collection type with leaf element type different from OCLAny
+     * results in OCLAny or a collection with the leaf element type OCLAny. 
+     * If <code>true</code> a warning is reported.
+     * <p><b>Note</b>: Leaf element type means the last element type which is not a collection.</p> 
+	 * @param op The operation which is called
+	 * @param sourceType The <code>Type</code> of the object the operation is called on.
+	 * @param resultType The <code>Type</code> of the result.
 	 */
-	private static void checkOclAnyWarning(OpGeneric op, Type t) {
-		if (t.isCollection(true) && ((CollectionType)t).elemType().isTrueOclAny()) {
-			Log.warn("Operation call " + StringUtil.inQuotes(op.name()) + 
-					 " results in type " + StringUtil.inQuotes(t.toString()) + " which might cause errors.");
+	private static void checkOclAnyWarning(OpGeneric op, Type[] params, Type resultType) {
+		Type sourceType = params[0];
+		
+		if (sourceType.isCollection(true)) {
+			CollectionType sourceCollectionType = (CollectionType)sourceType;
+			Type sourceElementType = sourceCollectionType.elemType();
+			
+			while (sourceElementType.isCollection(true)) {
+				sourceElementType = ((CollectionType)sourceElementType).elemType();
+			}
+			
+			if (sourceElementType.isTrueOclAny()) return;
+			
+			Type resultElementType = resultType;
+			while (resultElementType.isCollection(true)) {
+				resultElementType = ((CollectionType)resultElementType).elemType();
+			}
+			
+			if (resultElementType.isTrueOclAny()) {
+				StringBuilder paramTypes = new StringBuilder();
+				for (int index = 1; index < params.length; ++index) {
+					if (index > 1) {
+						paramTypes.append(",");
+					}
+					paramTypes.append(params[index].toString());
+				}
+
+				Log.warn("Operation call "
+						+ StringUtil.inQuotes(sourceType.toString() + "->"
+								+ op.name() + "(" + paramTypes.toString() + ")")
+						+ " results in type "
+						+ StringUtil.inQuotes(resultType.toString()) + "."
+						+ " This can cause unexpected errors.");
+			}
 		}
 	}
 
