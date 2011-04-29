@@ -465,8 +465,8 @@ public class ExprNavigationTest extends TestCase {
                                                  "<input>", pw,
                                                  system.varBindings() );
         assertNull( navExpr );
-        String expected = "<input>:1:3: The navigation path is ambiguous. "
-            +"A qualification of the source association is required.";
+		String expected = "<input>:1:3: The navigation path from `Person' to `job' is ambiguous," + 
+							" but no qualification of the source association was given.";
         assertEquals(expected, sw.toString().trim());
 
         // test 3: rolname is not `worker' is not avaliable

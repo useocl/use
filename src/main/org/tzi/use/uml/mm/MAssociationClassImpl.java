@@ -653,6 +653,10 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 	@Override
 	public MNavigableElement getSourceEnd(MClass srcClass,
 			MNavigableElement dst, String explicitRolename) {
+		if (srcClass == this) {
+			return this;
+		}
+		
 		return this.fAssociationImpl.getSourceEnd(srcClass, dst, explicitRolename);
 	}
 	

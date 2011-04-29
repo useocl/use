@@ -383,7 +383,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 	@Override
 	public MNavigableElement getSourceEnd(MClass srcClass,
 			MNavigableElement dst, String explicitRolename) {
-				
+		
 		for (MAssociationEnd end : this.associationEnds()) {
 			if (end.equals(dst)) continue;
 			
