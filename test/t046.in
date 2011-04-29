@@ -7,14 +7,17 @@
 ?Set{}->including(1)
 *-> Set{1} : Set(Integer)
 ?Set{}->including(1)->including('a')
+*Operation call `Set(Integer)->including(String)' results in type `Set(OclAny)'. This can cause unexpected errors.
 *-> Set{'a',1} : Set(OclAny)
 ?let s:Set(String) = Set{} in s->including(1)
+*Operation call `Set(String)->including(Integer)' results in type `Set(OclAny)'. This can cause unexpected errors.
 *-> Set{1} : Set(Integer)
 ?let s:Set(OclAny) = Set{} in s->including(1)->including('a')
 *-> Set{'a',1} : Set(OclAny)
 ?let sAny:Set(OclAny) = Set{1} in let sString:Set(String)=Set{'a'} in sAny->union(sString)
 *-> Set{'a',1} : Set(OclAny)
 ?let sAny:Set(OclAny) = Set{1} in let sString:Set(String)=Set{'a'} in sString->union(sAny)
+*Operation call `Set(String)->union(Set(OclAny))' results in type `Set(OclAny)'. This can cause unexpected errors.
 *-> Set{'a',1} : Set(OclAny)
 !create b1,b2:B
 !create c1,c2:C
