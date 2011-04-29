@@ -382,7 +382,7 @@
 *-> 'a' : String 
 
 ? if true then 'a' else 1 endif + 3
-*-> <input>:1:30: Undefined operation `OclAny.+(Integer)'.
+* <input>:1:30: Undefined operation `OclAny.+(Integer)'.
 
 #
 ## Test for (un-)definedness
