@@ -123,7 +123,7 @@ public final class ExpStdOp extends Expression {
         // search overloaded operations for a match
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
-            if (t != null && !t.equals(params[0])) {
+            if (t != null) {
             	checkOclAnyWarning(op, t);
                 return new ExpStdOp(op, args, t);
             }
