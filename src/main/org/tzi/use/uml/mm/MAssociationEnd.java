@@ -279,10 +279,15 @@ public final class MAssociationEnd extends MModelElementImpl
     		}
     	} else {
 	    	if ( multiplicity().isCollection() ) {
-	    		if ( isOrdered() )
+	    		if (this.hasQualifiers() && !this.isOrdered()) {
+	    			t = TypeFactory.mkBag( t );
+	    		} else if (this.hasQualifiers() && this.isOrdered()) {
+	    			t = TypeFactory.mkSequence( t );
+	    		} else if ( !this.hasQualifiers() && this.isOrdered() ) {
 	                t = TypeFactory.mkOrderedSet( t );
-	            else
+	    		} else {
 	                t = TypeFactory.mkSet( t );
+	    		}
 	        } else if ( association().associationEnds().size() > 2 ) {
 	            t = TypeFactory.mkSet(t);
 	        }
