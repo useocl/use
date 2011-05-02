@@ -1,5 +1,4 @@
 -- Test for qualified asscoiations
-@Monitor(host="localhost",port="6000")
 model QA
 
 enum NodeType {
@@ -7,7 +6,6 @@ enum NodeType {
   Right
 }
 
-@Monitor(package="org.tzi.test")
 class Bank
 end
 
@@ -32,7 +30,7 @@ end
 
 composition MapTile between
   Map[1] qualifier (x:Integer, y:Integer)
-  Tile[1..*]
+  Tile[0..1]
 end
 
 class HashMap

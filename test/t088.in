@@ -1,0 +1,2 @@
+*t088.use:14:2: Missing return type for OCL query operation `connectedPlusAux'.
+*t088.use:12:4: Undefined operation named `connectedPlusAux' in expression `Town.connectedPlusAux(Set(Town))'.

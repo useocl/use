@@ -1,4 +1,1 @@
-!create p1:Person
-?p1.firstSecond()
-*-> Set{} : Set(Person)
-exit
+*t053.use:6:2: Missing return type for OCL query operation `firstSecond'.
