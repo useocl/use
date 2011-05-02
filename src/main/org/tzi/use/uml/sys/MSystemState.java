@@ -1638,26 +1638,15 @@ public final class MSystemState {
 		for (MObject obj : objects) {
 			Map<List<Value>,Set<MObject>> linkedObjects = getLinkedObjects(obj, aend1, aend2);
 			
+			if (linkedObjects.size() == 0 && !aend2.multiplicity().contains(0)) {
+				reportMultiplicityViolation(out, assoc, aend1, aend2, obj, null);
+				valid = false;
+				continue;
+			}
+			
 			for(Map.Entry<List<Value>, Set<MObject>> entry : linkedObjects.entrySet()) {
-				int n = entry.getValue().size();
-				if (!aend2.multiplicity().contains(n)) {
-					out.println("Multiplicity constraint violation in association " + 
-							StringUtil.inQuotes(assoc.name()) + ":");
-					out.println("  Object " + StringUtil.inQuotes(obj.name()) + " of class "
-							+ StringUtil.inQuotes(obj.cls().name()) + " is connected to " + n
-							+ " object" + ((n == 1) ? "" : "s") + " of class "
-							+ StringUtil.inQuotes(aend2.cls().name()));
-					out.print("  at association end " + StringUtil.inQuotes(aend2.nameAsRolename()) + " ");
-					if (aend1.hasQualifiers()) {
-						out.print(" with the qualifier value");
-						if (entry.getKey().size() > 1) out.print("s");
-						out.print(" [");
-						out.print(StringUtil.fmtSeq(entry.getKey(), ","));
-						out.println("]");
-						out.print("  ");
-					}
-					out.println("but the multiplicity is specified as `"
-							+ aend2.multiplicity() + "'.");
+				if (!aend2.multiplicity().contains(entry.getValue().size())) {
+					reportMultiplicityViolation(out, assoc, aend1, aend2, obj, entry);
 					valid = false;
 				}
 				
@@ -1674,6 +1663,40 @@ public final class MSystemState {
 		}
 		
 		return valid;
+	}
+
+	/**
+	 * Writes informations about a multiplicity violation to <code>out</code>.
+	 * @param out <code>PrintWriter</code> to write the message to.
+	 * @param assoc The <code>MAssociation</code> the multiplicity is violated.
+	 * @param aend1 The <code>MAssociationEnd</code> at the end <code>obj</code>.
+	 * @param aend2 The <code>MAssociationEnd</code> at the end where the multiplicity is validated.
+	 * @param obj The <code>MObject</code> which is validated.
+	 * @param entry A <code>HashMap.Entry</code> with the linked objects. Can be null (no links)
+	 */
+	protected void reportMultiplicityViolation(PrintWriter out,
+			MAssociation assoc, MAssociationEnd aend1, MAssociationEnd aend2,
+			MObject obj, Map.Entry<List<Value>, Set<MObject>> entry) {
+		
+		int n = (entry == null ? 0 : entry.getValue().size());
+		
+		out.println("Multiplicity constraint violation in association " + 
+				StringUtil.inQuotes(assoc.name()) + ":");
+		out.println("  Object " + StringUtil.inQuotes(obj.name()) + " of class "
+				+ StringUtil.inQuotes(obj.cls().name()) + " is connected to " + n
+				+ " object" + ((n == 1) ? "" : "s") + " of class "
+				+ StringUtil.inQuotes(aend2.cls().name()));
+		out.print("  at association end " + StringUtil.inQuotes(aend2.nameAsRolename()) + " ");
+		if (aend1.hasQualifiers() && entry != null) {
+			out.print(" with the qualifier value");
+			if (entry.getKey().size() > 1) out.print("s");
+			out.print(" [");
+			out.print(StringUtil.fmtSeq(entry.getKey(), ","));
+			out.println("]");
+			out.print("  ");
+		}
+		out.println("but the multiplicity is specified as `"
+				+ aend2.multiplicity() + "'.");
 	}
 
 	
