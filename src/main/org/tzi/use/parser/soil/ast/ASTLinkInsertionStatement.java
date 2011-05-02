@@ -33,7 +33,8 @@ import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST class representing a link insertion node: <code>insert (x, y) into Z</code>.
+ * 
  * @author Daniel Gent
  *
  */
@@ -54,9 +55,10 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 	private List<List<ASTRValue>> qualifierValues;
 	
 	/**
-	 * TODO
-	 * @param associationName
-	 * @param participants
+	 * Constructs a new AST node.
+	 * @param associationName Name of the association to insert the link into.
+	 * @param participants The participating instances.
+	 * @param qualifierValues The <code>MRValue</code>s of the qualifiers. Can be <code>null</code>.
 	 */
 	public ASTLinkInsertionStatement(
 			String associationName,
@@ -69,8 +71,8 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 	}
 
 	/**
-	 * TODO
-	 * @return
+	 * Name of the association to insert the link into.
+	 * @return The association name
 	 */
 	public String getAssociationName() {
 		return fAssociationName;
@@ -78,8 +80,8 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The participating instances.
+	 * @return The <code>ASTRValue</code> nodes of participating instances.
 	 */
 	public List<ASTRValue> getParticipants() {
 		return fParticipants;
