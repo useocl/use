@@ -129,7 +129,7 @@ public final class Rolename extends EdgeProperty {
         } else {
             result.x = sourceWayPoint.getX() + 2;
         }
-        
+				
         return result;
 	}
 

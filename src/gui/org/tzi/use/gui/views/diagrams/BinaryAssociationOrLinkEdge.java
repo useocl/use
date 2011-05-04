@@ -98,7 +98,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      * SOUTH_WEST
      * NORTH_WEST
      */
-    Direction fReflexivePosition = Direction.NORTH_EAST;
+    Direction fReflexivePosition = Direction.UNKNOWN;
     
     /**
      * Internal constructor
@@ -480,6 +480,16 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     
     @Override
 	public double getTargetHeightHint() { return (hasTargetQualifier() ? getTargetQualifier().getHeight() : 0); }
+    
+    /**
+     * Returns the reflexive position this edge is located. 
+     * That is NW,NW,SE or SW if it is reflexive.
+     * UNKNOWN otherwise.
+     * @return
+     */
+    public Direction getReflexivePosition() {
+    	return this.fReflexivePosition;
+    }
     
     /**
      * Calculates the position of the points of a reflexive edge.

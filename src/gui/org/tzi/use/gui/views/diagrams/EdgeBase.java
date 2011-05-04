@@ -728,6 +728,22 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     }
     
     /**
+     * Determines the <code>WayPoint</code> of this edge which is located
+     * most to the direction specified by <code>direction</code>.
+     * @return The <code>WayPoint</code> which is located most to the specified direction.
+     */
+    public WayPoint getWayPointMostTo(Direction direction) {
+    	WayPoint result = fWayPoints.get(0);
+		for (WayPoint wp : fWayPoints) {
+			if (Direction.getDirection(result.getCenter(), wp.getCenter())
+					.isLocatedTo(direction))
+				result = wp;
+		}
+
+		return result;
+    }
+
+    /**
      * Type written into element tag
      */
     protected abstract String storeGetType();

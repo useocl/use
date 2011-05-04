@@ -26,6 +26,7 @@ import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.List;
 
+import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.uml.mm.MAssociation;
 
@@ -81,8 +82,28 @@ public final class AssociationName extends EdgeProperty {
     @Override
 	public Point2D.Double getDefaultPosition() {
 		Point2D.Double result = new Point2D.Double();
-		result.x = sourceWayPoint.getX() + ( targetWayPoint.getX() - sourceWayPoint.getX() ) / 2 - getBounds().getWidth() / 2 ;
-		result.y = sourceWayPoint.getY() + ( targetWayPoint.getY() - sourceWayPoint.getY() ) / 2 - 4 ;
+		
+		if (this.fEdge.isReflexive()) {
+			BinaryAssociationOrLinkEdge binaryEdge = (BinaryAssociationOrLinkEdge)this.fEdge;
+			
+			if (binaryEdge.getReflexivePosition().isLocatedNorth()) {
+				result.y = binaryEdge.getWayPointMostTo(Direction.NORTH).getCenter().getY() - getBounds().getHeight();
+			} else {
+				result.y = binaryEdge.getWayPointMostTo(Direction.SOUTH).getCenter().getY() + 4;
+			}
+			
+			double westX = binaryEdge.getWayPointMostTo(Direction.WEST).getCenter().getX();
+			double eastX = binaryEdge.getWayPointMostTo(Direction.EAST).getCenter().getX();
+			
+			result.x = westX + (eastX - westX) / 2 - getBounds().getWidth() / 2;
+			
+		} else {
+			Point2D sourceCenter = sourceWayPoint.getCenter();
+			Point2D targetCenter = targetWayPoint.getCenter();
+			result.x = sourceCenter.getX() + ( targetCenter.getX() - sourceCenter.getX() ) / 2 - getBounds().getWidth() / 2 ;
+			result.y = sourceCenter.getY() + ( targetCenter.getY() - sourceCenter.getY() ) / 2 - getBounds().getHeight();
+		}
+		
 		return result;
 	}
  
