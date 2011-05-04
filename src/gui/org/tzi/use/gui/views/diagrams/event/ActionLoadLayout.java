@@ -99,7 +99,7 @@ public class ActionLoadLayout extends AbstractAction {
         File f = fChooser.getSelectedFile();
         Log.verbose("File " + f);
 
-        //show all hidden nodes and edges. This is nesseccary, if 
+        // show all hidden nodes and edges. This is necessary, if 
         // nodes are hidden but a layout will be loaded which 
         // contains no hidden nodes or edges.
         if ( fHideAdmin != null ) {

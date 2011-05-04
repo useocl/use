@@ -299,7 +299,8 @@ public class ClassDiagram extends DiagramView
      * Deletes a class from the diagram.
      */
     public void deleteClass( MClass cls ) {
-        NodeBase n = (NodeBase) fClassToNodeMap.get( cls );
+        NodeBase n = fClassToNodeMap.get( cls );
+        
         if (n == null) {
             if ( fHiddenNodes.contains( cls ) ) {
                 fHiddenNodes.remove( cls );

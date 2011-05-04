@@ -60,9 +60,16 @@ import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 @SuppressWarnings("serial")
 public abstract class DiagramView extends JPanel 
                                   implements Printable {
-    protected DirectedGraph<NodeBase, EdgeBase> fGraph;
+    
+	/**
+	 * This graph contains all visible elements of a diagram
+	 */
+	protected DirectedGraph<NodeBase, EdgeBase> fGraph;
+    
     protected PrintWriter fLog;
+    
     protected Selection fNodeSelection;
+    
     protected Selection fEdgeSelection;
     
     // needed for autolayout
@@ -70,6 +77,7 @@ public abstract class DiagramView extends JPanel
     protected volatile SpringLayout<NodeBase> fLayouter;
     protected final Object fLock = new Object();
 
+    
     protected Set<Object> fHiddenNodes;
     protected Set<Object> fHiddenEdges;
     protected HideAdministration fHideAdmin; // coordinates the hiding of nodes
