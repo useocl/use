@@ -22,9 +22,7 @@
 package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Graphics2D;
-import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,28 +69,9 @@ public final class AssociationName extends EdgeProperty {
         }
         
         setColor( g );
-        drawText(g);
+        drawTextCentered(g);
         resetColor( g );
     }
-
-    /**
-	 * Draws the text centered inside the bounds returned by {@link #getBounds()}.
-	 * The text is underlined if {@link fEdge#isUnderlinedLabel()} returns true.
-	 * @param g
-	 */
-	protected void drawText(Graphics2D g) {
-		TextLayout layout = getTextLayout(g);
-		
-		Rectangle2D textBounds = layout.getBounds();
-		Rectangle2D bounds = getBounds();
-		
-		float x = Math.round((bounds.getCenterX() - textBounds.getWidth()  / 2));
-		
-		float y = Math.round((float)
-				(bounds.getCenterY() + (layout.getAscent() + layout.getDescent()) / 2 - layout.getDescent()));
-		
-		layout.draw(g, x, y);
-	}
 
 	/**
 	 * Calculates the default label position that is

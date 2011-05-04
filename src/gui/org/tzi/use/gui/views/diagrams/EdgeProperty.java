@@ -278,6 +278,25 @@ public abstract class EdgeProperty extends PlaceableNode {
 	}
 	
 	/**
+	 * Draws the text centered inside the bounds returned by {@link #getBounds()}.
+	 * The text is underlined if {@link fEdge#isUnderlinedLabel()} returns true.
+	 * @param g
+	 */
+	protected void drawTextCentered(Graphics2D g) {
+		TextLayout layout = getTextLayout(g);
+		
+		Rectangle2D textBounds = layout.getBounds();
+		Rectangle2D bounds = getBounds();
+		
+		float x = Math.round((bounds.getCenterX() - textBounds.getWidth()  / 2));
+		
+		float y = Math.round((float)
+				(bounds.getCenterY() + (layout.getAscent() + layout.getDescent()) / 2 - layout.getDescent()));
+		
+		layout.draw(g, x, y);
+	}
+	
+	/**
 	 * Moves the edge property dynamically on the user defined position if the
 	 * source or target node is moved.
 	 */

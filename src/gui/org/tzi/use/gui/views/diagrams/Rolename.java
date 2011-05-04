@@ -101,7 +101,7 @@ public final class Rolename extends EdgeProperty {
             	drawSelected(g);
             }
         	
-            g.drawString( fName, (int) getX() + 4, (int) getBounds().getMaxY() - 4 );
+            drawTextCentered(g);
         }
 
         resetColor( g );

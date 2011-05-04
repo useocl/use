@@ -93,7 +93,7 @@ public final class Multiplicity extends EdgeProperty {
         	drawSelected(g);
         }
         
-        g.drawString( fName, (int) getX() + 2, (int) getBounds().getMaxY() - 4 );
+        drawTextCentered(g);
         
         resetColor( g );
     }
