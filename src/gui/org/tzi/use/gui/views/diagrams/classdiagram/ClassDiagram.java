@@ -143,8 +143,7 @@ public class ClassDiagram extends DiagramView
         fHideAdmin = new HideAdministration( fNodeSelection, fGraph, fLayoutInfos );
         
         inputHandling = 
-            new DiagramInputHandling( fNodeSelection, fEdgeSelection,
-                                      fGraph, this);
+            new DiagramInputHandling( fNodeSelection, fEdgeSelection, this);
         
         fSelection = new ClassSelection(this);
         

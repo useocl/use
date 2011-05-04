@@ -114,7 +114,7 @@ public class NewObjectDiagram extends DiagramView
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount()==2) { 
                 // mouse over node?
-                PlaceableNode pickedObjectNode = findNode( fGraph, e.getX(),e.getY());
+                PlaceableNode pickedObjectNode = findNode( e.getX(),e.getY());
                 if (pickedObjectNode instanceof ObjectNode) {
                     ObjectNode obj = (ObjectNode)pickedObjectNode;
                     ObjectPropertiesView v = 
@@ -198,7 +198,7 @@ public class NewObjectDiagram extends DiagramView
                                                 null, this );
         
         DiagramInputHandling inputHandling = 
-            new DiagramInputHandling( fNodeSelection, fEdgeSelection, fGraph, this);
+            new DiagramInputHandling( fNodeSelection, fEdgeSelection, this);
         
         fParent.getModelBrowser().addHighlightChangeListener( this );
         

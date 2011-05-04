@@ -37,12 +37,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Iterator;
 
-import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.EdgeProperty;
-import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
@@ -64,7 +61,7 @@ public final class DiagramInputHandling implements MouseListener,
     
     private Selection fNodeSelection;
     private Selection fEdgeSelection;
-    private DirectedGraph<NodeBase, EdgeBase> fGraph;
+    
     private DiagramView fDiagram;
     
     // needed for mouse handling
@@ -76,13 +73,11 @@ public final class DiagramInputHandling implements MouseListener,
     private Cursor fCursor;
     private SelectionClassView opv ;
     
-    public DiagramInputHandling( Selection nodeSelection, Selection edgeSelection,
-                                 DirectedGraph<NodeBase, EdgeBase> graph, 
+    public DiagramInputHandling( Selection nodeSelection, Selection edgeSelection, 
                                  DiagramView diagram ) {
         
         fNodeSelection = nodeSelection;
         fEdgeSelection = edgeSelection;
-        fGraph = graph;
         fDiagram = diagram;
         
         new DropTarget(fDiagram, this);
@@ -109,11 +104,11 @@ public final class DiagramInputHandling implements MouseListener,
         int modifiers = e.getModifiers();
         
         if ( e.getClickCount() == 1  && modifiers == InputEvent.BUTTON1_MASK ) {
-               fDiagram.findEdge( fGraph, e.getX(), e.getY(), 1 );
+               fDiagram.findEdge( e.getX(), e.getY(), 1 );
         }
         
         // mouse over node?
-        PlaceableNode pickedObjectNode = fDiagram.findNode( fGraph, e.getX(), e.getY());
+        PlaceableNode pickedObjectNode = fDiagram.findNode( e.getX(), e.getY());
         
         // double click on EdgeProperty than reposition.
         if ( e.getClickCount() == 2 
@@ -124,7 +119,7 @@ public final class DiagramInputHandling implements MouseListener,
                 return;
            }
            // is there an edge place a node, which can be moved.
-           fDiagram.findEdge( fGraph, e.getX(), e.getY(), 2 );
+           fDiagram.findEdge( e.getX(), e.getY(), 2 );
         }
         
         

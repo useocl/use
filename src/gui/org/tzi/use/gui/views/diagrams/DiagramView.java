@@ -352,13 +352,12 @@ public abstract class DiagramView extends JPanel
     /**
      * Trys to find an edge on the given coordinates and adds a node 
      * on this edge if the mouse clickcount is 2.
-     * @param graph The edge has to be in this graph.
      * @param x X-coordinate.
      * @param y Y-coordinate.
      * @param clickCount The mouse click count.
      */
-    public void findEdge( DirectedGraph<NodeBase, EdgeBase> graph, int x, int y, int clickCount ) {
-        Iterator<EdgeBase> it = graph.edgeIterator();
+    public void findEdge( int x, int y, int clickCount ) {
+        Iterator<EdgeBase> it = fGraph.edgeIterator();
         
         while ( it.hasNext() ) {
             EdgeBase e = it.next();
@@ -372,9 +371,9 @@ public abstract class DiagramView extends JPanel
      * 
      * @return null if no such node could be found.
      */
-    public PlaceableNode findNode(DirectedGraph<NodeBase, EdgeBase> graph, int x, int y) {
+    public PlaceableNode findNode(int x, int y) {
         PlaceableNode res = null;
-        Iterator<NodeBase> nIter = graph.iterator();
+        Iterator<NodeBase> nIter = fGraph.iterator();
 
         while (nIter.hasNext()) {
             NodeBase n = nIter.next();
@@ -395,7 +394,7 @@ public abstract class DiagramView extends JPanel
         }
         
         if ( res == null ) {
-            Iterator<EdgeBase> eIter = graph.edgeIterator();
+            Iterator<EdgeBase> eIter = fGraph.edgeIterator();
             
             while ( eIter.hasNext() ) {
                 EdgeBase e = eIter.next();
