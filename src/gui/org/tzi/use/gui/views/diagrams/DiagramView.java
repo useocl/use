@@ -79,10 +79,15 @@ public abstract class DiagramView extends JPanel
 
     
     protected Set<Object> fHiddenNodes;
+    
     protected Set<Object> fHiddenEdges;
+    
     protected HideAdministration fHideAdmin; // coordinates the hiding of nodes
+    
     protected ActionLoadLayout fActionLoadLayout;
+    
     protected ActionSaveLayout fActionSaveLayout;
+    
     protected ActionSelectAll fActionSelectAll;
     
     protected DiagramOptions fOpt;
@@ -107,7 +112,7 @@ public abstract class DiagramView extends JPanel
 	}
 	
     /**
-     * Determinds if the auto layout of the diagram is on or off.
+     * Determines if the auto layout of the diagram is on or off.
      * @return <code>true</code> if the auto layout is on, otherwise
      * <code>false</code>
      */
