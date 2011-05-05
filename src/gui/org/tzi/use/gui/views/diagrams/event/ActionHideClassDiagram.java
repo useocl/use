@@ -142,14 +142,6 @@ public final class ActionHideClassDiagram extends ActionHide {
                     NodeBase dn = 
                         (NodeBase) fNaryEdgeToDiamondNodeMap.get( cls );
                     fLayoutXMLForHiddenElements += dn.storePlacementInfo( true );
-                    
-//                    // save HalfEdges
-//                    Set halfEdges = (Set) fEdgeToHalfEdgeMap.get( cls );
-//                    Iterator naryHalfEdgesIt = halfEdges.iterator();
-//                    while ( naryHalfEdgesIt.hasNext() ) {
-//                        HalfEdge he = (HalfEdge) naryHalfEdgesIt.next();
-//                        fLayoutXMLForHiddenElements += he.storePlacementInfo( true );
-//                    }
                 }
             } else {
                 // check if node is in one of the binary edges
@@ -190,14 +182,6 @@ public final class ActionHideClassDiagram extends ActionHide {
                         NodeBase n = 
                             (NodeBase) fNaryEdgeToDiamondNodeMap.get( naryEdge );
                         fLayoutXMLForHiddenElements += n.storePlacementInfo( true );
-                        
-//                        // save HalfEdges
-//                        List halfEdges = (ArrayList) fEdgeToHalfEdgeMap.get( naryEdge );
-//                        Iterator naryHalfEdgeIt = halfEdges.iterator();
-//                        while ( naryHalfEdgeIt.hasNext() ) {
-//                            HalfEdge he = (HalfEdge) naryHalfEdgeIt.next();
-//                            fLayoutXMLForHiddenElements += he.storePlacementInfo( true );
-//                        }
                     }
                 }
                 
