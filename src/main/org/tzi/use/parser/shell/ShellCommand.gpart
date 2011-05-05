@@ -65,6 +65,11 @@ import org.tzi.use.parser.ParseErrorHandler;
         return fParseErrorHandler.getFileName();
     }
     
+    @Override
+    public String getErrorHeader(RecognitionException e) {
+    	return "line " + e.line + ":" + e.charPositionInLine;
+    }
+    	
     public void emitErrorMessage(String msg) {
         fParseErrorHandler.reportError(msg);
     }
