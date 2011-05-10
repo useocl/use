@@ -365,10 +365,11 @@ public class ASTOperationExpression extends ASTExpression {
             break;
 
         case SRC_COLLECTION_TYPE + DOT + NO_PARENTHESES:
+        case SRC_COLLECTION_TYPE + DOT + NO_PARENTHESES + EXPLICIT_ROLENAME:
             // c.op    200 (5) with implicit (2,4,1)
             if (Options.disableCollectShorthand )
                 throw new SemanticException(fOp, MSG_DISABLE_COLLECT_SHORTHAND);
-            res = collectShorthandWithOutArgs(opname, srcExpr);
+            res = collectShorthandWithOutArgs(ctx, opname, srcExpr, fExplicitRolenameOrQualifiers, fQualifiers);
             break;
 
         case SRC_COLLECTION_TYPE + DOT + PARENTHESES:
@@ -408,7 +409,7 @@ public class ASTOperationExpression extends ASTExpression {
      * Handles shorthand notation for collect and expands to an
      * explicit collect expression. 
      */
-    private Expression collectShorthandWithOutArgs(String opname, Expression srcExpr)
+    private Expression collectShorthandWithOutArgs(Context ctx, String opname, Expression srcExpr, List<ASTExpression> explicitRolenameOrQualifiers, List<ASTExpression> qualiferValues)
         throws SemanticException 
     {
         Expression res = null;
@@ -434,7 +435,7 @@ public class ASTOperationExpression extends ASTExpression {
 
                     // transform c.r into c->collect($e | $e.r)
                     ExpVariable eVar = new ExpVariable("$e", elemType);
-                    Expression eNav = genNavigation(fOp, srcClass, eVar, dst);
+                    Expression eNav = genNavigation(ctx, fOp, srcClass, eVar, dst, explicitRolenameOrQualifiers, qualiferValues);
                     eNav.setIsPre(this.isPre());
                     res = genImplicitCollect(srcExpr, eNav, elemType);
                 }
