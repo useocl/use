@@ -50,4 +50,10 @@ info vars
 *-> Set{@C1,@C3} : Set(C)
 c
 *Error: postcondition false in operation call `C::i(self:@C1)'.
+!a:=1
+!b:=a.toString()
+?b
+*-> '1' : String
+!c:=a.toString().substring(1,1)
+*-> '1' : String
 exit
