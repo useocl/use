@@ -27,19 +27,19 @@ import org.tzi.use.util.StringUtil;
 
 
 /**
- * TODO
+ * This exception is raised by the SOIL-Compiler when
+ * an object was expected as a source, but another
+ * type is present.
  * @author Daniel Gent
  *
  */
+@SuppressWarnings("serial")
 public class NotAnObjectException extends CompilationFailedException {
-	/** TODO */
-	private static final long serialVersionUID = 1L;
-
 	
 	/**
-	 * TODO
-	 * @param statement
-	 * @param expression
+	 * Constructs a new not an object exception.
+	 * @param statement The <code>ASTStatement</code> that has failed to compile
+	 * @param expression The <code>Expression</code> which was given as a source 
 	 */
 	public NotAnObjectException(
 			ASTStatement statement, 

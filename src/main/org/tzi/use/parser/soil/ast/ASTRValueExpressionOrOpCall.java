@@ -69,10 +69,9 @@ public class ASTRValueExpressionOrOpCall extends ASTRValue {
 			
 			return new MRValueOperationCall(operationCallStatement);
 			
-		} catch (NotCallableException e) {
-			// obviously nothing callable...
-		} catch (UndefinedOperationException e) {
-			// callable, but not SOIL defined
+		} catch (CompilationFailedException e) {
+			// Not a soil operation call
+			//FIXME: Very bad style to use exceptions for conditional flows!
 		}
 		
 		// the expression is not a soil operation call
