@@ -27,23 +27,26 @@ import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MRValueOperationCall;
 import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.NotCallableException;
-import org.tzi.use.util.soil.exceptions.compilation.UndefinedOperationException;
 
 
 /**
- * TODO
+ * AST node which encapsulates a operation call statement
+ * or an expression.
+ * This lets the USE parser untouched.
+ * The generation process tries to generate a operation call statement
+ * first. If this is unsuccessful an expression is generated.
  * @author Daniel Gent
- *
  */
 public class ASTRValueExpressionOrOpCall extends ASTRValue {
-	/** TODO */
+	/**
+	 *  The encapsulated expression
+	 */
 	private ASTExpression fExpressionOrOpCall;
 	
 	
 	/**
-	 * TODO
-	 * @param expressionOrOpCall
+	 * Creates a new <code>ASTRValueExpressionOrOpCall</code>.
+	 * @param expressionOrOpCall The encapsulated expression
 	 */
 	public ASTRValueExpressionOrOpCall(ASTExpression expressionOrOpCall) {
 		fExpressionOrOpCall = expressionOrOpCall;
