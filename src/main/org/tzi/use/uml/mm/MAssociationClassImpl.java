@@ -557,7 +557,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 
 	@Override
 	public void addRedefines(MAssociation parentAssociation) {
-		this.addRedefines(parentAssociation);
+		this.fAssociationImpl.addRedefines(parentAssociation);
 	}
 
 	@Override
