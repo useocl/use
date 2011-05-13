@@ -678,8 +678,7 @@ public class NewObjectDiagram extends DiagramView
         if (!fNodeSelection.isEmpty()) {
             List<MObject> selectedObjects = new ArrayList<MObject>();
             
-            for(Iterator<Selectable> it = fNodeSelection.iterator(); it.hasNext();) {
-                PlaceableNode node = (PlaceableNode) it.next();
+            for (PlaceableNode node : fNodeSelection) {
                 if (node instanceof ObjectNode && node.isDeletable()) 
                     selectedObjects.add(((ObjectNode) node).object());
                 else if (node instanceof AssociationName) { // anfangs jj 
@@ -688,6 +687,7 @@ public class NewObjectDiagram extends DiagramView
                 	anames.add((AssociationName)node);
                 } 
             }
+            
             final MObject[] selectedObjs = (MObject[])selectedObjects.toArray(new MObject[0]);
             if (selectedObjs.length==1) {
                 popupMenu.insert( new ActionShowProperties("Edit properties of " + 

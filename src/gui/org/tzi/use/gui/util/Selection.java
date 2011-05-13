@@ -33,7 +33,7 @@ import org.tzi.use.gui.views.diagrams.Selectable;
 
 /** 
  * A selection maintains a collection of objects that implement 
- * the <code>Selectable<code>  interface. Clients may register for 
+ * the <code>Selectable</code>  interface. Clients may register for 
  * event notification when the selection changes.
  *
  * Note: All graphical presentation and updates have to be done by
@@ -42,8 +42,16 @@ import org.tzi.use.gui.views.diagrams.Selectable;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public class Selection implements Iterable<Selectable> { 
-    private Set<Selectable> fSelection;  // selected components
+public class Selection<T extends Selectable> implements Iterable<T> { 
+ 
+    /**
+     * The selected components
+     */
+	private Set<T> fSelection;
+    
+	/**
+	 * The listeners
+	 */
     protected EventListenerList fListenerList = new EventListenerList();
 
     /**
@@ -51,7 +59,7 @@ public class Selection implements Iterable<Selectable> {
      * state of the selection has changed.  
      */
     @SuppressWarnings("serial")
-	public class ChangeEvent extends EventObject {
+	public static class ChangeEvent extends EventObject {
         public ChangeEvent(Object source) {
             super(source);
         }
@@ -62,16 +70,16 @@ public class Selection implements Iterable<Selectable> {
     }
 
     public Selection() {
-        fSelection = new HashSet<Selectable>();
+        fSelection = new HashSet<T>();
     }
 
-    public void add(Selectable sel) {
+    public void add(T sel) {
         fSelection.add(sel);
         sel.setSelected(true);
         fireStateChanged();
     }
 
-    public void remove(Selectable sel) {
+    public void remove(T sel) {
         fSelection.remove(sel);
         sel.setSelected(false);
         fireStateChanged();
@@ -80,7 +88,7 @@ public class Selection implements Iterable<Selectable> {
     /**
      * Returns true if the specified object is currently selected.
      */
-    public boolean isSelected(Selectable sel) {
+    public boolean isSelected(T sel) {
         return fSelection.contains(sel);
     }
 
@@ -121,9 +129,9 @@ public class Selection implements Iterable<Selectable> {
     /**
      * Returns an iterator over all selected components.
      *
-     * @return iterator over Selectable objects.
+     * @return iterator over <code>Selectable</code> objects.
      */
-    public Iterator<Selectable> iterator() {
+    public Iterator<T> iterator() {
         return fSelection.iterator();
     }
 

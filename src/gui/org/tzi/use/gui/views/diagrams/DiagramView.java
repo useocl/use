@@ -68,9 +68,9 @@ public abstract class DiagramView extends JPanel
     
     protected PrintWriter fLog;
     
-    protected Selection fNodeSelection;
+    protected Selection<PlaceableNode> fNodeSelection;
     
-    protected Selection fEdgeSelection;
+    protected Selection<EdgeBase> fEdgeSelection;
     
     // needed for autolayout
     protected LayoutThread fLayoutThread;
@@ -82,7 +82,10 @@ public abstract class DiagramView extends JPanel
     
     protected Set<Object> fHiddenEdges;
     
-    protected HideAdministration fHideAdmin; // coordinates the hiding of nodes
+    /** 
+     * coordinates the hiding of nodes
+     */
+    protected HideAdministration fHideAdmin;
     
     protected ActionLoadLayout fActionLoadLayout;
     
@@ -144,7 +147,7 @@ public abstract class DiagramView extends JPanel
      * a node, additional calculations are needed, which are not required
      * when "just" redrawing.
      */
-    public void invalidateContent() {
+    public synchronized void invalidateContent() {
     	this.isDiagramContentChanged = true;
     	this.repaint();
     }

@@ -56,7 +56,7 @@ public abstract class MModelElementImpl implements MModelElement {
     
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
-    class MutableInteger {
+    static class MutableInteger {
         int fInt = 1;
     }
 
@@ -163,8 +163,7 @@ public abstract class MModelElementImpl implements MModelElement {
     public int compareTo(MModelElement o) {
         if (o == this )
             return 0;
-        if (! (o instanceof MModelElement) )
-            throw new ClassCastException();
+
         return fName.compareTo(((MModelElement) o).name());
     }
 

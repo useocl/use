@@ -156,7 +156,7 @@ public class Monitor {
     public Monitor(MSystem system, String host, String port) {
     	MElementAnnotation modelAnnotation = system.model().getAnnotation("Monitor");
     	
-    	if (host == "") {
+    	if ("".equals(host)) {
     		if (modelAnnotation != null && modelAnnotation.hasAnnotationValue("host")) {
     			this.host = modelAnnotation.getAnnotationValue("host");
     		} else {
@@ -166,7 +166,7 @@ public class Monitor {
     		this.host = host;
     	}
     	
-    	if (port == "") {
+    	if ("".equals(port)) {
     		if (modelAnnotation != null && modelAnnotation.hasAnnotationValue("port")) {
     			this.port = Integer.parseInt( modelAnnotation.getAnnotationValue("port") );
     		} else {

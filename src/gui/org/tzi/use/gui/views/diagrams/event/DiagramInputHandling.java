@@ -35,10 +35,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Iterator;
 
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.Selectable;
@@ -59,8 +59,8 @@ public final class DiagramInputHandling implements MouseListener,
                                                    DropTargetListener,
                                                    KeyListener {
     
-    private Selection fNodeSelection;
-    private Selection fEdgeSelection;
+    private Selection<PlaceableNode> fNodeSelection;
+    private Selection<EdgeBase> fEdgeSelection;
     
     private DiagramView fDiagram;
     
@@ -73,7 +73,7 @@ public final class DiagramInputHandling implements MouseListener,
     private Cursor fCursor;
     private SelectionClassView opv ;
     
-    public DiagramInputHandling( Selection nodeSelection, Selection edgeSelection, 
+    public DiagramInputHandling( Selection<PlaceableNode> nodeSelection, Selection<EdgeBase> edgeSelection, 
                                  DiagramView diagram ) {
         
         fNodeSelection = nodeSelection;
@@ -146,7 +146,7 @@ public final class DiagramInputHandling implements MouseListener,
                 fDragStart = e.getPoint();
             } else {
                 // click in background, clear selection
-                if ( fNodeSelection.clear() | fEdgeSelection.clear() ) {
+                if ( fNodeSelection.clear() || fEdgeSelection.clear() ) {
                 	if(opv!= null)
                 	 ((SelectionClassTableModel)(opv.fTableModel)).clearSelection(); // jj
                     fDiagram.repaint();
@@ -235,17 +235,16 @@ public final class DiagramInputHandling implements MouseListener,
 	 * @param dy
 	 */
 	public void moveSelectedObjects(int dx, int dy) {
-		for (Selectable sel : fNodeSelection) {
+		for (PlaceableNode sel : fNodeSelection) {
 		    sel.setDragged( true );
 		}
 		
 		// move all selected components to new position.
-		Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
-		while (nodeIterator.hasNext()) {
-		    PlaceableNode node = (PlaceableNode) nodeIterator.next();
-		    node.setDraggedPosition(dx, dy);
-		    if ( node instanceof WayPoint ) {
-		        ((WayPoint) node).setWasMoved( true );
+		for (PlaceableNode sel : fNodeSelection) {
+		    sel.setDraggedPosition(dx, dy);
+		    
+		    if ( sel instanceof WayPoint ) {
+		        ((WayPoint) sel).setWasMoved( true );
 		    }
 		}
 	}

@@ -121,8 +121,8 @@ public class ClassDiagram extends DiagramView
         fParent = parent;
         fHiddenNodes = new HashSet<Object>();
         fHiddenEdges = new HashSet<Object>();
-        fNodeSelection = new Selection();
-        fEdgeSelection = new Selection();
+        fNodeSelection = new Selection<PlaceableNode>();
+        fEdgeSelection = new Selection<EdgeBase>();
         
         setLayout( null );
         setBackground( Color.white );
@@ -595,10 +595,7 @@ public class ClassDiagram extends DiagramView
 		final Set<Object> selectedObjects = new HashSet<Object>();
 		
         if ( !fNodeSelection.isEmpty() ) {
-            Iterator<Selectable> nodeIterator = fNodeSelection.iterator();
-            
-            while ( nodeIterator.hasNext() ) {
-                PlaceableNode node = (PlaceableNode) nodeIterator.next();
+            for (PlaceableNode node : fNodeSelection) {
                 if ( node instanceof ClassNode && node.isDeletable() ) {
                 	ClassNode cn = (ClassNode)node;
                 	selectedClasses.add( cn.cls() );
@@ -613,7 +610,7 @@ public class ClassDiagram extends DiagramView
 					
 					anames.add((AssociationName)node);//jj
                 } //jj
-                }
+            }
             
             String txt = null;
             if ( selectedObjects.size() == 1 ) {
