@@ -255,13 +255,6 @@ public class SequenceValue extends CollectionValue {
         return res;
     }
 
-    public Object clone() throws CloneNotSupportedException {
-        // TODO: why has SequenceValue a clone method, while Set and BagValue don't?
-        SequenceValue res = (SequenceValue)super.clone();
-        res.fElements = new ArrayList<Value>(fElements);
-        return res;
-    }
-
     public Collection<Value> collection() {
         return fElements;
     }
@@ -284,7 +277,7 @@ public class SequenceValue extends CollectionValue {
 
     protected Integer getClassCompareNr()
     {
-    	return new Integer(2);
+    	return Integer.valueOf(2);
     }
     
     /** 
