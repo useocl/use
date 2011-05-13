@@ -508,7 +508,7 @@ public class Monitor {
     	end = System.currentTimeMillis();
     	duration = (end - start);
 		Log.println(" Creating " + countLinks + " links took " + duration + "ms ("
-				+ (double)countLinks / (duration / 1000) + " links/s).");
+				+ ((double)countLinks) / (duration / 1000) + " links/s).");
     }
     
     private void updateAttribute(ObjectReference obj, Field field, com.sun.jdi.Value javaValue) {

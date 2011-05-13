@@ -20,8 +20,14 @@ public class DateValue extends Value {
 	}
 	
 	@Override
-	public boolean equals(Object obj) {		
-		return value.equals(obj);
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (obj instanceof DateValue) {
+			return value.equals(((DateValue)obj).value);
+		} else {
+			return false;
+		}
 	}
 
 	@Override

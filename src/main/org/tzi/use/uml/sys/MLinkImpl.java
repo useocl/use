@@ -167,9 +167,11 @@ final class MLinkImpl implements MLink {
      */
     @Override
     public boolean equals(Object obj) { 
-        if (obj == this )
+        if (obj == this)
             return true;
-
+        
+        if (obj == null) return false;
+        
         // MLinkImpl implements hashCode() so
         // when the hash codes differ they are not equal
         if (this.hashCode() != obj.hashCode())

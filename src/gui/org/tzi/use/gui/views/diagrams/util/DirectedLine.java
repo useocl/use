@@ -111,10 +111,14 @@ public abstract class DirectedLine implements I_DirectedLine {
      * @return true if objects equal, false otherwise
      */
     public boolean equals(final Object obj) {
-        if (obj==null) return false;
-                    
-        final I_DirectedLine line = (I_DirectedLine) obj;
-        return hasSameClass(line) && hasSamePosition(line);
+        if (this == obj) {
+        	return true;
+        } else if (obj instanceof I_DirectedLine) {
+        	final I_DirectedLine line = (I_DirectedLine) obj;
+            return hasSameClass(line) && hasSamePosition(line);
+        } else {
+        	return false;
+        }
     }
 
     public int hashCode() {

@@ -65,11 +65,17 @@ public final class MLinkSet {
         }
         
         public final boolean equals(Object o) {
-            CacheEntry e = (CacheEntry)o;
+            if (this == o) {
+            	return true;
+            } else if (o instanceof CacheEntry) {
+            	CacheEntry e = (CacheEntry)o;
             
-            return e.end == end && 
-            	   e.object.equals( object ) && 
-            	   (qualifiers == null ? e.qualifiers == null : qualifiers.equals(e.qualifiers));
+	            return e.end == end && 
+	            	   e.object.equals( object ) && 
+	            	   (qualifiers == null ? e.qualifiers == null : qualifiers.equals(e.qualifiers));
+            } else {
+            	return false;
+            }
         }
         
         @Override

@@ -60,10 +60,25 @@ class GStatistic implements Comparable<GStatistic> {
             fCountInvalid++;
     }
 
+    @Override
     public int compareTo(GStatistic o) {
         return (new Long(diff())).compareTo(new Long(o.diff()));
     }
 
+    @Override
+    public boolean equals(Object o) {
+    	if (this == o) {
+    		return true;
+    	} else if (o == null) {
+    		return false;
+    	} else if (o instanceof GStatistic) {
+    		GStatistic s = (GStatistic)o;
+    		return this.compareTo(s) == 0;
+    	} else {
+    		return false;
+    	}
+    }
+    
     public String toStringForStatistics() {
         String valid = "" + fCountValid;
         String invalid = "" + fCountInvalid;

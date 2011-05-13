@@ -110,8 +110,14 @@ public abstract class DirectedGraphic implements I_DirectedGraphic {
      * @return true if objects equal, false otherwise
      */
     public boolean equals(final Object obj) {
-        final DirectedGraphic other = ((DirectedGraphic) obj);
-        return containedLines.equals(other.containedLines);
+    	if (obj == this) {
+    		return true;
+    	} else if (obj instanceof DirectedGraphic) {
+    		final DirectedGraphic other = ((DirectedGraphic) obj);
+    		return containedLines.equals(other.containedLines);
+    	} else {
+    		return false;
+    	}
     }
 
     public int hashCode() {

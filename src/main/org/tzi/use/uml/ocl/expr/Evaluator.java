@@ -179,7 +179,7 @@ public final class Evaluator {
                           ArrayList<Expression> exprList, 
                           MSystemState systemState) {
         if (numThreads < 1 )
-            new IllegalArgumentException("numThreads == " + numThreads);
+            throw new IllegalArgumentException("numThreads == " + numThreads);
 
         Queue result = new Queue();
         ThreadedEvaluator.Controller controller = 
