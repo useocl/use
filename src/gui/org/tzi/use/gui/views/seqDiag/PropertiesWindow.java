@@ -161,7 +161,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
             fSizeBox.addItem(new Integer(sizes[i]));
         }
         int actFontSize = fSeqDiag.getProperties().getFontSize();
-        fSizeBox.setSelectedItem(new Integer(actFontSize));
+        fSizeBox.setSelectedItem(Integer.valueOf(actFontSize));
 
         // Activation-Tab
         fActivation = new JPanel();
@@ -821,7 +821,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
      * 
      * @author Antje Werner
      */
-    public class NumberDocument extends PlainDocument {
+    public static class NumberDocument extends PlainDocument {
 
         /**
          * Inserts a String in the Document.

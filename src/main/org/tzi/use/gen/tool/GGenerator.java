@@ -109,9 +109,9 @@ public class GGenerator {
         Log.setShowWarnings(false);
         
         if (randomNr == null)
-            randomNr = new Long( (new Random()).nextInt(10000) );
+            randomNr = Long.valueOf( (new Random()).nextInt(10000) );
         if (limit == null)
-            limit = new Long( Long.MAX_VALUE );
+            limit = Long.valueOf( Long.MAX_VALUE );
 
         List<GProcedure> procedures = null;
         GProcedureCall call = null;

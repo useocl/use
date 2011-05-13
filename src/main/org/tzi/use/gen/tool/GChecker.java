@@ -62,7 +62,7 @@ class GStatistic implements Comparable<GStatistic> {
 
     @Override
     public int compareTo(GStatistic o) {
-        return (new Long(diff())).compareTo(new Long(o.diff()));
+        return (Long.valueOf(diff())).compareTo(Long.valueOf(o.diff()));
     }
 
     @Override
@@ -77,6 +77,11 @@ class GStatistic implements Comparable<GStatistic> {
     	} else {
     		return false;
     	}
+    }
+    
+    @Override
+    public int hashCode() {
+    	return Long.valueOf(diff()).hashCode();
     }
     
     public String toStringForStatistics() {

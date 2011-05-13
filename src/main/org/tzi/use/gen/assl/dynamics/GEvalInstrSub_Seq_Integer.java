@@ -98,7 +98,7 @@ class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCaller {
             Collection<Value> values = new ArrayList<Value>(wantedSize);
             
             for (int k=0; k < origSize; k++)
-                mappings.add( new Integer(k) );
+                mappings.add( Integer.valueOf(k) );
             
             for (int k=0; k < wantedSize; k++) {
                 int r = conf.random().nextInt(origSize-k);
