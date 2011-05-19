@@ -45,6 +45,9 @@ public final class TupleType extends Type {
 
         public Part(String name, Type type) {
             fName = name;
+            if (type == null)
+            	throw new IllegalArgumentException("Type of tuple part cannot be null.");
+            
             fType = type;
         }
 
@@ -149,7 +152,11 @@ public final class TupleType extends Type {
     			return TypeFactory.mkOclAny();
     		
     		TupleType.Part otherPart = otherType.fParts.get(part.name());
-    		commonParts[index] = new Part(part.fName, part.fType.getLeastCommonSupertype(otherPart.fType));
+    		Type partType = part.fType.getLeastCommonSupertype(otherPart.fType);
+    		
+    		if (partType == null) return null;
+    		
+    		commonParts[index] = new Part(part.fName, partType);
     		index++;
     	}
     	
