@@ -136,7 +136,7 @@ public class LayeredLayout_test {
     	DirectedGraph<Integer, DirectedEdgeBase<Integer>> g = new DirectedGraphBase<Integer, DirectedEdgeBase<Integer>>(N);
         Integer[] nodes = new Integer[N];
         for (int i = 0; i < N; i++) {
-            nodes[i] = new Integer(i + 1);
+            nodes[i] = i + 1;
             g.add(nodes[i]);
         }
         

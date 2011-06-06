@@ -400,7 +400,7 @@ public class ModelBrowser extends JPanel
         // which nodes are expanded
         for ( int i=0; i<fTree.getRowCount(); i++ ){
             if ( fTree.isExpanded( i ) ){
-                pathWereExpanded.add( new Integer(i) );
+                pathWereExpanded.add( i );
             }
             // which node is selected
             if ( fTree.isRowSelected( i ) ) {

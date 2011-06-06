@@ -44,7 +44,7 @@ public enum Direction {
 	static Map<Integer, Direction> intMap = new HashMap<Integer, Direction>();
 	static {
 		for (Direction d : Direction.values()) {
-			intMap.put(new Integer(d.getValue()), d);
+			intMap.put(d.getValue(), d);
 		}
 	}
 	
@@ -102,10 +102,10 @@ public enum Direction {
 			vertical = SOUTH.getValue();
 		}
 		
-		return getDirection(new Integer(vertical + horizontal));
+		return getDirection(vertical + horizontal);
 	}
 	
 	public static Direction getDirection(int value) {
-		return intMap.get(new Integer(value));
+		return intMap.get(value);
 	}
 }

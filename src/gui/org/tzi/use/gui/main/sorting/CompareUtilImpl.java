@@ -36,7 +36,7 @@ public class CompareUtilImpl implements CompareUtil {
      *         second.
      */
     public int compareInt(final int firstInt, final int secondInt) {
-        return new Integer(firstInt).compareTo(new Integer(secondInt));
+        return Integer.valueOf(firstInt).compareTo(Integer.valueOf(secondInt));
     }
 
     /**

@@ -40,6 +40,6 @@ public class WayPointComparator implements Comparator<WayPoint> {
      *         second.
      */
     public int compare( WayPoint obj1, WayPoint obj2) {
-        return new Integer(obj1.getID()).compareTo(new Integer(obj2.getID()));
+        return Integer.valueOf(obj1.getID()).compareTo(Integer.valueOf(obj2.getID()));
     }
 }

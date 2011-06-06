@@ -1697,8 +1697,6 @@ public class ExprEvalBrowser extends JPanel {
      * listener for the tree-modification-comobox in the SOUTH of the window
      */
     class EvalPopupMenuListener implements PopupMenuListener {
-        int entry = -1;
-
         public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
             fComboTreeDisplays.setSelectedIndex(-1);
             fComboTreeDisplays.removeItem("Display options");

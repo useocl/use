@@ -125,11 +125,7 @@ options {
   memoize = true;
 }
 : 
-  varName = IDENT
-  COLON_EQUAL
-  rVal = rValue
-  
-  { $n = new ASTVariableAssignmentStatement($varName.text, $rVal.n); }
+  varName = IDENT COLON_EQUAL rVal = rValue { $n = new ASTVariableAssignmentStatement($varName.text, $rVal.n); }
   |
   vNames = identListMin1
   COLON_EQUAL
@@ -441,16 +437,13 @@ options {
   memoize = true;
 }
 :
-  e = inSoilExpression
-  { $n = new ASTRValueExpressionOrOpCall($e.n); }
-  |
-  loc = lobjCreateStat
+    e = inSoilExpression { $n = new ASTRValueExpressionOrOpCall($e.n); }
+  | loc = lobjCreateStat
   { 
     $loc.n.setSourcePosition($start);
     $n = new ASTRValueNewLinkObject($loc.n);
   }
-  |
-  'new' 
+  | 'new' 
   objType = simpleType
   (
     LPAREN
