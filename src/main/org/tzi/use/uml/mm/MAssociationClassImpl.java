@@ -212,6 +212,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      */
     public void addOperation( MOperation op ) throws MInvalidModelException {
         fClassImpl.addOperation( op );
+        op.setClass(this);
     }
 
     /**
