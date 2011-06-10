@@ -22,8 +22,6 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -31,16 +29,10 @@ import javax.swing.AbstractAction;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
-import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.GeneralizationEdge;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.classdiagram.EnumNode;
-import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.gui.views.diagrams.Selectable;
 
 /**
  * 
@@ -54,49 +46,7 @@ public abstract class ActionHide extends AbstractAction {
      * All nodes which are suppose to be hidden in a diagram.
      */
     Set<Object> fNodesToHide;
-    /**
-     * All actuall hidden nodes in a diagram.
-     */
-    Set<Object> fHiddenNodes;
-    /**
-     * All actuall hidden edges in a diagram.
-     */
-    Set<Object> fHiddenEdges;
-    /**
-     * Mapping from an edge (Associaiton/Link) to a BinaryEdge.
-     * (MAssociation -> BinaryEdge) or (MLink -> BinaryEdge)
-     */
-    Map<?, BinaryAssociationOrLinkEdge> fEdgeToBinaryEdgeMap;
-    /**
-     * Mapping from a node (Class/Object) to a NodeBase.
-     * (MClass -> ClassNode) or (MObject -> ObjectNode)
-     */
-    Map<?, ? extends NodeBase> fNodeToNodeBaseMap;
-    /**
-     * Mapping from an n-ary edge (Associaiton/Link) to a DiamondNode.
-     * (MAssociation -> DiamondNode) or (MLink -> DiamondNode)
-     */
-    Map<?, DiamondNode> fNaryEdgeToDiamondNodeMap;
-    /**
-     * Mapping from an edge (Associaiton/Link) to a Set of HalfEdges.
-     * (MAssociation -> Set(HalfEdge)) or (MLink -> Set(HalfEdge))
-     */
-    Map<?, List<EdgeBase>> fEdgeToHalfEdgeMap;
-    /**
-     * Mapping from an edge node (AssociaitonClass/LinkObject) to an NodeEdge.
-     * (MAssociationClass -> NodeEdge) or (MLinkObject -> NodeEdge)
-     */
-    Map<?, EdgeBase> fEdgeToNodeEdgeMap;
-    /**
-     * Mapping from a generalization to an GeneralizationEdge.
-     * (MGeneralization -> GeneralizationEdge)
-     */
-    Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
-    /**
-     * Mapping from an enumeration to an EnumNode.
-     * (EnumType -> EnumNode)
-     */
-    Map<EnumType, EnumNode> fEnumToNodeMap;
+    
     /**
      * All hidden nodes or edges are saved into these properties.
      */
@@ -104,15 +54,11 @@ public abstract class ActionHide extends AbstractAction {
     /**
      * Actual selected nodes in the diagram.
      */
-    Selection fNodeSelection;
+    Selection<Selectable> fNodeSelection;
     /**
      * This graph contains all nodes and edges of a diagram.  
      */
     DirectedGraph<NodeBase, EdgeBase> fGraph;
-    /**
-     * The diagram the graph, nodes and edges belong to.
-     */
-    DiagramView fDiagram;
     /**
      * XML representation of the hidden element.
      */

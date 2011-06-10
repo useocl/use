@@ -84,18 +84,38 @@ public class LayoutInfos {
         fLog = log;
     }
 
+    /**
+     * Mapping from an edge (Associaiton/Link) to a BinaryEdge.
+     * (MAssociation -> BinaryEdge) or (MLink -> BinaryEdge)
+     */
     public Map<?, BinaryAssociationOrLinkEdge> getBinaryEdgeToEdgeMap() {
         return fBinaryEdgeToEdgeMap;
     }
+    
+    /**
+     * Mapping from an edge node (AssociationClass/LinkObject) to an NodeEdge.
+     * (MAssociationClass -> NodeEdge) or (MLinkObject -> NodeEdge)
+     */
     public Map<?, EdgeBase> getEdgeNodeToEdgeMap() {
         return fEdgeNodeToEdgeMap;
     }
+    
+    /**
+     * Mapping from an enumeration to an EnumNode.
+     * (EnumType -> EnumNode)
+     */
     public Map<EnumType, EnumNode> getEnumToNodeMap() {
         return fEnumToNodeMap;
     }
+    
+    /**
+     * Mapping from a generalization to an GeneralizationEdge.
+     * (MGeneralization -> GeneralizationEdge)
+     */
     public Map<MGeneralization, GeneralizationEdge> getGenToGeneralizationEdge() {
         return fGenToGeneralizationEdge;
     }
+    
     public Set<Object> getHiddenEdges() {
         return fHiddenEdges;
     }
@@ -108,15 +128,23 @@ public class LayoutInfos {
     public void setHiddenNodes( Set<Object> hiddenNodes ) {
         fHiddenNodes = hiddenNodes;
     }
+    
+    /**
+     * Mapping from an n-ary edge (Associaiton/Link) to a DiamondNode.
+     * (MAssociation -> DiamondNode) or (MLink -> DiamondNode)
+     */
     public Map<?, DiamondNode> getNaryEdgeToDiamondNodeMap() {
         return fNaryEdgeToDiamondNodeMap;
     }
-    public Map<?, List<EdgeBase>> getNaryEdgeToHalfEdgeMap() {
-        return fNaryEdgeToHalfEdgeMap;
-    }
+    
+    /**
+     * Mapping from a node (Class/Object) to a NodeBase.
+     * (MClass -> ClassNode) or (MObject -> ObjectNode)
+     */
     public Map<?, ? extends NodeBase> getNodeToNodeMap() {
         return fNodeToNodeMap;
     }
+    
     public DiagramOptions getOpt() {
         return fOpt;
     }

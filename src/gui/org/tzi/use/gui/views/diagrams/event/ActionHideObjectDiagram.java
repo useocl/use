@@ -28,10 +28,11 @@ import java.util.Set;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationClassOrObject;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.BinaryAssociationClassOrObject;
+import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.xmlparser.XMLParserAccess;
 import org.tzi.use.gui.xmlparser.XMLParserAccessImpl;
@@ -55,21 +56,12 @@ public final class ActionHideObjectDiagram extends ActionHide {
     private NewObjectDiagram fDiagram;
 
     public ActionHideObjectDiagram( String text, Set<?> nodesToHide,
-                                    Selection nodeSelection,
+                                    Selection<Selectable> nodeSelection,
                                     DirectedGraph<NodeBase, EdgeBase> graph, LayoutInfos layoutInfos ) {
         super(text);
         setNodes( nodesToHide );
         
         fLayoutInfos = layoutInfos;
-        fHiddenNodes = layoutInfos.getHiddenNodes();
-        fHiddenEdges = layoutInfos.getHiddenEdges();
-        fEdgeToBinaryEdgeMap = layoutInfos.getBinaryEdgeToEdgeMap();
-        fNodeToNodeBaseMap = layoutInfos.getNodeToNodeMap();
-        fNaryEdgeToDiamondNodeMap = layoutInfos.getNaryEdgeToDiamondNodeMap();
-        fEdgeToHalfEdgeMap = layoutInfos.getNaryEdgeToHalfEdgeMap();
-        fEdgeToNodeEdgeMap = layoutInfos.getEdgeNodeToEdgeMap();
-        fDiagram = (NewObjectDiagram) layoutInfos.getDiagram();
-        
         fNodeSelection = nodeSelection;
         fGraph = graph;
     }
@@ -80,21 +72,21 @@ public final class ActionHideObjectDiagram extends ActionHide {
      */
     public void showAllHiddenElements() {
         // add all hidden objects
-        Iterator<Object> it = fHiddenNodes.iterator();
+        Iterator<Object> it = fLayoutInfos.getHiddenNodes().iterator();
         MObject obj = null;
         while (it.hasNext()) {
             obj = (MObject) it.next();
             fDiagram.addObject(obj);
         }
-        fHiddenNodes.clear();
+        fLayoutInfos.getHiddenNodes().clear();
 
         // add all hidden links
-        it = fHiddenEdges.iterator();
+        it = fLayoutInfos.getHiddenEdges().iterator();
         while (it.hasNext()) {
             MLink link = (MLink) it.next();
             fDiagram.addLink(link);
         }
-        fHiddenEdges.clear();
+        fLayoutInfos.getHiddenEdges().clear();
         fDiagram.invalidateContent();
         
         XMLParserAccess xmlParser = new XMLParserAccessImpl( fLayoutInfos );
@@ -119,9 +111,8 @@ public final class ActionHideObjectDiagram extends ActionHide {
                 linksToHide.add( obj );
                 additionalObjToHide.add( obj );
                 BinaryAssociationClassOrObject ne = 
-                    (BinaryAssociationClassOrObject) fEdgeToNodeEdgeMap.get( (MLinkObject) obj );
-                NodeBase n = 
-                    (NodeBase) fNodeToNodeBaseMap.get( (MObject) obj );
+                    (BinaryAssociationClassOrObject) fLayoutInfos.getEdgeNodeToEdgeMap().get( (MLinkObject) obj );
+                NodeBase n = fLayoutInfos.getNodeToNodeMap().get( (MObject) obj );
                 
                 layoutXml.append(ne.storePlacementInfo( true ));
                 layoutXml.append(n.storePlacementInfo( true ));
@@ -130,8 +121,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
                 // location of diamond as well.
                 Set<MLinkEnd> naryLinkSet = ((MLink) obj).linkEnds();
                 if ( naryLinkSet.size() > 2 ) {
-                    NodeBase dn = 
-                        (NodeBase) fNaryEdgeToDiamondNodeMap.get( (MLink) obj );
+                    NodeBase dn = fLayoutInfos.getNaryEdgeToDiamondNodeMap().get( (MLink) obj );
                     
                     layoutXml.append(dn.storePlacementInfo( true ));
                     
@@ -145,7 +135,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
                 }
             } else {
                 // check if object is in one of the binary links
-                Iterator<?> linkIt = fEdgeToBinaryEdgeMap.keySet().iterator();
+                Iterator<?> linkIt = fLayoutInfos.getBinaryEdgeToEdgeMap().keySet().iterator();
                 while ( linkIt.hasNext() ) {
                     MLink link = (MLink) linkIt.next();
                     if ( link.linkedObjects().contains( obj ) ) {
@@ -153,18 +143,17 @@ public final class ActionHideObjectDiagram extends ActionHide {
                         // save layout information
                         if ( link instanceof MLinkObject ) {
                             BinaryAssociationClassOrObject ne = 
-                                (BinaryAssociationClassOrObject) fEdgeToNodeEdgeMap.get( (MLinkObject) link );
+                                (BinaryAssociationClassOrObject) fLayoutInfos.getEdgeNodeToEdgeMap().get( (MLinkObject) link );
                             layoutXml.append(ne.storePlacementInfo( true ));
                         } else {
-                            EdgeBase e = 
-                                (EdgeBase) fEdgeToBinaryEdgeMap.get( link );
+                            EdgeBase e = fLayoutInfos.getBinaryEdgeToEdgeMap().get( link );
                             layoutXml.append(e.storePlacementInfo( true ));
                         }
                     }
                 }
                 
                 // check if object is in one of the nary links
-                Iterator<?> naryLinkIt = fNaryEdgeToDiamondNodeMap.keySet().iterator();
+                Iterator<?> naryLinkIt = fLayoutInfos.getNaryEdgeToDiamondNodeMap().keySet().iterator();
                 while ( naryLinkIt.hasNext() ) {
                     MLink naryLink = (MLink) naryLinkIt.next();
                     
@@ -174,28 +163,19 @@ public final class ActionHideObjectDiagram extends ActionHide {
                         // save layout information
                         if ( naryLink instanceof MLinkObject ) {
                             BinaryAssociationClassOrObject ne = 
-                                (BinaryAssociationClassOrObject) fEdgeToNodeEdgeMap.get( (MLinkObject) naryLink );
+                                (BinaryAssociationClassOrObject) fLayoutInfos.getEdgeNodeToEdgeMap().get( (MLinkObject) naryLink );
                             layoutXml.append(ne.storePlacementInfo( true ));
                         } 
                         
                         // save diamond node
                         NodeBase n = 
-                            (NodeBase) fNaryEdgeToDiamondNodeMap.get( naryLink );
+                        	fLayoutInfos.getNaryEdgeToDiamondNodeMap().get( naryLink );
                         layoutXml.append(n.storePlacementInfo( true ));
-                        
-//                        // save HalfEdges
-//                        List halfEdges = (ArrayList) fEdgeToHalfEdgeMap.get( naryLink );
-//                        Iterator naryHalfEdgeIt = halfEdges.iterator();
-//                        while ( naryHalfEdgeIt.hasNext() ) {
-//                            HalfEdge he = (HalfEdge) naryHalfEdgeIt.next();
-//                            fLayoutXMLForHiddenElements += he.storePlacementInfo( true );
-//                        }
-
                     }
                 }
                 
                 // check if object is participating in an link object
-                Iterator<?> linkObjIt = fEdgeToNodeEdgeMap.keySet().iterator();
+                Iterator<?> linkObjIt = fLayoutInfos.getEdgeNodeToEdgeMap().keySet().iterator();
                 while ( linkObjIt.hasNext() ) {
                     MLink linkObj = (MLink) linkObjIt.next();
                     if ( linkObj.linkedObjects().contains( obj ) ) {
@@ -205,8 +185,8 @@ public final class ActionHideObjectDiagram extends ActionHide {
                         // save layout information
                         if ( linkObj instanceof MLinkObject ) {
                             BinaryAssociationClassOrObject ne = 
-                                (BinaryAssociationClassOrObject) fEdgeToNodeEdgeMap.get( (MLinkObject) linkObj );
-                            NodeBase n = (NodeBase) fNodeToNodeBaseMap.get( (MObject) linkObj );
+                                (BinaryAssociationClassOrObject) fLayoutInfos.getEdgeNodeToEdgeMap().get( (MLinkObject) linkObj );
+                            NodeBase n = fLayoutInfos.getNodeToNodeMap().get( (MObject) linkObj );
                             layoutXml.append(ne.storePlacementInfo( true ));
                             layoutXml.append(n.storePlacementInfo( true ));
                         }
@@ -232,7 +212,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
         Iterator<Object> it = fNodesToHide.iterator();
         while (it.hasNext()) {
             MObject obj = (MObject) it.next();
-            NodeBase objToHideNode = (NodeBase) fNodeToNodeBaseMap.get(obj);
+            NodeBase objToHideNode = fLayoutInfos.getNodeToNodeMap().get(obj);
             
             // save position information about object
             layoutXml.append(objToHideNode.storePlacementInfo( true ));
@@ -265,7 +245,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
     public void showHiddenElements(Set<?> hiddenElements) {
         
     	// Add all already hidden nodes
-    	Set<Object> nodesToHide = new HashSet<Object>(fHiddenNodes);
+    	Set<Object> nodesToHide = new HashSet<Object>(fLayoutInfos.getHiddenNodes());
 
     	// Remove all supplied nodes (don't hide them anymore)
     	nodesToHide.removeAll(hiddenElements);

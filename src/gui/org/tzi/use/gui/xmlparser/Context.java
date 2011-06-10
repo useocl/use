@@ -131,7 +131,6 @@ public class Context {
         }
         fAllMappings.put( LayoutTags.BINARYEDGE, layoutInfos.getBinaryEdgeToEdgeMap() );
         fAllMappings.put( LayoutTags.DIAMONDNODE, layoutInfos.getNaryEdgeToDiamondNodeMap() );
-        fAllMappings.put( LayoutTags.HALFEDGE, layoutInfos.getNaryEdgeToHalfEdgeMap() );
         fAllMappings.put( LayoutTags.EDGENODE, layoutInfos.getEdgeNodeToEdgeMap() );
         fAllMappings.put( LayoutTags.ENUMERATION, layoutInfos.getEnumToNodeMap() );
         fAllMappings.put( LayoutTags.INHERITANCE, layoutInfos.getGenToGeneralizationEdge() );
