@@ -3,6 +3,7 @@ package org.tzi.use.uml.ocl.expr.operations;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.BagType;
+import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.SetType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -11,7 +12,9 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.StringUtil;
 
 public class StandardOperationsSet {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
@@ -187,6 +190,26 @@ final class Op_set_intersection extends OpGeneric {
 		SetValue set2 = (SetValue) args[1];
 		return set1.intersection(set2);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col1 = (CollectionType) args[0].type();
+		CollectionType col2 = (CollectionType) args[1].type();
+		
+		Type elemType1 = col1.elemType();
+		Type elemType2 = col2.elemType();
+		
+		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+		
+		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to an empty set, " + StringUtil.NEWLINE +
+					 "because the element types " + StringUtil.inQuotes(elemType1) + 
+					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -224,6 +247,26 @@ final class Op_set_intersection_bag extends OpGeneric {
 		BagValue bag = (BagValue) args[1];
 		return set.intersection(bag);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col1 = (CollectionType) args[0].type();
+		CollectionType col2 = (CollectionType) args[1].type();
+		
+		Type elemType1 = col1.elemType();
+		Type elemType2 = col2.elemType();
+		
+		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+		
+		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to an empty, " + StringUtil.NEWLINE +
+					 "because the element type " + StringUtil.inQuotes(elemType1) + 
+					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -259,6 +302,26 @@ final class Op_set_difference extends OpGeneric {
 		SetValue set1 = (SetValue) args[0];
 		SetValue set2 = (SetValue) args[1];
 		return set1.difference(set2);
+	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col1 = (CollectionType) args[0].type();
+		CollectionType col2 = (CollectionType) args[1].type();
+		
+		Type elemType1 = col1.elemType();
+		Type elemType2 = col2.elemType();
+		
+		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+		
+		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to the same set, " + StringUtil.NEWLINE +
+					 "because the element types " + StringUtil.inQuotes(elemType1) + 
+					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+		}
+		
+		return null;
 	}
 }
 
@@ -334,6 +397,22 @@ final class Op_set_excluding extends OpGeneric {
 		SetValue set1 = (SetValue) args[0];
 		return set1.excluding(args[1]);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col = (CollectionType) args[0].type();
+		
+		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
+		
+		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to the same set, " + StringUtil.NEWLINE +
+					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
+					 " and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -370,5 +449,25 @@ final class Op_set_symmetricDifference extends OpGeneric {
 		SetValue set1 = (SetValue) args[0];
 		SetValue set2 = (SetValue) args[1];
 		return set1.symmetricDifference(set2);
+	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col1 = (CollectionType) args[0].type();
+		CollectionType col2 = (CollectionType) args[1].type();
+		
+		Type elemType1 = col1.elemType();
+		Type elemType2 = col2.elemType();
+		
+		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+		
+		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to the union of both sets, " + StringUtil.NEWLINE +
+					 "because the element types " + StringUtil.inQuotes(elemType1) + 
+					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+		}
+
+		return null;
 	}
 }

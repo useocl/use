@@ -23,6 +23,8 @@ package org.tzi.use.uml.ocl.expr;
 
 import java.util.List;
 
+import org.tzi.use.config.Options;
+import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.uml.ocl.expr.operations.BooleanOperation;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
 import org.tzi.use.uml.ocl.type.CollectionType;
@@ -34,6 +36,8 @@ import org.tzi.use.util.HashMultiMap;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
+
+import antlr.SemanticException;
 
 /**
  * General operation expressions. Each operation is implemented by its own
@@ -91,7 +95,6 @@ public final class ExpStdOp extends Expression {
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
             if (t != null) {
-            	checkOclAnyWarning(op, params, t);
                 return true;
             }
         }
@@ -103,6 +106,7 @@ public final class ExpStdOp extends Expression {
      * 
      * @exception ExpInvalidException
      *                cannot find a match for operation
+     * @throws SemanticException 
      */
     public static ExpStdOp create(String name, Expression args[])
             throws ExpInvalidException {
@@ -124,7 +128,7 @@ public final class ExpStdOp extends Expression {
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
             if (t != null) {
-            	checkOclAnyWarning(op, params, t);
+            	checkTypeSystemWarnings(op, args, params, t);
                 return new ExpStdOp(op, args, t);
             }
         }
@@ -134,6 +138,22 @@ public final class ExpStdOp extends Expression {
                 + opCallSignature(name, args) + "'.");
     }
 
+    private static void checkTypeSystemWarnings(OpGeneric op, Expression[] params, Type[] paramTypes, Type resultType) throws ExpInvalidException {
+    	if (!Options.checkWarningsOclAnyInCollections().equals(WarningType.IGNORE))
+    		checkOclAnyCollectionsWarning(op, paramTypes, resultType, Options.checkWarningsOclAnyInCollections());
+    	
+    	if (!Options.checkWarningsUnrelatedTypes().equals(WarningType.IGNORE)) {
+    		String warn = op.checkWarningUnrelatedTypes(params);
+    		if (warn != null) {
+    			if (Options.checkWarningsUnrelatedTypes().equals(WarningType.WARN)) {
+    				Log.warn(warn);
+    			} else {
+    				throw new ExpInvalidException(warn);
+    			}
+    		}
+    	}
+    }
+    
     /**
      * Validates if an operation call on a collection type with leaf element type different from OCLAny
      * results in OCLAny or a collection with the leaf element type OCLAny. 
@@ -142,8 +162,9 @@ public final class ExpStdOp extends Expression {
 	 * @param op The operation which is called
 	 * @param sourceType The <code>Type</code> of the object the operation is called on.
 	 * @param resultType The <code>Type</code> of the result.
+     * @throws ExpInvalidException 
 	 */
-	private static void checkOclAnyWarning(OpGeneric op, Type[] params, Type resultType) {
+	private static void checkOclAnyCollectionsWarning(OpGeneric op, Type[] params, Type resultType, WarningType warningType) throws ExpInvalidException {
 		Type sourceType = params[0];
 		
 		if (sourceType.isCollection(true)) {
@@ -170,12 +191,18 @@ public final class ExpStdOp extends Expression {
 					paramTypes.append(params[index].toString());
 				}
 
-				Log.warn("Operation call "
+				String message = "Operation call "
 						+ StringUtil.inQuotes(sourceType.toString() + "->"
 								+ op.name() + "(" + paramTypes.toString() + ")")
 						+ " results in type "
 						+ StringUtil.inQuotes(resultType.toString()) + "."
-						+ " This can cause unexpected errors.");
+						+ " This may lead to unexpected behavior.";
+				
+				if (warningType.equals(WarningType.ERROR)) {
+					throw new ExpInvalidException(message);
+				} else {
+					Log.warn(message);
+				}
 			}
 		}
 	}

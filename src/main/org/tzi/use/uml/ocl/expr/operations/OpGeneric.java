@@ -43,6 +43,8 @@ public abstract class OpGeneric {
 
     public abstract Type matches(Type params[]);
 
+    public String checkWarningUnrelatedTypes(Expression args[]) { return null; }
+    
     public abstract Value eval(EvalContext ctx, Value args[], Type resultType);
 
     public String stringRep(Expression args[], String atPre) {

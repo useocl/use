@@ -5,6 +5,7 @@ import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.ocl.type.BagType;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
@@ -22,6 +23,9 @@ import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.StringUtil;
+
+import antlr.SemanticException;
 
 public class StandardOperationsCollection {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
@@ -116,6 +120,21 @@ final class Op_collection_includes extends OpGeneric {
 		boolean res = coll.includes(args[1]);
 		return BooleanValue.get(res);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType  col = (CollectionType) args[0].type();
+		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
+		
+		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to false, " + StringUtil.NEWLINE +
+					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
+					 " and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -152,6 +171,21 @@ final class Op_collection_excludes extends OpGeneric {
 		boolean res = !coll.includes(args[1]);
 		return BooleanValue.get(res);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType  col = (CollectionType) args[0].type();
+		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
+		
+		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to true, " + StringUtil.NEWLINE +
+					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
+					 " and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -186,6 +220,21 @@ final class Op_collection_count extends OpGeneric {
 		CollectionValue coll = (CollectionValue) args[0];
 		int res = coll.count(args[1]);
 		return new IntegerValue(res);
+	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType  col = (CollectionType) args[0].type();
+		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
+		
+		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to true, " + StringUtil.NEWLINE +
+					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
+					 " and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
 	}
 }
 
@@ -222,6 +271,26 @@ final class Op_collection_includesAll extends OpGeneric {
 		boolean res = coll1.includesAll(coll2);
 		return BooleanValue.get(res);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col1 = (CollectionType) args[0].type();
+		CollectionType col2 = (CollectionType) args[1].type();
+		
+		Type elemType1 = col1.elemType();
+		Type elemType2 = col2.elemType();
+		
+		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+		
+		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to false, " + StringUtil.NEWLINE +
+					 "because the element types " + StringUtil.inQuotes(elemType1) + 
+					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -257,6 +326,26 @@ final class Op_collection_excludesAll extends OpGeneric {
 		CollectionValue coll2 = (CollectionValue) args[1];
 		boolean res = coll1.excludesAll(coll2);
 		return BooleanValue.get(res);
+	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col1 = (CollectionType) args[0].type();
+		CollectionType col2 = (CollectionType) args[1].type();
+		
+		Type elemType1 = col1.elemType();
+		Type elemType2 = col2.elemType();
+		
+		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+		
+		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " will always evaluate to true, " + StringUtil.NEWLINE +
+					 "because the element type " + StringUtil.inQuotes(elemType1) + 
+					 " and the parameter type " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+		}
+		
+		return null;
 	}
 }
 

@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.SequenceType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -12,7 +13,9 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.StringUtil;
 
 public class StandardOperationsSequence {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
@@ -453,6 +456,22 @@ final class Op_sequence_excluding extends OpGeneric {
 		SequenceValue seq = (SequenceValue) args[0];
 		return seq.excluding(args[1]);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col = (CollectionType) args[0].type();
+		
+		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
+		
+		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+				   " will always evaluate to the same sequence, " + StringUtil.NEWLINE +
+				   "because the element type " + StringUtil.inQuotes(col.elemType()) + 
+				   " and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 /* indexOf : Sequence(T) x T -> Integer */
@@ -494,6 +513,22 @@ final class Op_sequence_indexOf extends OpGeneric {
 			return UndefinedValue.instance;
 		else
 			return new IntegerValue(index + 1);
+	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		CollectionType col = (CollectionType) args[0].type();
+		
+		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
+		
+		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+				   " will always evaluate to undefined, " + StringUtil.NEWLINE +
+				   "because the element type " + StringUtil.inQuotes(col.elemType()) + 
+				   " and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
 	}
 }
 

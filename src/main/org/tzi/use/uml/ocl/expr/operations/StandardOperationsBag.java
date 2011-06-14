@@ -11,7 +11,9 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.StringUtil;
 
 public class StandardOperationsBag {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
@@ -195,6 +197,26 @@ final class Op_bag_intersection extends OpGeneric {
 		BagValue bag2 = (BagValue) args[1];
 		return bag1.intersection(bag2);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		BagType bag1 = (BagType) args[0].type();
+		BagType bag2 = (BagType) args[1].type();
+		
+		Type elemType1 = bag1.elemType();
+		Type elemType2 = bag2.elemType();
+		
+		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+		
+		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return  "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " can never evaluate to more then an empty bag, " + StringUtil.NEWLINE +
+					 "because the element types " + StringUtil.inQuotes(elemType1) + 
+					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -231,6 +253,26 @@ final class Op_bag_intersection_set extends OpGeneric {
 		BagValue bag = (BagValue) args[0];
 		SetValue set = (SetValue) args[1];
 		return bag.asSet().intersection(set);
+	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		BagType  bag = (BagType) args[0].type();
+		SetType set = (SetType) args[1].type();
+		
+		Type elemType1 = bag.elemType();
+		Type elemType2 = set.elemType();
+		
+		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+		
+		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " can never evaluate to more then an empty set, " + StringUtil.NEWLINE +
+					 "because the element types " + StringUtil.inQuotes(elemType1) + 
+					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+		}
+		
+		return null;
 	}
 }
 
@@ -303,5 +345,20 @@ final class Op_bag_excluding extends OpGeneric {
 			return UndefinedValue.instance;
 		BagValue bag = (BagValue) args[0];
 		return bag.excluding(args[1]);
+	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		BagType  bag = (BagType) args[0].type();
+		Type commonElementType = bag.elemType().getLeastCommonSupertype(args[1].type());
+		
+		if (!(bag.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					" will always evaluate to the same bag, " + StringUtil.NEWLINE +
+					"because the element type " + StringUtil.inQuotes(bag.elemType()) + 
+					" and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
 	}
 }

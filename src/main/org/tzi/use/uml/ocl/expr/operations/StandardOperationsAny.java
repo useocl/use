@@ -1,18 +1,21 @@
 package org.tzi.use.uml.ocl.expr.operations;
 
 import org.tzi.use.uml.ocl.expr.EvalContext;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.StringUtil;
 
 public class StandardOperationsAny {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
 		// generic operations on all types
 		OpGeneric.registerOperation(new Op_equal(), opmap);
 		OpGeneric.registerOperation(new Op_notequal(), opmap);
-		OpGeneric.registerOperation(new Op_isDefined(), opmap);;
+		OpGeneric.registerOperation(new Op_isDefined(), opmap);
 		OpGeneric op = new Op_isUndefined();
 		OpGeneric.registerOperation(op, opmap);;
 		OpGeneric.registerOperation("oclIsUndefined", op, opmap);
@@ -40,13 +43,25 @@ final class Op_equal extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2
-				&& params[0].getLeastCommonSupertype(params[1]) != null)
+		if (params.length == 2 && params[0].getLeastCommonSupertype(params[1]) != null)
 			return TypeFactory.mkBoolean();
 		else
 			return null;
 	}
 
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
+		
+		if (!(args[0].type().isTrueOclAny() || args[1].type().isTrueOclAny()) && lcst.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " can never evaluate to true because " + StringUtil.inQuotes(args[0].type()) + 
+					 " and " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
+	}
+	
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		boolean res;
 
@@ -94,6 +109,19 @@ final class Op_notequal extends OpGeneric {
 		boolean res = !args[0].equals(args[1]);
 		return BooleanValue.get(res);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
+		
+		if (!(args[0].type().isTrueOclAny() || args[1].type().isTrueOclAny()) && lcst.isTrueOclAny()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " can never evaluate to false because " + StringUtil.inQuotes(args[0].type()) + 
+					 " and " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -120,6 +148,17 @@ final class Op_isDefined extends OpGeneric {
 		boolean res = !args[0].isUndefined();
 		return BooleanValue.get(res);
 	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		if (args[0].type().isVoidType()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " can never evaluate to true because " + StringUtil.inQuotes(args[0].type()) + 
+					 " is always undefined";
+		}
+		
+		return null;
+	}
 }
 
 // --------------------------------------------------------
@@ -145,5 +184,16 @@ final class Op_isUndefined extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		boolean res = args[0].isUndefined();
 		return BooleanValue.get(res);
+	}
+	
+	@Override
+	public String checkWarningUnrelatedTypes(Expression args[]) {
+		if (args[0].type().isVoidType()) {
+			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
+					 " can never evaluate to false because " + StringUtil.inQuotes(args[0].type()) + 
+					 " is always undefined";
+		}
+		
+		return null;
 	}
 }

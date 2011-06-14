@@ -213,9 +213,6 @@ public class BagValue extends CollectionValue {
      * @pre T2 <= T1, if this has type Bag(T1) and v has type T2.
      */
     public BagValue excluding(Value v) {
-        if (!v.type().isSubtypeOf(elemType()))
-            throw new IllegalArgumentException("type mismatch");
-
         // copy this bag
         BagValue res = new BagValue(elemType(), fElements);
         res.removeAll(v);
@@ -271,7 +268,7 @@ public class BagValue extends CollectionValue {
 
     protected Integer getClassCompareNr()
     {
-    	return new Integer(3);
+    	return Integer.valueOf(3);
     }
     
     /**

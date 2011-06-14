@@ -120,6 +120,34 @@ public class Options {
     public static boolean disableExtensions = false;
     public static boolean readlineTest = false;
     
+    public enum WarningType {
+    	IGNORE("I"),
+    	WARN("W"),
+    	ERROR("E");
+    	
+    	private String type;
+    	private WarningType(String type) {
+    		this.type = type;
+    	}
+
+    	public String getShortName() {
+    		return type;
+    	}
+    	
+    	public static WarningType getType(String type) {
+    		for (WarningType t : WarningType.values()) {
+    			if (t.getShortName().equals(type)) {
+    				return t;
+    			}
+    		}
+    		
+    		return null;
+    	}
+    }
+    
+    public static WarningType checkWarningsOclAnyInCollections = WarningType.WARN;
+    public static WarningType checkWarningsUnrelatedTypes = WarningType.WARN;
+    
     // soil in ocl operation calls
     public enum SoilPermissionLevel {
     	NONE, SIDEEFFECT_FREE_ONLY, ALL
@@ -165,6 +193,8 @@ public class Options {
 				.println("  -daVinciClass output a daVinci graph representing the class diagram");
 		System.out
 				.println("  -disableCollectShorthand flag use of OCL shorthand notation as error");
+		System.out.println("  -oclAnyCollectionElementWarnings:(W)arn|(E)rror|(I)gnore");
+		System.out.println("  -typeSystemWarnings:(W)arn|(E)rror|(I)gnore");
         System.out.println("  -nogui        do not use GUI");
 		System.out.println("  -noplugins    do not use plugins");
         System.out.println("  -h            print help");
@@ -287,6 +317,12 @@ public class Options {
                 				" for argument `soilOpAsOCL', defaulting to `NONE'");
                 		soilFromOCL = SoilPermissionLevel.NONE;
                 	}
+                } else if (arg.startsWith("oclAnyCollectionElementWarnings:")) {
+                	String value = arg.substring("oclAnyCollectionElementWarnings:".length());
+                	checkWarningsOclAnyInCollections = WarningType.getType(value);
+                } else if (arg.startsWith("typeSystemWarnings:")) {
+                	String value = arg.substring("typeSystemWarnings:".length());
+                	checkWarningsUnrelatedTypes = WarningType.getType(value);
                 } else {
                 	System.out.println("invalid argument `" + arg
 							+ "\', try `use -h' for help.");
@@ -442,4 +478,18 @@ public class Options {
         
         fDiagramDimension.setSize( dWidth, dHeight );
     }
+
+	/**
+	 * @return
+	 */
+	public static WarningType checkWarningsOclAnyInCollections() {
+		return checkWarningsOclAnyInCollections;
+	}
+
+	/**
+	 * @return
+	 */
+	public static WarningType checkWarningsUnrelatedTypes() {
+		return checkWarningsUnrelatedTypes;
+	}
 }
