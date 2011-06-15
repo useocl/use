@@ -52,33 +52,30 @@ import org.tzi.use.uml.ocl.type.EnumType;
   */
 @SuppressWarnings("serial")
 public final class ActionHideClassDiagram extends ActionHide {
-    
-    /**
-     * The diagram the graph, nodes and edges belong to.
-     */
-    private ClassDiagram fDiagram;
-    
     public ActionHideClassDiagram( String text, Set<?> nodesToHide,
                                    Selection<Selectable> nodeSelection, DirectedGraph<NodeBase, EdgeBase> graph,
                                    LayoutInfos layoutInfos ) {
         super( text );
         setNodes( nodesToHide );
         fLayoutInfos = layoutInfos;
-                
         fNodeSelection = nodeSelection;
         fGraph = graph;
     }
 
+    protected ClassDiagram getDiagram() {
+    	return (ClassDiagram)fLayoutInfos.getDiagram();
+    }
+    
     public void showAllHiddenElements() {
         // add all hidden nodes
         MClass cls = null;
         for (Object elem : fLayoutInfos.getHiddenNodes()) {
             if ( elem instanceof MClass ) {
                 cls = (MClass) elem;
-                fDiagram.addClass( cls );
+                getDiagram().addClass( cls );
             } else if ( elem instanceof EnumType ) {
                 EnumType enumeration = (EnumType) elem;
-                fDiagram.addEnum( enumeration );
+                getDiagram().addEnum( enumeration );
             }
         }
         fLayoutInfos.getHiddenNodes().clear();
@@ -87,15 +84,15 @@ public final class ActionHideClassDiagram extends ActionHide {
         for (Object edge : fLayoutInfos.getHiddenEdges()) {
             if ( edge instanceof MAssociation ) {
                 MAssociation assoc = (MAssociation) edge;
-                fDiagram.addAssociation( assoc );
+                getDiagram().addAssociation( assoc );
             } else if ( edge instanceof MGeneralization ) {
                 MGeneralization gen = (MGeneralization) edge;
-                fDiagram.addGeneralization( gen );
+                getDiagram().addGeneralization( gen );
             }
 
         }
         fLayoutInfos.getHiddenEdges().clear();
-        fDiagram.invalidateContent();
+        getDiagram().invalidateContent();
         
         XMLParserAccess xmlParser = new XMLParserAccessImpl( fLayoutInfos );
         xmlParser.loadXMLString( fLayoutInfos.getHiddenElementsXML(), false );
@@ -264,10 +261,10 @@ public final class ActionHideClassDiagram extends ActionHide {
         // save edges which are connected to the nodes
         Set<Object> edgesToHide = saveEdges( nodesToHide );
         
-        fDiagram.deleteHiddenElementsFromDiagram( nodesToHide, edgesToHide );
+        getDiagram().deleteHiddenElementsFromDiagram( nodesToHide, edgesToHide );
         
         fNodeSelection.clear();
-        fDiagram.invalidateContent();
+        getDiagram().invalidateContent();
     }
     
     public void actionPerformed(ActionEvent e) {

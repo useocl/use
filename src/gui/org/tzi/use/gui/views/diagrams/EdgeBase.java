@@ -537,11 +537,15 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     	// of the objects as start and end point of the link. 
     	// Otherwise calculate the new positions.
         if ( edges.size() == 1 ) {
+        	Point2D oldValue = fSourceWayPoint.getCenter();
         	fSourceWayPoint.updatePosition(getNextWayPoint(fSourceWayPoint));
-        	onSourcePointChanged(fSourceWayPoint.getCenter());
+        	if (!oldValue.equals(fSourceWayPoint.getCenter()))
+        		onSourcePointChanged(fSourceWayPoint.getCenter());
         	
+        	oldValue = fTargetWayPoint.getCenter();
         	fTargetWayPoint.updatePosition(getPreviousWayPoint(fTargetWayPoint));
-        	onTargetPointChanged(fTargetWayPoint.getCenter());
+        	if (!oldValue.equals(fTargetWayPoint.getCenter()))
+        		onTargetPointChanged(fTargetWayPoint.getCenter());
         } else {
             // there are more then just one link between source and target node.
         	NodeBase source = fSource;
