@@ -223,9 +223,8 @@ public final class ActionHideObjectDiagram extends ActionHide {
         this.fLayoutXMLForHiddenElements = layoutXml.toString();
         
         // save links which are connected to the objects
-        Set<Object> linksToHide = saveEdges( objectsToHide );
-        
-        fDiagram.deleteHiddenElementsFromDiagram( objectsToHide, linksToHide );
+                
+        fDiagram.hideElementsInDiagram( objectsToHide );
         
         fNodeSelection.clear();
         fDiagram.invalidateContent();

@@ -124,8 +124,7 @@ public abstract class DiagramView extends JPanel
     /**
      * Deletes all hidden elements form this diagram.
      */
-    public abstract void deleteHiddenElementsFromDiagram( Set<Object> nodesToHide, 
-                                                          Set<Object> edgesToHide );
+    public abstract void hideElementsInDiagram( Set<Object> nodesToHide );
     
     /**
      * Determines if the popup menu of this diagram should be shown.

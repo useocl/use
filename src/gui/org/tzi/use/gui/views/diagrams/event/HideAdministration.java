@@ -104,13 +104,6 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
         fHideAction.showAllHiddenElements();
     }
 
-    /**
-     * Saves edges which are connected to the hidden nodes.
-     */
-    public void saveEdges( Set<Object> nodesToHide ) {
-        fHideAction.saveEdges( nodesToHide );
-    }
-
     public void showHiddenElements(Set<?> hiddenNodes) {
     	fHideAction.showHiddenElements(hiddenNodes);
     }

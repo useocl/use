@@ -52,18 +52,17 @@ import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.AssociationName;
+import org.tzi.use.gui.views.diagrams.AssociationOrLinkPartEdge;
+import org.tzi.use.gui.views.diagrams.BinaryAssociationClassOrObject;
 import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.GeneralizationEdge;
-import org.tzi.use.gui.views.diagrams.AssociationOrLinkPartEdge;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NAryAssociationClassOrObjectEdge;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.BinaryAssociationClassOrObject;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
@@ -82,6 +81,7 @@ import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.util.NamedElement;
 
 
 /**
@@ -94,16 +94,61 @@ import org.tzi.use.uml.sys.MObject;
 public class ClassDiagram extends DiagramView 
                              implements HighlightChangeListener {
 
-    private ClassDiagramView fParent;
-    private Map<MClass, ClassNode> fClassToNodeMap;
-    private Map<EnumType, EnumNode> fEnumToNodeMap;
-    private Map<MAssociation, BinaryAssociationOrLinkEdge> fBinaryAssocToEdgeMap;
-    private Map<MAssociationClass, EdgeBase> fAssocClassToEdgeMap;
-    private Map<MAssociation, DiamondNode> fNaryAssocToDiamondNodeMap;
-    private Map<MAssociation, List<EdgeBase>> fNaryAssocToHalfEdgeMap;
-    private Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
-        
-    // jj anfangen
+    public static class ClassDiagramData {
+		/**
+		 * 
+		 */
+		public Map<MClass, ClassNode> fClassToNodeMap;
+		/**
+		 * 
+		 */
+		public Map<EnumType, EnumNode> fEnumToNodeMap;
+		/**
+		 * 
+		 */
+		public Map<MAssociation, BinaryAssociationOrLinkEdge> fBinaryAssocToEdgeMap;
+		/**
+		 * 
+		 */
+		public Map<MAssociationClass, EdgeBase> fAssocClassToEdgeMap;
+		/**
+		 * 
+		 */
+		public Map<MAssociation, DiamondNode> fNaryAssocToDiamondNodeMap;
+		/**
+		 * 
+		 */
+		public Map<MAssociation, List<EdgeBase>> fNaryAssocToHalfEdgeMap;
+		/**
+		 * 
+		 */
+		public Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
+
+		/**
+		 * 
+		 */
+		public ClassDiagramData() {
+			fClassToNodeMap = new HashMap<MClass, ClassNode>();
+	        fEnumToNodeMap = new HashMap<EnumType, EnumNode>();
+	        fBinaryAssocToEdgeMap = new HashMap<MAssociation, BinaryAssociationOrLinkEdge>();
+	        fAssocClassToEdgeMap = new HashMap<MAssociationClass, EdgeBase>();
+	        fNaryAssocToDiamondNodeMap = new HashMap<MAssociation, DiamondNode>();
+	        fNaryAssocToHalfEdgeMap = new HashMap<MAssociation, List<EdgeBase>>();
+	        fGenToGeneralizationEdge = new HashMap<MGeneralization, GeneralizationEdge>();
+		}
+		
+		public boolean hasNodes() {
+			return !(fClassToNodeMap.isEmpty() && fEnumToNodeMap.isEmpty());
+		}
+	}
+
+	private ClassDiagramView fParent;
+    
+    private ClassDiagramData visibleData = new ClassDiagramData();
+
+    private ClassDiagramData hiddenData = new ClassDiagramData();
+    
+	// jj anfangen
 	private ClassSelection fSelection;
 	private DiagramInputHandling inputHandling;
 	// jj end
@@ -111,13 +156,7 @@ public class ClassDiagram extends DiagramView
     ClassDiagram( ClassDiagramView parent, PrintWriter log ) {
         fOpt = new ClassDiagramOptions();
         fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
-        fClassToNodeMap = new HashMap<MClass, ClassNode>();
-        fEnumToNodeMap = new HashMap<EnumType, EnumNode>();
-        fBinaryAssocToEdgeMap = new HashMap<MAssociation, BinaryAssociationOrLinkEdge>();
-        fAssocClassToEdgeMap = new HashMap<MAssociationClass, EdgeBase>();
-        fNaryAssocToDiamondNodeMap = new HashMap<MAssociation, DiamondNode>();
-        fNaryAssocToHalfEdgeMap = new HashMap<MAssociation, List<EdgeBase>>();
-        fGenToGeneralizationEdge = new HashMap<MGeneralization, GeneralizationEdge>();
+        
         fParent = parent;
         fHiddenNodes = new HashSet<Object>();
         fHiddenEdges = new HashSet<Object>();
@@ -129,13 +168,13 @@ public class ClassDiagram extends DiagramView
         fLog = log;
         setPreferredSize( Options.fDiagramDimension );
 
-        fLayoutInfos = new LayoutInfos( fBinaryAssocToEdgeMap, 
-                                        fClassToNodeMap, 
-                                        fNaryAssocToDiamondNodeMap,
-                                        fNaryAssocToHalfEdgeMap,
-                                        fAssocClassToEdgeMap,
-                                        fEnumToNodeMap,
-                                        fGenToGeneralizationEdge,
+        fLayoutInfos = new LayoutInfos( visibleData.fBinaryAssocToEdgeMap, 
+                                        visibleData.fClassToNodeMap, 
+                                        visibleData.fNaryAssocToDiamondNodeMap,
+                                        visibleData.fNaryAssocToHalfEdgeMap,
+                                        visibleData.fAssocClassToEdgeMap,
+                                        visibleData.fEnumToNodeMap,
+                                        visibleData.fGenToGeneralizationEdge,
                                         fHiddenNodes, fHiddenEdges,
                                         fOpt, fParent.system(), this, 
                                         fLog );
@@ -155,8 +194,8 @@ public class ClassDiagram extends DiagramView
                                                   fHideAdmin, fGraph,
                                                   fLayoutInfos );
         
-        fActionSelectAll = new ActionSelectAll( fNodeSelection, fClassToNodeMap,
-                                                fEnumToNodeMap, this );
+        fActionSelectAll = new ActionSelectAll( fNodeSelection, visibleData.fClassToNodeMap,
+                                                visibleData.fEnumToNodeMap, this );
 
         addMouseListener( inputHandling );
         fParent.addKeyListener( inputHandling );
@@ -173,10 +212,10 @@ public class ClassDiagram extends DiagramView
     }
 
     public Map<MClass, ClassNode> getClassToNodeMap() {
-    	return this.fClassToNodeMap;
+    	return this.visibleData.fClassToNodeMap;
     }
     
-    public Selection getNodeSelection() {
+    public Selection<PlaceableNode> getNodeSelection() {
 		return this.fNodeSelection;
 	}
     
@@ -197,18 +236,18 @@ public class ClassDiagram extends DiagramView
             int size = ((MAssociation) elem).associationEnds().size();
             EdgeBase eb = null;
             if ( size == 2 ) {
-                    eb = fBinaryAssocToEdgeMap.get( (MAssociation) elem );
+                    eb = visibleData.fBinaryAssocToEdgeMap.get( (MAssociation) elem );
                 if ( elem instanceof MAssociationClass ) {
-                    eb = fAssocClassToEdgeMap.get( (MAssociationClass) elem );
+                    eb = visibleData.fAssocClassToEdgeMap.get( (MAssociationClass) elem );
                 }
                 edges.add( eb );
             } else {
-                List<EdgeBase> halfEdges =  fNaryAssocToHalfEdgeMap.get( (MAssociation) elem );
+                List<EdgeBase> halfEdges =  visibleData.fNaryAssocToHalfEdgeMap.get( (MAssociation) elem );
                 if ( edges != null && halfEdges != null ) {
                     edges.addAll( halfEdges );
                 }
                 if ( elem instanceof MAssociationClass ) {
-                    eb = fAssocClassToEdgeMap.get( (MAssociationClass) elem );
+                    eb = visibleData.fAssocClassToEdgeMap.get( (MAssociationClass) elem );
                     if ( !edges.contains( eb ) ) {
                         edges.add( eb );
                     }
@@ -232,7 +271,7 @@ public class ClassDiagram extends DiagramView
         
         // elem is a class
         if ( elem != null && elem instanceof MClass ) {
-            NodeBase node = fClassToNodeMap.get( (MClass) elem );
+            NodeBase node = visibleData.fClassToNodeMap.get( (MClass) elem );
             if ( node != null ) {
                 if ( elem instanceof MAssociationClass ) {
                     if ( fNodeSelection.isSelected( node ) && allEdgesSelected ) {
@@ -274,6 +313,23 @@ public class ClassDiagram extends DiagramView
     }
 
     /**
+     * Shows all hidden elements again
+     */
+    public void showAll() {
+    	while (hiddenData.fClassToNodeMap.size() > 0) {
+    		showClass(hiddenData.fClassToNodeMap.keySet().iterator().next());
+    	}
+    	
+    	while (hiddenData.fEnumToNodeMap.size() > 0) {
+    		showEnum(hiddenData.fEnumToNodeMap.keySet().iterator().next());
+    	}
+    	
+    	while (hiddenData.fGenToGeneralizationEdge.size() > 0) {
+    		showGeneralization(hiddenData.fGenToGeneralizationEdge.keySet().iterator().next());
+    	}
+    }
+    
+    /**
      * Adds a class to the diagram.
      * 
      * @param cls Class to be added.
@@ -290,32 +346,81 @@ public class ClassDiagram extends DiagramView
         
         synchronized ( fLock ) {
             fGraph.add( n );
-            fClassToNodeMap.put( cls, n );
+            visibleData.fClassToNodeMap.put( cls, n );
             fLayouter = null;
         }
     }
 
     /**
-     * Deletes a class from the diagram.
+     * Hides a class from the diagram.
      */
-    public void deleteClass( MClass cls ) {
-        NodeBase n = fClassToNodeMap.get( cls );
+    public void hideClass( MClass cls ) {
+    	showOrHideClassNode(cls, false);
+    	
+    	// Remove all generalization edges
+    	Set<MGeneralization> gens = cls.model().generalizationGraph().allEdges(cls);
+    	for (MGeneralization gen : gens) {
+    		hideGeneralization(gen);
+    	}
+    	
+    	// Remove all associations
+    	for (MAssociation assoc : cls.associations()) {
+    		hideAssociation(assoc);
+    	}
+    }
+    
+    /**
+     * Shows an already hidden class again
+     * @param cls
+     */
+    public void showClass( MClass cls ) {
+    	showOrHideClassNode(cls, true);
+    	
+    	// Add all generalization edges, if nodes are present
+    	Set<MGeneralization> gens = cls.model().generalizationGraph().allEdges(cls);
+    	for (MGeneralization gen : gens) {
+    		if (visibleData.fClassToNodeMap.containsKey(gen.child()) &&
+    			visibleData.fClassToNodeMap.containsKey(gen.parent())) {
+    			showGeneralization(gen);
+    		}
+    	}
+    	
+    	// Remove all associations
+    	for (MAssociation assoc : cls.associations()) {
+    		boolean allsEndsVisible = true;
+    		for (MAssociationEnd end : assoc.associationEnds()) {
+    			if (!visibleData.fClassToNodeMap.containsKey(end.cls())) {
+    				allsEndsVisible = false;
+    				break;
+    			}
+    		}	
+    		
+    		if (allsEndsVisible)
+    			showAssociation(assoc);
+    	}
+    }
+    
+    /**
+     * Shows an already hidden class.
+     */
+    protected void showOrHideClassNode( MClass cls, boolean show ) {
+    	ClassDiagramData source = (show ? hiddenData : visibleData);
+    	ClassDiagramData target = (show ? visibleData : hiddenData);
+    	
+    	ClassNode n = source.fClassToNodeMap.get( cls );
         
-        if (n == null) {
-            if ( fHiddenNodes.contains( cls ) ) {
-                fHiddenNodes.remove( cls );
-                fLog.println("Deleted class `" + cls.name()
-                             + "' from the hidden classes.");
-            } else {
-                throw new RuntimeException("no node for class `" 
-                                           + cls.name() + "' in current state.");
+        if (n != null) {
+        	synchronized ( fLock ) {
+                if (show) 
+                	fGraph.add( n );
+                else
+                	fGraph.remove(n);
+                
+                source.fClassToNodeMap.remove( cls );
+                target.fClassToNodeMap.put(cls, n);
+                
+                fLayouter = null;
             }
-        }
-
-        synchronized ( fLock ) {
-            fGraph.remove( n );
-            fClassToNodeMap.remove( cls );
-            fLayouter = null;
         }
     }
     
@@ -334,32 +439,42 @@ public class ClassDiagram extends DiagramView
 
         synchronized ( fLock ) {
             fGraph.add( n );
-            fEnumToNodeMap.put( enumeration, n );
+            visibleData.fEnumToNodeMap.put( enumeration, n );
             fLayouter = null;
         }
     }
 
     /**
-     * Deletes an enumeration from the diagram.
+     * Hides an enumeration from the diagram.
      */
-    public void deleteEnum( EnumType enumeration ) {
-        NodeBase n = (NodeBase) fEnumToNodeMap.get( enumeration );
-        if (n == null) {
-            if ( fHiddenNodes.contains( enumeration ) ) {
-                fHiddenNodes.remove( enumeration );
-                fLog.println("Deleted enumeration `" + enumeration.name()
-                             + "' from the hidden enumerations.");
-            } else {
-                throw new RuntimeException("no node for enumeration `" 
-                                           + enumeration.name() 
-                                           + "' in current state.");
+    public void hideEnum( EnumType enumeration ) {
+        showOrHideEnum(enumeration, false);
+    }
+    
+    /**
+     * Shows an hidden enumeration in the diagram again.
+     */
+    public void showEnum( EnumType enumeration ) {
+        showOrHideEnum(enumeration, true);
+    }
+    
+    public void showOrHideEnum( EnumType enumeration, boolean show ) {
+    	ClassDiagramData source = (show ? hiddenData : visibleData);
+    	ClassDiagramData target = (show ? visibleData : hiddenData);
+    	
+    	EnumNode n = source.fEnumToNodeMap.get( enumeration );
+        
+        if (n != null) {
+        	synchronized ( fLock ) {
+                if (show)
+                	fGraph.add( n );
+                else
+                	fGraph.remove( n );
+                
+                source.fEnumToNodeMap.remove( enumeration );
+                target.fEnumToNodeMap.put(enumeration, n);
+                fLayouter = null;
             }
-        }
-
-        synchronized ( fLock ) {
-            fGraph.remove( n );
-            fEnumToNodeMap.remove( enumeration );
-            fLayouter = null;
         }
     }
     
@@ -367,173 +482,228 @@ public class ClassDiagram extends DiagramView
      * Adds an association to the diagram.
      */
     public void addAssociation( MAssociation assoc ) {
-        Iterator<MAssociationEnd> assocEndIter = assoc.associationEnds().iterator();
+    	if (assoc.associationEnds().size() == 2) {
+    		addBinaryAssociation(assoc);
+    	} else {
+    		addNAryAssociation(assoc);
+    	}
+    }
+    
+    public void showAssociation( MAssociation assoc) {
+		if (assoc.associationEnds().size() == 2) {
+    		showBinaryAssociation(assoc);
+    	} else {
+    		showNAryAssociation(assoc);
+    	}
+		
+		if (assoc instanceof MAssociationClass) {
+    		showClass((MClass)assoc);
+    	}
+	}
+    
+    /**
+     * Hides an association in the diagram.
+     */
+    public void hideAssociation( MAssociation assoc ) {
+    	if (assoc.associationEnds().size() == 2) {
+    		hideBinaryAssociation(assoc);
+    	} else {
+    		hideNAryAssociation(assoc);
+    	}
+    	
+    	if (assoc instanceof MAssociationClass) {
+    		hideClass((MClass)assoc);
+    	}
+    }
+    
+    protected void addBinaryAssociation(MAssociation assoc) {
+    	Iterator<MAssociationEnd> assocEndIter = assoc.associationEnds().iterator();
         MAssociationEnd assocEnd1 = assocEndIter.next();
         MAssociationEnd assocEnd2 = assocEndIter.next();
         MClass cls1 = assocEnd1.cls();
         MClass cls2 = assocEnd2.cls();
 
-        if ( assoc.associationEnds().size() == 2 ) {
-            // association class
-            if ( assoc instanceof MAssociationClass ) {
-                BinaryAssociationClassOrObject e = 
-                    new BinaryAssociationClassOrObject( 
-                    			  fClassToNodeMap.get( cls1 ),
-                                  fClassToNodeMap.get( cls2 ),
-                                  assocEnd1, assocEnd2,
-                                  fClassToNodeMap.get( assoc ),
-                                  this, assoc, false );
-                synchronized (fLock) {
-                    fGraph.addEdge(e);
-                    fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
-                    fLayouter = null;
-                }
-            } else {
-            	NodeBase source;
-            	NodeBase target;
-            	
-            	// for reflexive associations with exactly one qualifier
-            	// the qualifier end must be the source!
-            	if (assoc.associatedClasses().size() == 1 && 
-            		assocEnd2.hasQualifiers() && !assocEnd1.hasQualifiers()) {
-            		MAssociationEnd temp = assocEnd1;
-            		assocEnd1 = assocEnd2;
-            		assocEnd2 = temp;
-            		source = fClassToNodeMap.get(cls2);
-            		target = fClassToNodeMap.get(cls1);
-            	} else {
-            		source = fClassToNodeMap.get(cls1);
-            		target = fClassToNodeMap.get(cls2);
-            	}
-            	
-                // binary association
-            	BinaryAssociationOrLinkEdge e = 
-                    new BinaryAssociationOrLinkEdge( source, 
-                                    		   	     target, 
-                                    		   	     assocEnd1, assocEnd2, 
-                                    		   	     this, assoc );
-                synchronized ( fLock ) {
-                    fGraph.addEdge(e);
-                    fBinaryAssocToEdgeMap.put(assoc, e);
-                    fLayouter = null;
-                }
-            }
-
-        } else
+        // association class
+        if ( assoc instanceof MAssociationClass ) {
+            BinaryAssociationClassOrObject e = 
+                new BinaryAssociationClassOrObject( 
+                			  visibleData.fClassToNodeMap.get( cls1 ),
+                			  visibleData.fClassToNodeMap.get( cls2 ),
+                              assocEnd1, assocEnd2,
+                              visibleData.fClassToNodeMap.get( assoc ),
+                              this, assoc, false );
             synchronized (fLock) {
-                // Find a random new position. getWidth and getheight return 0
-                // if we are called on a new diagram.
-                double fNextNodeX = Math.random() * Math.max(100, getWidth());
-                double fNextNodeY = Math.random() * Math.max(100, getHeight());
-                
-                // n-ary association: create a diamond node and n edges to classes
-                DiamondNode node = new DiamondNode( assoc, fOpt );
-                node.setPosition( fNextNodeX, fNextNodeY );
-                fGraph.add(node);
-                // connected to an associationclass
-                if ( assoc instanceof MAssociationClass ) {
-                    NAryAssociationClassOrObjectEdge e = 
-                        new NAryAssociationClassOrObjectEdge( fClassToNodeMap.get( cls1 ), 
-                                      fClassToNodeMap.get( cls2 ),
-                                      node, 
-                                      fClassToNodeMap.get( assoc ),
-                                      this, assoc, false );
-                    synchronized (fLock) {
-                        fGraph.addEdge(e);
-                        fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
-                        fLayouter = null;
-                    }
-                }
-                // connected to a "normal" class
-                fNaryAssocToDiamondNodeMap.put( assoc, node );
-                List<EdgeBase> halfEdges = new ArrayList<EdgeBase>();
-                assocEndIter = assoc.associationEnds().iterator();
-                while ( assocEndIter.hasNext() ) {
-                    MAssociationEnd assocEnd = (MAssociationEnd) assocEndIter.next();
-                    MClass cls = assocEnd.cls();
-                    AssociationOrLinkPartEdge e = 
-                        new AssociationOrLinkPartEdge(node, fClassToNodeMap.get( cls ), assocEnd, this, assoc, false );
-                    fGraph.addEdge(e);
-                    halfEdges.add( e );
-                }
-                node.setHalfEdges( halfEdges );
-                fNaryAssocToHalfEdgeMap.put( assoc, halfEdges );
-                fLayouter = null;
-            }
-    }
-    
-    /**
-     * Removes an association from the diagram.
-     */
-    public void deleteAssociation( MAssociation assoc, boolean loadingLayout ) {
-        if ( assoc.associationEnds().size() == 2 ) {
-            EdgeBase e = null;
-            if ( assoc instanceof MAssociationClass ) { 
-                e = fAssocClassToEdgeMap.get( assoc );
-                if (e == null) {
-                    return;
-                }
-            } else {
-                e = fBinaryAssocToEdgeMap.get( assoc );
-            }
-
-            if ( e != null && !loadingLayout 
-                 && !( assoc instanceof MAssociationClass )
-                 && fHiddenEdges.contains( assoc ) ) {
-                fHiddenEdges.remove( assoc );
-                fLog.println("Deleted association `" + assoc.name() 
-                             + "' from hidden associations.");
-            }
-            if (e == null) {
-                throw new RuntimeException( "no edge for association `" 
-                                            + assoc.name()
-                                            + "' in current state." );
-            }
-
-            synchronized (fLock) {
-                fGraph.removeEdge( e );
-                if ( assoc instanceof MAssociationClass ) {
-                    fAssocClassToEdgeMap.remove( assoc );
-                } else {
-                    fBinaryAssocToEdgeMap.remove( assoc );
-                }
+                fGraph.addEdge(e);
+                visibleData.fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
                 fLayouter = null;
             }
         } else {
-            DiamondNode n = (DiamondNode) fNaryAssocToDiamondNodeMap.get( assoc );
-            if ( n == null && !loadingLayout ) {
-                if ( fHiddenEdges.contains( assoc ) ) {
-                    fHiddenEdges.remove( assoc );
-                    fLog.println( "Deleted association `" + assoc.name()
-                                  + "' from hidden associations." );
-                } else {
-                    throw new RuntimeException(
-                            "no diamond node for n-ary association `" 
-                            + assoc.name() + "' in current state.");
-                }
-            }
-
+        	NodeBase source;
+        	NodeBase target;
+        	
+        	// for reflexive associations with exactly one qualifier
+        	// the qualifier end must be the source!
+        	if (assoc.associatedClasses().size() == 1 && 
+        		assocEnd2.hasQualifiers() && !assocEnd1.hasQualifiers()) {
+        		MAssociationEnd temp = assocEnd1;
+        		assocEnd1 = assocEnd2;
+        		assocEnd2 = temp;
+        		source = visibleData.fClassToNodeMap.get(cls2);
+        		target = visibleData.fClassToNodeMap.get(cls1);
+        	} else {
+        		source = visibleData.fClassToNodeMap.get(cls1);
+        		target = visibleData.fClassToNodeMap.get(cls2);
+        	}
+        	
+            // binary association
+        	BinaryAssociationOrLinkEdge e = 
+                new BinaryAssociationOrLinkEdge( source, 
+                                		   	     target, 
+                                		   	     assocEnd1, assocEnd2, 
+                                		   	     this, assoc );
             synchronized ( fLock ) {
-                // all dangling HalfLinkEdges are removed by the graph
-                fGraph.remove( n );
-                fNaryAssocToDiamondNodeMap.remove( assoc );
-                fNaryAssocToHalfEdgeMap.remove( assoc );
+                fGraph.addEdge(e);
+                visibleData.fBinaryAssocToEdgeMap.put(assoc, e);
                 fLayouter = null;
             }
+        }
+    }
 
+    protected void addNAryAssociation(MAssociation assoc) {
+    	Iterator<MAssociationEnd> assocEndIter = assoc.associationEnds().iterator();
+        MAssociationEnd assocEnd1 = assocEndIter.next();
+        MAssociationEnd assocEnd2 = assocEndIter.next();
+        
+        MClass cls1 = assocEnd1.cls();
+        MClass cls2 = assocEnd2.cls();
+        
+        synchronized (fLock) {
+            // Find a random new position. getWidth and getheight return 0
+            // if we are called on a new diagram.
+            double fNextNodeX = Math.random() * Math.max(100, getWidth());
+            double fNextNodeY = Math.random() * Math.max(100, getHeight());
+            
+            // n-ary association: create a diamond node and n edges to classes
+            DiamondNode node = new DiamondNode( assoc, fOpt );
+            node.setPosition( fNextNodeX, fNextNodeY );
+            fGraph.add(node);
+            // connected to an associationclass
+            if ( assoc instanceof MAssociationClass ) {
+                NAryAssociationClassOrObjectEdge e = 
+                    new NAryAssociationClassOrObjectEdge( visibleData.fClassToNodeMap.get( cls1 ), 
+                                  visibleData.fClassToNodeMap.get( cls2 ),
+                                  node, 
+                                  visibleData.fClassToNodeMap.get( assoc ),
+                                  this, assoc, false );
+                
+                fGraph.addEdge(e);
+                visibleData.fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
+                fLayouter = null;
+            }
+            
+            // connected to a "normal" class
+            visibleData.fNaryAssocToDiamondNodeMap.put( assoc, node );
+            List<EdgeBase> halfEdges = new ArrayList<EdgeBase>();
+            assocEndIter = assoc.associationEnds().iterator();
+            while ( assocEndIter.hasNext() ) {
+                MAssociationEnd assocEnd = (MAssociationEnd) assocEndIter.next();
+                MClass cls = assocEnd.cls();
+                AssociationOrLinkPartEdge e = 
+                    new AssociationOrLinkPartEdge(node, visibleData.fClassToNodeMap.get( cls ), assocEnd, this, assoc, false );
+                fGraph.addEdge(e);
+                halfEdges.add( e );
+            }
+            node.setHalfEdges( halfEdges );
+            visibleData.fNaryAssocToHalfEdgeMap.put( assoc, halfEdges );
+            fLayouter = null;
+        }
+    }
+
+	protected void hideBinaryAssociation(MAssociation assoc) {
+		showOrHideBinaryAssociation(assoc, false);
+	}
+	
+	protected void showBinaryAssociation(MAssociation assoc) {
+		showOrHideBinaryAssociation(assoc, true);
+	}
+	
+	protected void showOrHideBinaryAssociation(MAssociation assoc, boolean show) {
+		ClassDiagramData source = (show ? hiddenData : visibleData);
+    	ClassDiagramData target = (show ? visibleData : hiddenData);
+    	
+		EdgeBase e = null;
+		
+        if ( assoc instanceof MAssociationClass ) { 
+            e = source.fAssocClassToEdgeMap.get( assoc );
+        } else {
+            e = source.fBinaryAssocToEdgeMap.get( assoc );
+        }
+
+        if (e != null) {
+	        synchronized (fLock) {
+	            if (show) 
+	            	fGraph.addEdge( e );
+	            else
+	            	fGraph.removeEdge( e );
+	            
+	            if ( assoc instanceof MAssociationClass ) {
+	            	source.fAssocClassToEdgeMap.remove( assoc );
+	            	target.fAssocClassToEdgeMap.put((MAssociationClass)assoc, e);
+	            } else {
+	            	source.fBinaryAssocToEdgeMap.remove( assoc );
+	            	target.fBinaryAssocToEdgeMap.put(assoc, (BinaryAssociationOrLinkEdge)e);
+	            }
+	            fLayouter = null;
+	        }
+        }
+	}
+
+	protected void hideNAryAssociation(MAssociation assoc) {
+        showOrHideNAryAssociation(assoc, false);
+    }
+	
+	protected void showNAryAssociation(MAssociation assoc) {
+        showOrHideNAryAssociation(assoc, true);
+    }
+	
+	protected void showOrHideNAryAssociation(MAssociation assoc, boolean show) {
+		ClassDiagramData source = (show ? hiddenData : visibleData);
+    	ClassDiagramData target = (show ? visibleData : hiddenData);
+    	
+		DiamondNode n = source.fNaryAssocToDiamondNodeMap.get( assoc );
+
+        if (n != null) {
             synchronized ( fLock ) {
+                // all dangling HalfLinkEdges are removed by the graph
+            	if (show)
+            		fGraph.add( n );
+            	else
+            		fGraph.remove( n );
+            	
+                source.fNaryAssocToDiamondNodeMap.remove( assoc );
+                target.fNaryAssocToDiamondNodeMap.put(assoc, n);
+                
+                List<EdgeBase> values = source.fNaryAssocToHalfEdgeMap.remove( assoc );
+                target.fNaryAssocToHalfEdgeMap.put(assoc, values);
+                
+                fLayouter = null;
+
                 if ( assoc instanceof MAssociationClass ) {
-                    BinaryAssociationClassOrObject edge = 
-                        (BinaryAssociationClassOrObject) fAssocClassToEdgeMap.get( assoc );
+                    EdgeBase edge = source.fAssocClassToEdgeMap.get( assoc );
                     if ( edge != null ) {
-                        fGraph.removeEdge( edge );
-                        fAssocClassToEdgeMap.remove( assoc );
+                        if (show)
+                        	fGraph.addEdge(edge);
+                        else
+                        	fGraph.removeEdge( edge );
+                        
+                        source.fAssocClassToEdgeMap.remove( assoc );
+                        target.fAssocClassToEdgeMap.put((MAssociationClass)assoc, edge);
                     }
                 }
             }
         }
     }
-    
+	
     /**
      * Adds a generalization to the diagram.
      */
@@ -541,35 +711,46 @@ public class ClassDiagram extends DiagramView
         MClass parent = gen.parent();
         MClass child = gen.child();
         GeneralizationEdge e = 
-            new GeneralizationEdge( fClassToNodeMap.get( child ),
-                                    fClassToNodeMap.get( parent ), this );
+            new GeneralizationEdge( visibleData.fClassToNodeMap.get( child ),
+                                    visibleData.fClassToNodeMap.get( parent ), this );
         synchronized ( fLock ) {
             fGraph.addEdge( e );
-            fGenToGeneralizationEdge.put( gen, e );
+            visibleData.fGenToGeneralizationEdge.put( gen, e );
             fLayouter = null;
         }
     }
 
     /**
-     * Deletes a generalization from the diagram.
+     * Hides a generalization in the diagram.
      */
-    public void deleteGeneralization( MGeneralization gen ) {
-        EdgeBase e = (GeneralizationEdge) fGenToGeneralizationEdge.get( gen );
-        if ( e == null ) {
-            if ( fHiddenEdges.contains( gen ) ) {
-                fHiddenEdges.remove( gen );
-                fLog.println("Deleted generalization `" + gen.name()
-                             + "' from the hidden associaitons.");
-            } else {
-                throw new RuntimeException("no edge for generalization `" 
-                                           + gen.name() + "' in current state.");
+    public void hideGeneralization( MGeneralization gen ) {
+    	showOrHideGeneralization(gen, false);
+    }
+    
+    /**
+     * Shows an already hidden generalization in the diagram again.
+     */
+    public void showGeneralization( MGeneralization gen ) {
+    	showOrHideGeneralization(gen, true);
+    }
+    
+    public void showOrHideGeneralization(MGeneralization gen, boolean show) {
+    	ClassDiagramData source = (show ? hiddenData : visibleData);
+    	ClassDiagramData target = (show ? visibleData : hiddenData);
+    	
+    	GeneralizationEdge e = source.fGenToGeneralizationEdge.get( gen );
+        
+        if ( e != null ) {
+        	synchronized ( fLock ) {
+                if (show)
+                	fGraph.addEdge( e );
+                else
+                	fGraph.removeEdge( e );
+                
+                source.fGenToGeneralizationEdge.remove( gen );
+                target.fGenToGeneralizationEdge.put(gen, e);
+                fLayouter = null;
             }
-        }
-
-        synchronized ( fLock ) {
-            fGraph.removeEdge( e );
-            fGenToGeneralizationEdge.remove( gen );
-            fLayouter = null;
         }
     }
     
@@ -591,9 +772,9 @@ public class ClassDiagram extends DiagramView
 		Set<AssociationName> anames = new HashSet<AssociationName>(); // jj
         
 		final Set<MClass> selectedClasses = new HashSet<MClass>(); // jj add final
-		final Set<EnumType> selectedEnumeration = new HashSet<EnumType>();
-		final Set<Object> selectedObjects = new HashSet<Object>();
 		
+		final Set<NamedElement> selectedObjects = new HashSet<NamedElement>();
+				
         if ( !fNodeSelection.isEmpty() ) {
             for (PlaceableNode node : fNodeSelection) {
                 if ( node instanceof ClassNode && node.isDeletable() ) {
@@ -602,7 +783,6 @@ public class ClassDiagram extends DiagramView
                     selectedObjects.add( cn.cls() );
                 } else if ( node instanceof EnumNode && node.isDeletable() ) {
                     EnumNode eNode = (EnumNode)node;
-                	selectedEnumeration.add(eNode.getEnum());
                 	selectedObjects.add(eNode.getEnum());
                 } else if (node instanceof AssociationName) { //jj
 					selectedClassesOfAssociation.addAll(
@@ -614,11 +794,8 @@ public class ClassDiagram extends DiagramView
             
             String txt = null;
             if ( selectedObjects.size() == 1 ) {
-                if ( selectedObjects.iterator().next() instanceof MClass ) {
-                    txt = "'" + ((MClass) selectedClasses.iterator().next()).name() + "'";
-                } else if ( selectedObjects.iterator().next() instanceof EnumType ) {
-                    txt = "'" + ((EnumType) selectedObjects.iterator().next()).name() + "'";
-                }
+                NamedElement m = selectedObjects.iterator().next();
+                txt = "'" + m.name() + "'";
             } else if ( selectedClasses.size() > 1 ) {
                 txt = selectedClasses.size() + " classes";
             }
@@ -652,12 +829,8 @@ public class ClassDiagram extends DiagramView
 			//end jj
             
             if ( txt != null && txt.length() > 0 ) {
-            	popupMenu.insert( fHideAdmin.setValues( "Crop " + txt,
-                         getNoneSelectedNodes( selectedClasses ) ),
-                         pos++ );
-                popupMenu.insert( fHideAdmin.setValues( "Hide " + txt,
-                                                        selectedClasses ),
-                                                        pos++ );
+            	popupMenu.insert( fHideAdmin.setValues( "Crop " + txt, getNoneSelectedNodes( selectedObjects ) ), pos++ );
+                popupMenu.insert( fHideAdmin.setValues( "Hide " + txt, selectedObjects ), pos++ );
                 
 				// pathlength view anfangs jj
 				popupMenu.insert(new JSeparator(),pos++);
@@ -730,7 +903,7 @@ public class ClassDiagram extends DiagramView
             }
         }
         
-        if ( !fHiddenNodes.isEmpty() ) {
+        if ( hiddenData.hasNodes() ) {
             final JMenuItem showAllClasses = new JMenuItem( "Show hidden classes" );
             showAllClasses.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ev) {
@@ -818,49 +991,25 @@ public class ClassDiagram extends DiagramView
             
             if ( !selectedNodes.contains( obj ) ) {
                 noneSelectedNodes.add( obj );
-        }
+            }
         }
         
         return noneSelectedNodes;
     }
 
     /**
-     * Deletes all hidden elements form this diagram.
+     * Hides the given elements in this diagram.
      */
     @Override
-    public void deleteHiddenElementsFromDiagram( Set<Object> nodesToHide, 
-                                                 Set<Object> edgesToHide ) {
+    public void hideElementsInDiagram( Set<Object> nodesToHide ) {
         Iterator<?> it = nodesToHide.iterator();
         while ( it.hasNext() ) {
             Object elem = it.next();
             if ( elem instanceof MClass ) {
-                deleteClass( (MClass) elem );
+                hideClass( (MClass) elem );
             } else if ( elem instanceof EnumType ) {
-                deleteEnum( (EnumType) elem );
+                hideEnum( (EnumType) elem );
             }
         }
-        
-        Set<MAssociation> assocsToDelete = new HashSet<MAssociation>();
-        Set<MGeneralization> gensToDelete = new HashSet<MGeneralization>();
-        it = edgesToHide.iterator();
-        while ( it.hasNext() ) {
-            MModelElement edge = (MModelElement) it.next();
-            if ( edge instanceof MAssociation ) {
-                assocsToDelete.add( (MAssociation) edge );
-            } else if ( edge instanceof MGeneralization ) {
-                gensToDelete.add( (MGeneralization) edge );
-            }
-        }
-        
-        for (MAssociation ass : assocsToDelete) {
-            deleteAssociation( ass, true );
-        }
-        
-        for (MGeneralization gen : gensToDelete) {
-            deleteGeneralization( gen );
-        }
-        
-        fHiddenNodes.addAll( nodesToHide );
-        fHiddenEdges.addAll( edgesToHide );
     }
 }

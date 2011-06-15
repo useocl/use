@@ -110,8 +110,7 @@ public class ActionLoadLayout extends AbstractAction {
         fLog.println("Reading layout file " + f);
         XMLParserAccess xmlParser = new XMLParserAccessImpl( fLayoutInfos );
         xmlParser.loadXMLFile( f, true );
-        fDiagram.deleteHiddenElementsFromDiagram( fLayoutInfos.getHiddenNodes(),
-                                                  fLayoutInfos.getHiddenEdges() );
+        fDiagram.hideElementsInDiagram( fLayoutInfos.getHiddenNodes() );
         
         fDiagram.invalidateContent();
     }

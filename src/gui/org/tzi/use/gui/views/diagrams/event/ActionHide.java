@@ -48,21 +48,20 @@ public abstract class ActionHide extends AbstractAction {
     Set<Object> fNodesToHide;
     
     /**
-     * All hidden nodes or edges are saved into these properties.
-     */
-    Properties fPropForHiddenElements;
-    /**
      * Actual selected nodes in the diagram.
      */
     Selection<Selectable> fNodeSelection;
+    
     /**
      * This graph contains all nodes and edges of a diagram.  
      */
     DirectedGraph<NodeBase, EdgeBase> fGraph;
+    
     /**
      * XML representation of the hidden element.
      */
     String fLayoutXMLForHiddenElements = "";
+    
     /**
      * Layout information about the given diagram. 
      */
@@ -92,12 +91,7 @@ public abstract class ActionHide extends AbstractAction {
      * view before.
      */
     public abstract void showHiddenElements(Set<?> set);
-    
-    /**
-     * Saves edges which are connected to the hidden nodes.
-     */
-    public abstract Set<Object> saveEdges( Set<Object> nodesToHide );
-    
+        
     /**
      * Hides all nodes with there connecting edges.
      */

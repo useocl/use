@@ -634,8 +634,9 @@ public class NewObjectDiagram extends DiagramView
      * Deletes all hidden elements form this diagram.
      */
     @Override
-    public void deleteHiddenElementsFromDiagram( Set<Object> objectsToHide, 
-                                          		 Set<Object> linksToHide ) {
+    public void hideElementsInDiagram( Set<Object> objectsToHide ) {
+    	//FIXME: Links to hide is null
+    	Set<Object> linksToHide = null;
         Iterator<Object> it = objectsToHide.iterator();
         while ( it.hasNext() ) {
             MObject obj = (MObject) it.next();

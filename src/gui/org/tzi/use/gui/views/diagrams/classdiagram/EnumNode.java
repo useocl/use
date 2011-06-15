@@ -44,7 +44,7 @@ public class EnumNode extends NodeBase implements SortChangeListener {
     private EnumType fEnum;
     private List<String> fLiterals;
         
-    private final String ENUMERATION = "<<enumeration>>";
+    private static final String ENUMERATION = "<<enumeration>>";
     
     EnumNode( EnumType enumeration, DiagramOptions opt ) {
         fEnum = enumeration;
