@@ -99,6 +99,7 @@ singleStat returns [ASTStatement n]
   | ces = condExStat     { $n = $ces.n; } // ix.   (conditional execution)
   | its = iterStat       { $n = $its.n; } // x.    (iteration)
   // handled in varAssignStat rule        // xii.  (operation call with result)
+  | whs = whileStat      { $n = $whs.n; } // (new, not in Buettner:2011:DISS)
 ;
 
 
@@ -380,6 +381,19 @@ iterStat returns [ASTIterationStatement n]
 ;
 
 
+////////////////////////////////////////////////////////////////////////////////
+// while statement
+////////////////////////////////////////////////////////////////////////////////
+whileStat returns [ASTWhileStatement n]
+:
+  'while'
+  cond = inSoilExpression
+  'do'
+  s = stat
+  'end'
+  
+  { $n = new ASTWhileStatement($cond.n, $s.n); }
+;
 
 
 
