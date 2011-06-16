@@ -154,59 +154,6 @@ public class StatementGenerationTest extends TestCase {
 		assertTrue(((MVariableAssignmentStatement)fStatement).getValue() 
 				instanceof MRValueNewObject);
 		
-		// assign 2 new objects to 2 variables
-		fStatement = null;
-		fStatement = generateStatement("v1, v2 := new C1");
-		assertNotNull(fStatement);
-		assertTrue(fStatement instanceof MSequenceStatement);
-		assertEquals(((MSequenceStatement)fStatement).getNumStatements(), 2);
-		for (MStatement statement : ((MSequenceStatement)fStatement).getStatements()) {
-			assertNotNull(statement);
-			assertTrue(statement instanceof MVariableAssignmentStatement);
-			assertTrue(((MVariableAssignmentStatement)statement).getValue() 
-					instanceof MRValueNewObject);
-		}
-		
-		// assign 2 new objects with 2 mandatory names to 2 variables
-		fStatement = null;
-		fStatement = generateStatement("v1, v2 := new C1('x', 'y')");
-		assertNotNull(fStatement);
-		assertTrue(fStatement instanceof MSequenceStatement);
-		assertEquals(((MSequenceStatement)fStatement).getNumStatements(), 2);
-		for (MStatement statement : ((MSequenceStatement)fStatement).getStatements()) {
-			assertNotNull(statement);
-			assertTrue(statement instanceof MVariableAssignmentStatement);
-			assertTrue(((MVariableAssignmentStatement)statement).getValue() 
-					instanceof MRValueNewObject);
-		}
-		
-		// assign 2 new objects with 1 mandatory name to 2 variables
-		fStatement = null;
-		fStatement = generateStatement("v1, v2 := new C1('x')");
-		assertNotNull(fStatement);
-		assertTrue(fStatement instanceof MSequenceStatement);
-		assertEquals(((MSequenceStatement)fStatement).getNumStatements(), 2);
-		for (MStatement statement : ((MSequenceStatement)fStatement).getStatements()) {
-			assertNotNull(statement);
-			assertTrue(statement instanceof MVariableAssignmentStatement);
-			assertTrue(((MVariableAssignmentStatement)statement).getValue() 
-					instanceof MRValueNewObject);
-		}
-		
-		// assign 2 new objects with 3 mandatory names (last one is ignored) 
-		// to 2 variables
-		fStatement = null;
-		fStatement = generateStatement("v1, v2 := new C1('x', 'y', 'z')");
-		assertNotNull(fStatement);
-		assertTrue(fStatement instanceof MSequenceStatement);
-		assertEquals(((MSequenceStatement)fStatement).getNumStatements(), 2);
-		for (MStatement statement : ((MSequenceStatement)fStatement).getStatements()) {
-			assertNotNull(statement);
-			assertTrue(statement instanceof MVariableAssignmentStatement);
-			assertTrue(((MVariableAssignmentStatement)statement).getValue() 
-					instanceof MRValueNewObject);
-		}
-		
 		// assign new link object to variable
 		fStatement = null;
 		fStatement = generateStatement("v := new AC1 between (o1, o2)");
@@ -293,16 +240,6 @@ public class StatementGenerationTest extends TestCase {
 		fStatement = null;
 		fStatement = generateStatement("new C1(12)");
 		assertNull(fStatement);
-		
-		// multiple object creation with mandatory object names
-		fStatement = null;
-		fStatement = generateStatement("new C1('x', 'y', 'z')");
-		assertNotNull(fStatement);
-		assertTrue(fStatement instanceof MSequenceStatement);
-		assertEquals(((MSequenceStatement)fStatement).getNumStatements(), 3);
-		for (MStatement statement : ((MSequenceStatement)fStatement).getStatements()) {
-			assertTrue(statement instanceof MNewObjectStatement);
-		}
 				
 		// invalid class
 		fStatement = null;

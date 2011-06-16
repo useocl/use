@@ -30,6 +30,7 @@ import org.tzi.use.parser.soil.*;
 import org.tzi.use.parser.soil.ast.*;
 import org.tzi.use.parser.ocl.*;
 import java.util.Collections;
+import java.util.Arrays;
 }
 
 @lexer::header {

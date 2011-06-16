@@ -84,23 +84,20 @@ nextStat[ASTSequenceStatement seq]
 // 
 ////////////////////////////////////////////////////////////////////////////////
 singleStat returns [ASTStatement n]
-options { 
-  backtrack = true;
-  memoize = true;
-}
+//options {
+  //backtrack = true;
+//}
 : 
     emp = emptyStat      { $n = $emp.n; } // i.    (empty statement)
   // handled in stat rule                 // ii.   (sequence)
+  | (statStartingWithExpr)=> sse = statStartingWithExpr { $n = $sse.n; }
   | vas = varAssignStat  { $n = $vas.n; } // iii.  (variable assignment)
-  | aas = attAssignStat  { $n = $aas.n; } // iv.   (attribute assignment)
-  | lcs = lobjCreateStat { $n = $lcs.n; } //       (link object creation)
-  | ocs = objCreateStat  { $n = $ocs.n; } // v.    (object creation)
+  | ocs = objCreateStat  { $n = $ocs.n; } // v.    (object creation) or (link object creation)
   | ods = objDestroyStat { $n = $ods.n; } // vi.   (object destruction)
   | lis = lnkInsStat     { $n = $lis.n; } // vii.  (link insertion)
   | lds = lnkDelStat     { $n = $lds.n; } // viii. (link deletion)
   | ces = condExStat     { $n = $ces.n; } // ix.   (conditional execution)
   | its = iterStat       { $n = $its.n; } // x.    (iteration)
-  | ops = callStat       { $n = $ops.n; } // xi.   (operation call without result)
   // handled in varAssignStat rule        // xii.  (operation call with result)
 ;
 
@@ -115,90 +112,100 @@ emptyStat returns [ASTEmptyStatement n]
   { $n = new ASTEmptyStatement(); }
 ;
 
-
+statStartingWithExpr returns [ASTStatement n]
+:
+  expr = expression
+  (
+    aas = attAssignStat[$expr.n]  { $n = $aas.n; } // iv.   (attribute assignment)
+  )?
+  {
+    if (aas == null) {
+      $n = new ASTOperationCallStatement($expr.n); 
+    }
+  }
+;
+	
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
 varAssignStat returns [ASTStatement n]
-options {
-  backtrack = true;
-  memoize = true;
-}
 : 
-  varName = IDENT COLON_EQUAL rVal = rValue { $n = new ASTVariableAssignmentStatement($varName.text, $rVal.n); }
-  |
-  vNames = identListMin1
+  varName = IDENT
   COLON_EQUAL
-  'new'
-  oType = simpleType
-  (
-    LPAREN
-      oNames = exprList
-    RPAREN
-  )?
-  
+  rVal = rValue
   {
-    ASTSimpleType objType = $oType.n;
-    List<String> varNames = $vNames.n;
-    int numVars = varNames.size();
-    
-    List<ASTExpression> objNames = null;
-    int numNames = 0;
-    
-    if (oNames != null) {
-      objNames = $oNames.n;
-      numNames = objNames.size();
-    }
-    
-    if (numNames > numVars) {
-      StringBuilder sb = new StringBuilder();
-      sb.append("ignoring superfluous object name");
-      if ((numNames - numVars) > 1) {
-        sb.append("s");
-      }
-      sb.append(": ");
-      for (int i = numVars; i < numNames; ) {
-        sb.append(objNames.get(i).getStringRep());
-        if (++i < numNames) {
-          sb.append(", ");
-        }
-      }
-      sb.append(" in statement `");
-      sb.append($text); 
-      sb.append("'");
-      
-      reportWarning(sb.toString());
-    }
-    
-    ASTSequenceStatement seq = new ASTSequenceStatement(numVars);
-    for (int i = 0; i < numVars; ++i) {     
-      seq.addStatement(
-        new ASTVariableAssignmentStatement(
-          varNames.get(i),
-          new ASTRValueNewObject(
-            objType, 
-            ((i < numNames) ? objNames.get(i) : null))),
-        $start,
-        $text);  
-    }
-       
-    $n = seq.simplify();
+    $n = new ASTVariableAssignmentStatement($varName.text, $rVal.n);
   }
+  
+  /*
+  { 
+    if ($varNames.n.size() == 1) {
+  		$n = new ASTVariableAssignmentStatement($varNames.n.get(0), $rVal.n);
+	} else {
+		ASTSimpleType objType = $oType.n;
+    	List<String> varNames = $varNames.n;
+    	int numVars = varNames.size();
+    
+	    List<ASTExpression> objNames = null;
+	    int numNames = 0;
+	    
+	    if (oNames != null) {
+	      objNames = $oNames.n;
+	      numNames = objNames.size();
+	    }
+	    
+	    if (numNames > numVars) {
+	      StringBuilder sb = new StringBuilder();
+	      sb.append("ignoring superfluous object name");
+	      if ((numNames - numVars) > 1) {
+	        sb.append("s");
+	      }
+	      sb.append(": ");
+	      for (int i = numVars; i < numNames; ) {
+	        sb.append(objNames.get(i).getStringRep());
+	        if (++i < numNames) {
+	          sb.append(", ");
+	        }
+	      }
+	      sb.append(" in statement `");
+	      sb.append($text); 
+	      sb.append("'");
+	      
+	      reportWarning(sb.toString());
+	    }
+    
+    	ASTSequenceStatement createSeq = (ASTSequenceStatement)rVal.n;
+    	
+	    ASTSequenceStatement seq = new ASTSequenceStatement(numVars);
+	    for (int i = 0; i < numVars; ++i) {     
+	      seq.addStatement(
+	        new ASTVariableAssignmentStatement(
+	          varNames.get(i),
+	          new ASTRValueNewObject(
+	            objType, 
+	            ((i < numNames) ? objNames.get(i) : null))),
+	        $start,
+	        $text);  
+	    }
+       
+    	$n = seq.simplify();
+	}
+  }
+  */
 ;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
-attAssignStat returns [ASTAttributeAssignmentStatement n]
+attAssignStat[ASTExpression exp] returns [ASTAttributeAssignmentStatement n]
 :
-  obj = inSoilExpression 
   DOT 
   attName = IDENT
   COLON_EQUAL
   r = rValue
   
-  { $n = new ASTAttributeAssignmentStatement($obj.n, $attName.text, $r.n); }
+  { $n = new ASTAttributeAssignmentStatement($exp, $attName.text, $r.n); }
 ;
 
 
@@ -208,56 +215,52 @@ attAssignStat returns [ASTAttributeAssignmentStatement n]
 objCreateStat returns [ASTStatement n]
 :
   'new'
-  objType = simpleType
+  ident = simpleType
   (
     LPAREN
-      objNames = exprListMin1
+      objName = expression
     RPAREN
+  )?
+  
+  (
+    'between'
+      LPAREN
+        p = rValListMin2
+      RPAREN
+    { 
+    $n = new ASTNewLinkObjectStatement($ident.n, $p.n, $objName.n);
+    }
   )?
   
   {
-    if (objNames == null) {
-      $n = new ASTNewObjectStatement($objType.n);
-    } else {
-      ASTSequenceStatement seq = new ASTSequenceStatement();
-      
-      for (ASTExpression objName : $objNames.n){    
-        seq.addStatement(
-          new ASTNewObjectStatement($objType.n, objName),
-          $start,
-          $text);
-      }
-      
-      $n = seq.simplify();
+    if ($n == null) {
+      $n = new ASTNewObjectStatement($ident.n, $objName.n);
     }
   }
-;
 
 
-////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////
-lobjCreateStat returns [ASTNewLinkObjectStatement n]
-:
-  'new'
-  assoc = IDENT
-  (
-    LPAREN
-      name = inSoilExpression
-    RPAREN
-  )?
-  'between'
-  LPAREN
-    p = rValListMin2
-  RPAREN
-  
-  { 
-    $n = 
-      new ASTNewLinkObjectStatement(
-        $assoc.text, $p.n, $name.n); 
+
+/*
+  {
+  	if ($n == null) {
+		if (objNames == null) {
+		  $n = new ASTNewObjectStatement($ident.n);
+		} else {
+		  ASTSequenceStatement seq = new ASTSequenceStatement();
+		  
+		  for (ASTExpression objName : $objNames.n){    
+		    seq.addStatement(
+		      new ASTNewObjectStatement($ident.n, objName),
+		      $start,
+		      $text);
+		  }
+		  
+		  $n = seq.simplify();
+		}
+	}
   }
+  */
 ;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -400,15 +403,7 @@ iterStat returns [ASTIterationStatement n]
 ;
 
 
-////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////
-callStat returns [ASTOperationCallStatement n]
-:
-  e = inSoilExpression
-  
-  { $n = new ASTOperationCallStatement($e.n); }
-;
+
 
 
 
@@ -432,31 +427,15 @@ nothing
 //
 ////////////////////////////////////////////////////////////////////////////////
 rValue returns [ASTRValue n]
-options {
-  backtrack = true;
-  memoize = true;
-}
 :
     e = inSoilExpression { $n = new ASTRValueExpressionOrOpCall($e.n); }
-  | loc = lobjCreateStat
+  | oc = objCreateStat
   { 
-    $loc.n.setSourcePosition($start);
-    $n = new ASTRValueNewLinkObject($loc.n);
-  }
-  | 'new' 
-  objType = simpleType
-  (
-    LPAREN
-      objName = inSoilExpression
-    RPAREN
-  )?
-  { 
-    ASTNewObjectStatement nos = 
-      new ASTNewObjectStatement($objType.n, $objName.n);
-    
-    nos.setSourcePosition($start);
-      
-    $n = new ASTRValueNewObject(nos); 
+    $oc.n.setSourcePosition($start);
+    if ($oc.n instanceof ASTNewLinkObjectStatement)
+    	$n = new ASTRValueNewLinkObject((ASTNewLinkObjectStatement)$oc.n);
+    else
+    	$n = new ASTRValueNewObject((ASTNewObjectStatement)$oc.n);
   }
 ;
 
@@ -605,8 +584,6 @@ identListMin1 returns [List<String> n]
     $n.add($id.text); }
   )*
 ;
-
-
 
 /* -----------------------------------------------------------------------------
 -------------------------- end of file SoilBase.gpart --------------------------

@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import org.tzi.use.parser.ocl.ASTExpression;
+import org.tzi.use.parser.ocl.ASTSimpleType;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
@@ -40,7 +41,7 @@ import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
  */
 public class ASTNewLinkObjectStatement extends ASTStatement {
 	/** TODO */
-	private String fAssociationClassName;
+	private ASTSimpleType fAssociationClassName;
 	/** TODO */
 	private List<ASTRValue> fParticipants;
 	/** TODO */
@@ -55,7 +56,7 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 	 * @param participants
 	 */
 	public ASTNewLinkObjectStatement(
-			String associationClassName, 
+			ASTSimpleType associationClassName, 
 			List<ASTRValue> participants,
 			ASTExpression linkObjectName) {
 		
@@ -71,20 +72,14 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 	 * @param participants
 	 */
 	public ASTNewLinkObjectStatement(
-			String associationClassName, 
+			ASTSimpleType associationClassName, 
 			List<ASTRValue> participants) {
 		
 		this(associationClassName, participants, null);
 	}
 	
 	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public String getAssociationClassName() {
-		return fAssociationClassName;
-	}
+
 	
 	
 	/**
@@ -109,7 +104,7 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 	protected MStatement generateStatement() throws CompilationFailedException {
 		
 		MAssociationClass associationClass = 
-			generateAssociationClass(fAssociationClassName);
+			generateAssociationClass(fAssociationClassName.toString());
 		
 		List<MRValue> participants = 
 			generateAssociationParticipants(

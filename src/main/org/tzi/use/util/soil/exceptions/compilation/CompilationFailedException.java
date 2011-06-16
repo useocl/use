@@ -30,7 +30,7 @@ import org.tzi.use.parser.soil.ast.ASTStatement;
  * @author Daniel Gent
  *
  */
-public abstract class CompilationFailedException extends Exception {
+public class CompilationFailedException extends Exception {
 	/** TODO */
 	private static final long serialVersionUID = 1L;
 	/** TODO */

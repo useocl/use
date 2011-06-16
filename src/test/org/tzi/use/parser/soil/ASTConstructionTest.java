@@ -124,8 +124,6 @@ public class ASTConstructionTest extends TestCase {
 		stats.add("v := new AC between (o1, o2)");
 		// variable assignment (new link object with mandatory name)
 		stats.add("v := new AC('lo1') between (o1, o2)");
-		// variable assignment (multiple new objects)
-		stats.add("v1, v2, v3 := new C('o1', 'o2', 'o3')");
 		// attribute assignment
 		stats.add("o.att := 42");
 		// link object creation
@@ -136,8 +134,6 @@ public class ASTConstructionTest extends TestCase {
 		stats.add("new C");
 		// object creation with mandatory name
 		stats.add("new C('o1')");
-		// multiple object creation
-		stats.add("new C('o1', 'o2', 'o3')");
 		// object destruction
 		stats.add("destroy o");
 		// multiple object destruction
@@ -219,58 +215,9 @@ public class ASTConstructionTest extends TestCase {
 		assertTrue(fResult instanceof ASTVariableAssignmentStatement);
 		assertTrue(((ASTVariableAssignmentStatement)fResult).getRValue() 
 				instanceof ASTRValueNewLinkObject);
-		
-		// assignment of multiple objects
-		setUp();
-		fResult = constructAST("a, b, c := new C");
-		assertNotNull(fResult);
-		assertTrue(fResult instanceof ASTSequenceStatement);
-		assertEquals(((ASTSequenceStatement)fResult).getNumStatements(), 3);
-		for (ASTStatement statement : ((ASTSequenceStatement)fResult).getStatements()) {
-			assertTrue(statement instanceof ASTVariableAssignmentStatement);
-			assertTrue(((ASTVariableAssignmentStatement)statement).getRValue() 
-					instanceof ASTRValueNewObject);
-		}
-		
-		// assignment of multiple objects with mandatory object names
-		setUp();
-		fResult = constructAST("a, b, c := new C('Ada', 'Bob', 'Cher')");
-		assertNotNull(fResult);
-		assertTrue(fResult instanceof ASTSequenceStatement);
-		assertEquals(((ASTSequenceStatement)fResult).getNumStatements(), 3);
-		for (ASTStatement statement : ((ASTSequenceStatement)fResult).getStatements()) {
-			assertTrue(statement instanceof ASTVariableAssignmentStatement);
-			assertTrue(((ASTVariableAssignmentStatement)statement).getRValue() 
-					instanceof ASTRValueNewObject);
-		}
-
-		// as above, but with more objects than mandatory names
-		// (last object gets a unique name)
-		setUp();
-		fResult = constructAST("a, b, c := new C('Ada', 'Bob')");
-		assertNotNull(fResult);
-		assertTrue(fResult instanceof ASTSequenceStatement);
-		assertEquals(((ASTSequenceStatement)fResult).getNumStatements(), 3);
-		for (ASTStatement statement : ((ASTSequenceStatement)fResult).getStatements()) {
-			assertTrue(statement instanceof ASTVariableAssignmentStatement);
-			assertTrue(((ASTVariableAssignmentStatement)statement).getRValue() 
-					instanceof ASTRValueNewObject);
-		}
-		
-		// as above, but with more mandatory names than objects
-		// (superfluous names are ignored)
-		setUp();
-		fResult = constructAST("a, b := new C('Ada', 'Bob', 'Cher')");
-		assertNotNull(fResult);
-		assertTrue(fResult instanceof ASTSequenceStatement);
-		assertEquals(((ASTSequenceStatement)fResult).getNumStatements(), 2);
-		for (ASTStatement statement : ((ASTSequenceStatement)fResult).getStatements()) {
-			assertTrue(statement instanceof ASTVariableAssignmentStatement);
-			assertTrue(((ASTVariableAssignmentStatement)statement).getRValue() 
-					instanceof ASTRValueNewObject);
-		}
 	}
-	
+		
+
 	
 	/**
 	 * TODO
@@ -329,15 +276,6 @@ public class ASTConstructionTest extends TestCase {
 		fResult = constructAST("new C('a')");
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTNewObjectStatement);
-		
-		// multiple objects with mandatory names
-		setUp();
-		fResult = constructAST("new C('a', 'b', 'c')");
-		assertNotNull(fResult);
-		assertTrue(fResult instanceof ASTSequenceStatement);
-		for (ASTStatement statement : ((ASTSequenceStatement)fResult).getStatements()) {
-			assertTrue(statement instanceof ASTNewObjectStatement);
-		}
 	}
 	
 	

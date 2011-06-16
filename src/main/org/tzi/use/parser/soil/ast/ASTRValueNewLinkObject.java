@@ -24,6 +24,7 @@ package org.tzi.use.parser.soil.ast;
 import java.util.List;
 
 import org.tzi.use.parser.ocl.ASTExpression;
+import org.tzi.use.parser.ocl.ASTSimpleType;
 import org.tzi.use.parser.ocl.ASTStringLiteral;
 import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
@@ -60,7 +61,7 @@ public class ASTRValueNewLinkObject extends ASTRValue {
 	 * @param linkObjectName
 	 */
 	public ASTRValueNewLinkObject(
-			String associationClassName,
+			ASTSimpleType associationClassName,
 			List<ASTRValue> participants,
 			ASTExpression linkObjectName) {
 		
@@ -78,7 +79,7 @@ public class ASTRValueNewLinkObject extends ASTRValue {
 	 * @param linkObjectName
 	 */
 	public ASTRValueNewLinkObject(
-			String associationClassName,
+			ASTSimpleType associationClassName,
 			List<ASTRValue> participants,
 			String linkObjectName) {
 		
@@ -95,7 +96,7 @@ public class ASTRValueNewLinkObject extends ASTRValue {
 	 * @param participants
 	 */
 	public ASTRValueNewLinkObject(
-			String associationClassName, 
+			ASTSimpleType associationClassName, 
 			List<ASTRValue> participants) {
 		
 		this(new ASTNewLinkObjectStatement(

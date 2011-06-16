@@ -317,11 +317,11 @@ public class Options {
                 				" for argument `soilOpAsOCL', defaulting to `NONE'");
                 		soilFromOCL = SoilPermissionLevel.NONE;
                 	}
-                } else if (arg.startsWith("oclAnyCollectionElementWarnings:")) {
-                	String value = arg.substring("oclAnyCollectionElementWarnings:".length());
+                } else if (arg.startsWith("oclAnyCollectionsChecks:")) {
+                	String value = arg.substring("oclAnyCollectionsChecks:".length());
                 	checkWarningsOclAnyInCollections = WarningType.getType(value);
-                } else if (arg.startsWith("typeSystemWarnings:")) {
-                	String value = arg.substring("typeSystemWarnings:".length());
+                } else if (arg.startsWith("extendedTypeSystemChecks:")) {
+                	String value = arg.substring("extendedTypeSystemChecks:".length());
                 	checkWarningsUnrelatedTypes = WarningType.getType(value);
                 } else {
                 	System.out.println("invalid argument `" + arg

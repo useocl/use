@@ -17,11 +17,11 @@ shellCommandOnly returns [ASTStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 shellCommand returns [ASTStatement n]
 :
-  (stat EOF)=> s = stat EOF
-  { $n = $s.n; }
-  |
-  l = legacyStat EOF
+  (legacyStat)=> l = legacyStat EOF
   { $n = $l.n; }
+  |
+  s = stat EOF
+  { $n = $s.n; }
 ;
 
 
@@ -92,7 +92,7 @@ singleLegacyStat returns [ASTStatement n]
   //| lox = legacyOpExit        { $n = $lox.n; }
   | lex = legacyExecute       { $n = $lex.n; }
   | ods = objDestroyStat      { $n = $ods.n; }
-  | 'set' aas = attAssignStat { $n = $aas.n; }
+  | 'set' e=expression aas = attAssignStat[$e.n] { $n = $aas.n; }
   | lis = lnkInsStat          { $n = $lis.n; }
   | lds = lnkDelStat          { $n = $lds.n; }
 ;
@@ -120,7 +120,7 @@ legacyCreate returns [ASTStatement n]
     for (String objName : $objNames.n) {
       seq.addStatement(
         new ASTNewObjectStatement(
-          objType, 
+          $objType.n, 
           new ASTStringLiteral(objName)), 
         $start,
         $text);
@@ -156,7 +156,7 @@ legacyCreateAssign returns [ASTStatement n]
       seq.addStatement(
         new ASTVariableAssignmentStatement(
           varName, 
-          new ASTRValueNewObject(objType)),
+          new ASTRValueNewObject($objType.n)),
         $start,
         $text);
     }
@@ -182,7 +182,7 @@ legacyCreateInsert returns [ASTVariableAssignmentStatement n]
   'create'
   name = IDENT
   COLON
-  asClassName = IDENT
+  asClassName = simpleType
   'between'
   LPAREN
     participants = rValListMin2
@@ -191,9 +191,9 @@ legacyCreateInsert returns [ASTVariableAssignmentStatement n]
   {
     ASTNewLinkObjectStatement nlo = 
       new ASTNewLinkObjectStatement(
-        $asClassName.text, 
+        $asClassName.n, 
         $participants.n, 
-        new ASTStringLiteral($name.text));
+        new ASTStringLiteral($name));
         
     nlo.setSourcePosition($start);
   
