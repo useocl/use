@@ -39,8 +39,14 @@ public class ASTStringLiteral extends ASTExpression {
 
     public ASTStringLiteral(Token token) {
         String st = token.getText(); 
-        // strip quotes
-        fValue = st.substring(1, st.length() - 1);
+        
+        if (st.startsWith("'") && st.endsWith("'")) {
+        	// strip quotes
+        	fValue = st.substring(1, st.length() - 1);
+        } else {
+        	fValue = st;
+        }
+        
         // Read Escape Characters
         convertString();
     }

@@ -240,95 +240,7 @@ public class StatementEffectTest extends TestCase {
 		varVal = lookUpVar(varName);
 		assertTrue(varVal instanceof IntegerValue);
 		assertEquals(((IntegerValue)varVal).value(), expectedResultValue);
-		
-		////////////////////////////////////////
-		// assignment of multiple new objects //
-		////////////////////////////////////////
-		
-		List<String> varNames = new ArrayList<String>();
-		varNames.add("a");
-		varNames.add("b");
-		varNames.add("c");
-		
-		reset();
-		
-		for (String vName : varNames) {
-			// variable names are free
-			assertNull(lookUpVar(vName));
-		}
-		
-		statement = 
-			varNames.get(0) + ", " +
-			varNames.get(1) + ", " +
-			varNames.get(2) + 
-			" := new " +
-			className;
-		
-		evaluateStatement(statement);
-		
-		for (String vName : varNames) {
-			// variable exists and refers to a new object
-			assertNotNull(lookUpVar(vName));
-			Value varValue = lookUpVar(vName);
-			assertTrue(varValue instanceof ObjectValue);
-			newObject = ((ObjectValue)varValue).value();
-			assertFalse(fOldState.hasObjectWithName(newObject.name()));
-			assertEquals(newObject.cls().name(), className);
-		}
-		
-		//////////////////////////////////////////////////////////////
-		// assignment of multiple objects with less mandatory names //
-		// than variable names                                      //
-		//////////////////////////////////////////////////////////////
-		
-		reset();
-		statement = 
-				varNames.get(0) + ", " + 
-				varNames.get(1) + ", " + 
-				varNames.get(2) + 
-				" := new " + 
-				className + 
-				"('" +
-				varNames.get(0) + "', '" +
-				varNames.get(1) + 
-				"')";
-		
-		evaluateStatement(statement);
-		
-		// 3 new objects
-		assertEquals(fState.numObjects(), (fOldState.numObjects() + 3));
-		// 4 new variables
-		newVars = getNewVars();
-		assertEquals(3, newVars.size());
-		
-		//////////////////////////////////////////////////////////////
-		// assignment of multiple objects with more mandatory names //
-		// than variable names                                      //
-		//////////////////////////////////////////////////////////////
-		
-		String name4 = "d";
-		
-		reset();
-		statement =
-				varNames.get(0) + ", " + 
-				varNames.get(1) + ", " + 
-				varNames.get(2) + 
-				" := new " + 
-				className + 
-				"('" +
-				varNames.get(0) + "', '" +
-				varNames.get(1) + "', '" +
-				varNames.get(2) + "', '" +
-				name4 + 
-				"')";
 
-		evaluateStatement(statement);
-		
-		// 3 new objects
-		assertEquals(fState.numObjects(), (fOldState.numObjects() + 3));
-		// 3 new variables
-		newVars = getNewVars();
-		assertEquals(newVars.size(), 3);
 	}
 	
 	
@@ -481,38 +393,7 @@ public class StatementEffectTest extends TestCase {
 		assertNotNull(varVal);
 		// and it points to the new object
 		assertEquals(varVal, newObject.value());
-		
-		/////////////////////////////////////////////////
-		// object creation with mandatory object names //
-		/////////////////////////////////////////////////
-		
-		String name2 = "b";
-			
-		reset();
-		
-		statement = "new " + className + "('" + name1 + "', '" + name2 + "')";
-		evaluateStatement(statement);
-		
-		newObjects = getNewObjects();
-		// 2 new objects with the mandatory names
-		assertEquals(newObjects.size(), 2);
-		MObject newObject1 = getObject(name1);
-		assertNotNull(newObject1);
-		assertTrue(newObjects.contains(newObject1));
-		assertEquals(newObject1.cls().name(), className);
-		MObject newObject2 = getObject(name2);
-		assertNotNull(newObject2);
-		assertTrue(newObjects.contains(newObject2));
-		assertEquals(newObject2.cls().name(), className); 
-		// 2 new variables referring to the new objects
-		assertEquals(0, getNewVars().size());
-		Value varVal1 = lookUpVar(name1);
-		assertNotNull(varVal1);
-		assertEquals(varVal1, newObject1.value());
-		Value varVal2 = lookUpVar(name2);
-		assertNotNull(varVal2);
-		assertEquals(varVal2, newObject2.value());
-		
+
 		////////////////////////
 		// variable shadowing //
 		////////////////////////

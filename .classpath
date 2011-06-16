@@ -4,7 +4,7 @@
 	<classpathentry excluding="**/.svn/**|gui/" kind="src" path="src/runtime"/>
 	<classpathentry excluding="**/.svn/**" kind="src" path="src/gui"/>
 	<classpathentry excluding="**/.svn/**" kind="src" path="src/test"/>
-	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/junit.jar" sourcepath="C:/Users/lhamann/.m2/repository/junit/junit/4.6/junit-4.6-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/gsbase.jar"/>
 	<classpathentry kind="lib" path="lib/xerces.jar"/>
