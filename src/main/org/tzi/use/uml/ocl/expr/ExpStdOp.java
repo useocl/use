@@ -146,7 +146,7 @@ public final class ExpStdOp extends Expression {
     		String warn = op.checkWarningUnrelatedTypes(params);
     		if (warn != null) {
     			if (Options.checkWarningsUnrelatedTypes().equals(WarningType.WARN)) {
-    				Log.warn(warn);
+    				Log.warn("Warning: " + warn);
     			} else {
     				throw new ExpInvalidException(warn);
     			}
@@ -195,13 +195,13 @@ public final class ExpStdOp extends Expression {
 						+ StringUtil.inQuotes(sourceType.toString() + "->"
 								+ op.name() + "(" + paramTypes.toString() + ")")
 						+ " results in type "
-						+ StringUtil.inQuotes(resultType.toString()) + "."
+						+ StringUtil.inQuotes(resultType.toString()) + "." + StringUtil.NEWLINE
 						+ " This may lead to unexpected behavior.";
 				
 				if (warningType.equals(WarningType.ERROR)) {
 					throw new ExpInvalidException(message);
 				} else {
-					Log.warn(message);
+					Log.warn("Warning: " + message);
 				}
 			}
 		}
