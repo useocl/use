@@ -19,7 +19,8 @@
 ?Set{}->including(amphCar)->including(econCar)->including(ship)
 *-> Set{@amphCar,@econCar,@ship} : Set(Vehicle)
 ?Set{}->including(amphCar)->including(econCar)->including(ship)->including(1)
-*Operation call `Set(Vehicle)->including(Integer)' results in type `Set(OclAny)'. This can cause unexpected errors.
+*Warning: Operation call `Set(Vehicle)->including(Integer)' results in type `Set(OclAny)'.
+*This may lead to unexpected behavior.
 *-> Set{1,@amphCar,@econCar,@ship} : Set(OclAny)
 
 ?Set{1, 2.1}
@@ -27,22 +28,26 @@
 ?Set{Set{1}}->including(Set{2})
 *-> Set{Set{1},Set{2}} : Set(Set(Integer))
 ?Set{Set{1}}->including(Set{'a'})
-*Operation call `Set(Set(Integer))->including(Set(String))' results in type `Set(Set(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Set(Set(Integer))->including(Set(String))' results in type `Set(Set(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Set{Set{'a'},Set{1}} : Set(Set(OclAny))
 ?Set{Set{1}}->including(Bag{1})
 *-> Set{Set{1},Bag{1}} : Set(Collection(Integer))
 ?Set{Set{1}}->including(Bag{'a'})
-*Operation call `Set(Set(Integer))->including(Bag(String))' results in type `Set(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Set(Set(Integer))->including(Bag(String))' results in type `Set(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Set{Set{1},Bag{'a'}} : Set(Collection(OclAny))
 ?Set{Set{1}}->including(Sequence{1})
 *-> Set{Set{1},Sequence{1}} : Set(Collection(Integer))
 ?Set{Set{1}}->including(Sequence{'a'})
-*Operation call `Set(Set(Integer))->including(Sequence(String))' results in type `Set(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Set(Set(Integer))->including(Sequence(String))' results in type `Set(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Set{Set{1},Sequence{'a'}} : Set(Collection(OclAny))
 ?Set{Set{1}}->including(OrderedSet{1})
 *-> Set{Set{1},OrderedSet{1}} : Set(Collection(Integer))
 ?Set{Set{1}}->including(OrderedSet{'a'})
-*Operation call `Set(Set(Integer))->including(OrderedSet(String))' results in type `Set(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Set(Set(Integer))->including(OrderedSet(String))' results in type `Set(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Set{Set{1},OrderedSet{'a'}} : Set(Collection(OclAny))
 
 ?Bag{1, 2.1}
@@ -50,22 +55,26 @@
 ?Bag{Bag{1}}->including(Bag{2})
 *-> Bag{Bag{1},Bag{2}} : Bag(Bag(Integer))
 ?Bag{Bag{1}}->including(Bag{'a'})
-*Operation call `Bag(Bag(Integer))->including(Bag(String))' results in type `Bag(Bag(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Bag(Bag(Integer))->including(Bag(String))' results in type `Bag(Bag(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Bag{Bag{'a'},Bag{1}} : Bag(Bag(OclAny))
 ?Bag{Bag{1}}->including(Set{1})
 *-> Bag{Set{1},Bag{1}} : Bag(Collection(Integer))
 ?Bag{Bag{1}}->including(Set{'a'})
-*Operation call `Bag(Bag(Integer))->including(Set(String))' results in type `Bag(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Bag(Bag(Integer))->including(Set(String))' results in type `Bag(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Bag{Set{'a'},Bag{1}} : Bag(Collection(OclAny))
 ?Bag{Bag{1}}->including(Sequence{1})
 *-> Bag{Sequence{1},Bag{1}} : Bag(Collection(Integer))
 ?Bag{Bag{1}}->including(Sequence{'a'})
-*Operation call `Bag(Bag(Integer))->including(Sequence(String))' results in type `Bag(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Bag(Bag(Integer))->including(Sequence(String))' results in type `Bag(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Bag{Sequence{'a'},Bag{1}} : Bag(Collection(OclAny))
 ?Bag{Bag{1}}->including(OrderedSet{1})
 *-> Bag{Bag{1},OrderedSet{1}} : Bag(Collection(Integer))
 ?Bag{Bag{1}}->including(OrderedSet{'a'})
-*Operation call `Bag(Bag(Integer))->including(OrderedSet(String))' results in type `Bag(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Bag(Bag(Integer))->including(OrderedSet(String))' results in type `Bag(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Bag{Bag{1},OrderedSet{'a'}} : Bag(Collection(OclAny))
 
 ?Sequence{1, 2.1}
@@ -73,22 +82,26 @@
 ?Sequence{Sequence{1}}->including(Sequence{2})
 *-> Sequence{Sequence{1},Sequence{2}} : Sequence(Sequence(Integer))
 ?Sequence{Sequence{1}}->including(Sequence{'a'})
-*Operation call `Sequence(Sequence(Integer))->including(Sequence(String))' results in type `Sequence(Sequence(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Sequence(Sequence(Integer))->including(Sequence(String))' results in type `Sequence(Sequence(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Sequence{Sequence{1},Sequence{'a'}} : Sequence(Sequence(OclAny))
 ?Sequence{Sequence{1}}->including(Set{1})
 *-> Sequence{Sequence{1},Set{1}} : Sequence(Collection(Integer))
 ?Sequence{Sequence{1}}->including(Set{'a'})
-*Operation call `Sequence(Sequence(Integer))->including(Set(String))' results in type `Sequence(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Sequence(Sequence(Integer))->including(Set(String))' results in type `Sequence(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Sequence{Sequence{1},Set{'a'}} : Sequence(Collection(OclAny))
 ?Sequence{Sequence{1}}->including(Bag{1})
 *-> Sequence{Sequence{1},Bag{1}} : Sequence(Collection(Integer))
 ?Sequence{Sequence{1}}->including(Bag{'a'})
-*Operation call `Sequence(Sequence(Integer))->including(Bag(String))' results in type `Sequence(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Sequence(Sequence(Integer))->including(Bag(String))' results in type `Sequence(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Sequence{Sequence{1},Bag{'a'}} : Sequence(Collection(OclAny))
 ?Sequence{Sequence{1}}->including(OrderedSet{1})
 *-> Sequence{Sequence{1},OrderedSet{1}} : Sequence(Collection(Integer))
 ?Sequence{Sequence{1}}->including(OrderedSet{'a'})
-*Operation call `Sequence(Sequence(Integer))->including(OrderedSet(String))' results in type `Sequence(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `Sequence(Sequence(Integer))->including(OrderedSet(String))' results in type `Sequence(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> Sequence{Sequence{1},OrderedSet{'a'}} : Sequence(Collection(OclAny))
 
 ?OrderedSet{1, 2.1}
@@ -96,22 +109,26 @@
 ?OrderedSet{OrderedSet{1}}->including(OrderedSet{2})
 *-> OrderedSet{OrderedSet{1},OrderedSet{2}} : OrderedSet(OrderedSet(Integer))
 ?OrderedSet{OrderedSet{1}}->including(OrderedSet{'a'})
-*Operation call `OrderedSet(OrderedSet(Integer))->including(OrderedSet(String))' results in type `OrderedSet(OrderedSet(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `OrderedSet(OrderedSet(Integer))->including(OrderedSet(String))' results in type `OrderedSet(OrderedSet(OclAny))'.
+*This may lead to unexpected behavior.
 *-> OrderedSet{OrderedSet{1},OrderedSet{'a'}} : OrderedSet(OrderedSet(OclAny))
 ?OrderedSet{OrderedSet{1}}->including(Set{1})
 *-> OrderedSet{OrderedSet{1},Set{1}} : OrderedSet(Collection(Integer))
 ?OrderedSet{OrderedSet{1}}->including(Set{'a'})
-*Operation call `OrderedSet(OrderedSet(Integer))->including(Set(String))' results in type `OrderedSet(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `OrderedSet(OrderedSet(Integer))->including(Set(String))' results in type `OrderedSet(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> OrderedSet{OrderedSet{1},Set{'a'}} : OrderedSet(Collection(OclAny))
 ?OrderedSet{OrderedSet{1}}->including(Bag{1})
 *-> OrderedSet{OrderedSet{1},Bag{1}} : OrderedSet(Collection(Integer))
 ?OrderedSet{OrderedSet{1}}->including(Bag{'a'})
-*Operation call `OrderedSet(OrderedSet(Integer))->including(Bag(String))' results in type `OrderedSet(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `OrderedSet(OrderedSet(Integer))->including(Bag(String))' results in type `OrderedSet(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> OrderedSet{OrderedSet{1},Bag{'a'}} : OrderedSet(Collection(OclAny))
 ?OrderedSet{OrderedSet{1}}->including(Sequence{1})
 *-> OrderedSet{OrderedSet{1},Sequence{1}} : OrderedSet(Collection(Integer))
 ?OrderedSet{OrderedSet{1}}->including(Sequence{'a'})
-*Operation call `OrderedSet(OrderedSet(Integer))->including(Sequence(String))' results in type `OrderedSet(Collection(OclAny))'. This can cause unexpected errors.
+*Warning: Operation call `OrderedSet(OrderedSet(Integer))->including(Sequence(String))' results in type `OrderedSet(Collection(OclAny))'.
+*This may lead to unexpected behavior.
 *-> OrderedSet{OrderedSet{1},Sequence{'a'}} : OrderedSet(Collection(OclAny))
 
 exit
