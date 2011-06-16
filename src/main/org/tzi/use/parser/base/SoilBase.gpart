@@ -114,7 +114,7 @@ emptyStat returns [ASTEmptyStatement n]
 
 statStartingWithExpr returns [ASTStatement n]
 :
-  expr = expression
+  expr = inSoilExpression
   (
     aas = attAssignStat[$expr.n]  { $n = $aas.n; } // iv.   (attribute assignment)
   )?
@@ -218,7 +218,7 @@ objCreateStat returns [ASTStatement n]
   ident = simpleType
   (
     LPAREN
-      objName = expression
+      objName = inSoilExpression
     RPAREN
   )?
   
@@ -237,29 +237,6 @@ objCreateStat returns [ASTStatement n]
       $n = new ASTNewObjectStatement($ident.n, $objName.n);
     }
   }
-
-
-
-/*
-  {
-  	if ($n == null) {
-		if (objNames == null) {
-		  $n = new ASTNewObjectStatement($ident.n);
-		} else {
-		  ASTSequenceStatement seq = new ASTSequenceStatement();
-		  
-		  for (ASTExpression objName : $objNames.n){    
-		    seq.addStatement(
-		      new ASTNewObjectStatement($ident.n, objName),
-		      $start,
-		      $text);
-		  }
-		  
-		  $n = seq.simplify();
-		}
-	}
-  }
-  */
 ;
 
 ////////////////////////////////////////////////////////////////////////////////
