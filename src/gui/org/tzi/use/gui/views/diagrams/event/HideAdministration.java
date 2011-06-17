@@ -82,7 +82,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
         }
     }
 
-    public Action setValues( String text, Set<?> selectedNodes ) {
+    public Action getAction( String text, Set<?> selectedNodes ) {
         if ( fDiagram instanceof NewObjectDiagram ) {
             fHideAction = new ActionHideObjectDiagram( text, selectedNodes,
                                                        fNodeSelection, fGraph,

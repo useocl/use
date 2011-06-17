@@ -176,7 +176,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideObjects(getSelectedPathObjects(), true).size() > 0) {
-			this.diagram.getHideAdmin().setValues("Hide",
+			this.diagram.getHideAdmin().getAction("Hide",
 					getHideObjects(getSelectedPathObjects(), true))
 					.actionPerformed(ev);
 		}
@@ -201,7 +201,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideObjects(getSelectedPathObjects(), false).size() > 0) {
-			this.diagram.getHideAdmin().setValues("Hide",
+			this.diagram.getHideAdmin().getAction("Hide",
 					getHideObjects(getSelectedPathObjects(), false))
 					.actionPerformed(ev);
 		}

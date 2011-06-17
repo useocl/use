@@ -748,9 +748,9 @@ public class NewObjectDiagram extends DiagramView
 				else{
 					info = "" + anames.size();
 				}
-				popupMenu.insert(fHideAdmin.setValues("Hide link " + info + "",
+				popupMenu.insert(fHideAdmin.getAction("Hide link " + info + "",
 						selectedObjectsOfAssociation), pos++);  //fixxx
-				popupMenu.insert(fHideAdmin.setValues("Crop link " + info,
+				popupMenu.insert(fHideAdmin.getAction("Crop link " + info,
 						getNoneSelectedNodes(selectedObjectsOfAssociation)), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
 				popupMenu.insert(fSelection.getSelectedLinkPathView("Selection link path length...", selectedObjectsOfAssociation, anames), pos++);
@@ -771,10 +771,10 @@ public class NewObjectDiagram extends DiagramView
                 popupMenu.insert( new ActionDelete("Delete " + txt, 
                                                    selectedObjectsSet),
                                                    pos++ );
-                popupMenu.insert( fHideAdmin.setValues("Hide " + txt,
+                popupMenu.insert( fHideAdmin.getAction("Hide " + txt,
                                                        selectedObjectsSet),
                                                        pos++ );
-                popupMenu.insert( fHideAdmin.setValues("Crop " + txt,
+                popupMenu.insert( fHideAdmin.getAction("Crop " + txt,
                                                        getNoneSelectedNodes( selectedObjectsSet )),
                                                        pos++ );
                 separatorNeeded = true;

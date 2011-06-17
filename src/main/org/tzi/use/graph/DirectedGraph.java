@@ -85,8 +85,10 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
     Object[] toArray();
 
     /**
-     * Returns a list containing all of the nodes in this graph.
-     * @return
+     * Returns a List containing all the nodes of the graph.<br/>
+     * The returned list should be independent to the source graph, 
+     * to allow changes to the list without modifying the source graph.
+     * @return A <code>List</code> of the nodes.
      */
     List<N> getNodes();
     

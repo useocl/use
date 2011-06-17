@@ -201,7 +201,7 @@ public class ObjectSelection {
 		}
 
 		subMenuHideObject
-				.add(diagram.getHideAdmin().setValues("Hide all objects", objects));
+				.add(diagram.getHideAdmin().getAction("Hide all objects", objects));
 
 		subMenuHideObject.addSeparator();
 
@@ -263,7 +263,7 @@ public class ObjectSelection {
 					JMenu jm = (JMenu) (cl.next());
 					if (jm.getName().contains(cls.name())) {
 						jm.add(diagram.getHideAdmin()
-								.setValues(info + objectname, objects2));
+								.getAction(info + objectname, objects2));
 					}
 				}
 			}
@@ -290,7 +290,7 @@ public class ObjectSelection {
 						}
 					}
 				}
-				subm.insert(diagram.getHideAdmin().setValues(info, objects3), 0);
+				subm.insert(diagram.getHideAdmin().getAction(info, objects3), 0);
 				subm.insertSeparator(1);
 			}
 		}

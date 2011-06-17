@@ -168,7 +168,7 @@ public class SelectionClassView extends ClassSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedClasses(), true).size() > 0) {
-			diagram.getHideAdmin().setValues("Hide",
+			diagram.getHideAdmin().getAction("Hide",
 					getHideClasses(getSelectedClasses(), true))
 					.actionPerformed(ev);
 		}
@@ -195,7 +195,7 @@ public class SelectionClassView extends ClassSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedClasses(), false).size() > 0) {
-			diagram.getHideAdmin().setValues("Hide",
+			diagram.getHideAdmin().getAction("Hide",
 					getHideClasses(getSelectedClasses(), false))
 					.actionPerformed(ev);
 		}

@@ -228,7 +228,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 				hideObjects.add(mo);
 			}
 		}
-		this.diagram.getHideAdmin().setValues("Hide all classes", hideObjects)
+		this.diagram.getHideAdmin().getAction("Hide all classes", hideObjects)
 				.actionPerformed(ev);
 	}
 
@@ -330,7 +330,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 			fTextOut.setText(val.toStringWithType());
 			
 			if (showart.equalsIgnoreCase("crop")) {
-				this.diagram.getHideAdmin().setValues("Hide",
+				this.diagram.getHideAdmin().getAction("Hide",
 						getCropHideObjects(objects)).actionPerformed(ev);
 				this.diagram.getHideAdmin()
 						.showHiddenElements(getShowObjects(objects));
@@ -338,7 +338,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 				this.diagram.getHideAdmin()
 						.showHiddenElements(getShowObjects(objects));
 			} else if (showart.equalsIgnoreCase("hide")) {
-				this.diagram.getHideAdmin().setValues("Hide",
+				this.diagram.getHideAdmin().getAction("Hide",
 						getHideObjects(objects)).actionPerformed(ev);
 			}
 		} catch (MultiplicityViolationException e) {

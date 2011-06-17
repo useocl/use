@@ -201,7 +201,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedPathClasses(), true).size() > 0) {
-			diagram.getHideAdmin().setValues("Hide",
+			diagram.getHideAdmin().getAction("Hide",
 					getHideClasses(getSelectedPathClasses(), true))
 					.actionPerformed(ev);
 		}
@@ -226,7 +226,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedPathClasses(), false).size() > 0) {
-			diagram.getHideAdmin().setValues("Hide",
+			diagram.getHideAdmin().getAction("Hide",
 					getHideClasses(getSelectedPathClasses(), false))
 					.actionPerformed(ev);
 		}

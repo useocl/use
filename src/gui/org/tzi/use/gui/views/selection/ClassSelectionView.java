@@ -204,7 +204,7 @@ public abstract class ClassSelectionView extends JPanel implements View {
 			}
 		}
 
-		diagram.getHideAdmin().setValues("Hide all classes", hideClass).actionPerformed(ev);
+		diagram.getHideAdmin().getAction("Hide all classes", hideClass).actionPerformed(ev);
 	}
 
 	/**

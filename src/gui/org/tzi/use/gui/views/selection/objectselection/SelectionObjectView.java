@@ -244,7 +244,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideObjects(getSelectedObjects(), true).size() > 0) {
-			this.diagram.getHideAdmin().setValues("Hide",
+			this.diagram.getHideAdmin().getAction("Hide",
 					getHideObjects(getSelectedObjects(), true))
 					.actionPerformed(ev);
 		}
@@ -269,7 +269,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideObjects(getSelectedObjects(), false).size() > 0) {
-			this.diagram.getHideAdmin().setValues("Hide",
+			this.diagram.getHideAdmin().getAction("Hide",
 					getHideObjects(getSelectedObjects(), false))
 					.actionPerformed(ev);
 		}

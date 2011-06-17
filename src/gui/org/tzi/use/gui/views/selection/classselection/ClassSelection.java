@@ -217,7 +217,7 @@ public class ClassSelection {
 			
 			Set<MClass> hideClass = new HashSet<MClass>();
 			hideClass.add(cls);
-			subMenuSelectionClassHide.add(diagram.getHideAdmin().setValues("hide "
+			subMenuSelectionClassHide.add(diagram.getHideAdmin().getAction("hide "
 						+ classname, hideClass));
 		}
 		
@@ -232,7 +232,7 @@ public class ClassSelection {
 					hideClass.add(cls);
 				}
 			}
-			subMenuSelectionClassHide.add(diagram.getHideAdmin().setValues("Hide all classes", hideClass));
+			subMenuSelectionClassHide.add(diagram.getHideAdmin().getAction("Hide all classes", hideClass));
 		}
 		return subMenuSelectionClassHide;
 	}

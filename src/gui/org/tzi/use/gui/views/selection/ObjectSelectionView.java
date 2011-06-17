@@ -218,7 +218,7 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 			}
 		}
 		
-		this.diagram.getHideAdmin().setValues("Hide all objects", hideojects).actionPerformed(ev);
+		this.diagram.getHideAdmin().getAction("Hide all objects", hideojects).actionPerformed(ev);
 	}
 	
 	public abstract void applyCropChanges(ActionEvent ev);

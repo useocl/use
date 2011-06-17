@@ -1,8 +1,23 @@
 !create p1:Person
 !create p2:Person
-!set p1.name = 'Tester'
 !openter p1 kill(p2)
 !destroy p
 !opexit
-?p1.getName('Ein ')
+!set p1.name := 'Tester'
+?p1.getNameOCLImplemented('Ein ')
+?p1.getNameOCLImplemented('Ein ')
+?p1.getNameOCLImplemented('Ein ')
+?p1.getNameSOILImplemented('Ein ')
+?p1.getNameSOILImplemented('Ein ')
+?p1.getNameSOILImplemented('Ein ')
+!res1 := p1.getNameOCLImplemented('Ein ')
+!res1 := p1.getNameOCLImplemented('Ein ')
+!res1 := p1.getNameOCLImplemented('Ein ')
+!res2 := p1.getNameSOILImplemented('Ein ')
+!res2 := p1.getNameSOILImplemented('Ein ')
+!res2 := p1.getNameSOILImplemented('Ein ')
+?res1
+?res2
+info opstack
+info vars
 exit

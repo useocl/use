@@ -358,7 +358,8 @@ public class ClassDiagram extends DiagramView
     	showOrHideClassNode(cls, false);
     	
     	// Remove all generalization edges
-    	Set<MGeneralization> gens = cls.model().generalizationGraph().allEdges(cls);
+    	Set<MGeneralization> gens = fParent.system().model().generalizationGraph().allEdges(cls);
+    	
     	for (MGeneralization gen : gens) {
     		hideGeneralization(gen);
     	}
@@ -811,11 +812,11 @@ public class ClassDiagram extends DiagramView
 				}
 				
 				popupMenu.insert(
-						fHideAdmin.setValues("Crop association " + info, 
+						fHideAdmin.getAction("Crop association " + info, 
 								getNoneSelectedNodes(selectedClassesOfAssociation)), pos++);
 				
 				popupMenu.insert(
-						fHideAdmin.setValues("Hide association " + info, 
+						fHideAdmin.getAction("Hide association " + info, 
 								selectedClassesOfAssociation), pos++);  //fixxx
 				
 				popupMenu.insert(new JSeparator(),pos++);
@@ -829,8 +830,8 @@ public class ClassDiagram extends DiagramView
 			//end jj
             
             if ( txt != null && txt.length() > 0 ) {
-            	popupMenu.insert( fHideAdmin.setValues( "Crop " + txt, getNoneSelectedNodes( selectedObjects ) ), pos++ );
-                popupMenu.insert( fHideAdmin.setValues( "Hide " + txt, selectedObjects ), pos++ );
+            	popupMenu.insert( fHideAdmin.getAction( "Crop " + txt, getNoneSelectedNodes( selectedObjects ) ), pos++ );
+                popupMenu.insert( fHideAdmin.getAction( "Hide " + txt, selectedObjects ), pos++ );
                 
 				// pathlength view anfangs jj
 				popupMenu.insert(new JSeparator(),pos++);
@@ -855,7 +856,7 @@ public class ClassDiagram extends DiagramView
 									
 									// If allObjects contains an object which is not shown, this
 									// is handled by the HideAdministration
-									Action hide = diagram.getHideAdmin().setValues("Internal", allObjectsToHide);
+									Action hide = diagram.getHideAdmin().getAction("Internal", allObjectsToHide);
 									hide.actionPerformed(null);
 								}
 							}}, pos++);
@@ -892,7 +893,7 @@ public class ClassDiagram extends DiagramView
 								Set<MObject> objectsToHide = diagram.getObjectSelection().getCropHideObjects(allClasses);
 								Set<MObject> objectsToShow = diagram.getObjectSelection().getHiddenObjects(allClasses);
 								
-								diagram.getHideAdmin().setValues("Hide", objectsToHide).actionPerformed(ev);							
+								diagram.getHideAdmin().getAction("Hide", objectsToHide).actionPerformed(ev);							
 								diagram.getHideAdmin().showHiddenElements(objectsToShow);
 							}
 						}
@@ -974,27 +975,9 @@ public class ClassDiagram extends DiagramView
      * @return A Set of the none selected objects in the diagram.
      */
     private Set<Object> getNoneSelectedNodes( Set<?> selectedNodes ) {
-        Set<Object> noneSelectedNodes = new HashSet<Object>();
-        
-        Iterator<NodeBase> it = fGraph.iterator();
-        while ( it.hasNext() ) {
-            NodeBase o = it.next();
-            Object obj;
-            
-            if ( o instanceof ClassNode ) {
-                obj = ((ClassNode) o).cls();
-            } else if (o instanceof EnumNode) {
-            	obj = ((EnumNode)o).getEnum();
-            } else {
-            	continue;
-            }
-            
-            if ( !selectedNodes.contains( obj ) ) {
-                noneSelectedNodes.add( obj );
-            }
-        }
-        
-        return noneSelectedNodes;
+        List<NodeBase> nodes = fGraph.getNodes();
+        nodes.removeAll(selectedNodes);
+        return new HashSet<Object>(nodes);
     }
 
     /**
@@ -1002,9 +985,7 @@ public class ClassDiagram extends DiagramView
      */
     @Override
     public void hideElementsInDiagram( Set<Object> nodesToHide ) {
-        Iterator<?> it = nodesToHide.iterator();
-        while ( it.hasNext() ) {
-            Object elem = it.next();
+        for (Object elem : nodesToHide) {
             if ( elem instanceof MClass ) {
                 hideClass( (MClass) elem );
             } else if ( elem instanceof EnumType ) {

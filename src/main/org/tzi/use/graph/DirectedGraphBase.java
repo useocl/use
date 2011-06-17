@@ -166,10 +166,12 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         return true;
     }
 
+    @Override
     public List<N> getNodes()
     {
     	return new ArrayList<N>(fNodes.keySet());
     }
+    
     // Graph specific Operations
 
     /**
