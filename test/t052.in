@@ -1,6 +1,8 @@
 !create p1:Person
 !create p2:Person
+!set p1.name = 'Tester'
 !openter p1 kill(p2)
 !destroy p
 !opexit
+?p1.getName('Ein ')
 exit

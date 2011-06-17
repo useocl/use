@@ -145,6 +145,7 @@ public final class ExpStdOp extends Expression {
     	if (!Options.checkWarningsUnrelatedTypes().equals(WarningType.IGNORE)) {
     		String warn = op.checkWarningUnrelatedTypes(params);
     		if (warn != null) {
+    			warn += StringUtil.NEWLINE + "You can change this check using the -extendedTypeSystemChecks switch.";
     			if (Options.checkWarningsUnrelatedTypes().equals(WarningType.WARN)) {
     				Log.warn("Warning: " + warn);
     			} else {
@@ -196,7 +197,8 @@ public final class ExpStdOp extends Expression {
 								+ op.name() + "(" + paramTypes.toString() + ")")
 						+ " results in type "
 						+ StringUtil.inQuotes(resultType.toString()) + "." + StringUtil.NEWLINE
-						+ " This may lead to unexpected behavior.";
+						+ "This may lead to unexpected behavior." + StringUtil.NEWLINE
+						+ "You can change this check using the -oclAnyCollectionsChecks switch.";
 				
 				if (warningType.equals(WarningType.ERROR)) {
 					throw new ExpInvalidException(message);

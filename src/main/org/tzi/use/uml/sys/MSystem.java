@@ -41,6 +41,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
@@ -207,7 +208,7 @@ public final class MSystem {
      * TODO
      * @param operationCall
      */
-    private void evaluatePreConditions(MOperationCall operationCall) {
+    private void evaluatePreConditions(EvalContext ctx, MOperationCall operationCall) {
     	
     	List<MPrePostCondition> preConditions = 
 			operationCall.getOperation().preConditions();
@@ -217,11 +218,15 @@ public final class MSystem {
     	
     	for (MPrePostCondition preCondition : preConditions) {
 			Evaluator oclEvaluator = new Evaluator();
+			
+			VarBindings b = (operationCall.requiresVariableFrameInEnvironment() ? fVariableEnvironment
+					.constructVarBindings() : ctx.varBindings());
+			
 			Value evalResult = 
 				oclEvaluator.eval(
 						preCondition.expression(), 
 						fCurrentState,
-						fVariableEnvironment.constructVarBindings());
+						b);
 			
 			boolean conditionPassed = 
 				(evalResult.isDefined() && 
@@ -239,7 +244,7 @@ public final class MSystem {
      * TODO
      * @param operationCall
      */
-    private void evaluatePostConditions(MOperationCall operationCall) {
+    private void evaluatePostConditions(EvalContext ctx, MOperationCall operationCall) {
     	
     	List<MPrePostCondition> postConditions = 
 			operationCall.getOperation().postConditions();
@@ -247,7 +252,14 @@ public final class MSystem {
     	LinkedHashMap<MPrePostCondition, Boolean> results = 
     		new LinkedHashMap<MPrePostCondition, Boolean>(postConditions.size());
     	
-    	operationCall.setVarBindings(fVariableEnvironment.constructVarBindings());
+		VarBindings b = (operationCall.requiresVariableFrameInEnvironment() ? fVariableEnvironment
+				.constructVarBindings() : ctx.varBindings());
+		
+		if (!operationCall.requiresVariableFrameInEnvironment() && operationCall.getResultValue() != null) {
+			b.push("result", operationCall.getResultValue());
+		}
+		
+    	operationCall.setVarBindings(b);
     	
     	for (MPrePostCondition postCondition : postConditions) {
 			Evaluator oclEvaluator = new Evaluator();
@@ -288,16 +300,13 @@ public final class MSystem {
 	 * @param output
 	 * @throws MSystemException 
 	 */
-	public void enterOperation(MOperationCall operationCall, boolean isOpenter) throws MSystemException {
+	public void enterOperation(EvalContext ctx, MOperationCall operationCall, boolean isOpenter) throws MSystemException {
 						
 		assertParametersValid(operationCall);
 		
 		if (operationCall.requiresVariableFrameInEnvironment()) {
 			pushParametersOnVariableEnvironment(operationCall, isOpenter);
-		}
 		
-		
-		if (operationCall.requiresVariableFrameInEnvironment()) {
 			if (getCurrentStatement() != null) {
 				if (!stateIsLocked()) {
 					getCurrentStatement().enteredOperationDuringEvaluation(operationCall);
@@ -306,13 +315,14 @@ public final class MSystem {
 		}
 	
 		fCallStack.push(operationCall);
-		assertPreConditions(operationCall);
+		
+		assertPreConditions(ctx, operationCall);
 		
 		copyPreStateIfNeccessary(operationCall);
 		operationCall.setEnteredSuccessfully(true);
 	}
 
-	public MOperationCall exitOperation(Value resultValue) throws MSystemException {
+	public MOperationCall exitOperation(EvalContext ctx, Value resultValue) throws MSystemException {
 		
 		MOperationCall operationCall = getCurrentOperation();
 		if (operationCall == null) {
@@ -328,7 +338,7 @@ public final class MSystem {
 			assertResultValueValid(resultValue, operationCall.getOperation());
 			if (resultValue != null) operationCall.setResultValue(resultValue);	
 		
-			assertPostConditions(operationCall);
+			assertPostConditions(ctx, operationCall);
 		
 			operationCall.setExitedSuccessfully(true);
 		
@@ -346,9 +356,9 @@ public final class MSystem {
 	 * @param operationCall
 	 * @throws MSystemException
 	 */
-	private void assertPreConditions(MOperationCall operationCall)
+	private void assertPreConditions(EvalContext ctx, MOperationCall operationCall)
 			throws MSystemException {
-		evaluatePreConditions(operationCall);
+		evaluatePreConditions(ctx, operationCall);
 		lockState();
 		PPCHandler ppcHandler = determinePPCHandler(operationCall);
 		try {
@@ -506,9 +516,9 @@ public final class MSystem {
 	 * @param operationCall
 	 * @throws MSystemException
 	 */
-	private void assertPostConditions(MOperationCall operationCall)
+	private void assertPostConditions(EvalContext ctx, MOperationCall operationCall)
 			throws MSystemException {
-		evaluatePostConditions(operationCall);
+		evaluatePostConditions(ctx, operationCall);
 		PPCHandler ppcHandler = determinePPCHandler(operationCall);
 		try {
 			ppcHandler.handlePostConditions(this, operationCall);

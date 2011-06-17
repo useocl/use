@@ -40,7 +40,7 @@ import org.tzi.use.util.TypedProperties;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "3.0.0RC2";
+    public static final String RELEASE_VERSION = "3.0.0RC3";
 
     // the copyright:
     public static final String COPYRIGHT = "Copyright (C) 1999-2010 University of Bremen";
@@ -145,8 +145,8 @@ public class Options {
     	}
     }
     
-    public static WarningType checkWarningsOclAnyInCollections = WarningType.WARN;
-    public static WarningType checkWarningsUnrelatedTypes = WarningType.WARN;
+    public static WarningType checkWarningsOclAnyInCollections = WarningType.ERROR;
+    public static WarningType checkWarningsUnrelatedTypes = WarningType.ERROR;
     
     // soil in ocl operation calls
     public enum SoilPermissionLevel {
@@ -193,8 +193,8 @@ public class Options {
 				.println("  -daVinciClass output a daVinci graph representing the class diagram");
 		System.out
 				.println("  -disableCollectShorthand flag use of OCL shorthand notation as error");
-		System.out.println("  -oclAnyCollectionElementWarnings:(W)arn|(E)rror|(I)gnore");
-		System.out.println("  -typeSystemWarnings:(W)arn|(E)rror|(I)gnore");
+		System.out.println("  -oclAnyCollectionsChecks: (W)arn|(E)rror|(I)gnore");
+		System.out.println("  -extendedTypeSystemChecks:(W)arn|(E)rror|(I)gnore");
         System.out.println("  -nogui        do not use GUI");
 		System.out.println("  -noplugins    do not use plugins");
         System.out.println("  -h            print help");

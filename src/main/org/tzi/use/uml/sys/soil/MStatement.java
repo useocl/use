@@ -912,7 +912,7 @@ public abstract class MStatement {
 		operationCall.setPreferredPPCHandler(preferredPPCHandler);
 		
 		try {
-			fSystem.enterOperation(operationCall, isOpenter);
+			fSystem.enterOperation(null, operationCall, isOpenter);
 		} catch (MSystemException e) {
 			throw new ExceptionOccuredException(this, e);
 		}
@@ -941,7 +941,7 @@ public abstract class MStatement {
 		}
 		
 		try {
-			fSystem.exitOperation(resultValue);
+			fSystem.exitOperation(null, resultValue);
 		} catch (MSystemException e) {
 			throw new ExceptionOccuredException(this, e);
 		}

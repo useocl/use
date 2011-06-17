@@ -126,7 +126,7 @@ public final class ExpObjOp extends Expression {
     	
     	try {
     		try {
-    			system.enterOperation(operationCall, false);
+    			system.enterOperation(ctx, operationCall, false);
     		} catch (MSystemException e) {
     			throw new RuntimeException(e.getMessage());
     		}
@@ -144,7 +144,7 @@ public final class ExpObjOp extends Expression {
     			throw new RuntimeException(e.getMessage());
     		} finally {
     			try {
-    				system.exitOperation(result);
+    				system.exitOperation(ctx, result);
     			} catch (MSystemException e) {
     				throw new RuntimeException(e.getMessage());
     			}
