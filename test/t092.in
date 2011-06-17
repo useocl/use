@@ -1,0 +1,5 @@
+!obj := new Test
+!obj.l()
+?obj.aReal
+*-> 445.7915684525922 : Real
+exit
