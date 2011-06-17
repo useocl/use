@@ -32,10 +32,10 @@ import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.MNamedElement;
 
 /**
  * A node representing a class.
@@ -43,7 +43,7 @@ import org.tzi.use.uml.mm.MOperation;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public class ClassNode extends NodeBase implements SortChangeListener {
+public class ClassNode extends ClassifierNode implements SortChangeListener {
     
     private DiagramOptions fOpt;
     private MClass fClass;
@@ -72,8 +72,8 @@ public class ClassNode extends NodeBase implements SortChangeListener {
         return fClass;
     }
     
-    public String name() {
-        return fClass.name();
+    public MNamedElement getClassifier() {
+        return fClass;
     }
     
     /**
@@ -132,14 +132,7 @@ public class ClassNode extends NodeBase implements SortChangeListener {
         setHeight(Math.max(getHeight(), (int)getMinHeight()));
         setWidth(Math.max(getWidth(), (int)getMinWidth()));
     }
-    
-    /**
-     * Returns if this class node may be deleted.
-     */
-    public boolean isDeletable() {
-        return true;
-    }
-    
+        
     public String ident() {
         return "Class." + fClass.name();
     }

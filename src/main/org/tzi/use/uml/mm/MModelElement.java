@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.util.NamedElement;
 
 
 /**
@@ -30,7 +29,7 @@ import org.tzi.use.util.NamedElement;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public interface MModelElement extends Annotatable, Comparable<MModelElement>, NamedElement {
+public interface MModelElement extends Annotatable, Comparable<MModelElement>, MNamedElement {
     /**
      * Returns the name of this model element.
      */

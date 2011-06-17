@@ -370,7 +370,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
     }
     
     /**
-     * Returns the set of associations this class directly
+     * Returns a new set of associations this class directly
      * participates in.
      *
      * @return Set(MAssociation).  

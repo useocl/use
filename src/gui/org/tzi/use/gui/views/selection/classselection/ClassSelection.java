@@ -22,7 +22,6 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.SelectionComparator;
-import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
 
@@ -104,16 +103,6 @@ public class ClassSelection {
 	public ActionSelectedClassPathView getSelectedClassPathView(String text, Set<MClass> sc){
 		return new ActionSelectedClassPathView(text, sc);
 	}
-	
-	
-	/**
-	 * Method getSelectedClassesOfAssociation returns all relevant classes, 
-	 * which are connected with the Association selected by the user. 
-	 */
-	public Set<MClass> getSelectedClassesOfAssociation(MAssociation ass) {
-		return ass.associatedClasses();
-	}
-	
 	
 	/**
 	 * Method getAllKindClasses gives all classes, which contain it as well as all subclasses.

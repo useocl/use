@@ -79,9 +79,9 @@ import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.mm.MModelElement;
+import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.util.NamedElement;
 
 
 /**
@@ -355,6 +355,9 @@ public class ClassDiagram extends DiagramView
      * Hides a class from the diagram.
      */
     public void hideClass( MClass cls ) {
+    	if (!visibleData.fClassToNodeMap.containsKey(cls))
+    		return;
+    	
     	showOrHideClassNode(cls, false);
     	
     	// Remove all generalization edges
@@ -365,7 +368,12 @@ public class ClassDiagram extends DiagramView
     	}
     	
     	// Remove all associations
-    	for (MAssociation assoc : cls.associations()) {
+    	Set<MAssociation> associations = cls.associations();
+    	if (cls instanceof MAssociationClass) {
+    		associations.add((MAssociationClass)cls);
+    	}
+    	
+    	for (MAssociation assoc : associations) {
     		hideAssociation(assoc);
     	}
     }
@@ -387,8 +395,14 @@ public class ClassDiagram extends DiagramView
     	}
     	
     	// Remove all associations
-    	for (MAssociation assoc : cls.associations()) {
+    	Set<MAssociation> associations = cls.associations();
+    	if (cls instanceof MAssociationClass) {
+    		associations.add((MAssociation)cls);
+    	}
+    	
+    	for (MAssociation assoc : associations) {
     		boolean allsEndsVisible = true;
+    		
     		for (MAssociationEnd end : assoc.associationEnds()) {
     			if (!visibleData.fClassToNodeMap.containsKey(end.cls())) {
     				allsEndsVisible = false;
@@ -490,16 +504,17 @@ public class ClassDiagram extends DiagramView
     	}
     }
     
-    public void showAssociation( MAssociation assoc) {
+    public void showAssociation( MAssociation assoc ) {
 		if (assoc.associationEnds().size() == 2) {
     		showBinaryAssociation(assoc);
     	} else {
     		showNAryAssociation(assoc);
     	}
 		
-		if (assoc instanceof MAssociationClass) {
-    		showClass((MClass)assoc);
-    	}
+		if (assoc instanceof MAssociationClass
+				&& !visibleData.fAssocClassToEdgeMap.containsKey(assoc)) {
+			showClass((MClass) assoc);
+		}
 	}
     
     /**
@@ -512,7 +527,7 @@ public class ClassDiagram extends DiagramView
     		hideNAryAssociation(assoc);
     	}
     	
-    	if (assoc instanceof MAssociationClass) {
+    	if (assoc instanceof MAssociationClass) { 
     		hideClass((MClass)assoc);
     	}
     }
@@ -774,7 +789,7 @@ public class ClassDiagram extends DiagramView
         
 		final Set<MClass> selectedClasses = new HashSet<MClass>(); // jj add final
 		
-		final Set<NamedElement> selectedObjects = new HashSet<NamedElement>();
+		final Set<MNamedElement> selectedObjects = new HashSet<MNamedElement>();
 				
         if ( !fNodeSelection.isEmpty() ) {
             for (PlaceableNode node : fNodeSelection) {
@@ -786,19 +801,12 @@ public class ClassDiagram extends DiagramView
                     EnumNode eNode = (EnumNode)node;
                 	selectedObjects.add(eNode.getEnum());
                 } else if (node instanceof AssociationName) { //jj
-					selectedClassesOfAssociation.addAll(
-							fSelection.getSelectedClassesOfAssociation(((AssociationName)node).getAssociation()));
+					selectedClassesOfAssociation
+							.addAll(((AssociationName) node).getAssociation()
+									.associatedClasses());
 					
 					anames.add((AssociationName)node);//jj
                 } //jj
-            }
-            
-            String txt = null;
-            if ( selectedObjects.size() == 1 ) {
-                NamedElement m = selectedObjects.iterator().next();
-                txt = "'" + m.name() + "'";
-            } else if ( selectedClasses.size() > 1 ) {
-                txt = selectedClasses.size() + " classes";
             }
             
             //anfangen jj
@@ -813,7 +821,7 @@ public class ClassDiagram extends DiagramView
 				
 				popupMenu.insert(
 						fHideAdmin.getAction("Crop association " + info, 
-								getNoneSelectedNodes(selectedClassesOfAssociation)), pos++);
+								getNoneSelectedElementsByElements(selectedClassesOfAssociation)), pos++);
 				
 				popupMenu.insert(
 						fHideAdmin.getAction("Hide association " + info, 
@@ -829,8 +837,16 @@ public class ClassDiagram extends DiagramView
 			}
 			//end jj
             
+			String txt = null;
+            if ( selectedObjects.size() == 1 ) {
+                MNamedElement m = selectedObjects.iterator().next();
+                txt = "'" + m.name() + "'";
+            } else if ( selectedClasses.size() > 1 ) {
+                txt = selectedClasses.size() + " classes";
+            }
+            
             if ( txt != null && txt.length() > 0 ) {
-            	popupMenu.insert( fHideAdmin.getAction( "Crop " + txt, getNoneSelectedNodes( selectedObjects ) ), pos++ );
+            	popupMenu.insert( fHideAdmin.getAction( "Crop " + txt, getNoneSelectedElementsByElements( selectedObjects ) ), pos++ );
                 popupMenu.insert( fHideAdmin.getAction( "Hide " + txt, selectedObjects ), pos++ );
                 
 				// pathlength view anfangs jj
@@ -970,16 +986,35 @@ public class ClassDiagram extends DiagramView
     }
 
     /**
-     * Finds all nodes which are not selected.
-     * @param selectedNodes Nodes which are selected at this point in the diagram.
+     * Finds all elements (class or enum node) which are not selected.
+     * @param selectedElements Nodes which are selected at this point in the diagram.
      * @return A Set of the none selected objects in the diagram.
      */
-    private Set<Object> getNoneSelectedNodes( Set<?> selectedNodes ) {
-        List<NodeBase> nodes = fGraph.getNodes();
-        nodes.removeAll(selectedNodes);
-        return new HashSet<Object>(nodes);
+    private Set<MNamedElement> getNoneSelectedElementsByElements( Set<? extends MNamedElement> selectedElements ) {
+    	Set<MNamedElement> noneSelectedElements = new HashSet<MNamedElement>();
+        
+        Iterator<NodeBase> it = fGraph.iterator();
+        MNamedElement namedElement;
+        
+        while ( it.hasNext() ) {
+            NodeBase o = it.next();
+        
+            if ( o instanceof ClassNode ) {
+            	namedElement = ((ClassNode) o).cls();
+            } else if (o instanceof EnumNode) {
+            	namedElement = ((EnumNode)o).getEnum();
+            } else {
+            	continue;
+            }
+            
+            if ( !selectedElements.contains( namedElement ) ) {
+            	noneSelectedElements.add( namedElement );
+            }
+        }
+        
+        return noneSelectedElements;
     }
-
+    
     /**
      * Hides the given elements in this diagram.
      */

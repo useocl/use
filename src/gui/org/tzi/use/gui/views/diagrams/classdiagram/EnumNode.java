@@ -29,7 +29,7 @@ import java.util.List;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.NodeBase;
+import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.ocl.type.EnumType;
 
 /**
@@ -38,7 +38,7 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public class EnumNode extends NodeBase implements SortChangeListener {
+public class EnumNode extends ClassifierNode implements SortChangeListener {
     
     private DiagramOptions fOpt;
     private EnumType fEnum;
@@ -57,10 +57,10 @@ public class EnumNode extends NodeBase implements SortChangeListener {
         return fEnum;
     }
     
-    public String name() {
-        return fEnum.name();
+    public MNamedElement getClassifier() {
+    	return fEnum;
     }
-
+    
     /**
      * After the occurence of an event the attribute list is updated.
      */
@@ -95,13 +95,6 @@ public class EnumNode extends NodeBase implements SortChangeListener {
         
         setWidth( getWidth() + 10 );
         setHeight( attrHeight + fm.getHeight()*2 + 4 );
-    }
-    
-    /**
-     * Returns if this class node may be deleted.
-     */
-    public boolean isDeletable() {
-        return true;
     }
     
     public String ident() {

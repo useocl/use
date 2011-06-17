@@ -19,13 +19,18 @@
 
 // $Id$
 
-package org.tzi.use.util;
+package org.tzi.use.uml.mm;
 
 /**
- * Interface for named elements in USE.
+ * Interface representing the NamedElement class
+ * of the UML meta model.
  * @author lhamann
  *
  */
-public interface NamedElement {
+public interface MNamedElement {
+	/**
+	 * Returns the name of the element.
+	 * @return The name of the element
+	 */
 	String name();
 }
