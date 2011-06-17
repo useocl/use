@@ -59,8 +59,12 @@ public class MWhileStatement extends MStatement {
 	@Override
 	protected void evaluate() throws EvaluationFailedException {
 		
-		while(((BooleanValue)evaluateExpression(fCondition)).value()) {
-			evaluateSubStatement(fBody);
+		while(  true) {
+			Value v = evaluateExpression(fCondition);
+			if (v.isDefined() && ((BooleanValue)v).value())
+				evaluateSubStatement(fBody);
+			else
+				break;
 		}
 		
 	}

@@ -1,0 +1,152 @@
+model Projects
+
+enum ProjectSize {small,medium,big}
+enum ProjectStatus {planned, active, finished, suspended}
+
+class Company
+attributes
+  name : String
+operations
+  hire(w : Worker) 
+    begin
+      insert(self, w) into Employs
+      -- TO BE DONE: 
+      -- try to activate projects by making the new employee a member
+    end
+    pre OnlyNonEmployeesCanBeHired: employees->excludes(w)
+    post Hired: employees->includes(w)
+
+  fire(w : Worker) 
+    begin
+      delete (self,w) from Employs;
+      for p in w.projects do
+        delete (p,w) from Member;
+        if not p.missingQualifications()->isEmpty then
+          p.status := #suspended
+        end
+      end
+    end
+    pre OnlyEmployeesCanBeFired: employees->includes(w)
+    post Fired: employees->excludes(w)
+    post ProjectsStillHappy: projects->forAll(p|
+      p.status = #active implies p.missingQualifications()->isEmpty)
+    post NoEmployeeOverloaded: 
+      employees->forAll(e|not e.isOverloaded())
+
+  start(p : Project) 
+    begin
+      p.status := #active
+    end
+    pre AllPredecessorsFinished: p.predecessors->forAll(s|s.status = #finished)
+    pre ProjectSuspendedOrPlanned: p.status = #suspended or p.status = #planned
+    pre HasAllQualifications: p.missingQualifications()->isEmpty
+    post ProjectIsActive: p.status = #active
+
+  finish(p : Project)
+    begin
+      for w in p.members do
+        delete(p,w) from Member
+      end;
+      p.status := #finished
+      -- TO BE DONE: 
+      -- try to activate further successor projects
+    end
+    pre ProjectIsActive: p.status = #active
+    post ProjectIsFinished: p.status = #finished
+    post NoMoreMembers: p.members->isEmpty
+
+  createWorker(qs : Set(Qualification)) : Worker begin
+      w := new Worker;
+      insert (self,w) into Employs;
+      for q in qs do insert (w,q) into IsQualified end;
+      result := w
+    end
+  
+  createProject(n : String, ws : Set(Worker), qs : Set(Qualification), s : ProjectSize) : Project begin
+      p := new Project;
+      insert (self, p) into CarriesOut;
+      for w in ws do insert (p,w) into Member end;
+      for q in qs do insert (p,q) into Requires end;
+      p.status := #active;
+      p.size := s;
+      p.name := n;
+      result := p
+    end
+
+constraints
+  inv OnlyOwnEmployeesInProjects: 
+    employees->includesAll(projects.members->asSet)
+end
+
+class Worker
+attributes
+  nickname : String
+  salary : Integer
+operations
+  isOverloaded() : Boolean = 
+    let active = projects->select(p|p.status = #active) in 
+     active->select(p|p.size=#big)->size * 2 + 
+     active->select(p|p.size=#medium)->size > 3
+constraints
+  inv notOverloaded: not isOverloaded()
+end
+
+class Project
+attributes 
+  name : String
+  size : ProjectSize
+  status : ProjectStatus
+operations
+  missingQualifications() : Set(Qualification) = requirements->select(q|
+    not members->exists(m | m.qualifications->includes(q)))
+  isHelpful(w : Worker) : Boolean = missingQualifications()->exists(q|w.qualifications->includes(q))
+constraints
+  inv AllQualificationsForActiveProject: status = #active implies missingQualifications()->isEmpty
+end
+
+
+class Qualification
+attributes
+  description : String
+end
+
+class Training < Project
+end
+
+association CarriesOut between
+ Company[1]
+ Project[0..*] role projects
+end
+
+association Employs between
+ Company[0..1] role employer
+ Worker[1..*] role employees
+end
+
+association IsQualified between
+ Worker[0..*] role workers
+ Qualification[1..*] role qualifications
+end
+
+association Member between
+ Project[0..*] role projects
+ Worker[1..*] role members
+end
+
+association Requires between
+ Project[0..*] role projects
+ Qualification[1..*] role requirements
+end
+
+association Prerequisite between
+  Project[0..*] role predecessors
+  Project[0..*] role successors
+end
+
+association Trains between
+  Training[0..*] role trainings
+  Qualification[1..*] role trained
+end
+
+
+
