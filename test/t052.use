@@ -19,8 +19,8 @@ operations
     post: aPrefix.isDefined()
 	post: result = aPrefix.concat(name)
 
-  getNameLegacyImplemented(aPrefix:String):String 
+  getNameNoImplementation(aPrefix:String):String 
     pre: aPrefix.isDefined()
     post: aPrefix.isDefined()
-	post: result = aPrefix.concat(name)
+    post: result = aPrefix.concat(name)
 end

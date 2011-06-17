@@ -1,23 +1,23 @@
 !create p1:Person
 !create p2:Person
+!create p3:Person
 !openter p1 kill(p2)
 !destroy p
 !opexit
 !set p1.name := 'Tester'
 ?p1.getNameOCLImplemented('Ein ')
+*-> 'Ein Tester' : String
 ?p1.getNameOCLImplemented('Ein ')
+*-> 'Ein Tester' : String
 ?p1.getNameOCLImplemented('Ein ')
-?p1.getNameSOILImplemented('Ein ')
-?p1.getNameSOILImplemented('Ein ')
-?p1.getNameSOILImplemented('Ein ')
+*-> 'Ein Tester' : String
 !res1 := p1.getNameOCLImplemented('Ein ')
 !res1 := p1.getNameOCLImplemented('Ein ')
 !res1 := p1.getNameOCLImplemented('Ein ')
-!res2 := p1.getNameSOILImplemented('Ein ')
-!res2 := p1.getNameSOILImplemented('Ein ')
-!res2 := p1.getNameSOILImplemented('Ein ')
 ?res1
-?res2
+*-> 'Ein Tester' : String
 info opstack
 info vars
+!openter p3 getNameNoImplementation('Zwei ')
+!opexit 'Zwei Tester'
 exit
