@@ -38,8 +38,8 @@
 ?Tuple{f:Person1.firstName,l:Person1.lastName}=Tuple{f:Person4.firstName,l:Person4.lastName}
 *-> false : Boolean
 ?Tuple{a='a'} = Tuple{b='a'}
-*Warning: Expression `(Tuple {a:'a'} = Tuple {b:'a'})' can never evaluate to true because `Tuple(a:String)' and `Tuple(b:String)' are unrelated.
-*-> false : Boolean
+*<input>:1:13: Expression `(Tuple {a:'a'} = Tuple {b:'a'})' can never evaluate to true because `Tuple(a:String)' and `Tuple(b:String)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 ?Tuple{a='a', b='b'} = Tuple{b='b', a='a'}
 *-> true : Boolean
 exit
