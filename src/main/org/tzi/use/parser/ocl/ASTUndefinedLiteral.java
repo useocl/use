@@ -27,6 +27,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -36,13 +37,22 @@ import org.tzi.use.uml.ocl.expr.Expression;
  */
 public class ASTUndefinedLiteral extends ASTExpression {
 
-    public ASTUndefinedLiteral(ASTType t) { }
+    private ASTType fType;
+
+	public ASTUndefinedLiteral(ASTType t) { 
+    	this.fType = t;
+    }
 
     public ASTUndefinedLiteral() { }
 
     public Expression gen(Context ctx) throws SemanticException {
-    	return new ExpUndefined();
+    	if (fType == null) {
+    		return new ExpUndefined();
+    	} else {
+    		Type t = fType.gen(ctx);
+    		return new ExpUndefined(t);
     	}
+    }
 
 	@Override
 	public void getFreeVariables(HashSet<String> freeVars) {

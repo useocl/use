@@ -498,6 +498,9 @@ emptyCollectionLiteral returns [ASTEmptyCollectionLiteral n]
 :
     'oclEmpty' LPAREN t=collectionType RPAREN
     { $n = new ASTEmptyCollectionLiteral($t.n); }
+|
+    t=collectionType LBRACE RBRACE
+    { $n = new ASTEmptyCollectionLiteral($t.n); }
     ;
 
 
@@ -515,9 +518,13 @@ undefinedLiteral returns [ASTUndefinedLiteral n]
     'Undefined'
     { $n = new ASTUndefinedLiteral(); }
 |
+    'null' LPAREN t=type RPAREN
+    { $n = new ASTUndefinedLiteral(t); }
+|
     'null'
     { $n = new ASTUndefinedLiteral(); }
     ;
+    
 
 
 /* ------------------------------------

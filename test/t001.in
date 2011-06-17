@@ -486,6 +486,15 @@
 ? oclEmpty(Set(Integer))
 *-> Set{} : Set(OclVoid)
 
+? Set(Integer){}
+*-> Set{} : Set(OclVoid)
+
+: Set{}
+*-> Set(OclVoid)
+
+: Set(Integer){}
+*-> Set(Integer)
+
 ? oclEmpty(Set(Set(Integer)))
 *-> Set{} : Set(OclVoid)
 
@@ -632,6 +641,15 @@
 
 ? oclUndefined(Set(Integer)) <> oclEmpty(Set(Integer))
 *-> true : Boolean
+
+: oclUndefined(Integer)
+*-> Integer
+
+: null
+*-> OclVoid
+
+: null(Integer)
+*-> Integer
 
 ? Set{1.0,2.2} = Set{1,2}
 *-> false : Boolean
