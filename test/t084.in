@@ -55,5 +55,6 @@ c
 ?b
 *-> '1' : String
 !c:=a.toString().substring(1,1)
+?c
 *-> '1' : String
 exit
