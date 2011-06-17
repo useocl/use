@@ -77,12 +77,16 @@ public class MExitOperationStatement extends MStatement {
 		
 		Value result = (fOperationResult == null) ? 
 				null : evaluateExpression(fOperationResult, false);
-		
+
 		// to be able to undo this statement, we need to capture the current
 		// variable mappings
 		Map<String, Value> currentMappings = 
 			fVarEnv.getCurrentMappings();
-		
+
+		if (result != null) {
+			fVarEnv.assign("result", result);
+		}
+
 		operationCall = fSystem.getCurrentOperation();
 		
 		ExceptionOccuredException caughtException = null;
