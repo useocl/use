@@ -26,6 +26,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.tzi.use.TestSystem;
+import org.tzi.use.config.Options;
+import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MConditionalExecutionStatement;
 import org.tzi.use.uml.sys.soil.MIterationStatement;
@@ -429,6 +431,7 @@ public class StatementGenerationTest extends TestCase {
 	@Test
 	public void testConditionalExecution() {
 		// conditional execution without else statement
+		Options.checkWarningsUnrelatedTypes = WarningType.IGNORE;
 		fStatement = generateStatement("if o1 = o2 then v := 42 end");
 		assertNotNull(fStatement);
 		assertTrue(fStatement instanceof MConditionalExecutionStatement);
@@ -449,6 +452,7 @@ public class StatementGenerationTest extends TestCase {
 		fStatement = null;
 		fStatement = generateStatement("if o1 then v := 42 end");
 		assertNull(fStatement);
+		Options.checkWarningsUnrelatedTypes = WarningType.ERROR;
 	}
 	
 	
