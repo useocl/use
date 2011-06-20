@@ -53,7 +53,7 @@ public final class Rolename extends EdgeProperty {
      */
     Rolename( MAssociationEnd assocEnd, NodeBase source, NodeBase target, 
               WayPoint sourceWayPoint, WayPoint targetWayPoint, DiagramOptions opt, int side, EdgeBase edge ) {
-    	super(source, sourceWayPoint, target, targetWayPoint);
+    	super(source, sourceWayPoint, target, targetWayPoint, false);
     	
         fAssocEnd = assocEnd;
         setName();
@@ -61,6 +61,13 @@ public final class Rolename extends EdgeProperty {
         fEdge = edge;
         fOpt = opt;
         fSide = side;
+        
+        sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+			@Override
+			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
+				Rolename.this.calculatePosition();				
+			}
+		});
     }
     
     private void setName() {

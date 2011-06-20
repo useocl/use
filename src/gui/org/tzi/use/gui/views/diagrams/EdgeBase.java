@@ -23,7 +23,6 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +37,7 @@ import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.SourceWayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.TargetWayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.waypoints.WayPointComparator;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 
@@ -436,39 +436,17 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     }
     
     /**
-     * Hook for edges to position related elements
-     * when source point changes.
-     */
-    void onSourcePointChanged(Point2D sourcePoint) {}
-        
-    /**
-     * Hook for edges to position related elements
-     * when target point changes.
-     */
-    void onTargetPointChanged(Point2D targetPoint) {}
-    
-    /**
      * Sets the start point of this Edge.
      */
     void setSourcePoint( double x, double y ) {
         fSourceWayPoint.setCenter(x, y);
-        onSourcePointChanged(fSourceWayPoint.getPosition());
     }
     
     /**
      * Sets the end point of this Edge.
      */
     void setTargetPoint( double x, double y ) {
-        fTargetWayPoint.setCenter( x, y );
-        onTargetPointChanged(fTargetWayPoint.getPosition());        
-    }
-    
-    /**
-     * Returns true if the source or target of this edge is an
-     * ObjectNode otherwise the method returns false.
-     */
-    protected boolean isUnderlinedLabel() {
-        return isLink();
+        fTargetWayPoint.setCenter( x, y );        
     }
     
     /**
@@ -537,15 +515,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     	// of the objects as start and end point of the link. 
     	// Otherwise calculate the new positions.
         if ( edges.size() == 1 ) {
-        	Point2D oldValue = fSourceWayPoint.getCenter();
         	fSourceWayPoint.updatePosition(getNextWayPoint(fSourceWayPoint));
-        	if (!oldValue.equals(fSourceWayPoint.getCenter()))
-        		onSourcePointChanged(fSourceWayPoint.getCenter());
-        	
-        	oldValue = fTargetWayPoint.getCenter();
         	fTargetWayPoint.updatePosition(getPreviousWayPoint(fTargetWayPoint));
-        	if (!oldValue.equals(fTargetWayPoint.getCenter()))
-        		onTargetPointChanged(fTargetWayPoint.getCenter());
         } else {
             // there are more then just one link between source and target node.
         	NodeBase source = fSource;
@@ -604,9 +575,6 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
                     aligned.sourceWayPoint.updatePosition((drawingSourceEqualsSource ? sDeltaX : 0), 0, aligned.sourceWayPointNext);
                     aligned.targetWayPoint.updatePosition((drawingTargetEqualsTarget ? tDeltaX : 0), 0, aligned.targetWayPointNext);
 
-                    e.onSourcePointChanged(aligned.getUnalignedSourceWayPoint().getCenter());
-                    e.onTargetPointChanged(aligned.getUnalignedTargetWayPoint().getCenter());
-                    
                     counter++;
                 }
             // ... use the height
@@ -652,10 +620,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
                     
                     aligned.sourceWayPoint.updatePosition(0, (drawingSourceEqualsSource ? sDeltaY : 0), aligned.sourceWayPointNext);
                     aligned.targetWayPoint.updatePosition(0, (drawingTargetEqualsTarget ? tDeltaY : 0), aligned.targetWayPointNext);
-    
-                    e.onSourcePointChanged(aligned.getUnalignedSourceWayPoint().getCenter());
-                    e.onTargetPointChanged(aligned.getUnalignedTargetWayPoint().getCenter());
-                    
+     
                     counter++;
                 }
             }
@@ -671,21 +636,12 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
      *
      */
     private class AlignedObjects {
-		boolean wasSwitched;
     	NodeBase drawingSource;
 		NodeBase drawingTarget;
 		AttachedWayPoint sourceWayPoint;
 		WayPoint sourceWayPointNext;
 		AttachedWayPoint targetWayPoint;
 		WayPoint targetWayPointNext;
-		
-		public WayPoint getUnalignedSourceWayPoint() {
-			return (wasSwitched ? targetWayPoint : sourceWayPoint);
-		}
-		
-		public WayPoint getUnalignedTargetWayPoint() {
-			return (wasSwitched ? sourceWayPoint : targetWayPoint);
-		}
     }
     
     /**
@@ -698,7 +654,6 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     	AlignedObjects result = new AlignedObjects();
     	
     	if (e.fSource.equals(fSource)) {
-    		result.wasSwitched = false;
     		result.drawingSource = e.getDrawingSource();
     		result.drawingTarget = e.getDrawingTarget();
     		result.sourceWayPoint = e.fSourceWayPoint;
@@ -706,7 +661,6 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     		result.targetWayPoint = e.fTargetWayPoint;
     		result.targetWayPointNext = e.getPreviousWayPoint(e.fTargetWayPoint);
     	} else {
-    		result.wasSwitched = true;
     		result.drawingSource = e.getDrawingTarget();
     		result.drawingTarget = e.getDrawingSource();
     		result.sourceWayPoint = e.fTargetWayPoint;

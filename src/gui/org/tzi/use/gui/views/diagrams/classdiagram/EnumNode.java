@@ -29,7 +29,7 @@ import java.util.List;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.uml.mm.MNamedElement;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.type.EnumType;
 
 /**
@@ -57,7 +57,7 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
         return fEnum;
     }
     
-    public MNamedElement getClassifier() {
+    public MClassifier getClassifier() {
     	return fEnum;
     }
     

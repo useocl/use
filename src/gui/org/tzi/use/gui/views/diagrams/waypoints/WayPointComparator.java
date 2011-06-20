@@ -19,11 +19,10 @@
 
 // $Id$
 
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.waypoints;
 
 import java.util.Comparator;
 
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 
 /**
  * @author gutsche

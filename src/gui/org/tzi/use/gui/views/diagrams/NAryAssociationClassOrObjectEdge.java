@@ -48,7 +48,7 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
      */
     WayPoint fConNode;
     
-    DiamondNode fNode;
+    DiamondNode fDiamondNode;
     
     private boolean isLink;
     
@@ -68,17 +68,19 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
 	/**
      * Use this constructor if it is an t-nary associationclass/objectlink.
      */
-    public NAryAssociationClassOrObjectEdge( NodeBase source, NodeBase target, DiamondNode node, NodeBase nodeEdgeNode, DiagramView diagram, MAssociation assoc, boolean isLink ) {
-        super( source, target, assoc.name(), diagram );
+	public NAryAssociationClassOrObjectEdge(DiamondNode diamondNode,
+			NodeBase associationClassNode, DiagramView diagram,
+			MAssociation assoc, boolean isLink) {
+        super( diamondNode, associationClassNode, assoc.name(), diagram );
         this.isLink = isLink;
-        initNodeEdge( node, nodeEdgeNode);
+        initNodeEdge( diamondNode, associationClassNode);
     }
     
     /**
      * Initializes this NodeEdge.
      */
     private void initNodeEdge( DiamondNode node, NodeBase nodeEdgeNode ) {
-        fNode = node;
+        fDiamondNode = node;
         fNodeEdgeNode = nodeEdgeNode;
                 
         fNENode = new WayPoint( fSource, fTarget, this,
@@ -103,7 +105,7 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
 	@Override
     public void onDraw( Graphics2D g ) {
         drawNodeEdge( g );
-        fNode.draw( g );
+        fDiamondNode.draw( g );
     }
 
 	/**
@@ -117,11 +119,11 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
             g.setColor( fOpt.getEDGE_COLOR() );
         }
         
-        update();
+        //update();
         
         try {
-            DirectedEdgeFactory.drawDashedEdge( g, (int) fNode.getCenter().getX(), 
-                                                (int) fNode.getCenter().getY(), 
+            DirectedEdgeFactory.drawDashedEdge( g, (int) fDiamondNode.getCenter().getX(), 
+                                                (int) fDiamondNode.getCenter().getY(), 
                                                 (int) fNodeEdgeNode.getCenter().getX(), 
                                                 (int) fNodeEdgeNode.getCenter().getY() );
         } catch ( Exception ex ) {

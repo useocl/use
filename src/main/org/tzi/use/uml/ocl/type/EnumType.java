@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.Annotatable;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MElementAnnotation;
-import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.util.CollectionUtil;
 
 /**
@@ -40,7 +40,7 @@ import org.tzi.use.util.CollectionUtil;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class EnumType extends Type implements Annotatable, MNamedElement {
+public final class EnumType extends Type implements Annotatable, MClassifier {
     //TODO: Use delegation for Annotatable?
 	private String fName;
     

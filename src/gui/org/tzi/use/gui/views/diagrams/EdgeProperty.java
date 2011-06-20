@@ -94,7 +94,9 @@ public abstract class EdgeProperty extends PlaceableNode {
 	
 	protected WayPoint targetWayPoint;
 
-	boolean isUserDefined = false;
+	protected boolean isUserDefined = false;
+	
+	protected boolean isLink;
 	
 	/**
 	 * x-delta from the calculated position
@@ -109,12 +111,14 @@ public abstract class EdgeProperty extends PlaceableNode {
 	public EdgeProperty() { }
 
 	public EdgeProperty(NodeBase source, WayPoint sourceWayPoint, NodeBase target,
-			WayPoint targetWayPoint) {
+			WayPoint targetWayPoint, boolean isLink) {
 		this.fSource = source;
 		this.sourceWayPoint = sourceWayPoint;
 			
 		this.fTarget = target;
 		this.targetWayPoint = targetWayPoint;
+		
+		this.isLink = isLink;
 	}
 
 	public MAssociation getAssociation() {
@@ -220,7 +224,7 @@ public abstract class EdgeProperty extends PlaceableNode {
 		FontRenderContext frc = g.getFontRenderContext();
 		Font font;
 		
-		if ( fEdge.isUnderlinedLabel() ) {
+		if ( this.isLink ) {
         	Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>(); 
         	attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         	font = g.getFont().deriveFont(attributes);
@@ -257,7 +261,11 @@ public abstract class EdgeProperty extends PlaceableNode {
 		
 		Point2D attachedPosition;
 		
-		if (this.fSide == SOURCE_SIDE) {
+		// Association name of n-Ary associations are related to the
+		// diamond node.
+		if (this.fEdge == null) {
+			attachedPosition = fSource.getCenter();
+		} else if (this.fSide == SOURCE_SIDE) {
 			attachedPosition = fEdge.getSourceWayPoint().getCenter(); 
 		} else {
 			attachedPosition = fEdge.getTargetWayPoint().getCenter(); 
@@ -267,7 +275,7 @@ public abstract class EdgeProperty extends PlaceableNode {
 		g.drawLine((int)attachedPosition.getX(), (int)attachedPosition.getY(), (int)sourcePoint.getX(), (int)sourcePoint.getY());
 		
 		// For label in between draw another line
-		if (this.fSide == 0) {
+		if (this.fSide == 0 && this.fEdge != null) {
 			attachedPosition = fEdge.getSourceWayPoint().getCenter();
 			sourcePoint = this.getIntersectionCoordinate(attachedPosition);
 			g.drawLine((int)attachedPosition.getX(), (int)attachedPosition.getY(), (int)sourcePoint.getX(), (int)sourcePoint.getY());
@@ -279,7 +287,7 @@ public abstract class EdgeProperty extends PlaceableNode {
 	
 	/**
 	 * Draws the text centered inside the bounds returned by {@link #getBounds()}.
-	 * The text is underlined if {@link fEdge#isUnderlinedLabel()} returns true.
+	 * The text is underlined if {@link fEdge#isLink()} returns true.
 	 * @param g
 	 */
 	protected void drawTextCentered(Graphics2D g) {

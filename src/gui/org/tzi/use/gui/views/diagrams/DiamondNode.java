@@ -46,8 +46,6 @@ public class DiamondNode extends NodeBase {
     private AssociationName fAssocName;
     private List<String> fConnectedNodes;
     private String fName;
-    private double fX_old;
-    private double fY_old;
     
     private List<EdgeBase> fHalfEdges; // participating edges
     
@@ -61,7 +59,7 @@ public class DiamondNode extends NodeBase {
         for (MClass cls : classes) {
             fConnectedNodes.add( cls.name() );
         }
-        instanciateAssocName();
+        instanciateAssocName(false);
     }
 
     public DiamondNode( MLink link, DiagramOptions opt ) {
@@ -75,12 +73,12 @@ public class DiamondNode extends NodeBase {
         for (MObject obj : objects) {
             fConnectedNodes.add( obj.name() );
         }
-        instanciateAssocName();
+        instanciateAssocName(true);
     }
     
-    private void instanciateAssocName() {
+    private void instanciateAssocName(boolean isLink) {
         fAssocName = new AssociationName( fName, fConnectedNodes, 
-                                          fOpt, this, fAssoc );
+                                          fOpt, this, fAssoc, isLink );
     }
     
     public MAssociation association() {
@@ -104,21 +102,19 @@ public class DiamondNode extends NodeBase {
      */
     @Override
     public void onDraw( Graphics2D g ) {
-        int x = (int) getX();
-        int y = (int) getY();
-        int[] xpoints = { x, x + 20, x, x - 20 };
-        int[] ypoints = { y - 10, y, y + 10, y };
-        
+    	
         if ( isSelected() ) {
             g.setColor( fOpt.getNODE_SELECTED_COLOR() );
         } else {
             g.setColor( fOpt.getDIAMONDNODE_COLOR() );    
         }
-        g.fillPolygon( xpoints, ypoints, xpoints.length );
+        
+        Polygon dim = dimension();
+        g.fillPolygon( dim );
         
         g.setColor( fOpt.getDIAMONDNODE_FRAME_COLOR() );
-        g.drawPolygon( xpoints, ypoints, xpoints.length );
-
+        
+        g.drawPolygon( dim );
         
         if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
@@ -130,15 +126,13 @@ public class DiamondNode extends NodeBase {
             fAssocName.draw( g );
         }
         g.setColor( fOpt.getDIAMONDNODE_COLOR() );
-        fX_old = getX();
-        fY_old = getY();
     }
 
     public Polygon dimension() {
         int x1 = (int) getX();
         int y1 = (int) getY();
-        int[] xpoints = { x1, x1 + 20, x1, x1 - 20 };
-        int[] ypoints = { y1 - 10, y1, y1 + 10, y1 };
+        int[] xpoints = { x1 + 20, x1 + 40, x1 + 20, x1      };
+        int[] ypoints = { y1     , y1 + 10, y1 + 20, y1 + 10 };
         return new Polygon( xpoints, ypoints, xpoints.length );
     }
 
@@ -161,29 +155,11 @@ public class DiamondNode extends NodeBase {
     public boolean isDeletable() {
         return false;
     }
-    
-    public void setPosition( double x, double y ) {
-        fX_old = getX();
-        fY_old = getY();
-        setX( x );
-        setY( y );
-    }
-
-    public double oldX() {
-        return fX_old;
-    }
-    public double oldY() {
-        return fY_old;
-    }
-    
+        
     @Override
-    public void setRectangleSize( Graphics2D g ) { }
-    
-    public double getWidth() {
-        return getBounds().getWidth();
-    }
-    public double getHeight() {
-        return getBounds().getHeight();
+    public void setRectangleSize( Graphics2D g ) {
+    	setWidth(dimension().getBounds2D().getWidth());
+    	setHeight(dimension().getBounds2D().getHeight());
     }
     
     public EdgeProperty getAssocName() {

@@ -35,7 +35,7 @@ import org.tzi.use.uml.ocl.type.ObjectType;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
 
-public interface MClass extends MModelElement {
+public interface MClass extends MModelElement, MClassifier {
 
     /**
      * Returns true if the class is marked abstract.

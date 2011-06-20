@@ -22,11 +22,13 @@
 package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.EnumNode;
@@ -69,6 +71,12 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * when drawn the first time.
      */
     protected boolean firstDraw = true;
+    
+    /**
+     * List of listeners which get notified if
+     * this node changes position. 
+     */
+    protected List<PositionChangedListener<PlaceableNode>> positionChangeListener = Collections.emptyList();
     
     /**
      * Draws the placeable node to the given Graphics object.
@@ -173,10 +181,16 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 
 	/**
      * Sets the position of this node to x and y.
-     */
+     * This operation is used by all other position related setter operations.
+     * @param x The new x-coordinate
+     * @param y The new y-coordinate
+     **/
     public void setPosition( double x, double y ) {
         double deltaX = x - bounds.x;
-        double deltaY = y - bounds.x;
+        double deltaY = y - bounds.y;
+        
+        if (deltaX == 0 && deltaY == 0)
+        	return;
         
     	bounds.x = x;
         bounds.y = y;
@@ -191,7 +205,17 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
         setPosition(p.getX(), p.getY());
     }
 
-    protected void onPositionChanged(double deltaX, double deltaY) {}
+    /**
+     * Notifies the listeners that the position of this
+     * node has changed.
+     * @param deltaX
+     * @param deltaY
+     */
+    protected void onPositionChanged(double deltaX, double deltaY) {
+    	for (PositionChangedListener<PlaceableNode> listener : this.positionChangeListener) {
+			listener.positionChanged(this, getPosition(), deltaX, deltaY);
+		}
+    }
     
     /**
      * Gets the position of this node.
@@ -200,6 +224,17 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
         return new Point2D.Double(bounds.x, bounds.y);
     }
 
+    public void addPositionChangedListener(PositionChangedListener<PlaceableNode> listener) {
+		if (positionChangeListener.size() == 0) {
+			positionChangeListener = new ArrayList<PositionChangedListener<PlaceableNode>>();
+		}
+    	positionChangeListener.add(listener);
+	}
+	
+	public void removePositionChangedListener(PositionChangedListener<PlaceableNode> listener) {
+		positionChangeListener.remove(listener);
+	}
+	
     /**
      * Sets the position of this node to the new position while dragging.
      */
@@ -285,7 +320,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param x
      */
     public void setCenterX(double x) {
-    	this.bounds.x = x - bounds.width / 2;
+    	setX(x - bounds.width / 2);
     }
     
     /**
@@ -293,7 +328,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param y
      */
     public void setCenterY(double y) {
-    	this.bounds.y = y - bounds.height / 2;
+    	setY(y - bounds.height / 2);
     }
     
     /**
@@ -322,7 +357,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param x New x coordinate.
      */
     public void setX( double x ) {
-        bounds.x = x;
+        setPosition(x, getY());
     }
 
     /**
@@ -330,7 +365,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param y New y coordinate.
      */
     public void setY( double y ) {
-        bounds.y = y;
+    	setPosition(getX(), y);
     }
     
     /**
@@ -342,7 +377,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param source the source <code>Point2D</code> of the line.
      * @param target the target <code>Point2D</code> of the line.
      */
-    Point2D getIntersectionCoordinate( Point2D target ) {
+    public Point2D getIntersectionCoordinate( Point2D target ) {
     	return getIntersectionCoordinate(this.getCenter(), target);
     }
     
@@ -399,7 +434,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
         
         // if no line is cut return the start point 
         // (both nodes lay on top of each other.
-        return new Point( (int)source.getX(), (int)source.getY() );
+        return new Point2D.Double( source.getX(), source.getY() );
     }
     
     /**

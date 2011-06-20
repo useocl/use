@@ -606,9 +606,8 @@ public class ClassDiagram extends DiagramView
             // connected to an associationclass
             if ( assoc instanceof MAssociationClass ) {
                 NAryAssociationClassOrObjectEdge e = 
-                    new NAryAssociationClassOrObjectEdge( visibleData.fClassToNodeMap.get( cls1 ), 
-                                  visibleData.fClassToNodeMap.get( cls2 ),
-                                  node, 
+                    new NAryAssociationClassOrObjectEdge(
+                    			  node, 
                                   visibleData.fClassToNodeMap.get( assoc ),
                                   this, assoc, false );
                 

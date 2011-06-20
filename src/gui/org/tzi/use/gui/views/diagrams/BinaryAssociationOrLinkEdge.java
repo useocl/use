@@ -340,9 +340,6 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
         		++index;
         	}
         }
-        
-        this.onSourcePointChanged(fSourceWayPoint.getCenter());
-        this.onTargetPointChanged(fTargetWayPoint.getCenter());
     }
     
     @Override
@@ -359,87 +356,27 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     }
     
     @Override
-    protected void onSourcePointChanged(Point2D sourcePoint) {
-    	//FIXME: Should not be needed anymore!
-    	if ( fAssocName != null ) {
-            fAssocName.updateSourceEdgePoint( sourcePoint );
-        }
-        if ( fSourceRolename != null ) {
-            fSourceRolename.updateSourceEdgePoint( sourcePoint );
-        }
-        if ( fTargetRolename != null ) {
-            fTargetRolename.updateTargetEdgePoint( sourcePoint );
-        }
-        if ( fSourceMultiplicity != null ) {
-            fSourceMultiplicity.updateSourceEdgePoint( sourcePoint );        
-        }
-        if ( fTargetMultiplicity != null ) {
-            fTargetMultiplicity.updateTargetEdgePoint( sourcePoint );
-        }
-    }
-    
-    @Override
-    protected void onTargetPointChanged(Point2D targetPoint) {
-    	if ( fAssocName != null ) {
-            fAssocName.updateTargetEdgePoint( targetPoint );
-        }
-        if ( fSourceRolename != null ) {
-            fSourceRolename.updateTargetEdgePoint( targetPoint );
-        }
-        if ( fTargetRolename != null ) {            
-            fTargetRolename.updateSourceEdgePoint( targetPoint );
-        }
-        if ( fSourceMultiplicity != null ) {
-            fSourceMultiplicity.updateTargetEdgePoint( targetPoint );        
-        }
-        if ( fTargetMultiplicity != null ) {
-            fTargetMultiplicity.updateSourceEdgePoint( targetPoint );
-        }
-    }
-    
-    @Override
     public List<EdgeProperty> getProperties() { 
-    	ArrayList<EdgeProperty> result = new ArrayList<EdgeProperty>();
-    	
-    	if ( fAssocName != null ) {
-            result.add(fAssocName);
-        }
+    	List<EdgeProperty> result = super.getProperties();
+
         if ( fSourceRolename != null ) {
         	result.add(fSourceRolename);
-        }
-        if ( fTargetRolename != null ) {
-        	result.add(fTargetRolename);
         }
         if ( fSourceMultiplicity != null ) {
         	result.add(fSourceMultiplicity);        
         }
-        if ( fTargetMultiplicity != null ) {
-        	result.add(fTargetMultiplicity);
-        }
-    	    
+            
     	return result;
     }
     
     @Override
     public PlaceableNode getWayPoint(double x, double y) {
-    	PlaceableNode res = null;
+    	PlaceableNode res = super.getWayPoint(x, y);
     	        
-        if ( getTargetRolename() != null && getTargetRolename().occupies( x, y ) ) {
-            // Do not break here. We search in the same order
-            // which is used for drawing. There may be another
-            // node drawn on top of this node. That node should be
-            // picked.
-            res = getTargetRolename();
-        } else if ( getSourceRolename() != null && getSourceRolename().occupies( x, y ) ) {
+        if ( getSourceRolename() != null && getSourceRolename().occupies( x, y ) ) {
             res = getSourceRolename();
-        } else if ( getTargetMultiplicity() != null && getTargetMultiplicity().occupies( x, y ) ) {
-            res = getTargetMultiplicity();
         } else if ( getSourceMultiplicity() != null && getSourceMultiplicity().occupies( x, y ) ) {
             res = getSourceMultiplicity();
-        } else if ( getAssocName() != null && getAssocName().occupies( x, y ) ) {
-            res = getAssocName();
-        } else if ( super.occupiesNonSpecialNodeOnEdge( x, y ) ) {
-            res = super.getNonSpecialWayPoint(x, y);
         }
         
         return res;

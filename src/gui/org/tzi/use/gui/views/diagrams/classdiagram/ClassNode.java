@@ -34,8 +34,8 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.MNamedElement;
 
 /**
  * A node representing a class.
@@ -72,7 +72,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         return fClass;
     }
     
-    public MNamedElement getClassifier() {
+    public MClassifier getClassifier() {
         return fClass;
     }
     

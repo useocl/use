@@ -92,34 +92,25 @@ public abstract class AttachedWayPoint extends WayPoint {
 	@Override
     public synchronized void setDraggedPosition( double movedX, double movedY ) {
 		// Don't leave the bounds
-		Rectangle2D attachedBounds = getAttachedNode().getBounds();
+		Point2D attachedCenter = getAttachedNode().getCenter();
 		
-		double xCenter = getCenter().getX() + movedX;
-		double yCenter = getCenter().getY() + movedY;
-		
-		setCenterX( Math.min(Math.max(attachedBounds.getMinX(), xCenter), attachedBounds.getMaxX())); 
-		setCenterY( Math.min(Math.max(attachedBounds.getMinY(), yCenter), attachedBounds.getMaxY()));
-		
-		// At least on value must be at the outer bounds of the attached node
-		Point2D myCenter = getCenter();
-		if (   myCenter.getX() > attachedBounds.getMinX() && myCenter.getX() < attachedBounds.getMaxX()
-			&& myCenter.getY() > attachedBounds.getMinY() && myCenter.getY() < attachedBounds.getMaxY()) {
-			// The stronger mouse movement forces the way point movement
-			if (movedX > movedY) {
-				if (myCenter.getY() > attachedBounds.getCenterY()) {
-					setCenterY(attachedBounds.getMaxY());
-				} else {
-					setCenterY(attachedBounds.getMinY());
-				}
-			} else {
-				if (myCenter.getX() > attachedBounds.getCenterX()) {
-					setCenterX(attachedBounds.getMaxX());
-				} else {
-					setCenterX(attachedBounds.getMinX());
-				}
-			}
-		}
+		Point2D.Double newPosition = new Point2D.Double(
+				getCenter().getX() + movedX,
+				getCenter().getY() + movedY); 
+				
+		Point2D intersectionPoint = getAttachedNode().getIntersectionCoordinate(newPosition);
 
+		while(intersectionPoint.equals(attachedCenter)) {
+			// Enlarge the line until it intersects the attached node
+			newPosition.x += newPosition.getX() - attachedCenter.getX();
+			newPosition.y += newPosition.getY() - attachedCenter.getY();
+			
+			intersectionPoint = getAttachedNode().getIntersectionCoordinate(newPosition);
+		}
+		
+		setCenter(intersectionPoint);
+
+		Rectangle2D attachedBounds = getAttachedNode().getBounds();
 		this.deltaX = bounds.x - attachedBounds.getMinX();
 		this.deltaY = bounds.y - attachedBounds.getMinY();
 		

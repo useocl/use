@@ -40,7 +40,7 @@ public final class Multiplicity extends EdgeProperty {
     Multiplicity( MAssociationEnd assocEnd, NodeBase source, NodeBase target,
                   EdgeBase edge, WayPoint sourceNode, WayPoint targetNode, 
                   DiagramOptions opt, int side ) {
-    	super(source, sourceNode, target, targetNode);
+    	super(source, sourceNode, target, targetNode, false);
     	
         fAssocEnd = assocEnd;
         fName = fAssocEnd.multiplicity().toString();
@@ -50,6 +50,12 @@ public final class Multiplicity extends EdgeProperty {
         fOpt = opt;
         fSide = side;
         
+        sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+			@Override
+			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
+				Multiplicity.this.calculatePosition();
+			}
+		});
     }
     
     @Override

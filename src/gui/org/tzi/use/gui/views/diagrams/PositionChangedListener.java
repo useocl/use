@@ -19,35 +19,16 @@
 
 // $Id$
 
-package org.tzi.use.gui.views.diagrams.classdiagram;
+package org.tzi.use.gui.views.diagrams;
 
-import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.uml.mm.MClassifier;
+import java.awt.geom.Point2D;
 
 /**
- * Base class for nodes representing a classifier (class or enumeration)
- * 
+ * Listener to react on position changes
+ * of an object. 
  * @author lhamann
  *
  */
-public abstract class ClassifierNode extends NodeBase {
-
-	
-	public abstract MClassifier getClassifier();
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#isDeletable()
-	 */
-	@Override
-	public boolean isDeletable() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#name()
-	 */
-	@Override
-	public String name() {
-		return getClassifier().name();
-	}
+public interface PositionChangedListener<Source> {
+	void positionChanged(Source source, Point2D newPosition, double deltaX, double deltaY);
 }

@@ -23,6 +23,7 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,21 +43,50 @@ public final class AssociationName extends EdgeProperty {
     
     AssociationName( String name, NodeBase source, NodeBase target,
                      WayPoint sourceNode, WayPoint targetNode, 
-                     DiagramOptions opt, EdgeBase edge, MAssociation assoc ) {
-    	super(source, sourceNode, target, targetNode);
+                     DiagramOptions opt, EdgeBase edge, MAssociation assoc, boolean isLink ) {
+    	super(source, sourceNode, target, targetNode, isLink);
         fName = name;
         fAssoc = assoc;
         fOpt = opt;
         fEdge = edge;
+        this.sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+			@Override
+			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
+				AssociationName.this.calculatePosition();				
+			}
+		});
+        
+        this.targetWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+			@Override
+			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
+				AssociationName.this.calculatePosition(); 				
+			}
+		});
     }
     
+    /**
+     * Used by n-ary associations / links
+     * @param name
+     * @param connectedNodes
+     * @param opt
+     * @param source
+     * @param assoc
+     */
     AssociationName( String name, List<String> connectedNodes, DiagramOptions opt,
-                     NodeBase source, MAssociation assoc ) {
+                     DiamondNode source, MAssociation assoc, boolean isLink ) {
         fName = name;
         fSource = source;
         fAssoc = assoc;
         fConnectedNodes = connectedNodes;
         fOpt = opt;
+        this.isLink = isLink;
+        
+        this.fSource.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+			@Override
+			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
+				AssociationName.this.calculatePosition();
+			}
+		});
     }
     
     public String name() {
@@ -70,7 +100,7 @@ public final class AssociationName extends EdgeProperty {
         }
         
         setColor( g );
-        drawTextCentered(g);
+        drawTextCentered( g );
         resetColor( g );
     }
 
@@ -83,7 +113,12 @@ public final class AssociationName extends EdgeProperty {
 	public Point2D.Double getDefaultPosition() {
 		Point2D.Double result = new Point2D.Double();
 		
-		if (this.fEdge.isReflexive()) {
+		if (this.fEdge == null) {
+			// n-Ary association
+			Rectangle2D diamondNodeBounds = this.fSource.getBounds();
+			result.x = diamondNodeBounds.getCenterX() - (getBounds().getWidth() / 2);
+			result.y = diamondNodeBounds.getY() - 30;
+		} else if (this.fEdge.isReflexive()) {
 			BinaryAssociationOrLinkEdge binaryEdge = (BinaryAssociationOrLinkEdge)this.fEdge;
 			
 			if (binaryEdge.getReflexivePosition().isLocatedNorth()) {

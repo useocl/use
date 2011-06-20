@@ -25,7 +25,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
@@ -84,7 +86,8 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
         
         fAssoc = assoc;
         
-        fAssocName = new AssociationName(fAssoc.name(), source, target, fSourceWayPoint, fTargetWayPoint, fOpt, this, assoc);
+		fAssocName = new AssociationName(fAssoc.name(), source, target,
+				fSourceWayPoint, fTargetWayPoint, fOpt, this, assoc, isLink);
         
         fTargetEnd = targetEnd;
         
@@ -120,6 +123,44 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
      */
     public EdgeProperty getAssocName() {
         return fAssocName;
+    }
+    
+    @Override
+    public List<EdgeProperty> getProperties() { 
+    	ArrayList<EdgeProperty> result = new ArrayList<EdgeProperty>();
+    	
+    	if ( fAssocName != null ) {
+            result.add(fAssocName);
+        }
+        if ( fTargetRolename != null ) {
+        	result.add(fTargetRolename);
+        }
+        if ( fTargetMultiplicity != null ) {
+        	result.add(fTargetMultiplicity);
+        }
+    	    
+    	return result;
+    }
+    
+    @Override
+    public PlaceableNode getWayPoint(double x, double y) {
+    	PlaceableNode res = null;
+    	        
+        if ( getTargetRolename() != null && getTargetRolename().occupies( x, y ) ) {
+            // Do not break here. We search in the same order
+            // which is used for drawing. There may be another
+            // node drawn on top of this node. That node should be
+            // picked.
+            res = getTargetRolename();
+        } else if ( getTargetMultiplicity() != null && getTargetMultiplicity().occupies( x, y ) ) {
+            res = getTargetMultiplicity();
+        } else if ( getAssocName() != null && getAssocName().occupies( x, y ) ) {
+            res = getAssocName();
+        } else if ( super.occupiesNonSpecialNodeOnEdge( x, y ) ) {
+            res = super.getNonSpecialWayPoint(x, y);
+        }
+        
+        return res;
     }
     
     @Override

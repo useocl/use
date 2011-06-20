@@ -76,7 +76,6 @@ import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NAryAssociationClassOrObjectEdge;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
@@ -435,8 +434,8 @@ public class NewObjectDiagram extends DiagramView
                 // connected to an "object link"
                 if (link instanceof MLinkObject) {
                     NAryAssociationClassOrObjectEdge e = 
-                        new NAryAssociationClassOrObjectEdge(fObjectToNodeMap.get(obj1), 
-                                     fObjectToNodeMap.get(obj2), node,
+                        new NAryAssociationClassOrObjectEdge(
+                        			 node,
                                      fObjectToNodeMap.get(link),
                                      this, link.association(), true );
                     synchronized (fLock) {
