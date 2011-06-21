@@ -22,13 +22,14 @@
 package org.tzi.use.gui.views.diagrams;
 
 import java.awt.geom.Point2D;
+import java.util.EventListener;
 
 /**
  * Listener to react on position changes
- * of an object. 
+ * of a diagram object.
+ * 
  * @author lhamann
- *
  */
-public interface PositionChangedListener<Source> {
+public interface PositionChangedListener<Source> extends EventListener {
 	void positionChanged(Source source, Point2D newPosition, double deltaX, double deltaY);
 }

@@ -34,8 +34,6 @@ import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.xmlparser.XMLParserAccess;
-import org.tzi.use.gui.xmlparser.XMLParserAccessImpl;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkEnd;
 import org.tzi.use.uml.sys.MLinkObject;
@@ -50,11 +48,6 @@ import org.tzi.use.uml.sys.MObject;
 @SuppressWarnings("serial")
 public final class ActionHideObjectDiagram extends ActionHide {
  
-    /**
-     * The diagram the graph, nodes and edges belong to.
-     */
-    private NewObjectDiagram fDiagram;
-
     public ActionHideObjectDiagram( String text, Set<?> nodesToHide,
                                     Selection<Selectable> nodeSelection,
                                     DirectedGraph<NodeBase, EdgeBase> graph, LayoutInfos layoutInfos ) {
@@ -67,32 +60,20 @@ public final class ActionHideObjectDiagram extends ActionHide {
     }
 
     /**
+     * Easier access to the object diagram
+     * @return
+     */
+    protected NewObjectDiagram getDiagram() {
+    	return (NewObjectDiagram)fLayoutInfos.getDiagram();
+    }
+    
+    /**
      * Displays all hidden objects again. The objects have to be added
      * again, because they were deleted from the view before.
      */
     public void showAllHiddenElements() {
-        // add all hidden objects
-        Iterator<Object> it = fLayoutInfos.getHiddenNodes().iterator();
-        MObject obj = null;
-        while (it.hasNext()) {
-            obj = (MObject) it.next();
-            fDiagram.addObject(obj);
-        }
-        fLayoutInfos.getHiddenNodes().clear();
-
-        // add all hidden links
-        it = fLayoutInfos.getHiddenEdges().iterator();
-        while (it.hasNext()) {
-            MLink link = (MLink) it.next();
-            fDiagram.addLink(link);
-        }
-        fLayoutInfos.getHiddenEdges().clear();
-        fDiagram.invalidateContent();
-        
-        XMLParserAccess xmlParser = new XMLParserAccessImpl( fLayoutInfos );
-        xmlParser.loadXMLString( fLayoutInfos.getHiddenElementsXML(), false );
-        fLayoutInfos.setHiddenElementsXML( "" );
-        fLayoutXMLForHiddenElements = "";
+    	getDiagram().showAll();
+        getDiagram().invalidateContent();
     }    
     
     /**
@@ -204,30 +185,10 @@ public final class ActionHideObjectDiagram extends ActionHide {
     /**
      * Hides all objects with there connecting links.
      */
-    public void hideNodesAndEdges() {
-        Set<Object> objectsToHide = new HashSet<Object>();
-        StringBuilder layoutXml = new StringBuilder(this.fLayoutXMLForHiddenElements);
-        
-        // hide objects
-        Iterator<Object> it = fNodesToHide.iterator();
-        while (it.hasNext()) {
-            MObject obj = (MObject) it.next();
-            NodeBase objToHideNode = fLayoutInfos.getNodeToNodeMap().get(obj);
-            
-            // save position information about object
-            layoutXml.append(objToHideNode.storePlacementInfo( true ));
-            
-            objectsToHide.add( obj );
-        }
-        
-        this.fLayoutXMLForHiddenElements = layoutXml.toString();
-        
-        // save links which are connected to the objects
-                
-        fDiagram.hideElementsInDiagram( objectsToHide );
-        
+    public void hideNodesAndEdges() {        
+        fLayoutInfos.getDiagram().hideElementsInDiagram( fNodesToHide );
         fNodeSelection.clear();
-        fDiagram.invalidateContent();
+        getDiagram().invalidateContent();
     }
     
     public void actionPerformed(ActionEvent e) {

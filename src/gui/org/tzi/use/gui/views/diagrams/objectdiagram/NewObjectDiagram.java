@@ -22,8 +22,6 @@
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -34,8 +32,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -86,7 +85,6 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModelElement;
@@ -94,6 +92,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkEnd;
 import org.tzi.use.uml.sys.MLinkObject;
+import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 
@@ -108,40 +107,73 @@ import org.tzi.use.uml.sys.MObjectState;
 public class NewObjectDiagram extends DiagramView 
                               implements HighlightChangeListener {
 
-    private class ShowObjectPropertiesViewMouseListener implements MouseListener {
+    /**
+     * This class saves needed information about
+     * visible or hidden nodes and edges.
+     * When hiding or showing objects the data is
+     * moved between the fields {@link NewObjectDiagram#visibleData} and
+     * {@link NewObjectDiagram#hiddenData}. 
+     * 
+     * @author lhamann
+     */
+	public static class ObjectDiagramData {
+		/**
+		 * 
+		 */
+		public Map<MObject, ObjectNode> fObjectToNodeMap;
+		/**
+		 * 
+		 */
+		public Map<MLink, BinaryAssociationOrLinkEdge> fBinaryLinkToEdgeMap;
+		/**
+		 * 
+		 */
+		public Map<MLink, DiamondNode> fNaryLinkToDiamondNodeMap;
+		/**
+		 * 
+		 */
+		public Map<MLink, List<EdgeBase>> fHalfLinkToEdgeMap;
+		/**
+		 * 
+		 */
+		public Map<MLinkObject, EdgeBase> fLinkObjectToNodeEdge;
 
-        public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount()==2) { 
-                // mouse over node?
-                PlaceableNode pickedObjectNode = findNode( e.getX(),e.getY());
-                if (pickedObjectNode instanceof ObjectNode) {
-                    ObjectNode obj = (ObjectNode)pickedObjectNode;
-                    ObjectPropertiesView v = 
-                        MainWindow.instance().showObjectPropertiesView();
-                    v.selectObject(obj.object().name());
-                }
-            }           
-        }
+		/**
+		 * 
+		 */
+		public ObjectDiagramData() {
+			fObjectToNodeMap = new HashMap<MObject, ObjectNode>();
+	        fBinaryLinkToEdgeMap = new HashMap<MLink, BinaryAssociationOrLinkEdge>();
+	        fNaryLinkToDiamondNodeMap = new HashMap<MLink, DiamondNode>();
+	        fHalfLinkToEdgeMap = new HashMap<MLink, List<EdgeBase>>();
+	        fLinkObjectToNodeEdge = new HashMap<MLinkObject, EdgeBase>();
+		}
 
-        public void mousePressed(MouseEvent e) {}
+		/**
+		 * @param link
+		 * @return
+		 */
+		public boolean containsLink(MLink link) {
+			return fBinaryLinkToEdgeMap.containsKey(link)
+					|| fNaryLinkToDiamondNodeMap.containsKey(link)
+					|| fLinkObjectToNodeEdge.containsKey(link);
+		}
+	}
+
+    private ObjectDiagramData visibleData = new ObjectDiagramData();
     
-        public void mouseReleased(MouseEvent e) {}
+    private ObjectDiagramData hiddenData = new ObjectDiagramData();
     
-        public void mouseEntered(MouseEvent e) {}
+	private NewObjectDiagramView fParent;
     
-        public void mouseExited(MouseEvent e) {}
+	/**
+	 * The position of the next object node.
+	 * This is either set to a random value or
+	 * to a specific position when an object
+	 * is created by drag & drop.
+	 */
+	private Point2D.Double nextNodePosition = new Point2D.Double();
         
-    }
-
-    private Map<MObject, ObjectNode> fObjectToNodeMap;
-    private Map<MLink, BinaryAssociationOrLinkEdge> fBinaryLinkToEdgeMap;
-    private Map<MLink, DiamondNode> fNaryLinkToDiamondNodeMap;
-    private Map<MLink, List<EdgeBase>> fHalfLinkToEdgeMap;
-    private Map<MLinkObject, EdgeBase> fLinkObjectToNodeEdge;
-    private NewObjectDiagramView fParent;
-    
-    private double fNextNodeX;
-    private double fNextNodeY;
     private ShowObjectPropertiesViewMouseListener 
         showObjectPropertiesViewMouseListener 
             = new ShowObjectPropertiesViewMouseListener();
@@ -154,25 +186,24 @@ public class NewObjectDiagram extends DiagramView
      * Creates a new empty diagram.
      */
     NewObjectDiagram(NewObjectDiagramView parent, PrintWriter log) {
+    	this.getRandomNextPosition();
+    		
         fOpt = new ObjDiagramOptions();
         fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
-        fObjectToNodeMap = new HashMap<MObject, ObjectNode>();
-        fBinaryLinkToEdgeMap = new HashMap<MLink, BinaryAssociationOrLinkEdge>();
-        fNaryLinkToDiamondNodeMap = new HashMap<MLink, DiamondNode>();
-        fHalfLinkToEdgeMap = new HashMap<MLink, List<EdgeBase>>();
-        fLinkObjectToNodeEdge = new HashMap<MLinkObject, EdgeBase>();
+        
         fHiddenNodes = new HashSet<Object>();
         fHiddenEdges = new HashSet<Object>();
         fParent = parent;
-        fNodeSelection = new Selection();
-        fEdgeSelection = new Selection();
+        fNodeSelection = new Selection<PlaceableNode>();
+        fEdgeSelection = new Selection<EdgeBase>();
+        
         fLog = log;
 
-        fLayoutInfos = new LayoutInfos( fBinaryLinkToEdgeMap, 
-                                        fObjectToNodeMap, 
-                                        fNaryLinkToDiamondNodeMap,
-                                        fHalfLinkToEdgeMap,
-                                        fLinkObjectToNodeEdge,
+        fLayoutInfos = new LayoutInfos( visibleData.fBinaryLinkToEdgeMap, 
+                                        visibleData.fObjectToNodeMap, 
+                                        visibleData.fNaryLinkToDiamondNodeMap,
+                                        visibleData.fHalfLinkToEdgeMap,
+                                        visibleData.fLinkObjectToNodeEdge,
                                         null,
                                         null,
                                         fHiddenNodes, fHiddenEdges,
@@ -193,7 +224,7 @@ public class NewObjectDiagram extends DiagramView
                                                   fHideAdmin, fGraph,
                                                   fLayoutInfos );
         
-        fActionSelectAll = new ActionSelectAll( fNodeSelection, fObjectToNodeMap,
+        fActionSelectAll = new ActionSelectAll( fNodeSelection, visibleData.fObjectToNodeMap,
                                                 null, this );
         
         DiagramInputHandling inputHandling = 
@@ -243,20 +274,20 @@ public class NewObjectDiagram extends DiagramView
             EdgeBase eb = null;
             if ( size == 2 ) {
                 for (MLink link : links) {
-                    eb = fBinaryLinkToEdgeMap.get( link );
+                    eb = visibleData.fBinaryLinkToEdgeMap.get( link );
                     if ( elem instanceof MAssociationClass ) {
-                        eb = fLinkObjectToNodeEdge.get( (MLinkObject) link );
+                        eb = visibleData.fLinkObjectToNodeEdge.get( (MLinkObject) link );
                     }
                     edges.add( eb );
                 }
             } else {
                 for (MLink link : links) {
                     for (MLinkEnd lEnd : link.linkEnds()) {
-                        eb = (EdgeBase) fHalfLinkToEdgeMap.get( lEnd );
+                        eb = (EdgeBase) visibleData.fHalfLinkToEdgeMap.get( lEnd );
                         edges.add( eb );
                     }
                     if ( elem instanceof MAssociationClass ) {
-                        eb = (EdgeBase) fLinkObjectToNodeEdge.get( (MLinkObject) link );
+                        eb = (EdgeBase) visibleData.fLinkObjectToNodeEdge.get( (MLinkObject) link );
                         if ( !edges.contains( eb ) ) {
                             edges.add( eb );        
                         }
@@ -282,7 +313,7 @@ public class NewObjectDiagram extends DiagramView
         // elem is a class
         if ( elem != null && elem instanceof MClass ) {
             for (MObject obj : fParent.system().state().objectsOfClass( (MClass) elem )) {
-                NodeBase node = fObjectToNodeMap.get( obj );
+                NodeBase node = visibleData.fObjectToNodeMap.get( obj );
                 if ( elem instanceof MAssociationClass ) {
                     if ( e.getHighlight() && allEdgesSelected ) {
                         fNodeSelection.add( node );
@@ -301,70 +332,147 @@ public class NewObjectDiagram extends DiagramView
         
         invalidateContent();
     }
-    
-    /**
-     * Determinds if the auto layout of the diagram is on or off.
-     * @return <code>true</code> if the auto layout is on, otherwise
-     * <code>false</code>
-     */
-    public boolean isDoAutoLayout() {
-        return fOpt.isDoAutoLayout();
-    }
-    
-
 
     /**
-     * Draws the diagram.
+     * Shows all hidden elements again
      */
-    public void paintComponent(Graphics g) {
-        synchronized (fLock) {
-            Font f = Font.getFont("use.gui.view.objectdiagram", getFont());
-            g.setFont(f);
-            drawDiagram(g);
-        }
+    public void showAll() {
+    	while (!hiddenData.fObjectToNodeMap.isEmpty()) {
+    		showObject(hiddenData.fObjectToNodeMap.keySet().iterator().next());
+    	}
     }
-
+    
     /**
      * Adds an object to the diagram.
      */
     public void addObject(MObject obj) {
-        // Find a random new position. getWidth and getHeight return 0
-        // if we are called on a new diagram.
-		fNextNodeX = Math.random() * Math.max(100, getWidth());
-		fNextNodeY = Math.random() * Math.max(100, getHeight());
-  
-        ObjectNode n = new ObjectNode( obj, fParent, fOpt);
-        n.setPosition( fNextNodeX, fNextNodeY );
+    	ObjectNode n = new ObjectNode( obj, fParent, fOpt);
+		n.setPosition( nextNodePosition );
         n.setMinWidth(minClassNodeWidth);
         n.setMinHeight(minClassNodeHeight);
         
+        getRandomNextPosition();
+        		
         synchronized (fLock) {
             fGraph.add(n);
-            fObjectToNodeMap.put(obj, n);
+            visibleData.fObjectToNodeMap.put(obj, n);
             fLayouter = null;
         }
     }
 
     /**
+     * Shows an already hidden object again
+     * @param obj The object to show
+     */
+    public void showObject( MObject obj ) {
+    	if (visibleData.fObjectToNodeMap.containsKey(obj)) return;
+    	
+    	showOrHideObjectNode(obj, true);
+    	
+    	boolean isLinkObject = false;
+    	
+    	Set<MAssociation> assocs = obj.cls().allAssociations();
+    	if (obj instanceof MLinkObject) {
+    		assocs.add((MAssociation)obj.cls());
+    		isLinkObject = true;
+    	}
+    	
+    	// Show all links the object participates in,
+    	// when all other objects are visible, too.
+    	for (MAssociation assoc : assocs) {
+    		MLinkSet links = fParent.system().state().linksOfAssociation(assoc);
+    		// TODO: Not very fast!
+    		for (MLink link : links.links()) {
+    			if (link.linkedObjects().contains(obj) || (isLinkObject && ((MLinkObject)link).equals(obj))) {
+    				boolean allVisible = true;
+    				for (MObject linkedO : link.linkedObjects()) {
+    					if (!visibleData.fObjectToNodeMap.containsKey(linkedO)) {
+    						allVisible = false;
+    						break;
+    					}
+    				}
+    				
+    				if (allVisible && (!isLinkObject || visibleData.fObjectToNodeMap.containsKey(obj)))
+    					showLink(link);
+    			}
+    		}
+    	}
+    }
+    
+    /**
+     * Hides an object in the diagram
+     * @param obj The <code>MObject</code> to hide
+     */
+    public void hideObject( MObject obj ) {
+    	showOrHideObjectNode(obj, false);
+    	
+    	// Hide all links the object participates in
+    	Set<MAssociation> assocs = obj.cls().allAssociations();
+    	
+    	if (obj instanceof MLinkObject) {
+    		assocs.add((MAssociation)obj.cls());
+    	}
+    	
+    	for (MAssociation assoc : assocs) {
+    		MLinkSet links = fParent.system().state().linksOfAssociation(assoc);
+    		// TODO: Not very fast!
+    		for (MLink link : links.links()) {
+    			if (link.linkedObjects().contains(obj) || (link instanceof MLinkObject && ((MLinkObject)link).equals(obj))) {
+    				hideLink(link);
+    			}
+    		}
+    	}
+    }
+    
+    /**
+     * Shows an already hidden class.
+     */
+    protected void showOrHideObjectNode( MObject obj, boolean show ) {
+    	ObjectDiagramData source = (show ? hiddenData : visibleData);
+    	ObjectDiagramData target = (show ? visibleData : hiddenData);
+    	
+    	ObjectNode n = source.fObjectToNodeMap.get( obj );
+        
+        if (n != null) {
+        	synchronized ( fLock ) {
+                if (show) 
+                	fGraph.add( n );
+                else
+                	fGraph.remove(n);
+                
+                source.fObjectToNodeMap.remove( obj );
+                target.fObjectToNodeMap.put(obj, n);
+                
+                fLayouter = null;
+            }
+        }
+    }
+    
+	/**
      * Deletes an object from the diagram.
      */
     public void deleteObject(MObject obj) {
-        ObjectNode n = (ObjectNode) fObjectToNodeMap.get(obj);
-        if (n == null) {
-            if ( fHiddenNodes.contains(obj) ) {
-                fHiddenNodes.remove(obj);
-                fLog.println("Deleted object `" + obj
-                             + "' from the hidden objects.");
-            } else {
-                throw new RuntimeException("no node for object `" + obj
-                        + "' in current state.");
-            }
-        }
-
-        synchronized (fLock) {
-            fGraph.remove(n);
-            fObjectToNodeMap.remove(obj);
-            fLayouter = null;
+    	ObjectNode n;
+    	boolean isVisible;
+    	
+    	if (visibleData.fObjectToNodeMap.containsKey(obj)) {
+    		n = visibleData.fObjectToNodeMap.get(obj);
+    		isVisible = true;
+    	} else {
+    		n = hiddenData.fObjectToNodeMap.get(obj);
+    		isVisible = false;
+    	}
+    	
+        if (n != null) {
+        	if (isVisible) {
+	        	synchronized (fLock) {
+	                fGraph.remove(n);
+	                visibleData.fObjectToNodeMap.remove(obj);
+	                fLayouter = null;
+	            }
+        	} else {
+        		hiddenData.fObjectToNodeMap.remove(obj);
+        	}
         }
     }
 
@@ -372,99 +480,225 @@ public class NewObjectDiagram extends DiagramView
      * Adds a link to the diagram.
      */
     public void addLink(MLink link) {
-		MAssociation assoc = link.association();
-		Iterator<MAssociationEnd> iter = assoc.associationEnds().iterator();
+    	if (link.linkEnds().size() == 2) {
+    		addBinaryLink(link);
+    	} else {
+    		addNAryLink(link);
+    	}
+    }
+    
+    protected void addBinaryLink(MLink link) {
+    	MAssociation assoc = link.association();
 	
-		MLinkEnd linkEnd1 = null;
-		MLinkEnd linkEnd2 = null;
-	    if (iter.hasNext()) {
-		  linkEnd1 = link.linkEnd((MAssociationEnd) iter.next());
-		  linkEnd2 = link.linkEnd((MAssociationEnd) iter.next());	  
-		}
-	    
-		if( (linkEnd1 == null) || (linkEnd2 == null)){
-		  throw new RuntimeException( "added link is invalid" );
-		}
-		
+		MLinkEnd linkEnd1 = link.linkEnd(assoc.associationEnds().get(0));
+		MLinkEnd linkEnd2 = link.linkEnd(assoc.associationEnds().get(1));
+
         MObject obj1 = linkEnd1.object();
         MObject obj2 = linkEnd2.object();
         
-        if (link.linkEnds().size() == 2) {
-            // object link
-            if (link instanceof MLinkObject) {
-                BinaryAssociationClassOrObject e = 
-                    new BinaryAssociationClassOrObject(fObjectToNodeMap.get(obj1), 
-                                 fObjectToNodeMap.get(obj2),
-                                 linkEnd1.associationEnd(), 
-                                 linkEnd2.associationEnd(),
-                                 fObjectToNodeMap.get(link),
-                                 this, link.association(), true );
-                
-                synchronized (fLock) {
-                    fGraph.addEdge(e);
-                    fLinkObjectToNodeEdge.put((MLinkObject)link, e);
-                    fLayouter = null;
-                }
-            } else {
-                // binary link
-				BinaryAssociationOrLinkEdge e = new BinaryAssociationOrLinkEdge(
-						fObjectToNodeMap.get(obj1), fObjectToNodeMap.get(obj2),
-						linkEnd1.associationEnd(), linkEnd2.associationEnd(),
-						this, link);
-				
-                synchronized (fLock) {
-                    fGraph.addEdge(e);
-                    fBinaryLinkToEdgeMap.put(link, e);
-                    fLayouter = null;
-                }
-            }
-
-        } else
+        // object link
+        if (link instanceof MLinkObject) {
+            BinaryAssociationClassOrObject e = 
+                new BinaryAssociationClassOrObject(visibleData.fObjectToNodeMap.get(obj1), 
+                             visibleData.fObjectToNodeMap.get(obj2),
+                             linkEnd1.associationEnd(), 
+                             linkEnd2.associationEnd(),
+                             visibleData.fObjectToNodeMap.get(link),
+                             this, link.association(), true );
+            
             synchronized (fLock) {
-                // Find a random new position. getWidth and getheight return 0
-                // if we are called on a new diagram.
-                double fNextNodeX = Math.random() * Math.max(100, getWidth());
-                double fNextNodeY = Math.random() * Math.max(100, getHeight());
-                
-                // n-ary link: create a diamond node and n edges to objects
-                DiamondNode node = new DiamondNode( link, fOpt );
-                node.setPosition( fNextNodeX, fNextNodeY );
-                fGraph.add(node);
-                
-                // connected to an "object link"
-                if (link instanceof MLinkObject) {
-                    NAryAssociationClassOrObjectEdge e = 
-                        new NAryAssociationClassOrObjectEdge(
-                        			 node,
-                                     fObjectToNodeMap.get(link),
-                                     this, link.association(), true );
-                    synchronized (fLock) {
-                        fGraph.addEdge(e);
-                        fLinkObjectToNodeEdge.put((MLinkObject)link, e);
-                        fLayouter = null;
-                    }
-                }
-                // connected to a "normal" link
-                fNaryLinkToDiamondNodeMap.put(link, node);
-                List<EdgeBase> halfEdges = new ArrayList<EdgeBase>();
-                
-                for (MLinkEnd linkEnd : link.linkEnds()) {
-                    MObject obj = linkEnd.object();
-                    AssociationOrLinkPartEdge e = 
-                        new AssociationOrLinkPartEdge( node, fObjectToNodeMap.get(obj), linkEnd.associationEnd(), this, link.association(), true );
-                    
-                    fGraph.addEdge(e);
-                    halfEdges.add( e );
-                }
-                if ( fLinkObjectToNodeEdge.get( link ) != null ) {
-                    halfEdges.add( fLinkObjectToNodeEdge.get( link ) );
-                }
-                node.setHalfEdges( halfEdges );
-                fHalfLinkToEdgeMap.put( link, halfEdges );
+                fGraph.addEdge(e);
+                visibleData.fLinkObjectToNodeEdge.put((MLinkObject)link, e);
                 fLayouter = null;
             }
+        } else {
+            // binary link
+			BinaryAssociationOrLinkEdge e = new BinaryAssociationOrLinkEdge(
+					visibleData.fObjectToNodeMap.get(obj1), visibleData.fObjectToNodeMap.get(obj2),
+					linkEnd1.associationEnd(), linkEnd2.associationEnd(),
+					this, link);
+			
+            synchronized (fLock) {
+                fGraph.addEdge(e);
+                visibleData.fBinaryLinkToEdgeMap.put(link, e);
+                fLayouter = null;
+            }
+        }
+    }
+    
+    protected void addNAryLink(MLink link) {
+        synchronized (fLock) {
+            getRandomNextPosition();
+            
+            // n-ary link: create a diamond node and n edges to objects
+            DiamondNode node = new DiamondNode( link, fOpt );
+            node.setPosition( nextNodePosition );
+            fGraph.add(node);
+            
+            // connected to an "object link"
+            if (link instanceof MLinkObject) {
+                NAryAssociationClassOrObjectEdge e = 
+                    new NAryAssociationClassOrObjectEdge(
+                    			 node,
+                                 visibleData.fObjectToNodeMap.get(link),
+                                 this, link.association(), true );
+                synchronized (fLock) {
+                    fGraph.addEdge(e);
+                    visibleData.fLinkObjectToNodeEdge.put((MLinkObject)link, e);
+                    fLayouter = null;
+                }
+            }
+            // connected to a "normal" link
+            visibleData.fNaryLinkToDiamondNodeMap.put(link, node);
+            List<EdgeBase> halfEdges = new ArrayList<EdgeBase>();
+            
+            for (MLinkEnd linkEnd : link.linkEnds()) {
+                MObject obj = linkEnd.object();
+                AssociationOrLinkPartEdge e = 
+                    new AssociationOrLinkPartEdge( node, visibleData.fObjectToNodeMap.get(obj), linkEnd.associationEnd(), this, link.association(), true );
+                
+                fGraph.addEdge(e);
+                halfEdges.add( e );
+            }
+            if ( visibleData.fLinkObjectToNodeEdge.get( link ) != null ) {
+                halfEdges.add( visibleData.fLinkObjectToNodeEdge.get( link ) );
+            }
+            node.setHalfEdges( halfEdges );
+            visibleData.fHalfLinkToEdgeMap.put( link, halfEdges );
+            fLayouter = null;
+        }
     }
 
+    public void showLink (MLink link) {
+    	if (visibleData.containsLink(link)) return;
+    	
+    	if (link instanceof MLinkObject) {
+    		showObject((MObject)link);
+    	}
+
+    	if (visibleData.containsLink(link)) return;
+    	
+    	if (link.linkEnds().size() == 2) {
+    		showBinaryLink(link);
+    	} else {
+    		showNAryLink(link);
+    	}
+    }
+    
+    public void hideLink (MLink link) {
+    	if (hiddenData.containsLink(link)) return;
+    	
+    	if (link.linkEnds().size() == 2) {
+    		hideBinaryLink(link);
+    	} else {
+    		hideNAryLink(link);
+    	}
+    	
+    	if (link instanceof MLinkObject && visibleData.fObjectToNodeMap.containsKey(link)) {
+    		hideObject((MObject)link);
+    	}
+    }
+
+    protected void showBinaryLink(MLink link) {
+    	showOrHideBinaryLink(link, true);
+    }
+    
+    protected void showNAryLink(MLink link) {
+    	showOrHideNAryLink(link, true);
+    }
+    
+    protected void hideBinaryLink(MLink link) {
+    	showOrHideBinaryLink(link, false);
+    }
+    
+    protected void hideNAryLink(MLink link) {
+    	showOrHideNAryLink(link, false);
+    }
+    
+    protected void showOrHideBinaryLink (MLink link, boolean show) {
+    	ObjectDiagramData source = (show ? hiddenData : visibleData);
+    	ObjectDiagramData target = (show ? visibleData : hiddenData);
+        
+        // object link
+        if (link instanceof MLinkObject) {
+            EdgeBase e = source.fLinkObjectToNodeEdge.get(link);
+            synchronized (fLock) {
+                if (show)
+                	fGraph.addEdge(e);
+                else
+                	fGraph.removeEdge(e);
+                
+                source.fLinkObjectToNodeEdge.remove((MLinkObject)link);
+                target.fLinkObjectToNodeEdge.put((MLinkObject)link, e);
+                fLayouter = null;
+            }
+        } else {
+            // binary link
+			BinaryAssociationOrLinkEdge e = source.fBinaryLinkToEdgeMap.get(link);
+			
+            synchronized (fLock) {
+                if (show)
+                	fGraph.addEdge(e);
+                else
+                	fGraph.removeEdge(e);
+                
+                source.fBinaryLinkToEdgeMap.remove(link);
+                target.fBinaryLinkToEdgeMap.put(link, e);
+                fLayouter = null;
+            }
+        }
+    }
+
+    protected void showOrHideNAryLink(MLink link, boolean show) {
+    	ObjectDiagramData source = (show ? hiddenData : visibleData);
+    	ObjectDiagramData target = (show ? visibleData : hiddenData);
+    	
+    	
+    	synchronized (fLock) {
+    		DiamondNode node = source.fNaryLinkToDiamondNodeMap.get(link);
+    		source.fNaryLinkToDiamondNodeMap.remove(link);
+    		target.fNaryLinkToDiamondNodeMap.put(link, node);
+    		
+    		if (show)
+    			fGraph.add(node);
+    		else
+    			fGraph.remove(node);
+            
+            // connected to an "object link"
+            if (link instanceof MLinkObject) {                
+                EdgeBase e = source.fLinkObjectToNodeEdge.get(link);
+                
+                if (e != null) {
+	                synchronized (fLock) {
+	                    if (show)
+	                    	fGraph.addEdge(e);
+	                    else
+	                    	fGraph.removeEdge(e);
+	                    
+	                    source.fLinkObjectToNodeEdge.remove(link);
+	                    target.fLinkObjectToNodeEdge.put((MLinkObject)link, e);
+	                    fLayouter = null;
+	                }
+                }
+            }
+            
+            List<EdgeBase> halfEdges = source.fHalfLinkToEdgeMap.get(link);
+            
+            if (halfEdges != null) {
+	            for (EdgeBase edge : halfEdges) {
+	                if (show)
+	                	fGraph.addEdge(edge);
+	                else
+	                	fGraph.removeEdge(edge);
+	            }
+            
+	            source.fHalfLinkToEdgeMap.remove( link );
+	            target.fHalfLinkToEdgeMap.put( link, halfEdges );
+            }
+	        fLayouter = null;
+        }
+    }
+    
     /**
      * Removes a link from the diagram.
      */
@@ -472,13 +706,13 @@ public class NewObjectDiagram extends DiagramView
         if (link.linkEnds().size() == 2) {
             EdgeBase e = null;
             if (link instanceof MObject) { // MLinkObject ???
-                e = fLinkObjectToNodeEdge.get(link);
+                e = visibleData.fLinkObjectToNodeEdge.get(link);
                 // TODO: this is just a tempory solution
                 if (e == null) {
                     return;
                 }
             } else {
-                e = (BinaryAssociationOrLinkEdge) fBinaryLinkToEdgeMap.get(link);
+                e = (BinaryAssociationOrLinkEdge) visibleData.fBinaryLinkToEdgeMap.get(link);
             }
 
             if ( e != null && !loadingLayout 
@@ -495,14 +729,14 @@ public class NewObjectDiagram extends DiagramView
             synchronized (fLock) {
                 fGraph.removeEdge(e);
                 if (link instanceof MObject) {
-                    fLinkObjectToNodeEdge.remove(link);
+                    visibleData.fLinkObjectToNodeEdge.remove(link);
                 } else {
-                    fBinaryLinkToEdgeMap.remove(link);
+                    visibleData.fBinaryLinkToEdgeMap.remove(link);
                 }
                 fLayouter = null;
             }
         } else {
-            DiamondNode n = (DiamondNode) fNaryLinkToDiamondNodeMap.get( link );
+            DiamondNode n = (DiamondNode) visibleData.fNaryLinkToDiamondNodeMap.get( link );
             if ( n == null && !loadingLayout ) {
                 if ( fHiddenEdges.contains(link) ) {
                     fHiddenEdges.remove(link);
@@ -518,18 +752,18 @@ public class NewObjectDiagram extends DiagramView
             synchronized (fLock) {
                 // all dangling HalfLinkEdges are removed by the graph
                 fGraph.remove(n);
-                fNaryLinkToDiamondNodeMap.remove(link);
-                fHalfLinkToEdgeMap.remove( link );
+                visibleData.fNaryLinkToDiamondNodeMap.remove(link);
+                visibleData.fHalfLinkToEdgeMap.remove( link );
                 fLayouter = null;
             }
 
             synchronized (fLock) {
                 if (link instanceof MObject) {
                     BinaryAssociationClassOrObject edge = 
-                        (BinaryAssociationClassOrObject) fLinkObjectToNodeEdge.get( link );
+                        (BinaryAssociationClassOrObject) visibleData.fLinkObjectToNodeEdge.get( link );
                     if (edge != null) {
                         fGraph.removeEdge( edge );
-                        fLinkObjectToNodeEdge.remove( link );
+                        visibleData.fLinkObjectToNodeEdge.remove( link );
                     }
                 }
             }
@@ -565,7 +799,7 @@ public class NewObjectDiagram extends DiagramView
     }
 
     /**
-     * Deletes a Link from the objectdiagram.
+     * Deletes a Link from the object diagram.
      */
     class ActionDeleteLink extends AbstractAction {
     	private MAssociation fAssociation;
@@ -628,32 +862,33 @@ public class NewObjectDiagram extends DiagramView
         }
     }
 
+    private class ShowObjectPropertiesViewMouseListener extends MouseAdapter {
+
+		@Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount()==2) { 
+                // mouse over node?
+                PlaceableNode pickedObjectNode = findNode( e.getX(),e.getY());
+                if (pickedObjectNode instanceof ObjectNode) {
+                    ObjectNode obj = (ObjectNode)pickedObjectNode;
+                    ObjectPropertiesView v = 
+                        MainWindow.instance().showObjectPropertiesView();
+                    v.selectObject(obj.object().name());
+                }
+            }           
+        }        
+    }
     
     /**
      * Deletes all hidden elements form this diagram.
      */
     @Override
     public void hideElementsInDiagram( Set<Object> objectsToHide ) {
-    	//FIXME: Links to hide is null
-    	Set<Object> linksToHide = null;
         Iterator<Object> it = objectsToHide.iterator();
         while ( it.hasNext() ) {
             MObject obj = (MObject) it.next();
-            deleteObject( obj );
+            hideObject( obj );
         }
-        
-        Set<MLink> linksToDelete = new HashSet<MLink>();
-        it = linksToHide.iterator();
-        while ( it.hasNext() ) {
-            MLink link = (MLink) it.next();
-            linksToDelete.add( link );
-        }
-        
-        for (MLink link : linksToDelete) {
-            deleteLink( link, true );
-        }
-        fHiddenNodes.addAll( objectsToHide );
-        fHiddenEdges.addAll( linksToHide );
     }
     
    /**
@@ -783,7 +1018,7 @@ public class NewObjectDiagram extends DiagramView
             }
         }
 
-        if (!fHiddenNodes.isEmpty()) {
+        if (!hiddenData.fObjectToNodeMap.isEmpty()) {
             final JMenuItem showAllObjects = new JMenuItem("Show hidden objects");
             showAllObjects.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ev) {
@@ -894,7 +1129,7 @@ public class NewObjectDiagram extends DiagramView
      * @param dtde
      */
     public void dropObjectFromModelBrowser( DropTargetDropEvent dtde ) {
-        //Log.trace(this, "dtde = " + dtde);
+
         try {
             dtde.acceptDrop(DnDConstants.ACTION_MOVE);
             Transferable transferable = dtde.getTransferable();
@@ -903,16 +1138,14 @@ public class NewObjectDiagram extends DiagramView
             if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String s = (String) transferable
                         .getTransferData(DataFlavor.stringFlavor);
-                //Log.trace(this, "transfer = " + s);
 
                 if (s.startsWith("CLASS-")) {
                     Point p = dtde.getLocation();
                     if ( isDoAutoLayout() ) {
-                        fNextNodeX = Math.random() * Math.max(100, getWidth());
-                        fNextNodeY = Math.random() * Math.max(100, getHeight());
+                        getRandomNextPosition();
                     } else {                    
-                        fNextNodeX = p.getX();
-                        fNextNodeY = p.getY();
+                        nextNodePosition.x = p.getX();
+                        nextNodePosition.y = p.getY();
                     }
                     String clsName = s.substring(6);
                     fParent.createObject(clsName);
@@ -974,4 +1207,15 @@ public class NewObjectDiagram extends DiagramView
         }
         return true;
     }
+    
+    /**
+	 * Finds a random new position for the next
+	 * object node.
+	 */
+	private void getRandomNextPosition() {
+		// getWidth and getHeight return 0
+        // if we are called on a new diagram.
+		nextNodePosition.x = Math.random() * Math.max(100, getWidth() - 100);
+		nextNodePosition.y = Math.random() * Math.max(100, getHeight() - 100);
+	}
 }

@@ -119,7 +119,20 @@ public abstract class DiagramView extends JPanel
      * @return <code>true</code> if the auto layout is on, otherwise
      * <code>false</code>
      */
-    public abstract boolean isDoAutoLayout();
+	public boolean isDoAutoLayout() {
+        return fOpt.isDoAutoLayout();
+    }
+    
+	/**
+     * Draws the diagram.
+     */
+    public void paintComponent( Graphics g ) {
+        synchronized ( fLock ) {
+            Font f = Font.getFont( "use.gui.view.objectdiagram", getFont() );
+            g.setFont( f );
+            drawDiagram( g );
+        }
+    }
     
     /**
      * Deletes all hidden elements form this diagram.
@@ -497,7 +510,8 @@ public abstract class DiagramView extends JPanel
      * Stops the auto layout thread.
      */
     public void stopLayoutThread() {
-        fLayoutThread = null;
+    	fLayoutThread.doLayout = false;
+        fLayoutThread.interrupt();
     }
 
     /**
@@ -505,6 +519,7 @@ public abstract class DiagramView extends JPanel
      */
     public void startLayoutThread() {
         fLayoutThread = new LayoutThread();
+        fLayoutThread.doLayout = true;
         fLayoutThread.start();
     }
 
@@ -527,9 +542,10 @@ public abstract class DiagramView extends JPanel
     }
     
     class LayoutThread extends Thread {
+    	public boolean doLayout = true;
+    	
         public void run() {
-            Thread me = Thread.currentThread();
-            while ( fLayoutThread == me ) {
+            while ( doLayout ) {
                 if ( isDoAutoLayout() ) {
                     synchronized ( fLock ) {
                         autoLayout();

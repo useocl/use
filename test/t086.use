@@ -1,6 +1,7 @@
 -- Test for qualified asscoiations
 model QA
 
+
 enum NodeType {
   Left,
   Right
@@ -12,14 +13,40 @@ end
 class Person
 end
 
+associationclass Exam between
+  Person[*] role examiner
+  Person[*] role examinee
+  Person[*] role protocoler
+end
+
+
+class Professor < Person
+end
+
 association BankPerson between
   Bank[*] qualifier (accountNo:String)
   Person[0..1] role customer
 end
 
+
 association Test between
   Bank[*] role myBank
   Person[*] role myBank
+end
+
+class A
+end
+
+class B
+end
+
+class C
+end
+
+association ABC between
+ A[*]
+ B[*]
+ C[*]
 end
 
 class Map
@@ -83,6 +110,8 @@ class Employee
 end
 
 class Company
+attributes
+  name : String
 end
 
 associationclass Job between
@@ -93,9 +122,6 @@ attributes
 end
 
 -- Test with four qualified reflexive associations
-class A
-end
-
 association A1 between
   A[*] role a1s qualifier (a1:Integer)
   A[*] role a1t
@@ -114,9 +140,6 @@ end
 association A4 between
   A[*] role a4s qualifier (a4:Integer)
   A[*] role a4t
-end
-
-class B
 end
 
 association B1 between
