@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -96,18 +95,16 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 			String cname = fAttributes.get(i).toString().substring(0,
 					fAttributes.get(i).toString().indexOf("(")).trim();
 
-			Iterator<MObject> it = selectedObjects.iterator();
-			MObject mo = null;
-			
 			//find out, which MObject is selected 
-			while (it.hasNext()) {
-				mo = it.next();
+			MObject selected = null;
+			for (MObject mo	: selectedObjects) {
 				if (mo.name().equals(cname)) {
+					selected = mo;
 					break;
 				}
 			}
 			
-			Map<MObject, Integer> paths = getAllPathObjects(mo);
+			Map<MObject, Integer> paths = getAllPathObjects(selected);
 			for (Map.Entry<MObject, Integer> entry : paths.entrySet()) {
 				if (entry.getValue().intValue() <= Integer.parseInt(fValues.get(i).toString())) {
 					objects.add(entry.getKey());
@@ -175,36 +172,27 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 * Method applyCropChanges shows only the appropriate marked classes.
 	 */
 	public void applyCropChanges(ActionEvent ev) {
-		if (getHideObjects(getSelectedPathObjects(), true).size() > 0) {
-			this.diagram.getHideAdmin().getAction("Hide",
-					getHideObjects(getSelectedPathObjects(), true))
-					.actionPerformed(ev);
-		}
-		if (getShowObjects(getSelectedPathObjects()).size() > 0) {
-			this.diagram.getHideAdmin()
-					.showHiddenElements(getShowObjects(getSelectedPathObjects()));
-		}
+		Set<MObject> selectedPathObjects = getSelectedPathObjects();
+		
+		this.diagram.hideAll();
+		this.diagram.showObjects(selectedPathObjects);
+		this.diagram.invalidateContent();
 	}
 
 	/**
 	 * Method applyShowChanges shows the appropriate marked classes.
 	 */
 	public void applyShowChanges(ActionEvent ev) {
-		if (getShowObjects(getSelectedPathObjects()).size() > 0) {
-			this.diagram.getHideAdmin()
-					.showHiddenElements(getShowObjects(getSelectedPathObjects()));
-		}
+		this.diagram.showObjects(getSelectedPathObjects());
+		this.diagram.invalidateContent();
 	}
 
 	/**
 	 * Method applyHideChanges hides the appropriate marked classes.
 	 */
 	public void applyHideChanges(ActionEvent ev) {
-		if (getHideObjects(getSelectedPathObjects(), false).size() > 0) {
-			this.diagram.getHideAdmin().getAction("Hide",
-					getHideObjects(getSelectedPathObjects(), false))
-					.actionPerformed(ev);
-		}
+		this.diagram.hideObjects(getSelectedPathObjects());
+		this.diagram.invalidateContent();
 	}
 
 	public void update() {

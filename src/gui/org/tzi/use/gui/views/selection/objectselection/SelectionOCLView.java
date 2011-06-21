@@ -29,7 +29,6 @@ import java.awt.event.KeyEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -44,12 +43,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -218,23 +216,13 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 	}
 
 	protected void applyHideAllObjects(ActionEvent ev) {
-		Iterator<?> it = this.diagram.getGraph().iterator();
-		
-		Set<MObject> hideObjects = new HashSet<MObject>();
-		while (it.hasNext()) {
-			Object node = it.next();
-			if (node instanceof ObjectNode) {
-				MObject mo = ((ObjectNode) node).object();
-				hideObjects.add(mo);
-			}
-		}
-		this.diagram.getHideAdmin().getAction("Hide all classes", hideObjects)
-				.actionPerformed(ev);
+		this.diagram.hideAll();
+		this.diagram.invalidateContent();
 	}
 
 	protected void applyShowAllObjects() {
-		this.diagram.getHideAdmin().showAllHiddenElements();
-		MainWindow.instance().repaint();
+		this.diagram.showAll();
+		this.diagram.invalidateContent();
 	}
 
 	/**
@@ -249,6 +237,9 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 		// clear previous results
 		fTextOut.setText(null);
 
+		WarningType backUp = Options.checkWarningsOclAnyInCollections();
+		Options.setCheckWarningsOclAnyInCollections(WarningType.IGNORE);
+		
 		// send error output to result window and msg stream
 		StringWriter msgWriter = new StringWriter();
 		PrintWriter out = new PrintWriter(new TeeWriter(
@@ -257,6 +248,8 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 		// compile query
 		Expression expr = OCLCompiler.compileExpression(fSystem.model(), in, 
 														"Error", out, fSystem.varBindings());
+		
+		Options.setCheckWarningsOclAnyInCollections(backUp);
 		out.flush();
 		fTextIn.requestFocus();
 
@@ -330,58 +323,17 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 			fTextOut.setText(val.toStringWithType());
 			
 			if (showart.equalsIgnoreCase("crop")) {
-				this.diagram.getHideAdmin().getAction("Hide",
-						getCropHideObjects(objects)).actionPerformed(ev);
-				this.diagram.getHideAdmin()
-						.showHiddenElements(getShowObjects(objects));
+				this.diagram.hideAll();
+				this.diagram.showObjects(objects);
 			} else if (showart.equalsIgnoreCase("show")) {
-				this.diagram.getHideAdmin()
-						.showHiddenElements(getShowObjects(objects));
+				this.diagram.showObjects(objects);
 			} else if (showart.equalsIgnoreCase("hide")) {
-				this.diagram.getHideAdmin().getAction("Hide",
-						getHideObjects(objects)).actionPerformed(ev);
+				this.diagram.hideObjects(objects);
 			}
+			this.diagram.invalidateContent();
 		} catch (MultiplicityViolationException e) {
 			fTextOut.setText("Could not evaluate. " + e.getMessage());
 		}
-	}
-
-	Set<MObject> getShowObjects(Set<MObject> objects) {
-		Set<MObject> result = new HashSet<MObject>(objects);
-		result.retainAll(this.diagram.getHiddenNodes()); 
-		
-		return result;
-	}
-
-	Set<MObject> getCropHideObjects(Set<MObject> cropObjects) {
-		Set<MObject> objects = new HashSet<MObject>();
-		
-		for (NodeBase node : this.diagram.getGraph().getNodes()) {
-			if (node instanceof ObjectNode) {
-				MObject mobj = ((ObjectNode) node).object();
-				if (!cropObjects.contains(mobj)) {
-					objects.add(mobj);
-				}
-			}
-		}
-		
-		return objects;
-	}
-
-	Set<MObject> getHideObjects(Set<MObject> objects) {
-		
-		Set<MObject> result = new HashSet<MObject>();
-		
-		for (NodeBase node : this.diagram.getGraph().getNodes()) {
-			if (node instanceof ObjectNode) {
-				MObject mobj = ((ObjectNode) node).object();
-				if (objects.contains(mobj)) {
-					result.add(mobj);
-				}
-			}
-		}
-		
-		return result;
 	}
 
 	public void actionPerformed(ActionEvent ev) {

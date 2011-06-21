@@ -129,7 +129,7 @@ public class Context {
         if ( fOpt instanceof ClassDiagramOptions ) {
             fAllMappings.put( LayoutTags.CLASS, layoutInfos.getNodeToNodeMap() );
         }
-        fAllMappings.put( LayoutTags.BINARYEDGE, layoutInfos.getBinaryEdgeToEdgeMap() );
+        //fAllMappings.put( LayoutTags.BINARYEDGE, layoutInfos.getBinaryEdgeToEdgeMap() );
         fAllMappings.put( LayoutTags.DIAMONDNODE, layoutInfos.getNaryEdgeToDiamondNodeMap() );
         fAllMappings.put( LayoutTags.EDGENODE, layoutInfos.getEdgeNodeToEdgeMap() );
         fAllMappings.put( LayoutTags.ENUMERATION, layoutInfos.getEnumToNodeMap() );

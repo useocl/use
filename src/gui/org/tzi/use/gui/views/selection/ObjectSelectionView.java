@@ -167,35 +167,6 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	}
 	
 	/**
-	 * Returns all objects that must be hidden.
-	 * 
-	 * @param isCrop Specifies, if the function "Crop" oder "Hide" is executed.
-	 */	
-	public Set<MObject> getHideObjects(Set<?> objects, boolean isCrop) {
-		Set<MObject> hideobjects = new HashSet<MObject>();
-		Iterator<NodeBase> ithide = this.diagram.getGraph().iterator(); 
-																
-		while (ithide.hasNext()) {
-			Object node = ithide.next();
-			if (node instanceof ObjectNode) {
-				MObject mo = ((ObjectNode) node).object();
-				if(isCrop){
-					if (!objects.contains(mo)) {
-						hideobjects.add(mo);
-					}
-				}
-				else{
-					if (objects.contains(mo)) {
-						hideobjects.add(mo);
-					}
-				}
-			}
-		}
-		
-		return hideobjects;
-	}
-	
-	/**
 	 * Shows all objects and links.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {

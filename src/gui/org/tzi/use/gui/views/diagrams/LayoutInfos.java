@@ -80,18 +80,9 @@ public class LayoutInfos {
         fOpt = opt;
         fDiagram = diagram;
         fSystem = system;
-        fHiddenElementsXML = "";
         fLog = log;
     }
 
-    /**
-     * Mapping from an edge (Associaiton/Link) to a BinaryEdge.
-     * (MAssociation -> BinaryEdge) or (MLink -> BinaryEdge)
-     */
-    public Map<?, BinaryAssociationOrLinkEdge> getBinaryEdgeToEdgeMap() {
-        return fBinaryEdgeToEdgeMap;
-    }
-    
     /**
      * Mapping from an edge node (AssociationClass/LinkObject) to an NodeEdge.
      * (MAssociationClass -> NodeEdge) or (MLinkObject -> NodeEdge)

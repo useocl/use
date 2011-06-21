@@ -53,6 +53,7 @@ import org.tzi.use.util.Log;
  * @author   Jie Xu
  */
 @SuppressWarnings("serial")
+//FIXME: This view is never used!
 public class SelectionObjectView extends ObjectSelectionView {
 	private static final String NO_CLASSES_AVAILABLE = "(No classes available.)";
 
@@ -243,36 +244,27 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 * Method applyCropChanges shows only the appropriate marked objects.
 	 */
 	public void applyCropChanges(ActionEvent ev) {
-		if (getHideObjects(getSelectedObjects(), true).size() > 0) {
-			this.diagram.getHideAdmin().getAction("Hide",
-					getHideObjects(getSelectedObjects(), true))
-					.actionPerformed(ev);
-		}
-		if (getShowObjects(getSelectedObjects()).size() > 0) {
-			this.diagram.getHideAdmin()
-					.showHiddenElements(getShowObjects(getSelectedObjects()));
-		}
+		Set<MObject> selectedObjects = getSelectedObjects();
+		
+		this.diagram.hideAll();
+		this.diagram.showObjects(selectedObjects);
+		this.diagram.invalidateContent();
 	}
 
 	/**
 	 * Method applyShowChanges shows the appropriate marked objects.
 	 */
 	public void applyShowChanges(ActionEvent ev) {
-		if (getShowObjects(getSelectedObjects()).size() > 0) {
-			this.diagram.getHideAdmin()
-					.showHiddenElements(getShowObjects(getSelectedObjects()));
-		}
+		this.diagram.showObjects(getSelectedObjects());
+		this.diagram.invalidateContent();
 	}
 
 	/**
 	 * Method applyHideChanges hides the appropriate marked objects.
 	 */
 	public void applyHideChanges(ActionEvent ev) {
-		if (getHideObjects(getSelectedObjects(), false).size() > 0) {
-			this.diagram.getHideAdmin().getAction("Hide",
-					getHideObjects(getSelectedObjects(), false))
-					.actionPerformed(ev);
-		}
+		this.diagram.hideObjects(getSelectedObjects());
+		this.diagram.invalidateContent();
 	}
 
 	public void update() {

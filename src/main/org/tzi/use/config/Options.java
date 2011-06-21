@@ -458,21 +458,10 @@ public class Options {
         }
     }
     
-//    private static void setDimension( String dimension ) {
     private static void setDimension( String width, String height ) {
         int dWidth = fDiagramDimension.width;
         int dHeight = fDiagramDimension.height;
-        
-//        dimension = dimension.substring( dimension.indexOf( "=" ) );
-//        System.out.println("dimension: "+dimension);
-//        StringTokenizer st = new StringTokenizer( dimension, "," );
-//        while ( st.hasMoreTokens() ) {
-//            width = Integer.parseInt( st.nextToken() );
-//            if ( st.hasMoreTokens() ) {
-//                height = Integer.parseInt( st.nextToken() );
-//            }
-//        }
-        
+                
         dWidth = Integer.parseInt( width );
         dHeight = Integer.parseInt( height );
         
@@ -491,5 +480,12 @@ public class Options {
 	 */
 	public static WarningType checkWarningsUnrelatedTypes() {
 		return checkWarningsUnrelatedTypes;
+	}
+
+	/**
+	 * @param ignore
+	 */
+	public static void setCheckWarningsOclAnyInCollections(WarningType warningLevel) {
+		checkWarningsOclAnyInCollections = warningLevel;
 	}
 }

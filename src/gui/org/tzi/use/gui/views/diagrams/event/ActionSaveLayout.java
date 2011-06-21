@@ -197,7 +197,7 @@ public class ActionSaveLayout extends AbstractAction {
         }
         
         xml.append(LayoutTags.NL);
-        xml.append(fLayoutInfos.getHiddenElementsXML());
+        //xml.append(fLayoutInfos.getHiddenElementsXML());
         
         XMLParserAccess xmlParser = new XMLParserAccessImpl();
         xmlParser.saveXMLFile( f, xml.toString() );

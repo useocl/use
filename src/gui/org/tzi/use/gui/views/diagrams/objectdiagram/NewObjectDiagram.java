@@ -343,6 +343,15 @@ public class NewObjectDiagram extends DiagramView
     }
     
     /**
+     * Hides all currently visible elements
+     */
+    public void hideAll() {
+    	while (!visibleData.fObjectToNodeMap.isEmpty()) {
+    		hideObject(visibleData.fObjectToNodeMap.keySet().iterator().next());
+    	}
+    }
+    
+    /**
      * Adds an object to the diagram.
      */
     public void addObject(MObject obj) {
@@ -360,6 +369,16 @@ public class NewObjectDiagram extends DiagramView
         }
     }
 
+    /**
+     * Show all objects contained in <code>objects</code>
+	 * @param objects
+	 */
+	public void showObjects(Set<MObject> objects) {
+		for (MObject o : objects) {
+			showObject(o);
+		}
+	}
+	
     /**
      * Shows an already hidden object again
      * @param obj The object to show
@@ -399,6 +418,15 @@ public class NewObjectDiagram extends DiagramView
     	}
     }
     
+    /**
+	 * Hides all objects included in <code>objects</code>
+	 * @param objects
+	 */
+	public void hideObjects(Set<MObject> objects) {
+		for (MObject o : objects)
+			hideObject(o);
+	}
+	
     /**
      * Hides an object in the diagram
      * @param obj The <code>MObject</code> to hide
