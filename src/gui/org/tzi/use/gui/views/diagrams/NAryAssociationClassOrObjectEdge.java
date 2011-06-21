@@ -28,7 +28,6 @@ import java.awt.geom.Point2D;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
-import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 
 /**
@@ -238,41 +237,8 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
 		return "NodeEdge";
 	}
 
-	@Override    
-    public String storePlacementInfo( boolean hidden ) {
-        return "";
-    }
-	
-	/**
-     * Saves placement information about this edge iff this NodeEdge
-     * participates in a tnary edge.
-     * @param hidden If this edge should be hidden or not.
-     * @return A XML representation of the layout information.
-     */
-    public String storeInfo( boolean hidden ) {
-        String xml = "";
-        
-        xml = LayoutTags.EDGE_O;
-        
-        if ( isLink() ) {
-            xml += " type=\"NodeEdge\" kind=\"link\">" + LayoutTags.NL;
-        } else {
-            xml += " type=\"NodeEdge\" kind=\"association\">" + LayoutTags.NL;
-        }
-        
-        xml += LayoutTags.INDENT + LayoutTags.NAME_O + fEdgeName 
-               + LayoutTags.NAME_C + LayoutTags.NL;
-
-        if ( !fWayPoints.isEmpty() ) {
-            for (WayPoint n : fWayPoints) {
-                xml += n.storePlacementInfo( hidden ) + LayoutTags.NL;
-            }
-        }
-        
-        xml += LayoutTags.INDENT + LayoutTags.HIDDEN_O + hidden 
-               + LayoutTags.HIDDEN_C + LayoutTags.NL;
-        
-        xml += LayoutTags.EDGE_C + LayoutTags.NL;
-        return xml;
-    }
+	@Override
+	protected String getStoreKind() {
+		return isLink() ? "link" : "association";
+	}
 }

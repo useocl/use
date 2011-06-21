@@ -206,4 +206,9 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
     public String toString() {
     	return fClass.name() + "(ClassNode)";
     }
+    
+    @Override
+    protected String getStoreType() {
+    	return "Class";
+    }
 }

@@ -37,6 +37,7 @@ import java.util.Map;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
+import org.w3c.dom.Element;
 
 /**
  * Represents a movable edge property like rolenames or multiplicities.
@@ -316,58 +317,6 @@ public abstract class EdgeProperty extends PlaceableNode {
 		calculatePosition();
 	}
 
-	public String storePlacementInfo(boolean hidden) {
-		StringBuilder xml = new StringBuilder();
-
-		String ident = LayoutTags.INDENT + LayoutTags.INDENT;
-
-		xml.append(LayoutTags.INDENT).append(LayoutTags.EDGEPROPERTY_O);
-		if (this instanceof Rolename) {
-			if (fSide == SOURCE_SIDE) {
-				xml.append(" type=\"rolename\" kind=\"source\">").append(
-						LayoutTags.NL);
-			} else {
-				xml.append(" type=\"rolename\" kind=\"target\">").append(
-						LayoutTags.NL);
-			}
-		} else if (this instanceof Multiplicity) {
-			if (fSide == SOURCE_SIDE) {
-				xml.append(" type=\"multiplicity\" kind=\"source\">").append(
-						LayoutTags.NL);
-			} else {
-				xml.append(" type=\"multiplicity\" kind=\"target\">").append(
-						LayoutTags.NL);
-			}
-		} else if (this instanceof AssociationName) {
-			xml.append(" type=\"associationName\">").append(LayoutTags.NL);
-		} else if (this instanceof WayPoint) {
-			xml.append(" type=\"NodeOnEdge\">").append(LayoutTags.NL);
-		} else {
-			xml.append(" type=Something Went Wrong>").append(LayoutTags.NL);
-		}
-
-		xml.append(ident).append(LayoutTags.NAME_O).append(name())
-				.append(LayoutTags.NAME_C).append(LayoutTags.NL);
-		if (isUserDefined()) {
-			xml.append(ident).append(LayoutTags.X_COORD_O)
-					.append(Double.toString(getX()))
-					.append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
-			xml.append(ident).append(LayoutTags.Y_COORD_O)
-					.append(Double.toString(getY()))
-					.append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
-		} else {
-			xml.append(ident).append(LayoutTags.X_COORD_O).append("-1")
-					.append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
-			xml.append(ident).append(LayoutTags.Y_COORD_O).append("-1")
-					.append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
-		}
-		xml.append(ident).append(LayoutTags.HIDDEN_O).append(hidden)
-				.append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
-
-		xml.append(LayoutTags.INDENT).append(LayoutTags.EDGEPROPERTY_C);
-		return xml.toString();
-	}
-
 	void setColor(Graphics2D g) {
 		if (isSelected() || (fEdge != null && fEdge.isSelected())) {
 			g.setColor(fOpt.getEDGE_SELECTED_COLOR());
@@ -378,5 +327,14 @@ public abstract class EdgeProperty extends PlaceableNode {
 
 	void resetColor(Graphics2D g) {
 		g.setColor(fOpt.getEDGE_COLOR());
+	}
+	
+	@Override
+	protected String getStoreElementName() { return LayoutTags.EDGEPROPERTY; }
+	
+	@Override
+	protected void storeAdditionalInfo(Element nodeElement, boolean hidden) {
+		//TODO: Was -1 for x and y values if user defined!
+		nodeElement.setAttribute("userDefined", String.valueOf(isUserDefined()));
 	}
 }

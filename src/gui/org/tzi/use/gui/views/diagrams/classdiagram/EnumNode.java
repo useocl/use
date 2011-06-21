@@ -102,7 +102,13 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
     }
     public String identNodeEdge() {
         return "";
-    }    
+    }
+    
+    @Override
+    protected String getStoreType() {
+    	return "Enumeration";
+    }
+    
     /**
      * Draws a box with a label.
      */

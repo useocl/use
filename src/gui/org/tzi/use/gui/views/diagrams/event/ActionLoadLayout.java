@@ -23,11 +23,16 @@ package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.ExtFileFilter;
@@ -36,9 +41,9 @@ import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.xmlparser.XMLParserAccess;
-import org.tzi.use.gui.xmlparser.XMLParserAccessImpl;
-import org.tzi.use.util.Log;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * Loads the current layout from a file.
@@ -54,7 +59,6 @@ public class ActionLoadLayout extends AbstractAction {
     private String fTitle = "";
     private String fAppendix = "";
     private DiagramView fDiagram;
-    private PrintWriter fLog;
     private HideAdministration fHideAdmin;
     private LayoutInfos fLayoutInfos;
     
@@ -66,7 +70,6 @@ public class ActionLoadLayout extends AbstractAction {
         fAppendix = appendix;
         
         fDiagram = diagram;
-        fLog = log;
         fHideAdmin = hideAdmin;
     }
 
@@ -79,7 +82,6 @@ public class ActionLoadLayout extends AbstractAction {
         fAppendix = appendix;
         fLayoutInfos = layoutInfos;
         fDiagram = diagram;
-        fLog = log;
         fHideAdmin = hideAdmin;
     }
     
@@ -97,8 +99,7 @@ public class ActionLoadLayout extends AbstractAction {
 
         ActionLoadLayout.LAST_PATH = fChooser.getCurrentDirectory().toString();
         File f = fChooser.getSelectedFile();
-        Log.verbose("File " + f);
-
+        
         // show all hidden nodes and edges. This is necessary, if 
         // nodes are hidden but a layout will be loaded which 
         // contains no hidden nodes or edges.
@@ -107,11 +108,30 @@ public class ActionLoadLayout extends AbstractAction {
         }
         
         fLayoutInfos.resetNodesOnEdges();
-        fLog.println("Reading layout file " + f);
-        XMLParserAccess xmlParser = new XMLParserAccessImpl( fLayoutInfos );
-        xmlParser.loadXMLFile( f, true );
-        fDiagram.hideElementsInDiagram( fLayoutInfos.getHiddenNodes() );
+                
+        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder;
+        Document doc;
         
+        try {
+        	docBuilder = fact.newDocumentBuilder();
+			doc = docBuilder.parse(f);
+		} catch (ParserConfigurationException e1) {
+			JOptionPane.showMessageDialog(fChooser, e1.getMessage());
+			return;
+		} catch (SAXException e1) {
+			JOptionPane.showMessageDialog(fChooser, e1.getMessage());
+			return;
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(fChooser, e1.getMessage());
+			return;
+		}
+		
+		Element rootElement = (Element)doc.getDocumentElement();
+		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);
+		fLayoutInfos.getOpt().loadOptions(layoutElement);
+		
+		fDiagram.restorePositionData(rootElement);
         fDiagram.invalidateContent();
     }
  

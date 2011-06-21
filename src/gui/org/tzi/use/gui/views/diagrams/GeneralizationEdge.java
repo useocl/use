@@ -94,8 +94,5 @@ public final class GeneralizationEdge extends EdgeBase {
     }
 
     @Override
-    protected boolean storeHasKind() { return false; }
-    
-    @Override
     protected String storeGetType() { return "Generalization"; }
 }

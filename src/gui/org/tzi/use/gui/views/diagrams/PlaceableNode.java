@@ -30,12 +30,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.gui.views.diagrams.classdiagram.EnumNode;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.gui.xmlparser.LayoutTags;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Represents a placeable node in a diagram. 
@@ -491,41 +491,48 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 	
     public abstract String name();
     
+    protected abstract String getStoreType();
+    
+    protected String getStoreKind() { return null; }
+    
+    protected String getStoreElementName() { return LayoutTags.NODE; }
+    
+    /**
+     * Override, if more then name, position and type data
+     * has to be stored
+     * @param nodeElement
+     */
+    protected void storeAdditionalInfo( Element nodeElement, boolean hidden) {}
+    
     /**
      * Saves placement information about this placeable node.
      * @param hidden If this node should be hidden or not.
      * @return A XML representation of the layout information.
      */
-    public String storePlacementInfo( boolean hidden ) {
-        StringBuilder xml = new StringBuilder();
-        String nl = "\n";
+    public final void storePlacementInfo( Element parent, boolean hidden ) {
+        Document doc = parent.getOwnerDocument();
         
-        xml.append(LayoutTags.NODE_O);
+        Element nodeElement = doc.createElement(this.getStoreElementName());
+        nodeElement.setAttribute("type", this.getStoreType());
         
-        if ( this instanceof ObjectNode ) {
-            xml.append(" type=\"Object\">").append(nl);
-        } else if ( this instanceof ClassNode ) {
-            xml.append(" type=\"Class\">").append(nl);
-        } else if ( this instanceof EnumNode ) {
-            xml.append(" type=\"Enumeration\">").append(nl);
-        } else {
-            xml.append(" type=Something Went Wrong>").append(nl);
-        } 
+        String kind = getStoreKind();
+        if (kind != null && ! kind.equals("")) {
+        	nodeElement.setAttribute("kind", kind);
+        }
         
-        xml.append(LayoutTags.INDENT).append(LayoutTags.NAME_O).append(name()) 
-               .append(LayoutTags.NAME_C).append(nl);
+        PersistHelper.appendChild(nodeElement, LayoutTags.NAME, name());
+        //FIXME: Was center!
+        PersistHelper.appendChild(nodeElement, LayoutTags.X_COORD, String.valueOf(getPosition().getX()));
+        PersistHelper.appendChild(nodeElement, LayoutTags.Y_COORD, String.valueOf(getPosition().getY()));
+        PersistHelper.appendChild(nodeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
+               
+        storeAdditionalInfo(nodeElement, hidden);
         
-        xml.append(LayoutTags.INDENT).append(LayoutTags.X_COORD_O)
-        	   .append( Double.toString( getCenter().getX() )).append(LayoutTags.X_COORD_C).append(nl);
-        	   
-        xml.append(LayoutTags.INDENT).append(LayoutTags.Y_COORD_O)
-        	   .append( Double.toString( getCenter().getY() )).append(LayoutTags.Y_COORD_C).append(nl);
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.HIDDEN_O).append(hidden) 
-               .append(LayoutTags.HIDDEN_C).append(nl);
-        
-        xml.append(LayoutTags.NODE_C).append(nl);
-        
-        return xml.toString();
+        parent.appendChild(nodeElement);
+    }
+    
+    public final void restorePlacementInfo(Element nodeElement) {
+    	setX( PersistHelper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD) );
+    	setY( PersistHelper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD) );
     }
 }

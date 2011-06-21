@@ -326,8 +326,8 @@ public class LayoutContentHandler extends ContentHandler {
             if ( Boolean.valueOf( fTagContent.trim() ).booleanValue() ) {
                 fCtx.getHiddenNodes().add( fCtx.getActualObj() );
                 String xml = fCtx.getLayoutInfos().getHiddenElementsXML();
-                xml += fCtx.getActualNode().storePlacementInfo( fHide )
-                       + LayoutTags.NL;
+                /* xml += fCtx.getActualNode().storePlacementInfo( fHide )
+                       + LayoutTags.NL; */
                 fCtx.getLayoutInfos().setHiddenElementsXML( xml );
             }
         }
@@ -388,8 +388,8 @@ public class LayoutContentHandler extends ContentHandler {
             if ( Boolean.valueOf( fTagContent.trim() ).booleanValue() ) {
                 fCtx.getHiddenEdges().add( fCtx.getActualObj() );
                 String xml = fCtx.getLayoutInfos().getHiddenElementsXML();
-                xml += fCtx.getActualNode().storePlacementInfo( fHide ) 
-                       + LayoutTags.NL;
+                /* xml += fCtx.getActualNode().storePlacementInfo( fHide ) 
+                       + LayoutTags.NL; */
                 fCtx.getLayoutInfos().setHiddenElementsXML( xml );
             }
         }
@@ -438,8 +438,9 @@ public class LayoutContentHandler extends ContentHandler {
             if ( Boolean.valueOf( fTagContent.trim() ).booleanValue() ) {
                 fCtx.getHiddenEdges().add( fCtx.getActualObj() );
                 String xml = fCtx.getLayoutInfos().getHiddenElementsXML();
-                xml += fCtx.getActualEdge().storePlacementInfo( fHide )
-                       + LayoutTags.NL;
+                /*
+                 * xml += fCtx.getActualEdge().storePlacementInfo( fHide )
+                       + LayoutTags.NL; */
                 fCtx.getLayoutInfos().setHiddenElementsXML( xml );
             }
         }
@@ -476,8 +477,8 @@ public class LayoutContentHandler extends ContentHandler {
             if ( Boolean.valueOf( fTagContent.trim() ).booleanValue() ) {
                 fCtx.getHiddenEdges().add( fCtx.getActualObj() );
                 String xml = fCtx.getLayoutInfos().getHiddenElementsXML();
-                xml += fCtx.getActualEdge().storePlacementInfo( fHide )
-                       + LayoutTags.NL;
+                /* xml += fCtx.getActualEdge().storePlacementInfo( fHide )
+                       + LayoutTags.NL; */
                 fCtx.getLayoutInfos().setHiddenElementsXML( xml );
             }
         }
@@ -552,8 +553,8 @@ public class LayoutContentHandler extends ContentHandler {
             if ( Boolean.valueOf( fTagContent.trim() ).booleanValue() ) {
                 fCtx.getHiddenEdges().add( fCtx.getActualObj() );
                 String xml = fCtx.getLayoutInfos().getHiddenElementsXML();
-                xml += fCtx.getActualEdge().storePlacementInfo( fHide )
-                       + LayoutTags.NL;
+                /* xml += fCtx.getActualEdge().storePlacementInfo( fHide )
+                       + LayoutTags.NL; */
                 fCtx.getLayoutInfos().setHiddenElementsXML( xml );
             }
         }
@@ -586,8 +587,8 @@ public class LayoutContentHandler extends ContentHandler {
                 if ( Boolean.valueOf( fTagContent.trim() ).booleanValue() ) {
                     fCtx.getHiddenEdges().add( fCtx.getActualObj() );
                     String xml = fCtx.getLayoutInfos().getHiddenElementsXML();
-                    xml += fCtx.getActualEdge().storePlacementInfo( fHide )
-                           + LayoutTags.NL;
+                    /* xml += fCtx.getActualEdge().storePlacementInfo( fHide )
+                           + LayoutTags.NL; */
                     fCtx.getLayoutInfos().setHiddenElementsXML( xml );
                 }
             }

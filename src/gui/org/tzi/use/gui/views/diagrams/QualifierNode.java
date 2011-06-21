@@ -230,4 +230,9 @@ public class QualifierNode extends NodeBase {
 	public void setRelativePosition(Direction relativePosition) {
 		this.relativePosition = relativePosition;
 	}
+	
+	@Override
+    public String getStoreType() {
+    	return "QualifierNode";
+    }
 }

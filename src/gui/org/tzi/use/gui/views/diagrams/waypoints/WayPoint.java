@@ -27,6 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.BinaryAssociationClassOrObject;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
@@ -34,6 +35,7 @@ import org.tzi.use.gui.views.diagrams.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.util.Log;
+import org.w3c.dom.Element;
 
 /**
  * Represents a way point on an edge. 
@@ -207,37 +209,15 @@ public class WayPoint extends EdgeProperty {
         // empty
     }
 
+    @Override
+    public String getStoreType() {
+    	// In 1.0: NodeOnEdge
+    	return "WayPoint";
+    }
     
-    public String storePlacementInfo( boolean hidden ) {
-        StringBuilder xml = new StringBuilder();
-        String ident = LayoutTags.INDENT + LayoutTags.INDENT;
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.EDGEPROPERTY_O);
-        
-        xml.append(" type=\"NodeOnEdge\">").append(LayoutTags.NL);
-        
-        xml.append(ident).append(LayoutTags.ID_O).append(getID()) 
-               .append(LayoutTags.ID_C).append(LayoutTags.NL);
-
-        xml.append(ident).append(LayoutTags.SPECIALID_O).append(getSpecialID().getId()) 
-               .append(LayoutTags.SPECIALID_C).append(LayoutTags.NL);
-
-        // coordinates
-        if ( isUserDefined() ) {
-            xml.append(ident).append(LayoutTags.X_COORD_O).append(Double.toString( getX() )) 
-                   .append(LayoutTags.X_COORD_C).append( LayoutTags.NL );
-            xml.append(ident).append(LayoutTags.Y_COORD_O).append(Double.toString( getY() )) 
-                   .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
-        } else {
-            xml.append(ident).append(LayoutTags.X_COORD_O).append("-1") 
-                   .append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
-            xml.append(ident).append(LayoutTags.Y_COORD_O).append("-1") 
-                   .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
-        }
-        xml.append(ident).append(LayoutTags.HIDDEN_O).append(hidden) 
-               .append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.EDGEPROPERTY_C);
-        return xml.toString();
+    @Override
+    protected void storeAdditionalInfo( Element nodeElement, boolean hidden ) {
+    	PersistHelper.appendChild(nodeElement, LayoutTags.ID, String.valueOf(getID()));
+    	PersistHelper.appendChild(nodeElement, LayoutTags.SPECIALID, String.valueOf(getSpecialID().getId()));
     }
 }

@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.tzi.use.graph.DirectedEdgeBase;
 import org.tzi.use.graph.DirectedGraph;
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.SourceWayPoint;
@@ -40,6 +41,7 @@ import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointComparator;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.gui.xmlparser.LayoutTags;
+import org.w3c.dom.Element;
 
 /**
  * Base class of all edge types in the diagram.
@@ -707,58 +709,43 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     protected abstract String storeGetType();
     
     /**
-     * If true, the attribute <code>kind</code> will be written into the store info
+     * If not null and not an empty string, 
+     * the attribute <code>kind</code> with the returned value will be written into the store info
      * @return
      */
-    protected boolean storeHasKind() { return true; }
+    protected String getStoreKind() { return ""; }
     
     /**
      * Saves placement information about this edge.
      * @param hidden If this edge should be hidden or not.
      * @return A XML representation of the layout information.
      */
-    public String storePlacementInfo( boolean hidden ) {
-        StringBuilder xml = new StringBuilder();
+    public void storePlacementInfo( Element parent, boolean hidden ) {
         
-        xml.append(LayoutTags.EDGE_O);
-        xml.append(" type=\"");
-        xml.append(storeGetType());
-        xml.append("\"");
-        
-        if (storeHasKind()) {
-        	xml.append(" kind=\"");
-        	xml.append((isLink() ? "link" : "association"));
-        	xml.append("\"");
+    	Element edgeElement = parent.getOwnerDocument().createElement(LayoutTags.EDGE);
+    	parent.appendChild(edgeElement);
+    	edgeElement.setAttribute("type", storeGetType());
+    	String kind = getStoreKind();
+    	
+        if (kind != null && !kind.equals("")) {
+        	edgeElement.setAttribute("kind", kind);
         }
         
-        xml.append(">");
-        xml.append(LayoutTags.NL);
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.SOURCE_O).append(fSource.name()).
-        	append(LayoutTags.SOURCE_C).append(LayoutTags.NL);
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.TARGET_O).append(fTarget.name()).
-            append(LayoutTags.TARGET_C).append(LayoutTags.NL);
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.NAME_O).append(fEdgeName).
-            append(LayoutTags.NAME_C).append(LayoutTags.NL);
-
-        
+        PersistHelper.appendChild(edgeElement, LayoutTags.SOURCE, fSource.name());
+        PersistHelper.appendChild(edgeElement, LayoutTags.TARGET, fTarget.name());
+        PersistHelper.appendChild(edgeElement, LayoutTags.NAME, fEdgeName);
+                
         for (EdgeProperty prop : getProperties()) {
-        	xml.append(prop.storePlacementInfo(hidden)).append(LayoutTags.NL);
+        	prop.storePlacementInfo(edgeElement, hidden);
         }
 
         for (WayPoint n : fWayPoints) {
-            xml.append(n.storePlacementInfo( hidden )).append(LayoutTags.NL);
+            n.storePlacementInfo( edgeElement, hidden );
         }
 
-        xml.append(LayoutTags.INDENT).append(LayoutTags.HIDDEN_O).append(hidden).
-            append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
-        
-        xml.append(LayoutTags.EDGE_C).append(LayoutTags.NL);
-        return xml.toString();
+        PersistHelper.appendChild(edgeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
     }
-    
+
     /**
      * Sorts the nodes on this edge according to their id.
      */

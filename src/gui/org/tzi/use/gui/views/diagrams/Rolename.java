@@ -140,4 +140,13 @@ public final class Rolename extends EdgeProperty {
         return result;
 	}
 
+	@Override
+    public String getStoreType() {
+    	return "rolename";
+    }
+	
+	@Override
+	protected String getStoreKind() {
+		return fSide == SOURCE_SIDE ? "source" : "target";
+	}
 }

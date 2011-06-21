@@ -50,6 +50,7 @@ import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
 import org.tzi.use.gui.views.diagrams.event.HideAdministration;
+import org.w3c.dom.Element;
 
 /**
  * Combines everything that the class and object diagram have in common.
@@ -560,4 +561,14 @@ public abstract class DiagramView extends JPanel
         }
     }
 
+	/**
+	 * Stores the placement info inside of the given element
+	 * @param rootElement
+	 */
+	public abstract void storePlacementInfos(Element rootElement);
+
+	/**
+	 * @param rootElement
+	 */
+	public abstract void restorePositionData(Element rootElement);
 }

@@ -27,11 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
+import org.w3c.dom.Element;
 
 /**
  * A pseude-node representing a diamond in an n-ary association.
@@ -166,46 +168,30 @@ public class DiamondNode extends NodeBase {
         return fAssocName;
     }
     
-    public String storePlacementInfo( boolean hidden ) {
-        StringBuilder xml = new StringBuilder();
-        
-        xml.append(LayoutTags.NODE_O);
-        if ( fLink != null ) {
-            xml.append(" type=\"DiamondNode\" kind=\"link\">").append(LayoutTags.NL);
-        } else {
-            xml.append(" type=\"DiamondNode\" kind=\"association\">").append(LayoutTags.NL);
-        }
-        
+    @Override
+    public String getStoreType() {
+    	return "DiamondNode";
+    }
+    
+    @Override
+    public String getStoreKind() {
+    	return (fLink != null ? "link" : "association");
+    }
+    
+    @Override
+    public void storeAdditionalInfo( Element nodeElement, boolean hidden ) {
+                
         for(String nodeName : fConnectedNodes ) {
-            xml.append(LayoutTags.INDENT).append(LayoutTags.CON_NODE_O).append(nodeName) 
-                   .append(LayoutTags.CON_NODE_C).append(LayoutTags.NL);
+            PersistHelper.appendChild(nodeElement, LayoutTags.CON_NODE, nodeName);
         }
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.NAME_O).append(name()) 
-               .append(LayoutTags.NAME_C).append(LayoutTags.NL);
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.X_COORD_O).append(Double.toString( getX() )) 
-               .append(LayoutTags.X_COORD_C).append(LayoutTags.NL);
-        xml.append(LayoutTags.INDENT).append(LayoutTags.Y_COORD_O).append(Double.toString( getY() )) 
-               .append(LayoutTags.Y_COORD_C).append(LayoutTags.NL);
-        
-        xml.append(fAssocName.storePlacementInfo( hidden )).append(LayoutTags.NL);
-        
-        xml.append(LayoutTags.INDENT).append(LayoutTags.HIDDEN_O).append(hidden) 
-               .append(LayoutTags.HIDDEN_C).append(LayoutTags.NL);
+
+        fAssocName.storePlacementInfo( nodeElement, hidden );
     
         if ( fHalfEdges != null ) {
             for (EdgeBase e : fHalfEdges) {
-                if ( e instanceof NAryAssociationClassOrObjectEdge ) {
-                    xml.append(((NAryAssociationClassOrObjectEdge) e).storeInfo( hidden )).append(LayoutTags.NL);
-                } else {
-                    xml.append(e.storePlacementInfo( hidden )).append(LayoutTags.NL);
-                }
+            	e.storePlacementInfo(nodeElement, hidden);
             }
         }
-        
-        xml.append(LayoutTags.NODE_C).append(LayoutTags.NL);
-        return xml.toString();
     }
 
 }

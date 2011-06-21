@@ -104,4 +104,13 @@ public final class Multiplicity extends EdgeProperty {
         resetColor( g );
     }
 
+    @Override
+    public String getStoreType() {
+    	return "multiplicity";
+    }
+    
+    @Override
+	protected String getStoreKind() {
+		return fSide == SOURCE_SIDE ? "source" : "target";
+	}
 }

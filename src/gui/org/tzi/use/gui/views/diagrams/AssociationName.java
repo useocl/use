@@ -89,8 +89,14 @@ public final class AssociationName extends EdgeProperty {
 		});
     }
     
+    @Override
     public String name() {
         return fName;
+    }
+    
+    @Override
+    public String getStoreType() {
+    	return "associationName";
     }
     
     @Override

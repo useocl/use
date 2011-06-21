@@ -185,4 +185,8 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
         return "OjectLink." + fObject.name();
     }
 
+    @Override
+    protected String getStoreType() {
+    	return "Object";
+    }
 }

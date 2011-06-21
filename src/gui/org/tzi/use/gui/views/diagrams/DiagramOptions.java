@@ -23,6 +23,10 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Color;
 
+import org.tzi.use.gui.util.PersistHelper;
+import org.tzi.use.gui.xmlparser.LayoutTags;
+import org.w3c.dom.Element;
+
 /**
  * Contains Options for the class and object diagrams.
  * 
@@ -137,5 +141,31 @@ public abstract class DiagramOptions {
     
 	public void setIsLoadingLayout(boolean isLoading) {
 		fIsLoadingLayout = isLoading;
+	}
+	
+	/**
+	 * @param optionsElement
+	 */
+	public void saveOptions(Element parent) {
+		// save diagram options
+		PersistHelper.appendChild(parent, LayoutTags.AUTOLAYOUT, String.valueOf(isDoAutoLayout()));
+		PersistHelper.appendChild(parent, LayoutTags.ANTIALIASING, String.valueOf(isDoAntiAliasing()));
+		PersistHelper.appendChild(parent, LayoutTags.SHOWASSOCNAMES, String.valueOf(isShowAssocNames()));
+		PersistHelper.appendChild(parent, LayoutTags.SHOWATTRIBUTES, String.valueOf(isShowAttributes()));        
+		PersistHelper.appendChild(parent, LayoutTags.SHOWMULTIPLICITIES, String.valueOf(isShowMutliplicities()));
+		PersistHelper.appendChild(parent, LayoutTags.SHOWOPERATIONS, String.valueOf(isShowOperations()));
+		PersistHelper.appendChild(parent, LayoutTags.SHOWROLENAMES, String.valueOf(isShowRolenames()));
+	}
+	/**
+	 * @param rootElement
+	 */
+	public void loadOptions(Element parent) {
+		setDoAutoLayout(PersistHelper.getElementBooleanValue(parent, LayoutTags.AUTOLAYOUT));
+		setDoAntiAliasing(PersistHelper.getElementBooleanValue(parent, LayoutTags.ANTIALIASING));
+		setShowAssocNames(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWASSOCNAMES));
+		setShowAttributes(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWATTRIBUTES));
+		setShowMutliplicities(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWMULTIPLICITIES));
+		setShowOperations(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWOPERATIONS));
+		setShowRolenames(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWROLENAMES));
 	}
 }

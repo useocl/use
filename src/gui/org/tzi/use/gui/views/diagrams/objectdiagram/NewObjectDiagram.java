@@ -95,6 +95,7 @@ import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
+import org.w3c.dom.Element;
 
 
 /**
@@ -217,7 +218,7 @@ public class NewObjectDiagram extends DiagramView
         // end jj
         
         fActionSaveLayout = new ActionSaveLayout( "USE object diagram layout",
-                                                  "olt", fGraph, fLog, fLayoutInfos );
+                                                  "olt", fLayoutInfos );
         
         fActionLoadLayout = new ActionLoadLayout( "USE object diagram layout",
                                                   "olt", this, fLog,
@@ -1245,5 +1246,27 @@ public class NewObjectDiagram extends DiagramView
         // if we are called on a new diagram.
 		nextNodePosition.x = Math.random() * Math.max(100, getWidth() - 100);
 		nextNodePosition.y = Math.random() * Math.max(100, getHeight() - 100);
+	}
+	
+	@Override
+	public void storePlacementInfos(Element root) {
+		storePlacementInfos(root, true);
+		storePlacementInfos(root, false);
+	}
+	
+	protected void storePlacementInfos(Element root, boolean visible) {
+		ObjectDiagramData data = (visible ? visibleData : hiddenData);
+		for (ObjectNode n : data.fObjectToNodeMap.values()) {
+			n.storePlacementInfo(root, !visible);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
+	 */
+	@Override
+	public void restorePositionData(Element rootElement) {
+		// TODO Auto-generated method stub
+		
 	}
 }

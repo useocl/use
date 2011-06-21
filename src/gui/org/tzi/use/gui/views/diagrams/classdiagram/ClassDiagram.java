@@ -48,6 +48,7 @@ import javax.swing.JSeparator;
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.AssociationOrLinkPartEdge;
@@ -71,6 +72,7 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.selection.classselection.ClassSelection;
+import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
@@ -80,6 +82,8 @@ import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.MObject;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -185,7 +189,7 @@ public class ClassDiagram extends DiagramView
         fSelection = new ClassSelection(this);
         
         fActionSaveLayout = new ActionSaveLayout( "USE class diagram layout",
-                                                  "clt", fGraph, fLog, fLayoutInfos );
+                                                  "clt", fLayoutInfos );
         
         fActionLoadLayout = new ActionLoadLayout( "USE class diagram layout",
                                                   "clt", this, fLog,
@@ -1001,4 +1005,73 @@ public class ClassDiagram extends DiagramView
             }
         }
     }
+    
+    @Override
+    public void storePlacementInfos(Element parent) {
+    	storePlacementInfos(parent, true);
+    	storePlacementInfos(parent, false);
+    }
+    
+    protected void storePlacementInfos(Element parent, boolean visible) {
+    	ClassDiagramData data = (visible ? visibleData : hiddenData);
+    	
+    	// store node positions in property object
+        for (ClassNode n : data.fClassToNodeMap.values()) {
+            n.storePlacementInfo( parent, !visible );
+        }
+
+        for (EnumNode n : data.fEnumToNodeMap.values()) {
+            n.storePlacementInfo( parent, !visible );
+        }
+        
+        for (DiamondNode n : data.fNaryAssocToDiamondNodeMap.values()) {
+        	n.storePlacementInfo(parent, !visible );
+        }
+
+        for (BinaryAssociationOrLinkEdge e : data.fBinaryAssocToEdgeMap.values()) {
+        	e.storePlacementInfo(parent, !visible);
+        }
+        
+        /*
+        // store EdgePropertie positions in property object
+        Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
+        while ( edgeIterator.hasNext() ) {
+            EdgeBase edge = edgeIterator.next();
+            if ( edge instanceof AssociationOrLinkPartEdge ) {
+                continue;
+            }
+            xml.append(edge.storePlacementInfo( false ));
+            xml.append(LayoutTags.NL);
+        }
+        */
+    }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
+	 */
+	@Override
+	public void restorePositionData(Element rootElement) {
+		NodeList nodeElements = rootElement.getElementsByTagName(LayoutTags.NODE);
+		for (int i = 0; i < nodeElements.getLength(); ++i) {
+			Element nodeElement = (Element)nodeElements.item(i);
+			String type = nodeElement.getAttribute("type");
+			
+			if (type.equals("Class")) {
+				String name = PersistHelper.getElementStringValue(nodeElement, "name");
+				MClass cls = fParent.system().model().getClass(name);
+				ClassNode node = visibleData.fClassToNodeMap.get(cls);
+				node.restorePlacementInfo(nodeElement);
+			} else if (type.equals("Enumeration")) {
+				String name = PersistHelper.getElementStringValue(nodeElement, "name");
+				EnumType enumType = fParent.system().model().enumType(name);
+				EnumNode node = visibleData.fEnumToNodeMap.get(enumType);
+				node.restorePlacementInfo(nodeElement);
+			} else if (type.equals("DiamondNode")) {
+				String name = PersistHelper.getElementStringValue(nodeElement, "name");
+				MAssociation assoc = fParent.system().model().getAssociation(name);
+				DiamondNode node = visibleData.fNaryAssocToDiamondNodeMap.get(assoc);
+				node.restorePlacementInfo(nodeElement);
+			}   
+		}
+	}
 }
