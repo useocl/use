@@ -32,9 +32,11 @@ import java.util.List;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
+import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.w3c.dom.Element;
 
 /**
  * An edge being part of a n-ary edge. This edge connects an node with a
@@ -279,6 +281,25 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
     }
     
     @Override
-    protected String storeGetType() { return "HalfEdge"; }
+    protected String getStoreType() { return "HalfEdge"; }
+    
+    @Override
+    protected void restoreEdgeProperty (Element propertyElement, String type, String version) {
+    	
+    	if (type.equals(LayoutTags.ASSOCNAME)) {
+    		fAssocName.restorePlacementInfo(propertyElement, version);
+    	} else if (type.equals(LayoutTags.ROLENAME)) {
+    		String kind = propertyElement.getAttribute("kind");
+    		if (kind.equals(LayoutTags.TARGET)) {
+    			fTargetRolename.restorePlacementInfo(propertyElement, version);
+    		}
+    	} else if (type.equals(LayoutTags.MULTIPLICITY)) {
+    		String kind = propertyElement.getAttribute("kind");
+    		if (kind.equals(LayoutTags.TARGET)) {
+    			fTargetMultiplicity.restorePlacementInfo(propertyElement, version);
+    		}
+    	}
+    	
+    }
 }
 

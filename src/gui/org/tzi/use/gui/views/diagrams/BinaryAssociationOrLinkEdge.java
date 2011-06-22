@@ -34,11 +34,13 @@ import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
+import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.util.MathUtil;
+import org.w3c.dom.Element;
 
 /**
  * An edge representing a binary link.
@@ -793,5 +795,23 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     }
     
     @Override
-    protected String storeGetType() { return "BinaryEdge"; }
+    protected String getStoreType() { return "BinaryEdge"; }
+    
+    @Override
+    protected void restoreEdgeProperty( Element propertyElement, String type, String version) {
+    	// Handles target edge property and association name
+    	super.restoreEdgeProperty(propertyElement, type, version);
+    	
+    	if (type.equals(LayoutTags.ROLENAME)) {
+    		String kind = propertyElement.getAttribute("kind");
+    		if (kind.equals(LayoutTags.SOURCE)) {
+    			fSourceRolename.restorePlacementInfo(propertyElement, version);
+    		}
+    	} else if (type.equals(LayoutTags.MULTIPLICITY)) {
+    		String kind = propertyElement.getAttribute("kind");
+    		if (kind.equals(LayoutTags.SOURCE)) {
+    			fSourceMultiplicity.restorePlacementInfo(propertyElement, version);
+    		}
+    	}
+    }
 }

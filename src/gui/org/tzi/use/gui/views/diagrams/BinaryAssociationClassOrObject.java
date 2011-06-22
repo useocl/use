@@ -203,5 +203,5 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     }
 
     @Override
-    protected String storeGetType() { return "NodeEdge"; }
+    protected String getStoreType() { return "NodeEdge"; }
 }

@@ -42,6 +42,7 @@ import org.tzi.use.gui.views.diagrams.waypoints.WayPointComparator;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Base class of all edge types in the diagram.
@@ -704,9 +705,16 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     }
 
     /**
+     * Sorts the nodes on this edge according to their id.
+     */
+    public void sortNodesOnEdge() {
+        Collections.sort( fWayPoints, new WayPointComparator() );
+    }
+    
+    /**
      * Type written into element tag
      */
-    protected abstract String storeGetType();
+    protected abstract String getStoreType();
     
     /**
      * If not null and not an empty string, 
@@ -720,11 +728,11 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
      * @param hidden If this edge should be hidden or not.
      * @return A XML representation of the layout information.
      */
-    public void storePlacementInfo( Element parent, boolean hidden ) {
+    public final void storePlacementInfo( Element parent, boolean hidden ) {
         
     	Element edgeElement = parent.getOwnerDocument().createElement(LayoutTags.EDGE);
     	parent.appendChild(edgeElement);
-    	edgeElement.setAttribute("type", storeGetType());
+    	edgeElement.setAttribute("type", getStoreType());
     	String kind = getStoreKind();
     	
         if (kind != null && !kind.equals("")) {
@@ -745,11 +753,45 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
 
         PersistHelper.appendChild(edgeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
     }
-
-    /**
-     * Sorts the nodes on this edge according to their id.
-     */
-    public void sortNodesOnEdge() {
-        Collections.sort( fWayPoints, new WayPointComparator() );
+    
+    protected void restoreEdgeProperty(Element propertyElement, String type, String version) {}
+    
+    protected void restoreWayPoint(Element wayPointElement, String version) {
+    	// Handle only source, target and user defined way points
+		int specialId = Integer.valueOf(PersistHelper.getElementStringValue(
+				wayPointElement, LayoutTags.SPECIALID));
+    	
+		WayPointType type = WayPointType.getById(specialId);
+		if (type.equals(WayPointType.SOURCE)) {
+			fSourceWayPoint.restorePlacementInfo(wayPointElement, version);
+		} else if (type.equals(WayPointType.TARGET)) {
+			fTargetWayPoint.restorePlacementInfo(wayPointElement, version);
+		} else if (type.equals(WayPointType.USER)) {
+			WayPoint userWp = new WayPoint(fSource, fTarget, this, fWayPoints.size() + 1, type, fEdgeName, fOpt);
+			fWayPoints.add(fWayPoints.size() - 1, userWp);
+			userWp.restorePlacementInfo(wayPointElement, version);
+		}
+    }
+    
+    public final void restorePlacementInfo( Element parent, String version ) {
+    	NodeList elements = parent.getElementsByTagName(LayoutTags.EDGEPROPERTY);
+    	
+    	for (int i = 0; i < elements.getLength(); ++i) {
+    		Element propertyElement = (Element)elements.item(i);
+    		String type = propertyElement.getAttribute("type");
+    		
+    		if (version.equals("1") && type.equals("NodeOnEdge") ||
+    			version.equals("2") && type.equals("WayPoint")) {
+    			restoreWayPoint(propertyElement, version);
+    		} else {
+    			restoreEdgeProperty(propertyElement, type, version);
+    		}
+    	}
+    	
+    	/*
+        for (WayPoint n : fWayPoints) {
+            n.storePlacementInfo( edgeElement, hidden );
+        }
+        */
     }
 }

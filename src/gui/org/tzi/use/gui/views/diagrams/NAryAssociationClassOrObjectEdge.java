@@ -233,7 +233,7 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
 	 * @see org.tzi.use.gui.views.diagrams.EdgeBase#storeGetType()
 	 */
 	@Override
-	protected String storeGetType() {
+	protected String getStoreType() {
 		return "NodeEdge";
 	}
 

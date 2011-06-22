@@ -488,4 +488,21 @@ public class Options {
 	public static void setCheckWarningsOclAnyInCollections(WarningType warningLevel) {
 		checkWarningsOclAnyInCollections = warningLevel;
 	}
+
+	private static String lastDirectory = System.getProperty("user.dir");;
+	
+	/**
+	 * We always use the last directory for file choose operations
+	 * @param string
+	 */
+	public static void setLastDirectory(String string) {
+		lastDirectory = string;
+	}
+	
+	/**
+	 * We always use the last directory for file choose operations
+	 */
+	public static String getLastDirectory() {
+		return lastDirectory;
+	}
 }

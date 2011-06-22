@@ -75,4 +75,8 @@ public enum WayPointType {
     public boolean isSpecial() {
     	return id != 0;
     }
+    
+    public static WayPointType getById(int id) {
+    	return WayPointType.values()[id];
+    }
 }

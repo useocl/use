@@ -909,11 +909,12 @@ public class NewObjectDiagram extends DiagramView
     }
     
     /**
-     * Deletes all hidden elements form this diagram.
+     * Hides all elements included in <code>objectsToHide</code> in this diagram.
+     * @param objectsToHide A set of {@link MObject}s to hide.
      */
     @Override
-    public void hideElementsInDiagram( Set<Object> objectsToHide ) {
-        Iterator<Object> it = objectsToHide.iterator();
+    public void hideElementsInDiagram( Set<?> objectsToHide ) {
+        Iterator<?> it = objectsToHide.iterator();
         while ( it.hasNext() ) {
             MObject obj = (MObject) it.next();
             hideObject( obj );
@@ -1265,7 +1266,7 @@ public class NewObjectDiagram extends DiagramView
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
 	 */
 	@Override
-	public void restorePositionData(Element rootElement) {
+	public void restorePositionData(Element rootElement, String version) {
 		// TODO Auto-generated method stub
 		
 	}

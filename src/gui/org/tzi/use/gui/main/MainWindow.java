@@ -898,7 +898,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
             String path;
             // reuse chooser if possible
             if (fChooser == null) {
-                path = System.getProperty("user.dir");
+                path = Options.getLastDirectory();
                 fChooser = new JFileChooser(path);
                 ExtFileFilter filter = new ExtFileFilter("use",
                         "USE specifications");
@@ -910,8 +910,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 return;
 
             path = fChooser.getCurrentDirectory().toString();
+            Options.setLastDirectory(path);
             File f = new File(path, fChooser.getSelectedFile().getName());
-            Log.verbose("File " + f);
 
             fLogPanel.clear();
             showLogPanel();

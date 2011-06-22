@@ -531,8 +531,11 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
         parent.appendChild(nodeElement);
     }
     
-    public final void restorePlacementInfo(Element nodeElement) {
+    public final void restorePlacementInfo(Element nodeElement, String version) {
     	setX( PersistHelper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD) );
     	setY( PersistHelper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD) );
+    	restoreAdditionalInfo(nodeElement, version);
     }
+    
+    protected void restoreAdditionalInfo(Element nodeElement, String version) { }
 }

@@ -102,12 +102,12 @@ public abstract class EdgeProperty extends PlaceableNode {
 	/**
 	 * x-delta from the calculated position
 	 */
-	double fX_UserDefined = 0.0;
+	protected double fX_UserDefined = 0.0;
 	
 	/**
 	 * y-delta from the calculated position
 	 */
-	double fY_UserDefined = 0.0;
+	protected double fY_UserDefined = 0.0;
 
 	public EdgeProperty() { }
 
@@ -334,7 +334,15 @@ public abstract class EdgeProperty extends PlaceableNode {
 	
 	@Override
 	protected void storeAdditionalInfo(Element nodeElement, boolean hidden) {
-		//TODO: Was -1 for x and y values if user defined!
 		nodeElement.setAttribute("userDefined", String.valueOf(isUserDefined()));
+	}
+	
+	@Override
+	protected void restoreAdditionalInfo(Element nodeElement, String version) {
+		if (version.equals("1")) {
+			this.isUserDefined = (this.getX() == -1 && this.getY() == -1);
+		} else {
+			this.isUserDefined = Boolean.valueOf(nodeElement.getAttribute("userDefined"));
+		}
 	}
 }

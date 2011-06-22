@@ -138,7 +138,7 @@ public abstract class DiagramView extends JPanel
     /**
      * Deletes all hidden elements form this diagram.
      */
-    public abstract void hideElementsInDiagram( Set<Object> nodesToHide );
+    public abstract void hideElementsInDiagram( Set<?> nodesToHide );
     
     /**
      * Determines if the popup menu of this diagram should be shown.
@@ -570,5 +570,5 @@ public abstract class DiagramView extends JPanel
 	/**
 	 * @param rootElement
 	 */
-	public abstract void restorePositionData(Element rootElement);
+	public abstract void restorePositionData(Element rootElement, String version);
 }

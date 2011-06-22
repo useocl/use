@@ -159,7 +159,7 @@ public abstract class DiagramOptions {
 	/**
 	 * @param rootElement
 	 */
-	public void loadOptions(Element parent) {
+	public void loadOptions(Element parent, String version) {
 		setDoAutoLayout(PersistHelper.getElementBooleanValue(parent, LayoutTags.AUTOLAYOUT));
 		setDoAntiAliasing(PersistHelper.getElementBooleanValue(parent, LayoutTags.ANTIALIASING));
 		setShowAssocNames(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWASSOCNAMES));

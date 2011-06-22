@@ -36,10 +36,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
-import org.tzi.use.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -51,14 +51,14 @@ import org.w3c.dom.Element;
  */
 @SuppressWarnings("serial")
 public class ActionSaveLayout extends AbstractAction {
-	private static String LAST_PATH = "";
-	
-	private JFileChooser fChooser;
+
     private String fTitle = "";
     private String fAppendix = "";
     private DiagramOptions fOpt;
     
     private LayoutInfos fLayoutInfos;
+
+    private File lastFile = null;
     
     public ActionSaveLayout( String title, String appendix, DiagramOptions opt, Properties properties) {
         super("Save layout...");
@@ -78,22 +78,23 @@ public class ActionSaveLayout extends AbstractAction {
     
     public void actionPerformed(ActionEvent e) {        
         int option = JOptionPane.YES_OPTION;
+
+		JFileChooser fChooser = new JFileChooser(Options.getLastDirectory());
+		ExtFileFilter filter = new ExtFileFilter(fAppendix, fTitle);
+		fChooser.addChoosableFileFilter(filter);
+		fChooser.setDialogTitle("Save layout");
         
-        File f = null;
+        if (lastFile != null && lastFile.exists()
+				&& lastFile.getParent().equals(Options.getLastDirectory())) {
+			fChooser.setSelectedFile(lastFile);
+		}
+        
         do {
-            // reuse chooser if possible
-            if (fChooser == null) {
-                fChooser = new JFileChooser(ActionSaveLayout.LAST_PATH);
-                ExtFileFilter filter = 
-                    new ExtFileFilter( fAppendix, fTitle );
-                fChooser.addChoosableFileFilter(filter);
-                fChooser.setDialogTitle("Save layout");
-            }
             int returnVal = fChooser.showSaveDialog( new JPanel() );
             if (returnVal != JFileChooser.APPROVE_OPTION)
                 return;
 
-            ActionSaveLayout.LAST_PATH = fChooser.getCurrentDirectory().toString();
+            Options.setLastDirectory(fChooser.getCurrentDirectory().toString());
             String filename = fChooser.getSelectedFile().getName();
 
             // if file does not have the appendix .olt or .clt at the appendix
@@ -105,12 +106,11 @@ public class ActionSaveLayout extends AbstractAction {
                 filename += "." + fAppendix;
             }
 
-            f = new File(ActionSaveLayout.LAST_PATH, filename);
-            Log.verbose("File " + f);
-
-            if (f.exists()) {
+            lastFile = new File(Options.getLastDirectory(), filename);
+            
+            if (lastFile.exists()) {
                 option = JOptionPane.showConfirmDialog(new JPanel(),
-                        "Overwrite existing file " + f + "?",
+                        "Overwrite existing file " + lastFile + "?",
                         "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
                 if (option == JOptionPane.CANCEL_OPTION) {
                     return;
@@ -180,7 +180,7 @@ public class ActionSaveLayout extends AbstractAction {
         XMLSerializer serializer = new XMLSerializer(format);
         
         try {
-			serializer.setOutputCharStream(new java.io.FileWriter(f));
+			serializer.setOutputCharStream(new java.io.FileWriter(lastFile));
 			serializer.serialize(doc);
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(fChooser, e1.getMessage());

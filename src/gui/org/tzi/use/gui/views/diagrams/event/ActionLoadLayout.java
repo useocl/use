@@ -29,11 +29,11 @@ import java.io.PrintWriter;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
@@ -53,14 +53,14 @@ import org.xml.sax.SAXException;
  */
 @SuppressWarnings("serial")
 public class ActionLoadLayout extends AbstractAction {
-    
-	private static String LAST_PATH = "";
-	private JFileChooser fChooser;
+	
     private String fTitle = "";
     private String fAppendix = "";
     private DiagramView fDiagram;
     private HideAdministration fHideAdmin;
     private LayoutInfos fLayoutInfos;
+    
+    private File lastFile = null;
     
     public ActionLoadLayout( String title, String appendix, DiagramView diagram,
                              PrintWriter log, DiagramOptions opt, 
@@ -87,18 +87,25 @@ public class ActionLoadLayout extends AbstractAction {
     
     public void actionPerformed(ActionEvent e) {
         // reuse chooser if possible
-        if (fChooser == null) {
-            fChooser = new JFileChooser(ActionLoadLayout.LAST_PATH);
-            ExtFileFilter filter = new ExtFileFilter( fAppendix, fTitle );
-            fChooser.addChoosableFileFilter(filter);
-            fChooser.setDialogTitle("Load layout");
-        }
-        int returnVal = fChooser.showOpenDialog( new JPanel() );
+    	JFileChooser fileChooser;
+    	
+        fileChooser = new JFileChooser(Options.getLastDirectory());
+        
+        ExtFileFilter filter = new ExtFileFilter( fAppendix, fTitle );
+        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.setDialogTitle("Load layout");
+        
+		if (lastFile != null && lastFile.exists()
+				&& lastFile.getParent().equals(Options.getLastDirectory())) {
+			fileChooser.setSelectedFile(lastFile);
+		}
+        
+        int returnVal = fileChooser.showOpenDialog( fDiagram );
         if (returnVal != JFileChooser.APPROVE_OPTION)
             return;
 
-        ActionLoadLayout.LAST_PATH = fChooser.getCurrentDirectory().toString();
-        File f = fChooser.getSelectedFile();
+        Options.setLastDirectory(fileChooser.getCurrentDirectory().toString());
+        lastFile = fileChooser.getSelectedFile();
         
         // show all hidden nodes and edges. This is necessary, if 
         // nodes are hidden but a layout will be loaded which 
@@ -115,23 +122,28 @@ public class ActionLoadLayout extends AbstractAction {
         
         try {
         	docBuilder = fact.newDocumentBuilder();
-			doc = docBuilder.parse(f);
+			doc = docBuilder.parse(lastFile);
 		} catch (ParserConfigurationException e1) {
-			JOptionPane.showMessageDialog(fChooser, e1.getMessage());
+			JOptionPane.showMessageDialog(fileChooser, e1.getMessage());
 			return;
 		} catch (SAXException e1) {
-			JOptionPane.showMessageDialog(fChooser, e1.getMessage());
+			JOptionPane.showMessageDialog(fileChooser, e1.getMessage());
 			return;
 		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(fChooser, e1.getMessage());
+			JOptionPane.showMessageDialog(fileChooser, e1.getMessage());
 			return;
 		}
 		
 		Element rootElement = (Element)doc.getDocumentElement();
-		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);
-		fLayoutInfos.getOpt().loadOptions(layoutElement);
+		String version = "1";
 		
-		fDiagram.restorePositionData(rootElement);
+		if (rootElement.hasAttribute("version"))
+			version = rootElement.getAttribute("version");
+		
+		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);
+		fLayoutInfos.getOpt().loadOptions(layoutElement, version);
+		
+		fDiagram.restorePositionData(rootElement, version);
         fDiagram.invalidateContent();
     }
  

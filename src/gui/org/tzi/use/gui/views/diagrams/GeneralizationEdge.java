@@ -36,9 +36,9 @@ import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
  */
 public final class GeneralizationEdge extends EdgeBase {
 
-    public GeneralizationEdge( ClassNode source, ClassNode target, 
+    public GeneralizationEdge( ClassNode child, ClassNode parent, 
                                DiagramView diagram ) {
-        super( source, target, "Inheritance", diagram );
+        super( child, parent, "Inheritance", diagram );
     }
 
     @Override
@@ -94,5 +94,5 @@ public final class GeneralizationEdge extends EdgeBase {
     }
 
     @Override
-    protected String storeGetType() { return "Generalization"; }
+    protected String getStoreType() { return "Generalization"; }
 }
