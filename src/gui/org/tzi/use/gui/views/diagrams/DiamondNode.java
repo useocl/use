@@ -34,6 +34,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * A pseude-node representing a diamond in an n-ary association.
@@ -179,19 +180,33 @@ public class DiamondNode extends NodeBase {
     }
     
     @Override
-    public void storeAdditionalInfo( Element nodeElement, boolean hidden ) {
+    public void storeAdditionalInfo( PersistHelper helper, Element nodeElement, boolean hidden ) {
                 
         for(String nodeName : fConnectedNodes ) {
-            PersistHelper.appendChild(nodeElement, LayoutTags.CON_NODE, nodeName);
+        	helper.appendChild( nodeElement, LayoutTags.CON_NODE, nodeName);
         }
 
-        fAssocName.storePlacementInfo( nodeElement, hidden );
+        fAssocName.storePlacementInfo( helper, nodeElement, hidden );
     
         if ( fHalfEdges != null ) {
             for (EdgeBase e : fHalfEdges) {
-            	e.storePlacementInfo(nodeElement, hidden);
+            	e.storePlacementInfo( helper, nodeElement, hidden);
             }
         }
     }
 
+    @Override
+    public void restoreAdditionalInfo( PersistHelper helper, Element nodeElement, String version ) {
+    	// Restore association name
+    	NodeList childs = helper.getChildElementsByTagName(nodeElement, LayoutTags.EDGEPROPERTY);
+    	
+    	Element assocNameElement = (Element)childs.item(0);
+    	fAssocName.restorePlacementInfo(helper, assocNameElement, version);
+
+        if ( fHalfEdges != null ) {
+            for (EdgeBase e : fHalfEdges) {
+            	//e.storePlacementInfo(nodeElement, hidden);
+            }
+        }
+    }
 }

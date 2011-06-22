@@ -502,14 +502,14 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * has to be stored
      * @param nodeElement
      */
-    protected void storeAdditionalInfo( Element nodeElement, boolean hidden) {}
+    protected void storeAdditionalInfo( PersistHelper helper, Element nodeElement, boolean hidden) {}
     
     /**
      * Saves placement information about this placeable node.
      * @param hidden If this node should be hidden or not.
      * @return A XML representation of the layout information.
      */
-    public final void storePlacementInfo( Element parent, boolean hidden ) {
+    public final void storePlacementInfo( PersistHelper helper, Element parent, boolean hidden ) {
         Document doc = parent.getOwnerDocument();
         
         Element nodeElement = doc.createElement(this.getStoreElementName());
@@ -520,22 +520,22 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
         	nodeElement.setAttribute("kind", kind);
         }
         
-        PersistHelper.appendChild(nodeElement, LayoutTags.NAME, name());
+        helper.appendChild(nodeElement, LayoutTags.NAME, name());
         //FIXME: Was center!
-        PersistHelper.appendChild(nodeElement, LayoutTags.X_COORD, String.valueOf(getPosition().getX()));
-        PersistHelper.appendChild(nodeElement, LayoutTags.Y_COORD, String.valueOf(getPosition().getY()));
-        PersistHelper.appendChild(nodeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
+        helper.appendChild(nodeElement, LayoutTags.X_COORD, String.valueOf(getPosition().getX()));
+        helper.appendChild(nodeElement, LayoutTags.Y_COORD, String.valueOf(getPosition().getY()));
+        helper.appendChild(nodeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
                
-        storeAdditionalInfo(nodeElement, hidden);
+        storeAdditionalInfo(helper, nodeElement, hidden);
         
         parent.appendChild(nodeElement);
     }
     
-    public final void restorePlacementInfo(Element nodeElement, String version) {
-    	setX( PersistHelper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD) );
-    	setY( PersistHelper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD) );
-    	restoreAdditionalInfo(nodeElement, version);
+    public final void restorePlacementInfo( PersistHelper helper, Element nodeElement, String version) {
+    	setX( helper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD) );
+    	setY( helper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD) );
+    	restoreAdditionalInfo(helper, nodeElement, version);
     }
     
-    protected void restoreAdditionalInfo(Element nodeElement, String version) { }
+    protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) { }
 }

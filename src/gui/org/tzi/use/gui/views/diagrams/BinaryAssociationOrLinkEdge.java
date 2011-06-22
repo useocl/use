@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
@@ -798,19 +799,19 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     protected String getStoreType() { return "BinaryEdge"; }
     
     @Override
-    protected void restoreEdgeProperty( Element propertyElement, String type, String version) {
+    protected void restoreEdgeProperty( PersistHelper helper, Element propertyElement, String type, String version) {
     	// Handles target edge property and association name
-    	super.restoreEdgeProperty(propertyElement, type, version);
+    	super.restoreEdgeProperty(helper, propertyElement, type, version);
     	
     	if (type.equals(LayoutTags.ROLENAME)) {
     		String kind = propertyElement.getAttribute("kind");
     		if (kind.equals(LayoutTags.SOURCE)) {
-    			fSourceRolename.restorePlacementInfo(propertyElement, version);
+    			fSourceRolename.restorePlacementInfo(helper, propertyElement, version);
     		}
     	} else if (type.equals(LayoutTags.MULTIPLICITY)) {
     		String kind = propertyElement.getAttribute("kind");
     		if (kind.equals(LayoutTags.SOURCE)) {
-    			fSourceMultiplicity.restorePlacementInfo(propertyElement, version);
+    			fSourceMultiplicity.restorePlacementInfo(helper, propertyElement, version);
     		}
     	}
     }

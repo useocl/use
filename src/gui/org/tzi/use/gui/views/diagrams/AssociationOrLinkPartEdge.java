@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
@@ -284,19 +285,19 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
     protected String getStoreType() { return "HalfEdge"; }
     
     @Override
-    protected void restoreEdgeProperty (Element propertyElement, String type, String version) {
+    protected void restoreEdgeProperty ( PersistHelper helper, Element propertyElement, String type, String version) {
     	
     	if (type.equals(LayoutTags.ASSOCNAME)) {
-    		fAssocName.restorePlacementInfo(propertyElement, version);
+    		fAssocName.restorePlacementInfo(helper, propertyElement, version);
     	} else if (type.equals(LayoutTags.ROLENAME)) {
     		String kind = propertyElement.getAttribute("kind");
     		if (kind.equals(LayoutTags.TARGET)) {
-    			fTargetRolename.restorePlacementInfo(propertyElement, version);
+    			fTargetRolename.restorePlacementInfo(helper, propertyElement, version);
     		}
     	} else if (type.equals(LayoutTags.MULTIPLICITY)) {
     		String kind = propertyElement.getAttribute("kind");
     		if (kind.equals(LayoutTags.TARGET)) {
-    			fTargetMultiplicity.restorePlacementInfo(propertyElement, version);
+    			fTargetMultiplicity.restorePlacementInfo(helper, propertyElement, version);
     		}
     	}
     	

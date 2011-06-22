@@ -38,6 +38,7 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.ExtFileFilter;
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.w3c.dom.Document;
@@ -133,15 +134,16 @@ public class ActionSaveLayout extends AbstractAction {
 			return;
 		}
        		
+		PersistHelper helper = new PersistHelper();
 		Element rootElement = doc.createElement("diagram_Layout");
 		rootElement.setAttribute("version", "2");
 		doc.appendChild(rootElement);
 				
 		Element optionsElement = doc.createElement("diagramOptions");
 		rootElement.appendChild(optionsElement);
-		fOpt.saveOptions(optionsElement);
+		fOpt.saveOptions(helper, optionsElement);
 
-		fLayoutInfos.getDiagram().storePlacementInfos( rootElement );
+		fLayoutInfos.getDiagram().storePlacementInfos( helper, rootElement );
 		
 		/*
         // store node positions in property object

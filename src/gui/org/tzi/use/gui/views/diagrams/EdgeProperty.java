@@ -34,6 +34,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
@@ -333,12 +334,12 @@ public abstract class EdgeProperty extends PlaceableNode {
 	protected String getStoreElementName() { return LayoutTags.EDGEPROPERTY; }
 	
 	@Override
-	protected void storeAdditionalInfo(Element nodeElement, boolean hidden) {
+	protected void storeAdditionalInfo(PersistHelper helper, Element nodeElement, boolean hidden) {
 		nodeElement.setAttribute("userDefined", String.valueOf(isUserDefined()));
 	}
 	
 	@Override
-	protected void restoreAdditionalInfo(Element nodeElement, String version) {
+	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) {
 		if (version.equals("1")) {
 			this.isUserDefined = (this.getX() == -1 && this.getY() == -1);
 		} else {

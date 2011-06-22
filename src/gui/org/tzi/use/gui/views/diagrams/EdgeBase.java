@@ -728,7 +728,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
      * @param hidden If this edge should be hidden or not.
      * @return A XML representation of the layout information.
      */
-    public final void storePlacementInfo( Element parent, boolean hidden ) {
+    public final void storePlacementInfo( PersistHelper helper, Element parent, boolean hidden ) {
         
     	Element edgeElement = parent.getOwnerDocument().createElement(LayoutTags.EDGE);
     	parent.appendChild(edgeElement);
@@ -739,42 +739,42 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
         	edgeElement.setAttribute("kind", kind);
         }
         
-        PersistHelper.appendChild(edgeElement, LayoutTags.SOURCE, fSource.name());
-        PersistHelper.appendChild(edgeElement, LayoutTags.TARGET, fTarget.name());
-        PersistHelper.appendChild(edgeElement, LayoutTags.NAME, fEdgeName);
+        helper.appendChild(edgeElement, LayoutTags.SOURCE, fSource.name());
+        helper.appendChild(edgeElement, LayoutTags.TARGET, fTarget.name());
+        helper.appendChild(edgeElement, LayoutTags.NAME, fEdgeName);
                 
         for (EdgeProperty prop : getProperties()) {
-        	prop.storePlacementInfo(edgeElement, hidden);
+        	prop.storePlacementInfo(helper, edgeElement, hidden);
         }
 
         for (WayPoint n : fWayPoints) {
-            n.storePlacementInfo( edgeElement, hidden );
+            n.storePlacementInfo(helper, edgeElement, hidden );
         }
 
-        PersistHelper.appendChild(edgeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
+        helper.appendChild(edgeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
     }
     
-    protected void restoreEdgeProperty(Element propertyElement, String type, String version) {}
+    protected void restoreEdgeProperty(PersistHelper helper, Element propertyElement, String type, String version) {}
     
-    protected void restoreWayPoint(Element wayPointElement, String version) {
+    protected void restoreWayPoint(PersistHelper helper, Element wayPointElement, String version) {
     	// Handle only source, target and user defined way points
-		int specialId = Integer.valueOf(PersistHelper.getElementStringValue(
+		int specialId = Integer.valueOf(helper.getElementStringValue(
 				wayPointElement, LayoutTags.SPECIALID));
     	
 		WayPointType type = WayPointType.getById(specialId);
 		if (type.equals(WayPointType.SOURCE)) {
-			fSourceWayPoint.restorePlacementInfo(wayPointElement, version);
+			fSourceWayPoint.restorePlacementInfo(helper, wayPointElement, version);
 		} else if (type.equals(WayPointType.TARGET)) {
-			fTargetWayPoint.restorePlacementInfo(wayPointElement, version);
+			fTargetWayPoint.restorePlacementInfo(helper, wayPointElement, version);
 		} else if (type.equals(WayPointType.USER)) {
 			WayPoint userWp = new WayPoint(fSource, fTarget, this, fWayPoints.size() + 1, type, fEdgeName, fOpt);
 			fWayPoints.add(fWayPoints.size() - 1, userWp);
-			userWp.restorePlacementInfo(wayPointElement, version);
+			userWp.restorePlacementInfo(helper, wayPointElement, version);
 		}
     }
     
-    public final void restorePlacementInfo( Element parent, String version ) {
-    	NodeList elements = parent.getElementsByTagName(LayoutTags.EDGEPROPERTY);
+    public final void restorePlacementInfo( PersistHelper helper, Element parent, String version ) {
+    	NodeList elements = helper.getChildElementsByTagName(parent, LayoutTags.EDGEPROPERTY);
     	
     	for (int i = 0; i < elements.getLength(); ++i) {
     		Element propertyElement = (Element)elements.item(i);
@@ -782,16 +782,10 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     		
     		if (version.equals("1") && type.equals("NodeOnEdge") ||
     			version.equals("2") && type.equals("WayPoint")) {
-    			restoreWayPoint(propertyElement, version);
+    			restoreWayPoint(helper, propertyElement, version);
     		} else {
-    			restoreEdgeProperty(propertyElement, type, version);
+    			restoreEdgeProperty(helper, propertyElement, type, version);
     		}
     	}
-    	
-    	/*
-        for (WayPoint n : fWayPoints) {
-            n.storePlacementInfo( edgeElement, hidden );
-        }
-        */
     }
 }

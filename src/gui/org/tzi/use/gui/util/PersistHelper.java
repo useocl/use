@@ -21,14 +21,26 @@
 
 package org.tzi.use.gui.util;
 
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.tzi.use.util.Log;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Provides easy to use XML methods
  * @author lhamann
- *
  */
 public class PersistHelper {
+	
+	XPathFactory factory = XPathFactory.newInstance();
+	
+	public PersistHelper() { }
+	
 	/**
 	 * Appends a child element to <code>parent</code> with the
 	 * given name and a text element with the value given by <code>value</code>
@@ -36,22 +48,36 @@ public class PersistHelper {
 	 * @parem value
 	 * @return
 	 */
-	public static Element appendChild(Element parent, String tagName, String value) {
+	public Element appendChild(Element parent, String tagName, String value) {
 		Element e = parent.getOwnerDocument().createElement(tagName);
         e.appendChild(parent.getOwnerDocument().createTextNode(value));
         parent.appendChild(e);
         return e;
 	}
 	
-	public static String getElementStringValue(Element parent, String childName) {
-		return parent.getElementsByTagName(childName).item(0).getChildNodes().item(0).getNodeValue();
+	public String getElementStringValue(Element parent, String childName) {
+		return (String)evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.STRING);
 	}
 	
-	public static boolean getElementBooleanValue(Element parent, String childName) {
-		return Boolean.valueOf(parent.getElementsByTagName(childName).item(0).getChildNodes().item(0).getNodeValue());
+	public boolean getElementBooleanValue(Element parent, String childName) {
+		return Boolean.valueOf((String)evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.STRING));
 	}
 	
-	public static double getElementDoubleValue(Element parent, String childName) {
-		return Double.valueOf(parent.getElementsByTagName(childName).item(0).getChildNodes().item(0).getNodeValue());
+	public double getElementDoubleValue(Element parent, String childName) {
+		return (Double)evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.NUMBER);
+	}
+	
+	public NodeList getChildElementsByTagName( Element parent, String childName) {
+		return (NodeList)evaluateXPathSave(parent, "./" + childName, XPathConstants.NODESET);
+	}
+	
+	public Object evaluateXPathSave( Element currentElement, String xpathExpr, QName resultType) {
+		XPath xpath = factory.newXPath();
+		try {
+			return xpath.evaluate(xpathExpr, currentElement, resultType);
+		} catch (XPathExpressionException e) {
+			Log.error("Invalid XPath expression: " + xpathExpr);
+			return null;
+		}
 	}
 }

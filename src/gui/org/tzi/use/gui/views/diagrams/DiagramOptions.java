@@ -146,26 +146,26 @@ public abstract class DiagramOptions {
 	/**
 	 * @param optionsElement
 	 */
-	public void saveOptions(Element parent) {
+	public void saveOptions(PersistHelper helper, Element parent) {
 		// save diagram options
-		PersistHelper.appendChild(parent, LayoutTags.AUTOLAYOUT, String.valueOf(isDoAutoLayout()));
-		PersistHelper.appendChild(parent, LayoutTags.ANTIALIASING, String.valueOf(isDoAntiAliasing()));
-		PersistHelper.appendChild(parent, LayoutTags.SHOWASSOCNAMES, String.valueOf(isShowAssocNames()));
-		PersistHelper.appendChild(parent, LayoutTags.SHOWATTRIBUTES, String.valueOf(isShowAttributes()));        
-		PersistHelper.appendChild(parent, LayoutTags.SHOWMULTIPLICITIES, String.valueOf(isShowMutliplicities()));
-		PersistHelper.appendChild(parent, LayoutTags.SHOWOPERATIONS, String.valueOf(isShowOperations()));
-		PersistHelper.appendChild(parent, LayoutTags.SHOWROLENAMES, String.valueOf(isShowRolenames()));
+		helper.appendChild(parent, LayoutTags.AUTOLAYOUT, String.valueOf(isDoAutoLayout()));
+		helper.appendChild(parent, LayoutTags.ANTIALIASING, String.valueOf(isDoAntiAliasing()));
+		helper.appendChild(parent, LayoutTags.SHOWASSOCNAMES, String.valueOf(isShowAssocNames()));
+		helper.appendChild(parent, LayoutTags.SHOWATTRIBUTES, String.valueOf(isShowAttributes()));        
+		helper.appendChild(parent, LayoutTags.SHOWMULTIPLICITIES, String.valueOf(isShowMutliplicities()));
+		helper.appendChild(parent, LayoutTags.SHOWOPERATIONS, String.valueOf(isShowOperations()));
+		helper.appendChild(parent, LayoutTags.SHOWROLENAMES, String.valueOf(isShowRolenames()));
 	}
 	/**
 	 * @param rootElement
 	 */
-	public void loadOptions(Element parent, String version) {
-		setDoAutoLayout(PersistHelper.getElementBooleanValue(parent, LayoutTags.AUTOLAYOUT));
-		setDoAntiAliasing(PersistHelper.getElementBooleanValue(parent, LayoutTags.ANTIALIASING));
-		setShowAssocNames(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWASSOCNAMES));
-		setShowAttributes(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWATTRIBUTES));
-		setShowMutliplicities(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWMULTIPLICITIES));
-		setShowOperations(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWOPERATIONS));
-		setShowRolenames(PersistHelper.getElementBooleanValue(parent, LayoutTags.SHOWROLENAMES));
+	public void loadOptions(PersistHelper helper, Element parent, String version) {
+		setDoAutoLayout(helper.getElementBooleanValue(parent, LayoutTags.AUTOLAYOUT));
+		setDoAntiAliasing(helper.getElementBooleanValue(parent, LayoutTags.ANTIALIASING));
+		setShowAssocNames(helper.getElementBooleanValue(parent, LayoutTags.SHOWASSOCNAMES));
+		setShowAttributes(helper.getElementBooleanValue(parent, LayoutTags.SHOWATTRIBUTES));
+		setShowMutliplicities(helper.getElementBooleanValue(parent, LayoutTags.SHOWMULTIPLICITIES));
+		setShowOperations(helper.getElementBooleanValue(parent, LayoutTags.SHOWOPERATIONS));
+		setShowRolenames(helper.getElementBooleanValue(parent, LayoutTags.SHOWROLENAMES));
 	}
 }

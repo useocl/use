@@ -45,6 +45,7 @@ import javax.swing.JPopupMenu;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.graphlayout.SpringLayout;
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
@@ -565,10 +566,10 @@ public abstract class DiagramView extends JPanel
 	 * Stores the placement info inside of the given element
 	 * @param rootElement
 	 */
-	public abstract void storePlacementInfos(Element rootElement);
+	public abstract void storePlacementInfos(PersistHelper helper, Element rootElement);
 
 	/**
 	 * @param rootElement
 	 */
-	public abstract void restorePositionData(Element rootElement, String version);
+	public abstract void restorePositionData(PersistHelper helper, Element rootElement, String version);
 }

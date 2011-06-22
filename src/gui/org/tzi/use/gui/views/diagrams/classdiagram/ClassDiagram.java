@@ -44,6 +44,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.xml.xpath.XPathConstants;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraphBase;
@@ -1009,33 +1010,33 @@ public class ClassDiagram extends DiagramView
     }
     
     @Override
-    public void storePlacementInfos(Element parent) {
-    	storePlacementInfos(parent, true);
-    	storePlacementInfos(parent, false);
+    public void storePlacementInfos(PersistHelper helper, Element parent) {
+    	storePlacementInfos(helper, parent, true);
+    	storePlacementInfos(helper, parent, false);
     }
     
-    protected void storePlacementInfos(Element parent, boolean visible) {
+    protected void storePlacementInfos(PersistHelper helper, Element parent, boolean visible) {
     	ClassDiagramData data = (visible ? visibleData : hiddenData);
     	
     	// store node positions in property object
         for (ClassNode n : data.fClassToNodeMap.values()) {
-            n.storePlacementInfo( parent, !visible );
+            n.storePlacementInfo( helper, parent, !visible );
         }
 
         for (EnumNode n : data.fEnumToNodeMap.values()) {
-            n.storePlacementInfo( parent, !visible );
+            n.storePlacementInfo( helper, parent, !visible );
         }
         
         for (DiamondNode n : data.fNaryAssocToDiamondNodeMap.values()) {
-        	n.storePlacementInfo(parent, !visible );
+        	n.storePlacementInfo( helper, parent, !visible );
         }
 
         for (BinaryAssociationOrLinkEdge e : data.fBinaryAssocToEdgeMap.values()) {
-        	e.storePlacementInfo(parent, !visible);
+        	e.storePlacementInfo( helper, parent, !visible );
         }
         
         for (GeneralizationEdge e : data.fGenToGeneralizationEdge.values()) {
-        	e.storePlacementInfo(parent, !visible);
+        	e.storePlacementInfo( helper, parent, !visible );
         }
         /*
         // store EdgePropertie positions in property object
@@ -1055,86 +1056,103 @@ public class ClassDiagram extends DiagramView
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
 	 */
 	@Override
-	public void restorePositionData(Element rootElement, String version) {
+	public void restorePositionData(PersistHelper helper, Element rootElement, String version) {
 		Set<MClassifier> hiddenClassifier = new HashSet<MClassifier>();
 				
-		// Restore nodes
-		NodeList elements = rootElement.getElementsByTagName(LayoutTags.NODE);
+		// Restore class nodes
+		NodeList elements = (NodeList) helper.evaluateXPathSave(rootElement,
+				"./" + LayoutTags.NODE + "[@type='Class']",
+				XPathConstants.NODESET);
+		
 		for (int i = 0; i < elements.getLength(); ++i) {
+			Element nodeElement = (Element)elements.item(i);			
+			String name = helper.getElementStringValue(nodeElement, "name");
+			MClass cls = fParent.system().model().getClass(name);
+			// Could be deleted
+			if (cls != null) {
+				ClassNode node = visibleData.fClassToNodeMap.get(cls);
+				node.restorePlacementInfo(helper, nodeElement, version);
+				if (isHidden(helper, nodeElement, version)) hiddenClassifier.add(cls);
+			}
+		}
+		
+		// Restore enum nodes
+		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
+				+ LayoutTags.NODE + "[@type='Enumeration']",
+				XPathConstants.NODESET);
+		
+		for (int i = 0; i < elements.getLength(); ++i) {		
 			Element nodeElement = (Element)elements.item(i);
-			String type = nodeElement.getAttribute("type");
-			
-			if (type.equals("Class")) {
-				String name = PersistHelper.getElementStringValue(nodeElement, "name");
-				MClass cls = fParent.system().model().getClass(name);
-				// Could be deleted
-				if (cls != null) {
-					ClassNode node = visibleData.fClassToNodeMap.get(cls);
-					node.restorePlacementInfo(nodeElement, version);
-					if (isHidden(nodeElement, version)) hiddenClassifier.add(cls);
-				}
-			} else if (type.equals("Enumeration")) {
-				String name = PersistHelper.getElementStringValue(nodeElement, "name");
-				EnumType enumType = fParent.system().model().enumType(name);
-				// Could be deleted
-				if (enumType != null) {
-					EnumNode node = visibleData.fEnumToNodeMap.get(enumType);
-					node.restorePlacementInfo(nodeElement, version);
-					if (isHidden(nodeElement, version)) hiddenClassifier.add(enumType);
-				}
-			} else if (type.equals("DiamondNode")) {
-				String name = PersistHelper.getElementStringValue(nodeElement, "name");
-				MAssociation assoc = fParent.system().model().getAssociation(name);
-				// Could be deleted
-				if (assoc != null) {
-					DiamondNode node = visibleData.fNaryAssocToDiamondNodeMap.get(assoc);
-					node.restorePlacementInfo(nodeElement, version);
-				}
+			String name = helper.getElementStringValue(nodeElement, "name");
+			EnumType enumType = fParent.system().model().enumType(name);
+			// Could be deleted
+			if (enumType != null) {
+				EnumNode node = visibleData.fEnumToNodeMap.get(enumType);
+				node.restorePlacementInfo(helper, nodeElement, version);
+				if (isHidden(helper, nodeElement, version)) hiddenClassifier.add(enumType);
+			}
+		}
+		
+		// Restore diamond nodes
+		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
+				+ LayoutTags.NODE + "[@type='DiamondNode']",
+				XPathConstants.NODESET);
+		
+		for (int i = 0; i < elements.getLength(); ++i) {		
+			Element nodeElement = (Element)elements.item(i);
+			String name = helper.getElementStringValue(nodeElement, "name");
+			MAssociation assoc = fParent.system().model().getAssociation(name);
+			// Could be deleted
+			if (assoc != null) {
+				DiamondNode node = visibleData.fNaryAssocToDiamondNodeMap.get(assoc);
+				node.restorePlacementInfo(helper, nodeElement, version);
 			}   
 		}
 		
 		// Restore edges
-		elements = rootElement.getElementsByTagName(LayoutTags.EDGE);
+		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
+				+ LayoutTags.EDGE + "[@type='BinaryEdge']",
+				XPathConstants.NODESET);
+		
 		for (int i = 0; i < elements.getLength(); ++i) {
 			Element edgeElement = (Element)elements.item(i);
-			String type = edgeElement.getAttribute("type");
 			
-			if (type.equals("BinaryEdge")) {
-				String name = PersistHelper.getElementStringValue(edgeElement, "name");
-				MAssociation assoc = fParent.system().model().getAssociation(name);
-				// Could be deleted
-				if (assoc != null) {
-					BinaryAssociationOrLinkEdge edge = visibleData.fBinaryAssocToEdgeMap.get(assoc);
-					edge.restorePlacementInfo(edgeElement, version);
-				}
-			} else if (type.equals("Generalization")) {
-				String source = PersistHelper.getElementStringValue(edgeElement, LayoutTags.SOURCE);
-				String target = PersistHelper.getElementStringValue(edgeElement, LayoutTags.TARGET);
-				
-				MClass child = fParent.system().model().getClass(source);
-				MClass parent = fParent.system().model().getClass(target);
-				
-				if (child != null && parent != null) {
-					Set<MGeneralization> genSet = fParent.system().model().generalizationGraph().edgesBetween(child, parent);
-					if (!genSet.isEmpty()) {
-						MGeneralization gen = genSet.iterator().next();
-						GeneralizationEdge edge = visibleData.fGenToGeneralizationEdge.get(gen);
-						edge.restorePlacementInfo(edgeElement, version);
-					}
-				}
-			} /*else if (type.equals("DiamondNode")) {
-				String name = PersistHelper.getElementStringValue(nodeElement, "name");
-				MAssociation assoc = fParent.system().model().getAssociation(name);
-				DiamondNode node = visibleData.fNaryAssocToDiamondNodeMap.get(assoc);
-				node.restorePlacementInfo(nodeElement, version);
-			} */ 
+			String name = helper.getElementStringValue(edgeElement, "name");
+			MAssociation assoc = fParent.system().model().getAssociation(name);
+			// Could be deleted
+			if (assoc != null) {
+				BinaryAssociationOrLinkEdge edge = visibleData.fBinaryAssocToEdgeMap.get(assoc);
+				edge.restorePlacementInfo(helper, edgeElement, version);
+			}
 		}
 		
+		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
+				+ LayoutTags.EDGE + "[@type='Generalization']",
+				XPathConstants.NODESET);
+		
+		for (int i = 0; i < elements.getLength(); ++i) {
+			Element edgeElement = (Element)elements.item(i);
+			String source = helper.getElementStringValue(edgeElement, LayoutTags.SOURCE);
+			String target = helper.getElementStringValue(edgeElement, LayoutTags.TARGET);
+				
+			MClass child = fParent.system().model().getClass(source);
+			MClass parent = fParent.system().model().getClass(target);
+			
+			if (child != null && parent != null) {
+				Set<MGeneralization> genSet = fParent.system().model().generalizationGraph().edgesBetween(child, parent);
+				if (!genSet.isEmpty()) {
+					MGeneralization gen = genSet.iterator().next();
+					GeneralizationEdge edge = visibleData.fGenToGeneralizationEdge.get(gen);
+					edge.restorePlacementInfo(helper, edgeElement, version);
+				}
+			}
+		}
+
 		// Hide elements
 		hideElementsInDiagram(hiddenClassifier);
 	}
 	
-	protected boolean isHidden(Element element, String version) {
-		return PersistHelper.getElementBooleanValue(element, LayoutTags.HIDDEN);
+	protected boolean isHidden(PersistHelper helper, Element element, String version) {
+		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
 	}
 }

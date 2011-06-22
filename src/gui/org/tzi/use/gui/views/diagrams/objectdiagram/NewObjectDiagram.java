@@ -62,6 +62,7 @@ import javax.swing.border.Border;
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.AssociationName;
@@ -1250,15 +1251,15 @@ public class NewObjectDiagram extends DiagramView
 	}
 	
 	@Override
-	public void storePlacementInfos(Element root) {
-		storePlacementInfos(root, true);
-		storePlacementInfos(root, false);
+	public void storePlacementInfos(PersistHelper helper, Element root) {
+		storePlacementInfos(helper, root, true);
+		storePlacementInfos(helper, root, false);
 	}
 	
-	protected void storePlacementInfos(Element root, boolean visible) {
+	protected void storePlacementInfos(PersistHelper helper, Element root, boolean visible) {
 		ObjectDiagramData data = (visible ? visibleData : hiddenData);
 		for (ObjectNode n : data.fObjectToNodeMap.values()) {
-			n.storePlacementInfo(root, !visible);
+			n.storePlacementInfo(helper, root, !visible);
 		}
 	}
 
@@ -1266,7 +1267,7 @@ public class NewObjectDiagram extends DiagramView
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
 	 */
 	@Override
-	public void restorePositionData(Element rootElement, String version) {
+	public void restorePositionData(PersistHelper helper, Element rootElement, String version) {
 		// TODO Auto-generated method stub
 		
 	}

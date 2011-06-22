@@ -216,15 +216,15 @@ public class WayPoint extends EdgeProperty {
     }
     
     @Override
-    protected void storeAdditionalInfo( Element nodeElement, boolean hidden ) {
-    	super.storeAdditionalInfo(nodeElement, hidden);
-    	PersistHelper.appendChild(nodeElement, LayoutTags.ID, String.valueOf(getID()));
-    	PersistHelper.appendChild(nodeElement, LayoutTags.SPECIALID, String.valueOf(getSpecialID().getId()));
+    protected void storeAdditionalInfo(PersistHelper helper, Element nodeElement, boolean hidden ) {
+    	super.storeAdditionalInfo(helper, nodeElement, hidden);
+    	helper.appendChild(nodeElement, LayoutTags.ID, String.valueOf(getID()));
+    	helper.appendChild(nodeElement, LayoutTags.SPECIALID, String.valueOf(getSpecialID().getId()));
     }
     
     @Override
-    protected void restoreAdditionalInfo( Element nodeElement, String version ) {
-    	super.restoreAdditionalInfo(nodeElement, version);
+    protected void restoreAdditionalInfo( PersistHelper helper, Element nodeElement, String version ) {
+    	super.restoreAdditionalInfo(helper, nodeElement, version);
     	if (isUserDefined()) {
     		fX_UserDefined = getX();
     		fY_UserDefined = getY();

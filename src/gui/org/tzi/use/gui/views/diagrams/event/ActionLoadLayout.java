@@ -36,6 +36,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.ExtFileFilter;
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
@@ -140,10 +141,11 @@ public class ActionLoadLayout extends AbstractAction {
 		if (rootElement.hasAttribute("version"))
 			version = rootElement.getAttribute("version");
 		
+		PersistHelper helper = new PersistHelper();
 		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);
-		fLayoutInfos.getOpt().loadOptions(layoutElement, version);
+		fLayoutInfos.getOpt().loadOptions(helper, layoutElement, version);
 		
-		fDiagram.restorePositionData(rootElement, version);
+		fDiagram.restorePositionData(helper, rootElement, version);
         fDiagram.invalidateContent();
     }
  
