@@ -756,6 +756,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     
     protected void restoreEdgeProperty(PersistHelper helper, Element propertyElement, String type, String version) {}
     
+    protected void restoreAdditionalInfo(PersistHelper helper, Element element, String version) {}
+    
     protected void restoreWayPoint(PersistHelper helper, Element wayPointElement, String version) {
     	// Handle only source, target and user defined way points
 		int specialId = Integer.valueOf(helper.getElementStringValue(
@@ -787,5 +789,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     			restoreEdgeProperty(helper, propertyElement, type, version);
     		}
     	}
+    	
+    	restoreAdditionalInfo(helper, elementNode, version);
     }
 }

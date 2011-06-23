@@ -25,12 +25,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.w3c.dom.Element;
 
 /**
  * Draws the line between the rectangle of the associationclass/objectlink 
@@ -59,9 +61,9 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
         
     /**
      * The NodeBase of instance ClassNode or ObjectNode displaying 
-     * the class part of the associationclass/objectlink.
+     * the class part of the association class / object link.
      */
-    private NodeBase fNodeEdgeNode; 
+    private NodeBase fAssociationOrLinkNode; 
     
     /**
      * Use this constructor if it is a binary associationclass/objectlink.
@@ -78,7 +80,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
      * Initializes this NodeEdge.
      */
     private void initNodeEdge( NodeBase nodeEdgeNode ) {
-        fNodeEdgeNode = nodeEdgeNode;
+        fAssociationOrLinkNode = nodeEdgeNode;
         
         fNENode = new WayPoint( fSource, fTarget, this,
                                 fNodesOnEdgeCounter++,
@@ -128,8 +130,8 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
             DirectedEdgeFactory.drawDashedEdge( g, 
                                                 (int) associationConnectionPoint.getCenter().getX(), 
                                                 (int) associationConnectionPoint.getCenter().getY(), 
-                                                (int) fNodeEdgeNode.getCenter().getX(), 
-                                                (int) fNodeEdgeNode.getCenter().getY() );
+                                                (int) fAssociationOrLinkNode.getCenter().getX(), 
+                                                (int) fAssociationOrLinkNode.getCenter().getY() );
         } catch ( Exception ex ) {
             //ignore
         }
@@ -139,35 +141,35 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
      * Updates the connection point.
      */
     public void update() {
-        if ( fNodeEdgeNode.isDragged() ) {
+        if ( fAssociationOrLinkNode.isDragged() ) {
             fFirstCall = false;
-            fX_old = fNodeEdgeNode.getX();
-            fY_old = fNodeEdgeNode.getY();
+            fX_old = fAssociationOrLinkNode.getX();
+            fY_old = fAssociationOrLinkNode.getY();
             fX_con_old = associationConnectionPoint.getX();
             fY_con_old = associationConnectionPoint.getY();
-        } else if ( !fNodeEdgeNode.isDragged() && ! fNodeEdgeNode.isSelected()) {
+        } else if ( !fAssociationOrLinkNode.isDragged() && ! fAssociationOrLinkNode.isSelected()) {
             double x = fX_old - fX_con_old;
             double y = fY_old - fY_con_old;
             double newX = x + associationConnectionPoint.getX();
             double newY = y + associationConnectionPoint.getY();
             fNENode.setPosition( newX, newY );
-            fNodeEdgeNode.setPosition( newX, newY );
+            fAssociationOrLinkNode.setPosition( newX, newY );
         }
         
-        if ( fFirstCall && !fNodeEdgeNode.isSelected() ) {
+        if ( fFirstCall && !fAssociationOrLinkNode.isSelected() ) {
             final int maxSpace = 30;
             double newX = 0.0;
             double newY = 0.0;
             
-            if ( fNodeEdgeNode.getCenter().getX() >= associationConnectionPoint.getCenter().getX() ) {
-                newX = associationConnectionPoint.getCenter().getX() + maxSpace + fNodeEdgeNode.getWidth()/2;
+            if ( fAssociationOrLinkNode.getCenter().getX() >= associationConnectionPoint.getCenter().getX() ) {
+                newX = associationConnectionPoint.getCenter().getX() + maxSpace + fAssociationOrLinkNode.getWidth()/2;
                 newY = associationConnectionPoint.getCenter().getY();
             } else {
-                newX = associationConnectionPoint.getCenter().getX() - maxSpace - fNodeEdgeNode.getWidth()/2;
+                newX = associationConnectionPoint.getCenter().getX() - maxSpace - fAssociationOrLinkNode.getWidth()/2;
                 newY = associationConnectionPoint.getCenter().getY();
             }
             fNENode.setCenter( newX, newY );
-            fNodeEdgeNode.setCenter( newX, newY );
+            fAssociationOrLinkNode.setCenter( newX, newY );
         } 
         
         
@@ -194,8 +196,8 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
               || ( fWayPoints.size() <= 6 && !associationConnectionPoint.isSelected() 
                    && !associationConnectionPoint.wasMoved() && isReflexive() ) ) {
             Point2D conPoint = Util.calculateMidPoint( x1, y1, x2, y2 );
-            Point2D nep = fNodeEdgeNode.getIntersectionCoordinate( 
-                                                     fNodeEdgeNode.getCenter(),
+            Point2D nep = fAssociationOrLinkNode.getIntersectionCoordinate( 
+                                                     fAssociationOrLinkNode.getCenter(),
                                                      conPoint);
             fNENode.setCenter( nep );
             associationConnectionPoint.setCenter( conPoint );
@@ -204,4 +206,9 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 
     @Override
     protected String getStoreType() { return "NodeEdge"; }
+    
+    @Override
+    protected void restoreAdditionalInfo(PersistHelper helper, Element element, String version) {
+    	fFirstCall = false;
+    }
 }
