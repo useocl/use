@@ -168,13 +168,12 @@ public class SelectionClassView extends ClassSelectionView {
 	 */
 	public void applyCropChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedClasses(), true).size() > 0) {
-			diagram.getHideAdmin().getAction("Hide",
+			diagram.getAction("Hide",
 					getHideClasses(getSelectedClasses(), true))
 					.actionPerformed(ev);
 		}
 		if (getClassesToShow(getSelectedClasses()).size() > 0) {
-			diagram.getHideAdmin()
-					.showHiddenElements(getClassesToShow(getSelectedClasses()));
+			diagram.showElementsInDiagram(getClassesToShow(getSelectedClasses()));
 		}
 		((SelectionClassTableModel) fTableModel).refreshAll();
 	}
@@ -184,8 +183,7 @@ public class SelectionClassView extends ClassSelectionView {
 	 */
 	public void applyShowChanges(ActionEvent ev) {
 		if (getClassesToShow(getSelectedClasses()).size() > 0) {
-			diagram.getHideAdmin()
-					.showHiddenElements(getClassesToShow(getSelectedClasses()));
+			diagram.showElementsInDiagram(getClassesToShow(getSelectedClasses()));
 			((SelectionClassTableModel) fTableModel).refreshAll();
 		}
 	}
@@ -195,7 +193,7 @@ public class SelectionClassView extends ClassSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		if (getHideClasses(getSelectedClasses(), false).size() > 0) {
-			diagram.getHideAdmin().getAction("Hide",
+			diagram.getAction("Hide",
 					getHideClasses(getSelectedClasses(), false))
 					.actionPerformed(ev);
 		}
@@ -205,8 +203,8 @@ public class SelectionClassView extends ClassSelectionView {
 	 * Method applyShowAllChanges show all classes.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
-		diagram.getHideAdmin().showAllHiddenElements();
-		MainWindow.instance().repaint();
+		diagram.showAll();
+		diagram.invalidateContent();
 		((SelectionClassTableModel) fTableModel).refreshAll();
 	}
 

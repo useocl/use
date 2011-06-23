@@ -22,16 +22,15 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
+import org.tzi.use.uml.mm.MClassifier;
 
 /**
  * Hides selected nodes and edges from a given diagram.
@@ -40,19 +39,18 @@ import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
  * @author Fabian Gutsche
   */
 @SuppressWarnings("serial")
-public final class ActionHideClassDiagram extends ActionHide {
-    public ActionHideClassDiagram( String text, Set<?> nodesToHide,
-                                   Selection<Selectable> nodeSelection, DirectedGraph<NodeBase, EdgeBase> graph,
-                                   LayoutInfos layoutInfos ) {
-        super( text );
+public final class ActionHideClassDiagram extends ActionHide<MClassifier> {
+    public ActionHideClassDiagram( String text, Set<? extends MClassifier> nodesToHide,
+                                   Selection<? extends Selectable> nodeSelection, DirectedGraph<NodeBase, EdgeBase> graph,
+                                   ClassDiagram diagram ) {
+        super( text, diagram, nodeSelection );
         setNodes( nodesToHide );
-        fLayoutInfos = layoutInfos;
         fNodeSelection = nodeSelection;
         fGraph = graph;
     }
 
     protected ClassDiagram getDiagram() {
-    	return (ClassDiagram)fLayoutInfos.getDiagram();
+    	return (ClassDiagram)diagram;
     }
     
     public void showAllHiddenElements() {
@@ -66,9 +64,7 @@ public final class ActionHideClassDiagram extends ActionHide {
      */
     public void hideNodesAndEdges() {
         getDiagram().hideElementsInDiagram( fNodesToHide );
-        
         fNodeSelection.clear();
-        
         getDiagram().invalidateContent();
     }
     
@@ -76,23 +72,8 @@ public final class ActionHideClassDiagram extends ActionHide {
         hideNodesAndEdges();
     }
 
-    public void showHiddenElements(Set<?> hiddenElements) {
-    	
-    	//FIXME: Only show hidden elements. Not show all and hide the rest
-    	
-    	// New set with currently hidden nodes
-    	Set<Object> objectsToHide = new HashSet<Object>(fLayoutInfos.getHiddenNodes());
-    	
-    	// Remove elements that should be shown
-    	objectsToHide.removeAll(hiddenElements);
-    	
-    	// Resets the view
-    	this.showAllHiddenElements();
-
-    	// Set objects to hide
-    	fNodesToHide.clear();
-    	fNodesToHide.addAll(objectsToHide);
-
-    	this.hideNodesAndEdges();
+    public void showHiddenElements(Set<MClassifier> hiddenElements) {
+    	getDiagram().showElementsInDiagram(hiddenElements);
+    	getDiagram().invalidateContent();
     }
 }

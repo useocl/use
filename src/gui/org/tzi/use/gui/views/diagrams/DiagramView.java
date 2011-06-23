@@ -50,7 +50,6 @@ import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
-import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.w3c.dom.Element;
 
 /**
@@ -83,12 +82,7 @@ public abstract class DiagramView extends JPanel
     protected Set<Object> fHiddenNodes;
     
     protected Set<Object> fHiddenEdges;
-    
-    /** 
-     * coordinates the hiding of nodes
-     */
-    protected HideAdministration fHideAdmin;
-    
+        
     protected ActionLoadLayout fActionLoadLayout;
     
     protected ActionSaveLayout fActionSaveLayout;
@@ -97,8 +91,6 @@ public abstract class DiagramView extends JPanel
     
     protected DiagramOptions fOpt;
     
-    protected LayoutInfos fLayoutInfos;
-
     /**
 	 * This value is read from the system properties file.
 	 * It determines the minimum width of a class node 
@@ -135,12 +127,7 @@ public abstract class DiagramView extends JPanel
             drawDiagram( g );
         }
     }
-    
-    /**
-     * Deletes all hidden elements form this diagram.
-     */
-    public abstract void hideElementsInDiagram( Set<?> nodesToHide );
-    
+        
     /**
      * Determines if the popup menu of this diagram should be shown.
      * @param e MouseEvent.
@@ -321,14 +308,6 @@ public abstract class DiagramView extends JPanel
      */
     public DirectedGraph<NodeBase, EdgeBase> getGraph() {
     	return this.fGraph;
-    }
-    
-    /**
-     * The hide administration of this diagram
-     * @return
-     */
-    public HideAdministration getHideAdmin() {
-    	return this.fHideAdmin;
     }
     
     /**
@@ -562,6 +541,8 @@ public abstract class DiagramView extends JPanel
         }
     }
 
+    public abstract void resetNodesOnEdges();
+    
 	/**
 	 * Stores the placement info inside of the given element
 	 * @param rootElement
@@ -572,4 +553,9 @@ public abstract class DiagramView extends JPanel
 	 * @param rootElement
 	 */
 	public abstract void restorePositionData(PersistHelper helper, Element rootElement, String version);
+
+	/**
+	 * Show all hidden elements again
+	 */
+	public abstract void showAll();
 }

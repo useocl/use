@@ -170,8 +170,8 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	 * Shows all objects and links.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
-		this.diagram.getHideAdmin().showAllHiddenElements();
-		MainWindow.instance().repaint();
+		this.diagram.showAll();
+		this.diagram.invalidateContent();
 	}
 
 	/**
@@ -189,7 +189,7 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 			}
 		}
 		
-		this.diagram.getHideAdmin().getAction("Hide all objects", hideojects).actionPerformed(ev);
+		this.diagram.getAction("Hide all objects", hideojects).actionPerformed(ev);
 	}
 	
 	public abstract void applyCropChanges(ActionEvent ev);

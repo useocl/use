@@ -773,8 +773,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
 		}
     }
     
-    public final void restorePlacementInfo( PersistHelper helper, Element parent, String version ) {
-    	NodeList elements = helper.getChildElementsByTagName(parent, LayoutTags.EDGEPROPERTY);
+    public final void restorePlacementInfo( PersistHelper helper, Element elementNode, String version ) {
+    	NodeList elements = helper.getChildElementsByTagName(elementNode, LayoutTags.EDGEPROPERTY);
     	
     	for (int i = 0; i < elements.getLength(); ++i) {
     		Element propertyElement = (Element)elements.item(i);

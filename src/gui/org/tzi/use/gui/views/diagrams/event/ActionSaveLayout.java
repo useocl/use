@@ -39,8 +39,7 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.LayoutInfos;
+import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -55,25 +54,22 @@ public class ActionSaveLayout extends AbstractAction {
 
     private String fTitle = "";
     private String fAppendix = "";
-    private DiagramOptions fOpt;
-    
-    private LayoutInfos fLayoutInfos;
+    private DiagramView fDiagram;
 
     private File lastFile = null;
     
-    public ActionSaveLayout( String title, String appendix, DiagramOptions opt, Properties properties) {
+    public ActionSaveLayout( String title, String appendix, DiagramView diagram, Properties properties) {
         super("Save layout...");
         fTitle = title;
         fAppendix = appendix;
-        fOpt = opt;
+        fDiagram = diagram;
     }
     
-    public ActionSaveLayout( String title, String appendix, LayoutInfos layoutInfos ) {
+    public ActionSaveLayout( String title, String appendix, DiagramView diagram ) {
         super("Save layout...");
         fTitle = title;
         fAppendix = appendix;
-        fOpt = layoutInfos.getOpt();
-        fLayoutInfos = layoutInfos;
+        fDiagram = diagram;
     }
     
     
@@ -141,9 +137,8 @@ public class ActionSaveLayout extends AbstractAction {
 				
 		Element optionsElement = doc.createElement("diagramOptions");
 		rootElement.appendChild(optionsElement);
-		fOpt.saveOptions(helper, optionsElement);
-
-		fLayoutInfos.getDiagram().storePlacementInfos( helper, rootElement );
+		fDiagram.getOptions().saveOptions(helper, optionsElement);
+		fDiagram.storePlacementInfos( helper, rootElement );
 		
 		/*
         // store node positions in property object

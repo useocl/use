@@ -40,7 +40,6 @@ import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,32 +57,26 @@ public class ActionLoadLayout extends AbstractAction {
     private String fTitle = "";
     private String fAppendix = "";
     private DiagramView fDiagram;
-    private HideAdministration fHideAdmin;
-    private LayoutInfos fLayoutInfos;
     
     private File lastFile = null;
     
     public ActionLoadLayout( String title, String appendix, DiagramView diagram,
                              PrintWriter log, DiagramOptions opt, 
-                             HideAdministration hideAdmin, DirectedGraph<NodeBase, EdgeBase> graph ) {
+                             DirectedGraph<NodeBase, EdgeBase> graph ) {
         super("Load layout...");
         fTitle = title;
         fAppendix = appendix;
         
         fDiagram = diagram;
-        fHideAdmin = hideAdmin;
     }
 
     public ActionLoadLayout( String title, String appendix,
                              DiagramView diagram, PrintWriter log,
-                             HideAdministration hideAdmin, DirectedGraph<NodeBase, EdgeBase> graph,
-                             LayoutInfos layoutInfos ) {
+                             DirectedGraph<NodeBase, EdgeBase> graph ) {
         super("Load layout...");
         fTitle = title;
         fAppendix = appendix;
-        fLayoutInfos = layoutInfos;
         fDiagram = diagram;
-        fHideAdmin = hideAdmin;
     }
     
     public void actionPerformed(ActionEvent e) {
@@ -111,11 +104,8 @@ public class ActionLoadLayout extends AbstractAction {
         // show all hidden nodes and edges. This is necessary, if 
         // nodes are hidden but a layout will be loaded which 
         // contains no hidden nodes or edges.
-        if ( fHideAdmin != null ) {
-            fHideAdmin.showAllHiddenElements();
-        }
-        
-        fLayoutInfos.resetNodesOnEdges();
+        fDiagram.showAll();
+        fDiagram.resetNodesOnEdges();
                 
         DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
@@ -143,7 +133,7 @@ public class ActionLoadLayout extends AbstractAction {
 		
 		PersistHelper helper = new PersistHelper();
 		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);
-		fLayoutInfos.getOpt().loadOptions(helper, layoutElement, version);
+		fDiagram.getOptions().loadOptions(helper, layoutElement, version);
 		
 		fDiagram.restorePositionData(helper, rootElement, version);
         fDiagram.invalidateContent();

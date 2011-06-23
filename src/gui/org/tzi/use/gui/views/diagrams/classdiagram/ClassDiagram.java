@@ -59,15 +59,14 @@ import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.GeneralizationEdge;
-import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NAryAssociationClassOrObjectEdge;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.event.ActionHideClassDiagram;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
-import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
@@ -171,19 +170,6 @@ public class ClassDiagram extends DiagramView
         setBackground( Color.white );
         fLog = log;
         setPreferredSize( Options.fDiagramDimension );
-
-        fLayoutInfos = new LayoutInfos( visibleData.fBinaryAssocToEdgeMap, 
-                                        visibleData.fClassToNodeMap, 
-                                        visibleData.fNaryAssocToDiamondNodeMap,
-                                        visibleData.fNaryAssocToHalfEdgeMap,
-                                        visibleData.fAssocClassToEdgeMap,
-                                        visibleData.fEnumToNodeMap,
-                                        visibleData.fGenToGeneralizationEdge,
-                                        fHiddenNodes, fHiddenEdges,
-                                        fOpt, fParent.system(), this, 
-                                        fLog );
-        
-        fHideAdmin = new HideAdministration( fNodeSelection, fGraph, fLayoutInfos );
         
         inputHandling = 
             new DiagramInputHandling( fNodeSelection, fEdgeSelection, this);
@@ -191,12 +177,10 @@ public class ClassDiagram extends DiagramView
         fSelection = new ClassSelection(this);
         
         fActionSaveLayout = new ActionSaveLayout( "USE class diagram layout",
-                                                  "clt", fLayoutInfos );
+                                                  "clt", this );
         
         fActionLoadLayout = new ActionLoadLayout( "USE class diagram layout",
-                                                  "clt", this, fLog,
-                                                  fHideAdmin, fGraph,
-                                                  fLayoutInfos );
+                                                  "clt", this, fLog, fGraph);
         
         fActionSelectAll = new ActionSelectAll( fNodeSelection, visibleData.fClassToNodeMap,
                                                 visibleData.fEnumToNodeMap, this );
@@ -246,7 +230,7 @@ public class ClassDiagram extends DiagramView
                 }
                 edges.add( eb );
             } else {
-                List<EdgeBase> halfEdges =  visibleData.fNaryAssocToHalfEdgeMap.get( (MAssociation) elem );
+				List<EdgeBase> halfEdges = visibleData.fNaryAssocToHalfEdgeMap.get((MAssociation) elem);
                 if ( edges != null && halfEdges != null ) {
                     edges.addAll( halfEdges );
                 }
@@ -296,9 +280,7 @@ public class ClassDiagram extends DiagramView
         invalidateContent();
     }
 
-    /**
-     * Shows all hidden elements again
-     */
+    @Override
     public void showAll() {
     	while (hiddenData.fClassToNodeMap.size() > 0) {
     		showClass(hiddenData.fClassToNodeMap.keySet().iterator().next());
@@ -768,7 +750,7 @@ public class ClassDiagram extends DiagramView
         
 		final Set<MClass> selectedClasses = new HashSet<MClass>(); // jj add final
 		
-		final Set<MNamedElement> selectedObjects = new HashSet<MNamedElement>();
+		final Set<MClassifier> selectedObjects = new HashSet<MClassifier>();
 				
         if ( !fNodeSelection.isEmpty() ) {
             for (PlaceableNode node : fNodeSelection) {
@@ -799,11 +781,11 @@ public class ClassDiagram extends DiagramView
 				}
 				
 				popupMenu.insert(
-						fHideAdmin.getAction("Crop association " + info, 
+						getAction("Crop association " + info, 
 								getNoneSelectedElementsByElements(selectedClassesOfAssociation)), pos++);
 				
 				popupMenu.insert(
-						fHideAdmin.getAction("Hide association " + info, 
+						getAction("Hide association " + info, 
 								selectedClassesOfAssociation), pos++);  //fixxx
 				
 				popupMenu.insert(new JSeparator(),pos++);
@@ -825,8 +807,8 @@ public class ClassDiagram extends DiagramView
             }
             
             if ( txt != null && txt.length() > 0 ) {
-            	popupMenu.insert( fHideAdmin.getAction( "Crop " + txt, getNoneSelectedElementsByElements( selectedObjects ) ), pos++ );
-                popupMenu.insert( fHideAdmin.getAction( "Hide " + txt, selectedObjects ), pos++ );
+            	popupMenu.insert( getAction( "Crop " + txt, getNoneSelectedElementsByElements( selectedObjects ) ), pos++ );
+                popupMenu.insert( getAction( "Hide " + txt, selectedObjects ), pos++ );
                 
 				// pathlength view anfangs jj
 				popupMenu.insert(new JSeparator(),pos++);
@@ -851,7 +833,7 @@ public class ClassDiagram extends DiagramView
 									
 									// If allObjects contains an object which is not shown, this
 									// is handled by the HideAdministration
-									Action hide = diagram.getHideAdmin().getAction("Internal", allObjectsToHide);
+									Action hide = diagram.getAction("Internal", allObjectsToHide);
 									hide.actionPerformed(null);
 								}
 							}}, pos++);
@@ -870,7 +852,7 @@ public class ClassDiagram extends DiagramView
 									
 									// If allObjects contains an object which is not hidden, this
 									// is handled by the HideAdministration
-									diagram.getHideAdmin().showHiddenElements(allObjects);
+									diagram.showObjects(allObjects);
 								}
 							}
 						});
@@ -888,8 +870,8 @@ public class ClassDiagram extends DiagramView
 								Set<MObject> objectsToHide = diagram.getObjectSelection().getCropHideObjects(allClasses);
 								Set<MObject> objectsToShow = diagram.getObjectSelection().getHiddenObjects(allClasses);
 								
-								diagram.getHideAdmin().getAction("Hide", objectsToHide).actionPerformed(ev);							
-								diagram.getHideAdmin().showHiddenElements(objectsToShow);
+								diagram.getAction("Hide", objectsToHide).actionPerformed(ev);							
+								diagram.showObjects(objectsToShow);
 							}
 						}
 					});
@@ -903,7 +885,7 @@ public class ClassDiagram extends DiagramView
             final JMenuItem showAllClasses = new JMenuItem( "Show hidden classes" );
             showAllClasses.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ev) {
-                    fHideAdmin.showAllHiddenElements();
+                    showAll();
                 }
             });
 
@@ -969,15 +951,15 @@ public class ClassDiagram extends DiagramView
      * @param selectedElements Nodes which are selected at this point in the diagram.
      * @return A Set of the none selected objects in the diagram.
      */
-    private Set<MNamedElement> getNoneSelectedElementsByElements( Set<? extends MNamedElement> selectedElements ) {
-    	Set<MNamedElement> noneSelectedElements = new HashSet<MNamedElement>();
+    private Set<MClassifier> getNoneSelectedElementsByElements( Set<? extends MClassifier> selectedElements ) {
+    	Set<MClassifier> noneSelectedElements = new HashSet<MClassifier>();
         
         Iterator<NodeBase> it = fGraph.iterator();
-        MNamedElement namedElement;
+        MClassifier namedElement;
         
         while ( it.hasNext() ) {
             NodeBase o = it.next();
-        
+            
             if ( o instanceof ClassNode ) {
             	namedElement = ((ClassNode) o).cls();
             } else if (o instanceof EnumNode) {
@@ -998,13 +980,26 @@ public class ClassDiagram extends DiagramView
      * Hides the given elements in this diagram.
      * @param nodesToHide A set of {@link MClassifier} ({@link MClass} or {@link EnumType}) to hide
      */
-    @Override
-    public void hideElementsInDiagram( Set<?> nodesToHide ) {
+    public void hideElementsInDiagram( Set<MClassifier> nodesToHide ) {
         for (Object elem : nodesToHide) {
             if ( elem instanceof MClass ) {
                 hideClass( (MClass) elem );
             } else if ( elem instanceof EnumType ) {
                 hideEnum( (EnumType) elem );
+            }
+        }
+    }
+    
+    /**
+     * Hides the given elements in this diagram.
+     * @param nodesToHide A set of {@link MClassifier} ({@link MClass} or {@link EnumType}) to hide
+     */
+    public void showElementsInDiagram( Set<?> nodesToShow ) {
+        for (Object elem : nodesToShow) {
+            if ( elem instanceof MClass ) {
+                showClass( (MClass) elem );
+            } else if ( elem instanceof EnumType ) {
+                showEnum( (EnumType) elem );
             }
         }
     }
@@ -1155,4 +1150,42 @@ public class ClassDiagram extends DiagramView
 	protected boolean isHidden(PersistHelper helper, Element element, String version) {
 		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
 	}
+	
+	@Override
+	public void resetNodesOnEdges() {
+		/*
+		if ( fBinaryEdgeToEdgeMap != null ) {
+            for (BinaryAssociationOrLinkEdge edge : fBinaryEdgeToEdgeMap.values()) {
+                edge.resetNodesOnEdges();
+            }
+        }
+    
+        if ( fNaryEdgeToHalfEdgeMap != null ) {
+            for (List<AssociationOrLinkPartEdge> edges : fNaryEdgeToHalfEdgeMap.values()) {
+            	for (EdgeBase edge : edges) {
+            		edge.resetNodesOnEdges();
+            	}
+            }
+        }
+        
+        if ( fEdgeNodeToEdgeMap != null ) {
+            for (EdgeBase edge : fEdgeNodeToEdgeMap.values()) {
+                edge.resetNodesOnEdges();
+            }
+        }
+        
+        
+        if ( fGenToGeneralizationEdge != null ) {
+            for (EdgeBase edge : fGenToGeneralizationEdge.values()) {
+                edge.resetNodesOnEdges();
+            }
+        }
+        */
+	}
+	
+	public ActionHideClassDiagram getAction( String text, Set<? extends MClassifier> selectedNodes ) {
+        return new ActionHideClassDiagram( text, selectedNodes,
+                                           fNodeSelection, fGraph,
+                                           this );
+    }
 }

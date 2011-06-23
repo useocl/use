@@ -72,15 +72,14 @@ import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NAryAssociationClassOrObjectEdge;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
-import org.tzi.use.gui.views.diagrams.event.HideAdministration;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
@@ -200,31 +199,16 @@ public class NewObjectDiagram extends DiagramView
         fEdgeSelection = new Selection<EdgeBase>();
         
         fLog = log;
-
-        fLayoutInfos = new LayoutInfos( visibleData.fBinaryLinkToEdgeMap, 
-                                        visibleData.fObjectToNodeMap, 
-                                        visibleData.fNaryLinkToDiamondNodeMap,
-                                        visibleData.fHalfLinkToEdgeMap,
-                                        visibleData.fLinkObjectToNodeEdge,
-                                        null,
-                                        null,
-                                        fHiddenNodes, fHiddenEdges,
-                                        fOpt, fParent.system(), this,
-                                        fLog );
-        
-        fHideAdmin = new HideAdministration( fNodeSelection, fGraph, fLayoutInfos );
         
         // anfangs jj
         fSelection = new ObjectSelection(this);
         // end jj
         
         fActionSaveLayout = new ActionSaveLayout( "USE object diagram layout",
-                                                  "olt", fLayoutInfos );
+                                                  "olt", this );
         
         fActionLoadLayout = new ActionLoadLayout( "USE object diagram layout",
-                                                  "olt", this, fLog,
-                                                  fHideAdmin, fGraph,
-                                                  fLayoutInfos );
+                                                  "olt", this, fLog, fGraph);
         
         fActionSelectAll = new ActionSelectAll( fNodeSelection, visibleData.fObjectToNodeMap,
                                                 null, this );
@@ -651,7 +635,7 @@ public class NewObjectDiagram extends DiagramView
         
         // object link
         if (link instanceof MLinkObject) {
-            EdgeBase e = source.fLinkObjectToNodeEdge.get(link);
+        	EdgeBase e = source.fLinkObjectToNodeEdge.get(link);
             synchronized (fLock) {
                 if (show)
                 	fGraph.addEdge(e);
@@ -696,7 +680,7 @@ public class NewObjectDiagram extends DiagramView
             
             // connected to an "object link"
             if (link instanceof MLinkObject) {                
-                EdgeBase e = source.fLinkObjectToNodeEdge.get(link);
+            	EdgeBase e = source.fLinkObjectToNodeEdge.get(link);
                 
                 if (e != null) {
 	                synchronized (fLock) {
@@ -913,8 +897,7 @@ public class NewObjectDiagram extends DiagramView
      * Hides all elements included in <code>objectsToHide</code> in this diagram.
      * @param objectsToHide A set of {@link MObject}s to hide.
      */
-    @Override
-    public void hideElementsInDiagram( Set<?> objectsToHide ) {
+    public void hideElementsInDiagram( Set<MObject> objectsToHide ) {
         Iterator<?> it = objectsToHide.iterator();
         while ( it.hasNext() ) {
             MObject obj = (MObject) it.next();
@@ -1013,10 +996,10 @@ public class NewObjectDiagram extends DiagramView
 				else{
 					info = "" + anames.size();
 				}
-				popupMenu.insert(fHideAdmin.getAction("Hide link " + info + "",
+				popupMenu.insert(getAction("Hide link " + info + "",
 						selectedObjectsOfAssociation), pos++);  //fixxx
-				popupMenu.insert(fHideAdmin.getAction("Crop link " + info,
-						getNoneSelectedNodes(selectedObjectsOfAssociation)), pos++);
+				popupMenu.insert(getAction("Crop link " + info, 
+						         getNoneSelectedNodes(selectedObjectsOfAssociation)), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
 				popupMenu.insert(fSelection.getSelectedLinkPathView("Selection link path length...", selectedObjectsOfAssociation, anames), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
@@ -1036,10 +1019,10 @@ public class NewObjectDiagram extends DiagramView
                 popupMenu.insert( new ActionDelete("Delete " + txt, 
                                                    selectedObjectsSet),
                                                    pos++ );
-                popupMenu.insert( fHideAdmin.getAction("Hide " + txt,
+                popupMenu.insert( getAction("Hide " + txt,
                                                        selectedObjectsSet),
                                                        pos++ );
-                popupMenu.insert( fHideAdmin.getAction("Crop " + txt,
+                popupMenu.insert( getAction("Crop " + txt,
                                                        getNoneSelectedNodes( selectedObjectsSet )),
                                                        pos++ );
                 separatorNeeded = true;
@@ -1053,8 +1036,8 @@ public class NewObjectDiagram extends DiagramView
             final JMenuItem showAllObjects = new JMenuItem("Show hidden objects");
             showAllObjects.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ev) {
-                    fHideAdmin.showAllHiddenElements();
-                    repaint();
+                    showAll();
+                    invalidateContent();
                 }
             });
 
@@ -1094,8 +1077,8 @@ public class NewObjectDiagram extends DiagramView
      * @param selectedNodes Nodes which are selected at this point in the diagram.
      * @return A HashSet of the none selected objects in the diagram.
      */
-    private Set<Object> getNoneSelectedNodes( Set<?> selectedNodes ) {
-        Set<Object> noneSelectedNodes = new HashSet<Object>();
+    private Set<MObject> getNoneSelectedNodes( Set<MObject> selectedNodes ) {
+        Set<MObject> noneSelectedNodes = new HashSet<MObject>();
         
         Iterator<NodeBase> it = fGraph.iterator();
         while ( it.hasNext() ) {
@@ -1269,6 +1252,18 @@ public class NewObjectDiagram extends DiagramView
 	@Override
 	public void restorePositionData(PersistHelper helper, Element rootElement, String version) {
 		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#resetNodesOnEdges()
+	 */
+	@Override
+	public void resetNodesOnEdges() {
+		// TODO Auto-generated method stub
 		
 	}
+	
+	public ActionHideObjectDiagram getAction( String text, Set<MObject> selectedNodes ) {
+        return new ActionHideObjectDiagram( text, selectedNodes, fNodeSelection, fGraph, this );
+    }
 }

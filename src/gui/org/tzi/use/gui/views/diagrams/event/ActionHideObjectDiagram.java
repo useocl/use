@@ -22,16 +22,16 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
+import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.uml.sys.MObject;
 
 /**
  * Hides the selected objects.
@@ -40,16 +40,13 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
  * @author Fabian Gutsche
   */
 @SuppressWarnings("serial")
-public final class ActionHideObjectDiagram extends ActionHide {
+public final class ActionHideObjectDiagram extends ActionHide<MObject> {
  
-    public ActionHideObjectDiagram( String text, Set<?> nodesToHide,
-                                    Selection<Selectable> nodeSelection,
-                                    DirectedGraph<NodeBase, EdgeBase> graph, LayoutInfos layoutInfos ) {
-        super(text);
+    public ActionHideObjectDiagram( String text, Set<MObject> nodesToHide,
+                                    Selection<? extends PlaceableNode> nodeSelection,
+                                    DirectedGraph<NodeBase, EdgeBase> graph, NewObjectDiagram diagram ) {
+        super(text, diagram, nodeSelection);
         setNodes( nodesToHide );
-        
-        fLayoutInfos = layoutInfos;
-        fNodeSelection = nodeSelection;
         fGraph = graph;
     }
 
@@ -58,7 +55,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
      * @return
      */
     protected NewObjectDiagram getDiagram() {
-    	return (NewObjectDiagram)fLayoutInfos.getDiagram();
+    	return (NewObjectDiagram)diagram;
     }
     
     /**
@@ -74,7 +71,7 @@ public final class ActionHideObjectDiagram extends ActionHide {
      * Hides all objects with there connecting links.
      */
     public void hideNodesAndEdges() {        
-        fLayoutInfos.getDiagram().hideElementsInDiagram( fNodesToHide );
+        getDiagram().hideElementsInDiagram( fNodesToHide );
         fNodeSelection.clear();
         getDiagram().invalidateContent();
     }
@@ -87,21 +84,8 @@ public final class ActionHideObjectDiagram extends ActionHide {
      * Displays all hidden objects again. The objects have to be added
      * again, because they were deleted from the view before.
      */
-    public void showHiddenElements(Set<?> hiddenElements) {
-        
-    	// Add all already hidden nodes
-    	Set<Object> nodesToHide = new HashSet<Object>(fLayoutInfos.getHiddenNodes());
-
-    	// Remove all supplied nodes (don't hide them anymore)
-    	nodesToHide.removeAll(hiddenElements);
-
-    	// Shows all Nodes and Edges
-    	// (Copies hiddenObjects to objects...)
-    	this.showAllHiddenElements();
-    	
-    	fNodesToHide.clear();
-    	fNodesToHide.addAll(nodesToHide);
-
-    	this.hideNodesAndEdges();
+    public void showHiddenElements(Set<MObject> hiddenElements) {
+    	getDiagram().showObjects(hiddenElements);
+    	getDiagram().invalidateContent();
     }
 }

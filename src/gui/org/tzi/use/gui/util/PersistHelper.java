@@ -71,6 +71,10 @@ public class PersistHelper {
 		return (NodeList)evaluateXPathSave(parent, "./" + childName, XPathConstants.NODESET);
 	}
 	
+	public Element getElementByExpression( Element currentElement, String xpathExpr ) {
+		return (Element)evaluateXPathSave(currentElement, xpathExpr, XPathConstants.NODE);
+	}
+	
 	public Object evaluateXPathSave( Element currentElement, String xpathExpr, QName resultType) {
 		XPath xpath = factory.newXPath();
 		try {

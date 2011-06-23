@@ -205,7 +205,18 @@ public class DiamondNode extends NodeBase {
 
         if ( fHalfEdges != null ) {
             for (EdgeBase e : fHalfEdges) {
-            	//e.storePlacementInfo(nodeElement, hidden);
+            	if (e instanceof AssociationOrLinkPartEdge) {
+            		AssociationOrLinkPartEdge partEdge = (AssociationOrLinkPartEdge)e; 
+					String xpathExpr = "./edge[@type='" + LayoutTags.HALFEDGE +
+									   "' and edgeproperty[@type='" + LayoutTags.ROLENAME + 
+									   "' and @kind='" + LayoutTags.TARGET + "']/name='"
+									   + partEdge.fTargetEnd.nameAsRolename() + "']";
+            	
+					Element halfEdgeElement = helper.getElementByExpression(nodeElement, xpathExpr);
+            	
+					if (halfEdgeElement != null)
+						e.restorePlacementInfo(helper, halfEdgeElement, version);
+            	}
             }
         }
     }

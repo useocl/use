@@ -204,15 +204,15 @@ public abstract class ClassSelectionView extends JPanel implements View {
 			}
 		}
 
-		diagram.getHideAdmin().getAction("Hide all classes", hideClass).actionPerformed(ev);
+		diagram.getAction("Hide all classes", hideClass).actionPerformed(ev);
 	}
 
 	/**
 	 * Method applyShowAllChanges is responsible for show all classes and associations.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
-		diagram.getHideAdmin().showAllHiddenElements();
-		MainWindow.instance().repaint();
+		diagram.showAll();
+		diagram.invalidateContent();
 	}
 
 	/**

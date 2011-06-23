@@ -206,8 +206,7 @@ public class ClassSelection {
 			
 			Set<MClass> hideClass = new HashSet<MClass>();
 			hideClass.add(cls);
-			subMenuSelectionClassHide.add(diagram.getHideAdmin().getAction("hide "
-						+ classname, hideClass));
+			subMenuSelectionClassHide.add(diagram.getAction("hide " + classname, hideClass));
 		}
 		
 		if (nodesize > 1) {
@@ -221,7 +220,7 @@ public class ClassSelection {
 					hideClass.add(cls);
 				}
 			}
-			subMenuSelectionClassHide.add(diagram.getHideAdmin().getAction("Hide all classes", hideClass));
+			subMenuSelectionClassHide.add(diagram.getAction("Hide all classes", hideClass));
 		}
 		return subMenuSelectionClassHide;
 	}
@@ -255,7 +254,7 @@ public class ClassSelection {
 							"Show " + classname);
 			showClasses.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
-							diagram.getHideAdmin().showHiddenElements(sclasses);
+							diagram.showElementsInDiagram(sclasses);
 						}
 					});
 				subMenuSelectionClassShow.add(showClasses);
@@ -267,7 +266,8 @@ public class ClassSelection {
 			"Show all classes");
 			showAllClasses.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
-					diagram.getHideAdmin().showAllHiddenElements();
+					diagram.showAll();
+					diagram.invalidateContent();
 				}
 			});
 			subMenuSelectionClassShow.add(showAllClasses);

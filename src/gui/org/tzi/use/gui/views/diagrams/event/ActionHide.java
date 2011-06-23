@@ -22,13 +22,13 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
+import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
@@ -41,16 +41,16 @@ import org.tzi.use.gui.views.diagrams.Selectable;
  * @author Fabian Gutsche
  */
 @SuppressWarnings("serial")
-public abstract class ActionHide extends AbstractAction {
+public abstract class ActionHide<NodeType> extends AbstractAction {
     /**
      * All nodes which are suppose to be hidden in a diagram.
      */
-    Set<Object> fNodesToHide;
+    Set<NodeType> fNodesToHide;
     
     /**
      * Actual selected nodes in the diagram.
      */
-    Selection<Selectable> fNodeSelection;
+    Selection<? extends Selectable> fNodeSelection;
     
     /**
      * This graph contains all nodes and edges of a diagram.  
@@ -67,14 +67,17 @@ public abstract class ActionHide extends AbstractAction {
      */
     LayoutInfos fLayoutInfos;
  
-    ActionHide( String text ) {
+    DiagramView diagram;
+    
+    ActionHide( String text, DiagramView diagram, Selection<? extends Selectable> nodeSelection ) {
         super( text );
+        this.diagram = diagram;
+        this.fNodeSelection = nodeSelection;
     }
 
-
-    void setNodes( Set<?> set ) {
+    void setNodes( Set<? extends NodeType> set ) {
         if ( set != null ) {
-            fNodesToHide = new HashSet<Object>(set);
+            fNodesToHide = new HashSet<NodeType>(set);
         }
     }
     
@@ -90,7 +93,7 @@ public abstract class ActionHide extends AbstractAction {
      * added to the diagram again, because they were deleted from the 
      * view before.
      */
-    public abstract void showHiddenElements(Set<?> set);
+    public abstract void showHiddenElements(Set<NodeType> set);
         
     /**
      * Hides all nodes with there connecting edges.

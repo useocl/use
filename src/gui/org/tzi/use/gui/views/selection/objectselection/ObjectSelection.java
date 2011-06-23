@@ -200,8 +200,7 @@ public class ObjectSelection {
 			}
 		}
 
-		subMenuHideObject
-				.add(diagram.getHideAdmin().getAction("Hide all objects", objects));
+		subMenuHideObject.add(diagram.getAction("Hide all objects", objects));
 
 		subMenuHideObject.addSeparator();
 
@@ -262,8 +261,7 @@ public class ObjectSelection {
 				while (cl.hasNext()) {
 					JMenu jm = (JMenu) (cl.next());
 					if (jm.getName().contains(cls.name())) {
-						jm.add(diagram.getHideAdmin()
-								.getAction(info + objectname, objects2));
+						jm.add(diagram.getAction(info + objectname, objects2));
 					}
 				}
 			}
@@ -290,7 +288,7 @@ public class ObjectSelection {
 						}
 					}
 				}
-				subm.insert(diagram.getHideAdmin().getAction(info, objects3), 0);
+				subm.insert(diagram.getAction(info, objects3), 0);
 				subm.insertSeparator(1);
 			}
 		}
@@ -317,9 +315,9 @@ public class ObjectSelection {
 		ArrayList<JMenu> submenus = new ArrayList<JMenu>();
 		final JMenuItem showAllObjects = new JMenuItem("Show all objects");
 		showAllObjects.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent ev) {
-				diagram.getHideAdmin().showAllHiddenElements();
+				diagram.showAll();
+				diagram.invalidateContent();
 
 			}
 		});
@@ -374,7 +372,7 @@ public class ObjectSelection {
 						+ objectname);
 				showObjects.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ev) {
-						diagram.getHideAdmin().showHiddenElements(objects);
+						diagram.showObjects(objects);
 					}
 				});
 				
@@ -409,7 +407,7 @@ public class ObjectSelection {
 				final JMenuItem showObjects = new JMenuItem(info);
 				showObjects.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent ev) {
-						diagram.getHideAdmin().showHiddenElements(objects);
+						diagram.showObjects(objects);
 					}
 				});
 				subm.insert(showObjects, 0);
