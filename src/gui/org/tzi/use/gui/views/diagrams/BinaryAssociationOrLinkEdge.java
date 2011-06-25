@@ -631,7 +631,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     }
     
     @Override
-    public void onFirstDraw(Graphics2D g) {
+    protected void onFirstDraw(Graphics2D g) {
     	if (hasSourceQualifier()) {
 			getSourceQualifier().setRectangleSize(g);
 		}
@@ -639,6 +639,12 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		if (hasTargetQualifier()) {
 			getTargetQualifier().setRectangleSize(g);
 		}
+		
+		if (fSourceMultiplicity != null)
+			fSourceMultiplicity.setRectangleSize(g);
+		
+		if (fSourceRolename != null)
+			fSourceRolename.setRectangleSize(g);
 		
 		// Prepares the qualifier
     	super.onFirstDraw(g);
@@ -798,7 +804,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     @Override
     protected String getStoreType() { return "BinaryEdge"; }
     
-    @Override
+	@Override
     protected void restoreEdgeProperty( PersistHelper helper, Element propertyElement, String type, String version) {
     	// Handles target edge property and association name
     	super.restoreEdgeProperty(helper, propertyElement, type, version);
@@ -815,4 +821,44 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     		}
     	}
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.EdgeBase#storeAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, boolean)
+	 */
+	@Override
+	protected void storeAdditionalInfo(PersistHelper helper, Element element,
+			boolean hidden) {
+		super.storeAdditionalInfo(helper, element, hidden);
+		if (this.hasSourceQualifier())
+			this.getSourceQualifier().storePlacementInfo(helper, element, hidden);
+		
+		if (this.hasTargetQualifier())
+			this.getTargetQualifier().storePlacementInfo(helper, element, hidden);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.EdgeBase#restoreAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, java.lang.String)
+	 */
+	@Override
+	protected void restoreAdditionalInfo(PersistHelper helper, Element element, String version) {
+		super.restoreAdditionalInfo(helper, element, version);
+		
+		if (this.hasSourceQualifier()) {
+			Element sourceQualNode = helper.getElementByExpression(element, "./node[@type='QualifierNode' and name='" + getSourceRolename().name() + "']");
+			// Could be a new qualifier
+			if (sourceQualNode != null) {
+				this.getSourceQualifier().restorePlacementInfo(helper, sourceQualNode, version);
+				this.getSourceQualifier().calculatePosition(getNextWayPoint(fSourceWayPoint).getCalculationPoint());
+			}
+		}
+		
+		if (this.hasTargetQualifier()) {
+			Element targetQualNode = helper.getElementByExpression(element, "./node[@type='QualifierNode' and name='" + getTargetRolename().name() + "']");
+			// Could be a new qualifier
+			if (targetQualNode != null) {
+				this.getTargetQualifier().restorePlacementInfo(helper, targetQualNode, version);
+				this.getTargetQualifier().calculatePosition(getPreviousWayPoint(fTargetWayPoint).getCalculationPoint());
+			}
+		}
+	}
 }

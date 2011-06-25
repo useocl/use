@@ -100,12 +100,8 @@ public class ActionLoadLayout extends AbstractAction {
 
         Options.setLastDirectory(fileChooser.getCurrentDirectory().toString());
         lastFile = fileChooser.getSelectedFile();
-        
-        // show all hidden nodes and edges. This is necessary, if 
-        // nodes are hidden but a layout will be loaded which 
-        // contains no hidden nodes or edges.
-        fDiagram.showAll();
-        fDiagram.resetNodesOnEdges();
+
+        fDiagram.reset();
                 
         DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;

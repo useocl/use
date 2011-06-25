@@ -160,26 +160,6 @@ public abstract class EdgeProperty extends PlaceableNode {
 	}
 
 	/**
-	 * Updates the start coordinate of the source node of the corresponding
-	 * edge.
-	 * 
-	 * @param p The new coordinates
-	 */
-	public void updateSourceEdgePoint(Point2D p) {
-		calculatePosition();
-	}
-
-	/**
-	 * Updates the start coordinate of the target node of the corresponding
-	 * edge.
-	 * 
-	 * @param p The new coordinates
-	 */
-	public void updateTargetEdgePoint(Point2D p) {
-		calculatePosition();
-	}
-
-	/**
 	 * Resets the edge property to the automatically computed position.
 	 */
 	public void reposition() {
@@ -336,14 +316,27 @@ public abstract class EdgeProperty extends PlaceableNode {
 	@Override
 	protected void storeAdditionalInfo(PersistHelper helper, Element nodeElement, boolean hidden) {
 		nodeElement.setAttribute("userDefined", String.valueOf(isUserDefined()));
+		if (isUserDefined()) {
+			helper.appendChild(nodeElement, "x_coord_user", String.valueOf(this.fX_UserDefined));
+			helper.appendChild(nodeElement, "y_coord_user", String.valueOf(this.fY_UserDefined));
+		}
 	}
 	
 	@Override
 	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) {
 		if (version.equals("1")) {
-			this.isUserDefined = (this.getX() == -1 && this.getY() == -1);
+			this.isUserDefined = !(this.getX() == -1 && this.getY() == -1);
+			if (isUserDefined) {
+				this.fX_UserDefined = getX() - getDefaultPosition().getX();
+				this.fY_UserDefined = getY() - getDefaultPosition().getY();
+			}
 		} else {
 			this.isUserDefined = Boolean.valueOf(nodeElement.getAttribute("userDefined"));
+			if (isUserDefined) {
+				this.fX_UserDefined = helper.getElementDoubleValue(nodeElement, "x_coord_user");
+				this.fY_UserDefined = helper.getElementDoubleValue(nodeElement, "y_coord_user");
+			}
 		}
+		calculatePosition();
 	}
 }

@@ -61,6 +61,7 @@ public final class Multiplicity extends EdgeProperty {
     @Override
     protected void onFirstDraw( Graphics2D g ) {
     	setRectangleSize( g );
+    	super.onFirstDraw(g);
     }
     
     @Override

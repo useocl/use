@@ -100,7 +100,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * with respect to text.  
      * @param g
      */
-    protected void onFirstDraw(Graphics2D g) {}
+    protected void onFirstDraw(Graphics2D g) { }
     
     /**
      * Called when the node is drawn.
@@ -239,7 +239,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * Sets the position of this node to the new position while dragging.
      */
     public void setDraggedPosition( double deltaX, double deltaY ) {
-        setPosition(bounds.x + deltaX, bounds.y + deltaY);
+    	setPosition(bounds.x + deltaX, bounds.y + deltaY);
     }
     
     /**

@@ -541,7 +541,20 @@ public abstract class DiagramView extends JPanel
         }
     }
 
-    public abstract void resetNodesOnEdges();
+    /**
+     * Shows all elements of the diagram again and
+     * the cals doReset to reset customized properties, e. g., way points
+     */
+    public final void reset() {
+    	this.showAll();
+    	doReset();
+    }
+    
+    /**
+     * Called when diagram is reseted.
+     * Should remove all user defined properties, e. g., user waay points
+     */
+    protected abstract void doReset();
     
 	/**
 	 * Stores the placement info inside of the given element

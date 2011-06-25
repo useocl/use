@@ -103,7 +103,6 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
         reIDNodes();
     }
     
-    
     /**
      * Draws this nodeedge.
      */

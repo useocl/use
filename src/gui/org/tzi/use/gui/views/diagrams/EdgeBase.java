@@ -83,6 +83,13 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     String fEdgeName;
     
     /**
+     * Because of the qualifier nodes, calculation has do be done twice
+     * the first time.
+     * This attribute handles this. 
+     */
+    private boolean firstCalculation = true;
+    
+    /**
      * List of all way points laying on this edge.
      */
     List<WayPoint> fWayPoints;
@@ -238,10 +245,10 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     /**
      * Called once when the edge is drawn the first time.
      * Can be used for example to calculate the width
-     * with respect to text.  
+     * with respect to text.
      * @param g
      */
-    protected void onFirstDraw(Graphics2D g) {}
+    protected void onFirstDraw(Graphics2D g) { }
     
     /**
      * Called when the edge is drawn.
@@ -264,7 +271,11 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     
     public List<EdgeProperty> getProperties() { return Collections.emptyList(); }
     
-    public void resetNodesOnEdges() {
+    /**
+     * Resets the edge, i. e., removes user way points and
+     * sets first draw to true
+     */
+    public void reset() {
         List<WayPoint> nodes = new ArrayList<WayPoint>();
 
         for (WayPoint node : getNodesOnEdge()) {
@@ -274,6 +285,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
         }
         
         fWayPoints = nodes;
+        this.firstDraw = true;
+        this.firstCalculation = true;
     }
     
     public boolean isSelected() {
@@ -686,6 +699,11 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     	}
     	
     	doCalculateNewPositions(edges);
+    	
+    	if (firstCalculation) {
+    		firstCalculation = false;
+    		calculateNewPositions(edges);
+    	}
     }
     
     /**
@@ -752,9 +770,13 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
         }
 
         helper.appendChild(edgeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
+        
+        storeAdditionalInfo(helper, edgeElement, hidden);
     }
     
     protected void restoreEdgeProperty(PersistHelper helper, Element propertyElement, String type, String version) {}
+    
+    protected void storeAdditionalInfo(PersistHelper helper, Element element, boolean hidden) {}
     
     protected void restoreAdditionalInfo(PersistHelper helper, Element element, String version) {}
     

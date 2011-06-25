@@ -167,6 +167,21 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
     }
     
     @Override
+    protected void onFirstDraw( Graphics2D g ) {
+    	super.onFirstDraw(g);
+    	
+    	// Position depends on width of the rectangle
+    	if (fAssocName != null)
+    		fAssocName.setRectangleSize(g);
+    	
+    	if (fTargetMultiplicity != null)
+    		fTargetMultiplicity.setRectangleSize(g);
+    	
+    	if (fTargetRolename != null)
+    		fTargetRolename.setRectangleSize(g);
+    }
+    
+    @Override
     protected void onDraw( Graphics2D g ) {
         if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );

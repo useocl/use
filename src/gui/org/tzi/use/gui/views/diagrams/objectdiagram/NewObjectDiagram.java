@@ -1255,11 +1255,11 @@ public class NewObjectDiagram extends DiagramView
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#resetNodesOnEdges()
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#doReset()
 	 */
 	@Override
-	public void resetNodesOnEdges() {
-		// TODO Auto-generated method stub
+	protected void doReset() {
+		
 		
 	}
 	

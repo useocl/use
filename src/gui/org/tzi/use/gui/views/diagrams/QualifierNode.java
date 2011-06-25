@@ -30,12 +30,14 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkEnd;
+import org.w3c.dom.Element;
 
 /**
  * A QualifierNode represents the rectangle placed at the
@@ -218,7 +220,7 @@ public class QualifierNode extends NodeBase {
 	 */
 	@Override
 	public String name() {
-		return qualifiedEnd.name() + " qualifier node";
+		return qualifiedEnd.name();
 	}
 
 	/**
@@ -232,7 +234,28 @@ public class QualifierNode extends NodeBase {
 	}
 	
 	@Override
-    public String getStoreType() {
+    protected String getStoreType() {
     	return "QualifierNode";
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#storeAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, boolean)
+	 */
+	@Override
+	protected void storeAdditionalInfo(PersistHelper helper,
+			Element nodeElement, boolean hidden) {
+		super.storeAdditionalInfo(helper, nodeElement, hidden);
+		helper.appendChild(nodeElement, "relativePosition", this.relativePosition.name());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#restoreAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, java.lang.String)
+	 */
+	@Override
+	protected void restoreAdditionalInfo(PersistHelper helper,
+			Element nodeElement, String version) {
+		super.restoreAdditionalInfo(helper, nodeElement, version);
+		this.relativePosition = Direction.valueOf(helper.getElementStringValue(nodeElement, "relativePosition"));
+	}
+	
 }

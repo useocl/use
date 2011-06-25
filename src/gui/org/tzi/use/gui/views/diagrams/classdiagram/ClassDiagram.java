@@ -1152,35 +1152,21 @@ public class ClassDiagram extends DiagramView
 	}
 	
 	@Override
-	public void resetNodesOnEdges() {
-		/*
-		if ( fBinaryEdgeToEdgeMap != null ) {
-            for (BinaryAssociationOrLinkEdge edge : fBinaryEdgeToEdgeMap.values()) {
-                edge.resetNodesOnEdges();
+	protected void doReset() {
+        for (EdgeBase edge : this.visibleData.fBinaryAssocToEdgeMap.values()) {
+            edge.reset();
+        }
+        for (EdgeBase edge : this.visibleData.fAssocClassToEdgeMap.values()) {
+        	edge.reset();
+        }
+        for (EdgeBase edge : this.visibleData.fGenToGeneralizationEdge.values()) {
+            edge.reset();
+        }
+        for (List<EdgeBase> halfEdges : this.visibleData.fNaryAssocToHalfEdgeMap.values()) {
+        	for (EdgeBase edge : halfEdges) {
+                edge.reset();
             }
         }
-    
-        if ( fNaryEdgeToHalfEdgeMap != null ) {
-            for (List<AssociationOrLinkPartEdge> edges : fNaryEdgeToHalfEdgeMap.values()) {
-            	for (EdgeBase edge : edges) {
-            		edge.resetNodesOnEdges();
-            	}
-            }
-        }
-        
-        if ( fEdgeNodeToEdgeMap != null ) {
-            for (EdgeBase edge : fEdgeNodeToEdgeMap.values()) {
-                edge.resetNodesOnEdges();
-            }
-        }
-        
-        
-        if ( fGenToGeneralizationEdge != null ) {
-            for (EdgeBase edge : fGenToGeneralizationEdge.values()) {
-                edge.resetNodesOnEdges();
-            }
-        }
-        */
 	}
 	
 	public ActionHideClassDiagram getAction( String text, Set<? extends MClassifier> selectedNodes ) {
