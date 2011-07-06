@@ -50,22 +50,21 @@ public final class GeneralizationEdge extends EdgeBase {
     @Override
     protected void onDraw( Graphics2D g ) {
         g.setColor( fOpt.getEDGE_COLOR() );
-    
-        WayPoint n1 = null;
-        WayPoint n2 = null;
-        
+
         // draw all line segments
         if ( !fWayPoints.isEmpty() ) {
+        	WayPoint n1 = null;
+            WayPoint n2 = null;
+            
             Iterator<WayPoint> it = fWayPoints.iterator();
-            int counter = 0;
-            if ( it.hasNext() ) {
-                n1 = (WayPoint) it.next();
-                counter++;
-            }
+            n1 = it.next();
+            int counter = 1;
+
             while( it.hasNext() ) {
-                n2 = (WayPoint) it.next();
+                n2 = it.next();
                 counter++;
                 n2.draw(g);
+                
                 try {
                     if ( counter < fWayPoints.size() ) {
                         DirectedEdgeFactory.drawAssociation( g,
@@ -74,22 +73,17 @@ public final class GeneralizationEdge extends EdgeBase {
                                                              (int) n2.getCenter().getX(),
                                                              (int) n2.getCenter().getY() );
                         n1 = n2;
+                    } else {
+                    	// draw the last line segment, as an inheritance
+                        DirectedEdgeFactory.drawInheritance( g, (int) n1.getCenter().getX(), 
+                                                                (int) n1.getCenter().getY(), 
+                                                                (int) n2.getCenter().getX(), 
+                                                                (int) n2.getCenter().getY() );
                     }
-                    
                 } catch ( Exception e ) {
                     //ignore
                 }
             }
-        }
-        
-        // draw the last line segment, as an inheritance
-        try {
-            DirectedEdgeFactory.drawInheritance( g, (int) n1.getCenter().getX(), 
-                                                    (int) n1.getCenter().getY(), 
-                                                    (int) n2.getCenter().getX(), 
-                                                    (int) n2.getCenter().getY() );
-        } catch ( Exception ex ) {
-            //ignore
         }
     }
 

@@ -844,7 +844,8 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		super.restoreAdditionalInfo(helper, element, version);
 		
 		if (this.hasSourceQualifier()) {
-			Element sourceQualNode = helper.getElementByExpression(element, "./node[@type='QualifierNode' and name='" + getSourceRolename().name() + "']");
+			Element sourceQualNode = helper.getElementByExpression(element, 
+						"./node[@type='QualifierNode' and name='" + getSourceRolename().name() + "']");
 			// Could be a new qualifier
 			if (sourceQualNode != null) {
 				this.getSourceQualifier().restorePlacementInfo(helper, sourceQualNode, version);
@@ -853,7 +854,8 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		}
 		
 		if (this.hasTargetQualifier()) {
-			Element targetQualNode = helper.getElementByExpression(element, "./node[@type='QualifierNode' and name='" + getTargetRolename().name() + "']");
+			Element targetQualNode = helper.getElementByExpression(element, 
+						"./node[@type='QualifierNode' and name='" + getTargetRolename().name() + "']");
 			// Could be a new qualifier
 			if (targetQualNode != null) {
 				this.getTargetQualifier().restorePlacementInfo(helper, targetQualNode, version);

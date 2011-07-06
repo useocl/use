@@ -1122,7 +1122,7 @@ public class ClassDiagram extends DiagramView
 		}
 		
 		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
-				+ LayoutTags.EDGE + "[@type='Generalization']",
+				+ LayoutTags.EDGE + "[@type='" + (version.equals("1") ? "Inheritance" : "Generalization")  + "']",
 				XPathConstants.NODESET);
 		
 		for (int i = 0; i < elements.getLength(); ++i) {

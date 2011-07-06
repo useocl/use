@@ -532,8 +532,16 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
     }
     
     public final void restorePlacementInfo( PersistHelper helper, Element nodeElement, String version) {
-    	setX( helper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD) );
-    	setY( helper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD) );
+    	double x = helper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD);
+    	double y = helper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD);
+    	Point2D.Double point = new Point2D.Double(x, y);
+    	
+    	if (version.equals("1")) {
+    		setCenter(point);
+    	} else {
+    		setPosition(point);
+    	}
+    	
     	restoreAdditionalInfo(helper, nodeElement, version);
     }
     
