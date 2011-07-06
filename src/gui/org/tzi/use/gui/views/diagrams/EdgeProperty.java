@@ -295,7 +295,7 @@ public abstract class EdgeProperty extends PlaceableNode {
 		fX_UserDefined += deltaX;
 		fY_UserDefined += deltaY;
 		isUserDefined = true;
-		calculatePosition();
+		super.setDraggedPosition(deltaX, deltaY);
 	}
 
 	void setColor(Graphics2D g) {

@@ -29,6 +29,7 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser;
@@ -76,7 +77,7 @@ public class NewObjectDiagramView extends JPanel
         setLayout(new BorderLayout());
 
         fObjectDiagram = new NewObjectDiagram(this, mainWindow.logWriter());
-        add("Center", fObjectDiagram);
+        add( new JScrollPane(fObjectDiagram) );
 
         this.setFocusable(true);
         

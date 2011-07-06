@@ -262,11 +262,22 @@ public abstract class DiagramView extends JPanel
             }
         }
 
+        double maxX = 0;
+        double maxY = 0;
+        
         // draw nodes
         nodeIterator = fGraph.iterator();
         while (nodeIterator.hasNext()) {
-            NodeBase n = (NodeBase) nodeIterator.next();
+            NodeBase n = nodeIterator.next();
             n.draw(g2d);
+            maxX = Math.max(maxX, n.getX() + n.getWidth());
+            maxY = Math.max(maxY, n.getY() + n.getHeight());
+        }
+        
+        Dimension newDimension = new Dimension( (int)maxX + 5, (int)maxY + 5);
+        if (!newDimension.equals(this.getPreferredSize())) {
+        	this.setPreferredSize(newDimension);
+        	this.revalidate();
         }
         
         isDiagramContentChanged = false;

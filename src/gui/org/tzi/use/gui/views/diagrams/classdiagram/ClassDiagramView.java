@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.main.MainWindow;
@@ -63,7 +64,7 @@ public class ClassDiagramView extends JPanel
         fSystem.addChangeListener( this );
         setLayout( new BorderLayout() );
         fClassDiagram = new ClassDiagram( this, mainWindow.logWriter() );
-        add( "Center", fClassDiagram );
+        add( new JScrollPane(fClassDiagram) );
         initState();
     }
     
