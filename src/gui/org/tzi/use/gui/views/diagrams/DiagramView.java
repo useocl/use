@@ -21,11 +21,14 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -168,6 +171,10 @@ public abstract class DiagramView extends JPanel
         g2d.setColor(getBackground());
         g2d.fillRect(0, 0, d.width, d.height);
  
+        if (this.fOpt.showGrid()) {
+        	drawGrid(g2d);
+        }
+        
         Iterator<EdgeBase> edgeIterator;
         // Calculates the min height of classifiers
         if (isDiagramContentChanged) {
@@ -284,6 +291,31 @@ public abstract class DiagramView extends JPanel
     }
         
     /**
+	 * @param g
+	 */
+	private void drawGrid(Graphics2D g) {
+		Color old = g.getColor();
+		g.setColor(Color.LIGHT_GRAY);
+				
+		Stroke oldStroke = g.getStroke();
+		BasicStroke newStroke = new BasicStroke(1.0F, BasicStroke.CAP_SQUARE,
+				BasicStroke.JOIN_MITER, 10.0F, new float[] { 5.0F, 5.0F }, 0.0F);
+
+		g.setStroke(newStroke);
+		
+		for (int x = 50; x < getSize().getWidth(); x += 50) {
+			g.drawLine(x, 0, x, (int)getSize().getHeight());
+		}
+		
+		for (int y = 50; y < getSize().getHeight(); y += 50) {
+			g.drawLine(0, y, (int)getSize().getWidth(), y);
+		}
+		
+		g.setColor(old);
+		g.setStroke(oldStroke);
+	}
+
+	/**
      * Returns the options of a specific diagram.
      */
     public DiagramOptions getOptions() {
@@ -481,12 +513,23 @@ public abstract class DiagramView extends JPanel
             }
         });
         
+        final JCheckBoxMenuItem cbShowGrid =
+            new JCheckBoxMenuItem("Show grid" );
+        cbShowGrid.setState( fOpt.showGrid() );
+        cbShowGrid.addItemListener( new ItemListener() {
+            public void itemStateChanged( ItemEvent ev ) {
+                fOpt.setShowGrid( ev.getStateChange() == ItemEvent.SELECTED );
+                repaint();
+            }
+        } );
+        
         popupMenu.add(cbAssocNames);
         popupMenu.add(cbRolenames);
         popupMenu.add(cbAttrValues);
         popupMenu.addSeparator();
         popupMenu.add(cbAutoLayout);
         popupMenu.add(cbAntiAliasing);
+        popupMenu.add(cbShowGrid);
         
         if (fGraph.size() > 0) {
             popupMenu.addSeparator();
@@ -576,7 +619,7 @@ public abstract class DiagramView extends JPanel
 	/**
 	 * @param rootElement
 	 */
-	public abstract void restorePositionData(PersistHelper helper, Element rootElement, String version);
+	public abstract void restorePlacementInfos(PersistHelper helper, Element rootElement, String version);
 
 	/**
 	 * Show all hidden elements again

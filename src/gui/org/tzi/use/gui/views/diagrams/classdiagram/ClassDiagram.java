@@ -1030,6 +1030,10 @@ public class ClassDiagram extends DiagramView
         	e.storePlacementInfo( helper, parent, !visible );
         }
         
+        for (EdgeBase e : data.fAssocClassToEdgeMap.values()) {
+        	e.storePlacementInfo( helper, parent, !visible );
+        }
+        
         for (GeneralizationEdge e : data.fGenToGeneralizationEdge.values()) {
         	e.storePlacementInfo( helper, parent, !visible );
         }
@@ -1051,7 +1055,7 @@ public class ClassDiagram extends DiagramView
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
 	 */
 	@Override
-	public void restorePositionData(PersistHelper helper, Element rootElement, String version) {
+	public void restorePlacementInfos(PersistHelper helper, Element rootElement, String version) {
 		Set<MClassifier> hiddenClassifier = new HashSet<MClassifier>();
 				
 		// Restore class nodes
@@ -1117,6 +1121,23 @@ public class ClassDiagram extends DiagramView
 			// Could be deleted
 			if (assoc != null) {
 				BinaryAssociationOrLinkEdge edge = visibleData.fBinaryAssocToEdgeMap.get(assoc);
+				edge.restorePlacementInfo(helper, edgeElement, version);
+			}
+		}
+		
+		// Restore edges
+		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
+				+ LayoutTags.EDGE + "[@type='NodeEdge']",
+				XPathConstants.NODESET);
+		
+		for (int i = 0; i < elements.getLength(); ++i) {
+			Element edgeElement = (Element)elements.item(i);
+			
+			String name = helper.getElementStringValue(edgeElement, "name");
+			MAssociation assoc = fParent.system().model().getAssociation(name);
+			// Could be deleted
+			if (assoc != null) {
+				EdgeBase edge = visibleData.fAssocClassToEdgeMap.get(assoc);
 				edge.restorePlacementInfo(helper, edgeElement, version);
 			}
 		}

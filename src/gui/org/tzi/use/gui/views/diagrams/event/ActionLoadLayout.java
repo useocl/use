@@ -131,7 +131,7 @@ public class ActionLoadLayout extends AbstractAction {
 		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);
 		fDiagram.getOptions().loadOptions(helper, layoutElement, version);
 		
-		fDiagram.restorePositionData(helper, rootElement, version);
+		fDiagram.restorePlacementInfos(helper, rootElement, version);
         fDiagram.invalidateContent();
     }
  

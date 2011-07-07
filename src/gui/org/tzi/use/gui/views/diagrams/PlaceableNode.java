@@ -194,7 +194,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
         
     	bounds.x = x;
         bounds.y = y;
-        
+
         onPositionChanged(deltaX, deltaY);
     }
 
@@ -532,6 +532,10 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
     }
     
     public final void restorePlacementInfo( PersistHelper helper, Element nodeElement, String version) {
+    	// We do not notify the listeners when restoring the layout
+    	List<PositionChangedListener<PlaceableNode>> listeners = this.positionChangeListener;
+    	this.positionChangeListener = Collections.emptyList();
+    	
     	double x = helper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD);
     	double y = helper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD);
     	Point2D.Double point = new Point2D.Double(x, y);
@@ -543,6 +547,8 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
     	}
     	
     	restoreAdditionalInfo(helper, nodeElement, version);
+    	
+    	this.positionChangeListener = listeners;
     }
     
     protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) { }

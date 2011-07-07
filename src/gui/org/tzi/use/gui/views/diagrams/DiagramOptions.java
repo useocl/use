@@ -42,6 +42,7 @@ public abstract class DiagramOptions {
     protected boolean fShowMutliplicities = false;
     protected boolean fShowAttributes = false;
     protected boolean fShowOperations = false;
+    protected boolean fShowGrid = false;
     
     // color settings
     protected Color NODE_COLOR;
@@ -99,9 +100,13 @@ public abstract class DiagramOptions {
         fShowOperations = showOperations;
     }
     
-    
-    
-    
+	public boolean showGrid() {
+		return fShowGrid;
+	}
+	public void setShowGrid(boolean showGrid) {
+		fShowGrid = showGrid;
+	}
+	
     public Color getDIAMONDNODE_COLOR() {
         return DIAMONDNODE_COLOR;
     }
@@ -155,6 +160,7 @@ public abstract class DiagramOptions {
 		helper.appendChild(parent, LayoutTags.SHOWMULTIPLICITIES, String.valueOf(isShowMutliplicities()));
 		helper.appendChild(parent, LayoutTags.SHOWOPERATIONS, String.valueOf(isShowOperations()));
 		helper.appendChild(parent, LayoutTags.SHOWROLENAMES, String.valueOf(isShowRolenames()));
+		helper.appendChild(parent, LayoutTags.SHOWGRID, String.valueOf(showGrid()));
 	}
 	/**
 	 * @param rootElement
@@ -167,5 +173,8 @@ public abstract class DiagramOptions {
 		setShowMutliplicities(helper.getElementBooleanValue(parent, LayoutTags.SHOWMULTIPLICITIES));
 		setShowOperations(helper.getElementBooleanValue(parent, LayoutTags.SHOWOPERATIONS));
 		setShowRolenames(helper.getElementBooleanValue(parent, LayoutTags.SHOWROLENAMES));
+		if (!version.equals("1")) {
+			setShowGrid(helper.getElementBooleanValue(parent, LayoutTags.SHOWGRID));
+		}
 	}
 }

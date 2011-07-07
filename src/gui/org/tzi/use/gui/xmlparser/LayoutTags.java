@@ -22,7 +22,7 @@
 package org.tzi.use.gui.xmlparser;
 
 /**
- * This class provieds just the tags for categorysing movies in an xml
+ * This class provides just the tags for categorizing movies in a XML
  * file.
  * 
  * @version     $ProjectVersion: 0.393 $
@@ -30,50 +30,6 @@ package org.tzi.use.gui.xmlparser;
  */
 public class LayoutTags {
 
-    // XML tags
-    public static final String AUTOLAYOUT_O = "<autolayout>";
-    public static final String AUTOLAYOUT_C = "</autolayout>";
-    public static final String ANTIALIASING_O = "<antialiasing>";
-    public static final String ANTIALIASING_C = "</antialiasing>";
-    public static final String SHOWASSOCNAMES_O = "<showassocnames>";
-    public static final String SHOWASSOCNAMES_C = "</showassocnames>";
-    public static final String SHOWROLENAMES_O = "<showrolenames>";
-    public static final String SHOWROLENAMES_C = "</showrolenames>";
-    public static final String SHOWMULTIPLICITIES_O = "<showmultiplicities>";
-    public static final String SHOWMULTIPLICITIES_C = "</showmultiplicities>";
-    public static final String SHOWATTRIBUTES_O = "<showattributes>";
-    public static final String SHOWATTRIBUTES_C = "</showattributes>";
-    public static final String SHOWOPERATIONS_O = "<showoperations>";
-    public static final String SHOWOPERATIONS_C = "</showoperations>";
-    
-    public static final String NAME_O = "<name>";
-    public static final String NAME_C = "</name>";
-    public static final String X_COORD_O = "<x_coord>";
-    public static final String X_COORD_C = "</x_coord>";
-    public static final String Y_COORD_O = "<y_coord>";
-    public static final String Y_COORD_C = "</y_coord>";
-    public static final String HIDDEN_O = "<hidden>";
-    public static final String HIDDEN_C = "</hidden>";
-    public static final String SOURCE_O = "<source>";
-    public static final String SOURCE_C = "</source>";
-    public static final String TARGET_O = "<target>";
-    public static final String TARGET_C = "</target>";
-    public static final String CON_NODE_O = "<connectedNode>";
-    public static final String CON_NODE_C = "</connectedNode>";
-    public static final String ID_O = "<id>";
-    public static final String ID_C = "</id>";
-    public static final String SPECIALID_O = "<specialid>";
-    public static final String SPECIALID_C = "</specialid>";
-    
-
-    public static final String NODE_O = "<node";
-    public static final String NODE_C = "</node>";
-    public static final String EDGE_O = "<edge";
-    public static final String EDGE_C = "</edge>";
-    public static final String EDGEPROPERTY_O = "<edgeproperty";
-    public static final String EDGEPROPERTY_C = "</edgeproperty>";
-    
-    
     // diagram options tags
     public static final String AUTOLAYOUT = "autolayout";
     public static final String ANTIALIASING = "antialiasing";
@@ -82,6 +38,7 @@ public class LayoutTags {
     public static final String SHOWMULTIPLICITIES = "showmultiplicities";
     public static final String SHOWATTRIBUTES = "showattributes";
     public static final String SHOWOPERATIONS = "showoperations";
+    public static final String SHOWGRID = "showgrid";
     
     // node and edge tags
     public static final String NAME = "name";
@@ -99,13 +56,6 @@ public class LayoutTags {
     public static final String NODE= "node";
     public static final String EDGE = "edge";
     public static final String EDGEPROPERTY = "edgeproperty";
-    
-    // open closing tags
-    public static final String OPEN_TAG = "<diagram_Layout> \n\n";
-    public static final String CLOSE_TAG = "</diagram_Layout>";
-    
-    public static final String NL = "\n";
-    public static final String INDENT = "   ";
     
     // type identifier
     public static final String CLASS = "Class";

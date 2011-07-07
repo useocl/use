@@ -246,6 +246,7 @@ public class QualifierNode extends NodeBase {
 			Element nodeElement, boolean hidden) {
 		super.storeAdditionalInfo(helper, nodeElement, hidden);
 		helper.appendChild(nodeElement, "relativePosition", this.relativePosition.name());
+		helper.appendChild(nodeElement, "yOffset", String.valueOf(this.getYOffset()));
 	}
 
 	/* (non-Javadoc)
@@ -256,6 +257,7 @@ public class QualifierNode extends NodeBase {
 			Element nodeElement, String version) {
 		super.restoreAdditionalInfo(helper, nodeElement, version);
 		this.relativePosition = Direction.valueOf(helper.getElementStringValue(nodeElement, "relativePosition"));
+		this.yOffset = helper.getElementDoubleValue(nodeElement, "yOffset");
 	}
 	
 }

@@ -67,9 +67,9 @@ public class ExpAny extends ExpQuery {
         ctx.enter(this);
         Value v = evalSelectOrReject(ctx, true);
         if (! v.isUndefined() ) {
-            CollectionValue coll = (CollectionValue) evalSelectOrReject(ctx, true);
+            CollectionValue coll = (CollectionValue) v;
             if (coll.size() > 0 ) {
-                res = (Value) coll.iterator().next();
+                res = coll.iterator().next();
             }
         }
         ctx.exit(this, res);

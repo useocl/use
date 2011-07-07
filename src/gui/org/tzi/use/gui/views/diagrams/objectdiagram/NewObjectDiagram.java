@@ -1250,7 +1250,7 @@ public class NewObjectDiagram extends DiagramView
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
 	 */
 	@Override
-	public void restorePositionData(PersistHelper helper, Element rootElement, String version) {
+	public void restorePlacementInfos(PersistHelper helper, Element rootElement, String version) {
 		// TODO Auto-generated method stub
 	}
 
