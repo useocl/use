@@ -45,6 +45,22 @@ public final class ExpIsKindOf extends Expression {
     }
 
     /**
+     * Returns the source expression.
+     * @return The source <code>Expression</code> 
+     */
+    public Expression getSourceExpr() {
+    	return fSourceExpr;
+    }
+    
+    /**
+     * Returns the target type.
+     * @return The target <code>Type</code> 
+     */
+    public Type getTargetType() {
+    	return fTargetType;
+    }
+        
+    /**
      * Evaluates expression and returns result value. 
      */
     public Value eval(EvalContext ctx) {
@@ -64,7 +80,7 @@ public final class ExpIsKindOf extends Expression {
     public StringBuilder toString(StringBuilder sb) {
         fSourceExpr.toString(sb);
         sb.append(".oclIsKindOf(");
-        fTargetType.toString();
+        fTargetType.toString(sb);
         return sb.append(")");
     }
 }
