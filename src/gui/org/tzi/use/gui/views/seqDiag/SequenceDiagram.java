@@ -3084,7 +3084,7 @@ public class SequenceDiagram extends JPanel implements Printable {
                 ll2 = ll2.getAntecessor();
             }
             // calculate position of each lifeline and its successor lifeline
-            while (ll2 != ll) {
+            while (ll2 != null && ll2 != ll) {
                 ll2.calculatePosition(fm);
                 ll2 = ll2.getSuccessor();
             }
