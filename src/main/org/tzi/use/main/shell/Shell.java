@@ -58,7 +58,6 @@ import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellCmd;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
-import org.tzi.use.monitor.Monitor;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
@@ -424,14 +423,6 @@ public final class Shell implements Runnable, PPCHandler {
         	cmdReloadExtensions();
 		else if (line.startsWith("plugins") || line.equals("plugins"))
 			cmdShowPlugins();
-		else if (line.startsWith("monitor start"))
-			cmdMonitoringStart(line);
-		else if (line.startsWith("monitor pause"))
-			cmdMonitoringPause();
-		else if (line.startsWith("monitor resume"))
-			cmdMonitoringResume();
-		else if (line.startsWith("monitor stop"))
-			cmdMonitoringEnd();
 		else if (Options.doPLUGIN) {
 			Set<Entry<Map<String, String>, PluginShellCmdProxy>> cmdEntrySet = this.pluginCommands.entrySet();
 			boolean cmdFound = false;
@@ -454,72 +445,6 @@ public final class Shell implements Runnable, PPCHandler {
 		} else
 			Log.error("Unknown command `" + line + "'. Try `help'.");
 	}
-
-    private Monitor monitor = null;
-    
-    private Monitor getMonitor() {
-    	return monitor;
-    }
-    
-    //***********************************************************
-    // Monitoring commands
-    //***********************************************************
-    private void cmdMonitoringStart(String line) throws NoSystemException {
-    	if (getMonitor() != null) {
-    		Log.error("Already monitioring an application. Please stop before starting a new monitor.");
-    		return;
-    	}
-    	
-    	String[] lineParts = line.split(" ");
-    	String host = "";
-    	String port = "";
-    	    	
-    	if (lineParts.length > 2) {
-    		String[] hostAndPort = lineParts[2].split(":");
-    		if (hostAndPort.length == 1) {
-        		port = hostAndPort[0];
-        	} else {
-        		host = hostAndPort[0];
-        		port = hostAndPort[1];
-        	}
-    	} else if (lineParts.length == 2) {
-    		Log.println("Using default value for remote debugger: localhost:6001");
-    	} else {
-    		Log.println("Wrong number of arguments. Usage: start monitor [hostname:]port");
-    		return;
-    	}
-    	
-    	monitor = new Monitor(this.system(), host, port);
-    	monitor.start();
-    }
-     
-    private void cmdMonitoringPause() throws NoSystemException {
-    	if (!checkMonitoring()) return;
-    	monitor.pause();
-    }
-
-    private void cmdMonitoringResume() {
-    	if (!checkMonitoring()) return;
-    	monitor.resume();
-    }
-
-    private void cmdMonitoringEnd() {
-    	if (!checkMonitoring()) return;
-    	monitor.end();
-    	monitor = null;
-    }
-
-    private boolean checkMonitoring() {
-    	if (monitor == null || !monitor.isRunning()) {
-    		Log.error("No monitoring is running. Please use 'monitor start' to begin monitoring.");
-    		return false;
-    	}
-    	
-    	return true;
-    }
-    //***********************************************************
-    // End of monitoring commands
-    //***********************************************************
 
 	private void cmdShowPlugins() {
 		System.out
