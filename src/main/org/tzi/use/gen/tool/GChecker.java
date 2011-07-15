@@ -127,7 +127,7 @@ class GInvariantStatistic extends GStatistic {
  * false, at first.
  * @author  Joern Bohling
  */
-class GChecker implements IGChecker {
+public class GChecker implements IGChecker {
     private boolean fCheckStructure;
     private Object[] fInvariantStatistics;
     private int fSize;

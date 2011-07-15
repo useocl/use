@@ -39,7 +39,7 @@ import org.tzi.use.util.NullWriter;
  * ASSL procedure can be aborted.
  * @author  Joern Bohling
  */
-class GCollectorImpl implements IGCollector {
+public class GCollectorImpl implements IGCollector {
     private boolean fValidStateFound;
     private List<MStatement> fStatements;
     private long fLimit;

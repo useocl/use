@@ -60,9 +60,9 @@ import org.tzi.use.util.Log;
  * @author  Joern Bohling
  */
 public class GGenerator {
-    private GModel fGModel;
-    private MSystem fSystem;
-    private GResult fLastResult;
+    protected GModel fGModel;
+    protected MSystem fSystem;
+    protected GResult fLastResult;
 
     public GGenerator( MSystem system ) {
         fSystem = system;
@@ -70,7 +70,7 @@ public class GGenerator {
         fLastResult = null;
     }
 
-    private void internalError(GEvaluationException e, long randomNr) {
+    protected void internalError(GEvaluationException e, long randomNr) {
         String nl = Options.LINE_SEPARATOR;
         try {
             PrintWriter pw

@@ -35,7 +35,7 @@ import org.tzi.use.uml.ocl.value.Value;
 
 import java.util.ListIterator;
 
-class GEvalInstructionList implements IGCaller {
+public class GEvalInstructionList implements IGCaller {
     private GInstructionList fInstr;
     private IGCaller fCaller;
     private ListIterator<GInstruction> fIterator;
@@ -61,7 +61,7 @@ class GEvalInstructionList implements IGCaller {
         proceed(conf,collector);
     }
 
-    private void proceed(GConfiguration conf,
+    protected void proceed(GConfiguration conf,
                          IGCollector collector) throws GEvaluationException {
         if (fIterator.hasNext() ) {
             GCreator.createFor((GInstruction) fIterator.next())

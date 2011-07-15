@@ -32,7 +32,7 @@ package org.tzi.use.gen.assl.dynamics;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 
-abstract class GEvalInstruction {
+public abstract class GEvalInstruction {
     public abstract void eval(GConfiguration conf,
                               IGCaller caller,
                               IGCollector collector)

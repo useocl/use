@@ -60,12 +60,11 @@ import org.tzi.use.util.CollectionUtil;
 
 class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     implements IGCaller {
+    protected GInstrTry_Assoc_LinkendSeqs fInstr;
 	static List<List<Value>> emptyQualifiers = Collections.emptyList();
-	
-    private GInstrTry_Assoc_LinkendSeqs fInstr;
     private IGCaller fCaller;
     private ListIterator<GValueInstruction> fIterator;
-    private List<List<MObject>> fObjectLists;
+    protected List<List<MObject>> fObjectLists;
     private GInstruction fLastEvaluatedInstruction;
     
     public GEvalInstrTry_Assoc_LinkendSeqs(GInstrTry_Assoc_LinkendSeqs instr ) {
@@ -122,7 +121,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     }
     
     
-    private void tryLinks(
+    protected void tryLinks(
     		GConfiguration conf, 
     		IGCollector collector) throws GEvaluationException {
          

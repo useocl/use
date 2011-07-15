@@ -46,7 +46,6 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
-
 class GEvalAttributeAssignment extends GEvalInstruction
     implements IGCaller {
     private GAttributeAssignment fInstr;

@@ -4,7 +4,7 @@
   <description>Build file for USE</description>
 	
   <property name="release.version" value="3.0.0RC3"/>
-  
+
   <!-- set release name to "use-x.y.z" -->
   <property name="release.name"       value="${ant.project.name}-${release.version}"/>
 

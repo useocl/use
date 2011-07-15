@@ -31,7 +31,7 @@ package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.uml.ocl.value.Value;
 
-interface IGCaller {
+public interface IGCaller {
     public void feedback( GConfiguration configuration,
                           Value value,
                           IGCollector collector ) 

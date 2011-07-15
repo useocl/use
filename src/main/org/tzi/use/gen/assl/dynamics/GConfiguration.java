@@ -37,7 +37,7 @@ import org.tzi.use.uml.ocl.expr.Evaluator;
 
 import java.util.Random;
 
-class GConfiguration {
+public class GConfiguration {
     private MSystemState fSystemState;
     private VarBindings fVarBindings;
     private Evaluator fEvaluator;
