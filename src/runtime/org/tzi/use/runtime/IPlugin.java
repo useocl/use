@@ -1,5 +1,7 @@
 package org.tzi.use.runtime;
 
+
+
 /**
  * This interface provides the basic startup class behaviour for the Plugin's
  * startup classes. - This interface should be implemented by a Plugin class if
@@ -26,6 +28,5 @@ public interface IPlugin {
 	 *             Throws errors if the Plugin's startup call fails.
 	 * 
 	 */
-	public void run(IPluginRuntime pluginRuntime) throws Exception;
-
+	void run(IPluginRuntime pluginRuntime) throws Exception;
 }
