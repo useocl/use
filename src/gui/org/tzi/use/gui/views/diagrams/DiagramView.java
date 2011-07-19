@@ -89,8 +89,8 @@ public abstract class DiagramView extends JPanel
     protected ActionLoadLayout fActionLoadLayout;
     
     protected ActionSaveLayout fActionSaveLayout;
-    
-    protected ActionSelectAll fActionSelectAll;
+
+	protected ActionSelectAll fActionSelectAll;
     
     protected DiagramOptions fOpt;
     
@@ -625,4 +625,13 @@ public abstract class DiagramView extends JPanel
 	 * Show all hidden elements again
 	 */
 	public abstract void showAll();
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#removeNotify()
+	 */
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		this.stopLayoutThread();
+	}
 }

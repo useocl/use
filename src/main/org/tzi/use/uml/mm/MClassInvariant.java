@@ -49,7 +49,7 @@ public final class MClassInvariant extends MModelElementImpl {
     private Expression fBody;   //  boolean expression
     private Expression fExpanded;
     private int fPositionInModel; // position of class in the model
-    private String fName; // name of the class
+    
     private boolean fHasVars;
     private boolean fIsExistential;
     
@@ -60,7 +60,7 @@ public final class MClassInvariant extends MModelElementImpl {
         throws ExpInvalidException
     {
         super(name, "inv");
-        fName = name;
+        
         fClass = cls;
         fBody = inv;
         fBody.assertBoolean();
@@ -205,7 +205,7 @@ public final class MClassInvariant extends MModelElementImpl {
      * @return Class name and invariant name as String
      */
     public String getClassAndNameAsString() {
-        return fClass.name() + "::" + fName;
+        return fClass.name() + "::" + name();
     }
 
     /**
@@ -213,7 +213,7 @@ public final class MClassInvariant extends MModelElementImpl {
      * @return Invariant name and class name as String
      */
     public String getNameAndClassAsString() {
-        return fName + "::" + fClass.name();
+        return name() + "::" + fClass.name();
     }
 
     /**
