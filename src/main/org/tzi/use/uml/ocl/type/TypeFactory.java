@@ -96,7 +96,7 @@ public final class TypeFactory {
     }
     
     public static ObjectType mkObjectType(MClass cls) {
-        return new ObjectType(cls);
+        return cls.type();
     }
 
     public static OclAnyType mkOclAny() {

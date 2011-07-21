@@ -36,7 +36,11 @@ import org.tzi.use.uml.mm.MClass;
 public final class ObjectType extends Type {
     private MClass fClass;
 
-    ObjectType(MClass cls) {
+    /**
+     * Should only be called by MClass 
+     * @param cls
+     */
+    public ObjectType(MClass cls) {
         fClass = cls;
     }
     

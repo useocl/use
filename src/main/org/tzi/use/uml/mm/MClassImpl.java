@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 
 
 /**
@@ -45,6 +44,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
     private Map<String, MOperation> fOperations;    // (String opname -> MOperation)
     private MModel fModel;  // Owner of this class
     private int fPositionInModel;
+    private ObjectType fType;
     
     // other classes reachable by associations 
     private Map<String, MNavigableElement> fNavigableElements;
@@ -55,6 +55,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
         fAttributes = new TreeMap<String, MAttribute>();
         fOperations = new TreeMap<String, MOperation>();
         fNavigableElements = new HashMap<String, MNavigableElement>();
+        fType = new ObjectType(this);
     }
     
     /**
@@ -76,7 +77,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * @return the corresponding type
      */
     public ObjectType type() {
-    	return TypeFactory.mkObjectType(this);
+    	return fType;
     }
 
     /**

@@ -130,7 +130,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @return the corresponding type
      */
     public ObjectType type() {
-    	return TypeFactory.mkObjectType(this);
+    	return fClassImpl.type();
     }
 
     /**
