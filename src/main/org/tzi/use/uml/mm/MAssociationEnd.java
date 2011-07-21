@@ -343,6 +343,9 @@ public final class MAssociationEnd extends MModelElementImpl
 		return resultType;
 	}
 
+	/**
+	 * Same as name.
+	 */
     public String nameAsRolename() {
         return name();
     }
