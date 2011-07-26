@@ -109,6 +109,7 @@ public abstract class DiagramView extends JPanel
 	public DiagramView() {
 		minClassNodeHeight = Integer.parseInt(System.getProperty("use.gui.view.classdiagram.class.minheight"));
         minClassNodeWidth = Integer.parseInt(System.getProperty("use.gui.view.classdiagram.class.minwidth"));
+        setFont(Font.getFont( "use.gui.view.objectdiagram", getFont() ));
 	}
 	
     /**
@@ -125,8 +126,6 @@ public abstract class DiagramView extends JPanel
      */
     public void paintComponent( Graphics g ) {
         synchronized ( fLock ) {
-            Font f = Font.getFont( "use.gui.view.objectdiagram", getFont() );
-            g.setFont( f );
             drawDiagram( g );
         }
     }
