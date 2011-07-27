@@ -886,6 +886,7 @@ public class ClassDiagram extends DiagramView
             showAllClasses.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ev) {
                     showAll();
+                    invalidateContent();
                 }
             });
 

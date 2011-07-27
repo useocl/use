@@ -60,7 +60,7 @@ public final class ActionHideClassDiagram extends ActionHide<MClassifier> {
     }
 
     /**
-     * Hides all nodes with there connecting edges.
+     * Hides all nodes with their connecting edges.
      */
     public void hideNodesAndEdges() {
         getDiagram().hideElementsInDiagram( fNodesToHide );
