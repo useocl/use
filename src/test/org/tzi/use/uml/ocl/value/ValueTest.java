@@ -50,14 +50,14 @@ public class ValueTest extends TestCase {
     }
 
     public void testInt() {
-        assertEquals("IntegerValue.value", 42, new IntegerValue(42).value());
+        assertEquals("IntegerValue.value", 42, IntegerValue.valueOf(42).value());
         assertEquals(
                      "IntegerValue.type",
                      TypeFactory.mkInteger(),
-                     new IntegerValue(42).type());
+                     IntegerValue.valueOf(42).type());
         assertTrue(
                    "IntegerValue.equals",
-                   new IntegerValue(42).equals(new IntegerValue(42)));
+                   IntegerValue.valueOf(42).equals(IntegerValue.valueOf(42)));
     }
 
     public void testReal() {
@@ -97,9 +97,9 @@ public class ValueTest extends TestCase {
     public void testSet() {
         SetValue intSet = new SetValue(TypeFactory.mkInteger());
         assertEquals("SetValue.size", 0, intSet.size());
-        intSet.add(new IntegerValue(3));
+        intSet.add(IntegerValue.valueOf(3));
         assertEquals("SetValue.insert", 1, intSet.size());
-        intSet.add(new IntegerValue(3));
+        intSet.add(IntegerValue.valueOf(3));
         assertEquals("SetValue/no duplicates", 1, intSet.size());
         try {
             intSet.add(new StringValue("foo"));
@@ -109,14 +109,14 @@ public class ValueTest extends TestCase {
             // expected
         }
         SetValue set1 = new SetValue(TypeFactory.mkInteger());
-        set1.add(new IntegerValue(1));
-        set1.add(new IntegerValue(2));
-        set1.add(new IntegerValue(3));
+        set1.add(IntegerValue.valueOf(1));
+        set1.add(IntegerValue.valueOf(2));
+        set1.add(IntegerValue.valueOf(3));
         SetValue set2 = new SetValue(TypeFactory.mkInteger());
-        set2.add(new IntegerValue(2));
-        set2.add(new IntegerValue(3));
+        set2.add(IntegerValue.valueOf(2));
+        set2.add(IntegerValue.valueOf(3));
         assertFalse("SetValue.equals", set1.equals(set2));
-        set2.add(new IntegerValue(1));
+        set2.add(IntegerValue.valueOf(1));
         assertTrue("SetValue.equals", set1.equals(set2));
         assertEquals("SetValue.toString", "Set{1,2,3}", set1.toString());
     }
@@ -124,9 +124,9 @@ public class ValueTest extends TestCase {
     public void testBag() {
         BagValue intBag = new BagValue(TypeFactory.mkInteger());
         assertEquals("BagValue.size", 0, intBag.size());
-        intBag.add(new IntegerValue(3));
+        intBag.add(IntegerValue.valueOf(3));
         assertEquals("BagValue.insert", 1, intBag.size());
-        intBag.add(new IntegerValue(3));
+        intBag.add(IntegerValue.valueOf(3));
         assertEquals("BagValue/duplicates", 2, intBag.size());
         try {
             intBag.add(new StringValue("foo"));
@@ -135,25 +135,25 @@ public class ValueTest extends TestCase {
             // expected
         }
         BagValue bag1 = new BagValue(TypeFactory.mkInteger());
-        bag1.add(new IntegerValue(1));
-        bag1.add(new IntegerValue(2));
-        bag1.add(new IntegerValue(3));
+        bag1.add(IntegerValue.valueOf(1));
+        bag1.add(IntegerValue.valueOf(2));
+        bag1.add(IntegerValue.valueOf(3));
         BagValue bag2 = new BagValue(TypeFactory.mkInteger());
-        bag2.add(new IntegerValue(2));
-        bag2.add(new IntegerValue(3));
+        bag2.add(IntegerValue.valueOf(2));
+        bag2.add(IntegerValue.valueOf(3));
         assertFalse("BagValue.equals", bag1.equals(bag2));
-        bag2.add(new IntegerValue(1));
+        bag2.add(IntegerValue.valueOf(1));
         assertTrue("BagValue.equals", bag1.equals(bag2));
-        bag2.add(new IntegerValue(1));
+        bag2.add(IntegerValue.valueOf(1));
         assertEquals("BagValue.toString", "Bag{1,1,2,3}", bag2.toString());
     }
 
     public void testSequence() {
         SequenceValue intSeq = new SequenceValue(TypeFactory.mkInteger());
         assertEquals("SequenceValue.size", 0, intSeq.size());
-        intSeq.add(new IntegerValue(3));
+        intSeq.add(IntegerValue.valueOf(3));
         assertEquals("SequenceValue.insert", 1, intSeq.size());
-        intSeq.add(new IntegerValue(3));
+        intSeq.add(IntegerValue.valueOf(3));
         assertEquals("SequenceValue/duplicates", 2, intSeq.size());
         try {
             intSeq.add(new StringValue("foo"));
@@ -162,41 +162,41 @@ public class ValueTest extends TestCase {
             // expected
         }
         SequenceValue seq1 = new SequenceValue(TypeFactory.mkInteger());
-        seq1.add(new IntegerValue(1));
-        seq1.add(new IntegerValue(2));
-        seq1.add(new IntegerValue(3));
+        seq1.add(IntegerValue.valueOf(1));
+        seq1.add(IntegerValue.valueOf(2));
+        seq1.add(IntegerValue.valueOf(3));
         SequenceValue seq2 = new SequenceValue(TypeFactory.mkInteger());
-        seq2.add(new IntegerValue(1));
-        seq2.add(new IntegerValue(2));
+        seq2.add(IntegerValue.valueOf(1));
+        seq2.add(IntegerValue.valueOf(2));
         assertFalse("SequenceValue.equals", seq1.equals(seq2));
-        seq2.add(new IntegerValue(3));
+        seq2.add(IntegerValue.valueOf(3));
         assertTrue("SequenceValue.equals", seq1.equals(seq2));
-        seq2.add(new IntegerValue(1));
+        seq2.add(IntegerValue.valueOf(1));
         assertEquals("SequenceValue.toString", "Sequence{1,2,3,1}", seq2.toString());
     }
 
     public void testSetEquals() {
         SetValue intSet1 = new SetValue(TypeFactory.mkInteger());
-        intSet1.add(new IntegerValue(1));
+        intSet1.add(IntegerValue.valueOf(1));
         SetValue intSet2 = new SetValue(TypeFactory.mkInteger());
-        intSet2.add(new IntegerValue(1));
+        intSet2.add(IntegerValue.valueOf(1));
         SetValue intSet3 = new SetValue(TypeFactory.mkInteger());
-        intSet3.add(new IntegerValue(2));
+        intSet3.add(IntegerValue.valueOf(2));
         SetValue intSet4 = new SetValue(TypeFactory.mkInteger()) { /*subclass*/ };
-        intSet4.add(new IntegerValue(1));
+        intSet4.add(IntegerValue.valueOf(1));
         
         new EqualsTester(intSet1, intSet2, intSet3, intSet4);
     }
     
     public void testSequenceEquals() {
         SequenceValue intSequence1 = new SequenceValue(TypeFactory.mkInteger());
-        intSequence1.add(new IntegerValue(1));
+        intSequence1.add(IntegerValue.valueOf(1));
         SequenceValue intSequence2 = new SequenceValue(TypeFactory.mkInteger());
-        intSequence2.add(new IntegerValue(1));
+        intSequence2.add(IntegerValue.valueOf(1));
         SequenceValue intSequence3 = new SequenceValue(TypeFactory.mkInteger());
-        intSequence3.add(new IntegerValue(2));
+        intSequence3.add(IntegerValue.valueOf(2));
         SequenceValue intSequence4 = new SequenceValue(TypeFactory.mkInteger()) { /*subclass*/ };
-        intSequence4.add(new IntegerValue(1));
+        intSequence4.add(IntegerValue.valueOf(1));
         
         new EqualsTester(intSequence1, intSequence2, intSequence3, intSequence4);
     }
@@ -204,13 +204,13 @@ public class ValueTest extends TestCase {
 
     public void testBagEquals() {
         BagValue intBag1 = new BagValue(TypeFactory.mkInteger());
-        intBag1.add(new IntegerValue(1));
+        intBag1.add(IntegerValue.valueOf(1));
         BagValue intBag2 = new BagValue(TypeFactory.mkInteger());
-        intBag2.add(new IntegerValue(1));
+        intBag2.add(IntegerValue.valueOf(1));
         BagValue intBag3 = new BagValue(TypeFactory.mkInteger());
-        intBag3.add(new IntegerValue(2));
+        intBag3.add(IntegerValue.valueOf(2));
         BagValue intBag4 = new BagValue(TypeFactory.mkInteger()) { /*subclass*/ };
-        intBag4.add(new IntegerValue(1));
+        intBag4.add(IntegerValue.valueOf(1));
         
         new EqualsTester(intBag1, intBag2, intBag3, intBag4);
     }

@@ -86,7 +86,7 @@ public class SequenceValue extends CollectionValue {
             int lower = ranges[i]; 
             int upper = ranges[i+1];
             for (int j = lower; j <= upper; j++)
-                fElements.add(new IntegerValue(j));
+                fElements.add(IntegerValue.valueOf(j));
             i += 2;
         }
         

@@ -56,10 +56,10 @@ public class AbstractBagTest extends TestCase {
      * same size. (values are primitiv)
      */
     public void testBagWithoutSameSize() {
-        Value[] valuesForBag1 = { new IntegerValue(1) };
+        Value[] valuesForBag1 = { IntegerValue.valueOf(1) };
         
-        Value[] valuesForBag2 = { new IntegerValue(0), 
-                                  new IntegerValue(1) };
+        Value[] valuesForBag2 = { IntegerValue.valueOf(0), 
+                                  IntegerValue.valueOf(1) };
         
         BagValue bagValue1 = new BagValue( TypeFactory.mkInteger(),
                                            valuesForBag1 );
@@ -68,9 +68,9 @@ public class AbstractBagTest extends TestCase {
         
         assertFalse( bagValue1.equals( bagValue2 ) );
         
-        Value[] valuesForBag3 = { new IntegerValue(0), 
-                                  new IntegerValue(1) };
-        Value[] valuesForBag4 = { new IntegerValue(1) };
+        Value[] valuesForBag3 = { IntegerValue.valueOf(0), 
+                                  IntegerValue.valueOf(1) };
+        Value[] valuesForBag4 = { IntegerValue.valueOf(1) };
         
         bagValue1 = new BagValue( TypeFactory.mkInteger(),
                                   valuesForBag3 );
@@ -85,11 +85,11 @@ public class AbstractBagTest extends TestCase {
      * two bags are not the same. (values are primitiv)
      */
     public void testSameBagSize() {
-        Value[] valuesForBag1 = { new IntegerValue(1), 
-                                  new IntegerValue(1) };
+        Value[] valuesForBag1 = { IntegerValue.valueOf(1), 
+                                  IntegerValue.valueOf(1) };
         
-        Value[] valuesForBag2 = { new IntegerValue(0), 
-                                  new IntegerValue(1) };
+        Value[] valuesForBag2 = { IntegerValue.valueOf(0), 
+                                  IntegerValue.valueOf(1) };
         
         BagValue bagValue1 = new BagValue( TypeFactory.mkInteger(),
                                            valuesForBag1 );
@@ -98,10 +98,10 @@ public class AbstractBagTest extends TestCase {
         
         assertFalse( bagValue1.equals( bagValue2 ) );
         
-        Value[] valuesForBag3 = { new IntegerValue(0), 
-                                  new IntegerValue(1) };
-        Value[] valuesForBag4 = { new IntegerValue(1), 
-                                  new IntegerValue(1) };
+        Value[] valuesForBag3 = { IntegerValue.valueOf(0), 
+                                  IntegerValue.valueOf(1) };
+        Value[] valuesForBag4 = { IntegerValue.valueOf(1), 
+                                  IntegerValue.valueOf(1) };
         
         bagValue1 = new BagValue( TypeFactory.mkInteger(),
                                   valuesForBag3 );
@@ -117,11 +117,11 @@ public class AbstractBagTest extends TestCase {
      * two bags are the same. (values are primitiv)
      */
     public void testSameBagSizeWithSameValues() {
-        Value[] valuesForBag1 = { new IntegerValue(1), 
-                                  new IntegerValue(1) };
+        Value[] valuesForBag1 = { IntegerValue.valueOf(1), 
+                                  IntegerValue.valueOf(1) };
         
-        Value[] valuesForBag2 = { new IntegerValue(1), 
-                                  new IntegerValue(1) };
+        Value[] valuesForBag2 = { IntegerValue.valueOf(1), 
+                                  IntegerValue.valueOf(1) };
         
         BagValue bagValue1 = new BagValue( TypeFactory.mkInteger(),
                                            valuesForBag1 );
@@ -130,12 +130,12 @@ public class AbstractBagTest extends TestCase {
         
         assertTrue( bagValue1.equals( bagValue2 ) );
         
-        Value[] valuesForBag3 = { new IntegerValue(3), 
-                                  new IntegerValue(0), 
-                                  new IntegerValue(1) };
-        Value[] valuesForBag4 = { new IntegerValue(0),
-                                  new IntegerValue(1), 
-                                  new IntegerValue(3) };
+        Value[] valuesForBag3 = { IntegerValue.valueOf(3), 
+                                  IntegerValue.valueOf(0), 
+                                  IntegerValue.valueOf(1) };
+        Value[] valuesForBag4 = { IntegerValue.valueOf(0),
+                                  IntegerValue.valueOf(1), 
+                                  IntegerValue.valueOf(3) };
         
         bagValue1 = new BagValue( TypeFactory.mkInteger(),
                                   valuesForBag3 );

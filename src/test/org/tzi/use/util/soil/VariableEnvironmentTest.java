@@ -68,9 +68,9 @@ public class VariableEnvironmentTest extends TestCase {
 		n1 = "n1";
 		n2 = "n2";
 		n3 = "n3";
-		v1 = new IntegerValue(1);
-		v2 = new IntegerValue(2);
-		v3 = new IntegerValue(3);
+		v1 = IntegerValue.valueOf(1);
+		v2 = IntegerValue.valueOf(2);
+		v3 = IntegerValue.valueOf(3);
 		vUnassigned = null;
 	}
 	

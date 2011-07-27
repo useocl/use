@@ -83,7 +83,7 @@ final class Op_number_add extends ArithOperation {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = ((IntegerValue) args[0]).value()
 					+ ((IntegerValue) args[1]).value();
-			return new IntegerValue(res);
+			return IntegerValue.valueOf(res);
 		} else {
 			double d1;
 			double d2;
@@ -120,7 +120,7 @@ final class Op_number_sub extends ArithOperation {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = ((IntegerValue) args[0]).value()
 					- ((IntegerValue) args[1]).value();
-			return new IntegerValue(res);
+			return IntegerValue.valueOf(res);
 		} else {
 			double d1;
 			double d2;
@@ -157,7 +157,7 @@ final class Op_number_mult extends ArithOperation {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = ((IntegerValue) args[0]).value()
 					* ((IntegerValue) args[1]).value();
-			return new IntegerValue(res);
+			return IntegerValue.valueOf(res);
 		} else {
 			double d1;
 			double d2;
@@ -266,7 +266,7 @@ final class Op_integer_abs extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		int i1 = ((IntegerValue) args[0]).value();
-		return new IntegerValue(Math.abs(i1));
+		return IntegerValue.valueOf(Math.abs(i1));
 	}
 }
 
@@ -294,7 +294,7 @@ final class Op_number_unaryminus extends OpGeneric {
 		Value res;
 		if (args[0].isInteger()) {
 			int i = ((IntegerValue) args[0]).value();
-			res = new IntegerValue(-i);
+			res = IntegerValue.valueOf(-i);
 		} else {
 			double d = ((RealValue) args[0]).value();
 			res = new RealValue(-d);
@@ -358,7 +358,7 @@ final class Op_real_floor extends OpGeneric {
 		else
 			d1 = ((RealValue) args[0]).value();
 
-		return new IntegerValue((int) Math.floor(d1));
+		return IntegerValue.valueOf((int) Math.floor(d1));
 	}
 }
 
@@ -391,7 +391,7 @@ final class Op_real_round extends OpGeneric {
 		else
 			d1 = ((RealValue) args[0]).value();
 
-		return new IntegerValue((int) Math.round(d1));
+		return IntegerValue.valueOf((int) Math.round(d1));
 	}
 }
 
@@ -418,7 +418,7 @@ final class Op_number_max extends ArithOperation {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = Math.max(((IntegerValue) args[0]).value(),
 					((IntegerValue) args[1]).value());
-			return new IntegerValue(res);
+			return IntegerValue.valueOf(res);
 		} else {
 			double d1;
 			double d2;
@@ -459,7 +459,7 @@ final class Op_number_min extends ArithOperation {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = Math.min(((IntegerValue) args[0]).value(),
 					((IntegerValue) args[1]).value());
-			return new IntegerValue(res);
+			return IntegerValue.valueOf(res);
 		} else {
 			double d1;
 			double d2;
@@ -501,7 +501,7 @@ final class Op_integer_mod extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		int i1 = ((IntegerValue) args[0]).value();
 		int i2 = ((IntegerValue) args[1]).value();
-		return new IntegerValue(i1 % i2);
+		return IntegerValue.valueOf(i1 % i2);
 	}
 }
 
@@ -529,7 +529,7 @@ final class Op_integer_idiv extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		int i1 = ((IntegerValue) args[0]).value();
 		int i2 = ((IntegerValue) args[1]).value();
-		return new IntegerValue(i1 / i2);
+		return IntegerValue.valueOf(i1 / i2);
 	}
 }
 

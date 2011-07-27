@@ -39,9 +39,9 @@ public class RubyHelper {
 		if (rubyValue instanceof Value) {
 			result = (Value)rubyValue;
 		} else if (rubyValue instanceof Long) {
-			result = new IntegerValue(((Long) rubyValue).intValue());
+			result = IntegerValue.valueOf(((Long) rubyValue).intValue());
         } else if (rubyValue instanceof Integer) {
-			result = new IntegerValue(((Integer) rubyValue).intValue());
+			result = IntegerValue.valueOf(((Integer) rubyValue).intValue());
         } else if (rubyValue instanceof String) {
 			result = new StringValue((String)rubyValue);
 		} else if (rubyValue instanceof Boolean) {

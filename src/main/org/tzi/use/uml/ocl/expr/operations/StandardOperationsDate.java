@@ -167,6 +167,6 @@ final class Op_Date_Day extends StandardOperationsDate
 		Calendar c = new GregorianCalendar();
 		c.setTime(((DateValue)args[0]).getValue());
 		
-		return new IntegerValue(c.get(Calendar.DAY_OF_MONTH));
+		return IntegerValue.valueOf(c.get(Calendar.DAY_OF_MONTH));
 	}
 }

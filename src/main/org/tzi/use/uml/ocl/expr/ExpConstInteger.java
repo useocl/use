@@ -48,7 +48,7 @@ public final class ExpConstInteger extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = new IntegerValue(fValue);
+        Value res = IntegerValue.valueOf(fValue);
         ctx.exit(this, res);
         return res;
     }

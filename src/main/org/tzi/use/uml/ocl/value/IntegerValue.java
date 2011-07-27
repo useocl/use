@@ -33,6 +33,13 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 public final class IntegerValue extends Value {
     int fValue;
     
+    /**
+     * Constructs a new IntegerValue with the value of <code>n</code>
+     * @deprecated Use {@link IntegerValue#valueOf(int)} instead, 
+     *             because it uses caching for some commonly used values to reduce
+     *             the overall amount of objects.
+     * @param n
+     */
     public IntegerValue(int n) {
         super(TypeFactory.mkInteger());
         fValue = n;
@@ -84,5 +91,20 @@ public final class IntegerValue extends Value {
             return +1;
         } else
             return toString().compareTo(o.toString());
+    }
+    
+    private static final IntegerValue[] predefinedValues;
+    static {
+    	predefinedValues = new IntegerValue[20];
+    	for (int i = 0; i < predefinedValues.length; ++i) {
+    		predefinedValues[i] = new IntegerValue(i);
+    	}
+    }
+    
+    public static IntegerValue valueOf(int integer) {
+    	if (integer >= 0 && integer < predefinedValues.length) {
+    		return predefinedValues[integer];
+    	}
+    	return new IntegerValue(integer);
     }
 }

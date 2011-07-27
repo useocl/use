@@ -5,12 +5,11 @@ import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.type.BagType;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.TupleType;
+import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
@@ -24,8 +23,6 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
-
-import antlr.SemanticException;
 
 public class StandardOperationsCollection {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
@@ -81,7 +78,7 @@ final class Op_collection_size extends OpGeneric {
 		if (args[0].isUndefined()) return UndefinedValue.instance;
 		
 		CollectionValue coll = (CollectionValue) args[0];
-		return new IntegerValue(coll.size());
+		return IntegerValue.valueOf(coll.size());
 	}
 }
 
@@ -216,10 +213,10 @@ final class Op_collection_count extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isUndefined())
-			return new IntegerValue(0);
+			return IntegerValue.valueOf(0);
 		CollectionValue coll = (CollectionValue) args[0];
 		int res = coll.count(args[1]);
-		return new IntegerValue(res);
+		return IntegerValue.valueOf(res);
 	}
 	
 	@Override
@@ -441,7 +438,7 @@ final class Op_collection_sum extends OpGeneric {
 					return UndefinedValue.instance;
 				isum += ((IntegerValue) v).value();
 			}
-			return new IntegerValue(isum);
+			return IntegerValue.valueOf(isum);
 		} else {
 			double rsum = 0.0;
 

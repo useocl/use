@@ -79,7 +79,7 @@ final class Op_string_size extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		int res = ((StringValue) args[0]).value().length();
-		return new IntegerValue(res);
+		return IntegerValue.valueOf(res);
 	}
 }
 
@@ -394,7 +394,7 @@ final class Op_string_toInteger extends OpGeneric {
 		
 		try {
 			int i = Integer.parseInt(v.value());
-			return new IntegerValue(i);
+			return IntegerValue.valueOf(i);
 		} catch (NumberFormatException e) {
 			return UndefinedValue.instance;
 		}
@@ -434,10 +434,10 @@ final class Op_string_indexOf extends OpGeneric {
 		String self = ((StringValue)args[0]).value();
 		String s = ((StringValue)args[1]).value();
 		
-		if (self.length() == 0) return new IntegerValue(0);
-		if (s.length()== 0 && self.length() > 0) return new IntegerValue(1);
+		if (self.length() == 0) return IntegerValue.valueOf(0);
+		if (s.length()== 0 && self.length() > 0) return IntegerValue.valueOf(1);
 		
-		return new IntegerValue(self.indexOf(s) + 1);
+		return IntegerValue.valueOf(self.indexOf(s) + 1);
 	}
 }
 

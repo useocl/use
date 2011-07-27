@@ -73,9 +73,9 @@ public class ExpQueryTest extends TestCase {
         // create range
         Value[] args1 =
             new Value[] {
-                new IntegerValue(1),
-                new IntegerValue(2),
-                new IntegerValue(3)};
+                IntegerValue.valueOf(1),
+                IntegerValue.valueOf(2),
+                IntegerValue.valueOf(3)};
         fSet123 = new ExpressionWithValue(new SetValue(TypeFactory.mkInteger(), args1));
 
         // create query expression
@@ -96,7 +96,7 @@ public class ExpQueryTest extends TestCase {
     public void testSelect1() throws ExpInvalidException {
         Expression exp = new ExpSelect((VarDecl)null, fSet123, new ExpConstBoolean(true));
         Value[] values =
-            new Value[] { new IntegerValue(1), new IntegerValue(2), new IntegerValue(3)};
+            new Value[] { IntegerValue.valueOf(1), IntegerValue.valueOf(2), IntegerValue.valueOf(3)};
         assertEquals(
                      exp.toString(),
                      new SetValue(TypeFactory.mkInteger(), values),
@@ -109,7 +109,7 @@ public class ExpQueryTest extends TestCase {
                           new VarDecl("e", TypeFactory.mkInteger()),
                           fSet123,
                           fEGreater1);
-        Value[] values = new Value[] { new IntegerValue(2), new IntegerValue(3)};
+        Value[] values = new Value[] { IntegerValue.valueOf(2), IntegerValue.valueOf(3)};
         assertEquals(
                      exp.toString(),
                      new SetValue(TypeFactory.mkInteger(), values),
@@ -122,7 +122,7 @@ public class ExpQueryTest extends TestCase {
                           new VarDecl("e", TypeFactory.mkInteger()),
                           fSet123,
                           fEGreater1);
-        Value[] values = new Value[] { new IntegerValue(1)};
+        Value[] values = new Value[] { IntegerValue.valueOf(1)};
         assertEquals(
                      exp.toString(),
                      new SetValue(TypeFactory.mkInteger(), values),
@@ -172,7 +172,7 @@ public class ExpQueryTest extends TestCase {
         Expression exp =
             new ExpCollectNested(new VarDecl("e", TypeFactory.mkInteger()), fSet123, mult2Exp);
         Value[] values =
-            new Value[] { new IntegerValue(2), new IntegerValue(4), new IntegerValue(6)};
+            new Value[] { IntegerValue.valueOf(2), IntegerValue.valueOf(4), IntegerValue.valueOf(6)};
         assertEquals(
                      exp.toString(),
                      new BagValue(TypeFactory.mkInteger(), values),
@@ -183,7 +183,7 @@ public class ExpQueryTest extends TestCase {
         // Set { 1..100 }->iterate(e; acc : Integer= 0 | acc + e);
         Value[] args1 = new Value[100];
         for (int i = 0; i < 100; i++)
-            args1[i] = new IntegerValue(i + 1);
+            args1[i] = IntegerValue.valueOf(i + 1);
         Expression set1To100 = new ExpressionWithValue(new SetValue(TypeFactory.mkInteger(), args1));
 
         // create query expression
@@ -202,14 +202,14 @@ public class ExpQueryTest extends TestCase {
                                               new ExpConstInteger(0)),
                            set1To100,
                            accPlusE);
-        assertEquals(exp.toString(), new IntegerValue(5050), e.eval(exp, fState));
+        assertEquals(exp.toString(), IntegerValue.valueOf(5050), e.eval(exp, fState));
     }
 
     public void testIterate2() throws ExpInvalidException {
         // Set { 1..3 }->iterate(e1, e2; acc : Integer= 0 | acc + e1 * e2));
         Value[] args1 = new Value[3];
         for (int i = 0; i < 3; i++)
-            args1[i] = new IntegerValue(i + 1);
+            args1[i] = IntegerValue.valueOf(i + 1);
         Expression set1To3 = new ExpressionWithValue(new SetValue(TypeFactory.mkInteger(), args1));
 
         // create query expression
@@ -236,7 +236,7 @@ public class ExpQueryTest extends TestCase {
                                               new ExpConstInteger(0)),
                            set1To3,
                            add);
-        assertEquals(exp.toString(), new IntegerValue(36), e.eval(exp, fState));
+        assertEquals(exp.toString(), IntegerValue.valueOf(36), e.eval(exp, fState));
     }
 
     /**

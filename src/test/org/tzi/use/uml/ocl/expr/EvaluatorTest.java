@@ -84,7 +84,7 @@ public class EvaluatorTest extends TestCase {
             Value v = (Value) q.get();
             int s1 = (numExpr - i) * factor;
             int s2 = s1 * (s1 + 1) / 2;
-            assertEquals("Sum 1.." + s1, new IntegerValue(s2), v);
+            assertEquals("Sum 1.." + s1, IntegerValue.valueOf(s2), v);
         }
 
         // env.printHeader("Time: " + (System.currentTimeMillis() - t0) + " ms");

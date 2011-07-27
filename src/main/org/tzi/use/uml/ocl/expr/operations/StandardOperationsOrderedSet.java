@@ -13,7 +13,6 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
 
@@ -514,7 +513,7 @@ final class Op_orderedSet_indexOf extends OpGeneric {
 		if (index == -1)
 			return UndefinedValue.instance;
 		else
-			return new IntegerValue(index + 1);
+			return IntegerValue.valueOf(index + 1);
 	}
 	
 	@Override

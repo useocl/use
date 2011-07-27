@@ -81,7 +81,7 @@ public class OrderedSetValue extends CollectionValue {
             int lower = ranges[i]; 
             int upper = ranges[i+1];
             for (int j = lower; j <= upper; j++)
-                add(new IntegerValue(j));
+                add(IntegerValue.valueOf(j));
             i += 2;
         }
     }

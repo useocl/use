@@ -193,7 +193,7 @@ public class TestSystem {
 		
 		op1.setStatement(
 				new MVariableAssignmentStatement(
-						"result", new IntegerValue(42)));
+						"result", IntegerValue.valueOf(42)));
 		c1.addOperation(op1);
 		
 		// soil defined operation without parameters & without result value
@@ -355,7 +355,7 @@ public class TestSystem {
 		varEnv.assign("o6", state.createObject(C2, "O6").value());
 		varEnv.assign("O6", varEnv.lookUp("o6"));
 		
-		varEnv.assign("v", new IntegerValue(42));
+		varEnv.assign("v", IntegerValue.valueOf(42));
 		
 		state.createLink(
 				getModel().getAssociation("A1"),

@@ -13,7 +13,6 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
 
@@ -512,7 +511,7 @@ final class Op_sequence_indexOf extends OpGeneric {
 		if (index == -1)
 			return UndefinedValue.instance;
 		else
-			return new IntegerValue(index + 1);
+			return IntegerValue.valueOf(index + 1);
 	}
 	
 	@Override

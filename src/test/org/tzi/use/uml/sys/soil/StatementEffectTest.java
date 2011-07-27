@@ -106,7 +106,7 @@ public class StatementEffectTest extends TestCase {
 		////////////////////////////////
 		
 		String statement;
-		IntegerValue val1 = new IntegerValue(42);
+		IntegerValue val1 = IntegerValue.valueOf(42);
 		String varName = "x";
 		
 		// variable not existent before
@@ -126,7 +126,7 @@ public class StatementEffectTest extends TestCase {
 		// undo //
 		//////////
 		
-		IntegerValue val2 = new IntegerValue(43);
+		IntegerValue val2 = IntegerValue.valueOf(43);
 		
 		// overwrite variable
 		statement = varName + " := " + val2;
@@ -272,7 +272,7 @@ public class StatementEffectTest extends TestCase {
 		evaluateStatement(statement);
 		
 		Value newAttVal = getAttVal(object, attName);
-		assertEquals(newAttVal, new IntegerValue(attVal));
+		assertEquals(newAttVal, IntegerValue.valueOf(attVal));
 		
 		int attVal2 = 43;
 		
@@ -286,7 +286,7 @@ public class StatementEffectTest extends TestCase {
 		evaluateStatement(statement);
 		
 		newAttVal = getAttVal(object, attName);
-		assertEquals(newAttVal, new IntegerValue(attVal2));
+		assertEquals(newAttVal, IntegerValue.valueOf(attVal2));
 		
 		//////////
 		// undo //
@@ -295,7 +295,7 @@ public class StatementEffectTest extends TestCase {
 		undo();
 		
 		newAttVal = getAttVal(object, attName);
-		assertEquals(newAttVal, new IntegerValue(attVal));
+		assertEquals(newAttVal, IntegerValue.valueOf(attVal));
 		
 		//////////
 		// redo //
@@ -304,7 +304,7 @@ public class StatementEffectTest extends TestCase {
 		redo();
 		
 		newAttVal = getAttVal(object, attName);
-		assertEquals(newAttVal, new IntegerValue(attVal2));
+		assertEquals(newAttVal, IntegerValue.valueOf(attVal2));
 	}
 
 
@@ -1267,7 +1267,7 @@ public class StatementEffectTest extends TestCase {
 			sum += x;
 		}
 		
-		assertEquals(lookUpVar("sum"), new IntegerValue(sum));
+		assertEquals(lookUpVar("sum"), IntegerValue.valueOf(sum));
 		
 		///////////////////////////////////////////////////
 		// iteration variable shadows existing variables //
@@ -1279,7 +1279,7 @@ public class StatementEffectTest extends TestCase {
 		
 		evaluateStatement(statement);
 		
-		assertEquals(lookUpVar("y"), new IntegerValue(0));
+		assertEquals(lookUpVar("y"), IntegerValue.valueOf(0));
 		
 	
 		////////////////////////////////////////////////
