@@ -47,6 +47,7 @@ public class GCollectorImpl implements IGCollector {
     private PrintWriter fDetailPrintWriter;
     private long fLeafCount;
     private boolean fExistsInvalidMessage;
+    private boolean fPrePostCondViolation;
 
     public GCollectorImpl() {
         fValidStateFound = false;
@@ -56,6 +57,7 @@ public class GCollectorImpl implements IGCollector {
         fBasicPrintWriter = new PrintWriter( new NullWriter() );
         fDetailPrintWriter = new PrintWriter( new NullWriter() );
         fExistsInvalidMessage = false;
+        fPrePostCondViolation = false;
     }
     
     public boolean canStop() {
@@ -112,7 +114,8 @@ public class GCollectorImpl implements IGCollector {
     }
 
     public boolean validStateFound() {
-        return fValidStateFound;
+    	// if a valid state has been found and no pre or postconditions have been violated
+    	return fValidStateFound && !fPrePostCondViolation;
     }
 
     public void invalid( String str ) {
@@ -127,6 +130,21 @@ public class GCollectorImpl implements IGCollector {
 
     public boolean existsInvalidMessage() {
         return fExistsInvalidMessage;
+    }
+    
+    /**
+     * storing pre or postcondition violations during the ASSL evaluation process
+     */
+    public void setPrePostViolation() {
+    	fPrePostCondViolation = true;
+    }
+    
+    /**
+     * @return "true" if an pre or postcondition violation occured during the ASSL evaluation
+     * called by GEvalProcedure
+     */
+    public boolean getPrePostViolation() {
+    	return fPrePostCondViolation;
     }
 }
 

@@ -102,6 +102,9 @@ instruction ::= variableAssignment
                 | loop
                 | atomicInstruction
                 | ifThenElse
+                | asslCall
+                | opEnter
+                | opExit
 // Not yet implemented: cut
 
 variableAssignment ::= id ":=" valueInstruction
@@ -180,6 +183,9 @@ instruction ::= variableAssignment
                 | loop
                 | atomicInstruction
                 | ifThenElse
+                | asslCall
+                | opEnter
+                | opExit
 */
 instruction returns [ASTGInstruction instr]
 :
@@ -188,6 +194,9 @@ instruction returns [ASTGInstruction instr]
     | instrLO = loop				{$instr = $instrLO.loop;}
     | instrAI = atomicInstruction	{$instr = $instrAI.instr;}
     | instrIT = ifThenElse			{$instr = $instrIT.ifThenElse;}
+    | instrAC = asslCall			{$instr = $instrAC.instr;}
+    | instrOE = opEnter				{$instr = $instrOE.instr;}
+    | instrOX = opExit				{$instr = $instrOX.instr;}
     ;
 
 
@@ -265,6 +274,43 @@ atomicInstruction returns [ASTGAtomicInstruction instr]
     RPAREN
     ;
 
+/* ------------------------------------
+asslCall ::= "ASSLCall" 
+      id "(" ( oclExpression (","oclExpression)* )? ")"
+*/
+asslCall returns [ASTGAsslCall instr]
+:
+    'ASSLCall' name=IDENT { $instr = new ASTGAsslCall($name); } LPAREN
+        ( parameter=oclExpression { $instr.addParameter($parameter.encapOcl); }
+            ( COMMA parameter=oclExpression
+              { $instr.addParameter($parameter.encapOcl); }
+            )*
+        )?
+    RPAREN
+    ;
+
+/* ------------------------------------
+opEnter ::= "OpEnter" 
+      oclExpression id "(" ( oclExpression (","oclExpression)* )? ")"
+*/
+opEnter returns [ASTGOpEnter instr]
+:
+    'OpEnter' oid=oclExpression opname=IDENT { $instr = new ASTGOpEnter($oid.encapOcl, $opname); } LPAREN 
+        ( parameter=oclExpression { $instr.addParameter($parameter.encapOcl); }
+            ( COMMA parameter=oclExpression
+              { $instr.addParameter($parameter.encapOcl); }
+            )*
+        )?
+    RPAREN
+    ;
+
+/* ------------------------------------
+opEnter ::= "OpExit" 
+*/
+opExit returns [ASTGOpExit instr]
+:
+    'OpExit' { $instr = new ASTGOpExit(); }
+    ;
 
 /* ------------------------------------
 instructionParameter ::= oclExpression | instrParameterIdent

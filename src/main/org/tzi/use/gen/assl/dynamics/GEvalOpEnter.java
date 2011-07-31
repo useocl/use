@@ -1,0 +1,127 @@
+package org.tzi.use.gen.assl.dynamics;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.tzi.use.gen.assl.statics.GInstrOpEnter;
+import org.tzi.use.gen.assl.statics.GOCLExpression;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.ocl.expr.ExpVariable;
+import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.Value;
+///import org.tzi.use.uml.sys.MCmdOpEnter;
+import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
+import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
+import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
+import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.sys.soil.SoilEvaluationContext;
+import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+///import org.tzi.use.util.cmd.CannotUndoException;
+///import org.tzi.use.util.cmd.CommandFailedException;
+
+import com.sun.security.auth.login.ConfigFile;
+
+public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
+
+	GInstrOpEnter fInstr;
+	IGCaller fCaller;
+	
+	public GEvalOpEnter (GInstrOpEnter instr) {
+		fInstr = instr;
+	}
+	
+	@Override
+	public void eval(GConfiguration conf, IGCaller caller, IGCollector collector)
+			throws GEvaluationException {
+
+		collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
+		fCaller = caller;
+		GCreator.createFor(fInstr.objname()).eval(conf, this, collector);
+	}
+
+	public void feedback( GConfiguration conf,
+            Value value,
+            IGCollector collector ) throws GEvaluationException {
+		// if a pre- or postcondition violation occured before skip this command and continue with ASSL evaluation
+		if (collector.getPrePostViolation()) 
+			fCaller.feedback(conf, value, collector);
+		else {
+			// no condition violation occurred before. Generate and execute this OpEnter ASSL command
+			collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
+
+			Expression[] argExprs;
+			Expression expr = new ExpressionWithValue( value );
+
+			Type t = expr.type();
+			if (! t.isObjectType() ) throw new GEvaluationException();
+			MClass cls = ((ObjectType) t).cls();
+			MOperation op = cls.operation
+			(fInstr.opname(), true);
+
+			// get Parameter and transform them into expressions
+			Iterator paramIter = fInstr.parameter().iterator();
+			argExprs = new Expression[fInstr.parameter().size()];
+			int i=0;
+			Map<String, Expression> arguments = new HashMap<String, Expression>();
+			while (paramIter.hasNext()){
+				GOCLExpression goexpr = (GOCLExpression) paramIter.next();
+				Value v2 = conf.evalExpression(goexpr.expression());
+				argExprs[i] = new ExpressionWithValue(v2);
+				// soil adapted
+				arguments.put(op.paramList().varDecl(i).name(), argExprs[i]);
+				i++;
+			}
+			// generate statement for openter command 
+			MEnterOperationStatement stmt = new MEnterOperationStatement(expr, op, arguments);
+			MStatement inverseStatement = null;
+			StatementEvaluationResult evaluationResult = null;
+			try {
+				// execute openter command
+				evaluationResult = conf.systemState().system().evaluateStatement(stmt, false, false, false);
+				inverseStatement = evaluationResult.getInverseStatement();
+			} catch (MSystemException e) {
+				// Precondition violated
+				//e.printStackTrace();
+			}
+			// if a precondition was violated an exception is thrown and no evaluation result is generated. 
+			// The violation is marked in the collector. 
+			if ( evaluationResult == null )
+				collector.setPrePostViolation();
+
+			fCaller.feedback(conf, value, collector);
+
+			// if all preconditions hold the opexit command is added to the ASSL command list 
+			if (evaluationResult!=null && collector.expectSubsequentReporting()) {
+				collector.subsequentlyPrependStatement( stmt );
+			}
+
+			try {
+				if (!collector.getPrePostViolation())
+					conf.systemState().system().evaluateStatement(inverseStatement, true, false, false);
+			} catch (MSystemException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+
+	}
+
+	public String toString() {
+		return "GEvalASSLCall";
+	}
+	
+}

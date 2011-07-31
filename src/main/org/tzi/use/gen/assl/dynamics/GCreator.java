@@ -34,12 +34,15 @@ import java.util.Map;
 
 import org.tzi.use.gen.assl.statics.GAttributeAssignment;
 import org.tzi.use.gen.assl.statics.GIfThenElse;
+import org.tzi.use.gen.assl.statics.GInstrASSLCall;
 import org.tzi.use.gen.assl.statics.GInstrAny_Seq;
 import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
 import org.tzi.use.gen.assl.statics.GInstrCreate_C;
 import org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends;
 import org.tzi.use.gen.assl.statics.GInstrDelete_Object;
 import org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends;
+import org.tzi.use.gen.assl.statics.GInstrOpEnter;
+import org.tzi.use.gen.assl.statics.GInstrOpExit;
 import org.tzi.use.gen.assl.statics.GInstrSub_Seq;
 import org.tzi.use.gen.assl.statics.GInstrSub_Seq_Integer;
 import org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs;
@@ -77,6 +80,9 @@ class GCreator {
     	createMap.put(GAttributeAssignment.class, new CreateGEvalAttributeAssignment());
     	createMap.put(GInstrTry_Assoc_LinkendSeqs.class, new CreateGEvalInstrTry_Assoc_LinkendSeqs());
     	createMap.put(GInstrDelete_Object.class, new CreateGEvalInstrDelete_Object());
+    	createMap.put(GInstrASSLCall.class, new CreateGEvalASSLCall());
+    	createMap.put(GInstrOpEnter.class, new CreateGEvalOpEnter());
+    	createMap.put(GInstrOpExit.class, new CreateGEvalOpExit());
     }
     
     public static GEvalInstruction createFor(GInstruction instr)
@@ -189,4 +195,22 @@ final class CreateGEvalInstrDelete_Object implements IInstCreator {
 	public GEvalInstruction create(GInstruction instr) {
             return new GEvalInstrDelete_Object( (GInstrDelete_Object) instr );
     }
+}
+
+final class CreateGEvalASSLCall implements IInstCreator {
+	public GEvalASSLCall create(GInstruction instr) {
+		return new GEvalASSLCall((GInstrASSLCall) instr);
+	}
+}
+
+final class CreateGEvalOpEnter implements IInstCreator {
+	public GEvalOpEnter create(GInstruction instr) {
+		return new GEvalOpEnter((GInstrOpEnter) instr);
+	}
+}
+
+final class CreateGEvalOpExit implements IInstCreator {
+	public GEvalOpExit create(GInstruction instr) {
+		return new GEvalOpExit((GInstrOpExit) instr);
+	}
 }

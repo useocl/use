@@ -64,6 +64,17 @@ public class GGenerator {
     protected MSystem fSystem;
     protected GResult fLastResult;
 
+    private String fFilename;
+    private Long fLimit;
+    private String fPrintFilename;
+    private boolean fPrintBasics;
+    private boolean fPrintDetails; 
+    private Long fRandomNr;
+    private boolean fCheckStructure;
+    private GCollectorImpl collector;
+    
+    private List fProcedures;
+    
     public GGenerator( MSystem system ) {
         fSystem = system;
         fGModel = new GModel(system.model());
@@ -96,34 +107,83 @@ public class GGenerator {
         }
     }
 
-    public void startProcedure( String filename,
-                                String callstr,
-                                Long limit,
-                                String printFilename,
-                                boolean printBasics,
-                                boolean printDetails,
-                                Long randomNr,
-                                boolean checkStructure ) {
-        fLastResult = null;
-        boolean didShowWarnigs = Log.isShowWarnings();
-        Log.setShowWarnings(false);
-        
-        if (randomNr == null)
-            randomNr = Long.valueOf( (new Random()).nextInt(10000) );
-        if (limit == null)
-            limit = Long.valueOf( Long.MAX_VALUE );
+    public GProcedureCall getCall(String callstr) {
+        if (fProcedures!=null) {
+            Log.verbose("Compiling `" + callstr + "'.");
+            return ASSLCompiler.compileProcedureCall(fSystem.model(),
+                                                    fSystem.state(),
+                                                    callstr,
+                                                    "<input>",
+                                                    new PrintWriter(System.err)
+                                                    );
+        }
+        return null;
+    }
+    
+	public GProcedure getProcedure(String callstr) {
+    	if (fRandomNr == null)
+            fRandomNr = new Long( (new Random()).nextInt(10000) );
+        if (fLimit == null)
+            fLimit = new Long( Long.MAX_VALUE );
 
-        List<GProcedure> procedures = null;
+        //List procedures = null;
+        GProcedureCall call = null;
+        PrintWriter pw = null;
+        PrintWriter resultPw = null;
+        GProcedure retproc = null;
+        
+/*
+        try {
+        	GProcedure retproc = null;
+        	Log.verbose("Compiling procedures from " + fFilename + ".");
+            procedures=ASSLCompiler.compileProcedures(
+                                                     fSystem.model(),
+                                                     new FileInputStream(fFilename),
+                                                     fFilename,
+                                                     new PrintWriter(System.err) );
+  */
+            if (fProcedures!=null) {
+                Log.verbose("Compiling `" + callstr + "'.");
+                call = ASSLCompiler.compileProcedureCall(fSystem.model(),
+                                                        fSystem.state(),
+                                                        callstr,
+                                                        "<input>",
+                                                        new PrintWriter(System.err)
+                                                        );
+            }
+            if (call != null && fProcedures != null) {
+                retproc = call.findMatching( fProcedures );
+                if (retproc == null)
+                    Log.error( call.signatureString()
+                               + " not found in " + fFilename );
+                else 
+                	return retproc;
+            }
+            return null;
+		
+	}
+    
+    /**
+     * only for intern ASSL procedure calls. 
+     * procedure will be invoked only by the ASSL command "ASSLCall <procname> (<Arglist>);"
+     */
+    public void startProcedure( String callstr ) {
+    	if (fRandomNr == null)
+            fRandomNr = new Long( (new Random()).nextInt(10000) );
+        if (fLimit == null)
+            fLimit = new Long( Long.MAX_VALUE );
+
+        List procedures = null;
         GProcedureCall call = null;
         PrintWriter pw = null;
         PrintWriter resultPw = null;
 
         try {
-            Log.verbose("Compiling procedures from " + filename + ".");
-            procedures = ASSLCompiler.compileProcedures(
+            Log.verbose("Compiling procedures from " + fFilename + ".");
+            procedures=ASSLCompiler.compileProcedures(
                                                      fSystem.model(),
-                                                     new FileInputStream(filename),
-                                                     filename,
+                                                     new FileInputStream(fFilename),
+                                                     fFilename,
                                                      new PrintWriter(System.err) );
             if (procedures!=null) {
                 Log.verbose("Compiling `" + callstr + "'.");
@@ -138,6 +198,129 @@ public class GGenerator {
                 GProcedure proc = call.findMatching( procedures );
                 if (proc == null)
                     Log.error( call.signatureString()
+                               + " not found in " + fFilename );
+                else {
+                    resultPw = new PrintWriter(System.out);
+                    if (fPrintFilename==null)
+                        pw = resultPw;
+                    else
+                        pw = new PrintWriter(
+                                             new BufferedWriter(new FileWriter(fPrintFilename)));
+
+                    if (fPrintBasics || fPrintDetails)
+                        collector.setBasicPrintWriter(pw);
+                    if (fPrintDetails)
+                        collector.setDetailPrintWriter(pw);
+
+                    GChecker checker = new GChecker(fGModel, fCheckStructure);
+
+                    Log.verbose(proc.toString() + " started...");
+
+                    try {
+                        GEvalProcedure evalproc = new GEvalProcedure( proc );
+                        evalproc.eval(call.evaluateParams(fSystem.state()),
+                                      fSystem.state(),
+                                      collector,
+                                      checker,
+                                      fRandomNr.longValue());
+                        fLastResult = new GResult( collector,
+                                                   checker,
+                                                   fRandomNr.longValue());
+                        if (collector.existsInvalidMessage())
+                            pw.println("There were errors." + (
+                                                               (!fPrintBasics && !fPrintDetails)
+                                                               ?
+                                                               " Use the -b or -d option to get "+
+                                                               "further information."
+                                                               :
+                                                               " See output " + 
+                                                               ( fPrintFilename!=null ? "("+fPrintFilename+") " : "" ) +
+                                                               "for details."
+                                                               ) );
+                        try {
+                            if (Log.isVerbose())
+                                printResult(resultPw);
+                        } catch (GNoResultException e) {
+                            throw new RuntimeException(
+                                                       "Although the generator computed a result, it"
+                                                       + "is not available for printing." );
+                        }                  
+                    } catch (GEvaluationException e) {
+                        internalError(e, fRandomNr.longValue());
+                        Log.error("The system state may be changed in use.");
+                    } catch (StackOverflowError ex) {
+                        Log.error("Evaluation aborted because of a stack " +
+                                  "overflow error. Maybe there were too many "+
+                                  "elements in a sequence of a for-loop.");
+                        Log.error("The system state may be changed in use.");
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            Log.error( e.getMessage() );
+        } catch (IOException e) {
+            Log.error( e.getMessage() );
+        } finally {
+            if (pw != null ) {
+                pw.flush();
+                if (fPrintFilename != null )
+                    pw.close();
+            }
+            if (resultPw != null )
+                resultPw.flush();
+        }
+    }
+
+    
+    public void startProcedure( String filename,
+                                String callstr,
+                                Long limit,
+                                String printFilename,
+                                boolean printBasics,
+                                boolean printDetails,
+                                Long randomNr,
+                                boolean checkStructure ) {
+        fLastResult = null;
+        boolean didShowWarnigs = Log.isShowWarnings();
+        Log.setShowWarnings(false);
+
+        fFilename = filename;
+        fPrintFilename = printFilename;
+        fPrintBasics = printBasics;
+        fPrintDetails = printDetails;
+        fRandomNr = randomNr;
+        fCheckStructure = checkStructure;
+        
+        if (randomNr == null)
+            randomNr = Long.valueOf( (new Random()).nextInt(10000) );
+        if (limit == null)
+            limit = Long.valueOf( Long.MAX_VALUE );
+
+        //List<GProcedure> procedures = null;
+        GProcedureCall call = null;
+        PrintWriter pw = null;
+        PrintWriter resultPw = null;
+
+        try {
+            Log.verbose("Compiling procedures from " + filename + ".");
+            fProcedures = ASSLCompiler.compileProcedures(
+                                                     fSystem.model(),
+                                                     new FileInputStream(filename),
+                                                     filename,
+                                                     new PrintWriter(System.err) );
+            if (fProcedures!=null) {
+                Log.verbose("Compiling `" + callstr + "'.");
+                call = ASSLCompiler.compileProcedureCall(fSystem.model(),
+                                                        fSystem.state(),
+                                                        callstr,
+                                                        "<input>",
+                                                        new PrintWriter(System.err)
+                                                        );
+            }
+            if (call != null && fProcedures != null) {
+                GProcedure proc = call.findMatching( fProcedures );
+                if (proc == null)
+                    Log.error( call.signatureString()
                                + " not found in " + filename );
                 else {
                     resultPw = new PrintWriter(System.out);
@@ -147,7 +330,7 @@ public class GGenerator {
                         pw = new PrintWriter(
                                              new BufferedWriter(new FileWriter(printFilename)));
 
-                    GCollectorImpl collector = new GCollectorImpl();
+                    collector = new GCollectorImpl();
                     collector.setLimit(limit.longValue());
                     if (printBasics || printDetails)
                         collector.setBasicPrintWriter(pw);
@@ -320,6 +503,10 @@ public class GGenerator {
     public void printResultStatistics() throws GNoResultException {
         PrintWriter pw = new PrintWriter(System.out);
         lastResult().checker().printStatistics(pw);
+        // PrePostCondition check output
+        if (collector.getPrePostViolation()) {
+        	pw.println("PrePostCondition violation occured");
+        }
         pw.flush();
     }
     

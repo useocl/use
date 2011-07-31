@@ -39,7 +39,9 @@ public interface IGCollector {
     public void subsequentlyPrependStatement(MStatement statement);
     public boolean expectSubsequentReporting();
     public void leaf();
-
+    public void setPrePostViolation();
+    public boolean getPrePostViolation();
+    
     public PrintWriter basicPrintWriter();
     public PrintWriter detailPrintWriter();
 
