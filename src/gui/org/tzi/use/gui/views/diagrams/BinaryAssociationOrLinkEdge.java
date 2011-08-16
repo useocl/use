@@ -128,7 +128,6 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
                                                 fSourceWayPoint, fTargetWayPoint, fOpt,
                                                 Multiplicity.SOURCE_SIDE );
         
-        checkAndCreateReflexiveEdge();
     }
     
     /**
