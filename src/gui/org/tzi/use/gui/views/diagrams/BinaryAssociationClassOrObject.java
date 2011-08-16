@@ -88,30 +88,26 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
         associationConnectionPoint.setWasMoved( false );
                 
         if ( isReflexive() ) {
-            fWayPoints.add( fWayPoints.indexOf( fRefNode3 ), associationConnectionPoint );
         
             updater = new PositionChangedListener<PlaceableNode>() {
 				@Override
 				public void positionChanged(PlaceableNode source, Point2D newPosition,
 						double deltaX, double deltaY) {
-					updateConnectionPoint( 
-							(int) fRefNode2.getCenter().getX(), (int) fRefNode2.getCenter().getY(), 
-                            (int) fRefNode3.getCenter().getX(), (int) fRefNode3.getCenter().getY() );		
+					updateConnectionPoint( fRefNode2.getCenter(), 
+                            			   fRefNode3.getCenter() );		
 				}
 			};
 			
             fRefNode2.addPositionChangedListener(updater);
             fRefNode3.addPositionChangedListener(updater);
         } else {
-            fWayPoints.add( 1, associationConnectionPoint );
             
             updater = new PositionChangedListener<PlaceableNode>() {
 				@Override
 				public void positionChanged(PlaceableNode source, Point2D newPosition,
 						double deltaX, double deltaY) {
-					updateConnectionPoint( 
-						fSourceWayPoint.getCenter().getX(), fSourceWayPoint.getCenter().getY(), 
-     					fTargetWayPoint.getCenter().getX(), fTargetWayPoint.getCenter().getY() );		
+					updateConnectionPoint( fSourceWayPoint.getCenter(), 
+										   fTargetWayPoint.getCenter());		
 				}
 			};
 			
@@ -167,8 +163,8 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
      * @param x2 x-coordinate of the second point.
      * @param y2 y-coordinate of the second point.
      */
-    private void updateConnectionPoint( double x1, double y1, double x2, double y2 ) {
-        Point2D conPoint = Util.calculateMidPoint( x1, y1, x2, y2 );
+    private void updateConnectionPoint( Point2D firstPoint, Point2D secondPoint ) {
+        Point2D conPoint = Util.calculateMidPoint( firstPoint, secondPoint );
         Point2D nep = fAssociationClassOrObjectNode.getIntersectionCoordinate( 
                                                  fAssociationClassOrObjectNode.getCenter(),
                                                  conPoint);

@@ -145,4 +145,13 @@ public class Util {
         
         return result;
     }
+    
+    /**
+     * Calculates the mid point of two given points which form a straight line.
+     * @param p1 first point
+     * @param p2 second point
+     */
+    public static Point2D calculateMidPoint( Point2D p1, Point2D p2 ) {
+    	return calculateMidPoint(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+    }
 }

@@ -127,6 +127,8 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
         fSourceMultiplicity = new Multiplicity( sourceEnd, source, target, this,
                                                 fSourceWayPoint, fTargetWayPoint, fOpt,
                                                 Multiplicity.SOURCE_SIDE );
+        
+        checkAndCreateReflexiveEdge();
     }
     
     /**
@@ -248,17 +250,20 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     private void checkAndCreateReflexiveEdge() {
         if ( isReflexive() ) {
             // Add before the last element in the list
-			fWayPoints.add(fWayPoints.size() - 1, new WayPoint(fSource,
+        	fRefNode1 = new WayPoint(fSource,
 					fTarget, this, fNodesOnEdgeCounter++,
-					WayPointType.REFLEXIVE_1, fAssoc.name(), fOpt));
+					WayPointType.REFLEXIVE_1, fAssoc.name(), fOpt);
+			fWayPoints.add(fWayPoints.size() - 1, fRefNode1);
 
-			fWayPoints.add(fWayPoints.size() - 1, new WayPoint(fSource,
+			fRefNode2 = new WayPoint(fSource,
 					fTarget, this, fNodesOnEdgeCounter++,
-					WayPointType.REFLEXIVE_2, fAssoc.name(), fOpt));
+					WayPointType.REFLEXIVE_2, fAssoc.name(), fOpt);
+			fWayPoints.add(fWayPoints.size() - 1, fRefNode2);
 
-			fWayPoints.add(fWayPoints.size() - 1, new WayPoint(fSource,
+			fRefNode3 = new WayPoint(fSource,
 					fTarget, this, fNodesOnEdgeCounter++,
-					WayPointType.REFLEXIVE_3, fAssoc.name(), fOpt));
+					WayPointType.REFLEXIVE_3, fAssoc.name(), fOpt);
+			fWayPoints.add(fWayPoints.size() - 1, fRefNode3);
             
 			if (getNumberOfQualifers() == 2) {
 				fWayPoints.add(fWayPoints.size() - 1, new WayPoint(fSource,
