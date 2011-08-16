@@ -307,8 +307,8 @@ public class ASTOperationExpression extends ASTExpression {
             } else {
                 // (4) navigation operation on object type
                 // must be a role name
-                MNavigableElement dst = 
-                    srcClass.navigableEnd(opname);
+                MNavigableElement dst = srcClass.navigableEnd(opname);
+                
                 if (dst != null ){
                     res = genNavigation(fOp, srcClass, srcExpr, dst);
                 } else {

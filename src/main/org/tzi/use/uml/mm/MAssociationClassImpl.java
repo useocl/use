@@ -50,7 +50,8 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
     private MAssociationImpl fAssociationImpl;
     private MClassImpl fClassImpl;
     private int fPositionInModel;
-
+    private ObjectType fType;
+    
     /**
      * Creates a new associationclass.
      *
@@ -62,6 +63,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
         super( name );
         fClassImpl = new MClassImpl( name, isAbstract );
         fAssociationImpl = new MAssociationImpl( name );
+        fType = new ObjectType(this);
     }
 
     /**
@@ -130,7 +132,7 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @return the corresponding type
      */
     public ObjectType type() {
-    	return fClassImpl.type();
+    	return fType;
     }
 
     /**
