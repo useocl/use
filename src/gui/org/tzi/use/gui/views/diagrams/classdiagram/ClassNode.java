@@ -53,6 +53,18 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
     private String[] fAttrValues;
     private String[] fOprSignatures;
     
+    /**
+     * The size of all three compartments (name, attributes, operations) is
+     * calculated once.
+     * The correct size is returned by checking the diagram options 
+     * ({@link DiagramOptions#isShowAttributes(boolean)} and 
+     * ({@link DiagramOptions#isShowOperations()}.
+     *  
+     */
+    private Rectangle2D.Double classNameRect = new Rectangle2D.Double();
+    private Rectangle2D.Double attributesRect = new Rectangle2D.Double();
+    private Rectangle2D.Double operationsRect = new Rectangle2D.Double();
+    
     ClassNode( MClass cls, DiagramOptions opt ) {
         fClass = cls;
         fOpt = opt;
@@ -76,7 +88,53 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         return fClass;
     }
     
-    /**
+    /* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setHeight(double)
+	 */
+	@Override
+	public void setHeight(double height) {
+		throw new RuntimeException("Illegal calls of ClassNode.setHeight(double).");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setWidth(double)
+	 */
+	@Override
+	public void setWidth(double width) {
+		throw new RuntimeException("Illegal calls of ClassNode.setHeight(double).");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#getBounds()
+	 */
+	@Override
+	public Rectangle2D getBounds() {
+		double width = classNameRect.width;
+		double height = classNameRect.height;
+		
+		if (fOpt.isShowAttributes()) {
+			width = Math.max(width, attributesRect.width);
+			height += attributesRect.height;
+		}
+		
+		if (fOpt.isShowOperations()) {
+			width = Math.max(width, operationsRect.width);
+			height += operationsRect.height;
+		}
+		
+		width += 10;
+		height += 4;
+		
+        height = Math.max(height, getMinHeight());
+        width = Math.max(width, getMinWidth());
+        
+		bounds.width = width;
+		bounds.height = height;
+
+		return super.getBounds();
+	}
+
+	/**
      * After the occurrence of an event the attribute list is updated.
      */
     public void stateChanged( SortChangeEvent e ) {
@@ -92,45 +150,35 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
      * (Width and height are needed from other methods before the nodes are
      * drawn.)
      */
-    public void setRectangleSize( Graphics2D g ) { //FontMetrics fm ) {
+    public void setRectangleSize( Graphics2D g ) {
         FontMetrics fm = g.getFontMetrics();
         Font normalFont = fm.getFont();
+        Font classNameFont;
+        
         if ( fClass.isAbstract() ) {
-            Font italicFont = normalFont.deriveFont( Font.ITALIC );
-            FontMetrics italicFm = g.getFontMetrics( italicFont );
-            setWidth( italicFm.stringWidth( fLabel ) );
-            setHeight( italicFm.getHeight() );
+            classNameFont = normalFont.deriveFont( Font.ITALIC );
         } else {
-            setWidth( fm.stringWidth( fLabel ) );
-            setHeight( fm.getHeight() );
+        	classNameFont = normalFont;
         }
         
-        int attrHeight = 0;
-        int oprHeight = 0;
+        FontMetrics classNameFontMetrics = g.getFontMetrics( classNameFont );
         
-        if ( fOpt.isShowAttributes() ) {
-            for ( int i = 0; i < fAttributes.size(); i++ ) {
-                MAttribute attr = (MAttribute) fAttributes.get( i );
-                fAttrValues[i] = attr.toString();
-                setWidth( Math.max( getWidth(), fm.stringWidth( fAttrValues[i] ) ) );
-            }
-            attrHeight = fm.getHeight() * fAttributes.size() + 3;
+        classNameRect.width = classNameFontMetrics.stringWidth( fLabel );
+        classNameRect.height = classNameFontMetrics.getHeight();
+        
+        for ( int i = 0; i < fAttributes.size(); i++ ) {
+            MAttribute attr = (MAttribute) fAttributes.get( i );
+            fAttrValues[i] = attr.toString();
+            attributesRect.width = Math.max( attributesRect.width, fm.stringWidth( fAttrValues[i] ) );
         }
+        attributesRect.height = fm.getHeight() * fAttributes.size() + 3;
         
-        if ( fOpt.isShowOperations() ) {
-            for ( int i = 0; i < fOperations.size(); i++ ) {
-                MOperation opr = (MOperation) fOperations.get( i );
-                fOprSignatures[i] = opr.signature();
-                setWidth( Math.max( getWidth(), fm.stringWidth( fOprSignatures[i] ) ) );
-            }
-            oprHeight = fm.getHeight() * fOperations.size() + 3;
+        for ( int i = 0; i < fOperations.size(); i++ ) {
+            MOperation opr = (MOperation) fOperations.get( i );
+            fOprSignatures[i] = opr.signature();
+            operationsRect.width = Math.max( operationsRect.width, fm.stringWidth( fOprSignatures[i] ) );
         }
-        
-        setWidth( getWidth() + 10 );
-        setHeight( attrHeight + oprHeight + fm.getHeight() + 4 );
-        
-        setHeight(Math.max(getHeight(), (int)getMinHeight()));
-        setWidth(Math.max(getWidth(), (int)getMinWidth()));
+        operationsRect.height = fm.getHeight() * fOperations.size() + 3;
     }
         
     public String ident() {
@@ -147,7 +195,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         int x = (int) getCenter().getX();
         int y;
         
-        Rectangle2D bounds = this.getBounds();
+        Rectangle2D currentBounds = this.getBounds();
         Polygon dimension = dimension();
         FontMetrics fm = g.getFontMetrics();
         
@@ -169,7 +217,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         g.drawPolygon( dimension );
         
         x -= labelWidth / 2;
-        y = (int)bounds.getY() + fm.getAscent() + 2;
+        y = (int)currentBounds.getY() + fm.getAscent() + 2;
         g.setColor( fOpt.getNODE_LABEL_COLOR() );
         
         g.drawString( fLabel, x, y );
@@ -179,9 +227,9 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         
         if ( fOpt.isShowAttributes() ) {
             // compartment divider
-            g.drawLine( (int)bounds.getX(), y + 3, (int)bounds.getMaxX() - 1, y + 3 );
+            g.drawLine( (int)currentBounds.getX(), y + 3, (int)currentBounds.getMaxX() - 1, y + 3 );
             // add insets
-            x = (int)bounds.getX() + 5;
+            x = (int)currentBounds.getX() + 5;
             y += 3;
             for ( int i = 0; i < fAttributes.size(); i++ ) {
                 y += fm.getHeight();
@@ -191,9 +239,9 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         
         if ( fOpt.isShowOperations() ) {
             // compartment divider
-            g.drawLine( (int)bounds.getX(), y + 3, (int)bounds.getMaxX() - 1, y + 3 );
+            g.drawLine( (int)currentBounds.getX(), y + 3, (int)currentBounds.getMaxX() - 1, y + 3 );
             // add insets
-            x = (int)bounds.getX() + 5;
+            x = (int)currentBounds.getX() + 5;
             y += 3;
             for ( int i = 0; i < fOperations.size(); i++ ) {
                 y += fm.getHeight();
