@@ -226,10 +226,6 @@ public class WayPoint extends EdgeProperty {
     protected void restoreAdditionalInfo( PersistHelper helper, Element nodeElement, String version ) {
     	if (!version.equals("1")) {
 			this.isUserDefined = Boolean.valueOf(nodeElement.getAttribute("userDefined"));
-			if (isUserDefined) {
-				this.fX_UserDefined = helper.getElementDoubleValue(nodeElement, "x_coord_user");
-				this.fY_UserDefined = helper.getElementDoubleValue(nodeElement, "y_coord_user");
-			}
 		}
     }
 }

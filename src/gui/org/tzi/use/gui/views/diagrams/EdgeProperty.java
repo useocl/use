@@ -99,16 +99,6 @@ public abstract class EdgeProperty extends PlaceableNode {
 	protected boolean isUserDefined = false;
 	
 	protected boolean isLink;
-	
-	/**
-	 * x-delta from the calculated position
-	 */
-	protected double fX_UserDefined = 0.0;
-	
-	/**
-	 * y-delta from the calculated position
-	 */
-	protected double fY_UserDefined = 0.0;
 
 	public EdgeProperty() { }
 
@@ -128,17 +118,13 @@ public abstract class EdgeProperty extends PlaceableNode {
 	}
 
 	public void setX_UserDefined(double x) {
-		double deltaX = x - fX_UserDefined;
-		fX_UserDefined = x;
 		isUserDefined = true;
-		calculatePosition(deltaX, 0);
+		setX(x);
 	}
 
 	public void setY_UserDefined(double y) {
-		double deltaY = y - fY_UserDefined;
-		fY_UserDefined = y;
 		isUserDefined = true;
-		calculatePosition(0, deltaY);
+		setY(y);
 	}
 
 	/**
@@ -165,11 +151,9 @@ public abstract class EdgeProperty extends PlaceableNode {
 	 * Resets the edge property to the automatically computed position.
 	 */
 	public void reposition() {
-		fX_UserDefined = 0.0;
-		fY_UserDefined = 0.0;
-		
 		isUserDefined = false;
 		setSelected(false);
+		calculatePosition(0, 0);
 	}
 
 	/**
@@ -189,9 +173,7 @@ public abstract class EdgeProperty extends PlaceableNode {
 	 */
 	protected void calculatePosition(double deltaX, double deltaY) {
 		if (isUserDefined()) {
-			fX_UserDefined += deltaX;
-			fY_UserDefined += deltaY;
-			setPosition(fX_UserDefined, fY_UserDefined);
+			setPosition(getX() + deltaX, getY() + deltaY);
 		} else {
 			setPosition(getDefaultPosition());
 		}
@@ -307,8 +289,6 @@ public abstract class EdgeProperty extends PlaceableNode {
 	 */
 	@Override
 	public void setDraggedPosition(double deltaX, double deltaY) {
-		fX_UserDefined += deltaX;
-		fY_UserDefined += deltaY;
 		isUserDefined = true;
 		super.setDraggedPosition(deltaX, deltaY);
 	}
@@ -331,35 +311,27 @@ public abstract class EdgeProperty extends PlaceableNode {
 	@Override
 	protected void storeAdditionalInfo(PersistHelper helper, Element nodeElement, boolean hidden) {
 		nodeElement.setAttribute("userDefined", String.valueOf(isUserDefined()));
-		if (isUserDefined()) {
-			helper.appendChild(nodeElement, "x_coord_user", String.valueOf(this.fX_UserDefined));
-			helper.appendChild(nodeElement, "y_coord_user", String.valueOf(this.fY_UserDefined));
-		}
 	}
 	
 	@Override
 	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) {
+		double x = helper.getElementDoubleValue(nodeElement, "x_coord");
+		double y = helper.getElementDoubleValue(nodeElement, "y_coord");
+		
 		if (version.equals("1")) {
-			double x = helper.getElementDoubleValue(nodeElement, "x_coord");
-			double y = helper.getElementDoubleValue(nodeElement, "y_coord");
 			this.isUserDefined = x != -1 && y != -1;
 			
 			if (isUserDefined) {
 				TextLayout layout = getTextLayout(null);
 				int widthDiff = (int)getWidth() - fmTextWidth; 
-				double xCorrected = Math.round(x - widthDiff);
-				double yCorrected = Math.floor(y - (layout.getAscent() + layout.getDescent()) / 2 - layout.getDescent() - MARGIN_VERTICAL / 2);
-				
-				this.fX_UserDefined = xCorrected;
-				this.fY_UserDefined = yCorrected;
+				x = Math.round(x - widthDiff);
+				y = Math.floor(y - (layout.getAscent() + layout.getDescent()) / 2 - layout.getDescent() - MARGIN_VERTICAL / 2);
 			}
 		} else {
 			this.isUserDefined = Boolean.valueOf(nodeElement.getAttribute("userDefined"));
-			if (isUserDefined) {
-				this.fX_UserDefined = helper.getElementDoubleValue(nodeElement, "x_coord_user");
-				this.fY_UserDefined = helper.getElementDoubleValue(nodeElement, "y_coord_user");
-			}
 		}
+		
+		this.setPosition(x, y);
 		calculatePosition(0, 0);
 	}
 }
