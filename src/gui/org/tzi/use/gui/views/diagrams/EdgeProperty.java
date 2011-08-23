@@ -128,15 +128,17 @@ public abstract class EdgeProperty extends PlaceableNode {
 	}
 
 	public void setX_UserDefined(double x) {
+		double deltaX = x - fX_UserDefined;
 		fX_UserDefined = x;
 		isUserDefined = true;
-		calculatePosition();
+		calculatePosition(deltaX, 0);
 	}
 
 	public void setY_UserDefined(double y) {
+		double deltaY = y - fY_UserDefined;
 		fY_UserDefined = y;
 		isUserDefined = true;
-		calculatePosition();
+		calculatePosition(0, deltaY);
 	}
 
 	/**
@@ -185,10 +187,14 @@ public abstract class EdgeProperty extends PlaceableNode {
 	/**
 	 * Called when related elements change positions.
 	 */
-	protected void calculatePosition() {
-		Point2D defaultPosition = getDefaultPosition();
-		setX(defaultPosition.getX() + (isUserDefined() ? fX_UserDefined : 0));
-		setY(defaultPosition.getY() + (isUserDefined() ? fY_UserDefined : 0));
+	protected void calculatePosition(double deltaX, double deltaY) {
+		if (isUserDefined()) {
+			fX_UserDefined += deltaX;
+			fY_UserDefined += deltaY;
+			setPosition(fX_UserDefined, fY_UserDefined);
+		} else {
+			setPosition(getDefaultPosition());
+		}
 	}
 	
 	/**
@@ -197,12 +203,21 @@ public abstract class EdgeProperty extends PlaceableNode {
 	 */
 	protected Point2D getDefaultPosition() { return getCenter(); }
 	
+	protected TextLayout textLayout = null;
+	
+	protected int fmTextWidth = 0;
+	
 	/**
-	 * Gets the {@link TextLayout} used to draw the association name.
+	 * Gets the {@link TextLayout} used to draw the edge property.
 	 * @param g The GraphicContext to draw with
 	 * @return
 	 */
 	protected TextLayout getTextLayout(Graphics2D g) {
+		if (textLayout != null) return textLayout;
+		
+		if (g == null)
+			throw new NullPointerException("Textlayout was not initialized.");
+		
 		FontRenderContext frc = g.getFontRenderContext();
 		Font font;
 		
@@ -214,8 +229,10 @@ public abstract class EdgeProperty extends PlaceableNode {
         	font = g.getFont();
         }
 		
-		TextLayout layout = new TextLayout(fName, font, frc);
-		return layout;
+		fmTextWidth = g.getFontMetrics().stringWidth(fName);
+		
+		textLayout = new TextLayout(fName, font, frc);
+		return textLayout;
 	}
 	
 	/**
@@ -266,7 +283,7 @@ public abstract class EdgeProperty extends PlaceableNode {
 		g.setStroke(oldStroke);
 		g.setColor(fOpt.getNODE_SELECTED_COLOR());
 	}
-	
+		
 	/**
 	 * Draws the text centered inside the bounds returned by {@link #getBounds()}.
 	 * The text is underlined if {@link fEdge#isLink()} returns true.
@@ -279,13 +296,11 @@ public abstract class EdgeProperty extends PlaceableNode {
 		Rectangle2D bounds = getBounds();
 		
 		float x = Math.round((bounds.getCenterX() - textBounds.getWidth()  / 2));
-		
-		float y = Math.round((float)
-				(bounds.getCenterY() + (layout.getAscent() + layout.getDescent()) / 2 - layout.getDescent()));
+		float y = Math.round((float)(bounds.getCenterY() + (layout.getAscent() + layout.getDescent()) / 2 - layout.getDescent()));
 		
 		layout.draw(g, x, y);
 	}
-	
+		
 	/**
 	 * Moves the edge property dynamically on the user defined position if the
 	 * source or target node is moved.
@@ -325,10 +340,18 @@ public abstract class EdgeProperty extends PlaceableNode {
 	@Override
 	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) {
 		if (version.equals("1")) {
-			this.isUserDefined = !(this.getX() == -1 && this.getY() == -1);
+			double x = helper.getElementDoubleValue(nodeElement, "x_coord");
+			double y = helper.getElementDoubleValue(nodeElement, "y_coord");
+			this.isUserDefined = x != -1 && y != -1;
+			
 			if (isUserDefined) {
-				this.fX_UserDefined = getX() - getDefaultPosition().getX();
-				this.fY_UserDefined = getY() - getDefaultPosition().getY();
+				TextLayout layout = getTextLayout(null);
+				int widthDiff = (int)getWidth() - fmTextWidth; 
+				double xCorrected = Math.round(x - widthDiff);
+				double yCorrected = Math.floor(y - (layout.getAscent() + layout.getDescent()) / 2 - layout.getDescent() - MARGIN_VERTICAL / 2);
+				
+				this.fX_UserDefined = xCorrected;
+				this.fY_UserDefined = yCorrected;
 			}
 		} else {
 			this.isUserDefined = Boolean.valueOf(nodeElement.getAttribute("userDefined"));
@@ -337,6 +360,6 @@ public abstract class EdgeProperty extends PlaceableNode {
 				this.fY_UserDefined = helper.getElementDoubleValue(nodeElement, "y_coord_user");
 			}
 		}
-		calculatePosition();
+		calculatePosition(0, 0);
 	}
 }

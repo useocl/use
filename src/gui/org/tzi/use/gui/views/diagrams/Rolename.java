@@ -38,7 +38,8 @@ import org.tzi.use.util.StringUtil;
  * @author Fabian Gutsche
  */
 public final class Rolename extends EdgeProperty {
-    MAssociationEnd fAssocEnd;
+
+	MAssociationEnd fAssocEnd;
     
     /**
      * 
@@ -62,10 +63,10 @@ public final class Rolename extends EdgeProperty {
         fOpt = opt;
         fSide = side;
         
-        sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+        source.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
 			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
-				Rolename.this.calculatePosition();				
+				Rolename.this.calculatePosition(deltaX, deltaY);
 			}
 		});
     }
@@ -148,5 +149,13 @@ public final class Rolename extends EdgeProperty {
 	@Override
 	protected String getStoreKind() {
 		return fSide == SOURCE_SIDE ? "source" : "target";
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Rolename: " + fName;
 	}
 }

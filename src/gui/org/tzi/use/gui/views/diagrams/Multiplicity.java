@@ -50,10 +50,10 @@ public final class Multiplicity extends EdgeProperty {
         fOpt = opt;
         fSide = side;
         
-        sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+        source.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
 			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
-				Multiplicity.this.calculatePosition();
+				Multiplicity.this.calculatePosition(deltaX, deltaY);
 			}
 		});
     }

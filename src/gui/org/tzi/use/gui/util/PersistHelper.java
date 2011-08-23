@@ -67,6 +67,15 @@ public class PersistHelper {
 		return (Double)evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.NUMBER);
 	}
 	
+	/**
+	 * @param parent
+	 * @param childName
+	 * @return
+	 */
+	public int getElementIntegerValue(Element parent, String childName) {
+		return Integer.valueOf(evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.STRING).toString());
+	}
+	
 	public NodeList getChildElementsByTagName( Element parent, String childName) {
 		return (NodeList)evaluateXPathSave(parent, "./" + childName, XPathConstants.NODESET);
 	}

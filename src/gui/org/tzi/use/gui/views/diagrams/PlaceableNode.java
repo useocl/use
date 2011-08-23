@@ -123,7 +123,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * Returns the height of this node.
      */
     public double getHeight() {
-        return bounds.height;
+        return getBounds().getHeight();
     }
     /**
      * Sets the height of this node.
@@ -136,8 +136,8 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
     /**
      * Returns the width of this node.
      */
-    public double getWidth(){
-        return bounds.width;
+    public double getWidth() {
+        return getBounds().getWidth();
     }
     /**
      * Sets the width of this node.
@@ -186,7 +186,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param y The new y-coordinate
      **/
     public void setPosition( double x, double y ) {
-        double deltaX = x - bounds.x;
+    	double deltaX = x - bounds.x;
         double deltaY = y - bounds.y;
         
         if (deltaX == 0 && deltaY == 0)
@@ -221,7 +221,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * Gets the position of this node.
      */
     public Point2D getPosition() {
-        return new Point2D.Double(bounds.x, bounds.y);
+        return new Point2D.Double(getBounds().getX(), getBounds().getY());
     }
 
     public void addPositionChangedListener(PositionChangedListener<PlaceableNode> listener) {
@@ -239,7 +239,8 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * Sets the position of this node to the new position while dragging.
      */
     public void setDraggedPosition( double deltaX, double deltaY ) {
-    	setPosition(bounds.x + deltaX, bounds.y + deltaY);
+    	Rectangle2D currentBounds = getBounds();
+    	setPosition(currentBounds.getX() + deltaX, currentBounds.getY() + deltaY);
     }
     
     /**
@@ -274,11 +275,12 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * Returns the dimension as a polygon of this node.
      */
     public Polygon dimension() {
-        int[] xpoints = { (int)bounds.getMinX(), (int)bounds.getMaxX(), 
-        				  (int)bounds.getMaxX(), (int)bounds.getMinX() };
+        Rectangle2D currentBounds = getBounds();
+    	int[] xpoints = { (int)currentBounds.getMinX(), (int)currentBounds.getMaxX(), 
+        				  (int)currentBounds.getMaxX(), (int)currentBounds.getMinX() };
         
-        int[] ypoints = { (int)bounds.getMinY(), (int)bounds.getMinY(),
-        				  (int)bounds.getMaxY(), (int)bounds.getMaxY() };
+        int[] ypoints = { (int)currentBounds.getMinY(), (int)currentBounds.getMinY(),
+        				  (int)currentBounds.getMaxY(), (int)currentBounds.getMaxY() };
         
         int npoints = xpoints.length;
         return new Polygon( xpoints, ypoints, npoints );
@@ -296,7 +298,8 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @return
      */
     public Point2D getCenter() {
-    	return new Point2D.Double(bounds.getCenterX(), bounds.getCenterY() );
+    	Rectangle2D currentBounds = getBounds();
+    	return new Point2D.Double(currentBounds.getCenterX(), currentBounds.getCenterY() );
     }
     
     /**
@@ -320,7 +323,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param x
      */
     public void setCenterX(double x) {
-    	setX(x - bounds.width / 2);
+    	setX(x - getBounds().getWidth() / 2);
     }
     
     /**
@@ -328,28 +331,28 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param y
      */
     public void setCenterY(double y) {
-    	setY(y - bounds.height / 2);
+    	setY(y - getBounds().getHeight() / 2);
     }
     
     /**
      * Checks whether the node occupies a given point.
      */
     public boolean occupies( double x, double y ) {
-        return bounds.contains( x, y );
+        return getBounds().contains( x, y );
     }
     
     /**
      * Returns the x coordinate of this node.
      */
     public double getX() {
-    	return bounds.x;
+    	return getBounds().getX();
     }
     
     /**
      * Returns the y coordinate of this node.
      */
     public double getY() {
-    	return bounds.y;
+    	return getBounds().getY();
     }
     
     /**
@@ -536,20 +539,30 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
     	List<PositionChangedListener<PlaceableNode>> listeners = this.positionChangeListener;
     	this.positionChangeListener = Collections.emptyList();
     	
-    	double x = helper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD);
-    	double y = helper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD);
-    	Point2D.Double point = new Point2D.Double(x, y);
+    	Point2D.Double point = new Point2D.Double();
+    	point.x = helper.getElementDoubleValue(nodeElement, LayoutTags.X_COORD);
+    	point.y = helper.getElementDoubleValue(nodeElement, LayoutTags.Y_COORD);
     	
-    	if (version.equals("1")) {
-    		setCenter(point);
-    	} else {
-    		setPosition(point);
-    	}
-    	
+    	restorePosition(point, version);
+    	    	
     	restoreAdditionalInfo(helper, nodeElement, version);
     	
     	this.positionChangeListener = listeners;
     }
     
-    protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) { }
+    /**
+	 * @param point
+	 * @param version
+	 */
+	protected void restorePosition(Point2D.Double point, String version) {
+		if (version.equals("1")) {
+    		point.x = Math.floor(point.x);
+    		point.y = Math.floor(point.y);
+    		setCenter(point);
+    	} else {
+    		setPosition(point);
+    	}		
+	}
+
+	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) { }
 }

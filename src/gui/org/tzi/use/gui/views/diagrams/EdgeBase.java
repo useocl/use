@@ -26,9 +26,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.xpath.XPathConstants;
 
 import org.tzi.use.graph.DirectedEdgeBase;
 import org.tzi.use.graph.DirectedGraph;
@@ -765,8 +768,11 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
         	prop.storePlacementInfo(helper, edgeElement, hidden);
         }
 
+        int id = 0;
         for (WayPoint n : fWayPoints) {
+        	n.setID(id);
             n.storePlacementInfo(helper, edgeElement, hidden );
+            id++;
         }
 
         helper.appendChild(edgeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
@@ -790,26 +796,59 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
 			fSourceWayPoint.restorePlacementInfo(helper, wayPointElement, version);
 		} else if (type.equals(WayPointType.TARGET)) {
 			fTargetWayPoint.restorePlacementInfo(helper, wayPointElement, version);
-		} else if (type.equals(WayPointType.USER)) {
-			WayPoint userWp = new WayPoint(fSource, fTarget, this, fWayPoints.size() + 1, type, fEdgeName, fOpt);
-			fWayPoints.add(fWayPoints.size() - 1, userWp);
-			userWp.restorePlacementInfo(helper, wayPointElement, version);
+		} else {
+			int id = helper.getElementIntegerValue(wayPointElement, "id");
+			WayPoint wayPointToRestore = null;
+			if (fWayPoints.size() > id) {
+				WayPoint wp = fWayPoints.get(id);
+				if (wp.getSpecialID().getId() == specialId ) {
+					wayPointToRestore = wp;
+				}
+			}
+			
+			if (wayPointToRestore == null) {
+				wayPointToRestore = new WayPoint(fSource, fTarget, this, fWayPoints.size() + 1, type, fEdgeName, fOpt);
+				fWayPoints.add(id, wayPointToRestore);
+			}
+			
+			wayPointToRestore.restorePlacementInfo(helper, wayPointElement, version);
 		}
     }
     
-    public final void restorePlacementInfo( PersistHelper helper, Element elementNode, String version ) {
-    	NodeList elements = helper.getChildElementsByTagName(elementNode, LayoutTags.EDGEPROPERTY);
+    public final void restorePlacementInfo( final PersistHelper helper, Element elementNode, String version ) {
+		NodeList wayPoints = (NodeList) helper.evaluateXPathSave(elementNode,
+				"./edgeproperty[@type='NodeOnEdge' or @type='WayPoint']",
+				XPathConstants.NODESET);
     	
-    	for (int i = 0; i < elements.getLength(); ++i) {
-    		Element propertyElement = (Element)elements.item(i);
-    		String type = propertyElement.getAttribute("type");
+		List<Element> orderedWayPoints = new ArrayList<Element>(wayPoints.getLength());
+    	for (int i = 0; i < wayPoints.getLength(); ++i) {
+    		Element wayPointElement = (Element)wayPoints.item(i);
+    		orderedWayPoints.add(wayPointElement);
+    	}
+    	
+    	Collections.sort(orderedWayPoints, new Comparator<Element>() {
+			@Override
+			public int compare(Element o1, Element o2) {
+				int id1 = helper.getElementIntegerValue(o1, "id");
+				int id2 = helper.getElementIntegerValue(o2, "id");
+				
+				return Integer.valueOf(id1).compareTo(id2);
+			}
     		
-    		if (version.equals("1") && type.equals("NodeOnEdge") ||
-    			version.equals("2") && type.equals("WayPoint")) {
-    			restoreWayPoint(helper, propertyElement, version);
-    		} else {
-    			restoreEdgeProperty(helper, propertyElement, type, version);
-    		}
+		});
+    	
+    	for (Element wayPointElement : orderedWayPoints) {
+    		restoreWayPoint(helper, wayPointElement, version);
+    	}
+    	
+    	NodeList properties = (NodeList) helper.evaluateXPathSave(elementNode,
+				"./edgeproperty[not (@type='NodeOnEdge' or @type='WayPoint')]",
+				XPathConstants.NODESET);
+    	
+    	for (int i = 0; i < properties.getLength(); ++i) {
+    		Element propertyElement = (Element)properties.item(i);
+    		String type = propertyElement.getAttribute("type");
+    		restoreEdgeProperty(helper, propertyElement, type, version);
     	}
     	
     	restoreAdditionalInfo(helper, elementNode, version);

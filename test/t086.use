@@ -1,11 +1,21 @@
 -- Test for qualified asscoiations
 model QA
 
-
 enum NodeType {
   Left,
   Right
 }
+
+class Map
+end
+
+class Tile
+end
+
+composition MapTile between
+  Map[1] qualifier (x:Integer, y:Integer)
+  Tile[0..1]
+end
 
 class Bank
 end
@@ -47,17 +57,6 @@ association ABC between
  A[*]
  B[*]
  C[*]
-end
-
-class Map
-end
-
-class Tile
-end
-
-composition MapTile between
-  Map[1] qualifier (x:Integer, y:Integer)
-  Tile[0..1]
 end
 
 class HashMap

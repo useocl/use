@@ -53,6 +53,7 @@ import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
+import org.tzi.use.util.Log;
 import org.w3c.dom.Element;
 
 /**
@@ -246,8 +247,8 @@ public abstract class DiagramView extends JPanel
         				minHeight += heightHint + 4;
             	}
             	n.setMinHeight(Math.max(minHeight + 4, n.getMinHeight()));
+            	n.setRectangleSize(g2d);
             }
-            n.setRectangleSize(g2d);
         }
 
         
@@ -302,12 +303,18 @@ public abstract class DiagramView extends JPanel
 
 		g.setStroke(newStroke);
 		
+		// Vertical lines
 		for (int x = 50; x < getSize().getWidth(); x += 50) {
 			g.drawLine(x, 0, x, (int)getSize().getHeight());
+			if (Log.isDebug())
+				g.drawString(String.valueOf(x), x + 4, 10);
 		}
 		
+		// Horizontal lines
 		for (int y = 50; y < getSize().getHeight(); y += 50) {
 			g.drawLine(0, y, (int)getSize().getWidth(), y);
+			if (Log.isDebug())
+				g.drawString(String.valueOf(y), 2, y + 12);
 		}
 		
 		g.setColor(old);

@@ -52,14 +52,14 @@ public final class AssociationName extends EdgeProperty {
         this.sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
 			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
-				AssociationName.this.calculatePosition();				
+				AssociationName.this.calculatePosition(deltaX, deltaY);				
 			}
 		});
         
         this.targetWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
 			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
-				AssociationName.this.calculatePosition(); 				
+				AssociationName.this.calculatePosition(deltaX, deltaY);	
 			}
 		});
     }
@@ -84,7 +84,7 @@ public final class AssociationName extends EdgeProperty {
         this.fSource.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
 			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
-				AssociationName.this.calculatePosition();
+				AssociationName.this.calculatePosition(deltaX, deltaY);
 			}
 		});
     }

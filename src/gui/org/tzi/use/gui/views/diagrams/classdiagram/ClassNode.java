@@ -214,7 +214,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         }
         g.fillPolygon( dimension );
         g.setColor( fOpt.getNODE_FRAME_COLOR() );
-        g.drawPolygon( dimension );
+        g.drawRect((int)currentBounds.getX(), (int)currentBounds.getY(), (int)currentBounds.getWidth() - 1, (int)currentBounds.getHeight() - 1);
         
         x -= labelWidth / 2;
         y = (int)currentBounds.getY() + fm.getAscent() + 2;

@@ -293,13 +293,13 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     			
                 switch ( counter ) {
                 case 0:
-                	be.fReflexivePosition = Direction.NORTH_WEST;
-                    break;
-                case 1:
                 	be.fReflexivePosition = Direction.NORTH_EAST;
                     break;
-                case 2:
+                case 1:
                 	be.fReflexivePosition = Direction.SOUTH_EAST;
+                    break;
+                case 2:
+                	be.fReflexivePosition = Direction.NORTH_WEST;
                     break;
                 case 3:
                 	be.fReflexivePosition = Direction.SOUTH_WEST;
