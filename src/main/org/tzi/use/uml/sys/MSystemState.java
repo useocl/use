@@ -765,24 +765,7 @@ public final class MSystemState {
 		MLink link = null;
 		
 		MLinkSet linkSet = linksOfAssociation(assoc);
-		List<MAssociationEnd> assocEnds = assoc.associationEnds();
-		int numObjects = objects.size();
-		
-		for (MLink l : linkSet.links()) {
-			boolean found = true;
-			for (int i = 0; i < numObjects; ++i) {
-				MLinkEnd le = l.linkEnd(assocEnds.get(i));
-				if (le.object() != objects.get(i)) {
-					found = false;
-					break;
-				}
-			}
-			
-			if (found) {
-				link = l;
-				break;
-			}
-		}
+		link = linkSet.linkBetweenObjects(new HashSet<MObject>(objects));
 
 		if (link == null) {
 			throw new MSystemException("Link `" + assoc.name() + "' between ("
