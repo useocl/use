@@ -20,7 +20,7 @@
 package org.tzi.use.uml.ocl.expr;
 
 /**
- * Exception thrown when a multiplicity is voilated during
+ * Exception thrown when a multiplicity is violated during
  * evaluation.
  *
  * @author  Joern Bohling
