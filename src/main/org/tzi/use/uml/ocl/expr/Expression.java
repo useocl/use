@@ -202,4 +202,6 @@ public abstract class Expression implements BufferedToString {
     	
     	return false;
     }
+    
+    public abstract void processWithVisitor(ExpressionVisitor visitor);
 }

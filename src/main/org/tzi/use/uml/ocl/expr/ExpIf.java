@@ -100,4 +100,12 @@ public final class ExpIf extends Expression {
     public Expression getElseExpression() {
         return fElseExp;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitIf(this);
+	}
 }

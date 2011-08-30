@@ -57,6 +57,10 @@ public final class ExpTupleLiteral extends Expression {
             this.givenType = givenType;
         }
         
+        public Expression getExpression() {
+        	return fExpr;
+        }
+        
         /**
          * Returns the type of the TuplePart. Either the one given by the user
          * or if not given the type of the expression. 
@@ -99,6 +103,14 @@ public final class ExpTupleLiteral extends Expression {
     }
 
     /**
+     * The parts of this tuple literal
+     * @return
+     */
+    public Part[] getParts() {
+    	return fParts;
+    }
+    
+    /**
      * Evaluates expression and returns result value.
      */
     public Value eval(EvalContext ctx) {
@@ -121,4 +133,12 @@ public final class ExpTupleLiteral extends Expression {
         StringUtil.fmtSeqBuffered(sb, fParts, ",");
         return sb.append("}");
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitTupleLiteral(this);
+	}
 }

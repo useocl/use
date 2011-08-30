@@ -67,5 +67,13 @@ public class ExpCollectNested extends ExpQuery {
         ctx.exit(this, res);
         return res;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitCollectNested(this);
+	}
 }
 

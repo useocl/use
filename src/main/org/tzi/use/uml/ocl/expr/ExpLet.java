@@ -94,4 +94,12 @@ public final class ExpLet extends Expression {
     public Expression getVarExpression() {
         return fVarExpr;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitLet(this);
+	}
 }

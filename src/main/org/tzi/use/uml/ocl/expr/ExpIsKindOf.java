@@ -83,4 +83,12 @@ public final class ExpIsKindOf extends Expression {
         fTargetType.toString(sb);
         return sb.append(")");
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitIsKindOf(this);
+	}
 }

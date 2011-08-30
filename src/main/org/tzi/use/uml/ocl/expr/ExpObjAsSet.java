@@ -45,6 +45,14 @@ public final class ExpObjAsSet extends Expression {
     }
 
     /**
+     * Returns the left side of the asSet operation.
+     * @return
+     */
+    public Expression getObjectExpression() {
+    	return fObjExp;
+    }
+    
+    /**
      * Evaluates expression and returns result value. 
      */
     public Value eval(EvalContext ctx) {
@@ -71,4 +79,12 @@ public final class ExpObjAsSet extends Expression {
         // is hidden in the "->".
         return fObjExp.toString(sb);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitObjAsSet(this);
+	}
 }

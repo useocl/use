@@ -174,6 +174,11 @@ public final class ExpObjOp extends Expression {
         return fOp;
     }
 
+    /**
+     * All arguments of the expression.
+     * Index 0 is the receiver object (self)
+     * @return
+     */
     public Expression[] getArguments() {
         return fArgs;
     }
@@ -191,5 +196,13 @@ public final class ExpObjOp extends Expression {
 		}
 		
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitObjOp(this);
 	}
 }

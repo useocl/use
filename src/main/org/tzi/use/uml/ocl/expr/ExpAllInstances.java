@@ -40,20 +40,28 @@ import org.tzi.use.uml.sys.MSystemState;
  * @author  Mark Richters
  */
 public final class ExpAllInstances extends Expression {
-    private Type fSourceType;
+    private ObjectType fSourceType;
     
     public ExpAllInstances(Type sourceType)
         throws ExpInvalidException
     {
         // result type is a set of sourceType
         super(TypeFactory.mkSet(sourceType));
-        fSourceType = sourceType;
 
         if (! sourceType.isTrueObjectType() )
-            throw new ExpInvalidException(
-                                          "Expected an object type, found `" + sourceType + "'.");
+            throw new ExpInvalidException("Expected an object type, found `" + sourceType + "'.");
+        
+        fSourceType = (ObjectType)sourceType;
     }
 
+    /**
+     * The type allInstances() is applied to. 
+     * @return
+     */
+    public ObjectType getSourceType() {
+    	return this.fSourceType;
+    }
+    
     /**
      * Evaluates expression and returns result value. 
      */
@@ -88,4 +96,9 @@ public final class ExpAllInstances extends Expression {
 		sb.append(".allInstances");
 		return sb.append(atPre());
     }
+	
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitAllInstances(this);
+	}
 }

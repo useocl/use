@@ -238,5 +238,13 @@ public final class ExpNavigation extends Expression {
         return fObjExp;
     }
 
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitNavigation(this);
+	}
+
 }
 

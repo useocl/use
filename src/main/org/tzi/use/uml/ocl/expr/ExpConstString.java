@@ -59,5 +59,13 @@ public final class ExpConstString extends Expression {
         sb.append(fValue);
         return sb.append("'");
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitConstString(this);
+	}
 }
 

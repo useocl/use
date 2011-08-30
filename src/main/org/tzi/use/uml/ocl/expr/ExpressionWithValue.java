@@ -45,5 +45,14 @@ public class ExpressionWithValue extends Expression  {
     public StringBuilder toString(StringBuilder sb) {
     	return sb.append(fValue.toString());
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitWithValue(this);		
+	}
+    
 }
 

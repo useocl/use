@@ -32,4 +32,12 @@ public class ExpConstDate extends Expression {
 		return sb.append(df.format(value));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(ExpressionVisitor visitor) {
+		visitor.visitConstDate(this);
+	}
+
 }
