@@ -29,7 +29,6 @@ import java.util.List;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.type.EnumType;
 
 /**
@@ -39,26 +38,18 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @author Fabian Gutsche
  */
 public class EnumNode extends ClassifierNode implements SortChangeListener {
-    
-    private DiagramOptions fOpt;
-    private EnumType fEnum;
+
     private List<String> fLiterals;
         
     private static final String ENUMERATION = "<<enumeration>>";
     
     EnumNode( EnumType enumeration, DiagramOptions opt ) {
-        fEnum = enumeration;
-        fOpt = opt;
-        
+    	super(enumeration, opt);
         fLiterals = enumeration.getLiterals();
     }
     
     public EnumType getEnum() {
-        return fEnum;
-    }
-    
-    public MClassifier getClassifier() {
-    	return fEnum;
+        return (EnumType)getClassifier();
     }
     
     /**
@@ -71,34 +62,33 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
         //                                                   .sortLiterals( fLiterals );
     }
     
-    /**
-     * Sets the correct size of the width and height of this class node.
-     * This method needs to be called before actually drawing the node.
-     * (Width and height are needed from other methods before the nodes are
-     * drawn.)
-     */
-    public void setRectangleSize( Graphics2D g ) { //FontMetrics fm ) {
-        FontMetrics fm = g.getFontMetrics();
-        
-        setWidth( Math.max( fm.stringWidth( fEnum.name() ), 
-                            fm.stringWidth( ENUMERATION ) ) );
-        setHeight( fm.getHeight()*2 );
-        
-        int attrHeight = 0;
-        
-        if ( fOpt.isShowAttributes() ) {
-            for (String literal : fLiterals) {
-                setWidth( Math.max( getWidth(), fm.stringWidth( literal ) ) );
-            }
-            attrHeight = fm.getHeight() * fLiterals.size() + 3;
+    @Override
+    protected void calculateNameRectSize(Graphics2D g, Rectangle2D.Double rect) {
+    	FontMetrics fm = g.getFontMetrics();
+        rect.width = Math.max( fm.stringWidth( getClassifier().name() ), fm.stringWidth( ENUMERATION ) ) + 10;
+        rect.height = fm.getHeight() * 2;
+    }
+    
+    @Override
+    protected void calculateAttributeRectSize(Graphics2D g, Rectangle2D.Double rect) {
+    	FontMetrics fm = g.getFontMetrics();
+    	rect.height = 0;
+
+        for (String literal : fLiterals) {
+            rect.width = Math.max( rect.width, fm.stringWidth( literal ) );
         }
-        
-        setWidth( getWidth() + 10 );
-        setHeight( attrHeight + fm.getHeight()*2 + 4 );
+        rect.height = fm.getHeight() * fLiterals.size() + 3;
+        rect.width += 10;
+    }
+    
+    @Override
+    protected void calculateOperationsRectSize(Graphics2D g, Rectangle2D.Double rect) {
+    	rect.height = 0;
+    	rect.width = 0;
     }
     
     public String ident() {
-        return "Enumeration." + fEnum.name();
+        return "Enumeration." + getClassifier().name();
     }
     public String identNodeEdge() {
         return "";
@@ -119,7 +109,7 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
         Rectangle2D bounds = getBounds();
         FontMetrics fm = g.getFontMetrics();
         
-        int labelWidth = fm.stringWidth( fEnum.name() );
+        int labelWidth = fm.stringWidth( getClassifier().name() );
         int enumerationWidth = fm.stringWidth( ENUMERATION );
         
         if ( isSelected() ) {
@@ -142,7 +132,7 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
         y += fm.getHeight();
         x = (int) getCenter().getX();
         x -= labelWidth / 2;
-        g.drawString( fEnum.name(), x, y );
+        g.drawString( getClassifier().name(), x, y );
         
         if ( fOpt.isShowAttributes() ) {
             // compartment divider

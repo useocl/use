@@ -21,6 +21,7 @@
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -34,7 +35,6 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MOperation;
 
 /**
@@ -44,31 +44,17 @@ import org.tzi.use.uml.mm.MOperation;
  * @author Fabian Gutsche
  */
 public class ClassNode extends ClassifierNode implements SortChangeListener {
-    
-    private DiagramOptions fOpt;
-    private MClass fClass;
-    private String fLabel;
+
     private List<MAttribute> fAttributes;
     private List<MOperation> fOperations;
+    
     private String[] fAttrValues;
     private String[] fOprSignatures;
     
-    /**
-     * The size of all three compartments (name, attributes, operations) is
-     * calculated once.
-     * The correct size is returned by checking the diagram options 
-     * ({@link DiagramOptions#isShowAttributes(boolean)} and 
-     * ({@link DiagramOptions#isShowOperations()}.
-     *  
-     */
-    private Rectangle2D.Double classNameRect = new Rectangle2D.Double();
-    private Rectangle2D.Double attributesRect = new Rectangle2D.Double();
-    private Rectangle2D.Double operationsRect = new Rectangle2D.Double();
-    
+    private Color color = null;
+
     ClassNode( MClass cls, DiagramOptions opt ) {
-        fClass = cls;
-        fOpt = opt;
-        fLabel = cls.name();
+    	super(cls, opt);
         
         fAttributes = ModelBrowserSorting.getInstance()
             .sortAttributes(cls.attributes()); 
@@ -81,57 +67,21 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
     }
     
     public MClass cls() {
-        return fClass;
+        return (MClass)getClassifier();
     }
     
-    public MClassifier getClassifier() {
-        return fClass;
-    }
-    
-    /* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setHeight(double)
+    /**
+	 * @return the color
 	 */
-	@Override
-	public void setHeight(double height) {
-		throw new RuntimeException("Illegal calls of ClassNode.setHeight(double).");
+	public Color getColor() {
+		return color;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setWidth(double)
+	/**
+	 * @param color the color to set
 	 */
-	@Override
-	public void setWidth(double width) {
-		throw new RuntimeException("Illegal calls of ClassNode.setHeight(double).");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#getBounds()
-	 */
-	@Override
-	public Rectangle2D getBounds() {
-		double width = classNameRect.width;
-		double height = classNameRect.height;
-		
-		if (fOpt.isShowAttributes()) {
-			width = Math.max(width, attributesRect.width);
-			height += attributesRect.height;
-		}
-		
-		if (fOpt.isShowOperations()) {
-			width = Math.max(width, operationsRect.width);
-			height += operationsRect.height;
-		}
-		
-		width += 10;
-		height += 4;
-		
-        height = Math.max(height, getMinHeight());
-        width = Math.max(width, getMinWidth());
-        
-		bounds.width = width;
-		bounds.height = height;
-
-		return super.getBounds();
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 	/**
@@ -144,48 +94,53 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
             .sortOperations( fOperations );
     }
     
-    /**
-     * Sets the correct size of the width and height of this class node.
-     * This method needs to be called before actually drawing the node.
-     * (Width and height are needed from other methods before the nodes are
-     * drawn.)
-     */
-    public void setRectangleSize( Graphics2D g ) {
-        FontMetrics fm = g.getFontMetrics();
-        Font normalFont = fm.getFont();
+    @Override
+    protected void calculateNameRectSize(Graphics2D g, Rectangle2D.Double rect) {
         Font classNameFont;
         
-        if ( fClass.isAbstract() ) {
-            classNameFont = normalFont.deriveFont( Font.ITALIC );
+        if ( cls().isAbstract() ) {
+            classNameFont = g.getFont().deriveFont( Font.ITALIC );
         } else {
-        	classNameFont = normalFont;
+        	classNameFont = g.getFont();
         }
         
         FontMetrics classNameFontMetrics = g.getFontMetrics( classNameFont );
         
-        classNameRect.width = classNameFontMetrics.stringWidth( fLabel );
-        classNameRect.height = classNameFontMetrics.getHeight();
-        
-        for ( int i = 0; i < fAttributes.size(); i++ ) {
+        rect.width = classNameFontMetrics.stringWidth( fLabel );
+        rect.height = classNameFontMetrics.getHeight();
+    }
+    
+    @Override
+    protected void calculateAttributeRectSize(Graphics2D g, Rectangle2D.Double rect) {
+    	FontMetrics fm = g.getFontMetrics();
+    	
+    	for ( int i = 0; i < fAttributes.size(); i++ ) {
             MAttribute attr = (MAttribute) fAttributes.get( i );
             fAttrValues[i] = attr.toString();
-            attributesRect.width = Math.max( attributesRect.width, fm.stringWidth( fAttrValues[i] ) );
+            rect.width = Math.max( attributesRect.width, fm.stringWidth( fAttrValues[i] ) );
         }
-        attributesRect.height = fm.getHeight() * fAttributes.size() + 3;
-        
-        for ( int i = 0; i < fOperations.size(); i++ ) {
+    	
+        rect.height = fm.getHeight() * fAttributes.size() + 3;
+    }
+    
+    @Override
+    protected void calculateOperationsRectSize(Graphics2D g, Rectangle2D.Double rect) {
+    	FontMetrics fm = g.getFontMetrics();
+    	
+    	for ( int i = 0; i < fOperations.size(); i++ ) {
             MOperation opr = (MOperation) fOperations.get( i );
             fOprSignatures[i] = opr.signature();
             operationsRect.width = Math.max( operationsRect.width, fm.stringWidth( fOprSignatures[i] ) );
         }
+    	
         operationsRect.height = fm.getHeight() * fOperations.size() + 3;
     }
         
     public String ident() {
-        return "Class." + fClass.name();
+        return "Class." + cls().name();
     }
     public String identNodeEdge() {
-        return "AssociationClass." + fClass.name();
+        return "AssociationClass." + cls().name();
     }
     
     /**
@@ -200,7 +155,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         FontMetrics fm = g.getFontMetrics();
         
         Font oldFont = g.getFont();
-        if ( fClass.isAbstract() ) {
+        if ( cls().isAbstract() ) {
             g.setFont( oldFont.deriveFont( Font.ITALIC ) );
             fm = g.getFontMetrics();
         }
@@ -210,8 +165,12 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         if ( isSelected() ) {
             g.setColor( fOpt.getNODE_SELECTED_COLOR() );
         } else {
-            g.setColor( fOpt.getNODE_COLOR() );
+        	if (getColor() != null)
+        		g.setColor( getColor() );
+        	else
+        		g.setColor( fOpt.getNODE_COLOR() );
         }
+        
         g.fillPolygon( dimension );
         g.setColor( fOpt.getNODE_FRAME_COLOR() );
         g.drawRect((int)currentBounds.getX(), (int)currentBounds.getY(), (int)currentBounds.getWidth() - 1, (int)currentBounds.getHeight() - 1);
@@ -252,7 +211,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
     
     @Override
     public String toString() {
-    	return fClass.name() + "(ClassNode)";
+    	return cls().name() + "(ClassNode)";
     }
     
     @Override

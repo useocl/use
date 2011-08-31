@@ -21,6 +21,10 @@
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.uml.mm.MClassifier;
 
@@ -32,8 +36,33 @@ import org.tzi.use.uml.mm.MClassifier;
  */
 public abstract class ClassifierNode extends NodeBase {
 
-	
-	public abstract MClassifier getClassifier();
+	/**
+     * The size of all three compartments (name, attributes, operations) is
+     * calculated once.
+     * The correct size is returned by checking the diagram options 
+     * ({@link DiagramOptions#isShowAttributes(boolean)} and 
+     * ({@link DiagramOptions#isShowOperations()}.
+     *  
+     */
+    protected Rectangle2D.Double nameRect = new Rectangle2D.Double();
+    protected Rectangle2D.Double attributesRect = new Rectangle2D.Double();
+    protected Rectangle2D.Double operationsRect = new Rectangle2D.Double();
+    
+    protected DiagramOptions fOpt;
+    
+    protected String fLabel;
+    
+    protected MClassifier classifier;
+    
+    public ClassifierNode(MClassifier cls, DiagramOptions opt) {
+    	this.classifier = cls;
+    	this.fLabel = cls.name();
+    	this.fOpt = opt;
+    }
+    
+	public MClassifier getClassifier() {
+		return classifier;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#isDeletable()
@@ -50,4 +79,67 @@ public abstract class ClassifierNode extends NodeBase {
 	public String name() {
 		return getClassifier().name();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setHeight(double)
+	 */
+	@Override
+	public void setHeight(double height) {
+		throw new RuntimeException("Illegal call of ClassifierNode.setHeight(double).");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setWidth(double)
+	 */
+	@Override
+	public void setWidth(double width) {
+		throw new RuntimeException("Illegal call of ClassifierNode.setWidth(double).");
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#getBounds()
+	 */
+	@Override
+	public Rectangle2D getBounds() {
+		double width = nameRect.width;
+		double height = nameRect.height;
+		
+		if (fOpt.isShowAttributes()) {
+			width = Math.max(width, attributesRect.width);
+			height += attributesRect.height;
+		}
+		
+		if (fOpt.isShowOperations()) {
+			width = Math.max(width, operationsRect.width);
+			height += operationsRect.height;
+		}
+		
+		width += 10;
+		height += 4;
+		
+        height = Math.max(height, getMinHeight());
+        width = Math.max(width, getMinWidth());
+        
+		bounds.width = width;
+		bounds.height = height;
+
+		return super.getBounds();
+	}
+	
+	/**
+     * Sets the correct size of the width and height of this class node.
+     * This method needs to be called before actually drawing the node.
+     * (Width and height are needed from other methods before the nodes are
+     * drawn.)
+     */
+    public final void setRectangleSize( Graphics2D g ) {
+        calculateNameRectSize(g, nameRect);
+        calculateAttributeRectSize(g, attributesRect);
+        calculateOperationsRectSize(g, operationsRect);
+    }
+    
+    protected abstract void calculateNameRectSize(Graphics2D g, Rectangle2D.Double rect);
+    protected abstract void calculateAttributeRectSize(Graphics2D g, Rectangle2D.Double rect);
+    protected abstract void calculateOperationsRectSize(Graphics2D g, Rectangle2D.Double rect);
+    
 }
