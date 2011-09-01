@@ -12,7 +12,7 @@ public class GInstrOpEnter extends GInstruction {
 	public GInstrOpEnter(GValueInstruction oid, String opname, List params) {
 		fObjname = oid;
 		fOpname = opname;
-		fParameter = (List) params;
+		fParameter = params;
 	}
 
 	public GValueInstruction objname() {
