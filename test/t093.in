@@ -1,6 +1,6 @@
 open t093.use
 gen start -t -r 6436 t093.assl tryWorld(3)
-gen result accept
+gen result
 *Random number generator was initialized with 6436.
 *Checked 13 snapshots.
 *Result: Valid state found.
@@ -13,3 +13,4 @@ gen result accept
 *!@Elem3.value := 22
 *!insert (@Elem1,@Elem3) into RightElem
 *!insert (@Elem2,@Elem1) into RightElem
+exit
