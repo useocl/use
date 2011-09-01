@@ -53,4 +53,8 @@ public class GAttributeAssignment extends GAssignment {
     public String toString() {
         return new StringBuilder(targetObjectInstr().toString()).append(".").append(targetAttribute().name()).append(" := ").append(sourceInstr()).toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitAttributeAssignment(this);
+    }
 }

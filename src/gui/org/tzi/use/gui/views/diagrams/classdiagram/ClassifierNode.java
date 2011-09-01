@@ -24,6 +24,7 @@ package org.tzi.use.gui.views.diagrams.classdiagram;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
+import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.uml.mm.MClassifier;
@@ -58,6 +59,14 @@ public abstract class ClassifierNode extends NodeBase {
     	this.classifier = cls;
     	this.fLabel = cls.name();
     	this.fOpt = opt;
+    	this.fOpt.addOptionChangedListener(new DiagramOptionChangedListener() {
+			@Override
+			public void optionChanged(String optionname) {
+				if (optionname.equals("SHOWROLENAMES") ||
+					optionname.equals("SHOWATTRIBUTES")	)
+				calculateBounds();
+			}
+		});
     }
     
 	public MClassifier getClassifier() {
@@ -96,11 +105,7 @@ public abstract class ClassifierNode extends NodeBase {
 		throw new RuntimeException("Illegal call of ClassifierNode.setWidth(double).");
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#getBounds()
-	 */
-	@Override
-	public Rectangle2D getBounds() {
+	protected void calculateBounds() {
 		double width = nameRect.width;
 		double height = nameRect.height;
 		
@@ -114,16 +119,14 @@ public abstract class ClassifierNode extends NodeBase {
 			height += operationsRect.height;
 		}
 		
-		width += 10;
 		height += 4;
+		width += 10;
 		
         height = Math.max(height, getMinHeight());
         width = Math.max(width, getMinWidth());
         
 		bounds.width = width;
 		bounds.height = height;
-
-		return super.getBounds();
 	}
 	
 	/**
@@ -136,6 +139,7 @@ public abstract class ClassifierNode extends NodeBase {
         calculateNameRectSize(g, nameRect);
         calculateAttributeRectSize(g, attributesRect);
         calculateOperationsRectSize(g, operationsRect);
+        calculateBounds();
     }
     
     protected abstract void calculateNameRectSize(Graphics2D g, Rectangle2D.Double rect);

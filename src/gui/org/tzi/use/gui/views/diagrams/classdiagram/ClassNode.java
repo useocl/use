@@ -49,6 +49,8 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
     private List<MOperation> fOperations;
     
     private String[] fAttrValues;
+    private Color[] fAttrColors;
+    
     private String[] fOprSignatures;
     
     private Color color = null;
@@ -59,6 +61,8 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         fAttributes = ModelBrowserSorting.getInstance()
             .sortAttributes(cls.attributes()); 
         fAttrValues = new String[fAttributes.size()];
+        fAttrColors = new Color[fAttributes.size()];
+        
         fOperations = cls.operations();
         fOprSignatures = new String[fOperations.size()];
         fOperations = ModelBrowserSorting.getInstance()
@@ -84,6 +88,19 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
 		this.color = color;
 	}
 
+	public void setAttributeColor(MAttribute att, Color color) {
+		fAttrColors[fAttributes.indexOf(att)] = color;
+	}
+	
+	/**
+	 * 
+	 */
+	public void resetAttributeColor() {
+		for (int i = 0; i < fAttrColors.length; i++) {
+			fAttrColors[i] = null;
+		}
+	}
+	
 	/**
      * After the occurrence of an event the attribute list is updated.
      */
@@ -120,7 +137,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
             rect.width = Math.max( attributesRect.width, fm.stringWidth( fAttrValues[i] ) );
         }
     	
-        rect.height = fm.getHeight() * fAttributes.size() + 3;
+        rect.height = fm.getHeight() * fAttributes.size() + 4;
     }
     
     @Override
@@ -133,7 +150,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
             operationsRect.width = Math.max( operationsRect.width, fm.stringWidth( fOprSignatures[i] ) );
         }
     	
-        operationsRect.height = fm.getHeight() * fOperations.size() + 3;
+        operationsRect.height = fm.getHeight() * fOperations.size() + 4;
     }
         
     public String ident() {
@@ -186,13 +203,26 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         
         if ( fOpt.isShowAttributes() ) {
             // compartment divider
-            g.drawLine( (int)currentBounds.getX(), y + 3, (int)currentBounds.getMaxX() - 1, y + 3 );
+        	y += 3;
+            g.drawLine( (int)currentBounds.getX(), y, (int)currentBounds.getMaxX() - 1, y );
             // add insets
             x = (int)currentBounds.getX() + 5;
-            y += 3;
+            
+            Color orgColor = g.getColor(); 
+                        
             for ( int i = 0; i < fAttributes.size(); i++ ) {
-                y += fm.getHeight();
-                g.drawString( fAttrValues[i], x, y );
+            	if (!isSelected() && fAttrColors[i] != null) {
+            		int height = fm.getHeight();
+            		if (i == 0) height += 2;
+            		if (i == fAttributes.size() - 1) height += 2;
+            		
+            		g.setColor(fAttrColors[i]);
+            		g.fillRect((int)currentBounds.getX() + 1, y + 1, (int)currentBounds.getWidth() - 2, height);
+            		g.setColor(orgColor);
+            	}
+            	
+                y += fm.getHeight() + (i == 0 ? 2 : 0);
+                g.drawString( fAttrValues[i], x, y - fm.getDescent() );
             }
         }
         

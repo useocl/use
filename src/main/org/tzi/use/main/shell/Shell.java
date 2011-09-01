@@ -38,8 +38,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -48,6 +52,9 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.tzi.use.analysis.coverage.AttributeAccessInfo;
+import org.tzi.use.analysis.coverage.CoverageAnalyzer;
+import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.gen.model.GFlaggedInvariant;
@@ -421,6 +428,8 @@ public final class Shell implements Runnable, PPCHandler {
             cmdGenResult(line.substring(10), system());
         else if (line.startsWith("reload extensions"))
         	cmdReloadExtensions();
+        else if (line.startsWith("coverage"))
+        	cmdCoverage();
 		else if (line.startsWith("plugins") || line.equals("plugins"))
 			cmdShowPlugins();
 		else if (Options.doPLUGIN) {
@@ -459,6 +468,125 @@ public final class Shell implements Runnable, PPCHandler {
 				.println("=================================================================");
 	}
 
+	private void cmdCoverage() {
+		MModel model = fSession.system().model(); 
+		if (model == null) {
+			Log.error("No model loaded");
+			return;
+		}
+		
+		CoverageData data = CoverageAnalyzer.calculateModelCoverage(model);
+		
+		Log.println("Covered classes by invariants:      "
+				+ data.getCoveredClasses().size() + "/"
+				+ model.classes().size());
+		
+		List<Map.Entry<MClass, Integer>> entries = new ArrayList<Map.Entry<MClass, Integer>>(
+				data.getClassCoverage().entrySet());
+		
+		Collections.sort(entries, new Comparator<Map.Entry<MClass, Integer>>() {
+			@Override
+			public int compare(Entry<MClass, Integer> o1,
+					Entry<MClass, Integer> o2) {
+				return o2.getValue().compareTo(o1.getValue());
+			}
+		});
+		
+		for (Map.Entry<MClass, Integer> entry : entries) {
+			Log.println("  " + entry.getKey().name() + ": " + entry.getValue().toString());
+		}
+		
+		Set<MClass> notCovered = new HashSet<MClass>(model.classes());
+		notCovered.removeAll(data.getClassCoverage().keySet());
+		
+		for (MClass entry : notCovered) {
+			Log.println("  " + entry.name() + ": " + 0);
+		}
+		
+		Log.println("Covered classes (complete) by invariants: "
+				+ data.getCompleteCoveredClasses().size() + "/"
+				+ model.classes().size());
+		
+		entries = new ArrayList<Map.Entry<MClass, Integer>>(data.getCompleteClassCoverage().entrySet());
+		
+		Collections.sort(entries, new Comparator<Map.Entry<MClass, Integer>>() {
+			@Override
+			public int compare(Entry<MClass, Integer> o1,
+					Entry<MClass, Integer> o2) {
+				return o2.getValue().compareTo(o1.getValue());
+			}
+		});
+		
+		for (Map.Entry<MClass, Integer> entry : entries) {
+			Log.println("  " + entry.getKey().name() + ": " + entry.getValue().toString());
+		}
+		
+		notCovered = new HashSet<MClass>(model.classes());
+		notCovered.removeAll(data.getCompleteClassCoverage().keySet());
+		
+		for (MClass entry : notCovered) {
+			Log.println("  " + entry.name() + ": " + 0);
+		}
+		
+		Log.println("Covered associations by invariants: "
+				+ data.getAssociationCoverage().size() + "/"
+				+ model.associations().size());
+		
+		int attCount = 0;
+		for (MClass cls : model.classes()) {
+			attCount += cls.attributes().size();
+		}
+		
+		Log.println("Covered attributes by invariants:   "
+				+ data.getAttributeAccessCoverage().size() + "/"
+				+ attCount);
+		
+		Log.println();
+		Log.println("Coverage by Invariant:");
+		
+		List<MClassInvariant> sortedInvs = new ArrayList<MClassInvariant>(data.getCoveredClassesByInvariant().keySet());
+		Collections.sort(sortedInvs, new Comparator<MClassInvariant>() {
+			@Override
+			public int compare(MClassInvariant o1, MClassInvariant o2) {
+				int clsCmp = o1.cls().compareTo(o2);
+				if (clsCmp == 0)
+					return o1.name().compareTo(o2.name());
+				else
+					return clsCmp;
+			}
+		});
+		
+		for (MClassInvariant inv : sortedInvs) {
+			Log.println();
+			Log.print("  ");
+			Log.print(inv.cls().name());
+			Log.print("::");
+			Log.print(inv.name());
+			Log.println(":");
+			
+			Log.print("   -Classes:            ");
+			Log.println(StringUtil.fmtSeq(data.getCoveredClassesByInvariant().get(inv), ", "));
+			
+			Log.print("   -Classes (complete): ");
+			Log.println(StringUtil.fmtSeq(data.getCompleteCoveredClassesByInvariant().get(inv), ", "));
+			
+			Log.print("   -Associations:       ");
+			Log.println(StringUtil.fmtSeq(data.getCoveredAssocsByInvariant().get(inv), ", "));
+			
+			Log.print("   -Attributes:         ");
+			Log.println(StringUtil.fmtSeq(data.getCoveredAttributesByInvariant().get(inv), ", ", new StringUtil.IElementFormatter<AttributeAccessInfo>() {
+				@Override
+				public String format(AttributeAccessInfo element) {
+					String inherited = "";
+					if (element.isInherited())
+						inherited = " (inherited)";
+					
+					return element.getSourceClass().name() + "." + element.getAttribute().name() + inherited;
+				}
+			}));
+		}
+	}
+	
     /**
      * Checks integrity constraints of current system state.
      */

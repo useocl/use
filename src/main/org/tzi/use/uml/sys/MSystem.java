@@ -617,13 +617,11 @@ public final class MSystem {
 		
 		if (!result.wasSuccessfull()) {
 			if (undoOnFailure) {
-				fStatementEvaluationResults.pop();
+				if (storeResult) fStatementEvaluationResults.pop();
 				evaluate(result.getInverseStatement(), false, false, notifyUpdateStateListeners);
 			}
 			
-			throw new MSystemException(
-					result.getException().getMessage(),
-					result.getException());
+			throw new MSystemException(result.getException().getMessage(), result.getException());
 		}
 		
 		return result;

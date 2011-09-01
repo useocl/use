@@ -68,4 +68,8 @@ public class GLoop extends GInstruction {
     public String toString() {
         return new StringBuilder("for ").append(fDecl).append(" in ").append(fSequenceInstr).append(" ...").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitLoop(this);
+    }
 }

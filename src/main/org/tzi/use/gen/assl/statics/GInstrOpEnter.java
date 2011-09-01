@@ -32,4 +32,7 @@ public class GInstrOpEnter extends GInstruction {
 		return "OpEnter "+fObjname.toString()+" "+fOpname+"("+fParameter+")";
 	}
 
+	public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrOpEnter(this);
+    }
 }

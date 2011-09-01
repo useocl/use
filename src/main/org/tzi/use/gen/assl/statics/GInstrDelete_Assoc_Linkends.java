@@ -61,4 +61,8 @@ public class GInstrDelete_Assoc_Linkends extends GInstruction {
         			.append(StringUtil.fmtSeq(fLinkends.iterator(), ","))
         			.append(")").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrDelete_Assoc_Linkends(this);
+    }
 }

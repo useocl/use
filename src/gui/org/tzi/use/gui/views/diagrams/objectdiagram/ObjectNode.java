@@ -30,6 +30,7 @@ import java.util.List;
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.uml.mm.MAttribute;
@@ -54,11 +55,23 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
     private List<MAttribute> fAttributes;
     private String[] fValues;
     
+    protected Rectangle2D.Double nameRect = new Rectangle2D.Double();
+    protected Rectangle2D.Double attributesRect = new Rectangle2D.Double();
+    
     public ObjectNode( MObject obj, NewObjectDiagramView parent, 
                        DiagramOptions opt ) {
         fObject = obj;
         fParent = parent;
         fOpt = opt;
+        this.fOpt.addOptionChangedListener(new DiagramOptionChangedListener() {
+			@Override
+			public void optionChanged(String optionname) {
+				if (optionname.equals("SHOWROLENAMES") ||
+					optionname.equals("SHOWATTRIBUTES")	)
+				calculateBounds();
+			}
+		});
+        
         MClass cls = obj.cls();
         fLabel = obj.name() + ":" + cls.name();
         List<MAttribute> allAttributes = cls.allAttributes();
@@ -99,37 +112,50 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
      */
     public void setRectangleSize( Graphics2D g ) {
         FontMetrics fm = g.getFontMetrics();
-        setWidth( fm.stringWidth( fLabel ) );
-        setHeight( fm.getHeight() );
+        
+        nameRect.width = fm.stringWidth( fLabel );
+        nameRect.height =  fm.getHeight();
 
         String value;
         
-        if ( fOpt.isShowAttributes() ) {
-            MObjectState objState = fObject.state( fParent.system().state() );
-            for ( int i = 0; i < fAttributes.size(); i++ ) {
-                MAttribute attr = (MAttribute) fAttributes.get( i );
-                Value val = (Value) objState.attributeValue( attr );
-                
-                if (val instanceof EnumValue) {
-                	value = "#" + ((EnumValue)val).value();
-                } else {
-                	value = val.toString();
-                }
-                
-                fValues[i] = attr.name()
-                             + "=" + value; 
-                
-                setWidth( Math.max( getWidth(), fm.stringWidth( fValues[i] ) ) );
+        MObjectState objState = fObject.state( fParent.system().state() );
+        for ( int i = 0; i < fAttributes.size(); i++ ) {
+            MAttribute attr = (MAttribute) fAttributes.get( i );
+            Value val = (Value) objState.attributeValue( attr );
+            
+            if (val instanceof EnumValue) {
+            	value = "#" + ((EnumValue)val).value();
+            } else {
+            	value = val.toString();
             }
-            setHeight( getHeight() * ( fAttributes.size() + 1 ) + 3 );
+            
+            fValues[i] = attr.name() + "=" + value; 
+            
+            attributesRect.width = Math.max( attributesRect.width, fm.stringWidth( fValues[i] ) );
         }
-
-        setWidth( getWidth() + 10 );
-        setHeight( getHeight() + 4 );
         
-        setHeight(Math.max(getHeight(), (int)getMinHeight()));
-        setWidth(Math.max(getWidth(), (int)getMinWidth()));
+        attributesRect.height = fm.getHeight() * fAttributes.size() + 3;
+        calculateBounds();
     }
+
+	protected void calculateBounds() {
+		double width = nameRect.width;
+		double height = nameRect.height;
+		
+		if (fOpt.isShowAttributes()) {
+			width = Math.max(width, attributesRect.width);
+			height += attributesRect.height;
+		}
+		
+		height += 4;
+		width += 10;
+		
+        height = Math.max(height, getMinHeight());
+        width = Math.max(width, getMinWidth());
+        
+		bounds.width = width;
+		bounds.height = height;
+	}
 
 
     public boolean isDeletable() {

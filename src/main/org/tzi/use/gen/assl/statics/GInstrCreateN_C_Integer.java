@@ -60,4 +60,8 @@ public class GInstrCreateN_C_Integer extends GValueInstruction {
     public String toString() {
         return new StringBuilder("CreateN(").append(fClass).append(", ").append(fIntegerInstr).append(")").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrCreateN_C_Integer(this);
+    }
 }

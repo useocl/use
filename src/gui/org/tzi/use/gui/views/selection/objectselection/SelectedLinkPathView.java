@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -192,7 +193,7 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 				if (((DiamondNode) o).name().equalsIgnoreCase(name)) {
 					DiamondNode dnode = (DiamondNode) o;
 					
-					Set<MObject> set = dnode.link().linkedObjects();
+					List<MObject> set = dnode.link().linkedObjects();
 					for (MObject mo : set) {
 						if (!selectedObjectsOfLink.contains(mo)
 								&& !objects.contains(mo)) {

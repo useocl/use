@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.MAssociation;
@@ -50,7 +51,7 @@ public interface MLink {
      *
      * @return Set(MObject).
      */
-    Set<MObject> linkedObjects();
+    List<MObject> linkedObjects();
 
     /**
      * Returns the set of objects participating in this link.

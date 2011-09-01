@@ -58,4 +58,8 @@ public class GInstrSub_Seq_Integer extends GValueInstruction {
     public String toString() {
         return new StringBuilder("Sub(").append(fSequenceInstr).append(",").append(fIntegerInstr).append(")").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrSub_Seq_Integer(this);
+    }
 }

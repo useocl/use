@@ -19,22 +19,15 @@
 
 // $Id$
 
-package org.tzi.use.uml.mm;
+package org.tzi.use.gui.views.diagrams;
+
+import java.util.EventListener;
 
 /**
- * Interface representing a classifier of
- * the UML meta model.
- * 
- * TODO: UML meta model defines generalization etc. on classifier 
+ * Interface for listeners for diagram options changes 
  * @author lhamann
  *
  */
-public interface MClassifier extends MNamedElement {
-	/**
-	 * If true, the Classifier does not provide a complete declaration and can typically not be instantiated.
-	 * An abstract classifier is intended to be used by other classifiers (e.g., as the target of general 
-	 * metarelationships or generalization relationships). Default value is false. [UML 2.3, p. 53]
-	 * @return
-	 */
-	boolean isAbstract();
+public interface DiagramOptionChangedListener extends EventListener {
+	public void optionChanged(String optionname);
 }

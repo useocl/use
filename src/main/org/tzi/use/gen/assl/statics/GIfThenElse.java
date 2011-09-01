@@ -42,4 +42,8 @@ public class GIfThenElse extends GInstruction {
     public String toString() {
         return new StringBuilder("if ").append(fConditionInstr).append(" then begin ... end else begin ... end").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitIfThenElse(this);
+    }
 }

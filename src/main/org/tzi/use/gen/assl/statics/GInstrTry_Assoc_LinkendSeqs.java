@@ -58,4 +58,8 @@ public class GInstrTry_Assoc_LinkendSeqs extends GInstruction {
     public String toString() {
         return new StringBuilder("Try(").append(fAssociation).append(",").append(StringUtil.fmtSeq(fLinkendSequences.iterator(), ",")).append(")").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrTry_Assoc_LinkendSeqs(this);
+    }
 }

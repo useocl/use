@@ -188,4 +188,12 @@ public final class EnumType extends Type implements Annotatable, MClassifier {
     public StringBuilder toString(StringBuilder sb) {
         return sb.append(fName);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MClassifier#isAbstract()
+	 */
+	@Override
+	public boolean isAbstract() {
+		return false;
+	}
 }

@@ -38,6 +38,7 @@ public final class TypeFactory {
      * to be created once.
      */
     private static IntegerType integerType = new IntegerType();
+    private static UnlimitedNaturalType unlimitedNaturalType = new UnlimitedNaturalType();
     private static RealType realType = new RealType();
     private static StringType stringType = new StringType();
     private static BooleanType booleanType = new BooleanType();
@@ -55,6 +56,10 @@ public final class TypeFactory {
         return integerType;
     }
 
+    public static UnlimitedNaturalType mkUnlimitedNatural() {
+        return unlimitedNaturalType;
+    }
+    
     public static RealType mkReal() {
         return realType;
     }

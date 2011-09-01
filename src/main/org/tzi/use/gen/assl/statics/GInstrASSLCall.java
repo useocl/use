@@ -25,4 +25,7 @@ public class GInstrASSLCall extends GInstruction {
 		return "ASSLCall "+ procname+ "("+ fParam + ")";
 	}
 
+	public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrASSLCall(this);
+    }
 }

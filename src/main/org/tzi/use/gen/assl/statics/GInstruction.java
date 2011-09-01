@@ -29,5 +29,8 @@ package org.tzi.use.gen.assl.statics;
  * @author  Joern Bohling
  */
 public abstract class GInstruction {
-    public abstract String toString();
+    
+	public abstract String toString();
+    
+	public abstract void processWithVisitor(InstructionVisitor v);
 }

@@ -144,11 +144,11 @@ public class MLinkObjectImpl implements MLinkObject {
     }
 
     /**
-     * Returns the set of objects participating in this linkobject.
+     * Returns the list of objects participating in this link object.
      *
-     * @return Set(MObject).
+     * @return List(MObject).
      */
-    public Set<MObject> linkedObjects() {
+    public List<MObject> linkedObjects() {
         return delegatesLink.linkedObjects();
     }
 

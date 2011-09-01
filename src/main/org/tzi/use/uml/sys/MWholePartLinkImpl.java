@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.MAggregationKind;
@@ -63,9 +64,9 @@ final class MWholePartLinkImpl implements MWholePartLink {
     /**
      * Returns the set of objects participating in this link.
      *
-     * @return Set(MObject).
+     * @return List(MObject).
      */
-    public Set<MObject> linkedObjects() {        
+    public List<MObject> linkedObjects() {        
         return delegatesLink.linkedObjects();
     }
 

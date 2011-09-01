@@ -240,7 +240,7 @@ public final class MLinkSet {
      *
      * @return true if the link set did not already contain the link.
      */
-    boolean add(MLink link) {
+    boolean add(MLink link) {    	
         for (MLinkEnd end : link.linkEnds()) {
             CacheEntry e = new CacheEntry(end.associationEnd(), end.object(), end.getQualifierValues());
             Set<MLink> links = selectCache.get(e);
@@ -294,7 +294,7 @@ public final class MLinkSet {
      * Returns the link if there is a link connecting the given set of
      * objects, otherwise null is returned.  
      */
-    public MLink linkBetweenObjects(Set<MObject> objects) {
+    public MLink linkBetweenObjects(List<MObject> objects) {
         for (MLink link : fLinks) {
             if (link.linkedObjects().equals(objects) )
                 return link;

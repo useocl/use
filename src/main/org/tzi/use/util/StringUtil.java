@@ -244,6 +244,31 @@ public final class StringUtil {
         }
     }
     
+    
+    public interface IElementFormatter<T> {
+    	String format(T element);
+    }
+    
+    public static <T> String fmtSeq(Collection<T> collection, String divider, IElementFormatter<T> formatter) {
+    	return fmtSeq(collection.iterator(), divider, formatter);
+    }
+    
+    
+    public static <T> String fmtSeq(Iterator<T> it, String divider, IElementFormatter<T> formatter) {
+    	StringBuilder resString = new StringBuilder();
+    	fmtSeq(resString, it, divider, formatter);
+    	return resString.toString();
+    }
+    
+    public static <T> void fmtSeq(StringBuilder target, Iterator<T> it, String divider, IElementFormatter<T> formatter) {
+        while (it.hasNext() ) {            
+        	target.append(formatter.format(it.next()));
+            
+            if (it.hasNext())
+            	target.append(divider);
+        }
+    }
+    
     /**
      * <p>
      * Appends all elements of the <code>Collection</code> to the <code>StringBuilder</code> by

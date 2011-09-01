@@ -8,4 +8,7 @@ public class GInstrOpExit extends GInstruction {
 		return "OpExit";
 	}
 
+	public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrOpExit(this);
+    }
 }

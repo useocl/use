@@ -52,4 +52,8 @@ public class GInstrTry_Seq extends GValueInstruction {
     public String toString() {
         return new StringBuilder("Try(").append(fSequenceInstr).append(")").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrTry_Seq(this);
+    }
 }

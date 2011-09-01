@@ -289,10 +289,10 @@ public final class MSystemState {
 	}
 
 	/**
-	 * Returns the link if there is a link connecting the given set of objects,
+	 * Returns the link if there is a link connecting the given list of objects,
 	 * otherwise null is returned.
 	 */
-	public MLink linkBetweenObjects(MAssociation assoc, Set<MObject> objects) {
+	public MLink linkBetweenObjects(MAssociation assoc, List<MObject> objects) {
 		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
 		return linkSet.linkBetweenObjects(objects);
 	}
@@ -765,7 +765,7 @@ public final class MSystemState {
 		MLink link = null;
 		
 		MLinkSet linkSet = linksOfAssociation(assoc);
-		link = linkSet.linkBetweenObjects(new HashSet<MObject>(objects));
+		link = linkSet.linkBetweenObjects(objects);
 
 		if (link == null) {
 			throw new MSystemException("Link `" + assoc.name() + "' between ("

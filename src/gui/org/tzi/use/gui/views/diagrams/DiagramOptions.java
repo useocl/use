@@ -22,6 +22,8 @@
 package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.xmlparser.LayoutTags;
@@ -43,6 +45,7 @@ public abstract class DiagramOptions {
     protected boolean fShowAttributes = false;
     protected boolean fShowOperations = false;
     protected boolean fShowGrid = false;
+    protected boolean fShowCoverage = false;
     
     // color settings
     protected Color NODE_COLOR;
@@ -63,6 +66,7 @@ public abstract class DiagramOptions {
     }
     public void setDoAutoLayout( boolean doAutoLayout ) {
         fDoAutoLayout = doAutoLayout;
+        onOptionChanged("DOAUTOLAYOUT");
     }
 
     public boolean isShowAssocNames() {
@@ -70,6 +74,7 @@ public abstract class DiagramOptions {
     }
     public void setShowAssocNames( boolean showAssocNames ) {
         fShowAssocNames = showAssocNames;
+        onOptionChanged("SHOWASSOCNAMES");
     }
 
     public boolean isShowRolenames() {
@@ -77,6 +82,7 @@ public abstract class DiagramOptions {
     }
     public void setShowRolenames( boolean showRolenames ) {
         fShowRolenames = showRolenames;
+        onOptionChanged("SHOWROLENAMES");
     }
 
     public boolean isDoAntiAliasing() {
@@ -84,6 +90,7 @@ public abstract class DiagramOptions {
     }
     public void setDoAntiAliasing( boolean doAntiAliasing ) {
         fDoAntiAliasing = doAntiAliasing;
+        onOptionChanged("DOANTIALIASING");
     }
     
     public boolean isShowAttributes() {
@@ -91,6 +98,7 @@ public abstract class DiagramOptions {
     }
     public void setShowAttributes( boolean showAttributes ) {
         fShowAttributes = showAttributes;
+        onOptionChanged("SHOWATTRIBUTES");
     }
 
     public boolean isShowOperations() {
@@ -98,13 +106,28 @@ public abstract class DiagramOptions {
     }
     public void setShowOperations( boolean showOperations ) {
         fShowOperations = showOperations;
+        onOptionChanged("SHOWOPERATIONS");
     }
     
+    /**
+	 * @param b
+	 */
+	public void setShowCoverage(boolean showCoverage) {
+		fShowCoverage = showCoverage;
+		onOptionChanged("SHOWCOVERAGE");
+	}
+
+	public boolean isShowCoverage() {
+		return fShowCoverage;
+	}
+
+	
 	public boolean showGrid() {
 		return fShowGrid;
 	}
 	public void setShowGrid(boolean showGrid) {
 		fShowGrid = showGrid;
+		onOptionChanged("SHOWGRID");
 	}
 	
     public Color getDIAMONDNODE_COLOR() {
@@ -146,6 +169,7 @@ public abstract class DiagramOptions {
     
 	public void setIsLoadingLayout(boolean isLoading) {
 		fIsLoadingLayout = isLoading;
+		onOptionChanged("ISLOADINGLAYOUT");
 	}
 	
 	/**
@@ -175,6 +199,22 @@ public abstract class DiagramOptions {
 		setShowRolenames(helper.getElementBooleanValue(parent, LayoutTags.SHOWROLENAMES));
 		if (!version.equals("1")) {
 			setShowGrid(helper.getElementBooleanValue(parent, LayoutTags.SHOWGRID));
+		}
+	}
+	
+	private List<DiagramOptionChangedListener> optionChangedListener = new ArrayList<DiagramOptionChangedListener>();
+	
+	public void addOptionChangedListener(DiagramOptionChangedListener listener) {
+		optionChangedListener.add(listener);
+	}
+	
+	public void removeOptionChangedListener(DiagramOptionChangedListener listener) {
+		optionChangedListener.remove(listener);
+	}
+	
+	protected void onOptionChanged(String optionname) {
+		for (DiagramOptionChangedListener listener : optionChangedListener) {
+			listener.optionChanged(optionname);
 		}
 	}
 }

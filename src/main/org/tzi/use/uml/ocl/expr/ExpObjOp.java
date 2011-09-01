@@ -125,35 +125,29 @@ public final class ExpObjOp extends Expression {
     	MSystem system = ctx.postState().system();
     	
     	try {
-    		try {
-    			system.enterOperation(ctx, operationCall, false);
-    		} catch (MSystemException e) {
-    			throw new RuntimeException(e.getMessage());
-    		}
-    		
-    		try {
-    			if (operation.hasExpression()) {
-    				result = operation.expression().eval(ctx);
-    			} else if (operation.hasStatement()) {
-    				result = 
-						system.evaluateStatementInExpression(
-								operation.getStatement());
-    			}
-    		} catch (Exception e) {
-    			operationCall.setExecutionFailed(true);
-    			throw new RuntimeException(e.getMessage());
-    		} finally {
-    			try {
-    				system.exitOperation(ctx, result);
-    			} catch (MSystemException e) {
-    				throw new RuntimeException(e.getMessage());
-    			}
-    		}
-    	} finally {
-    		ctx.popVarBindings(fArgs.length);
-	    	ctx.exit(this, result);
-    	}
+    		system.enterOperation(ctx, operationCall, false);
+    		operationCall.setExecutionFailed(true);
     	
+			if (operation.hasExpression()) {
+				result = operation.expression().eval(ctx);
+			} else if (operation.hasStatement()) {
+				result = 
+					system.evaluateStatementInExpression(
+							operation.getStatement());
+			}
+			operationCall.setExecutionFailed(false);
+		} catch (MSystemException e) {
+    		throw new RuntimeException(e);
+    	} finally {
+    		try {
+	    		if (operationCall.enteredSuccessfully()) {
+	    			system.exitOperation(ctx, result);
+	    		}
+    		} catch (Exception e){ }
+    		ctx.popVarBindings(fArgs.length);
+    	    ctx.exit(this, result);
+    	}
+    		    
     	return result;
     }
 

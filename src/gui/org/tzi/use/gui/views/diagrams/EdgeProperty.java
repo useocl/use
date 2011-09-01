@@ -185,8 +185,16 @@ public abstract class EdgeProperty extends PlaceableNode {
 	 */
 	protected Point2D getDefaultPosition() { return getCenter(); }
 	
+	/**
+	 * Cached instance of the text layout for this property.
+	 * Is lazy initialized at first call to {@link #getTextLayout(Graphics2D)} 
+	 */
 	protected TextLayout textLayout = null;
 	
+	/**
+	 * Used to enable an improved positioning when loading
+	 * layouts saved in version 1
+	 */
 	protected int fmTextWidth = 0;
 	
 	/**

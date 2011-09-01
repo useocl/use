@@ -74,10 +74,26 @@ public final class MAttribute extends MModelElementImpl {
         fPositionInModel = position;
     }
     
+    @Override
     public String toString() {
         return name() + " : " + fType;
     }
 
+    /**
+     * Two attribute objects are equal if the have the same owner and the same name
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this )
+            return true;
+        if (obj instanceof MAttribute ) {
+        	MAttribute other = (MAttribute)obj;
+            return fOwner.equals(other.fOwner) && name().equals(other.name());
+        }
+        
+        return false;
+    }
+    
     /**
      * Process this element with visitor.
      */

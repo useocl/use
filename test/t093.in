@@ -1,0 +1,15 @@
+open t093.use
+gen start -t -r 6436 t093.assl tryWorld(3)
+gen result accept
+*Random number generator was initialized with 6436.
+*Checked 13 snapshots.
+*Result: Valid state found.
+*Commands to produce the valid state:
+*!new Elem('Elem1')
+*!new Elem('Elem2')
+*!new Elem('Elem3')
+*!@Elem1.value := 66
+*!@Elem2.value := 11
+*!@Elem3.value := 22
+*!insert (@Elem1,@Elem3) into RightElem
+*!insert (@Elem2,@Elem1) into RightElem

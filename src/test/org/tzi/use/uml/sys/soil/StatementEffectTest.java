@@ -25,7 +25,6 @@ package org.tzi.use.uml.sys.soil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -943,7 +942,7 @@ public class StatementEffectTest extends TestCase {
 		// of the correct association
 		assertEquals(newLink.association().name(), assocName);
 		// linking the correct objects
-		Set<MObject> linkedObjects = newLink.linkedObjects();
+		List<MObject> linkedObjects = newLink.linkedObjects();
 		assertEquals(linkedObjects.size(), 2);
 		assertTrue(linkedObjects.contains(linkedObject1));
 		assertTrue(linkedObjects.contains(linkedObject2));

@@ -46,6 +46,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.xml.xpath.XPathConstants;
 
+import org.tzi.use.analysis.coverage.CoverageAnalyzer;
+import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
@@ -76,6 +78,7 @@ import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MGeneralization;
@@ -928,6 +931,19 @@ public class ClassDiagram extends DiagramView
         popupMenu.insert( cbMultiplicities, pos++-1 );
         popupMenu.insert( cbOperations, pos++ );
         
+
+        final JCheckBoxMenuItem cbCoverage =
+                new JCheckBoxMenuItem("Show coverage" );
+        cbCoverage.setState( fOpt.isShowCoverage() );
+        cbCoverage.addItemListener( new ItemListener() {
+                public void itemStateChanged( ItemEvent ev ) {
+                    fOpt.setShowCoverage( ev.getStateChange() == ItemEvent.SELECTED );
+                    setCoverageColor();
+                }
+            } );
+
+        popupMenu.insert( cbCoverage, pos++ );
+        
 //      jj anfangen this
 		// etwas seleted
 		if (fGraph.size() > 0 || fHiddenNodes.size() > 0) {
@@ -1196,4 +1212,56 @@ public class ClassDiagram extends DiagramView
                                            fNodeSelection, fGraph,
                                            this );
     }
+	
+	private void setCoverageColor() {
+		if (fOpt.isShowCoverage()) {
+			CoverageData data = CoverageAnalyzer.calculateModelCoverage(this.fParent.system().model());
+			
+			int minCover = 0; //data.calcLowestClassCoverage();
+			int maxCover = data.calcHighestCompleteClassCoverage();
+			int maxAttCover = data.calcHighestAttributeCoverage();
+			int value;
+			
+			for (Map.Entry<MClass, Integer> clsData : data.getCompleteClassCoverage().entrySet()) {
+				ClassNode n = visibleData.fClassToNodeMap.get(clsData.getKey());
+				if (n == null)
+					n = hiddenData.fClassToNodeMap.get(clsData.getKey());
+				n.setColor(scaleColor(clsData.getValue().intValue(), minCover, maxCover));
+
+				for (MAttribute att : clsData.getKey().attributes()) {
+					if (data.getAttributeCoverage().containsKey(att)) {
+						value = data.getAttributeCoverage().get(att);
+					} else {
+						value = 0;
+					}
+					n.setAttributeColor(att, scaleColor(value, minCover, maxAttCover));
+				}
+			}
+		} else {
+			for (ClassNode n : visibleData.fClassToNodeMap.values()) {
+				n.setColor(null);
+				n.resetAttributeColor();
+			}
+			for (ClassNode n : hiddenData.fClassToNodeMap.values()) {
+				n.setColor(null);
+				n.resetAttributeColor();
+			}
+		}
+		repaint();
+	}
+	
+	private Color scaleColor(int theVal, int low, int high) {
+		return produceColor(theVal - low, high - low);
+	}
+	
+	private Color produceColor(int step, int steps)
+	{
+	    float value = (step == 0 ? 0.0f : 0.1f + step * (0.9f / steps)); //tend to darkness
+	    
+	    int rgb = Color.HSBtoRGB(0.59f, value, 1f); //create a darker color
+        //Hue is Blue, not noticeable
+        //because Saturation is 0
+	    Color color = new Color(rgb);
+	    return color;
+	}
 }

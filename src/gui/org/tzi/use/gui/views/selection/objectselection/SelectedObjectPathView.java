@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -137,7 +138,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 			depth = result.get(currentObject).intValue() + 1;
 
 			for (MLink link : allLinks) {
-				Set<MObject> linkedobjects = link.linkedObjects();
+				List<MObject> linkedobjects = link.linkedObjects();
 
 				if (linkedobjects.contains(currentObject)) {
 					for (MObject object : linkedobjects) {

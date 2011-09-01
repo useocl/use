@@ -71,7 +71,7 @@ public class DiamondNode extends NodeBase {
         fName = fAssoc.name();
         fOpt = opt;
         fConnectedNodes = new ArrayList<String>();
-        Set<MObject> objects = link.linkedObjects();
+        List<MObject> objects = link.linkedObjects();
         
         for (MObject obj : objects) {
             fConnectedNodes.add( obj.name() );

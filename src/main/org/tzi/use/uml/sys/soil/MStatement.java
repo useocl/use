@@ -809,10 +809,7 @@ public abstract class MStatement {
 		// we need to find out if this is actually a link object, since we need
 		// to call destroyObject in that case to get the correct undo 
 		// statement
-		MLink link = 
-			fState.linkBetweenObjects(
-					association, 
-					new LinkedHashSet<MObject>(participants));
+		MLink link = fState.linkBetweenObjects(association, participants);
 		
 		if ((link != null) && (link instanceof MLinkObject)) {
 			destroyObject((MLinkObject)link);

@@ -43,4 +43,8 @@ public class GVariableAssignment extends GAssignment {
     public String toString() {
         return new StringBuilder(fTarget).append(" := ").append(fSourceInstr).toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitVariableAssignment(this);
+    }
 }

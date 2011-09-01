@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,9 +51,9 @@ final class MLinkImpl implements MLink {
     private Map<MAssociationEnd, MLinkEnd> fLinkEnds;
 
     /**
-     * The Set of all link ends to avoid copying.
+     * The set of all link ends to avoid copying.
      */
-    private Set<MLinkEnd> linkEndsSet;
+    private Set<MLinkEnd> linkEnds;
     
     /**
      * Other representation of linked objects,
@@ -82,7 +83,7 @@ final class MLinkImpl implements MLink {
                                                objects.size() + ")");
         
         fLinkEnds = new HashMap<MAssociationEnd, MLinkEnd>(assoc.associationEnds().size());
-        linkEndsSet = new HashSet<MLinkEnd>(assoc.associationEnds().size());
+        linkEnds = new HashSet<MLinkEnd>();
 
         Iterator<MAssociationEnd> it1 = assoc.associationEnds().iterator();
         Iterator<MObject> it2 = objects.iterator();
@@ -106,7 +107,7 @@ final class MLinkImpl implements MLink {
             MLinkEnd lend = new MLinkEnd(aend, obj, endQualifierValues);
             hashCode += lend.hashCode();
             fLinkEnds.put(aend, lend);
-            linkEndsSet.add(lend);
+            linkEnds.add(lend);
             linkedObjects[i] = obj;
             ++i;
         }
@@ -120,26 +121,21 @@ final class MLinkImpl implements MLink {
     }
 
     /** 
-     * Returns a read only set of all link ends of this link.
+     * Returns a read only list of all link ends of this link.
      *
-     * @return read only set of the link ends
+     * @return read only list of the link ends
      */
     public Set<MLinkEnd> linkEnds() {
-    	return Collections.unmodifiableSet(linkEndsSet);
+    	return Collections.unmodifiableSet(linkEnds);
     }
 
     /**
-     * Returns the set of objects participating in this link.
+     * Returns the list of objects participating in this link.
      *
      * @return Set(MObject).
      */
-    public Set<MObject> linkedObjects() {
-    	Set<MObject> s = new HashSet<MObject>();
-                
-        for (MLinkEnd lend : fLinkEnds.values()) {
-            s.add(lend.object());
-        }
-        
+    public List<MObject> linkedObjects() {
+    	List<MObject> s = Arrays.asList(linkedObjects);
         return s;
     }
 

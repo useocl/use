@@ -49,4 +49,8 @@ public class GOCLExpression extends GValueInstruction {
     public String toString() {
         return new StringBuilder("[").append(fExpression.toString()).append("]").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitOCLExpression(this);
+    }
 }

@@ -53,4 +53,8 @@ public class GInstrCreate_C extends GValueInstruction {
     public String toString() {
         return new StringBuilder("Create(").append(fClass).append(")").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrCreate_C(this);
+    }
 }

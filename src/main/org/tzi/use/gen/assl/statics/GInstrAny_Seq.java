@@ -52,4 +52,8 @@ public class GInstrAny_Seq extends GValueInstruction {
     public String toString() {
         return new StringBuilder("Any(").append(fSequenceInstr).append(")").toString();
     }
+    
+    public void processWithVisitor(InstructionVisitor v) {
+    	v.visitInstrAny_Seq(this);
+    }
 }
