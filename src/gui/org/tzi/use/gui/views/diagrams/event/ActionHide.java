@@ -30,7 +30,6 @@ import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.LayoutInfos;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.Selectable;
 
@@ -57,16 +56,6 @@ public abstract class ActionHide<NodeType> extends AbstractAction {
      */
     DirectedGraph<NodeBase, EdgeBase> fGraph;
     
-    /**
-     * XML representation of the hidden element.
-     */
-    String fLayoutXMLForHiddenElements = "";
-    
-    /**
-     * Layout information about the given diagram. 
-     */
-    LayoutInfos fLayoutInfos;
- 
     DiagramView diagram;
     
     ActionHide( String text, DiagramView diagram, Selection<? extends Selectable> nodeSelection ) {
