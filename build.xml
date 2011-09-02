@@ -3,7 +3,7 @@
 <project name="use" default="build" basedir=".">
   <description>Build file for USE</description>
 	
-  <property name="release.version" value="3.0.0RC3"/>
+  <property name="release.version" value="3.0.0RC4"/>
 
   <!-- set release name to "use-x.y.z" -->
   <property name="release.name"       value="${ant.project.name}-${release.version}"/>
