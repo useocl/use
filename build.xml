@@ -31,7 +31,7 @@
   <property name="build.dir"           location="${basedir}/build"/>
   <property name="build.classes.dir"   location="${build.dir}/classes"/>
   <property name="build.lib.dir"       location="${build.dir}/lib"/>
-  <property name="build.lib_build.dir" location="${build.dir}/lib_build"/> 
+  <property name="build.libbuild.dir" location="${build.dir}/lib_build"/> 
   <property name="build.javadoc.dir"   location="${build.dir}/javadoc"/>
   <property name="build.release.dir"   location="${build.dir}/release/${release.name}"/>
   <property name="build.doc.dir"       location="${build.dir}/doc"/>
@@ -319,12 +319,12 @@
     <javac srcdir="${src.main.dir}:${src.runtime.dir}:${src.gui.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off" 
        classpath="${antlr.jar}:${junit.jar}:${xerces.jar}:${jruby.jar}" 
-       source="${java.sourceversion}" target="${java.targetversion}">
+       source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
     </javac>  
     <javac srcdir="${src.test.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off"
        classpath="${antlr.jar}:${junit.jar}:${gsbase.jar}"
-    	source="${java.sourceversion}" target="${java.targetversion}">
+    	source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
        <exclude name="org/tzi/use/gui/**/*.java"/>
     </javac>
   </target>
@@ -334,12 +334,12 @@
     <javac srcdir="${src.gui.dir}:${src.runtime.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off" 
        classpath="${antlr.jar}:${junit.jar}:${xerces.jar}" 
-       source="${java.sourceversion}" target="${java.targetversion}">
+       source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
     </javac>  
     <javac srcdir="${src.test.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off"
        classpath="${antlr.jar}:${junit.jar}:${gsbase.jar}"
-       source="${java.sourceversion}" target="${java.targetversion}">
+       source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
        <include name="org/tzi/use/gui/**/*.java"/>
     </javac>
   </target>
@@ -349,7 +349,7 @@
 	<javac srcdir="${src.runtime.dir}" destdir="${build.classes.dir}" 
 		deprecation="on" debug="on" listfiles="off" 
 		classpath="${antlr.jar}:${junit.jar}:${xerces.jar}" 
-		source="${java.sourceversion}" target="${java.targetversion}">
+		source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
 	</javac>
   </target>
 
@@ -463,7 +463,7 @@
   </target>
 
   <!-- create all jars -->
-  <target name="build" depends="jar-use, create-nativelib" description="build everything " />
+  <target name="build" depends="jar-use, create-nativelib" description="build everything "/>
 
 
   <!-- delete the build tree -->
@@ -567,7 +567,13 @@
   <!-- perform classcycle checks -->
   <property name="package" value="org.tzi.use"/>
 
-  <target name="test-classcycles">
+  <target name="check-classcycles-available" depends="init">
+  	<condition property="classcycleslib.available">
+      	<available file="${build.libbuild.dir}/Classycle1.3.3/classycle.jar" />
+  	</condition>
+  </target>
+  	
+  <target name="test-classcycles" depends="check-classcycles-available" if="classcycleslib.available">
     <taskdef name="classycleDependencyCheck" 
              classname="classycle.ant.DependencyCheckingTask" classpath="lib_build/Classycle1.3.3/classycle.jar"/>
 	
@@ -695,12 +701,6 @@
       <fileset dir="${build.lib.dir}">
         <exclude name="checkstyle-all-3.4.jar"/>
       </fileset>
-    </copy>
-
-	<!-- copy build-lib files -->
-    <mkdir dir="${build.release.dir}/lib_build"/>
-    <copy todir="${build.release.dir}/lib_build">
-      <fileset dir="${build.lib_build.dir}"/>
     </copy>
 
     <!-- copy src files -->
