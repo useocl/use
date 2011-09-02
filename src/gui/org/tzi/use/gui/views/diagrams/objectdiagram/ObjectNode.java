@@ -66,7 +66,7 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
         this.fOpt.addOptionChangedListener(new DiagramOptionChangedListener() {
 			@Override
 			public void optionChanged(String optionname) {
-				if (optionname.equals("SHOWROLENAMES") ||
+				if (optionname.equals("SHOWOPERATIONS") ||
 					optionname.equals("SHOWATTRIBUTES")	)
 				calculateBounds();
 			}
