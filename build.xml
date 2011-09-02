@@ -30,15 +30,15 @@
   <!-- define build directories and files -->
   <property name="build.dir"           location="${basedir}/build"/>
   <property name="build.classes.dir"   location="${build.dir}/classes"/>
-  <property name="build.lib.dir"       location="${build.dir}/lib"/>
-  <property name="build.libbuild.dir" location="${build.dir}/lib_build"/> 
+  <property name="build.lib.dir"       location="${build.dir}/lib"/> 
   <property name="build.javadoc.dir"   location="${build.dir}/javadoc"/>
   <property name="build.release.dir"   location="${build.dir}/release/${release.name}"/>
   <property name="build.doc.dir"       location="${build.dir}/doc"/>
   <property name="use.jar"             location="${build.lib.dir}/use.jar"/>
   <property name="use-gui.jar"         location="${build.lib.dir}/use-gui.jar"/>
   <property name="use-runtime.jar"     location="${build.lib.dir}/use-runtime.jar" />
-
+  <property name="build.libbuild.dir"  location="${basedir}/lib_build"/>
+	
   <property name="antlr.jar"          location="${lib.dir}/antlr-3.3.jar"/>
   <property name="junit.jar"          location="${lib.dir}/junit.jar"/>
   <property name="gsbase.jar"         location="${lib.dir}/gsbase.jar"/>
@@ -567,7 +567,7 @@
   <!-- perform classcycle checks -->
   <property name="package" value="org.tzi.use"/>
 
-  <target name="check-classcycles-available" depends="init">
+  <target name="check-classcycles-available">
   	<condition property="classcycleslib.available">
       	<available file="${build.libbuild.dir}/Classycle1.3.3/classycle.jar" />
   	</condition>
