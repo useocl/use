@@ -21,6 +21,7 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public final class Rolename extends EdgeProperty {
 
 	MAssociationEnd fAssocEnd;
     
+	private Color color = null;
+	
     /**
      * 
      * @param assocEnd The <code>MAassociationEnd</code> this role name belongs to.
@@ -97,6 +100,24 @@ public final class Rolename extends EdgeProperty {
     	}
     }
     
+    public MAssociationEnd getEnd() {
+    	return fAssocEnd;
+    }
+    
+    /**
+	 * @return the color
+	 */
+	public Color getColor() {
+		return color;
+	}
+
+	/**
+	 * @param color the color to set
+	 */
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	
     /**
      * Draws a role name on a binary edge.
      */
@@ -105,6 +126,15 @@ public final class Rolename extends EdgeProperty {
         setColor( g );
                     
         if ( fAssocEnd != null && fAssocEnd.isNavigable() ) {
+        	if (this.getColor() != null) {
+        		Color old = g.getColor();
+        		g.setColor(this.getColor());
+        		g.fillPolygon(this.dimension());
+        		g.setColor(Color.LIGHT_GRAY);
+        		g.draw(getBounds());
+        		g.setColor(old);
+        	}
+        	
         	if ( isSelected() ) {
             	drawSelected(g);
             }

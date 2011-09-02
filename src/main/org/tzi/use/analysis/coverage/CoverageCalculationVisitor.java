@@ -24,8 +24,10 @@ package org.tzi.use.analysis.coverage;
 import java.util.Stack;
 
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.ExpAllInstances;
 import org.tzi.use.uml.ocl.expr.ExpAny;
@@ -131,9 +133,23 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 		} else {
 			coverageData.getAssociationCoverage().put(assoc, coverageData.getAssociationCoverage().get(assoc) + 1);
 		}
-		for (MClass cls : assoc.associatedClasses()) {
-			addCompleteClassCoverage(cls);
+	}
+	
+	/**
+	 * @param sourceType
+	 */
+	private void addAssociationEndCoverage(MNavigableElement dst) {
+		//FIXME: How to handle association class?
+		if (!(dst instanceof MAssociationEnd)) return;
+		MAssociationEnd end = (MAssociationEnd)dst;
+		
+		if (!coverageData.getAssociationEndCoverage().containsKey(end)) {
+			coverageData.getAssociationEndCoverage().put(end, 1);
+		} else {
+			coverageData.getAssociationEndCoverage().put(end, coverageData.getAssociationEndCoverage().get(end) + 1);
 		}
+		
+		addCompleteClassCoverage(end.cls());
 	}
 	
 	/* (non-Javadoc)
@@ -313,7 +329,7 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 	public void visitNavigation(ExpNavigation exp) {
 		exp.getObjectExpression().processWithVisitor(this);
 		addAssociationCoverage(exp.getDestination().association());
-		//addClassCoverage(exp.getDestination().cls());
+		addAssociationEndCoverage(exp.getDestination());
 	}
 
 	/* (non-Javadoc)

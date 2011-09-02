@@ -66,7 +66,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     /**
      * Role name which is on the source side of this edge.
      */
-    EdgeProperty fSourceRolename;
+    Rolename fSourceRolename;
     
     /**
      * Multiplicity which is on the source side of this edge.
@@ -200,7 +200,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     /**
      * @return Returns the fSourceRolename.
      */
-    public EdgeProperty getSourceRolename() {
+    public Rolename getSourceRolename() {
         return fSourceRolename;
     }
         

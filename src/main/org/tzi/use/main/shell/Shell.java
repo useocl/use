@@ -588,6 +588,14 @@ public final class Shell implements Runnable, PPCHandler {
 					return element.getSourceClass().name() + "." + element.getAttribute().name() + inherited;
 				}
 			}));
+			
+			Log.print("   -Properties:         ");
+			Log.println(StringUtil.fmtSeq(data.getPropertyCoverage().keySet(), ", ", new StringUtil.IElementFormatter<MModelElement>() {
+				@Override
+				public String format(MModelElement element) {
+					return element.name();
+				}
+			}));
 		}
 	}
 	

@@ -27,9 +27,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.MModelElement;
 
 /**
  * Container class for coverage data.
@@ -54,6 +56,11 @@ public class CoverageData {
 	
 	protected Map<MAssociation, Integer> associationCoverage = new HashMap<MAssociation, Integer>();
 	
+	/**
+	 * Saves coverage information about association end coverage
+	 */
+	protected Map<MAssociationEnd, Integer> associationEndCoverage = new HashMap<MAssociationEnd, Integer>();
+
 	public CoverageData() {	}
 	
 	/**
@@ -92,15 +99,28 @@ public class CoverageData {
 	}
 	
 	/**
+	 * @return the associationEndCoverage
+	 */
+	public Map<MAssociationEnd, Integer> getAssociationEndCoverage() {
+		return associationEndCoverage;
+	}
+	
+	/**
+	 * @return the propertyCoverage
+	 */
+	public Map<MModelElement, Integer> getPropertyCoverage() {
+		HashMap<MModelElement, Integer> res = new HashMap<MModelElement, Integer>();
+		res.putAll(this.associationEndCoverage);
+		res.putAll(this.attributeCoverage);
+		return res;
+	}
+	
+	/**
 	 * Calculates the highest class coverage value
 	 * @return
 	 */
 	public int calcHighestClassCoverage() {
-		int res = 0;
-		for (Integer i : this.classCoverage.values()) {
-			res = Math.max(res, i.intValue());
-		}
-		return res;
+		return highestInt(this.classCoverage);
 	}
 	
 	/**
@@ -108,20 +128,11 @@ public class CoverageData {
 	 * @return
 	 */
 	public int calcHighestCompleteClassCoverage() {
-		int res = 0;
-		for (Integer i : this.completeClassCoverage.values()) {
-			res = Math.max(res, i.intValue());
-		}
-		return res;
+		return highestInt(this.completeClassCoverage);
 	}
 	
 	public int calcLowestClassCoverage() {		
-		int res = Integer.MAX_VALUE;
-		for (Integer i : this.classCoverage.values()) {
-			res = Math.min(res, i.intValue());
-		}
-		
-		return res;
+		return lowestInt(this.classCoverage);
 	}
 	
 	public Set<MClass> getCoveredClasses() {
@@ -152,9 +163,21 @@ public class CoverageData {
 	 * @return
 	 */
 	public int calcHighestAttributeCoverage() {
+		return highestInt(this.attributeCoverage);
+	}
+	
+	public int highestInt(Map<?, Integer> map) {
 		int res = 0;
-		for (Integer i : this.attributeCoverage.values()) {
+		for (Integer i : map.values()) {
 			res = Math.max(res, i.intValue());
+		}
+		return res;
+	}
+	
+	public int lowestInt(Map<?, Integer> map) {
+		int res = Integer.MAX_VALUE;
+		for (Integer i : map.values()) {
+			res = Math.min(res, i.intValue());
 		}
 		return res;
 	}

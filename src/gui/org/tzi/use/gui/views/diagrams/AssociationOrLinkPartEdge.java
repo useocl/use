@@ -53,7 +53,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
     /**
      * Role name which is on the target side of this edge.
      */
-    EdgeProperty fTargetRolename;
+    Rolename fTargetRolename;
     
     /**
      * Multiplicity which is on the target side of this edge.
@@ -110,7 +110,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
     /**
      * @return Returns the fTargetRolename.
      */
-    public EdgeProperty getTargetRolename() {
+    public Rolename getTargetRolename() {
         return fTargetRolename;
     }
     

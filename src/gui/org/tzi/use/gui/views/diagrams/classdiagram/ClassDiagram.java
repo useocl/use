@@ -83,6 +83,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MGeneralization;
+import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -1216,11 +1217,14 @@ public class ClassDiagram extends DiagramView
     }
 	
 	private Map<MModelElement, CoverageData> data = null;
+	
 	private void setCoverageColor() {
 
 		if (fOpt.isShowCoverage()) {
+			MModel model = this.fParent.system().model();
+			
 			if (data == null)
-				data = CoverageAnalyzer.calculateModelCoverage(this.fParent.system().model());
+				data = CoverageAnalyzer.calculateModelCoverage(model);
 			
 			MModelElement selectedElement = this.fParent.getModelBrowser().getSelectedModelElement();
 			
@@ -1228,15 +1232,17 @@ public class ClassDiagram extends DiagramView
 			if (selectedElement != null && data.containsKey(selectedElement)) {
 				theData = data.get(selectedElement);
 			} else {
-				theData = data.get(this.fParent.system().model());
+				theData = data.get(model);
 			}
+			
+			Map<MModelElement, Integer> propCover = theData.getPropertyCoverage();
 			
 			int minCover = 0; //data.calcLowestClassCoverage();
 			int maxCover = theData.calcHighestCompleteClassCoverage();
-			int maxAttCover = theData.calcHighestAttributeCoverage();
+			int maxAttCover = theData.highestInt(propCover);
 			int value;
 			
-			for (MClass cls : this.fParent.system().model().classes()) {
+			for (MClass cls : model.classes()) {
 				if (theData.getCompleteClassCoverage().containsKey(cls)) {
 					value = theData.getCompleteClassCoverage().get(cls);
 				} else {
@@ -1248,15 +1254,33 @@ public class ClassDiagram extends DiagramView
 					n = hiddenData.fClassToNodeMap.get(cls);
 				
 				n.setColor(scaleColor(value, minCover, maxCover));
-
+				
 				for (MAttribute att : cls.attributes()) {
-					if (theData.getAttributeCoverage().containsKey(att)) {
+					if (propCover.containsKey(att)) {
 						value = theData.getAttributeCoverage().get(att);
 					} else {
 						value = 0;
 					}
 					n.setAttributeColor(att, scaleColor(value, minCover, maxAttCover));
 				}
+			}
+			
+			for (BinaryAssociationOrLinkEdge edge : visibleData.fBinaryAssocToEdgeMap.values()) {
+				if (propCover.containsKey(edge.getSourceRolename().getEnd())) {
+					value = propCover.get(edge.getSourceRolename().getEnd());
+				} else {
+					value = 0;
+				}
+				
+				edge.getSourceRolename().setColor(scaleColor(value, minCover, maxAttCover));
+				
+				if (propCover.containsKey(edge.getTargetRolename().getEnd())) {
+					value = propCover.get(edge.getTargetRolename().getEnd());
+				} else {
+					value = 0;
+				}
+				
+				edge.getTargetRolename().setColor(scaleColor(value, minCover, maxAttCover));
 			}
 		} else {
 			resetColor();
@@ -1273,6 +1297,11 @@ public class ClassDiagram extends DiagramView
 		for (ClassNode n : hiddenData.fClassToNodeMap.values()) {
 			n.setColor(null);
 			n.resetAttributeColor();
+		}
+		
+		for (BinaryAssociationOrLinkEdge edge : visibleData.fBinaryAssocToEdgeMap.values()) {
+			edge.getSourceRolename().setColor(null);
+			edge.getTargetRolename().setColor(null);
 		}
 	}
 	
