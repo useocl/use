@@ -15,36 +15,30 @@ public class ASTGOpEnter extends ASTGInstruction {
 
 	ASTGocl fObjname;
 	String fOpname;
-	List fParameter;
+	List<ASTGocl> fParameter;
 	
 	public ASTGOpEnter (ASTGocl oid, Token opname) {
 		fObjname = oid;
 		fOpname = opname.getText();
-		fParameter = new ArrayList();
+		fParameter = new ArrayList<ASTGocl>();
 	}
 	
-	public void addParameter(Object param) {
+	public void addParameter(ASTGocl param) {
 		fParameter.add(param);
 	}
 	
 	@Override
 	public GInstruction gen(Context ctx) throws SemanticException {
-		// TODO Auto-generated method stub
 
-
-        GValueInstruction oid =
-        	(GValueInstruction) ((ASTGocl) fObjname).gen(ctx);
+        GValueInstruction oid = (GValueInstruction) fObjname.gen(ctx);
 		
-        ArrayList params = new ArrayList();
-        ArrayList errParams = new ArrayList();
+        ArrayList<GValueInstruction> params = new ArrayList<GValueInstruction>();
         
-        Iterator it = fParameter.iterator();
+        Iterator<ASTGocl> it = fParameter.iterator();
         while (it.hasNext() ) {
-            Object param = it.next();
-            GValueInstruction instr =
-            	(GValueInstruction) ((ASTGocl) param).gen(ctx);
+        	ASTGocl param = it.next();
+            GValueInstruction instr = (GValueInstruction)param.gen(ctx);
             params.add( instr );
-            errParams.add( instr.type().toString() );
         }
         GInstruction instr = new GInstrOpEnter(oid, fOpname, params);
         

@@ -73,7 +73,7 @@ public class GGenerator {
     private boolean fCheckStructure;
     private GCollectorImpl collector;
     
-    private List fProcedures;
+    private List<GProcedure> fProcedures;
     
     public GGenerator( MSystem system ) {
         fSystem = system;
@@ -108,7 +108,7 @@ public class GGenerator {
     }
 
     public GProcedureCall getCall(String callstr) {
-        if (fProcedures!=null) {
+        if (fProcedures != null) {
             Log.verbose("Compiling `" + callstr + "'.");
             return ASSLCompiler.compileProcedureCall(fSystem.model(),
                                                     fSystem.state(),
@@ -121,48 +121,32 @@ public class GGenerator {
     }
     
 	public GProcedure getProcedure(String callstr) {
-    	if (fRandomNr == null)
-            fRandomNr = new Long( (new Random()).nextInt(10000) );
-        if (fLimit == null)
-            fLimit = new Long( Long.MAX_VALUE );
+		if (fRandomNr == null)
+			fRandomNr = new Long((new Random()).nextInt(10000));
+		if (fLimit == null)
+			fLimit = new Long(Long.MAX_VALUE);
 
-        //List procedures = null;
-        GProcedureCall call = null;
-        PrintWriter pw = null;
-        PrintWriter resultPw = null;
-        GProcedure retproc = null;
-        
-/*
-        try {
-        	GProcedure retproc = null;
-        	Log.verbose("Compiling procedures from " + fFilename + ".");
-            procedures=ASSLCompiler.compileProcedures(
-                                                     fSystem.model(),
-                                                     new FileInputStream(fFilename),
-                                                     fFilename,
-                                                     new PrintWriter(System.err) );
-  */
-            if (fProcedures!=null) {
-                Log.verbose("Compiling `" + callstr + "'.");
-                call = ASSLCompiler.compileProcedureCall(fSystem.model(),
-                                                        fSystem.state(),
-                                                        callstr,
-                                                        "<input>",
-                                                        new PrintWriter(System.err)
-                                                        );
-            }
-            if (call != null && fProcedures != null) {
-                retproc = call.findMatching( fProcedures );
-                if (retproc == null)
-                    Log.error( call.signatureString()
-                               + " not found in " + fFilename );
-                else 
-                	return retproc;
-            }
-            return null;
+		// List procedures = null;
+		GProcedureCall call = null;
+		GProcedure retproc = null;
 		
+		if (fProcedures != null) {
+			Log.verbose("Compiling `" + callstr + "'.");
+			call = ASSLCompiler.compileProcedureCall(fSystem.model(), fSystem
+					.state(), callstr, "<input>", new PrintWriter(System.err));
+		}
+		
+		if (call != null && fProcedures != null) {
+			retproc = call.findMatching(fProcedures);
+			if (retproc == null)
+				Log.error(call.signatureString() + " not found in " + fFilename);
+			else
+				return retproc;
+		}
+		
+		return null;
 	}
-    
+   
     /**
      * only for intern ASSL procedure calls. 
      * procedure will be invoked only by the ASSL command "ASSLCall <procname> (<Arglist>);"
@@ -173,19 +157,19 @@ public class GGenerator {
         if (fLimit == null)
             fLimit = new Long( Long.MAX_VALUE );
 
-        List procedures = null;
+        List<GProcedure> procedures = null;
         GProcedureCall call = null;
         PrintWriter pw = null;
         PrintWriter resultPw = null;
 
         try {
             Log.verbose("Compiling procedures from " + fFilename + ".");
-            procedures=ASSLCompiler.compileProcedures(
+            procedures = ASSLCompiler.compileProcedures(
                                                      fSystem.model(),
                                                      new FileInputStream(fFilename),
                                                      fFilename,
                                                      new PrintWriter(System.err) );
-            if (procedures!=null) {
+            if (procedures != null) {
                 Log.verbose("Compiling `" + callstr + "'.");
                 call = ASSLCompiler.compileProcedureCall(fSystem.model(),
                                                         fSystem.state(),
@@ -194,6 +178,7 @@ public class GGenerator {
                                                         new PrintWriter(System.err)
                                                         );
             }
+            
             if (call != null && procedures != null) {
                 GProcedure proc = call.findMatching( procedures );
                 if (proc == null)

@@ -1,38 +1,23 @@
 package org.tzi.use.gen.assl.dynamics;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.tzi.use.gen.assl.statics.GInstrOpEnter;
 import org.tzi.use.gen.assl.statics.GOCLExpression;
+import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
-///import org.tzi.use.uml.sys.MCmdOpEnter;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
-import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
-import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.uml.sys.soil.SoilEvaluationContext;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
-///import org.tzi.use.util.cmd.CannotUndoException;
-///import org.tzi.use.util.cmd.CommandFailedException;
-
-import com.sun.security.auth.login.ConfigFile;
 
 public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 
@@ -72,7 +57,7 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 			(fInstr.opname(), true);
 
 			// get Parameter and transform them into expressions
-			Iterator paramIter = fInstr.parameter().iterator();
+			Iterator<GValueInstruction> paramIter = fInstr.parameter().iterator();
 			argExprs = new Expression[fInstr.parameter().size()];
 			int i=0;
 			Map<String, Expression> arguments = new HashMap<String, Expression>();

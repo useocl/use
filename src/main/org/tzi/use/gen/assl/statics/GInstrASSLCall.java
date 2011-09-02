@@ -5,9 +5,9 @@ import java.util.List;
 public class GInstrASSLCall extends GInstruction {
 
 	String procname;
-	List fParam;
+	List<GValueInstruction> fParam;
 
-	public GInstrASSLCall(String id, List param) {
+	public GInstrASSLCall(String id, List<GValueInstruction> param) {
 		procname = id;
 		fParam=param;
 	}
@@ -16,7 +16,7 @@ public class GInstrASSLCall extends GInstruction {
 		return procname;
 	}
 	
-	public List param() {
+	public List<GValueInstruction> param() {
 		return fParam;
 	}
 	

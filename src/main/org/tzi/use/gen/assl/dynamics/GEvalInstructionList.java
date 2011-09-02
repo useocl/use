@@ -40,11 +40,8 @@ public class GEvalInstructionList implements IGCaller {
     private IGCaller fCaller;
     private ListIterator<GInstruction> fIterator;
 
-    private static int fIdentcounter =0;
-
     public GEvalInstructionList( GInstructionList instr ) {
         fInstr = instr;
-        fIdentcounter++;
     }
 
     public void eval(GConfiguration conf,
