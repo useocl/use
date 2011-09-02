@@ -29,7 +29,6 @@ import java.util.TreeSet;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 
 /**
@@ -39,52 +38,24 @@ import org.tzi.use.uml.mm.MModel;
  */
 public class CoverageData {
 	
-	protected Map<MClassInvariant, Set<MClass>> coveredClassesByInvariant = new HashMap<MClassInvariant, Set<MClass>>();
-	
-	protected Map<MClassInvariant, Set<MClass>> completeCoveredClassesByInvariant = new HashMap<MClassInvariant, Set<MClass>>();
-	
-	protected Map<MClassInvariant, Set<MAssociation>> coveredAssocsByInvariant = new HashMap<MClassInvariant, Set<MAssociation>>();
-	
-	protected Map<MClassInvariant, Set<AttributeAccessInfo>> coveredAttributesByInvariant = new HashMap<MClassInvariant, Set<AttributeAccessInfo>>();
-
-	protected Map<MClass, Integer> classCoverage;
-	
-	protected Map<MClass, Integer> completeClassCoverage;
-	
-	protected Map<AttributeAccessInfo, Integer> attributeAccessCoverage;
-	
-	protected Map<MAttribute, Integer> attributeCoverage;
-	
-	protected Map<MAssociation, Integer> associationCoverage;
+	/**
+	 * Only expressions which access directly a class (allInstances()) are counted
+	 */
+	protected Map<MClass, Integer> classCoverage = new HashMap<MClass, Integer>();
 	
 	/**
-	 * @return the coveredClassesByInvariant
+	 * All expressions are counted which cover the class, associations or attributes of the class
 	 */
-	public Map<MClassInvariant, Set<MClass>> getCoveredClassesByInvariant() {
-		return coveredClassesByInvariant;
-	}
-
-	/**
-	 * @return the complete covered classes by invariants
-	 */
-	public Map<MClassInvariant, Set<MClass>> getCompleteCoveredClassesByInvariant() {
-		return completeCoveredClassesByInvariant;
-	}
+	protected Map<MClass, Integer> completeClassCoverage = new HashMap<MClass, Integer>();
 	
-	/**
-	 * @return the coveredAssocsByInvariant
-	 */
-	public Map<MClassInvariant, Set<MAssociation>> getCoveredAssocsByInvariant() {
-		return coveredAssocsByInvariant;
-	}
-
-	/**
-	 * @return the coveredAttributesByInvariant
-	 */
-	public Map<MClassInvariant, Set<AttributeAccessInfo>> getCoveredAttributesByInvariant() {
-		return coveredAttributesByInvariant;
-	}
-
+	protected Map<AttributeAccessInfo, Integer> attributeAccessCoverage = new HashMap<AttributeAccessInfo, Integer>();
+	
+	protected Map<MAttribute, Integer> attributeCoverage = new HashMap<MAttribute, Integer>();
+	
+	protected Map<MAssociation, Integer> associationCoverage = new HashMap<MAssociation, Integer>();
+	
+	public CoverageData() {	}
+	
 	/**
 	 * @return the classCoverage
 	 */
@@ -118,23 +89,6 @@ public class CoverageData {
 	 */
 	public Map<MAssociation, Integer> getAssociationCoverage() {
 		return associationCoverage;
-	}
-	
-	protected void setResult(MModel model, CoverageCalculationVisitor v) {
-		this.associationCoverage = v.getAssociationCoverage();
-		this.attributeAccessCoverage = v.getAttributeAccessCoverage();
-		this.attributeCoverage = v.getAttributeCoverage();
-		this.classCoverage = v.getClassCoverage();
-		this.completeClassCoverage = v.getCompleteClassCoverage();
-		
-		for (MClass cls : model.classes()) {
-			if (!this.classCoverage.containsKey(cls)) {
-				this.classCoverage.put(cls, Integer.valueOf(0));
-			}
-			if (!this.completeClassCoverage.containsKey(cls)) {
-				this.completeClassCoverage.put(cls, Integer.valueOf(0));
-			}
-		}
 	}
 	
 	/**
@@ -203,5 +157,20 @@ public class CoverageData {
 			res = Math.max(res, i.intValue());
 		}
 		return res;
+	}
+	
+	/**
+	 * Adds all uncovered classes to the corresponding maps with a value of 0.
+	 * @param model
+	 */
+	public void addUncoveredClasses(MModel model) {
+		for (MClass cls : model.classes()) {
+			if (!this.classCoverage.containsKey(cls)) {
+				this.classCoverage.put(cls, Integer.valueOf(0));
+			}
+			if (!this.completeClassCoverage.containsKey(cls)) {
+				this.completeClassCoverage.put(cls, Integer.valueOf(0));
+			}
+		}
 	}
 }

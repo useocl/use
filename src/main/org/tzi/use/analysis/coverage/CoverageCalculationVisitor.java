@@ -21,8 +21,6 @@
 
 package org.tzi.use.analysis.coverage;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import org.tzi.use.uml.mm.MAssociation;
@@ -81,50 +79,16 @@ import org.tzi.use.uml.ocl.type.ObjectType;
  */
 public class CoverageCalculationVisitor implements ExpressionVisitor {
 
-	/**
-	 * Only expressions which access directly a class (allInstances()) are counted
-	 */
-	private Map<MClass, Integer> classCoverage = new HashMap<MClass, Integer>();
-	
-	/**
-	 * All expressions are counted which cover the class, associations or attributes of the class
-	 */
-	private Map<MClass, Integer> completeClassCoverage = new HashMap<MClass, Integer>();
-	
-	private Map<AttributeAccessInfo, Integer> attributeAccessCoverage = new HashMap<AttributeAccessInfo, Integer>();
-	
-	private Map<MAttribute, Integer> attributeCoverage = new HashMap<MAttribute, Integer>();
-	
-	private Map<MAssociation, Integer> associationCoverage = new HashMap<MAssociation, Integer>();
-	
-	public Map<MClass, Integer> getClassCoverage() {
-		return this.classCoverage;
-	}
-	
-	public Map<MClass, Integer> getCompleteClassCoverage() {
-		return this.completeClassCoverage;
-	}
-	
-	public Map<AttributeAccessInfo, Integer> getAttributeAccessCoverage() {
-		return this.attributeAccessCoverage;
-	}
-
-	public Map<MAttribute, Integer> getAttributeCoverage() {
-		return this.attributeCoverage;
-	}
-	
-	public Map<MAssociation, Integer> getAssociationCoverage() {
-		return this.associationCoverage;
-	}
+	private CoverageData coverageData = new CoverageData();
 	
 	/**
 	 * @param cls
 	 */
 	private void addClassCoverage(MClass cls) {
-		if (!classCoverage.containsKey(cls)) {
-			classCoverage.put(cls, 1);
+		if (!coverageData.getClassCoverage().containsKey(cls)) {
+			coverageData.getClassCoverage().put(cls, 1);
 		} else {
-			classCoverage.put(cls, classCoverage.get(cls) + 1);
+			coverageData.getClassCoverage().put(cls, coverageData.getClassCoverage().get(cls) + 1);
 		}
 		addCompleteClassCoverage(cls);
 	}
@@ -133,10 +97,10 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 	 * @param cls
 	 */
 	private void addCompleteClassCoverage(MClass cls) {
-		if (!completeClassCoverage.containsKey(cls)) {
-			completeClassCoverage.put(cls, 1);
+		if (!coverageData.getCompleteClassCoverage().containsKey(cls)) {
+			coverageData.getCompleteClassCoverage().put(cls, 1);
 		} else {
-			completeClassCoverage.put(cls, completeClassCoverage.get(cls) + 1);
+			coverageData.getCompleteClassCoverage().put(cls, coverageData.getCompleteClassCoverage().get(cls) + 1);
 		}
 	}
 	
@@ -145,15 +109,15 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 	 */
 	private void addAttributeCoverage(MClass sourceClass, MAttribute att) {
 		AttributeAccessInfo info = new AttributeAccessInfo(sourceClass, att);
-		if (!attributeAccessCoverage.containsKey(info)) {
-			attributeAccessCoverage.put(info, 1);
+		if (!coverageData.getAttributeAccessCoverage().containsKey(info)) {
+			coverageData.getAttributeAccessCoverage().put(info, 1);
 		} else {
-			attributeAccessCoverage.put(info, attributeAccessCoverage.get(info) + 1);
+			coverageData.getAttributeAccessCoverage().put(info, coverageData.getAttributeAccessCoverage().get(info) + 1);
 		}
-		if (!attributeCoverage.containsKey(att)) {
-			attributeCoverage.put(att, 1);
+		if (!coverageData.getAttributeCoverage().containsKey(att)) {
+			coverageData.getAttributeCoverage().put(att, 1);
 		} else {
-			attributeCoverage.put(att, attributeCoverage.get(att) + 1);
+			coverageData.getAttributeCoverage().put(att, coverageData.getAttributeCoverage().get(att) + 1);
 		}
 		addCompleteClassCoverage(sourceClass);
 	}
@@ -162,10 +126,10 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 	 * @param sourceType
 	 */
 	private void addAssociationCoverage(MAssociation assoc) {
-		if (!associationCoverage.containsKey(assoc)) {
-			associationCoverage.put(assoc, 1);
+		if (!coverageData.getAssociationCoverage().containsKey(assoc)) {
+			coverageData.getAssociationCoverage().put(assoc, 1);
 		} else {
-			associationCoverage.put(assoc, associationCoverage.get(assoc) + 1);
+			coverageData.getAssociationCoverage().put(assoc, coverageData.getAssociationCoverage().get(assoc) + 1);
 		}
 		for (MClass cls : assoc.associatedClasses()) {
 			addCompleteClassCoverage(cls);
@@ -501,5 +465,13 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 		for (Expression ex : exp.getElemExpr()) {
 			ex.processWithVisitor(this);
 		}
+	}
+
+	/**
+	 * Returns the collected information about the coverage
+	 * @return The collected coverage data
+	 */
+	public CoverageData getCoverageData() {
+		return coverageData;
 	}
 }

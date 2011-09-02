@@ -37,6 +37,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -130,6 +131,15 @@ public class ModelBrowser extends JPanel
     	return this.modelCollections;
     }
 
+    public MModelElement getSelectedModelElement() {
+    	if (fTree.getSelectionCount() > 0) {
+    		DefaultMutableTreeNode node = (DefaultMutableTreeNode)fTree.getLastSelectedPathComponent();
+    		if (node.getUserObject() instanceof MModelElement)
+    			return (MModelElement)node.getUserObject();
+    	}
+    	return null;
+    }
+    
     // implementation of interface DragSourceListener
     public void dragGestureRecognized(DragGestureEvent dge) {
         //Log.trace(this, "dragGestureRecognized");
@@ -162,8 +172,8 @@ public class ModelBrowser extends JPanel
 	    IRuntime pluginRuntime) {
         fListenerList = new EventListenerList();
         // Create tree and nodes.
-	setMainWindow(mainWindow);
-	setPluginRuntime(pluginRuntime);
+        setMainWindow(mainWindow);
+        setPluginRuntime(pluginRuntime);
         setModel(model);
 
         fDragSource = new DragSource();
@@ -179,32 +189,36 @@ public class ModelBrowser extends JPanel
         // Enable tool tips
         ToolTipManager.sharedInstance().registerComponent(fTree);
 
-        // Listen for when the selection changes.
-        fTree.addTreeSelectionListener(new TreeSelectionListener() {
-                public void valueChanged(TreeSelectionEvent e) {
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) fTree
-			.getLastSelectedPathComponent();
+		// Listen for when the selection changes.
+		fTree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) fTree
+						.getLastSelectedPathComponent();
 
-                    if (fModel == null || node == null ) 
-                        return;
+				if (fModel == null || node == null)
+					return;
 
-                    Object nodeInfo = node.getUserObject();
-                    if (node.isLeaf() && (nodeInfo instanceof MModelElement) ) {
-                        MModelElement me = (MModelElement) nodeInfo;
-                        displayInfo(me);
-                        int selectedRow = -1;
-                        // which node is selected
-                        for ( int i=0; i<fTree.getRowCount(); i++ ){
-                            if ( fTree.isRowSelected( i ) ) {
-                                selectedRow = i;
-                            }
-                        }
-		    fMouseHandler.setSelectedNodeRectangle(fTree
-			    .getRowBounds(selectedRow));
-                        fMouseHandler.setSelectedModelElement( me );
-                    } 
-                }
-            });
+				Object nodeInfo = node.getUserObject();
+				if (node.isLeaf() && (nodeInfo instanceof MModelElement)) {
+					MModelElement me = (MModelElement) nodeInfo;
+					displayInfo(me);
+					int selectedRow = -1;
+					// which node is selected
+					for (int i = 0; i < fTree.getRowCount(); i++) {
+						if (fTree.isRowSelected(i)) {
+							selectedRow = i;
+						}
+					}
+					fMouseHandler.setSelectedNodeRectangle(fTree
+							.getRowBounds(selectedRow));
+					fMouseHandler.setSelectedModelElement(me);
+					
+					fireSelectionChanged(me);
+				} else {
+					fireSelectionChanged(null);
+				}
+			}
+		});
 
         // Create the scroll pane and add the tree to it. 
         JScrollPane treeView = new JScrollPane(fTree);
@@ -424,13 +438,17 @@ public class ModelBrowser extends JPanel
     }
     
     /**
-     * Adds Listeners who are interrested on a change event of highlighting.
+     * Adds Listeners who are interested on a change event of highlighting.
      * 
      * @param l
-     *            The listener who is interrested
+     *            The listener who is interested
      */
     public void addHighlightChangeListener( HighlightChangeListener l ) {
         fListenerList.add( HighlightChangeListener.class, l );
+    }
+    
+    public void removeHighlightChangeListener( HighlightChangeListener l ) {
+        fListenerList.remove( HighlightChangeListener.class, l );
     }
     
     /*
@@ -455,5 +473,42 @@ public class ModelBrowser extends JPanel
                 ((HighlightChangeListener) listeners[i+1]).stateChanged(e);
             }          
         }
+    }
+    
+    /*
+     * Notify all listeners that have registered interest for notification on
+     * this event type. The event instance is lazily created using the
+     * parameters passed into the fire method.
+     */
+    public void fireSelectionChanged( MModelElement elem ) {
+        // Guaranteed to return a non-null array
+        Object[] listeners = fListenerList.getListenerList();
+        
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length-2; i >= 0; i -= 2) {
+            if (listeners[i] == SelectionChangedListener.class ) {
+                // Lazily create the event:
+                ((SelectionChangedListener) listeners[i+1]).selectionChanged(elem);
+            }          
+        }
+    }
+    
+    /**
+     * Adds Listeners who are interested on a change of the selected element in the browser.
+     * 
+     * @param l
+     *            The listener who is interested
+     */
+    public void addSelectionChangedListener( SelectionChangedListener l ) {
+        fListenerList.add( SelectionChangedListener.class, l );
+    }
+    
+    public void removeSelectionChangedListener(SelectionChangedListener l) {
+        listenerList.remove(SelectionChangedListener.class, l);
+    }
+
+    public interface SelectionChangedListener extends EventListener {
+    	public void selectionChanged(MModelElement element);
     }
 }

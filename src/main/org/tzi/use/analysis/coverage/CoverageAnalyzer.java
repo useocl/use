@@ -21,12 +21,12 @@
 
 package org.tzi.use.analysis.coverage;
 
-import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.MModelElement;
 
 /**
  * This class provides operations to analyze 
@@ -35,8 +35,15 @@ import org.tzi.use.uml.mm.MModel;
  *
  */
 public class CoverageAnalyzer {
-	public static CoverageData calculateModelCoverage(MModel model) {
-		CoverageData result = new CoverageData();
+	
+	/**
+	 * Calculates the model coverage for the complete model and for each invariant. 
+	 * @param model The {@link MModel} to calculate the coverage
+	 * @return A {@link Map} which contains the data for each {@link MClassInvariant} and for the complete {@link MModel}.
+	 */
+	public static Map<MModelElement, CoverageData> calculateModelCoverage(MModel model) {
+		Map<MModelElement, CoverageData> result = new HashMap<MModelElement, CoverageData>(
+				model.classInvariants().size() + 1);
 		
 		CoverageCalculationVisitor visitorOverall = new CoverageCalculationVisitor();
 		CoverageCalculationVisitor visitorSingleInv;
@@ -45,14 +52,12 @@ public class CoverageAnalyzer {
 			visitorSingleInv = new CoverageCalculationVisitor();
 			inv.expandedExpression().processWithVisitor(visitorOverall);
 			inv.expandedExpression().processWithVisitor(visitorSingleInv);
-			
-			result.getCoveredClassesByInvariant().put(inv, new TreeSet<MClass>(visitorSingleInv.getClassCoverage().keySet()));
-			result.getCoveredAssocsByInvariant().put(inv, new TreeSet<MAssociation>(visitorSingleInv.getAssociationCoverage().keySet()));
-			result.getCoveredAttributesByInvariant().put(inv, new TreeSet<AttributeAccessInfo>(visitorSingleInv.getAttributeAccessCoverage().keySet()));
-			result.getCompleteCoveredClassesByInvariant().put(inv, new TreeSet<MClass>(visitorSingleInv.getCompleteClassCoverage().keySet()));
+						
+			result.put(inv, visitorSingleInv.getCoverageData());
 		}
 		
-		result.setResult(model, visitorOverall);
+		visitorOverall.getCoverageData().addUncoveredClasses(model);
+		result.put(model, visitorOverall.getCoverageData());
 		return result;
 	}
 }

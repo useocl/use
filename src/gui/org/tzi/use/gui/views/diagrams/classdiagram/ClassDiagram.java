@@ -51,6 +51,7 @@ import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.main.ModelBrowser.SelectionChangedListener;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.AssociationName;
@@ -98,7 +99,7 @@ import org.w3c.dom.NodeList;
  */
 @SuppressWarnings("serial")
 public class ClassDiagram extends DiagramView 
-                             implements HighlightChangeListener {
+                             implements HighlightChangeListener, SelectionChangedListener {
 
     public static class ClassDiagramData {
 		/**
@@ -192,6 +193,7 @@ public class ClassDiagram extends DiagramView
         fParent.addKeyListener( inputHandling );
                 
         fParent.getModelBrowser().addHighlightChangeListener( this );
+        fParent.getModelBrowser().addSelectionChangedListener( this );
         
         addComponentListener( new ComponentAdapter() {
             public void componentResized( ComponentEvent e ) {
@@ -1213,24 +1215,43 @@ public class ClassDiagram extends DiagramView
                                            this );
     }
 	
+	private Map<MModelElement, CoverageData> data = null;
 	private void setCoverageColor() {
+
 		if (fOpt.isShowCoverage()) {
-			CoverageData data = CoverageAnalyzer.calculateModelCoverage(this.fParent.system().model());
+			if (data == null)
+				data = CoverageAnalyzer.calculateModelCoverage(this.fParent.system().model());
+			
+			MModelElement selectedElement = this.fParent.getModelBrowser().getSelectedModelElement();
+			
+			CoverageData theData;
+			if (selectedElement != null && data.containsKey(selectedElement)) {
+				theData = data.get(selectedElement);
+			} else {
+				theData = data.get(this.fParent.system().model());
+			}
 			
 			int minCover = 0; //data.calcLowestClassCoverage();
-			int maxCover = data.calcHighestCompleteClassCoverage();
-			int maxAttCover = data.calcHighestAttributeCoverage();
+			int maxCover = theData.calcHighestCompleteClassCoverage();
+			int maxAttCover = theData.calcHighestAttributeCoverage();
 			int value;
 			
-			for (Map.Entry<MClass, Integer> clsData : data.getCompleteClassCoverage().entrySet()) {
-				ClassNode n = visibleData.fClassToNodeMap.get(clsData.getKey());
+			for (MClass cls : this.fParent.system().model().classes()) {
+				if (theData.getCompleteClassCoverage().containsKey(cls)) {
+					value = theData.getCompleteClassCoverage().get(cls);
+				} else {
+					value = 0;
+				}
+				
+				ClassNode n = visibleData.fClassToNodeMap.get(cls);
 				if (n == null)
-					n = hiddenData.fClassToNodeMap.get(clsData.getKey());
-				n.setColor(scaleColor(clsData.getValue().intValue(), minCover, maxCover));
+					n = hiddenData.fClassToNodeMap.get(cls);
+				
+				n.setColor(scaleColor(value, minCover, maxCover));
 
-				for (MAttribute att : clsData.getKey().attributes()) {
-					if (data.getAttributeCoverage().containsKey(att)) {
-						value = data.getAttributeCoverage().get(att);
+				for (MAttribute att : cls.attributes()) {
+					if (theData.getAttributeCoverage().containsKey(att)) {
+						value = theData.getAttributeCoverage().get(att);
 					} else {
 						value = 0;
 					}
@@ -1238,16 +1259,21 @@ public class ClassDiagram extends DiagramView
 				}
 			}
 		} else {
-			for (ClassNode n : visibleData.fClassToNodeMap.values()) {
-				n.setColor(null);
-				n.resetAttributeColor();
-			}
-			for (ClassNode n : hiddenData.fClassToNodeMap.values()) {
-				n.setColor(null);
-				n.resetAttributeColor();
-			}
+			resetColor();
 		}
+		
 		repaint();
+	}
+
+	protected void resetColor() {
+		for (ClassNode n : visibleData.fClassToNodeMap.values()) {
+			n.setColor(null);
+			n.resetAttributeColor();
+		}
+		for (ClassNode n : hiddenData.fClassToNodeMap.values()) {
+			n.setColor(null);
+			n.resetAttributeColor();
+		}
 	}
 	
 	private Color scaleColor(int theVal, int low, int high) {
@@ -1263,5 +1289,13 @@ public class ClassDiagram extends DiagramView
         //because Saturation is 0
 	    Color color = new Color(rgb);
 	    return color;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.main.ModelBrowser.SelectionChangedListener#selectionChanged(org.tzi.use.uml.mm.MModelElement)
+	 */
+	@Override
+	public void selectionChanged(MModelElement element) {
+		setCoverageColor();
 	}
 }

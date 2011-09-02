@@ -77,6 +77,7 @@ import org.tzi.use.uml.mm.MMInstanceGenerator;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.expr.EvalNode;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -475,7 +476,8 @@ public final class Shell implements Runnable, PPCHandler {
 			return;
 		}
 		
-		CoverageData data = CoverageAnalyzer.calculateModelCoverage(model);
+		Map<MModelElement, CoverageData> completeData = CoverageAnalyzer.calculateModelCoverage(model);
+		CoverageData data = completeData.get(model);
 		
 		Log.println("Covered classes by invariants:      "
 				+ data.getCoveredClasses().size() + "/"
@@ -544,7 +546,7 @@ public final class Shell implements Runnable, PPCHandler {
 		Log.println();
 		Log.println("Coverage by Invariant:");
 		
-		List<MClassInvariant> sortedInvs = new ArrayList<MClassInvariant>(data.getCoveredClassesByInvariant().keySet());
+		List<MClassInvariant> sortedInvs = new ArrayList<MClassInvariant>(model.classInvariants());
 		Collections.sort(sortedInvs, new Comparator<MClassInvariant>() {
 			@Override
 			public int compare(MClassInvariant o1, MClassInvariant o2) {
@@ -557,6 +559,8 @@ public final class Shell implements Runnable, PPCHandler {
 		});
 		
 		for (MClassInvariant inv : sortedInvs) {
+			data = completeData.get(inv);
+			
 			Log.println();
 			Log.print("  ");
 			Log.print(inv.cls().name());
@@ -565,16 +569,16 @@ public final class Shell implements Runnable, PPCHandler {
 			Log.println(":");
 			
 			Log.print("   -Classes:            ");
-			Log.println(StringUtil.fmtSeq(data.getCoveredClassesByInvariant().get(inv), ", "));
+			Log.println(StringUtil.fmtSeq(data.getCoveredClasses(), ", "));
 			
 			Log.print("   -Classes (complete): ");
-			Log.println(StringUtil.fmtSeq(data.getCompleteCoveredClassesByInvariant().get(inv), ", "));
+			Log.println(StringUtil.fmtSeq(data.getCompleteCoveredClasses(), ", "));
 			
 			Log.print("   -Associations:       ");
-			Log.println(StringUtil.fmtSeq(data.getCoveredAssocsByInvariant().get(inv), ", "));
+			Log.println(StringUtil.fmtSeq(data.getAssociationCoverage().keySet(), ", "));
 			
 			Log.print("   -Attributes:         ");
-			Log.println(StringUtil.fmtSeq(data.getCoveredAttributesByInvariant().get(inv), ", ", new StringUtil.IElementFormatter<AttributeAccessInfo>() {
+			Log.println(StringUtil.fmtSeq(data.getAttributeAccessCoverage().keySet(), ", ", new StringUtil.IElementFormatter<AttributeAccessInfo>() {
 				@Override
 				public String format(AttributeAccessInfo element) {
 					String inherited = "";
