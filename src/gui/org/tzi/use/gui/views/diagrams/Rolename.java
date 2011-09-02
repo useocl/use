@@ -126,12 +126,10 @@ public final class Rolename extends EdgeProperty {
         setColor( g );
                     
         if ( fAssocEnd != null && fAssocEnd.isNavigable() ) {
-        	if (this.getColor() != null) {
+        	if (this.getColor() != null && !this.getColor().equals(Color.WHITE)) {
         		Color old = g.getColor();
         		g.setColor(this.getColor());
         		g.fillPolygon(this.dimension());
-        		g.setColor(Color.LIGHT_GRAY);
-        		g.draw(getBounds());
         		g.setColor(old);
         	}
         	
