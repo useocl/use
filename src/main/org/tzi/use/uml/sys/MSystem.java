@@ -612,7 +612,7 @@ public final class MSystem {
 			fStatementEvaluationResults.push(result);
 		}
 		
-		if (notifyUpdateStateListeners)
+		if (result.wasSuccessfull() && notifyUpdateStateListeners)
 			fireStateChanged(result.getStateDifference());
 		
 		if (!result.wasSuccessfull()) {
@@ -633,11 +633,18 @@ public final class MSystem {
 	 */
 	private void fireStateChanged(StateDifference differences) {
 		Object[] listeners = fListenerList.getListenerList();
+		StateChangeEvent sce = null;
+		
 		for (int i = listeners.length-2; i >= 0; i -= 2) {
 	        if (listeners[i] == StateChangeListener.class) {
-	        	StateChangeEvent sce = new StateChangeEvent(this);
-	        	differences.fillStateChangeEvent(sce);
-	            ((StateChangeListener)listeners[i+1]).stateChanged(sce);
+	        	try {
+	        		if (sce == null) {
+	        			sce = new StateChangeEvent(this);
+	        			differences.fillStateChangeEvent(sce);
+	        		}
+	        		
+	        		((StateChangeListener)listeners[i+1]).stateChanged(sce);
+	        	} catch (Exception ex) { }
 	        }          
 	    }
 		

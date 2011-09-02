@@ -99,7 +99,7 @@ class GEvalInstrDelete_Object extends GEvalInstruction
 		basicOutput.println("undo: " + statement.getShellCommand());
 		
 		try {
-			system.evaluateStatement(inverseStatement, true, false);
+			system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			collector.invalid(e);
 		}

@@ -151,7 +151,7 @@ class GEvalInstrCreateN_C_Integer extends GEvalInstruction
             
         basicOutput.println("undo: " + statement.getShellCommand());
         try {
-        	system.evaluateStatement(inverseStatement, true, false);
+        	system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}
