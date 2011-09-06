@@ -27,6 +27,7 @@ import java.util.Map;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
+import org.tzi.use.uml.mm.MPrePostCondition;
 
 /**
  * This class provides operations to analyze 
@@ -39,21 +40,29 @@ public class CoverageAnalyzer {
 	/**
 	 * Calculates the model coverage for the complete model and for each invariant. 
 	 * @param model The {@link MModel} to calculate the coverage
-	 * @return A {@link Map} which contains the data for each {@link MClassInvariant} and for the complete {@link MModel}.
+	 * @return A {@link Map} which contains the data for each {@link MClassInvariant} and {@link MPrePostCondition} and for the complete {@link MModel}.
 	 */
 	public static Map<MModelElement, CoverageData> calculateModelCoverage(MModel model) {
 		Map<MModelElement, CoverageData> result = new HashMap<MModelElement, CoverageData>(
 				model.classInvariants().size() + 1);
 		
 		CoverageCalculationVisitor visitorOverall = new CoverageCalculationVisitor();
-		CoverageCalculationVisitor visitorSingleInv;
+		CoverageCalculationVisitor visitorSingleElement;
 		
 		for (MClassInvariant inv : model.classInvariants()) {
-			visitorSingleInv = new CoverageCalculationVisitor();
+			visitorSingleElement = new CoverageCalculationVisitor();
 			inv.expandedExpression().processWithVisitor(visitorOverall);
-			inv.expandedExpression().processWithVisitor(visitorSingleInv);
+			inv.expandedExpression().processWithVisitor(visitorSingleElement);
 						
-			result.put(inv, visitorSingleInv.getCoverageData());
+			result.put(inv, visitorSingleElement.getCoverageData());
+		}
+		
+		for (MPrePostCondition ppc : model.prePostConditions()) {
+			visitorSingleElement = new CoverageCalculationVisitor();
+			ppc.expression().processWithVisitor(visitorOverall);
+			ppc.expression().processWithVisitor(visitorSingleElement);
+						
+			result.put(ppc, visitorSingleElement.getCoverageData());
 		}
 		
 		visitorOverall.getCoverageData().addUncoveredClasses(model);
