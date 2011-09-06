@@ -43,6 +43,7 @@ import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.BooleanValue;
@@ -260,21 +261,26 @@ public final class MSystem {
 		}
 		
     	operationCall.setVarBindings(b);
+    	boolean conditionPassed;
     	
     	for (MPrePostCondition postCondition : postConditions) {
 			Evaluator oclEvaluator = new Evaluator();
-			Value evalResult = 
-				oclEvaluator.eval(
-						postCondition.expression(), 
-						operationCall.getPreState(),
-						fCurrentState,
-						operationCall.getVarBindings());
 			
-			boolean conditionPassed = 
-				(evalResult.isDefined() && 
-						evalResult.type().isBoolean() &&
-						((BooleanValue)evalResult).isTrue());
-			
+			try {
+				Value evalResult = 
+					oclEvaluator.eval(
+							postCondition.expression(), 
+							operationCall.getPreState(),
+							fCurrentState,
+							operationCall.getVarBindings());
+				
+				conditionPassed = 
+					(evalResult.isDefined() && 
+							evalResult.type().isBoolean() &&
+							((BooleanValue)evalResult).isTrue());
+			} catch (MultiplicityViolationException e) {
+				conditionPassed = false;
+			}
 			results.put(postCondition, conditionPassed);
     	}
     	

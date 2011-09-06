@@ -30,6 +30,7 @@ import java.util.List;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
@@ -189,12 +190,16 @@ public class SoilPPCHandler implements PPCHandler {
 			Expression ppc) {
 		
 		Evaluator oclEvaluator = new Evaluator();
-		oclEvaluator.eval(
-				ppc,
-				preState,
-				system.state(), 
-				system.getVariableEnvironment().constructVarBindings(), 
-				fOutput,
-				"    ");
+		try {
+			oclEvaluator.eval(
+					ppc,
+					preState,
+					system.state(), 
+					system.getVariableEnvironment().constructVarBindings(), 
+					fOutput,
+					"    ");
+		} catch (MultiplicityViolationException e) {
+			fOutput.println("    Evaluation failed because of multiplicity violation: " + e.getMessage());
+		}
 	}
 }
