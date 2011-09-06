@@ -144,7 +144,7 @@ public final class ExpObjOp extends Expression {
 	    			system.exitOperation(ctx, result);
 	    		}
     		} catch (Exception e){ }
-    		ctx.popVarBindings(fArgs.length + 1);
+    		ctx.popVarBindings(fArgs.length);
     	    ctx.exit(this, result);
     	}
     		    

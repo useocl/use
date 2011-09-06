@@ -284,6 +284,10 @@ public final class MSystem {
 			results.put(postCondition, conditionPassed);
     	}
     	
+    	if (!operationCall.requiresVariableFrameInEnvironment() && operationCall.getResultValue() != null) {
+			b.pop();
+		}
+    	
     	operationCall.setPostConditionsCheckResult(results);
     }
     
