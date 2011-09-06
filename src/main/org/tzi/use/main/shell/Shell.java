@@ -1803,8 +1803,7 @@ public final class Shell implements Runnable, PPCHandler {
 		} catch (PreConditionCheckFailedException e) {
 			
 			try {
-				if (Options.doGUI)
-					ppcShell(system);
+				ppcShell(system);
 				throw e;
 			} catch (NoSystemException e1) {
 				throw e;
@@ -1837,9 +1836,7 @@ public final class Shell implements Runnable, PPCHandler {
 			ppcHandler.handlePostConditions(system, operationCall);
 		} catch (PostConditionCheckFailedException e) {
 			try {
-				if (Options.doGUI)
-					ppcShell(system);
-				
+				ppcShell(system);
 				throw e;
 			} catch (NoSystemException e1) {
 				throw e;
