@@ -197,9 +197,28 @@ public final class MClassInvariant extends MModelElementImpl {
             return 0;
         if (! (o instanceof MClassInvariant) )
             throw new ClassCastException();
-        return toString().compareTo(((MClassInvariant) o).toString());
+        
+        MClassInvariant otherInv = (MClassInvariant) o;
+        int clsCmp = cls().compareTo(otherInv.cls());
+        
+        if (clsCmp == 0)
+        	return toString().compareTo(otherInv.toString());
+        else
+        	return clsCmp;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+    	if (obj == this )
+            return true;
+        if (obj instanceof MClassInvariant ) {
+        	MClassInvariant other = (MClassInvariant)obj;
+            return cls().equals(other.cls()) && name().equals(other.name());
+        }
+        
+        return false;
+    }
+    
     /**
      * Returns the name of the corresponding MClass followed by the name of the invariant
      * @return Class name and invariant name as String
