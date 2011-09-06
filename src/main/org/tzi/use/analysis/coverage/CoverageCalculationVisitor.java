@@ -475,7 +475,11 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 	 * @see org.tzi.use.uml.ocl.expr.ExpressionVisitor#visitVariable(org.tzi.use.uml.ocl.expr.ExpVariable)
 	 */
 	@Override
-	public void visitVariable(ExpVariable exp) {}
+	public void visitVariable(ExpVariable exp) {
+		if (exp.type().isTrueObjectType()) {
+			addClassCoverage(((ObjectType)exp.type()).cls());
+		}
+	}
 	
 	protected void visitCollectionLiteral(ExpCollectionLiteral exp) {
 		for (Expression ex : exp.getElemExpr()) {
