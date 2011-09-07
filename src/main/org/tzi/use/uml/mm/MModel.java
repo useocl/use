@@ -90,7 +90,7 @@ public class MModel extends MModelElementImpl {
     /**
      * Returns the specified class.
      * 
-     * @return null if class <code>name</name> does not exist.
+     * @return <code>null</code> if class <code>name</code> does not exist.
      */
     public MClass getClass(String name) {
         return (MClass) fClasses.get(name);
