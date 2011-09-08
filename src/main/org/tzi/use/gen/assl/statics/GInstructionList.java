@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+import org.tzi.use.gen.assl.dynamics.GEvalInstructionList;
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
@@ -71,8 +72,7 @@ public class GInstructionList implements GInstruction {
 	 */
 	@Override
 	public GEvalInstruction createEvalInstr() {
-		// TODO Auto-generated method stub
-		return null;
+		return new GEvalInstructionList(this);
 	}   
     
 }

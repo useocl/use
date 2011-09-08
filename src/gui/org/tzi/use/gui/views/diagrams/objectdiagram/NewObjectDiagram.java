@@ -1241,6 +1241,7 @@ public class NewObjectDiagram extends DiagramView
 	
 	protected void storePlacementInfos(PersistHelper helper, Element root, boolean visible) {
 		ObjectDiagramData data = (visible ? visibleData : hiddenData);
+		
 		for (ObjectNode n : data.fObjectToNodeMap.values()) {
 			n.storePlacementInfo(helper, root, !visible);
 		}
