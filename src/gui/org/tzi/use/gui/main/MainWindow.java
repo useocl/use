@@ -367,14 +367,6 @@ public class MainWindow extends JFrame implements StateChangeListener {
         mi = menu.add(fActionViewCloseAll);
         mi.setMnemonic('a');
 
-        // `Help' submenu
-        menu = new JMenu("Help");
-        menu.setMnemonic('H');
-        fMenuBar.add(menu);
-        // not yet implemented in swing: menuBar.setHelpMenu(menu);
-        mi = menu.add(fActionHelpAbout);
-        mi.setMnemonic('A');
-
         // create the browser panel
 		fModelBrowser = new ModelBrowser(this, fPluginRuntime);
 
