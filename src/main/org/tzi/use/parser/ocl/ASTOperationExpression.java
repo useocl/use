@@ -565,7 +565,7 @@ public class ASTOperationExpression extends ASTExpression {
         } catch (ExpInvalidException ex) {
             // shouldn't fail because we already checked the
             // existence above
-            throw new RuntimeException("collectShorthand failed: " + ex.getMessage());
+            throw new SemanticException(fOp, "collectShorthand failed: " + ex.getMessage());
         }
         return res;
     }
