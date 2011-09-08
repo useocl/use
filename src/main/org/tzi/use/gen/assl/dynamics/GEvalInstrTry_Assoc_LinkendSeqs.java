@@ -81,7 +81,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     
         // fIterator has a next element, because an association has at least
         // two link ends.
-        fLastEvaluatedInstruction = (GInstruction) fIterator.next();
+        fLastEvaluatedInstruction = fIterator.next();
         GCreator.createFor(fLastEvaluatedInstruction).eval(conf,this,collector);
         fIterator.previous();
     }

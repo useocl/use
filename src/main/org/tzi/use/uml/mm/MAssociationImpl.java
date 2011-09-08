@@ -22,6 +22,7 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -416,6 +417,14 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 		}
 		
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#getAllParentAssociations()
+	 */
+	@Override
+	public Set<MAssociation> getAllParentAssociations() {
+		return Collections.emptySet();
 	}
 	
 	

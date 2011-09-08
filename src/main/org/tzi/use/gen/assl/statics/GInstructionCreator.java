@@ -54,7 +54,8 @@ public class GInstructionCreator {
             new GMatcherInsert_Assoc_Linkends(),
             new GMatcherDelete_Assoc_Linkends(),
             new GMatcherTry_Assoc_LinkendSeqs(),
-            new GMatcherSub_Seq_Integer()
+            new GMatcherSub_Seq_Integer(),
+            new GMatcherCreate_AC()
         };
         matchermap = new HashMultiMap<String, IGInstructionMatcher>();
         for (int i = 0; i < matcherlist.length; i++)

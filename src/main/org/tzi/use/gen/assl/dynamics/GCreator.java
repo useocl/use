@@ -37,6 +37,7 @@ import org.tzi.use.gen.assl.statics.GIfThenElse;
 import org.tzi.use.gen.assl.statics.GInstrASSLCall;
 import org.tzi.use.gen.assl.statics.GInstrAny_Seq;
 import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
+import org.tzi.use.gen.assl.statics.GInstrCreate_AC;
 import org.tzi.use.gen.assl.statics.GInstrCreate_C;
 import org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends;
 import org.tzi.use.gen.assl.statics.GInstrDelete_Object;
@@ -83,6 +84,7 @@ class GCreator {
     	createMap.put(GInstrASSLCall.class, new CreateGEvalASSLCall());
     	createMap.put(GInstrOpEnter.class, new CreateGEvalOpEnter());
     	createMap.put(GInstrOpExit.class, new CreateGEvalOpExit());
+    	createMap.put(GInstrCreate_AC.class, new CreateGEvalInstrCreate_AC());
     }
     
     public static GEvalInstruction createFor(GInstruction instr)
@@ -140,6 +142,12 @@ final class CreateGEvalIfThenElse implements IInstCreator {
 final class CreateGEvalInstrCreate_C implements IInstCreator {
 	public GEvalInstruction create(GInstruction instr) {
             return new GEvalInstrCreate_C( (GInstrCreate_C) instr );
+	}
+}
+
+final class CreateGEvalInstrCreate_AC implements IInstCreator {
+	public GEvalInstruction create(GInstruction instr) {
+            return new GEvalInstrCreate_AC( (GInstrCreate_AC) instr );
 	}
 }
 

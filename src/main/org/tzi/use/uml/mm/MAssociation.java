@@ -161,6 +161,12 @@ public interface MAssociation extends MModelElement {
      */
     void processWithVisitor(MMVisitor v);
 
+    /**
+     * Returns all parent associations this association is inherited from
+     * @return
+     */
+    Set<MAssociation> getAllParentAssociations();
+    
     /** 
      * Returns true if a link consisting of objects of the given classes
      * can be assigned to this association.

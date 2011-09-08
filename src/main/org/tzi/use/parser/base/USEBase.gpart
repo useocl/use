@@ -118,9 +118,10 @@ associationClassDefinition[boolean isAbstract] returns [ASTAssociationClass n]
     
     name=IDENT { $n = new ASTAssociationClass($name, isAbstract); }
     ( LESS idListRes=idList { $n.addSuperClasses($idListRes.idList); } )?
-    'between'
+    ('between'
     ae=associationEnd { $n.addEnd($ae.n); }
     ( ae=associationEnd { $n.addEnd($ae.n); } )+
+    )?
     ( 'attributes' 
       ( a=attributeDefinition { $n.addAttribute($a.n); } )* 
     )?

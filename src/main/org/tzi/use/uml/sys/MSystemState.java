@@ -509,10 +509,15 @@ public final class MSystemState {
 	}
 
 	private void auxDeleteLink(MLink link) {
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(link.association());
-		linkSet.remove(link);
+		Set<MAssociation> allAssocs = new HashSet<MAssociation>(link.association().getAllParentAssociations());
+		allAssocs.add(link.association());
 		
-		removeLinkFromWholePartGraph(link);
+		for (MAssociation ass : allAssocs) {
+			MLinkSet linkSet = (MLinkSet) fLinkSets.get(ass);
+			linkSet.remove(link);
+		
+			removeLinkFromWholePartGraph(link);
+		}
 	}
 
 	private void removeLinkFromWholePartGraph(MLink link) {
@@ -739,18 +744,6 @@ public final class MSystemState {
 	}
 
 	/**
-	 * Deletes a link from the state.
-	 */
-	// TODO: Was geschieht mit Set von deleteObject
-	public void deleteLink(MLink link) {
-		auxDeleteLink(link);
-
-		if (link instanceof MLinkObject) {
-			auxDeleteObject((MLinkObject) link);
-		}
-	}
-
-	/**
 	 * Deletes a link from the state. The link is indirectly specified by the
 	 * association and objects.
 	 * 
@@ -829,6 +822,14 @@ public final class MSystemState {
 			throw new MSystemException("Link " + linkobj + " already exists.");
 		linkSet.add(linkobj);
 
+		for (MAssociation parent : assocClass.getAllParentAssociations()) {
+			linkSet = fLinkSets.get(parent);
+			if (linkSet.contains(linkobj))
+				throw new MSystemException("Link " + linkobj + " already exists.");
+			
+			linkSet.add(linkobj);
+		}
+		
 		return linkobj;
 	}
 

@@ -64,8 +64,8 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     public BinaryAssociationClassOrObject( NodeBase source, NodeBase target,
                      MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
                      NodeBase associationClassOrObjectNode,
-                     DiagramView diagram, MAssociation assoc, boolean isLink ) {
-        super( source, target, sourceEnd, targetEnd, diagram, assoc, isLink );
+                     DiagramView diagram, MAssociation assoc ) {
+        super( source, target, sourceEnd, targetEnd, diagram, assoc );
         initNodeEdge( associationClassOrObjectNode );
     }
 

@@ -24,6 +24,7 @@ package org.tzi.use.uml.mm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +46,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @see MClassImpl
  */
 
-class MAssociationClassImpl extends MModelElementImpl implements MAssociationClass {
+public class MAssociationClassImpl extends MModelElementImpl implements MAssociationClass {
 
     private MAssociationImpl fAssociationImpl;
     private MClassImpl fClassImpl;
@@ -483,8 +484,15 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
      * @see         MAssociation#navigableEndsFrom( MClass )
      */
     public List<MNavigableElement> navigableEndsFrom( MClass cls ) {
-        List<MNavigableElement> nav = fAssociationImpl.navigableEndsFrom( cls );
-        nav.add( this );
+    	List<MNavigableElement> nav;
+    	
+    	if (cls.equals(this)) {
+    		nav = new ArrayList<MNavigableElement>(navigableEnds().values());
+    	} else {
+    		nav = fAssociationImpl.navigableEndsFrom( cls );
+    		nav.add( this );
+    	}
+    	
         return nav;
     }
 
@@ -654,10 +662,14 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 	 * @see org.tzi.use.uml.mm.MAssociation#getSourceEnd(org.tzi.use.uml.mm.MClass, org.tzi.use.uml.mm.MNavigableElement, java.lang.String)
 	 */
 	@Override
-	public MNavigableElement getSourceEnd(MClass srcClass,
-			MNavigableElement dst, String explicitRolename) {
-		if (srcClass == this) {
+	public MNavigableElement getSourceEnd(MClass srcClass, MNavigableElement dst, String explicitRolename) {
+		if (srcClass.equals(this)) {
 			return this;
+		} else if (srcClass instanceof MAssociationClass ) {
+			// Inherited association class?
+			if (srcClass.isSubClassOf(this)) {
+				return this;
+			}
 		}
 		
 		return this.fAssociationImpl.getSourceEnd(srcClass, dst, explicitRolename);
@@ -669,5 +681,32 @@ class MAssociationClassImpl extends MModelElementImpl implements MAssociationCla
 	@Override
 	public boolean isCollection() {
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociationClass#validateAssociation()
+	 */
+	@Override
+	public void validateInheritance() {
+		for (MClass cls : allParents()) {
+			if (cls instanceof MAssociationClass) {
+				this.fAssociationImpl = ((MAssociationClassImpl)cls).fAssociationImpl;
+				return;
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#getAllParentAssociations()
+	 */
+	@Override
+	public Set<MAssociation> getAllParentAssociations() {
+		Set<MAssociation> parents = new HashSet<MAssociation>();
+		for (MClass cls : this.allParents()) {
+			if (cls instanceof MAssociationClass) {
+				parents.add((MAssociation)cls);
+			}
+		}
+		return parents;
 	}
 }

@@ -28,6 +28,8 @@ import org.tzi.use.uml.mm.MModel;
 import java.util.List;
 
 /**
+ * Matcher for a Create(Class) instruction
+ * 
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */

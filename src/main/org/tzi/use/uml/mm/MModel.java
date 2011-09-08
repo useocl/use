@@ -166,7 +166,7 @@ public class MModel extends MModelElementImpl {
                 String newRolename = elem.nameAsRolename();
                 newRolenames.add( newRolename );
                 
-                if (aends.containsKey(newRolename)) {
+                if (aends.containsKey(newRolename) && !aends.get(newRolename).equals(elem)) {
                     throw new MInvalidModelException("Association end `"
                             + newRolename
                             + "' navigable from class `"

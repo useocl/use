@@ -153,6 +153,8 @@ public class ASTAssociationClass extends ASTClass {
                                          fAssocClass.name() + "': " +
                                          ex.getMessage() );
         }
+        
+        fAssocClass.validateInheritance();
         return fAssocClass;
     }
 

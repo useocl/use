@@ -29,4 +29,8 @@ package org.tzi.use.uml.mm;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
 public interface MAssociationClass extends MClass, MAssociation, MNavigableElement {
+	/**
+	 * 
+	 */
+	void validateInheritance();
 }

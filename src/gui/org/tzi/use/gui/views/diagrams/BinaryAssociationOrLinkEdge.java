@@ -113,7 +113,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      * @param assoc
      * @param isLink
      */
-    protected BinaryAssociationOrLinkEdge(NodeBase source, NodeBase target,
+    private BinaryAssociationOrLinkEdge(NodeBase source, NodeBase target,
 			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
 			DiagramView diagram, MAssociation assoc, boolean isLink) {
 		super(source, target, targetEnd, diagram, assoc, isLink);

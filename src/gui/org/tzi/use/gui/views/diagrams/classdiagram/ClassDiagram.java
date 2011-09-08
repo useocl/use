@@ -515,7 +515,7 @@ public class ClassDiagram extends DiagramView
                 			  visibleData.fClassToNodeMap.get( cls2 ),
                               assocEnd1, assocEnd2,
                               visibleData.fClassToNodeMap.get( assoc ),
-                              this, assoc, false );
+                              this, assoc );
             synchronized (fLock) {
                 fGraph.addEdge(e);
                 visibleData.fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );

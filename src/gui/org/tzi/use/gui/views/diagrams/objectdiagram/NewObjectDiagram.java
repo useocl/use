@@ -518,7 +518,7 @@ public class NewObjectDiagram extends DiagramView
                              linkEnd1.associationEnd(), 
                              linkEnd2.associationEnd(),
                              visibleData.fObjectToNodeMap.get(link),
-                             this, link.association(), true );
+                             this, link.association() );
             
             synchronized (fLock) {
                 fGraph.addEdge(e);
