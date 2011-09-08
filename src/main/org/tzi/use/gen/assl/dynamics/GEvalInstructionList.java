@@ -61,8 +61,7 @@ public class GEvalInstructionList implements IGCaller {
     protected void proceed(GConfiguration conf,
                          IGCollector collector) throws GEvaluationException {
         if (fIterator.hasNext() ) {
-            GCreator.createFor((GInstruction) fIterator.next())
-                .eval(conf,this,collector);
+            fIterator.next().createEvalInstr().eval(conf,this,collector);
             fIterator.previous();
         }
         else

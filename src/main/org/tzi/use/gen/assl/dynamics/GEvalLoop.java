@@ -34,8 +34,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * March 22th 2001 
  * @author  Joern Bohling
  */
-class GEvalLoop extends GEvalInstruction
-    implements IGCaller {
+public class GEvalLoop extends GEvalInstruction implements IGCaller {
     private GLoop fInstr;
     private IGCaller fCaller;
     private ListIterator<Value> fSeqIterator;
@@ -50,7 +49,7 @@ class GEvalLoop extends GEvalInstruction
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
         fSeqIterator = null;
-        GCreator.createFor(fInstr.sequenceInstr()).eval( conf, this, collector );
+        fInstr.sequenceInstr().createEvalInstr().eval( conf, this, collector );
     }
 
     public void feedback(GConfiguration conf,
@@ -58,8 +57,7 @@ class GEvalLoop extends GEvalInstruction
                          IGCollector collector ) throws GEvaluationException {
         if (fSeqIterator == null) {
             if (value.isUndefined())
-                collector.invalid(
-                                  buildCantExecuteMessage( fInstr, fInstr.sequenceInstr()) );
+                collector.invalid(buildCantExecuteMessage( fInstr, fInstr.sequenceInstr()) );
             else {
                 fSeqIterator = ((SequenceValue)value).list().listIterator();
             }
@@ -69,8 +67,7 @@ class GEvalLoop extends GEvalInstruction
                 Value seqElem = (Value) fSeqIterator.next();
                 collector.detailPrintWriter().println(fInstr.decl().name() + ":=" + seqElem );
                 conf.varBindings().push(fInstr.decl().name(), seqElem);
-                GCreator.createFor(fInstr.instructionList())
-                    .eval( conf, this, collector );
+                fInstr.instructionList().createEvalInstr().eval( conf, this, collector );
                 conf.varBindings().pop();
                 fSeqIterator.previous();
             } else {

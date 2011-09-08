@@ -58,7 +58,7 @@ import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.CollectionUtil;
 
 
-class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
+public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     implements IGCaller {
     protected GInstrTry_Assoc_LinkendSeqs fInstr;
 	static List<List<Value>> emptyQualifiers = Collections.emptyList();
@@ -82,7 +82,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         // fIterator has a next element, because an association has at least
         // two link ends.
         fLastEvaluatedInstruction = fIterator.next();
-        GCreator.createFor(fLastEvaluatedInstruction).eval(conf,this,collector);
+        fLastEvaluatedInstruction.createEvalInstr().eval(conf,this,collector);
         fIterator.previous();
     }
 
@@ -111,8 +111,7 @@ class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     
         if (fIterator.hasNext()) {
             fLastEvaluatedInstruction = (GInstruction) fIterator.next();
-            GCreator.createFor(fLastEvaluatedInstruction)
-                .eval(conf,this,collector);
+            fLastEvaluatedInstruction.createEvalInstr().eval(conf,this,collector);
             fIterator.previous();
         }
         else

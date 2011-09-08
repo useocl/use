@@ -34,7 +34,7 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 
 		collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
 		fCaller = caller;
-		GCreator.createFor(fInstr.objname()).eval(conf, this, collector);
+		fInstr.objname().createEvalInstr().eval(conf, this, collector);
 	}
 
 	public void feedback( GConfiguration conf,

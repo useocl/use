@@ -36,7 +36,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * March 22th 2001 
  * @author  Joern Bohling
  */
-class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
+public class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
     private GInstrSub_Seq fInstr;
     private IGCaller fCaller;
 
@@ -49,7 +49,7 @@ class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
                      IGCollector collector) throws GEvaluationException {
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
-        GCreator.createFor(fInstr.sequenceInstr()).eval(conf,this,collector );
+        fInstr.sequenceInstr().createEvalInstr().eval(conf,this,collector );
     }
 
     public void feedback( GConfiguration conf,

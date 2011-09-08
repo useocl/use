@@ -53,7 +53,7 @@ import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
-class GEvalInstrCreateN_C_Integer extends GEvalInstruction
+public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
     implements IGCaller {
     private GInstrCreateN_C_Integer fInstr;
     private IGCaller fCaller;
@@ -67,7 +67,7 @@ class GEvalInstrCreateN_C_Integer extends GEvalInstruction
                      IGCollector collector) throws GEvaluationException {
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
-        GCreator.createFor(fInstr.integerInstr()).eval(conf,this,collector );
+        fInstr.integerInstr().createEvalInstr().eval(conf,this,collector);
     }
 
     public void feedback(

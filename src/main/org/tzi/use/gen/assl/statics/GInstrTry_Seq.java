@@ -24,14 +24,16 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.gen.assl.dynamics.GEvalInstrTry_Seq;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.ocl.type.CollectionType;
+import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrTry_Seq extends GValueInstruction {
+public class GInstrTry_Seq implements GValueInstruction {
 
     // Try( Sequence(T) ): T
 
@@ -56,4 +58,12 @@ public class GInstrTry_Seq extends GValueInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrTry_Seq(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalInstrTry_Seq( this );
+	}
 }

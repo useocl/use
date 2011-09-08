@@ -24,6 +24,8 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalAttributeAssignment;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MAttribute;
 
 /**
@@ -57,4 +59,12 @@ public class GAttributeAssignment extends GAssignment {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitAttributeAssignment(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalAttributeAssignment( this );
+	}
 }

@@ -24,16 +24,18 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.SequenceType;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrCreateN_C_Integer extends GValueInstruction {
+public class GInstrCreateN_C_Integer implements GValueInstruction {
 
     // CreateN( Class C, Integer ): Sequence(C)
 
@@ -64,4 +66,12 @@ public class GInstrCreateN_C_Integer extends GValueInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrCreateN_C_Integer(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalInstrCreateN_C_Integer( this );
+	}
 }

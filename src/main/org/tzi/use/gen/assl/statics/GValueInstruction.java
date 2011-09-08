@@ -30,6 +30,6 @@ import org.tzi.use.uml.ocl.type.Type;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public abstract class GValueInstruction extends GInstruction {
-    public abstract Type type();
+public interface GValueInstruction extends GInstruction {
+    Type type();
 }

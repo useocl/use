@@ -33,7 +33,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author  <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
-class GEvalIfThenElse extends GEvalInstruction
+public class GEvalIfThenElse extends GEvalInstruction
     implements IGCaller {
     private GIfThenElse fInstr;
     private IGCaller fCaller;
@@ -47,7 +47,7 @@ class GEvalIfThenElse extends GEvalInstruction
                      IGCollector collector) throws GEvaluationException {
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
-        GCreator.createFor(fInstr.conditionInstr()).eval( conf, this, collector );
+        fInstr.conditionInstr().createEvalInstr().eval( conf, this, collector );
     }
 
     public void feedback(GConfiguration conf,
@@ -60,12 +60,10 @@ class GEvalIfThenElse extends GEvalInstruction
                 return;
             } else
                 if (((BooleanValue)value).value() ) {
-                    GCreator.createFor(fInstr.thenInstructionList())
-                        .eval( conf, this, collector );
+                    fInstr.thenInstructionList().createEvalInstr().eval( conf, this, collector );
                 } 
                 else {
-                    GCreator.createFor(fInstr.elseInstructionList())
-                        .eval( conf, this, collector );
+                    fInstr.elseInstructionList().createEvalInstr().eval( conf, this, collector );
                 }
         } else {
             fCaller.feedback( conf, null, collector );

@@ -26,6 +26,8 @@ package org.tzi.use.gen.assl.statics;
 
 import java.util.List;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_AC;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -36,7 +38,7 @@ import org.tzi.use.util.StringUtil;
  * @see org.tzi.use.gen.assl.statics
  * @author  Lars Hamann
  */
-public class GInstrCreate_AC extends GValueInstruction {
+public class GInstrCreate_AC implements GValueInstruction {
 
     // Create( AssociationClass C, Exp... ): C
 
@@ -73,4 +75,12 @@ public class GInstrCreate_AC extends GValueInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrCreate_AC(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalInstrCreate_AC(this);
+	}
 }

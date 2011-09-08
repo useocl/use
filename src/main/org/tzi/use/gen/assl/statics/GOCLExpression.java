@@ -24,6 +24,8 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+import org.tzi.use.gen.assl.dynamics.GEvalOCLExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 
@@ -31,7 +33,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GOCLExpression extends GValueInstruction {
+public class GOCLExpression implements GValueInstruction {
     private Expression fExpression;
 
     public GOCLExpression( Expression expression ) {
@@ -53,4 +55,12 @@ public class GOCLExpression extends GValueInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitOCLExpression(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalOCLExpression( this );
+	}
 }

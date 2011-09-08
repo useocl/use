@@ -126,4 +126,9 @@ public interface InstructionVisitor {
 	 * @param gInstrCreate_AC
 	 */
 	void visitInstrCreate_AC(GInstrCreate_AC gInstrCreate_AC);
+
+	/**
+	 * @param gInstructionList
+	 */
+	void visitInstrucionList(GInstructionList gInstructionList);
 }

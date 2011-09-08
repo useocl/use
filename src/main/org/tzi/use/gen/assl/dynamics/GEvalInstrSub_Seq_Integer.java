@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 
-class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCaller {
+public class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCaller {
     private GInstrSub_Seq_Integer fInstr;
     private IGCaller fCaller;
 
@@ -56,7 +56,7 @@ class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCaller {
         wantedSize = 0;
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
-        GCreator.createFor(fInstr.sequenceInstr()).eval(conf,this,collector );
+        fInstr.sequenceInstr().createEvalInstr().eval(conf,this,collector );
     }
 
     public void feedback( GConfiguration conf,
@@ -68,8 +68,7 @@ class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCaller {
                                   buildCantExecuteMessage(fInstr, fInstr.sequenceInstr()));
             else {
                 fSequence = (SequenceValue) value;
-                GCreator.createFor(fInstr.integerInstr())
-                    .eval(conf,this,collector );
+                fInstr.integerInstr().createEvalInstr().eval(conf,this,collector );
             }
         } else {
             if (value.isUndefined())

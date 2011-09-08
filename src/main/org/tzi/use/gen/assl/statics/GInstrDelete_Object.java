@@ -24,11 +24,14 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstrDelete_Object;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrDelete_Object extends GInstruction {
+public class GInstrDelete_Object implements GInstruction {
 
     // NO RESULT VALUE -> not a subclass of GValueInstruction
     // Delete( Object )
@@ -50,4 +53,12 @@ public class GInstrDelete_Object extends GInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrDelete_Object(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalInstrDelete_Object( this );
+	}
 }

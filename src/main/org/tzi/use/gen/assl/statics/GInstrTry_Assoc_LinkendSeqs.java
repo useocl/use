@@ -24,6 +24,8 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstrTry_Assoc_LinkendSeqs;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.util.StringUtil;
 import java.util.List;
@@ -32,7 +34,7 @@ import java.util.List;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrTry_Assoc_LinkendSeqs extends GInstruction {
+public class GInstrTry_Assoc_LinkendSeqs implements GInstruction {
 
     // NO RESULT VALUE -> not a subclass of GValueInstruction
     // Try( n-ary-Association, endset1, endset2, ..., endsetn )
@@ -62,4 +64,12 @@ public class GInstrTry_Assoc_LinkendSeqs extends GInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrTry_Assoc_LinkendSeqs(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalInstrTry_Assoc_LinkendSeqs( this );
+	}
 }

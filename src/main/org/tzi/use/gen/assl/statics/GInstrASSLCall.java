@@ -2,7 +2,10 @@ package org.tzi.use.gen.assl.statics;
 
 import java.util.List;
 
-public class GInstrASSLCall extends GInstruction {
+import org.tzi.use.gen.assl.dynamics.GEvalASSLCall;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+
+public class GInstrASSLCall implements GInstruction {
 
 	String procname;
 	List<GValueInstruction> fParam;
@@ -28,4 +31,12 @@ public class GInstrASSLCall extends GInstruction {
 	public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrASSLCall(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalASSLCall(this);
+	}
 }

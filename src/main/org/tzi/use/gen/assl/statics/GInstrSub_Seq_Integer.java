@@ -24,13 +24,15 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstrSub_Seq_Integer;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrSub_Seq_Integer extends GValueInstruction {
+public class GInstrSub_Seq_Integer implements GValueInstruction {
 
     // Sub( Sequence(T), Integer ): Sequence(T)
 
@@ -62,4 +64,12 @@ public class GInstrSub_Seq_Integer extends GValueInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrSub_Seq_Integer(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalInstrSub_Seq_Integer( this );
+	}
 }

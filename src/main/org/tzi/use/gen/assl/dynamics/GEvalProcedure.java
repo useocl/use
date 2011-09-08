@@ -75,8 +75,8 @@ public class GEvalProcedure implements IGCaller {
         GConfiguration conf = new GConfiguration( state,
                                                   varBindings,
                                                   randomNr );
-        GCreator.createFor( fProcedure.instructionList() )
-            .eval( conf, this, collector );       // just delegation
+        
+        fProcedure.instructionList().createEvalInstr().eval( conf, this, collector );       // just delegation
     }
     
     public void feedback( GConfiguration conf,

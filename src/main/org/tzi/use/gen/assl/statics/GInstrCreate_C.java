@@ -24,6 +24,8 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -32,7 +34,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrCreate_C extends GValueInstruction {
+public class GInstrCreate_C implements GValueInstruction {
 
     // Create( Class C ): C
 
@@ -57,4 +59,12 @@ public class GInstrCreate_C extends GValueInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrCreate_C(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalInstrCreate_C( this );
+	}
 }

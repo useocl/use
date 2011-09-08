@@ -57,8 +57,7 @@ public class GEvalASSLCall extends GEvalInstruction implements IGCaller {
 		// prepare procedure call with the calculated callStr
 		GProcedure proc = conf.systemState().system().generator().getProcedure(callStr);
 		// call procedure
-		GCreator.createFor( proc.instructionList() )
-        				.eval( conf, this, collector ); 
+		proc.instructionList().createEvalInstr().eval( conf, this, collector ); 
 
 	}
 

@@ -53,7 +53,7 @@ import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MStatement;
 
-class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
+public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
     private GInstrCreate_AC fInstr;
     private IGCaller fCaller;
     private List<MRValue> fObjectList;
@@ -77,7 +77,7 @@ class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
         // fIterator has a next element, because an association has at least
         // two link ends.
         fLastEvaluatedInstruction = fIterator.next();
-        GCreator.createFor(fLastEvaluatedInstruction).eval(conf, this, collector);
+        fLastEvaluatedInstruction.createEvalInstr().eval(conf, this, collector);
         fIterator.previous();
     }
 
@@ -97,7 +97,7 @@ class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
     
         if (fIterator.hasNext()) {
             fLastEvaluatedInstruction = (GInstruction) fIterator.next();
-            GCreator.createFor(fLastEvaluatedInstruction).eval(conf, this, collector);
+            fLastEvaluatedInstruction.createEvalInstr().eval(conf, this, collector);
             fIterator.previous();
         }
         else

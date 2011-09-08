@@ -24,6 +24,9 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+import org.tzi.use.gen.assl.dynamics.GEvalVariableAssignment;
+
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
@@ -47,4 +50,12 @@ public class GVariableAssignment extends GAssignment {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitVariableAssignment(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalVariableAssignment( this );
+	}
 }

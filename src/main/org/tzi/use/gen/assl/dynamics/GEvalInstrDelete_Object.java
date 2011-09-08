@@ -42,7 +42,7 @@ import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
 
-class GEvalInstrDelete_Object extends GEvalInstruction
+public class GEvalInstrDelete_Object extends GEvalInstruction
     implements IGCaller {
     private GInstrDelete_Object fInstr;
     private IGCaller fCaller;
@@ -56,7 +56,7 @@ class GEvalInstrDelete_Object extends GEvalInstruction
                      IGCollector collector) throws GEvaluationException {
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
-        GCreator.createFor(fInstr.objectInstr()).eval(conf,this,collector );
+        fInstr.objectInstr().createEvalInstr().eval(conf,this,collector );
     }
 
     public void feedback(

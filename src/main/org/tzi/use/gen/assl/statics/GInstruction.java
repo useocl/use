@@ -24,13 +24,17 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public abstract class GInstruction {
+public interface GInstruction {
     
-	public abstract String toString();
+	String toString();
     
-	public abstract void processWithVisitor(InstructionVisitor v);
+	void processWithVisitor(InstructionVisitor v);
+	
+	GEvalInstruction createEvalInstr();
 }

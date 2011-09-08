@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.value.Value;
 
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 
-class GEvalOCLExpression extends GEvalInstruction {
+public class GEvalOCLExpression extends GEvalInstruction {
     private GOCLExpression fInstr;
 
     public GEvalOCLExpression(GOCLExpression instr ) {

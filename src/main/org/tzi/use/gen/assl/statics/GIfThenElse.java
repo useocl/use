@@ -1,10 +1,13 @@
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalIfThenElse;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Hanna Bauerdick
  */
-public class GIfThenElse extends GInstruction {
+public class GIfThenElse implements GInstruction {
     private GInstructionList fThenInstructionList;
     private GInstructionList fElseInstructionList;
     private GValueInstruction fConditionInstr;
@@ -46,4 +49,12 @@ public class GIfThenElse extends GInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitIfThenElse(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalIfThenElse( this );
+	}
 }

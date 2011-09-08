@@ -32,7 +32,7 @@ package org.tzi.use.gen.assl.dynamics;
 import org.tzi.use.gen.assl.statics.GVariableAssignment;
 import org.tzi.use.uml.ocl.value.Value;
 
-class GEvalVariableAssignment extends GEvalInstruction
+public class GEvalVariableAssignment extends GEvalInstruction
     implements IGCaller {
     private GVariableAssignment fInstr;
     private IGCaller fCaller;
@@ -46,7 +46,7 @@ class GEvalVariableAssignment extends GEvalInstruction
                      IGCollector collector) throws GEvaluationException {
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
-        GCreator.createFor(fInstr.sourceInstr()).eval( conf, this, collector );
+        fInstr.sourceInstr().createEvalInstr().eval( conf, this, collector );
     }
 
     public void feedback( GConfiguration conf,

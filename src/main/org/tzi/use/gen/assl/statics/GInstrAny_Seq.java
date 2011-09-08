@@ -24,6 +24,8 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstrAny_Seq;
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.CollectionType;
 
@@ -31,7 +33,7 @@ import org.tzi.use.uml.ocl.type.CollectionType;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrAny_Seq extends GValueInstruction {
+public class GInstrAny_Seq implements GValueInstruction {
 
     // Any( Sequence(T) ): T
 
@@ -56,4 +58,12 @@ public class GInstrAny_Seq extends GValueInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrAny_Seq(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalInstrAny_Seq( this );
+	}
 }

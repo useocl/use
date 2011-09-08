@@ -26,11 +26,13 @@ package org.tzi.use.gen.assl.statics;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstructionList {
+public class GInstructionList implements GInstruction {
     private List<GInstruction> fInstructions;
 
     public GInstructionList() {
@@ -54,7 +56,24 @@ public class GInstructionList {
         }
         
         return result.toString();
-    }   
+    }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#processWithVisitor(org.tzi.use.gen.assl.statics.InstructionVisitor)
+	 */
+	@Override
+	public void processWithVisitor(InstructionVisitor v) {
+		v.visitInstrucionList(this);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		// TODO Auto-generated method stub
+		return null;
+	}   
     
 }
 

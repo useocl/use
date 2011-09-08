@@ -28,7 +28,7 @@ package org.tzi.use.gen.assl.statics;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public abstract class GAssignment extends GInstruction {
+public abstract class GAssignment implements GInstruction {
     protected GValueInstruction fSourceInstr;
 
     protected GAssignment( GValueInstruction source ) {

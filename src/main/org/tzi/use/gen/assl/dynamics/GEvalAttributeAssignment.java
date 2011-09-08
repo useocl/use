@@ -46,7 +46,7 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
-class GEvalAttributeAssignment extends GEvalInstruction
+public class GEvalAttributeAssignment extends GEvalInstruction
     implements IGCaller {
     private GAttributeAssignment fInstr;
     private IGCaller fCaller;
@@ -64,7 +64,7 @@ class GEvalAttributeAssignment extends GEvalInstruction
         fCaller = caller;
         fObjectName = null;
         
-        GCreator.createFor(fInstr.targetObjectInstr()).eval( conf, this, collector );
+        fInstr.targetObjectInstr().createEvalInstr().eval( conf, this, collector );
     }
 
     public void feedback(
@@ -78,9 +78,7 @@ class GEvalAttributeAssignment extends GEvalInstruction
     			collector.invalid(buildCantExecuteMessage(fInstr, culprit));
     		} else {
     			fObjectName = ((ObjectValue)value).value().name();
-                GEvalInstruction instruction = 
-                	GCreator.createFor(fInstr.sourceInstr());
-    			
+                GEvalInstruction instruction = fInstr.sourceInstr().createEvalInstr();
                 instruction.eval(conf, this, collector);
     		}
     		

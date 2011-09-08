@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends;
-import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.ocl.value.ObjectValue;
@@ -50,7 +49,7 @@ import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MStatement;
 
-class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
+public class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
     implements IGCaller {
     private GInstrDelete_Assoc_Linkends fInstr;
     private IGCaller fCaller;
@@ -71,8 +70,7 @@ class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
     
         // fIterator has a next element, because an association has at least
         // two linkends.
-        GCreator.createFor((GInstruction)fIterator.next())
-            .eval(conf,this,collector);
+        fIterator.next().createEvalInstr().eval(conf,this,collector);
         fIterator.previous();
     }
 
@@ -88,8 +86,7 @@ class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
 
         fObjectNames.add( ((ObjectValue) value).value().name() );
         if (fIterator.hasNext()) {
-            GCreator.createFor((GInstruction)fIterator.next())
-                .eval(conf,this,collector);
+            fIterator.next().createEvalInstr().eval(conf,this,collector);
             fIterator.previous();
         }
         else

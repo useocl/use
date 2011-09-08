@@ -2,7 +2,10 @@ package org.tzi.use.gen.assl.statics;
 
 import java.util.List;
 
-public class GInstrOpEnter extends GInstruction {
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+import org.tzi.use.gen.assl.dynamics.GEvalOpEnter;
+
+public class GInstrOpEnter implements GInstruction {
 
 	GValueInstruction fObjname;
 	String fOpname;
@@ -35,4 +38,12 @@ public class GInstrOpEnter extends GInstruction {
 	public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrOpEnter(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalOpEnter(this);
+	}
 }

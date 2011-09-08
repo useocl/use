@@ -33,7 +33,7 @@ import org.tzi.use.gen.assl.statics.GInstrTry_Seq;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
 
-class GEvalInstrTry_Seq extends GEvalInstruction implements IGCaller {
+public class GEvalInstrTry_Seq extends GEvalInstruction implements IGCaller {
     private GInstrTry_Seq fInstr;
     private IGCaller fCaller;
 
@@ -46,7 +46,7 @@ class GEvalInstrTry_Seq extends GEvalInstruction implements IGCaller {
                      IGCollector collector) throws GEvaluationException {
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
         fCaller = caller;
-        GCreator.createFor(fInstr.sequenceInstr()).eval( conf, this, collector );
+        fInstr.sequenceInstr().createEvalInstr().eval( conf, this, collector );
     }
 
     public void feedback( GConfiguration conf,

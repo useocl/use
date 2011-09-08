@@ -24,13 +24,15 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+import org.tzi.use.gen.assl.dynamics.GEvalLoop;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GLoop extends GInstruction {
+public class GLoop implements GInstruction {
     private GInstructionList fInstructionList;
     private GValueInstruction fSequenceInstr;
     private VarDecl fDecl;
@@ -72,4 +74,12 @@ public class GLoop extends GInstruction {
     public void processWithVisitor(InstructionVisitor v) {
     	v.visitLoop(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
+	 */
+	@Override
+	public GEvalInstruction createEvalInstr() {
+		return new GEvalLoop( this );
+	}
 }
