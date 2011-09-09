@@ -101,7 +101,7 @@ public class ActionLoadLayout extends AbstractAction {
         Options.setLastDirectory(fileChooser.getCurrentDirectory().toString());
         lastFile = fileChooser.getSelectedFile();
 
-        fDiagram.reset();
+        fDiagram.showAll();
                 
         DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;

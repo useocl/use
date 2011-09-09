@@ -297,7 +297,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
             }
         }
         
-        fWayPoints = nodes;
+        this.fWayPoints = nodes;
+        this.fNodesOnEdgeCounter = 0;
         this.firstDraw = true;
         this.firstCalculation = true;
     }
@@ -839,6 +840,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     }
     
     public final void restorePlacementInfo( final PersistHelper helper, Element elementNode, String version ) {
+    	this.reset();
+    	
 		NodeList wayPoints = (NodeList) helper.evaluateXPathSave(elementNode,
 				"./edgeproperty[@type='NodeOnEdge' or @type='WayPoint']",
 				XPathConstants.NODESET);

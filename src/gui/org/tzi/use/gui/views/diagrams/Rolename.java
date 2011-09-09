@@ -66,7 +66,7 @@ public final class Rolename extends EdgeProperty {
         fOpt = opt;
         fSide = side;
         
-        source.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+        sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
 			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
 				Rolename.this.calculatePosition(deltaX, deltaY);

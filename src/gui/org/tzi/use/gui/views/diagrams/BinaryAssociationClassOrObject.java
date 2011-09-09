@@ -31,6 +31,7 @@ import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.sys.MLink;
 import org.w3c.dom.Element;
 
 /**
@@ -74,13 +75,24 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     PositionChangedListener<PlaceableNode> updater;
     
     /**
-     * Use this constructor if it is a binary associationclass/objectlink.
+     * Use this constructor if it is a binary association class.
      */
     public BinaryAssociationClassOrObject( NodeBase source, NodeBase target,
                      MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
                      NodeBase associationClassOrObjectNode,
                      DiagramView diagram, MAssociation assoc ) {
         super( source, target, sourceEnd, targetEnd, diagram, assoc );
+        initNodeEdge( associationClassOrObjectNode );
+    }
+    
+    /**
+     * Use this constructor if it is a binary object link.
+     */
+    public BinaryAssociationClassOrObject( NodeBase source, NodeBase target,
+                     MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
+                     NodeBase associationClassOrObjectNode,
+                     DiagramView diagram, MLink link ) {
+        super( source, target, sourceEnd, targetEnd, diagram, link );
         initNodeEdge( associationClassOrObjectNode );
     }
 
@@ -178,6 +190,10 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     }
 
     private void calculateConnectionReferencePoints() {
+    	calculateConnectionReferencePoints(false);
+    }
+    
+    private void calculateConnectionReferencePoints(boolean forceUpdate) {
     	int firstPointIndex = (this.fWayPoints.size() - 1) / 2;
     	int secondPointIndex = firstPointIndex + (this.fWayPoints.size() - 1)  % 2;
     			
@@ -199,7 +215,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     		changed = true;
     	}
     	
-    	if (changed) {
+    	if (changed || forceUpdate) {
     		updateConnectionPoint();
     	}
     }
@@ -236,6 +252,6 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 	protected void restoreAdditionalInfo(PersistHelper helper, Element element,
 			String version) {
 		super.restoreAdditionalInfo(helper, element, version);
-		calculateConnectionReferencePoints();
+		calculateConnectionReferencePoints(true);
 	}
 }

@@ -1180,24 +1180,6 @@ public class ClassDiagram extends DiagramView
 		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
 	}
 	
-	@Override
-	protected void doReset() {
-        for (EdgeBase edge : this.visibleData.fBinaryAssocToEdgeMap.values()) {
-            edge.reset();
-        }
-        for (EdgeBase edge : this.visibleData.fAssocClassToEdgeMap.values()) {
-        	edge.reset();
-        }
-        for (EdgeBase edge : this.visibleData.fGenToGeneralizationEdge.values()) {
-            edge.reset();
-        }
-        for (List<EdgeBase> halfEdges : this.visibleData.fNaryAssocToHalfEdgeMap.values()) {
-        	for (EdgeBase edge : halfEdges) {
-                edge.reset();
-            }
-        }
-	}
-	
 	public ActionHideClassDiagram getAction( String text, Set<? extends MClassifier> selectedNodes ) {
         return new ActionHideClassDiagram( text, selectedNodes,
                                            fNodeSelection, fGraph,

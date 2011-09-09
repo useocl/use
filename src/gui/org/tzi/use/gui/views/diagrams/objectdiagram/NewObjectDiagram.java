@@ -524,7 +524,7 @@ public class NewObjectDiagram extends DiagramView
                              linkEnd1.associationEnd(), 
                              linkEnd2.associationEnd(),
                              visibleData.fObjectToNodeMap.get(link),
-                             this, link.association() );
+                             this, link );
             
             synchronized (fLock) {
                 fGraph.addEdge(e);
@@ -1256,10 +1256,6 @@ public class NewObjectDiagram extends DiagramView
 			n.storePlacementInfo(helper, root, !visible);
 		}
 		
-		for (EdgeBase e : data.fLinkObjectToNodeEdge.values()) {
-			e.storePlacementInfo(helper, root, !visible);
-		}
-		
 		for (EdgeBase e : data.fBinaryLinkToEdgeMap.values()) {
 			e.storePlacementInfo(helper, root, !visible);
 		}
@@ -1386,24 +1382,6 @@ public class NewObjectDiagram extends DiagramView
 
 	protected boolean isHidden(PersistHelper helper, Element element, String version) {
 		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#doReset()
-	 */
-	@Override
-	protected void doReset() {
-		for (EdgeBase e : visibleData.fLinkObjectToNodeEdge.values()) {
-			e.reset();
-		}
-		
-		for (EdgeBase e : visibleData.fBinaryLinkToEdgeMap.values()) {
-			e.reset();
-		}
-		
-		for (EdgeBase e : visibleData.fLinkObjectToNodeEdge.values()) {
-			e.reset();
-		}
 	}
 	
 	public ActionHideObjectDiagram getAction( String text, Set<MObject> selectedNodes ) {
