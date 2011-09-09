@@ -344,6 +344,11 @@ public final class MSystemState {
 							+ "Use 'create ... between ...' or 'insert' instead.");
 		}
 		
+		if (cls.isAbstract()) {
+			throw new MSystemException(
+					"Cannot create an object of an abtract class!");
+		}
+		
 		// create new object and initial state
 		MObject obj = fSystem.createObject(cls, name);
 		MObjectState objState = new MObjectState(obj);
@@ -805,6 +810,11 @@ public final class MSystemState {
 			throw new MSystemException(
 					"Cannot insert two linkobjects of the same type"
 							+ " between one set of objects!");
+		}
+		
+		if (assocClass.isAbstract()) {
+			throw new MSystemException(
+					"Cannot create a linkobject of an abtract association class!");
 		}
 		
 		MLinkObject linkobj = new MLinkObjectImpl(assocClass, name, objects, qualifierValues);
