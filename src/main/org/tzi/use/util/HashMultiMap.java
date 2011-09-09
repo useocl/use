@@ -41,8 +41,12 @@ public class HashMultiMap<K, V> implements MultiMap<K, V> {
     private Map<K, List<V>> fMap;
     private transient int fSizeAll;
 
+    public HashMultiMap(int initialCapacity) {
+        fMap = new HashMap<K, List<V>>(initialCapacity);
+    }
+
     public HashMultiMap() {
-        fMap = new HashMap<K, List<V>>();
+    	this(16);
     }
 
     // Query Operations

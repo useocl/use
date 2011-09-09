@@ -56,7 +56,7 @@ public final class ExpStdOp extends Expression {
 
     // initialize operation map
     static {
-        opmap = new HashMultiMap<String, OpGeneric>();
+        opmap = new HashMultiMap<String, OpGeneric>(90);
         OpGeneric.registerOperations(opmap);
     }
 
