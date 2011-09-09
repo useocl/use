@@ -21,7 +21,6 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
@@ -31,7 +30,8 @@ import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAssociation;
 
 /**
- * TODO
+ * Represents the dashed line between an association class or link object
+ * and the diamond node of an n-ary association.
  * @author lhamann
  *
  */
@@ -47,8 +47,14 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
      */
     WayPoint fConNode;
     
+    /**
+     * The diamond node the dashed line is connected to.
+     */
     DiamondNode fDiamondNode;
     
+    /**
+     * True, if the dashed line is connected to a link object.
+     */
     private boolean isLink;
     
     private double fX_old;
@@ -60,9 +66,9 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
     
     /**
      * The NodeBase of instance ClassNode or ObjectNode displaying 
-     * the class part of the associationclass/objectlink.
+     * the class part of the associationclass / objectlink.
      */
-    private NodeBase fNodeEdgeNode; 
+    private NodeBase fAssociationClassOrLinkObjectNode; 
     
 	/**
      * Use this constructor if it is an t-nary associationclass/objectlink.
@@ -80,7 +86,7 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
      */
     private void initNodeEdge( DiamondNode node, NodeBase nodeEdgeNode ) {
         fDiamondNode = node;
-        fNodeEdgeNode = nodeEdgeNode;
+        fAssociationClassOrLinkObjectNode = nodeEdgeNode;
                 
         fNENode = new WayPoint( fSource, fTarget, this,
                                 fNodesOnEdgeCounter++,
@@ -101,33 +107,27 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
 	/* (non-Javadoc)
 	 * @see org.tzi.use.gui.views.diagrams.EdgeBase#onDraw(java.awt.Graphics2D)
 	 */
-	@Override
-    public void onDraw( Graphics2D g ) {
-        drawNodeEdge( g );
-        fDiamondNode.draw( g );
-    }
-
-	/**
-     * Draws the dashed line starting at the mid point of the solid line.
+    /**
+     * Draws the dashed line starting at the mid point of the solid line.<br/>
+     * Invokes draw on the diamond node
      * @param g The graphics object the dashed line is drawn into.
      */
-    private void drawNodeEdge( Graphics g ) {
-        if ( isSelected() ) {
+	@Override
+    public void onDraw( Graphics2D g ) {
+		if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
         } else {
             g.setColor( fOpt.getEDGE_COLOR() );
         }
-        
-        //update();
-        
+                
         try {
             DirectedEdgeFactory.drawDashedEdge( g, (int) fDiamondNode.getCenter().getX(), 
                                                 (int) fDiamondNode.getCenter().getY(), 
-                                                (int) fNodeEdgeNode.getCenter().getX(), 
-                                                (int) fNodeEdgeNode.getCenter().getY() );
-        } catch ( Exception ex ) {
-            //ignore
-        }
+                                                (int) fAssociationClassOrLinkObjectNode.getCenter().getX(), 
+                                                (int) fAssociationClassOrLinkObjectNode.getCenter().getY() );
+        } catch ( Exception ex ) { }
+        
+        fDiamondNode.draw( g );
     }
 
     /**
@@ -163,35 +163,35 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
      * Updates the connection point.
      */
     public void update() {
-        if ( fNodeEdgeNode.isDragged() ) { // && fDiagram.isDoAutoLayout() ) {
+        if ( fAssociationClassOrLinkObjectNode.isDragged() ) { // && fDiagram.isDoAutoLayout() ) {
             fFirstCall = false;
-            fX_old = fNodeEdgeNode.getX();
-            fY_old = fNodeEdgeNode.getY();
+            fX_old = fAssociationClassOrLinkObjectNode.getX();
+            fY_old = fAssociationClassOrLinkObjectNode.getY();
             fX_con_old = fConNode.getX();
             fY_con_old = fConNode.getY();
-        } else if ( !fNodeEdgeNode.isDragged() ) { //&& fDiagram.isDoAutoLayout() ) {
+        } else if ( !fAssociationClassOrLinkObjectNode.isDragged() ) { //&& fDiagram.isDoAutoLayout() ) {
             double x = fX_old - fX_con_old;
             double y = fY_old - fY_con_old;
             double newX = x + fConNode.getX();
             double newY = y + fConNode.getY();
             fNENode.setPosition( newX, newY );
-            fNodeEdgeNode.setPosition( newX, newY );
+            fAssociationClassOrLinkObjectNode.setPosition( newX, newY );
         }
         
-        if ( fFirstCall && !fNodeEdgeNode.isSelected() ) {
+        if ( fFirstCall && !fAssociationClassOrLinkObjectNode.isSelected() ) {
             final int maxSpace = 30;
             double newX = 0.0;
             double newY = 0.0;
             
-            if ( fNodeEdgeNode.getCenter().getX() >= fConNode.getCenter().getX() ) {
-                newX = fConNode.getCenter().getX() + maxSpace + fNodeEdgeNode.getWidth()/2;
+            if ( fAssociationClassOrLinkObjectNode.getCenter().getX() >= fConNode.getCenter().getX() ) {
+                newX = fConNode.getCenter().getX() + maxSpace + fAssociationClassOrLinkObjectNode.getWidth()/2;
                 newY = fConNode.getCenter().getY();
             } else {
-                newX = fConNode.getCenter().getX() - maxSpace - fNodeEdgeNode.getWidth()/2;
+                newX = fConNode.getCenter().getX() - maxSpace - fAssociationClassOrLinkObjectNode.getWidth()/2;
                 newY = fConNode.getCenter().getY();
             }
             fNENode.setPosition( newX, newY );
-            fNodeEdgeNode.setPosition( newX, newY );
+            fAssociationClassOrLinkObjectNode.setPosition( newX, newY );
         } 
         
         updateConnectionPoint( fSourceWayPoint.getX(), fSourceWayPoint.getY(), fTargetWayPoint.getX(), fTargetWayPoint.getY() );
@@ -211,8 +211,8 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase {
               || ( fWayPoints.size() <= 6 && !fConNode.isSelected() 
                    && !fConNode.wasMoved() && isReflexive() ) ) {
             Point2D conPoint = calcConnectionPoint( x1, y1, x2, y2 );
-            Point2D nep = fNodeEdgeNode.getIntersectionCoordinate( 
-                                                     fNodeEdgeNode.getCenter(),
+            Point2D nep = fAssociationClassOrLinkObjectNode.getIntersectionCoordinate( 
+                                                     fAssociationClassOrLinkObjectNode.getCenter(),
                                                      conPoint);
             fNENode.setX( nep.getX() );
             fNENode.setY( nep.getY() );

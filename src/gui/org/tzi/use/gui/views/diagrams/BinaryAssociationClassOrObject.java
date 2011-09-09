@@ -24,15 +24,18 @@ package org.tzi.use.gui.views.diagrams;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.w3c.dom.Element;
 
 /**
- * Draws the line between the rectangle of the associationclass/objectlink 
+ * Extends the {@link BinaryAssociationOrLinkEdge} to additionally  
+ * draw the line between the rectangle of the association class/ objectlink 
  * and the corresponding classes/objects.
  *
  * @version $ProjectVersion: 0.393 $
@@ -50,6 +53,18 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
      */
     WayPoint associationConnectionPoint;
         
+    /**
+     * The first way point the connection point is related to.
+     * Without user defined way points this is the source way point.
+     */
+    WayPoint connectionPointRefWayPoint1;
+    
+    /**
+     * The second way point the connection point is related to.
+     * Without user defined way points this is the target way point.
+     */
+    WayPoint connectionPointRefWayPoint2;
+    
     /**
      * The NodeBase of instance ClassNode or ObjectNode displaying 
      * the class part of the association class / object link.
@@ -87,34 +102,24 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
         
         associationConnectionPoint.setWasMoved( false );
                 
+        updater = new PositionChangedListener<PlaceableNode>() {
+			@Override
+			public void positionChanged(PlaceableNode source, Point2D newPosition,
+					double deltaX, double deltaY) {
+				updateConnectionPoint();
+			}
+		};
+		
         if ( isReflexive() ) {
-        
-            updater = new PositionChangedListener<PlaceableNode>() {
-				@Override
-				public void positionChanged(PlaceableNode source, Point2D newPosition,
-						double deltaX, double deltaY) {
-					updateConnectionPoint( fRefNode2.getCenter(), 
-                            			   fRefNode3.getCenter() );		
-				}
-			};
-			
-            fRefNode2.addPositionChangedListener(updater);
-            fRefNode3.addPositionChangedListener(updater);
+            this.connectionPointRefWayPoint1 = fRefNode2;
+            this.connectionPointRefWayPoint2 = fRefNode3;
         } else {
-            
-            updater = new PositionChangedListener<PlaceableNode>() {
-				@Override
-				public void positionChanged(PlaceableNode source, Point2D newPosition,
-						double deltaX, double deltaY) {
-					updateConnectionPoint( fSourceWayPoint.getCenter(), 
-										   fTargetWayPoint.getCenter());		
-				}
-			};
-			
-            fSourceWayPoint.addPositionChangedListener(updater);
-            fTargetWayPoint.addPositionChangedListener(updater);
+        	this.connectionPointRefWayPoint1 = fSourceWayPoint;
+            this.connectionPointRefWayPoint2 = fTargetWayPoint;
         }
         
+        this.connectionPointRefWayPoint1.addPositionChangedListener(updater);
+        this.connectionPointRefWayPoint2.addPositionChangedListener(updater);
         fAssociationClassOrObjectNode.addPositionChangedListener(updater);
         
         reIDNodes();
@@ -125,8 +130,8 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
      */
     @Override
     protected void onDraw( Graphics2D g ) {
-        drawNodeEdge( g );
         drawBinaryEdge( g );
+        drawNodeEdge( g );
     }
 
     public void update() {
@@ -158,20 +163,79 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     /**
      * Calculates the new position of the connection point where the 
      * dashed line connects to the solid line.
-     * @param x1 x-coordinate of the first point.
-     * @param y1 y-coordinate of the first point.
-     * @param x2 x-coordinate of the second point.
-     * @param y2 y-coordinate of the second point.
      */
-    private void updateConnectionPoint( Point2D firstPoint, Point2D secondPoint ) {
+    private void updateConnectionPoint() {
+    	Point2D firstPoint = connectionPointRefWayPoint1.getCenter();
+    	Point2D secondPoint = connectionPointRefWayPoint2.getCenter();
+    	
         Point2D conPoint = Util.calculateMidPoint( firstPoint, secondPoint );
         Point2D nep = fAssociationClassOrObjectNode.getIntersectionCoordinate( 
                                                  fAssociationClassOrObjectNode.getCenter(),
                                                  conPoint);
+        
         fAssociationClassOrObjectWayPoint.setCenter( nep );
         associationConnectionPoint.setCenter( conPoint );
     }
 
-    @Override
+    private void calculateConnectionReferencePoints() {
+    	int firstPointIndex = (this.fWayPoints.size() - 1) / 2;
+    	int secondPointIndex = firstPointIndex + (this.fWayPoints.size() - 1)  % 2;
+    			
+    	WayPoint ref1 = this.fWayPoints.get(firstPointIndex);
+    	WayPoint ref2 = this.fWayPoints.get(secondPointIndex);
+    	boolean changed = false;
+    	
+    	if (!this.connectionPointRefWayPoint1.equals(ref1)) {
+    		this.connectionPointRefWayPoint1.removePositionChangedListener(updater);
+    		this.connectionPointRefWayPoint1 = ref1;
+    		this.connectionPointRefWayPoint1.addPositionChangedListener(updater);
+    		changed = true;
+    	}
+    	
+    	if (!this.connectionPointRefWayPoint2.equals(ref2)) {
+    		this.connectionPointRefWayPoint2.removePositionChangedListener(updater);
+    		this.connectionPointRefWayPoint2 = ref2;
+    		this.connectionPointRefWayPoint2.addPositionChangedListener(updater);
+    		changed = true;
+    	}
+    	
+    	if (changed) {
+    		updateConnectionPoint();
+    	}
+    }
+    
+    
+    /* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.EdgeBase#occupiesThanAdd(int, int, int)
+	 */
+	@Override
+	public WayPoint occupiesThanAdd(int x, int y, int clickCount) {
+		WayPoint wp = super.occupiesThanAdd(x, y, clickCount);
+		if (wp != null) {
+			calculateConnectionReferencePoints();
+		}
+		return wp;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.EdgeBase#removeNodeOnEdge(org.tzi.use.gui.views.diagrams.waypoints.WayPoint)
+	 */
+	@Override
+	public void removeNodeOnEdge(WayPoint node) {
+		super.removeNodeOnEdge(node);
+		calculateConnectionReferencePoints();
+	}
+
+	@Override
     protected String getStoreType() { return "NodeEdge"; }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge#restoreAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, java.lang.String)
+	 */
+	@Override
+	protected void restoreAdditionalInfo(PersistHelper helper, Element element,
+			String version) {
+		super.restoreAdditionalInfo(helper, element, version);
+		calculateConnectionReferencePoints();
+	}
 }

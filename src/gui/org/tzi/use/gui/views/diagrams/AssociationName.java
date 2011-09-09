@@ -49,6 +49,7 @@ public final class AssociationName extends EdgeProperty {
         fAssoc = assoc;
         fOpt = opt;
         fEdge = edge;
+        
         this.sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
 			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
@@ -110,6 +111,16 @@ public final class AssociationName extends EdgeProperty {
         resetColor( g );
     }
 
+    @Override
+    protected void calculatePosition(double deltaX, double deltaY) {
+    	// If both nodes are selected we receive two events
+		if (this.fSource.isSelected() && this.fTarget != null && this.fTarget.isSelected()) {
+			deltaX /= 2;
+			deltaY /= 2;
+		}
+		super.calculatePosition(deltaX, deltaY);
+    }
+    
 	/**
 	 * Calculates the default label position that is
 	 * the center of the given points.

@@ -23,6 +23,7 @@ package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -135,6 +136,15 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
         
         fWayPoints.add( fSourceWayPoint );
         fWayPoints.add( fTargetWayPoint );
+        
+        // When source and target are moved, we also want to move the user defined way points
+        source.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
+			@Override
+			public void positionChanged(PlaceableNode source, Point2D newPosition, double deltaX, double deltaY) {
+				if (fSource.isSelected() && fTarget.isSelected())
+					moveUserDefinedWayPoints(deltaX, deltaY);
+			}
+		});
     }
 
 	/**
@@ -335,7 +345,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
         
         while ( it.hasNext() ) {
             n2 = it.next();
-            line = new Line2D.Double( n1.getCenter().getX(), n1.getCenter().getY(), n2.getCenter().getX(), n2.getCenter().getY() );
+            line = new Line2D.Double( n1.getCenter(), n2.getCenter() );
             occupies = line.intersects( x - 2, y - 2, 4, 4 );
             if ( occupies && clickCount == 2 ) {
                 // are the coordinates above another node do not add another node.
@@ -732,6 +742,19 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
         Collections.sort( fWayPoints, new WayPointComparator() );
     }
     
+    /**
+     * Moves all user defined way points
+	 * @param deltaX
+	 * @param deltaY
+	 */
+	protected void moveUserDefinedWayPoints(double deltaX, double deltaY) {
+		for (WayPoint wp : fWayPoints) {
+			if (!wp.isSpecial()) {
+				wp.setPosition(wp.getX() + deltaX, wp.getY() + deltaY);
+			}
+		}
+	}
+	
     /**
      * Type written into element tag
      */

@@ -1057,18 +1057,6 @@ public class ClassDiagram extends DiagramView
         for (GeneralizationEdge e : data.fGenToGeneralizationEdge.values()) {
         	e.storePlacementInfo( helper, parent, !visible );
         }
-        /*
-        // store EdgePropertie positions in property object
-        Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
-        while ( edgeIterator.hasNext() ) {
-            EdgeBase edge = edgeIterator.next();
-            if ( edge instanceof AssociationOrLinkPartEdge ) {
-                continue;
-            }
-            xml.append(edge.storePlacementInfo( false ));
-            xml.append(LayoutTags.NL);
-        }
-        */
     }
 
 	/* (non-Javadoc)

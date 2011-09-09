@@ -125,7 +125,6 @@ public class NewObjectDiagramView extends JPanel
         }
         
         fObjectDiagram.invalidateContent();
-        
         viewcount++; // jj
     }
 

@@ -224,11 +224,10 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
         
         if ( !fWayPoints.isEmpty() ) {
         	Iterator<WayPoint> it = fWayPoints.iterator();
-            int counter = 0;
+        	
             if ( it.hasNext() ) {
                 n1 = it.next();
                 n1.draw( g );
-                counter++;
             }
             
             while( it.hasNext() ) {
@@ -236,7 +235,6 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
             	p1 = n1.getCenter();
                 p2 = n2.getCenter();
                                 
-                counter++;
                 // draw nodeOnEdge
                 n2.draw( g );
                 

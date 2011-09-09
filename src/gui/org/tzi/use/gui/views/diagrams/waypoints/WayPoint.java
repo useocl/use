@@ -228,4 +228,9 @@ public class WayPoint extends EdgeProperty {
 			this.isUserDefined = Boolean.valueOf(nodeElement.getAttribute("userDefined"));
 		}
     }
+    
+    @Override
+    public String toString() {
+    	return this.getClass().getSimpleName() + " " + this.getBounds();
+    }
 }

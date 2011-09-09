@@ -72,6 +72,11 @@ public enum WayPointType {
     	return this.id;
     }
     
+    /**
+     * Returns true, if this way point was not created by the user, e. g., it 
+     * is a way point of a reflexive edge.
+     * @return
+     */
     public boolean isSpecial() {
     	return id != 0;
     }

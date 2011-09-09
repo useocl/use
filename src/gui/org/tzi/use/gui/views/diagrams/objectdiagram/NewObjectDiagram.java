@@ -38,9 +38,11 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +60,7 @@ import javax.swing.JSeparator;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
+import javax.xml.xpath.XPathConstants;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraphBase;
@@ -83,6 +86,7 @@ import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
+import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAttribute;
@@ -96,6 +100,7 @@ import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -513,7 +518,8 @@ public class NewObjectDiagram extends DiagramView
         // object link
         if (link instanceof MLinkObject) {
             BinaryAssociationClassOrObject e = 
-                new BinaryAssociationClassOrObject(visibleData.fObjectToNodeMap.get(obj1), 
+                new BinaryAssociationClassOrObject(
+                			 visibleData.fObjectToNodeMap.get(obj1), 
                              visibleData.fObjectToNodeMap.get(obj2),
                              linkEnd1.associationEnd(), 
                              linkEnd2.associationEnd(),
@@ -1245,6 +1251,22 @@ public class NewObjectDiagram extends DiagramView
 		for (ObjectNode n : data.fObjectToNodeMap.values()) {
 			n.storePlacementInfo(helper, root, !visible);
 		}
+		
+		for (NodeBase n : data.fNaryLinkToDiamondNodeMap.values()) {
+			n.storePlacementInfo(helper, root, !visible);
+		}
+		
+		for (EdgeBase e : data.fLinkObjectToNodeEdge.values()) {
+			e.storePlacementInfo(helper, root, !visible);
+		}
+		
+		for (EdgeBase e : data.fBinaryLinkToEdgeMap.values()) {
+			e.storePlacementInfo(helper, root, !visible);
+		}
+		
+		for (EdgeBase e : data.fLinkObjectToNodeEdge.values()) {
+			e.storePlacementInfo(helper, root, !visible);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1252,16 +1274,136 @@ public class NewObjectDiagram extends DiagramView
 	 */
 	@Override
 	public void restorePlacementInfos(PersistHelper helper, Element rootElement, String version) {
-		// TODO Auto-generated method stub
+		Set<MObject> hiddenObjects = new HashSet<MObject>();
+		
+		// Restore object nodes
+		NodeList elements = (NodeList) helper.evaluateXPathSave(rootElement,
+				"./" + LayoutTags.NODE + "[@type='Object']",
+				XPathConstants.NODESET);
+		
+		for (int i = 0; i < elements.getLength(); ++i) {
+			Element nodeElement = (Element)elements.item(i);			
+			String name = helper.getElementStringValue(nodeElement, "name");
+			MObject obj = fParent.system().state().objectByName(name);
+			// Could be deleted
+			if (obj != null) {
+				ObjectNode node = visibleData.fObjectToNodeMap.get(obj);
+				node.restorePlacementInfo(helper, nodeElement, version);
+				if (isHidden(helper, nodeElement, version)) hiddenObjects.add(obj);
+			}
+		}
+				
+		// Restore diamond nodes
+		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
+				+ LayoutTags.NODE + "[@type='DiamondNode']",
+				XPathConstants.NODESET);
+		
+		for (int i = 0; i < elements.getLength(); ++i) {
+			Element nodeElement = (Element)elements.item(i);
+			String name = helper.getElementStringValue(nodeElement, "name");
+			MAssociation assoc = fParent.system().model().getAssociation(name);
+			
+			// Get connected objects
+			NodeList objectElements = helper.getChildElementsByTagName(nodeElement, "connectedNode");
+			List<MObject> connectedObjects = new LinkedList<MObject>();
+			
+			for (int iNode = 0; iNode < objectElements.getLength(); ++iNode) {
+				Element objectElement = (Element)objectElements.item(iNode);
+				String objectName = objectElement.getFirstChild().getNodeValue();
+				MObject obj = fParent.system().state().objectByName(objectName);
+				if (obj != null) {
+					connectedObjects.add(obj);
+				}
+			}
+			
+			// Deleted
+			if (assoc.associationEnds().size() != connectedObjects.size())
+				continue;
+			
+			MLink link = fParent.system().state().linkBetweenObjects(assoc, connectedObjects);
+			
+			// Could be deleted
+			if (link != null) {
+				DiamondNode node = visibleData.fNaryLinkToDiamondNodeMap.get(link);
+				node.restorePlacementInfo(helper, nodeElement, version);
+			}   
+		}
+				
+		// Restore edges
+		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
+				+ LayoutTags.EDGE + "[@type='BinaryEdge']",
+				XPathConstants.NODESET);
+		
+		for (int i = 0; i < elements.getLength(); ++i) {
+			Element edgeElement = (Element)elements.item(i);
+			
+			String name = helper.getElementStringValue(edgeElement, "name");
+			MAssociation assoc = fParent.system().model().getAssociation(name);
+			String sourceObjectName = helper.getElementStringValue(edgeElement, "source");
+			String targetObjectName = helper.getElementStringValue(edgeElement, "target");
+			
+			MObject sourceObject = fParent.system().state().objectByName(sourceObjectName);
+			MObject targetObject = fParent.system().state().objectByName(targetObjectName);
+			
+			// Could be deleted
+			if (assoc != null && sourceObject != null && targetObject != null) {
+				MLink link = fParent.system().state().linkBetweenObjects(assoc, Arrays.asList(sourceObject, targetObject));
+				if (link != null) {
+					BinaryAssociationOrLinkEdge edge = visibleData.fBinaryLinkToEdgeMap.get(link);
+					edge.restorePlacementInfo(helper, edgeElement, version);
+				}
+			}
+		}
+		
+		// Restore edges
+		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
+				+ LayoutTags.EDGE + "[@type='NodeEdge']",
+				XPathConstants.NODESET);
+		
+		for (int i = 0; i < elements.getLength(); ++i) {
+			Element edgeElement = (Element)elements.item(i);
+			String name = helper.getElementStringValue(edgeElement, "name");
+			MAssociation assoc = fParent.system().model().getAssociation(name);
+			String sourceObjectName = helper.getElementStringValue(edgeElement, "source");
+			String targetObjectName = helper.getElementStringValue(edgeElement, "target");
+			
+			MObject sourceObject = fParent.system().state().objectByName(sourceObjectName);
+			MObject targetObject = fParent.system().state().objectByName(targetObjectName);
+			
+			// Could be deleted
+			if (assoc != null && sourceObject != null && targetObject != null) {
+				MLink link = fParent.system().state().linkBetweenObjects(assoc, Arrays.asList(sourceObject, targetObject));
+				if (link != null) {
+					BinaryAssociationClassOrObject edge = (BinaryAssociationClassOrObject)visibleData.fLinkObjectToNodeEdge.get(link);
+					edge.restorePlacementInfo(helper, edgeElement, version);
+				}
+			}
+		}
+		
+		// Hide elements
+		hideElementsInDiagram(hiddenObjects);
 	}
 
+	protected boolean isHidden(PersistHelper helper, Element element, String version) {
+		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#doReset()
 	 */
 	@Override
 	protected void doReset() {
+		for (EdgeBase e : visibleData.fLinkObjectToNodeEdge.values()) {
+			e.reset();
+		}
 		
+		for (EdgeBase e : visibleData.fBinaryLinkToEdgeMap.values()) {
+			e.reset();
+		}
 		
+		for (EdgeBase e : visibleData.fLinkObjectToNodeEdge.values()) {
+			e.reset();
+		}
 	}
 	
 	public ActionHideObjectDiagram getAction( String text, Set<MObject> selectedNodes ) {
