@@ -196,7 +196,7 @@ public class DiamondNode extends NodeBase {
     }
 
     @Override
-    public void restoreAdditionalInfo( PersistHelper helper, Element nodeElement, String version ) {
+    public void restoreAdditionalInfo( PersistHelper helper, Element nodeElement, int version ) {
     	// Restore association name
     	NodeList childs = helper.getChildElementsByTagName(nodeElement, LayoutTags.EDGEPROPERTY);
     	

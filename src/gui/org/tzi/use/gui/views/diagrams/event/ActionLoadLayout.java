@@ -122,10 +122,10 @@ public class ActionLoadLayout extends AbstractAction {
 		}
 		
 		Element rootElement = (Element)doc.getDocumentElement();
-		String version = "1";
+		int version = 1;
 		
 		if (rootElement.hasAttribute("version"))
-			version = rootElement.getAttribute("version");
+			version = Integer.valueOf(rootElement.getAttribute("version"));
 		
 		PersistHelper helper = new PersistHelper();
 		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);

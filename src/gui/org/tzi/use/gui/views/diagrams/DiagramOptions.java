@@ -189,7 +189,7 @@ public abstract class DiagramOptions {
 	/**
 	 * @param rootElement
 	 */
-	public void loadOptions(PersistHelper helper, Element parent, String version) {
+	public void loadOptions(PersistHelper helper, Element parent, int version) {
 		setDoAutoLayout(helper.getElementBooleanValue(parent, LayoutTags.AUTOLAYOUT));
 		setDoAntiAliasing(helper.getElementBooleanValue(parent, LayoutTags.ANTIALIASING));
 		setShowAssocNames(helper.getElementBooleanValue(parent, LayoutTags.SHOWASSOCNAMES));
@@ -197,7 +197,7 @@ public abstract class DiagramOptions {
 		setShowMutliplicities(helper.getElementBooleanValue(parent, LayoutTags.SHOWMULTIPLICITIES));
 		setShowOperations(helper.getElementBooleanValue(parent, LayoutTags.SHOWOPERATIONS));
 		setShowRolenames(helper.getElementBooleanValue(parent, LayoutTags.SHOWROLENAMES));
-		if (!version.equals("1")) {
+		if (version > 1) {
 			setShowGrid(helper.getElementBooleanValue(parent, LayoutTags.SHOWGRID));
 		}
 	}

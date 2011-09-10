@@ -809,7 +809,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     protected String getStoreType() { return "BinaryEdge"; }
     
 	@Override
-    protected void restoreEdgeProperty( PersistHelper helper, Element propertyElement, String type, String version) {
+    protected void restoreEdgeProperty( PersistHelper helper, Element propertyElement, String type, int version) {
     	// Handles target edge property and association name
     	super.restoreEdgeProperty(helper, propertyElement, type, version);
     	
@@ -844,7 +844,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 	 * @see org.tzi.use.gui.views.diagrams.EdgeBase#restoreAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, java.lang.String)
 	 */
 	@Override
-	protected void restoreAdditionalInfo(PersistHelper helper, Element element, String version) {
+	protected void restoreAdditionalInfo(PersistHelper helper, Element element, int version) {
 		super.restoreAdditionalInfo(helper, element, version);
 		
 		if (this.hasSourceQualifier()) {

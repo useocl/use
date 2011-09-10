@@ -250,7 +250,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 	 */
 	@Override
 	protected void restoreAdditionalInfo(PersistHelper helper, Element element,
-			String version) {
+			int version) {
 		super.restoreAdditionalInfo(helper, element, version);
 		calculateConnectionReferencePoints(true);
 	}

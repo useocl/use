@@ -223,8 +223,8 @@ public class WayPoint extends EdgeProperty {
     }
     
     @Override
-    protected void restoreAdditionalInfo( PersistHelper helper, Element nodeElement, String version ) {
-    	if (!version.equals("1")) {
+    protected void restoreAdditionalInfo( PersistHelper helper, Element nodeElement, int version ) {
+    	if (version > 1) {
 			this.isUserDefined = Boolean.valueOf(nodeElement.getAttribute("userDefined"));
 		}
     }

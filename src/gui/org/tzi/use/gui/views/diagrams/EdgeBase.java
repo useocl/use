@@ -804,13 +804,13 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
         storeAdditionalInfo(helper, edgeElement, hidden);
     }
     
-    protected void restoreEdgeProperty(PersistHelper helper, Element propertyElement, String type, String version) {}
+    protected void restoreEdgeProperty(PersistHelper helper, Element propertyElement, String type, int version) {}
     
     protected void storeAdditionalInfo(PersistHelper helper, Element element, boolean hidden) {}
     
-    protected void restoreAdditionalInfo(PersistHelper helper, Element element, String version) {}
+    protected void restoreAdditionalInfo(PersistHelper helper, Element element, int version) {}
     
-    protected void restoreWayPoint(PersistHelper helper, Element wayPointElement, String version) {
+    protected void restoreWayPoint(PersistHelper helper, Element wayPointElement, int version) {
     	// Handle only source, target and user defined way points
 		int specialId = Integer.valueOf(helper.getElementStringValue(
 				wayPointElement, LayoutTags.SPECIALID));
@@ -839,7 +839,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
 		}
     }
     
-    public final void restorePlacementInfo( final PersistHelper helper, Element elementNode, String version ) {
+    public final void restorePlacementInfo( final PersistHelper helper, Element elementNode, int version ) {
     	this.reset();
     	
 		NodeList wayPoints = (NodeList) helper.evaluateXPathSave(elementNode,

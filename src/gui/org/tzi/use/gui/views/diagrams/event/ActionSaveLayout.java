@@ -132,42 +132,14 @@ public class ActionSaveLayout extends AbstractAction {
        		
 		PersistHelper helper = new PersistHelper();
 		Element rootElement = doc.createElement("diagram_Layout");
-		rootElement.setAttribute("version", "2");
+		rootElement.setAttribute("version", "3");
 		doc.appendChild(rootElement);
 				
 		Element optionsElement = doc.createElement("diagramOptions");
 		rootElement.appendChild(optionsElement);
 		fDiagram.getOptions().saveOptions(helper, optionsElement);
 		fDiagram.storePlacementInfos( helper, rootElement );
-		
-		/*
-        // store node positions in property object
-        Iterator<NodeBase> nodeIterator = fGraph.iterator();
-        while (nodeIterator.hasNext()) {
-            NodeBase n = nodeIterator.next();
-            n.storePlacementInfo( rootElement, false );
-        }
-        
-        
-        // store EdgePropertie positions in property object
-        Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
-        while ( edgeIterator.hasNext() ) {
-            EdgeBase edge = edgeIterator.next();
-            if ( edge instanceof AssociationOrLinkPartEdge ) {
-                continue;
-            }
-            xml.append(edge.storePlacementInfo( false ));
-            xml.append(LayoutTags.NL);
-        }
-        
-        xml.append(LayoutTags.NL);
-        //xml.append(fLayoutInfos.getHiddenElementsXML());
-        
-        XMLParserAccess xmlParser = new XMLParserAccessImpl();
-        xmlParser.saveXMLFile( f, xml.toString() );
-        fLog.println("Wrote layout file " + f);
-        */
-        
+
         // use specific Xerces class to write DOM-data to a file:
         OutputFormat format = new OutputFormat(doc);
         format.setLineWidth(65);

@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -168,7 +167,6 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         int y;
         
         Rectangle2D currentBounds = this.getBounds();
-        Polygon dimension = dimension();
         FontMetrics fm = g.getFontMetrics();
         
         Font oldFont = g.getFont();
@@ -188,9 +186,9 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         		g.setColor( fOpt.getNODE_COLOR() );
         }
         
-        g.fillPolygon( dimension );
+        g.fill( currentBounds );
         g.setColor( fOpt.getNODE_FRAME_COLOR() );
-        g.drawRect((int)currentBounds.getX(), (int)currentBounds.getY(), (int)currentBounds.getWidth() - 1, (int)currentBounds.getHeight() - 1);
+        g.draw(currentBounds);
         
         x -= labelWidth / 2;
         y = (int)currentBounds.getY() + fm.getAscent() + 2;

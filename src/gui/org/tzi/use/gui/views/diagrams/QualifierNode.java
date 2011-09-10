@@ -24,7 +24,6 @@ package org.tzi.use.gui.views.diagrams;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -168,16 +167,16 @@ public class QualifierNode extends NodeBase {
 	 */
 	@Override
 	public void onDraw(Graphics2D g) {
-		Rectangle dimension = this.dimension().getBounds();
+		Rectangle2D dimension = this.getBounds();
 		
-		int x = dimension.x;
-		int y = dimension.y;
+		int x = (int)dimension.getX();
+		int y = (int)dimension.getY();
 		
 		Color oldColor = g.getColor();
 		g.setColor(Color.white);
-		g.fillRect(dimension.x, dimension.y, dimension.width, dimension.height);
+		g.fill(dimension);
 		g.setColor(oldColor);
-		g.drawRect(dimension.x, dimension.y, dimension.width, dimension.height);
+		g.draw(dimension);
 		x += 3;
 				
 		for (String displayedEntry : this.displayedEntries) {
@@ -254,7 +253,7 @@ public class QualifierNode extends NodeBase {
 	 */
 	@Override
 	protected void restoreAdditionalInfo(PersistHelper helper,
-			Element nodeElement, String version) {
+			Element nodeElement, int version) {
 		super.restoreAdditionalInfo(helper, nodeElement, version);
 		this.relativePosition = Direction.valueOf(helper.getElementStringValue(nodeElement, "relativePosition"));
 		this.yOffset = helper.getElementDoubleValue(nodeElement, "yOffset");

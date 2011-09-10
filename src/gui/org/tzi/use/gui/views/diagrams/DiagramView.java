@@ -610,7 +610,7 @@ public abstract class DiagramView extends JPanel
 	/**
 	 * @param rootElement
 	 */
-	public abstract void restorePlacementInfos(PersistHelper helper, Element rootElement, String version);
+	public abstract void restorePlacementInfos(PersistHelper helper, Element rootElement, int version);
 
 	/**
 	 * Show all hidden elements again

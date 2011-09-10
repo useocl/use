@@ -534,7 +534,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
         parent.appendChild(nodeElement);
     }
     
-    public final void restorePlacementInfo( PersistHelper helper, Element nodeElement, String version) {
+    public final void restorePlacementInfo( PersistHelper helper, Element nodeElement, int version) {
     	// We do not notify the listeners when restoring the layout
     	List<PositionChangedListener<PlaceableNode>> listeners = this.positionChangeListener;
     	this.positionChangeListener = Collections.emptyList();
@@ -554,8 +554,8 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 	 * @param point
 	 * @param version
 	 */
-	protected void restorePosition(Point2D.Double point, String version) {
-		if (version.equals("1")) {
+	protected void restorePosition(Point2D.Double point, int version) {
+		if (version == 1) {
     		point.x = Math.floor(point.x);
     		point.y = Math.floor(point.y);
     		setCenter(point);
@@ -564,5 +564,5 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
     	}		
 	}
 
-	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) { }
+	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, int version) { }
 }

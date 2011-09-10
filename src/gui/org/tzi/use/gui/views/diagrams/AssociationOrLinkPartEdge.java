@@ -298,7 +298,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
     protected String getStoreType() { return "HalfEdge"; }
     
     @Override
-    protected void restoreEdgeProperty ( PersistHelper helper, Element propertyElement, String type, String version) {
+    protected void restoreEdgeProperty ( PersistHelper helper, Element propertyElement, String type, int version) {
     	
     	if (type.equals(LayoutTags.ASSOCNAME)) {
     		fAssocName.restorePlacementInfo(helper, propertyElement, version);

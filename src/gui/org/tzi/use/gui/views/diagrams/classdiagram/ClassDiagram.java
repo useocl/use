@@ -1063,7 +1063,7 @@ public class ClassDiagram extends DiagramView
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
 	 */
 	@Override
-	public void restorePlacementInfos(PersistHelper helper, Element rootElement, String version) {
+	public void restorePlacementInfos(PersistHelper helper, Element rootElement, int version) {
 		Set<MClassifier> hiddenClassifier = new HashSet<MClassifier>();
 				
 		// Restore class nodes
@@ -1151,7 +1151,7 @@ public class ClassDiagram extends DiagramView
 		}
 		
 		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
-				+ LayoutTags.EDGE + "[@type='" + (version.equals("1") ? "Inheritance" : "Generalization")  + "']",
+				+ LayoutTags.EDGE + "[@type='" + (version == 1 ? "Inheritance" : "Generalization")  + "']",
 				XPathConstants.NODESET);
 		
 		for (int i = 0; i < elements.getLength(); ++i) {
@@ -1176,7 +1176,7 @@ public class ClassDiagram extends DiagramView
 		hideElementsInDiagram(hiddenClassifier);
 	}
 	
-	protected boolean isHidden(PersistHelper helper, Element element, String version) {
+	protected boolean isHidden(PersistHelper helper, Element element, int version) {
 		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
 	}
 	

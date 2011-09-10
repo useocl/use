@@ -322,11 +322,11 @@ public abstract class EdgeProperty extends PlaceableNode {
 	}
 	
 	@Override
-	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, String version) {
+	protected void restoreAdditionalInfo(PersistHelper helper, Element nodeElement, int version) {
 		double x = helper.getElementDoubleValue(nodeElement, "x_coord");
 		double y = helper.getElementDoubleValue(nodeElement, "y_coord");
 		
-		if (version.equals("1")) {
+		if (version == 1) {
 			this.isUserDefined = x != -1 && y != -1;
 			
 			if (isUserDefined) {

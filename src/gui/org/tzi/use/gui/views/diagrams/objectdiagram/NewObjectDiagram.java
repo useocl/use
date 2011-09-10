@@ -1269,7 +1269,7 @@ public class NewObjectDiagram extends DiagramView
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
 	 */
 	@Override
-	public void restorePlacementInfos(PersistHelper helper, Element rootElement, String version) {
+	public void restorePlacementInfos(PersistHelper helper, Element rootElement, int version) {
 		Set<MObject> hiddenObjects = new HashSet<MObject>();
 		
 		// Restore object nodes
@@ -1380,7 +1380,7 @@ public class NewObjectDiagram extends DiagramView
 		hideElementsInDiagram(hiddenObjects);
 	}
 
-	protected boolean isHidden(PersistHelper helper, Element element, String version) {
+	protected boolean isHidden(PersistHelper helper, Element element, int version) {
 		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
 	}
 	

@@ -24,9 +24,11 @@ package org.tzi.use.gui.views.diagrams.waypoints;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.EdgeBase;
 import org.tzi.use.gui.views.diagrams.NodeBase;
+import org.w3c.dom.Element;
 
 /**
  * A way point attached to a node
@@ -45,12 +47,6 @@ public abstract class AttachedWayPoint extends WayPoint {
 	 * Used when a source point is positioned by the user.
 	 */
 	protected double deltaY;
-	
-	/**
-	 * True when the position of this way point
-	 * is forced by the user, e.g., it is placed by her. 
-	 */
-	protected boolean forcedPosition;
 	
 	public AttachedWayPoint(NodeBase source, NodeBase target, EdgeBase edge,
 			int id, WayPointType type, String edgeName, DiagramOptions opt) {
@@ -78,11 +74,6 @@ public abstract class AttachedWayPoint extends WayPoint {
 	@Override
 	public boolean isVisible() {
 		return true;
-	}
-	
-	@Override
-	public boolean isUserDefined() {
-		return this.forcedPosition;
 	}
 	
 	/**
@@ -114,7 +105,7 @@ public abstract class AttachedWayPoint extends WayPoint {
 		this.deltaX = bounds.x - attachedBounds.getMinX();
 		this.deltaY = bounds.y - attachedBounds.getMinY();
 		
-		forcedPosition = true;
+		this.isUserDefined = true;
     }
 	
 	/**
@@ -143,5 +134,35 @@ public abstract class AttachedWayPoint extends WayPoint {
     		this.setX(getAttachedNode().getX() + deltaX);
     		this.setY(getAttachedNode().getY() + deltaY);
     	}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.waypoints.WayPoint#storeAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, boolean)
+	 */
+	@Override
+	protected void storeAdditionalInfo(PersistHelper helper,
+			Element nodeElement, boolean hidden) {
+		super.storeAdditionalInfo(helper, nodeElement, hidden);
+		
+		if (this.isUserDefined()) {
+			helper.appendChild(nodeElement, "deltaX", String.valueOf(this.deltaX));
+			helper.appendChild(nodeElement, "deltaY", String.valueOf(this.deltaY));
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.waypoints.WayPoint#restoreAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, java.lang.String)
+	 */
+	@Override
+	protected void restoreAdditionalInfo(PersistHelper helper,
+			Element nodeElement, int version) {
+		super.restoreAdditionalInfo(helper, nodeElement, version);
+		
+		if (this.isUserDefined() && version > 2) {
+			this.deltaX = helper.getElementDoubleValue(nodeElement, "deltaX");
+			this.deltaY = helper.getElementDoubleValue(nodeElement, "deltaY");
+		} else {
+			this.isUserDefined = false;
+		}
 	}
 }
