@@ -63,11 +63,13 @@ public class ASTRValueNewLinkObject extends ASTRValue {
 	public ASTRValueNewLinkObject(
 			ASTSimpleType associationClassName,
 			List<ASTRValue> participants,
+			List<List<ASTRValue>> qualifierValues,
 			ASTExpression linkObjectName) {
 		
 		this(new ASTNewLinkObjectStatement(
 				associationClassName, 
-				participants, 
+				participants,
+				qualifierValues,
 				linkObjectName));
 	}
 	
@@ -81,11 +83,13 @@ public class ASTRValueNewLinkObject extends ASTRValue {
 	public ASTRValueNewLinkObject(
 			ASTSimpleType associationClassName,
 			List<ASTRValue> participants,
+			List<List<ASTRValue>> qualifierValues,
 			String linkObjectName) {
 		
 		this(new ASTNewLinkObjectStatement(
 				associationClassName, 
-				participants, 
+				participants,
+				qualifierValues,
 				new ASTStringLiteral(linkObjectName)));
 	}
 	
@@ -97,11 +101,13 @@ public class ASTRValueNewLinkObject extends ASTRValue {
 	 */
 	public ASTRValueNewLinkObject(
 			ASTSimpleType associationClassName, 
-			List<ASTRValue> participants) {
+			List<ASTRValue> participants,
+			List<List<ASTRValue>> qualifierValues) {
 		
 		this(new ASTNewLinkObjectStatement(
 				associationClassName, 
-				participants));	
+				participants,
+				qualifierValues));	
 	}
 	
 	

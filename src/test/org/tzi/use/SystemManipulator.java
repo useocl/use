@@ -130,6 +130,7 @@ public class SystemManipulator {
 				new MNewLinkObjectStatement(
 						associationClass, 
 						newParticipants, 
+						Collections.<List<MRValue>>emptyList(),
 						objectName));
 	}
 	
@@ -159,6 +160,7 @@ public class SystemManipulator {
 				new MNewLinkObjectStatement(
 						associationClass, 
 						newParticipants, 
+						Collections.<List<MRValue>>emptyList(),
 						objectName));
 	}
 	

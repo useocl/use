@@ -185,14 +185,15 @@ legacyCreateInsert returns [ASTVariableAssignmentStatement n]
   asClassName = simpleType
   'between'
   LPAREN
-    participants = rValListMin2
+    participants = rValListMin2WithOptionalQualifiers
   RPAREN
   
   {
     ASTNewLinkObjectStatement nlo = 
       new ASTNewLinkObjectStatement(
         $asClassName.n, 
-        $participants.n, 
+        $participants.participans,
+        $participants.qualifiers,
         new ASTStringLiteral($name));
         
     nlo.setSourcePosition($start);

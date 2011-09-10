@@ -226,10 +226,10 @@ objCreateStat returns [ASTStatement n]
   (
     'between'
       LPAREN
-        p = rValListMin2
+        p = rValListMin2WithOptionalQualifiers
       RPAREN
     { 
-    $n = new ASTNewLinkObjectStatement($ident.n, $p.n, $objName.n);
+    $n = new ASTNewLinkObjectStatement($ident.n, $p.participans, $p.qualifiers, $objName.n);
     }
   )?
   

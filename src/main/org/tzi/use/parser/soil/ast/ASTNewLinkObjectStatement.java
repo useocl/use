@@ -22,6 +22,8 @@
 package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.parser.ocl.ASTExpression;
@@ -42,27 +44,37 @@ import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
 public class ASTNewLinkObjectStatement extends ASTStatement {
 	/** TODO */
 	private ASTSimpleType fAssociationClassName;
+	
 	/** TODO */
 	private List<ASTRValue> fParticipants;
+		
 	/** TODO */
 	private ASTExpression fLinkObjectName;
 	
+	/**
+	 * The List of the provided qualifiers
+	 */
+	private List<List<ASTRValue>> qualifierValues;
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new AST node.
 	 * @param associationName
 	 * @param objectName
 	 * @param participants
+	 * @param qualifierValues
+	 * @param linkObjectName
 	 */
 	public ASTNewLinkObjectStatement(
 			ASTSimpleType associationClassName, 
 			List<ASTRValue> participants,
+			List<List<ASTRValue>> qualifierValues,
 			ASTExpression linkObjectName) {
 		
 		fAssociationClassName = associationClassName;
 		fParticipants = participants;
 		fLinkObjectName = linkObjectName;
+		this.qualifierValues = qualifierValues;
 	}
 	
 	
@@ -73,15 +85,12 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 	 */
 	public ASTNewLinkObjectStatement(
 			ASTSimpleType associationClassName, 
-			List<ASTRValue> participants) {
+			List<ASTRValue> participants,
+			List<List<ASTRValue>> qualifierValues) {
 		
-		this(associationClassName, participants, null);
+		this(associationClassName, participants, qualifierValues, null);
 	}
-	
-	
-
-	
-	
+		
 	/**
 	 * TODO
 	 * @return
@@ -111,9 +120,32 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 					associationClass, 
 					fParticipants);
 		
+		List<List<MRValue>> qualifierRValues;
+		if (this.qualifierValues == null || this.qualifierValues.isEmpty()) {
+			qualifierRValues = Collections.emptyList();
+		} else {
+			qualifierRValues = new ArrayList<List<MRValue>>();
+			
+			for (List<ASTRValue> endQualifierValues : this.qualifierValues ) {
+				List<MRValue> endQualifierRValues;
+				
+				if (endQualifierValues == null || endQualifierValues.isEmpty()) {
+					endQualifierRValues = Collections.emptyList();
+				} else {
+					endQualifierRValues = new ArrayList<MRValue>();
+					
+					for (ASTRValue value : endQualifierValues) {
+						endQualifierRValues.add(this.generateRValue(value));
+					}
+				}
+				qualifierRValues.add(endQualifierRValues);
+			}
+		}
+		
 		return new MNewLinkObjectStatement(
 				associationClass, 
-				participants, 
+				participants,
+				qualifierRValues,
 				(fLinkObjectName == null ? 
 						null : generateStringExpression(fLinkObjectName)));
 	}

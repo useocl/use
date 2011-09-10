@@ -34,9 +34,9 @@ import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
 
 
 /**
- * TODO
+ * This statement inserts a new link into an association.
+ * 
  * @author Daniel Gent
- *
  */
 public class MLinkInsertionStatement extends MStatement {
 	/**
@@ -59,9 +59,11 @@ public class MLinkInsertionStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
-	 * @param association
-	 * @param participants
+	 * Creates a new link insertion statement between the objects provided by the list participants.
+	 * 
+	 * @param association The <code>MAssociation</code> to create the link for.
+	 * @param participants The <code>MObject</code>s participating in the link as <code>MRValue</code>s.
+	 * @param qualifiers The qualifier values for the different association ends
 	 */
 	public MLinkInsertionStatement(
 			MAssociation association, 
@@ -74,9 +76,10 @@ public class MLinkInsertionStatement extends MStatement {
 	}
 	
 	/**
-	 * TODO
-	 * @param association
-	 * @param participants
+	 * Creates a new link insertion statement between the objects provided by the list participants.
+	 * @param association The <code>MAssociation</code> to create the link for.
+	 * @param participants The <code>MObject</code>s participating in the link.
+	 * @param qualifiers
 	 */
 	public MLinkInsertionStatement(
 			MAssociation association,
@@ -109,17 +112,16 @@ public class MLinkInsertionStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Gets the <code>MAssociation</code> to create the link for.
+	 * @return The <code>MAssociation</code> to create the link for.
 	 */
 	public MAssociation getAssociation() {
 		return fAssociation;
 	}
-	
-	
+		
 	/**
-	 * TODO
-	 * @return
+	 * Gets the <code>MObject</code>s participating in the link as <code>MRValue</code>s.
+	 * @return The <code>MObject</code>s participating in the link as <code>MRValue</code>s.
 	 */
 	public List<MRValue> getParticipants() {
 		return fParticipants;

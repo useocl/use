@@ -228,7 +228,8 @@ public class ExprNavigationTest extends TestCase {
             system.evaluateStatement(
             		new MNewLinkObjectStatement(
             				assoc, 
-            				participants, 
+            				participants,
+            				Collections.<List<MRValue>>emptyList(),
             				"j2"), false);
 
             MAssociationClass job = system.model().getAssociationClass( "Job" );

@@ -32,6 +32,7 @@ package org.tzi.use.gen.assl.dynamics;
 import static org.tzi.use.util.StringUtil.inQuotes;
 
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -115,7 +116,7 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
     	ObjectType objectType = TypeFactory.mkObjectType(objectClass);
     	String objectName = state.uniqueObjectNameForClass(objectClass.name());
     	
-    	MStatement statement = new MNewLinkObjectStatement(objectClass, fObjectList, objectName);
+    	MStatement statement = new MNewLinkObjectStatement(objectClass, fObjectList, Collections.<List<MRValue>>emptyList(), objectName);
     	
     	MStatement inverseStatement;
     	
