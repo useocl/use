@@ -155,7 +155,22 @@ public class MLinkDeletionStatement extends MStatement {
 		
 		StringBuilder result = new StringBuilder();
 		result.append("delete (");
-		StringUtil.fmtSeq(result, fParticipants, ",");
+		StringUtil.fmtSeq(result, fParticipants, ",", new StringUtil.IElementFormatter<MRValue>() {
+			int index = 0;
+			
+			@Override
+			public String format(MRValue element) {
+				String qualifierValues = "";
+				
+				if (qualifierRValues.get(index) != null && qualifierRValues.get(index).size() > 0) {
+					qualifierValues = "{";
+					qualifierValues += StringUtil.fmtSeq(qualifierRValues.get(index), ",");
+					qualifierValues += "}";
+				}
+				++index;
+				return element.toString() + qualifierValues;
+			}
+		});
 		result.append(") from ");
 		result.append(fAssociation);
 			
