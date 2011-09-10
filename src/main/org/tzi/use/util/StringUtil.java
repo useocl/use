@@ -249,6 +249,10 @@ public final class StringUtil {
     	String format(T element);
     }
     
+    public static <T> void fmtSeq(StringBuilder target, Collection<T> collection, String divider, IElementFormatter<T> formatter) {
+    	fmtSeq(target, collection.iterator(), divider, formatter);
+    }
+    
     public static <T> String fmtSeq(Collection<T> collection, String divider, IElementFormatter<T> formatter) {
     	return fmtSeq(collection.iterator(), divider, formatter);
     }

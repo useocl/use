@@ -23,14 +23,13 @@ package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
 
 
 /**
- * TODO
- * @author Daniel Gent
+ * This statement executes a while-loop.
+ * @author Fabian Büttner
  *
  */
 public class MWhileStatement extends MStatement {
