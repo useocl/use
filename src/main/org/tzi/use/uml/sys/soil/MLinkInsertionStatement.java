@@ -186,7 +186,7 @@ public class MLinkInsertionStatement extends MStatement {
 			public String format(MRValue element) {
 				String qualifierValues = "";
 				
-				if (qualifiers.get(index) != null && qualifiers.get(index).size() > 0) {
+				if (!qualifiers.isEmpty() && qualifiers.get(index) != null && qualifiers.get(index).size() > 0) {
 					qualifierValues = "{";
 					qualifierValues += StringUtil.fmtSeq(qualifiers.get(index), ",");
 					qualifierValues += "}";
