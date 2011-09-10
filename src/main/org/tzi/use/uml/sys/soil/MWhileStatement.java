@@ -29,7 +29,7 @@ import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
 
 /**
  * This statement executes a while-loop.
- * @author Fabian Büttner
+ * @author Fabian Buettner
  *
  */
 public class MWhileStatement extends MStatement {
