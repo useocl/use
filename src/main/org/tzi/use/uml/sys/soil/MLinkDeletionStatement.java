@@ -38,6 +38,7 @@ import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
  * @author Daniel Gent
  *
  */
+//FIXME: Qualifier values need to be considered
 public class MLinkDeletionStatement extends MStatement {
 	/**
 	 * The name of the association to delete the link from. 
@@ -52,7 +53,7 @@ public class MLinkDeletionStatement extends MStatement {
 	/**
 	 * The qualifier values of the associations ends.
 	 */
-	private List<List<MRValue>> qualifierRValues;
+	private List<List<MRValue>> qualifierRValues = Collections.emptyList();
 	
 	/**
 	 * TODO
