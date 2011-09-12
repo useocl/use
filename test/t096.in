@@ -60,10 +60,12 @@ check
 ?b2.customer[120] = @p2
 *-> true : Boolean
 !delete (p1, b2) from Account
+*Error: Link `Account' between (p1,b2) does not exist.
 ?b2.customer = Bag{@p2,@p2,@p2}
 *-> true : Boolean
 !delete (p2, b2{105}) from Account
-*Error: Link `Account' between (p1,b2) does not exist.
+!delete (p2, b2{105}) from Account
+*Error: Link `Account' between (p2,b2{105}) does not exist.
 ?b2.customer = Bag{@p2,@p2}
 *-> true : Boolean
 !create j1:Job between (p1{c1}, c1)
@@ -89,3 +91,4 @@ check
 *-> true : Boolean
 ?@j2
 *<input>:1:1: There is no object `j2'.
+exit
