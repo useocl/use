@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -781,8 +782,23 @@ public abstract class MStatement {
 					new MRValueExpression(participant));
 		}
 		
+		List<List<MRValue>> wrappedQualifier = new LinkedList<List<MRValue>>();
+		
+		for(List<Value> qValues : qualifierValues) {
+			List<MRValue> wrappedQValues;
+			if (qValues.size() == 0) {
+				wrappedQValues = Collections.emptyList();
+			} else {
+				wrappedQValues = new LinkedList<MRValue>();
+				for (Value qValue : qValues) {
+					wrappedQValues.add(new MRValueExpression(qValue));
+				}
+			}
+			wrappedQualifier.add(wrappedQValues);
+		}
+		
 		fResult.prependToInverseStatement(
-				new MLinkDeletionStatement(association, wrappedParticipants));
+				new MLinkDeletionStatement(association, wrappedParticipants, wrappedQualifier));
 		
 		fResult.appendEvent(
 				new LinkInsertedEvent(
@@ -808,7 +824,7 @@ public abstract class MStatement {
 		// we need to find out if this is actually a link object, since we need
 		// to call destroyObject in that case to get the correct undo 
 		// statement
-		MLink link = fState.linkBetweenObjects(association, participants);
+		MLink link = fState.linkBetweenObjects(association, participants, qualifierValues);
 		
 		if ((link != null) && (link instanceof MLinkObject)) {
 			destroyObject((MLinkObject)link);
@@ -817,7 +833,7 @@ public abstract class MStatement {
 		
 		try {
 			fResult.getStateDifference().addDeleteResult(
-					fState.deleteLink(association, participants));
+					fState.deleteLink(association, participants, qualifierValues));
 		} catch (MSystemException e) {
 			throw new ExceptionOccuredException(this, e);
 		}

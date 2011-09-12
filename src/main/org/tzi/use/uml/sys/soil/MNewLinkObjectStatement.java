@@ -194,22 +194,7 @@ public class MNewLinkObjectStatement extends MStatement {
 		}
 		sb.append(" between (");
 		
-		StringUtil.fmtSeq(sb, fParticipants, ",", new StringUtil.IElementFormatter<MRValue>() {
-			int index = 0;
-			
-			@Override
-			public String format(MRValue element) {
-				String qualifierValues = "";
-				
-				if (qualifier.get(index) != null && qualifier.get(index).size() > 0) {
-					qualifierValues = "{";
-					qualifierValues += StringUtil.fmtSeq(qualifier.get(index), ",");
-					qualifierValues += "}";
-				}
-				++index;
-				return element.toString() + qualifierValues;
-			}
-		});
+		StringUtil.fmtSeqWithSubSeq(sb, fParticipants, ",", qualifier, ",", "{", "}");
 		
 		sb.append(")");
 		

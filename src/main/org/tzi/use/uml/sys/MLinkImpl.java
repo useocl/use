@@ -21,8 +21,10 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -185,9 +187,25 @@ final class MLinkImpl implements MLink {
 
     @Override
     public String toString() {
-        return "[" + fAssociation.name() + " : (" +
-            StringUtil.fmtSeq(fLinkEnds.values().iterator(), ", ") +
-            ")]";
+    	// For the link identification in an object diagram we need to 
+    	// build a deterministic string representation.
+    	// Therefore, the link ends are ordered by the association end name
+    	StringBuilder result = new StringBuilder("[");
+    	result.append(fAssociation.name()).append(" : (");
+        
+    	List<MLinkEnd> ends = new ArrayList<MLinkEnd>(fLinkEnds.values());
+    	Collections.sort(ends, new Comparator<MLinkEnd>() {
+			@Override
+			public int compare(MLinkEnd o1, MLinkEnd o2) {
+				return o1.associationEnd().name().compareTo(o2.associationEnd().name());
+			}
+		});
+    	
+        StringUtil.fmtSeq(result, ends, ", ");
+            
+        result.append(")]");
+        
+        return result.toString();
     }
 
 }

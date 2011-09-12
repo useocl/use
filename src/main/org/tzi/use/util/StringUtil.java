@@ -590,4 +590,67 @@ public final class StringUtil {
     	
     	return result.toString();
     }
+
+    /**
+	 * Prints the elements of the collection <code>mainSequence</code> separated by <code>delimiter</code> with
+	 * the sub collection appended to each element, if present.
+	 * E. g., ada{ibm}, bob
+	 * 
+     * @param buffer
+     * @param mainSequence
+     * @param delimiter
+     * @param subSequences
+     * @param subDelimiter
+     * @param subStart
+     * @param subEnd
+     */
+	public static <T> String fmtSeqWithSubSeq(final Collection<T> mainSequence, final String delimiter,
+											  final Collection<? extends Collection<?>> subSequences, 
+											  final String subDelimiter, final String subStart, final String subEnd) {
+		StringBuilder res = new StringBuilder();
+		StringUtil.fmtSeqWithSubSeq(res, mainSequence, delimiter, subSequences, subDelimiter, subStart, subEnd);
+		return res.toString();
+	}
+	
+	/**
+	 * Prints the elements of the collection <code>mainSequence</code> separated by <code>delimiter</code> with
+	 * the sub collection appended to each element, if present.
+	 * E. g., ada{ibm}, bob
+	 * 
+     * @param buffer
+     * @param mainSequence
+     * @param delimiter
+     * @param subSequences
+     * @param subDelimiter
+     * @param subStart
+     * @param subEnd
+     */
+	public static <T> void fmtSeqWithSubSeq(
+			StringBuilder buffer,
+			final Collection<T> mainSequence, final String delimiter,
+			final Collection<? extends Collection<?>> subSequences, 
+			final String subDelimiter, final String subStart, final String subEnd) {
+		
+		final Iterator<? extends Collection<?>> subIter = subSequences.iterator();
+		
+		StringUtil.fmtSeq(buffer, mainSequence, delimiter, new StringUtil.IElementFormatter<T>() {
+						
+			@Override
+			public String format(T element) {
+				String qualifierValues = "";
+				
+				if (subIter.hasNext()) {
+					Collection<?> subSeq = subIter.next();
+					if (!subSeq.isEmpty()) {
+						qualifierValues = subStart;
+						qualifierValues += StringUtil.fmtSeq(subSeq, subDelimiter);
+						qualifierValues += subEnd;
+					}
+				}
+				
+				return element.toString() + qualifierValues;
+			}
+		});
+		
+	}
 }

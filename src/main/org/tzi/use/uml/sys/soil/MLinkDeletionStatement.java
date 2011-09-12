@@ -38,7 +38,6 @@ import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
  * @author Daniel Gent
  *
  */
-//FIXME: Qualifier values need to be considered
 public class MLinkDeletionStatement extends MStatement {
 	/**
 	 * The name of the association to delete the link from. 
@@ -53,19 +52,22 @@ public class MLinkDeletionStatement extends MStatement {
 	/**
 	 * The qualifier values of the associations ends.
 	 */
-	private List<List<MRValue>> qualifierRValues = Collections.emptyList();
+	private List<List<MRValue>> qualifier;
 	
 	/**
 	 * TODO
 	 * @param association
 	 * @param participants
+	 * @param qualifiers
 	 */
 	public MLinkDeletionStatement(
 			MAssociation association, 
-			List<MRValue> participants) {
+			List<MRValue> participants,
+			List<List<MRValue>> qualifiers) {
 		
-		fAssociation = association;
-		fParticipants = participants;
+		this.fAssociation = association;
+		this.fParticipants = participants;
+		this.qualifier = qualifiers;
 	}
 	
 	
@@ -76,7 +78,8 @@ public class MLinkDeletionStatement extends MStatement {
 	 */
 	public MLinkDeletionStatement(
 			MAssociation association, 
-			Expression... participants) {
+			Expression[] participants,
+			List<List<MRValue>> qualifiers) {
 		
 		fAssociation = association;
 		
@@ -84,6 +87,8 @@ public class MLinkDeletionStatement extends MStatement {
 		for (Expression participant : participants) {
 			fParticipants.add(new MRValueExpression(participant));
 		}
+		
+		this.qualifier = qualifiers;
 	}
 	
 	
@@ -94,7 +99,8 @@ public class MLinkDeletionStatement extends MStatement {
 	 */
 	public MLinkDeletionStatement(
 			MAssociation association,
-			MObject... participants) {
+			MObject[] participants,
+			List<List<MRValue>> qualifiers) {
 		
 		fAssociation = association;
 		
@@ -102,6 +108,7 @@ public class MLinkDeletionStatement extends MStatement {
 		for (MObject participant : participants) {
 			fParticipants.add(new MRValueExpression(participant));
 		}
+		this.qualifier = qualifiers;
 	}
 	
 	
@@ -129,11 +136,11 @@ public class MLinkDeletionStatement extends MStatement {
 		List<MObject> participants = evaluateObjectRValues(fParticipants);
 		List<List<Value>> qualifierValues;
 		
-		if (this.qualifierRValues == null || this.qualifierRValues.isEmpty()) {
+		if (this.qualifier == null || this.qualifier.isEmpty()) {
 			qualifierValues = Collections.emptyList();
 		} else {
 			qualifierValues = new ArrayList<List<Value>>();
-			for (List<MRValue> endRValues : qualifierRValues ) {
+			for (List<MRValue> endRValues : qualifier ) {
 				List<Value> endQualifierValues;
 				if (endRValues == null || endRValues.isEmpty() ) {
 					endQualifierValues = Collections.emptyList();
@@ -156,25 +163,23 @@ public class MLinkDeletionStatement extends MStatement {
 		
 		StringBuilder result = new StringBuilder();
 		result.append("delete (");
-		StringUtil.fmtSeq(result, fParticipants, ",");
-		
-		/*
-		, new StringUtil.IElementFormatter<MRValue>() {
+		StringUtil.fmtSeq(result, fParticipants, ",", new StringUtil.IElementFormatter<MRValue>() {
 			int index = 0;
 			
 			@Override
 			public String format(MRValue element) {
 				String qualifierValues = "";
 				
-				if (qualifierRValues.get(index) != null && qualifierRValues.get(index).size() > 0) {
+				if (!qualifier.isEmpty() && qualifier.get(index) != null && qualifier.get(index).size() > 0) {
 					qualifierValues = "{";
-					qualifierValues += StringUtil.fmtSeq(qualifierRValues.get(index), ",");
+					qualifierValues += StringUtil.fmtSeq(qualifier.get(index), ",");
 					qualifierValues += "}";
 				}
 				++index;
 				return element.toString() + qualifierValues;
 			}
-		});*/
+		});
+		
 		result.append(") from ");
 		result.append(fAssociation);
 			

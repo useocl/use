@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -279,22 +280,43 @@ public final class MSystemState {
 	
 	/**
 	 * Returns true if there is a link of the specified association connecting
+	 * the given set of objects with the provided qualifiers.
+	 */
+	public boolean hasLinkBetweenObjects(MAssociation assoc, List<MObject> objects, List<List<Value>> qualiferValues) {
+		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+		return linkSet.hasLinkBetweenObjects(objects, qualiferValues);
+	}
+	
+	/**
+	 * Returns true if there is a link of the specified association connecting
 	 * the given set of objects.
 	 */
 	public boolean hasLinkBetweenObjects(
 			MAssociation assoc, 
 			Collection<MObject> objects) {
 		
-		return hasLinkBetweenObjects(assoc, objects.toArray(new MObject[0]));
+		return hasLinkBetweenObjects(assoc, new LinkedList<MObject>(objects));
 	}
 
+	/**
+	 * Returns all links between the given objects, ignoring possible
+	 * qualifier values.
+	 * @param assoc
+	 * @param asList
+	 * @return
+	 */
+	public Set<MLink> linkBetweenObjects(MAssociation assoc, List<MObject> objects) {
+		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+		return linkSet.linkBetweenObjects(objects);
+	}
+	
 	/**
 	 * Returns the link if there is a link connecting the given list of objects,
 	 * otherwise null is returned.
 	 */
-	public MLink linkBetweenObjects(MAssociation assoc, List<MObject> objects) {
+	public MLink linkBetweenObjects(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues) {
 		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
-		return linkSet.linkBetweenObjects(objects);
+		return linkSet.linkBetweenObjects(objects, qualifierValues);
 	}
 
 	/**
@@ -563,7 +585,7 @@ public final class MSystemState {
 		if (assoc instanceof MAssociationClass) {
 			// specifies if there is already an existing linkobject of this
 			// association class between the objects
-			if (hasLinkBetweenObjects(assoc, objects.toArray(new MObject[objects.size()]))) {
+			if (hasLinkBetweenObjects(assoc, objects, qualifierValues)) {
 				throw new MSystemException(
 						"Cannot insert two linkobjects of the same type"
 								+ " between one set of objects!");
@@ -756,18 +778,18 @@ public final class MSystemState {
 	 *                link does not exist
 	 * @return the removed link.
 	 */
-	public DeleteObjectResult deleteLink(MAssociation assoc, List<MObject> objects)
+	public DeleteObjectResult deleteLink(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues)
 			throws MSystemException {
 		
 		DeleteObjectResult result = new DeleteObjectResult();
 		MLink link = null;
 		
 		MLinkSet linkSet = linksOfAssociation(assoc);
-		link = linkSet.linkBetweenObjects(objects);
+		link = linkSet.linkBetweenObjects(objects, qualifierValues);
 
 		if (link == null) {
 			throw new MSystemException("Link `" + assoc.name() + "' between ("
-					+ StringUtil.fmtSeq(objects.iterator(), ",")
+					+ StringUtil.fmtSeqWithSubSeq(objects, ",", qualifierValues, ",", "{", "}")
 					+ ") does not exist.");
 		}
 
@@ -806,7 +828,7 @@ public final class MSystemState {
 					+ "' already exists.");
 		}
 		
-		if (hasLinkBetweenObjects(assocClass, objects.toArray(new MObject[objects.size()]))) {
+		if (hasLinkBetweenObjects(assocClass, objects, qualifierValues)) {
 			throw new MSystemException(
 					"Cannot insert two linkobjects of the same type"
 							+ " between one set of objects!");
@@ -1404,7 +1426,7 @@ public final class MSystemState {
 		String timeStr = t % 1000 + "s";
 		timeStr = (t / 1000) + "." + StringUtil.leftPad(timeStr, 4, '0');
 		out.println("checked " + numChecked + " invariant"
-				+ ((numChecked == 1) ? "" : "s") + " in " + timeStr + ", "
+				+ ((numChecked == 1) ? "" : "s") + (Options.testMode ? "" : " in " + timeStr) + ", "
 				+ numFailed + " failure" + ((numFailed == 1) ? "" : "s") + '.');
 		out.flush();
 		return valid;
@@ -1786,5 +1808,4 @@ public final class MSystemState {
 	public String uniqueObjectNameForClass(MClass cls) {
 		return uniqueObjectNameForClass(cls.name());
 	}
-
 }

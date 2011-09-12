@@ -49,6 +49,7 @@ import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
 import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
 import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 
 /** 
@@ -183,7 +184,7 @@ public class NewObjectDiagramView extends JPanel
     void deleteLink(MAssociation association, MObject[] objects) {
     	try {
 			fSystem.evaluateStatement(
-					new MLinkDeletionStatement(association, objects));
+					new MLinkDeletionStatement(association, objects, Collections.<List<MRValue>>emptyList()));
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
 					fMainWindow, 

@@ -463,7 +463,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         	insertStatements.add(
         			new MLinkInsertionStatement(association, participants, Collections.<List<MRValue>>emptyList()));
         	deleteStatements.add(
-        			new MLinkDeletionStatement(association, participants));
+        			new MLinkDeletionStatement(association, participants, Collections.<List<MRValue>>emptyList()));
         	
         	try {
         		// FIXME: Support qualifiers in generator

@@ -36,7 +36,11 @@ import org.w3c.dom.Element;
  * @author Fabian Gutsche
  */
 public abstract class DiagramOptions {
-
+	/**
+	 * The current version number of the layout informations
+	 */
+	public static int XML_LAYOUT_VERSION = 4;
+	
     protected boolean fDoAutoLayout = false;
     protected boolean fShowRolenames = false;
     protected boolean fShowAssocNames = true;

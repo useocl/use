@@ -298,7 +298,7 @@ public class SystemManipulator {
     	evaluateStatement(
     			new MLinkDeletionStatement(
     					association, 
-    					participants));
+    					participants, Collections.<List<MRValue>>emptyList()));
     	
     }
     

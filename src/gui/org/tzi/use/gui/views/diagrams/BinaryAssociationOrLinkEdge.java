@@ -104,6 +104,12 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     Direction fReflexivePosition = Direction.UNKNOWN;
     
     /**
+     * If this is a link edge, we need to save the string representation of the link,
+     * to be able to retrieve the correct link between objects with qualifier values.
+     */
+    String linkValue = null;
+    
+    /**
      * Internal constructor
      * @param source
      * @param target
@@ -179,8 +185,11 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		}
 		
 		if (targetEnd.hasQualifiers()) {
-			this.setTargetQualifier(new QualifierNode(target, targetEnd));
+			this.setTargetQualifier(new QualifierNode(target, targetEnd, link));
 		}
+		
+		if (this.hasQualifier())
+			this.linkValue = link.toString();
 		
 		checkAndCreateReflexiveEdge();
 	}
@@ -244,6 +253,15 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     
     public boolean isReflexive() {
         return fSource.equals( fTarget );
+    }
+    
+    /**
+     * If this edge is a link and it has qualifier values this operation
+     * returns the string representation of the link. Otherwise <code>null</code> is returned.
+     * @return The string representation of the <code>MLink</code> or <code>null</code>.
+     */
+    public String getLinkvalue() {
+    	return this.linkValue;
     }
     
     private void checkAndCreateReflexiveEdge() {
@@ -838,6 +856,10 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		
 		if (this.hasTargetQualifier())
 			this.getTargetQualifier().storePlacementInfo(helper, element, hidden);
+		
+		if (this.isLink() && this.hasQualifier()) {
+			helper.appendChild(element, "linkValue", linkValue);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -865,6 +887,10 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 				this.getTargetQualifier().restorePlacementInfo(helper, targetQualNode, version);
 				this.getTargetQualifier().calculatePosition(getPreviousWayPoint(fTargetWayPoint).getCalculationPoint());
 			}
+		}
+		
+		if (this.isLink() && this.hasQualifier()) {
+			linkValue = helper.getElementStringValue(element, "linkValue");
 		}
 	}
 }

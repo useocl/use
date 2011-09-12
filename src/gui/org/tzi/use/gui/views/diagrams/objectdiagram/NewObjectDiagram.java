@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -981,8 +982,7 @@ public class NewObjectDiagram extends DiagramView
                     if (!fParent.hasLinkBetweenObjects(assoc, l)) {
                         popupMenu.insert(new ActionInsertLink(assoc, l), pos++ );
                         addedInsertLinkAction = true;
-                    } 
-                    if (fParent.hasLinkBetweenObjects(assoc, l)) {
+                    } else {
                         popupMenu.insert(new ActionDeleteLink(assoc, l),pos++);
                         addedInsertLinkAction = true;
                     }
@@ -1315,8 +1315,8 @@ public class NewObjectDiagram extends DiagramView
 			// Deleted
 			if (assoc.associationEnds().size() != connectedObjects.size())
 				continue;
-			
-			MLink link = fParent.system().state().linkBetweenObjects(assoc, connectedObjects);
+			// n-ary links cannot be qualified therefore an empty list for the qualifer values is provided
+			MLink link = fParent.system().state().linkBetweenObjects(assoc, connectedObjects, Collections.<List<Value>>emptyList());
 			
 			// Could be deleted
 			if (link != null) {
@@ -1343,7 +1343,21 @@ public class NewObjectDiagram extends DiagramView
 			
 			// Could be deleted
 			if (assoc != null && sourceObject != null && targetObject != null) {
-				MLink link = fParent.system().state().linkBetweenObjects(assoc, Arrays.asList(sourceObject, targetObject));
+				MLink link;
+				
+				if (assoc.hasQualifiedEnds()) {
+					String linkValue = helper.getElementStringValue(edgeElement, "linkValue");
+					link = getLinkByValue(assoc, Arrays.asList(sourceObject, targetObject), linkValue);
+				} else {
+					// No qualifier values are present. 
+					link = fParent
+							.system()
+							.state()
+							.linkBetweenObjects(assoc,
+									Arrays.asList(sourceObject, targetObject),
+									Collections.<List<Value>>emptyList());
+				}
+				
 				if (link != null) {
 					BinaryAssociationOrLinkEdge edge = visibleData.fBinaryLinkToEdgeMap.get(link);
 					edge.restorePlacementInfo(helper, edgeElement, version);
@@ -1368,7 +1382,21 @@ public class NewObjectDiagram extends DiagramView
 			
 			// Could be deleted
 			if (assoc != null && sourceObject != null && targetObject != null) {
-				MLink link = fParent.system().state().linkBetweenObjects(assoc, Arrays.asList(sourceObject, targetObject));
+				MLink link;
+				
+				if (assoc.hasQualifiedEnds()) {
+					String linkValue = helper.getElementStringValue(edgeElement, "linkValue");
+					link = getLinkByValue(assoc, Arrays.asList(sourceObject, targetObject), linkValue);
+				} else {
+					// No qualifier values are present. 
+					link = fParent
+							.system()
+							.state()
+							.linkBetweenObjects(assoc,
+									Arrays.asList(sourceObject, targetObject),
+									Collections.<List<Value>> emptyList());
+				}
+				
 				if (link != null) {
 					BinaryAssociationClassOrObject edge = (BinaryAssociationClassOrObject)visibleData.fLinkObjectToNodeEdge.get(link);
 					edge.restorePlacementInfo(helper, edgeElement, version);
@@ -1380,6 +1408,19 @@ public class NewObjectDiagram extends DiagramView
 		hideElementsInDiagram(hiddenObjects);
 	}
 
+	protected MLink getLinkByValue(MAssociation assoc, List<MObject> objects, String linkValue) {
+		Set<MLink> links = fParent.system().state().linkBetweenObjects(assoc, objects);
+		if (links.size() == 1) {
+			return links.iterator().next(); 
+		} else {
+			for (MLink aLink : links) {
+				if (aLink.toString().equals(linkValue)) {
+					return aLink;
+				}
+			}
+		}
+		return null;
+	}
 	protected boolean isHidden(PersistHelper helper, Element element, int version) {
 		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
 	}

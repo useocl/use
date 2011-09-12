@@ -39,6 +39,7 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
+import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -132,7 +133,7 @@ public class ActionSaveLayout extends AbstractAction {
        		
 		PersistHelper helper = new PersistHelper();
 		Element rootElement = doc.createElement("diagram_Layout");
-		rootElement.setAttribute("version", "3");
+		rootElement.setAttribute("version", String.valueOf(DiagramOptions.XML_LAYOUT_VERSION));
 		doc.appendChild(rootElement);
 				
 		Element optionsElement = doc.createElement("diagramOptions");

@@ -22,57 +22,57 @@
 package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST class representing a link deletion node: <code>delete (x, y) from Z</code>.
  * @author Daniel Gent
  *
  */
 public class ASTLinkDeletionStatement extends ASTStatement {
-	/** TODO */
+	/**
+	 * The name of the association to insert a link into
+	 */
 	private String fAssociationName;
-	/** TODO */
+	
+	/** 
+	 * The ASTRValues of the participating objects
+	 */
 	private List<ASTRValue> fParticipants;
 	
+	/**
+	 * The List of the provided qualifiers
+	 */
+	private List<List<ASTRValue>> qualifierValues;
 	
 	/**
-	 * TODO
-	 * @param associationName
-	 * @param participants
+	 * Constructs a new AST node.
+	 * @param associationName Name of the association to delete the link from.
+	 * @param participants The participating instances.
+	 * @param qualifierValues The <code>MRValue</code>s of the qualifiers. Can be <code>null</code>.
 	 */
 	public ASTLinkDeletionStatement(
 			String associationName,
-			List<ASTRValue> participants) {
+			List<ASTRValue> participants,
+			List<List<ASTRValue>> qualifierValues) {
 		
 		fAssociationName = associationName;
 		fParticipants = participants;
+		this.qualifierValues = qualifierValues;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param associationName
-	 * @param participants
-	 */
-	public ASTLinkDeletionStatement(
-			String associationName,
-			ASTRValue... participants) {
-		
-		this(associationName, Arrays.asList(participants));
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
+	 * Name of the association to insert the link into.
+	 * @return The association name
 	 */
 	public String getAssociationName() {
 		return fAssociationName;
@@ -80,8 +80,8 @@ public class ASTLinkDeletionStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The participating instances.
+	 * @return The <code>ASTRValue</code> nodes of participating instances.
 	 */
 	public List<ASTRValue> getParticipants() {
 		return fParticipants;
@@ -101,7 +101,29 @@ public class ASTLinkDeletionStatement extends ASTStatement {
 					association, 
 					fParticipants);
 		
-		return new MLinkDeletionStatement(association, participants);
+		List<List<MRValue>> qualifierRValues;
+		if (this.qualifierValues == null || this.qualifierValues.isEmpty()) {
+			qualifierRValues = Collections.emptyList();
+		} else {
+			qualifierRValues = new ArrayList<List<MRValue>>();
+			
+			for (List<ASTRValue> endQualifierValues : this.qualifierValues ) {
+				List<MRValue> endQualifierRValues;
+				
+				if (endQualifierValues == null || endQualifierValues.isEmpty()) {
+					endQualifierRValues = Collections.emptyList();
+				} else {
+					endQualifierRValues = new ArrayList<MRValue>();
+					
+					for (ASTRValue value : endQualifierValues) {
+						endQualifierRValues.add(this.generateRValue(value));
+					}
+				}
+				qualifierRValues.add(endQualifierRValues);
+			}
+		}
+		
+		return new MLinkDeletionStatement(association, participants, qualifierRValues);
 	}
 
 
@@ -116,11 +138,9 @@ public class ASTLinkDeletionStatement extends ASTStatement {
 		StringBuilder sB = new StringBuilder();
 		sB.append("delete ");
 		sB.append("(");
-		for (ASTRValue participant : fParticipants) {
-			sB.append(participant);
-			sB.append(",");
-		}
-		sB.delete(sB.length() - 1, sB.length());
+		
+		StringUtil.fmtSeqWithSubSeq(sB, fParticipants, ",", qualifierValues, ",", "{", "}");
+		
 		sB.append(") ");
 		sB.append("from ");
 		sB.append(fAssociationName);

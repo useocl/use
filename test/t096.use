@@ -1,0 +1,32 @@
+/*
+This model tests qualified associations and association classes
+ */
+model t096
+
+class Person
+  attributes
+    name : String
+end
+
+class Company
+  attributes
+    name : String
+end
+
+class Bank < Company
+end
+
+association Account between
+  Person[0..1] role customer
+  Bank[*] role bank qualifier(accountNr:Integer)
+end
+
+associationclass Job 
+  between
+    Person[*] role employee qualifier(aCompany:Company)
+    Company[0..1] role employer
+  attributes
+    salary : Integer
+end
+
+

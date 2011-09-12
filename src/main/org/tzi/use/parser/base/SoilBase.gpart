@@ -334,12 +334,12 @@ lnkDelStat returns [ASTLinkDeletionStatement n]
 :
   'delete'
   LPAREN
-    p = rValListMin2
+    p = rValListMin2WithOptionalQualifiers
   RPAREN
   'from' 
   ass = IDENT
   
-  { $n = new ASTLinkDeletionStatement($ass.text, $p.n); }
+  { $n = new ASTLinkDeletionStatement($ass.text, $p.participans, $p.qualifiers); }
 ;
 
 

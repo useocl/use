@@ -179,22 +179,9 @@ public class MLinkInsertionStatement extends MStatement {
 		
 		StringBuilder result = new StringBuilder();
 		result.append("insert (");
-		StringUtil.fmtSeq(result, fParticipants, ",", new StringUtil.IElementFormatter<MRValue>() {
-			int index = 0;
-			
-			@Override
-			public String format(MRValue element) {
-				String qualifierValues = "";
-				
-				if (!qualifiers.isEmpty() && qualifiers.get(index) != null && qualifiers.get(index).size() > 0) {
-					qualifierValues = "{";
-					qualifierValues += StringUtil.fmtSeq(qualifiers.get(index), ",");
-					qualifierValues += "}";
-				}
-				++index;
-				return element.toString() + qualifierValues;
-			}
-		});
+		
+		StringUtil.fmtSeqWithSubSeq(result, fParticipants, ",", qualifiers, ",", "{", "}");
+		
 		result.append(") into ");
 		result.append(fAssociation);
 			

@@ -31,6 +31,7 @@ package org.tzi.use.gen.assl.dynamics;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -113,10 +114,11 @@ public class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
         			new MRValueExpression(object));      			
         }
         
+        //FIXME: Qualifier in Generator
         MStatement statement = 
         	new MLinkDeletionStatement(
         			association, 
-        			participants);
+        			participants, Collections.<List<MRValue>>emptyList());
         
         MStatement inverseStatement;
 

@@ -95,13 +95,30 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
         else
             otherEnd = (MAssociationEnd) assoc.associationEnds().get(0);
         
-        if (otherEnd.multiplicity().isCollection()) {
-            if (otherEnd.isOrdered())
-                return TypeFactory.mkSequence(TypeFactory.mkObjectType( this ));
-            else
-                return TypeFactory.mkSet(TypeFactory.mkObjectType( this ));
+        Type thisType = TypeFactory.mkObjectType( this );
+        if (src.hasQualifiers()) {
+        	if (qualifiedAccess) {
+        		if (otherEnd.multiplicity().isCollection()) {
+    				if ( otherEnd.isOrdered() )
+    	                return TypeFactory.mkOrderedSet( thisType );
+    	            else
+    	                return TypeFactory.mkSet( thisType );
+    			}
+        	} else {
+        		if ( otherEnd.isOrdered() )
+	                return TypeFactory.mkSequence( thisType );
+	            else
+	                return TypeFactory.mkBag( thisType );
+        	}
+        } else {
+	        if (otherEnd.multiplicity().isCollection()) {
+	            if (otherEnd.isOrdered())
+	                return TypeFactory.mkOrderedSet(thisType);
+	            else
+	                return TypeFactory.mkSet(thisType);
+	        }
         }
-        return TypeFactory.mkObjectType( this );
+        return thisType;
     }
 
     public MAssociation association() {

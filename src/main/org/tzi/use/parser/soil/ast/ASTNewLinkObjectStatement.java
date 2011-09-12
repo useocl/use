@@ -167,7 +167,9 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 			sb.append(fLinkObjectName);
 		}
 		sb.append(" between (");
-		StringUtil.fmtSeq(sb, fParticipants, ", ");
+		
+		StringUtil.fmtSeqWithSubSeq(sb, fParticipants, ",", qualifierValues, ",", "{", "}");
+		
 		sb.append(")");
 		
 		return sb.toString();

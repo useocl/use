@@ -252,7 +252,7 @@ public final class MLinkSet {
             
             links.add(link);
             
-            // we add to entries for ends with qualifiers
+            // we add two entries for ends with qualifiers
             if (end.hasQualifiers()) {
             	e = new CacheEntry(end.associationEnd(), end.object(), null);
                 links = selectCache.get(e);
@@ -280,24 +280,59 @@ public final class MLinkSet {
     
     /**
      * Returns true if there is a link connecting the given set of
-     * objects.  
+     * objects with the provided qualifier values.  
      */
-    public boolean hasLinkBetweenObjects(MObject[] objects) {
-        for (MLink link : fLinks) {
-            if (Arrays.equals(link.linkedObjectsAsArray(), objects))
-            	return true;
-        }
-        return false;
+    public boolean hasLinkBetweenObjects(List<MObject> objects, List<List<Value>> qualifierValues) {
+        return linkBetweenObjects(objects, qualifierValues) != null;
     }
 
+    /**
+     * Returns true if there is a link connecting the given set of
+     * objects without taking qualifier values into account
+     */
+    public boolean hasLinkBetweenObjects(MObject[] objects) {
+        return !linkBetweenObjects(Arrays.asList(objects)).isEmpty();
+    }
+    
+    /**
+     * Returns all links connecting the given set of
+     * objects. If no link exists an empty set is returned.  
+     */
+	public Set<MLink> linkBetweenObjects(List<MObject> objects) {
+		Set<MLink> result = new HashSet<MLink>();
+		
+		for (MLink link : fLinks) {
+            if (link.linkedObjects().equals(objects)) {
+            	result.add(link);
+            }
+        }
+		
+		return result;
+	}
+	
     /**
      * Returns the link if there is a link connecting the given set of
      * objects, otherwise null is returned.  
      */
-    public MLink linkBetweenObjects(List<MObject> objects) {
-        for (MLink link : fLinks) {
-            if (link.linkedObjects().equals(objects) )
-                return link;
+    public MLink linkBetweenObjects(List<MObject> objects, List<List<Value>> qualifierValues) {
+        boolean equal = true;
+        
+    	for (MLink link : fLinks) {
+            if (link.linkedObjects().equals(objects)) {
+            	if (link.association().hasQualifiedEnds()) {
+	            	equal = true; // true, because if no qualifiers exists it is the correct link 
+	            	for (int index = 0; index < link.association().associationEnds().size(); ++index) {
+	            		MAssociationEnd end = link.association().associationEnds().get(index);
+	            		if (!link.linkEnd(end).qualifierValuesEqual(qualifierValues.get(index)))
+	            			equal = false;
+	            	}
+	            	
+	            	if (equal)
+	            		return link;
+            	} else {
+            		return link;
+            	}
+            }
         }
         
         return null;
@@ -322,10 +357,22 @@ public final class MLinkSet {
             CacheEntry e = new CacheEntry(end.associationEnd(), end.object(), end.getQualifierValues());
             Set<MLink> links = selectCache.get(e);
             
-            if (links!=null) {
+            if (links != null) {
                 links.remove(link);
                 if (links.isEmpty()) {
                     selectCache.remove(e);
+                }
+            }
+            
+            if (link.association().hasQualifiedEnds()) {
+            	e = new CacheEntry(end.associationEnd(), end.object(), null);
+                links = selectCache.get(e);
+                
+                if (links != null) {
+                    links.remove(link);
+                    if (links.isEmpty()) {
+                        selectCache.remove(e);
+                    }
                 }
             }
         }
