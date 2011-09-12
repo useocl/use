@@ -40,7 +40,7 @@ import org.tzi.use.util.TypedProperties;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "3.0.0RC7";
+    public static final String RELEASE_VERSION = "3.0.0RC8";
 
     // the copyright:
     public static final String COPYRIGHT = "Copyright (C) 1999-2010 University of Bremen";
