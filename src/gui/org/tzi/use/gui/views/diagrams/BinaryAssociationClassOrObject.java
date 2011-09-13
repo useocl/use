@@ -249,8 +249,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 	 * @see org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge#restoreAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, java.lang.String)
 	 */
 	@Override
-	protected void restoreAdditionalInfo(PersistHelper helper, Element element,
-			int version) {
+	protected void restoreAdditionalInfo(PersistHelper helper, Element element, int version) {
 		super.restoreAdditionalInfo(helper, element, version);
 		calculateConnectionReferencePoints(true);
 	}

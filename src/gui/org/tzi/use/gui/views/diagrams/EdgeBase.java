@@ -820,7 +820,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
 			fSourceWayPoint.restorePlacementInfo(helper, wayPointElement, version);
 		} else if (type.equals(WayPointType.TARGET)) {
 			fTargetWayPoint.restorePlacementInfo(helper, wayPointElement, version);
-		} else {
+		} else if (!type.equals(WayPointType.ASSOC_CLASS_CON)) {
 			int id = helper.getElementIntegerValue(wayPointElement, "id");
 			WayPoint wayPointToRestore = null;
 			if (fWayPoints.size() > id) {
