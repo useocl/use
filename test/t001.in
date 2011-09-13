@@ -1225,6 +1225,45 @@
 *-> true : Boolean
 
 #
+## reverse
+#
+?let s:Sequence(Integer) = null in s->reverse()
+*-> Undefined : OclVoid
+
+?let s:Sequence(Integer) = Sequence{} in s->reverse()
+*-> Sequence{} : Sequence(Integer)
+
+?let s:Sequence(Integer) = Sequence{1} in s->reverse()
+*-> Sequence{1} : Sequence(Integer)
+
+?let s:Sequence(Integer) = Sequence{1,2,3} in s->reverse()
+*-> Sequence{3,2,1} : Sequence(Integer)
+
+?let s:Sequence(Integer) = Sequence{1,3,2} in s->reverse()
+*-> Sequence{2,3,1} : Sequence(Integer)
+
+?let s:Sequence(Integer) = Sequence{3,1,2} in s->reverse()
+*-> Sequence{2,1,3} : Sequence(Integer)
+
+?let s:OrderedSet(Integer) = null in s->reverse()
+*-> Undefined : OclVoid
+
+?let s:OrderedSet(Integer) = OrderedSet{} in s->reverse()
+*-> OrderedSet{} : OrderedSet(Integer)
+
+?let s:OrderedSet(Integer) = OrderedSet{1} in s->reverse()
+*-> OrderedSet{1} : OrderedSet(Integer)
+
+?let s:OrderedSet(Integer) = OrderedSet{1,2,3} in s->reverse()
+*-> OrderedSet{3,2,1} : OrderedSet(Integer)
+
+?let s:OrderedSet(Integer) = OrderedSet{1,3,2} in s->reverse()
+*-> OrderedSet{2,3,1} : OrderedSet(Integer)
+
+?let s:OrderedSet(Integer) = OrderedSet{3,1,2} in s->reverse()
+*-> OrderedSet{2,1,3} : OrderedSet(Integer)
+
+#
 ## Nested Iterate Expressions
 #
 
