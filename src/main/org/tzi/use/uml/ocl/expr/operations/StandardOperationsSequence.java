@@ -553,6 +553,8 @@ final class Op_sequence_reverse extends OpGeneric {
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		if (args[0].isUndefined()) return UndefinedValue.instance;
+		
 		SequenceValue col = (SequenceValue)args[0];
 		ArrayList<Value> elements = new ArrayList<Value>(col.collection());
 		Collections.reverse(elements);
