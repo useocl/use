@@ -555,6 +555,8 @@ final class Op_orderedSet_reverse extends OpGeneric {
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		if (args[0].isUndefined()) return UndefinedValue.instance;
+			
 		OrderedSetValue col = (OrderedSetValue)args[0];
 		ArrayList<Value> elements = new ArrayList<Value>(col.collection());
 		Collections.reverse(elements);
