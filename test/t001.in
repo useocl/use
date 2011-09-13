@@ -1231,7 +1231,7 @@
 *-> Undefined : OclVoid
 
 ?let s:Sequence(Integer) = Sequence{} in s->reverse()
-*-> Sequence{} : Sequence(Integer)
+*-> Sequence{} : Sequence(OclVoid)
 
 ?let s:Sequence(Integer) = Sequence{1} in s->reverse()
 *-> Sequence{1} : Sequence(Integer)
@@ -1249,7 +1249,7 @@
 *-> Undefined : OclVoid
 
 ?let s:OrderedSet(Integer) = OrderedSet{} in s->reverse()
-*-> OrderedSet{} : OrderedSet(Integer)
+*-> OrderedSet{} : OrderedSet(OclVoid)
 
 ?let s:OrderedSet(Integer) = OrderedSet{1} in s->reverse()
 *-> OrderedSet{1} : OrderedSet(Integer)
