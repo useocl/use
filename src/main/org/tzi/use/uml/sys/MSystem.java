@@ -173,6 +173,10 @@ public final class MSystem {
     	fPPCHandlerOverride = ppcHandlerOverride;
     }
     
+    public UniqueNameGenerator getUniqueNameGenerator() {
+    	return this.fUniqueNameGenerator;
+    }
+    
     /**
      * Creates and adds a new object to the system. The name of the
      * object may be null in which case a unique name is automatically

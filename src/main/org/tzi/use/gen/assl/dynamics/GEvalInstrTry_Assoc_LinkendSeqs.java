@@ -234,6 +234,8 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             // configurations for next iteration
             oldConfiguration = newConfiguration;
         	++newConfiguration;
+        	// Remove unique name state, because no undo statements are executed
+        	system.getUniqueNameGenerator().popState();
         	
           // stop once all configurations have been built or stopping is allowed
         } while ((newConfiguration < tooLarge) && !collector.canStop());
