@@ -74,13 +74,4 @@ public class MEmptyStatement extends MStatement {
 	public String toString() {
 		return "<empty>";
 	}
-
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.sys.soil.MStatement#mayGenerateUnqiueNames()
-	 */
-	@Override
-	public boolean mayGenerateUnqiueNames() {
-		return false;
-	}
 }

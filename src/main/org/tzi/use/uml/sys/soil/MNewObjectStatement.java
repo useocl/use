@@ -26,10 +26,7 @@ import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
 import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
-import org.tzi.use.util.soil.exceptions.evaluation.ExceptionOccuredException;
 
 
 /**
@@ -139,33 +136,6 @@ public class MNewObjectStatement extends MStatement {
 			createObject(fObjectClass, objectName);
 	}
 
-	/**
-	 * TODO
-	 * @param objectClass
-	 * @param objectName
-	 * @return
-	 * @throws EvaluationFailedException
-	 */
-	protected MObject createObject(
-			MClass objectClass, 
-			String objectName) throws EvaluationFailedException {
-		
-		MObject newObject;
-		try {
-			newObject = fState.createObject(objectClass, objectName);
-		} catch (MSystemException e) {
-			throw new ExceptionOccuredException(this, e);
-		}
-		
-		fResult.getStateDifference().addNewObject(newObject);
-		
-		fResult.prependToInverseStatement(
-				new MObjectDestructionStatement(newObject.value()));
-		
-		fResult.appendEvent(new ObjectCreatedEvent(this, newObject));
-		
-		return newObject;
-	}
 	
 	@Override
 	protected String shellCommand() {
@@ -185,14 +155,5 @@ public class MNewObjectStatement extends MStatement {
 	@Override
 	public String toString() {
 		return shellCommand();
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.sys.soil.MStatement#mayGenerateUnqiueNames()
-	 */
-	@Override
-	public boolean mayGenerateUnqiueNames() {
-		return true;
 	}
 }

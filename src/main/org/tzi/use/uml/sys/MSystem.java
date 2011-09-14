@@ -608,12 +608,10 @@ public final class MSystem {
 		
 		fCurrentlyEvaluatedStatements.push(statement);
 		
-		if (statement.mayGenerateUnqiueNames()) {
-			if(context.isUndo()) {
-				fUniqueNameGenerator.popState();
-			} else {
-				fUniqueNameGenerator.pushState();
-			}
+		if (context.isUndo()) {
+			fUniqueNameGenerator.popState();
+		} else {
+			fUniqueNameGenerator.pushState();
 		}
 		
 		StatementEvaluationResult result = statement.evaluate(context);

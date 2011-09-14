@@ -114,14 +114,4 @@ public class MWhileStatement extends MStatement {
 	public String toString() {
 		return shellCommand();
 	}
-
-
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.sys.soil.MStatement#mayGenerateUnqiueNames()
-	 */
-	@Override
-	public boolean mayGenerateUnqiueNames() {
-		return false;
-	}
 }

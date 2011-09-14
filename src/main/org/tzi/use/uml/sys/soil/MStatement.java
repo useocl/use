@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -56,12 +58,12 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
 import org.tzi.use.uml.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
 import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
 import org.tzi.use.uml.sys.events.OperationEnteredEvent;
 import org.tzi.use.uml.sys.events.OperationExitedEvent;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.UniqueNameGenerator;
 import org.tzi.use.util.soil.VariableEnvironment;
 import org.tzi.use.util.soil.exceptions.evaluation.DestroyObjectWithActiveOperationException;
 import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
@@ -217,15 +219,6 @@ public abstract class MStatement {
 	 */
 	public abstract boolean hasSideEffects();
 	
-	/**
-	 * When a statement is executed, which may require a
-	 * unique name for something, the {@link UniqueNameGenerator} pushes
-	 * a new configuration on is stack.
-	 * To reduce overload of this stack, only statements which may require
-	 * a unique name generate a new configuration. 
-	 * @return
-	 */
-	public abstract boolean mayGenerateUnqiueNames();
 	
 	/**
 	 * TODO
@@ -566,6 +559,36 @@ public abstract class MStatement {
 		fVarEnv.assign(variableName, value);	
 	}
 	
+	
+	/**
+	 * TODO
+	 * @param objectClass
+	 * @param objectName
+	 * @return
+	 * @throws EvaluationFailedException
+	 */
+	protected MObject createObject(
+			MClass objectClass, 
+			String objectName) throws EvaluationFailedException {
+		
+		MObject newObject;
+		try {
+			newObject = fState.createObject(objectClass, objectName);
+		} catch (MSystemException e) {
+			throw new ExceptionOccuredException(this, e);
+		}
+		
+		fResult.getStateDifference().addNewObject(newObject);
+		
+		fResult.prependToInverseStatement(
+				new MObjectDestructionStatement(newObject.value()));
+		
+		fResult.appendEvent(new ObjectCreatedEvent(this, newObject));
+		
+		return newObject;
+	}
+	
+	
 	/**
 	 * TODO
 	 * @param associationClass
@@ -728,7 +751,65 @@ public abstract class MStatement {
 						attribute, 
 						value));
 	}
+	
+	
+	/**
+	 * TODO
+	 * @param association
+	 * @param participants
+	 * @param qualifierValues
+	 * @throws EvaluationFailedException 
+	 */
+	protected MLink insertLink(
+			MAssociation association, 
+			List<MObject> participants,
+			List<List<Value>> qualifierValues) throws EvaluationFailedException {
 		
+		MLink newLink;
+		try {
+			newLink = fState.createLink(association, participants, qualifierValues);
+		} catch (MSystemException e) {
+			throw new ExceptionOccuredException(this, e);
+		}
+		
+		fResult.getStateDifference().addNewLink(newLink);
+		
+		List<MRValue> wrappedParticipants = 
+			new ArrayList<MRValue>(participants.size());
+		
+		for (MObject participant : participants) {
+			wrappedParticipants.add(
+					new MRValueExpression(participant));
+		}
+		
+		List<List<MRValue>> wrappedQualifier = new LinkedList<List<MRValue>>();
+		
+		for(List<Value> qValues : qualifierValues) {
+			List<MRValue> wrappedQValues;
+			if (qValues.size() == 0) {
+				wrappedQValues = Collections.emptyList();
+			} else {
+				wrappedQValues = new LinkedList<MRValue>();
+				for (Value qValue : qValues) {
+					wrappedQValues.add(new MRValueExpression(qValue));
+				}
+			}
+			wrappedQualifier.add(wrappedQValues);
+		}
+		
+		fResult.prependToInverseStatement(
+				new MLinkDeletionStatement(association, wrappedParticipants, wrappedQualifier));
+		
+		fResult.appendEvent(
+				new LinkInsertedEvent(
+						this, 
+						association, 
+						participants));
+		
+		return newLink;
+	}
+	
+	
 	/**
 	 * TODO
 	 * @param association
