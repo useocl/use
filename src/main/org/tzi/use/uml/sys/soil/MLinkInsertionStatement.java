@@ -23,14 +23,19 @@ package org.tzi.use.uml.sys.soil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.events.LinkInsertedEvent;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.evaluation.ExceptionOccuredException;
 
 
 /**
@@ -155,11 +160,8 @@ public class MLinkInsertionStatement extends MStatement {
 			MAssociationClass associationClass = 
 				(MAssociationClass)fAssociation;
 			
-			if ((fLinkObjectName == null) || 
-					fState.hasObjectWithName(fLinkObjectName)) {
-				
-				fLinkObjectName = 
-					fSystem.uniqueObjectNameForClass(associationClass.name());
+			if ((fLinkObjectName == null) || fState.hasObjectWithName(fLinkObjectName)) {
+				fLinkObjectName = fSystem.uniqueObjectNameForClass(associationClass.name());
 			}
 			
 			createLinkObject(
@@ -173,6 +175,61 @@ public class MLinkInsertionStatement extends MStatement {
 		}
 	}
 	
+	/**
+	 * TODO
+	 * @param association
+	 * @param participants
+	 * @param qualifierValues
+	 * @throws EvaluationFailedException 
+	 */
+	protected MLink insertLink(
+			MAssociation association, 
+			List<MObject> participants,
+			List<List<Value>> qualifierValues) throws EvaluationFailedException {
+		
+		MLink newLink;
+		try {
+			newLink = fState.createLink(association, participants, qualifierValues);
+		} catch (MSystemException e) {
+			throw new ExceptionOccuredException(this, e);
+		}
+		
+		fResult.getStateDifference().addNewLink(newLink);
+		
+		List<MRValue> wrappedParticipants = 
+			new ArrayList<MRValue>(participants.size());
+		
+		for (MObject participant : participants) {
+			wrappedParticipants.add(
+					new MRValueExpression(participant));
+		}
+		
+		List<List<MRValue>> wrappedQualifier = new LinkedList<List<MRValue>>();
+		
+		for(List<Value> qValues : qualifierValues) {
+			List<MRValue> wrappedQValues;
+			if (qValues.size() == 0) {
+				wrappedQValues = Collections.emptyList();
+			} else {
+				wrappedQValues = new LinkedList<MRValue>();
+				for (Value qValue : qValues) {
+					wrappedQValues.add(new MRValueExpression(qValue));
+				}
+			}
+			wrappedQualifier.add(wrappedQValues);
+		}
+		
+		fResult.prependToInverseStatement(
+				new MLinkDeletionStatement(association, wrappedParticipants, wrappedQualifier));
+		
+		fResult.appendEvent(
+				new LinkInsertedEvent(
+						this, 
+						association, 
+						participants));
+		
+		return newLink;
+	}
 	
 	@Override
 	protected String shellCommand() {
@@ -198,5 +255,13 @@ public class MLinkInsertionStatement extends MStatement {
 	@Override
 	public String toString() {
 		return shellCommand();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.sys.soil.MStatement#mayGenerateUnqiueNames()
+	 */
+	@Override
+	public boolean mayGenerateUnqiueNames() {
+		return true;
 	}
 }
