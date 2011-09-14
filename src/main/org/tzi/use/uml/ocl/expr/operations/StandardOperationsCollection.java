@@ -355,7 +355,7 @@ final class Op_collection_isEmpty extends OpGeneric {
 	}
 
 	public int kind() {
-		return PREDICATE;
+		return SPECIAL;
 	}
 
 	public boolean isInfixOrPrefix() {
@@ -368,6 +368,8 @@ final class Op_collection_isEmpty extends OpGeneric {
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		if (args[0].isUndefined()) return UndefinedValue.instance;
+		
 		CollectionValue coll = (CollectionValue) args[0];
 		return BooleanValue.get(coll.isEmpty());
 	}
@@ -382,7 +384,7 @@ final class Op_collection_notEmpty extends OpGeneric {
 	}
 
 	public int kind() {
-		return PREDICATE;
+		return SPECIAL;
 	}
 
 	public boolean isInfixOrPrefix() {
@@ -395,6 +397,7 @@ final class Op_collection_notEmpty extends OpGeneric {
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		if (args[0].isUndefined()) return UndefinedValue.instance;
 		CollectionValue coll = (CollectionValue) args[0];
 		return BooleanValue.get(!coll.isEmpty());
 	}
