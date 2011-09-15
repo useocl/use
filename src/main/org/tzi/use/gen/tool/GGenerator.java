@@ -481,7 +481,9 @@ public class GGenerator {
         pw.println("Random number generator was " 
                    + "initialized with " + lastResult().randomNr() + ".");
         pw.println("Checked " + lastResult().collector().numberOfCheckedStates() + " snapshots.");
-        pw.println("Made " + lastResult().collector().getCutCount() + " try cuts.");
+        
+        if (this.useTryCuts)
+        	pw.println("Made " + lastResult().collector().getCutCount() + " try cuts.");
         
         if (lastResult().collector().limit() != Long.MAX_VALUE)
             pw.println("Limit was set to " + lastResult().collector().limit() + "." );
