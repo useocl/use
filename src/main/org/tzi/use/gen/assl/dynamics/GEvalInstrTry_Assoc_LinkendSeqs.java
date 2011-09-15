@@ -225,12 +225,11 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         			++numCut;
         			collector.addCut();
         		}
-        		
         	}
         	
         	if (continueEvaluation) {
         		++numEvaluated;
-				fCaller.feedback(conf, null, collector);    
+				fCaller.feedback(conf, null, collector);
 	            if (collector.expectSubsequentReporting()) {
 	            	MSequenceStatement changeStatement = 
 	            		constructLinkChangeStatement(

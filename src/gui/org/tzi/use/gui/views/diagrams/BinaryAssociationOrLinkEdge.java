@@ -398,9 +398,11 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     public PlaceableNode getWayPoint(double x, double y) {
     	PlaceableNode res = super.getWayPoint(x, y);
     	        
-        if ( getSourceRolename() != null && getSourceRolename().occupies( x, y ) ) {
+        if ( fOpt.isShowRolenames() && 
+        	 getSourceRolename() != null && getSourceRolename().occupies( x, y ) ) {
             res = getSourceRolename();
-        } else if ( getSourceMultiplicity() != null && getSourceMultiplicity().occupies( x, y ) ) {
+        } else if ( fOpt.isShowMutliplicities() &&
+        			getSourceMultiplicity() != null && getSourceMultiplicity().occupies( x, y ) ) {
             res = getSourceMultiplicity();
         }
         

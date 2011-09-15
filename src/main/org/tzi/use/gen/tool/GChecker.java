@@ -167,9 +167,10 @@ public class GChecker implements IGChecker {
             if (!stat.flaggedInvariant().disabled()) {
                 boolean valid = stat.flaggedInvariant().eval(state);
                 stat.registerResult(valid);
-                if (!valid ) {
+                if (!valid) {
                     pw.println(stat.flaggedInvariant().toString()+ " invalid.");
                     result = false;
+                    break;
                 }
             }
         }
@@ -185,6 +186,7 @@ public class GChecker implements IGChecker {
         
         if (result)
             pw.println("valid state.");
+        
         return result;
     }
 

@@ -149,15 +149,18 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
     public PlaceableNode getWayPoint(double x, double y) {
     	PlaceableNode res = null;
     	        
-        if ( getTargetRolename() != null && getTargetRolename().occupies( x, y ) ) {
+        if ( fOpt.isShowRolenames() && 
+        	 getTargetRolename() != null && getTargetRolename().occupies( x, y ) ) {
             // Do not break here. We search in the same order
             // which is used for drawing. There may be another
             // node drawn on top of this node. That node should be
             // picked.
             res = getTargetRolename();
-        } else if ( getTargetMultiplicity() != null && getTargetMultiplicity().occupies( x, y ) ) {
+        } else if ( fOpt.isShowMutliplicities() && 
+        	        getTargetMultiplicity() != null && getTargetMultiplicity().occupies( x, y ) ) {
             res = getTargetMultiplicity();
-        } else if ( getAssocName() != null && getAssocName().occupies( x, y ) ) {
+        } else if ( fOpt.isShowAssocNames() && 
+        		    getAssocName() != null && getAssocName().occupies( x, y ) ) {
             res = getAssocName();
         } else if ( super.occupiesNonSpecialNodeOnEdge( x, y ) ) {
             res = super.getNonSpecialWayPoint(x, y);
