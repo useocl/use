@@ -1600,6 +1600,8 @@ public final class Shell implements Runnable, PPCHandler {
         boolean outputOptionFound = false;
         boolean randomOptionFound = false;
         boolean checkStructure = true;
+        boolean useCut = false;
+        
         String message = null;
 
         try {
@@ -1647,7 +1649,8 @@ public final class Shell implements Runnable, PPCHandler {
                         || optionOrFilename.equals("-d")
                         || optionOrFilename.equals("-bf")
                         || optionOrFilename.equals("-df")
-                        || optionOrFilename.equals("-t")) {
+                        || optionOrFilename.equals("-t")
+                        || optionOrFilename.equals("-c")) {
                     // an output option
                     if (outputOptionFound)
                         error = true;
@@ -1663,8 +1666,10 @@ public final class Shell implements Runnable, PPCHandler {
                         printFilename = st.nextToken();
                     } else if (optionOrFilename.equals("-t")) {
                     	printDuration = false;
-                    }
-                    outputOptionFound = true;
+                    } else if (optionOrFilename.equals("-c")) {
+                    	useCut = true;
+                    } else 
+                    	outputOptionFound = true;
                 } else {
                     // optionOrFilename must be a filename
                     if (optionOrFilename.startsWith("-"))
@@ -1694,7 +1699,7 @@ public final class Shell implements Runnable, PPCHandler {
                 Log.error(message);
             else {
                 Log.error("syntax is `start [-l <num>][-r <num>]"
-                        + "[-b|-d|-bf <FILE>|-df <FILE>|-t] "
+                        + "[-b|-d|-bf <FILE>|-df <FILE>|-t|-c] "
                         + "FILE PROCNAME([paramlist])'");
             }
             return;
@@ -1705,7 +1710,7 @@ public final class Shell implements Runnable, PPCHandler {
 
         system.generator().startProcedure(filename, callstr, limit,
                 printFilename, printBasics, printDetails, randomNr,
-                checkStructure);
+                checkStructure, useCut);
 
         long duration = System.currentTimeMillis() - start;
         if (printDuration) {

@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.NullWriter;
+import org.tzi.use.util.NullPrintWriter;
 
 /**
  * Collects information which can be printed using the -d and -b options
@@ -46,16 +46,21 @@ public class GCollectorImpl implements IGCollector {
     private PrintWriter fBasicPrintWriter;
     private PrintWriter fDetailPrintWriter;
     private long fLeafCount;
+    private long cutCount;
+    
     private boolean fExistsInvalidMessage;
     private boolean fPrePostCondViolation;
 
+    private boolean doBasicPrinting = false;
+    private boolean doDetailPrinting = false;
+    
     public GCollectorImpl() {
         fValidStateFound = false;
         fStatements = new ArrayList<MStatement>();
         fLimit = Long.MAX_VALUE;
         fLeafCount = 0;
-        fBasicPrintWriter = new PrintWriter( new NullWriter() );
-        fDetailPrintWriter = new PrintWriter( new NullWriter() );
+        fBasicPrintWriter = NullPrintWriter.getInstance();
+        fDetailPrintWriter = NullPrintWriter.getInstance();
         fExistsInvalidMessage = false;
         fPrePostCondViolation = false;
     }
@@ -84,10 +89,18 @@ public class GCollectorImpl implements IGCollector {
         return fBasicPrintWriter;
     }
     
+    public boolean doBasicPrinting() {
+    	return this.doBasicPrinting;
+    }
+    
     public PrintWriter detailPrintWriter() {
         return fDetailPrintWriter;
     }
 
+    public boolean doDetailPrinting() {
+    	return this.doDetailPrinting;
+    }
+    
     public void setLimit(long limit) {
         fLimit = limit;
     }
@@ -98,10 +111,12 @@ public class GCollectorImpl implements IGCollector {
     
     public void setBasicPrintWriter( PrintWriter pw ) {
         fBasicPrintWriter = pw;
+        this.doBasicPrinting = true;
     }
 
     public void setDetailPrintWriter( PrintWriter pw ) {
         fDetailPrintWriter = pw;
+        this.doDetailPrinting = true;
     }
 
     public void leaf() {
@@ -113,6 +128,14 @@ public class GCollectorImpl implements IGCollector {
         return fLeafCount;
     }
 
+    public long getCutCount() {
+    	return this.cutCount;
+    }
+    
+    public void addCut() {
+    	++cutCount;
+    }
+    
     public boolean validStateFound() {
     	// if a valid state has been found and no pre or postconditions have been violated
     	return fValidStateFound && !fPrePostCondViolation;

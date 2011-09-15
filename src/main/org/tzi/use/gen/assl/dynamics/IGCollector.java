@@ -35,16 +35,27 @@ import org.tzi.use.uml.sys.soil.MStatement;
 
 public interface IGCollector {
     public boolean canStop();
+    
     public void setValidStateFound();
+    
     public void subsequentlyPrependStatement(MStatement statement);
+    
     public boolean expectSubsequentReporting();
+    
     public void leaf();
+    
     public void setPrePostViolation();
+    
     public boolean getPrePostViolation();
     
     public PrintWriter basicPrintWriter();
+    public boolean doBasicPrinting();
+    
     public PrintWriter detailPrintWriter();
+    public boolean doDetailPrinting();
 
     public void invalid( String str );
     public void invalid( Exception e );
+    
+    public void addCut();
 }

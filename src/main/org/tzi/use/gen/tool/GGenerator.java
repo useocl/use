@@ -60,6 +60,7 @@ import org.tzi.use.util.Log;
  * @author  Joern Bohling
  */
 public class GGenerator {
+
     protected GModel fGModel;
     protected MSystem fSystem;
     protected GResult fLastResult;
@@ -71,6 +72,8 @@ public class GGenerator {
     private boolean fPrintDetails; 
     private Long fRandomNr;
     private boolean fCheckStructure;
+    private boolean useTryCuts;
+    
     private GCollectorImpl collector;
     
     private List<GProcedure> fProcedures;
@@ -207,7 +210,10 @@ public class GGenerator {
                                       fSystem.state(),
                                       collector,
                                       checker,
-                                      fRandomNr.longValue());
+                                      fRandomNr.longValue(),
+                                      fCheckStructure,
+                                      this.useTryCuts);
+                        
                         fLastResult = new GResult( collector,
                                                    checker,
                                                    fRandomNr.longValue());
@@ -264,8 +270,10 @@ public class GGenerator {
                                 boolean printBasics,
                                 boolean printDetails,
                                 Long randomNr,
-                                boolean checkStructure ) {
+                                boolean checkStructure,
+                                boolean useTryCuts) {
         fLastResult = null;
+        this.useTryCuts = useTryCuts;
         boolean didShowWarnigs = Log.isShowWarnings();
         Log.setShowWarnings(false);
 
@@ -331,7 +339,10 @@ public class GGenerator {
                                       fSystem.state(),
                                       collector,
                                       checker,
-                                      randomNr.longValue());
+                                      randomNr.longValue(),
+                                      fCheckStructure,
+                                      this.useTryCuts);
+                        
                         fLastResult = new GResult( collector,
                                                    checker,
                                                    randomNr.longValue());
@@ -470,6 +481,8 @@ public class GGenerator {
         pw.println("Random number generator was " 
                    + "initialized with " + lastResult().randomNr() + ".");
         pw.println("Checked " + lastResult().collector().numberOfCheckedStates() + " snapshots.");
+        pw.println("Made " + lastResult().collector().getCutCount() + " try cuts.");
+        
         if (lastResult().collector().limit() != Long.MAX_VALUE)
             pw.println("Limit was set to " + lastResult().collector().limit() + "." );
         if (!lastResult().collector().validStateFound() )

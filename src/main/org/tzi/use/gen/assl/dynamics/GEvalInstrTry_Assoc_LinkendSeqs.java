@@ -56,6 +56,7 @@ import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.CollectionUtil;
+import org.tzi.use.util.NullPrintWriter;
 
 
 public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
@@ -197,6 +198,11 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         // can check the initial state
         long newConfiguration = oldConfiguration;
         
+        long numEvaluated = 0;
+        long numCut = 0;
+        
+        boolean continueEvaluation = true;
+        
         do {
         	// construct the statement that transforms the state from old to
         	// new configuration
@@ -213,24 +219,36 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
 				throw new GEvaluationException(e);
 			}
 			
-			fCaller.feedback(conf, null, collector);    
-            if (collector.expectSubsequentReporting()) {
-            	MSequenceStatement changeStatement = 
-            		constructLinkChangeStatement(
-            				// 0, <- in the original the no-links configuration
-            				//       was used, but i'm pretty sure that's wrong
-            				initialConfiguration, // transform initial state
-            				newConfiguration,     // to valid state
-            				insertStatements, 
-            				deleteStatements);
-            	
-            	for (MStatement s : changeStatement.getStatements()) {
-            		if (!s.isEmptyStatement()) {
-            			collector.subsequentlyPrependStatement(s);
-            		}
-            	}
-            }
-            
+        	if (conf.usesTryCuts() && conf.isCheckingStructure()) {
+        		continueEvaluation = system.state().checkStructure(fInstr.association(), NullPrintWriter.getInstance(), false);
+        		if (!continueEvaluation) {
+        			++numCut;
+        			collector.addCut();
+        		}
+        		
+        	}
+        	
+        	if (continueEvaluation) {
+        		++numEvaluated;
+				fCaller.feedback(conf, null, collector);    
+	            if (collector.expectSubsequentReporting()) {
+	            	MSequenceStatement changeStatement = 
+	            		constructLinkChangeStatement(
+	            				// 0, <- in the original the no-links configuration
+	            				//       was used, but i'm pretty sure that's wrong
+	            				initialConfiguration, // transform initial state
+	            				newConfiguration,     // to valid state
+	            				insertStatements, 
+	            				deleteStatements);
+	            	
+	            	for (MStatement s : changeStatement.getStatements()) {
+	            		if (!s.isEmptyStatement()) {
+	            			collector.subsequentlyPrependStatement(s);
+	            		}
+	            	}
+	            }
+        	}
+        	
             // configurations for next iteration
             oldConfiguration = newConfiguration;
         	++newConfiguration;
@@ -240,6 +258,13 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
           // stop once all configurations have been built or stopping is allowed
         } while ((newConfiguration < tooLarge) && !collector.canStop());
         
+        if (collector.doBasicPrinting()) {
+	        basicOutput.print("Evaluated ");
+	        basicOutput.print(numEvaluated);
+	        basicOutput.print(" sub tress (cut ");
+	        basicOutput.print(numCut);
+	        basicOutput.println(")");
+        }
         
         // transform state to the initial state if we aren't in it anyways
         if (oldConfiguration != initialConfiguration) {
@@ -253,6 +278,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         	basicOutput.println(statement.getShellCommand());
         	try {
         		system.evaluateStatement(statement, true, false, false);
+        		system.getUniqueNameGenerator().popState();
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}

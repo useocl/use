@@ -42,14 +42,20 @@ public class GConfiguration {
     private VarBindings fVarBindings;
     private Evaluator fEvaluator;
     private Random fRandom;
-
+    private boolean isCheckingStructure;
+    private boolean useTryCuts;
+    
     public GConfiguration( MSystemState state,
                            VarBindings varBindings,
-                           long randomNr ) {
+                           long randomNr,
+                           boolean isCheckingStructure,
+                           boolean useTryCuts) {
         fSystemState = state;
         fVarBindings = varBindings;
         fEvaluator = new Evaluator();
         fRandom = new Random( randomNr );
+        this.isCheckingStructure = isCheckingStructure;
+        this.useTryCuts = useTryCuts;
     }
 
     public MSystemState systemState() {
@@ -64,6 +70,14 @@ public class GConfiguration {
         return fRandom;
     }
 
+    public boolean isCheckingStructure() {
+    	return isCheckingStructure;
+    }
+    
+    public boolean usesTryCuts() {
+    	return useTryCuts;
+    }
+    
     public Value evalExpression( Expression expr ) {
         return fEvaluator.eval( expr,
                                 fSystemState,

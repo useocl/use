@@ -53,7 +53,9 @@ public class GEvalProcedure implements IGCaller {
                      MSystemState state,
                      IGCollector collector,
                      IGChecker checker,
-                     long randomNr) throws GEvaluationException {
+                     long randomNr,
+                     boolean isCheckingStructure,
+                     boolean useTryCuts) throws GEvaluationException {
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fProcedure).append("'").toString());
         fChecker = checker;
         VarBindings varBindings = new VarBindings();
@@ -74,7 +76,7 @@ public class GEvalProcedure implements IGCaller {
         
         GConfiguration conf = new GConfiguration( state,
                                                   varBindings,
-                                                  randomNr );
+                                                  randomNr, isCheckingStructure, useTryCuts);
         
         fProcedure.instructionList().createEvalInstr().eval( conf, this, collector );       // just delegation
     }

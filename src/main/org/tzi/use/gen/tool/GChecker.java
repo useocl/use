@@ -174,10 +174,9 @@ public class GChecker implements IGChecker {
             }
         }
         
-
         // checking structure
         if (result && fCheckStructure) {
-            result=state.checkStructure(new PrintWriter(new NullWriter()));
+            result=state.checkStructure(new PrintWriter(new NullWriter()), false);
             if (!result) {
                 pw.println("invalid structure.");
             }

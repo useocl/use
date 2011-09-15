@@ -62,6 +62,7 @@ import org.tzi.use.util.HashBag;
 import org.tzi.use.util.HashMultiMap;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.Queue;
 import org.tzi.use.util.StringUtil;
 
@@ -1533,36 +1534,59 @@ public final class MSystemState {
 	 * association links match their declaration of multiplicities.
 	 */
 	public boolean checkStructure(PrintWriter out) {
+		return checkStructure(out, true);
+	}
+	
+	/**
+	 * Checks model inherent constraints, i.e., checks whether cardinalities of
+	 * association links match their declaration of multiplicities.
+	 */
+	public boolean checkStructure(PrintWriter out, boolean reportAllErrors) {
 		boolean res = true;
 		out.println("checking structure...");
 		out.flush();
 		// check the whole/part hierarchy
 		if (!checkWholePartLink(out)) {
+			if (!reportAllErrors) return false;
 			res = false;
 		}
+		
 		// check all associations
 		for (MAssociation assoc : fSystem.model().associations()) {
-			if (assoc.associationEnds().size() != 2) {
-				// check for n-ary links
-				if (!naryAssociationsAreValid(out, assoc))
-					res = false;
-			} else {
-				// check both association ends
-				Iterator<MAssociationEnd> it2 = assoc.associationEnds().iterator();
-				MAssociationEnd aend1 = it2.next();
-				MAssociationEnd aend2 = it2.next();
-
-				if (!validateBinaryAssociations(out, assoc, aend1, aend2)
-						|| !validateBinaryAssociations(out, assoc, aend2, aend1))
-					res = false;
-			}
+			res = res && checkStructure(assoc, out, reportAllErrors);
+			if (!reportAllErrors && !res) return false;
 		}
 		// out.println("checking link cardinalities, done.");
 		out.flush();
 		return res;
 	}
 
-	private boolean naryAssociationsAreValid(PrintWriter out, MAssociation assoc) {
+	/**
+	 * Checks model checks whether cardinalities of
+	 * association links match their declaration of multiplicities.
+	 */
+	public boolean checkStructure(MAssociation assoc, PrintWriter out, boolean reportAllErrors) {
+		boolean res = true;
+		
+		if (assoc.associationEnds().size() != 2) {
+			// check for n-ary links
+			res = naryAssociationsAreValid(out, assoc, reportAllErrors);
+		} else {
+			// check both association ends
+			Iterator<MAssociationEnd> it2 = assoc.associationEnds().iterator();
+			MAssociationEnd aend1 = it2.next();
+			MAssociationEnd aend2 = it2.next();
+
+			res = validateBinaryAssociations(out, assoc, aend1, aend2, reportAllErrors) &&
+				  validateBinaryAssociations(out, assoc, aend2, aend1, reportAllErrors);
+		}
+		
+		// out.println("checking link cardinalities, done.");
+		out.flush();
+		return res;
+	}
+
+	private boolean naryAssociationsAreValid(PrintWriter out, MAssociation assoc, boolean reportAllErrors) {
 		boolean valid = true;
 		Set<MLink> links = linksOfAssociation(assoc).links();
 
@@ -1605,6 +1629,7 @@ public final class MSystemState {
 					valid = false;
 				}
 			}
+			if (!reportAllErrors && !valid) return valid;
 		}
 		return valid;
 	}
@@ -1643,7 +1668,7 @@ public final class MSystemState {
 	}
 
 	private boolean validateBinaryAssociations(PrintWriter out, MAssociation assoc, 
-			MAssociationEnd aend1, MAssociationEnd aend2) {
+			MAssociationEnd aend1, MAssociationEnd aend2, boolean reportAllErrors) {
 		boolean valid = true;
 
 		// for each object of the association end's type get
@@ -1656,8 +1681,12 @@ public final class MSystemState {
 			
 			if (linkedObjects.size() == 0 && !aend2.multiplicity().contains(0)) {
 				reportMultiplicityViolation(out, assoc, aend1, aend2, obj, null);
-				valid = false;
-				continue;
+				if (!reportAllErrors) {
+					return false;
+				} else {
+					valid = false;
+					continue;
+				}
 			}
 			
 			for(Map.Entry<List<Value>, Set<MObject>> entry : linkedObjects.entrySet()) {
@@ -1676,6 +1705,10 @@ public final class MSystemState {
 						valid = false;
 				}
 			}
+			
+			if (!reportAllErrors && !valid) {
+				return valid;
+			}
 		}
 		
 		return valid;
@@ -1693,6 +1726,8 @@ public final class MSystemState {
 	protected void reportMultiplicityViolation(PrintWriter out,
 			MAssociation assoc, MAssociationEnd aend1, MAssociationEnd aend2,
 			MObject obj, Map.Entry<List<Value>, Set<MObject>> entry) {
+		
+		if (out == NullPrintWriter.getInstance()) return;
 		
 		int n = (entry == null ? 0 : entry.getValue().size());
 		
