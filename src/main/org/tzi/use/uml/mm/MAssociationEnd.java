@@ -21,9 +21,9 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -350,19 +350,19 @@ public final class MAssociationEnd extends MModelElementImpl
         return name();
     }
 
+    private List<MAssociationEnd> allOtherEnds = null;
     /**
      * Returns the list of all other association ends participating
      * in the same association.
      * @return List(MAssociatioEnd)
      */
     public List<MAssociationEnd> getAllOtherAssociationEnds() {
-        List<MAssociationEnd> nMinusOneClasses = new ArrayList<MAssociationEnd>();
-        
-        for (MAssociationEnd end : fAssociation.associationEnds()) {
-            if (end != this) nMinusOneClasses.add(end);
+        if (allOtherEnds == null) {
+        	allOtherEnds = new LinkedList<MAssociationEnd>(fAssociation.associationEnds());
+        	allOtherEnds.remove(this);
         }
         
-        return nMinusOneClasses;
+        return allOtherEnds;
     }
 
 	public void addSubsettedEnd(MAssociationEnd subsetsEnd) {

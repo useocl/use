@@ -96,6 +96,9 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
         if (this.aggregationKind == MAggregationKind.NONE)
         	this.aggregationKind = aend.aggregationKind();
         
+        // Does at least one end has a qualifier?
+        this.hasQualifiedEnds = this.hasQualifiedEnds || aend.hasQualifiers();
+        
         fAssociationEnds.add(aend);
         aend.setAssociation(this);
     }
@@ -364,18 +367,13 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 		return false;
 	}
 
+	private boolean hasQualifiedEnds = false;
 	/* (non-Javadoc)
 	 * @see org.tzi.use.uml.mm.MAssociation#hasQualifiedEnds()
 	 */
 	@Override
 	public boolean hasQualifiedEnds() {
-		// TODO Save information?
-		for (MAssociationEnd end : this.associationEnds()) {
-			if (end.hasQualifiers())
-				return true;
-		}
-		
-		return false;
+		return this.hasQualifiedEnds;
 	}
 
 	/* (non-Javadoc)

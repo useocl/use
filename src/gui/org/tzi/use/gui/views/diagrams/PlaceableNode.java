@@ -524,7 +524,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
         }
         
         helper.appendChild(nodeElement, LayoutTags.NAME, name());
-        //FIXME: Was center!
+
         helper.appendChild(nodeElement, LayoutTags.X_COORD, String.valueOf(getPosition().getX()));
         helper.appendChild(nodeElement, LayoutTags.Y_COORD, String.valueOf(getPosition().getY()));
         helper.appendChild(nodeElement, LayoutTags.HIDDEN, String.valueOf(hidden));
