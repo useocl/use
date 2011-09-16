@@ -212,7 +212,9 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         			insertStatements, 
         			deleteStatements);
         	
-        	basicOutput.println(statement.getShellCommand());
+        	if (collector.doBasicPrinting())
+                    basicOutput.println(statement.getShellCommand());
+
         	try {	
         		system.evaluateStatement(statement, true, false, false);
 			} catch (MSystemException e) {
@@ -273,8 +275,10 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         				initialConfiguration, 
         				insertStatements, 
         				deleteStatements);
-        	
-        	basicOutput.println(statement.getShellCommand());
+
+                if (collector.doBasicPrinting())
+                    basicOutput.println(statement.getShellCommand());
+                
         	try {
         		system.evaluateStatement(statement, true, false, false);
         		system.getUniqueNameGenerator().popState();

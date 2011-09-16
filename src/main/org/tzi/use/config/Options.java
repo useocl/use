@@ -43,7 +43,7 @@ public class Options {
     public static final String RELEASE_VERSION = "3.0.0RC8";
 
     // the copyright:
-    public static final String COPYRIGHT = "Copyright (C) 1999-2010 University of Bremen";
+    public static final String COPYRIGHT = "Copyright (C) 1999-2011 University of Bremen";
 
     /**
 	 * Name of the file for system properties located in the etc subdirectory of

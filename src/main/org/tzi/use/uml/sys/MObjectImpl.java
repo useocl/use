@@ -112,6 +112,8 @@ public final class MObjectImpl implements MObject {
     public boolean equals( Object obj ) {
         if ( obj == this )
             return true;
+        if (hashCode != obj.hashCode())
+            return false;
         if ( obj instanceof MObject )
             return fName.equals( ( ( MObject ) obj ).name() );
         return false;

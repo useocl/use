@@ -62,11 +62,11 @@ public final class CollectionUtil {
      *              ... {b,2,q} {b,3,p} {b,3,q} }
      */
     public static <T> List<List<T>> combinations( List<List<T>> listWithLists ) {
-        // the elements of listWithLists must be Lists
         List<List<T>> combinations = new ArrayList<List<T>>();
         Stack<T> elementStack = new Stack<T>();
         
         combine( elementStack, listWithLists, combinations );
+        
         return combinations;
     }
     
