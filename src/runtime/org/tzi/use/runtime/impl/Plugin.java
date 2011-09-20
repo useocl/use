@@ -23,14 +23,20 @@ public abstract class Plugin implements IPlugin {
 	public static Plugin getInstance() {
 		return pluginInstance;
 	}
-	
+
+	/**
+	 * Implementors should not override this method,
+	 * instead {@link #doRun(IPluginRuntime)} should be overridden.<br>
+	 * This method is not declared as final for backward compatibility. 
+	 */
 	@Override
-	public final void run(IPluginRuntime pluginRuntime) throws Exception {
+	public void run(IPluginRuntime pluginRuntime) throws Exception {
 		pluginInstance = this;
 		doRun(pluginRuntime);
 	}
 	
 	/**
+	 * Hook method which allows implementors to react on the plugin start.
 	 * @param pluginRuntime
 	 */
 	protected void doRun(IPluginRuntime pluginRuntime) { }
