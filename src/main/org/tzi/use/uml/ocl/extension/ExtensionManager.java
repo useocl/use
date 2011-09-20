@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.xerces.parsers.DOMParser;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -21,6 +20,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
 public class ExtensionManager {
 	private static ExtensionManager INSTANCE = null;

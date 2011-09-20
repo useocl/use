@@ -34,8 +34,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
@@ -43,6 +41,9 @@ import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * Saves the current layout to a file.

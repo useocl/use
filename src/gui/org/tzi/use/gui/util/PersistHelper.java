@@ -45,7 +45,7 @@ public class PersistHelper {
 	 * Appends a child element to <code>parent</code> with the
 	 * given name and a text element with the value given by <code>value</code>
 	 * @param tagName
-	 * @parem value
+	 * @param value
 	 * @return
 	 */
 	public Element appendChild(Element parent, String tagName, String value) {
@@ -56,24 +56,23 @@ public class PersistHelper {
 	}
 	
 	public String getElementStringValue(Element parent, String childName) {
-		return (String)evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.STRING);
+		NodeList elems = parent.getElementsByTagName(childName);
+		if (elems.getLength() > 0)
+			return elems.item(0).getTextContent();
+		else
+			return null;
 	}
 	
 	public boolean getElementBooleanValue(Element parent, String childName) {
-		return Boolean.valueOf((String)evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.STRING));
+		return Boolean.valueOf(getElementStringValue(parent, childName));
 	}
 	
 	public double getElementDoubleValue(Element parent, String childName) {
-		return (Double)evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.NUMBER);
+		return Double.valueOf(getElementStringValue(parent, childName));
 	}
 	
-	/**
-	 * @param parent
-	 * @param childName
-	 * @return
-	 */
 	public int getElementIntegerValue(Element parent, String childName) {
-		return Integer.valueOf(evaluateXPathSave(parent, "./" + childName + "/text()", XPathConstants.STRING).toString());
+		return Integer.valueOf(getElementStringValue(parent, childName));
 	}
 	
 	public NodeList getChildElementsByTagName( Element parent, String childName) {
