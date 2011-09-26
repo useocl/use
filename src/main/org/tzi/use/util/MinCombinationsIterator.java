@@ -70,7 +70,6 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
 		
 		buildPartitions();
 		initState();
-		buildNextCombination();
 	}
 	
 	private void buildPartitions() {
@@ -109,7 +108,10 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
     	for (int index = 0; index < partitionedCombinations.size(); ++index) {
     		toDo.push(new State(Collections.<Pair<T>>emptyList(), partitionedCombinations.subList(index, partitionedCombinations.size())));
     	}
-	}
+    	
+    	// Empty LinkSet is first
+    	this.nextLinkSet = Collections.emptyList();
+    }
 	
     private void buildNextCombination() {
     	if (toDo.isEmpty()) {
