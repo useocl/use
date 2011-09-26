@@ -48,6 +48,7 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
 import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
@@ -56,7 +57,10 @@ import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.CollectionUtil;
+import org.tzi.use.util.CollectionUtil.UniqueList;
+import org.tzi.use.util.MinCombinationsIterator;
 import org.tzi.use.util.NullPrintWriter;
+import org.tzi.use.util.Pair;
 
 
 public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
@@ -115,9 +119,16 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             fLastEvaluatedInstruction.createEvalInstr().eval(conf,this,collector);
             fIterator.previous();
         }
-        else
-            // every parameter is evaluated, so fObjectLists is complete now
-            tryLinks(conf, collector);
+        else {
+            if (conf.isCheckingStructure() && conf.useMinCombinations() &&
+            	fInstr.association().associationEnds().size() == 2 &&
+            	( !fInstr.association().associationEnds().get(0).isCollection() || 
+            	  !fInstr.association().associationEnds().get(1).isCollection()	)	)
+            	tryLinksBinaryOne(conf, collector);
+            else
+            	// every parameter is evaluated, so fObjectLists is complete now
+            	tryLinks(conf, collector);
+        }
     }
     
     
@@ -510,7 +521,77 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
     	return initConfiguration;
     }
     
-    
+	protected void tryLinksBinaryOne(
+    		GConfiguration conf, 
+    		IGCollector collector) throws GEvaluationException {
+        
+        // Just get combinations of objects and check its size.
+        List<Pair<MObject>> links;
+        MinCombinationsIterator<MObject> linkSetIter;
+        
+        UniqueList unique;
+        if (!fInstr.association().associationEnds().get(0).isCollection()) {
+        	unique = UniqueList.FIRST_IS_UNIQUE;
+        } else {
+        	unique = UniqueList.SECOND_IS_UNIQUE;
+        }
+        
+		linkSetIter = new MinCombinationsIterator<MObject>(fObjectLists.get(0), fObjectLists.get(1), unique);
+        MSystemState state = conf.systemState();
+        MSystem system = state.system();
+            	
+        //TODO: in the original version of this algorithm, all links get removed so
+        //      we do that as well to ensure previous test cases behave the same
+
+        MSequenceStatement statements;
+        StatementEvaluationResult res;
+        
+        double ignoredStates = Math.pow(2, (fObjectLists.get(0).size() * fObjectLists.get(1).size()));
+        
+        if (unique == UniqueList.SECOND_IS_UNIQUE) {
+        	ignoredStates -= Math.pow(fObjectLists.get(0).size() + 1, fObjectLists.get(1).size()) - 1;
+        } else {
+        	ignoredStates -= Math.pow(fObjectLists.get(1).size() + 1, fObjectLists.get(0).size()) - 1;
+        }
+        
+        collector.addIgnoredStates((long)ignoredStates);
+        PrintWriter basicOutput = collector.basicPrintWriter();
+        
+        do {
+        	statements = new MSequenceStatement();
+        	links = linkSetIter.next();
+        	
+        	for (Pair<MObject> elem : links) {
+        		statements.appendStatement(new MLinkInsertionStatement(fInstr.association(), new MObject[]{elem.first, elem.second}, Collections.<List<Value>>emptyList()));
+        	}
+        	
+        	if (collector.doBasicPrinting())
+                basicOutput.println(statements.getShellCommand());
+        	
+        	try {	
+        		res = system.evaluateStatement(statements, true, false, false);
+			} catch (MSystemException e) {
+				throw new GEvaluationException(e);
+			}
+			
+        	
+			fCaller.feedback(conf, null, collector);
+            if (collector.expectSubsequentReporting()) {
+            	collector.subsequentlyPrependStatement(statements);
+            }
+            
+        	system.getUniqueNameGenerator().popState();
+        	
+        	try {	
+        		system.evaluateStatement(res.getInverseStatement(), false, false, false);
+			} catch (MSystemException e) {
+				throw new GEvaluationException(e);
+			}
+        	
+          // stop once all configurations have been built or stopping is allowed
+        } while (linkSetIter.hasNext() && !collector.canStop());
+    }
+	
     private MSequenceStatement constructLinkChangeStatement(
     		long oldCombination, 
     		long newCombination,

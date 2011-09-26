@@ -41,6 +41,7 @@ public class AllTests {
         test.addTestSuite( org.tzi.use.util.HashMultiMapTest.class );
         test.addTestSuite( org.tzi.use.util.ReportTest.class );
         test.addTestSuite( org.tzi.use.util.StringUtilTest.class );
+        test.addTestSuite( org.tzi.use.util.CombinationTest.class );
         test.addTest(org.tzi.use.util.soil.AllTests.suite());
         return test;
     }

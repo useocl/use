@@ -44,18 +44,21 @@ public class GConfiguration {
     private Random fRandom;
     private boolean isCheckingStructure;
     private boolean useTryCuts;
+    private boolean useMinCombinations;
     
     public GConfiguration( MSystemState state,
                            VarBindings varBindings,
                            long randomNr,
                            boolean isCheckingStructure,
-                           boolean useTryCuts) {
+                           boolean useTryCuts,
+                           boolean useMinCombinations) {
         fSystemState = state;
         fVarBindings = varBindings;
         fEvaluator = new Evaluator();
         fRandom = new Random( randomNr );
         this.isCheckingStructure = isCheckingStructure;
         this.useTryCuts = useTryCuts;
+        this.useMinCombinations = useMinCombinations;
     }
 
     public MSystemState systemState() {
@@ -83,4 +86,11 @@ public class GConfiguration {
                                 fSystemState,
                                 fVarBindings );
     }
+
+	/**
+	 * @return
+	 */
+	public boolean useMinCombinations() {
+		return useMinCombinations;
+	}
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +37,11 @@ import java.util.Stack;
  */
 public final class CollectionUtil {
 
+	public enum UniqueList {
+		FIRST_IS_UNIQUE,
+		SECOND_IS_UNIQUE
+	}
+	
     // no instances
     private CollectionUtil() {}
 
@@ -68,6 +74,69 @@ public final class CollectionUtil {
         combine( elementStack, listWithLists, combinations );
         
         return combinations;
+    }
+    
+    
+    /**
+     * Computes of a given List with Lists the combinations.
+     * Example: Given  { { a, b } { 1, 2, 3} { p, q} }
+     * Result is: { {a,1,p} {a,1,q} {a,2,p} {a,2,q} {a,3,p}
+     *              ... {b,2,q} {b,3,p} {b,3,q} }
+     */
+    public static <T> List<List<Pair<T>>> combinationsOne( List<T> firstList, List<T> secondList, UniqueList unique ) {
+    	List<T> l1 = (unique == UniqueList.FIRST_IS_UNIQUE ? secondList : firstList);
+    	List<T> l2 = (unique == UniqueList.FIRST_IS_UNIQUE ? firstList : secondList);
+    	
+    	// Each partition contains only combinations from one element of the unique list
+    	// e.g.: {a,b} {c,d} results in:
+    	// 0 = {(a,c), (a,d)}, 1 = {(b,c), (b,d)}
+    	List<List<Pair<T>>> partitionedCombinations = new ArrayList<List<Pair<T>>>();
+    	
+    	for (int index = 0; index < l1.size(); index++) {
+    		List<Pair<T>> partition = new ArrayList<Pair<T>>();
+    		
+    		for (int index2 = 0; index2 < l2.size(); index2++) {
+    			Pair<T> entry = new Pair<T>();
+    			if (unique == UniqueList.FIRST_IS_UNIQUE) {
+    				entry.first  = l2.get(index2);
+    				entry.second = l1.get(index);
+    			} else {
+    				entry.first  = l1.get(index);
+    				entry.second = l2.get(index2);
+    			}
+    			partition.add(entry);
+    		}
+    		
+    		partitionedCombinations.add(partition);
+    	}
+    	
+    	
+    	List<List<Pair<T>>> result = new ArrayList<List<Pair<T>>>();
+    	// Loops over all partitions of the combinations and calls combine.
+    	// The tails is reduced by one after every call, because the previous call includes already the combinations
+    	for (int index = 0; index < partitionedCombinations.size(); ++index) {
+    		combinationsOneAux(result, Collections.<Pair<T>>emptyList(), partitionedCombinations.subList(index, partitionedCombinations.size()));
+    	}
+    	
+    	return result;
+    }
+    
+    private static <T> void combinationsOneAux(List<List<Pair<T>>> result, List<Pair<T>> head, List<List<Pair<T>>> tail) {
+    
+    	if (tail.size() == 0) return;
+    	
+    	List<Pair<T>> myCombinations = tail.get(0);
+    	
+    	// All combination for a single element
+    	// cmb = m * (1 + (|tail|  
+    	for(int index = 0; index < myCombinations.size(); ++index) {
+    		List<Pair<T>> newHead = new LinkedList<Pair<T>>(head);
+    		newHead.add(myCombinations.get(index));
+    		result.add(newHead);
+    		for (int index2 = 1; index2 < tail.size(); ++index2) {
+	    		combinationsOneAux(result, newHead, tail.subList(index2, tail.size()));
+    		}
+    	}
     }
     
     /**

@@ -1600,7 +1600,8 @@ public final class Shell implements Runnable, PPCHandler {
         boolean outputOptionFound = false;
         boolean randomOptionFound = false;
         boolean checkStructure = true;
-        boolean useCut = false;
+        boolean useCut = true;
+        boolean useMinCombinations = true;
         
         String message = null;
 
@@ -1650,7 +1651,8 @@ public final class Shell implements Runnable, PPCHandler {
                         || optionOrFilename.equals("-bf")
                         || optionOrFilename.equals("-df")
                         || optionOrFilename.equals("-t")
-                        || optionOrFilename.equals("-c")) {
+                        || optionOrFilename.equals("-dc")
+                        || optionOrFilename.equals("-ac")) {
                     // an output option
                     if (outputOptionFound)
                         error = true;
@@ -1666,8 +1668,10 @@ public final class Shell implements Runnable, PPCHandler {
                         printFilename = st.nextToken();
                     } else if (optionOrFilename.equals("-t")) {
                     	printDuration = false;
-                    } else if (optionOrFilename.equals("-c")) {
-                    	useCut = true;
+                    } else if (optionOrFilename.equals("-dc")) {
+                    	useCut = false;
+                    } else if (optionOrFilename.equals("-ac")) {
+                    	useMinCombinations = false;
                     } else 
                     	outputOptionFound = true;
                 } else {
@@ -1699,7 +1703,7 @@ public final class Shell implements Runnable, PPCHandler {
                 Log.error(message);
             else {
                 Log.error("syntax is `start [-l <num>][-r <num>]"
-                        + "[-b|-d|-bf <FILE>|-df <FILE>|-t|-c] "
+                        + "[-b|-d|-bf <FILE>|-df <FILE>|-t|-c|-ac|-dc] "
                         + "FILE PROCNAME([paramlist])'");
             }
             return;
@@ -1710,7 +1714,7 @@ public final class Shell implements Runnable, PPCHandler {
 
         system.generator().startProcedure(filename, callstr, limit,
                 printFilename, printBasics, printDetails, randomNr,
-                checkStructure, useCut);
+                checkStructure, useCut, useMinCombinations);
 
         long duration = System.currentTimeMillis() - start;
         if (printDuration) {

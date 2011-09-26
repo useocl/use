@@ -47,6 +47,10 @@ public class GCollectorImpl implements IGCollector {
     private PrintWriter fDetailPrintWriter;
     private long fLeafCount;
     private long cutCount;
+    /**
+     * Number of states ignored by using reduced number of link combinations.
+     */
+    private long ignoredStates;
     
     private boolean fExistsInvalidMessage;
     private boolean fPrePostCondViolation;
@@ -169,5 +173,17 @@ public class GCollectorImpl implements IGCollector {
     public boolean getPrePostViolation() {
     	return fPrePostCondViolation;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#addIgnoredStates(long)
+	 */
+	@Override
+	public void addIgnoredStates(long ignoredStates) {
+		this.ignoredStates += ignoredStates;
+	}
+	
+	public long getIgnoredStates() {
+		return this.ignoredStates;
+	}
 }
 

@@ -57,5 +57,16 @@ public interface IGCollector {
     public void invalid( String str );
     public void invalid( Exception e );
     
+    /**
+     * Increments the "cut-counter" by one.
+     */
     public void addCut();
+
+	/**
+	 * Adds <code>ignoredStates</code> to the overall ignored states
+	 * @param ignoredStates
+	 */
+	public void addIgnoredStates(long ignoredStates);
+    
+    
 }

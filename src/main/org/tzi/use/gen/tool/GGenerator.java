@@ -73,6 +73,7 @@ public class GGenerator {
     private Long fRandomNr;
     private boolean fCheckStructure;
     private boolean useTryCuts;
+    private boolean useMinCombinations;
     
     private GCollectorImpl collector;
     
@@ -212,7 +213,8 @@ public class GGenerator {
                                       checker,
                                       fRandomNr.longValue(),
                                       fCheckStructure,
-                                      this.useTryCuts);
+                                      this.useTryCuts,
+                                      this.useMinCombinations);
                         
                         fLastResult = new GResult( collector,
                                                    checker,
@@ -271,9 +273,11 @@ public class GGenerator {
                                 boolean printDetails,
                                 Long randomNr,
                                 boolean checkStructure,
-                                boolean useTryCuts) {
+                                boolean useTryCuts,
+                                boolean useMinCombinations) {
         fLastResult = null;
         this.useTryCuts = useTryCuts;
+        this.useMinCombinations = useMinCombinations;
         boolean didShowWarnigs = Log.isShowWarnings();
         Log.setShowWarnings(false);
 
@@ -341,7 +345,8 @@ public class GGenerator {
                                       checker,
                                       randomNr.longValue(),
                                       fCheckStructure,
-                                      this.useTryCuts);
+                                      this.useTryCuts,
+                                      this.useMinCombinations);
                         
                         fLastResult = new GResult( collector,
                                                    checker,
@@ -480,11 +485,14 @@ public class GGenerator {
     public void printResult(PrintWriter pw) throws GNoResultException {
         pw.println("Random number generator was " 
                    + "initialized with " + lastResult().randomNr() + ".");
-        pw.println("Checked " + lastResult().collector().numberOfCheckedStates() + " snapshots.");
+        pw.println("Checked " + String.format("%,d", lastResult().collector().numberOfCheckedStates()) + " snapshots.");
         
         if (this.useTryCuts)
-        	pw.println("Made " + lastResult().collector().getCutCount() + " try cuts.");
+        	pw.println("Made " + String.format("%,d", lastResult().collector().getCutCount()) + " try cuts.");
         
+        if (this.useMinCombinations)
+        	pw.println("Ignored " +  String.format("%,d", lastResult().collector().getIgnoredStates()) + " useless link combinations.");
+        	
         if (lastResult().collector().limit() != Long.MAX_VALUE)
             pw.println("Limit was set to " + lastResult().collector().limit() + "." );
         if (!lastResult().collector().validStateFound() )

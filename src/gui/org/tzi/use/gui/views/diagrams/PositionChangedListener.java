@@ -30,6 +30,6 @@ import java.util.EventListener;
  * 
  * @author lhamann
  */
-public interface PositionChangedListener<Source> extends EventListener {
-	void positionChanged(Source source, Point2D newPosition, double deltaX, double deltaY);
+public interface PositionChangedListener<TSource> extends EventListener {
+	void positionChanged(TSource source, Point2D newPosition, double deltaX, double deltaY);
 }
