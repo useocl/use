@@ -112,6 +112,7 @@ public final class CollectionUtil {
     	
     	
     	List<List<Pair<T>>> result = new ArrayList<List<Pair<T>>>();
+    	result.add(Collections.<Pair<T>>emptyList());
     	// Loops over all partitions of the combinations and calls combine.
     	// The tails is reduced by one after every call, because the previous call includes already the combinations
     	for (int index = 0; index < partitionedCombinations.size(); ++index) {

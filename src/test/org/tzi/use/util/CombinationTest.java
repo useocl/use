@@ -50,8 +50,7 @@ public class CombinationTest extends TestCase {
         List<String> l2 = getList(3, 3);
         
         List<List<Pair<String>>> result = CollectionUtil.combinationsOne(l1, l2, UniqueList.SECOND_IS_UNIQUE);
-        System.out.println(result);
-        assertEquals(8, result.size());
+        assertEquals(64, result.size());
     }
     
     
@@ -59,7 +58,7 @@ public class CombinationTest extends TestCase {
     	List<String> l1 = getList(0,3);
         List<String> l2 = getList(3,3);
         
-        List<List<Pair<String>>> result = CollectionUtil.combinationsOne(l1, l2, UniqueList.FIRST_IS_UNIQUE);
+        List<List<Pair<String>>> result = CollectionUtil.combinationsOne(l1, l2, UniqueList.SECOND_IS_UNIQUE);
         MinCombinationsIterator<String> iter = new MinCombinationsIterator<String>(l1, l2, UniqueList.SECOND_IS_UNIQUE);
         
         int num = 0;
