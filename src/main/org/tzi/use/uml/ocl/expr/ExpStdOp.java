@@ -278,11 +278,6 @@ public final class ExpStdOp extends Expression {
                         // need to call the operation's eval() method.
                         res = UndefinedValue.instance;
                         break;
-                    case OpGeneric.PREDICATE:
-                        // predicates are by default false when passed
-                        // an undefined argument
-                        res = BooleanValue.FALSE;
-                        break;
                     case OpGeneric.SPECIAL:
                         // these operations handle undefined arguments
                         // themselves

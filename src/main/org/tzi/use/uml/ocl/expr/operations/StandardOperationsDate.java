@@ -44,7 +44,7 @@ abstract class ExpStdOpDate_Date_Bool extends StandardOperationsDate
 
 	@Override
 	public int kind() {
-		return PREDICATE;
+		return OPERATION;
 	}
 	
 	@Override

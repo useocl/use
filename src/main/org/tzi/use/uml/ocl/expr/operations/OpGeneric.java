@@ -31,8 +31,6 @@ public abstract class OpGeneric {
     // SPECIAL -> operation needs special treatment of undefined arguments
     public static final int OPERATION = 0;
 
-    public static final int PREDICATE = 1;
-
     public static final int SPECIAL = 3;
 
     public abstract String name();

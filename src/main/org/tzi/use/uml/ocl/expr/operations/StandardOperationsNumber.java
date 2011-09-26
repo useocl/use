@@ -542,7 +542,7 @@ final class Op_number_less extends OpGeneric {
 	}
 
 	public int kind() {
-		return PREDICATE;
+		return OPERATION;
 	}
 
 	public boolean isInfixOrPrefix() {
@@ -579,7 +579,7 @@ final class Op_number_greater extends OpGeneric {
 	}
 
 	public int kind() {
-		return PREDICATE;
+		return OPERATION;
 	}
 
 	public boolean isInfixOrPrefix() {
@@ -616,7 +616,7 @@ final class Op_number_lessequal extends OpGeneric {
 	}
 
 	public int kind() {
-		return PREDICATE;
+		return OPERATION;
 	}
 
 	public boolean isInfixOrPrefix() {
@@ -653,7 +653,7 @@ final class Op_number_greaterequal extends OpGeneric {
 	}
 
 	public int kind() {
-		return PREDICATE;
+		return OPERATION;
 	}
 
 	public boolean isInfixOrPrefix() {
