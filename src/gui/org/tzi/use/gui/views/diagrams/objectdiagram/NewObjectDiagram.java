@@ -394,7 +394,7 @@ public class NewObjectDiagram extends DiagramView
     		MLinkSet links = fParent.system().state().linksOfAssociation(assoc);
     		// TODO: Not very fast!
     		for (MLink link : links.links()) {
-    			if (link.linkedObjects().contains(obj) || (isLinkObject && ((MLinkObject)link).equals(obj))) {
+    			if (link.linkedObjects().contains(obj) || (isLinkObject && link.equals(obj))) {
     				boolean allVisible = true;
     				for (MObject linkedO : link.linkedObjects()) {
     					if (!visibleData.fObjectToNodeMap.containsKey(linkedO)) {
