@@ -163,11 +163,11 @@ the web.
 9. Reporting bugs
 -----------------
 
-Bug reports can be addressed to the following address:
+Bug reports can submitted on SourceForge
 
-   mk@informatik.uni-bremen.de
+   https://sourceforge.net/apps/mantisbt/useocl
 
-When sending bug reports, always include:
+When submitting bug reports, always include:
   - a complete description of the problem encountered
   - the output of `use -V'
   - the operating system and version

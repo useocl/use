@@ -2,8 +2,89 @@ USE NEWS -- history of user-visible changes. -*- Text -*-
 
 $Id$
 
-Please send bug reports to mk@informatik.uni-bremen.de. See the file
-`README' for a description of how to report bugs.
+Please see the file `README' for a description of how to report bugs.
+
+** Changes since version 2.6.0
+* [GUI] The class and object diagrams where refactored. One benefit is, that show, 
+  hide and crop are now faster.
+
+* [GUI] Class and object diagrams now show scroll bars if content is larger then
+  the diagram window.
+
+* [GUI] The owners of role names, association names and multiplicities are
+  shown when these elements are selected.
+
+* [GUI] Layout save and load was completely refactored which solves many bugs,
+  e. g., heap overflow and unsaved position of association classes.
+
+* [GUI] Objects created by dragging a class into an object window are placed
+  at the mouse pointer postition and not randomly.
+  
+* [GUI] The save and load dialogs now remind the previous choosen directory.
+
+* [GUI] Qualified association ends are shown in class and object diagram.
+
+* [GUI,UML,OCL] Definition of qualified association ends is now supported.
+  The following example qualifies the association end tiles with two
+  integer values (note that the placement of the qualifiers is switched to
+  align the definition more to the grapfical representation):
+  
+  association MapTiles between
+    Map[1] role map qualifier (x:Integer, y:Integer)
+    Tile[0..1] role tiles
+  end
+  
+  Links of qualified associations can be created by specifying qualifier values
+  at the corresponding end:
+  
+  !insert (aMap{1,1}, aTile) into MapTiles
+  
+  The same syntax is used for delete and create statements.
+  
+  Navigation is done as defined in the OCL standard by providing qualifier
+  values in brackets, e. g.,
+  
+  aMap.tiles[1,1]
+
+* [UML] Inheritance of association classes now works correctly.
+  
+* [ASSL] Instances of association classes can now be created in ASSL procedures by
+  the commands
+  
+    Create(AssociationClassName, [instanceEnd1], [instanceEnd2], ... [instanceEndN]);
+	
+	Try(AssociationClassName, [instanceEnd1], [instanceEnd2], ... [instanceEndN]);
+	
+  The Try command returns a set of created instances of the association class.
+
+* [ASSL] The Try command on associations and associations classes now automatically
+  reduces the search space when applicable. When used on a binary association with at
+  least one association end with upper multiplicity of 1 only combinations which
+  do not violate the upper multiplicity are tried. This optimization is not used when
+  either structural checks are supressed (argument -s) or it is supressed by providing
+  the argument -ac (all combinations) when starting an ASSL procedure.
+
+* [ASSL] The Try command now immidiatly checks for structural violations if structural
+  checks are not supressed by the -s option. These checks are also not performed when
+  the combinations are automatically reduced as decribed before. These "cuts" can be
+  supressed by providing the argument -dc (do not cut).
+  
+* [OCL] USE now requires a return type for operation definitions. Before 3.0.0 USE 
+  infered the result type which could lead to errors, e. g., when defining recursive 
+  operations.
+
+* [OCL] Type operations (oclAsType, oclIsKindOf, ...) on collections are now supported.
+
+* [OCL] Empty collections can now initiated with a type, as it is specified in the OCL 2.2
+  standard, e.g., Set(Integer){}
+
+* [OCL] The undefined value (null) can be "upcasted" by specifying a type, e.g., null(Integer).
+  This is the shorthand notation for let c:Integer = null in c
+  
+* [SOIL] Support of while loop, e. g., x := 1.1; while x < 100 do x := x * x end;
+
+* [General] Many minor bug fixes. For details please visit:
+  https://sourceforge.net/apps/mantisbt/useocl/changelog_page.php
 
 ** Changes since version 2.5.0
 * [GUI] Sequence diagram now supports association classes.

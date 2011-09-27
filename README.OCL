@@ -24,11 +24,6 @@ USE.
   - Invariants can have multiple variables, e. g.,
     context p1, p2:Person inv nameUnique
         p1.name = p2.name implies p1 = p2
-
-  - All types include an undefined value. For example, the expression
-    1/0 results in the value "undefined" of type Integer. Checking for
-    an undefined value can be done with the new operations "isDefined"
-    and "isUndefined". These are defined for all types, e.g.,
-    (1/0).isUndefined() results in "true". An undefined value may be
-    explicitly specified with the new operation "oclUndefined(T)"
-    where T may be any type.
+  
+  - The undefined value (null) can be "upcasted" by specifying a type, e.g., 
+    null(Integer). This is the shorthand notation for let i:Integer = null in i
