@@ -48,28 +48,20 @@ import org.tzi.use.util.NullPrintWriter;
 
 
 /**
- * TODO
+ * Soil AST tests
  * @author Daniel Gent
  *
  */
 public class ASTConstructionTest extends TestCase {
-	/** TODO */
+
 	private ASTStatement fResult;
 
-	
-	/**
-	 * TODO
-	 */
 	@Override
 	@Before
 	public void setUp() {
 		fResult = null;
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testEmptyStatement() {
 		// nothing
@@ -84,10 +76,6 @@ public class ASTConstructionTest extends TestCase {
 		assertTrue(fResult.isEmptyStatement());
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testSequenceStatement() {
 		// sequence of two statements
@@ -163,10 +151,6 @@ public class ASTConstructionTest extends TestCase {
 		}
 	}
 
-
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testVariableAssignment() {
 		// assignment of an expression
@@ -217,11 +201,6 @@ public class ASTConstructionTest extends TestCase {
 				instanceof ASTRValueNewLinkObject);
 	}
 		
-
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testAttributeAssignment() {
 		// assign expression to attribute
@@ -260,10 +239,6 @@ public class ASTConstructionTest extends TestCase {
 		assertTrue(fResult instanceof ASTAttributeAssignmentStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testObjectCreation() {
 		// object creation without variable assignment
@@ -277,11 +252,7 @@ public class ASTConstructionTest extends TestCase {
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTNewObjectStatement);
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testLinkObjectCreation() {
 		// simple link object creation
@@ -307,11 +278,7 @@ public class ASTConstructionTest extends TestCase {
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTNewLinkObjectStatement);
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testObjectDestruction() {
 		// single destruction statement
@@ -340,11 +307,7 @@ public class ASTConstructionTest extends TestCase {
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTObjectDestructionStatement);
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testLinkInsertion() {
 		// simple link insertion
@@ -376,11 +339,7 @@ public class ASTConstructionTest extends TestCase {
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTLinkInsertionStatement);
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+		
 	@Test
 	public void testLinkDeletion() {
 		// simple link deletion
@@ -388,11 +347,7 @@ public class ASTConstructionTest extends TestCase {
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTLinkDeletionStatement);
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testConditionalExecution() {
 		// conditional execution without else statement
@@ -406,11 +361,7 @@ public class ASTConstructionTest extends TestCase {
 		assertNotNull(fResult);
 		assertTrue(fResult instanceof ASTConditionalExecutionStatement);
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testIteration() {
 		// simple iteration
@@ -420,9 +371,6 @@ public class ASTConstructionTest extends TestCase {
 	}
 	
 	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testOperationCall() {
 		// simple operation call
@@ -433,7 +381,7 @@ public class ASTConstructionTest extends TestCase {
 	
 	
 	/**
-	 * TODO
+	 * Helper method
 	 * @param input
 	 * @return
 	 */
