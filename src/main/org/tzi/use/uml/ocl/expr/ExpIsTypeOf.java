@@ -78,7 +78,13 @@ public final class ExpIsTypeOf extends Expression {
     @Override
     public StringBuilder toString(StringBuilder sb) {
         fSourceExpr.toString(sb);
-        sb.append(".oclIsTypeOf(");
+        
+        if (fSourceExpr.type().isCollection(true))
+        	sb.append("->");
+        else
+        	sb.append(".");
+        
+        sb.append("oclIsTypeOf(");
         fTargetType.toString(sb);
         return sb.append(")");
     }

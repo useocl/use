@@ -1417,6 +1417,9 @@
 ? let x=1 in let x=2 in let x=3 in x
 *-> 3 : Integer
 
+#
+## type operations
+#
 ? 42.oclIsKindOf(OclVoid)
 *-> false : Boolean
 
@@ -1428,5 +1431,48 @@
 
 ? true.oclIsKindOf(OclVoid)
 *-> false : Boolean
+
+? Set{1}->oclIsKindOf(Set(OclAny))
+*-> true : Boolean
+
+?Set{1}->oclIsTypeOf(Set(OclAny))
+*-> false : Boolean
+
+?Set{1}->oclIsKindOf(Set(String))
+*-> false : Boolean
+
+?Set{1}.oclIsKindOf(Set(String))
+*-> Bag{false} : Bag(Boolean)
+
+?Set{1}.oclIsKindOf(String)
+*-> Bag{false} : Bag(Boolean)
+
+?Set{1,'a'}.oclIsKindOf(String)
+*-> Bag{false,true} : Bag(Boolean)
+
+?1->oclIsKindOf(Integer)
+*<input>:1:3: Warning: application of `oclIsKindOf' to a single value should be done with `.' instead of `->'.
+*-> true : Boolean
+
+?1.oclIsKindOf(Real)
+*-> true : Boolean
+
+?1.oclIsKindOf(Set(Integer))
+*-> false : Boolean
+
+?let s:Collection(Integer) = Set{1} in s.oclAsType(Set(Integer))
+*<input>:1:50: Target type `Set(Integer)' is not a subtype of the source expression's type `Integer'.
+
+?let s:Collection(Integer) = Set{1} in s->oclAsType(Set(Integer))
+*-> Set{1} : Set(Integer)
+
+?let s:Collection(Integer) = Set{1} in s->oclAsType(Set(OclAny))
+*<input>:1:51: Target type `Set(OclAny)' is not a subtype of the source expression's type `Collection(Integer)'.
+
+?let s:Collection(OclAny) = Set{1} in s->oclAsType(Set(OclAny))
+*-> Set{1} : Set(Integer)
+
+?:let s:Collection(OclAny) = Set{1} in s->oclAsType(Set(OclAny))
+*-> Set(OclAny)
 
 exit

@@ -15,3 +15,7 @@ as well as empty lines. All other lines not starting with a `*' are
 taken as input for USE. Lines with a leading `*' mark expected output
 (without the `*') from USE.
 
+"Topics" of the test files:
+---------------------------
+t001: Operations on build in types
+t002: Operations on build in types and objects

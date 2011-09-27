@@ -45,10 +45,10 @@ import org.tzi.use.uml.ocl.type.Type;
  *   <li>oclAsType</li>
  *   <li>oclIsKindOf</li>
  *   <li>oclIsTypeOf</li>
- * </ul> 
- *
- * @version     $ProjectVersion: 0.393 $
+ * </ul>
+ * 
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
 public class ASTTypeArgExpression extends ASTExpression {
     private Token fOpToken;
@@ -67,7 +67,7 @@ public class ASTTypeArgExpression extends ASTExpression {
     }
 
     public Expression gen(Context ctx) throws SemanticException {
-        Expression res;
+        Expression res = null;
         Expression expr;
         Type t = fTargetType.gen(ctx);
 
@@ -86,15 +86,28 @@ public class ASTTypeArgExpression extends ASTExpression {
                                             fOpToken.getText() + "'.");
         }
     
-        // this type expression cannot be applied to collections
-        // (Collection is not a subtype of OclAny where this
-        // expression is defined). However, if we find a source
-        // expression of type Collection(T), this might be a shorthand
-        // for the collect operation, e.g. `c.oclIsKindOf(Employee)'
+        if (!expr.type().isCollection(true) && fFollowsArrow) {
+        	ctx.reportWarning(fOpToken, "application of `" + fOpToken.getText() + 
+                    "' to a single value should be done with `.' " +
+                    "instead of `->'.");
+        }
+        // If we find a source expression of type Collection(T), 
+        // this might be a shorthand for the collect operation, 
+        // e.g. `c.oclIsKindOf(Employee)'
         // is a valid shorthand for `c->collect(e |
         // e.oclIsKindOf(Employee))'
-
-        if (! expr.type().isCollection(true) ) {
+        if (expr.type().isCollection(true) && !fFollowsArrow) {
+            if (Options.disableCollectShorthand )
+                throw new SemanticException(fOpToken, MSG_DISABLE_COLLECT_SHORTHAND);
+        
+            CollectionType cType = (CollectionType ) expr.type();
+            Type elemType = cType.elemType();
+                    
+            // transform c.oclIsKindOf(t) into c->collect($e | $e.oclIsKindOf(t))
+            ExpVariable eVar = new ExpVariable("$e", elemType);
+            Expression collectBody = genExpr(eVar, t);
+            res = genImplicitCollect(expr, collectBody, elemType);
+        } else {
             res = genExpr(expr, t);
             // Because of multiple inheritance only oclIsTypeOf results always in false when no relation is given  
             if ((res instanceof ExpIsTypeOf) && ! expr.type().isSubtypeOf(t) && ! t.isSubtypeOf(expr.type()) )
@@ -103,25 +116,6 @@ public class ASTTypeArgExpression extends ASTExpression {
                                   expr.type() + 
                                   "' is neither a subtype nor a supertype of the target type `" +
                                   t + "'.");
-        } else if (! fFollowsArrow ) {
-            if (Options.disableCollectShorthand )
-                throw new SemanticException(fOpToken, MSG_DISABLE_COLLECT_SHORTHAND);
-        
-            CollectionType cType = (CollectionType ) expr.type();
-            Type elemType = cType.elemType();
-            if (elemType.isCollection(true) ) // nested collection?
-                throw new SemanticException(fOpToken, "Operation `" +
-                                            fOpToken.getText() + 
-                                            "' cannot be applied to collection.");
-        
-            // transform c.oclIsKindOf(t) into c->collect($e | $e.oclIsKindOf(t))
-            ExpVariable eVar = new ExpVariable("$e", elemType);
-            Expression collectBody = genExpr(eVar, t);
-            res = genImplicitCollect(expr, collectBody, elemType);
-        } else {
-            throw new SemanticException(fOpToken, "Operation `" +
-                                        fOpToken.getText() + 
-                                        "' cannot be applied to collection.");
         }
 
         return res;
