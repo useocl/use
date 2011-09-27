@@ -215,7 +215,7 @@ attAssignStat[ASTExpression exp] returns [ASTAttributeAssignmentStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 objCreateStat returns [ASTStatement n]
 :
-  'new'
+  keyNew
   ident = simpleType
   (
     LPAREN
@@ -576,6 +576,8 @@ identListMin1 returns [List<String> n]
   )*
 ;
 
+keyNew:
+  {input.LT(1).getText().equals("new")}? IDENT ;
 /* -----------------------------------------------------------------------------
 -------------------------- end of file SoilBase.gpart --------------------------
 ----------------------------------------------------------------------------- */
