@@ -88,6 +88,18 @@ Please see the file `README' for a description of how to report bugs.
   
 * [SOIL] Support of while loop, e. g., x := 1.1; while x < 100 do x := x * x end;
 
+* [GUI/CML] Coverage analysis
+  A simple coverage analysis of the defined constraints can now be used.
+  
+  In a class diagram the coverage is visualized by different lighter and darker
+  blue coloring of classes and attributes (operations are currently not supported).
+  If an attribute or class is dark, it is used more often in constraints. 
+  To show the coverage information use the context menu of the class diagram
+  and then select "Show coverage". 
+ 
+  On the command line the command !coverage prints more detailed information
+  about the model coverage.
+
 * [General] Many minor bug fixes. For details please visit:
   https://sourceforge.net/apps/mantisbt/useocl/changelog_page.php
 
