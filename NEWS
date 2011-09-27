@@ -75,7 +75,7 @@ Please see the file `README' for a description of how to report bugs.
 
 * [OCL] Type operations (oclAsType, oclIsKindOf, ...) on collections are now supported.
 
-* [OCL] Empty collections can now initiated with a type, as it is specified in the OCL 2.2
+* [OCL] Empty collections can now be initiated with a type, as it is specified in the OCL 2.2
   standard, e.g., Set(Integer){}
 
 * [OCL] The undefined value (null) can be "upcasted" by specifying a type, e.g., null(Integer).
