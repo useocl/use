@@ -109,7 +109,6 @@ public class GEvalAttributeAssignment extends GEvalInstruction
     	try {
     		StatementEvaluationResult evaluationResult = 
     			system.evaluateStatement(statement, true, false, false);
-    		
     		inverseStatement = evaluationResult.getInverseStatement();
     		
 		} catch (MSystemException e) {
@@ -120,13 +119,16 @@ public class GEvalAttributeAssignment extends GEvalInstruction
 		if (collector.expectSubsequentReporting()) {
 			collector.subsequentlyPrependStatement(statement);
 		}
-         
+        
 		basicOutput.println("undo: " + statement.getShellCommand());
 		try {
 			system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}
+		
+		system.getUniqueNameGenerator().popState();
+		system.getUniqueNameGenerator().popState();
     }
 
     public String toString() {

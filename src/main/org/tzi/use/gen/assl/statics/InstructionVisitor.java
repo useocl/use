@@ -131,4 +131,10 @@ public interface InstructionVisitor {
 	 * @param gInstructionList
 	 */
 	void visitInstrucionList(GInstructionList gInstructionList);
+
+	/**
+	 * @param gInstrTry_AssocClass_LinkendSeqs
+	 */
+	void visitInstrTry_AssocClass_LinkendSeqs(
+			GInstrTry_AssocClass_LinkendSeqs gInstrTry_AssocClass_LinkendSeqs);
 }

@@ -24,22 +24,22 @@
 
 package org.tzi.use.gen.assl.statics;
 
+import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.SequenceType;
+import org.tzi.use.uml.ocl.type.TypeFactory;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-class GMatcherTry_Assoc_LinkendSeqs implements IGInstructionMatcher {
+class GMatcherTry_AssocClass_LinkendSeqs implements IGInstructionMatcher {
     public String name() {
         return "Try";
     }
@@ -63,8 +63,8 @@ class GMatcherTry_Assoc_LinkendSeqs implements IGInstructionMatcher {
         	ends.add(  (GValueInstruction) o  );
         }
         
-        return new GInstrTry_Assoc_LinkendSeqs(
-                                               model.getAssociation((String) first), ends );
+		return new GInstrTry_AssocClass_LinkendSeqs(
+				(MAssociationClass) model.getAssociation((String) first), ends);
     }
 
     private boolean matches( Object first, List<Object> rest, MModel model ) {
@@ -74,7 +74,7 @@ class GMatcherTry_Assoc_LinkendSeqs implements IGInstructionMatcher {
         if (assoc == null )
             return false;
 
-        if (assoc instanceof MAssociationClass)
+        if (!(assoc instanceof MAssociationClass))
         	return false;
         
         List<MAssociationEnd> ends = assoc.associationEnds();
@@ -90,7 +90,7 @@ class GMatcherTry_Assoc_LinkendSeqs implements IGInstructionMatcher {
 
             if (! (r instanceof GValueInstruction) ||
                 ! ((GValueInstruction) r).type()
-                .isSubtypeOf( TypeFactory.mkSequence(endtype) ) )
+                .isSubtypeOf( new SequenceType(endtype) ) )
                 return false;
         }    
 

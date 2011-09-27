@@ -61,18 +61,25 @@ class GMatcherCreate_AC implements IGInstructionMatcher {
     	// First param must be a name of an association class and not abstract
     	if (!(param.get(0) instanceof String)) return false;
     	String associationClassName = (String)param.get(0);
-    	MClass associationClass = model.getClass(associationClassName);
+    	MClass cls = model.getClass(associationClassName);
     	
-    	if (associationClass == null || associationClass.isAbstract() || !(associationClass instanceof MAssociationClass))
+    	if (cls == null || cls.isAbstract() || !(cls instanceof MAssociationClass))
     		return false;
     	
+    	MAssociationClass associationClass = (MAssociationClass)cls;
+    	
     	// All association ends must be provided
-    	if (((MAssociationClass)associationClass).associationEnds().size() != param.size() - 1)
+    	if (associationClass.associationEnds().size() != param.size() - 1)
     		return false;
     	
     	// All parameter need to be objects of connected classes
     	for (int index = 1; index < param.size(); ++index) {
     		if (!(param.get(index) instanceof GValueInstruction)) return false;
+    		
+    		GValueInstruction instr = (GValueInstruction)param.get(index);
+    		if (!instr.type().isSubtypeOf(associationClass.associationEnds().get(index - 1).cls().type())) {
+    			return false;
+    		}
     	}
     	
     	return true;    	

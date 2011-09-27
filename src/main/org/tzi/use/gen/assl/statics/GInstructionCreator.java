@@ -54,6 +54,7 @@ public class GInstructionCreator {
             new GMatcherInsert_Assoc_Linkends(),
             new GMatcherDelete_Assoc_Linkends(),
             new GMatcherTry_Assoc_LinkendSeqs(),
+            new GMatcherTry_AssocClass_LinkendSeqs(),
             new GMatcherSub_Seq_Integer(),
             new GMatcherCreate_AC()
         };
