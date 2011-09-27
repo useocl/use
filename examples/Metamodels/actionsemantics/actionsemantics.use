@@ -1138,7 +1138,7 @@ operations
 
 -- [4] This operation asserts that the step preceding this execution snapshot
 -- caused the creation of the entity with given identity.
-  new(id : Identity) : Boolean =
+  new_(id : Identity) : Boolean =
     self.preChange.oclAsType(Step).predecessor.isDefined()
 --    Set{self.preChange.oclAsType(Step).predecessor}->notEmpty
 -- post: self.post(id).isNew()
@@ -1636,7 +1636,7 @@ operations
      self.currentActionSnapshot().valueOf(p.flow.source)
 -- [4] This operation asserts that the execution of the procedure action has been started.
   actionExecutionStarted(): Boolean =
-    self.new(self.executionID.actionExecution)
+    self.new_(self.executionID.actionExecution)
 end
 
 --------------------------------------------------------------
@@ -1697,13 +1697,13 @@ operations
 --      self.groupExecutionID.subactionExecution.availableExecutions()->asSet())
 -- [2] This operation asserts that the subaction executions have been started.
   subactionExecutionsStarted() : Boolean =
-    self.groupExecutionID.subactionExecution->forAll(e : ActionExecutionIdentity | self.new(e))
+    self.groupExecutionID.subactionExecution->forAll(e : ActionExecutionIdentity | self.new_(e))
 -- [3] This operation asserts that the subaction executions have completed.
   subactionExecutionsCompleted() : Boolean =
     self.groupExecutionID.subactionExecution->forAll(e : ActionExecutionIdentity | self.completed(e))
 -- [4] This operation asserts that the variable executions have been started.
   variableExecutionsStarted() : Boolean =
-    self.groupExecutionID.variableExecution->forAll(e : VariableExecutionIdentity | self.new(e))
+    self.groupExecutionID.variableExecution->forAll(e : VariableExecutionIdentity | self.new_(e))
 -- [5] This operation asserts that the variable executions have been stopped.
   variableExecutionStopped() : Boolean =
     self.groupExecutionID.variableExecution->forAll(e : VariableExecutionIdentity | self.destroyed(e))
