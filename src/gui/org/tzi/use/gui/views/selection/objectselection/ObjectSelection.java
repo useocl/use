@@ -182,8 +182,6 @@ public class ObjectSelection {
 		it = diagram.getGraph().iterator();
 		subMenuHideObject = new JMenu("Selection hide object");
 
-		int nodesize = 0;
-
 		SelectionComparator sort = new SelectionComparator();
 		TreeSet<MClass> classes = new TreeSet<MClass>(sort);
 		ArrayList<JMenu> submenus = new ArrayList<JMenu>();
@@ -247,7 +245,6 @@ public class ObjectSelection {
 			String objectname = "";
 
 			if (node instanceof ObjectNode) {
-				nodesize++;
 				MClass cls = null;
 				MObject mobj = null;
 
@@ -307,8 +304,6 @@ public class ObjectSelection {
 		it = diagram.getHiddenNodes().iterator();
 		subMenuShowObject = new JMenu("Selection show object");
 
-		int nodesize = 0;
-
 		SelectionComparator sort = new SelectionComparator();
 
 		TreeSet<MClass> classes = new TreeSet<MClass>(sort);
@@ -359,7 +354,6 @@ public class ObjectSelection {
 			String objectname = "";
 
 			if (node instanceof MObject) {
-				nodesize++;
 				MClass cls = null;
 				MObject mobj = null;
 				mobj = (MObject) node;

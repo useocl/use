@@ -39,7 +39,7 @@ public class LineChartView extends JPanel {
     private int fRangeCurrentX; // 0 <= fCurrentX < fMaxX 
     private int fMaxY = 0;  // max. y value of all samples
     private int fTopY = 10; // fMaxY <= fTopY
-    private int fX;     // current x value
+    
     private Font fFont;
 
     /**
@@ -69,7 +69,6 @@ public class LineChartView extends JPanel {
         if (values.length != fNumLines )
             throw new IllegalArgumentException("values.length != fNumLines");
 
-        fX++;
         if (fRangeCurrentX < fRangeX - 1)
             fRangeCurrentX++;
         else {

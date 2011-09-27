@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.Queue;
 
 /**
@@ -34,9 +35,6 @@ import org.tzi.use.util.Queue;
  * @author  Mark Richters
  */
 class ThreadedEvaluator {
-    private static final boolean DEBUG = false;
-    //private static final boolean DEBUG = true;
-
     /**
      * A Controller maintains a set of worker threads each processing
      * a single expression at a time.
@@ -76,20 +74,24 @@ class ThreadedEvaluator {
         public void run() {
             // spawn worker threads
             for (int i = 0; i < fNumWorkers; i++) {
-                if (DEBUG )
-                    System.err.println("Starting Worker " + i);
+                if (Log.isDebug())
+                    Log.debug("Starting Worker " + i);
+                
                 fWorkers[i] = new Worker(this, i);
                 fWorkers[i].start();
             }
 
             // wait on results in fifo order
             for (int i = 0; i < fNumJobs; i++) {
-                if (DEBUG )
-                    System.err.println("Waiting on result " + i + " of " + fNumJobs);
+            	if (Log.isDebug())
+                    Log.debug("Waiting on result " + i + " of " + fNumJobs);
+            	
                 Job job = fJobs[i];
                 Value v = job.getResult();
-                if (DEBUG )
-                    System.err.println("Got result " + i + " of " + fNumJobs);
+                
+                if (Log.isDebug())
+                    Log.debug("Got result " + i + " of " + fNumJobs);
+                
                 fResultValueQueue.append(v);
             }
         }
@@ -150,34 +152,38 @@ class ThreadedEvaluator {
         }
 
         public void run() {
-            if (DEBUG )
-                System.err.println("Worker " + fNumber + " starts running.");
+        	if (Log.isDebug())
+                Log.debug("Worker " + fNumber + " starts running.");
+            
             int jobsProcessed = 0;
+            
             Job job;
             while ((job = fController.getNextJob()) != null ) {
-                if (DEBUG )
-                    System.err.println("Worker " + fNumber + " working on job " + job);
+            	if (Log.isDebug())
+                    Log.debug("Worker " + fNumber + " working on job " + job);
+            	
                 Evaluator evaluator = new Evaluator();
 
                 Value v = null;
                 try {
                     v = evaluator.eval(job.fExpr, fController.fSystemState);
                 } catch (Exception ex) {
-                    if (DEBUG) {
-                        System.err.println("Caught: " + ex.getMessage());
-                    }
+                	if (Log.isDebug())
+                        Log.debug("Caught: " + ex.getMessage());
                     
                     v = null;
                     job.setIgnore(true);
                 }
 
-                if (DEBUG )
-                    System.err.println("Worker " + fNumber + " finished job " + job);
+                if (Log.isDebug())
+                    Log.debug("Worker " + fNumber + " finished job " + job);
+                
                 job.setResult(v);
                 jobsProcessed++;
             }
-            if (DEBUG )
-                System.err.println("Worker " + fNumber + " finished (" + 
+            
+            if (Log.isDebug())
+                Log.debug("Worker " + fNumber + " finished (" + 
                                    jobsProcessed + " jobs processed)");
         }
     }

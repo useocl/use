@@ -78,7 +78,6 @@ public class SelectionObjectTableModel extends TableModel {
 			MSystemState state = fSystem.state();
 			Set<MObject> allObjects = state.allObjects();
 			Iterator<MObject> objectIterator = allObjects.iterator();
-			int i = 0;
 
 			SelectionComparator sort = new SelectionComparator();
 			TreeSet<MObject> sortedNodes = new TreeSet<MObject>(sort);
@@ -87,7 +86,6 @@ public class SelectionObjectTableModel extends TableModel {
 				MObject obj = objectIterator.next();
 				if (cls.equals(obj.cls())) {
 					 sortedNodes.add(obj);
-					i++;
 				}
 			}
 			

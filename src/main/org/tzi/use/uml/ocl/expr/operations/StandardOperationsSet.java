@@ -12,7 +12,6 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
 
