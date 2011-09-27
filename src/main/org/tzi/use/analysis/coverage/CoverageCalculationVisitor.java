@@ -319,6 +319,7 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 	 */
 	@Override
 	public void visitLet(ExpLet exp) {
+		exp.getVarExpression().processWithVisitor(this);
 		exp.getInExpression().processWithVisitor(this);
 	}
 
