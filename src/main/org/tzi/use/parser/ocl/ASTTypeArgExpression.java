@@ -38,7 +38,14 @@ import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 
 /**
- * Node of the abstract syntax tree constructed by the parser.
+ * Node of the abstract syntax tree constructed by the parser, 
+ * which represents one of the following type expressions or
+ * a shorthand collect of them:
+ * <ul>
+ *   <li>oclAsType</li>
+ *   <li>oclIsKindOf</li>
+ *   <li>oclIsTypeOf</li>
+ * </ul> 
  *
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
