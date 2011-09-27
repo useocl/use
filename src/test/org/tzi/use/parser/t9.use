@@ -6,4 +6,4 @@ end
 constraints
 
 context A inv:
-  Set{Set{1,2}}.oclIsKindOf(Set(Integer))
+  Set{Set{1,2}}->oclIsKindOf(Set(Integer))
