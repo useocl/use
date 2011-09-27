@@ -98,7 +98,6 @@ public class ActionLoadLayout extends AbstractAction {
         if (returnVal != JFileChooser.APPROVE_OPTION)
             return;
 
-        long start = System.currentTimeMillis();
         Options.setLastDirectory(fileChooser.getCurrentDirectory().toString());
         lastFile = fileChooser.getSelectedFile();
 
@@ -134,9 +133,6 @@ public class ActionLoadLayout extends AbstractAction {
 		
 		fDiagram.restorePlacementInfos(helper, rootElement, version);
         fDiagram.invalidateContent();
-        
-        long end = System.currentTimeMillis();
-        System.out.println("Loaded layout in " + (end - start) + "ms");
     }
  
 }

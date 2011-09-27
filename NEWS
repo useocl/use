@@ -18,16 +18,16 @@ Please see the file `README' for a description of how to report bugs.
   e. g., heap overflow and unsaved position of association classes.
 
 * [GUI] Objects created by dragging a class into an object window are placed
-  at the mouse pointer postition and not randomly.
+  at the mouse pointer position and not randomly.
   
-* [GUI] The save and load dialogs now remind the previous choosen directory.
+* [GUI] The save and load dialogs now remind the previous chosen directory.
 
 * [GUI] Qualified association ends are shown in class and object diagram.
 
 * [GUI,UML,OCL] Definition of qualified association ends is now supported.
   The following example qualifies the association end tiles with two
   integer values (note that the placement of the qualifiers is switched to
-  align the definition more to the grapfical representation):
+  align the definition more to the graphical representation):
   
   association MapTiles between
     Map[1] role map qualifier (x:Integer, y:Integer)
@@ -61,16 +61,21 @@ Please see the file `README' for a description of how to report bugs.
   reduces the search space when applicable. When used on a binary association with at
   least one association end with upper multiplicity of 1 only combinations which
   do not violate the upper multiplicity are tried. This optimization is not used when
-  either structural checks are supressed (argument -s) or it is supressed by providing
+  either structural checks are suppressed (argument -s) or it is suppressed by providing
   the argument -ac (all combinations) when starting an ASSL procedure.
+  If this optimization is used the size of the search space of a single try on a binary 
+  association is calculated by (|e1| + 1)^|e2| where |e1| is the number of instances provided for
+  the association end with an upper multiplicity of one and |e2| is the number of instances
+  provided for the opposite end. Without this optimization the search space size is calculated
+  by 2^(|e1| * |e2|).
 
-* [ASSL] The Try command now immidiatly checks for structural violations if structural
-  checks are not supressed by the -s option. These checks are also not performed when
-  the combinations are automatically reduced as decribed before. These "cuts" can be
-  supressed by providing the argument -dc (do not cut).
+* [ASSL] The Try command now immediately checks for structural violations if structural
+  checks are not suppressed by the -s option. These checks are also not performed when
+  the combinations are automatically reduced as described before. These "cuts" can be
+  suppressed by providing the argument -dc (do not cut).
   
 * [OCL] USE now requires a return type for operation definitions. Before 3.0.0 USE 
-  infered the result type which could lead to errors, e. g., when defining recursive 
+  inferred the result type which could lead to errors, e. g., when defining recursive 
   operations.
 
 * [OCL] Type operations (oclAsType, oclIsKindOf, ...) on collections are now supported.
@@ -93,7 +98,7 @@ Please see the file `README' for a description of how to report bugs.
 
 * [OCL] USE now checks for cycles and sharing of objects inside aggregations and
   compositions. If an invalid cycle or sharing is found after an insert a warning is reported,
-  but the link is created. When using "check structure now" (GUI) or "check" (commandline) the
+  but the link is created. When using "check structure now" (GUI) or "check" (command line) the
   invalid links are reported as errors.
 
 * [CMD] USE now has a new action language called SOIL (simple OCL based imperative language)
