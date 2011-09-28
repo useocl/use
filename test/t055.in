@@ -3,6 +3,8 @@ gen start -r 4155 -t t055.assl set_attr(b)
 gen result
 *Random number generator was initialized with 4155.
 *Checked 1 snapshots.
+*Made 0 try cuts.
+*Ignored 0 useless link combinations.
 *Result: Valid state found.
 *Commands to produce the valid state:
 *!@b.name := ''
@@ -12,6 +14,8 @@ gen start -r 5907 -t t055.assl set_attr(let b2A:A=b in b2A)
 gen result
 *Random number generator was initialized with 5907.
 *Checked 1 snapshots.
+*Made 0 try cuts.
+*Ignored 0 useless link combinations.
 *Result: Valid state found.
 *Commands to produce the valid state:
 *!@b.name := ''

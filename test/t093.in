@@ -1,5 +1,5 @@
 open t093.use
-gen start -t -r 6436 t093.assl tryWorld(3)
+gen start -t -r 6436 -dc -ac t093.assl tryWorld(3)
 gen result
 *Random number generator was initialized with 6436.
 *Checked 13 snapshots.

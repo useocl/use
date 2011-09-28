@@ -32,6 +32,8 @@ gen start -s -r 1568 -t t043.assl transition(1,1)
 gen result
 *Random number generator was initialized with 1568.
 *Checked 1 snapshots.
+*Made 0 try cuts.
+*Ignored 0 useless link combinations.
 *Result: Valid state found.
 *Commands to produce the valid state:
 *!new Person('Person1')

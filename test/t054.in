@@ -1,7 +1,7 @@
-gen start -r 6589 -t t054.assl createState(1, 1)
+gen start -r 6589 -t -dc -ac t054.assl createState(1, 1)
 gen result
 *Random number generator was initialized with 6589.
-*Checked 253973 snapshots.
+*Checked 253,973 snapshots.
 *Result: Valid state found.
 *Commands to produce the valid state:
 *!new Car('Car1')

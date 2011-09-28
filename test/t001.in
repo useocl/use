@@ -1472,7 +1472,7 @@
 ?let s:Collection(OclAny) = Set{1} in s->oclAsType(Set(OclAny))
 *-> Set{1} : Set(Integer)
 
-?:let s:Collection(OclAny) = Set{1} in s->oclAsType(Set(OclAny))
+:let s:Collection(OclAny) = Set{1} in s->oclAsType(Set(OclAny))
 *-> Set(OclAny)
 
 exit
