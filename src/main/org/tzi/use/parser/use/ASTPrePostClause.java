@@ -83,6 +83,7 @@ public class ASTPrePostClause extends AST {
             if ( ppc != null && fName != null ) {
                 ppc.setPositionInModel( fName.getLine() );
             }
+            
             ctx.model().addPrePostCondition(ppc);
         } catch (MInvalidModelException ex) {
             ctx.reportError(fExpr.getStartToken(), ex);
@@ -90,6 +91,9 @@ public class ASTPrePostClause extends AST {
             ctx.reportError(fExpr.getStartToken(), ex);
         } catch (SemanticException ex) {
             ctx.reportError(ex);
+        } catch (NullPointerException ex) {
+        	// Can be raised by MModel if the owning operation
+        	// was not successfully generated.
         }
         vars.exitScope(); 
         ctx.exprContext().pop();
