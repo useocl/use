@@ -1,12 +1,12 @@
 -- Opens the class diagram:
--- open examples/Papers/2006/GogollaBuettnerRichters/civstat.use
+-- open civstat.use
 
 -- Creates the object diagram:
--- read examples/Papers/2006/GogollaBuettnerRichters/attemptBigamy.cmd
+-- read attemptBigamy.cmd
 
-gen load examples/Papers/2006/GogollaBuettnerRichters/bigamy.invs
+gen load bigamy.invs
 
-gen start examples/Papers/2006/GogollaBuettnerRichters/civstat.assl attemptBigamy()
+gen start civstat.assl attemptBigamy()
 
 ------------------------------------------------------------------------
 

@@ -1,2 +1,2 @@
-open "D:\UserData\lhamann\workspace\use-work\examples\Papers\2006\GogollaBuettnerRichters\civstat.use"
-open "D:\UserData\lhamann\workspace\use-work\examples\Papers\2006\GogollaBuettnerRichters\AllTests.testsuite"
+open civstat.use
+open AllTests.testsuite
