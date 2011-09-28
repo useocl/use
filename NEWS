@@ -86,7 +86,10 @@ Please see the file `README' for a description of how to report bugs.
 * [OCL] The undefined value (null) can be "upcasted" by specifying a type, e.g., null(Integer).
   This is the shorthand notation for let c:Integer = null in c
   
-* [SOIL] Support of while loop, e. g., x := 1.1; while x < 100 do x := x * x end;
+* [SOIL] The old command line language has been been replaced by SOIL (Simple OCL-based 
+  Imperative Programming Language) as described in
+  [F. Büttner. Reusing OCL in the Definition of Imperative Languages. Logos Verlag, Berlin, 2011].
+  Examples can be found in examples/soil/. 
 
 * [GUI/CML] Coverage analysis
   A simple coverage analysis of the defined constraints can now be used.
