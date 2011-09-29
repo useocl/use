@@ -125,8 +125,9 @@ public abstract class DiagramView extends JPanel
 	/**
      * Draws the diagram.
      */
+	@Override
     public void paintComponent( Graphics g ) {
-        synchronized ( fLock ) {
+    	synchronized ( fLock ) {
             drawDiagram( g );
         }
     }
