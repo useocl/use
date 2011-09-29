@@ -39,12 +39,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.ExprEvalBrowser;
+import org.tzi.use.main.Session;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -72,10 +75,24 @@ class EvalOCLDialog extends JDialog {
 
     private Evaluator evaluator;
 
-    EvalOCLDialog(MSystem system, JFrame parent) {
+    private JButton btnEvalBrowser;
+    
+    private JButton btnEval;
+    
+    EvalOCLDialog(Session session, JFrame parent) {
         super(parent, "Evaluate OCL expression");
-        fSystem = system;
-
+        fSystem = session.system();
+        session.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				Session session = (Session)e.getSource();
+				
+				fSystem = session.hasSystem() ? session.system() : null;
+				btnEvalBrowser.setEnabled(session.hasSystem());
+				btnEval.setEnabled(session.hasSystem());
+			}
+		});
+        
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         // create text components and labels
@@ -106,8 +123,9 @@ class EvalOCLDialog extends JDialog {
 
         // create panel on the right containing buttons
         JPanel btnPane = new JPanel();
-        final JButton btnEvalBrowser = new JButton("Browser");
-        JButton btnEval = new JButton("Evaluate");
+        btnEvalBrowser = new JButton("Browser");
+        
+        btnEval = new JButton("Evaluate");
         btnEval.setMnemonic('E');
         
         btnEval.addActionListener(new ActionListener() {
@@ -210,7 +228,12 @@ class EvalOCLDialog extends JDialog {
     }
 
     private void evaluate(String in) {
-        // clear previous results
+        if (this.fSystem == null) {
+        	fTextOut.setText("No system!");
+        	return;
+        }
+        
+    	// clear previous results
         fTextOut.setText(null);
 
         // send error output to result window and msg stream
@@ -241,14 +264,11 @@ class EvalOCLDialog extends JDialog {
         if (expr == null) {
             // try to parse error message and set caret to error position
             String msg = msgWriter.toString();
-            // System.err.println("msg = " + msg);
-            // System.err.println("first : " + msg.indexOf(':'));
             int colon1 = msg.indexOf(':');
             if (colon1 != -1) {
                 int colon2 = msg.indexOf(':', colon1 + 1);
                 int colon3 = msg.indexOf(':', colon2 + 1);
-                // System.err.println("index = " + colon2 + " " + colon3);
-
+                
                 try {
                     int line = Integer.parseInt(msg.substring(colon1 + 1,
                             colon2));
@@ -257,16 +277,11 @@ class EvalOCLDialog extends JDialog {
                     int caret = 1 + StringUtil.nthIndexOf(in, line - 1,
                             Options.LINE_SEPARATOR);
                     caret += column;
-                    // System.err.println("line = " + line + ", column " +
-                    // column +
-                    // ", caret = " + caret);
 
                     // sanity check
                     caret = Math.min(caret, fTextIn.getText().length());
                     fTextIn.setCaretPosition(caret);
-                } catch (NumberFormatException ex) {
-                    // TODO: should this be ignored?
-                }
+                } catch (NumberFormatException ex) { }
             }
             return;
         }

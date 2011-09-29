@@ -133,14 +133,12 @@ public class Session {
                 if (event == null )
                     event = new ChangeEvent(this);
                 ((ChangeListener) listeners[i+1]).stateChanged(event);
-
-                // System.out.println("Notifying: " + ((ChangeListener) listeners[i+1]).getClass());
             }          
         }
     } 
     
     /**
-     * TODO
+     * Notifies listeners, that a statement has been evaluated.
      * @param statement
      */
     private void fireEvaluatedStatement(MStatement statement) {

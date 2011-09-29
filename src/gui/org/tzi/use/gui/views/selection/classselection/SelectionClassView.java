@@ -37,6 +37,7 @@ import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.Selection;
+import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
@@ -60,7 +61,7 @@ public class SelectionClassView extends ClassSelectionView {
 
 	private Map<MClass, ClassNode> fClassToNodeMap; // (MClass -> ClassNode)
 
-	private Selection fNodeSelection;
+	private Selection<PlaceableNode> fNodeSelection;
 
 	/**
 	 * Constructor for SelectionClassView.
@@ -68,7 +69,7 @@ public class SelectionClassView extends ClassSelectionView {
 	public SelectionClassView(MainWindow parent, MSystem system,
 			Set<MClass> selectedClasses, ClassDiagram classDiagram,
 			DiagramInputHandling mouseHandling, Map<MClass, ClassNode> fClassToNodeMap,
-			Selection fNodeSelection) {
+			Selection<PlaceableNode> fNodeSelection) {
 		super(new BorderLayout(), parent, system, classDiagram);
 		this.fClassToNodeMap = fClassToNodeMap;
 		this.fNodeSelection = fNodeSelection;

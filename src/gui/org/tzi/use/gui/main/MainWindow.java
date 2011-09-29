@@ -88,6 +88,7 @@ import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.StateEvolutionView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.gui.views.diagrams.AssociationName;
+import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
@@ -1242,8 +1243,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            EvalOCLDialog dlg = new EvalOCLDialog(fSession.system(),
-                    MainWindow.this);
+            EvalOCLDialog dlg = new EvalOCLDialog(fSession, MainWindow.this);
             dlg.setVisible(true);
         }
     }
@@ -1691,7 +1691,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     //von hier jj
     public SelectionClassView showClassSelectionClassView (Set<MClass> selectedClasses, 
     								ClassDiagram classDiagram, DiagramInputHandling mouseHandling, 
-    								Map<MClass, ClassNode> fClassToNodeMap, Selection fNodeSelection) { // jj object selection class 
+    								Map<MClass, ClassNode> fClassToNodeMap, Selection<PlaceableNode> fNodeSelection) { // jj object selection class 
     	
     	SelectionClassView opv = new SelectionClassView(MainWindow.this,
                 fSession.system(), selectedClasses, classDiagram, mouseHandling, fClassToNodeMap, fNodeSelection);
