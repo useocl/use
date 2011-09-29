@@ -69,11 +69,17 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         ModelBrowserSorting.getInstance().addSortChangeListener( this );
     }
     
+    /**
+     * Gets the {@link MClass} represented by this class node.
+     * @return The represented <code>MClass</code>
+     */
     public MClass cls() {
         return (MClass)getClassifier();
     }
     
     /**
+     * Gets the currently set color of the class node.
+     * May be <code>null</code>.
 	 * @return the color
 	 */
 	public Color getColor() {
@@ -81,18 +87,25 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
 	}
 
 	/**
+	 * Sets the color of the class node to <code>color</code>.
+	 * If color is <code>null</code> the default specified in the properties file color is used.
 	 * @param color the color to set
 	 */
 	public void setColor(Color color) {
 		this.color = color;
 	}
 
+	/**
+	 * Sets the color of the attribute <code>attr</code> to <code>color</code>.
+	 * @param att
+	 * @param color
+	 */
 	public void setAttributeColor(MAttribute att, Color color) {
 		fAttrColors[fAttributes.indexOf(att)] = color;
 	}
 	
 	/**
-	 * 
+	 * Resets the attribute colors to the color of the class node
 	 */
 	public void resetAttributeColor() {
 		for (int i = 0; i < fAttrColors.length; i++) {
@@ -162,6 +175,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
     /**
      * Draws a box with a label.
      */
+    @Override
     protected void onDraw( Graphics2D g ) {
         int x = (int) getCenter().getX();
         int y;
