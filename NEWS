@@ -6,6 +6,8 @@ Please see the file `README' for a description of how to report bugs.
 ** Changes since version 3.0.0
 * [GUI] The first opening of a class or object diagram is now faster. 
 
+* [GUI] Fixed minor issues related to show/hide/crop
+
 * [UML] Exception was thrown when a model contains a duplicate operation
   definition with pre- or postconditions on both. 
 
