@@ -3,6 +3,11 @@ USE NEWS -- history of user-visible changes. -*- Text -*-
 $Id$
 
 Please see the file `README' for a description of how to report bugs.
+** Changes since version 3.0.0
+* [GUI] The first opening of a class or object diagram is now faster. 
+
+* [UML] Exception was thrown when a model contains a duplicate operation
+  definition with pre- or postconditions on both. 
 
 ** Changes since version 2.6.0
 * [GUI] The class and object diagrams where refactored. One benefit is, that show, 
