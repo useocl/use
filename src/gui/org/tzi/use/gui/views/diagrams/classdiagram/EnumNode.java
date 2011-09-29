@@ -73,7 +73,8 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
     protected void calculateAttributeRectSize(Graphics2D g, Rectangle2D.Double rect) {
     	FontMetrics fm = g.getFontMetrics();
     	rect.height = 0;
-
+    	rect.width = 0;
+    	
         for (String literal : fLiterals) {
             rect.width = Math.max( rect.width, fm.stringWidth( literal ) );
         }

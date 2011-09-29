@@ -148,6 +148,15 @@ public class ClassDiagram extends DiagramView
 		public boolean hasNodes() {
 			return !(fClassToNodeMap.isEmpty() && fEnumToNodeMap.isEmpty());
 		}
+
+		/**
+		 * @return
+		 */
+		public Set<? extends NodeBase> allNodes() {
+			Set<NodeBase> result = new HashSet<NodeBase>(fClassToNodeMap.values());
+			result.addAll(fEnumToNodeMap.values());
+			return result;
+		}
 	}
 
 	private ClassDiagramView fParent;
@@ -166,8 +175,7 @@ public class ClassDiagram extends DiagramView
         fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
         
         fParent = parent;
-        fHiddenNodes = new HashSet<Object>();
-        fHiddenEdges = new HashSet<Object>();
+
         fNodeSelection = new Selection<PlaceableNode>();
         fEdgeSelection = new Selection<EdgeBase>();
         
@@ -827,7 +835,6 @@ public class ClassDiagram extends DiagramView
 				
 				if ( (hasShownObjects || hasHiddenObjects) && MainWindow.instance().getObjectDiagrams().size() > 0) {
 					if(hasShownObjects) {
-						
 						popupMenu.insert(new AbstractAction("Hide all objects of " + txt) {
 							public void actionPerformed(ActionEvent e) {
 								// Hide objects in all object diagrams
@@ -859,6 +866,7 @@ public class ClassDiagram extends DiagramView
 									// If allObjects contains an object which is not hidden, this
 									// is handled by the HideAdministration
 									diagram.showObjects(allObjects);
+									diagram.invalidateContent();
 								}
 							}
 						});
@@ -947,11 +955,10 @@ public class ClassDiagram extends DiagramView
 
         popupMenu.insert( cbCoverage, pos++ );
         
-//      jj anfangen this
-		// etwas seleted
-		if (fGraph.size() > 0 || fHiddenNodes.size() > 0) {
+        // jj anfangen this
+		if (fGraph.size() > 0 || hiddenData.hasNodes()) {
 			popupMenu.addSeparator();
-			if (fHiddenNodes.size() > 0) {
+			if (hiddenData.hasNodes()) {
 				popupMenu.add(fSelection.getSubMenuShowClass());
 			}
 			if (fGraph.size() > 0) {
@@ -1296,5 +1303,13 @@ public class ClassDiagram extends DiagramView
 	@Override
 	public void selectionChanged(MModelElement element) {
 		setCoverageColor();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getHiddenNodes()
+	 */
+	@Override
+	public Set<? extends NodeBase> getHiddenNodes() {
+		return hiddenData.allNodes();
 	}
 }

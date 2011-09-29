@@ -145,28 +145,6 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	}
 
 	/**
-	 * Returns all objects from objectsToShow that are
-	 * currently hidden, e. g. all objects which have
-	 * to be shown again.
-	 */
-	public Set<MObject> getShowObjects(Set<MObject> objectsToShow) {
-		Set<MObject> showObjects = new HashSet<MObject>();
-		Iterator<Object> itHiddenNodes = this.diagram.getHiddenNodes().iterator(); 
-
-		while (itHiddenNodes.hasNext()) {
-			Object node = itHiddenNodes.next();
-			
-			if (node instanceof MObject) {
-				MObject mo = (MObject) node;
-				if (objectsToShow.contains(mo)) {
-					showObjects.add(mo);
-				}
-			}
-		}
-		return showObjects;
-	}
-	
-	/**
 	 * Shows all objects and links.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {

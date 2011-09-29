@@ -25,7 +25,7 @@ public class ObjectPathTableModel extends TableModel{
 		super(fAttributes, fValues);
 		this.selectedObjects = selectedObjects;
 		this.fView = fView;
-		this.setColumnName("object name", "path length");
+		this.setColumnName("Object", "Path length");
 		update();
 	}
 

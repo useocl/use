@@ -1741,7 +1741,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     	SelectedLinkPathView opv = 
     		new SelectedLinkPathView(MainWindow.this, fSession.system(), diagram, selectedClasses, anames);
         
-    	ViewFrame f = new ViewFrame("Selection link path length", opv,
+    	ViewFrame f = new ViewFrame("Selection by path length", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());
@@ -1754,7 +1754,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     //selection object path view
     public SelectedObjectPathView showSelectedObjectPathView(NewObjectDiagram diagram, Set<MObject> selectedObjects) { // jj object selection class 
     	SelectedObjectPathView opv = new SelectedObjectPathView(MainWindow.this, fSession.system(), diagram, selectedObjects);
-        ViewFrame f = new ViewFrame("Selection objects path length", opv,
+        ViewFrame f = new ViewFrame("Selection by path length", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());

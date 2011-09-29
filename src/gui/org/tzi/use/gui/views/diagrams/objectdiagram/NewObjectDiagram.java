@@ -100,6 +100,7 @@ import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.util.StringUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -198,8 +199,6 @@ public class NewObjectDiagram extends DiagramView
         fOpt = new ObjDiagramOptions();
         fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
         
-        fHiddenNodes = new HashSet<Object>();
-        fHiddenEdges = new HashSet<Object>();
         fParent = parent;
         fNodeSelection = new Selection<PlaceableNode>();
         fEdgeSelection = new Selection<EdgeBase>();
@@ -738,10 +737,10 @@ public class NewObjectDiagram extends DiagramView
 
             if ( e != null && !loadingLayout 
                  && !(link instanceof MLinkObject )
-                 && fHiddenEdges.contains(link) ) {
-                fHiddenEdges.remove(link);
-                fLog.println("Deleted link `" + link + "' from hidden links.");
+                 && hiddenData.fBinaryLinkToEdgeMap.containsKey(link) ) {
+            	hiddenData.fBinaryLinkToEdgeMap.remove(link);
             }
+            
             if (e == null) {
                 throw new RuntimeException( "no edge for link `" + link
                                             + "' in current state." );
@@ -759,10 +758,8 @@ public class NewObjectDiagram extends DiagramView
         } else {
             DiamondNode n = (DiamondNode) visibleData.fNaryLinkToDiamondNodeMap.get( link );
             if ( n == null && !loadingLayout ) {
-                if ( fHiddenEdges.contains(link) ) {
-                    fHiddenEdges.remove(link);
-                    fLog.println("Deleted link `" + link
-                                 + "' from hidden links.");
+                if ( hiddenData.fNaryLinkToDiamondNodeMap.containsKey(link) ) {
+                	hiddenData.fNaryLinkToDiamondNodeMap.remove(link);
                 } else {
                     throw new RuntimeException(
                             "no diamond node for n-ary link `" + link
@@ -802,14 +799,10 @@ public class NewObjectDiagram extends DiagramView
         	fAssociation = association;
             fParticipants = participants;
 
-        	String txt = "insert (";
-            for (int i = 0; i < participants.length; ++i) {
-                if (i > 0) {
-                	txt = txt + ",";
-                }
-                txt = txt + participants[i].name();
-            }
-            txt = txt + ") into " + association.name();
+        	StringBuilder txt = new StringBuilder("insert (");
+        	StringUtil.fmtSeq(txt, participants, ",");
+            txt.append(") into ")
+               .append(association.name());
             
             putValue(Action.NAME, txt);
         }
@@ -1007,7 +1000,7 @@ public class NewObjectDiagram extends DiagramView
 				popupMenu.insert(getAction("Crop link " + info, 
 						         getNoneSelectedNodes(selectedObjectsOfAssociation)), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
-				popupMenu.insert(fSelection.getSelectedLinkPathView("Selection link path length...", selectedObjectsOfAssociation, anames), pos++);
+				popupMenu.insert(fSelection.getSelectedLinkPathView("Selection by path length...", selectedObjectsOfAssociation, anames), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
 				
 			} 
@@ -1057,22 +1050,21 @@ public class NewObjectDiagram extends DiagramView
         }
         
         // anfangs jj
-        if (fGraph.size() > 0 || fHiddenNodes.size() > 0) { 
+        if (fGraph.size() > 0 || !hiddenData.fObjectToNodeMap.isEmpty()) { 
 			popupMenu.addSeparator();			
 
 			if (fGraph.size() > 0) {
 				popupMenu.add(fSelection.getSubMenuHideObject());
 			}
 			
-			if (fHiddenNodes.size() > 0) {
+			if (!hiddenData.fObjectToNodeMap.isEmpty()) {
 				popupMenu.add(fSelection.getSubMenuShowObject());
 			}
 		}
-        
 		// jj end this
 
 		popupMenu.addSeparator();
-		popupMenu.add(fSelection.getSelectionOCLView("OCL Selection...")); // end jj
+		popupMenu.add(fSelection.getSelectionOCLView("Selection with OCL...")); // end jj
 
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
         return true;
@@ -1428,4 +1420,12 @@ public class NewObjectDiagram extends DiagramView
 	public ActionHideObjectDiagram getAction( String text, Set<MObject> selectedNodes ) {
         return new ActionHideObjectDiagram( text, selectedNodes, fNodeSelection, fGraph, this );
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getHiddenNodes()
+	 */
+	@Override
+	public Set<? extends NodeBase> getHiddenNodes() {
+		return new HashSet<ObjectNode>(hiddenData.fObjectToNodeMap.values());
+	}
 }

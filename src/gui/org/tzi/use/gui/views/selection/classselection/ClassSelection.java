@@ -161,12 +161,12 @@ public class ClassSelection {
 			
 			if (diag.getHiddenNodes() != null && diag.getHiddenNodes().size() > 0 ) {
 				for (MClass mc : classes) {
-					Iterator<Object> itobject = diag.getHiddenNodes().iterator();
+					Iterator<? extends NodeBase> itobject = diag.getHiddenNodes().iterator();
 					
 					while(itobject.hasNext()){
 						Object node = itobject.next();
-						if (node instanceof MObject) {
-							MObject mobj = (MObject) node;
+						if (node instanceof ObjectNode) {
+							ObjectNode mobj = (ObjectNode) node;
 							if(mc.equals(mobj.cls())){
 								return true;
 							}

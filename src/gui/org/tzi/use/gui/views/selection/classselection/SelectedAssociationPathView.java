@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -37,11 +36,7 @@ import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
-import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MSystem;
 
@@ -55,6 +50,7 @@ import org.tzi.use.uml.sys.MSystem;
 public class SelectedAssociationPathView extends SelectedClassPathView {
 
 	private Set<AssociationName> anames;
+	
 	private JButton fBtnReset;
 	
 	/**
@@ -100,7 +96,7 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 			String cname = fAttributes.get(i).toString().substring(0,
 					fAttributes.get(i).toString().indexOf("(")).trim();
 			
-			Set<MClass> assclasses = getSelectedClassesOfAssociation(cname);
+			Set<MClass> assclasses = getClassesOfAssociation(cname);
 			int enteredValue = Integer.parseInt(fValues.get(i).toString());
 			
 			for (MClass mc : assclasses) {
@@ -122,7 +118,7 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 	 */
 	public int getAssociationDepth(AssociationName aname) {
 
-		Set<MClass> classes = getSelectedClassesOfAssociation(aname.name());
+		Set<MClass> classes = getClassesOfAssociation(aname.name());
 		int maxdepth = -1;
 				
 		for (MClass mc : classes) {
@@ -137,79 +133,9 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
      * Method getSelectedClassesOfAssociation calls twice Method getSelectedClassesofAssociationHS(), 
      * in order to find relevant classes both in "Hidden" and in "Show". 
 	 */
-	private Set<MClass> getSelectedClassesOfAssociation(String name) {
-		Set<MClass> classes = getSelectedClassesofAssociationHS(name, true);
-		classes.addAll(getSelectedClassesofAssociationHS(name, false));
-		
-		return classes;
-	}
-	
-	/**
-	 * Method getSelectedClassesOfAssociationHS returns selected classes of Association in "Show" oder "Hidden"
-	 */
-	private Set<MClass> getSelectedClassesofAssociationHS(String name, boolean isshow){
+	private Set<MClass> getClassesOfAssociation(String name) {
 		Set<MClass> classes = new HashSet<MClass>();
-		Iterator<?> it;
-		
-		if(isshow){
-			it = diagram.getGraph().edgeIterator();
-		}
-		else{
-			it = diagram.getHiddenEdges().iterator();
-		}
-		
-		boolean have = false;
-		while(it.hasNext() && !have){
-			Object o = it.next();
-			if(isshow){
-			if(o instanceof BinaryAssociationOrLinkEdge){
-				BinaryAssociationOrLinkEdge edge = (BinaryAssociationOrLinkEdge)o;
-				if(edge.getAssocName()!= null && edge.getAssocName().name().equalsIgnoreCase(name)){
-					MClass mc = ((ClassNode)(edge.source())).cls();
-						classes.add(mc);
-						mc = ((ClassNode)(edge.target())).cls();
-						if(!classes.contains(mc)){
-							classes.add(mc);
-						}
-						return classes;
-					}
-				}
-			}
-			else{
-				if(o instanceof MAssociation){
-					MAssociation ma = ((MAssociation) o);
-					if(ma.name().equalsIgnoreCase(name)){
-						Set<MClass> set = ((MAssociation) o).associatedClasses();
-						
-						for (MClass mc : set) {
-							if(!classes.contains(mc)){
-								classes.add(mc);
-							}
-						}
-						return classes;
-					}
-				}
-			}
-		}
-		if(!have){
-			it = diagram.getGraph().iterator();
-			
-			while(it.hasNext()){
-				Object o = it.next();
-				if(o instanceof DiamondNode){
-					if(((DiamondNode)o).name().equalsIgnoreCase(name)){
-						DiamondNode dnode = (DiamondNode)o;
-						Set<MClass> set = dnode.association().associatedClasses();
-						for (MClass mc : set) {
-							if(!classes.contains(mc)){
-								classes.add(mc);
-							}
-						}
-						return classes;
-					}
-				}
-			}
-		}
+		classes.addAll(fSystem.model().getAssociation(name).associatedClasses());
 		return classes;
 	}
 	

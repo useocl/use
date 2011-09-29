@@ -180,7 +180,7 @@ public class ObjectSelection {
 		Iterator<?> it = null;
 
 		it = diagram.getGraph().iterator();
-		subMenuHideObject = new JMenu("Selection hide object");
+		subMenuHideObject = new JMenu("Hide object");
 
 		SelectionComparator sort = new SelectionComparator();
 		TreeSet<MClass> classes = new TreeSet<MClass>(sort);
@@ -270,7 +270,7 @@ public class ObjectSelection {
 			JMenu subm = (JMenu) (cl.next());
 			if (subm.getItemCount() > 1) {
 				it = diagram.getGraph().iterator();
-				info = "Hide all " + subm.getName();
+				info = "Hide all";
 				final HashSet<MObject> objects3 = new HashSet<MObject>();
 
 				while (it.hasNext()) {
@@ -302,7 +302,7 @@ public class ObjectSelection {
 
 		Iterator<?> it = null;
 		it = diagram.getHiddenNodes().iterator();
-		subMenuShowObject = new JMenu("Selection show object");
+		subMenuShowObject = new JMenu("Show object");
 
 		SelectionComparator sort = new SelectionComparator();
 
@@ -382,7 +382,7 @@ public class ObjectSelection {
 		for (JMenu subm : submenus) {
 			if (subm.getItemCount() > 1) {
 				it = diagram.getHiddenNodes().iterator();
-				info = "Show all " + subm.getName();
+				info = "Show all";
 				final HashSet<MObject> objects = new HashSet<MObject>();
 
 				while (it.hasNext()) {
@@ -464,15 +464,15 @@ public class ObjectSelection {
 		return getDisplayedObjectsForClasses(classesToHide);
 	}
 	
-	public Set<MObject> getHiddenObjects(Set<MClass> classes){ 
+	public Set<MObject> getHiddenObjects(Set<MClass> classes) {
 		final Set<MObject> objects = new HashSet<MObject>();
 		
 		for (MClass mc : classes) {
-			for (Object node : diagram.getHiddenNodes()) {
-				if(node instanceof MObject){
-					MObject mobj = (MObject)(node);
+			for (NodeBase node : diagram.getHiddenNodes()) {
+				if(node instanceof ObjectNode){
+					ObjectNode mobj = (ObjectNode)(node);
 					if(mobj.cls().equals(mc)){
-						objects.add(mobj);
+						objects.add(mobj.object());
 					}
 				}
 			}

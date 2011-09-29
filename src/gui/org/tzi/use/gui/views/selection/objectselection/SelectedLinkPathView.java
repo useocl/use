@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,10 +36,9 @@ import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
-import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
+import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 
@@ -134,75 +132,16 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 	}
 
 	/**
-     * Method getSelectedObjectsOfLink calls twice Method getSelectedObjectsOfLinkHS(), 
-     * in order to find relevant objects both in "Hidden" and in "Show". 
+	 * Returns all objects which are linked by the association named <code>associationName</code>.
+	 * @param associationName
+	 * @return
 	 */
-	private Set<MObject> getSelectedObjectsOfLink(String name) {
-		Set<MObject> objects = getSelectedObjectsOfLinkHS(name, new HashSet<MObject>(), true);
-		objects.addAll(getSelectedObjectsOfLinkHS(name, objects, false));
-		return objects;
-	}
-
-	/**
-	 * Method getSelectedObjectsOfLinkHS returns selected objects of Association in "Show" oder "Hidden"
-	 */
-	private Set<MObject> getSelectedObjectsOfLinkHS(String node,
-													Set<MObject> selectedObjectsOfLink, boolean isshow) {
-		
+	private Set<MObject> getSelectedObjectsOfLink(String associationName) {
 		Set<MObject> objects = new HashSet<MObject>();
-		Iterator<?> it;
+		MLinkSet linkSet = fSystem.state().linksOfAssociation(fSystem.model().getAssociation(associationName));
 		
-		if (isshow) {
-			it = this.diagram.getGraph().edgeIterator();
-		} else {
-			it = this.diagram.getHiddenEdges().iterator();
-		}
-		
-		String name = node;
-		
-		while (it.hasNext()) {
-			Object o = it.next();
-			if (o instanceof BinaryAssociationOrLinkEdge) {
-				BinaryAssociationOrLinkEdge edge = (BinaryAssociationOrLinkEdge) o;
-				
-				if (edge.getAssocName() != null
-						&& edge.getAssocName().name().equals(name)) {
-					MObject mo = ((ObjectNode) (edge.source())).object();
-					if (!selectedObjectsOfLink.contains(mo)) {
-						objects.add(mo);
-					}
-					mo = ((ObjectNode) (edge.target())).object();
-					if (!selectedObjectsOfLink.contains(mo)
-							&& !objects.contains(mo)) {
-						objects.add(mo);
-					}
-					return objects;
-				}
-			}
-		}
-
-		if (isshow) {
-			it = this.diagram.getGraph().iterator();
-		} else {
-			it = this.diagram.getHiddenNodes().iterator();
-		}
-		
-		while (it.hasNext()) {
-			Object o = it.next();
-			if (o instanceof DiamondNode) {
-				if (((DiamondNode) o).name().equalsIgnoreCase(name)) {
-					DiamondNode dnode = (DiamondNode) o;
-					
-					List<MObject> set = dnode.link().linkedObjects();
-					for (MObject mo : set) {
-						if (!selectedObjectsOfLink.contains(mo)
-								&& !objects.contains(mo)) {
-							objects.add(mo);
-						}
-					}
-					return objects;
-				}
-			}
+		for (MLink link : linkSet.links()) { 
+			objects.addAll(link.linkedObjects());
 		}
 		
 		return objects;

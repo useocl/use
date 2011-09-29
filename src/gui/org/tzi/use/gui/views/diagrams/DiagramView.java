@@ -81,12 +81,7 @@ public abstract class DiagramView extends JPanel
     protected LayoutThread fLayoutThread;
     protected volatile SpringLayout<NodeBase> fLayouter;
     protected final Object fLock = new Object();
-
     
-    protected Set<Object> fHiddenNodes;
-    
-    protected Set<Object> fHiddenEdges;
-        
     protected ActionLoadLayout fActionLoadLayout;
     
     protected ActionSaveLayout fActionSaveLayout;
@@ -340,18 +335,8 @@ public abstract class DiagramView extends JPanel
      * All currently hidden nodes in this view
      * @return
      */
-    public Set<Object> getHiddenNodes() {
-    	return this.fHiddenNodes;
-    }
-    
-    /**
-     * All currently hidden edges in this view
-     * @return
-     */
-    public Set<Object> getHiddenEdges() {
-    	return this.fHiddenEdges;
-    }
-    
+    public abstract Set<? extends NodeBase> getHiddenNodes();
+        
     /**
      * The graph of the diagram
      * @return
