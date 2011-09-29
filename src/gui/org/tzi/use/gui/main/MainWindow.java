@@ -1778,7 +1778,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     
     public SelectionOCLView showSelectionOCLView(NewObjectDiagram diagram) { // jj ocl selection class 
     	SelectionOCLView opv = new SelectionOCLView(MainWindow.this, fSession.system(), diagram);
-    	ViewFrame f = new ViewFrame("Selection OCL expression", opv,
+    	ViewFrame f = new ViewFrame("Selection by OCL expression", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
        
