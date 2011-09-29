@@ -25,6 +25,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -37,9 +39,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.GridBagHelper;
+import org.tzi.use.main.Session;
+import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MSystem;
 
@@ -53,20 +59,33 @@ import org.tzi.use.uml.sys.MSystem;
 class CreateObjectDialog extends JDialog {
     private MSystem fSystem;
     private MainWindow fParent;
-    private Object[] fClasses;
+    private List<MClass> fClasses;
     private JList fListClasses;
     private JTextField fTextObjectName;
 
-    CreateObjectDialog(MSystem system, MainWindow parent) {
+    CreateObjectDialog(Session session, MainWindow parent) {
         super(parent, "Create object");
-        fSystem = system;
+        
+        session.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				closeDialog();
+			}
+		});
+        
+        fSystem = session.system();
         fParent = parent;
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
+        fClasses = new ArrayList<MClass>(fSystem.model().classes().size());
         // create class list and label
-        fClasses = fSystem.model().classes().toArray();
-        fListClasses = new JList(fClasses);
+        for (MClass cls : fSystem.model().classes()) {
+        	if (!(cls instanceof MAssociationClass))
+        		fClasses.add(cls);
+        }
+        
+        fListClasses = new JList(fClasses.toArray());
         fListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JLabel labelClasses = new JLabel("Select class:");
         labelClasses.setDisplayedMnemonic('S');
@@ -152,7 +171,7 @@ class CreateObjectDialog extends JDialog {
 
         // get class
         int i = fListClasses.getSelectedIndex();
-        if (i < 0 || i >= fClasses.length ) {
+        if (i < 0 || i >= fClasses.size() ) {
             JOptionPane.showMessageDialog(this,
                                           "You need to specify a class for the new object.",
                                           "Error",
@@ -160,7 +179,7 @@ class CreateObjectDialog extends JDialog {
             return;
         }
 
-        fParent.createObject((MClass)fClasses[i], name);
+        fParent.createObject((MClass)fClasses.get(i), name);
     }
 }
 

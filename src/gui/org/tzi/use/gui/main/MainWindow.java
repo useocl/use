@@ -1227,8 +1227,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            CreateObjectDialog dlg = new CreateObjectDialog(fSession.system(),
-                    MainWindow.this);
+            CreateObjectDialog dlg = new CreateObjectDialog(fSession, MainWindow.this);
             dlg.setVisible(true);
         }
     }
