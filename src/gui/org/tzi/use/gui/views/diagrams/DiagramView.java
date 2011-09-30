@@ -46,7 +46,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraph;
+import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.graphlayout.SpringLayout;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
@@ -83,10 +85,8 @@ public abstract class DiagramView extends JPanel
     protected final Object fLock = new Object();
     
     protected ActionLoadLayout fActionLoadLayout;
-    
     protected ActionSaveLayout fActionSaveLayout;
-
-	protected ActionSelectAll fActionSelectAll;
+    protected ActionSelectAll  fActionSelectAll;
     
     protected DiagramOptions fOpt;
     
@@ -102,10 +102,23 @@ public abstract class DiagramView extends JPanel
 	 */
 	protected int minClassNodeHeight;
 	
-	public DiagramView() {
+	public DiagramView(DiagramOptions opt, PrintWriter log) {
+		fOpt = opt;
+		fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
+		fLog = log;
+		
+		fNodeSelection = new Selection<PlaceableNode>();
+        fEdgeSelection = new Selection<EdgeBase>();
+        
 		minClassNodeHeight = Integer.parseInt(System.getProperty("use.gui.view.classdiagram.class.minheight"));
         minClassNodeWidth = Integer.parseInt(System.getProperty("use.gui.view.classdiagram.class.minwidth"));
         setFont(Font.getFont( "use.gui.view.objectdiagram", getFont() ));
+        
+        setLayout( null );
+        setBackground( Color.white );
+        setPreferredSize( Options.fDiagramDimension );
+        
+        fActionSelectAll = new ActionSelectAll( fNodeSelection, this );
 	}
 	
     /**
@@ -335,7 +348,7 @@ public abstract class DiagramView extends JPanel
      * All currently hidden nodes in this view
      * @return
      */
-    public abstract Set<? extends NodeBase> getHiddenNodes();
+    public abstract Set<? extends PlaceableNode> getHiddenNodes();
         
     /**
      * The graph of the diagram
@@ -527,6 +540,8 @@ public abstract class DiagramView extends JPanel
             popupMenu.addSeparator();
             popupMenu.add(fActionLoadLayout);
             popupMenu.add(fActionSaveLayout);
+            popupMenu.addSeparator();
+            popupMenu.add(fActionSelectAll);
         }
 
         return popupMenu;
@@ -610,5 +625,15 @@ public abstract class DiagramView extends JPanel
 	public void removeNotify() {
 		super.removeNotify();
 		this.stopLayoutThread();
+	}
+
+	/**
+	 * @return
+	 */
+	public abstract DiagramData getVisibleData();
+	
+	public static interface DiagramData {
+		Set<PlaceableNode> getNodes();
+		boolean hasNodes();
 	}
 }

@@ -48,8 +48,6 @@ import javax.xml.xpath.XPathConstants;
 
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
-import org.tzi.use.config.Options;
-import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser.SelectionChangedListener;
 import org.tzi.use.gui.util.PersistHelper;
@@ -68,7 +66,6 @@ import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.event.ActionHideClassDiagram;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
-import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
@@ -102,7 +99,7 @@ import org.w3c.dom.NodeList;
 public class ClassDiagram extends DiagramView 
                              implements HighlightChangeListener, SelectionChangedListener {
 
-    public static class ClassDiagramData {
+    public static class ClassDiagramData implements DiagramData {
 		/**
 		 * 
 		 */
@@ -149,11 +146,12 @@ public class ClassDiagram extends DiagramView
 			return !(fClassToNodeMap.isEmpty() && fEnumToNodeMap.isEmpty());
 		}
 
-		/**
-		 * @return
+		/* (non-Javadoc)
+		 * @see org.tzi.use.gui.views.diagrams.DiagramView.DiagramData#getNodes()
 		 */
-		public Set<? extends NodeBase> allNodes() {
-			Set<NodeBase> result = new HashSet<NodeBase>(fClassToNodeMap.values());
+		@Override
+		public Set<PlaceableNode> getNodes() {
+			Set<PlaceableNode> result = new HashSet<PlaceableNode>(fClassToNodeMap.values());
 			result.addAll(fEnumToNodeMap.values());
 			return result;
 		}
@@ -171,18 +169,9 @@ public class ClassDiagram extends DiagramView
 	// jj end
     
     ClassDiagram( ClassDiagramView parent, PrintWriter log ) {
-        fOpt = new ClassDiagramOptions();
-        fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
+    	super(new ClassDiagramOptions(), log);
         
         fParent = parent;
-
-        fNodeSelection = new Selection<PlaceableNode>();
-        fEdgeSelection = new Selection<EdgeBase>();
-        
-        setLayout( null );
-        setBackground( Color.white );
-        fLog = log;
-        setPreferredSize( Options.fDiagramDimension );
         
         inputHandling = 
             new DiagramInputHandling( fNodeSelection, fEdgeSelection, this);
@@ -194,9 +183,6 @@ public class ClassDiagram extends DiagramView
         
         fActionLoadLayout = new ActionLoadLayout( "USE class diagram layout",
                                                   "clt", this, fLog, fGraph);
-        
-        fActionSelectAll = new ActionSelectAll( fNodeSelection, visibleData.fClassToNodeMap,
-                                                visibleData.fEnumToNodeMap, this );
 
         addMouseListener( inputHandling );
         fParent.addKeyListener( inputHandling );
@@ -593,7 +579,7 @@ public class ClassDiagram extends DiagramView
             for (MAssociationEnd assocEnd : assoc.associationEnds()) {
                 MClass cls = assocEnd.cls();
                 AssociationOrLinkPartEdge e = 
-                    new AssociationOrLinkPartEdge(node, visibleData.fClassToNodeMap.get( cls ), assocEnd, this, assoc, false );
+                    new AssociationOrLinkPartEdge(node, visibleData.fClassToNodeMap.get( cls ), assocEnd, this, assoc, null );
                 fGraph.addEdge(e);
                 halfEdges.add( e );
             }
@@ -1309,7 +1295,15 @@ public class ClassDiagram extends DiagramView
 	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getHiddenNodes()
 	 */
 	@Override
-	public Set<? extends NodeBase> getHiddenNodes() {
-		return hiddenData.allNodes();
+	public Set<PlaceableNode> getHiddenNodes() {
+		return hiddenData.getNodes();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getVisibleData()
+	 */
+	@Override
+	public DiagramData getVisibleData() {
+		return visibleData;
 	}
 }

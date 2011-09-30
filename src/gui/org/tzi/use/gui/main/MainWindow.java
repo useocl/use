@@ -113,6 +113,7 @@ import org.tzi.use.runtime.gui.impl.PluginActionProxy;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
@@ -1736,9 +1737,10 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
     
     //  selection class path view
-    public SelectedLinkPathView showSelectedLinkPathView(NewObjectDiagram diagram, Set<MObject> selectedClasses, Set<AssociationName> anames) { // jj object selection class 
+    public SelectedLinkPathView showSelectedLinkPathView(NewObjectDiagram diagram, Set<MObject> selectedClasses, Set<MLink> selectedLinks) { 
+    	// jj object selection class 
     	SelectedLinkPathView opv = 
-    		new SelectedLinkPathView(MainWindow.this, fSession.system(), diagram, selectedClasses, anames);
+    		new SelectedLinkPathView(MainWindow.this, fSession.system(), diagram, selectedClasses, selectedLinks);
         
     	ViewFrame f = new ViewFrame("Selection by path length", opv,
                 "ObjectProperties.gif");

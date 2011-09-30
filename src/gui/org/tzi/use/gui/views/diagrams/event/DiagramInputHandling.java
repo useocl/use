@@ -71,6 +71,8 @@ public final class DiagramInputHandling implements MouseListener,
     private int fDragMode;
     private boolean fIsDragging = false;
     private Cursor fCursor;
+    
+    //FIXME: React on select event. This class should not know anything about the existense if SelectionClassView
     private SelectionClassView opv ;
     
     public DiagramInputHandling( Selection<PlaceableNode> nodeSelection, Selection<EdgeBase> edgeSelection, 
@@ -83,9 +85,10 @@ public final class DiagramInputHandling implements MouseListener,
         new DropTarget(fDiagram, this);
     }
     
-    public void setSelectionClassView(SelectionClassView opv){//jj
+    public void setSelectionClassView(SelectionClassView opv) {//jj
     	this.opv = opv;
     }
+    
     public void mouseClicked(MouseEvent e) {
                 
     }

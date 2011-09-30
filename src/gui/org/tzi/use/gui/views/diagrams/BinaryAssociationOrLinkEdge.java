@@ -121,8 +121,8 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      */
     private BinaryAssociationOrLinkEdge(NodeBase source, NodeBase target,
 			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
-			DiagramView diagram, MAssociation assoc, boolean isLink) {
-		super(source, target, targetEnd, diagram, assoc, isLink);
+			DiagramView diagram, MAssociation assoc, MLink link) {
+		super(source, target, targetEnd, diagram, assoc, link);
     	
 		fSourceEnd = sourceEnd;
         
@@ -151,7 +151,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 	public BinaryAssociationOrLinkEdge(NodeBase source, NodeBase target,
 			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
 			DiagramView diagram, MAssociation assoc) {
-		this(source, target, sourceEnd, targetEnd, diagram, assoc, false);
+		this(source, target, sourceEnd, targetEnd, diagram, assoc, null);
 
 		if (sourceEnd.hasQualifiers()) {
 			this.setSourceQualifier(new QualifierNode(source, sourceEnd));
@@ -178,7 +178,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 	public BinaryAssociationOrLinkEdge(NodeBase source, NodeBase target,
 			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
 			DiagramView diagram, MLink link) {
-		this(source, target, sourceEnd, targetEnd, diagram, link.association(), true);
+		this(source, target, sourceEnd, targetEnd, diagram, link.association(), link);
 
 		if (sourceEnd.hasQualifiers()) {
 			this.setSourceQualifier(new QualifierNode(source, sourceEnd, link));

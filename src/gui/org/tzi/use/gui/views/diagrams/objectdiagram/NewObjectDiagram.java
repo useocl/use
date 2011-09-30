@@ -21,7 +21,6 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -63,11 +62,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.xml.xpath.XPathConstants;
 
-import org.tzi.use.config.Options;
-import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.AssociationOrLinkPartEdge;
@@ -82,7 +78,6 @@ import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
-import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
@@ -124,7 +119,7 @@ public class NewObjectDiagram extends DiagramView
      * 
      * @author lhamann
      */
-	public static class ObjectDiagramData {
+	public static class ObjectDiagramData implements DiagramData {
 		/**
 		 * 
 		 */
@@ -166,6 +161,27 @@ public class NewObjectDiagram extends DiagramView
 					|| fNaryLinkToDiamondNodeMap.containsKey(link)
 					|| fLinkObjectToNodeEdge.containsKey(link);
 		}
+
+		/* (non-Javadoc)
+		 * @see org.tzi.use.gui.views.diagrams.DiagramView.DiagramData#getNodes()
+		 */
+		@Override
+		public Set<PlaceableNode> getNodes() {
+			Set<PlaceableNode> result = new HashSet<PlaceableNode>();
+			
+			result.addAll(this.fNaryLinkToDiamondNodeMap.values());
+			result.addAll(this.fObjectToNodeMap.values());
+			
+			return result;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.tzi.use.gui.views.diagrams.DiagramView.DiagramData#hasNodes()
+		 */
+		@Override
+		public boolean hasNodes() {
+			return !(fNaryLinkToDiamondNodeMap.isEmpty() && fObjectToNodeMap.isEmpty());
+		}
 	}
 
     private ObjectDiagramData visibleData = new ObjectDiagramData();
@@ -194,17 +210,11 @@ public class NewObjectDiagram extends DiagramView
      * Creates a new empty diagram.
      */
     NewObjectDiagram(NewObjectDiagramView parent, PrintWriter log) {
+    	super(new ObjDiagramOptions(), log);
     	this.getRandomNextPosition();
-    		
-        fOpt = new ObjDiagramOptions();
-        fGraph = new DirectedGraphBase<NodeBase, EdgeBase>();
-        
+    	
         fParent = parent;
-        fNodeSelection = new Selection<PlaceableNode>();
-        fEdgeSelection = new Selection<EdgeBase>();
-        
-        fLog = log;
-        
+                
         // anfangs jj
         fSelection = new ObjectSelection(this);
         // end jj
@@ -214,18 +224,11 @@ public class NewObjectDiagram extends DiagramView
         
         fActionLoadLayout = new ActionLoadLayout( "USE object diagram layout",
                                                   "olt", this, fLog, fGraph);
-        
-        fActionSelectAll = new ActionSelectAll( fNodeSelection, visibleData.fObjectToNodeMap,
-                                                null, this );
-        
+
         DiagramInputHandling inputHandling = 
             new DiagramInputHandling( fNodeSelection, fEdgeSelection, this);
         
         fParent.getModelBrowser().addHighlightChangeListener( this );
-        
-        setLayout(null);
-        setBackground(Color.white);
-        setPreferredSize( Options.fDiagramDimension );
         
         addMouseListener(inputHandling);
         addMouseListener(showObjectPropertiesViewMouseListener);
@@ -575,7 +578,7 @@ public class NewObjectDiagram extends DiagramView
             for (MLinkEnd linkEnd : link.linkEnds()) {
                 MObject obj = linkEnd.object();
                 AssociationOrLinkPartEdge e = 
-                    new AssociationOrLinkPartEdge( node, visibleData.fObjectToNodeMap.get(obj), linkEnd.associationEnd(), this, link.association(), true );
+                    new AssociationOrLinkPartEdge( node, visibleData.fObjectToNodeMap.get(obj), linkEnd.associationEnd(), this, link.association(), link );
                 
                 fGraph.addEdge(e);
                 halfEdges.add( e );
@@ -919,8 +922,8 @@ public class NewObjectDiagram extends DiagramView
 
         // position for the popupMenu items 
         int pos = 0;
-        HashSet<MObject> selectedObjectsOfAssociation = new HashSet<MObject>(); //jj
-		HashSet<AssociationName> anames = new HashSet<AssociationName>(); // jj
+        Set<MObject> selectedObjectsOfAssociation = new HashSet<MObject>(); //jj
+		Set<MLink> selectedLinks = new HashSet<MLink>(); // jj
         
         // get all associations that exist between the classes of the
         // selected objects
@@ -928,21 +931,22 @@ public class NewObjectDiagram extends DiagramView
             List<MObject> selectedObjects = new ArrayList<MObject>();
             
             for (PlaceableNode node : fNodeSelection) {
-                if (node instanceof ObjectNode && node.isDeletable()) 
+                if (node instanceof ObjectNode && node.isDeletable()) {
                     selectedObjects.add(((ObjectNode) node).object());
-                else if (node instanceof AssociationName) { // anfangs jj 
-                	selectedObjectsOfAssociation.addAll(fSelection.getSelectedObjectsofAssociation(((AssociationName)node)
-							,selectedObjectsOfAssociation)); // end jj
-                	anames.add((AssociationName)node);
+                } else if (node instanceof AssociationName) { 
+                	// anfangs jj
+					MLink link = ((AssociationName)node).getLink();
+					selectedObjectsOfAssociation.addAll(link.linkedObjects());
+					selectedLinks.add(link);
                 } 
             }
-            
-            final MObject[] selectedObjs = (MObject[])selectedObjects.toArray(new MObject[0]);
-            if (selectedObjs.length==1) {
+
+            if (selectedObjects.size() == 1) {
                 popupMenu.insert( new ActionShowProperties("Edit properties of " + 
                 		selectedObjects.get(0).name(), selectedObjects.get(0)), pos++);
             }
-            int m = selectedObjs.length;
+            
+            int m = selectedObjects.size();
             boolean addedInsertLinkAction = false;
             
             for (MAssociation assoc : fParent.system().model().associations()) {
@@ -965,7 +969,7 @@ public class NewObjectDiagram extends DiagramView
                     	continue;
                     
                     for(int j=0;j<n;++j) {
-                        l[j] = selectedObjs[digits[j]];
+                        l[j] = selectedObjects.get(digits[j]);
                         c[j] = l[j].cls();
                     }
                     
@@ -986,21 +990,23 @@ public class NewObjectDiagram extends DiagramView
             if ( addedInsertLinkAction )
                 popupMenu.insert( new JSeparator(), pos++ );
             
-//          anfangs jj
+            // begin jj
             if(selectedObjects.size()<=0 && selectedObjectsOfAssociation.size() > 0){ 
 				String info;
-				if(anames.size() == 1){
-					info =((AssociationName) anames.iterator().next()).name();
+				
+				if(selectedLinks.size() == 1) {
+					info = selectedLinks.iterator().next().association().name();
+				} else {
+					info = "" + selectedLinks.size();
 				}
-				else{
-					info = "" + anames.size();
-				}
+				
 				popupMenu.insert(getAction("Hide link " + info + "",
 						selectedObjectsOfAssociation), pos++);  //fixxx
 				popupMenu.insert(getAction("Crop link " + info, 
 						         getNoneSelectedNodes(selectedObjectsOfAssociation)), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
-				popupMenu.insert(fSelection.getSelectedLinkPathView("Selection by path length...", selectedObjectsOfAssociation, anames), pos++);
+				popupMenu.insert(fSelection.getSelectionByPathLengthView(
+						selectedObjectsOfAssociation, selectedLinks), pos++);
 				popupMenu.insert(new JSeparator(),pos++);
 				
 			} 
@@ -1427,5 +1433,13 @@ public class NewObjectDiagram extends DiagramView
 	@Override
 	public Set<? extends NodeBase> getHiddenNodes() {
 		return new HashSet<ObjectNode>(hiddenData.fObjectToNodeMap.values());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getVisibleData()
+	 */
+	@Override
+	public DiagramData getVisibleData() {
+		return visibleData;
 	}
 }

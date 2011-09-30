@@ -37,6 +37,7 @@ import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.sys.MLink;
 import org.w3c.dom.Element;
 
 /**
@@ -82,15 +83,17 @@ public class AssociationOrLinkPartEdge extends EdgeBase {
     /**
      * Constructs a new edge. source is a pseude-node, target is a node.
      */
-    public AssociationOrLinkPartEdge( NodeBase source, NodeBase target, MAssociationEnd targetEnd, DiagramView diagram, MAssociation assoc, boolean isLink ) {
+	public AssociationOrLinkPartEdge(NodeBase source, NodeBase target,
+			MAssociationEnd targetEnd, DiagramView diagram, MAssociation assoc,
+			MLink link) {
         super( source, target, targetEnd.association().name(), diagram );
         
-        this.isLink = isLink;
+        this.isLink = (link != null);
         
         fAssoc = assoc;
         
 		fAssocName = new AssociationName(fAssoc.name(), source, target,
-				fSourceWayPoint, fTargetWayPoint, fOpt, this, assoc, isLink);
+				fSourceWayPoint, fTargetWayPoint, fOpt, this, assoc, link);
         
         fTargetEnd = targetEnd;
         

@@ -22,40 +22,27 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.Selectable;
+import org.tzi.use.gui.views.diagrams.PlaceableNode;
 
 @SuppressWarnings("serial")
 public class ActionSelectAll extends AbstractAction {
-    private Selection fNodeSelection;
-    private Map<?, ? extends Selectable> fNodes;
-    private Map<?, ? extends Selectable> fEnumNodes;
+    private Selection<PlaceableNode> fSelection;
     private DiagramView fDiagram;
     
-    public ActionSelectAll( Selection nodeSelection, Map<?, ? extends Selectable> nodes, Map<?, ? extends Selectable> enumNodes,
-                            DiagramView diagram ) {
+    public ActionSelectAll( Selection<PlaceableNode> selection, DiagramView diagram ) {
         super( "Select all" );
-        fNodeSelection = nodeSelection;
-        fNodes = nodes;
-        fEnumNodes = nodes;
+        fSelection = selection;
         fDiagram = diagram;
     }
     
     public void actionPerformed( ActionEvent e ) {
-        for (Selectable s : fNodes.values()) {
-            fNodeSelection.add( s );
-        }
-
-        for (Selectable s : fEnumNodes.values()) {
-            fNodeSelection.add( s );    
-        }
-        
-        fDiagram.repaint();
+    	fSelection.addAll(fDiagram.getVisibleData().getNodes());
+    	fDiagram.repaint();
     }
     
 }

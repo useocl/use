@@ -81,7 +81,7 @@ public class DiamondNode extends NodeBase {
     
     private void instanciateAssocName(boolean isLink) {
         fAssocName = new AssociationName( fName, fConnectedNodes, 
-                                          fOpt, this, fAssoc, isLink );
+                                          fOpt, this, fAssoc, fLink );
     }
     
     public MAssociation association() {

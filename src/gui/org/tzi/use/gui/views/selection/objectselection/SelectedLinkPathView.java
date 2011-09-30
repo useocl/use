@@ -35,7 +35,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkSet;
@@ -54,26 +53,23 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Set<AssociationName> anames;
-
 	private JButton fBtnReset;
 	
 	/**
 	 * Constructor for SelectedLinkPathView.
 	 */
 	public SelectedLinkPathView(MainWindow parent, MSystem system, NewObjectDiagram diagram, 
-				Set<MObject> selectedObjects, Set<AssociationName> anames) {
+				Set<MObject> selectedObjects, Set<MLink> selectedLinks) {
 		super(parent, system, diagram, selectedObjects);
-		this.anames = anames;
-		initSelectedAssociationPathView();
+		initSelectedAssociationPathView(selectedLinks);
 	}
 
 	/**
 	 * Method initSelectedAssociationPathView initialize the layout of the view 
 	 * and add the Button "Reset", which pre-defined values can be reset.
 	 */
-	void initSelectedAssociationPathView() {
-		fTableModel = new LinkPathTableModel(fAttributes, fValues, anames, this);
+	void initSelectedAssociationPathView(Set<MLink> selectedLinks) {
+		fTableModel = new LinkPathTableModel(fAttributes, fValues, selectedLinks, this);
 		fTable = new JTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		fTablePane = new JScrollPane(fTable);
@@ -120,11 +116,10 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 	/**
 	 * Method getLinkDepth obtain maximally attainable Depth based on starting point(aname)
 	 */
-	public int getLinkDepth(AssociationName aname) {
-		Set<MObject> objects = getSelectedObjectsOfLink(aname.name());
+	public int getLinkDepth(MLink link) {
 		int maxdepth = 0;
 		
-		for (MObject mo : objects) {
+		for (MObject mo : link.linkedObjects()) {
 			int max = getDepth(mo);
 			maxdepth = Math.max(max, maxdepth);
 		}

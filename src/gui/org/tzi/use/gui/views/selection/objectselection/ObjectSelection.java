@@ -13,14 +13,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiamondNode;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.SelectionComparator;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 
 /** 
@@ -28,6 +29,7 @@ import org.tzi.use.uml.sys.MObject;
  * 
  * @author   Jun Zhang 
  * @author   Jie Xu
+ * @author   Lars Hamann
  */
 public class ObjectSelection {
 
@@ -41,23 +43,24 @@ public class ObjectSelection {
 	}
 
 	@SuppressWarnings("serial")
-	class ActionSelectedLinkPathView extends AbstractAction {
+	class ActionShowSelectedLinkPathView extends AbstractAction {
 		private Set<MObject> selectedObjects;
-		private Set<AssociationName> anames;
+		private Set<MLink> selectedLinks;
 
-		ActionSelectedLinkPathView(String text, Set<MObject> sc, Set<AssociationName> anames) {
-			super(text);
-			this.anames = anames;
+		ActionShowSelectedLinkPathView(Set<MObject> sc, Set<MLink> links) {
+			super("Selection by path length...");
+			this.selectedLinks = links;
 			selectedObjects = sc;
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			MainWindow.instance().showSelectedLinkPathView(ObjectSelection.this.diagram, selectedObjects, anames);
+			MainWindow.instance().showSelectedLinkPathView(
+					ObjectSelection.this.diagram, selectedObjects, selectedLinks);
 		}
 	}
 
-	public ActionSelectedLinkPathView getSelectedLinkPathView(String text, Set<MObject> sc, Set<AssociationName> anames) {
-		return new ActionSelectedLinkPathView(text, sc, anames);
+	public ActionShowSelectedLinkPathView getSelectionByPathLengthView(Set<MObject> sc, Set<MLink> links) {
+		return new ActionShowSelectedLinkPathView(sc, links);
 	}
 
 	@SuppressWarnings("serial")
@@ -121,7 +124,7 @@ public class ObjectSelection {
 	 * Method getSelectedObjectsofAssociation returns all relevant objects, 
 	 * which are connected with the Association selected by the user. 
 	 */
-	public Set<MObject> getSelectedObjectsofAssociation(AssociationName node,
+	public Set<MObject> getSelectedObjectsofAssociation(MAssociation node,
 														Set<MObject> selectedObjectsOfAssociation) {
 		HashSet<MObject> objects = new HashSet<MObject>();
 		Iterator<?> it = this.diagram.getGraph().edgeIterator();
@@ -133,8 +136,7 @@ public class ObjectSelection {
 			if (o instanceof BinaryAssociationOrLinkEdge) {
 				BinaryAssociationOrLinkEdge edge = (BinaryAssociationOrLinkEdge) o;
 
-				if (edge.getAssocName() != null
-						&& edge.getAssocName().equals(node)) {
+				if (edge.getAssocName() != null && edge.getAssocName().equals(node)) {
 
 					MObject mo = ((ObjectNode) (edge.source())).object();
 					if (!selectedObjectsOfAssociation.contains(mo)) {

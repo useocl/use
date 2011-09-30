@@ -30,6 +30,7 @@ import java.util.List;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.sys.MLink;
 
 /**
  * Represents a association name node in a diagram. 
@@ -41,14 +42,17 @@ public final class AssociationName extends EdgeProperty {
 	
     private List<String> fConnectedNodes;
     
+    private MLink link = null;
+    
     AssociationName( String name, NodeBase source, NodeBase target,
                      WayPoint sourceNode, WayPoint targetNode, 
-                     DiagramOptions opt, EdgeBase edge, MAssociation assoc, boolean isLink ) {
-    	super(source, sourceNode, target, targetNode, isLink);
+                     DiagramOptions opt, EdgeBase edge, MAssociation assoc, MLink link ) {
+    	super(source, sourceNode, target, targetNode, link != null);
         fName = name;
         fAssoc = assoc;
         fOpt = opt;
         fEdge = edge;
+        this.link = link;
         
         this.sourceWayPoint.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
@@ -74,13 +78,14 @@ public final class AssociationName extends EdgeProperty {
      * @param assoc
      */
     AssociationName( String name, List<String> connectedNodes, DiagramOptions opt,
-                     DiamondNode source, MAssociation assoc, boolean isLink ) {
+                     DiamondNode source, MAssociation assoc, MLink link ) {
         fName = name;
         fSource = source;
         fAssoc = assoc;
         fConnectedNodes = connectedNodes;
         fOpt = opt;
-        this.isLink = isLink;
+        this.isLink = link != null;
+        this.link = link;
         
         this.fSource.addPositionChangedListener(new PositionChangedListener<PlaceableNode>() {
 			@Override
@@ -98,6 +103,15 @@ public final class AssociationName extends EdgeProperty {
     @Override
     public String getStoreType() {
     	return "associationName";
+    }
+    
+    /**
+     * Returns the link related to this association name or <code>null</code>
+     * if not related to a link.
+     * @return
+     */
+    public MLink getLink() {
+    	return link;
     }
     
     @Override
