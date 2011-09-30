@@ -32,15 +32,16 @@ public class SelectionClassTableModel extends TableModel {
 		
 	private ClassDiagram classDiagram;
 	
-    private Map<MClass, ClassNode> fClassToNodeMap; // (MClass -> ClassNode)
-    private Selection fNodeSelection;
+    private Map<MClass, ClassNode> fClassToNodeMap;
+    
+    private Selection<PlaceableNode> fNodeSelection;
     
     
 	/**
 	 * Constructor for SelectionClassTableModel
 	 */
 	public SelectionClassTableModel( List<String> fAttributes, List<Object> fValues, Set<MClass> selectedClasses, ClassDiagram classDiagram,
-									 Map<MClass, ClassNode> fClassToNodeMap, Selection fNodeSelection) {
+									 Map<MClass, ClassNode> fClassToNodeMap, Selection<PlaceableNode> fNodeSelection) {
 		super(fAttributes, fValues);
 		this.fClassToNodeMap = fClassToNodeMap;
 		this.fNodeSelection = fNodeSelection;
