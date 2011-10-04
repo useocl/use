@@ -803,17 +803,17 @@ public class ClassDiagram extends DiagramView
         
 		final Set<MClass> selectedClasses = new HashSet<MClass>(); // jj add final
 		
-		final Set<MClassifier> selectedObjects = new HashSet<MClassifier>();
+		final Set<MClassifier> selectedClassifier = new HashSet<MClassifier>();
 				
         if ( !fNodeSelection.isEmpty() ) {
             for (PlaceableNode node : fNodeSelection) {
                 if ( node instanceof ClassNode && node.isDeletable() ) {
                 	ClassNode cn = (ClassNode)node;
                 	selectedClasses.add( cn.cls() );
-                    selectedObjects.add( cn.cls() );
+                    selectedClassifier.add( cn.cls() );
                 } else if ( node instanceof EnumNode && node.isDeletable() ) {
                     EnumNode eNode = (EnumNode)node;
-                	selectedObjects.add(eNode.getEnum());
+                	selectedClassifier.add(eNode.getEnum());
                 } else if (node instanceof AssociationName) { //jj
                 	MAssociation assoc = ((AssociationName) node).getAssociation();
 					selectedClassesOfAssociation.addAll(assoc.associatedClasses());
@@ -850,27 +850,27 @@ public class ClassDiagram extends DiagramView
 			//end jj
             
 			String txt = null;
-            if ( selectedObjects.size() == 1 ) {
-                MNamedElement m = selectedObjects.iterator().next();
+            if ( selectedClassifier.size() == 1 ) {
+                MNamedElement m = selectedClassifier.iterator().next();
                 txt = "'" + m.name() + "'";
             } else if ( selectedClasses.size() > 1 ) {
                 txt = selectedClasses.size() + " classes";
             }
             
             if ( txt != null && txt.length() > 0 ) {
-            	popupMenu.insert( getAction( "Crop " + txt, getNoneSelectedElementsByElements( selectedObjects ) ), pos++ );
-                popupMenu.insert( getAction( "Hide " + txt, selectedObjects ), pos++ );
+            	popupMenu.insert( getAction( "Crop " + txt, getNoneSelectedElementsByElements( selectedClassifier ) ), pos++ );
+                popupMenu.insert( getAction( "Hide " + txt, selectedClassifier ), pos++ );
                 
 				// pathlength view anfangs jj
 				popupMenu.insert(new JSeparator(),pos++);
 				popupMenu.insert(fSelection.getSelectedClassPathView("Selection " + txt + " path length...", 
 								 selectedClasses), pos++);
-				popupMenu.insert(new JSeparator(),pos++);
 				
 				boolean hasHiddenObjects = fSelection.classHasHiddenObjects(fSelection.getAllKindClasses(selectedClasses));
 				boolean hasShownObjects = fSelection.classHasDisplayedObjects(fSelection.getAllKindClasses(selectedClasses));
 				
 				if ( (hasShownObjects || hasHiddenObjects) && MainWindow.instance().getObjectDiagrams().size() > 0) {
+					popupMenu.insert(new JSeparator(),pos++);
 					if(hasShownObjects) {
 						popupMenu.insert(new AbstractAction("Hide all objects of " + txt) {
 							public void actionPerformed(ActionEvent e) {
