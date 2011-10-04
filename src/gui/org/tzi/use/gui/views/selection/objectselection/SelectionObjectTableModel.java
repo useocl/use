@@ -23,10 +23,10 @@ import org.tzi.use.uml.sys.MSystemState;
  */
 @SuppressWarnings("serial")
 public class SelectionObjectTableModel extends AbstractTableModel {
-	public MClass fClass;
+	public MClass fClass = null;
 	
 	MSystem fSystem;
-	
+
 	private List<Row> rows = new ArrayList<Row>();
 	
 	private static class Row {
@@ -44,11 +44,8 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 	/**
 	 * Constructor for SelectionObjectTableModel.
 	 */
-	public SelectionObjectTableModel(MClass fClass, MSystem system) {
-		super();
-		this.fClass = fClass;
+	public SelectionObjectTableModel(MSystem system) {
 		this.fSystem = system;
-		update();
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +70,7 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 		case 0:
 			return String.class;
 		default:
-			return boolean.class;
+			return Boolean.class;
 		}
 	}
 
@@ -150,6 +147,14 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+	 */
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return columnIndex == 1;
+	}
+	
 	/**
 	 * Sets all selection values to true
 	 */

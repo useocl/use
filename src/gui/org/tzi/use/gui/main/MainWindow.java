@@ -1762,7 +1762,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     
     public SelectionObjectView showSelectionObjectView(NewObjectDiagram diagram) { // jj object selection class 
     	SelectionObjectView opv = new SelectionObjectView(MainWindow.this, fSession.system(), diagram);
-        ViewFrame f = new ViewFrame("Selection objects", opv,
+        ViewFrame f = new ViewFrame("Select objects", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());

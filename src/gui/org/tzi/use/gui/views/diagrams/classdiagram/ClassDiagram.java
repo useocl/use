@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -880,11 +879,7 @@ public class ClassDiagram extends DiagramView
 								for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
 									NewObjectDiagram diagram = oDiagView.getDiagram();
 									Set<MObject> allObjectsToHide = diagram.getObjectSelection().getDisplayedObjectsForClasses(allClasses);
-									
-									// If allObjects contains an object which is not shown, this
-									// is handled by the HideAdministration
-									Action hide = diagram.getAction("Internal", allObjectsToHide);
-									hide.actionPerformed(null);
+									diagram.hideElementsInDiagram(allObjectsToHide);
 								}
 							}}, pos++);
 					}

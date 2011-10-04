@@ -83,23 +83,18 @@ public class ObjectSelection {
 
 	@SuppressWarnings("serial")
 	class ActionSelectionObjectView extends AbstractAction {
-		private MObject fObject;
-
-		ActionSelectionObjectView(String text, MObject object) {
-			super(text);
-			fObject = object;
+		ActionSelectionObjectView() {
+			super("Select objects...");
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			SelectionObjectView v = MainWindow.instance()
-					.showSelectionObjectView(ObjectSelection.this.diagram);
-			v.selectClass(fObject.name());
+			MainWindow.instance().showSelectionObjectView(
+					ObjectSelection.this.diagram);
 		}
 	}
 
-	public ActionSelectionObjectView getSelectionObjectView(String text,
-			MObject mo) {
-		return new ActionSelectionObjectView(text, mo);
+	public ActionSelectionObjectView getSelectionObjectView() {
+		return new ActionSelectionObjectView();
 	}
 
 	/**
@@ -107,8 +102,8 @@ public class ObjectSelection {
 	 */
 	@SuppressWarnings("serial")
 	class ActionSelectionOCLView extends AbstractAction {
-		ActionSelectionOCLView(String text) {
-			super(text);
+		ActionSelectionOCLView() {
+			super("Selection with OCL...");
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -116,8 +111,8 @@ public class ObjectSelection {
 		}
 	}
 
-	public ActionSelectionOCLView getSelectionOCLView(String text) {
-		return new ActionSelectionOCLView(text);
+	public ActionSelectionOCLView getSelectionWithOCLViewAction() {
+		return new ActionSelectionOCLView();
 	}
 
 	/**

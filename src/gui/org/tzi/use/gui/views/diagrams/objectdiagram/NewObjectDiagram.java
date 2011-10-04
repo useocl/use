@@ -991,7 +991,7 @@ public class NewObjectDiagram extends DiagramView
                 popupMenu.insert( new JSeparator(), pos++ );
             
             // begin jj
-            if(selectedObjects.size()<=0 && selectedObjectsOfAssociation.size() > 0){ 
+            if(selectedObjects.size() <= 0 && selectedObjectsOfAssociation.size() > 0){ 
 				String info;
 				
 				if(selectedLinks.size() == 1) {
@@ -1070,8 +1070,9 @@ public class NewObjectDiagram extends DiagramView
 		// jj end this
 
 		popupMenu.addSeparator();
-		popupMenu.add(fSelection.getSelectionOCLView("Selection with OCL...")); // end jj
-
+		popupMenu.add(fSelection.getSelectionWithOCLViewAction()); // end jj
+		popupMenu.add(fSelection.getSelectionObjectView()); // end jj
+		
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
         return true;
     }

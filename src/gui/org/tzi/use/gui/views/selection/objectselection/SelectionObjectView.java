@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.Box;
@@ -43,7 +44,6 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.Log;
 
 /** 
  * a view of SelectionObject
@@ -51,9 +51,8 @@ import org.tzi.use.util.Log;
  * @author   Jie Xu
  */
 @SuppressWarnings("serial")
-//FIXME: This view is never used!
 public class SelectionObjectView extends ObjectSelectionView {
-	private static final String NO_CLASSES_AVAILABLE = "(No classes available.)";
+	private static final String NO_OBJECTS_AVAILABLE = "(No objects available.)";
 
 	private JComboBox fClassComboBox;
 
@@ -62,8 +61,6 @@ public class SelectionObjectView extends ObjectSelectionView {
 	private JButton fBtnClear;
 
 	private ClassComboBoxActionListener fClassComboBoxActionListener;
-
-	private MClass fClass;
 
 	private MSystem fSystem;
 
@@ -74,11 +71,11 @@ public class SelectionObjectView extends ObjectSelectionView {
 		super(parent, system, diagram);
 		this.fSystem = system;
 		initSelectionObjectView();
-		updateGUIState();
+		update();
 	}
 
 	void initSelectionObjectView() {
-		fTableModel = new SelectionObjectTableModel(fClass, fSystem);
+		fTableModel = new SelectionObjectTableModel(fSystem);
 		fTable = new JTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		fTablePane = new JScrollPane(fTable);
@@ -113,10 +110,9 @@ public class SelectionObjectView extends ObjectSelectionView {
 
 	class ClassComboBoxActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			JComboBox cb = (JComboBox) e.getSource();
-			String clsName = (String) cb.getSelectedItem();
-			Log.trace(this, "fClassComboBox.actionPerformed(): " + clsName);
-			if (clsName != NO_CLASSES_AVAILABLE)
+			String clsName = (String) fClassComboBox.getSelectedItem();
+			
+			if (!NO_OBJECTS_AVAILABLE.equals(clsName))
 				selectClass(clsName);
 		}
 	}
@@ -137,63 +133,11 @@ public class SelectionObjectView extends ObjectSelectionView {
 	}
 
 	/**
-	 * Method updateGUIState initializes and updates the list of available objects.
-	 */
-	private void updateGUIState() { 
-		Log.trace(this, "updateGUIState1");
-
-		fClassComboBox.removeActionListener(fClassComboBoxActionListener);
-
-		MSystemState state = fSystem.state();
-		Set<MObject> allObjects = state.allObjects();
-		
-		ArrayList<String> livingClasses = new ArrayList<String>();
-		
-		for (MObject obj : allObjects) {
-			MClass cls = obj.cls();
-			if (obj.exists(state) && !livingClasses.contains(cls.name()))
-				livingClasses.add(cls.name());
-		}
-
-		if (livingClasses.isEmpty()) {
-			livingClasses.add(NO_CLASSES_AVAILABLE);
-			fClassComboBox.setEnabled(false);
-			fClass = null;
-		} else
-			fClassComboBox.setEnabled(true);
-
-		Object[] clsNames = livingClasses.toArray();
-		Arrays.sort(clsNames);
-
-		// create combo box with available objects
-		fClassComboBox.setModel(new DefaultComboBoxModel(clsNames));
-		// try to keep selection
-		if (fClass != null)
-			fClassComboBox.setSelectedItem(fClass.name());
-		fClassComboBox.addActionListener(fClassComboBoxActionListener);
-		Log.trace(this, "updateGUIState2");
-	}
-
-	/**
 	 * Method selectClass update the table of class, when an object has been selected from the list.
 	 */
 	public void selectClass(String clsName) {
-		MSystemState state = fSystem.state();
-		String objectName = "";
-				
-		for (MObject obj : state.allObjects()) {
-			if (obj.name().contains(clsName)) {
-				objectName = obj.name();
-				break;
-			}
-		}
-		
-		fClass = (state.objectByName(objectName)).cls();
-
-		if (!fClassComboBox.getSelectedItem().equals(objectName)) {
-			fClassComboBox.setSelectedItem(objectName);
-		}
-		((SelectionObjectTableModel) fTableModel).setSelected(fClass);
+		MClass cls = fSystem.model().getClass(clsName);
+		((SelectionObjectTableModel) fTableModel).setSelected(cls);
 		((SelectionObjectTableModel) fTableModel).update();
 	}
 
@@ -225,8 +169,39 @@ public class SelectionObjectView extends ObjectSelectionView {
 	}
 
 	public void update() {
-		updateGUIState();
-		((SelectionObjectTableModel) fTableModel).update();
+		fClassComboBox.removeActionListener(fClassComboBoxActionListener);
+		
+		MSystemState state = fSystem.state();
+		List<String> namesOfClassesWithObjects = new ArrayList<String>();
+		String previouslySelectedItem = (String)fClassComboBox.getSelectedItem();
+		
+		for (MClass cls : fSystem.model().classes()) {
+			if (!state.objectsOfClassAndSubClasses(cls).isEmpty())
+				namesOfClassesWithObjects.add(cls.name());
+		}
+
+		if (namesOfClassesWithObjects.isEmpty()) {
+			namesOfClassesWithObjects.add(NO_OBJECTS_AVAILABLE);
+			fClassComboBox.setEnabled(false);
+		} else {
+			fClassComboBox.setEnabled(true);
+		}
+		
+		String[] clsNames = namesOfClassesWithObjects.toArray(new String[0]);
+		Arrays.sort(clsNames);
+
+		// create combo box with available objects
+		fClassComboBox.setModel(new DefaultComboBoxModel(clsNames));
+		
+		fClassComboBox.addActionListener(fClassComboBoxActionListener);
+		
+		// try to keep selection
+		if (previouslySelectedItem != null) {
+			fClassComboBox.setSelectedItem(previouslySelectedItem);
+			((SelectionObjectTableModel) fTableModel).setSelected(fSystem.model().getClass(previouslySelectedItem));
+		} else {
+			fClassComboBox.setSelectedIndex(0);
+		}
 	}
 
 }
