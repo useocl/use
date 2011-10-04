@@ -640,7 +640,7 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
 	
 	@Override
 	public boolean isReadOnly() {
-		return false;
+		return isAbstract();
 	}
 
 	/* (non-Javadoc)

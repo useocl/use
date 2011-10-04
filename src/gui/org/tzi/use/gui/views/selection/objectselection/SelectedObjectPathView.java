@@ -39,6 +39,7 @@ import javax.swing.JTable;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.selection.ObjectSelectionView;
+import org.tzi.use.gui.views.selection.TableModel.Row;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
@@ -47,6 +48,7 @@ import org.tzi.use.uml.sys.MSystem;
  * a view of SelectedObjectPath
  * @author   Jun Zhang 
  * @author   Jie Xu
+ * @author   Lars Hamann
  */
 @SuppressWarnings("serial")
 public class SelectedObjectPathView extends ObjectSelectionView {
@@ -59,7 +61,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 * Constructor for SelectedObjectPathView.
 	 */
 	public SelectedObjectPathView(MainWindow parent, MSystem system, NewObjectDiagram diagram, Set<MObject> selectedObjects) {
-		super(new BorderLayout(), parent, system, diagram);
+		super(parent, system, diagram);
 
 		this.selectedObjects = selectedObjects;
 		initSelectedClassPathView();
@@ -70,8 +72,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 * and add the Button "Reset", which pre-defined values can be reset.
 	 */
 	void initSelectedClassPathView() {
-		fTableModel = new ObjectPathTableModel(fAttributes, fValues,
-				selectedObjects, this);
+		fTableModel = new ObjectPathTableModel(selectedObjects, this);
 		fTable = new JTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		fTablePane = new JScrollPane(fTable);
@@ -92,22 +93,10 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	public Set<MObject> getSelectedPathObjects() {
 		Set<MObject> objects = new HashSet<MObject>();
 		
-		for (int i = 0; i < fAttributes.size(); i++) {
-			String cname = fAttributes.get(i).toString().substring(0,
-					fAttributes.get(i).toString().indexOf("(")).trim();
-
-			//find out, which MObject is selected 
-			MObject selected = null;
-			for (MObject mo	: selectedObjects) {
-				if (mo.name().equals(cname)) {
-					selected = mo;
-					break;
-				}
-			}
-			
-			Map<MObject, Integer> paths = getAllPathObjects(selected);
+		for (Row<MObject> row : ((ObjectPathTableModel)fTableModel).getRows()) {
+			Map<MObject, Integer> paths = getAllPathObjects(row.item);
 			for (Map.Entry<MObject, Integer> entry : paths.entrySet()) {
-				if (entry.getValue().intValue() <= Integer.parseInt(fValues.get(i).toString())) {
+				if (entry.getValue().intValue() <= row.value) {
 					objects.add(entry.getKey());
 				}
 			}
@@ -197,7 +186,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	}
 
 	public void update() {
-		fTableModel.update();
+		((ObjectPathTableModel)fTableModel).update();
 	}
 
 }

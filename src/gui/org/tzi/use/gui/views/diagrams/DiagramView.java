@@ -618,6 +618,11 @@ public abstract class DiagramView extends JPanel
 	 */
 	public abstract void showAll();
 	
+	/**
+	 * Hide all elements
+	 */
+	public abstract void hideAll();
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.JComponent#removeNotify()
 	 */
@@ -632,8 +637,14 @@ public abstract class DiagramView extends JPanel
 	 */
 	public abstract DiagramData getVisibleData();
 	
+	/**
+	 * @return
+	 */
+	public abstract DiagramData getHiddenData();
+	
 	public static interface DiagramData {
 		Set<PlaceableNode> getNodes();
+		
 		boolean hasNodes();
 	}
 }

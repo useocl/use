@@ -85,6 +85,7 @@ import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystem;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -155,6 +156,37 @@ public class ClassDiagram extends DiagramView
 			result.addAll(fEnumToNodeMap.values());
 			return result;
 		}
+
+		/**
+		 * Searches for the given classifier and returns the node
+		 * which represents it.
+		 * @param cf
+		 * @return
+		 */
+		public PlaceableNode getNode(MClassifier cf) {
+			PlaceableNode n = this.fClassToNodeMap.get(cf);
+			if (n != null) return n;
+			return this.fEnumToNodeMap.get(cf);
+		}
+		
+		public boolean containsNodeForClassifer(MClassifier cf) {
+			return this.fClassToNodeMap.containsKey(cf) || this.fEnumToNodeMap.containsKey(cf);
+		}
+
+		/**
+		 * Returns all placeable nodes for the given classifiers.
+		 * @param selected
+		 * @return
+		 */
+		public Set<PlaceableNode> getNodes(Set<MClassifier> classifier) {
+			Set<PlaceableNode> nodes = new HashSet<PlaceableNode>();
+			for (MClassifier cf : classifier) {
+				PlaceableNode node = getNode(cf);
+				if (node != null)
+					nodes.add(node);
+			}
+			return nodes;
+		}
 	}
 
 	private ClassDiagramView fParent;
@@ -199,6 +231,10 @@ public class ClassDiagram extends DiagramView
         startLayoutThread();
     }
 
+    public MSystem getSystem() {
+    	return fParent.system();
+    }
+    
     public Map<MClass, ClassNode> getClassToNodeMap() {
     	return this.visibleData.fClassToNodeMap;
     }
@@ -288,6 +324,17 @@ public class ClassDiagram extends DiagramView
     	
     	while (hiddenData.fEnumToNodeMap.size() > 0) {
     		showEnum(hiddenData.fEnumToNodeMap.keySet().iterator().next());
+    	}
+    }
+    
+    @Override
+    public void hideAll() {
+    	while (visibleData.fClassToNodeMap.size() > 0) {
+    		hideClass(visibleData.fClassToNodeMap.keySet().iterator().next());
+    	}
+    	
+    	while (visibleData.fEnumToNodeMap.size() > 0) {
+    		hideEnum(visibleData.fEnumToNodeMap.keySet().iterator().next());
     	}
     }
     
@@ -385,9 +432,12 @@ public class ClassDiagram extends DiagramView
     	ClassDiagramData target = (show ? visibleData : hiddenData);
     	
     	ClassNode n = source.fClassToNodeMap.get( cls );
-        
-        if (n != null) {
+
+    	if (n != null) {
         	synchronized ( fLock ) {
+        		if (!show && this.getNodeSelection().isSelected(n))
+        			this.getNodeSelection().remove(n);
+        		
                 if (show) 
                 	fGraph.add( n );
                 else
@@ -443,6 +493,9 @@ public class ClassDiagram extends DiagramView
         
         if (n != null) {
         	synchronized ( fLock ) {
+        		if (!show && this.getNodeSelection().isSelected(n))
+        			this.getNodeSelection().remove(n);
+        		
                 if (show)
                 	fGraph.add( n );
                 else
@@ -746,7 +799,7 @@ public class ClassDiagram extends DiagramView
         // position for the popupMenu items 
         int pos = 0;
         Set<MClass> selectedClassesOfAssociation = new HashSet<MClass>(); //jj
-		Set<AssociationName> anames = new HashSet<AssociationName>(); // jj
+		Set<MAssociation> selectedAssociations = new HashSet<MAssociation>(); // jj
         
 		final Set<MClass> selectedClasses = new HashSet<MClass>(); // jj add final
 		
@@ -762,22 +815,20 @@ public class ClassDiagram extends DiagramView
                     EnumNode eNode = (EnumNode)node;
                 	selectedObjects.add(eNode.getEnum());
                 } else if (node instanceof AssociationName) { //jj
-					selectedClassesOfAssociation
-							.addAll(((AssociationName) node).getAssociation()
-									.associatedClasses());
-					
-					anames.add((AssociationName)node);//jj
+                	MAssociation assoc = ((AssociationName) node).getAssociation();
+					selectedClassesOfAssociation.addAll(assoc.associatedClasses());
+					selectedAssociations.add(assoc);//jj
                 } //jj
             }
             
-            //anfangen jj
+            //begin jj
 			if(selectedClasses.isEmpty() && !selectedClassesOfAssociation.isEmpty()) {
 				String info;
-				if (anames.size() == 1) {
-					info = anames.iterator().next().name();
+				if (selectedAssociations.size() == 1) {
+					info = selectedAssociations.iterator().next().name();
 				}
 				else{
-					info = "" + anames.size();
+					info = "" + selectedAssociations.size();
 				}
 				
 				popupMenu.insert(
@@ -791,7 +842,7 @@ public class ClassDiagram extends DiagramView
 				popupMenu.insert(new JSeparator(),pos++);
 				popupMenu.insert(fSelection.getSelectedAssociationPathView(
 								"Selection association path length...", 
-								selectedClassesOfAssociation, anames), pos++);
+								selectedClassesOfAssociation, selectedAssociations), pos++);
 				
 				popupMenu.insert(new JSeparator(), pos++);
 				
@@ -951,7 +1002,7 @@ public class ClassDiagram extends DiagramView
 				popupMenu.add(fSelection.getSubMenuHideClass());
 			}
 			
-			popupMenu.add(fSelection.getSelectionClassView("Selection classes...", inputHandling, selectedClasses));
+			popupMenu.add(fSelection.getSelectionClassView("Selection classes..."));
 			
 		} // end jj
         
@@ -1305,5 +1356,22 @@ public class ClassDiagram extends DiagramView
 	@Override
 	public DiagramData getVisibleData() {
 		return visibleData;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getHiddenData()
+	 */
+	@Override
+	public DiagramData getHiddenData() {
+		return hiddenData;
+	}
+	
+	/**
+	 * @param cs
+	 * @return
+	 */
+	public boolean isVisible(MClassifier cs) {
+		return visibleData.fClassToNodeMap.containsKey(cs) || 
+			   visibleData.fEnumToNodeMap.containsKey(cs);
 	}
 }

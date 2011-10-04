@@ -27,9 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -39,7 +38,6 @@ import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.ObjectSelectionView;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
@@ -73,15 +71,14 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 * Constructor for SelectionObjectView.
 	 */
 	public SelectionObjectView(MainWindow parent, MSystem system, NewObjectDiagram diagram) {
-		super(new BorderLayout(), parent, system, diagram);
+		super(parent, system, diagram);
 		this.fSystem = system;
 		initSelectionObjectView();
 		updateGUIState();
 	}
 
 	void initSelectionObjectView() {
-		fTableModel = new SelectionObjectTableModel(fAttributes, fValues,
-				fClass, fSystem);
+		fTableModel = new SelectionObjectTableModel(fClass, fSystem);
 		fTable = new JTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		fTablePane = new JScrollPane(fTable);
@@ -128,55 +125,15 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 * Method getSelectedObjects return selected objects.
 	 */
 	private Set<MObject> getSelectedObjects() {
-		Set<MObject> selected = new HashSet<MObject>();
-		
-		for (int i = 0; i < fAttributes.size(); i++) {
-			if (fValues.get(i) != null
-					&& ((Boolean) fValues.get(i)).booleanValue()) {
-				String name = fAttributes.get(i).toString();
-				Iterator<?> it = this.diagram.getGraph().iterator();
-				boolean find = false;
-				while (it.hasNext()) {
-					Object node = it.next();
-					if (node instanceof ObjectNode) {
-						MObject mobj = ((ObjectNode) node).object();
-						if (mobj.name().equals(name)) {
-							selected.add(mobj);
-							find = true;
-							break;
-						}
-					}
-				}
-				if (!find) {
-					it = this.diagram.getHiddenNodes().iterator();
-					while (it.hasNext()) {
-						Object node = it.next();
-						if (node instanceof MObject) {
-							MObject mobj = (MObject) node;
-							if (mobj.name().equals(name)) {
-								selected.add(mobj);
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		return selected;
+		return ((SelectionObjectTableModel)fTableModel).getSelectedObjects();
 	}
 
 	private void applySelectAllChanges(ActionEvent ev) {
-		for (int i = 0; i < fValues.size(); i++) {
-			fValues.set(i, (Boolean.valueOf(true)));
-		}
-		this.repaint();
+		((SelectionObjectTableModel)fTableModel).selectAll();
 	}
 
 	private void applyClearChanges(ActionEvent ev) {
-		for (int i = 0; i < fValues.size(); i++) {
-			fValues.set(i, (Boolean.valueOf(false)));
-		}
-		this.repaint();
+		((SelectionObjectTableModel)fTableModel).deselectAll();
 	}
 
 	/**
@@ -237,7 +194,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 			fClassComboBox.setSelectedItem(objectName);
 		}
 		((SelectionObjectTableModel) fTableModel).setSelected(fClass);
-		fTableModel.update();
+		((SelectionObjectTableModel) fTableModel).update();
 	}
 
 	/**
@@ -269,7 +226,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 
 	public void update() {
 		updateGUIState();
-		fTableModel.update();
+		((SelectionObjectTableModel) fTableModel).update();
 	}
 
 }

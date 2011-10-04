@@ -74,7 +74,6 @@ import javax.swing.event.InternalFrameEvent;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.gui.util.ExtFileFilter;
-import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.util.StatusBar;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.AssociationEndsInfo;
@@ -87,12 +86,8 @@ import org.tzi.use.gui.views.ObjectCountView;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.StateEvolutionView;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.selection.classselection.SelectedAssociationPathView;
@@ -110,6 +105,7 @@ import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -1689,15 +1685,13 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
     
     //von hier jj
-    public SelectionClassView showClassSelectionClassView (Set<MClass> selectedClasses, 
-    								ClassDiagram classDiagram, DiagramInputHandling mouseHandling, 
-    								Map<MClass, ClassNode> fClassToNodeMap, Selection<PlaceableNode> fNodeSelection) { // jj object selection class 
+	public SelectionClassView showClassSelectionClassView(ClassDiagram classDiagram) { // jj object selection class 
     	
-    	SelectionClassView opv = new SelectionClassView(MainWindow.this,
-                fSession.system(), selectedClasses, classDiagram, mouseHandling, fClassToNodeMap, fNodeSelection);
-    	mouseHandling.setSelectionClassView(opv);
+    	SelectionClassView opv = new SelectionClassView(MainWindow.this, fSession.system(), classDiagram);
+    	
         ViewFrame f = new ViewFrame("Selection classes", opv,
                 "ObjectProperties.gif");
+        
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());
         c.add(opv, BorderLayout.CENTER);
@@ -1709,9 +1703,10 @@ public class MainWindow extends JFrame implements StateChangeListener {
     /**
      * Creates a new assocation path length view.
      */
-    public SelectedAssociationPathView showSelectedAssociationPathView(ClassDiagram diagram, Set<MClass> selectedClasses, Set<AssociationName> anames) { // jj object selection class 
-    	SelectedAssociationPathView opv = new SelectedAssociationPathView(MainWindow.this, fSession.system(), diagram,
-    			selectedClasses, anames);
+    public SelectedAssociationPathView showSelectedAssociationPathView(ClassDiagram diagram, Set<MClass> selectedClasses, Set<MAssociation> selectedAssociations) { // jj object selection class 
+		SelectedAssociationPathView opv = new SelectedAssociationPathView(
+				MainWindow.this, fSession.system(), diagram, selectedClasses,
+				selectedAssociations);
         ViewFrame f = new ViewFrame("Selection association path length", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
@@ -1726,7 +1721,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
     public SelectedClassPathView showSelectedClassPathView(ClassDiagram diagram, Set<MClass> selectedClasses) { // jj object selection class 
     	SelectedClassPathView opv = new SelectedClassPathView(MainWindow.this, fSession.system(),
     									diagram, selectedClasses);
-        ViewFrame f = new ViewFrame("Selection classes path length", opv,
+        ViewFrame f = new ViewFrame("Selection by path length", opv,
                 "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());

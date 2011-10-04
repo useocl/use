@@ -16,7 +16,7 @@ import org.tzi.use.uml.sys.MLink;
  * @author   Jie Xu
  */
 @SuppressWarnings("serial")
-public class LinkPathTableModel extends TableModel {
+public class LinkPathTableModel extends TableModel<MLink> {
 	SelectedLinkPathView fView;
 	
 	List<MLink> selectedLinks; 
@@ -26,8 +26,7 @@ public class LinkPathTableModel extends TableModel {
 	 * 
 	 * @param anames stores the names of the associations, which are selected by the user. 
 	 */
-	public LinkPathTableModel( List<String> fAttributes, List<Object> fValues, Set<MLink> selectedLinks, SelectedLinkPathView fView) {
-		super(fAttributes, fValues);
+	public LinkPathTableModel( Set<MLink> selectedLinks, SelectedLinkPathView fView) {
 		this.fView = fView;
 		this.selectedLinks = new ArrayList<MLink>(selectedLinks);
 		this.setColumnName("link", "path length");
@@ -38,11 +37,9 @@ public class LinkPathTableModel extends TableModel {
 	 * Method update updates the data of Table. 
 	 */
 	public void update() {
-
+		rows = new ArrayList<TableModel.Row<MLink>>();
+		
 		if (selectedLinks.size() > 0) {
-			fAttributes.clear();
-			fValues.clear();
-
 			TreeSet<MLink> sortedLinks = new TreeSet<MLink>(new Comparator<MLink>() {
 				@Override
 				public int compare(MLink o1, MLink o2) {
@@ -56,14 +53,11 @@ public class LinkPathTableModel extends TableModel {
 				int depth = fView.getLinkDepth(link);
 				if(depth < 0)
 					depth = 0;
-				
-				fAttributes.add(link.toString() + " (0-" + depth + ")");
-				fValues.add(Integer.valueOf(depth));
+				String name = link.toString() + " (0-" + depth + ")";
+				rows.add(new Row<MLink>(name, depth, depth, link));
 			}
-		} else {
-			fAttributes = new ArrayList<String>();
-			fValues = new ArrayList<Object>();
 		}
+		
 		fireTableDataChanged();
 	}
 

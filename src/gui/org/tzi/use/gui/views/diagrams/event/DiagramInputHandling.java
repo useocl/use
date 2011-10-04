@@ -44,8 +44,6 @@ import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
-import org.tzi.use.gui.views.selection.classselection.SelectionClassTableModel;
-import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
 
 /**
  * Handles the mouse movements and keyboard inputs 
@@ -72,9 +70,6 @@ public final class DiagramInputHandling implements MouseListener,
     private boolean fIsDragging = false;
     private Cursor fCursor;
     
-    //FIXME: React on select event. This class should not know anything about the existense if SelectionClassView
-    private SelectionClassView opv ;
-    
     public DiagramInputHandling( Selection<PlaceableNode> nodeSelection, Selection<EdgeBase> edgeSelection, 
                                  DiagramView diagram ) {
         
@@ -85,14 +80,7 @@ public final class DiagramInputHandling implements MouseListener,
         new DropTarget(fDiagram, this);
     }
     
-    public void setSelectionClassView(SelectionClassView opv) {//jj
-    	this.opv = opv;
-    }
-    
-    public void mouseClicked(MouseEvent e) {
-                
-    }
-    
+    public void mouseClicked(MouseEvent e) { }
     
     /**
      * event: on item not on item -------------------------------------------
@@ -150,8 +138,6 @@ public final class DiagramInputHandling implements MouseListener,
             } else {
                 // click in background, clear selection
                 if ( fNodeSelection.clear() || fEdgeSelection.clear() ) {
-                	if(opv!= null)
-                	 ((SelectionClassTableModel)(opv.fTableModel)).clearSelection(); // jj
                     fDiagram.repaint();
                 }
             }
@@ -161,9 +147,6 @@ public final class DiagramInputHandling implements MouseListener,
 		    if (pickedObjectNode != null) {
 		        // add this component to the selection
 		        fNodeSelection.add( pickedObjectNode );
-		        if(opv != null)
-		        	((SelectionClassTableModel)(opv.fTableModel)).addSelected(pickedObjectNode);
-		
 		        fDiagram.repaint();
 		    }
 		break;

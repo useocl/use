@@ -5,10 +5,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -18,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.View;
@@ -62,16 +61,12 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 
 	public JTable fTable;
 
-	public TableModel fTableModel;
-
-	public List<String> fAttributes = new ArrayList<String>();
-
-	public List<Object> fValues = new ArrayList<Object>();
+	public AbstractTableModel fTableModel;
 
 	protected NewObjectDiagram diagram;
 	
-	public ObjectSelectionView(BorderLayout layout, MainWindow parent, MSystem system, NewObjectDiagram diagram) {
-		super(layout);
+	public ObjectSelectionView(MainWindow parent, MSystem system, NewObjectDiagram diagram) {
+		super(new BorderLayout());
 		this.fSystem = system;
 		this.fMainWindow = parent;
 		this.diagram = diagram;

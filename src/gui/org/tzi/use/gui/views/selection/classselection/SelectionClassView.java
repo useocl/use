@@ -22,33 +22,34 @@
 package org.tzi.use.gui.views.selection.classselection;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram.ClassDiagramData;
 import org.tzi.use.gui.views.selection.ClassSelectionView;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.sys.MSystem;
 
 /** 
- * a view of SelectionClass
+ * This view shows all classes in a table and allows
+ * the user to show or hide them by changing
+ * the value of the second column.
  * @author   Jun Zhang 
  * @author   Jie Xu
+ * @author   Lars Hamann 
  */
 @SuppressWarnings("serial")
 public class SelectionClassView extends ClassSelectionView {
@@ -57,32 +58,20 @@ public class SelectionClassView extends ClassSelectionView {
 
 	private JButton fBtnClear;
 
-	private Set<MClass> selectedClasses;
-
-	private Map<MClass, ClassNode> fClassToNodeMap; // (MClass -> ClassNode)
-
-	private Selection<PlaceableNode> fNodeSelection;
-
 	/**
 	 * Constructor for SelectionClassView.
 	 */
-	public SelectionClassView(MainWindow parent, MSystem system,
-			Set<MClass> selectedClasses, ClassDiagram classDiagram,
-			DiagramInputHandling mouseHandling, Map<MClass, ClassNode> fClassToNodeMap,
-			Selection<PlaceableNode> fNodeSelection) {
-		super(new BorderLayout(), parent, system, classDiagram);
-		this.fClassToNodeMap = fClassToNodeMap;
-		this.fNodeSelection = fNodeSelection;
-		this.selectedClasses = selectedClasses;
+	public SelectionClassView(MainWindow parent, MSystem system, ClassDiagram classDiagram) {
+		super(parent, system, classDiagram);
 		initSelectionClassView();
 	}
 
 	void initSelectionClassView() {
-		fTableModel = new SelectionClassTableModel(fAttributes, fValues,
-				selectedClasses, diagram, fClassToNodeMap,
-				fNodeSelection);
+		fTableModel = new SelectionClassTableModel(diagram);
 		fTable = new JTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
+		fTable.getColumnModel().getColumn(0).setCellRenderer(new VivibilityCellrenderer());
+				
 		fTablePane = new JScrollPane(fTable);
 
 		fBtnSelectAll = new JButton("Select all");
@@ -113,79 +102,56 @@ public class SelectionClassView extends ClassSelectionView {
 	/**
 	 * Method getSelectedClasses return selected classes.
 	 */
-	private Set<MClass> getSelectedClasses() {
-		Set<MClass> selected = new HashSet<MClass>();
-		for (int i = 0; i < fAttributes.size(); i++) {
-			if (fValues.get(i) != null
-					&& ((Boolean) fValues.get(i)).booleanValue()) {
-				String name = fAttributes.get(i).toString();
-				Iterator<?> it = diagram.getGraph().iterator();
-				boolean find = false;
-				while (it.hasNext()) {
-					Object node = it.next();
-					if (node instanceof ClassNode) {
-						MClass mc = ((ClassNode) node).cls();
-						if (mc.name().equals(name)) {
-							selected.add(mc);
-							find = true;
-							break;
-						}
-					}
-				}
-				if (!find) {
-					it = diagram.getHiddenNodes().iterator();
-					while (it.hasNext()) {
-						Object node = it.next();
-						if (node instanceof MClass) {
-							MClass mc = (MClass) node;
-							if (mc.name().equals(name)) {
-								selected.add(mc);
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		return selected;
+	private Set<MClassifier> getSelectedClassifier() {
+		return ((SelectionClassTableModel)fTableModel).getSelectedClassifier();
 	}
 
 	private void applySelectAllChanges(ActionEvent ev) {
-		for (int i = 0; i < fValues.size(); i++) {
-			fTableModel.setValueAt("true", i, 1);
-		}
-		this.repaint();
+		((SelectionClassTableModel)fTableModel).selectAll();
 	}
 
 	private void applyClearChanges(ActionEvent ev) {
-		for (int i = 0; i < fValues.size(); i++) {
-			fTableModel.setValueAt("false", i, 1);
-		}
-		this.repaint();
+		((SelectionClassTableModel)fTableModel).deselectAll();
 	}
 
 	/**
 	 * Method applyCropChanges shows only the appropriate marked classes.
 	 */
 	public void applyCropChanges(ActionEvent ev) {
-		if (getHideClasses(getSelectedClasses(), true).size() > 0) {
-			diagram.getAction("Hide",
-					getHideClasses(getSelectedClasses(), true))
-					.actionPerformed(ev);
+		Set<MClassifier> selectedClassifier = getSelectedClassifier();
+		Set<MClassifier> classifierToHide = getClassifierToHide(selectedClassifier, true); 
+		
+		if (!classifierToHide.isEmpty()) {
+			diagram.hideElementsInDiagram(classifierToHide);
 		}
-		if (getClassesToShow(getSelectedClasses()).size() > 0) {
-			diagram.showElementsInDiagram(getClassesToShow(getSelectedClasses()));
+
+		Set<MClassifier> classifierToShow = getClassifierToShow(selectedClassifier);
+		
+		if (classifierToShow.size() > 0) {
+			diagram.showElementsInDiagram(classifierToShow);
+			selectedClassifier.retainAll(classifierToShow);
+			Set<PlaceableNode> selectedNodes = ((ClassDiagramData)diagram.getVisibleData()).getNodes(selectedClassifier);
+			diagram.getNodeSelection().addAll(selectedNodes);
 		}
-		((SelectionClassTableModel) fTableModel).refreshAll();
+		
+		diagram.invalidateContent();
+		((SelectionClassTableModel) fTableModel).update();
 	}
 
 	/**
 	 * Method applyShowChanges shows the appropriate marked classes.
 	 */
 	public void applyShowChanges(ActionEvent ev) {
-		if (getClassesToShow(getSelectedClasses()).size() > 0) {
-			diagram.showElementsInDiagram(getClassesToShow(getSelectedClasses()));
-			((SelectionClassTableModel) fTableModel).refreshAll();
+		Set<MClassifier> selected = ((SelectionClassTableModel) fTableModel).getSelectedClassifier();
+		Set<MClassifier> classifierToShow = getClassifierToShow(selected);
+		
+		if (classifierToShow.size() > 0) {
+			diagram.showElementsInDiagram(classifierToShow);
+			
+			selected.retainAll(classifierToShow);
+			Set<PlaceableNode> selectedNodes = ((ClassDiagramData)diagram.getVisibleData()).getNodes(selected);
+			diagram.getNodeSelection().addAll(selectedNodes);
+			diagram.invalidateContent();
 		}
 	}
 
@@ -193,23 +159,59 @@ public class SelectionClassView extends ClassSelectionView {
 	 * Method applyHideChanges hides the appropriate marked classes.
 	 */
 	public void applyHideChanges(ActionEvent ev) {
-		if (getHideClasses(getSelectedClasses(), false).size() > 0) {
-			diagram.getAction("Hide",
-					getHideClasses(getSelectedClasses(), false))
-					.actionPerformed(ev);
+		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedClassifier(), false);
+		
+		if (classifierToHide.size() > 0) {
+			diagram.hideElementsInDiagram(classifierToHide);
+			diagram.invalidateContent();
+			((SelectionClassTableModel) fTableModel).update();
 		}
 	}
 
 	/**
-	 * Method applyShowAllChanges show all classes.
+	 * Show all classifiers in diagram and refresh the table
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
-		diagram.showAll();
-		diagram.invalidateContent();
-		((SelectionClassTableModel) fTableModel).refreshAll();
+		super.applyShowAllChanges(ev);
+		((SelectionClassTableModel) fTableModel).update();
 	}
 
+	/**
+	 * Hide all classifiers in diagram and refresh the table
+	 */
+	public void applyHideAllChanges(ActionEvent ev) {
+		super.applyHideAllChanges(ev);
+		((SelectionClassTableModel) fTableModel).update();
+	}
+	
 	public void update() {
-		fTableModel.update();
+		((SelectionClassTableModel)fTableModel).update();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.selection.ClassSelectionView#detachModel()
+	 */
+	@Override
+	public void detachModel() {
+		super.detachModel();
+		((SelectionClassTableModel)fTableModel).dispose();
+	}
+	
+	private class VivibilityCellrenderer extends DefaultTableCellRenderer {
+		@Override
+	    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+	                                                   boolean hasFocus, int row, int column){
+	        	
+				Component defaultRenderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);  
+				
+				if (!((SelectionClassTableModel)fTableModel).getRows().get(row).visible) {
+					this.setForeground(Color.gray);
+				} else {
+					this.setForeground(Color.black);
+				}
+				
+				
+				return defaultRenderer;
+	    }
 	}
 }

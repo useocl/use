@@ -13,7 +13,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
@@ -22,6 +21,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.SelectionComparator;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
 
@@ -48,42 +48,40 @@ public class ClassSelection {
 		Set<MClass> selectedClasses;
 		DiagramInputHandling mouseHandling;
 
-		ActionSelectionClassView(String text, Set<MClass> selectedClasses, DiagramInputHandling mouseHandling) {
+		ActionSelectionClassView(String text) {
 			super(text);
-			this.mouseHandling = mouseHandling;
-			this.selectedClasses = selectedClasses;
 		}
 
 		/**
 		 * @see java.awt.event.ActionListener#actionPerformed(ActionEvent)
 		 */
 		public void actionPerformed(ActionEvent e) {  
-			MainWindow.instance().showClassSelectionClassView(selectedClasses, diagram, mouseHandling, diagram.getClassToNodeMap(), diagram.getNodeSelection()); 
+			MainWindow.instance().showClassSelectionClassView(diagram); 
 		}
 	}
 	
-	public ActionSelectionClassView getSelectionClassView(String text, DiagramInputHandling mouseHandling, Set<MClass> selectedClasses){
-		return new ActionSelectionClassView(text, selectedClasses, mouseHandling);
+	public ActionSelectionClassView getSelectionClassView(String text) {
+		return new ActionSelectionClassView(text);
 	}
 	
 	@SuppressWarnings("serial")
 	class ActionSelectedAssociationPathView extends AbstractAction {
 		private Set<MClass> selectedClasses;
-		private Set<AssociationName> anames;
+		private Set<MAssociation> selectedAssociations;
 		
-		ActionSelectedAssociationPathView(String text, Set<MClass> sc, Set<AssociationName> anames) {
+		ActionSelectedAssociationPathView(String text, Set<MClass> sc, Set<MAssociation> selectedAssociations) {
 			super(text);
-			this.anames = anames;
+			this.selectedAssociations = selectedAssociations;
 			selectedClasses = sc;
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			MainWindow.instance().showSelectedAssociationPathView(diagram, selectedClasses, anames);
+			MainWindow.instance().showSelectedAssociationPathView(diagram, selectedClasses, selectedAssociations);
 		}
 	}
 	
-	public ActionSelectedAssociationPathView getSelectedAssociationPathView(String text, Set<MClass> sc, Set<AssociationName> anames){
-		return new ActionSelectedAssociationPathView(text, sc, anames);
+	public ActionSelectedAssociationPathView getSelectedAssociationPathView(String text, Set<MClass> sc, Set<MAssociation> selectedAssociations){
+		return new ActionSelectedAssociationPathView(text, sc, selectedAssociations);
 	}
 	
 	@SuppressWarnings("serial")

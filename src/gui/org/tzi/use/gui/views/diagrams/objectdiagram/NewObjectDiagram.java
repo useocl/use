@@ -807,7 +807,7 @@ public class NewObjectDiagram extends DiagramView
             txt.append(") into ")
                .append(association.name());
             
-            putValue(Action.NAME, txt);
+            putValue(Action.NAME, txt.toString());
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -1441,5 +1441,13 @@ public class NewObjectDiagram extends DiagramView
 	@Override
 	public DiagramData getVisibleData() {
 		return visibleData;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getHiddenData()
+	 */
+	@Override
+	public DiagramData getHiddenData() {
+		return hiddenData;
 	}
 }

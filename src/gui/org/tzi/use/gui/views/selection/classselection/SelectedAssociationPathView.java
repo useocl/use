@@ -33,10 +33,12 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.AssociationName;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
+import org.tzi.use.gui.views.selection.TableModel.Row;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MSystem;
 
@@ -49,27 +51,22 @@ import org.tzi.use.uml.sys.MSystem;
 @SuppressWarnings("serial")
 public class SelectedAssociationPathView extends SelectedClassPathView {
 
-	private Set<AssociationName> anames;
-	
 	private JButton fBtnReset;
 	
 	/**
 	 * Constructor for SelectedAssociationPathView.
 	 */
 	public SelectedAssociationPathView(MainWindow parent, MSystem system, ClassDiagram diagram,
-			Set<MClass> selectedClasses, Set<AssociationName> anames) {
-		super(parent, system, diagram, selectedClasses);
-		this.anames = anames;
-				
-		initSelectedAssociationPathView();
+			Set<MClass> selectedClasses, Set<MAssociation> selectedAssociations) {
+		super(parent, system, diagram, new AssociationPathTableModel(selectedAssociations));
 	}
    
 	/**
 	 * Method initSelectedAssociationPathView initialize the layout of the view 
 	 * and add the Button "Reset", which pre-defined values can be reset.
 	 */
-	void initSelectedAssociationPathView(){
-		fTableModel = new AssociationPathTableModel(fAttributes, fValues, anames, this); 
+	void initView(AbstractTableModel model) {
+		fTableModel = model; 
 		fTable = new JTable(fTableModel); 
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		fTablePane = new JScrollPane(fTable);
@@ -87,23 +84,18 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 		add(buttonPane, BorderLayout.SOUTH);
 	}
 
-	public Set<MClass> getSelectedPathClasses() {
-		
+	public Set<MClass> getSelectedPathClasses() {		
 		Set<MClass> classes = new HashSet<MClass>();
-		
-		for (int i = 0; i < fAttributes.size(); i++) {
-			// TODO: Use Associations instead of parsing 
-			String cname = fAttributes.get(i).toString().substring(0,
-					fAttributes.get(i).toString().indexOf("(")).trim();
-			
-			Set<MClass> assclasses = getClassesOfAssociation(cname);
-			int enteredValue = Integer.parseInt(fValues.get(i).toString());
+		AssociationPathTableModel model = (AssociationPathTableModel)this.fTableModel;
+
+		for (Row<MAssociation> row : model.getRows()) {
+			Set<MClass> assclasses = row.item.associatedClasses();
 			
 			for (MClass mc : assclasses) {
 				Map<MClass, Integer> allPathes = getAllPathClasses(mc);
 				
 				for (Entry<MClass, Integer> entry : allPathes.entrySet()) {
-					if (entry.getValue().intValue() <= enteredValue) {
+					if (entry.getValue().intValue() <= row.value) {
 						classes.add(entry.getKey());
 					}
 				}
@@ -116,12 +108,10 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 	/**
 	 * Method getAssociationDepth obtains maximally attainable Depth based on starting point(aname)
 	 */
-	public int getAssociationDepth(AssociationName aname) {
-
-		Set<MClass> classes = getClassesOfAssociation(aname.name());
+	public static int getAssociationDepth(MAssociation assoc) {
 		int maxdepth = -1;
 				
-		for (MClass mc : classes) {
+		for (MClass mc : assoc.associatedClasses()) {
 			int max = getDepth(mc);
 			maxdepth = Math.max(max, maxdepth);
 		}
@@ -129,17 +119,7 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 		return maxdepth;
 	}
 	
-	/**
-     * Method getSelectedClassesOfAssociation calls twice Method getSelectedClassesofAssociationHS(), 
-     * in order to find relevant classes both in "Hidden" and in "Show". 
-	 */
-	private Set<MClass> getClassesOfAssociation(String name) {
-		Set<MClass> classes = new HashSet<MClass>();
-		classes.addAll(fSystem.model().getAssociation(name).associatedClasses());
-		return classes;
-	}
-	
 	public void update() {
-		fTableModel.update();
+		((AssociationPathTableModel)fTableModel).update();
 	}
 }

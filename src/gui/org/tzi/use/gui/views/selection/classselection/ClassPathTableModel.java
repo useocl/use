@@ -2,7 +2,6 @@ package org.tzi.use.gui.views.selection.classselection;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -18,15 +17,12 @@ import org.tzi.use.uml.mm.MClass;
  */
 
 @SuppressWarnings("serial")
-public class ClassPathTableModel extends TableModel {
+public class ClassPathTableModel extends TableModel<MClass> {
 	Set<MClass> selectedClasses;
-	SelectedClassPathView fView;
 	
-	public ClassPathTableModel( List<String> fAttributes, List<Object> fValues, Set<MClass> selectedClasses, SelectedClassPathView fView) {
-		super(fAttributes, fValues);
+	public ClassPathTableModel( Set<MClass> selectedClasses) {
 		this.selectedClasses = selectedClasses;
-		this.fView = fView;
-		this.setColumnName("class name", "path length");
+		this.setColumnName("class", "path length");
 		update();
 	}
 
@@ -34,11 +30,9 @@ public class ClassPathTableModel extends TableModel {
 	 * Method update updates the data of Table. 
 	 */
 	public void update() {
-
+		rows = new ArrayList<Row<MClass>>();
+		
 		if (selectedClasses.size() > 0) {
-			fAttributes.clear();
-			fValues.clear();
-			
 			// add all class
 			TreeSet<MClass> sortedClasses = new TreeSet<MClass>(new Comparator<MClass>(){
 				public int compare(MClass o1, MClass o2) {
@@ -48,13 +42,11 @@ public class ClassPathTableModel extends TableModel {
 			sortedClasses.addAll(selectedClasses);
 
 			for (MClass mc : sortedClasses) {
-				int depth = fView.getDepth(mc); 
-				fAttributes.add(mc.name() + " (0-" + depth + ")");
-				fValues.add(new Integer(depth));
+				int depth = SelectedClassPathView.getDepth(mc);
+				String name = mc.name() + " (0-" + depth + ")";
+				
+				rows.add(new Row<MClass>(name, depth, depth, mc));
 			}
-		} else {
-			fAttributes = new ArrayList<String>();
-			fValues = new ArrayList<Object>();
 		}
 		
 		fireTableDataChanged();

@@ -27,21 +27,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.selection.ClassSelectionView;
+import org.tzi.use.gui.views.selection.TableModel.Row;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.sys.MSystem;
 
 /** 
@@ -53,27 +55,26 @@ import org.tzi.use.uml.sys.MSystem;
 @SuppressWarnings("serial")
 public class SelectedClassPathView extends ClassSelectionView {
 
-	Set<MClass> selectedClasses;
-
 	private JButton fBtnReset;
 
 	/**
 	 * Constructor for SelectedClassPathView.
 	 */
 	public SelectedClassPathView(MainWindow parent, MSystem system, ClassDiagram diagram, Set<MClass> selectedClasses) {
-		super(new BorderLayout(), parent, system, diagram);
-
-		this.selectedClasses = selectedClasses;
-		initSelectedClassPathView();
+		this(parent, system, diagram, new ClassPathTableModel(selectedClasses));
 	}
     
+	protected SelectedClassPathView(MainWindow parent, MSystem system, ClassDiagram diagram, AbstractTableModel model) {
+		super(parent, system, diagram);
+		initView(model);
+	}
+	
 	/**
 	 * initSelectionClassPathView initialize the layout of view and add a Button "Reset", 
 	 * which pre-defined values can be reset.
 	 */
-	void initSelectedClassPathView() {
-		fTableModel = new ClassPathTableModel(fAttributes, fValues,
-				selectedClasses, this);
+	void initView(AbstractTableModel model) {
+		fTableModel = model;
 		fTable = new JTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		fTablePane = new JScrollPane(fTable);
@@ -81,7 +82,6 @@ public class SelectedClassPathView extends ClassSelectionView {
 		fBtnReset = new JButton("Reset");
 		fBtnReset.setMnemonic('R');
 		fBtnReset.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				update();
 			}
@@ -94,26 +94,11 @@ public class SelectedClassPathView extends ClassSelectionView {
 
 	public Set<MClass> getSelectedPathClasses() {
 		Set<MClass> classes = new HashSet<MClass>();
+		ClassPathTableModel model = (ClassPathTableModel)this.fTableModel;
 		
-		for (int i = 0; i < fAttributes.size(); i++) {
-			String att = fAttributes.get(i).toString();
-			
-			// TODO: Use MClass instead of parsing
-			String className = att.substring(0, att.indexOf("(")).trim();
-
-			Iterator<MClass> it = selectedClasses.iterator();
-			MClass mc = null;
-			
-			// find out, which mclass selected 
-			while (it.hasNext()) { 
-				mc = (MClass) (it.next());
-				if (mc.name().equals(className)) {
-					break;
-				}
-			}
-			
-			Map<MClass, Integer> allPathes = getAllPathClasses(mc);
-			int maxDepth = Integer.parseInt(fValues.get(i).toString());
+		for (Row<MClass> row : model.getRows()) {
+			Map<MClass, Integer> allPathes = getAllPathClasses(row.item);
+			int maxDepth = row.value;
 
 			for (Entry<MClass, Integer> entry : allPathes.entrySet()) {
 				if (entry.getValue() <= maxDepth) {
@@ -128,7 +113,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 	/**
 	 * Method getAllPathClasses return all attainable classes from the given class mc
 	 */
-	public Map<MClass, Integer> getAllPathClasses(MClass mc) {
+	public static Map<MClass, Integer> getAllPathClasses(MClass mc) {
 		
 		Map<MClass, Integer> result = new HashMap<MClass, Integer>();
 		
@@ -170,7 +155,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 * @param relatedClasses classes to evantually at to buffer
 	 * @param depth depth to set
 	 */
-	private void addNewClassesWithDepth(LinkedList<MClass> buffer, Map<MClass, Integer> result,
+	private static void addNewClassesWithDepth(LinkedList<MClass> buffer, Map<MClass, Integer> result,
 										Set<MClass> relatedClasses, int depth) {
 		if (relatedClasses != null) {
 			for (MClass cls : relatedClasses) {
@@ -185,7 +170,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 	/**
 	 * Method getDepth obtains maximally attainable Depth based on starting point(mc)
 	 */
-	public int getDepth(MClass mc) {
+	public static int getDepth(MClass mc) {
 		Map<MClass, Integer> allClasses = getAllPathClasses(mc);
 
 		int maxDepth = 0;
@@ -200,38 +185,53 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 * Method applyCropChanges shows only the appropriate marked classes.
 	 */
 	public void applyCropChanges(ActionEvent ev) {
-		if (getHideClasses(getSelectedPathClasses(), true).size() > 0) {
-			diagram.getAction("Hide",
-					getHideClasses(getSelectedPathClasses(), true))
-					.actionPerformed(ev);
+		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedPathClasses(), true);
+		
+		if (classifierToHide.size() > 0) {
+			diagram.hideElementsInDiagram(classifierToHide);
 		}
-		if (getClassesToShow(getSelectedPathClasses()).size() > 0) {
-			diagram.showElementsInDiagram(getClassesToShow(getSelectedPathClasses()));
+		
+		Set<MClassifier> classifierToShow = getClassifierToShow(getSelectedPathClasses());
+		if (classifierToShow.size() > 0) {
+			diagram.showElementsInDiagram(classifierToShow);
 		}
+		
+		diagram.invalidateContent();
 	}
 
 	/**
 	 * Method applyShowChanges shows the appropriate marked classes.
 	 */
 	public void applyShowChanges(ActionEvent ev) {
-		if (getClassesToShow(getSelectedPathClasses()).size() > 0) {
-			diagram.showElementsInDiagram(getClassesToShow(getSelectedPathClasses()));
+		if (this.fTable.isEditing())
+			this.fTable.getCellEditor().stopCellEditing();
+		
+		Set<MClassifier> classifierToShow = getClassifierToShow(getSelectedPathClasses());
+		
+		if (!classifierToShow.isEmpty()) {
+			diagram.showElementsInDiagram(classifierToShow);
 		}
+		
+		diagram.invalidateContent();
 	}
 
 	/**
 	 * Method applyHideChanges hides the appropriate marked classes.
 	 */
 	public void applyHideChanges(ActionEvent ev) {
-		if (getHideClasses(getSelectedPathClasses(), false).size() > 0) {
-			diagram.getAction("Hide",
-					getHideClasses(getSelectedPathClasses(), false))
-					.actionPerformed(ev);
+		if (this.fTable.isEditing())
+			this.fTable.getCellEditor().stopCellEditing();
+		
+		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedPathClasses(), false);
+		
+		if (classifierToHide.size() > 0) {
+			diagram.hideElementsInDiagram(classifierToHide);
 		}
+		diagram.invalidateContent();
 	}
 
 	public void update() {
-		fTableModel.update();
+		((ClassPathTableModel)fTableModel).update();
 	}
 
 }

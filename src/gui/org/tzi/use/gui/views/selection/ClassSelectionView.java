@@ -4,10 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -17,12 +14,15 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram.ClassDiagramData;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassifierNode;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.StateChangeEvent;
 
@@ -35,39 +35,35 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  */
 @SuppressWarnings("serial")
 public abstract class ClassSelectionView extends JPanel implements View {
-	public JScrollPane fTablePane;
+	protected JScrollPane fTablePane;
 
-	public JButton fBtnShowAll;
+	protected JButton fBtnShowAll;
 
-	public JButton fBtnHideAll;
+	protected JButton fBtnHideAll;
 
-	public JButton fBtnCrop;
+	protected JButton fBtnCrop;
 
-	public JButton fBtnShow;
+	protected JButton fBtnShow;
 
-	public JButton fBtnHide;
+	protected JButton fBtnHide;
 
-	public JPanel buttonPane;
+	protected JPanel buttonPane;
 
-	public MSystem fSystem;
+	protected MSystem fSystem;
 
-	public MainWindow fMainWindow;
+	protected MainWindow fMainWindow;
 
-	public JTable fTable;
+	protected JTable fTable;
 
-	public TableModel fTableModel;
-
-	public List<String> fAttributes = new ArrayList<String>();
-
-	public List<Object> fValues = new ArrayList<Object>();
+	protected AbstractTableModel fTableModel;
 
 	protected ClassDiagram diagram;
 	
 	/**
 	 * Constructor for ClassSelectionView.
 	 */
-	public ClassSelectionView(BorderLayout layout, MainWindow parent, MSystem system, ClassDiagram diagram) {
-		super(layout);
+	public ClassSelectionView(MainWindow parent, MSystem system, ClassDiagram diagram) {
+		super(new BorderLayout());
 		
 		this.fSystem = system;
 		this.fMainWindow = parent;
@@ -103,6 +99,9 @@ public abstract class ClassSelectionView extends JPanel implements View {
 		fBtnCrop.setMnemonic('C');
 		fBtnCrop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (fTable.isEditing())
+					fTable.getCellEditor().stopCellEditing();
+				
 				applyCropChanges(e);
 			}
 		});
@@ -111,6 +110,9 @@ public abstract class ClassSelectionView extends JPanel implements View {
 		fBtnShow.setMnemonic('O');
 		fBtnShow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (fTable.isEditing())
+					fTable.getCellEditor().stopCellEditing();
+				
 				applyShowChanges(e);
 			}
 		});
@@ -119,6 +121,9 @@ public abstract class ClassSelectionView extends JPanel implements View {
 		fBtnHide.setMnemonic('I');
 		fBtnHide.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (fTable.isEditing())
+					fTable.getCellEditor().stopCellEditing();
+				
 				applyHideChanges(e);
 			}
 		});
@@ -142,50 +147,43 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	}
 
 	/**
-	 * Returns all MClass objects from classes which are hidden.
+	 * Returns all MClass objects contained in <code>classifier</code> which are hidden.
 	 */
-	public Set<MClass> getClassesToShow(Set<MClass> classes) {
-		Set<MClass> showclasses = new HashSet<MClass>();
-		Iterator<?> itshow = diagram.getHiddenNodes().iterator();
+	public Set<MClassifier> getClassifierToShow(Set<? extends MClassifier> classifier) {
+		Set<MClassifier> showclassifier = new HashSet<MClassifier>();
+		ClassDiagramData hiddenData = (ClassDiagramData)diagram.getHiddenData();
 		
-		// add Instance of MClass
-		while (itshow.hasNext()) {
-			Object node = itshow.next();
-			if (node instanceof MClass) {
-				MClass cls = (MClass) node;
-				if (classes.contains(cls)) {
-					showclasses.add(cls);
-				}
-			}
+		for (MClassifier cf : classifier) {
+			if (hiddenData.containsNodeForClassifer(cf))
+				showclassifier.add(cf);
 		}
 		
-		return showclasses;
+		return showclassifier;
 	}
 
 	/**
-	 * Method getHideClasses takes two parameters: HashSet and a boolean value. 
-	 * The boolean value "true" means that the function "crop" is selected.
+	 * This method calculates the classifiers that need to be hidden in the diagram.
+	 * When isCrop is false, all classifiers which are currently visible and contained in <code>classifiers</code>
+	 * are returned. 
 	 */
-	public Set<MClass> getHideClasses(Set<MClass> classes, boolean isCrop) {
-		Set<MClass> hideclasses = new HashSet<MClass>();
-		Iterator<?> ithide = diagram.getGraph().iterator();
-		
-		// add Instance of MClass
-		while (ithide.hasNext()) {
-			Object node = ithide.next();
-			if (node instanceof ClassNode) {
-				MClass cls = ((ClassNode) node).cls();
+	public Set<MClassifier> getClassifierToHide(Set<? extends MClassifier> classifiers, boolean isCrop) {
+		Set<MClassifier> hideclasses = new HashSet<MClassifier>();
+
+		for (PlaceableNode node : diagram.getVisibleData().getNodes()) {
+			if (node instanceof ClassifierNode) {
+				MClassifier cf = ((ClassifierNode)node).getClassifier();
 				if (isCrop) {
-					if (!classes.contains(cls)) {
-						hideclasses.add(cls);
+					if (!classifiers.contains(cf)) {
+						hideclasses.add(cf);
 					}
 				} else {
-					if (classes.contains(cls)) {
-						hideclasses.add(cls);
+					if (classifiers.contains(cf)) {
+						hideclasses.add(cf);
 					}
 				}
 			}
 		}
+	
 		return hideclasses;
 	}
 
@@ -193,18 +191,8 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	 * Method applyHideAllChanges is responsible for hiding all classes and associations.
 	 */
 	public void applyHideAllChanges(ActionEvent ev) {
-		Iterator<?> it = diagram.getGraph().iterator();
-		
-		Set<MClass> hideClass = new HashSet<MClass>();
-		while (it.hasNext()) {
-			Object node = it.next();
-			if (node instanceof ClassNode) {
-				MClass cls = ((ClassNode) node).cls();
-				hideClass.add(cls);
-			}
-		}
-
-		diagram.getAction("Hide all classes", hideClass).actionPerformed(ev);
+		diagram.hideAll();
+		diagram.invalidateContent();
 	}
 
 	/**

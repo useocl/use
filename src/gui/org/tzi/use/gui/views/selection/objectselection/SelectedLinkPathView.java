@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,8 +35,8 @@ import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.selection.TableModel.Row;
 import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 
@@ -45,6 +44,7 @@ import org.tzi.use.uml.sys.MSystem;
  * a view of SelectedLinkPath
  * @author   Jun Zhang 
  * @author   Jie Xu
+ * @author   Lars Hamann
  */
 public class SelectedLinkPathView extends SelectedObjectPathView {
 
@@ -69,7 +69,7 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 	 * and add the Button "Reset", which pre-defined values can be reset.
 	 */
 	void initSelectedAssociationPathView(Set<MLink> selectedLinks) {
-		fTableModel = new LinkPathTableModel(fAttributes, fValues, selectedLinks, this);
+		fTableModel = new LinkPathTableModel(selectedLinks, this);
 		fTable = new JTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		fTablePane = new JScrollPane(fTable);
@@ -89,24 +89,16 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 
 	public Set<MObject> getSelectedPathObjects() {
 		Set<MObject> objects = new HashSet<MObject>();
-		for (int i = 0; i < fAttributes.size(); i++) {
-			String cname = fAttributes.get(i).toString().substring(0,
-					fAttributes.get(i).toString().indexOf("(")).trim();
+		
+		for (Row<MLink> row : ((LinkPathTableModel)fTableModel).getRows()) {
 
-			Iterator<MObject> it = getSelectedObjectsOfLink(cname).iterator();
-			MObject mo = null;
-						
-			while (it.hasNext()) {
-				mo = it.next();
-				if (mo.name().equals(cname)) {
-					break;
-				}
-			}
+			for (MObject obj : row.item.linkedObjects()) {
+				Map<MObject, Integer> paths = getAllPathObjects(obj);
 			
-			Map<MObject, Integer> paths = getAllPathObjects(mo);
-			for (Map.Entry<MObject, Integer> entry : paths.entrySet()) {
-				if (entry.getValue().intValue() <= Integer.parseInt(fValues.get(i).toString())) {
-					objects.add(entry.getKey());
+				for (Map.Entry<MObject, Integer> entry : paths.entrySet()) {
+					if (entry.getValue().intValue() <= row.value) {
+						objects.add(entry.getKey());
+					}
 				}
 			}
 		}
@@ -126,24 +118,8 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 		return maxdepth;
 	}
 
-	/**
-	 * Returns all objects which are linked by the association named <code>associationName</code>.
-	 * @param associationName
-	 * @return
-	 */
-	private Set<MObject> getSelectedObjectsOfLink(String associationName) {
-		Set<MObject> objects = new HashSet<MObject>();
-		MLinkSet linkSet = fSystem.state().linksOfAssociation(fSystem.model().getAssociation(associationName));
-		
-		for (MLink link : linkSet.links()) { 
-			objects.addAll(link.linkedObjects());
-		}
-		
-		return objects;
-	}
-
 	public void update() {
-		fTableModel.update();
+		((LinkPathTableModel)fTableModel).update();
 	}
 
 }
