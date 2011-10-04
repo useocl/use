@@ -59,7 +59,6 @@ import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.gen.model.GFlaggedInvariant;
 import org.tzi.use.gen.tool.GNoResultException;
-import org.tzi.use.main.DaVinciProcess;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
@@ -143,11 +142,6 @@ public final class Shell implements Runnable, PPCHandler {
     private Session fSession;
 
     /**
-     * The daVinci communication interface.
-     */
-    private DaVinciProcess fDaVinci;
-
-    /**
      * Result of last check command.
      */
     private boolean fLastCheckResult = false;
@@ -188,7 +182,7 @@ public final class Shell implements Runnable, PPCHandler {
 		}
         
 		this.fPluginRuntime = pluginRuntime;
-        fDaVinci = new DaVinciProcess(Options.DAVINCI_PATH);
+        
 		// integrate plugin commands
 		if (Options.doPLUGIN) {
 			this.shellExtensionPoint = (IPluginShellExtensionPoint) this.fPluginRuntime
@@ -714,8 +708,7 @@ public final class Shell implements Runnable, PPCHandler {
     private void cmdExit() {
         // clean up
         Log.verbose("Exiting...");
-        // terminate daVinci
-        fDaVinci.close();
+        
         // Write command history to file
         if (!Options.quiet) {
             try {
@@ -725,6 +718,7 @@ public final class Shell implements Runnable, PPCHandler {
                         + Options.USE_HISTORY_PATH + " : " + ex.getMessage());
             }
         }
+        
         synchronized( fReadlineStack ) {
             fReadlineStack.closeAll();
             fFinished = true;

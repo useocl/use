@@ -57,12 +57,6 @@ public class Options {
     private static final String USER_PROP_FILE = ".userc";
 
     /**
-     * Name of the property giving the path to the davinci executable.
-     */
-    private static final String DAVINCI_PATH_P = "use.davinci.path";
-    public static String DAVINCI_PATH = "daVinci";
-
-    /**
 	 * Name of the property giving the number of parallel threads to use for
 	 * evaluating constraints.
      */
@@ -394,9 +388,6 @@ public class Options {
             if (propFile.exists() )
                 loadProperties(propFile);
         }
-
-        // set values
-        DAVINCI_PATH = props.getProperty(DAVINCI_PATH_P, DAVINCI_PATH);
 
 		MONITOR_ASPECT_TEMPLATE = useHome
 				+ FILE_SEPARATOR
