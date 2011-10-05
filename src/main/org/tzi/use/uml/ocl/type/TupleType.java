@@ -110,6 +110,9 @@ public final class TupleType extends Type {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean isSubtypeOf(Type t) {
+    	if (t.isTrueOclAny())
+    		return true;
+    	
     	if(!t.isTupleType(true)){
     		return false;
     	}
