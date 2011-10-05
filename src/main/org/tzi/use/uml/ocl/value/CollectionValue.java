@@ -123,30 +123,49 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
         
         // Two or more values
-        List<Type> commonSupertypes = values[0].type().allSupertypesOrdered();
-        Type lastCommonSupertype = commonSupertypes.get(0);
+        List<Type> commonSuperTypes = values[0].type().allSupertypesOrdered();
+        Type lastCommonSupertype = commonSuperTypes.get(0);
     	Type t;
     	
     	for (int i = 1; i < values.length; ++i) {
     		t = values[i].type();
     		
     		if (lastCommonSupertype.isVoidType()) {
-    			commonSupertypes = t.allSupertypesOrdered();
+    			commonSuperTypes = t.allSupertypesOrdered();
     		} else if (!t.isVoidType()) {
-    			commonSupertypes.retainAll(t.allSupertypesOrdered());
+    			commonSuperTypes.retainAll(t.allSupertypesOrdered());
     		}
     		
-    		if (commonSupertypes.isEmpty()) {
+    		if (commonSuperTypes.isEmpty()) {
     			throw new ExpInvalidException("Type mismatch, " + this.type().toString() + " element " + 
                         (i + 1) + " (" + values[i].type().toString() + ")" +
                         " does not have a common supertype " + 
                         "with previous elements (" + lastCommonSupertype.toString() + ").");	
     		}
     		
-    		lastCommonSupertype = commonSupertypes.get(0);
+    		lastCommonSupertype = commonSuperTypes.get(0);
     	}
-    		
-        return commonSupertypes.get(0);
+    	
+    	Type resultType = null;
+    	boolean relatedToAll;
+    	
+		for (int i = 0; i < commonSuperTypes.size(); ++i) {
+			resultType = commonSuperTypes.get(i);
+			relatedToAll = true;
+			
+			for (Type otherTypes  : commonSuperTypes) {
+				if (!resultType.equals(otherTypes)
+						&& !(otherTypes.isSubtypeOf(resultType) || resultType
+								.isSubtypeOf(otherTypes))) {
+					relatedToAll = false;
+					break;
+				}
+			}
+			
+			if (relatedToAll) break;
+		}
+		
+        return resultType;
     }
 
     

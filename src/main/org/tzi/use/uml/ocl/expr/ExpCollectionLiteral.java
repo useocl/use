@@ -73,8 +73,25 @@ public abstract class ExpCollectionLiteral extends Expression {
                         " does not have a common supertype " + 
                         "with previous elements.");
     	}
-        
-    	return commonSuperTypes.get(0);
+    	
+    	Type resultType = null;
+    	boolean relatedToAll;
+    	
+		for (int i = 0; i < commonSuperTypes.size(); ++i) {
+			resultType = commonSuperTypes.get(i);
+			relatedToAll = true;
+			
+			for (Type otherTypes  : commonSuperTypes) {
+				if (!resultType.equals(otherTypes) && !(otherTypes.isSubtypeOf(resultType) || resultType.isSubtypeOf(otherTypes))) {
+					relatedToAll = false;
+					break;
+				}
+			}
+			
+			if (relatedToAll) break;
+		}
+    	
+    	return resultType;
     }
 
 
