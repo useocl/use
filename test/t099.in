@@ -22,4 +22,5 @@
 :Bag{A1,A2,B1,B2,E1}
 *-> Bag(E)
 ?Set{Set{A1,A2,B1,B2,E1}, Bag{A1,A2,B1,B2,E1}}
-*-> Set{Set{A1,A2,B1,B2,E1}, Bag{A1,A2,B1,B2,E1}} : Set(Collection(E))
+*-> Set{Set{@A1,@A2,@B1,@B2,@E1}, Bag{@A1,@A2,@B1,@B2,@E1}} : Set(Collection(E))
+exit
