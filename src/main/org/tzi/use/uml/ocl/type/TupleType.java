@@ -207,6 +207,6 @@ public final class TupleType extends Type {
 	 */
 	@Override
 	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
-		// nothing to do		
+		allSupertypes.add(TypeFactory.mkOclAny());
 	}
 }
