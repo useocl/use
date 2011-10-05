@@ -21,8 +21,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * The OCL Integer type.
@@ -51,14 +50,12 @@ public final class IntegerType extends BasicType {
         return !t.isVoidType() && (t.isNumber() || t.isTrueOclAny());
     }
 
-    /** 
-     * Returns the set of all supertypes (including this type).
-     */
-    public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>(3);
-        res.add(TypeFactory.mkOclAny());
-        res.add(TypeFactory.mkReal());
-        res.add(this);
-        return res;
-    }
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
+	 */
+	@Override
+	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
+		allSupertypes.add(TypeFactory.mkReal());
+		allSupertypes.add(TypeFactory.mkOclAny());
+	}
 }

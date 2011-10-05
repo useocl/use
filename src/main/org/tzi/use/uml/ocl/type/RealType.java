@@ -21,8 +21,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * The OCL Real type.
@@ -51,13 +50,11 @@ public final class RealType extends BasicType {
         return equals(t) || t.isTrueOclAny();
     }
 
-    /** 
-     * Returns the set of all supertypes (including this type).
-     */
-    public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>(2);
-        res.add(TypeFactory.mkOclAny());
-        res.add(this);
-        return res;
-    }
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
+	 */
+	@Override
+	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
+		allSupertypes.add(TypeFactory.mkOclAny());		
+	}
 }

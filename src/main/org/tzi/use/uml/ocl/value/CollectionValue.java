@@ -109,10 +109,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     /**
      * Returns the value for the type parameter of this collection.
      */
-    protected Type inferElementType() 
-        throws ExpInvalidException
-    {
-
+	protected Type inferElementType() throws ExpInvalidException {
         if (collection().size() == 0) {
             return fElemType;
         }
@@ -126,26 +123,23 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
         
         // Two or more values
-        Type lastCommonSupertype = values[0].type();
-        Type commonSuperType = values[0].type();
-    	Type t2;
+        List<Type> commonSupertypes = values[0].type().allSupertypesOrdered();
+        Type lastCommonSupertype = commonSupertypes.get(0);
     	
     	for (int i = 1; i < values.length; ++i) {
-    		t2 = values[i].type();
-    		commonSuperType = commonSuperType.getLeastCommonSupertype(t2);
+    		commonSupertypes.retainAll(values[i].type().allSupertypesOrdered());
     		
-    		if (commonSuperType == null) {
+    		if (commonSupertypes.isEmpty()) {
     			throw new ExpInvalidException("Type mismatch, " + this.type().toString() + " element " + 
-                        (i + 1) + " (" + t2.toString() + ")" +
+                        (i + 1) + " (" + values[i].type().toString() + ")" +
                         " does not have a common supertype " + 
-                        "with previous elements (" + lastCommonSupertype.toString() + ").");
+                        "with previous elements (" + lastCommonSupertype.toString() + ").");	
+    		}
+    		
+    		lastCommonSupertype = commonSupertypes.get(0);
     	}
-    	
-    		lastCommonSupertype = commonSuperType;
-    	}
-    	
-        // FIXME: deal with other cases: t1 < t, t2 < t, t1 and t2 unrelated.
-        return commonSuperType;
+    		
+        return commonSupertypes.get(0);
     }
 
     

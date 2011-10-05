@@ -21,8 +21,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * The OCL String type.
@@ -36,25 +35,25 @@ public final class StringType extends BasicType {
         super("String");
     }
     
-    public boolean isString() {
+    @Override
+	public boolean isString() {
     	return true;
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
+    @Override
+	public boolean isSubtypeOf(Type t) {
         return equals(t) || t.isTrueOclAny();
     }
 
-    /** 
-     * Returns the set of all supertypes (including this type).
-     */
-    public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>(2);
-        res.add(TypeFactory.mkOclAny());
-        res.add(this);
-        return res;
-    }
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
+	 */
+	@Override
+	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
+		allSupertypes.add(TypeFactory.mkOclAny());
+	}
 
 }

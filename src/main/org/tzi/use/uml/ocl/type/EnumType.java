@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.tzi.use.uml.mm.Annotatable;
 import org.tzi.use.uml.mm.MClassifier;
@@ -117,16 +116,6 @@ public final class EnumType extends Type implements Annotatable, MClassifier {
         return equals(t) || t.isTrueOclAny();
     }
 
-    /** 
-     * Returns the set of all supertypes (including this type).
-     */
-    public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>(2);
-        res.add(TypeFactory.mkOclAny());
-        res.add(this);
-        return res;
-    }
-
     @Override
     public boolean isAnnotatable() {
     	return true;
@@ -195,5 +184,13 @@ public final class EnumType extends Type implements Annotatable, MClassifier {
 	@Override
 	public boolean isAbstract() {
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
+	 */
+	@Override
+	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
+		allSupertypes.add(TypeFactory.mkOclAny());
 	}
 }

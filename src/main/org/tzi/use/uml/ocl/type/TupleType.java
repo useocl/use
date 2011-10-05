@@ -21,10 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.tzi.use.util.BufferedToString;
@@ -196,20 +195,18 @@ public final class TupleType extends Type {
         return hashCode;
     }
     
-
-    /** 
-     * Returns the set of all supertypes (including this type).
-     */
-    public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>(1);
-        res.add(this);
-        return res;
-    }
-
     public Part getPart(String name) {
         if (fParts.containsKey(name))
         	return fParts.get(name);
         else
         	return null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
+	 */
+	@Override
+	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
+		// nothing to do		
+	}
 }

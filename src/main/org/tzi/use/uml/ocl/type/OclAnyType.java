@@ -21,8 +21,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * The OclAny type.
@@ -42,15 +41,6 @@ public final class OclAnyType extends Type {
 
     public boolean isTrueOclAny() {
     	return true;
-    }
-    
-    /** 
-     * Returns the set of all supertypes (including this type).
-     */
-    public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>(1);
-        res.add(this);
-        return res;
     }
 
     /**
@@ -74,4 +64,12 @@ public final class OclAnyType extends Type {
     public StringBuilder toString(StringBuilder sb) {
         return sb.append("OclAny");
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
+	 */
+	@Override
+	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
+		// Nothing to do. OclAny has no supertypes
+	}
 }

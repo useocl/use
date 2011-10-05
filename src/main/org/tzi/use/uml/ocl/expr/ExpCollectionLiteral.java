@@ -21,6 +21,8 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import java.util.List;
+
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
@@ -45,32 +47,29 @@ public abstract class ExpCollectionLiteral extends Expression {
     /**
      * Returns the value for the type parameter of this collection.
      */
-    protected Type inferElementType() 
-        throws ExpInvalidException
+    protected Type inferElementType() throws ExpInvalidException
     {
     	if (this.fElemExpr.length == 0)
     		return TypeFactory.mkVoidType();
     	else if (this.fElemExpr.length == 1)
     		return this.fElemExpr[0].type();
     	
-    	Type commonSuperType = this.fElemExpr[0].type();
+    	List<Type> commonSuperTypes = this.fElemExpr[0].type().allSupertypesOrdered();
+    	
     	Type t2;
     	
     	for (int i = 1; i < fElemExpr.length; ++i) {
     		t2 = fElemExpr[i].type();
-    		commonSuperType = commonSuperType.getLeastCommonSupertype(t2);
+    		commonSuperTypes.retainAll(t2.allSupertypesOrdered());
     		
-    		if (commonSuperType == null)
+    		if (commonSuperTypes.isEmpty())
     			throw new ExpInvalidException("Type mismatch, " + fKind + " element " + 
                         (i + 1) +
                         " does not have a common supertype " + 
                         "with previous elements.");
     	}
         
-    	return commonSuperType; 
-    	
-        // FIXME: deal with other cases: t1 < t, t2 < t, t1 and t2 unrelated.
-        // throw new ExpInvalidException("Cannot determine type of " + fKind + ".");
+    	return commonSuperTypes.get(0);
     }
 
 
