@@ -1,0 +1,23 @@
+model t100
+
+class A
+  operations
+    op():Integer = 1
+end
+
+class B < A
+  operations
+    op():Integer = 2
+end
+
+class C < B
+end
+
+class D < B
+end
+
+class E < C,D
+  operations
+    op():Integer = 3
+end
+
