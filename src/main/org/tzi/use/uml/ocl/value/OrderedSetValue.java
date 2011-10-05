@@ -92,7 +92,7 @@ public class OrderedSetValue extends CollectionValue {
     }
     
     @Override
-    public void doSetElemType() {
+    public void doSetType() {
         setType( TypeFactory.mkOrderedSet(fElemType));
     }
 
@@ -292,7 +292,9 @@ public class OrderedSetValue extends CollectionValue {
     void add(Value v) {
     	if (!fElements.contains(v)) {
     		fElements.add(v);
-    		deriveRuntimeType();
+    		
+    		if (!v.type().equals(this.elemType()))
+    			deriveRuntimeType();
     	}
     }
 

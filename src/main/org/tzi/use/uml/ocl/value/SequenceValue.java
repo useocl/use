@@ -99,7 +99,7 @@ public class SequenceValue extends CollectionValue {
     }
     
     @Override
-    public void doSetElemType() {
+    public void doSetType() {
         setType( TypeFactory.mkSequence(fElemType));
     }
 
@@ -298,8 +298,12 @@ public class SequenceValue extends CollectionValue {
     }
 
     void add(Value v) {
+    	boolean needToDeriveRuntimeType = !v.type().equals(this.elemType());
+        
         fElements.add(v);
-        deriveRuntimeType();
+        
+        if (needToDeriveRuntimeType)
+            deriveRuntimeType();
     }
 
 

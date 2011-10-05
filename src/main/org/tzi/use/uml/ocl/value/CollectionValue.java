@@ -59,7 +59,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public final void setElemType( Type t ) {
         fElemType = t;
-        doSetElemType();
+        doSetType();
     }
     
     /**
@@ -68,7 +68,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
      * sets the element type.
      * So implementors are guaranteed to be able to use <code>fElemtType</code>.   
      */
-    protected abstract void doSetElemType();
+    protected abstract void doSetType();
     
     public abstract Iterator<Value> iterator();
     public abstract int size();
@@ -125,9 +125,16 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         // Two or more values
         List<Type> commonSupertypes = values[0].type().allSupertypesOrdered();
         Type lastCommonSupertype = commonSupertypes.get(0);
+    	Type t;
     	
     	for (int i = 1; i < values.length; ++i) {
-    		commonSupertypes.retainAll(values[i].type().allSupertypesOrdered());
+    		t = values[i].type();
+    		
+    		if (lastCommonSupertype.isVoidType()) {
+    			commonSupertypes = t.allSupertypesOrdered();
+    		} else if (!t.isVoidType()) {
+    			commonSupertypes.retainAll(t.allSupertypesOrdered());
+    		}
     		
     		if (commonSupertypes.isEmpty()) {
     			throw new ExpInvalidException("Type mismatch, " + this.type().toString() + " element " + 

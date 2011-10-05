@@ -60,8 +60,13 @@ public abstract class ExpCollectionLiteral extends Expression {
     	
     	for (int i = 1; i < fElemExpr.length; ++i) {
     		t2 = fElemExpr[i].type();
-    		commonSuperTypes.retainAll(t2.allSupertypesOrdered());
     		
+    		if (commonSuperTypes.get(0).isVoidType()) {
+    			commonSuperTypes = t2.allSupertypesOrdered();
+    		} else if (!commonSuperTypes.get(0).isVoidType()) {
+    			commonSuperTypes.retainAll(t2.allSupertypesOrdered());
+    		}
+    	    		
     		if (commonSuperTypes.isEmpty())
     			throw new ExpInvalidException("Type mismatch, " + fKind + " element " + 
                         (i + 1) +

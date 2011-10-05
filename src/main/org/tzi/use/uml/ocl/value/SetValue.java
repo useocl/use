@@ -100,7 +100,7 @@ public class SetValue extends CollectionValue {
     }
     
     @Override
-    public void doSetElemType() {
+    public void doSetType() {
         setType( TypeFactory.mkSet(fElemType));
     }
     
@@ -109,17 +109,9 @@ public class SetValue extends CollectionValue {
      * 
      */
     void add(Value v) {
-        boolean needToDeriveRuntimeType = true;
-        // performance optimization
-        for (Iterator<Value> it = fElements.iterator(); it.hasNext();) {
-            Value val = (Value) it.next();
-            if (val.type().equals(v.type())) {
-                needToDeriveRuntimeType = false;
-                break;
-            }
-        }
         fElements.add(v);
-        if (needToDeriveRuntimeType)
+        
+        if (!v.type().equals(this.elemType()))
             deriveRuntimeType();
     }
 
