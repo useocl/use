@@ -240,7 +240,8 @@ public final class MOperation extends MModelElementImpl {
     }
 
     /**
-     * Returns a string describing the signature of the operation.
+     * Returns a string describing the signature of the operation, i. e.,<br/>
+     * <code>opName( (param : Type)* ) : Type</code>
      */
     public String signature() {
         String res = name() + "(" + fVarDeclList + ")";
