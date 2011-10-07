@@ -328,13 +328,9 @@ public class VariableEnvironment {
 			}
 		}
 		
-		//Set<String> pushedNames = new HashSet<String>();
 		for (Entry<String, Value> entry : fCurrentFrame.entrySet()) {
 			String varName = entry.getKey();			
-			//if (!pushedNames.contains(varName)) {
-				result.setType(varName, entry.getValue().type());
-				//pushedNames.add(varName);
-			//}
+			result.setType(varName, entry.getValue().type());
 		}
 		
 		return result;

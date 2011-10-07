@@ -34,7 +34,6 @@ import java.util.Set;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.SrcPos;
-import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAttribute;
@@ -76,57 +75,36 @@ import org.tzi.use.util.soil.exceptions.evaluation.UndefinedValueException;
 
 
 /**
- * TODO
+ * Base class for all SOIL statements.
  * @author Daniel Gent
  *
  */
 public abstract class MStatement {
-	/** TODO */
-	private ASTStatement fSourceStatement;
-	/** TODO */
+
+	/**
+	 * The source position of the statement (if specified).
+	 */
 	private SrcPos fSourcePosition;
+	
 	/** TODO */
 	protected SoilEvaluationContext fContext;
+	
 	/** TODO */
 	protected StatementEvaluationResult fResult;
+	
 	/** TODO */
 	protected MSystem fSystem;
+	
 	/** TODO */
 	protected MSystemState fState;
+	
 	/** TODO */
 	protected VariableEnvironment fVarEnv;
+	
 	/** TODO */
 	private boolean fIsOperationBody = false;
-	/** TODO */
+	
 	private static final String SHELL_PREFIX = "!";
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public boolean hasSourceStatement() {
-		return fSourceStatement != null;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param sourceStatement
-	 */
-	public void setSourceStatement(ASTStatement sourceStatement) {
-		fSourceStatement = sourceStatement;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTStatement getSourceStatement() {
-		return fSourceStatement;
-	}
-	
 	
 	/**
 	 * TODO

@@ -79,7 +79,6 @@ public class MObjectDestructionStatement extends MStatement {
 				
 				statement.setIsOperationBody(isOperationBody());
 				statement.setSourcePosition(getSourcePosition());
-				statement.setSourceStatement(getSourceStatement());
 				
 				evaluateSubStatement(statement);
 			}

@@ -85,30 +85,39 @@ import org.tzi.use.util.soil.exceptions.compilation.WrongNumOfParticipantsExcept
  *
  */
 public abstract class ASTStatement extends AST {
-	/** TODO */
+	
+	/**
+	 * The source position of this statement
+	 */
 	private SrcPos fSourcePosition;
+	
 	/** TODO */
 	private String fParsedText;
-	/** TODO */
+	
 	private List<ASTStatement> fChildStatements = new ArrayList<ASTStatement>();
+	
 	/** TODO */
 	protected VariableSet fBoundSet = new VariableSet();
 	/** TODO */
 	protected VariableSet fAssignedSet = new VariableSet();
+	
 	/** TODO */
 	protected Context fContext;
+	
 	/** TODO */
 	protected SymbolTable fSymtable;
+	
 	/** TODO */
 	private Type fRequiredResultType;
-	/** TODO */
+
 	protected static boolean VERBOSE = false;
-	/** TODO */
+	
 	protected static PrintWriter VERBOSE_OUT = new PrintWriter(System.out);
 
 	
 	/**
-	 * TODO
+	 * Returns <code>true</code> if a source position is specified, i. e.,
+	 * {@link #getSourcePosition()} does not return <code>null</code>. 
 	 * @return
 	 */
 	public boolean hasSourcePosition() {
@@ -117,8 +126,9 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns the source position of this statement id specified.
+	 * Otherwise <code>null</code> is returned.
+	 * @return The source position or <code>null</code>
 	 */
 	public SrcPos getSourcePosition() {
 		return fSourcePosition;
@@ -126,8 +136,8 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param sourcePosition
+	 * Sets the source position of this statement.
+	 * @param sourcePosition The source position to set
 	 */
 	public void setSourcePosition(SrcPos sourcePosition) {
 		fSourcePosition = sourcePosition;
@@ -135,8 +145,8 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param token
+	 *  Sets the source position of this statement to the position of the token.
+	 * @param token A token which represents the position of this statement. 
 	 */
 	public void setSourcePosition(Token token) {
 		setSourcePosition(new SrcPos(token));
@@ -169,8 +179,8 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * True if this statement is an instance of {@link ASTEmptyStatement}.
+	 * @return <code>true</code> if this instance is an ASTEmptyStatement. 
 	 */
 	public boolean isEmptyStatement() {
 		return (this instanceof ASTEmptyStatement);
@@ -234,22 +244,37 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
+	 * When set to <code>true</code> the <code>ASTStatement</code>s
+	 * print more information to {@link PrintWriter} specified by {@link #setVerboseOutput(PrintWriter)}.
 	 * @param verbose
 	 */
 	public static void setVerbose(boolean verbose) {
 		VERBOSE = verbose;
 	}
 	
+	/**
+	 * Returns the state of verbose output.
+	 * @return <code>true</code> if verbose output is enabled, <code>false</code> otherwise.
+	 */
+	public static boolean getVerbose() {
+		return VERBOSE;
+	}
 	
 	/**
-	 * TODO
-	 * @param output
+	 * Sets the verbose output messages to <code>output</code>.
+	 * @param output The PrintWriter for the verbose output.
 	 */
 	public static void setVerboseOutput(PrintWriter output) {
 		VERBOSE_OUT = output;
 	}
 	
+	/**
+	 * Gets the current {@link PrintWriter} to output verbose messages to.
+	 * @returns The current {@link PrintWriter} for verbose output.
+	 */
+	public static PrintWriter getVerboseOutput() {
+		return VERBOSE_OUT;
+	}
 	
 	/**
 	 * TODO
@@ -268,8 +293,7 @@ public abstract class ASTStatement extends AST {
 		verbosePrintln("generating " + this);
 		
 		MStatement result = generateStatement();
-	
-		result.setSourceStatement(this);
+
 		result.setSourcePosition(fSourcePosition);
 		
 		if (fRequiredResultType != null) {
@@ -358,8 +382,10 @@ public abstract class ASTStatement extends AST {
 	
 
 	/**
-	 * TODO
-	 * @param output
+	 * If isVerbose is set to <code>true</code> this method
+	 * prints the string representation of <code>output</code> to
+	 * the {@link PrintWriter} specified by {@link #setVerboseOutput(PrintWriter)}.
+	 * @param output The object to print
 	 */
 	protected void verbosePrint(Object output) {
 		if (VERBOSE) {
@@ -370,8 +396,10 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param output
+	 * If isVerbose is set to <code>true</code> this method
+	 * prints the string representation of <code>output</code> to
+	 * the {@link PrintWriter} specified by {@link #setVerboseOutput(PrintWriter)} with an appended new line.
+	 * @param output The object to print
 	 */
 	protected void verbosePrintln(Object output) {
 		verbosePrint(output + "\n");

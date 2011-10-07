@@ -36,6 +36,7 @@ import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.soil.VariableEnvironment;
 import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
 
@@ -51,9 +52,7 @@ public class ShellCommandCompiler {
 	 * default constructor hidden, since we don't need
 	 * instances of this class
 	 */
-	private ShellCommandCompiler() {
-		
-	}
+	private ShellCommandCompiler() { }
 	
 	
 	/**
@@ -217,17 +216,18 @@ public class ShellCommandCompiler {
 	
 	
 	/**
-	 * 
-	 * @param statement
-	 * @param inputName
-	 * @param errorOutput
-	 * @param state
-	 * @param model
+	 * Constructs a MStatement from the given AST.
+	 * If the compilation fails <code>null</code> is returned.
+	 * @param statement The AST to construct the statement from.
+	 * @param inputName A name for the input used by error messages.
+	 * @param errorOutput Output for error messages
+	 * @param state The system state
+	 * @param model The model
 	 * @param variableEnvironment
-	 * @param verbose
-	 * @return
+	 * @param verbose if true, detailed messages are printed to stdout
+	 * @return The constructed MStatement or <code>null</code> if any error occured.
 	 */
-	public static MStatement constructStatement(
+	private static MStatement constructStatement(
 			ASTStatement statement, 
 			String inputName,
 			PrintWriter errorOutput,
@@ -235,19 +235,15 @@ public class ShellCommandCompiler {
 			MModel model,
 			VariableEnvironment variableEnvironment,
 			boolean verbose) {
-	
-		// TODO
-		PrintWriter verboseOutput = new PrintWriter(System.out);
 		
 		if (verbose) {	
-			verboseOutput.println();
-			verboseOutput.println("------------------");
-			verboseOutput.println("COMPILATION REPORT\n");
-			verboseOutput.println("RESULTING AST\n");
-			statement.printTree(verboseOutput);
-			verboseOutput.println();
-			verboseOutput.println("-------------\n");
-			verboseOutput.flush();
+			Log.println();
+			Log.println("------------------");
+			Log.println("COMPILATION REPORT\n");
+			Log.println("RESULTING AST\n");
+			statement.printTree(new PrintWriter(Log.out()));
+			Log.println();
+			Log.println("-------------\n");
 		}
 			
 		// create context
@@ -269,7 +265,7 @@ public class ShellCommandCompiler {
 						variableEnvironment.constructSymbolTable());
 				
 		} catch (CompilationFailedException e) {
-			//errorOutput.print("Error: ");
+
 			errorOutput.println(e.getMessage(statement));
 			
 			if (verbose) {
@@ -281,9 +277,8 @@ public class ShellCommandCompiler {
 			errorOutput.flush();
 			
 			if (verbose) {
-				verboseOutput.println("\nCOMPILATION FAILED");
-				verboseOutput.println("------------------\n");
-				verboseOutput.flush();
+				Log.println("\nCOMPILATION FAILED");
+				Log.println("------------------\n");
 			}
 			
 			
@@ -291,9 +286,8 @@ public class ShellCommandCompiler {
 		}
 		
 		if (verbose) {
-			verboseOutput.println("\nCOMPILATION SUCCESSFUL");
-			verboseOutput.println("----------------------\n");
-			verboseOutput.flush();
+			Log.println("\nCOMPILATION SUCCESSFUL");
+			Log.println("----------------------\n");
 		}
 	
         return compiledStatement;
