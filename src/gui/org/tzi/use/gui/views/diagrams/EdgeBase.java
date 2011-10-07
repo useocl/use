@@ -485,7 +485,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
     public Set<EdgeBase> checkForNewPositionAndDraw( DirectedGraph<NodeBase, EdgeBase> graph, Graphics2D g ) {
         Set<EdgeBase> edges = null;
 
-        if ( graph.existsPath( fSource, fTarget ) ) {
+        // The edge could be connected to nodes which are not in the graph
+        if (graph.contains(fSource) && graph.contains(fTarget)) {
             edges = graph.edgesBetween( fSource, fTarget );
             calculateNewPositions( edges );
         }
