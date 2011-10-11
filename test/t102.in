@@ -1,0 +1,3 @@
+open civsnap.use
+gen start civsnap.assl transition(2, 1)
+gen result

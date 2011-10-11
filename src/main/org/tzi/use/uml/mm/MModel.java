@@ -164,9 +164,14 @@ public class MModel extends MModelElementImpl {
             
             for (MNavigableElement elem : assoc.navigableEndsFrom(cls)) {
                 String newRolename = elem.nameAsRolename();
+                
+                // Inherited association (class)
+                if (aends.containsKey(newRolename) && aends.get(newRolename).equals(elem))
+                	continue;
+                
                 newRolenames.add( newRolename );
                 
-                if (aends.containsKey(newRolename) && !aends.get(newRolename).equals(elem)) {
+                if (aends.containsKey(newRolename)) {
                     throw new MInvalidModelException("Association end `"
                             + newRolename
                             + "' navigable from class `"
