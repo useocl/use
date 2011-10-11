@@ -1465,6 +1465,7 @@
 !new Tile
 !new Tile
 !new Tile
+
 !new Tile
 !new Tile
 !new Tile
@@ -8775,9 +8776,9 @@
 !@Player2.name := 'Atahualpa'
 !@Player1.name := 'Moytoy'
 !@IndianSettlement15.name := 'Cururu'
-!@IndianSettlement14.name := 'Nun'daye'li'
+!@IndianSettlement14.name := 'Nun\'daye\'li'
 !@IndianSettlement13.name := 'Qosqo'
-!@IndianSettlement12.name := 'Nun'daye'li'
+!@IndianSettlement12.name := 'Nun\'daye\'li'
 !@IndianSettlement11.name := 'Teocuitlatlan'
 !@IndianSettlement10.name := 'Urcaguary'
 !@IndianSettlement8.name := 'Maguana'
@@ -8785,10 +8786,10 @@
 !@IndianSettlement6.name := 'Ahadje'
 !@IndianSettlement7.name := 'Tetonwan'
 !@IndianSettlement4.name := 'Onondaga'
-!@IndianSettlement5.name := 'Itsa'ti'
+!@IndianSettlement5.name := 'Itsa\'ti'
 !@IndianSettlement2.name := 'Acatlan'
 !@IndianSettlement3.name := 'Mescalero'
-!@IndianSettlement1.name := 'Iguaçu'
+!@IndianSettlement1.name := 'Iguacu'
 !@Colony3.name := 'Isabella'
 !@Colony4.name := 'Quebec'
 !@Tile310.type := Undefined
@@ -12692,6 +12693,7 @@
 !@Tile1651.x := 10
 !@Tile1651.y := 30
 !@Tile1650.type := Undefined
+
 !@Tile1650.x := 18
 !@Tile1650.y := 7
 !@Tile1649.type := @TileType12
@@ -20404,6 +20406,7 @@
 !@Tile4458.type := @TileType21
 !@Tile4458.x := 25
 !@Tile4458.y := 43
+
 !@Tile4457.type := Undefined
 !@Tile4457.x := 17
 !@Tile4457.y := 25

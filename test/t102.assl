@@ -17,13 +17,13 @@ var thePersonsPre: Sequence(Person),
 begin
 thePersonsPre:=CreateN(Person,[numPerson]);
 for i:Integer in [Sequence{1..numPerson}] begin
-  [thePersonsPre->at(i)].name:=Any([Sequence{
+  [thePersonsPre->at(i)].name:=Try([Sequence{
     'Ada','Bel','Cam','Day','Eva','Flo','Gen','Hao','Ina','Jen',
     'Ali','Bob','Cyd','Dan','Eli','Fox','Gil','Hal','Ike','Jan'}]);
   [thePersonsPre->at(i)].civstat:=
     Any([Sequence{#single,#married,#divorced,#widowed}]);
-  [thePersonsPre->at(i)].gender:=Any([Sequence{#female,#male}]);
-  [thePersonsPre->at(i)].alive:=Any([Sequence{false,true}]); end;
+  [thePersonsPre->at(i)].gender:=Try([Sequence{#female,#male}]);
+  [thePersonsPre->at(i)].alive:=Try([Sequence{false,true}]); end;
 ------------------------------------------------------------------------
 preSnapshot:=Create(Snapshot);
 for i:Integer in [Sequence{1..numPerson}] begin
@@ -41,45 +41,45 @@ for i:Integer in [Sequence{1..numPerson}] begin
   Insert(SnapshotPerson,[posSnapshot],[thePersonsPos->at(i)]);
   Insert(PredSuccPerson,[thePersonsPre->at(i)],[thePersonsPos->at(i)]); end;
 ------------------------------------------------------------------------
-theOpKind:=Any([Sequence{'birth','marry','divorce','death'}]);
+theOpKind:=Try([Sequence{'birth','marry','divorce','death'}]);
 if [theOpKind='birth'] then begin
   theBirthC:=Create(birthC,[preSnapshot],[posSnapshot]);
-  [theBirthC].aSelf:=Any([thePersonsPre]);
-  [theBirthC].aName:=Any([Sequence{
+  [theBirthC].aSelf:=Try([thePersonsPre]);
+  [theBirthC].aName:=Try([Sequence{
     'Ada','Bel','Cam','Day','Eva','Flo','Gen','Hao','Ina','Jen',
     'Ali','Bob','Cyd','Dan','Eli','Fox','Gil','Hal','Ike','Jan'}]);
-  [theBirthC].aGender:=Any([Sequence{#female,#male}]);end;
+  [theBirthC].aGender:=Try([Sequence{#female,#male}]);end;
 if [theOpKind='marry'] then begin
   theMarryC:=Create(marryC,[preSnapshot],[posSnapshot]);
-  [theMarryC].aSelf:=Any([thePersonsPre]);
-  [theMarryC].aSpouse:=Any([thePersonsPre]);end;
+  [theMarryC].aSelf:=Try([thePersonsPre]);
+  [theMarryC].aSpouse:=Try([thePersonsPre]);end;
 if [theOpKind='divorce'] then begin
   theDivorceC:=Create(divorceC,[preSnapshot],[posSnapshot]);
-  [theDivorceC].aSelf:=Any([thePersonsPre]);end;
+  [theDivorceC].aSelf:=Try([thePersonsPre]);end;
 if [theOpKind='death'] then begin
   theDeathC:=Create(deathC,[preSnapshot],[posSnapshot]);
-  [theDeathC].aSelf:=Any([thePersonsPre]);end;
+  [theDeathC].aSelf:=Try([thePersonsPre]);end;
 for i:Integer in [Sequence{1..numChanges}] begin
   theChangeKind:=
-    Any([Sequence{'name','civstat','gender','alive','Marriage'}]);
+    Try([Sequence{'name','civstat','gender','alive','Marriage'}]);
   if [theChangeKind='name'] then begin
-    thePerson:=Any([thePersonsPos]);
-    [thePerson].name:=Any([Sequence{
+    thePerson:=Try([thePersonsPos]);
+    [thePerson].name:=Try([Sequence{
       'Ada','Bel','Cam','Day','Eva','Flo','Gen','Hao','Ina','Jen',
       'Ali','Bob','Cyd','Dan','Eli','Fox','Gil','Hal','Ike','Jan'}]); end;
   if [theChangeKind='civstat'] then begin
-    thePerson:=Any([thePersonsPos]);
+    thePerson:=Try([thePersonsPos]);
     [thePerson].civstat:=
-      Any([Sequence{#single,#married,#divorced,#widowed}]); end;
+      Try([Sequence{#single,#married,#divorced,#widowed}]); end;
   if [theChangeKind='gender'] then begin
-    thePerson:=Any([thePersonsPos]);
-    [thePerson].gender:=Any([Sequence{#female,#male}]); end;
+    thePerson:=Try([thePersonsPos]);
+    [thePerson].gender:=Try([Sequence{#female,#male}]); end;
   if [theChangeKind='alive'] then begin
-    thePerson:=Any([thePersonsPos]);
-    [thePerson].alive:=Any([Sequence{false,true}]); end;
+    thePerson:=Try([thePersonsPos]);
+    [thePerson].alive:=Try([Sequence{false,true}]); end;
   if [theChangeKind='Marriage'] then begin
-    theWife:=Any([thePersonsPos]);
-    theHusband:=Any([thePersonsPos]);
+    theWife:=Try([thePersonsPos]);
+    theHusband:=Try([thePersonsPos]);
     Insert(Marriage,[theWife],[theHusband]); end;
   end;
 end;
