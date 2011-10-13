@@ -87,7 +87,7 @@ classDefinition[boolean isAbstract] returns [ASTClass n]
         inv=invariantClause { $n.addInvariantClause($inv.n); }
       )*
     )?
-    'end'
+    keyEnd
     ;
 
 /* ------------------------------------
@@ -137,7 +137,7 @@ associationClassDefinition[boolean isAbstract] returns [ASTAssociationClass n]
       ( keyAggregation | keyComposition )
       { $n.setKind(t); }
     )?
-    'end'
+    keyEnd
     ;
     
 /* ------------------------------------
@@ -168,7 +168,7 @@ operationDefinition returns [ASTOperation n]
     { $n = new ASTOperation($name, $pl.paramList, $t.n); $n.setAnnotations($as.annotations); }
     (
         ( EQUAL e = expression   { $n.setExpression($e.n); } )
-      | ( 'begin' s = stat 'end' { $n.setStatement($s.n);  } )
+      | ( 'begin' s = stat keyEnd { $n.setStatement($s.n);  } )
     )?
     ( ppc=prePostClause { $n.addPrePostClause($ppc.n); } )*
     ( SEMI )?
@@ -191,7 +191,7 @@ associationDefinition returns [ASTAssociation n]
     'between'
     ae=associationEnd { $n.addEnd($ae.n); }
     ( ae=associationEnd { $n.addEnd($ae.n); } )+
-    'end'
+    keyEnd
     ;
 
 

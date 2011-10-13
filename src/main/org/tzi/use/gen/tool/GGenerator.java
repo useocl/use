@@ -483,18 +483,17 @@ public class GGenerator {
     }
     
     public void printResult(PrintWriter pw) throws GNoResultException {
-        pw.println("Random number generator was " 
-                   + "initialized with " + lastResult().randomNr() + ".");
-        pw.println("Checked " + String.format("%,d", lastResult().collector().numberOfCheckedStates()) + " snapshots.");
+    	pw.println(String.format("Random number generator was initialized with %d.",  lastResult().randomNr()));
+        pw.println(String.format("Checked %,d snapshots.", lastResult().collector().numberOfCheckedStates()));
         
         if (this.useTryCuts)
-        	pw.println("Made " + String.format("%,d", lastResult().collector().getCutCount()) + " try cuts.");
+        	pw.println(String.format("Made %,d try cuts.", lastResult().collector().getCutCount()));
         
         if (this.useMinCombinations)
-        	pw.println("Ignored " +  String.format("%,d", lastResult().collector().getIgnoredStates()) + " useless link combinations.");
+        	pw.println(String.format("Ignored %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
         	
         if (lastResult().collector().limit() != Long.MAX_VALUE)
-            pw.println("Limit was set to " + lastResult().collector().limit() + "." );
+            pw.println(String.format("Limit was set to %,d.", lastResult().collector().limit()));
         if (!lastResult().collector().validStateFound() )
             pw.println("Result: No valid state found.");
         else {
