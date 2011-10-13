@@ -22,11 +22,11 @@
 package org.tzi.use.uml.sys.soil;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
@@ -98,8 +98,8 @@ public class MEnterOperationStatement extends MStatement {
 		// evaluate arguments
 		Value[] arguments = new Value[fArguments.size()];
 		int i=0;
-		for (Entry<String, Expression> argument : fArguments.entrySet()) {
-			Value argValue = evaluateExpression(argument.getValue(), false);
+		for (VarDecl argumentDecl : fOperation.allParams()) {
+			Value argValue = evaluateExpression(fArguments.get(argumentDecl.name()), false);
 			arguments[i] = argValue;
 			++i;
 		}
