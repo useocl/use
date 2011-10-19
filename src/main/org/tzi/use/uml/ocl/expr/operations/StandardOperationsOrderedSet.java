@@ -13,8 +13,8 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.MultiMap;
 
 public class StandardOperationsOrderedSet {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {

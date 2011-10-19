@@ -19,7 +19,7 @@
 
 // $Id$
 
-package org.tzi.use.util;
+package org.tzi.use.util.collections;
 
 import java.util.Comparator;
 import java.util.Collection;

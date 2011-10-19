@@ -31,7 +31,7 @@ import java.util.Map;
 import org.tzi.use.uml.mm.Annotatable;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MElementAnnotation;
-import org.tzi.use.util.CollectionUtil;
+import org.tzi.use.util.collections.CollectionUtil;
 
 /**
  * An enumeration type.

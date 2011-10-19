@@ -19,7 +19,7 @@
 
 // $Id$
 
-package org.tzi.use.util;
+package org.tzi.use.util.collections;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import org.tzi.use.util.CollectionUtil.UniqueList;
+import org.tzi.use.util.Pair;
+import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 
 /**
  * TODO

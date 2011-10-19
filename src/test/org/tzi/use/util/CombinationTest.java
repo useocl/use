@@ -24,7 +24,9 @@ package org.tzi.use.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.util.CollectionUtil.UniqueList;
+import org.tzi.use.util.collections.CollectionUtil;
+import org.tzi.use.util.collections.MinCombinationsIterator;
+import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 
 import junit.framework.TestCase;
 

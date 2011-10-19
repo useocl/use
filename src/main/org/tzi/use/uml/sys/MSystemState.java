@@ -57,14 +57,14 @@ import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.util.Bag;
-import org.tzi.use.util.HashBag;
-import org.tzi.use.util.HashMultiMap;
 import org.tzi.use.util.Log;
-import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.NullPrintWriter;
-import org.tzi.use.util.Queue;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.Bag;
+import org.tzi.use.util.collections.HashBag;
+import org.tzi.use.util.collections.HashMultiMap;
+import org.tzi.use.util.collections.MultiMap;
+import org.tzi.use.util.collections.Queue;
 
 /**
  * A system state represents a valid instance of a model. It contains a set of

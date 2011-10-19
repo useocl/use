@@ -6,8 +6,8 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.MultiMap;
 
 public class StandardOperationsAny {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {

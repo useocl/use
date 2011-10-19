@@ -55,9 +55,9 @@ import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.CollectionUtil;
-import org.tzi.use.util.CollectionUtil.UniqueList;
-import org.tzi.use.util.MinCombinationsIterator;
+import org.tzi.use.util.collections.CollectionUtil;
+import org.tzi.use.util.collections.MinCombinationsIterator;
+import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.Pair;
 

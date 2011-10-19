@@ -30,6 +30,7 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.base.ParserHelper;
 import org.tzi.use.uml.ocl.expr.ExpAny;
+import org.tzi.use.uml.ocl.expr.ExpClosure;
 import org.tzi.use.uml.ocl.expr.ExpCollect;
 import org.tzi.use.uml.ocl.expr.ExpCollectNested;
 import org.tzi.use.uml.ocl.expr.ExpExists;
@@ -136,6 +137,7 @@ public class ASTQueryExpression extends ASTExpression {
             case ParserHelper.Q_SORTEDBY_ID:
             case ParserHelper.Q_ANY_ID:
             case ParserHelper.Q_ONE_ID:
+            case ParserHelper.Q_CLOSURE_ID:
                 VarDecl decl;
                 if (declList.isEmpty() )
                     decl = null;
@@ -168,6 +170,9 @@ public class ASTQueryExpression extends ASTExpression {
                     break;
                 case ParserHelper.Q_ONE_ID:
                     res = new ExpOne(decl, range, expr);
+                    break;
+                case ParserHelper.Q_CLOSURE_ID:
+                    res = new ExpClosure(decl, range, expr);
                     break;
                 default:
                     // TODO: ignore or error on default?

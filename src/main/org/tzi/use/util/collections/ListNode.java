@@ -19,7 +19,7 @@
 
 // $Id$
 
-package org.tzi.use.util;
+package org.tzi.use.util.collections;
 
 /** 
  * A Node in a single linked list containing data and a link to the

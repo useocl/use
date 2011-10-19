@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.tzi.use.util.CollectionUtil;
+import org.tzi.use.util.collections.CollectionUtil;
 
 
 /**

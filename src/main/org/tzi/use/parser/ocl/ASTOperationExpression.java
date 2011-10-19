@@ -50,8 +50,8 @@ import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.util.CollectionUtil;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.CollectionUtil;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

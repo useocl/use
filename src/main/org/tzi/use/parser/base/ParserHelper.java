@@ -15,6 +15,7 @@ public class ParserHelper {
     final static String Q_SORTEDBY = "sortedBy";
     final static String Q_ANY      = "any";
     final static String Q_ONE      = "one";
+    final static String Q_CLOSURE  = "closure";
 
     public final static int Q_COLLECT_ID  = 1;
     public final static int Q_SELECT_ID   = 2;
@@ -26,6 +27,7 @@ public class ParserHelper {
     public final static int Q_ANY_ID      = 8;
     public final static int Q_ONE_ID      = 9;
     public final static int Q_COLLECTNESTED_ID  = 10;
+    public final static int Q_CLOSURE_ID  = 11;
     
     public final static HashMap<String, Integer> queryIdentMap = new HashMap<String, Integer>();
 
@@ -40,6 +42,7 @@ public class ParserHelper {
         queryIdentMap.put(Q_ANY,      new Integer(Q_ANY_ID));
         queryIdentMap.put(Q_ONE,      new Integer(Q_ONE_ID));
         queryIdentMap.put(Q_COLLECTNESTED, new Integer(Q_COLLECTNESTED_ID));
+        queryIdentMap.put(Q_CLOSURE,  new Integer(Q_CLOSURE_ID));
     }
     
     public static boolean isQueryIdent(Token t) {

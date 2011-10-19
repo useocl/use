@@ -45,9 +45,9 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.CollectionUtil;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.CollectionUtil;
 
 /**
  * Navigation expression from one class to another.

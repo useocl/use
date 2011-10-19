@@ -89,9 +89,6 @@ public class Options {
 	public static String URL_PREFIX = "file:" + FILE_SEPARATOR + FILE_SEPARATOR
 			+ FILE_SEPARATOR;
 
-//    private static final String SPEC_FILE_EXTENSION = ".use";
-//    private static final String DIAGRAM_FILE_EXTENSION = ".dgm";
-
     /**
      * Name of the property giving the path to the monitor aspect template.
      */
@@ -150,11 +147,14 @@ public class Options {
     public static SoilPermissionLevel soilFromOCL = SoilPermissionLevel.NONE;
 
     /**
-	 * New Plugin Architecture Parameter
-	 */
-	// enable/disable plugin architecture
+	 * enable/disable plugin architecture
+	 *
+	 **/
 	public static boolean doPLUGIN = true;
-	// static plugin directory
+	
+	/**
+	 * static plugin directory
+	 */
 	public static String pluginDir = "lib/plugins/";
 
 	/**
@@ -173,9 +173,9 @@ public class Options {
      */
     public static final String PROTOCOL_FILE = "use.protocol";
 
+    
     /** no instances */
-	private Options() {
-	}
+	private Options() {}
 
     private static void printHelp() {
         System.out.println("usage: use [options] [spec_file] [cmd_file]");

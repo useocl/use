@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.TupleType.Part;
-import org.tzi.use.util.CollectionComparator;
+import org.tzi.use.util.collections.CollectionComparator;
 
 /**
  * Tuple values.

@@ -59,7 +59,7 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.util.Log;
-import org.tzi.use.util.Queue;
+import org.tzi.use.util.collections.Queue;
 
 /**
  * A table showing invariants and their results.

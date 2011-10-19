@@ -30,7 +30,7 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.Queue;
+import org.tzi.use.util.collections.Queue;
 
 /**
  * Test Evaluator class.

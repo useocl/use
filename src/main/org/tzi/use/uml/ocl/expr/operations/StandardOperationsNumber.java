@@ -8,7 +8,7 @@ import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.RealValue;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.collections.MultiMap;
 
 class StandardOperationsNumber {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {

@@ -67,4 +67,5 @@ public interface ExpressionVisitor {
 	void visitTupleSelectOp (ExpTupleSelectOp exp);
 	void visitUndefined (ExpUndefined exp);
 	void visitVariable (ExpVariable exp);
+	void visitClosure(ExpClosure expClosure);
 }

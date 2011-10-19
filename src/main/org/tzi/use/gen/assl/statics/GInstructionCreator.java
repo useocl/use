@@ -27,8 +27,8 @@ package org.tzi.use.gen.assl.statics;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.util.HashMultiMap;
-import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.collections.HashMultiMap;
+import org.tzi.use.util.collections.MultiMap;
 
 /**
  * @see org.tzi.use.gen.assl.statics

@@ -4,8 +4,8 @@ import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.MultiMap;
 
 /**
  * OpGeneric is the base class of a large group of individual operations. Each

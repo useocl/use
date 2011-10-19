@@ -31,10 +31,10 @@ import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.HashMultiMap;
 import org.tzi.use.util.Log;
-import org.tzi.use.util.MultiMap;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.HashMultiMap;
+import org.tzi.use.util.collections.MultiMap;
 
 import antlr.SemanticException;
 

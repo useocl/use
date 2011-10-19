@@ -34,8 +34,8 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.util.PermutationGenerator;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.PermutationGenerator;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

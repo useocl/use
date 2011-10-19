@@ -19,38 +19,43 @@
 
 // $Id$
 
-package org.tzi.use.util;
+package org.tzi.use.util.collections;
 
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+
 /**
  * A Bag stores objects and for each object the number of its occurrences.
- *
- * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * 
+ * @version $ProjectVersion: 0.393 $
+ * @author Mark Richters
  */
-public class HashBag<T> extends AbstractBag<T> implements Bag<T> {
+public class TreeBag<T> extends AbstractBag<T> implements Bag<T> {
 
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
     class MutableInteger {
         int fInt;
+
         MutableInteger(int n) {
             fInt = n;
         }
     }
 
-    private transient HashMap<T, MutableInteger> fMap;
+    // private transient HashMap fMap;
+    private transient TreeMap<T, MutableInteger> fMap;
+
     private transient int fSizeAll;
 
     /**
-     * Constructs a new, empty HashBag; the backing HashMap has default
-     * capacity and load factor.
+     * Constructs a new, empty HashBag; the backing HashMap has default capacity
+     * and load factor.
      */
-    public HashBag() {
-        fMap = new HashMap<T, MutableInteger>();
+    public TreeBag() {
+        // TreeMaps are used because there the entries are ordered
+        fMap = new TreeMap<T, MutableInteger>();
     }
 
     /**
@@ -61,12 +66,12 @@ public class HashBag<T> extends AbstractBag<T> implements Bag<T> {
     }
 
     /**
-     * Returns the number of different elements in this
-     * Bag. Duplicates are not counted.  
+     * Returns the number of different elements in this Bag. Duplicates are not
+     * counted.
      */
     public int sizeUnique() {
         return fMap.size();
-    }   
+    }
 
     /**
      * Returns true if this Bag contains no elements.
@@ -81,45 +86,44 @@ public class HashBag<T> extends AbstractBag<T> implements Bag<T> {
     public boolean contains(Object obj) {
         return fMap.containsKey(obj);
     }
-    
 
     /**
      * Returns the number of occurrences of the specified object in this Bag.
      */
     public int occurrences(Object obj) {
         MutableInteger count = fMap.get(obj);
-        if (count == null )
+        if (count == null)
             return 0;
-        else 
+        else
             return count.fInt;
     }
 
     /**
-     * Returns an Iterator over the elements in this Bag. Different
-     * elements are returned in no particular order (unless the Bag is
-     * an instance of some class that provides a guarantee). However,
-     * duplicate elements are guaranteed to be kept adjacent.
+     * Returns an Iterator over the elements in this Bag. Different elements are
+     * returned in no particular order (unless the Bag is an instance of some
+     * class that provides a guarantee). However, duplicate elements are
+     * guaranteed to be kept adjacent.
      */
     public Iterator<T> iterator() {
-        return new AllElementsIterator(this);
+        return new AllElementsIterator<T>(this);
     }
 
     /**
-     * Returns an Iterator over the unique elements in this
-     * Bag. Elements are returned in no particular order (unless the
-     * Bag is an instance of some class that provides a
-     * guarantee). Duplicate elements are delivered just once.
+     * Returns an Iterator over the unique elements in this Bag. Elements are
+     * returned in no particular order (unless the Bag is an instance of some
+     * class that provides a guarantee). Duplicate elements are delivered just
+     * once.
      */
     public Iterator<T> uniqueIterator() {
         return fMap.keySet().iterator();
     }
 
-
     // Modification Operations
-    
+
     public boolean add(T obj) {
         MutableInteger count = fMap.get(obj);
-        if (count == null )
+        
+        if (count == null)
             fMap.put(obj, new MutableInteger(1));
         else
             count.fInt++;
@@ -129,24 +133,26 @@ public class HashBag<T> extends AbstractBag<T> implements Bag<T> {
     }
 
     public boolean add(T obj, int c) {
-        if (c < 1 ) 
+        if (c < 1)
             throw new IllegalArgumentException("count: " + c);
-        MutableInteger count = (MutableInteger) fMap.get(obj);
-        if (count == null )
+        
+        MutableInteger count = fMap.get(obj);
+        
+        if (count == null)
             fMap.put(obj, new MutableInteger(c));
         else
             count.fInt += c;
+        
         fSizeAll += c;
         return obj != null;
     }
 
     public boolean remove(Object obj) {
         MutableInteger count = fMap.get(obj);
-        
-        if (count == null )
+        if (count == null)
             return false;
         else {
-            if (count.fInt > 1 )
+            if (count.fInt > 1)
                 count.fInt--;
             else
                 fMap.remove(obj);
@@ -155,9 +161,10 @@ public class HashBag<T> extends AbstractBag<T> implements Bag<T> {
         }
     }
 
-    public boolean removeAll(Object obj) {
+    public boolean removeAll(T obj) {
         MutableInteger count = fMap.get(obj);
-        if (count == null )
+        
+        if (count == null)
             return false;
         else {
             fMap.remove(obj);
@@ -176,17 +183,19 @@ public class HashBag<T> extends AbstractBag<T> implements Bag<T> {
         fSizeAll = 0;
     }
 
-
     /**
      * HashBag Iterator.
      */
-    private class AllElementsIterator implements Iterator<T> {
-        private Bag<T> fBag;
-        private Iterator<T> fKeyIterator;
-        private int fElemsLeft;
-        private T fElem;
+    private class AllElementsIterator<ET> implements Iterator<ET> {
+        private Bag<ET> fBag;
 
-        AllElementsIterator(Bag<T> b) {
+        private Iterator<ET> fKeyIterator;
+
+        private int fElemsLeft;
+
+        private ET fElem;
+
+        AllElementsIterator(Bag<ET> b) {
             fBag = b;
             fKeyIterator = fBag.uniqueIterator();
             fElemsLeft = 0;
@@ -197,12 +206,11 @@ public class HashBag<T> extends AbstractBag<T> implements Bag<T> {
             return fElemsLeft > 0 || fKeyIterator.hasNext();
         }
 
-        public T next() throws NoSuchElementException {
-            if (fElemsLeft == 0 ) {
+        public ET next() throws NoSuchElementException {
+            if (fElemsLeft == 0) {
                 // need to get next element
-                if (! fKeyIterator.hasNext() )
+                if (!fKeyIterator.hasNext())
                     throw new NoSuchElementException();
-                
                 fElem = fKeyIterator.next();
                 fElemsLeft = fBag.occurrences(fElem) - 1;
                 return fElem;

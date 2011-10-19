@@ -34,6 +34,7 @@ import org.tzi.use.uml.ocl.expr.ExpAny;
 import org.tzi.use.uml.ocl.expr.ExpAsType;
 import org.tzi.use.uml.ocl.expr.ExpAttrOp;
 import org.tzi.use.uml.ocl.expr.ExpBagLiteral;
+import org.tzi.use.uml.ocl.expr.ExpClosure;
 import org.tzi.use.uml.ocl.expr.ExpCollect;
 import org.tzi.use.uml.ocl.expr.ExpCollectNested;
 import org.tzi.use.uml.ocl.expr.ExpCollectionLiteral;
@@ -494,5 +495,13 @@ public class CoverageCalculationVisitor implements ExpressionVisitor {
 	 */
 	public CoverageData getCoverageData() {
 		return coverageData;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.ExpressionVisitor#visitClosure(org.tzi.use.uml.ocl.expr.ExpClosure)
+	 */
+	@Override
+	public void visitClosure(ExpClosure expClosure) {
+		visitQuery(expClosure);
 	}
 }

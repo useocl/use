@@ -10,7 +10,7 @@ import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.DateValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.collections.MultiMap;
 
 /**
  * Base class for standard operations on Dates.

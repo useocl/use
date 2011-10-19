@@ -9,7 +9,7 @@ import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
-import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.collections.MultiMap;
 
 public class StandardOperationsObject {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {

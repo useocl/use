@@ -8,7 +8,7 @@ import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.MultiMap;
+import org.tzi.use.util.collections.MultiMap;
 
 public class StandardOperationsBoolean {
 	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {

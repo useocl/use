@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
-import org.tzi.use.util.Queue;
+import org.tzi.use.util.collections.Queue;
 
 /**
  * An evaluator with parallel execution.

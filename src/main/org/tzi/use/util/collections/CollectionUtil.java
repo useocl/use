@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.util;
+package org.tzi.use.util.collections;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
+import org.tzi.use.util.Pair;
 
 /**
  * Class with useful class operations for modifying collections.

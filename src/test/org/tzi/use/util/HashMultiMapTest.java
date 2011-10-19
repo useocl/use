@@ -21,6 +21,8 @@
 
 package org.tzi.use.util;
 
+import org.tzi.use.util.collections.HashMultiMap;
+
 import junit.framework.TestCase;
 
 /**

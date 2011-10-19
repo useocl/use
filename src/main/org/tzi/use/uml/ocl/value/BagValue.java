@@ -27,9 +27,9 @@ import java.util.Iterator;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.util.Bag;
-import org.tzi.use.util.HashBag;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.Bag;
+import org.tzi.use.util.collections.HashBag;
 
 /**
  * Bag value. The bag is read-only outside of this package. Changes always
