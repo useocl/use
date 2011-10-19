@@ -34,7 +34,12 @@ import java.io.PrintWriter;
 import org.tzi.use.uml.sys.soil.MStatement;
 
 public interface IGCollector {
-    public boolean canStop();
+    /**
+     * True, if a valid state was found.
+     * No further execution is needed.
+     * @return
+     */
+	public boolean canStop();
     
     public void setValidStateFound();
     
@@ -42,6 +47,10 @@ public interface IGCollector {
     
     public boolean expectSubsequentReporting();
     
+    /**
+     * Called if a leaf is hit.
+     * Normally used for statistical reasons (number of states checked).
+     */
     public void leaf();
     
     public void setPrePostViolation();
@@ -56,17 +65,42 @@ public interface IGCollector {
 
     public void invalid( String str );
     public void invalid( Exception e );
-    
-    /**
-     * Increments the "cut-counter" by one.
-     */
-    public void addCut();
 
 	/**
 	 * Adds <code>ignoredStates</code> to the overall ignored states
 	 * @param ignoredStates
 	 */
 	public void addIgnoredStates(long ignoredStates);
+
+	/**
+	 * Informs the previous callers, that a barrier cannot be passed.
+	 */
+	public void setBlocked(boolean newValue);
     
-    
+	/**
+	 * Returns the state of the last checked barrier.
+	 */
+	public boolean getBlocked();
+	
+	/**
+	 * Adds 1 to the cut counter
+	 */
+	public void addCut();
+	
+	/**
+	 * Returns the number of cuts
+	 * @return Number of cuts made
+	 */
+	public long getCuts();
+	
+	/**
+	 * Adds one to the number of "hit" barriers.
+	 */
+	public void addBarrierHit();
+	
+	/**
+	 * Returns the number of barriers hit.
+	 * @return Number of hit barriers.
+	 */
+	public long getBarriersHit();
 }

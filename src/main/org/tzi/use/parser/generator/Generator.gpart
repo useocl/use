@@ -105,7 +105,7 @@ instruction ::= variableAssignment
                 | asslCall
                 | opEnter
                 | opExit
-// Not yet implemented: cut
+				| barrier
 
 variableAssignment ::= id ":=" valueInstruction
 
@@ -124,6 +124,8 @@ instructionParameter ::= oclExpression | instrParameterIdent
 instrParameterIdent ::= id
 
 oclExpression ::= "[" expression "]"
+
+barrier ::= "barrier" IDENT | oclExpression
 */
 
 
@@ -186,6 +188,7 @@ instruction ::= variableAssignment
                 | asslCall
                 | opEnter
                 | opExit
+                | barrier
 */
 instruction returns [ASTGInstruction instr]
 :
@@ -197,6 +200,7 @@ instruction returns [ASTGInstruction instr]
     | instrAC = asslCall			{$instr = $instrAC.instr;}
     | instrOE = opEnter				{$instr = $instrOE.instr;}
     | instrOX = opExit				{$instr = $instrOX.instr;}
+    | instrBA = barrier				{$instr = $instrBA.barrier;}
     ;
 
 
@@ -340,6 +344,16 @@ oclExpression returns [ASTGocl encapOcl]
     { $encapOcl = new ASTGocl($ocl.n, $i); }
     ;
 
+/* -------------------------------------
+barrier ::= "barrier" (IDENT | oclExpression)
+*/
+barrier returns [ASTGBarrier barrier]
+:
+   'barrier' (
+       invClass = IDENT COLON_COLON invName = IDENT { $barrier = new ASTGBarrierInvariant($invClass, $invName); } 
+     | exp = oclExpression { $barrier = new ASTGBarrierExpression($exp.encapOcl); }
+   )
+;
 
 // ++++++++++++++++++++++++++++++++++++++++++
 // Grammar for calling a procedure

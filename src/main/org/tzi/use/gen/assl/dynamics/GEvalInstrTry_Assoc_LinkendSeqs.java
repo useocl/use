@@ -238,7 +238,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         			collector.addCut();
         		}
         	}
-        	
+        	        	
         	if (continueEvaluation) {
         		++numEvaluated;
 				fCaller.feedback(conf, null, collector);
@@ -404,10 +404,14 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
 				throw new GEvaluationException(e);
 			}
 			
-        	
 			fCaller.feedback(conf, null, collector);
+			
             if (collector.expectSubsequentReporting()) {
-            	collector.subsequentlyPrependStatement(statements);
+            	for (MStatement s : statements.getStatements()) {
+            		if (!s.isEmptyStatement()) {
+            			collector.subsequentlyPrependStatement(s);
+            		}
+            	}
             }
             
         	system.getUniqueNameGenerator().popState();

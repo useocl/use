@@ -21,10 +21,10 @@
 
 package org.tzi.use.util;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * A generator for creating unique names. Given a name a it produces
@@ -35,13 +35,13 @@ import java.util.Map;
  * @author      Mark Richters 
  */
 public class UniqueNameGenerator {
-	private Deque<Map<String, Integer>> fStack;
+	private Stack<Map<String, Integer>> fStack;
     private Map<String, Integer> fNameMap;
 
     
     public UniqueNameGenerator() {
-        fNameMap = new HashMap<String, Integer>();
-        fStack = new ArrayDeque<Map<String, Integer>>();
+        fNameMap = Collections.emptyMap();
+        fStack = new Stack<Map<String, Integer>>();
         fStack.push(fNameMap);
     }
     
@@ -51,7 +51,16 @@ public class UniqueNameGenerator {
      * increment this number.
      */
     public String generate(String name) {
-        Integer i = fNameMap.get(name);
+        if (fNameMap.isEmpty()) {
+        	// Lazy initialization of name map
+        	fNameMap = new HashMap<String, Integer>();
+        	
+        	if (fStack.size() > 1) {
+        		fNameMap.putAll(fStack.get(fStack.size() - 2));
+        	}
+        }
+        
+    	Integer i = fNameMap.get(name);
                 
         if (i == null ) {
         	i = 1;
@@ -65,7 +74,11 @@ public class UniqueNameGenerator {
     }
     
     public void pushState() {
-    	fNameMap = new HashMap<String, Integer>(fNameMap);
+    	// Not all statements require a generated name,
+    	// but when using the generator there are many calls
+    	// to this operation.
+    	// We put an empty Map here and initialize it lazily, if required.
+    	fNameMap = Collections.emptyMap();
     	fStack.push(fNameMap);
     }
     

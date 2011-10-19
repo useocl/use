@@ -104,35 +104,19 @@ public class ShellCommandCompiler {
 	 * @return
 	 *   if the input was a valid soil statement, an evaluable soil statement, null else
 	 */
-	public static MStatement compileShellCommand(
-			MModel model,
-            MSystemState state,
-            VariableEnvironment variableEnvironment,
-            InputStream input, 
-            String inputName,
-            PrintWriter errorOutput,
-            boolean verbose) {
+	public static MStatement compileShellCommand(MModel model,
+			MSystemState state, VariableEnvironment variableEnvironment,
+			InputStream input, String inputName, PrintWriter errorOutput,
+			boolean verbose) {
 		
-        ASTStatement ast = 
-        	constructAST(
-        		input, 
-        		inputName, 
-        		errorOutput, 
-        		verbose);
+		ASTStatement ast = constructAST(input, inputName, errorOutput, verbose);
         
         if (ast == null) {
         	return null;
         }
         
-        MStatement statement = 
-        	constructStatement(
-        			ast, 
-        			inputName, 
-        			errorOutput, 
-        			state, 
-        			model, 
-        			variableEnvironment, 
-        			verbose);
+		MStatement statement = constructStatement(ast, inputName, errorOutput,
+				state, model, variableEnvironment, verbose);
 		
 		return statement;
 	 }
@@ -149,11 +133,8 @@ public class ShellCommandCompiler {
 	 * @param verbose
 	 * @return
 	 */
-	public static ASTStatement constructAST(
-            InputStream input, 
-            String inputName,
-            PrintWriter errorOutput,
-            boolean verbose) {
+	public static ASTStatement constructAST(InputStream input,
+			String inputName, PrintWriter errorOutput, boolean verbose) {
 		
 		ANTLRInputStream aInput;
 		try {

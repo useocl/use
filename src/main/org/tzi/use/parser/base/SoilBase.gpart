@@ -359,7 +359,7 @@ condExStat returns [ASTConditionalExecutionStatement n]
     'else' 
      es = stat { elseStat = $es.n; }
   )?
-  keyEnd
+  'end'
   
   { $n = new ASTConditionalExecutionStatement($con.n, $ts.n, elseStat); }
 ;
@@ -375,7 +375,7 @@ iterStat returns [ASTIterationStatement n]
   set = inSoilExpression
   'do'
   s = stat
-  keyEnd
+  'end'
   
   { $n = new ASTIterationStatement($var.text, $set.n, $s.n); }
 ;
@@ -390,7 +390,7 @@ whileStat returns [ASTWhileStatement n]
   cond = inSoilExpression
   'do'
   s = stat
-  keyEnd
+  'end'
   
   { $n = new ASTWhileStatement($cond.n, $s.n); }
 ;
@@ -575,9 +575,6 @@ identListMin1 returns [List<String> n]
     $n.add($id.text); }
   )*
 ;
-
-keyEnd:
-  {input.LT(1).getText().equals("end")}? IDENT ;
   
 /* -----------------------------------------------------------------------------
 -------------------------- end of file SoilBase.gpart --------------------------

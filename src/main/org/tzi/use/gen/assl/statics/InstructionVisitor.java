@@ -137,4 +137,9 @@ public interface InstructionVisitor {
 	 */
 	void visitInstrTry_AssocClass_LinkendSeqs(
 			GInstrTry_AssocClass_LinkendSeqs gInstrTry_AssocClass_LinkendSeqs);
+
+	/**
+	 * @param gInstrBarrier
+	 */
+	void visitBarrier(GInstrBarrier gInstrBarrier);
 }

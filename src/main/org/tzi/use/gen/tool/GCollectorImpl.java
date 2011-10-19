@@ -45,18 +45,34 @@ public class GCollectorImpl implements IGCollector {
     private long fLimit;
     private PrintWriter fBasicPrintWriter;
     private PrintWriter fDetailPrintWriter;
+    
+    /**
+     * Number of leafs, i. e., checked system states
+     */
     private long fLeafCount;
-    private long cutCount;
+    
     /**
      * Number of states ignored by using reduced number of link combinations.
      */
-    private long ignoredStates;
+    private long ignoredStates = 0;
+    
+    /**
+     * Number of cuts made
+     */
+    private long cutCount = 0;
+    
+    /**
+     * Number of barriers hit
+     */
+    private long barrierHitCount = 0;
     
     private boolean fExistsInvalidMessage;
     private boolean fPrePostCondViolation;
 
     private boolean doBasicPrinting = false;
     private boolean doDetailPrinting = false;
+    
+    private boolean isBlocked = false;
     
     public GCollectorImpl() {
         fValidStateFound = false;
@@ -131,14 +147,6 @@ public class GCollectorImpl implements IGCollector {
     public long numberOfCheckedStates() {
         return fLeafCount;
     }
-
-    public long getCutCount() {
-    	return this.cutCount;
-    }
-    
-    public void addCut() {
-    	++cutCount;
-    }
     
     public boolean validStateFound() {
     	// if a valid state has been found and no pre or postconditions have been violated
@@ -184,6 +192,54 @@ public class GCollectorImpl implements IGCollector {
 	
 	public long getIgnoredStates() {
 		return this.ignoredStates;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#setBlocked()
+	 */
+	@Override
+	public void setBlocked(boolean newValue) {
+		this.isBlocked = newValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#getBlocked()
+	 */
+	@Override
+	public boolean getBlocked() {
+		return isBlocked;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#addCut()
+	 */
+	@Override
+	public void addCut() {
+		++this.cutCount;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#getCuts()
+	 */
+	@Override
+	public long getCuts() {
+		return this.cutCount;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#addBarrierHit()
+	 */
+	@Override
+	public void addBarrierHit() {
+		++this.barrierHitCount;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#getBarriersHit()
+	 */
+	@Override
+	public long getBarriersHit() {
+		return this.barrierHitCount;
 	}
 }
 

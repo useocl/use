@@ -245,7 +245,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstruction
         	
         	if (continueEvaluation) {
         		++numEvaluated;
-
+        		
         		SetValue result = createResultSet(association, res);
 				fCaller.feedback(conf, result, collector);
 				
@@ -422,12 +422,16 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstruction
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}
-			
+
         	SetValue result = createResultSet(fInstr.getAssociationClass(), res);
 			fCaller.feedback(conf, result, collector);
 			
             if (collector.expectSubsequentReporting()) {
-            	collector.subsequentlyPrependStatement(statements);
+            	for (MStatement s : statements.getStatements()) {
+            		if (!s.isEmptyStatement()) {
+            			collector.subsequentlyPrependStatement(s);
+            		}
+            	}
             }
             
         	try {	

@@ -100,6 +100,7 @@ import org.tzi.use.util.NullWriter;
 import org.tzi.use.util.Report;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.USEWriter;
+import org.tzi.use.util.collections.LimitedStack;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.ReadlineTestReadlineDecorator;
@@ -383,14 +384,14 @@ public final class Shell implements Runnable, PPCHandler {
             cmdGenMM(line.substring(6));
         else if (line.equals("genmonitor"))
             cmdGenMonitor();
-        else if (line.equals("graph"))
-            cmdGraph();
         else if (line.startsWith("info "))
             cmdInfo(line.substring(5));
         else if (line.equals("net"))
             cmdNet();
         else if (line.startsWith("open "))
             cmdOpen(line.substring(5));
+        else if (line.startsWith("reopen"))
+        	cmdReOpen(line.substring(6));
         else if (line.startsWith("read "))
             cmdRead(line.substring(5), true);
         else if (line.startsWith("readq "))
@@ -645,14 +646,12 @@ public final class Shell implements Runnable, PPCHandler {
     
     
     /**
-     * TODO
-     * @param line
-     * @param verbose
+     * Executes a SOIL statement (started by <code>!</code> or <code>!!</code>)
+     * @param line The command line without <code>!</code>
+     * @param verbose If <code>true</code> detailed messages are written to the shell. 
      * @throws NoSystemException
      */
-    private void cmdExec(
-    		String line, 
-    		boolean verbose) throws NoSystemException {
+	private void cmdExec(String line, boolean verbose) throws NoSystemException {
     	
     	if (line.length() == 0) {
     		Log.error("ERROR: Statement expected.");
@@ -810,21 +809,6 @@ public final class Shell implements Runnable, PPCHandler {
                     out.close();
             }
         }
-    }
-
-    /**
-     * Show object diagram with daVinci.
-     */
-    private void cmdGraph() {
-        System.out.println("Command is not available in this version.");
-        //      try {
-        //          if ( ! fDaVinci.isRunning() )
-        //          fDaVinci.start();
-        //          fDaVinci.send("graph(new_placed(" + fSystem.state().getDaVinciGraph()
-        // + "))");
-        //      } catch (IOException ex) {
-        //          Log.error(ex.getMessage());
-        //      }
     }
 
     /**
@@ -1174,12 +1158,84 @@ public final class Shell implements Runnable, PPCHandler {
             } else {
                 cmdRead(token, doEcho);
             }
+            
+            if (this.openFiles.size() <= 1) {
+            	String opened;
+            	
+            	if (this.openFiles.size() == 0)
+            		opened = filename;
+            	else
+            		opened = this.openFiles.peek().toString();
+            	
+        		if (Options.getRecentFiles().contains(opened)) {
+        			Options.getRecentFiles().remove(opened);
+        		}
+        		        			
+        		Options.getRecentFiles().push(opened);
+        	}
         } catch (NoSystemException e) {
             Log.error("No System available. Please load a model before "
                     + "executing this command.");
         }
     }
 
+    /**
+     * <ul>
+     *   <li>Executes the last open command if no arguments are specified.</li>
+     *   <li>If <code>-l</code> is specified prints a list of the last opened files.</li>
+     *   <li>If a number (<code>n</code>) is specified as an argument the <code>n</code>-th recent file is opened.</li>
+     * </ul>
+     * @param line The command line without the command reopen.
+     */
+    private void cmdReOpen(String line) {
+    	line = (line == null ? "" : line.trim());
+    	
+    	LimitedStack<String> recentFiles = Options.getRecentFiles();
+    	
+    	if (line.startsWith("-l")) {
+    		if (recentFiles.isEmpty()) {
+    			Log.println("No files were opened, yet.");
+    			return;
+    		}
+    		
+    		int index = 0;
+    		for (int i = recentFiles.size() - 1; i >= 0; --i) {
+    			index++;
+    			Log.println(index + ": " + recentFiles.get(i));
+    		}
+    		return;
+    	}
+    	
+    	if (recentFiles.isEmpty()) {
+			Log.error("No recent files to reopen.");
+			return;
+		}
+    	
+    	String filename;
+    	if (line.equals("")) {
+    		filename = Options.getRecentFiles().peek(); 
+    	} else {
+    		int fileNr;
+    		try {
+    			fileNr = Integer.parseInt(line);
+    		} catch (NumberFormatException e) {
+    			Log.error("Invalid argument " + line);
+    			Log.println("Options: [-l] | [num]");
+    			return;
+    		}
+    		
+    		if (fileNr < 1 || fileNr > recentFiles.size()) {
+    			Log.error("Invalid recent file number");
+    			return;
+    		}
+
+    		filename = recentFiles.get(recentFiles.size() - fileNr);
+    	}
+    	
+    	Log.println(filename);
+    	cmdOpen(filename);
+    }
+    
     /**
      * Reads a specification file.
      */
@@ -1712,7 +1768,7 @@ public final class Shell implements Runnable, PPCHandler {
 
         long duration = System.currentTimeMillis() - start;
         if (printDuration) {
-        	Log.println("Duration: " + duration + "ms");
+        	Log.println(String.format("Duration: %,dms", duration));
     }
     }
 

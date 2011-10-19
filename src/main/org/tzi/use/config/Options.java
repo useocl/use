@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import org.tzi.use.util.Log;
 import org.tzi.use.util.TypedProperties;
+import org.tzi.use.util.collections.LimitedStack;
 
 
 /**
@@ -173,6 +174,10 @@ public class Options {
      */
     public static final String PROTOCOL_FILE = "use.protocol";
 
+    /**
+     * Contains the ten last opened files
+     */
+    private static LimitedStack<String> openedFiles = new LimitedStack<String>(10); 
     
     /** no instances */
 	private Options() {}
@@ -495,5 +500,9 @@ public class Options {
 	 */
 	public static String getLastDirectory() {
 		return lastDirectory;
+	}
+	
+	public static LimitedStack<String> getRecentFiles() {
+		return openedFiles;
 	}
 }

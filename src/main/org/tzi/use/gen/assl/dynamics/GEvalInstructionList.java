@@ -60,12 +60,14 @@ public class GEvalInstructionList extends GEvalInstruction implements IGCaller {
 
     protected void proceed(GConfiguration conf,
                          IGCollector collector) throws GEvaluationException {
-        if (fIterator.hasNext() ) {
+        if (fIterator.hasNext() && !collector.getBlocked()) {
             fIterator.next().createEvalInstr().eval(conf,this,collector);
             fIterator.previous();
         }
-        else
+        else {
+        	collector.setBlocked(false);
             fCaller.feedback( conf, null, collector );
+        }
     }
 
     public String toString() {

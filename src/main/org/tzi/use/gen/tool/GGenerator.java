@@ -487,11 +487,13 @@ public class GGenerator {
         pw.println(String.format("Checked %,d snapshots.", lastResult().collector().numberOfCheckedStates()));
         
         if (this.useTryCuts)
-        	pw.println(String.format("Made %,d try cuts.", lastResult().collector().getCutCount()));
+        	pw.println(String.format("Made %,d try cuts.", lastResult().collector().getCuts()));
         
         if (this.useMinCombinations)
         	pw.println(String.format("Ignored %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
-        	
+        
+        pw.println(String.format("Barriers blocked %,d times.", lastResult().collector().getBarriersHit()));
+        
         if (lastResult().collector().limit() != Long.MAX_VALUE)
             pw.println(String.format("Limit was set to %,d.", lastResult().collector().limit()));
         if (!lastResult().collector().validStateFound() )

@@ -1,15 +1,25 @@
 USE NEWS -- history of user-visible changes. -*- Text -*-
 
-$Id$
-
 Please see the file `README' for a description of how to report bugs.
 ** Changes since version 3.0.0
+* [OCL] Added support for the closure operation introduced with OCL 2.3.
+
+* [ASSL] New barrier statement to force backtracking if the invariant
+  or the expression specified by the barrier is false. 
+
+* [CMD] New command 'reopen' to open recent files again.
+  If used without arguments it opens the most recent file.
+  Possible arguments are: -l for a list of the ten most recent files and
+  or a number which opens the file as numbered by -l.
+  
 * [GUI] The first opening of a class or object diagram is now faster. 
 
 * [GUI] Fixed minor issues related to show/hide/crop
 
 * [UML] Exception was thrown when a model contains a duplicate operation
   definition with pre- or postconditions on both. 
+
+* [General] Memory usage improvements.
 
 ** Changes since version 2.6.0
 * [GUI] The class and object diagrams where refactored. One benefit is, that show, 

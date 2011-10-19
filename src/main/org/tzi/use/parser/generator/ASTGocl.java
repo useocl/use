@@ -47,4 +47,8 @@ public class ASTGocl extends ASTGValueInstruction {
     public GInstruction gen(Context ctx) throws SemanticException {
         return new GOCLExpression( fExpression.gen(ctx) );
     }
+    
+    public ASTExpression getExpression() {
+    	return fExpression;
+    }
 }
