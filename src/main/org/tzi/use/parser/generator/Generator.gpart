@@ -125,7 +125,7 @@ instrParameterIdent ::= id
 
 oclExpression ::= "[" expression "]"
 
-barrier ::= "barrier" IDENT | oclExpression
+barrier ::= "Barrier" "(" IDENT | oclExpression ")"
 */
 
 
@@ -349,10 +349,12 @@ barrier ::= "barrier" (IDENT | oclExpression)
 */
 barrier returns [ASTGBarrier barrier]
 :
-   'barrier' (
+   'Barrier'
+   LPAREN (
        invClass = IDENT COLON_COLON invName = IDENT { $barrier = new ASTGBarrierInvariant($invClass, $invName); } 
      | exp = oclExpression { $barrier = new ASTGBarrierExpression($exp.encapOcl); }
    )
+   RPAREN
 ;
 
 // ++++++++++++++++++++++++++++++++++++++++++

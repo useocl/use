@@ -91,7 +91,7 @@ public class ASTIterateExpression extends ASTExpression {
         vars.enterScope();
         if (! declList.isEmpty() ) {
             // add element variables
-            fDeclList.addVariablesToSymtable(vars, declList.varDecl(0).type());
+        	declList.addVariablesToSymtable(vars);
         }
         vars.add(fInit.nameToken(), init.type());
         expr = fExpr.gen(ctx);

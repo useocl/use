@@ -86,17 +86,6 @@ paramList returns [List<ASTVariableDeclaration> paramList]
     ;
 
 /* ------------------------------------
-  idList ::= id { "," id }
-*/
-idList returns [List idList]
-@init{ $idList = new ArrayList(); }
-:
-    id0=IDENT { $idList.add($id0); }
-    ( COMMA idn=IDENT { $idList.add($idn); } )*
-    ;
-
-
-/* ------------------------------------
   variableDeclaration ::= 
     id ":" type
 */
@@ -393,15 +382,14 @@ typeExpression[ASTExpression source, boolean followsArrow]
 
 /* ------------------------------------
   elemVarsDeclaration ::= 
-    idList [ ":" type ]
+    id (":" type)? ("," id (":" type)?)*  
 */
 elemVarsDeclaration returns [ASTElemVarsDeclaration n]
-@init{ List idList; }
 :
-    idListRes=idList
-    ( COLON t=type )?
-    { $n = new ASTElemVarsDeclaration($idListRes.idList, $t.n); }
-    ;
+{ $n = new ASTElemVarsDeclaration(); }
+   var1 = IDENT (COLON t=type)? {$n.addDeclaration($var1, $t.n);}
+   (COMMA varN = IDENT (COLON tN = type)? {$n.addDeclaration($varN, $tN.n); })*
+;
 
 
 /* ------------------------------------

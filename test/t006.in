@@ -25,6 +25,16 @@
 ? Set{1,2}->forAll(i1, i2 | i1 <> i2)
 *-> false : Boolean
 
+# Issue #0000119
+? Set{1,2}->forAll(i1:Integer, i2:Integer | i1 <> i2)
+*-> false : Boolean
+
+? Set{1,2}->forAll(i1:Integer, i2:Real | i1 <> i2)
+*-> false : Boolean
+
+? Set{1,2}->forAll(i1:Integer, i2 | i1 <> i2)
+*-> false : Boolean
+
 # Implicit element variables also work for nested collections and
 # iterate-based expressions.
 

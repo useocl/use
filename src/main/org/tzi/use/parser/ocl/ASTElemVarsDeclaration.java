@@ -30,12 +30,12 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.util.StringUtil;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -45,18 +45,23 @@ import org.tzi.use.uml.ocl.type.Type;
  */
 public class ASTElemVarsDeclaration extends AST {
     private List<Token> fIdList;
-    private ASTType fType;  // optional: may be null
-
-    public ASTElemVarsDeclaration(List<Token> idList, ASTType type) {
-        fIdList = idList;
-        fType = type;
-    }
+    private List<ASTType> fTypeList;
 
     public ASTElemVarsDeclaration() {
         fIdList = new ArrayList<Token>();
-        fType = null;
+        fTypeList = new ArrayList<ASTType>();
     }
 
+    /**
+     * Adds a declaration to the list of element var declarations.
+	 * @param varname The token representing the varname
+	 * @param type The AST node of the type of the variable. Can be <code>null</code>.
+	 */
+	public void addDeclaration(Token varname, ASTType type) {
+		this.fIdList.add(varname);
+		this.fTypeList.add(type);
+	}
+	
     /**
      * Returns <tt>true</tt> if this list contains no declarations.
      */
@@ -68,39 +73,39 @@ public class ASTElemVarsDeclaration extends AST {
         throws SemanticException 
     {
         // variable type may be omitted in query expressions
-        Type type;
-        if (fType == null ) {
-            // infer type from range expression, cast cannot fail
-            // since the type has been checked by caller.
-            CollectionType ctype = (CollectionType) range.type();
-            type = ctype.elemType();
-        } else {
-            type = fType.gen(ctx);
-        }
+        Type sourceElementType;
+        sourceElementType = ((CollectionType) range.type()).elemType();
 
-        // build list of VarDecls, all vars have the same type
-        VarDeclList varDeclList = new VarDeclList(true);
+        // build list of VarDecls
+        VarDeclList varDeclList = new VarDeclList(false);
+        Type thisType;
         
-        for (Token id : fIdList) {
+        for (int index = 0; index < fIdList.size(); ++index) { 
+        	Token id = fIdList.get(index);
+        	ASTType type = fTypeList.get(index);
         	
 		    if (varDeclList.containsName(id.getText())) {
 		      throw new SemanticException(id, "double declared variable");
 		    }
 		    
-            VarDecl decl = new VarDecl(id.getText(), type);
+		    if (type != null) {
+		    	thisType = type.gen(ctx);
+		    	if (!sourceElementType.isSubtypeOf(thisType))
+					throw new SemanticException(id, "Invalid type "
+							+ StringUtil.inQuotes(thisType)
+							+ " for source element type "
+							+ StringUtil.inQuotes(sourceElementType)
+							+ " specified.");
+		    } else {
+		    	thisType = sourceElementType;
+		    }
+		    
+            VarDecl decl = new VarDecl(id, thisType);
             varDeclList.add(decl);
         }
         return varDeclList;
     }
 
-    void addVariablesToSymtable(Symtable vars, Type type) 
-        throws SemanticException 
-    {
-        for (Token id : fIdList) {
-            vars.add(id, type);
-        }
-    }
-    
     public HashSet<String> getVarNames() {
     	HashSet<String> result = new HashSet<String>();
     	Iterator<Token> it = fIdList.iterator();

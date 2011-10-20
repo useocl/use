@@ -21,6 +21,8 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import org.antlr.runtime.Token;
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.ocl.type.Type;
 
 /** 
@@ -32,7 +34,18 @@ import org.tzi.use.uml.ocl.type.Type;
 public class VarDecl {
     private String fVar;
     private Type fType;
+    private SrcPos sourcePosition = null;
 
+	public VarDecl(Token v, Type t) {
+        fVar = v.getText();
+        fType = t;
+        if (t == null )
+            throw new NullPointerException("type must not be null");
+        
+        sourcePosition = new SrcPos(v);
+    }
+
+    
     public VarDecl(String v, Type t) {
         fVar = v;
         fType = t;
@@ -54,6 +67,13 @@ public class VarDecl {
         return fType;
     }
 
+    /**
+	 * @return the sourcePosition
+	 */
+	public SrcPos getSourcePosition() {
+		return sourcePosition;
+	}
+	
     public int hashCode() {
         return fVar.hashCode();
     }

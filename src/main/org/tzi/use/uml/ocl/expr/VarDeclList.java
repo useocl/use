@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.Symtable;
 import org.tzi.use.util.StringUtil;
 
 /** 
@@ -148,5 +150,15 @@ public class VarDeclList {
             StringUtil.fmtSeq(sb, fVarDecls.iterator(), ", ");
         }
     }
+
+	/**
+	 * @param vars
+	 * @throws SemanticException 
+	 */
+	public void addVariablesToSymtable(Symtable vars) throws SemanticException {
+		for (VarDecl var : fVarDecls) {
+			vars.add(var.name(), var.type(), var.getSourcePosition());
+		}
+	}
 }
 

@@ -115,7 +115,7 @@ public class ASTQueryExpression extends ASTExpression {
             // the argument expression
             Symtable vars = ctx.varTable();
             vars.enterScope();
-            fDeclList.addVariablesToSymtable(vars, declList.varDecl(0).type());
+            declList.addVariablesToSymtable(vars);
             expr = fExpr.gen(ctx);
             vars.exitScope(); 
         }
