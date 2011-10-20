@@ -32,13 +32,21 @@ package org.tzi.use.gen.tool;
  */
 public class GResult {
     private GCollectorImpl fCollector;
+    
     private GChecker fChecker;
+    
     private long fRandomNr;
-
-    public GResult(GCollectorImpl collector, GChecker checker, long r) {
+    
+    /**
+     * How long did it take to calculate the result?
+     */
+    private long duration;
+    
+    public GResult(GCollectorImpl collector, GChecker checker, long r, long duration) {
         fCollector = collector;
         fChecker = checker;
         fRandomNr = r;
+        this.duration = duration;
     }
 
     public GCollectorImpl collector() {
@@ -51,5 +59,13 @@ public class GResult {
 
     public long randomNr() {
         return fRandomNr;
+    }
+    
+    /**
+     * The time in milliseconds it took to calculate the result.
+     * @return
+     */
+    public long getDuration() {
+    	return this.duration;
     }
 }

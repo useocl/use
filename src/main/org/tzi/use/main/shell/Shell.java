@@ -1632,8 +1632,6 @@ public final class Shell implements Runnable, PPCHandler {
      *  
      */
     private void cmdGenStartProcedure(String str, MSystem system) {
-    	long start = System.currentTimeMillis();
-    	
         String filename = null; // the file which contains procedures
         String callstr = null; // the call of the procedure
         Long limit = null; // default: no limit
@@ -1764,12 +1762,7 @@ public final class Shell implements Runnable, PPCHandler {
 
         system.generator().startProcedure(filename, callstr, limit,
                 printFilename, printBasics, printDetails, randomNr,
-                checkStructure, useCut, useMinCombinations);
-
-        long duration = System.currentTimeMillis() - start;
-        if (printDuration) {
-        	Log.println(String.format("Duration: %,dms", duration));
-    }
+                checkStructure, useCut, useMinCombinations, printDuration);
     }
 
     private MSystem system() throws NoSystemException {

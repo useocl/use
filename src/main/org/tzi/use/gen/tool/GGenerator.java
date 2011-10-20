@@ -71,9 +71,27 @@ public class GGenerator {
     private boolean fPrintBasics;
     private boolean fPrintDetails; 
     private Long fRandomNr;
+    
     private boolean fCheckStructure;
+    
+    /**
+     * If true, the generator checks directly after
+     * a try call if multiplicity is violated.  
+     */
     private boolean useTryCuts;
+    
+    /**
+     * If true, a try on a 1 : * association uses
+     * only useful links.
+     */
     private boolean useMinCombinations;
+    
+    /**
+     * If true, time related information (duration, snapshots/s)
+     * is printed in the result.
+     * Otherwise it is suppressed. This is usefull for tests.
+     */
+    private boolean printTimeRelatedData;
     
     private GCollectorImpl collector;
     
@@ -165,7 +183,8 @@ public class GGenerator {
         GProcedureCall call = null;
         PrintWriter pw = null;
         PrintWriter resultPw = null;
-
+        long startTime = System.currentTimeMillis();
+        
         try {
             Log.verbose("Compiling procedures from " + fFilename + ".");
             procedures = ASSLCompiler.compileProcedures(
@@ -216,9 +235,12 @@ public class GGenerator {
                                       this.useTryCuts,
                                       this.useMinCombinations);
                         
+                        long endTime = System.currentTimeMillis();
                         fLastResult = new GResult( collector,
                                                    checker,
-                                                   fRandomNr.longValue());
+                                                   fRandomNr.longValue(),
+                                                   endTime - startTime);
+                        
                         if (collector.existsInvalidMessage())
                             pw.println("There were errors." + (
                                                                (!fPrintBasics && !fPrintDetails)
@@ -274,10 +296,13 @@ public class GGenerator {
                                 Long randomNr,
                                 boolean checkStructure,
                                 boolean useTryCuts,
-                                boolean useMinCombinations) {
+                                boolean useMinCombinations,
+                                boolean outputTimeRelatedData) {
         fLastResult = null;
         this.useTryCuts = useTryCuts;
         this.useMinCombinations = useMinCombinations;
+        this.printTimeRelatedData = outputTimeRelatedData;
+        
         boolean didShowWarnigs = Log.isShowWarnings();
         Log.setShowWarnings(false);
 
@@ -298,6 +323,8 @@ public class GGenerator {
         PrintWriter pw = null;
         PrintWriter resultPw = null;
 
+        long startTime = System.currentTimeMillis();
+        
         try {
             Log.verbose("Compiling procedures from " + filename + ".");
             fProcedures = ASSLCompiler.compileProcedures(
@@ -348,9 +375,12 @@ public class GGenerator {
                                       this.useTryCuts,
                                       this.useMinCombinations);
                         
+                        long endTime = System.currentTimeMillis();
                         fLastResult = new GResult( collector,
                                                    checker,
-                                                   randomNr.longValue());
+                                                   randomNr.longValue(),
+                                                   endTime - startTime);
+                        
                         if (collector.existsInvalidMessage())
                             pw.println("There were errors." + (
                                                                (!printBasics && !printDetails)
@@ -484,7 +514,19 @@ public class GGenerator {
     
     public void printResult(PrintWriter pw) throws GNoResultException {
     	pw.println(String.format("Random number generator was initialized with %d.",  lastResult().randomNr()));
-        pw.println(String.format("Checked %,d snapshots.", lastResult().collector().numberOfCheckedStates()));
+        
+    	long numSnapshots = lastResult().collector().numberOfCheckedStates();
+    	if (this.printTimeRelatedData) {    		
+    		long duration = lastResult().getDuration();
+    		double snapShotsPerSecond = Double.NaN;
+    				
+    		if (duration > 0)
+    			snapShotsPerSecond = (numSnapshots / (duration * 1000));
+    		
+    		pw.println(String.format("Checked %,d snapshots in %,dms (%,f2d snapshots/s).", numSnapshots, duration, snapShotsPerSecond));
+    	} else {
+    		pw.println(String.format("Checked %,d snapshots.", numSnapshots));
+    	}
         
         if (this.useTryCuts)
         	pw.println(String.format("Made %,d try cuts.", lastResult().collector().getCuts()));
