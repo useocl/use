@@ -517,13 +517,14 @@ public class GGenerator {
         
     	long numSnapshots = lastResult().collector().numberOfCheckedStates();
     	if (this.printTimeRelatedData) {    		
-    		long duration = lastResult().getDuration();
+    		double duration = lastResult().getDuration() / 1000D;
     		double snapShotsPerSecond = Double.NaN;
     				
-    		if (duration > 0)
-    			snapShotsPerSecond = (numSnapshots / (duration / 1000));
+    		if (duration > 0) {
+    			snapShotsPerSecond = (numSnapshots / duration);
+    		}
     		
-    		pw.println(String.format("Checked %,d snapshots in %,dms (%,.0f snapshots/s).", numSnapshots, duration, snapShotsPerSecond));
+    		pw.println(String.format("Checked %,d snapshots in %,.3fs (%,.0f snapshots/s).", numSnapshots, duration, snapShotsPerSecond));
     	} else {
     		pw.println(String.format("Checked %,d snapshots.", numSnapshots));
     	}
