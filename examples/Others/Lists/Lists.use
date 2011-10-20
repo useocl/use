@@ -13,13 +13,13 @@ operations
   -- These should actually be abstract operations that have to be
   -- implemented by subclasses (not yet available in USE)
   tail() : Sequence(List) = oclUndefined(Sequence(List))
-  closure() : Sequence(List) = oclUndefined(Sequence(List))
+  closure_() : Sequence(List) = oclUndefined(Sequence(List))
 end
 
 class EmptyList < List
 operations
   tail() : Sequence(List) = oclEmpty(Sequence(List))
-  closure() : Sequence(List) = oclEmpty(Sequence(List))
+  closure_() : Sequence(List) = oclEmpty(Sequence(List))
 end
 
 class NonEmptyList < List
@@ -31,7 +31,7 @@ operations
       self.next.tail()
     endif
 
-  closure() : Sequence(List) =
+  closure_() : Sequence(List) =
     self.tail()->prepend(self)
 end
 
@@ -69,21 +69,21 @@ constraints
 -- no m1, m2: Map - m1 | some (m1.list.*next & m2.list.*next)
 context Map inv:
   Map.allInstances->forAll(m1, m2 | m1 <> m2 
-    implies m1.list.closure()->asSet->intersection(m2.list.closure()->asSet)->isEmpty)
+    implies m1.list.closure_()->asSet->intersection(m2.list.closure_()->asSet)->isEmpty)
 
 
 -- Lists contained in Maps have Pairs as their elements
 -- Map.list.*next.elt in Pair
 context List inv ListsInMapsHavePairs:
   self.map->notEmpty 
-    implies self.closure()->forAll(l | l.oclAsType(NonEmptyList).elt.oclIsKindOf(Pair))
+    implies self.closure_()->forAll(l | l.oclAsType(NonEmptyList).elt.oclIsKindOf(Pair))
 
 
 -- Lists contained in Maps do not hold null references as elements
 -- all p: Map.list.*next & NonEmptyList | some p.elt
 context List inv ListsInMapsHaveElements:
   self.map->notEmpty 
-    implies self.closure()->forAll(l | l.oclAsType(NonEmptyList).elt->notEmpty)
+    implies self.closure_()->forAll(l | l.oclAsType(NonEmptyList).elt->notEmpty)
 
 -- no object is both a key of some Pair and a val of some Pair
 -- no Pair.key & Pair.val
@@ -94,9 +94,9 @@ context Pair inv NoObjectKeyAndVal:
 -- Lists do not contain duplicates
 -- all p: List, o: Object | sole o & p.*next.elt
 context List inv NoDuplicates:
-  self.closure()->asBag->select(l | l.oclAsType(NonEmptyList).elt->notEmpty)->size
+  self.closure_()->asBag->select(l | l.oclAsType(NonEmptyList).elt->notEmpty)->size
   = 
-  self.closure()->asSet->select(l | l.oclAsType(NonEmptyList).elt->notEmpty)->size
+  self.closure_()->asSet->select(l | l.oclAsType(NonEmptyList).elt->notEmpty)->size
 
 
 -- no cyclic Lists
@@ -108,13 +108,13 @@ context List inv NoCycles:
 -- no List contains itself as an element
 -- no p: List | p in p.*next.elt
 context List inv NotContainsSelf:
-  not self.closure()->exists(l | l.oclAsType(NonEmptyList).elt->includes(self))
+  not self.closure_()->exists(l | l.oclAsType(NonEmptyList).elt->includes(self))
 
 
 -- no List contains a List as an element
 -- no List & List.elt 
 context List inv NoListElement:
-  not self.closure()->exists(l | l.oclAsType(NonEmptyList).elt.oclIsKindOf(List))
+  not self.closure_()->exists(l | l.oclAsType(NonEmptyList).elt.oclIsKindOf(List))
 
 
 -- there is only one EmptyList object
