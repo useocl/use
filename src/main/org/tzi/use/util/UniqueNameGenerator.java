@@ -55,6 +55,10 @@ public class UniqueNameGenerator {
         	// Lazy initialization of name map
         	fNameMap = new HashMap<String, Integer>();
         	
+        	// Remove empty map from stack
+        	fStack.pop();
+        	fStack.push(fNameMap);
+        	
         	if (fStack.size() > 1) {
         		fNameMap.putAll(fStack.get(fStack.size() - 2));
         	}
