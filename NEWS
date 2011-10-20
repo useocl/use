@@ -5,7 +5,11 @@ Please see the file `README' for a description of how to report bugs.
 * [OCL] Added support for the closure operation introduced with OCL 2.3.
 
 * [ASSL] New barrier statement to force backtracking if the invariant
-  or the expression specified by the barrier is false. 
+  or the expression specified by the barrier is false. The statement
+  can be used with an invariant name:
+    Barrier(Person::namesAreUnique);
+  or with an boolean OCL expression: 
+    Barrier([Person.allInstances()->isUnique(name)]); 
 
 * [CMD] New command 'reopen' to open recent files again.
   If used without arguments it opens the most recent file.
