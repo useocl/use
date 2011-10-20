@@ -521,9 +521,9 @@ public class GGenerator {
     		double snapShotsPerSecond = Double.NaN;
     				
     		if (duration > 0)
-    			snapShotsPerSecond = (numSnapshots / (duration * 1000));
+    			snapShotsPerSecond = (numSnapshots / (duration / 1000));
     		
-    		pw.println(String.format("Checked %,d snapshots in %,dms (%,f2d snapshots/s).", numSnapshots, duration, snapShotsPerSecond));
+    		pw.println(String.format("Checked %,d snapshots in %,dms (%,.0f snapshots/s).", numSnapshots, duration, snapShotsPerSecond));
     	} else {
     		pw.println(String.format("Checked %,d snapshots.", numSnapshots));
     	}
