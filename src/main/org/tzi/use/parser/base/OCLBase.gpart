@@ -86,6 +86,17 @@ paramList returns [List<ASTVariableDeclaration> paramList]
     ;
 
 /* ------------------------------------
+  idList ::= id { "," id }
+*/
+idList returns [List idList]
+@init{ $idList = new ArrayList(); }
+:
+    id0=IDENT { $idList.add($id0); }
+    ( COMMA idn=IDENT { $idList.add($idn); } )*
+    ;
+
+
+/* ------------------------------------
   variableDeclaration ::= 
     id ":" type
 */
