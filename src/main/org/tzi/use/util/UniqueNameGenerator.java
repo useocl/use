@@ -56,8 +56,7 @@ public class UniqueNameGenerator {
         	fNameMap = new HashMap<String, Integer>();
         	
         	// Remove empty map from stack
-        	fStack.pop();
-        	fStack.push(fNameMap);
+        	fStack.setElementAt(fNameMap, fStack.size() - 1);
         	
         	if (fStack.size() > 1) {
         		fNameMap.putAll(fStack.get(fStack.size() - 2));
