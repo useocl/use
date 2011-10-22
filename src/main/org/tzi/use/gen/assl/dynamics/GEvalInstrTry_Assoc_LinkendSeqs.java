@@ -378,10 +378,10 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         
         double ignoredStates = Math.pow(2, (fObjectLists.get(0).size() * fObjectLists.get(1).size()));
         
-        if (unique == UniqueList.SECOND_IS_UNIQUE) {
-        	ignoredStates -= Math.pow(fObjectLists.get(0).size() + 1, fObjectLists.get(1).size());
+        if (unique == UniqueList.FIRST_IS_UNIQUE) {
+        	ignoredStates -= (Math.pow(fObjectLists.get(0).size() + 1, fObjectLists.get(1).size()));
         } else {
-        	ignoredStates -= Math.pow(fObjectLists.get(1).size() + 1, fObjectLists.get(0).size());
+        	ignoredStates -= (Math.pow(fObjectLists.get(1).size() + 1, fObjectLists.get(0).size()));
         }
         
         collector.addIgnoredStates((long)ignoredStates);
