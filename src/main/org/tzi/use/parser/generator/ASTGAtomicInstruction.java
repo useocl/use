@@ -38,6 +38,7 @@ import org.tzi.use.gen.assl.statics.GInstructionCreator;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.util.StringUtil;
 
 public class ASTGAtomicInstruction extends ASTGValueInstruction {
@@ -61,8 +62,9 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
         for (Object param : fParameter) {
             if (param instanceof Token ) {
                 String name = ((Token) param).getText();
-                boolean isClass = ctx.model().getClass(name)!=null;
-                boolean isAssociation = ctx.model().getAssociation(name)!=null;
+                boolean isClass = ctx.model().getClass(name) != null;
+                boolean isAssociation = ctx.model().getAssociation(name) != null;
+                
                 if (isClass && isAssociation )
                     errParams.add("Class/Association");
                 else if (isClass)
@@ -70,6 +72,20 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
                 else if (isAssociation)
                     errParams.add("Association");
                 else {
+                	boolean isAttribute = false;
+                	// Attribute?
+                	for (MClass cls : ctx.model().classes()) {
+                		if (cls.attribute(name, false) != null) {
+                			isAttribute = true;
+                			errParams.add("Attribute");
+                			params.add( name );
+                			break;
+                		}
+                	}
+                	
+                	if (isAttribute)
+            			continue;
+                	
                     String err = "`" + name +"' is not a class or " +
                         "association of the current model. If `" + name +
                         "' is a variable, use squared " +

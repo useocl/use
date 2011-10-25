@@ -525,6 +525,7 @@ public class GGenerator {
     		}
     		
     		pw.println(String.format("Checked %,d snapshots in %,.3fs (%,.0f snapshots/s).", numSnapshots, duration, snapShotsPerSecond));
+    		pw.println(String.format("%,d;%.3f", numSnapshots, duration));
     	} else {
     		pw.println(String.format("Checked %,d snapshots.", numSnapshots));
     	}
@@ -533,7 +534,7 @@ public class GGenerator {
         	pw.println(String.format("Made %,d try cuts.", lastResult().collector().getCuts()));
         
         if (this.useMinCombinations)
-        	pw.println(String.format("Ignored %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
+        	pw.println(String.format("Ignored at least %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
         
         pw.println(String.format("Barriers blocked %,d times.", lastResult().collector().getBarriersHit()));
         

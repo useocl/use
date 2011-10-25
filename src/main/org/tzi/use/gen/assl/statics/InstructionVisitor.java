@@ -142,4 +142,9 @@ public interface InstructionVisitor {
 	 * @param gInstrBarrier
 	 */
 	void visitBarrier(GInstrBarrier gInstrBarrier);
+
+	/**
+	 * @param gInstrTry_Attribute
+	 */
+	void visitInstrTry_Attribute(GInstrTry_Attribute gInstrTry_Attribute);
 }

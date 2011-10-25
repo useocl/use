@@ -31,17 +31,21 @@ import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
 
 
 /**
- * TODO
+ * Represents a list (sequence) of statements.
  * @author Daniel Gent
  *
  */
 public class MSequenceStatement extends MStatement {
-	/** TODO */
+	
+	/**
+	 * The sequence of statements to evaluate
+	 */
 	private List<MStatement> fStatements;
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new container for statements to
+	 * evaluate in a single call.
 	 */
 	public MSequenceStatement() {
 		fStatements = new LinkedList<MStatement>();
@@ -50,7 +54,8 @@ public class MSequenceStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new container with the given statements to
+	 * execute in a single call
 	 * @param statements
 	 */
 	public MSequenceStatement(List<MStatement> statements) {
@@ -59,7 +64,8 @@ public class MSequenceStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new container with the given statements to
+	 * execute in a single call
 	 * @param statements
 	 */
 	public MSequenceStatement(MStatement... statements) {
@@ -68,7 +74,7 @@ public class MSequenceStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
+	 * Returns the number of statements.
 	 * @return
 	 */
 	public int getNumStatements() {
@@ -77,7 +83,7 @@ public class MSequenceStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
+	 * Returns all contained statements
 	 * @return
 	 */
 	public List<MStatement> getStatements() {
@@ -86,7 +92,7 @@ public class MSequenceStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
+	 * Appends a statement to the sequence.
 	 * @param statement
 	 */
 	public void appendStatement(MStatement statement) {
@@ -95,7 +101,7 @@ public class MSequenceStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
+	 * Prepends a statement to the sequence.
 	 * @param statement
 	 */
 	public void prependStatement(MStatement statement) {
@@ -104,7 +110,7 @@ public class MSequenceStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
+	 * Removes all statements.
 	 */
 	public void clear() {
 		fStatements.clear();
@@ -112,7 +118,7 @@ public class MSequenceStatement extends MStatement {
 		
 	
 	/**
-	 * TODO
+	 * True if the sequence does not contain any statement.
 	 * @return
 	 */
 	public boolean isEmpty() {
@@ -121,7 +127,9 @@ public class MSequenceStatement extends MStatement {
 	
 	
 	/**
-	 * TODO
+	 * Returns a simpler statement if possible, i. e., the empty statement if the sequence is empty
+	 * or the single statement if only one statement is included in the sequence,
+	 * or this sequence if it cannot be simplified, 
 	 * @return
 	 */
 	public MStatement simplify() {

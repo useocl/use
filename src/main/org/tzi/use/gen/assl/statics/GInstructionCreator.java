@@ -53,6 +53,7 @@ public class GInstructionCreator {
             //    to deleted objects would not be updated.
             new GMatcherInsert_Assoc_Linkends(),
             new GMatcherDelete_Assoc_Linkends(),
+            new GMatcherTry_Attribute(),
             new GMatcherTry_Assoc_LinkendSeqs(),
             new GMatcherTry_AssocClass_LinkendSeqs(),
             new GMatcherSub_Seq_Integer(),
