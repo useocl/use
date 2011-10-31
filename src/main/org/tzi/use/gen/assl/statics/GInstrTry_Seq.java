@@ -33,7 +33,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrTry_Seq implements GValueInstruction {
+public class GInstrTry_Seq extends GInstrTry implements GValueInstruction {
 
     // Try( Sequence(T) ): T
 
@@ -64,6 +64,7 @@ public class GInstrTry_Seq implements GValueInstruction {
 	 */
 	@Override
 	public GEvalInstruction createEvalInstr() {
-		return new GEvalInstrTry_Seq( this );
+		++createdEvalTries;
+		return new GEvalInstrTry_Seq( this, firstTry && createdEvalTries == 1 );
 	}
 }

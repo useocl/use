@@ -37,7 +37,7 @@ import org.tzi.use.util.StringUtil;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrTry_AssocClass_LinkendSeqs implements GValueInstruction {
+public class GInstrTry_AssocClass_LinkendSeqs extends GInstrTry implements GValueInstruction {
 
     // NO RESULT VALUE -> not a subclass of GValueInstruction
     // Try( n-ary-Association, endset1, endset2, ..., endsetn )
@@ -73,7 +73,8 @@ public class GInstrTry_AssocClass_LinkendSeqs implements GValueInstruction {
 	 */
 	@Override
 	public GEvalInstruction createEvalInstr() {
-		return new GEvalInstrTry_AssocClass_LinkendSeqs( this );
+		++createdEvalTries;
+		return new GEvalInstrTry_AssocClass_LinkendSeqs( this, firstTry && createdEvalTries == 1 );
 	}
 
 	/* (non-Javadoc)

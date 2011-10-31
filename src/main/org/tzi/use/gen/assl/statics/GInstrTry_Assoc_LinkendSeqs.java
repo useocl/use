@@ -34,7 +34,7 @@ import java.util.List;
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
-public class GInstrTry_Assoc_LinkendSeqs implements GInstruction {
+public class GInstrTry_Assoc_LinkendSeqs extends GInstrTry implements GInstruction {
 
     // NO RESULT VALUE -> not a subclass of GValueInstruction
     // Try( n-ary-Association, endset1, endset2, ..., endsetn )
@@ -70,6 +70,7 @@ public class GInstrTry_Assoc_LinkendSeqs implements GInstruction {
 	 */
 	@Override
 	public GEvalInstruction createEvalInstr() {
-		return new GEvalInstrTry_Assoc_LinkendSeqs( this );
+		++createdEvalTries;
+		return new GEvalInstrTry_Assoc_LinkendSeqs( this, firstTry && createdEvalTries == 1 );
 	}
 }

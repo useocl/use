@@ -93,4 +93,12 @@ public class UniqueNameGenerator {
     public String toString() {
     	return fStack.toString();
     }
+
+	/**
+	 * The number of saved states.
+	 * @return
+	 */
+	public int getStates() {
+		return fStack.size();
+	}
 }

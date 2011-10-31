@@ -33,11 +33,12 @@ import org.tzi.use.gen.assl.statics.GInstrTry_Seq;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
 
-public class GEvalInstrTry_Seq extends GEvalInstruction implements IGCaller {
+public class GEvalInstrTry_Seq extends GEvalInstrTry implements IGCaller {
     private GInstrTry_Seq fInstr;
     private IGCaller fCaller;
 
-    public GEvalInstrTry_Seq(GInstrTry_Seq instr ) {
+    public GEvalInstrTry_Seq(GInstrTry_Seq instr, boolean first ) {
+    	super(first);
         fInstr = instr;
     }
 
@@ -55,13 +56,21 @@ public class GEvalInstrTry_Seq extends GEvalInstruction implements IGCaller {
         if (value.isUndefined())
             collector.invalid( buildCantExecuteMessage(fInstr,fInstr.sequenceInstr()) );
         else {
-            for (Value elem : (CollectionValue)value) {            	
+        	CollectionValue col = (CollectionValue)value; 
+        	this.initProgress(col.size());
+        	int element = 0;
+        	
+            for (Value elem : col) {
             	if (collector.canStop()) {
                 	break;
                 }
+            	++element;
                 collector.detailPrintWriter().println("`"+ fInstr + "' == "+elem);
+                this.outPutProgress(element);
                 fCaller.feedback( conf, elem, collector );
             }
+            
+            this.endProgress();
         }
     }
 

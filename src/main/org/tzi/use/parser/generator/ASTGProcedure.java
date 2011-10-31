@@ -32,6 +32,7 @@ package org.tzi.use.parser.generator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
+import org.tzi.use.gen.assl.statics.GInstrTry;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
@@ -58,7 +59,8 @@ public class ASTGProcedure extends AST {
 
     public GProcedure gen(Context ctx) throws SemanticException {
         GProcedure proc = new GProcedure(fName.getText());
-
+        GInstrTry.numTries = 0;
+        
         ctx.varTable().enterScope();
         try {
             for (ASTVariableDeclaration astvardecl : fParameterDecls) {

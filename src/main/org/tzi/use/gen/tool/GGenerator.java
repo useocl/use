@@ -365,6 +365,7 @@ public class GGenerator {
                     Log.verbose(proc.toString() + " started...");
                     
                     try {
+                    	Log.println(String.format("Before evaluation: UniqueNameGenerator has %d saved states.", fSystem.getUniqueNameGenerator().getStates()));
                         GEvalProcedure evalproc = new GEvalProcedure( proc );
                         evalproc.eval(call.evaluateParams(fSystem.state()),
                                       fSystem.state(),
@@ -375,6 +376,7 @@ public class GGenerator {
                                       this.useTryCuts,
                                       this.useMinCombinations);
                         
+                        Log.println(String.format("After evaluation: UniqueNameGenerator has %d saved states.", fSystem.getUniqueNameGenerator().getStates()));
                         long endTime = System.currentTimeMillis();
                         fLastResult = new GResult( collector,
                                                    checker,

@@ -30,7 +30,7 @@ import org.tzi.use.uml.mm.MAttribute;
  * @author Lars Hamann
  *
  */
-public class GInstrTry_Attribute implements GInstruction {
+public class GInstrTry_Attribute extends GInstrTry implements GInstruction {
 
 	private MAttribute attribute;
     
@@ -64,7 +64,8 @@ public class GInstrTry_Attribute implements GInstruction {
 	 */
 	@Override
 	public GEvalInstruction createEvalInstr() {
-		return new GEvalInstrTry_Attribute(this);
+		++createdEvalTries;
+		return new GEvalInstrTry_Attribute(this, firstTry && createdEvalTries == 1);
 	}
 
 	/**

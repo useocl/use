@@ -4,6 +4,10 @@ Please see the file `README' for a description of how to report bugs.
 ** Changes since version 3.0.1
 * [ASSL] Fixed bug in barrier statement
 
+* [ASSL] New Try-statement Try(Collection(Class), AttributeName, Sequence(Value)).
+
+ 
+
 ** Changes since version 3.0.0
 * [OCL] Added support for the closure operation introduced with OCL 2.3.
 

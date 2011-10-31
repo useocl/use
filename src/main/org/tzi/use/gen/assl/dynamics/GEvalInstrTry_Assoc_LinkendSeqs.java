@@ -62,16 +62,18 @@ import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.Pair;
 
 
-public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
+public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
     implements IGCaller {
-    protected GInstrTry_Assoc_LinkendSeqs fInstr;
+    
+	protected GInstrTry_Assoc_LinkendSeqs fInstr;
 	static List<List<Value>> emptyQualifiers = Collections.emptyList();
     private IGCaller fCaller;
     private ListIterator<GValueInstruction> fIterator;
     protected List<List<MObject>> fObjectLists;
     private GInstruction fLastEvaluatedInstruction;
     
-    public GEvalInstrTry_Assoc_LinkendSeqs(GInstrTry_Assoc_LinkendSeqs instr ) {
+    public GEvalInstrTry_Assoc_LinkendSeqs(GInstrTry_Assoc_LinkendSeqs instr, boolean first ) {
+    	super(first);
         fInstr = instr;
     }
 
@@ -105,8 +107,10 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         }
     
         List<MObject> objects = new ArrayList<MObject>();
-
-        for (Value elem : (CollectionValue)value) {
+        CollectionValue values = (CollectionValue)value;
+        this.initProgress(values.size());
+        
+        for (Value elem : values) {
             if (elem.isUndefined()) {
                 collector.invalid( "Can't execute `" + fInstr +
                                    "', because the result of `" + 
@@ -162,6 +166,8 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             
             return;
         }
+        
+        this.initProgress(numLinks);
         
         MSystemState state = conf.systemState();
         MSystem system = state.system();
@@ -268,11 +274,14 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             // configurations for next iteration
             oldConfiguration = newConfiguration;
         	++newConfiguration;
+        	this.outPutProgress(newConfiguration);
         	// Remove unique name state, because no undo statements are executed
         	system.getUniqueNameGenerator().popState();
         	
           // stop once all configurations have been built or stopping is allowed
         } while ((newConfiguration < tooLarge) && !collector.canStop());
+        
+        this.endProgress();
         
         if (collector.doBasicPrinting()) {
 	        basicOutput.print("Evaluated ");
@@ -381,18 +390,25 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
         MSequenceStatement statements;
         StatementEvaluationResult res;
         
-        double ignoredStates = Math.pow(2, (fObjectLists.get(0).size() * fObjectLists.get(1).size()));
+        double ignoredStates;
+        double statesToDoOld = Math.pow(2, (fObjectLists.get(0).size() * fObjectLists.get(1).size()));
+        double statesToDo;
         
         if (unique == UniqueList.FIRST_IS_UNIQUE) {
-        	ignoredStates -= (Math.pow(fObjectLists.get(0).size() + 1, fObjectLists.get(1).size()));
+        	statesToDo = (Math.pow(fObjectLists.get(0).size() + 1, fObjectLists.get(1).size()));
         } else {
-        	ignoredStates -= (Math.pow(fObjectLists.get(1).size() + 1, fObjectLists.get(0).size()));
+        	statesToDo = (Math.pow(fObjectLists.get(1).size() + 1, fObjectLists.get(0).size()));
         }
+        ignoredStates = statesToDoOld - statesToDo;
+        this.initProgress((long)statesToDo);
         
         collector.addIgnoredStates((long)ignoredStates);
         PrintWriter basicOutput = collector.basicPrintWriter();
         
+        long tryNum = 0;
+        
         do {
+        	++tryNum;
         	statements = new MSequenceStatement();
         	links = linkSetIter.next();
         	
@@ -419,6 +435,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstruction
             	}
             }
             
+            this.outPutProgress(tryNum);
         	system.getUniqueNameGenerator().popState();
         	
         	try {	

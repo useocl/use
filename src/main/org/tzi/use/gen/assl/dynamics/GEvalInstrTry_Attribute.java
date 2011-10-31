@@ -46,14 +46,15 @@ import combinatorics.permutations.PermutationWithRepetitionGenerator;
  * @author Lars Hamann
  *
  */
-public class GEvalInstrTry_Attribute extends GEvalInstruction {
+public class GEvalInstrTry_Attribute extends GEvalInstrTry {
 
 	GInstrTry_Attribute instr;
 	
 	/**
 	 * @param instr
 	 */
-	public GEvalInstrTry_Attribute(GInstrTry_Attribute instr) {
+	public GEvalInstrTry_Attribute(GInstrTry_Attribute instr, boolean first ) {
+    	super(first);
 		this.instr = instr;
 	}
 
@@ -110,12 +111,14 @@ public class GEvalInstrTry_Attribute extends GEvalInstruction {
 				vector, range.size());
 		Iterator<CombinatoricsVector<Value>> iter = gen.createIterator();
 		MSequenceStatement assignStatements = new MSequenceStatement();
+		this.initProgress(gen.getNumberOfGeneratedObjects());
 		
 		MAttribute attr = instr.getAttribute();
 		int iValue = 0;
 		CombinatoricsVector<Value> currentCombination;
 		MStatement assignStmt;
 		MSystem system = conf.systemState().system();
+		long cmb = 0;
 		
 		while (!collector.canStop() && iter.hasNext()) {
 			assignStatements.clear();
@@ -137,6 +140,8 @@ public class GEvalInstrTry_Attribute extends GEvalInstruction {
 				throw new GEvaluationException(e);
 			}
 			
+			this.outPutProgress(++cmb);
+			
 			caller.feedback(conf, null, collector);
 		
 			// Remove unique name state, because no undo statements are executed
@@ -150,6 +155,8 @@ public class GEvalInstrTry_Attribute extends GEvalInstruction {
             	}
             }
 		}
+		
+		this.endProgress();
 	}
 
 }

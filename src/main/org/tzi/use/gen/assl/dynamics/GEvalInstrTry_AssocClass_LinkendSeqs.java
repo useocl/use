@@ -64,7 +64,7 @@ import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.Pair;
 
 
-public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstruction
+public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
     implements IGCaller {
     protected GInstrTry_AssocClass_LinkendSeqs fInstr;
 	static List<List<Value>> emptyQualifiers = Collections.emptyList();
@@ -73,7 +73,8 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstruction
     protected List<List<MObject>> fObjectLists;
     private GInstruction fLastEvaluatedInstruction;
     
-    public GEvalInstrTry_AssocClass_LinkendSeqs(GInstrTry_AssocClass_LinkendSeqs instr ) {
+    public GEvalInstrTry_AssocClass_LinkendSeqs(GInstrTry_AssocClass_LinkendSeqs instr, boolean first ) {
+    	super(first);
         fInstr = instr;
     }
 
@@ -160,6 +161,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstruction
             return;
         }
         
+        this.initProgress(numLinks);
         MSystemState state = conf.systemState();
         MSystem system = state.system();
         PrintWriter basicOutput = collector.basicPrintWriter();
@@ -270,11 +272,14 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstruction
             // configurations for next iteration
             oldConfiguration = newConfiguration;
         	++newConfiguration;
+        	this.outPutProgress(newConfiguration);
         	// Remove unique name state, because no undo statements are executed
         	system.getUniqueNameGenerator().popState();
         	
           // stop once all configurations have been built or stopping is allowed
         } while ((newConfiguration < tooLarge) && !collector.canStop());
+        
+        this.endProgress();
         
         if (collector.doBasicPrinting()) {
 	        basicOutput.print("Evaluated ");
