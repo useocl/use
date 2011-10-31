@@ -43,7 +43,8 @@
   <property name="junit.jar"          location="${lib.dir}/junit.jar"/>
   <property name="gsbase.jar"         location="${lib.dir}/gsbase.jar"/>
   <property name="checkstyle.jar"     location="${lib.dir}/checkstyle-all-3.4.jar"/>
-  <property name="jruby.jar"          location="${lib.dir}/jruby-complete-1.4.0.jar"/>
+  <property name="jruby.jar"            location="${lib.dir}/jruby-complete-1.4.0.jar"/>
+  <property name="combinatoricslib.jar" location="${lib.dir}/combinatoricslib-0.2.jar"/>
 	
   <property name="readline.src.dir"   location="${src.main.dir}/org/tzi/use/util/input"/>
   <property name="parser.dir"         location="${src.main.dir}/org/tzi/use/parser"/>
@@ -317,12 +318,12 @@
     <mkdir dir="${build.classes.dir}"/>
     <javac srcdir="${src.main.dir}:${src.runtime.dir}:${src.gui.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off" 
-       classpath="${antlr.jar}:${junit.jar}:${jruby.jar}" 
+       classpath="${antlr.jar}:${junit.jar}:${jruby.jar}:${combinatoricslib.jar}" 
        source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
     </javac>  
     <javac srcdir="${src.test.dir}" destdir="${build.classes.dir}" 
        deprecation="on" debug="on" listfiles="off"
-       classpath="${antlr.jar}:${junit.jar}:${gsbase.jar}"
+       classpath="${antlr.jar}:${junit.jar}:${gsbase.jar}:${combinatoricslib.jar}"
     	source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
        <exclude name="org/tzi/use/gui/**/*.java"/>
     </javac>
