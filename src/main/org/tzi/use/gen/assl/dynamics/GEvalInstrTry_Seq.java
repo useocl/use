@@ -66,7 +66,10 @@ public class GEvalInstrTry_Seq extends GEvalInstrTry implements IGCaller {
                 }
             	++element;
                 collector.detailPrintWriter().println("`"+ fInstr + "' == "+elem);
-                this.outPutProgress(element);
+                
+                if (this.firstTry)
+                	this.outPutProgress(element);
+                
                 fCaller.feedback( conf, elem, collector );
             }
             

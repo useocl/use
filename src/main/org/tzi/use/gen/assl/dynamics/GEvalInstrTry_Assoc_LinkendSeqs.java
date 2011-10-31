@@ -274,7 +274,8 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
             // configurations for next iteration
             oldConfiguration = newConfiguration;
         	++newConfiguration;
-        	this.outPutProgress(newConfiguration);
+        	if (this.firstTry)
+        		this.outPutProgress(newConfiguration);
         	// Remove unique name state, because no undo statements are executed
         	system.getUniqueNameGenerator().popState();
         	
@@ -435,7 +436,9 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
             	}
             }
             
-            this.outPutProgress(tryNum);
+            if (this.firstTry)
+            	this.outPutProgress(tryNum);
+            
         	system.getUniqueNameGenerator().popState();
         	
         	try {	

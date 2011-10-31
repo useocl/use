@@ -140,7 +140,8 @@ public class GEvalInstrTry_Attribute extends GEvalInstrTry {
 				throw new GEvaluationException(e);
 			}
 			
-			this.outPutProgress(++cmb);
+			if (this.firstTry)
+				this.outPutProgress(++cmb);
 			
 			caller.feedback(conf, null, collector);
 		
