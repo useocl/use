@@ -288,8 +288,7 @@ class EvalOCLDialog extends JDialog {
 
         try {
             // evaluate it with current system state
-            evaluator = new Evaluator();
-            evaluator.enableEvalTree();
+            evaluator = new Evaluator(true);
             Value val = evaluator.eval(expr, fSystem.state(), fSystem
                     .varBindings());
             // print result

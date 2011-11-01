@@ -61,7 +61,7 @@ public class ASTTestCase extends AST {
 			
 			// TODO: Generic Interface!
 			if (cmd instanceof ASTAssert) {
-				EvalContext eCtx = new EvalContext(preState, system.state(), system.varBindings(), null);
+				EvalContext eCtx = new EvalContext(preState, system.state(), system.varBindings(), null, false);
 				ASTAssert ass = (ASTAssert)cmd;
 				ctx.setIsAssertExpression(true);
 				

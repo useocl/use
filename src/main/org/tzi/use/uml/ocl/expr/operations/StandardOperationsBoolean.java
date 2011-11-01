@@ -45,17 +45,25 @@ final class Op_boolean_or extends BooleanOperation {
 
 	public Value evalWithArgs(EvalContext ctx, Expression args[]) {
 		Value v1 = args[0].eval(ctx);
-		Value v2 = args[1].eval(ctx);
+		Value v2 = null;
+		
+		if (ctx.isEnableEvalTree())
+			v2 = args[1].eval(ctx);
+		
 		if (v1.isDefined()) {
 			boolean b1 = ((BooleanValue) v1).value();
 			if (b1)
 				return BooleanValue.TRUE;
 			else {
-				// Value v2 = args[1].eval(ctx);
+				if (!ctx.isEnableEvalTree())
+					v2 = args[1].eval(ctx);
+				
 				return v2;
 			}
 		} else {
-			// Value v2 = args[1].eval(ctx);
+			if (!ctx.isEnableEvalTree())
+				v2 = args[1].eval(ctx);
+			
 			if (v2.isDefined()) {
 				boolean b2 = ((BooleanValue) v2).value();
 				if (b2)
@@ -120,17 +128,25 @@ final class Op_boolean_and extends BooleanOperation {
 
 	public Value evalWithArgs(EvalContext ctx, Expression args[]) {
 		Value v1 = args[0].eval(ctx);
-		Value v2 = args[1].eval(ctx);
+		Value v2 = null;
+		
+		if (ctx.isEnableEvalTree())
+			v2 = args[1].eval(ctx);
+		
 		if (v1.isDefined()) {
 			boolean b1 = ((BooleanValue) v1).value();
 			if (!b1)
 				return BooleanValue.FALSE;
 			else {
-				// Value v2 = args[1].eval(ctx);
+				if (!ctx.isEnableEvalTree())
+					v2 = args[1].eval(ctx);
+				
 				return v2;
 			}
 		} else {
-			// Value v2 = args[1].eval(ctx);
+			if (!ctx.isEnableEvalTree())
+				v2 = args[1].eval(ctx);
+			
 			if (v2.isDefined()) {
 				boolean b2 = ((BooleanValue) v2).value();
 				if (!b2)
@@ -185,17 +201,25 @@ final class Op_boolean_implies extends BooleanOperation {
 
 	public Value evalWithArgs(EvalContext ctx, Expression args[]) {
 		Value v1 = args[0].eval(ctx);
-		Value v2 = args[1].eval(ctx);
+		Value v2 = null;
+		
+		if (ctx.isEnableEvalTree())
+			v2 = args[1].eval(ctx);
+		
 		if (v1.isDefined()) {
 			boolean b1 = ((BooleanValue) v1).value();
 			if (!b1)
 				return BooleanValue.TRUE;
 			else {
-				// Value v2 = args[1].eval(ctx);
+				if (!ctx.isEnableEvalTree())
+					v2 = args[1].eval(ctx);
+				
 				return v2;
 			}
 		} else {
-			// Value v2 = args[1].eval(ctx);
+			if (!ctx.isEnableEvalTree())
+				v2 = args[1].eval(ctx);
+			
 			if (v2.isDefined()) {
 				boolean b2 = ((BooleanValue) v2).value();
 				if (b2)

@@ -1346,11 +1346,10 @@ public final class Shell implements Runnable, PPCHandler {
 
         // evaluate it with current system state
         PrintWriter output = null;
-        Evaluator evaluator = new Evaluator();
+        Evaluator evaluator = new Evaluator(verboseEval);
         if (verboseEval) {
             Log.println("Detailed results of subexpressions:");
             output = new PrintWriter(Log.out());
-            evaluator.enableEvalTree();
         }
 
         try {

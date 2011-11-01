@@ -100,7 +100,7 @@ public class ExprNavigationTest extends TestCase {
             ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd, Collections.<Expression>emptyList() );
             Value val = nav.eval( new EvalContext( null, system.state(),
                                                    system.varBindings(), 
-                                                   new PrintWriter( new StringWriter() ) ) );
+                                                   new PrintWriter( new StringWriter() ), false ) );
 
             assertTrue( val.isObject() );
             assertEquals( "c1", ( ( ObjectValue ) val ).value().name() );
@@ -132,7 +132,7 @@ public class ExprNavigationTest extends TestCase {
             ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd, Collections.<Expression>emptyList() );
             Value val = nav.eval( new EvalContext( null, system.state(),
                                                    system.varBindings(),
-                                                   new PrintWriter( new StringWriter() ) ) );
+                                                   new PrintWriter( new StringWriter() ), false ) );
 
             assertTrue( val.isSet() );
             assertEquals( 4, ( ( SetValue ) val ).size() );
@@ -174,7 +174,7 @@ public class ExprNavigationTest extends TestCase {
             ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, job, Collections.<Expression>emptyList() );
             Value val = nav.eval( new EvalContext( null, system.state(),
                                                    system.varBindings(), 
-                                                   new PrintWriter( new StringWriter() ) ) );
+                                                   new PrintWriter( new StringWriter() ), false ) );
 
             assertTrue( val.isObject() );
             assertEquals( "@j1", val.toString());

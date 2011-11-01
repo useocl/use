@@ -184,11 +184,16 @@ public abstract class ExpQuery extends Expression {
                 if (res != doExists)
                     res = evalExistsOrForAll0(nesting + 1, rangeVal, ctx,
                             doExists);
-                else
+                else if (ctx.isEnableEvalTree())
                     // don't change the result value when expression is true
                     // (exists) or
                     // false (forAll) and continue iteration
                     evalExistsOrForAll0(nesting + 1, rangeVal, ctx, doExists);
+                else {
+                	if (!fElemVarDecls.isEmpty())
+                        ctx.popVarBinding();
+                	break;
+                }
             } else {
                 // evaluate predicate expression
                 Value queryVal = fQueryExp.eval(ctx);
@@ -200,9 +205,14 @@ public abstract class ExpQuery extends Expression {
                 // don't change the result value when expression is true
                 // (exists) or
                 // false (forAll) and continue iteration
-                if (res != doExists
-                        && ((BooleanValue) queryVal).value() == doExists)
+                if (res != doExists && ((BooleanValue) queryVal).value() == doExists)
                     res = doExists;
+                else if (!ctx.isEnableEvalTree()) {
+                	if (!fElemVarDecls.isEmpty())
+                        ctx.popVarBinding();
+                	break;
+                }
+                	
             }
 
             if (!fElemVarDecls.isEmpty())

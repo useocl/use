@@ -43,8 +43,9 @@ public class EvalContext {
     private int fNesting;   // for indentation during trace
     private PrintWriter fEvalLog; // may be null
     private String fEvalLogIndent;
-    private boolean fEnableEvalTree;
-    private Stack<EvalNode> fNodeStack;
+    private final boolean fEnableEvalTree;
+
+	private Stack<EvalNode> fNodeStack;
     private EvalNode fRootNode;
 
     /**
@@ -60,13 +61,19 @@ public class EvalContext {
                 MSystemState postState,
                 VarBindings globalBindings,
                 PrintWriter evalLog,
-                String evalLogIndent) {
+                String evalLogIndent,
+                boolean enableEvalTree) {
         fPreState = preState;
         fPostState = postState;
         fVarBindings = new VarBindings(globalBindings);
         fNesting = 0;
         fEvalLog = evalLog;
         fEvalLogIndent = evalLogIndent;
+        fEnableEvalTree = enableEvalTree;
+        
+        if (fEnableEvalTree) {
+        	fNodeStack = new Stack<EvalNode>();
+        }
     }
     
     /**
@@ -81,21 +88,18 @@ public class EvalContext {
     public EvalContext(MSystemState preState,
             MSystemState postState,
             VarBindings globalBindings,
-            PrintWriter evalLog) {
+            PrintWriter evalLog, boolean enableEvalTree) {
     	
-    	this(preState, postState, globalBindings, evalLog, "  ");
+    	this(preState, postState, globalBindings, evalLog, "  ", enableEvalTree);
     }
-    
 
     /**
-     * Turns on building an evaluation tree. The tree is used, e.g.,
-     * in the evaluation browser.  
-     */
-    void enableEvalTree() {
-        fEnableEvalTree = true;
-        fNodeStack = new Stack<EvalNode>();
-    }
-
+	 * @return the fEnableEvalTree
+	 */
+	public boolean isEnableEvalTree() {
+		return fEnableEvalTree;
+	}
+	
     /**
      * Pushes a new variable binding onto the binding stack.
      */
@@ -168,7 +172,7 @@ public class EvalContext {
             Log.trace(this, indent() + "enter " + ec + " \"" + expr + "\"");
         }
 
-        if (fEnableEvalTree )
+        if (fEnableEvalTree)
             fNodeStack.push(new EvalNode(varBindings()));
     }
 

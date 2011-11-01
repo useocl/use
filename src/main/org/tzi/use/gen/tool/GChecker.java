@@ -153,7 +153,7 @@ public class GChecker implements IGChecker {
     public boolean check(MSystemState state, PrintWriter pw) {
         // resort the invariants every 10th check.
         // invariants, which are often invalid, will be checked first.
-        if (sortCounter == 10) {
+        if (sortCounter == 10000) {
             sortCounter = 0;
             Arrays.sort(fInvariantStatistics);
         } else
@@ -161,7 +161,7 @@ public class GChecker implements IGChecker {
         
         // evaluating invariants
         boolean result = true;
-        for (int k=0; k<fSize && result; k++) {
+        for (int k = 0; k < fSize && result; k++) {
             GInvariantStatistic stat 
                 = (GInvariantStatistic) fInvariantStatistics[k];
             if (!stat.flaggedInvariant().disabled()) {

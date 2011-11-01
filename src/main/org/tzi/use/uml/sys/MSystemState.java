@@ -1053,7 +1053,7 @@ public final class MSystemState {
 			res.addAll(tmpResult);
 			return res;
 		} else if (dstEnd.isDerived()) {
-			EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null);
+			EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null, false);
 			
 			ctx.pushVarBinding("self", obj.value());
         	Value evalRes = dstEnd.getDeriveExpression().eval(ctx);
@@ -1077,7 +1077,7 @@ public final class MSystemState {
 	     	   T.allInstances()->select(t | t.deriveExpression->includes(self))
 	     	   
 	     	*/
-        	EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null);
+        	EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null, false);
 						
 	     	MClass endClass = dstEnd.cls();
 	     	MNavigableElement otherEnd = dstEnd.getAllOtherAssociationEnds().get(0);

@@ -39,20 +39,28 @@ import org.tzi.use.util.collections.Queue;
 public final class Evaluator {
 
     private EvalContext fEvalContext;
-    private boolean fEnableEvalTree;
+    private final boolean fEnableEvalTree;
 
     /**
-     * Creates a default Evaluator.
+     * Creates a default Evaluator without building an evaluation tree.
+     * 
+     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
+     * The tree is used, e.g., in the evaluation browser.  
+     *
      */
     public Evaluator() {
+    	fEnableEvalTree = false;
     }
     
     /**
-     * Turns on building an evaluation tree. The tree is used, e.g.,
-     * in the evaluation browser.  
+     * Creates a default Evaluator.
+     * 
+     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
+     * The tree is used, e.g., in the evaluation browser.  
+     *
      */
-    public void enableEvalTree() {
-        fEnableEvalTree = true;
+    public Evaluator(boolean enableEvalTree) {
+    	fEnableEvalTree = enableEvalTree;
     }
 
     /**
@@ -66,7 +74,7 @@ public final class Evaluator {
                       VarBindings bindings, 
                       PrintWriter evalLog,
                       String evalLogIndent) {
-        fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent);
+        fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent, fEnableEvalTree);
         Value res = evaluate(expr);
         if (evalLog != null )
             evalLog.flush();
@@ -83,7 +91,7 @@ public final class Evaluator {
             MSystemState postState,
             VarBindings bindings, 
             PrintWriter evalLog) {
-		fEvalContext = new EvalContext(preState, postState, bindings, evalLog);
+		fEvalContext = new EvalContext(preState, postState, bindings, evalLog, fEnableEvalTree);
 		Value res = evaluate(expr);
 		if (evalLog != null )
 		  evalLog.flush();
@@ -139,9 +147,6 @@ public final class Evaluator {
 
 
     private Value evaluate(Expression expr) {
-        if (fEnableEvalTree )
-            fEvalContext.enableEvalTree();
-
         if (Log.isTracing() )
             Log.trace("Evaluator.eval expr: " + expr);
 

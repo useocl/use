@@ -219,8 +219,7 @@ public class ClassInvariantView extends JPanel implements View {
                     // System.out.println("double click on: " + fSelectedRow);
                     Expression expr = fClassInvariants[fSelectedRow]
                             .expandedExpression();
-                    Evaluator evaluator = new Evaluator();
-                    evaluator.enableEvalTree();
+                    Evaluator evaluator = new Evaluator(true);
                     try {
                         evaluator.eval(expr, fSystem.state());
                     } catch (MultiplicityViolationException ex) {

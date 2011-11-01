@@ -349,8 +349,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                         for (int i = 0; i < fClassInvariants.length; i++) {
                             if (fClassInvariants[i].name().equals(invName)) {
                                 expr = fClassInvariants[i].expandedExpression();
-                                Evaluator evaluator = new Evaluator();
-                                evaluator.enableEvalTree();
+                                Evaluator evaluator = new Evaluator(true);
                                 try {
                                     evaluator.eval(expr, fSystem.state());
                                 } catch (MultiplicityViolationException ex) {
