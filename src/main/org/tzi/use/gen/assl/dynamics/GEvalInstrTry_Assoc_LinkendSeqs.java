@@ -108,8 +108,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
     
         List<MObject> objects = new ArrayList<MObject>();
         CollectionValue values = (CollectionValue)value;
-        this.initProgress(values.size());
-        
+                
         for (Value elem : values) {
             if (elem.isUndefined()) {
                 collector.invalid( "Can't execute `" + fInstr +
