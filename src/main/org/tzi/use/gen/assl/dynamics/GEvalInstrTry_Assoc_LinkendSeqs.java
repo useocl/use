@@ -205,6 +205,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
         			true, 
         			false,
         			false);
+        	system.getUniqueNameGenerator().popState();
         } catch (MSystemException e) {
         	throw new GEvaluationException(e);
         }
@@ -437,14 +438,14 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
             
             this.outPutProgress(tryNum);
             
-        	system.getUniqueNameGenerator().popState();
-        	
         	try {	
         		system.evaluateStatement(res.getInverseStatement(), false, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}
         	
+        	system.getUniqueNameGenerator().popState();
+        	system.getUniqueNameGenerator().popState();
           // stop once all configurations have been built or stopping is allowed
         } while (linkSetIter.hasNext() && !collector.canStop());
     }

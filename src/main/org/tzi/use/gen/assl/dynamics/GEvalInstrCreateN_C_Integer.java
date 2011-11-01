@@ -118,7 +118,8 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         }
         MStatement inverseStatement;
         
-        basicOutput.println(statement.getShellCommand());
+        if (collector.doBasicPrinting())
+        	basicOutput.println(statement.getShellCommand());
         
         try {
         	StatementEvaluationResult evaluationResult = 
@@ -138,7 +139,8 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         
         Value objects = new SequenceValue(objectType, objectValues);
         
-        detailOutput.println(inQuotes(fInstr) + " == " + objects);
+        if (collector.doDetailPrinting())
+        	detailOutput.println(inQuotes(fInstr) + " == " + objects);
         
         fCaller.feedback(conf, objects, collector);
         if (collector.expectSubsequentReporting()) {
@@ -149,12 +151,17 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         	}
         }
             
-        basicOutput.println("undo: " + statement.getShellCommand());
+        if (collector.doBasicPrinting())
+        	basicOutput.println("undo: " + statement.getShellCommand());
+        
         try {
         	system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}
+        
+        system.getUniqueNameGenerator().popState();
+        system.getUniqueNameGenerator().popState();
     }
 
     public String toString() {

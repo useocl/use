@@ -121,7 +121,9 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
         
         MStatement inverseStatement;
 
-        basicOutput.println(statement.getShellCommand());
+        if (collector.doBasicPrinting())
+        	basicOutput.println(statement.getShellCommand());
+        
         try {
         	StatementEvaluationResult evaluationResult = 
         		system.evaluateStatement(statement, true, false, false);
@@ -131,20 +133,23 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
 			collector.invalid(e);
 			return;
 		}
-		
-		//detailOutput.println("`" + fInstr + "' == (no value)");
-		
+				
 		fCaller.feedback(conf, null, collector);
         if (collector.expectSubsequentReporting()) {
         	collector.subsequentlyPrependStatement(statement);
         }
-         
-        basicOutput.println("undo: " + statement.getShellCommand());
+        
+        if (collector.doBasicPrinting())
+        	basicOutput.println("undo: " + statement.getShellCommand());
+        
         try {
         	system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			collector.invalid(e);
 		}
+        
+        system.getUniqueNameGenerator().popState();
+        system.getUniqueNameGenerator().popState();
     }
 
     public String toString() {

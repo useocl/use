@@ -87,6 +87,8 @@ public class GEvalAttributeAssignment extends GEvalInstruction
     	
     	MSystemState state = conf.systemState();
     	MSystem system = state.system();
+    	
+    	boolean doBasicOutput = collector.doBasicPrinting() || collector.doDetailPrinting();
     	PrintWriter basicOutput = collector.basicPrintWriter();
     	
     	MObject object = state.objectByName(fObjectName);
@@ -105,7 +107,9 @@ public class GEvalAttributeAssignment extends GEvalInstruction
     	
     	MStatement inverseStatement;
     	
-    	basicOutput.println(statement.getShellCommand());
+    	if (doBasicOutput)
+    		basicOutput.println(statement.getShellCommand());
+    	
     	try {
     		StatementEvaluationResult evaluationResult = 
     			system.evaluateStatement(statement, true, false, false);
@@ -120,7 +124,9 @@ public class GEvalAttributeAssignment extends GEvalInstruction
 			collector.subsequentlyPrependStatement(statement);
 		}
         
-		basicOutput.println("undo: " + statement.getShellCommand());
+		if (doBasicOutput)
+			basicOutput.println("undo: " + statement.getShellCommand());
+		
 		try {
 			system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {

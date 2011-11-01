@@ -31,52 +31,74 @@ import org.tzi.use.util.Log;
  *
  */
 public abstract class GEvalInstrTry extends GEvalInstruction {
-	static int numCols = 50;
-	static char barChar = '#';
 	
-	protected long max;
-	protected int last;
-	protected PrintWriter progressOut;
-	
-	protected boolean firstTry = false;
+	private final Output output;
 	
 	public GEvalInstrTry(boolean first) {
-		firstTry = first;
-	}
-	
-	protected void initProgress(long max) {
-		if (!this.firstTry) return;
-	
-		this.progressOut = new PrintWriter(Log.out());
-		this.max = max;
-		progressOut.println("Progress of first Try in ASSL-Procedure (" + max + " combinations):");
-		
-		progressOut.print("|");
-		
-		for (int i = 1; i < numCols - 1; ++i)
-			progressOut.print('-');
-
-		progressOut.println('|');
-		progressOut.flush();
-	}
-	
-	protected void outPutProgress(long state) {
-		if (!this.firstTry) return;
-		
-		int barNum = (int) (numCols * ((double)state / (double)max));
-		if (barNum > last) {
-			for (int i = last; i < barNum; ++i) {
-				progressOut.print(barChar);
-			}
-			
-			progressOut.flush();
-			last = barNum;
+		if (first) {
+			output = new OutputFirst();
+		} else {
+			output = Output.defaultOut;
 		}
 	}
 	
+	protected void initProgress(long max) {
+		output.initProgress(max);
+	}
+	
+	protected void outPutProgress(long state) {
+		output.outPutProgress(state);
+	}
+	
 	protected void endProgress() {
-		if (!this.firstTry) return;
-		this.progressOut.println();
-		this.progressOut.flush();
+		output.endProgress();
+	}
+
+	private static class Output {
+		public static Output defaultOut = new Output();
+		
+		protected void initProgress(long end) {}
+		protected void outPutProgress(long state) {}
+		protected void endProgress() {}
+	}
+	
+	private static class OutputFirst extends Output {
+		static int numCols = 50;
+		static char barChar = '#';
+		
+		protected long max;
+		protected int last;
+		protected PrintWriter progressOut;
+		
+		protected void initProgress(long end) {
+			progressOut = new PrintWriter(Log.out());
+			max = end;
+			progressOut.println("Progress of first Try in ASSL-Procedure (" + max + " combinations):");
+			
+			progressOut.print("|");
+			
+			for (int i = 1; i < numCols - 1; ++i)
+				progressOut.print('-');
+
+			progressOut.println('|');
+			progressOut.flush();
+		}
+		
+		protected void outPutProgress(long state) {
+			int barNum = (int) (numCols * ((double)state / (double)max));
+			if (barNum > last) {
+				for (int i = last; i < barNum; ++i) {
+					progressOut.print(barChar);
+				}
+				
+				progressOut.flush();
+				last = barNum;
+			}
+		}
+		
+		protected void endProgress() {
+			progressOut.println();
+			progressOut.flush();
+		}
 	}
 }

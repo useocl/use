@@ -109,6 +109,7 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
 	private void createLinkObject(GConfiguration conf, IGCollector collector) throws GEvaluationException {
 		MSystemState state = conf.systemState();
     	MSystem system = state.system();
+
     	PrintWriter basicOutput = collector.basicPrintWriter();
     	PrintWriter detailOutput = collector.detailPrintWriter();
     			
@@ -120,7 +121,9 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
     	
     	MStatement inverseStatement;
     	
-    	basicOutput.println(statement.getShellCommand());
+    	if (collector.doBasicPrinting())
+    		basicOutput.println(statement.getShellCommand());
+    	
     	try {
     		
     		StatementEvaluationResult evaluationResult = 
@@ -134,7 +137,8 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
 		
 		ObjectValue objectValue = new ObjectValue(objectType, state.objectByName(objectName));
 		
-		detailOutput.println(inQuotes(fInstr) + " == " + objectValue);
+		if (collector.doDetailPrinting())
+			detailOutput.println(inQuotes(fInstr) + " == " + objectValue);
 		
 		fCaller.feedback(conf, objectValue, collector);
             
@@ -142,12 +146,17 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
 			collector.subsequentlyPrependStatement(statement);
 		}
 		
-		basicOutput.println("undo: " + statement.getShellCommand());
+		if (collector.doBasicPrinting())
+			basicOutput.println("undo: " + statement.getShellCommand());
 		
 		try {
 			system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}
+		
+		system.getUniqueNameGenerator().popState();
+		system.getUniqueNameGenerator().popState();
+		
 	}
 }

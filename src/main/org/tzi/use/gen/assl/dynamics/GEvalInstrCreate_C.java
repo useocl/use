@@ -61,7 +61,8 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
     	PrintWriter basicOutput = collector.basicPrintWriter();
     	PrintWriter detailOutput = collector.detailPrintWriter();
     	
-    	detailOutput.println("evaluating " + inQuotes(fInstr));
+    	if (collector.doDetailPrinting())
+    		detailOutput.println("evaluating " + inQuotes(fInstr));
     			
     	MClass objectClass = fInstr.cls();
     	ObjectType objectType = TypeFactory.mkObjectType(objectClass);
@@ -73,7 +74,9 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
     	
     	MStatement inverseStatement;
     	
-    	basicOutput.println(statement.getShellCommand());
+    	if (collector.doBasicPrinting())
+    		basicOutput.println(statement.getShellCommand());
+    	
     	try {
     		
     		StatementEvaluationResult evaluationResult = 
@@ -88,7 +91,8 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
 		ObjectValue objectValue = 
 			new ObjectValue(objectType, state.objectByName(objectName));
 		
-		detailOutput.println(inQuotes(fInstr) + " == " + objectValue);
+		if (collector.doDetailPrinting())
+			detailOutput.println(inQuotes(fInstr) + " == " + objectValue);
 		
 		caller.feedback(conf, objectValue, collector);
             
@@ -96,12 +100,16 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
 			collector.subsequentlyPrependStatement(statement);
 		}
 		
-		basicOutput.println("undo: " + statement.getShellCommand());
+		if (collector.doBasicPrinting())
+			basicOutput.println("undo: " + statement.getShellCommand());
 		
 		try {
 			system.evaluateStatement(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}
+		
+		system.getUniqueNameGenerator().popState();
+		system.getUniqueNameGenerator().popState();
     }
 }

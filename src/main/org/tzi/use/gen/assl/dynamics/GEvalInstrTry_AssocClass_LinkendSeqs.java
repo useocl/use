@@ -443,11 +443,11 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
             
         	try {	
         		system.evaluateStatement(res.getInverseStatement(), false, false, false);
-        		system.getUniqueNameGenerator().popState();
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}
         	
+        	system.getUniqueNameGenerator().popState();
         	system.getUniqueNameGenerator().popState();
           // stop once all configurations have been built or stopping is allowed
         } while (linkSetIter.hasNext() && !collector.canStop());
