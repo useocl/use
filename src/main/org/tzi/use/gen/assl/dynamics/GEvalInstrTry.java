@@ -55,7 +55,7 @@ public abstract class GEvalInstrTry extends GEvalInstruction {
 	}
 
 	private static class Output {
-		public static Output defaultOut = new Output();
+		public static final Output defaultOut = new Output();
 		
 		protected void initProgress(long end) {}
 		protected void outPutProgress(long state) {}
