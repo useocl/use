@@ -207,7 +207,7 @@ public abstract class ExpQuery extends Expression {
                 // false (forAll) and continue iteration
                 if (res != doExists && ((BooleanValue) queryVal).value() == doExists)
                     res = doExists;
-                else if (!ctx.isEnableEvalTree()) {
+                else if (!ctx.isEnableEvalTree() &&  ((BooleanValue) queryVal).value() == doExists) {
                 	if (!fElemVarDecls.isEmpty())
                         ctx.popVarBinding();
                 	break;
