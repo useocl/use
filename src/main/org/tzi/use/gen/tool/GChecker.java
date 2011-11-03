@@ -25,15 +25,13 @@
 package org.tzi.use.gen.tool;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.tzi.use.gen.assl.dynamics.IGChecker;
 import org.tzi.use.gen.model.GFlaggedInvariant;
 import org.tzi.use.gen.model.GModel;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.NullWriter;
+import org.tzi.use.util.NullPrintWriter;
 
 
 /**
@@ -50,7 +48,11 @@ class GStatistic implements Comparable<GStatistic> {
     }
 
     public long diff() {
-        return fCountValid - fCountInvalid;
+    	// Assuming that ASSL files usually build
+    	// correct parts of the model in sequence
+    	// a valid invariant is more important then
+    	// an invalid one
+        return 10 * fCountValid - fCountInvalid;
     }
 
     public void registerResult( boolean valid ) {
@@ -62,7 +64,15 @@ class GStatistic implements Comparable<GStatistic> {
 
     @Override
     public int compareTo(GStatistic o) {
-        return (Long.valueOf(diff())).compareTo(Long.valueOf(o.diff()));
+    	long thisDiff = this.diff();
+    	long oDiff = o.diff();
+    	
+    	if (thisDiff == oDiff)
+    		return 0;
+    	else if (thisDiff < oDiff)
+    		return -1;
+    	else
+    		return 1;
     }
 
     @Override
@@ -129,28 +139,29 @@ class GInvariantStatistic extends GStatistic {
  */
 public class GChecker implements IGChecker {
     private boolean fCheckStructure;
-    private Object[] fInvariantStatistics;
+    
+    private GInvariantStatistic[] fInvariantStatistics;
     private int fSize;
     private GStatistic fStructureStatistic;
     private int sortCounter;
 
     public GChecker(GModel model, boolean check) {
         fCheckStructure = check;
-        
-        List<GInvariantStatistic> stats = new ArrayList<GInvariantStatistic>();
-        
+                
+        fInvariantStatistics = new GInvariantStatistic[model.flaggedInvariants().size()];
+        int index = 0;
         for (GFlaggedInvariant inv : model.flaggedInvariants()) {
-            inv = (GFlaggedInvariant)inv.clone();
-            stats.add( new GInvariantStatistic(inv));
+        	inv = (GFlaggedInvariant)inv.clone();
+        	fInvariantStatistics[index] = new GInvariantStatistic(inv);
+        	++index;
         }
         
         sortCounter = 0;
-        fInvariantStatistics = stats.toArray();
-        fSize = stats.size();
+        fSize = fInvariantStatistics.length;
         fStructureStatistic = new GStatistic();
     }
 
-    public boolean check(MSystemState state, PrintWriter pw) {
+    public boolean check(MSystemState state, PrintWriter pw, boolean doBasicOutput) {
         // resort the invariants every 10th check.
         // invariants, which are often invalid, will be checked first.
         if (sortCounter == 10000) {
@@ -162,13 +173,14 @@ public class GChecker implements IGChecker {
         // evaluating invariants
         boolean result = true;
         for (int k = 0; k < fSize && result; k++) {
-            GInvariantStatistic stat 
-                = (GInvariantStatistic) fInvariantStatistics[k];
+            GInvariantStatistic stat = fInvariantStatistics[k];
             if (!stat.flaggedInvariant().disabled()) {
                 boolean valid = stat.flaggedInvariant().eval(state);
                 stat.registerResult(valid);
                 if (!valid) {
-                    pw.println(stat.flaggedInvariant().toString()+ " invalid.");
+                	if (doBasicOutput)
+                		pw.println(stat.flaggedInvariant().toString() + " invalid.");
+                	 
                     result = false;
                     break;
                 }
@@ -177,14 +189,14 @@ public class GChecker implements IGChecker {
         
         // checking structure
         if (result && fCheckStructure) {
-            result=state.checkStructure(new PrintWriter(new NullWriter()), false);
-            if (!result) {
+            result = state.checkStructure(NullPrintWriter.getInstance(), false);
+            if (!result && doBasicOutput) {
                 pw.println("invalid structure.");
             }
             fStructureStatistic.registerResult(result);
         }
         
-        if (result)
+        if (result && doBasicOutput)
             pw.println("valid state.");
         
         return result;
@@ -200,9 +212,7 @@ public class GChecker implements IGChecker {
                    "  model-inherent multiplicities" );
     
         Arrays.sort(fInvariantStatistics);
-        for (int k=0; k<fSize; k++)
-            pw.println(
-                       ((GInvariantStatistic) fInvariantStatistics[k])
-                       .toStringForStatistics());
+        for (int k=0; k < fSize; k++)
+            pw.println(fInvariantStatistics[k].toStringForStatistics());
     }
 }

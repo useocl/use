@@ -89,12 +89,14 @@ public class GEvalProcedure implements IGCaller {
         collector.leaf();
         try {
             if (fChecker.check(conf.systemState(),
-                               collector.basicPrintWriter())) {
+                               collector.basicPrintWriter(), collector.doBasicPrinting())) {
                 collector.setValidStateFound();
             }
         } catch (MultiplicityViolationException e) {
-            collector.detailPrintWriter().println("An error occured while checking an invariant:");
-            collector.detailPrintWriter().println(e.getMessage());
+        	if (collector.doDetailPrinting()) {
+        		collector.detailPrintWriter().println("An error occured while checking an invariant:");
+        		collector.detailPrintWriter().println(e.getMessage());
+        	}
         }
     }
 
