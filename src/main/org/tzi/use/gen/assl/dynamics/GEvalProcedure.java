@@ -29,17 +29,15 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-
 import java.util.Iterator;
 import java.util.List;
+
+import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.value.UndefinedValue;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MSystemState;
 
 public class GEvalProcedure implements IGCaller {
     private GProcedure fProcedure;
@@ -87,16 +85,9 @@ public class GEvalProcedure implements IGCaller {
                           IGCollector collector ) throws GEvaluationException {
         // value is not relevant
         collector.leaf();
-        try {
-            if (fChecker.check(conf.systemState(),
-                               collector.basicPrintWriter(), collector.doBasicPrinting())) {
-                collector.setValidStateFound();
-            }
-        } catch (MultiplicityViolationException e) {
-        	if (collector.doDetailPrinting()) {
-        		collector.detailPrintWriter().println("An error occured while checking an invariant:");
-        		collector.detailPrintWriter().println(e.getMessage());
-        	}
+        
+        if (fChecker.check(conf.systemState(), collector)) {
+            collector.setValidStateFound();
         }
     }
 

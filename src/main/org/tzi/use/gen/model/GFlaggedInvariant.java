@@ -25,11 +25,12 @@
 
 package org.tzi.use.gen.model;
 
+import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.BooleanValue;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Knows whether a class invariant is activated or negated.
@@ -64,14 +65,16 @@ public class GFlaggedInvariant implements Cloneable {
         }
     }
 
-    public boolean eval(MSystemState systemState) {
+    public boolean eval(IGCollector collector, MSystemState systemState) {
         if (fDisabled) {
             return true;
         }
+        
+        
         Value value = fEvaluator.eval( fClassInvariant.expandedExpression(),
                                        systemState );
-        return value.isDefined()
-            && ((BooleanValue) value).isFalse() == fNegated;
+        
+        return value.isDefined() && ((BooleanValue) value).isFalse() == fNegated;
     }
 
     public void setDisabled( boolean b ) {

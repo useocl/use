@@ -1650,6 +1650,9 @@ public final class Shell implements Runnable, PPCHandler {
         boolean useCut = true;
         boolean useMinCombinations = true;
         
+        int checksBeforeSortInvariants = 0;
+        double checksBeforeSortInvariantsGrowFactor = 0;
+        
         String message = null;
 
         try {
@@ -1693,6 +1696,27 @@ public final class Shell implements Runnable, PPCHandler {
                                     + " (< 2^63).";
                     }
                     limitOptionFound = true;
+                } else if (optionOrFilename.equals("-si")) {
+                    try {
+                        checksBeforeSortInvariants = new Integer(st.nextToken());
+                    } catch (NumberFormatException e) {
+                        error = true;
+                    }
+                    
+                    if (error)
+                        message = "the parameter of the -si"
+                                + " option must be a positive number.";
+                } else if (optionOrFilename.equals("-sif")) {
+                    try {
+                        checksBeforeSortInvariantsGrowFactor = 1 + (new Integer(st.nextToken()).doubleValue() / 100);
+                    } catch (NumberFormatException e) {
+                        error = true;
+                    }
+                    
+                    if (error)
+                        message = "the parameter of the -sif"
+                                + " option must be a positive number.";
+                      
                 } else if (optionOrFilename.equals("-b")
                         || optionOrFilename.equals("-d")
                         || optionOrFilename.equals("-bf")
@@ -1749,7 +1773,7 @@ public final class Shell implements Runnable, PPCHandler {
             if (message != null)
                 Log.error(message);
             else {
-                Log.error("syntax is `start [-l <num>][-r <num>]"
+                Log.error("syntax is `start [-l <num>][-r <num>][-si <num>][-sif<num>]"
                         + "[-b|-d|-bf <FILE>|-df <FILE>|-t|-c|-ac|-dc] "
                         + "FILE PROCNAME([paramlist])'");
             }
@@ -1761,7 +1785,7 @@ public final class Shell implements Runnable, PPCHandler {
 
         system.generator().startProcedure(filename, callstr, limit,
                 printFilename, printBasics, printDetails, randomNr,
-                checkStructure, useCut, useMinCombinations, printDuration);
+                checkStructure, useCut, useMinCombinations, printDuration, checksBeforeSortInvariants, checksBeforeSortInvariantsGrowFactor);
     }
 
     private MSystem system() throws NoSystemException {

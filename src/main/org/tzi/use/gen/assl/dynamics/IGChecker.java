@@ -30,8 +30,7 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.uml.sys.MSystemState;
-import java.io.PrintWriter;
 
 public interface IGChecker {
-    public boolean check(MSystemState state, PrintWriter pw, boolean doBasicOutput);
+    public boolean check(MSystemState state, IGCollector collector);
 }

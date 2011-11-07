@@ -297,7 +297,9 @@ public class GGenerator {
                                 boolean checkStructure,
                                 boolean useTryCuts,
                                 boolean useMinCombinations,
-                                boolean outputTimeRelatedData) {
+                                boolean outputTimeRelatedData,
+                                int checksBeforeSortInvariants,
+                                double checksBeforeSortInvariantsGrowFactor) {
         fLastResult = null;
         this.useTryCuts = useTryCuts;
         this.useMinCombinations = useMinCombinations;
@@ -362,6 +364,12 @@ public class GGenerator {
                         collector.setDetailPrintWriter(pw);
 
                     GChecker checker = new GChecker(fGModel, checkStructure);
+                    if (checksBeforeSortInvariants > 0)
+                    	checker.setChecksBeforeSort(checksBeforeSortInvariants);
+                    
+                    if (checksBeforeSortInvariantsGrowFactor > 0)
+                    	checker.setIncreaseChecksBeforeSortFactor(checksBeforeSortInvariantsGrowFactor);
+                    
                     Log.verbose(proc.toString() + " started...");
                     
                     try {
@@ -554,7 +562,7 @@ public class GGenerator {
     
     public void printResultStatistics() throws GNoResultException {
         PrintWriter pw = new PrintWriter(System.out);
-        lastResult().checker().printStatistics(pw);
+        lastResult().checker().printStatistics(pw, lastResult().collector().numberOfCheckedStates());
         // PrePostCondition check output
         if (collector.getPrePostViolation()) {
         	pw.println("PrePostCondition violation occured");

@@ -53,6 +53,8 @@ public interface IGCollector {
      */
     public void leaf();
     
+    long numberOfCheckedStates();
+    
     public void setPrePostViolation();
     
     public boolean getPrePostViolation();

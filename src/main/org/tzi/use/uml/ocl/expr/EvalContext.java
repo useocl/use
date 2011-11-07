@@ -22,7 +22,6 @@
 package org.tzi.use.uml.ocl.expr;
 
 import java.io.PrintWriter;
-import java.util.Stack;
 
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
@@ -37,16 +36,15 @@ import org.tzi.use.util.Log;
  */
 
 public class EvalContext {
-    private MSystemState fPreState; // required for postconditions
-    private MSystemState fPostState; // default state
-    private VarBindings fVarBindings;
+    private final MSystemState fPreState; // required for postconditions
+    private final MSystemState fPostState; // default state
+    private final VarBindings fVarBindings;
     private int fNesting;   // for indentation during trace
-    private PrintWriter fEvalLog; // may be null
-    private String fEvalLogIndent;
-    private final boolean fEnableEvalTree;
-
-	private Stack<EvalNode> fNodeStack;
-    private EvalNode fRootNode;
+    
+    private final PrintWriter fEvalLog; // may be null
+    private final String fEvalLogIndent;
+    
+    private final boolean isTracing;
 
     /**
      * Creates new evaluation context. The parameter preState may be
@@ -58,48 +56,21 @@ public class EvalContext {
      * @param evalLogIndent used indent for the output, e.g., "   "
      */
     public EvalContext(MSystemState preState,
-                MSystemState postState,
-                VarBindings globalBindings,
-                PrintWriter evalLog,
-                String evalLogIndent,
-                boolean enableEvalTree) {
+    				   MSystemState postState,
+    				   VarBindings globalBindings,
+    				   PrintWriter evalLog,
+    				   String evalLogIndent) {
         fPreState = preState;
         fPostState = postState;
         fVarBindings = new VarBindings(globalBindings);
         fNesting = 0;
         fEvalLog = evalLog;
         fEvalLogIndent = evalLogIndent;
-        fEnableEvalTree = enableEvalTree;
-        
-        if (fEnableEvalTree) {
-        	fNodeStack = new Stack<EvalNode>();
-        }
-    }
-    
-    /**
-     * Creates new evaluation context. The parameter preState may be
-     * null in which case it is set to postState.
-     * A default of two spaces for indent of evaluation log is used.
-     * @param preState the pre <code>MSystemState</code> for the evaluation. May be <code>null</code>
-     * @param postState the current <code>MSystemState</code> for the evaluation
-     * @param globalBindings the global <code>VarBindings</code>
-     * @param evalLog <code>PrintWriter</code> to print evaluation informations. May be <code>null</code>
-     */
-    public EvalContext(MSystemState preState,
-            MSystemState postState,
-            VarBindings globalBindings,
-            PrintWriter evalLog, boolean enableEvalTree) {
-    	
-    	this(preState, postState, globalBindings, evalLog, "  ", enableEvalTree);
+        isTracing = Log.isTracing();
     }
 
-    /**
-	 * @return the fEnableEvalTree
-	 */
-	public boolean isEnableEvalTree() {
-		return fEnableEvalTree;
-	}
-	
+    public boolean isEnableEvalTree() { return false; }
+    
     /**
      * Pushes a new variable binding onto the binding stack.
      */
@@ -143,7 +114,7 @@ public class EvalContext {
     public MSystemState preState() {
         return fPreState;
     }
-
+    
     /** 
      * Search current bindings for variable name. Visibility is
      * determined by the order of elements. Variable bindings may thus
@@ -155,48 +126,26 @@ public class EvalContext {
         return fVarBindings.getValue(name);
     }
 
-    /**
-     * Returns the root node of the evaluation tree after evaluation
-     * is complete. Result is null, if building the tree has not been
-     * enabled before.
-     */
-    EvalNode getEvalNodeRoot() {
-        return fRootNode;
-    }
-
     void enter(Expression expr) {
         fNesting++;
-        if (Log.isTracing() ) {
+        if (isTracing) {
             String ec = expr.getClass().getName();
             ec = ec.substring(ec.lastIndexOf(".") + 1);
             Log.trace(this, indent() + "enter " + ec + " \"" + expr + "\"");
         }
-
-        if (fEnableEvalTree)
-            fNodeStack.push(new EvalNode(varBindings()));
     }
 
     void exit(Expression expr, Value result) {
         fNesting--;
-        if (Log.isTracing() ) {
+        if (isTracing) {
             Log.trace(this, indent() + "exit  \"" + expr + "\" = " + result);
         }
 
         // print the results sequentially from the innermost
         // subexpression to the outermost expression
-        if (fEvalLog != null )
+        if ( fEvalLog != null )
             fEvalLog.println(fEvalLogIndent + expr + " : " + 
                              result.type() + " = " + result);
-
-        if (fEnableEvalTree ) {
-            EvalNode n = fNodeStack.pop();
-            n.setExpression(expr);
-            n.setResult(result);
-            if (! fNodeStack.empty() )
-                (fNodeStack.peek()).addChild(n);
-            else
-                fRootNode = n;
-        }
     }
 
     private String indent() {

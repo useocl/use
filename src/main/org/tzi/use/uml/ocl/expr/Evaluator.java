@@ -74,7 +74,11 @@ public final class Evaluator {
                       VarBindings bindings, 
                       PrintWriter evalLog,
                       String evalLogIndent) {
-        fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent, fEnableEvalTree);
+    	if (fEnableEvalTree)
+    		fEvalContext = new DetailedEvalContext(preState, postState, bindings, evalLog, evalLogIndent);
+    	else
+    		fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent);
+    	
         Value res = evaluate(expr);
         if (evalLog != null )
             evalLog.flush();
@@ -91,11 +95,7 @@ public final class Evaluator {
             MSystemState postState,
             VarBindings bindings, 
             PrintWriter evalLog) {
-		fEvalContext = new EvalContext(preState, postState, bindings, evalLog, fEnableEvalTree);
-		Value res = evaluate(expr);
-		if (evalLog != null )
-		  evalLog.flush();
-		return res;
+		return this.eval(expr, preState, postState, bindings, evalLog, "  ");
 	}
 
     /**
@@ -162,7 +162,10 @@ public final class Evaluator {
     }
 
     public EvalNode getEvalNodeRoot() {
-        return fEvalContext.getEvalNodeRoot();
+    	if (fEnableEvalTree)
+    		return ((DetailedEvalContext)fEvalContext).getEvalNodeRoot();
+    	
+    	return null;
     }
 
     /**

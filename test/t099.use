@@ -1,16 +1,27 @@
 model t099
 
-class C
+class A
 end
 
-class D < C
+class B < A
+   operations
+      doWithBs(someBs:Set(B)) : Collection(B) =
+	    someBs->excluding(self)
+		
+	  doWithB(aB:B) : Boolean =
+	    aB = self
 end
 
-class E < C
+class C < A
 end
 
-class A < D, E
+class D < B,C
 end
 
-class B < D, E
+class E < B,C
+end
+
+association BtoC between
+  B[*]
+  C[*]
 end
