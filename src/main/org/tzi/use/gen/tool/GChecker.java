@@ -26,8 +26,6 @@ package org.tzi.use.gen.tool;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.tzi.use.gen.assl.dynamics.IGChecker;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
@@ -219,29 +217,14 @@ public class GChecker implements IGChecker {
 	}
 
 	private long sortCount = 0;
-	private long randomCount = 0;
-	
-	private long rCounter = 0;
 	
 	public boolean check(final MSystemState state, final IGCollector collector) {
         // resort the invariants starting every 10.000th check.
-    	// each sorting increases the next sort by 10%
         // invariants, which are often invalid, will be checked first.
         if (sortCounter == checksBeforeSort) {
             sortCounter = 0;
-            checksBeforeSort = (int)(checksBeforeSort * increaseChecksBeforeSortFactor);
-            ++rCounter;
-            
-            if (rCounter < 40) {
-            	Arrays.sort(fInvariantStatistics);
-            	++sortCount;
-            } else {
-            	List<GInvariantStatistic> sList = Arrays.asList(fInvariantStatistics);  
-            	Collections.shuffle(sList);
-            	sList.toArray(fInvariantStatistics);
-            	rCounter = 0;
-            	++randomCount;
-            }
+            Arrays.sort(fInvariantStatistics);
+            ++sortCount;
             
             for (int i = 0; i < fInvariantStatistics.length; ++i)
             	fInvariantStatistics[i].localReset();
@@ -324,6 +307,6 @@ public class GChecker implements IGChecker {
         pw.print(String.format("%,d", totalChecks));
         pw.print(" Overhead (checks - states checked): ");
         pw.println(String.format("%,d", totalChecks - checkedStates));
-        pw.println(String.format("Sorted %,d times. Shuffled %,d times.", sortCount, randomCount));
+        pw.println(String.format("Sorted %,d times.", sortCount));
     }
 }
