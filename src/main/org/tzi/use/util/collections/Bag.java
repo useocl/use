@@ -41,7 +41,8 @@ public interface Bag<T> extends Collection<T> {
     /**
      * Returns the number of all elements (including duplicates) in this Bag.
      */
-    int size();
+    @Override
+	int size();
 
     /**
      * Returns the number of different elements in this
@@ -52,14 +53,16 @@ public interface Bag<T> extends Collection<T> {
     /**
      * Returns true if this Bag contains no elements.
      */
-    boolean isEmpty();
+    @Override
+	boolean isEmpty();
 
     /**
      * Returns true if this Bag contains the specified object at least once.
      *
      * @exception NullPointerException obj is null.
      */
-    boolean contains(T obj);
+    @Override
+	boolean contains(Object obj);
 
     /**
      * Returns the number of occurrences of the specified object in this Bag.
@@ -74,7 +77,8 @@ public interface Bag<T> extends Collection<T> {
      * an instance of some class that provides a guarantee). However,
      * duplicate elements are guaranteed to be kept adjacent.
      */
-    Iterator<T> iterator();
+    @Override
+	Iterator<T> iterator();
 
     /**
      * Returns an Iterator over the unique elements in this
@@ -94,7 +98,8 @@ public interface Bag<T> extends Collection<T> {
      *
      * @return true if o != null.
      */
-    boolean add(T o);
+    @Override
+	boolean add(T o);
 
     /** 
      * Adds the specified element <code>count</code> times to this
@@ -112,7 +117,8 @@ public interface Bag<T> extends Collection<T> {
      *
      * @return true if the Bag contained the specified element.
      */
-    boolean remove(T o);
+    @Override
+	boolean remove(Object o);
 
     /** 
      * Removes all occurrences of the given element in this
@@ -131,7 +137,8 @@ public interface Bag<T> extends Collection<T> {
      * @exception UnsupportedOperationException clear is not supported
      *        by this Bag.
      */
-    void clear();
+    @Override
+	void clear();
 
 
     // Views
@@ -144,10 +151,12 @@ public interface Bag<T> extends Collection<T> {
      * @param o Object to be compared for equality with this Bag.
      * @return true if the specified Object is equal to this Bag.
      */
-    boolean equals(Object o);
+    @Override
+	boolean equals(Object o);
 
     /**
      * Returns the hash code value for this Bag.
      */
-    int hashCode();
+    @Override
+	int hashCode();
 }

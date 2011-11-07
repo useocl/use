@@ -33,7 +33,8 @@ gen result
 *Random number generator was initialized with 1568.
 *Checked 1 snapshots.
 *Made 0 try cuts.
-*Ignored 0 useless link combinations.
+*Ignored at least 0 useless link combinations.
+*Barriers blocked 0 times.
 *Result: Valid state found.
 *Commands to produce the valid state:
 *!new Person('Person1')

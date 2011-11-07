@@ -37,7 +37,7 @@ c
 info vars
 *[frame 2]
 *  result : Integer = 1
-*  c1 : C = @C3
+*  c1 : C = @C2
 *  self : C = @C1
 *[frame 1]
 *  self : C = @C1
@@ -45,9 +45,9 @@ info vars
 *  x : Integer = 4
 *[object variables]
 *  C1 : C = @C1
-*  C3 : C = @C3
+*  C2 : C = @C2
 ?C.allInstances
-*-> Set{@C1,@C3} : Set(C)
+*-> Set{@C1,@C2} : Set(C)
 c
 *Error: postcondition false in operation call `C::i(self:@C1)'.
 !a:=1

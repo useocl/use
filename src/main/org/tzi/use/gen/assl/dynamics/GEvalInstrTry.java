@@ -23,6 +23,7 @@ package org.tzi.use.gen.assl.dynamics;
 
 import java.io.PrintWriter;
 
+import org.tzi.use.config.Options;
 import org.tzi.use.util.Log;
 
 /**
@@ -35,7 +36,7 @@ public abstract class GEvalInstrTry extends GEvalInstruction {
 	private final Output output;
 	
 	public GEvalInstrTry(boolean first) {
-		if (first) {
+		if (first && !Options.testMode) {
 			output = new OutputFirst();
 		} else {
 			output = Output.defaultOut;
