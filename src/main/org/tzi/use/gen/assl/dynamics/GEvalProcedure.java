@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -51,10 +52,7 @@ public class GEvalProcedure implements IGCaller {
                      MSystemState state,
                      IGCollector collector,
                      IGChecker checker,
-                     long randomNr,
-                     boolean isCheckingStructure,
-                     boolean useTryCuts,
-                     boolean useMinCombinations) throws GEvaluationException {
+                     GGeneratorArguments cfg) throws GEvaluationException {
         collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fProcedure).append("'").toString());
         fChecker = checker;
         VarBindings varBindings = new VarBindings();
@@ -73,9 +71,7 @@ public class GEvalProcedure implements IGCaller {
             collector.detailPrintWriter().println(localDecl.name() + ":=" + value);
         }
         
-        GConfiguration conf = new GConfiguration( state,
-                                                  varBindings,
-                                                  randomNr, isCheckingStructure, useTryCuts, useMinCombinations);
+		GConfiguration conf = new GConfiguration(state, varBindings, cfg);
         
         fProcedure.instructionList().createEvalInstr().eval( conf, this, collector );       // just delegation
     }

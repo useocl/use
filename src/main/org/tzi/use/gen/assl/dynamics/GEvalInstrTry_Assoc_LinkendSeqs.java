@@ -127,7 +127,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
             fIterator.previous();
         }
         else {
-            if (conf.isCheckingStructure() && conf.useMinCombinations() &&
+            if (conf.getConfig().checkStructure() && conf.getConfig().useMinCombinations() &&
             	fInstr.association().associationEnds().size() == 2 &&
             	( !fInstr.association().associationEnds().get(0).isCollection() || 
             	  !fInstr.association().associationEnds().get(1).isCollection()	)	)
@@ -242,8 +242,10 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
 				throw new GEvaluationException(e);
 			}
 			
-        	if (conf.usesTryCuts() && conf.isCheckingStructure()) {
-        		continueEvaluation = system.state().checkStructure(fInstr.association(), NullPrintWriter.getInstance(), false);
+        	if (conf.getConfig().useTryCuts() && conf.getConfig().checkStructure()) {
+				continueEvaluation = system.state().checkStructure(
+						fInstr.association(), NullPrintWriter.getInstance(),
+						false);
         		if (!continueEvaluation) {
         			++numCut;
         			collector.addCut();

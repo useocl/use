@@ -26,6 +26,7 @@ package org.tzi.use.gen.tool;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import org.tzi.use.gen.assl.dynamics.IGChecker;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
@@ -40,7 +41,7 @@ import org.tzi.use.util.NullPrintWriter;
  * Counts results (either valid or invalid).
  * @author  Joern Bohling
  */
-class GStatistic implements Comparable<GStatistic> {
+class GStatistic {
     protected long fCountValid = 0;
     protected long fCountInvalid = 0;
     protected long fCountException = 0;
@@ -53,14 +54,6 @@ class GStatistic implements Comparable<GStatistic> {
     
     public GStatistic() {}
 
-    public double diff() {
-    	// Assuming that ASSL files usually build
-    	// correct parts of the model in sequence
-    	// a valid invariant is more important then
-    	// an invalid one
-        return (double)totalTime_Local / (fCountValid_Local - fCountInvalid_Local);
-    }
-
     public long getTotalChecks() {
     	return fCountInvalid + fCountValid + fCountException;
     }
@@ -70,9 +63,9 @@ class GStatistic implements Comparable<GStatistic> {
             fCountValid_Local++;
         } else {
             fCountInvalid_Local++;
-            totalTime_Local += time;
         }
         
+        totalTime_Local += time;
         totalTime += time;
     }
 
@@ -88,42 +81,10 @@ class GStatistic implements Comparable<GStatistic> {
     	fCountInvalid_Local = 0;
     	totalTime_Local = 0;
     }
-    
-    @Override
-    public int compareTo(GStatistic o) {
-    	double thisDiff = this.diff();
-    	double oDiff = o.diff();
-    	
-    	if (thisDiff == oDiff)
-    		return 0;
-    	else if (thisDiff < oDiff)
-    		return -1;
-    	else
-    		return 1;
-    }
 
-    @Override
-    public boolean equals(Object o) {
-    	if (this == o) {
-    		return true;
-    	} else if (o == null) {
-    		return false;
-    	} else if (o instanceof GStatistic) {
-    		GStatistic s = (GStatistic)o;
-    		return this.compareTo(s) == 0;
-    	} else {
-    		return false;
-    	}
-    }
-    
-    @Override
-    public int hashCode() {
-    	return Double.valueOf(diff()).hashCode();
-    }
-    
     public String toStringForStatistics() {
 		return String.format("%,14d %,14d %,14d %,14d %,14d", getTotalChecks(),
-				fCountValid, fCountInvalid, fCountException, totalTime);
+				fCountValid, fCountInvalid, fCountException, totalTime / 1000000);
     }
 }
 
@@ -164,11 +125,12 @@ public class GChecker implements IGChecker {
     
     private int sortCounter;
     
-    private int checksBeforeSort = 10000;
-    private double increaseChecksBeforeSortFactor = 1.1;
+    private final int checksBeforeSort;
+        
+    private final Comparator<GInvariantStatistic> invariantComparator;
     
-    public GChecker(GModel model, boolean checkStructure) {
-        fCheckStructure = checkStructure;
+    public GChecker(GModel model, GGeneratorArguments args) {
+        fCheckStructure = args.checkStructure();
                 
         fInvariantStatistics = new GInvariantStatistic[model.flaggedInvariants().size()];
         int index = 0;
@@ -178,52 +140,75 @@ public class GChecker implements IGChecker {
         	++index;
         }
         
-        sortCounter = 0;        
+        checksBeforeSort = args.getChecksBeforeSortInvariants();
+        
+        sortCounter = 0;
         fSize = fInvariantStatistics.length;
         fStructureStatistic = new GStatistic();
+        
+        switch (args.getInvariantSortOrder()) {
+        	case MOST_FAILED:
+        		invariantComparator = new Comparator<GInvariantStatistic>() {
+					@Override
+					public int compare(GInvariantStatistic o1, GInvariantStatistic o2) {
+						long diff1 = o1.fCountValid_Local - o1.fCountInvalid_Local;
+						long diff2 = o2.fCountValid_Local - o2.fCountInvalid_Local;
+						
+						return (int)(diff1 - diff2);
+					}
+				};
+				break;
+        	case FASTEST:
+        		invariantComparator = new Comparator<GInvariantStatistic>() {
+					@Override
+					public int compare(GInvariantStatistic o1,
+							GInvariantStatistic o2) {
+						double diff1 = (double) o1.totalTime_Local
+							/ (double) (o1.fCountValid_Local - o1.fCountInvalid_Local);
+						double diff2 = (double) o2.totalTime_Local
+							/ (double) (o2.fCountValid_Local - o2.fCountInvalid_Local);
+						
+						return (int)Math.round(diff1 - diff2);
+					}
+				};
+				break;
+        	case COMBINED:
+        	default:
+        		invariantComparator = new Comparator<GInvariantStatistic>() {
+					@Override
+					public int compare(GInvariantStatistic o1,
+							GInvariantStatistic o2) {
+						
+						double total1 = o1.fCountValid_Local + o1.fCountInvalid_Local;
+						double total2 = o2.fCountValid_Local + o2.fCountInvalid_Local;
+						
+						// We want invalid invariants to be checked first
+						double validFactor1 =  o1.fCountValid_Local / total1;
+						double validFactor2 =  o2.fCountValid_Local / total2;
+						
+						// time per evaluation
+						double timeFactor1 = (double)o1.totalTime_Local / total1;
+						double timeFactor2 = (double)o2.totalTime_Local / total2;
+						
+						// ratio of valid invariants multiplied by ratio of evaluation time
+						double f1 = validFactor1 * (timeFactor1 / timeFactor2);
+						double f2 = validFactor2 * (timeFactor2 / timeFactor1);
+						
+						return Double.compare(f1, f2);
+					}
+				};
+        }
     }
 
-    
-    /**
-	 * @return the checksBeforeSort
-	 */
-	public int getChecksBeforeSort() {
-		return checksBeforeSort;
-	}
-
-
-	/**
-	 * @param checksBeforeSort the checksBeforeSort to set
-	 */
-	public void setChecksBeforeSort(int checksBeforeSort) {
-		this.checksBeforeSort = checksBeforeSort;
-	}
-
-
-	/**
-	 * @return the increaseChecksBeforeSortFactor
-	 */
-	public double getIncreaseChecksBeforeSortFactor() {
-		return increaseChecksBeforeSortFactor;
-	}
-
-
-	/**
-	 * @param increaseChecksBeforeSortFactor the increaseChecksBeforeSortFactor to set
-	 */
-	public void setIncreaseChecksBeforeSortFactor(
-			double increaseChecksBeforeSortFactor) {
-		this.increaseChecksBeforeSortFactor = increaseChecksBeforeSortFactor;
-	}
-
-	private long sortCount = 0;
+    private long sortCount = 0;
 	
 	public boolean check(final MSystemState state, final IGCollector collector) {
         // resort the invariants starting every 10.000th check.
         // invariants, which are often invalid, will be checked first.
         if (sortCounter == checksBeforeSort) {
             sortCounter = 0;
-            Arrays.sort(fInvariantStatistics);
+            
+            Arrays.sort(fInvariantStatistics, invariantComparator);
             ++sortCount;
             
             for (int i = 0; i < fInvariantStatistics.length; ++i)
@@ -241,9 +226,9 @@ public class GChecker implements IGChecker {
             if (!stat.flaggedInvariant().disabled()) {
             	
             	try {
-            		start = System.currentTimeMillis();
+            		start = System.nanoTime();
 	            	boolean valid = stat.flaggedInvariant().eval(collector, state);
-	                stat.registerResult(valid, System.currentTimeMillis() - start);
+	                stat.registerResult(valid, System.nanoTime() - start);
 	                
 	                if (!valid) {
 	                	if (collector.doBasicPrinting())
@@ -265,12 +250,12 @@ public class GChecker implements IGChecker {
         
         // checking structure
         if (result && fCheckStructure) {
-        	start = System.currentTimeMillis();
+        	start = System.nanoTime();
             result = state.checkStructure(NullPrintWriter.getInstance(), false);
             if (!result && collector.doBasicPrinting()) {
                 collector.basicPrintWriter().println("invalid structure.");
             }
-            fStructureStatistic.registerResult(result, System.currentTimeMillis() - start);
+            fStructureStatistic.registerResult(result, System.nanoTime() - start);
         }
         
         if (result && collector.doBasicPrinting())
@@ -293,7 +278,7 @@ public class GChecker implements IGChecker {
     
         for (int i = 0; i < fInvariantStatistics.length; ++i)
         	fInvariantStatistics[i].localReset();
-        Arrays.sort(fInvariantStatistics);
+        Arrays.sort(fInvariantStatistics, invariantComparator);
         
         long totalChecks = fStructureStatistic.getTotalChecks();
         

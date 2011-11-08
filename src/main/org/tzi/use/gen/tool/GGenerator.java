@@ -33,7 +33,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -64,34 +63,7 @@ public class GGenerator {
     protected GModel fGModel;
     protected MSystem fSystem;
     protected GResult fLastResult;
-
-    private String fFilename;
-    private Long fLimit;
-    private String fPrintFilename;
-    private boolean fPrintBasics;
-    private boolean fPrintDetails; 
-    private Long fRandomNr;
-    
-    private boolean fCheckStructure;
-    
-    /**
-     * If true, the generator checks directly after
-     * a try call if multiplicity is violated.  
-     */
-    private boolean useTryCuts;
-    
-    /**
-     * If true, a try on a 1 : * association uses
-     * only useful links.
-     */
-    private boolean useMinCombinations;
-    
-    /**
-     * If true, time related information (duration, snapshots/s)
-     * is printed in the result.
-     * Otherwise it is suppressed. This is usefull for tests.
-     */
-    private boolean printTimeRelatedData;
+    protected GGeneratorArguments fConfig;
     
     private GCollectorImpl collector;
     
@@ -101,6 +73,7 @@ public class GGenerator {
         fSystem = system;
         fGModel = new GModel(system.model());
         fLastResult = null;
+        fConfig = new GGeneratorArguments();
     }
 
     protected void internalError(GEvaluationException e, long randomNr) {
@@ -109,7 +82,6 @@ public class GGenerator {
             PrintWriter pw
                 = new PrintWriter(new FileWriter("generator_error.txt"));
             pw.println("Program version: " + Options.RELEASE_VERSION);
-            //pw.println("Project version: " + Options.PROJECT_VERSION);
             pw.println("Stack trace: ");
             e.printStackTrace(pw);
             pw.close();
@@ -123,7 +95,6 @@ public class GGenerator {
                                "PLEASE SEND THE FOLLOWING INFORMATION "+nl+
                                "TO joebo@informatik.uni-bremen.de.");
             System.err.println("Program version: " + Options.RELEASE_VERSION);
-            //System.err.println("Project version: " + Options.PROJECT_VERSION);
             System.err.println("Stack trace: ");
             e.printStackTrace();
         }
@@ -143,11 +114,6 @@ public class GGenerator {
     }
     
 	public GProcedure getProcedure(String callstr) {
-		if (fRandomNr == null)
-			fRandomNr = new Long((new Random()).nextInt(10000));
-		if (fLimit == null)
-			fLimit = new Long(Long.MAX_VALUE);
-
 		// List procedures = null;
 		GProcedureCall call = null;
 		GProcedure retproc = null;
@@ -161,7 +127,7 @@ public class GGenerator {
 		if (call != null && fProcedures != null) {
 			retproc = call.findMatching(fProcedures);
 			if (retproc == null)
-				Log.error(call.signatureString() + " not found in " + fFilename);
+				Log.error(call.signatureString() + " not found in " + fConfig.getFilename());
 			else
 				return retproc;
 		}
@@ -174,10 +140,6 @@ public class GGenerator {
      * procedure will be invoked only by the ASSL command "ASSLCall <procname> (<Arglist>);"
      */
     public void startProcedure( String callstr ) {
-    	if (fRandomNr == null)
-            fRandomNr = new Long( (new Random()).nextInt(10000) );
-        if (fLimit == null)
-            fLimit = new Long( Long.MAX_VALUE );
 
         List<GProcedure> procedures = null;
         GProcedureCall call = null;
@@ -186,11 +148,11 @@ public class GGenerator {
         long startTime = System.currentTimeMillis();
         
         try {
-            Log.verbose("Compiling procedures from " + fFilename + ".");
+            Log.verbose("Compiling procedures from " + fConfig.getFilename() + ".");
             procedures = ASSLCompiler.compileProcedures(
                                                      fSystem.model(),
-                                                     new FileInputStream(fFilename),
-                                                     fFilename,
+                                                     new FileInputStream(fConfig.getFilename()),
+                                                     fConfig.getFilename(),
                                                      new PrintWriter(System.err) );
             if (procedures != null) {
                 Log.verbose("Compiling `" + callstr + "'.");
@@ -206,21 +168,22 @@ public class GGenerator {
                 GProcedure proc = call.findMatching( procedures );
                 if (proc == null)
                     Log.error( call.signatureString()
-                               + " not found in " + fFilename );
+                               + " not found in " + fConfig.getFilename() );
                 else {
                     resultPw = new PrintWriter(System.out);
-                    if (fPrintFilename==null)
+                    if (fConfig.getPrintFilename() == null)
                         pw = resultPw;
                     else
-                        pw = new PrintWriter(
-                                             new BufferedWriter(new FileWriter(fPrintFilename)));
+						pw = new PrintWriter(new BufferedWriter(new FileWriter(
+								fConfig.getPrintFilename())));
 
-                    if (fPrintBasics || fPrintDetails)
+                    if (fConfig.doBasicPrinting())
                         collector.setBasicPrintWriter(pw);
-                    if (fPrintDetails)
+                    
+                    if (fConfig.doPrintDetails())
                         collector.setDetailPrintWriter(pw);
 
-                    GChecker checker = new GChecker(fGModel, fCheckStructure);
+                    GChecker checker = new GChecker(fGModel, fConfig);
 
                     Log.verbose(proc.toString() + " started...");
 
@@ -230,28 +193,27 @@ public class GGenerator {
                                       fSystem.state(),
                                       collector,
                                       checker,
-                                      fRandomNr.longValue(),
-                                      fCheckStructure,
-                                      this.useTryCuts,
-                                      this.useMinCombinations);
+                                      fConfig);
                         
                         long endTime = System.currentTimeMillis();
                         fLastResult = new GResult( collector,
                                                    checker,
-                                                   fRandomNr.longValue(),
+                                                   fConfig.getRandomNr().longValue(),
                                                    endTime - startTime);
                         
-                        if (collector.existsInvalidMessage())
-                            pw.println("There were errors." + (
-                                                               (!fPrintBasics && !fPrintDetails)
-                                                               ?
-                                                               " Use the -b or -d option to get "+
-                                                               "further information."
-                                                               :
-                                                               " See output " + 
-                                                               ( fPrintFilename!=null ? "("+fPrintFilename+") " : "" ) +
-                                                               "for details."
-                                                               ) );
+                        if (collector.existsInvalidMessage()) {
+                            pw.print("There were errors.");
+                            if (!fConfig.doBasicPrinting()) {
+                            	pw.print(" Use the -b or -d option to get further information.");
+                            } else {
+                            	pw.print(" See output ");
+                            	if (fConfig.getPrintFilename() != null) { 
+                            		pw.print("(" + fConfig.getPrintFilename() + ")");
+                            	}
+                                pw.println("for details.");
+                            }
+                        }
+                        
                         try {
                             if (Log.isVerbose())
                                 printResult(resultPw);
@@ -261,7 +223,7 @@ public class GGenerator {
                                                        + "is not available for printing." );
                         }                  
                     } catch (GEvaluationException e) {
-                        internalError(e, fRandomNr.longValue());
+                        internalError(e, fConfig.getRandomNr().longValue());
                         Log.error("The system state may be changed in use.");
                     } catch (StackOverflowError ex) {
                         Log.error("Evaluation aborted because of a stack " +
@@ -278,7 +240,7 @@ public class GGenerator {
         } finally {
             if (pw != null ) {
                 pw.flush();
-                if (fPrintFilename != null )
+                if (fConfig.getPrintFilename() != null )
                     pw.close();
             }
             if (resultPw != null )
@@ -287,40 +249,13 @@ public class GGenerator {
     }
 
     
-    public void startProcedure( String filename,
-                                String callstr,
-                                Long limit,
-                                String printFilename,
-                                boolean printBasics,
-                                boolean printDetails,
-                                Long randomNr,
-                                boolean checkStructure,
-                                boolean useTryCuts,
-                                boolean useMinCombinations,
-                                boolean outputTimeRelatedData,
-                                int checksBeforeSortInvariants,
-                                double checksBeforeSortInvariantsGrowFactor) {
+	public void startProcedure(String callstr, GGeneratorArguments args) {
         fLastResult = null;
-        this.useTryCuts = useTryCuts;
-        this.useMinCombinations = useMinCombinations;
-        this.printTimeRelatedData = outputTimeRelatedData;
+        fConfig = args;
         
         boolean didShowWarnigs = Log.isShowWarnings();
         Log.setShowWarnings(false);
 
-        fFilename = filename;
-        fPrintFilename = printFilename;
-        fPrintBasics = printBasics;
-        fPrintDetails = printDetails;
-        fRandomNr = randomNr;
-        fCheckStructure = checkStructure;
-        
-        if (randomNr == null)
-            randomNr = Long.valueOf( (new Random()).nextInt(10000) );
-        if (limit == null)
-            limit = Long.valueOf( Long.MAX_VALUE );
-
-        //List<GProcedure> procedures = null;
         GProcedureCall call = null;
         PrintWriter pw = null;
         PrintWriter resultPw = null;
@@ -328,13 +263,13 @@ public class GGenerator {
         long startTime = System.currentTimeMillis();
         
         try {
-            Log.verbose("Compiling procedures from " + filename + ".");
+            Log.verbose("Compiling procedures from " + fConfig.getFilename() + ".");
             fProcedures = ASSLCompiler.compileProcedures(
                                                      fSystem.model(),
-                                                     new FileInputStream(filename),
-                                                     filename,
+                                                     new FileInputStream(fConfig.getFilename()),
+                                                     fConfig.getFilename(),
                                                      new PrintWriter(System.err) );
-            if (fProcedures!=null) {
+            if (fProcedures != null) {
                 Log.verbose("Compiling `" + callstr + "'.");
                 call = ASSLCompiler.compileProcedureCall(fSystem.model(),
                                                         fSystem.state(),
@@ -347,29 +282,23 @@ public class GGenerator {
                 GProcedure proc = call.findMatching( fProcedures );
                 if (proc == null)
                     Log.error( call.signatureString()
-                               + " not found in " + filename );
+                               + " not found in " + fConfig.getFilename() );
                 else {
                     resultPw = new PrintWriter(System.out);
-                    if (printFilename==null)
+                    if (fConfig.getPrintFilename() == null)
                         pw = resultPw;
                     else
                         pw = new PrintWriter(
-                                             new BufferedWriter(new FileWriter(printFilename)));
+                                             new BufferedWriter(new FileWriter(fConfig.getPrintFilename())));
 
                     collector = new GCollectorImpl();
-                    collector.setLimit(limit.longValue());
-                    if (printBasics || printDetails)
+                    collector.setLimit(fConfig.getLimit().longValue());
+                    if (fConfig.doBasicPrinting())
                         collector.setBasicPrintWriter(pw);
-                    if (printDetails)
+                    if (fConfig.doPrintDetails())
                         collector.setDetailPrintWriter(pw);
 
-                    GChecker checker = new GChecker(fGModel, checkStructure);
-                    if (checksBeforeSortInvariants > 0)
-                    	checker.setChecksBeforeSort(checksBeforeSortInvariants);
-                    
-                    if (checksBeforeSortInvariantsGrowFactor > 0)
-                    	checker.setIncreaseChecksBeforeSortFactor(checksBeforeSortInvariantsGrowFactor);
-                    
+                    GChecker checker = new GChecker(fGModel, fConfig);
                     Log.verbose(proc.toString() + " started...");
                     
                     try {
@@ -378,28 +307,26 @@ public class GGenerator {
                                       fSystem.state(),
                                       collector,
                                       checker,
-                                      randomNr.longValue(),
-                                      fCheckStructure,
-                                      this.useTryCuts,
-                                      this.useMinCombinations);
+                                      fConfig);
                         
                         long endTime = System.currentTimeMillis();
                         fLastResult = new GResult( collector,
                                                    checker,
-                                                   randomNr.longValue(),
+                                                   fConfig.getRandomNr().longValue(),
                                                    endTime - startTime);
                         
-                        if (collector.existsInvalidMessage())
-                            pw.println("There were errors." + (
-                                                               (!printBasics && !printDetails)
-                                                               ?
-                                                               " Use the -b or -d option to get "+
-                                                               "further information."
-                                                               :
-                                                               " See output " + 
-                                                               ( printFilename!=null ? "("+printFilename+") " : "" ) +
-                                                               "for details."
-                                                               ) );
+                        if (collector.existsInvalidMessage()) {
+                        	pw.print("There were errors.");
+	                        if (!fConfig.doBasicPrinting()) {
+	                        	pw.print(" Use the -b or -d option to get further information.");
+	                        } else {
+	                        	pw.print(" See output ");
+	                        	if (fConfig.getPrintFilename() != null) { 
+	                        		pw.print("(" + fConfig.getPrintFilename() + ")");
+	                        	}
+	                            pw.println("for details.");
+	                        }
+                        }
                         try {
                             if (Log.isVerbose())
                                 printResult(resultPw);
@@ -409,7 +336,7 @@ public class GGenerator {
                                                        + "is not available for printing." );
                         }                  
                     } catch (GEvaluationException e) {
-                        internalError(e, randomNr.longValue());
+                        internalError(e, fConfig.getRandomNr().longValue());
                         Log.error("The system state may be changed in use.");
                     } catch (StackOverflowError ex) {
                         Log.error("Evaluation aborted because of a stack " +
@@ -426,7 +353,7 @@ public class GGenerator {
         } finally {
             if (pw != null ) {
                 pw.flush();
-                if (printFilename != null )
+                if (fConfig.getPrintFilename() != null )
                     pw.close();
             }
             if (resultPw != null )
@@ -524,7 +451,7 @@ public class GGenerator {
     	pw.println(String.format("Random number generator was initialized with %d.",  lastResult().randomNr()));
         
     	long numSnapshots = lastResult().collector().numberOfCheckedStates();
-    	if (this.printTimeRelatedData) {    		
+    	if (fConfig.printTimeRelatedData()) {    		
     		double duration = lastResult().getDuration() / 1000D;
     		double snapShotsPerSecond = Double.NaN;
     				
@@ -537,10 +464,10 @@ public class GGenerator {
     		pw.println(String.format("Checked %,d snapshots.", numSnapshots));
     	}
         
-        if (this.useTryCuts)
+        if (fConfig.useTryCuts())
         	pw.println(String.format("Made %,d try cuts.", lastResult().collector().getCuts()));
         
-        if (this.useMinCombinations)
+        if (fConfig.useMinCombinations())
         	pw.println(String.format("Ignored at least %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
         
         pw.println(String.format("Barriers blocked %,d times.", lastResult().collector().getBarriersHit()));

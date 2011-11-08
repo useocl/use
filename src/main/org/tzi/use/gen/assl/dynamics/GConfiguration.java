@@ -29,36 +29,30 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-
 import java.util.Random;
 
+import org.tzi.use.gen.tool.GGeneratorArguments;
+import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MSystemState;
+
 public class GConfiguration {
-    private MSystemState fSystemState;
-    private VarBindings fVarBindings;
-    private Evaluator fEvaluator;
-    private Random fRandom;
-    private boolean isCheckingStructure;
-    private boolean useTryCuts;
-    private boolean useMinCombinations;
+    private final MSystemState fSystemState;
+    private final VarBindings fVarBindings;
+    private final Evaluator fEvaluator;
+    private final GGeneratorArguments fConfig;
+    private final Random fRandom;
     
     public GConfiguration( MSystemState state,
                            VarBindings varBindings,
-                           long randomNr,
-                           boolean isCheckingStructure,
-                           boolean useTryCuts,
-                           boolean useMinCombinations) {
+                           GGeneratorArguments cfg) {
         fSystemState = state;
         fVarBindings = varBindings;
         fEvaluator = new Evaluator();
-        fRandom = new Random( randomNr );
-        this.isCheckingStructure = isCheckingStructure;
-        this.useTryCuts = useTryCuts;
-        this.useMinCombinations = useMinCombinations;
+        fConfig = cfg;
+        fRandom = new Random( fConfig.getRandomNr().longValue() );
     }
 
     public MSystemState systemState() {
@@ -73,12 +67,8 @@ public class GConfiguration {
         return fRandom;
     }
 
-    public boolean isCheckingStructure() {
-    	return isCheckingStructure;
-    }
-    
-    public boolean usesTryCuts() {
-    	return useTryCuts;
+    public GGeneratorArguments getConfig() {
+    	return fConfig;
     }
     
     public Value evalExpression( Expression expr ) {
@@ -86,11 +76,4 @@ public class GConfiguration {
                                 fSystemState,
                                 fVarBindings );
     }
-
-	/**
-	 * @return
-	 */
-	public boolean useMinCombinations() {
-		return useMinCombinations;
-	}
 }

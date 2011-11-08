@@ -58,6 +58,7 @@ import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.gen.model.GFlaggedInvariant;
+import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.gen.tool.GNoResultException;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
@@ -1631,161 +1632,15 @@ public final class Shell implements Runnable, PPCHandler {
      *  
      */
     private void cmdGenStartProcedure(String str, MSystem system) {
-        String filename = null; // the file which contains procedures
-        String callstr = null; // the call of the procedure
-        Long limit = null; // default: no limit
-        boolean printBasics = false; // print flow of control (to understand)
-        boolean printDetails = false; // print flow of control in detail
-        boolean printDuration = true; // print information about execution time
-        String printFilename = null; // null-> prints to System.out
-        Long randomNr = null; // null-> choose a random number
-
-        StringTokenizer st = new StringTokenizer(str);
-        boolean allOptionsFound = false;
-        boolean error = false;
-        boolean limitOptionFound = false;
-        boolean outputOptionFound = false;
-        boolean randomOptionFound = false;
-        boolean checkStructure = true;
-        boolean useCut = true;
-        boolean useMinCombinations = true;
+        GGeneratorArguments args = GGeneratorArguments.parseCallstring(str);
         
-        int checksBeforeSortInvariants = 0;
-        double checksBeforeSortInvariantsGrowFactor = 0;
+        if (args == null) return;
         
-        String message = null;
-
-        try {
-            while (!allOptionsFound && !error) {
-                String optionOrFilename = st.nextToken();
-                
-                if (optionOrFilename.equals("-s")) {
-                    if (!checkStructure)
-                        error = true;
-                    else
-                        checkStructure = false;
-                } else if (optionOrFilename.equals("-r")) {
-                    if (randomOptionFound)
-                        error = true;
-                    else {
-                        try {
-                            randomNr = new Long(st.nextToken());
-                        } catch (NumberFormatException e) {
-                            error = true;
-                        }
-                        error = error || (randomNr.longValue() <= 0);
-                        if (error)
-                            message = "the parameter of the -r"
-                                    + " option must be a positive number"
-                                    + " (< 2^63).";
-                    }
-                    randomOptionFound = true;
-                } else if (optionOrFilename.equals("-l")) {
-                    if (limitOptionFound)
-                        error = true;
-                    else {
-                        try {
-                            limit = new Long(st.nextToken());
-                        } catch (NumberFormatException e) {
-                            error = true;
-                        }
-                        error = error || (limit.longValue() <= 0);
-                        if (error)
-                            message = "the parameter of the -l"
-                                    + " option must be a positive number"
-                                    + " (< 2^63).";
-                    }
-                    limitOptionFound = true;
-                } else if (optionOrFilename.equals("-si")) {
-                    try {
-                        checksBeforeSortInvariants = new Integer(st.nextToken());
-                    } catch (NumberFormatException e) {
-                        error = true;
-                    }
-                    
-                    if (error)
-                        message = "the parameter of the -si"
-                                + " option must be a positive number.";
-                } else if (optionOrFilename.equals("-sif")) {
-                    try {
-                        checksBeforeSortInvariantsGrowFactor = 1 + (new Integer(st.nextToken()).doubleValue() / 100);
-                    } catch (NumberFormatException e) {
-                        error = true;
-                    }
-                    
-                    if (error)
-                        message = "the parameter of the -sif"
-                                + " option must be a positive number.";
-                      
-                } else if (optionOrFilename.equals("-b")
-                        || optionOrFilename.equals("-d")
-                        || optionOrFilename.equals("-bf")
-                        || optionOrFilename.equals("-df")
-                        || optionOrFilename.equals("-t")
-                        || optionOrFilename.equals("-dc")
-                        || optionOrFilename.equals("-ac")) {
-                    // an output option
-                    if (outputOptionFound)
-                        error = true;
-                    else if (optionOrFilename.equals("-b"))
-                        printBasics = true;
-                    else if (optionOrFilename.equals("-d"))
-                        printDetails = true;
-                    else if (optionOrFilename.equals("-bf")) {
-                        printBasics = true;
-                        printFilename = st.nextToken();
-                    } else if (optionOrFilename.equals("-df")) {
-                        printDetails = true;
-                        printFilename = st.nextToken();
-                    } else if (optionOrFilename.equals("-t")) {
-                    	printDuration = false;
-                    } else if (optionOrFilename.equals("-dc")) {
-                    	useCut = false;
-                    } else if (optionOrFilename.equals("-ac")) {
-                    	useMinCombinations = false;
-                    } else 
-                    	outputOptionFound = true;
-                } else {
-                    // optionOrFilename must be a filename
-                    if (optionOrFilename.startsWith("-"))
-                        error = true;
-                    else {
-                        allOptionsFound = true;
-                        if (optionOrFilename.startsWith("\"")) {
-                        	// Quoted filename
-                        	while (st.hasMoreElements()) {
-                        		optionOrFilename += " " + st.nextToken();
-                        		if (optionOrFilename.endsWith("\""))
-                        			break;
-                        	}
-                        }
-                        
-                        filename = optionOrFilename;
-                        callstr = st.nextToken("");
-                    }
-                }
-            }
-        } catch (NoSuchElementException e) {
-            error = true;
-        }
-
-        if (error) {
-            if (message != null)
-                Log.error(message);
-            else {
-                Log.error("syntax is `start [-l <num>][-r <num>][-si <num>][-sif<num>]"
-                        + "[-b|-d|-bf <FILE>|-df <FILE>|-t|-c|-ac|-dc] "
-                        + "FILE PROCNAME([paramlist])'");
-            }
-            return;
-        }
-
-        filename = this.getFilenameToOpen(filename);
+        // Filename correction (relative pathes...)
+        args.setFilename(this.getFilenameToOpen(args.getFilename()));
         this.setFileClosed();
 
-        system.generator().startProcedure(filename, callstr, limit,
-                printFilename, printBasics, printDetails, randomNr,
-                checkStructure, useCut, useMinCombinations, printDuration, checksBeforeSortInvariants, checksBeforeSortInvariantsGrowFactor);
+        system.generator().startProcedure(args.getCallString(), args);
     }
 
     private MSystem system() throws NoSystemException {

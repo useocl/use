@@ -9,30 +9,29 @@
 !create E1 : E
 !create E2 : E
 ?Set{A1,A2,B1,B2,E1}
-*-> Set{@A1,@A2,@B1,@B2,@E1} : Set(B)
+*-> Set{@A1,@A2,@B1,@B2,@E1} : Set(A)
 :Set{A1,A2,B1,B2,E1}
-*-> Set(B)
+*-> Set(A)
 ?OrderedSet{A1,A2,B1,B2,E1}
-*-> OrderedSet{@A1,@A2,@B1,@B2,@E1} : OrderedSet(B)
+*-> OrderedSet{@A1,@A2,@B1,@B2,@E1} : OrderedSet(A)
 :OrderedSet{A1,A2,B1,B2,E1}
-*-> OrderedSet(B)
+*-> OrderedSet(A)
 ?Sequence{A1,A2,B1,B2,E1}
-*-> Sequence{@A1,@A2,@B1,@B2,@E1} : Sequence(B)
+*-> Sequence{@A1,@A2,@B1,@B2,@E1} : Sequence(A)
 :Sequence{A1,A2,B1,B2,E1}
-*-> Sequence(B)
+*-> Sequence(A)
 ?Bag{A1,A2,B1,B2,E1}
-*-> Bag{@A1,@A2,@B1,@B2,@E1} : Bag(B)
+*-> Bag{@A1,@A2,@B1,@B2,@E1} : Bag(A)
 :Bag{A1,A2,B1,B2,E1}
-*-> Bag(B)
+*-> Bag(A)
 ?Set{Set{A1,A2,B1,B2,E1}, Bag{A1,A2,B1,B2,E1}}
-*-> Set{Set{@A1,@A2,@B1,@B2,@E1}, Bag{@A1,@A2,@B1,@B2,@E1}} : Set(Collection(B))
+*-> Set{Set{@A1,@A2,@B1,@B2,@E1}, Bag{@A1,@A2,@B1,@B2,@E1}} : Set(Collection(A))
 ?Set{}->including(A1)->including(A2)->including(B1)->including(B2)->including(E1)
-*-> Set{@A1,@A2,@B1,@B2,@E1} : Set(B)
+*-> Set{@A1,@A2,@B1,@B2,@E1} : Set(A)
 :Set{}->including(A1)->including(A2)->including(B1)->including(B2)->including(E1)
-*-> Set(B)
+*-> Set(A)
 ?Set{B1,B2,C1,C2}
 *-> Set{@B1,@B2,@C1,@C2} : Set(A)
 :Set{B1,B2,C1,C2}
 *-> Set(A)
-?let s:Set(E) = Set{A1,B1} in s
 exit
