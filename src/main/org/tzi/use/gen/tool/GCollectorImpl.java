@@ -66,15 +66,20 @@ public class GCollectorImpl implements IGCollector {
      */
     private long barrierHitCount = 0;
     
+    /**
+     * Number of automatically calculated barriers
+     */
+    private int calculatedBarriers = 0;
+    
     private boolean fExistsInvalidMessage;
     private boolean fPrePostCondViolation;
 
-    private boolean doBasicPrinting = false;
-    private boolean doDetailPrinting = false;
+    private final boolean doBasicPrinting;
+    private final boolean doDetailPrinting;
     
     private boolean isBlocked = false;
     
-    public GCollectorImpl() {
+    public GCollectorImpl(boolean doBasicPrinting, boolean doDetailPrinting) {
         fValidStateFound = false;
         fStatements = new ArrayList<MStatement>();
         fLimit = Long.MAX_VALUE;
@@ -83,6 +88,8 @@ public class GCollectorImpl implements IGCollector {
         fDetailPrintWriter = NullPrintWriter.getInstance();
         fExistsInvalidMessage = false;
         fPrePostCondViolation = false;
+        this.doBasicPrinting = doBasicPrinting;
+        this.doDetailPrinting = doDetailPrinting;
     }
     
     public boolean canStop() {
@@ -129,14 +136,24 @@ public class GCollectorImpl implements IGCollector {
         return fLimit;
     }
     
+    /**
+     * Sets the {@link PrintWriter} to write basic information to.
+     * This writer is only used when the constructor parameter <code>doBasicPrinting</code>
+     * was set to <code>true</code>. 
+     * @param pw
+     */
     public void setBasicPrintWriter( PrintWriter pw ) {
         fBasicPrintWriter = pw;
-        this.doBasicPrinting = true;
     }
 
+    /**
+     * Sets the {@link PrintWriter} to write detailed information to.
+     * This writer is only used when the constructor parameter <code>doDetailPrinting</code>
+     * was set to <code>true</code>. 
+     * @param pw
+     */
     public void setDetailPrintWriter( PrintWriter pw ) {
         fDetailPrintWriter = pw;
-        this.doDetailPrinting = true;
     }
 
     public void leaf() {
@@ -240,6 +257,21 @@ public class GCollectorImpl implements IGCollector {
 	@Override
 	public long getBarriersHit() {
 		return this.barrierHitCount;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#addCalculatedBarrier()
+	 */
+	@Override
+	public void addCalculatedBarrier() {
+		++calculatedBarriers;		
+	}
+
+	/**
+	 * @return the calculatedBarriers
+	 */
+	public int getCalculatedBarriers() {
+		return calculatedBarriers;
 	}
 }
 

@@ -85,6 +85,12 @@ public class GGeneratorArguments {
     
     private InvariantSortOrder invariantSortOrder = InvariantSortOrder.COMBINED;
     
+    /**
+     * If true, the generator automatically calculates barriers for
+     * the ASSL-Procedure.
+     */
+    private boolean calculateBarriers = true;
+    
     public GGeneratorArguments() {
     	fRandomNr = new Long((new Random()).nextInt(10000));
     	fLimit = new Long(Long.MAX_VALUE);
@@ -275,6 +281,20 @@ public class GGeneratorArguments {
 	}
 
 	/**
+	 * @return the calculateBarriers
+	 */
+	public boolean isCalculateBarriers() {
+		return calculateBarriers;
+	}
+
+	/**
+	 * @param calculateBarriers the calculateBarriers to set
+	 */
+	public void setCalculateBarriers(boolean calculateBarriers) {
+		this.calculateBarriers = calculateBarriers;
+	}
+
+	/**
 	 * Parses the command line arguments
 	 * @param str
 	 * @return
@@ -363,7 +383,8 @@ public class GGeneratorArguments {
                         || optionOrFilename.equals("-df")
                         || optionOrFilename.equals("-t")
                         || optionOrFilename.equals("-dc")
-                        || optionOrFilename.equals("-ac")) {
+                        || optionOrFilename.equals("-ac")
+                        || optionOrFilename.equals("-nb")) {
                     // an output option
                     if (outputOptionFound)
                         error = true;
@@ -383,6 +404,8 @@ public class GGeneratorArguments {
                     	args.setUseTryCuts(false);
                     } else if (optionOrFilename.equals("-ac")) {
                     	args.setUseMinCombinations(false);
+                    } else if (optionOrFilename.equals("-nb")) {
+                    	args.setCalculateBarriers(false);
                     } else 
                     	outputOptionFound = true;
                 } else {

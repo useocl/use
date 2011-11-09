@@ -88,4 +88,9 @@ public class GInstrTry_Attribute extends GInstrTry implements GInstruction {
 	public GOCLExpression getValues() {
 		return values;
 	}
+	
+	@Override
+	public String toString() {
+		return "Try([" + objects.toString() + "], " + attribute.name() + ", [" + values.toString() + "])";
+	}
 }

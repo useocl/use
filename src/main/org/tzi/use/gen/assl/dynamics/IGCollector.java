@@ -105,4 +105,9 @@ public interface IGCollector {
 	 * @return Number of hit barriers.
 	 */
 	public long getBarriersHit();
+
+	/**
+	 * Increments the counter for automatically calculated barriers.
+	 */
+	public void addCalculatedBarrier();
 }

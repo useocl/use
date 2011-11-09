@@ -291,7 +291,7 @@ public class GGenerator {
                         pw = new PrintWriter(
                                              new BufferedWriter(new FileWriter(fConfig.getPrintFilename())));
 
-                    collector = new GCollectorImpl();
+                    collector = new GCollectorImpl(fConfig.doPrintBasics(), fConfig.doPrintDetails());
                     collector.setLimit(fConfig.getLimit().longValue());
                     if (fConfig.doBasicPrinting())
                         collector.setBasicPrintWriter(pw);
@@ -300,6 +300,10 @@ public class GGenerator {
 
                     GChecker checker = new GChecker(fGModel, fConfig);
                     Log.verbose(proc.toString() + " started...");
+                    
+                    if (fConfig.isCalculateBarriers()) {
+                    	proc.calculateBarriers(collector, fGModel);
+                    }
                     
                     try {
                         GEvalProcedure evalproc = new GEvalProcedure( proc );

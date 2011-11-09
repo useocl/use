@@ -25,11 +25,21 @@
 package org.tzi.use.gen.assl.statics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.tzi.use.analysis.coverage.BasicCoverageData;
+import org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator;
+import org.tzi.use.gen.assl.dynamics.IGCollector;
+import org.tzi.use.gen.model.GFlaggedInvariant;
+import org.tzi.use.gen.model.GModel;
 import org.tzi.use.gen.tool.GSignature;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.util.StringUtil;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -102,6 +112,55 @@ public class GProcedure {
     public String toString() {
         return signatureString();
     }
+
+	/**
+	 * @param fGModel
+	 */
+	public void calculateBarriers(IGCollector collector, GModel gModel) {
+		
+		// Calculate coverage of all invariants
+		Map<GFlaggedInvariant, BasicCoverageData> invCoverage = new HashMap<GFlaggedInvariant, BasicCoverageData>();
+		BasicExpressionCoverageCalulator invCalc = new BasicExpressionCoverageCalulator();
+		
+		for (GFlaggedInvariant inv : gModel.flaggedInvariants()) {
+			if (!inv.disabled()) {
+				
+				invCoverage.put(inv, invCalc.calcualteCoverage(inv.getFlaggedExpression()));
+			}
+		}
+		
+		BasicInstructionCoverageCalulator instrCalc = new BasicInstructionCoverageCalulator();
+		List<GInstruction> instrList = fInstructionList.instructions();
+		Set<GFlaggedInvariant> blockedInvs = new HashSet<GFlaggedInvariant>();
+		
+		for (int index = 0; index < instrList.size(); ++index) {
+			BasicCoverageData instrCoverage = instrCalc.calcualteCoverage(instrList.subList(index, instrList.size()));
+			blockedInvs.clear();
+			
+			for (Map.Entry<GFlaggedInvariant, BasicCoverageData> invData : invCoverage.entrySet()) {
+				GFlaggedInvariant inv = invData.getKey();
+				if (instrCoverage.disjoint(invData.getValue())) {
+					GInstrBarrier bInstr = new GInstrBarrier(invData.getKey().getFlaggedExpression());
+					blockedInvs.add(invData.getKey());
+					collector.addCalculatedBarrier();
+					instrList.add(index, bInstr);
+					++index;
+					
+					if (collector.doBasicPrinting()) {
+						collector.basicPrintWriter().println(
+								"Added Barrier for invariant "
+										+ StringUtil.inQuotes(inv)
+										+ " before statement "
+										+ StringUtil.inQuotes(fInstructionList.instructions().get(index)));
+					}
+				}
+			}
+			
+			for (GFlaggedInvariant inv : blockedInvs) {
+				invCoverage.remove(inv);
+			}
+		}
+	}
 }
 
 

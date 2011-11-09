@@ -28,6 +28,10 @@ package org.tzi.use.gen.model;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.ocl.expr.ExpStdOp;
+import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystemState;
@@ -102,4 +106,21 @@ public class GFlaggedInvariant implements Cloneable {
     public MClassInvariant classInvariant() {
         return fClassInvariant;
     }
+
+	/**
+	 * @return
+	 */
+	public Expression getFlaggedExpression() {
+		Expression invExpr = fClassInvariant.expandedExpression();
+		
+		if (this.negated()) {
+			try {
+				invExpr = ExpStdOp.create("not", new Expression[] {invExpr});
+			} catch (ExpInvalidException e) {}
+		} else if (this.disabled()) {
+			return new ExpressionWithValue(BooleanValue.TRUE);
+		}
+		
+		return invExpr;
+	}
 }
