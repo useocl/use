@@ -474,6 +474,9 @@ public class GGenerator {
         if (fConfig.useMinCombinations())
         	pw.println(String.format("Ignored at least %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
         
+        if (fConfig.isCalculateBarriers())
+        	pw.println(String.format("Added %,d barriers.", lastResult().collector().getCalculatedBarriers()));
+        
         pw.println(String.format("Barriers blocked %,d times.", lastResult().collector().getBarriersHit()));
         
         if (lastResult().collector().limit() != Long.MAX_VALUE)
