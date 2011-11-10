@@ -48,7 +48,11 @@ public class GEvalBarrier extends GEvalInstruction implements IGCaller {
 		collector.detailPrintWriter().println(new StringBuilder("evaluating barrier `").append(instr).append("'").toString());
         try { 
             Value val = conf.evalExpression(instr.getExpression());
-            collector.detailPrintWriter().println("`" + instr + "' == " + val);
+            
+			if (collector.doDetailPrinting())
+				collector.detailPrintWriter().println(
+						"`" + instr + "' == " + val);
+            
             if (val.equals(BooleanValue.FALSE)) {
             	collector.addBarrierHit();
             	collector.setBlocked(true);
@@ -65,8 +69,7 @@ public class GEvalBarrier extends GEvalInstruction implements IGCaller {
 	@Override
 	public void feedback(GConfiguration configuration, Value value,
 			IGCollector collector) throws GEvaluationException {
-		
-		
+
 	}
 
 }

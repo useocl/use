@@ -42,26 +42,33 @@ import org.tzi.use.uml.sys.MSystemState;
  */
 public class GFlaggedInvariant implements Cloneable {
     private boolean fDisabled;
+    
     private boolean fNegated;
+    
     private MClassInvariant fClassInvariant;
+    
     private Evaluator fEvaluator;
+    
+    private boolean checkedByBarrier;
     
     public GFlaggedInvariant(MClassInvariant inv) {
         fDisabled = false;
         fNegated = false;
         fClassInvariant = inv;
+        checkedByBarrier = false;
         fEvaluator = new Evaluator();
     }
     
     public Object clone() {
         try {
-            //GFlaggedInvariant shallowCopy = new GFlaggedInvariant(fClassInvariant);
             GFlaggedInvariant shallowCopy = (GFlaggedInvariant)super.clone();
             // fEvaluator can be reused?
             fEvaluator = new Evaluator();
             
             shallowCopy.setDisabled(fDisabled);
             shallowCopy.setNegated(fNegated);
+            shallowCopy.setCheckedByBarrier(checkedByBarrier);
+            
             return shallowCopy;
         } catch (CloneNotSupportedException e) {
             // unexpected!
@@ -122,5 +129,22 @@ public class GFlaggedInvariant implements Cloneable {
 		}
 		
 		return invExpr;
+	}
+
+	/**
+	 * <code>true</code> if this invariant is validated by
+	 * an automatically placed barrier. So it can be ignored
+	 * by the last check.
+	 * @return the checkedByBarrier
+	 */
+	public boolean isCheckedByBarrier() {
+		return checkedByBarrier;
+	}
+
+	/**
+	 * @param checkedByBarrier the checkedByBarrier to set
+	 */
+	public void setCheckedByBarrier(boolean checkedByBarrier) {
+		this.checkedByBarrier = checkedByBarrier;
 	}
 }

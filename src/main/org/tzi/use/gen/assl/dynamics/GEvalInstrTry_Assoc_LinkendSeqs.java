@@ -127,7 +127,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
             fIterator.previous();
         }
         else {
-            if (conf.getConfig().checkStructure() && conf.getConfig().useMinCombinations() &&
+            if (conf.getArguments().checkStructure() && conf.getArguments().useMinCombinations() &&
             	fInstr.association().associationEnds().size() == 2 &&
             	( !fInstr.association().associationEnds().get(0).isCollection() || 
             	  !fInstr.association().associationEnds().get(1).isCollection()	)	)
@@ -148,6 +148,8 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
         // By the way, the search of a valid state within 2^62 combinations 
     	// would not terminate in years.
     	final int MAX_LINKS = 62;
+    	
+    	// TODO: Shuffle
     	
         // Just get combinations of objects and check its size.
         List<List<MObject>> combinations = 
@@ -224,6 +226,9 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
         
         boolean continueEvaluation = true;
         
+        final boolean useTryCuts = conf.getArguments().useTryCuts();
+        final boolean checkStructure = conf.getArguments().checkStructure();
+        
         do {
         	// construct the statement that transforms the state from old to
         	// new configuration
@@ -242,7 +247,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
 				throw new GEvaluationException(e);
 			}
 			
-        	if (conf.getConfig().useTryCuts() && conf.getConfig().checkStructure()) {
+        	if (useTryCuts && checkStructure) {
 				continueEvaluation = system.state().checkStructure(
 						fInstr.association(), NullPrintWriter.getInstance(),
 						false);
@@ -382,6 +387,11 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
         	unique = UniqueList.SECOND_IS_UNIQUE;
         }
         
+        if (conf.getArguments().useRandomTry()) {
+        	Collections.shuffle(fObjectLists.get(0), conf.random());
+        	Collections.shuffle(fObjectLists.get(1), conf.random());
+        }
+        
 		linkSetIter = new MinCombinationsIterator<MObject>(fObjectLists.get(0), fObjectLists.get(1), unique);
         MSystemState state = conf.systemState();
         MSystem system = state.system();
@@ -418,7 +428,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
         		statements.appendStatement(new MLinkInsertionStatement(fInstr.association(), new MObject[]{elem.first, elem.second}, Collections.<List<Value>>emptyList()));
         	}
         	
-        	if (collector.doBasicPrinting())
+        	if (collector.doBasicPrinting() && !statements.isEmpty())
                 basicOutput.println(statements.getShellCommand());
         	
         	try {	

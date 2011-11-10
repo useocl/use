@@ -65,7 +65,11 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+		
         fCaller = caller;
         fIterator = fInstr.linkEnds().listIterator();
         fObjectNames = new ArrayList<String>();

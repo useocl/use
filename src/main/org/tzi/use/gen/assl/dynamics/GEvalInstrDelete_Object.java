@@ -54,7 +54,11 @@ public class GEvalInstrDelete_Object extends GEvalInstruction
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+		
         fCaller = caller;
         fInstr.objectInstr().createEvalInstr().eval(conf,this,collector );
     }
@@ -96,7 +100,8 @@ public class GEvalInstrDelete_Object extends GEvalInstruction
 			collector.subsequentlyPrependStatement(statement);
 		}
 		
-		basicOutput.println("undo: " + statement.getShellCommand());
+		if (collector.doBasicPrinting())
+			basicOutput.println("undo: " + statement.getShellCommand());
 		
 		try {
 			system.evaluateStatement(inverseStatement, true, false, false);

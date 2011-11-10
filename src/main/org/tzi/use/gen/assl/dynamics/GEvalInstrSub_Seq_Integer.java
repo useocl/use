@@ -54,7 +54,12 @@ public class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCal
                      IGCollector collector) throws GEvaluationException {
         fSequence = null;
         wantedSize = 0;
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
+        
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+        
         fCaller = caller;
         fInstr.sequenceInstr().createEvalInstr().eval(conf,this,collector );
     }
@@ -106,8 +111,11 @@ public class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCal
             }
             
             Value subVal = new SequenceValue(fSequence.elemType(), values);
-            collector.detailPrintWriter().println(
-                                                  "`"+ fInstr + "' == " +subVal );
+            
+			if (collector.doDetailPrinting())
+				collector.detailPrintWriter().println(
+						"`" + fInstr + "' == " + subVal);
+			
             fCaller.feedback( conf, subVal, collector );
         }
     }

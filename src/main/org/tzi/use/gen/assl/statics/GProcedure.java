@@ -124,7 +124,6 @@ public class GProcedure {
 		
 		for (GFlaggedInvariant inv : gModel.flaggedInvariants()) {
 			if (!inv.disabled()) {
-				
 				invCoverage.put(inv, invCalc.calcualteCoverage(inv.getFlaggedExpression()));
 			}
 		}
@@ -144,6 +143,7 @@ public class GProcedure {
 					blockedInvs.add(invData.getKey());
 					collector.addCalculatedBarrier();
 					instrList.add(index, bInstr);
+					inv.setCheckedByBarrier(true);
 					++index;
 					
 					if (collector.doBasicPrinting()) {

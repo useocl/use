@@ -69,7 +69,11 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
         
-    	collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+		
         fCaller = caller;
         
         fIterator = fInstr.getLinkedObjects().listIterator();

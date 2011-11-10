@@ -174,13 +174,19 @@ public abstract class MStatement {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns the shell command for the statement prefixed by
+	 * the shell prefix {@link #SHELL_PREFIX}.
+	 * @return The textual form of this statement for the USE shell.
 	 */
 	public final String getShellCommand() {
 		return SHELL_PREFIX + shellCommand();
 	}
 	
+	/**
+	 * Returns the shell command of this statement without the shell prefix. 
+	 * @return The command text of this statement.
+	 */
+	protected abstract String shellCommand();
 	
 	/**
 	 * TODO
@@ -199,8 +205,11 @@ public abstract class MStatement {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns true if this statement can used inside an
+	 * OCL expression. This depends on the setting of the
+	 * option  {@link Options#soilFromOCL} which can 
+	 * be configured by a program argument.
+	 * @return <code>true</code> if the statement is callable from an OCL expression with the current setting.
 	 */
 	public boolean isCallableInOCL() {
 		switch (Options.soilFromOCL) {
@@ -215,14 +224,6 @@ public abstract class MStatement {
 	@Override
 	public abstract String toString();
 
-
-	/**
-	 * TODO
-	 * @return
-	 */
-	protected abstract String shellCommand();
-
-	
 	/**
 	 * TODO
 	 * @param indent

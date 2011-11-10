@@ -47,7 +47,12 @@ public class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
+    	
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+		
         fCaller = caller;
         fInstr.sequenceInstr().createEvalInstr().eval(conf,this,collector );
     }
@@ -68,8 +73,11 @@ public class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
             }
             
             Value subVal = new SequenceValue(seq.elemType(), values);
-            collector.detailPrintWriter().println(
-                                                  "`"+ fInstr + "' == " +subVal );
+            
+			if (collector.doDetailPrinting())
+				collector.detailPrintWriter().println(
+						"`" + fInstr + "' == " + subVal);
+			
             fCaller.feedback( conf, subVal, collector );
         }
     }

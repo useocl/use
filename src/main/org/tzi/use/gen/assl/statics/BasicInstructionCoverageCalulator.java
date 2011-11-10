@@ -24,6 +24,7 @@ package org.tzi.use.gen.assl.statics;
 import java.util.List;
 
 import org.tzi.use.analysis.coverage.BasicCoverageData;
+import org.tzi.use.uml.mm.MClass;
 
 /**
  * Calculates the coverage informations about a 
@@ -82,7 +83,7 @@ public class BasicInstructionCoverageCalulator implements InstructionVisitor {
 	 */
 	@Override
 	public void visitInstrCreate_C(GInstrCreate_C gInstrCreate_C) {
-		coverage.getCoveredClasses().add(gInstrCreate_C.cls());		
+		addClassCoverage(gInstrCreate_C.cls());
 	}
 
 	/* (non-Javadoc)
@@ -92,7 +93,7 @@ public class BasicInstructionCoverageCalulator implements InstructionVisitor {
 	public void visitInstrCreateN_C_Integer(
 			GInstrCreateN_C_Integer gInstrCreateN_C_Integer) {
 		gInstrCreateN_C_Integer.integerInstr().processWithVisitor(this);
-		coverage.getCoveredClasses().add(gInstrCreateN_C_Integer.cls());
+		addClassCoverage(gInstrCreateN_C_Integer.cls());
 	}
 
 	/* (non-Javadoc)
@@ -224,7 +225,17 @@ public class BasicInstructionCoverageCalulator implements InstructionVisitor {
 			instr.processWithVisitor(this);
 		}
 		this.coverage.getCoveredAssociations().add(gInstrCreate_AC.getAssociationClass());
-		this.coverage.getCoveredClasses().add(gInstrCreate_AC.getAssociationClass());
+		addClassCoverage(gInstrCreate_AC.getAssociationClass());
+	}
+
+	/**
+	 * @param gInstrCreate_AC
+	 */
+	private void addClassCoverage(MClass cls) {
+		this.coverage.getCoveredClasses().add(cls);
+		for (MClass parent : cls.allParents()) {
+			this.coverage.getCoveredClasses().add(parent);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -249,7 +260,7 @@ public class BasicInstructionCoverageCalulator implements InstructionVisitor {
 		}
 		
 		this.coverage.getCoveredAssociations().add(gInstrTry_AssocClass_LinkendSeqs.getAssociationClass());
-		this.coverage.getCoveredClasses().add(gInstrTry_AssocClass_LinkendSeqs.getAssociationClass());
+		addClassCoverage(gInstrTry_AssocClass_LinkendSeqs.getAssociationClass());
 		
 	}
 

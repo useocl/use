@@ -58,6 +58,8 @@ public class GGeneratorArguments {
     
     private boolean fCheckStructure = true;
     
+    private boolean useRandomTry = false;
+    
     /**
      * If true, the generator checks directly after
      * a try call if multiplicity is violated.  
@@ -444,5 +446,18 @@ public class GGeneratorArguments {
         }
 
 		return args;
+	}
+
+	/**
+	 * If <code>true</code>, the source collections
+	 * of a try are permuted before the evaluation.
+	 * @return
+	 */
+	public boolean useRandomTry() {
+		return useRandomTry;
+	}
+	
+	public void setRandomTry(boolean useRandom) {
+		this.useRandomTry = useRandom;
 	}
 }

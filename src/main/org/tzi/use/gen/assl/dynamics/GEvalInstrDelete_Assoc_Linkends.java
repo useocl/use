@@ -64,7 +64,11 @@ public class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+		
         fCaller = caller;
         fIterator = fInstr.linkEnds().listIterator();
         fObjectNames = new ArrayList<String>();
@@ -102,7 +106,6 @@ public class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
         MSystemState state = conf.systemState();
         MSystem system = state.system();
         PrintWriter basicOutput = collector.basicPrintWriter();
-        //PrintWriter detailOutput = collector.detailPrintWriter();
         
         MAssociation association = fInstr.association();
         List<MRValue> participants = 
@@ -132,9 +135,7 @@ public class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
 			collector.invalid(e);
 			return;
 		}
-		
-		//detailOutput.println("`" + fInstr + "' == (no value)");
-		
+				
 		fCaller.feedback(conf, null, collector);
         if (collector.expectSubsequentReporting()) {
         	collector.subsequentlyPrependStatement(statement);

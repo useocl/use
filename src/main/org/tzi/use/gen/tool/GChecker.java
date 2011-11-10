@@ -223,7 +223,7 @@ public class GChecker implements IGChecker {
                 
         for (int k = 0; k < fSize && result; k++) {
             GInvariantStatistic stat = fInvariantStatistics[k];
-            if (!stat.flaggedInvariant().disabled()) {
+            if (!stat.flaggedInvariant().disabled() && !stat.flaggedInvariant().isCheckedByBarrier() ) {
             	
             	try {
             		start = System.nanoTime();

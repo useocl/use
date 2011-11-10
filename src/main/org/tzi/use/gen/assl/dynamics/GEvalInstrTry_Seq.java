@@ -45,8 +45,12 @@ public class GEvalInstrTry_Seq extends GEvalInstrTry implements IGCaller {
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
-        fCaller = caller;
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+        
+		fCaller = caller;
         fInstr.sequenceInstr().createEvalInstr().eval( conf, this, collector );
     }
 
@@ -65,7 +69,9 @@ public class GEvalInstrTry_Seq extends GEvalInstrTry implements IGCaller {
                 	break;
                 }
             	++element;
-                collector.detailPrintWriter().println("`"+ fInstr + "' == "+elem);
+				if (collector.doDetailPrinting())
+					collector.detailPrintWriter().println(
+							"`" + fInstr + "' == " + elem);
                 
                 this.outPutProgress(element);
                 

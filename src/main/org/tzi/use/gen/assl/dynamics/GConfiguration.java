@@ -67,7 +67,7 @@ public class GConfiguration {
         return fRandom;
     }
 
-    public GGeneratorArguments getConfig() {
+    public GGeneratorArguments getArguments() {
     	return fConfig;
     }
     

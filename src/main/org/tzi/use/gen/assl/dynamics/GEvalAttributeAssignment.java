@@ -60,8 +60,12 @@ public class GEvalAttributeAssignment extends GEvalInstruction
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
 
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
-        fCaller = caller;
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+        
+		fCaller = caller;
         fObjectName = null;
         
         fInstr.targetObjectInstr().createEvalInstr().eval( conf, this, collector );

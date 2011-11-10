@@ -81,7 +81,11 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fInstr).append("'").toString());
+		if (collector.doDetailPrinting())
+			collector.detailPrintWriter().println(
+					new StringBuilder("evaluating `").append(fInstr)
+							.append("'").toString());
+		
         fCaller = caller;
         fIterator = fInstr.linkendSequences().listIterator();
         fObjectLists = new ArrayList<List<MObject>>();
@@ -122,7 +126,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
             fIterator.previous();
         }
         else {
-            if (conf.getConfig().checkStructure() && conf.getConfig().useMinCombinations() &&
+            if (conf.getArguments().checkStructure() && conf.getArguments().useMinCombinations() &&
             	fInstr.getAssociationClass().associationEnds().size() == 2 &&
             	( !fInstr.getAssociationClass().associationEnds().get(0).isCollection() || 
             	  !fInstr.getAssociationClass().associationEnds().get(1).isCollection()	)	)
@@ -237,7 +241,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
 				throw new GEvaluationException(e);
 			}
 			
-        	if (conf.getConfig().useTryCuts() && conf.getConfig().checkStructure()) {
+        	if (conf.getArguments().useTryCuts() && conf.getArguments().checkStructure()) {
         		continueEvaluation = system.state().checkStructure(fInstr.getAssociationClass(), NullPrintWriter.getInstance(), false);
         		if (!continueEvaluation) {
         			++numCut;
@@ -390,6 +394,11 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         	unique = UniqueList.FIRST_IS_UNIQUE;
         } else {
         	unique = UniqueList.SECOND_IS_UNIQUE;
+        }
+        
+        if (conf.getArguments().useRandomTry()) {
+        	Collections.shuffle(fObjectLists.get(0), conf.random());
+        	Collections.shuffle(fObjectLists.get(1), conf.random());
         }
         
 		linkSetIter = new MinCombinationsIterator<MObject>(fObjectLists.get(0), fObjectLists.get(1), unique);

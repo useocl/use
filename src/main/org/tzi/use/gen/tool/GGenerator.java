@@ -298,12 +298,12 @@ public class GGenerator {
                     if (fConfig.doPrintDetails())
                         collector.setDetailPrintWriter(pw);
 
-                    GChecker checker = new GChecker(fGModel, fConfig);
-                    Log.verbose(proc.toString() + " started...");
-                    
                     if (fConfig.isCalculateBarriers()) {
                     	proc.calculateBarriers(collector, fGModel);
                     }
+                    
+                    GChecker checker = new GChecker(fGModel, fConfig);
+                    Log.verbose(proc.toString() + " started...");
                     
                     try {
                         GEvalProcedure evalproc = new GEvalProcedure( proc );
