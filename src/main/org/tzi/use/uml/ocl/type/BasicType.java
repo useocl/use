@@ -30,7 +30,7 @@ package org.tzi.use.uml.ocl.type;
  */
 public abstract class BasicType extends Type {
 
-    private String fTypename;
+    private final String fTypename;
 
     protected BasicType(String t) {
         fTypename = t;
