@@ -105,9 +105,9 @@ public class GFlaggedInvariant implements Cloneable {
     }    
 
     public String toString() {
-        return fClassInvariant.toString() + " "
-            + (fNegated?"(negated)":"")
-            + (fDisabled?"(disabled)":"");
+        return fClassInvariant.toString()
+            + (fNegated  ? " (negated)"  : "")
+            + (fDisabled ? " (disabled)" : "");
     }
 
     public MClassInvariant classInvariant() {

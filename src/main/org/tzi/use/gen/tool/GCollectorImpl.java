@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.gen.assl.dynamics.IGCollector;
+import org.tzi.use.gen.assl.statics.GInstrBarrier;
+import org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullPrintWriter;
 
@@ -78,6 +80,8 @@ public class GCollectorImpl implements IGCollector {
     private final boolean doDetailPrinting;
     
     private boolean isBlocked = false;
+    
+    private List<GInstrBarrier> barriers = new ArrayList<GInstrBarrier>();
     
     public GCollectorImpl(boolean doBasicPrinting, boolean doDetailPrinting) {
         fValidStateFound = false;
@@ -247,7 +251,7 @@ public class GCollectorImpl implements IGCollector {
 	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#addBarrierHit()
 	 */
 	@Override
-	public void addBarrierHit() {
+	public void addBarrierBlock() {
 		++this.barrierHitCount;
 	}
 
@@ -260,18 +264,31 @@ public class GCollectorImpl implements IGCollector {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#addCalculatedBarrier()
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#addBarrier(GInstrCalculatedBarrier)
 	 */
 	@Override
-	public void addCalculatedBarrier() {
-		++calculatedBarriers;		
+	public void addBarrier(GInstrCalculatedBarrier barrier) {
+		++calculatedBarriers;
+		barriers.add(barrier);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCollector#addBarrier(GInstrBarrier)
+	 */
+	@Override
+	public void addBarrier(GInstrBarrier barrier) {
+		barriers.add(barrier);
+	}
+	
 	/**
 	 * @return the calculatedBarriers
 	 */
-	public int getCalculatedBarriers() {
+	public int getNumCalculatedBarriers() {
 		return calculatedBarriers;
+	}
+	
+	public List<GInstrBarrier> getBarriers() {
+		return this.barriers;
 	}
 }
 

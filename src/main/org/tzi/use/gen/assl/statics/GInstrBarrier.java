@@ -23,6 +23,7 @@ package org.tzi.use.gen.assl.statics;
 
 import org.tzi.use.gen.assl.dynamics.GEvalBarrier;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+import org.tzi.use.gen.tool.statistics.GStatistic;
 import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
@@ -32,10 +33,13 @@ import org.tzi.use.uml.ocl.expr.Expression;
  */
 public class GInstrBarrier implements GInstruction {
 
-	private Expression barrierExpression;
+	private final Expression barrierExpression;
+	
+	private final GStatistic barrierStatistic;
 	
 	public GInstrBarrier(Expression barrierExp) {
 		this.barrierExpression = barrierExp;
+		this.barrierStatistic = new GStatistic(this);
 	}
 
 	/* (non-Javadoc)
@@ -59,13 +63,22 @@ public class GInstrBarrier implements GInstruction {
 	 */
 	@Override
 	public String toString() {
-		return "barrier " + barrierExpression.toString();
+		return "Barrier([" + barrierExpression.toString() + "])";
 	}
 
 	/**
+	 * Returns the expression evaluated by this barrier
 	 * @return
 	 */
 	public Expression getExpression() {
 		return barrierExpression;
+	}
+	
+	/**
+	 * Returns the statistic information about his barrier.
+	 * @return
+	 */
+	public GStatistic getStatistic() {
+		return this.barrierStatistic;
 	}
 }

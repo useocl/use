@@ -62,13 +62,17 @@ public class GEvalProcedure implements IGCaller {
             String varName = parDecl.name();
             Value value = valuesIt.next();
             varBindings.push(varName, value);
-            collector.detailPrintWriter().println( varName + ":=" + value );
+            
+            if (collector.doDetailPrinting())
+            	collector.detailPrintWriter().println( varName + ":=" + value );
         }
         
         for (VarDecl localDecl : fProcedure.localDecls()) {
             Value value = UndefinedValue.instance;
             varBindings.push(localDecl.name(), value);
-            collector.detailPrintWriter().println(localDecl.name() + ":=" + value);
+            
+            if (collector.doDetailPrinting())
+            	collector.detailPrintWriter().println(localDecl.name() + ":=" + value);
         }
         
 		GConfiguration conf = new GConfiguration(state, varBindings, cfg);

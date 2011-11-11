@@ -46,20 +46,30 @@ public class GEvalBarrier extends GEvalInstruction implements IGCaller {
 	public void eval(GConfiguration conf, IGCaller caller, IGCollector collector)
 			throws GEvaluationException {
 		collector.detailPrintWriter().println(new StringBuilder("evaluating barrier `").append(instr).append("'").toString());
-        try { 
+        long start = System.nanoTime();
+        
+		try {
             Value val = conf.evalExpression(instr.getExpression());
             
 			if (collector.doDetailPrinting())
 				collector.detailPrintWriter().println(
 						"`" + instr + "' == " + val);
             
-            if (val.equals(BooleanValue.FALSE)) {
-            	collector.addBarrierHit();
+			boolean valid = false;
+			if (val.isDefined()) {
+				valid = val.equals(BooleanValue.TRUE); 
+			}
+			
+			if (!valid) {
+            	collector.addBarrierBlock();
             	collector.setBlocked(true);
             }
+            instr.getStatistic().registerResult(valid, System.nanoTime() - start);
+            
             caller.feedback( conf, val, collector );
         } catch (MultiplicityViolationException e) {
-            collector.invalid(e.getMessage());
+            instr.getStatistic().registerException();
+        	collector.invalid(e.getMessage());
         }
 	}
 

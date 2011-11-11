@@ -39,6 +39,7 @@ import java.util.TreeSet;
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.assl.dynamics.GEvalProcedure;
 import org.tzi.use.gen.assl.dynamics.GEvaluationException;
+import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.model.GFlaggedInvariant;
 import org.tzi.use.gen.model.GModel;
@@ -475,7 +476,7 @@ public class GGenerator {
         	pw.println(String.format("Ignored at least %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
         
         if (fConfig.isCalculateBarriers())
-        	pw.println(String.format("Added %,d barriers.", lastResult().collector().getCalculatedBarriers()));
+        	pw.println(String.format("Added %,d barriers.", lastResult().collector().getNumCalculatedBarriers()));
         
         pw.println(String.format("Barriers blocked %,d times.", lastResult().collector().getBarriersHit()));
         
@@ -497,6 +498,16 @@ public class GGenerator {
     public void printResultStatistics() throws GNoResultException {
         PrintWriter pw = new PrintWriter(System.out);
         lastResult().checker().printStatistics(pw, lastResult().collector().numberOfCheckedStates());
+        
+        if (lastResult().collector().getBarriers().size() > 0) {
+        	pw.println();
+        	pw.println("Barrier statistics (barriers marked with * were calculated):");
+        	pw.println("        checks          valid        invalid     mul. viol.      time (ms)  Barrier");
+        	for (GInstrBarrier barrier : lastResult().collector().getBarriers()) {
+        		pw.println(barrier.getStatistic().toStringForStatistics());
+        	}
+        }
+        
         // PrePostCondition check output
         if (collector.getPrePostViolation()) {
         	pw.println("PrePostCondition violation occured");

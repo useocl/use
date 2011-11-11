@@ -31,6 +31,8 @@ package org.tzi.use.gen.assl.dynamics;
 
 import java.io.PrintWriter;
 
+import org.tzi.use.gen.assl.statics.GInstrBarrier;
+import org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier;
 import org.tzi.use.uml.sys.soil.MStatement;
 
 public interface IGCollector {
@@ -98,7 +100,7 @@ public interface IGCollector {
 	/**
 	 * Adds one to the number of "hit" barriers.
 	 */
-	public void addBarrierHit();
+	public void addBarrierBlock();
 	
 	/**
 	 * Returns the number of barriers hit.
@@ -107,7 +109,15 @@ public interface IGCollector {
 	public long getBarriersHit();
 
 	/**
-	 * Increments the counter for automatically calculated barriers.
+	 * Add the barrier statement to the list of barriers.
+	 * @param bInstr 
 	 */
-	public void addCalculatedBarrier();
+	public void addBarrier(GInstrBarrier bInstr);
+	
+	/**
+	 * Add the calculated barrier statement to the list of barriers and
+	 * increments the counter for calculated barriers by one.
+	 * @param bInstr 
+	 */
+	public void addBarrier(GInstrCalculatedBarrier bInstr);
 }

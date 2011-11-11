@@ -139,9 +139,9 @@ public class GProcedure {
 			for (Map.Entry<GFlaggedInvariant, BasicCoverageData> invData : invCoverage.entrySet()) {
 				GFlaggedInvariant inv = invData.getKey();
 				if (instrCoverage.disjoint(invData.getValue())) {
-					GInstrBarrier bInstr = new GInstrBarrier(invData.getKey().getFlaggedExpression());
-					blockedInvs.add(invData.getKey());
-					collector.addCalculatedBarrier();
+					GInstrCalculatedBarrier bInstr = new GInstrCalculatedBarrier(inv);
+					blockedInvs.add(inv);
+					collector.addBarrier(bInstr);
 					instrList.add(index, bInstr);
 					inv.setCheckedByBarrier(true);
 					++index;
