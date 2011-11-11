@@ -4,6 +4,7 @@ gen result
 *Checked 31,675 snapshots.
 *Made 0 try cuts.
 *Ignored at least 0 useless link combinations.
+*Added 1 barriers.
 *Barriers blocked 0 times.
 *Result: Valid state found.
 *Commands to produce the valid state:

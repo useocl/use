@@ -320,12 +320,12 @@ public class VariableEnvironment {
 	 * @return the constructed symbol table
 	 */
 	public SymbolTable constructSymbolTable() {
-		SymbolTable result = new SymbolTable();
+		SymbolTable result;
 		
 		if (fObjectVisibility.peek()) {
-			for (MObject obj : fSystemState.allObjects()) {
-				result.setType(obj.name(), obj.type());
-			}
+			result = new SymbolTable(fSystemState);
+		} else {
+			result = new SymbolTable();
 		}
 		
 		for (Entry<String, Value> entry : fCurrentFrame.entrySet()) {

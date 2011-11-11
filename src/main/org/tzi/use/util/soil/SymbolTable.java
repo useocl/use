@@ -31,6 +31,8 @@ import java.util.Set;
 
 import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemState;
 
 
 /**
@@ -95,6 +97,7 @@ public class SymbolTable {
 	private Deque<Map<String, Entry>> fStates = 
 		new ArrayDeque<Map<String, Entry>>();
 	
+	private MSystemState fVisibleState ;
 	
 	/**
 	 * constructs an empty symbol table
@@ -104,6 +107,14 @@ public class SymbolTable {
 		fEntries = fStates.peek();
 	}
 	
+	/**
+	 * constructs an empty symbol table with the visible
+	 * objects from state
+	 */
+	public SymbolTable(MSystemState visibleState) {
+		this();
+		fVisibleState = visibleState;
+	}
 	
 	/**
 	 * construct a symbol table from a {@code VariableEnvironment}
@@ -185,7 +196,25 @@ public class SymbolTable {
 		fEntries.put(name, new Entry(type));
 	}
 	
-	
+	/**
+	 * Returns an entry by looking into the
+	 * entries constructed by adding elements
+	 * to the SymTable or if nothing found by
+	 * looking into the objects of the system sate. 
+	 * @param name
+	 * @return An entry for <code>name</code> or <code>null</code>.
+	 */
+	private Entry getEntry(String name) {
+		Entry entry = fEntries.get(name);
+		
+		if (entry == null && fVisibleState != null) {
+			MObject obj = fVisibleState.objectByName(name);
+			if (obj != null)
+				return new Entry(obj.type());
+		}
+		
+		return entry;
+	}
 	/**
 	 * returns true if this contains a variable with the specified name
 	 * 
@@ -193,7 +222,7 @@ public class SymbolTable {
 	 * @return true if this contains a variable with the specified name
 	 */
 	public boolean contains(String name) {
-		return fEntries.keySet().contains(name);
+		return getEntry(name) != null;
 	}
 	
 	
@@ -204,7 +233,7 @@ public class SymbolTable {
 	 * @return true if the dirty bit for the specified variable is set
 	 */
 	public boolean isDirty(String name) {
-		Entry entry = fEntries.get(name);
+		Entry entry = getEntry(name);
 		
 		if (entry != null) {
 			return entry.isDirty;
@@ -223,7 +252,7 @@ public class SymbolTable {
 	 *         or the variable is not flagged as dirty
 	 */
 	public ASTStatement getCause(String name) {
-		Entry entry = fEntries.get(name);
+		Entry entry = getEntry(name);
 		
 		if ((entry != null) && (entry.isDirty)) {
 			return entry.cause;
@@ -240,12 +269,11 @@ public class SymbolTable {
 	 * @return the variable's type or {@code null} if there is no such variable
 	 */
 	public Type getType(String name) {
-		Entry entry = fEntries.get(name);
+		Entry entry = getEntry(name);
 		
 		if (entry != null) {
 			return entry.type;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}

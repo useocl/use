@@ -2,6 +2,7 @@ gen start -r 6589 -t -dc -ac t054.assl createState(1, 1)
 gen result
 *Random number generator was initialized with 6589.
 *Checked 253,973 snapshots.
+*Added 1 barriers.
 *Barriers blocked 0 times.
 *Result: Valid state found.
 *Commands to produce the valid state:

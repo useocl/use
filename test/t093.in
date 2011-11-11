@@ -3,6 +3,7 @@ gen start -t -r 6436 -dc -ac t093.assl tryWorld(3)
 gen result
 *Random number generator was initialized with 6436.
 *Checked 13 snapshots.
+*Added 0 barriers.
 *Barriers blocked 0 times.
 *Result: Valid state found.
 *Commands to produce the valid state:
