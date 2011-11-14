@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
  * A QualifierNode represents the rectangle placed at the
  * end of an association with qualifiers.
  * It is placed around the classifier node.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class QualifierNode extends NodeBase {

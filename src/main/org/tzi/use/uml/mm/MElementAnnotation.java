@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * Saves information about annotations of
  * model elements as attribute value pairs.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class MElementAnnotation {

@@ -23,7 +23,7 @@ package org.tzi.use.gui.views.diagrams.waypoints;
 
 /**
  * Different types of way points.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public enum WayPointType {

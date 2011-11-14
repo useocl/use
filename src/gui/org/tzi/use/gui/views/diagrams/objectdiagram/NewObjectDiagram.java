@@ -117,7 +117,7 @@ public class NewObjectDiagram extends DiagramView
      * moved between the fields {@link NewObjectDiagram#visibleData} and
      * {@link NewObjectDiagram#hiddenData}. 
      * 
-     * @author lhamann
+     * @author Lars Hamann
      */
 	public static class ObjectDiagramData implements DiagramData {
 		/**

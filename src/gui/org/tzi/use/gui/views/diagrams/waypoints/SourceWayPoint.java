@@ -27,7 +27,7 @@ import org.tzi.use.gui.views.diagrams.NodeBase;
 
 /**
  * Way point attached to the source node
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class SourceWayPoint extends AttachedWayPoint {

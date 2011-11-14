@@ -32,7 +32,7 @@ import org.tzi.use.uml.mm.MPrePostCondition;
 /**
  * This class provides operations to analyze 
  * the model coverage of OCl expressions.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class CoverageAnalyzer {

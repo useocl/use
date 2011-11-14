@@ -23,7 +23,7 @@ package org.tzi.use.gen.assl.statics;
 
 /**
  * Visitor interface for generator instructions
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public interface InstructionVisitor {

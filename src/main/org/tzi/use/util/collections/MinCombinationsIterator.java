@@ -33,7 +33,7 @@ import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 
 /**
  * TODO
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {

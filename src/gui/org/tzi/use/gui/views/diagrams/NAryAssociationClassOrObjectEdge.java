@@ -32,7 +32,7 @@ import org.tzi.use.uml.mm.MAssociation;
 /**
  * Represents the dashed line between an association class or link object
  * and the diamond node of an n-ary association.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class NAryAssociationClassOrObjectEdge extends EdgeBase {

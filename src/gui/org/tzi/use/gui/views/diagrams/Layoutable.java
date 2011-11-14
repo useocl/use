@@ -26,7 +26,7 @@ import java.awt.geom.Point2D;
 /**
  * The layouts of use can automatically
  * position objects of that type.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public interface Layoutable {

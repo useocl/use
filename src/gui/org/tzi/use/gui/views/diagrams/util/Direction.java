@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * Enum to define directions.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public enum Direction {

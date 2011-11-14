@@ -15,7 +15,7 @@ import org.tzi.use.util.collections.MultiMap;
 /**
  * Base class for standard operations on Dates.
  * 
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 abstract class StandardOperationsDate extends OpGeneric {
@@ -32,7 +32,7 @@ abstract class StandardOperationsDate extends OpGeneric {
 /**
  * Baseclass for Operations
  * Date x Date -> Boolean
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 abstract class ExpStdOpDate_Date_Bool extends StandardOperationsDate

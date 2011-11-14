@@ -32,7 +32,7 @@ import org.tzi.use.uml.mm.MClassifier;
 /**
  * Base class for nodes representing a classifier (class or enumeration)
  * 
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public abstract class ClassifierNode extends NodeBase {

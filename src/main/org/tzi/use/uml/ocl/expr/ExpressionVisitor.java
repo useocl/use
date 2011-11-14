@@ -23,7 +23,7 @@ package org.tzi.use.uml.ocl.expr;
 
 /**
  * Visitor interface for expressions
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public interface ExpressionVisitor {

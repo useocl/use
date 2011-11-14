@@ -23,7 +23,7 @@ package org.tzi.use.util;
 
 /**
  * Some math utility functions
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class MathUtil {

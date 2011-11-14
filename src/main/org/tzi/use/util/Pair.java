@@ -23,7 +23,7 @@ package org.tzi.use.util;
 
 /**
  * TODO
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class Pair<T> {

@@ -30,7 +30,7 @@ import org.tzi.use.uml.mm.MElementAnnotation;
 
 /**
  * AST node representing an annotation
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class ASTAnnotation extends AST {

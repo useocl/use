@@ -24,7 +24,7 @@ package org.tzi.use.uml.mm;
 /**
  * Interface representing the NamedElement class
  * of the UML meta model.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public interface MNamedElement {

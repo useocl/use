@@ -29,7 +29,7 @@ import org.tzi.use.uml.mm.MNavigableElement;
 
 /**
  * TODO
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class CoverageCalculationVisitor extends AbstractCoverageVisitor {

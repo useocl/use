@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 
 /**
  * Tests the enumeration Direction
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class DirectionTest extends TestCase {

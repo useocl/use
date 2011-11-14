@@ -29,7 +29,7 @@ import org.tzi.use.uml.mm.Annotatable;
 
 /**
  * AST node with possible annotations
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public abstract class ASTAnnotatable extends AST {

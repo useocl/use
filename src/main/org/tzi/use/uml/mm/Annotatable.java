@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * Interface for annotatable elements
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public interface Annotatable {

@@ -33,7 +33,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Provides easy to use XML methods
- * @author lhamann
+ * @author Lars Hamann
  */
 public class PersistHelper {
 	

@@ -26,7 +26,7 @@ package org.tzi.use.uml.mm;
  * the UML meta model.
  * 
  * TODO: UML meta model defines generalization etc. on classifier 
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public interface MClassifier extends MNamedElement {

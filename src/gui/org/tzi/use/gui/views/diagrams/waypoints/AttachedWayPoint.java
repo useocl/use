@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 
 /**
  * A way point attached to a node
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public abstract class AttachedWayPoint extends WayPoint {

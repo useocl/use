@@ -25,7 +25,7 @@ import java.util.EventListener;
 
 /**
  * Interface for listeners for diagram options changes 
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public interface DiagramOptionChangedListener extends EventListener {

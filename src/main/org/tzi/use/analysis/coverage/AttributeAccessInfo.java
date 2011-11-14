@@ -30,7 +30,7 @@ import org.tzi.use.uml.mm.MClass;
  * saves the source class of the object expression, e. g., 
  * for an access to the name of an professor
  * the class Professor is saved instead of the attribute owner Person 
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class AttributeAccessInfo implements Comparable<AttributeAccessInfo> {

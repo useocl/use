@@ -35,7 +35,7 @@ import org.tzi.use.uml.mm.MModelElement;
 
 /**
  * Container class for coverage data.
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class CoverageData {

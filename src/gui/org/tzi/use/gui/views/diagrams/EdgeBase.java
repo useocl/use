@@ -663,7 +663,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<NodeBase> implements Sel
      * the correct source objects when two edges between two nodes save source and
      * target the other way round.
      * 
-     * @author lhamann
+     * @author Lars Hamann
      *
      */
     private class AlignedObjects {
