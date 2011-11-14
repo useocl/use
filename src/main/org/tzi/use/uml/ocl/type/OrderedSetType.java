@@ -21,7 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * The OCL Sequence type.
@@ -97,23 +99,25 @@ public final class OrderedSetType extends CollectionType {
         return false;
     }
 
-    /* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.type.CollectionType#initOrderedSuperTypes(java.util.List)
-	 */
     /** 
-     * If this collection has type OrderedSet(T) 
-     * all types OrderedSet(T') and Collection(T') where T' <= T are added.
+     * Returns the set of all supertypes (including this type).  If
+     * this collection has type Sequence(T) the result is the set of
+     * all types Sequence(T') and Collection(T') where T' <= T.
      */
-	@Override
-	protected void getOrderedSuperTypes(List<Type> allSupertypes) {	
-        for (Type t : elemType().allSupertypesOrdered()) {
-        	allSupertypes.add(TypeFactory.mkOrderedSet(t));
-        }
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
+        res.addAll(super.allSupertypes());
+        Set<Type> elemSuper = elemType().allSupertypes();
+        Iterator<Type> typeIter = elemSuper.iterator();
         
-		super.getOrderedSuperTypes(allSupertypes);
-	}
+        while (typeIter.hasNext() ) {
+            Type t = typeIter.next();
+            res.add(TypeFactory.mkOrderedSet(t));
+        }
+        return res;
+    }
 
-	@Override
+    @Override
     public StringBuilder toString(StringBuilder sb) {
         sb.append("OrderedSet(");
         elemType().toString(sb);

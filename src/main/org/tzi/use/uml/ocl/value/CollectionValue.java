@@ -59,7 +59,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public final void setElemType( Type t ) {
         fElemType = t;
-        doSetType();
+        doSetElemType();
     }
     
     /**
@@ -68,7 +68,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
      * sets the element type.
      * So implementors are guaranteed to be able to use <code>fElemtType</code>.   
      */
-    protected abstract void doSetType();
+    protected abstract void doSetElemType();
     
     public abstract Iterator<Value> iterator();
     public abstract int size();
@@ -109,7 +109,10 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     /**
      * Returns the value for the type parameter of this collection.
      */
-	protected Type inferElementType() throws ExpInvalidException {
+    protected Type inferElementType() 
+        throws ExpInvalidException
+    {
+
         if (collection().size() == 0) {
             return fElemType;
         }
@@ -123,49 +126,26 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
         
         // Two or more values
-        List<Type> commonSuperTypes = values[0].type().allSupertypesOrdered();
-        Type lastCommonSupertype = commonSuperTypes.get(0);
-    	Type t;
+        Type lastCommonSupertype = values[0].type();
+        Type commonSuperType = values[0].type();
+    	Type t2;
     	
     	for (int i = 1; i < values.length; ++i) {
-    		t = values[i].type();
+    		t2 = values[i].type();
+    		commonSuperType = commonSuperType.getLeastCommonSupertype(t2);
     		
-    		if (lastCommonSupertype.isVoidType()) {
-    			commonSuperTypes = t.allSupertypesOrdered();
-    		} else if (!t.isVoidType()) {
-    			commonSuperTypes.retainAll(t.allSupertypesOrdered());
-    		}
-    		
-    		if (commonSuperTypes.isEmpty()) {
+    		if (commonSuperType == null) {
     			throw new ExpInvalidException("Type mismatch, " + this.type().toString() + " element " + 
-                        (i + 1) + " (" + values[i].type().toString() + ")" +
+                        (i + 1) + " (" + t2.toString() + ")" +
                         " does not have a common supertype " + 
-                        "with previous elements (" + lastCommonSupertype.toString() + ").");	
-    		}
-    		
-    		lastCommonSupertype = commonSuperTypes.get(0);
+                        "with previous elements (" + lastCommonSupertype.toString() + ").");
     	}
     	
-    	Type resultType = null;
-    	boolean relatedToAll;
+    		lastCommonSupertype = commonSuperType;
+    	}
     	
-		for (int i = 0; i < commonSuperTypes.size(); ++i) {
-			resultType = commonSuperTypes.get(i);
-			relatedToAll = true;
-			
-			for (Type otherTypes  : commonSuperTypes) {
-				if (!resultType.equals(otherTypes)
-						&& !(otherTypes.isSubtypeOf(resultType) || resultType
-								.isSubtypeOf(otherTypes))) {
-					relatedToAll = false;
-					break;
-				}
-			}
-			
-			if (relatedToAll) break;
-		}
-		
-        return resultType;
+        // FIXME: deal with other cases: t1 < t, t2 < t, t1 and t2 unrelated.
+        return commonSuperType;
     }
 
     

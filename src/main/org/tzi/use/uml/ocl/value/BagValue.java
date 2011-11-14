@@ -100,7 +100,7 @@ public class BagValue extends CollectionValue {
     }
     
     @Override
-    public void doSetType() {
+    public void doSetElemType() {
         setType( TypeFactory.mkBag(fElemType));
     }
     
@@ -297,23 +297,24 @@ public class BagValue extends CollectionValue {
     }
 
     void add(Value v) {
-    	boolean needToDeriveRuntimeType = !v.type().equals(this.elemType());
-        
+        boolean needToDeriveRuntimeType = true;
+        // performance optimization
+        for (Iterator<Value> it = fElements.iterator(); it.hasNext();) {
+            Value val = it.next();
+            if (val.type().equals(v.type())) {
+                needToDeriveRuntimeType = false;
+                break;
+            }
+        }
         fElements.add(v);
-        
         if (needToDeriveRuntimeType) {
         	deriveRuntimeType();
         }
     }
 
     void add(Value v, int i) {
-    	boolean needToDeriveRuntimeType = !v.type().equals(this.elemType());
-    	
         fElements.add(v, i);
-        
-        if (needToDeriveRuntimeType) {
-        	deriveRuntimeType();
-        }
+        deriveRuntimeType();
     }
 
     void removeAll(Value v) {

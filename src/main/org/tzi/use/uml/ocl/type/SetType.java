@@ -21,7 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * The OCL Set type.
@@ -36,39 +38,33 @@ public final class SetType extends CollectionType {
         super(elemType);
     }
 
-    @Override
-	public String shortName() {
+    public String shortName() {
         if (elemType().isCollection(true) )
             return "Set(...)";
         else 
             return "Set(" + elemType() + ")";
     }
 
-    @Override
-	public boolean isTrueCollection() {
+    public boolean isTrueCollection() {
     	return false;
     }
     
-    @Override
-	public boolean isSet() {
+    public boolean isSet() {
     	return true;
     }
     
-    @Override
-	public boolean isTrueSet() {
+    public boolean isTrueSet() {
     	return true;
     }
     
-    @Override
-	public boolean isInstantiableCollection() {
+    public boolean isInstantiableCollection() {
     	return true;
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    @Override
-	public boolean isSubtypeOf(Type t) {
+    public boolean isSubtypeOf(Type t) {
         if (! t.isTrueCollection() && ! t.isTrueSet() )
             return false;
 
@@ -79,20 +75,25 @@ public final class SetType extends CollectionType {
         return false;
     }
 
-    /* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.type.CollectionType#initOrderedSuperTypes(java.util.List)
-	 */
-	@Override
-	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
-        for(Type t : elemType().allSupertypesOrdered()) {
-        	allSupertypes.add(TypeFactory.mkSet(t));
-        }
+    /** 
+     * Returns the set of all supertypes (including this type).  If
+     * this collection has type Set(T) the result is the set of
+     * all types Set(T') and Collection(T') where T' <= T.
+     */
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
+        res.addAll(super.allSupertypes());
+        Set<Type> elemSuper = elemType().allSupertypes();
+        Iterator<Type> typeIter = elemSuper.iterator();
         
-		super.getOrderedSuperTypes(allSupertypes);
-	}
+        while (typeIter.hasNext() ) {
+            Type t = typeIter.next();
+            res.add(TypeFactory.mkSet(t));
+        }
+        return res;
+    }
 
-	@Override
-	public Type getLeastCommonSupertype(Type type)
+    public Type getLeastCommonSupertype(Type type)
     {
     	if (!type.isCollection(false))
     		return null;

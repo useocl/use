@@ -21,7 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Collection is the abstract base class for set, sequence, and bag.
@@ -66,6 +68,24 @@ public class CollectionType extends Type {
         return false;
     }
 
+    /** 
+     * Returns the set of all supertypes (including this type).  If
+     * this collection has type Collection(T) the result is the set of
+     * all types Collection(T') where T' <= T.
+     */
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
+        Set<Type> elemSuper = fElemType.allSupertypes();
+        Iterator<Type> typeIter = elemSuper.iterator();
+        
+        while (typeIter.hasNext() ) {
+            Type t = typeIter.next();
+            res.add(TypeFactory.mkCollection(t));
+        }
+        
+        return res;
+    }
+
     public Type getLeastCommonSupertype(Type type)
     {
     	if (!type.isCollection(false))
@@ -102,19 +122,5 @@ public class CollectionType extends Type {
     public int hashCode() {
         return fElemType.hashCode();
     }
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
-	 */
-    /** 
-     * If this collection has type Collection(T) all
-     * types Collection(T') where T' <= T are added.
-     */
-	@Override
-	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
-        for (Type t : fElemType.allSupertypesOrdered()) {
-            allSupertypes.add(TypeFactory.mkCollection(t));
-        }
-	}
     
 }

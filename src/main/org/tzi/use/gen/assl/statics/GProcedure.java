@@ -133,6 +133,11 @@ public class GProcedure {
 		Set<GFlaggedInvariant> blockedInvs = new HashSet<GFlaggedInvariant>();
 		
 		for (int index = 0; index < instrList.size(); ++index) {
+			// Add user defined barrier to statistics
+			if (instrList.get(index).getClass().equals(GInstrBarrier.class) ) {
+				collector.addBarrier((GInstrBarrier)instrList.get(index));
+			}
+			
 			BasicCoverageData instrCoverage = instrCalc.calcualteCoverage(instrList.subList(index, instrList.size()));
 			blockedInvs.clear();
 			

@@ -1,31 +1,25 @@
 package org.tzi.use.uml.ocl.type;
 
-import java.util.List;
 import java.util.Set;
 
 public class VoidType extends Type {
 
-	@Override
 	public Set<Type> allSupertypes() {
 		throw new UnsupportedOperationException("Call to allSupertypes is invalid on OclVoid");
 	}
 
-	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof VoidType;
 	}
 
-	@Override
 	public int hashCode() {
 		return 0;
 	}
 
-	@Override
 	public boolean isVoidType() {
     	return true;
     }
 	
-	@Override
 	public boolean isSubtypeOf(Type t) {
 		return true;
 	}
@@ -111,14 +105,6 @@ public class VoidType extends Type {
 	@Override
     public StringBuilder toString(StringBuilder sb) {
 		return sb.append("OclVoid");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
-	 */
-	@Override
-	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
-		// Nothing to do
 	}
 
 }

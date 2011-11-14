@@ -21,8 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.tzi.use.uml.mm.MClass;
 
@@ -67,6 +68,23 @@ public final class ObjectType extends Type {
     }
 
     /** 
+     * Returns the set of all supertypes (including this type).
+     */
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
+        res.add(this);
+        res.add(TypeFactory.mkOclAny());
+        Set<MClass> parents = fClass.allParents();
+        Iterator<MClass> clsIter = parents.iterator();
+        
+        while (clsIter.hasNext() ) {
+            MClass cls = clsIter.next();
+            res.add(TypeFactory.mkObjectType(cls));
+        }
+        return res;
+    }
+
+    /** 
      * Return complete printable type name, e.g. 'Set(Bag(Integer))'. 
      */
     @Override
@@ -87,21 +105,5 @@ public final class ObjectType extends Type {
     public int hashCode() {
         return fClass.hashCode();
     }
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
-	 */
-	@Override
-	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
-        List<MClass> todo = new LinkedList<MClass>(fClass.parents());
-        
-        while (!todo.isEmpty()) {
-        	MClass cls = todo.remove(0);
-        	allSupertypes.add(TypeFactory.mkObjectType(cls));
-            todo.addAll(cls.parents());
-        }
-        
-        allSupertypes.add(TypeFactory.mkOclAny());
-	}
     
 }

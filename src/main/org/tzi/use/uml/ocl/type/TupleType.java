@@ -21,9 +21,10 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.tzi.use.util.BufferedToString;
@@ -44,9 +45,6 @@ public final class TupleType extends Type {
 
         public Part(String name, Type type) {
             fName = name;
-            if (type == null)
-            	throw new IllegalArgumentException("Type of tuple part cannot be null.");
-            
             fType = type;
         }
 
@@ -154,11 +152,7 @@ public final class TupleType extends Type {
     			return TypeFactory.mkOclAny();
     		
     		TupleType.Part otherPart = otherType.fParts.get(part.name());
-    		Type partType = part.fType.getLeastCommonSupertype(otherPart.fType);
-    		
-    		if (partType == null) return null;
-    		
-    		commonParts[index] = new Part(part.fName, partType);
+    		commonParts[index] = new Part(part.fName, part.fType.getLeastCommonSupertype(otherPart.fType));
     		index++;
     	}
     	
@@ -198,18 +192,20 @@ public final class TupleType extends Type {
         return hashCode;
     }
     
+
+    /** 
+     * Returns the set of all supertypes (including this type).
+     */
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>(1);
+        res.add(this);
+        return res;
+    }
+
     public Part getPart(String name) {
         if (fParts.containsKey(name))
         	return fParts.get(name);
         else
         	return null;
     }
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.type.Type#initOrderedSuperTypes(java.util.List)
-	 */
-	@Override
-	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
-		allSupertypes.add(TypeFactory.mkOclAny());
-	}
 }

@@ -21,7 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * The OCL Sequence type.
@@ -37,36 +39,30 @@ public final class SequenceType extends CollectionType {
         super(elemType);
     }
     
-    @Override
-	public boolean isInstantiableCollection() {
+    public boolean isInstantiableCollection() {
     	return true;
     }
 
-    @Override
-	public String shortName() {
+    public String shortName() {
         if (elemType().isCollection(true) )
             return "Sequence(...)";
         else 
             return "Sequence(" + elemType() + ")";
     }
 
-    @Override
-	public boolean isTrueCollection() {
+    public boolean isTrueCollection() {
     	return false;
     }
     
-    @Override
-	public boolean isTrueSequence() {
+    public boolean isTrueSequence() {
     	return true;
     }
     
-    @Override
-	public boolean isSequence() {
+    public boolean isSequence() {
     	return true;
     }
     
-    @Override
-	public Type getLeastCommonSupertype(Type type)
+    public Type getLeastCommonSupertype(Type type)
     {
     	if (!type.isCollection(false))
     		return null;
@@ -89,8 +85,7 @@ public final class SequenceType extends CollectionType {
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    @Override
-	public boolean isSubtypeOf(Type t) {
+    public boolean isSubtypeOf(Type t) {
         if (! t.isTrueCollection() && ! t.isTrueSequence() )
             return false;
 
@@ -100,24 +95,25 @@ public final class SequenceType extends CollectionType {
         return false;
     }
 
-    /* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.type.CollectionType#initOrderedSuperTypes(java.util.List)
-	 */
-    /**
-     * If this collection has type Sequence(T) 
-     * all types Sequence(T') and Collection(T') where T' <= T are
-     * added to the list of all supertypes.
+    /** 
+     * Returns the set of all supertypes (including this type).  If
+     * this collection has type Sequence(T) the result is the set of
+     * all types Sequence(T') and Collection(T') where T' <= T.
      */
-	@Override
-	protected void getOrderedSuperTypes(List<Type> allSupertypes) {
-		for (Type t : elemType().allSupertypesOrdered()) {
-			allSupertypes.add(TypeFactory.mkSequence(t));
-		}
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
+        res.addAll(super.allSupertypes());
+        Set<Type> elemSuper = elemType().allSupertypes();
+        Iterator<Type> typeIter = elemSuper.iterator();
+        
+        while (typeIter.hasNext() ) {
+            Type t = typeIter.next();
+            res.add(TypeFactory.mkSequence(t));
+        }
+        return res;
+    }
 
-		super.getOrderedSuperTypes(allSupertypes);
-	}
-
-	@Override
+    @Override
     public StringBuilder toString(StringBuilder sb) {
         sb.append("Sequence(");
         elemType().toString(sb);

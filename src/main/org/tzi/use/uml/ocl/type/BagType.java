@@ -21,7 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * The OCL Bag type.
@@ -36,39 +38,33 @@ public final class BagType extends CollectionType {
         super(elemType);
     }
 
-    @Override
-	public String shortName() {
+    public String shortName() {
         if (elemType().isCollection(true) )
             return "Bag(...)";
         else 
             return "Bag(" + elemType() + ")";
     }
 
-    @Override
-	public boolean isTrueCollection() {
+    public boolean isTrueCollection() {
     	return false;
     }
     
-    @Override
-	public boolean isInstantiableCollection() {
+    public boolean isInstantiableCollection() {
     	return true;
     }
 
-    @Override
-	public boolean isBag() {
+    public boolean isBag() {
     	return true;
     }
     
-    @Override
-	public boolean isTrueBag() {
+    public boolean isTrueBag() {
     	return true;
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    @Override
-	public boolean isSubtypeOf(Type t) {
+    public boolean isSubtypeOf(Type t) {
         if (! t.isTrueCollection() && ! t.isTrueBag() )
             return false;
 
@@ -78,21 +74,26 @@ public final class BagType extends CollectionType {
         return false;
     }
 
-    /* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.type.CollectionType#initOrderedSuperTypes(java.util.List)
-	 */
-	@Override
-	protected void getOrderedSuperTypes(List<Type> allSupertypes) {        
+    /** 
+     * Returns the set of all supertypes (including this type).  If
+     * this collection has type Bag(T) the result is the set of
+     * all types Bag(T') and Collection(T') where T' <= T.
+     */
+    public Set<Type> allSupertypes() {
+        Set<Type> res = new HashSet<Type>();
+        res.addAll(super.allSupertypes());
+        Set<Type> elemSuper = elemType().allSupertypes();
+        Iterator<Type> typeIter = elemSuper.iterator();
         
-        for (Type t : elemType().allSupertypesOrdered()) {
-        	allSupertypes.add(TypeFactory.mkBag(t));
+        while (typeIter.hasNext() ) {
+            Type t = typeIter.next();
+            res.add(TypeFactory.mkBag(t));
         }
-		
-		super.getOrderedSuperTypes(allSupertypes);
-	}
+        
+        return res;
+    }
 
-	@Override
-	public Type getLeastCommonSupertype(Type type)
+    public Type getLeastCommonSupertype(Type type)
     {
     	if (!type.isCollection(false))
     		return null;

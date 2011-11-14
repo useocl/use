@@ -23,8 +23,6 @@ package org.tzi.use.uml.ocl.type;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.MClass;
@@ -40,15 +38,6 @@ import org.tzi.use.util.BufferedToString;
  */
 public abstract class Type implements BufferedToString {
 
-	public Type() { }
-	
-	/**
-	 * Initializes the list of ordered super types.
-	 * Called by the constructor with the instantiated object (<code>this</code>) contained at first position.
-	 * @param allSupertypes The list of super types initialized with <code>this</code> at position 0.
-	 */
-	protected abstract void getOrderedSuperTypes(List<Type> allSupertypes);
-	
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
@@ -89,28 +78,13 @@ public abstract class Type implements BufferedToString {
     public abstract int hashCode();
 
     /** 
-     * Returns the set of all super types (including this type).
+     * Returns the set of all supertypes (including this type).
      */
-    public Set<Type> allSupertypes() {
-    	return new HashSet<Type>(allSupertypesOrdered());
-    }
+    public abstract Set<Type> allSupertypes();
 
-    /** 
-     * Returns the list of all super types (including this type) starting at this
-     * type, i.e., <code>result.indexOf(this) == 0</code>, and running to the most generic
-     * type.
-     */
-    public final List<Type> allSupertypesOrdered() {
-    	List<Type> orderedSupertypes = new LinkedList<Type>();
-		orderedSupertypes.add(this);
-		getOrderedSuperTypes(orderedSupertypes);
-    	
-		return orderedSupertypes;
-    }
-    
     // The following set of functions is a rather ugly solution, but
     // it avoids numerous instanceof tests in user code.
-    // Corresponding sub types override these methods and return true
+    // Corresponding Subtypes override these methods and return true
     public boolean isNumber() {
     	return false;
     }
