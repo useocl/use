@@ -456,6 +456,7 @@ public class GGenerator {
     	pw.println(String.format("Random number generator was initialized with %d.",  lastResult().randomNr()));
         
     	long numSnapshots = lastResult().collector().numberOfCheckedStates();
+    	    	
     	if (fConfig.printTimeRelatedData()) {    		
     		double duration = lastResult().getDuration() / 1000D;
     		double snapShotsPerSecond = Double.NaN;
@@ -469,6 +470,23 @@ public class GGenerator {
     		pw.println(String.format("Checked %,d snapshots.", numSnapshots));
     	}
         
+    	if (!lastResult().collector().getBarriers().isEmpty()) {
+    		long numBarrierChecks = lastResult().collector().getBarriersHit();
+        	long overallChecks = numSnapshots + numBarrierChecks;
+        	
+    		double duration = lastResult().getDuration() / 1000D;
+    		double checksPerSecond = Double.NaN;
+    				
+    		if (duration > 0) {
+    			checksPerSecond = (overallChecks / duration);
+    		}
+    		
+    		if (fConfig.printTimeRelatedData())
+    			pw.println(String.format("Checked %,d times in %,.3fs (%,.0f checks/s).", overallChecks, duration, checksPerSecond));
+    		else
+    			pw.println(String.format("Checked %,d times.", overallChecks));
+    	}
+    	
         if (fConfig.useTryCuts())
         	pw.println(String.format("Made %,d try cuts.", lastResult().collector().getCuts()));
         
