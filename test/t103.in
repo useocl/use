@@ -1,0 +1,14 @@
+gen start -nb -t -r 4859 t103.assl a()
+gen result
+* Random number generator was initialized with 4859.
+* Checked 11 snapshots.
+* Made 0 try cuts.
+* Ignored at least 0 useless link combinations.
+* Barriers blocked 0 times.
+* Result: Valid state found.
+* Commands to produce the valid state:
+* !new A('A1')
+* !@A1.a := 11
+gen result accept
+* Generated result (system state) accepted.
+quit

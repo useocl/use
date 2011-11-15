@@ -1,0 +1,13 @@
+procedure a()
+var new1:A, 
+    i:Integer;
+begin
+  new1:=Create(A);
+  i := Try([Sequence{1..20}]);
+  ASSLCall seta([new1], [i]);
+end;
+
+procedure seta(a:A, i:Integer)
+begin
+  [a].a := [i];
+end;

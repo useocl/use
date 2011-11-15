@@ -1,10 +1,9 @@
-gen start -t -r 1348 t102.assl transition(2, 1)
+gen start -t -nb -r 1348 t102.assl transition(2, 1)
 gen result
 *Random number generator was initialized with 1348.
 *Checked 31,675 snapshots.
 *Made 0 try cuts.
 *Ignored at least 0 useless link combinations.
-*Added 1 barriers.
 *Barriers blocked 0 times.
 *Result: Valid state found.
 *Commands to produce the valid state:

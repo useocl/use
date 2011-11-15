@@ -1,0 +1,9 @@
+model t103
+
+class A
+attributes
+  a : Integer
+constraints
+  inv testing:
+    self.a>10
+end
