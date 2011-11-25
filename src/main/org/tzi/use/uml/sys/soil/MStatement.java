@@ -41,7 +41,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -64,14 +64,7 @@ import org.tzi.use.uml.sys.events.OperationExitedEvent;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.VariableEnvironment;
-import org.tzi.use.util.soil.exceptions.evaluation.DestroyObjectWithActiveOperationException;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
-import org.tzi.use.util.soil.exceptions.evaluation.ExceptionOccuredException;
-import org.tzi.use.util.soil.exceptions.evaluation.ExpressionEvaluationFailedException;
-import org.tzi.use.util.soil.exceptions.evaluation.NotACollectionException;
-import org.tzi.use.util.soil.exceptions.evaluation.NotAStringException;
-import org.tzi.use.util.soil.exceptions.evaluation.NotAnObjectException;
-import org.tzi.use.util.soil.exceptions.evaluation.UndefinedValueException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
@@ -323,17 +316,20 @@ public abstract class MStatement {
 					expression, 
 					fState, 
 					fVarEnv.constructVarBindings());
-		} catch(RuntimeException e) {
-			throw new ExpressionEvaluationFailedException(
-					this, 
-					expression, 
-					e);
+		} catch (MultiplicityViolationException e) {
+			throw new EvaluationFailedException(this,
+					"Evaluation of expression "
+							+ StringUtil.inQuotes(expression)
+							+ " failed due to following reason:\n  "
+							+ e.getMessage());
 		} finally {
 			fContext.exitExpression();
 		}
 		
 		if (mustBeDefined && value.isUndefined()) {
-			throw new UndefinedValueException(this, expression);
+			throw new EvaluationFailedException(this, "The value of expression " +
+					StringUtil.inQuotes(expression) +
+					" is undefined.");
 		}
 		
 		return value;
@@ -367,7 +363,11 @@ public abstract class MStatement {
 		if (value instanceof ObjectValue) {
 			return ((ObjectValue)value).value();
 		} else {
-			throw new NotAnObjectException(this, expression);
+			throw new EvaluationFailedException(this, "Expression "
+					+ StringUtil.inQuotes(expression)
+					+ " is expected to evaluate to an object "
+					+ ", but its type is "
+					+ StringUtil.inQuotes(expression.type()) + ".");
 		}
 	}
 		
@@ -389,26 +389,6 @@ public abstract class MStatement {
 		
 		return result;
 	}
-		
-	
-	/**
-	 * TODO
-	 * @param expression
-	 * @return
-	 * @throws EvaluationFailedException
-	 */
-	protected CollectionValue evaluateCollection(
-			Expression expression) throws EvaluationFailedException {
-		
-		Value value = evaluateExpression(expression, true);
-		
-		if (value instanceof CollectionValue) {
-			return (CollectionValue)value;
-		} else {
-			throw new NotACollectionException(this, expression);
-		}
-	}
-	
 	
 	/**
 	 * TODO
@@ -424,7 +404,13 @@ public abstract class MStatement {
 		if (value instanceof StringValue) {
 			return ((StringValue)value).value();
 		} else {
-			throw new NotAStringException(this, expression);
+			throw new EvaluationFailedException(this, "Expression " + 
+					StringUtil.inQuotes(expression) + 
+					" is expected to be of type " +
+					StringUtil.inQuotes("String") +
+					", found " +
+					StringUtil.inQuotes(expression.type()) +
+					".");
 		}
 	}
 	
@@ -458,7 +444,9 @@ public abstract class MStatement {
 		Value value = rValue.evaluate(this);
 		
 		if (mustBeDefined && value.isUndefined()) {
-			throw new UndefinedValueException(this, rValue);
+			throw new EvaluationFailedException(this, "The value of rValue " +
+					StringUtil.inQuotes(rValue) +
+					" is undefined.");
 		}
 		
 		return value;
@@ -492,7 +480,12 @@ public abstract class MStatement {
 		if (value instanceof ObjectValue) {
 			return ((ObjectValue)value).value();
 		} else {
-			throw new NotAnObjectException(this, rValue);
+			throw new EvaluationFailedException(this, "RValue " +
+					StringUtil.inQuotes(rValue) +
+					" is expected to evaluate to an object " +
+					", but its type is " +
+					StringUtil.inQuotes(rValue.getType()) +
+					".");
 		}
 	}
 	
@@ -554,7 +547,7 @@ public abstract class MStatement {
 		try {
 			newObject = fState.createObject(objectClass, objectName);
 		} catch (MSystemException e) {
-			throw new ExceptionOccuredException(this, e);
+			throw new EvaluationFailedException(this, e);
 		}
 		
 		fResult.getStateDifference().addNewObject(newObject);
@@ -592,7 +585,7 @@ public abstract class MStatement {
 					qualifierValues);
 			
 		} catch (MSystemException e) {
-			throw new ExceptionOccuredException(this, e);
+			throw new EvaluationFailedException(this, e);
 		}
 		
 		fResult.getStateDifference().addNewLinkObject(newLinkObject);
@@ -622,9 +615,11 @@ public abstract class MStatement {
 		
 		for (MObject affectedObject : objectsAffectedByDeletion) {
 			if (fSystem.hasActiveOperation(affectedObject)) {
-				throw new DestroyObjectWithActiveOperationException(
-						this, 
-						affectedObject);
+				throw new EvaluationFailedException(
+						this,
+						"Object "
+								+ StringUtil.inQuotes(affectedObject)
+								+ " has an active operation and thus cannot be deleted.");
 			}
 		}
 		
@@ -712,7 +707,7 @@ public abstract class MStatement {
 			oldValue = object.state(fState).attributeValue(attribute);
 			object.state(fState).setAttributeValue(attribute, value);
 		} catch (IllegalArgumentException e) {
-			throw new ExceptionOccuredException(this, e);
+			throw new EvaluationFailedException(this, e);
 		}
 		
 		fResult.getStateDifference().addModifiedObject(object);
@@ -748,7 +743,7 @@ public abstract class MStatement {
 		try {
 			newLink = fState.createLink(association, participants, qualifierValues);
 		} catch (MSystemException e) {
-			throw new ExceptionOccuredException(this, e);
+			throw new EvaluationFailedException(this, e);
 		}
 		
 		fResult.getStateDifference().addNewLink(newLink);
@@ -814,7 +809,7 @@ public abstract class MStatement {
 			fResult.getStateDifference().addDeleteResult(
 					fState.deleteLink(association, participants, qualifierValues));
 		} catch (MSystemException e) {
-			throw new ExceptionOccuredException(this, e);
+			throw new EvaluationFailedException(this, e);
 		}
 		
 		List<MRValue> wrappedParticipants = 
@@ -888,14 +883,14 @@ public abstract class MStatement {
 	 * @param self
 	 * @param operation
 	 * @param arguments
-	 * @throws ExceptionOccuredException
+	 * @throws EvaluationFailedException
 	 */
 	protected MOperationCall enterOperation(
 			MObject self, 
 			MOperation operation, 
 			Value[] arguments,
 			PPCHandler preferredPPCHandler,
-			boolean isOpenter) throws ExceptionOccuredException {
+			boolean isOpenter) throws EvaluationFailedException {
 	
 		MOperationCall operationCall = 
 			new MOperationCall(this, self, operation, arguments);
@@ -905,7 +900,7 @@ public abstract class MStatement {
 		try {
 			fSystem.enterOperation(null, operationCall, isOpenter);
 		} catch (MSystemException e) {
-			throw new ExceptionOccuredException(this, e);
+			throw new EvaluationFailedException(this, e);
 		}
 		
 		return operationCall;
@@ -915,11 +910,11 @@ public abstract class MStatement {
 	/**
 	 * TODO
 	 * @param resultValue
-	 * @throws ExceptionOccuredException
+	 * @throws EvaluationFailedException
 	 */
 	protected MOperationCall exitOperation(
 			Value resultValue,
-			PPCHandler preferredPPCHandler) throws ExceptionOccuredException {
+			PPCHandler preferredPPCHandler) throws EvaluationFailedException {
 		
 		MOperationCall currentOperation = fSystem.getCurrentOperation();
 		
@@ -934,7 +929,7 @@ public abstract class MStatement {
 		try {
 			fSystem.exitOperation(null, resultValue);
 		} catch (MSystemException e) {
-			throw new ExceptionOccuredException(this, e);
+			throw new EvaluationFailedException(this, e);
 		}
 		
 		return currentOperation;
@@ -945,10 +940,10 @@ public abstract class MStatement {
 	 * TODO
 	 * @param resultValue
 	 * @return
-	 * @throws ExceptionOccuredException
+	 * @throws EvaluationFailedException
 	 */
 	protected MOperationCall exitOperation(
-			Value resultValue) throws ExceptionOccuredException {
+			Value resultValue) throws EvaluationFailedException {
 		
 		return exitOperation(resultValue, null);
 	}

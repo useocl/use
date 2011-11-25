@@ -32,8 +32,7 @@ import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
-import org.tzi.use.util.soil.exceptions.evaluation.ExceptionOccuredException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
@@ -89,14 +88,14 @@ public class MExitOperationStatement extends MStatement {
 
 		operationCall = fSystem.getCurrentOperation();
 		
-		ExceptionOccuredException caughtException = null;
+		EvaluationFailedException caughtException = null;
 		try {
 			exitOperation(
 					result, 
 					fCustomPPCHandler == null ? 
 							OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler);
 			fSystem.setLastOperationCall(operationCall);
-		} catch (ExceptionOccuredException e) {
+		} catch (EvaluationFailedException e) {
 			caughtException = e;
 		}
 		

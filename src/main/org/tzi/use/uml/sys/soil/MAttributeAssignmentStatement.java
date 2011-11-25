@@ -26,7 +26,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**

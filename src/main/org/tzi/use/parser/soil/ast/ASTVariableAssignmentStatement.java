@@ -29,22 +29,21 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.InvalidRValueException;
-import org.tzi.use.util.soil.exceptions.compilation.RValueTypeMismatchException;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST node of a variable assignment statement. 
  * @author Daniel Gent
  *
  */
 public class ASTVariableAssignmentStatement extends ASTStatement {
-	/** TODO */
+	
 	private String fVariableName;
-	/** TODO */
+	
 	private ASTType fMandatoryType;
-	/** TODO */
+	
 	private ASTRValue fRValue;
 	
 	
@@ -130,7 +129,9 @@ public class ASTVariableAssignmentStatement extends ASTStatement {
 		Type valueType = rValue.getType();
 		
 		if (valueType == null) {
-			throw new InvalidRValueException(this, fRValue);
+			throw new CompilationFailedException(this, StringUtil.inQuotes(fRValue)
+					+ " is not a valid rvalue, since the called "
+					+ "operation does not return a value");
 		}
 		
 		Type variableType;
@@ -138,12 +139,11 @@ public class ASTVariableAssignmentStatement extends ASTStatement {
 			Type mandatoryType = generateType(fMandatoryType);
 			
 			if (!valueType.isSubtypeOf(mandatoryType)) {
-				throw new RValueTypeMismatchException(
-						this, 
-						fVariableName, 
-						rValue, 
-						mandatoryType, 
-						valueType);
+				throw new CompilationFailedException(this,
+						"Type of expression does not match declaration. Expected "
+								+ StringUtil.inQuotes(mandatoryType)
+								+ ", found " + StringUtil.inQuotes(valueType)
+								+ ".");
 			}
 			variableType = mandatoryType;
 		} else {

@@ -60,7 +60,7 @@ import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.UniqueNameGenerator;
 import org.tzi.use.util.soil.StateDifference;
 import org.tzi.use.util.soil.VariableEnvironment;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
  * A system maintains a system state and provides functionality for

@@ -24,7 +24,7 @@ package org.tzi.use.parser.soil.ast;
 import java.io.PrintWriter;
 
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**

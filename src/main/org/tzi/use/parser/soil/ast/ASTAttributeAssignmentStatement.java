@@ -28,12 +28,12 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.util.soil.exceptions.compilation.AttributeTypeMismatchException;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST class for an attribute assignment statement.
  * @author Daniel Gent
  *
  */
@@ -47,10 +47,10 @@ public class ASTAttributeAssignmentStatement extends ASTStatement {
 		
 	
 	/**
-	 * TODO
-	 * @param object
-	 * @param attributeName
-	 * @param value
+	 * Constructs a new AST with the given values.
+	 * @param object Expression for the source object
+	 * @param attributeName The name of the attribute
+	 * @param value The ASt for the rValue. 
 	 */
 	public ASTAttributeAssignmentStatement(
 			ASTExpression object,
@@ -72,7 +72,11 @@ public class ASTAttributeAssignmentStatement extends ASTStatement {
 		MRValue rValue = generateRValue(fRValue);
 		
 		if (!rValue.getType().isSubtypeOf(attribute.type())) {
-			throw new AttributeTypeMismatchException(this, attribute, rValue);
+			throw new CompilationFailedException(this,
+					"Type mismatch in assignment expression. Expected type "
+							+ StringUtil.inQuotes(attribute.type())
+							+ ", found "
+							+ StringUtil.inQuotes(rValue.getType()) + ".");
 		}
 		
 		return new MAttributeAssignmentStatement(object, attribute, rValue);

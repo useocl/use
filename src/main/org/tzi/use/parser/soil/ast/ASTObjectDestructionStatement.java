@@ -35,8 +35,8 @@ import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.NotDestroyableException;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
@@ -83,7 +83,10 @@ public class ASTObjectDestructionStatement extends ASTStatement {
 			// check if each element is an object
 			for (Expression element : collection.getElemExpr()) {
 				if (!element.type().isObjectType()) {
-					throw new NotDestroyableException(this, fToDelete, type);
+					throw new CompilationFailedException(this, "Expected "
+							+ StringUtil.inQuotes(fToDelete.getStringRep())
+							+ " to be a collection of objects, found "
+							+ StringUtil.inQuotes(type) + ".");
 				}
 			}
 			
@@ -97,7 +100,11 @@ public class ASTObjectDestructionStatement extends ASTStatement {
 			objects = Arrays.asList(possibleObject);
 						
 		} else {
-			throw new NotDestroyableException(this, fToDelete, type);
+			throw new CompilationFailedException(this, "Expected " +
+					StringUtil.inQuotes(fToDelete.getStringRep()) +
+					" to be an object type, found " +
+					StringUtil.inQuotes(type) + 
+					".");
 		}
 		
 		switch (objects.size()) {

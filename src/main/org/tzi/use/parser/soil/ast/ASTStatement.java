@@ -21,6 +21,8 @@
 
 package org.tzi.use.parser.soil.ast;
 
+import static org.tzi.use.util.StringUtil.inQuotes;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -49,27 +51,10 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.SymbolTable;
 import org.tzi.use.util.soil.VariableSet;
-import org.tzi.use.util.soil.exceptions.compilation.ArgumentTypeMismatchException;
-import org.tzi.use.util.soil.exceptions.compilation.AssociationTypeMismatchException;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.ExpressionGenerationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.IllegalAssociationClassInstantiationException;
-import org.tzi.use.util.soil.exceptions.compilation.NotAClassException;
-import org.tzi.use.util.soil.exceptions.compilation.NotAStringException;
-import org.tzi.use.util.soil.exceptions.compilation.NotATypeException;
-import org.tzi.use.util.soil.exceptions.compilation.NotAnAssociationClassException;
-import org.tzi.use.util.soil.exceptions.compilation.NotAnAttributeException;
-import org.tzi.use.util.soil.exceptions.compilation.NotAnObjectException;
-import org.tzi.use.util.soil.exceptions.compilation.NotAnOperationException;
-import org.tzi.use.util.soil.exceptions.compilation.ResultTypeMismatch;
-import org.tzi.use.util.soil.exceptions.compilation.ResultUnboundException;
-import org.tzi.use.util.soil.exceptions.compilation.UnkownAssociationException;
-import org.tzi.use.util.soil.exceptions.compilation.VariableTypeUncertainException;
-import org.tzi.use.util.soil.exceptions.compilation.VariableUndefinedException;
-import org.tzi.use.util.soil.exceptions.compilation.WrongNumOfArgumentsException;
-import org.tzi.use.util.soil.exceptions.compilation.WrongNumOfParticipantsException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
@@ -298,15 +283,21 @@ public abstract class ASTStatement extends AST {
 		
 		if (fRequiredResultType != null) {
 			if (!binds("result")) {
-				throw new ResultUnboundException(this);
+				throw new CompilationFailedException(this,
+						"Operation must return a value, but variable "
+								+ StringUtil.inQuotes("result")
+								+ " might be unbound.");
 			}
 			
 			Type resultType = bound().getType("result");
 			if (!resultType.isSubtypeOf(fRequiredResultType)) {
-				throw new ResultTypeMismatch(
+				throw new CompilationFailedException(
 						this, 
-						fRequiredResultType, 
-						resultType);
+						"Operation returns a value of type " +
+								StringUtil.inQuotes(resultType) +
+								", which is not a subtype of the declared return type " +
+								StringUtil.inQuotes(fRequiredResultType) +
+								".");
 			}
 		}
 		 
@@ -432,18 +423,28 @@ public abstract class ASTStatement extends AST {
 		Symtable newSymtable = new Symtable();
 		for (String name : freeVariables) {
 			if (!symbolTable.contains(name)) {
-				throw new VariableUndefinedException(
-						this, 
-						expression, 
-						name);
+				throw new CompilationFailedException(this, "Variable "
+						+ StringUtil.inQuotes(name) + " in expression "
+						+ StringUtil.inQuotes(expression.getStringRep())
+						+ " is undefined.");
 			}
 			
 			if (symbolTable.isDirty(name)) {
-				throw new VariableTypeUncertainException(
+				ASTStatement cause = symbolTable.getCause(name);
+				throw new CompilationFailedException(
 						this, 
-						expression, 
-						name, 
-						symbolTable.getCause(name));
+						"The type of variable " +
+								StringUtil.inQuotes(name) +
+								" in expression " +
+								StringUtil.inQuotes(expression.getStringRep()) + 
+								" is uncertain due to possible assignment in statement " +
+								StringUtil.inQuotes(cause) +
+								" at line " +
+								cause.getSourcePosition().line() +
+								", column " +
+								cause.getSourcePosition().column() +
+								"."
+						);
 			}
 			
 			try {
@@ -466,10 +467,12 @@ public abstract class ASTStatement extends AST {
 		try {
 			return expression.gen(context);
 		} catch (SemanticException e) {
-			throw new ExpressionGenerationFailedException(
-					this, 
-					expression, 
-					e);
+			throw new CompilationFailedException(
+					this,
+					"generation of expression " +
+					StringUtil.inQuotes(expression.getStringRep()) +
+							" failed, with following error:\n\n" +
+							e.getMessage());
 		} finally {
 			context.setVarTable(backup);
 		}
@@ -501,9 +504,7 @@ public abstract class ASTStatement extends AST {
 		
 		Expression possibleObject = generateExpression(expression);
 		
-		if (!possibleObject.type().isObjectType()) {
-			throw new NotAnObjectException(this, possibleObject);
-		}
+		validateObjectType(possibleObject);
 		
 		return possibleObject;
 	}
@@ -521,10 +522,10 @@ public abstract class ASTStatement extends AST {
 		Expression possibleString = generateExpression(expression);
 		
 		if (!possibleString.type().isString()) {
-			throw new NotAStringException(
-					this, 
-					expression, 
-					possibleString.type());
+			throw new CompilationFailedException(this, "Expression "
+					+ inQuotes(expression.getStringRep()) + " is of type "
+					+ inQuotes(possibleString.type()) + ", expected "
+					+ inQuotes("String"));
 		}
 		
 		return possibleString;
@@ -532,32 +533,52 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param object
+	 * Gets the {@link MAttribute} of the class which is accessed by
+	 * <code>objectExpr</code>.
+	 * 
+	 * @param objectExpr
+	 *            Expression resulting in an object instance.
 	 * @param attributeName
-	 * @return
+	 *            The name of the attribute to return.
+	 * @return The attribute with <code>name</code> of the class of the
+	 *         expression <code>objectExpr</code>.
 	 * @throws CompilationFailedException
+	 *             If the type of <code>objectExpr</code> is not an object type
+	 *             or if the class has no attribute with the name
+	 *             <code>attributeName</code>.
 	 */
 	protected MAttribute generateAttribute(
-			Expression object, 
+			Expression objectExpr, 
 			String attributeName) throws CompilationFailedException {
 		
-		if (!object.type().isObjectType()) {
-			throw new NotAnObjectException(this, object);
-		}
+		validateObjectType(objectExpr);
 		
-		MClass objectClass = ((ObjectType)object.type()).cls();
+		MClass objectClass = ((ObjectType)objectExpr.type()).cls();
 		MAttribute attribute = 
 			objectClass.attribute(attributeName, true);
 		
 		if (attribute == null) {
-			throw new NotAnAttributeException(
-					this, 
-					objectClass, 
-					attributeName);
+			throw new CompilationFailedException(this, "Class "
+					+ StringUtil.inQuotes(objectClass.name())
+					+ " does not have an attribute "
+					+ StringUtil.inQuotes(attributeName) + ".");
 		}
 		
 		return attribute;
+	}
+
+
+	/**
+	 * @param objectExpr
+	 * @throws CompilationFailedException
+	 */
+	private void validateObjectType(Expression expression)
+			throws CompilationFailedException {
+		if (!expression.type().isObjectType()) {
+			throw new CompilationFailedException(this,
+					"Expected expression with object type, found type "
+							+ StringUtil.inQuotes(expression.type()) + ".");
+		}
 	}
 	
 	
@@ -581,12 +602,12 @@ public abstract class ASTStatement extends AST {
 	 * @throws NotATypeException
 	 */
 	protected Type generateType(
-			ASTType type) throws NotATypeException {
+			ASTType type) throws CompilationFailedException {
 
 		try {
 			return type.gen(fContext);
 		} catch(SemanticException e) {
-			throw new NotATypeException(this, type);
+			throw new CompilationFailedException(this, "Expected type name, found " + StringUtil.inQuotes(type) + ".");
 		}			
 	}
 	
@@ -604,7 +625,8 @@ public abstract class ASTStatement extends AST {
 		Type t = generateType(type);
 		
 		if (!t.isObjectType()) {
-			throw new NotAClassException(this, t);
+			throw new CompilationFailedException(this, "Expected object type, found "
+					+ StringUtil.inQuotes(t) + ".");
 		}
 		
 		MClass result = ((ObjectType)t).cls();
@@ -612,9 +634,10 @@ public abstract class ASTStatement extends AST {
 		if (!mayBeAssociationClass && 
 				fContext.model().associations().contains(result)) {
 			
-			throw new IllegalAssociationClassInstantiationException(
-					this, 
-					result);
+			throw new CompilationFailedException(this,
+					"Cannot instantiate association class "
+							+ inQuotes(result.name())
+							+ " without participants.");
 		}
 		
 		return result;
@@ -625,19 +648,17 @@ public abstract class ASTStatement extends AST {
 	 * TODO
 	 * @param name
 	 * @return
-	 * @throws UnkownAssociationException
+	 * @throws CompilationFailedException
 	 */
-	protected MAssociation generateAssociation(
-			String name) throws UnkownAssociationException {
+	protected MAssociation getAssociation(
+			String name) throws CompilationFailedException {
 		
 		MAssociation association = 
 			fContext.model().getAssociation(name);
 		
 		if (association == null) {
-			
-			throw new UnkownAssociationException(
-					this, 
-					name);
+			throw new CompilationFailedException(this, "Association "
+					+ StringUtil.inQuotes(name) + " does not exist.");
 		}
 		
 		return association;
@@ -648,19 +669,17 @@ public abstract class ASTStatement extends AST {
 	 * TODO
 	 * @param name
 	 * @return
-	 * @throws NotAnAssociationClassException 
+	 * @throws CompilationFailedException 
 	 */
 	protected MAssociationClass generateAssociationClass(
-			String name) throws NotAnAssociationClassException {
+			String name) throws CompilationFailedException {
 		
 		MAssociationClass result =
             fContext.model().getAssociationClass(name);
 		
 		if (result == null) {
-			
-			throw new NotAnAssociationClassException(
-					this, 
-					name);
+			throw new CompilationFailedException(this, "Association class "
+					+ StringUtil.inQuotes(name) + " does not exist.");
 		}
 			
 		return result;
@@ -686,12 +705,13 @@ public abstract class ASTStatement extends AST {
 		int numAssociationEnds = associationEnds.size();
 		
 		if (numAssociationEnds != numParticipants) {
-			
-			throw new WrongNumOfParticipantsException(
-					this, 
-					association,
-					numAssociationEnds,
-					numParticipants);
+			throw new CompilationFailedException(this,
+					"A link for association"
+							+ ((association instanceof MAssociationClass) ? ""
+									: " class")
+							+ StringUtil.inQuotes(association) + " requires "
+							+ numAssociationEnds + " objects, found "
+							+ numParticipants + ".");
 		}
 		
 		// generate the participant for each slot, and check
@@ -712,13 +732,14 @@ public abstract class ASTStatement extends AST {
 			
 			if (!foundType.isSubtypeOf(expectedType)) {
 				
-				throw new AssociationTypeMismatchException(
+				throw new CompilationFailedException(
 						this, 
-						association, 
-						participants.get(i),
-						expectedType,
-						foundType,
-						i);	
+						"Participant " +  (i + 1) + " of association " + 
+						((association instanceof MAssociationClass) ? "class " : "") +
+						StringUtil.inQuotes(association.name()) +
+						" must be of type " + StringUtil.inQuotes(expectedType) +
+						", but " + StringUtil.inQuotes(participants.get(i)) +
+						" is of type " + StringUtil.inQuotes(foundType) + ".");	
 			}
 			
 			result.add(participant);
@@ -739,22 +760,11 @@ public abstract class ASTStatement extends AST {
 			Expression object, 
 			String operationName) throws CompilationFailedException {
 		
-		if (!object.type().isObjectType()) {
-			throw new NotAnObjectException(this, object);
-		}
+		validateObjectType(object);
 		
 		MClass objectClass = ((ObjectType)object.type()).cls();
 		
-		MOperation result = objectClass.operation(operationName, true);
-		if (result == null) {
-			
-			throw new NotAnOperationException(
-					this, 
-					objectClass.name(), 
-					operationName);
-		}
-		
-		return result;
+		return generateOperation(objectClass, operationName);
 	}
 	
 	
@@ -763,20 +773,18 @@ public abstract class ASTStatement extends AST {
 	 * @param objectClass
 	 * @param operationName
 	 * @return
-	 * @throws NotAnOperationException
+	 * @throws CompilationFailedException
 	 */
 	protected MOperation generateOperation(
 			MClass objectClass, 
-			String operationName) throws NotAnOperationException {
+			String operationName) throws CompilationFailedException {
 		
 		MOperation result = objectClass.operation(operationName, true);
 		
 		if (result == null) {
-			
-			throw new NotAnOperationException(
-					this, 
-					objectClass.name(), 
-					operationName);
+			throw new CompilationFailedException(this, "No operation "
+					+ StringUtil.inQuotes(operationName) + "found in class "
+					+ StringUtil.inQuotes(objectClass.name()) + ".");
 		}
 		
 		return result;
@@ -800,11 +808,13 @@ public abstract class ASTStatement extends AST {
 		int numArguments = arguments.size();
 		
 		if (numParameters != numArguments) {
-			
-			throw new WrongNumOfArgumentsException(
-					this, 
-					operation, 
-					arguments);
+			throw new CompilationFailedException(this,
+					"Number of arguments does not match declaration of operation"
+							+ StringUtil.inQuotes(operation.name())
+							+ ". Expected " + operation.paramList().size()
+							+ " argument"
+							+ ((operation.paramList().size() == 1) ? "" : "s")
+							+ ", found " + arguments.size() + ".");
 		}
 		
 		LinkedHashMap<String, Expression> result = 
@@ -820,13 +830,12 @@ public abstract class ASTStatement extends AST {
 			
 			if (!foundType.isSubtypeOf(expectedType)) {
 				
-				throw new ArgumentTypeMismatchException(
-						this, 
-						operation,
-						arguments.get(i),
-						expectedType,
-						foundType,
-						i);
+				throw new CompilationFailedException(
+						this,
+						"Type mismatch in argument " + i + ". Expected type " +
+						StringUtil.inQuotes(expectedType) + 
+						", found " +
+						StringUtil.inQuotes(foundType) + ".");
 			}
 			
 			result.put(parameter.name(), argument);

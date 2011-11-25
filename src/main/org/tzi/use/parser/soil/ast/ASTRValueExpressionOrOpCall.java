@@ -26,7 +26,7 @@ import org.tzi.use.uml.sys.soil.MOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MRValueOperationCall;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**

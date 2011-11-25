@@ -27,12 +27,12 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.soil.MConditionalExecutionStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.ConditionNotBooleanException;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST node for a conditional execution statement.
  * @author Daniel Gent
  *
  */
@@ -52,10 +52,10 @@ public class ASTConditionalExecutionStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
-	 * @param condition
-	 * @param thenStatement
-	 * @param elseStatement
+	 * Constructs a new AST node.
+	 * @param condition AST of the condition expression
+	 * @param thenStatement AST of the then statement.
+	 * @param elseStatement AST of the else statement
 	 */
 	public ASTConditionalExecutionStatement(
 			ASTExpression condition,
@@ -105,10 +105,11 @@ public class ASTConditionalExecutionStatement extends ASTStatement {
 		// generate the condition expression and check if it's boolean
 		Expression condition = generateExpression(fCondition);
 		if (!condition.type().isBoolean()) {
-			throw new ConditionNotBooleanException(
-					this, 
-					fCondition, 
-					condition.type());
+			throw new CompilationFailedException(this, "Expression "
+					+ StringUtil.inQuotes(fCondition.getStringRep())
+					+ " is expected to be of type "
+					+ StringUtil.inQuotes("Boolean") + ", found "
+					+ StringUtil.inQuotes(condition.type()) + ".");
 		}
 		
 		// generate the then and else statements

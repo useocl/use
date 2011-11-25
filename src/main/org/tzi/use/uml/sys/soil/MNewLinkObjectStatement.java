@@ -32,7 +32,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**

@@ -30,7 +30,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**

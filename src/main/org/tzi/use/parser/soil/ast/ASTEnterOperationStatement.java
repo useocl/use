@@ -32,8 +32,7 @@ import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.OperationDefinedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
@@ -105,7 +104,11 @@ public class ASTEnterOperationStatement extends ASTStatement {
 					fOperationName);
 		
 		if (operation.hasExpression() || operation.hasStatement()) {
-			throw new OperationDefinedException(this, operation);
+			throw new CompilationFailedException(this, "Operation " +
+					StringUtil.inQuotes(operation) +
+					" is defined by a " +
+					(operation.hasExpression() ? "OCL expression" : "soil statement") +
+					" and cannot be entered with openter.");
 		}
 		
 		// construct arguments

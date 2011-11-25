@@ -31,9 +31,9 @@ import org.antlr.runtime.Token;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.VariableSet;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.IllegalAssignmentInSequenceException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
@@ -186,10 +186,10 @@ public class ASTSequenceStatement extends ASTStatement {
 	/**
 	 * TODO
 	 * @param s2
-	 * @throws IllegalAssignmentInSequenceException
+	 * @throws CompilationFailedException
 	 */
 	private void checkS2Validity(
-			ASTStatement s2) throws IllegalAssignmentInSequenceException {
+			ASTStatement s2) throws CompilationFailedException {
 	
 		if (fBoundSet.isEmpty() || s2.fAssignedSet.isEmpty()) {
 			return;
@@ -205,13 +205,24 @@ public class ASTSequenceStatement extends ASTStatement {
 			
 			for (Type assignedType : assignedTypes) {
 				for (Type boundType : boundTypes) {
-					if (!assignedType.isSubtypeOf(boundType)) {	
-						throw new IllegalAssignmentInSequenceException(
+					if (!assignedType.isSubtypeOf(boundType)) {
+						ASTStatement cause = fSymtable.getCause(name);
+						throw new CompilationFailedException(
 								this,
-								name,
-								boundType,
-								assignedType,
-								fSymtable.getCause(name));
+								"Statement "
+										+ StringUtil.inQuotes(cause)
+										+ " at line "
+										+ cause.getSourcePosition().line()
+										+ ", column "
+										+ cause.getSourcePosition().column()
+										+ " possibly sets variable "
+										+ StringUtil.inQuotes(name)
+										+ " to type "
+										+ StringUtil.inQuotes(boundType)
+										+ ". This is prohibited, since this is not a subtype "
+										+ "of its current type "
+										+ StringUtil.inQuotes(assignedType)
+										+ ".");
 					}
 				}
 			}

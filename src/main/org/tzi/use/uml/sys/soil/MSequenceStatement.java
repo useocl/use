@@ -27,7 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**

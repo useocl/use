@@ -31,9 +31,8 @@ import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.sys.soil.MOperationCallStatement;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.NotCallableException;
-import org.tzi.use.util.soil.exceptions.compilation.UndefinedOperationException;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
@@ -67,27 +66,11 @@ public class ASTOperationCallStatement extends ASTStatement {
 	@Override
 	protected MOperationCallStatement generateStatement() throws CompilationFailedException {
 		
-		/*Expression object = generateObjectExpression(fObject);
-		
-		MOperation operation = generateOperation(object, fOperationName);
-	
-		if (!operation.hasStatement()) {
-			
-			throw new UndefinedOperationException(
-					this, 
-					operation.cls(), 
-					fOperationName);
-		}
-		
-		LinkedHashMap<String, Expression> arguments = 
-			generateOperationArguments(operation, fArguments);
-		
-		return new MOperationCallStatement(object, operation, arguments);
-		*/
-		
 		// expression needs to be of type ASTOperationExpression
 		if (!(fOperationCall instanceof ASTOperationExpression)) {
-			throw new NotCallableException(this, fOperationCall);
+			throw new CompilationFailedException(this, "Expression " +
+					StringUtil.inQuotes(fOperationCall.getStringRep()) +
+					" does not give a reference to an operation.");
 		}
 		
 		ASTOperationExpression operationExpression =
@@ -96,7 +79,9 @@ public class ASTOperationCallStatement extends ASTStatement {
 		// needs to conform to
 		// sourceExpression '.'  operation '(' argumentExpressions ')'
 		if (!operationExpression.isObjectOperation()) {			
-			throw new NotCallableException(this, fOperationCall);
+			throw new CompilationFailedException(this, "Expression " +
+					StringUtil.inQuotes(fOperationCall.getStringRep()) +
+					" does not give a reference to an operation.");
 		}
 		
 		ASTExpression objectExpression = 
@@ -118,10 +103,10 @@ public class ASTOperationCallStatement extends ASTStatement {
 		
 		if (!operation.hasStatement()) {
 			
-			throw new UndefinedOperationException(
-					this, 
-					objectClass, 
-					operationName);
+			throw new CompilationFailedException(this, "Operation "
+					+ StringUtil.inQuotes(objectClass.name() + "::"
+							+ operationName)
+					+ " is not defined by a soil statement.");
 		}
 		
 		// construct arguments

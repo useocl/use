@@ -34,8 +34,7 @@ import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
-import org.tzi.use.util.soil.exceptions.evaluation.UndefinedOperationException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
@@ -136,10 +135,6 @@ public class MOperationCallStatement extends MStatement {
 	protected void evaluate() throws EvaluationFailedException {
 		
 		MStatement operationBody = fOperation.getStatement();
-		
-		if (operationBody == null) {
-			throw new UndefinedOperationException(this, fOperation);
-		}
 				
 		// just to check if self exists
 		MObject self = evaluateObjectExpression(fObject);

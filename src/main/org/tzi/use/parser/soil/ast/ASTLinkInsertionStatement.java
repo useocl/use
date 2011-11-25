@@ -29,7 +29,7 @@ import java.util.List;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
@@ -93,7 +93,7 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 		
 		// generate association
 		MAssociation association = 
-			generateAssociation(fAssociationName);
+			getAssociation(fAssociationName);
 				
 		// generate participants
 		List<MRValue> participants = 

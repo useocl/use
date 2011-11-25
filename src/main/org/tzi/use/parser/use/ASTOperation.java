@@ -43,7 +43,7 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**

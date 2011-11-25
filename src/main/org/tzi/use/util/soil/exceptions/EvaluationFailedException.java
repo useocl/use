@@ -19,7 +19,7 @@
 
 // $Id$
 
-package org.tzi.use.util.soil.exceptions.evaluation;
+package org.tzi.use.util.soil.exceptions;
 
 import org.tzi.use.uml.sys.soil.MStatement;
 
@@ -29,7 +29,7 @@ import org.tzi.use.uml.sys.soil.MStatement;
  * @author Daniel Gent
  *
  */
-public abstract class EvaluationFailedException extends Exception {
+public class EvaluationFailedException extends Exception {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -68,6 +68,18 @@ public abstract class EvaluationFailedException extends Exception {
 		fFailedStatement = failedStatement;
 	}
 	
+	/**
+	 * TODO
+	 * @param failedStatement
+	 * @param cause
+	 */
+	public EvaluationFailedException(
+			MStatement failedStatement, 
+			Throwable cause) {
+		
+		super(cause.getMessage(), cause);
+		fFailedStatement = failedStatement;
+	}
 	
 	/**
 	 * The statement that failed.

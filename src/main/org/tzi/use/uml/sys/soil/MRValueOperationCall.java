@@ -23,7 +23,7 @@ package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**

@@ -19,7 +19,7 @@
 
 // $Id$
 
-package org.tzi.use.util.soil.exceptions.compilation;
+package org.tzi.use.util.soil.exceptions;
 
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.parser.soil.ast.ASTStatement;

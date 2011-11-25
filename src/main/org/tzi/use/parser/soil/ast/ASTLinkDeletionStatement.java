@@ -30,7 +30,7 @@ import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
@@ -93,7 +93,7 @@ public class ASTLinkDeletionStatement extends ASTStatement {
 		
 		// generate association
 		MAssociation association = 
-			generateAssociation(fAssociationName);
+			getAssociation(fAssociationName);
 				
 		// generate participants
 		List<MRValue> participants = 

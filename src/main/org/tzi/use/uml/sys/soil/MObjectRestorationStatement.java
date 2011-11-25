@@ -32,8 +32,7 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
-import org.tzi.use.util.soil.exceptions.evaluation.ExceptionOccuredException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
@@ -74,7 +73,7 @@ public class MObjectRestorationStatement extends MStatement {
                 fState.restoreObject(objectState);  
                 fResult.getStateDifference().addNewObject(objectState.object());
             } catch (MSystemException e) {
-                throw new ExceptionOccuredException(this, e);
+                throw new EvaluationFailedException(this, e);
             }
         }
 		

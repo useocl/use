@@ -27,7 +27,7 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.soil.MWhileStatement;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 public class ASTWhileStatement extends ASTStatement {

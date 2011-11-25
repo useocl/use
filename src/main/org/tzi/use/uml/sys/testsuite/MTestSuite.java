@@ -17,7 +17,7 @@ import org.tzi.use.uml.sys.ppcHandling.PostConditionCheckFailedException;
 import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullWriter;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 public class MTestSuite {
 	private Token name;

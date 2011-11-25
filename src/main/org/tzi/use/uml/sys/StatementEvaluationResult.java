@@ -28,7 +28,7 @@ import org.tzi.use.uml.sys.events.Event;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.soil.StateDifference;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
  * TODO

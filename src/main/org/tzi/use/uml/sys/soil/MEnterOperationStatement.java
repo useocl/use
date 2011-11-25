@@ -35,7 +35,7 @@ import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**

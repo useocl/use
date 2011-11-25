@@ -26,7 +26,7 @@ import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
@@ -71,8 +71,12 @@ public class MObjectDestructionStatement extends MStatement {
 		
 		// handle "dynamic" collections (e.g. .allInstances)
 		if (fToDelete.type().isCollection(false)) {
-			CollectionValue collection = evaluateCollection(fToDelete);
+			Value val = evaluateExpression(fToDelete);
 			
+			if (val.isUndefined())
+				return;
+			
+			CollectionValue collection = (CollectionValue)val;
 			for (Value object : collection.collection()) {
 				MObjectDestructionStatement statement = 
 					new MObjectDestructionStatement(object);

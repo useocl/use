@@ -18,7 +18,7 @@ import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.testsuite.MAssert;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 public class ASTTestCase extends AST {
 	public enum TestResult {

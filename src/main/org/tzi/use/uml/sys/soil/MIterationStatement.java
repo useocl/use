@@ -24,7 +24,7 @@ package org.tzi.use.uml.sys.soil;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
@@ -87,9 +87,13 @@ public class MIterationStatement extends MStatement {
 	
 	@Override
 	protected void evaluate() throws EvaluationFailedException {
-		
-		CollectionValue range = evaluateCollection(fRange);
 	
+		Value val = evaluateExpression(fRange);
+		
+		if (val.isUndefined())
+			return;
+		
+		CollectionValue range = (CollectionValue)val;
 		for (Value elem : range) {
 			fVarEnv.assign(fVariableName, elem);
 			evaluateSubStatement(fBody);

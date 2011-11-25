@@ -24,34 +24,32 @@ package org.tzi.use.parser.soil.ast;
 import java.io.PrintWriter;
 
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MIterationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.soil.exceptions.compilation.AssignmentToIterVariableException;
-import org.tzi.use.util.soil.exceptions.compilation.CompilationFailedException;
-import org.tzi.use.util.soil.exceptions.compilation.NotACollectionException;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST node of an iteration statement.
  * @author Daniel Gent
  *
  */
 public class ASTIterationStatement extends ASTStatement {
-	/** TODO */
+	
 	private String fIterVarName;
-	/** TODO */
+	
 	private ASTExpression fRange;
-	/** TODO */
+	
 	private ASTStatement fBody;
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new AST node.
 	 * @param iterVarName
 	 * @param range
 	 * @param body
@@ -70,7 +68,7 @@ public class ASTIterationStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
+	 * Name of the iteration variable.
 	 * @return
 	 */
 	public String getIterVarName() {
@@ -79,7 +77,7 @@ public class ASTIterationStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
+	 * The AST of the source expression
 	 * @return
 	 */
 	public ASTExpression getRange() {
@@ -88,7 +86,7 @@ public class ASTIterationStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
+	 * The AST of the body statements.
 	 * @return
 	 */
 	public ASTStatement getBody() {
@@ -101,7 +99,11 @@ public class ASTIterationStatement extends ASTStatement {
 		
 		Expression range = generateExpression(fRange);
 		if (!range.type().isCollection(false)) {
-			throw new NotACollectionException(this, fRange, range.type());
+			throw new CompilationFailedException(this, "Expression "
+					+ StringUtil.inQuotes(fRange.getStringRep())
+					+ " is expected to be of type "
+					+ StringUtil.inQuotes("Collection") + ", found "
+					+ StringUtil.inQuotes(range.type()) + ".");
 		}
 		
 		Type iterVarType = ((CollectionType)range.type()).elemType();
@@ -112,7 +114,10 @@ public class ASTIterationStatement extends ASTStatement {
 		fSymtable.restoreState(this);
 		
 		if (fBody.assigns(fIterVarName)) {
-			throw new AssignmentToIterVariableException(this);
+			throw new CompilationFailedException(this, 
+					"There is possible assignment to the iteration variable " +
+					StringUtil.inQuotes(this.getIterVarName()) +
+					". This is prohibited.");
 		}
 		
 		// assigned(iteration) = assigned(body)

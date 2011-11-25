@@ -106,7 +106,7 @@ import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.ReadlineTestReadlineDecorator;
 import org.tzi.use.util.input.SocketReadline;
-import org.tzi.use.util.soil.exceptions.evaluation.EvaluationFailedException;
+import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 class NoSystemException extends Exception {
 	/**
