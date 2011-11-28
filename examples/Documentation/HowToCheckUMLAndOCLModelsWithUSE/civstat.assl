@@ -1,0 +1,120 @@
+------------------------------------------------------------------------
+
+procedure Person_birth(self:Person,aName:String,aGender:Gender)
+begin
+[self].name:=[aName];
+[self].civstat:=[#single];
+[self].gender:=[aGender];
+[self].alive:=[true];
+end;
+
+procedure Person_marry(self:Person,aSpouse:Person)
+begin
+[self].civstat:=[#married]; [aSpouse].civstat:=[#married];
+if [self.gender=#female] then
+  begin Insert(Marriage,[self],[aSpouse]); end
+else -- [self.gender=#male]
+  begin Insert(Marriage,[aSpouse],[self]); end;
+end;
+
+procedure Person_divorce(self:Person)
+begin
+[self].civstat:=[#divorced];
+if [self.gender=#female] then
+  begin [self.husband].civstat:=[#divorced];
+  Delete(Marriage,[self],[self.husband]); end
+else -- [self.gender=#male]
+  begin [self.wife].civstat:=[#divorced];
+  Delete(Marriage,[self.wife],[self]); end;
+end;
+
+procedure Person_death(self:Person)
+begin
+[self].alive:=[false];
+if [self.husband.isDefined] then -- [self.gender=#female]
+  begin [self.husband].civstat:=[#widowed];
+  Delete(Marriage,[self],[self.husband]); end;
+if [self.wife.isDefined] then -- [self.gender=#male]
+  begin [self.wife].civstat:=[#widowed];
+  Delete(Marriage,[self.wife],[self]); end;
+end;
+
+------------------------------------------------------------------------
+
+procedure crowd(numFemale:Integer, numMale:Integer, numMarriage:Integer)
+var theFemales: Sequence(Person), theMales: Sequence(Person),
+    f: Person, m: Person;
+begin
+theFemales:=CreateN(Person,[numFemale]);
+theMales:=CreateN(Person,[numMale]);
+for i:Integer in [Sequence{1..numFemale}]
+  begin [theFemales->at(i)].name:=Any([Sequence{'Ada','Bel','Cam','Day',
+    'Eva','Flo','Gen','Hao','Ina','Jen'}]);
+  [theFemales->at(i)].civstat:=
+    Any([Sequence{#single,#married,#divorced,#widowed}]);
+  [theFemales->at(i)].gender:=Any([Sequence{#female,#male}]);
+  [theFemales->at(i)].alive:=Any([Sequence{false,true}]); end;
+for i:Integer in [Sequence{1..numMale}]
+  begin [theMales->at(i)].name:=Any([Sequence{'Ali','Bob','Cyd','Dan',
+    'Eli','Fox','Gil','Hal','Ike','Jan'}]);
+  [theMales->at(i)].civstat:=
+    Any([Sequence{#single,#married,#divorced,#widowed}]);
+  [theMales->at(i)].gender:=Any([Sequence{#female,#male}]);
+  [theMales->at(i)].alive:=Any([Sequence{false,true}]); end;
+for i:Integer in [Sequence{1..numMarriage}]
+  begin f:=Any([theFemales]); m:=Any([theMales]);
+  Insert(Marriage,[f],[m]); end;
+end;
+
+------------------------------------------------------------------------
+
+procedure world(numFemale:Integer, numMale:Integer, numMarriage:Integer)
+-- numMarriage<=numFemale<=26, numMarriage<=numMale<=26
+var theFemales: Sequence(Person), theMales: Sequence(Person),
+    f: Person, m: Person;
+begin
+theFemales:=CreateN(Person,[numFemale]);
+theMales:=CreateN(Person,[numMale]);
+for i:Integer in [Sequence{1..numFemale}]
+  begin [theFemales->at(i)].name:=Any([Sequence{'Ada','Bel','Cam','Day',
+    'Eva','Flo','Gen','Hao','Ina','Jen','Kia','Lan','Mae','Nan','Oki',
+    'Pam','Quao','Rae','Sen','Tip','Una','Vea','Wan','Xia','Yan','Zoe'}
+    ->reject(n|Person.allInstances->exists(p|p.name=n))]);
+  [theFemales->at(i)].civstat:=[#single];
+  [theFemales->at(i)].gender:=[#female];
+  [theFemales->at(i)].alive:=[true]; end;
+for i:Integer in [Sequence{1..numMale}]
+  begin [theMales->at(i)].name:=Any([Sequence{'Ali','Bob','Cyd','Dan',
+    'Eli','Fox','Gil','Hal','Ike','Jan','Kim','Leo','Max','Nam','Ole',
+    'Pat','Quin','Rex','Sam','Tom','Ulf','Vic','Wei','Xan','Yul','Zan'}
+    ->reject(n|Person.allInstances->exists(p|p.name=n))]);
+  [theMales->at(i)].civstat:=[#single];
+  [theMales->at(i)].gender:=[#male];
+  [theMales->at(i)].alive:=[true]; end;
+for i:Integer in [Sequence{1..numMarriage}]
+  begin f:=Any([theFemales->reject(p|p.husband.isDefined)]);
+  m:=Any([theMales->reject(p|p.wife.isDefined)]);
+  [f].civstat:=[#married]; [m].civstat:=[#married];
+  Insert(Marriage,[f],[m]); end;
+end;
+
+------------------------------------------------------------------------
+
+procedure attemptBigamy()
+var p: Person, w: Person, h:Person, thePersons: Sequence(Person);
+--   w -wife-----husband- p -wife-----husband- h
+begin
+thePersons:=CreateN(Person,[3]);
+for i:Integer in [Sequence{1..3}]
+  begin [thePersons->at(i)].name:=Try([Sequence{'A','B','C'}]);
+  [thePersons->at(i)].civstat:=
+    Try([Sequence{#single,#married,#divorced,#widowed}]);
+  [thePersons->at(i)].gender:=Try([Sequence{#female,#male}]);
+  [thePersons->at(i)].alive:=Try([Sequence{false,true}]); end;
+p:=Try([thePersons]);
+w:=Try([thePersons->excluding(p)]);
+h:=Try([thePersons->excluding(p)->excluding(w)]);
+Insert(Marriage,[w],[p]); Insert(Marriage,[p],[h]);
+end; -- [(3*4*2*2)^3]*(3*2*1) = [48^3]*6 = 110552*6 = 663552
+
+------------------------------------------------------------------------

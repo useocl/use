@@ -1,0 +1,88 @@
+model CivilStatusWorld
+
+enum CivilStatus {single, married, divorced, widowed}
+enum Gender {female, male}
+
+class Person
+
+attributes
+  name:String
+  civstat:CivilStatus
+  gender:Gender
+  alive:Boolean
+
+operations
+
+birth(aName:String, aGender:Gender)
+pre  freshUnlinkedPerson: name.isUndefined and civstat.isUndefined and
+     gender.isUndefined and alive.isUndefined and
+     wife.isUndefined and husband.isUndefined
+post nameAssigned: name=aName -- equivalent to 'aName=self.name'
+post civstatAssigned: civstat=#single
+post genderAssigned: gender=aGender
+post isAliveAssigned: alive=true -- equivalent to 'alive'
+
+marry(aSpouse:Person)
+pre  aSpouseDefined: aSpouse.isDefined
+pre  isAlive: alive
+pre  aSpouseAlive: aSpouse.alive
+pre  isUnmarried: civstat<>#married
+pre  aSpouseUnmarried: aSpouse.civstat<>#married
+pre  differentGenders: gender<>aSpouse.gender
+post isMarried: civstat=#married
+post femaleHasMarriedHusband: gender=#female implies
+     husband=aSpouse and husband.civstat=#married
+post maleHasMarriedWife: gender=#male implies
+     wife=aSpouse and wife.civstat=#married
+
+divorce()
+pre  isMarried: civstat=#married
+pre  isAlive: alive
+pre  husbandAlive: gender=#female implies husband.alive
+pre  wifeAlive: gender=#male implies wife.alive
+post isDivorced: civstat=#divorced
+post husbandDivorced: gender=#female implies
+     husband.isUndefined and husband@pre.civstat=#divorced
+post wifeDivorced: gender=#male implies
+     wife.isUndefined and wife@pre.civstat=#divorced
+
+death()
+pre  isAlive: alive
+post notAlive: not(alive)
+post husbandWidowed: gender=#female and husband@pre.isDefined implies
+     husband@pre.wife.isUndefined and husband@pre.civstat=#widowed
+post wifeWidowed: gender=#male and wife@pre.isDefined implies
+     wife@pre.husband.isUndefined and wife@pre.civstat=#widowed
+
+spouse():Person=if gender=#female then husband else wife endif
+
+constraints -- invariants can be defined also outside the class see (*)
+  inv attributesDefined: name.isDefined and civstat.isDefined and
+      gender.isDefined and alive.isDefined
+  inv nameCapitalThenSmallLetters: -- name.matches('[A-Z][a-z]*')
+      let small:Set(String)=
+        Set{'a','b','c','d','e','f','g','h','i','j','k','l','m',
+            'n','o','p','q','r','s','t','u','v','w','x','y','z'} in
+      let capital:Set(String)=
+        Set{'A','B','C','D','E','F','G','H','I','J','K','L','M',
+            'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'} in
+      capital->includes(name.substring(1,1)) and
+      Set{2..name.size}->forAll(i |
+        small->includes(name.substring(i,i)))
+  inv nameIsUnique: Person.allInstances->forAll(self2|
+      self<>self2 implies self.name<>self2.name)
+  inv femaleHasNoWife: gender=#female implies wife.isUndefined
+  inv maleHasNoHusband: gender=#male implies husband.isUndefined
+
+end
+
+association Marriage between
+  Person [0..1] role wife
+  Person [0..1] role husband
+end
+
+-- constraints -- (*)
+-- 
+-- context Person inv attributesDefined2:
+--   name.isDefined and civstat.isDefined and
+--   gender.isDefined and alive.isDefined
