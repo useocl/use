@@ -97,7 +97,8 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
     			partition.add(entry);
     		}
     		
-    		partitionedCombinations.add(partition);
+    		if (partition.size() > 0)
+    			partitionedCombinations.add(partition);
     	}
 	}
 		
@@ -126,9 +127,6 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
     	
     	if (s.index + 1 == myCombinations.size()) {
 			toDo.pop();
-		} else if (s.index == myCombinations.size()) {
-			nextLinkSet = null;
-    		return;	
 		}
     	
     	this.nextLinkSet = new ArrayList<Pair<T>>(s.head);
