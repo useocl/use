@@ -126,6 +126,9 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
     	
     	if (s.index + 1 == myCombinations.size()) {
 			toDo.pop();
+		} else if (s.index == myCombinations.size()) {
+			nextLinkSet = null;
+    		return;	
 		}
     	
     	this.nextLinkSet = new ArrayList<Pair<T>>(s.head);
