@@ -669,9 +669,9 @@ public class ExprEvalBrowser extends JPanel {
             DefaultMutableTreeNode dchild = dnode;
             EvalNode echild = (EvalNode) dchild.getUserObject();
             while (dchild.getChildCount() > 0
-                    && echild.getExpr().name() == "var"
-                    && echild.getResult() != "true"
-                    && echild.getResult() != "false") {
+                    && echild.getExpr().name().equals("var")
+                    && !echild.getResult().equals("true")
+                    && !echild.getResult().equals("false")) {
                 dchild = (DefaultMutableTreeNode) dchild.getChildAt(0);
                 echild = (EvalNode) dchild.getUserObject();
             }
@@ -693,21 +693,21 @@ public class ExprEvalBrowser extends JPanel {
         EvalNode enode = (EvalNode) dnode.getUserObject();
         TreeModel model = fTree.getModel();
         if (fTree.isVisible(path) && fTree.isCollapsed(path)) {
-            if (val && enode.getResult() == "true")
+            if (val && enode.getResult().equals("true"))
                 expandAllTrue(path, "false");
-            else if (!val && enode.getResult() == "false")
+            else if (!val && enode.getResult().equals("false"))
                 expandAllTrue(path, "true");
             else if (fEarlyVarEval) {
                 DefaultMutableTreeNode dchild = dnode;
                 EvalNode echild = (EvalNode) dchild.getUserObject();
                 while (dchild.getChildCount() > 0
-                        && echild.getExpr().name() == "var") {
+                        && echild.getExpr().name().equals("var")) {
                     dchild = (DefaultMutableTreeNode) dchild.getChildAt(0);
                     echild = (EvalNode) dchild.getUserObject();
                 }
-                if (val && echild.getResult() == "true")
+                if (val && echild.getResult().equals("true"))
                     expandAllTrue(new TreePath(dnode.getPath()), "false");
-                if (!val && echild.getResult() == "false")
+                if (!val && echild.getResult().equals("false"))
                     expandAllTrue(new TreePath(dnode.getPath()), "true");
             }
             return;
