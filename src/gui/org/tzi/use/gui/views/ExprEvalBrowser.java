@@ -139,7 +139,7 @@ public class ExprEvalBrowser extends JPanel {
     JCheckBoxMenuItem fVarSubstituteWinChk = new JCheckBoxMenuItem(
             "Subexpression evaluation window");
 
-    JCheckBoxMenuItem fNoColorHighlitingChk = new JCheckBoxMenuItem("No colors");
+    JCheckBoxMenuItem fNoColorHighlightingChk = new JCheckBoxMenuItem("Black and white");
 
     JRadioButtonMenuItem[] fTreeViews = {
             new JRadioButtonMenuItem("Late variable assignment", true),
@@ -148,11 +148,11 @@ public class ExprEvalBrowser extends JPanel {
             new JRadioButtonMenuItem("Variable substitution"),
             new JRadioButtonMenuItem("No variable assignment") };
 
-    JRadioButtonMenuItem[] fTreeHighlitings = {
-            new JRadioButtonMenuItem("No highliting", true),
-            new JRadioButtonMenuItem("Term highliting"),
-            new JRadioButtonMenuItem("Subtree highliting"),
-            new JRadioButtonMenuItem("Complete subtree hightliting") };
+    JRadioButtonMenuItem[] fTreeHighlightings = {
+            new JRadioButtonMenuItem("No highlighting", true),
+            new JRadioButtonMenuItem("Term highlighting"),
+            new JRadioButtonMenuItem("Subtree highlighting"),
+            new JRadioButtonMenuItem("Complete subtree highlighting") };
 
     DefaultMutableTreeNode fTopNode;
 
@@ -200,81 +200,81 @@ public class ExprEvalBrowser extends JPanel {
         breakLabel: for(EvalNode child : node.children()) {
             Expression childExpr = child.getExpr();
             DefaultMutableTreeNode treeChild = new DefaultMutableTreeNode(child);
-            // TreeHighlitings for the node
-            char[] highlitings = new char[2];
+            // TreeHighlightings for the node
+            char[] highlightings = new char[2];
             TreeNode[] nodes = treeParent.getPath();
-            // subtree highliting
+            // subtree highlighting
             DefaultMutableTreeNode dnode = treeParent;
             EvalNode enode;
             if (child.getResult() == "true")
-                highlitings[0] = 't';
+                highlightings[0] = 't';
             else if (child.getResult() == "false")
-                highlitings[0] = 'f';
+                highlightings[0] = 'f';
             else if (child.getResult() == "Undefined"
                     && child.getExpr().type().toString() == "Boolean")
-                highlitings[0] = 'u';
+                highlightings[0] = 'u';
             else {
                 for (int i = nodes.length - 1; i >= 0; i--) {
                     dnode = (DefaultMutableTreeNode) nodes[i];
                     enode = (EvalNode) dnode.getUserObject();
                     if (enode.getResult().equals("true")) {
-                        highlitings[0] = 't';
+                        highlightings[0] = 't';
                         break;
                     } else if (enode.getResult().equals("false")) {
-                        highlitings[0] = 'f';
+                        highlightings[0] = 'f';
                         break;
                     } else if (enode.getResult().equals("Undefined")
                             && enode.getExpr().type().toString() == "Boolean") {
-                        highlitings[0] = 'u';
+                        highlightings[0] = 'u';
                         break;
                     }
                 }
-                if ((highlitings[0] != 't') && (highlitings[0] != 'f')
-                        && (highlitings[0] != 'u')) {
+                if ((highlightings[0] != 't') && (highlightings[0] != 'f')
+                        && (highlightings[0] != 'u')) {
                     EvalNode root = (EvalNode) fTopNode.getUserObject();
                     if (root.getResult() == "true")
-                        highlitings[0] = 't';
+                        highlightings[0] = 't';
                     else if (root.getResult() == "false")
-                        highlitings[0] = 'f';
+                        highlightings[0] = 'f';
                 }
             }
-            // complete subtree highliting
+            // complete subtree highlighting
             dnode = (DefaultMutableTreeNode) nodes[0];
             enode = (EvalNode) dnode.getUserObject();
             if (nodes.length == 1)
                 if (child.getResult() == "true")
-                    highlitings[1] = 't';
+                    highlightings[1] = 't';
                 else if (child.getResult() == "false")
-                    highlitings[1] = 'f';
+                    highlightings[1] = 'f';
                 else if (child.getResult() == "Undefined"
                         && child.getExpr().type().toString() == "Boolean")
-                    highlitings[1] = 'u';
+                    highlightings[1] = 'u';
             for (int i = 1; i < nodes.length; i++) {
                 dnode = (DefaultMutableTreeNode) nodes[i];
                 enode = (EvalNode) dnode.getUserObject();
                 if (enode.isEarlyVarNode())
                     continue;
                 if (enode.getResult().equals("true")) {
-                    highlitings[1] = 't';
+                    highlightings[1] = 't';
                     break;
                 } else if (enode.getResult().equals("false")) {
-                    highlitings[1] = 'f';
+                    highlightings[1] = 'f';
                     break;
                 } else if (enode.getResult().equals("Undefined")
                         && enode.getExpr().type().toString() == "Boolean") {
-                    highlitings[1] = 'u';
+                    highlightings[1] = 'u';
                     break;
                 }
             }
-            if ((highlitings[1] != 't') && (highlitings[1] != 'f')
-                    && (highlitings[1] != 'u')) {
+            if ((highlightings[1] != 't') && (highlightings[1] != 'f')
+                    && (highlightings[1] != 'u')) {
                 EvalNode root = (EvalNode) fTopNode.getUserObject();
                 if (root.getResult() == "true")
-                    highlitings[1] = 't';
+                    highlightings[1] = 't';
                 else if (root.getResult() == "false")
-                    highlitings[1] = 'f';
+                    highlightings[1] = 'f';
             }
-            child.setHighliting(highlitings);
+            child.setHighlighting(highlightings);
             // remove all Varbindings that are in the system state but not in
             // the term
             child.getVarBindings().removeAll(fNeedlessVarBindings);
@@ -297,13 +297,13 @@ public class ExprEvalBrowser extends JPanel {
                 // node is also expanded
                 enode.setVisibleAttr(child.isVisible());
                 enode.setVarAssignment(e.getVarName() + " = " + e.getValue());
-                // Highliting for the new Var-Assignment-Node
-                char[] highlitings2 = (char[]) highlitings.clone();
+                // Highlighting for the new Var-Assignment-Node
+                char[] highlightings2 = (char[]) highlightings.clone();
                 if (newVars.size() == 1 && enode.getResult() == "true")
-                    highlitings2[0] = 't';
+                    highlightings2[0] = 't';
                 else if (newVars.size() == 1 && enode.getResult() == "false")
-                    highlitings2[0] = 'f';
-                enode.setHighliting(highlitings2);
+                    highlightings2[0] = 'f';
+                enode.setHighlighting(highlightings2);
 
                 for (int i = 1; i < newVars.size(); i++) {
                     Entry e2 = (Entry) newVars.get(i);
@@ -363,16 +363,16 @@ public class ExprEvalBrowser extends JPanel {
         
         // the tree is created later when the default configuration is set
         createNodes(fTopNode, root);
-        // highlitings informations for the root node
-        char[] highlitings = new char[2];
+        // highlightings informations for the root node
+        char[] highlightings = new char[2];
         if (root.getResult() == "true") {
-            highlitings[0] = 't';
-            highlitings[1] = 't';
+            highlightings[0] = 't';
+            highlightings[1] = 't';
         } else if (root.getResult() == "false") {
-            highlitings[0] = 'f';
-            highlitings[1] = 'f';
+            highlightings[0] = 'f';
+            highlightings[1] = 'f';
         }
-        root.setHighliting(highlitings);
+        root.setHighlighting(highlightings);
         // remove old tree
         fScrollTree.remove(fTree);
         // create the tree
@@ -390,13 +390,13 @@ public class ExprEvalBrowser extends JPanel {
 
         fTree.addMouseListener(fMouseListener);
         // set the selectedRenderer to the new created tree
-        if (fTreeHighlitings[0].isSelected())
+        if (fTreeHighlightings[0].isSelected())
             fTree.setCellRenderer(new DefaultTreeCellRenderer());
-        else if (fTreeHighlitings[1].isSelected())
+        else if (fTreeHighlightings[1].isSelected())
             fTree.setCellRenderer(new TermRenderer());
-        else if (fTreeHighlitings[2].isSelected())
+        else if (fTreeHighlightings[2].isSelected())
             fTree.setCellRenderer(new SubtreeRenderer());
-        else if (fTreeHighlitings[3].isSelected())
+        else if (fTreeHighlightings[3].isSelected())
             fTree.setCellRenderer(new CompleteSubtreeRenderer());
         // reset the extra windows
         fVarAssList.setListData(new Vector<Entry>());
@@ -496,16 +496,16 @@ public class ExprEvalBrowser extends JPanel {
         root.getVarBindings().removeAll(fNeedlessVarBindings);
         // the tree is created later when the default configuration is set
         createNodes(fTopNode, root);
-        // highlitings informations for the root node
-        char[] highlitings = new char[2];
+        // highlightings informations for the root node
+        char[] highlightings = new char[2];
         if (root.getResult() == "true") {
-            highlitings[0] = 't';
-            highlitings[1] = 't';
+            highlightings[0] = 't';
+            highlightings[1] = 't';
         } else if (root.getResult() == "false") {
-            highlitings[0] = 'f';
-            highlitings[1] = 'f';
+            highlightings[0] = 'f';
+            highlightings[1] = 'f';
         }
-        root.setHighliting(highlitings);
+        root.setHighlighting(highlightings);
         // create the tree
         fTreeModel = new DefaultTreeModel(fTopNode);
         fTree = new JTree(fTreeModel);
@@ -601,19 +601,19 @@ public class ExprEvalBrowser extends JPanel {
         add(shortcuts, BorderLayout.CENTER);
         shortcuts.setMnemonic('5');
         shortcuts.addActionListener(fActionListener);
-        shortcuts = new JButton("No highliting");
+        shortcuts = new JButton("No highlighting");
         add(shortcuts, BorderLayout.CENTER);
         shortcuts.setMnemonic('0');
         shortcuts.addActionListener(fActionListener);
-        shortcuts = new JButton("Term highliting");
+        shortcuts = new JButton("Term highlighting");
         add(shortcuts, BorderLayout.CENTER);
         shortcuts.setMnemonic('9');
         shortcuts.addActionListener(fActionListener);
-        shortcuts = new JButton("Subtree highliting");
+        shortcuts = new JButton("Subtree highlighting");
         add(shortcuts, BorderLayout.CENTER);
         shortcuts.setMnemonic('8');
         shortcuts.addActionListener(fActionListener);
-        shortcuts = new JButton("Complete Subtree highliting");
+        shortcuts = new JButton("Complete Subtree highlighting");
         add(shortcuts, BorderLayout.CENTER);
         shortcuts.setMnemonic('7');
         shortcuts.addActionListener(fActionListener);
@@ -818,17 +818,17 @@ public class ExprEvalBrowser extends JPanel {
                 bg_treeview.add(fTreeViews[i]);
             }
             popup.add(menu);
-            // Syntax Highliting
-            menu = new JMenu("True-false highliting");
-            ButtonGroup bg_highliting = new ButtonGroup();
-            for (int i = 0; i < fTreeHighlitings.length; i++) {
-                fTreeHighlitings[i].addActionListener(fActionListener);
-                menu.add(fTreeHighlitings[i]);
-                bg_highliting.add(fTreeHighlitings[i]);
+            // Syntax Highlighting
+            menu = new JMenu("True-false highlighting");
+            ButtonGroup bg_highlighting = new ButtonGroup();
+            for (int i = 0; i < fTreeHighlightings.length; i++) {
+                fTreeHighlightings[i].addActionListener(fActionListener);
+                menu.add(fTreeHighlightings[i]);
+                bg_highlighting.add(fTreeHighlightings[i]);
             }
             menu.addSeparator();
-            fNoColorHighlitingChk.addItemListener(fItemListener);
-            menu.add(fNoColorHighlitingChk);
+            fNoColorHighlightingChk.addItemListener(fItemListener);
+            menu.add(fNoColorHighlightingChk);
             popup.add(menu);
             // Button for Adjustments to window-size
             JMenuItem treewidth = new JMenuItem("Fit width");
@@ -1019,12 +1019,12 @@ public class ExprEvalBrowser extends JPanel {
                     }
                 }
             }
-            // Action for Checkbox fNoColorHighlitingChk
-            else if (object == fNoColorHighlitingChk) {
+            // Action for Checkbox fNoColorHighlightingChk
+            else if (object == fNoColorHighlightingChk) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    fNoColorHighlitingChk.setSelected(true);
+                    fNoColorHighlightingChk.setSelected(true);
                 } else {
-                    fNoColorHighlitingChk.setSelected(false);
+                    fNoColorHighlightingChk.setSelected(false);
                 }
                 markVisibleNodes(fTopNode);
                 fTreeModel.reload();
@@ -1082,20 +1082,20 @@ public class ExprEvalBrowser extends JPanel {
             } else if (command.equals("Subexpression evaluation window")) {
                 boolean sel = fVarSubstituteWinChk.isSelected();
                 fVarSubstituteWinChk.setSelected(!sel);
-            } else if (command.equals("No highliting")) {
-                fTreeHighlitings[0].setSelected(true);
+            } else if (command.equals("No highlighting")) {
+                fTreeHighlightings[0].setSelected(true);
                 fTree.setCellRenderer(new DefaultTreeCellRenderer());
                 fTree.repaint();
-            } else if (command.equals("Term highliting")) {
-                fTreeHighlitings[1].setSelected(true);
+            } else if (command.equals("Term highlighting")) {
+                fTreeHighlightings[1].setSelected(true);
                 fTree.setCellRenderer(new TermRenderer());
                 fTree.repaint();
-            } else if (command.equals("Subtree highliting")) {
-                fTreeHighlitings[2].setSelected(true);
+            } else if (command.equals("Subtree highlighting")) {
+                fTreeHighlightings[2].setSelected(true);
                 fTree.setCellRenderer(new SubtreeRenderer());
                 fTree.repaint();
             } else if (command.equalsIgnoreCase("Complete subtree hightliting")) {
-                fTreeHighlitings[3].setSelected(true);
+                fTreeHighlightings[3].setSelected(true);
                 fTree.setCellRenderer(new CompleteSubtreeRenderer());
                 fTree.repaint();
             } else if (command.equals("Default configuration")) {
@@ -1166,30 +1166,30 @@ public class ExprEvalBrowser extends JPanel {
                     actionPerformed(new ActionEvent(fTreeViews[0], 0,
                             "Late variable assignment"));
                 prop = System.getProperty(
-                        "use.gui.view.evalbrowser.highliting", "false");
+                        "use.gui.view.evalbrowser.highlighting", "false");
                 if (prop.equals("term")) {
-                    fTreeHighlitings[1].setSelected(true);
-                    actionPerformed(new ActionEvent(fTreeHighlitings[1], 0,
-                            "Term highliting"));
+                    fTreeHighlightings[1].setSelected(true);
+                    actionPerformed(new ActionEvent(fTreeHighlightings[1], 0,
+                            "Term highlighting"));
                 } else if (prop.equals("subtree")) {
-                    fTreeHighlitings[2].setSelected(true);
-                    actionPerformed(new ActionEvent(fTreeHighlitings[2], 0,
-                            "Subtree highliting"));
+                    fTreeHighlightings[2].setSelected(true);
+                    actionPerformed(new ActionEvent(fTreeHighlightings[2], 0,
+                            "Subtree highlighting"));
                 } else if (prop.equals("complete")) {
-                    fTreeHighlitings[3].setSelected(true);
-                    actionPerformed(new ActionEvent(fTreeHighlitings[3], 0,
+                    fTreeHighlightings[3].setSelected(true);
+                    actionPerformed(new ActionEvent(fTreeHighlightings[3], 0,
                             "Complete subtree hightliting"));
                 } else {
-                    fTreeHighlitings[0].setSelected(true);
-                    actionPerformed(new ActionEvent(fTreeHighlitings[3], 0,
-                            "No highliting"));
+                    fTreeHighlightings[0].setSelected(true);
+                    actionPerformed(new ActionEvent(fTreeHighlightings[3], 0,
+                            "No highlighting"));
                 }
                 prop = System.getProperty(
-                        "use.gui.view.evalbrowser.blackHighliting", "false");
+                        "use.gui.view.evalbrowser.blackHighlighting", "false");
                 if (prop.equals("true"))
-                    fNoColorHighlitingChk.setSelected(true);
+                    fNoColorHighlightingChk.setSelected(true);
                 else
-                    fNoColorHighlitingChk.setSelected(false);
+                    fNoColorHighlightingChk.setSelected(false);
                 // delete the HTML-Formatting
                 deleteHTMLTags(fTopNode);
             } else if (command.equals("Set as default")) {
@@ -1312,22 +1312,22 @@ public class ExprEvalBrowser extends JPanel {
             nodeIndent += fTreeIndent * 2 + 4;
             double nodeWidth = fScrollTree.getWidth() - nodeIndent;
             // detect the fonr metrics of the current node
-            char highliting[] = enode.getHighliting();
+            char highlighting[] = enode.getHighlighting();
             FontMetrics fm = fTree.getFontMetrics(fTree.getFont());
-            if (!fNoColorHighlitingChk.isSelected()
-                    || fTreeHighlitings[0].isSelected()
-                    || highliting.length < 2)
+            if (!fNoColorHighlightingChk.isSelected()
+                    || fTreeHighlightings[0].isSelected()
+                    || highlighting.length < 2)
                 fm = fTree.getFontMetrics(fTree.getFont());
-            else if (fTreeHighlitings[1].isSelected()
+            else if (fTreeHighlightings[1].isSelected()
                     && (enode.getResult() == "true" || enode.getResult() == "false"))
                 fm = fTree
                         .getFontMetrics(fTree.getFont().deriveFont(Font.BOLD));
-            else if (fTreeHighlitings[2].isSelected()
-                    && (highliting[0] == 't' || highliting[0] == 'f'))
+            else if (fTreeHighlightings[2].isSelected()
+                    && (highlighting[0] == 't' || highlighting[0] == 'f'))
                 fm = fTree
                         .getFontMetrics(fTree.getFont().deriveFont(Font.BOLD));
-            else if (fTreeHighlitings[3].isSelected()
-                    && (highliting[1] == 't' || highliting[0] == 'f'))
+            else if (fTreeHighlightings[3].isSelected()
+                    && (highlighting[1] == 't' || highlighting[0] == 'f'))
                 fm = fTree
                         .getFontMetrics(fTree.getFont().deriveFont(Font.BOLD));
             // set the width for the node if the node text goes beyond the
@@ -1439,27 +1439,27 @@ public class ExprEvalBrowser extends JPanel {
                     else if (fTreeViews[4].isSelected())
                         System.setProperty("use.gui.view.evalbrowser.treeview",
                                 "noVarAssignment");
-                    if (fTreeHighlitings[0].isSelected())
+                    if (fTreeHighlightings[0].isSelected())
                         System.setProperty(
-                                "use.gui.view.evalbrowser.highliting", "no");
-                    else if (fTreeHighlitings[1].isSelected())
+                                "use.gui.view.evalbrowser.highlighting", "no");
+                    else if (fTreeHighlightings[1].isSelected())
                         System.setProperty(
-                                "use.gui.view.evalbrowser.highliting", "term");
-                    else if (fTreeHighlitings[2].isSelected())
+                                "use.gui.view.evalbrowser.highlighting", "term");
+                    else if (fTreeHighlightings[2].isSelected())
                         System.setProperty(
-                                "use.gui.view.evalbrowser.highliting",
+                                "use.gui.view.evalbrowser.highlighting",
                                 "subtree");
-                    else if (fTreeHighlitings[3].isSelected())
+                    else if (fTreeHighlightings[3].isSelected())
                         System.setProperty(
-                                "use.gui.view.evalbrowser.highliting",
+                                "use.gui.view.evalbrowser.highlighting",
                                 "complete");
-                    if (fNoColorHighlitingChk.isSelected())
+                    if (fNoColorHighlightingChk.isSelected())
                         System.setProperty(
-                                "use.gui.view.evalbrowser.blackHighliting",
+                                "use.gui.view.evalbrowser.blackHighlighting",
                                 "true");
                     else
                         System.setProperty(
-                                "use.gui.view.evalbrowser.blackHighliting",
+                                "use.gui.view.evalbrowser.blackHighlighting",
                                 "false");
                     setVisible(false);
                     dispose();
@@ -1531,24 +1531,24 @@ public class ExprEvalBrowser extends JPanel {
                             s = setConfigPoint(s,
                                     "use.gui.view.evalbrowser.treeview",
                                     "noVarAssignment");
-                        if (fTreeHighlitings[0].isSelected())
+                        if (fTreeHighlightings[0].isSelected())
                             s = setConfigPoint(s,
-                                    "use.gui.view.evalbrowser.highliting", "no");
-                        else if (fTreeHighlitings[1].isSelected())
+                                    "use.gui.view.evalbrowser.highlighting", "no");
+                        else if (fTreeHighlightings[1].isSelected())
                             s = setConfigPoint(s,
-                                    "use.gui.view.evalbrowser.highliting",
+                                    "use.gui.view.evalbrowser.highlighting",
                                     "term");
-                        else if (fTreeHighlitings[2].isSelected())
+                        else if (fTreeHighlightings[2].isSelected())
                             s = setConfigPoint(s,
-                                    "use.gui.view.evalbrowser.highliting",
+                                    "use.gui.view.evalbrowser.highlighting",
                                     "subtree");
-                        else if (fTreeHighlitings[3].isSelected())
+                        else if (fTreeHighlightings[3].isSelected())
                             s = setConfigPoint(s,
-                                    "use.gui.view.evalbrowser.highliting",
+                                    "use.gui.view.evalbrowser.highlighting",
                                     "complete");
                         s = setConfigPoint(s,
-                                "use.gui.view.evalbrowser.blackHighliting",
-                                fNoColorHighlitingChk.isSelected());
+                                "use.gui.view.evalbrowser.blackHighlighting",
+                                fNoColorHighlightingChk.isSelected());
 
                         // rewrite the config file
                         FileWriter writer = new FileWriter(f);
@@ -1811,7 +1811,7 @@ public class ExprEvalBrowser extends JPanel {
     }
 
     /**
-     * the TreeCellRenderer for term-Highliting
+     * the TreeCellRenderer for term-Highlighting
      */
     class TermRenderer extends DefaultTreeCellRenderer {
         public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -1824,7 +1824,7 @@ public class ExprEvalBrowser extends JPanel {
                 super.getTreeCellRendererComponent(tree, value, sel, expanded,
                         leaf, row, hasFocus);
             if ((enode.getResult()).equals("true")) {
-                if (fNoColorHighlitingChk.isSelected()) {
+                if (fNoColorHighlightingChk.isSelected()) {
                     setFont(fDefaultFont.deriveFont(Font.BOLD));
                     setForeground(Color.black);
                     setBackgroundNonSelectionColor(Color.white);
@@ -1834,7 +1834,7 @@ public class ExprEvalBrowser extends JPanel {
                     setBackgroundNonSelectionColor(Color.white);
                 }
             } else if ((enode.getResult()).equals("false")) {
-                if (fNoColorHighlitingChk.isSelected()) {
+                if (fNoColorHighlightingChk.isSelected()) {
                     // setFont(new Font("Courier",Font.PLAIN+Font.ITALIC,14));
                     setFont(fDefaultFont.deriveFont(Font.BOLD));
                     setForeground(Color.white);
@@ -1845,7 +1845,7 @@ public class ExprEvalBrowser extends JPanel {
                     setBackgroundNonSelectionColor(Color.white);
                 }
             } else {
-                if (fNoColorHighlitingChk.isSelected()) {
+                if (fNoColorHighlightingChk.isSelected()) {
                     setFont(fDefaultFont);
                     setForeground(Color.black);
                     setBackgroundNonSelectionColor(Color.white);
@@ -1866,7 +1866,7 @@ public class ExprEvalBrowser extends JPanel {
     }
 
     /**
-     * the TreeCellRenderer for subtree-Highliting
+     * the TreeCellRenderer for subtree-Highlighting
      */
     class SubtreeRenderer extends DefaultTreeCellRenderer {
         public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -1878,9 +1878,9 @@ public class ExprEvalBrowser extends JPanel {
             if (!enode.htmlUsed())
                 super.getTreeCellRendererComponent(tree, value, sel, expanded,
                         leaf, row, hasFocus);
-            char[] highlitings = enode.getHighliting();
-            if (highlitings != null && highlitings[0] == 't') {
-                if (fNoColorHighlitingChk.isSelected()) {
+            char[] highlightings = enode.getHighlighting();
+            if (highlightings != null && highlightings[0] == 't') {
+                if (fNoColorHighlightingChk.isSelected()) {
                     setFont(fDefaultFont.deriveFont(Font.BOLD));
                     setForeground(Color.black);
                     setBackgroundNonSelectionColor(Color.white);
@@ -1889,8 +1889,8 @@ public class ExprEvalBrowser extends JPanel {
                     setForeground(new Color(0, 0x80, 0));
                     setBackgroundNonSelectionColor(Color.white);
                 }
-            } else if (highlitings != null && highlitings[0] == 'f') {
-                if (fNoColorHighlitingChk.isSelected()) {
+            } else if (highlightings != null && highlightings[0] == 'f') {
+                if (fNoColorHighlightingChk.isSelected()) {
                     setFont(fDefaultFont.deriveFont(Font.BOLD));
                     setForeground(Color.white);
                     setBackgroundNonSelectionColor(Color.black);
@@ -1900,7 +1900,7 @@ public class ExprEvalBrowser extends JPanel {
                     setBackgroundNonSelectionColor(Color.white);
                 }
             } else {
-                if (fNoColorHighlitingChk.isSelected()) {
+                if (fNoColorHighlightingChk.isSelected()) {
                     setFont(fDefaultFont);
                     setForeground(Color.black);
                     setBackgroundNonSelectionColor(Color.white);
@@ -1921,7 +1921,7 @@ public class ExprEvalBrowser extends JPanel {
     }
 
     /**
-     * highlites Complete Subtree of the evaluated complete terms
+     * highlights Complete Subtree of the evaluated complete terms
      */
     class CompleteSubtreeRenderer extends DefaultTreeCellRenderer {
         public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -1933,9 +1933,9 @@ public class ExprEvalBrowser extends JPanel {
             if (!enode.htmlUsed())
                 super.getTreeCellRendererComponent(tree, value, sel, expanded,
                         leaf, row, hasFocus);
-            char[] highlitings = enode.getHighliting();
-            if (highlitings[1] == 't') {
-                if (fNoColorHighlitingChk.isSelected()) {
+            char[] highlightings = enode.getHighlighting();
+            if (highlightings[1] == 't') {
+                if (fNoColorHighlightingChk.isSelected()) {
                     setFont(fDefaultFont.deriveFont(Font.BOLD));
                     setForeground(Color.black);
                     setBackgroundNonSelectionColor(Color.white);
@@ -1944,8 +1944,8 @@ public class ExprEvalBrowser extends JPanel {
                     setForeground(new Color(0, 0x80, 0));
                     setBackgroundNonSelectionColor(Color.white);
                 }
-            } else if (highlitings[1] == 'f') {
-                if (fNoColorHighlitingChk.isSelected()) {
+            } else if (highlightings[1] == 'f') {
+                if (fNoColorHighlightingChk.isSelected()) {
                     setFont(fDefaultFont.deriveFont(Font.BOLD));
                     setForeground(Color.white);
                     setBackgroundNonSelectionColor(Color.black);
@@ -1955,7 +1955,7 @@ public class ExprEvalBrowser extends JPanel {
                     setBackgroundNonSelectionColor(Color.white);
                 }
             } else {
-                if (fNoColorHighlitingChk.isSelected()) {
+                if (fNoColorHighlightingChk.isSelected()) {
                     setFont(fDefaultFont);
                     setForeground(Color.black);
                     setBackgroundNonSelectionColor(Color.white);

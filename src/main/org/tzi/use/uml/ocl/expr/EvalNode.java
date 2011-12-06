@@ -55,7 +55,7 @@ public class EvalNode {
 
     private boolean fIsVisible = false;
 
-    private char[] fHighliting; // highliting informations for the node
+    private char[] fHighlighting; // highlighting informations for the node
 
     private String fVarSubstituteView; // the ocl-term with substituted
 
@@ -225,15 +225,15 @@ public class EvalNode {
     }
 
     /**
-     * EvalNode true/false-highliting informations 1. field: subtree-highliting
-     * 2. field: complete-highliting
+     * EvalNode true/false-highlighting informations 1. field: subtree-highlighting
+     * 2. field: complete-highlighting
      */
-    public void setHighliting(char[] c) {
-        fHighliting = c;
+    public void setHighlighting(char[] c) {
+        fHighlighting = c;
     }
 
-    public char[] getHighliting() {
-        return fHighliting;
+    public char[] getHighlighting() {
+        return fHighlighting;
     }
 
     /**
