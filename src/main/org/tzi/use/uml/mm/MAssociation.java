@@ -219,6 +219,11 @@ public interface MAssociation extends MModelElement {
 			String explicitRolename);
 
 	/**
+	 * @return
+	 */
+	boolean isOrdered();
+
+	/**
 	 * Because the ordering of association ends is important for validating
 	 * relations between associations (subsets, redefines, etc.) but the order of 
 	 * association ends can be changed in related associations this operation

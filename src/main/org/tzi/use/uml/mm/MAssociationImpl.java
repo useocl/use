@@ -424,6 +424,19 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 	public Set<MAssociation> getAllParentAssociations() {
 		return Collections.emptySet();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#isOrdered()
+	 */
+	@Override
+	public boolean isOrdered() {
+		for (MAssociationEnd e : fAssociationEnds) {
+			if( e.isOrdered()) return true;
+		}
+		return false;
+	}
+	
+
 	
 	
 }

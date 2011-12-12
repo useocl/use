@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,16 +93,30 @@ public final class MLinkSet {
     
     MLinkSet(MAssociation assoc) {
         fAssociation = assoc;
-        fLinks = new HashSet<MLink>();
+        createInternalLinkSet();
         selectCache = new HashMap<CacheEntry, Set<MLink>>();
     }
 
     /**
+	 * Creates the appropriate internal set w.r.t. preserving the ordering 
+	 */
+	private void createInternalLinkSet() {
+        if (fAssociation.isOrdered()) {
+        	fLinks = new LinkedHashSet<MLink>();
+        }
+        else { 
+        	fLinks = new HashSet<MLink>();
+        }
+
+		
+	}
+
+	/**
      * Copy constructor.
      */
     MLinkSet(MLinkSet x) {
         fAssociation = x.fAssociation;
-        fLinks = new HashSet<MLink>();
+        createInternalLinkSet();
         fLinks.addAll(x.fLinks);
         selectCache = new HashMap<CacheEntry, Set<MLink>>();
         
@@ -127,7 +142,7 @@ public final class MLinkSet {
             return res;
         }
         
-        res = new HashSet<MLink>();
+        res = new LinkedHashSet<MLink>();
 
         for(MLink link : fLinks) {
             MLinkEnd linkEnd = link.linkEnd(aend);
@@ -146,7 +161,7 @@ public final class MLinkSet {
      */
     Set<MLink> select(MAssociationEnd aend, MObject obj) {
         Set<MLink> res;
-        res = new HashSet<MLink>();
+        res = new LinkedHashSet<MLink>();
 
         for(MLink link : fLinks) {
             MLinkEnd linkEnd = link.linkEnd(aend);
@@ -164,7 +179,7 @@ public final class MLinkSet {
      * @return Set(MLink) the set of removed links
      */
     Set<MLink> removeAll(MAssociationEnd aend, MObject obj) {
-        Set<MLink> res = new HashSet<MLink>();
+        Set<MLink> res = new LinkedHashSet<MLink>();
         Iterator<MLink> it = fLinks.iterator();
         
         while (it.hasNext() ) {
@@ -246,7 +261,7 @@ public final class MLinkSet {
             Set<MLink> links = selectCache.get(e);
             
             if (links == null) {
-                links = new HashSet<MLink>();
+                links = new LinkedHashSet<MLink>();
                 selectCache.put(e, links);
             }
             
@@ -258,7 +273,7 @@ public final class MLinkSet {
                 links = selectCache.get(e);
                 
                 if (links == null) {
-                    links = new HashSet<MLink>();
+                    links = new LinkedHashSet<MLink>();
                     selectCache.put(e, links);
                 }
                 

@@ -726,4 +726,12 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
 		}
 		return parents;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MAssociation#isOrdered()
+	 */
+	@Override
+	public boolean isOrdered() {
+		return this.fAssociationImpl.isOrdered();
+	}
 }
