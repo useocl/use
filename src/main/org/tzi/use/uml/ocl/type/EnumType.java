@@ -64,7 +64,7 @@ public final class EnumType extends Type implements Annotatable, MClassifier {
      * (String objects). The list of literals is checked for
      * duplicates.
      */
-    EnumType(String name, List<String> literals) {
+    protected EnumType(String name, List<String> literals) {
         fName = name;
         fLiterals = new ArrayList<String>(literals);
         fLiteralSet = new HashSet<String>(fLiterals.size());

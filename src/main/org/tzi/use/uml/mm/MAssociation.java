@@ -157,11 +157,6 @@ public interface MAssociation extends MModelElement {
     public void setPositionInModel(int position);
 
     /**
-     * Process this element with visitor.
-     */
-    void processWithVisitor(MMVisitor v);
-
-    /**
      * Returns all parent associations this association is inherited from
      * @return
      */

@@ -29,6 +29,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,15 +44,19 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.xml.xpath.XPathConstants;
 
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
+import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser.SelectionChangedListener;
+import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.AssociationName;
@@ -72,19 +80,32 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.selection.classselection.ClassSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
+import org.tzi.use.parser.ocl.OCLCompiler;
+import org.tzi.use.uml.mm.Annotatable;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.uml.mm.MElementAnnotation;
 import org.tzi.use.uml.mm.MGeneralization;
+import org.tzi.use.uml.mm.MInvalidModelException;
+import org.tzi.use.uml.mm.MMPrintVisitor;
+import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MNamedElement;
+import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.util.NullPrintWriter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -101,7 +122,7 @@ public class ClassDiagram extends DiagramView
 
     public static class ClassDiagramData implements DiagramData {
 		/**
-		 * 
+		 * All mappings from (association-)classes to nodes.
 		 */
 		public Map<MClass, ClassNode> fClassToNodeMap;
 		/**
@@ -1001,6 +1022,60 @@ public class ClassDiagram extends DiagramView
 			
 		} // end jj
         
+		final JMenuItem cbExport =
+                new JMenuItem("Export visible elements as new model..." );
+        cbExport.addActionListener(new ActionListener() {
+        	File lastFile = null;
+        	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int option = JOptionPane.YES_OPTION;
+
+				JFileChooser fChooser = new JFileChooser(Options.getLastDirectory());
+				ExtFileFilter filter = new ExtFileFilter("use", "USE model");
+				fChooser.addChoosableFileFilter(filter);
+				fChooser.setDialogTitle("Save visible elements as model...");
+		        
+		        if (lastFile != null && lastFile.exists()
+						&& lastFile.getParent().equals(Options.getLastDirectory())) {
+					fChooser.setSelectedFile(lastFile);
+				}
+		        
+		        do {
+		            int returnVal = fChooser.showSaveDialog( ClassDiagram.this );
+		            if (returnVal != JFileChooser.APPROVE_OPTION)
+		                return;
+
+		            Options.setLastDirectory(fChooser.getCurrentDirectory().toString());
+		            String filename = fChooser.getSelectedFile().getName();
+
+		            // if file does not have the appendix .use
+		            int dot = filename.lastIndexOf(".");
+		            if (dot == -1 || !filename.substring(dot, 
+		                                       filename.length()).trim()
+		                                       .equals( ".use" )) {
+		                filename += ".use";
+		            }
+
+		            lastFile = new File(Options.getLastDirectory(), filename);
+		            
+		            if (lastFile.exists()) {
+		                option = JOptionPane.showConfirmDialog(ClassDiagram.this,
+		                        "Overwrite existing file " + lastFile + "?",
+		                        "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
+		                if (option == JOptionPane.CANCEL_OPTION) {
+		                    return;
+		                }
+
+		            }
+		            // display the saving dialog, as long as the file
+		            // will be overwritten or cancel is pressed.
+		        } while (option != JOptionPane.YES_OPTION);
+				exportVisibleClassesAsModel(lastFile);
+			}
+		});
+
+        popupMenu.insert( cbExport, pos++ );
         popupMenu.show( e.getComponent(), e.getX(), e.getY() );
         return true;
     }
@@ -1368,5 +1443,214 @@ public class ClassDiagram extends DiagramView
 	public boolean isVisible(MClassifier cs) {
 		return visibleData.fClassToNodeMap.containsKey(cs) || 
 			   visibleData.fEnumToNodeMap.containsKey(cs);
+	}
+	
+	private void exportVisibleClassesAsModel(File exportFile) {
+		ModelFactory f = new ModelFactory();
+		MModel sourceModel = getSystem().model();
+		MModel targetModel = f.createModel(sourceModel.name());
+		
+		copyAnnotations(sourceModel, targetModel);
+		
+		// Create "skeletons" for class
+		for (MClass sourceClass : this.visibleData.fClassToNodeMap.keySet()) {
+			try {
+				MClass targetClass;
+				
+				if (sourceClass instanceof MAssociationClass)
+					targetClass = f.createAssociationClass(sourceClass.name(), sourceClass.isAbstract());
+				else
+					targetClass = f.createClass(sourceClass.name(), sourceClass.isAbstract());
+				
+				targetModel.addClass(targetClass);
+				copyAnnotations(sourceClass, targetClass);
+			} catch (MInvalidModelException e) { /* Cannot happen */ }
+		}
+		
+		// Create enumerations
+		for (EnumType sourceEnum : visibleData.fEnumToNodeMap.keySet()) {
+			try {
+				EnumType targetEnum = TypeFactory.mkEnum(sourceEnum.name(), sourceEnum.getLiterals());
+				targetModel.addEnumType(targetEnum);
+				copyAnnotations(sourceEnum, targetEnum);
+			} catch (MInvalidModelException e) { /* Cannot happen */ }
+		}
+		
+		// Create inheritance and attributes
+		for (MClass targetClass : targetModel.classes()) {
+			MClass sourceClass = sourceModel.getClass(targetClass.name());
+			
+			// Inheritance
+			for (MClass sourceParentClass : sourceClass.parents()) {
+				MClass targetParentClass = targetModel.getClass(sourceParentClass.name());
+				// Could be hidden!
+				if (targetParentClass != null) {
+					try {
+						targetModel.addGeneralization(f.createGeneralization(targetClass, targetParentClass));
+					} catch (MInvalidModelException e) { /* Cannot happen */ }
+				}
+			}
+			
+			// Attributes
+			for (MAttribute sourceAttribute : sourceClass.attributes()) {
+				Type attType = OCLCompiler.compileType(
+						targetModel, sourceAttribute.type().toString(),
+						"Export", NullPrintWriter.getInstance());
+				
+				// if type is not exported, don't export the attribute
+				if (attType != null) {
+					MAttribute targetAttribute = f.createAttribute(sourceAttribute.name(), attType);
+					try {
+						targetClass.addAttribute(targetAttribute);
+					} catch (MInvalidModelException e) { /* Cannot happen */ }
+					copyAnnotations(sourceAttribute, targetAttribute);
+				}
+			}
+			
+			// Operations
+			for (MOperation sourceOperation : sourceClass.operations()) {
+				boolean hasErrors = false;
+				Type resultType = null;
+				
+				if (sourceOperation.hasResultType()) {
+					resultType = OCLCompiler.compileType(
+							targetModel, sourceOperation.resultType().toString(),
+							"Export", NullPrintWriter.getInstance());
+					
+					// Result Type is not exported
+					if (resultType == null)
+						continue;
+				}
+				
+				// if type is not exported, don't export the operation
+				if (resultType != null) {
+					VarDeclList targetArgs = new VarDeclList(false);
+										
+					// Build arguments
+					for (VarDecl arg : sourceOperation.allParams()) {
+						VarDecl v = cloneVarDecl(targetModel, arg);
+						if (v == null) {
+							hasErrors = true;
+							break;
+						}
+
+						targetArgs.add(v);
+					}
+					
+					// If arg type is not present, continue to next operation
+					if (hasErrors)
+						continue;
+					
+					MOperation targetOperation = f.createOperation(sourceOperation.name(), targetArgs, resultType);
+										
+					try {
+						targetClass.addOperation(targetOperation);
+					} catch (MInvalidModelException e) { /* Cannot happen */ }
+					
+					copyAnnotations(sourceOperation, targetOperation);
+				}
+			}
+		}
+		
+		// Binary associations
+		Set<MAssociation> sourceAssociations = new HashSet<MAssociation>(visibleData.fBinaryAssocToEdgeMap.keySet());
+		// n-ary associations
+		sourceAssociations.addAll(visibleData.fNaryAssocToDiamondNodeMap.keySet());
+		
+		for (MAssociation sourceAssoc : sourceAssociations) {
+			MAssociation targetAssoc;
+			if (sourceAssoc instanceof MAssociationClass) {
+				targetAssoc = (MAssociation)targetModel.getClass(sourceAssoc.name());
+			} else {
+				targetAssoc = f.createAssociation(sourceAssoc.name());
+				copyAnnotations(sourceAssoc, targetAssoc);
+			}
+			
+			for (MAssociationEnd sourceEnd : sourceAssoc.associationEnds()) {
+				List<VarDecl> targetQualifiers = new ArrayList<VarDecl>();
+				boolean hasErrors = false;
+				
+				for (VarDecl sourceQualifier : sourceEnd.getQualifiers()) {
+					VarDecl targetQualifier = cloneVarDecl(targetModel, sourceQualifier);
+					if (targetQualifier == null) {
+						hasErrors = true;
+						break;
+					}
+					
+					targetQualifiers.add(targetQualifier);
+				}
+				
+				if (hasErrors)
+					continue;
+				
+				MAssociationEnd targetEnd = 
+						f.createAssociationEnd(
+								targetModel.getClass(sourceEnd.cls().name()),
+								sourceEnd.name(),
+								sourceEnd.multiplicity(),
+								sourceEnd.aggregationKind(),
+								sourceEnd.isOrdered(),
+								targetQualifiers);
+
+				copyAnnotations(sourceEnd, targetEnd);
+				try {
+					targetAssoc.addAssociationEnd(targetEnd);
+				} catch (MInvalidModelException e) {
+					
+				}
+			}
+			
+			try {
+				targetModel.addAssociation(targetAssoc);
+			} catch (MInvalidModelException e) {
+
+			}
+		}
+
+		// Write result
+		FileOutputStream out;
+		try {
+			out = new FileOutputStream(exportFile, false);
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(ClassDiagram.this, e.getMessage(),
+					"Error saving the USE model", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		MMVisitor v = new MMPrintVisitor(new PrintWriter(out, true));
+        targetModel.processWithVisitor(v);
+        
+        try {
+			out.close();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(ClassDiagram.this, e.getMessage(),
+					"Error saving the USE model", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+        
+		JOptionPane.showMessageDialog(ClassDiagram.this, "Export succesfull",
+				"Export successfull", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private VarDecl cloneVarDecl(MModel targetModel, VarDecl v) {
+		Type argType = OCLCompiler.compileType(
+				targetModel, v.type().toString(),
+				"Export", NullPrintWriter.getInstance());
+		
+		if (argType == null) {
+			return null;
+		}
+		
+		return new VarDecl(v.name(), argType);
+	}
+	
+	/**
+	 * @param sourceModel
+	 * @param targetModel
+	 */
+	private void copyAnnotations(Annotatable source, Annotatable target) {
+		for (MElementAnnotation an : source.getAllAnnotations().values()) {
+			target.addAnnotation(an);
+		}
 	}
 }

@@ -272,4 +272,12 @@ public class MMInstanceGenerator implements MMVisitor {
     public void visitPrePostCondition(MPrePostCondition e) {
         //FIXME: implement
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MMVisitor#visitAnnotation(org.tzi.use.uml.mm.MElementAnnotation)
+	 */
+	@Override
+	public void visitAnnotation(MElementAnnotation a) {
+		// NoOp		
+	}
 }

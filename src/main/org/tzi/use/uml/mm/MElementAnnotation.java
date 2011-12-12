@@ -88,4 +88,11 @@ public class MElementAnnotation {
 			return null;
 		}
 	}
+
+	/**
+	 * @param mmPrintVisitor
+	 */
+	public void processWithVisitor(MMVisitor v) {
+		v.visitAnnotation(this);
+	}
 }

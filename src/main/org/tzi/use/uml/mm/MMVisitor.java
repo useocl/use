@@ -29,6 +29,7 @@ package org.tzi.use.uml.mm;
  * @author      Mark Richters 
  */
 public interface MMVisitor {
+	void visitAnnotation(MElementAnnotation a);
     void visitAssociation(MAssociation e);
     void visitAssociationClass( MAssociationClass e );
     void visitAssociationEnd(MAssociationEnd e);

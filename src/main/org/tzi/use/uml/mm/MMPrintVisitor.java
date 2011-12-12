@@ -22,8 +22,10 @@
 package org.tzi.use.uml.mm;
 
 import java.io.PrintWriter;
+import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
@@ -106,6 +108,7 @@ public class MMPrintVisitor implements MMVisitor {
 
     public void visitAssociation(MAssociation e) {
         indent();
+        visitAnnotations(e);
         println(keyword(MAggregationKind.name(e.aggregationKind())) + ws() + 
                 id(e.name()) + ws() + keyword("between"));
 
@@ -128,6 +131,7 @@ public class MMPrintVisitor implements MMVisitor {
     
     public void visitAssociationClass( MAssociationClass e ) {
     	indent();
+    	visitAnnotations(e);
         if ( e.isAbstract() ) {
             print( keyword( "abstract" ) );
             print( ws() );
@@ -165,6 +169,7 @@ public class MMPrintVisitor implements MMVisitor {
 
     public void visitAssociationEnd(MAssociationEnd e) {
         indent();
+        visitAnnotations(e);
         StringBuilder result = new StringBuilder();
         
         result.append(id(e.cls().name()));
@@ -173,6 +178,21 @@ public class MMPrintVisitor implements MMVisitor {
         result.append(keyword("role"));
         result.append(ws());
         result.append(id(e.name()));
+        
+        if (e.hasQualifiers()) {
+        	result.append(" ");
+        	result.append(keyword("qualifier"));
+        	result.append(" (");
+        	
+        	boolean first = true;
+        	for (VarDecl q : e.getQualifiers()) {
+        		if (!first)
+        			result.append(", ");
+        		result.append(q.toString());
+        		first = false;
+        	}
+        	result.append(")");
+        }
         
         if (e.getSubsettedEnds().size() > 0) {
         	for (MAssociationEnd end : e.getSubsettedEnds()) {
@@ -207,6 +227,7 @@ public class MMPrintVisitor implements MMVisitor {
 
     public void visitAttribute(MAttribute e) {
         indent();
+        visitAnnotations(e);
         println(id(e.name()) + ws() + other(":") + ws() +
                 other(e.type().toString()));
     }
@@ -240,6 +261,7 @@ public class MMPrintVisitor implements MMVisitor {
     
     public void visitClass(MClass e) {
         indent();
+        visitAnnotations(e);
         if (e.isAbstract() )
             print(keyword("abstract") + ws());
         print(keyword("class") + ws() + id(e.name()));
@@ -258,6 +280,8 @@ public class MMPrintVisitor implements MMVisitor {
     }
 
     public void visitClassInvariant(MClassInvariant e) {
+    	visitAnnotations(e);
+    	
     	StringBuilder line = new StringBuilder();
     	line.append(keyword("context"));
     	line.append(ws());
@@ -295,12 +319,14 @@ public class MMPrintVisitor implements MMVisitor {
 
     public void visitModel(MModel e) {
         indent(); 
+        visitAnnotations(e);
         println(keyword("model") + ws() + id(e.name()));
         println();
     
         // print user-defined data types
         for (EnumType t : e.enumTypes()) {
             indent();
+            visitAnnotations(t);
             println(keyword("enum") + ws() + other(t.toString()) + ws() + 
                     other("{") + ws() +
                     other(StringUtil.fmtSeq(t.literals(), ", ")) + ws() +
@@ -316,7 +342,7 @@ public class MMPrintVisitor implements MMVisitor {
 
         // visit associations
         for (MAssociation assoc : e.associations()) {
-            assoc.processWithVisitor(this);
+        	assoc.processWithVisitor(this);
             println();
         }
 
@@ -339,6 +365,7 @@ public class MMPrintVisitor implements MMVisitor {
 
     public void visitOperation(MOperation e) {
         indent(); 
+        visitAnnotations(e);
         print(id(e.name()) + 
               other("(" + e.paramList() + ")"));
         
@@ -372,6 +399,7 @@ public class MMPrintVisitor implements MMVisitor {
     }
     
     public void visitPrePostCondition(MPrePostCondition e) {
+    	visitAnnotations(e);
         println(keyword("context") + ws() +
                 other(e.cls().name()) + other("::") +
                 other(e.operation().signature()));
@@ -392,4 +420,35 @@ public class MMPrintVisitor implements MMVisitor {
             throw new RuntimeException("unbalanced indentation");
         fIndent -= fIndentStep;
     }
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.mm.MMVisitor#visitAnnotation(org.tzi.use.uml.mm.MElementAnnotation)
+	 */
+	@Override
+	public void visitAnnotation(MElementAnnotation a) {
+		print(keyword("@" + a.getName()));
+		print("(");
+		
+		boolean first = true;
+		
+		for (Map.Entry<String, String> e : a.getValues().entrySet()) {
+			if (!first)
+				print(", ");
+			
+			print(id(e.getKey()));
+			print("=\"");
+			print(e.getValue());
+			print("\"");
+			
+			first = false;
+		}
+		
+		println(")");
+	}
+	
+	private void visitAnnotations(Annotatable e) {
+		for (MElementAnnotation a : e.getAllAnnotations().values()) {
+			a.processWithVisitor(this);
+		}
+	}
 }
