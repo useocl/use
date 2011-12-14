@@ -1522,33 +1522,30 @@ public class ClassDiagram extends DiagramView
 						continue;
 				}
 				
-				// if type is not exported, don't export the operation
-				if (resultType != null) {
-					VarDeclList targetArgs = new VarDeclList(false);
-										
-					// Build arguments
-					for (VarDecl arg : sourceOperation.allParams()) {
-						VarDecl v = cloneVarDecl(targetModel, arg);
-						if (v == null) {
-							hasErrors = true;
-							break;
-						}
-
-						targetArgs.add(v);
+				VarDeclList targetArgs = new VarDeclList(false);
+									
+				// Build arguments
+				for (VarDecl arg : sourceOperation.allParams()) {
+					VarDecl v = cloneVarDecl(targetModel, arg);
+					if (v == null) {
+						hasErrors = true;
+						break;
 					}
-					
-					// If arg type is not present, continue to next operation
-					if (hasErrors)
-						continue;
-					
-					MOperation targetOperation = f.createOperation(sourceOperation.name(), targetArgs, resultType);
-										
-					try {
-						targetClass.addOperation(targetOperation);
-					} catch (MInvalidModelException e) { /* Cannot happen */ }
-					
-					copyAnnotations(sourceOperation, targetOperation);
+
+					targetArgs.add(v);
 				}
+				
+				// If arg type is not present, continue to next operation
+				if (hasErrors)
+					continue;
+				
+				MOperation targetOperation = f.createOperation(sourceOperation.name(), targetArgs, resultType);
+									
+				try {
+					targetClass.addOperation(targetOperation);
+				} catch (MInvalidModelException e) { /* Cannot happen */ }
+				
+				copyAnnotations(sourceOperation, targetOperation);
 			}
 		}
 		
