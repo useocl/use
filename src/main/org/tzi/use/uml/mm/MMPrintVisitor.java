@@ -370,7 +370,7 @@ public class MMPrintVisitor implements MMVisitor {
               other("(" + e.paramList() + ")"));
         
         if (e.hasResultType() ) {
-            println(ws() + other(":") + ws() + other(e.resultType().toString()));
+            print(ws() + other(":") + ws() + other(e.resultType().toString()));
         }
         
         if (e.hasExpression() ) {
@@ -391,6 +391,8 @@ public class MMPrintVisitor implements MMVisitor {
             indent();
             println(keyword("end"));
             decIndent();
+        } else {
+        	println();
         }
     }
     
