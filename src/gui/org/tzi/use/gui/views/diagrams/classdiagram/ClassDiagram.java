@@ -1482,7 +1482,8 @@ public class ClassDiagram extends DiagramView
 			
 			// Inheritance
 			for (MClass sourceParentClass : sourceClass.parents()) {
-				MClass targetParentClass = targetModel.getClass(sourceParentClass.name());
+				MClass targetParentClass = findMostSpecificExportedType(sourceParentClass, targetModel);
+				
 				// Could be hidden!
 				if (targetParentClass != null) {
 					try {
@@ -1627,6 +1628,26 @@ public class ClassDiagram extends DiagramView
         
 		JOptionPane.showMessageDialog(ClassDiagram.this, "Export succesfull",
 				"Export successfull", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	/**
+	 * @param sourceParentClass
+	 * @param targetModel
+	 * @return
+	 */
+	private MClass findMostSpecificExportedType(MClass sourceParentClass, MModel targetModel) {
+		MClass parent = targetModel.getClass(sourceParentClass.name());
+		
+		if (parent != null)
+			return parent;
+		
+		for (MClass otherParent : sourceParentClass.parents()) {
+			parent = findMostSpecificExportedType(otherParent, targetModel); 
+			if (parent != null)
+				return parent;
+		}
+		
+		return null;
 	}
 
 	private VarDecl cloneVarDecl(MModel targetModel, VarDecl v) {
