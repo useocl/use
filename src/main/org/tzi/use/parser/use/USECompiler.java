@@ -97,12 +97,10 @@ public class USECompiler {
         
         try {
             // Parse the specification
-            //Log.verbose("Parsing...");
             ASTModel astModel = parser.model();
             if (errHandler.errorCount() == 0 ) {
 
                 // Generate code
-                //Log.verbose("Translating...");
                 Context ctx = new Context(inName, err, null, factory);
                 model = astModel.gen(ctx);
                 if (ctx.errorCount() > 0 )

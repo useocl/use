@@ -36,6 +36,9 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,6 +48,9 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraph;
@@ -56,7 +62,12 @@ import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSelectAll;
 import org.tzi.use.util.Log;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * Combines everything that the class and object diagram have in common.
@@ -622,6 +633,97 @@ public abstract class DiagramView extends JPanel
 	 * Hide all elements
 	 */
 	public abstract void hideAll();
+
+	protected void beforeLoadLayout(File layoutFile) {}
+	
+	protected void afterLoadLayout(File layoutFile) {}
+	
+	public void loadLayout(File layoutFile) {
+		beforeLoadLayout(layoutFile);
+		
+		this.showAll();
+        
+        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder;
+        Document doc;
+        
+        try {
+        	docBuilder = fact.newDocumentBuilder();
+			doc = docBuilder.parse(layoutFile);
+		} catch (ParserConfigurationException e1) {
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+			return;
+		} catch (SAXException e1) {
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+			return;
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+			return;
+		}
+		
+		Element rootElement = (Element)doc.getDocumentElement();
+		int version = 1;
+		
+		if (rootElement.hasAttribute("version"))
+			version = Integer.valueOf(rootElement.getAttribute("version"));
+		
+		PersistHelper helper = new PersistHelper();
+		Element layoutElement = (Element)rootElement.getElementsByTagName("diagramOptions").item(0);
+		this.getOptions().loadOptions(helper, layoutElement, version);
+		this.restorePlacementInfos(helper, rootElement, version);
+        this.invalidateContent();
+        
+        afterLoadLayout(layoutFile);
+	}
+	
+	protected void beforeSaveLayout(File layoutFile) {}
+	
+	protected void afterSaveLayout(File layoutFile) {}
+	
+	public void saveLayout(File layoutFile) {
+		beforeSaveLayout(layoutFile);
+		
+		DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder;
+        Document doc;
+        
+        try {
+        	docBuilder = fact.newDocumentBuilder();
+			doc = docBuilder.newDocument();
+		} catch (ParserConfigurationException e1) {
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+			return;
+		}
+       		
+		PersistHelper helper = new PersistHelper();
+		Element rootElement = doc.createElement("diagram_Layout");
+		rootElement.setAttribute("version", String.valueOf(DiagramOptions.XML_LAYOUT_VERSION));
+		doc.appendChild(rootElement);
+				
+		Element optionsElement = doc.createElement("diagramOptions");
+		rootElement.appendChild(optionsElement);
+		this.getOptions().saveOptions(helper, optionsElement);
+		this.storePlacementInfos( helper, rootElement );
+
+        // use specific Xerces class to write DOM-data to a file:
+        OutputFormat format = new OutputFormat(doc);
+        format.setLineWidth(65);
+        format.setIndenting(true);
+        format.setIndent(2);
+        
+        XMLSerializer serializer = new XMLSerializer(format);
+        
+        try {
+        	FileWriter w = new FileWriter(layoutFile);
+			serializer.setOutputCharStream(w);
+			serializer.serialize(doc);
+			w.close();
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+		}
+        
+        afterSaveLayout(layoutFile);
+	}
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.JComponent#removeNotify()
@@ -630,8 +732,15 @@ public abstract class DiagramView extends JPanel
 	public void removeNotify() {
 		super.removeNotify();
 		this.stopLayoutThread();
+		this.onClosing();
 	}
 
+	/**
+	 * Can be used to remove listeners etc. to allow the garbage collector to remove
+	 * the diagram.
+	 */
+	protected void onClosing() {};
+	
 	/**
 	 * @return
 	 */

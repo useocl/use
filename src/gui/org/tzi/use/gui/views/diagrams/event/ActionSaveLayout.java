@@ -23,27 +23,15 @@ package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.ExtFileFilter;
-import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * Saves the current layout to a file.
@@ -59,13 +47,6 @@ public class ActionSaveLayout extends AbstractAction {
     private DiagramView fDiagram;
 
     private File lastFile = null;
-    
-    public ActionSaveLayout( String title, String appendix, DiagramView diagram, Properties properties) {
-        super("Save layout...");
-        fTitle = title;
-        fAppendix = appendix;
-        fDiagram = diagram;
-    }
     
     public ActionSaveLayout( String title, String appendix, DiagramView diagram ) {
         super("Save layout...");
@@ -120,42 +101,7 @@ public class ActionSaveLayout extends AbstractAction {
             // will be overwritten or cancel is pressed.
         } while (option != JOptionPane.YES_OPTION);
 
-        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder;
-        Document doc;
-        
-        try {
-        	docBuilder = fact.newDocumentBuilder();
-			doc = docBuilder.newDocument();
-		} catch (ParserConfigurationException e1) {
-			JOptionPane.showMessageDialog(fChooser, e1.getMessage());
-			return;
-		}
-       		
-		PersistHelper helper = new PersistHelper();
-		Element rootElement = doc.createElement("diagram_Layout");
-		rootElement.setAttribute("version", String.valueOf(DiagramOptions.XML_LAYOUT_VERSION));
-		doc.appendChild(rootElement);
-				
-		Element optionsElement = doc.createElement("diagramOptions");
-		rootElement.appendChild(optionsElement);
-		fDiagram.getOptions().saveOptions(helper, optionsElement);
-		fDiagram.storePlacementInfos( helper, rootElement );
-
-        // use specific Xerces class to write DOM-data to a file:
-        OutputFormat format = new OutputFormat(doc);
-        format.setLineWidth(65);
-        format.setIndenting(true);
-        format.setIndent(2);
-        
-        XMLSerializer serializer = new XMLSerializer(format);
-        
-        try {
-			serializer.setOutputCharStream(new java.io.FileWriter(lastFile));
-			serializer.serialize(doc);
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(fChooser, e1.getMessage());
-		}
+        fDiagram.saveLayout(lastFile);
     }
 
 }

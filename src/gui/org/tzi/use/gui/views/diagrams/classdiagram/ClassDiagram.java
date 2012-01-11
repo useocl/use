@@ -215,6 +215,11 @@ public class ClassDiagram extends DiagramView
 
     private ClassDiagramData hiddenData = new ClassDiagramData();
     
+    /**
+     * True if a user loads or saves a layout
+     */
+    private boolean hasUserDefinedLayout = false;
+    
 	// jj anfangen
 	private ClassSelection fSelection;
 	private DiagramInputHandling inputHandling;
@@ -234,7 +239,7 @@ public class ClassDiagram extends DiagramView
                                                   "clt", this );
         
         fActionLoadLayout = new ActionLoadLayout( "USE class diagram layout",
-                                                  "clt", this, fLog, fGraph);
+                                                  "clt", this);
 
         addMouseListener( inputHandling );
         fParent.addKeyListener( inputHandling );
@@ -1138,7 +1143,79 @@ public class ClassDiagram extends DiagramView
         }
     }
     
-    @Override
+    protected File getDefaultLayoutFile() {
+		if (this.getSystem().model().getModelDirectory() == null)
+    		return null;
+    	
+		File modelFile = new File(this.getSystem().model().filename()); 
+		String fileNameOnly = modelFile.getName();
+		fileNameOnly = fileNameOnly.substring(0, fileNameOnly.lastIndexOf('.'));
+    	File defaultLayoutFile = new File(this.getSystem().model().getModelDirectory(),  fileNameOnly + "_default.clt");
+		return defaultLayoutFile;
+	}
+    
+    /**
+     * Tries to load the default layout from the file "default.clt" in the same
+     * directory as the model file.
+     * If no such file is present, nothing is done. 
+     */
+    protected void loadDefaultLayout() {
+    	File defaultLayoutFile = getDefaultLayoutFile();
+    	
+    	if (defaultLayoutFile == null || !defaultLayoutFile.exists()) 
+    		return;
+    	
+    	loadLayout(defaultLayoutFile);
+    	hasUserDefinedLayout = false;
+    }
+
+    /* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#afterLoadLayout(java.io.File)
+	 */
+	@Override
+	protected void afterLoadLayout(File layoutFile) {
+		super.afterLoadLayout(layoutFile);
+		hasUserDefinedLayout = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#afterSaveLayout(java.io.File)
+	 */
+	@Override
+	protected void afterSaveLayout(File layoutFile) {
+		super.afterSaveLayout(layoutFile);
+		hasUserDefinedLayout = true;
+	}
+
+	/**
+     * Saves the current layout to the file "default.clt" if no other
+     * layout was loaded or saved.
+     */
+    private void saveDefaultLayout() {
+    	if (this.hasUserDefinedLayout) return;
+    	    	
+    	File defaultLayoutFile = getDefaultLayoutFile();
+    	if (defaultLayoutFile == null) 
+    		return;
+    	
+    	saveLayout(defaultLayoutFile);
+    	
+    	hasUserDefinedLayout = false;
+    }
+
+    
+    /* (non-Javadoc)
+	 * @see org.tzi.use.gui.views.diagrams.DiagramView#onClosing()
+	 */
+	@Override
+	protected void onClosing() {
+		super.onClosing();
+		fParent.getModelBrowser().removeHighlightChangeListener( this );
+        fParent.getModelBrowser().removeSelectionChangedListener( this );
+        saveDefaultLayout();
+	}
+
+	@Override
     public void storePlacementInfos(PersistHelper helper, Element parent) {
     	storePlacementInfos(helper, parent, true);
     	storePlacementInfos(helper, parent, false);
@@ -1173,9 +1250,6 @@ public class ClassDiagram extends DiagramView
         }
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#restorePositionData(org.w3c.dom.Element)
-	 */
 	@Override
 	public void restorePlacementInfos(PersistHelper helper, Element rootElement, int version) {
 		Set<MClassifier> hiddenClassifier = new HashSet<MClassifier>();

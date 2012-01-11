@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.mm;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,7 +43,7 @@ import org.tzi.use.uml.ocl.type.EnumType;
  */
 public class MModel extends MModelElementImpl {
     private Map<String, EnumType> fEnumTypes;
-    private Map<String, MClass>fClasses;
+    private Map<String, MClass> fClasses;
     private Map<String, MAssociation> fAssociations;
     private DirectedGraph<MClass, MGeneralization> fGenGraph;
     private Map<String, MClassInvariant> fClassInvariants;
@@ -72,6 +73,24 @@ public class MModel extends MModelElementImpl {
         return fFilename;
     }
 
+    /**
+     * Returns the directory which contains the model file,
+     * if the model was loaded from a file.
+     * Returns <code>null</code> if the model was not loaded from a file.
+     * @return The directory containing the model file or <code>null</code> if the model was not loaded. 
+     */
+    public File getModelDirectory() {
+    	if (fFilename == null || fFilename.equals(""))
+    		return null;
+    	
+    	File modelFile = new File(fFilename);
+    	// could be moved or deleted
+    	if (!modelFile.exists())
+    		return null;
+    	
+    	return modelFile.getParentFile();
+    }
+    
     /**
      * Adds a class. The class must have a unique name within the model.
      * 

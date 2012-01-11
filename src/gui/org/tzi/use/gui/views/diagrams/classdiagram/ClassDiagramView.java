@@ -66,6 +66,7 @@ public class ClassDiagramView extends JPanel
         fClassDiagram = new ClassDiagram( this, mainWindow.logWriter() );
         add( new JScrollPane(fClassDiagram) );
         initState();
+        fClassDiagram.loadDefaultLayout();
     }
     
     public MSystem system() {

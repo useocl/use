@@ -223,7 +223,7 @@ public class NewObjectDiagram extends DiagramView
                                                   "olt", this );
         
         fActionLoadLayout = new ActionLoadLayout( "USE object diagram layout",
-                                                  "olt", this, fLog, fGraph);
+                                                  "olt", this);
 
         DiagramInputHandling inputHandling = 
             new DiagramInputHandling( fNodeSelection, fEdgeSelection, this);

@@ -916,7 +916,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
             FileInputStream iStream = null;
             try {
                 iStream = new FileInputStream(f);
-                model = USECompiler.compileSpecification(iStream, f.getName(),
+                model = USECompiler.compileSpecification(iStream, f.getAbsolutePath(),
                         fLogWriter, new ModelFactory());
                 fLogWriter.println("done.");
                 if (model != null) {
@@ -925,7 +925,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
                     system = new MSystem(model);
                 }
             } catch (FileNotFoundException ex) {
-                Log.error("File `" + f.getName() + "' not found.");
+                Log.error("File `" + f.getAbsolutePath() + "' not found.");
             } finally {
                 if (iStream != null)
                     try {
