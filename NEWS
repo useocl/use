@@ -6,7 +6,7 @@ Please see the file `README' for a description of how to report bugs.
 
 * [ASSL] New Try-statement Try(Collection(Class), AttributeName, Sequence(Value)).
 
- 
+* [GUI] USE now saves a "default" Layout for the class diagram for a model.
 
 ** Changes since version 3.0.0
 * [OCL] Added support for the closure operation introduced with OCL 2.3.
