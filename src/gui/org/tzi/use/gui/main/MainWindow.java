@@ -666,7 +666,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
             MSystem system = fSession.system();
             fModelBrowser.setModel(system.model());
             system.addChangeListener(this);
-            setTitle("USE: " + system.model().filename());
+            setTitle("USE: " + new File(system.model().filename()).getName());
         } else {
             fModelBrowser.setModel(null);
             // fSession.system().removeChangeListener(this);
