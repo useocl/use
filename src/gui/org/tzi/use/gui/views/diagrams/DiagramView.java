@@ -563,8 +563,10 @@ public abstract class DiagramView extends JPanel
      * Stops the auto layout thread.
      */
     public void stopLayoutThread() {
-    	fLayoutThread.doLayout = false;
-        fLayoutThread.interrupt();
+    	if (fLayoutThread != null) {
+    		fLayoutThread.doLayout = false;
+    		fLayoutThread.interrupt();
+    	}
     }
 
     /**
