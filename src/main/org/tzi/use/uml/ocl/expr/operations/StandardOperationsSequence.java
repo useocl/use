@@ -138,7 +138,7 @@ final class Op_sequence_append extends OpGeneric {
 	}
 
 	public int kind() {
-		return OPERATION;
+		return SPECIAL;
 	}
 
 	public boolean isInfixOrPrefix() {
@@ -173,7 +173,7 @@ final class Op_sequence_prepend extends OpGeneric {
 	}
 
 	public int kind() {
-		return OPERATION;
+		return SPECIAL;
 	}
 
 	public boolean isInfixOrPrefix() {

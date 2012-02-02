@@ -140,7 +140,7 @@ final class Op_orderedSet_append extends OpGeneric {
 	}
 
 	public int kind() {
-		return OPERATION;
+		return SPECIAL;
 	}
 
 	public boolean isInfixOrPrefix() {
@@ -175,7 +175,7 @@ final class Op_orderedSet_prepend extends OpGeneric {
 	}
 
 	public int kind() {
-		return OPERATION;
+		return SPECIAL;
 	}
 
 	public boolean isInfixOrPrefix() {
