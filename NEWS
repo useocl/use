@@ -4,9 +4,17 @@ Please see the file `README' for a description of how to report bugs.
 ** Changes since version 3.0.1
 * [ASSL] Fixed bug in barrier statement
 
+* [ASSL] Automatic calculation of barriers. Can be suppressed by using
+  the option -nb (no barriers) for gen start
+
 * [ASSL] New Try-statement Try(Collection(Class), AttributeName, Sequence(Value)).
 
 * [GUI] USE now saves a "default" Layout for the class diagram for a model.
+
+* [GUI] Fixed object properties view to allow to set more then one attribute
+  at once.
+
+* [GUI] Visible classes and associations can be exported as a new model.
 
 ** Changes since version 3.0.0
 * [OCL] Added support for the closure operation introduced with OCL 2.3.
