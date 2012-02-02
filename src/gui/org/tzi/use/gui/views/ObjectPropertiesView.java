@@ -234,6 +234,10 @@ public class ObjectPropertiesView extends JPanel implements View {
         	return;
         }
         
+        // Don't refresh after first change...
+        fSystem.removeChangeListener(this);
+        boolean error = false;
+        
         for (int i = 0; i < fValues.length; ++i) {
         	MAttribute attribute = fAttributes.get(i);
         	String newValue = fValues[i];
@@ -257,7 +261,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         					errorOutput, 
         					"Error", 
         					JOptionPane.ERROR_MESSAGE);
-        			
+        			error = true;
         			continue;
         		}
         		
@@ -274,9 +278,14 @@ public class ObjectPropertiesView extends JPanel implements View {
         					e.getMessage(), 
         					"Error", 
         					JOptionPane.ERROR_MESSAGE);
+        			error = true;
         		}
         	}
         }
+        
+        if (!error) update();
+        
+        fSystem.addChangeListener(this);
     }
 
     private boolean haveObject() {
