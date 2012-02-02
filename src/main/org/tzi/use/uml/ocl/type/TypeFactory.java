@@ -48,7 +48,6 @@ public final class TypeFactory {
     private static final BooleanType booleanType = new BooleanType();
     private static final OclAnyType oclAnyType = new OclAnyType();
     private static final VoidType voidType = new VoidType();
-    private static final DateType dateType = new DateType();
     
     static {
     	buildInTypesMap.put("Integer", integerType);
@@ -57,7 +56,6 @@ public final class TypeFactory {
     	buildInTypesMap.put("Real", realType);
     	buildInTypesMap.put("OclAny", oclAnyType);
     	buildInTypesMap.put("OclVoid", voidType);
-    	buildInTypesMap.put("Date", dateType);
     }
     
     /**
@@ -82,10 +80,6 @@ public final class TypeFactory {
         return booleanType;
     }
 
-    public static DateType mkDate() {
-    	return dateType;
-    }
-    
     public static EnumType mkEnum(String name, List<String> literals) {
         return new EnumType(name, literals);
     }

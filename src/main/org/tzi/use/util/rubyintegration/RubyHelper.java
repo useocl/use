@@ -1,7 +1,6 @@
 package org.tzi.use.util.rubyintegration;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
@@ -17,7 +16,6 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
-import org.tzi.use.uml.ocl.value.DateValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.OrderedSetValue;
@@ -48,8 +46,6 @@ public class RubyHelper {
 			result = BooleanValue.get(((Boolean)rubyValue).booleanValue());
 		} else if (rubyValue instanceof Double) {
 			result = new RealValue(((Double)rubyValue).doubleValue());
-		} else if (rubyValue instanceof Date) {
-			result = new DateValue(((Date)rubyValue));
 		} else if (rubyValue instanceof MObject) {
 			MObject obj = (MObject)rubyValue;
 			result = new ObjectValue(TypeFactory.mkObjectType(obj.cls()), obj);
@@ -98,9 +94,6 @@ public class RubyHelper {
 		}
 		if (useValue instanceof IntegerValue) {
 			return ((IntegerValue)useValue).value();
-		}
-		if (useValue instanceof DateValue) {
-			return ((DateValue)useValue).getValue();
 		}
 		if (useValue instanceof BooleanValue) {
 			return ((BooleanValue)useValue).value();

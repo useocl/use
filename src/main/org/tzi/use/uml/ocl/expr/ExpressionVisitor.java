@@ -35,7 +35,6 @@ public interface ExpressionVisitor {
 	void visitCollect (ExpCollect exp);
 	void visitCollectNested (ExpCollectNested exp);
 	void visitConstBoolean (ExpConstBoolean exp);
-	void visitConstDate (ExpConstDate exp);
 	void visitConstEnum (ExpConstEnum exp);
 	void visitConstInteger (ExpConstInteger exp);
 	void visitConstReal (ExpConstReal exp);

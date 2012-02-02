@@ -57,7 +57,6 @@ public class VariableSetTest extends TestCase {
 				TypeFactory.mkReal(),
 				TypeFactory.mkString(),
 				TypeFactory.mkBoolean(),
-				TypeFactory.mkDate(),
 				TypeFactory.mkOclAny(),
 		};
 		

@@ -38,7 +38,6 @@ import org.tzi.use.uml.ocl.expr.ExpCollect;
 import org.tzi.use.uml.ocl.expr.ExpCollectNested;
 import org.tzi.use.uml.ocl.expr.ExpCollectionLiteral;
 import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
-import org.tzi.use.uml.ocl.expr.ExpConstDate;
 import org.tzi.use.uml.ocl.expr.ExpConstEnum;
 import org.tzi.use.uml.ocl.expr.ExpConstInteger;
 import org.tzi.use.uml.ocl.expr.ExpConstReal;
@@ -148,12 +147,6 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor{
 	 */
 	@Override
 	public void visitConstBoolean(ExpConstBoolean exp) {}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.ExpressionVisitor#visitConstDate(org.tzi.use.uml.ocl.expr.ExpConstDate)
-	 */
-	@Override
-	public void visitConstDate(ExpConstDate exp) {}
 
 	/* (non-Javadoc)
 	 * @see org.tzi.use.uml.ocl.expr.ExpressionVisitor#visitConstEnum(org.tzi.use.uml.ocl.expr.ExpConstEnum)

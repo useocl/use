@@ -87,9 +87,6 @@ public abstract class OpGeneric {
 		StandardOperationsBag.registerTypeOperations(opmap);
 		StandardOperationsSequence.registerTypeOperations(opmap);
 		StandardOperationsOrderedSet.registerTypeOperations(opmap);
-		
-		// Extensions
-		StandardOperationsDate.registerTypeOperations(opmap);
 	}
 	
 	/**
