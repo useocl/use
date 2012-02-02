@@ -244,8 +244,9 @@ public class ExprNavigationTest extends TestCase {
                                                                ( MNavigableElement ) job, emptyQualiferValues );
 
             assertEquals( 2, objects.size() );
-            assertEquals( "j2", ( ( MObject ) objects.get( 0 ) ).name() );
-            assertEquals( "j1", ( ( MObject ) objects.get( 1 ) ).name() );
+            
+            assertTrue(objects.contains(system.state().objectByName("j2")));
+            assertTrue(objects.contains(system.state().objectByName("j1")));
         } catch ( Exception e ) {
             fail( "Exception was thrown: " + e.getMessage() );
         }
