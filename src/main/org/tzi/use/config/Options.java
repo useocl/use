@@ -183,6 +183,7 @@ public class Options {
 	private Options() {}
 
     private static void printHelp() {
+    	
         System.out.println("usage: use [options] [spec_file] [cmd_file]");
         System.out.println();
         System.out.println("options:");

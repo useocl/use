@@ -1387,6 +1387,21 @@ public class MainWindow extends JFrame implements StateChangeListener {
 				}
             });
             
+            int OBJECTS_LARGE_SYSTEM = 100;
+            
+            // Many objects. Ask user if all objects should be hidden
+            if (fSession.system().state().allObjects().size() > OBJECTS_LARGE_SYSTEM) {
+            	
+            	int option = JOptionPane.showConfirmDialog(new JPanel(),
+                        "The current system state contains more then " + OBJECTS_LARGE_SYSTEM + " instances." +
+            	"This can slow down the object diagram.\r\nDo you want to start with an empty object diagram?",
+                        "Large system state", JOptionPane.YES_NO_OPTION);
+                
+            	if (option == JOptionPane.YES_OPTION) {
+                    odv.getDiagram().hideAll();
+                }
+            }
+            
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(odv, BorderLayout.CENTER);
