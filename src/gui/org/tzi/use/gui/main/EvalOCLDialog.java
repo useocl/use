@@ -23,6 +23,7 @@ package org.tzi.use.gui.main;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
@@ -97,6 +98,7 @@ class EvalOCLDialog extends JDialog {
 
         // create text components and labels
         fTextIn = new JTextArea();
+        fTextIn.setFont(new Font("Monospaced", Font.PLAIN, getFont().getSize()));
         JLabel textInLabel = new JLabel("Enter OCL expression:");
         textInLabel.setDisplayedMnemonic('O');
         textInLabel.setLabelFor(fTextIn);
