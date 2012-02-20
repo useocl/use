@@ -1475,4 +1475,11 @@
 :let s:Collection(OclAny) = Set{1} in s->oclAsType(Set(OclAny))
 *-> Set(OclAny)
 
+# Issue 0000133
+?Sequence{Set{7,8},Set{7},Set{}->excluding(0)}
+*-> Sequence{Set{7,8},Set{7},Set{}} : Sequence(Set(Integer))
+
+?Set{oclEmpty(Set(OclAny)),Set{9}}
+*-> Set{Set{},Set{9}} : Set(Set(Integer))
+
 exit
