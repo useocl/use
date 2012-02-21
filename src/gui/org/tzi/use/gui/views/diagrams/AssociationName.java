@@ -127,11 +127,12 @@ public final class AssociationName extends EdgeProperty {
 
     @Override
     protected void calculatePosition(double deltaX, double deltaY) {
-    	// If both nodes are selected we receive two events
-		if (this.fSource.isSelected() && this.fTarget != null && this.fTarget.isSelected()) {
-			deltaX /= 2;
-			deltaY /= 2;
-		}
+    	// If both nodes are selected we receive two events and get the
+    	// concrete movement.
+    	// If only one node is selected it "feels" better to move just the
+    	// half of the distance.
+    	deltaX /= 2;
+    	deltaY /= 2;
 		super.calculatePosition(deltaX, deltaY);
     }
     
