@@ -21,15 +21,21 @@
 
 package org.tzi.use.parser.soil.ast;
 
+import static org.tzi.use.util.StringUtil.inQuotes;
+
 import java.io.PrintWriter;
 
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTSimpleType;
 import org.tzi.use.parser.ocl.ASTStringLiteral;
+import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
@@ -104,8 +110,22 @@ public class ASTNewObjectStatement extends ASTStatement {
 
 	@Override
 	protected MStatement generateStatement() throws CompilationFailedException {
+	
+		Type t = generateType(fObjectType);
 		
-		MClass objectClass = generateClass(fObjectType, false);
+		if (!t.isObjectType()) {
+			throw new CompilationFailedException(this, "Expected object type, found "
+					+ StringUtil.inQuotes(t) + ".");
+		}
+		
+		MClass objectClass = ((ObjectType)t).cls();
+		
+		if (objectClass instanceof MAssociationClass ) {
+			throw new CompilationFailedException(this,
+					"Cannot instantiate association class "
+							+ inQuotes(objectClass.name())
+							+ " without participants.");
+		}
 		
 		Expression objectName = 
 			(fObjectName == null ? 

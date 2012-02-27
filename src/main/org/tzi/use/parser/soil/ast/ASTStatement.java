@@ -611,39 +611,6 @@ public abstract class ASTStatement extends AST {
 		}			
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param type
-	 * @return
-	 * @throws CompilationFailedException
-	 */
-	protected MClass generateClass(
-			ASTType type,
-			boolean mayBeAssociationClass) throws CompilationFailedException {
-		
-		Type t = generateType(type);
-		
-		if (!t.isObjectType()) {
-			throw new CompilationFailedException(this, "Expected object type, found "
-					+ StringUtil.inQuotes(t) + ".");
-		}
-		
-		MClass result = ((ObjectType)t).cls();
-		
-		if (!mayBeAssociationClass && 
-				fContext.model().associations().contains(result)) {
-			
-			throw new CompilationFailedException(this,
-					"Cannot instantiate association class "
-							+ inQuotes(result.name())
-							+ " without participants.");
-		}
-		
-		return result;
-	}
-	
-	
 	/**
 	 * TODO
 	 * @param name
@@ -663,28 +630,6 @@ public abstract class ASTStatement extends AST {
 		
 		return association;
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param name
-	 * @return
-	 * @throws CompilationFailedException 
-	 */
-	protected MAssociationClass generateAssociationClass(
-			String name) throws CompilationFailedException {
-		
-		MAssociationClass result =
-            fContext.model().getAssociationClass(name);
-		
-		if (result == null) {
-			throw new CompilationFailedException(this, "Association class "
-					+ StringUtil.inQuotes(name) + " does not exist.");
-		}
-			
-		return result;
-	}
-	
 	
 	/**
 	 * TODO

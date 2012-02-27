@@ -111,10 +111,15 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 
 	@Override
 	protected MStatement generateStatement() throws CompilationFailedException {
-		
-		MAssociationClass associationClass = 
-			generateAssociationClass(fAssociationClassName.toString());
-		
+
+		MAssociationClass associationClass =
+	            fContext.model().getAssociationClass(fAssociationClassName.toString());
+			
+		if (associationClass == null) {
+			throw new CompilationFailedException(this, "Association class "
+					+ StringUtil.inQuotes(fAssociationClassName.toString()) + " does not exist.");
+		}
+			
 		List<MRValue> participants = 
 			generateAssociationParticipants(
 					associationClass, 
