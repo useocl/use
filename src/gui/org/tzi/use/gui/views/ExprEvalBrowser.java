@@ -277,9 +277,11 @@ public class ExprEvalBrowser extends JPanel {
             child.setHighlighting(highlightings);
             // remove all Varbindings that are in the system state but not in
             // the term
-            child.getVarBindings().removeAll(fNeedlessVarBindings);
+            
             // VarBindings for the Early-Variable-Assignment-View
             Vector<Entry> childVars = child.getVarBindings();
+            childVars.removeAll(fNeedlessVarBindings);
+            
             Vector<Entry> newVars = new Vector<Entry>( childVars );
 
             newVars.removeAll(parentVars);

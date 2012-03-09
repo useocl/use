@@ -58,6 +58,16 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
             return fValue;
         }
 
+        @Override
+        public boolean equals(Object otherEntry) {
+        	if (!(otherEntry instanceof VarBindings.Entry)) {
+        		return false;
+        	}
+        	
+        	Entry other = (Entry)otherEntry;
+        	return fVarname.equals(other.fVarname);
+        }
+        
         public String toString() {
             return fVarname + " : " + fValue.type() + " = " + fValue;
         }
