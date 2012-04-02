@@ -7,7 +7,7 @@ shellCommandOnly returns [ASTStatement n]
   (stat)=> s = stat
   { $n = $s.n; }
   |
-  l = legacyStat
+  (legacyStat)=> l = legacyStat
   { $n = $l.n; }
 ;
 
@@ -20,7 +20,7 @@ shellCommand returns [ASTStatement n]
   (legacyStat)=> l = legacyStat EOF
   { $n = $l.n; }
   |
-  s = stat EOF
+  (stat)=> s = stat EOF
   { $n = $s.n; }
 ;
 

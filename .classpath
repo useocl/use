@@ -8,7 +8,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/gsbase.jar"/>
 	<classpathentry kind="lib" path="lib/jruby-complete-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/antlr-3.3.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-3.4-complete.jar"/>
 	<classpathentry kind="lib" path="lib/combinatoricslib-0.2.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

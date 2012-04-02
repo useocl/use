@@ -39,7 +39,7 @@
   <property name="use-runtime.jar"     location="${build.lib.dir}/use-runtime.jar" />
   <property name="build.libbuild.dir"  location="${basedir}/lib_build"/>
 	
-  <property name="antlr.jar"          location="${lib.dir}/antlr-3.3.jar"/>
+  <property name="antlr.jar"          location="${lib.dir}/antlr-3.4-complete.jar"/>
   <property name="junit.jar"          location="${lib.dir}/junit.jar"/>
   <property name="gsbase.jar"         location="${lib.dir}/gsbase.jar"/>
   <property name="checkstyle.jar"     location="${lib.dir}/checkstyle-all-3.4.jar"/>
@@ -249,66 +249,6 @@
       <arg line="-lib ../base TestSuite.g"/> 
     </java>
 		
-  	<!-- Some patching to avoid Warnings for generated code -->
-  	<replaceregexp file="${parser.dir}/shell/ShellCommandLexer.java"
-  		    match="^public class"
-  		    replace="@SuppressWarnings(&quot;all&quot;) public class"
-  		    flags="m" />
-  	
-  	<replaceregexp file="${parser.dir}/shell/ShellCommandParser.java"
-  	  		match="^public class"
-  	  		replace="@SuppressWarnings(&quot;all&quot;) public class"
-  	  		flags="m" />
-  	
-  	<replaceregexp file="${parser.dir}/generator/GeneratorLexer.java"
-  	  		match="^public class"
-  	  		replace="@SuppressWarnings(&quot;all&quot;) public class"
-  	  		flags="m" />
-  	
-  	<replaceregexp file="${parser.dir}/generator/GeneratorParser.java"
-  	  	  	match="^public class"
-  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-  	  	  	flags="m" />
-	
-	<replaceregexp file="${parser.dir}/soil/SoilLexer.java"
-		  	match="^public class"
-		  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-		  	flags="m" />
-		  	
-	<replaceregexp file="${parser.dir}/soil/SoilParser.java"
-		  	match="^public class"
-		  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-		  	flags="m" />
-  	
-  	<replaceregexp file="${parser.dir}/ocl/OCLParser.java"
-  	  	  	match="^public class"
-  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-  	  	  	flags="m" />
-  	
-  	<replaceregexp file="${parser.dir}/ocl/OCLLexer.java"
-  	  	  	match="^public class"
-  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-  	  	  	flags="m" />
-  	
-  	<replaceregexp file="${parser.dir}/use/USELexer.java"
-  	  	  	match="^public class"
-  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-  	  	  	flags="m" />
-  	
-  	<replaceregexp file="${parser.dir}/use/USEParser.java"
-  	  	  	match="^public class"
-  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-  	  	  	flags="m" />
-		
-	<replaceregexp file="${parser.dir}/testsuite/TestSuiteLexer.java"
-	  	  	  	match="^public class"
-	  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-	  	  	  	flags="m" />
-		
-	<replaceregexp file="${parser.dir}/testsuite/TestSuiteParser.java"
-	  	  	  	match="^public class"
-	  	  	  	replace="@SuppressWarnings(&quot;all&quot;) public class"
-	  	  	  	flags="m" />
   </target>
 
   <!-- compile USE sources -->
