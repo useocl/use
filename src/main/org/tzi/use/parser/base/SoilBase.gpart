@@ -100,7 +100,7 @@ singleStat returns [ASTStatement n]
   | its = iterStat       { $n = $its.n; } // x.    (iteration)
   // handled in varAssignStat rule        // xii.  (operation call with result)
   | whs = whileStat      { $n = $whs.n; } // (new, not in Buettner:2011:DISS)
-  | blk = blockStat      { $n = $blk.n; } // (ditto)
+//  | blk = blockStat      { $n = $blk.n; } // (ditto)
 ;
 
 
@@ -399,16 +399,16 @@ whileStat returns [ASTWhileStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 // block statement
 ////////////////////////////////////////////////////////////////////////////////
-blockStat returns [ASTBlockStatement n]
-@init {
-    block = new ASTBlockStatement();
-}
-:
-  ('declare' IDENT COLON t = type (COMMA IDENT COLON type)* )?
-  'begin'
-  s = stat {block.setStat($s.n);}
-  'end'
-;
+// blockStat returns [ASTBlockStatement n]
+// @init {
+//     block = new ASTBlockStatement();
+// }
+// :
+//   ('declare' IDENT COLON t = type (COMMA IDENT COLON type)* )?
+//   'begin'
+//   s = stat {block.setStat($s.n);}
+//   'end'
+// ;
 
 
 
