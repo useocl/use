@@ -112,6 +112,8 @@ public class Options {
     public static boolean disableExtensions = false;
     public static boolean readlineTest = false;
     
+    public static boolean explicitVariableDeclarations = false;
+    
     public enum WarningType {
     	IGNORE("I"),
     	WARN("W"),

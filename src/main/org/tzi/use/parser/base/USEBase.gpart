@@ -168,7 +168,7 @@ operationDefinition returns [ASTOperation n]
     { $n = new ASTOperation($name, $pl.paramList, $t.n); $n.setAnnotations($as.annotations); }
     (
         ( EQUAL e = expression   { $n.setExpression($e.n); } )
-      | ( 'begin' s = stat 'end' { $n.setStatement($s.n);  } )
+      | ( s = blockStat  { $n.setStatement($s.n);  } )
     )?
     ( ppc=prePostClause { $n.addPrePostClause($ppc.n); } )*
     ( SEMI )?

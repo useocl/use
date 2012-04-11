@@ -100,7 +100,7 @@ singleStat returns [ASTStatement n]
   | its = iterStat       { $n = $its.n; } // x.    (iteration)
   // handled in varAssignStat rule        // xii.  (operation call with result)
   | whs = whileStat      { $n = $whs.n; } // (new, not in Buettner:2011:DISS)
-//  | blk = blockStat      { $n = $blk.n; } // (ditto)
+  | blk = blockStat      { $n = $blk.n; } // (ditto)
 ;
 
 
@@ -355,10 +355,10 @@ condExStat returns [ASTConditionalExecutionStatement n]
   'if' 
   con = inSoilExpression
   'then' 
-  ts = stat 
+  ts = statOrImplicitBlock 
   (
     'else' 
-     es = stat { elseStat = $es.n; }
+     es = statOrImplicitBlock  { elseStat = $es.n; }
   )?
   'end'
   
@@ -375,7 +375,7 @@ iterStat returns [ASTIterationStatement n]
   'in'
   set = inSoilExpression
   'do'
-  s = stat
+  s = statOrImplicitBlock 
   'end'
   
   { $n = new ASTIterationStatement($var.text, $set.n, $s.n); }
@@ -390,7 +390,7 @@ whileStat returns [ASTWhileStatement n]
   'while'
   cond = inSoilExpression
   'do'
-  s = stat
+  s = statOrImplicitBlock 
   'end'
   
   { $n = new ASTWhileStatement($cond.n, $s.n); }
@@ -399,18 +399,34 @@ whileStat returns [ASTWhileStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 // block statement
 ////////////////////////////////////////////////////////////////////////////////
-// blockStat returns [ASTBlockStatement n]
-// @init {
-//     block = new ASTBlockStatement();
-// }
-// :
-//   ('declare' IDENT COLON t = type (COMMA IDENT COLON type)* )?
-//   'begin'
-//   s = stat {block.setStat($s.n);}
-//   'end'
-// ;
+blockStat returns [ASTBlockStatement n]
+@init {
+  n = new ASTBlockStatement(org.tzi.use.config.Options.explicitVariableDeclarations);
+} 
+:
+ 'begin'
+ ( 'declare' vd = variableDeclaration { n.addVariableDeclaration(vd);} ( COMMA vd1 = variableDeclaration { n.addVariableDeclaration(vd1);} )* SEMI )?
+ s = stat { n.setBody($s.n); }
+ 'end'
+; 
 
 
+////////////////////////////////////////////////////////////////////////////////
+// implicit block
+////////////////////////////////////////////////////////////////////////////////
+implicitBlockStat returns [ASTBlockStatement n]
+@init {
+  n = new ASTBlockStatement(false);
+} 
+:
+  'declare' vd = variableDeclaration { n.addVariableDeclaration(vd);} ( COMMA vd1 = variableDeclaration { n.addVariableDeclaration(vd1);} )* SEMI 
+ s = stat { n.setBody($s.n); }
+; 
+
+statOrImplicitBlock returns [ASTStatement n]
+:
+  (s1 = stat { n = $s1.n; } | s2 = implicitBlockStat { n = $s2.n; })
+;
 
 ////////////////////////////////////////////////////////////////////////////////
 //

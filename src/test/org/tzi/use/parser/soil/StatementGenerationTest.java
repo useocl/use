@@ -67,6 +67,7 @@ public class StatementGenerationTest extends TestCase {
 	public void setUp() throws Exception {
 		fStatement = null;
 		fTestSystem = new TestSystem();
+  	    Options.explicitVariableDeclarations = false;
 	}
 	
 	

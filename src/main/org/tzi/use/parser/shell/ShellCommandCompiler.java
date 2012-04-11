@@ -191,7 +191,7 @@ public class ShellCommandCompiler {
 			return null;
 		}
 		
-		statement.flatten();
+		//statement.flatten();
 		return statement;
 	}
 	

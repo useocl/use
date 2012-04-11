@@ -97,6 +97,12 @@ public class SymbolTable {
 	private Deque<Map<String, Entry>> fStates = 
 		new ArrayDeque<Map<String, Entry>>();
 	
+	//TODO: refactor both to one stack with a proper data object per frame
+	/** the stack of explicit/implicit */
+	private Deque<Boolean> fExplicitState = 
+			new ArrayDeque<Boolean>();
+	
+	
 	private MSystemState fVisibleState ;
 	
 	/**
@@ -104,6 +110,7 @@ public class SymbolTable {
 	 */
 	public SymbolTable() {
 		fStates.push(new LinkedHashMap<String, Entry>());
+		fExplicitState.push(Boolean.FALSE);
 		fEntries = fStates.peek();
 	}
 	
@@ -123,6 +130,8 @@ public class SymbolTable {
 	 */
 	public SymbolTable(VariableEnvironment variableEnvironment) {
 		fStates = variableEnvironment.constructSymbolTable().fStates;
+		fExplicitState.push(Boolean.FALSE);
+		
 	}
 	
 	
@@ -131,7 +140,9 @@ public class SymbolTable {
 	 */
 	public void clear() {
 		fStates.clear();
+		fExplicitState.clear();
 		fStates.push(new LinkedHashMap<String, Entry>());
+		fExplicitState.push(Boolean.FALSE);
 		fEntries = fStates.peek();
 	}
 	
@@ -142,9 +153,15 @@ public class SymbolTable {
 	 * @see #restoreState()
 	 * @see #restoreState(ASTStatement)
 	 */
-	public void storeState() {
+	public void storeState(Boolean explicit) {
 		fStates.push(new LinkedHashMap<String, Entry>(fEntries));
 		fEntries = fStates.peek();
+		fExplicitState.push(explicit);
+	}
+	
+	public void storeState() {
+		Boolean b = fExplicitState.peek();
+		storeState(b);
 	}
 	
 	
@@ -166,6 +183,7 @@ public class SymbolTable {
 		}
 		
 		Map<String, Entry> poppedState = fStates.pop();
+		fExplicitState.pop();
 		fEntries = fStates.peek();
 			
 		Set<String> sharedNames = new HashSet<String>(fEntries.keySet());
@@ -319,4 +337,12 @@ public class SymbolTable {
 		
 		return sb.toString();
 	}
+
+	/**
+	 * @return
+	 */
+	public boolean isExplicit() {
+		return fExplicitState.peek();
+	}
+
 }

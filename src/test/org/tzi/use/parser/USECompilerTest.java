@@ -38,6 +38,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.tzi.use.config.Options;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.uml.mm.MModel;
@@ -104,6 +105,8 @@ public class USECompilerTest extends TestCase {
 
 
     public void testSpecification() {
+  	    Options.explicitVariableDeclarations = false;
+
         List<File> fileList = getFilesMatchingSuffix(".use", 33);
         // add all the example files which should have no errors
         File dir = new File(EXAMPLES_PATH);
