@@ -1,4 +1,4 @@
-/*
+﻿/*
  * USE - UML based specification environment
  * Copyright (C) 1999-2010 Mark Richters, University of Bremen
  *
@@ -27,23 +27,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
-import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MBlockStatement;
-import org.tzi.use.uml.sys.soil.MEmptyStatement;
-import org.tzi.use.uml.sys.soil.MIterationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
  * An block that may introduce local variables.
- * @author Fabian B�ttner
+ * @author Fabian Büttner
  */
 public class ASTBlockStatement extends ASTStatement {
 	
