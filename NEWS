@@ -2,6 +2,11 @@ USE NEWS -- history of user-visible changes. -*- Text -*-
 
 Please see the file `README' for a description of how to report bugs.
 ** Changes since version 3.0.2
+* Explicit variable declaration is now default in operations. 
+  Use 'declare var1 : type1, var2 : type2, ...;' after 'begin'.
+  The interactive mode stays implicit.
+  Old behavior (implicit typing in operations) can be activated using -implicitTypes.
+
 * [OCL] Fixed wrong handling of undefined for operations append/prepend
   on Sequence and OrderedSet
 
