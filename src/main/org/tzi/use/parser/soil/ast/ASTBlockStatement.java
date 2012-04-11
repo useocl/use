@@ -23,6 +23,7 @@ package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.parser.SemanticException;
@@ -41,9 +42,8 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * AST node of an iteration statement.
- * @author Daniel Gent
- *
+ * An block that may introduce local variables.
+ * @author Fabian Büttner
  */
 public class ASTBlockStatement extends ASTStatement {
 	
@@ -118,8 +118,18 @@ public class ASTBlockStatement extends ASTStatement {
 
 	@Override
 	public String toString() {
-		//TODO: add implementation for toString()
-		return "TODO";
+		StringBuilder sb = new StringBuilder();
+		sb.append("begin ");
+		if (!fVariableDeclarations.isEmpty()) {
+			for(Iterator<ASTVariableDeclaration> it = fVariableDeclarations.iterator(); it.hasNext();) {
+				ASTVariableDeclaration vd = it.next();
+				sb.append(vd.toString());
+				if (it.hasNext()) sb.append(",");
+			}
+			sb.append(";");
+		}
+		sb.append(fBody.toString());
+		return sb.toString();
 	}
 
 }
