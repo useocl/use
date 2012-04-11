@@ -56,6 +56,7 @@ operations
     post NoMoreMembers: p.members->isEmpty
 
   createWorker(qs : Set(Qualification)) : Worker begin
+      declare w : Worker;
       w := new Worker;
       insert (self,w) into Employs;
       for q in qs do insert (w,q) into IsQualified end;
@@ -63,6 +64,7 @@ operations
     end
   
   createProject(n : String, ws : Set(Worker), qs : Set(Qualification), s : ProjectSize) : Project begin
+      declare p : Project;
       p := new Project;
       insert (self, p) into CarriesOut;
       for w in ws do insert (p,w) into Member end;
