@@ -77,7 +77,7 @@ post maleHasMarriedWife:      gender = #male implies
 								
 divorce()
 begin
-  
+  declare spouse : Person;  
   --spouse := self;
   spouse := self.spouse();
   self.civstat          := #divorced;
@@ -146,6 +146,7 @@ end
 
 fac(n : Integer) : Integer
 begin
+  declare m : Integer;
   result := 1;
   if (n > 1) then
     m := self.fac(n - 1);

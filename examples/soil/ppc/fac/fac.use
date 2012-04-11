@@ -6,6 +6,7 @@ class Rec
       if n <= 1 then 1 else n * self.fac_q(n - 1) endif
     fac_s(n : Integer) : Integer
     begin
+      declare tmp : Integer;
       result := 1;
       if n > 1 then
         tmp := self.fac_s(n-1); 
