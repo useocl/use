@@ -29,6 +29,7 @@ import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;

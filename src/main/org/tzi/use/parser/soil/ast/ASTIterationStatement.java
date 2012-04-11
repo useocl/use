@@ -121,8 +121,10 @@ public class ASTIterationStatement extends ASTStatement {
 		}
 		
 		// assigned(iteration) = assigned(body)
-		fAssignedSet.add(fBody.fAssignedSet);
-		fAssignedSet.add(fIterVarName, iterVarType);
+		if (! fSymtable.isExplicit()) {
+			fAssignedSet.add(fBody.fAssignedSet);
+			fAssignedSet.add(fIterVarName, iterVarType);
+		}
 		
 		// range is empty!
 		if (iterVarType.isVoidType()) {

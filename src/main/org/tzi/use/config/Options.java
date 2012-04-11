@@ -112,7 +112,7 @@ public class Options {
     public static boolean disableExtensions = false;
     public static boolean readlineTest = false;
     
-    public static boolean explicitVariableDeclarations = false;
+    public static boolean explicitVariableDeclarations = true;
     
     public enum WarningType {
     	IGNORE("I"),
@@ -197,6 +197,7 @@ public class Options {
 				.println("  -disableCollectShorthand flag use of OCL shorthand notation as error");
 		System.out.println("  -oclAnyCollectionsChecks: (W)arn|(E)rror|(I)gnore");
 		System.out.println("  -extendedTypeSystemChecks:(W)arn|(E)rror|(I)gnore");
+		System.out.println("  -implicitTypes  Implicit variable typing in operations");
         System.out.println("  -nogui        do not use GUI");
 		System.out.println("  -noplugins    do not use plugins");
         System.out.println("  -h            print help");
@@ -290,6 +291,8 @@ public class Options {
                 } else if (arg.equals("V")) {
                     System.out.println("release " + RELEASE_VERSION);
                     System.exit(0);
+                } else if (arg.equals("implicitTypes")) {
+                    Options.explicitVariableDeclarations = false;
                 } else if (arg.equals("debug")) {
 					Log.setDebug(true);
                     Log.setTrace(true);

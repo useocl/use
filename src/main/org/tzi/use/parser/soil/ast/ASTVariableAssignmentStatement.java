@@ -150,9 +150,17 @@ public class ASTVariableAssignmentStatement extends ASTStatement {
 			variableType = valueType;
 		}
 		
-		fBoundSet.add(fVariableName, variableType);
-		fAssignedSet.add(fVariableName, variableType);
-		fSymtable.setType(fVariableName, variableType);
+		if (fSymtable.isExplicit()) {
+			if (!fSymtable.contains(fVariableName))
+				throw new CompilationFailedException(this, "Variable " + fVariableName + " was not declared.");
+			Type t = fSymtable.getType(fVariableName);
+			if (! variableType.isSubtypeOf(t)) 
+				throw new CompilationFailedException(this, "Variable " + fVariableName + " of type " + t + ", which is incompatible with " + variableType);
+		} else {
+			fBoundSet.add(fVariableName, variableType);
+			fAssignedSet.add(fVariableName, variableType);
+			fSymtable.setType(fVariableName, variableType);
+		}
 		
 		return new MVariableAssignmentStatement(fVariableName, rValue);
 	}

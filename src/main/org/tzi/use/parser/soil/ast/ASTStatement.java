@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.antlr.runtime.Token;
+import org.tzi.use.config.Options;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -282,22 +283,24 @@ public abstract class ASTStatement extends AST {
 		result.setSourcePosition(fSourcePosition);
 		
 		if (fRequiredResultType != null) {
-			if (!binds("result")) {
-				throw new CompilationFailedException(this,
-						"Operation must return a value, but variable "
-								+ StringUtil.inQuotes("result")
-								+ " might be unbound.");
-			}
-			
-			Type resultType = bound().getType("result");
-			if (!resultType.isSubtypeOf(fRequiredResultType)) {
-				throw new CompilationFailedException(
-						this, 
-						"Operation returns a value of type " +
-								StringUtil.inQuotes(resultType) +
-								", which is not a subtype of the declared return type " +
-								StringUtil.inQuotes(fRequiredResultType) +
-								".");
+			if (!fSymtable.isExplicit()) {
+				if (!binds("result")) {
+					throw new CompilationFailedException(this,
+							"Operation must return a value, but variable "
+									+ StringUtil.inQuotes("result")
+									+ " might be unbound.");
+				}
+				
+				Type resultType = bound().getType("result");
+				if (!resultType.isSubtypeOf(fRequiredResultType)) {
+					throw new CompilationFailedException(
+							this, 
+							"Operation returns a value of type " +
+									StringUtil.inQuotes(resultType) +
+									", which is not a subtype of the declared return type " +
+									StringUtil.inQuotes(fRequiredResultType) +
+									".");
+				}
 			}
 		}
 		 
@@ -318,10 +321,14 @@ public abstract class ASTStatement extends AST {
 		
 		// build symbol table from ...
     	SymbolTable symbolTable = new SymbolTable();
+    	symbolTable.storeState(Options.explicitVariableDeclarations);
     	// ... parameters and ...
     	for (VarDecl p : operation.allParams()) {
     		symbolTable.setType(p.name(), p.type());
     	}
+    	if (operation.resultType() != null && Options.explicitVariableDeclarations) {
+        	symbolTable.setType("result", operation.resultType());;
+        }
     	// ... self
     	symbolTable.setType("self", TypeFactory.mkObjectType(operation.cls()));
     	

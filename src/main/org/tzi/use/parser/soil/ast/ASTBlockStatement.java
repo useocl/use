@@ -90,8 +90,10 @@ public class ASTBlockStatement extends ASTStatement {
 				fSymtable.setType(varDecl.name(), varDecl.type());
 			}
 		} 
-		fBoundSet = fBody.bound();
-		fAssignedSet = fBody.assigned();
+		if (!fExplicitDeclarations) {
+			fBoundSet = fBody.bound();
+			fAssignedSet = fBody.assigned();
+		}
 		MStatement body = generateStatement(fBody);
 		if (fExplicitDeclarations) {
 			fSymtable.restoreState(this);
