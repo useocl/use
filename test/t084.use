@@ -16,13 +16,15 @@ operations
 
   i() : Integer
   begin
-      c1 := new C;
-      result := 1
-    end
+    declare c1 : C;
+    c1 := new C;
+    result := 1
+  end
   post notOne: result <> 1
 
   k() 
-    begin
-      x := self.i();
-    end
+  begin
+  declare x : Integer;
+    x := self.i();
+  end
 end
