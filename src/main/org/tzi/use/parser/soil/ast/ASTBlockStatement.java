@@ -1,4 +1,4 @@
-﻿/*
+/*
  * USE - UML based specification environment
  * Copyright (C) 1999-2010 Mark Richters, University of Bremen
  *
@@ -36,7 +36,7 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 /**
  * An block that may introduce local variables.
- * @author Fabian Büttner
+ * @author Fabian Buettner
  */
 public class ASTBlockStatement extends ASTStatement {
 	
