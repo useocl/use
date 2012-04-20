@@ -18,12 +18,6 @@ import org.tzi.use.util.Log;
  */
 public abstract class Plugin implements IPlugin {
 
-	protected static Plugin pluginInstance = null;
-	
-	public static Plugin getInstance() {
-		return pluginInstance;
-	}
-
 	/**
 	 * Implementors should not override this method,
 	 * instead {@link #doRun(IPluginRuntime)} should be overridden.<br>
@@ -31,7 +25,6 @@ public abstract class Plugin implements IPlugin {
 	 */
 	@Override
 	public void run(IPluginRuntime pluginRuntime) throws Exception {
-		pluginInstance = this;
 		doRun(pluginRuntime);
 	}
 	
