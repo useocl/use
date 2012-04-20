@@ -23,10 +23,8 @@ package org.tzi.use.main;
 
 import java.util.EventListener;
 import java.util.EventObject;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.soil.MStatement;
@@ -40,8 +38,9 @@ import org.tzi.use.uml.sys.soil.MStatement;
  */
 public class Session {
     private MSystem fSystem;
-    private EventListenerList fListenerList;
-
+    private List<ChangeListener> fListenerStateChange;
+    private List<EvaluatedStatementListener> fListenerEvaluatedStatement;
+    
     public class EvaluatedStatement extends EventObject {
 		private static final long serialVersionUID = 1L;
 
@@ -58,7 +57,8 @@ public class Session {
     
     
     public Session() {
-        fListenerList = new EventListenerList();
+        fListenerEvaluatedStatement = new LinkedList<EvaluatedStatementListener>();
+        fListenerStateChange = new LinkedList<ChangeListener>();
     }
 
     /** 
@@ -103,19 +103,19 @@ public class Session {
     }
 
     public void addChangeListener(ChangeListener l) {
-        fListenerList.add(ChangeListener.class, l);
+        fListenerStateChange.add(l);
     }
     
     public void removeChangeListener(ChangeListener l) {
-        fListenerList.remove(ChangeListener.class, l);
+    	fListenerStateChange.remove(l);
     }
 
     public void addEvaluatedStatementListener(EvaluatedStatementListener l) {
-    	fListenerList.add(EvaluatedStatementListener.class, l);
+    	fListenerEvaluatedStatement.add(l);
     }
     
     public void removeEvaluatedStatementListener(EvaluatedStatementListener l) {
-    	fListenerList.remove(EvaluatedStatementListener.class, l);
+    	fListenerEvaluatedStatement.remove(l);
     }
     
     /**
@@ -123,17 +123,11 @@ public class Session {
      * notification on this event type.  
      */
     private void fireStateChanged() {
-        // Guaranteed to return a non-null array
-        Object[] listeners = fListenerList.getListenerList();
-        // Process the listeners last to first, notifying
-        // those that are interested in this event
-        ChangeEvent event = null;
-        for (int i = listeners.length-2; i >= 0; i -= 2) {
-            if (listeners[i] == ChangeListener.class ) {
-                if (event == null )
-                    event = new ChangeEvent(this);
-                ((ChangeListener) listeners[i+1]).stateChanged(event);
-            }          
+        // Process the listeners and notifying them
+        ChangeEvent event = new ChangeEvent(this);
+        
+        for (ChangeListener l : this.fListenerStateChange) {
+            l.stateChanged(event);
         }
     } 
     
@@ -142,20 +136,10 @@ public class Session {
      * @param statement
      */
     private void fireEvaluatedStatement(MStatement statement) {
-    	Object[] listeners = fListenerList.getListenerList();
-    	EvaluatedStatement event = null;
+    	EvaluatedStatement event = new EvaluatedStatement(this);
 
-    	for (int i = (listeners.length - 2); i >= 0; i -= 2) {
-            if (listeners[i] == EvaluatedStatementListener.class) {
-            	if (event == null) {
-            		event = new EvaluatedStatement(this);
-            	}
-            	
-            	EvaluatedStatementListener listener = 
-            		(EvaluatedStatementListener)listeners[i + 1];
-            	
-            	listener.evaluatedStatement(event);
-            }          
+    	for (EvaluatedStatementListener l : this.fListenerEvaluatedStatement) {
+        	l.evaluatedStatement(event);
         }
     }
 }

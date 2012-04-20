@@ -66,8 +66,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -99,6 +97,8 @@ import org.tzi.use.gui.views.selection.objectselection.SelectionOCLView;
 import org.tzi.use.gui.views.selection.objectselection.SelectionObjectView;
 import org.tzi.use.gui.views.seqDiag.SDScrollPane;
 import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
+import org.tzi.use.main.ChangeEvent;
+import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.Session.EvaluatedStatement;
 import org.tzi.use.main.runtime.IRuntime;
