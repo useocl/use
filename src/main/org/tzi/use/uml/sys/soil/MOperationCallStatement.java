@@ -134,11 +134,13 @@ public class MOperationCallStatement extends MStatement {
 	@Override
 	protected void evaluate() throws EvaluationFailedException {
 		
-		MStatement operationBody = fOperation.getStatement();
 				
 		// just to check if self exists
 		MObject self = evaluateObjectExpression(fObject);
 		
+		MOperation operation = self.cls().operation(fOperation.name(), true);
+		MStatement operationBody = operation.getStatement();
+	    	
 		// evaluate arguments
 		// evaluate arguments
 		Value[] arguments = new Value[fArguments.size()];
@@ -152,7 +154,7 @@ public class MOperationCallStatement extends MStatement {
 		MOperationCall operationCall = 
 			enterOperation(
 					self, 
-					fOperation, 
+					operation, 
 					arguments, 
 					fContext.isInExpression() ? 
 							ExpressionPPCHandler.getDefaultOutputHandler() : SoilPPCHandler.getDefaultOutputHandler(), false);

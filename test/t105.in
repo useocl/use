@@ -1,0 +1,13 @@
+!create d1:D
+!d1.f()
+?d1.n
+* -> 2 : Integer
+!create d2:D
+!c := let c : C = d2 in c
+!c.f()
+?c.n
+* -> 2 : Integer
+!d3 := new D;  c2 := let x : C = d3 in x; c2.f(); 
+?c2.n
+* -> 2 : Integer
+quit

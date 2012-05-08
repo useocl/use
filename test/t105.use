@@ -1,0 +1,18 @@
+model t105
+
+class C
+attributes
+  n : Integer
+operations 
+  f() begin
+    self.n := 1
+  end
+end
+
+class D < C
+operations  
+  f() begin
+    self.n := 2
+  end
+end
+ 
