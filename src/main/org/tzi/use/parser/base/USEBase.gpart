@@ -283,8 +283,11 @@ invariant returns [ASTConstraintDefinition n]
 */
 invariantClause returns [ASTInvariantClause n]
 :
-      'inv' ( name=IDENT )? COLON e=expression { $n = new ASTInvariantClause($name, $e.n); }
-    | 'existential' 'inv' ( name=IDENT )? COLON e=expression { $n = new ASTExistentialInvariantClause($name, $e.n); }
+	as = annotationSet
+      'inv' ( name=IDENT )? COLON e=expression 
+      { $n = new ASTInvariantClause($name, $e.n); $n.setAnnotations($as.annotations); }
+    | 'existential' 'inv' ( name=IDENT )? COLON e=expression 
+      { $n = new ASTExistentialInvariantClause($name, $e.n); $n.setAnnotations($as.annotations); }
     ;
 
 
@@ -309,9 +312,10 @@ prePost returns [ASTPrePost n]
 prePostClause returns [ASTPrePostClause n]
 @init { Token t = null; }
 :
+	as = annotationSet
     { t = input.LT(1); }
     ( 'pre' | 'post' )  ( name=IDENT )? COLON e=expression
-    { $n = new ASTPrePostClause(t, $name, $e.n); }
+    { $n = new ASTPrePostClause(t, $name, $e.n); $n.setAnnotations($as.annotations); }
 ;
 
 annotationSet returns [Set<ASTAnnotation> annotations]

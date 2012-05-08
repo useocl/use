@@ -22,7 +22,6 @@
 package org.tzi.use.parser.use;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
@@ -42,7 +41,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTPrePostClause extends AST {
+public class ASTPrePostClause extends ASTAnnotatable {
 	Token fToken;     // pre or post
 	Token fName;      // optional
     ASTExpression fExpr;
@@ -83,6 +82,8 @@ public class ASTPrePostClause extends AST {
             if ( ppc != null && fName != null ) {
                 ppc.setPositionInModel( fName.getLine() );
             }
+            
+            this.genAnnotations(ppc);
             
             ctx.model().addPrePostCondition(ppc);
         } catch (MInvalidModelException ex) {

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
@@ -44,7 +43,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public class ASTInvariantClause extends AST {
+public class ASTInvariantClause extends ASTAnnotatable {
 	Token fName;      // optional
     ASTExpression fExpr;
 
@@ -87,6 +86,8 @@ public class ASTInvariantClause extends AST {
             
             MClassInvariant inv = onCreateMClassInvariant(ctx, cls, varNames,
 					expr, invName);
+            
+            this.genAnnotations(inv);
             
             // sets the line position of the USE-Model in this  invarinat
             inv.setPositionInModel( fExpr.getStartToken().getLine() );
