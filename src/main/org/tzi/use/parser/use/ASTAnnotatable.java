@@ -40,7 +40,9 @@ public abstract class ASTAnnotatable extends AST {
 		this.annotations = annotations; 
 	}
 	
-	public void genAnnotations(Annotatable element) {	
+	public void genAnnotations(Annotatable element) {
+		if (this.annotations == null || element == null) return;
+		
 		for (ASTAnnotation an : this.annotations) {
 			element.addAnnotation(an.gen());
 		}

@@ -31,7 +31,7 @@ c
 *    (result <> 1) : Boolean = false
 *
 *  call stack at the time of evaluation:
-*    2. C::i(self:@C1) [caller: self.i()@t084.use:26:11]
+*    2. C::i(self:@C1) [caller: self.i()@t084.use:28:9]
 *    1. C::k(self:@C1) [caller: C1.k()@<input>:1:0]
 *
 info vars
@@ -41,6 +41,7 @@ info vars
 *  self : C = @C1
 *[frame 1]
 *  self : C = @C1
+*  x : OclVoid = Undefined
 *[frame 0]
 *  x : Integer = 4
 *[object variables]

@@ -4,6 +4,8 @@ Please see the file `README' for a description of how to report bugs.
 ** Changes since version 3.0.3
 * [SOIL] Fixed bug that prevents correct dispatching of overridden SOIL 
   operations.
+* [UML] Annotations can now also be specified for invariants, pre- and 
+  postconditions.
 
 ** Changes since version 3.0.2
 * [SOIL] Explicit variable declaration is now default in operations. 
@@ -139,7 +141,7 @@ Please see the file `README' for a description of how to report bugs.
   
 * [SOIL] The old command line language has been been replaced by SOIL (Simple OCL-based 
   Imperative Programming Language) as described in
-  [F. Büttner. Reusing OCL in the Definition of Imperative Languages. Logos Verlag, Berlin, 2011].
+  [F. Bï¿½ttner. Reusing OCL in the Definition of Imperative Languages. Logos Verlag, Berlin, 2011].
   Examples can be found in examples/soil/. 
 
 * [GUI/CML] Coverage analysis

@@ -1,0 +1,30 @@
+model t106
+
+@Test()
+class Person
+  attributes
+    @Test(name="asasa")
+    name:String
+  operations
+    @Test(name="asds", test="sadsad")
+    doIt()
+    @Test()
+    pre: true
+    @Test()
+    post: true
+  constraints
+    @Test()
+    inv testInv: true
+end
+
+constraints
+
+context Person
+  @Test(name="kljsdf")
+  inv test2: true
+  
+context Person::doIt()
+  @Test(test="sdas")
+  pre: true
+  @Test(sdkjf="sdflj")
+  post: true
