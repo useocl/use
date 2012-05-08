@@ -1,0 +1,444 @@
+\section{Object Types}
+\subsection{Equality}
+$=(y:\mathit{OclAny}):\mathit{Boolean}$ represents equality
+between objects. It evaluates to true if $\mathit{self}$ is the same as $y$.\\
+{\bf Notation:} $\mathit{self}$\verb+=+$y$
+\subsection{Inequality}
+$<>(y:\mathit{OclAny}):\mathit{Boolean}\stackrel{\mathit{def}}{=}\mathit{not}\ (
+\mathit{self}=y)$ represents inequality between objects.\\
+{\bf Notation:} $\mathit{self}$\verb+<>+$y$
+\subsection{isUndefined}
+$\mathit{isUndefined}():\mathit{Boolean}$ evaluates to true, if the
+callee is undefined.\\
+{\bf Notation:} $\mathit{self}$\verb+.isUndefined()+
+\subsection{oclIsNew}
+$\mathit{oclIsNew}():\mathit{Boolean}\stackrel{\mathit{def}}{=}
+\mathit{self}@\mathit{pre}.\mathit{isUndefined}()$ can only be used
+in a postcondition and states that the object has
+been newly created during the execution of an operation.\\
+{\bf Notation:} $\mathit{self}$\verb+.oclIsNew()+
+\subsection{oclAsType}
+$\mathit{oclAsType}(T):T$ is a ``cast'' or ``retyping'' expression,
+  evaluating to the value of the callee, if it is an instance of $T$,
+  and to $\mathit{Undefined}$ otherwise.\\
+  {\bf Notation:} $\mathit{self}$\verb+.oclAsType(+$T$\verb+)+
+\subsection{oclIsTypeOf}
+$\mathit{oclIsTypeOf}(T):\mathit{Boolean}$ evaluates to $\mathit{true}$ if the
+callee is an instance of type $T$.\\
+{\bf Notation:} $\mathit{self}$\verb+.oclIsTypeOf(+$T$\verb+)+
+\subsection{oclIsKindOf}
+$\mathit{oclIsKindOf}(T):\mathit{Boolean}$ evaluates to $\mathit{true}$ if the
+callee is
+  an instance of type $T$ or one of $T$s subtypes, that is, the callee
+  conforms to the type $T$.\\
+  {\bf Notation:} $\mathit{self}$\verb+.isKindOf(+$T$\verb+)+
+\section{Boolean Types}
+\begin{tabular}{cc|ccccc}\hline
+  $a$ & $b$ & $\mathit{not}\ b$ & $a\ \mathit{and}\ b$ & $a\
+  \mathit{or}\ b$ & $a\ \mathit{implies}\ b$ & $a\ \mathit{xor}\ b$\\ \hline
+  $\mathit{true}$ & $\mathit{true}$ & $\mathit{false}$ & $\mathit{true}$ & $\mathit{true}$ & $\mathit{true}$ & $\mathit{false}$ \\
+  $\mathit{true}$ & $\mathit{false}$ & $\mathit{true}$ & $\mathit{false}$ & $\mathit{true}$ & $\mathit{false}$ & $\mathit{true}$ \\
+  $\mathit{true}$ & $\bot$ & $\bot$ & $\bot$ & $\mathit{true}$ & $\bot$ & $\bot$ \\
+  $\mathit{false}$ & $\mathit{true}$ & $\mathit{false}$ & $\mathit{false}$ & $\mathit{true}$ & $\mathit{true}$ & $\mathit{true}$ \\
+  $\mathit{false}$ & $\mathit{false}$ & $\mathit{true}$ & $\mathit{false}$ & $\mathit{false}$ & $\mathit{true}$ & $\mathit{false}$ \\
+  $\mathit{false}$ & $\bot$ & $\bot$ & $\mathit{false}$ & $\bot$ & $\mathit{true}$ & $\bot$ \\
+  $\bot$ & $\mathit{true}$ & $\mathit{false}$ & $\bot$ & $\mathit{true}$ & $\mathit{true}$ & $\bot$ \\
+  $\bot$ & $\mathit{false}$ & $\mathit{true}$ & $\mathit{false}$ & $\bot$ & $\bot$ & $\bot$ \\
+  $\bot$ & $\bot$ & $\bot$ & $\bot$ & $\bot$ & $\bot$ & $\bot$ \\ \hline
+\end{tabular}
+\section{Real}
+\subsection{Addition}
+$+(y:\mathit{Real}):\mathit{Real}$ describes the sum of $\mathit{self}$ and $y$.\\
+{\bf Notation:} $\mathit{self}$\verb-+-$y$
+\subsection{Subtraction}
+$-(y:\mathit{Real}):\mathit{Real}$ describes the difference between
+$\mathit{self}$
+  and $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+-+$y$
+\subsection{Multiplication}
+$*(y:\mathit{Real}):\mathit{Real}$ describes the product of $\mathit{self}$ and
+$y$.\\
+{\bf Notation:} $\mathit{self}$\verb+*+$y$
+\subsection{Division}
+$/(y:\mathit{Real}):\mathit{Real}$ describes the quotient of $\mathit{self}$
+and $y$.\\
+{\bf Notation:} $\mathit{self}$\verb+/+$y$
+\subsection{Negation}
+$-():\mathit{Real}\stackrel{def}{=} 0-\mathit{self}$ describes the negation
+of $\mathit{self}$.\\
+{\bf Notation:} \verb+-+$\mathit{self}$
+\subsection{Less}
+$<(y:\mathit{Real}):\mathit{Boolean}$ evaluates to $\mathit{true}$,
+if the value of
+  $\mathit{self}$ is less than the value of $y$.  It evaluates to $\mathit{false}$, if
+  the value of $\mathit{self}$ is equal to or greater than the value of $y$.
+  In any other case, it is undefined.\\
+  {\bf Notation:} $\mathit{self}$\verb+<+$y$
+\subsection{Greater}
+$>(y:\mathit{Real}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if the value
+of
+  $\mathit{self}$ is greater than the value of $y$.  It evaluates to $\mathit{false}$,
+  if the value of $\mathit{self}$ is less than or equal to the value of $y$.
+  In any other case, it is undefined.\\
+  {\bf Notation:} $\mathit{self}$\verb+>+$y$
+\subsection{Less or equal}
+$<=(y:\mathit{Real}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if the
+value of
+  $\mathit{self}$ is less than or equal to the value of $y$.  It evaluates to
+  $\mathit{false}$, if the value of $\mathit{self}$ is greater than the value of $y$.  In
+  any other case, it is undefined.\\
+  {\bf Notation:} $\mathit{self}$\verb+<=+$y$
+\subsection{Greater or equal}
+$>=(y:\mathit{Real}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if the
+value of
+  $\mathit{self}$ is equal to or greater than the value of $y$.  It evaluates
+  to $\mathit{false}$, if the value of $\mathit{self}$ is less than the value of $y$.
+  In any other case, it is undefined.\\
+  {\bf Notation:} $\mathit{self}$\verb+>=+$y$
+\subsection{Absolute Values}
+$\mathit{abs}():\mathit{Real}\stackrel{def}{=}\mathit{if} \mathit{self} < 0~ \mathit{then} -\mathit{self}\
+\mathit{else}\ \mathit{self}\ \mathit{endif}$ describes the absolute value of $\mathit{self}$.\\
+{\bf Notation:} $\mathit{self}$\verb+.abs()+
+\subsection{Floor}
+$\mathit{floor}():\mathit{Integer}$ describes the largest integer
+which is not
+  greater than $\mathit{self}$.\\
+  {\bf Notation:} $\mathit{self}$\verb+.floor()+\\
+  {\bf Note:} $\mathit{floor}$ binds stronger than $-$. That means
+  $(-3.3).floor() = -4$ and $-3.3.floor() = -(3.3.floor()) = -3$.
+\subsection{Round}
+$\mathit{round}():\mathit{integer}\stackrel{def}{=}(\mathit{self}+0.5).\mathit{floor}()$ rounds
+  $\mathit{self}$ to the nearest integer.\\
+  {\bf Notation:} $\mathit{self}$\verb+.round()+
+\subsection{Maximum}
+$\mathit{max}(y:\mathit{Real}):\mathit{Real}\stackrel{def}{=}\mathit{if}\ \mathit{self} < y\ \mathit{then} y\
+\mathit{else}\ \mathit{self}\ \mathit{endif}$ results in the greater value of $\mathit{self}$ and $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+.max(+$y$\verb+)+
+\subsection{Minimum}
+$\mathit{min}(y:\mathit{Real}):\mathit{Real}\stackrel{def}{=}\mathit{if}\ \mathit{self}\ > y\ \mathit{then}\ y\
+\mathit{else}\
+  \mathit{self}\ \mathit{endif}$ results in the smaller value of $\mathit{self}$ and $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+.min(+$y$\verb+)+
+\section{Integer}
+\subsection{Addition} $+(y:\mathit{Integer}):\mathit{Integer}$ describes the sum of
+$\mathit{self}$ and
+$y$.\\
+  {\bf Notation:} $\mathit{self}$\verb-+-$y$
+\subsection{Subtraction}
+$-(y:\mathit{Integer}):\mathit{Integer}$ describes the difference
+between $\mathit{self}$ and $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+-+$y$
+\subsection{Multiplication}
+$*(y:\mathit{Integer}):\mathit{Integer}$ describes the product of $\mathit{self}$
+and
+  $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+*+$y$
+\subsection{Division}
+$/(y:\mathit{Integer}):\mathit{Real}$ describes the quotient of $\mathit{self}$
+and
+  $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+/+$y$
+\subsection{Negation}
+$-():\mathit{Integer}\stackrel{def}{=} 0-\mathit{self}$ describes the negation of
+  $\mathit{self}$.\\
+  {\bf Notation:} \verb+-+$\mathit{self}$
+\subsection{Less}
+$<(y:\mathit{Integer}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if the
+value of
+  $\mathit{self}$ is less than the value of $y$.  It evaluates to $\mathit{false}$, if
+  the value of $\mathit{self}$ is equal to or greater than the value of $y$.
+  In any other case, it is undefined.\\
+  {\bf Notation:} $\mathit{self}$\verb+<+$y$
+\subsection{Greater}
+$>(y:\mathit{Integer}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if the
+value of
+  $\mathit{self}$ is greater than the value of $y$.  It evaluates to $\mathit{false}$,
+  if the value of $\mathit{self}$ is less than or equal to the value of $y$.
+  In any other case, it is undefined.\\
+  {\bf Notation:} $\mathit{self}$\verb+>+$y$
+\subsection{Less or equal}
+$<=(y:\mathit{Integer}):\mathit{Boolean}$ evaluates to $\mathit{true}$,
+if the
+value of
+  $\mathit{self}$ is less than or equal to the value of $y$.  It evaluates to
+  $\mathit{false}$, if the value of $\mathit{self}$ is greater than the value of $y$.  In
+  any other case, it is undefined.\\
+  {\bf Notation:} $\mathit{self}$\verb+<=+$y$
+\subsection{Greater or equal}
+$>=(y:\mathit{Integer}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if the
+value of
+  $\mathit{self}$ is equal to or greater than the value of $y$.  It evaluates
+  to $\mathit{false}$, if the value of $\mathit{self}$ is less than the value of $y$.
+  In any other case, it is undefined.\\
+  {\bf Notation:} $\mathit{self}$\verb+>=+$y$
+\subsection{Absolute Values}
+$\mathit{abs}():\mathit{Integer}\stackrel{def}{=}\mathit{if}\ \mathit{self}\ < 0\ \mathit{then}\ -\mathit{self}\
+\mathit{else}\
+  \mathit{self}\ \mathit{endif}$ describes the absolute value of $\mathit{self}$.\\
+  {\bf Notation:} $\mathit{self}$\verb+.abs()+
+\subsection{Euclidean division}
+$\mathit{div}(y:\mathit{Integer}):\mathit{Integer}$ describes Euclidean division
+of
+  $\mathit{self}$ by $y$, that is, it results in the unique integer $z$ such
+  that there exists an $0\leq r < y$ with $z* y + r=\mathit{self}$.\\
+  {\bf Notation:} $\mathit{self}$\verb+ div +$y$
+\subsection{Modulo}
+$\mathit{mod}(y:\mathit{Integer}):\mathit{Integer}$ describes
+Euclidean reminder of
+  $\mathit{self}$ divided by $y$, that is, it results in the unique integer
+  $0\leq r < y$ such that there exists an integer $z$ with $z* y +
+  r=\mathit{self}$.\\
+  {\bf Notation:} $\mathit{self}$\verb+.mod(+$y$\verb+)+
+\subsection{Maximum} $\mathit{max}(y:\mathit{Integer}):\mathit{Integer}\stackrel{def}{=}\mathit{if}\
+\mathit{self}\ < y\ \mathit{then}\
+y\ \mathit{else}\
+  \mathit{self}\ \mathit{endif}$ evaluates to the greater value of $\mathit{self}$ and $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+.max(+$y$\verb+)+
+\subsection{Minimum} $\mathit{min}(y:\mathit{Integer}):\mathit{Integer}\stackrel{def}{=}\mathit{if}\
+\mathit{self} > y\ \mathit{then}\
+y\
+  \mathit{else}\ \mathit{self}\ \mathit{endif}$ evaluates to the smaller value of $\mathit{self}$
+  and $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+.min(+$y$\verb+)+
+\section{Collection}
+$\langle\mathit{col}\rangle \Coloneqq \mathit{Set}\ |\ \mathit{Bag}\ |\ \mathit{Sequence}$
+\subsection{Size}
+$\mathit{size}():\mathit{Integer}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Integer}=0\mid
+a+1)$\\
+  {\bf Notation:} $\mathit{self}$\verb+->size()+
+\subsection{Count}
+$\mathit{count}(,y:T):\mathit{Integer}\stackrel{def}{=}
+  \mathit{self}\rightarrow\mathit{iterate}(i;a:\mathit{Iterate}=0\mid\mathit{if}\ y=i\ \mathit{then}\ a+1\ \mathit{else}\
+  a\ \mathit{endif})$ counts how often $y$ occurs in the collection.\\
+  {\bf Notation:} $\mathit{self}$\verb+->count(+$y$\verb+)+
+\subsection{Includes}
+$\mathit{includes}(,y:T):\mathit{Boolean}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{count}(y)>0$
+  returns true if and only if $y$ occurs in the collection.\\
+  {\bf Notation:} $\mathit{self}$\verb+->includes(+$y$\verb+)+
+\subsection{Excludes}
+$\mathit{excludes}(,y:T):\mathit{Boolean}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{count}(y)=0$
+  returns true if and only if $y$ does not occur in the collection.\\
+  {\bf Notation:} $\mathit{self}$\verb+->excludes(+$y$\verb+)+
+\subsection{Includes all}
+$\mathit{includesAll}(,y:\langle\mathit{col}\rangle(T)):\mathit{Boolean}\stackrel{def}{=}
+  y\rightarrow\mathit{forAll}(e\mid \mathit{self}\rightarrow\mathit{includes}(e))$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->includesAll(+$y$\verb+)+
+\subsection{Excludes all}
+$\mathit{excludesAll}(,y:\langle\mathit{col}\rangle(T)):\mathit{Boolean}\stackrel{def}{=}
+  y\rightarrow\mathit{forAll}(e\mid \mathit{self}\rightarrow\mathit{excludes}(e))$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->excludesAll(+$y$\verb+)+
+\subsection{Is empty}
+$\mathit{isEmpty}():\mathit{Boolean}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{size}()=0$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->isEmpty()+
+\subsection{Not empty}
+$\mathit{notEmpty}():\mathit{Boolean}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{size}()<>0$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->notEmpty()+
+\subsection{Sum}
+$\mathit{sum}():T\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Iterate}=0\mid a +
+e)$.\\
+ {\bf Notation:} $\mathit{self}$\verb+->sum()+
+\section{Set}
+\subsection{Set-Equality}
+$=(y:\mathit{Set}(T)):\mathit{Boolean}$ describes set-equality.\\
+  {\bf Notation:} $\mathit{self}$\verb+=+$y$
+\subsection{Including elements}
+$\mathit{including}(y:T):\mathit{Set}(T)$ describes the set obtained from
+  $\mathit{self}$ by including $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->including(+$y$\verb+)+
+\subsection{Excluding elements}
+$\mathit{excluding}(y:T):\mathit{Set}(T)$ describes the set obtained from
+  $\mathit{self}$ by excluding $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->excluding(+$y$\verb+)+
+\subsection{Union}
+$\mathit{union}(y:\mathit{Set}(T)):\mathit{Set}(T)$ describes the union of the
+set
+  $\mathit{self}$ and the set $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{Union with Bag}
+$\mathit{union}(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the union of the
+set
+  obtained from $\mathit{self}$ by assuming that each element of $\mathit{self}$
+  occurs exactly once and the bag $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{Intersection}
+$\mathit{intersection}(y:\mathit{Set}(T)):\mathit{Set}(T)$ describes the
+intersection
+  of the set $\mathit{self}$ the set $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->intersection(+$y$\verb+)+
+\subsection{Intersection with Bag}
+$\mathit{intersection}(y:\mathit{Bag}(T)):\mathit{Set}(T)$ describes the
+intersection
+  of the set $\mathit{self}$ and the set obtained from $y$ by including every
+  element contained in $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->intersection(+$y$\verb+)+
+\subsection{Difference of sets}
+$-(y:\mathit{Set}(T)):\mathit{Set}(T)$ describes the difference of the set
+  $\mathit{self}$ the set $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+-+$y$
+\subsection{Flatten}
+$\mathit{flatten}():\mathit{Set}(T')$.  If $\mathit{self}$ is a set of
+collections,
+  then this operation returns the set-union of all its elements.\\
+  {\bf Notation:} $\mathit{self}$\verb+->flatten()+
+%\subsection{As Set}
+%!!!!! (gibt es in USE nicht. Soll es hinzugefügt werden?) $\mathit{asSet}():
+%  \mathit{Set}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Set}(T)=\mathit{oclEmpty}(\mathit{Set}(T))\mid
+%  a\rightarrow\mathit{including}(e))$ is the identity function.\\
+%  {\bf Notation:} $\mathit{self}$\verb+->asSet()+
+\subsection{As Bag}
+$\mathit{asBag}():
+  \mathit{Bag}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Bag}(T)=\mathit{oclEmpty}(\mathit{Bag}(T))\mid
+  a\rightarrow\mathit{including}(e))$ returns a bag which includes each
+  element of $\mathit{self}$ exactly once.\\
+  {\bf Notation:} $\mathit{self}$\verb+->asBag()+
+\subsection{As Sequence}
+$\mathit{asSequence}(): \mathit{Sequence}(T)$ returns a sequence
+containing
+  all elements of $\mathit{self}$ exactly once.  The order of the elements is
+  arbitrary.  It is equivalent to the expression
+  \begin{equation*}
+    {\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T)\mid
+      a\rightarrow\mathit{append}(e))}\quad.
+  \end{equation*}\\
+  {\bf Notation:} $\mathit{self}$\verb+->asSequence()+
+\section{Bag}
+\subsection{Equality}
+$=(y:\mathit{Bag}(T)):\mathit{Boolean}$ describes equality of
+multi-sets.\\
+  {\bf Notation:} $\mathit{self}$\verb+=+$y$
+\subsection{Including elements}
+$\mathit{including}(y:T):\mathit{Bag}(T)$ describes the bag
+obtained from
+  $\mathit{self}$ by including $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->including(+$y$\verb+)+
+\subsection{Excluding elements}
+$\mathit{excluding}(y:T):\mathit{Bag}(T)$ describes the bag obtained from
+  $\mathit{self}$ by excluding all occurrences of $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->excluding(+$y$\verb+)+
+\subsection{Union}
+$\mathit{union}(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the union of the
+bag
+  $\mathit{self}$ and the bag $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{Union with Set}
+$\mathit{union}(y:\mathit{Set}(T)):\mathit{Bag}(T)$ describes the union of the
+bag
+  $\mathit{self}$ and the set obtained from $y$ by including each element of
+  $y$ exactly once.\\
+  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{Intersection}
+$\mathit{intersection}(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the
+intersection
+  of the bag $\mathit{self}$ and the bag $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->intersection(+$y$\verb+)+
+\subsection{Intersection with Set}
+$\mathit{intersection}(y:\mathit{Set}(T)):\mathit{Set}(T)$ describes the
+intersection
+  of the bag $\mathit{self}$ and the set $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->intersection(+$y$\verb+)+
+%\subsection{Difference of bags}
+%!!!!! (existiert nicht in USE; hinzufügen?) $-(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the bag obtained from
+%  $\mathit{self}$ by removing all occurrences of the elements of $y$.\\
+%  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{Flatten}
+$\mathit{flatten}():\mathit{Bag}(T')$.  If $\mathit{self}$ is a bag of
+collections,
+  then this operation returns the bag union of all its elements.\\
+  {\bf Notation:} $\mathit{self}$\verb+->flatten(+$y$\verb+)+
+\subsection{As Set}
+$\mathit{asSet}():
+  \mathit{Set}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Set}(T)=\mathit{oclEmpty}(\mathit{Set}(T))\mid
+  a\rightarrow\mathit{including}(e))$ returns a set which contains each
+  element of $\mathit{self}$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->asSet()+
+%\subsection{As Bag}
+%!!!!! (existiert nicht; hinzufügen?) $\mathit{asBag}():\mathit{Bag}(T)$ is the identity function.\\
+%  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{As Sequence}
+$\mathit{asSequence}():\mathit{Sequence}(T)$ returns a sequence containing
+  all elements of $\mathit{self}$ as often as they occur in the multi-set.
+  The order of the elements is arbitrary. It is equivalent to:
+  \begin{equation*}
+    \mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T))\mid
+    a\rightarrow\mathit{append}(e))\quad.
+  \end{equation*}
+  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\section{Sequence}
+\subsection{Get element}
+$\mathit{at}(y:\mathit{Integer}):T$ results in the element at the $y$th
+  position of the sequence.\\
+  {\bf Notation:} $\mathit{self}$\verb+->at(+$y$\verb+)+
+\subsection{Equality}
+$=(y:\mathit{Sequence}(T)):\mathit{Boolean}\stackrel{def}{=}\mathit{let}\
+  s={\mathit{self}\rightarrow\mathit{size}()}\ \mathit{in}\
+  s={y\rightarrow\mathit{size}()}\ \linebreak[1]\mathit{and}\ \linebreak[2]
+  \mathit{Sequence}\{1..s\}\rightarrow
+  \mathit{forAll}(i:\mathit{Integer}\mid \mathit{self}\rightarrow\mathit{at}(i)=y\rightarrow\mathit{at}(i))$
+  describes equality of sequences.\\
+  {\bf Notation:} $\mathit{self}$\verb+=+$y$
+\subsection{Union}
+$\mathit{union}(y:\mathit{Sequence}(T)):\mathit{Sequence}(T)$ describes the
+  concatenation of $\mathit{self}$ and $y$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{Flatten}
+$\mathit{flatten}(\mathit{self}:\mathit{Sequence}(T)):\mathit{Sequence}(T')$.  If $\mathit{self}$ is a sequence of
+  collections, then this operation returns the sequence concatenation
+  of all its elements.\\
+  {\bf Notation:} $\mathit{self}$\verb+->flatten()+
+\subsection{Append elements}
+$\mathit{append}(y:T):\mathit{Sequence}(T)\stackrel{def}{=}
+\mathit{self}\rightarrow\mathit{union}(\mathit{Sequence}\{y\})$ results in the sequence
+  which consists of all elements of $y$ with $y$ appended.\\
+  {\bf Notation:} $\mathit{self}$\verb+->append(+$y$\verb+)+
+\subsection{Prepend elements}
+$\mathit{prepend}(y:T):\mathit{Sequence}(T)\stackrel{def}{=}
+  \mathit{Sequence}\{y\}\rightarrow\mathit{union}(\mathit{self})$ results in the sequence
+  which consists of all elements of $\mathit{self}$ with $y$ prepended.\\
+  {\bf Notation:} $\mathit{self}$\verb+->prepend(+$y$\verb+)+
+\subsection{Excluding elements}
+$\mathit{excluding}(y:T):\mathit{Sequence}(T)\stackrel{def}{=} \mathit{self}\rightarrow
+  \mathit{iterate}(i;a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T))\mid \mathit{if}\
+  y=i\ \mathit{then}\ a\ \linebreak[2]
+  \mathit{else}\ a\rightarrow\mathit{append}(i)\ \mathit{endif})$ results in
+  the largest sub-sequence of $\mathit{self}$, in which $y$ does not occur.\\
+  {\bf Notation:} $\mathit{self}$\verb+->excluding(+$y$\verb+)+
+\subsection{Subsequence}
+$\mathit{subSequence}(y:\mathit{Integer},z:\mathit{Integer}):\mathit{Sequence}(T)$
+  results in the subsequence of $\mathit{self}$ starting at index $y$ and
+  ending at index $z$.  It is equivalent to:
+  \begin{multline*}
+    \mathit{Sequence}\{1..z\}\rightarrow\mathit{Iterate}(i;
+    a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T))\mid{}\\
+    \mathit{if}\ y\leq i\ \mathit{and}\ i\leq z\ \mathit{then}\
+    a\rightarrow\mathit{append}(\mathit{self}\rightarrow\mathit{at}(i))\mathit{else}\ a\ \mathit{endif})
+  \end{multline*}\\
+  {\bf Notation:} $\mathit{self}$\verb+->subSequence(+$y$\verb+)+
+%\subsection{Insert element}
+%!!!!! (existiert nicht, hinzufügen?)
+%$\mathit{insertAt}(y:T,z:\mathit{Integer}):\mathit{Sequence}(T)\stackrel{def}{=}
+%  (\mathit{self}\rightarrow\mathit{subSequence}(1,z-1)\rightarrow\mathit{append}(y))\linebreak[0]
+%  \rightarrow\mathit{union}(\mathit{self}\rightarrow
+%  \mathit{Subsequence}(z,\mathit{self}\rightarrow\mathit{size}()))$ results in a sequence
+%  where $y$ is inserted at position $z$.\\
+%  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{Get first element}
+$\mathit{first}():T\stackrel{def}{=}\mathit{self}\rightarrow\mathit{at}(1)$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->first(+$y$\verb+)+
+\subsection{Get last element}
+$\mathit{last}():T\stackrel{def}{=}\mathit{self}\rightarrow\mathit{at}(\mathit{self}\rightarrow\mathit{size}())$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->last(+$y$\verb+)+
+%\subsection{As Sequence}
+%!!!!! (existiert nicht, hinzufügen?)$\mathit{asSequence}(): \mathit{Sequence}(T)$ is the identity function.\\
+%  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
+\subsection{As Set}
+$\mathit{asSet}():
+  \mathit{asSet}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Set}(T)=\mathit{oclEmpty}(\mathit{Set}(T))\mid
+  a\rightarrow\mathit{including}(e))$ returns a set which contains each
+  element of $\mathit{self}$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->asSet(+$y$\verb+)+
+\subsection{As Bag}
+$\mathit{asBag}():
+  \mathit{Bag}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Bag}(T)=\mathit{oclEmpty}(\mathit{Bag}(T))\mid
+  a\rightarrow\mathit{including}(e))$ returns a bag containing all elements
+  of the sequence $\mathit{self}$.\\
+  {\bf Notation:} $\mathit{self}$\verb+->asBag(+$y$\verb+)+
