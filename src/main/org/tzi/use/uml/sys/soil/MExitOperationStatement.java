@@ -101,7 +101,7 @@ public class MExitOperationStatement extends MStatement {
 		
 		// build the inverse statement if necessary
 		
-		if (!operationCall.exited()) {
+		if (operationCall == null || !operationCall.exited()) {
 			if (caughtException != null) {
 				throw caughtException;
 			} else {

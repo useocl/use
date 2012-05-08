@@ -919,7 +919,7 @@ public abstract class MStatement {
 		MOperationCall currentOperation = fSystem.getCurrentOperation();
 		
 		if (currentOperation == null) {
-			throw new RuntimeException("NO OPERATION");
+			throw new EvaluationFailedException(this, "No current operation");
 		}
 		
 		if (preferredPPCHandler != null) {
