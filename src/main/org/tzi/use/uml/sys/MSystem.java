@@ -237,39 +237,32 @@ public final class MSystem {
     
     /**
      * TODO
+     * 
      * @param operationCall
      */
     private void evaluatePreConditions(EvalContext ctx, MOperationCall operationCall) {
-    	
-    	List<MPrePostCondition> preConditions = 
-			operationCall.getOperation().preConditions();
-    	
-    	LinkedHashMap<MPrePostCondition, Boolean> results = 
-    		new LinkedHashMap<MPrePostCondition, Boolean>(preConditions.size());
-    	
-    	for (MPrePostCondition preCondition : preConditions) {
-			Evaluator oclEvaluator = new Evaluator();
-			
-			VarBindings b = (operationCall.requiresVariableFrameInEnvironment() ? fVariableEnvironment
-					.constructVarBindings() : ctx.varBindings());
-			
-			Value evalResult = 
-				oclEvaluator.eval(
-						preCondition.expression(), 
-						fCurrentState,
-						b);
-			
-			boolean conditionPassed = 
-				(evalResult.isDefined() && 
-						evalResult.type().isBoolean() &&
-						((BooleanValue)evalResult).isTrue());
-			
-			results.put(preCondition, conditionPassed);
-    	}
-    	
-    	operationCall.setPreConditionsCheckResult(results);
+
+        List<MPrePostCondition> preConditions = operationCall.getOperation().preConditions();
+
+        LinkedHashMap<MPrePostCondition, Boolean> results = new LinkedHashMap<MPrePostCondition, Boolean>(
+                preConditions.size());
+
+        for (MPrePostCondition preCondition : preConditions) {
+            Evaluator oclEvaluator = new Evaluator();
+
+            VarBindings b = (operationCall.requiresVariableFrameInEnvironment() ? fVariableEnvironment
+                    .constructVarBindings() : ctx.varBindings());
+
+            Value evalResult = oclEvaluator.eval(preCondition.expression(), fCurrentState, b);
+
+            boolean conditionPassed = (evalResult.isDefined() && evalResult.type().isBoolean() && ((BooleanValue) evalResult)
+                    .isTrue());
+
+            results.put(preCondition, conditionPassed);
+        }
+
+        operationCall.setPreConditionsCheckResult(results);
     }
-    
     
     /**
      * TODO
@@ -343,17 +336,6 @@ public final class MSystem {
 	public void enterQueryOperation(EvalContext ctx, MOperationCall operationCall, boolean isOpenter) throws MSystemException {
 						
 		assertParametersValid(operationCall);
-		
-		if (operationCall.requiresVariableFrameInEnvironment()) {
-			pushParametersOnVariableEnvironment(operationCall, isOpenter);
-		
-/*			if (getCurrentStatement() != null) {
-				if (!stateIsLocked()) {
-					getCurrentStatement().enteredOperationDuringEvaluation(operationCall);
-				}
-			}
-			*/
-		}
 	
 		fCallStack.push(operationCall);
 		
@@ -380,14 +362,17 @@ public final class MSystem {
 						
 		assertParametersValid(operationCall);
 		
-		if (operationCall.requiresVariableFrameInEnvironment()) {
-			pushParametersOnVariableEnvironment(operationCall, isOpenter);
+		// set up variable environment
+        fVariableEnvironment.pushFrame(isOpenter);
+        fVariableEnvironment.assign("self", operationCall.getSelf().value());
+        for (int i = 0; i < operationCall.getOperation().paramList().size();++i) {
+        	fVariableEnvironment.assign(operationCall.getOperation().paramList().varDecl(i).name(), operationCall.getArguments()[i]);
+        }
 		
-			if (getCurrentStatement() != null) {
-				if (!stateIsLocked()) {
-					result.appendEvent(
-					new OperationEnteredEvent(operationCall));
-				}
+		if (getCurrentStatement() != null) {
+			if (!stateIsLocked()) {
+				result.appendEvent(
+				new OperationEnteredEvent(operationCall));
 			}
 		}
 	
@@ -411,7 +396,11 @@ public final class MSystem {
 		}
 		
 		if (operationCall.executionHasFailed()) {
-			exitCurrentQueryOperation();
+			MOperationCall currentOperation = getCurrentOperation();
+            if (currentOperation == null) throw new RuntimeException("Cannot exit without a current operation!");
+            currentOperation.setExited(true);
+            fCallStack.pop();
+            MStatement currentStatement = getCurrentStatement();
 			return operationCall;
 		}
 		
@@ -425,7 +414,11 @@ public final class MSystem {
 		
 			return operationCall;
 		} finally {
-			exitCurrentQueryOperation();
+			MOperationCall currentOperation = getCurrentOperation();
+            if (currentOperation == null) throw new RuntimeException("Cannot exit without a current operation!");
+            currentOperation.setExited(true);
+            fCallStack.pop();
+            MStatement currentStatement = getCurrentStatement();
 		}
 	}
 
@@ -499,20 +492,6 @@ public final class MSystem {
 			ppcHandler = operationCall.getDefaultPPCHandler();
 		}
 		return ppcHandler;
-	}
-
-	/**
-	 * Push a new frame on the variable environment and assign all 
-	 * parameters of this operation call, including "self".
-	 */
-	private void pushParametersOnVariableEnvironment(
-			MOperationCall operationCall, boolean isOpenter) {
-		// set up variable environment
-		fVariableEnvironment.pushFrame(isOpenter);
-		fVariableEnvironment.assign("self", operationCall.getSelf().value());
-		for (int i = 0; i < operationCall.getOperation().paramList().size();++i) {
-			fVariableEnvironment.assign(operationCall.getOperation().paramList().varDecl(i).name(), operationCall.getArguments()[i]);
-		}
 	}
 
 	/**
@@ -645,20 +624,6 @@ public final class MSystem {
 	/**
 	 * TODO
 	 */
-	private void exitCurrentQueryOperation() {
-		MOperationCall currentOperation = getCurrentOperation();
-		if (currentOperation == null) throw new RuntimeException("Cannot exit without a current operation!");
-		currentOperation.setExited(true);
-		fCallStack.pop();
-		MStatement currentStatement = getCurrentStatement();
-		if (currentOperation.requiresVariableFrameInEnvironment()) {
-			fVariableEnvironment.popFrame();
-		}
-	}
-	
-	/**
-	 * TODO
-	 */
 	private void exitCurrentNonQueryOperation(SoilEvaluationContext context,
 			StatementEvaluationResult result) {
 		MOperationCall currentOperation = getCurrentOperation();
@@ -666,12 +631,10 @@ public final class MSystem {
 		currentOperation.setExited(true);
 		fCallStack.pop();
 		MStatement currentStatement = getCurrentStatement();
-		if (currentOperation.requiresVariableFrameInEnvironment()) {
-			if (currentStatement != null && !stateIsLocked()) {
-				result.appendEvent(new OperationExitedEvent(currentOperation));
-			}
-			fVariableEnvironment.popFrame();
+		if (currentStatement != null && !stateIsLocked()) {
+			result.appendEvent(new OperationExitedEvent(currentOperation));
 		}
+		fVariableEnvironment.popFrame();
 	}
 
 	

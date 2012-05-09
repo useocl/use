@@ -421,14 +421,6 @@ public class MOperationCall {
 	}
 	
 	/**
-	 * Does this operation call require a new variable frame?
-	 * @return
-	 */
-	public boolean requiresVariableFrameInEnvironment() {
-		return fOperation.expression() == null;
-	}
-
-	/**
 	 * TODO
 	 * @return
 	 */
@@ -495,4 +487,14 @@ public class MOperationCall {
 		
 		return result.toString();
 	}
+
+
+    /**
+     * Does this operation require a fresh variable frame? 
+     * OCL query operations do not require a fresh frame, all other operations do.
+     * @return
+     */
+    public boolean requiresVariableFrameInEnvironment() {
+        return fOperation.expression() == null;
+    }
 }
