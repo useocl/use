@@ -86,15 +86,6 @@ public abstract class MStatement {
 	protected StatementEvaluationResult fResult;
 	
 	/** TODO */
-	protected MSystem fSystem;
-	
-	/** TODO */
-	protected MSystemState fState;
-	
-	/** TODO */
-	protected VariableEnvironment fVarEnv;
-	
-	/** TODO */
 	private boolean fIsOperationBody = false;
 	
 	private static final String SHELL_PREFIX = "!";
@@ -275,9 +266,6 @@ public abstract class MStatement {
 		
 		fContext = context;
 		fResult = result;
-		fSystem = context.getSystem();
-		fState = context.getState();
-		fVarEnv = context.getVarEnv();
 		
 		try {
 			evaluate();
@@ -314,8 +302,8 @@ public abstract class MStatement {
 		try {
 			value = evaluator.eval(
 					expression, 
-					fState, 
-					fVarEnv.constructVarBindings());
+					fContext.getState(), 
+					fContext.getVarEnv().constructVarBindings());
 		} catch (MultiplicityViolationException e) {
 			throw new EvaluationFailedException(this,
 					"Evaluation of expression "
@@ -516,7 +504,7 @@ public abstract class MStatement {
 	 */
 	protected void assignVariable(String variableName, Value value) {
 		
-		Value oldValue = fVarEnv.lookUp(variableName);
+		Value oldValue = fContext.getVarEnv().lookUp(variableName);
 		
 		if (oldValue != null) {
 			fResult.prependToInverseStatement(
@@ -528,7 +516,7 @@ public abstract class MStatement {
 					new MVariableDestructionStatement(variableName));
 		}
 			
-		fVarEnv.assign(variableName, value);	
+		fContext.getVarEnv().assign(variableName, value);	
 	}
 	
 	
@@ -545,7 +533,7 @@ public abstract class MStatement {
 		
 		MObject newObject;
 		try {
-			newObject = fState.createObject(objectClass, objectName);
+			newObject = fContext.getState().createObject(objectClass, objectName);
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
@@ -578,7 +566,7 @@ public abstract class MStatement {
 		MLinkObject newLinkObject;
 		try {
 			newLinkObject = 
-				fState.createLinkObject(
+				fContext.getState().createLinkObject(
 					associationClass, 
 					linkObjectName, 
 					participants,
@@ -611,10 +599,10 @@ public abstract class MStatement {
 		// check whether this object, or any of the link objects possibly
 		// connected to this object have an active operation
 		Set<MObject> objectsAffectedByDeletion = 
-			fState.getObjectsAffectedByDestruction(object);
+			fContext.getState().getObjectsAffectedByDestruction(object);
 		
 		for (MObject affectedObject : objectsAffectedByDeletion) {
-			if (fSystem.hasActiveOperation(affectedObject)) {
+			if (fContext.getSystem().hasActiveOperation(affectedObject)) {
 				throw new EvaluationFailedException(
 						this,
 						"Object "
@@ -626,7 +614,7 @@ public abstract class MStatement {
 		// .deleteObject() also takes care of the links this
 		// object has been participating in
 		DeleteObjectResult deleteResult = 
-			fState.deleteObject(object);	
+			fContext.getState().deleteObject(object);	
 		fResult.getStateDifference().addDeleteResult(deleteResult);
 		
 		Map<MObject, List<String>> undefinedTopLevelReferences = 
@@ -634,7 +622,7 @@ public abstract class MStatement {
 			
 		for (MObject destroyedObject : deleteResult.getRemovedObjects()) {
 			List<String> topLevelReferences = 
-				fVarEnv.getTopLevelReferencesTo(destroyedObject);
+				fContext.getVarEnv().getTopLevelReferencesTo(destroyedObject);
 			
 			if (!topLevelReferences.isEmpty()) {
 				undefinedTopLevelReferences.put(
@@ -642,7 +630,7 @@ public abstract class MStatement {
 						topLevelReferences);
 			}
 					
-			fVarEnv.undefineReferencesTo(destroyedObject);
+			fContext.getVarEnv().undefineReferencesTo(destroyedObject);
 		}
 		
 		fResult.prependToInverseStatement(
@@ -704,8 +692,8 @@ public abstract class MStatement {
 		Value oldValue;
 		
 		try {
-			oldValue = object.state(fState).attributeValue(attribute);
-			object.state(fState).setAttributeValue(attribute, value);
+			oldValue = object.state(fContext.getState()).attributeValue(attribute);
+			object.state(fContext.getState()).setAttributeValue(attribute, value);
 		} catch (IllegalArgumentException e) {
 			throw new EvaluationFailedException(this, e);
 		}
@@ -741,7 +729,7 @@ public abstract class MStatement {
 		
 		MLink newLink;
 		try {
-			newLink = fState.createLink(association, participants, qualifierValues);
+			newLink = fContext.getState().createLink(association, participants, qualifierValues);
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
@@ -798,7 +786,7 @@ public abstract class MStatement {
 		// we need to find out if this is actually a link object, since we need
 		// to call destroyObject in that case to get the correct undo 
 		// statement
-		MLink link = fState.linkBetweenObjects(association, participants, qualifierValues);
+		MLink link = fContext.getState().linkBetweenObjects(association, participants, qualifierValues);
 		
 		if ((link != null) && (link instanceof MLinkObject)) {
 			destroyObject((MLinkObject)link);
@@ -807,7 +795,7 @@ public abstract class MStatement {
 		
 		try {
 			fResult.getStateDifference().addDeleteResult(
-					fState.deleteLink(association, participants, qualifierValues));
+					fContext.getState().deleteLink(association, participants, qualifierValues));
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
@@ -898,7 +886,7 @@ public abstract class MStatement {
 		operationCall.setPreferredPPCHandler(preferredPPCHandler);
 		
 		try {
-			fSystem.enterOperation(null, operationCall, isOpenter);
+			fContext.getSystem().enterOperation(null, operationCall, isOpenter);
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
@@ -916,7 +904,7 @@ public abstract class MStatement {
 			Value resultValue,
 			PPCHandler preferredPPCHandler) throws EvaluationFailedException {
 		
-		MOperationCall currentOperation = fSystem.getCurrentOperation();
+		MOperationCall currentOperation = fContext.getSystem().getCurrentOperation();
 		
 		if (currentOperation == null) {
 			throw new EvaluationFailedException(this, "No current operation");
@@ -927,7 +915,7 @@ public abstract class MStatement {
 		}
 		
 		try {
-			fSystem.exitOperation(null, resultValue);
+			fContext.getSystem().exitOperation(null, resultValue);
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}

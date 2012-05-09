@@ -156,10 +156,10 @@ public class MLinkInsertionStatement extends MStatement {
 				(MAssociationClass)fAssociation;
 			
 			if ((fLinkObjectName == null) || 
-					fState.hasObjectWithName(fLinkObjectName)) {
+					fContext.getState().hasObjectWithName(fLinkObjectName)) {
 				
 				fLinkObjectName = 
-					fSystem.uniqueObjectNameForClass(associationClass.name());
+					fContext.getSystem().uniqueObjectNameForClass(associationClass.name());
 			}
 			
 			createLinkObject(

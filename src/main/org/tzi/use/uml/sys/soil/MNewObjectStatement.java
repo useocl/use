@@ -126,7 +126,7 @@ public class MNewObjectStatement extends MStatement {
 		
 		String objectName;
 		if (fObjectName == null) {
-			objectName = fState.uniqueObjectNameForClass(fObjectClass);
+			objectName = fContext.getState().uniqueObjectNameForClass(fObjectClass);
 		} else {
 			objectName = evaluateString(fObjectName);
 		}

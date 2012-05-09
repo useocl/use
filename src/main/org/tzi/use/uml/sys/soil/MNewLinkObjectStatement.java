@@ -167,7 +167,7 @@ public class MNewLinkObjectStatement extends MStatement {
 		
 		String objectName;
 		if (fObjectName == null) {
-			objectName = fState.uniqueObjectNameForClass(fAssociationClass);
+			objectName = fContext.getState().uniqueObjectNameForClass(fAssociationClass);
 		} else {
 			objectName = evaluateString(fObjectName);
 		}

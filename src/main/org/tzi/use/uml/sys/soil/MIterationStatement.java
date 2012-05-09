@@ -95,7 +95,7 @@ public class MIterationStatement extends MStatement {
 		
 		CollectionValue range = (CollectionValue)val;
 		for (Value elem : range) {
-			fVarEnv.assign(fVariableName, elem);
+			fContext.getVarEnv().assign(fVariableName, elem);
 			evaluateSubStatement(fBody);
 		}
 		

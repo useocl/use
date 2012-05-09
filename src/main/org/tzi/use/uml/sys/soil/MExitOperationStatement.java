@@ -80,13 +80,13 @@ public class MExitOperationStatement extends MStatement {
 		// to be able to undo this statement, we need to capture the current
 		// variable mappings
 		Map<String, Value> currentMappings = 
-			fVarEnv.getCurrentMappings();
+			fContext.getVarEnv().getCurrentMappings();
 
 		if (result != null) {
-			fVarEnv.assign("result", result);
+			fContext.getVarEnv().assign("result", result);
 		}
 
-		operationCall = fSystem.getCurrentOperation();
+		operationCall = fContext.getSystem().getCurrentOperation();
 		
 		EvaluationFailedException caughtException = null;
 		try {
@@ -94,7 +94,7 @@ public class MExitOperationStatement extends MStatement {
 					result, 
 					fCustomPPCHandler == null ? 
 							OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler);
-			fSystem.setLastOperationCall(operationCall);
+			fContext.getSystem().setLastOperationCall(operationCall);
 		} catch (EvaluationFailedException e) {
 			caughtException = e;
 		}

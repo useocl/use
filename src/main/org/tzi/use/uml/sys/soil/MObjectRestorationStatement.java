@@ -70,7 +70,7 @@ public class MObjectRestorationStatement extends MStatement {
 		
 		for (MObjectState objectState : removedObjectStates) {
             try {
-                fState.restoreObject(objectState);  
+                fContext.getState().restoreObject(objectState);  
                 fResult.getStateDifference().addNewObject(objectState.object());
             } catch (MSystemException e) {
                 throw new EvaluationFailedException(this, e);
@@ -81,7 +81,7 @@ public class MObjectRestorationStatement extends MStatement {
 		Set<MLink> removedLinks = fDeleteObjectResult.getRemovedLinks();
 	
         for (MLink link : removedLinks) {
-            fState.insertLink(link);
+            fContext.getState().insertLink(link);
             fResult.getStateDifference().addNewLink(link);
         }
         
@@ -91,7 +91,7 @@ public class MObjectRestorationStatement extends MStatement {
         for (Entry<MObject, List<String>> entry :undefinedVariables) {
         	Value value = entry.getKey().value();
         	for (String name : entry.getValue()) {
-        		fVarEnv.assign(name, value);
+        		fContext.getVarEnv().assign(name, value);
         	}
         }
 	}

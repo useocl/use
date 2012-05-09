@@ -163,7 +163,7 @@ public class MOperationCallStatement extends MStatement {
 			evaluateSubStatement(operationBody);
 			
 			if (fOperation.hasResultType()) {
-				fReturnValue = fVarEnv.lookUp("result");
+				fReturnValue = fContext.getVarEnv().lookUp("result");
 			}
 		} catch (EvaluationFailedException e) {
 			operationCall.setExecutionFailed(true);

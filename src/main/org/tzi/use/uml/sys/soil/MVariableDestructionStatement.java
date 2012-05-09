@@ -56,13 +56,13 @@ public class MVariableDestructionStatement extends MStatement {
 	@Override
 	protected void evaluate() throws EvaluationFailedException {
 		
-		Value oldValue = fVarEnv.lookUp(fVariableName);
+		Value oldValue = fContext.getVarEnv().lookUp(fVariableName);
 		if (oldValue != null) {
 			fResult.getInverseStatement().prependStatement(
 					new MVariableAssignmentStatement(fVariableName, oldValue));
 		}
 		
-		fVarEnv.remove(fVariableName);
+		fContext.getVarEnv().remove(fVariableName);
 	}
 	
 	
