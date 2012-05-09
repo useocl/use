@@ -22,6 +22,7 @@
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -54,15 +55,16 @@ public class MVariableDestructionStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		Value oldValue = fContext.getVarEnv().lookUp(fVariableName);
+		Value oldValue = context.getVarEnv().lookUp(fVariableName);
 		if (oldValue != null) {
-			fResult.getInverseStatement().prependStatement(
+			result.getInverseStatement().prependStatement(
 					new MVariableAssignmentStatement(fVariableName, oldValue));
 		}
 		
-		fContext.getVarEnv().remove(fVariableName);
+		context.getVarEnv().remove(fVariableName);
 	}
 	
 	

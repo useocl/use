@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
@@ -143,10 +144,11 @@ public class MSequenceStatement extends MStatement {
 	
 
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		for (MStatement statement : fStatements) {
-			evaluateSubStatement(statement);
+			evaluateSubStatement(context, result, statement);
 		}
 	}
 	

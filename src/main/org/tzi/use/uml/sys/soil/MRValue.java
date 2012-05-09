@@ -23,6 +23,7 @@ package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -32,8 +33,6 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  *
  */
 public abstract class MRValue {
-	/** TODO */
-	protected MStatement fParent;
 	
 	
 	/**
@@ -49,17 +48,11 @@ public abstract class MRValue {
 	 * @return
 	 * @throws EvaluationFailedException
 	 */
-	public Value evaluate(MStatement parent) throws EvaluationFailedException {
-		fParent = parent;
-		return evaluate();
-	}
+	public abstract Value evaluate(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
+			MStatement parent) throws EvaluationFailedException;
 	
-	/**
-	 * TODO
-	 * @return
-	 * @throws EvaluationFailedException 
-	 */
-	public abstract Value evaluate() throws EvaluationFailedException;
 	
 	
 	/**

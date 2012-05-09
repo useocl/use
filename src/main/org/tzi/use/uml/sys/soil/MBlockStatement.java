@@ -29,6 +29,7 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -60,12 +61,13 @@ public class MBlockStatement extends MStatement {
 	
 
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 	
 		for (VarDecl varDecl : fVariableDeclarations) {
-			assignVariable(varDecl.name(), UndefinedValue.instance);
+			assignVariable(context, result, varDecl.name(), UndefinedValue.instance);
 		}
-		evaluateSubStatement(fBody);
+		evaluateSubStatement(context, result, fBody);
 	}
 	
 	

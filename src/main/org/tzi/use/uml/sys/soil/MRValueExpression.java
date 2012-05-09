@@ -26,6 +26,7 @@ import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -76,8 +77,11 @@ public class MRValueExpression extends MRValue {
 
 
 	@Override
-	public Value evaluate() throws EvaluationFailedException {
-		return fParent.evaluateExpression(fExpression);
+	public Value evaluate(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
+			MStatement parent) throws EvaluationFailedException {
+		return parent.evaluateExpression(context, result, fExpression);
 	}
 
 
@@ -97,4 +101,5 @@ public class MRValueExpression extends MRValue {
 	public String toString() {
 		return fExpression.toString();
 	}
+	
 }

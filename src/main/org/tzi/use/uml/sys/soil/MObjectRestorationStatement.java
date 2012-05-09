@@ -31,6 +31,7 @@ import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
@@ -62,7 +63,8 @@ public class MObjectRestorationStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		// restore objects
 		Set<MObjectState> removedObjectStates = 
@@ -70,8 +72,8 @@ public class MObjectRestorationStatement extends MStatement {
 		
 		for (MObjectState objectState : removedObjectStates) {
             try {
-                fContext.getState().restoreObject(objectState);  
-                fResult.getStateDifference().addNewObject(objectState.object());
+                context.getState().restoreObject(objectState);  
+                result.getStateDifference().addNewObject(objectState.object());
             } catch (MSystemException e) {
                 throw new EvaluationFailedException(this, e);
             }
@@ -81,8 +83,8 @@ public class MObjectRestorationStatement extends MStatement {
 		Set<MLink> removedLinks = fDeleteObjectResult.getRemovedLinks();
 	
         for (MLink link : removedLinks) {
-            fContext.getState().insertLink(link);
-            fResult.getStateDifference().addNewLink(link);
+            context.getState().insertLink(link);
+            result.getStateDifference().addNewLink(link);
         }
         
         // restore top level variables
@@ -91,7 +93,7 @@ public class MObjectRestorationStatement extends MStatement {
         for (Entry<MObject, List<String>> entry :undefinedVariables) {
         	Value value = entry.getKey().value();
         	for (String name : entry.getValue()) {
-        		fContext.getVarEnv().assign(name, value);
+        		context.getVarEnv().assign(name, value);
         	}
         }
 	}

@@ -23,6 +23,7 @@ package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -57,9 +58,12 @@ public class MRValueNewLinkObject extends MRValue {
 	
 
 	@Override
-	public Value evaluate() throws EvaluationFailedException {
+	public Value evaluate(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
+			MStatement parent) throws EvaluationFailedException {
 		
-		fParent.evaluateSubStatement(fNewLinkObjectStatement);
+		parent.evaluateSubStatement(context, result, fNewLinkObjectStatement);
 		
 		return fNewLinkObjectStatement.getCreatedLinkObject().value();
 	}

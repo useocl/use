@@ -31,6 +31,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
@@ -143,7 +144,8 @@ public class MNewLinkObjectStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		List<List<Value>> qualifierValues = new ArrayList<List<Value>>();
 		List<Value> empty = Collections.emptyList();
 		
@@ -154,7 +156,7 @@ public class MNewLinkObjectStatement extends MStatement {
 				} else {
 					List<Value> thisQualifierValues = new ArrayList<Value>();
 					for (MRValue v : values) {
-						thisQualifierValues.add(evaluateRValue(v));
+						thisQualifierValues.add(evaluateRValue(context, result, v));
 					}
 					qualifierValues.add(thisQualifierValues);
 				}
@@ -163,18 +165,18 @@ public class MNewLinkObjectStatement extends MStatement {
 		
 		// evaluate participants
 		List<MObject> participants = 
-			evaluateObjectRValues(fParticipants);
+			evaluateObjectRValues(context, result, fParticipants);
 		
 		String objectName;
 		if (fObjectName == null) {
-			objectName = fContext.getState().uniqueObjectNameForClass(fAssociationClass);
+			objectName = context.getState().uniqueObjectNameForClass(fAssociationClass);
 		} else {
-			objectName = evaluateString(fObjectName);
+			objectName = evaluateString(context, result, fObjectName);
 		}
 				
 		// create link object
 		fCreatedLinkObject = 
-			createLinkObject(
+			createLinkObject(context, result, 
 					fAssociationClass, 
 					objectName, 
 					participants,

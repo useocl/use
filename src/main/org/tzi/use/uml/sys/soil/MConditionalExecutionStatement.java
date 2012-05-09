@@ -24,6 +24,7 @@ package org.tzi.use.uml.sys.soil;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -95,9 +96,10 @@ public class MConditionalExecutionStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		Value value = evaluateExpression(fCondition, false);
+		Value value = evaluateExpression(context, result, fCondition, false);
 		
 		MStatement toEvaluate;
 		if ((value.isDefined() 
@@ -110,7 +112,7 @@ public class MConditionalExecutionStatement extends MStatement {
 			toEvaluate = fElseStatement;
 		}
 		
-		evaluateSubStatement(toEvaluate);
+		evaluateSubStatement(context, result, toEvaluate);
 	}
 	
 	

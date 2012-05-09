@@ -22,6 +22,7 @@
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -83,11 +84,12 @@ public class MVariableAssignmentStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		Value value = evaluateRValue(fRValue);
+		Value value = evaluateRValue(context, result, fRValue);
 		
-		assignVariable(fVariableName, value);
+		assignVariable(context, result, fVariableName, value);
 	}
 	
 	

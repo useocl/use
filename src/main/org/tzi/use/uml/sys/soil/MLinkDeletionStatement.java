@@ -29,6 +29,7 @@ import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
@@ -131,9 +132,10 @@ public class MLinkDeletionStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		List<MObject> participants = evaluateObjectRValues(fParticipants);
+		List<MObject> participants = evaluateObjectRValues(context, result, fParticipants);
 		List<List<Value>> qualifierValues;
 		
 		if (this.qualifier == null || this.qualifier.isEmpty()) {
@@ -147,14 +149,14 @@ public class MLinkDeletionStatement extends MStatement {
 				} else {
 					endQualifierValues = new ArrayList<Value>();
 					for (MRValue endRValue : endRValues) {
-						endQualifierValues.add(this.evaluateRValue(endRValue));
+						endQualifierValues.add(this.evaluateRValue(context, result, endRValue));
 					}
 				}
 				qualifierValues.add(endQualifierValues);
 			}
 		}
 		
-		deleteLink(fAssociation, participants, qualifierValues);
+		deleteLink(context, result, fAssociation, participants, qualifierValues);
 	}
 	
 	

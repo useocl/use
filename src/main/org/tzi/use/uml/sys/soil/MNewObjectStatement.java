@@ -26,6 +26,7 @@ import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -122,18 +123,19 @@ public class MNewObjectStatement extends MStatement {
 
 
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		String objectName;
 		if (fObjectName == null) {
-			objectName = fContext.getState().uniqueObjectNameForClass(fObjectClass);
+			objectName = context.getState().uniqueObjectNameForClass(fObjectClass);
 		} else {
-			objectName = evaluateString(fObjectName);
+			objectName = evaluateString(context, result, fObjectName);
 		}
 						
 		// create new object
 		fCreatedObject = 
-			createObject(fObjectClass, objectName);
+			createObject(context, result, fObjectClass, objectName);
 	}
 
 	

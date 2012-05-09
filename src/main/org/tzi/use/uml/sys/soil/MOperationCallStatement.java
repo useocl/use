@@ -31,6 +31,7 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.util.StringUtil;
@@ -132,11 +133,12 @@ public class MOperationCallStatement extends MStatement {
 	
 
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 				
 		// just to check if self exists
-		MObject self = evaluateObjectExpression(fObject);
+		MObject self = evaluateObjectExpression(context, result, fObject);
 		
 		MOperation operation = self.cls().operation(fOperation.name(), true);
 		MStatement operationBody = operation.getStatement();
@@ -146,30 +148,32 @@ public class MOperationCallStatement extends MStatement {
 		Value[] arguments = new Value[fArguments.size()];
 		int i=0;
 		for (Entry<String, Expression> argument : fArguments.entrySet()) {
-			Value argValue = evaluateExpression(argument.getValue(), false);
+			Value argValue = evaluateExpression(context, result, argument.getValue(), false);
 			arguments[i] = argValue;
 			++i;
 		}
 		
 		MOperationCall operationCall = 
 			enterOperation(
+					context, 
+					result,
 					self, 
 					operation, 
 					arguments, 
-					fContext.isInExpression() ? 
+					context.isInExpression() ? 
 							ExpressionPPCHandler.getDefaultOutputHandler() : SoilPPCHandler.getDefaultOutputHandler(), false);
 		
 		try {
-			evaluateSubStatement(operationBody);
+			evaluateSubStatement(context, result, operationBody);
 			
 			if (fOperation.hasResultType()) {
-				fReturnValue = fContext.getVarEnv().lookUp("result");
+				fReturnValue = context.getVarEnv().lookUp("result");
 			}
 		} catch (EvaluationFailedException e) {
 			operationCall.setExecutionFailed(true);
 			throw e;
 		} finally {
-			exitOperation(fReturnValue);
+			exitOperation(context, result, fReturnValue, null);
 		}
 	}
 	

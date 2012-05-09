@@ -29,6 +29,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
@@ -72,29 +73,30 @@ public class MExitOperationStatement extends MStatement {
 	
 
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		Value result = (fOperationResult == null) ? 
-				null : evaluateExpression(fOperationResult, false);
+		Value vresult = (fOperationResult == null) ? 
+				null : evaluateExpression(context, result, fOperationResult, false);
 
 		// to be able to undo this statement, we need to capture the current
 		// variable mappings
 		Map<String, Value> currentMappings = 
-			fContext.getVarEnv().getCurrentMappings();
+			context.getVarEnv().getCurrentMappings();
 
-		if (result != null) {
-			fContext.getVarEnv().assign("result", result);
+		if (vresult != null) {
+			context.getVarEnv().assign("result", vresult);
 		}
 
-		operationCall = fContext.getSystem().getCurrentOperation();
+		operationCall = context.getSystem().getCurrentOperation();
 		
 		EvaluationFailedException caughtException = null;
 		try {
-			exitOperation(
-					result, 
+			exitOperation(context, result, 
+					vresult, 
 					fCustomPPCHandler == null ? 
 							OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler);
-			fContext.getSystem().setLastOperationCall(operationCall);
+			context.getSystem().setLastOperationCall(operationCall);
 		} catch (EvaluationFailedException e) {
 			caughtException = e;
 		}
@@ -111,7 +113,7 @@ public class MExitOperationStatement extends MStatement {
 		
 		// restore variable mappings
 		for (Entry<String, Value> entry : currentMappings.entrySet()) {
-			fResult.prependToInverseStatement(
+			result.prependToInverseStatement(
 					new MVariableAssignmentStatement(
 							entry.getKey(), 
 							entry.getValue()));
@@ -126,7 +128,7 @@ public class MExitOperationStatement extends MStatement {
 			wrappedArguments.put(n , new ExpressionWithValue(operationCall.getArguments()[i]));
 		}
 			
-		fResult.prependToInverseStatement(
+		result.prependToInverseStatement(
 				new MEnterOperationStatement(
 						new ExpressionWithValue(operationCall.getSelf().value()),
 						operationCall.getOperation(),

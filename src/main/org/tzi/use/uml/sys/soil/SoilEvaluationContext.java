@@ -52,30 +52,13 @@ public class SoilEvaluationContext {
 	/**
 	 * TODO
 	 * @param system
-	 * @param state
-	 * @param varEnv
-	 */
-	public SoilEvaluationContext(
-			MSystem system, 
-			MSystemState state, 
-			VariableEnvironment varEnv) {
-		
-		fSystem = system;
-		fState = state;
-		fVarEnv = varEnv;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param system
 	 */
 	public SoilEvaluationContext(MSystem system) {
 	
-		this(
-				system, 
-				system.state(), 
-				system.getVariableEnvironment());
+		fSystem = system; 
+		//FIXME: Remove fState and fVarEnv and replace by helper operations?
+		fState = system.state(); 
+		fVarEnv = system.getVariableEnvironment();
 	}
 	
 	

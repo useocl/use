@@ -24,6 +24,7 @@ package org.tzi.use.uml.sys.soil;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -56,12 +57,13 @@ public class MWhileStatement extends MStatement {
 	
 		
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		while(  true) {
-			Value v = evaluateExpression(fCondition);
+			Value v = evaluateExpression(context, result, fCondition);
 			if (v.isDefined() && ((BooleanValue)v).value())
-				evaluateSubStatement(fBody);
+				evaluateSubStatement(context, result, fBody);
 			else
 				break;
 		}

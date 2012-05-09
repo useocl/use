@@ -26,6 +26,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -155,15 +156,17 @@ public class MAttributeAssignmentStatement extends MStatement {
 		
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		// get the actual object
-		MObject object = evaluateObjectExpression(fObject);
+		MObject object = evaluateObjectExpression(context, result, fObject);
 		
 		// get the new value
-		Value newValue = evaluateRValue(fRValue);
+		Value newValue = evaluateRValue(context, result, fRValue);
 		
-		assignAttribute(object, fAttribute, newValue);
+		assignAttribute(context, result, object, fAttribute, newValue);
 	}
 	
 	

@@ -90,7 +90,7 @@ public final class MSystem {
     /** TODO */
     private int fStateLock = 0;
     /** TODO */
-    private Deque<MStatement> fCurrentlyEvaluatedStatements;
+    private Deque<StatementEvaluationResult> fCurrentlyEvaluatedStatements;
 
     /**
      * True, if this system is used inside a test suite.
@@ -121,7 +121,7 @@ public final class MSystem {
         fStatementEvaluationResults = new ArrayDeque<StatementEvaluationResult>();
         fCallStack = new ArrayDeque<MOperationCall>();
         fRedoStack = new ArrayDeque<MStatement>();
-        fCurrentlyEvaluatedStatements = new ArrayDeque<MStatement>();
+        fCurrentlyEvaluatedStatements = new ArrayDeque<StatementEvaluationResult>();
     }
 
     /**
@@ -314,18 +314,19 @@ public final class MSystem {
 	 * @param output
 	 * @throws MSystemException 
 	 */
-	public void enterOperation(EvalContext ctx, MOperationCall operationCall, boolean isOpenter) throws MSystemException {
+	public void enterQueryOperation(EvalContext ctx, MOperationCall operationCall, boolean isOpenter) throws MSystemException {
 						
 		assertParametersValid(operationCall);
 		
 		if (operationCall.requiresVariableFrameInEnvironment()) {
 			pushParametersOnVariableEnvironment(operationCall, isOpenter);
 		
-			if (getCurrentStatement() != null) {
+/*			if (getCurrentStatement() != null) {
 				if (!stateIsLocked()) {
 					getCurrentStatement().enteredOperationDuringEvaluation(operationCall);
 				}
 			}
+			*/
 		}
 	
 		fCallStack.push(operationCall);
@@ -336,7 +337,46 @@ public final class MSystem {
 		operationCall.setEnteredSuccessfully(true);
 	}
 
-	public MOperationCall exitOperation(EvalContext ctx, Value resultValue) throws MSystemException {
+	/**
+	 * TODO
+	 * @param self
+	 * @param operation
+	 * @param arguments
+	 * @param ppcHandler
+	 * @param output
+	 * @throws MSystemException 
+	 */
+	public void enterNonQueryOperation(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
+			MOperationCall operationCall, 
+			boolean isOpenter) throws MSystemException {
+						
+		assertParametersValid(operationCall);
+		
+		if (operationCall.requiresVariableFrameInEnvironment()) {
+			pushParametersOnVariableEnvironment(operationCall, isOpenter);
+		
+			if (getCurrentStatement() != null) {
+				if (!stateIsLocked()) {
+					getCurrentStatement().enteredOperationDuringEvaluation(context, result, operationCall);
+				}
+			}
+		}
+	
+		fCallStack.push(operationCall);
+		
+		EvalContext ctx = new EvalContext(
+				context.getState(), 
+				context.getState(), 
+				context.getVarEnv().constructVarBindings(), null, "");
+		assertPreConditions(ctx, operationCall);
+		
+		copyPreStateIfNeccessary(operationCall);
+		operationCall.setEnteredSuccessfully(true);
+	}
+	
+	public MOperationCall exitQueryOperation(EvalContext ctx, Value resultValue) throws MSystemException {
 		
 		MOperationCall operationCall = getCurrentOperation();
 		if (operationCall == null) {
@@ -344,7 +384,7 @@ public final class MSystem {
 		}
 		
 		if (operationCall.executionHasFailed()) {
-			exitCurrentOperation();
+			exitCurrentQueryOperation();
 			return operationCall;
 		}
 		
@@ -358,7 +398,40 @@ public final class MSystem {
 		
 			return operationCall;
 		} finally {
-			exitCurrentOperation();
+			exitCurrentQueryOperation();
+		}
+	}
+
+	public MOperationCall exitNonQueryOperation(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
+			Value resultValue) throws MSystemException {
+		
+		MOperationCall operationCall = getCurrentOperation();
+		if (operationCall == null) {
+			throw new MSystemException("Call stack is empty.");
+		}
+		
+		if (operationCall.executionHasFailed()) {
+			exitCurrentNonQueryOperation(context, result);
+			return operationCall;
+		}
+		
+		try {
+			assertResultValueValid(resultValue, operationCall.getOperation());
+			if (resultValue != null) operationCall.setResultValue(resultValue);	
+		
+			EvalContext ctx = new EvalContext(
+					context.getState(), 
+					context.getState(), 
+					context.getVarEnv().constructVarBindings(), null, "");
+			assertPostConditions(ctx, operationCall);
+		
+			operationCall.setExitedSuccessfully(true);
+		
+			return operationCall;
+		} finally {
+			exitCurrentNonQueryOperation(context, result);
 		}
 	}
 
@@ -545,7 +618,22 @@ public final class MSystem {
 	/**
 	 * TODO
 	 */
-	private void exitCurrentOperation() {
+	private void exitCurrentQueryOperation() {
+		MOperationCall currentOperation = getCurrentOperation();
+		if (currentOperation == null) throw new RuntimeException("Cannot exit without a current operation!");
+		currentOperation.setExited(true);
+		fCallStack.pop();
+		MStatement currentStatement = getCurrentStatement();
+		if (currentOperation.requiresVariableFrameInEnvironment()) {
+			fVariableEnvironment.popFrame();
+		}
+	}
+	
+	/**
+	 * TODO
+	 */
+	private void exitCurrentNonQueryOperation(SoilEvaluationContext context,
+			StatementEvaluationResult result) {
 		MOperationCall currentOperation = getCurrentOperation();
 		if (currentOperation == null) throw new RuntimeException("Cannot exit without a current operation!");
 		currentOperation.setExited(true);
@@ -553,13 +641,12 @@ public final class MSystem {
 		MStatement currentStatement = getCurrentStatement();
 		if (currentOperation.requiresVariableFrameInEnvironment()) {
 			if (currentStatement != null && !stateIsLocked()) {
-				currentStatement.exitedOperationDuringEvaluation(
-						currentOperation);
+				currentStatement.exitedOperationDuringEvaluation(context, result, currentOperation);
 			}
 			fVariableEnvironment.popFrame();
 		}
 	}
-	
+
 	
 	/**
      * Returns a unique name that can be used for a new object of the
@@ -583,7 +670,7 @@ public final class MSystem {
 			boolean undoOnFailure,
 			boolean storeResult,
 			boolean notifyUpdateStateListeners) throws MSystemException {
-    	
+    	//FIXME: inline these parameters into the evaluation context
     	return evaluate(
     			statement, 
     			new SoilEvaluationContext(this),
@@ -610,7 +697,9 @@ public final class MSystem {
 					"The system currently cannot be modified.");
 		}
 		
-		fCurrentlyEvaluatedStatements.push(statement);
+		StatementEvaluationResult result = new StatementEvaluationResult(statement);
+		
+		fCurrentlyEvaluatedStatements.push(result);
 		
 		if (context.isUndo()) {
 			fUniqueNameGenerator.popState();
@@ -618,7 +707,7 @@ public final class MSystem {
 			fUniqueNameGenerator.pushState();
 		}
 		
-		StatementEvaluationResult result = statement.evaluate(context);
+		statement.evaluateGuarded(context, result);
 				
 		fCurrentlyEvaluatedStatements.pop();
 		
@@ -717,7 +806,7 @@ public final class MSystem {
     }
     
     
-    public Value evaluateStatementInExpression(
+    /*public Value evaluateStatementInExpression(
     		MStatement statement) throws MSystemException {
     	
     	MStatement currentStatement = getCurrentStatement();
@@ -733,7 +822,7 @@ public final class MSystem {
     	}
     	
 		return fVariableEnvironment.lookUp("result");
-    }
+    }*/
     
     
     /**
@@ -890,7 +979,7 @@ public final class MSystem {
      * @return
      */
     private MStatement getCurrentStatement() {
-    	return fCurrentlyEvaluatedStatements.peek();
+    	return fCurrentlyEvaluatedStatements.peek().getEvaluatedStatement();
     }
     
     
@@ -933,9 +1022,9 @@ public final class MSystem {
     		result.addAll(it.next().getEvents());
     	}
     	
-    	MStatement currentStatement = fCurrentlyEvaluatedStatements.peek();
-    	if (currentStatement != null) {
-    		result.addAll(currentStatement.getResult().getEvents());
+    	StatementEvaluationResult currentResult = fCurrentlyEvaluatedStatements.peek();
+    	if (currentResult != null) {
+    		result.addAll(currentResult.getEvents());
     	}
     	
     	return result;
@@ -954,11 +1043,10 @@ public final class MSystem {
     }
     
     public void updateListeners() {
-    	MStatement currentStatement = fCurrentlyEvaluatedStatements.peek();
-    	
-    	if (currentStatement != null) {
+    	StatementEvaluationResult currentResult = fCurrentlyEvaluatedStatements.peek();
+    	if (currentResult != null) {
     		fireStateChanged(
-					currentStatement.getResult().getStateDifference());
+					currentResult.getStateDifference());
 		}
     }
     

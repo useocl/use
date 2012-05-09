@@ -29,6 +29,7 @@ import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
@@ -129,9 +130,10 @@ public class MLinkInsertionStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		List<MObject> participants = evaluateObjectRValues(fParticipants);
+		List<MObject> participants = evaluateObjectRValues(context, result, fParticipants);
 		List<List<Value>> qualifierValues = new ArrayList<List<Value>>();
 		List<Value> empty = Collections.emptyList();
 		
@@ -142,7 +144,7 @@ public class MLinkInsertionStatement extends MStatement {
 				} else {
 					List<Value> thisQualifierValues = new ArrayList<Value>();
 					for (MRValue v : values) {
-						thisQualifierValues.add(evaluateRValue(v));
+						thisQualifierValues.add(evaluateRValue(context, result, v));
 					}
 					qualifierValues.add(thisQualifierValues);
 				}
@@ -156,20 +158,20 @@ public class MLinkInsertionStatement extends MStatement {
 				(MAssociationClass)fAssociation;
 			
 			if ((fLinkObjectName == null) || 
-					fContext.getState().hasObjectWithName(fLinkObjectName)) {
+					context.getState().hasObjectWithName(fLinkObjectName)) {
 				
 				fLinkObjectName = 
-					fContext.getSystem().uniqueObjectNameForClass(associationClass.name());
+					context.getSystem().uniqueObjectNameForClass(associationClass.name());
 			}
 			
-			createLinkObject(
+			createLinkObject(context, result, 
 					associationClass, 
 					fLinkObjectName, 
 					participants,
 					qualifierValues);
 			
 		} else {
-			insertLink(fAssociation, participants, qualifierValues);
+			insertLink(context, result, fAssociation, participants, qualifierValues);
 		}
 	}
 	

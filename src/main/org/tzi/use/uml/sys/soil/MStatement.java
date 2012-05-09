@@ -49,9 +49,7 @@ import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
@@ -63,7 +61,6 @@ import org.tzi.use.uml.sys.events.OperationEnteredEvent;
 import org.tzi.use.uml.sys.events.OperationExitedEvent;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.VariableEnvironment;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -78,12 +75,6 @@ public abstract class MStatement {
 	 * The source position of the statement (if specified).
 	 */
 	private SrcPos fSourcePosition;
-	
-	/** TODO */
-	protected SoilEvaluationContext fContext;
-	
-	/** TODO */
-	protected StatementEvaluationResult fResult;
 	
 	/** TODO */
 	private boolean fIsOperationBody = false;
@@ -117,17 +108,6 @@ public abstract class MStatement {
 	}
 	
 	
-	/**
-	 * TODO
-	 */
-	public StatementEvaluationResult evaluate(SoilEvaluationContext context) {
-		
-		StatementEvaluationResult result = new StatementEvaluationResult(this);
-		
-		evaluate(context, result);
-		
-		return result;
-	}
 	
 	
 	/**
@@ -171,14 +151,6 @@ public abstract class MStatement {
 	 * @return The command text of this statement.
 	 */
 	protected abstract String shellCommand();
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public StatementEvaluationResult getResult() {
-		return fResult;
-	}
 	
 	
 	/**
@@ -260,15 +232,12 @@ public abstract class MStatement {
 	 * @param context
 	 * @param result
 	 */
-	protected void evaluate(
+	public void evaluateGuarded(
 			SoilEvaluationContext context,
 			StatementEvaluationResult result) {
 		
-		fContext = context;
-		fResult = result;
-		
 		try {
-			evaluate();
+			evaluate(context, result);
 		} catch (EvaluationFailedException e) {
 			result.setException(e);
 		}
@@ -280,7 +249,8 @@ public abstract class MStatement {
 	 * @param hasUndoStatement
 	 * @throws EvaluationFailedException
 	 */
-	protected abstract void evaluate() throws EvaluationFailedException;
+	protected abstract void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException;
 
 
 	/**
@@ -291,6 +261,8 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected Value evaluateExpression(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			Expression expression, 
 			boolean mustBeDefined) throws EvaluationFailedException {
 		
@@ -298,12 +270,12 @@ public abstract class MStatement {
 		
 		Value value;
 		
-		fContext.enterExpression(expression);
+		context.enterExpression(expression);
 		try {
 			value = evaluator.eval(
 					expression, 
-					fContext.getState(), 
-					fContext.getVarEnv().constructVarBindings());
+					context.getState(), 
+					context.getVarEnv().constructVarBindings());
 		} catch (MultiplicityViolationException e) {
 			throw new EvaluationFailedException(this,
 					"Evaluation of expression "
@@ -311,7 +283,7 @@ public abstract class MStatement {
 							+ " failed due to following reason:\n  "
 							+ e.getMessage());
 		} finally {
-			fContext.exitExpression();
+			context.exitExpression();
 		}
 		
 		if (mustBeDefined && value.isUndefined()) {
@@ -331,9 +303,11 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected Value evaluateExpression(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			Expression expression) throws EvaluationFailedException {
 		
-		return evaluateExpression(expression, false);
+		return evaluateExpression(context, result, expression, false);
 	}
 	
 
@@ -344,9 +318,11 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected MObject evaluateObjectExpression(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			Expression expression) throws EvaluationFailedException {
 		
-		Value value = evaluateExpression(expression, true);
+		Value value = evaluateExpression(context, result, expression, true);
 		
 		if (value instanceof ObjectValue) {
 			return ((ObjectValue)value).value();
@@ -366,16 +342,18 @@ public abstract class MStatement {
 	 * @return
 	 * @throws EvaluationFailedException
 	 */
-	protected List<MObject> evaluateObjectExpressions(
+	protected List<MObject> evaluateObjectExpressions(			
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			List<Expression> expressions) throws EvaluationFailedException {
 		
-		List<MObject> result = new ArrayList<MObject>(expressions.size());
+		List<MObject> vresult = new ArrayList<MObject>(expressions.size());
 		
 		for (Expression expression : expressions) {
-			result.add(evaluateObjectExpression(expression));
+			vresult.add(evaluateObjectExpression(context, result, expression));
 		}
 		
-		return result;
+		return vresult;
 	}
 	
 	/**
@@ -385,9 +363,11 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected String evaluateString(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			Expression expression) throws EvaluationFailedException {
 		
-		Value value = evaluateExpression(expression, true);
+		Value value = evaluateExpression(context, result, expression, true);
 	
 		if (value instanceof StringValue) {
 			return ((StringValue)value).value();
@@ -409,12 +389,14 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	public void evaluateSubStatement(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MStatement statement) throws EvaluationFailedException {
 		
-		statement.evaluate(fContext, fResult);
+		statement.evaluateGuarded(context, result);
 		
-		if (fResult.getException() != null) {
-			throw fResult.getException();
+		if (result.getException() != null) {
+			throw result.getException();
 		}
 	}
 	
@@ -426,10 +408,12 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException 
 	 */
 	protected Value evaluateRValue(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MRValue rValue, 
 			boolean mustBeDefined) throws EvaluationFailedException {
 		
-		Value value = rValue.evaluate(this);
+		Value value = rValue.evaluate(context, result, this);
 		
 		if (mustBeDefined && value.isUndefined()) {
 			throw new EvaluationFailedException(this, "The value of rValue " +
@@ -448,9 +432,11 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException 
 	 */
 	protected Value evaluateRValue(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MRValue rValue) throws EvaluationFailedException {
 		
-		return evaluateRValue(rValue, false);
+		return evaluateRValue(context, result, rValue, false);
 	}
 	
 	
@@ -461,9 +447,11 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected MObject evaluateObjectRValue(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MRValue rValue) throws EvaluationFailedException {
 		
-		Value value = evaluateRValue(rValue, true);
+		Value value = evaluateRValue(context, result, rValue, true);
 		
 		if (value instanceof ObjectValue) {
 			return ((ObjectValue)value).value();
@@ -485,15 +473,17 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected List<MObject> evaluateObjectRValues(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			List<MRValue> rValues) throws EvaluationFailedException {
 		
-		List<MObject> result = new ArrayList<MObject>(rValues.size());
+		List<MObject> vresult = new ArrayList<MObject>(rValues.size());
 		
 		for (MRValue rValue : rValues) {
-			result.add(evaluateObjectRValue(rValue));
+			vresult.add(evaluateObjectRValue(context, result, rValue));
 		}
 		
-		return result;
+		return vresult;
 	}
 	
 	
@@ -502,21 +492,24 @@ public abstract class MStatement {
 	 * @param variableName
 	 * @param value
 	 */
-	protected void assignVariable(String variableName, Value value) {
+	protected void assignVariable(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
+			String variableName, Value value) {
 		
-		Value oldValue = fContext.getVarEnv().lookUp(variableName);
+		Value oldValue = context.getVarEnv().lookUp(variableName);
 		
 		if (oldValue != null) {
-			fResult.prependToInverseStatement(
+			result.prependToInverseStatement(
 					new MVariableAssignmentStatement(
 							variableName, 
 							oldValue));
 		} else {
-			fResult.prependToInverseStatement(
+			result.prependToInverseStatement(
 					new MVariableDestructionStatement(variableName));
 		}
 			
-		fContext.getVarEnv().assign(variableName, value);	
+		context.getVarEnv().assign(variableName, value);	
 	}
 	
 	
@@ -528,22 +521,24 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected MObject createObject(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MClass objectClass, 
 			String objectName) throws EvaluationFailedException {
 		
 		MObject newObject;
 		try {
-			newObject = fContext.getState().createObject(objectClass, objectName);
+			newObject = context.getState().createObject(objectClass, objectName);
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
 		
-		fResult.getStateDifference().addNewObject(newObject);
+		result.getStateDifference().addNewObject(newObject);
 		
-		fResult.prependToInverseStatement(
+		result.prependToInverseStatement(
 				new MObjectDestructionStatement(newObject.value()));
 		
-		fResult.appendEvent(new ObjectCreatedEvent(this, newObject));
+		result.appendEvent(new ObjectCreatedEvent(this, newObject));
 		
 		return newObject;
 	}
@@ -558,6 +553,8 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected MLinkObject createLinkObject(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MAssociationClass associationClass, 
 			String linkObjectName, 
 			List<MObject> participants,
@@ -566,7 +563,7 @@ public abstract class MStatement {
 		MLinkObject newLinkObject;
 		try {
 			newLinkObject = 
-				fContext.getState().createLinkObject(
+				context.getState().createLinkObject(
 					associationClass, 
 					linkObjectName, 
 					participants,
@@ -576,12 +573,12 @@ public abstract class MStatement {
 			throw new EvaluationFailedException(this, e);
 		}
 		
-		fResult.getStateDifference().addNewLinkObject(newLinkObject);
+		result.getStateDifference().addNewLinkObject(newLinkObject);
 		
-		fResult.prependToInverseStatement(
+		result.prependToInverseStatement(
 				new MObjectDestructionStatement(newLinkObject.value()));
 		
-		fResult.appendEvent(
+		result.appendEvent(
 				new LinkInsertedEvent(this, associationClass, participants));
 		
 		return newLinkObject;
@@ -593,16 +590,19 @@ public abstract class MStatement {
 	 * @param object
 	 * @throws EvaluationFailedException 
 	 */
-	protected void destroyObject(MObject object) throws EvaluationFailedException {
+	protected void destroyObject(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
+			MObject object) throws EvaluationFailedException {
 		
 		// we cannot destroy an object with an active operation. we need to 
 		// check whether this object, or any of the link objects possibly
 		// connected to this object have an active operation
 		Set<MObject> objectsAffectedByDeletion = 
-			fContext.getState().getObjectsAffectedByDestruction(object);
+			context.getState().getObjectsAffectedByDestruction(object);
 		
 		for (MObject affectedObject : objectsAffectedByDeletion) {
-			if (fContext.getSystem().hasActiveOperation(affectedObject)) {
+			if (context.getSystem().hasActiveOperation(affectedObject)) {
 				throw new EvaluationFailedException(
 						this,
 						"Object "
@@ -614,15 +614,15 @@ public abstract class MStatement {
 		// .deleteObject() also takes care of the links this
 		// object has been participating in
 		DeleteObjectResult deleteResult = 
-			fContext.getState().deleteObject(object);	
-		fResult.getStateDifference().addDeleteResult(deleteResult);
+			context.getState().deleteObject(object);	
+	    result.getStateDifference().addDeleteResult(deleteResult);
 		
 		Map<MObject, List<String>> undefinedTopLevelReferences = 
 			new HashMap<MObject, List<String>>();
 			
 		for (MObject destroyedObject : deleteResult.getRemovedObjects()) {
 			List<String> topLevelReferences = 
-				fContext.getVarEnv().getTopLevelReferencesTo(destroyedObject);
+				context.getVarEnv().getTopLevelReferencesTo(destroyedObject);
 			
 			if (!topLevelReferences.isEmpty()) {
 				undefinedTopLevelReferences.put(
@@ -630,22 +630,22 @@ public abstract class MStatement {
 						topLevelReferences);
 			}
 					
-			fContext.getVarEnv().undefineReferencesTo(destroyedObject);
+			context.getVarEnv().undefineReferencesTo(destroyedObject);
 		}
 		
-		fResult.prependToInverseStatement(
+		result.prependToInverseStatement(
 				new MObjectRestorationStatement(
 						deleteResult, 
 						undefinedTopLevelReferences));
 		
 		if (object instanceof MLink) {
 			MLink link = (MLink)object;
-			fResult.appendEvent(new LinkDeletedEvent(
+			result.appendEvent(new LinkDeletedEvent(
 					this,
 					link.association(), 
 					Arrays.asList(link.linkedObjectsAsArray())));
 		} else {
-			fResult.appendEvent(new ObjectDestroyedEvent(this, object));
+			result.appendEvent(new ObjectDestroyedEvent(this, object));
 		}
 		
 		Set<MLink> deletedLinks = 
@@ -665,14 +665,14 @@ public abstract class MStatement {
 		deletedObjects.removeAll(deletedLinks);
 		
 		for (MLink l : deletedLinks) {
-			fResult.appendEvent(new LinkDeletedEvent(
+			result.appendEvent(new LinkDeletedEvent(
 					this,
 					l.association(), 
 					Arrays.asList(l.linkedObjectsAsArray())));
 		}
 		
 		for (MObject o : deletedObjects) {
-			fResult.appendEvent(new ObjectDestroyedEvent(this, o));
+			result.appendEvent(new ObjectDestroyedEvent(this, o));
 		}
 	}
 	
@@ -685,6 +685,8 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected void assignAttribute(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MObject object, 
 			MAttribute attribute, 
 			Value value) throws EvaluationFailedException {
@@ -692,21 +694,21 @@ public abstract class MStatement {
 		Value oldValue;
 		
 		try {
-			oldValue = object.state(fContext.getState()).attributeValue(attribute);
-			object.state(fContext.getState()).setAttributeValue(attribute, value);
+			oldValue = object.state(context.getState()).attributeValue(attribute);
+			object.state(context.getState()).setAttributeValue(attribute, value);
 		} catch (IllegalArgumentException e) {
 			throw new EvaluationFailedException(this, e);
 		}
 		
-		fResult.getStateDifference().addModifiedObject(object);
+		result.getStateDifference().addModifiedObject(object);
 		
-		fResult.prependToInverseStatement(
+		result.prependToInverseStatement(
 				new MAttributeAssignmentStatement(
 						object, 
 						attribute, 
 						oldValue));
 		
-		fResult.appendEvent(
+		result.appendEvent(
 				new AttributeAssignedEvent(
 						this, 
 						object, 
@@ -723,18 +725,20 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException 
 	 */
 	protected MLink insertLink(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MAssociation association, 
 			List<MObject> participants,
 			List<List<Value>> qualifierValues) throws EvaluationFailedException {
 		
 		MLink newLink;
 		try {
-			newLink = fContext.getState().createLink(association, participants, qualifierValues);
+			newLink = context.getState().createLink(association, participants, qualifierValues);
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
 		
-		fResult.getStateDifference().addNewLink(newLink);
+		result.getStateDifference().addNewLink(newLink);
 		
 		List<MRValue> wrappedParticipants = 
 			new ArrayList<MRValue>(participants.size());
@@ -759,10 +763,10 @@ public abstract class MStatement {
 			wrappedQualifier.add(wrappedQValues);
 		}
 		
-		fResult.prependToInverseStatement(
+		result.prependToInverseStatement(
 				new MLinkDeletionStatement(association, wrappedParticipants, wrappedQualifier));
 		
-		fResult.appendEvent(
+		result.appendEvent(
 				new LinkInsertedEvent(
 						this, 
 						association, 
@@ -779,6 +783,8 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected void deleteLink(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MAssociation association, 
 			List<MObject> participants,
 			List<List<Value>> qualifierValues) throws EvaluationFailedException {
@@ -786,16 +792,16 @@ public abstract class MStatement {
 		// we need to find out if this is actually a link object, since we need
 		// to call destroyObject in that case to get the correct undo 
 		// statement
-		MLink link = fContext.getState().linkBetweenObjects(association, participants, qualifierValues);
+		MLink link = context.getState().linkBetweenObjects(association, participants, qualifierValues);
 		
 		if ((link != null) && (link instanceof MLinkObject)) {
-			destroyObject((MLinkObject)link);
+			destroyObject(context, result, (MLinkObject)link);
 			return;
 		}
 		
 		try {
-			fResult.getStateDifference().addDeleteResult(
-					fContext.getState().deleteLink(association, participants, qualifierValues));
+			result.getStateDifference().addDeleteResult(
+					context.getState().deleteLink(association, participants, qualifierValues));
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
@@ -829,10 +835,10 @@ public abstract class MStatement {
 				wrappedQualifier.add(endQualifierValues);
 			}
 		}
-		fResult.prependToInverseStatement(
+		result.prependToInverseStatement(
 				new MLinkInsertionStatement(association, wrappedParticipants, wrappedQualifier));
 		
-		fResult.appendEvent(
+		result.appendEvent(
 				new LinkDeletedEvent(
 						this, 
 						association, 
@@ -845,9 +851,11 @@ public abstract class MStatement {
 	 * @param operationCall
 	 */
 	public void enteredOperationDuringEvaluation(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MOperationCall operationCall) {
 		
-		fResult.appendEvent(
+		result.appendEvent(
 				new OperationEnteredEvent(
 						this, 
 						operationCall));
@@ -859,9 +867,11 @@ public abstract class MStatement {
 	 * @param operationCall
 	 */
 	public void exitedOperationDuringEvaluation(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MOperationCall operationCall) {
 		
-		fResult.appendEvent(
+		result.appendEvent(
 				new OperationExitedEvent(this, operationCall));
 	}
 	
@@ -874,6 +884,8 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected MOperationCall enterOperation(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			MObject self, 
 			MOperation operation, 
 			Value[] arguments,
@@ -886,7 +898,7 @@ public abstract class MStatement {
 		operationCall.setPreferredPPCHandler(preferredPPCHandler);
 		
 		try {
-			fContext.getSystem().enterOperation(null, operationCall, isOpenter);
+			context.getSystem().enterNonQueryOperation(context, result, operationCall, isOpenter);
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
@@ -901,10 +913,12 @@ public abstract class MStatement {
 	 * @throws EvaluationFailedException
 	 */
 	protected MOperationCall exitOperation(
+			SoilEvaluationContext context,
+			StatementEvaluationResult result,
 			Value resultValue,
 			PPCHandler preferredPPCHandler) throws EvaluationFailedException {
 		
-		MOperationCall currentOperation = fContext.getSystem().getCurrentOperation();
+		MOperationCall currentOperation = context.getSystem().getCurrentOperation();
 		
 		if (currentOperation == null) {
 			throw new EvaluationFailedException(this, "No current operation");
@@ -915,7 +929,7 @@ public abstract class MStatement {
 		}
 		
 		try {
-			fContext.getSystem().exitOperation(null, resultValue);
+			context.getSystem().exitNonQueryOperation(context,result,resultValue);
 		} catch (MSystemException e) {
 			throw new EvaluationFailedException(this, e);
 		}
@@ -924,15 +938,5 @@ public abstract class MStatement {
 	}
 	
 	
-	/**
-	 * TODO
-	 * @param resultValue
-	 * @return
-	 * @throws EvaluationFailedException
-	 */
-	protected MOperationCall exitOperation(
-			Value resultValue) throws EvaluationFailedException {
-		
-		return exitOperation(resultValue, null);
-	}
+	
 }

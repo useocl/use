@@ -26,6 +26,7 @@ import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
@@ -67,11 +68,12 @@ public class MObjectDestructionStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		// handle "dynamic" collections (e.g. .allInstances)
 		if (fToDelete.type().isCollection(false)) {
-			Value val = evaluateExpression(fToDelete);
+			Value val = evaluateExpression(context, result, fToDelete);
 			
 			if (val.isUndefined())
 				return;
@@ -84,13 +86,13 @@ public class MObjectDestructionStatement extends MStatement {
 				statement.setIsOperationBody(isOperationBody());
 				statement.setSourcePosition(getSourcePosition());
 				
-				evaluateSubStatement(statement);
+				evaluateSubStatement(context, result, statement);
 			}
 			
 		} else {
-			MObject object = evaluateObjectExpression(fToDelete);
+			MObject object = evaluateObjectExpression(context, result, fToDelete);
 			
-			destroyObject(object);
+			destroyObject(context, result, object);
 		}
 	}
 	

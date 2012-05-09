@@ -31,6 +31,7 @@ import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
@@ -90,22 +91,23 @@ public class MEnterOperationStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate() throws EvaluationFailedException {
+	protected void evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		// evaluate self
-		MObject self = evaluateObjectExpression(fObject);
+		MObject self = evaluateObjectExpression(context, result, fObject);
 		
 		// evaluate arguments
 		Value[] arguments = new Value[fArguments.size()];
 		int i=0;
 		for (VarDecl argumentDecl : fOperation.allParams()) {
-			Value argValue = evaluateExpression(fArguments.get(argumentDecl.name()), false);
+			Value argValue = evaluateExpression(context, result, fArguments.get(argumentDecl.name()), false);
 			arguments[i] = argValue;
 			++i;
 		}
 		
 		MOperationCall opCall = 
-			enterOperation(
+			enterOperation(context, result, 
 				self, 
 				fOperation, 
 				arguments, 
@@ -126,7 +128,7 @@ public class MEnterOperationStatement extends MStatement {
 				new ExpressionWithValue(UndefinedValue.instance);
 		}
 		
-		fResult.prependToInverseStatement(
+		result.prependToInverseStatement(
 				new MExitOperationStatement(
 						resultExpression,
 						DoNothingPPCHandler.getInstance()));
