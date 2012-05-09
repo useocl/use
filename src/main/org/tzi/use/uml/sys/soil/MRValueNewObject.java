@@ -49,7 +49,7 @@ public class MRValueNewObject extends MRValue {
     @Override
     public Value evaluate(SoilEvaluationContext context, StatementEvaluationResult result,
             MStatement parent) throws EvaluationFailedException {
-        fNewObjectStatement.evaluate(context, result);
+        fNewObjectStatement.execute(context, result);
         return fNewObjectStatement.getCreatedObject().value();
     }
 

@@ -144,11 +144,11 @@ public class MSequenceStatement extends MStatement {
 	
 
 	@Override
-    public void evaluate(SoilEvaluationContext context,
+    public void execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		for (MStatement statement : fStatements) {
-			statement.evaluate(context, result);
+			statement.execute(context, result);
 		}
 	}
 	
@@ -169,7 +169,7 @@ public class MSequenceStatement extends MStatement {
 	
 
 	@Override
-	protected void toVisitorString(
+	protected void toConcreteSyntax(
 			StringBuilder indent, 
 			String indentIncrease,
 			StringBuilder target) {
@@ -179,7 +179,7 @@ public class MSequenceStatement extends MStatement {
 		int numStatements = fStatements.size();
 		for (int i = 0; i < numStatements; ++i) {
 			MStatement statement = fStatements.get(i);
-			statement.toVisitorString(indent, indentIncrease, target);
+			statement.toConcreteSyntax(indent, indentIncrease, target);
 			target.append(";");
 			if (i < (numStatements - 1)) {
 				target.append(newLine);

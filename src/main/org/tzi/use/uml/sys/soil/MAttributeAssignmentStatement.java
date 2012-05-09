@@ -24,12 +24,10 @@ package org.tzi.use.uml.sys.soil;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
@@ -135,7 +133,7 @@ public class MAttributeAssignmentStatement extends MStatement {
     }
 
     @Override
-    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
 
         // get the actual object

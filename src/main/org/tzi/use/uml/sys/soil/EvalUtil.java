@@ -36,11 +36,11 @@ import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
- * @author fabian
+ * Static helper class for the evaluation of expressions (from within MStatement and its subclasses).
+ * @author Fabian Buettner
  *
  */
-public class EvalUtil {
+class EvalUtil {
     /**
      * TODO
      * @param expression

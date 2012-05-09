@@ -183,7 +183,7 @@ public class NewObjectDiagramView extends JPanel
      */
     void deleteLink(MAssociation association, MObject[] objects) {
     	try {
-			fSystem.evaluateStatement(
+			fSystem.execute(
 					new MLinkDeletionStatement(association, objects, Collections.<List<MRValue>>emptyList()));
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
@@ -199,7 +199,7 @@ public class NewObjectDiagramView extends JPanel
      */
     void insertLink(MAssociation association, MObject[] objects) {
     	try {
-			fSystem.evaluateStatement(
+			fSystem.execute(
 					new MLinkInsertionStatement(association, objects, Collections.<List<Value>>emptyList()));
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
@@ -226,7 +226,7 @@ public class NewObjectDiagramView extends JPanel
         	return;
         }
         try {
-			fSystem.evaluateStatement(sequence.simplify());
+			fSystem.execute(sequence.simplify());
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
 					fMainWindow, 

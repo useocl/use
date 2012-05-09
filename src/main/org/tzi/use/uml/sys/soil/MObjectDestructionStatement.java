@@ -31,8 +31,7 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
- * 
+ * @author Fabian Buettner
  * @author Daniel Gent
  * 
  */
@@ -68,7 +67,7 @@ public class MObjectDestructionStatement extends MStatement {
     }
 
     @Override
-    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
 
         // handle "dynamic" collections (e.g. .allInstances)
@@ -82,10 +81,9 @@ public class MObjectDestructionStatement extends MStatement {
             for (Value object : collection.collection()) {
                 MObjectDestructionStatement statement = new MObjectDestructionStatement(object);
 
-                statement.setIsOperationBody(isOperationBody());
                 statement.setSourcePosition(getSourcePosition());
 
-                statement.evaluate(context, result);
+                statement.execute(context, result);
             }
 
         } else {

@@ -84,7 +84,7 @@ public class MVariableAssignmentStatement extends MStatement {
 	
 	
 	@Override
-    public void evaluate(SoilEvaluationContext context,
+    public void execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		Value value = EvalUtil.evaluateRValue(this, context, result, fRValue, false);

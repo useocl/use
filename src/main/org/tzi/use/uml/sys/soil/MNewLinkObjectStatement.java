@@ -158,7 +158,7 @@ public class MNewLinkObjectStatement extends MStatement {
     }
 
     @Override
-    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
         List<List<Value>> qualifierValues = new ArrayList<List<Value>>();
         List<Value> empty = Collections.emptyList();

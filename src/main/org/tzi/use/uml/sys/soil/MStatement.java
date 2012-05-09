@@ -21,168 +21,103 @@
 
 package org.tzi.use.uml.sys.soil;
 
-
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
- * Base class for all SOIL statements.
- * MStatement instances provides the methods required for the interpretation of the statement, but do not hold 
- * state information themselves. 
- * @author Fabian Büttner
+ * Base class for all SOIL statements. MStatement instances provides the methods
+ * required for the interpretation of the statement, but do not hold state
+ * information themselves. 
+ * The main method is {@link #execute(SoilEvaluationContext, StatementEvaluationResult)}.
+ * 
+ * @author Fabian Buettner
  * @author Daniel Gent
  */
 public abstract class MStatement {
 
-	/**
-	 * The source position of the statement (if specified).
-	 */
-	private SrcPos fSourcePosition;
-	
-	/** TODO */
-	private boolean fIsOperationBody = false;
-	
-	private static final String SHELL_PREFIX = "!";
-	
-	/**
-	 * Get the position of this statement in the source. 
-	 * @return
-	 */
-	public SrcPos getSourcePosition() {
-		return fSourcePosition;
-	}
-	
-	
-	/**
-     * Set the position of this statement in the source. 
-	 * @param sourcePosition
-	 */
-	public void setSourcePosition(SrcPos sourcePosition) {
-		fSourcePosition = sourcePosition;
-	}
-	
-	
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public boolean isEmptyStatement() {
-		return this == MEmptyStatement.getInstance();
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public boolean isOperationBody() {
-		return fIsOperationBody;
-	}
+    /**
+     * The source position of the statement (if specified).
+     */
+    private SrcPos fSourcePosition;
 
-
-	/**
-	 * TODO
-	 * @param isOperationBody
-	 */
-	public void setIsOperationBody(boolean isOperationBody) {
-		fIsOperationBody = isOperationBody;
-	}
-	
-	
-	/**
-	 * Returns the shell command for the statement prefixed by
-	 * the shell prefix {@link #SHELL_PREFIX}.
-	 * @return The textual form of this statement for the USE shell.
-	 */
-	public final String getShellCommand() {
-		return SHELL_PREFIX + shellCommand();
-	}
-	
-	/**
-	 * Returns the shell command of this statement without the shell prefix. 
-	 * @return The command text of this statement.
-	 */
-	protected abstract String shellCommand();
-	
-	
-	@Override
-	public abstract String toString();
-
-	/**
-	 * TODO
-	 * @param indent
-	 * @param indentIncr
-	 * @return
-	 */
-	public String toVisitorString(int indent, int indentIncr) {
-		
-		return toVisitorString(
-				new StringBuilder(StringUtil.repeat(" ", indent)), 
-				StringUtil.repeat(" ", indentIncr));
-		
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	private String toVisitorString(
-			StringBuilder indent, 
-			String indentIncr) {
-		
-		StringBuilder result = new StringBuilder();
-		
-		toVisitorString(indent, indentIncr, result);
-		
-		return result.toString();
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param indent
-	 * @param indentIncrease
-	 * @param target
-	 */
-	protected void toVisitorString(
-			StringBuilder indent,
-			String indentIncrease,
-			StringBuilder target) {
-		
-		target.append(indent);
-		target.append(shellCommand());
-	}
-	
+    private static final String SHELL_PREFIX = "!";
 
     /**
-     * TODO
+     * Get the position of this statement in the source.
+     */
+    public SrcPos getSourcePosition() {
+        return fSourcePosition;
+    }
+
+    /**
+     * Set the position of this statement in the source.
+     */
+    public void setSourcePosition(SrcPos sourcePosition) {
+        fSourcePosition = sourcePosition;
+    }
+
+    /**
+     * Is this statement a no-op statement?
+     */
+    public boolean isEmptyStatement() {
+        return this == MEmptyStatement.getInstance();
+    }
+
+    /**
+     * Execute this statement in the given context. This modifies the system
+     * state. The result object captures additional data about the execution of
+     * the statement.
      * 
      * @param hasUndoStatement
      * @throws EvaluationFailedException
      */
-    public abstract void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public abstract void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException;
 
+    /**
+     * Returns the shell command for the statement prefixed by the shell prefix
+     * {@link #SHELL_PREFIX}.
+     * @return The textual form of this statement for the USE shell.
+     */
+    public final String getShellCommand() {
+        return SHELL_PREFIX + shellCommand();
+    }
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    /**
+     * Returns the shell command of this statement without the shell prefix.
+     * @return The command text of this statement.
+     */
+    protected abstract String shellCommand();
+
+    @Override
+    public abstract String toString();
+
+    /**
+     * Returns the concrete representation of this statement in the concrete syntax.  
+     * @param indent Indentation 
+     * @param indentIncr Indentation increment (for nested statements).
+     * @return The pretty-printed string representation.
+     */
+    public String toConcreteSyntax(int indent, int indentIncr) {
+
+        StringBuilder result = new StringBuilder();
+        toConcreteSyntax(new StringBuilder(StringUtil.repeat(" ", indent)), StringUtil.repeat(" ", indentIncr), result);
+        return result.toString();
+
+    }
+
+    /**
+     * Returns the concrete representation of this statement in the concrete syntax.  
+     * @param indent Indentation 
+     * @param indentIncr Indentation increment (for nested statements).
+     * @param target The result string is appended here
+     */
+    protected void toConcreteSyntax(StringBuilder indent, String indentIncrease, StringBuilder target) {
+
+        target.append(indent);
+        target.append(shellCommand());
+    }
+
 }

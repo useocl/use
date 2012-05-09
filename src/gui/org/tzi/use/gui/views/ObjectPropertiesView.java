@@ -266,7 +266,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         		}
         		
         		try {
-        			fSystem.evaluateStatement(
+        			fSystem.execute(
         					new MAttributeAssignmentStatement(
         							fObject, 
         							attribute, 

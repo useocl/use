@@ -75,7 +75,7 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 			StatementEvaluationResult evaluationResult = null;
 			try {
 				// execute openter command
-				evaluationResult = conf.systemState().system().evaluateStatement(stmt, false, false, false);
+				evaluationResult = conf.systemState().system().execute(stmt, false, false, false);
 				inverseStatement = evaluationResult.getInverseStatement();
 			} catch (MSystemException e) {
 				// Precondition violated
@@ -95,7 +95,7 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 
 			try {
 				if (!collector.getPrePostViolation())
-					conf.systemState().system().evaluateStatement(inverseStatement, true, false, false);
+					conf.systemState().system().execute(inverseStatement, true, false, false);
 			} catch (MSystemException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

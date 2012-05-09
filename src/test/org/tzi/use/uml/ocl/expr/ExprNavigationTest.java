@@ -209,7 +209,7 @@ public class ExprNavigationTest extends TestCase {
             					companyClass, 
             					name));
             }
-            system.evaluateStatement(seq);
+            system.execute(seq);
             seq.clear();
 
             // creation of a link between p1 and c2 of an association
@@ -225,7 +225,7 @@ public class ExprNavigationTest extends TestCase {
             					system.state().objectByName(name)));
             }
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewLinkObjectStatement(
             				assoc, 
             				participants,
@@ -323,7 +323,7 @@ public class ExprNavigationTest extends TestCase {
             					companyClass, 
             					name));
             }
-            system.evaluateStatement(seq);
+            system.execute(seq);
             seq.clear();
 
 
@@ -342,7 +342,7 @@ public class ExprNavigationTest extends TestCase {
             }
             MAssociation assoc = model.getAssociation( "Job" );
             
-            system.evaluateStatement(new MLinkInsertionStatement(assoc, exprs, qualifier), true);
+            system.execute(new MLinkInsertionStatement(assoc, exprs, qualifier), true);
             
             MAssociation job = system.model().getAssociation( "Job" );
             MAssociationEnd personEnd =

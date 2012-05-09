@@ -540,7 +540,7 @@ public class GGenerator {
             try {
                
                 for (MStatement statement : lastResult().collector().statements()) {
-                	fSystem.evaluateStatement(statement);
+                	fSystem.execute(statement);
                 }
                 
                 System.out.println("Generated result (system state) accepted.");

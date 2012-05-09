@@ -48,7 +48,7 @@ public class MRValueOperationCall extends MRValue {
     public Value evaluate(SoilEvaluationContext context, StatementEvaluationResult result,
             MStatement parent) throws EvaluationFailedException {
 
-        fOperationCallStatement.evaluate(context, result);
+        fOperationCallStatement.execute(context, result);
 
         return fOperationCallStatement.getReturnValue();
     }

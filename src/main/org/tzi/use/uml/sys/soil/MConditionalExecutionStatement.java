@@ -96,7 +96,7 @@ public class MConditionalExecutionStatement extends MStatement {
 	
 	
 	@Override
-    public void evaluate(SoilEvaluationContext context,
+    public void execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		Value value = EvalUtil.evaluateExpression(this, context, result, fCondition, false);
@@ -112,7 +112,7 @@ public class MConditionalExecutionStatement extends MStatement {
 			toEvaluate = fElseStatement;
 		}
 		
-		toEvaluate.evaluate(context, result);
+		toEvaluate.execute(context, result);
 	}
 	
 	
@@ -134,7 +134,7 @@ public class MConditionalExecutionStatement extends MStatement {
 	
 
 	@Override
-	protected void toVisitorString(
+	protected void toConcreteSyntax(
 			StringBuilder indent,
 			String indentIncr,
 			StringBuilder target) {
@@ -147,7 +147,7 @@ public class MConditionalExecutionStatement extends MStatement {
 		target.append(" then");
 		target.append(newLine);
 		indent.append(indentIncr);
-		fThenStatement.toVisitorString(indent, indentIncr, target);
+		fThenStatement.toConcreteSyntax(indent, indentIncr, target);
 		indent.delete(indent.length() - indentIncr.length(), indent.length());
 		if (hasElseStatement()) {
 			target.append(newLine);
@@ -155,7 +155,7 @@ public class MConditionalExecutionStatement extends MStatement {
 			target.append("else");
 			target.append(newLine);
 			indent.append(indentIncr);
-			fElseStatement.toVisitorString(indent, indentIncr, target);
+			fElseStatement.toConcreteSyntax(indent, indentIncr, target);
 			indent.delete(indent.length() - indentIncr.length(), indent.length());
 		}
 		target.append(newLine);

@@ -397,7 +397,7 @@ public class MMPrintVisitor implements MMVisitor {
     }
     
     protected String getStatementVisitorString(MStatement statement) {
-    	return statement.toVisitorString(fIndent, fIndentStep);
+    	return statement.toConcreteSyntax(fIndent, fIndentStep);
     }
     
     public void visitPrePostCondition(MPrePostCondition e) {

@@ -130,7 +130,7 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
         
         try {
         	StatementEvaluationResult evaluationResult = 
-        		system.evaluateStatement(statement, true, false, false);
+        		system.execute(statement, true, false, false);
         	
         	inverseStatement = evaluationResult.getInverseStatement();
 		} catch (MSystemException e) {
@@ -147,7 +147,7 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
         	basicOutput.println("undo: " + statement.getShellCommand());
         
         try {
-        	system.evaluateStatement(inverseStatement, true, false, false);
+        	system.execute(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			collector.invalid(e);
 		}

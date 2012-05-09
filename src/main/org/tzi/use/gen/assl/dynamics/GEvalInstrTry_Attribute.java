@@ -135,7 +135,7 @@ public class GEvalInstrTry_Attribute extends GEvalInstrTry {
 			}
 		
 			try {	
-	    		system.evaluateStatement(assignStatements, true, false, false);
+	    		system.execute(assignStatements, true, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}

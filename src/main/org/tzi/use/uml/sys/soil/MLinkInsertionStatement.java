@@ -137,7 +137,7 @@ public class MLinkInsertionStatement extends MStatement {
     }
 
     @Override
-    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
 
         List<MObject> vresult = new ArrayList<MObject>(fParticipants.size());

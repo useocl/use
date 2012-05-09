@@ -373,7 +373,7 @@ public class SystemManipulator {
     public void evaluateStatement(
     		MStatement statement) throws MSystemException {
     	
-    	fSystem.evaluateStatement(statement);
+    	fSystem.execute(statement);
     }
     
     
@@ -385,7 +385,7 @@ public class SystemManipulator {
     public void evaluateStatement(
     		String statement) throws MSystemException {
     	
-    	fSystem.evaluateStatement(generateStatement(statement));
+    	fSystem.execute(generateStatement(statement));
     }
     
     

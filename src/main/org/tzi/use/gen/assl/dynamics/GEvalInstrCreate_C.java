@@ -80,7 +80,7 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
     	try {
     		
     		StatementEvaluationResult evaluationResult = 
-    			system.evaluateStatement(statement, true, false, false);
+    			system.execute(statement, true, false, false);
     		
     		inverseStatement = evaluationResult.getInverseStatement();
     		
@@ -104,7 +104,7 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
 			basicOutput.println("undo: " + statement.getShellCommand());
 		
 		try {
-			system.evaluateStatement(inverseStatement, true, false, false);
+			system.execute(inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}

@@ -61,13 +61,13 @@ public class MBlockStatement extends MStatement {
 	
 
 	@Override
-    public void evaluate(SoilEvaluationContext context,
+    public void execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 	
 		for (VarDecl varDecl : fVariableDeclarations) {
 			context.getSystem().assignVariable(result, varDecl.name(), UndefinedValue.instance);
 		}
-		fBody.evaluate(context, result);
+		fBody.execute(context, result);
 	}
 	
 	
@@ -80,7 +80,7 @@ public class MBlockStatement extends MStatement {
 
 
 	@Override
-	protected void toVisitorString(
+	protected void toConcreteSyntax(
 			StringBuilder indent, 
 			String indentIncrease,
 			StringBuilder target) {

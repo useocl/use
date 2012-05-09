@@ -802,7 +802,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         	USEWriter.getInstance().protocol(
 					"[GUI] " + statement.getShellCommand().substring(1));
         	
-        	fSession.system().evaluateStatement(statement);
+        	fSession.system().execute(statement);
         			
         } catch (MSystemException e) {
         	JOptionPane.showMessageDialog(

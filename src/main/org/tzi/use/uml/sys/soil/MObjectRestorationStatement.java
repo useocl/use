@@ -60,7 +60,7 @@ public class MObjectRestorationStatement extends MStatement {
     }
 
     @Override
-    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
 
         // restore objects

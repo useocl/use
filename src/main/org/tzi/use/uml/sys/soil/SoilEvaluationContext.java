@@ -30,124 +30,120 @@ import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.soil.VariableEnvironment;
 
 /**
- * TODO
+ * This context objects comprises everything that is required to execute
+ * statements.
+ * 
+ * @author Fabian Buettner
  * @author Daniel Gent
- *
+ * 
  */
 public class SoilEvaluationContext {
-	/** TODO */
-	private MSystem fSystem;
-	/** TODO */
-	private MSystemState fState;
-	/** TODO */
-	private VariableEnvironment fVarEnv;
-	/** TODO */
-	private Deque<Expression> fExpressionStack = new ArrayDeque<Expression>();
-	/** TODO */
-	private boolean fIsUndo = false;
-	/** TODO */
-	private boolean fIsRedo = false;
-	
-	
-	/**
-	 * TODO
-	 * @param system
-	 */
-	public SoilEvaluationContext(MSystem system) {
-	
-		fSystem = system; 
-		//FIXME: Remove fState and fVarEnv and replace by helper operations?
-		fState = system.state(); 
-		fVarEnv = system.getVariableEnvironment();
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MSystem getSystem() {
-		return fSystem;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MSystemState getState() {
-		return fState;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public VariableEnvironment getVarEnv() {
-		return fVarEnv;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public boolean isUndo() {
-		return fIsUndo;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param isUndo
-	 */
-	public void setIsUndo(boolean isUndo) {
-		fIsUndo = isUndo;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public boolean isRedo() {
-		return fIsRedo;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param isRedo
-	 */
-	public void setIsRedo(boolean isRedo) {
-		fIsRedo = isRedo;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param expression
-	 */
-	public void enterExpression(Expression expression) {
-		fExpressionStack.push(expression);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Expression exitExpression() {
-		return fExpressionStack.pop();
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public boolean isInExpression() {
-		return !fExpressionStack.isEmpty();
-	}
+    /** TODO */
+    private MSystem fSystem;
+
+    private Deque<Expression> fExpressionStack = new ArrayDeque<Expression>();
+    /** TODO */
+    private boolean fIsUndo = false;
+    /** TODO */
+    private boolean fIsRedo = false;
+
+    /**
+     * TODO
+     * 
+     * @param system
+     */
+    public SoilEvaluationContext(MSystem system) {
+
+        fSystem = system;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public MSystem getSystem() {
+        return fSystem;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public MSystemState getState() {
+        return fSystem.state();
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public VariableEnvironment getVarEnv() {
+        return fSystem.getVariableEnvironment();
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public boolean isUndo() {
+        return fIsUndo;
+    }
+
+    /**
+     * TODO
+     * 
+     * @param isUndo
+     */
+    public void setIsUndo(boolean isUndo) {
+        fIsUndo = isUndo;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public boolean isRedo() {
+        return fIsRedo;
+    }
+
+    /**
+     * TODO
+     * 
+     * @param isRedo
+     */
+    public void setIsRedo(boolean isRedo) {
+        fIsRedo = isRedo;
+    }
+
+    /**
+     * TODO
+     * 
+     * @param expression
+     */
+    public void enterExpression(Expression expression) {
+        fExpressionStack.push(expression);
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Expression exitExpression() {
+        return fExpressionStack.pop();
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public boolean isInExpression() {
+        return !fExpressionStack.isEmpty();
+    }
 }

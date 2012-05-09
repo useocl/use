@@ -87,7 +87,7 @@ public class MIterationStatement extends MStatement {
 
 	
 	@Override
-    public void evaluate(SoilEvaluationContext context,
+    public void execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 	
 		Value val = EvalUtil.evaluateExpression(this, context, result, fRange);
@@ -98,7 +98,7 @@ public class MIterationStatement extends MStatement {
 		CollectionValue range = (CollectionValue)val;
 		for (Value elem : range) {
 			context.getVarEnv().assign(fVariableName, elem);
-			fBody.evaluate(context, result);
+			fBody.execute(context, result);
 		}
 		
 	}
@@ -118,7 +118,7 @@ public class MIterationStatement extends MStatement {
 	
 
 	@Override
-	protected void toVisitorString(
+	protected void toConcreteSyntax(
 			StringBuilder indent, 
 			String indentIncrease,
 			StringBuilder target) {
@@ -134,7 +134,7 @@ public class MIterationStatement extends MStatement {
 		if (!fBody.isEmptyStatement()) {
 			target.append(newLine);
 			indent.append(indentIncrease);
-			fBody.toVisitorString(indent, indentIncrease, target);
+			fBody.toConcreteSyntax(indent, indentIncrease, target);
 			indent.delete(indent.length() - indentIncrease.length(), indent.length());
 			target.append(newLine);
 		}

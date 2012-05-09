@@ -53,13 +53,13 @@ public class MWhileStatement extends MStatement {
     }
 
     @Override
-    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
 
         while (true) {
             Value v = EvalUtil.evaluateExpression(this, context, result, fCondition);
             if (v.isDefined() && ((BooleanValue) v).value())
-                fBody.evaluate(context, result);
+                fBody.execute(context, result);
             else
                 break;
         }
@@ -73,7 +73,7 @@ public class MWhileStatement extends MStatement {
 
 
     @Override
-    protected void toVisitorString(StringBuilder indent, String indentIncrease, StringBuilder target) {
+    protected void toConcreteSyntax(StringBuilder indent, String indentIncrease, StringBuilder target) {
 
         String newLine = "\n";
 
@@ -84,7 +84,7 @@ public class MWhileStatement extends MStatement {
         if (!fBody.isEmptyStatement()) {
             target.append(newLine);
             indent.append(indentIncrease);
-            fBody.toVisitorString(indent, indentIncrease, target);
+            fBody.toConcreteSyntax(indent, indentIncrease, target);
             indent.delete(indent.length() - indentIncrease.length(), indent.length());
             target.append(newLine);
         }

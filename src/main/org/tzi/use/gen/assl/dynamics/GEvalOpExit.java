@@ -25,7 +25,7 @@ public class GEvalOpExit extends GEvalInstruction {
 			MStatement inverseStatement = null;
 			try {
 				// execute OpExit statement
-				evaluationResult = conf.systemState().system().evaluateStatement(statement, false, false, false);
+				evaluationResult = conf.systemState().system().execute(statement, false, false, false);
 				inverseStatement = evaluationResult.getInverseStatement();
 			} catch (MSystemException e) {
 				//e.printStackTrace();
@@ -38,7 +38,7 @@ public class GEvalOpExit extends GEvalInstruction {
 			}
 			try {
 				if (evaluationResult!=null)
-					conf.systemState().system().evaluateStatement(inverseStatement, true, false, false);
+					conf.systemState().system().execute(inverseStatement, true, false, false);
 			} catch (MSystemException e) {
 				e.printStackTrace();
 			}

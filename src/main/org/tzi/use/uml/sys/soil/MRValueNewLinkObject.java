@@ -62,7 +62,7 @@ public class MRValueNewLinkObject extends MRValue {
 			StatementEvaluationResult result,
 			MStatement parent) throws EvaluationFailedException {
 		
-		fNewLinkObjectStatement.evaluate(context, result);
+		fNewLinkObjectStatement.execute(context, result);
 		
 		return fNewLinkObjectStatement.getCreatedLinkObject().value();
 	}

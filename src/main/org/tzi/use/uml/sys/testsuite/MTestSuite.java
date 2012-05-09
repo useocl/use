@@ -122,7 +122,7 @@ public class MTestSuite {
 			if (c == null)
 				return null;
 			
-			system.evaluateStatement(c);
+			system.execute(c);
 		}
 				
 		return system;

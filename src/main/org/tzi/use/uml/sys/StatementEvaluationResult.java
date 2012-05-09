@@ -31,26 +31,23 @@ import org.tzi.use.util.soil.StateDifference;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
+ * Captures additional information about the execution of a statement, 
+ * for example to realize undo / redo and to feed state change listeners. 
+ * 
+ * @author Fabian Buettner
  * @author Daniel Gent
- *
  */
 public class StatementEvaluationResult {
-	/** TODO */
 	private MStatement fEvaluatedStatement;
-	/** TODO */
 	private StateDifference fStateDifference = new StateDifference();
-	/** TODO */
 	private MSequenceStatement fInverseStatement = new MSequenceStatement();
-	/** TODO */
 	private EvaluationFailedException fException = null;
-	/** TODO */
 	private List<Event> fEvents = new ArrayList<Event>();
 	
 
 	/**
 	 * TODO
-	 * @param statement
+	 * @param statement The (top-level) statement that is / has been executed
 	 */
 	public StatementEvaluationResult(MStatement statement) {
 		fEvaluatedStatement = statement;

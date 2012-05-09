@@ -89,7 +89,7 @@ public class ASTTestCase extends AST {
 					return TestResult.ERROR;
 				}
 				
-				system.evaluateStatement(mCmd);
+				system.execute(mCmd);
 				
 				if (mCmd instanceof MExitOperationStatement) {
 					// We keep track of the last pre state to allow asserts after

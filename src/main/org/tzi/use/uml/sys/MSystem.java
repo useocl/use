@@ -92,6 +92,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  * doing state transitions.
  *
  * @version     $ProjectVersion: 0.393 $
+ * @author      Fabian Buettner 
  * @author      Mark Richters 
  */
 public final class MSystem {
@@ -687,36 +688,29 @@ public final class MSystem {
     
     
     /**
-     * TODO
+     * Creates an object in the current system state, captures additional
+     * information about the execution.
      * 
      * @param objectClass
      * @param objectName
-     * @return
      * @throws MSystemException
-     * @throws EvaluationFailedException
      */
-    public MObject createObject(StatementEvaluationResult result,
-            MClass objectClass, String objectName) throws MSystemException {
+    public MObject createObject(StatementEvaluationResult result, MClass objectClass,
+            String objectName) throws MSystemException {
 
         MObject newObject = fCurrentState.createObject(objectClass, objectName);
-
         result.getStateDifference().addNewObject(newObject);
-
         result.prependToInverseStatement(new MObjectDestructionStatement(newObject.value()));
-
         result.appendEvent(new ObjectCreatedEvent(newObject));
-
         return newObject;
     }
 
     /**
-     * TODO
-     * 
-     * @param object
+     * Destroys an object in the current system state and keeps track of the changes.
      * @throws MSystemException
      */
-    public void destroyObject(StatementEvaluationResult result,
-            MObject object) throws MSystemException {
+    public void destroyObject(StatementEvaluationResult result, MObject object)
+            throws MSystemException {
 
         // we cannot destroy an object with an active operation. we need to
         // check whether this object, or any of the link objects possibly
@@ -739,8 +733,8 @@ public final class MSystem {
         Map<MObject, List<String>> undefinedTopLevelReferences = new HashMap<MObject, List<String>>();
 
         for (MObject destroyedObject : deleteResult.getRemovedObjects()) {
-            List<String> topLevelReferences = fVariableEnvironment.getTopLevelReferencesTo(
-                    destroyedObject);
+            List<String> topLevelReferences = fVariableEnvironment
+                    .getTopLevelReferencesTo(destroyedObject);
 
             if (!topLevelReferences.isEmpty()) {
                 undefinedTopLevelReferences.put(destroyedObject, topLevelReferences);
@@ -786,16 +780,15 @@ public final class MSystem {
 
     /**
      * Inserts a link between objects to the current state and keeps track of
-     * the changes (e.g., for undo) in the result object.
+     * the changes.
      * 
      * @param association
      * @param participants
      * @param qualifierValues
      * @throws EvaluationFailedException
      */
-    public MLink createLink(StatementEvaluationResult result,
-            MAssociation association, List<MObject> participants, List<List<Value>> qualifierValues)
-            throws MSystemException {
+    public MLink createLink(StatementEvaluationResult result, MAssociation association,
+            List<MObject> participants, List<List<Value>> qualifierValues) throws MSystemException {
 
         MLink newLink = fCurrentState.createLink(association, participants, qualifierValues);
 
@@ -831,22 +824,20 @@ public final class MSystem {
     }
 
     /**
-     * TODO
+     * Deletes a link in the current system state and keeps track of the changes.
      * 
      * @param association
      * @param participants
      * @throws MSystemException
      * @throws EvaluationFailedException
      */
-    public void deleteLink(StatementEvaluationResult result,
-            MAssociation association, List<MObject> participants, List<List<Value>> qualifierValues)
-            throws MSystemException {
+    public void deleteLink(StatementEvaluationResult result, MAssociation association,
+            List<MObject> participants, List<List<Value>> qualifierValues) throws MSystemException {
 
         // we need to find out if this is actually a link object, since we need
         // to call destroyObject in that case to get the correct undo
         // statement
-        MLink link = fCurrentState.linkBetweenObjects(association, participants,
-                qualifierValues);
+        MLink link = fCurrentState.linkBetweenObjects(association, participants, qualifierValues);
 
         if ((link != null) && (link instanceof MLinkObject)) {
             destroyObject(result, (MLinkObject) link);
@@ -890,7 +881,7 @@ public final class MSystem {
     }
 
     /**
-     * TODO
+     * Creates a link object in the current system state and keeps track of the changes.
      * 
      * @param associationClass
      * @param linkObjectName
@@ -899,10 +890,9 @@ public final class MSystem {
      * @throws MSystemException
      * @throws EvaluationFailedException
      */
-    public MLinkObject createLinkObject(
-            StatementEvaluationResult result, MAssociationClass associationClass,
-            String linkObjectName, List<MObject> participants, List<List<Value>> qualifierValues)
-            throws MSystemException {
+    public MLinkObject createLinkObject(StatementEvaluationResult result,
+            MAssociationClass associationClass, String linkObjectName, List<MObject> participants,
+            List<List<Value>> qualifierValues) throws MSystemException {
 
         MLinkObject newLinkObject;
         newLinkObject = fCurrentState.createLinkObject(associationClass, linkObjectName,
@@ -918,7 +908,7 @@ public final class MSystem {
     }
 
     /**
-     * TODO
+     * Assigns an attribute value of an object in the current system state and keeps track of the changes.
      * 
      * @param object
      * @param attribute
@@ -926,8 +916,8 @@ public final class MSystem {
      * @throws MSystemException
      * @throws EvaluationFailedException
      */
-    public void assignAttribute(StatementEvaluationResult result,
-            MObject object, MAttribute attribute, Value value) throws MSystemException {
+    public void assignAttribute(StatementEvaluationResult result, MObject object,
+            MAttribute attribute, Value value) throws MSystemException {
 
         Value oldValue;
 
@@ -966,78 +956,7 @@ public final class MSystem {
         fVariableEnvironment.assign(variableName, value);
     }
 
-    /**
-     * TODO
-     * 
-     * @param statement
-     * @param undoOnFailure
-     * @param storeResult
-     * @return
-     * @throws MSystemException
-     */
-    private StatementEvaluationResult evaluate(MStatement statement, boolean undoOnFailure,
-            boolean storeResult, boolean notifyUpdateStateListeners) throws MSystemException {
-        // FIXME: inline these parameters into the evaluation context
-        return evaluate(statement, new SoilEvaluationContext(this), undoOnFailure, storeResult,
-                notifyUpdateStateListeners);
-    }
-   
-    
-    /**
-	 * TODO
-	 * @param statement
-	 * @throws EvaluationFailedException
-	 */
-	private StatementEvaluationResult evaluate(
-			MStatement statement,
-			SoilEvaluationContext context,
-			boolean undoOnFailure,
-			boolean storeResult,
-			boolean notifyUpdateStateListeners) throws MSystemException {
-		
-		if (stateIsLocked()) {
-			throw new MSystemException(
-					"The system currently cannot be modified.");
-		}
-		
-		StatementEvaluationResult result = new StatementEvaluationResult(statement);
-		
-		fCurrentlyEvaluatedStatements.push(result);
-		
-		if (context.isUndo()) {
-			fUniqueNameGenerator.popState();
-		} else {
-			fUniqueNameGenerator.pushState();
-		}
-		
-		try {
-        	statement.evaluate(context, result);
-        } catch (EvaluationFailedException e) {
-        	result.setException(e);
-        }
-				
-		fCurrentlyEvaluatedStatements.pop();
-		
-		if (storeResult) {
-			fStatementEvaluationResults.push(result);
-		}
-		
-		if (result.wasSuccessfull() && notifyUpdateStateListeners)
-			fireStateChanged(result.getStateDifference());
-		
-		if (!result.wasSuccessfull()) {
-			if (undoOnFailure) {
-				if (storeResult) fStatementEvaluationResults.pop();
-				evaluate(result.getInverseStatement(), false, false, notifyUpdateStateListeners);
-			}
-			
-			throw new MSystemException(result.getException().getMessage(), result.getException());
-		}
-		
-		return result;
-	}
-
-	/**
+   	/**
 	 * TODO
 	 * @param differences
 	 */
@@ -1066,10 +985,10 @@ public final class MSystem {
      * @param statement
      * @throws EvaluationFailedException
      */
-    public StatementEvaluationResult evaluateStatement(
+    public StatementEvaluationResult execute(
     		MStatement statement) throws MSystemException {
     	    	   	
-    	return evaluateStatement(statement, true, true, true);
+    	return execute(statement, true, true, true);
     }
     
     /**
@@ -1077,17 +996,10 @@ public final class MSystem {
      * @param statement
      * @throws EvaluationFailedException
      */
-    public StatementEvaluationResult evaluateStatement(
+    public StatementEvaluationResult execute(
     		MStatement statement, boolean notifyUpdateStateListeners) throws MSystemException {
     	    	   	
-    	return evaluateStatement(statement, true, true, notifyUpdateStateListeners);
-    }
-    
-    public StatementEvaluationResult evaluateStatement(
-    		MStatement statement,
-    		boolean undoOnFailure,
-    		boolean storeResult) throws MSystemException {
-    	return evaluateStatement(statement, undoOnFailure, storeResult, true);
+    	return execute(statement, true, true, notifyUpdateStateListeners);
     }
     
     /**
@@ -1098,7 +1010,7 @@ public final class MSystem {
      * @return
      * @throws EvaluationFailedException
      */
-    public StatementEvaluationResult evaluateStatement(
+    public StatementEvaluationResult execute(
     		MStatement statement,
     		boolean undoOnFailure,
     		boolean storeResult,
@@ -1107,11 +1019,68 @@ public final class MSystem {
     	fRedoStack.clear();
     	
     	StatementEvaluationResult result = 
-    		evaluate(statement, undoOnFailure, storeResult, notifyUpdateStateListeners);
+    		execute(statement, new SoilEvaluationContext(this), undoOnFailure, storeResult,
+        notifyUpdateStateListeners);
     	
     	return result;
     }
     
+    /**
+     * Executes a statement.
+     * 
+     * @param statement The statement to execute
+     * @param context The evaluation context
+     * @param undoOnFailure Undo the statement on failure in sub-statements
+     * @throws EvaluationFailedException
+     */
+    private StatementEvaluationResult execute(MStatement statement, SoilEvaluationContext context,
+            boolean undoOnFailure, boolean storeResult, boolean notifyUpdateStateListeners)
+            throws MSystemException {
+
+        if (stateIsLocked()) {
+            throw new MSystemException("The system currently cannot be modified.");
+        }
+
+        StatementEvaluationResult result = new StatementEvaluationResult(statement);
+
+        fCurrentlyEvaluatedStatements.push(result);
+
+        if (context.isUndo()) {
+            fUniqueNameGenerator.popState();
+        } else {
+            fUniqueNameGenerator.pushState();
+        }
+
+        try {
+            statement.execute(context, result);
+        } catch (EvaluationFailedException e) {
+            result.setException(e);
+        }
+
+        fCurrentlyEvaluatedStatements.pop();
+
+        if (storeResult) {
+            fStatementEvaluationResults.push(result);
+        }
+
+        if (result.wasSuccessfull() && notifyUpdateStateListeners)
+            fireStateChanged(result.getStateDifference());
+
+        if (!result.wasSuccessfull()) {
+            if (undoOnFailure) {
+                if (storeResult)
+                    fStatementEvaluationResults.pop();
+                execute(result.getInverseStatement(), new SoilEvaluationContext(this), false,
+                        false, notifyUpdateStateListeners);
+            }
+
+            throw new MSystemException(result.getException().getMessage(), result.getException());
+        }
+
+        return result;
+    }
+
+
     
     /*public Value evaluateStatementInExpression(
     		MStatement statement) throws MSystemException {
@@ -1159,7 +1128,7 @@ public final class MSystem {
     	SoilEvaluationContext context = new SoilEvaluationContext(this);
     	context.setIsUndo(true);
     	
-    	return evaluate(inverseStatement, context, false, false, true);
+    	return execute(inverseStatement, context, false, false, true);
     }
     
     
@@ -1183,7 +1152,7 @@ public final class MSystem {
 		context.setIsRedo(true);
 		
 		StatementEvaluationResult result = 
-			evaluate(
+			execute(
 					redoStatement, 
 					context, 
 					false, 

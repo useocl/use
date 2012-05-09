@@ -92,7 +92,7 @@ public class MEnterOperationStatement extends MStatement {
 	
 	
 	@Override
-    public void evaluate(SoilEvaluationContext context,
+    public void execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		// evaluate self

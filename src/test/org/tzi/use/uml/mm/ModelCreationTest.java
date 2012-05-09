@@ -69,15 +69,15 @@ public class ModelCreationTest extends TestCase {
             MClass personClass = model.getClass("Person");
             MClass companyClass = model.getClass("Company");
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				personClass, "p1"));
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				personClass, "p2"));
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				companyClass, "c1"));
             
@@ -101,15 +101,15 @@ public class ModelCreationTest extends TestCase {
             MClass personClass = model.getClass("Person");
             MClass companyClass = model.getClass("Company");
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				personClass, "p1"));
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				personClass, "p2"));
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				companyClass, "c1"));
 
@@ -120,7 +120,7 @@ public class ModelCreationTest extends TestCase {
             participants.add(
             		new MRValueExpression(system.state().objectByName("c1")));
            
-            system.evaluateStatement(
+            system.execute(
             		new MLinkInsertionStatement(
             				model.getAssociation("Job"), 
             				participants, null));
@@ -131,7 +131,7 @@ public class ModelCreationTest extends TestCase {
             participants.add(
             		new MRValueExpression(system.state().objectByName("p2")));
 
-            system.evaluateStatement(
+            system.execute(
             		new MLinkInsertionStatement(
             				model.getAssociation("isBoss"), 
             				participants, null));
@@ -156,15 +156,15 @@ public class ModelCreationTest extends TestCase {
             MClass personClass = model.getClass("Person");
             MClass bankClass = model.getClass("Bank");
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				personClass, "p1"));
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				personClass, "p2"));
             
-            system.evaluateStatement(
+            system.execute(
             		new MNewObjectStatement(
             				bankClass, "b1"));
 
@@ -185,7 +185,7 @@ public class ModelCreationTest extends TestCase {
             qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
             qualifierValues.add(null);
             
-            system.evaluateStatement(
+            system.execute(
             		new MLinkInsertionStatement(
             				model.getAssociation("Account"), 
             				participants,
@@ -197,7 +197,7 @@ public class ModelCreationTest extends TestCase {
             qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
             
             try {
-	            system.evaluateStatement(
+	            system.execute(
 	            		new MLinkInsertionStatement(
 	            				model.getAssociation("Account"), 
 	            				participants,
@@ -211,7 +211,7 @@ public class ModelCreationTest extends TestCase {
             qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
             
             try {
-	            system.evaluateStatement(
+	            system.execute(
 	            		new MLinkInsertionStatement(
 	            				model.getAssociation("Account"), 
 	            				participants,
@@ -222,7 +222,7 @@ public class ModelCreationTest extends TestCase {
             // Build erroneous insertion statement equivalent to "insert (b1, p1) into Account"           
             qualifierValues.clear();
             try {
-	            system.evaluateStatement(
+	            system.execute(
 	            		new MLinkInsertionStatement(
 	            				model.getAssociation("Account"), 
 	            				participants,
@@ -234,7 +234,7 @@ public class ModelCreationTest extends TestCase {
             qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
             qualifierValues.add(null);
             try {
-	            system.evaluateStatement(
+	            system.execute(
 	            		new MLinkInsertionStatement(
 	            				model.getAssociation("Account"), 
 	            				participants,
@@ -247,7 +247,7 @@ public class ModelCreationTest extends TestCase {
             qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123455"))));
             qualifierValues.add(null);
             
-	        system.evaluateStatement(
+	        system.execute(
             		new MLinkInsertionStatement(
             				model.getAssociation("Account"), 
             				participants,
@@ -263,7 +263,7 @@ public class ModelCreationTest extends TestCase {
             qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("654321"))));
             qualifierValues.add(null);
             
-            system.evaluateStatement(
+            system.execute(
             		new MLinkInsertionStatement(
             				model.getAssociation("Account"), 
             				participants,

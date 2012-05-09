@@ -74,7 +74,7 @@ public class MExitOperationStatement extends MStatement {
 	
 
 	@Override
-    public void evaluate(SoilEvaluationContext context,
+    public void execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		Value vresult = (fOperationResult == null) ? 

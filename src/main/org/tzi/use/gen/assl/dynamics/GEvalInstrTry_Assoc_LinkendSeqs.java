@@ -197,7 +197,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
         // in the original version of this algorithm, all links get removed so
         // we do that as well to ensure previous test cases behave the same
         try {
-        	system.evaluateStatement(
+        	system.execute(
         			constructLinkChangeStatement(
         					initialConfiguration, 
         					0, 
@@ -242,7 +242,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
                     basicOutput.println(statement.getShellCommand());
 
         	try {	
-        		system.evaluateStatement(statement, true, false, false);
+        		system.execute(statement, true, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}
@@ -311,7 +311,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
                     basicOutput.println(statement.getShellCommand());
                 
         	try {
-        		system.evaluateStatement(statement, true, false, false);
+        		system.execute(statement, true, false, false);
         		system.getUniqueNameGenerator().popState();
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
@@ -432,7 +432,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
                 basicOutput.println(statements.getShellCommand());
         	
         	try {	
-        		res = system.evaluateStatement(statements, true, false, false);
+        		res = system.execute(statements, true, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}
@@ -450,7 +450,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
             this.outPutProgress(tryNum);
             
         	try {	
-        		system.evaluateStatement(res.getInverseStatement(), false, false, false);
+        		system.execute(res.getInverseStatement(), false, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}

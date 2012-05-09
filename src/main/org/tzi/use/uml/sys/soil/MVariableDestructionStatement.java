@@ -54,7 +54,7 @@ public class MVariableDestructionStatement extends MStatement {
     }
 
     @Override
-    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
 
         Value oldValue = context.getVarEnv().lookUp(fVariableName);

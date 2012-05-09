@@ -679,9 +679,9 @@ public final class Shell implements Runnable, PPCHandler {
 			if ((statement instanceof MEnterOperationStatement)
 					|| (statement instanceof MExitOperationStatement)) {
 				
-				system.evaluateStatement(statement, false, true);
+				system.execute(statement, false, true, true);
 			} else {
-				system.evaluateStatement(statement);
+				system.execute(statement);
 			}
 		} catch (MSystemException e) {
 			String message = e.getMessage();

@@ -126,7 +126,7 @@ public class MOperationCallStatement extends MStatement {
     }
 
     @Override
-    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
 
         // just to check if self exists
@@ -157,7 +157,7 @@ public class MOperationCallStatement extends MStatement {
         }
 
         try {
-            operationBody.evaluate(context, result);
+            operationBody.execute(context, result);
 
             if (fOperation.hasResultType()) {
                 fReturnValue = context.getVarEnv().lookUp("result");
