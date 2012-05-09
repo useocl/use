@@ -24,173 +24,141 @@ package org.tzi.use.uml.sys.soil;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
-
 
 /**
  * TODO
- * @author Daniel Gent
- *
+ * 
  */
 public class MAttributeAssignmentStatement extends MStatement {
-	/** TODO */
-	private Expression fObject;
-	/** TODO */
-	private MAttribute fAttribute;
-	/** TODO */
-	private MRValue fRValue;
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 * @param attribute
-	 * @param value
-	 */
-	public MAttributeAssignmentStatement(
-			Expression object, 
-			MAttribute attribute,
-			MRValue rValue) {
-		
-		fObject = object;
-		fAttribute = attribute;
-		fRValue = rValue;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 * @param attribute
-	 * @param value
-	 */
-	public MAttributeAssignmentStatement(
-			Expression object,
-			MAttribute attribute,
-			Expression value) {
-		
-		this(object, attribute, new MRValueExpression(value));
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 * @param attribute
-	 * @param value
-	 */
-	public MAttributeAssignmentStatement(
-			Expression object,
-			MAttribute attribute,
-			Value value) {
-		
-		this(object, attribute, new MRValueExpression(value));
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 * @param attribute
-	 * @param value
-	 */
-	public MAttributeAssignmentStatement(
-			MObject object,
-			MAttribute attribute,
-			Expression value) {
-		
-		this(
-				new ExpressionWithValue(object.value()), 
-				attribute, 
-				value);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 * @param attribute
-	 * @param value
-	 */
-	public MAttributeAssignmentStatement(
-			MObject object,
-			MAttribute attribute,
-			Value value) {
-		
-		this(
-				new ExpressionWithValue(object.value()), 
-				attribute, 
-				new ExpressionWithValue(value));
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Expression getObject() {
-		return fObject;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MAttribute getAttribute() {
-		return fAttribute;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MRValue getRValue() {
-		return fRValue;
-		
-	}
-		
-	
-	@Override
-	protected void evaluate(
-			SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
-		
-		// get the actual object
-		MObject object = evaluateObjectExpression(context, result, fObject);
-		
-		// get the new value
-		Value newValue = evaluateRValue(context, result, fRValue);
-		
-		assignAttribute(context, result, object, fAttribute, newValue);
-	}
-	
-	
-	@Override
-	protected String shellCommand() {
-		return 
-		fObject + 
-		"." + 
-		fAttribute.name() + 
-		" := " + 
-		fRValue;
-	}
-	
+    /** TODO */
+    private Expression fObject;
+    /** TODO */
+    private MAttribute fAttribute;
+    /** TODO */
+    private MRValue fRValue;
 
-	@Override
-	public boolean hasSideEffects() {
-		// no need to check expression or rvalue, changing an attribute is
-		// always a "side effect"
-		return true;
-	}
+    /**
+     * TODO
+     * 
+     * @param object
+     * @param attribute
+     * @param value
+     */
+    public MAttributeAssignmentStatement(Expression object, MAttribute attribute, MRValue rValue) {
+
+        fObject = object;
+        fAttribute = attribute;
+        fRValue = rValue;
+    }
+
+    /**
+     * TODO
+     * 
+     * @param object
+     * @param attribute
+     * @param value
+     */
+    public MAttributeAssignmentStatement(Expression object, MAttribute attribute, Expression value) {
+
+        this(object, attribute, new MRValueExpression(value));
+    }
+
+    /**
+     * TODO
+     * 
+     * @param object
+     * @param attribute
+     * @param value
+     */
+    public MAttributeAssignmentStatement(Expression object, MAttribute attribute, Value value) {
+
+        this(object, attribute, new MRValueExpression(value));
+    }
+
+    /**
+     * TODO
+     * 
+     * @param object
+     * @param attribute
+     * @param value
+     */
+    public MAttributeAssignmentStatement(MObject object, MAttribute attribute, Expression value) {
+
+        this(new ExpressionWithValue(object.value()), attribute, value);
+    }
+
+    /**
+     * TODO
+     * 
+     * @param object
+     * @param attribute
+     * @param value
+     */
+    public MAttributeAssignmentStatement(MObject object, MAttribute attribute, Value value) {
+
+        this(new ExpressionWithValue(object.value()), attribute, new ExpressionWithValue(value));
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Expression getObject() {
+        return fObject;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public MAttribute getAttribute() {
+        return fAttribute;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public MRValue getRValue() {
+        return fRValue;
+
+    }
+
+    @Override
+    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+            throws EvaluationFailedException {
+
+        // get the actual object
+        MObject object = EvalUtil.evaluateObjectExpression(this, context, result, fObject);
+
+        // get the new value
+        Value newValue = EvalUtil.evaluateRValue(this, context, result, fRValue, false);
+
+        try {
+            context.getSystem().assignAttribute(result, object, fAttribute, newValue);
+        } catch (MSystemException e) {
+            throw new EvaluationFailedException(this, e.getMessage());
+        }
+    }
+
+    @Override
+    protected String shellCommand() {
+        return fObject + "." + fAttribute.name() + " := " + fRValue;
+    }
 
 
-	@Override
-	public String toString() {
-		return shellCommand();
-	}
+    @Override
+    public String toString() {
+        return shellCommand();
+    }
 }

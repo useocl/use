@@ -22,7 +22,6 @@
 package org.tzi.use.uml.sys.events;
 
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.soil.MStatement;
 
 /**
  * TODO
@@ -39,8 +38,7 @@ public class ObjectDestroyedEvent extends Event {
 	 * @param creator
 	 * @param destroyedObject
 	 */
-	public ObjectDestroyedEvent(MStatement creator, MObject destroyedObject) {
-		super(creator);
+	public ObjectDestroyedEvent(MObject destroyedObject) {
 		fDestroyedObject = destroyedObject;
 	}
 	

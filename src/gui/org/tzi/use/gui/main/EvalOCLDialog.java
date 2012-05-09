@@ -42,7 +42,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.ExprEvalBrowser;
@@ -243,10 +242,6 @@ class EvalOCLDialog extends JDialog {
         PrintWriter out = new PrintWriter(new TeeWriter(
                 new TextComponentWriter(fTextOut), msgWriter), true);
 
-        SoilPermissionLevel permissionLevel = Options.soilFromOCL;
-        if (permissionLevel == SoilPermissionLevel.ALL) {
-        	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
-        }
         
         // compile query
         Expression expr = OCLCompiler.compileExpression(
@@ -257,8 +252,7 @@ class EvalOCLDialog extends JDialog {
                 out, 
                 fSystem.varBindings());
         
-        Options.soilFromOCL = permissionLevel;
-        
+       
         out.flush();
         fTextIn.requestFocus();
 

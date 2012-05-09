@@ -26,136 +26,124 @@ import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
  * TODO
+ * 
  * @author Daniel Gent
- *
+ * 
  */
 public class MNewObjectStatement extends MStatement {
-	/** TODO */
-	private MClass fObjectClass;
-	/** TODO */
-	private Expression fObjectName;
-	/** TODO */
-	private MObject fCreatedObject;
-	
-	
-	/**
-	 * TODO
-	 * @param objectClass
-	 * @param objectName
-	 */
-	public MNewObjectStatement(
-			MClass objectClass, 
-			Expression objectName) {
-		
-		fObjectClass = objectClass;
-		fObjectName = objectName;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param objectClass
-	 * @param objectName
-	 */
-	public MNewObjectStatement(
-			MClass objectClass,
-			String objectName) {
-		
-		fObjectClass = objectClass;
-		if (objectName != null) {
-			fObjectName = new ExpConstString(objectName);
-		}
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param objectClass
-	 */
-	public MNewObjectStatement(
-			MClass objectClass) {
-		
-		fObjectClass = objectClass;
-		fObjectName = null;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MClass getObjectClass() {
-		return fObjectClass;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Type getObjectType() {
-		return fObjectClass.type();
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Expression getObjectName() {
-		return fObjectName;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MObject getCreatedObject() {
-		return fCreatedObject;
-	}
+    /** TODO */
+    private MClass fObjectClass;
+    /** TODO */
+    private Expression fObjectName;
+    /** TODO */
+    private MObject fCreatedObject;
 
+    /**
+     * TODO
+     * 
+     * @param objectClass
+     * @param objectName
+     */
+    public MNewObjectStatement(MClass objectClass, Expression objectName) {
 
-	@Override
-	protected void evaluate(SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
-		
-		String objectName;
-		if (fObjectName == null) {
-			objectName = context.getState().uniqueObjectNameForClass(fObjectClass);
-		} else {
-			objectName = evaluateString(context, result, fObjectName);
-		}
-						
-		// create new object
-		fCreatedObject = 
-			createObject(context, result, fObjectClass, objectName);
-	}
+        fObjectClass = objectClass;
+        fObjectName = objectName;
+    }
 
-	
-	@Override
-	protected String shellCommand() {
-		return 
-		"new " + 
-		fObjectClass.name() + 
-		(fObjectName != null ? ("(" + fObjectName + ")") : "");
-	}
+    /**
+     * TODO
+     * 
+     * @param objectClass
+     * @param objectName
+     */
+    public MNewObjectStatement(MClass objectClass, String objectName) {
 
+        fObjectClass = objectClass;
+        if (objectName != null) {
+            fObjectName = new ExpConstString(objectName);
+        }
+    }
 
-	@Override
-	public boolean hasSideEffects() {
-		return true;
-	}
+    /**
+     * TODO
+     * 
+     * @param objectClass
+     */
+    public MNewObjectStatement(MClass objectClass) {
 
+        fObjectClass = objectClass;
+        fObjectName = null;
+    }
 
-	@Override
-	public String toString() {
-		return shellCommand();
-	}
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public MClass getObjectClass() {
+        return fObjectClass;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Type getObjectType() {
+        return fObjectClass.type();
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Expression getObjectName() {
+        return fObjectName;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public MObject getCreatedObject() {
+        return fCreatedObject;
+    }
+
+    @Override
+    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+            throws EvaluationFailedException {
+
+        String objectName;
+        if (fObjectName == null) {
+            objectName = context.getState().uniqueObjectNameForClass(fObjectClass);
+        } else {
+            objectName = EvalUtil.evaluateString(this, context, result, fObjectName);
+        }
+
+        // create new object
+        try {
+            fCreatedObject = context.getSystem().createObject(result, fObjectClass, objectName);
+        } catch (MSystemException e) {
+            throw new EvaluationFailedException(this, e.getMessage());
+        }
+    }
+
+    @Override
+    protected String shellCommand() {
+        return "new " + fObjectClass.name()
+                + (fObjectName != null ? ("(" + fObjectName + ")") : "");
+    }
+
+    @Override
+    public String toString() {
+        return shellCommand();
+    }
 }

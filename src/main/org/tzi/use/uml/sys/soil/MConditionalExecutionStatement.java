@@ -96,10 +96,10 @@ public class MConditionalExecutionStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate(SoilEvaluationContext context,
+    public void evaluate(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		Value value = evaluateExpression(context, result, fCondition, false);
+		Value value = EvalUtil.evaluateExpression(this, context, result, fCondition, false);
 		
 		MStatement toEvaluate;
 		if ((value.isDefined() 
@@ -112,7 +112,7 @@ public class MConditionalExecutionStatement extends MStatement {
 			toEvaluate = fElseStatement;
 		}
 		
-		evaluateSubStatement(context, result, toEvaluate);
+		toEvaluate.evaluate(context, result);
 	}
 	
 	
@@ -132,14 +132,6 @@ public class MConditionalExecutionStatement extends MStatement {
 	}
 	
 	
-	@Override
-	public boolean hasSideEffects() {		
-		return (
-				fCondition.hasSideEffects() || 
-				fThenStatement.hasSideEffects() || 
-				fElseStatement.hasSideEffects());
-	}
-
 
 	@Override
 	protected void toVisitorString(

@@ -26,91 +26,86 @@ import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
  * TODO
+ * 
  * @author Daniel Gent
- *
+ * 
  */
 public class MObjectDestructionStatement extends MStatement {
-	/** TODO */
-	private Expression fToDelete;
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 */
-	public MObjectDestructionStatement(Expression toDelete) {
-		fToDelete = toDelete;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 */
-	public MObjectDestructionStatement(Value object) {
-		this(new ExpressionWithValue(object));
-	}
+    /** TODO */
+    private Expression fToDelete;
 
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Expression getToDelete() {
-		return fToDelete;
-	}
-	
-	
-	@Override
-	protected void evaluate(SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
-		
-		// handle "dynamic" collections (e.g. .allInstances)
-		if (fToDelete.type().isCollection(false)) {
-			Value val = evaluateExpression(context, result, fToDelete);
-			
-			if (val.isUndefined())
-				return;
-			
-			CollectionValue collection = (CollectionValue)val;
-			for (Value object : collection.collection()) {
-				MObjectDestructionStatement statement = 
-					new MObjectDestructionStatement(object);
-				
-				statement.setIsOperationBody(isOperationBody());
-				statement.setSourcePosition(getSourcePosition());
-				
-				evaluateSubStatement(context, result, statement);
-			}
-			
-		} else {
-			MObject object = evaluateObjectExpression(context, result, fToDelete);
-			
-			destroyObject(context, result, object);
-		}
-	}
-	
-	
-	@Override
-	protected String shellCommand() {
-		return "destroy " + fToDelete;
-	}
-	
-	
-	@Override
-	public boolean hasSideEffects() {
-		return true;
-	}
+    /**
+     * TODO
+     * 
+     * @param object
+     */
+    public MObjectDestructionStatement(Expression toDelete) {
+        fToDelete = toDelete;
+    }
 
+    /**
+     * TODO
+     * 
+     * @param object
+     */
+    public MObjectDestructionStatement(Value object) {
+        this(new ExpressionWithValue(object));
+    }
 
-	@Override
-	public String toString() {
-		return shellCommand();
-	}
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Expression getToDelete() {
+        return fToDelete;
+    }
+
+    @Override
+    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+            throws EvaluationFailedException {
+
+        // handle "dynamic" collections (e.g. .allInstances)
+        if (fToDelete.type().isCollection(false)) {
+            Value val = EvalUtil.evaluateExpression(this, context, result, fToDelete);
+
+            if (val.isUndefined())
+                return;
+
+            CollectionValue collection = (CollectionValue) val;
+            for (Value object : collection.collection()) {
+                MObjectDestructionStatement statement = new MObjectDestructionStatement(object);
+
+                statement.setIsOperationBody(isOperationBody());
+                statement.setSourcePosition(getSourcePosition());
+
+                statement.evaluate(context, result);
+            }
+
+        } else {
+            MObject object = EvalUtil.evaluateObjectExpression(this, context, result, fToDelete);
+
+            try {
+                context.getSystem().destroyObject(result, object);
+            } catch (MSystemException e) {
+                throw new EvaluationFailedException(this, e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    protected String shellCommand() {
+        return "destroy " + fToDelete;
+    }
+
+    @Override
+    public String toString() {
+        return shellCommand();
+    }
 }

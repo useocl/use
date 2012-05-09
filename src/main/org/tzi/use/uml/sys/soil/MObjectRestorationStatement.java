@@ -35,84 +35,72 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
  * TODO
+ * 
  * @author Daniel Gent
- *
+ * 
  */
 public class MObjectRestorationStatement extends MStatement {
-	/** TODO */
-	private DeleteObjectResult fDeleteObjectResult;
-	/** TODO */
-	private Map<MObject, List<String>> fUndefinedTopLevelReferences;
-	
-	
-	/**
-	 * 
-	 * @param deleteObjectResult
-	 * @param undefinedTopLevelReferences
-	 */
-	public MObjectRestorationStatement(
-			DeleteObjectResult deleteObjectResult, 
-			Map<MObject, List<String>> undefinedTopLevelReferences) {
-		
-		fDeleteObjectResult = deleteObjectResult;
-		fUndefinedTopLevelReferences = undefinedTopLevelReferences;
-	}
-	
-	
-	@Override
-	protected void evaluate(SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
-		
-		// restore objects
-		Set<MObjectState> removedObjectStates = 
-			fDeleteObjectResult.getRemovedObjectStates();
-		
-		for (MObjectState objectState : removedObjectStates) {
+    /** TODO */
+    private DeleteObjectResult fDeleteObjectResult;
+    /** TODO */
+    private Map<MObject, List<String>> fUndefinedTopLevelReferences;
+
+    /**
+     * 
+     * @param deleteObjectResult
+     * @param undefinedTopLevelReferences
+     */
+    public MObjectRestorationStatement(DeleteObjectResult deleteObjectResult,
+            Map<MObject, List<String>> undefinedTopLevelReferences) {
+
+        fDeleteObjectResult = deleteObjectResult;
+        fUndefinedTopLevelReferences = undefinedTopLevelReferences;
+    }
+
+    @Override
+    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+            throws EvaluationFailedException {
+
+        // restore objects
+        Set<MObjectState> removedObjectStates = fDeleteObjectResult.getRemovedObjectStates();
+
+        for (MObjectState objectState : removedObjectStates) {
             try {
-                context.getState().restoreObject(objectState);  
+                context.getState().restoreObject(objectState);
                 result.getStateDifference().addNewObject(objectState.object());
             } catch (MSystemException e) {
                 throw new EvaluationFailedException(this, e);
             }
         }
-		
-		// restore links
-		Set<MLink> removedLinks = fDeleteObjectResult.getRemovedLinks();
-	
+
+        // restore links
+        Set<MLink> removedLinks = fDeleteObjectResult.getRemovedLinks();
+
         for (MLink link : removedLinks) {
             context.getState().insertLink(link);
             result.getStateDifference().addNewLink(link);
         }
-        
+
         // restore top level variables
-        Set<Entry<MObject, List<String>>> undefinedVariables =
-        	fUndefinedTopLevelReferences.entrySet();
-        for (Entry<MObject, List<String>> entry :undefinedVariables) {
-        	Value value = entry.getKey().value();
-        	for (String name : entry.getValue()) {
-        		context.getVarEnv().assign(name, value);
-        	}
+        Set<Entry<MObject, List<String>>> undefinedVariables = fUndefinedTopLevelReferences
+                .entrySet();
+        for (Entry<MObject, List<String>> entry : undefinedVariables) {
+            Value value = entry.getKey().value();
+            for (String name : entry.getValue()) {
+                context.getVarEnv().assign(name, value);
+            }
         }
-	}
-	
-	
-	@Override
-	protected String shellCommand() {
-		return "<object restoration>";
-	}
-	
-	
-	@Override
-	public boolean hasSideEffects() {
-		return true;
-	}
+    }
 
+    @Override
+    protected String shellCommand() {
+        return "<object restoration>";
+    }
 
-	@Override
-	public String toString() {
-		return shellCommand();
-	}
+    @Override
+    public String toString() {
+        return shellCommand();
+    }
 }

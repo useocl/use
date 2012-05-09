@@ -381,6 +381,8 @@ public final class MSystemState {
 		
 		return obj;
 	}
+	
+   
 
 	/**
 	 * Restores a destroyed object.
@@ -460,6 +462,8 @@ public final class MSystemState {
 
 		return result;
 	}
+	
+    
 
 	public class DeleteObjectResult {
 		private Set<MLink> removedLinks = new HashSet<MLink>();
@@ -567,10 +571,8 @@ public final class MSystemState {
 	}
 
 	/**
-	 * Creates and adds a new link to the state.
-	 * 
-	 * @exception MSystemException
-	 *                link invalid or already existing
+	 * Inserts a link between objects to the current state-
+	 * @exception MSystemException link invalid or already existing
 	 * @return the newly created link.
 	 */
 	public MLink createLink(MAssociation assoc, List<MObject> objects, 
@@ -669,6 +671,8 @@ public final class MSystemState {
 		}
 		return link;
 	}
+
+    
 
 	/**
 	 * Validates if the given objects can
@@ -808,6 +812,7 @@ public final class MSystemState {
 		return result;
 	}
 	
+    
 	/**
 	 * Creates and adds a new link to the state.
 	 * 
@@ -866,6 +871,8 @@ public final class MSystemState {
 		return linkobj;
 	}
 
+   
+	
 	/**
 	 * Returns the state of an object in a specific system state.
 	 * 
@@ -875,6 +882,8 @@ public final class MSystemState {
 		return fObjectStates.get(obj);
 	}
 
+	
+    
 	/**
 	 * 
 	 * @param obj

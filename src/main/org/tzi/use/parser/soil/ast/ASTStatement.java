@@ -337,7 +337,6 @@ public abstract class ASTStatement extends AST {
     	}
     	
     	MStatement result = generateStatement(context, symbolTable);
-    	result.setIsOperationBody(true);
     	
     	return result;
 	}

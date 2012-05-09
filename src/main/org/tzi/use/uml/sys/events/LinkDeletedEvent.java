@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.soil.MStatement;
 
 
 /**
@@ -47,11 +46,9 @@ public class LinkDeletedEvent extends Event {
 	 * @param participants
 	 */
 	public LinkDeletedEvent(
-			MStatement creator, 
 			MAssociation association, 
 			List<MObject> participants) {
 		
-		super(creator);
 		fAssociation = association;
 		fParticipants = participants;
 	}

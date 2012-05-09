@@ -27,93 +27,73 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
  * This statement executes a while-loop.
+ * 
  * @author Fabian Buettner
- *
+ * 
  */
 public class MWhileStatement extends MStatement {
-	
-	private Expression fCondition;
-	
-	private MStatement fBody;
-	
-	
-	/**
-	 * TODO
-	 * @param variableName
-	 * @param range
-	 * @param body
-	 */
-	public MWhileStatement(
-			Expression condition, 
-			MStatement body) {
-		
-		fCondition= condition;
-		fBody = body;
-	}
-	
-	
-		
-	@Override
-	protected void evaluate(SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
-		
-		while(  true) {
-			Value v = evaluateExpression(context, result, fCondition);
-			if (v.isDefined() && ((BooleanValue)v).value())
-				evaluateSubStatement(context, result, fBody);
-			else
-				break;
-		}
-		
-	}
-	
-	
-	@Override
-	protected String shellCommand() {
-		return 
-		"while " + 
-		fCondition + 
-		" do " + 
-		fBody.shellCommand() + 
-		" end";
-	}
-	
 
-	@Override
-	public boolean hasSideEffects() {
-		return(fCondition.hasSideEffects() || fBody.hasSideEffects());
-	}
+    private Expression fCondition;
+
+    private MStatement fBody;
+
+    /**
+     * TODO
+     * 
+     * @param variableName
+     * @param range
+     * @param body
+     */
+    public MWhileStatement(Expression condition, MStatement body) {
+
+        fCondition = condition;
+        fBody = body;
+    }
+
+    @Override
+    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+            throws EvaluationFailedException {
+
+        while (true) {
+            Value v = EvalUtil.evaluateExpression(this, context, result, fCondition);
+            if (v.isDefined() && ((BooleanValue) v).value())
+                fBody.evaluate(context, result);
+            else
+                break;
+        }
+
+    }
+
+    @Override
+    protected String shellCommand() {
+        return "while " + fCondition + " do " + fBody.shellCommand() + " end";
+    }
 
 
-	@Override
-	protected void toVisitorString(
-			StringBuilder indent, 
-			String indentIncrease,
-			StringBuilder target) {
-		
-		String newLine = "\n";
-		
-		target.append(indent);
-		target.append("while ");
-		target.append(fCondition);
-		target.append(" do ");
-		if (!fBody.isEmptyStatement()) {
-			target.append(newLine);
-			indent.append(indentIncrease);
-			fBody.toVisitorString(indent, indentIncrease, target);
-			indent.delete(indent.length() - indentIncrease.length(), indent.length());
-			target.append(newLine);
-		}
-		target.append(indent);
-		target.append("end");
-	}
+    @Override
+    protected void toVisitorString(StringBuilder indent, String indentIncrease, StringBuilder target) {
 
+        String newLine = "\n";
 
-	@Override
-	public String toString() {
-		return shellCommand();
-	}
+        target.append(indent);
+        target.append("while ");
+        target.append(fCondition);
+        target.append(" do ");
+        if (!fBody.isEmptyStatement()) {
+            target.append(newLine);
+            indent.append(indentIncrease);
+            fBody.toVisitorString(indent, indentIncrease, target);
+            indent.delete(indent.length() - indentIncrease.length(), indent.length());
+            target.append(newLine);
+        }
+        target.append(indent);
+        target.append("end");
+    }
+
+    @Override
+    public String toString() {
+        return shellCommand();
+    }
 }

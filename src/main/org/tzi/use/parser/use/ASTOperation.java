@@ -25,11 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.config.Options;
-import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.SrcPos;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
@@ -165,18 +162,11 @@ public class ASTOperation extends ASTAnnotatable {
                 fOperation.setExpression(expr);
             }
             
-            // ppcs may not have side effects
-            SoilPermissionLevel permissionLevel = Options.soilFromOCL;
-            if (permissionLevel == SoilPermissionLevel.ALL) {
-            	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
-            }
 
             for (ASTPrePostClause ppc : fPrePostClauses) {
                 ppc.gen(ctx, ctx.currentClass(), fOperation);
             }
             
-            // restore permission level
-            Options.soilFromOCL = permissionLevel;
             
         } catch (MInvalidModelException ex) {
             throw new SemanticException(fName, ex);

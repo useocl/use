@@ -84,12 +84,12 @@ public class MVariableAssignmentStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate(SoilEvaluationContext context,
+    public void evaluate(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		Value value = evaluateRValue(context, result, fRValue);
+		Value value = EvalUtil.evaluateRValue(this, context, result, fRValue, false);
 		
-		assignVariable(context, result, fVariableName, value);
+		context.getSystem().assignVariable(result, fVariableName, value);
 	}
 	
 	
@@ -99,12 +99,6 @@ public class MVariableAssignmentStatement extends MStatement {
 	}
 	
 	
-	@Override
-	public boolean hasSideEffects() {
-		return fRValue.hasSideEffects();
-	}
-
-
 	@Override
 	public String toString() {
 		return shellCommand();

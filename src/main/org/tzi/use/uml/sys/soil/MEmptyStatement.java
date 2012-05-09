@@ -54,7 +54,7 @@ public class MEmptyStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate(SoilEvaluationContext context,
+    public void evaluate(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 	}
@@ -65,12 +65,6 @@ public class MEmptyStatement extends MStatement {
 		return "";
 	}
 	
-	
-	@Override
-	public boolean hasSideEffects() {
-		return false;
-	}
-
 
 	@Override
 	public String toString() {

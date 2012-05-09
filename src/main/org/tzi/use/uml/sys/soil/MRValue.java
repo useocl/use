@@ -28,9 +28,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * 
- * @author Daniel Gent
- *
+ *  
  */
 public abstract class MRValue {
 	
@@ -52,14 +50,6 @@ public abstract class MRValue {
 			SoilEvaluationContext context,
 			StatementEvaluationResult result,
 			MStatement parent) throws EvaluationFailedException;
-	
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public abstract boolean hasSideEffects();
 	
 	
 	@Override

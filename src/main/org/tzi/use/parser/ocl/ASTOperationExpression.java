@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
-import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
@@ -479,8 +478,7 @@ public class ASTOperationExpression extends ASTExpression {
             	
             	// if the body is a soil statement, evaluating soil statements 
             	// must be allowed
-            	if (op.hasStatement() && 
-            			Options.soilFromOCL == SoilPermissionLevel.NONE) {
+            	if (op.hasStatement()) {
             		
             		throw new SemanticException(
             				fOp, 
@@ -488,21 +486,9 @@ public class ASTOperationExpression extends ASTExpression {
             				srcClass.name() +
             				"::" + 
             				opname +
-            				" is defined by a soil statement.");
+            				" is not a query operation.");
             	}
             	
-            	// if the operation has side effects, this must be allowed
-            	if (op.hasSideEffects() && 
-            			Options.soilFromOCL != SoilPermissionLevel.ALL) {
-            		
-            		throw new SemanticException(
-            				fOp, 
-            				"Operation " +
-            				srcClass.name() +
-            				"::" + 
-            				opname +
-            				" is not side effect free.");
-            	}
                 
                 // transform c.op(...) into c->collect($e | $e.op(...))
                 ExpVariable eVar = new ExpVariable("$e", elemType);
@@ -596,8 +582,7 @@ public class ASTOperationExpression extends ASTExpression {
         	
         	// if the body is a soil statement, evaluating soil statements 
         	// must be allowed
-        	if (op.hasStatement() && 
-        			Options.soilFromOCL == SoilPermissionLevel.NONE) {
+        	if (op.hasStatement()) {
         		
         		throw new SemanticException(
         				fOp, 
@@ -605,22 +590,9 @@ public class ASTOperationExpression extends ASTExpression {
         				srcClass.name() +
         				"::" + 
         				opname +
-        				" is defined by a soil statement.");
+        				" is not a query operation.");
         	}
         	
-        	// if the operation has side effects, this must be allowed
-        	if (op.hasSideEffects() && 
-        			Options.soilFromOCL != SoilPermissionLevel.ALL) {
-        		
-        		throw new SemanticException(
-        				fOp, 
-        				"Operation " +
-        				srcClass.name() +
-        				"::" + 
-        				opname +
-        				" is not side effect free.");
-        	}
-        	      
             try { 
                 // constructor performs additional checks
                 res = new ExpObjOp(op, fArgExprs);

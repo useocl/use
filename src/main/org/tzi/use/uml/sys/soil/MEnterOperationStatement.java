@@ -31,6 +31,7 @@ import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
@@ -91,29 +92,34 @@ public class MEnterOperationStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate(SoilEvaluationContext context,
+    public void evaluate(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		// evaluate self
-		MObject self = evaluateObjectExpression(context, result, fObject);
+		MObject self = EvalUtil.evaluateObjectExpression(this, context, result, fObject);
 		
 		// evaluate arguments
 		Value[] arguments = new Value[fArguments.size()];
 		int i=0;
 		for (VarDecl argumentDecl : fOperation.allParams()) {
-			Value argValue = evaluateExpression(context, result, fArguments.get(argumentDecl.name()), false);
+			Value argValue = EvalUtil.evaluateExpression(this, context, result, fArguments.get(argumentDecl.name()), false);
 			arguments[i] = argValue;
 			++i;
 		}
+		MOperationCall operationCall = 
+			new MOperationCall(this, self, fOperation, arguments);
+		
+		operationCall.setPreferredPPCHandler(fCustomPPCHandler == null ? 
+								OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler);
+		
+		try {
+			context.getSystem().enterNonQueryOperation(context, result, operationCall, true);
+		} catch (MSystemException e) {
+			throw new EvaluationFailedException(this, e);
+		}
 		
 		MOperationCall opCall = 
-			enterOperation(context, result, 
-				self, 
-				fOperation, 
-				arguments, 
-				fCustomPPCHandler == null ? 
-						OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler,
-				true);
+			operationCall;
 		
 		// build inverse statement if necessary
 		
@@ -150,11 +156,6 @@ public class MEnterOperationStatement extends MStatement {
 		return result.toString();
 	}
 
-
-	@Override
-	public boolean hasSideEffects() {
-		return true;
-	}
 
 
 	@Override

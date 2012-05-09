@@ -28,49 +28,38 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
  * TODO
+ * 
  * @author Daniel Gent
- *
+ * 
  */
 public class MRValueNewObject extends MRValue {
-	/** TODO */
-	private MNewObjectStatement fNewObjectStatement;
-	
-	
-	/**
-	 * TODO
-	 * @param newObjectStatement
-	 */
-	public MRValueNewObject(
-			MNewObjectStatement newObjectStatement) {
-		
-		fNewObjectStatement = newObjectStatement;
-	}
+    /** TODO */
+    private MNewObjectStatement fNewObjectStatement;
 
+    /**
+     * TODO
+     * 
+     * @param newObjectStatement
+     */
+    public MRValueNewObject(MNewObjectStatement newObjectStatement) {
 
-	@Override
-	public Value evaluate(
-			SoilEvaluationContext context,
-			StatementEvaluationResult result,
-			MStatement parent) throws EvaluationFailedException {
-		parent.evaluateSubStatement(context, result, fNewObjectStatement);
-		return fNewObjectStatement.getCreatedObject().value();
-	}
+        fNewObjectStatement = newObjectStatement;
+    }
 
-	
-	@Override
-	public Type getType() {
-		return fNewObjectStatement.getObjectType();
-	}
+    @Override
+    public Value evaluate(SoilEvaluationContext context, StatementEvaluationResult result,
+            MStatement parent) throws EvaluationFailedException {
+        fNewObjectStatement.evaluate(context, result);
+        return fNewObjectStatement.getCreatedObject().value();
+    }
 
+    @Override
+    public Type getType() {
+        return fNewObjectStatement.getObjectType();
+    }
 
-	@Override
-	public boolean hasSideEffects() {
-		return fNewObjectStatement.hasSideEffects();
-	}
-
-
-	@Override
-	public String toString() {
-		return fNewObjectStatement.shellCommand();
-	}
+    @Override
+    public String toString() {
+        return fNewObjectStatement.shellCommand();
+    }
 }

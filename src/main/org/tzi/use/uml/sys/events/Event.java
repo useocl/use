@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.sys.events;
 
-import org.tzi.use.uml.sys.soil.MStatement;
 
 /**
  * TODO
@@ -29,24 +28,5 @@ import org.tzi.use.uml.sys.soil.MStatement;
  *
  */
 public abstract class Event {
-	/** TODO */
-	private MStatement fCause;
 	
-	
-	/**
-	 * TODO
-	 * @param cause
-	 */
-	protected Event(MStatement cause) {
-		fCause = cause;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MStatement getCause() {
-		return fCause;
-	}
 }

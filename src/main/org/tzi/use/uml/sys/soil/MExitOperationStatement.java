@@ -29,6 +29,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
@@ -73,11 +74,11 @@ public class MExitOperationStatement extends MStatement {
 	
 
 	@Override
-	protected void evaluate(SoilEvaluationContext context,
+    public void evaluate(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		Value vresult = (fOperationResult == null) ? 
-				null : evaluateExpression(context, result, fOperationResult, false);
+				null : EvalUtil.evaluateExpression(this, context, result, fOperationResult, false);
 
 		// to be able to undo this statement, we need to capture the current
 		// variable mappings
@@ -92,10 +93,23 @@ public class MExitOperationStatement extends MStatement {
 		
 		EvaluationFailedException caughtException = null;
 		try {
-			exitOperation(context, result, 
-					vresult, 
-					fCustomPPCHandler == null ? 
-							OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler);
+			PPCHandler preferredPPCHandler = fCustomPPCHandler == null ? 
+					OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler;
+			MOperationCall currentOperation = context.getSystem().getCurrentOperation();
+			
+			if (currentOperation == null) {
+				throw new EvaluationFailedException(this, "No current operation");
+			}
+			
+			if (preferredPPCHandler != null) {
+				currentOperation.setPreferredPPCHandler(preferredPPCHandler);
+			}
+			
+			try {
+				context.getSystem().exitNonQueryOperation(context,result,vresult);
+			} catch (MSystemException e) {
+				throw new EvaluationFailedException(this, e);
+			}
 			context.getSystem().setLastOperationCall(operationCall);
 		} catch (EvaluationFailedException e) {
 			caughtException = e;
@@ -149,11 +163,6 @@ public class MExitOperationStatement extends MStatement {
 	}
 
 	
-	@Override
-	public boolean hasSideEffects() {
-		return true;
-	}
-
 	public MOperationCall getOperationCall() {
 		return operationCall;
 	}

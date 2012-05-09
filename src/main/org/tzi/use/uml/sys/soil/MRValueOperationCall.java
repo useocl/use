@@ -26,54 +26,40 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
  * TODO
- * @author Daniel Gent
- *
+ * 
  */
 public class MRValueOperationCall extends MRValue {
-	/** TODO */
-	private MOperationCallStatement fOperationCallStatement;
-	
-	
-	/**
-	 * TODO
-	 * @param operationCallStatement
-	 */
-	public MRValueOperationCall(
-			MOperationCallStatement operationCallStatement) {
-		
-		fOperationCallStatement = operationCallStatement;
-	}
+    /** TODO */
+    private MOperationCallStatement fOperationCallStatement;
 
+    /**
+     * TODO
+     * 
+     * @param operationCallStatement
+     */
+    public MRValueOperationCall(MOperationCallStatement operationCallStatement) {
 
-	@Override
-	public Value evaluate(
-			SoilEvaluationContext context,
-			StatementEvaluationResult result,
-			MStatement parent) throws EvaluationFailedException {
-		
-		parent.evaluateSubStatement(context, result, fOperationCallStatement);
+        fOperationCallStatement = operationCallStatement;
+    }
 
-		return fOperationCallStatement.getReturnValue();
-	}
+    @Override
+    public Value evaluate(SoilEvaluationContext context, StatementEvaluationResult result,
+            MStatement parent) throws EvaluationFailedException {
 
+        fOperationCallStatement.evaluate(context, result);
 
-	@Override
-	public Type getType() {		
-		return fOperationCallStatement.getReturnType();
-	}
+        return fOperationCallStatement.getReturnValue();
+    }
 
+    @Override
+    public Type getType() {
+        return fOperationCallStatement.getReturnType();
+    }
 
-	@Override
-	public boolean hasSideEffects() {
-		return fOperationCallStatement.hasSideEffects();
-	}
-
-
-	@Override
-	public String toString() {
-		return fOperationCallStatement.shellCommand();
-	}
+    @Override
+    public String toString() {
+        return fOperationCallStatement.shellCommand();
+    }
 }

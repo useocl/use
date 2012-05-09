@@ -29,7 +29,6 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
  * TODO
- * @author Daniel Gent
  *
  */
 public class MRValueNewLinkObject extends MRValue {
@@ -63,7 +62,7 @@ public class MRValueNewLinkObject extends MRValue {
 			StatementEvaluationResult result,
 			MStatement parent) throws EvaluationFailedException {
 		
-		parent.evaluateSubStatement(context, result, fNewLinkObjectStatement);
+		fNewLinkObjectStatement.evaluate(context, result);
 		
 		return fNewLinkObjectStatement.getCreatedLinkObject().value();
 	}
@@ -72,12 +71,6 @@ public class MRValueNewLinkObject extends MRValue {
 	@Override
 	public Type getType() {
 		return fNewLinkObjectStatement.getAssociationClass().type();
-	}
-
-
-	@Override
-	public boolean hasSideEffects() {
-		return fNewLinkObjectStatement.hasSideEffects();
 	}
 
 

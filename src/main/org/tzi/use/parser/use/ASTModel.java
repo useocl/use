@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.config.Options;
-import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTEnumTypeDefinition;
@@ -203,11 +201,6 @@ public class ASTModel extends ASTAnnotatable {
             ac.genOperationBodies(ctx);
         }
         
-        // constraints may not have side effects
-        SoilPermissionLevel permissionLevel = Options.soilFromOCL;
-        if (permissionLevel == SoilPermissionLevel.ALL) {
-        	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
-        }
 
         // (4b) generate constraints of association and non-association classes
         // All class interfaces are known and association features
@@ -236,9 +229,6 @@ public class ASTModel extends ASTAnnotatable {
             }
         }
         
-        // restore permission level
-        Options.soilFromOCL = permissionLevel;
-
         return model;
     }
 

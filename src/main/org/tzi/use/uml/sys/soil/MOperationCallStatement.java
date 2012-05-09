@@ -31,186 +31,175 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
  * TODO
+ * 
  * @author Daniel Gent
- *
+ * 
  */
 public class MOperationCallStatement extends MStatement {
-	/** TODO */
-	private Expression fObject;
-	/** TODO */
-	private MOperation fOperation;
-	/** TODO */
-	private LinkedHashMap<String, Expression> fArguments;
-	/** TODO */
-	private Value fReturnValue; // may be null!
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 * @param operation
-	 * @param arguments
-	 */
-	public MOperationCallStatement(
-			Expression object,
-			MOperation operation,
-			LinkedHashMap<String, Expression> arguments) {
-		
-		fObject = object;
-		fOperation = operation;
-		fArguments = arguments;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 * @param operation
-	 */
-	public MOperationCallStatement(
-			Expression object,
-			MOperation operation) {
-		
-		this(
-				object, 
-				operation, 
-				new LinkedHashMap<String, Expression>(0));
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Expression getObject() {
-		return fObject;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MOperation getOperation() {
-		return fOperation;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Map<String, Expression> getArguments() {
-		return fArguments;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Value getReturnValue() {
-		return fReturnValue;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Type getReturnType() {
-		return fOperation.resultType();
-	}
-	
+    /** TODO */
+    private Expression fObject;
+    /** TODO */
+    private MOperation fOperation;
+    /** TODO */
+    private LinkedHashMap<String, Expression> fArguments;
+    /** TODO */
+    private Value fReturnValue; // may be null!
 
-	@Override
-	protected void evaluate(SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
-		
-				
-		// just to check if self exists
-		MObject self = evaluateObjectExpression(context, result, fObject);
-		
-		MOperation operation = self.cls().operation(fOperation.name(), true);
-		MStatement operationBody = operation.getStatement();
-	    	
-		// evaluate arguments
-		// evaluate arguments
-		Value[] arguments = new Value[fArguments.size()];
-		int i=0;
-		for (Entry<String, Expression> argument : fArguments.entrySet()) {
-			Value argValue = evaluateExpression(context, result, argument.getValue(), false);
-			arguments[i] = argValue;
-			++i;
-		}
-		
-		MOperationCall operationCall = 
-			enterOperation(
-					context, 
-					result,
-					self, 
-					operation, 
-					arguments, 
-					context.isInExpression() ? 
-							ExpressionPPCHandler.getDefaultOutputHandler() : SoilPPCHandler.getDefaultOutputHandler(), false);
-		
-		try {
-			evaluateSubStatement(context, result, operationBody);
-			
-			if (fOperation.hasResultType()) {
-				fReturnValue = context.getVarEnv().lookUp("result");
-			}
-		} catch (EvaluationFailedException e) {
-			operationCall.setExecutionFailed(true);
-			throw e;
-		} finally {
-			exitOperation(context, result, fReturnValue, null);
-		}
-	}
-	
-	
-	@Override
-	protected String shellCommand() {
-		StringBuilder result = new StringBuilder();
-		
-		result.append(fObject);
-		result.append(".");
-		result.append(fOperation);
-		result.append("(");
-		StringUtil.fmtSeq(result, fArguments.values(), ", ");
-		result.append(")");
-		
-		return result.toString();
-	}
-	
-	
-	@Override
-	public boolean hasSideEffects() {
-		if (fObject.hasSideEffects() || fOperation.hasSideEffects()) {
-			return true;
-		}
-		
-		for (Expression argument : fArguments.values()) {
-			if (argument.hasSideEffects()) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
+    /**
+     * TODO
+     * 
+     * @param object
+     * @param operation
+     * @param arguments
+     */
+    public MOperationCallStatement(Expression object, MOperation operation,
+            LinkedHashMap<String, Expression> arguments) {
 
+        fObject = object;
+        fOperation = operation;
+        fArguments = arguments;
+    }
 
-	@Override
-	public String toString() {
-		return shellCommand();
-	}
+    /**
+     * TODO
+     * 
+     * @param object
+     * @param operation
+     */
+    public MOperationCallStatement(Expression object, MOperation operation) {
+
+        this(object, operation, new LinkedHashMap<String, Expression>(0));
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Expression getObject() {
+        return fObject;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public MOperation getOperation() {
+        return fOperation;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Map<String, Expression> getArguments() {
+        return fArguments;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Value getReturnValue() {
+        return fReturnValue;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Type getReturnType() {
+        return fOperation.resultType();
+    }
+
+    @Override
+    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+            throws EvaluationFailedException {
+
+        // just to check if self exists
+        MObject self = EvalUtil.evaluateObjectExpression(this, context, result, fObject);
+
+        MOperation operation = self.cls().operation(fOperation.name(), true);
+        MStatement operationBody = operation.getStatement();
+
+        // evaluate arguments
+        // evaluate arguments
+        Value[] arguments = new Value[fArguments.size()];
+        int i = 0;
+        for (Entry<String, Expression> argument : fArguments.entrySet()) {
+            Value argValue = EvalUtil.evaluateExpression(this, context, result,
+                    argument.getValue(), false);
+            arguments[i] = argValue;
+            ++i;
+        }
+        MOperationCall operationCall = new MOperationCall(this, self, operation, arguments);
+
+        operationCall.setPreferredPPCHandler(context.isInExpression() ? ExpressionPPCHandler
+                .getDefaultOutputHandler() : SoilPPCHandler.getDefaultOutputHandler());
+
+        try {
+            context.getSystem().enterNonQueryOperation(context, result, operationCall, false);
+        } catch (MSystemException e1) {
+            throw new EvaluationFailedException(this, e1);
+        }
+
+        try {
+            operationBody.evaluate(context, result);
+
+            if (fOperation.hasResultType()) {
+                fReturnValue = context.getVarEnv().lookUp("result");
+            }
+        } catch (EvaluationFailedException e) {
+            operationCall.setExecutionFailed(true);
+            throw e;
+        } finally {
+            MOperationCall currentOperation = context.getSystem().getCurrentOperation();
+
+            if (currentOperation == null) {
+                throw new EvaluationFailedException(this, "No current operation");
+            }
+
+            if (null != null) {
+                currentOperation.setPreferredPPCHandler(null);
+            }
+
+            try {
+                context.getSystem().exitNonQueryOperation(context, result, fReturnValue);
+            } catch (MSystemException e) {
+                throw new EvaluationFailedException(this, e);
+            }
+        }
+    }
+
+    @Override
+    protected String shellCommand() {
+        StringBuilder result = new StringBuilder();
+
+        result.append(fObject);
+        result.append(".");
+        result.append(fOperation);
+        result.append("(");
+        StringUtil.fmtSeq(result, fArguments.values(), ", ");
+        result.append(")");
+
+        return result.toString();
+    }
+
+    @Override
+    public String toString() {
+        return shellCommand();
+    }
 }

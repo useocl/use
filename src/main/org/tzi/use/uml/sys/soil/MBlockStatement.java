@@ -61,13 +61,13 @@ public class MBlockStatement extends MStatement {
 	
 
 	@Override
-	protected void evaluate(SoilEvaluationContext context,
+    public void evaluate(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 	
 		for (VarDecl varDecl : fVariableDeclarations) {
-			assignVariable(context, result, varDecl.name(), UndefinedValue.instance);
+			context.getSystem().assignVariable(result, varDecl.name(), UndefinedValue.instance);
 		}
-		evaluateSubStatement(context, result, fBody);
+		fBody.evaluate(context, result);
 	}
 	
 	
@@ -77,11 +77,6 @@ public class MBlockStatement extends MStatement {
 		return "TODO";
 	}
 	
-
-	@Override
-	public boolean hasSideEffects() {
-		return(fBody.hasSideEffects());
-	}
 
 
 	@Override

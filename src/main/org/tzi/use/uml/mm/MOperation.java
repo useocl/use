@@ -94,34 +94,13 @@ public final class MOperation extends MModelElementImpl {
     	fStatement = statement;
     }
     
-    /**
-     * TODO
-     * @return
-     */
-    public synchronized boolean hasSideEffects() {
-    	if (fIsCheckingSideEffects) {
-    		return false;
-    	} else {
-    		fIsCheckingSideEffects = true;
-    		boolean hasSideEffects = 
-    			((hasExpression() && fExpr.hasSideEffects()) ||
-    			    	 (hasStatement() && fStatement.hasSideEffects()));
-    		fIsCheckingSideEffects = false;
-    		
-    		return hasSideEffects;
-    	}
-    }
-    
     
     /**
      * TODO
      * @return
      */
     public boolean isCallableFromOCL() {
-    	return (
-    			(fExpr != null) || 
-    			((fStatement != null) && 
-    					fStatement.isCallableInOCL()));
+    	return (fExpr != null); 
     }
     
 

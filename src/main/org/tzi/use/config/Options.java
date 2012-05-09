@@ -142,13 +142,7 @@ public class Options {
     public static WarningType checkWarningsOclAnyInCollections = WarningType.ERROR;
     public static WarningType checkWarningsUnrelatedTypes = WarningType.ERROR;
     
-    // soil in ocl operation calls
-    public enum SoilPermissionLevel {
-    	NONE, SIDEEFFECT_FREE_ONLY, ALL
-    }
-    
-    public static SoilPermissionLevel soilFromOCL = SoilPermissionLevel.NONE;
-
+   
     /**
 	 * enable/disable plugin architecture
 	 *
@@ -307,21 +301,6 @@ public class Options {
                         setDimension( args[i+1], args[i+2] );
                         i = i+2;
                     }
-                } else if (arg.startsWith("XsoilOpInOCL:")) {
-                	String option = arg.substring(13);
-                	if (option.equals("NONE") || option.equals("0")) {
-                		soilFromOCL = SoilPermissionLevel.NONE;
-                	} else if (option.equals("SIDEEFFECT_FREE_ONLY") || option.equals("1")) {
-                		soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
-                	} else if (option.equals("ALL") || option.equals("2")) {
-                		soilFromOCL = SoilPermissionLevel.ALL;
-                	} else {
-                		System.out.println(
-                				"invalid option " + 
-                				option + 
-                				" for argument `soilOpAsOCL', defaulting to `NONE'");
-                		soilFromOCL = SoilPermissionLevel.NONE;
-                	}
                 } else if (arg.startsWith("oclAnyCollectionsChecks:")) {
                 	String value = arg.substring("oclAnyCollectionsChecks:".length());
                 	checkWarningsOclAnyInCollections = WarningType.getType(value);

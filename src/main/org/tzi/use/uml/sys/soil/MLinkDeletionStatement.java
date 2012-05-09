@@ -29,6 +29,7 @@ import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
@@ -132,10 +133,15 @@ public class MLinkDeletionStatement extends MStatement {
 	
 	
 	@Override
-	protected void evaluate(SoilEvaluationContext context,
+    public void evaluate(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		List<MObject> participants = evaluateObjectRValues(context, result, fParticipants);
+		List<MObject> vresult = new ArrayList<MObject>(fParticipants.size());
+                
+                for (MRValue rValue : fParticipants) {
+                	vresult.add(EvalUtil.evaluateObjectRValue(this, context, result, rValue));
+                }
+        List<MObject> participants = vresult;
 		List<List<Value>> qualifierValues;
 		
 		if (this.qualifier == null || this.qualifier.isEmpty()) {
@@ -149,14 +155,18 @@ public class MLinkDeletionStatement extends MStatement {
 				} else {
 					endQualifierValues = new ArrayList<Value>();
 					for (MRValue endRValue : endRValues) {
-						endQualifierValues.add(this.evaluateRValue(context, result, endRValue));
+						endQualifierValues.add(EvalUtil.evaluateRValue(this, context, result, endRValue, false));
 					}
 				}
 				qualifierValues.add(endQualifierValues);
 			}
 		}
 		
-		deleteLink(context, result, fAssociation, participants, qualifierValues);
+		try {
+            context.getSystem().deleteLink(result, fAssociation, participants, qualifierValues);
+        } catch (MSystemException e) {
+            throw new EvaluationFailedException(this, e.getMessage());
+        }
 	}
 	
 	
@@ -188,12 +198,6 @@ public class MLinkDeletionStatement extends MStatement {
 		return result.toString();
 	}
 	
-	
-	@Override
-	public boolean hasSideEffects() {
-		return true;
-	}
-
 
 	@Override
 	public String toString() {

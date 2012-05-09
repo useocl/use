@@ -25,65 +25,54 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
  * TODO
+ * 
  * @author Daniel Gent
- *
+ * 
  */
 public class MVariableDestructionStatement extends MStatement {
-	/** TODO */
-	private String fVariableName;
-	
-	
-	/**
-	 * TODO
-	 * @param variableName
-	 */
-	public MVariableDestructionStatement(String variableName) {
-		fVariableName = variableName;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public String getVariableName() {
-		return fVariableName;
-	}
-	
-	
-	@Override
-	protected void evaluate(SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
-		
-		Value oldValue = context.getVarEnv().lookUp(fVariableName);
-		if (oldValue != null) {
-			result.getInverseStatement().prependStatement(
-					new MVariableAssignmentStatement(fVariableName, oldValue));
-		}
-		
-		context.getVarEnv().remove(fVariableName);
-	}
-	
-	
-	@Override
-	protected String shellCommand() {
-		return "<variable destruction>";
-	}
-	
-	
-	@Override
-	public boolean hasSideEffects() {
-		// can't be part of a soil defined ocl operation,
-		// but let's restrict it as much as possible anyways
-		return true;
-	}
+    /** TODO */
+    private String fVariableName;
 
+    /**
+     * TODO
+     * 
+     * @param variableName
+     */
+    public MVariableDestructionStatement(String variableName) {
+        fVariableName = variableName;
+    }
 
-	@Override
-	public String toString() {
-		return shellCommand();
-	}
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public String getVariableName() {
+        return fVariableName;
+    }
+
+    @Override
+    public void evaluate(SoilEvaluationContext context, StatementEvaluationResult result)
+            throws EvaluationFailedException {
+
+        Value oldValue = context.getVarEnv().lookUp(fVariableName);
+        if (oldValue != null) {
+            result.getInverseStatement().prependStatement(
+                    new MVariableAssignmentStatement(fVariableName, oldValue));
+        }
+
+        context.getVarEnv().remove(fVariableName);
+    }
+
+    @Override
+    protected String shellCommand() {
+        return "<variable destruction>";
+    }
+
+    @Override
+    public String toString() {
+        return shellCommand();
+    }
 }

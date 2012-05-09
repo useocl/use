@@ -179,21 +179,7 @@ public final class ExpObjOp extends Expression {
         return fArgs;
     }
 
-	@Override
-	public boolean hasSideEffects() {
-		if (fOp.hasSideEffects()) {
-			return true;
-		}
-		
-		for (Expression arg : fArgs) {
-			if (arg.hasSideEffects()) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
 	 */

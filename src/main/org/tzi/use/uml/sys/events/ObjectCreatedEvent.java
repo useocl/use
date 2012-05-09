@@ -22,7 +22,6 @@
 package org.tzi.use.uml.sys.events;
 
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.soil.MStatement;
 
 /**
  * TODO
@@ -40,10 +39,8 @@ public class ObjectCreatedEvent extends Event {
 	 * @param createdObject
 	 */
 	public ObjectCreatedEvent(
-			MStatement creator, 
 			MObject createdObject) {
 		
-		super(creator);
 		fCreatedObject = createdObject;
 	}
 	

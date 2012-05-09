@@ -29,77 +29,66 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-
 /**
  * TODO
+ * 
  * @author Daniel Gent
- *
+ * 
  */
 public class MRValueExpression extends MRValue {
-	/** TODO */
-	private Expression fExpression;
-	
-	
-	/**
-	 * TODO
-	 * @param expression
-	 */
-	public MRValueExpression(Expression expression) {
-		fExpression = expression;
-	}
+    /** TODO */
+    private Expression fExpression;
 
-	
-	/**
-	 * TODO
-	 * @param value
-	 */
-	public MRValueExpression(Value value) {
-		fExpression = new ExpressionWithValue(value);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param object
-	 */
-	public MRValueExpression(MObject object) {
-		fExpression = new ExpressionWithValue(object.value());
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public Expression getExpression() {
-		return fExpression;
-	}
+    /**
+     * TODO
+     * 
+     * @param expression
+     */
+    public MRValueExpression(Expression expression) {
+        fExpression = expression;
+    }
 
+    /**
+     * TODO
+     * 
+     * @param value
+     */
+    public MRValueExpression(Value value) {
+        fExpression = new ExpressionWithValue(value);
+    }
 
-	@Override
-	public Value evaluate(
-			SoilEvaluationContext context,
-			StatementEvaluationResult result,
-			MStatement parent) throws EvaluationFailedException {
-		return parent.evaluateExpression(context, result, fExpression);
-	}
+    /**
+     * TODO
+     * 
+     * @param object
+     */
+    public MRValueExpression(MObject object) {
+        fExpression = new ExpressionWithValue(object.value());
+    }
 
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    public Expression getExpression() {
+        return fExpression;
+    }
 
-	@Override
-	public Type getType() {
-		return fExpression.type();
-	}
+    @Override
+    public Value evaluate(SoilEvaluationContext context, StatementEvaluationResult result,
+            MStatement parent) throws EvaluationFailedException {
+        return EvalUtil.evaluateExpression(parent, context, result, fExpression);
+    }
 
+    @Override
+    public Type getType() {
+        return fExpression.type();
+    }
 
-	@Override
-	public boolean hasSideEffects() {
-		return fExpression.hasSideEffects();
-	}
+    @Override
+    public String toString() {
+        return fExpression.toString();
+    }
 
-
-	@Override
-	public String toString() {
-		return fExpression.toString();
-	}
-	
 }

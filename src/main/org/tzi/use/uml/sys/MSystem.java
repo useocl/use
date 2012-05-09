@@ -26,17 +26,25 @@ import static org.tzi.use.util.StringUtil.inQuotes;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.event.EventListenerList;
 
 import org.tzi.use.gen.tool.GGenerator;
+import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MOperation;
@@ -49,11 +57,28 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
+import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
+import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.sys.events.OperationExitedEvent;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PostConditionCheckFailedException;
 import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
+import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
+import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
+import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
+import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
+import org.tzi.use.uml.sys.soil.MObjectRestorationStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
+import org.tzi.use.uml.sys.soil.MVariableDestructionStatement;
 import org.tzi.use.uml.sys.soil.SoilEvaluationContext;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
@@ -359,7 +384,8 @@ public final class MSystem {
 		
 			if (getCurrentStatement() != null) {
 				if (!stateIsLocked()) {
-					getCurrentStatement().enteredOperationDuringEvaluation(context, result, operationCall);
+					result.appendEvent(
+					new OperationEnteredEvent(operationCall));
 				}
 			}
 		}
@@ -367,9 +393,9 @@ public final class MSystem {
 		fCallStack.push(operationCall);
 		
 		EvalContext ctx = new EvalContext(
-				context.getState(), 
-				context.getState(), 
-				context.getVarEnv().constructVarBindings(), null, "");
+				fCurrentState, 
+				fCurrentState, 
+				fVariableEnvironment.constructVarBindings(), null, "");
 		assertPreConditions(ctx, operationCall);
 		
 		copyPreStateIfNeccessary(operationCall);
@@ -422,9 +448,9 @@ public final class MSystem {
 			if (resultValue != null) operationCall.setResultValue(resultValue);	
 		
 			EvalContext ctx = new EvalContext(
-					context.getState(), 
-					context.getState(), 
-					context.getVarEnv().constructVarBindings(), null, "");
+					fCurrentState, 
+					fCurrentState, 
+					fVariableEnvironment.constructVarBindings(), null, "");
 			assertPostConditions(ctx, operationCall);
 		
 			operationCall.setExitedSuccessfully(true);
@@ -641,7 +667,7 @@ public final class MSystem {
 		MStatement currentStatement = getCurrentStatement();
 		if (currentOperation.requiresVariableFrameInEnvironment()) {
 			if (currentStatement != null && !stateIsLocked()) {
-				currentStatement.exitedOperationDuringEvaluation(context, result, currentOperation);
+				result.appendEvent(new OperationExitedEvent(currentOperation));
 			}
 			fVariableEnvironment.popFrame();
 		}
@@ -657,29 +683,306 @@ public final class MSystem {
     }
     
     
+    
+    
+    
     /**
      * TODO
+     * 
+     * @param objectClass
+     * @param objectName
+     * @return
+     * @throws MSystemException
+     * @throws EvaluationFailedException
+     */
+    public MObject createObject(StatementEvaluationResult result,
+            MClass objectClass, String objectName) throws MSystemException {
+
+        MObject newObject = fCurrentState.createObject(objectClass, objectName);
+
+        result.getStateDifference().addNewObject(newObject);
+
+        result.prependToInverseStatement(new MObjectDestructionStatement(newObject.value()));
+
+        result.appendEvent(new ObjectCreatedEvent(newObject));
+
+        return newObject;
+    }
+
+    /**
+     * TODO
+     * 
+     * @param object
+     * @throws MSystemException
+     */
+    public void destroyObject(StatementEvaluationResult result,
+            MObject object) throws MSystemException {
+
+        // we cannot destroy an object with an active operation. we need to
+        // check whether this object, or any of the link objects possibly
+        // connected to this object have an active operation
+        Set<MObject> objectsAffectedByDeletion = fCurrentState
+                .getObjectsAffectedByDestruction(object);
+
+        for (MObject affectedObject : objectsAffectedByDeletion) {
+            if (hasActiveOperation(affectedObject)) {
+                throw new MSystemException("Object " + StringUtil.inQuotes(affectedObject)
+                        + " has an active operation and thus cannot be deleted.");
+            }
+        }
+
+        // .deleteObject() also takes care of the links this
+        // object has been participating in
+        DeleteObjectResult deleteResult = fCurrentState.deleteObject(object);
+        result.getStateDifference().addDeleteResult(deleteResult);
+
+        Map<MObject, List<String>> undefinedTopLevelReferences = new HashMap<MObject, List<String>>();
+
+        for (MObject destroyedObject : deleteResult.getRemovedObjects()) {
+            List<String> topLevelReferences = fVariableEnvironment.getTopLevelReferencesTo(
+                    destroyedObject);
+
+            if (!topLevelReferences.isEmpty()) {
+                undefinedTopLevelReferences.put(destroyedObject, topLevelReferences);
+            }
+
+            fVariableEnvironment.undefineReferencesTo(destroyedObject);
+        }
+
+        result.prependToInverseStatement(new MObjectRestorationStatement(deleteResult,
+                undefinedTopLevelReferences));
+
+        if (object instanceof MLink) {
+            MLink link = (MLink) object;
+            result.appendEvent(new LinkDeletedEvent(link.association(), Arrays.asList(link
+                    .linkedObjectsAsArray())));
+        } else {
+            result.appendEvent(new ObjectDestroyedEvent(object));
+        }
+
+        Set<MLink> deletedLinks = new HashSet<MLink>(deleteResult.getRemovedLinks());
+        Set<MObject> deletedObjects = new HashSet<MObject>(deleteResult.getRemovedObjects());
+
+        deletedLinks.remove(object);
+        deletedObjects.remove(object);
+
+        for (MObject o : deletedObjects) {
+            if (o instanceof MLink) {
+                deletedLinks.add((MLink) o);
+            }
+        }
+
+        deletedObjects.removeAll(deletedLinks);
+
+        for (MLink l : deletedLinks) {
+            result.appendEvent(new LinkDeletedEvent(l.association(), Arrays.asList(l
+                    .linkedObjectsAsArray())));
+        }
+
+        for (MObject o : deletedObjects) {
+            result.appendEvent(new ObjectDestroyedEvent(o));
+        }
+    }
+
+    /**
+     * Inserts a link between objects to the current state and keeps track of
+     * the changes (e.g., for undo) in the result object.
+     * 
+     * @param association
+     * @param participants
+     * @param qualifierValues
+     * @throws EvaluationFailedException
+     */
+    public MLink createLink(StatementEvaluationResult result,
+            MAssociation association, List<MObject> participants, List<List<Value>> qualifierValues)
+            throws MSystemException {
+
+        MLink newLink = fCurrentState.createLink(association, participants, qualifierValues);
+
+        result.getStateDifference().addNewLink(newLink);
+
+        List<MRValue> wrappedParticipants = new ArrayList<MRValue>(participants.size());
+
+        for (MObject participant : participants) {
+            wrappedParticipants.add(new MRValueExpression(participant));
+        }
+
+        List<List<MRValue>> wrappedQualifier = new LinkedList<List<MRValue>>();
+
+        for (List<Value> qValues : qualifierValues) {
+            List<MRValue> wrappedQValues;
+            if (qValues.size() == 0) {
+                wrappedQValues = Collections.emptyList();
+            } else {
+                wrappedQValues = new LinkedList<MRValue>();
+                for (Value qValue : qValues) {
+                    wrappedQValues.add(new MRValueExpression(qValue));
+                }
+            }
+            wrappedQualifier.add(wrappedQValues);
+        }
+
+        result.prependToInverseStatement(new MLinkDeletionStatement(association,
+                wrappedParticipants, wrappedQualifier));
+
+        result.appendEvent(new LinkInsertedEvent(association, participants));
+
+        return newLink;
+    }
+
+    /**
+     * TODO
+     * 
+     * @param association
+     * @param participants
+     * @throws MSystemException
+     * @throws EvaluationFailedException
+     */
+    public void deleteLink(StatementEvaluationResult result,
+            MAssociation association, List<MObject> participants, List<List<Value>> qualifierValues)
+            throws MSystemException {
+
+        // we need to find out if this is actually a link object, since we need
+        // to call destroyObject in that case to get the correct undo
+        // statement
+        MLink link = fCurrentState.linkBetweenObjects(association, participants,
+                qualifierValues);
+
+        if ((link != null) && (link instanceof MLinkObject)) {
+            destroyObject(result, (MLinkObject) link);
+            return;
+        }
+
+        result.getStateDifference().addDeleteResult(
+                fCurrentState.deleteLink(association, participants, qualifierValues));
+
+        List<MRValue> wrappedParticipants = new ArrayList<MRValue>(participants.size());
+
+        for (MObject participant : participants) {
+            wrappedParticipants.add(new MRValueExpression(participant));
+        }
+
+        List<List<MRValue>> wrappedQualifier;
+        if (qualifierValues == null || qualifierValues.isEmpty()) {
+            wrappedQualifier = Collections.emptyList();
+        } else {
+            wrappedQualifier = new ArrayList<List<MRValue>>(qualifierValues.size());
+
+            for (List<Value> endQualifier : qualifierValues) {
+                List<MRValue> endQualifierValues;
+
+                if (endQualifier == null || endQualifier.isEmpty()) {
+                    endQualifierValues = Collections.emptyList();
+                } else {
+                    endQualifierValues = new ArrayList<MRValue>();
+                    for (Value v : endQualifier) {
+                        endQualifierValues.add(new MRValueExpression(v));
+                    }
+                }
+
+                wrappedQualifier.add(endQualifierValues);
+            }
+        }
+        result.prependToInverseStatement(new MLinkInsertionStatement(association,
+                wrappedParticipants, wrappedQualifier));
+
+        result.appendEvent(new LinkDeletedEvent(association, participants));
+    }
+
+    /**
+     * TODO
+     * 
+     * @param associationClass
+     * @param linkObjectName
+     * @param participants
+     * @return
+     * @throws MSystemException
+     * @throws EvaluationFailedException
+     */
+    public MLinkObject createLinkObject(
+            StatementEvaluationResult result, MAssociationClass associationClass,
+            String linkObjectName, List<MObject> participants, List<List<Value>> qualifierValues)
+            throws MSystemException {
+
+        MLinkObject newLinkObject;
+        newLinkObject = fCurrentState.createLinkObject(associationClass, linkObjectName,
+                participants, qualifierValues);
+
+        result.getStateDifference().addNewLinkObject(newLinkObject);
+
+        result.prependToInverseStatement(new MObjectDestructionStatement(newLinkObject.value()));
+
+        result.appendEvent(new LinkInsertedEvent(associationClass, participants));
+
+        return newLinkObject;
+    }
+
+    /**
+     * TODO
+     * 
+     * @param object
+     * @param attribute
+     * @param value
+     * @throws MSystemException
+     * @throws EvaluationFailedException
+     */
+    public void assignAttribute(StatementEvaluationResult result,
+            MObject object, MAttribute attribute, Value value) throws MSystemException {
+
+        Value oldValue;
+
+        try {
+            oldValue = object.state(fCurrentState).attributeValue(attribute);
+            object.state(fCurrentState).setAttributeValue(attribute, value);
+        } catch (IllegalArgumentException e) {
+            throw new MSystemException(e.getMessage());
+        }
+
+        result.getStateDifference().addModifiedObject(object);
+
+        result.prependToInverseStatement(new MAttributeAssignmentStatement(object, attribute,
+                oldValue));
+
+        result.appendEvent(new AttributeAssignedEvent(object, attribute, value));
+    }
+
+    /**
+     * TODO
+     * 
+     * @param variableName
+     * @param value
+     */
+    public void assignVariable(StatementEvaluationResult result, String variableName, Value value) {
+
+        Value oldValue = fVariableEnvironment.lookUp(variableName);
+
+        if (oldValue != null) {
+            result.prependToInverseStatement(new MVariableAssignmentStatement(variableName,
+                    oldValue));
+        } else {
+            result.prependToInverseStatement(new MVariableDestructionStatement(variableName));
+        }
+
+        fVariableEnvironment.assign(variableName, value);
+    }
+
+    /**
+     * TODO
+     * 
      * @param statement
      * @param undoOnFailure
      * @param storeResult
      * @return
      * @throws MSystemException
      */
-    private StatementEvaluationResult evaluate(
-			MStatement statement,
-			boolean undoOnFailure,
-			boolean storeResult,
-			boolean notifyUpdateStateListeners) throws MSystemException {
-    	//FIXME: inline these parameters into the evaluation context
-    	return evaluate(
-    			statement, 
-    			new SoilEvaluationContext(this),
-    			undoOnFailure, 
-    			storeResult,
-    			notifyUpdateStateListeners);
+    private StatementEvaluationResult evaluate(MStatement statement, boolean undoOnFailure,
+            boolean storeResult, boolean notifyUpdateStateListeners) throws MSystemException {
+        // FIXME: inline these parameters into the evaluation context
+        return evaluate(statement, new SoilEvaluationContext(this), undoOnFailure, storeResult,
+                notifyUpdateStateListeners);
     }
-    
    
+    
     /**
 	 * TODO
 	 * @param statement
@@ -707,7 +1010,11 @@ public final class MSystem {
 			fUniqueNameGenerator.pushState();
 		}
 		
-		statement.evaluateGuarded(context, result);
+		try {
+        	statement.evaluate(context, result);
+        } catch (EvaluationFailedException e) {
+        	result.setException(e);
+        }
 				
 		fCurrentlyEvaluatedStatements.pop();
 		

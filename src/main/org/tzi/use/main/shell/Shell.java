@@ -56,7 +56,6 @@ import org.tzi.use.analysis.coverage.AttributeAccessInfo;
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
-import org.tzi.use.config.Options.SoilPermissionLevel;
 import org.tzi.use.gen.model.GFlaggedInvariant;
 import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.gen.tool.GNoResultException;
@@ -1322,11 +1321,6 @@ public final class Shell implements Runnable, PPCHandler {
             return;
         }
         
-        SoilPermissionLevel permissionLevel = Options.soilFromOCL;
-        if (permissionLevel == SoilPermissionLevel.ALL) {
-        	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
-        }
-
         // compile query
         MSystem system = system();
         InputStream stream = new ByteArrayInputStream(line.getBytes());
@@ -1339,8 +1333,6 @@ public final class Shell implements Runnable, PPCHandler {
 				new PrintWriter(System.err), 
 				system.varBindings());
 		
-		Options.soilFromOCL = permissionLevel;
-        
         // compile errors?
         if (expr == null)
             return;
@@ -1395,11 +1387,6 @@ public final class Shell implements Runnable, PPCHandler {
             return;
         }
 
-        SoilPermissionLevel permissionLevel = Options.soilFromOCL;
-        if (permissionLevel == SoilPermissionLevel.ALL) {
-        	Options.soilFromOCL = SoilPermissionLevel.SIDEEFFECT_FREE_ONLY;
-        }
-        
         // compile query
         MSystem system = system();
         InputStream stream = new ByteArrayInputStream(line.getBytes());
@@ -1412,7 +1399,6 @@ public final class Shell implements Runnable, PPCHandler {
 				new PrintWriter(System.err), 
 				system.varBindings());
 		
-		Options.soilFromOCL = permissionLevel;
 
         // compile errors?
         if (expr == null)

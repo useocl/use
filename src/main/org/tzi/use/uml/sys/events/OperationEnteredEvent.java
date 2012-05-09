@@ -22,7 +22,6 @@
 package org.tzi.use.uml.sys.events;
 
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.soil.MStatement;
 
 
 /**
@@ -42,10 +41,8 @@ public class OperationEnteredEvent extends Event {
 	 * @param failed
 	 */
 	public OperationEnteredEvent(
-			MStatement creator, 
 			MOperationCall operationCall) {
 		
-		super(creator);
 		fOperationCall = operationCall;
 	}
 	

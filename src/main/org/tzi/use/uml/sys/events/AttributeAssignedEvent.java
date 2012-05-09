@@ -24,7 +24,6 @@ package org.tzi.use.uml.sys.events;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.soil.MStatement;
 
 
 /**
@@ -49,12 +48,10 @@ public class AttributeAssignedEvent extends Event {
 	 * @param value
 	 */
 	public AttributeAssignedEvent(
-			MStatement creator, 
 			MObject object, 
 			MAttribute attribute, 
 			Value value) {
 		
-		super(creator);
 		fObject = object;
 		fAttribute = attribute;
 		fValue = value;

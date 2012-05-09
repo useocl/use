@@ -87,10 +87,10 @@ public class MIterationStatement extends MStatement {
 
 	
 	@Override
-	protected void evaluate(SoilEvaluationContext context,
+    public void evaluate(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 	
-		Value val = evaluateExpression(context, result, fRange);
+		Value val = EvalUtil.evaluateExpression(this, context, result, fRange);
 		
 		if (val.isUndefined())
 			return;
@@ -98,7 +98,7 @@ public class MIterationStatement extends MStatement {
 		CollectionValue range = (CollectionValue)val;
 		for (Value elem : range) {
 			context.getVarEnv().assign(fVariableName, elem);
-			evaluateSubStatement(context, result, fBody);
+			fBody.evaluate(context, result);
 		}
 		
 	}
@@ -116,12 +116,6 @@ public class MIterationStatement extends MStatement {
 		" end";
 	}
 	
-
-	@Override
-	public boolean hasSideEffects() {
-		return(fRange.hasSideEffects() || fBody.hasSideEffects());
-	}
-
 
 	@Override
 	protected void toVisitorString(
