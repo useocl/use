@@ -50,7 +50,7 @@ public class MOperationCallStatement extends MStatement {
     /** TODO */
     private MOperation fOperation;
     /** TODO */
-    private LinkedHashMap<String, Expression> fArguments;
+    private Map<String, Expression> fArguments;
     /** TODO */
     private Value fReturnValue; // may be null!
 
@@ -61,9 +61,8 @@ public class MOperationCallStatement extends MStatement {
      * @param operation
      * @param arguments
      */
-    public MOperationCallStatement(Expression object, MOperation operation,
-            LinkedHashMap<String, Expression> arguments) {
-
+	public MOperationCallStatement(Expression object, MOperation operation,
+			Map<String, Expression> arguments) {
         fObject = object;
         fOperation = operation;
         fArguments = arguments;
