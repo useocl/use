@@ -134,4 +134,8 @@
 ? Set{Set{1,2},Set{3}}.including(4) = Set{Set{1,2},Set{3}}->collect(s | s->including(4))->flatten
 *-> true : Boolean
 
+# Shorthand collect on tuples (Mantis issue #0000134)
+? let s=Set{Tuple{a:'Tolkien',b:'Rings'},Tuple{a:'Dante',b:'Comedia'}} in s.a = s->collect(a) 
+*-> true : Boolean
+
 exit

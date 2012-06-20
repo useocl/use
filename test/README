@@ -19,3 +19,5 @@ taken as input for USE. Lines with a leading `*' mark expected output
 ---------------------------
 t001: Operations on build in types
 t002: Operations on build in types and objects
+t003: Navigation
+t004: Shorthand collect on objects and build-in types
