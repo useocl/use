@@ -490,4 +490,8 @@ public class Options {
 	public static LimitedStack<String> getRecentFiles() {
 		return openedFiles;
 	}
+	
+	public static String getUSEVersion() {
+		return RELEASE_VERSION;
+	}
 }
