@@ -52,6 +52,22 @@ public final class ExpAsType extends Expression {
     }
 
     /**
+     * Returns the source expression.
+     * @return The source <code>Expression</code> 
+     */
+    public Expression getSourceExpr() {
+    	return fSourceExpr;
+    }
+    
+    /**
+     * Returns the target type.
+     * @return The target <code>Type</code> 
+     */
+    public Type getTargetType() {
+    	return type();
+    }
+    
+    /**
      * Evaluates expression and returns result value. 
      */
     public Value eval(EvalContext ctx) {
