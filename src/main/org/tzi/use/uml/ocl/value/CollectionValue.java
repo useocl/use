@@ -109,9 +109,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     /**
      * Returns the value for the type parameter of this collection.
      */
-    protected Type inferElementType() 
-        throws ExpInvalidException
-    {
+    protected Type inferElementType() throws ExpInvalidException {
 
         if (collection().size() == 0) {
             return fElemType;
@@ -148,8 +146,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         return commonSuperType;
     }
 
-    
-    
     protected void deriveRuntimeType() {
         try {
             setElemType(inferElementType());
