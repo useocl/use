@@ -55,7 +55,7 @@ public class ExpClosure extends ExpQuery {
 	 * If source is ordered a ordered set is returned,
 	 * otherwise a set.
 	 * The element type of the resulting collection type is
-	 * retrieved from the query expression.
+	 * retrieved from the range expression.
 	 * 
 	 * @param rangeExp The expression the closure operation is evaluated on. 
 	 * @param queryExp The body of the query expression.
@@ -68,21 +68,27 @@ public class ExpClosure extends ExpQuery {
 		CollectionType resultType;
 
 		CollectionType rangeType = (CollectionType) rangeExp.type();
-		Type flattenedQueryType = (queryExp.type().isCollection(true) ? ((CollectionType) queryExp
-				.type()).elemType() : queryExp.type());
+		Type flattenedQueryType;
+		
+		if (queryExp.type().isCollection(true)
+				&& !queryExp.type().isSubtypeOf(rangeType.elemType())) {
+			flattenedQueryType = ((CollectionType)queryExp.type()).elemType();
+		} else {
+			flattenedQueryType = queryExp.type();
+		}
 
-		if (!flattenedQueryType.equals(rangeType.elemType())) {
+		if (!flattenedQueryType.isSubtypeOf(rangeType.elemType())) {
 			throw new ExpInvalidException("Query expression must be of type "
 					+ StringUtil.inQuotes(rangeType.elemType())
 					+ " or "
 					+ StringUtil.inQuotes("Collection(" + rangeType.elemType()
-							+ ")") + ".");
+							+ ")") + ", but is " + StringUtil.inQuotes(queryExp.type()) + ".");
 		}
 
 		if (rangeExp.type().isSequence() || rangeExp.type().isOrderedSet()) {
-			resultType = TypeFactory.mkOrderedSet(flattenedQueryType);
+			resultType = TypeFactory.mkOrderedSet(rangeType.elemType());
 		} else {
-			resultType = TypeFactory.mkSet(flattenedQueryType);
+			resultType = TypeFactory.mkSet(rangeType.elemType());
 		}
 
 		return resultType;
@@ -124,11 +130,13 @@ public class ExpClosure extends ExpQuery {
 
         evalClosureAux(resValues, rangeVal, ctx);
         
+        CollectionType resultType = (CollectionType)type();
+        
         // result is collection with mapped values
         if (fRangeExp.type().isSequence() || fRangeExp.type().isOrderedSet())
-            return new OrderedSetValue(fQueryExp.type(), resValues);
+            return new OrderedSetValue(resultType.elemType(), resValues);
         else
-            return new SetValue(fQueryExp.type(), resValues);
+            return new SetValue(resultType.elemType(), resValues);
     }
     
 	/**
@@ -140,8 +148,9 @@ public class ExpClosure extends ExpQuery {
 			EvalContext ctx) {
 		
 		Collection<Value> rangeVal;
+		CollectionType resultType = (CollectionType)type();
 		
-		if (elem.isCollection()) {
+		if (elem.isCollection() && !elem.type().isSubtypeOf(resultType.elemType())) {
 			rangeVal = ((CollectionValue)elem).collection();
 		} else {
 			rangeVal = new ArrayList<Value>(1);
@@ -160,7 +169,7 @@ public class ExpClosure extends ExpQuery {
             Value val = fQueryExp.eval(ctx);
 
             // add element or elements to result
-            if (val.isCollection()) {
+            if (val.isCollection() && !val.type().isSubtypeOf(resultType.elemType()) ) {
             	CollectionValue colVal = (CollectionValue)val;
             	for (Value elem2 : colVal.collection()) {
             		if (!resValues.contains(elem2)) {
