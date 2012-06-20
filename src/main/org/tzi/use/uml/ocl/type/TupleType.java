@@ -202,6 +202,12 @@ public final class TupleType extends Type {
         return res;
     }
 
+    /**
+     * Returns the tuple part with the given <code>name</code> or <code>null</code> if no
+     * such part exists. 
+     * @param name
+     * @return
+     */
     public Part getPart(String name) {
         if (fParts.containsKey(name))
         	return fParts.get(name);

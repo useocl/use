@@ -439,7 +439,18 @@ public class ASTOperationExpression extends ASTExpression {
                     res = genImplicitCollect(srcExpr, eNav, elemType);
                 }
             }
+        } else if (elemType.isTupleType(true)) {
+        	TupleType t = (TupleType)elemType;
+        	TupleType.Part p = t.getPart(opname);
+        	
+        	if (p != null) {
+        		ExpVariable eVar = new ExpVariable("$e", elemType);
+        		ExpTupleSelectOp eAttr = new ExpTupleSelectOp(p, eVar);
+                eAttr.setIsPre(this.isPre());
+                res = genImplicitCollect(srcExpr, eAttr, elemType);
+        	}
         }
+        
         if (res == null ) {
             // ! objectType || ! (attr ||  navigation)
             // try (1) predefined OCL operation
