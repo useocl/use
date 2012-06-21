@@ -25,7 +25,7 @@
 ? Set{1,2}->forAll(i1, i2 | i1 <> i2)
 *-> false : Boolean
 
-# Issue #0000119
+# Issue #0000119 (Parser does not allow multiple type declarations in OCL iterate expression )
 ? Set{1,2}->forAll(i1:Integer, i2:Integer | i1 <> i2)
 *-> false : Boolean
 

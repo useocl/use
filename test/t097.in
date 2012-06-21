@@ -1,0 +1,19 @@
+gen start -r 703 -t t097.assl createAC(4,4)
+gen result
+gen result accept
+
+reset
+gen start -r 703 -t -ac t097.assl createAC(4,4)
+gen result
+gen result accept
+
+reset
+gen start -r 703 -t t097.assl tryAC(4,4)
+gen result
+gen result accept
+
+reset
+gen start -r 703 -t -ac t097.assl tryAC(4,4)
+gen result
+gen result accept
+exit

@@ -3,7 +3,7 @@
 # See the README file in this directory for information about the file
 # format.
 
-# tests evaluation of the equals method of Bags
+# tests combination of different collections
 
 ?let x:Collection(OclAny) = Set{42} in let y:Collection(OclAny) = Sequence{42} in x = y
 *-> false : Boolean
