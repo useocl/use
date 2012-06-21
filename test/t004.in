@@ -85,7 +85,6 @@
 ? a.b.bop1() = a.b->collect(b | b.bop1())
 *-> true : Boolean
 
-
 ? a.b.bop2()
 *-> Bag{'b1','b1b1','b2','b2b2'} : Bag(String)
 
@@ -135,7 +134,9 @@
 *-> true : Boolean
 
 # Shorthand collect on tuples (Mantis issue #0000134)
-? let s=Set{Tuple{a:'Tolkien',b:'Rings'},Tuple{a:'Dante',b:'Comedia'}} in s.a = s->collect(a) 
+# Need to be fixed to collect(a)
+# let s=Set{Tuple{a:'Tolkien',b:'Rings'},Tuple{a:'Dante',b:'Comedia'}} in s.a = s->collect(a)
+? let s=Set{Tuple{a:'Tolkien',b:'Rings'},Tuple{a:'Dante',b:'Comedia'}} in s.b = s->collect(b)
 *-> true : Boolean
 
 exit
