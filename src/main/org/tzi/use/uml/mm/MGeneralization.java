@@ -31,8 +31,8 @@ import org.tzi.use.graph.DirectedEdge;
  * @author      Mark Richters 
  */
 public final class MGeneralization extends MModelElementImpl implements DirectedEdge<MClass> {
-    private MClass fParent;
-    private MClass fChild;
+    private final MClass fParent;
+    private final MClass fChild;
 
     /** 
      * Creates a new generalization.

@@ -43,12 +43,15 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     private Map<N, NodeInfo> fNodes;
     private Set<E> fEdges;
 
+    private Map<N, Set<N>> closureCache;
+    
     /**
      * Constructs an empty graph.
      */
     public DirectedGraphBase() {
         fNodes = new HashMap<N, NodeInfo>();
         fEdges = new HashSet<E>();
+        closureCache = new HashMap<N, Set<N>>();
     }
 
     /**
@@ -61,6 +64,10 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     }
 
 
+    private synchronized void clearCache() {
+    	closureCache.clear();
+    }
+    
     // Query Operations
 
     /**
@@ -119,6 +126,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
             return false;
         else {
             fNodes.put(o, new NodeInfo());
+            clearCache();
             return true;
         }
     }
@@ -162,6 +170,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         }
                 
         fNodes.remove(o);
+        clearCache();
         
         return true;
     }
@@ -278,6 +287,8 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         target.addIncomingEdge(e);
 
         fEdges.add(e);
+        
+        clearCache();
         return true;
     }
 
@@ -302,6 +313,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         target.removeIncomingEdge(e);
 
         fEdges.remove(e);
+        clearCache();
         return true;
     }
 
@@ -339,12 +351,17 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.
      */
-    public Set<N> targetNodeClosureSet(N n) {
+    public synchronized Set<N> targetNodeClosureSet(N n) {
         // check for existing node
         getNodeInfo(n);
-        Set<N> closure = new HashSet<N>();
-        targetNodeClosureSet0(closure, n);
-        return closure;
+        
+        if (!closureCache.containsKey(n)) {
+        	Set<N> closure = new HashSet<N>();
+        	targetNodeClosureSet0(closure, n);
+        	closureCache.put(n, closure);
+        }
+        
+        return closureCache.get(n);
     }
 
     private void targetNodeClosureSet0(Set<N> closure, N n) {

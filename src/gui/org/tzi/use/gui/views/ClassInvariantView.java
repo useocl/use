@@ -24,6 +24,7 @@ package org.tzi.use.gui.views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -31,6 +32,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,6 +40,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -91,6 +94,8 @@ public class ClassInvariantView extends JPanel implements View {
 
     private MainWindow fMainWindow;
 
+    private InvWorker worker = null;
+    
     /**
      * The table model.
      */
@@ -245,7 +250,9 @@ public class ClassInvariantView extends JPanel implements View {
                 }
             }
         });
-        update();
+        
+        worker = new InvWorker();
+        worker.execute();
     }
 
     private void clearValues() {
@@ -262,77 +269,13 @@ public class ClassInvariantView extends JPanel implements View {
         fOpenEvalBrowserEnabled = on;
     }
 
-    private void update() {
-        MSystemState systemState = fSystem.state();
-        boolean violationLabel = false; // determinds if the
-        // MultiplicityViolation Label should be
-        // shown
-
-        // check structure
-        systemState.checkStructure(fMainWindow.logWriter());
-        // check invariants
-        fLabel.setForeground(Color.black);
-        if (Options.EVAL_NUMTHREADS > 1)
-            fLabel.setText("Working (using " + Options.EVAL_NUMTHREADS
-                    + " concurrent threads)...");
-        else
-            fLabel.setText("Working...");
-
-        ArrayList<Expression> exprList = new ArrayList<Expression>();
-        for (int i = 0; i < fClassInvariants.length; i++)
-            exprList.add(fClassInvariants[i].expandedExpression());
-
-        // start (possibly concurrent) evaluation
-        Evaluator evaluator = new Evaluator();
-        Queue resultValues = evaluator.evalList(Options.EVAL_NUMTHREADS,
-                exprList, systemState);
-        int numFailures = 0;
-        fProgressBar.setValue(0);
-        for (int i = 0; i < fClassInvariants.length; i++) {
-            try {
-                Value v = (Value) resultValues.get();
-                boolean ok = false;
-                // if v == null it is not considered as a failure, rather it is
-                // a MultiplicityViolation and it is skiped as Failurecount
-                boolean skip = false;
-                if (v != null) {
-                    ok = v.isDefined() && ((BooleanValue) v).isTrue();
-                } else {
-                    violationLabel = true;
-                    skip = true;
-                }
-
-                if (!skip && !ok)
-                    numFailures++;
-                fValues[i] = v;
-                fProgressBar.setValue(i + 1);
-                fProgressBar.repaint();
-            } catch (InterruptedException ex) {
-                Log.error("InterruptedException: " + ex.getMessage());
-            }
-        }
-        setOpenEvalBrowserEnabled(true);
-
-        // show summary of results
-        if (numFailures == 0) {
-            if (violationLabel) {
-                fLabel.setForeground(Color.red);
-                fLabel
-                        .setText("Model inherent constraints violated (see Log for details).");
-            } else {
-                fLabel.setForeground(Color.black);
-                fLabel.setText("Constraints ok.");
-            }
-        } else {
-            fLabel.setForeground(Color.red);
-            fLabel.setText(numFailures + " constraint"
-                    + ((numFailures > 1) ? "s" : "") + " failed.");
-        }
-        fMyTableModel.fireTableDataChanged();
-    }
-
     public void stateChanged(StateChangeEvent e) {
-        update();
+    	if (worker != null && !worker.isDone()) {
+    		worker.cancel(true);
+    	}
+    	
+    	worker = new InvWorker();
+    	worker.execute();
     }
 
     /**
@@ -340,5 +283,134 @@ public class ClassInvariantView extends JPanel implements View {
      */
     public void detachModel() {
         fSystem.removeChangeListener(this);
+    }
+    
+    private class InvWorker extends SwingWorker<Boolean,Integer> {
+    	
+    	private String labelText;
+    	
+    	private String checkStructureResult = null;
+    	
+    	int numFailures = 0;
+    	
+    	int progressEnd = 0;
+    	
+    	// determines if the MultiplicityViolation Label should be shown
+    	boolean violationLabel = false; 
+    	
+    	/* (non-Javadoc)
+		 * @see javax.swing.SwingWorker#doInBackground()
+		 */
+		@Override
+		protected Boolean doInBackground() throws Exception {
+			progressEnd = 2 + fClassInvariants.length;
+			
+			MSystemState systemState = fSystem.state();
+            
+            // check structure
+            labelText = "Checking structure...";
+            publish(1);
+            
+            StringWriter out = new StringWriter();
+            systemState.checkStructure(new PrintWriter(out));
+            
+            checkStructureResult = out.toString();
+            
+            // check invariants
+            if (Options.EVAL_NUMTHREADS > 1)
+                labelText = "Working (using " + Options.EVAL_NUMTHREADS + " concurrent threads)...";
+            else
+                labelText = "Working...";
+
+            publish(2);
+            
+            ArrayList<Expression> exprList = new ArrayList<Expression>();
+            for (int i = 0; i < fClassInvariants.length; i++)
+                exprList.add(fClassInvariants[i].expandedExpression());
+
+            // start (possibly concurrent) evaluation
+            Evaluator evaluator = new Evaluator();
+            Queue resultValues = evaluator.evalList(Options.EVAL_NUMTHREADS, exprList, systemState);
+            
+            for (int i = 0; i < fClassInvariants.length; i++) {
+                try {
+                    Value v = (Value) resultValues.get();
+                    if (this.isCancelled())
+                    	return null;
+                    
+                    boolean ok = false;
+                    // if v == null it is not considered as a failure, rather it is
+                    // a MultiplicityViolation and it is skiped as Failurecount
+                    boolean skip = false;
+                    if (v != null) {
+                        ok = v.isDefined() && ((BooleanValue) v).isTrue();
+                    } else {
+                        violationLabel = true;
+                        skip = true;
+                    }
+
+                    if (!skip && !ok)
+                        numFailures++;
+                    
+                    fValues[i] = v;
+                    publish(i + 2);
+                } catch (InterruptedException ex) {
+                    Log.error("InterruptedException: " + ex.getMessage());
+                }
+            }
+            
+            return null;
+        }
+
+		/* (non-Javadoc)
+		 * @see javax.swing.SwingWorker#process(java.util.List)
+		 */
+		@Override
+		protected void process(List<Integer> chunks) {
+			int lastProgress = chunks.get(chunks.size() - 1);
+			
+			if (lastProgress >= 2 && checkStructureResult != null) {
+				fMainWindow.logWriter().append(checkStructureResult);
+				checkStructureResult = null;
+			}
+			
+			fLabel.setForeground(Color.black);
+			fLabel.setText(labelText);
+			
+			fProgressBar.setMaximum(progressEnd);
+			fProgressBar.setValue(lastProgress);
+			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			fMyTableModel.fireTableDataChanged();
+			repaint();
+		}
+
+		/* (non-Javadoc)
+		 * @see javax.swing.SwingWorker#done()
+		 */
+		@Override
+		protected void done() {
+			setOpenEvalBrowserEnabled(true);
+
+            // show summary of results
+            if (numFailures == 0) {
+                if (violationLabel) {
+                    fLabel.setForeground(Color.red);
+                    fLabel
+                            .setText("Model inherent constraints violated (see Log for details).");
+                } else {
+                    fLabel.setForeground(Color.black);
+                    fLabel.setText("Constraints ok.");
+                }
+            } else {
+                fLabel.setForeground(Color.red);
+                fLabel.setText(numFailures + " constraint"
+                        + ((numFailures > 1) ? "s" : "") + " failed.");
+            }
+            
+            fProgressBar.setMaximum(1);
+			fProgressBar.setValue(1);
+            setCursor(Cursor.getDefaultCursor());
+            fMyTableModel.fireTableDataChanged();
+		}
     }
 }
