@@ -1,0 +1,12 @@
+model CivilStatusWorld
+
+class Person
+operations
+  giveBirth(childName:String, aGender:Gender):Person
+  post newEarthCitizen: result.oclIsNew()
+end
+
+association Marriage between
+  Person [0..1] role wife
+  Person [0..1] role husband
+end
