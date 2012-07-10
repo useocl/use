@@ -33,6 +33,10 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,6 +58,7 @@ import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.expr.EvaluatorCallable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.value.BooleanValue;
@@ -61,8 +66,6 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.StateChangeEvent;
-import org.tzi.use.util.Log;
-import org.tzi.use.util.collections.Queue;
 
 /**
  * A table showing invariants and their results.
@@ -271,6 +274,7 @@ public class ClassInvariantView extends JPanel implements View {
 
     public void stateChanged(StateChangeEvent e) {
     	if (worker != null && !worker.isDone()) {
+    		worker.shutdown();
     		worker.cancel(true);
     	}
     	
@@ -286,6 +290,8 @@ public class ClassInvariantView extends JPanel implements View {
     }
     
     private class InvWorker extends SwingWorker<Boolean,Integer> {
+    	
+    	private ExecutorService executor;
     	
     	private String labelText;
     	
@@ -307,6 +313,10 @@ public class ClassInvariantView extends JPanel implements View {
 			
 			MSystemState systemState = fSystem.state();
             
+			for (int i = 0; i < fValues.length; ++i) {
+				fValues[i] = null;
+			}
+			
             // check structure
             labelText = "Checking structure...";
             publish(1);
@@ -324,18 +334,23 @@ public class ClassInvariantView extends JPanel implements View {
 
             publish(2);
             
-            ArrayList<Expression> exprList = new ArrayList<Expression>();
-            for (int i = 0; i < fClassInvariants.length; i++)
-                exprList.add(fClassInvariants[i].expandedExpression());
-
-            // start (possibly concurrent) evaluation
-            Evaluator evaluator = new Evaluator();
-            Queue resultValues = evaluator.evalList(Options.EVAL_NUMTHREADS, exprList, systemState);
+            executor = Executors.newFixedThreadPool(Options.EVAL_NUMTHREADS);
+            List<Future<Value>> results = new ArrayList<Future<Value>>(fClassInvariants.length);
+            
+            for (int i = 0; i < fClassInvariants.length; i++) {
+            	EvaluatorCallable evalCall = new EvaluatorCallable(systemState, fClassInvariants[i].expandedExpression());
+            	Future<Value> f = executor.submit(evalCall); 
+                results.add(f);
+            }
             
             for (int i = 0; i < fClassInvariants.length; i++) {
                 try {
-                    Value v = (Value) resultValues.get();
-                    if (this.isCancelled())
+                	Future<Value> nextFuture = results.get(i);
+                	
+                	// Here we wait for the result of task n
+                    Value v = nextFuture.get();
+                    
+                    if (executor.isTerminated())
                     	return null;
                     
                     boolean ok = false;
@@ -355,12 +370,27 @@ public class ClassInvariantView extends JPanel implements View {
                     fValues[i] = v;
                     publish(i + 2);
                 } catch (InterruptedException ex) {
-                    Log.error("InterruptedException: " + ex.getMessage());
+                    // OK
                 }
             }
             
+            executor.shutdown();
             return null;
         }
+
+		/**
+		 * 
+		 */
+		public void shutdown() {
+			executor.shutdownNow();
+			// Wait max ten seconds
+			try {
+				executor.awaitTermination(10, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		/* (non-Javadoc)
 		 * @see javax.swing.SwingWorker#process(java.util.List)

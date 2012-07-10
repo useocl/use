@@ -1245,11 +1245,11 @@ public final class MSystem {
     	return result;
     }
     
-    private void lockState() {
+    private synchronized void lockState() {
     	++fStateLock;
     }
     
-    private void unlockState() {
+    private synchronized void unlockState() {
     	--fStateLock;
     }
     

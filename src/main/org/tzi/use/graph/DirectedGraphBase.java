@@ -23,6 +23,7 @@ package org.tzi.use.graph;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,7 +44,8 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     private Map<N, NodeInfo> fNodes;
     private Set<E> fEdges;
 
-    private Map<N, Set<N>> closureCache;
+    // Array is of type N
+    private Map<N, Object[]> closureCache;
     
     /**
      * Constructs an empty graph.
@@ -51,7 +53,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     public DirectedGraphBase() {
         fNodes = new HashMap<N, NodeInfo>();
         fEdges = new HashSet<E>();
-        closureCache = new HashMap<N, Set<N>>();
+        closureCache = new HashMap<N, Object[]>();
     }
 
     /**
@@ -358,10 +360,15 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         if (!closureCache.containsKey(n)) {
         	Set<N> closure = new HashSet<N>();
         	targetNodeClosureSet0(closure, n);
-        	closureCache.put(n, closure);
+        	Object[] closureArray = new Object[closure.size()];
+        	closureArray = closure.toArray(closureArray);
+        	closureCache.put(n, closureArray);
+        	return closure;
         }
         
-        return closureCache.get(n);
+        @SuppressWarnings("unchecked")
+		N[] closureArray = (N[])closureCache.get(n);
+        return new HashSet<N>(Arrays.asList(closureArray));
     }
 
     private void targetNodeClosureSet0(Set<N> closure, N n) {
