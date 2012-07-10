@@ -1,5 +1,5 @@
 !create ada:Person
-!openter ada giveBirth('Eve', #female)
+!openter ada giveBirth('Eve')
 !create eve:Person
 !opexit eve
 exit

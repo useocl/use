@@ -2,7 +2,7 @@ model CivilStatusWorld
 
 class Person
 operations
-  giveBirth(childName:String, aGender:Gender):Person
+  giveBirth(childName:String):Person
   post newEarthCitizen: result.oclIsNew()
 end
 
