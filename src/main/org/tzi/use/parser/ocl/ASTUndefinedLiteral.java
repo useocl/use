@@ -21,7 +21,7 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -55,7 +55,7 @@ public class ASTUndefinedLiteral extends ASTExpression {
     }
 
 	@Override
-	public void getFreeVariables(HashSet<String> freeVars) {
+	public void getFreeVariables(Set<String> freeVars) {
 		
 	}
 }

@@ -127,7 +127,9 @@ public abstract class Expression implements BufferedToString {
     
     
     /**
-     * TODO
+     * Returns <code>true</code> if this expression or one
+     * of it child expressions constains an access to the pre state
+     * of the system.
      * @return
      */
     public boolean containsPre() {

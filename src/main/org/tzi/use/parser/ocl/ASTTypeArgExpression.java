@@ -21,7 +21,7 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
@@ -142,7 +142,7 @@ public class ASTTypeArgExpression extends ASTExpression {
     }
 
 	@Override
-	public void getFreeVariables(HashSet<String> freeVars) {
+	public void getFreeVariables(Set<String> freeVars) {
 		if (fSourceExpr != null) {
 			fSourceExpr.getFreeVariables(freeVars);
 		}

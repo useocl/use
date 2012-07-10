@@ -400,7 +400,6 @@ public final class MSystem {
             if (currentOperation == null) throw new RuntimeException("Cannot exit without a current operation!");
             currentOperation.setExited(true);
             fCallStack.pop();
-            MStatement currentStatement = getCurrentStatement();
 			return operationCall;
 		}
 		
@@ -418,7 +417,6 @@ public final class MSystem {
             if (currentOperation == null) throw new RuntimeException("Cannot exit without a current operation!");
             currentOperation.setExited(true);
             fCallStack.pop();
-            MStatement currentStatement = getCurrentStatement();
 		}
 	}
 
@@ -443,7 +441,7 @@ public final class MSystem {
 		
 			EvalContext ctx = new EvalContext(
 					fCurrentState, 
-					fCurrentState, 
+					fCurrentState,
 					fVariableEnvironment.constructVarBindings(), null, "");
 			assertPostConditions(ctx, operationCall);
 		
@@ -1043,27 +1041,6 @@ public final class MSystem {
         return result;
     }
 
-
-    
-    /*public Value evaluateStatementInExpression(
-    		MStatement statement) throws MSystemException {
-    	
-    	MStatement currentStatement = getCurrentStatement();
-    	
-    	if (currentStatement == null) {
-    		evaluate(statement, false, false, false);
-    	} else {
-    		try {
-    			currentStatement.evaluateSubStatement(statement);
-    		} catch (EvaluationFailedException e) {
-    			throw new MSystemException(e.getMessage(), e);
-    		}
-    	}
-    	
-		return fVariableEnvironment.lookUp("result");
-    }*/
-    
-    
     /**
      * TODO
      * @return
@@ -1125,7 +1102,6 @@ public final class MSystem {
 		return result;
 	}
 
-//        lastOperationCall = opcall;
 	/**
      * TODO
      * @return

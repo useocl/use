@@ -21,7 +21,7 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
@@ -47,7 +47,7 @@ public class ASTIntegerLiteral extends ASTExpression {
     }
 
     @Override
-	public void getFreeVariables(HashSet<String> freeVars) {
+	public void getFreeVariables(Set<String> freeVars) {
 	
 	}
 

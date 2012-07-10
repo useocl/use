@@ -22,8 +22,8 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
@@ -63,7 +63,7 @@ public class ASTPropertyCallExpression extends ASTExpression {
     }
 
 	@Override
-	public void getFreeVariables(HashSet<String> freeVars) {
+	public void getFreeVariables(Set<String> freeVars) {
 		for (ASTExpression arg : fArgs) {
 			arg.getFreeVariables(freeVars);
 		}

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
@@ -97,14 +98,14 @@ public abstract class ASTExpression extends AST {
      * TODO
      * @param freeVars
      */
-    public abstract void getFreeVariables(HashSet<String> freeVars);
+    public abstract void getFreeVariables(Set<String> freeVars);
     
     /**
      * TODO
      * @return
      */
-    public HashSet<String> getFreeVariables() {
-    	HashSet<String> result = new HashSet<String>();
+    public Set<String> getFreeVariables() {
+    	Set<String> result = new HashSet<String>();
     	getFreeVariables(result);
     	return result;
     }

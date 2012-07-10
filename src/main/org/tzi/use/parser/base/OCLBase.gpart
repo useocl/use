@@ -361,6 +361,13 @@ operationExpression[ASTExpression source, boolean followsArrow]
     )?
 
     ( AT 'pre' { $n.setIsPre(); } ) ?
+    
+    // The operation oclIsNew also requires access to the pre state
+    { if ($name.getText().equals("oclIsNew")) {
+    	$n.setIsPre();
+      }
+    }
+    
     (
       LPAREN { $n.hasParentheses(); }
       ( 

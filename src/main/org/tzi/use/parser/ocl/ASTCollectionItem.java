@@ -21,7 +21,7 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.tzi.use.parser.AST;
 
@@ -44,7 +44,7 @@ public class ASTCollectionItem extends AST {
     }
 
     // for soil type checking
-	public void getFreeVariables(HashSet<String> freeVars) {
+	public void getFreeVariables(Set<String> freeVars) {
 		fFirst.getFreeVariables(freeVars);
 		if (fSecond != null) {
 			fSecond.getFreeVariables(freeVars);

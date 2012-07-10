@@ -21,7 +21,7 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
@@ -60,7 +60,7 @@ public class ASTTupleItem extends AST {
     }
     
 
-	public void getFreeVariables(HashSet<String> freeVars) {
+	public void getFreeVariables(Set<String> freeVars) {
 		fExpr.getFreeVariables(freeVars);
 	}
 }
