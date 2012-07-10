@@ -50,7 +50,7 @@ import antlr.SemanticException;
  */
 public final class ExpStdOp extends Expression {
 
-    // opname / possible (overloaded) operations
+	// opname / possible (overloaded) operations
     public static MultiMap<String, OpGeneric> opmap;
 
     // initialize operation map
@@ -250,6 +250,14 @@ public final class ExpStdOp extends Expression {
         return fArgs;
     }
 
+    /* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#containsPre()
+	 */
+	@Override
+	public boolean requiresPreState() {
+		return this.opname().equals("oclIsNew") || super.requiresPreState();
+	}
+	
     /**
      * Evaluates the expression and returns a result value.
      */

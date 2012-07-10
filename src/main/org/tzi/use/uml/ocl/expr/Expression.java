@@ -38,10 +38,14 @@ import org.tzi.use.util.BufferedToString;
  */
 public abstract class Expression implements BufferedToString {
 	private ASTExpression fSourceExpression;
-    private Type fType; // result type
-    private List<Expression> fChildExpressions = new ArrayList<Expression>();
+	
+	// result type
+	private Type fType;
+    
+	private List<Expression> fChildExpressions = new ArrayList<Expression>();
 
-    private boolean fIsPre = false; // marked "@pre"?
+    // marked "@pre"?
+    private boolean fIsPre = false;
 
     protected Expression(Type t) {
         fType = t;
@@ -128,16 +132,16 @@ public abstract class Expression implements BufferedToString {
     
     /**
      * Returns <code>true</code> if this expression or one
-     * of it child expressions constains an access to the pre state
+     * of it child expressions contains an access to the pre state
      * of the system.
      * @return
      */
-    public boolean containsPre() {
+    public boolean requiresPreState() {
     	if (fIsPre) {
     		return true;
     	} else {
     		for (Expression childExpression : fChildExpressions) {
-    			if (childExpression.containsPre()) {
+    			if (childExpression.requiresPreState()) {
     				return true;
     			}
     		}

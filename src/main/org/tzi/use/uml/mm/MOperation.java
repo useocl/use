@@ -254,12 +254,12 @@ public final class MOperation extends MModelElementImpl {
     }
     
     /**
-     * Returns true if any of the post conditions contain the @pre modifier
-     * @return true if any of the post conditions contain the @pre modifier
+     * Returns true if any of the post conditions requires access to the pre state, e. g., by using @pre or oclIsNew
+     * @return true if any of the post conditions requires access to the pre state, e. g., by using @pre or oclIsNew
      */
     public boolean postConditionsRequirePreState() {
     	for (MPrePostCondition postCondition : fPostConditions) {
-    		if (postCondition.expression().containsPre()) {
+    		if (postCondition.expression().requiresPreState()) {
     			return true;
     		}
     	}
