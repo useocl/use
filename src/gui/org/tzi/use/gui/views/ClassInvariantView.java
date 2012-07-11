@@ -23,21 +23,18 @@ package org.tzi.use.gui.views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JLabel;
@@ -50,7 +47,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
@@ -117,7 +114,7 @@ public class ClassInvariantView extends JPanel implements View {
      * The table model.
      */
     class MyTableModel extends AbstractTableModel {
-        final String[] columnNames = { "Invariant", "Result", "Duration" };
+        final String[] columnNames = { "Invariant", "Result", "Duration (ms)" };
 
         public String getColumnName(int col) {
             return columnNames[col];
@@ -132,11 +129,43 @@ public class ClassInvariantView extends JPanel implements View {
         }
 
         public Object getValueAt(int row, int col) {
-            if (col == 0)
-                return fClassInvariants[row];
-            else if (col == 1)
-                return fValues[row] == null ? null : fValues[row].result;
-            else
+        	EvalResult evalRes = fValues[row];
+        	boolean hasResult = evalRes != null;
+        	
+        	if (col == 0) {
+        		
+        		if (hasResult)
+        			return fClassInvariants[row];
+        		else
+        			return "<html><font color='gray'>" + fClassInvariants[row].toString() + "</font></html>";
+        		
+        	} else if (col == 1) {
+        				
+        		if (hasResult) {
+        			boolean valid = evalRes.result != null && evalRes.result.isBoolean() && ((BooleanValue)evalRes.result).value();
+        			StringBuilder res = new StringBuilder();
+        			res.append("<html><font color='");
+        			
+        			if (valid)
+        				res.append("green");
+        			else
+        				res.append("red");
+        			
+        			res.append("'>");
+        			
+        			if (evalRes.result == null) {
+        				res.append(evalRes.message);
+        			} else {
+        				res.append(evalRes.result.toString());
+        			}
+        			
+        			res.append("</font></html>");
+        			return res.toString();
+        			
+        		} else {
+        			return null;
+        		}
+            } else
                 return fValues[row] == null ? null : fValues[row].duration;
         }
 
@@ -145,35 +174,6 @@ public class ClassInvariantView extends JPanel implements View {
                 return Value.class;
             else
                 return Object.class;
-        }
-    }
-
-    /**
-     * Renderer for (boolean) values. Uses different colors for different
-     * values.
-     */
-    class ValueRenderer extends JLabel implements TableCellRenderer {
-        final Color colorTrue = new Color(0, 0x80, 0);
-
-        final Color colorFalse = new Color(0xc0, 0, 0);
-
-        final Color colorUndefined = Color.gray;
-
-        public Component getTableCellRendererComponent(JTable table,
-                Object obj, boolean isSelected, boolean hasFocus, int row,
-                int column) {
-            Color c = colorUndefined;
-            if (obj == null)
-                setText("n/a");
-            else {
-                setText(obj.toString());
-                if (obj instanceof BooleanValue) {
-                    boolean b = ((BooleanValue) obj).value();
-                    c = (b) ? colorTrue : colorFalse;
-                }
-            }
-            this.setForeground(c);
-            return this;
         }
     }
 
@@ -210,7 +210,6 @@ public class ClassInvariantView extends JPanel implements View {
         add(bottomPanel, BorderLayout.SOUTH);
 
         fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
-        fTable.setDefaultRenderer(Value.class, new ValueRenderer());
 
         // track selections
         fTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -226,6 +225,10 @@ public class ClassInvariantView extends JPanel implements View {
             }
         });
 
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment( JLabel.RIGHT );
+        fTable.getColumnModel().getColumn(2).setCellRenderer( rightRenderer );
+        
         // double click on table opens an ExprEvalBrowser on the
         // selected invariant
         setOpenEvalBrowserEnabled(false);
@@ -360,6 +363,7 @@ public class ClassInvariantView extends JPanel implements View {
                 try {
                 	EvalResult res = ecs.take().get();
                     fValues[res.index] = res;
+                    publish(incrementProgress());
                     
                     boolean ok = false;
                     // if v == null it is not considered as a failure, rather it is
