@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -75,7 +76,22 @@ import org.tzi.use.uml.sys.StateChangeEvent;
  */
 @SuppressWarnings("serial")
 public class ClassInvariantView extends JPanel implements View {
-    private JTable fTable;
+    
+	private class EvalResult {
+		public final int index;
+		public final Value result;
+		public final String message;
+		public final long duration;
+		
+		public EvalResult(int index, Value result, String message, long duration) {
+			this.index = index;
+			this.result = result;
+			this.message = message;
+			this.duration = duration;
+		}
+	}
+	
+	private JTable fTable;
 
     private JLabel fLabel; // message at bottom of view
 
@@ -87,7 +103,7 @@ public class ClassInvariantView extends JPanel implements View {
 
     private MClassInvariant[] fClassInvariants;
 
-    private Value[] fValues;
+    private EvalResult[] fValues;
 
     private MyTableModel fMyTableModel;
 
@@ -101,14 +117,14 @@ public class ClassInvariantView extends JPanel implements View {
      * The table model.
      */
     class MyTableModel extends AbstractTableModel {
-        final String[] columnNames = { "Invariant", "Result" };
+        final String[] columnNames = { "Invariant", "Result", "Duration" };
 
         public String getColumnName(int col) {
             return columnNames[col];
         }
 
         public int getColumnCount() {
-            return 2;
+            return 3;
         }
 
         public int getRowCount() {
@@ -118,8 +134,10 @@ public class ClassInvariantView extends JPanel implements View {
         public Object getValueAt(int row, int col) {
             if (col == 0)
                 return fClassInvariants[row];
+            else if (col == 1)
+                return fValues[row] == null ? null : fValues[row].result;
             else
-                return fValues[row];
+                return fValues[row] == null ? null : fValues[row].duration;
         }
 
         public Class<?> getColumnClass(int c) {
@@ -174,7 +192,7 @@ public class ClassInvariantView extends JPanel implements View {
         Arrays.sort(fClassInvariants);
 
         // initialize value array to undefined values
-        fValues = new Value[n];
+        fValues = new EvalResult[n];
         clearValues();
 
         setLayout(new BorderLayout());
@@ -330,34 +348,25 @@ public class ClassInvariantView extends JPanel implements View {
 				labelText = "Working...";
 
 			publish(2);
-        		
-            List<MyEvaluatorCallable> tasks = new ArrayList<MyEvaluatorCallable>(fClassInvariants.length);
+        	
+            ExecutorCompletionService<EvalResult> ecs = new ExecutorCompletionService<EvalResult>(executor);
             
             for (int i = 0; i < fClassInvariants.length; i++) {
             	MyEvaluatorCallable cb = new MyEvaluatorCallable(systemState, i,fClassInvariants[i]);
-                tasks.add(cb);
-            }
-            
-            List<Future<Value>> results;
-            try {
-            	results = executor.invokeAll(tasks);
-            } catch (InterruptedException e) {
-            	return null;
+                ecs.submit(cb);
             }
             
             for (int i = 0; i < fClassInvariants.length; i++) {
                 try {
-                	Future<Value> nextFuture = results.get(i);
-                	
-                	// Here we wait for the result of task n
-                    Value v = nextFuture.get();
+                	EvalResult res = ecs.take().get();
+                    fValues[res.index] = res;
                     
                     boolean ok = false;
                     // if v == null it is not considered as a failure, rather it is
                     // a MultiplicityViolation and it is skipped as failure count
                     boolean skip = false;
-                    if (v != null) {
-                        ok = v.isDefined() && ((BooleanValue) v).isTrue();
+                    if (res.result != null) {
+                        ok = res.result.isDefined() && ((BooleanValue)res.result).isTrue();
                     } else {
                         violationLabel = true;
                         skip = true;
@@ -450,7 +459,7 @@ public class ClassInvariantView extends JPanel implements View {
             setCursor(Cursor.getDefaultCursor());
 		}
 		
-		private class MyEvaluatorCallable implements Callable<Value> {
+		private class MyEvaluatorCallable implements Callable<EvalResult> {
 	    	final int index;
 	    	final MSystemState state;
 	    	final MClassInvariant inv;
@@ -465,17 +474,19 @@ public class ClassInvariantView extends JPanel implements View {
 			 * @see org.tzi.use.uml.ocl.expr.EvaluatorCallable#call()
 			 */
 			@Override
-			public Value call() throws Exception {
+			public EvalResult call() throws Exception {
 				Evaluator eval = new Evaluator();
 				Value v = null;
+				String message = null;
+				long start = System.currentTimeMillis();
 				
 				try {
 					v = eval.eval(inv.expandedExpression(), state);
-				} catch (MultiplicityViolationException e) { }
+				} catch (MultiplicityViolationException e) { 
+					message = e.getMessage();
+				}
 				
-				fValues[index] = v;
-				publish(incrementProgress());
-				return v;
+				return new EvalResult(index, v, message, System.currentTimeMillis() - start);
 			}
 	    }
     }
