@@ -33,6 +33,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -58,7 +59,6 @@ import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.EvaluatorCallable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.value.BooleanValue;
@@ -95,10 +95,8 @@ public class ClassInvariantView extends JPanel implements View {
 
     private boolean fOpenEvalBrowserEnabled = false;
 
-    private MainWindow fMainWindow;
+    private volatile InvWorker worker = null;
 
-    private InvWorker worker = null;
-    
     /**
      * The table model.
      */
@@ -162,7 +160,7 @@ public class ClassInvariantView extends JPanel implements View {
     }
 
     public ClassInvariantView(MainWindow parent, MSystem system) {
-        fMainWindow = parent;
+        
         fSystem = system;
         fModel = fSystem.model();
         fSystem.addChangeListener(this);
@@ -217,14 +215,7 @@ public class ClassInvariantView extends JPanel implements View {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && fSelectedRow >= 0
                         && fOpenEvalBrowserEnabled) {
-                    // System.out.println(fClassInvariants[fSelectedRow].toString());
-
-                    // ClassInvariantDetailsDialog dlg =
-                    // new ClassInvariantDetailsDialog(fSystem,
-                    // fClassInvariants[fSelectedRow]);
-                    // dlg.setVisible(true);
-
-                    // System.out.println("double click on: " + fSelectedRow);
+                    
                     Expression expr = fClassInvariants[fSelectedRow]
                             .expandedExpression();
                     Evaluator evaluator = new Evaluator(true);
@@ -236,26 +227,25 @@ public class ClassInvariantView extends JPanel implements View {
                     // get the invariant as html string
                     StringWriter sw = new StringWriter();
                     sw.write("<html>");
-                    // sw.write("<style> <!-- body { font-family: sansserif; }
-                    // --> </style>");
-                    // sw.write("</head><body><font size=\"-1\">");
+                    
                     MMVisitor v = new MMHTMLPrintVisitor(new PrintWriter(sw));
                     fClassInvariants[fSelectedRow].processWithVisitor(v);
                     sw.write("</html>");
                     String htmlSpec = sw.toString();
+                    
                     // get the invariant as normal string
                     sw = new StringWriter();
                     v = new MMPrintVisitor(new PrintWriter(sw));
                     fClassInvariants[fSelectedRow].processWithVisitor(v);
                     String spec = sw.toString();
+                    
                     ExprEvalBrowser.createPlus(evaluator
                             .getEvalNodeRoot(), fSystem, spec, htmlSpec);
                 }
             }
         });
         
-        worker = new InvWorker();
-        worker.execute();
+        update();
     }
 
     private void clearValues() {
@@ -273,6 +263,12 @@ public class ClassInvariantView extends JPanel implements View {
     }
 
     public void stateChanged(StateChangeEvent e) {
+    	update();
+    }
+
+    private synchronized void update() { 
+    	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    	
     	if (worker != null && !worker.isDone()) {
     		worker.shutdown();
     		worker.cancel(true);
@@ -281,7 +277,7 @@ public class ClassInvariantView extends JPanel implements View {
     	worker = new InvWorker();
     	worker.execute();
     }
-
+    
     /**
      * Detaches the view from its model.
      */
@@ -291,56 +287,62 @@ public class ClassInvariantView extends JPanel implements View {
     
     private class InvWorker extends SwingWorker<Boolean,Integer> {
     	
-    	private ExecutorService executor;
+    	private final ExecutorService executor;
     	
     	private String labelText;
     	
-    	private String checkStructureResult = null;
-    	
     	int numFailures = 0;
+    	
+    	int progress = 0;
     	
     	int progressEnd = 0;
     	
+    	long duration = 0;
+    	
     	// determines if the MultiplicityViolation Label should be shown
     	boolean violationLabel = false; 
+    	
+    	protected synchronized int incrementProgress() {
+    		++progress;
+    		return progress;
+    	}
+    	
+    	public InvWorker() {
+    		executor = Executors.newFixedThreadPool(Options.EVAL_NUMTHREADS);
+    	}
     	
     	/* (non-Javadoc)
 		 * @see javax.swing.SwingWorker#doInBackground()
 		 */
 		@Override
 		protected Boolean doInBackground() throws Exception {
-			progressEnd = 2 + fClassInvariants.length;
+			long start = System.currentTimeMillis();
 			
 			MSystemState systemState = fSystem.state();
-            
-			for (int i = 0; i < fValues.length; ++i) {
-				fValues[i] = null;
-			}
-			
-            // check structure
-            labelText = "Checking structure...";
-            publish(1);
-            
-            StringWriter out = new StringWriter();
-            systemState.checkStructure(new PrintWriter(out));
-            
-            checkStructureResult = out.toString();
-            
-            // check invariants
-            if (Options.EVAL_NUMTHREADS > 1)
-                labelText = "Working (using " + Options.EVAL_NUMTHREADS + " concurrent threads)...";
-            else
-                labelText = "Working...";
+				
+			progressEnd = fClassInvariants.length;
+			clearValues();
+        
+			// check invariants
+			if (Options.EVAL_NUMTHREADS > 1)
+				labelText = "Working (using " + Options.EVAL_NUMTHREADS + " concurrent threads)...";
+			else
+				labelText = "Working...";
 
-            publish(2);
-            
-            executor = Executors.newFixedThreadPool(Options.EVAL_NUMTHREADS);
-            List<Future<Value>> results = new ArrayList<Future<Value>>(fClassInvariants.length);
+			publish(2);
+        		
+            List<MyEvaluatorCallable> tasks = new ArrayList<MyEvaluatorCallable>(fClassInvariants.length);
             
             for (int i = 0; i < fClassInvariants.length; i++) {
-            	EvaluatorCallable evalCall = new EvaluatorCallable(systemState, fClassInvariants[i].expandedExpression());
-            	Future<Value> f = executor.submit(evalCall); 
-                results.add(f);
+            	MyEvaluatorCallable cb = new MyEvaluatorCallable(systemState, i,fClassInvariants[i]);
+                tasks.add(cb);
+            }
+            
+            List<Future<Value>> results;
+            try {
+            	results = executor.invokeAll(tasks);
+            } catch (InterruptedException e) {
+            	return null;
             }
             
             for (int i = 0; i < fClassInvariants.length; i++) {
@@ -350,12 +352,9 @@ public class ClassInvariantView extends JPanel implements View {
                 	// Here we wait for the result of task n
                     Value v = nextFuture.get();
                     
-                    if (executor.isTerminated())
-                    	return null;
-                    
                     boolean ok = false;
                     // if v == null it is not considered as a failure, rather it is
-                    // a MultiplicityViolation and it is skiped as Failurecount
+                    // a MultiplicityViolation and it is skipped as failure count
                     boolean skip = false;
                     if (v != null) {
                         ok = v.isDefined() && ((BooleanValue) v).isTrue();
@@ -367,14 +366,16 @@ public class ClassInvariantView extends JPanel implements View {
                     if (!skip && !ok)
                         numFailures++;
                     
-                    fValues[i] = v;
-                    publish(i + 2);
                 } catch (InterruptedException ex) {
                     // OK
                 }
             }
             
+            duration = System.currentTimeMillis() - start;
+            
             executor.shutdown();
+            executor.notifyAll();
+            
             return null;
         }
 
@@ -382,13 +383,20 @@ public class ClassInvariantView extends JPanel implements View {
 		 * 
 		 */
 		public void shutdown() {
-			executor.shutdownNow();
-			// Wait max ten seconds
+			executor.shutdown(); // Disable new tasks from being submitted
 			try {
-				executor.awaitTermination(10, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// Wait a while for existing tasks to terminate
+				if (!executor.awaitTermination(2, TimeUnit.SECONDS)) {
+					executor.shutdownNow(); // Cancel currently executing tasks
+					// Wait a while for tasks to respond to being cancelled
+					if (!executor.awaitTermination(2, TimeUnit.SECONDS))
+						System.err.println("Pool did not terminate");
+				}
+			} catch (InterruptedException ie) {
+				// (Re-)Cancel if current thread also interrupted
+				executor.shutdownNow();
+				// Preserve interrupt status
+				Thread.currentThread().interrupt();
 			}
 		}
 
@@ -399,18 +407,13 @@ public class ClassInvariantView extends JPanel implements View {
 		protected void process(List<Integer> chunks) {
 			int lastProgress = chunks.get(chunks.size() - 1);
 			
-			if (lastProgress >= 2 && checkStructureResult != null) {
-				fMainWindow.logWriter().append(checkStructureResult);
-				checkStructureResult = null;
-			}
-			
 			fLabel.setForeground(Color.black);
 			fLabel.setText(labelText);
 			
 			fProgressBar.setMaximum(progressEnd);
 			fProgressBar.setValue(lastProgress);
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			fMyTableModel.fireTableDataChanged();
+
 			repaint();
 		}
 
@@ -421,26 +424,59 @@ public class ClassInvariantView extends JPanel implements View {
 		protected void done() {
 			setOpenEvalBrowserEnabled(true);
 
+			String text;
+			
             // show summary of results
             if (numFailures == 0) {
                 if (violationLabel) {
                     fLabel.setForeground(Color.red);
-                    fLabel
-                            .setText("Model inherent constraints violated (see Log for details).");
+                    text = "Model inherent constraints violated (see Log for details).";
                 } else {
                     fLabel.setForeground(Color.black);
-                    fLabel.setText("Constraints ok.");
+                    text = "Constraints ok.";
                 }
             } else {
                 fLabel.setForeground(Color.red);
-                fLabel.setText(numFailures + " constraint"
-                        + ((numFailures > 1) ? "s" : "") + " failed.");
+                text = numFailures + " constraint" + ((numFailures > 1) ? "s" : "") + " failed.";
             }
             
+            text = text + String.format(" (%,dms)", duration);
+            
+            fLabel.setText(text);
             fProgressBar.setMaximum(1);
 			fProgressBar.setValue(1);
+			fMyTableModel.fireTableDataChanged();
+			
             setCursor(Cursor.getDefaultCursor());
-            fMyTableModel.fireTableDataChanged();
 		}
+		
+		private class MyEvaluatorCallable implements Callable<Value> {
+	    	final int index;
+	    	final MSystemState state;
+	    	final MClassInvariant inv;
+	    	
+	    	public MyEvaluatorCallable(MSystemState state, int index, MClassInvariant inv) {
+	    		this.state = state;
+	    		this.index = index;
+	    		this.inv = inv;
+	    	}
+
+			/* (non-Javadoc)
+			 * @see org.tzi.use.uml.ocl.expr.EvaluatorCallable#call()
+			 */
+			@Override
+			public Value call() throws Exception {
+				Evaluator eval = new Evaluator();
+				Value v = null;
+				
+				try {
+					v = eval.eval(inv.expandedExpression(), state);
+				} catch (MultiplicityViolationException e) { }
+				
+				fValues[index] = v;
+				publish(incrementProgress());
+				return v;
+			}
+	    }
     }
 }
