@@ -455,7 +455,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      * @param g
      *            the Graphics-object which should be used by drawing.
      */
-    public void paint(Graphics g) {
+    public synchronized void paint(Graphics g) {
         Font oldFont = g.getFont();
         g.setFont(fProperties.getFont());
         super.paint(g);
@@ -477,7 +477,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      * @param g
      *            the Graphics2D-object which should be used for drawing.
      */
-    public void drawDiagram(Graphics2D g) {
+    public synchronized void drawDiagram(Graphics2D g) {
         if (fProperties.getAntiAliasing())
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
@@ -548,17 +548,13 @@ public class SequenceDiagram extends JPanel implements Printable {
      * @param g
      *            the Graphics2D-object which should be used for drawing. values
      */
-    public void drawView(Graphics2D g) {
+    public synchronized void drawView(Graphics2D g) {
+
         if (fProperties.getAntiAliasing())
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
         g.setFont(fProperties.getFont());
-        
-        Map<Object, Lifeline> lifelines = null;
-        synchronized (this) {
-            lifelines = new HashMap<Object, Lifeline>(fLifelines);
-        }
         
         // the postition and dimension values of the visible view
         int fX = (int) fView.getX();
@@ -680,7 +676,7 @@ public class SequenceDiagram extends JPanel implements Printable {
         g.setClip((int) fView.getX(), (int) fView.getY(), (int) fView
                 .getWidth(), (int) fView.getHeight());
         // draw all visible lifelines which are involved in at least one message
-        for (Lifeline ll : lifelines.values()) {
+        for (Lifeline ll : fLifelines.values()) {
             if (ll.fObjectBox.getEnd() > fX
                     && ll.fObjectBox.getStart() < fX + fWidth) {
                 // is lifeline involved in at least one message and is not
@@ -2769,10 +2765,12 @@ public class SequenceDiagram extends JPanel implements Printable {
             fNestings = new int[objects.size()];
             // calculate nestings of the object lifelines of the inserted
             // objects
-            for (int i = 0; i < fNestings.length; i++) {
-                MObject object = objects.get(i);
-                ObjLifeline oll = (ObjLifeline) fLifelines.get(object);
-                fNestings[i] = oll.fActivationNesting;
+            synchronized(SequenceDiagram.this) {
+	            for (int i = 0; i < fNestings.length; i++) {
+	                MObject object = objects.get(i);
+	                ObjLifeline oll = (ObjLifeline) fLifelines.get(object);
+	                fNestings[i] = oll.fActivationNesting;
+	            }
             }
         }
 
@@ -2808,120 +2806,123 @@ public class SequenceDiagram extends JPanel implements Printable {
          * @return the length of the longest message
          */
         private int calculateMessLength() {
-            // see above
-            String message = createMessage();
-            FontMetrics fm = getFontMetrics(fProperties.getFont());
-            int messLength = fm.stringWidth(message) + 10;
-            Lifeline ll = null;
-            int srcDistance = fOwner.column();
-            if (fSrc != null && fSrc.owner() != null) {
-                srcDistance = fOwner.calculateDistance(fSrc.owner());
-                ll = fSrc.owner();
-            }
-            if (srcDistance == 0) {
-                messLength = fm.stringWidth(message) + 15 + 14;
-            } else {
-                messLength += fOwner.getObjectBox().getWidth() / 2;
-                if (fNesting > 0) {
-                    messLength += fProperties.frWidth() / 2;
-                }
-                if (fNesting > 1)
-                    messLength += (fSrc.fNesting - 1) * fProperties.frOffset();
-
-                if (fSrc != null) {
-                    if (fSrc.owner() != null && fSrc.fNesting > 1)
-                        messLength += (fSrc.fNesting - 1)
-                                * fProperties.frOffset();
-                    if (fSrc.owner() == null || fSrc.fNesting > 0)
-                        messLength += fProperties.frWidth() / 2; // +5
-                } else {
-                    messLength += fProperties.frWidth() / 2; // 5;
-                }
-
-                // List of all objects that take part in the new link
-                //MObject[] objects = ((MCmdInsertLink) fEvent).getObjects();
-                List<MObject> objects = ((LinkInsertedEvent)fEvent).getParticipants();
-                
-                // List of all role-names
-                List<String> roleNames = 
-                	((LinkInsertedEvent)fEvent).getAssociation().roleNames();
-                
-                // view each role-name
-                for (int i = 0; i < roleNames.size(); i++) {
-                    // the message from this lifline to the
-                    // object-lifelines
-                    String insertedMess = "inserted as " + roleNames.get(i);
-                    // the regarded object
-                    MObject object = objects.get(i);
-                    // find out the according lifeline
-                    ObjLifeline oll = (ObjLifeline) fLifelines.get(object);
-                    if (!oll.isHidden()) {
-                        // distance from this lifeline to the goal-lifeline
-                        int dist = fOwner.calculateDistance(oll);
-                        // length of message
-                        int length = fm.stringWidth(insertedMess) + 10;
-                        // consider nestings of activation
-                        if (fNesting > 1) {
-                            length += (fSrc.fNesting - 1)
-                                    * fProperties.frOffset();
-                        }
-                        if (fNesting > 0) {
-                            length += fProperties.frWidth() / 2;
-                        }
-                        // consider nestings of the goal-lifeline
-                        if (fNestings[i] > 0) {
-                            length += fProperties.frWidth() / 2;
-                        }
-                        if (fNestings[i] > 1) {
-                            length += (oll.fActivationNesting - 1)
-                                    * fProperties.frOffset();
-                        }
-                        // the object lifeline is on the right side of the link
-                        // lifeline
-                        if (dist > 0) {
-                            // check out if the 'inserted as'-messsage causes a
-                            // bigger distance
-                            // between two lifelines than the 'insert'-message
-                            if (srcDistance > 0) {
-                                if (length / dist > messLength / srcDistance) {
-                                    messLength = length;
-                                    srcDistance = dist;
-                                    ll = oll;
-                                }
-                            } else {
-                                if (length / dist > messLength / -srcDistance) {
-                                    messLength = length;
-                                    srcDistance = dist;
-                                    ll = oll;
-                                }
-                            }
-                            // the object lifeline is on the left side of the
-                            // link
-                            // lifeline
-                            // -> the inserted message affects the position of
-                            // the
-                            // objects lifeline
-                        } else {
-                            if (length / (-dist) > oll.getMaxMessLength())
-                                oll.setMaxMessLength(length / (-dist));
-                        }
-                    }
-                }
-            }
-
-            // see above
-            if (srcDistance > 0) {
-                fMessLength = messLength / srcDistance;
-                return messLength / srcDistance;
-            } else if (srcDistance < 0) {
-                if (messLength / (-srcDistance) > ll.getMaxMessLength())
-                    ll.setMaxMessLength(messLength / (-srcDistance));
-                fMessLength = messLength / srcDistance;
-                return messLength / srcDistance;
-            } else {
-                fMessLength = -messLength;
-                return -messLength;
-            }
+        	synchronized (SequenceDiagram.this) {
+						
+	            // see above
+	            String message = createMessage();
+	            FontMetrics fm = getFontMetrics(fProperties.getFont());
+	            int messLength = fm.stringWidth(message) + 10;
+	            Lifeline ll = null;
+	            int srcDistance = fOwner.column();
+	            if (fSrc != null && fSrc.owner() != null) {
+	                srcDistance = fOwner.calculateDistance(fSrc.owner());
+	                ll = fSrc.owner();
+	            }
+	            if (srcDistance == 0) {
+	                messLength = fm.stringWidth(message) + 15 + 14;
+	            } else {
+	                messLength += fOwner.getObjectBox().getWidth() / 2;
+	                if (fNesting > 0) {
+	                    messLength += fProperties.frWidth() / 2;
+	                }
+	                if (fNesting > 1)
+	                    messLength += (fSrc.fNesting - 1) * fProperties.frOffset();
+	
+	                if (fSrc != null) {
+	                    if (fSrc.owner() != null && fSrc.fNesting > 1)
+	                        messLength += (fSrc.fNesting - 1)
+	                                * fProperties.frOffset();
+	                    if (fSrc.owner() == null || fSrc.fNesting > 0)
+	                        messLength += fProperties.frWidth() / 2; // +5
+	                } else {
+	                    messLength += fProperties.frWidth() / 2; // 5;
+	                }
+	
+	                // List of all objects that take part in the new link
+	                //MObject[] objects = ((MCmdInsertLink) fEvent).getObjects();
+	                List<MObject> objects = ((LinkInsertedEvent)fEvent).getParticipants();
+	                
+	                // List of all role-names
+	                List<String> roleNames = 
+	                	((LinkInsertedEvent)fEvent).getAssociation().roleNames();
+	                
+	                // view each role-name
+	                for (int i = 0; i < roleNames.size(); i++) {
+	                    // the message from this lifline to the
+	                    // object-lifelines
+	                    String insertedMess = "inserted as " + roleNames.get(i);
+	                    // the regarded object
+	                    MObject object = objects.get(i);
+	                    // find out the according lifeline
+	                    ObjLifeline oll = (ObjLifeline) fLifelines.get(object);
+	                    if (!oll.isHidden()) {
+	                        // distance from this lifeline to the goal-lifeline
+	                        int dist = fOwner.calculateDistance(oll);
+	                        // length of message
+	                        int length = fm.stringWidth(insertedMess) + 10;
+	                        // consider nestings of activation
+	                        if (fNesting > 1) {
+	                            length += (fSrc.fNesting - 1)
+	                                    * fProperties.frOffset();
+	                        }
+	                        if (fNesting > 0) {
+	                            length += fProperties.frWidth() / 2;
+	                        }
+	                        // consider nestings of the goal-lifeline
+	                        if (fNestings[i] > 0) {
+	                            length += fProperties.frWidth() / 2;
+	                        }
+	                        if (fNestings[i] > 1) {
+	                            length += (oll.fActivationNesting - 1)
+	                                    * fProperties.frOffset();
+	                        }
+	                        // the object lifeline is on the right side of the link
+	                        // lifeline
+	                        if (dist > 0) {
+	                            // check out if the 'inserted as'-messsage causes a
+	                            // bigger distance
+	                            // between two lifelines than the 'insert'-message
+	                            if (srcDistance > 0) {
+	                                if (length / dist > messLength / srcDistance) {
+	                                    messLength = length;
+	                                    srcDistance = dist;
+	                                    ll = oll;
+	                                }
+	                            } else {
+	                                if (length / dist > messLength / -srcDistance) {
+	                                    messLength = length;
+	                                    srcDistance = dist;
+	                                    ll = oll;
+	                                }
+	                            }
+	                            // the object lifeline is on the left side of the
+	                            // link
+	                            // lifeline
+	                            // -> the inserted message affects the position of
+	                            // the
+	                            // objects lifeline
+	                        } else {
+	                            if (length / (-dist) > oll.getMaxMessLength())
+	                                oll.setMaxMessLength(length / (-dist));
+	                        }
+	                    }
+	                }
+	            }
+	
+	            // see above
+	            if (srcDistance > 0) {
+	                fMessLength = messLength / srcDistance;
+	                return messLength / srcDistance;
+	            } else if (srcDistance < 0) {
+	                if (messLength / (-srcDistance) > ll.getMaxMessLength())
+	                    ll.setMaxMessLength(messLength / (-srcDistance));
+	                fMessLength = messLength / srcDistance;
+	                return messLength / srcDistance;
+	            } else {
+	                fMessLength = -messLength;
+	                return -messLength;
+	            }
+	        }
         }
     }
 
@@ -3069,7 +3070,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the used FontMetrics object, needed for calculating the width
      *            of the individual activation messages.
      */
-    public void calculateLlPositions(FontMetrics fm) {
+    public synchronized void calculateLlPositions(FontMetrics fm) {
         // Map of all existing lifelines
         Map<Object, Lifeline> lifelines = fLifelines;
         Iterator<Lifeline> lifelineIter = lifelines.values().iterator();
@@ -3328,7 +3329,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return int the y-value in the sequence diagram of the created activation
      */
-    public int drawCreate(
+    public synchronized int drawCreate(
     		ObjectCreatedEvent event, 
     		Stack<Activation> activationStack, 
     		int lastyValue,
@@ -3422,7 +3423,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawDestroy(
+    public synchronized int drawDestroy(
     		ObjectDestroyedEvent event, 
     		Stack<Activation> activationStack, 
     		int lastYValue,
@@ -3505,7 +3506,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawSet(
+    public synchronized int drawSet(
     		AttributeAssignedEvent event, 
     		Stack<Activation> activationStack, 
     		int lastYValue,
@@ -3591,7 +3592,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawOpEnter(
+    public synchronized int drawOpEnter(
     		OperationEnteredEvent event, 
     		Stack<Activation> activationStack, 
     		int lastYValue,
@@ -3680,7 +3681,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawInsert(
+    public synchronized int drawInsert(
     		LinkInsertedEvent event, 
     		Stack<Activation> activationStack, 
     		int lastYValue,
@@ -3800,7 +3801,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the antecessor of this activation
      * @return the y-value in the sequence diagram of the created activation
      */
-    public int drawDelete(
+    public synchronized int drawDelete(
     		LinkDeletedEvent event, 
     		Stack<Activation> activationStack, 
     		int lastYValue,
@@ -3887,7 +3888,7 @@ public class SequenceDiagram extends JPanel implements Printable {
      *            the y-value of the lifeline which should be found
      * @return Lifeline the Lifeline which is located on the given y-value
      */
-    public Lifeline getLifeline(int x) {
+    public synchronized Lifeline getLifeline(int x) {
         // view each lifeline
         for (Lifeline ll : fLifelines.values()) {
             // object box of the lifeline

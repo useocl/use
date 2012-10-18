@@ -114,8 +114,6 @@ public final class MSystem {
     /** TODO */
     private Deque<MStatement> fRedoStack;
     /** TODO */
-    private int fStateLock = 0;
-    /** TODO */
     private Deque<StatementEvaluationResult> fCurrentlyEvaluatedStatements;
 
     /**
@@ -370,10 +368,7 @@ public final class MSystem {
         }
 		
 		if (getCurrentStatement() != null) {
-			if (!stateIsLocked()) {
-				result.appendEvent(
-				new OperationEnteredEvent(operationCall));
-			}
+			result.appendEvent(new OperationEnteredEvent(operationCall));
 		}
 	
 		fCallStack.push(operationCall);
@@ -464,7 +459,7 @@ public final class MSystem {
 	private void assertPreConditions(EvalContext ctx, MOperationCall operationCall)
 			throws MSystemException {
 		evaluatePreConditions(ctx, operationCall);
-		lockState();
+		
 		PPCHandler ppcHandler = determinePPCHandler(operationCall);
 		try {
 			ppcHandler.handlePreConditions(this, operationCall);
@@ -474,8 +469,6 @@ public final class MSystem {
 				fVariableEnvironment.popFrame();
 			}
 			throw new MSystemException(e.getMessage(), e);
-		} finally {
-			unlockState();
 		}
 	}
 
@@ -629,7 +622,7 @@ public final class MSystem {
 		currentOperation.setExited(true);
 		fCallStack.pop();
 		MStatement currentStatement = getCurrentStatement();
-		if (currentStatement != null && !stateIsLocked()) {
+		if (currentStatement != null) {
 			result.appendEvent(new OperationExitedEvent(currentOperation));
 		}
 		fVariableEnvironment.popFrame();
@@ -998,10 +991,6 @@ public final class MSystem {
             boolean undoOnFailure, boolean storeResult, boolean notifyUpdateStateListeners)
             throws MSystemException {
 
-        if (stateIsLocked()) {
-            throw new MSystemException("The system currently cannot be modified.");
-        }
-
         StatementEvaluationResult result = new StatementEvaluationResult(statement);
 
         fCurrentlyEvaluatedStatements.push(result);
@@ -1243,18 +1232,6 @@ public final class MSystem {
     	}
     	
     	return result;
-    }
-    
-    private synchronized void lockState() {
-    	++fStateLock;
-    }
-    
-    private synchronized void unlockState() {
-    	--fStateLock;
-    }
-    
-    private boolean stateIsLocked() {
-    	return fStateLock > 0;
     }
     
     public void updateListeners() {

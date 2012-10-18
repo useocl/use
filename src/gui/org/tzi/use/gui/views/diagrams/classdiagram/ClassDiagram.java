@@ -1149,7 +1149,10 @@ public class ClassDiagram extends DiagramView
     	
 		File modelFile = new File(this.getSystem().model().filename()); 
 		String fileNameOnly = modelFile.getName();
-		fileNameOnly = fileNameOnly.substring(0, fileNameOnly.lastIndexOf('.'));
+		if (fileNameOnly.contains(".")) {
+			fileNameOnly = fileNameOnly.substring(0, fileNameOnly.lastIndexOf('.'));
+		}
+		
     	File defaultLayoutFile = new File(this.getSystem().model().getModelDirectory(),  fileNameOnly + "_default.clt");
 		return defaultLayoutFile;
 	}
