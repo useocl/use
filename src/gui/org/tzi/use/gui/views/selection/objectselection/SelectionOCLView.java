@@ -168,7 +168,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 		// create panel on the right containing buttons
 		JPanel btnPane = new JPanel();
-		fBtnEval = new JButton("Evalute");
+		fBtnEval = new JButton("Evaluate");
 		fBtnEval.setMnemonic('E');
 		fBtnEval.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -308,7 +308,9 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 				
 				if (validResult) {
 					for (Value objVal : col.collection()) {
-						objects.add(((ObjectValue)objVal).value());
+						if (objVal.isObject()) {
+							objects.add(((ObjectValue)objVal).value());
+						}
 					}
 				}
 			} else if (val.isObject()) {
