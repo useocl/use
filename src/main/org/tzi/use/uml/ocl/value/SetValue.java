@@ -109,23 +109,13 @@ public class SetValue extends CollectionValue {
      * 
      */
     void add(Value v) {
-        boolean needToDeriveRuntimeType = true;
-        // performance optimization
-        for (Iterator<Value> it = fElements.iterator(); it.hasNext();) {
-            Value val = (Value) it.next();
-            if (val.type().equals(v.type())) {
-                needToDeriveRuntimeType = false;
-                break;
-            }
-        }
         fElements.add(v);
-        if (needToDeriveRuntimeType)
-            deriveRuntimeType();
+        markTypeAsDirty();
     }
 
     void addAll(Collection<Value> v) {
         fElements.addAll(v);
-        deriveRuntimeType();
+        markTypeAsDirty();
     }
 
     /**
@@ -134,7 +124,7 @@ public class SetValue extends CollectionValue {
      */
     void remove(Value v) {
         fElements.remove(v);
-        deriveRuntimeType();
+        markTypeAsDirty();
     }
 
     /**

@@ -25,15 +25,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.type.TupleType;
+import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.type.TupleType.Part;
+import org.tzi.use.uml.ocl.type.UniqueLeastCommonSupertypeDeterminator;
 import org.tzi.use.util.collections.CollectionComparator;
 
 /**
@@ -47,19 +49,41 @@ import org.tzi.use.util.collections.CollectionComparator;
  */
 public abstract class CollectionValue extends Value implements Iterable<Value> {
     protected Type fElemType; // store frequently needed element type too
+	private boolean fTypeIsDirty; // true: fType and fElementType have to be recomputed
 
     CollectionValue(Type t, Type elemType) {
         super(t);
+        fTypeIsDirty = true;
         fElemType = elemType;
     }
 
-    public Type elemType() {
-        return fElemType;
-    }            
+    public final Type elemType() {
+        recalculateTypeIfRequired();
+    	return fElemType;
+    }
+    
+    public final Type type() {
+        recalculateTypeIfRequired();
+        return super.type();
+    }
 
-    public final void setElemType( Type t ) {
-        fElemType = t;
-        doSetElemType();
+	private void recalculateTypeIfRequired() {
+		if (fTypeIsDirty) {
+        	Set<Type> types = new HashSet<Type>();
+        	for (Value v : collection()) {
+        		types.add(v.type());
+        	}
+        	fElemType = new UniqueLeastCommonSupertypeDeterminator().calculateFor(types);
+        	if (fElemType == null) {
+        		throw new RuntimeException("Could not determine unique common supertype for " + types);
+        	}
+        	doSetElemType();
+        	fTypeIsDirty = false;
+        }
+	}            
+
+    protected void markTypeAsDirty() {
+    	fTypeIsDirty = true;
     }
     
     /**
@@ -106,54 +130,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         throw new ClassCastException();
     }
 
-    /**
-     * Returns the value for the type parameter of this collection.
-     */
-    protected Type inferElementType() throws ExpInvalidException {
-
-        if (collection().size() == 0) {
-            return fElemType;
-        }
-        
-        Value[] values = new Value[collection().size()];
-        collection().toArray(values);
-        
-        // One Value => Type is element type
-        if (values.length == 1) {
-        	return values[0].type();
-        }
-        
-        // Two or more values
-        Type lastCommonSupertype = values[0].type();
-        Type commonSuperType = values[0].type();
-    	Type t2;
-    	
-    	for (int i = 1; i < values.length; ++i) {
-    		t2 = values[i].type();
-    		commonSuperType = commonSuperType.getLeastCommonSupertype(t2);
-    		
-    		if (commonSuperType == null) {
-    			throw new ExpInvalidException("Type mismatch, " + this.type().toString() + " element " + 
-                        (i + 1) + " (" + t2.toString() + ")" +
-                        " does not have a common supertype " + 
-                        "with previous elements (" + lastCommonSupertype.toString() + ").");
-    	}
-    	
-    		lastCommonSupertype = commonSuperType;
-    	}
-    	
-        // FIXME: deal with other cases: t1 < t, t2 < t, t1 and t2 unrelated.
-        return commonSuperType;
-    }
-
-    protected void deriveRuntimeType() {
-        try {
-            setElemType(inferElementType());
-        } catch( ExpInvalidException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
+  
     public SetValue product(CollectionValue col)
     {
     	Part[] parts = new Part[2];

@@ -21,8 +21,14 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.tzi.use.uml.ocl.type.OclAnyType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.type.UniqueLeastCommonSupertypeDeterminator;
+import org.tzi.use.uml.ocl.type.VoidType;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
@@ -53,28 +59,25 @@ public abstract class ExpCollectionLiteral extends Expression {
     	else if (this.fElemExpr.length == 1)
     		return this.fElemExpr[0].type();
     	
-    	Type commonSuperType = this.fElemExpr[0].type();
-    	Type t2;
+    	Set<Type> types = new HashSet<Type>();
+        for (int i = 0; i < fElemExpr.length; i++) {
+			Type t = fElemExpr[i].type();
+			types.add(t);
+        }
+			
+    	Type result = new UniqueLeastCommonSupertypeDeterminator().calculateFor(types); 
     	
-    	for (int i = 1; i < fElemExpr.length; ++i) {
-    		t2 = fElemExpr[i].type();
-    		commonSuperType = commonSuperType.getLeastCommonSupertype(t2);
-    		
-    		if (commonSuperType == null)
-    			throw new ExpInvalidException("Type mismatch, " + fKind + " element " + 
-                        (i + 1) +
-                        " does not have a common supertype " + 
-                        "with previous elements.");
-    	}
-        
-    	return commonSuperType; 
+    	if (result == null) 
+    		throw new ExpInvalidException("No common supertype of the element types");
     	
-        // FIXME: deal with other cases: t1 < t, t2 < t, t1 and t2 unrelated.
-        // throw new ExpInvalidException("Cannot determine type of " + fKind + ".");
+    	return result;
     }
 
+	
 
-    /**
+    
+	
+	/**
      * Evaluates argument expressions.
      */
     protected Value[] evalArgs(EvalContext ctx) {

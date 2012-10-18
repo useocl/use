@@ -8,7 +8,7 @@
 !create a1,a2:A
 
 ? A.allInstances->select(attr > 0)
-*-> Set{} : Set(A)
+*-> Set{} : Set(OclVoid)
 
 ? Set{1,2}->select(i | i.abs() > 0)
 *-> Set{1,2} : Set(Integer)

@@ -1,6 +1,6 @@
 !create a:A
 ?a.b.c
-*-> Bag{} : Bag(C)
+*-> Bag{} : Bag(OclVoid)
 
 # Set(Set(T))->flatten : Set(T)
 # Set(Bag(T))->flatten : Set(T)
@@ -17,13 +17,13 @@
 
 # implicit flattening works here
 ?Set{a}.b.c
-*-> Bag{} : Bag(C)
+*-> Bag{} : Bag(OclVoid)
 
 # fails here
 ?Sequence{a}.b.c
-*-> Sequence{} : Sequence(C)
+*-> Sequence{} : Sequence(OclVoid)
 
 # fails here
 ?a.b_ordered.c
-*-> Sequence{} : Sequence(C)
+*-> Sequence{} : Sequence(OclVoid)
 quit

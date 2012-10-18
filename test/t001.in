@@ -670,7 +670,7 @@
 *-> Set{1,2} : Set(Integer)
 
 ? Set{1,2,3}->intersection(Set{4})
-*-> Set{} : Set(Integer)
+*-> Set{} : Set(OclVoid)
 
 ? Set{1,2,3}->intersection(Bag{1,2})
 *-> Set{1,2} : Set(Integer)

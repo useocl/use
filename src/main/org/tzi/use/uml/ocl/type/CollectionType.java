@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import java.lang.annotation.ElementType;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -123,4 +124,8 @@ public class CollectionType extends Type {
         return fElemType.hashCode();
     }
     
+    @Override
+    public boolean isVoidOrElementTypeIsVoid() {
+		return elemType().isVoidOrElementTypeIsVoid();
+	}
 }

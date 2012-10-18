@@ -169,7 +169,7 @@ public class OrderedSetValue extends CollectionValue {
     	OrderedSetValue res = new OrderedSetValue(elemType());
     	res.addAll(fElements);
     	res.fElements.add(index.value() - 1, v);
-    	res.deriveRuntimeType();
+    	res.markTypeAsDirty();
     	
     	return res;
     }
@@ -191,7 +191,7 @@ public class OrderedSetValue extends CollectionValue {
         OrderedSetValue res = new OrderedSetValue(elemType());
         res.addAll(fElements);
         res.addAll(v.fElements);
-        res.deriveRuntimeType();
+        res.markTypeAsDirty();
         return res;
     }
 
@@ -199,7 +199,7 @@ public class OrderedSetValue extends CollectionValue {
         OrderedSetValue res = new OrderedSetValue(elemType());
         res.addAll(fElements);
         res.add(v);
-        res.deriveRuntimeType();
+        res.markTypeAsDirty();
         return res;
     }
 
@@ -209,7 +209,7 @@ public class OrderedSetValue extends CollectionValue {
         	res.add(v);
         
         res.addAll(fElements);
-        res.deriveRuntimeType();
+        res.markTypeAsDirty();
         
         return res;
     }
@@ -292,7 +292,7 @@ public class OrderedSetValue extends CollectionValue {
     void add(Value v) {
     	if (!fElements.contains(v)) {
     		fElements.add(v);
-    		deriveRuntimeType();
+    		markTypeAsDirty();
     	}
     }
 
@@ -307,7 +307,7 @@ public class OrderedSetValue extends CollectionValue {
         	}
     	}
     	
-        deriveRuntimeType();
+        markTypeAsDirty();
     }
 
 

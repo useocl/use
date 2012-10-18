@@ -5,5 +5,5 @@
 *-> Set{@b1} : Set(B)
 !destroy b1
 ?a1.b
-*-> Set{} : Set(B)
+*-> Set{} : Set(OclVoid)
 exit

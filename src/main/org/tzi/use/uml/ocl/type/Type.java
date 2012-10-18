@@ -289,5 +289,12 @@ public abstract class Type implements BufferedToString {
     
         return cType;
 	}
+
+	/**
+	 * @return Whether this type is OclVoid or an collection type having a void element type (recursively)
+	 */
+	public boolean isVoidOrElementTypeIsVoid() {
+		return false;
+	}
 }
 

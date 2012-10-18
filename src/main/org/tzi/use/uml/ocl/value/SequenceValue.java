@@ -90,7 +90,7 @@ public class SequenceValue extends CollectionValue {
             i += 2;
         }
         
-        this.deriveRuntimeType();
+        this.markTypeAsDirty();
     }
 
     @Override
@@ -299,13 +299,13 @@ public class SequenceValue extends CollectionValue {
 
     void add(Value v) {
         fElements.add(v);
-        deriveRuntimeType();
+        markTypeAsDirty();
     }
 
 
     void addAll(Collection<? extends Value> v) {
         fElements.addAll(v);
-        deriveRuntimeType();
+        markTypeAsDirty();
     }
 
 

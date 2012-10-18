@@ -107,4 +107,9 @@ public class VoidType extends Type {
 		return sb.append("OclVoid");
 	}
 
+	@Override
+	public boolean isVoidOrElementTypeIsVoid() {
+		return true;
+	}
+
 }

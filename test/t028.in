@@ -52,7 +52,7 @@
 *-> @a2 : A2
 
 ?c2.a3[r31]
-*-> Set{} : Set(A3)
+*-> Set{} : Set(OclVoid)
 
 ?c2.a3[r32]
 *-> @a3 : A3

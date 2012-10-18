@@ -45,7 +45,7 @@
 ?cyd.bank
 *-> Bag{@comdirect,@diba} : Bag(Bank)
 ?dan.bank
-*-> Bag{} : Bag(Bank)
+*-> Bag{} : Bag(OclVoid)
 ?eve.bank
 *-> Bag{@comdirect,@comdirect,@diba} : Bag(Bank)
 

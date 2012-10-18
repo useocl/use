@@ -155,7 +155,7 @@ public abstract class Value implements Comparable<Value>, BufferedToString {
     public void toStringWithType(StringBuilder sb) {
         this.toString(sb);
         sb.append(" : ");
-        fType.toString(sb);
+        type().toString(sb);
     }
     
     public abstract int hashCode();

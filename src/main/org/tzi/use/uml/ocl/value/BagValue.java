@@ -293,32 +293,32 @@ public class BagValue extends CollectionValue {
 
     void addAll(Collection<Value> v) {
         fElements.addAll(v);
-        deriveRuntimeType();
+        markTypeAsDirty();
     }
 
     void add(Value v) {
-        boolean needToDeriveRuntimeType = true;
+        boolean needTomarkTypeAsDirty = true;
         // performance optimization
         for (Iterator<Value> it = fElements.iterator(); it.hasNext();) {
             Value val = it.next();
             if (val.type().equals(v.type())) {
-                needToDeriveRuntimeType = false;
+                needTomarkTypeAsDirty = false;
                 break;
             }
         }
         fElements.add(v);
-        if (needToDeriveRuntimeType) {
-        	deriveRuntimeType();
+        if (needTomarkTypeAsDirty) {
+        	markTypeAsDirty();
         }
     }
 
     void add(Value v, int i) {
         fElements.add(v, i);
-        deriveRuntimeType();
+        markTypeAsDirty();
     }
 
     void removeAll(Value v) {
         fElements.removeAll(v);
-        deriveRuntimeType();
+        markTypeAsDirty();
     }
 }

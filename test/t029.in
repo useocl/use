@@ -3,21 +3,21 @@
 !create c:C
 
 ?a.c 
-*-> Set{} : Set(C)
+*-> Set{} : Set(OclVoid)
 
 ?a.b
-*-> Set{} : Set(B)
+*-> Set{} : Set(OclVoid)
 
 ?b.a 
-*-> Set{} : Set(A)
+*-> Set{} : Set(OclVoid)
 
 ?b.c
-*-> Set{} : Set(C)
+*-> Set{} : Set(OclVoid)
 
 ?c.a
-*-> Set{} : Set(A)
+*-> Set{} : Set(OclVoid)
 
 ?c.b 
-*-> Set{} : Set(B)
+*-> Set{} : Set(OclVoid)
 
 quit

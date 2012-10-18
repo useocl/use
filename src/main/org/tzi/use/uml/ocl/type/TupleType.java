@@ -21,11 +21,16 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import javax.swing.event.ListSelectionEvent;
 
 import org.tzi.use.util.BufferedToString;
 import org.tzi.use.util.StringUtil;
@@ -199,7 +204,29 @@ public final class TupleType extends Type {
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>(1);
         res.add(this);
+        res.add(TypeFactory.mkOclAny());
+        List<Part> selectedSupertypes = new LinkedList<Part>();
+        List<Part> remainingTypes = new LinkedList<Part>();
+        remainingTypes.addAll(fParts.values());
+        genAllSuperTypes(selectedSupertypes, remainingTypes, res);
         return res;
+    }
+    
+    private void genAllSuperTypes(List<Part> selectedSupertypes, List<Part> remainingTypes, Set<Type> result) {
+    	if (remainingTypes.isEmpty()) {
+    		TupleType tt = new TupleType( selectedSupertypes.toArray(new Part[0]));
+    		result.add(tt);
+    		return;
+    	}
+    	
+    	Part p = remainingTypes.remove(0);
+    	for (Type t1 : p.type().allSupertypes()) {
+    		Part p1 = new Part(p.name(), t1);
+    		selectedSupertypes.add(0, p1);
+    		genAllSuperTypes(selectedSupertypes, remainingTypes, result);
+    		selectedSupertypes.remove(0);
+    	}
+    	remainingTypes.add(0,p);
     }
 
     /**

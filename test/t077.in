@@ -89,7 +89,7 @@
 ?'abcda'.characters()
 *-> Sequence{'a','b','c','d','a'} : Sequence(String)
 ?''.characters()
-*-> Sequence{} : Sequence(String)
+*-> Sequence{} : Sequence(OclVoid)
 
 -- toBoolean
 ?'true'.toBoolean()
