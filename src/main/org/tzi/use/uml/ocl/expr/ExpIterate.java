@@ -106,8 +106,10 @@ public class ExpIterate extends ExpQuery {
 
         // evaluate range
         Value v = fRangeExp.eval(ctx);
-        if (v.isUndefined() )
+        if (v.isUndefined() ) {
+        	ctx.exit(this, UndefinedValue.instance);
             return UndefinedValue.instance;
+        }
         CollectionValue rangeVal = (CollectionValue) v;
 
         // prepare result value
