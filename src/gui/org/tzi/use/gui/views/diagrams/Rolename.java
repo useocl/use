@@ -76,7 +76,7 @@ public final class Rolename extends EdgeProperty {
     
     private void setName() {
     	List<String> constraints = new ArrayList<String>();
-    	
+    		
     	if (fAssocEnd.isOrdered()) {
     		constraints.add("ordered");
     	}
@@ -93,7 +93,10 @@ public final class Rolename extends EdgeProperty {
 			constraints.add("redefines " + redefinedEnd.nameAsRolename());    			
 		}
 		
-    	fName = fAssocEnd.nameAsRolename();
+		if (fAssocEnd.isDerived())
+			fName = "/" + fAssocEnd.nameAsRolename();
+		else
+			fName = fAssocEnd.nameAsRolename();
     	
     	if (constraints.size() > 0) {
     		fName = fName + " {" + StringUtil.fmtSeq(constraints.iterator(), ", ") + "}";
