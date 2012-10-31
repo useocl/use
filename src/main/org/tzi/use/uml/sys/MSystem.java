@@ -637,10 +637,6 @@ public final class MSystem {
         return fUniqueNameGenerator.generate(clsName);
     }
     
-    
-    
-    
-    
     /**
      * Creates an object in the current system state, captures additional
      * information about the execution.
@@ -930,8 +926,6 @@ public final class MSystem {
 	        	} catch (Exception ex) { }
 	        }          
 	    }
-		
-		differences.clear();
 	}
 
 	/**
@@ -1179,8 +1173,8 @@ public final class MSystem {
     
     
     /**
-     * TODO
-     * @return
+     * Returns the currently executed statement.
+     * @return The executed statement.
      */
     private MStatement getCurrentStatement() {
     	return fCurrentlyEvaluatedStatements.peek().getEvaluatedStatement();
@@ -1188,8 +1182,8 @@ public final class MSystem {
     
     
     /**
-	 * TODO
-	 * @return
+	 * The current call stack of the system.
+	 * @return The current call stack of the system.
 	 */
 	public Deque<MOperationCall> getCallStack() {
 		return fCallStack;
@@ -1197,14 +1191,15 @@ public final class MSystem {
 	
 	
 	/**
-	 * TODO
-	 * @param object
-	 * @return
+	 * Queries the current call stack for an operation
+	 * call event with <code>object</code> as the receiving instance.
+	 * @param object The object to check an active operation call for.
+	 * @return <code>true</code> if the provided object has an active operation.
 	 */
 	public boolean hasActiveOperation(MObject object) {
 		
-		for (MOperationCall operationCAll : fCallStack) {
-			if (operationCAll.getSelf() == object) {
+		for (MOperationCall operationCall : fCallStack) {
+			if (operationCall.getSelf() == object) {
 				return true;
 			}
 		}

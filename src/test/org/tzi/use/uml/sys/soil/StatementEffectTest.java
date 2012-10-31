@@ -30,8 +30,9 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tzi.use.SystemManipulator;
 import org.tzi.use.TestSystem;
+import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.value.IntegerValue;
@@ -57,7 +58,7 @@ public class StatementEffectTest extends TestCase {
 	/** TODO */
 	private TestSystem fTestSystem;
 	/** TODO */
-	private SystemManipulator fManipulator;
+	private UseSystemApi systemApi;
 	/** TODO */
 	private MSystemState fState;
 	/** TODO */
@@ -74,7 +75,7 @@ public class StatementEffectTest extends TestCase {
 	@Override
 	public void setUp() throws MInvalidModelException, MSystemException, ExpInvalidException {
 		fTestSystem = new TestSystem();
-		fManipulator = new SystemManipulator(fTestSystem.getSystem());
+		systemApi = UseSystemApi.create(fTestSystem.getSystem());
 		fState = fTestSystem.getState();
 		fOldState = new MSystemState("oldState", fState);
 		fOldVarEnv = new VariableEnvironment(fTestSystem.getVarEnv());
@@ -1683,11 +1684,31 @@ public class StatementEffectTest extends TestCase {
 	
 	
 	/**
+     * TODO
+     * @param statement
+     * @throws MSystemException
+     */
+    public void evaluateStatement(
+    		String statement) throws MSystemException {
+    	
+    	systemApi.getSystem().execute(generateStatement(statement));
+    }
+    
+    
+    /**
 	 * TODO
-	 * @param statement
-	 * @throws MSystemException
+	 * @param input
+	 * @return
 	 */
-	private void evaluateStatement(String statement) throws MSystemException {
-		fManipulator.evaluateStatement(statement);
+	private MStatement generateStatement(String input) {
+		
+		return ShellCommandCompiler.compileShellCommand(
+				systemApi.getSystem().model(), 
+				systemApi.getSystem().state(), 
+				systemApi.getSystem().getVariableEnvironment(), 
+				input, 
+				"<input>", 
+				NullPrintWriter.getInstance(), 
+				false);
 	}
 }

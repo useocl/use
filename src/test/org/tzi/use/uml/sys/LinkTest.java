@@ -26,7 +26,8 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.tzi.use.SystemManipulator;
+import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MModel;
@@ -78,7 +79,7 @@ public class LinkTest extends TestCase {
         try {
             MSystem system = createModelWithObject();
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi api = UseSystemApi.create(system);
 
             assertEquals( "j1", system.state().objectByName( "j1" ).name() );
 
@@ -88,14 +89,14 @@ public class LinkTest extends TestCase {
             assertTrue( system.state().hasLinkBetweenObjects( system.model().getAssociation( "Job" ),
                                                               objects ) );
 
-            systemManipulator.destroyObjects("j1");
+            api.deleteObject("j1");
             assertNull(system.state().objectByName("j1"));
 
             objects[0] = system.state().objectByName( "p1" );
             objects[1] = system.state().objectByName( "c1" );
             assertFalse( system.state().hasLinkBetweenObjects( system.model().getAssociation( "Job" ),
                                                                objects ) );
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -109,11 +110,11 @@ public class LinkTest extends TestCase {
         try {
             MSystem system = createModelWithObject();
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi api = UseSystemApi.create(system);
             
             MAssociation assoc = system.model().getAssociation("Job");
                    
-            systemManipulator.deleteLink("Job", "p1", "c1");
+            api.deleteLink("Job", new String[] {"p1", "c1"});
             
             assertNull(system.state().objectByName("j1"));
 
@@ -121,7 +122,7 @@ public class LinkTest extends TestCase {
             objects[0] = system.state().objectByName( "p1" );
             objects[1] = system.state().objectByName( "c1" );
             assertFalse( system.state().hasLinkBetweenObjects( assoc, objects ) );
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -167,9 +168,9 @@ public class LinkTest extends TestCase {
         try {
             MSystem system = createModelWithoutLinkObject();
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi api = UseSystemApi.create(system);
              
-            systemManipulator.insertLink("Job", "p1", "c1");
+            api.createLink("Job", "p1", "c1");
             
             // Look here first if the test fails. Hint: Check the names. (UniqueNameGenerator)
             assertEquals( "Job1", system.state().objectByName( "Job1" ).name() );
@@ -179,7 +180,7 @@ public class LinkTest extends TestCase {
             objects[1] = system.state().objectByName( "c1" );
             assertTrue( system.state().hasLinkBetweenObjects( system.model().getAssociation( "Job" ),
                                                               objects ) );
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -193,11 +194,10 @@ public class LinkTest extends TestCase {
         try {
             system = createModelWithoutLinkObject();
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
-            
-            systemManipulator.createObjects("Job", "j1");
+            UseSystemApi api = UseSystemApi.create(system);
+            api.createObjects("Job", "j1");
 
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             // tests if the object j1 does not exists
             assertEquals( null, system.state().objectByName( "j1" ) );
 
@@ -220,15 +220,15 @@ public class LinkTest extends TestCase {
         try {
             system = createModelWithoutLinkObject();
            
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi api = UseSystemApi.create(system);
              
             // Insert the first LinkObject
-            systemManipulator.createLinkObject("Job", "j1", "p1", "c1");
+            api.createLinkObject("Job", "j1", new String[]{"p1", "c1"});
             
             // Insert the second LinkObject
-            systemManipulator.createLinkObject("Job", "j2", "p1", "c1");  
+            api.createLinkObject("Job", "j2", new String[]{"p1", "c1"});  
             
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             // wanted.
         } finally {
             // tests if the object j2 does not exists
@@ -247,15 +247,15 @@ public class LinkTest extends TestCase {
             system = createModelWithoutLinkObject();
             assocClass = system.model().getAssociationClass("Job");
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi api = UseSystemApi.create(system);
                
             // Insert the first LinkObject
-            systemManipulator.insertLink("Job", "p1", "c1");
+            api.createLink("Job", "p1", "c1");
             
             // Insert the second LinkObject
-            systemManipulator.insertLink("Job", "p1", "c1");
+            api.createLink("Job", "p1", "c1");
             
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             // wanted.
         } finally {
             // for counting the number of Instances between names
@@ -291,25 +291,24 @@ public class LinkTest extends TestCase {
             // creation of the system
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
-            MSystem system = new MSystem( model );
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi api = UseSystemApi.create(model, true);
             
             // creation of an object (p1) of the class Person
-            systemManipulator.createObjects("Person", "p1");
+            api.createObjects("Person", "p1");
             
             // creation of an object (c1) of the class Company
-            systemManipulator.createObjects("Company", "c1");
+            api.createObjects("Company", "c1");
         
 
             // creation of an link object (j1) of the association class Job
-            systemManipulator.createLinkObject(
+            api.createLinkObject(
             		"Job", 
             		"j1", 
-            		"p1", "c1");
+            		new String[] {"p1", "c1"});
             
-            return system;
-        } catch ( MSystemException e ) {
+            return api.getSystem();
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -325,19 +324,17 @@ public class LinkTest extends TestCase {
             // creation of the system
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
-            MSystem system = new MSystem( model );
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
-            
+            UseSystemApi api = UseSystemApi.create(model);
             
             // creation of an object (p1) of the class Person
-            systemManipulator.createObjects("Person", "p1");
+            api.createObjects("Person", "p1");
             
             // creation of an object (c1) of the class Company
-            systemManipulator.createObjects("Company", "c1");
+            api.createObjects("Company", "c1");
             
-            return system;
-        } catch ( MSystemException e ) {
+            return api.getSystem();
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }

@@ -27,12 +27,12 @@ import java.util.List;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.tzi.use.SystemManipulator;
+import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseModelApi;
+import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
 
 
 /**
@@ -45,7 +45,7 @@ import org.tzi.use.uml.sys.MSystemException;
  */
 public class MAssociationClassTest extends TestCase {
 
-	static List<VarDecl> emptyQualifiers = Collections.emptyList();
+	static final List<VarDecl> emptyQualifiers = Collections.emptyList();
 	
     /**
      * Creates a model with classes and an associationclass.
@@ -62,21 +62,18 @@ public class MAssociationClassTest extends TestCase {
         try {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
-            MSystem system = new MSystem( model );
-            
-            SystemManipulator manipulator = new SystemManipulator(system);
+                        
+            UseSystemApi api = UseSystemApi.create(model);
 
-            manipulator.createObjects("Person", "p1", "p2");
-            
-            manipulator.createObjects("Company", "c1");
-            
-            manipulator.createLinkObject("Job", "j1", "p1", "c1");
+            api.createObjects("Person", "p1", "p2");
+            api.createObjects("Company", "c1");
+            api.createLinkObject("Job", "j1", new String[] {"p1", "c1"});
       
-            assertEquals( system.state().objectByName( "p1" ).name(), "p1" );
-            assertEquals( system.state().objectByName( "p2" ).name(), "p2" );
-            assertEquals( system.state().objectByName( "c1" ).name(), "c1" );
-            assertEquals( system.state().objectByName( "j1" ).name(), "j1" );
-        } catch ( MSystemException e ) {
+            assertEquals( api.getObject( "p1" ).name(), "p1" );
+            assertEquals( api.getObject( "p2" ).name(), "p2" );
+            assertEquals( api.getObject( "c1" ).name(), "c1" );
+            assertEquals( api.getObject( "j1" ).name(), "j1" );
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -88,36 +85,19 @@ public class MAssociationClassTest extends TestCase {
     public void testOverlappingAttributeAndAssociationEndNames() {
         // Test for Well-Formedness Rule No. 1 of AssociationClass of OMG 1.4
         try {
-            ModelFactory mf = new ModelFactory();
+            UseModelApi api = new UseModelApi("PersonCompany");
+            api.createClass( "Person", false );
+            api.createClass( "Company", false );
+            api.createAssociationClass( "Job", false, 
+                                        "Person", "employee", "0..1", MAggregationKind.NONE,
+            		                    "Company", "company", "0..1", MAggregationKind.NONE);
 
-            MModel model = mf.createModel( "PersonCompany" );
-            MClass person = mf.createClass( "Person", false );
-            MClass company = mf.createClass( "Company", false );
-            model.addClass( person );
-            model.addClass( company );
-            MAssociationClass job = mf.createAssociationClass( "Job", false );
-            model.addClass( job );
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, 1 );
-            MAssociationEnd endPerson = mf.createAssociationEnd( person, "employee", m1,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers );
-            MAssociationEnd endCompany = mf.createAssociationEnd( company, "company", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            job.addAssociationEnd( endPerson );
-            job.addAssociationEnd( endCompany );
+            api.createAttribute( "Job", "employee", "Integer");
 
-            Type type = TypeFactory.mkInteger();
-            MAttribute attr = mf.createAttribute( "employee", type );
-            job.addAttribute( attr );
-            fail( "MInvalidModelException was not thrown." );
-        } catch ( MInvalidModelException e ) {
+            fail( "UseApiException was not thrown." );
+        } catch ( UseApiException e ) {
             // wanted.
         }
-
     }
 
 
@@ -127,21 +107,22 @@ public class MAssociationClassTest extends TestCase {
      */
     public void testOverlappingAssociationEndAndAttributeNames() {
         // Test for Well-Formedness Rule No. 1 of AssociationClass of OMG 1.4
+    	
+    	// Combined use of api and direct model manipulation. 
+    	UseModelApi api = new UseModelApi("PersonCompany");
         try {
             ModelFactory mf = new ModelFactory();
-
-            MModel model = mf.createModel( "PersonCompany" );
-            MClass person = mf.createClass( "Person", false );
-            MClass company = mf.createClass( "Company", false );
-            model.addClass( person );
-            model.addClass( company );
+            MModel model = api.getModel();
+            
+            MClass person = api.createClass( "Person", false );
+            api.createClass( "Company", false );
+            
             MAssociationClass job = mf.createAssociationClass( "Job", false );
             model.addClass( job );
 
             // adds an attribute
             Type type = TypeFactory.mkInteger();
-            MAttribute attr = mf.createAttribute( "employee", type );
-            job.addAttribute( attr );
+            api.createAttributeEx( job, "employee", type );
 
             // adds the associationends
             MMultiplicity m1 = mf.createMultiplicity();
@@ -155,6 +136,8 @@ public class MAssociationClassTest extends TestCase {
             fail( "MInvalidModelException was not thrown." );
         } catch ( MInvalidModelException e ) {
             // wanted.
+        } catch (  UseApiException e ) {
+        	throw new Error(e);
         }
 
     }
@@ -207,55 +190,26 @@ public class MAssociationClassTest extends TestCase {
      * an aggregation.
      */
     public void testTernaryAssocClassWithAggregation() {
-        MAssociationClass job = null;
-        MAssociationEnd endPerson = null;
-        MAssociationEnd endCompany = null;
-        MAssociationEnd endSalary = null;
-        try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonCompanySalary" );
+        
+    	UseModelApi api = new UseModelApi("PersonCompanySalary");
+    	
+    	try {
+            api.createClass( "Person", false );
+            api.createClass( "Company", false );
+            api.createClass( "Salary", false );
 
-            MClass person = mf.createClass( "Person", false );
-            model.addClass( person );
-
-            MClass company = mf.createClass( "Company", false );
-            model.addClass( company );
-
-            MClass salary = mf.createClass( "Salary", false );
-            model.addClass( salary );
-
-            job = mf.createAssociationClass( "Job", false );
-            model.addClass( job );
-
-            // adds the associationends
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, 1 );
-            MMultiplicity m3 = mf.createMultiplicity();
-            m3.addRange( 0, 1 );
-
-            endPerson = mf.createAssociationEnd( person, "employee", m1,
-                                                 MAggregationKind.AGGREGATION,
-                                                 false, emptyQualifiers );
-            endCompany = mf.createAssociationEnd( company, "employer", m2,
-                                                  MAggregationKind.NONE,
-                                                  false, emptyQualifiers );
-            endSalary = mf.createAssociationEnd( salary, "salary", m3,
-                                                 MAggregationKind.NONE,
-                                                 false, emptyQualifiers );
-
-            job.addAssociationEnd( endPerson );
-            job.addAssociationEnd( endCompany );
-            job.addAssociationEnd( endSalary );
-
-            fail( "MInvalidModelException was not thrown." );
-        } catch ( MInvalidModelException e ) {
-            assertEquals( endPerson, job.associationEnds().get( 0 ) );
-            assertEquals( endCompany, job.associationEnds().get( 1 ) );
-            assertEquals( 2, job.associationEnds().size() );
+            api.createAssociationClass( "Job", false, 
+            		                    new String[] {"Person",   "Company",  "Salary"},
+            		                    new String[] {"employee", "employer", "salary"},
+            		                    new String[] {"0..1",     "0..1",     "0..1"},
+            		                    new int[]    {MAggregationKind.AGGREGATION, MAggregationKind.NONE, MAggregationKind.NONE} 
+            		                    );
+            
+            fail( "UseApiException was not thrown." );
+        } catch ( UseApiException e ) {
+        	assertNull(api.getClass("Job"));
+        	assertNull(api.getAssociation("Job"));
         }
-
     }
 
     /**

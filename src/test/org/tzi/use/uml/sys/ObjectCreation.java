@@ -21,10 +21,10 @@
 
 package org.tzi.use.uml.sys;
 
-import org.tzi.use.SystemManipulator;
+import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.TestModelUtil;
-import org.tzi.use.uml.ocl.expr.ExpConstString;
 
 
 /**
@@ -61,16 +61,16 @@ public class ObjectCreation {
                     .createModelWithClassAndAssocs();
             MSystem system = new MSystem( model );
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi systemApi = UseSystemApi.create(system);
             
             // creation of an object (p1) of the class Person
-            systemManipulator.createObjects("Person", "p1");
+            systemApi.createObjects("Person", "p1");
             
             // creation of an object (c1) of the class Company
-            systemManipulator.createObjects("Company", "c1");
+            systemApi.createObjects("Company", "c1");
             
             // creation of a link between p1 and c1 of an association
-            systemManipulator.insertLink("Job", "p1", "c1");
+            systemApi.createLink("Job", "p1", "c1");
             
             return system;
         } catch ( Exception e ) {
@@ -91,27 +91,27 @@ public class ObjectCreation {
                     .createModelWithClassAndAssocs2();
             MSystem system = new MSystem( model );
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi systemApi = UseSystemApi.create(system);
             
             // creation of an object (p1) of the class Person
-            systemManipulator.createObjects("Person", "p1");
+            systemApi.createObjects("Person", "p1");
             
             // creation of four objects (c1-c4) of the class Company
-            systemManipulator.createObjects(
+            systemApi.createObjects(
             		"Company", 
             		"c1", "c2", "c3", "c4");
              
             // creation of a link between p1 and c1 of an association
-            systemManipulator.insertLink("Job", "p1", "c1");
-            systemManipulator.insertLink("Job", "p1", "c2");
-            systemManipulator.insertLink("Job", "p1", "c3");
-            systemManipulator.insertLink("Job", "p1", "c4");
+            systemApi.createLink("Job", "p1", "c1");
+            systemApi.createLink("Job", "p1", "c2");
+            systemApi.createLink("Job", "p1", "c3");
+            systemApi.createLink("Job", "p1", "c4");
             
             // set an attribute value in c1
-            systemManipulator.setAttribute("c1", "name", new ExpConstString("IBM"));
+            systemApi.setAttributeValue("c1", "name", "'IBM'");
                    
             return system;
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -129,25 +129,25 @@ public class ObjectCreation {
                     .createModelWithClassAndAssocClass();
             MSystem system = new MSystem( model );
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi systemApi = UseSystemApi.create(system);
             
             // creation of an object (p1) of the class Person
-            systemManipulator.createObjects("Person", "p1");
+            systemApi.createObjects("Person", "p1");
             
             // creation of an object (c1) of the class Company
-            systemManipulator.createObjects("Company", "c1");
+            systemApi.createObjects("Company", "c1");
             
             // creation of a link object (j1) of class Job between p1 and c1
-            systemManipulator.createLinkObject(
+            systemApi.createLinkObject(
             		"Job", 
             		"j1",
             		"p1", "c1");
             
             // set an attribute value in c1
-            systemManipulator.setAttribute("c1", "name", new ExpConstString("IBM"));
+            systemApi.setAttributeValue("c1", "name", "'IBM'");
             
             return system;
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -164,19 +164,19 @@ public class ObjectCreation {
                     .createModelWithOneClassAndOneAssocClass();
             MSystem system = new MSystem( model );
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi systemApi = UseSystemApi.create(system);
             
             // creation of an objects (p1,p2) of the class Person
-            systemManipulator.createObjects("Person", "p1", "p2");
+            systemApi.createObjects("Person", "p1", "p2");
             
             // creation of a link object (j1) of class Job between p1 and p2
-            systemManipulator.createLinkObject(
+            systemApi.createLinkObject(
             		"Job", 
             		"j1", 
             		"p1", "p2");
             
             return system;
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -194,28 +194,28 @@ public class ObjectCreation {
                     .createModelWithClassAndTenaryAssocClass();
             MSystem system = new MSystem( model );
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi systemApi = UseSystemApi.create(system);
             
             // creation of an object (p1) of the class Person
-            systemManipulator.createObjects("Person", "p1");
+            systemApi.createObjects("Person", "p1");
             
             // creation of an object (c1) of the class Company
-            systemManipulator.createObjects("Company", "c1");
+            systemApi.createObjects("Company", "c1");
             
             // creation of an object (s1) of the class Salary
-            systemManipulator.createObjects("Salary", "s1");
+            systemApi.createObjects("Salary", "s1");
             
             // creation of a link object (j1) of class Job between p1, s1 and c1
-            systemManipulator.createLinkObject(
+            systemApi.createLinkObject(
             		"Job",
             		"j1", 
             		"p1", "c1", "s1");
 
             // set an attribute value in c1
-            systemManipulator.setAttribute("c1", "name", new ExpConstString("IBM"));
+            systemApi.setAttributeValue("c1", "name", "'IBM'");
 
             return system;
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }
@@ -234,37 +234,37 @@ public class ObjectCreation {
                     .createComplexModel();
             MSystem system = new MSystem( model );
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi systemApi = UseSystemApi.create(system);
             
             // creation of two objects (p1, p2) of the class Person
-            systemManipulator.createObjects("Person", "p1", "p2");
+            systemApi.createObjects("Person", "p1", "p2");
             
             // creation of a link between p1 and p2 (p1 is boss of p2)
-            systemManipulator.insertLink("isBoss", "p1", "p2");
+            systemApi.createLink("isBoss", "p1", "p2");
                  
             // creation of two objects (c1, c2) of the class Company
-            systemManipulator.createObjects("Company", "c1", "c2");
+            systemApi.createObjects("Company", "c1", "c2");
             
             // creation of a link object (j1) of class Job between p1 and c1
-            systemManipulator.createLinkObject(
+            systemApi.createLinkObject(
             		"Job", 
             		"j1",
             		"p1", "c1");
             
             // creation of a link object (j2) of class Job between p2 and c1
-            systemManipulator.createLinkObject(
+            systemApi.createLinkObject(
             		"Job", 
             		"j2",
             		"p2", "c1");                      
             
             // set an attribute value in c1
-            systemManipulator.setAttribute("c1", "name", new ExpConstString("IBM"));
+            systemApi.setAttributeValue("c1", "name", "'IBM'");
             
             // set an attribute value in c2
-            systemManipulator.setAttribute("c2", "name", new ExpConstString("SUN"));
+            systemApi.setAttributeValue("c2", "name", "'SUN'");
 
             return system;
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             throw ( new Error( e ) );
         }
     }

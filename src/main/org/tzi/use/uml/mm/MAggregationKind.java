@@ -42,4 +42,8 @@ public class MAggregationKind {
     public static final String name(int k) { 
         return fNames[k];
     }
+    
+    public static final boolean isValid(int k) {
+    	return k >= 0 && k <= 2;
+    }
 }

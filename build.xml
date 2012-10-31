@@ -435,7 +435,7 @@
 		<javadoc packagenames="org.*" sourcepath="${src.main.dir}" classpath="${antlr.jar}:${junit.jar}" destdir="${build.javadoc.dir}" author="true" version="true" private="true" use="true" windowtitle="${ant.project.name} API" doctitle="${release.name}">
       <tag name="pre" scope="constructors,methods" description="Precondition:" />
 			<bottom>
-				<![CDATA[<i>Copyright &#169; 1999-2004 Mark Richters. All Rights
+				<![CDATA[<i>Copyright &#169; 1999-2012 Mark Richters. All Rights
 	     Reserved.</i>]]></bottom>
     </javadoc>
   </target>

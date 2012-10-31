@@ -22,16 +22,10 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.EnumType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.api.UseModelApi;
+import org.tzi.use.api.UseApiException;
 
 /**
  * The class <code>TestModelUtil</code> offers methods for creating
@@ -43,8 +37,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  */
 public class TestModelUtil {
     private static TestModelUtil util = null;
-    private static List<VarDecl> emptyQualifiers = Collections.emptyList();
-    
+        
     private TestModelUtil() { }
 
     /**
@@ -62,29 +55,28 @@ public class TestModelUtil {
      * This method creates an empty model.
      */
     public MModel createEmptyModel() {
-        ModelFactory mf = new ModelFactory();
-        MModel model = mf.createModel( "PersonCompany" );
-        return model;
+        UseModelApi api = new UseModelApi( "PersonCompany" );
+        return api.getModel();
     }
 
     /**
      * This method creates a model with an enumeration.
      */
     public MModel createModelWithEnum() {
-        try{
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "Color" );
-            
+        try {
+        	UseModelApi api = new UseModelApi("Color");
+        	api.createEnumeration("colors", "blau", "gelb", "rot", "gruen");
+        	        	
             List<String> literals = new ArrayList<String>();
             literals.add( "blau" );
             literals.add( "gelb" );
             literals.add( "rot" );
             literals.add( "gruen" );
-            EnumType type = TypeFactory.mkEnum( "colors", literals );
-            model.addEnumType( type );
+            api.createEnumeration("colors2", literals);
             
-            return model;
-        } catch ( MInvalidModelException e ) {
+            return api.getModel();
+            
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
@@ -95,36 +87,25 @@ public class TestModelUtil {
      */
     public MModel createModelWithObjectTypes() {
         try{
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "TestObjectType" );
-            MClass a = mf.createClass( "A", false );
-            MClass b = mf.createClass( "B", false );
-            model.addClass (a);
-            model.addClass (b);
-            MAttribute a1 = mf.createAttribute ("name",TypeFactory.mkObjectType(b));
-            a.addAttribute (a1);
-            
-            return model;
-        } catch ( MInvalidModelException e ) {
+        	UseModelApi api = new UseModelApi("TestObjectType");
+        	api.createClass( "A", false );
+        	api.createClass( "B", false );
+            api.createAttribute("A", "name", "B");
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
 
 
     public MModel createModelWithCollectionTypes() {
-        try{
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "TestObjectType" );
-            MClass a = mf.createClass( "A", false ); 
-            MClass b = mf.createClass( "B", false );
-            model.addClass (a);
-            model.addClass (b);
-            MAttribute a1 = mf.createAttribute
-                ("name",TypeFactory.mkSet(TypeFactory.mkObjectType(b)));
-            a.addAttribute(a1);
-            return model;
-        } 
-        catch ( MInvalidModelException e ) {
+        try {
+            UseModelApi api = new UseModelApi("TestObjectType");
+            api.createClass( "A", false ); 
+            api.createClass( "B", false );
+            api.createAttribute("A", "name","B");
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
         
@@ -135,14 +116,11 @@ public class TestModelUtil {
      */
     public MModel createModelWithClasses() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonCompany" );
-            MClass person = mf.createClass( "Person", false );
-            MClass company = mf.createClass( "Company", false );
-            model.addClass( person );
-            model.addClass( company );
-            return model;
-        } catch ( MInvalidModelException e ) {
+            UseModelApi api = new UseModelApi( "PersonCompany" );
+            api.createClass( "Person", false );
+            api.createClass( "Company", false );
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
@@ -153,40 +131,19 @@ public class TestModelUtil {
      */
     public MModel createModelWithClassAndAssocs() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonCompany" );
-            MClass person = mf.createClass( "Person", false );
-            MClass company = mf.createClass( "Company", false );
-            model.addClass( person );
-            model.addClass( company );
-            MAssociation job = mf.createAssociation( "Job" );
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, 1 );
-            MAssociationEnd endPerson = mf.createAssociationEnd( person,
-                                                                 "employee", m1,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers );
-            MAssociationEnd endCompany = mf.createAssociationEnd( company,
-                                                                  "company", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            job.addAssociationEnd( endPerson );
-            job.addAssociationEnd( endCompany );
-            model.addAssociation( job );
-            MAssociation isBoss = mf.createAssociation( "isBoss" );
-            MAssociationEnd endPerson1 = mf.createAssociationEnd( person, "boss", m1,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            MAssociationEnd endPerson2 = mf.createAssociationEnd( person, "worker", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            isBoss.addAssociationEnd( endPerson1 );
-            isBoss.addAssociationEnd( endPerson2 );
-            model.addAssociation( isBoss );
-            return model;
-        } catch ( MInvalidModelException e ) {
+            UseModelApi api = new UseModelApi( "PersonCompany" );
+            api.createClass( "Person", false );
+            api.createClass( "Company", false );
+            api.createAssociation("Job", 
+            		              "Person", "employee", "0..1", MAggregationKind.NONE, 
+            		              "Company", "company", "0..1", MAggregationKind.NONE);
+            
+            api.createAssociation("isBoss", 
+            		              "Person", "boss", "0..1", MAggregationKind.NONE, 
+            		              "Person", "worker", "0..1", MAggregationKind.NONE);
+            
+            return api.getModel();
+        } catch ( UseApiException e ) {
             //e.printStackTrace();
             throw new Error( e );
         }
@@ -198,78 +155,38 @@ public class TestModelUtil {
      */
     public MModel createModelWithClassAndAssocs2() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonCompany" );
-            MClass person = mf.createClass( "Person", false );
-            MClass company = mf.createClass( "Company", false );
-            model.addClass( person );
-            model.addClass( company );
+            UseModelApi api = new UseModelApi("PersonCompany");
+            api.createClass("Person", false);
+            api.createClass("Company", false);
+            api.createAttribute("Company", "name", "String");
+            api.createAssociation("Job", 
+            		              "Person", "employee", "0..1", MAggregationKind.NONE, 
+            		              "Company", "company", "0..*", MAggregationKind.NONE);
 
-            MAttribute companyName = mf.createAttribute( "name", TypeFactory.mkString() );
-            company.addAttribute( companyName );
-
-            MAssociation job = mf.createAssociation( "Job" );
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, MMultiplicity.MANY );
-            MAssociationEnd endPerson = mf.createAssociationEnd( person,
-                                                                 "employee", m1,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers );
-            MAssociationEnd endCompany = mf.createAssociationEnd( company,
-                                                                  "company", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            job.addAssociationEnd( endPerson );
-            job.addAssociationEnd( endCompany );
-            model.addAssociation( job );
-
-            return model;
-        } catch ( MInvalidModelException e ) {
-            //e.printStackTrace();
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
 
     /**
      * This method creates a model with two classes (Person and Company)
-     * and an associationclass (Job).
+     * and an association class (Job).
      */
     public MModel createModelWithClassAndAssocClass() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonCompany" );
-            MClass person = mf.createClass( "Person", false );
-            MClass company = mf.createClass( "Company", false );
-            model.addClass( person );
-            model.addClass( company );
+            UseModelApi api = new UseModelApi("PersonCompany");
+            api.createClass("Person", false);
+            api.createClass("Company", false);
+            api.createAttribute("Company", "name", "String");
 
-            MAttribute companyName = mf.createAttribute( "name", TypeFactory.mkString() );
-            company.addAttribute( companyName );
+            api.createAssociationClass("Job", false,
+            		                   "Person" , "person" , "0..1", MAggregationKind.NONE, 
+		                               "Company", "company", "0..1", MAggregationKind.NONE);
 
-            MAssociationClass job = mf.createAssociationClass( "Job", false );
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, 1 );
-            MAssociationEnd endPerson = mf.createAssociationEnd( person, "person", m1,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers );
-            MAssociationEnd endCompany = mf.createAssociationEnd( company, "company", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            job.addAssociationEnd( endPerson );
-            job.addAssociationEnd( endCompany );
-            model.addClass( job );
-            model.addAssociation( job );
-
-            MAttribute salary = mf.createAttribute( "salary", TypeFactory.mkInteger() );
-            job.addAttribute( salary );
-
-            return model;
-        } catch ( MInvalidModelException e ) {
-            //e.printStackTrace();
+            api.createAttribute( "Job", "salary", "Integer" );
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
@@ -280,30 +197,14 @@ public class TestModelUtil {
      */
     public MModel createModelWithOneClassAndOneAssocClass() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonCompany" );
-            MClass person = mf.createClass( "Person", false );
-            model.addClass( person );
+        	UseModelApi api = new UseModelApi( "PersonCompany" );
+            api.createClass( "Person", false );
+            api.createAssociationClass( "Job", false,
+            		                    "Person", "boss", "0..1", MAggregationKind.NONE,
+            		                    "Person", "worker", "0..1", MAggregationKind.NONE);
 
-            MAssociationClass job = mf.createAssociationClass( "Job", false );
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, 1 );
-            MAssociationEnd endPerson1 = mf.createAssociationEnd( person, "boss", m1,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            MAssociationEnd endPerson2 = mf.createAssociationEnd( person, "worker", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            job.addAssociationEnd( endPerson1 );
-            job.addAssociationEnd( endPerson2 );
-            model.addClass( job );
-            model.addAssociation( job );
-
-            return model;
-        } catch ( MInvalidModelException e ) {
-            //e.printStackTrace();
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
@@ -314,42 +215,21 @@ public class TestModelUtil {
      */
     public MModel createModelWithClassAndTenaryAssocClass() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonCompany" );
-            MClass person = mf.createClass( "Person", false );
-            MClass company = mf.createClass( "Company", false );
-            MClass salary = mf.createClass( "Salary", false );
-            model.addClass( person );
-            model.addClass( company );
-            model.addClass( salary );
+        	UseModelApi api = new UseModelApi( "PersonCompany" );
+            api.createClass( "Person", false );
+            api.createClass( "Company", false );
+            api.createClass( "Salary", false );
+            
+            api.createAttribute( "Company", "name", "String" );
+            
+            api.createAssociationClass("Job", false, 
+            		                   new String[] {"Person", "Company", "Salary"},
+            						   new String[] {"person", "company", "salary"},
+            						   new String[] {"0..1",   "0..1",    "0..1"},
+            						   new int[]    {MAggregationKind.NONE, MAggregationKind.NONE, MAggregationKind.NONE});
 
-            MAttribute companyName = mf.createAttribute( "name", TypeFactory.mkString() );
-            company.addAttribute( companyName );
-
-            MAssociationClass job = mf.createAssociationClass( "Job", false );
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, 1 );
-            MMultiplicity m3 = mf.createMultiplicity();
-            m3.addRange( 0, 1 );
-            MAssociationEnd endPerson = mf.createAssociationEnd( person, "person", m1,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers );
-            MAssociationEnd endCompany = mf.createAssociationEnd( company, "company", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            MAssociationEnd endSalary = mf.createAssociationEnd( salary, "salary", m3,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers );
-            job.addAssociationEnd( endPerson );
-            job.addAssociationEnd( endCompany );
-            job.addAssociationEnd( endSalary );
-            model.addClass( job );
-            model.addAssociation( job );
-            return model;
-        } catch ( MInvalidModelException e ) {
-            //e.printStackTrace();
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
@@ -361,36 +241,23 @@ public class TestModelUtil {
      */
     public MModel createModelWithClassAndQualifiedAssoc() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "BankModel" );
-            MClass person = mf.createClass( "Person", false );
-            MClass bank = mf.createClass( "Bank", false );
-            model.addClass( person );
-            model.addClass( bank );
-            MAssociation account = mf.createAssociation( "Account" );
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, MMultiplicity.MANY );
-            List<VarDecl> qualifier = new ArrayList<VarDecl>();
-            qualifier.add(new VarDecl("accountNr", TypeFactory.mkString()));
+        	UseModelApi api = new UseModelApi( "BankModel" );
+            api.createClass( "Person", false );
+            api.createClass( "Bank", false );
             
-            MAssociationEnd endPerson = mf.createAssociationEnd( person,
-                                                                 "account", m1,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers);
-            
-            MAssociationEnd endBank = mf.createAssociationEnd( bank,
-                                                                  "bank", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, qualifier );
-            account.addAssociationEnd( endBank );
-            account.addAssociationEnd( endPerson );
-            
-            model.addAssociation( account );
-            return model;
-        } catch ( MInvalidModelException e ) {
-            //e.printStackTrace();
+            api.createAssociationEx("Account", 
+            		              new String[] {"Bank", "Person"},
+            		              new String[] {"bank", "account"},
+            		              new String[] {"0..*", "0..1"},
+            		              new int[] {MAggregationKind.NONE, MAggregationKind.NONE},
+            		              new boolean[] {false, false},
+            		              new String[][][] {
+            							new String[][]{new String[] {"accountNr", "String"}},
+            							new String[][]{}}
+            		              );
+
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
@@ -401,52 +268,25 @@ public class TestModelUtil {
      */
     public MModel createComplexModel() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonCompany" );
-
+        	UseModelApi api = new UseModelApi( "PersonCompany" );
             // adds two classes named Person and Company
-            MClass person = mf.createClass( "Person", false );
-            MClass company = mf.createClass( "Company", false );
-            model.addClass( person );
-            model.addClass( company );
-
-            MAttribute companyName = mf.createAttribute( "name", TypeFactory.mkString() );
-            company.addAttribute( companyName );
-
+            api.createClass( "Person", false );
+            api.createClass( "Company", false );
+            
+            api.createAttribute( "Company", "name", "String" );
+            
             // adds an associationclass between Person and Company named Job
-            MAssociationClass job = mf.createAssociationClass( "Job", false );
-            MMultiplicity m1 = mf.createMultiplicity();
-            m1.addRange( 0, 1 );
-            MMultiplicity m2 = mf.createMultiplicity();
-            m2.addRange( 0, 1 );
-            MAssociationEnd endPerson = mf.createAssociationEnd( person, "employee", m1,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers );
-            MAssociationEnd endCompany = mf.createAssociationEnd( company, "company", m2,
-                                                                  MAggregationKind.NONE,
-                                                                  false, emptyQualifiers );
-            job.addAssociationEnd( endPerson );
-            job.addAssociationEnd( endCompany );
-            model.addClass( job );
-            model.addAssociation( job );
+            api.createAssociationClass("Job", false, 
+            						   "Person", "employee", "0..1", MAggregationKind.NONE, 
+            						   "Company", "company", "0..1", MAggregationKind.NONE);
 
             // adds an association between Person itself named isBoss
-            MAssociation isBoss = mf.createAssociation( "isBoss" );
-            m1.addRange( 0, 1 );
-            m2.addRange( 0, 1 );
-            MAssociationEnd endWorker = mf.createAssociationEnd( person, "worker", m1,
-                                                                 MAggregationKind.NONE,
-                                                                 false, emptyQualifiers );
-            MAssociationEnd endBoss = mf.createAssociationEnd( person, "boss", m2,
-                                                               MAggregationKind.NONE,
-                                                               false, emptyQualifiers );
-            isBoss.addAssociationEnd( endWorker );
-            isBoss.addAssociationEnd( endBoss );
-            model.addAssociation( isBoss );
+            api.createAssociation( "isBoss", 
+            		               "Person", "worker", "0..1", MAggregationKind.NONE,
+            		               "Person", "boss"  , "0..1", MAggregationKind.NONE);
 
-            return model;
-        } catch ( MInvalidModelException e ) {
-            //e.printStackTrace();
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
@@ -458,63 +298,44 @@ public class TestModelUtil {
      */
     public MModel createModelWithGen() {
         try {
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "PersonEmployee" );
-            MClass person = mf.createClass( "Person", false );
-            MClass employee = mf.createClass( "Employee", false );
-            model.addClass( person );
-            model.addClass( employee );
-            MGeneralization gen = mf.createGeneralization( employee, person );
-            model.addGeneralization( gen );
-            return model;
-        } catch ( MInvalidModelException e ) {
+            UseModelApi api = new UseModelApi( "PersonEmployee" );
+            api.createClass( "Person", false );
+            api.createClass( "Employee", false );
+            
+            api.createGeneralization( "Employee", "Person" );
+            
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }
 
     public MModel createModelWithOperation() {
         try{
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "Person" );
-            MClass person = mf.createClass( "Person", false );
-            model.addClass (person);
-
+        	UseModelApi api = new UseModelApi( "Person" );
+            api.createClass( "Person", false );
+            
             // adds an attribute
-            MAttribute name = mf.createAttribute("fName", TypeFactory.mkString() );
-            person.addAttribute (name);
+            api.createAttribute("Person", "fName", "String" );
             
             // adds an operation
-            MOperation op = mf.createOperation( "equalsName", 
-                                                new VarDeclList( 
-                                                    new VarDecl( "name", TypeFactory.mkString() )), 
-                                                TypeFactory.mkBoolean() );
-            person.addOperation( op );
+            api.createOperation( "Person", "equalsName", new String[][] {new String[] {"name", "String"}}, "Boolean" ); 
             
-            return model;
-        } catch ( MInvalidModelException e ) {
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e ) ;
         }
     }
         
     public MModel createModelWithInvariant() {
         try{
-            ModelFactory mf = new ModelFactory();
-            MModel model = mf.createModel( "Person" );
-            MClass person = mf.createClass( "Person", false );
-            model.addClass (person);
-
-            // adds an attribute
-            MAttribute name = mf.createAttribute("fName", TypeFactory.mkString() );
-            person.addAttribute (name);
+        	UseModelApi api = new UseModelApi( "Person" );
+            api.createClass( "Person", false );
+            api.createAttribute("Person", "fName", "String" );
+            api.createInvariant("testInv", "Person", "true", false);
             
-            Expression expr = new ExpVariable( "p1", TypeFactory.mkBoolean() );
-            MClassInvariant inv = new MClassInvariant( null, null, person, expr, false );
-            model.addClassInvariant( inv );
-            
-            return model;
-        } catch ( MInvalidModelException e ) {
-            throw new Error( e );
-        } catch ( ExpInvalidException e ) {
+            return api.getModel();
+        } catch ( UseApiException e ) {
             throw new Error( e );
         }
     }

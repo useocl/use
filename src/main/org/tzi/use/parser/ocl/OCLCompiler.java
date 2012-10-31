@@ -32,6 +32,7 @@ import org.antlr.runtime.RecognitionException;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
@@ -59,11 +60,36 @@ public class OCLCompiler {
 	                                           VarBindings globalBindings) {
 		
 		return compileExpression(
-				model,  
+				model,
 				new ByteArrayInputStream(in.getBytes()), 
 				inName, 
 				err, 
 				globalBindings);
+	}
+    
+    /**
+	 * Compiles an expression.
+	 * @param model the model
+	 * @param input the source to compile
+	 * @param inName name of the source stream
+	 * @param err output stream for error messages
+	 * @param globalBindings the variable bindings
+	 * @return null if there were any errors
+	 */
+    public static Expression compileExpression(MModel model,
+	                                           String in, 
+	                                           String inName, 
+	                                           PrintWriter err,
+	                                           Symtable varTable) {
+		
+		return compileExpression(
+				model, 
+				null,
+				new ByteArrayInputStream(in.getBytes()), 
+				inName, 
+				err, 
+				null,
+				varTable);
 	}
     
     /**
@@ -131,6 +157,24 @@ public class OCLCompiler {
                                                String inName, 
                                                PrintWriter err,
                                                VarBindings globalBindings) {
+    	return compileExpression(model, state, in, inName, err, globalBindings, null);
+    }
+    
+    /**
+     * Compiles an expression.
+     *
+     * @param  in the source to be compiled
+     * @param  inName name of the source stream
+     * @param  err output stream for error messages
+     * @return Expression null if there were any errors
+     */
+    private static Expression compileExpression(MModel model,
+                                               MSystemState state,
+                                               InputStream in, 
+                                               String inName, 
+                                               PrintWriter err,
+                                               VarBindings globalBindings,
+                                               Symtable varTable) {
         Expression expr = null;
         ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
         
@@ -163,6 +207,9 @@ public class OCLCompiler {
                 Context ctx = new Context(inName, err, globalBindings, null);
                 ctx.setModel(model);
                 ctx.setSystemState(state);
+                if (varTable != null)
+                	ctx.setVarTable(varTable);
+                
                 expr = astExpr.gen(ctx);
     
                 // check for semantic errors

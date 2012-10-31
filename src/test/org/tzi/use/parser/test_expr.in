@@ -261,7 +261,7 @@ Set{1,2,3}->intersection(Set{1,2})
 -> Set{1,2} : Set(Integer)
 
 Set{1,2,3}->intersection(Set{4})
--> Set{} : Set(Integer)
+-> Set{} : Set(OclVoid)
 
 Set{1,2,3} - Set{2}
 -> Set{1,3} : Set(Integer)

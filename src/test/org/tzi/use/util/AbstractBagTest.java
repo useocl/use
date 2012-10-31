@@ -23,18 +23,16 @@ package org.tzi.use.util;
 
 import junit.framework.TestCase;
 
-import org.tzi.use.SystemManipulator;
+import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseModelApi;
+import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
 
 
 /**
@@ -44,8 +42,7 @@ import org.tzi.use.uml.sys.MSystemException;
  * @author  Fabian Gutsche
  */
 public class AbstractBagTest extends TestCase {
-    private ModelFactory mf;
-    private MModel model;
+    
     private MSystem system;
     private MClass a;
     private MClass b;
@@ -294,27 +291,21 @@ public class AbstractBagTest extends TestCase {
      * Creates the model and system every test is working with.
      */
     private void createModel() {
-        mf = new ModelFactory();
-        model = mf.createModel("Test");
-        system = new MSystem( model );
+        UseModelApi mApi = new UseModelApi("Test");
+        
         try {
-            a = mf.createClass("A", false);
-            b = mf.createClass("B", false);
-            c = mf.createClass("C", false);
+            a = mApi.createClass("A", false);
+            b = mApi.createClass("B", false);
+            c = mApi.createClass("C", false);
             
-            model.addClass(a);
-            model.addClass(b);
-            model.addClass(c);
+            UseSystemApi sApi = UseSystemApi.create(mApi.getModel());
             
-            SystemManipulator testHelper = new SystemManipulator(system);
+            sApi.createObjectsEx(a, "a1");
+            sApi.createObjectsEx(b, "b1");
+            sApi.createObjectsEx(c, "c1");
             
-            testHelper.createObjects(a, "a1");
-            testHelper.createObjects(b, "b1");
-            testHelper.createObjects(c, "c1");
-            
-        } catch ( MInvalidModelException ex ) {
-            fail( ex.getMessage() );
-        } catch ( MSystemException ex ) {
+            system = sApi.getSystem();
+        } catch ( UseApiException ex ) {
             fail( ex.getMessage() );
         }
     }

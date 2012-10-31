@@ -24,7 +24,8 @@ package org.tzi.use.uml.sys;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.tzi.use.SystemManipulator;
+import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MAssociation;
 
 
@@ -53,15 +54,15 @@ public class DeletionTest extends TestCase {
         try {
             MSystem system = ObjectCreation.getInstance()
                     .createModelWithObjectsAndLinkObject();
+
+            UseSystemApi api = UseSystemApi.create(system);
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
-            
-            systemManipulator.deleteLink("Job", "p1", "c1");
+            api.deleteLink("Job", new String[] {"p1", "c1"});
             
             assertNull(system.state().objectByName("j1"));
             assertEquals("p1", system.state().objectByName("p1").name());
             assertEquals("c1", system.state().objectByName("c1").name());
-        } catch (MSystemException e) {
+        } catch (UseApiException e) {
             fail(e.getMessage());
         }
     }
@@ -75,9 +76,9 @@ public class DeletionTest extends TestCase {
             MSystem system = 
             	ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi api = UseSystemApi.create(system);
             
-            systemManipulator.destroyObjects("j1");
+            api.deleteObject("j1");
             assertNull( system.state().objectByName( "j1" ) );
 
             MAssociation assoc = system.model().getAssociation( "Job" );
@@ -88,7 +89,7 @@ public class DeletionTest extends TestCase {
 
             assertEquals( "p1", system.state().objectByName( "p1" ).name() );
             assertEquals( "c1", system.state().objectByName( "c1" ).name() );
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             fail( e.getMessage() );
         }
     }
@@ -102,14 +103,14 @@ public class DeletionTest extends TestCase {
             MSystem system = 
             	ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             
-            SystemManipulator systemManipulator = new SystemManipulator(system);
+            UseSystemApi api = UseSystemApi.create(system);
             
-            systemManipulator.destroyObjects("p1");
+            api.deleteObject("p1");
             
             assertNull( system.state().objectByName( "j1" ) );
             assertNull( system.state().objectByName( "p1" ) );
             assertEquals( "c1", system.state().objectByName( "c1" ).name() );
-        } catch ( MSystemException e ) {
+        } catch ( UseApiException e ) {
             fail( e.getMessage() );
         }
     }

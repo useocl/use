@@ -28,7 +28,9 @@ import java.util.List;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
@@ -91,6 +93,34 @@ public class MNewLinkObjectStatement extends MStatement {
         this.qualifier = qualifiers;
     }
 
+    public MNewLinkObjectStatement(MAssociationClass associationClass, MObject[] participants,
+            List<List<Value>> qualifiers, String objectName) {
+    
+    	fAssociationClass = associationClass;
+    	fObjectName = new ExpressionWithValue(new StringValue(objectName));
+    	
+    	fParticipants = new ArrayList<MRValue>(participants.length);
+        for (MObject participant : participants) {
+            fParticipants.add(new MRValueExpression(participant));
+        }
+    	
+    	this.qualifier = new ArrayList<List<MRValue>>();
+        for (List<Value> endQualifiers : qualifiers) {
+            List<MRValue> endQualifierValues;
+
+            if (endQualifiers == null || endQualifiers.isEmpty()) {
+                endQualifierValues = Collections.emptyList();
+            } else {
+                endQualifierValues = new ArrayList<MRValue>();
+                for (Value v : endQualifiers) {
+                    endQualifierValues.add(new MRValueExpression(v));
+                }
+            }
+
+            this.qualifier.add(endQualifierValues);
+        }
+    }
+        
     /**
      * Constructs a new MNewLinkCreateStatement.
      * 

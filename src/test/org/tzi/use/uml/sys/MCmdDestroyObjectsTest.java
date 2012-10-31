@@ -23,13 +23,13 @@ package org.tzi.use.uml.sys;
 
 import junit.framework.TestCase;
 
-import org.tzi.use.SystemManipulator;
+import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseModelApi;
+import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.expr.ExpAllInstances;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.Value;
 
 
 /**
@@ -41,33 +41,28 @@ import org.tzi.use.uml.ocl.expr.ExpInvalidException;
  */
 
 public class MCmdDestroyObjectsTest extends TestCase {
-    private ModelFactory mf;
-    private MModel model;
-    private MSystem system;
+    private UseModelApi modelApi;
+    private UseSystemApi systemApi;
+
     private MClass a;
     private MClass b;
     private MClass c;
-    private SystemManipulator systemManipulator;
-    
+        
     /**
      * Creates the model and system every test is working with.
      */
     protected void setUp() {
-        mf = new ModelFactory();
-        model = mf.createModel("Test");
-        system = new MSystem( model );
+        modelApi = new UseModelApi("Test");
+                
         try {
-            a = mf.createClass("A", false);
-            b = mf.createClass("B", false);
-            c = mf.createClass("C", false);
-            
-            model.addClass(a);
-            model.addClass(b);
-            model.addClass(c);
-        } catch ( MInvalidModelException ex ) {
+            a = modelApi.createClass("A", false);
+            b = modelApi.createClass("B", false);
+            c = modelApi.createClass("C", false);
+        } catch ( UseApiException ex ) {
             fail( ex.getMessage() );
         }
-        systemManipulator = new SystemManipulator(system);
+        
+        systemApi = UseSystemApi.create(modelApi.getModel());
     }
     
     /**
@@ -76,20 +71,18 @@ public class MCmdDestroyObjectsTest extends TestCase {
     public void testDestroySingleObject() {   
         try{
         	// create one object of class a
-        	systemManipulator.createObjects(a, "a1");
+        	systemApi.createObjectEx(a, "a1");
         	
             // expect one object of class a       
-            assertEquals(1, system.state().objectsOfClass(a).size());
+            assertEquals(1, systemApi.getSystem().state().objectsOfClass(a).size());
            
             // destroy all objects of class a
-            systemManipulator.destroyObjects(new ExpAllInstances(a.type()));
+            systemApi.deleteObject("a1");
            
             // expect no objects of class a
-            assertEquals(0, system.state().objectsOfClass(a).size());
+            assertEquals(0, systemApi.getSystem().state().objectsOfClass(a).size());
 
-        } catch ( MSystemException ex ) {
-            fail( ex.getMessage() );
-        } catch ( ExpInvalidException ex ) {
+        } catch ( UseApiException ex ) {
             fail( ex.getMessage() );
         }
     }
@@ -102,35 +95,41 @@ public class MCmdDestroyObjectsTest extends TestCase {
     public void testDestroyObjectsWithDifferentTypes() {
         try{
         	// create two objects of class `A'
-        	systemManipulator.createObjects(a, "a1", "a2");
+        	systemApi.createObjectsEx(a, "a1", "a2");
         	// create two objects of class `B'
-        	systemManipulator.createObjects(b, "b1", "b2");
+        	systemApi.createObjectsEx(b, "b1", "b2");
         	// create two objects of class `C'
-        	systemManipulator.createObjects(c, "c1", "c2");
+        	systemApi.createObjectsEx(c, "c1", "c2");
         	
             // expect two objects of class a
-            assertEquals(2, system.state().objectsOfClass(a).size());
+            assertEquals(2, systemApi.getSystem().state().objectsOfClass(a).size());
             // expect two objects of class b
-            assertEquals(2, system.state().objectsOfClass(b).size());
+            assertEquals(2, systemApi.getSystem().state().objectsOfClass(b).size());
             // expect two objects of class c
-            assertEquals(2, system.state().objectsOfClass(c).size());
+            assertEquals(2, systemApi.getSystem().state().objectsOfClass(c).size());
             
             // Destruction of all objects!
-            systemManipulator.destroyObjects(
-            		new ExpAllInstances(a.type()),
-            		new ExpAllInstances(b.type()),
-            		new ExpAllInstances(c.type()));
+            Value objectCollection = systemApi.evaluate("A.allInstances()->union(B.allInstances())->union(C.allInstances())");
+            
+            assertTrue(objectCollection.type().isCollection(true));
+            CollectionValue colVal = (CollectionValue)objectCollection;
+            MObject[] objects = new MObject[colVal.size()];
+            int i = 0;
+            for (Value v : colVal) {
+            	objects[i] = ((ObjectValue)v).value();
+            	++i;
+            }
+            
+            systemApi.deleteObjectsEx(objects);
           
             // expect no objects of class a
-            assertEquals(0, system.state().objectsOfClass(a).size());
+            assertEquals(0, systemApi.getSystem().state().objectsOfClass(a).size());
             // expect no objects of class b
-            assertEquals(0, system.state().objectsOfClass(b).size());
+            assertEquals(0, systemApi.getSystem().state().objectsOfClass(b).size());
             // expect no objects of class c
-            assertEquals(0, system.state().objectsOfClass(c).size());
+            assertEquals(0, systemApi.getSystem().state().objectsOfClass(c).size());
 
-        } catch ( MSystemException ex ) {
-            fail( ex.getMessage() );
-        } catch ( ExpInvalidException ex ) {
+        } catch ( UseApiException ex ) {
             fail( ex.getMessage() );
         }
     }

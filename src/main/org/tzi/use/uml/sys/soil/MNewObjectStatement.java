@@ -31,17 +31,17 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
+ * Statement used to create a new {@link MObject}. 
  * 
  * @author Daniel Gent
  * 
  */
 public class MNewObjectStatement extends MStatement {
-    /** TODO */
+    
     private MClass fObjectClass;
-    /** TODO */
+    
     private Expression fObjectName;
-    /** TODO */
+    
     private MObject fCreatedObject;
 
     /**
@@ -51,7 +51,6 @@ public class MNewObjectStatement extends MStatement {
      * @param objectName
      */
     public MNewObjectStatement(MClass objectClass, Expression objectName) {
-
         fObjectClass = objectClass;
         fObjectName = objectName;
     }
@@ -63,8 +62,8 @@ public class MNewObjectStatement extends MStatement {
      * @param objectName
      */
     public MNewObjectStatement(MClass objectClass, String objectName) {
-
         fObjectClass = objectClass;
+        
         if (objectName != null) {
             fObjectName = new ExpConstString(objectName);
         }
@@ -76,7 +75,6 @@ public class MNewObjectStatement extends MStatement {
      * @param objectClass
      */
     public MNewObjectStatement(MClass objectClass) {
-
         fObjectClass = objectClass;
         fObjectName = null;
     }

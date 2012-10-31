@@ -157,8 +157,12 @@ public class USECompilerTest extends TestCase {
         MModel model = new ModelFactory().createModel("Test");
         // read expressions and expected results from file
         BufferedReader in = new BufferedReader(new FileReader(TEST_EXPR_FILE));
+        int lineNr = 0;
+        
         while (true) {
             String line = in.readLine();
+            lineNr++;
+            
             if (line == null) {
                 break;
             }
@@ -175,6 +179,8 @@ public class USECompilerTest extends TestCase {
             String expStr = line;
             while (true) {
                 line = in.readLine();
+                lineNr++;
+                
                 if (line == null) {
                     throw new RuntimeException("missing result line");
                 }
@@ -201,10 +207,12 @@ public class USECompilerTest extends TestCase {
             assertNotNull(expr + " compiles", expr);
 
             MSystemState systemState = new MSystem(model).state();
-            //Log.setTrace(true);
+
             Value val = new Evaluator().eval(expr, systemState);
-            assertEquals("evaluate: " + expStr, resultStr, val.toStringWithType());
+            assertEquals(TEST_EXPR_FILE + ":" + lineNr + " evaluate: " + expStr, resultStr, val.toStringWithType());
         }
+        
+        in.close();
     }
 
     private File getFailFileFromUseFile(String specFileName) {
