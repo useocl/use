@@ -107,7 +107,7 @@ public class UseModelApi {
 	
 	/**
 	 * Creates a new UseModelApi instance with 
-	 * the provided <code>model</model> as the model instance.
+	 * the provided <code>model</code> as the model instance.
 	 * This is useful if you want to modify an existing model instance.
 	 * @param model The model to modify through this API instance.
 	 */
@@ -388,16 +388,16 @@ public class UseModelApi {
 	 * <code>isAbstract</code> if its an abstract class or not. A ternary
 	 * association class is not allow to have an aggregation or composition.
 	 * 
-	 * @param assoClassName
+	 * @param associationClassName
 	 * @param isAbstract
-	 * @param className1
-	 * @param roleName1
-	 * @param multiplicity1
-	 * @param aggregaKind1
-	 * @param className2
-	 * @param roleName2
-	 * @param multiplicity2
-	 * @param aggregaKind2
+	 * @param end1ClassName
+	 * @param end1RoleName
+	 * @param end1Multiplicity
+	 * @param end1Aggregation
+	 * @param end2ClassName
+	 * @param end2RoleName
+	 * @param end2Multiplicity
+	 * @param end2Aggregation
 	 * 
 	 * @return mAssociationClass
 	 * @throws MInvalidModelException
@@ -514,7 +514,7 @@ public class UseModelApi {
 	 * This method creates a generalization relation two classes.
 	 * The name of the parent class is provided by <code>parentName</code>.
 	 * The name of the subclass is given by <code>childName</code>.
-	 * 
+	 * @ocl.pre   Class.allInstances()->exists(name=childName) and  Class.allInstances()->exists(name=parentName)
 	 * @param childName The name of the subclass
 	 * @param parentName The name of the parent, i. e., general class
 	 * @return The generalization instance
@@ -534,8 +534,8 @@ public class UseModelApi {
 	 * The parent class is provided by <code>parent</code>.
 	 * The subclass is given by <code>child</code>.
 	 * 
-	 * @param childName The name of the subclass
-	 * @param parentName The name of the parent, i. e., general class
+	 * @param child The subclass
+	 * @param parent The general class
 	 * @return The generalization instance
 	 * @throws ApiException
 	 *         If the class names are invalid.
@@ -586,7 +586,7 @@ public class UseModelApi {
 			                              String end1ClassName, String end1RoleName, String end1Multiplicity, int end1Aggregation, 
 			                              String end2ClassName, String end2RoleName, String end2Multiplicity, int end2Aggregation) throws UseApiException {
 
-		return createAssociationEx(associationName, 
+		return createAssociation(associationName, 
 								   new String[]  {end1ClassName,  end2ClassName}, 
 								   new String[]  {end1RoleName, end2RoleName},
 								   new String[]  {end1Multiplicity, end2Multiplicity},
@@ -607,12 +607,12 @@ public class UseModelApi {
 	 *                  the qualifier information (dimension two) as a string array of length two (dimension three).
 	 *                  The first element in the array of the third dimension is the name of the qualifier, the second
 	 *                  element is the type. 
-	 * @return
+	 * @return The new association
 	 * @throws UseApiException
 	 */
-	public MAssociation createAssociationEx(String associationName, String[] classNames, String[] roleNames, 
-			                                String[] multiplicities, int[] aggregationKinds, boolean[] orderedInfo, 
-			                                String[][][] qualifier) throws UseApiException {
+	public MAssociation createAssociation(String associationName, String[] classNames, String[] roleNames, 
+			                              String[] multiplicities, int[] aggregationKinds, boolean[] orderedInfo, 
+			                              String[][][] qualifier) throws UseApiException {
 		if (associationName == null || associationName.equals("")) {
 			throw new UseApiException("Asssociations must be named!");
 		}
@@ -650,13 +650,20 @@ public class UseModelApi {
 		return assoc;
 	}
 	
+	public MAssociation createAssociationEx(String associationName, MClass[] classes, String[] roleNames, 
+            String[] multiplicities, int[] aggregationKinds, boolean[] orderedInfo, 
+            String[][][] qualifier) throws UseApiException {
+		
+		return null;
+	}
+	
 	/**
 	 * Helper to create associations ends.
 	 * @param endClassName
 	 * @param endRoleName
 	 * @param endMultiplicity
 	 * @param endAggregation
-	 * @return
+	 * @return The MAssociationEnd instance
 	 * @throws UseApiException
 	 */
 	private MAssociationEnd createAssociationEnd(String endClassName,

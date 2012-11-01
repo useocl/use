@@ -245,7 +245,7 @@ public class TestModelUtil {
             api.createClass( "Person", false );
             api.createClass( "Bank", false );
             
-            api.createAssociationEx("Account", 
+            api.createAssociation("Account", 
             		              new String[] {"Bank", "Person"},
             		              new String[] {"bank", "account"},
             		              new String[] {"0..*", "0..1"},

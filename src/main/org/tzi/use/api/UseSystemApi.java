@@ -59,8 +59,8 @@ public abstract class UseSystemApi {
 	 * Creates a new system API for the given session.
 	 * The returned API implementation is designed to be used
 	 * inside a running USE application session. 
-	 * @param session
-	 * @return
+	 * @param session The session to create a new system API for. 
+	 * @return A new UseSystemApi instance with an empty system state to manipulate.
 	 */
 	public static UseSystemApi create(Session session) {
 		return new UseSystemApiUndoable(session);
@@ -77,8 +77,8 @@ public abstract class UseSystemApi {
 	 * Creates a new system API for the given model.
 	 * The returned API implementation is designed to be used
 	 * inside an application using USE as a library. 
-	 * @param model
-	 * @return
+	 * @param model The model to create a new system API for. 
+	 * @return A new UseSystemApi instance with an empty system state to manipulate.
 	 */
 	public static UseSystemApi create(MModel model) {
 		return new UseSystemApiNative(model);
@@ -88,8 +88,8 @@ public abstract class UseSystemApi {
 	 * Creates a new system API for the given system.
 	 * The returned API implementation is designed to be used
 	 * inside an application using USE as a library. 
-	 * @param system
-	 * @return
+	 * @param system The system to encapsulate with the API.
+	 * @return A new UseSystemApi instance with the system state encapsulated to manipulate it.
 	 */
 	public static UseSystemApi create(MSystem system) {
 		return new UseSystemApiNative(system);
@@ -147,7 +147,7 @@ public abstract class UseSystemApi {
 	 * 
 	 * @param objectNames
 	 *            The object names to retrieve the objects for.
-	 * @return
+	 * @return The <code>MObject</code> instances with the given names. 
 	 * @throws UseApiException
 	 *             If an object with a given name is not present in the current
 	 *             system state.
@@ -199,7 +199,7 @@ public abstract class UseSystemApi {
 	 * Creates new objects for the class named <code>className</code>.
 	 * The object names are provided by the argument <code>objectNames</code>.
 	 * @param className The name of the class for which a new object should be created.
-	 * @param objectNamesThe names of the new objects.
+	 * @param objectNames The names of the new objects.
 	 * @throws UseApiException
 	 */
 	public final MObject[] createObjects(
@@ -220,7 +220,7 @@ public abstract class UseSystemApi {
 	 * If only the class name is known the operation {@link #createObjects(String, String...)}
 	 * can be used.</p>
 	 * @param objectClass The class for which a new object should be created.
-	 * @param objectNamesThe names of the new objects.
+	 * @param objectNames The names of the new objects.
 	 * @throws UseApiException
 	 */
 	public final MObject[] createObjectsEx(MClass objectClass,
@@ -412,9 +412,9 @@ public abstract class UseSystemApi {
 	/**
 	 * This method creates a new instance of an association class.
 	 *  
-	 * @param associationClassName The association class to create a new instance for.
+	 * @param associationClass The association class to create a new instance for.
 	 * @param newObjectName The name of the newly created object.
-	 * @param connectedObjectsNames The participating objects.
+	 * @param connectedObjects The participating objects.
 	 * @throws UseApiException
 	 *         
 	 */
@@ -429,9 +429,10 @@ public abstract class UseSystemApi {
 	/**
 	 * This method creates a new instance of an association class.
 	 *  
-	 * @param associationClassName The association class to create a new instance for.
+	 * @param associationClass The association class to create a new instance for.
 	 * @param newObjectName The name of the newly created object.
-	 * @param connectedObjectsNames The participating objects.
+	 * @param connectedObjects The participating objects.
+	 * @param qualifierValues The values for the qualifiers.
 	 * @throws UseApiException
 	 *         
 	 */
@@ -443,7 +444,7 @@ public abstract class UseSystemApi {
 	
 	/**
      * Deletes the objects with the names provided by <code>objectNames</code> from the system state.
-     * @param objectNames
+     * @param objectNames The names of the objects to delete.
      * @throws UseApiException 
      */
     public final void deleteObjects(String... objectNames) throws UseApiException {
@@ -452,8 +453,8 @@ public abstract class UseSystemApi {
     }
     
     /**
-     * Deletes the objects with the names provided by <code>objectNames</code> from the system state.
-     * @param objectNames
+     * Deletes the objects provided by <code>objects</code> from the system state.
+     * @param objects The objects to delete.
      * @throws UseApiException 
      */
     public final void deleteObjectsEx(MObject... objects) throws UseApiException {
@@ -561,12 +562,36 @@ public abstract class UseSystemApi {
     public abstract void deleteLinkEx(MLink link) throws UseApiException;
     		
     /**
-	 * This method request the current system state.
+	 * <p>This method validates the current state of
+	 * the encapsulated system and returns the result of the 
+	 * validation (<code>true</code> if valid or <code>false</code> if invalid).</p>
 	 * 
-	 * @return
+	 * <p>The validation includes static checks (like multiplicyties) and
+	 * the evaluation of all defined invariants.</p> 
+	 * 
+	 * <p>This method does not provide any details about validation errors.
+	 * To retrieve a string representation of the errors use {@link #checkState(PrintWriter)}.</p>
+	 * @return <code>true</code> if the state of the encapsulated system is valid.
 	 */
-	public boolean checkState() {
-		return false;
+    public boolean checkState() {
+    	return checkState(NullPrintWriter.getInstance());
+    }
+    
+    /**
+	 * <p>This method validates the current state of
+	 * the encapsulated system and returns the result of the 
+	 * validation (<code>true</code> if valid or <code>false</code> if invalid).</p>
+	 * 
+	 * <p>The validation includes static checks (like multiplicyties) and
+	 * the evaluation of all defined invariants.</p> 
+	 * 
+	 * @param error A <code>PrintWriter</code> used to report validation errors to.
+	 * @return <code>true</code> if the state of the encapsulated system is valid.
+	 */
+	public boolean checkState(PrintWriter error) {
+		//FIXME: Implement!
+		return system.state().checkStructure(error);
+		
 	}
 
 	/**
