@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import javax.swing.event.ListSelectionEvent;
 
 import org.tzi.use.util.BufferedToString;
 import org.tzi.use.util.StringUtil;

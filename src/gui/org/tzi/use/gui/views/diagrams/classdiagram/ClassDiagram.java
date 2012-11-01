@@ -1603,7 +1603,7 @@ public class ClassDiagram extends DiagramView
 				VarDeclList targetArgs = new VarDeclList(false);
 									
 				// Build arguments
-				for (VarDecl arg : sourceOperation.allParams()) {
+				for (VarDecl arg : sourceOperation.paramList()) {
 					VarDecl v = cloneVarDecl(targetModel, arg);
 					if (v == null) {
 						hasErrors = true;

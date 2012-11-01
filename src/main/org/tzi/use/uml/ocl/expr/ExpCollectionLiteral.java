@@ -24,11 +24,9 @@ package org.tzi.use.uml.ocl.expr;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.tzi.use.uml.ocl.type.OclAnyType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.type.UniqueLeastCommonSupertypeDeterminator;
-import org.tzi.use.uml.ocl.type.VoidType;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 

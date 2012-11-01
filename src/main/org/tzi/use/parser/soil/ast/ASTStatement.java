@@ -323,7 +323,7 @@ public abstract class ASTStatement extends AST {
     	SymbolTable symbolTable = new SymbolTable();
     	symbolTable.storeState(Options.explicitVariableDeclarations);
     	// ... parameters and ...
-    	for (VarDecl p : operation.allParams()) {
+    	for (VarDecl p : operation.paramList()) {
     		symbolTable.setType(p.name(), p.type());
     	}
     	if (operation.resultType() != null && Options.explicitVariableDeclarations) {

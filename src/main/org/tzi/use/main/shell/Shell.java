@@ -1640,9 +1640,11 @@ public final class Shell implements Runnable, PPCHandler {
     // Method for deferring Read-Commands
     //***********************************************************
     private String getFirstWordOfFile(String filename) {
-        try {
+    	BufferedReader bf = null;
+    	
+    	try {
             String result = "";
-            BufferedReader bf = new BufferedReader(new FileReader(filename));
+            bf = new BufferedReader(new FileReader(filename));
             boolean isComment = false;
             boolean noCase = false;
             boolean cont = false;
@@ -1691,6 +1693,11 @@ public final class Shell implements Runnable, PPCHandler {
             return "ERROR: -1";
         } catch (IOException e) {
             // ignored
+        } finally {
+        	if (bf != null)
+				try {
+					bf.close();
+				} catch (IOException e) {}
         }
         return null;
     }

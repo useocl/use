@@ -23,12 +23,8 @@ package org.tzi.use.uml.sys.soil;
 
 import java.util.List;
 
-import org.tzi.use.uml.ocl.expr.ExpUndefined;
-import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 

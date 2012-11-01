@@ -182,6 +182,7 @@ public class USECompilerTest extends TestCase {
                 lineNr++;
                 
                 if (line == null) {
+                	in.close();
                     throw new RuntimeException("missing result line");
                 }
                 if (line.startsWith("-> ")) {
@@ -241,8 +242,10 @@ public class USECompilerTest extends TestCase {
 
     private void failCompileSpecFailedFailFileDiffers(String specFileName, StringOutputStream errStr, File failFile) {
         System.err.println("Expected: #############");
+        BufferedReader failReader = null;
+        
         try {
-            BufferedReader failReader = new BufferedReader(new FileReader(failFile));
+            failReader = new BufferedReader(new FileReader(failFile));
             while (true) {
                 String line = failReader.readLine();
                 if (line == null) {
@@ -252,6 +255,12 @@ public class USECompilerTest extends TestCase {
             }
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
+        } finally {
+        	if (failReader != null) {
+				try {
+					failReader.close();
+				} catch (IOException e) {}
+        	}
         }
         System.err.println("Got: ##################");
         System.err.print(errStr.toString());
@@ -299,6 +308,12 @@ public class USECompilerTest extends TestCase {
             ok = false;
         } catch (IndexOutOfBoundsException ex) {
         	ok = false;
+        } finally {
+        	if (failReader != null) {
+				try {
+					failReader.close();
+				} catch (IOException e) {}
+        	}
         }
         return ok;
     }

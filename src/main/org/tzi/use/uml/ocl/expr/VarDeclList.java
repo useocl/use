@@ -35,7 +35,7 @@ import org.tzi.use.util.StringUtil;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public class VarDeclList {
+public class VarDeclList implements Iterable<VarDecl> {
     private List<VarDecl> fVarDecls;
 
     /**
@@ -159,6 +159,14 @@ public class VarDeclList {
 		for (VarDecl var : fVarDecls) {
 			vars.add(var.name(), var.type(), var.getSourcePosition());
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
+	@Override
+	public Iterator<VarDecl> iterator() {
+		return fVarDecls.iterator();
 	}
 }
 

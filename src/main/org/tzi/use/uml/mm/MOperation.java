@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MStatement;
@@ -48,9 +47,7 @@ public final class MOperation extends MModelElementImpl {
     private List<MPrePostCondition> fPreConditions;
     private List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
-    private boolean fIsCheckingSideEffects = false;
     
-
     public MOperation(String name, VarDeclList varDeclList, Type resultType) {
 	    super(name);
 	    fVarDeclList = varDeclList;
@@ -61,7 +58,8 @@ public final class MOperation extends MModelElementImpl {
 	}
 
     /**
-     * TODO
+     * Returns <code>true</code> if a SOIL statement (a body with possible side effects)
+     * is defined for this operation.
      * @return
      */
 	public boolean hasStatement() {
@@ -69,8 +67,8 @@ public final class MOperation extends MModelElementImpl {
     }
     
 	/**
-	 * TODO
-	 * @return
+	 * Returns the defined SOIL statement of the body or <code>null</code>. 
+	 * @return The statement of the body if defined otherwise <code>null</code>.
 	 */
     public MStatement getStatement() {
     	return fStatement;
@@ -78,8 +76,11 @@ public final class MOperation extends MModelElementImpl {
     
     
     /**
-     * TODO
-     * @return
+     * <p>Returns <code>true</code> if this operation has a body.</p>
+     * 
+     * <p>The body can be a side effect free OCL expression (see {@link #expression()})
+     * or a SOIL statement possibly with side effects (see {@link #getStatement()}).</p> 
+     * @return <code>true</code> if a body is defined, <code>false</code> otherwise.
      */
     public boolean hasBody() {
     	return (hasExpression() || hasStatement());
@@ -87,8 +88,8 @@ public final class MOperation extends MModelElementImpl {
     
     
     /**
-     * TODO
-     * @param statement
+     * Sets the given SOIL statement as the operation body. 
+     * @param statement The operation body statement.
      */
     public void setStatement(MStatement statement) {
     	fStatement = statement;
@@ -96,21 +97,30 @@ public final class MOperation extends MModelElementImpl {
     
     
     /**
-     * TODO
-     * @return
+     * Returns <code>true</code> if the operation
+     * can be safely called from inside an OCL expression.
+     * <p>An operation is allowed to be called from inside an OCL expression,
+     * if it has a body that is defined as an OCL expression.</p>
+     * @return <code>true</code> if the operation can be called from inside an OCL expression.
      */
     public boolean isCallableFromOCL() {
     	return (fExpr != null); 
     }
-    
 
     /** 
-     * Returns the owner class of this operation.
+     * Returns the owning class of this operation.
      */
     public MClass cls() {
         return fClass;
     }
 
+    /** 
+     * Sets the owning class of this operation to <code>cls</code>.
+     */
+    void setClass(MClass cls) {
+        fClass = cls;
+    }
+    
     /** 
      * Returns the parameter list of the operation.
      */
@@ -119,23 +129,7 @@ public final class MOperation extends MModelElementImpl {
     }
     
     /**
-     * TODO
-     * @return
-     */
-    public List<VarDecl> allParams() {
-    	List<VarDecl> result = new ArrayList<VarDecl>();
-    	
-    	int numVarDecls = fVarDeclList.size();
-    	for (int i = 0; i < numVarDecls; ++i) {
-    		result.add(fVarDeclList.varDecl(i));
-    	}
-    	
-    	return result;
-    }
-    
-    
-    /**
-     * returns a list of all parameter names
+     * Returns a list of all parameter names
      * @return
      */
     public List<String> paramNames() {
@@ -212,10 +206,6 @@ public final class MOperation extends MModelElementImpl {
     public void setTempExpression() {
         // If no result type is set, use type of the expression
         fExpr = new ExpUndefined();
-    }
-    
-    void setClass(MClass cls) {
-        fClass = cls;
     }
 
     /**

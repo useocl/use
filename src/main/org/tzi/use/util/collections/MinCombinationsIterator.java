@@ -141,25 +141,6 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
 
     }
     
-    private static <T> void combinationsOneAux(List<List<Pair<T>>> result, List<Pair<T>> head, List<List<Pair<T>>> tail) {
-        
-    	if (tail.size() == 0) return;
-    	
-    	List<Pair<T>> myCombinations = tail.get(0);
-    	
-    	// All combination for a single element
-    	// cmb = m * (1 + (|tail|  
-    	for(int index = 0; index < myCombinations.size(); ++index) {
-    		List<Pair<T>> newHead = new LinkedList<Pair<T>>(head);
-    		newHead.add(myCombinations.get(index));
-    		result.add(newHead);
-    		
-    		for (int index2 = 1; index2 < tail.size(); ++index2) {
-	    		combinationsOneAux(result, newHead, tail.subList(index2, tail.size()));
-    		}
-    	}
-    }
-    
     /* (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */

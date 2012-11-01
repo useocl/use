@@ -101,7 +101,7 @@ public class MEnterOperationStatement extends MStatement {
 		// evaluate arguments
 		Value[] arguments = new Value[fArguments.size()];
 		int i=0;
-		for (VarDecl argumentDecl : fOperation.allParams()) {
+		for (VarDecl argumentDecl : fOperation.paramList()) {
 			Value argValue = EvalUtil.evaluateExpression(this, context, result, fArguments.get(argumentDecl.name()), false);
 			arguments[i] = argValue;
 			++i;

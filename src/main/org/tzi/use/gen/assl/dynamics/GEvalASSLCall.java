@@ -69,12 +69,12 @@ public class GEvalASSLCall extends GEvalInstruction implements IGCaller {
 		// first: add parameter-variable declarations to varBindings stack
         Iterator<VarDecl> declIt;
         declIt = proc.parameterDecls().iterator();
-        List paramValues = call.evaluateParams(conf.systemState());
+        List<Value> paramValues = call.evaluateParams(conf.systemState());
         varNumber = paramValues.size(); //new
-        Iterator valuesIt = paramValues.iterator();
+        Iterator<Value> valuesIt = paramValues.iterator();
         while (declIt.hasNext()) {
             String varName = ((VarDecl) declIt.next()).name();
-            Value value = (Value) valuesIt.next();
+            Value value = valuesIt.next();
             //varBindings.push(varName, value);
             conf.varBindings().push(varName, value); 
             collector.detailPrintWriter().println( varName + ":=" + value );

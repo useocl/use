@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.lang.annotation.ElementType;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
