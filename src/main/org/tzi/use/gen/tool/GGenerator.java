@@ -616,4 +616,11 @@ public class GGenerator {
     public MSystem system() {
         return fSystem;
     }
+
+	/**
+	 * @return
+	 */
+	public GModel gModel() {
+		return fGModel;
+	}
 }
