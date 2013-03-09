@@ -1562,10 +1562,10 @@ public final class MSystemState {
 		
 		// check all associations
 		for (MAssociation assoc : fSystem.model().associations()) {
-			res = res && checkStructure(assoc, out, reportAllErrors);
+			res = checkStructure(assoc, out, reportAllErrors) && res;
 			if (!reportAllErrors && !res) return false;
 		}
-		// out.println("checking link cardinalities, done.");
+
 		out.flush();
 		return res;
 	}
@@ -1586,11 +1586,12 @@ public final class MSystemState {
 			MAssociationEnd aend1 = it2.next();
 			MAssociationEnd aend2 = it2.next();
 
-			res = validateBinaryAssociations(out, assoc, aend1, aend2, reportAllErrors) &&
-				  validateBinaryAssociations(out, assoc, aend2, aend1, reportAllErrors);
+			res = validateBinaryAssociations(out, assoc, aend1, aend2, reportAllErrors);
+			if (!res && !reportAllErrors) return res;
+			
+			res = validateBinaryAssociations(out, assoc, aend2, aend1, reportAllErrors) & res;
 		}
 		
-		// out.println("checking link cardinalities, done.");
 		out.flush();
 		return res;
 	}
@@ -1838,9 +1839,9 @@ public final class MSystemState {
 	 */
 	public String uniqueObjectNameForClass(String clsName) {
 		String name;
-		do
+		do {
 			name = system().uniqueObjectNameForClass(clsName);
-		while (objectByName(name) != null);
+		} while (objectByName(name) != null);
 		return name;
 	}
 	
