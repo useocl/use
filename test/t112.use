@@ -8,6 +8,6 @@ end
 
 composition AB between
   A[1] role owner
-  B[4] role b ordered
+  B[3] role b ordered
 end
 

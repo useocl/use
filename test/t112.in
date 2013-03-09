@@ -6,7 +6,7 @@ check
 *checking structure...
 *Multiplicity constraint violation in association `AB':
 *  Object `a1' of class `A' is connected to 0 objects of class `B'
-*  at association end `b' but the multiplicity is specified as `4'.
+*  at association end `b' but the multiplicity is specified as `3'.
 *Multiplicity constraint violation in association `AB':
 *  Object `b1' of class `B' is connected to 0 objects of class `A'
 *  at association end `owner' but the multiplicity is specified as `1'.
