@@ -44,14 +44,31 @@ expression returns [ASTExpression n]
 :
     { tok = input.LT(1); /* remember start of expression */ }
     ( 
-      'let' name=IDENT ( COLON t=type )? EQUAL e1=expression 'in'
-       { ASTLetExpression nextLet = new ASTLetExpression($name, $t.n, $e1.n);
+      'let' 
+      name=IDENT ( COLON t=type )? EQUAL e1=expression
+      
+      { ASTLetExpression nextLet = new ASTLetExpression($name, $t.n, $e1.n);
          if ( firstLet == null ) 
              firstLet = nextLet;
          if ( prevLet != null ) 
              prevLet.setInExpr(nextLet);
          prevLet = nextLet;
-       }
+      }
+      
+      (
+      COMMA
+        name=IDENT ( COLON t=type )? EQUAL e1=expression
+      
+        { ASTLetExpression nextLet = new ASTLetExpression($name, $t.n, $e1.n);
+           if ( firstLet == null ) 
+               firstLet = nextLet;
+           if ( prevLet != null ) 
+               prevLet.setInExpr(nextLet);
+           prevLet = nextLet;
+        }
+      )*
+      
+      'in'
     )*
 
     nCndImplies=conditionalImpliesExpression

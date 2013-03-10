@@ -103,12 +103,9 @@ public final class MLinkSet {
 	private void createInternalLinkSet() {
         if (fAssociation.isOrdered()) {
         	fLinks = new LinkedHashSet<MLink>();
-        }
-        else { 
+        } else { 
         	fLinks = new HashSet<MLink>();
         }
-
-		
 	}
 
 	/**
