@@ -382,4 +382,8 @@
 *-> true : Boolean
 ?let c:Collection(Integer) = OrderedSet{1, 2} in OrderedSet{1, 2} <> c
 *-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2}, c2 = OrderedSet{1, 2} in c2 <> c
+*-> false : Boolean
+?let c:Collection(Integer) = OrderedSet{1, 2}, c2 = c in c2 = c
+*-> true : Boolean
 exit

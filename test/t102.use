@@ -86,10 +86,11 @@ inv inv_attributesDefined:
      self1.gender.isUndefined and self1.alive.isUndefined))
 inv inv_nameCapitalThenSmallLetters:
   self.person->forAll(self1|
-    let small:Set(String)=
+    let
+	small:Set(String) =
       Set{'a','b','c','d','e','f','g','h','i','j','k','l','m',
-          'n','o','p','q','r','s','t','u','v','w','x','y','z'} in
-    let capital:Set(String)=
+          'n','o','p','q','r','s','t','u','v','w','x','y','z'},
+    capital:Set(String) =
       Set{'A','B','C','D','E','F','G','H','I','J','K','L','M',
           'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'} in
     (capital->includes(self1.name.substring(1,1)) and
