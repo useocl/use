@@ -63,5 +63,6 @@ check
 *-> 1 : Integer
 check
 *checking structure...
-*ok
+*checking invariants...
+*checked 0 invariants, 0 failures.
 exit
