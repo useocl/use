@@ -115,7 +115,8 @@ public class ASTIterateExpression extends ASTExpression {
 		fExpr.getFreeVariables(freeVarsInExpr);
 		HashSet<String> declaredVars = fDeclList.getVarNames();
 		freeVarsInExpr.removeAll(declaredVars);
-	
+		freeVarsInExpr.remove(fInit.nameToken().getText());
+		
 		freeVars.addAll(freeVarsInExpr);	
 	}
 
