@@ -1302,8 +1302,11 @@ public class ClassDiagram extends DiagramView
 			MAssociation assoc = fParent.system().model().getAssociation(name);
 			// Could be deleted
 			if (assoc != null) {
+				// Could be made to a binary association
 				DiamondNode node = visibleData.fNaryAssocToDiamondNodeMap.get(assoc);
-				node.restorePlacementInfo(helper, nodeElement, version);
+				if (node != null) {
+					node.restorePlacementInfo(helper, nodeElement, version);
+				}
 			}   
 		}
 		
@@ -1320,7 +1323,10 @@ public class ClassDiagram extends DiagramView
 			// Could be deleted
 			if (assoc != null) {
 				BinaryAssociationOrLinkEdge edge = visibleData.fBinaryAssocToEdgeMap.get(assoc);
-				edge.restorePlacementInfo(helper, edgeElement, version);
+				// Could have been changed to a n-ary
+				if (edge != null) {
+					edge.restorePlacementInfo(helper, edgeElement, version);
+				}
 			}
 		}
 		
