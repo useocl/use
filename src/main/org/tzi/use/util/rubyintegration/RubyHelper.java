@@ -34,6 +34,8 @@ public class RubyHelper {
 	public static Value rubyValueToUseValue(Object rubyValue, Type expectedType) {
 		Value result = UndefinedValue.instance;
 		
+		if (rubyValue == null) return result;
+		
 		if (rubyValue instanceof Value) {
 			result = (Value)rubyValue;
 		} else if (rubyValue instanceof Long) {
