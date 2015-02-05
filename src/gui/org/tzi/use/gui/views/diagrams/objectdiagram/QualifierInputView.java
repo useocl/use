@@ -115,7 +115,7 @@ public class QualifierInputView extends JDialog {
 				String[] qualifierNames = new String[end.getQualifiers().size()];
 				int index2 = 0;
 				for (VarDecl qualifier : end.getQualifiers()) {
-					qualifierNames[index2] = qualifier.name();
+					qualifierNames[index2++] = qualifier.name();
 				}
 				
 				this.tableModels[index] = new TableModel(qualifierNames);
