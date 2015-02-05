@@ -45,7 +45,7 @@ public class ASTGBarrierExpression extends ASTGBarrier {
 	protected Expression genExpression(Context ctx) throws SemanticException {
 		Expression theExpression = expression.gen(ctx);
 		
-		if (!theExpression.type().isBoolean())
+		if (!theExpression.type().isTypeOfBoolean())
 			throw new SemanticException(expression.getStartToken(), "Barrier expression must be a boolean expression.");
 		
 		return theExpression;

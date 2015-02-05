@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import java.util.ArrayList;
@@ -26,6 +24,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
@@ -144,12 +143,14 @@ public class MSequenceStatement extends MStatement {
 	
 
 	@Override
-    public void execute(SoilEvaluationContext context,
+    public Value execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		for (MStatement statement : fStatements) {
 			statement.execute(context, result);
 		}
+		
+		return null;
 	}
 	
 	
@@ -191,5 +192,12 @@ public class MSequenceStatement extends MStatement {
 	@Override
 	public String toString() {
 		return shellCommand();
+	}
+
+
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
 	}
 }

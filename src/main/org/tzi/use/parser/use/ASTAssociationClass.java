@@ -26,6 +26,7 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
+import org.tzi.use.parser.use.ASTAssociation.AssociationEndConstraintsGenerator;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
@@ -34,8 +35,6 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 
 
 /**
@@ -68,8 +67,12 @@ public class ASTAssociationClass extends ASTClass {
             .createAssociationClass( fName.getText(), fIsAbstract );
         // sets the line position of the USE-Model in this association class
         fAssocClass.setPositionInModel( fName.getLine() );
+        fAssocClass.setModel( ctx.model() );
+        
         // makes sure we have a unique class name
-        ctx.typeTable().add( fName, TypeFactory.mkObjectType( fAssocClass ) );
+        ctx.typeTable().add( fName, fAssocClass );
+        fClass = fAssocClass;
+        
         return fAssocClass;
     }
 
@@ -98,6 +101,10 @@ public class ASTAssociationClass extends ASTClass {
         for (ASTAttribute a : fAttributes) {
             try {
                 MAttribute attr = a.gen( ctx );
+                if (this.fAssocClass.isDerived() && !attr.isDerived()) {
+					throw new SemanticException(a.nameToken(),
+							"A derived association class can only define derived attributes.");
+                }
                 fAssocClass.addAttribute( attr );
             } catch ( SemanticException ex ) {
                 ctx.reportError( ex );
@@ -153,21 +160,19 @@ public class ASTAssociationClass extends ASTClass {
                                          fAssocClass.name() + "': " +
                                          ex.getMessage() );
         }
-        
-        fAssocClass.validateInheritance();
+       
         return fAssocClass;
     }
 
-    public void genOperationBodies(Context ctx) {
+    public void genOperationBodiesAndDerivedAttributes(Context ctx) {
     	ctx.setCurrentClass( fAssocClass );
 
         // enter pseudo-variable "self" into scope of expressions
-        ObjectType ot = TypeFactory.mkObjectType( fAssocClass );
-        ctx.exprContext().push( "self", ot );
+        ctx.exprContext().push( "self", fAssocClass );
         Symtable vars = ctx.varTable();
         vars.enterScope();
         try {
-            vars.add( "self", ot, null );
+            vars.add( "self", fAssocClass, null );
         } catch ( SemanticException ex ) {
             // fatal error?
             throw new Error(ex);
@@ -183,6 +188,16 @@ public class ASTAssociationClass extends ASTClass {
             }
         }
 
+        // generate derived attributes
+        for (ASTAttribute astAttribute : fAttributes) {
+            try {
+            	astAttribute.genDerived(ctx);
+            	astAttribute.genInit(ctx);
+            } catch (SemanticException ex) {
+                ctx.reportError(ex);
+            }
+        }
+        
         vars.exitScope();
         ctx.exprContext().pop();
         ctx.setCurrentClass( null );
@@ -192,26 +207,15 @@ public class ASTAssociationClass extends ASTClass {
         ctx.setCurrentClass( fAssocClass );
 
         // enter pseudo-variable "self" into scope of expressions
-        ObjectType ot = TypeFactory.mkObjectType( fAssocClass );
-        ctx.exprContext().push( "self", ot );
+        ctx.exprContext().push( "self", fAssocClass );
         Symtable vars = ctx.varTable();
         vars.enterScope();
         try {
-            vars.add( "self", ot, null );
+            vars.add( "self", fAssocClass, null );
         } catch ( SemanticException ex ) {
             // fatal error?
             throw new Error(ex);
         }
-
-
-        // generate operation bodies
-        /*for (ASTOperation astOp : fOperations) {
-            try {
-                astOp.genFinal( ctx );
-            } catch ( SemanticException ex ) {
-                ctx.reportError( ex );
-            }
-        }*/
 
         // add class invariants
         for (ASTInvariantClause astInv : fInvariantClauses) {
@@ -222,4 +226,30 @@ public class ASTAssociationClass extends ASTClass {
         ctx.exprContext().pop();
         ctx.setCurrentClass( null );
     }
+
+	/**
+	 * @param ctx
+	 * @throws MInvalidModelException 
+	 */
+	public void genAssociationFinal(Context ctx) throws MInvalidModelException {
+		if (fAssociationEnds.isEmpty()) {
+			MAssociationClass parent = fAssocClass.parents().iterator().next();
+			for (MAssociationEnd end : parent.associationEnds()) {
+				fAssocClass.addAssociationEnd(ctx.modelFactory().createAssociationEnd(
+						end.cls(), end.nameAsRolename(), end.multiplicity(), end.aggregationKind()
+						, end.isOrdered(), end.getQualifiers()));
+			}
+		}
+	}
+
+	/**
+	 * @param ctx
+	 * @param model
+	 */
+	public void genEndConstraints(Context ctx) throws SemanticException {
+		AssociationEndConstraintsGenerator gen = new AssociationEndConstraintsGenerator(
+				ctx, fName.getText(), fAssociationEnds);
+    	
+		gen.generate();
+	}
 }

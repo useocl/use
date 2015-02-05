@@ -21,17 +21,25 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
+
+import com.google.common.base.Optional;
 
 /**
  * An Attribute is a model element that is part of a Class.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
-public final class MAttribute extends MModelElementImpl {
+public final class MAttribute extends MModelElementImpl implements UseFileLocatable {
     private MClass fOwner;
-    private Type fType;
+    private final Type fType;
+
+    private Expression deriveExpression = null;
+    
+    private Expression initExpression = null;
+    
     private int fPositionInModel;
 
     /**
@@ -61,6 +69,51 @@ public final class MAttribute extends MModelElementImpl {
     }
 
     /**
+     * <code>true</code> if a derive expression is specified for
+     * this attribute.
+     * @return
+     */
+    public boolean isDerived() {
+    	return deriveExpression != null;
+    }
+    
+    public boolean hasInitExpression() {
+    	return initExpression != null;
+    }
+    
+    /**
+     * Sets the derive expression for this attribute.
+	 * @param exp The derive expression, can be <code>null</code>.
+	 */
+	public void setDeriveExpression(Expression exp) {
+		this.deriveExpression = exp;
+	}
+	
+	/**
+     * Sets the init expression for this attribute.
+	 * @param exp The init expression, can be <code>null</code>.
+	 */
+	public void setInitExpression(Expression exp) {
+		this.initExpression = exp;
+	}
+	
+	/**
+	 * The defined derive expression, if any.
+	 * @return The derive expression or <code>null</code> if none is specified.
+	 */
+	public Expression getDeriveExpression() {
+		return this.deriveExpression;
+	}
+	
+	/**
+	 * The defined init expression, if any.
+	 * @return The init expression or <code>null</code> if none is specified.
+	 */
+	public Optional<Expression> getInitExpression() {
+		return Optional.fromNullable(this.initExpression);
+	}
+	
+    /**
      * Returns the position in the defined USE-Model.
      */
     public int getPositionInModel() {
@@ -76,7 +129,7 @@ public final class MAttribute extends MModelElementImpl {
     
     @Override
     public String toString() {
-        return name() + " : " + fType;
+        return (isDerived() ? "/" : "") + name() + " : " + fType;
     }
 
     /**
@@ -97,7 +150,8 @@ public final class MAttribute extends MModelElementImpl {
     /**
      * Process this element with visitor.
      */
-    public void processWithVisitor(MMVisitor v) {
+    @Override
+	public void processWithVisitor(MMVisitor v) {
         v.visitAttribute(this);
     }
 }

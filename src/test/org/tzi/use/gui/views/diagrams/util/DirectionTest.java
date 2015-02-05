@@ -77,7 +77,7 @@ public class DirectionTest extends TestCase {
 		from.setLocation(0, 0);
 		to.setLocation(0, 0);
 		
-		assertEquals(Direction.getDirection(from, to), Direction.UNKNOWN);
+		assertEquals(Direction.getDirection(from, to), Direction.CENTER);
 		
 		to.x = 1;
 		assertEquals(Direction.getDirection(from, to), Direction.EAST);

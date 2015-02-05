@@ -1,5 +1,5 @@
 -- Opens the class diagram:
--- open civstat.use
+open civstat.use
 
 -- Creates the object diagram:
 -- read abcd_cmd.cmd

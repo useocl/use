@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2010 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2012 Mark Richters, University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,6 +23,7 @@ package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
@@ -31,20 +32,23 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST class for a legacy opexit command
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class ASTExitOperationStatement extends ASTStatement {
-	/** TODO */
+	
+	/** The specified result expression, if any **/ 
 	private ASTExpression fResult;
 
 	
 	/**
-	 * TODO
-	 * @param result
+	 * Constructs a new ASTExitOperationStatement node with the given result expression.
+	 * The result expression maybe <code>null</code>. 
+	 * @param result An expression that calculates the result of the operation.
 	 */
-	public ASTExitOperationStatement(ASTExpression result) {
+	public ASTExitOperationStatement(Token start, ASTExpression result) {
+		super(start);
 		fResult = result;
 	}
 	

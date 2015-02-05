@@ -21,45 +21,34 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.type.BagType;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.OrderedSetType;
-import org.tzi.use.uml.ocl.type.SequenceType;
-import org.tzi.use.uml.ocl.type.SetType;
+import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.BagValue;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.OrderedSetValue;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.CollectionUtil;
 
 /**
  * Navigation expression from one class to another.
- *
- * @version     $ProjectVersion: 0.393 $
+ * 
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
 public final class ExpNavigation extends Expression {
-    private MNavigableElement fSrc;
-    private MNavigableElement fDst;
-    private Expression fObjExp;
-    private List<Expression> qualifierExpressions;
+    private final MNavigableElement fSrc;
+    private final MNavigableElement fDst;
+    private final Expression fObjExp;
+    
+    private final Expression[] qualifierExpressions;
     
     public ExpNavigation(Expression objExp,
                          MNavigableElement src,
@@ -68,11 +57,15 @@ public final class ExpNavigation extends Expression {
         throws ExpInvalidException
     {
         // set result type later
-        super(null, objExp);
+        super(null);
         
-        this.qualifierExpressions = CollectionUtil.emptyListIfNull(theQualifierExpressions);
+        if (theQualifierExpressions == null) {
+        	this.qualifierExpressions = new Expression[0];
+        } else {
+        	this.qualifierExpressions = theQualifierExpressions.toArray(new Expression[theQualifierExpressions.size()]);
+        }
                 
-        if ( !objExp.type().isTrueObjectType() )
+        if ( !objExp.type().isKindOfClassifier(VoidHandling.EXCLUDE_VOID) )
             throw new ExpInvalidException(
                     "Target expression of navigation operation must have " +
                     "object type, found `" + objExp.type() + "'." );
@@ -82,12 +75,11 @@ public final class ExpNavigation extends Expression {
         			" has no defined qualifiers, but qualifer values were provided.");
         }
         
-        setResultType( dst.getType( objExp.type(), src, !qualifierExpressions.isEmpty() ) );
+        setResultType( dst.getType( objExp.type(), src, qualifierExpressions.length > 0 ) );
 
         this.fSrc = src;
         this.fDst = dst;
         this.fObjExp = objExp;
-        this.qualifierExpressions = theQualifierExpressions;
     }
 
     /**
@@ -97,108 +89,41 @@ public final class ExpNavigation extends Expression {
 	public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = UndefinedValue.instance;
-        Value val = fObjExp.eval(ctx);
+        final Value val = fObjExp.eval(ctx);
 
         // if we don't have an object we can't navigate 
         if (! val.isUndefined() ) {
             // get the object
-            ObjectValue objVal = (ObjectValue) val;
-            MObject obj = objVal.value();
-            MSystemState state = isPre() ? ctx.preState() : ctx.postState();
-            Type resultType = type();
+            final ObjectValue objVal = (ObjectValue) val;
+            final MObject obj = objVal.value();
+            final MSystemState state = isPre() ? ctx.preState() : ctx.postState();
+            final Type resultType = type();
             
-            // if dst is derived evaluate the derive expression with obj as source
-            if (fDst.isDerived()) {
-            	ctx.pushVarBinding("self", objVal);
-            	res = fDst.getDeriveExpression().eval(ctx);
-            	
-            	if (res.isUndefined()) {
-            		if (resultType.isSet()) {
-            			res = new SetValue(((SetType) resultType).elemType());
-            		} else if (resultType.isOrderedSet()) {
-            			res =  new OrderedSetValue(((OrderedSetType) resultType).elemType());
-            		}
-            	}
-            } else if (fDst.getAllOtherAssociationEnds() != null &&
-            		   fDst.getAllOtherAssociationEnds().size() == 1 && 
-            		   fDst.getAllOtherAssociationEnds().get(0).isDerived()) {
-            	/* The opposite side of a derived end of a binary association can be calculated:
-            	   T = 
-            	   T.allInstances()->select(t | t.deriveExpression->includes(self))
-            	   
-            	*/
-            	MClass endClass = fDst.cls();
-            	MNavigableElement otherEnd = fDst.getAllOtherAssociationEnds().get(0);
-            	StringBuilder query = new StringBuilder();
-            	query.append(endClass.name()).append(".allInstances()->select(self | ");
-            	otherEnd.getDeriveExpression().toString(query);
-            	query.append("->includes(sourceObject)");
-            	query.append(")");
-            	
-            	ctx.pushVarBinding("sourceObject", objVal);
-            	
-            	Expression linkExpression = OCLCompiler.compileExpression(
-            			ctx.postState().system().model(), 
-            			query.toString(), 
-            			"opposite derived end", 
-            			new PrintWriter(Log.out()),
-            			ctx.varBindings());
-            	
-            	if (linkExpression == null) {
-            		Log.error("Calculated opposite derive expression had compile errors!");
-            		return UndefinedValue.instance;
-            	}
-            	
-            	res = linkExpression.eval(ctx);
-            	
-            	if (res.isUndefined()) {
-            		if (resultType.isSet()) {
-            			res = new SetValue(((SetType) resultType).elemType());
-            		} else if (resultType.isOrderedSet()) {
-            			res =  new OrderedSetValue(((OrderedSetType) resultType).elemType());
-            		}
-            	}
-            } else {  
-	            // get objects at association end
-            	List<Value> qualifierValues;
-            	if (this.qualifierExpressions.isEmpty()) {
-            		qualifierValues = Collections.emptyList();
-            	} else {
-            		qualifierValues = new ArrayList<Value>();
-            		for (Expression exp : this.qualifierExpressions) {
-            			qualifierValues.add(exp.eval(ctx));
-            		}
-            	}
-            	
-	            List<MObject> objList = obj.getNavigableObjects(state, fSrc, fDst, qualifierValues);
-	            if (resultType.isTrueObjectType() ) {
-	                if (objList.size() > 1 )
-	                    throw new MultiplicityViolationException(
-	                        "expected link set size 1 at " + 
-	                        "association end `" + fDst + 
-	                        "', found: " + 
-	                        objList.size());
-	                if (objList.size() == 1 ) {
-	                    obj = objList.get(0);
-	                    if (obj.exists(state) )
-	                        res = new ObjectValue((ObjectType) type(), obj);
-	                }
-	            } else if (resultType.isSet() ) {
-	                res = new SetValue(((SetType) resultType).elemType(), 
-	                                   oidsToObjectValues(state, objList));
-	            } else if (resultType.isOrderedSet() ) {
-	                res = new OrderedSetValue(((OrderedSetType) resultType).elemType(), 
-	                                        oidsToObjectValues(state, objList));
-	            } else if (resultType.isBag() ) {
-	            	res = new BagValue(((BagType) resultType).elemType(), 
-                            oidsToObjectValues(state, objList));
-	            } else if (resultType.isSequence() ) {
-	            	res = new SequenceValue(((SequenceType) resultType).elemType(), 
-                            oidsToObjectValues(state, objList));
-	            } else
-	                throw new RuntimeException("Unexpected association end type `" + 
-	                                           resultType + "'");
-            }
+              
+            // get objects at association end
+        	List<Value> qualifierValues = new LinkedList<Value>();
+        		
+    		for (Expression exp : this.qualifierExpressions) {
+    			qualifierValues.add(exp.eval(ctx));
+    		}
+        	        	
+            List<MObject> objList = obj.getNavigableObjects(state, fSrc, fDst, qualifierValues);
+            if (resultType.isTypeOfClass() ) {
+                if (objList.size() > 1 )
+                    throw new MultiplicityViolationException(
+                        "expected link set size 1 at " + 
+                        "association end `" + fDst + 
+                        "', found: " + 
+                        objList.size());
+                if (objList.size() == 1 ) {
+                    res = new ObjectValue((MClass)type(), objList.get(0));
+                }
+            } else if (resultType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+            	CollectionType ct = (CollectionType)resultType;
+            	res = ct.createCollectionValue(oidsToObjectValues(state, objList));
+            } else
+                throw new RuntimeException("Unexpected association end type `" + 
+                                           resultType + "'");
         }
 
         ctx.exit(this, res);
@@ -212,7 +137,7 @@ public final class ExpNavigation extends Expression {
         for (MObject obj : objList) {
             MObjectState objState = obj.state(state);
             if (objState != null )
-                res[i++] = new ObjectValue(obj.type(), obj);
+                res[i++] = new ObjectValue(obj.cls(), obj);
         }
         return res;
     }
@@ -237,13 +162,30 @@ public final class ExpNavigation extends Expression {
     public Expression getObjectExpression() {
         return fObjExp;
     }
+    
+    /**
+     * Returns an array of defined qualifier expressions for this navigation.
+     * If no expressions where defined an empty array is returned. 
+     * @return
+     */
+    public Expression[] getQualifierExpression(){
+		return qualifierExpressions;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitNavigation(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		 if (fObjExp.requiresPreState()) return true;
+		 
+		 for (Expression e : qualifierExpressions) {
+		    if (e.requiresPreState()) return true;
+		 }
+		 
+		 return false;
 	}
 
 }

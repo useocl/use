@@ -1,0 +1,17 @@
+model TestOverride
+
+class Base
+  operations
+    doSomethingInIt(aSet:Set(Integer), aValue:Integer):Collection(OclAny) = Sequence{}->union(aSet->asSequence())->including(aValue)
+	doSomething(otherBase:Base):Collection(OclAny) = otherBase.doSomethingInIt(Set{1}, 4)
+end
+
+class Sub1 < Base
+  operations
+    doSomethingInIt(aCollection:Collection(OclAny), aValue:OclAny):Bag(OclAny) = Bag{}->union(aCollection->asBag())->including(aValue)
+end
+
+class Sub2
+  operations
+    doSomething():Bag(OclAny) = Bag{1}
+end

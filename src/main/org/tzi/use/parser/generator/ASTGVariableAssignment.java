@@ -75,7 +75,7 @@ public class ASTGVariableAssignment extends ASTGInstruction {
         GValueInstruction valuesource = (GValueInstruction) source;
         // The type of the source must be the same type 
         // or a subtype of the target variable.
-        if (! valuesource.type().isSubtypeOf(type)) {
+        if (! valuesource.type().conformsTo(type)) {
             String err = "Invalid assignment: " +
                 "`"+fTarget.getText()+"' is of type " + type + "." +
                 "`" + valuesource + "' is of type " + valuesource.type() + ".";

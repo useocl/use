@@ -154,13 +154,13 @@ public class AbstractBagTest extends TestCase {
      */
     public void testBagWithoutSameSizeWithObjects() {
         createModel();
-        ObjectValue o1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ObjectValue o1 = new ObjectValue( a, 
                                           system.state().objectByName("a1") );        
         Value[] valuesForBag1 = { o1 };
         
-        ObjectValue ov1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ObjectValue ov1 = new ObjectValue( a, 
                                            system.state().objectByName("a1") );
-        ObjectValue ov2 = new ObjectValue( TypeFactory.mkObjectType(b), 
+        ObjectValue ov2 = new ObjectValue( b, 
                                            system.state().objectByName("b1") );
         Value[] valuesForBag2 = { ov1, ov2 };
         
@@ -171,14 +171,12 @@ public class AbstractBagTest extends TestCase {
         
         assertFalse( bagValue1.equals( bagValue2 ) );
         
-        o1 = new ObjectValue( TypeFactory.mkObjectType(a), 
-                                          system.state().objectByName("a1") );        
-        ObjectValue o2 = new ObjectValue( TypeFactory.mkObjectType(a), 
-                                          system.state().objectByName("b1") );
+        o1 = new ObjectValue( a, system.state().objectByName("a1") );
+        
+        ObjectValue o2 = new ObjectValue( a, system.state().objectByName("b1") );
         Value[] valuesForBag3 = { o1, o2 };
         
-        ov1 = new ObjectValue( TypeFactory.mkObjectType(a), 
-                                           system.state().objectByName("a1") );
+        ov1 = new ObjectValue( a, system.state().objectByName("a1") );
         Value[] valuesForBag4 = { ov1 };
         
         bagValue1 = new BagValue( TypeFactory.mkOclAny(),
@@ -196,15 +194,15 @@ public class AbstractBagTest extends TestCase {
      */
     public void testSameBagSizeObjects() {
         createModel();
-        ObjectValue o1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ObjectValue o1 = new ObjectValue( a, 
                                           system.state().objectByName("a1") );        
-        ObjectValue o2 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ObjectValue o2 = new ObjectValue( a, 
                                           system.state().objectByName("a1") );
         Value[] valuesForBag1 = { o1, o2 };
         
-        ObjectValue ov1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ObjectValue ov1 = new ObjectValue( a, 
                                            system.state().objectByName("a1") );
-        ObjectValue ov2 = new ObjectValue( TypeFactory.mkObjectType(b), 
+        ObjectValue ov2 = new ObjectValue( b, 
                                            system.state().objectByName("b1") );
         Value[] valuesForBag2 = { ov1, ov2 };
         
@@ -215,15 +213,15 @@ public class AbstractBagTest extends TestCase {
         
         assertFalse( bagValue1.equals( bagValue2 ) );
         
-        o1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        o1 = new ObjectValue( a, 
                               system.state().objectByName("a1") );        
-        o2 = new ObjectValue( TypeFactory.mkObjectType(b), 
+        o2 = new ObjectValue( b, 
                               system.state().objectByName("b1") );
         Value[] valuesForBag3 = { o1, o2 };
         
-        ov1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ov1 = new ObjectValue( a, 
                                system.state().objectByName("a1") );
-        ov2 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ov2 = new ObjectValue( a, 
                                system.state().objectByName("a1") );
         Value[] valuesForBag4 = { ov1, ov2 };
         
@@ -242,15 +240,15 @@ public class AbstractBagTest extends TestCase {
      */
     public void testSameBagSizeWithObjectsValuesAreTheSame() {
         createModel();
-        ObjectValue o1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ObjectValue o1 = new ObjectValue( a, 
                                           system.state().objectByName("a1") );        
-        ObjectValue o2 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ObjectValue o2 = new ObjectValue( a, 
                                           system.state().objectByName("a1") );
         Value[] valuesForBag1 = { o1, o2 };
         
-        ObjectValue ov1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ObjectValue ov1 = new ObjectValue( a, 
                                            system.state().objectByName("a1") );
-        ObjectValue ov2 = new ObjectValue( TypeFactory.mkObjectType(b), 
+        ObjectValue ov2 = new ObjectValue( b, 
                                            system.state().objectByName("a1") );
         Value[] valuesForBag2 = { ov1, ov2 };
         
@@ -261,19 +259,19 @@ public class AbstractBagTest extends TestCase {
         
         assertTrue( bagValue1.equals( bagValue2 ) );
         
-        o1 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        o1 = new ObjectValue( a, 
                               system.state().objectByName("a1") );        
-        o2 = new ObjectValue( TypeFactory.mkObjectType(b), 
+        o2 = new ObjectValue( b, 
                               system.state().objectByName("b1") );
-        ObjectValue o3 = new ObjectValue( TypeFactory.mkObjectType(c), 
+        ObjectValue o3 = new ObjectValue( c, 
                                           system.state().objectByName("c1") );
         Value[] valuesForBag3 = { o1, o2, o3 };
         
-        ov1 = new ObjectValue( TypeFactory.mkObjectType(c), 
+        ov1 = new ObjectValue( c, 
                                system.state().objectByName("c1") );
-        ov2 = new ObjectValue( TypeFactory.mkObjectType(a), 
+        ov2 = new ObjectValue( a, 
                                system.state().objectByName("a1") );
-        ObjectValue ov3 = new ObjectValue( TypeFactory.mkObjectType(b), 
+        ObjectValue ov3 = new ObjectValue( b, 
                                            system.state().objectByName("b1") );
         Value[] valuesForBag4 = { ov1, ov2, ov3 };
         
@@ -298,7 +296,7 @@ public class AbstractBagTest extends TestCase {
             b = mApi.createClass("B", false);
             c = mApi.createClass("C", false);
             
-            UseSystemApi sApi = UseSystemApi.create(mApi.getModel());
+            UseSystemApi sApi = UseSystemApi.create(mApi.getModel(), false);
             
             sApi.createObjectsEx(a, "a1");
             sApi.createObjectsEx(b, "b1");

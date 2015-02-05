@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.runtime.ANTLRInputStream;
@@ -39,9 +40,9 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.use.ASTConstraintDefinition;
+import org.tzi.use.uml.mm.GeneratorModelFactory;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.sys.MSystemState;
 
 public class ASSLCompiler {
@@ -89,30 +90,39 @@ public class ASSLCompiler {
                 error = true;
             else {
                 Iterator<ASTGProcedure> astgproc = astgProcList.iterator();
+                
+                // Generate signatures first, to allow procedure calls
                 while (astgproc.hasNext() && !error ) {
                     Context ctx = new Context(inName, err, null, null);
                     ctx.setModel(model);
                     ASTGProcedure astgProc = (ASTGProcedure) astgproc.next();
-                    try {
-                        GProcedure proc = astgProc.gen(ctx);
-                        if (ctx.errorCount() != 0 )
-                            error = true;
-                        else {
-                            boolean ignore = false;
-                            Iterator<GProcedure> it = procedures.iterator();
-                            while (it.hasNext())
-                                if (((GProcedure) it.next()).getSignature().equals(proc.getSignature() ) ) {
-                                    err.println("Warning: Ignoring redefinition of " + proc);
-                                    ignore = true;
-                                }
-                            if (!ignore)
-                                procedures.add( proc );
-                        }
-                    } catch (SemanticException ex) {
-                        ctx.reportError(ex);
+                    GProcedure proc = astgProc.genSignature(ctx);
+                    if (ctx.errorCount() != 0 )
                         error = true;
+                    else {
+                        boolean ignore = false;
+                        Iterator<GProcedure> it = procedures.iterator();
+                        while (it.hasNext())
+                            if (((GProcedure) it.next()).getSignature().equals(proc.getSignature() ) ) {
+                                err.println("Warning: Ignoring redefinition of " + proc);
+                                ignore = true;
+                            }
+                        if (!ignore)
+                            procedures.add( proc );
                     }
                 }
+                
+                astgproc = astgProcList.iterator();
+                while (astgproc.hasNext() && !error ) {
+                	Context ctx = new Context(inName, err, null, null);
+                    ctx.setModel(model);
+                    ctx.setProcedures(procedures);
+                    ASTGProcedure astgProc = (ASTGProcedure) astgproc.next();
+                    astgProc.genBody(ctx);
+                    if (ctx.errorCount() != 0 )
+                        error = true;
+                }
+                
             }
         } catch (RecognitionException e) {
             err.println(parser.getSourceName() +":" + 
@@ -139,11 +149,12 @@ public class ASSLCompiler {
      */
     public static GProcedureCall compileProcedureCall(MModel model,
                                                       MSystemState systemState,
+                                                      List<GProcedure> procedures,
                                                       String in, 
                                                       String inName,
                                                       PrintWriter err) {
     	InputStream stream = new ByteArrayInputStream(in.getBytes());
-    	return ASSLCompiler.compileProcedureCall(model, systemState, stream, inName, err);
+    	return ASSLCompiler.compileProcedureCall(model, systemState, procedures, stream, inName, err);
     }
     /**
      * Compiles a procedure call
@@ -157,6 +168,7 @@ public class ASSLCompiler {
      */
     public static GProcedureCall compileProcedureCall(MModel model,
                                                       MSystemState systemState,
+                                                      List<GProcedure> procedures,
                                                       InputStream in, 
                                                       String inName,
                                                       PrintWriter err) {
@@ -175,12 +187,14 @@ public class ASSLCompiler {
             ASTGProcedureCall astgProcCall = parser.procedureCallOnly();
             if (errHandler.errorCount() == 0 ) {
     
-                Context ctx=new Context(inName,
+                Context ctx = new Context(inName,
                                         err,
                                         systemState.system().varBindings(),
                                         null);
                 ctx.setModel(model);
                 ctx.setSystemState(systemState);
+                ctx.setProcedures(procedures);
+                
                 procCall = astgProcCall.gen(ctx);
     
                 // check for semantic errors
@@ -209,7 +223,7 @@ public class ASSLCompiler {
      * @param  err output stream for error messages
      * @return Collection the added invariants (MClassInvariant)
      */
-    public static Collection<MClassInvariant> compileAndAddInvariants(MModel model,
+    public static Collection<MClassInvariant> compileInvariants(MModel model,
                                                      InputStream in,
                                                      String inName,
                                                      PrintWriter err) {
@@ -234,17 +248,14 @@ public class ASSLCompiler {
                 Context ctx = new Context(inName,
                                           err,
                                           null,
-                                          new ModelFactory());
-                Collection<MClassInvariant> existingInvs = model.classInvariants();
+                                          new GeneratorModelFactory());
                 ctx.setModel(model);
                 
+                addedInvs = new LinkedList<MClassInvariant>();
                 for (ASTConstraintDefinition cd : consDefList) {
                     // adds the class invariants to the given model
-                    cd.gen(ctx);
+                    addedInvs.addAll(cd.gen(ctx, false));
                 }
-                
-                addedInvs = new ArrayList<MClassInvariant>(model.classInvariants());
-                addedInvs.removeAll(existingInvs);
             }
         } catch (RecognitionException e) {
             err.println(e.line + ":" +

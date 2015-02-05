@@ -17,18 +17,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.sys.events.LinkInsertedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A BarChartView showing the number of links in the current system
@@ -49,7 +50,8 @@ public class LinkCountView extends BarChartView implements View {
         fAssociations = associations.toArray(new MAssociation[0]);
         Arrays.sort(fAssociations);
         setNames(fAssociations);
-        fSystem.addChangeListener(this);
+        fSystem.registerRequiresAllDerivedValues();
+        fSystem.getEventBus().register(this);
         update();
     }
 
@@ -63,14 +65,21 @@ public class LinkCountView extends BarChartView implements View {
         setValues(values);
     }
 
-    public void stateChanged(StateChangeEvent e) {
-        update();
+    @Subscribe
+    public void stateChanged(LinkInsertedEvent e) {
+    	update();
     }
-
+    
+    @Subscribe
+    public void stateChanged(LinkDeletedEvent e) {
+    	update();
+    }
+    
     /**
      * Detaches the view from its model.
      */
     public void detachModel() {
-        fSystem.removeChangeListener(this);
+        fSystem.getEventBus().unregister(this);
+        fSystem.unregisterRequiresAllDerivedValues();
     }
 }

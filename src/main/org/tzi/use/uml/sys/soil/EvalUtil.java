@@ -38,20 +38,22 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 /**
  * Static helper class for the evaluation of expressions (from within MStatement and its subclasses).
  * @author Fabian Buettner
+ * @author Lars Hamann
  *
  */
-class EvalUtil {
+public class EvalUtil {
     /**
-     * TODO
-     * @param expression
-     * @param mustBeDefined
-     * @return
-     * @throws EvaluationFailedException
+     * Evaluates the <code>expression</code> using the given <code>context</code>.
+     * If <code>mustBeDefined</code> is <code>true</code> an exception is thrown,
+     * if the evaluation results in the undefined value.
+     * @param context The context to evaluate the expression with. 
+     * @param expression The expression to evaluate.
+     * @param mustBeDefined If <code>true</code>, the expression must evaluate to a value != <code>undefined</code>.
+     * @return The evaluation result.
+     * @throws EvaluationFailedException If a multiplicity violation occurs or the expression evaluates to undefined and <code>mustBeDefined</code> is <code>true</code>.
      */
-    static Value evaluateExpression(
-            MStatement stmt,
+    public static Value evaluateExpression(
             SoilEvaluationContext context,
-            StatementEvaluationResult result,
             Expression expression, 
             boolean mustBeDefined) throws EvaluationFailedException {
         
@@ -66,7 +68,7 @@ class EvalUtil {
                     context.getState(), 
                     context.getVarEnv().constructVarBindings());
         } catch (MultiplicityViolationException e) {
-            throw new EvaluationFailedException(stmt,
+            throw new EvaluationFailedException(
                     "Evaluation of expression "
                             + StringUtil.inQuotes(expression)
                             + " failed due to following reason:\n  "
@@ -76,7 +78,7 @@ class EvalUtil {
         }
         
         if (mustBeDefined && value.isUndefined()) {
-            throw new EvaluationFailedException(stmt, "The value of expression " +
+            throw new EvaluationFailedException("The value of expression " +
                     StringUtil.inQuotes(expression) +
                     " is undefined.");
         }
@@ -86,39 +88,38 @@ class EvalUtil {
     
     
     /**
-     * TODO
-     * @param expression
-     * @return
-     * @throws EvaluationFailedException
+     * Evaluates the <code>expression</code> using the given <code>context</code>.
+     * 
+     * @param context The context to evaluate the expression with. 
+     * @param expression The expression to evaluate.
+     * @return The evaluation result.
+     * @throws EvaluationFailedException If a multiplicity violation occurs.
      */
-    static Value evaluateExpression(
-            MStatement stmt,
+    public static Value evaluateExpression(
             SoilEvaluationContext context,
-            StatementEvaluationResult result,
             Expression expression) throws EvaluationFailedException {
-        
-        return evaluateExpression(stmt,context, result, expression, false);
+        return evaluateExpression(context, expression, false);
     }
     
-
     /**
-     * TODO
-     * @param expression
-     * @return
-     * @throws EvaluationFailedException
+     * Evaluates the <code>expression</code> using the given <code>context</code>
+     * and performs a type check (result is an object) to the result.
+     * 
+     * @param context The context to evaluate the expression with. 
+     * @param expression The expression to evaluate.
+     * @return The resulting object.
+     * @throws EvaluationFailedException If a multiplicity violation occurs or if the expression does not return an object value.
      */
-    static MObject evaluateObjectExpression(
-            MStatement stmt,
+    public static MObject evaluateObjectExpression(
             SoilEvaluationContext context,
-            StatementEvaluationResult result,
             Expression expression) throws EvaluationFailedException {
         
-        Value value = evaluateExpression(stmt, context, result, expression, true);
+        Value value = evaluateExpression(context, expression, true);
         
         if (value instanceof ObjectValue) {
             return ((ObjectValue)value).value();
         } else {
-            throw new EvaluationFailedException(stmt, "Expression "
+            throw new EvaluationFailedException("Expression "
                     + StringUtil.inQuotes(expression)
                     + " is expected to evaluate to an object "
                     + ", but its type is "
@@ -128,44 +129,46 @@ class EvalUtil {
         
     
     /**
-     * TODO
-     * @param expressions
-     * @return
-     * @throws EvaluationFailedException
+     * Evaluates the <code>expressions</code> using the given <code>context</code>
+     * and performs a type check (result is an object) to the result.
+     * 
+     * @param context The context to evaluate the expression with. 
+     * @param expression The expression to evaluate.
+     * @return The resulting objects.
+     * @throws EvaluationFailedException If a multiplicity violation occurs or if the expression does not return a string value.
      */
-    static List<MObject> evaluateObjectExpressions(          
-            MStatement stmt,
+    public static List<MObject> evaluateObjectExpressions(
             SoilEvaluationContext context,
-            StatementEvaluationResult result,
             List<Expression> expressions) throws EvaluationFailedException {
         
         List<MObject> vresult = new ArrayList<MObject>(expressions.size());
         
         for (Expression expression : expressions) {
-            vresult.add(evaluateObjectExpression(stmt, context, result, expression));
+            vresult.add(evaluateObjectExpression(context, expression));
         }
         
         return vresult;
     }
     
     /**
-     * TODO
-     * @param expression
-     * @return
-     * @throws EvaluationFailedException
+     * Evaluates the <code>expression</code> using the given <code>context</code>
+     * and performs a type check (result is a string) to the result.
+     * 
+     * @param context The context to evaluate the expression with. 
+     * @param expression The expression to evaluate.
+     * @return The resulting object.
+     * @throws EvaluationFailedException If a multiplicity violation occurs or if the expression does not return a string value.
      */
-    static String evaluateString(
-            MStatement stmt,
+    public static String evaluateString(
             SoilEvaluationContext context,
-            StatementEvaluationResult result,
             Expression expression) throws EvaluationFailedException {
         
-        Value value = evaluateExpression(stmt, context, result, expression, true);
+        Value value = evaluateExpression(context, expression, true);
     
         if (value instanceof StringValue) {
             return ((StringValue)value).value();
         } else {
-            throw new EvaluationFailedException(stmt, "Expression " + 
+            throw new EvaluationFailedException("Expression " + 
                     StringUtil.inQuotes(expression) + 
                     " is expected to be of type " +
                     StringUtil.inQuotes("String") +
@@ -177,22 +180,25 @@ class EvalUtil {
     
     
     /**
-     * TODO
-     * @param rValue
-     * @return
+     * Evaluates the <code>rValue</code> and returns the value.
+     * Additional side effects are stored in <code>result</code>.
+     * @param context The context used to evaluate the RValue in.
+     * @param result Store for additional results, e. g., created objects.
+     * @param rValue The RValue to evaluate.
+     * @param mustBeDefined If <code>true</code>, an exception is raised, if the result is undefined.
+     * @return The result value of the evaluation.
      * @throws EvaluationFailedException 
      */
-    static Value evaluateRValue(
-            MStatement stmt,
+    public static Value evaluateRValue(
             SoilEvaluationContext context,
             StatementEvaluationResult result,
             MRValue rValue, 
             boolean mustBeDefined) throws EvaluationFailedException {
         
-        Value value = rValue.evaluate(context, result, stmt);
+        Value value = rValue.evaluate(context, result);
         
         if (mustBeDefined && value.isUndefined()) {
-            throw new EvaluationFailedException(stmt, "The value of rValue " +
+            throw new EvaluationFailedException("The value of rValue " +
                     StringUtil.inQuotes(rValue) +
                     " is undefined.");
         }
@@ -202,23 +208,25 @@ class EvalUtil {
     
     
     /**
-     * TODO 
-     * @param rValue
-     * @return
-     * @throws EvaluationFailedException
+     * Evaluates the <code>rValue</code> and returns the value.
+     * Additional side effects are stored in <code>result</code>.
+     * @param context The context used to evaluate the RValue in.
+     * @param result Store for additional results, e. g., created objects.
+     * @param rValue The RValue to evaluate.
+     * @return The result value of the evaluation.
+     * @throws EvaluationFailedException 
      */
-    static MObject evaluateObjectRValue(
-            MStatement stmt,
+    public static MObject evaluateObjectRValue(
             SoilEvaluationContext context,
             StatementEvaluationResult result,
             MRValue rValue) throws EvaluationFailedException {
         
-        Value value = evaluateRValue(stmt, context, result, rValue, true);
+        Value value = evaluateRValue(context, result, rValue, true);
         
         if (value instanceof ObjectValue) {
             return ((ObjectValue)value).value();
         } else {
-            throw new EvaluationFailedException(stmt, "RValue " +
+            throw new EvaluationFailedException("RValue " +
                     StringUtil.inQuotes(rValue) +
                     " is expected to evaluate to an object " +
                     ", but its type is " +

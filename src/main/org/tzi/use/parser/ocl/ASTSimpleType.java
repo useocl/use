@@ -24,15 +24,14 @@ package org.tzi.use.parser.ocl;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author Mark Richters
+ * @author Lars Hamann
  */
 public class ASTSimpleType extends ASTType {
     private Token fName;
@@ -47,15 +46,16 @@ public class ASTSimpleType extends ASTType {
 
         if (res == null) { 
             // check for enumeration type
-            res = ctx.model().enumType(name);
+            //TODO: Add enums to MModel.getClassifier()
+        	res = ctx.model().enumType(name);
             
             if (res == null ) {
                 // check for object type
-                MClass cls = ctx.model().getClass(name);
-                if (cls == null )
+                res = ctx.model().getClassifier(name);
+                
+                if (res == null )
                     throw new SemanticException(fName,
                                                 "Expected type name, found `" + name + "'.");
-                res = TypeFactory.mkObjectType(cls);
             }
         }
         

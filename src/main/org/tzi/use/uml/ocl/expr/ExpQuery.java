@@ -21,11 +21,25 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.*;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.BagValue;
+import org.tzi.use.uml.ocl.value.BooleanValue;
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.UndefinedValue;
+import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * Abstract base class for select, reject, collect, exists, forAll and iterate
@@ -37,7 +51,7 @@ import org.tzi.use.uml.ocl.value.*;
 
 public abstract class ExpQuery extends Expression {
 
-    /**
+	/**
      * List of element variables that will be bound to each range element (may
      * be empty).
      */
@@ -56,24 +70,30 @@ public abstract class ExpQuery extends Expression {
     protected ExpQuery(Type resultType, VarDeclList elemVarDecls,
             Expression rangeExp, Expression queryExp)
             throws ExpInvalidException {
-        super(resultType, rangeExp, queryExp);
+        super(resultType);
         fElemVarDecls = elemVarDecls;
         fRangeExp = rangeExp;
         fQueryExp = queryExp;
 
         // type of rangeExp must be a subtype of Collection, i.e. Set,
         // Sequence or Bag
-        if (!fRangeExp.type().isCollection(false))
+        if (!fRangeExp.type().isKindOfCollection(VoidHandling.INCLUDE_VOID))
             throw new ExpInvalidException("Range expression must be of type "
                     + "`Collection', found `" + fRangeExp.type() + "'.");
 
-        // assert that declard element variables are equal or
+        Type rangeElemType;
+        
+        // assert that declared element variables are equal or
         // supertypes of range element type
-        Type rangeElemType = ((CollectionType) fRangeExp.type()).elemType();
+        if (fRangeExp.type().isTypeOfVoidType()) {
+        	rangeElemType = TypeFactory.mkVoidType();
+        } else {
+        	rangeElemType = ((CollectionType) fRangeExp.type()).elemType();
+        }
 
         for (int i = 0; i < fElemVarDecls.size(); i++) {
             VarDecl vd = fElemVarDecls.varDecl(i);
-            if (!rangeElemType.isSubtypeOf(vd.type()))
+            if (!rangeElemType.conformsTo(vd.type()))
                 throw new ExpInvalidException("Type `" + vd.type()
                         + "' of range variable `" + vd.name()
                         + "' does not match type `" + rangeElemType
@@ -81,9 +101,14 @@ public abstract class ExpQuery extends Expression {
         }
     }
 
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return fRangeExp.requiresPreState() || fQueryExp.requiresPreState();
+	}
+	
     protected void assertBooleanQuery() throws ExpInvalidException {
         // queryExp must be a boolean expression
-        if (!fQueryExp.type().isBoolean())
+        if (!fQueryExp.type().isTypeOfBoolean())
             throw new ExpInvalidException("Argument expression of `" + name()
                     + "' must have boolean type, found `" + fQueryExp.type()
                     + "'.");
@@ -101,18 +126,20 @@ public abstract class ExpQuery extends Expression {
 
         // prepare result value
         ArrayList<Value> resValues = new ArrayList<Value>();
-        Type elemType = rangeVal.elemType();
-        if (!rangeVal.type().isInstantiableCollection())
-            throw new RuntimeException("rangeVal is not of collection type: "
-                    + rangeVal.type());
 
+        if (!rangeVal.type().isInstantiableCollection())
+            throw new RuntimeException("rangeVal is not of collection type: " + rangeVal.type());
+
+        if (!fElemVarDecls.isEmpty())
+            ctx.pushVarBinding(fElemVarDecls.varDecl(0).name(), null);
+        
         // loop over range elements
         for (Value elemVal : rangeVal) {
 
             // bind element variable to range element, if variable was
             // declared
             if (!fElemVarDecls.isEmpty())
-                ctx.pushVarBinding(fElemVarDecls.varDecl(0).name(), elemVal);
+                ctx.varBindings().setPeekValue(elemVal);
 
             // evaluate select expression
             Value queryVal = fQueryExp.eval(ctx);
@@ -123,27 +150,13 @@ public abstract class ExpQuery extends Expression {
 
             if (((BooleanValue) queryVal).value() == doSelect)
                 resValues.add(elemVal);
-
-            if (!fElemVarDecls.isEmpty())
-                ctx.popVarBinding();
         }
 
-        CollectionValue res;
-        if (rangeVal.type().isSet())
-            res = new SetValue(elemType, resValues);
-        else if (rangeVal.type().isSequence())
-            res = new SequenceValue(elemType, resValues);
-        else if (rangeVal.type().isBag())
-            res = new BagValue(elemType, resValues);
-        else if (rangeVal.type().isOrderedSet())
-        	res = new OrderedSetValue(elemType, resValues);
-        else {
-            // should not happen
-            throw new RuntimeException("rangeVal is not of collection type: "
-                    + rangeVal.type());
-        }
+        if (!fElemVarDecls.isEmpty())
+            ctx.popVarBinding();
+        
         // result is collection with selected/rejected values
-        return res;
+        return ((CollectionType)rangeVal.type()).createCollectionValue(resValues);
     }
 
     /**
@@ -228,38 +241,152 @@ public abstract class ExpQuery extends Expression {
     protected final Value evalCollectNested(EvalContext ctx) {
         // evaluate range
         Value v = fRangeExp.eval(ctx);
+        
         if (v.isUndefined())
             return UndefinedValue.instance;
+        
         CollectionValue rangeVal = (CollectionValue) v;
 
         // prepare result value
-        ArrayList<Value> resValues = new ArrayList<Value>();
-
-        // loop over range elements
-        for (Value elemVal : rangeVal) {
-
-            // bind element variable to range element, if variable was
-            // declared
-            if (!fElemVarDecls.isEmpty())
-                ctx.pushVarBinding(fElemVarDecls.varDecl(0).name(), elemVal);
-
-            // evaluate collect expression
-            Value val = fQueryExp.eval(ctx);
-
-            // add element to result
-            resValues.add(val);
-
-            if (!fElemVarDecls.isEmpty())
-                ctx.popVarBinding();
+        Value[] resValues = new Value[rangeVal.size()];
+        int i = 0;
+        
+        if (!rangeVal.isEmpty()) {
+	        // bind element variable to range element, if variable was
+	        // declared
+	        if (!fElemVarDecls.isEmpty())
+	            ctx.pushVarBinding(fElemVarDecls.varDecl(0).name(), null);
+	        
+	        // loop over range elements
+	        for (Value elemVal : rangeVal) {
+	
+	            // bind element variable to range element, if variable was
+	            // declared
+	            if (!fElemVarDecls.isEmpty())
+	                ctx.varBindings().setPeekValue(elemVal);
+	                        
+	            // evaluate collect expression
+	            Value val = fQueryExp.eval(ctx);
+	
+	            // add element to result
+	            resValues[i++] = val;
+	        }
+	
+	        if (!fElemVarDecls.isEmpty())
+	            ctx.popVarBinding();
         }
-
+        
         // result is collection with mapped values
-        if (fRangeExp.type().isSequence() || fRangeExp.type().isOrderedSet())
+        if (v.type().isTypeOfSequence() || v.type().isTypeOfOrderedSet())
             return new SequenceValue(fQueryExp.type(), resValues);
         else
             return new BagValue(fQueryExp.type(), resValues);
     }
 
+    /**
+     * Collect without nesting
+     * @param ctx
+     * @return
+     */
+    protected final Value evalCollect(EvalContext ctx) {
+        // evaluate range
+        Value v = fRangeExp.eval(ctx);
+        
+        if (v.isUndefined())
+            return UndefinedValue.instance;
+        
+        CollectionValue rangeVal = (CollectionValue) v;
+
+        // prepare result value
+        Value[] resValues = new Value[rangeVal.size()];
+        int i = 0;
+        
+        if (!rangeVal.isEmpty()) {
+	        // bind element variable to range element, if variable was
+	        // declared
+	        if (!fElemVarDecls.isEmpty())
+	            ctx.pushVarBinding(fElemVarDecls.varDecl(0).name(), null);
+	        
+	        // loop over range elements
+	        for (Value elemVal : rangeVal) {
+	
+	            // bind element variable to range element, if variable was
+	            // declared
+	            if (!fElemVarDecls.isEmpty())
+	                ctx.varBindings().setPeekValue(elemVal);
+	                        
+	            // evaluate collect expression
+	            Value val = fQueryExp.eval(ctx);
+	
+	            // add element to result
+	            resValues[i++] = val;
+	        }
+	
+	        if (!fElemVarDecls.isEmpty())
+	            ctx.popVarBinding();
+        }
+        
+        // result is collection with mapped values
+        if (v.type().isTypeOfSequence() || v.type().isTypeOfOrderedSet())
+            return new SequenceValue(fQueryExp.type(), resValues);
+        else
+            return new BagValue(fQueryExp.type(), resValues);    	
+    }
+
+    /**
+     * Collect without nesting the result
+     * @param ctx
+     * @return
+     */
+    protected final Value evalCollectOnNested(EvalContext ctx) {
+        // evaluate range
+        Value v = fRangeExp.eval(ctx);
+        
+        if (v.isUndefined())
+            return UndefinedValue.instance;
+        
+        CollectionValue rangeVal = (CollectionValue) v;
+
+        // prepare result value
+        List<Value> resValues = new ArrayList<Value>(rangeVal.size());
+                
+        if (!rangeVal.isEmpty()) {
+	        // bind element variable to range element, if variable was
+	        // declared
+	        if (!fElemVarDecls.isEmpty())
+	            ctx.pushVarBinding(fElemVarDecls.varDecl(0).name(), null);
+	        
+	        // loop over range elements
+	        for (Value elemVal : rangeVal) {
+	
+	            // bind element variable to range element, if variable was
+	            // declared
+	            if (!fElemVarDecls.isEmpty())
+	                ctx.varBindings().setPeekValue(elemVal);
+	                        
+	            // evaluate collect expression
+	            Value val = fQueryExp.eval(ctx);
+	
+	            if (!val.isUndefined()) {
+	            	for (Value cVal : (CollectionValue)val) {
+	            		resValues.add(cVal);
+	            	}
+	            } else {
+	            	resValues.add(val);
+	            }
+	        }
+	
+	        if (!fElemVarDecls.isEmpty())
+	            ctx.popVarBinding();
+        }
+        
+        // result is collection with mapped values
+        if (v.type().isTypeOfSequence() || v.type().isTypeOfOrderedSet())
+            return new SequenceValue(((CollectionType)fQueryExp.type()).elemType(), resValues);
+        else
+            return new BagValue(((CollectionType)fQueryExp.type()).elemType(), resValues);
+    }
+    
     /**
      * Evaluate isUnique expression.
      */
@@ -363,6 +490,7 @@ public abstract class ExpQuery extends Expression {
      * Return name of concrete query expression, e.g. `select'. Defined by
      * subclasses.
      */
+    @Override
     public abstract String name();
 
     @Override

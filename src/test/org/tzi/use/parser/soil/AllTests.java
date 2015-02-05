@@ -26,22 +26,18 @@ import junit.framework.TestSuite;
 
 
 /**
- * TODO
+ * All soil parser tests
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class AllTests {
 	
-	/**
-	 * TODO
-	 */
-	private AllTests() {
-		
-	}
+	private AllTests() {}
 	
 	
 	/**
-	 * TODO
+	 * Returns a new <code>TestSuite</code> containing all
+	 * soil parser tests.
 	 * @return
 	 */
 	public static Test suite() {

@@ -31,7 +31,6 @@ import org.tzi.use.uml.ocl.value.Value;
  * navigation over associations with multiplicity zero or one) to a
  * singleton or empty set.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public final class ExpObjAsSet extends Expression {
@@ -39,7 +38,7 @@ public final class ExpObjAsSet extends Expression {
     private Type fElemType;
 
     public ExpObjAsSet(Expression objExp) {
-        super(TypeFactory.mkSet(objExp.type()), objExp);
+        super(TypeFactory.mkSet(objExp.type()));
         fObjExp = objExp;
         fElemType = objExp.type();
     }
@@ -80,11 +79,13 @@ public final class ExpObjAsSet extends Expression {
         return fObjExp.toString(sb);
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitObjAsSet(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return fObjExp.requiresPreState();
 	}
 }

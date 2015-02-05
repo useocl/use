@@ -35,7 +35,9 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A StateBrowser provides a tree view of objects and links in the
@@ -57,7 +59,7 @@ public class StateTreeView extends JTree implements View {
         // create a tree that allows one selection at a time.
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         putClientProperty("JTree.lineStyle", "Angled");
-        fSystem.addChangeListener(this);
+        fSystem.getEventBus().register(this);
     }
 
     private void setTreeModel() {
@@ -93,15 +95,16 @@ public class StateTreeView extends JTree implements View {
         setModel(treeModel);
     }
 
-    public void stateChanged(StateChangeEvent e) {
-        setTreeModel();
+    @Subscribe
+    public void onStatementExecuted(StatementExecutedEvent e) {
+    	setTreeModel();
     }
 
     /**
      * Detaches the view from its model.
      */
     public void detachModel() {
-        fSystem.removeChangeListener(this);
+        fSystem.getEventBus().unregister(this);
     }
 
 }

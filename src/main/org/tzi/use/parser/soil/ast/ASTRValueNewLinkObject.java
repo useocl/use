@@ -21,11 +21,6 @@
 
 package org.tzi.use.parser.soil.ast;
 
-import java.util.List;
-
-import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.parser.ocl.ASTSimpleType;
-import org.tzi.use.parser.ocl.ASTStringLiteral;
 import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueNewLinkObject;
@@ -34,92 +29,25 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * A AST-node for an RValue encapsulating
+ * an AST for a NewLinkObjectStatement. 
  * @author Daniel Gent
  *
  */
 public class ASTRValueNewLinkObject extends ASTRValue {
-	/** TODO */
+	/** The AST of the encapsulated statement */
 	private ASTNewLinkObjectStatement fNewLinkObjectStatement;
 	
-	
 	/**
-	 * TODO
-	 * @param newLinkObjectStatement
+	 * Constructs a new ATS node. 
+	 * @param newLinkObjectStatement The encapsulated statement.
 	 */
 	public ASTRValueNewLinkObject(
 			ASTNewLinkObjectStatement newLinkObjectStatement) {
 		
 		fNewLinkObjectStatement = newLinkObjectStatement;		
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param associationClassName
-	 * @param participants
-	 * @param linkObjectName
-	 */
-	public ASTRValueNewLinkObject(
-			ASTSimpleType associationClassName,
-			List<ASTRValue> participants,
-			List<List<ASTRValue>> qualifierValues,
-			ASTExpression linkObjectName) {
-		
-		this(new ASTNewLinkObjectStatement(
-				associationClassName, 
-				participants,
-				qualifierValues,
-				linkObjectName));
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param associationClassName
-	 * @param participants
-	 * @param linkObjectName
-	 */
-	public ASTRValueNewLinkObject(
-			ASTSimpleType associationClassName,
-			List<ASTRValue> participants,
-			List<List<ASTRValue>> qualifierValues,
-			String linkObjectName) {
-		
-		this(new ASTNewLinkObjectStatement(
-				associationClassName, 
-				participants,
-				qualifierValues,
-				new ASTStringLiteral(linkObjectName)));
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param associationClassName
-	 * @param participants
-	 */
-	public ASTRValueNewLinkObject(
-			ASTSimpleType associationClassName, 
-			List<ASTRValue> participants,
-			List<List<ASTRValue>> qualifierValues) {
-		
-		this(new ASTNewLinkObjectStatement(
-				associationClassName, 
-				participants,
-				qualifierValues));	
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTNewLinkObjectStatement getNewLinkObjectStatement() {
-		return fNewLinkObjectStatement;
-	}
 
-	
 	@Override
 	protected MRValue generate() throws CompilationFailedException {
 		

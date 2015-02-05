@@ -29,8 +29,8 @@ info vars
 *  res2 : String = 'Ein Tester'
 *  res1 : String = 'Ein Tester'
 *[object variables]
-*  p1 : Person = @p1
-*  p3 : Person = @p3
+*  p1 : Person = p1
+*  p3 : Person = p3
 !openter p3 getNameNoImplementation('Zwei ')
 *precondition `pre3' is true
 !opexit 'Zwei Tester'

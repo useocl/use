@@ -22,15 +22,15 @@
 package org.tzi.use.uml.ocl.value;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.uml.ocl.type.Type;
@@ -48,52 +48,58 @@ import org.tzi.use.util.collections.CollectionComparator;
  * @see     BagValue
  */
 public abstract class CollectionValue extends Value implements Iterable<Value> {
-    protected Type fElemType; // store frequently needed element type too
-	private boolean fTypeIsDirty; // true: fType and fElementType have to be recomputed
 
+	protected Type fElemType; // store frequently needed element type too	
+    
     CollectionValue(Type t, Type elemType) {
         super(t);
-        fTypeIsDirty = true;
         fElemType = elemType;
     }
 
     public final Type elemType() {
-        recalculateTypeIfRequired();
     	return fElemType;
     }
     
     public final Type type() {
-        recalculateTypeIfRequired();
         return super.type();
     }
 
-	private void recalculateTypeIfRequired() {
-		if (fTypeIsDirty) {
-        	Set<Type> types = new HashSet<Type>();
-        	for (Value v : collection()) {
-        		types.add(v.type());
-        	}
-        	fElemType = new UniqueLeastCommonSupertypeDeterminator().calculateFor(types);
-        	if (fElemType == null) {
-        		throw new RuntimeException("Could not determine unique common supertype for " + types);
-        	}
-        	doSetElemType();
-        	fTypeIsDirty = false;
-        }
+    @Override
+	public Type getRuntimeType() {
+    	Set<Type> types = new HashSet<Type>();
+    	types.add(TypeFactory.mkVoidType());
+    	for (Value v : collection()) {
+    		types.add(v.getRuntimeType());
+    	}
+    	Type runtimeElemType = new UniqueLeastCommonSupertypeDeterminator().calculateFor(types);
+    	if (runtimeElemType == null) {
+    		throw new RuntimeException("Could not determine unique common supertype for " + types);
+    	}
+        return getRuntimeType(runtimeElemType);
 	}            
 
-    protected void markTypeAsDirty() {
-    	fTypeIsDirty = true;
-    }
+    /**
+     * This method returns the type of a collection with the given 
+     * element type.   
+     */
+    protected abstract CollectionType getRuntimeType(Type elementType);
     
     /**
-     * This method must set the type of the value.
-     * It is called by the template method <code>setElemType()</code>, which
-     * sets the element type.
-     * So implementors are guaranteed to be able to use <code>fElemtType</code>.   
-     */
-    protected abstract void doSetElemType();
-    
+     * Returns the element type of the <code>resultType</code> if 
+     * it is a collection type. 
+     * Otherwise, a runtime exception is thrown.
+	 * @param resultType
+	 * @return
+	 */
+	protected final Type getResultElementType(final Type resultType) {
+    	// Result could be any (currently not) or void.... 
+    	if (resultType instanceof CollectionType) {
+    		return ((CollectionType)resultType).elemType();
+    	} else {
+    		throw new RuntimeException("Internal type error!");
+    	}
+	}
+	
     public abstract Iterator<Value> iterator();
     public abstract int size();
     public abstract boolean isEmpty();
@@ -101,6 +107,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public abstract boolean includesAll(CollectionValue v);
     public abstract boolean excludesAll(CollectionValue v);
     public abstract int count(Value v);
+    public abstract CollectionValue flatten(Type resultType);
 
     protected abstract Integer getClassCompareNr();
     
@@ -134,8 +141,8 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public SetValue product(CollectionValue col)
     {
     	Part[] parts = new Part[2];
-    	parts[0] = new Part("first", this.elemType());
-    	parts[1] = new Part("second", col.elemType());
+    	parts[0] = new Part(0, "first", this.elemType());
+    	parts[1] = new Part(1, "second", col.elemType());
     	
     	TupleType tupleType = TypeFactory.mkTuple(parts);
     	SetValue res = new SetValue(tupleType);
@@ -144,7 +151,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     	Iterator<Value> iter2;
     	Value elem1, elem2;
     	TupleValue tuple;
-    	Map<String, Value> valueParts;
+    	TupleValue.Part[] valueParts;
     	
     	while (iter1.hasNext())
     	{
@@ -155,11 +162,11 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     		{
     			elem2 = iter2.next();
     			
-    			valueParts = new HashMap<String, Value>(2);
-    			valueParts.put("first", elem1);
-    			valueParts.put("second", elem2);
+    			valueParts = new TupleValue.Part[2];
+    			valueParts[0] = new TupleValue.Part(0, "first", elem1);
+    			valueParts[1] = new TupleValue.Part(1, "second", elem2);
     			
-    			tuple = new TupleValue(tupleType, valueParts);
+    			tuple = new TupleValue(tupleType, Arrays.asList(valueParts));
     			res.add(tuple);
     		}
     	}
@@ -200,5 +207,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     	else
     		return new SequenceValue(elemType(), this.getSortedElements());
     }
+    
 }
 

@@ -26,36 +26,36 @@ import org.tzi.use.parser.soil.ast.ASTStatement;
 
 
 /**
- * TODO
+ * This exception is used if a soil statement
+ * could not be "compiled". 
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class CompilationFailedException extends Exception {
-	/** TODO */
 	private static final long serialVersionUID = 1L;
-	/** TODO */
-	private ASTStatement fInvalidStatement;
 	
+	/** The source position, if any of the failed statement **/
+	private SrcPos sourcePosition;
 	
 	/**
-	 * TODO
-	 * @param statement
-	 * @param message
+	 * Constructs a new exception using the AST of the statement failed to be compiled and a message.
+	 * @param statement The AST of the failed statement.
+	 * @param message A user defined message.
 	 */
 	public CompilationFailedException(
 			ASTStatement statement,
 			String message) {
 		
 		super(message);
-		fInvalidStatement = statement;
+		sourcePosition = statement.getSourcePosition();
 	}
 	
 	
 	/**
-	 * TODO
-	 * @param statement
-	 * @param message
-	 * @param cause
+	 * Constructs a new exception using the AST of the statement failed to be 
+	 * compiled, a message and the original cause.
+	 * @param statement The AST of the failed statement.
+	 * @param message A user defined message.
 	 */
 	public CompilationFailedException(
 			ASTStatement statement,
@@ -63,44 +63,24 @@ public class CompilationFailedException extends Exception {
 			Throwable cause) {
 		
 		super(message, cause);
-		fInvalidStatement = statement;
+		sourcePosition = statement.getSourcePosition();
 	}
 	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTStatement getInvalidStatement() {
-		return fInvalidStatement;
+	@Override
+	public String getMessage() {
+		return getMessage(false);
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param topLevelStatement
-	 * @return
-	 */
-	public String getMessage(ASTStatement topLevelStatement) {
-		
-		if (fInvalidStatement.isEmptyStatement()) {
-			return super.getMessage();
-		}
+	public String getMessage(boolean includePositionInfomation) {
+		if (!includePositionInfomation) return super.getMessage();
 		
 		String locationString;
-		if (fInvalidStatement.hasSourcePosition()) {
-			SrcPos sourcePosition = fInvalidStatement.getSourcePosition();
-			
-			locationString = 
-				sourcePosition.srcName() +
-				":" +
-				sourcePosition.line() +
-				":" +
-				sourcePosition.column();
+		if (sourcePosition != null) {
+			locationString = sourcePosition.toString();
 		} else {
 			locationString = "<unknown location>";
 		}
 		
-		return locationString + ": " + super.getMessage(); 
+		return locationString + super.getMessage();
 	}
 }

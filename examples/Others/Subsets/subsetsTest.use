@@ -12,6 +12,6 @@ association ac between
 end
 
 association bd between
-  T1[*] role b
   T2[*] role d
+  T1[*] role b
 end

@@ -36,6 +36,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.gui.main.ModelBrowserSorting;
+import org.tzi.use.gui.main.ModelBrowserSorting.StateMachineOrder;
 import org.tzi.use.uml.mm.MModelElement;
 
 /**
@@ -44,13 +45,13 @@ import org.tzi.use.uml.mm.MModelElement;
  */
 public class ModelBrowserMouseHandling implements MouseListener {
 
-    private final String ALPHABETIC = "in alphabetic order";
-    private final String ALPHABETIC_BY_CLASS = "in alphabetic order - class name first";
-    private final String ALPHABETIC_BY_INV_NAME = "in alphabetic order - invariant name first";
-    private final String USE = "in USE file order";
-    private final String ALPHABETIC_BY_OP = "in alphabetic order - operation name first";
-    private final String ALPHABETIC_BY_COND_NAME = "in alphabetic order - condition name first";
-    private final String ALPHABETIC_BY_COND_TYPE= "in alphabetic order - pre conditions first";
+    private static final String ALPHABETIC = "in alphabetic order";
+    private static final String ALPHABETIC_BY_CLASS = "in alphabetic order - class name first";
+    private static final String ALPHABETIC_BY_INV_NAME = "in alphabetic order - invariant name first";
+    private static final String USE = "in USE file order";
+    private static final String ALPHABETIC_BY_OP = "in alphabetic order - operation name first";
+    private static final String ALPHABETIC_BY_COND_NAME = "in alphabetic order - condition name first";
+    private static final String ALPHABETIC_BY_COND_TYPE= "in alphabetic order - pre conditions first";
     
     private ModelBrowserSorting fMBS = ModelBrowserSorting.getInstance();
     private ModelBrowser fMB;
@@ -83,12 +84,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         popupMenu.add(subMenuCls);
 
         final JRadioButtonMenuItem alphabeticCls = new JRadioButtonMenuItem(ALPHABETIC);
-        alphabeticCls.setSelected(fMBS.CLS_ALPHABETIC == fMBS.clsOrder);
+        alphabeticCls.setSelected(ModelBrowserSorting.CLS_ALPHABETIC == fMBS.clsOrder);
         alphabeticCls.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ev) {
                 JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(ALPHABETIC)) {
-                    fMBS.clsOrder = fMBS.CLS_ALPHABETIC;
+                    fMBS.clsOrder = ModelBrowserSorting.CLS_ALPHABETIC;
                 }
                 fMBS.fireStateChanged();
             }
@@ -96,12 +97,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuCls.add(alphabeticCls);
 
         final JRadioButtonMenuItem useOrderCls = new JRadioButtonMenuItem(USE);
-        useOrderCls.setSelected(fMBS.CLS_USE_ORDER == fMBS.clsOrder);
+        useOrderCls.setSelected(ModelBrowserSorting.CLS_USE_ORDER == fMBS.clsOrder);
         useOrderCls.addItemListener(new ItemListener() {
             public void itemStateChanged(final ItemEvent ev) {
                 final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(USE)) {
-                    fMBS.clsOrder = fMBS.CLS_USE_ORDER;
+                    fMBS.clsOrder = ModelBrowserSorting.CLS_USE_ORDER;
                 }
                 fMBS.fireStateChanged();
             }
@@ -114,12 +115,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuCls.add( subMenuAttr );
         
         final JRadioButtonMenuItem alphabeticAttr = new JRadioButtonMenuItem( ALPHABETIC );
-        alphabeticAttr.setSelected( fMBS.ATTR_ALPHABETIC == fMBS.attrOrder );
+        alphabeticAttr.setSelected( ModelBrowserSorting.ATTR_ALPHABETIC == fMBS.attrOrder );
         alphabeticAttr.addItemListener( new ItemListener() {
             public void itemStateChanged( final ItemEvent ev ) {
                 final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals( ALPHABETIC )) {
-                    fMBS.attrOrder = fMBS.ATTR_ALPHABETIC;
+                    fMBS.attrOrder = ModelBrowserSorting.ATTR_ALPHABETIC;
                 }
                 fMBS.fireStateChanged();
             }
@@ -127,12 +128,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuAttr.add( alphabeticAttr );
         
         final JRadioButtonMenuItem useOrderAttr = new JRadioButtonMenuItem( USE );
-        useOrderAttr.setSelected( fMBS.ATTR_USE_ORDER == fMBS.attrOrder );
+        useOrderAttr.setSelected( ModelBrowserSorting.ATTR_USE_ORDER == fMBS.attrOrder );
         useOrderAttr.addItemListener( new ItemListener() {
             public void itemStateChanged( final ItemEvent ev ) {
                 final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(USE)) {
-                    fMBS.attrOrder = fMBS.ATTR_USE_ORDER;
+                    fMBS.attrOrder = ModelBrowserSorting.ATTR_USE_ORDER;
                 }
                 fMBS.fireStateChanged();
             }
@@ -145,12 +146,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuCls.add( subMenuOpr );
         
         final JRadioButtonMenuItem alphabeticOpr = new JRadioButtonMenuItem( ALPHABETIC );
-        alphabeticOpr.setSelected( fMBS.OPR_ALPHABETIC == fMBS.oprOrder );
+        alphabeticOpr.setSelected( ModelBrowserSorting.OPR_ALPHABETIC == fMBS.oprOrder );
         alphabeticOpr.addItemListener( new ItemListener() {
             public void itemStateChanged( final ItemEvent ev ) {
                 final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals( ALPHABETIC )) {
-                    fMBS.oprOrder = fMBS.OPR_ALPHABETIC;
+                    fMBS.oprOrder = ModelBrowserSorting.OPR_ALPHABETIC;
                 }
                 fMBS.fireStateChanged();
             }
@@ -158,18 +159,47 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuOpr.add( alphabeticOpr );
         
         final JRadioButtonMenuItem useOrderOpr = new JRadioButtonMenuItem( USE );
-        useOrderOpr.setSelected( fMBS.OPR_USE_ORDER == fMBS.oprOrder );
+        useOrderOpr.setSelected( ModelBrowserSorting.OPR_USE_ORDER == fMBS.oprOrder );
         useOrderOpr.addItemListener( new ItemListener() {
             public void itemStateChanged( final ItemEvent ev ) {
                 final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(USE)) {
-                    fMBS.oprOrder = fMBS.OPR_USE_ORDER;
+                    fMBS.oprOrder = ModelBrowserSorting.OPR_USE_ORDER;
                 }
                 fMBS.fireStateChanged();
             }
         });
         subMenuOpr.add( useOrderOpr );
 
+        JMenu subMenuStateM = new JMenu( "sort state machines" );
+        subMenuCls.add( subMenuStateM );
+        
+        final JRadioButtonMenuItem alphabeticSms = new JRadioButtonMenuItem( ALPHABETIC );
+        alphabeticSms.setSelected( fMBS.stateMachineOrder == StateMachineOrder.ALPHABETIC );
+        alphabeticSms.addItemListener( new ItemListener() {
+            public void itemStateChanged( final ItemEvent ev ) {
+                final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
+                if (j.getText().equals( ALPHABETIC )) {
+                    fMBS.stateMachineOrder = StateMachineOrder.ALPHABETIC;
+                }
+                fMBS.fireStateChanged();
+            }
+        });
+        subMenuStateM.add( alphabeticSms );
+        
+        final JRadioButtonMenuItem useOrderSms = new JRadioButtonMenuItem( USE );
+        useOrderSms.setSelected( fMBS.stateMachineOrder == StateMachineOrder.USE );
+        useOrderSms.addItemListener( new ItemListener() {
+            public void itemStateChanged( final ItemEvent ev ) {
+                final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
+                if (j.getText().equals(USE)) {
+                    fMBS.stateMachineOrder = StateMachineOrder.USE;
+                }
+                fMBS.fireStateChanged();
+            }
+        });
+        subMenuStateM.add( useOrderSms );
+        
         //////////////////////////////////////////////////////////
         // items for associations
         //////////////////////////////////////////////////////////
@@ -178,12 +208,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         popupMenu.add(subMenuAssoc);
 
         final JRadioButtonMenuItem alphabeticAssoc = new JRadioButtonMenuItem(ALPHABETIC);
-        alphabeticAssoc.setSelected(fMBS.ASSOC_ALPHABETIC == fMBS.assocOrder);
+        alphabeticAssoc.setSelected(ModelBrowserSorting.ASSOC_ALPHABETIC == fMBS.assocOrder);
         alphabeticAssoc.addItemListener(new ItemListener() {
             public void itemStateChanged(final ItemEvent ev) {
                 final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(ALPHABETIC)) {
-                    fMBS.assocOrder = fMBS.ASSOC_ALPHABETIC;
+                    fMBS.assocOrder = ModelBrowserSorting.ASSOC_ALPHABETIC;
                 }
                 fMBS.fireStateChanged();
             }
@@ -191,12 +221,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuAssoc.add(alphabeticAssoc);
 
         final JRadioButtonMenuItem useOrderAssoc = new JRadioButtonMenuItem(USE);
-        useOrderAssoc.setSelected(fMBS.ASSOC_USE_ORDER == fMBS.assocOrder);
+        useOrderAssoc.setSelected(ModelBrowserSorting.ASSOC_USE_ORDER == fMBS.assocOrder);
         useOrderAssoc.addItemListener(new ItemListener() {
             public void itemStateChanged(final ItemEvent ev) {
                 final JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(USE)) {
-                    fMBS.assocOrder = fMBS.ASSOC_USE_ORDER;
+                    fMBS.assocOrder = ModelBrowserSorting.ASSOC_USE_ORDER;
                 }
                 fMBS.fireStateChanged();
             }
@@ -211,12 +241,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         popupMenu.add(subMenuInv);
 
         final JRadioButtonMenuItem alphabeticInvByClass = new JRadioButtonMenuItem(ALPHABETIC_BY_CLASS);
-        alphabeticInvByClass.setSelected(fMBS.INV_ALPHABETIC_BY_CLASS == fMBS.invOrder);
+        alphabeticInvByClass.setSelected(ModelBrowserSorting.INV_ALPHABETIC_BY_CLASS == fMBS.invOrder);
         alphabeticInvByClass.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ev) {
                 JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(ALPHABETIC_BY_CLASS)) {
-                    fMBS.invOrder = fMBS.INV_ALPHABETIC_BY_CLASS;
+                    fMBS.invOrder = ModelBrowserSorting.INV_ALPHABETIC_BY_CLASS;
                 }
                 fMBS.fireStateChanged();
             }
@@ -224,12 +254,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuInv.add(alphabeticInvByClass);
 
         final JRadioButtonMenuItem alphabeticInvByInvName = new JRadioButtonMenuItem(ALPHABETIC_BY_INV_NAME);
-        alphabeticInvByInvName.setSelected(fMBS.INV_ALPHABETIC_INV_NAME == fMBS.invOrder);
+        alphabeticInvByInvName.setSelected(ModelBrowserSorting.INV_ALPHABETIC_INV_NAME == fMBS.invOrder);
         alphabeticInvByInvName.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ev) {
                 JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(ALPHABETIC_BY_INV_NAME)) {
-                    fMBS.invOrder = fMBS.INV_ALPHABETIC_INV_NAME;
+                    fMBS.invOrder = ModelBrowserSorting.INV_ALPHABETIC_INV_NAME;
                 }
                 fMBS.fireStateChanged();
             }
@@ -237,12 +267,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuInv.add(alphabeticInvByInvName);
 
         final JRadioButtonMenuItem useOrderInv = new JRadioButtonMenuItem(USE);
-        useOrderInv.setSelected(fMBS.INV_USE_ORDER == fMBS.invOrder);
+        useOrderInv.setSelected(ModelBrowserSorting.INV_USE_ORDER == fMBS.invOrder);
         useOrderInv.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ev) {
                 JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(USE)) {
-                    fMBS.invOrder = fMBS.INV_USE_ORDER;
+                    fMBS.invOrder = ModelBrowserSorting.INV_USE_ORDER;
                 }
                 fMBS.fireStateChanged();
             }
@@ -258,12 +288,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
 
 
         final JRadioButtonMenuItem alphabeticCondByOpName = new JRadioButtonMenuItem(ALPHABETIC_BY_OP);
-        alphabeticCondByOpName.setSelected(fMBS.COND_ALPHABETIC_BY_OPERATION == fMBS.condOrder);
+        alphabeticCondByOpName.setSelected(ModelBrowserSorting.COND_ALPHABETIC_BY_OPERATION == fMBS.condOrder);
         alphabeticCondByOpName.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ev) {
                 JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(ALPHABETIC_BY_OP)) {
-                    fMBS.condOrder = fMBS.COND_ALPHABETIC_BY_OPERATION;
+                    fMBS.condOrder = ModelBrowserSorting.COND_ALPHABETIC_BY_OPERATION;
                 }
                 fMBS.fireStateChanged();
             }
@@ -271,12 +301,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuCond.add(alphabeticCondByOpName);
 
         final JRadioButtonMenuItem alphabeticCondByCondName = new JRadioButtonMenuItem(ALPHABETIC_BY_COND_NAME);
-        alphabeticCondByCondName.setSelected(fMBS.COND_ALPHABETIC_BY_NAME == fMBS.condOrder);
+        alphabeticCondByCondName.setSelected(ModelBrowserSorting.COND_ALPHABETIC_BY_NAME == fMBS.condOrder);
         alphabeticCondByCondName.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ev) {
                 JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(ALPHABETIC_BY_COND_NAME)) {
-                    fMBS.condOrder = fMBS.COND_ALPHABETIC_BY_NAME;
+                    fMBS.condOrder = ModelBrowserSorting.COND_ALPHABETIC_BY_NAME;
                 }
                 fMBS.fireStateChanged();
             }
@@ -284,12 +314,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuCond.add(alphabeticCondByCondName);
 
         final JRadioButtonMenuItem alphabeticCondByCondType = new JRadioButtonMenuItem(ALPHABETIC_BY_COND_TYPE);
-        alphabeticCondByCondType.setSelected(fMBS.COND_ALPHABETIC_BY_PRE == fMBS.condOrder);
+        alphabeticCondByCondType.setSelected(ModelBrowserSorting.COND_ALPHABETIC_BY_PRE == fMBS.condOrder);
         alphabeticCondByCondType.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ev) {
                 JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(ALPHABETIC_BY_COND_TYPE)) {
-                    fMBS.condOrder = fMBS.COND_ALPHABETIC_BY_PRE;
+                    fMBS.condOrder = ModelBrowserSorting.COND_ALPHABETIC_BY_PRE;
                 }
                 fMBS.fireStateChanged();
             }
@@ -297,12 +327,12 @@ public class ModelBrowserMouseHandling implements MouseListener {
         subMenuCond.add(alphabeticCondByCondType);  
         
         final JRadioButtonMenuItem useOrderCond = new JRadioButtonMenuItem(USE);
-        useOrderCond.setSelected(fMBS.COND_USE_ORDER == fMBS.condOrder);
+        useOrderCond.setSelected(ModelBrowserSorting.COND_USE_ORDER == fMBS.condOrder);
         useOrderCond.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent ev) {
                 JRadioButtonMenuItem j = (JRadioButtonMenuItem) ev.getItem();
                 if (j.getText().equals(USE)) {
-                    fMBS.condOrder = fMBS.COND_USE_ORDER;
+                    fMBS.condOrder = ModelBrowserSorting.COND_USE_ORDER;
                 }
                 fMBS.fireStateChanged();
             }
@@ -350,16 +380,10 @@ public class ModelBrowserMouseHandling implements MouseListener {
     }
     
     public void mousePressed(MouseEvent e) {
-        if (maybeShowPopup(e))
-            return;
-        
-        tryToFireStateChangeEvent( e );
+        maybeShowPopup(e);
     }
 
     public void mouseClicked(MouseEvent e) {
-        if (maybeShowPopup(e))
-            return;
-        
         tryToFireStateChangeEvent( e );
     }
 
@@ -370,10 +394,6 @@ public class ModelBrowserMouseHandling implements MouseListener {
     }
 
     public void mouseReleased(MouseEvent e) {
-        if (maybeShowPopup(e))
-            return;
-        
-        tryToFireStateChangeEvent( e );
+        maybeShowPopup(e);
     }
-
 }

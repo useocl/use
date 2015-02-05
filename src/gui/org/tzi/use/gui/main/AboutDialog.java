@@ -21,9 +21,22 @@
 
 package org.tzi.use.gui.main;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
@@ -43,7 +56,7 @@ class AboutDialog extends JDialog {
         JPanel logoBox = new JPanel();
         logoBox.setLayout(new BoxLayout(logoBox, BoxLayout.Y_AXIS));
         //logoBox.setBackground(new Color(0xe0, 0xe0, 0xff));
-        logoBox.add(new JLabel(new ImageIcon(Options.iconDir + "use1.gif")));
+        logoBox.add(new JLabel(new ImageIcon(Options.getIconPath("use1.gif").toString())));
         logoBox.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 
         JPanel infoBox = new JPanel();

@@ -29,7 +29,7 @@ import java.util.Set;
 
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.collections.CollectionUtil;
@@ -41,8 +41,7 @@ import org.tzi.use.util.collections.CollectionUtil;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class MAssociationEnd extends MModelElementImpl 
-    implements MNavigableElement {
+public final class MAssociationEnd extends MModelElementImpl implements MNavigableElement {
 
     private MAssociation fAssociation; // Owner of this association end
     private MClass fClass;  // associated class
@@ -56,6 +55,12 @@ public final class MAssociationEnd extends MModelElementImpl
      *  This end is a derived union
      */
     private boolean isUnion;
+    
+    /**
+     * <code>true</code> if this end is defined as derived.
+     */
+    private boolean isDerived;
+    
     /**
      *  All ends this end subsets
      */
@@ -72,6 +77,10 @@ public final class MAssociationEnd extends MModelElementImpl
      *  All ends this end is redefined by
      */
     private Set<MAssociationEnd> redefiningEnds = Collections.emptySet();
+    /**
+     *  Parameter For calculating derived values
+     */
+    private VarDeclList deriveParameter = null;
     /**
      *  For calculating derived values
      */
@@ -243,9 +252,9 @@ public final class MAssociationEnd extends MModelElementImpl
     	Type t;
     	
     	if (this.getRedefiningEnds().size() > 0) {
-    		t = getRedefinedType((ObjectType)sourceObjectType);
+    		t = getRedefinedType((MClass)sourceObjectType);
     	} else {
-    		t = TypeFactory.mkObjectType( cls() );
+    		t = cls();
     	}
     	
         if ( src.equals( src.association() ) ) {
@@ -302,10 +311,10 @@ public final class MAssociationEnd extends MModelElementImpl
      * @return The type at this association end.
      */
     public Type getType() {
-    	return this.getType(cls().type(), false, false);
+    	return this.getType(cls(), false, false);
     }
     
-	private Type getRedefinedType(ObjectType sourceObjectType) {
+	private Type getRedefinedType(MClass sourceObjectType) {
 		Type resultType = null;
 		
 		// If another association end redefines this end with 
@@ -313,16 +322,16 @@ public final class MAssociationEnd extends MModelElementImpl
 		boolean foundDirectEnd = false;
 
 		// No redefinition possible, because source type is the opposite of this end
-		if (this.getAllOtherAssociationEnds().get(0).cls().equals(sourceObjectType.cls()) )
-			return TypeFactory.mkObjectType(this.cls());
+		if (this.getAllOtherAssociationEnds().get(0).cls().equals(sourceObjectType) )
+			return this.cls();
 			
 		for (MAssociationEnd redefiningEnd : this.getRedefiningEnds()) {
 			// TODO: n-ary
 			MAssociationEnd redefiningEndSrc = redefiningEnd.getAllOtherAssociationEnds().get(0);
-			Type redefiningEndSrcType = TypeFactory.mkObjectType(redefiningEndSrc.cls());
+			Type redefiningEndSrcType = redefiningEndSrc.cls();
 			
 			if (redefiningEndSrcType.equals(sourceObjectType)) {
-				resultType = TypeFactory.mkObjectType(redefiningEnd.cls());
+				resultType = redefiningEnd.cls();
 				foundDirectEnd = true;
 				break;
 			}
@@ -331,11 +340,13 @@ public final class MAssociationEnd extends MModelElementImpl
 		// No redefinitions with equal type found.
 		// We need to check inheritance
 		if (!foundDirectEnd) {
-			for (MClass parent : sourceObjectType.cls().parents()) {
-				resultType = getRedefinedType(TypeFactory.mkObjectType(parent));
-				
-				if (resultType != null) {
-					break;
+			for (MClass parent : sourceObjectType.parents()) {
+				if (parent instanceof MClass) {
+					resultType = getRedefinedType(parent);
+					
+					if (resultType != null) {
+						break;
+					}
 				}
 			}
 		}
@@ -343,9 +354,7 @@ public final class MAssociationEnd extends MModelElementImpl
 		return resultType;
 	}
 
-	/**
-	 * Same as name.
-	 */
+	@Override
     public String nameAsRolename() {
         return name();
     }
@@ -440,8 +449,9 @@ public final class MAssociationEnd extends MModelElementImpl
 	 * Type has to be checked before!
 	 * @param exp
 	 */
-	public void setDeriveExpression(Expression exp) {
+	public void setDeriveExpression(VarDeclList parameter, Expression exp) {
 		this.deriveExpression = exp;
+		this.deriveParameter = parameter;
 	}
 	
 	@Override
@@ -449,11 +459,25 @@ public final class MAssociationEnd extends MModelElementImpl
 		return this.deriveExpression;
 	}
 	
+	/**
+	 * @return
+	 */
+	public VarDeclList getDeriveParamter() {
+		return deriveParameter;
+	}
+	
 	@Override
 	public boolean isDerived() {
-		return this.deriveExpression != null;
+		return isDerived;
 	}
 
+	/**
+	 * @param b
+	 */
+	public void setDerived(boolean b) {
+		this.isDerived = b;
+	}
+	
 	@Override
 	public List<VarDecl> getQualifiers() {
 		return qualifier;

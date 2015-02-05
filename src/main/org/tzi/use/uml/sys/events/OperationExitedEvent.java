@@ -22,33 +22,31 @@
 package org.tzi.use.uml.sys.events;
 
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.events.tags.EventContext;
 
 
 /**
- * TODO
+ * Information about the event of an operation exit.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
 public class OperationExitedEvent extends Event {
-	/** TODO */
+	/** The operation call which let to this operation exit event */
 	private MOperationCall fOperationCall;
 
-	
 	/**
-	 * TODO
-	 * @param creator
-	 * @param operationCall
+	 * Constructs a new operation exited event.
+	 * @param operationCall The operation call which let to this operation exit event
 	 */
-	public OperationExitedEvent(
-			MOperationCall operationCall) {
-		
+	public OperationExitedEvent(EventContext ctx, MOperationCall operationCall) {
+		super(ctx);
 		fOperationCall = operationCall;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @return
+	 * The operation call which let to this operation exit event
+	 * @return The operation call which let to this operation exit event
 	 */
 	public MOperationCall getOperationCall() {
 		return fOperationCall;

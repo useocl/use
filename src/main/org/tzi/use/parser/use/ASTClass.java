@@ -28,13 +28,15 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
+import org.tzi.use.parser.use.statemachines.ASTStateMachine;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
+import org.tzi.use.uml.mm.statemachines.MStateMachine;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -49,9 +51,16 @@ public class ASTClass extends ASTAnnotatable {
     protected List<ASTAttribute> fAttributes;
     protected List<ASTOperation> fOperations;
     protected List<ASTConstraintDefinition> fConstraints;
-    private MClass fClass;  // the class is constructed in several passes, see genXXX methods below
+    
+    /**
+     * The class is constructed in several passes, see genXXX methods below
+     */
+    protected MClass fClass;
+    
     protected ArrayList<ASTInvariantClause> fInvariantClauses;
 
+    protected List<ASTStateMachine> stateMachines;
+    
     public ASTClass(Token name, boolean isAbstract) {
         fName = name;
         fIsAbstract = isAbstract;
@@ -59,6 +68,7 @@ public class ASTClass extends ASTAnnotatable {
         fOperations = new ArrayList<ASTOperation>();
         fConstraints = new ArrayList<ASTConstraintDefinition>();
         fInvariantClauses = new ArrayList<ASTInvariantClause>();
+        stateMachines = new ArrayList<ASTStateMachine>();
     }
 
     public void addAttribute(ASTAttribute a) {
@@ -88,7 +98,7 @@ public class ASTClass extends ASTAnnotatable {
         fClass.setPositionInModel( fName.getLine() );
         this.genAnnotations(fClass);
         // makes sure we have a unique class name
-        ctx.typeTable().add(fName, TypeFactory.mkObjectType(fClass));
+        ctx.typeTable().add(fName, fClass);
         return fClass;
     }
 
@@ -140,8 +150,10 @@ public class ASTClass extends ASTAnnotatable {
                 fClass.addOperation(op);
             } catch (SemanticException ex) {
                 ctx.reportError(ex);
+                astOp.setSignatureGenFailed();
             } catch (MInvalidModelException ex) {
                 ctx.reportError(fName, ex);
+                astOp.setSignatureGenFailed();
             }
         }
 
@@ -151,7 +163,8 @@ public class ASTClass extends ASTAnnotatable {
 
     private void checkForInheritanceConflicts(MClass parent) throws SemanticException {
         //check for inheritance conflicts
-        for(MClass otherParent : fClass.parents()) {
+        for(MClassifier otherParentC : fClass.parents()) {
+        	MClass otherParent = (MClass)otherParentC;
             // check attributes
             for(MAttribute otherParentAttribute : otherParent.allAttributes()) {
                 
@@ -181,16 +194,15 @@ public class ASTClass extends ASTAnnotatable {
         }
     }
     
-    public void genOperationBodies(Context ctx) {
+    public void genOperationBodiesAndDerivedAttributes(Context ctx) {
     	ctx.setCurrentClass(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
-        ObjectType ot = TypeFactory.mkObjectType(fClass);
-        ctx.exprContext().push("self", ot);
+        ctx.exprContext().push("self", fClass);
         Symtable vars = ctx.varTable();
         vars.enterScope();
         try {
-            vars.add("self", ot, null);
+            vars.add("self", fClass, null);
         } catch (SemanticException ex) { 
             // fatal error?
             throw new Error(ex);
@@ -205,12 +217,64 @@ public class ASTClass extends ASTAnnotatable {
             }
         }
 
+        // generate derived attributes
+        for (ASTAttribute astAttribute : fAttributes) {
+            try {
+            	astAttribute.genDerived(ctx);
+            	astAttribute.genInit(ctx);
+            } catch (SemanticException ex) {
+                ctx.reportError(ex);
+            }
+        }
+        
         vars.exitScope(); 
         ctx.exprContext().pop();
         ctx.setCurrentClass(null);
     }
     
+    public void genStateMachinesAndStates(Context ctx) {
+    	ctx.setCurrentClass(fClass);
+    	
+    	for (ASTStateMachine sm : this.stateMachines) {
+    		MStateMachine mSm;
+			try {
+				mSm = sm.gen(ctx);
+				if (mSm instanceof MProtocolStateMachine)
+	    			fClass.addOwnedProtocolStateMachine((MProtocolStateMachine)mSm);
+				
+			} catch (SemanticException ex) {
+				ctx.reportError(ex);
+			}
+    	}
+    	
+    	ctx.setCurrentClass(null);
+    }
+    
 
+    /**
+	 * @param ctx
+	 */
+	public void genStateMachineTransitions(Context ctx) {
+		ctx.setCurrentClass(fClass);
+
+        // enter pseudo-variable "self" into scope of expressions
+        ctx.exprContext().push("self", fClass);
+        Symtable vars = ctx.varTable();
+        vars.enterScope();
+        
+    	for (ASTStateMachine sm : this.stateMachines) {
+			try {
+				sm.genTransitionsAndStateInvariants(ctx);
+			} catch (SemanticException ex) {
+				ctx.reportError(ex);
+			}
+    	}
+    	
+    	vars.exitScope(); 
+        ctx.exprContext().pop();
+        ctx.setCurrentClass(null);
+	}
+	
     /**
      * Adds constraints to the class.
      */
@@ -218,26 +282,15 @@ public class ASTClass extends ASTAnnotatable {
         ctx.setCurrentClass(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
-        ObjectType ot = TypeFactory.mkObjectType(fClass);
-        ctx.exprContext().push("self", ot);
+        ctx.exprContext().push("self", fClass);
         Symtable vars = ctx.varTable();
         vars.enterScope();
         try {
-            vars.add("self", ot, null);
+            vars.add("self", fClass, null);
         } catch (SemanticException ex) { 
             // fatal error?
             throw new Error(ex);
         }
-
-
-        // generate operation bodies
-        /*for (ASTOperation astOp : fOperations) {
-            try {
-                astOp.genFinal(ctx);
-            } catch (SemanticException ex) {
-                ctx.reportError(ex);
-            }
-        }*/
 
         // add class invariants
         for (ASTInvariantClause astInv : fInvariantClauses) {
@@ -256,4 +309,11 @@ public class ASTClass extends ASTAnnotatable {
     public void setClass(MClass cls) {
       fClass = cls;
     }
+
+	/**
+	 * @param sm
+	 */
+	public void addStateMachine(ASTStateMachine sm) {
+		this.stateMachines.add(sm);
+	}
 }

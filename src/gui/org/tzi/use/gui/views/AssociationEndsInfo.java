@@ -46,7 +46,6 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.StateChangeEvent;
 
 /**
  * View for informations about associations, e.g., subsetting, redefined etc.
@@ -62,7 +61,7 @@ public class AssociationEndsInfo extends JPanel implements View {
 	
 	private TableModel model;
 	
-	JComboBox cboAssociations;
+	JComboBox<MAssociation> cboAssociations;
 	
 	public AssociationEndsInfo(MainWindow parent, MSystem system) {
         super(new BorderLayout());
@@ -94,7 +93,7 @@ public class AssociationEndsInfo extends JPanel implements View {
 			}
 		});
 		
-		cboAssociations = new JComboBox(associations);
+		cboAssociations = new JComboBox<MAssociation>(associations);
 		cboAssociations.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -112,9 +111,19 @@ public class AssociationEndsInfo extends JPanel implements View {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane tablePane = new JScrollPane(table);
+        
+        String legendString = "<html>" +
+        		              "Legend: " +
+        		              "<font color='green'>green:</font> end of selected association; " +
+        		              "<font color='blue'>blue:</font> end is directly redefined/subsetted; " +
+        		              "<font color='red'>red:</font> end redefines/subsets implicitly another end</html>";
+        JPanel legendPanel = new JPanel();
+        legendPanel.add(new JLabel(legendString), BorderLayout.WEST);
+        
         // layout panel
         add(topPanel, BorderLayout.NORTH);
         add(tablePane, BorderLayout.CENTER);
+        add(legendPanel, BorderLayout.SOUTH);
         
         setPreferedWidth();
 	}
@@ -131,20 +140,15 @@ public class AssociationEndsInfo extends JPanel implements View {
 	
 	@Override
 	public void detachModel() {
-		// We do nothing because USE closes alls windows
+		// We do nothing because USE closes all windows
 		// after new model is loaded
-	}
-
-	@Override
-	public void stateChanged(StateChangeEvent e) {
-		// Nothing to do
 	}
 	
 	protected void showAssociationInfo() {
 		this.model.initEntries();
 	}
 	
-	private static int[] columnWidth = new int[] {
+	private static final int[] columnWidth = new int[] {
 		153,
 		104,
 		31,
@@ -162,7 +166,7 @@ public class AssociationEndsInfo extends JPanel implements View {
 		153
 	};
 	
-	private static String[] columnNames = new String[] {
+	private static final String[] columnNames = new String[] {
 		"Rolename",
 		"Type",
 		"Mul.",

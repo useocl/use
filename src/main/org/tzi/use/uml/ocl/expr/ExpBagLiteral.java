@@ -34,8 +34,7 @@ import org.tzi.use.uml.ocl.value.Value;
  */
 public final class ExpBagLiteral extends ExpCollectionLiteral {
 
-    public ExpBagLiteral(Expression[] elemExpr) 
-        throws ExpInvalidException
+    public ExpBagLiteral(Expression[] elemExpr) throws ExpInvalidException
     {
         super("Bag", elemExpr);
         setResultType(TypeFactory.mkBag(inferElementType()));

@@ -16,12 +16,11 @@ import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.Log;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.tzi.use.util.StringUtil;
 
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
+import com.ximpleware.NavException;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
 
 public class ExtensionManager {
 	private static ExtensionManager INSTANCE = null;
@@ -109,30 +108,31 @@ public class ExtensionManager {
 	}
 	
 	private void loadExtensions(File f) {
-		DOMParser p = new DOMParser();
 		
-		try {
-			p.parse(f.getAbsolutePath());
-		} catch (SAXException e) {
-			Log.error("Could not parse extension files. " + e.getMessage());
-			return;
-		} catch (IOException e) {
-			Log.error("Could not parse extension files. " + e.getMessage());
+		VTDGen vg = new VTDGen();
+		if (!vg.parseFile(f.getAbsolutePath(), false)) {
+			Log.error("Could not parse extension file " + StringUtil.inQuotes(f.toString()));
 			return;
 		}
 		
-		Document doc = p.getDocument();
-		Element root = doc.getDocumentElement();
+		VTDNav vn = vg.getNav();
 		
-		NodeList operations = root.getElementsByTagName("operation");
-		
-		for (int index = 0; index < operations.getLength(); index++) {
-			ExtensionOperation op = loadOperation((Element)operations.item(index));
+		try {
+			vn.toElement(VTDNav.ROOT, "*");
+			if (!vn.toElement(VTDNav.FIRST_CHILD))
+				return;
 			
-			ExpStdOp.addOperation(op);
-			this.addedOperations.add(op);
-			
-			Log.debug("Added extension operation '" + op.name() + "'");
+			while (true) {
+				ExtensionOperation op = loadOperation(vn);
+				ExpStdOp.addOperation(op);
+				this.addedOperations.add(op);
+				
+				Log.debug("Added extension operation '" + op.name() + "'");
+				if (!vn.toElement(VTDNav.NEXT_SIBLING))
+					break;
+			}
+		} catch (NavException e) {
+			Log.error("Invalid extension file structure " + StringUtil.inQuotes(f.toString()));
 		}
 	}
 	
@@ -144,27 +144,48 @@ public class ExtensionManager {
 		this.addedOperations.clear();
 	}
 
-	private ExtensionOperation loadOperation(Element opNode) {
-		String name, source, returnType, body;
+	private ExtensionOperation loadOperation(VTDNav vn) throws NavException {
+		String name, source, returnType;
+		String body = "";
+		int res;
+
+		res = vn.getAttrVal("name");
+		name = vn.toNormalizedString(res);
 		
-		name = opNode.getAttributes().getNamedItem("name").getNodeValue();
-		source = opNode.getAttributes().getNamedItem("source").getNodeValue();
-		returnType = opNode.getAttributes().getNamedItem("returnType").getNodeValue();
-		body = opNode.getElementsByTagName("body").item(0).getFirstChild().getNodeValue();
+		res = vn.getAttrVal("source");
+		source = vn.toNormalizedString(res);
 		
+		res = vn.getAttrVal("returnType");
+		returnType = vn.toNormalizedString(res);
+		
+		vn.toElement(VTDNav.FIRST_CHILD, "body");
+		res = vn.getText(); // get the index of the text (char data or CDATA)
+        if (res != -1) {
+        	body = vn.toNormalizedString(res);
+        }
+		vn.toElement(VTDNav.PARENT);
+        
 		ExtensionOperation op = new ExtensionOperation(source, name, returnType, body);
 		
-		if (opNode.getElementsByTagName("parameter").getLength() > 0) {
-			Element parameter = (Element)opNode.getElementsByTagName("parameter").item(0);
-			NodeList parameterList = parameter.getElementsByTagName("par");
-			
-			for (int i = 0; i < parameterList.getLength(); i++) {
+		if (vn.toElement(VTDNav.FIRST_CHILD, "parameter")) {
+			if (vn.toElement(VTDNav.FIRST_CHILD, "par")) {
 				String parName, parType;
-				parName = parameterList.item(i).getAttributes().getNamedItem("name").getNodeValue();
-				parType = parameterList.item(i).getAttributes().getNamedItem("type").getNodeValue();
 				
-				op.addParameter(parName, parType);
+				while(true) {
+					res = vn.getAttrVal("name");
+					parName = vn.toNormalizedString(res);
+
+					res = vn.getAttrVal("type");
+					parType = vn.toNormalizedString(res);
+					
+					op.addParameter(parName, parType);
+					if (!vn.toElement(VTDNav.NEXT_SIBLING))
+						break;
+				}
+				vn.toElement(VTDNav.PARENT);
 			}
+			
+			vn.toElement(VTDNav.PARENT);
 		}
 		
 		op.initialize();

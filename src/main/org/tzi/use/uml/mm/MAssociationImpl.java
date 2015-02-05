@@ -25,17 +25,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.tzi.use.util.collections.CollectionUtil;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /** 
  * An association connects two or more classes.
- *
- * @version     $ProjectVersion: 0.393 $
+ * 
  * @author  Mark Richters
  */
-class MAssociationImpl extends MModelElementImpl implements MAssociation {
-    private List<MAssociationEnd> fAssociationEnds;
-    private int fPositionInModel;
+class MAssociationImpl extends MClassifierImpl implements MAssociation {
+    
+	private List<MAssociationEnd> fAssociationEnds;
     
     private Set<MAssociation> subsets = new HashSet<MAssociation>();
     private Set<MAssociation> subsettedBy = new HashSet<MAssociation>();
@@ -44,6 +52,11 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
     private Set<MAssociation> redefinedBy = new HashSet<MAssociation>();
     
     private boolean isUnion;
+    
+    /**
+     * <code>true</code>, if one end is defined as derived.
+     */
+    private boolean isDerived = false;
     
     /**
      * The association is called reflexive if any participating class
@@ -59,17 +72,75 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
      * ends.
      */
     MAssociationImpl(String name) {
-        super(name);
+        super(name, false);
         fAssociationEnds = new ArrayList<MAssociationEnd>(2);
     }
 
+    @Override
+	public boolean isTypeOfClassifier() {
+		return false;
+	}
+
+
+	@Override
+	public boolean isKindOfAssociation(VoidHandling h) {
+		return true;
+	}
+
+	@Override
+	public boolean isTypeOfAssociation() {
+		return true;
+	}
+
+
+	/**
+     * Returns the set of all direct parent classes (without this
+     * class).
+     *
+     * @return Set(MClass) 
+     */
+	public Set<MAssociation> parents() {
+        return CollectionUtil.downCastUnsafe(super.parents());
+    }
+
+    /**
+     * Returns the set of all parent classes (without this
+     * class). This is the transitive closure of the generalization
+     * relation.
+     *
+     * @return Set(MClass) 
+     */
+    public Set<MAssociation> allParents() {
+    	return CollectionUtil.downCastUnsafe(super.allParents());
+    }
+
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Iterable<MAssociation> generalizationHierachie(final boolean includeThis) {
+		return (Iterable)super.generalizationHierachie(includeThis);
+	}
+	
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Iterable<MAssociation> specializationHierachie(final boolean includeThis) {
+		return (Iterable)super.specializationHierachie(includeThis);
+	}
+	
+    public Set<MAssociation> allChildren() {
+        return CollectionUtil.downCastUnsafe(super.allChildren());
+    }
+
+    public Set<MAssociation> children() {
+        return CollectionUtil.downCastUnsafe(super.children());
+    }
+        
     /** 
      * Adds an association end.
      *
      * @exception MInvalidModel trying to add another composition
      *            or aggregation end.
      */
-    public void addAssociationEnd(MAssociationEnd aend) throws MInvalidModelException {
+    public void addAssociationEnd(@NonNull MAssociationEnd aend) throws MInvalidModelException {
         if (aend.aggregationKind() != MAggregationKind.NONE )
             if (this.aggregationKind() != MAggregationKind.NONE ) 
                 throw new MInvalidModelException(
@@ -77,7 +148,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
                                                  "or aggregation end (`" + aend.name() +
                                                  "') to association `" + name() + "'.");
 
-        // duplicate role names are ambiguos if they (1) refer to the
+        // duplicate role names are ambiguous if they (1) refer to the
         // same class, or (2) are used in n-ary associations with n > 2
         String rolename = aend.name();
         
@@ -98,6 +169,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
         
         // Does at least one end has a qualifier?
         this.hasQualifiedEnds = this.hasQualifiedEnds || aend.hasQualifiers();
+        this.isDerived = this.isDerived || aend.isDerived();
         
         fAssociationEnds.add(aend);
         aend.setAssociation(this);
@@ -112,13 +184,10 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
         return fAssociationEnds;
     }
     
-    /**
-     * Returns the lust of all rolen ames of the association ends.
-     * @return
-     */
+    @Override
     public List<String> roleNames() {
-    	List<String> result = new ArrayList<String>(fAssociationEnds.size());
-    	for (MAssociationEnd assocEnd : fAssociationEnds) {
+    	List<String> result = new ArrayList<String>();
+    	for (MAssociationEnd assocEnd : associationEnds()) {
     		result.add(assocEnd.name());
     	}
     	
@@ -143,7 +212,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
     public Set<MAssociationEnd> associationEndsAt(MClass cls) {
         Set<MAssociationEnd> res = new HashSet<MAssociationEnd>();
 
-        for (MAssociationEnd aend : fAssociationEnds) {
+        for (MAssociationEnd aend : associationEnds()) {
             if (aend.cls().equals(cls) )
                 res.add(aend);
         }
@@ -158,7 +227,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
     public Set<MClass> associatedClasses() {
         HashSet<MClass> res = new HashSet<MClass>();
 
-        for (MAssociationEnd aend : fAssociationEnds) {
+        for (MAssociationEnd aend : associationEnds()) {
             res.add(aend.cls());
         }
         
@@ -203,7 +272,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
         List<MNavigableElement> res = new ArrayList<MNavigableElement>();
         boolean partOfAssoc = false;
         
-        for (MAssociationEnd aend : fAssociationEnds) {
+        for (MAssociationEnd aend : associationEnds()) {
             if (! aend.cls().equals(cls) )
                 res.add(aend);
             else {
@@ -219,21 +288,6 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
     }
     
     /**
-     * Returns the position in the defined USE-Model.
-     */
-    public int getPositionInModel() {
-        return fPositionInModel;
-    }
-
-    /**
-     * Sets the position in the defined USE-Model.
-     */
-    public void setPositionInModel(int position) {
-        fPositionInModel = position;
-    }
-
-
-    /**
      * Process this element with visitor.
      */
     public void processWithVisitor(MMVisitor v) {
@@ -242,7 +296,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 
     public boolean isAssignableFrom(MClass[] classes) {
         int i=0;
-        for (MAssociationEnd end : fAssociationEnds) {
+        for (MAssociationEnd end : associationEnds()) {
             if (!classes[i].isSubClassOf(end.cls())) return false;
             ++i;
         }
@@ -250,8 +304,9 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
     }
 
 	@Override
-	public void addSubsets(MAssociation asso) {
-		subsets.add(asso);
+	public void addSubsets(@NonNull MAssociation asso) {
+		subsets.add(asso);		
+		this.model().generalizationGraph().addEdge(new MGeneralization(this, asso));
 	}
 
 	@Override
@@ -281,7 +336,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 	}
 
 	@Override
-	public void addSubsettedBy(MAssociation asso) {
+	public void addSubsettedBy(@NonNull MAssociation asso) {
 		this.subsettedBy.add(asso);
 	}
 
@@ -313,7 +368,28 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 	}
 
 	@Override
-	public void addRedefinedBy(MAssociation association) {
+	public MNavigableElement navigableEnd(final String rolename) {
+		return Iterables.find(this.fAssociationEnds, new Predicate<MAssociationEnd>() {
+			@Override
+			public boolean apply(MAssociationEnd end) {
+				return rolename.equals(end.name());
+			}
+		}, null);
+	}
+
+	@Override
+	public Map<String, MAssociationEnd> navigableEnds() {
+
+		return Maps.<String,MAssociationEnd>uniqueIndex(this.fAssociationEnds, new Function<MAssociationEnd, String>() {
+			@Override
+			public String apply(MAssociationEnd input) {
+				return input.nameAsRolename();
+			}
+		});
+	}
+
+	@Override
+	public void addRedefinedBy(@NonNull MAssociation association) {
 		this.redefinedBy.add(association);
 	}
 
@@ -322,21 +398,82 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 		return this.redefinedBy;
 	}
 	
+	private Set<MAssociation> redefinedByClosure = Collections.emptySet();
+	
 	@Override
 	public Set<MAssociation> getRedefinedByClosure() {
+		return redefinedByClosure;
+	}
+	
+	public void calculateRedefinedByClosure() {
+		Set<MAssociation> closure = new HashSet<>();
+		Set<MAssociation> validated = new HashSet<>();
+		
+		getRedefinedByClosureAux(this, this, validated, closure);
+		
+		if (!closure.isEmpty()) {
+			this.redefinedByClosure = closure;
+		}
+	}
+	
+	public Set<MAssociation> getSpecifiedRedefinedByClosure() {
 		Set<MAssociation> result = new HashSet<MAssociation>();
 		
 		for (MAssociation ass : this.getRedefinedBy()) {
 			result.add(ass);
-			result.addAll(ass.getRedefinedByClosure());
+			result.addAll(ass.getSpecifiedRedefinedByClosure());
 		}
 		
 		return result;
 	}
 	
+	private void getRedefinedByClosureAux(MAssociation toCheck, MAssociation checkAgainst, Set<MAssociation> validated, Set<MAssociation> closure) {
+		
+		if (validated.contains(toCheck)) return;
+		
+		final Set<MAssociation> redefinedBy = toCheck.getSpecifiedRedefinedByClosure();
+		
+		// Number of ends equals (checked during model creation)
+		int numEnds = toCheck.associationEnds().size();
+		validated.add(toCheck);
+		
+		// Go through the redefining associations
+		for (MAssociation redefiningAssoc : redefinedBy) {
+			
+			// Needed to consider the evil multiple inheritance
+			if (redefiningAssoc.equals(checkAgainst) || validated.contains(redefiningAssoc))
+				continue;
+			
+			validated.add(redefiningAssoc);
+
+			// Check all ends of the redefining association
+			for (int i = 0; i < numEnds; ++i) {
+				MAssociationEnd checkAgainstEnd = checkAgainst.associationEnds().get(i);
+				MAssociationEnd childEnd =  redefiningAssoc.associationEnds().get(i);
+				
+				if (childEnd.cls().isSubClassOf(checkAgainstEnd.cls(), true)) {
+					// More specific redefinition
+					closure.add(redefiningAssoc);
+					break;
+				}
+			}
+		}
+		
+		// Needed to consider the evil multiple inheritance
+		for (MAssociation parent : toCheck.parents()) {
+			getRedefinedByClosureAux(parent, checkAgainst, validated, closure);
+		}
+	}
+
+	
 	@Override
-	public void addRedefines(MAssociation parentAssociation) {
+	public void addRedefines(@NonNull MAssociation parentAssociation) {
 		this.redefines.add(parentAssociation);
+		this.model().generalizationGraph().addEdge(new MGeneralization(this, parentAssociation));
+		
+		for (MAssociation assoc : this.model().associations()) {
+			assoc.calculateRedefinedByClosure();
+		}
 	}
 
 	@Override
@@ -360,7 +497,7 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 	public boolean isReadOnly() {
 		if (this.isUnion) return true;
 		
-		for (MAssociationEnd end : fAssociationEnds) {
+		for (MAssociationEnd end : associationEnds()) {
 			if (end.isDerived()) return true;
 		}
 		
@@ -368,19 +505,14 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 	}
 
 	private boolean hasQualifiedEnds = false;
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#hasQualifiedEnds()
-	 */
+	
 	@Override
 	public boolean hasQualifiedEnds() {
 		return this.hasQualifiedEnds;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#getSourceEnd(org.tzi.use.uml.mm.MClass, org.tzi.use.uml.mm.MNavigableElement, java.lang.String)
-	 */
+	
 	@Override
-	public MNavigableElement getSourceEnd(MClass srcClass,
+	public MNavigableElement getSourceEnd(MClassifier srcClass,
 			MNavigableElement dst, String explicitRolename) {
 		
 		for (MAssociationEnd end : this.associationEnds()) {
@@ -399,44 +531,21 @@ class MAssociationImpl extends MModelElementImpl implements MAssociation {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#getParentAlignedEnds(org.tzi.use.uml.mm.MAssociation)
-	 */
-	//@Override
-	public List<MAssociationEnd> getParentAlignedEnds(MAssociation parentAssociation) {
-		List<MAssociationEnd> ownEnds = new ArrayList<MAssociationEnd>(this.associationEnds());
-		
-		for (MAssociationEnd parentEnd : parentAssociation.associationEnds()) {
-			for (MAssociationEnd end : ownEnds) {
-				if (end.getRedefinedEnds().isEmpty()) {
-					
-				}
-			}
-		}
-		
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#getAllParentAssociations()
-	 */
-	@Override
-	public Set<MAssociation> getAllParentAssociations() {
-		return Collections.emptySet();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#isOrdered()
-	 */
 	@Override
 	public boolean isOrdered() {
-		for (MAssociationEnd e : fAssociationEnds) {
+		for (MAssociationEnd e : associationEnds()) {
 			if( e.isOrdered()) return true;
 		}
 		return false;
 	}
-	
 
-	
-	
+	@Override
+	public boolean isDerived() {
+		return isDerived;
+	}
+
+	@Override
+	public boolean isRedefining() {
+		return !this.redefines.isEmpty();
+	}
 }

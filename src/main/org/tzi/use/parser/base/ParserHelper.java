@@ -32,17 +32,17 @@ public class ParserHelper {
     public final static HashMap<String, Integer> queryIdentMap = new HashMap<String, Integer>();
 
     static {
-        queryIdentMap.put(Q_COLLECT,  new Integer(Q_COLLECT_ID));
-        queryIdentMap.put(Q_SELECT,   new Integer(Q_SELECT_ID));
-        queryIdentMap.put(Q_REJECT,   new Integer(Q_REJECT_ID));
-        queryIdentMap.put(Q_FORALL,   new Integer(Q_FORALL_ID));
-        queryIdentMap.put(Q_EXISTS,   new Integer(Q_EXISTS_ID));
-        queryIdentMap.put(Q_ISUNIQUE, new Integer(Q_ISUNIQUE_ID));
-        queryIdentMap.put(Q_SORTEDBY, new Integer(Q_SORTEDBY_ID));
-        queryIdentMap.put(Q_ANY,      new Integer(Q_ANY_ID));
-        queryIdentMap.put(Q_ONE,      new Integer(Q_ONE_ID));
-        queryIdentMap.put(Q_COLLECTNESTED, new Integer(Q_COLLECTNESTED_ID));
-        queryIdentMap.put(Q_CLOSURE,  new Integer(Q_CLOSURE_ID));
+        queryIdentMap.put(Q_COLLECT,		Integer.valueOf(Q_COLLECT_ID));
+        queryIdentMap.put(Q_SELECT,			Integer.valueOf(Q_SELECT_ID));
+        queryIdentMap.put(Q_REJECT,			Integer.valueOf(Q_REJECT_ID));
+        queryIdentMap.put(Q_FORALL,			Integer.valueOf(Q_FORALL_ID));
+        queryIdentMap.put(Q_EXISTS,			Integer.valueOf(Q_EXISTS_ID));
+        queryIdentMap.put(Q_ISUNIQUE,		Integer.valueOf(Q_ISUNIQUE_ID));
+        queryIdentMap.put(Q_SORTEDBY,		Integer.valueOf(Q_SORTEDBY_ID));
+        queryIdentMap.put(Q_ANY,			Integer.valueOf(Q_ANY_ID));
+        queryIdentMap.put(Q_ONE,			Integer.valueOf(Q_ONE_ID));
+        queryIdentMap.put(Q_COLLECTNESTED,	Integer.valueOf(Q_COLLECTNESTED_ID));
+        queryIdentMap.put(Q_CLOSURE,		Integer.valueOf(Q_CLOSURE_ID));
     }
     
     public static boolean isQueryIdent(Token t) {

@@ -38,7 +38,8 @@ import org.tzi.use.util.Log;
 
 
 /**
- * TODO
+ * PPC handler for SOIL implemented operations.
+ * 
  * @author Daniel Gent
  *
  */
@@ -66,7 +67,8 @@ public class SoilPPCHandler implements PPCHandler {
 	
 	
 	/**
-	 * TODO
+	 * Creates a new SOIL PPC handler with its output
+	 * directed to <code>output</code>.
 	 * @param output
 	 */
 	public SoilPPCHandler(PrintWriter output) {
@@ -176,14 +178,7 @@ public class SoilPPCHandler implements PPCHandler {
 			throw new PostConditionCheckFailedException(operationCall);
 		}
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param system
-	 * @param preState
-	 * @param ppc
-	 */
+
 	private void printDetailedPPC(
 			MSystem system, 
 			MSystemState preState, 
@@ -201,5 +196,23 @@ public class SoilPPCHandler implements PPCHandler {
 		} catch (MultiplicityViolationException e) {
 			fOutput.println("    Evaluation failed because of multiplicity violation: " + e.getMessage());
 		}
+	}
+
+
+	@Override
+	public void handleTransitionsPre(MSystem system,
+			MOperationCall operationCall)
+			throws PreConditionCheckFailedException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void handleTransitionsPost(MSystem system,
+			MOperationCall operationCall)
+			throws PostConditionCheckFailedException {
+		// TODO Auto-generated method stub
+		
 	}
 }

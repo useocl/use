@@ -57,11 +57,11 @@ import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.collections.CollectionUtil;
-import org.tzi.use.util.collections.MinCombinationsIterator;
-import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.Pair;
+import org.tzi.use.util.collections.CollectionUtil;
+import org.tzi.use.util.collections.CollectionUtil.UniqueList;
+import org.tzi.use.util.collections.MinCombinationsIterator;
 
 
 public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
@@ -321,10 +321,10 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
 		Value[] newObjects = new Value[res.getStateDifference().getNewObjects().size()];
 		int index = 0;
 		for (MObject o : res.getStateDifference().getNewObjects()) {
-			newObjects[index] = new ObjectValue(association.type(), o);
+			newObjects[index] = new ObjectValue(association, o);
 			index++;
 		}
-		SetValue result = new SetValue(association.type(), newObjects);
+		SetValue result = new SetValue(association, newObjects);
 		return result;
 	}
     

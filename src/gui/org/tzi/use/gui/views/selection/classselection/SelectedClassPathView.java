@@ -25,6 +25,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -44,7 +45,6 @@ import org.tzi.use.gui.views.selection.TableModel.Row;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.sys.MSystem;
 
 /** 
  * a view of SelectedClassPath
@@ -60,12 +60,12 @@ public class SelectedClassPathView extends ClassSelectionView {
 	/**
 	 * Constructor for SelectedClassPathView.
 	 */
-	public SelectedClassPathView(MainWindow parent, MSystem system, ClassDiagram diagram, Set<MClass> selectedClasses) {
-		this(parent, system, diagram, new ClassPathTableModel(selectedClasses));
+	public SelectedClassPathView(MainWindow parent, ClassDiagram diagram, Set<MClass> selectedClasses) {
+		this(parent, diagram, new ClassPathTableModel(selectedClasses));
 	}
     
-	protected SelectedClassPathView(MainWindow parent, MSystem system, ClassDiagram diagram, AbstractTableModel model) {
-		super(parent, system, diagram);
+	protected SelectedClassPathView(MainWindow parent, ClassDiagram diagram, AbstractTableModel model) {
+		super(parent, diagram);
 		initView(model);
 	}
 	
@@ -121,10 +121,10 @@ public class SelectedClassPathView extends ClassSelectionView {
 		LinkedList<MClass> buffer = new LinkedList<MClass>();
 		
 		buffer.addLast(mc);
-		result.put(mc, new Integer(0));
+		result.put(mc, Integer.valueOf(0));
 		
 		MClass currentClass;
-		Set<MClass> relatedClasses;
+		Set<? extends MClassifier> relatedClasses;
 		int depth;
 		
 		while (buffer.size() > 0) {
@@ -156,12 +156,14 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 * @param depth depth to set
 	 */
 	private static void addNewClassesWithDepth(LinkedList<MClass> buffer, Map<MClass, Integer> result,
-										Set<MClass> relatedClasses, int depth) {
+										Set<? extends MClassifier> relatedClasses, int depth) {
 		if (relatedClasses != null) {
-			for (MClass cls : relatedClasses) {
+			for (MClassifier cls : relatedClasses) {
+				if (!(cls instanceof MClass)) continue;
+				
 				if (!result.containsKey(cls)) {
-					result.put(cls, new Integer(depth));
-					buffer.add(cls);
+					result.put((MClass)cls, Integer.valueOf(depth));
+					buffer.add((MClass)cls);
 				}
 			}
 		}
@@ -188,7 +190,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedPathClasses(), true);
 		
 		if (classifierToHide.size() > 0) {
-			diagram.hideElementsInDiagram(classifierToHide);
+			diagram.hideElementsInDiagram(classifierToHide, Collections.<MAssociation>emptySet());
 		}
 		
 		Set<MClassifier> classifierToShow = getClassifierToShow(getSelectedPathClasses());
@@ -196,7 +198,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 			diagram.showElementsInDiagram(classifierToShow);
 		}
 		
-		diagram.invalidateContent();
+		diagram.invalidateContent(true);
 	}
 
 	/**
@@ -212,7 +214,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 			diagram.showElementsInDiagram(classifierToShow);
 		}
 		
-		diagram.invalidateContent();
+		diagram.invalidateContent(true);
 	}
 
 	/**
@@ -225,9 +227,9 @@ public class SelectedClassPathView extends ClassSelectionView {
 		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedPathClasses(), false);
 		
 		if (classifierToHide.size() > 0) {
-			diagram.hideElementsInDiagram(classifierToHide);
+			diagram.hideElementsInDiagram(classifierToHide, Collections.<MAssociation>emptySet());
 		}
-		diagram.invalidateContent();
+		diagram.invalidateContent(true);
 	}
 
 	public void update() {

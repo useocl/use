@@ -39,20 +39,22 @@ import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.sys.events.OperationExitedEvent;
 import org.tzi.use.util.StringUtil;
+
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A CallStackView shows the stack of currently active operations.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 @SuppressWarnings("serial")
 public class CallStackView extends JPanel implements View {
     private MSystem fSystem;
-    private JList fList;
-    private DefaultListModel fListModel;
+    private JList<String> fList;
+    private DefaultListModel<String> fListModel;
     private JPopupMenu fPopupMenu; // context menu on right mouse click
     private boolean fShowCall = false;
 
@@ -61,8 +63,8 @@ public class CallStackView extends JPanel implements View {
 
         setFont(Font.getFont("use.gui.userFont", getFont()));
         setLayout(new BorderLayout());
-        fListModel = new DefaultListModel();
-        fList = new JList(fListModel);
+        fListModel = new DefaultListModel<String>();
+        fList = new JList<String>(fListModel);
         add(fList, BorderLayout.CENTER);
 
         // create the popup menu for options
@@ -97,7 +99,7 @@ public class CallStackView extends JPanel implements View {
         fList.addMouseListener(pl);
         addMouseListener(pl);
 
-        fSystem.addChangeListener(this);
+        fSystem.getEventBus().register(this);
         update();
     }
 
@@ -133,22 +135,28 @@ public class CallStackView extends JPanel implements View {
         					",");
         		}
         		line.append(")");
-        		fListModel.addElement(line);
+        		fListModel.addElement(line.toString());
         	}	
         }
         
         repaint();
     }
 
-    public void stateChanged(StateChangeEvent e) {
+    @Subscribe
+    public void operationEntered(OperationEnteredEvent e) {
         update();
     }
 
+    @Subscribe
+    public void operationExited(OperationExitedEvent e) {
+        update();
+    }
+    
     /**
      * Detaches the view from its model.
      */
     public void detachModel() {
-        fSystem.removeChangeListener(this);
+        fSystem.getEventBus().unregister(this);
     }
 
 }

@@ -17,31 +17,32 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.main.shell;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
+import java.io.Reader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,19 +57,17 @@ import org.tzi.use.analysis.coverage.AttributeAccessInfo;
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
-import org.tzi.use.gen.model.GFlaggedInvariant;
 import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.gen.tool.GNoResultException;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
-import org.tzi.use.main.shell.runtime.IPluginShellCmd;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
 import org.tzi.use.parser.use.USECompiler;
-import org.tzi.use.runtime.shell.impl.PluginShellCmdProxy;
+import org.tzi.use.runtime.shell.impl.PluginShellCmdFactory.PluginShellCmdContainer;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
@@ -78,7 +77,6 @@ import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.expr.EvalNode;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
@@ -100,7 +98,6 @@ import org.tzi.use.util.NullWriter;
 import org.tzi.use.util.Report;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.USEWriter;
-import org.tzi.use.util.collections.LimitedStack;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.ReadlineTestReadlineDecorator;
@@ -147,6 +144,8 @@ public final class Shell implements Runnable, PPCHandler {
      */
     private boolean fLastCheckResult = false;
 
+    private int delay = 0;
+    
     /**
      * Single-step commands.
      */
@@ -163,7 +162,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private IPluginShellExtensionPoint shellExtensionPoint;
 
-	private Map<Map<String, String>, PluginShellCmdProxy> pluginCommands = new HashMap<Map<String, String>, PluginShellCmdProxy>();
+	private final List<PluginShellCmdContainer> pluginCommands;
 
 	private IRuntime fPluginRuntime;
 
@@ -190,7 +189,10 @@ public final class Shell implements Runnable, PPCHandler {
 					.getExtensionPoint("shell");
 
 			this.pluginCommands = this.shellExtensionPoint.createPluginCmds(this.fSession, this);
-    }
+		}
+		else {
+			pluginCommands = Collections.emptyList();
+		}
 	}
 
 	public static void createInstance(Session session, IRuntime pluginRuntime) {
@@ -201,6 +203,14 @@ public final class Shell implements Runnable, PPCHandler {
         return fShell;
     }
 
+	public PrintStream getOut() {
+		return System.out;
+	}
+	
+	public PrintStream getErr() {
+		return System.err;
+	}
+	
     /**
      * Returns the result of the last check command.
      */
@@ -215,7 +225,8 @@ public final class Shell implements Runnable, PPCHandler {
 		setupReadline();
 
 		if (Options.cmdFilename != null) {
-			cmdOpen(Options.cmdFilename);
+			// Include filename in "" to be able to handle spaces
+			cmdOpen("\"" + Options.cmdFilename + "\"");
 		} else {
 			Log.verbose("Enter `help' for a list of available commands.");
 			
@@ -237,6 +248,7 @@ public final class Shell implements Runnable, PPCHandler {
                     while (true) {
                         // use special prompt to emphasize multi-line input
                         String oneLine = fReadline.readline(CONTINUE_PROMPT);
+                        
                         // end of input or a single dot terminates the input
                         // loop
                         if (oneLine == null || oneLine.equals("."))
@@ -256,11 +268,10 @@ public final class Shell implements Runnable, PPCHandler {
             	
                 processLineSafely(line);
             } else {
-                fFinished = fReadlineStack.popCurrentReadline();
-                setFileClosed();
-                
+            	fFinished = fReadlineStack.popCurrentReadline();
+            	setFileClosed();
                 if (fFinished && Options.quiet)
-                    processLineSafely("check");
+            		processLineSafely("check");
             }
         }
         cmdExit();
@@ -270,29 +281,31 @@ public final class Shell implements Runnable, PPCHandler {
      * Initializes readline.
      */
     private void setupReadline() {
+    	if(Options.quiet){
+    		// no readline required in quiet mode
+    		return;
+    	}
+    	
         String GNUReadlineNotAvailable;
         if (Options.suppressWarningsAboutMissingReadlineLibrary)
             GNUReadlineNotAvailable = null;
         else
-            GNUReadlineNotAvailable = "Apparently, the GNU readline library is not availabe on your system."
+            GNUReadlineNotAvailable = "Apparently, the GNU readline library is not available on your system."
                     + Options.LINE_SEPARATOR
                     + "The program will continue using a simple readline implementation."
                     + Options.LINE_SEPARATOR
                     + "You can turn off this warning message by using the switch -nr";
 
-        //Readline rl = null;
-        if (!Options.quiet) {
-            fReadline = LineInput.getUserInputReadline(GNUReadlineNotAvailable);
-            fReadline.usingHistory();
+        fReadline = LineInput.getUserInputReadline(GNUReadlineNotAvailable);
+        fReadline.usingHistory();
 
-            // Read command history from previous sessions
-            try {
-                fReadline.readHistory(Options.USE_HISTORY_PATH);
-            } catch (IOException ex) {
-                // Fail silently if history file does not exist
-            }
-            fReadlineStack.push(fReadline);
+        // Read command history from previous sessions
+        try {
+            fReadline.readHistory(Options.USE_HISTORY_PATH);
+        } catch (IOException ex) {
+            // Fail silently if history file does not exist
         }
+        fReadlineStack.push(fReadline);
     }
 
     /**
@@ -311,12 +324,12 @@ public final class Shell implements Runnable, PPCHandler {
                             + nl
                             + "due to an error in the program. The program will try to continue, but may"
                             + nl
-                            + "not be able to recover from the error. Please send a bug report to grp-usedevel@informatik.uni-bremen.de"
+                            + "not be able to recover from the error. Please send a bug report to"
+                            + nl
+                            + Options.SUPPORT_MAIL
                             + nl
                             + "with a description of your last input and include the following output:");
             System.err.println("Program version: " + Options.RELEASE_VERSION);
-			// System.err.println("Project version: " +
-			// Options.PROJECT_VERSION);
             System.err.print("Stack trace: ");
             ex.printStackTrace(System.err);
         }
@@ -341,9 +354,15 @@ public final class Shell implements Runnable, PPCHandler {
      * Analyses a line of input and calls the method implementing a command.
      */
     private void processLine(String line) throws NoSystemException {
-        line = line.trim();
-        if (line == null || line.length() == 0 || line.startsWith("//")
-                || line.startsWith("--"))
+    	
+    	if (delay > 0) {
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {}
+    	}
+    	
+        line = (line == null ? "" : line.trim());
+        if (line.length() == 0 || line.startsWith("//") || line.startsWith("--"))
             return;
 
         if (fStepMode) {
@@ -354,7 +373,7 @@ public final class Shell implements Runnable, PPCHandler {
                 if (c == 0x1b)
                     fStepMode = false;
             } catch (IOException ex) { }
-            }
+        }
 
         if (line.startsWith("help") || line.endsWith("--help"))
             cmdHelp(line);
@@ -428,40 +447,51 @@ public final class Shell implements Runnable, PPCHandler {
         	cmdCoverage();
 		else if (line.startsWith("plugins") || line.equals("plugins"))
 			cmdShowPlugins();
-		else if (Options.doPLUGIN) {
-			Set<Entry<Map<String, String>, PluginShellCmdProxy>> cmdEntrySet = this.pluginCommands.entrySet();
-			boolean cmdFound = false;
-			
-			for (Entry<Map<String, String>, PluginShellCmdProxy> currentCmdMapEntry : cmdEntrySet) {
-				Map<String, String> currentCmdDescMap = currentCmdMapEntry.getKey();
+		else if (line.startsWith("delay"))
+			cmdSetDelay(line);
+		else if (line.startsWith("debug")) {
+			String[] tokens = line.split(" ");
+			if (tokens.length < 2) {
+				Log.error("Missing value [on|off] for debug");
+			}
+			boolean value = false;
+			if (tokens[1].equals("on")) {
+				value = true;
+			} else if (!tokens[1].equals("off")) {
+				Log.error("Invalid debug value " + StringUtil.inQuotes(tokens[1]) +". Only on or off a valid.");
+				return;
+			}
+			Options.setDebug(value);
+		} else if (Options.doPLUGIN) {
+			PluginShellCmdContainer cmd = null;
 
-				if (line.startsWith(currentCmdDescMap.get("cmd"))
-						|| line.equals(currentCmdDescMap.get("cmd"))) {
-					IPluginShellCmd currentCmd = currentCmdMapEntry.getValue();
-					currentCmd.executeCmd(currentCmdDescMap.get("cmd"), 
-							line.substring(currentCmdDescMap.get("cmd").length()));
-					cmdFound = true;
+			for (PluginShellCmdContainer currentCmdMapEntry : pluginCommands) {
+				if (line.startsWith(currentCmdMapEntry.getCmd())
+						|| line.equals(currentCmdMapEntry.getCmd())) {
+					cmd = currentCmdMapEntry;
 					break;
-    }
+				}
 			}
 
-			if (!cmdFound)
+			if(cmd == null){
 				Log.error("Unknown command `" + line + "'. Try `help'.");
+			} else {
+				String arguments = line.substring(cmd.getCmd().length());
+				cmd.getProxy().executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
+			}
+			
 		} else
 			Log.error("Unknown command `" + line + "'. Try `help'.");
 	}
 
 	private void cmdShowPlugins() {
-		System.out
-				.println("================== Plugin commands available ====================");
+		System.out.println("================== Plugin commands available ====================");
 		
-		for (Entry<Map<String, String>, PluginShellCmdProxy> currentCmdMapEntry : this.pluginCommands.entrySet()) {
-			Map<String, String> currentCmdDescMap = currentCmdMapEntry.getKey();
-			System.out.println(currentCmdDescMap.get("cmd") + " : "
-					+ currentCmdDescMap.get("help"));
+		for (PluginShellCmdContainer currentCmdMapEntry : this.pluginCommands) {
+			System.out.println(currentCmdMapEntry.getCmd() + " : " + currentCmdMapEntry.getHelp());
 		}
-		System.out
-				.println("=================================================================");
+		
+		System.out.println("=================================================================");
 	}
 
 	private void cmdCoverage() {
@@ -471,7 +501,7 @@ public final class Shell implements Runnable, PPCHandler {
 			return;
 		}
 		
-		Map<MModelElement, CoverageData> completeData = CoverageAnalyzer.calculateModelCoverage(model);
+		Map<MModelElement, CoverageData> completeData = CoverageAnalyzer.calculateModelCoverage(model, true);
 		CoverageData data = completeData.get(model);
 		
 		Log.println("Covered classes by invariants:      "
@@ -601,7 +631,6 @@ public final class Shell implements Runnable, PPCHandler {
         boolean verbose = false;
         boolean details = false;
         boolean all = false;
-        boolean noGenInv = true;
         ArrayList<String> invNames = new ArrayList<String>();
         StringTokenizer tokenizer = new StringTokenizer(line);
         // skip command
@@ -616,20 +645,11 @@ public final class Shell implements Runnable, PPCHandler {
                 all = true;
             } else {
                 MClassInvariant inv = system().model().getClassInvariant(token);
-                if (system().generator() != null && inv == null) {
-                    GFlaggedInvariant gInv = system().generator()
-                            .flaggedInvariant(token);
-                    if (gInv != null) {
-                        inv = gInv.classInvariant();
-                        noGenInv = false;
-                    }
+                if (inv == null){
+					Log.error("Model has no invariant named " + StringUtil.inQuotes(token) + ".");
                 }
-                if (!noGenInv) {
-                    if (inv == null)
-                        Log.error("Model has no invariant named `" + token
-                                + "'.");
-                    else
-                        invNames.add(token);
+                else {
+                	invNames.add(token);
                 }
             }
         }
@@ -653,7 +673,7 @@ public final class Shell implements Runnable, PPCHandler {
      */
 	private void cmdExec(String line, boolean verbose) throws NoSystemException {
     	
-    	if (line.length() == 0) {
+    	if (line == null || line.length() == 0) {
     		Log.error("ERROR: Statement expected.");
     		return;
     	}
@@ -672,8 +692,9 @@ public final class Shell implements Runnable, PPCHandler {
     		return;
     	}
     	
-		Log.trace(this, "--- Executing shell command: " + statement.getShellCommand());
-		
+    	if (Log.isTracing()) {
+			Log.trace(this, "--- Executing shell command: " + statement.getShellCommand());
+    	}
             
 		try {
 			if ((statement instanceof MEnterOperationStatement)
@@ -692,7 +713,7 @@ public final class Shell implements Runnable, PPCHandler {
 				EvaluationFailedException exception = 
 					(EvaluationFailedException)e.getCause();
 			
-				message = exception.getMessage(statement);
+				message = exception.getMessage();
 			}
 			
 			Log.error(message);
@@ -719,7 +740,6 @@ public final class Shell implements Runnable, PPCHandler {
         }
         
         synchronized( fReadlineStack ) {
-            fReadlineStack.closeAll();
             fFinished = true;
             int exitCode = 0;
             if (Options.quiet && ! lastCheckResult() )
@@ -730,7 +750,7 @@ public final class Shell implements Runnable, PPCHandler {
                 System.err.flush();
                 exitCode = ReadlineTestReadlineDecorator.getBalance();
             }
-           
+
             System.exit(exitCode);
         }
     }
@@ -805,8 +825,7 @@ public final class Shell implements Runnable, PPCHandler {
         } finally {
             if (out != null) {
                 out.flush();
-                if (filename != null)
-                    out.close();
+                out.close();
             }
         }
     }
@@ -1012,13 +1031,14 @@ public final class Shell implements Runnable, PPCHandler {
      */
     private void cmdNet() {
         int port = 1777;
-        try {
-            Log.verbose("waiting for connection on port " + port + "...");
-            ServerSocket socket = new ServerSocket(port);
+        Log.verbose("waiting for connection on port " + port + "...");
+        
+        try (ServerSocket socket = new ServerSocket(port)) {
             Socket client = socket.accept();
             InetAddress clientAddr = client.getInetAddress();
-            Log.verbose("connected to " + clientAddr.getHostName() + "/"
-                    + client.getPort());
+            
+            Log.verbose("connected to " + clientAddr.getHostName() + ":" + client.getPort());
+            
             Readline readline = new SocketReadline(client, true, "net>");
             fReadlineStack.push(readline);
         } catch (IOException ex) {
@@ -1028,13 +1048,34 @@ public final class Shell implements Runnable, PPCHandler {
 
     /**
      * Saves pathname of the currently opened file and returns the absolute path.
-     * All other files can be opened relatively to it.
+     * All other files can be opened relative to it.
      */
     private Stack<File> openFiles = new Stack<File>();
     private Stack<String> relativeNames = new Stack<String>();
     
-    private String getFilenameToOpen(String filename) {
-    	if (filename.startsWith("\"") && filename.startsWith("\""))
+    public String getFilenameToOpen(String filename) {
+    	return getFilenameToOpen(filename, true);
+    }
+    
+    /**
+     * This operation handles filenames provided to the USE-Shell.
+     * Surrounding characters like <code>'</code> or <code>"</code>  
+     * (even if mixed) are removed. 
+     * <p>If an absolute path is given as <code>filename</code>,
+     * this file name (with removed quotes) is returned.<p>
+     * <p>If a relative path is provided as <code>filename</code>,
+     * the currently opened file is used as the starting point to calculate
+     * the absolute path.</p>
+     * <p><b>Warning:</b> No check is made if the calculated file exists.
+     * This has to be done by the caller.</p>
+     * @param filename A absolute or relative filename to open.
+     * @param useAsCurrentFile If <code>true</code>, the opened file is stored as currently opened
+     * and is used as the starting point to calculate subsequent relative file names.
+     * After the file is no longer the current file, i.e., it was closed or the file was not opened, {@link #setFileClosed()} must be called.
+     * @return
+     */
+    public String getFilenameToOpen(String filename, boolean useAsCurrentFile) {
+    	if (filename.matches("([\"']).+?\\1")) // matches '<name>' or "<name>", not "<name>'
     		filename = filename.substring(1, filename.length() - 1);
     		
     	File f = new File(filename);
@@ -1042,22 +1083,31 @@ public final class Shell implements Runnable, PPCHandler {
     	
     	if (f.isAbsolute()) {
     		result = filename;
-    		relativeNames.push("");
+			if (useAsCurrentFile) {
+				relativeNames.push("");
+			}
     	} else {
     		if (openFiles.isEmpty()) {
-    			f = new File(filename);
     			result = filename;
-    			relativeNames.push(getPathWithoutFile(result));
+    			if (useAsCurrentFile) {
+    				relativeNames.push(getPathWithoutFile(result));
+    			}
     		} else {
     			File currentFile = openFiles.peek();
     			f = new File(currentFile.getParentFile(), filename);
     			
-    			relativeNames.push(getPathWithoutFile(relativeNames.peek() + filename));
+    			if (useAsCurrentFile) {
+    				relativeNames.push(getPathWithoutFile(relativeNames.peek() + filename));
+    			}
+    			
     			result = f.getAbsolutePath();
     		}
     	}
     	
-    	openFiles.push(f);
+    	if (useAsCurrentFile) {
+    		openFiles.push(f);
+    	}
+    	
     	return result;
     }
     
@@ -1083,21 +1133,36 @@ public final class Shell implements Runnable, PPCHandler {
     /**
      * Removes the currently opened file from the stack of opened files.
      */
-    private void setFileClosed() {
-    	openFiles.pop();
-    	relativeNames.pop();
+    public void setFileClosed() {
+    	if(!openFiles.empty()){
+    		openFiles.pop();
+    	}
+    	if(!relativeNames.empty()){
+    		relativeNames.pop();
+    	}
     }
     
     /**
-     * Checks which file type is to be opened and calls the specific open
-     * command (<code>cmdOpenUseFile</code>,<code>cmdRead</code>,
-     * <code>cmdLoad</code>).
+     * Shorthand for {@link #cmdOpen(String, boolean)}.
      * 
-     * @param line
-     *            Path and filename to be opened.
+     * @param line Path and filename to be opened.
+     * @see #cmdOpen(String, boolean)
      */
-    private void cmdOpen(String line) {
-        boolean doEcho = true;
+    private void cmdOpen(String line){
+    	cmdOpen(line, false);
+    }
+    
+    /**
+	 * Checks which file type is to be opened and calls the specific open
+	 * command (<code>cmdOpenUseFile</code>,<code>cmdRead</code>,
+	 * <code>cmdLoad</code>). If the parameter {@code forcequiet} is
+	 * {@code true}, the output will be suppressed.
+	 * 
+	 * @param line
+	 *            Path and filename to be opened.
+	 */
+    private void cmdOpen(String line, boolean forcequiet) {
+        boolean doEcho = forcequiet?false:true;
         StringTokenizer st = new StringTokenizer(line);
 
         // if there is no filename and option
@@ -1123,7 +1188,7 @@ public final class Shell implements Runnable, PPCHandler {
         // to find out what command will be needed
         try {
         	// if quoted add remaining tokens
-        	if (token.startsWith("\"")) {
+        	if (token.startsWith("\"") || token.startsWith("'")) {
         		while (st.hasMoreTokens()) {
         			token += " " + st.nextToken();
         		}
@@ -1149,7 +1214,7 @@ public final class Shell implements Runnable, PPCHandler {
                 }
                 return;
             }
-            if (firstWord.startsWith("model")) {
+            if (firstWord.startsWith("model") || firstWord.startsWith("@")) {
                 cmdOpenUseFile(token);
             } else if (firstWord.startsWith("context")) {
                 cmdGenLoadInvariants(token, system(), doEcho);
@@ -1166,12 +1231,9 @@ public final class Shell implements Runnable, PPCHandler {
             		opened = filename;
             	else
             		opened = this.openFiles.peek().toString();
-            	
-        		if (Options.getRecentFiles().contains(opened)) {
-        			Options.getRecentFiles().remove(opened);
-        		}
-        		        			
+
         		Options.getRecentFiles().push(opened);
+        		Options.setLastDirectory(Paths.get(opened).getParent());
         	}
         } catch (NoSystemException e) {
             Log.error("No System available. Please load a model before "
@@ -1189,21 +1251,25 @@ public final class Shell implements Runnable, PPCHandler {
      */
     private void cmdReOpen(String line) {
     	line = (line == null ? "" : line.trim());
+    	boolean quiet = false;
     	
-    	LimitedStack<String> recentFiles = Options.getRecentFiles();
+    	List<String> recentFiles = Options.getRecentFiles().getItems();
     	
     	if (line.startsWith("-l")) {
     		if (recentFiles.isEmpty()) {
     			Log.println("No files were opened, yet.");
     			return;
     		}
-    		
-    		int index = 0;
-    		for (int i = recentFiles.size() - 1; i >= 0; --i) {
-    			index++;
-    			Log.println(index + ": " + recentFiles.get(i));
+
+    		int length = (int) Math.log10(recentFiles.size()) + 1;
+    		for (int index = 0; index < recentFiles.size(); ++index) {
+    			Log.println(String.format("%" + length + "d: %s", index+1, recentFiles.get(index)));
     		}
     		return;
+    	}
+    	else if(line.startsWith("-q")){
+    		line = line.substring(2).trim();
+    		quiet = true;
     	}
     	
     	if (recentFiles.isEmpty()) {
@@ -1211,16 +1277,21 @@ public final class Shell implements Runnable, PPCHandler {
 			return;
 		}
     	
-    	String filename;
-    	if (line.equals("")) {
-    		filename = Options.getRecentFiles().peek(); 
+		String filename;
+		if (line.equals("")) {
+			try {
+				filename = recentFiles.get(0);
+			} catch (IndexOutOfBoundsException e) {
+				Log.error("No recent file available");
+				return;
+			}
     	} else {
     		int fileNr;
     		try {
     			fileNr = Integer.parseInt(line);
     		} catch (NumberFormatException e) {
     			Log.error("Invalid argument " + line);
-    			Log.println("Options: [-l] | [num]");
+    			Log.println("Options: [-l] | [[-q] num]");
     			return;
     		}
     		
@@ -1229,11 +1300,11 @@ public final class Shell implements Runnable, PPCHandler {
     			return;
     		}
 
-    		filename = recentFiles.get(recentFiles.size() - fileNr);
+    		filename = recentFiles.get(fileNr - 1);
     	}
     	
     	Log.println(filename);
-    	cmdOpen(filename);
+		cmdOpen("\"" + filename + "\"", quiet);
     }
     
     /**
@@ -1241,23 +1312,26 @@ public final class Shell implements Runnable, PPCHandler {
      */
     private void cmdOpenUseFile(String file) {
         MModel model = null;
-        FileInputStream specStream = null;
+        BufferedInputStream specStream = null;
 
         String filename = getFilenameToOpen(file);
         
         try {
             Log.verbose("compiling specification...");
-            specStream = new FileInputStream(filename);
+            specStream = new BufferedInputStream(new FileInputStream(filename));
+            handleBOM(specStream);
             model = USECompiler.compileSpecification(specStream, filename,
                     new PrintWriter(System.err), new ModelFactory());
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");
-        } finally {
-            if (specStream != null)
-                try {
-                	specStream.close();
-                } catch (IOException ex) {}
-                }
+        } catch (IOException e) {
+        	Log.error("IO error while accessing `" + filename + "': " + e.getMessage());
+		} finally {
+			if (specStream != null)
+				try {
+					specStream.close();
+				} catch (IOException ex) {}
+		}
 
         // compile ok?
         if (model != null) {
@@ -1272,7 +1346,7 @@ public final class Shell implements Runnable, PPCHandler {
     }
 
     private void cmdRunTestSuite(String file) {
-    	FileInputStream specStream = null;
+    	BufferedInputStream specStream = null;
         String filename = getFilenameToOpen(file);
         MTestSuite testSuite = null;
         MModel model = null;
@@ -1286,12 +1360,15 @@ public final class Shell implements Runnable, PPCHandler {
         
         try {
             Log.verbose("compiling test suite...");
-            specStream = new FileInputStream(filename);
+            specStream = new BufferedInputStream(new FileInputStream(filename));
+            handleBOM(specStream);
             testSuite = TestSuiteCompiler.compileTestSuite(specStream, filename,
                     new PrintWriter(System.err), model);
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");
-        } finally {
+        } catch (IOException e) {
+			Log.error("Error accessing file " + StringUtil.inQuotes(filename) + ": " + e.getMessage());
+		} finally {
             if (specStream != null)
                 try {
                 	specStream.close();
@@ -1322,7 +1399,14 @@ public final class Shell implements Runnable, PPCHandler {
         }
         
         // compile query
-        MSystem system = system();
+        MSystem system;
+        try {
+			system = system();
+        }
+        catch (NoSystemException e) {
+        	MModel model = new ModelFactory().createModel("empty model");
+			system = new MSystem(model);
+		}
         InputStream stream = new ByteArrayInputStream(line.getBytes());
             
 		Expression expr = OCLCompiler.compileExpression(
@@ -1350,28 +1434,6 @@ public final class Shell implements Runnable, PPCHandler {
                     .varBindings(), output);
             // print result
             System.out.println("-> " + val.toStringWithType());
-            if (verboseEval && Options.doGUI) {
-                Class<?> exprEvalBrowserClass = null;
-                try {
-                    exprEvalBrowserClass = Class
-                            .forName("org.tzi.use.gui.views.ExprEvalBrowser");
-                } catch (ClassNotFoundException e) {
-					Log
-							.error(
-									"Could not load GUI. Probably use-gui-...jar is missing.",
-									e);
-                    System.exit(1);
-                }
-                try {
-                    Method create = exprEvalBrowserClass.getMethod("create",
-                            new Class[] { EvalNode.class, MSystem.class });
-					create.invoke(null, new Object[] {
-							evaluator.getEvalNodeRoot(), system() });
-                } catch (Exception e) {
-                    Log.error("FATAL ERROR.", e);
-                    System.exit(1);
-                }
-            }
         } catch (MultiplicityViolationException e) {
             System.out.println("-> " + "Could not evaluate. " + e.getMessage());
         }
@@ -1388,7 +1450,14 @@ public final class Shell implements Runnable, PPCHandler {
         }
 
         // compile query
-        MSystem system = system();
+        MSystem system;
+        try {
+			system = system();
+        }
+        catch (NoSystemException e) {
+        	MModel model = new ModelFactory().createModel("empty model");
+			system = new MSystem(model);
+		}
         InputStream stream = new ByteArrayInputStream(line.getBytes());
            
 		Expression expr = OCLCompiler.compileExpression(
@@ -1414,7 +1483,9 @@ public final class Shell implements Runnable, PPCHandler {
         try {
         	filename = getFilenameToOpen(filename);
         	
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
+        	Reader r = getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
+        	BufferedReader reader = new BufferedReader(r);
+            
             // read from file, echo each line as it is read
             Readline fReadline;
             
@@ -1426,7 +1497,9 @@ public final class Shell implements Runnable, PPCHandler {
             
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");
-        }
+        } catch (IOException e) {
+			Log.error("IO error accessing file " + StringUtil.inQuotes(filename) + ":" + e.getMessage());
+		}
     }
 
     /**
@@ -1449,6 +1522,22 @@ public final class Shell implements Runnable, PPCHandler {
         Log.println("Step mode turned on.");
     }
 
+    private void cmdSetDelay(String line) {
+    	String[] parts = line.split("\\s");
+    	delay = 0;
+    	
+    	if (parts.length > 2) {
+    		Log.error("Invalid number of arguments. Please use delay [number].");
+    	} else if (parts.length == 2) {
+    		try {
+    			delay = Integer.parseInt(parts[1]);
+    		} catch (NumberFormatException e) {
+    			Log.error("Invalid delay specified. Please provide a valid number.");
+    		}
+    	}
+    	Log.println(String.format("Delay was set to %1$d.", delay));
+    }
+    
     /**
      * Undoes the last command.
      */
@@ -1472,9 +1561,6 @@ public final class Shell implements Runnable, PPCHandler {
 		}
     }
     
-    
-    
-
     /**
      * Prints commands executed so far.
      */
@@ -1483,14 +1569,12 @@ public final class Shell implements Runnable, PPCHandler {
         PrintWriter out = null;
         try {
             if (filename == null)
-                out = new PrintWriter(System.out);
+                out = new PrintWriter(getOut());
             else {
                 out = new PrintWriter(new BufferedWriter(new FileWriter(
                         filename)));
             }
-            out
-                    .println("-- Script generated by USE "
-                            + Options.RELEASE_VERSION);
+			out.println("-- Script generated by USE " + Options.RELEASE_VERSION);
             out.println();
             system.writeSoilStatements(out);
         } catch (IOException ex) {
@@ -1508,32 +1592,54 @@ public final class Shell implements Runnable, PPCHandler {
     // Generator Commands
     //***********************************************************
 
-    /**
-     *  
-     */
-    private void cmdGenLoadInvariants(String str, MSystem system, boolean doEcho) {
-        String filename = str.trim();
-        if (filename.length() == 0)
-            Log.error("syntax is `load FILE'");
-        else {
-        	filename = getFilenameToOpen(filename);
-            system.generator().loadInvariants(str.trim(), doEcho);
-            setFileClosed();
-    }
-    }
+	private void cmdGenLoadInvariants(String str, MSystem system, boolean doEcho) {
+		String filename = str.trim();
+		if (filename.length() == 0)
+			Log.error("syntax is `load FILE'");
+		else {
+			BufferedInputStream in = null;
+			try {
+				filename = getFilenameToOpen(filename);
+				in = new BufferedInputStream(new FileInputStream(filename));
+				handleBOM(in);
+				
+				system.loadInvariants(in, str.trim(), doEcho, new PrintWriter(getOut(), true));
+				
+				setFileClosed();
+			} catch (FileNotFoundException e) {
+				Log.error("File " + StringUtil.inQuotes(filename) + " not found!");
+				return;
+			} catch (IOException e) {
+				Log.error("Error accessing file " + StringUtil.inQuotes(filename) + ": " + e.getMessage());
+				return;
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {}
+				}
+			}
+		}
+	}
 
-    /**
-     *  
-     */
     private void cmdGenUnloadInvariants(String str, MSystem system) {
         StringTokenizer st = new StringTokenizer(str);
         Set<String> names = new TreeSet<String>();
         try {
-            while (st.hasMoreTokens())
-                names.add(st.nextToken());
-            system.generator().unloadInvariants(names);
+            while (st.hasMoreTokens()){
+            	names.add(st.nextToken());
+            }
+            
+            // if no invariant names are given all invariants are removed
+            if(names.isEmpty()){
+            	for(MClassInvariant inv : system.model().getLoadedClassInvariants()){
+            		names.add(inv.qualifiedName());
+            	}
+            }
+            
+            system.unloadInvariants(names, new PrintWriter(Log.out(), true));
         } catch (NoSuchElementException e) {
-            Log.error("syntax is `unload [invnames]'");
+            Log.error("syntax is " + StringUtil.inQuotes("unload [invnames]"));
         }
     }
 
@@ -1559,9 +1665,6 @@ public final class Shell implements Runnable, PPCHandler {
         }
     }
 
-    /**
-     *  
-     */
     private void cmdGenInvariantFlags(String str, MSystem system) {
         // Syntax: gen flags (invariant)* [+d|-d] [+n|-n]
         StringTokenizer st = new StringTokenizer(str);
@@ -1575,10 +1678,11 @@ public final class Shell implements Runnable, PPCHandler {
         try {
             while (st.hasMoreTokens() && !optionDetected) {
                 tok = st.nextToken();
-                if (tok.startsWith("+") || tok.startsWith("-"))
-                    optionDetected = true;
-                else
+                if (tok.startsWith("+") || tok.startsWith("-")) {
+                	optionDetected = true;
+                } else {
                     names.add(tok);
+                }
             }
             while (optionDetected && !error) {
                 if (tok.equals("+d") || tok.equals("-d")) {
@@ -1606,12 +1710,35 @@ public final class Shell implements Runnable, PPCHandler {
         } catch (NoSuchElementException e) {
             error = true;
         }
-        if (error)
-            Log.error("syntax is `flags [invnames] ((+d|-d) | (+n|-n))'");
-        else if (disabled == null && negated == null)
-            system.generator().printInvariantFlags(names);
-        else
-            system.generator().setInvariantFlags(names, disabled, negated);
+        
+        Collection<MClassInvariant> invs;
+        
+        if (names.isEmpty()) {
+        	invs = system.model().classInvariants();
+        } else {
+        	invs = new HashSet<MClassInvariant>();
+        
+	        for(String invName : names){
+	        	MClassInvariant inv = system.model().getClassInvariant(invName);
+	        	if(inv == null){
+	        		Log.error("Invariant " + StringUtil.inQuotes(invName) + " does not exist. " + 
+	                        "Ignoring " + StringUtil.inQuotes(invName) + ".");
+	        		error = true;
+	        		continue;
+	        	}
+	        	invs.add(inv);
+	        }
+        }
+        
+        if (error){
+        	Log.error("syntax is `flags (-all|[invnames]) ((+d|-d) | (+n|-n))'");
+        }
+        else if (disabled == null && negated == null){
+        	system.generator().printInvariantFlags(invs);
+        }
+        else {
+        	system.setClassInvariantFlags(invs, (disabled == null)? null : Boolean.valueOf(!disabled.booleanValue()), negated);
+        }
     }
 
     /**
@@ -1644,7 +1771,9 @@ public final class Shell implements Runnable, PPCHandler {
     	
     	try {
             String result = "";
-            bf = new BufferedReader(new FileReader(filename));
+            // Handle possible UTF BOM
+            Reader r = getReaderFromFilename(filename);
+            bf = new BufferedReader(r);
             boolean isComment = false;
             boolean noCase = false;
             boolean cont = false;
@@ -1655,6 +1784,11 @@ public final class Shell implements Runnable, PPCHandler {
                 while (!noCase) {
                     noCase = true;
                     if (line.startsWith("--")) {
+                        noCase = true;
+                        cont = true;
+                        continue;
+                    }
+                    if (line.startsWith("@")) {
                         noCase = true;
                         cont = true;
                         continue;
@@ -1715,22 +1849,20 @@ public final class Shell implements Runnable, PPCHandler {
 			ppcHandler = operationCall.getDefaultPPCHandler();
 		}
 		
-		// we don't want to take care of openter/opexit
-		if (!operationCall.getOperation().hasBody()) {
-			ppcHandler.handlePreConditions(system, operationCall);
-			return;
-		}
-		
 		try {
 			ppcHandler.handlePreConditions(system, operationCall);
 		} catch (PreConditionCheckFailedException e) {
-			
-			try {
-				ppcShell(system);
-				throw e;
-			} catch (NoSystemException e1) {
-				throw e;
-			} catch (IOException e1) {
+			// we don't want to take care of openter/opexit
+			if (operationCall.getOperation().hasBody()) {
+				try {
+					ppcShell(system);
+					throw e;
+				} catch (NoSystemException e1) {
+					throw e;
+				} catch (IOException e1) {
+					throw e;
+				}
+			} else {
 				throw e;
 			}
 		}	
@@ -1769,6 +1901,23 @@ public final class Shell implements Runnable, PPCHandler {
 		}
 	}
 	
+
+	@Override
+	public void handleTransitionsPre(MSystem system,
+			MOperationCall operationCall)
+			throws PreConditionCheckFailedException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleTransitionsPost(MSystem system,
+			MOperationCall operationCall)
+			throws PostConditionCheckFailedException {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	
 	private void ppcShell(MSystem system) throws NoSystemException, IOException {
 		PrintWriter output = new PrintWriter(Log.out(), true);
@@ -1787,12 +1936,14 @@ public final class Shell implements Runnable, PPCHandler {
     		StringUtil.inQuotes("c") + 
     		" continues the evaluation (i.e. unwinds the stack).\n";
     	
-    	system.updateListeners();
+    	//FIXME: Required?
+    	// system.updateListeners();
+    	
     	if (!Options.testMode) {
     	output.println();
-    	output.println("+-------------------------------------------------------------------+");
-    	output.println("| Evaluation is paused. You may inspect, but not modifiy the state. |");
-    	output.println("+-------------------------------------------------------------------+");
+    	output.println("+------------------------------------------------------------------+");
+    	output.println("| Evaluation is paused. You may inspect, but not modify the state. |");
+    	output.println("+------------------------------------------------------------------+");
     	output.println(HELP);
     	}
     	String input;
@@ -1819,5 +1970,66 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 			
     	} while (!input.equals("c"));
+	}
+	
+	/**
+	 * Safe way to get a reader from a filename.
+	 * This operation examines a possible valid unicode BOM. 
+	 * @param filename
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private Reader getReaderFromFilename(String filename) throws FileNotFoundException, IOException {
+		Reader r = getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
+		return r;
+	}
+	
+	/**
+	 * Safe way to get a reader from an input stream.
+	 * This operation examines a possible valid unicode BOM. 
+	 * @param filename
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private Reader getReaderFromInputStream(BufferedInputStream in) throws IOException {
+		String encoding = handleBOM(in);
+		
+		if (encoding == null) {
+			return new InputStreamReader(in);
+		} else {
+			return new InputStreamReader(in, encoding);
+		}
+	}
+	
+	/**
+	 * Reads the first bytes of an input stream an checks for a unicode BOM.
+	 * If no BOM is present, the stream is reset. Otherwise the stream
+	 * is at the beginning of the content.
+	 * @param in
+	 * @return
+	 * @throws IOException
+	 */
+	private String handleBOM(BufferedInputStream in) throws IOException {
+		String encoding = null;
+		
+		in.mark(3);
+		int byte1 = in.read();
+		int byte2 = in.read();
+		if (byte1 == 0xFF && byte2 == 0xFE) {
+			encoding = "UTF-16LE";
+		} else if (byte1 == 0xFF && byte2 == 0xFF) {
+			encoding = "UTF-16BE";
+		} else {
+			int byte3 = in.read();
+			if (byte1 == 0xEF && byte2 == 0xBB && byte3 == 0xBF) {
+				encoding = "UTF-8";
+			} else {
+				in.reset();
+			}
+		}
+		
+		return encoding;
 	}
 }

@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.tzi.use.analysis.coverage.BasicCoverageData;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 
 /**
  * Calculates the coverage informations about a 
@@ -233,8 +234,8 @@ public class BasicInstructionCoverageCalulator implements InstructionVisitor {
 	 */
 	private void addClassCoverage(MClass cls) {
 		this.coverage.getCoveredClasses().add(cls);
-		for (MClass parent : cls.allParents()) {
-			this.coverage.getCoveredClasses().add(parent);
+		for (MClassifier parent : cls.allParents()) {
+			this.coverage.getCoveredClasses().add((MClass)parent);
 		}
 	}
 

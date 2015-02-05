@@ -1,4 +1,4 @@
 !assign a := create A
 ?a
-*-> @A1 : A
+*-> A1 : A
 quit

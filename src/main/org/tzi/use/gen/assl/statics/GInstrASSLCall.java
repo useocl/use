@@ -4,37 +4,36 @@ import java.util.List;
 
 import org.tzi.use.gen.assl.dynamics.GEvalASSLCall;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
+import org.tzi.use.util.StringUtil;
 
 public class GInstrASSLCall implements GInstruction {
 
-	String procname;
-	List<GValueInstruction> fParam;
+	GProcedure fProcedure;
+	
+	List<GOCLExpression> fArguments;
 
-	public GInstrASSLCall(String id, List<GValueInstruction> param) {
-		procname = id;
-		fParam=param;
+	public GInstrASSLCall(GProcedure procedure, List<GOCLExpression> param) {
+		fProcedure = procedure;
+		fArguments = param;
 	}
 	
-	public String procName() {
-		return procname;
+	public GProcedure getProcedure() {
+		return fProcedure;
 	}
 	
-	public List<GValueInstruction> param() {
-		return fParam;
+	public List<GOCLExpression> getArguments() {
+		return fArguments;
 	}
 	
 	@Override
 	public String toString() {
-		return "ASSLCall "+ procname+ "("+ fParam + ")";
+		return "ASSLCall "+ fProcedure.name() + "("+ StringUtil.fmtSeq(fArguments, ",") + ")";
 	}
 
 	public void processWithVisitor(InstructionVisitor v) {
     	v.visitInstrASSLCall(this);
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
-	 */
 	@Override
 	public GEvalInstruction createEvalInstr() {
 		return new GEvalASSLCall(this);

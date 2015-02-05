@@ -76,10 +76,10 @@ public class USECompilerTest extends TestCase {
     private static final boolean VERBOSE = false;
 
     private static final String TEST_PATH =
-        System.getProperty("basedir")
+        System.getProperty("user.dir")
         + "/src/test/org/tzi/use/parser".replace('/', File.separatorChar);
     private static final String EXAMPLES_PATH =
-        System.getProperty("basedir") + "/examples".replace('/', File.separatorChar);
+        System.getProperty("user.dir") + "/examples".replace('/', File.separatorChar);
 
 
     // java.io has a StringWriter but we need an OutputStream for
@@ -107,7 +107,7 @@ public class USECompilerTest extends TestCase {
     public void testSpecification() {
   	    Options.explicitVariableDeclarations = false;
 
-        List<File> fileList = getFilesMatchingSuffix(".use", 33);
+        List<File> fileList = getFilesMatchingSuffix(".use", 32);
         // add all the example files which should have no errors
         File dir = new File(EXAMPLES_PATH);
         File[] files = dir.listFiles( new SuffixFileFilter(".use") );
@@ -149,7 +149,7 @@ public class USECompilerTest extends TestCase {
 
 
     private static final String TEST_EXPR_FILE =
-        System.getProperty("basedir")
+        System.getProperty("user.dir")
         + "/src/test/org/tzi/use/parser/test_expr.in".replace('/', File.separatorChar);
 
 
@@ -283,7 +283,6 @@ public class USECompilerTest extends TestCase {
              + ").");
     }
 
-
     private boolean isErrorMessageAsExpected(File failFile, StringOutputStream errStr) throws FileNotFoundException {
         // check whether error output equals expected output
         BufferedReader failReader =
@@ -309,17 +308,12 @@ public class USECompilerTest extends TestCase {
         } catch (IndexOutOfBoundsException ex) {
         	ok = false;
         } finally {
-        	if (failReader != null) {
-				try {
-					failReader.close();
-				} catch (IOException e) {}
-        	}
+			try {
+				failReader.close();
+			} catch (IOException e) {}
         }
         return ok;
     }
-
-
-
 
     private List<File> getFilesMatchingSuffix(String suffix, int expected) {
         List<File> fileList = new ArrayList<File>();

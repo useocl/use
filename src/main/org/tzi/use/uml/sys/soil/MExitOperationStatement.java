@@ -17,11 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,29 +35,30 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * TODO
+ * This statement class is used for the legacy opexit command
+ * and for the inverse of an openter or operation call.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
 public class MExitOperationStatement extends MStatement {
-	/** TODO */
+	/** The expression used to calculate the operation call result */
 	private Expression fOperationResult;
-	/** TODO */
+	/** A custom PPC handler */
 	private PPCHandler fCustomPPCHandler;
-	
+	/** The operation call created by openter */
 	private MOperationCall operationCall;
 	
 	/**
-	 * TODO
-	 * @param result
+	 * Creates a new exit operation statement.
+	 * @param result The expression used to calculate the operation call result.
 	 */
 	public MExitOperationStatement(Expression operationResult) {
 		fOperationResult = operationResult;
 	}
-	
-	
+
 	/**
-	 * TODO
+	 * Used to revert an OperationCall
 	 * @param result
 	 * @param customPPCHandler
 	 */
@@ -72,13 +70,33 @@ public class MExitOperationStatement extends MStatement {
 		fCustomPPCHandler = customPPCHandler;
 	}
 	
+	/**
+	 * @return the fOperationResult
+	 */
+	public Expression getOperationResult() {
+		return fOperationResult;
+	}
+
+	/**
+	 * @return the fCustomPPCHandler
+	 */
+	public PPCHandler getCustomPPCHandler() {
+		return fCustomPPCHandler;
+	}
+
+	/**
+	 * @return the operationCall
+	 */
+	public MOperationCall getOperationCall() {
+		return operationCall;
+	}
 
 	@Override
-    public void execute(SoilEvaluationContext context,
+    public Value execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		Value vresult = (fOperationResult == null) ? 
-				null : EvalUtil.evaluateExpression(this, context, result, fOperationResult, false);
+				null : EvalUtil.evaluateExpression(context, fOperationResult, false);
 
 		// to be able to undo this statement, we need to capture the current
 		// variable mappings
@@ -98,7 +116,7 @@ public class MExitOperationStatement extends MStatement {
 			MOperationCall currentOperation = context.getSystem().getCurrentOperation();
 			
 			if (currentOperation == null) {
-				throw new EvaluationFailedException(this, "No current operation");
+				throw new EvaluationFailedException("No current operation");
 			}
 			
 			if (preferredPPCHandler != null) {
@@ -108,7 +126,7 @@ public class MExitOperationStatement extends MStatement {
 			try {
 				context.getSystem().exitNonQueryOperation(context,result,vresult);
 			} catch (MSystemException e) {
-				throw new EvaluationFailedException(this, e);
+				throw new EvaluationFailedException(e);
 			}
 			context.getSystem().setLastOperationCall(operationCall);
 		} catch (EvaluationFailedException e) {
@@ -121,7 +139,7 @@ public class MExitOperationStatement extends MStatement {
 			if (caughtException != null) {
 				throw caughtException;
 			} else {
-				return;
+				return null;
 			}
 		}
 		
@@ -134,12 +152,10 @@ public class MExitOperationStatement extends MStatement {
 		}
 		
 		// operation must be reentered
-		Map<String, Expression> wrappedArguments = 
-			new HashMap<String, Expression>(operationCall.getArguments().length);
+		Expression[] wrappedArguments = new Expression[operationCall.getArguments().length];
 		
-		for (int i = 0; i < operationCall.getOperation().paramNames().size();++i) {
-			String n = operationCall.getOperation().paramNames().get(i);
-			wrappedArguments.put(n , new ExpressionWithValue(operationCall.getArguments()[i]));
+		for (int i = 0; i < operationCall.getOperation().paramNames().size(); ++i) {
+			wrappedArguments[i] = new ExpressionWithValue(operationCall.getArguments()[i]);
 		}
 			
 		result.prependToInverseStatement(
@@ -152,6 +168,8 @@ public class MExitOperationStatement extends MStatement {
 		if (caughtException != null) {
 			throw caughtException;
 		}
+		
+		return vresult;
 	}
 
 	
@@ -162,13 +180,13 @@ public class MExitOperationStatement extends MStatement {
 		((fOperationResult == null) ? "" : " " + fOperationResult);
 	}
 
-	
-	public MOperationCall getOperationCall() {
-		return operationCall;
-	}
-
 	@Override
 	public String toString() {
 		return shellCommand();
+	}
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
 	}
 }

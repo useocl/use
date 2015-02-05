@@ -66,6 +66,7 @@ public class ASTEnumTypeDefinition extends ASTAnnotatable {
                                         ex.getMessage() + ".");
         }
         
+        res.setPositionInModel(fName.getLine());
         this.genAnnotations(res);
         
         return res;

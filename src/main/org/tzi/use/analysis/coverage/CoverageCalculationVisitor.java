@@ -26,19 +26,34 @@ import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
+import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.ocl.expr.ExpConstUnlimitedNatural;
 
 /**
- * TODO
+ * This coverage visitor counts for each covered element
+ * the number of occurrences.
+ * <p>This visitor can be used to check how often an element is used.</p>
+ * <p>Covered elements:
+ * <ul>
+ *  <li>Classes</li>
+ *  <li>Associations</li>
+ *  <li>Association ends</li>
+ *  <li>Attributes</li>
+ * </ul>
  * @author Lars Hamann
- *
  */
 public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 
-	private CoverageData coverageData = new CoverageData();
+	private final CoverageData coverageData = new CoverageData();
+		
+	public CoverageCalculationVisitor(boolean expandOperations) {
+		super(expandOperations);
+	}
 	
 	/**
 	 * @param cls
 	 */
+	@Override
 	protected void addClassCoverage(MClass cls) {
 		if (!coverageData.getClassCoverage().containsKey(cls)) {
 			coverageData.getClassCoverage().put(cls, 1);
@@ -62,6 +77,7 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	/**
 	 * @param sourceType
 	 */
+	@Override
 	protected void addAttributeCoverage(MClass sourceClass, MAttribute att) {
 		AttributeAccessInfo info = new AttributeAccessInfo(sourceClass, att);
 		if (!coverageData.getAttributeAccessCoverage().containsKey(info)) {
@@ -80,6 +96,20 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	/**
 	 * @param sourceType
 	 */
+	@Override
+	protected void addOperationCoverage(MClass sourceClass, MOperation op) {
+		if (!coverageData.getOperationCoverage().containsKey(op)) {
+			coverageData.getOperationCoverage().put(op, 1);
+		} else {
+			coverageData.getOperationCoverage().put(op, coverageData.getOperationCoverage().get(op) + 1);
+		}
+		addCompleteClassCoverage(sourceClass);
+	}
+	
+	/**
+	 * @param sourceType
+	 */
+	@Override
 	protected void addAssociationCoverage(MAssociation assoc) {
 		if (!coverageData.getAssociationCoverage().containsKey(assoc)) {
 			coverageData.getAssociationCoverage().put(assoc, 1);
@@ -91,6 +121,7 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	/**
 	 * @param sourceType
 	 */
+	@Override
 	protected void addAssociationEndCoverage(MNavigableElement dst) {
 		//FIXME: How to handle association class?
 		if (!(dst instanceof MAssociationEnd)) return;
@@ -111,5 +142,11 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	 */
 	public CoverageData getCoverageData() {
 		return coverageData;
+	}
+
+	@Override
+	public void visitConstUnlimitedNatural(
+			ExpConstUnlimitedNatural expressionConstUnlimitedNatural) {
+		
 	}
 }

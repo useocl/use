@@ -13,3 +13,4 @@ while (<>) {
 
     print "$_\n";
 }
+print "exit\n";

@@ -21,6 +21,7 @@
 
 package org.tzi.use.gui.views.diagrams.event;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.dnd.DnDConstants;
@@ -38,12 +39,12 @@ import java.awt.event.MouseMotionListener;
 
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.EdgeProperty;
-import org.tzi.use.gui.views.diagrams.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.Selectable;
+import org.tzi.use.gui.views.diagrams.elements.CommentNode;
+import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.ResizeNode;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 
 /**
  * Handles the mouse movements and keyboard inputs 
@@ -57,36 +58,43 @@ public final class DiagramInputHandling implements MouseListener,
                                                    DropTargetListener,
                                                    KeyListener {
     
-    private Selection<PlaceableNode> fNodeSelection;
-    private Selection<EdgeBase> fEdgeSelection;
+    private final Selection<PlaceableNode> fNodeSelection;
+    private final Selection<EdgeBase> fEdgeSelection;
     
-    private DiagramView fDiagram;
+    private final DiagramView fDiagram;
+    
+    private enum DragMode {
+    	DRAG_NONE,
+        DRAG_ITEMS,
+        RESIZE_ITEM;
+    }
+    
+    private ResizeNode resizeNode = null;
     
     // needed for mouse handling
-    private static final int DRAG_NONE = 0;
-    private static final int DRAG_ITEMS = 1; // drag selected items
-    private Point fDragStart;
-    private int fDragMode;
-    private boolean fIsDragging = false;
-    private Cursor fCursor;
     
-    public DiagramInputHandling( Selection<PlaceableNode> nodeSelection, Selection<EdgeBase> edgeSelection, 
-                                 DiagramView diagram ) {
+    private Point    fDragStart;
+    private DragMode fDragMode;
+    private boolean  fIsDragging = false;
         
+    public DiagramInputHandling( Selection<PlaceableNode> nodeSelection, Selection<EdgeBase> edgeSelection, DiagramView diagram ) {
         fNodeSelection = nodeSelection;
         fEdgeSelection = edgeSelection;
         fDiagram = diagram;
         
         new DropTarget(fDiagram, this);
+        fDiagram.addMouseMotionListener(this);
     }
     
-    public void mouseClicked(MouseEvent e) { }
+    @Override
+	public void mouseClicked(MouseEvent e) { }
     
     /**
      * event: on item not on item -------------------------------------------
      * b1: select item clear selection deselect others S-b1: extend selection -
      */
-    public void mousePressed(MouseEvent e) {
+    @Override
+	public void mousePressed(MouseEvent e) {
         if (fDiagram.maybeShowPopup(e))
             return;
         
@@ -94,26 +102,34 @@ public final class DiagramInputHandling implements MouseListener,
         fDiagram.stopLayoutThread();
         int modifiers = e.getModifiers();
         
-        if ( e.getClickCount() == 1  && modifiers == InputEvent.BUTTON1_MASK ) {
-               fDiagram.findEdge( e.getX(), e.getY(), 1 );
-        }
-        
         // mouse over node?
-        PlaceableNode pickedObjectNode = fDiagram.findNode( e.getX(), e.getY());
+        PlaceableNode pickedObjectNode = fDiagram.findNode(e.getX(), e.getY());
+        // mouse over edge?
+        EdgeBase pickedEdge = fDiagram.findEdge(e.getX(), e.getY());
         
         // double click on EdgeProperty than reposition.
-        if ( e.getClickCount() == 2 
-             && modifiers == InputEvent.BUTTON1_MASK ) {
+        if ( e.getClickCount() == 2  && modifiers == InputEvent.BUTTON1_MASK ) {
+        	//FIXME: Define interface!
            if ( pickedObjectNode instanceof EdgeProperty ) {
-                ((EdgeProperty) pickedObjectNode).reposition();
+                ((EdgeProperty) pickedObjectNode).setToAutoPosition();
                 fDiagram.repaint();
                 return;
+           } else if ( pickedObjectNode instanceof ResizeNode) {
+        	   ((ResizeNode) pickedObjectNode).setToCalculatedSize();
+               fDiagram.repaint();
+               return;
+           } else if ( pickedObjectNode instanceof CommentNode) {
+        	   // Contextmenuitem for CommentNode 
+        	   ((CommentNode) pickedObjectNode).setEditable();
+        	   fDiagram.repaint();
+        	   return;
            }
            // is there an edge place a node, which can be moved.
-           fDiagram.findEdge( e.getX(), e.getY(), 2 );
+           if (pickedEdge != null) {
+        	   fDiagram.addWayPoint(e.getX(), e.getY());
+        	   return;
+           }
         }
-        
-        
         
         switch (modifiers) {
         case InputEvent.BUTTON1_MASK:
@@ -124,7 +140,7 @@ public final class DiagramInputHandling implements MouseListener,
                 // nothing (and also leave all other selected items
                 // untouched). In any case this click may be used to
                 // start dragging selected items.
-                if (!fNodeSelection.isSelected(pickedObjectNode)) {
+                if (!(pickedObjectNode instanceof ResizeNode) && !fNodeSelection.isSelected(pickedObjectNode)) {
                     // clear selection
                     fNodeSelection.clear();
                     fEdgeSelection.clear();
@@ -133,20 +149,49 @@ public final class DiagramInputHandling implements MouseListener,
                     fDiagram.repaint();
                 } 
                 // subsequent dragging events will move selected items
-                fDragMode = DRAG_ITEMS;
+                if (pickedObjectNode instanceof ResizeNode) {
+                	resizeNode = (ResizeNode)pickedObjectNode;
+                	fDragMode = DragMode.RESIZE_ITEM;
+                } else {
+                	fDragMode = DragMode.DRAG_ITEMS;
+                	resizeNode = null;
+                }
+                
                 fDragStart = e.getPoint();
-            } else {
-                // click in background, clear selection
-                if ( fNodeSelection.clear() || fEdgeSelection.clear() ) {
+            } else if (pickedEdge != null) {
+            	if (!fEdgeSelection.isSelected(pickedEdge)) {
+                    // clear selection
+                    fNodeSelection.clear();
+                    fEdgeSelection.clear();
+                    // add this component as the only selected item
+                    fEdgeSelection.add(pickedEdge);
                     fDiagram.repaint();
                 }
+            } else {
+                // click in background, clear selection
+            	fNodeSelection.clear();
+            	fEdgeSelection.clear();
+                fDiagram.repaint();
             }
         break;
         case InputEvent.SHIFT_MASK + InputEvent.BUTTON1_MASK:
-            fDragMode = DRAG_NONE;
+            fDragMode = DragMode.DRAG_NONE;
 		    if (pickedObjectNode != null) {
-		        // add this component to the selection
-		        fNodeSelection.add( pickedObjectNode );
+		        // add or remove this component to the selection
+		    	if (fNodeSelection.isSelected(pickedObjectNode))
+		    		fNodeSelection.remove( pickedObjectNode );
+		    	else
+		    		fNodeSelection.add( pickedObjectNode );
+		        
+		    	fDiagram.repaint();
+		    }
+		    if (pickedEdge != null) {
+		        // add or remove this component to the selection
+		        if (fEdgeSelection.isSelected(pickedEdge))
+		        	fEdgeSelection.remove(pickedEdge);
+		        else
+		        	fEdgeSelection.add( pickedEdge );
+		        
 		        fDiagram.repaint();
 		    }
 		break;
@@ -160,10 +205,8 @@ public final class DiagramInputHandling implements MouseListener,
         }
     }
     
-    
-    
-    
-    public void mouseReleased(MouseEvent e) {
+    @Override
+	public void mouseReleased(MouseEvent e) {
         fDiagram.removeMouseMotionListener(this);
         fDiagram.startLayoutThread();
         
@@ -172,39 +215,38 @@ public final class DiagramInputHandling implements MouseListener,
         }
         
         if (fIsDragging) {
-            e.getComponent().setCursor(fCursor);
+            e.getComponent().setCursor(Cursor.getDefaultCursor());
             fIsDragging = false;
-            fDragMode = DRAG_NONE;
-
-            for (Selectable sel : fNodeSelection) {
-                sel.setDragged( false );
-            }
+            fDragMode = DragMode.DRAG_NONE;
         }
+        
         fDiagram.maybeShowPopup(e);
     }
     
-    
-    
-    
-    public void mouseEntered(MouseEvent e) {
+    @Override
+	public void mouseEntered(MouseEvent e) {
     }
     
-    public void mouseExited(MouseEvent e) {
+    @Override
+	public void mouseExited(MouseEvent e) {
+    	if (fDiagram.getStatusBar() != null)
+    		fDiagram.getStatusBar().clearMessage();
     }
     
-    public synchronized void mouseDragged(MouseEvent e) {
+    @Override
+	public synchronized void mouseDragged(MouseEvent e) {
         // ignore dragging events which we are not interested in
-        if (fDragMode == DRAG_NONE)
+        if (fDragMode == DragMode.DRAG_NONE)
             return;
         
-        // switch cursor at start of dragging
-        if (!fIsDragging) {
-            fCursor = fDiagram.getCursor();
+        // switch cursor at start of dragging if move
+        if (!fIsDragging && fDragMode == DragMode.DRAG_ITEMS) {
             fDiagram.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-            fIsDragging = true;
         }
         
-        if (fDragMode == DRAG_ITEMS) {
+        fIsDragging = true;
+        
+        if (fDragMode == DragMode.DRAG_ITEMS) {
             Point p = e.getPoint();
             int dx = p.x - fDragStart.x;
             int dy = p.y - fDragStart.y;
@@ -213,48 +255,98 @@ public final class DiagramInputHandling implements MouseListener,
             
             fDragStart = p;
         }
+        
+        if (fDragMode == DragMode.RESIZE_ITEM) {
+            resizeSelectedObjects(e.getPoint());
+        }
+        
         fDiagram.repaint();
     }
 
+    /**
+     * 
+     * @param dx
+     * @param dy
+     */
+    protected void resizeSelectedObjects(Point p) {
+        // Just to be sure
+    	if (fNodeSelection.isEmpty()) return;
+        
+    	int dx = p.x - fDragStart.x;
+        int dy = p.y - fDragStart.y;
+        
+    	// If single selection we could have
+		// started the dragging for resizing
+		PlaceableNode theNode = fNodeSelection.iterator().next();
+				
+		if (resizeNode != null) {
+			resizeNode.setDraggedPosition(dx, dy);
+			fDiagram.invalidateNode(theNode);
+			fDragStart = p;
+			return;
+		}
+    }
+    
 	/**
 	 * @param dx
 	 * @param dy
 	 */
-	public void moveSelectedObjects(int dx, int dy) {
+	protected void moveSelectedObjects(int dx, int dy) {
+		// move all selected components to new position, 
+		// or resize 
 		for (PlaceableNode sel : fNodeSelection) {
-		    sel.setDragged( true );
-		}
-		
-		// move all selected components to new position.
-		for (PlaceableNode sel : fNodeSelection) {
-		    sel.setDraggedPosition(dx, dy);
-		    
-		    if ( sel instanceof WayPoint ) {
-		        ((WayPoint) sel).setWasMoved( true );
-		    }
+			sel.setDraggedPosition(dx, dy);
+		    // WayPoints and other selectable nodes are not in the graph
+		    if (fDiagram.getGraph().contains(sel))
+		    	fDiagram.invalidateNode(sel);
 		}
 	}
     
-    public void mouseMoved(MouseEvent e) {
+    @Override
+	public void mouseMoved(MouseEvent e) {
+    	if (fDiagram.getStatusBar() != null)
+    		fDiagram.getStatusBar().showMessage("[x=" + e.getPoint().getX() + ", y=" + e.getPoint().getY() + "] ", BorderLayout.EAST);
+    	
+    	PlaceableNode targetNode = null;
+    	
+    	// We allow selected nodes to change the mouse cursor
+    	for (PlaceableNode n : fNodeSelection) {
+    		if (n.occupies(e.getX(), e.getY())) {
+    			targetNode = n;
+    		} else {
+    			targetNode = n.getRelatedNode(e.getX(), e.getY());
+    		}
+    		
+    		if (targetNode != null) {
+    			fDiagram.setCursor(targetNode.getCursor());
+    			return;
+    		}
+    	}
+    	
+    	fDiagram.setCursor(Cursor.getDefaultCursor());
     }
     
     // implementation of interface DragTargetListener
-    public void dragEnter(DropTargetDragEvent dtde) {
+    @Override
+	public void dragEnter(DropTargetDragEvent dtde) {
         //Log.trace(this, "dragEnter");
         dtde.acceptDrag(DnDConstants.ACTION_MOVE);
     }
     
-    public void dragOver(DropTargetDragEvent dtde) {
+    @Override
+	public void dragOver(DropTargetDragEvent dtde) {
         //Log.trace(this, "dragOver");
         dtde.acceptDrag(DnDConstants.ACTION_MOVE);
     }
     
-    public void dropActionChanged(DropTargetDragEvent dtde) {
+    @Override
+	public void dropActionChanged(DropTargetDragEvent dtde) {
         //Log.trace(this, "dropActionChanged");
         dtde.acceptDrag(DnDConstants.ACTION_MOVE);
     }
     
-    public void dragExit(DropTargetEvent dte) {
+    @Override
+	public void dragExit(DropTargetEvent dte) {
         //Log.trace(this, "dragExit");
     }
     
@@ -262,21 +354,16 @@ public final class DiagramInputHandling implements MouseListener,
      * Accepts a drag of a class from the ModelBrowser. A new object of this
      * class will be created.
      */
-    public void drop(DropTargetDropEvent dtde) {
+    @Override
+	public void drop(DropTargetDropEvent dtde) {
         if ( fDiagram instanceof NewObjectDiagram ) {
             ((NewObjectDiagram) fDiagram).dropObjectFromModelBrowser( dtde );
         }
     }
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-	 */
 	@Override
 	public void keyTyped(KeyEvent e) { }
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
-	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (!e.isActionKey()) return;
@@ -308,9 +395,6 @@ public final class DiagramInputHandling implements MouseListener,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-	 */
 	@Override
 	public void keyReleased(KeyEvent e) { }
 }

@@ -25,42 +25,28 @@ import org.tzi.use.uml.sys.MOperationCall;
 
 
 /**
- * TODO
+ * Base class for pre and postconditin failed exceptions.
  * @author Daniel Gent
  *
  */
 public abstract class PPCCheckFailedException extends Exception {
-	/** TODO */
 	private static final long serialVersionUID = 1L;
-	/** TODO */
-	private MOperationCall fCulprit;
-	
+	/** The operation call which failed. */
+	private MOperationCall fOperationCall;
 	
 	/**
-	 * TODO
-	 * @param culprit
+	 * Constructor with all needed information. 
+	 * @param opCall The operation call which failed
 	 */
-	public PPCCheckFailedException(MOperationCall culprit) {
-		fCulprit = culprit;
+	public PPCCheckFailedException(MOperationCall opCall) {
+		fOperationCall = opCall;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param culprit
-	 * @param message
+	 * The operation call which failed
+	 * @return The operation call which failed
 	 */
-	public PPCCheckFailedException(MOperationCall culprit, String message) {
-		super(message);
-		fCulprit = culprit;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MOperationCall getCulprit() {
-		return fCulprit;
+	public MOperationCall getOperationCall() {
+		return fOperationCall;
 	}
 }

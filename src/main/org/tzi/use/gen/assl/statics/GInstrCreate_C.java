@@ -28,7 +28,6 @@ import org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -49,7 +48,7 @@ public class GInstrCreate_C implements GValueInstruction {
     }
 
     public Type type() {
-        return TypeFactory.mkObjectType(fClass);
+        return fClass;
     }
     
     public String toString() {

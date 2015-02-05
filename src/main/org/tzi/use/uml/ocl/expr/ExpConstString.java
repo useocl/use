@@ -32,7 +32,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpConstString extends Expression {
-    private String fValue;
+    private final String fValue;
 
     public ExpConstString(String s) {
         super(TypeFactory.mkString());
@@ -67,5 +67,13 @@ public final class ExpConstString extends Expression {
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitConstString(this);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
+	 */
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
+	}	
 }
 

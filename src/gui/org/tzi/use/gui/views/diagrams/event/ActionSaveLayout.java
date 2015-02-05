@@ -22,7 +22,8 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -46,7 +47,7 @@ public class ActionSaveLayout extends AbstractAction {
     private String fAppendix = "";
     private DiagramView fDiagram;
 
-    private File lastFile = null;
+    private Path lastFile = null;
     
     public ActionSaveLayout( String title, String appendix, DiagramView diagram ) {
         super("Save layout...");
@@ -59,14 +60,16 @@ public class ActionSaveLayout extends AbstractAction {
     public void actionPerformed(ActionEvent e) {        
         int option = JOptionPane.YES_OPTION;
 
-		JFileChooser fChooser = new JFileChooser(Options.getLastDirectory());
+		JFileChooser fChooser = new JFileChooser(Options.getLastDirectory().toFile());
 		ExtFileFilter filter = new ExtFileFilter(fAppendix, fTitle);
-		fChooser.addChoosableFileFilter(filter);
+		fChooser.setFileFilter(filter);
 		fChooser.setDialogTitle("Save layout");
         
-        if (lastFile != null && lastFile.exists()
-				&& lastFile.getParent().equals(Options.getLastDirectory())) {
-			fChooser.setSelectedFile(lastFile);
+        if (   lastFile != null 
+        	&& Files.exists(lastFile)
+			&& lastFile.getParent().equals(Options.getLastDirectory())) {
+			
+        	fChooser.setSelectedFile(lastFile.toFile());
 		}
         
         do {
@@ -74,21 +77,17 @@ public class ActionSaveLayout extends AbstractAction {
             if (returnVal != JFileChooser.APPROVE_OPTION)
                 return;
 
-            Options.setLastDirectory(fChooser.getCurrentDirectory().toString());
+            Options.setLastDirectory(fChooser.getCurrentDirectory().toPath());
             String filename = fChooser.getSelectedFile().getName();
 
             // if file does not have the appendix .olt or .clt at the appendix
-            int dot = filename.lastIndexOf(".");
-            if (dot == -1
-                || !filename.substring(dot, 
-                                       filename.length()).trim()
-                                       .equals( "." + fAppendix )) {
+            if (!filename.endsWith("." + fAppendix)) {
                 filename += "." + fAppendix;
             }
 
-            lastFile = new File(Options.getLastDirectory(), filename);
+            lastFile = Options.getLastDirectory().resolve(filename);
             
-            if (lastFile.exists()) {
+            if (Files.exists(lastFile)) {
                 option = JOptionPane.showConfirmDialog(new JPanel(),
                         "Overwrite existing file " + lastFile + "?",
                         "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);

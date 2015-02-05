@@ -66,5 +66,14 @@ public interface ExpressionVisitor {
 	void visitTupleSelectOp (ExpTupleSelectOp exp);
 	void visitUndefined (ExpUndefined exp);
 	void visitVariable (ExpVariable exp);
-	void visitClosure(ExpClosure expClosure);
+	void visitClosure(ExpClosure exp);
+	void visitOclInState(ExpOclInState exp);
+	void visitVarDeclList(VarDeclList varDeclList);
+	void visitVarDecl(VarDecl varDecl);
+	void visitObjectByUseId(ExpObjectByUseId exp);
+	void visitConstUnlimitedNatural(ExpConstUnlimitedNatural exp);
+	void visitSelectByKind(ExpSelectByKind exp);
+	void visitExpSelectByType(ExpSelectByType exp);
+	void visitRange(ExpRange exp);
+	void visitNavigationClassifierSource(ExpNavigationClassifierSource exp);
 }

@@ -8,7 +8,7 @@ gen result
 * Result: Valid state found.
 * Commands to produce the valid state:
 * !new A('A1')
-* !@A1.a := 11
+* !A1.a := 11
 gen result accept
 * Generated result (system state) accepted.
 quit

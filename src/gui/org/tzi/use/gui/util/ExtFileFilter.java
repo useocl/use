@@ -59,7 +59,8 @@ package org.tzi.use.gui.util;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.filechooser.*;
+
+import javax.swing.filechooser.FileFilter;
 
 /**
  * A convenience implementation of FileFilter that filters out
@@ -165,7 +166,7 @@ public class ExtFileFilter extends FileFilter {
                 return true;
             }
             String extension = getExtension(f);
-            if (extension != null && filters.get(getExtension(f)) != null) {
+            if (extension != null && filters.get(extension) != null) {
                 return true;
             }
         }

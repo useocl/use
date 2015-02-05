@@ -32,7 +32,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpConstInteger extends Expression {
-    private int fValue;
+    private final int fValue;
 
     public ExpConstInteger(int n) {
         super(TypeFactory.mkInteger());
@@ -46,7 +46,8 @@ public final class ExpConstInteger extends Expression {
     /**
      * Evaluates expression and returns result value.
      */
-    public Value eval(EvalContext ctx) {
+    @Override
+	public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = IntegerValue.valueOf(fValue);
         ctx.exit(this, res);
@@ -58,12 +59,14 @@ public final class ExpConstInteger extends Expression {
         return sb.append(fValue);
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitConstInteger(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
 	}
 }
 

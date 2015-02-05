@@ -3,21 +3,21 @@
 !create econCar:EconomicalCar
 !create ship:Ship
 ?Set{econCar, fuelCar}
-*-> Set{@econCar,@fuelCar} : Set(Car)
+*-> Set{econCar,fuelCar} : Set(Car)
 ?Set{econCar, fuelCar, amphCar}
-*-> Set{@amphCar,@econCar,@fuelCar} : Set(Car)
+*-> Set{amphCar,econCar,fuelCar} : Set(Car)
 ?Set{econCar, fuelCar, amphCar, ship}
-*-> Set{@amphCar,@econCar,@fuelCar,@ship} : Set(Vehicle)
+*-> Set{amphCar,econCar,fuelCar,ship} : Set(Vehicle)
 ?Set{amphCar, ship}
-*-> Set{@amphCar,@ship} : Set(Ship)
+*-> Set{amphCar,ship} : Set(Ship)
 ?Set{econCar, fuelCar, amphCar, ship, 'Hello'}
-*-> Set{'Hello',@amphCar,@econCar,@fuelCar,@ship} : Set(OclAny)
+*-> Set{'Hello',amphCar,econCar,fuelCar,ship} : Set(OclAny)
 ?Set{}->including(amphCar)
-*-> Set{@amphCar} : Set(AmphibianCar)
+*-> Set{amphCar} : Set(AmphibianCar)
 ?Set{}->including(amphCar)->including(econCar)
-*-> Set{@amphCar,@econCar} : Set(Car)
+*-> Set{amphCar,econCar} : Set(Car)
 ?Set{}->including(amphCar)->including(econCar)->including(ship)
-*-> Set{@amphCar,@econCar,@ship} : Set(Vehicle)
+*-> Set{amphCar,econCar,ship} : Set(Vehicle)
 ?Set{}->including(amphCar)->including(econCar)->including(ship)->including(1)
 *<input>:1:64: Operation call `Set(Vehicle)->including(Integer)' results in type `Set(OclAny)'.
 *This may lead to unexpected behavior.

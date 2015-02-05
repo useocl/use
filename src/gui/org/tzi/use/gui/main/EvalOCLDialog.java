@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.main;
 
 import java.awt.BorderLayout;
@@ -26,6 +24,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -44,11 +44,13 @@ import javax.swing.JTextArea;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.TextComponentWriter;
-import org.tzi.use.gui.views.ExprEvalBrowser;
+import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
 import org.tzi.use.main.ChangeEvent;
 import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;
 import org.tzi.use.parser.ocl.OCLCompiler;
+import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
@@ -67,42 +69,55 @@ import org.tzi.use.util.TeeWriter;
 class EvalOCLDialog extends JDialog {
     private MSystem fSystem;
 
-    private JTextArea fTextIn;
+    private final JTextArea fTextIn;
 
-    private JTextArea fTextOut;
+    private final JTextArea fTextOut;
 
     private ExprEvalBrowser fEvalBrowser;
 
     private Evaluator evaluator;
 
-    private JButton btnEvalBrowser;
+    private final JButton btnEvalBrowser;
     
-    private JButton btnEval;
+    private final JButton btnEval;
     
-    EvalOCLDialog(Session session, JFrame parent) {
+    private final ChangeListener sessionChangeListener = new ChangeListener() {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			Session session = (Session)e.getSource();
+			fSystem = getSystem(session);
+		}
+	};
+    
+    EvalOCLDialog(final Session session, JFrame parent) {
         super(parent, "Evaluate OCL expression");
-        fSystem = session.system();
-        session.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Session session = (Session)e.getSource();
-				
-				fSystem = session.hasSystem() ? session.system() : null;
-				btnEvalBrowser.setEnabled(session.hasSystem());
-				btnEval.setEnabled(session.hasSystem());
-			}
-		});
+    	fSystem = getSystem(session);
+        session.addChangeListener(sessionChangeListener);
         
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        // unregister from session on close
+        addWindowListener(new WindowAdapter() {
+        	@Override
+        	public void windowClosing(WindowEvent e) {
+        		session.removeChangeListener(sessionChangeListener);
+        	}
+		});
 
+        // Use font specified in the settings 
+        Font evalFont = Font.getFont("use.gui.evalFont", getFont());
+        
         // create text components and labels
         fTextIn = new JTextArea();
-        fTextIn.setFont(new Font("Monospaced", Font.PLAIN, getFont().getSize()));
+        fTextIn.setFont(evalFont);
         JLabel textInLabel = new JLabel("Enter OCL expression:");
         textInLabel.setDisplayedMnemonic('O');
         textInLabel.setLabelFor(fTextIn);
+        
         fTextOut = new JTextArea();
         fTextOut.setEditable(false);
+        fTextOut.setLineWrap(true);
+        fTextOut.setFont(evalFont);
+        
         JLabel textOutLabel = new JLabel("Result:");
         textOutLabel.setLabelFor(fTextOut);
 
@@ -130,48 +145,50 @@ class EvalOCLDialog extends JDialog {
         btnEval.setMnemonic('E');
         
         btnEval.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                evaluate(fTextIn.getText());
-                String out = fTextOut.getText();
-                if (out != null && out.length() > 4
-                        && !out.substring(0, 4).equals("Error")) {
-                    btnEvalBrowser.setEnabled(true);
-                    if (fEvalBrowser != null
-                            && fEvalBrowser.getFrame().isVisible()) {
-                        fEvalBrowser.updateEvalBrowser(evaluator
+            @Override
+			public void actionPerformed(ActionEvent e) {
+            	if(fEvalBrowser != null && fEvalBrowser.getFrame().isVisible()){
+            		// if evaluation browser is already open, update it as well
+            		boolean evalSuccess = evaluate(fTextIn.getText(), true);
+            		
+            		if(evalSuccess){
+            			fEvalBrowser.updateEvalBrowser(evaluator
                                 .getEvalNodeRoot());
-                    }
-                } else {
-                    btnEvalBrowser.setEnabled(false);
-                    if (fEvalBrowser != null) {
-                        fEvalBrowser.getFrame().setVisible(false);
-                        fEvalBrowser.getFrame().dispose();
-                    }
-                }
-
+            		}
+            	}
+            	else {
+            		evaluate(fTextIn.getText(), false);
+            	}
             }
         });
         Dimension dim = btnEval.getMaximumSize();
         dim.width = Short.MAX_VALUE;
         btnEval.setMaximumSize(dim);
         btnEvalBrowser.setMnemonic('B');
-        btnEvalBrowser.setEnabled(false);
         btnEvalBrowser.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (fEvalBrowser != null && fEvalBrowser.getFrame().isVisible()) {
-                    fEvalBrowser.getFrame().setVisible(true);
-                } else {
-                    fEvalBrowser = ExprEvalBrowser.create(evaluator
-                            .getEvalNodeRoot(), fSystem);
+            @Override
+			public void actionPerformed(ActionEvent e) {
+            	// Error message is printed by evaluate method
+            	boolean evalSuccess = evaluate(fTextIn.getText(), true);
+                
+                if(evalSuccess){
+                	if (fEvalBrowser != null && fEvalBrowser.getFrame().isVisible()) {
+                		fEvalBrowser.updateEvalBrowser(evaluator
+                                .getEvalNodeRoot());
+                		fEvalBrowser.getFrame().requestFocus();
+                	} else {
+                		fEvalBrowser = ExprEvalBrowser.create(evaluator
+                				.getEvalNodeRoot(), fSystem);
+                	}
                 }
             }
         });
         JButton btnClear = new JButton("Clear");
         btnClear.setMnemonic('C');
         btnClear.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 fTextOut.setText(null);
-                btnEvalBrowser.setEnabled(false);
                 if (fEvalBrowser != null) {
                     fEvalBrowser.getFrame().setVisible(false);
                     fEvalBrowser.getFrame().dispose();
@@ -183,7 +200,8 @@ class EvalOCLDialog extends JDialog {
         btnClear.setMaximumSize(dim);
         JButton btnClose = new JButton("Close");
         btnClose.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 closeDialog();
                 if (fEvalBrowser != null) {
                     fEvalBrowser.getFrame().setVisible(false);
@@ -223,15 +241,31 @@ class EvalOCLDialog extends JDialog {
         fTextOut.addKeyListener(ekl);
     }
 
-    private void closeDialog() {
+    /**
+     * Returns the session's system if available or an empty model.
+     * 
+	 * @param session current session
+	 * @return a system to evaluate expressions in
+	 */
+	private MSystem getSystem(Session session) {
+		if(session.hasSystem()){
+			return session.system();
+		}
+		else {
+			MModel model = new ModelFactory().createModel("empty model");
+			return new MSystem(model);
+		}
+	}
+
+	private void closeDialog() {
         setVisible(false);
         dispose();
     }
 
-    private void evaluate(String in) {
+    private boolean evaluate(String in, boolean evalTree) {
         if (this.fSystem == null) {
         	fTextOut.setText("No system!");
-        	return;
+        	return false;
         }
         
     	// clear previous results
@@ -252,7 +286,7 @@ class EvalOCLDialog extends JDialog {
                 out, 
                 fSystem.varBindings());
         
-       
+        
         out.flush();
         fTextIn.requestFocus();
 
@@ -279,19 +313,20 @@ class EvalOCLDialog extends JDialog {
                     fTextIn.setCaretPosition(caret);
                 } catch (NumberFormatException ex) { }
             }
-            return;
+            return false;
         }
 
         try {
             // evaluate it with current system state
-            evaluator = new Evaluator(true);
+            evaluator = new Evaluator(evalTree);
             Value val = evaluator.eval(expr, fSystem.state(), fSystem
                     .varBindings());
             // print result
             fTextOut.setText(val.toStringWithType());
-
+            return true;
         } catch (MultiplicityViolationException e) {
             fTextOut.setText("Could not evaluate. " + e.getMessage());
         }
+        return false;
     }
 }

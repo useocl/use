@@ -16,14 +16,14 @@ gen result
 *!new B('B2')
 *!new B('B3')
 *!new B('B4')
-*!new AB('AB1') between (@A2,@B1)
-*!@AB1.c := 1
-*!new AB('AB2') between (@A2,@B2)
-*!@AB2.c := 1
-*!new AB('AB3') between (@A2,@B3)
-*!@AB3.c := 1
-*!new AB('AB4') between (@A2,@B4)
-*!@AB4.c := 1
+*!new AB('AB1') between (A2,B1)
+*!AB1.c := 1
+*!new AB('AB2') between (A2,B2)
+*!AB2.c := 1
+*!new AB('AB3') between (A2,B3)
+*!AB3.c := 1
+*!new AB('AB4') between (A2,B4)
+*!AB4.c := 1
 gen result accept
 *Generated result (system state) accepted.
 reset
@@ -44,14 +44,14 @@ gen result
 *!new B('B2')
 *!new B('B3')
 *!new B('B4')
-*!new AB('AB1') between (@A2,@B1)
-*!@AB1.c := 1
-*!new AB('AB2') between (@A2,@B2)
-*!@AB2.c := 1
-*!new AB('AB3') between (@A2,@B3)
-*!@AB3.c := 1
-*!new AB('AB4') between (@A2,@B4)
-*!@AB4.c := 1
+*!new AB('AB1') between (A2,B1)
+*!AB1.c := 1
+*!new AB('AB2') between (A2,B2)
+*!AB2.c := 1
+*!new AB('AB3') between (A2,B3)
+*!AB3.c := 1
+*!new AB('AB4') between (A2,B4)
+*!AB4.c := 1
 gen result accept
 *Generated result (system state) accepted.
 reset
@@ -59,7 +59,7 @@ gen start -r 703 -t t097.assl tryAC(4,4)
 gen result
 *Random number generator was initialized with 703.
 *Checked 1 snapshots.
-*Checked 2 times.
+*Checks including barriers: 2.
 *Made 0 try cuts.
 *Ignored at least 64,911 useless link combinations.
 *Added 1 barriers.
@@ -74,8 +74,8 @@ gen result
 *!new B('B2')
 *!new B('B3')
 *!new B('B4')
-*!insert (@A1,@B4) into AB
-*!@AB1.c := 1
+*!insert (A1,B4) into AB
+*!AB1.c := 1
 gen result accept
 *Generated result (system state) accepted.
 reset
@@ -83,7 +83,7 @@ gen start -r 703 -t -ac t097.assl tryAC(4,4)
 gen result
 *Random number generator was initialized with 703.
 *Checked 1 snapshots.
-*Checked 2 times.
+*Checks including barriers: 2.
 *Made 0 try cuts.
 *Added 1 barriers.
 *Barriers blocked 1 times.
@@ -97,8 +97,8 @@ gen result
 *!new B('B2')
 *!new B('B3')
 *!new B('B4')
-*!new AB between (@A1,@B1)
-*!@AB1.c := 1
+*!new AB between (A1,B1)
+*!AB1.c := 1
 gen result accept
 *Generated result (system state) accepted.
 exit

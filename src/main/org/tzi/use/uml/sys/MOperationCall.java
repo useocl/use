@@ -22,14 +22,20 @@
 package org.tzi.use.uml.sys;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.statemachines.MRegion;
+import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
@@ -39,51 +45,95 @@ import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.StringUtil;
 
 
 /**
- * TODO
+ * This class handles an operation call
+ * inside of soil or with the legacy command "openter".
  * @author Daniel Gent
  *
  */
-public class MOperationCall {
-	/** TODO */
-	private SrcPos fCallerSourcePos;
-	/** TODO */
-	private String fCallerString;
-	/** TODO */
+public class MOperationCall {	
+	/** The caller expression of the operation call.
+	 *  <p>Used for detailed output.</p>
+	 *  <p>If this attribute is <code>null</code>, {@link #fCallerStatement} is set.</p> 
+	 */
+	private final Expression fCallerExpression;
+	/** The caller statement of the operation call.
+	 *  <p>Used for detailed output</p>
+	 *  <p>If this attribute is <code>null</code>, {@link #fCallerExpression} is set.</p> 
+	 */
+	private final MStatement fCallerStatement;
+	
+	/** The "self-pointer" for this operation call, i. e., 
+	 *  the receiver of the message
+	 */
 	private MObject fSelf;
-	/** TODO */
+	
+	/**
+	 * The called operation
+	 */
 	private MOperation fOperation;
-	/** TODO */
+	
+	/** 
+	 * The arguments of the operation all
+	 */
 	private Value[] fArguments;
-	/** TODO */
+	
+	/** 
+	 * Reference to the system state before the operation was called.
+	 * Needed for using <code>@pre</code> in postconditions and other
+	 * functions. 
+	 */
 	private MSystemState fPreState;
-	/** TODO */
+	
+	/** The preferred PPC handler. Can be set externally */
 	private PPCHandler fPreferredPPCHandler;
-	/** TODO */
-	private LinkedHashMap<MPrePostCondition, Boolean> fPreConditionCheckResults;
-	/** TODO */
-	private LinkedHashMap<MPrePostCondition, Boolean> fPostConditionCheckResults;
-	/** TODO */
+	
+	/** Stores the evaluation results of the preconditions */
+	private Map<MPrePostCondition, Boolean> fPreConditionCheckResults;
+	
+	/** Stores the evaluation results of the postconditions */
+	private Map<MPrePostCondition, Boolean> fPostConditionCheckResults;
+	
+	/** Information about the success of the operation enter. Is set externally. */
 	private boolean fEnteredSuccessfully = false;
-	/** TODO */
+	
+	/** Information about the current state of the operation call. */
 	private boolean fExited = false;
-	/** TODO */
+	
+	/** Information about the success of the operation exit. Is set externally. */
 	private boolean fExitedSuccessfully = false;
-	/** TODO */
+	
+	/** Information about the success of the overall operation call. Is set externally. */
 	private boolean fExecutionFailed = false;
-	/** TODO */
+	
+	/** 
+	 * Saves the result value if this operation call, if any. 
+	 */
 	private Value fResultValue;
 	
 	/**
-	 * The var bindings used by the operation call
+	 * The variable bindings used by the operation call
 	 */
 	private VarBindings varBindings;
 	
 	/**
-	 * TODO
+	 * Cache for possible transitions that could be
+	 * taken when the operation returns.	
+	 */
+	private Map<MProtocolStateMachineInstance, Map<MRegion, Set<MTransition>>> possibleTransitions = null;
+		
+	/**
+	 * Saves all executed transitions after the operation was exited.
+	 * Needed to be able to revert an operation call.
+	 */
+	private Map<MProtocolStateMachineInstance, Set<MTransition>> executedTransitions = null;
+	
+	/**
+	 * Private constructor with all required values.
 	 * @param self
 	 * @param operation
 	 * @param arguments
@@ -91,16 +141,21 @@ public class MOperationCall {
 	private MOperationCall(
 			MObject self, 
 			MOperation operation, 
-			Value[] arguments) {
+			Value[] arguments,
+			Expression callerExpression,
+			MStatement callerStatement) {
 		
 		fSelf = self;
 		fOperation = operation;
-		fArguments = arguments;		
+		fArguments = arguments;
+		fCallerExpression = callerExpression;
+		fCallerStatement = callerStatement;
 	}
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new operation call object with the statement <code>caller</code>
+	 * as the source of the operation call.
 	 * @param caller
 	 * @param self
 	 * @param operation
@@ -112,14 +167,13 @@ public class MOperationCall {
 			MOperation operation, 
 			Value[] arguments) {
 		
-		this(self, operation, arguments);
-		fCallerSourcePos = caller.getSourcePosition();
-		fCallerString = caller.toString();
+		this(self, operation, arguments, null, caller);
 	}
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new operation call object with the expression <code>caller</code>
+	 * as the source of the operation call.
 	 * @param caller
 	 * @param self
 	 * @param operation
@@ -131,14 +185,11 @@ public class MOperationCall {
 			MOperation operation,
 			Value[] arguments) {
 		
-		this(self, operation, arguments);
-		fCallerSourcePos = 
-			new SrcPos(caller.getSourceExpression().getStartToken());
-		fCallerString = caller.toString();
+		this(self, operation, arguments, caller, null);
 	}
 	
 	/**
-	 * TODO
+	 * The receiver of the operation call.
 	 * @return
 	 */
 	public MObject getSelf() {
@@ -146,41 +197,40 @@ public class MOperationCall {
 	}
 	
 	
+	/**
+	 * Returns the pre state of the operation call.
+	 * @return
+	 */
     public MSystemState getPreState() {
     	return fPreState;
     }
     
 	/**
-	 * TODO
+	 * The called operation.
 	 * @return
 	 */
 	public MOperation getOperation() {
 		return fOperation;
 	}
 	
-	
 	/**
-	 * TODO
+	 * Returns all argument values.
 	 * @return
 	 */
 	public Value[] getArguments() {
 		return fArguments;
 	}
-	
-	
-	
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * Access to the information of the overall operation call execution.
+	 * @return <code>true</code> if the execution failed.
 	 */
 	public boolean executionHasFailed() {
 		return fExecutionFailed;
 	}
 	
-	
 	/**
-	 * TODO
+	 * Sets information about the execution of the operation.
 	 * @param executionFailed
 	 */
 	public void setExecutionFailed(boolean executionFailed) {
@@ -188,7 +238,7 @@ public class MOperationCall {
 	}
 	
 	/**
-	 * TODO
+	 * Sets the pre state of the operation call.
 	 * @param preState
 	 */
 	public void setPreState(MSystemState preState) {
@@ -197,17 +247,16 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Access to the result value, if any.
+	 * @return The result value of the operation. Maybe <code>null</code>.
 	 */
 	public Value getResultValue() {
 		return fResultValue;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param resultValue
+	 * Sets the result value of this operation call.
+	 * @param resultValue The result value.
 	 */
 	public void setResultValue(Value resultValue) {
 		fResultValue = resultValue;
@@ -215,7 +264,7 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Access to information about the entrance of the operation call.
 	 * @return
 	 */
 	public boolean enteredSuccessfully() {
@@ -224,8 +273,8 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
-	 * @param enteredSuccessfully
+	 * Sets information about the entrance success.
+	 * @param enteredSuccessfully The success state of the operation call enter.
 	 */
 	public void setEnteredSuccessfully(boolean enteredSuccessfully) {
 		fEnteredSuccessfully = enteredSuccessfully;
@@ -233,8 +282,8 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
-	 * @param exitedSuccessfully
+	 * Sets information about the exit success.
+	 * @param exitedSuccessfully The success state of the exit.
 	 */
 	public void setExitedSuccessfully(boolean exitedSuccessfully) {
 		fExitedSuccessfully = exitedSuccessfully;
@@ -243,7 +292,7 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Sets the state of the operation call.
 	 * @param exited
 	 */
 	public void setExited(boolean exited) {
@@ -252,7 +301,7 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Access to the information about the success of the operation exit.
 	 * @return
 	 */
 	public boolean exitedSuccessfully() {
@@ -261,7 +310,7 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Access to the information about the current state of the operation call.
 	 * @return
 	 */
 	public boolean exited() {
@@ -270,7 +319,7 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * <code>true</code>, if the called operation defines pre conditions.
 	 * @return
 	 */
 	public boolean hasPreConditions() {
@@ -279,7 +328,7 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * <code>true</code>, if the called operation defines post conditions.
 	 * @return
 	 */
 	public boolean hasPostConditions() {
@@ -288,47 +337,43 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Returns all evaluation results of the pre conditions.
 	 * @return
 	 */
-	public LinkedHashMap<MPrePostCondition, Boolean> getPreConditionEvaluationResults() {
+	public Map<MPrePostCondition, Boolean> getPreConditionEvaluationResults() {
 		return fPreConditionCheckResults;
 	}
 	
 	
 	/**
-	 * TODO
+	 * Returns all failed pre conditions.
 	 * @return
 	 */
 	public List<MPrePostCondition> getFailedPreConditions() {
 		return getFailedPPCs(fPreConditionCheckResults);
 	}
-	
-	
 
-
+	
 	/**
-	 * TODO
+	 * Sets the evaluation results of the post conditions.
 	 * @param results
 	 */
-	public void setPreConditionsCheckResult(
-			LinkedHashMap<MPrePostCondition, Boolean> results) {
-		
-		fPreConditionCheckResults = results;	
+	public void setPreConditionsCheckResult(Map<MPrePostCondition, Boolean> results) {
+		fPreConditionCheckResults = results;
 	}
 	
 	
 	/**
-	 * TODO
+	 * Returns all evaluation results of the post conditions. 
 	 * @return
 	 */
-	public LinkedHashMap<MPrePostCondition, Boolean> getPostConditionEvaluationResults() {
+	public Map<MPrePostCondition, Boolean> getPostConditionEvaluationResults() {
 		return fPostConditionCheckResults;
 	}
 	
 	
 	/**
-	 * TODO
+	 * Returns all failed post conditions.
 	 * @return
 	 */
 	public List<MPrePostCondition> getFailedPostConditions() {
@@ -337,19 +382,24 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Sets the evaluation results of the post conditions.
 	 * @param results
 	 */
-	public void setPostConditionsCheckResult(
-			LinkedHashMap<MPrePostCondition, Boolean> results) {
-		
-		fPostConditionCheckResults = results;	
+	public void setPostConditionsCheckResult(Map<MPrePostCondition, Boolean> results) {
+		fPostConditionCheckResults = results;
 	}
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns the default PPCHandler of this operation call.
+	 * The default values are:
+	 * <ul>
+	 *   <li>{@link ExpressionPPCHandler#getDefaultOutputHandler()}: <br/>If the called operation has an OCL-body, i. e., it is a OCL query operation.
+	 *   <li>{@link SoilPPCHandler#getDefaultOutputHandler()}:</br> If the called operation has a SOIL-body.
+	 *   <li>{@link OpEnterOpExitPPCHandler#getDefaultOutputHandler()}:</br> If it has no body (legacy openter / opexit).
+	 *   <li>{@link DoNothingPPCHandler#getInstance()}:</br> otherwise.
+	 * </ul> 
+	 * @return The default PPCHandler for the called operation.
 	 */
 	public PPCHandler getDefaultPPCHandler() {
 		if (fOperation.hasExpression()) {
@@ -365,7 +415,7 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Returns a possible defined preferred PPC handler, which overrides the default handler.
 	 * @return
 	 */
 	public PPCHandler getPreferredPPCHandler() {
@@ -374,7 +424,8 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Returns <code>true</code> if a preferred
+	 * PPC handler was set.
 	 * @return
 	 */
 	public boolean hasPreferredPPCHandler() {
@@ -383,21 +434,19 @@ public class MOperationCall {
 	
 	
 	/**
-	 * TODO
+	 * Sets the preferred PPC handler.
 	 * @param preferredPPCHandler
 	 */
 	public void setPreferredPPCHandler(PPCHandler preferredPPCHandler) {
 		fPreferredPPCHandler = preferredPPCHandler;
 	}
-	
-	
+		
 	/**
-	 * TODO
-	 * @param evaluationResults
-	 * @return
+	 * Extracts all failed pre- or postconditions from the provided evaluation results.
+	 * @param evaluationResults The evaluation results to filter.
+	 * @return A list of all failed pre- or postconditions which were included in <code>evaluationResults</code>.
 	 */
-	private List<MPrePostCondition> getFailedPPCs(
-			Map<MPrePostCondition, Boolean> evaluationResults) {
+	private List<MPrePostCondition> getFailedPPCs(Map<MPrePostCondition, Boolean> evaluationResults) {
 		
 		List<MPrePostCondition> result = new ArrayList<MPrePostCondition>();
 		
@@ -421,23 +470,32 @@ public class MOperationCall {
 	}
 	
 	/**
-	 * TODO
+	 * Returns a String with information about the caller.
+	 * <p>The String has the following form:<br/>
+	 * <b>[caller: </b> <code>(callerExpression|callerStatement|<b>&lt;unknown&gt;</b>)</code><b>@</b><code>(sourcePos|<b>&lt;unknown&gt;)</b></code><b>]</b></p>
 	 * @return
 	 */
 	public String getCallerString() {
 		StringBuilder result = new StringBuilder();
+		SrcPos sourcePosition;
 		
 		result.append("[caller: ");
-		result.append(fCallerString == null ? "<unknown>" : fCallerString);
+		if (fCallerExpression != null) {
+			fCallerExpression.toString(result);
+			sourcePosition = fCallerExpression.getSourcePosition();
+		} else if (fCallerStatement != null) {
+			result.append(fCallerStatement.toString());
+			sourcePosition = fCallerStatement.getSourcePosition();
+		} else {
+			result.append("<unknown>");
+			sourcePosition = null;
+		}
+		
 		result.append("@");
-		if (fCallerSourcePos == null) {
+		if (sourcePosition == null) {
 			result.append("<unknown>");
 		} else {
-			result.append(fCallerSourcePos.srcName());
-			result.append(":");
-			result.append(fCallerSourcePos.line());
-			result.append(":");
-			result.append(fCallerSourcePos.column());
+			result.append(sourcePosition.toString(true));
 		}
 		result.append("]");
 		
@@ -497,4 +555,100 @@ public class MOperationCall {
     public boolean requiresVariableFrameInEnvironment() {
         return fOperation.expression() == null;
     }
+
+
+	/**
+	 * Stores possible transitions of an operation call.
+	 * Used to be able to skip the calculation of the
+	 * possible transitions after an operation call has been executed.
+	 * @param psm
+	 * @param possibleTransitions
+	 */
+	public void putPossibleTransitions(MProtocolStateMachineInstance psm,
+			Map<MRegion, Set<MTransition>> possibleTransitions) {
+		
+		if (this.possibleTransitions == null) {
+			this.possibleTransitions = new HashMap<MProtocolStateMachineInstance, Map<MRegion, Set<MTransition>>>();
+		}
+		
+		this.possibleTransitions.put(psm, possibleTransitions);
+	}
+	
+	/**
+	 * Stores executed transitions of an operation call.
+	 * Used to be able to revert the operation call.
+	 * @param psm
+	 * @param executedTrans
+	 */
+	public void putExecutedTransitions(MProtocolStateMachineInstance psm,
+			Set<MTransition> executedTrans) {
+		
+		if (this.executedTransitions == null) {
+			this.executedTransitions = new HashMap<MProtocolStateMachineInstance, Set<MTransition>>();
+		}
+		
+		this.executedTransitions.put(psm, executedTrans);
+	}
+	
+	/**
+	 * Returns previously set transitions that could be taken
+	 * when the operation is returning.
+	 * @param psm
+	 * @return
+	 */
+	public Map<MRegion, Set<MTransition>> getPossibleTransitions(MProtocolStateMachineInstance psm) {
+		if (this.possibleTransitions == null) 
+			return Collections.emptyMap();
+		
+		return this.possibleTransitions.get(psm);
+	}
+	
+	public Map<MProtocolStateMachineInstance, Map<MRegion, Set<MTransition>>> getAllPossibleTransitions() {
+		if (this.possibleTransitions == null) {
+			return Collections.emptyMap();
+		}
+		
+		return this.possibleTransitions;
+	}
+	
+	/**
+	 * returns <code>true</code> if the operation call could 
+	 * execute a transition.
+	 * @return
+	 */
+	public boolean hasPossibleTransitions() {
+		return (this.possibleTransitions != null);
+	}
+	
+	/**
+	 * Returns previously set transitions that were taken
+	 * after the operation executed.
+	 * @param psm
+	 * @return
+	 */
+	public Map<MProtocolStateMachineInstance, Set<MTransition>> getExecutedTransitions() {
+		return this.executedTransitions;
+	}
+
+	/**
+	 * <code>true</code> if the operation call executed any transition.
+	 * @return
+	 */
+	public boolean hasExecutedTransitions() {
+		return executedTransitions != null && executedTransitions.size() > 0;
+	}
+
+	/**
+	 * @param t
+	 */
+	public void addExecutedTransition(MProtocolStateMachineInstance psm, MTransition t) {
+		if (executedTransitions == null)
+			executedTransitions = new HashMap<MProtocolStateMachineInstance, Set<MTransition>>();
+		
+		if (!executedTransitions.containsKey(psm)) {
+			executedTransitions.put(psm, new HashSet<MTransition>());
+		}
+		
+		executedTransitions.get(psm).add(t);
+	}
 }

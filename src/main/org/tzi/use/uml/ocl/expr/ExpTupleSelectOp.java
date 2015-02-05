@@ -27,9 +27,8 @@ import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 
 /**
- * Attribute operation on objects.
+ * Attribute operation on tuple.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpTupleSelectOp extends Expression {
@@ -37,10 +36,10 @@ public final class ExpTupleSelectOp extends Expression {
     private Expression fTupleExp;
     
     public ExpTupleSelectOp(TupleType.Part part, Expression tupleExp) {
-        super(part.type(), tupleExp);
+        super(part.type());
         fPart = part;
         fTupleExp = tupleExp;
-        if (! tupleExp.type().isTupleType(false) )
+        if (! tupleExp.type().isTypeOfTupleType() )
             throw new IllegalArgumentException("Target expression of tuple selection operation " +
                                                "must have tuple type, found `" + 
                                                fTupleExp.type() + "'.");
@@ -67,13 +66,31 @@ public final class ExpTupleSelectOp extends Expression {
         ctx.exit(this, res);
         return res;
     }
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+    
+    /**
+     * Returns the part of the tuple select expression.
+	 * @return the part
 	 */
+	public TupleType.Part getPart() {
+		return fPart;
+	}
+	
+	/**
+	 * Returns the tuple expression.
+	 * @return the tuple expression
+	 */
+	public Expression getTupleExp() {
+		return fTupleExp;
+	}
+
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitTupleSelectOp(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return fTupleExp.requiresPreState();
 	}
 }
 

@@ -31,7 +31,6 @@ import org.tzi.use.util.Log;
 /**
  * Context information used during evaluation.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 
@@ -41,14 +40,14 @@ public class EvalContext {
     private final VarBindings fVarBindings;
     private int fNesting;   // for indentation during trace
     
-    private final PrintWriter fEvalLog; // may be null
+    private final PrintWriter fEvalLog; // may be null    
     private final String fEvalLogIndent;
     
     private final boolean isTracing;
-
+    
     /**
      * Creates new evaluation context. The parameter preState may be
-     * null in which case it is set to postState.
+     * <code>null</code>.
      * @param preState the pre <code>MSystemState</code> for the evaluation. May be <code>null</code>
      * @param postState the current <code>MSystemState</code> for the evaluation
      * @param globalBindings the global <code>VarBindings</code>
@@ -69,6 +68,24 @@ public class EvalContext {
         isTracing = Log.isTracing();
     }
 
+    /**
+     * Copy constructor to create a new evaluation context with different
+     * states and bindings, but with the same setup, e.g., indent.
+     * @param preState The used pre state
+     * @param postState The used post state
+     * @param globalBindings the global <code>VarBindings</code>
+     * @param src the <code>EvalContext</code> to copy the settings from
+     */
+	public EvalContext(MSystemState preState, MSystemState postState, VarBindings globalBindings, EvalContext src) {
+		fPreState = preState;
+		fPostState = postState;
+		fVarBindings = new VarBindings(globalBindings);
+		fNesting = src.fNesting;
+		fEvalLog = src.fEvalLog;
+		fEvalLogIndent = src.fEvalLogIndent;
+		isTracing = src.isTracing;
+	}
+    
     public boolean isEnableEvalTree() { return false; }
     
     /**
@@ -127,8 +144,8 @@ public class EvalContext {
     }
 
     void enter(Expression expr) {
-        fNesting++;
         if (isTracing) {
+        	++fNesting;
             String ec = expr.getClass().getName();
             ec = ec.substring(ec.lastIndexOf(".") + 1);
             Log.trace(this, indent() + "enter " + ec + " \"" + expr + "\"");
@@ -136,16 +153,16 @@ public class EvalContext {
     }
 
     void exit(Expression expr, Value result) {
-        fNesting--;
         if (isTracing) {
+        	--fNesting;
             Log.trace(this, indent() + "exit  \"" + expr + "\" = " + result);
         }
 
         // print the results sequentially from the innermost
         // subexpression to the outermost expression
-        if ( fEvalLog != null )
-            fEvalLog.println(fEvalLogIndent + expr + " : " + 
-                             result.type() + " = " + result);
+        if ( fEvalLog != null ) {
+            fEvalLog.println(fEvalLogIndent + expr + " : " + result.type() + " = " + result);
+        }
     }
 
     private String indent() {

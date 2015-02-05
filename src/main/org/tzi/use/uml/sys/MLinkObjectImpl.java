@@ -29,8 +29,6 @@ import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
@@ -40,14 +38,17 @@ import org.tzi.use.util.StringUtil;
  * An link object is an instance of an association class. It usually has different
  * object states over time and is connected to several objects.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
+ * @author Lars Hamann
  */
 
 public class MLinkObjectImpl implements MLinkObject {
-    private MLink delegatesLink;
-    private MObject delegatesObject;
+    
+	private final MLink delegatesLink;
+    
+    private final MObject delegatesObject;
+    
     // Delegates all methodcalls to MLinkImpl or MObjectImpl
 
     /**
@@ -70,14 +71,6 @@ public class MLinkObjectImpl implements MLinkObject {
     }
 
     /**
-     * Returns the type of this link object.
-     */
-    @Override
-    public ObjectType type() {
-        return delegatesObject.type();
-    }
-
-    /**
      * Returns a name for this link object.
      */
     @Override
@@ -87,7 +80,7 @@ public class MLinkObjectImpl implements MLinkObject {
     
     @Override
     public ObjectValue value() {
-    	return new ObjectValue(TypeFactory.mkObjectType(cls()), this);
+    	return new ObjectValue(cls(), this);
     }
 
     
@@ -110,15 +103,11 @@ public class MLinkObjectImpl implements MLinkObject {
     }
 
     @Override
-    public List<MObject> getLinkedObjects( MSystemState systemState,
-                                  MAssociationEnd srcEnd, MAssociationEnd dstEnd, List<Value> qualifierValues ) {
-        return systemState.getLinkedObjects( this, srcEnd, dstEnd, qualifierValues );
-    }
-
-    @Override
     public List<MObject> getNavigableObjects( MSystemState systemState,
                                      MNavigableElement src, MNavigableElement dst, List<Value> qualifierValues ) {
-        return systemState.getNavigableObjects( this, src, dst, qualifierValues );
+        // Here, delegation is not possible, because this instance is saved for link sets.
+    	// Therefore, the delegation to this.delegateObject would result in empty data for navigation.
+    	return systemState.getNavigableObjects( this, src, dst, qualifierValues );
     }
 
     @Override
@@ -156,13 +145,15 @@ public class MLinkObjectImpl implements MLinkObject {
         return delegatesLink.linkedObjectsAsArray();
     }
 
-    /**
-     * Returns the link end for the given association end.
-     */
+    @Override
     public MLinkEnd linkEnd( MAssociationEnd aend ) {
         return delegatesLink.linkEnd( aend );
     }
 
+    @Override
+    public MLinkEnd getLinkEnd( int index ) {
+        return delegatesLink.getLinkEnd( index );
+    }
 
     /**
      * Two link objects are equal iff they have the same name.
@@ -183,4 +174,22 @@ public class MLinkObjectImpl implements MLinkObject {
                 + StringUtil.fmtSeq( linkEnds().iterator(), ", " )
                 + ")]";
     }
+
+	@Override
+	public boolean isVirtual() {
+		return delegatesLink.isVirtual();
+	}
+
+
+	@Override
+	public List<List<Value>> getQualifier() {
+		return delegatesLink.getQualifier();
+	}
+	
+	    /**
+		 * @return the delegatesLink
+		 */
+		public MLink getDelegatesLink() {
+		    return delegatesLink;
+		}
 }

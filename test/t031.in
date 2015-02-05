@@ -2,13 +2,13 @@
 
 ??rec.fac(3)
 *Detailed results of subexpressions:
-*  rec : Rec = @rec
+*  rec : Rec = rec
 *  3 : Integer = 3
 *  n : Integer = 3
 *  1 : Integer = 1
 *  (n <= 1) : Boolean = false
 *  n : Integer = 3
-*  self : Rec = @rec
+*  self : Rec = rec
 *  n : Integer = 3
 *  1 : Integer = 1
 *  (n - 1) : Integer = 2
@@ -16,7 +16,7 @@
 *  1 : Integer = 1
 *  (n <= 1) : Boolean = false
 *  n : Integer = 2
-*  self : Rec = @rec
+*  self : Rec = rec
 *  n : Integer = 2
 *  1 : Integer = 1
 *  (n - 1) : Integer = 1

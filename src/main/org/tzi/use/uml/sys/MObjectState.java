@@ -21,25 +21,48 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 
 import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
+import org.tzi.use.uml.mm.statemachines.MState;
+import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 /**
  * An object state is the state of an object in a given system state.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author Mark Richters
+ * @author Lars Hamann 
  */
 public final class MObjectState {
     /**
      * Slots holding a value for each attribute.
      */
-    private TreeMap<MAttribute, Value> fAttrSlots;
-    private MObject fObject;    // owner object
+    private Map<MAttribute, Value> fAttrSlots;
+
+    /**
+     * Instances of the owned psm.
+     */
+    private Set<MProtocolStateMachineInstance> protocolStateMachines;
+
+	/**
+     * owner object
+     */
+    private MObject fObject;
 
     /**
      * Constructs a new object state. 
@@ -47,11 +70,23 @@ public final class MObjectState {
 	public MObjectState(MObject obj) {
         fObject = obj;
 
+        List<MAttribute> atts = obj.cls().allAttributes();
         // initialize attribute slots with undefined values
-        fAttrSlots = new TreeMap<MAttribute, Value>();
+        fAttrSlots = new IdentityHashMap<MAttribute, Value>(atts.size());
         
-        for (MAttribute attr : obj.cls().allAttributes()) {
+        for (MAttribute attr : atts) {
             fAttrSlots.put(attr, UndefinedValue.instance);
+        }
+        
+        Set<MProtocolStateMachine> psms = obj.cls().getAllOwnedProtocolStateMachines(); 
+        if (psms.isEmpty()) {
+        	this.protocolStateMachines = Collections.emptySet();
+        } else {
+        	this.protocolStateMachines = new HashSet<MProtocolStateMachineInstance>();
+        	// Initialize possible protocol state machines
+	        for (MProtocolStateMachine psm : psms) {
+	        	this.protocolStateMachines.add(psm.createInstance(this.fObject));
+	        }
         }
     }
 
@@ -60,16 +95,59 @@ public final class MObjectState {
      */
     MObjectState(MObjectState x) {
         fObject = x.fObject;
-        fAttrSlots = new TreeMap<MAttribute, Value>(x.fAttrSlots);
+        fAttrSlots = new IdentityHashMap<MAttribute, Value>(x.fAttrSlots);
+        
+        if (x.protocolStateMachines.isEmpty()) {
+        	this.protocolStateMachines = Collections.emptySet();
+        } else {
+        	this.protocolStateMachines = new HashSet<MProtocolStateMachineInstance>(x.protocolStateMachines.size());
+        	for (MProtocolStateMachineInstance i : x.protocolStateMachines) {        		
+        		this.protocolStateMachines.add(new MProtocolStateMachineInstance(i));
+        	}
+        }
     }
 
     /**
-     * Returns the object.
+     * Returns the object linked to this state.
      */
     public MObject object() {
         return fObject;
     }
 
+    /**
+     * Used for a new object to initialize the values
+     * for attributes that have an initialize expression.
+     */
+    public void initialize(MSystemState state) {
+
+    	Collection<MAttribute> initAttr = Collections2.filter(fAttrSlots.keySet(), new Predicate<MAttribute>() {
+			@Override
+			public boolean apply(MAttribute input) {
+				return input.getInitExpression().isPresent();
+			}});
+    	    	
+    	if (initAttr.isEmpty()) {
+    		return;
+    	}
+    	
+    	List<MAttribute> sortedAttributes = new ArrayList<>(initAttr);
+    	
+    	// Definition order is important for init expressions.
+    	Collections.sort(sortedAttributes, new Comparator<MAttribute>() {
+			@Override
+			public int compare(MAttribute attr1, MAttribute attr2) {
+				int position1 = attr1.getPositionInModel();
+				int position2 = attr2.getPositionInModel();
+				return Integer.compare(position1, position2);
+			}
+		});
+    	
+    	for (MAttribute attr : sortedAttributes) {
+			Value v = state.evaluateInitExpression(this.fObject, attr.getInitExpression().get());
+			setAttributeValue(attr, v);
+    	}
+    }
+    
     /**
      * Returns the value of the specified attribute.
      *
@@ -77,10 +155,12 @@ public final class MObjectState {
 	 *                attr is not part of this object.
      */
     public Value attributeValue(MAttribute attr) {
-        Value val = (Value) fAttrSlots.get(attr);
+        Value val = fAttrSlots.get(attr);
+        
         if (val == null )
 			throw new IllegalArgumentException("Attribute `" + attr
 					+ "' does not exist in object `" + fObject.name() + "'.");
+        
         return val;
     }
     
@@ -91,14 +171,7 @@ public final class MObjectState {
 	 *                attributeName is not a name of an attribute of this object.
      */
     public Value attributeValue(String attributeName) {
-    	MAttribute attribute = null;
-    	
-    	for (MAttribute att : fAttrSlots.keySet()) {
-    		if (att.name().equals(attributeName)) {
-    			attribute = att;
-    			break;
-    		}
-    	}
+    	MAttribute attribute = fObject.cls().attribute(attributeName, true);
     	
     	return attributeValue(attribute);
     }
@@ -110,23 +183,66 @@ public final class MObjectState {
 	 *                attr is not part of this object or types don't match.
      */
     public void setAttributeValue(MAttribute attr, Value newVal) {
-        Value oldVal = (Value) fAttrSlots.get(attr);
+        Value oldVal = fAttrSlots.get(attr);
+        
         if (oldVal == null )
 			throw new IllegalArgumentException("Attribute `" + attr
 					+ "' does not exist in object `" + fObject.name() + "'.");
-        if (! newVal.type().isSubtypeOf(attr.type()) )
+        
+        if (! newVal.type().conformsTo(attr.type()) )
 			throw new IllegalArgumentException("Expected type `" + attr.type()
 					+ "' for attribute `" + attr.name() + "', found type `"
 					+ newVal.type() + "'.");
+        
         fAttrSlots.put(attr, newVal);
     }
 
     /**
-	 * Returns a map with attribute/value pairs. Do not modify this map!
+	 * Returns a map with attribute/value pairs.
+	 * The returned map is unmodifiable.
      *
      * @return Map(MAttribute, Value) 
      */
     public Map<MAttribute, Value> attributeValueMap() {
-        return fAttrSlots;
+        return Collections.unmodifiableMap(fAttrSlots);
     }
+    
+    /**
+     * Returns all state machine instances this object state has.
+	 * @return the protocolStateMachines
+	 */
+	public Set<MProtocolStateMachineInstance> getProtocolStateMachinesInstances() {
+		return protocolStateMachines;
+	}
+
+	/**
+	 * Returns <code>true</code>, if any of the state machines
+	 * instances in this state is in the state <code>stateToCheck</code>. 
+	 * @param stateToCheck
+	 * @return
+	 */
+	public boolean isInState(MState stateToCheck) {
+		for (MProtocolStateMachineInstance i : this.protocolStateMachines) {
+			if (i.getProtocolStateMachine().equals(stateToCheck.getContainer().getStateMachine())) {
+				if (i.getCurrentState(stateToCheck.getContainer()).equals(stateToCheck))
+						return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the protocol state machine instance of the given state machine
+	 * or <code>null</code> if no such instance is present.
+	 * @param stateMachine
+	 * @return
+	 */
+	public MProtocolStateMachineInstance getProtocolStateMachineInstance (MStateMachine stateMachine) {
+		for (MProtocolStateMachineInstance i : this.protocolStateMachines) {
+			if (i.getProtocolStateMachine().equals(stateMachine))
+				return i;
+		}
+		
+		return null;
+	}
 }

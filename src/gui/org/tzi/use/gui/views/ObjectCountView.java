@@ -28,7 +28,10 @@ import java.util.Collection;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A BarChartView showing the number of objects in the current system
@@ -51,7 +54,7 @@ public class ObjectCountView extends BarChartView implements View {
         Arrays.sort(fClasses);
         setNames(fClasses);
         fValues = new int[fClasses.length];
-        fSystem.addChangeListener(this);
+        fSystem.getEventBus().register(this);
         update();
     }
 
@@ -63,14 +66,20 @@ public class ObjectCountView extends BarChartView implements View {
         setValues(fValues);
     }
 
-    public void stateChanged(StateChangeEvent e) {
-        update();
+    @Subscribe
+    public void onObjectCreated(ObjectCreatedEvent e) {
+    	update();
     }
-
+    
+    @Subscribe
+    public void onObjectDestroyed(ObjectDestroyedEvent e) {
+    	update();
+    }
+    
     /**
      * Detaches the view from its model.
      */
     public void detachModel() {
-        fSystem.removeChangeListener(this);
+        fSystem.getEventBus().unregister(this);
     }
 }

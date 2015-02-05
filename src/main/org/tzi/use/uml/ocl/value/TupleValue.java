@@ -21,13 +21,17 @@
 
 package org.tzi.use.uml.ocl.value;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.tzi.use.uml.ocl.type.TupleType;
-import org.tzi.use.uml.ocl.type.TupleType.Part;
+import org.tzi.use.util.BufferedToString;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionComparator;
 
 /**
@@ -37,10 +41,69 @@ import org.tzi.use.util.collections.CollectionComparator;
  * @author  Mark Richters
  */
 public final class TupleValue extends Value {
-    /**
+	
+	public static class Part implements BufferedToString, Comparable<Part> {
+        private final int position;
+    	private final String fName;
+        private final Value fValue;
+
+        public Part(int position, String name, Value value) {
+            this.fName = name;
+            this.fValue = value;
+            this.position = position;
+        }
+
+        @Override
+        public String toString() {
+            return this.toString(new StringBuilder()).toString();
+        }
+
+        @Override
+        public StringBuilder toString(StringBuilder sb) {
+        	sb.append(fName).append("=");
+        	fValue.toString(sb);
+        	return sb;
+        }
+        
+        public String getName() {
+            return fName;
+        }
+
+        public Value getValue() {
+            return fValue;
+        }
+
+        public int getPosition() {
+        	return position;
+        }
+        
+        public boolean equals(Object obj) {
+            if (obj == null) 
+                return false;
+            if (obj == this )
+                return true;
+            if (obj.getClass().equals(getClass())) {
+                Part other = (Part) obj;
+                return fName.equals(other.fName) && fValue.equals(other.fValue);
+            }
+            return false;
+        }
+
+        public int hashCode() {
+            return fName.hashCode() + fValue.hashCode() * 113;
+        }
+
+		@Override
+		public int compareTo(Part o) {
+			return this.fValue.compareTo(o.fValue);
+		}
+        
+    }
+	
+	/**
      * Map&lt;String, Value&gt;
      */
-	private Map<String, Value> fParts = new TreeMap<String, Value>();
+	private Map<String, TupleValue.Part> fParts = new TreeMap<String, TupleValue.Part>();
 
     /**
      * Constructs a tuple and sets all values. Elements are type checked
@@ -52,41 +115,31 @@ public final class TupleValue extends Value {
      * @exception IllegalArgumentException the type of at least one
      *            value does not match 
      */
-    public TupleValue(TupleType t, Map<String, Value> parts) {
+    public TupleValue(TupleType t, List<TupleValue.Part> parts) {
         super(t);
-        
-        Map<String, Part> typeParts = t.getParts();
-        Iterator<Entry<String, Value>> iter = parts.entrySet().iterator();
+        Iterator<TupleValue.Part> iter = parts.iterator();
         
         while(iter.hasNext())
         {
-        	Map.Entry<String, Value> entry = iter.next();
-        	Part typePart = typeParts.get(entry.getKey());
-        	Value value = entry.getValue();
-        	
-            if (! value.type().isSubtypeOf(typePart.type()) )
-                throw new IllegalArgumentException("type mismatch: " + 
-                                                   value.type() + ", " + typePart.type());
-            fParts.put(entry.getKey(), value);
+        	TupleValue.Part part = iter.next();
+            fParts.put(part.getName(), part);
         }
     }
 
     @Override
     public StringBuilder toString(StringBuilder sb) {
         sb.append("Tuple{");
-        boolean first = true;
 
-        for (Map.Entry<String, Value> entry : fParts.entrySet()) {	
-        	if (!first)
-        		sb.append(",");
-        	else
-        		first = false;
-        	
-        	sb.append(entry.getKey());
-        	sb.append("=");
-        	entry.getValue().toString(sb);
-        }
+        List<TupleValue.Part> sortedParts = new ArrayList<TupleValue.Part>(fParts.values());
+        Collections.sort(sortedParts, new Comparator<TupleValue.Part>() {
+			@Override
+			public int compare(Part p1, Part p2) {
+				if (p1.position < p2.position) return -1;
+			    if (p1.position > p2.position) return  1;
+			    return 0;
+			}});
         
+        StringUtil.fmtSeqBuffered(sb, sortedParts, ",");
         sb.append("}");
         
         return sb;
@@ -109,20 +162,21 @@ public final class TupleValue extends Value {
     public int compareTo(Value o) {
         if (o == this )
             return 0;
-        if (o instanceof UndefinedValue )
+        if (o instanceof UndefinedValue)
             return +1;
         if (! (o instanceof TupleValue) )
-            throw new ClassCastException();
+        	// Use textual representation to compare
+            return this.toStringWithType().compareTo(o.toStringWithType());
         
         TupleValue other = (TupleValue) o;
-        return new CollectionComparator<Value>().compare(fParts.values(), 
-                                                   other.fParts.values());
+        return new CollectionComparator<TupleValue.Part>().compare(fParts.values(), 
+                                                                   other.fParts.values());
     }
 
     
     public Value getElementValue(String name) {
         if (fParts.containsKey(name))
-        	return (Value)fParts.get(name);
+        	return fParts.get(name).getValue();
         else
         	throw new IllegalArgumentException("No such element: " + name);
     }

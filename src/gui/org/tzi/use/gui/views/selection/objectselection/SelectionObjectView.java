@@ -38,7 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.selection.ObjectSelectionView;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
@@ -54,7 +54,7 @@ import org.tzi.use.uml.sys.MSystemState;
 public class SelectionObjectView extends ObjectSelectionView {
 	private static final String NO_OBJECTS_AVAILABLE = "(No objects available.)";
 
-	private JComboBox fClassComboBox;
+	private JComboBox<String> fClassComboBox;
 
 	private JButton fBtnSelectAll;
 
@@ -62,12 +62,10 @@ public class SelectionObjectView extends ObjectSelectionView {
 
 	private ClassComboBoxActionListener fClassComboBoxActionListener;
 
-	private MSystem fSystem;
-
 	/**
 	 * Constructor for SelectionObjectView.
 	 */
-	public SelectionObjectView(MainWindow parent, MSystem system, NewObjectDiagram diagram) {
+	public SelectionObjectView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
 		super(parent, system, diagram);
 		this.fSystem = system;
 		initSelectionObjectView();
@@ -101,7 +99,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 		buttonPane.add(Box.createHorizontalGlue());
 
 		// create combo box with available objects
-		fClassComboBox = new JComboBox();
+		fClassComboBox = new JComboBox<String>();
 		fClassComboBoxActionListener = new ClassComboBoxActionListener();
 		add(fClassComboBox, BorderLayout.NORTH);
 		add(buttonPane, BorderLayout.SOUTH);
@@ -149,7 +147,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 		
 		this.diagram.hideAll();
 		this.diagram.showObjects(selectedObjects);
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
@@ -157,7 +155,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 */
 	public void applyShowChanges(ActionEvent ev) {
 		this.diagram.showObjects(getSelectedObjects());
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
@@ -165,7 +163,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		this.diagram.hideObjects(getSelectedObjects());
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	public void update() {
@@ -191,7 +189,7 @@ public class SelectionObjectView extends ObjectSelectionView {
 		Arrays.sort(clsNames);
 
 		// create combo box with available objects
-		fClassComboBox.setModel(new DefaultComboBoxModel(clsNames));
+		fClassComboBox.setModel(new DefaultComboBoxModel<String>(clsNames));
 		
 		fClassComboBox.addActionListener(fClassComboBoxActionListener);
 		

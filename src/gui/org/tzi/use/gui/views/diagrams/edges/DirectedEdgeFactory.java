@@ -23,6 +23,8 @@
 package org.tzi.use.gui.views.diagrams.edges;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import org.tzi.use.gui.views.diagrams.util.DashedDirectedLine;
 import org.tzi.use.gui.views.diagrams.util.DirectedGraphicFactory;
@@ -136,10 +138,11 @@ public class DirectedEdgeFactory {
     public static I_DirectedEdge createAggregation( final int sourceX,
                                                     final int sourceY,
                                                     final int targetX,
-                                                    final int targetY )
+                                                    final int targetY,
+                                                    final boolean dashed)
     throws Exception {
         return new DirectedEdge( DirectedGraphicFactory.HOLLOW_DIAMOND,
-                                 SolidDirectedLine.class, sourceX, sourceY,
+                                 (dashed ? DashedDirectedLine.class : SolidDirectedLine.class), sourceX, sourceY,
                                  targetX, targetY );
     }
     
@@ -160,10 +163,11 @@ public class DirectedEdgeFactory {
     public static I_DirectedEdge createComposition( final int sourceX,
                                                     final int sourceY,
                                                     final int targetX,
-                                                    final int targetY )
+                                                    final int targetY,
+                                                    boolean dashed)
     throws Exception {
         return new DirectedEdge( DirectedGraphicFactory.FILLED_DIAMOND,
-                                 SolidDirectedLine.class, sourceX, sourceY,
+                                 (dashed ? DashedDirectedLine.class : SolidDirectedLine.class), sourceX, sourceY,
                                  targetX, targetY );
     }
     
@@ -241,10 +245,11 @@ public class DirectedEdgeFactory {
     public static I_DirectedEdge createAssociation( final int sourceX,
                                                     final int sourceY,
                                                     final int targetX,
-                                                    final int targetY )
+                                                    final int targetY,
+                                                    final boolean dashed)
     throws Exception {
         return new DirectedEdge( DirectedGraphicFactory.EMPTY_HEAD,
-                                 SolidDirectedLine.class, sourceX, sourceY,
+                                 (dashed ? DashedDirectedLine.class : SolidDirectedLine.class), sourceX, sourceY,
                                  targetX, targetY );
     }
     
@@ -321,10 +326,11 @@ public class DirectedEdgeFactory {
     public static I_DirectedEdge createDirectedEdge( final int sourceX,
                                                      final int sourceY,
                                                      final int targetX,
-                                                     final int targetY )
+                                                     final int targetY,
+                                                     final boolean dashed)
     throws Exception {
         return new DirectedEdge( DirectedGraphicFactory.ARROW_HEAD,
-                                 SolidDirectedLine.class, sourceX, sourceY,
+                                 (dashed ? DashedDirectedLine.class : SolidDirectedLine.class), sourceX, sourceY,
                                  targetX, targetY );
     }
     
@@ -346,11 +352,12 @@ public class DirectedEdgeFactory {
     public static I_DirectedEdge createDirectedAggregation( final int sourceX,
                                                             final int sourceY,
                                                             final int targetX,
-                                                            final int targetY )
+                                                            final int targetY,
+                                                            final boolean dashed)
     throws Exception {
         return new DirectedEdge( DirectedGraphicFactory.HOLLOW_DIAMOND,
                                  DirectedGraphicFactory.ARROW_HEAD,
-                                 SolidDirectedLine.class, sourceX, sourceY,
+                                 (dashed ? DashedDirectedLine.class : SolidDirectedLine.class), sourceX, sourceY,
                                  targetX, targetY );
     }  
     
@@ -371,11 +378,12 @@ public class DirectedEdgeFactory {
     public static I_DirectedEdge createDirectedComposition( final int sourceX,
                                                             final int sourceY,
                                                             final int targetX,
-                                                            final int targetY )
+                                                            final int targetY,
+                                                            final boolean dashed)
     throws Exception {
         return new DirectedEdge( DirectedGraphicFactory.FILLED_DIAMOND,
                                  DirectedGraphicFactory.ARROW_HEAD,
-                                 SolidDirectedLine.class, sourceX, sourceY,
+                                 (dashed ? DashedDirectedLine.class : SolidDirectedLine.class), sourceX, sourceY,
                                  targetX, targetY );
     }  
     
@@ -404,9 +412,7 @@ public class DirectedEdgeFactory {
                                                   final int targetX,
                                                   final int targetY )
     throws Exception {
-        return createInheritance( sourceX, sourceY, targetX, targetY )
-        .draw(
-              graphic );
+        return createInheritance( sourceX, sourceY, targetX, targetY ).draw( graphic );
     }
     
     /**
@@ -493,11 +499,10 @@ public class DirectedEdgeFactory {
                                                   final int sourceX,
                                                   final int sourceY,
                                                   final int targetX,
-                                                  final int targetY )
+                                                  final int targetY,
+                                                  final boolean dashed)
     throws Exception {
-        return createAggregation( sourceX, sourceY, targetX, targetY )
-        .draw(
-              graphic );
+        return createAggregation( sourceX, sourceY, targetX, targetY, dashed ).draw( graphic );
     }
     
     /**
@@ -521,9 +526,10 @@ public class DirectedEdgeFactory {
                                                   final int sourceX,
                                                   final int sourceY,
                                                   final int targetX,
-                                                  final int targetY )
+                                                  final int targetY,
+                                                  boolean dashed)
     throws Exception {
-        return createComposition( sourceX, sourceY, targetX, targetY )
+        return createComposition( sourceX, sourceY, targetX, targetY, dashed )
         .draw(
               graphic );
     }
@@ -606,9 +612,10 @@ public class DirectedEdgeFactory {
                                                   final int sourceX,
                                                   final int sourceY,
                                                   final int targetX,
-                                                  final int targetY )
+                                                  final int targetY,
+                                                  final boolean dashed)
     throws Exception {
-        return createAssociation( sourceX, sourceY, targetX, targetY )
+        return createAssociation( sourceX, sourceY, targetX, targetY, dashed )
         .draw(
               graphic );
     }
@@ -685,9 +692,10 @@ public class DirectedEdgeFactory {
                                                    final int sourceX,
                                                    final int sourceY,
                                                    final int targetX,
-                                                   final int targetY )
+                                                   final int targetY,
+                                                   final boolean dashed)
     throws Exception {
-        return createDirectedEdge( sourceX, sourceY, targetX, targetY )
+        return createDirectedEdge( sourceX, sourceY, targetX, targetY, dashed )
         .draw(
               graphic );
     }
@@ -713,9 +721,10 @@ public class DirectedEdgeFactory {
                                                           final int sourceX,
                                                           final int sourceY,
                                                           final int targetX,
-                                                          final int targetY )
+                                                          final int targetY,
+                                                          final boolean dashed)
     throws Exception {
-        return createDirectedAggregation( sourceX, sourceY, targetX, targetY )
+        return createDirectedAggregation( sourceX, sourceY, targetX, targetY, dashed )
                .draw(graphic );
     }
 
@@ -740,9 +749,44 @@ public class DirectedEdgeFactory {
                                                           final int sourceX,
                                                           final int sourceY,
                                                           final int targetX,
-                                                          final int targetY )
+                                                          final int targetY,
+                                                          final boolean dashed)
     throws Exception {
-        return createDirectedComposition( sourceX, sourceY, targetX, targetY )
+        return createDirectedComposition( sourceX, sourceY, targetX, targetY, dashed )
                .draw( graphic );
+    }
+    
+    public enum ArrowStyle {
+    	FILLED,
+    	OPEN
+    }
+    
+    public static void drawArrow(final Graphics2D g, final int x1, final int y1, final int x2, final int y2, ArrowStyle style) {
+        int ARR_LENGTH = 8;
+        int ARR_WIDTH  = 5;
+        
+        // Get the current transform
+        AffineTransform saveAT = g.getTransform();
+        
+        double dx = x2 - x1, dy = y2 - y1;
+        double angle = Math.atan2(dy, dx);
+        int len = (int)Math.round(Math.sqrt(dx*dx + dy*dy));
+        AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
+        at.concatenate(AffineTransform.getRotateInstance(angle));
+        // Perform transformation
+        g.transform(at);
+
+        // Draw horizontal line starting in (0, 0) to start of arrowhead
+        g.drawLine(0, 0, len, 0);
+        if (style == ArrowStyle.FILLED) {
+	        g.fillPolygon(new int[] {len, len-ARR_LENGTH, len-ARR_LENGTH, len},
+	                      new int[] {0,   -ARR_WIDTH,     ARR_WIDTH,      0  }, 4);
+        } else {
+        	g.drawLine(len, 0, len - ARR_LENGTH,  ARR_WIDTH);
+        	g.drawLine(len, 0, len - ARR_LENGTH, -ARR_WIDTH);
+        }
+        
+        // Restore original transform
+        g.setTransform(saveAT);
     }
 }

@@ -22,6 +22,7 @@
 package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.util.FloatUtil;
 
 /**
  * Real values.
@@ -31,7 +32,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @see     IntegerValue
  */
 public final class RealValue extends Value {
-    double fValue;
+    final double fValue;
     
     public RealValue(double d) {
         super(TypeFactory.mkReal());
@@ -57,7 +58,7 @@ public final class RealValue extends Value {
         if (obj == this )
             return true;
         else if (obj instanceof RealValue )
-            return ((RealValue) obj).fValue == fValue;
+            return FloatUtil.equals(((RealValue) obj).fValue, fValue);
         else if (obj instanceof IntegerValue )
             return ((IntegerValue) obj).fValue == fValue;
         return false;

@@ -17,14 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
@@ -42,13 +41,11 @@ public class MNewObjectStatement extends MStatement {
     
     private Expression fObjectName;
     
-    private MObject fCreatedObject;
-
     /**
-     * TODO
+     * Constructs a new object creation statement.
      * 
-     * @param objectClass
-     * @param objectName
+     * @param objectClass The class of the object to create.
+     * @param objectName The expression used to derive the name of the new object.
      */
     public MNewObjectStatement(MClass objectClass, Expression objectName) {
         fObjectClass = objectClass;
@@ -56,10 +53,10 @@ public class MNewObjectStatement extends MStatement {
     }
 
     /**
-     * TODO
+     * Constructs a new object creation statement.
      * 
-     * @param objectClass
-     * @param objectName
+     * @param objectClass The class of the new object to create.
+     * @param objectName The name of the new object.
      */
     public MNewObjectStatement(MClass objectClass, String objectName) {
         fObjectClass = objectClass;
@@ -70,67 +67,43 @@ public class MNewObjectStatement extends MStatement {
     }
 
     /**
-     * TODO
-     * 
-     * @param objectClass
-     */
-    public MNewObjectStatement(MClass objectClass) {
-        fObjectClass = objectClass;
-        fObjectName = null;
-    }
+	 * @return the fObjectClass
+	 */
+	public MClass getObjectClass() {
+		return fObjectClass;
+	}
 
-    /**
-     * TODO
+	/**
+	 * @return the fObjectName
+	 */
+	public Expression getObjectName() {
+		return fObjectName;
+	}
+
+	/**
+     * Returns the type of the object to create.
      * 
      * @return
      */
-    public MClass getObjectClass() {
+    public MClass getObjectType() {
         return fObjectClass;
     }
 
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public Type getObjectType() {
-        return fObjectClass.type();
-    }
-
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public Expression getObjectName() {
-        return fObjectName;
-    }
-
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public MObject getCreatedObject() {
-        return fCreatedObject;
-    }
-
     @Override
-    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
-            throws EvaluationFailedException {
+    public Value execute(SoilEvaluationContext context, StatementEvaluationResult result) throws EvaluationFailedException {
 
-        String objectName;
+    	String objectName;
         if (fObjectName == null) {
             objectName = context.getState().uniqueObjectNameForClass(fObjectClass);
         } else {
-            objectName = EvalUtil.evaluateString(this, context, result, fObjectName);
+            objectName = EvalUtil.evaluateString(context, fObjectName);
         }
 
         // create new object
         try {
-            fCreatedObject = context.getSystem().createObject(result, fObjectClass, objectName);
+            return new ObjectValue(fObjectClass, context.getSystem().createObject(result, fObjectClass, objectName));
         } catch (MSystemException e) {
-            throw new EvaluationFailedException(this, e.getMessage());
+            throw new EvaluationFailedException(e);
         }
     }
 
@@ -144,4 +117,9 @@ public class MNewObjectStatement extends MStatement {
     public String toString() {
         return shellCommand();
     }
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
+	}
 }

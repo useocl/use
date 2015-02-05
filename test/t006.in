@@ -46,5 +46,26 @@
 ? Set{Set{1,2},Set{3}}->select(exists(abs() > 2))
 *-> Set{Set{3}} : Set(Set(Integer))
 
+?let c:OrderedSet(OclAny) = OrderedSet{} in c->append(1)->oclIsTypeOf(OrderedSet(Integer))
+*-> true : Boolean
+
+?let c:OrderedSet(OclAny) = OrderedSet{1} in c->append(1)->oclIsTypeOf(OrderedSet(Integer))
+*-> true : Boolean
+
+?let c:OrderedSet(OclAny) = OrderedSet{} in c->append(1)->oclIsTypeOf(OrderedSet(String))
+*-> false : Boolean
+
+?let c:Collection(OclAny) = OrderedSet{1} in c->oclIsTypeOf(OrderedSet(String))
+*-> false : Boolean
+
+?let c:Collection(OclAny) = OrderedSet{1} in c->oclIsTypeOf(Set(String))
+*-> false : Boolean
+
+?let c:Collection(OclAny) = OrderedSet{1} in c->oclIsKindOf(Set(String))
+*-> false : Boolean
+
+?let c:Collection(OclAny) = OrderedSet{1} in c->oclIsKindOf(OrderedSet(Integer))
+*-> true : Boolean
+
 
 exit

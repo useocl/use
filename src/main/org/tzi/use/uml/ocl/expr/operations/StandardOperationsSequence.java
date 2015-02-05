@@ -14,10 +14,11 @@ import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.Multimap;
 
 public class StandardOperationsSequence {
-	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
+	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
 		// operations on Sequence
         // count: inherited from Collection
 		OpGeneric.registerOperation(new Op_sequence_union(), opmap);
@@ -32,57 +33,7 @@ public class StandardOperationsSequence {
 		OpGeneric.registerOperation(new Op_sequence_including(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_excluding(), opmap);
 		OpGeneric.registerOperation(new Op_sequence_reverse(), opmap);
-		
-		// Constructors
-		OpGeneric.registerOperation(new Op_mkSequenceRange(), opmap);
-	}
-}
-
-// --------------------------------------------------------
-//
-// Sequence constructors.
-//
-// --------------------------------------------------------
-/* mkSequenceRange : Integer x Integer, ... -> Sequence(Integer) */
-final class Op_mkSequenceRange extends OpGeneric {
-	public String name() {
-		return "mkSequenceRange";
-	}
-
-	public int kind() {
-		return OPERATION;
-	}
-
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
-
-	public Type matches(Type params[]) {
-		return (params.length >= 2 && params.length % 2 == 0
-				&& params[0].isInteger() && params[1].isInteger()) ? TypeFactory
-				.mkSequence(TypeFactory.mkInteger())
-				: null;
-	}
-
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		int[] ranges = new int[args.length];
-		for (int i = 0; i < args.length; i++)
-			ranges[i] = ((IntegerValue) args[i]).value();
-
-		return new SequenceValue(TypeFactory.mkInteger(), ranges);
-	}
-
-	public String stringRep(Expression args[], String atPre) {
-		if (args.length % 2 != 0)
-			throw new IllegalArgumentException("length=" + args.length);
-		String s = "Sequence{";
-		for (int i = 0; i < args.length; i += 2) {
-			if (i > 0)
-				s += ",";
-			s += args[i] + ".." + args[i + 1];
-		}
-		s += "}";
-		return s;
+		OpGeneric.registerOperation(new Op_sequence_shuffle(), opmap);
 	}
 }
 
@@ -107,8 +58,8 @@ final class Op_sequence_union extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSequence()
-				&& params[1].isSequence()) {
+		if (params.length == 2 && params[0].isTypeOfSequence()
+				&& params[1].isTypeOfSequence()) {
 			SequenceType sequence1 = (SequenceType) params[0];
 			SequenceType sequence2 = (SequenceType) params[1];
 
@@ -125,7 +76,7 @@ final class Op_sequence_union extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SequenceValue sequence1 = (SequenceValue) args[0];
 		SequenceValue sequence2 = (SequenceValue) args[1];
-		return sequence1.union(sequence2);
+		return sequence1.union(resultType, sequence2);
 	}
 }
 
@@ -146,7 +97,7 @@ final class Op_sequence_append extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSequence()) {
+		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
 			Type commonElementType = seqType.elemType()
@@ -160,7 +111,7 @@ final class Op_sequence_append extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SequenceValue seq = (SequenceValue) args[0];
-		return seq.append(args[1]);
+		return seq.append(resultType, args[1]);
 	}
 }
 
@@ -181,7 +132,7 @@ final class Op_sequence_prepend extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSequence()) {
+		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
 			Type commonElementType = seqType.elemType()
@@ -195,7 +146,7 @@ final class Op_sequence_prepend extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SequenceValue seq = (SequenceValue) args[0];
-		return seq.prepend(args[1]);
+		return seq.prepend(resultType, args[1]);
 	}
 }
 
@@ -216,8 +167,8 @@ final class Op_sequence_insertAt extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 3 && params[0].isSequence()
-				&& params[1].isInteger()) {
+		if (params.length == 3 && params[0].isTypeOfSequence()
+				&& params[1].isTypeOfInteger()) {
 			SequenceType seqType = (SequenceType) params[0];
 
 			Type commonElementType = seqType.elemType()
@@ -231,7 +182,7 @@ final class Op_sequence_insertAt extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SequenceValue seq = (SequenceValue) args[0];
-		SequenceValue res = seq.insertAt((IntegerValue) args[1],
+		SequenceValue res = seq.insertAt(resultType, (IntegerValue) args[1],
 				(Value) args[2]);
 
 		if (res == null)
@@ -258,8 +209,8 @@ final class Op_sequence_subSequence extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		return (params.length == 3 && params[0].isSequence()
-				&& params[1].isInteger() && params[2].isInteger()) ? params[0]
+		return (params.length == 3 && params[0].isTypeOfSequence()
+				&& params[1].isTypeOfInteger() && params[2].isTypeOfInteger()) ? params[0]
 				: null;
 	}
 
@@ -272,7 +223,7 @@ final class Op_sequence_subSequence extends OpGeneric {
 
 		Value res = null;
 		try {
-			res = seq.subSequence(lower - 1, upper);
+			res = seq.subSequence(resultType, lower - 1, upper);
 		} catch (IndexOutOfBoundsException e) {
 			res = UndefinedValue.instance;
 		}
@@ -297,8 +248,8 @@ final class Op_sequence_at extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSequence()
-				&& params[1].isInteger()) {
+		if (params.length == 2 && params[0].isTypeOfSequence()
+				&& params[1].isTypeOfInteger()) {
 			SequenceType seq = (SequenceType) params[0];
 			return seq.elemType();
 		}
@@ -335,7 +286,7 @@ final class Op_sequence_first extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isSequence()) {
+		if (params.length == 1 && params[0].isTypeOfSequence()) {
 			SequenceType seq = (SequenceType) params[0];
 			return seq.elemType();
 		}
@@ -367,7 +318,7 @@ final class Op_sequence_last extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isSequence()) {
+		if (params.length == 1 && params[0].isTypeOfSequence()) {
 			SequenceType seq = (SequenceType) params[0];
 			return seq.elemType();
 		}
@@ -399,7 +350,7 @@ final class Op_sequence_including extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSequence()) {
+		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
 			Type commonElementType = seqType.elemType()
@@ -416,7 +367,7 @@ final class Op_sequence_including extends OpGeneric {
 		if (args[0].isUndefined())
 			return UndefinedValue.instance;
 		SequenceValue seq = (SequenceValue) args[0];
-		return seq.append(args[1]);
+		return seq.append(resultType, args[1]);
 	}
 }
 
@@ -437,7 +388,7 @@ final class Op_sequence_excluding extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSequence()) {
+		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
 			Type commonElementType = seqType.elemType()
@@ -453,7 +404,7 @@ final class Op_sequence_excluding extends OpGeneric {
 		if (args[0].isUndefined())
 			return UndefinedValue.instance;
 		SequenceValue seq = (SequenceValue) args[0];
-		return seq.excluding(args[1]);
+		return seq.excluding(resultType, args[1]);
 	}
 	
 	@Override
@@ -462,7 +413,7 @@ final class Op_sequence_excluding extends OpGeneric {
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 				   " will always evaluate to the same sequence, " + StringUtil.NEWLINE +
 				   "because the element type " + StringUtil.inQuotes(col.elemType()) + 
@@ -488,7 +439,7 @@ final class Op_sequence_indexOf extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSequence()) {
+		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
 			Type commonElementType = seqType.elemType()
@@ -520,7 +471,7 @@ final class Op_sequence_indexOf extends OpGeneric {
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 				   " will always evaluate to undefined, " + StringUtil.NEWLINE +
 				   "because the element type " + StringUtil.inQuotes(col.elemType()) + 
@@ -546,7 +497,7 @@ final class Op_sequence_reverse extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isSequence()) {
+		if (params.length == 1 && params[0].isTypeOfSequence()) {
 			return params[0];
 		}
 		return null;
@@ -558,6 +509,38 @@ final class Op_sequence_reverse extends OpGeneric {
 		SequenceValue col = (SequenceValue)args[0];
 		ArrayList<Value> elements = new ArrayList<Value>(col.collection());
 		Collections.reverse(elements);
+		
+		return new SequenceValue(col.elemType(), elements);
+	}
+}
+
+/* Not OCL: shuffle : Sequence(T) -> Sequence(T) */
+final class Op_sequence_shuffle extends OpGeneric {
+	public String name() {
+		return "shuffle";
+	}
+
+	public int kind() {
+		return SPECIAL;
+	}
+
+	public boolean isInfixOrPrefix() {
+		return false;
+	}
+
+	public Type matches(Type params[]) {
+		if (params.length == 1 && params[0].isTypeOfSequence()) {
+			return params[0];
+		}
+		return null;
+	}
+
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		if (args[0].isUndefined()) return UndefinedValue.instance;
+		
+		SequenceValue col = (SequenceValue)args[0];
+		ArrayList<Value> elements = new ArrayList<Value>(col.collection());
+		Collections.shuffle(elements);
 		
 		return new SequenceValue(col.elemType(), elements);
 	}

@@ -37,6 +37,11 @@ public class SemanticException extends Exception {
 	
     private final SrcPos fSrcPos;
 
+    public SemanticException(String message) {
+    	super(message);
+    	fSrcPos = null;
+    }
+    
     /** 
      * Construct exception with information about source position.
      */
@@ -68,7 +73,7 @@ public class SemanticException extends Exception {
      */
     @Override
     public String getMessage() {
-        return fSrcPos + super.getMessage();
+        return (fSrcPos == null ? "" : fSrcPos.toString()) + super.getMessage();
     }
     
     /**

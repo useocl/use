@@ -68,20 +68,14 @@ public class GInstrTry_AssocClass_LinkendSeqs extends GInstrTry implements GValu
     	v.visitInstrTry_AssocClass_LinkendSeqs(this);
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
-	 */
 	@Override
 	public GEvalInstruction createEvalInstr() {
 		++createdEvalTries;
 		return new GEvalInstrTry_AssocClass_LinkendSeqs( this, firstTry && createdEvalTries == 1 );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.statics.GValueInstruction#type()
-	 */
 	@Override
 	public Type type() {
-		return TypeFactory.mkSet(fAssociationClass.type());
+		return TypeFactory.mkSet(fAssociationClass);
 	}
 }

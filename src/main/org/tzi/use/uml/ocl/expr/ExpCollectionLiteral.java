@@ -22,30 +22,41 @@
 package org.tzi.use.uml.ocl.expr;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.type.UniqueLeastCommonSupertypeDeterminator;
+import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
 /**
  * Abstract base class for collection literals.
- *
- * @version     $ProjectVersion: 0.393 $
+ * 
  * @author  Mark Richters
  */
 public abstract class ExpCollectionLiteral extends Expression {
-    private String fKind;
-    protected Expression[] fElemExpr;
+    
+	private final String fKind;
+
+	protected final Expression[] fElemExpr;
 
     protected ExpCollectionLiteral(String kind, Expression[] elemExpr) {
-        super(null, elemExpr);
+        super(null);
         fKind = kind;
         fElemExpr = elemExpr;
     }
 
+    /**
+	 * @return the fKind
+	 */
+	public String getKind() {
+		return fKind;
+	}
+	
     /**
      * Returns the value for the type parameter of this collection.
      */
@@ -71,18 +82,40 @@ public abstract class ExpCollectionLiteral extends Expression {
     	return result;
     }
 
-	
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		for (Expression elementExpr : fElemExpr) {
+			if (elementExpr.requiresPreState())
+				return true;
+		}
+		
+		return false;
+	}
 
-    
-	
 	/**
      * Evaluates argument expressions.
      */
     protected Value[] evalArgs(EvalContext ctx) {
-        Value argValues[] = new Value[fElemExpr.length];
-        for (int i = 0; i < fElemExpr.length; i++)
-            argValues[i] = fElemExpr[i].eval(ctx);
-        return argValues;
+    	
+        List<Value> argValues = new LinkedList<Value>();
+        
+        for (Expression exp : fElemExpr) {
+        	Value eValue = exp.eval(ctx);
+            if (exp instanceof ExpRange) {
+            	if (eValue.isUndefined()) {
+            		argValues.add(eValue);
+            	} else {
+            		SequenceValue sVal = (SequenceValue)eValue;
+            		for (Value v : sVal.collection()) {
+            			argValues.add(v);
+            		}
+            	}
+            } else { 
+            	argValues.add(eValue);
+            }
+        }
+        
+        return argValues.toArray(new Value[argValues.size()]);
     }
 
     @Override

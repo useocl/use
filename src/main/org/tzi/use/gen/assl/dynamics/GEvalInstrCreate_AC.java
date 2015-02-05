@@ -41,8 +41,6 @@ import org.tzi.use.gen.assl.statics.GInstrCreate_AC;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
@@ -118,7 +116,6 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
     	PrintWriter detailOutput = collector.detailPrintWriter();
     			
     	MAssociationClass objectClass = fInstr.getAssociationClass();
-    	ObjectType objectType = TypeFactory.mkObjectType(objectClass);
     	String objectName = state.uniqueObjectNameForClass(objectClass.name());
     	
     	MStatement statement = new MNewLinkObjectStatement(objectClass, fObjectList, Collections.<List<MRValue>>emptyList(), objectName);
@@ -139,7 +136,7 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
 			throw new GEvaluationException(e);
 		}
 		
-		ObjectValue objectValue = new ObjectValue(objectType, state.objectByName(objectName));
+		ObjectValue objectValue = new ObjectValue(objectClass, state.objectByName(objectName));
 		
 		if (collector.doDetailPrinting())
 			detailOutput.println(inQuotes(fInstr) + " == " + objectValue);

@@ -4,10 +4,10 @@ model CallSequence
 
 class C1
 operations
-  op1() : OclVoid
+  op1()
 end
 
 class C2
 operations
-  op2() : OclVoid
+  op2()
 end

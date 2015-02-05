@@ -35,8 +35,6 @@ import java.io.PrintWriter;
 
 import org.tzi.use.gen.assl.statics.GInstrCreate_C;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
@@ -65,7 +63,6 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
     		detailOutput.println("evaluating " + inQuotes(fInstr));
     			
     	MClass objectClass = fInstr.cls();
-    	ObjectType objectType = TypeFactory.mkObjectType(objectClass);
     	String objectName = state.uniqueObjectNameForClass(objectClass.name());
     	
     	MStatement statement = new MNewObjectStatement(
@@ -89,7 +86,7 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
 		}
 		
 		ObjectValue objectValue = 
-			new ObjectValue(objectType, state.objectByName(objectName));
+			new ObjectValue(objectClass, state.objectByName(objectName));
 		
 		if (collector.doDetailPrinting())
 			detailOutput.println(inQuotes(fInstr) + " == " + objectValue);

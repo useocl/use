@@ -24,16 +24,16 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.SequenceType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.ocl.type.SequenceType;
+import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -85,12 +85,12 @@ class GMatcherTry_AssocClass_LinkendSeqs implements IGInstructionMatcher {
         Iterator<Object> restIt = rest.iterator();
 
         for (MAssociationEnd end : ends) {
-            Type endtype = TypeFactory.mkObjectType( end.cls() );
+            Type endtype = end.cls();
             Object r = restIt.next();
 
             if (! (r instanceof GValueInstruction) ||
                 ! ((GValueInstruction) r).type()
-                .isSubtypeOf( new SequenceType(endtype) ) )
+                .conformsTo( new SequenceType(endtype) ) )
                 return false;
         }    
 

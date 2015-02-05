@@ -32,7 +32,14 @@ import org.tzi.use.util.Pair;
 import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 
 /**
- * TODO
+ * An iterator which iterates over generated partitions of two lists.
+ * One of the lists is specified as unique.
+ * 
+ * Each returned partition contains only combinations from one element of the unique list
+ * e.g.:<br/>
+ * <code>{a,b} {c,d}</code> (second list is marked as unique) results in:<br/> 
+ * <code>0 = {(a,c), (a,d)}, 1 = {(b,c), (b,d)}</code>
+ * 
  * @author Lars Hamann
  *
  */

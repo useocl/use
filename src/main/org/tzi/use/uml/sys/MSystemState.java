@@ -17,12 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
 package org.tzi.use.uml.sys;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,67 +33,81 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.config.Options;
-import org.tzi.use.gen.model.GFlaggedInvariant;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
-import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
+import org.tzi.use.uml.ocl.expr.SimpleEvalContext;
 import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
+import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.StringUtil.IElementFormatter;
 import org.tzi.use.util.collections.Bag;
+import org.tzi.use.util.collections.CollectionUtil;
 import org.tzi.use.util.collections.HashBag;
-import org.tzi.use.util.collections.HashMultiMap;
-import org.tzi.use.util.collections.MultiMap;
 import org.tzi.use.util.collections.Queue;
+import org.tzi.use.util.soil.StateDifference;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * A system state represents a valid instance of a model. It contains a set of
  * objects and links connecting objects. Methods allow manipulation and querying
  * of objects and links.
  * 
- * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Mark Richters
+ * @author Lars Hamann
  */
 
 public final class MSystemState {
-	public static final int REMOVED_LINKS = 0;
-	public static final int REMOVED_OBJECTS = 1;
-	public static final int REMOVED_OBJECTSTATES = 2;
 
+	/**
+	 * The name of the system state
+	 */
 	private String fName;
+	
+	/**
+	 * The system related to this state
+	 */
 	private MSystem fSystem;
 
 	/**
 	 * The set of all object states.
 	 */
 	private Map<MObject, MObjectState> fObjectStates;
-
+	
 	/**
 	 * The set of objects partitioned by class. Must be kept in sync with
 	 * fObjectStates.
 	 */
-	private MultiMap<MClass, MObject> fClassObjects;
+	private Multimap<MClass, MObject> fClassObjects;
 
 	/**
 	 * Mapping of object names to objects to get
@@ -106,20 +121,39 @@ public final class MSystemState {
 	private Map<MAssociation, MLinkSet> fLinkSets;
 
 	/**
+	 * Handles virtual links and attribute values
+	 */
+	private DerivedValueController[] derivedValuesController;
+	
+	private static final int DVC_DERIVED_ASSOCS = 0;
+	private static final int DVC_UNION_ASSOCS = 1;
+	private static final int DVC_DERIVED_ATTR = 2;
+	/**
 	 * Creates a new system state with no objects and links.
 	 */
 	MSystemState(String name, MSystem system) {
 		fName = name;
 		fSystem = system;
 		fObjectStates = new HashMap<MObject, MObjectState>();
-		fClassObjects = new HashMultiMap<MClass, MObject>();
+		fClassObjects = HashMultimap.create();
 		fObjectNames = new HashMap<String, MObject>();
 		fLinkSets = new HashMap<MAssociation, MLinkSet>();
-
+		
 		// create empty link sets
 		for(MAssociation assoc : fSystem.model().associations()) {
 			MLinkSet linkSet = new MLinkSet(assoc);
 			fLinkSets.put(assoc, linkSet);
+		}
+		
+		synchronized (dirtyLock) {
+			derivedValuesController = new DerivedValueController[3];
+			derivedValuesController[DVC_DERIVED_ASSOCS] = new DerivedLinkControllerDerivedEnd(this, fLinkSets);
+			derivedValuesController[DVC_UNION_ASSOCS] = new DerivedLinkControllerUnion(this, fLinkSets);
+			derivedValuesController[DVC_DERIVED_ATTR] = new DerivedAttributeController(this, fObjectStates);
+	
+			for (int i = 0; i < derivedValuesController.length; ++i) {
+				derivedValuesController[i].initState();
+			}
 		}
 	}
 
@@ -139,15 +173,70 @@ public final class MSystemState {
 			fObjectNames.put(e.getKey().name(), e.getKey());
 		}
 
-		fClassObjects = new HashMultiMap<MClass, MObject>();
+		fClassObjects = HashMultimap.create();
 		fClassObjects.putAll(x.fClassObjects);
 
 		fLinkSets = new HashMap<MAssociation, MLinkSet>();
 		for(Map.Entry<MAssociation, MLinkSet> e : x.fLinkSets.entrySet()) {
-			fLinkSets.put(e.getKey(), new MLinkSet((MLinkSet) e.getValue()));
+			fLinkSets.put(e.getKey(), new MLinkSet(e.getValue()));
+		}
+		
+		synchronized (dirtyLock) {
+			derivedValuesController = new DerivedValueController[3];
+			derivedValuesController[0] = new DerivedLinkControllerDerivedEnd(this, x.fLinkSets, (DerivedLinkController)x.derivedValuesController[0]);
+			derivedValuesController[1] = new DerivedLinkControllerUnion(this, x.fLinkSets, (DerivedLinkController)x.derivedValuesController[1]);
+			derivedValuesController[2] = new DerivedAttributeController(this, x.fObjectStates, (DerivedAttributeController)x.derivedValuesController[2]);
 		}
 	}
 
+	
+	private Object  dirtyLock = new Object();
+	private boolean derivedIsDirty = true;
+	
+	/**
+	 * Invokes updates on the controller for derived
+	 * values, e. g., derived links or attributes.
+	 */
+	public void updateDerivedValues(boolean forceUpdate) {
+		synchronized (dirtyLock) {
+			if (!this.derivedIsDirty) return;
+			
+			if(forceUpdate || fSystem.isImmediatlyCalculateDerivedValues()) {
+				for (int i = 0; i < derivedValuesController.length; ++i) { 
+					derivedValuesController[i].updateState();
+				}
+				this.derivedIsDirty = false;
+			}
+		}
+	}
+	
+	/**
+	 * Invokes updates on the controller for derived
+	 * values, e. g., derived links or attributes.
+	 */
+	public void updateDerivedValues() {
+		updateDerivedValues(false);
+	}
+	
+	/**
+	 * Invokes updates on the controller for derived values, e. g., derived
+	 * links or attributes and saves the changeset in {@code diff}.
+	 * 
+	 * @param diff
+	 */
+	public void updateDerivedValues(StateDifference diff) {
+		synchronized (dirtyLock) {
+			this.derivedIsDirty = true;
+			
+			if(fSystem.isImmediatlyCalculateDerivedValues()){
+				for (int i = 0; i < derivedValuesController.length; ++i) { 
+					derivedValuesController[i].updateState(diff);
+				}
+				this.derivedIsDirty = false;
+			}
+		}
+	}
+	
 	/**
 	 * Returns the name of this state. The name is unique for different states.
 	 */
@@ -170,6 +259,7 @@ public final class MSystemState {
 	public Set<MObject> allObjects() {
 		return fObjectStates.keySet();
 	}
+	
 	
 	/**
 	 * returns the names of all objects in this state
@@ -213,14 +303,14 @@ public final class MSystemState {
 	/**
 	 * Returns the set of objects of class <code>cls</code> currently existing
 	 * in this state.
-	 * 
+	 * <p>To also get the objects of the sublcasses use {@link #objectsOfClassAndSubClasses(MClass)}.</p>
 	 * @return Set(MObject)
 	 */
 	public Set<MObject> objectsOfClass(MClass cls) {
 		return new HashSet<MObject>(fClassObjects.get(cls));
 	}
 
-	/*
+	/**
 	 * Returns the set of objects of class <code>cls</code> and all of its
 	 * subclasses.
 	 * 
@@ -228,7 +318,7 @@ public final class MSystemState {
 	 */
 	public Set<MObject> objectsOfClassAndSubClasses(MClass cls) {
 		Set<MObject> res = new HashSet<MObject>();
-		Set<MClass> children = cls.allChildren();
+		Set<MClass> children = CollectionUtil.downCastUnsafe(cls.allChildren());
 		
 		res.addAll(fClassObjects.get(cls));
 		
@@ -267,6 +357,10 @@ public final class MSystemState {
 	 * Returns the set of links of the specified association in this state.
 	 */
 	public MLinkSet linksOfAssociation(MAssociation assoc) {
+		if (assoc.isUnion() || assoc.isDerived()) {
+			updateDerivedValues(true);
+		}
+		
 		return fLinkSets.get(assoc);
 	}
 
@@ -275,7 +369,7 @@ public final class MSystemState {
 	 * the given set of objects.
 	 */
 	public boolean hasLinkBetweenObjects(MAssociation assoc, MObject... objects) {
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+		MLinkSet linkSet = fLinkSets.get(assoc);
 		return linkSet.hasLinkBetweenObjects(objects);
 	}
 	
@@ -284,21 +378,24 @@ public final class MSystemState {
 	 * the given set of objects with the provided qualifiers.
 	 */
 	public boolean hasLinkBetweenObjects(MAssociation assoc, List<MObject> objects, List<List<Value>> qualiferValues) {
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
-		return linkSet.hasLinkBetweenObjects(objects, qualiferValues);
+		Set<MAssociation> toDo = new HashSet<MAssociation>();
+		toDo.add(assoc);
+		
+		if (assoc instanceof MAssociationClass) {
+			// Add parents and child
+			toDo.addAll(assoc.allParents());
+			toDo.addAll(assoc.allChildren());
+		}
+		
+		for (MAssociation ass : toDo) {
+			MLinkSet linkSet = fLinkSets.get(ass);
+			if (linkSet.hasLinkBetweenObjects(objects, qualiferValues))
+				return true;
+		}
+		
+		return false;
 	}
 	
-	/**
-	 * Returns true if there is a link of the specified association connecting
-	 * the given set of objects.
-	 */
-	public boolean hasLinkBetweenObjects(
-			MAssociation assoc, 
-			Collection<MObject> objects) {
-		
-		return hasLinkBetweenObjects(assoc, new LinkedList<MObject>(objects));
-	}
-
 	/**
 	 * Returns all links between the given objects, ignoring possible
 	 * qualifier values.
@@ -307,7 +404,7 @@ public final class MSystemState {
 	 * @return
 	 */
 	public Set<MLink> linkBetweenObjects(MAssociation assoc, List<MObject> objects) {
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+		MLinkSet linkSet = linksOfAssociation(assoc);
 		return linkSet.linkBetweenObjects(objects);
 	}
 	
@@ -316,7 +413,7 @@ public final class MSystemState {
 	 * otherwise null is returned.
 	 */
 	public MLink linkBetweenObjects(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues) {
-		MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+		MLinkSet linkSet = linksOfAssociation(assoc);
 		return linkSet.linkBetweenObjects(objects, qualifierValues);
 	}
 
@@ -327,7 +424,7 @@ public final class MSystemState {
 	 */
 	public boolean hasLink(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues)
 			throws MSystemException {
-		MLinkSet linkSet = fLinkSets.get(assoc);
+		MLinkSet linkSet = linksOfAssociation(assoc);
 		
 		return linkSet.hasLink(objects, qualifierValues);
 	}
@@ -374,14 +471,35 @@ public final class MSystemState {
 		
 		// create new object and initial state
 		MObject obj = fSystem.createObject(cls, name);
+		
 		MObjectState objState = new MObjectState(obj);
+		
 		fObjectStates.put(obj, objState);
 		fClassObjects.put(cls, obj);
 		fObjectNames.put(obj.name(), obj);
 		
+		objState.initialize(this);
+		
+		StringWriter err = new StringWriter();
+		boolean valid = true;
+		
+		// Validate initial states of state machines
+		for (MProtocolStateMachineInstance sm : objState.getProtocolStateMachinesInstances()) {
+			valid &= sm.checkStateInvariant(this, new PrintWriter(err));
+		}
+
+		if (!valid) {
+			fObjectStates.remove(obj);
+			fClassObjects.remove(cls, obj);
+			fObjectNames.remove(obj.name());
+			fSystem.deleteObject(obj);
+			
+			throw new MSystemException("Object creation failed:\n" + err.toString());
+		}
+		
 		return obj;
 	}
-	
+
    
 
 	/**
@@ -399,9 +517,9 @@ public final class MSystemState {
 	
 	
 	/**
-	 * TODO
-	 * @param object
-	 * @return
+	 * Returns a set of objects which are effected by the destruction of <code>object</code>.
+	 * @param object The object to query effected objects for.
+	 * @return A set of objects which are effected by the destruction of <code>object</code>.
 	 */
 	public Set<MObject> getObjectsAffectedByDestruction(MObject object) {
 		Set<MObject> result = new HashSet<MObject>();
@@ -413,16 +531,14 @@ public final class MSystemState {
 	
 
 	/**
-	 * TODO
-	 * @param object
-	 * @param result
+	 * Recursively checks all association classes reachable from
+	 * <code>object</code> for instances connected to <code>object</code>.
+	 * These link objects are stored in <code>result</code>. 
+	 * @param object The object to follow.
+	 * @param result The overall result buffer.
 	 */
-	private void getObjectsAffectedByDestruction(
-			MObject object, 
-			Set<MObject> result) {
-		
+	private void getObjectsAffectedByDestruction(MObject object, Set<MObject> result) {
 		result.add(object);
-		
 		MClass objectClass = object.cls();
 		
 		for (MAssociation association : objectClass.allAssociations()) {
@@ -448,7 +564,7 @@ public final class MSystemState {
 	 * Deletes an object from the state. All links connected to the object are
 	 * removed.
 	 * 
-	 * @return Set(MLink) the set of removed links
+	 * @return The <code>DeleteObjectResult</code> with information about the changes.
 	 */
 	public DeleteObjectResult deleteObject(MObject obj) {
 		DeleteObjectResult result = auxDeleteObject(obj);
@@ -462,13 +578,55 @@ public final class MSystemState {
 
 		return result;
 	}
-	
-    
 
-	public class DeleteObjectResult {
+
+	public static class DeleteObjectResult {
+		public static class ObjectStateModification {
+
+			private final MObjectState state;
+			
+			private final MAttribute attribute;
+			
+			private final MObject attributeValue;
+			
+			public ObjectStateModification(MObjectState state, MAttribute attr, MObject obj) {
+				this.state = state;
+				this.attribute = attr;
+				this.attributeValue = obj;
+			}
+			
+			/**
+			 * The modified object state.
+			 * @return The modified object state.
+			 */
+			public MObjectState getObjectState() {
+				return state;
+			}
+
+
+			/**
+			 * The object the attribute had as the value before.
+			 * @return
+			 */
+			public MObject getObject() {
+				return attributeValue;
+			}
+
+
+			/**
+			 * The modified attribute.
+			 * @return
+			 */
+			public MAttribute getAttribute() {
+				return attribute;
+			}
+			
+		}
+		
 		private Set<MLink> removedLinks = new HashSet<MLink>();
 		private Set<MObject> removedObjects = new HashSet<MObject>();
 		private Set<MObjectState> removedObjectStates = new HashSet<MObjectState>();
+		private Set<ObjectStateModification> stateModifications = new HashSet<ObjectStateModification>();
 		
 		public Set<MLink> getRemovedLinks()
 		{
@@ -489,6 +647,14 @@ public final class MSystemState {
 			removedLinks.addAll(other.removedLinks);
 			removedObjects.addAll(other.removedObjects);
 			removedObjectStates.addAll(other.removedObjectStates);
+			stateModifications.addAll(other.stateModifications);
+		}
+
+		/**
+		 * @return
+		 */
+		public Set<ObjectStateModification> getModifiedStates() {
+			return stateModifications;
 		}
 	}
 	
@@ -518,9 +684,7 @@ public final class MSystemState {
 						if (removed instanceof MLinkObject) {
 							DeleteObjectResult resLinkObject = auxDeleteObject((MLinkObject) removed);
 							
-							res.getRemovedLinks().addAll(resLinkObject.getRemovedLinks());
-							res.getRemovedObjects().addAll(resLinkObject.getRemovedObjects());
-							res.getRemovedObjectStates().addAll(resLinkObject.getRemovedObjectStates());
+							res.add(resLinkObject);
 						}
 					}
 					
@@ -529,6 +693,24 @@ public final class MSystemState {
 			}
 			
 			linkSet.clearCache(obj);
+		}
+		
+		// Find all classes which might have an attribute value containing the deleted object.
+		Collection<MClass> allClasses = system().model().classes();
+				
+		for (MClass cls : allClasses) {
+			for (MAttribute attr : cls.attributes()) {
+				if (obj.cls().conformsTo(attr.type())) {
+					// Check for all object values
+					for (MObject relObject : this.objectsOfClassAndSubClasses(cls)) {
+						MObjectState state = relObject.state(this); 
+						if (state.attributeValue(attr).equals(obj.value())) {
+							state.setAttributeValue(attr, UndefinedValue.instance);
+							res.getModifiedStates().add(new ObjectStateModification(state, attr, obj));
+						}
+					}
+				}
+			}
 		}
 		
 		res.getRemovedObjects().add(obj);
@@ -541,15 +723,10 @@ public final class MSystemState {
 	}
 
 	private void auxDeleteLink(MLink link) {
-		Set<MAssociation> allAssocs = new HashSet<MAssociation>(link.association().getAllParentAssociations());
-		allAssocs.add(link.association());
+		MLinkSet linkSet = fLinkSets.get(link.association());
+		linkSet.remove(link);
 		
-		for (MAssociation ass : allAssocs) {
-			MLinkSet linkSet = (MLinkSet) fLinkSets.get(ass);
-			linkSet.remove(link);
-		
-			removeLinkFromWholePartGraph(link);
-		}
+		removeLinkFromWholePartGraph(link);
 	}
 
 	private void removeLinkFromWholePartGraph(MLink link) {
@@ -575,14 +752,22 @@ public final class MSystemState {
 	 * @exception MSystemException link invalid or already existing
 	 * @return the newly created link.
 	 */
-	public MLink createLink(MAssociation assoc, List<MObject> objects, 
-							List<List<Value>> qualifierValues)
+	public MLink createLink(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues)
 			throws MSystemException {
+		
 		MLink link = null;
+		StringWriter sw = new StringWriter();
+		PrintWriter out = new PrintWriter(sw);
 
+		if(assoc.isDerived()){
+			throw new MSystemException("Cannot create link for association with derived end.");
+		}
+		
 		validateLinkQualifiers(assoc, qualifierValues);
 		
-		validateRedefinesForLink(assoc, objects);
+		if (!validateRedefinesForLink(assoc, objects, out)) {
+			throw new MSystemException(sw.toString());
+		}
 		
 		// checks if assoc is an associationclass
 		if (assoc instanceof MAssociationClass) {
@@ -602,7 +787,7 @@ public final class MSystemState {
 		} else if ((assoc.aggregationKind() == MAggregationKind.AGGREGATION)
 				|| (assoc.aggregationKind() == MAggregationKind.COMPOSITION)) {
 			
-			MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+			MLinkSet linkSet = fLinkSets.get(assoc);
 			link = new MLinkImpl(assoc, objects, qualifierValues);
 			if (linkSet.contains(link))
 				throw new MSystemException("Link `" + assoc.name()
@@ -634,7 +819,7 @@ public final class MSystemState {
 							sourceEdgeIter.next()).iterator();
 					
 					while (iter.hasNext()) {
-						MLink l = (MLink) iter.next();
+						MLink l = iter.next();
 						if (l.association().aggregationKind() == MAggregationKind.COMPOSITION && 
 							!associationsHaveSubsetsRelation(l.association(), assoc) &&
 							!associationsHaveRedefinitionRelation(l.association(), wholePartLink.association())) {
@@ -661,7 +846,7 @@ public final class MSystemState {
 			// create a normal link
 			link = new MLinkImpl(assoc, objects, qualifierValues);
 			// get link set for association
-			MLinkSet linkSet = (MLinkSet) fLinkSets.get(assoc);
+			MLinkSet linkSet = fLinkSets.get(assoc);
 			if (linkSet.contains(link))
 				throw new MSystemException("Link `" + assoc.name()
 						+ "' between ("
@@ -672,27 +857,92 @@ public final class MSystemState {
 		return link;
 	}
 
-    
-
 	/**
-	 * Validates if the given objects can
-	 * be linked wrt possible defined redefinitions
-	 * @param assoc
-	 * @param objects
-	 */
-	private void validateRedefinesForLink(MAssociation assoc,
-			List<MObject> objects) {
+	 * Validates, if a redefinition constraint of a child association of <code>toCheck</code> exists,
+	 * that is a more specific redefinition.
+	 * The redefinition constraint must be suitable for the given list of <code>objects</code>.
+	 **/
+	private boolean validateRedefinesForLink(MAssociation assoc, List<MObject> objects, PrintWriter err) {
+		final Set<MAssociation> redefinedBy = assoc.getRedefinedByClosure();
 		
-		if (!assoc.getRedefinedBy().isEmpty()) {
-			return;
+		// Number of ends equals (checked during model creation)
+		int numEnds = assoc.associationEnds().size();
+		
+		// Go through the redefining associations
+		for (MAssociation redefiningAssoc : redefinedBy) {
+			// Check if at least one object at the other end is a subclass of the end type. 
+			// If true, the redefinition must hold
+			for (int i = 0; i < numEnds; ++i) {
+				// If the redefinition start at the same end, we don't need
+				// to check, because this end won't give us information
+				MAssociationEnd checkAgainstEnd = assoc.associationEnds().get(i);
+				MAssociationEnd childEnd =  redefiningAssoc.associationEnds().get(i);
+				
+				if (assoc.isUnion() || assoc.isDerived()) {
+					// In a union association, no invalid links can exist
+					// because, the redefined links are all subclasses and validated
+					// downwards the inheritance tree
+					
+					// For derived associations, the type checker ensures
+					// valid links.
+					continue;
+				} else if (!checkAgainstEnd.cls().equals(childEnd.cls()) && 
+					objects.get(i).cls().isSubClassOf(redefiningAssoc.associationEnds().get(i).cls() ) ) {
+					if (err != null) {
+						err.print("The link of the association ");
+						err.print(StringUtil.inQuotes(assoc));
+						err.print(" with the participants (");
+						err.print(StringUtil.fmtSeq(objects, ",", new IElementFormatter<MObject>() {
+							@Override
+							public String format(MObject element) {
+								return element.name() + ":" + element.cls().name();
+							}} ));
+						err.print(") is invalid, because the association is redefined by ");
+						err.print(StringUtil.inQuotes(redefiningAssoc.name()));
+						err.print(" with ends (");
+						err.print(StringUtil.fmtSeq(redefiningAssoc.associationEnds(), ",", new IElementFormatter<MAssociationEnd>() {
+							@Override
+							public String format(MAssociationEnd element) {
+								return element.name() + ":" + element.cls().name();
+							}} ));
+						err.println(").");
+					}
+									
+					return false;
+				}
+			}
 		}
 		
-		for (MAssociation redefiningAssoc : assoc.getRedefinedByClosure()) {
-			// List<MAssociationEnd> redefiningEnds = redefiningAssoc.getParentAlignedEnds(assoc);
-			
-		}
+		return true;
 	}
 
+	/**
+	 * Validates all links of the association if they confirm to the redefinition constraints. 
+	 * @param assoc The association to validate the redefines constraints for.
+	 * @param out PrintWriter to print error messages to. Can be <code>null</code>.
+	 * @param reportAllErrors If <code>true</code>, all errors are written to <code>out</code>. Otherwise the validation stops at the first error.
+	 * @return
+	 */
+	private boolean validateRedefines(MAssociation assoc, PrintWriter out, boolean reportAllErrors) {
+		final Set<MAssociation> redefinedBy = assoc.getRedefinedByClosure();
+
+		if (redefinedBy.isEmpty()) {
+			return true;
+		}
+		
+		boolean isValid = true;
+		
+		for (MLink link : this.fLinkSets.get(assoc).links()) {
+			isValid = validateRedefinesForLink(assoc, link.linkedObjects(), out) && isValid;
+			
+			if (!isValid && !reportAllErrors)
+				return isValid;
+		}
+		
+		return isValid;
+	}
+	
+	
 	/**
 	 * Validates the correct usage of qualified associations, e.g.,
 	 * The provided qualifier values are checked against the definition (defined?, Type?)
@@ -730,7 +980,7 @@ public final class MSystemState {
 						Value qualifierValue = qualifierValues.get(valueIndex);
 						VarDecl qualifier = end.getQualifiers().get(valueIndex);
 						
-						if (!qualifierValue.type().isSubtypeOf(qualifier.type())) {
+						if (!qualifierValue.type().conformsTo(qualifier.type())) {
 							throw new MSystemException(
 									"The type of the provided value ("
 											+ StringUtil.inQuotes(qualifierValue
@@ -785,20 +1035,28 @@ public final class MSystemState {
 	 */
 	public DeleteObjectResult deleteLink(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues)
 			throws MSystemException {
-		
-		DeleteObjectResult result = new DeleteObjectResult();
 		MLink link = null;
 		
 		MLinkSet linkSet = linksOfAssociation(assoc);
 		link = linkSet.linkBetweenObjects(objects, qualifierValues);
-
+		
 		if (link == null) {
 			throw new MSystemException("Link `" + assoc.name() + "' between ("
 					+ StringUtil.fmtSeqWithSubSeq(objects, ",", qualifierValues, ",", "{", "}")
 					+ ") does not exist.");
 		}
+		
+		return deleteLink(link);
+	}
+	
+	public DeleteObjectResult deleteLink(MLink link) throws MSystemException {
+		DeleteObjectResult result = new DeleteObjectResult();
 
-		linkSet.remove(link);
+		MLinkSet linkSet = linksOfAssociation(link.association());
+		if (!linkSet.remove(link)) {
+			throw new MSystemException("Invalid link to delete provided!");
+		}
+		
 		removeLinkFromWholePartGraph(link);
 		result.getRemovedLinks().add(link);
 
@@ -812,7 +1070,6 @@ public final class MSystemState {
 		return result;
 	}
 	
-    
 	/**
 	 * Creates and adds a new link to the state.
 	 * 
@@ -845,33 +1102,47 @@ public final class MSystemState {
 					"Cannot create a linkobject of an abtract association class!");
 		}
 		
+		validateLinkQualifiers(assocClass, qualifierValues);
+		StringWriter sw = new StringWriter();
+		if (!validateRedefinesForLink(assocClass, objects, new PrintWriter(sw))) {
+			throw new MSystemException(sw.toString());
+		}
+		
 		MLinkObject linkobj = new MLinkObjectImpl(assocClass, name, objects, qualifierValues);
 
-		// Part from createObject method
-		MObjectState objState = new MObjectState(linkobj);
-		fObjectStates.put(linkobj, objState);
-		fClassObjects.put(assocClass, linkobj);
-		fObjectNames.put(linkobj.name(), linkobj);
-		
 		//FIXME: Qualifier!
 		// Part from createLink method
 		MLinkSet linkSet = fLinkSets.get(assocClass);
 		if (linkSet.contains(linkobj))
 			throw new MSystemException("Link " + linkobj + " already exists.");
-		linkSet.add(linkobj);
+				
+		// Part from createObject method
+		MObjectState objState = new MObjectState(linkobj);
+		fObjectStates.put(linkobj, objState);
+		fClassObjects.put(assocClass, linkobj);
+		fObjectNames.put(linkobj.name(), linkobj);
 
-		for (MAssociation parent : assocClass.getAllParentAssociations()) {
-			linkSet = fLinkSets.get(parent);
-			if (linkSet.contains(linkobj))
-				throw new MSystemException("Link " + linkobj + " already exists.");
-			
-			linkSet.add(linkobj);
-		}
+		objState.initialize(this);
 		
+		StringWriter err = new StringWriter();
+		boolean valid = true;
+		
+		// Validate initial states of state machines
+		for (MProtocolStateMachineInstance sm : objState.getProtocolStateMachinesInstances()) {
+			valid &= sm.checkStateInvariant(this, new PrintWriter(err));
+		}
+
+		if (!valid) {
+			fObjectStates.remove(linkobj);
+			fClassObjects.remove(assocClass, linkobj);
+			fObjectNames.remove(linkobj.name());
+			
+			throw new MSystemException("Object creation failed:\n" + err.toString());
+		}
+
+		linkSet.add(linkobj);
 		return linkobj;
 	}
-
-   
 	
 	/**
 	 * Returns the state of an object in a specific system state.
@@ -881,21 +1152,29 @@ public final class MSystemState {
 	MObjectState getObjectState(MObject obj) {
 		return fObjectStates.get(obj);
 	}
-
-	
     
 	/**
-	 * 
+	 * This operation returns all objects reachable from a source object <code>obj</code>
+	 * navigating from association end <code>srcEnd</code> to association end
+	 * <code>dst</code>.
+	 * The difference to {@link #getNavigableObjects(MObject, MNavigableElement, MNavigableElement, List)}
+	 * is, that no qualifier values are provided. Instead the reachable objects
+	 * are partitioned by these values, to allow the validation of
+	 * multiplicities on qualified ends (The meaning of multiplicities change when using qualifiers to
+	 * how many objects are connected given concrete qualifier values).
 	 * @param obj
 	 * @param srcEnd
 	 * @param dstEnd
 	 * @return
 	 */
-	Map<List<Value>,Set<MObject>> getLinkedObjects(MObject obj, MAssociationEnd srcEnd, MAssociationEnd dstEnd) {
+	private Map<List<Value>,Set<MObject>> getLinkedObjects(MObject obj, MAssociationEnd srcEnd, MAssociationEnd dstEnd) {
 		Map<List<Value>, Set<MObject>> res = new HashMap<List<Value>, Set<MObject>>();
 
 		// get association
 		MAssociation assoc = dstEnd.association();
+		int srcIndex = srcEnd.association().associationEnds().indexOf(srcEnd);
+		int dstIndex = dstEnd.association().associationEnds().indexOf(dstEnd);
+		
 		MLinkSet linkSet;
 		
 		if (dstEnd.isUnion()) {
@@ -909,7 +1188,7 @@ public final class MSystemState {
 					res.putAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
 				}
 			}
-			
+		} else if (!dstEnd.getRedefiningEnds().isEmpty()) {
 			// add redefining ends
 			for (MAssociationEnd redefiningDestEnd : dstEnd.getRedefiningEnds()) {
 				MAssociationEnd redefiningSrcEnd = redefiningDestEnd.getAllOtherAssociationEnds().get(0);
@@ -918,75 +1197,12 @@ public final class MSystemState {
 					res.putAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
 				}
 			}
-
-			return res;
-		/*
-		// FIXME: Is derived possible with qualifiers?
-		} else if (dstEnd.isDerived()) {
-			EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null);
 			
-			ctx.pushVarBinding("self", obj.value());
-        	Value evalRes = dstEnd.getDeriveExpression().eval(ctx);
-        	
-        	if (evalRes.isUndefined()) {
-        		return new ArrayList<MObject>();
-        	} else {
-        		CollectionValue col = (CollectionValue)evalRes;
-        		res = new ArrayList<MObject>(col.size());
-        		for (Value v : col) {
-        			ObjectValue oVal = (ObjectValue)v;
-        			res.add(oVal.value());
-        		}
-        		
-        		return res;
-        	}
-        } else if (dstEnd.getAllOtherAssociationEnds().size() == 1 && 
-        		   dstEnd.getAllOtherAssociationEnds().get(0).isDerived()) {
-	       / The opposite side of a derived end of a binary association can be calculated:
-	     	   T = 
-	     	   T.allInstances()->select(t | t.deriveExpression->includes(self))
-	     	   
-	     	/
-        	EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null);
-						
-	     	MClass endClass = dstEnd.cls();
-	     	MNavigableElement otherEnd = dstEnd.getAllOtherAssociationEnds().get(0);
-	     	StringBuilder query = new StringBuilder();
-	     	query.append(endClass.name()).append(".allInstances()->select(self | ");
-	     	otherEnd.getDeriveExpression().toString(query);
-	     	query.append("->includes(sourceObject)");
-	     	query.append(")");
-	     	
-	     	ctx.pushVarBinding("sourceObject", obj.value());
-	     	
-	     	Expression linkExpression = OCLCompiler.compileExpression(
-	     			ctx.postState().system().model(), 
-	     			query.toString(), 
-	     			"opposite derived end", 
-	     			new PrintWriter(Log.out()),
-	     			ctx.varBindings());
-	     	
-	     	if (linkExpression == null) {
-	     		Log.error("Calculated opposite derive expression had compile errors!");
-	     		return new ArrayList<MObject>();
-	     	}
-	     	
-	     	Value expResult; 
-	     	expResult = linkExpression.eval(ctx);
-	     	
-	     	if (expResult.isUndefined()) {
-	     		return new ArrayList<MObject>();
-	     	} else {
-        		CollectionValue col = (CollectionValue)expResult;
-        		res = new ArrayList<MObject>(col.size());
-        		for (Value v : col) {
-        			ObjectValue oVal = (ObjectValue)v;
-        			res.add(oVal.value());
-        		}
-        		
-        		return res;
-        	}
-	    */
+		} else if (assoc.isDerived()) {
+			// Derived cannot be qualified, otherwise for each qualifier value
+			// combination like Integer x Integer the derive expression must be evaluated.
+			List<MObject> derived = getNavigableObjectsFromDerivedAssociation(obj, srcEnd, dstEnd);
+			res.put(Collections.<Value>emptyList(), new HashSet<MObject>(derived));
 		} else {
 			// get link set for association
 			linkSet = fLinkSets.get(assoc);
@@ -1006,261 +1222,358 @@ public final class MSystemState {
 	
 			// project tuples to destination end component
 			for (MLink link : links) {
-				MLinkEnd linkEndDst = link.linkEnd(dstEnd);
-				MLinkEnd linkEndSrc = link.linkEnd(srcEnd);
+				MLinkEnd linkEndDst = link.getLinkEnd(dstIndex);
+				MLinkEnd linkEndSrc = link.getLinkEnd(srcIndex);
 				
 				if (!res.containsKey(linkEndSrc.getQualifierValues()))
 					res.put(linkEndSrc.getQualifierValues(), new HashSet<MObject>());
 				
 				res.get(linkEndSrc.getQualifierValues()).add(linkEndDst.object());
 			}
-			
-			return res;
 		}
+		
+		return res;
+	}
+	
+	public MObject getNavigableObject(MLink link, MNavigableElement dst) {
+		int indexDst = link.association().associationEnds().indexOf(dst);
+		return link.getLinkEnd(indexDst).object();
 	}
 	
 	/**
-	 * Returns a list of objects at <code>dstEnd</code> which are linked to
-	 * <code>obj</code> at srcEnd with the given qualifier values.
-	 * 
-	 * @param obj The source object
-	 * @param srcEnd The association end to navigate from
-	 * @param dstEnd The association end to navigate to
-	 * @param qualifierValues Possible qualifier values. Can be <code>null</code>.
-	 * 
-	 * @return List(MObject)
-	 */
-	List<MObject> getLinkedObjects(MObject obj, MAssociationEnd srcEnd, MAssociationEnd dstEnd, List<Value> qualifierValues) {
-		List<MObject> res = new ArrayList<MObject>();
-
-		// get association
-		MAssociation assoc = dstEnd.association();
-		MLinkSet linkSet;
-		
-		if (dstEnd.isUnion()) {			
-			Set<MObject> tmpResult = new HashSet<MObject>();
-			
-			// add subsetting ends
-			for (MAssociationEnd subsettingDestEnd : dstEnd.getSubsettingEnds()) {
-				// TODO: n-ary!
-				MAssociationEnd subsettingSrcEnd = subsettingDestEnd.getAllOtherAssociationEnds().get(0);
-				// Add only if src end is generalization relationship with cls of obj
-				if (subsettingSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
-					tmpResult.addAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd, qualifierValues));
-				}
-			}
-			
-			// add redefining ends
-			for (MAssociationEnd redefiningDestEnd : dstEnd.getRedefiningEnds()) {
-				MAssociationEnd redefiningSrcEnd = redefiningDestEnd.getAllOtherAssociationEnds().get(0);
-				// Add only if src end is generalization relationship with cls of obj
-				if (redefiningSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(redefiningSrcEnd.cls())) {				
-					tmpResult.addAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd, qualifierValues));
-				}
-			}
-			
-			res.addAll(tmpResult);
-			return res;
-		} else if (dstEnd.isDerived()) {
-			EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null, "");
-			
-			ctx.pushVarBinding("self", obj.value());
-        	Value evalRes = dstEnd.getDeriveExpression().eval(ctx);
-        	
-        	if (evalRes.isUndefined()) {
-        		return new ArrayList<MObject>();
-        	} else {
-        		CollectionValue col = (CollectionValue)evalRes;
-        		res = new ArrayList<MObject>(col.size());
-        		for (Value v : col) {
-        			ObjectValue oVal = (ObjectValue)v;
-        			res.add(oVal.value());
-        		}
-        		
-        		return res;
-        	}
-        } else if (dstEnd.getAllOtherAssociationEnds().size() == 1 && 
-        		   dstEnd.getAllOtherAssociationEnds().get(0).isDerived()) {
-	       /* The opposite side of a derived end of a binary association can be calculated:
-	     	   T = 
-	     	   T.allInstances()->select(t | t.deriveExpression->includes(self))
-	     	   
-	     	*/
-        	EvalContext ctx = new EvalContext(this, this, this.fSystem.varBindings(), null, "");
-						
-	     	MClass endClass = dstEnd.cls();
-	     	MNavigableElement otherEnd = dstEnd.getAllOtherAssociationEnds().get(0);
-	     	StringBuilder query = new StringBuilder();
-	     	query.append(endClass.name()).append(".allInstances()->select(self | ");
-	     	otherEnd.getDeriveExpression().toString(query);
-	     	query.append("->includes(sourceObject)");
-	     	query.append(")");
-	     	
-	     	ctx.pushVarBinding("sourceObject", obj.value());
-	     	
-	     	Expression linkExpression = OCLCompiler.compileExpression(
-	     			ctx.postState().system().model(), 
-	     			query.toString(), 
-	     			"opposite derived end", 
-	     			new PrintWriter(Log.out()),
-	     			ctx.varBindings());
-	     	
-	     	if (linkExpression == null) {
-	     		Log.error("Calculated opposite derive expression had compile errors!");
-	     		return new ArrayList<MObject>();
-	     	}
-	     	
-	     	Value expResult; 
-	     	expResult = linkExpression.eval(ctx);
-	     	
-	     	if (expResult.isUndefined()) {
-	     		return new ArrayList<MObject>();
-	     	} else {
-        		CollectionValue col = (CollectionValue)expResult;
-        		res = new ArrayList<MObject>(col.size());
-        		for (Value v : col) {
-        			ObjectValue oVal = (ObjectValue)v;
-        			res.add(oVal.value());
-        		}
-        		
-        		return res;
-        	}
-	     	
-	     	
-		} else {
-			// get link set for association
-			linkSet = fLinkSets.get(assoc);
-		
-		
-			// if link set is empty return empty result list
-			if (Log.isTracing())
-				Log.trace(this, "linkSet size of association `" + assoc.name() + "' = "
-						  + linkSet.size());
-			
-			if (linkSet.size() == 0)
-				return res;
-	
-			// select links with srcEnd == obj
-			Set<MLink> links = linkSet.select(srcEnd, obj, qualifierValues);
-			
-			if (Log.isTracing())
-				Log.trace(this, "linkSet.select for object `" + obj + "', size = " + links.size());
-	
-			// project tuples to destination end component
-			for (MLink link : links) {
-				MLinkEnd linkEnd = link.linkEnd(dstEnd);
-				res.add(linkEnd.object());
-			}
-			
-			return res;
-		}
-	}
-
-	/**
-	 * Returns a list of objects at <code>dst</code> which are connected to this
-	 * object at <code>src</code>. This is needed for navigation.
+	 * Returns a list of objects at <code>dst</code> which are connected to the
+	 * object <code>obj</code> at <code>src</code>. This is needed for navigation.
 	 * 
 	 * @return List(MObject)
 	 */
 	public List<MObject> getNavigableObjects(MObject obj, MNavigableElement src, MNavigableElement dst, List<Value> qualifierValues) {
-		ArrayList<MObject> res = new ArrayList<MObject>();
+		return getNavigableObjects(obj, src, dst, qualifierValues, false, false);
+	}
 
-		if (dst.isUnion()) {
+	protected List<MObject> getNavigableObjects(MObject obj, MNavigableElement src, MNavigableElement dst, List<Value> qualifierValues, boolean excludeDerivedLinks, boolean excludeRedefines) {
+		MAssociation assoc = dst.association();
+		int srcIndex = assoc.reachableEnds().indexOf(src);
+		int dstIndex = assoc.reachableEnds().indexOf(dst);
+		return getNavigableObjects(obj, assoc, srcIndex, dstIndex, qualifierValues, excludeDerivedLinks, excludeRedefines);
+	}
+	
+	/**
+	 * Returns a list of objects at <code>dst</code> which are connected to the
+	 * object <code>obj</code> at <code>src</code>. This is needed for navigation.
+	 * It recursively calls this method if there are child associations.
+	 * @param obj The object the navigation starts
+	 * @param src The source end the navigation starts 
+	 * @param dst The end to navigate to
+	 * @param qualifierValues The values which qualify the navigation
+	 * @param excludeDerivedLinks If <code>true</code>, the concrete link sets are queried only for non virtual links. Derived association ends are still evaluated.
+	 * @param excludeRedefines If <code>true</code>, redefining associations are not considered. Needed, because the first association queries all redefining associations.  
+	 * @return
+	 */
+	protected List<MObject> getNavigableObjects(MObject obj, MAssociation assoc, int srcIndex, int dstIndex, List<Value> qualifierValues, boolean excludeDerivedLinks, boolean excludeRedefines) {
+		ArrayList<MObject> res = null;
+		Set<MAssociation> handledChilds = new HashSet<MAssociation>();
+		
+		MNavigableElement src = assoc.reachableEnds().get(srcIndex);
+		MNavigableElement dst = assoc.reachableEnds().get(dstIndex);
+		
+		// Links are computed by the union of all subsets
+		if (assoc.isUnion()) {
+			if (Log.isDebug()) {
+				Log.debug("getNavigableObjects for union [obj=" + obj + "; src=" + src + ";  dst=" + dst);
+			}
 			Set<MObject> tmpResult = new HashSet<MObject>();
-			// TODO: n-ary!
 
-			// add subsetting ends
-			for (MAssociationEnd subsettingDestEnd : dst.getSubsettingEnds()) {
-				MAssociationEnd subsettingSrcEnd = subsettingDestEnd
-						.getAllOtherAssociationEnds().get(0);
-				// Check only if src end is generalization relationship with cls
-				// of obj
-				if (subsettingSrcEnd.cls().isSubClassOf(obj.cls())
-						|| obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
-					tmpResult.addAll(getLinkedObjects(obj, subsettingSrcEnd,
-							subsettingDestEnd, qualifierValues));
+			for (MAssociation subsettingAssoc : dst.association().children()) {
+				MNavigableElement subsettingSrcEnd = subsettingAssoc.reachableEnds().get(srcIndex);
+				MNavigableElement subsettingDstEnd = subsettingAssoc.reachableEnds().get(dstIndex);
+				
+				boolean subsets = false;
+				// There are various number of child associations. Check for subsets
+				if (subsettingSrcEnd instanceof MAssociationEnd) {
+					subsets = ((MAssociationEnd)subsettingSrcEnd).getSubsettedEnds().contains(src);
+				}
+
+				if (!subsets && subsettingDstEnd instanceof MAssociationEnd) {
+					subsets = ((MAssociationEnd)subsettingDstEnd).getSubsettedEnds().contains(dst);
+				}
+				
+				if (subsets) {
+					// Check only if source end has a generalization relationship with class of obj (inheritance tree can split up)
+					if (subsettingSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
+						tmpResult.addAll(getNavigableObjects(obj, subsettingAssoc, srcIndex, dstIndex, qualifierValues, excludeDerivedLinks, excludeRedefines));
+					}
 				}
 			}
-
-			// add redefining ends
-			for (MAssociationEnd redefiningDestEnd : dst.getRedefiningEnds()) {
-				MAssociationEnd redefiningSrcEnd = redefiningDestEnd
-						.getAllOtherAssociationEnds().get(0);
-				// Check only if src end is generalization relationship with cls
-				// of obj
-				if (redefiningSrcEnd.cls().isSubClassOf(obj.cls())
-						|| obj.cls().isSubClassOf(redefiningSrcEnd.cls())) {
-					tmpResult.addAll(getLinkedObjects(obj, redefiningSrcEnd,
-							redefiningDestEnd, qualifierValues));
-				}
+			
+			res = new ArrayList<MObject>(tmpResult);
+			return res;
+		} 
+		
+		if (assoc.isDerived()) {
+			if (Log.isDebug()) {
+				Log.debug("getNavigableObjects for derived [obj=" + obj + "; src=" + src + ";  dst=" + dst + "]");
 			}
-
-			res.addAll(tmpResult);
+			res = getNavigableObjectsFromDerivedAssociation(obj, src, dst);
 		} else {
-			// get association
-			MAssociation assoc = dst.association();
-
+			if (Log.isDebug()) {
+				Log.debug("getNavigableObjects normal [obj=" + obj + "; src=" + src + ";  dst=" + dst);
+			}
+			res = new ArrayList<MObject>();
+			
 			// get link set for association
-			MLinkSet linkSet = fLinkSets.get(assoc);
+			MLinkSet linkSet = linksOfAssociation(assoc);
 
 			// if link set is empty return empty result list
 			if (Log.isTracing()) {
-				Log.trace(this, "linkSet size of association `" + assoc.name()
-						+ "' = " + linkSet.size());
+				Log.trace(this, "linkSet size of association `" + assoc.name() + "' = " + linkSet.size());
 			}
 
-			if (linkSet.size() == 0)
-				return res;
+			if (linkSet.size() > 0) {
 
-			// navigation from a linkobject
-			if (src instanceof MAssociationClass) {
-				// TODO: Why is navigation from AssociationClass to
-				// AssociationClass not allowed?
-				if (dst instanceof MAssociationClass) {
-					throw new RuntimeException("Wrong navigation expression.");
-				}
-				MLinkEnd linkEnd = ((MLinkObject) obj)
-						.linkEnd((MAssociationEnd) dst);
-				res.add(linkEnd.object());
-			} else {
-				MAssociationEnd srcEnd = (MAssociationEnd) src;
-				// select links with srcEnd == obj
-				Set<MLink> links = linkSet.select(srcEnd, obj, qualifierValues);
-
-				if (Log.isTracing()) {
-					Log.trace(this, "linkSet.select for object `" + obj
-							+ "', size = " + links.size());
-				}
-
-				// navigation to a linkobject
-				if (dst instanceof MAssociationClass) {
-					for (MLink link : links) {
-						res.add((MObject) link);
+				// navigation from a linkobject
+				if (src instanceof MAssociationClass) {
+					if (dst instanceof MAssociationClass) {
+						// Links for a link object are stored with a single additional end of type MAssociationClass 
+						throw new RuntimeException("Internal error! Wrong internal navigation from accociation class end to association class end.");
 					}
+					MLinkEnd linkEnd = ((MLink)obj).getLinkEnd(dstIndex);
+					res.add(linkEnd.object());
 				} else {
-					MAssociationEnd dstEnd = (MAssociationEnd) dst;
-					// project tuples to destination end component
-					for (MLink link : links) {
-						MLinkEnd linkEnd = link.linkEnd(dstEnd);
-						res.add(linkEnd.object());
+					MAssociationEnd srcEnd = (MAssociationEnd) src;
+					// select links with srcEnd == obj
+					Set<MLink> links = linkSet.select(srcEnd, obj, qualifierValues, excludeDerivedLinks);
+	
+					if (Log.isTracing()) {
+						Log.trace(this, "linkSet.select for object `" + obj + "', size = " + links.size());
 					}
+	
+					// navigation to a linkobject
+					if (dst instanceof MAssociationClass) {
+						for (MLink link : links) {
+							res.add((MObject) link);
+						}
+					} else {
+						// project tuples to destination end component
+						for (MLink link : links) {
+							MLinkEnd linkEnd = link.getLinkEnd(dstIndex);
+							res.add(linkEnd.object());
+						}
+					}
+				}
+			}
+			// Check the children
+			if (assoc instanceof MAssociationClass) {
+				MAssociationClass assocCls = (MAssociationClass)assoc;
+				for (MAssociationClass child : assocCls.children()) {
+					// Redefines does not need to consider them
+					handledChilds.add(child);
+					// If an association class does not add new ends, the base association is used. 
+					List<MObject> childs = getNavigableObjects(obj, child, srcIndex, dstIndex, qualifierValues, excludeDerivedLinks, excludeRedefines);
+					
+					res.addAll(childs);
 				}
 			}
 		}
 
+		if (!excludeRedefines) {
+			// Collect all links of possible child associations.
+			// Since we collect all children here, the child association does not need to calculate children
+			for (MAssociation child : assoc.getRedefinedByClosure()) {
+				if (handledChilds.contains(child)) continue;
+				
+				List<MObject> childs = getNavigableObjects(obj, child, srcIndex, dstIndex, qualifierValues, excludeDerivedLinks, true);
+				res.addAll(childs);
+			}
+		}
+		
 		return res;
 	}
 
+	protected ArrayList<MObject> getNavigableObjectsFromDerivedAssociation(MObject obj, MNavigableElement src, MNavigableElement dst) {
+		ArrayList<MObject> res = new ArrayList<MObject>();
+		
+		// Get all linked objects by evaluating the derive expression
+		MAssociation association = dst.association(); 
+		
+		MAssociationEnd derivedEnd = null;
+		
+		for (MAssociationEnd end : association.associationEnds()) {
+			if (end.isDerived()) {
+				derivedEnd = end;
+				break;
+			}
+		}
+		
+		assert(derivedEnd != null);
+		
+		int numEnds = association.associationEnds().size();
+		List<MObject[]> toEvaluate = new ArrayList<MObject[]>();
+		// Index of the destination object used for the input to
+		// the evaluate derive expression.
+		int dstIndex = -1;
+		
+		if (numEnds == 2) {
+			if (src.isDerived()) {
+				// if the source end is derived, check derive expression for all
+				// possible instances of the destination end.
+				Set<MObject> allObjects = objectsOfClassAndSubClasses(dst.cls());
+				for (MObject o : allObjects) {
+					toEvaluate.add( new MObject[] {o} );
+				}
+				dstIndex = 0;
+			} else {
+				// Simply evaluate the expression on source
+				toEvaluate.add( new MObject[] {obj} );
+			}
+		} else {
+			List<MAssociationEnd> noneDerivedEnds = derivedEnd.getAllOtherAssociationEnds();
+			int srcPosition = noneDerivedEnds.indexOf(src);
+			
+			List<MClass> otherClasses = new ArrayList<MClass>();
+			
+			for (int index = 0; index < noneDerivedEnds.size(); ++index) {
+				MAssociationEnd end = noneDerivedEnds.get(index);
+				if (!end.equals(src)) {
+					otherClasses.add(end.cls());
+					if (end.equals(dst)) {
+						dstIndex = index;
+					}
+				}
+			}
+			
+			Bag<MObject[]> sourceObjects = getCrossProductOfInstanceSets(otherClasses);
+			for (MObject[] toEval : sourceObjects) {
+				MObject[] evalInput = new MObject[numEnds - 1];
+				if (srcPosition >= 0)
+					evalInput[srcPosition] = obj;
+				
+				int i = 0;
+				for (int index = 0; index < srcPosition; ++index) {
+					evalInput[index] = toEval[i];
+					++i;
+				}
+				
+				for (int index = srcPosition + 1; index < numEnds - 1; ++index) {
+					evalInput[index] = toEval[i];
+					++i;
+				}
+				
+				toEvaluate.add(evalInput);
+			}
+		}
+
+		for (MObject[] sourceObjects : toEvaluate) {
+			List<MObject> linkedObjects;
+			try {
+				linkedObjects = evaluateDeriveExpression(sourceObjects, derivedEnd);
+			} catch (StackOverflowError e) {
+				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to an stack overflow!\nMaybe an infinite recursion is defined.");
+				continue;
+			} catch (RuntimeException e) {
+				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a runtime exception: " + e.getMessage());
+				continue;
+			} catch (MSystemException e) {
+				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a runtime exception: " + e.getMessage());
+				continue;
+			}
+			
+			if (src.isDerived()) {
+				if (linkedObjects.contains(obj))
+					res.add(sourceObjects[dstIndex]);
+			} else if (dst.isDerived()) {
+				res.addAll(linkedObjects);
+			} else {
+				if (linkedObjects.size() > 0)
+					res.add(sourceObjects[dstIndex]);
+			}
+		}
+		
+		return res;
+	}
+
+	Value evaluateInitExpression(MObject self, Expression initExp) {
+		// no variables in context
+		VarBindings vars = new VarBindings();
+		EvalContext ctx = new SimpleEvalContext(this, this, vars);
+		ctx.pushVarBinding("self", self.value());
+		
+        Value res = null;
+        try {
+        	res = initExp.eval(ctx);
+        } catch (MultiplicityViolationException e) {
+        	return UndefinedValue.instance;
+        }
+        
+        return res;
+	}
+	
+	List<MObject> evaluateDeriveExpression(MObject[] source, MAssociationEnd dst) throws MSystemException {
+		// add the object values to the context
+		EvalContext ctx = new SimpleEvalContext(MSystemState.this, MSystemState.this, new VarBindings());
+		List<MObject> result = new LinkedList<>();
+		
+		for (int i = 0; i < source.length; ++i) {
+			ObjectValue objVal = new ObjectValue((MClass)dst.getDeriveParamter().varDecl(i).type(), source[i]);
+			ctx.pushVarBinding(dst.getDeriveParamter().varDecl(i).name(), objVal);
+		}
+		
+        Value res = null;
+        try {
+        	res = dst.getDeriveExpression().eval(ctx);
+        } catch (MultiplicityViolationException e) {
+        	return Collections.emptyList();
+        }
+    	
+    	if (res.isUndefined()) {
+    		return Collections.emptyList();
+    	}
+
+    	if (res.type().isTypeOfClass()) {
+    		// Single object as result
+    		ObjectValue singleObject = (ObjectValue)res;
+    		result.add(singleObject.value());
+    	} else if (res.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+    		// Collection of objects as result
+    		CollectionValue col = (CollectionValue)res;
+    		
+    		
+    		for (Value v : col) {
+    			if (!v.isUndefined()) {
+    				ObjectValue singleObject = (ObjectValue)v;
+    				result.add(singleObject.value());
+    			}
+    		}
+    	} else {
+    		// Ups....
+    		throw new MSystemException("Invalid return type of derive expression");
+    	}
+    	
+    	return result;
+	}
+
+	public Value evaluateDeriveExpression(final ObjectValue source, final MAttribute attribute) {
+		final EvalContext ctx = new SimpleEvalContext(this, this, system().varBindings()); 
+    	
+        ctx.pushVarBinding("self", source);
+        
+    	return attribute.getDeriveExpression().eval(ctx);
+	}
+	
+	public Value evaluateDeriveExpression(final MObject source, final MAttribute attribute) {
+		final ObjectValue objVal = new ObjectValue(source.cls(), source);
+		
+    	return evaluateDeriveExpression(objVal, attribute);
+	}
+	
 	/**
 	 * Checks for a valid system state. Returns true if all constraints hold for
 	 * all objects. Prints result of subexpressions for failing constraints to
 	 * the log if traceEvaluation is true. - Checks the whole/part hierarchy.
 	 */
 	public boolean check(PrintWriter out, boolean traceEvaluation,
-			boolean showDetails, boolean allInvariants, List<String> invNames) {
+			boolean showDetails, boolean allInvariants, final List<String> invNames) {
 		boolean valid = true;
 		Evaluator evaluator = new Evaluator();
-		MModel model = fSystem.model();
 
 		// model inherent constraints: check whether cardinalities of
 		// association links match their declaration of multiplicities
@@ -1282,94 +1595,42 @@ public final class MSystemState {
 		ArrayList<MClassInvariant> invList = new ArrayList<MClassInvariant>();
 		ArrayList<Boolean> negatedList = new ArrayList<Boolean>();
 		ArrayList<Expression> exprList = new ArrayList<Expression>();
+		Collection<MClassInvariant> source;
 		
-		if (allInvariants) {
-			// get all invariants (loaded and normal classinvariants)
-			// it doesn't matter if specific invariants are given or not
-
-			// get all loaded Invariants (generator)
-			for (GFlaggedInvariant flaggedInv : fSystem.generator().flaggedInvariants()) {
-				MClassInvariant inv = flaggedInv.classInvariant();
-				Expression expr = inv.expandedExpression();
-				
-				// sanity check
-				if (!expr.type().isBoolean())
-					throw new RuntimeException("Expression " + expr
-							+ "has type " + expr.type()
-							+ ", expected boolean type");
-				if (flaggedInv.negated()) {
-					try {
-						Expression[] args = { expr };
-						Expression expr1 = ExpStdOp.create("not", args);
-						expr = expr1;
-					} catch (ExpInvalidException e) {
-						// TODO: Should this be ignored or is this a fatal
-						// error?
-					}
-					negatedList.add(Boolean.TRUE);
-				} else {
-					negatedList.add(Boolean.FALSE);
-				}
-				invList.add(inv);
-				exprList.add(expr);
-				out.println("GeneratorInvariants: " + inv);
-			}
-		} else if (invNames.isEmpty()) {
-			// get all invariants
-			for(MClassInvariant inv : model.classInvariants()) {
-				Expression expr = inv.expandedExpression();
-				// sanity check
-				if (!expr.type().isBoolean())
-					throw new RuntimeException("Expression " + expr
-							+ "has type " + expr.type()
-							+ ", expected boolean type");
-				invList.add(inv);
-				negatedList.add(Boolean.FALSE);
-				exprList.add(expr);
-			}
+		if (invNames.isEmpty()) {
+			source = fSystem.model().classInvariants();
 		} else {
-			// get only specified invariants
-			for (String invName : invNames) {
-				MClassInvariant inv = model.getClassInvariant(invName);
-				if (inv != null) {
-					Expression expr = inv.expandedExpression();
-					// sanity check
-					if (!expr.type().isBoolean())
-						throw new RuntimeException("Expression " + expr
-								+ "has type " + expr.type()
-								+ ", expected boolean type");
-					invList.add(inv);
-					negatedList.add(Boolean.FALSE);
-					exprList.add(expr);
-				} else {
-					GFlaggedInvariant flaggedInv = fSystem.generator()
-							.flaggedInvariant(invName);
-					inv = flaggedInv.classInvariant();
-					if (inv != null) {
-						Expression expr = inv.expandedExpression();
-						// sanity check
-						if (!expr.type().isBoolean())
-							throw new RuntimeException("Expression " + expr
-									+ "has type " + expr.type()
-									+ ", expected boolean type");
-						if (flaggedInv.negated()) {
-							try {
-								Expression[] args = { expr };
-								Expression expr1 = ExpStdOp.create("not", args);
-								expr = expr1;
-							} catch (ExpInvalidException e) {
-								// TODO: Should this be ignored or is this a
-								// fatal error?
-							}
-							negatedList.add(Boolean.TRUE);
-						} else {
-							negatedList.add(Boolean.FALSE);
+			source = Collections2.filter(fSystem.model().classInvariants(), 
+					new Predicate<MClassInvariant>() {
+						@Override
+						public boolean apply(MClassInvariant input) {
+							return invNames.contains(input.name());
 						}
-						invList.add(inv);
-						exprList.add(expr);
-					}
+					});
+		}
+		
+		for (MClassInvariant inv : source) {
+		
+			// Ignore if deactivated and not all should be checked.
+			if (!allInvariants && !inv.isActive()) continue;
+			
+			Expression expr = inv.expandedExpression();
+			
+			if (inv.isNegated()) {
+				try {
+					Expression[] args = { expr };
+					Expression expr1 = ExpStdOp.create("not", args);
+					expr = expr1;
+				} catch (ExpInvalidException e) {
+					// This cannot happen, since in invariant is a boolean expression 
+					// (checked by MClassInvariant constructor)
 				}
+				negatedList.add(Boolean.TRUE);
+			} else {
+				negatedList.add(Boolean.FALSE);
 			}
+			invList.add(inv);
+			exprList.add(expr);
 		}
 
 		// start (possibly concurrent) evaluation
@@ -1378,7 +1639,7 @@ public final class MSystemState {
 
 		// receive results
 		for (int i = 0; i < exprList.size(); i++) {
-			MClassInvariant inv = (MClassInvariant) invList.get(i);
+			MClassInvariant inv = invList.get(i);
 			numChecked++;
 			String msg = "checking invariant (" + numChecked + ") `"
 					+ inv.cls().name() + "::" + inv.name() + "': ";
@@ -1388,11 +1649,10 @@ public final class MSystemState {
 				Value v = (Value) resultValues.get();
 
 				// if value 'v' is null, the invariant can not be evaluated,
-				// therefor
-				// it is N/A (not available).
+				// therefore it is N/A (not available).
 				if (v == null) {
 					out.println("N/A");
-					// if there is a value, the invariant can allways be
+					// if there is a value, the invariant can always be
 					// evaluated and the
 					// result can be printed.
 				} else {
@@ -1407,7 +1667,7 @@ public final class MSystemState {
 						// results
 						if (traceEvaluation) {
 							out.println("Results of subexpressions:");
-							Expression expr = (Expression) exprList.get(i);
+							Expression expr = exprList.get(i);
 							evaluator.eval(expr, this, new VarBindings(), out);
 						}
 
@@ -1551,9 +1811,14 @@ public final class MSystemState {
 	 * association links match their declaration of multiplicities.
 	 */
 	public boolean checkStructure(PrintWriter out, boolean reportAllErrors) {
+		long start = System.currentTimeMillis();
+		
 		boolean res = true;
 		out.println("checking structure...");
 		out.flush();
+		
+		updateDerivedValues(true);
+		
 		// check the whole/part hierarchy
 		if (!checkWholePartLink(out)) {
 			if (!reportAllErrors) return false;
@@ -1567,31 +1832,40 @@ public final class MSystemState {
 		}
 
 		out.flush();
+
+		if (!Options.testMode) {
+			long duration = System.currentTimeMillis() - start;
+			out.println(String.format("checked structure in %,dms.", duration));
+		}
+		
 		return res;
 	}
 
 	/**
 	 * Checks model checks whether cardinalities of
 	 * association links match their declaration of multiplicities.
+	 * Further, subsetting and redefine constraints are validated.
 	 */
 	public boolean checkStructure(MAssociation assoc, PrintWriter out, boolean reportAllErrors) {
 		boolean res = true;
 		
+		res = validateRedefines(assoc, out, reportAllErrors);
+		
 		if (assoc.associationEnds().size() != 2) {
 			// check for n-ary links
-			res = naryAssociationsAreValid(out, assoc, reportAllErrors);
+			res = naryAssociationsAreValid(out, assoc, reportAllErrors) && res;
 		} else {
 			// check both association ends
 			Iterator<MAssociationEnd> it2 = assoc.associationEnds().iterator();
 			MAssociationEnd aend1 = it2.next();
 			MAssociationEnd aend2 = it2.next();
 
-			res = validateBinaryAssociations(out, assoc, aend1, aend2, reportAllErrors);
+			res = validateBinaryAssociations(out, assoc, aend1, aend2, reportAllErrors) && res;
 			if (!res && !reportAllErrors) return res;
 			
-			res = validateBinaryAssociations(out, assoc, aend2, aend1, reportAllErrors) & res;
+			res = validateBinaryAssociations(out, assoc, aend2, aend1, reportAllErrors) && res;
 		}
-		
+
 		out.flush();
 		return res;
 	}
@@ -1627,8 +1901,7 @@ public final class MSystemState {
 						++count;
 				}
 				if (!selEnd.multiplicity().contains(count)) {
-					out
-							.println("Multiplicity constraint violation in association `"
+					out.println("Multiplicity constraint violation in association `"
 									+ assoc.name() + "':");
 					out.println("  Objects `" + StringUtil.fmtSeq(tuple, ", ")
 							+ "' are connected to " + count + " object"
@@ -1651,10 +1924,9 @@ public final class MSystemState {
 	 * @param classes
 	 * @return a bag of object arrays (<code>Bag(MObject[])</code>)
 	 */
-	Bag<MObject[]> getCrossProductOfInstanceSets(List<MClass> classes) {
+	public Bag<MObject[]> getCrossProductOfInstanceSets(List<MClass> classes) {
 		Bag<MObject[]> bag = new HashBag<MObject[]>();
-		insertAllNMinusOneTuples(bag, (MClass[]) classes
-				.toArray(new MClass[classes.size()]), 0, new MObject[0]);
+		insertAllNMinusOneTuples(bag, classes.toArray(new MClass[classes.size()]), 0, new MObject[0]);
 		return bag;
 	}
 
@@ -1705,13 +1977,8 @@ public final class MSystemState {
 					valid = false;
 				}
 				
-				if (aend1.getSubsettedEnds().size() > 0) {
+				if (!aend1.getSubsettedEnds().isEmpty()) {
 					if (!validateSubsets(out, obj, entry.getKey(), entry.getValue(), aend1))
-						valid = false;
-				}
-	
-				if (aend1.getRedefiningEnds().size() > 0) {
-					if (!validateRedefineBinary(out, obj, entry.getKey(), entry.getValue(), aend1))
 						valid = false;
 				}
 			}
@@ -1760,39 +2027,6 @@ public final class MSystemState {
 				+ aend2.multiplicity() + "'.");
 	}
 
-	
-	private boolean validateRedefineBinary(PrintWriter out, MObject obj,
-			List<Value> qualifierValues, Set<MObject> linkedObjects,
-			MAssociationEnd aend) {
-		boolean valid = true;
-		List<MAssociationEnd> endsToCheck = new ArrayList<MAssociationEnd>();
-		
-		// Find all redefining ends, which are of the same type or a subtype of obj 
-		for (MAssociationEnd end : aend.getRedefiningEnds()) {
-			if (aend.cls().type().isSubtypeOf(obj.type())) {
-				endsToCheck.add(end);
-			}
-		}
-		
-		// All objects linked with obj must conform to the type at the redefining end
-		for (MAssociationEnd end : endsToCheck) {
-			// Get the type, the objects must conform to			
-			Type destType = aend.getAllOtherAssociationEnds().get(0).cls().type();
-			
-			for (MObject dstObj : linkedObjects) {
-				if (!dstObj.type().isSubtypeOf(destType)) {
-					out.println("constraint {redefines " + aend.nameAsRolename() + "} on association end " 
-							+ end.nameAsRolename() + ":" + end.association().name() + " is violated!");
-					out.println("Object " + obj.name() + " is linked with object " + dstObj.name() + 
-							    " whichs type does not conform to the type " + destType.shortName());
-					valid = false;
-				}
-			}
-		}
-		
-		return valid;
-	}
-	
 	/**
 	 * Checks if the list of connected objects is a subset of all parent navigations.
 	 * @param out
@@ -1814,7 +2048,7 @@ public final class MSystemState {
 			assert ends.size() == 1;
 			MAssociationEnd subEnd2 = ends.get(0);
 			
-			List<MObject> parentObjectList = getLinkedObjects(obj, subEnd1, subEnd2, qualifierValues);
+			List<MObject> parentObjectList = getNavigableObjects(obj, subEnd1, subEnd2, qualifierValues);
 			
 			if (!parentObjectList.containsAll(linkedObjects)) {
 				// Which objects are missing?
@@ -1834,14 +2068,14 @@ public final class MSystemState {
 	
 	/**
 	 * Returns a unique name that can be used for a new object of the given
-	 * class. Checks whether the name is used in this state. BigFix for USE
+	 * class. Checks whether the name is used in this state. BugFix for USE
 	 * 2.0.0. This operation is only used by the Snapshot Generator.
 	 */
 	public String uniqueObjectNameForClass(String clsName) {
 		String name;
-		do {
+		do
 			name = system().uniqueObjectNameForClass(clsName);
-		} while (objectByName(name) != null);
+		while (objectByName(name) != null);
 		return name;
 	}
 	
@@ -1852,5 +2086,29 @@ public final class MSystemState {
 	 */
 	public String uniqueObjectNameForClass(MClass cls) {
 		return uniqueObjectNameForClass(cls.name());
+	}
+
+	/**
+	 * @param fLogWriter
+	 */
+	public void checkStateInvariants(@NonNull PrintWriter out) {
+		boolean error = false;
+		int checkedStateMachines = 0;
+		long start = System.currentTimeMillis();
+		
+		for (MObject o : this.allObjects()) {
+			if (o.cls().getAllOwnedProtocolStateMachines().isEmpty()) continue;
+			
+			for (MProtocolStateMachineInstance psmI : o.state(this).getProtocolStateMachinesInstances()) {
+				error = error || !psmI.checkStateInvariant(this, out);
+				++checkedStateMachines;
+			}
+		}
+		
+		long duration = System.currentTimeMillis() - start;
+		if (!error) {
+			out.println("All state invariants are valid.");
+		}
+		out.println(String.format("The evaluation of the state invariants of %,d state machines took %,dms.", checkedStateMachines, duration));
 	}
 }

@@ -20,9 +20,11 @@
 package org.tzi.use.util.collections;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,10 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.tzi.use.util.Pair;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 
 /**
  * Class with useful class operations for modifying collections.
@@ -149,7 +155,7 @@ public final class CollectionUtil {
      * @param theList
      * @return
      */
-    public static <T> List<T> emptyListIfNull(List<T> theList) {
+    public static <T> List<T> emptyListIfNull(final List<T> theList) {
     	if (theList == null)
     		return Collections.emptyList();
     	else
@@ -164,7 +170,7 @@ public final class CollectionUtil {
      * @param theMap
      * @return
      */
-    public static <TK, TV> Map<TK, TV> emptyMapIfNull(Map<TK, TV> theMap) {
+    public static <TK, TV> Map<TK, TV> emptyMapIfNull(final Map<TK, TV> theMap) {
     	if (theMap == null)
     		return Collections.emptyMap();
     	else
@@ -178,7 +184,7 @@ public final class CollectionUtil {
      * @param theSet
      * @return
      */
-    public static <T> Set<T> emptySetIfNull(Set<T> theSet) {
+    public static <T> Set<T> emptySetIfNull(final Set<T> theSet) {
     	if (theSet == null)
     		return Collections.emptySet();
     	else
@@ -199,7 +205,7 @@ public final class CollectionUtil {
      * @param theList A <code>List</code>
      * @return The same list if <code>theList.size() > 0</code> or a new <code>ArrayList</code>  
      */
-    public static <T> List<T> initAsArrayList(List<T> theList) {
+    public static <T> List<T> initAsArrayList(final List<T> theList) {
     	if (theList.size() == 0)
     		return new ArrayList<T>();
     	else
@@ -221,7 +227,7 @@ public final class CollectionUtil {
      * @param theList A <code>List</code>
      * @return The same <code>Map</code> if <code>theMap.size() > 0</code> or a new <code>HashMap</code>  
      */
-    public static <TK, TV> Map<TK,TV> initAsHashMap(Map<TK,TV> theMap) {
+    public static <TK, TV> Map<TK,TV> initAsHashMap(final Map<TK,TV> theMap) {
     	if (theMap.size() == 0)
     		return new HashMap<TK,TV>();
     	else
@@ -242,10 +248,65 @@ public final class CollectionUtil {
      * @param theSet A <code>Set</code>
      * @return The same set if <code>theSet.size() > 0</code> or a new <code>HashSet</code>  
      */
-    public static <T> Set<T> initAsHashSet(Set<T> theSet) {
+    public static <T> Set<T> initAsHashSet(final Set<T> theSet) {
     	if (theSet.size() == 0)
     		return new HashSet<T>();
     	else
     		return theSet;
     }
+    
+    /**
+     * This operation needs to be used with care!
+     * It allows an unsafe downcast from a generic collection to another,
+     * which in general is not valid!
+     * @param set
+     * @return
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T, TCast extends T> Set<TCast> downCastUnsafe(final Set<? extends T> set) {
+		return (Set)set;
+    }
+
+	/**
+	 * Returns the single element from <code>collection<code>.
+	 * If the collection has more than one element or is empty,
+	 * an exception is thrown.
+	 * @param collection The collection to retrieve the single element from.
+	 * @return The single element.
+	 * @throws IllegalArgumentException If the collection is empty or has more than one element.
+	 */
+	public static <T> T exactlyOne( Collection<T> collection) throws IllegalArgumentException {
+		Iterator<T> i = collection.iterator();
+		if (!i.hasNext())
+			throw new IllegalArgumentException("Collection is empty");
+		
+		T element = i.next();
+		
+		if (i.hasNext())
+			throw new IllegalArgumentException("Collection has more than one element");
+		
+		return element;
+	}
+	
+	public static <T> boolean exists(Iterable<T> source, Predicate<T> predicate) {
+		Iterator<T> iter = source.iterator();
+		return exists(iter, predicate);
+	}
+	
+	public static <T> boolean exists(Iterator<T> source, Predicate<T> predicate) {
+		T item;
+		
+		while (source.hasNext()) {
+			item = source.next(); 
+			if (predicate.apply(item)) {
+				 return true;
+			 }
+		}
+		
+		return false;
+	}
+
+	public static <T,TCast> Set<TCast> filterByType(final Set<T> source, final Class<TCast> cls) {
+		return Sets.newHashSet(Iterators.filter(source.iterator(), cls)); 
+	}
 }

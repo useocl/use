@@ -36,20 +36,28 @@ public final class BooleanType extends BasicType {
         super("Boolean");
     }
     
-    public boolean isBoolean() {
+    @Override
+    public boolean isTypeOfBoolean() {
+    	return true;
+    }
+    
+    @Override
+    public boolean isKindOfBoolean(VoidHandling h) {
     	return true;
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
-        return equals(t) || t.isTrueOclAny();
+    @Override
+    public boolean conformsTo(Type other) {
+        return this.equals(other) || other.isTypeOfOclAny();
     }
 
     /** 
      * Returns the set of all supertypes (including this type).
      */
+    @Override
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>(2);
         res.add(TypeFactory.mkOclAny());

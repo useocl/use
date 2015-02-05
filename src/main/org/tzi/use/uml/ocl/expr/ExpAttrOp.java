@@ -27,22 +27,24 @@ import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Attribute operation on objects.
- *
- * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * 
+ * @author Mark Richters
+ * @author Lars Hamann
  */
 public final class ExpAttrOp extends Expression {
     private MAttribute fAttr;
+    
     private Expression fObjExp;
     
     public ExpAttrOp(MAttribute a, Expression objExp) {
-        super(a.type(), objExp);
+        super(a.type());
         fAttr = a;
         fObjExp = objExp;
-        if (! objExp.type().isTrueObjectType() )
+        if (! objExp.type().isTypeOfClass() )
             throw new IllegalArgumentException(
                                                "Target expression of attribute operation must have " +
                                                "object type, found `" + objExp.type() + "'.");
@@ -67,12 +69,18 @@ public final class ExpAttrOp extends Expression {
         if (! val.isUndefined() ) {
             ObjectValue objVal = (ObjectValue) val;
             MObject obj = objVal.value();
-            MObjectState objState = isPre() ? 
-                obj.state(ctx.preState()) : obj.state(ctx.postState());
-
-            // if the object is dead the result is undefined
-            if (objState != null )
-                res = objState.attributeValue(fAttr);
+            
+            if (fAttr.isDerived()) {
+            	MSystemState state = isPre() ? ctx.preState() : ctx.postState();
+            	res = state.evaluateDeriveExpression(obj, fAttr);
+            } else {
+	            MObjectState objState = isPre() ? 
+	                obj.state(ctx.preState()) : obj.state(ctx.postState());
+	
+	            // if the object is dead the result is undefined
+	            if (objState != null )
+	                res = objState.attributeValue(fAttr);
+            }
         }
         ctx.exit(this, res);
         return res;
@@ -86,12 +94,14 @@ public final class ExpAttrOp extends Expression {
         return sb.append(atPre());
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitAttrOp(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {		
+		return fObjExp.requiresPreState();
 	}
 }
 

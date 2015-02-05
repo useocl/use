@@ -63,7 +63,7 @@ public class ASTGIfThenElse extends ASTGInstruction {
         try {
             GInstruction condition = fCondition.gen(ctx);
             if (! (condition instanceof GValueInstruction) ||
-                ! ((GValueInstruction) condition).type().isBoolean() ) {
+                ! ((GValueInstruction) condition).type().isTypeOfBoolean() ) {
                 String err = "`" + condition + "' must be of type Boolean.";
                 throw new SemanticException( fname, err );
             }

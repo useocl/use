@@ -1,0 +1,62 @@
+!create s1 : Snapshot
+!create mirco : User
+!create author : Role
+!insert (mirco,author) into UserAssignment
+!create sess1 : Session
+!insert (sess1,mirco) into ActiveUser
+!insert (sess1,author) into ActiveRoles
+!create acc1 : Access
+!insert (sess1,acc1) into ActiveAccess
+!create write : Action
+!insert (acc1,write) into AccessAction
+!create paper11 : Resource
+!insert (acc1,paper11) into AccessResource
+!insert (write,paper11) into Permission
+!insert (Permission1,author) into PermissionAssignment
+!create s2 : Snapshot
+!create martin : User
+!insert (s2,martin) into SnapshotUser
+!create pcMember : Role
+!insert (martin,pcMember) into UserAssignment
+!create sess2 : Session
+!insert (sess2,martin) into ActiveUser
+!insert (sess2,pcMember) into ActiveRoles
+!create acc2 : Access
+!insert (sess2,acc2) into ActiveAccess
+!insert (acc2,paper11) into AccessResource
+!create review : Action
+!insert (acc2,review) into AccessAction
+!insert (review,paper11) into Permission
+!insert (Permission2,pcMember) into PermissionAssignment
+!insert (s1,s2) into PredSuccSnapshot
+!create s3 : Snapshot
+!insert (s2,s3) into PredSuccSnapshot
+!create oliver : User
+!insert (s3,oliver) into SnapshotUser
+!create chair : Role
+!insert (oliver,chair) into UserAssignment
+!create sess3 : Session
+!insert (sess3,oliver) into ActiveUser
+!insert (sess3,chair) into ActiveRoles
+!create acc3 : Access
+!insert (sess3,acc3) into ActiveAccess
+!insert (acc3,paper11) into AccessResource
+!create decide : Action
+!insert (acc3,decide) into AccessAction
+!insert (decide,paper11) into Permission
+!insert (Permission3,chair) into PermissionAssignment
+!insert (s1,mirco) into SnapshotUser
+?Permission.allInstances()->size()
+*-> 3 : Integer
+?Permission.byUseId('Permission3')
+*-> Permission3:Permission
+?Permission.byUseId('Permission4')
+*-> Undefined : OclVoid
+?Permission.byUseId(null)
+*-> Undefined : OclVoid
+?Permission.byUseId(5)
+*<input>:1:0: Operation Permission.byUseId(expression) requires an expression of type `String', found `Integer'.
+!a := new User('ada')
+?let id = a.useToId() in User.byUseId(id) = a
+*-> true : Boolean
+exit

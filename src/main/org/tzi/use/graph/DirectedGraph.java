@@ -21,6 +21,7 @@
 
 package org.tzi.use.graph;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -37,9 +38,7 @@ import java.util.Set;
  */
 
 
-public interface DirectedGraph<N, E extends DirectedEdge<N>> {
-    // Query Operations (from Collection)
-
+public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<N> {
     /**
      * Returns the number of nodes in this graph.  If this graph
      * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
@@ -66,7 +65,7 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
      * @return <tt>true</tt> if this graph contains the specified
      *         node
      */
-    boolean contains(N o);
+    boolean contains(Object o);
 
     /**
      * Returns an iterator over the nodes in this collection.  There are no
@@ -117,7 +116,7 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
      * @return <tt>true</tt> if this graph did contain the
      *          specified node and removed it.  
      */
-    boolean remove(N o);
+    boolean remove(Object o);
 
 
     // Graph specific Operations
@@ -208,6 +207,26 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
     Set<N> targetNodeSet(N n);
 
     /**
+     * An iterable over the nodes reachable by outgoing edges.
+     * @param node The starting node
+     * @param includeNode If <code>true</code>, the starting node is the first element of the iteration.
+     * @return
+     */
+    NodeSetIterator<N> targetNodeClosureSetIterator(N node, boolean includeNode);
+    
+    /**
+     * Returns a set view of nodes which are directly reachable by outgoing
+     * edges from <code>n</code>.
+     * This operation is used to get a set of subclasses of type <code>T</code> the nodes.
+     * <code>s</code> is used as the "erasure object" to check the cast.
+     * 
+     * @return a set view of reachable target nodes.
+     * @throws NodeDoesNotExistException node n is not part of this graph.
+     * @throws NullPointerException n is null.
+     */
+    <T extends N> Set<T> targetNodeSet(Class<T> s, T n);
+    
+    /**
      * Returns a set view of nodes which are reachable by one ore more 
      * outgoing edges from <code>n</code>.
      *
@@ -218,6 +237,16 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
     Set<N> targetNodeClosureSet(N n);
 
     /**
+     * Returns a set view of nodes which are reachable by one ore more 
+     * outgoing edges from <code>n</code>.
+     *
+     * @return a set view of all reachable target nodes.
+     * @throws NodeDoesNotExistException node n is not part of this graph.
+     * @throws NullPointerException n is null.
+     */
+    <T extends N> Set<T> targetNodeClosureSet(Class<T> s, T n);
+    
+    /**
      * Returns a set view of nodes which have directed edges targeting
      * <code>n</code>.
      *
@@ -225,7 +254,9 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
      * @throws NodeDoesNotExistException node n is not part of this graph.
      * @throws NullPointerException n is null.  */
     Set<N> sourceNodeSet(N n);
-
+    
+    <T extends N> Set<T> sourceNodeSet(Class<T> s, T n);
+    
     /**
      * Returns a set view of all nodes which have a path to
      * <code>n</code>.
@@ -236,6 +267,16 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
      */
     Set<N> sourceNodeClosureSet(N n);
 
+    <T extends N> Set<T> sourceNodeClosureSet(Class<T> s, T n);
+    
+    /**
+     * An iterable over the nodes reachable by outgoing edges.
+     * @param node The starting node
+     * @param includeNode If <code>true</code>, the starting node is the first element of the iteration.
+     * @return
+     */
+    NodeSetIterator<N> sourceNodeClosureSetIterator(N node, boolean includeNode);
+    
     /**
      * Returns the set of edges between two nodes.
      *
@@ -245,6 +286,17 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
      */
     Set<E> edgesBetween(N n1, N n2);
 
+    /**
+     * Returns the set of edges between two nodes.
+     * If <code>oneDirection</code> is <code>true</code>, only the edges
+     * from <code>source</code> to <code>target</code> are returned.
+     * Otherwise, edges in both directions are returned. 
+     * @return Set(E)
+     * @throws NodeDoesNotExistException node <code>source</code> or <code>target</code> is not in this graph.
+     * @throws NullPointerException <code>source</code> or <code>target</code> is null.
+     */
+    Set<E> edgesBetween(N source, N target, boolean oneDirection);
+    
     /**
      * Returns true if there is a set of directed edges from n1 to n2.
      *
@@ -260,5 +312,14 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> {
      * @return true if the graph contains at least one cycle.
      */
     boolean hasCycle();
+
+	/**
+	 * Removes all nodes and edges from the graph
+	 */
+	void clear();
+	
+	public interface NodeSetIterator<N> extends Iterator<N> {
+		int getDepth();
+	}
 }
 

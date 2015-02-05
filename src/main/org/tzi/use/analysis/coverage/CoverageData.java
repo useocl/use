@@ -32,6 +32,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
+import org.tzi.use.uml.mm.MOperation;
 
 /**
  * Container class for coverage data.
@@ -55,6 +56,8 @@ public class CoverageData {
 	protected Map<MAttribute, Integer> attributeCoverage = new HashMap<MAttribute, Integer>();
 	
 	protected Map<MAssociation, Integer> associationCoverage = new HashMap<MAssociation, Integer>();
+	
+	protected Map<MOperation, Integer> operationCoverage = new HashMap<MOperation, Integer>();
 	
 	/**
 	 * Saves coverage information about association end coverage
@@ -92,6 +95,13 @@ public class CoverageData {
 	}
 	
 	/**
+	 * @return the attributeCoverage
+	 */
+	public Map<MOperation, Integer> getOperationCoverage() {
+		return operationCoverage;
+	}
+	
+	/**
 	 * @return the associationCoverage
 	 */
 	public Map<MAssociation, Integer> getAssociationCoverage() {
@@ -112,6 +122,7 @@ public class CoverageData {
 		HashMap<MModelElement, Integer> res = new HashMap<MModelElement, Integer>();
 		res.putAll(this.associationEndCoverage);
 		res.putAll(this.attributeCoverage);
+		res.putAll(this.operationCoverage);
 		return res;
 	}
 	

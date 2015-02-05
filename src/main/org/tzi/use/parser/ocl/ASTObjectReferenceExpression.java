@@ -34,17 +34,17 @@ import org.tzi.use.uml.sys.MObject;
 
 
 /**
- * TODO
+ * AST node for an object reference expression (reference to single object by name).
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class ASTObjectReferenceExpression extends ASTExpression {
-	/** TODO */
+	/** The token of the object name */
 	private Token fObjectName;
 	
 	/**
-	 * TODO
-	 * @param objectName
+	 * Constructs a new AST node 
+	 * @param objectName The token of the object name.
 	 */
 	public ASTObjectReferenceExpression(Token objectName) {
 		fObjectName = objectName;

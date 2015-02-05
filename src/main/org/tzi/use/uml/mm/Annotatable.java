@@ -29,12 +29,6 @@ import java.util.Map;
  *
  */
 public interface Annotatable {
-	/**
-     * True if objects of the specific class can have
-     * annotations.
-     * @return
-     */
-    boolean isAnnotatable();
     
     /**
      * True if the model element was defined with annotations, e. g.,

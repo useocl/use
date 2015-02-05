@@ -34,9 +34,9 @@ import java.util.Set;
 import org.tzi.use.analysis.coverage.BasicCoverageData;
 import org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
-import org.tzi.use.gen.model.GFlaggedInvariant;
-import org.tzi.use.gen.model.GModel;
 import org.tzi.use.gen.tool.GSignature;
+import org.tzi.use.uml.mm.MClassInvariant;
+import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
@@ -116,21 +116,21 @@ public class GProcedure {
 	/**
 	 * @param fGModel
 	 */
-	public void calculateBarriers(IGCollector collector, GModel gModel) {
+	public void calculateBarriers(IGCollector collector, MModel model) {
 		
 		// Calculate coverage of all invariants
-		Map<GFlaggedInvariant, BasicCoverageData> invCoverage = new HashMap<GFlaggedInvariant, BasicCoverageData>();
-		BasicExpressionCoverageCalulator invCalc = new BasicExpressionCoverageCalulator();
+		Map<MClassInvariant, BasicCoverageData> invCoverage = new HashMap<MClassInvariant, BasicCoverageData>();
+		BasicExpressionCoverageCalulator invCalc = new BasicExpressionCoverageCalulator(true);
 		
-		for (GFlaggedInvariant inv : gModel.flaggedInvariants()) {
-			if (!inv.disabled()) {
-				invCoverage.put(inv, invCalc.calcualteCoverage(inv.getFlaggedExpression()));
+		for (MClassInvariant inv : model.classInvariants()) {
+			if (inv.isActive()) {
+				invCoverage.put(inv, invCalc.calcualteCoverage(inv.flaggedExpression()));
 			}
 		}
 		
 		BasicInstructionCoverageCalulator instrCalc = new BasicInstructionCoverageCalulator();
 		List<GInstruction> instrList = fInstructionList.instructions();
-		Set<GFlaggedInvariant> blockedInvs = new HashSet<GFlaggedInvariant>();
+		Set<MClassInvariant> blockedInvs = new HashSet<>();
 		
 		for (int index = 0; index < instrList.size(); ++index) {
 			// Add user defined barrier to statistics
@@ -138,11 +138,13 @@ public class GProcedure {
 				collector.addBarrier((GInstrBarrier)instrList.get(index));
 			}
 			
-			BasicCoverageData instrCoverage = instrCalc.calcualteCoverage(instrList.subList(index, instrList.size()));
+			BasicCoverageData instrCoverage = instrCalc
+					.calcualteCoverage(instrList.subList(index,
+							instrList.size()));
 			blockedInvs.clear();
 			
-			for (Map.Entry<GFlaggedInvariant, BasicCoverageData> invData : invCoverage.entrySet()) {
-				GFlaggedInvariant inv = invData.getKey();
+			for (Map.Entry<MClassInvariant, BasicCoverageData> invData : invCoverage.entrySet()) {
+				MClassInvariant inv = invData.getKey();
 				if (instrCoverage.disjoint(invData.getValue())) {
 					GInstrCalculatedBarrier bInstr = new GInstrCalculatedBarrier(inv);
 					blockedInvs.add(inv);
@@ -161,7 +163,7 @@ public class GProcedure {
 				}
 			}
 			
-			for (GFlaggedInvariant inv : blockedInvs) {
+			for (MClassInvariant inv : blockedInvs) {
 				invCoverage.remove(inv);
 			}
 		}

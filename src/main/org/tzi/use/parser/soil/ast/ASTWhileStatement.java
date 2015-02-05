@@ -23,6 +23,7 @@ package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.soil.MStatement;
@@ -38,33 +39,27 @@ public class ASTWhileStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
-	 * @param iterVarName
-	 * @param range
-	 * @param body
+	 * Constructs a new ASTWhileStatement node.
+	 * @param condition AST-node for the while condition.
+	 * @param body AST of the body of the while loop.
 	 */
-	public ASTWhileStatement(
+	public ASTWhileStatement(Token start,
 			ASTExpression condition, 
 			ASTStatement body) {
-		
+		super(start);
 		fCondition= condition;
 		fBody = body;
-		
-		addChildStatement(body);
 	}
-	
 	
 	@Override
 	protected MStatement generateStatement() throws CompilationFailedException {
 		
 		Expression condition = generateExpression(fCondition);
-		if (!condition.type().isBoolean()) {
+		if (!condition.type().isTypeOfBoolean()) {
 			throw new CompilationFailedException(this, "Condition expression must be of Boolean type");
 		}
 		
 		MStatement body = generateStatement(fBody);
-		
-		// assigned(iteration) = assigned(body)
 		fAssignedSet.add(fBody.fAssignedSet);
 		
 		return new MWhileStatement(condition, body);

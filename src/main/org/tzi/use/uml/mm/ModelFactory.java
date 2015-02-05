@@ -23,6 +23,8 @@ package org.tzi.use.uml.mm;
 
 import java.util.List;
 
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignalImpl;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
@@ -35,7 +37,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class ModelFactory {
+public class ModelFactory {
 
     public MModel createModel(String name) {
         return new MModel(name);
@@ -80,7 +82,7 @@ public final class ModelFactory {
         return new MAssociationImpl(name);
     }
 
-    public MGeneralization createGeneralization(MClass child, MClass parent) {
+    public MGeneralization createGeneralization(MClassifier child, MClassifier parent) {
         return new MGeneralization(child, parent);
     }
 
@@ -106,4 +108,13 @@ public final class ModelFactory {
     public MMultiplicity createMultiplicity() {
         return new MMultiplicity();
     }
+
+	/**
+	 * Creates a new signal.
+	 * @param name
+	 * @return
+	 */
+	public MSignal createSignal(String name, boolean isAbstract) {	
+		return new MSignalImpl(name, isAbstract);
+	}
 }

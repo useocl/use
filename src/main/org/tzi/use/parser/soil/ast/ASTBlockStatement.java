@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.ocl.expr.VarDecl;
@@ -47,10 +48,11 @@ public class ASTBlockStatement extends ASTStatement {
 	private ASTStatement fBody;
 
 	/** Whether explicit variable declarations are required in this (and all inner blocks) */  
-	private boolean fExplicitDeclarations;
+	private final boolean fExplicitDeclarations;
 	
 	
-	public ASTBlockStatement(boolean explicitDeclarations) {
+	public ASTBlockStatement(Token sourcePosition, boolean explicitDeclarations) {
+		super(sourcePosition);
 		this.fExplicitDeclarations = explicitDeclarations;
 		this.fVariableDeclarations = new ArrayList<ASTVariableDeclaration>();
 	}
@@ -67,8 +69,11 @@ public class ASTBlockStatement extends ASTStatement {
 	@Override
 	protected MStatement generateStatement() throws CompilationFailedException {
 		List<VarDecl> varDecls = new ArrayList<VarDecl>();
-		if (fExplicitDeclarations) {
+		boolean needsExplicit = fExplicitDeclarations || !fVariableDeclarations.isEmpty();
+		
+		if (needsExplicit) {
 			fSymtable.storeState(true);
+			
 			for (ASTVariableDeclaration astVarDecl : fVariableDeclarations) {
 				VarDecl varDecl;
 				try {
@@ -82,15 +87,17 @@ public class ASTBlockStatement extends ASTStatement {
 				varDecls.add(varDecl);
 				fSymtable.setType(varDecl.name(), varDecl.type());
 			}
-		} 
-		if (!fExplicitDeclarations) {
+		} else {
 			fBoundSet = fBody.bound();
 			fAssignedSet = fBody.assigned();
 		}
+		
 		MStatement body = generateStatement(fBody);
-		if (fExplicitDeclarations) {
+		
+		if (needsExplicit) {
 			fSymtable.restoreState(this);
 		}
+				
 		return new MBlockStatement(varDecls, body);
 	}
 
@@ -113,7 +120,10 @@ public class ASTBlockStatement extends ASTStatement {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("begin ");
+		
 		if (!fVariableDeclarations.isEmpty()) {
+			sb.append("declare ");
+			
 			for(Iterator<ASTVariableDeclaration> it = fVariableDeclarations.iterator(); it.hasNext();) {
 				ASTVariableDeclaration vd = it.next();
 				sb.append(vd.toString());
@@ -121,6 +131,7 @@ public class ASTBlockStatement extends ASTStatement {
 			}
 			sb.append(";");
 		}
+		
 		sb.append(fBody.toString());
 		return sb.toString();
 	}

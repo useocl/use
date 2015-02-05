@@ -30,9 +30,9 @@ public abstract class ASTAssert extends AST {
 	private void setExpressionString() {
 		CommonToken startToken = (CommonToken)this.start;
 		CommonToken endToken = (CommonToken)this.end;
-		CharStream inputStream = startToken.getInputStream();
 		
 		if (this.start != null && this.end != null) {
+			CharStream inputStream = startToken.getInputStream();
 			expressionString = inputStream.substring(startToken.getStartIndex(), endToken.getStopIndex());
 		}
 	}

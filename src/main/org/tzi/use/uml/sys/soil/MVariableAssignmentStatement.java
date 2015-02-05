@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.value.Value;
@@ -27,21 +25,20 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * TODO
+ * "Compiled" version of an variable assignment statement. 
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class MVariableAssignmentStatement extends MStatement {
-	/** TODO */
+	/** The name of the variable to assign a value to */
 	private String fVariableName;
-	/** TODO */
+	/** The RValue to assign */
 	private MRValue fRValue;
-
 	
 	/**
-	 * TODO
-	 * @param variableName
-	 * @param value
+	 * Constructs a new variable assignment statement.
+	 * @param variableName The name of the variable to assign a value to.
+	 * @param value The RValue to assign.
 	 */
 	public MVariableAssignmentStatement(
 			String variableName, 
@@ -51,11 +48,10 @@ public class MVariableAssignmentStatement extends MStatement {
 		fRValue = rValue;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param variableName
-	 * @param value
+	 * Constructs a new variable assignment statement.
+	 * @param variableName The name of the variable to assign a value to.
+	 * @param value The RValue to assign.
 	 */
 	public MVariableAssignmentStatement(
 			String variableName, 
@@ -64,43 +60,44 @@ public class MVariableAssignmentStatement extends MStatement {
 		this(variableName, new MRValueExpression(value));
 	}
 	
-	
 	/**
-	 * TODO
-	 * @return
+	 * @return the fVariableName
 	 */
 	public String getVariableName() {
 		return fVariableName;
 	}
-	
-	
+
 	/**
-	 * TODO
+	 * Returns the value that is assigned.
 	 * @return
 	 */
 	public MRValue getValue() {
 		return fRValue;
 	}
 	
-	
 	@Override
-    public void execute(SoilEvaluationContext context,
+    public Value execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		Value value = EvalUtil.evaluateRValue(this, context, result, fRValue, false);
+		Value value = EvalUtil.evaluateRValue(context, result, fRValue, false);
 		
 		context.getSystem().assignVariable(result, fVariableName, value);
+		
+		return null;
 	}
-	
 	
 	@Override
 	protected String shellCommand() {
 		return fVariableName + " := " + fRValue;
 	}
 	
-	
 	@Override
 	public String toString() {
 		return shellCommand();
+	}
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
 	}
 }

@@ -21,7 +21,7 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
@@ -36,15 +36,15 @@ import org.tzi.use.uml.sys.MObject;
  */
 public final class ExpAsType extends Expression {
     private Expression fSourceExpr;
-    
-    public ExpAsType(Expression sourceExpr, Type targetType)
+
+	public ExpAsType(Expression sourceExpr, Type targetType)
         throws ExpInvalidException
     {
         // result type is the specified target type
-        super(targetType, sourceExpr);
+        super(targetType);
         fSourceExpr = sourceExpr;
 
-        if (! targetType.isSubtypeOf(fSourceExpr.type()) )
+        if (! targetType.conformsTo(fSourceExpr.type()) )
             throw new ExpInvalidException(
                                           "Target type `" + targetType + 
                                           "' is not a subtype of the source expression's type `" + 
@@ -67,6 +67,11 @@ public final class ExpAsType extends Expression {
     	return type();
     }
     
+    @Override
+    public String name() {
+    	return "oclAsType";
+    }
+    
     /**
      * Evaluates expression and returns result value. 
      */
@@ -80,12 +85,12 @@ public final class ExpAsType extends Expression {
             MObject obj = ov.value();
             // Note: an undefined value can still be casted to a
             // subtype!  See initialization of res above
-            if (obj.exists(ctx.postState()) && obj.type().isSubtypeOf(targetType) )
-                res = new ObjectValue((ObjectType) targetType, obj);
+            if (obj.exists(ctx.postState()) && obj.cls().conformsTo(targetType) )
+                res = new ObjectValue((MClass) targetType, obj);
         } else {
             // value is fine if its type is equal or a subtype of the
             // expected type
-            if (v.type().isSubtypeOf(targetType) ) {
+            if (v.type().conformsTo(targetType) ) {
                 res = v;
             }
         }
@@ -96,16 +101,18 @@ public final class ExpAsType extends Expression {
     @Override
     public StringBuilder toString(StringBuilder sb) {
         fSourceExpr.toString(sb);
-        sb.append(".oclAsType(");
+        sb.append(".").append(name()).append("(");
         type().toString(sb);
         return sb.append(")");
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitAsType(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return fSourceExpr.requiresPreState();
 	}
 }

@@ -21,11 +21,14 @@
 
 package org.tzi.use.uml.ocl.value;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.Bag;
@@ -100,8 +103,8 @@ public class BagValue extends CollectionValue {
     }
     
     @Override
-    public void doSetElemType() {
-        setType( TypeFactory.mkBag(fElemType));
+    public CollectionType getRuntimeType(Type elementType) {
+        return TypeFactory.mkBag(elementType);
     }
     
     /**
@@ -116,11 +119,11 @@ public class BagValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Bag(T1) and v has type Bag(T2).
      */
-    public BagValue union(BagValue v) {
+    public BagValue union(Type resultType, BagValue v) {
         if (v.isEmpty())
             return this;
 
-        BagValue res = new BagValue(elemType());
+        BagValue res = new BagValue(getResultElementType(resultType));
 
         // add elements of both bags to result
         res.addAll(fElements);
@@ -133,8 +136,8 @@ public class BagValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Bag(T1) and v has type Bag(T2).
      */
-    public BagValue intersection(BagValue v) {
-        BagValue res = new BagValue(elemType());
+    public BagValue intersection(Type resultType, BagValue v) {
+        BagValue res = new BagValue(getResultElementType(resultType));
         if (this.isEmpty() || v.isEmpty())
             return res;
 
@@ -199,9 +202,9 @@ public class BagValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Bag(T1) and v has type T2.
      */
-    public BagValue including(Value v) {
+    public BagValue including(Type resultType, Value v) {
         // copy this bag
-        BagValue res = new BagValue(elemType(), fElements);
+        BagValue res = new BagValue(getResultElementType(resultType), fElements);
         // check and add v
         res.add(v);
         return res;
@@ -212,9 +215,9 @@ public class BagValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Bag(T1) and v has type T2.
      */
-    public BagValue excluding(Value v) {
+    public BagValue excluding(Type resultType, Value v) {
         // copy this bag
-        BagValue res = new BagValue(elemType(), fElements);
+        BagValue res = new BagValue(getResultElementType(resultType), fElements);
         res.removeAll(v);
         return res;
     }
@@ -222,22 +225,18 @@ public class BagValue extends CollectionValue {
     /**
      * Returns a new "flattened" bag. This bag must have collection elements.
      */
-    public BagValue flatten() {
-        if (!elemType().isCollection(true))
+    public BagValue flatten(Type resultType) {
+        if (!elemType().isKindOfCollection(VoidHandling.EXCLUDE_VOID))
            return this;
 
-        CollectionType c2 = (CollectionType) elemType();
-        BagValue res = new BagValue(c2.elemType());
+        List<Value> res = new ArrayList<Value>();
         Iterator<Value> it = fElements.iterator();
         
         while (it.hasNext()) {
         	Value v = it.next();
-        	if (v.isUndefined())
-        	{
+        	if (v.isUndefined()) {
         		res.add(v);
-        	}
-        	else
-        	{
+        	} else {
         		CollectionValue elem = (CollectionValue) v;
         		Iterator<Value> it2 = elem.iterator();
         		while (it2.hasNext()) {
@@ -246,7 +245,8 @@ public class BagValue extends CollectionValue {
         		}
         	}
         }
-        return res;
+        
+        return new BagValue(getResultElementType(resultType), res);
     }
 
     public Collection<Value> collection() {
@@ -293,32 +293,17 @@ public class BagValue extends CollectionValue {
 
     void addAll(Collection<Value> v) {
         fElements.addAll(v);
-        markTypeAsDirty();
     }
 
     void add(Value v) {
-        boolean needTomarkTypeAsDirty = true;
-        // performance optimization
-        for (Iterator<Value> it = fElements.iterator(); it.hasNext();) {
-            Value val = it.next();
-            if (val.type().equals(v.type())) {
-                needTomarkTypeAsDirty = false;
-                break;
-            }
-        }
         fElements.add(v);
-        if (needTomarkTypeAsDirty) {
-        	markTypeAsDirty();
-        }
     }
 
     void add(Value v, int i) {
         fElements.add(v, i);
-        markTypeAsDirty();
     }
 
     void removeAll(Value v) {
         fElements.removeAll(v);
-        markTypeAsDirty();
     }
 }

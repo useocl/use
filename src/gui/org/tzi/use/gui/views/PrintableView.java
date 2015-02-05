@@ -21,15 +21,27 @@
 
 package org.tzi.use.gui.views;
 
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 
 
 /** 
  * Views with print facility implement this interface.
- *
- * @version     $ProjectVersion: 0.393 $
+ * 
  * @author      Mark Richters 
  */
 public interface PrintableView {
-    void printView(PageFormat pf);
+    
+	void printView(PageFormat pf);
+    
+    void export(Graphics2D g);
+	
+	/**
+	 * @return
+	 */
+	float getContentHeight();
+	/**
+	 * @return
+	 */
+	float getContentWidth();
 }

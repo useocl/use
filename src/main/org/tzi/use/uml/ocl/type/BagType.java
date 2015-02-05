@@ -23,7 +23,12 @@ package org.tzi.use.uml.ocl.type;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+
+import org.tzi.use.uml.ocl.value.BagValue;
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * The OCL Bag type.
@@ -39,38 +44,43 @@ public final class BagType extends CollectionType {
     }
 
     public String shortName() {
-        if (elemType().isCollection(true) )
+        if (elemType().isKindOfCollection(VoidHandling.EXCLUDE_VOID) )
             return "Bag(...)";
         else 
             return "Bag(" + elemType() + ")";
     }
 
-    public boolean isTrueCollection() {
-    	return false;
-    }
-    
+    @Override
     public boolean isInstantiableCollection() {
     	return true;
     }
 
-    public boolean isBag() {
+    @Override
+    public boolean isTypeOfBag() {
     	return true;
     }
     
-    public boolean isTrueBag() {
+    @Override
+    public boolean isKindOfBag(VoidHandling h) {
     	return true;
+    }
+    
+    @Override
+    public boolean isTypeOfCollection() {
+    	return false;
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
-        if (! t.isTrueCollection() && ! t.isTrueBag() )
+    public boolean conformsTo(Type t) {
+        if (!t.isTypeOfCollection() && !t.isTypeOfBag())
             return false;
 
         CollectionType t2 = (CollectionType) t;
-        if (elemType().isSubtypeOf(t2.elemType()) )
+        if (elemType().conformsTo(t2.elemType()) )
             return true;
+        
         return false;
     }
 
@@ -82,8 +92,8 @@ public final class BagType extends CollectionType {
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>();
         res.addAll(super.allSupertypes());
-        Set<Type> elemSuper = elemType().allSupertypes();
-        Iterator<Type> typeIter = elemSuper.iterator();
+        Set<? extends Type> elemSuper = elemType().allSupertypes();
+        Iterator<? extends Type> typeIter = elemSuper.iterator();
         
         while (typeIter.hasNext() ) {
             Type t = typeIter.next();
@@ -95,10 +105,10 @@ public final class BagType extends CollectionType {
 
     public Type getLeastCommonSupertype(Type type)
     {
-    	if (!type.isCollection(false))
+    	if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
     		return null;
     	
-    	if (type.isVoidType())
+    	if (type.isTypeOfVoidType())
     		return this;
     	
     	CollectionType cType = (CollectionType)type;
@@ -107,13 +117,28 @@ public final class BagType extends CollectionType {
     	if (commonElementType == null)
     		return null;
     	
-    	if (type.isBag())
+    	if (type.isTypeOfBag())
     		return TypeFactory.mkBag(commonElementType);
     	else
     		return TypeFactory.mkCollection(commonElementType);
     }
     
     @Override
+	public Type createCollectionType(Type t) {
+	 	return TypeFactory.mkBag(t);
+	}
+
+    @Override
+    public CollectionValue createCollectionValue(List<Value> values) {
+    	return new BagValue(elemType(), values);
+    }
+    
+    @Override
+    public CollectionValue createCollectionValue(Value[] values) {
+    	return new BagValue(elemType(), values);
+    }
+    
+	@Override
     public StringBuilder toString(StringBuilder sb) {
         sb.append("Bag(");
         elemType().toString(sb);

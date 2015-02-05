@@ -22,6 +22,8 @@
 
 package org.tzi.use.gui.views.diagrams.util;
 
+import org.tzi.use.util.FloatUtil;
+
 public class DirectedLineFactory {
     
     private DirectedLineFactory() {}
@@ -45,8 +47,8 @@ public class DirectedLineFactory {
 
     static void validateArguments(final double sourceX, final double sourceY, final double targetX,
                                   final double targetY) {
-        if (sourceX == targetX && sourceY == targetY) {
-            throw new UnsupportedOperationException("A dot is not a line.");
+        if (FloatUtil.equals(sourceX, targetX) && FloatUtil.equals(sourceY, targetY)) {
+            throw new IllegalArgumentException("A dot is not a line.");
         }
     }
 }

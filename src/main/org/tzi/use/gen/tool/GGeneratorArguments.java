@@ -356,7 +356,7 @@ public class GGeneratorArguments {
                     limitOptionFound = true;
                 } else if (optionOrFilename.equals("-si")) {
                     try {
-                        args.setChecksBeforeSortInvariants(new Integer(st.nextToken()));
+                        args.setChecksBeforeSortInvariants(Integer.valueOf(st.nextToken()));
                     } catch (NumberFormatException e) {
                         error = true;
                     }

@@ -27,7 +27,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 
 /**
  * Matcher for a try on an attribute
@@ -36,9 +36,6 @@ import org.tzi.use.uml.ocl.type.ObjectType;
  */
 public class GMatcherTry_Attribute implements IGInstructionMatcher {
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.statics.IGInstructionMatcher#createIfMatches(java.util.List, org.tzi.use.uml.mm.MModel)
-	 */
 	@Override
 	public GInstruction createIfMatches(List<Object> param, MModel model) {
 		if (param.size() != 3)
@@ -56,19 +53,18 @@ public class GMatcherTry_Attribute implements IGInstructionMatcher {
 			return null;
 		}
 		
-		if (!((GOCLExpression)param.get(2)).type().isSequence()) {
+		if (!((GOCLExpression)param.get(2)).type().isTypeOfSequence()) {
 			return null;
 		}
 		
 		GOCLExpression range = (GOCLExpression)param.get(0);
 		String attributeName = (String)param.get(1); 
 								
-		if (!range.type().isCollection(true) && 
-			!((CollectionType)range.type()).elemType().isObjectType())
+		if (!range.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID) && 
+			!((CollectionType)range.type()).elemType().isTypeOfClass())
 				return null;
 		
-		ObjectType oType = (ObjectType)((CollectionType)range.type()).elemType();
-		MClass cls = oType.cls();
+		MClass cls = (MClass)((CollectionType)range.type()).elemType();
 		MAttribute attribute = cls.attribute(attributeName, true);
 		
 		if (attribute == null)
@@ -78,11 +74,7 @@ public class GMatcherTry_Attribute implements IGInstructionMatcher {
 		
         return new GInstrTry_Attribute( range, attribute, values);
 	}
-
 		
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.statics.IGInstructionMatcher#name()
-	 */
 	@Override
 	public String name() {
 		return "Try";

@@ -1,0 +1,195 @@
+------------------------------------------------------ model TollCollect
+model TollCollect
+------------------------------------------------------------ class Truck
+class Truck
+attributes
+  num:String            init: ''
+  trips:Sequence(Point) init: Sequence{}
+  debt:Integer          init: 0
+operations
+  init(aNum:String)
+    begin self.num:=aNum end
+  enter(entry:Point)
+    begin insert (self,entry) into Current; self.debt:=1;
+    self.trips:=self.trips->including(self.current) end
+  move(target:Point)
+    begin self.trips:=self.trips->including(target);
+    self.debt:=self.debt+1; delete (self,self.current) from Current;
+    insert (self,target) into Current end
+  pay(amount:Integer)
+    begin self.debt:=self.debt-amount end
+  bye():Integer
+    begin delete (self,self.current) from Current;
+    result:=self.debt.abs(); self.debt:=0 end
+  ----------------------------------------------------------------------
+  numIsKey():Boolean=
+    Truck.allInstances->forAll(self,self2|
+      self<>self2 implies self.num<>self2.num)
+  ----------------------------------------------------------------------
+statemachines
+  psm TruckLife
+  states
+    prenatal:initial
+    born   [num='']
+    noDebt [num<>'' and current->isEmpty]
+    debt   [num<>'' and current->notEmpty]
+  transitions
+    prenatal -> born   { create }
+    born     -> noDebt { init() }
+    noDebt   -> debt   { enter() }
+    debt     -> debt   { move() }
+    debt     -> debt   { pay() }
+    debt     -> noDebt { bye() }
+  end
+end
+------------------------------------------------------------ class Point
+class Point
+attributes
+  name:String init: ''
+  isJunction:Boolean derived: north->union(south)->size()>=2
+operations
+  init(aName:String)
+    begin self.name:=aName end
+  northConnect(aNorth:Point)
+    begin insert (aNorth,self) into Connection end
+  southConnect(aSouth:Point)
+    begin insert (self,aSouth) into Connection end
+  ----------------------------------------------------------------------
+  northPlus():Set(Point)=Set{self}->closure(p|p.north)
+  southPlus():Set(Point)=Set{self}->closure(p|p.south)
+  ----------------------------------------------------------------------
+  nameIsKey():Boolean=
+    Point.allInstances->forAll(self,self2|
+      self<>self2 implies self.name<>self2.name)
+  noCycles():Boolean=
+    Point.allInstances->forAll(self|
+      not(self.northPlus()->includes(self)))
+  ----------------------------------------------------------------------
+statemachines
+  psm PointLife
+  states
+    prenatal:initial
+    born    [name=null]
+    growing [name<>null]
+  transitions
+    prenatal -> born    { create }
+    born     -> growing { init() }
+    growing  -> growing { northConnect() }
+    growing  -> growing { southConnect() }
+  end
+end
+---------------------------------------------------- association Current
+association Current between
+  Truck[0..*] role truck
+  Point[0..1] role current
+end
+------------------------------------------------- association Connection
+association Connection between
+  Point[0..*] role north
+  Point[0..*] role south
+end
+------------------------------------------------------------ constraints
+constraints
+------------------------------------------------------------- invariants
+context Truck inv numIsKeyInv:
+  numIsKey()
+context Point inv nameIsKeyInv:
+  nameIsKey()
+context Point inv noCyclesInv:
+  noCycles()
+------------------------------------------------------------ Point::init
+context Point::init(aName:String)
+pre freshPoint:
+  self.name='' and self.north->isEmpty and self.south->isEmpty
+post nameAssigned:
+  aName=self.name
+post allPointInvs:
+  nameIsKey() and noCycles()
+---------------------------------------------------- Point::northConnect
+context Point::northConnect(aNorth:Point)
+pre aNorthDefined:
+  aNorth.isDefined
+pre freshConnection:
+  self.north->excludes(aNorth) and self.south->excludes(aNorth)
+pre notSelfLink:
+  self<>aNorth
+pre noCycleIntroduced:
+  aNorth.northPlus()->excludes(self)
+post connectionAssigned:
+  self.north->includes(aNorth)
+post allPointInvs:
+  nameIsKey() and noCycles()
+------------------------------------------------------------ Truck::init
+context Point::southConnect(aSouth:Point)
+pre aSouthDefined:
+  aSouth.isDefined
+pre freshConnection:
+  self.south->excludes(aSouth) and self.south->excludes(aSouth)
+pre notSelfLink:
+  self<>aSouth
+pre noCycleIntroduced:
+  aSouth.southPlus()->excludes(self)
+post connectionAssigned:
+  self.south->includes(aSouth)
+post allPointInvs:
+  nameIsKey() and noCycles()
+------------------------------------------------------------ Truck::init
+context Truck::init(aNum:String)
+pre freshTruck:
+  self.num='' and self.trips=Sequence{} and self.debt=0 and
+  self.current->isEmpty
+post numAssigned:
+  aNum=self.num
+post allTruckInvs:
+  numIsKey()
+----------------------------------------------------------- Truck::enter
+context Truck::enter(entry:Point)
+pre noDebt:
+  0=self.debt
+pre currentEmpty:
+  self.current->isEmpty
+post debtAssigned:
+  1=self.debt
+post currentAssigned:
+  entry=self.current
+post allTruckInvs:
+  numIsKey()
+------------------------------------------------------------ Truck::move
+context Truck::move(target:Point)
+pre currentExists:
+  self.current->notEmpty
+pre targetReachable:
+  self.current.north->union(self.current.south)->includes(target)
+post debtIncreased:
+  self.debt@pre+1=self.debt
+post tripsUpdated:
+  self.trips@pre->including(target)=self.trips
+post currentAssigned:
+  target=self.current
+post allTruckInvs:
+  numIsKey()
+------------------------------------------------------------- Truck::pay
+context Truck::pay(amount:Integer)
+pre amountPositive:
+  amount>0
+pre currentExists:
+  self.current->notEmpty
+post debtReduced:
+  (self.debt@pre-amount)=(self.debt)
+post allTruckInvs:
+  numIsKey()
+------------------------------------------------------------- Truck::bye
+context Truck::bye():Integer
+pre currentExists:
+  self.current->notEmpty
+pre noDebt:
+  self.debt<=0
+post resultEqualsOverPayment:
+  self.debt@pre.abs()=result
+post zeroDebt:
+  self.debt=0
+post currentEmpty:
+  self.current->isEmpty
+post allTruckInvs:
+  numIsKey()
+------------------------------------------------------------------------

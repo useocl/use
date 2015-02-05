@@ -38,6 +38,7 @@ import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpVariable;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -46,33 +47,26 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
-import org.tzi.use.uml.sys.soil.MOperationCallStatement;
+import org.tzi.use.uml.sys.soil.MObjectOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
 import org.tzi.use.util.soil.VariableEnvironment;
 
 /**
- * TODO
+ * Helper to setup a test system.
  * @author Daniel Gent
  *
  */
 public class TestSystem {
-	/** TODO */
+
 	private MSystem fSystem;
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException
-	 * @throws MInvalidModelException
-	 * @throws ExpInvalidException 
-	 */
+
 	public TestSystem() throws MSystemException, MInvalidModelException, ExpInvalidException {
 		init();
 	}
 	
 	
 	/**
-	 * TODO
+	 * Resets the state of the test system.
 	 * @throws MSystemException 
 	 */
 	public void reset() throws MSystemException {
@@ -80,38 +74,18 @@ public class TestSystem {
 		initObjectsAndLinks();
 	}
 	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
 	public MSystem getSystem() {
 		return fSystem;
 	}
 	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
 	public MModel getModel() {
 		return fSystem.model();
 	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
+
 	public MSystemState getState() {
 		return fSystem.state();
 	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
+
 	public VariableEnvironment getVarEnv() {
 		return fSystem.getVariableEnvironment();
 	}
@@ -268,9 +242,9 @@ public class TestSystem {
 				new VarDeclList(true),
 				null);
 		
-		op8.setStatement(new MOperationCallStatement(
-				new ExpVariable("self", c1.type()), 
-				op7));
+		op8.setStatement(new MObjectOperationCallStatement(
+				new ExpVariable("self", c1), 
+				op7, new Expression[0]));
 		
 	
 		c1.addOperation(op8);
@@ -328,12 +302,7 @@ public class TestSystem {
 		
 		initObjectsAndLinks();
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException
-	 */
+
 	private void initObjectsAndLinks() throws MSystemException {
 		
 		MSystemState state = fSystem.state();

@@ -2,7 +2,8 @@ package org.tzi.use.runtime;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.URL;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.main.runtime.IRuntime;
@@ -35,24 +36,27 @@ public class MainPluginRuntime {
 	 *            The Plugin location path
 	 * @return Array of jar-filenames
 	 */
-	private static String[] getJarFileNames(URL location) {
+	private static String[] getJarFileNames(Path pluginDirURL) {
 
-		URL pluginDirURL = location;
 		String[] fileNames = null;
-		File pluginDir;
-
-		pluginDir = new File(pluginDirURL.getPath());
+		File pluginDir = pluginDirURL.toFile();
+		
 		Log.debug("Searching for plugins in: [" + pluginDirURL.toString()+ "]");
 		Log.debug("Plugin path validity: [" + pluginDir.exists() + "]");
 		
 		JarFilter jarFilter = new JarFilter();
 		fileNames = pluginDir.list(jarFilter);
-		if (fileNames != null) {
-			StringBuilder verboseMsg = new StringBuilder("Plugin filename(s) [");
-			StringUtil.fmtSeq(verboseMsg, fileNames, ",");
-			verboseMsg.append("]");
-			Log.verbose(verboseMsg.toString());
+		
+		if(fileNames == null){
+			Log.error("Could not read plugin directory " + StringUtil.inQuotes(pluginDir) + ".");
+			return new String[0];
 		}
+		
+		StringBuilder verboseMsg = new StringBuilder("Plugin filename(s) [");
+		StringUtil.fmtSeq(verboseMsg, fileNames, ",");
+		verboseMsg.append("]");
+		Log.verbose(verboseMsg.toString());
+		
 		return fileNames;
 	}
 
@@ -63,7 +67,7 @@ public class MainPluginRuntime {
 	 *            The Plugin location path
 	 * @return The Plugin Runtime object
 	 */
-	public static IRuntime run(URL pluginDirURL) {
+	public static IRuntime run(Path pluginDirURL) {
 
 		String[] pluginFileNames;
 		pluginFileNames = getJarFileNames(pluginDirURL);
@@ -74,7 +78,12 @@ public class MainPluginRuntime {
 		for (int cntFiles = 0; cntFiles < pluginFileNames.length;) {
 			String pluginFilename = pluginFileNames[cntFiles];
 			Log.debug("Current plugin filename [" + pluginFilename + "]");
-			pluginRuntime.registerPlugin(pluginFilename, pluginDirURL);
+			try {
+				pluginRuntime.registerPlugin(pluginFilename, pluginDirURL.toUri().toURL());
+			} catch (MalformedURLException e) {
+				Log.error("Could not convert filepath " + StringUtil.inQuotes(pluginDirURL) + ". Skipping plugin.");
+				continue;
+			}
 			Log.debug("ClassLoader of runtime ["
 					+ Thread.currentThread().getContextClassLoader().toString()
 					+ "]");

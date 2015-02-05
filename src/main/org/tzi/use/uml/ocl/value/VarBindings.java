@@ -23,6 +23,7 @@ package org.tzi.use.uml.ocl.value;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
@@ -31,10 +32,9 @@ import org.tzi.use.uml.sys.MSystemState;
  * Variable bindings bind names to values. Bindings are kept on a stack and can
  * be retrieved by name. Main use is for expression evaluation.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
-public final class VarBindings implements Iterable<VarBindings.Entry> {
+public class VarBindings implements Iterable<VarBindings.Entry> {
 
     public class Entry {
         String fVarname;
@@ -58,6 +58,10 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
             return fValue;
         }
 
+        protected void setValue(Value v) {
+        	fValue = v;
+        }
+        
         @Override
         public boolean equals(Object otherEntry) {
         	if (!(otherEntry instanceof VarBindings.Entry)) {
@@ -68,12 +72,17 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
         	return fVarname.equals(other.fVarname);
         }
         
+        @Override
+        public int hashCode() {
+        	return fVarname.hashCode() * fValue.hashCode();
+        }
+        
         public String toString() {
             return fVarname + " : " + fValue.type() + " = " + fValue;
         }
     }
     
-    private ArrayList<Entry> fBindings;
+    private List<Entry> fBindings;
 
     private MSystemState fVisibleState;
     
@@ -115,6 +124,18 @@ public final class VarBindings implements Iterable<VarBindings.Entry> {
         fBindings.add(new Entry(varname, value));
     }
 
+    /**
+     * Sets the value of the entry at the peek
+     * to <code>v</code>. 
+     * @param v
+     */
+    public void setPeekValue(Value v) {
+    	fBindings.get(fBindings.size() - 1).fValue = v;
+    }
+    
+    /**
+     * Removes the last varentry
+     */
     public void pop() {
         fBindings.remove(fBindings.size() - 1);
     }

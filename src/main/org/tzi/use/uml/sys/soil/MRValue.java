@@ -28,28 +28,29 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- *  
+ * 
  */
 public abstract class MRValue {
 	
 	
 	/**
-	 * TODO
+	 * Returns the type of the RValue.
 	 * @return
 	 */
 	public abstract Type getType();
 		
 	
 	/**
-	 * TODO
-	 * @param parent
-	 * @return
+	 * Evaluates the RValue.
+	 * @param context The evaluation context
+	 * @param result A result object that can store additional information. 
+	 * @param parent The parent statement of this RValue.
+	 * @return The evaluated value.
 	 * @throws EvaluationFailedException
 	 */
 	public abstract Value evaluate(
 			SoilEvaluationContext context,
-			StatementEvaluationResult result,
-			MStatement parent) throws EvaluationFailedException;
+			StatementEvaluationResult result) throws EvaluationFailedException;
 	
 	
 	@Override

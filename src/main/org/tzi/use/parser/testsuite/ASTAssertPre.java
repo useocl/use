@@ -12,7 +12,6 @@ import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.testsuite.MAssert;
 import org.tzi.use.uml.sys.testsuite.MAssertPre;
@@ -44,12 +43,12 @@ public class ASTAssertPre extends ASTAssert {
 		// source of operation call must denote object
         Expression objExp = source.gen(ctx);
         Type t = objExp.type();
-        if (! t.isTrueObjectType() )
+        if (! t.isTypeOfClass() )
             throw new SemanticException(source.getStartToken(), 
                                         "Expected expression with object type, " + 
                                         "found type `" + t + "'.");
 
-        MClass cls = ((ObjectType) t).cls();
+        MClass cls = (MClass)t;
 
         // find operation
         String opname = operationName.getText();
@@ -72,7 +71,7 @@ public class ASTAssertPre extends ASTAssert {
         
         for (ASTExpression astExpr : arguments) {
             argExprs[i] = astExpr.gen(ctx);
-            if (! argExprs[i].type().isSubtypeOf(params.varDecl(i).type()) )
+            if (! argExprs[i].type().conformsTo(params.varDecl(i).type()) )
                 throw new SemanticException(operationName, "Type mismatch in argument " + i +
                                             ". Expected type `" + params.varDecl(i).type() + "', found `" +
                                             argExprs[i].type() + "'.");    

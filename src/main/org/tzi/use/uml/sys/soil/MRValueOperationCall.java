@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.type.Type;
@@ -27,39 +25,45 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
- * 
+ * Encapsulates an {@link MOperationCallStatement} 
+ * used as an assignment value.
  */
 public class MRValueOperationCall extends MRValue {
-    /** TODO */
-    private MOperationCallStatement fOperationCallStatement;
-
-    /**
-     * TODO
+	/** The encapsulated command */
+	private MOperationCallStatement fOperationCallStatement;
+	
+	/**
+	 * Constructs a new <code>MRValueOperationCall</code> which
+	 * encapsulates <code>operationCallStatement<(code>.
      * 
-     * @param operationCallStatement
-     */
+	 * @param operationCallStatement
+	 */
     public MRValueOperationCall(MOperationCallStatement operationCallStatement) {
+		
+		fOperationCallStatement = operationCallStatement;
+	}
 
-        fOperationCallStatement = operationCallStatement;
-    }
+	@Override
+	public Value evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
+		
+        return fOperationCallStatement.execute(context, result);
+	}
 
-    @Override
-    public Value evaluate(SoilEvaluationContext context, StatementEvaluationResult result,
-            MStatement parent) throws EvaluationFailedException {
+	/**
+	 * @return the fOperationCallStatement
+	 */
+	public MOperationCallStatement getOperationCallStatement() {
+		return fOperationCallStatement;
+	}
+	
+	@Override
+	public Type getType() {		
+		return fOperationCallStatement.getReturnType();
+	}
 
-        fOperationCallStatement.execute(context, result);
-
-        return fOperationCallStatement.getReturnValue();
-    }
-
-    @Override
-    public Type getType() {
-        return fOperationCallStatement.getReturnType();
-    }
-
-    @Override
-    public String toString() {
-        return fOperationCallStatement.shellCommand();
-    }
+	@Override
+	public String toString() {
+		return fOperationCallStatement.shellCommand();
+	}
 }

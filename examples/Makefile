@@ -1,8 +1,9 @@
 # $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
 
 TOPDIR = ..
+LOCALE = en_US.UTF-8
 
-USE = $(TOPDIR)/bin/use
+USE = LANG=$(LOCALE) $(TOPDIR)/bin/use
 
 USE_FILES := $(shell find -name "*.use")
 DONE_USE_FILES := $(USE_FILES:.use=.use.done) 

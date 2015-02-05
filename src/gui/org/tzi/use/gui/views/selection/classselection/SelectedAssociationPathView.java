@@ -40,7 +40,6 @@ import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.selection.TableModel.Row;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.MSystem;
 
 /** 
  * a View of SelectedAssociationPath
@@ -56,9 +55,8 @@ public class SelectedAssociationPathView extends SelectedClassPathView {
 	/**
 	 * Constructor for SelectedAssociationPathView.
 	 */
-	public SelectedAssociationPathView(MainWindow parent, MSystem system, ClassDiagram diagram,
-			Set<MClass> selectedClasses, Set<MAssociation> selectedAssociations) {
-		super(parent, system, diagram, new AssociationPathTableModel(selectedAssociations));
+	public SelectedAssociationPathView(MainWindow parent, ClassDiagram diagram, Set<MClass> selectedClasses, Set<MAssociation> selectedAssociations) {
+		super(parent, diagram, new AssociationPathTableModel(selectedAssociations));
 	}
    
 	/**

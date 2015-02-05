@@ -21,12 +21,18 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
-import java.util.regex.Pattern;
 
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
@@ -35,35 +41,32 @@ import org.tzi.use.uml.ocl.value.VarBindings.Entry;
 /**
  * Context information used during evaluation.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 public class EvalNode {
-    private List<EvalNode> fChildren;
+    
+	private List<EvalNode> fChildren;
 
     private Expression fExpr;
 
     private Value fResult;
 
-    private Vector<Entry> fVarBindings; // for the var bindings window in the
-
-    // ExprEvalBrowser
-
-    private String fTabWidth = "<table>"; // widthspec for the treenode
-
-    private String fTabEnd = "</table>";
-
+    /**
+     * for the var bindings window in the
+     * ExprEvalBrowser
+     */
+    private final Vector<Entry> fVarBindings;
+    
+    /**
+     * If <code>true</code>, the occurrence
+     * of variables in the text is replaces by the current value
+     * of the variable.
+     */
+    private boolean fSubstituteVariables = false;
+    
     private boolean fIsVisible = false;
 
-    private char[] fHighlighting; // highlighting informations for the node
-
-    private String fVarSubstituteView; // the ocl-term with substituted
-
-    // variables
-
-    private String fVarAss; // Variable-Assignments - Attribute for the
-
-    // Var-Assignment-EvalNodes
+    private int width = -1;
 
     /**
      * Constructor for the Variable-Assignment-EvalNodes invoked from the
@@ -73,7 +76,7 @@ public class EvalNode {
      * @param vars
      *            the var-bindings
      */
-    public EvalNode(Vector<Entry> vars) {
+    protected EvalNode(Vector<Entry> vars) {
         fVarBindings = vars;
     }
 
@@ -92,13 +95,96 @@ public class EvalNode {
         }
     }
 
+    /**
+     * @param nodeWidth
+     */
+    public void setWidth(int nodeWidth) {
+    	this.width = nodeWidth;
+    }
+
     void addChild(EvalNode n) {
         if (fChildren == null)
             fChildren = new ArrayList<EvalNode>();
         fChildren.add(n);
     }
 
-    public List<EvalNode> children() {
+    /**
+	 * Sorts the node tree to match the sorted display order of unsorted types.
+	 * E.g. for the expression <code>Set{2,3,1}->forAll( i | i < 5 )</code> the
+	 * range expression is displayed as <code>Set{1,2,3}</code> and the order of
+	 * the evaluation details should follow this order.
+	 */
+    public void sortSubtree(){
+    	for(EvalNode child : children()){
+    		child.sortSubtree();
+    	}
+    	
+    	// query expressions with an unordered range type need sorting
+    	if(fExpr instanceof ExpQuery &&
+        		(((ExpQuery) fExpr).getRangeExpression().type().isTypeOfSet() || ((ExpQuery) fExpr).getRangeExpression().type().isTypeOfBag())){
+        	
+        	EvalNode rangeNode = null;
+        	ExpQuery expr = (ExpQuery) fExpr;
+        	
+        	// find the node representing the range expression and cut it from the list
+	        for (Iterator<EvalNode> iterator = fChildren.iterator(); iterator.hasNext();) {
+				EvalNode child = iterator.next();
+				if(child.getExpression() == expr.getRangeExpression()){
+	        		rangeNode = child;
+	        		iterator.remove();
+	        		break;
+	        	}
+			}
+        
+	        if(rangeNode != null){
+	        	final List<String> relevantVars = new ArrayList<String>(expr.getVariableDeclarations().size());
+	        	for(int i = 0; i < expr.getVariableDeclarations().size(); i++){
+	        		relevantVars.add(expr.getVariableDeclarations().varDecl(i).name());
+	        	}
+
+	        	// sort the list by the variables defined in the query expression
+	        	Collections.sort(fChildren, new Comparator<EvalNode>() {
+					@Override
+					public int compare(EvalNode o1, EvalNode o2) {
+						Value[] v1 = getVarValues(o1, relevantVars);
+						Value[] v2 = getVarValues(o2, relevantVars);
+						
+						for(int i = 0; i < relevantVars.size(); i++){
+							if(v1[i] == null && v2[i] == null){
+								return 0;
+							} else if(v2[i] == null){
+								return -1;
+							} else if(v1[i] == null){
+								return 1;
+							} else if(!v1[i].equals(v2[i])){
+								return v1[i].compareTo(v2[i]);
+							}
+						}
+						
+						return 0;
+					}
+					
+					private Value[] getVarValues(EvalNode node, List<String> relevantVars) {
+						Value[] values = new Value[relevantVars.size()];
+						for(int i = 0; i < relevantVars.size(); i++){
+							String rVar = relevantVars.get(i);
+							for (VarBindings.Entry e : node.getVarBindings()) {
+								if (rVar.equals(e.getVarName())) {
+									values[i] = e.getValue();
+								}
+							}
+						}
+						return values;
+					}
+				});
+	        	
+	        	// insert range expression back at the first position
+	        	fChildren.add(0, rangeNode);
+	        }
+        }
+    }
+    
+	public List<EvalNode> children() {
         if (fChildren == null)
             return new ArrayList<EvalNode>();
         else
@@ -109,7 +195,7 @@ public class EvalNode {
         fExpr = expr;
     }
 
-    public Expression getExpr() {
+    public Expression getExpression() {
         return fExpr;
     }
 
@@ -117,17 +203,8 @@ public class EvalNode {
         fResult = result;
     }
 
-    public String getResult() {
-        return fResult.toString();
-    }
-
-    /**
-     * if HTML-Code is needed for the node true is returned
-     */
-    public boolean htmlUsed() {
-        if (fTabWidth == "<table>")
-            return false;
-        return true;
+    public Value getResult() {
+        return fResult;
     }
 
     /**
@@ -137,78 +214,67 @@ public class EvalNode {
      * are substituted before the width spec is added if it is needed
      */
     public String toString() {
-
-        String htmlConform;
-        if (fVarAss != null) {
-            if (fTabWidth == "<table>")
-                return fVarAss;
-            htmlConform = "<html>" + fTabWidth + other(fVarAss) + fTabEnd
-                    + "</html>";
-            return htmlConform;
-        }
-
-        if (fVarSubstituteView != null)
-            if (fTabWidth == "<table>")
-                return fVarSubstituteView;
-            else
-                return "<html>" + fTabWidth + other(fVarSubstituteView)
-                        + fTabEnd + "</html>";
-        else if (fTabWidth == "<table>")
-            return fExpr + " = " + fResult;
-        else
-            return "<html>" + fTabWidth + other(fExpr + " = " + fResult)
-                    + fTabEnd + "</html>";
-        // return htmlConform ;
-    }
-
-    /**
-     * returns the String of the node that is displayed in the tree without the
-     * HTML-informations
-     */
-    public String toNormString() {
-        if (fVarAss != null)
-            return fVarAss;
-        else if (fVarSubstituteView != null)
-            return fVarSubstituteView;
-        else
-            return fExpr + " = " + fResult;
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("<html>");
+    	if (this.width > 0) {
+    		sb.append("<table width='");
+    		sb.append(this.width);
+    		sb.append("'>");
+    	}
+    	sb.append(getExprAndValue(fSubstituteVariables));
+    	
+    	if (this.width > 0) {
+    		sb.append("</table>");
+    	}
+    	
+    	sb.append("</html>");
+    	
+    	return sb.toString();
     }
 
     /**
      * returns the original expression without substitutions and the associated
      * value
      */
-    public String getExprAndValue() {
-        if (fVarAss == null)
-            return fExpr + " = " + fResult;
-        else
-            return fVarAss;
-    }
-
-    public String getHtmlExpr() {
-        return other2(getExpr().toString());
+    public String getExprAndValue(boolean substituteVariables) {
+        String exp = getExpressionString(substituteVariables);
+        exp += " = " + (fResult.isObject()?"@":"") + fResult.toString();
+        
+    	return exp;
     }
 
     /**
-     * sets the width spec for the node
-     */
-    public void setTabWidth(double d) {
-        fTabWidth = "<table width=\"" + d + "\">";
-        fTabEnd = "</table>";
-    }
-
-    /**
-     * resets the spec width
-     */
-    public void resetTabWidth() {
-        fTabWidth = "<table>";
-        fTabEnd = "</table>";
-    }
-
+	 * @return
+	 */
+	public String getExpressionString(boolean substituteVariables) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+    	ExpressionVisitor visitor;
+    	if (substituteVariables) {
+    		visitor = new SubstituteVariablesExpressionVisitor(pw, true);
+    	} else {
+    		visitor = new RelevantOperationHighlightVisitor(pw);
+    	}
+        fExpr.processWithVisitor(visitor);
+    	
+    	return sw.toString();
+	}
+	
+	public String getExpressionStringRaw(boolean substituteVariables) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		
+		ExpressionPrintVisitor v = new ExpressionPrintVisitor(pw);
+		
+		fExpr.processWithVisitor(v);
+		
+		return sw.toString();
+	}
+	
     /**
      * sets if this EvalNode is visible in the tree in the ExprEvalBrowser
      */
-    public void setVisibleAttr(boolean b) {
+    public void setVisible(boolean b) {
         fIsVisible = b;
     }
 
@@ -217,202 +283,406 @@ public class EvalNode {
     }
 
     public boolean isEarlyVarNode() {
-        return fVarAss != null;
+        return false;
     }
 
     public Vector<Entry> getVarBindings() {
         return fVarBindings;
     }
 
+    public enum TreeValue {
+    	TRUE,
+    	FALSE,
+    	UNDEFINED,
+    	INVALID
+    }
+    
+    private TreeValue subTreeValue;
+    
     /**
-     * EvalNode true/false-highlighting informations 1. field: subtree-highlighting
-     * 2. field: complete-highlighting
-     */
-    public void setHighlighting(char[] c) {
-        fHighlighting = c;
-    }
+	 * @return the highlightSubTree
+	 */
+	public TreeValue getSubTreeValue() {
+		return subTreeValue;
+	}
 
-    public char[] getHighlighting() {
-        return fHighlighting;
-    }
+	/**
+	 * @param highlightSubTree the highlightSubTree to set
+	 */
+	public void setSubTreeValue(TreeValue highlightSubTree) {
+		this.subTreeValue = highlightSubTree;
+	}
 
-    /**
-     * adds the next Variable-assignment for Variable-Assignment-EvalNodes
-     */
-    public void setVarAssignment(String nextVar) {
-        if (fVarAss == null)
-            fVarAss = nextVar;
-        else
-            fVarAss += ", " + nextVar;
-    }
+	/**
+	 * @return the highlightCompleteTree
+	 */
+	public TreeValue getCompleteTreeValue() {
+		return completeTreeValue;
+	}
 
+	/**
+	 * @param highlightCompleteTree the highlightCompleteTree to set
+	 */
+	public void setCompleteTreeValue(TreeValue highlightCompleteTree) {
+		this.completeTreeValue = highlightCompleteTree;
+	}
+
+	private TreeValue completeTreeValue;
+    
     /**
      * sets or resets the variable-substitution attribute
      */
-    public void setVarSubstituteView(boolean b) {
-        if (b)
-            fVarSubstituteView = substituteVariables();
-        else
-            fVarSubstituteView = null;
+    public void setSubstituteVariables(boolean b) {
+        this.fSubstituteVariables = b;
     }
 
-    /**
-     * substitutes the variables with the assigned values this method is invoked
-     * by the toString-method if one of the substitute-tree-views are selected
-     * in the ExprEvalBrowser
-     * 
-     * @return string with the substituted values
-     */
-    public String substituteVariables() {
-        // if the ocl-expression represents a variable
-        if (fExpr.name() == "var")
-            // if the this is a normal var-node
-            if (fVarAss == null)
-                return fExpr + " = " + fResult;
-            // if this variable-expr-node is created in
-            // ExprEvalBrowser::createNodes
-            // for the early-var-assignment-view
-            else
-                return fVarAss;
+	/**
+	 *  
+	 * @return
+	 */
+	public String substituteChildExpressions() {
+		Map<Expression, Value> subexpressionsToReplace = new HashMap<>();
+		for (EvalNode child : children()) {
+			if(getExpression() instanceof ExpQuery){
+				// only replace range expression for query expressions
+				subexpressionsToReplace.put(child.getExpression(), child.getResult());
+				break;
+			}
+		}
+		
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		
+		ExpressionVisitor v = new SubstituteVariablesExpressionVisitor(pw, false, subexpressionsToReplace);
+		getExpression().processWithVisitor(v);
+		
+		return sw.toString();
+	}
+    
+    private class SubstituteVariablesExpressionVisitor extends RelevantOperationHighlightVisitor {
 
-        String ret = "";
-        HashSet<Character> stoken = new HashSet<Character>();
-        stoken.add(new Character(' '));
-        stoken.add(new Character('<'));
-        stoken.add(new Character('>'));
-        stoken.add(new Character('('));
-        stoken.add(new Character(')'));
-        stoken.add(new Character('.'));
-        stoken.add(new Character(':'));
-        stoken.add(new Character('-'));
-        ret = "(" + getExprAndValue() + ")";
-        
-        for (int i = fVarBindings.size() - 1; i >= 0; --i) {
-            Entry entry = (Entry) fVarBindings.get(i);
-            String varname = entry.getVarName();
-            String varval = entry.valToString();
-            Pattern p = Pattern.compile(varname);
-            String[] parts = p.split(ret);
-            String help = "";
-            for (int j = 0; j < parts.length; j++) {
+    	
+		/**
+		 * Since variables can be hidden by sub expressions,
+		 * we need to keep track of variable declarations hiding
+		 * variables with a broader scope.
+		 */
+		private final Set<String> hiddenVars = new HashSet<>();
+		
+		private final boolean doHighlighting;
+		
+		private final Map<Expression, Value> expressionsToReplace;
+		
+		public SubstituteVariablesExpressionVisitor(PrintWriter pw, boolean doHighlighting) {
+			this(pw, doHighlighting, Collections.<Expression,Value>emptyMap());
+		}
 
-                if (j == parts.length - 1)
-                    help += parts[j];
-                else {
-                    help += parts[j];
-                    char first = ' ';
-                    if (parts[j].length() > 0)
-                        first = parts[j].charAt(parts[j].length() - 1);
-                    char second = ' ';
-                    if (parts[j + 1] != null && parts[j + 1].length() > 0)
-                        second = parts[j + 1].charAt(0);
-                    if (stoken.contains(new Character(first))
-                            && stoken.contains(new Character(second)))
-                        help += varval;
-                    else
-                        help += varname;
-                }
-            }
-            ret = help;
-        }
-        return ret.substring(1, ret.length() - 1);
+		public SubstituteVariablesExpressionVisitor(PrintWriter pw, boolean doHighlighting, Map<Expression, Value> expressionsToReplace) {
+			super(pw);
+			this.doHighlighting = doHighlighting;
+			this.expressionsToReplace = expressionsToReplace;
+		}
+		
+		protected boolean replace(Expression exp) {
+			if (this.expressionsToReplace.containsKey(exp)) {
+				String value = "";
+				Value val = this.expressionsToReplace.get(exp);
+				
+				if (val.isObject()) {
+					value += "@";
+				}
+				value += val.toString();
+				
+				writer.write(value);
+				return true;
+			}
+			
+			return false;
+		}
+		
+		@Override
+		protected boolean doHighlight() { 
+			return doHighlighting; 
+		}
+		
+		@Override
+		public void visitVariable(ExpVariable exp) {
+			if (replace(exp)) return;
+			
+			if (!hiddenVars.contains(exp.getVarname())) {
+				Entry varEntry = null;
+				for (Entry e : fVarBindings) {
+					if (e.getVarName().equals(exp.getVarname())) {
+						varEntry = e;
+						break;
+					}
+				}
+				
+				if (varEntry != null) {
+					String value = "";
+					if (varEntry.getValue().isObject()) {
+						value += "@";
+					}
+					value += varEntry.getValue().toString();
+					
+					writer.write(variable(value, exp));
+					return;
+				}
+			}
+			
+			super.visitVariable(exp);
+		}
+		
+		@Override
+		public void visitVarDecl(VarDecl varDecl) {
+			hiddenVars.add(varDecl.name());
+			super.visitVarDecl(varDecl);
+		}
+
+		@Override
+		public void visitNavigation(ExpNavigation exp) {
+			if (replace(exp)) return;
+			super.visitNavigation(exp);
+		}
+
+		@Override
+		public void visitAttrOp(ExpAttrOp exp) {
+			if (replace(exp)) return;
+			super.visitAttrOp(exp);
+		}
+
+		@Override
+		public void visitAllInstances(ExpAllInstances exp) {
+			if (replace(exp)) return;
+			super.visitAllInstances(exp);
+		}
+
+		@Override
+		public void visitAny(ExpAny exp) {
+			if (replace(exp)) return;
+			super.visitAny(exp);
+		}
+
+		@Override
+		public void visitAsType(ExpAsType exp) {
+			if (replace(exp)) return;
+			super.visitAsType(exp);
+		}
+
+		@Override
+		public void visitCollect(ExpCollect exp) {
+			if (replace(exp)) return;
+			super.visitCollect(exp);
+		}
+
+		@Override
+		public void visitCollectNested(ExpCollectNested exp) {
+			if (replace(exp)) return;
+			super.visitCollectNested(exp);
+		}
+
+		@Override
+		public void visitExists(ExpExists exp) {
+			if (replace(exp)) return;
+			super.visitExists(exp);
+		}
+
+		@Override
+		public void visitForAll(ExpForAll exp) {
+			if (replace(exp)) return;
+			super.visitForAll(exp);
+		}
+
+		@Override
+		public void visitIf(ExpIf exp) {
+			if (replace(exp)) return;
+			super.visitIf(exp);
+		}
+
+		@Override
+		public void visitIsKindOf(ExpIsKindOf exp) {
+			if (replace(exp)) return;
+			super.visitIsKindOf(exp);
+		}
+
+		@Override
+		public void visitIsTypeOf(ExpIsTypeOf exp) {
+			if (replace(exp)) return;
+			super.visitIsTypeOf(exp);
+		}
+
+		@Override
+		public void visitIsUnique(ExpIsUnique exp) {
+			if (replace(exp)) return;
+			super.visitIsUnique(exp);
+		}
+
+		@Override
+		public void visitIterate(ExpIterate exp) {
+			if (replace(exp)) return;
+			super.visitIterate(exp);
+		}
+
+		@Override
+		public void visitLet(ExpLet exp) {
+			if (replace(exp)) return;
+			super.visitLet(exp);
+		}
+
+		@Override
+		public void visitObjAsSet(ExpObjAsSet exp) {
+			if (replace(exp)) return;
+			super.visitObjAsSet(exp);
+		}
+
+		@Override
+		public void visitObjOp(ExpObjOp exp) {
+			if (replace(exp)) return;
+			super.visitObjOp(exp);
+		}
+
+		@Override
+		public void visitObjRef(ExpObjRef exp) {
+			if (replace(exp)) return;
+			super.visitObjRef(exp);
+		}
+
+		@Override
+		public void visitOne(ExpOne exp) {
+			if (replace(exp)) return;
+			super.visitOne(exp);
+		}
+
+		@Override
+		public void visitReject(ExpReject exp) {
+			if (replace(exp)) return;
+			super.visitReject(exp);
+		}
+
+		@Override
+		public void visitWithValue(ExpressionWithValue exp) {
+			if (replace(exp)) return;
+			super.visitWithValue(exp);
+		}
+
+		@Override
+		public void visitSelect(ExpSelect exp) {
+			if (replace(exp)) return;
+			super.visitSelect(exp);
+		}
+
+		@Override
+		public void visitSortedBy(ExpSortedBy exp) {
+			if (replace(exp)) return;
+			super.visitSortedBy(exp);
+		}
+
+		@Override
+		public void visitStdOp(ExpStdOp exp) {
+			if (replace(exp)) return;
+			super.visitStdOp(exp);
+		}
+
+		@Override
+		public void visitTupleSelectOp(ExpTupleSelectOp exp) {
+			if (replace(exp)) return;
+			super.visitTupleSelectOp(exp);
+		}
+
+		@Override
+		public void visitUndefined(ExpUndefined exp) {
+			if (replace(exp)) return;
+			super.visitUndefined(exp);
+		}
+
+		@Override
+		public void visitClosure(ExpClosure exp) {
+			if (replace(exp)) return;
+			super.visitClosure(exp);
+		}
+
+		@Override
+		public void visitOclInState(ExpOclInState exp) {
+			if (replace(exp)) return;
+			super.visitOclInState(exp);
+		}
+
+		@Override
+		public void visitObjectByUseId(ExpObjectByUseId exp) {
+			if (replace(exp)) return;
+			super.visitObjectByUseId(exp);
+		}
+
+		@Override
+		public void visitSelectByKind(ExpSelectByKind exp) {
+			if (replace(exp)) return;
+			super.visitSelectByKind(exp);
+		}
+
+		@Override
+		public void visitExpSelectByType(ExpSelectByType exp) {
+			if (replace(exp)) return;
+			super.visitExpSelectByType(exp);
+		}
     }
+    
+    private class RelevantOperationHighlightVisitor extends GenerateHTMLExpressionVisitor {
+    	
+		public RelevantOperationHighlightVisitor(PrintWriter pw) {
+			super(pw);
+		}
+    	
+		protected boolean doHighlight() { return true; }
+		
+		private String highlight(String s, Expression expr){
+			return getExpression() == expr && doHighlight() ? "<font color=\"blue\">" + s + "</font>" : s ;
+		}
+		
+		@Override
+		protected String formatKeyword(String s, Expression expr) {
+			return super.formatKeyword(highlight(s, expr), expr);
+		}
+		
+		@Override
+		protected String formatLiteral(String s, Expression expr) {
+			return super.formatLiteral(highlight(s, expr), expr);
+		}
+		
+		@Override
+		protected String formatOperation(String s, Expression expr) {
+			return super.formatOperation(highlight(s, expr), expr);
+		}
+		
+		@Override
+		protected String formatVariable(String s, Expression expr) {
+			return super.formatVariable(highlight(s, expr), expr);
+		}
 
-    /**
-     * substitutes the variables with it's values needed by the
-     * VarSubstituetWindow in the EvalBrowser
-     * 
-     * @return the term with substituted variables
-     */
-    public String substituteVariables(String term) {
-        String ret = "";
-        HashSet<Character> stoken = new HashSet<Character>();
-        stoken.add(new Character(' '));
-        stoken.add(new Character('<'));
-        stoken.add(new Character('>'));
-        stoken.add(new Character('('));
-        stoken.add(new Character(')'));
-        stoken.add(new Character('.'));
-        stoken.add(new Character(':'));
-        stoken.add(new Character('-'));
-        ret = "(" + term + ")";
-        
-        for (int i = fVarBindings.size() - 1; i >= 0; --i) {
-            Entry entry = (Entry) fVarBindings.get(i);
-            String varname = entry.getVarName();
-            String varval = entry.valToString();
-            Pattern p = Pattern.compile(varname);
-            String[] parts = p.split(ret);
-            String help = "";
-            for (int j = 0; j < parts.length; j++) {
-
-                if (j == parts.length - 1)
-                    help += parts[j];
-                else {
-                    help += parts[j];
-                    char first = ' ';
-                    if (parts[j].length() > 0)
-                        first = parts[j].charAt(parts[j].length() - 1);
-                    char second = ' ';
-                    if (parts[j + 1] != null)
-                        second = parts[j + 1].charAt(0);
-                    if (stoken.contains(new Character(first))
-                            && stoken.contains(new Character(second)))
-                        help += varval;
-                    else
-                        help += varname;
-                }
-            }
-            ret = help;
-        }
-        return ret.substring(1, ret.length() - 1);
+		@Override
+		public void visitNavigation(ExpNavigation exp) {
+			if(exp == getExpression()){
+				exp.getObjectExpression().processWithVisitor(this);
+				writer.write('.');
+				writer.write(highlight(exp.getDestination().nameAsRolename(), exp));
+				atPre(exp);
+			}
+			else {
+				super.visitNavigation(exp);
+			}
+		}
+		
+		@Override
+		public void visitAttrOp(ExpAttrOp exp) {
+			if(exp == getExpression()){
+				exp.objExp().processWithVisitor(this);
+				writer.write('.');
+				writer.write(highlight(exp.attr().name(), exp));
+				atPre(exp);
+			}
+			else {
+				super.visitAttrOp(exp);
+			}
+		}
+		
     }
-
-    /**
-     * substitutes the "<" and ">" and "," char to html-conform chars returns
-     * the html-conform string
-     */
-    protected String other(String s) {
-        StringBuffer b = new StringBuffer();
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            switch (c) {
-            case '<':
-                b.append("&lt;");
-                break;
-            case '>':
-                b.append("&gt;");
-                break;
-            case ',':
-                b.append("&#130;");
-                break;
-            default:
-                b.append(c);
-            }
-        }
-        return b.toString();
-    }
-
-    /**
-     * substitutes the "<" and ">" char to html-conform chars returns the
-     * html-conform string
-     */
-    protected String other2(String s) {
-        StringBuffer b = new StringBuffer();
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            switch (c) {
-            case '<':
-                b.append("&lt;");
-                break;
-            case '>':
-                b.append("&gt;");
-                break;
-            default:
-                b.append(c);
-            }
-        }
-        return b.toString();
-    }
-
 }

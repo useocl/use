@@ -22,19 +22,19 @@
 !create a2 : A2 between (c1,c2)
 !create a3 : A3 between (c1,c2)
 ?c1.a1[r11]
-*-> @a1 : A1
+*-> a1 : A1
 
 ?c1.a1[r12]
 *-> Undefined : OclVoid
 
 ?c1.a2[r21]
-*-> @a2 : A2
+*-> a2 : A2
 
 ?c1.a2[r22]
 *-> Undefined : OclVoid
 
 ?c1.a3[r31]
-*-> Set{@a3} : Set(A3)
+*-> Set{a3} : Set(A3)
 
 ?c1.a3[r32]
 *-> Undefined : OclVoid
@@ -43,18 +43,18 @@
 *-> Undefined : OclVoid
 
 ?c2.a1[r12]
-*-> @a1 : A1
+*-> a1 : A1
 
 ?c2.a2[r21]
 *-> Undefined : OclVoid
 
 ?c2.a2[r22]
-*-> @a2 : A2
+*-> a2 : A2
 
 ?c2.a3[r31]
 *-> Set{} : Set(OclVoid)
 
 ?c2.a3[r32]
-*-> @a3 : A3
+*-> a3 : A3
 
 quit

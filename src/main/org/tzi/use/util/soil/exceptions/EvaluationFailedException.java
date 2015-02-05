@@ -21,81 +21,45 @@
 
 package org.tzi.use.util.soil.exceptions;
 
-import org.tzi.use.uml.sys.soil.MStatement;
 
 
 /**
  * Exception to throw when the evaluation of a statement has failed.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
 public class EvaluationFailedException extends Exception {
 	
 	private static final long serialVersionUID = 1L;
-	
-	/** 
-	 * Reference to the statement that failed to execute.
-	 */
-	private MStatement fFailedStatement;
-	
-	
-	/**
-	 * TODO
-	 * @param failedStatement
-	 * @param message
-	 */
-	public EvaluationFailedException(
-			MStatement failedStatement, 
-			String message) {
 		
+	/**
+	 * Constructs a new evaluation failed exception.
+	 * @param failedStatement The failed statement.
+	 * @param message A user defined message.
+	 */
+	public EvaluationFailedException(String message) {
 		super(message);
-		fFailedStatement = failedStatement;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param failedStatement
-	 * @param message
-	 * @param cause
+	 * Constructs a new evaluation failed exception.
+	 * @param message A user defined message.
+	 * @param cause The original cause of the failure.
 	 */
 	public EvaluationFailedException(
-			MStatement failedStatement, 
 			String message,
 			Throwable cause) {
 		
 		super(message, cause);
-		fFailedStatement = failedStatement;
 	}
 	
 	/**
-	 * TODO
-	 * @param failedStatement
-	 * @param cause
+	 * Constructs a new evaluation failed exception.
+	 * @param failedStatement The failed statement.
+	 * @param cause The original cause of the failure.
 	 */
-	public EvaluationFailedException(
-			MStatement failedStatement, 
-			Throwable cause) {
-		
+	public EvaluationFailedException(Throwable cause) {
 		super(cause.getMessage(), cause);
-		fFailedStatement = failedStatement;
-	}
-	
-	/**
-	 * The statement that failed.
-	 * @return The <code>MStatement</code> that failed.
-	 */
-	public MStatement getFailedStatement() {
-		return fFailedStatement;
-	}
-	
-	
-	/**
-	 * 
-	 * @param topLevelStatement
-	 * @return
-	 */
-	public String getMessage(MStatement topLevelStatement) {
-		return getMessage();
 	}
 }

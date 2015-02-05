@@ -37,7 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.selection.ObjectSelectionView;
 import org.tzi.use.gui.views.selection.TableModel.Row;
 import org.tzi.use.uml.sys.MLink;
@@ -60,7 +60,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	/**
 	 * Constructor for SelectedObjectPathView.
 	 */
-	public SelectedObjectPathView(MainWindow parent, MSystem system, NewObjectDiagram diagram, Set<MObject> selectedObjects) {
+	public SelectedObjectPathView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram, Set<MObject> selectedObjects) {
 		super(parent, system, diagram);
 
 		this.selectedObjects = selectedObjects;
@@ -115,7 +115,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 		LinkedList<MObject> buffer = new LinkedList<MObject>();
 		
 		buffer.addLast(mo);
-		result.put(mo, new Integer(0));
+		result.put(mo, Integer.valueOf(0));
 		
 		MObject currentObject;
 		int depth;
@@ -132,7 +132,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 				if (linkedobjects.contains(currentObject)) {
 					for (MObject object : linkedobjects) {
 						if (!result.containsKey(object)) {
-							result.put(object, new Integer(depth));
+							result.put(object, Integer.valueOf(depth));
 							// Check objects reachable by this object
 							buffer.add(object);
 						}
@@ -166,7 +166,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 		
 		this.diagram.hideAll();
 		this.diagram.showObjects(selectedPathObjects);
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 */
 	public void applyShowChanges(ActionEvent ev) {
 		this.diagram.showObjects(getSelectedPathObjects());
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	 */
 	public void applyHideChanges(ActionEvent ev) {
 		this.diagram.hideObjects(getSelectedPathObjects());
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	public void update() {

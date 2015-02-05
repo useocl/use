@@ -22,6 +22,7 @@
 
 package org.tzi.use.gui.views.diagrams.util;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class DirectedGraphicFactory {
@@ -30,10 +31,13 @@ public class DirectedGraphicFactory {
     
     public static final I_DirectedGraphic EMPTY_HEAD = new SimpleDirectedGraphic();
     
-    public static final I_DirectedGraphic TRIANGLE =
+    public static final I_DirectedGraphic TRIANGLE_EMPTY =
             new SimpleDirectedGraphic().addLine(DirectedLineFactory.createSolidDirectedLine(12, 8, 0, 0))
             .addLine(DirectedLineFactory.createSolidDirectedLine(0, 0, 0, 16))
             .addLine(DirectedLineFactory.createSolidDirectedLine(0, 16, 12, 8));
+    
+    public static final I_DirectedGraphic TRIANGLE =
+    		FilledDirectedGraphic.fillDirectedGraphic(TRIANGLE_EMPTY, Color.WHITE);
     
     public static final I_DirectedGraphic ARROW_HEAD =
             new SimpleDirectedGraphic().addLine(DirectedLineFactory.createSolidDirectedLine(15, 6, 0, 0))

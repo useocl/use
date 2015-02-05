@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.mm.MAttribute;
@@ -31,132 +29,119 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
- * 
+ * "Compiled" version of an attribute assignment.
+ *
  */
 public class MAttributeAssignmentStatement extends MStatement {
-    /** TODO */
-    private Expression fObject;
-    /** TODO */
-    private MAttribute fAttribute;
-    /** TODO */
-    private MRValue fRValue;
-
-    /**
-     * TODO
+	/** The expression leading to an object to assign the new value to. */
+	private Expression fObject;
+	/** The attribute to assign the value to */
+	private MAttribute fAttribute;
+	/** The value to assign */
+	private MRValue fRValue;
+	
+	/**
+	 * Constructs a new attribute assignment statement. 
      * 
-     * @param object
-     * @param attribute
-     * @param value
-     */
+	 * @param object The expression leading to an object to assign the new value to.
+	 * @param attribute The attribute to assign the value to
+	 * @param rValue The value to assign
+	 */
     public MAttributeAssignmentStatement(Expression object, MAttribute attribute, MRValue rValue) {
-
-        fObject = object;
-        fAttribute = attribute;
-        fRValue = rValue;
-    }
-
+		fObject = object;
+		fAttribute = attribute;
+		fRValue = rValue;
+	}
+	
     /**
-     * TODO
+	 * Constructs a new attribute assignment statement. 
      * 
-     * @param object
-     * @param attribute
-     * @param value
-     */
+	 * @param object The expression leading to an object to assign the new value to.
+	 * @param attribute The attribute to assign the value to
+	 * @param value The expression leading to the value to assign
+	 */
     public MAttributeAssignmentStatement(Expression object, MAttribute attribute, Expression value) {
-
-        this(object, attribute, new MRValueExpression(value));
-    }
-
+		
+		this(object, attribute, new MRValueExpression(value));
+	}
+	
     /**
-     * TODO
+	 * Constructs a new attribute assignment statement. 
      * 
-     * @param object
-     * @param attribute
-     * @param value
-     */
-    public MAttributeAssignmentStatement(Expression object, MAttribute attribute, Value value) {
-
-        this(object, attribute, new MRValueExpression(value));
-    }
-
-    /**
-     * TODO
-     * 
-     * @param object
-     * @param attribute
-     * @param value
-     */
+	 * @param object The object to assign the new value to.
+	 * @param attribute The attribute to assign the value to
+	 * @param rValue The expression leading to the value to assign
+	 */
     public MAttributeAssignmentStatement(MObject object, MAttribute attribute, Expression value) {
-
+		
         this(new ExpressionWithValue(object.value()), attribute, value);
-    }
-
+	}
+	
     /**
-     * TODO
+	 * Constructs a new attribute assignment statement. 
      * 
-     * @param object
-     * @param attribute
-     * @param value
-     */
+	 * @param object The object to assign the new value to.
+	 * @param attribute The attribute to assign the value to
+	 * @param rValue The value to assign
+	 */
     public MAttributeAssignmentStatement(MObject object, MAttribute attribute, Value value) {
-
+		
         this(new ExpressionWithValue(object.value()), attribute, new ExpressionWithValue(value));
-    }
+	}
+		
+	/**
+	 * @return the fObject
+	 */
+	public Expression getObject() {
+		return fObject;
+	}
 
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public Expression getObject() {
-        return fObject;
-    }
+	/**
+	 * @return the fAttribute
+	 */
+	public MAttribute getAttribute() {
+		return fAttribute;
+	}
 
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public MAttribute getAttribute() {
-        return fAttribute;
-    }
+	/**
+	 * @return the fRValue
+	 */
+	public MRValue getRValue() {
+		return fRValue;
+	}
 
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public MRValue getRValue() {
-        return fRValue;
-
-    }
-
-    @Override
-    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
+	@Override
+    public Value execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
-
-        // get the actual object
-        MObject object = EvalUtil.evaluateObjectExpression(this, context, result, fObject);
-
-        // get the new value
-        Value newValue = EvalUtil.evaluateRValue(this, context, result, fRValue, false);
-
+		
+		// get the actual object
+        MObject object = EvalUtil.evaluateObjectExpression(context, fObject);
+		
+		// get the new value
+        Value newValue = EvalUtil.evaluateRValue(context, result, fRValue, false);
+		
         try {
             context.getSystem().assignAttribute(result, object, fAttribute, newValue);
         } catch (MSystemException e) {
-            throw new EvaluationFailedException(this, e.getMessage());
+            throw new EvaluationFailedException(e.getMessage());
         }
+        
+        return null;
     }
-
-    @Override
-    protected String shellCommand() {
+	
+	@Override
+	protected String shellCommand() {
         return fObject + "." + fAttribute.name() + " := " + fRValue;
-    }
+	}
+	
 
+	@Override
+	public String toString() {
+		return shellCommand();
+	}
 
-    @Override
-    public String toString() {
-        return shellCommand();
-    }
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
+	}
 }

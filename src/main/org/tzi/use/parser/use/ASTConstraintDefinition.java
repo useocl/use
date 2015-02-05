@@ -22,6 +22,8 @@
 package org.tzi.use.parser.use;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.runtime.Token;
@@ -30,7 +32,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.ocl.type.Type;
 
 /**
@@ -62,23 +64,33 @@ public class ASTConstraintDefinition extends AST {
     }
 
     public void gen(Context ctx) {
+    	gen(ctx, true);
+    }
+    
+    public Collection<MClassInvariant> gen(Context ctx, boolean addToModel) {
+    	Collection<MClassInvariant> invs = new LinkedList<MClassInvariant>();
         try {
             Type t = fType.gen(ctx);
-            if (! t.isTrueObjectType() )
+            if (! t.isTypeOfClass() )
                 throw new SemanticException(fType.getStartToken(), 
                                             "Expected an object type, found `" +
                                             t + "'");
-            MClass cls = ((ObjectType) t).cls();
+            MClass cls = (MClass)t;
             ctx.setCurrentClass(cls);
             
-            for (ASTInvariantClause astInv : fInvariantClauses) {
-                astInv.gen(ctx, fVarNames, cls);
-            }
+            MClassInvariant inv;
+			for (ASTInvariantClause astInv : fInvariantClauses) {
+				inv = astInv.gen(ctx, fVarNames, cls, addToModel);
+				if(inv != null){
+					invs.add(inv);
+				}
+			}
             
         } catch (SemanticException ex) {
             ctx.reportError(ex);
         } finally {
             ctx.setCurrentClass(null);
         }
+        return invs;
     }
 }

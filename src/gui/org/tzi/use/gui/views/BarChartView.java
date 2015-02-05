@@ -21,8 +21,15 @@
 
 package org.tzi.use.gui.views;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Rectangle;
+
+import javax.swing.JPanel;
 
 /** 
  * This panel produces a bar chart view. A list of names is displayed
@@ -83,7 +90,7 @@ public class BarChartView extends JPanel {
     /**
      * Sets new values to be displayed.
      */
-    public void setValues(int[] values) {
+    public synchronized void setValues(int[] values) {
         if (values.length != fNames.length )
             throw new IllegalArgumentException("values.length != fNames.length");
         fMaxValue = Integer.MIN_VALUE;
@@ -101,23 +108,27 @@ public class BarChartView extends JPanel {
      */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
+        
+		// copy values to prevent racing condition when the values are updated
+		// while the component is painted
+        int[] values;
+        int maxValue;
+        synchronized (this) {
+			values = this.fValues;
+			maxValue = this.fMaxValue;
+		}
+        
         Font oldFont = g.getFont();
         g.setFont(fFont);
-
-        //      Log.trace(this, getBounds().toString());
-        //      Log.trace(this, getInsets().toString());
-    
+        
         // respect borders
         Insets insets = getInsets();
-        Rectangle r = getBounds();
+        Rectangle r = new Rectangle(getSize());
         r.x += insets.left;
         r.y += insets.top;
         r.width -= insets.left + insets.right;
         r.height -= insets.top + insets.bottom;
-
-        // System.out.println("paintComponent" + count++);
-
+	
         // write headers
         g.setColor(Color.lightGray);
 
@@ -135,7 +146,6 @@ public class BarChartView extends JPanel {
         g.drawString(fHeader1, x, y);
         g.drawString(fHeader2, x + fMaxNameWidth + 10, y);
 
-
         // left column
         y += fFontSize + 4;
         for (int i = 0; i < fNames.length; i++) {
@@ -144,19 +154,22 @@ public class BarChartView extends JPanel {
         }
 
         // right column
-        x = r.x + 10 + fMaxNameWidth + 10; 
+        x = r.x + 10 + fMaxNameWidth + 10;
         y = r.y + 2 * fFontSize + 4;
-        for (int i = 0; i < fValues.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             // draw bar
-            g.setColor(new Color(fBarColor.getRed() * (i+1) / fValues.length,
-                                 fBarColor.getGreen() * (i+1) / fValues.length,
-                                 fBarColor.getBlue() * (i+1) / fValues.length));
-            g.fill3DRect(x, y - fFontSize, 
-                         100 * fValues[i] / fMaxValue, fFontSize, true);
+            g.setColor(new Color(fBarColor.getRed() * (i+1) / values.length,
+                                 fBarColor.getGreen() * (i+1) / values.length,
+                                 fBarColor.getBlue() * (i+1) / values.length));
+            
+            // +1 because the bar can not be 0 wide
+            int width = (100 * values[i] / maxValue) +1;
+            g.fill3DRect(x, y - fFontSize,
+                         width, fFontSize, true);
 
-            // draw value inside bar
-            g.setColor(Color.white);
-            g.drawString(Integer.toString(fValues[i]), x, y - 2);
+            // draw number right from bar
+        	g.setColor(Color.black);
+            g.drawString(Integer.toString(values[i]), x+width+2, y - 2);
             y += fFontSize + 2;
         }
         g.setFont(oldFont);

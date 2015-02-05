@@ -57,6 +57,10 @@ public enum WayPointType {
      */
     ASSOC_CLASS(6),
     /**
+     * Special identification for the third reflexive node on this edge.
+     */
+    REFLEXIVE_4(8),
+    /**
      * Special identification for the connection point from the dashed to 
      * the solid line of an associationclass/objectlink.
      */
@@ -84,4 +88,11 @@ public enum WayPointType {
     public static WayPointType getById(int id) {
     	return WayPointType.values()[id];
     }
+
+	/**
+	 * @return
+	 */
+	public boolean allowsDeletion() {
+		return this == WayPointType.USER;
+	}
 }

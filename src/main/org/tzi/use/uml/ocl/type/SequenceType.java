@@ -23,7 +23,12 @@ package org.tzi.use.uml.ocl.type;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.SequenceValue;
+import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * The OCL Sequence type.
@@ -39,35 +44,39 @@ public final class SequenceType extends CollectionType {
         super(elemType);
     }
     
+    @Override
     public boolean isInstantiableCollection() {
     	return true;
     }
 
-    public String shortName() {
-        if (elemType().isCollection(true) )
+    @Override
+    public boolean isTypeOfCollection() {
+    	return false;
+    }
+    
+    @Override
+    public boolean isTypeOfSequence() {
+    	return true;
+    }
+        
+    @Override
+	public boolean isKindOfSequence(VoidHandling h) {
+		return true;
+	}
+
+	public String shortName() {
+        if (elemType().isKindOfCollection(VoidHandling.EXCLUDE_VOID) )
             return "Sequence(...)";
         else 
             return "Sequence(" + elemType() + ")";
     }
 
-    public boolean isTrueCollection() {
-    	return false;
-    }
-    
-    public boolean isTrueSequence() {
-    	return true;
-    }
-    
-    public boolean isSequence() {
-    	return true;
-    }
-    
     public Type getLeastCommonSupertype(Type type)
     {
-    	if (!type.isCollection(false))
+    	if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
     		return null;
     	
-    	if (type.isVoidType())
+    	if (type.isTypeOfVoidType())
     		return this;
     	
     	CollectionType cType = (CollectionType)type;
@@ -76,7 +85,7 @@ public final class SequenceType extends CollectionType {
     	if (commonElementType == null) 
     		return null;
     	
-    	if (type.isSequence())
+    	if (type.isTypeOfSequence())
     		return TypeFactory.mkSequence(commonElementType);
     	else
     		return TypeFactory.mkCollection(commonElementType);
@@ -85,13 +94,14 @@ public final class SequenceType extends CollectionType {
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
-        if (! t.isTrueCollection() && ! t.isTrueSequence() )
+    public boolean conformsTo(Type t) {
+        if (!t.isTypeOfCollection() && !t.isTypeOfSequence())
             return false;
 
         CollectionType t2 = (CollectionType) t;
-        if (elemType().isSubtypeOf(t2.elemType()) )
+        if (elemType().conformsTo(t2.elemType()) )
             return true;
+        
         return false;
     }
 
@@ -103,8 +113,8 @@ public final class SequenceType extends CollectionType {
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>();
         res.addAll(super.allSupertypes());
-        Set<Type> elemSuper = elemType().allSupertypes();
-        Iterator<Type> typeIter = elemSuper.iterator();
+        Set<? extends Type> elemSuper = elemType().allSupertypes();
+        Iterator<? extends Type> typeIter = elemSuper.iterator();
         
         while (typeIter.hasNext() ) {
             Type t = typeIter.next();
@@ -112,7 +122,22 @@ public final class SequenceType extends CollectionType {
         }
         return res;
     }
+    
+    @Override
+	public Type createCollectionType(Type t) {
+	 	return TypeFactory.mkSequence(t);
+	}
 
+    @Override
+    public CollectionValue createCollectionValue(List<Value> values) {
+    	return new SequenceValue(elemType(), values);
+    }
+    
+    @Override
+    public CollectionValue createCollectionValue(Value[] values) {
+    	return new SequenceValue(elemType(), values);
+    }
+    
     @Override
     public StringBuilder toString(StringBuilder sb) {
         sb.append("Sequence(");

@@ -26,10 +26,9 @@ import java.util.Set;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.uml.sys.MObject;
 
 /**
@@ -43,8 +42,8 @@ public final class ActionHideObjectDiagram extends ActionHide<MObject> {
  
     public ActionHideObjectDiagram( String text, Set<MObject> nodesToHide,
                                     Selection<? extends PlaceableNode> nodeSelection,
-                                    DirectedGraph<NodeBase, EdgeBase> graph, NewObjectDiagram diagram ) {
-        super(text, diagram, nodeSelection);
+                                    DirectedGraph<PlaceableNode, EdgeBase> graph, DiagramViewWithObjectNode diagramViewWithObjectNode ) {
+        super(text, diagramViewWithObjectNode, nodeSelection);
         setNodes( nodesToHide );
         fGraph = graph;
     }
@@ -53,8 +52,8 @@ public final class ActionHideObjectDiagram extends ActionHide<MObject> {
      * Easier access to the object diagram
      * @return
      */
-    protected NewObjectDiagram getDiagram() {
-    	return (NewObjectDiagram)diagram;
+    protected DiagramViewWithObjectNode getDiagram() {
+    	return (DiagramViewWithObjectNode) diagram;
     }
     
     /**
@@ -63,7 +62,7 @@ public final class ActionHideObjectDiagram extends ActionHide<MObject> {
      */
     public void showAllHiddenElements() {
     	getDiagram().showAll();
-        getDiagram().invalidateContent();
+        getDiagram().repaint();
     }    
 
     /**
@@ -72,7 +71,7 @@ public final class ActionHideObjectDiagram extends ActionHide<MObject> {
     public void hideNodesAndEdges() {        
         getDiagram().hideElementsInDiagram( fNodesToHide );
         fNodeSelection.clear();
-        getDiagram().invalidateContent();
+        getDiagram().repaint();
     }
     
     public void actionPerformed(ActionEvent e) {
@@ -85,6 +84,6 @@ public final class ActionHideObjectDiagram extends ActionHide<MObject> {
      */
     public void showHiddenElements(Set<MObject> hiddenElements) {
     	getDiagram().showObjects(hiddenElements);
-    	getDiagram().invalidateContent();
+    	getDiagram().repaint();
     }
 }

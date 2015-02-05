@@ -29,9 +29,9 @@ import javax.swing.AbstractAction;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.Selectable;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 
 /**
  * 
@@ -54,7 +54,7 @@ public abstract class ActionHide<NodeType> extends AbstractAction {
     /**
      * This graph contains all nodes and edges of a diagram.  
      */
-    DirectedGraph<NodeBase, EdgeBase> fGraph;
+    DirectedGraph<PlaceableNode, EdgeBase> fGraph;
     
     DiagramView diagram;
     
@@ -76,14 +76,7 @@ public abstract class ActionHide<NodeType> extends AbstractAction {
      * view before.
      */
     public abstract void showAllHiddenElements();
-    
-    /**
-     * Displays hidden elements again. The hidden elements need to be 
-     * added to the diagram again, because they were deleted from the 
-     * view before.
-     */
-    public abstract void showHiddenElements(Set<NodeType> set);
-        
+            
     /**
      * Hides all nodes with there connecting edges.
      */

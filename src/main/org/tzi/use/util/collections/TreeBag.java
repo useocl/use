@@ -21,9 +21,9 @@
 
 package org.tzi.use.util.collections;
 
-import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 
 /**
@@ -32,7 +32,7 @@ import java.util.NoSuchElementException;
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
-public class TreeBag<T> extends AbstractBag<T> implements Bag<T> {
+public class TreeBag<T> extends AbstractBag<T> {
 
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.

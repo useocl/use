@@ -38,8 +38,6 @@ import java.util.List;
 import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
@@ -105,7 +103,6 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         PrintWriter detailOutput = collector.detailPrintWriter();
               
         MClass objectClass = fInstr.cls();
-        ObjectType objectType = TypeFactory.mkObjectType(objectClass);
         
         MSequenceStatement statement = new MSequenceStatement();
         List<String> objectNames = new ArrayList<String>();
@@ -138,10 +135,10 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         List<Value> objectValues = new ArrayList<Value>();
         for (String objectName : objectNames) {
         	MObject object = state.objectByName(objectName);
-        	objectValues.add(new ObjectValue(objectType, object));
+        	objectValues.add(new ObjectValue(objectClass, object));
         }
         
-        Value objects = new SequenceValue(objectType, objectValues);
+        Value objects = new SequenceValue(objectClass, objectValues);
         
         if (collector.doDetailPrinting())
         	detailOutput.println(inQuotes(fInstr) + " == " + objects);

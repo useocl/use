@@ -18,13 +18,15 @@ import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram.ClassDiagramData;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramData;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassifierNode;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A ClassSelectionView is derived from JPanel and the superclass of the three other subclasses. 
@@ -62,14 +64,14 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	/**
 	 * Constructor for ClassSelectionView.
 	 */
-	public ClassSelectionView(MainWindow parent, MSystem system, ClassDiagram diagram) {
+	public ClassSelectionView(MainWindow parent, ClassDiagram diagram) {
 		super(new BorderLayout());
 		
-		this.fSystem = system;
+		this.fSystem = diagram.getSystem();
 		this.fMainWindow = parent;
 		this.diagram = diagram;
 		
-		fSystem.addChangeListener(this);
+		fSystem.getEventBus().register(this);
 		initClassSelectionView();
 	}
 	
@@ -192,7 +194,7 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	 */
 	public void applyHideAllChanges(ActionEvent ev) {
 		diagram.hideAll();
-		diagram.invalidateContent();
+		diagram.invalidateContent(true);
 	}
 
 	/**
@@ -200,7 +202,7 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
 		diagram.showAll();
-		diagram.invalidateContent();
+		diagram.invalidateContent(true);
 	}
 
 	/**
@@ -224,21 +226,17 @@ public abstract class ClassSelectionView extends JPanel implements View {
      */
 	public abstract void update();
 
-	/**
-	 * Method stateChanged called due to an external change of state.
-	 * 
-	 * @see org.tzi.use.uml.sys.StateChangeListener#stateChanged(StateChangeEvent)
-	 */
-	public void stateChanged(StateChangeEvent e) {
+	@Subscribe
+	public void onStatementExecuted(StatementExecutedEvent e) {
 		update();
 	}
-
+	
 	/**
 	 * Method detachModel detaches the view from its model.
 	 * 
 	 * @see org.tzi.use.gui.views.View#detachModel()
 	 */
 	public void detachModel() {
-		fSystem.removeChangeListener(this);
+		fSystem.getEventBus().unregister(this);
 	}
 }

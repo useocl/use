@@ -14,10 +14,10 @@
 !create e : E
 
 ? Set{a,b,c,d,e}
-*-> Set{@a,@b,@c,@d,@e} : Set(A)
+*-> Set{a,b,c,d,e} : Set(A)
 
 ? Set{b,c}
-*-> Set{@b,@c} : Set(A)
+*-> Set{b,c} : Set(A)
 
 #? Set{d,e}
 #*-> Set{d,e} : Set(A)

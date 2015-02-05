@@ -23,24 +23,21 @@ package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
 
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST class for the empty statement.
  * @author Daniel Gent
  *
  */
 public class ASTEmptyStatement extends ASTStatement {
 	
-	/**
-	 * TODO
-	 */
-	public ASTEmptyStatement() {
-		
+	public ASTEmptyStatement() { 
+		super((SrcPos)null);
 	}
-	
 	
 	@Override
 	protected MEmptyStatement generateStatement() throws CompilationFailedException {

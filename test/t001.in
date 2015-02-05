@@ -1482,4 +1482,9 @@
 ?Set{oclEmpty(Set(OclAny)),Set{9}}
 *-> Set{Set{},Set{9}} : Set(Set(Integer))
 
+?null->including(42)
+*-> Bag{42} : Bag(Integer)
+
+?let a=2, b=3 in a + b
+*-> 5 : Integer
 exit

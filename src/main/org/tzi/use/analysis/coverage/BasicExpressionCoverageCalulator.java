@@ -25,21 +25,31 @@ import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
+import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.ocl.expr.ExpObjectByUseId;
+import org.tzi.use.uml.ocl.expr.ExpRange;
 import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
- * TODO
+ * This coverage visitor simply adds all covered
+ * model elements into the result.
+ * <p>This visitor can be used to check whether an element is covered or not.</p>
+ * <p>Covered elements:
+ * <ul>
+ *  <li>Classes</li>
+ *  <li>Associations</li>
+ *  <li>Association ends</li>
+ *  <li>Attributes</li>
+ * </ul>
  * @author Lars Hamann
- *
  */
 public class BasicExpressionCoverageCalulator extends AbstractCoverageVisitor {
 
 	private BasicCoverageData coverage;
 	
-	/**
-	 * @param inv
-	 */
-	public BasicExpressionCoverageCalulator() { }
+	public BasicExpressionCoverageCalulator(boolean expandOperations) {
+		super(expandOperations);
+	}
 
 	/**
 	 * @return
@@ -50,36 +60,40 @@ public class BasicExpressionCoverageCalulator extends AbstractCoverageVisitor {
 		return coverage;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.analysis.coverage.AbstractCoverageVisitor#addClassCoverage(org.tzi.use.uml.mm.MClass)
-	 */
 	@Override
 	protected void addClassCoverage(MClass cls) {
 		coverage.getCoveredClasses().add(cls);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.analysis.coverage.AbstractCoverageVisitor#addAssociationEndCoverage(org.tzi.use.uml.mm.MNavigableElement)
-	 */
 	@Override
 	protected void addAssociationEndCoverage(MNavigableElement dst) {
 		coverage.getCoveredAssociations().add(dst.association());		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.analysis.coverage.AbstractCoverageVisitor#addAssociationCoverage(org.tzi.use.uml.mm.MAssociation)
-	 */
 	@Override
 	protected void addAssociationCoverage(MAssociation assoc) {
 		coverage.getCoveredAssociations().add(assoc);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.analysis.coverage.AbstractCoverageVisitor#addAttributeCoverage(org.tzi.use.uml.mm.MClass, org.tzi.use.uml.mm.MAttribute)
-	 */
 	@Override
 	protected void addAttributeCoverage(MClass sourceClass, MAttribute att) {
 		coverage.getCoveredAttributes().add(att);		
 	}
 
+	@Override
+	public void visitObjectByUseId(ExpObjectByUseId expObjectByUseId) {
+		coverage.getCoveredClasses().add(expObjectByUseId.getSourceType());
+		expObjectByUseId.getIdExpression().processWithVisitor(this);
+	}
+
+	@Override
+	protected void addOperationCoverage(MClass sourceClass, MOperation op) {
+		coverage.getCoveredOperations().add(op);
+	}
+
+	@Override
+	public void visitRange(ExpRange exp) {
+		exp.getStart().processWithVisitor(this);
+		exp.getEnd().processWithVisitor(this);
+	}
 }

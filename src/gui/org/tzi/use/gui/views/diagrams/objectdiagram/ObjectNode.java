@@ -23,8 +23,10 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
+import java.awt.font.TextAttribute;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedString;
 import java.util.List;
 
 import org.tzi.use.gui.main.ModelBrowserSorting;
@@ -32,9 +34,13 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.NodeBase;
+import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.statemachines.MState;
+import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.ocl.value.EnumValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
@@ -43,44 +49,64 @@ import org.tzi.use.uml.sys.MObjectState;
 /**
  * A node representing an object.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
+ * @author Lars Hamann
  */
-public class ObjectNode extends NodeBase implements SortChangeListener {
+public class ObjectNode extends PlaceableNode implements SortChangeListener, ObjectNodeActivity {
 
-    private DiagramOptions fOpt;
-    private NewObjectDiagramView fParent;
-    private MObject fObject;
-    private String fLabel;
+    private final ObjDiagramOptions fOpt;
+    private final NewObjectDiagramView fParent;
+    private final MObject fObject;
+    private final String fLabel;
+    AttributedString fLabelA;
+    
     private List<MAttribute> fAttributes;
-    private String[] fValues;
+    private final String[] fValues;
+    
+    private List<MStateMachine> fStateMachines;
+    private final String[] fStateValues;
     
     protected Rectangle2D.Double nameRect = new Rectangle2D.Double();
     protected Rectangle2D.Double attributesRect = new Rectangle2D.Double();
+    protected Rectangle2D.Double statesRect = new Rectangle2D.Double();
+    
+    protected DiagramOptionChangedListener fOptChaneListener;
     
     public ObjectNode( MObject obj, NewObjectDiagramView parent, 
-                       DiagramOptions opt ) {
+                       ObjDiagramOptions opt ) {
         fObject = obj;
         fParent = parent;
         fOpt = opt;
-        this.fOpt.addOptionChangedListener(new DiagramOptionChangedListener() {
+        fOptChaneListener = new DiagramOptionChangedListener() {
 			@Override
 			public void optionChanged(String optionname) {
 				if (optionname.equals("SHOWOPERATIONS") ||
-					optionname.equals("SHOWATTRIBUTES")	)
+					optionname.equals("SHOWATTRIBUTES") || 
+					optionname.equals("SHOWSTATES"))
 				calculateBounds();
 			}
-		});
+		};
+		
+        this.fOpt.addOptionChangedListener(fOptChaneListener);
         
         MClass cls = obj.cls();
         fLabel = obj.name() + ":" + cls.name();
+        fLabelA = new AttributedString(fLabel);
+        fLabelA.addAttribute(TextAttribute.FONT, parent.getFont());
+        fLabelA.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        
         List<MAttribute> allAttributes = cls.allAttributes();
         final int N = allAttributes.size();
         fValues = new String[N];
 
         fAttributes = ModelBrowserSorting.getInstance()
                                             .sortAttributes( allAttributes );
-        ModelBrowserSorting.getInstance().addSortChangeListener( this );
+        
+		fStateMachines = ModelBrowserSorting.getInstance().sortStateMachines(
+				fObject.cls().getAllOwnedProtocolStateMachines());
+		
+		fStateValues = new String[fStateMachines.size()];
+        
     }
 
     public MObject object() {
@@ -90,18 +116,27 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
     public MClass cls() {
         return fObject.cls();
     }
+
+    @Override
+    public String getId() {
+    	return name();
+    }
     
+    @Override
     public String name() {
         return fObject.name();
     }
 
-
     /**
      * After the occurence of an event the attribute list is updated.
      */
-    public void stateChanged( SortChangeEvent e ) {
+    @Override
+	public void stateChanged( SortChangeEvent e ) {
         fAttributes = 
             ModelBrowserSorting.getInstance().sortAttributes( fAttributes );
+        
+        fStateMachines = 
+        	ModelBrowserSorting.getInstance().sortStateMachines( fStateMachines );
     }
 
     /**
@@ -110,31 +145,27 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
      * (Width and height are needed from other methods before the nodes are
      * drawn.)
      */
-    public void setRectangleSize( Graphics2D g ) {
+    @Override
+	public void doCalculateSize( Graphics2D g ) {
         FontMetrics fm = g.getFontMetrics();
         
         nameRect.width = fm.stringWidth( fLabel );
         nameRect.height =  fm.getHeight();
 
-        String value;
-        
-        MObjectState objState = fObject.state( fParent.system().state() );
-        for ( int i = 0; i < fAttributes.size(); i++ ) {
-            MAttribute attr = (MAttribute) fAttributes.get( i );
-            Value val = (Value) objState.attributeValue( attr );
-            
-            if (val instanceof EnumValue) {
-            	value = "#" + ((EnumValue)val).value();
-            } else {
-            	value = val.toString();
-            }
-            
-            fValues[i] = attr.name() + "=" + value; 
-            
-            attributesRect.width = Math.max( attributesRect.width, fm.stringWidth( fValues[i] ) );
-        }
-        
+        updateContent();
+        attributesRect.width = 0;
+		for (int i = 0; i < fValues.length; ++i) {
+			attributesRect.width = Math.max( attributesRect.width, fm.stringWidth( fValues[i] ) );
+		}
+		
         attributesRect.height = fm.getHeight() * fAttributes.size() + 3;
+        
+        statesRect.width = 0;
+        for (int i = 0; i < fStateValues.length; ++i) {
+			statesRect.width = Math.max( statesRect.width, fm.stringWidth( fStateValues[i] ) );
+		}
+        statesRect.height = fm.getHeight() * fStateMachines.size() + 3;
+        
         calculateBounds();
     }
 
@@ -147,31 +178,63 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
 			height += attributesRect.height;
 		}
 		
+		if (fOpt.isShowStates()) {
+			width = Math.max(width, statesRect.width);
+			height += statesRect.height;
+		}
+		
 		height += 4;
 		width += 10;
 		
         height = Math.max(height, getMinHeight());
         width = Math.max(width, getMinWidth());
         
-		bounds.width = width;
-		bounds.height = height;
+        setCalculatedBounds(width, height);
 	}
 
-
-    public boolean isDeletable() {
-        return true;
-    }
-
+    /**
+	 * 
+	 */
+	public void updateContent() {
+		String value;
+		MObjectState objState = fObject.state( fParent.system().state() );
+		
+		if (objState == null) return;
+		
+        for ( int i = 0; i < fAttributes.size(); i++ ) {
+            MAttribute attr = fAttributes.get( i );
+            Value val = objState.attributeValue( attr );
+            
+            if (val instanceof EnumValue) {
+            	value = "#" + ((EnumValue)val).value();
+            } else {
+            	value = val.toString();
+            }
+            
+            fValues[i] = (attr.isDerived() ? "/" : "") + attr.name() + "=" + value; 
+        }
+        
+        for ( int i = 0; i < fStateMachines.size(); i++ ) {
+            MStateMachine sm = fStateMachines.get( i );
+            MState val = objState.getProtocolStateMachineInstance(sm).getCurrentState(sm.getDefaultRegion());
+            
+            fStateValues[i] = sm.name() + "=" + val.name(); 
+        }
+	}
+	
     /**
      * Draws a box with an underlined label.
      */
     @Override
     protected void onDraw( Graphics2D g ) {
-        int x = (int) getX();
-        int y = (int) getY();
-
-        Polygon dimension = dimension();
-        Rectangle2D bounds = getBounds();
+    	Rectangle2D.Double currentBounds = getRoundedBounds();
+    	 
+    	if (!Util.enlargeRectangle(currentBounds, 10).intersects(g.getClipBounds())) {
+    		return;
+    	}
+    	
+        double x = currentBounds.getX();
+        int y = (int)currentBounds.getY();
         
         int labelWidth = g.getFontMetrics().stringWidth( fLabel );
 
@@ -180,26 +243,37 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
         } else {
             g.setColor( fOpt.getNODE_COLOR() );
         }
-        g.fillPolygon( dimension );
+        g.fill( currentBounds );
         g.setColor( fOpt.getNODE_FRAME_COLOR() );
-        g.drawPolygon( dimension );
+        g.draw( currentBounds );
 
-        x = (int)bounds.getCenterX() - labelWidth / 2;
-        y = (int)bounds.getY() + g.getFontMetrics().getAscent() + 2;
-        g.setColor( fOpt.getNODE_LABEL_COLOR() );
-        g.drawString( fLabel, x, y );
-        // underline label
-        g.drawLine( x, y + 1, x + labelWidth, y + 1 );
-
+        x = (currentBounds.getCenterX() - labelWidth / 2);
+        y = (int)currentBounds.getY() + g.getFontMetrics().getAscent() + 2;
+        
+        g.setColor( fOpt.getColor(DiagramOptions.NODE_LABEL_COLOR));
+        g.drawString( fLabelA.getIterator(), Math.round(x), y );
+                
         if ( fOpt.isShowAttributes() ) {
             // compartment divider
-            x = (int) getBounds().getCenterX();
-            g.drawLine( (int)bounds.getX(), y + 3, (int)bounds.getMaxX() - 1, y + 3 );
-            x -= ( getWidth() - 10 ) / 2;
+            Line2D.Double lineAttrDivider = new Line2D.Double(currentBounds.getX(), y + 3, currentBounds.getMaxX(), y + 3);
+            g.draw(lineAttrDivider);
+            x = currentBounds.getX() + 5;
             y += 3;
             for ( int i = 0; i < fAttributes.size(); i++ ) {
                 y += g.getFontMetrics().getHeight();
-                g.drawString( fValues[i], x, y );
+                g.drawString( fValues[i], Math.round(x), y );
+            }
+        }
+        
+        if ( fOpt.isShowStates() ) {
+            // compartment divider
+            Line2D.Double lineAttrDivider = new Line2D.Double(currentBounds.getX(), y + 3, currentBounds.getMaxX(), y + 3);
+            g.draw(lineAttrDivider);
+            x = currentBounds.getX() + 5;
+            y += 3;
+            for ( int i = 0; i < fStateValues.length; i++ ) {
+                y += g.getFontMetrics().getHeight();
+                g.drawString( fStateValues[i], Math.round(x), y );
             }
         }
     }
@@ -215,4 +289,15 @@ public class ObjectNode extends NodeBase implements SortChangeListener {
     protected String getStoreType() {
     	return "Object";
     }
+    
+    @Override
+    public String toString() {
+    	return "ObjectNode[" + object().name() + "]";
+    }
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		this.fOpt.removeOptionChangedListener(fOptChaneListener);
+	}
 }

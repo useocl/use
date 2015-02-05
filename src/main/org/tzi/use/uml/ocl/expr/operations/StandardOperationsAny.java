@@ -7,16 +7,17 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.Multimap;
 
 public class StandardOperationsAny {
-	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
+	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
 		// generic operations on all types
 		OpGeneric.registerOperation(new Op_equal(), opmap);
 		OpGeneric.registerOperation(new Op_notequal(), opmap);
 		OpGeneric.registerOperation(new Op_isDefined(), opmap);
 		OpGeneric op = new Op_isUndefined();
-		OpGeneric.registerOperation(op, opmap);;
+		OpGeneric.registerOperation(op, opmap);
 		OpGeneric.registerOperation("oclIsUndefined", op, opmap);
 	}
 }
@@ -52,7 +53,7 @@ final class Op_equal extends OpGeneric {
 	public String checkWarningUnrelatedTypes(Expression args[]) {
 		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
 		
-		if (!(args[0].type().isTrueOclAny() || args[1].type().isTrueOclAny()) && lcst.isTrueOclAny()) {
+		if (!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to true because " + StringUtil.inQuotes(args[0].type()) + 
 					 " and " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
@@ -67,9 +68,9 @@ final class Op_equal extends OpGeneric {
 		if (args[0].isUndefined())
 			return BooleanValue.get(args[1].isUndefined());
 		
-		if (args[1].type().isSubtypeOf(args[0].type()))
+		if (args[1].type().conformsTo(args[0].type()))
 			res = args[0].equals(args[1]);
-		else if (args[0].type().isSubtypeOf(args[1].type()))
+		else if (args[0].type().conformsTo(args[1].type()))
 			res = args[1].equals(args[0]);
 		else
 			res = false;
@@ -113,7 +114,7 @@ final class Op_notequal extends OpGeneric {
 	public String checkWarningUnrelatedTypes(Expression args[]) {
 		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
 		
-		if (!(args[0].type().isTrueOclAny() || args[1].type().isTrueOclAny()) && lcst.isTrueOclAny()) {
+		if (!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to false because " + StringUtil.inQuotes(args[0].type()) + 
 					 " and " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
@@ -150,7 +151,7 @@ final class Op_isDefined extends OpGeneric {
 	
 	@Override
 	public String checkWarningUnrelatedTypes(Expression args[]) {
-		if (args[0].type().isVoidType()) {
+		if (args[0].type().isTypeOfVoidType()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to true because " + StringUtil.inQuotes(args[0].type()) + 
 					 " is always undefined";
@@ -187,7 +188,7 @@ final class Op_isUndefined extends OpGeneric {
 	
 	@Override
 	public String checkWarningUnrelatedTypes(Expression args[]) {
-		if (args[0].type().isVoidType()) {
+		if (args[0].type().isTypeOfVoidType()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to false because " + StringUtil.inQuotes(args[0].type()) + 
 					 " is always undefined";

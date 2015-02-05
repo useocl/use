@@ -1,0 +1,56 @@
+!create a:A
+!create b:B
+!create c:C
+
+!insert (a,b) into PredSucc
+*Error: The link of the association `PredSucc' with the participants (a:A,b:B) is invalid, because the association is redefined by `PredSuccA' with ends (predA:A,succA:A).
+
+!insert (a,c) into PredSucc
+*Error: The link of the association `PredSucc' with the participants (a:A,c:C) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (b,a) into PredSucc
+*Error: The link of the association `PredSucc' with the participants (b:B,a:A) is invalid, because the association is redefined by `PredSuccA' with ends (predA:A,succA:A).
+
+!insert (b,c) into PredSucc
+*Error: The link of the association `PredSucc' with the participants (b:B,c:C) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (c,a) into PredSucc
+*Error: The link of the association `PredSucc' with the participants (c:C,a:A) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (c,b) into PredSucc
+*Error: The link of the association `PredSucc' with the participants (c:C,b:B) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (c,c) into PredSucc
+*Error: The link of the association `PredSucc' with the participants (c:C,c:C) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (a,c) into PredSuccA
+*Error: The link of the association `PredSuccA' with the participants (a:A,c:C) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (b,c) into PredSuccB
+*Error: The link of the association `PredSuccB' with the participants (b:B,c:C) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (a,a) into PredSuccA
+!insert (b,b) into PredSuccB
+!insert (c,c) into PredSuccA
+*Error: The link of the association `PredSuccA' with the participants (c:C,c:C) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (c,c) into PredSuccB
+*Error: The link of the association `PredSuccB' with the participants (c:C,c:C) is invalid, because the association is redefined by `PredSuccC' with ends (predC:C,succC:C).
+
+!insert (c,c) into PredSuccC
+!create c1:C
+!insert (c,c1) into PredSuccC
+
+?c1.succ
+*-> Undefined : OclVoid
+?c1.pred
+*-> c : C
+:c1.pred
+*-> C
+?c1.predC
+*-> c : C
+?c1.predB
+*-> c : C
+:c1.predB
+*-> B
+exit

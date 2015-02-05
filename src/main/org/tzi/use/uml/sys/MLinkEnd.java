@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.sys;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,23 +41,23 @@ public final class MLinkEnd {
     /**
      * The type of the link end
      */
-	private MAssociationEnd fAssociationEnd;
+	private final MAssociationEnd fAssociationEnd;
 	
 	/**
 	 * The linked object
 	 */
-    private MObject fObject;
+    private final MObject fObject;
 
     /**
      * Possible defined qualifier values.
      * Maybe <code>null</code>.
      */
-    private List<Value> qualifierValues;
+    private final Value[] qualifierValues;
     
     /**
      * Saved hash value for performance reasons
      */
-    private int hashCode;
+    private final int hashCode;
 
     /**
      * Constructs a new link end. 
@@ -93,7 +94,7 @@ public final class MLinkEnd {
         	Value value = qualifierValues.get(index);
         	Type expectedType = aend.getQualifiers().get(index).type();
         	
-        	if (!value.type().isSubtypeOf(expectedType))
+        	if (!value.type().conformsTo(expectedType))
         		throw new MSystemException(
         			"Type of qualifier value (" + StringUtil.inQuotes(value.toStringWithType()) + 
         			") does not conform to expected qualifier type (" + StringUtil.inQuotes(expectedType.toString()) + ")!");
@@ -101,9 +102,9 @@ public final class MLinkEnd {
         
         this.fAssociationEnd = aend;
         this.fObject = obj;
-        this.qualifierValues = qualifierValues;
-        
-        this.hashCode = fAssociationEnd.hashCode() + 19 * fObject.hashCode() + 23 * this.qualifierValues.hashCode();
+        this.qualifierValues = qualifierValues.toArray(new Value[qualifierValues.size()]);
+        // Note: We use the hash code calculation of the provided list for the qualifier values
+        this.hashCode = fAssociationEnd.hashCode() + 19 * fObject.hashCode() + 23 * qualifierValues.hashCode();
     }
 
     /**
@@ -135,9 +136,12 @@ public final class MLinkEnd {
         
         if (obj instanceof MLinkEnd ) {
         	MLinkEnd oEnd = (MLinkEnd) obj;
+        	if (this.hashCode != oEnd.hashCode)
+        		return false;
+        	
             return fAssociationEnd.equals(oEnd.fAssociationEnd)
                 && fObject.equals(oEnd.fObject)
-                && qualifierValues.equals(oEnd.qualifierValues);
+                && Arrays.equals(qualifierValues, oEnd.qualifierValues);
         }
         
         return false;
@@ -147,7 +151,7 @@ public final class MLinkEnd {
 		return fAssociationEnd
 				+ ":"
 				+ fObject
-				+ (qualifierValues.size() > 0 ? "["
+				+ (qualifierValues.length > 0 ? "["
 						+ StringUtil.fmtSeq(qualifierValues, ",") + "]" : "");
     }
 
@@ -158,15 +162,25 @@ public final class MLinkEnd {
 	 * @return True, if the qualifiers (if any) match
 	 */
 	public boolean qualifierValuesEqual(List<Value> qualifiers) {
-		return qualifierValues.equals(qualifiers);
+		return qualifierValuesEqual(qualifiers.toArray(new Value[0]));
 	}
 
+	/**
+	 * Checks if the provided qualifier values match the
+	 * qualifier values at this end.
+	 * @param qualifiers The <code>Array</code> of the qualifier values to check. May be <code>null</code>
+	 * @return True, if the qualifiers (if any) match
+	 */
+	public boolean qualifierValuesEqual(Value[] qualifiers) {
+		return Arrays.equals(qualifierValues, qualifiers);
+	}
+	
 	/**
 	 * The unmodifiable List of the qualifier values of this end.
 	 * @return The <code>List</code> of all qualifier values.
 	 */
 	public List<Value> getQualifierValues() {
-		return Collections.unmodifiableList(qualifierValues);
+		return Arrays.asList(qualifierValues);
 	}
 
 	/**

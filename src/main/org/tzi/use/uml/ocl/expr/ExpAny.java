@@ -22,15 +22,18 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
+import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 
 /** 
- * OCL 1.4 any expression.
- *
- * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * OCL any expression.
+ *  
+ * @author Mark Richters
+ * @author Lars Hamann
+ * 
+ * @since OCL 1.4
  */
 public class ExpAny extends ExpQuery {
     
@@ -65,20 +68,45 @@ public class ExpAny extends ExpQuery {
     public Value eval(EvalContext ctx) {
         Value res = UndefinedValue.instance;
         ctx.enter(this);
-        Value v = evalSelectOrReject(ctx, true);
-        if (! v.isUndefined() ) {
-            CollectionValue coll = (CollectionValue) v;
-            if (coll.size() > 0 ) {
-                res = coll.iterator().next();
+        
+        // evaluate range
+        Value v = fRangeExp.eval(ctx);
+        if (v.isUndefined())
+            return UndefinedValue.instance;
+        
+        CollectionValue rangeVal = (CollectionValue) v;
+
+        if (!fElemVarDecls.isEmpty())
+            ctx.pushVarBinding(fElemVarDecls.varDecl(0).name(), null);
+        
+        // loop over range elements
+        for (Value elemVal : rangeVal) {
+
+            // bind element variable to range element, if variable was
+            // declared
+            if (!fElemVarDecls.isEmpty())
+                ctx.varBindings().setPeekValue(elemVal);
+
+            // evaluate select expression
+            Value queryVal = fQueryExp.eval(ctx);
+
+            // undefined query values default to false
+            if (queryVal.isUndefined())
+                queryVal = BooleanValue.FALSE;
+
+            if (((BooleanValue) queryVal).value()) {
+                res = elemVal;
+                break;
             }
         }
+
+        if (!fElemVarDecls.isEmpty())
+            ctx.popVarBinding();
+        
         ctx.exit(this, res);
         return res;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitAny(this);

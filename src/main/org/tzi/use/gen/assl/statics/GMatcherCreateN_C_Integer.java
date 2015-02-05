@@ -24,8 +24,9 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import org.tzi.use.uml.mm.MModel;
 import java.util.List;
+
+import org.tzi.use.uml.mm.MModel;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -54,7 +55,7 @@ class GMatcherCreateN_C_Integer implements IGInstructionMatcher {
             model.getClass((String) param.get(0)) != null &&
             ! model.getClass((String) param.get(0)).isAbstract() &&
             param.get(1) instanceof GValueInstruction &&
-            ((GValueInstruction) param.get(1)).type().isInteger();
+            ((GValueInstruction) param.get(1)).type().isTypeOfInteger();
     }
 }
 

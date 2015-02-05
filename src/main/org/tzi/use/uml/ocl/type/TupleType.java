@@ -21,6 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,16 +41,18 @@ import org.tzi.use.util.StringUtil;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public final class TupleType extends Type {
+public final class TupleType extends TypeImpl {
     private Map<String, Part> fParts = new TreeMap<String, Part>();
 
     public static class Part implements BufferedToString {
-        private String fName;
-        private Type fType;
+        private final int position;
+    	private final String fName;
+        private final Type fType;
 
-        public Part(String name, Type type) {
-            fName = name;
-            fType = type;
+        public Part(int position, String name, Type type) {
+            this.fName = name;
+            this.fType = type;
+            this.position = position;
         }
 
         @Override
@@ -68,6 +73,10 @@ public final class TupleType extends Type {
             return fType;
         }
 
+        public int getPosition() {
+        	return position;
+        }
+        
         public boolean equals(Object obj) {
             if (obj == null) 
                 return false;
@@ -94,9 +103,20 @@ public final class TupleType extends Type {
     }
 
     @Override
-    public boolean isTupleType(boolean excludeVoid) {
+    public boolean isTypeOfTupleType() {
     	return true;
     }
+    
+    @Override
+    public boolean isKindOfTupleType(VoidHandling h) {
+    	return true;
+    }
+    
+    @Override
+    public boolean isKindOfOclAny(VoidHandling h) {
+    	return true;
+    }
+    
     
     /**
      * Returns the defined tuple parts
@@ -109,11 +129,11 @@ public final class TupleType extends Type {
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
-    	if (t.isTrueOclAny())
+    public boolean conformsTo(Type t) {
+    	if (t.isTypeOfOclAny())
     		return true;
     	
-    	if(!t.isTupleType(true)){
+    	if(!t.isTypeOfTupleType()){
     		return false;
     	}
 
@@ -125,7 +145,7 @@ public final class TupleType extends Type {
     		
     		TupleType.Part otherPart = otherType.fParts.get(part.name());
     		
-    		if (!part.type().isSubtypeOf(otherPart.type()))
+    		if (!part.type().conformsTo(otherPart.type()))
     			return false;
     	}
     	
@@ -134,10 +154,10 @@ public final class TupleType extends Type {
 
     @Override
 	public Type getLeastCommonSupertype(Type type) {
-    	if (type.isVoidType())
+    	if (type.isTypeOfVoidType())
     		return this;
     	
-    	if(!type.isTupleType(true)){
+    	if(!type.isTypeOfTupleType()){
     		return TypeFactory.mkOclAny();
     	}
 
@@ -154,7 +174,7 @@ public final class TupleType extends Type {
     			return TypeFactory.mkOclAny();
     		
     		TupleType.Part otherPart = otherType.fParts.get(part.name());
-    		commonParts[index] = new Part(part.fName, part.fType.getLeastCommonSupertype(otherPart.fType));
+    		commonParts[index] = new Part(index, part.fName, part.fType.getLeastCommonSupertype(otherPart.fType));
     		index++;
     	}
     	
@@ -167,9 +187,21 @@ public final class TupleType extends Type {
      */
     @Override
     public StringBuilder toString(StringBuilder sb) {
-        sb.append("Tuple(");
-        StringUtil.fmtSeqBuffered(sb, fParts.values().iterator(), ",");
-        return sb.append(")");
+    	sb.append("Tuple(");
+
+        List<TupleType.Part> sortedParts = new ArrayList<TupleType.Part>(fParts.values());
+        Collections.sort(sortedParts, new Comparator<TupleType.Part>() {
+			@Override
+			public int compare(Part p1, Part p2) {
+				if (p1.position < p2.position) return -1;
+			    if (p1.position > p2.position) return  1;
+			    return 0;
+			}});
+        
+        StringUtil.fmtSeqBuffered(sb, sortedParts, ",");        
+        sb.append(")");
+        
+        return sb;
     }
 
     /** 
@@ -217,8 +249,17 @@ public final class TupleType extends Type {
     	}
     	
     	Part p = remainingTypes.remove(0);
-    	for (Type t1 : p.type().allSupertypes()) {
-    		Part p1 = new Part(p.name(), t1);
+    	Set<Type> superTypes;
+    	//FIXME: Inconsistent handling of OvlVoid. Maybe use parameter (noRecusrionOnVoid) for allSupertypes() 
+    	if (p.type().isVoidOrElementTypeIsVoid()) {
+    		superTypes = new HashSet<Type>();
+    		superTypes.add(p.type());
+    	} else {
+    		superTypes = new HashSet<>(p.type().allSupertypes());
+    	}
+    	
+    	for (Type t1 : superTypes) {
+    		Part p1 = new Part(0, p.name(), t1);
     		selectedSupertypes.add(0, p1);
     		genAllSuperTypes(selectedSupertypes, remainingTypes, result);
     		selectedSupertypes.remove(0);

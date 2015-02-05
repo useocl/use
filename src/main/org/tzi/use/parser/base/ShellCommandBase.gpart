@@ -32,23 +32,17 @@ shellCommand returns [ASTStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 legacyStat returns [ASTStatement n]
 @init {
-  ASTSequenceStatement seq = new ASTSequenceStatement();
+  ASTSequenceStatement seq = new ASTSequenceStatement($start);
 }
 :
   loe = legacyOpEnter
   { 
     $n = $loe.n;
-    if ($n != null) {
-      $n.setSourcePosition($start);
-    }
   }
   |
   lox = legacyOpExit
    { 
     $n = $lox.n; 
-    if ($n != null) {
-      $n.setSourcePosition($start);
-    }
   }
   |
   nextLegacyStat[seq]
@@ -58,7 +52,6 @@ legacyStat returns [ASTStatement n]
   
   { 
     $n = seq.simplify();
-    $n.setSourcePosition($start);
   }
 ;
 
@@ -72,9 +65,7 @@ nextLegacyStat[ASTSequenceStatement seq]
   SEMI?
   
   {
-    if (($s.n != null) && (!$s.n.isEmptyStatement())) { 
-      seq.addStatement($s.n, $start, $text);
-    }
+     seq.addStatement($s.n);
   }
 ;
 
@@ -115,15 +106,14 @@ legacyCreate returns [ASTStatement n]
   objType = simpleType
   
   { 
-    ASTSequenceStatement seq = new ASTSequenceStatement();
+    ASTSequenceStatement seq = new ASTSequenceStatement($start);
     
     for (String objName : $objNames.n) {
       seq.addStatement(
         new ASTNewObjectStatement(
+          $start,
           $objType.n, 
-          new ASTStringLiteral(objName)), 
-        $start,
-        $text);
+          new ASTStringLiteral(objName)));
     }
     
     $n = seq.simplify();
@@ -150,15 +140,14 @@ legacyCreateAssign returns [ASTStatement n]
   objType = simpleType
   
   {
-    ASTSequenceStatement seq = new ASTSequenceStatement();
+    ASTSequenceStatement seq = new ASTSequenceStatement($start);
     
     for (String varName : $varNames.n) {
       seq.addStatement(
         new ASTVariableAssignmentStatement(
+          $start,
           varName, 
-          new ASTRValueNewObject($objType.n)),
-        $start,
-        $text);
+          new ASTRValueNewObject($start, $objType.n)));
     }
     
     $n = seq.simplify();
@@ -191,14 +180,13 @@ legacyCreateInsert returns [ASTVariableAssignmentStatement n]
   {
     ASTNewLinkObjectStatement nlo = 
       new ASTNewLinkObjectStatement(
+        $start,
         $asClassName.n, 
         $participants.participans,
         $participants.qualifiers,
         new ASTStringLiteral($name));
-        
-    nlo.setSourcePosition($start);
   
-    $n = new ASTVariableAssignmentStatement(
+    $n = new ASTVariableAssignmentStatement($start,
       $name.text,
       new ASTRValueNewLinkObject(nlo));
   }
@@ -226,7 +214,7 @@ legacyLet returns [ASTVariableAssignmentStatement n]
   EQUAL
   e = inSoilExpression
  
-  { $n = new ASTVariableAssignmentStatement($varName.text, $e.n, $varType.n); }
+  { $n = new ASTVariableAssignmentStatement($start, $varName.text, $e.n, $varType.n); }
 ;
 
 
@@ -250,7 +238,7 @@ legacyOpEnter returns [ASTEnterOperationStatement n]
     args = exprList
   RPAREN
   
-  { $n = new ASTEnterOperationStatement($obj.n, $op.text, $args.n); }
+  { $n = new ASTEnterOperationStatement($start, $obj.n, $op.text, $args.n); }
 ;
 
 
@@ -270,7 +258,7 @@ legacyOpExit returns [ASTStatement n]
 :
   'opexit' ((inSoilExpression)=> retVal = inSoilExpression | nothing)
   
-  { $n = new ASTExitOperationStatement($retVal.n); }
+  { $n = new ASTExitOperationStatement($start, $retVal.n); }
 ;
 
 

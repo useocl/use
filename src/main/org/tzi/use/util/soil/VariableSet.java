@@ -282,7 +282,7 @@ public class VariableSet {
 			
 			for (Type thisType : theseTypes) {
 				for (Type thatType : thoseTypes) {
-					if (thatType.isSubtypeOf(thisType)) {
+					if (thatType.conformsTo(thisType)) {
 						toDelete.add(thisType);
 						break;
 					}

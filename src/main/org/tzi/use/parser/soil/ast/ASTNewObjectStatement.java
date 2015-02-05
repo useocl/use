@@ -25,13 +25,12 @@ import static org.tzi.use.util.StringUtil.inQuotes;
 
 import java.io.PrintWriter;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTSimpleType;
-import org.tzi.use.parser.ocl.ASTStringLiteral;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
@@ -40,85 +39,55 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * 
+ * AST class for a new object statement
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class ASTNewObjectStatement extends ASTStatement {
-	/** TODO */
+	/** AST node for the object class */
 	private ASTSimpleType fObjectType;
-	/** TODO */
+	/** Expression to calculate the new object name from. Can be <code>null</code>. */
 	private ASTExpression fObjectName;
 	
 	
 	/**
-	 * TODO
-	 * @param objectType
-	 * @param objectName
+	 * Constructs a new ASTNewObjectStatement node using the provided information.
+	 * @param objectType AST node which leads to an object type.
+	 * @param objectName AST node for an expression used to calculate the new object name. Can be <code>null</code>.
 	 */
 	public ASTNewObjectStatement(
+			Token start,
 			ASTSimpleType objectType, 
 			ASTExpression objectName) {
-		
+		super(start);
 		fObjectType = objectType;
 		fObjectName = objectName;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param objectType
-	 * @param objectName
+	 * Constructs a new ASTNewObjectStatement node using the provided information.
+	 * <p>The new object name/id is set by the system.</p>
+	 * @param objectType AST node which leads to an object type.
 	 */
 	public ASTNewObjectStatement(
-			ASTSimpleType objectType,
-			String objectName) {
-		
-		this(objectType, new ASTStringLiteral(objectName));
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param objectType
-	 */
-	public ASTNewObjectStatement(
+			Token start,
 			ASTSimpleType objectType) {
-		
+		super(start);
 		fObjectType = objectType;
 		fObjectName = null;
 	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTSimpleType getObjectType() {
-		return fObjectType;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTExpression getObjectName() {
-		return fObjectName;
-	}
-
 
 	@Override
 	protected MStatement generateStatement() throws CompilationFailedException {
 	
 		Type t = generateType(fObjectType);
 		
-		if (!t.isObjectType()) {
+		if (!t.isTypeOfClass()) {
 			throw new CompilationFailedException(this, "Expected object type, found "
 					+ StringUtil.inQuotes(t) + ".");
 		}
 		
-		MClass objectClass = ((ObjectType)t).cls();
+		MClass objectClass = (MClass)t;
 		
 		if (objectClass instanceof MAssociationClass ) {
 			throw new CompilationFailedException(this,

@@ -40,17 +40,18 @@ public class CoverageAnalyzer {
 	/**
 	 * Calculates the model coverage for the complete model and for each invariant. 
 	 * @param model The {@link MModel} to calculate the coverage
+	 * @param expandOprations If <code>true</code>, operation expressions will also be considered. Otherwise, only the operation itself is marked as covered.  
 	 * @return A {@link Map} which contains the data for each {@link MClassInvariant} and {@link MPrePostCondition} and for the complete {@link MModel}.
 	 */
-	public static Map<MModelElement, CoverageData> calculateModelCoverage(MModel model) {
+	public static Map<MModelElement, CoverageData> calculateModelCoverage(MModel model, boolean expandOprations) {
 		Map<MModelElement, CoverageData> result = new HashMap<MModelElement, CoverageData>(
 				model.classInvariants().size() + 1);
 		
-		CoverageCalculationVisitor visitorOverall = new CoverageCalculationVisitor();
+		CoverageCalculationVisitor visitorOverall = new CoverageCalculationVisitor(expandOprations);
 		CoverageCalculationVisitor visitorSingleElement;
 		
 		for (MClassInvariant inv : model.classInvariants()) {
-			visitorSingleElement = new CoverageCalculationVisitor();
+			visitorSingleElement = new CoverageCalculationVisitor(expandOprations);
 			inv.expandedExpression().processWithVisitor(visitorOverall);
 			inv.expandedExpression().processWithVisitor(visitorSingleElement);
 						
@@ -58,7 +59,7 @@ public class CoverageAnalyzer {
 		}
 		
 		for (MPrePostCondition ppc : model.prePostConditions()) {
-			visitorSingleElement = new CoverageCalculationVisitor();
+			visitorSingleElement = new CoverageCalculationVisitor(expandOprations);
 			ppc.expression().processWithVisitor(visitorOverall);
 			ppc.expression().processWithVisitor(visitorSingleElement);
 						

@@ -1,0 +1,2861 @@
+model UML23_MetaModel
+
+/*
+enum VisibilityKind {
+  public,
+  private,
+  protected,
+  package
+}
+*/
+
+/*
+UML 2.3 p. 124:
+Parameter direction kind is an enumeration type 
+that defines literals used to specify direction of parameters.
+*/
+enum ParameterDirectionKind {
+  /*
+  UML 2.3 p. 124:
+  Indicates that parameter values 
+  are passed into the behavioral element by the caller.
+  */
+  _in, -- Keyword!
+  
+  /*
+  UML 2.3 p. 124:
+  Indicates that parameter values are passed into a behavioral 
+  element by the caller and then back out to the caller
+  from the behavioral element.
+  */
+  inout,
+  
+  /*
+  UML 2.3 p. 124:
+  Indicates that parameter values are passed from 
+  a behavioral element out to the caller.
+  */
+  out,
+  /*
+  UML 2.3 p. 124:
+  Indicates that parameter values are passed as 
+  return values from a behavioral element back to the caller.
+  */
+  return
+}
+
+enum AggregationKind {
+  none,
+  shared,
+  composite
+}
+
+enum ConnectorKind {
+  assembly,
+  delegation
+}
+
+--------------------------------------------
+-- Package: UML::Classes::Kernel::Classifier
+--------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Fig. 7.3: Root diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+/*
+  UML 2.3 p. 65:
+  An element is a constituent of a model. 
+  As such, it has the capability of owning other elements.
+*/
+abstract class Element
+  operations
+    /*
+	UML 2.3 p. 65f.:
+	[1] The query allOwnedElements() gives all of the direct 
+	and indirect owned elements of an element.
+	
+	@Modified: ->asSet()
+	*/
+	allOwnedElements(): Set(Element) =
+	  ownedElement->closure(ownedElement)
+	
+	/*
+	UML 2.3 p. 66:
+	[2] The query mustBeOwned() indicates whether elements of this 
+	type must have an owner. Subclasses of Element that do not require 
+	an owner must override this operation.
+	*/
+	mustBeOwned() : Boolean = true
+	
+  constraints
+    /*
+    UML 2.3 p. 65:  
+    [1] An element may not directly or indirectly own itself.
+    */
+    inv noOwningCycle:
+      not self.allOwnedElements()->includes(self)
+    /*
+    UML 2.3 p. 65:  
+    [2] Elements that must be owned must have an owner.
+    */
+    inv mustBeOwnedHasOwner:
+      self.mustBeOwned() implies owner->notEmpty()
+end
+
+/*
+  UML 2.3 p. 135:
+  Relationship is an abstract concept that specifies some kind 
+  of relationship between elements.
+*/
+abstract class Relationship < Element
+end
+
+/*
+  UML 2.3 p. 64:
+  A directed relationship represents a relationship between a 
+  collection of source model elements and a collection of target
+  model elements.
+*/
+abstract class DirectedRelationship < Relationship
+end
+
+/*
+  UML 2.3 p. 58:
+  A comment is a textual annotation that can be attached 
+  to a set of elements.
+*/
+class Comment < Element
+  attributes
+    body : String
+end
+
+composition A_Element_Owner_Element_OwnedElement between
+  Element[0..1] role owner union
+  Element[*] role ownedElement union
+end
+
+composition C_Element_OwningElement_Comment_OwningComments between
+  Element[0..1] role owningElement subsets owner
+  Comment[*] role ownedComments subsets ownedElement
+end
+
+association A_Element_AnnotatedElement_Comment_Comment between
+  Element[*] role annotatedElement
+  Comment[*] role notNavigableAnnotatedElement
+end
+ 
+association A_Relationship_Relationship_Element_RelatedElement between
+  Element[1..*] role relatedElement union
+  Relationship[*] role relationship union
+end
+
+association A_DirectedRelationship_DirectedRelationship_Element_Target between
+  Element[1..*] role target subsets relatedElement union
+  DirectedRelationship[*] role notNavigableTarget subsets relationship
+end
+
+association A_DirectedRelationship_DirectedRelationship_Element_Source between
+  Element[1..*] role source subsets relatedElement union
+  DirectedRelationship[*] role notNavigableSource subsets relationship
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End: Fig. 7.3
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Fig. 7.4: Namespaces diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+/*
+  UML 2.3 p. 100:
+  A named element is an element in a model that may have a name.
+*/
+abstract class NamedElement < Element
+attributes
+  name : String
+  -- visibility : VisibilityKind
+  -- TODO: Spec is String->union(String)
+  -- qualifiedName : String = self.allNamespaces()->iterate( ns : Namespace; result: String = self.name |
+  --                             ns.name.concat(self.separator()).concat(result))
+  
+operations
+  /*
+  UML 2.3 p. 101:
+  [1] The query allNamespaces() gives the sequence of namespaces 
+  in which the NamedElement is nested, working outwards.
+  */
+  allNamespaces(): Sequence(Namespace) =
+    if self.namespace->isEmpty() then 
+	  Sequence{}
+    else 
+	  self.namespace.allNamespaces()->prepend(self.namespace)
+    endif
+  
+  /*
+  UML 2.3 p. 101:
+  [2] The query isDistinguishableFrom() determines whether two NamedElements 
+  may logically co-exist within a Namespace. By default, two named elements 
+  are distinguishable if 
+    (a) they have unrelated types or 
+	(b) they have related types but different names.
+  */
+  -- TODO: oclType
+  isDistinguishableFrom(n:NamedElement, ns: Namespace): Boolean = true
+  /*
+    if self.oclIsKindOf(n.oclType) or n.oclIsKindOf(self.oclType) then 
+	  ns.getNamesOfMember(self)->intersection(ns.getNamesOfMember(n))->isEmpty()
+    else 
+	  true
+    endif
+  */
+  
+  /*
+  UML 2.3 p. 101:
+  [3] The query separator() gives the string that is used to separate 
+  names when constructing a qualified name.
+  */
+  separator(): String = '::'
+
+end
+
+/*
+  UML 2.3 p. 112:
+  A packageable element indicates a named element that may be 
+  owned directly by a package.
+*/
+-- abstract class PackageableElement < NamedElement
+--  attributes
+    /*
+	UML 2.3 p. 112:
+	Indicates that packageable elements must always have a visibility 
+	(i.e., visibility is not optional). Redefines NamedElement::visibility. 
+	Default value is false.
+	*/
+	
+--  constraints
+--    inv visibilityDefined: true
+	  --self.visibility.isDefined()
+-- end
+
+/*
+  UML 2.3 p. 101:
+  A namespace is an element in a model that contains a set 
+  of named elements that can be identified by name.
+*/
+abstract class Namespace < NamedElement
+
+  operations
+	  /*
+	  UML 2.3 p. 103:
+      [1] The query getNamesOfMember() gives a set of all of the names that a 
+	  member would have in a Namespace. In general a member can have multiple names 
+	  in a Namespace if it is imported more than once with different aliases. The query takes
+	  account of importing. It gives back the set of names that an element would have in 
+	  an importing namespace, either because it is owned; or if not owned, then imported individually; 
+	  or if not individually, then from a package.
+	  
+	  @Modified: Set{}->including(element.name), elementImports:Set(ElementImport)
+	  */
+	/*
+	getNamesOfMember(element: NamedElement): Set(String) = 
+	  if self.ownedMember->includes(element) then 
+		Set{}->including(element.name)
+	  else 
+		let elementImports:Set(ElementImport) = self.elementImport->select(ei | ei.importedElement = element) in
+		  if elementImports->notEmpty() then 
+			elementImports->collect(el | el.getName())->asSet()
+		  else
+			self.packageImport->select(pi | 
+			  pi.importedPackage.visibleMembers()->includes(element))->collect(pi | 
+			    pi.importedPackage.getNamesOfMember(element))->asSet()
+		  endif
+	  endif
+	*/
+	/*
+	UML 2.3 p. 103:
+	[2] The Boolean query membersAreDistinguishable() determines whether all of the namespace’s members 
+	are distinguishable within it.
+	*/
+	membersAreDistinguishable() : Boolean =
+	  self.member->forAll( memb |
+	    self.member->excluding(memb)->forAll(other |
+		  memb.isDistinguishableFrom(other, self)))
+		  
+	/*
+	UML 2.3 p. 103:
+	[3] The query importMembers() defines which of a set of PackageableElements are actually imported into the namespace.
+	This excludes hidden ones, i.e., those that have names that conflict with names of owned members, and also excludes
+	elements that would have the same name when imported.
+	*/
+	/*
+	importMembers(imps: Set(PackageableElement)): Set(PackageableElement) =
+	  self.excludeCollisions(imps)->select(imp | self.ownedMember->forAll(mem |
+	    imp.isDistinguishableFrom(mem, self)))
+	*/
+	/*
+	UML 2.3 p. 103:
+	[4] The query excludeCollisions() excludes from a set of PackageableElements any that would not be 
+	distinguishable from each other in this namespace.
+	*/
+	/*
+	excludeCollisions(imps: Set(PackageableElement)): Set(PackageableElement) =
+	  imps->reject(imp1 | imps.exists(imp2 | not imp1.isDistinguishableFrom(imp2, self)))
+	*/  
+  constraints
+    /*
+	UML 2.3 p. 102:
+    [1] All the members of a Namespace are distinguishable within it.
+	*/
+	inv membersAreDistinguishable:
+      membersAreDistinguishable()
+	 /*
+	 UML 2.3 p. 102:
+	[2] The importedMember property is derived from the ElementImports and the PackageImports.
+	@Modified ->asSet()
+	*/
+	-- inv importedMemberIsDerived:
+	--  self.importedMember = 
+	--	self.elementImport.importedElement->asSet()->union(self.packageImport.importedPackage->collect(p |p.visibleMembers()))->asSet()
+end
+
+/*
+UML 2.3 p. 133:
+A redefinable element is an element that, when defined in the context of a classifier, 
+can be redefined more specifically or differently in the context of another classifier 
+that specializes (directly or indirectly) the context classifier.
+*/
+abstract class RedefinableElement < NamedElement
+  attributes
+    /*
+	UML 2.3 p. 133:
+	Indicates whether it is possible to further redefine a RedefinableElement. If the value is true, 
+	then it is not possible to further redefine the RedefinableElement. Note that this property is 
+	preserved through package merge operations; that is, the capability to redefine a 
+	RedefinableElement (i.e., isLeaf=false) must be preserved in the resulting RedefinableElement 
+	of a package merge operation where a RedefinableElement with isLeaf=false is merged with a
+	matching RedefinableElement with isLeaf=true: the resulting RedefinableElement will have isLeaf=false.
+	Default value is false.
+	*/
+    -- isLeaf : Boolean
+  operations
+    /*
+	UML 2.3 p. 134:
+    [1] The query isConsistentWith() specifies, for any two RedefinableElements in a context in which 
+	redefinition is possible, whether redefinition would be logically consistent. By default, this is false; 
+	this operation must be overridden for subclasses of RedefinableElement to define the consistency conditions.
+	*/
+	isConsistentWith(redefinee: RedefinableElement): Boolean = false
+	  pre: redefinee.isRedefinitionContextValid(self)
+	
+	/*
+	UML 2.3 p. 134:
+	[2] The query isRedefinitionContextValid() specifies whether the redefinition contexts of this 
+	RedefinableElement are properly related to the redefinition contexts of the specified RedefinableElement 
+	to allow this element to redefine the other. By default at least one of the redefinition contexts 
+	of this element must be a specialization of at least one of the redefinition contexts of the specified element.
+	@Modified Set(Classifier)->includes(Set(Classifier)) was wrong
+	*/
+	isRedefinitionContextValid(redefined: RedefinableElement): Boolean = 
+	  self.redefinitionContext->exists(c | (c.allParents() - redefined.redefinitionContext)->notEmpty() )
+end
+
+/*
+UML 2.3 p. 66:
+An element import identifies an element in another package, 
+and allows the element to be referenced using its name without a qualifier.
+*/
+class ElementImport < DirectedRelationship
+  attributes
+    -- visibility : VisibilityKind
+    alias : String
+  operations
+	/*
+	UML 2.3 p. 67:
+    [1] The query getName() returns the name under which the imported 
+	PackageableElement will be known in the importing namespace.
+	@Modified: self.alias.isDefined
+	*/
+	/*
+	getName():String =
+	  if self.alias.isDefined() then
+	    self.alias
+	  else
+	    self.importedElement.name
+	  endif
+	*/
+  constraints
+    /*
+    UML 2.3 p. 67:
+    [1] The visibility of an ElementImport is either public or private.
+	*/
+	inv visibilityValid: true
+	  /*
+	  self.visibility = VisibilityKind::public 
+	  or 
+	  self.visibility = VisibilityKind::private
+	*/
+	
+    /*
+    UML 2.3 p. 67:	
+	[2] An importedElement has either public visibility or no visibility at all.
+	@Modified: self.importedElement.visibility.isDefined
+	*/
+	inv importedVisibilityValid: true
+	  -- self.importedElement.visibility.isDefined() implies 
+	  --  self.importedElement.visibility = VisibilityKind::public
+end
+
+/*
+UML 2.3 p. 113:
+A package import is a relationship that allows the use of unqualified 
+names to refer to package members from other namespaces.
+*/
+class PackageImport < DirectedRelationship
+  attributes
+    /*
+	UML 2.3 p. 113:
+	Specifies the visibility of the imported PackageableElements within the importing Namespace, i.e., whether imported
+	elements will in turn be visible to other packages that use that importingPackage as an importedPackage. 
+	If the PackageImport is public, the imported elements will be visible outside the package,
+	while if it is private they will not. By default, the value of visibility is public.
+	*/
+    -- visibility : VisibilityKind
+  constraints
+    /*
+	UML 2.3 p. 113:
+	[1] The visibility of a PackageImport is either public or private.
+	*/
+	inv visibilityValid: true
+	  -- self.visibility = VisibilityKind::public 
+	  -- or 
+	  -- self.visibility = VisibilityKind::private
+end
+
+-- association A_Namespace_Namespace_PackageableElement_ImportedMember between
+--  Namespace[*] role notNavigableImportedMember
+  /*
+  UML 2.3 p. 102:
+  [2] The importedMember property is derived from the ElementImports and the PackageImports.
+  @Modified asSet()
+  */
+--  PackageableElement[*] role importedMember subsets member derived = 
+--    self.elementImport.importedElement->asSet()->union(self.packageImport.importedPackage->collect(p |p.visibleMembers())->asSet())
+-- end
+
+association A_Namespace_Namespace_NamedElement_Member between
+  Namespace[*] role notNavigableMember union
+  NamedElement[*] role member union
+end
+
+composition C_Namespace_Namespace_NamedElement_OwnedMember between
+  Namespace[0..1] role namespace subsets owner subsets notNavigableMember union
+  NamedElement[*] role ownedMember subsets member subsets ownedElement union
+end
+
+composition C_Namespace_ImportingNamespace_ElementImport_ElementImport between
+  Namespace[1] role importingNamespace subsets source subsets owner
+  ElementImport[*] role elementImport subsets ownedElement
+end
+
+-- association A_ElementImport_ElementImport_PackageableElement_ImportedElement between
+--  ElementImport[*] role notNavigableImportedElement -- Spec says: 1
+--  PackageableElement[1] role importedElement subsets target
+-- end
+
+composition C_Namespace_ImportingNamespace_PackageImport_PackageImport between
+  Namespace[1] role importingNamespace subsets source subsets owner
+  PackageImport[*] role packageImport subsets ownedElement
+end
+
+association A_PackageImport_PackageImport_Package_ImportedPackage between
+  Package[1] role importedPackage subsets target
+  PackageImport[*] role notNavigableImportedPackage
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.4
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.5: Multiplicities diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 96:
+A multiplicity is a definition of an inclusive interval of non-negative integers beginning 
+with a lower bound and ending with a (possibly infinite) upper bound. 
+A multiplicity element embeds this information to specify the allowable cardinalities for an 
+instantiation of this element.
+*/
+abstract class MultiplicityElement < Element
+  attributes
+    /*
+	UML 2.3 p. 96:
+	For a multivalued multiplicity, this attribute specifies whether the values in 
+	an instantiation of this element are sequentially ordered. Default is false.
+	*/
+    isOrdered : Boolean
+	
+	/*
+	UML 2.3 p. 97:
+	For a multivalued multiplicity, this attributes specifies whether the values 
+	in an instantiation of this element are unique. Default is true.
+	*/
+	isUnique : Boolean
+	
+	/*
+	UML 2.3 p. 97:
+	Specifies the lower bound of the multiplicity interval, if it is expressed as an integer.
+	*/
+	lower : Integer derive = if lowerValue->isEmpty() then 1 else lowerValue.integerValue() endif
+	
+	/*
+	UML 2.3 p. 97:
+	Specifies the upper bound of the multiplicity interval, if it is expressed as an unlimited natural.
+	*/
+	upper : UnlimitedNatural derive = if upperValue->isEmpty() then 1 else upperValue.unlimitedValue() endif
+  operations
+    /*
+	UML 2.3 p. 97:
+    [1] The query isMultivalued() checks whether this multiplicity has an upper bound greater than one.
+	@Modified
+	*/
+	isMultivalued() : Boolean =
+	 upper > 1
+	pre: upper.isDefined()
+
+	/*
+	UML 2.3 p. 97:
+	[2] The query includesCardinality() checks whether the specified cardinality is valid for this multiplicity.
+	@Modified
+	*/
+	includesCardinality(C : Integer) : Boolean =
+	  (lower <= C) and (upper >= C)
+	pre: upper.isDefined() and lower.isDefined()
+
+	/*
+	UML 2.3 p. 98:
+	[3] The query includesMultiplicity() checks whether this multiplicity includes all the 
+	cardinalities allowed by the specified multiplicity.
+	@Modified
+	*/
+	includesMultiplicity(M : MultiplicityElement) : Boolean =
+	  (self.lower <= M.lower) and (self.upper >= M.upper)
+	pre: self.upper.isDefined() and self.lower.isDefined()
+	     and 
+		 M.upper.isDefined() and M.lower.isDefined()
+	
+
+	/*
+	UML 2.3 p. 98:
+	[4] The query lowerBound() returns the lower bound of the multiplicity as an integer.
+	@Modified No UnlimitedNatural
+	*/
+	-- lowerBound() : Integer =
+	--  if lowerValue->isEmpty() then 1 else lowerValue.integerValue() endif
+	
+	/*
+	UML 2.3 p. 98:
+	[5] The query upperBound() returns the upper bound of the multiplicity for a bounded
+	multiplicity as an unlimited natural.
+	@Modified UnlimitedNatural
+	*/
+	-- upperBound() : Integer =
+	--  if upperValue->isEmpty() then 1 else upperValue.integerValue() endif
+  
+  constraints
+    /*
+	UML 2.3 p. 97:
+	[1] A multiplicity must define at least one valid cardinality that is greater than zero.
+	@Modified
+	@TODO: Correct?
+	*/
+    inv upperBoundDefined:
+	  upper.isDefined() implies upper > 0
+	
+	/*
+	UML 2.3 p. 97:
+	[1] The lower bound must be a non-negative integer literal.
+	@Modified
+	@TODO: Correct?
+	*/
+	inv lowerBoundNonNegative:
+	  lower.isDefined() implies lower >= 0
+	
+	/*
+	UML 2.3 p. 97:
+	[2] The upper bound must be greater than or equal to the lower bound.
+	@Modified
+	*/
+	inv upperBoundConformsToLowerBound:
+	  (upper.isDefined() and lower.isDefined()) implies upper >= lower
+	  
+	/*
+	UML 2.3 p. 97:
+	[5] The derived lower attribute must equal the lowerBound.
+	*/
+	inv derivedLowerAttrEqualsLowerBound: true
+	  -- lower = lowerBound()
+
+	/*
+	UML 2.3 p. 97:
+    [6] The derived upper attribute must equal the upperBound.
+	*/
+	inv derivedUpperAttrEqualsUpperBound: true
+	  -- upper = upperBound()
+	  
+end
+
+/*
+UML 2.3 p. 140:
+A value specification is the specification of a (possibly empty) 
+set of instances, including both objects and data values.
+*/
+abstract class ValueSpecification < NamedElement, TypedElement
+  operations
+    /*
+	UML 2.3 p. 141:
+    [1] The query isComputable() determines whether a value specification can be computed in a model.
+	This operation cannot be fully defined in OCL. A conforming implementation is expected to deliver true 
+	for this operation for all value specifications that it can compute, and to compute all of those 
+	for which the operation is true. A conforming implementation is expected to be able to compute 
+	the value of all literals.
+	*/
+	isComputable(): Boolean = false
+
+	/*
+	UML 2.3 p. 141:
+    [2] The query integerValue() gives a single Integer value when one can be computed.
+	*/
+	integerValue() : Integer = null
+
+	/*
+	UML 2.3 p. 141:
+	[3] The query booleanValue() gives a single Boolean value when one can be computed.
+	*/
+	booleanValue() : Boolean = null
+
+	/*
+	UML 2.3 p. 141:
+	[4] The query stringValue() gives a single String value when one can be computed.
+	*/
+	stringValue() : String = null
+
+	/*
+	UML 2.3 p. 141:
+	[5] The query unlimitedValue() gives a single UnlimitedNatural value when one can be computed.
+	*/
+	unlimitedValue() : UnlimitedNatural = null
+
+	/*
+	UML 2.3 p. 141:
+	[6] The query isNull() returns true when it can be computed that the value is null.
+	*/
+	isNull() : Boolean = false
+	
+	getValue() : OclAny = null
+end
+
+/*
+UML 2.3 p. 139:
+A typed element has a type.
+*/
+abstract class TypedElement < NamedElement
+end
+
+/*
+UML 2.3 p. 138:
+A type constrains the values represented by a typed element.
+*/
+abstract class Type < NamedElement
+  operations
+    conformsTo(other : Type) : Boolean = false
+end
+
+composition C_MultiplicityElement_OwningUpper_ValueSpecification_UpperValue between
+  MultiplicityElement[0..1] role owningUpper subsets owner
+  ValueSpecification[0..1] role upperValue subsets ownedElement
+end
+
+composition C_MultiplicityElement_OwningLower_ValueSpecification_LowerValue between
+  MultiplicityElement[0..1] role owningLower subsets owner
+  ValueSpecification[0..1] role lowerValue subsets ownedElement
+end
+
+association A_TypedElement_TypedElement_Type_Type between
+  TypedElement[*]
+  Type[0..1]
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.5
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.6: Expressions diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 70:
+An expression is a structured tree of symbols that denotes a (possibly empty) 
+set of values when evaluated in a context.
+*/
+class Expression < ValueSpecification
+  attributes
+    /*
+	UML 2.3 p- 70:
+	The symbol associated with the node in the expression tree.
+	*/
+    symbol : String	
+end
+
+/*
+UML 2.3 p. 104:
+An opaque expression is an uninterpreted textual statement 
+that denotes a (possibly empty) set of values when evaluated
+in a context.
+*/
+class OpaqueExpression < ValueSpecification
+  attributes
+    /*
+	UML 2.3 p. 104:
+	The text of the expression, possibly in multiple languages.
+	@Modified String[0..*] {nonunique, ordered}
+	*/
+    body : Sequence(String)
+	/*
+	UML 2.3 p. 104:
+	Specifies the languages in which the expression is stated. The interpretation 
+	of the expression body depends on the languages. If the languages are unspecified, 
+	they might be implicit from the expression body or the context. Languages are 
+	matched to body strings by order.
+	@Modified String[0..*] {ordered}
+	*/
+	language : OrderedSet(String)
+  operations
+    /*
+	UML 2.3 p. 104:
+	[1] The query value() gives an integer value for an expression intended to produce one.
+	@Modified Body
+	*/
+	value(): Integer = null
+	  pre: self.isIntegral()
+
+	/*
+	UML 2.3 p. 104f:
+	[2] The query isIntegral() tells whether an expression is intended to produce an integer.
+	@Modified Body
+	*/
+	isIntegral(): Boolean = false
+	
+	/*
+	UML 2.3 p. 105:
+	[3] The query isPositive() tells whether an integer expression has a positive value.
+	@Modified Body
+	*/
+	isPositive(): Boolean = false
+	  pre: self.isIntegral()
+
+	/*
+	UML 2.3 p. 105:
+	[4] The query isNonNegative() tells whether an integer expression has a non-negative value.
+	@Modified Body
+	*/
+	isNonNegative(): Boolean = false
+	  pre: self.isIntegral()
+	  
+  constraints
+    /*
+	UML 2.3 p. 104:
+	[1] If the language attribute is not empty, then the size of 
+	the body and language arrays must be the same.
+	*/
+	inv languagesAndBodiesAreValid:
+	  language->notEmpty() implies (body->size() = language->size())
+end
+
+/*
+UML 2.3 p. 94:
+A literal specification identifies a literal constant being modeled.
+*/
+abstract class LiteralSpecification < ValueSpecification
+end
+
+/*
+UML 2.3 p. 87:
+An instance value is a value specification that identifies an instance.
+*/
+class InstanceValue < ValueSpecification
+  operations
+    getValue() : OclAny = self.instance
+end
+
+/*
+UML 2.3 p. 91:
+A literal Boolean is a specification of a Boolean value.
+*/
+class LiteralBoolean < LiteralSpecification
+  attributes
+    /*
+	UML 2.3 p. 92:
+	The specified Boolean value.
+	*/
+    value : Boolean
+	
+  operations
+    /*
+	UML 2.3 p. 92:
+    [1] The query isComputable() is redefined to be true.
+	*/
+	isComputable() : Boolean = true
+	
+	/*
+	UML 2.3 p. 92:
+	[2] The query booleanValue() gives the value.
+	*/
+	booleanValue() : Boolean = value
+end
+
+/*
+UML 2.3 p. 92:
+A literal integer is a specification of an integer value.
+*/
+class LiteralInteger < LiteralSpecification
+  attributes
+	/*
+	UML 2.3 p. 93:
+	The specified Integer value. Default value is 0.
+	*/
+    value : Integer
+  operations
+	/*
+	UML 2.3 p. 93:
+    [1] The query isComputable() is redefined to be true.
+	*/
+	isComputable() : Boolean = true
+	/*
+	UML 2.3 p. 93:
+	[2] The query integerValue() gives the value.
+	*/
+	integerValue() : Integer = value
+	
+	getValue() : OclAny = self.value
+end
+
+/*
+UML 2.3 p. 94:
+A literal string is a specification of a string value.
+*/
+class LiteralString < LiteralSpecification
+  attributes
+    /*
+	UML 2.3: p. 95:
+	The specified String value
+	*/
+	value : String
+  operations
+    /*
+	UML 2.3: p. 95:
+    [1] The query isComputable() is redefined to be true.
+	*/
+	isComputable() : Boolean = true
+
+	/*
+	UML 2.3: p. 95:
+	[2] The query stringValue() gives the value.
+	*/
+	stringValue() : String = value
+end
+
+/*
+UML 2.3 p. 95:
+A literal unlimited natural is a specification of an unlimited natural number.
+*/
+class LiteralUnlimitedNatural < LiteralSpecification
+  attributes
+    /*
+	UML 2.3 p. 96:
+	The specified UnlimitedNatural value. Default value is 0.
+	*/
+    value : UnlimitedNatural -- @Modified Should be UnlimitedNatural
+  operations
+    /*
+	UML 2.3 p. 96:
+	[1] The query isComputable() is redefined to be true.
+	*/
+	isComputable() : Boolean = true
+
+	/*
+	UML 2.3 p. 96:
+	[2] The query unlimitedValue() gives the value.
+	@Modified Should be UnlimitedNatural
+	*/
+	unlimitedValue() : UnlimitedNatural = value
+end
+
+/*
+UML 2.3 p. 93:
+A literal null specifies the lack of a value.
+*/
+class LiteralNull < LiteralSpecification
+  operations
+    /*
+	UML 2.3 p. 93:
+    [1] The query isComputable() is redefined to be true.
+	*/
+	isComputable() : Boolean = true
+	
+	/*
+	UML 2.3 p. 93:
+	[2] The query isNull() returns true.
+	*/
+	isNull() : Boolean = true
+end
+
+composition C_Expression_Expression_ValueSpecification_Operand between
+  Expression[0..1] role expression subsets owner
+  ValueSpecification[*] role operand ordered subsets ownedElement
+end
+
+association A_InstanceValue_InstanceValue_InstanceSpecification_Instance between
+  InstanceValue[*] role notNavigableInstance
+  InstanceSpecification[1] role instance
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.6
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.7: Constraints diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 59:
+A constraint is a condition or restriction expressed in natural language text or in a machine 
+readable language for the purpose of declaring some of the semantics of an element.
+*/
+class Constraint < NamedElement
+  constraints
+    /*
+	UML 2.3 p. 60:
+	[3] A constraint cannot be applied to itself.
+	*/
+    inv notConstrainingSelf:
+	  not constrainedElement->includes(self)
+end
+
+composition C_Namespace_Context_Constraint_OwnedRule between
+  Namespace[0..1] role _context subsets namespace // context is Keyword!
+  Constraint[*] role ownedRule subsets ownedMember
+end
+
+association A_Constraint_Constraint_Element_ConstrainedElement between
+  Constraint[*] role notNavigableConstrainedElement
+  Element[*] role constrainedElement ordered
+end
+
+composition C_Constraint_OwningConstraint_ValueSpecification_Specification between
+  Constraint[0..1] role owningConstraint subsets owner
+  ValueSpecification[1] role specification subsets ownedElement
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.7
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Begin Fig. 7.8: Instances diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 84:
+An instance specification is a model element that represents an instance in a modeled system.
+*/
+class InstanceSpecification < NamedElement
+  constraints
+    /*
+	UML 2.3 p. 85:
+    [1] The defining feature of each slot is a structural feature (directly or inherited) 
+	of a classifier of the instance specification.
+	*/
+	inv definingFeatureIsFeatureOfClassifier:
+	  slot->forAll(s | classifier->exists (c | c.allFeatures()->includes (s.definingFeature)))
+
+	/*
+	UML 2.3 p. 84:
+    [2] One structural feature (including the same feature inherited from multiple classifiers) 
+	is the defining feature of at most one slot in an instance specification.
+	*/
+	inv oneStructuralFeatureDefinesAtMostOneSlotPerInstance:
+	  classifier->forAll(c | (c.allFeatures()->forAll(f | slot->select(s | s.definingFeature = f)->size() <= 1)))
+	  
+	inv subsettingIsValid:
+      slot->select(s | not s.definingFeature.oclAsType(Property).subsettedProperty->isEmpty())->forAll(s |
+		let subsetterLinks = s.definingFeature.oclAsType(Property).getConnectedObjects() in
+		
+		s.definingFeature.oclAsType(Property).subsettedProperty->forAll(subsettedProperty |
+			let subsettedLinks = subsettedProperty.getConnectedObjects() in
+			subsetterLinks->forAll(t1 |
+				subsettedLinks->one(t2 | t1.source=t2.source and t2.conn.getValue()->asSet()->includesAll(t1.conn.getValue()->asSet()))
+			)
+		)
+	)
+	
+	inv unionIsValid:
+      slot->select(s | s.definingFeature.oclAsType(Property).isDerivedUnion)->forAll(s |
+		let subsetter = Property.allInstances()->select(p |
+		  p.subsettedProperty->includes(s.definingFeature.oclAsType(Property))) in
+		let unionLinks = s.definingFeature.oclAsType(Property).getConnectedObjects() in
+		
+		unionLinks->forAll(t1 | 
+		  subsetter->collect(p |
+		    p.getConnectedObjects()->select(t2 |
+			  t1.source = t2.source).conn.getValue())->asSet() = t1.conn.getValue()->asSet()
+		)
+	)
+end
+
+/*
+UMl 2.3 p. 135:
+A slot specifies that an entity modeled by an instance specification 
+has a value or values for a specific structural feature.
+*/
+class Slot < Element
+
+  constraints
+	inv subsettingIsValidProp:  
+	  let prop = self.definingFeature.oclAsType(Property) in
+	  (prop.isDefined() and prop.owner.oclIsKindOf(Class)) implies (
+	     let ourValues = self.value.getValue()->asSet() in
+		 prop.subsettedProperty->forAll(subsettedProp |
+		   	let subsettedValues = self.owningInstance.slot->any(definingFeature = subsettedProp).value.getValue()->asSet() in
+			  subsettedValues->includesAll(ourValues)
+	     )
+		)
+		
+  inv subsettingIsValid:
+  let definingProperty = self.definingFeature.oclAsType(Property) in
+  not definingProperty.oclIsUndefined() implies (
+    let ourLinks = definingProperty.getConnectedObjects() in
+    definingProperty.subsettedProperty->forAll(subsettedProperty |
+      let subsettedLinks = subsettedProperty.getConnectedObjects() in
+        ourLinks->forAll(t1 |
+          subsettedLinks->one(t2 | 
+            t1.source=t2.source and t2.conn.getValue()->asSet()
+            ->includesAll(t1.conn.getValue()->asSet()))
+    )
+  )
+)
+end
+
+composition C_InstanceSpecification_OwningInctance_Slot_OwnedElement between
+  InstanceSpecification[1] role owningInstance subsets owner
+  Slot[*] role slot subsets ownedElement
+end
+
+composition C_Slot_OwningSlot_ValueSpecification_Value between
+  Slot[0..1] role owningSlot subsets owner
+  ValueSpecification[*] role value ordered subsets ownedElement
+end
+
+association A_Slot_Slot_StructuralFeature_DefiningFeature between
+  Slot[*] role notNavigableDefiningFeature
+  StructuralFeature[1] role definingFeature
+end
+
+composition C_InstanceSpecification_OwningInstanceSpec_ValueSpecification_Specification between
+  InstanceSpecification[0..1] role owningInstanceSpec subsets owner
+  ValueSpecification[0..1] role specification subsets ownedElement
+end
+
+association A_InstanceSpecification_InstanceSpecification_Classifier_Classifier between
+  InstanceSpecification[*] role notNavigableClassifier
+  Classifier[*] role classifier
+end
+--------------------------------------------------------------------------------------------------------
+-- End Fig. 7.8
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.9: Classifiers diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+abstract class Classifier < RedefinableElement, Type, Namespace
+  attributes
+    /*
+    UML 2.3 p. 53:
+	If true, the Classifier does not provide a complete declaration 
+	and can typically not be instantiated. An abstract classifier is 
+	intended to be used by other classifiers (e.g., as the target of 
+	general metarelationships or generalization relationships).
+	Default value is false.
+	*/
+    isAbstract : Boolean
+	
+	/*
+	UML 2.3 p. 53:
+	if[sic!] true, the Classifier cannot be specialized by generalization. 
+	Note that this property is preserved through package merge operations; 
+	that is, the capability to specialize a Classifier (i.e., isFinalSpecialization =false) 
+	must be preserved in the resulting Classifier of a package merge operation where 
+	a Classifier with isFinalSpecialization =false is merged with a matching Classifier with 
+	isFinalSpecialization =true: the resulting Classifier will have isFinalSpecialization=false.
+	Default is false.
+	*/
+	-- isFinalSpecialization : Boolean
+  
+  operations
+    /*
+	UML 2.3 p. 54:
+    [1] The query allFeatures() gives all of the features in the namespace of the classifier.
+	In general, through mechanisms such as inheritance, this will be a larger set than feature.
+	Original:
+	member->select(oclIsKindOf(Feature))
+	*/
+	allFeatures() : Set(Feature) =
+	  member->select(oclIsKindOf(Feature)).oclAsType(Feature)->asSet()
+	
+	/*
+	UML 2.3 p. 54:
+	[2] The query parents() gives all of the immediate ancestors of a generalized Classifier.
+	*/
+	parents(): Set(Classifier) =
+	  self.generalization.general->asSet()
+
+	/*
+	UML 2.3 p. 55:
+	[3] The query allParents() gives all of the direct and indirect ancestors of a generalized Classifier.
+	Original specification misses asSet()
+	*/
+	allParents() : Set(Classifier) =
+	  self.parents()->union(self.parents()->collect(p | p.allParents()))->asSet()
+
+	/*
+	UML 2.3 p. 55:
+	[4] The query inheritableMembers() gives all of the members of a classifier that 
+	may be inherited in one of its descendants,	subject to whatever visibility 
+	restrictions apply.
+	Fix: member->select(m | c.hasVisibilityOf(m)) let to infinite recursion.
+	*/
+	inheritableMembers(c: Classifier): Set(NamedElement) =
+	  -- member->select(m | m.visibility <> VisibilityKind::private)
+	  member
+	pre: c.allParents()->includes(self)
+	
+	/*
+	UML 2.3 p. 55:
+	[5] The query hasVisibilityOf() determines whether a named element is visible 
+	in the classifier. By default all are visible. It is only called when the 
+	argument is something owned by a parent.
+	*/
+	hasVisibilityOf(n: NamedElement) : Boolean = true
+	
+	/*
+	  if (self.inheritedMember->includes(n)) then
+	    n.visibility <> VisibilityKind::private
+      else
+        true
+	  endif
+	*/
+	
+	/*
+	UML 2.3 p. 55:
+	[6] The query conformsTo() gives true for a classifier that defines a type 
+	that conforms to another. This is used, for example, in the specification of 
+	signature conformance for operations.
+	*/
+	conformsTo(other: Type): Boolean =
+		self=other or self.allParents()->includes(other)
+
+	/*
+	UML 2.3 p. 55:
+	[7] The query inherit() defines how to inherit a set of elements. 
+	Here the operation is defined to inherit them all. It is intended
+	to be redefined in circumstances where inheritance is affected by redefinition.
+	*/
+	inherit(inhs: Set(NamedElement)): Set(NamedElement) = inhs
+
+	/*
+	UML 2.3 p. 55:
+	[8] The query maySpecializeType() determines whether this classifier may have a 
+	generalization relationship to classifiers of the specified type. By default a 
+	classifier may specialize classifiers of the same or a more general type. 
+	It is intended to be redefined by classifiers that have different 
+	specialization constraints.
+	
+	What is c.oslType???
+		self.oclIsKindOf(c.oclType)
+	*/
+	
+	maySpecializeType(c : Classifier) : Boolean =
+	   self.allParents()->includes(c) 
+	
+	
+  constraints
+    inv isAbstractDefined:
+	  self.isAbstract.isDefined()
+	
+	/*
+	UML 2.3 p. 54:
+	[2] Generalization hierarchies must be directed and acyclical. 
+	    A classifier cannot be both a transitively general and
+	    transitively specific classifier of the same classifier.
+    */
+	inv generalizationHierarchieIsValid:
+	  not self.allParents()->includes(self)
+	
+    /*
+	UML 2.3 p. 54:
+    [3] A classifier may only specialize classifiers of a valid type.	
+	*/
+	inv onlySpecializeValidType:
+	  self.parents()->forAll(c | self.maySpecializeType(c))
+	
+	/*
+	UML 2.3 p. 54:
+	[4] The inheritedMember association is derived by inheriting 
+	the inheritable members of the parents.
+	Modified (->asSet())
+	*/
+	inv inheritedMemberIsValid:
+	  self.inheritedMember->includesAll(
+	    self.inherit(self.parents()->collect(p | p.inheritableMembers(self))->asSet()))
+	
+	/*
+	UML 2.3 p. 54:
+	[5] The parents of a classifier must be non-final.
+	*/
+	inv parentsAreNotFinal: true
+	   -- self.parents()->forAll(not isFinalSpecialization)
+end
+
+/*
+UML 2.3 p. 72:
+A generalization is a taxonomic relationship between a more general classifier 
+and a more specific classifier. Each instance of the specific classifier is also 
+an indirect instance of the general classifier. Thus, the specific classifier inherits
+the features of the more general classifier.
+*/
+class Generalization < DirectedRelationship
+  attributes
+	/*
+	UML 2.3 p. 73:
+	Indicates whether the specific classifier can be used wherever the general classifier
+	can be used. If true, the execution traces of the specific classifier will be a superset
+	of the execution traces of the general classifier. The default value is true.
+	*/
+    -- isSubstitutable : Boolean
+end
+
+association A_RedefinableElement_RedefinableElement_RedefinableElement_RedefinedElement between
+  RedefinableElement[*] role notNavigableRedefinedElement
+  RedefinableElement[*] role redefinedElement union
+end
+
+association A_RedefinableElement_RedefinableElement_Classifier_RedefinitionContext between
+  Classifier[*] role redefinitionContext union
+  RedefinableElement[*] role notNavigableRedefinitionContext
+end
+
+association A_Classifier_Classifier_Property_Attribute between
+  Classifier[0..1] role classifier subsets featuringClassifier union -- Err in Spec?: redefinitionContext
+  Property[*] role attribute subsets feature union
+end
+
+association A_Classifier_General_Generalization_Generalization between
+  Classifier[1] role general subsets target
+  Generalization[*] role allGeneralizations
+end
+
+composition C_Classifier_Specific_Generalization_Generalization between
+  Classifier[1] role specific subsets source subsets owner
+  Generalization[*]	role generalization subsets ownedElement
+end
+
+association A_Classifier_Classifier_NamedElement_InheritedMember between
+  Classifier[*] role notNavigableInheritedMember subsets notNavigableMember
+  /*
+  UML 2.3 p. 54:
+  [4] The inheritedMember association is derived by inheriting the inheritable members of the parents.
+  */
+  NamedElement[*] role inheritedMember subsets member derived = self.inherit(self.parents()->collect(p | p.inheritableMembers(self))->asSet())
+end
+
+association A_Classifier_Classifier_Classifier_RedefinedClassifier between
+  Classifier[*] role notNavigableRedefinedClassifier
+  Classifier[*] role redefinedClassifier subsets redefinedElement
+end
+
+association A_Classifier_Classifier_Classifier_General between
+  Classifier[*] role notNavigableGeneral
+  /* UML 2.3 p. 54: The general classifiers are the classifiers referenced by the generalization relationships. */
+  Classifier[*] role general derived = self.parents()
+end
+
+------------------------------------------------------------------
+-- End Figure 7.9
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.10: Features diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 71:
+A feature declares a behavioral or structural characteristic of 
+instances of classifiers.
+*/
+abstract class Feature < RedefinableElement
+  attributes
+    /*
+	UML 2.3 p. 71:
+	Specifies whether this feature characterizes individual instances 
+	classified by the classifier (false) or the classifier itself (true).
+	Default value is false.
+	*/
+    -- isStatic : Boolean
+end
+
+/*
+UML 2.3 p. 136:
+A structural feature is a typed feature of a classifier 
+that specifies the structure of instances of the classifier.
+*/
+abstract class StructuralFeature < MultiplicityElement, TypedElement, Feature
+  attributes
+	/*
+	UML 2.3 p. 136:
+	States whether the feature’s value may be modified by a client. 
+	Default is false.
+	*/
+    isReadOnly : Boolean
+end
+
+/*
+UML 2.3 p. 49:
+A behavioral feature is a feature of a classifier that 
+specifies an aspect of the behavior of its instances.
+*/
+abstract class BehavioralFeature < Feature, Namespace
+  operations
+    /*
+	UML 2.3 p. 49:
+	[1] The query isDistinguishableFrom() determines whether two 
+	BehavioralFeatures may coexist in the same Namespace. It specifies that 
+	they have to have different signatures.
+	@Modified Type conformance
+	*/
+	/*
+	isDistinguishableFrom(n: NamedElement, ns: Namespace): Boolean =
+		if n.oclIsKindOf(BehavioralFeature) then
+			if ns.getNamesOfMember(self)->intersection(ns.getNamesOfMember(n))->notEmpty() 
+			   and n.oclIsTypeOf(BehavioralFeature) then 
+				Set{self}->including(n.oclAsType(BehavioralFeature))
+					->isUnique(bf | bf.ownedParameter->collect(type))
+			else
+				true
+			endif
+		else 
+			true
+		endif
+	*/
+end
+
+/*
+UML 2.3 p. 123:
+A parameter is a specification of an argument used to 
+pass information into or out of an invocation of a behavioral
+feature.
+*/
+class Parameter < TypedElement, MultiplicityElement
+  attributes
+	/*
+	UML 2.3 p. 123:
+	Indicates whether a parameter is being sent into or 
+	out of a behavioral element. The default value is in.
+	*/
+    direction : ParameterDirectionKind
+	
+	/*
+	UML 2.3 p. 123:
+	Specifies a String that represents a value to be used when 
+	no argument is supplied for the Parameter. 
+	This is a derived value.
+	*/
+	default : String -- derived
+end
+
+association A_Classifier_FeaturingClassifier_Feature_Feature between
+  Classifier[*] role featuringClassifier union
+  Feature[*] role feature union
+end
+
+composition C_BehavioralFeature_OwnerFormalParam_Parameter_OwnedParameter between
+  BehavioralFeature[0..1] role ownerFormalParam subsets namespace
+  Parameter[*] role ownedParameter ordered subsets ownedMember
+end
+
+association A_BehavioralFeature_BehavioralFeature_Type_RaisedException between
+  BehavioralFeature[*] role notNavigableRaisedException
+  Type[*] role raisedException
+end
+
+composition C_Parameter_OwningParameter_ValueSpecification_DefaultValue between
+  Parameter[0..1] role owningParameter subsets owner
+  ValueSpecification[0..1] role defaultValue subsets ownedElement
+end
+
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.10
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.11: Operations diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+
+/*
+UML 2.3 p. 105:
+An operation is a behavioral feature of a classifier that specifies the name, 
+type, parameters, and constraints for invoking an associated behavior.
+*/
+class Operation < BehavioralFeature
+	attributes
+		/*
+		UML 2.3 p. 106:
+		Specifies whether an execution of the BehavioralFeature leaves the state 
+		of the system unchanged (isQuery=true) or whether side effects may occur 
+		(isQuery=false). The default value is false.
+		*/
+		isQuery : Boolean
+		
+		/*
+		UML 2.3 p. 106:
+		Specifies whether the return parameter is ordered or not, if present. 
+		This is derived.
+		*/
+		isOrdered : Boolean -- derived
+		
+		/*
+		UML 2.3 p. 106:
+		Specifies whether the return parameter is unique or not, if present. 
+		This is derived.
+		*/
+		isUnique : Boolean  -- derived
+		
+		/*
+		UML 2.3 p. 106:
+		Specifies the lower multiplicity of the return parameter, if present.
+		This is derived.
+		*/
+		lower : Integer     -- derived
+		
+		/*
+		UML 2.3 p. 106:
+		Specifies the upper multiplicity of the return parameter, if present. 
+		This is derived.
+		@Modified Should be UnlimitedNatural
+		*/
+		upper : Integer     -- derived
+	operations
+		/*
+		UML 2.3 p. 107:
+		[1] The query isConsistentWith() specifies, for any two Operations in a context in which 
+		redefinition is possible, whether redefinition would be logically consistent. A redefining 
+		operation is consistent with a redefined operation if it has the same number of owned parameters, 
+		and the type of each owned parameter conforms to the type of the corresponding redefined parameter.
+		A redefining operation is consistent with a redefined operation if it has the same number 
+		of formal parameters, the same number of return results, and the type of each formal parameter 
+		and return result conforms to the type of the corresponding redefined parameter or return result.
+		@Modified Moved let to the beginning
+		*/
+		isConsistentWith(redefinee: RedefinableElement) : Boolean =
+			let op:Operation = redefinee.oclAsType(Operation) in
+				redefinee.oclIsKindOf(Operation) and
+				self.ownedParameter->size() = op.ownedParameter->size() and
+				Sequence{1..self.ownedParameter->size()}->forAll(i | 
+					op.ownedParameter->at(1).type.conformsTo(self.ownedParameter->at(1).type))
+		
+			pre: redefinee.isRedefinitionContextValid(self)
+		
+		/*
+		UML 2.3 p. 107:
+		[2] The query returnResult() returns the set containing the return parameter of 
+		the Operation if one exists; otherwise, it returns an empty set.
+		@Modified asSet()
+		*/
+		returnResult() : Set(Parameter) =
+			ownedParameter->select(par | par.direction = ParameterDirectionKind::return)->asSet()
+			
+	constraints
+		/*
+		UML 2.3 p. 107:
+		[1] An operation can have at most one return parameter 
+		(i.e., an owned parameter with the direction set to ‘return’).
+		*/
+		inv operationsHasOnlyOneReturnparameter:
+			ownedParameter->select(par | par.direction = ParameterDirectionKind::return)->size() <= 1
+		
+		/*
+		UML 2.3 p. 107:
+		[2] If this operation has a return parameter, isOrdered equals the value of isOrdered 
+		for that parameter; otherwise, isOrdered is false.
+		@Modified any(true)
+		*/
+		inv isOrderedIsValid:
+			isOrdered = if returnResult()->notEmpty() then 
+				returnResult()->any(true).isOrdered 
+			else 
+				false 
+			endif
+			
+		/*
+		UML 2.3 p. 107:
+		[3] If this operation has a return parameter, isUnique equals the value of 
+		isUnique for that parameter; otherwise, isUnique is true.
+		*/
+		inv isUniqueIsValid:
+			isUnique = if returnResult()->notEmpty() then 
+				returnResult()->any(true).isUnique 
+			else 
+				true 
+			endif
+
+		/*
+		UML 2.3 p. 107:
+		[4] If this operation has a return parameter, lower equals the value 
+		of lower for that parameter; otherwise, lower is not defined.
+		@Modified Set{}
+		*/
+		inv lowerIsValid:
+			lower = if returnResult()->notEmpty() then 
+				returnResult()->any(true).lower 
+			else 
+				null 
+			endif
+		
+		/*
+		UML 2.3 p. 107:
+		[5] If this operation has a return parameter, upper equals the value 
+		of upper for that parameter; otherwise, upper is not defined.
+		@Modified Set{}
+		*/
+		inv upperIsValid: true
+		    /*
+			upper = if returnResult()->notEmpty() then 
+				returnResult()->any(true).upper
+			else
+				null
+			endif
+			*/
+
+		/*
+		UML 2.3 p. 107:
+		[6] If this operation has a return parameter, type equals the value 
+		of type for that parameter; otherwise, type is not defined.
+		@Modified Set{}
+		*/
+		inv typeIsValid:
+			type = if returnResult()->notEmpty() then 
+				returnResult()->any(true).type 
+			else 
+				null
+			endif
+
+		/*
+		UML 2.3 p. 107:
+		[7] A bodyCondition can only be specified for a query operation.
+		*/
+		inv bodyConditrionOnlyIfIsQuery:
+			bodyCondition->notEmpty() implies isQuery
+end 
+
+composition C_Operation_Operation_Parameter_OwnedParameter between
+  Operation[0..1] role operationRedefined -- subsets namespace
+  Parameter[*] role ownedParameterRedefined -- redefines ownedParameter
+end
+
+composition C_Operation_PreContext_Constraint_Precondition between
+  Operation[0..1] role preContext subsets _context
+  Constraint[*] role precondition subsets ownedRule
+end
+
+composition C_Operation_PostContext_Constraint_Postcondition between
+  Operation[0..1] role postContext subsets _context
+  Constraint[*] role postcondition subsets ownedRule
+end
+
+composition C_Operation_BodyContext_Constraint_BodyCondition between
+  Operation[0..1] role bodyContext subsets _context
+  Constraint[0..1] role bodyCondition subsets ownedRule
+end
+
+association A_Operation_Operation_Type_Type between
+  Operation[*] role notNavigableType
+  Type[0..1] role type
+end
+
+association A_Operation_Operation_Type_RaisedException between
+  Operation[*] role notNavigableRaisedException_Redefined -- subsets redefinedElement
+  Type[*] role raisedException_redefined redefines raisedException
+end
+
+association A_Operation_Operation_Operation_RedefinedOperation between
+  Operation[*] role notNavigableRedefinedOperation
+  Operation[*] role redefinedOperation
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.11
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.12: Classes diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+
+/*
+UML 2.3 p. 125:
+A property is a structural feature.
+
+A property related to a classifier by ownedAttribute represents an attribute, 
+and it may also represent an association end. It relates an instance of the class to 
+a value or collection of values of the type of the attribute.
+
+A property related to an Association by memberEnd or its specializations represents 
+an end of the association. The type of property is the type of the end of the association.
+*/
+class Property < StructuralFeature /* , ConnectableElement*/ /* From Fig. 9.2: */ 
+	attributes
+		/*
+		UML 2.3 p. 126:
+		Specifies the kind of aggregation that applies to the Property. 
+		The default value is none.
+		*/
+		-- aggregation : AggregationKind /*[1]*/
+		
+		/*
+		UML 2.3 p. 126:
+		A String that is evaluated to give a default value for the Property 
+		when an object of the owning Classifier is instantiated. 
+		This is a derived value.
+		*/
+		-- default : String -- derived
+		
+		/*
+		UML 2.3 p. 126:
+		This is a derived value, indicating whether the aggregation 
+		of the Property is composite or not.
+		*/
+		-- isComposite : Boolean /*[1]*/ -- derived
+		
+		/*
+		UML 2.3 p. 126:
+		Specifies whether the Property is derived, i.e., whether its value or values 
+		can be computed from other information.
+		The default value is false.
+		*/
+		isDerived : Boolean /*[1]*/
+	
+		/*
+		UML 2.3 p. 126:
+		Specifies whether the property is derived as the union of all of 
+		the properties that are constrained to subset it.
+		The default value is false.
+		*/
+		isDerivedUnion : Boolean
+	
+		/*
+		UML 2.3 p. 126:
+		If true, the attribute may only be read, and not written. 
+		The default value is false.
+		*/
+		-- isReadOnly : Boolean /* already defined in StructuralFeature */
+		
+	operations
+		/*
+		UML 2.3 p. 128:
+		[1] The query isConsistentWith() specifies, for any two Properties in a context in which 
+		redefinition is possible, whether redefinition would be logically consistent. 
+		A redefining property is consistent with a redefined property if the type of the redefining 
+		property conforms to the type of the redefined property, the multiplicity of the redefining 
+		property (if specified) is contained in the multiplicity of the redefined property, 
+		and the redefining property is derived if the redefined attribute is property.
+		@Modified Moved let to the beginning, replaces isEmpty with isDefined
+		*/
+		isConsistentWith(redefinee : RedefinableElement) : Boolean =
+			let prop : Property = redefinee.oclAsType(Property) in
+				redefinee.oclIsKindOf(Property) and (prop.type.conformsTo(self.type) and
+				((prop.lower.isDefined() and self.lower.isDefined()) implies
+					prop.lower >= self.lower) and
+				((prop.upper.isDefined() and self.upper.isDefined()) implies
+					prop.lower <= self.lower) and
+				(self.isDerived implies prop.isDerived) /* and 
+				(self.isComposite implies prop.isComposite) */)
+				
+			pre: redefinee.isRedefinitionContextValid(self)
+		/*
+		UML 2.3 p. 128:	
+		[2] The query subsettingContext() gives the context for subsetting a property. 
+		It consists, in the case of an attribute, of the corresponding classifier, 
+		and in the case of an association end, all of the classifiers at the other ends.
+		*/
+		subsettingContext() : Set(Type) = 
+			if association->notEmpty() then 
+				association.endType->asSet() -- -type
+			else
+				if classifier->notEmpty() then 
+					Set{classifier}
+				else
+					Set{}
+				endif
+			endif
+		/*
+		UML 2.3 p. 128:	
+		[3] The query isNavigable() indicates whether it is possible to 
+		navigate across the property.
+		@Modified 
+		@TODO: association or owningAssociation?
+		*/
+		isNavigable() : Boolean =
+			not classifier->isEmpty() or association.navigableOwnedEnd->includes(self)
+		
+		/*
+		UML 2.3 p. 129:	
+		[4] The query isAttribute() is true if the Property is defined as 
+		an attribute of some classifier
+		@Modified
+		*/
+		isAttribute(p : Property) : Boolean = 
+			Classifier.allInstances->exists(c| c.attribute->includes(p))
+
+		getConnectedObjects():Set(Tuple(source:Sequence(InstanceSpecification), conn:Set(ValueSpecification))) = 
+		  -- Because we use allFeatures(), we include sub classes or sub associations
+		  let instances = InstanceSpecification.allInstances()->select(i | i.classifier.allFeatures()->includes(self)) in
+		  
+		  if self.isDerivedUnion then
+			  Property.allInstances()->select(f | f.oclAsType(Property).subsettedProperty->includes(self))
+			    ->collect( f | f.oclAsType(Property).getConnectedObjects())->iterate(derivedValues ; res:Set(Tuple(source:Sequence(InstanceSpecification), conn:Set(ValueSpecification)))=Set{} |
+					let existingValues = res->any(t2 | t2.source = derivedValues.source) in
+					if existingValues <> null then
+					  res->excluding(existingValues)->including(Tuple{source=existingValues.source, conn=existingValues.conn->union(derivedValues.conn)})
+					else
+					  res->including(derivedValues)
+					endif
+				)
+	      else if self.owner.oclIsTypeOf(Class) then
+		    -- Property is owned by a class
+			-- Instances of class are the source and the defined values in the slot are the connected objects
+			instances->collect(i | Tuple{source=Sequence{i}, conn=i.slot->any(s|s.definingFeature=self).value->asSet()})->asSet()
+		  else
+		    -- Property is owned by association
+			-- Collect sequences of source tuples (seq->size() = 1 for binary associations and n-1 for n-ary) 
+			-- and the set of connected objects
+		    let assoc:Association = self.owner.oclAsType(Association) in
+			-- Collect a set for each link with information about linked object and the linked property
+            let sourceObjects:Set(Sequence(Tuple(property:Property, obj:InstanceValue))) = 
+			  instances->collectNested(i | 
+			    -- Reject the association end which is linked to ourself
+			    assoc.memberEnd->reject(mEnd | mEnd = self)
+			    -- Collect the source instances tuple
+				->collect(mEnd |
+				  Tuple{property=mEnd, obj=i.slot->any(s | s.definingFeature = mEnd).value->any(true).oclAsType(InstanceValue)}
+				)
+			  )->asSet()
+            in
+			  -- Collect for each source tuple the connected objects			 
+			  sourceObjects->collect(link:Sequence(Tuple(property:Property, obj:InstanceValue)) |
+			    -- Select all instances which are linked by the given objects at the given ends
+			    let linkedInstances = instances->select(i |
+                  link->forAll(t:Tuple(property:Property, obj:InstanceValue) | 
+                    i.slot->exists(definingFeature=t.property and value->any(true).oclAsType(InstanceValue).instance = t.obj.instance)
+                  )
+                )->collect(slot->any(definingFeature=self).value)->asSet() in
+			    Tuple{source=link.obj.instance,conn=linkedInstances}
+			  )->asSet()
+			endif
+         endif
+		 
+	constraints
+inv subsettingIsValid:
+  let subsetLinks = self.getConnectedObjects() in
+  self.subsettedProperty->forAll(supersetProperty |
+    let supersetLinks = supersetProperty.getConnectedObjects() in
+    subsetLinks->forAll(t1 |
+      supersetLinks->one(t2 | t1.source=t2.source and 
+        t2.conn.getValue()->asSet()->includesAll(
+          t1.conn.getValue()->asSet()))
+	)
+  )
+  
+		inv isDerivedIsDefined:
+			self.isDerived.isDefined()
+		
+		-- inv aggregationIsDefined:
+		--	self.aggregation.isDefined()
+		
+		-- inv isCompositeIsDefined:
+		--	self.isComposite.isDefined()
+		
+		/*
+		UML 2.3 p. 127:	
+		[1] If this property is owned by a class associated with a binary association, 
+		and the other end of the association is also owned by a class, 
+		then opposite gives the other end.
+		@Modified any(true); excluding instead of -; replaced Set{} with null
+		*/
+		/*
+		inv:
+			opposite = 
+			if owningAssociation->isEmpty() and association.memberEnd->size() = 2 then
+				let otherEnd = (association.memberEnd->excluding(self))->any(true) in
+					if otherEnd.owningAssociation->isEmpty() then 
+						otherEnd
+					else 
+						null
+					endif
+			else
+				null
+			endif
+		*/
+		/*
+		UML 2.3 p. 127:	
+		[2] A multiplicity on an aggregate end of a composite aggregation 
+		must not have an upper bound greater than 1.
+		@Modified replaced isEmpty with isDefined
+		*/
+		-- inv compositeEndMultiplicityIsOne:
+		--	isComposite implies (upperBound().isDefined() or upperBound() <= 1)
+			
+		/*
+		UML 2.3 p. 127:	
+		[3] Subsetting may only occur when the context of the subsetting 
+		property conforms to the context of the subsetted property.
+		*/
+		inv subsettingConformsToContext:
+			subsettedProperty->notEmpty() implies
+				(subsettingContext()->notEmpty() and subsettingContext()->forAll (sc |
+					subsettedProperty->forAll(sp | 
+						sp.subsettingContext()->exists(c | sc.conformsTo(c)))))
+		
+		/*
+		UML 2.3 p. 127:	
+		[4] A redefined property must be inherited from a more general 
+		classifier containing the redefining property.
+		@Modified impliese instead of if then
+		*/
+		inv redefinedPropertyIsInherited:
+			redefinedProperty->notEmpty() implies
+				(redefinitionContext->notEmpty() and redefinedProperty->forAll(rp |
+						((redefinitionContext->collect(fc | 
+							fc.allParents()))->asSet())->collect(c| 
+								c.allFeatures())->asSet()->includes(rp)))
+		
+		/*
+		UML 2.3 p. 128:	
+		[5] A subsetting property may strengthen the type of the subsetted property, 
+		and its upper bound may be less.
+		@Modified 
+		*/
+		inv subsettedPropertyCanStrengthen:
+			subsettedProperty->forAll(sp |
+				type.conformsTo(sp.type) and 
+				((upper.isDefined() and sp.upper.isDefined()) implies
+					upper <= sp.upper))
+		
+		/*
+		UML 2.3 p. 128:	
+		[6] Only a navigable property can be marked as readOnly.
+		*/
+		inv onlyNavigableReadOnly:
+			isReadOnly implies isNavigable()
+		
+		/*
+		UML 2.3 p. 128:			
+		[7] A derived union is derived.
+		*/
+		inv derivedUnionIsDerived:
+			isDerivedUnion implies isDerived
+		
+		/*
+		UML 2.3 p. 128:	
+		[8] A derived union is read only.
+		*/
+		inv derivedUnionIsReadOnly:
+			isDerivedUnion implies isReadOnly
+		
+		/*
+		UML 2.3 p. 128:	
+		[9] The value of isComposite is true only if aggregation is composite.
+		*/
+		-- inv isCompositeIsValid:
+		--	isComposite = (self.aggregation = AggregationKind::composite)
+	
+		/*
+		UML 2.3 p. 128:	
+		[10] A Property cannot be subset by a Property with the same name
+		@Modified Replaced if then with implies
+		*/
+		inv subsetRequiresDifferentname:
+			self.subsettedProperty->notEmpty() implies
+				self.subsettedProperty->forAll(sp | sp.name <> self.name)
+end
+
+/*
+UML 2.3 p. 50:	
+A class describes a set of objects that share the same specifications 
+of features, constraints, and semantics.
+*/
+class Class < Classifier /*, EncapsulatedClassifier*/
+  operations
+  
+    /*
+	UML 2.3 p. 51:
+	The inherit operation is overridden to exclude redefined properties.
+	
+	@Modified
+	Original implementation is wrong:
+    inherit(inhs : Set(NamedElement)) : Set(NamedElement) =
+	  inhs->excluding(inh |
+	    ownedMember->select(oclIsKindOf(RedefinableElement))->select(redefinedElement->includes(inh)))
+	*/
+	inherit(inhs : Set(NamedElement)) : Set(NamedElement) =
+	  inhs->reject(inh |
+	    ownedMember->select(oclIsKindOf(RedefinableElement))->exists(oclAsType(RedefinableElement).redefinedElement->includes(inh)))
+end
+
+/*
+UML 2.3 p. 38:
+An association describes a set of tuples whose values refer to typed instances. 
+An instance of an association is called a link. A link is a tuple with one 
+value for each end of the association, where each value is an instance of 
+the type of the end.
+*/
+class Association < Relationship, Classifier
+	attributes
+		/*
+		UML 2.3 p. 38:
+		Specifies whether the association is derived from other model elements such 
+		as other associations or constraints. The default value is false.
+		*/
+		isDerived : Boolean
+		
+	constraints
+		
+		/*
+		UML 2.3 p. 39:
+		[1] An association specializing another association has the same number of 
+		ends as the other association.
+		*/
+		inv specializedAssociationsHasSameNumberOfEnds:
+			parents()->select(oclIsKindOf(Association)).oclAsType(Association)->forAll(p | 
+				p.memberEnd->size() = self.memberEnd->size())
+
+		/*
+		UML 2.3 p. 39:
+		[2] When an association specializes another association, every end of the specific 
+		association corresponds to an end of the general association, and the specific 
+		end reaches the same type or a subtype of the more general end.
+		*/
+		inv endsOfSpecializingAssociatzionConformToEndsOfSpecializedAssociation:
+			Sequence{1..self.memberEnd->size()}->forAll(i | 
+				self.general->select(oclIsKindOf(Association)).oclAsType(Association)->forAll(ga |
+					self.memberEnd->at(i).type.conformsTo(ga.memberEnd->at(i).type)))
+
+		/*
+		UML 2.3 p. 39:
+		[4] Only binary associations can be aggregations.
+		*/
+		-- inv onlyBinaryAssociationsCanBeAggregations:
+		--	self.memberEnd->exists(aggregation <> AggregationKind::none) implies 
+		--		self.memberEnd->size() = 2
+
+		/*
+		UML 2.3 p. 39:
+		[5] Association ends of associations with more than two ends 
+		must be owned by the association.
+		@Modified implies instead of if then
+		*/
+		inv nAryAssociationsOwnTheirEnds:
+			memberEnd->size() > 2 implies ownedEnd->includesAll(memberEnd)
+end
+
+/*
+association A_Class_Class_Class_SuperClass between
+  Class[*] role notNavigableSuperClass
+  Class[*] role superClass redefines general
+end
+*/
+
+-- TODO: Structured Classfier already defines this composition (Class < EncapsulatedClassifier < StructuredClassifier)
+
+composition C_Class_Class_Property_OwnedAttribute between
+  Class[0..1] role _class subsets classifier subsets namespace subsets featuringClassifier
+  Property[*] role ownedAttribute ordered subsets attribute subsets ownedMember subsets feature
+end
+
+/*
+composition C_Class_Class_Classifier_NestedClassifier between
+  Class[0..1] role class subsets namespace subsets redefinitionContext
+  Classifier[*] role nestedClassifier ordered subsets ownedMember subsets notNavigableRedefinitionContext
+end
+*/
+
+composition C_Class_Class_Operation_OwnedOperation between
+  Class[0..1] role notNavigableOwnedOperation subsets redefinitionContext subsets namespace subsets featuringClassifier
+  Operation[*] role ownedOperation subsets feature subsets ownedMember subsets notNavigableRedefinitionContext
+end
+
+association A_Property_Property_Property_SubsettedProperty between
+  Property[*] role notNavigableSubsettedProperty
+  Property[*] role subsettedProperty
+end
+
+association A_Property_Property_Property_RedefinedProperty between
+  Property[*] role notNavigableredefinedProperty
+  Property[*] role redefinedProperty
+end
+
+association A_Property_Property_Property_Opposite between
+  Property[0..1] role notNavigableOpposite
+  Property[0..1] role opposite derived = if owningAssociation->isEmpty() and association.memberEnd->size() = 2 then
+				let otherEnd = (association.memberEnd->excluding(self))->any(true) in
+					if otherEnd.owningAssociation->isEmpty() then 
+						otherEnd
+					else 
+						null
+					endif
+			else
+				null
+			endif
+end
+
+association A_Property_MemberEnd_Association_Association between
+  Association[0..1] role association subsets notNavigableMember
+  Property[2..*] role memberEnd ordered subsets member
+end
+
+composition C_Association_OwningAssociation_Property_OwnedEnd between
+  Association[0..1] role owningAssociation subsets association subsets namespace subsets featuringClassifier
+  Property[*] role ownedEnd ordered subsets memberEnd subsets feature subsets ownedMember  
+end
+
+association A_Association_Association_Property_NavigableOwnedEnd between
+  Association[0..1] role notNavigableAssociation subsets owningAssociation -- Not marked in Spec
+  Property[*] role navigableOwnedEnd subsets ownedEnd
+end
+
+/*
+composition C_Property_OwningProperty_ValueSpecification_DefaultValue between
+  Property[0..1] role owningProperty subsets owner
+  ValueSpecification[0..1] role defaultValue subsets ownedElement
+end
+*/
+
+/*
+  UML 2.3 p. 39:
+  [3] endType is derived from the types of the member ends.
+*/
+association A_Association_Association_Type_EndType between
+  Type[1..*] role endType ordered subsets relatedElement derived = self.memberEnd->collect(e | e.type)->asOrderedSet()
+  Association[*] role notNavigableEndType subsets relationship -- Not marked in Spec                    was missing!
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.12
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.13: DataTypes diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 62:
+A data type is a type whose instances are identified only by their value. 
+A DataType may contain attributes to support the modeling of structured data types.
+
+A typical use of data types would be to represent programming language primitive 
+types or CORBA basic types. For example, integer and string types are 
+often treated as data types.
+*/
+class DataType < Classifier
+end
+
+/*
+UML 2.3 p. 125:
+A primitive type defines a predefined data type, without any relevant
+substructure (i.e., it has no parts in the context of UML). 
+A primitive datatype may have an algebra and operations defined 
+outside of UML, for example, mathematically.
+*/
+class PrimitiveType < DataType
+end
+
+/*
+UML 2.3 p. 68:
+An enumeration is a data type whose values are enumerated 
+in the model as enumeration literals.
+*/
+class Enumeration < DataType
+end
+
+/*
+UML 2.3 p. 69:
+An enumeration literal is a user-defined data value for an enumeration.
+*/
+class EnumerationLiteral < InstanceSpecification
+end
+
+composition C_DataType_Datatype_Property_OwnedAttribute between
+  DataType[0..1] role datatype subsets namespace subsets featuringClassifier subsets classifier
+  Property[*] role ownedAttribute ordered subsets ownedMember subsets attribute
+end
+
+composition C_DataType_Datatype_Operation_OwnedOperation between
+  DataType[0..1] role datatype subsets namespace subsets redefinitionContext subsets featuringClassifier
+  Operation[*] role ownedOperation ordered subsets ownedMember subsets notNavigableRedefinitionContext subsets feature
+end
+
+composition C_Enumeration_Enumeration_EnumerationLiteral_OwnedLiteral between
+  Enumeration[0..1] role enumeration subsets namespace
+  EnumerationLiteral[*] role ownedLiteral ordered subsets ownedMember
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.13
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.14 - The Packages diagram of the Kernel package
+--------------------------------------------------------------------------------------------------------
+
+/*
+UML 2.3 p. 109:
+A package is used to group elements, and provides a namespace for the grouped elements.
+*/
+class Package < Namespace, NamedElement
+	operations
+		/*
+		UML 2.3 p. 110:
+		[1] The query mustBeOwned() indicates whether elements of 
+		this type must have an owner.
+		*/
+		mustBeOwned() : Boolean = false
+
+		/*
+		UML 2.3 p. 110:
+		[2] The query visibleMembers() defines which members of a Package 
+		can be accessed outside it.
+		@Modified packagedElement instead of member
+		*/
+		-- visibleMembers() : Set(PackageableElement) =
+		--	packagedElement->select( m | self.makesVisible(m))
+	
+		/*
+		UML 2.3 p. 110f:
+		[3] The query makesVisible() defines whether a Package makes an element 
+		visible outside itself. Elements with no visibility and elements with 
+		public visibility are made visible.
+		@Modified Removed qualified name of NamedElement
+		*/
+		makesVisible(el: NamedElement) : Boolean = true
+		/*
+			-- case: the element is in the package itself
+			(ownedMember->includes(el)) or
+			-- case: it is imported individually with public visibility
+			(elementImport->select(ei|ei.importedElement.visibility = VisibilityKind::public)->collect(ei|ei.importedElement)->includes(el)) or
+			-- case: it is imported in a package with public visibility
+			(packageImport->select(pi|pi.visibility = VisibilityKind::public)->collect(pi|pi.importedPackage.member->includes(el))->notEmpty())
+			*/
+			pre: self.member->includes(el)	
+			
+	constraints
+		/*
+		UML 2.3 p. 110:
+		[1] If an element that is owned by a package has visibility, 
+		it is public or private.
+		@Modified replaced ownedElements with member; replaced isEmpty with isDefined; fixed typo
+		*/
+		inv ownedElementHasVisibilityPublicOrPrivate: true
+		/*
+			self.member->forAll(e | 
+				e.visibility.isDefined() implies 
+					e.visibility = VisibilityKind::public or e.visibility = VisibilityKind::private)
+					*/
+end
+
+/*
+UML 2.3 p. 114:
+A package merge defines how the contents of one package are 
+extended by the contents of another package.
+*/
+class PackageMerge < DirectedRelationship
+end
+
+--composition C_Package_OwningPackage_PackagableElement_PackagedElement between
+--  Package[0..1] role owningPackage subsets namespace
+--  PackageableElement[*] role packagedElement subsets ownedMember
+--end
+
+composition C_Package_Package_Type_OwnedType between
+  Package[0..1] role package /* subsets owningPackage */ -- Spec says: namespace
+  Type[*] role ownedType /* subsets packagedElement */
+end
+
+composition C_Package_ReceivingPackage_PackageMerge_PackageMerge between
+  Package[1] role receivingPackage subsets source subsets owner
+  PackageMerge[*] role packageMerge subsets notNavigableSource subsets ownedElement
+end
+
+association A_PackageMerge_PackageMerge_Package_MergedPackage between
+  Package[1] role mergedPackage subsets target
+  PackageMerge[*] role notNavigableMergedPackage subsets notNavigableTarget
+end
+
+composition C_Package_NestingPackage_Package_Nestedpackage between
+  Package[0..1] role nestingPackage /* subsets owningPackage */ -- spec says: namespace
+  Package[*] role nestedPackage /* subsets packagedElement */
+end
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.14
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.15 - Contents of Dependencies package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 63:
+A dependency is a relationship that signifies that a single or a set of model elements 
+requires other model elements for their specification or implementation. This means that 
+the complete semantics of the depending elements is either semantically or structurally 
+dependent on the definition of the supplier element(s).
+*/
+class Dependency < DirectedRelationship, NamedElement
+end
+
+/*
+UML 2.3 p. 37:
+An abstraction is a relationship that relates two elements or sets of elements that 
+represent the same concept at different levels of abstraction or from different viewpoints. 
+In the metamodel, an Abstraction is a Dependency in which there is a mapping between 
+the supplier and the client.
+*/
+class Abstraction < Dependency
+end
+
+/*
+UML 2.3 p. 140:
+A usage is a relationship in which one element requires another element (or set of elements) 
+for its full implementation or operation. In the metamodel, a Usage is a Dependency 
+in which the client requires the presence of the supplier.
+*/
+class Usage < Dependency
+end
+
+/*
+UML 2.3 p. 132:
+Realization is a specialized abstraction relationship between two sets of model elements, 
+one representing a specification (the supplier) and the other represents an implementation 
+of the latter (the client). Realization can be used to model stepwise refinement, 
+optimizations, transformations, templates, model synthesis, framework composition, etc.
+*/
+class Realization < Abstraction
+end
+
+/*
+UML 2.3 p. 137:
+A substitution is a relationship between two classifiers which signifies that the 
+substitutingClassifier complies with the contract specified by the contract classifier. 
+This implies that instances of the substitutingClassifier are runtime substitutable 
+where instances of the contract classifier are expected.
+*/
+class Substitution < Realization
+end
+
+-- @TODO: In the specification the subsets constraint is on the wrong end?!?
+association A_Dependency_SupplierDependency_NamedElement_Supplier between
+  NamedElement[1..*] role supplier subsets target
+  Dependency[*] role supplierDependency
+end
+
+-- In the specification the subsets constraint is on the wrong end?!?
+association A_Dependency_ClientDependency_NamedElement_Client between
+  NamedElement[1..*] role client subsets source
+  Dependency[*] role clientDependency
+end
+
+composition C_Abstraction_Abstraction_OpaqueExpression_Mapping between
+  Abstraction[0..1] role abstraction subsets owner -- not mentioned in Spec.
+  OpaqueExpression[0..1] role mapping subsets ownedElement
+end
+
+association A_Substitution_Substitution_Classifier_Contract between
+  Classifier[1] role contract subsets supplier
+  Substitution[*] role notNavigableSubstitution subsets supplierDependency -- not mentioned in Spec.
+end
+
+composition C_Classifier_SubstitutingClassifier_Substitution_Substitution between
+  Classifier[1] role substitutingClassifier subsets client subsets owner -- owner not mentioned in Spec.
+  Substitution[*] role substitution subsets ownedElement subsets clientDependency
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.15
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.16 - Contents of Interfaces package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 88:
+An interface is a kind of classifier that represents a declaration of a set of 
+coherent public features and obligations. An interface specifies a contract; 
+any instance of a classifier that realizes the interface must fulfill that contract.
+The obligations that may be associated with an interface are in the form of various kinds 
+of constraints (such as pre- and postconditions) or protocol specifications, 
+which may impose ordering restrictions on interactions through the interface.
+*/
+class Interface < Classifier
+	constraints
+		/*
+		UML 2.3 p. 88:
+		[1] The visibility of all features owned by an interface must be public.
+		*/
+		inv interfaceFeaturesArePublic: true
+			-- self.feature->forAll(f | f.visibility = VisibilityKind::public)
+end
+
+/*
+UML 2.3 p. 91:
+An InterfaceRealization is a specialized Realization relationship between 
+a Classifier and an Interface. This relationship signifies that the realizing 
+classifier conforms to the contract specified by the Interface.
+*/
+class InterfaceRealization < Realization
+end
+
+/*
+UML 2.3 p. 50:
+A BehavioredClassifier may have an interface realization.
+*/
+class BehavioredClassifier < Classifier
+end
+
+composition C_Interface_Interface_Classifier_NestedClassifier between
+  Interface[0..1] role notNavigableNestedClassifier2 subsets namespace subsets redefinitionContext
+  Classifier[*] role nestedClassifer ordered subsets ownedMember -- not mentioned in Spec.: subsets notNavigableRedefinitionContext
+end
+
+composition C_Interface_Interface_Property_OwnedAttribute between
+  Interface[0..1] role notNavigableOwnedAttribute subsets classifier subsets namespace subsets featuringClassifier
+  Property[*] role ownedAttribute ordered subsets attribute subsets ownedMember -- not mentioned in Spec.: subsets feature
+end
+
+composition C_Interface_Interface_Operation_OwnedOperation between
+  Interface[0..1] role interface subsets redefinitionContext -- not mentioned in Spec.: subsets namespace subsets featuringClassifier
+  Operation[*] role ownedOperation ordered subsets notNavigableRedefinitionContext subsets ownedMember subsets feature
+end
+
+association A_Interface_Interface_Interface_RedefinedInterface between
+  Interface[*] role notNavigableRedefinedInterface -- not mentioned in Spec.: subsets notNavigableRedefinedElement
+  Interface[*] role redefinedInterface subsets redefinedElement
+end
+
+association InterfaceRealization_InterfaceRealization_Interface_Contract between
+  Interface[1] role contract subsets supplier
+  InterfaceRealization[*] role notNavigableContract -- not mentioned in Spec.: subsets supplierDependency
+end
+
+composition C_BehavioredClassifier_ImplementingClassifier_InterfaceRealization_InterfaceRealization between
+  BehavioredClassifier[1] role implementingClassifier subsets client -- not mentioned in Spec.: subsets owner
+  InterfaceRealization[*] role interfaceRealization subsets clientDependency subsets ownedElement
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.16
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.17 - Contents of AssociationClasses package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 46:
+A model element that has both association and class properties. An AssociationClass 
+can be seen as an association that also has class properties, or as a class that 
+also has association properties. It not only connects a set of classifiers but also
+defines a set of features that belong to the relationship itself and not to any 
+of the classifiers.
+*/
+class AssociationClass < Class, Association
+	constraints
+		/*
+		UML 2.3 p. 47:
+		[1] An AssociationClass cannot be defined between itself and something else.3
+		@Modified Typo, Type check; replaced collect with forAll
+		*/
+		inv notDefinedBetweenItself:
+			self.endType->excludes(self) and self.endType->forAll(et|
+				et.oclIsTypeOf(Classifier) implies et.oclAsType(Classifier).allParents()->excludes(self))
+		
+		/*
+		UML 2.3 p. 47:
+		[2] The owned attributes and owned ends of an AssociationClass are disjoint.
+		@Modified asSet because intersection is not defined on OrderedSet
+		*/
+		inv attributesAndEndsAreDesjoint:
+			ownedAttribute->asSet()->intersection(ownedEnd->asSet())->isEmpty()
+end
+
+/*
+composition C_Property_AssociationEnd_Property_Qualifier between
+  Property[0..1] role associationEnd subsets owner
+  Property[*] role qualifier ordered subsets ownedElement
+end
+*/
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.17
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 7.18 - Contents of PowerTypes package
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 76:
+A GeneralizationSet is a PackageableElement (from Kernel) 
+whose instances define collections of subsets of Generalization relationships.
+*/
+class GeneralizationSet < NamedElement
+	attributes
+		/*
+		UML 2.3 p. 77:
+		Indicates (via the associated Generalizations) whether or not the set of specific Classifiers 
+		are covering for a particular general classifier. When isCovering is true, every instance of 
+		a particular general Classifier is also an instance of at least one of its specific Classifiers 
+		for the GeneralizationSet. When isCovering is false, there are one or more instances of the 
+		particular general Classifier that are not instances of at least one of its specific Classifiers
+		defined for the GeneralizationSet. For example, Person could have two Generalization relationships 
+		each with a different specific Classifier: Male Person and Female Person. 
+		This GeneralizationSet would be covering because every instance of Person would be an instance 
+		of Male Person or Female Person. In contrast, Person could have a three Generalization relationship 
+		involving three specific Classifiers: North American Person, Asian Person, and European Person. 
+		This GeneralizationSet would not be covering because there are instances of Person for which 
+		these three specific Classifiers do not apply. The first example, then, could be read: 
+		any Person would be specialized as either being a Male Person or a Female Person — and nothing else; 
+		the second could be read: any Person would be specialized as being North American Person, 
+		Asian Person, European Person, or something else. Default value is false.
+		*/
+		isCovering : Boolean
+		
+		/*
+		UML 2.3 p. 77:
+		Indicates whether or not the set of specific Classifiers in a Generalization relationship have 
+		instance in common. If isDisjoint is true, the specific Classifiers for a particular 
+		GeneralizationSet have no members in common; that is, their intersection is empty. 
+		If isDisjoint is false, the specific Classifiers in a particular GeneralizationSet have one or more
+		members in common; that is, their intersection is not empty. For example, Person could have 
+		two Generalization relationships, each with the different specific Classifier: Manager or Staff. 
+		This would be disjoint because every instance of Person must either be a Manager or Staff. 
+		In contrast, Person could have two Generalization relationships involving two specific 
+		(and non- covering) Classifiers: Sales Person and Manager. This GeneralizationSet would not
+		be disjoint because there are instances of Person that can be a Sales Person and a Manager. 
+		Default value is false.
+		*/
+		isDisjoint : Boolean
+		
+	constraints
+		/*
+		UML 2.3 p. 77:
+		[1] Every Generalization associated with a particular GeneralizationSet 
+		must have the same general Classifier.
+		*/
+		inv samegeneralClassifier:
+			generalization->collect(g | g.general)->asSet()->size() <= 1
+end
+
+association A_Classifier_Powertype_GeneralizationSet_PowertypeExtend between
+  Classifier[0..1] role powertype
+  GeneralizationSet[*] role powertypeExtent
+end
+
+association A_Generalization_Generalization_GeneralizationSet_GeneralizationSet between
+  Generalization[*] role generalization
+  GeneralizationSet[*] role generalizationSet
+end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 7.18
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 8.2 - The metaclasses that define the basic Component construct
+--------------------------------------------------------------------------------------------------------
+/* 
+Class is from UML::CompositeStructured::StructuredClasses::Class, 
+but due package merge, this can be ignored 
+*/
+
+/*
+UML 2.3 p. 150:
+A component represents a modular part of a system that encapsulates 
+its contents and whose manifestation is replaceable within its environment.
+*/
+-- class Component < NamedElement, Class 
+	-- attributes
+		-- /*
+		-- UML 2.3 p. 151:
+		-- The kind of instantiation that applies to a Component. If false, 
+		-- the component is instantiated as an addressable object. If true, 
+		-- the Component is defined at design-time, but at run-time (or execution-time) 
+		-- an addressable object specified by the Component does not exist. 
+		-- Instead, the runtime behavior of the component and its ports can be
+		-- completely inferred from the runtime behavior of its realizing classifiers or parts. 
+		-- Several standard stereotypes use this meta attribute 
+		-- (e.g., «specification», «focus», «subsystem»).
+		-- */
+		-- isIndirectlyInstantiated : Boolean
+	
+	-- operations
+		-- /*
+		-- UML 2.3 p. 152:
+		-- [1] Utility returning the set of realized interfaces of a component
+		-- @Modified return value; upper / lower case; type conformance
+		-- (classifier.clientDependency->select(dependency| dependency.oclIsKindOf(Realization) 
+			-- and dependency.supplier.oclIsKindOf(Interface)))->collect(dependency|dependency.client)
+		-- */
+		-- realizedInterfaces(classifier : Classifier) : Set(Interface) =
+			-- (classifier.clientDependency->select(dependency | 
+				-- dependency.oclIsKindOf(Realization) and 
+				-- dependency.client->exists(c | c.oclIsKindOf(Interface))))->collect(dependency | 
+					-- dependency.client->select(c | c.oclIsKindOf(Interface)).oclAsType(Interface))->asSet()
+		
+		
+		-- /*
+		-- UML 2.3 p. 152:
+		-- [2] Utility returning the set of required interfaces of a component:
+		-- @Modified return value; upper / lower case; ;type conformance
+		-- classifier.clientDependency->select(dependency | dependency.oclIsKindOf(Realization) 
+			-- and dependency.supplier.oclIsKindOf(Interface)))->collect(dependency|dependency.client)
+		-- */
+		-- usedInterfaces(classifier : Classifier) : Set(Interface) = 
+			-- (classifier.supplierDependency->select(dependency |
+				-- dependency.oclIsKindOf(Usage) and 
+				-- dependency.supplier->exists(s | s.oclIsKindOf(Interface))))->collect(dependency |
+					-- dependency.supplier->select(s | s.oclIsKindOf(Interface)).oclAsType(Interface))->asSet()
+		
+	-- constraints
+		-- /*
+		-- UML 2.3 p. 152:
+		-- [1] A component cannot nest classifiers.
+		-- */
+		-- inv noNestedClassifiers:
+			-- self.nestedClassifier->isEmpty()
+		
+		-- /*
+		-- UML 2.3 p. 152:
+		-- [1] A component nested in a Class cannot have any packaged elements.
+		-- */
+		-- inv nestedComponentCannotHavePackagedElements:
+			-- (not self.class->isEmpty()) implies self.packagedElement->isEmpty()
+-- end
+
+-- /*
+-- UML 2.3 p. 159:
+-- The ComponentRealization concept is specialized in the Components package to (optionally) 
+-- define the Classifiers that realize the contract offered by a component in terms of its 
+-- provided and required interfaces. The component forms an abstraction from these various Classifiers.
+-- */
+-- class ComponentRealization < Realization
+-- end
+
+-- composition C_Component_Abstraction_ComponentRealization_Realization between
+  -- Component[0..1] role abstraction subsets owner subsets client
+  -- ComponentRealization[*] role realization subsets ownedElement -- not mentioned in Spec.: subsets clientDependency
+-- end
+
+-- association A_Component_Component_Interface_Required between
+  -- Component[*] role notNavigableRequired
+  -- /*
+  -- UML 2.3 p. 151f:
+  -- The interfaces that the component requires from other components in its environment in 
+  -- order to be able to offer its full set of provided functionality. 
+  -- These interfaces may be Used by the Component or any of its realizingClassifiers, 
+  -- or they may be the Interfaces that are required by its public Ports. 
+  -- The required interfaces association is a derived association:
+  -- @Modified let usage; lower case; call of usedInterfaces
+	-- */
+  -- Interface[*] role required derived =
+	-- let usedInterfaces : Set(Interface) = usedInterfaces(self) in
+	-- let realizingClassifiers : Set(Classifier) = self.realization.realizingClassifier->union(
+		-- self.allParents()->select(oclIsKindOf(Component)).oclAsType(Component).realization.realizingClassifier)->asSet() in
+	-- let allRealizingClassifiers : Set(Classifier) = realizingClassifiers->union(realizingClassifiers.allParents()->asSet()) in
+	-- let realizingClassifierInterfaces : Set(Interface) = allRealizingClassifiers->iterate(c; rci : Set(Interface) = Set{} |
+		-- rci->union(usedInterfaces(c))) in
+	-- let ports : Set(Port) = self.ownedPort->union(allParents().oclAsType(EncapsulatedClassifier).ownedPort->asSet()) in
+	-- let usedByPorts : Set(Interface) = ports.required->asSet() in
+		-- usedInterfaces->union(realizingClassifierInterfaces)->union(usedByPorts)->asSet()
+-- end
+
+-- association A_Component_Component_Interface_Provided between
+  -- Component[*] role notNavigableProvided
+  -- /*
+  -- UML 2.3 p. 151:
+  -- The interfaces that the component exposes to its environment. These interfaces may be Realized by the Component
+  -- or any of its realizingClassifiers, or they may be the Interfaces that are provided by its public Ports. 
+  -- The provided interfaces association is a derived association:
+  -- @Modified let usage, lower case
+  -- */
+  -- Interface[*] role provided derived =
+	-- let realizedInterfaces : Set(Interface) = realizedInterfaces(self) in
+	-- let realizingClassifiers : Set(Classifier) = self.realization.realizingClassifier->union(
+			-- self.allParents()->select(oclIsKindOf(Component)).oclAsType(Component).realization.realizingClassifier)->asSet() in
+	-- let allRealizingClassifiers : Set(Classifier) = realizingClassifiers->union(realizingClassifiers.allParents()->asSet()) in
+	-- let realizingClassifierInterfaces : Set(Interface) = allRealizingClassifiers->iterate(c; rci : Set(Interface) = Set{} |
+		-- rci->union(realizedInterfaces(c))) in
+	-- let ports : Set(Port) = self.ownedPort->union(allParents().oclAsType(EncapsulatedClassifier).ownedPort->asSet()) in
+	-- let providedByPorts : Set(Interface) = ports.provided->asSet() in
+		-- realizedInterfaces->union(realizingClassifierInterfaces)->union(providedByPorts)->asSet()
+-- end
+
+-- association A_ComponentRealization_ComponentRealization_Classifier_RealizingClassifier between
+  -- ComponentRealization[*] role notNavigableRealizingClassifier -- not mentioned in Spec.: subsets supplierDependency
+  -- Classifier[1..*] role realizingClassifier subsets supplier
+-- end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 8.2
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 8.3 - The metaclasses that define the component wiring constructs
+--------------------------------------------------------------------------------------------------------
+-- Inheritance from Fig. 9.3
+/*
+UML 2.3 p. 160:
+The connector concept is extended in the Components package to include 
+contracts and notation.
+
+A delegation connector is a connector that links the 
+external contract of a component (as specified by its ports) to the
+realization of that behavior. It represents the forwarding of events 
+(operation requests and events): a signal that arrives at a port that has a 
+delegation connector to one or more parts or ports on parts will be passed on to 
+those targets for handling.
+
+An assembly connector is a connector between two or more parts or ports on 
+parts that defines that one or more parts provide the services that other parts use.
+*/
+-- class Connector < Feature
+  -- attributes
+	-- /*
+	-- UML 2.3 p. 160:
+	-- Indicates the kind of connector. This is derived: a connector with one 
+	-- or more ends connected to a Port that is not on a Part and that is not 
+	-- a behavior port is a delegation; otherwise it is an assembly.
+	-- */
+    -- kind : ConnectorKind /* derived = if end->exists(e.role.oclIsKindOf(Port) and e.partWithPort->isEmpty() and not e.role.oclAsType(Port).isBehavior)
+									  -- then ConnectorKind::delegation
+									  -- else ConnectorKind::assembly
+									  -- endif	*/
+									  
+	-- /*
+	-- @TODO: Define Invariant
+	-- [1] Each feature of each of the required interfaces of each Port or Part at the end of a connector must have at least one
+	-- compatible feature among the features of the provided interfaces of Ports or Parts at the other ends, where the required set
+	-- of (interface) features of a delegating port from the context of the delegating connector is the set of features that exist in
+	-- the port's provided interfaces, and the provided set of (interface) features of a delegating port from the context of the
+	-- delegating connector is the set of features that exist in the port's required interfaces.
+	-- */
+-- end
+
+-- association A_Connector_Connector_Behavior_Contract between
+--  Connector[*] role notNavigableContract
+--  Behavior[*] role contract
+-- end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 8.3
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 8.4 - The packaging capabilities of Components
+--------------------------------------------------------------------------------------------------------
+-- composition C_Component_Component_PackageableElement_packagedElement between
+  -- Component[0..1] role notNavigablePackagedElement -- not mentioned in Spec.: subsets namespace
+  -- PackageableElement[*] role packagedElement subsets ownedMember
+-- end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 8.4
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.2 - Structured classifier
+--------------------------------------------------------------------------------------------------------
+/*
+UML 2.3 p. 192:
+A structured classifier is an abstract metaclass that represents 
+any classifier whose behavior can be fully or partly described by 
+the collaboration of owned or referenced instances.
+*/
+-- class StructuredClassifier < Classifier
+	/*
+	@TODO: Invariant
+	[1] The multiplicities on connected elements must be consistent.
+	*/
+-- end
+
+--class ConnectableElement < TypedElement
+--end
+
+--association A_StructuredClassifier_StructuredClassifier_ConnectableElement_Role between
+--  StructuredClassifier[*] role notNavigableRole -- not mentioned in Spec.: subsets notNavigableMember
+--  ConnectableElement[*] role _role subsets member -- derived
+--end
+
+--composition C_StructuredClassifier_StructuredClassifier_Property_OwnedAttribute between
+--  StructuredClassifier[0..1] role notNavigableOwnedAttribute2 
+--	/* not mentioned in Spec.: */ subsets notNavigableRole subsets namespace subsets classifier subsets featuringClassifier
+--  Property[*] role ownedAttribute ordered subsets _role subsets ownedMember subsets attribute subsets feature
+--end
+
+--association A_StructuredClassifier_StructuredClassifier_Property_Part between
+--  StructuredClassifier[0..1] role notNavigablePart
+--  Property[*] role part -- derived
+--end
+
+--composition C_StructuredClassifier_StructuredClassifier_Connector_OwnedConnector between
+--  StructuredClassifier[0..1] role notNavigableOwnedConnector 
+--    subsets redefinitionContext 
+	-- not mentioned in Spec.: subsets namespace
+	-- not mentioned in Spec.: subsets featuringClassifier
+--  Connector[*] role ownedConnector 
+	-- not mentioned in Spec.: subsets notNavigableRedefinitionContext 
+--	subsets ownedMember
+--	subsets feature
+--end
+
+/*
+This association is already defined in Fig. 7.9
+*/
+/* association A_Classifier_Classifier_Property_Attribute between
+  Classifier[0..1] role classifier
+  Property[*] role attribute
+end */
+
+--association A_Connector_Connector_Connector_RedefinedConnector between
+--  Connector[*] role notNavigableRedefinedConnector -- not mentioned in Spec.: subsets notNavigableRedefinedElement
+--  Connector[*] role redefinedConnector subsets redefinedElement
+--end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.2
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.3 - Connectors
+--------------------------------------------------------------------------------------------------------
+--class ConnectorEnd < MultiplicityElement
+--end
+
+--association A_ConnectableElement_Role_ConnectorEnd_End between
+--  ConnectableElement[1] role _role -- derived
+--  ConnectorEnd[*] role _end -- derived
+--end
+
+--composition C_Connector_Connector_ConnectorEnd_End between
+--  Connector[1] role notNavigableEnd -- not mentioned in Spec.: subsets owner
+--  ConnectorEnd[2..*] role _end ordered subsets ownedElement
+--end
+
+--association A_ConnectorEnd_ConnectorEnd_Property_DefiningEnd between
+--  ConnectorEnd[*] role notNavigableDefiningEnd
+--  Property[0..1] role definingEnd -- derived, readonly
+--end
+
+--association A_Connector_Connector_Association_Type between
+--  Connector[*] role notNavigableType2
+--  Association[0..1] role type
+--end  
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.3
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.4 - The Port metaclass
+--------------------------------------------------------------------------------------------------------
+--class EncapsulatedClassifier < StructuredClassifier
+--end
+
+--class Port < Property
+--end
+
+--composition C_EncapsulatedClassifier_EncapsulatedClassifier_Port_OwnedPort between
+--  EncapsulatedClassifier[0..1] role notNavigableOwnedPort subsets redefinitionContext
+--  Port[*] role ownedPort subsets ownedAttribute -- derived
+--end
+
+--association A_Port_Port_Port_RedefinedPort between
+--  Port[*] role port -- not navigable
+--  Port[*] role redefinedPort subsets redefinedElement
+--end
+
+--association A_Port_Port_Interface_Required between
+--  Port[*] role notNavigableInterfaceRequired
+--  Interface[*] role required -- readOnly, derived
+--end
+
+--association A_Port_Port_Interface_Provided between
+--  Port[*] role notNavigableInterfaceProvided
+--  Interface[*] role provided -- readOnly, derived
+--end
+
+--association A_ConnectorEnd_ConnectorEnd_Property_PartWithPort between
+--  ConnectorEnd[*] role notNavigableConnectorEnd
+--  Property[0..1] role portWithPart
+--end
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.4
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.5 - Classes with internal structure
+--------------------------------------------------------------------------------------------------------
+-- Only inheritance information Class < EncapsulatedClassifier
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.5
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.6 - Collaboration
+--------------------------------------------------------------------------------------------------------
+--class Collaboration < StructuredClassifier, BehavioredClassifier
+--end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.6
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.7 - Collaboration.use and role binding
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.7
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.8 - Actions specific to composite structures
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.8
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 9.9 - Extension to Variable
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure 9.9
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure 13.6 - Common Behavior
+--------------------------------------------------------------------------------------------------------
+--class Behavior < Class
+--  attributes
+--    isReentrant:Boolean
+--end
+--------------------------------------------------------------------------------------------------------
+-- End Figure 13.6
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- Figure x.xx - zzzzzzz
+--------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------
+-- End Figure x.xx
+--------------------------------------------------------------------------------------------------------

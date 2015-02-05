@@ -72,6 +72,15 @@ public class SrcPos {
      * is suitable for usage as a message prefix.  
      */
     public String toString() {
-        return fSrcName + ":" + fLine + ":" + fColumn + ": ";
+        return toString(false);
+    }
+    
+    /** 
+     * Returns a printable representation of the source position which
+     * is suitable for usage as a message prefix.
+     * @param simple If <code>false</code> a common used suffix <code>: </code> is added to the string.
+     */
+    public String toString(boolean simple) {
+        return fSrcName + ":" + fLine + ":" + fColumn + (simple ? "" : ": ");
     }
 }

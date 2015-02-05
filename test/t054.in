@@ -14,12 +14,12 @@ gen result
 *!new Wheel('Wheel3')
 *!new Wheel('Wheel4')
 *!new Propeller('Propeller1')
-*!@Car1.name := 'Audi A4'
-*!insert (@Car1,@Engine1) into CarPoweredBy
-*!insert (@Car1,@Wheel1) into DrivesOn
-*!insert (@Car1,@Wheel2) into DrivesOn
-*!insert (@Car1,@Wheel3) into DrivesOn
-*!insert (@Car1,@Wheel4) into DrivesOn
-*!insert (@Boat1,@Engine2) into BoatPoweredBy
-*!insert (@Boat1,@Propeller1) into DrivesWith
+*!Car1.name := 'Audi A4'
+*!insert (Car1,Engine1) into CarPoweredBy
+*!insert (Car1,Wheel1) into DrivesOn
+*!insert (Car1,Wheel2) into DrivesOn
+*!insert (Car1,Wheel3) into DrivesOn
+*!insert (Car1,Wheel4) into DrivesOn
+*!insert (Boat1,Engine2) into BoatPoweredBy
+*!insert (Boat1,Propeller1) into DrivesWith
 exit

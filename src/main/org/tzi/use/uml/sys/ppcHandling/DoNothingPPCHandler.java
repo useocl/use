@@ -25,26 +25,21 @@ import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 
 /**
- * TODO
+ * This PPC handler ignores every call.
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class DoNothingPPCHandler implements PPCHandler {
-	/** TODO */
+	/** The singleton instance */
 	private static final DoNothingPPCHandler fInstance = 
 		new DoNothingPPCHandler();
-	
 
-	/**
-	 * TODO
-	 */
-	private DoNothingPPCHandler() {
-		
-	}
+	/** Singleton */
+	private DoNothingPPCHandler() {}
 	
 	
 	/**
-	 * TODO
+	 * Returns the singleton instance.
 	 * @return
 	 */
 	public static DoNothingPPCHandler getInstance() {
@@ -65,5 +60,21 @@ public class DoNothingPPCHandler implements PPCHandler {
 			MSystem system,
 			MOperationCall operationCall) throws PostConditionCheckFailedException {
 		
+	}
+
+
+	@Override
+	public void handleTransitionsPre(MSystem system,
+			MOperationCall operationCall)
+			throws PreConditionCheckFailedException {
+				
+	}
+
+
+	@Override
+	public void handleTransitionsPost(MSystem system,
+			MOperationCall operationCall)
+			throws PostConditionCheckFailedException {
+				
 	}
 }

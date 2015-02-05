@@ -12,42 +12,42 @@
 !insert (comdirect{'300001'}, eve) into BankPerson
 
 ?db.customer
-*-> Bag{@ada,@bob} : Bag(Person)
+*-> Bag{ada,bob} : Bag(Person)
 ?db.customer['100000']
-*-> @ada : Person
+*-> ada : Person
 ?db.customer['100100']
-*-> @bob : Person
+*-> bob : Person
 
 ?diba.customer
-*-> Bag{@ada,@cyd,@eve} : Bag(Person)
+*-> Bag{ada,cyd,eve} : Bag(Person)
 ?diba.customer['200000']
-*-> @ada : Person
+*-> ada : Person
 ?diba.customer['200200']
-*-> @cyd : Person
+*-> cyd : Person
 ?diba.customer['200500']
-*-> @eve : Person
+*-> eve : Person
 
 ?comdirect.customer
-*-> Bag{@bob,@cyd,@eve,@eve} : Bag(Person)
+*-> Bag{bob,cyd,eve,eve} : Bag(Person)
 ?comdirect.customer['100000']
-*-> @bob : Person
+*-> bob : Person
 ?comdirect.customer['200200']
-*-> @cyd : Person
+*-> cyd : Person
 ?comdirect.customer['300000']
-*-> @eve : Person
+*-> eve : Person
 ?comdirect.customer['300001']
-*-> @eve : Person
+*-> eve : Person
 
 ?ada.bank
-*-> Bag{@db,@diba} : Bag(Bank)
+*-> Bag{db,diba} : Bag(Bank)
 ?bob.bank
-*-> Bag{@comdirect,@db} : Bag(Bank)
+*-> Bag{comdirect,db} : Bag(Bank)
 ?cyd.bank
-*-> Bag{@comdirect,@diba} : Bag(Bank)
+*-> Bag{comdirect,diba} : Bag(Bank)
 ?dan.bank
 *-> Bag{} : Bag(OclVoid)
 ?eve.bank
-*-> Bag{@comdirect,@comdirect,@diba} : Bag(Bank)
+*-> Bag{comdirect,comdirect,diba} : Bag(Bank)
 
 -- Build Map
 !map := new Map
@@ -66,7 +66,7 @@
 !insert (table{entry1.hashValue}, entry1) into HashMapEntries
 !insert (table{entry2.hashValue}, entry2) into HashMapEntries
 ?table.element[2]
-*-> Set{@entry1,@entry2} : Set(HashMapEntry)
+*-> Set{entry1,entry2} : Set(HashMapEntry)
 ?entry1.container
-*-> Bag{@table} : Bag(HashMap)
+*-> Bag{table} : Bag(HashMap)
 exit

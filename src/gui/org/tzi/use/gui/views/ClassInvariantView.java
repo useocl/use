@@ -17,28 +17,29 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -51,10 +52,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.util.MMHTMLPrintVisitor;
+import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
 import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MMPrintVisitor;
-import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -63,13 +62,18 @@ import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.ClassInvariantChangedEvent;
+import org.tzi.use.uml.sys.events.ClassInvariantsLoadedEvent;
+import org.tzi.use.uml.sys.events.ClassInvariantsUnloadedEvent;
+import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /**
  * A table showing invariants and their results.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
+ * @author Frank Hilken
  */
 @SuppressWarnings("serial")
 public class ClassInvariantView extends JPanel implements View {
@@ -89,67 +93,88 @@ public class ClassInvariantView extends JPanel implements View {
 	}
 	
 	private JTable fTable;
-
     private JLabel fLabel; // message at bottom of view
-
     private JProgressBar fProgressBar;
 
     private MSystem fSystem;
-
     private MModel fModel;
-
-    private MClassInvariant[] fClassInvariants;
-
+    
+    private MClassInvariant[] fClassInvariants = new MClassInvariant[0];
     private EvalResult[] fValues;
 
-    private MyTableModel fMyTableModel;
-
+    private ClassInvariantTableModel fMyTableModel;
     private int fSelectedRow = -1;
-
     private boolean fOpenEvalBrowserEnabled = false;
+    private boolean showFlags = true;
+    private boolean showDuration = false;
+    
+    private InvWorker worker = null;
 
-    private volatile InvWorker worker = null;
+    private ExecutorService executor = Executors.newFixedThreadPool(Options.EVAL_NUMTHREADS);
 
-    /**
-     * The table model.
-     */
-    class MyTableModel extends AbstractTableModel {
-        final String[] columnNames = { "Invariant", "Result", "Duration (ms)" };
+    private class ClassInvariantTableModel extends AbstractTableModel {
+        private final String[] columnNames = { "Invariant", "Loaded", "Active", "Negate", "Satisfied", "Duration (ms)" };
+        private final int[] columnWidths =   {  150,         50,       50,       50,       70,          70 };
 
-        public String getColumnName(int col) {
+        @Override
+		public String getColumnName(int col) {
+        	col = calcColumnByOptions(col);
             return columnNames[col];
         }
 
-        public int getColumnCount() {
-            return 3;
+        public int getColumnWidth(int col){
+        	col = calcColumnByOptions(col);
+        	return columnWidths[col];
+        }
+        
+        @Override
+		public int getColumnCount() {
+        	int res = 2;
+        	if(showFlags){
+        		res += 3;
+        	}
+        	if(showDuration){
+        		res += 1;
+        	}
+            return res;
         }
 
-        public int getRowCount() {
+        @Override
+		public int getRowCount() {
             return fClassInvariants.length;
         }
 
-        public Object getValueAt(int row, int col) {
+        @Override
+		public Object getValueAt(int row, int col) {
+        	col = calcColumnByOptions(col);
         	EvalResult evalRes = fValues[row];
-        	boolean hasResult = evalRes != null;
+        	boolean hasResult = evalRes != null && fClassInvariants[row].isActive();
         	
         	if (col == 0) {
-        		
-        		if (hasResult)
-        			return fClassInvariants[row];
-        		else
-        			return "<html><font color='gray'>" + fClassInvariants[row].toString() + "</font></html>";
-        		
-        	} else if (col == 1) {
-        				
+        		String out = showFlags ? fClassInvariants[row].qualifiedName() : fClassInvariants[row].qualifiedName() + createFlagString(fClassInvariants[row]);
+        		if (hasResult) {
+        			return out;
+        		}
+        		else {
+        			return "<html><font color='gray'>" + out + "</font></html>";
+        		}
+        	} else if(col == 1){
+        		return fClassInvariants[row].isLoaded();
+        	} else if(col == 2){
+        		return fClassInvariants[row].isActive();
+        	} else if(col == 3){
+        		return fClassInvariants[row].isNegated();
+        	} else if (col == 4) {
         		if (hasResult) {
         			boolean valid = evalRes.result != null && evalRes.result.isBoolean() && ((BooleanValue)evalRes.result).value();
         			StringBuilder res = new StringBuilder();
         			res.append("<html><font color='");
         			
-        			if (valid)
+        			if (valid){
         				res.append("green");
-        			else
+        			} else {
         				res.append("red");
+        			}
         			
         			res.append("'>");
         			
@@ -162,60 +187,113 @@ public class ClassInvariantView extends JPanel implements View {
         			res.append("</font></html>");
         			return res.toString();
         			
+        		} else if(!fClassInvariants[row].isActive()){
+        			return "<html><font color='gray'>inactive</font></html>";
         		} else {
         			return null;
         		}
-            } else
-                return fValues[row] == null ? null : fValues[row].duration;
+            } else if( col == 5){
+            	// duration
+            	return evalRes != null ? evalRes.duration + " " : null;
+            } else {
+            	return null;
+            }
         }
-
-        public Class<?> getColumnClass(int c) {
-            if (c == 1)
-                return Value.class;
-            else
-                return Object.class;
-        }
-    }
-
-    public ClassInvariantView(MainWindow parent, MSystem system) {
         
+		private String createFlagString(MClassInvariant inv) {
+			if(!inv.isActive()){
+				return " (+d)";
+			} else if(inv.isNegated()){
+				return " (+n)";
+			} else {
+				return "";
+			}
+		}
+
+		@Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        	columnIndex = calcColumnByOptions(columnIndex);
+        	if(columnIndex == 2){
+        		fSystem.setClassInvariantFlags(fClassInvariants[rowIndex], (Boolean)aValue, null);
+        	} else if(columnIndex == 3){
+        		fSystem.setClassInvariantFlags(fClassInvariants[rowIndex], null, (Boolean)aValue);
+        	} else {
+        		super.setValueAt(aValue, rowIndex, columnIndex);
+        	}
+        }
+        
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+        	columnIndex = calcColumnByOptions(columnIndex);
+        	if(showFlags){
+        		return (columnIndex == 2 || columnIndex == 3);
+        	} else {
+        		return false;
+        	}
+        }
+        
+        @Override
+		public Class<?> getColumnClass(int c) {
+        	c = calcColumnByOptions(c);
+        	switch (c) {
+			case 1:
+			case 2:
+			case 3:
+				return Boolean.class;
+			case 4:
+				return Value.class;
+			default:
+				return Object.class;
+			}
+        }
+        
+        /**
+		 * Given any currently visible column index, this method returns the
+		 * index of the column in the static data model contained in the table
+		 * model.
+		 */
+        private int calcColumnByOptions(int c){
+        	int res = c;
+        	if(c > 0 && !showFlags){
+        		res += 3;
+        	}
+        	return res;
+        }
+        
+        
+    }
+    
+    public ClassInvariantView(final MainWindow parent, MSystem system) {
         fSystem = system;
         fModel = fSystem.model();
-        fSystem.addChangeListener(this);
+        fSystem.getEventBus().register(this);
 
-        int n = fModel.classInvariants().size();
-
-        // initialize array of class invariants
-        fClassInvariants = new MClassInvariant[n];
-        System.arraycopy(fModel.classInvariants().toArray(), 0,
-                fClassInvariants, 0, n);
-        Arrays.sort(fClassInvariants);
-
-        // initialize value array to undefined values
-        fValues = new EvalResult[n];
-        clearValues();
-
-        setLayout(new BorderLayout());
-        fMyTableModel = new MyTableModel();
+        JPopupMenu popupMenu = createPopupMenu();
+        
+        setLayout(new BorderLayout());         
+        fMyTableModel = new ClassInvariantTableModel();
         fTable = new JTable();
         fTable.setModel(fMyTableModel);
-        add(new JScrollPane(fTable), BorderLayout.CENTER);
+        fTable.setComponentPopupMenu(popupMenu);
+        JScrollPane scrollPane = new JScrollPane(fTable);
+        scrollPane.setComponentPopupMenu(popupMenu);
+        add(scrollPane, BorderLayout.CENTER);
         JPanel bottomPanel = new JPanel(new BorderLayout());
         fLabel = new JLabel();
         fLabel.setForeground(Color.black);
         bottomPanel.add(fLabel, BorderLayout.CENTER);
-        fProgressBar = new JProgressBar(0, n);
+        fProgressBar = new JProgressBar();
+        fProgressBar.setPreferredSize(new Dimension(100, 20));
         fProgressBar.setStringPainted(true);
         bottomPanel.add(fProgressBar, BorderLayout.EAST);
         add(bottomPanel, BorderLayout.SOUTH);
-
-        fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 
         // track selections
         fTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListSelectionModel rowSM = fTable.getSelectionModel();
         rowSM.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
+            @Override
+			public void valueChanged(ListSelectionEvent e) {
                 ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 if (lsm.isSelectionEmpty()) {
                     fSelectedRow = -1;
@@ -225,51 +303,85 @@ public class ClassInvariantView extends JPanel implements View {
             }
         });
 
-        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-        rightRenderer.setHorizontalAlignment( JLabel.RIGHT );
-        fTable.getColumnModel().getColumn(2).setCellRenderer( rightRenderer );
-        
         // double click on table opens an ExprEvalBrowser on the
         // selected invariant
         setOpenEvalBrowserEnabled(false);
         fTable.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && fSelectedRow >= 0
-                        && fOpenEvalBrowserEnabled) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 
+                	&& fSelectedRow >= 0 && fOpenEvalBrowserEnabled) {
                     
-                    Expression expr = fClassInvariants[fSelectedRow]
-                            .expandedExpression();
-                    Evaluator evaluator = new Evaluator(true);
-                    try {
-                        evaluator.eval(expr, fSystem.state());
-                    } catch (MultiplicityViolationException ex) {
-                        return;
-                    }
-                    // get the invariant as html string
-                    StringWriter sw = new StringWriter();
-                    sw.write("<html>");
-                    
-                    MMVisitor v = new MMHTMLPrintVisitor(new PrintWriter(sw));
-                    fClassInvariants[fSelectedRow].processWithVisitor(v);
-                    sw.write("</html>");
-                    String htmlSpec = sw.toString();
-                    
-                    // get the invariant as normal string
-                    sw = new StringWriter();
-                    v = new MMPrintVisitor(new PrintWriter(sw));
-                    fClassInvariants[fSelectedRow].processWithVisitor(v);
-                    String spec = sw.toString();
-                    
+                	if(!fClassInvariants[fSelectedRow].isActive()){
+                		return;
+                	}
+                	
+            		Expression expr = fClassInvariants[fSelectedRow]
+            				.flaggedExpression();
+            		Evaluator evaluator = new Evaluator(true);
+            		try {
+            			evaluator.eval(expr, fSystem.state());
+            		} catch (MultiplicityViolationException ex) {
+            			return;
+            		}
+
                     ExprEvalBrowser.createPlus(evaluator
-                            .getEvalNodeRoot(), fSystem, spec, htmlSpec);
+                            .getEvalNodeRoot(), fSystem, fClassInvariants[fSelectedRow]);
                 }
             }
         });
         
+        updateTableStructure();
+        init();
         update();
     }
 
-    private void clearValues() {
+	private JPopupMenu createPopupMenu() {
+		JPopupMenu menu = new JPopupMenu();
+		
+		JCheckBoxMenuItem flagModeItem = new JCheckBoxMenuItem("Show invariant flags");
+		flagModeItem.setSelected(showFlags);
+		flagModeItem.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				showFlags = e.getStateChange() == ItemEvent.SELECTED;
+				updateTableStructure();
+			}
+		});
+		menu.add(flagModeItem);
+		
+		JCheckBoxMenuItem showDurationItem = new JCheckBoxMenuItem("Show evaluation time");
+		showDurationItem.setSelected(showDuration);
+		showDurationItem.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				showDuration = e.getStateChange() == ItemEvent.SELECTED;
+				updateTableStructure();
+			}
+		});
+		menu.add(showDurationItem);
+		
+		return menu;
+	}
+
+	private void init() {
+		int n = fModel.classInvariants().size();
+
+		// initialize array of class invariants
+		fClassInvariants = new MClassInvariant[n];
+		System.arraycopy(fModel.classInvariants().toArray(), 0,
+				fClassInvariants, 0, n);
+		Arrays.sort(fClassInvariants);
+
+		// initialize value array to undefined values
+		fValues = new EvalResult[n];
+		clearValues();
+		
+		fProgressBar.setMinimum(0);
+		fProgressBar.setMaximum(n);
+	}
+
+	private void clearValues() {
         for (int i = 0; i < fValues.length; i++)
             fValues[i] = null;
     }
@@ -283,64 +395,113 @@ public class ClassInvariantView extends JPanel implements View {
         fOpenEvalBrowserEnabled = on;
     }
 
-    public void stateChanged(StateChangeEvent e) {
+    @Subscribe
+    public void onClassInvariantLoading(ClassInvariantsLoadedEvent ev){
+    	init();
     	update();
     }
-
+    
+   	@Subscribe
+    public void onClassInvariantUnloading(ClassInvariantsUnloadedEvent ev){
+   		init();
+   		update();
+   	}
+   	
+    @Subscribe
+    public void onClassInvariantStateChange(ClassInvariantChangedEvent ev){
+    	update();
+    }
+    
+    /**
+	 * Listen to any event that changes the system state to update all
+	 * invariants.
+	 */
+    @Subscribe
+    public void onSystemStateChanged(SystemStateChangedEvent e) {
+    	update();
+    }
+    
     private synchronized void update() { 
     	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     	
-    	if (worker != null && !worker.isDone()) {
-    		worker.shutdown();
-    		worker.cancel(true);
+    	if (worker != null) {
+    		if(!worker.isDone()) {	
+    			worker.cancel(false);
+    		}
     	}
-    	
+
     	worker = new InvWorker();
     	worker.execute();
     }
     
     /**
+     * Updates the table when its structure (columns) change.
+     */
+    private void updateTableStructure() {
+    	fMyTableModel.fireTableStructureChanged();
+		for (int i = 0; i < fTable.getColumnModel().getColumnCount(); i++) {
+			fTable.getColumnModel().getColumn(i).setPreferredWidth(fMyTableModel.getColumnWidth(i));
+		}
+		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
+
+		int satisifedCol = 1;
+		if (showFlags) {
+			satisifedCol += 3;
+		}
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+		fTable.getColumnModel().getColumn(satisifedCol).setCellRenderer(centerRenderer);
+
+		if (showDuration) {
+			int durationCol = 2;
+			
+			if (showFlags) {
+				durationCol += 3;
+			}
+			DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+			rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+			fTable.getColumnModel().getColumn(durationCol).setCellRenderer(rightRenderer);
+		}
+	}
+    
+    /**
      * Detaches the view from its model.
      */
-    public void detachModel() {
-        fSystem.removeChangeListener(this);
+    @Override
+	public void detachModel() {
+        fSystem.getEventBus().unregister(this);
+        if(!worker.isDone()){
+        	worker.cancel(false);
+        }
+        executor.shutdown();
     }
     
-    private class InvWorker extends SwingWorker<Boolean,Integer> {
-    	
-    	private final ExecutorService executor;
-    	
+    private class InvWorker extends SwingWorker<Void,Integer> {
+
     	private String labelText;
     	
     	int numFailures = 0;
-    	
     	int progress = 0;
-    	
     	int progressEnd = 0;
-    	
     	long duration = 0;
     	
     	// determines if the MultiplicityViolation Label should be shown
     	boolean violationLabel = false; 
     	
+    	MSystemState systemState;
+    	
     	protected synchronized int incrementProgress() {
-    		++progress;
-    		return progress;
+    		return ++progress;
     	}
     	
-    	public InvWorker() {
-    		executor = Executors.newFixedThreadPool(Options.EVAL_NUMTHREADS);
+    	public InvWorker() { 
+    		systemState = fSystem.state();
     	}
     	
-    	/* (non-Javadoc)
-		 * @see javax.swing.SwingWorker#doInBackground()
-		 */
 		@Override
-		protected Boolean doInBackground() throws Exception {
+		protected Void doInBackground() throws Exception {
 			long start = System.currentTimeMillis();
-			
-			MSystemState systemState = fSystem.state();
-				
+
 			progressEnd = fClassInvariants.length;
 			clearValues();
         
@@ -350,16 +511,23 @@ public class ClassInvariantView extends JPanel implements View {
 			else
 				labelText = "Working...";
 
-			publish(2);
-        	
+			publish(0);
+
+            List<Future<EvalResult>> futures = new ArrayList<Future<EvalResult>>();
             ExecutorCompletionService<EvalResult> ecs = new ExecutorCompletionService<EvalResult>(executor);
             
             for (int i = 0; i < fClassInvariants.length; i++) {
-            	MyEvaluatorCallable cb = new MyEvaluatorCallable(systemState, i,fClassInvariants[i]);
-                ecs.submit(cb);
+            	if(!fClassInvariants[i].isActive()){
+            		continue;
+            	}
+        		MyEvaluatorCallable cb = new MyEvaluatorCallable(systemState, i, fClassInvariants[i]);
+        		futures.add(ecs.submit(cb));
             }
             
-            for (int i = 0; i < fClassInvariants.length; i++) {
+            for (int i = 0; i < fClassInvariants.length && !isCancelled(); i++) {
+            	if(!fClassInvariants[i].isActive()){
+            		continue;
+            	}
                 try {
                 	EvalResult res = ecs.take().get();
                     fValues[res.index] = res;
@@ -380,42 +548,18 @@ public class ClassInvariantView extends JPanel implements View {
                         numFailures++;
                     
                 } catch (InterruptedException ex) {
-                    // OK
+                	break;
                 }
             }
             
+            for (Future<EvalResult> f : futures) {
+            	f.cancel(true);
+            }
+
             duration = System.currentTimeMillis() - start;
-            
-            executor.shutdown();
-            executor.notifyAll();
-            
             return null;
         }
 
-		/**
-		 * 
-		 */
-		public void shutdown() {
-			executor.shutdown(); // Disable new tasks from being submitted
-			try {
-				// Wait a while for existing tasks to terminate
-				if (!executor.awaitTermination(2, TimeUnit.SECONDS)) {
-					executor.shutdownNow(); // Cancel currently executing tasks
-					// Wait a while for tasks to respond to being cancelled
-					if (!executor.awaitTermination(2, TimeUnit.SECONDS))
-						System.err.println("Pool did not terminate");
-				}
-			} catch (InterruptedException ie) {
-				// (Re-)Cancel if current thread also interrupted
-				executor.shutdownNow();
-				// Preserve interrupt status
-				Thread.currentThread().interrupt();
-			}
-		}
-
-		/* (non-Javadoc)
-		 * @see javax.swing.SwingWorker#process(java.util.List)
-		 */
 		@Override
 		protected void process(List<Integer> chunks) {
 			int lastProgress = chunks.get(chunks.size() - 1);
@@ -430,9 +574,6 @@ public class ClassInvariantView extends JPanel implements View {
 			repaint();
 		}
 
-		/* (non-Javadoc)
-		 * @see javax.swing.SwingWorker#done()
-		 */
 		@Override
 		protected void done() {
 			setOpenEvalBrowserEnabled(true);
@@ -474,19 +615,18 @@ public class ClassInvariantView extends JPanel implements View {
 	    		this.inv = inv;
 	    	}
 
-			/* (non-Javadoc)
-			 * @see org.tzi.use.uml.ocl.expr.EvaluatorCallable#call()
-			 */
 			@Override
 			public EvalResult call() throws Exception {
+				if (isCancelled()) return null;
+				
 				Evaluator eval = new Evaluator();
 				Value v = null;
 				String message = null;
 				long start = System.currentTimeMillis();
 				
 				try {
-					v = eval.eval(inv.expandedExpression(), state);
-				} catch (MultiplicityViolationException e) { 
+					v = eval.eval(inv.flaggedExpression(), state);
+				} catch (MultiplicityViolationException e) {
 					message = e.getMessage();
 				}
 				

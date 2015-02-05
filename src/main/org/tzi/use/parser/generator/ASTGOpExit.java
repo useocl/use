@@ -9,7 +9,6 @@ public class ASTGOpExit extends ASTGInstruction {
 
 	@Override
 	public GInstruction gen(Context ctx) throws SemanticException {
-		// TODO Auto-generated method stub
 		GInstruction instr = new GInstrOpExit();
 		return instr;
 	}

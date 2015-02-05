@@ -17,7 +17,7 @@
 #
 
 ? a1.b
-*-> @b1 : B
+*-> b1 : B
 
 ? a2.b
 *-> Undefined : OclVoid

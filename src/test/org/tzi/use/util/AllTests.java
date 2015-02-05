@@ -37,11 +37,10 @@ public class AllTests {
     public static Test suite() {
         final TestSuite test = new TestSuite( "All util tests" );
         test.addTestSuite( org.tzi.use.util.AbstractBagTest.class );
-        test.addTestSuite( org.tzi.use.util.FilterIteratorTest.class );
-        test.addTestSuite( org.tzi.use.util.HashMultiMapTest.class );
         test.addTestSuite( org.tzi.use.util.ReportTest.class );
         test.addTestSuite( org.tzi.use.util.StringUtilTest.class );
         test.addTestSuite( org.tzi.use.util.CombinationTest.class );
+        test.addTestSuite( org.tzi.use.util.DiagramUtilTest.class );
         test.addTest(org.tzi.use.util.soil.AllTests.suite());
         return test;
     }

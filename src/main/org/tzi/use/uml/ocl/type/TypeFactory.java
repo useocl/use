@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 
 /**
  * Interface for type creation.
@@ -43,6 +43,7 @@ public final class TypeFactory {
      * to be created once.
      */
     private static final IntegerType integerType = new IntegerType();
+    private static final UnlimitedNaturalType unlimitedNaturalType = new UnlimitedNaturalType();
     private static final RealType realType = new RealType();
     private static final StringType stringType = new StringType();
     private static final BooleanType booleanType = new BooleanType();
@@ -51,6 +52,7 @@ public final class TypeFactory {
     
     static {
     	buildInTypesMap.put("Integer", integerType);
+    	buildInTypesMap.put("UnlimitedNatural", unlimitedNaturalType);
     	buildInTypesMap.put("String", stringType);
     	buildInTypesMap.put("Boolean", booleanType);
     	buildInTypesMap.put("Real", realType);
@@ -68,6 +70,10 @@ public final class TypeFactory {
         return integerType;
     }
 
+    public static UnlimitedNaturalType mkUnlimitedNatural() {
+		return unlimitedNaturalType;
+	}
+    
     public static RealType mkReal() {
         return realType;
     }
@@ -81,7 +87,7 @@ public final class TypeFactory {
     }
 
     public static EnumType mkEnum(String name, List<String> literals) {
-        return new EnumType(name, literals);
+        return new EnumType(null, name, literals);
     }
 
     public static CollectionType mkCollection(Type elemType) {
@@ -103,11 +109,11 @@ public final class TypeFactory {
     public static OrderedSetType mkOrderedSet(Type elemType) {
     	return new OrderedSetType(elemType);
     }
-    
-    public static ObjectType mkObjectType(MClass cls) {
-        return cls.type();
-    }
 
+    public static MessageType mkMessageType(MSignal signal) {
+		return signal.getType();
+	}
+    
     public static OclAnyType mkOclAny() {
         return oclAnyType;
     }

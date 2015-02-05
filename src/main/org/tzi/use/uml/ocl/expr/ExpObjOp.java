@@ -37,20 +37,23 @@ import org.tzi.use.util.StringUtil;
 /**
  * An operation defined by a class.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpObjOp extends Expression {
     private MOperation fOp;
-    private Expression[] fArgs; // the arguments, first one is "receiver" object
+    
+    /**
+     * The arguments, first one is "receiver" object
+     */
+    private Expression[] fArgs;
     
     public ExpObjOp(MOperation op, Expression[] args) 
         throws ExpInvalidException
     {
-        super(op.resultType(), args);
+        super(op.resultType());
         fOp = op;
         fArgs = args;
-        if (! args[0].type().isTrueObjectType() )
+        if (! args[0].type().isTypeOfClass() )
             throw new ExpInvalidException(
                                           "Target expression of object operation must have " +
                                           "object type, found `" + args[0].type() + "'.");
@@ -64,7 +67,7 @@ public final class ExpObjOp extends Expression {
                                           (args.length - 1) + ".");
 
         for (int i = 1; i < args.length; i++)
-            if (! args[i].type().isSubtypeOf(params.varDecl(i - 1).type()) )
+            if (! args[i].type().conformsTo(params.varDecl(i - 1).type()) )
                 throw new ExpInvalidException(
                                               "Type mismatch in argument `" + params.varDecl(i - 1).name() + 
                                               "'. Expected type `" + params.varDecl(i - 1).type() + 
@@ -72,6 +75,10 @@ public final class ExpObjOp extends Expression {
     }
     
     public Value eval(EvalContext ctx) {
+    	if (isPre()) {
+    		ctx = new EvalContext(ctx.preState(), ctx.preState(), ctx.varBindings(), ctx);
+    	}
+    	
     	ctx.enter(this);
     	
     	Value result = UndefinedValue.instance;
@@ -94,8 +101,7 @@ public final class ExpObjOp extends Expression {
     		return result;
     	}
     	
-    	MOperation operation = 
-    		self.cls().operation(fOp.name(), true);
+    	MOperation operation = self.cls().operation(fOp.name(), true);
     	
     	if (!operation.isCallableFromOCL()) {
     		throw new RuntimeException("Cannot call operation " + operation);
@@ -131,12 +137,7 @@ public final class ExpObjOp extends Expression {
 			if (operation.hasExpression()) {
 				result = operation.expression().eval(ctx);
 			}
-			/* FB: Disabled operations with side-effects in expressions */
-			/* else if (operation.hasStatement()) {
-				result = 
-					system.evaluateStatementInExpression(
-							operation.getStatement());
-			}*/
+
 			operationCall.setExecutionFailed(false);
 		} catch (MSystemException e) {
     		throw new RuntimeException(e);
@@ -179,12 +180,19 @@ public final class ExpObjOp extends Expression {
         return fArgs;
     }
 
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitObjOp(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		for (Expression e : fArgs) {
+			if (e.requiresPreState()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

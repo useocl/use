@@ -24,20 +24,23 @@ package org.tzi.use.uml.mm;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /** 
  * An association connects two or more classes.
  *
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public interface MAssociation extends MModelElement {
-    /** 
+public interface MAssociation extends MClassifier, UseFileLocatable {
+    
+	/** 
      * Adds an association end.
      *
      * @exception MInvalidModel trying to add another composition
      *            or aggregation end.
      */
-    void addAssociationEnd(MAssociationEnd aend) throws MInvalidModelException;
+    void addAssociationEnd(@NonNull MAssociationEnd aend) throws MInvalidModelException;
 
     /**
      * Returns the list of association ends.
@@ -48,7 +51,7 @@ public interface MAssociation extends MModelElement {
     
     
     /**
-     * TODO
+     * Returns the list of all role names.
      * @return
      */
     List<String> roleNames();
@@ -85,7 +88,7 @@ public interface MAssociation extends MModelElement {
      * Adds an association that is subsetted by this association
      * @param asso
      */
-    void addSubsets(MAssociation asso);
+    void addSubsets(@NonNull MAssociation asso);
     
     /**
      * Returns the transitive closure of all association, this
@@ -98,7 +101,7 @@ public interface MAssociation extends MModelElement {
      * Adds an association that this association is subsetted by
      * @param asso
      */
-    void addSubsettedBy(MAssociation asso);
+    void addSubsettedBy(@NonNull MAssociation asso);
     
     /**
      * All associations this association is subsetted by
@@ -147,20 +150,17 @@ public interface MAssociation extends MModelElement {
     List<MNavigableElement> navigableEndsFrom(MClass cls);
 
     /**
-     * Returns the position in the defined USE-Model.
-     */
-    public int getPositionInModel();
-
-    /**
      * Sets the position in the defined USE-Model.
      */
     public void setPositionInModel(int position);
 
     /**
-     * Returns all parent associations this association is inherited from
-     * @return
+     * Sets the model owning this class. This method must be called by
+     * {@link MModel#addAssociation(MAssociation)}.
+     *
+     * @see MModel#addAssociation(MAssociation)
      */
-    Set<MAssociation> getAllParentAssociations();
+    public void setModel( MModel model );
     
     /** 
      * Returns true if a link consisting of objects of the given classes
@@ -174,18 +174,66 @@ public interface MAssociation extends MModelElement {
 
 	MAssociationEnd getAssociationEnd(MClass endCls, String rolename);
 
-	void addRedefinedBy(MAssociation association);
+	void addRedefinedBy(@NonNull MAssociation association);
 
+	/**
+	 * The set of child associations this association is directly redefined by. 
+	 * @return An unmodifiable set of associations this association is directly redefined by.
+	 */
 	Set<MAssociation> getRedefinedBy();
 	
+	/**
+	 * A set of child associations this association is directly or indirectly redefined by. 
+	 * @return An unmodifiable set of associations this association is directly or indirectly redefined by.
+	 */
 	Set<MAssociation> getRedefinedByClosure();
-		
-	void addRedefines(MAssociation parentAssociation);
+	
+	/**
+	 * Returns the transitive closure of specified redefines relations.
+	 * In contrast to {@link #getRedefinedByClosure()} it does not return
+	 * implicitly present relations.
+	 * @return
+	 */
+	Set<MAssociation> getSpecifiedRedefinedByClosure();
+	
+	/**
+	 * Forces the closure cache to be recalculated.
+	 */
+	void calculateRedefinedByClosure();
+	
+	
+	void addRedefines(@NonNull MAssociation parentAssociation);
 
+	/**
+	 * Access to the set of associations this association directly redefines.
+	 * @return The unmodifiable set of associations this association redefines. 
+	 */
 	Set<MAssociation> getRedefines();
 	
+	/**
+	 * Access to the set of all associations this association directly or indirectly redefines.
+	 * @return The unmodifiable set of associations this association directly or indirectly redefines. 
+	 */
 	Set<MAssociation> getRedefinesClosure();
 	
+	@Override
+    public Set<? extends MAssociation> parents();
+        
+    @Override
+    public Set<? extends MAssociation> allParents();
+    
+    @Override
+    public Set<? extends MAssociation> allChildren();
+
+    @Override
+    public Set<? extends MAssociation> children();
+    
+    @Override
+    public Iterable<? extends MAssociation> generalizationHierachie(boolean includeThis);
+    
+    @Override
+    public Iterable<? extends MAssociation> specializationHierachie(boolean includeThis);
+    
 	/**
 	 * True, if links can be inserted into this association otherwise
 	 * false, e.g., an association with a derived union at at least
@@ -210,13 +258,26 @@ public interface MAssociation extends MModelElement {
 	 * @param explicitRolename Optional an explicit rolename. May be <code>null</code>.
 	 * @return The matching source end or <code>null</code>.
 	 */
-	MNavigableElement getSourceEnd(MClass srcClass, MNavigableElement dst,
-			String explicitRolename);
+	MNavigableElement getSourceEnd(MClassifier srcClass, MNavigableElement dst, String explicitRolename);
 
 	/**
 	 * @return
 	 */
 	boolean isOrdered();
+
+	/**
+	 * Returns <code>true</code> if an association end
+	 * is defined as derived.
+	 * @return
+	 */
+	boolean isDerived();
+
+	/**
+	 * Returns <code>true</code> if an association end
+	 * is redefines another.
+	 * @return
+	 */
+	boolean isRedefining();
 
 	/**
 	 * Because the ordering of association ends is important for validating

@@ -26,24 +26,31 @@ import org.tzi.use.uml.sys.MObject;
 
 
 /**
- * TODO
+ * Expression for a named object like <code>@ada</code>.
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class ExpObjRef extends Expression {
-	/** TODO */
+	/** The object */
 	private MObject fObject;
 	
 	
 	/**
-	 * TODO
-	 * @param object
+	 * Constructs a new object reference expression node.
+	 * @param object The referenced object
 	 */
 	public ExpObjRef(MObject object) {
-		super(object.type());
+		super(object.cls());
 		fObject = object;
 	}
 
+	/**
+	 * Returns the {@link MObject} object of this expression.
+	 * @return the object
+	 */
+	public MObject getObject(){
+		return fObject;
+	}
 	
 	@Override
 	public ObjectValue eval(EvalContext ctx) {
@@ -67,5 +74,14 @@ public class ExpObjRef extends Expression {
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitObjRef(this);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
+	 */
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
 	}
 }

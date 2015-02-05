@@ -22,6 +22,8 @@
 
 package org.tzi.use.gui.views.diagrams.util;
 
+import org.tzi.use.util.FloatUtil;
+
 /**
  * Represents a directed line
  */
@@ -281,11 +283,10 @@ public abstract class DirectedLine implements I_DirectedLine {
     }
 
     private boolean hasSamePosition(final I_DirectedLine line) {
-        return (sourceX == line.getSourceX()
-                && sourceY == line.getSourceY()
-                && targetX == line.getTargetX()
-                && targetY == line.getTargetY()
-                );
+		return (FloatUtil.equals(sourceX, line.getSourceX())
+				&& FloatUtil.equals(sourceY, line.getSourceY())
+				&& FloatUtil.equals(targetX, line.getTargetX())
+				&& FloatUtil.equals(targetY, line.getTargetY()));
     }
 
     private boolean hasSameClass(final I_DirectedLine line) {
@@ -296,13 +297,13 @@ public abstract class DirectedLine implements I_DirectedLine {
                                                        final double remainingAngle) {
         final double height = auxiliaryLine.getTargetY() - auxiliaryLine.getSourceY();
         final double width = auxiliaryLine.getTargetX() - auxiliaryLine.getSourceX();
-        if (remainingAngle == 270.0) {
+        if (FloatUtil.equals(remainingAngle, 270.0d)) {
             return doCreateDirectedLine(sourceX, sourceY, sourceX + height, sourceY - width);
         }
-        if (remainingAngle == 180.0) {
+        if (FloatUtil.equals(remainingAngle, 180.0d)) {
             return doCreateDirectedLine(sourceX, sourceY, sourceX - width, sourceY - height);
         }
-        if (remainingAngle == 90.0) {
+        if (FloatUtil.equals(remainingAngle, 90.0d)) {
             return doCreateDirectedLine(sourceX, sourceY, sourceX - height, sourceY + width);
         }
         return auxiliaryLine;

@@ -1,0 +1,20 @@
+!create i:Invoice
+!create p1:InvoiceLineItem
+!create p2:InvoiceLineItem
+?i.total
+*-> 0.0 : Real
+!insert(i,p1) into LineItems
+?i.total
+*-> Undefined : OclVoid
+!set p1.amount := 1
+!set p1.price := 100
+?i.total
+*-> 100.0 : Real
+!insert(i,p2) into LineItems
+?i.total
+*-> Undefined : OclVoid
+!set p2.amount := 2
+!set p2.price := 50
+?i.total
+*-> 200.0 : Real
+exit

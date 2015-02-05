@@ -63,9 +63,7 @@ public class ASTRValueExpressionOrOpCall extends ASTRValue {
 		
 		try {
 			ASTOperationCallStatement opCall = 
-				new ASTOperationCallStatement(fExpressionOrOpCall);
-			
-			opCall.setSourcePosition(fExpressionOrOpCall.getStartToken());
+				new ASTOperationCallStatement(fExpressionOrOpCall.getStartToken(), fExpressionOrOpCall);
 			
 			MOperationCallStatement operationCallStatement = 
 				(MOperationCallStatement)fParent.generateStatement(opCall);

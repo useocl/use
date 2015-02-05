@@ -278,12 +278,12 @@ public class ExpQueryTest extends TestCase {
             state.createLink( r, Arrays.asList( new MObject[] { a1, b2 } ), null);
 
             VarBindings bindings = new VarBindings();
-            bindings.push( "A1", new ObjectValue(a1.type(), a1));
-            bindings.push( "B1", new ObjectValue(a1.type(), b1));
-            bindings.push( "B2", new ObjectValue(a1.type(), b2));
+            bindings.push( "A1", new ObjectValue(a1.cls(), a1));
+            bindings.push( "B1", new ObjectValue(a1.cls(), b1));
+            bindings.push( "B2", new ObjectValue(a1.cls(), b2));
             
            
-            ExpVariable expVar = new ExpVariable( "A1", TypeFactory.mkObjectType(a) );
+            ExpVariable expVar = new ExpVariable( "A1", a );
             ExpNavigation nav = new ExpNavigation( expVar, ra, rb, Collections.<Expression>emptyList() );
             
             try {

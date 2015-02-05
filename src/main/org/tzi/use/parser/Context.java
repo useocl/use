@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.antlr.runtime.Token;
+import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -60,6 +61,8 @@ public class Context {
     private MSystemState fSystemState;
     private boolean fInsidePostCondition;
     private List<String> fLoopVarNames;
+    
+    private List<GProcedure> generatorProcedures;
     
     // for test cases: in assert expressions invariant names 
     // are replaced by their expression
@@ -207,5 +210,17 @@ public class Context {
 	
 	public boolean isInsideTestCase() {
 		return this.fIsInsideTestCase;
+	}
+
+	/**
+	 * Sets the available procedures in an ASSL file 
+	 * @param procedures
+	 */
+	public void setProcedures(List<GProcedure> procedures) {
+		generatorProcedures = procedures;
+	}
+	
+	public List<GProcedure> getProcedures() {
+		return generatorProcedures;
 	}
 }

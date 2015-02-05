@@ -21,9 +21,13 @@
 
 package org.tzi.use.gui.main;
 
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
+
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
+import javax.swing.JScrollPane;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.views.PrintableView;
@@ -42,7 +46,7 @@ public class ViewFrame extends JInternalFrame {
     public ViewFrame(String title, View view, String iconFilename) {
         super(title, true, true, true, true);
         fView = view;
-        setFrameIcon(new ImageIcon(Options.iconDir + iconFilename));
+        setFrameIcon(new ImageIcon(Options.getIconPath(iconFilename).toString()));
     }
 
     void close() {
@@ -56,6 +60,31 @@ public class ViewFrame extends JInternalFrame {
     void print(PageFormat pf) {
         if (fView instanceof PrintableView )
             ((PrintableView) fView).printView(pf);
+    }
+    
+    void export(Graphics2D g, boolean exportAll) {
+    	JComponent component = null;
+    	
+    	boolean exportThis = !(fView instanceof JComponent && !exportAll);
+    	
+    	if (!exportThis) {
+    		component = (JComponent)fView;
+    		// Dirty hack to remove the exported frame of a scroll bar
+    		if (component.getComponent(0) instanceof JScrollPane) {
+    			component = (JComponent)component.getComponent(0);
+    			component = (JComponent)component.getComponent(0);
+    		}
+    	} else {
+    		component = this;
+    	}
+    	
+        boolean oldDb = false;
+        oldDb = component.isDoubleBuffered();
+        component.setDoubleBuffered(false);
+        
+        component.paint(g);
+        
+        component.setDoubleBuffered(oldDb);
     }
     
     /**

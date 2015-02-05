@@ -22,6 +22,7 @@
 package org.tzi.use.uml.sys;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,21 +37,32 @@ import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+
 /**
  * A link set contains instances of an association.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author Mark Richters
+ * @author Lars Hamann 
  */
 public final class MLinkSet {
-    private final MAssociation fAssociation; // The type of all links of this set.
+    /**
+     * The type of all links of this set.
+     */
+	private final MAssociation fAssociation;
+	
     private Set<MLink> fLinks;
 
-    private static class CacheEntry {
-        final MAssociationEnd end;
-        final MObject         object;
-        final int 			  hashCode;
-        final List<Value>	  qualifiers;
+    private SetMultimap<List<MObject>, MLink> objectsToLinksMap = HashMultimap.create();  
+    
+    private static final class CacheEntry {
+        private final MAssociationEnd end;
+        private final MObject         object;
+        private final int 			  hashCode;
+        private final List<Value>	  qualifiers;
         
         public CacheEntry(MAssociationEnd end, MObject object, List<Value> qualifiers) {
             this.end = end;
@@ -93,18 +105,18 @@ public final class MLinkSet {
     
     MLinkSet(MAssociation assoc) {
         fAssociation = assoc;
-        createInternalLinkSet();
+        fLinks = createInternalLinkSetImpl();
         selectCache = new HashMap<CacheEntry, Set<MLink>>();
     }
 
     /**
 	 * Creates the appropriate internal set w.r.t. preserving the ordering 
 	 */
-	private void createInternalLinkSet() {
+	private Set<MLink> createInternalLinkSetImpl() {
         if (fAssociation.isOrdered()) {
-        	fLinks = new LinkedHashSet<MLink>();
+        	return new LinkedHashSet<MLink>();
         } else { 
-        	fLinks = new HashSet<MLink>();
+        	return new HashSet<MLink>();
         }
 	}
 
@@ -113,8 +125,7 @@ public final class MLinkSet {
      */
     MLinkSet(MLinkSet x) {
         fAssociation = x.fAssociation;
-        createInternalLinkSet();
-        fLinks.addAll(x.fLinks);
+        fLinks = createInternalLinkSetImpl();
         selectCache = new HashMap<CacheEntry, Set<MLink>>();
         
         for (MLink link : x.fLinks) {
@@ -125,48 +136,38 @@ public final class MLinkSet {
     /**
      * Selects all links whose link ends at <code>aend</code> connect
      * <code>obj</code> with the given qualifier values.
-     * The Set is immutable.
+     * The set is immutable.
      *
-     * @return Set(MLink) An immutable <code>Set</code> of the corresponding links. 
+     * @return An unmodifiable <code>Set</code> of the corresponding links. 
      */
-    Set<MLink> select(MAssociationEnd aend, MObject obj, List<Value> qualifierValues) {
-        Set<MLink> res;
-        if (selectCache != null) {
-            CacheEntry e = new CacheEntry(aend, obj, qualifierValues);
-            res = selectCache.get(e);
-            if (res==null) res = Collections.emptySet();
-            
-            return res;
-        }
+    Set<MLink> select(MAssociationEnd aend, MObject obj, List<Value> qualifierValues, boolean excludeDerived) {
+        CacheEntry e = new CacheEntry(aend, obj, qualifierValues);
+        Set<MLink> res = selectCache.get(e);
         
-        res = new LinkedHashSet<MLink>();
-
-        for(MLink link : fLinks) {
-            MLinkEnd linkEnd = link.linkEnd(aend);
-            if (linkEnd.object().equals(obj) && linkEnd.qualifierValuesEqual(qualifierValues))
-                res.add(link);
-        }
+        if (res==null) return Collections.emptySet();
         
-        return res;
+        if (excludeDerived) {
+        	return Sets.filter(res, new Predicate<MLink>() {
+        		public boolean apply(MLink l) {
+        			return !l.isVirtual();
+        		}
+        	});
+        } else {
+        	return Collections.unmodifiableSet(res);
+        }
     }
 
     /**
-     * Selects all links whose link ends at <code>aend</code> connect
+     * Selects all links whose link ends at the end at index <code>aendIndex</code> connect
      * <code>obj</code>.
      *
-     * @return Set(MLink) A <code>Set</code> of the corresponding links. 
+     * @return An unmodifiable <code>Set</code> of the corresponding links. 
      */
     Set<MLink> select(MAssociationEnd aend, MObject obj) {
-        Set<MLink> res;
-        res = new LinkedHashSet<MLink>();
-
-        for(MLink link : fLinks) {
-            MLinkEnd linkEnd = link.linkEnd(aend);
-            if (linkEnd.object().equals(obj))
-                res.add(link);
-        }
+        CacheEntry e = new CacheEntry(aend, obj, null);
+        Set<MLink> res = selectCache.get(e);
         
-        return res;
+        return res == null ? Collections.<MLink>emptySet() : Collections.unmodifiableSet(res);
     }
     
     /**
@@ -176,7 +177,7 @@ public final class MLinkSet {
      * @return Set(MLink) the set of removed links
      */
     Set<MLink> removeAll(MAssociationEnd aend, MObject obj) {
-        Set<MLink> res = new LinkedHashSet<MLink>();
+        Set<MLink> res = createInternalLinkSetImpl();
         Iterator<MLink> it = fLinks.iterator();
         
         while (it.hasNext() ) {
@@ -252,13 +253,13 @@ public final class MLinkSet {
      *
      * @return true if the link set did not already contain the link.
      */
-    boolean add(MLink link) {    	
+    boolean add(MLink link) {	
         for (MLinkEnd end : link.linkEnds()) {
             CacheEntry e = new CacheEntry(end.associationEnd(), end.object(), end.getQualifierValues());
             Set<MLink> links = selectCache.get(e);
             
             if (links == null) {
-                links = new LinkedHashSet<MLink>();
+                links = createInternalLinkSetImpl();
                 selectCache.put(e, links);
             }
             
@@ -270,13 +271,15 @@ public final class MLinkSet {
                 links = selectCache.get(e);
                 
                 if (links == null) {
-                    links = new LinkedHashSet<MLink>();
+                    links = createInternalLinkSetImpl();
                     selectCache.put(e, links);
                 }
                 
                 links.add(link);
             }
         }
+        
+        this.objectsToLinksMap.put(link.linkedObjects(), link);
         
         return fLinks.add(link);
     }
@@ -308,18 +311,14 @@ public final class MLinkSet {
     
     /**
      * Returns all links connecting the given set of
-     * objects. If no link exists an empty set is returned.  
+     * objects. If no link exists an empty set is returned.
+     * @return An unmodifiable set of links connecting the given objects. 
+     *         If no links exists, an empty set is returned.  
      */
 	public Set<MLink> linkBetweenObjects(List<MObject> objects) {
-		Set<MLink> result = new HashSet<MLink>();
+		Set<MLink> result = this.objectsToLinksMap.get(objects);
 		
-		for (MLink link : fLinks) {
-            if (link.linkedObjects().equals(objects)) {
-            	result.add(link);
-            }
-        }
-		
-		return result;
+		return result == null ? Collections.<MLink>emptySet() : Collections.unmodifiableSet(result);
 	}
 	
     /**
@@ -329,7 +328,9 @@ public final class MLinkSet {
     public MLink linkBetweenObjects(List<MObject> objects, List<List<Value>> qualifierValues) {
         boolean equal = true;
         
-    	for (MLink link : fLinks) {
+        Collection<MLink> links = this.objectsToLinksMap.get(objects);
+        
+    	for (MLink link : links) {
             if (link.linkedObjects().equals(objects)) {
             	if (link.association().hasQualifiedEnds()) {
 	            	equal = true; // true, because if no qualifiers exists it is the correct link 
@@ -388,6 +389,15 @@ public final class MLinkSet {
                 }
             }
         }
-        return fLinks.remove(link);
+        
+        this.objectsToLinksMap.remove(link.linkedObjects(), link);
+        
+        boolean result = fLinks.remove(link);
+        return result;
     }
+
+	@Override
+	public String toString() {
+		return "MLinkSet for " + fAssociation.name() + ": [" + StringUtil.fmtSeq(fLinks, ",") + "]"; 
+	}
 }

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram_Layout version="10">
+  <diagramOptions>
+    <autolayout>false</autolayout>
+    <antialiasing>false</antialiasing>
+    <showassocnames>true</showassocnames>
+    <showattributes>false</showattributes>
+    <showmultiplicities>true</showmultiplicities>
+    <showoperations>false</showoperations>
+    <showrolenames>true</showrolenames>
+    <showgrid>false</showgrid>
+  </diagramOptions>
+  <node id="abS" sizeCalculated="true" type="Class">
+    <name>abS</name>
+    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
+      <useOffsetX>0.0</useOffsetX>
+      <useOffsetY>0.0</useOffsetY>
+      <basisDeltaX>ABSOLUTE</basisDeltaX>
+      <deltaX>0.0</deltaX>
+      <basisDeltaY>ABSOLUTE</basisDeltaY>
+      <deltaY>-54.0</deltaY>
+      <corner>NORTH</corner>
+      <relativeNodeId>abS::WayPoint::-1</relativeNodeId>
+    </strategy>
+    <hidden>false</hidden>
+  </node>
+  <node id="abG" sizeCalculated="true" type="Class">
+    <name>abG</name>
+    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
+      <useOffsetX>0.0</useOffsetX>
+      <useOffsetY>0.0</useOffsetY>
+      <basisDeltaX>ABSOLUTE</basisDeltaX>
+      <deltaX>0.0</deltaX>
+      <basisDeltaY>ABSOLUTE</basisDeltaY>
+      <deltaY>-54.0</deltaY>
+      <corner>NORTH</corner>
+      <relativeNodeId>abG::WayPoint::-1</relativeNodeId>
+    </strategy>
+    <hidden>false</hidden>
+  </node>
+  <node id="A" sizeCalculated="true" type="Class">
+    <name>A</name>
+    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
+      <x>58.0</x>
+      <y>94.0</y>
+    </strategy>
+    <hidden>false</hidden>
+  </node>
+  <node id="B" sizeCalculated="true" type="Class">
+    <name>B</name>
+    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
+      <x>8.0</x>
+      <y>26.0</y>
+    </strategy>
+    <hidden>false</hidden>
+  </node>
+  <edge type="NodeEdge">
+    <source>A</source>
+    <target>B</target>
+    <name>abS</name>
+    <properties>
+      <edgeproperty id="abS::source::rolename" sizeCalculated="true"
+        type="rolename" userDefined="false" visible="true">
+        <name>raS</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <attached>abS::WayPoint::0</attached>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abS::source::multiplicity" sizeCalculated="true"
+        type="multiplicity" userDefined="false" visible="true">
+        <name>*</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <attached>abS::WayPoint::0</attached>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abS::target::rolename" sizeCalculated="true"
+        type="rolename" userDefined="false" visible="true">
+        <name>rbS</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <attached>abS::WayPoint::1</attached>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abS::target::multiplicity" sizeCalculated="true"
+        type="multiplicity" userDefined="false" visible="true">
+        <name>3..4</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <attached>abS::WayPoint::1</attached>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abS::AssociationName" sizeCalculated="true"
+        type="associationName" userDefined="false" visible="true">
+        <name>abS</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <related length="2">
+            <related0>abS::WayPoint::0</related0>
+            <related1>abS::WayPoint::1</related1>
+          </related>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </properties>
+    <waypoints>
+      <edgeproperty id="abS::WayPoint::0" sizeCalculated="true"
+        type="WayPoint" userDefined="false" visible="true">
+        <name>0</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+        </strategy>
+        <id>0</id>
+        <specialid>1</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abS::WayPoint::1" sizeCalculated="true"
+        type="WayPoint" userDefined="false" visible="true">
+        <name>1</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+        </strategy>
+        <id>1</id>
+        <specialid>2</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </waypoints>
+    <hidden>false</hidden>
+  </edge>
+  <edge type="NodeEdge">
+    <source>A</source>
+    <target>B</target>
+    <name>abG</name>
+    <properties>
+      <edgeproperty id="abG::source::multiplicity" sizeCalculated="true"
+        type="multiplicity" userDefined="false" visible="true">
+        <name>*</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <attached>abG::WayPoint::0</attached>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abG::source::rolename" sizeCalculated="true"
+        type="rolename" userDefined="false" visible="true">
+        <name>raG</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <attached>abG::WayPoint::0</attached>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abG::target::rolename" sizeCalculated="true"
+        type="rolename" userDefined="false" visible="true">
+        <name>rbG</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <attached>abG::WayPoint::1</attached>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abG::target::multiplicity" sizeCalculated="true"
+        type="multiplicity" userDefined="false" visible="true">
+        <name>1..2</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <attached>abG::WayPoint::1</attached>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abG::AssociationName" sizeCalculated="true"
+        type="associationName" userDefined="false" visible="true">
+        <name>abG</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+          <related length="2">
+            <related0>abG::WayPoint::0</related0>
+            <related1>abG::WayPoint::1</related1>
+          </related>
+        </strategy>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </properties>
+    <waypoints>
+      <edgeproperty id="abG::WayPoint::0" sizeCalculated="true"
+        type="WayPoint" userDefined="false" visible="true">
+        <name>0</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+        </strategy>
+        <id>0</id>
+        <specialid>1</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="abG::WayPoint::1" sizeCalculated="true"
+        type="WayPoint" userDefined="false" visible="true">
+        <name>1</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+        </strategy>
+        <id>1</id>
+        <specialid>2</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </waypoints>
+    <hidden>false</hidden>
+  </edge>
+  <edge type="Generalization">
+    <source>abS</source>
+    <target>abG</target>
+    <name>Inheritance</name>
+    <properties/>
+    <waypoints>
+      <edgeproperty id="Generalization::abS::abG::WayPoint::0"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>0</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+        </strategy>
+        <id>0</id>
+        <specialid>1</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="Generalization::abS::abG::WayPoint::1"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>1</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <useOffsetX>0.0</useOffsetX>
+          <useOffsetY>0.0</useOffsetY>
+        </strategy>
+        <id>1</id>
+        <specialid>2</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </waypoints>
+    <hidden>false</hidden>
+  </edge>
+</diagram_Layout>

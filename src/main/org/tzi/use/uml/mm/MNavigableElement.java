@@ -64,6 +64,13 @@ public interface MNavigableElement {
 
     public MAssociation association();
 
+    /**
+	 * Returns the role name for elements which are reachable
+	 * by navigation. For association ends, this is the name,
+	 * whereas for classes this is the name starting with a lower case
+	 * letter.
+	 * TODO: This changed in OCL 2.3 to returning the name as is.
+	 */
     public String nameAsRolename();
 
     void setUnion(boolean newValue);

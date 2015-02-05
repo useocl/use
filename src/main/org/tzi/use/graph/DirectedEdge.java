@@ -21,6 +21,8 @@
 
 package org.tzi.use.graph;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /** 
  * Basic interface of directed binary edges in a graph.
  *
@@ -36,11 +38,13 @@ public interface DirectedEdge<N> {
     /**
      * Returns the source node of this edge.
      */
+	@NonNull
     N source();
 
     /**
      * Returns the target node of this edge.
      */
+	@NonNull
     N target();
 
     /**

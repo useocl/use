@@ -31,23 +31,23 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.expr.ExpCollectNested;
+import org.tzi.use.uml.ocl.expr.ExpCollect;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpNavigation;
+import org.tzi.use.uml.ocl.expr.ExpNavigationClassifierSource;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
- *
- * @version     $ProjectVersion: 0.393 $
+ * 
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
 
 public abstract class ASTExpression extends AST {
@@ -95,14 +95,18 @@ public abstract class ASTExpression extends AST {
     public abstract Expression gen(Context ctx) throws SemanticException;
         
     /**
-     * TODO
-     * @param freeVars
+     * Used by template method {@link getFreeVariables()} to create
+     * a set of all free variables of an expression by asking its
+     * sub-expressions.
+     * <p>Implementors need to add all free variables to the provided set <code>freeVars</code>.</p>
+     * @param freeVars The <code>Set</code> of free variables.
      */
     public abstract void getFreeVariables(Set<String> freeVars);
     
     /**
-     * TODO
-     * @return
+     * Returns the set of all unbound/free variables
+     * this expression.
+     * @return A <code>Set</code> of all free variables.
      */
     public Set<String> getFreeVariables() {
     	Set<String> result = new HashSet<String>();
@@ -160,7 +164,7 @@ public abstract class ASTExpression extends AST {
     }
 
     protected Expression genNavigation( Token rolenameToken,
-                                        MClass srcClass,
+                                        MClassifier srcClass,
                                         Expression srcExpr,
                                         MNavigableElement dst ) 
             throws SemanticException {
@@ -168,7 +172,7 @@ public abstract class ASTExpression extends AST {
     }
 
     protected Expression genNavigation(Context ctx, Token rolenameToken,
-                                       MClass srcClass,
+                                       MClassifier srcClass,
                                        Expression srcExpr,
                                        MNavigableElement dst,
                                        List<ASTExpression> explicitRolenameOrQualifiers,
@@ -180,20 +184,34 @@ public abstract class ASTExpression extends AST {
         // find source end
         MNavigableElement src = null;
         
+        if (srcClass.equals(dst.association())) {
+        	return new ExpNavigationClassifierSource(dst.cls(), srcExpr, dst);
+        }
+        
         if (navigationNeedsExplicitRolename(srcClass, dst)) {
-        	if (explicitRolenameOrQualifiers.size() == 0) {
-        		// an explicit rolename is needed, but not provided
-                throw new SemanticException(rolenameToken,
-                                            "The navigation path from " + StringUtil.inQuotes(srcClass.name()) + " to " + StringUtil.inQuotes(dst.nameAsRolename()) + " is ambiguous, " +
-                                            "but no qualification of the source association was given.");
-        	}
+			if (explicitRolenameOrQualifiers.size() == 0) {
+				// an explicit rolename is needed, but not provided
+				throw new SemanticException(
+						rolenameToken,
+						"The navigation path from "
+								+ StringUtil.inQuotes(srcClass.name())
+								+ " to "
+								+ StringUtil.inQuotes(dst.nameAsRolename())
+								+ " is ambiguous, "
+								+ "but no qualification of the source association was given.");
+			}
         	
-        	if (explicitRolenameOrQualifiers.size() > 1) {
-        		// an explicit rolename is needed, but more then one was provided
-        		throw new SemanticException(rolenameToken,
-                        "More then one qualification for the ambiguous navigation path from " + StringUtil.inQuotes(srcClass.name()) + " to " + StringUtil.inQuotes(dst.nameAsRolename()) +
-                        " was given. May be you interchanged it with qualifier values?");
-        	}
+			if (explicitRolenameOrQualifiers.size() > 1) {
+				// an explicit rolename is needed, but more than one was
+				// provided
+				throw new SemanticException(
+						rolenameToken,
+						"More then one qualification for the ambiguous navigation path from "
+								+ StringUtil.inQuotes(srcClass.name())
+								+ " to "
+								+ StringUtil.inQuotes(dst.nameAsRolename())
+								+ " was given. May be you interchanged it with qualifier values?");
+			}
         	
         	ASTExpression explicitRolenameExp = explicitRolenameOrQualifiers.get(0);
         	
@@ -262,7 +280,7 @@ public abstract class ASTExpression extends AST {
 	 * @param dst The <code>MNavigableElement</code> to navigate to.
 	 * @return <code>true</code> if the navigation needs a rolename, otherwise <code>false</code>.
 	 */
-	protected boolean navigationNeedsExplicitRolename(MClass srcClass, MNavigableElement dst) {
+	protected boolean navigationNeedsExplicitRolename(MClassifier srcClass, MNavigableElement dst) {
 		// Only associations with ends > 2 can have ambiguous navigation expressions.
 		if (dst.association().reachableEnds().size() == 2) return false;
 		
@@ -281,36 +299,23 @@ public abstract class ASTExpression extends AST {
 	
     /**
      * Transforms an expression <code>$e.foo</code> into an expression
-     * <code>c->collect($e | $e.foo)</code> or <code>c->collect($e |
+     * <code>c->collect($e | $e.foo)</code> or <code>c->collectNested($e |
      * $e.foo)->flatten</code> if the result of the collect is a
      * nested collection.
      *
      * @param srcExpr the source collection
      * @param expr the argument expression for collect
      * @param elemType type of elements of the source collection 
+     * @throws SemanticException 
      */
     protected Expression genImplicitCollect(Expression srcExpr, 
                                             Expression expr, 
-                                            Type elemType) 
+                                            Type elemType) throws SemanticException 
     {
-        Expression res = null;
-        try {
-            ExpCollectNested eCollect = 
-                new ExpCollectNested(new VarDecl("$e", elemType), srcExpr, expr);
-            res = eCollect;
-        
-            // is result a nested collection?
-            if (res.type().isCollection(true) ) {
-                CollectionType t = (CollectionType) res.type();
-                if (t.elemType().isCollection(true) ) {
-                    // add flatten
-                    Expression[] args = { res };
-                    res = ExpStdOp.create("flatten", args);
-                }
-            }
+    	try { 
+    		return new ExpCollect(new VarDecl("$e", elemType), srcExpr, expr);
         } catch (ExpInvalidException ex) {
-            throw new RuntimeException("genImplicitCollect failed: " + ex.getMessage());
+            throw new SemanticException(srcExpr.getSourcePosition(), ex);
         }
-        return res;
     }
 }

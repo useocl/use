@@ -21,6 +21,8 @@
 
 package org.tzi.use.uml.mm;
 
+import java.util.Set;
+
 /**
  * MAssociationClass instances represent associationclasses in a model.
  *
@@ -29,8 +31,23 @@ package org.tzi.use.uml.mm;
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
 public interface MAssociationClass extends MClass, MAssociation, MNavigableElement {
-	/**
-	 * 
-	 */
-	void validateInheritance();
+
+	@Override
+    public Set<MAssociationClass> parents();
+    
+    
+	@Override
+    public Set<MAssociationClass> allParents();
+    
+	@Override
+    public Set<MAssociationClass> allChildren();
+
+	@Override
+    public Set<MAssociationClass> children();
+	
+	@Override
+	public Iterable<MAssociationClass> generalizationHierachie(boolean includeThis);
+	
+	@Override
+	public Iterable<MAssociationClass> specializationHierachie(boolean includeThis);
 }

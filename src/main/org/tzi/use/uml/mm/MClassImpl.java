@@ -22,47 +22,53 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.tzi.use.uml.ocl.type.ObjectType;
-
+import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
+import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.util.collections.CollectionUtil;
 
 /**
  * MClass instances represent classes in a model.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
-public class MClassImpl extends MModelElementImpl implements MClass {
-    private boolean fIsAbstract; // abstract class?
-    private Map<String, MAttribute> fAttributes;    // (String attrname -> MAttribute)
-    private Map<String, MOperation> fOperations;    // (String opname -> MOperation)
-    private MModel fModel;  // Owner of this class
-    private int fPositionInModel;
-    private ObjectType fType;
+public class MClassImpl extends MClassifierImpl implements MClass {
+   
+	/**
+	 * All defined attributes of this class excluding inherited ones.
+	 */
+    private Map<String, MAttribute> fAttributes;
     
+    private Map<String, MOperation> fOperations;
+    
+    /**
+     * Maps all operations (including inherited)
+     */
+    private Map<String, MOperation> fVTableOperations;
+        
     // other classes reachable by associations 
     private Map<String, MNavigableElement> fNavigableElements;
 
+    /**
+     * All owned PSM
+     */
+    private Set<MProtocolStateMachine> ownedProtocolStateMachines = Collections.emptySet();
+    
     MClassImpl(String name, boolean isAbstract) {
-        super(name);
-        fIsAbstract = isAbstract;
+        super(name, isAbstract);
         fAttributes = new TreeMap<String, MAttribute>();
         fOperations = new TreeMap<String, MOperation>();
+        fVTableOperations = new HashMap<String, MOperation>();
         fNavigableElements = new HashMap<String, MNavigableElement>();
-        fType = new ObjectType(this);
-    }
-    
-    /**
-     * Returns true if the class is marked abstract.
-     */
-    public boolean isAbstract() {
-        return fIsAbstract;
     }
 
     /**
@@ -71,32 +77,19 @@ public class MClassImpl extends MModelElementImpl implements MClass {
     public String nameAsRolename() {
         return Character.toLowerCase(name().charAt(0)) + name().substring(1);
     }
+
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" }) // Class only inherit from other classes
+	public Iterable<MClass> generalizationHierachie(final boolean includeThis) {
+    	return (Iterable)super.generalizationHierachie(includeThis);
+	}
     
-    /**
-     * returns the corresponding type
-     * @return the corresponding type
-     */
-    public ObjectType type() {
-    	return fType;
-    }
-
-    /**
-     * Returns the model owning this class.
-     */
-    public MModel model() {
-        return fModel;
-    }
-
-    /**
-     * Sets the model owning this class. This method must be called by
-     * MModel.addClass().  
-     *
-     * @see MModel#addClass
-     */
-    public void setModel(MModel model) {
-        fModel = model;
-    }
-
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" }) // Class only inherit from other classes
+	public Iterable<MClass> specializationHierachie(final boolean includeThis) {
+		return (Iterable)super.specializationHierachie(includeThis);
+	}
+    
     /** 
      * Adds an attribute. The attribute must have a unique name within
      * the class and must not conflict with any attribute with the
@@ -123,12 +116,13 @@ public class MClassImpl extends MModelElementImpl implements MClass {
                                              "' already defined in a superclass.");
     
         // check if attribute of same name is defined in a subclass
-        for (MClass cls : children() ) {
+        for (MClass cls : allChildren() ) {
             if (cls.attribute(attrName, false) != null )
                 throw new MInvalidModelException("Attribute `" + 
                                                  attrName + "' conflicts with existing attribute " +
                                                  "in class `" + cls.name() + "'.");
         }
+        
         // add attribute
         fAttributes.put(attr.name(), attr);
         attr.setOwner(this);
@@ -151,16 +145,16 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * @return List(MAttribute) 
      */
     public List<MAttribute> allAttributes() {
-        //Set result = new HashSet(fAttributes.size());
         List<MAttribute> result = new ArrayList<MAttribute>();
         
         // start with local attributes
         result.addAll(attributes());
 
-        // add attributes from all superclasses
+        // add attributes from all super classes
         for (MClass cls : allParents() ) {
             result.addAll(cls.attributes());
         }
+        
         return result;
     }
 
@@ -203,7 +197,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
         // number and types of arguments.
         MOperation superOp = operation(opname, true);
         if (superOp != null ) {
-            if (! superOp.equals(op) )
+            if (!op.isValidOverrideOf(superOp) )
                 throw new MInvalidModelException("Redefinition of operation `" + superOp +
                                                  "' requires same number and type of arguments.");
         }
@@ -214,17 +208,19 @@ public class MClassImpl extends MModelElementImpl implements MClass {
         for (MClass cls : allChildren()) {
             MOperation subOp = cls.operation(opname, false);
             if (subOp != null )
-                if (! subOp.equals(op) )
+                if (!subOp.isValidOverrideOf(op) )
                     throw new MInvalidModelException("Operation `" + op +
                                                      "' does not match its redefinition in class `" + 
                                                      cls + "'.");
         }
     
         fOperations.put(op.name(), op);
+        fVTableOperations.put(op.name(), op);
+        
         op.setClass(this);
     }
 
-    /**
+	/**
      * Returns all operations defined for this class. Inherited
      * operations are not included.
      */
@@ -260,26 +256,36 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * first matching operation. Thus, if an operation is redefined,
      * this method returns the most specific one.
      *
-     * @return null if operation does not exist. 
+     * @return <code>null</code> if operation does not exist. 
      */
     public MOperation operation(String name, boolean searchInherited) {
-        MOperation op = fOperations.get(name);
+    	MOperation op;
+    	
+    	if (searchInherited) {
+    		op = fVTableOperations.get(name);
+			
+    		if (op != null)
+    			return op;
+    			
+			for (MClass cls : parents()) {
+				op = cls.operation(name, false);
+				if (op != null) {
+					fVTableOperations.put(name, op);
+					return op;
+				}
+			}
+			// FIXME: The compiler has to check a unique binding in case of multiple inheritance
+			for (MClass cls : parents()) {
+				op = cls.operation(name, true);
+				if (op != null) {
+					fVTableOperations.put(name, op);
+					return op;
+				}
+			}
+    	} else{
+    		op = fOperations.get(name);
+    	}
         
-        if (op == null && searchInherited ) {
-	        for (MClass cls : parents()) {
-                op = cls.operation(name, false);
-                if (op != null )
-                    return op;
-            }
-	        // FIXME: The compiler has to check a unique binding in case
-	        //        of multiple inheritance
-	        for (MClass cls : parents()) {
-                op = cls.operation(name, true);
-                if (op != null )
-                    return op;
-            }
-            
-        }
         return op;
     }
 
@@ -288,7 +294,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * Returns the association end that can be reached by the
      * OCL expression <code>self.rolename</code>.
      *
-     * @return null if no such association end exists.
+     * @return <code>null</code> if no such association end exists.
      */
     public MNavigableElement navigableEnd(String rolename) {
         return navigableEnds().get( rolename );
@@ -325,39 +331,54 @@ public class MClassImpl extends MModelElementImpl implements MClass {
         }
     }
 
-    public void deleteNavigableElements () {
-        fNavigableElements.clear();
-    }
+    
+    @Override
+	public boolean isTypeOfClassifier() {
+		return false;
+	}
 
-    /**
+	@Override
+	public boolean isKindOfClass(VoidHandling h) {
+		return true;
+	}
+
+	@Override
+	public boolean isTypeOfClass() {
+		return true;
+	}
+
+	/**
      * Returns the set of all direct parent classes (without this
      * class).
      *
      * @return Set(MClass) 
      */
+    @Override
     public Set<MClass> parents() {
-        return fModel.generalizationGraph().targetNodeSet(this);
+    	return model.generalizationGraph().targetNodeSet(MClass.class, this);
     }
 
     /**
      * Returns the set of all parent classes (without this
      * class). This is the transitive closure of the generalization
      * relation.
+     * The set is unmodifiable!
      *
-     * @return Set(MClass) 
+     * @return Set(MClass) An unmodifiable set of all parent classes
      */
     public Set<MClass> allParents() {
-        return fModel.generalizationGraph().targetNodeClosureSet(this);
+        return Collections.unmodifiableSet(model.generalizationGraph().targetNodeClosureSet(MClass.class, this));
     }
 
     /**
      * Returns the set of all child classes (without this class). This
      * is the transitive closure of the generalization relation.
+     * The set is unmodifiable!
      *
-     * @return Set(MClass) 
+     * @return Set(MClass) An unmodifiable set of all child classes
      */
     public Set<MClass> allChildren() {
-        return fModel.generalizationGraph().sourceNodeClosureSet(this);
+        return Collections.unmodifiableSet(model.generalizationGraph().sourceNodeClosureSet(MClass.class, this));
     }
 
     /**
@@ -367,7 +388,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
      * @return Set(MClass) 
      */
     public Set<MClass> children() {
-        return fModel.generalizationGraph().sourceNodeSet(this);
+        return model.generalizationGraph().sourceNodeSet(MClass.class, this);
     }
     
     /**
@@ -402,29 +423,7 @@ public class MClassImpl extends MModelElementImpl implements MClass {
         
         return res;
     }
-
-    /**
-     * Returns true if this class is a child of
-     * <code>otherClass</code> or equal to it.  
-     */
-    public boolean isSubClassOf(MClass otherClass) {
-        return this.equals(otherClass) || allParents().contains(otherClass);
-    }
-
-    /**
-     * Returns the position in the defined USE-Model.
-     */
-    public int getPositionInModel() {
-        return fPositionInModel;
-    }
-
-    /**
-     * Sets the position in the defined USE-Model.
-     */
-    public void setPositionInModel(int position) {
-        fPositionInModel = position;
-    }
-
+    
     /**
      * Process this element with visitor.
      */
@@ -434,13 +433,10 @@ public class MClassImpl extends MModelElementImpl implements MClass {
 
 	@Override
 	public List<MAssociationEnd> getAssociationEnd(String roleName) {
-		List<MAssociationEnd> result = new ArrayList<MAssociationEnd>();
+		List<MAssociationEnd> result = new LinkedList<MAssociationEnd>();
 		
-		Set<MClass> allClasses = this.allParents();
-		allClasses.add(this);
-		
-		for (MAssociation assoc : this.allAssociations()) {
-			for (MClass cls : allClasses) {
+		for (MClass cls : this.generalizationHierachie(true)) {
+			for (MAssociation assoc : cls.associations()) {
 				Set<MAssociationEnd> ends = assoc.associationEndsAt(cls);
 				for (MAssociationEnd end : ends) {
 					if (end.nameAsRolename().equals(roleName))
@@ -448,7 +444,38 @@ public class MClassImpl extends MModelElementImpl implements MClass {
 				}
 			}
 		}
-		
 		return result;
+	}
+
+	@Override
+	public void addOwnedProtocolStateMachine(MProtocolStateMachine psm) {
+		this.ownedProtocolStateMachines = CollectionUtil.initAsHashSet(this.ownedProtocolStateMachines);
+		this.ownedProtocolStateMachines.add(psm);
+	}
+
+	@Override
+	public Set<MProtocolStateMachine> getOwnedProtocolStateMachines() {
+		return Collections.unmodifiableSet(this.ownedProtocolStateMachines);
+	}
+
+	@Override
+	public boolean hasStateMachineWhichHandles(MOperationCall operationCall) {
+		for (MClass general : generalizationHierachie(true)) {
+			for (MProtocolStateMachine psm : general.getOwnedProtocolStateMachines()) {
+				if (psm.handlesOperation(operationCall.getOperation()))
+					return true;
+			}
+		}
+				
+		return false;
+	}
+
+	@Override
+	public Set<MProtocolStateMachine> getAllOwnedProtocolStateMachines() {
+		Set<MProtocolStateMachine> psms = new HashSet<MProtocolStateMachine>();
+		for (MClass cls : generalizationHierachie(true)) {
+			psms.addAll(cls.getOwnedProtocolStateMachines());
+		}
+		return psms;
 	}
 }

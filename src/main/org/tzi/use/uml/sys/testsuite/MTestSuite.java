@@ -110,6 +110,22 @@ public class MTestSuite {
 				// we ignore the messages in tests
 				
 			}
+
+			@Override
+			public void handleTransitionsPre(MSystem system,
+					MOperationCall operationCall)
+					throws PreConditionCheckFailedException {
+				// we ignore the messages in tests
+				
+			}
+
+			@Override
+			public void handleTransitionsPost(MSystem system,
+					MOperationCall operationCall)
+					throws PostConditionCheckFailedException {
+				// we ignore the messages in tests
+				
+			}
 		});
 		
 		Context ctx = new Context(name.getText(), output, system.varBindings(), null);

@@ -28,6 +28,7 @@ import java.util.Set;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MOperation;
 
 /**
  * Basic coverage data, i. e., sets of model elements.
@@ -37,6 +38,7 @@ import org.tzi.use.uml.mm.MClass;
 public class BasicCoverageData {
 	private Set<MClass> coveredClasses = new HashSet<MClass>();
 	private Set<MAttribute> coveredAttributes = new HashSet<MAttribute>();
+	private Set<MOperation> coveredOperations = new HashSet<MOperation>();
 	private Set<MAssociation> coveredAssociations = new HashSet<MAssociation>();
 	/**
 	 * @return the coveredClasses
@@ -49,6 +51,12 @@ public class BasicCoverageData {
 	 */
 	public Set<MAttribute> getCoveredAttributes() {
 		return coveredAttributes;
+	}
+	/**
+	 * @return the coveredOperations
+	 */
+	public Set<MOperation> getCoveredOperations() {
+		return coveredOperations;
 	}
 	/**
 	 * @return the coveredAssociations

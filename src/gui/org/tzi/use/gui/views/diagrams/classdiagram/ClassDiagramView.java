@@ -22,6 +22,7 @@
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,10 +37,11 @@ import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MGeneralization;
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.StateChangeEvent;
 
 /**
  * A graph showing an class diagram with all elements in the
@@ -53,21 +55,36 @@ public class ClassDiagramView extends JPanel
                                  implements View, 
                                             PrintableView {
 
-    private MainWindow fMainWindow;
-    private MSystem fSystem;
+    private final MainWindow fMainWindow;
+    
+    private final MSystem fSystem;
+    
     private ClassDiagram fClassDiagram;
 
-    public ClassDiagramView( MainWindow mainWindow, MSystem system ) { 
+    public ClassDiagramView( MainWindow mainWindow, MSystem system, boolean loadLayout ) { 
     	this.setFocusable(true);
         fMainWindow = mainWindow;
         fSystem = system;
-        fSystem.addChangeListener( this );
         setLayout( new BorderLayout() );
-        fClassDiagram = new ClassDiagram( this, mainWindow.logWriter() );
-        add( new JScrollPane(fClassDiagram) );
-        initState();
-        fClassDiagram.loadDefaultLayout();
+        initDiagram(loadLayout, null);
     }
+
+	public void initDiagram(boolean loadDefaultLayout, ClassDiagramOptions opt) {
+		if (opt == null)
+			fClassDiagram = new ClassDiagram( this, fMainWindow.logWriter());
+		else
+			fClassDiagram = new ClassDiagram( this, fMainWindow.logWriter(), new ClassDiagramOptions(opt));
+		
+		fClassDiagram.setStatusBar(fMainWindow.statusBar());
+		this.removeAll();
+        add( new JScrollPane(fClassDiagram) );
+		
+        initState();
+        
+        if (loadDefaultLayout) {
+        	fClassDiagram.loadDefaultLayout();
+        }
+	}
     
     public MSystem system() {
         return fSystem;
@@ -81,7 +98,7 @@ public class ClassDiagramView extends JPanel
     }
     
     /**
-     * Determinds if this is the selected view.
+     * Determines if this is the selected view.
      * @return <code>true</code> if it is the selected view, otherwise
      * <code>false</false>
      */
@@ -98,6 +115,7 @@ public class ClassDiagramView extends JPanel
      * instance.
      */
     private void initState() {
+    	
         // read Classes
         Collection<MClass> allClasses = fSystem.model().classes();
         for (MClass cls : allClasses) {
@@ -110,8 +128,13 @@ public class ClassDiagramView extends JPanel
             fClassDiagram.addEnum( enumeration );
         }
 
+        // read signals
+        for (MSignal s : fSystem.model().getSignals()) {
+            fClassDiagram.addSignal( s );
+        }
+        
         // read generalizations
-        DirectedGraph<MClass, MGeneralization> genGraph = fSystem.model().generalizationGraph();
+        DirectedGraph<MClassifier, MGeneralization> genGraph = fSystem.model().generalizationGraph();
         Iterator<MGeneralization> edgeIter = genGraph.edgeIterator();
         while ( edgeIter.hasNext() ) {
             MGeneralization gen = edgeIter.next();
@@ -123,14 +146,33 @@ public class ClassDiagramView extends JPanel
         for (MAssociation assoc : allAssociations) {
             fClassDiagram.addAssociation( assoc );
         }
+        
+        fClassDiagram.initialize();
     }
     
-    public void printView( PageFormat pf ) {
+    @Override
+	public void printView( PageFormat pf ) {
         fClassDiagram.printDiagram( pf, "Class diagram" );
     }
 
-    public void stateChanged( StateChangeEvent e ) {}
+    @Override
+	public void export( Graphics2D g ) {
+    	boolean oldDb = fClassDiagram.isDoubleBuffered();
+    	fClassDiagram.setDoubleBuffered(false);
+    	fClassDiagram.paint(g);
+    	fClassDiagram.setDoubleBuffered(oldDb);
+    }
 
-    public void detachModel () {}
+    @Override
+	public void detachModel () {}
 
+	@Override
+	public float getContentHeight() {
+		return this.getHeight();
+	}
+	
+	@Override
+	public float getContentWidth() {
+		return this.getWidth();
+	}
 }

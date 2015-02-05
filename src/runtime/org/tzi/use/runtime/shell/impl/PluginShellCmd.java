@@ -24,6 +24,7 @@ public abstract class PluginShellCmd implements IPluginShellCmd {
 	private final Shell fShell;
 	private String cmd;
 	private String cmdArguments;
+	private String[] cmdArgumentList;
 
 	/**
 	 * Constructor to create a Plugin Shell Command Proxy with the given Plugin
@@ -62,9 +63,11 @@ public abstract class PluginShellCmd implements IPluginShellCmd {
 		return this.pluginCmdDelegate;
 	}
 
-	public void executeCmd(String cmd, String cmdArguments) {
+	public void executeCmd(String cmd, String cmdArguments, String[] argList) {
 		this.cmd = cmd;
 		this.cmdArguments = cmdArguments;
+		this.cmdArgumentList = argList;
+		
 		if (this.pluginCmdDelegate == null) {
 			Log.debug("Plugin not started yet, starting now...");
 			this.pluginCmdDelegate = createCmdDelegate();
@@ -84,6 +87,10 @@ public abstract class PluginShellCmd implements IPluginShellCmd {
 
 	public String getCmdArguments() {
 		return this.cmdArguments;
+	}
+	
+	public String[] getCmdArgumentList() {
+		return this.cmdArgumentList;
 	}
 
 	public IPluginShellCmdDescriptor getDescriptor() {

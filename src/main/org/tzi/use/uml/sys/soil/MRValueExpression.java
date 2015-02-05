@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -30,65 +28,63 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
+ * A RValue which evaluates an expression.
  * 
  * @author Daniel Gent
- * 
+ *
  */
 public class MRValueExpression extends MRValue {
-    /** TODO */
-    private Expression fExpression;
-
-    /**
-     * TODO
+	/** The encapsulated expression the value is derived from */
+	private Expression fExpression;
+	
+	/**
+	 * Constructs a new RValue encapsulating <code>expression</code>.
      * 
-     * @param expression
-     */
-    public MRValueExpression(Expression expression) {
-        fExpression = expression;
-    }
+	 * @param expression The encapsulated expression the value is derived from
+	 */
+	public MRValueExpression(Expression expression) {
+		fExpression = expression;
+	}
 
-    /**
-     * TODO
+	/**
+	 * Constructs a new RValue encapsulating <code>value</code>.
      * 
-     * @param value
-     */
-    public MRValueExpression(Value value) {
-        fExpression = new ExpressionWithValue(value);
-    }
-
-    /**
-     * TODO
+	 * @param value The encapsulated value
+	 */
+	public MRValueExpression(Value value) {
+		fExpression = new ExpressionWithValue(value);
+	}
+	
+	/**
+	 * Constructs a new RValue encapsulating <code>object</code>.
      * 
-     * @param object
-     */
-    public MRValueExpression(MObject object) {
-        fExpression = new ExpressionWithValue(object.value());
-    }
+	 * @param object The encapsulated object
+	 */
+	public MRValueExpression(MObject object) {
+		fExpression = new ExpressionWithValue(object.value());
+	}
 
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public Expression getExpression() {
-        return fExpression;
-    }
+	@Override
+	public Value evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
+        return EvalUtil.evaluateExpression(context, fExpression);
+	}
 
-    @Override
-    public Value evaluate(SoilEvaluationContext context, StatementEvaluationResult result,
-            MStatement parent) throws EvaluationFailedException {
-        return EvalUtil.evaluateExpression(parent, context, result, fExpression);
-    }
+	/**
+	 * @return the fExpression
+	 */
+	public Expression getExpression() {
+		return fExpression;
+	}
+	
+	@Override
+	public Type getType() {
+		return fExpression.type();
+	}
 
-    @Override
-    public Type getType() {
-        return fExpression.type();
-    }
-
-    @Override
-    public String toString() {
-        return fExpression.toString();
-    }
+	@Override
+	public String toString() {
+		return fExpression.toString();
+	}
 
 }

@@ -2,16 +2,19 @@ package org.tzi.use.uml.ocl.expr.operations;
 
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.RealValue;
 import org.tzi.use.uml.ocl.value.StringValue;
+import org.tzi.use.uml.ocl.value.UnlimitedNaturalValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.Multimap;
 
 class StandardOperationsNumber {
-	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
+	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
 		// operations on Integer and Real
         OpGeneric.registerOperation(new Op_number_add(), opmap);
         OpGeneric.registerOperation(new Op_number_sub(), opmap);
@@ -50,15 +53,18 @@ class StandardOperationsNumber {
 * This class is only used for +, *, -, max, min on Integers and Reals.
 */
 abstract class ArithOperation extends OpGeneric {
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
 		if (params.length == 2) {
-			if (params[0].isInteger() && params[1].isInteger())
+			if (params[0].isTypeOfInteger() && params[1].isTypeOfInteger())
 				return TypeFactory.mkInteger();
-			else if (params[00].isNumber() && params[1].isNumber())
+			else if (params[0].isKindOfNumber(VoidHandling.INCLUDE_VOID)
+					&& params[1].isKindOfNumber(VoidHandling.INCLUDE_VOID))
 				return TypeFactory.mkReal();
 		}
 		return null;
@@ -71,14 +77,17 @@ abstract class ArithOperation extends OpGeneric {
 /* + : Integer x Real -> Real */
 /* + : Real x Real -> Real */
 final class Op_number_add extends ArithOperation {
+	@Override
 	public String name() {
 		return "+";
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = ((IntegerValue) args[0]).value()
@@ -108,14 +117,17 @@ final class Op_number_add extends ArithOperation {
 /* - : Integer x Real -> Real */
 /* - : Real x Real -> Real */
 final class Op_number_sub extends ArithOperation {
+	@Override
 	public String name() {
 		return "-";
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = ((IntegerValue) args[0]).value()
@@ -145,14 +157,17 @@ final class Op_number_sub extends ArithOperation {
 /* * : Integer x Real -> Real */
 /* * : Real x Real -> Real */
 final class Op_number_mult extends ArithOperation {
+	@Override
 	public String name() {
 		return "*";
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {		
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = ((IntegerValue) args[0]).value()
@@ -179,23 +194,29 @@ final class Op_number_mult extends ArithOperation {
 
 /* / : Number x Number -> Real */
 final class Op_number_div extends OpGeneric {
+	@Override
 	public String name() {
 		return "/";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 2 && params[0].isNumber() && params[1]
-				.isNumber()) ? TypeFactory.mkReal() : null;
+		return (params.length == 2 && 
+				params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && 
+				params[1].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory.mkReal() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		double d1;
 		double d2;
@@ -220,23 +241,28 @@ final class Op_number_div extends OpGeneric {
 
 /* abs : Real -> Real */
 final class Op_real_abs extends OpGeneric {
+	@Override
 	public String name() {
 		return "abs";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return false;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isReal()) ? TypeFactory
+		return (params.length == 1 && params[0].isTypeOfReal()) ? TypeFactory
 				.mkReal() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		double d1 = ((RealValue) args[0]).value();
 		return new RealValue(Math.abs(d1));
@@ -247,23 +273,28 @@ final class Op_real_abs extends OpGeneric {
 
 /* abs : Integer -> Integer */
 final class Op_integer_abs extends OpGeneric {
+	@Override
 	public String name() {
 		return "abs";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return false;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isInteger()) ? TypeFactory
+		return (params.length == 1 && params[0].isTypeOfInteger()) ? TypeFactory
 				.mkInteger() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		int i1 = ((IntegerValue) args[0]).value();
 		return IntegerValue.valueOf(Math.abs(i1));
@@ -274,22 +305,27 @@ final class Op_integer_abs extends OpGeneric {
 
 /* - : Number -> Number */
 final class Op_number_unaryminus extends OpGeneric {
+	@Override
 	public String name() {
 		return "-";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isNumber()) ? params[0] : null;
+		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? params[0] : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		Value res;
 		if (args[0].isInteger()) {
@@ -307,22 +343,27 @@ final class Op_number_unaryminus extends OpGeneric {
 
 /* + : Number -> Number */
 final class Op_number_unaryplus extends OpGeneric {
+	@Override
 	public String name() {
 		return "+";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isNumber()) ? params[0] : null;
+		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? params[0] : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		// nop
 		return args[0];
@@ -334,23 +375,28 @@ final class Op_number_unaryplus extends OpGeneric {
 /* floor : Real -> Integer */
 /* floor : Integer -> Integer */
 final class Op_real_floor extends OpGeneric {
+	@Override
 	public String name() {
 		return "floor";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return false;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isNumber()) ? TypeFactory
+		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
 				.mkInteger() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		double d1;
 		if (args[0].isInteger())
@@ -367,23 +413,28 @@ final class Op_real_floor extends OpGeneric {
 /* round : Real -> Integer */
 /* round : Integer -> Integer */
 final class Op_real_round extends OpGeneric {
+	@Override
 	public String name() {
 		return "round";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return false;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isNumber()) ? TypeFactory
+		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
 				.mkInteger() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		double d1;
 		if (args[0].isInteger())
@@ -402,18 +453,22 @@ final class Op_real_round extends OpGeneric {
 /* max : Integer x Real -> Real */
 /* max : Real x Real -> Real */
 final class Op_number_max extends ArithOperation {
+	@Override
 	public String name() {
 		return "max";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return false;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = Math.max(((IntegerValue) args[0]).value(),
@@ -443,18 +498,22 @@ final class Op_number_max extends ArithOperation {
 /* min : Integer x Real -> Real */
 /* min : Real x Real -> Real */
 final class Op_number_min extends ArithOperation {
+	@Override
 	public String name() {
 		return "min";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return false;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		if (args[0].isInteger() && args[1].isInteger()) {
 			int res = Math.min(((IntegerValue) args[0]).value(),
@@ -481,23 +540,28 @@ final class Op_number_min extends ArithOperation {
 
 /* mod : Integer x Integer -> Integer */
 final class Op_integer_mod extends OpGeneric {
+	@Override
 	public String name() {
 		return "mod";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 2 && params[0].isInteger() && params[1]
-				.isInteger()) ? TypeFactory.mkInteger() : null;
+		return (params.length == 2 && params[0].isTypeOfInteger() && params[1]
+				.isTypeOfInteger()) ? TypeFactory.mkInteger() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		int i1 = ((IntegerValue) args[0]).value();
 		int i2 = ((IntegerValue) args[1]).value();
@@ -509,23 +573,28 @@ final class Op_integer_mod extends OpGeneric {
 
 /* idiv : Integer x Integer -> Integer */
 final class Op_integer_idiv extends OpGeneric {
+	@Override
 	public String name() {
 		return "div";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 2 && params[0].isInteger() && params[1]
-				.isInteger()) ? TypeFactory.mkInteger() : null;
+		return (params.length == 2 && params[0].isTypeOfInteger() && params[1]
+				.isTypeOfInteger()) ? TypeFactory.mkInteger() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		int i1 = ((IntegerValue) args[0]).value();
 		int i2 = ((IntegerValue) args[1]).value();
@@ -537,32 +606,44 @@ final class Op_integer_idiv extends OpGeneric {
 
 /* < : Number x Number -> Boolean */
 final class Op_number_less extends OpGeneric {
+	@Override
 	public String name() {
 		return "<";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 2 && params[0].isNumber() && params[1]
-				.isNumber()) ? TypeFactory.mkBoolean() : null;
+		return (params.length == 2
+				&& params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && params[1]
+					.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
+				.mkBoolean() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		double d1;
 		double d2;
-		if (args[0].isInteger())
+		
+		if (args[0].isUnlimitedNatural())
+			d1 = ((UnlimitedNaturalValue) args[0]).value();
+		else if (args[0].isInteger())
 			d1 = ((IntegerValue) args[0]).value();
 		else
 			d1 = ((RealValue) args[0]).value();
 
-		if (args[1].isInteger())
+		if (args[1].isUnlimitedNatural())
+			d2 = ((UnlimitedNaturalValue) args[1]).value();
+		else if (args[1].isInteger())
 			d2 = ((IntegerValue) args[1]).value();
 		else
 			d2 = ((RealValue) args[1]).value();
@@ -574,32 +655,43 @@ final class Op_number_less extends OpGeneric {
 
 /* > : Number x Number -> Boolean */
 final class Op_number_greater extends OpGeneric {
+	@Override
 	public String name() {
 		return ">";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 2 && params[0].isNumber() && params[1]
-				.isNumber()) ? TypeFactory.mkBoolean() : null;
+		return (params.length == 2
+				&& params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && params[1]
+					.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
+				.mkBoolean() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		double d1;
 		double d2;
-		if (args[0].isInteger())
+		if (args[0].isUnlimitedNatural())
+			d1 = ((UnlimitedNaturalValue) args[0]).value();
+		else if (args[0].isInteger())
 			d1 = ((IntegerValue) args[0]).value();
 		else
 			d1 = ((RealValue) args[0]).value();
 
-		if (args[1].isInteger())
+		if (args[1].isUnlimitedNatural())
+			d2 = ((UnlimitedNaturalValue) args[1]).value();
+		else if (args[1].isInteger())
 			d2 = ((IntegerValue) args[1]).value();
 		else
 			d2 = ((RealValue) args[1]).value();
@@ -611,32 +703,43 @@ final class Op_number_greater extends OpGeneric {
 
 /* <= : Number x Number -> Boolean */
 final class Op_number_lessequal extends OpGeneric {
+	@Override
 	public String name() {
 		return "<=";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 2 && params[0].isNumber() && params[1]
-				.isNumber()) ? TypeFactory.mkBoolean() : null;
+		return (params.length == 2
+				&& params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && params[1]
+					.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
+				.mkBoolean() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		double d1;
 		double d2;
-		if (args[0].isInteger())
+		if (args[0].isUnlimitedNatural())
+			d1 = ((UnlimitedNaturalValue) args[0]).value();
+		else if (args[0].isInteger())
 			d1 = ((IntegerValue) args[0]).value();
 		else
 			d1 = ((RealValue) args[0]).value();
 
-		if (args[1].isInteger())
+		if (args[1].isUnlimitedNatural())
+			d2 = ((UnlimitedNaturalValue) args[1]).value();
+		else if (args[1].isInteger())
 			d2 = ((IntegerValue) args[1]).value();
 		else
 			d2 = ((RealValue) args[1]).value();
@@ -648,32 +751,43 @@ final class Op_number_lessequal extends OpGeneric {
 
 /* >= : Number x Number -> Boolean */
 final class Op_number_greaterequal extends OpGeneric {
+	@Override
 	public String name() {
 		return ">=";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return true;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 2 && params[0].isNumber() && params[1]
-				.isNumber()) ? TypeFactory.mkBoolean() : null;
+		return (params.length == 2
+				&& params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && params[1]
+					.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
+				.mkBoolean() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		double d1;
 		double d2;
-		if (args[0].isInteger())
+		if (args[0].isUnlimitedNatural())
+			d1 = ((UnlimitedNaturalValue) args[0]).value();
+		else if (args[0].isInteger())
 			d1 = ((IntegerValue) args[0]).value();
 		else
 			d1 = ((RealValue) args[0]).value();
 
-		if (args[1].isInteger())
+		if (args[1].isUnlimitedNatural())
+			d2 = ((UnlimitedNaturalValue) args[1]).value();
+		else if (args[1].isInteger())
 			d2 = ((IntegerValue) args[1]).value();
 		else
 			d2 = ((RealValue) args[1]).value();
@@ -683,22 +797,29 @@ final class Op_number_greaterequal extends OpGeneric {
 
 /* toString : Number -> String */
 final class Op_number_toString extends OpGeneric {
+	@Override
 	public String name() {
 		return "toString";
 	}
 
+	@Override
 	public int kind() {
 		return OPERATION;
 	}
 
+	@Override
 	public boolean isInfixOrPrefix() {
 		return false;
 	}
 
+	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isNumber()) ? TypeFactory.mkString() : null;
+		return (params.length == 1 && params[0]
+				.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
+				.mkString() : null;
 	}
 
+	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		return new StringValue(args[0].toString());
 	}

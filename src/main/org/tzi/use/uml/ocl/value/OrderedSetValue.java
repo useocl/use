@@ -27,6 +27,7 @@ import java.util.Iterator;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 
@@ -92,8 +93,8 @@ public class OrderedSetValue extends CollectionValue {
     }
     
     @Override
-    public void doSetElemType() {
-        setType( TypeFactory.mkOrderedSet(fElemType));
+    public CollectionType getRuntimeType(Type elementType) {
+        return TypeFactory.mkOrderedSet(elementType);
     }
 
     /**
@@ -151,8 +152,8 @@ public class OrderedSetValue extends CollectionValue {
      *
      * @pre T2 <= T1, if this has type OrderedSet(T1) and v has type T2.
      */
-    public OrderedSetValue excluding(Value v) {
-        OrderedSetValue res = new OrderedSetValue(elemType());
+    public OrderedSetValue excluding(Type resultType, Value v) {
+        OrderedSetValue res = new OrderedSetValue(getResultElementType(resultType));
         Iterator<Value> it = fElements.iterator(); 
         while (it.hasNext() ) {
             Value elem = it.next();
@@ -162,14 +163,13 @@ public class OrderedSetValue extends CollectionValue {
         return res;
     }
 
-    public OrderedSetValue insertAt(IntegerValue index, Value v) {
+    public OrderedSetValue insertAt(Type resultType, IntegerValue index, Value v) {
     	if (index.value() < 1 || index.value() > fElements.size() + 1)
     		return null;
     	
-    	OrderedSetValue res = new OrderedSetValue(elemType());
+    	OrderedSetValue res = new OrderedSetValue(getResultElementType(resultType));
     	res.addAll(fElements);
     	res.fElements.add(index.value() - 1, v);
-    	res.markTypeAsDirty();
     	
     	return res;
     }
@@ -187,29 +187,26 @@ public class OrderedSetValue extends CollectionValue {
         return res;
     }
 
-    public OrderedSetValue union(OrderedSetValue v) {
-        OrderedSetValue res = new OrderedSetValue(elemType());
+    public OrderedSetValue union(Type resultType, OrderedSetValue v) {
+        OrderedSetValue res = new OrderedSetValue(getResultElementType(resultType));
         res.addAll(fElements);
         res.addAll(v.fElements);
-        res.markTypeAsDirty();
         return res;
     }
 
-    public OrderedSetValue append(Value v) {
-        OrderedSetValue res = new OrderedSetValue(elemType());
+    public OrderedSetValue append(Type resultType, Value v) {
+        OrderedSetValue res = new OrderedSetValue(getResultElementType(resultType));
         res.addAll(fElements);
         res.add(v);
-        res.markTypeAsDirty();
         return res;
     }
 
-    public OrderedSetValue prepend(Value v) {
-        OrderedSetValue res = new OrderedSetValue(elemType());
+    public OrderedSetValue prepend(Type resultType, Value v) {
+        OrderedSetValue res = new OrderedSetValue(getResultElementType(resultType));
         if (!fElements.contains(v))
         	res.add(v);
         
         res.addAll(fElements);
-        res.markTypeAsDirty();
         
         return res;
     }
@@ -220,8 +217,8 @@ public class OrderedSetValue extends CollectionValue {
      *
      * @throws    IndexOutOfBoundsException if range is illegal
      */
-    public OrderedSetValue subOrderedSet(int lower, int upper) {
-        OrderedSetValue res = new OrderedSetValue(elemType());
+    public OrderedSetValue subOrderedSet(Type resultType, int lower, int upper) {
+        OrderedSetValue res = new OrderedSetValue(getResultElementType(resultType));
         for (int i = lower; i < upper; i++) 
             res.add(fElements.get(i));
         return res;
@@ -232,12 +229,11 @@ public class OrderedSetValue extends CollectionValue {
      * sequence elements.  
      * Otherwise the result is nondeterministic, as in Set->asSequence
      */
-    public OrderedSetValue flatten() {
-        if ( !elemType().isCollection(true) ) 
+    public OrderedSetValue flatten(Type resultType) {
+        if ( !elemType().isKindOfCollection(VoidHandling.EXCLUDE_VOID) ) 
             return this;
-    
-        CollectionType c2 = (CollectionType) elemType();
-        OrderedSetValue res = new OrderedSetValue(c2.elemType());
+
+        OrderedSetValue res = new OrderedSetValue(getResultElementType(resultType));
         Iterator<Value> it = fElements.iterator(); 
         
         while (it.hasNext() ) {
@@ -292,7 +288,6 @@ public class OrderedSetValue extends CollectionValue {
     void add(Value v) {
     	if (!fElements.contains(v)) {
     		fElements.add(v);
-    		markTypeAsDirty();
     	}
     }
 
@@ -306,9 +301,5 @@ public class OrderedSetValue extends CollectionValue {
         		fElements.add(element);
         	}
     	}
-    	
-        markTypeAsDirty();
     }
-
-
 }

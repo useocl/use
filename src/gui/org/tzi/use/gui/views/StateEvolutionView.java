@@ -21,16 +21,17 @@
 
 package org.tzi.use.gui.views;
 
-import java.awt.*;
+import java.awt.Color;
 
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A LineChartView showing the evolution of objects and links over time.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 @SuppressWarnings("serial")
@@ -40,7 +41,7 @@ public class StateEvolutionView extends LineChartView implements View {
     public StateEvolutionView(MSystem system) {
         super(50, 2, new Color[] { Color.blue, Color.red });
         fSystem = system;
-        fSystem.addChangeListener(this);
+        fSystem.getEventBus().register(this);
         update();
     }
 
@@ -51,7 +52,8 @@ public class StateEvolutionView extends LineChartView implements View {
         addValues(values);
     }
 
-    public void stateChanged(StateChangeEvent e) {
+    @Subscribe
+    public void onStructureChanged(SystemStructureChangedEvent e) {
         update();
     }
 
@@ -59,6 +61,6 @@ public class StateEvolutionView extends LineChartView implements View {
      * Detaches the view from its model.
      */
     public void detachModel() {
-        fSystem.removeChangeListener(this);
+        fSystem.getEventBus().unregister(this);
     }
 }

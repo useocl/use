@@ -23,6 +23,7 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
 
@@ -51,7 +52,7 @@ public class ExpSortedBy extends ExpQuery {
     
         // check for allowed type of queryExp
         Type t = queryExp.type();
-        if (! ( t.isNumber() || t.isString() ) )
+        if (! ( t.isKindOfNumber(VoidHandling.EXCLUDE_VOID) || t.isKindOfString(VoidHandling.EXCLUDE_VOID) ) )
             throw new ExpInvalidException(
                                           "Argument of sortedBy must have basic type " +
                                           "(Integer, Real, or String), found `" + 
@@ -75,9 +76,6 @@ public class ExpSortedBy extends ExpQuery {
         return res;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitSortedBy(this);

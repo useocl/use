@@ -1,0 +1,23 @@
+-- Template class_r1.vm
+!newElement := new Class('SubClass') 
+-- Template classifier_r1.vm
+!newElement.isAbstract := false 
+-- Template namedElement_r1.vm
+!newElement.name := 'SubClass'
+
+-- Template class_r1.vm
+!newElement := new Class('BaseClass')
+-- Template classifier_r1.vm
+!newElement.isAbstract := false
+-- Template namedElement_r1.vm
+!newElement.name :='BaseClass'
+
+-- Template class_r1.vm
+!newElement := new Class('BaseClass')
+-- Template classifier_r1.vm
+!newElement.isAbstract := false
+-- Template namedElement_r1.vm
+!newElement.name :='BaseClass'
+
+-- Template classs_r2.vm
+!insert(SubClass, BaseClass) into A_Class_Class_Class_SuperClass

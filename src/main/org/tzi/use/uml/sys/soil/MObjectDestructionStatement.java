@@ -17,13 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
@@ -31,79 +31,89 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
+ * "Compiled" version of a delete statement.
  * @author Fabian Buettner
  * @author Daniel Gent
- * 
+ *
  */
 public class MObjectDestructionStatement extends MStatement {
-    /** TODO */
-    private Expression fToDelete;
-
-    /**
-     * TODO
+	/** The expression leading to the objects to delete.
+	 *  Must be a single object or a collection of objects.
+	 */
+	private Expression fToDelete;
+	
+	/**
+	 * Constructs a new destruction statement.
+	 * The objects returned by the expression <code>toDelete</code> are
+	 * deleted from the system. 
+     * <p>The given expression must be either an object type or a collection of object type.<br/>
+     *    This is <b>not</b> checked!</p>
+	 * @param object
+	 */
+	public MObjectDestructionStatement(Expression toDelete) {
+		fToDelete = toDelete;
+	}
+	
+	/**
+	 * Constructs a new destruction statement.
+	 * The provided object value will be deleted from the system state.  
      * 
-     * @param object
-     */
-    public MObjectDestructionStatement(Expression toDelete) {
-        fToDelete = toDelete;
-    }
+	 * @param object The object value to delete.
+	 */
+	public MObjectDestructionStatement(ObjectValue object) {
+		this(new ExpressionWithValue(object));
+	}
 
-    /**
-     * TODO
-     * 
-     * @param object
-     */
-    public MObjectDestructionStatement(Value object) {
-        this(new ExpressionWithValue(object));
-    }
+	/**
+	 * @return the expression leading to the objects to delete
+	 */
+	public Expression getToDelete() {
+		return fToDelete;
+	}
 
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public Expression getToDelete() {
-        return fToDelete;
-    }
-
-    @Override
-    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
+	@Override
+    public Value execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
-
-        // handle "dynamic" collections (e.g. .allInstances)
-        if (fToDelete.type().isCollection(false)) {
-            Value val = EvalUtil.evaluateExpression(this, context, result, fToDelete);
-
-            if (val.isUndefined())
-                return;
-
-            CollectionValue collection = (CollectionValue) val;
-            for (Value object : collection.collection()) {
-                MObjectDestructionStatement statement = new MObjectDestructionStatement(object);
-
-                statement.setSourcePosition(getSourcePosition());
-
+		
+		// handle "dynamic" collections (e.g. .allInstances)
+		if (fToDelete.type().isKindOfCollection(VoidHandling.INCLUDE_VOID)) {
+            Value val = EvalUtil.evaluateExpression(context, fToDelete);
+			
+			if (val.isUndefined())
+				return null;
+			
+			CollectionValue collection = (CollectionValue)val;
+			for (Value object : collection.collection()) {
+                MObjectDestructionStatement statement = new MObjectDestructionStatement((ObjectValue)object);
+				statement.setSourcePosition(getSourcePosition());
                 statement.execute(context, result);
-            }
-
-        } else {
-            MObject object = EvalUtil.evaluateObjectExpression(this, context, result, fToDelete);
-
+			}
+			
+		} else {
+            MObject object = EvalUtil.evaluateObjectExpression(context, fToDelete);
+			
             try {
                 context.getSystem().destroyObject(result, object);
             } catch (MSystemException e) {
-                throw new EvaluationFailedException(this, e.getMessage());
-            }
-        }
+                throw new EvaluationFailedException(e.getMessage());
+			}
+		}
+		
+		return null;
     }
+	
+	@Override
+	protected String shellCommand() {
+		return "destroy " + fToDelete;
+	}
+	
+	@Override
+	public String toString() {
+		return shellCommand();
+	}
 
-    @Override
-    protected String shellCommand() {
-        return "destroy " + fToDelete;
-    }
-
-    @Override
-    public String toString() {
-        return shellCommand();
-    }
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
+	}
 }

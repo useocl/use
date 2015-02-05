@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 
@@ -38,7 +39,7 @@ import org.tzi.use.util.StringUtil;
  * @author  Mark Richters
  */
 public class SequenceValue extends CollectionValue {
-    private ArrayList<Value> fElements;
+    private final ArrayList<Value> fElements;
     
     /**
      * Constructs a new empty sequence.
@@ -75,7 +76,7 @@ public class SequenceValue extends CollectionValue {
 
     /**
      * Constructs a sequence and fills it with ranges of integers.
-     *
+     * The length of the array must be even.
      * @exception IllegalArgumentException the type of at least one
      *            value does not match 
      */
@@ -89,8 +90,6 @@ public class SequenceValue extends CollectionValue {
                 fElements.add(IntegerValue.valueOf(j));
             i += 2;
         }
-        
-        this.markTypeAsDirty();
     }
 
     @Override
@@ -99,8 +98,8 @@ public class SequenceValue extends CollectionValue {
     }
     
     @Override
-    public void doSetElemType() {
-        setType( TypeFactory.mkSequence(fElemType));
+    public CollectionType getRuntimeType(Type elementType) {
+        return TypeFactory.mkSequence(elementType);
     }
 
     /**
@@ -113,27 +112,32 @@ public class SequenceValue extends CollectionValue {
      *        &lt; 1 || index &gt; size()).
      */
     public Value get(int index) {
-        return (Value) fElements.get(index);
+        return fElements.get(index);
     }
 
 
-    public Iterator<Value> iterator() {
+    @Override
+	public Iterator<Value> iterator() {
         return fElements.iterator();
     }
 
-    public int size() {
+    @Override
+	public int size() {
         return fElements.size();
     }
 
-    public boolean isEmpty() {
+    @Override
+	public boolean isEmpty() {
         return fElements.isEmpty();
     }
 
-    public boolean includes(Value v) {
+    @Override
+	public boolean includes(Value v) {
         return fElements.contains(v);
     }
 
-    public boolean includesAll(CollectionValue v) {
+    @Override
+	public boolean includesAll(CollectionValue v) {
         Iterator<Value> it = v.iterator(); 
         while (it.hasNext() ) {
             Value elem = it.next();
@@ -143,7 +147,8 @@ public class SequenceValue extends CollectionValue {
         return true;
     }
 
-    public boolean excludesAll(CollectionValue v) {
+    @Override
+	public boolean excludesAll(CollectionValue v) {
         Iterator<Value> it = v.iterator(); 
         while (it.hasNext() ) {
             Value elem = it.next();
@@ -158,8 +163,8 @@ public class SequenceValue extends CollectionValue {
      *
      * @pre T2 <= T1, if this has type Sequence(T1) and v has type T2.
      */
-    public SequenceValue excluding(Value v) {
-        SequenceValue res = new SequenceValue(elemType());
+    public SequenceValue excluding(Type resultType, Value v) {
+        SequenceValue res = new SequenceValue(getResultElementType(resultType));
         Iterator<Value> it = fElements.iterator(); 
         while (it.hasNext() ) {
             Value elem = it.next();
@@ -169,7 +174,8 @@ public class SequenceValue extends CollectionValue {
         return res;
     }
 
-    public int count(Value v) {
+    @Override
+	public int count(Value v) {
         int res = 0;
         Iterator<Value> it = fElements.iterator();
         
@@ -181,32 +187,32 @@ public class SequenceValue extends CollectionValue {
         return res;
     }
 
-    public SequenceValue union(SequenceValue v) {
-        SequenceValue res = new SequenceValue(elemType());
+    public SequenceValue union(Type resultType, SequenceValue v) {
+        SequenceValue res = new SequenceValue(getResultElementType(resultType));
         res.addAll(fElements);
         res.addAll(v.fElements);
         return res;
     }
 
-    public SequenceValue append(Value v) {
-        SequenceValue res = new SequenceValue(elemType());
+    public SequenceValue append(Type resultType, Value v) {
+        SequenceValue res = new SequenceValue(getResultElementType(resultType));
         res.addAll(fElements);
         res.add(v);
         return res;
     }
 
-    public SequenceValue prepend(Value v) {
-        SequenceValue res = new SequenceValue(elemType());
+    public SequenceValue prepend(Type resultType, Value v) {
+        SequenceValue res = new SequenceValue(getResultElementType(resultType));
         res.add(v);
         res.addAll(fElements);
         return res;
     }
 
-    public SequenceValue insertAt(IntegerValue index, Value v) {
+    public SequenceValue insertAt(Type resultType, IntegerValue index, Value v) {
     	if (index.value() < 1 || index.value() >= fElements.size())
     		return null;
     	
-    	SequenceValue res = new SequenceValue(elemType());
+    	SequenceValue res = new SequenceValue(getResultElementType(resultType));
     	res.addAll(fElements);
     	res.fElements.add(index.value(), v);
     	
@@ -223,10 +229,10 @@ public class SequenceValue extends CollectionValue {
      *
      * @throws    IndexOutOfBoundsException if range is illegal
      */
-    public SequenceValue subSequence(int lower, int upper) {
-        SequenceValue res = new SequenceValue(elemType());
+    public SequenceValue subSequence(Type resultType, int lower, int upper) {
+        SequenceValue res = new SequenceValue(getResultElementType(resultType));
         for (int i = lower; i < upper; i++) 
-            res.add((Value)fElements.get(i));
+            res.add(fElements.get(i));
         return res;
     }
 
@@ -235,16 +241,19 @@ public class SequenceValue extends CollectionValue {
      * sequence elements.  
      * Otherwise the result is nondeterministic, as in Set->asSequence
      */
-    public SequenceValue flatten() {
-        if (! elemType().isCollection(true) ) 
+    public SequenceValue flatten(Type resultType) {
+        if (! elemType().isKindOfCollection(VoidHandling.EXCLUDE_VOID) ) 
             return this;
     
-        CollectionType c2 = (CollectionType) elemType();
-        SequenceValue res = new SequenceValue(c2.elemType());
+        SequenceValue res = new SequenceValue(getResultElementType(resultType));
         Iterator<Value> it = fElements.iterator();
         
         while (it.hasNext() ) {
-            CollectionValue elem = (CollectionValue) it.next();
+        	Value v = it.next();
+        	if (v.isUndefined())
+        		continue;
+        	
+            CollectionValue elem = (CollectionValue)v;
             Iterator<Value> it2 = elem.iterator(); 
             while (it2.hasNext() ) {
                 Value elem2 = it2.next();
@@ -255,7 +264,8 @@ public class SequenceValue extends CollectionValue {
         return res;
     }
 
-    public Collection<Value> collection() {
+    @Override
+	public Collection<Value> collection() {
         return fElements;
     }
 
@@ -271,11 +281,13 @@ public class SequenceValue extends CollectionValue {
         return sb.append("}");
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return fElements.hashCode();
     }
 
-    protected Integer getClassCompareNr()
+    @Override
+	protected Integer getClassCompareNr()
     {
     	return Integer.valueOf(2);
     }
@@ -287,7 +299,8 @@ public class SequenceValue extends CollectionValue {
      * @pre T2 and T1 have common supertype, if this has type Sequence(T1) and 
      *      obj has type Sequence(T2). 
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         
         if (obj == null) return false;
         if (obj.getClass().equals(getClass()) ) {
@@ -299,14 +312,9 @@ public class SequenceValue extends CollectionValue {
 
     void add(Value v) {
         fElements.add(v);
-        markTypeAsDirty();
     }
-
 
     void addAll(Collection<? extends Value> v) {
-        fElements.addAll(v);
-        markTypeAsDirty();
+    	fElements.addAll(v);
     }
-
-
 }

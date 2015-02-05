@@ -45,7 +45,8 @@ public class ASTGProcedure extends AST {
     private List<ASTVariableDeclaration> fParameterDecls;
     private List<ASTVariableDeclaration> fLocalDecls;
     private List<ASTGInstruction> fInstructions;
-
+    private GProcedure proc;
+    
     public ASTGProcedure (
     		Token name, 
     		List<ASTVariableDeclaration> parameterDecls, 
@@ -57,11 +58,14 @@ public class ASTGProcedure extends AST {
         fInstructions = instructions;
     }
 
-    public GProcedure gen(Context ctx) throws SemanticException {
-        GProcedure proc = new GProcedure(fName.getText());
-        GInstrTry.numTries = 0;
-        
+	/**
+	 * @param ctx
+	 * @return
+	 */
+	public GProcedure genSignature(Context ctx) {
+		proc = new GProcedure(fName.getText());		
         ctx.varTable().enterScope();
+        
         try {
             for (ASTVariableDeclaration astvardecl : fParameterDecls) {
                 VarDecl vardecl = astvardecl.gen(ctx);
@@ -76,19 +80,43 @@ public class ASTGProcedure extends AST {
                 // throws an exception when variable is redefined
                 proc.addLocalDecl( vardecl );
             }
-            
-            for (ASTGInstruction ins : fInstructions) {
-                proc.addInstruction( ins.gen(ctx) );
-            }
-        
         } catch (SemanticException ex ) {
             ctx.reportError(ex);
         }
         
-        // FIXME: Decentralize the exception handling to allow more error messages at once?
-
         ctx.varTable().exitScope();
 
         return proc;
-    }
+	}
+
+	/**
+	 * @param ctx
+	 * @return
+	 */
+	public void genBody(Context ctx) {
+		GInstrTry.numTries = 0;
+        ctx.varTable().enterScope();
+
+        try {
+        	for (int i = 0; i < fParameterDecls.size(); ++i) {
+        		ASTVariableDeclaration astvardecl = fParameterDecls.get(i);
+                VarDecl vardecl = proc.parameterDecls().get(i);
+                ctx.varTable().add( astvardecl.name(), vardecl.type() );
+            }
+
+        	for (int i = 0; i < fLocalDecls.size(); ++i) {
+        		ASTVariableDeclaration astvardecl = fLocalDecls.get(i);
+                VarDecl vardecl = proc.localDecls().get(i);
+                ctx.varTable().add( astvardecl.name(), vardecl.type() );
+            }
+            
+        	for (ASTGInstruction ins : fInstructions) {
+                proc.addInstruction( ins.gen(ctx) );
+            }
+        } catch (SemanticException ex ) {
+            ctx.reportError(ex);
+        }
+        
+        ctx.varTable().exitScope();
+	}
 }

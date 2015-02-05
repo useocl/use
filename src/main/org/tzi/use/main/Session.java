@@ -40,14 +40,14 @@ public class Session {
     private MSystem fSystem;
     private List<ChangeListener> fListenerStateChange;
     private List<EvaluatedStatementListener> fListenerEvaluatedStatement;
-    
+
     public class EvaluatedStatement extends EventObject {
 		private static final long serialVersionUID = 1L;
 
 		public EvaluatedStatement(Object source) {
 			super(source);
 
-		}    	
+		}
     }
     
     public interface EvaluatedStatementListener extends EventListener {
@@ -129,7 +129,7 @@ public class Session {
         for (ChangeListener l : this.fListenerStateChange) {
             l.stateChanged(event);
         }
-    } 
+    }
     
     /**
      * Notifies listeners, that a statement has been evaluated.
@@ -140,8 +140,6 @@ public class Session {
 
     	for (EvaluatedStatementListener l : this.fListenerEvaluatedStatement) {
         	l.evaluatedStatement(event);
-        }
+    	}
     }
 }
-
-

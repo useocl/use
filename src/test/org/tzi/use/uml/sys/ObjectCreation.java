@@ -61,7 +61,7 @@ public class ObjectCreation {
                     .createModelWithClassAndAssocs();
             MSystem system = new MSystem( model );
             
-            UseSystemApi systemApi = UseSystemApi.create(system);
+            UseSystemApi systemApi = UseSystemApi.create(system, false);
             
             // creation of an object (p1) of the class Person
             systemApi.createObjects("Person", "p1");
@@ -91,7 +91,7 @@ public class ObjectCreation {
                     .createModelWithClassAndAssocs2();
             MSystem system = new MSystem( model );
             
-            UseSystemApi systemApi = UseSystemApi.create(system);
+            UseSystemApi systemApi = UseSystemApi.create(system, false);
             
             // creation of an object (p1) of the class Person
             systemApi.createObjects("Person", "p1");
@@ -129,7 +129,7 @@ public class ObjectCreation {
                     .createModelWithClassAndAssocClass();
             MSystem system = new MSystem( model );
             
-            UseSystemApi systemApi = UseSystemApi.create(system);
+            UseSystemApi systemApi = UseSystemApi.create(system, false);
             
             // creation of an object (p1) of the class Person
             systemApi.createObjects("Person", "p1");
@@ -164,7 +164,7 @@ public class ObjectCreation {
                     .createModelWithOneClassAndOneAssocClass();
             MSystem system = new MSystem( model );
             
-            UseSystemApi systemApi = UseSystemApi.create(system);
+            UseSystemApi systemApi = UseSystemApi.create(system, false);
             
             // creation of an objects (p1,p2) of the class Person
             systemApi.createObjects("Person", "p1", "p2");
@@ -194,7 +194,7 @@ public class ObjectCreation {
                     .createModelWithClassAndTenaryAssocClass();
             MSystem system = new MSystem( model );
             
-            UseSystemApi systemApi = UseSystemApi.create(system);
+            UseSystemApi systemApi = UseSystemApi.create(system, false);
             
             // creation of an object (p1) of the class Person
             systemApi.createObjects("Person", "p1");
@@ -234,7 +234,7 @@ public class ObjectCreation {
                     .createComplexModel();
             MSystem system = new MSystem( model );
             
-            UseSystemApi systemApi = UseSystemApi.create(system);
+            UseSystemApi systemApi = UseSystemApi.create(system, false);
             
             // creation of two objects (p1, p2) of the class Person
             systemApi.createObjects("Person", "p1", "p2");

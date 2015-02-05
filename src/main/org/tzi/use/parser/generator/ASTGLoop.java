@@ -77,7 +77,7 @@ public class ASTGLoop extends ASTGInstruction {
 
             GInstruction sequence = fSequence.gen(ctx);
             if (! (sequence instanceof GValueInstruction) ||
-                ! ((GValueInstruction) sequence).type().isSequence() ) {
+                ! ((GValueInstruction) sequence).type().isTypeOfSequence() ) {
                 String err = "`" + sequence + "' must be of type Sequence.";
                 // Fixme: The position of the error must be the
                 // position of fSequence.
@@ -85,7 +85,7 @@ public class ASTGLoop extends ASTGInstruction {
             }
 
             if (! ((SequenceType)((GValueInstruction) sequence).type())
-                .elemType().isSubtypeOf(vardecl.type()) ) {
+                .elemType().conformsTo(vardecl.type()) ) {
                 String err = "The elements of `"+sequence+"' must be of " +
                     "type " + vardecl.type() + " (or a subtype)";
                 throw new SemanticException( fDecl.name(), err );

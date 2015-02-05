@@ -29,12 +29,7 @@ package org.tzi.use.uml.mm;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public interface MModelElement extends Annotatable, Comparable<MModelElement>, MNamedElement {
-    /**
-     * Returns the name of this model element.
-     */
-    String name();
-
+public interface MModelElement extends MNamedElement, Annotatable, Comparable<MModelElement> {
     /**
      * Process this element with visitor.
      */

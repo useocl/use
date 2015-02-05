@@ -14,10 +14,11 @@ import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.Multimap;
 
 public class StandardOperationsOrderedSet {
-	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
+	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
 		// operations on OrderedSet
 		OpGeneric.registerOperation(new Op_orderedSet_append(), opmap);
 		OpGeneric.registerOperation(new Op_orderedSet_prepend(), opmap);
@@ -33,58 +34,6 @@ public class StandardOperationsOrderedSet {
 		OpGeneric.registerOperation(new Op_orderedSet_union(), opmap);		
 		OpGeneric.registerOperation(new Op_orderedSet_including(), opmap);
 		OpGeneric.registerOperation(new Op_orderedSet_excluding(), opmap);
-		
-		// Constructors
-		OpGeneric.registerOperation(new Op_mkOrderedSetRange(), opmap);
-	}
-}
-
-//--------------------------------------------------------
-//
-// OrderedSet constructors.
-//
-// --------------------------------------------------------
-
-/* mkSequenceRange : Integer x Integer, ... -> OrderedSet(Integer) */
-final class Op_mkOrderedSetRange extends OpGeneric {
-	public String name() {
-		return "mkOrderedSetRange";
-	}
-
-	public int kind() {
-		return OPERATION;
-	}
-
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
-
-	public Type matches(Type params[]) {
-		return (params.length >= 2 && params.length % 2 == 0
-				&& params[0].isInteger() && params[1].isInteger()) ? TypeFactory
-				.mkOrderedSet(TypeFactory.mkInteger())
-				: null;
-	}
-
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		int[] ranges = new int[args.length];
-		for (int i = 0; i < args.length; i++)
-			ranges[i] = ((IntegerValue) args[i]).value();
-
-		return new OrderedSetValue(TypeFactory.mkInteger(), ranges);
-	}
-
-	public String stringRep(Expression args[], String atPre) {
-		if (args.length % 2 != 0)
-			throw new IllegalArgumentException("length=" + args.length);
-		String s = "OrderedSet{";
-		for (int i = 0; i < args.length; i += 2) {
-			if (i > 0)
-				s += ",";
-			s += args[i] + ".." + args[i + 1];
-		}
-		s += "}";
-		return s;
 	}
 }
 
@@ -109,8 +58,8 @@ final class Op_orderedSet_union extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isOrderedSet()
-				&& params[1].isOrderedSet()) {
+		if (params.length == 2 && params[0].isTypeOfOrderedSet()
+				&& params[1].isTypeOfOrderedSet()) {
 			OrderedSetType oset1 = (OrderedSetType) params[0];
 			OrderedSetType oset2 = (OrderedSetType) params[1];
 
@@ -127,7 +76,7 @@ final class Op_orderedSet_union extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		OrderedSetValue oset1 = (OrderedSetValue) args[0];
 		OrderedSetValue oset2 = (OrderedSetValue) args[1];
-		return oset1.union(oset2);
+		return oset1.union(resultType, oset2);
 	}
 }
 
@@ -148,7 +97,7 @@ final class Op_orderedSet_append extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isOrderedSet()) {
+		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
 			Type commonElementType = osetType.elemType()
@@ -162,7 +111,7 @@ final class Op_orderedSet_append extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		OrderedSetValue oset = (OrderedSetValue) args[0];
-		return oset.append(args[1]);
+		return oset.append(resultType, args[1]);
 	}
 }
 
@@ -183,7 +132,7 @@ final class Op_orderedSet_prepend extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isOrderedSet()) {
+		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
 			Type commonElementType = osetType.elemType()
@@ -197,7 +146,7 @@ final class Op_orderedSet_prepend extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		OrderedSetValue oset = (OrderedSetValue) args[0];
-		return oset.prepend(args[1]);
+		return oset.prepend(resultType, args[1]);
 	}
 }
 
@@ -218,8 +167,8 @@ final class Op_orderedSet_insertAt extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 3 && params[0].isOrderedSet()
-				&& params[1].isInteger()) {
+		if (params.length == 3 && params[0].isTypeOfOrderedSet()
+				&& params[1].isTypeOfInteger()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
 			Type commonElementType = osetType.elemType()
@@ -233,7 +182,7 @@ final class Op_orderedSet_insertAt extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		OrderedSetValue oset = (OrderedSetValue) args[0];
-		OrderedSetValue res = oset.insertAt((IntegerValue) args[1],
+		OrderedSetValue res = oset.insertAt(resultType, (IntegerValue) args[1],
 				(Value) args[2]);
 
 		if (res == null)
@@ -260,8 +209,8 @@ final class Op_orderedSet_subOrderedSet extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		return (params.length == 3 && params[0].isOrderedSet()
-				&& params[1].isInteger() && params[2].isInteger()) ? params[0]
+		return (params.length == 3 && params[0].isTypeOfOrderedSet()
+				&& params[1].isTypeOfInteger() && params[2].isTypeOfInteger()) ? params[0]
 				: null;
 	}
 
@@ -274,7 +223,7 @@ final class Op_orderedSet_subOrderedSet extends OpGeneric {
 
 		Value res = null;
 		try {
-			res = seq.subOrderedSet(lower - 1, upper);
+			res = seq.subOrderedSet(resultType, lower - 1, upper);
 		} catch (IndexOutOfBoundsException e) {
 			res = UndefinedValue.instance;
 		}
@@ -299,8 +248,8 @@ final class Op_orderedSet_at extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isOrderedSet()
-				&& params[1].isInteger()) {
+		if (params.length == 2 && params[0].isTypeOfOrderedSet()
+				&& params[1].isTypeOfInteger()) {
 			OrderedSetType oset = (OrderedSetType) params[0];
 			return oset.elemType();
 		}
@@ -337,7 +286,7 @@ final class Op_orderedSet_first extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isOrderedSet()) {
+		if (params.length == 1 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType oset = (OrderedSetType) params[0];
 			return oset.elemType();
 		}
@@ -369,7 +318,7 @@ final class Op_orderedSet_last extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isOrderedSet()) {
+		if (params.length == 1 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType oset = (OrderedSetType) params[0];
 			return oset.elemType();
 		}
@@ -401,7 +350,7 @@ final class Op_orderedSet_including extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isOrderedSet()) {
+		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
 			Type commonElementType = osetType.elemType()
@@ -418,7 +367,7 @@ final class Op_orderedSet_including extends OpGeneric {
 		if (args[0].isUndefined())
 			return UndefinedValue.instance;
 		OrderedSetValue oset = (OrderedSetValue) args[0];
-		return oset.append(args[1]);
+		return oset.append(resultType, args[1]);
 	}
 }
 
@@ -439,7 +388,7 @@ final class Op_orderedSet_excluding extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isOrderedSet()) {
+		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
 			Type commonElementType = osetType.elemType()
@@ -455,7 +404,7 @@ final class Op_orderedSet_excluding extends OpGeneric {
 		if (args[0].isUndefined())
 			return UndefinedValue.instance;
 		OrderedSetValue oset = (OrderedSetValue) args[0];
-		return oset.excluding(args[1]);
+		return oset.excluding(resultType, args[1]);
 	}
 	
 	@Override
@@ -464,7 +413,7 @@ final class Op_orderedSet_excluding extends OpGeneric {
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to the same ordered set, " + StringUtil.NEWLINE +
 					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
@@ -490,7 +439,7 @@ final class Op_orderedSet_indexOf extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isOrderedSet()) {
+		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
 			Type commonElementType = osetType.elemType()
@@ -522,7 +471,7 @@ final class Op_orderedSet_indexOf extends OpGeneric {
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					" will always evaluate to undefined, " + StringUtil.NEWLINE +
 					"because the element type " + StringUtil.inQuotes(col.elemType()) + 
@@ -548,7 +497,7 @@ final class Op_orderedSet_reverse extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isOrderedSet()) {
+		if (params.length == 1 && params[0].isTypeOfOrderedSet()) {
 			return params[0];
 		}
 		return null;

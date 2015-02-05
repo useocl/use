@@ -27,6 +27,7 @@ import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -62,7 +63,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
             fail( ex.getMessage() );
         }
         
-        systemApi = UseSystemApi.create(modelApi.getModel());
+        systemApi = UseSystemApi.create(modelApi.getModel(), false);
     }
     
     /**
@@ -111,7 +112,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
             // Destruction of all objects!
             Value objectCollection = systemApi.evaluate("A.allInstances()->union(B.allInstances())->union(C.allInstances())");
             
-            assertTrue(objectCollection.type().isCollection(true));
+            assertTrue(objectCollection.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID));
             CollectionValue colVal = (CollectionValue)objectCollection;
             MObject[] objects = new MObject[colVal.size()];
             int i = 0;

@@ -30,7 +30,6 @@ import org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_AC;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -61,7 +60,7 @@ public class GInstrCreate_AC implements GValueInstruction {
     
     @Override
     public Type type() {
-        return TypeFactory.mkObjectType(associationClass);
+        return associationClass;
     }
     
     public String toString() {
@@ -76,9 +75,6 @@ public class GInstrCreate_AC implements GValueInstruction {
     	v.visitInstrCreate_AC(this);
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.statics.GInstruction#createEvalInstr()
-	 */
 	@Override
 	public GEvalInstruction createEvalInstr() {
 		return new GEvalInstrCreate_AC(this);

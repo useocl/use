@@ -65,8 +65,8 @@ public final class Evaluator {
 
     /**
      * Evaluates an expression in the specified system state context
-     * with a set of initial variable bindings. Detailed information
-     * is printed to evalLog.
+     * with a set of initial variable bindings. 
+     * Detailed information is printed to <code>evalLog</code>, which can be <code>null</code>.
      */
     public Value eval(Expression expr, 
                       MSystemState preState,
@@ -76,8 +76,10 @@ public final class Evaluator {
                       String evalLogIndent) {
     	if (fEnableEvalTree)
     		fEvalContext = new DetailedEvalContext(preState, postState, bindings, evalLog, evalLogIndent);
-    	else
+    	else if (evalLog != null || Log.isTracing())
     		fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent);
+    	else
+    		fEvalContext = new SimpleEvalContext(preState, postState, bindings);
     	
         Value res = evaluate(expr);
         if (evalLog != null )
@@ -99,12 +101,15 @@ public final class Evaluator {
 	}
 
     /**
-     * TODO
-     * @param expr
-     * @param postState
-     * @param bindings
-     * @param evalLog
-     * @return
+     * Evaluates an expression in the specified system state context
+     * with a set of initial variable bindings.
+     * This evaluation method uses the provided system state for the prestate and the current state.  
+     * Detailed information is printed to evalLog.
+     * @param expr The expression to evaluate.
+     * @param postState The system state used as the current and pre state
+     * @param bindings The var bindings.
+     * @param evalLog A PrintWriter for the details.
+     * @return The result value.
      */
     public Value eval(Expression expr, 
                       MSystemState postState,

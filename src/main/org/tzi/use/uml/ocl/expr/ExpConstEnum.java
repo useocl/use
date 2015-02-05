@@ -28,15 +28,16 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * Enumeration literal.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpConstEnum extends Expression {
     private String fValue;
-
+    private EnumValue enumValue;
+        
     public ExpConstEnum(EnumType t, String literal) {
         super(t);
         fValue = literal;
+        enumValue = new EnumValue((EnumType) type(), fValue);
     }
 
     public String value() {
@@ -47,10 +48,9 @@ public final class ExpConstEnum extends Expression {
      * Evaluates expression and returns result value.
      */
     public Value eval(EvalContext ctx) {
-        ctx.enter(this);
-        Value res = new EnumValue((EnumType) type(), fValue);
-        ctx.exit(this, res);
-        return res;
+        ctx.enter(this);    
+        ctx.exit(this, enumValue);
+        return enumValue;
     }
 
     @Override
@@ -60,12 +60,14 @@ public final class ExpConstEnum extends Expression {
         return sb.append(fValue);
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitConstEnum(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
 	}
 }
 

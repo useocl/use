@@ -35,115 +35,113 @@ import org.tzi.use.util.soil.VariableEnvironment;
  * 
  * @author Fabian Buettner
  * @author Daniel Gent
- * 
+ *
  */
 public class SoilEvaluationContext {
-    /** TODO */
-    private MSystem fSystem;
+	
+	private MSystem fSystem;
 
-    private Deque<Expression> fExpressionStack = new ArrayDeque<Expression>();
-    /** TODO */
-    private boolean fIsUndo = false;
-    /** TODO */
-    private boolean fIsRedo = false;
-
-    /**
-     * TODO
+	private Deque<Expression> fExpressionStack = new ArrayDeque<Expression>();
+	
+	private boolean fIsUndo = false;
+	
+	private boolean fIsRedo = false;
+	
+	/**
+	 * Constructs a new evaluation context for the given system.
      * 
-     * @param system
-     */
+	 * @param system The system of the context.
+	 */
     public SoilEvaluationContext(MSystem system) {
-
-        fSystem = system;
-    }
-
-    /**
-     * TODO
+		fSystem = system;
+	}
+	
+	/**
+	 * The system the statement is evaluated on. 
+	 * @return
+	 */
+	public MSystem getSystem() {
+		return fSystem;
+	}
+	
+	/**
+	 * The system state the statement is evaluated on. 
      * 
-     * @return
-     */
-    public MSystem getSystem() {
-        return fSystem;
-    }
-
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public MSystemState getState() {
+	 * @return
+	 */
+	public MSystemState getState() {
         return fSystem.state();
-    }
-
-    /**
-     * TODO
+	}
+	
+	/**
+	 * The variable environment of the system.
      * 
-     * @return
-     */
-    public VariableEnvironment getVarEnv() {
+	 * @return
+	 */
+	public VariableEnvironment getVarEnv() {
         return fSystem.getVariableEnvironment();
-    }
-
-    /**
-     * TODO
+	}
+	
+	/**
+	 * <code>true</code>, if the current context is an undo
+	 * of a previously executed statement.
      * 
-     * @return
-     */
-    public boolean isUndo() {
-        return fIsUndo;
-    }
-
-    /**
-     * TODO
+	 * @return
+	 */
+	public boolean isUndo() {
+		return fIsUndo;
+	}
+	
+	/**
+	 * Sets this context to an undo context. 
+	 * @param isUndo
+	 */
+	public void setIsUndo(boolean isUndo) {
+		fIsUndo = isUndo;
+	}
+	
+	/**
+	 *  <code>true</code>, if the current context is a redo
+	 *  of a previously undone statement.
      * 
-     * @param isUndo
-     */
-    public void setIsUndo(boolean isUndo) {
-        fIsUndo = isUndo;
-    }
-
-    /**
-     * TODO
+	 * @return
+	 */
+	public boolean isRedo() {
+		return fIsRedo;
+	}
+	
+	/**
+	 * Sets this context to a redo context. 
+	 * @param isRedo
+	 */
+	public void setIsRedo(boolean isRedo) {
+		fIsRedo = isRedo;
+	}
+	
+	/**
+	 * Pushes <code>expression</code> to the expression stack.
      * 
-     * @return
-     */
-    public boolean isRedo() {
-        return fIsRedo;
-    }
-
-    /**
-     * TODO
+	 * @param expression The expression to enter.
+	 */
+	public void enterExpression(Expression expression) {
+		fExpressionStack.push(expression);
+	}
+	
+	/**
+	 * Pops the last entered expression from the expression stack.
      * 
-     * @param isRedo
-     */
-    public void setIsRedo(boolean isRedo) {
-        fIsRedo = isRedo;
-    }
-
-    /**
-     * TODO
+	 * @return The last entered expression.
+	 */
+	public Expression exitExpression() {
+		return fExpressionStack.pop();
+	}
+	
+	/**
+	 * <code>true</code>, if an expression was entered before but not exited.
      * 
-     * @param expression
-     */
-    public void enterExpression(Expression expression) {
-        fExpressionStack.push(expression);
-    }
-
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public Expression exitExpression() {
-        return fExpressionStack.pop();
-    }
-
-    /**
-     * TODO
-     * 
-     * @return
-     */
-    public boolean isInExpression() {
-        return !fExpressionStack.isEmpty();
-    }
+	 * @return
+	 */
+	public boolean isInExpression() {
+		return !fExpressionStack.isEmpty();
+	}
 }

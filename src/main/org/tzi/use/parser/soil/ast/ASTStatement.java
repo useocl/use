@@ -25,7 +25,6 @@ import static org.tzi.use.util.StringUtil.inQuotes;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -47,9 +46,7 @@ import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
@@ -65,10 +62,9 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  * Holds references to the {@link Context} {@code fContext} and a special
  * {@link SymbolTable} {@code fSymbolTable}.
  * <p>
- * Furthermore each object of this kind posseses its own 
  * 
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public abstract class ASTStatement extends AST {
 	
@@ -77,29 +73,33 @@ public abstract class ASTStatement extends AST {
 	 */
 	private SrcPos fSourcePosition;
 	
-	/** TODO */
-	private String fParsedText;
-	
-	private List<ASTStatement> fChildStatements = new ArrayList<ASTStatement>();
-	
-	/** TODO */
+	/** The set of bound variables for the statement */
 	protected VariableSet fBoundSet = new VariableSet();
-	/** TODO */
+	
+	/** The set of assigned variables */
 	protected VariableSet fAssignedSet = new VariableSet();
 	
-	/** TODO */
+	//FIXME: Why not as an argument as it is done by the other AST classes?
+	/** The context used by the generation */
 	protected Context fContext;
 	
-	/** TODO */
+	//FIXME: Why not as an argument as it is done by the other AST classes?
 	protected SymbolTable fSymtable;
 	
-	/** TODO */
+	/** If set, the generated statement must return a result of this type */
 	private Type fRequiredResultType;
 
 	protected static boolean VERBOSE = false;
 	
 	protected static PrintWriter VERBOSE_OUT = new PrintWriter(System.out);
 
+	public ASTStatement(SrcPos sourcePosition) {
+		this.fSourcePosition = sourcePosition;
+	}
+	
+	public ASTStatement(Token sourcePosition) {
+		this(new SrcPos(sourcePosition));
+	}
 	
 	/**
 	 * Returns <code>true</code> if a source position is specified, i. e.,
@@ -110,9 +110,8 @@ public abstract class ASTStatement extends AST {
 		return fSourcePosition != null;
 	}
 	
-	
 	/**
-	 * Returns the source position of this statement id specified.
+	 * Returns the source position of this statement if specified.
 	 * Otherwise <code>null</code> is returned.
 	 * @return The source position or <code>null</code>
 	 */
@@ -137,31 +136,6 @@ public abstract class ASTStatement extends AST {
 	public void setSourcePosition(Token token) {
 		setSourcePosition(new SrcPos(token));
 	}
-
-	/**
-	 * TODO
-	 * @param childStatement
-	 */
-	protected void addChildStatement(ASTStatement childStatement) {
-		fChildStatements.add(childStatement);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param childStatements
-	 */
-	protected void addChildStatements(List<ASTStatement> childStatements) {
-		fChildStatements.addAll(childStatements);
-	}
-
-	/**
-	 * TODO
-	 * @return
-	 */
-	public List<ASTStatement> getChildStatements() {
-		return fChildStatements;
-	}
 	
 	
 	/**
@@ -171,20 +145,18 @@ public abstract class ASTStatement extends AST {
 	public boolean isEmptyStatement() {
 		return (this instanceof ASTEmptyStatement);
 	}
-	
-	
+		
 	/**
-	 * TODO
+	 * Access to the set symbol table.
 	 * @return
 	 */
 	public SymbolTable getSymbolTable() {
 		return fSymtable;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @return
+	 * Set of bound variables.
+	 * @return The set of bound variables.
 	 */
 	public VariableSet bound() {
 		return fBoundSet;
@@ -192,8 +164,8 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Set of assigned variables.
+	 * @return The set of assigned variables.
 	 */
 	public VariableSet assigned() {
 		return fAssignedSet;
@@ -201,7 +173,7 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
+	 * Returns <code>true</code>, if this statement binds a variable named <code>name</code>.
 	 * @param name
 	 * @return
 	 */
@@ -211,7 +183,8 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
+	 * Returns <code>true</code> if the statement assigns
+	 * a value to the variable <code>name</code>.
 	 * @param name
 	 * @return
 	 */
@@ -221,10 +194,10 @@ public abstract class ASTStatement extends AST {
 		
 	
 	/**
-	 * TODO
+	 * Used to validate the result type of an operation body statement.
 	 * @param type
 	 */
-	public void mustBindResultAs(Type type) {
+	private void mustBindResultAs(Type type) {
 		fRequiredResultType = type;
 	}
 	
@@ -263,7 +236,8 @@ public abstract class ASTStatement extends AST {
 	}
 	
 	/**
-	 * TODO
+	 * Generates this statement using the given <code>context</code>
+	 * and the given <code>symtable</code>
 	 * @param context
 	 * @param symtable
 	 * @return
@@ -284,24 +258,24 @@ public abstract class ASTStatement extends AST {
 		
 		if (fRequiredResultType != null) {
 			if (!fSymtable.isExplicit()) {
-				if (!binds("result")) {
-					throw new CompilationFailedException(this,
-							"Operation must return a value, but variable "
-									+ StringUtil.inQuotes("result")
-									+ " might be unbound.");
-				}
-				
-				Type resultType = bound().getType("result");
-				if (!resultType.isSubtypeOf(fRequiredResultType)) {
-					throw new CompilationFailedException(
-							this, 
-							"Operation returns a value of type " +
-									StringUtil.inQuotes(resultType) +
-									", which is not a subtype of the declared return type " +
-									StringUtil.inQuotes(fRequiredResultType) +
-									".");
-				}
+			if (!binds("result")) {
+				throw new CompilationFailedException(this,
+						"Operation must return a value, but variable "
+								+ StringUtil.inQuotes("result")
+								+ " might be unbound.");
 			}
+			
+			Type resultType = bound().getType("result");
+			if (!resultType.conformsTo(fRequiredResultType)) {
+				throw new CompilationFailedException(
+						this, 
+						"Operation returns a value of type " +
+								StringUtil.inQuotes(resultType) +
+								", which is not a subtype of the declared return type " +
+								StringUtil.inQuotes(fRequiredResultType) +
+								".");
+			}
+		}
 		}
 		 
 		return result;
@@ -309,7 +283,7 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
+	 * Generates this statement in the context of an operation body.
 	 * @param context
 	 * @param operation
 	 * @return
@@ -327,10 +301,10 @@ public abstract class ASTStatement extends AST {
     		symbolTable.setType(p.name(), p.type());
     	}
     	if (operation.resultType() != null && Options.explicitVariableDeclarations) {
-        	symbolTable.setType("result", operation.resultType());;
+        	symbolTable.setType("result", operation.resultType());
         }
     	// ... self
-    	symbolTable.setType("self", TypeFactory.mkObjectType(operation.cls()));
+    	symbolTable.setType("self", operation.cls());
     	
     	if (operation.hasResultType()) {
     		mustBindResultAs(operation.resultType());
@@ -343,39 +317,24 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param indent
-	 * @param indentInc
-	 * @param errorOutput
+	 * Prints out the AST to <code>target</code>.
+	 * @param target
 	 */
 	public void printTree(PrintWriter target) {
 		printTree(new StringBuilder(), target);
 	}
 	
-	
-	@Override
-	public String toString() {
-		return fParsedText;
-	}
-	
-	
 	/**
-	 * TODO
+	 * Print the statement as a tree using the given prelude (prefix).
 	 * @param prelude
 	 * @param target
 	 */
-	protected abstract void printTree(
-			StringBuilder prelude, 
-			PrintWriter target);
+	protected abstract void printTree(StringBuilder prelude, PrintWriter target);
 	
 	/**
-	 * TODO
+	 * This method is used to remove unnecessary AST nodes. 
 	 */
-	public void flatten() {
-		for (ASTStatement statement : fChildStatements) {
-			statement.flatten();
-		}
-	}
+	public void flatten() {	}
 	
 
 	/**
@@ -404,7 +363,7 @@ public abstract class ASTStatement extends AST {
 	
 
 	/**
-	 * TODO
+	 * Generate the expression with all set information.
 	 * @return
 	 * @throws CompilationFailedException
 	 */
@@ -412,7 +371,8 @@ public abstract class ASTStatement extends AST {
 
 	
 	/**
-	 * TODO
+	 * Generates an expression using the given <code>context</code> 
+	 * and the given <code>symbolTable</code>.
 	 * @param expression
 	 * @param context
 	 * @param symbolTable
@@ -486,28 +446,26 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param expression
+	 * Generates an expression using the context ({@link #fContext}) 
+	 * and symbol table ({@link #fSymtable}.
+	 * @param expression The expression to generate
 	 * @return
 	 * @throws CompilationFailedException
 	 */
 	protected Expression generateExpression(
 			ASTExpression expression) throws CompilationFailedException {
-		
 		return generateExpression(expression, fContext, fSymtable);
 	}
 	
 	
 	
 	/**
-	 * TODO
-	 * @param expression
+	 * Generates the expression and checks if it is of type ObjectType.
+	 * @param expression The expression to generate
 	 * @return
 	 * @throws CompilationFailedException
 	 */
-	protected Expression generateObjectExpression(
-			ASTExpression expression) throws CompilationFailedException {
-		
+	protected Expression generateObjectExpression(ASTExpression expression) throws CompilationFailedException {		
 		Expression possibleObject = generateExpression(expression);
 		
 		validateObjectType(possibleObject);
@@ -517,8 +475,8 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param expression
+	 * Generates the expression and checks if it is of type string.
+	 * @param expression The expression to generate
 	 * @return
 	 * @throws CompilationFailedException
 	 */
@@ -527,7 +485,7 @@ public abstract class ASTStatement extends AST {
 		
 		Expression possibleString = generateExpression(expression);
 		
-		if (!possibleString.type().isString()) {
+		if (!possibleString.type().isTypeOfString()) {
 			throw new CompilationFailedException(this, "Expression "
 					+ inQuotes(expression.getStringRep()) + " is of type "
 					+ inQuotes(possibleString.type()) + ", expected "
@@ -553,13 +511,13 @@ public abstract class ASTStatement extends AST {
 	 *             or if the class has no attribute with the name
 	 *             <code>attributeName</code>.
 	 */
-	protected MAttribute generateAttribute(
+	protected MAttribute getAttributeSafe(
 			Expression objectExpr, 
 			String attributeName) throws CompilationFailedException {
 		
 		validateObjectType(objectExpr);
 		
-		MClass objectClass = ((ObjectType)objectExpr.type()).cls();
+		MClass objectClass = (MClass)objectExpr.type();
 		MAttribute attribute = 
 			objectClass.attribute(attributeName, true);
 		
@@ -580,7 +538,7 @@ public abstract class ASTStatement extends AST {
 	 */
 	private void validateObjectType(Expression expression)
 			throws CompilationFailedException {
-		if (!expression.type().isObjectType()) {
+		if (!expression.type().isTypeOfClass()) {
 			throw new CompilationFailedException(this,
 					"Expected expression with object type, found type "
 							+ StringUtil.inQuotes(expression.type()) + ".");
@@ -589,8 +547,9 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param statement
+	 * Generates a the <code>statement</code> by using the set
+	 * context ({@link #fContext}) and symbol table ({@link #fSymtable}.
+	 * @param statement The statement to generate.
 	 * @return
 	 * @throws CompilationFailedException 
 	 */
@@ -602,14 +561,12 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
-	 * @param type
+	 * Generates the type from the given AST.
+	 * @param type AST node of the type to generate
 	 * @return
 	 * @throws NotATypeException
 	 */
-	protected Type generateType(
-			ASTType type) throws CompilationFailedException {
-
+	protected Type generateType(ASTType type) throws CompilationFailedException {
 		try {
 			return type.gen(fContext);
 		} catch(SemanticException e) {
@@ -618,12 +575,12 @@ public abstract class ASTStatement extends AST {
 	}
 	
 	/**
-	 * TODO
-	 * @param name
-	 * @return
-	 * @throws CompilationFailedException
+	 * Returns the association names <code>name</code>.
+	 * @param name The name of the association to get.
+	 * @return The association named <code>name</code>.
+	 * @throws CompilationFailedException If no such association exists. 
 	 */
-	protected MAssociation getAssociation(
+	protected MAssociation getAssociationSafe(
 			String name) throws CompilationFailedException {
 		
 		MAssociation association = 
@@ -638,7 +595,8 @@ public abstract class ASTStatement extends AST {
 	}
 	
 	/**
-	 * TODO
+	 * Generates the RValues for the given participants and checks 
+	 * them if they are valid for the given association. 
 	 * @param association
 	 * @param participants
 	 * @return
@@ -675,13 +633,12 @@ public abstract class ASTStatement extends AST {
 			MAssociationEnd associationEnd = 
 				associationEnds.get(i);
 			
-			MRValue participant = 
-				generateRValue(participants.get(i));
+			MRValue participant = participants.get(i).generate(this);
 			
-			Type expectedType = associationEnd.cls().type();
+			Type expectedType = associationEnd.cls();
 			Type foundType = participant.getType();
 			
-			if (!foundType.isSubtypeOf(expectedType)) {
+			if (!foundType.conformsTo(expectedType)) {
 				
 				throw new CompilationFailedException(
 						this, 
@@ -699,34 +656,16 @@ public abstract class ASTStatement extends AST {
 		return result;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param object
-	 * @param operationName
-	 * @return
-	 * @throws CompilationFailedException
+	 * Checks if the operation named <code>operationName</code> is defined
+	 * for the class <code>objectClass</code>.
+	 * If no such operation exists, a {@link CompilationFailedException} is thrown.
+	 * @param objectClass The class to get the operation for.
+	 * @param operationName The name of the operation to retrieve.
+	 * @return The operation named <code>operationName</code> defined in the class <code>objectClass</code> or in one of its parents.
+	 * @throws CompilationFailedException If no such operation exists.
 	 */
-	protected MOperation generateOperation(
-			Expression object, 
-			String operationName) throws CompilationFailedException {
-		
-		validateObjectType(object);
-		
-		MClass objectClass = ((ObjectType)object.type()).cls();
-		
-		return generateOperation(objectClass, operationName);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param objectClass
-	 * @param operationName
-	 * @return
-	 * @throws CompilationFailedException
-	 */
-	protected MOperation generateOperation(
+	protected MOperation getOperationSafe(
 			MClass objectClass, 
 			String operationName) throws CompilationFailedException {
 		
@@ -743,13 +682,14 @@ public abstract class ASTStatement extends AST {
 	
 	
 	/**
-	 * TODO
+	 * Generates the expressions for the expression ASTs given by <code>arguments</code>
+	 * and checks if the expressions are valid parameters for <code>operation</code>.
 	 * @param operation
 	 * @param arguments
 	 * @return
 	 * @throws CompilationFailedException
 	 */
-	protected LinkedHashMap<String, Expression> generateOperationArguments(
+	protected Expression[] generateOperationArguments(
 			MOperation operation,
 			List<ASTExpression> arguments) throws CompilationFailedException {
 		
@@ -768,8 +708,7 @@ public abstract class ASTStatement extends AST {
 							+ ", found " + arguments.size() + ".");
 		}
 		
-		LinkedHashMap<String, Expression> result = 
-			new LinkedHashMap<String, Expression>(arguments.size());
+		Expression[] result = new Expression[numParameters];
 		
 		for (int i = 0; i < numParameters; ++i) {
 			
@@ -779,32 +718,19 @@ public abstract class ASTStatement extends AST {
 			Type expectedType = parameter.type();
 			Type foundType = argument.type();
 			
-			if (!foundType.isSubtypeOf(expectedType)) {
+			if (!foundType.conformsTo(expectedType)) {
 				
 				throw new CompilationFailedException(
 						this,
-						"Type mismatch in argument " + i + ". Expected type " +
+						"Type mismatch for operation " + operation.signature() + " in argument " + (i + 1) + ". Expected type " +
 						StringUtil.inQuotes(expectedType) + 
 						", found " +
 						StringUtil.inQuotes(foundType) + ".");
 			}
 			
-			result.put(parameter.name(), argument);
+			result[i] = argument;
 		}
 		
 		return result;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param rValue
-	 * @return
-	 * @throws CompilationFailedException
-	 */
-	protected MRValue generateRValue(
-			ASTRValue rValue) throws CompilationFailedException {
-		
-		return rValue.generate(this);
 	}
 }

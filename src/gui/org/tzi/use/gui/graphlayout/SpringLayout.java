@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.views.diagrams.Layoutable;
-import org.tzi.use.gui.views.diagrams.NodeBase;
 
 /**
  * A spring embedder layout algorithm. See, e.g. G. Di Battista et
@@ -36,15 +35,20 @@ import org.tzi.use.gui.views.diagrams.NodeBase;
  * @author      Mark Richters 
  */
 public class SpringLayout<N extends Layoutable> {
-    private DirectedGraph<N, ?> fGraph; // the graph to be layouted
-    private double fWidth;  // maximum width of layout
-    private double fHeight; // maximum height of layout
-    private double fMarginX;    // margin on left/right side of the drawing area
-    private double fMarginY;    // margin on top/bottom side of the drawing area
+	/** the graph to be layouted **/
+	protected DirectedGraph<N, ?> fGraph;
+	/** maximum width of layout **/
+	protected double fWidth;
+	/** maximum height of layout **/
+	protected double fHeight;
+	/** margin on left/right side of the drawing area **/
+    protected double fMarginX;
+    /** margin on top/bottom side of the drawing area **/
+    protected double fMarginY;
     private double fEdgeLen = 120.0;
-    private List<N> fNodes;
-    private double[] fXn;
-    private double[] fYn;
+    protected List<N> fNodes;
+    protected double[] fXn;
+    protected double[] fYn;
 
     /**
      * Constructs a new SpringLayouter.
@@ -81,8 +85,8 @@ public class SpringLayout<N extends Layoutable> {
      */
     public void layout() {
         final int N = fNodes.size();
-        final double k1 = 1.0;
-        final double k2 = 100.0 * 100.0;
+        final double k1 = 1;
+        final double k2 = 10000;
 
         double xc = 0.0;
         double yc = 0.0;
@@ -97,7 +101,7 @@ public class SpringLayout<N extends Layoutable> {
             double sumfx1 = 0.0;
             double sumfy1 = 0.0;
             while (uIter.hasNext() ) {
-                NodeBase u = (NodeBase) uIter.next();
+                N u = uIter.next();
                 
                 double xu = u.getCenter().getX();
                 double yu = u.getCenter().getY();
@@ -147,16 +151,19 @@ public class SpringLayout<N extends Layoutable> {
         double dy = fHeight / 2 - yc / N;
 
         // use only small steps for smooth animation
-        dx = Math.max(-5, Math.min(5, dx));
-        dy = Math.max(-5, Math.min(5, dy));
+        dx = Math.max(-2.5, Math.min(2.5, dx));
+        dy = Math.max(-2.5, Math.min(2.5, dy));
 
         // set new positions
         for (int i = 0; i < N; i++) {
             N v = fNodes.get(i);
+            double halfWidth = v.getWidth() / 2;
+            double halfHeight = v.getHeight() / 2;
+            
             // move each node towards center of drawing area and keep
             // it within bounds
-            double x = Math.max(fMarginX, Math.min(fWidth - fMarginX, fXn[i] + dx));
-            double y = Math.max(fMarginY, Math.min(fHeight - fMarginY, fYn[i] + dy));
+            double x = Math.max(fMarginX + halfWidth,  Math.min(fWidth - fMarginX - halfWidth, fXn[i] + dx));
+            double y = Math.max(fMarginY + halfHeight, Math.min(fHeight - fMarginY - halfHeight, fYn[i] + dy));
             v.setCenter(x, y);
         }
     }

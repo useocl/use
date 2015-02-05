@@ -80,7 +80,7 @@ public class ExprContext {
      * Returns the top element of the stack.
      */
     public Entry peek() {
-        return (Entry) fEntries.peek();
+        return fEntries.peek();
     }
 
     public void pop() {

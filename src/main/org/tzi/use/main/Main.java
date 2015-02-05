@@ -27,8 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.file.Path;
 
 import javax.swing.ImageIcon;
 import javax.swing.UIDefaults;
@@ -90,37 +89,30 @@ public final class Main {
 		// Plugin Framework
 		if (Options.doPLUGIN) {
 			// create URL from plugin directory
-			URL pluginDirURL = null;
+			Path pluginDirURL = Options.pluginDir;
+			Log.verbose("Plugin path: [" + pluginDirURL + "]");
+			Class<?> mainPluginRuntimeClass = null;
 			try {
-				pluginDirURL = new URL(Options.pluginDir);
-				Log.verbose("Plugin path: [" + pluginDirURL + "]");
-				Class<?> mainPluginRuntimeClass = null;
-				try {
-					mainPluginRuntimeClass = Class
-							.forName("org.tzi.use.runtime.MainPluginRuntime");
-				} catch (ClassNotFoundException e) {
-					Log
-							.error("Could not load PluginRuntime. Probably use-runtime-...jar is missing.\n"
-									+ "Try starting use with -noplugins switch.\n"
-									+ e.getMessage());
-					System.exit(1);
-				}
-				try {
-					Method run = mainPluginRuntimeClass.getMethod("run",
-							new Class[] { pluginDirURL.getClass() });
-					pluginRuntime = (IRuntime) run.invoke(null,
-							new Object[] { pluginDirURL });
-					Log.debug("Starting plugin runtime, got class ["
-							+ pluginRuntime.getClass() + "]");
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.error("FATAL ERROR.");
-					System.exit(1);
-				}
-			} catch (MalformedURLException mfue) {
-				Log.error("Plugin path " + Options.pluginDir
-						+ " invalid! Please check your configuration: " + mfue);
-				Log.error("Plugin framework disabled!");
+				mainPluginRuntimeClass = Class
+						.forName("org.tzi.use.runtime.MainPluginRuntime");
+			} catch (ClassNotFoundException e) {
+				Log
+						.error("Could not load PluginRuntime. Probably use-runtime-...jar is missing.\n"
+								+ "Try starting use with -noplugins switch.\n"
+								+ e.getMessage());
+				System.exit(1);
+			}
+			try {
+				Method run = mainPluginRuntimeClass.getMethod("run",
+						new Class[] { Path.class });
+				pluginRuntime = (IRuntime) run.invoke(null,
+						new Object[] { pluginDirURL });
+				Log.debug("Starting plugin runtime, got class ["
+						+ pluginRuntime.getClass() + "]");
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.error("FATAL ERROR.");
+				System.exit(1);
 			}
 		}
 
@@ -150,6 +142,9 @@ public final class Main {
 				System.exit(1);
 			}
 
+			if (!Options.testMode)
+				Options.getRecentFiles().push(Options.specFilename);
+			
 			if (Options.compileOnly) {
 				Log.verbose("no errors.");
 				if (Options.compileAndPrint) {
@@ -165,13 +160,8 @@ public final class Main {
 
 			// create system
 			system = new MSystem(model);
-			session.setSystem(system);
-		} else {
-			model = new ModelFactory().createModel("empty model");
-			system = new MSystem(model);
-			Log.verbose("using empty model.");
-			session.setSystem(system);
 		}
+		session.setSystem(system);
 
 		if (Options.doGUI) {
 			Class<?> mainWindowClass = null;
@@ -291,7 +281,7 @@ class MyTheme extends DefaultMetalTheme {
 	}
 
 	private void initIcon(UIDefaults table, String property, String iconFilename) {
-		table.put(property, new ImageIcon(Options.iconDir + iconFilename));
+		table.put(property, new ImageIcon(Options.getIconPath(iconFilename).toString()));
 	}
 
 }

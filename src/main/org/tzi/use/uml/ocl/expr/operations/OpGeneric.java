@@ -3,9 +3,11 @@ package org.tzi.use.uml.ocl.expr.operations;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.Multimap;
 
 /**
  * OpGeneric is the base class of a large group of individual operations. Each
@@ -15,8 +17,8 @@ import org.tzi.use.util.collections.MultiMap;
  * ExpOperation (see below). Also, this way the new operation symbol is
  * immediately available to the specification compiler.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
+ * @author Lars Hamann
  */
 
 public abstract class OpGeneric {
@@ -35,6 +37,10 @@ public abstract class OpGeneric {
 
     public abstract String name();
 
+    public boolean isBooleanOperation() {
+    	return false;
+    }
+    
     public abstract int kind();
 
     public abstract boolean isInfixOrPrefix();
@@ -60,7 +66,7 @@ public abstract class OpGeneric {
             // translate into dot notation, e.g. foo->union(bla)
             res = name() + atPre;
             if (args.length > 0) {
-                if (args[0].type().isCollection(true))
+                if (args[0].type().isKindOfCollection(VoidHandling.EXCLUDE_VOID))
                     res = args[0] + "->" + res;
                 else
                     res = args[0] + "." + res;
@@ -71,10 +77,12 @@ public abstract class OpGeneric {
         return res;
     }
 
-	public static void registerOperations(MultiMap<String, OpGeneric> opmap) {
+	public static void registerOperations(Multimap<String, OpGeneric> opmap) {
 		// Basic operations
 		StandardOperationsAny.registerTypeOperations(opmap);
 		StandardOperationsObject.registerTypeOperations(opmap);
+		
+		StandardOperationsEnum.registerTypeOperations(opmap);
 		
 		// Basic types
 		StandardOperationsNumber.registerTypeOperations(opmap);
@@ -94,7 +102,7 @@ public abstract class OpGeneric {
 	 * @param op The operation to register
 	 * @param opmap The multi map holding the operations
 	 */
-	public static void registerOperation(OpGeneric op, MultiMap<String, OpGeneric> opmap) {
+	public static void registerOperation(OpGeneric op, Multimap<String, OpGeneric> opmap) {
 		opmap.put(op.name(), op);
 	}
 	
@@ -104,7 +112,7 @@ public abstract class OpGeneric {
 	 * @param op The operation to register
 	 * @param opmap The multi map holding the operations
 	 */
-	public static void registerOperation(String name, OpGeneric op, MultiMap<String, OpGeneric> opmap) {
+	public static void registerOperation(String name, OpGeneric op, Multimap<String, OpGeneric> opmap) {
 		opmap.put(name, op);
 	}
 }

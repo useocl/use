@@ -26,12 +26,11 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 /**
  * Integer values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     RealValue
  */
 public final class IntegerValue extends Value {
-    int fValue;
+    final int fValue;
     
     /**
      * Constructs a new IntegerValue with the value of <code>n</code>
@@ -40,7 +39,8 @@ public final class IntegerValue extends Value {
      *             the overall amount of objects.
      * @param n
      */
-    public IntegerValue(int n) {
+    @Deprecated
+	public IntegerValue(int n) {
         super(TypeFactory.mkInteger());
         fValue = n;
     }

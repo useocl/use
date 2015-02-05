@@ -22,53 +22,88 @@
 package org.tzi.use.gui.views.diagrams.waypoints;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
-import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.w3c.dom.Element;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
+import org.tzi.use.gui.views.diagrams.elements.positioning.PositionStrategy;
+import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection;
+import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed;
+import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
+import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
+import org.tzi.use.gui.views.diagrams.util.Direction;
 
 /**
- * A way point attached to a node
+ * A way point attached to a node.
+ * This kind of way point always stays on the bounds of the attached node.
+ * The way point returns the bounds of the attached node for position strategies.
+ * 
  * @author Lars Hamann
  *
  */
-public abstract class AttachedWayPoint extends WayPoint {
-	/**
-	 * The delta to the x coordinate of the attached node.
-	 * Used when a source point is positioned by the user.
-	 */
-	protected double deltaX;
-	
-	/**
-	 * The delta to the y coordinate of the attached node.
-	 * Used when a source point is positioned by the user.
-	 */
-	protected double deltaY;
-	
-	public AttachedWayPoint(NodeBase source, NodeBase target, EdgeBase edge,
-			int id, WayPointType type, String edgeName, DiagramOptions opt) {
-		super(source, target, edge, id, type, edgeName, opt);
+public class AttachedWayPoint extends WayPoint {
+
+	public interface ResetStrategy {
+		PositionStrategy reset();
 	}
 	
-	protected abstract NodeBase getAttachedNode();
+	/**
+	 * The node this way point is attached to.
+	 */
+	protected PlaceableNode attachedNode;
+	
+	/**
+	 * If the way point should be reseted,
+	 * this "code block" is used to accomplish this.
+	 * Using such a code block allows an owner of a way point
+	 * to specify a new default behavior, as it is done
+	 * by reflexive edges.
+	 */
+	protected ResetStrategy resetStrategy = null;
+	
+	/**
+	 * Constructs a new attached way point with the strategy {@link StrategyAttachedIntersection}.
+	 * @param attachedNode The node this way point is attached to. Used to register listeners. 
+	 * @param source
+	 * @param target
+	 * @param edge
+	 * @param id
+	 * @param type
+	 * @param edgeName
+	 * @param opt
+	 */
+	public AttachedWayPoint(PlaceableNode attachedNode, EdgeBase edge, WayPointType type, String edgeName, DiagramOptions opt) {
+		super(edge, type, edgeName, opt);
+		
+		this.attachedNode = attachedNode;
+	}
+
+	@Override
+	public void onInitialize() {
+		super.onInitialize();
+		// Use a default strategy if none was set
+		if (this.strategy == StrategyFixed.instance)
+			this.strategy = new StrategyAttachedIntersection(this);
+	}
+
+	public PlaceableNode getAttachedNode() {
+		return this.attachedNode;
+	}
+	
+	public WayPoint getAutopositionWayPoint() { 
+		if (this.getNextWayPoint() != null)
+			return this.getNextWayPoint();
+		else
+			return this.getPreviousWayPoint();
+	}
 	
 	@Override
-	public Point2D getCalculationPoint() {
+	public PlaceableNode getCalculationNode() {
 		if (isUserDefined()) {
-			return new Point2D.Double(
-					getAttachedNode().getX() + deltaX + getWidth() / 2, 
-					getAttachedNode().getY() + deltaY + getHeight() / 2);
+			return this;
 		} else {
-			return getAttachedNode().getCenter();
+			return getAttachedNode();
 		}
-	}
-	
-	@Override
-	public void setCenter(Point2D p) {
-		super.setCenter(p);
 	}
 	
 	@Override
@@ -82,87 +117,102 @@ public abstract class AttachedWayPoint extends WayPoint {
 	 */
 	@Override
     public synchronized void setDraggedPosition( double movedX, double movedY ) {
-		// Don't leave the bounds
-		Point2D attachedCenter = getAttachedNode().getCenter();
-		
-		Point2D.Double newPosition = new Point2D.Double(
-				getCenter().getX() + movedX,
-				getCenter().getY() + movedY); 
-				
-		Point2D intersectionPoint = getAttachedNode().getIntersectionCoordinate(newPosition);
-
-		while(intersectionPoint.equals(attachedCenter)) {
-			// Enlarge the line until it intersects the attached node
-			newPosition.x += newPosition.getX() - attachedCenter.getX();
-			newPosition.y += newPosition.getY() - attachedCenter.getY();
+		// Dragging switches strategy to fixed
+		if (getStrategy() instanceof StrategyAttachedIntersection) {
+			// Calculate the current offset
+			movedX += getCenter().getX() - getAttachedNode().getX();
+			movedY += getCenter().getY() - getAttachedNode().getY();
+			setStrategy(new StrategyRelativeToCorner(this, getAttachedNode(), Direction.NORTH_WEST, 0, DeltaBasis.ABSOLUTE, 0, DeltaBasis.ABSOLUTE));
+		}
 			
-			intersectionPoint = getAttachedNode().getIntersectionCoordinate(newPosition);
-		}
+		Point2D draggedPosition = getStrategy().calculateDraggedPosition(this, movedX, movedY);
 		
-		setCenter(intersectionPoint);
-
-		Rectangle2D attachedBounds = getAttachedNode().getBounds();
-		this.deltaX = bounds.x - attachedBounds.getMinX();
-		this.deltaY = bounds.y - attachedBounds.getMinY();
-		
-		this.isUserDefined = true;
+		verifyUpdatePosition(draggedPosition);
+				
+		setIsUserDefined(true);
+		setPosition(draggedPosition);
     }
-	
+
 	/**
-	 * Updates the position of this way point wrt. user defined position or
-	 * the attached classifier 
-	 * @param nextWayPoint The next way point on the edge (used to calculate automatic position)
+	 * If the way point should be reseted,
+	 * this "code block" is used to accomplish this.
+	 * Using such a code block allows an owner of a way point
+	 * to specify a new default behavior, as it is done
+	 * by reflexive edges.
+	 *
+	 * @return the resetStrategy
 	 */
-	public void updatePosition(WayPoint nextWayPoint) {
-		updatePosition(0, 0, nextWayPoint);
-	}
-	
-	/**
-	 * Updates the position of this way point wrt. user defined position or
-	 * the attached classifier with the given deltas
-	 * @param calcualtionSource
-	 * @param nextWayPoint
-	 */
-	public void updatePosition(double calcDeltaX, double calcDeltaY, WayPoint nextWayPoint) {
-		if (!isUserDefined()) {
-			this.setCenter(getAttachedNode().getIntersectionCoordinate(
-					new Point2D.Double(
-							getCalculationPoint().getX() + calcDeltaX,
-							getCalculationPoint().getY() + calcDeltaY),
-					nextWayPoint.getCalculationPoint()));
-    	} else {
-    		this.setX(getAttachedNode().getX() + deltaX);
-    		this.setY(getAttachedNode().getY() + deltaY);
-    	}
+	public ResetStrategy getResetStrategy() {
+		return resetStrategy;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.waypoints.WayPoint#storeAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, boolean)
+	/**
+	 * If the way point should be reseted,
+	 * this "code block" is used to accomplish this.
+	 * Using such a code block allows an owner of a way point
+	 * to specify a new default behavior, as it is done
+	 * by reflexive edges.
+	 * 
+	 * @param resetStrategy the resetStrategy to set
+	 */
+	public void setResetStrategy(ResetStrategy resetStrategy) {
+		this.resetStrategy = resetStrategy;
+	}
+	
+	/**
+     * Sets the position of the edge property to its automatically computed one.
+     */
+	@Override
+	public void setToAutoPosition() {
+		setIsUserDefined(false);
+		PositionStrategy s;
+		if (this.resetStrategy != null)
+			s = this.resetStrategy.reset();
+		else
+			s = new StrategyAttachedIntersection(this);
+		setStrategy(s);
+		updatePosition();
+	}
+	
+	/**
+	 * This method needs to modify the center position calculated by the attach strategy <code>autoPosition</code>
+	 * to the new position of this way point given as left top coordinates.
+	 * @param autoPosition The calculated center position.
 	 */
 	@Override
-	protected void storeAdditionalInfo(PersistHelper helper,
-			Element nodeElement, boolean hidden) {
-		super.storeAdditionalInfo(helper, nodeElement, hidden);
-		
-		if (this.isUserDefined()) {
-			helper.appendChild(nodeElement, "deltaX", String.valueOf(this.deltaX));
-			helper.appendChild(nodeElement, "deltaY", String.valueOf(this.deltaY));
-		}
+	public void verifyUpdatePosition(Point2D autoPosition) {
+		// Position must be in bounds
+		Point2D verifiedPosition = attachedNode.getIntersectionCoordinate(autoPosition); 
+		autoPosition.setLocation(verifiedPosition);
+		super.verifyUpdatePosition(autoPosition);
+	}
+	
+	
+	/**
+	 * Depending of the attached side, we need to invert the offset
+	 */
+	@Override
+	public double getMyOffset() { 
+		if (this.getNextWayPoint() == null)
+			return fEdge.getOffset();
+		else if (this.getPreviousWayPoint() == null)
+			return fEdge.getOffset() * -1;
+		else
+			return 0.0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.waypoints.WayPoint#restoreAdditionalInfo(org.tzi.use.gui.util.PersistHelper, org.w3c.dom.Element, java.lang.String)
-	 */
 	@Override
-	protected void restoreAdditionalInfo(PersistHelper helper,
-			Element nodeElement, int version) {
-		super.restoreAdditionalInfo(helper, nodeElement, version);
-		
-		if (this.isUserDefined() && version > 2) {
-			this.deltaX = helper.getElementDoubleValue(nodeElement, "deltaX");
-			this.deltaY = helper.getElementDoubleValue(nodeElement, "deltaY");
-		} else {
-			this.isUserDefined = false;
-		}
+	public AttachedWayPoint getStrategyWayPoint() {
+		return this;
+	}
+
+	/**
+	 * Returns a height hint for the attached node.
+	 * Allows attached way points to let the attached node "grow",
+	 * if they require a lot of space. 
+	 * @return
+	 */
+	public double getHeightHint() {
+		return 0;
 	}
 }

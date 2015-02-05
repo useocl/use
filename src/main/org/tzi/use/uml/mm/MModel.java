@@ -24,6 +24,7 @@ package org.tzi.use.uml.mm;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -31,33 +32,67 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.collections.CollectionUtil;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 
 /**
  * A Model is a top-level package containing all other model elements.
- * 
- * @version $ProjectVersion: 0.393 $
+ *  
  * @author Mark Richters
+ * @author Lars Hamann
  */
 public class MModel extends MModelElementImpl {
+	
+	/**
+	 * This map keeps track of the numbering of 
+	 * "unnamed" named model elements, i.e.,
+	 * if an invariant was defined without a name
+	 * a name like <code>inv::1</code> is generated.  
+	 */
+	private final Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
+	
+	/**
+	 *  We don't want to allocate a new Integer object each time we
+	 *  have to increment the value in a map.
+	 */
+    static class MutableInteger {
+        int fInt = 1;
+    }
+    
     private Map<String, EnumType> fEnumTypes;
+    
     private Map<String, MClass> fClasses;
+    
     private Map<String, MAssociation> fAssociations;
-    private DirectedGraph<MClass, MGeneralization> fGenGraph;
+    
+    private DirectedGraph<MClassifier, MGeneralization> fGenGraph;
+    
     private Map<String, MClassInvariant> fClassInvariants;
+    
     private Map<String, MPrePostCondition> fPrePostConditions;
+    
     private String fFilename; // name of .use file
 
+    private Map<String, MSignal> signals;
+    
     protected MModel(String name) {
         super(name);
         fEnumTypes = new TreeMap<String, EnumType>();
         fClasses = new TreeMap<String, MClass>();
         fAssociations = new TreeMap<String, MAssociation>();
-        fGenGraph = new DirectedGraphBase<MClass, MGeneralization>();
+        fGenGraph = new DirectedGraphBase<MClassifier, MGeneralization>();
         fClassInvariants = new TreeMap<String, MClassInvariant>();
         fPrePostConditions = new TreeMap<String, MPrePostCondition>();
+        signals = new TreeMap<>();
+        
         fFilename = "";
     }
 
@@ -99,8 +134,11 @@ public class MModel extends MModelElementImpl {
      */
     public void addClass(MClass cls) throws MInvalidModelException {
         if (fClasses.containsKey(cls.name()))
-            throw new MInvalidModelException("Model already contains a class `"
-                    + cls.name() + "'.");
+            throw new MInvalidModelException("Model already contains a class `" + cls.name() + "'.");
+        
+        if (!(cls instanceof MAssociationClass) && fAssociations.containsKey(cls.name()))
+            throw new MInvalidModelException("Model already contains an association `" + cls.name() + "'.");
+        
         fClasses.put(cls.name(), cls);
         fGenGraph.add(cls);
         cls.setModel(this);
@@ -112,16 +150,31 @@ public class MModel extends MModelElementImpl {
      * @return <code>null</code> if class <code>name</code> does not exist.
      */
     public MClass getClass(String name) {
-        return (MClass) fClasses.get(name);
+        return fClasses.get(name);
     }
 
+    /**
+     * Returns the classifier (currently MClass, MAssociation, or MAssociationClass)
+     * with the given name or <code>null</code>, if no classifier with the
+     * given name exists in the model.
+     */
+    public MClassifier getClassifier(String name) {
+        MClassifier classifier = getClass(name);
+        if (classifier != null) {
+        	return classifier;
+        }
+        
+        classifier = getAssociation(name);
+        return classifier;
+    }
+    
     /**
      * Returns the specified association class.
      * 
      * @return null if class <code>name</name> does not exist.
      */
     public MAssociationClass getAssociationClass(String name) {
-        MClass cls = (MClass) fClasses.get(name);
+        MClass cls = fClasses.get(name);
         if (cls instanceof MAssociationClass) {
             return (MAssociationClass) cls;
         } else {
@@ -165,44 +218,60 @@ public class MModel extends MModelElementImpl {
      */
     public void addAssociation(MAssociation assoc)
             throws MInvalidModelException {
-        if (assoc.associationEnds().size() < 2)
+        if (assoc.associationEnds().size() < 2) {
+        	if (!(assoc instanceof MAssociationClass) || ((MAssociationClass)assoc).parents().isEmpty())
             throw new IllegalArgumentException("Illformed association `"
                     + assoc.name() + "': number of associationEnds == "
                     + assoc.associationEnds().size());
-
+        }
+        
         if (fAssociations.containsKey(assoc.name()))
             throw new MInvalidModelException(
                     "Model already contains an association named `"
                             + assoc.name() + "'.");
 
+        if (!(assoc instanceof MAssociationClass) && fClasses.containsKey(assoc.name()))
+            throw new MInvalidModelException("Model already contains a class `" + assoc.name() + "'.");
+        
         // check for role name conflicts: for each class the set of
         // navigable classes must have unique role names
         for (MClass cls : assoc.associatedClasses()) {
-            Map<String, MNavigableElement> aends = cls.navigableEnds();
+            Map<String, ? extends MNavigableElement> aends = cls.navigableEnds();
             List<String> newRolenames = new ArrayList<String>();
             
             for (MNavigableElement elem : assoc.navigableEndsFrom(cls)) {
                 String newRolename = elem.nameAsRolename();
                 
-                // Inherited association (class)
-                if (aends.containsKey(newRolename) && aends.get(newRolename).equals(elem))
-                	continue;
-                
                 newRolenames.add( newRolename );
                 
                 if (aends.containsKey(newRolename)) {
-                    throw new MInvalidModelException("Association end `"
-                            + newRolename
-                            + "' navigable from class `"
-                            + cls.name()
-                            + "' conflicts with same rolename in association `"
-                            + ((MNavigableElement) aends.get(newRolename))
-                                    .association().name() + "'.");
+                    // Inherited?
+                	boolean inherited = false;
+                	MNavigableElement otherEnd = aends.get(newRolename);
+                	
+                	if (otherEnd.association() instanceof MAssociationClass && assoc instanceof MAssociationClass) {
+                		MAssociationClass otherCls = (MAssociationClass)otherEnd.association();
+                		MAssociationClass ourCls = (MAssociationClass)assoc;
+                		
+                		if (ourCls.allParents().contains(otherCls)) {
+                			inherited = true;
+                		}
+                	}
+
+                	if (!inherited) {
+	                	throw new MInvalidModelException("Association end `"
+	                            + newRolename
+	                            + "' navigable from class `"
+	                            + cls.name()
+	                            + "' conflicts with same rolename in association `"
+	                            + ((MNavigableElement) aends.get(newRolename))
+	                                    .association().name() + "'.");
+                	}
                 }
             }
             
             // tests if the rolenames are already used in one of the subclasses
-            for (MClass subCls : cls.allChildren()) {
+            for (MClass subCls : CollectionUtil.<MClassifier, MClass>downCastUnsafe(cls.allChildren())) {
                 for ( int i = 0; i < newRolenames.size(); i++ ) {
                     String newRolename = newRolenames.get(i);
                     if ( subCls.navigableEnds().containsKey( newRolename ) ) {
@@ -226,6 +295,9 @@ public class MModel extends MModelElementImpl {
             cls.registerNavigableEnds(assoc.navigableEndsFrom(cls));
         }
 
+        assoc.setModel(this);
+        fGenGraph.add(assoc);
+        
         fAssociations.put(assoc.name(), assoc);
     }
 
@@ -243,6 +315,7 @@ public class MModel extends MModelElementImpl {
      * 
      * @return null if association does not exist.
      */
+    @Nullable
     public MAssociation getAssociation(String name) {
         return fAssociations.get(name);
     }
@@ -290,22 +363,56 @@ public class MModel extends MModelElementImpl {
     public void addGeneralization(MGeneralization gen)
             throws MInvalidModelException {
         // generalization is irreflexive
-        if (gen.isReflexive())
-            throw new MInvalidModelException("Class `" + gen.child()
+        MClassifier child = gen.child();
+		if (gen.isReflexive()) {
+            throw new MInvalidModelException("Class `" + child
                     + "' cannot be a superclass of itself.");
-
+        }
+        
         // check for cycles that might be introduced by adding the new
         // generalization
-        if (fGenGraph.existsPath(gen.parent(), gen.child()))
+        MClassifier parent = gen.parent();
+		if (fGenGraph.existsPath(parent, child)) {
             throw new MInvalidModelException(
                     "Detected cycle in generalization hierarchy. Class `"
-                            + gen.parent().name()
+                            + parent.name()
                             + "' is already a subclass of `"
-                            + gen.child().name() + "'.");
-
+                            + child.name() + "'.");
+        }
+        
+        if(!parent.getClass().isAssignableFrom(child.getClass())) {
+			throw new MInvalidModelException(
+					"Invalid inheritance relation between meta elements "
+							+ StringUtil.inQuotes(child.getClass()
+									.getSimpleName()
+									+ "::" + child.name())
+							+ " < "
+							+ StringUtil.inQuotes(parent.getClass()
+									.getSimpleName()
+									+ "::" + parent.name()));
+        }
+        
+        final boolean childIsAssocClass  = child  instanceof MAssociationClass;
+        final boolean parentIsAssocClass = parent instanceof MAssociationClass;
+        
+        /**
+         * If one element is an association class, both elements must be association classes.
+         * (childIsAssocClass || parentIsAssocClass) implies (childIsAssocClass && parentIsAssocClass) 
+         * This is negated to raise an error.
+         * !((childIsAssocClass || parentIsAssocClass) implies (childIsAssocClass && parentIsAssocClass))
+         * Extracted this expression leads to:
+         */
+        if ((childIsAssocClass || parentIsAssocClass) && (!childIsAssocClass || !parentIsAssocClass)) {
+        	throw new MInvalidModelException("Association classes can only inherit from association classes.");
+        }
+        
         /* FIXME: check for any conflicts that might be introduced by
            the generalization: (1) attributes with same name, (2)
-           inherited associations?? */
+           inherited associations??
+           For usage as a library, one cannot guarantee that the inheritance
+           Relations are set-up before attribute definition.
+           */
+        // child.validateInheritance();
 
         // silently ignore duplicates
         fGenGraph.addEdge(gen);
@@ -316,7 +423,7 @@ public class MModel extends MModelElementImpl {
      * 
      * @return a DirectedGraph with MClass nodes and MGeneralization edges
      */
-    public DirectedGraph<MClass, MGeneralization> generalizationGraph() {
+    public DirectedGraph<MClassifier, MGeneralization> generalizationGraph() {
         return fGenGraph;
     }
 
@@ -374,23 +481,50 @@ public class MModel extends MModelElementImpl {
      * @exception MInvalidModel
      *                model already contains an invariant with same name.
      */
-    public void addClassInvariant(MClassInvariant inv)
-            throws MInvalidModelException {
-        String name = inv.cls().name() + "::" + inv.name();
-        if (fClassInvariants.containsKey(name))
+    public void addClassInvariant(MClassInvariant inv) throws MInvalidModelException {
+        
+    	String name = inv.cls().name() + "::" + inv.name();
+        
+    	if (fClassInvariants.containsKey(name))
             throw new MInvalidModelException(
                     "Duplicate definition of invariant `" + inv.name()
                             + "' in class `" + inv.cls().name() + "'.");
-        fClassInvariants.put(name, inv);
+        
+    	fClassInvariants.put(name, inv);
     }
 
     /**
-     * Returns a collection containing all class invariants.
+     * Returns a collection containing all class invariants (including loaded invariants).
      * 
      * @return collection of MClassInvariant objects.
      */
     public Collection<MClassInvariant> classInvariants() {
         return fClassInvariants.values();
+    }
+    
+    public Collection<MClassInvariant> classInvariants(boolean onlyActive) {
+        if (onlyActive) {
+        	return Maps.filterValues(fClassInvariants, new Predicate<MClassInvariant>() {
+				@Override
+				public boolean apply(MClassInvariant input) {
+					return input.isActive();
+				}
+        	}).values();
+        } else {
+        	return fClassInvariants.values();
+        }
+    }
+    
+    /**
+     * @return collection of class invariants from the use file loaded
+     */
+    public Collection<MClassInvariant> modelClassInvariants() {
+		return Maps.filterValues(fClassInvariants, new Predicate<MClassInvariant>() {
+			@Override
+			public boolean apply(MClassInvariant inv) {
+				return !inv.isLoaded();
+			}
+		}).values();
     }
 
     /**
@@ -409,6 +543,8 @@ public class MModel extends MModelElementImpl {
         }
         return res;
     }
+    
+    
 
     /**
      * Returns a collection containing all invariants for a given class and its
@@ -418,7 +554,8 @@ public class MModel extends MModelElementImpl {
      */
     public Set<MClassInvariant> allClassInvariants(MClass cls) {
         Set<MClassInvariant> res = new HashSet<MClassInvariant>();
-        Set<MClass> parents = cls.allParents();
+        Set<MClass> allP = CollectionUtil.downCastUnsafe(cls.allParents());
+        Set<MClass> parents = new HashSet<MClass>(allP);
         parents.add(cls);
         Iterator<MClassInvariant> it = fClassInvariants.values().iterator();
         
@@ -438,12 +575,36 @@ public class MModel extends MModelElementImpl {
     public MClassInvariant getClassInvariant(String name) {
         return fClassInvariants.get(name);
     }
-
+    
+	/**
+	 * Returns all loaded invariants.
+	 */
+	public Collection<MClassInvariant> getLoadedClassInvariants() {
+		return Maps.filterValues(fClassInvariants, new Predicate<MClassInvariant>() {
+			@Override
+			public boolean apply(MClassInvariant inv) {
+				return inv.isLoaded();
+			}
+		}).values();
+	}
+    
+	public MClassInvariant removeClassInvariant(String name) {
+		MClassInvariant inv = fClassInvariants.get(name);
+		
+		if(inv != null && inv.isLoaded()){
+			fClassInvariants.remove(name);
+			return inv;
+		}
+		
+		return null;
+	}
+	
     /**
      * Adds a pre-/postcondition.
      */
     public void addPrePostCondition(MPrePostCondition ppc)
             throws MInvalidModelException {
+    	
         String name = ppc.cls().name() + "::" + ppc.operation().name()
                 + ppc.name();
         if (fPrePostConditions.containsKey(name))
@@ -467,6 +628,44 @@ public class MModel extends MModelElementImpl {
     }
 
     /**
+     * Adds the <code>signal</code> to the model.
+	 * @param signal The signal to add.
+	 * @throws MInvalidModelException If a classifier with the same name already exists.
+	 */
+	public void addSignal(MSignal signal) throws MInvalidModelException {
+		if (this.signals.containsKey(signal.name())
+				|| this.fAssociations.containsKey(signal.name())
+				|| this.fClasses.containsKey(signal.name())
+				|| this.fEnumTypes.containsKey(signal.name())) {
+			throw new MInvalidModelException(
+					"Model already constains a classifier named "
+							+ StringUtil.inQuotes(signal.name()));
+		}
+		
+		this.signals.put(signal.name(), signal);
+		this.fGenGraph.add(signal);
+		
+		signal.setModel(this);
+	}
+		
+	/**
+	 * Returns a copied set of all defined signals. 
+	 * @return
+	 */
+	public Set<MSignal> getSignals() {
+		return new HashSet<>(this.signals.values());
+	}
+	
+	/**
+	 * Returns the signal with the given <code>name</code>
+	 * or <code>null</code>, if no such signal exists.
+	 * @param name The name of the signal to lookup.
+	 * @return The signal with the given name or <code>null</code>.
+	 */
+	public MSignal getSignal(String name) {
+		return this.signals.get(name);
+	}
+    /**
      * Returns a string with some statistics about the model: Number of classes,
      * associations, invariants, and operations.
      */
@@ -486,10 +685,13 @@ public class MModel extends MModelElementImpl {
             stats += "s";
 
         n = 0;
+        int nPSMs = 0;
+        
         Iterator<MClass> it = classes().iterator();
         while (it.hasNext()) {
             MClass cls = it.next();
             n += cls.operations().size();
+            nPSMs += cls.getOwnedProtocolStateMachines().size();
         }
         stats += ", " + n + " operation";
         if (n != 1)
@@ -501,6 +703,11 @@ public class MModel extends MModelElementImpl {
             stats += "s";
         }
 
+        stats += ", " + nPSMs + " state machine";
+        if (nPSMs != 1) {
+            stats += "s";
+        }
+        
         return "Model " + name() + stats + ")";
     }
 
@@ -509,5 +716,25 @@ public class MModel extends MModelElementImpl {
      */
     public void processWithVisitor(MMVisitor v) {
         v.visitModel(this);
+    }
+    
+    /**
+     * Sets the name of model element to a generated one, if the element has
+     * no name. If the name is
+     * <code>null</code> or empty a new name starting with <code>prefix</code> will
+     * be generated. Note that the generated names will be unique but
+     * they may still clash with some user defined name.
+     */
+    public String createModelElementName(String prefix) {
+    	
+        MutableInteger i = fNameMap.get(prefix);
+        if (i == null ) {
+            i = new MutableInteger();
+            fNameMap.put(prefix, i);
+        } else {
+        	i.fInt++;
+        }
+        
+        return prefix + String.valueOf(i.fInt);
     }
 }

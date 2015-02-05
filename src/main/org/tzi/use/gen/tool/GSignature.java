@@ -3,6 +3,7 @@ package org.tzi.use.gen.tool;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
@@ -43,7 +44,7 @@ public class GSignature {
 			
 			for(int index = 0; index < this.types.size(); index++)
 			{
-				if (!sigTypes.get(index).isSubtypeOf(types.get(index)))
+				if (!sigTypes.get(index).conformsTo(types.get(index)))
 					return false;
 			}
 			
@@ -91,5 +92,19 @@ public class GSignature {
 		} else if (!types.equals(other.types))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @param procedures
+	 * @return
+	 */
+	public GProcedure findMatching(List<GProcedure> procedures) {
+		for (GProcedure proc : procedures) {
+            if (proc.getSignature().conformsTo(this)) {
+            	return proc;
+            }
+        }
+		
+		return null;
 	}
 }

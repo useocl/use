@@ -17,16 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
-
-import java.util.Map;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
@@ -41,73 +36,95 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * TODO
+ * The statement class for the legacy openter command.
  * @author Daniel Gent
  *
  */
 public class MEnterOperationStatement extends MStatement {
-	/** TODO */
+	/** The expression leading to the receiving object of the operation enter */
 	private Expression fObject;
-	/** TODO */
+	/** The operation to enter */
 	private MOperation fOperation;
-	/** TODO */
-	private Map<String, Expression> fArguments;
-	/** TODO */
+	/** The arguments for the operation enter */
+	private Expression[] fArguments;
+	/** A custom PPC handler */
 	private PPCHandler fCustomPPCHandler;
 
-	
 	/**
-	 * TODO
-	 * @param object
-	 * @param operation
-	 * @param arguments
+	 * Creates a new statement for a legacy openter command. 
+	 * @param object The expression leading to the receiving object of the operation enter.
+	 * @param operation The operation to enter.
+	 * @param arguments The arguments for the operation enter.
 	 */
 	public MEnterOperationStatement(
 			Expression object, 
 			MOperation operation, 
-			Map<String, Expression> arguments) {
+			Expression[] arguments) {
 		
 		fObject = object;
 		fOperation = operation;
 		fArguments = arguments;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param object
-	 * @param operation
-	 * @param arguments
-	 * @param customPPCHandler
+	 * Creates a new statement for a legacy openter command providing a custom PPC handler.
+	 * @param object The expression leading to the receiving object of the operation enter.
+	 * @param operation The operation to enter.
+	 * @param arguments The arguments for the operation enter.
+	 * @param customPPCHandler A custom PPC handler.
 	 */
 	public MEnterOperationStatement(
 			Expression object,
 			MOperation operation,
-			Map<String, Expression> arguments,
+			Expression[] arguments,
 			PPCHandler customPPCHandler) {
 		
 		this(object, operation, arguments);
 		fCustomPPCHandler = customPPCHandler;
 	}
 	
-	
+	/**
+	 * @return the fObject
+	 */
+	public Expression getObject() {
+		return fObject;
+	}
+
+	/**
+	 * @return the fOperation
+	 */
+	public MOperation getOperation() {
+		return fOperation;
+	}
+
+	/**
+	 * @return the fArguments
+	 */
+	public Expression[] getArguments() {
+		return fArguments;
+	}
+
+	/**
+	 * @return the fCustomPPCHandler
+	 */
+	public PPCHandler getCustomPPCHandler() {
+		return fCustomPPCHandler;
+	}
+
 	@Override
-    public void execute(SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
+    public Value execute(SoilEvaluationContext context, StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		// evaluate self
-		MObject self = EvalUtil.evaluateObjectExpression(this, context, result, fObject);
+		MObject self = EvalUtil.evaluateObjectExpression(context, fObject);
 		
 		// evaluate arguments
-		Value[] arguments = new Value[fArguments.size()];
-		int i=0;
-		for (VarDecl argumentDecl : fOperation.paramList()) {
-			Value argValue = EvalUtil.evaluateExpression(this, context, result, fArguments.get(argumentDecl.name()), false);
+		Value[] arguments = new Value[fArguments.length];
+		for (int i = 0; i < fArguments.length; ++i) {
+			Value argValue = EvalUtil.evaluateExpression(context, fArguments[i], false);
 			arguments[i] = argValue;
-			++i;
 		}
-		MOperationCall operationCall = 
-			new MOperationCall(this, self, fOperation, arguments);
+		
+		MOperationCall operationCall = new MOperationCall(this, self, fOperation, arguments);
 		
 		operationCall.setPreferredPPCHandler(fCustomPPCHandler == null ? 
 								OpEnterOpExitPPCHandler.getDefaultOutputHandler() : fCustomPPCHandler);
@@ -115,16 +132,15 @@ public class MEnterOperationStatement extends MStatement {
 		try {
 			context.getSystem().enterNonQueryOperation(context, result, operationCall, true);
 		} catch (MSystemException e) {
-			throw new EvaluationFailedException(this, e);
+			throw new EvaluationFailedException(e);
 		}
 		
-		MOperationCall opCall = 
-			operationCall;
+		MOperationCall opCall = operationCall;
 		
 		// build inverse statement if necessary
 		
 		if (!opCall.enteredSuccessfully()) {
-			return;
+			return null;
 		}
 		
 		Expression resultExpression = null;
@@ -138,8 +154,9 @@ public class MEnterOperationStatement extends MStatement {
 				new MExitOperationStatement(
 						resultExpression,
 						DoNothingPPCHandler.getInstance()));
+		
+		return null;
 	}
-
 	
 	@Override
 	protected String shellCommand() {
@@ -150,16 +167,19 @@ public class MEnterOperationStatement extends MStatement {
 		result.append(" ");
 		result.append(fOperation);
 		result.append("(");
-		StringUtil.fmtSeq(result, fArguments.values(), ", ");
+		StringUtil.fmtSeq(result, fArguments, ", ");
 		result.append(")");
 		
 		return result.toString();
 	}
 
-
-
 	@Override
 	public String toString() {
 		return shellCommand();
+	}
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
 	}
 }

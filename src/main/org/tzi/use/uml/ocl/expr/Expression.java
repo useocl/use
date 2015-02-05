@@ -21,10 +21,7 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tzi.use.parser.ocl.ASTExpression;
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
@@ -32,58 +29,42 @@ import org.tzi.use.util.BufferedToString;
 
 /**
  * Abstract base class of all expressions.
- * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 public abstract class Expression implements BufferedToString {
-	private ASTExpression fSourceExpression;
+	private SrcPos fSourcePosition;
 	
-	// result type
+	/** result type of the expression */
 	private Type fType;
-    
-	private List<Expression> fChildExpressions = new ArrayList<Expression>();
 
-    // marked "@pre"?
+    /** marked "@pre"? */
     private boolean fIsPre = false;
 
+    /** If this attribute is <code>null</code> the child expressions have not
+     *  been asked if they require a pre state.
+     *  <p>Otherwise, the result is stored in this Integer (lazy initialization).</p>
+     */
+    private Boolean preStateRequired = null;
+    
     protected Expression(Type t) {
         fType = t;
     }
     
-    
-    protected Expression(Type t, Expression... childExpressions) {
-    	this(t);
-    	addChildExpressions(childExpressions);
-    }
-    
-    
     /**
-     * TODO
-     * @param expressions
-     */
-    protected void addChildExpressions(Expression... expressions) {
-    	for (Expression e : expressions) {
-    		fChildExpressions.add(e);
-    	}
-    }
-    
-    
-    /**
-     * TODO
+     * Sets the source position of the expression.
      * @param expression
      */
-    public void setSourceExpression(ASTExpression expression) {
-    	fSourceExpression = expression;
+    public void setSourcePosition(SrcPos position) {
+    	fSourcePosition = position;
     }
     
-    
     /**
-     * TODO
+     * The source position (normally the starting position) of this expression.
+     * <p>Can be <code>null</code>.</p> 
      * @return
      */
-    public ASTExpression getSourceExpression() {
-    	return fSourceExpression;
+    public SrcPos getSourcePosition() {
+    	return fSourcePosition;
     }
 
     
@@ -137,19 +118,21 @@ public abstract class Expression implements BufferedToString {
      * @return
      */
     public boolean requiresPreState() {
-    	if (fIsPre) {
-    		return true;
-    	} else {
-    		for (Expression childExpression : fChildExpressions) {
-    			if (childExpression.requiresPreState()) {
-    				return true;
-    			}
-    		}
+    	if (preStateRequired == null) {
+    		boolean result = fIsPre || childExpressionRequiresPreState();
+    		preStateRequired = Boolean.valueOf(result);
     	}
     	
-    	return false;
+    	return preStateRequired.booleanValue();
     }
 
+    /**
+     * Primitive operation for the template method {@link #requiresPreState()}.
+     * Implementors should return the result of {@link #requiresPreState()}
+     * of its sub-expressions.
+     * @return
+     */
+    protected abstract boolean childExpressionRequiresPreState();
     
     /**
      * Every expression can print itself.
@@ -172,7 +155,7 @@ public abstract class Expression implements BufferedToString {
      *                not a boolean expression
      */
     public void assertBoolean() throws ExpInvalidException {
-        if (!fType.isSubtypeOf(TypeFactory.mkBoolean()))
+        if (!fType.conformsTo(TypeFactory.mkBoolean()))
             throw new ExpInvalidException("Boolean expression expected, "
                     + "found expression of type `" + this.toString() + "'.");
     }
@@ -192,21 +175,6 @@ public abstract class Expression implements BufferedToString {
      */
     public String name() {
         return null;
-    }
-    
-    /**
-     * TODO
-     * @return
-     */
-    public boolean hasSideEffects() {
-    	
-    	for (Expression child : fChildExpressions) {
-    		if (child.hasSideEffects()) {
-    			return true;
-    		}
-    	}
-    	
-    	return false;
     }
     
     public abstract void processWithVisitor(ExpressionVisitor visitor);

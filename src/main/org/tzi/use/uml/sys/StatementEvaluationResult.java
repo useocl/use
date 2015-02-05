@@ -33,9 +33,10 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 /**
  * Captures additional information about the execution of a statement, 
  * for example to realize undo / redo and to feed state change listeners. 
- * 
+ *
  * @author Fabian Buettner
  * @author Daniel Gent
+ * @author Lars Hamann
  */
 public class StatementEvaluationResult {
 	private MStatement fEvaluatedStatement;
@@ -46,7 +47,7 @@ public class StatementEvaluationResult {
 	
 
 	/**
-	 * TODO
+	 * Constructs a new <code>StatementEvaluationResult</code> for the given statement.
 	 * @param statement The (top-level) statement that is / has been executed
 	 */
 	public StatementEvaluationResult(MStatement statement) {
@@ -55,7 +56,7 @@ public class StatementEvaluationResult {
 	
 
 	/**
-	 * TODO
+	 * <code>true</code>, if no exception was stored in this result.
 	 * @return
 	 */
 	public boolean wasSuccessfull() {
@@ -64,8 +65,8 @@ public class StatementEvaluationResult {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns the executed statement which calculated this result.
+	 * @return The executed <code>Statement</code>.
 	 */
 	public MStatement getEvaluatedStatement() {
 		return fEvaluatedStatement;
@@ -73,8 +74,9 @@ public class StatementEvaluationResult {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns a {@link StateDifference} object that contains
+	 * information about the changes made to calculate this statement result. 
+	 * @return A <code>StateDifference</code> object including information about the state changes.
 	 */
 	public StateDifference getStateDifference() {
 		return fStateDifference;
@@ -82,8 +84,8 @@ public class StatementEvaluationResult {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns the <code>Statement</code> to undo this result.
+	 * @return The <code>Statement</code> to execute to undo this result.
 	 */
 	public MSequenceStatement getInverseStatement() {
 		return fInverseStatement;
@@ -91,8 +93,8 @@ public class StatementEvaluationResult {
 
 
 	/**
-	 * TODO
-	 * @param statement
+	 * Adds the <code>statement</code> to the list of inverse statements.
+	 * @param statement The <code>Statement</code> to append.
 	 */
 	public void prependToInverseStatement(MStatement statement) {
 		fInverseStatement.prependStatement(statement);
@@ -100,8 +102,9 @@ public class StatementEvaluationResult {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns the exception which occurred during the calculation of this
+	 * result, if any.
+	 * @return The <code>Exception</code> that might have occured.  
 	 */
 	public EvaluationFailedException getException() {
 		return fException;
@@ -109,8 +112,8 @@ public class StatementEvaluationResult {
 	
 	
 	/**
-	 * TODO
-	 * @param exception
+	 * Stores an exception which was raised while calculating the result.
+	 * @param exception The <code>Exception</code> to store.
 	 */
 	public void setException(EvaluationFailedException exception) {
 		fException = exception;
@@ -118,8 +121,8 @@ public class StatementEvaluationResult {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The list of events raised for this result.
+	 * @return The <code>List</code> of events.
 	 */
 	public List<Event> getEvents() {
 		return fEvents;
@@ -127,10 +130,12 @@ public class StatementEvaluationResult {
 	
 	
 	/**
-	 * TODO
-	 * @param event
+	 * Appends an event to the list of events raised for this result.
+	 * @param event The <code>Event</code> to append. <code>null</code>-values are ignored.
 	 */
 	public void appendEvent(Event event) {
+		if (event == null) return;
+		
 		fEvents.add(event);
 	}
 }

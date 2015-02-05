@@ -63,7 +63,7 @@ public class MAssociationClassTest extends TestCase {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
                         
-            UseSystemApi api = UseSystemApi.create(model);
+            UseSystemApi api = UseSystemApi.create(model, false);
 
             api.createObjects("Person", "p1", "p2");
             api.createObjects("Company", "c1");

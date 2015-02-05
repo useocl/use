@@ -36,19 +36,26 @@ public final class RealType extends BasicType {
         super("Real");
     }
     
-    public boolean isNumber() {
+    @Override
+    public boolean isKindOfNumber(VoidHandling h) {
     	return true;
     }
     
-    public boolean isReal() {
+    @Override
+    public boolean isTypeOfReal() {
+    	return true;
+    }
+    
+    @Override
+    public boolean isKindOfReal(VoidHandling h) {
     	return true;
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
-        return equals(t) || t.isTrueOclAny();
+    public boolean conformsTo(Type t) {
+        return equals(t) || t.isTypeOfOclAny();
     }
 
     /** 

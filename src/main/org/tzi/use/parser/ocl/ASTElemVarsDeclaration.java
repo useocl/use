@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
@@ -35,6 +36,7 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -69,12 +71,16 @@ public class ASTElemVarsDeclaration extends AST {
         return fIdList.isEmpty();
     }
 
-    public VarDeclList gen(Context ctx, Expression range) 
-        throws SemanticException 
+    public VarDeclList gen(Context ctx, Expression range) throws SemanticException 
     {
         // variable type may be omitted in query expressions
         Type sourceElementType;
-        sourceElementType = ((CollectionType) range.type()).elemType();
+        
+        if (range.type().isTypeOfVoidType()) {
+        	sourceElementType = TypeFactory.mkVoidType();
+        } else {
+        	sourceElementType = ((CollectionType) range.type()).elemType();
+        }
 
         // build list of VarDecls
         VarDeclList varDeclList = new VarDeclList(false);
@@ -90,7 +96,7 @@ public class ASTElemVarsDeclaration extends AST {
 		    
 		    if (type != null) {
 		    	thisType = type.gen(ctx);
-		    	if (!sourceElementType.isSubtypeOf(thisType))
+		    	if (!sourceElementType.conformsTo(thisType))
 					throw new SemanticException(id, "Invalid type "
 							+ StringUtil.inQuotes(thisType)
 							+ " for source element type "
@@ -106,12 +112,24 @@ public class ASTElemVarsDeclaration extends AST {
         return varDeclList;
     }
 
-    public HashSet<String> getVarNames() {
+    public Set<String> getVarNames() {
     	HashSet<String> result = new HashSet<String>();
     	Iterator<Token> it = fIdList.iterator();
     	while (it.hasNext()) {
     		result.add(it.next().getText());    		
     	}
     	return result;
+    }
+    
+    public List<Token> getVarTokens() {
+    	return this.fIdList;
+    }
+    
+    public List<ASTType> getVarTypes() {
+    	return this.fTypeList;
+    }
+    
+    public int getNumVars() {
+    	return this.fIdList.size();
     }
 }

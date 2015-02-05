@@ -1,0 +1,49 @@
+
+!create a1:A
+!create a2:A
+!create a3:A
+ 
+!create b1:B
+!create b2:B
+!create b3:B
+ 
+!create c1:C
+!create c2:C
+!create c3:C
+
+?A.allInstances()->selectByKind(A)->size() = A.allInstances()->size()
+* -> true : Boolean
+?A.allInstances()->selectByKind(B)->size() = 6
+* -> true : Boolean
+?A.allInstances()->selectByKind(C)->size() = 3
+* -> true : Boolean
+
+:A.allInstances()->selectByKind(A)
+* -> Set(A)
+:A.allInstances()->selectByKind(B)
+* -> Set(B)
+:A.allInstances()->selectByKind(C)
+* -> Set(C)
+
+?A.allInstances()->selectByType(A)->size() = 3
+* -> true : Boolean
+?A.allInstances()->selectByType(B)->size() = 3
+* -> true : Boolean
+?A.allInstances()->selectByType(C)->size() = 3
+* -> true : Boolean
+
+:A.allInstances()->selectByType(A)
+* -> Set(A)
+:A.allInstances()->selectByType(B)
+* -> Set(B)
+:A.allInstances()->selectByType(C)
+* -> Set(C)
+
+?a1->selectByKind(B)
+* <input>:1:4: Warning: application of `selectByKind' to a single value should be done with `.' instead of `->'.
+* The operation `selectByKind' is only applicable on collections.
+
+?null->selectByKind(B)
+* <input>:1:6: Warning: application of `selectByKind' to a single value should be done with `.' instead of `->'.
+* -> Undefined : OclVoid
+exit

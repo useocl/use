@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MStatement;
@@ -34,16 +35,25 @@ import org.tzi.use.util.StringUtil;
 /**
  * An operation is a parameterized expression. Evaluation of the
  * expression has no side-effects wrt the system state.
- *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author Mark Richters 
+ * @author Lars Hamann
  */
-public final class MOperation extends MModelElementImpl {
-    private VarDeclList fVarDeclList; // A list of parameters
-    private Type fResultType;         // The declared result type (optional)
-    private Expression fExpr;         // The operation's body (optional)
-    private MStatement fStatement;    // might be null
-    private MClass fClass;  // owner
+public final class MOperation extends MModelElementImpl implements UseFileLocatable {
+    /** A list of parameters */
+	private VarDeclList fVarDeclList;
+    
+    /** The declared result type (optional) */
+    private Type fResultType;
+    
+    /** The operation's body (optional) */
+    private Expression fExpr;
+    
+    /** The statement, might be <code>null</code>.*/
+    private MStatement fStatement;
+    
+    /** The owner */
+    private MClass fClass;
+    
     private List<MPrePostCondition> fPreConditions;
     private List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
@@ -95,7 +105,7 @@ public final class MOperation extends MModelElementImpl {
     	fStatement = statement;
     }
     
-    
+    		
     /**
      * Returns <code>true</code> if the operation
      * can be safely called from inside an OCL expression.
@@ -191,7 +201,7 @@ public final class MOperation extends MModelElementImpl {
     		throw new MInvalidModelException("The operation " + StringUtil.inQuotes(this.cls().name() + "." + this.name()) + 
     				" does not have a declared result type and the result type of the defined expression could not be calcuated. This" +
     				" can happen when an operation without a declared result type is calling itself recursively.");
-    	} else if (! expr.type().isSubtypeOf(fResultType) ) {
+    	} else if (! expr.type().conformsTo(fResultType) ) {
             throw new MInvalidModelException("Expression type `" +
                                              expr.type() + 
                                              "' does not match declared result type `" + fResultType + "'.");
@@ -276,6 +286,65 @@ public final class MOperation extends MModelElementImpl {
     public void processWithVisitor(MMVisitor v) {
         v.visitOperation(this);
     }
-    
+
+    /**
+	 * @param op
+	 * @return
+	 */
+	public boolean isValidOverrideOf(MOperation op) {
+		if (!this.name().equals(op.name())) return false;
+		
+		if (this.fResultType == null) {
+			if (op.fResultType != null) return false;
+		} else {
+			if (!this.fResultType.conformsTo(op.fResultType))
+				return false;
+		}
+		
+		if (this.fVarDeclList.size() != op.fVarDeclList.size())
+			return false;
+		
+		int index = 0;
+		for (VarDecl opVar : op.fVarDeclList) {
+			if (!opVar.type().conformsTo(this.fVarDeclList.varDecl(index).type()))
+				return false;
+			++index;
+		}
+		
+		return true;
+	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		// Checks this and name
+		if (!super.equals(obj))
+			return false;
+		
+		if (!(obj instanceof MOperation))
+			return false;
+		
+		MOperation op = (MOperation)obj;
+		
+		if (!fClass.equals(op.fClass))
+			return false;
+
+		if (fResultType == null) {
+			if(op.fResultType != null) return false;
+		} else {
+			return fResultType.equals(op.fResultType);
+		}
+		
+		if (!this.paramList().equals(op.paramList()))
+			return false;
+		
+		return true;
+	}
+
+	@Override
+	public int compareTo(MModelElement o) {
+		if (o instanceof MOperation)
+			return signature().compareTo(((MOperation)o).signature());
+		else
+			return super.compareTo(o);
+	}
 }

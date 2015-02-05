@@ -40,13 +40,11 @@ import org.tzi.use.util.StringUtil;
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ASTCollectionLiteral extends ASTExpression {
     private Token fToken;
     private List<ASTCollectionItem> fItems;
-    private boolean fHasRanges;
 
     public ASTCollectionLiteral(Token token) {
         fToken = token;
@@ -55,32 +53,14 @@ public class ASTCollectionLiteral extends ASTExpression {
 
     public void addItem(ASTCollectionItem item) {
         fItems.add(item);
-        if (item.fSecond != null )
-            fHasRanges = true;
     }
 
     public Expression gen(Context ctx) throws SemanticException {
         String opname = "mk" + fToken.getText();
-        if (fHasRanges )
-            opname += "Range";
 
-        // produce argument list
-        ArrayList<ASTExpression> args = new ArrayList<ASTExpression>();
-        for (ASTCollectionItem item : fItems) {
-            args.add(item.fFirst);
-            // if there is at least one range item, we generate all
-            // arguments as ranges
-            if (fHasRanges ) {
-                if (item.fSecond == null )
-                    args.add(item.fFirst);
-                else
-                    args.add(item.fSecond);
-            }
-        }
-
-        Expression[] eArgs = new Expression[args.size()];
-        for (int i = 0; i < args.size(); i++)
-            eArgs[i] = ((ASTExpression) args.get(i)).gen(ctx);
+        Expression[] eArgs = new Expression[fItems.size()];
+        for (int i = 0; i < fItems.size(); i++)
+            eArgs[i] = fItems.get(i).gen(ctx);
         
         try {
             if (opname.equals("mkSet") )

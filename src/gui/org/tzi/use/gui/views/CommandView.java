@@ -24,39 +24,44 @@ package org.tzi.use.gui.views;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.util.List;
+import java.util.Stack;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
+
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A CommandView shows the sequence of executed state manipulation
  * commands.
- *
- * @version     $ProjectVersion: 0.393 $
+ *  
  * @author      Mark Richters 
  */
 @SuppressWarnings("serial")
 public class CommandView extends JPanel implements View {
     private MSystem fSystem;
-    private JList fList;
-    private DefaultListModel fListModel;
+    private JList<String> fList;
+    private DefaultListModel<String> fListModel;
 
     public CommandView(MSystem system) {
         fSystem = system;
 
         setFont(Font.getFont("use.gui.userFont", getFont()));
         setLayout(new BorderLayout());
-        fListModel = new DefaultListModel();
-        fList = new JList(fListModel);
+        fListModel = new DefaultListModel<String>();
+        fList = new JList<String>(fListModel);
         add(fList, BorderLayout.CENTER);
 
-        fSystem.addChangeListener(this);
         update();
+        
+        fSystem.getEventBus().register(this);
     }
 
     private void update() {
@@ -68,31 +73,42 @@ public class CommandView extends JPanel implements View {
         if (numEvaluatedStatements == 0) {
         	fListModel.addElement("<empty>");
         } else {
+        	Stack<Integer> numbering = new Stack<>();
+        	Stack<String> prefixes = new Stack<>();
+        	
+        	numbering.push(Integer.valueOf(0));
+        	prefixes.push("");
+        	
+        	String entry;
+        	String prefix;
+        	MStatement statement;
+        	
         	for (int i = 0; i < numEvaluatedStatements; ++i) {
-        		fListModel.addElement(
-        				(i + 1) + 
-        				". " + 
-        				evaluatedStatements.get(i).getShellCommand());
+        		statement = evaluatedStatements.get(i);
+        		int number = numbering.pop();
+        		numbering.push(++number);
+        		
+        		prefix = prefixes.peek() + number + ".";
+        		entry = prefix + " " + statement.getShellCommand();
+        		
+        		if (statement instanceof MEnterOperationStatement) {
+        			numbering.push(0);
+        			prefixes.push(prefix);
+        		} else if (statement instanceof MExitOperationStatement) {
+        			numbering.pop();
+        			prefixes.pop();
+        		}
+        		
+        		fListModel.addElement(entry);
         	}
         }
-        // TODO cmd version
-        /*List<MCmd> cmds = fSystem.useCommands();
-        if (cmds.isEmpty() ) {
-            fListModel.addElement("<empty>");
-        } else {
-            int j = 1;
-            Iterator<MCmd> cmdIter = cmds.iterator();
-            while (cmdIter.hasNext() ) {
-                MCmd cmd = cmdIter.next();
-                String s = j++ + ". " + cmd.getUSEcmd();
-                fListModel.addElement(s);
-            }
-        }*/
+
         fList.ensureIndexIsVisible(fListModel.size() - 1);
         repaint();
     }
 
-    public void stateChanged(StateChangeEvent e) {
+    @Subscribe
+    public void onStatementExecuted(StatementExecutedEvent e) {
         update();
     }
 
@@ -100,7 +116,7 @@ public class CommandView extends JPanel implements View {
      * Detaches the view from its model.
      */
     public void detachModel() {
-        fSystem.removeChangeListener(this);
+        fSystem.getEventBus().unregister(this);
     }
 
 }

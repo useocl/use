@@ -12,6 +12,6 @@
 !create e : E
 
 ? Set{d,e}
-*-> Set{@d,@e} : Set(C)
+*-> Set{d,e} : Set(C)
 
 exit

@@ -26,12 +26,10 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 /**
  * String values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
- * @see     RealValue
  */
 public final class StringValue extends Value {
-    private String fValue;
+    private final String fValue;
     
     public StringValue(String s) {
         super(TypeFactory.mkString());

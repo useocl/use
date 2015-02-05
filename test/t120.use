@@ -1,0 +1,13 @@
+/*
+ * Test for new operations oclSelectByKind and oclSelectByType
+ */
+model t120
+
+class A
+end
+
+class B < A
+end
+
+class C < B
+end

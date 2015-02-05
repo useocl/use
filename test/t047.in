@@ -13,9 +13,9 @@
 !set Person3.firstName := 'Ada'
 !set Person3.lastName := 'Apple'
 ?Person.allInstances()
-*-> Set{@Person1,@Person2,@Person3} : Set(Person)
+*-> Set{Person1,Person2,Person3} : Set(Person)
 ?Person.allInstances()->asSequence()
-*-> Sequence{@Person1,@Person2,@Person3} : Sequence(Person)
+*-> Sequence{Person1,Person2,Person3} : Sequence(Person)
 ?Person.allInstances()->asSequence().firstName
 *-> Sequence{'Ada','Ada','Ada'} : Sequence(String)
 ?Person.allInstances()->asSequence().lastName

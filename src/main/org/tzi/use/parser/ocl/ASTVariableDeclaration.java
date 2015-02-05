@@ -38,6 +38,11 @@ public class ASTVariableDeclaration extends AST {
     private Token fName;
     private ASTType fType;
 
+    /**
+     * 
+     * @param name 
+     * @param type The AST node of the type of the variable. Cannot be <code>null</code>.
+     */
     public ASTVariableDeclaration(Token name, ASTType type) {
         fName = name;
         fType = type;
@@ -52,6 +57,11 @@ public class ASTVariableDeclaration extends AST {
 
     public Token name() {
         return fName;
+    }
+    
+    @Override
+    public String toString() {
+    	return fName.getText() + ":" + fType.toString(); 
     }
 }
 

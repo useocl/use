@@ -23,11 +23,8 @@ package org.tzi.use.uml.sys;
 
 import java.util.List;
 
-import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 
@@ -41,24 +38,28 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author      Marc Richters
  */
 public final class MObjectImpl implements MObject {
-    private MClass fClass;  // class of object
-    private ObjectType fType;   // type of object
-    private String fName;   // unique object name
+	/**
+	 * class of object
+	 */
+	private final MClass fClass;
 
-    private ObjectValue objectValue;
+    /**
+     * unique object name
+     */
+    private final String fName;
 
-    // For performance reasons
-    private int hashCode;
+    /**
+     *  For performance reasons
+     */
+    private final int hashCode;
 
     /**
      * Constructs a new object for the given class.
      */
     MObjectImpl( MClass cls, String name ) {
         fClass = cls;
-        fType = TypeFactory.mkObjectType( fClass );
         fName = name;
         hashCode = fName.hashCode();
-        objectValue = new ObjectValue(TypeFactory.mkObjectType(fClass), this);
     }
 
     @Override
@@ -67,18 +68,13 @@ public final class MObjectImpl implements MObject {
     }
 
     @Override
-    public ObjectType type() {
-        return fType;
-    }
-    
-    @Override
     public String name() {
         return fName;
     }
 
     @Override
     public ObjectValue value() {
-    	return objectValue;
+    	return new ObjectValue(this.cls(), this);
     }
 
     @Override
@@ -89,12 +85,6 @@ public final class MObjectImpl implements MObject {
     @Override
     public boolean exists( MSystemState systemState ) {
         return systemState.getObjectState( this ) != null;
-    }
-
-    @Override
-    public List<MObject> getLinkedObjects( MSystemState systemState,
-                                  MAssociationEnd srcEnd, MAssociationEnd dstEnd, List<Value> qualifierValues ) {
-        return systemState.getLinkedObjects( this, srcEnd, dstEnd, qualifierValues );
     }
 
     @Override
@@ -110,13 +100,19 @@ public final class MObjectImpl implements MObject {
 
     @Override
     public boolean equals( Object obj ) {
-        if ( obj == this )
-            return true;
-        if (hashCode != obj.hashCode())
-            return false;
-        if ( obj instanceof MObject )
-            return fName.equals( ( ( MObject ) obj ).name() );
-        return false;
+        if ( obj == this ){
+        	return true;
+        }
+        if( obj == null ){
+        	return false;
+        }
+        if (hashCode != obj.hashCode()){
+        	return false;
+        }
+        if ( obj instanceof MObject ){
+        	return fName.equals( ( ( MObject ) obj ).name() );
+        }
+    	return false;
     }
 
     @Override

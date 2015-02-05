@@ -8,7 +8,7 @@ gen result
 *Barriers blocked 0 times.
 *Result: Valid state found.
 *Commands to produce the valid state:
-*!@b.name := ''
+*!b.name := ''
 gen result accept
 *Generated result (system state) accepted.
 gen start -r 5907 -t t055.assl set_attr(let b2A:A=b in b2A)
@@ -21,7 +21,7 @@ gen result
 *Barriers blocked 0 times.
 *Result: Valid state found.
 *Commands to produce the valid state:
-*!@b.name := ''
+*!b.name := ''
 gen result accept
 *Generated result (system state) accepted.
 exit

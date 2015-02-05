@@ -1,12 +1,12 @@
 package org.tzi.use.main.shell.runtime;
 
-import java.util.Map;
+import java.util.List;
 
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IDescriptor;
 import org.tzi.use.main.runtime.IExtensionPoint;
 import org.tzi.use.main.shell.Shell;
-import org.tzi.use.runtime.shell.impl.PluginShellCmdProxy;
+import org.tzi.use.runtime.shell.impl.PluginShellCmdFactory.PluginShellCmdContainer;
 
 /**
  * This interface provides the Shell Command Extension Point. The implementation
@@ -33,8 +33,8 @@ public interface IPluginShellExtensionPoint extends IExtensionPoint {
 	 *            The Session object
 	 * @param shell
 	 *            The Shell object
-	 * @return Map of created Shell Command Proxies
+	 * @return List of created Shell Command Containers
 	 */
-	Map<Map<String, String>, PluginShellCmdProxy> createPluginCmds(Session session, Shell shell);
+	List<PluginShellCmdContainer> createPluginCmds(Session session, Shell shell);
 
 }

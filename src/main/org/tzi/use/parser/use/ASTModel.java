@@ -29,35 +29,39 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTEnumTypeDefinition;
+import org.tzi.use.parser.use.statemachines.ASTSignal;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
 public class ASTModel extends ASTAnnotatable {
-    private Token fName;
-    private List<ASTEnumTypeDefinition> fEnumTypeDefs;
-    private List<ASTClass> fClasses;
-    private List<ASTAssociationClass> fAssociationClasses;
-    private List<ASTAssociation> fAssociations;
-    private List<ASTConstraintDefinition> fConstraints;
-    private List<ASTPrePost> fPrePosts;
+    private final Token fName;
+    private final List<ASTEnumTypeDefinition> fEnumTypeDefs;
+    private final List<ASTClass> fClasses;
+    private final List<ASTAssociationClass> fAssociationClasses;
+    private final List<ASTAssociation> fAssociations;
+    private final List<ASTSignal> signals;
+    private final List<ASTConstraintDefinition> fConstraints;
+    private final List<ASTPrePost> fPrePosts;
 
     public ASTModel(Token name) {
         fName = name;
-        fEnumTypeDefs = new ArrayList<ASTEnumTypeDefinition>();
-        fClasses = new ArrayList<ASTClass>();
-        fAssociationClasses = new ArrayList<ASTAssociationClass>();
-        fAssociations = new ArrayList<ASTAssociation>();
-        fConstraints = new ArrayList<ASTConstraintDefinition>();
-        fPrePosts = new ArrayList<ASTPrePost>();
+        fEnumTypeDefs = new ArrayList<>();
+        fClasses = new ArrayList<>();
+        fAssociationClasses = new ArrayList<>();
+        fAssociations = new ArrayList<>();
+        fConstraints = new ArrayList<>();
+        fPrePosts = new ArrayList<>();
+        signals = new ArrayList<>();
     }
 
     public void addEnumTypeDef(ASTEnumTypeDefinition etd) {
@@ -84,6 +88,10 @@ public class ASTModel extends ASTAnnotatable {
         fPrePosts.add(ppc);
     }
 
+	public void addSignal(ASTSignal s) {
+		this.signals.add(s);		
+	}
+	
     public MModel gen(Context ctx) {
         MModel model = ctx.modelFactory().createModel(fName.getText());
         model.setFilename(ctx.filename());
@@ -121,14 +129,14 @@ public class ASTModel extends ASTAnnotatable {
             }
         }
 
-        // (1c) add empty associationclasses to model
+        // (1c) add empty association classes to model
         Iterator<ASTAssociationClass> acIt = fAssociationClasses.iterator();
         while ( acIt.hasNext() ) {
             ASTAssociationClass ac = acIt.next();
             try {
-                // The associationclass can just be added as a class so far,
+                // The association class can just be added as a class so far,
                 // because to keep the order of generating a model.
-                // The associationclass will be added as an association in step 3b.
+                // The association class will be added as an association in step 3b.
                 MAssociationClass assocCls = ac.genEmptyAssocClass( ctx );
                 model.addClass( assocCls );
             } catch ( SemanticException ex ) {
@@ -139,7 +147,26 @@ public class ASTModel extends ASTAnnotatable {
                 acIt.remove();
             }
         }
-
+        
+        // (1c) add empty signals to model
+        {
+	        Iterator<ASTSignal> iter = this.signals.iterator();  
+	        while (iter.hasNext()) {
+	        	ASTSignal s = iter.next();
+	        	
+	        	try {
+					MSignal signal = s.genEmptySignal(ctx);
+					model.addSignal(signal);
+				} catch (SemanticException ex) {
+					ctx.reportError( ex );
+					iter.remove();
+				} catch (MInvalidModelException e1) {
+					ctx.reportError( s.getName(), e1 );
+					iter.remove();
+				}
+	        }
+        }
+        
         // (2a) add attributes and set generalization
         // relationships. The names of all classes are known at this
         // point
@@ -148,12 +175,18 @@ public class ASTModel extends ASTAnnotatable {
         }
 
         // (2b) add attributes and set generalization
-        // relationships of the associationclasses.
+        // relationships of the association classes.
         // The names of all classes are known at this point
         for (ASTAssociationClass ac : fAssociationClasses) {
             ac.genAttributesOperationSignaturesAndGenSpec( ctx );
         }
 
+        // (2c) add attributes and set generalization relationships
+        // of signals
+        for (ASTSignal s : signals) {
+			s.genAttributesAndGenSpec( ctx );
+        }
+        
         // (3a) add associations. Classes are known and can be
         // referenced by role names.
         for (ASTAssociation a : fAssociations) {
@@ -164,6 +197,14 @@ public class ASTModel extends ASTAnnotatable {
             }
         }
 
+        for (ASTClass c : fClasses) {
+        	c.genStateMachinesAndStates(ctx);
+        }
+        
+        for (ASTAssociationClass ac : fAssociationClasses) {
+            ac.genStateMachinesAndStates(ctx);
+        }
+        
         // (3b) add association classes as associations.
         // Classes are known and can be referenced by role names.
         for (ASTAssociationClass ac : fAssociationClasses) {
@@ -180,11 +221,32 @@ public class ASTModel extends ASTAnnotatable {
             }
         }
 
+        // (3c) Generalization of association classes might leave out new
+        // rolenames. Add them from parent.
+        for (ASTAssociationClass ac : fAssociationClasses) {
+            try {
+                ac.genAssociationFinal( ctx );
+            } catch ( MInvalidModelException ex ) {
+                ctx.reportError( fName, ex );
+            }
+        }
+
+        
         // (3c) add associationEnd specific constraints, e. g. subsets
         // Role names are known and can be subset
         for (ASTAssociation a : fAssociations) {
         	try {
-        		a.genConstraints(ctx, model);
+        		a.genEndConstraints(ctx);
+        	} catch (SemanticException ex) {
+        		ctx.reportError(ex);
+        	}
+        }
+        
+        // (3c) add associationEnd specific constraints, e. g. subsets
+        // Role names are known and can be subset
+        for (ASTAssociationClass a : fAssociationClasses) {
+        	try {
+        		a.genEndConstraints(ctx);
         	} catch (SemanticException ex) {
         		ctx.reportError(ex);
         	}
@@ -194,11 +256,11 @@ public class ASTModel extends ASTAnnotatable {
         // All class interfaces are known and association features
         // are available for expressions.
         for (ASTClass c : fClasses) {
-            c.genOperationBodies(ctx);
+            c.genOperationBodiesAndDerivedAttributes(ctx);
         }
         
         for (ASTAssociationClass ac : fAssociationClasses) {
-            ac.genOperationBodies(ctx);
+            ac.genOperationBodiesAndDerivedAttributes(ctx);
         }
         
 
@@ -229,6 +291,15 @@ public class ASTModel extends ASTAnnotatable {
             }
         }
         
+        // Gen transitions
+        for (ASTClass c : fClasses) {
+        	c.genStateMachineTransitions(ctx);
+        }
+        
+        for (ASTAssociationClass ac : fAssociationClasses) {
+            ac.genStateMachineTransitions(ctx);
+        }
+
         return model;
     }
 

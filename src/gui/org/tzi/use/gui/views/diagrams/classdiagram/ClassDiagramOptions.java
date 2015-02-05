@@ -21,7 +21,7 @@
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
-import java.awt.Color;
+import java.nio.file.Path;
 
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 
@@ -33,17 +33,49 @@ import org.tzi.use.gui.views.diagrams.DiagramOptions;
  */
 public final class ClassDiagramOptions extends DiagramOptions {
 
+	public enum ShowCoverage {
+		DONT_SHOW,
+		SHOW,
+		SHOW_EXPAND_OPERATIONS;
+		
+		@Override
+		public String toString() {
+			switch (this.ordinal()) {
+			case 0:
+				return "Don't show";
+			case 1:
+				return "Show";
+			case 2:
+				return "Show (expand operations)";
+			default:
+				return "<unknown>";
+			}
+		}
+	}
+	
     public ClassDiagramOptions() {
-        // color Settings
-        NODE_COLOR = new Color( 0xff, 0xf8, 0xb4 ); //new Color(0xe0, 0xe0, 0xe0);
-        NODE_SELECTED_COLOR = Color.orange;
-        NODE_FRAME_COLOR = Color.blue; //Color.black;
-        NODE_LABEL_COLOR = Color.black;
-        DIAMONDNODE_COLOR = Color.white;
-        DIAMONDNODE_FRAME_COLOR = Color.black;
-        EDGE_COLOR = Color.BLACK; //Color.red;
-        EDGE_LABEL_COLOR = Color.darkGray;
-        EDGE_SELECTED_COLOR = Color.orange;
+    }
+    
+    protected ShowCoverage fShowCoverage = ShowCoverage.DONT_SHOW;
+    
+    /**
+     * Copy constructor
+     * @param source
+     */
+    public ClassDiagramOptions(ClassDiagramOptions source) {
+        super(source);
+        this.fShowMutliplicities = source.fShowMutliplicities;
+        this.fShowCoverage = source.fShowCoverage;
+    }
+    
+    @Override
+    protected void registerAdditionalColors() {
+       // No additional colors
+    }
+    
+    public ClassDiagramOptions(Path modelFile) {
+    	this();
+    	this.modelFileName = modelFile;
     }
     
     public boolean isShowMutliplicities() {
@@ -54,4 +86,15 @@ public final class ClassDiagramOptions extends DiagramOptions {
         fShowMutliplicities = showMutliplicities;
     }
 
+    /**
+	 * @param showCoverage
+	 */
+	public void setShowCoverage(ShowCoverage showCoverage) {
+		fShowCoverage = showCoverage;
+		onOptionChanged("SHOWCOVERAGE");
+	}
+
+	public ShowCoverage getShowCoverage() {
+		return fShowCoverage;
+	}
 }

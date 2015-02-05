@@ -26,8 +26,10 @@ import java.awt.geom.Rectangle2D;
 
 import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.NodeBase;
+import org.tzi.use.gui.views.diagrams.elements.CompartmentNode;
+import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.util.MathUtil;
 
 /**
  * Base class for nodes representing a classifier (class or enumeration)
@@ -35,7 +37,7 @@ import org.tzi.use.uml.mm.MClassifier;
  * @author Lars Hamann
  *
  */
-public abstract class ClassifierNode extends NodeBase {
+public abstract class ClassifierNode extends CompartmentNode implements DiagramOptionChangedListener {
 
 	/**
      * The size of all three compartments (name, attributes, operations) is
@@ -59,74 +61,56 @@ public abstract class ClassifierNode extends NodeBase {
     	this.classifier = cls;
     	this.fLabel = cls.name();
     	this.fOpt = opt;
-    	this.fOpt.addOptionChangedListener(new DiagramOptionChangedListener() {
-			@Override
-			public void optionChanged(String optionname) {
-				if (optionname.equals("SHOWOPERATIONS") ||
-					optionname.equals("SHOWATTRIBUTES")	)
-				calculateBounds();
-			}
-		});
+    	this.fOpt.addOptionChangedListener(this);
     }
     
 	public MClassifier getClassifier() {
 		return classifier;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#isDeletable()
-	 */
-	@Override
-	public boolean isDeletable() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#name()
-	 */
 	@Override
 	public String name() {
 		return getClassifier().name();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setHeight(double)
-	 */
 	@Override
-	public void setHeight(double height) {
-		throw new RuntimeException("Illegal call of ClassifierNode.setHeight(double).");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.PlaceableNode#setWidth(double)
-	 */
-	@Override
-	public void setWidth(double width) {
-		throw new RuntimeException("Illegal call of ClassifierNode.setWidth(double).");
-	}
+    public String getId() {
+    	return name(); 
+    }
+	
+	private double lineHeight;
 	
 	protected void calculateBounds() {
 		double width = nameRect.width;
 		double height = nameRect.height;
 		
+		double requiredHeight = nameRect.height;
+		
 		if (fOpt.isShowAttributes()) {
 			width = Math.max(width, attributesRect.width);
 			height += attributesRect.height;
+			if (hasAttributes())
+				requiredHeight += lineHeight + VERTICAL_INDENT;
+			else
+				requiredHeight += 2 * VERTICAL_INDENT;
 		}
 		
 		if (fOpt.isShowOperations()) {
 			width = Math.max(width, operationsRect.width);
 			height += operationsRect.height;
+			if (hasOperations())
+				requiredHeight += lineHeight + VERTICAL_INDENT;
+			else
+				requiredHeight += 2 * VERTICAL_INDENT;
 		}
-		
-		height += 4;
+
 		width += 10;
 		
-        height = Math.max(height, getMinHeight());
-        width = Math.max(width, getMinWidth());
-        
-		bounds.width = width;
-		bounds.height = height;
+		setRequiredHeight("CLASSIFIERNODE", requiredHeight);
+        height = MathUtil.max(height, getMinHeight(), getRequiredHeight());
+        width = MathUtil.max(width, getMinWidth(), getRequiredWidth());
+
+        setCalculatedBounds(width, height);
 	}
 	
 	/**
@@ -135,15 +119,32 @@ public abstract class ClassifierNode extends NodeBase {
      * (Width and height are needed from other methods before the nodes are
      * drawn.)
      */
-    public final void setRectangleSize( Graphics2D g ) {
+	@Override
+    public final void doCalculateSize( Graphics2D g ) {
         calculateNameRectSize(g, nameRect);
         calculateAttributeRectSize(g, attributesRect);
         calculateOperationsRectSize(g, operationsRect);
+        this.lineHeight = Util.getLineHeight(g.getFontMetrics());
         calculateBounds();
     }
     
+	@Override
+	public void optionChanged(String optionname) {
+		if (optionname.equals("SHOWOPERATIONS") ||
+			optionname.equals("SHOWATTRIBUTES")	)
+		calculateBounds();
+	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		fOpt.removeOptionChangedListener(this);
+	}
+
     protected abstract void calculateNameRectSize(Graphics2D g, Rectangle2D.Double rect);
     protected abstract void calculateAttributeRectSize(Graphics2D g, Rectangle2D.Double rect);
     protected abstract void calculateOperationsRectSize(Graphics2D g, Rectangle2D.Double rect);
     
+    protected abstract boolean hasAttributes();
+	protected abstract boolean hasOperations();
 }

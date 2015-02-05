@@ -48,35 +48,17 @@ statOnly returns [ASTStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 stat returns [ASTStatement n]
 @init {
-  ASTSequenceStatement seq = new ASTSequenceStatement();
+  ASTSequenceStatement seq = new ASTSequenceStatement($start);
 }
 :
-  nextStat[seq]
+  s = singleStat {seq.addStatement($s.n);}
   (
     SEMI
-    nextStat[seq]
+    s2 = singleStat {seq.addStatement($s2.n); }
   )* 
   
   { 
     $n = seq.simplify();
-    if (($n != null) && (!$n.isEmptyStatement())) {
-      $n.setSourcePosition($start);
-    }
-  }
-;
-
-
-////////////////////////////////////////////////////////////////////////////////
-//
-////////////////////////////////////////////////////////////////////////////////
-nextStat[ASTSequenceStatement seq]
-:
-  s = singleStat
-  
-  {
-    if (($s.n != null) && (!$s.n.isEmptyStatement())) {
-      seq.addStatement($s.n, $start, $text);
-    }
   }
 ;
 
@@ -84,9 +66,6 @@ nextStat[ASTSequenceStatement seq]
 // 
 ////////////////////////////////////////////////////////////////////////////////
 singleStat returns [ASTStatement n]
-//options {
-  //backtrack = true;
-//}
 : 
     emp = emptyStat      { $n = $emp.n; } // i.    (empty statement)
   // handled in stat rule                 // ii.   (sequence)
@@ -122,7 +101,7 @@ statStartingWithExpr returns [ASTStatement n]
   )?
   {
     if (aas == null) {
-      $n = new ASTOperationCallStatement($expr.n); 
+      $n = new ASTOperationCallStatement($start, $expr.n); 
     }
   }
 ;
@@ -136,64 +115,8 @@ varAssignStat returns [ASTStatement n]
   COLON_EQUAL
   rVal = rValue
   {
-    $n = new ASTVariableAssignmentStatement($varName.text, $rVal.n);
+    $n = new ASTVariableAssignmentStatement($varName, $varName.text, $rVal.n);
   }
-  
-  /*
-  { 
-    if ($varNames.n.size() == 1) {
-  		$n = new ASTVariableAssignmentStatement($varNames.n.get(0), $rVal.n);
-	} else {
-		ASTSimpleType objType = $oType.n;
-    	List<String> varNames = $varNames.n;
-    	int numVars = varNames.size();
-    
-	    List<ASTExpression> objNames = null;
-	    int numNames = 0;
-	    
-	    if (oNames != null) {
-	      objNames = $oNames.n;
-	      numNames = objNames.size();
-	    }
-	    
-	    if (numNames > numVars) {
-	      StringBuilder sb = new StringBuilder();
-	      sb.append("ignoring superfluous object name");
-	      if ((numNames - numVars) > 1) {
-	        sb.append("s");
-	      }
-	      sb.append(": ");
-	      for (int i = numVars; i < numNames; ) {
-	        sb.append(objNames.get(i).getStringRep());
-	        if (++i < numNames) {
-	          sb.append(", ");
-	        }
-	      }
-	      sb.append(" in statement `");
-	      sb.append($text); 
-	      sb.append("'");
-	      
-	      reportWarning(sb.toString());
-	    }
-    
-    	ASTSequenceStatement createSeq = (ASTSequenceStatement)rVal.n;
-    	
-	    ASTSequenceStatement seq = new ASTSequenceStatement(numVars);
-	    for (int i = 0; i < numVars; ++i) {     
-	      seq.addStatement(
-	        new ASTVariableAssignmentStatement(
-	          varNames.get(i),
-	          new ASTRValueNewObject(
-	            objType, 
-	            ((i < numNames) ? objNames.get(i) : null))),
-	        $start,
-	        $text);  
-	    }
-       
-    	$n = seq.simplify();
-	}
-  }
-  */
 ;
 
 
@@ -207,7 +130,7 @@ attAssignStat[ASTExpression exp] returns [ASTAttributeAssignmentStatement n]
   COLON_EQUAL
   r = rValue
   
-  { $n = new ASTAttributeAssignmentStatement($exp, $attName.text, $r.n); }
+  { $n = new ASTAttributeAssignmentStatement($attName, $exp, $attName.text, $r.n); }
 ;
 
 
@@ -220,7 +143,7 @@ objCreateStat returns [ASTStatement n]
   ident = simpleType
   (
     LPAREN
-      objName = inSoilExpression
+      (objName = inSoilExpression)?
     RPAREN
   )?
   
@@ -230,13 +153,13 @@ objCreateStat returns [ASTStatement n]
         p = rValListMin2WithOptionalQualifiers
       RPAREN
     { 
-    $n = new ASTNewLinkObjectStatement($ident.n, $p.participans, $p.qualifiers, $objName.n);
+    $n = new ASTNewLinkObjectStatement($start, $ident.n, $p.participans, $p.qualifiers, $objName.n);
     }
   )?
   
   {
     if ($n == null) {
-      $n = new ASTNewObjectStatement($ident.n, $objName.n);
+      $n = new ASTNewObjectStatement($start, $ident.n, $objName.n);
     }
   }
 ;
@@ -250,13 +173,11 @@ objDestroyStat returns [ASTStatement n]
   el = exprListMin1
   
   {
-    ASTSequenceStatement seq = new ASTSequenceStatement();
+    ASTSequenceStatement seq = new ASTSequenceStatement($start);
     
     for (ASTExpression expression : $el.n) {
       seq.addStatement(
-        new ASTObjectDestructionStatement(expression),
-        $start,
-        $text);
+        new ASTObjectDestructionStatement($start, expression));
     }
     
     $n = seq.simplify();
@@ -276,7 +197,7 @@ lnkInsStat returns [ASTLinkInsertionStatement n]
   'into'
   ass = IDENT
 
-  { $n = new ASTLinkInsertionStatement($ass.text, $p.participans, $p.qualifiers); }
+  { $n = new ASTLinkInsertionStatement($start, $ass.text, $p.participans, $p.qualifiers); }
 ;
 
 rValListMin2WithOptionalQualifiers returns [List<ASTRValue> participans, List<List<ASTRValue>> qualifiers]
@@ -340,7 +261,7 @@ lnkDelStat returns [ASTLinkDeletionStatement n]
   'from' 
   ass = IDENT
   
-  { $n = new ASTLinkDeletionStatement($ass.text, $p.participans, $p.qualifiers); }
+  { $n = new ASTLinkDeletionStatement($start, $ass.text, $p.participans, $p.qualifiers); }
 ;
 
 
@@ -362,7 +283,7 @@ condExStat returns [ASTConditionalExecutionStatement n]
   )?
   'end'
   
-  { $n = new ASTConditionalExecutionStatement($con.n, $ts.n, elseStat); }
+  { $n = new ASTConditionalExecutionStatement($start, $con.n, $ts.n, elseStat); }
 ;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -378,7 +299,7 @@ iterStat returns [ASTIterationStatement n]
   s = statOrImplicitBlock 
   'end'
   
-  { $n = new ASTIterationStatement($var.text, $set.n, $s.n); }
+  { $n = new ASTIterationStatement($start, $var.text, $set.n, $s.n); }
 ;
 
 
@@ -393,7 +314,7 @@ whileStat returns [ASTWhileStatement n]
   s = statOrImplicitBlock 
   'end'
   
-  { $n = new ASTWhileStatement($cond.n, $s.n); }
+  { $n = new ASTWhileStatement($start, $cond.n, $s.n); }
 ;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -401,12 +322,12 @@ whileStat returns [ASTWhileStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 blockStat returns [ASTBlockStatement n]
 @init {
-  n = new ASTBlockStatement(org.tzi.use.config.Options.explicitVariableDeclarations);
+  $n = new ASTBlockStatement($start, org.tzi.use.config.Options.explicitVariableDeclarations);
 } 
 :
  'begin'
- ( 'declare' vd = variableDeclaration { n.addVariableDeclaration(vd);} ( COMMA vd1 = variableDeclaration { n.addVariableDeclaration(vd1);} )* SEMI )?
- s = stat { n.setBody($s.n); }
+ ( 'declare' vd = variableDeclaration { $n.addVariableDeclaration(vd);} ( COMMA vd1 = variableDeclaration { $n.addVariableDeclaration(vd1);} )* SEMI )?
+ s = stat { $n.setBody($s.n); }
  'end'
 ; 
 
@@ -416,11 +337,11 @@ blockStat returns [ASTBlockStatement n]
 ////////////////////////////////////////////////////////////////////////////////
 implicitBlockStat returns [ASTBlockStatement n]
 @init {
-  n = new ASTBlockStatement(false);
+  $n = new ASTBlockStatement($start, false);
 } 
 :
-  'declare' vd = variableDeclaration { n.addVariableDeclaration(vd);} ( COMMA vd1 = variableDeclaration { n.addVariableDeclaration(vd1);} )* SEMI 
- s = stat { n.setBody($s.n); }
+  'declare' vd = variableDeclaration { $n.addVariableDeclaration(vd);} ( COMMA vd1 = variableDeclaration { $n.addVariableDeclaration(vd1);} )* SEMI 
+ s = stat { $n.setBody($s.n); }
 ; 
 
 statOrImplicitBlock returns [ASTStatement n]
@@ -452,7 +373,6 @@ rValue returns [ASTRValue n]
     e = inSoilExpression { $n = new ASTRValueExpressionOrOpCall($e.n); }
   | oc = objCreateStat
   { 
-    $oc.n.setSourcePosition($start);
     if ($oc.n instanceof ASTNewLinkObjectStatement)
     	$n = new ASTRValueNewLinkObject((ASTNewLinkObjectStatement)$oc.n);
     else

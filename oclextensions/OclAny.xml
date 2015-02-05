@@ -1,0 +1,12 @@
+<extensions>
+  <operation source="Integer" name="sleep" returnType="Boolean">
+	<parameter>
+		<par name="s" type="Integer"/>
+	</parameter>
+	<body><![CDATA[
+		sleep($s)
+		true
+	]]>
+	</body>
+  </operation>
+</extensions>

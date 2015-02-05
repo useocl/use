@@ -48,11 +48,10 @@ public abstract class Value implements Comparable<Value>, BufferedToString {
         return fType;
     }
 
-    public void setType( Type t) {
-        fType = t;
+    public Type getRuntimeType() {
+    	return fType;
     }
     
-
     /**
      * True if value is an <code>{@link IntegerValue}</code> 
      * @return True if value is an instance of <code>{@link IntegerValue}</code>
@@ -61,6 +60,14 @@ public abstract class Value implements Comparable<Value>, BufferedToString {
         return false;
     }
 
+    /**
+     * True if value is an <code>{@link UnlimitedNaturalValue}</code> 
+     * @return True if value is an instance of <code>{@link UnlimitedNaturalValue}</code>
+     */
+    public boolean isUnlimitedNatural() {
+    	return false;
+    }
+    
     /**
      * True if value is a <code>{@link RealValue}</code> 
      * @return True if value is an instance of <code>{@link RealValue}</code>
@@ -137,7 +144,16 @@ public abstract class Value implements Comparable<Value>, BufferedToString {
         return false;
     }
 
-    public final String toString() {
+    /**
+     * True if value is an instance of <code>{@link LinkValue}</code> 
+     * @return True if value is an instance of <code>{@link LinkValue}</code>
+     */
+	public boolean isLink() {
+		return false;
+	}
+	
+    @Override
+	public final String toString() {
     	StringBuilder sb = new StringBuilder();
     	this.toString(sb);
     	return sb.toString();
@@ -155,16 +171,27 @@ public abstract class Value implements Comparable<Value>, BufferedToString {
     public void toStringWithType(StringBuilder sb) {
         this.toString(sb);
         sb.append(" : ");
-        type().toString(sb);
+        getRuntimeType().toString(sb);
     }
     
-    public abstract int hashCode();
+    @Override
+	public abstract int hashCode();
 
     /**
      * Returns true if two values are equal. Note that this method
      * implements our OCL semantics of equality. It correctly deals
      * with undefined values.
      */
-    public abstract boolean equals(Object obj);
+    @Override
+	public abstract boolean equals(Object obj);
+    
+    /**
+     * This operation is needed by some external tools
+     * that require a more loose interpretation of
+     * static typed.
+     */
+    public void setTypeToRuntimeType() {
+    	this.fType = getRuntimeType();
+    }
 }
 

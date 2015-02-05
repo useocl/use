@@ -1,7 +1,9 @@
 package org.tzi.use.runtime.shell.impl;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 import org.tzi.use.main.Session;
@@ -44,23 +46,56 @@ public class PluginShellCmdFactory {
 	 *            The application's Session object
 	 * @param shell
 	 *            The application's Shell object
-	 * @return A Map of Plugin Shell Command Proxies
+	 * @return A sorted list of Plugin Shell Command Containers
 	 */
-	public Map<Map<String, String>, PluginShellCmdProxy> createPluginCmds(Vector<IPluginShellCmdDescriptor> cmds, Session session, Shell shell) {
+	public List<PluginShellCmdContainer> createPluginCmds(Vector<IPluginShellCmdDescriptor> cmds, Session session, Shell shell) {
 
-		Map<Map<String, String>, PluginShellCmdProxy> cmdsMap = new HashMap<Map<String, String>, PluginShellCmdProxy>();
+		List<PluginShellCmdContainer> cmdList = new ArrayList<PluginShellCmdContainer>(cmds.size());
 		
 		for (IPluginShellCmdDescriptor currentCmdDescriptor : cmds) {
-			Map<String, String> currentCmdDescMap = new HashMap<String, String>();
-			
-			PluginShellCmdModel currentCmdModel = currentCmdDescriptor
-					.getPluginCmdModel();
-			currentCmdDescMap.put("cmd", currentCmdModel.getShellCmd());
-			currentCmdDescMap.put("help", currentCmdModel.getCmdHelp());
-			cmdsMap.put(currentCmdDescMap, new PluginShellCmdProxy(
-					currentCmdDescriptor, session, shell));
+			PluginShellCmdModel currentCmdModel = currentCmdDescriptor.getPluginCmdModel();
+			cmdList.add(new PluginShellCmdContainer(currentCmdModel.getShellCmd(), currentCmdModel.getCmdHelp(),
+					new PluginShellCmdProxy(currentCmdDescriptor, session, shell)));
 		}
-		return cmdsMap;
+		
+		/*
+		 * Sort the list so longer entries are at the front. This is to prevent
+		 * shorter commands from hiding longer commands by matching a suffix of
+		 * the other commands.
+		 * E.g. 'command' hides 'commandOther' if it is matched first.
+		 */
+		Collections.sort(cmdList, new Comparator<PluginShellCmdContainer>() {
+			@Override
+			public int compare(PluginShellCmdContainer o1, PluginShellCmdContainer o2) {
+				return o2.cmd.length() - o1.cmd.length();
+			}
+		});
+		
+		return cmdList;
 	}
+	
+	public static class PluginShellCmdContainer {
+		private final String cmd;
+		private final String help;
+		private final PluginShellCmdProxy proxy;
+		
+		private PluginShellCmdContainer(String cmd, String help, PluginShellCmdProxy proxy){
+			this.cmd = cmd;
+			this.help = help;
+			this.proxy = proxy;
+		}
 
+		public String getCmd() {
+			return cmd;
+		}
+
+		public String getHelp() {
+			return help;
+		}
+
+		public PluginShellCmdProxy getProxy() {
+			return proxy;
+		}
+	}
+	
 }

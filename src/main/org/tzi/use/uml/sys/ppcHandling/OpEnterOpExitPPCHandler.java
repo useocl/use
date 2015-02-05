@@ -22,19 +22,32 @@
 package org.tzi.use.uml.sys.ppcHandling;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
+import org.tzi.use.uml.mm.statemachines.MProtocolTransition;
+import org.tzi.use.uml.mm.statemachines.MRegion;
+import org.tzi.use.uml.mm.statemachines.MState;
+import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 
 /**
- * TODO
+ * PPC handler for legacy openter/opexit commands.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
 public class OpEnterOpExitPPCHandler implements PPCHandler {
@@ -56,7 +69,7 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 	private PrintWriter fOutput;
 	
 	/**
-	 * Constructs a default handler which outputs to {@link Log#out}.
+	 * Constructs a handler which outputs to {@link Log#out}.
 	 */
 	private OpEnterOpExitPPCHandler() {
 		fOutput = new PrintWriter(Log.out(), true);
@@ -64,7 +77,7 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 	
 	
 	/**
-	 * TODO
+	 * Constructs a handler which outputs to <code>output</code>.
 	 * @param output
 	 */
 	public OpEnterOpExitPPCHandler(PrintWriter output) {
@@ -73,12 +86,12 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 	
 
 	@Override
-	public void handlePreConditions(
-			MSystem system, 
-			MOperationCall operationCall) throws PreConditionCheckFailedException {
+	public void handlePreConditions(MSystem system, MOperationCall operationCall) throws PreConditionCheckFailedException {
 		
 		Map<MPrePostCondition, Boolean> evaluationResults = 
 			operationCall.getPreConditionEvaluationResults();
+		
+		boolean allValid = true;
 		
 		for (Entry<MPrePostCondition, Boolean> entry : evaluationResults.entrySet()) {
 			MPrePostCondition preCondition = entry.getKey();
@@ -86,10 +99,11 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 					"precondition " + 
 					StringUtil.inQuotes(preCondition.name()) + 
 					" is " +
-					entry.getValue());	
+					entry.getValue());
+			allValid &= entry.getValue().booleanValue();
 		}
 		
-		if (evaluationResults.values().contains(Boolean.FALSE)) {
+		if (!allValid) {
 			throw new PreConditionCheckFailedException(operationCall);
 		}
 	}
@@ -125,5 +139,55 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 		if (evaluationResults.values().contains(Boolean.FALSE)) {
 			throw new PostConditionCheckFailedException(operationCall);
 		}
+	}
+
+
+	@Override
+	public void handleTransitionsPre(MSystem system, MOperationCall operationCall)
+			throws PreConditionCheckFailedException {
+
+		MObjectState selfState = operationCall.getSelf().state(system.state());
+		Set<MProtocolStateMachineInstance> machinesSet = selfState.getProtocolStateMachinesInstances();
+		List<MProtocolStateMachineInstance> machines = new ArrayList<>(machinesSet);
+		
+		Collections.sort(machines, new Comparator<MProtocolStateMachineInstance>() {
+			@Override
+			public int compare(MProtocolStateMachineInstance o1, MProtocolStateMachineInstance o2) {
+				return o1.getProtocolStateMachine().name().compareTo(o2.getProtocolStateMachine().name());
+			}
+		});
+		
+		for (MProtocolStateMachineInstance psmInstance : machines) {
+			MProtocolStateMachine psm = psmInstance.getProtocolStateMachine(); 
+			if (psm.handlesOperation(operationCall.getOperation())) {				
+				Map<MRegion, Set<MTransition>> possibleTransitions = operationCall.getPossibleTransitions(psmInstance);
+				
+				for (MRegion r : psm.getRegions()) {
+					MState s = psmInstance.getCurrentState(r);
+					Set<MTransition> possibleInRegion = possibleTransitions.get(r);
+					
+					for (MTransition t : s.getOutgoing()) {
+						MProtocolTransition pt = (MProtocolTransition)t;
+						// May refer to create, etc.
+						if (pt.getReferred() == null) continue;
+						
+						if (operationCall.getOperation().equals(pt.getReferred()) ||
+							operationCall.getOperation().isValidOverrideOf(pt.getReferred())) {
+							boolean possible = possibleInRegion.contains(t);
+							fOutput.println("Transition " + t.toString() + " is " + (possible ? "" : "not ") + "possible.");
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	@Override
+	public void handleTransitionsPost(MSystem system,
+			MOperationCall operationCall)
+			throws PostConditionCheckFailedException {
+		// TODO Auto-generated method stub
+		
 	}
 }

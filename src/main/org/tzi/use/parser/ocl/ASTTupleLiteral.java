@@ -53,7 +53,7 @@ public class ASTTupleLiteral extends ASTExpression {
             // If a type was given, check conformance
             if (ti.getType() != null) {
             	Type itemType = ti.getType().gen(ctx);
-            	if (!e.type().isSubtypeOf(itemType)) {
+            	if (!e.type().conformsTo(itemType)) {
             		throw new SemanticException(ti.name(), "Tuple part expression does not match the given part type");
             	}
             	parts[i++] = new ExpTupleLiteral.Part(ti.name().getText(), e, itemType);

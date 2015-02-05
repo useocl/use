@@ -26,29 +26,27 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * 
+ * Abstract base class for all RValue AST-nodes.
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public abstract class ASTRValue {
-	/** TODO */
+	/** The AST node of the parent statement */
 	protected ASTStatement fParent;	
-	
+
 	/**
-	 * TODO
+	 * Generates the {@link MRValue}.
 	 * @return
 	 * @throws CompilationFailedException 
 	 */
-	public MRValue generate(
-			ASTStatement parent) throws CompilationFailedException {
-		
+	public MRValue generate(ASTStatement parent) throws CompilationFailedException {
 		fParent = parent;
-		
 		return generate();
 	}
 	
 	/**
-	 * TODO
+	 * Called by template method {link {@link #generate(ASTStatement)} to
+	 * generate the RValue.
 	 * @return
 	 * @throws CompilationFailedException 
 	 */

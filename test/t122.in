@@ -1,0 +1,45 @@
+!new A('a1')
+!new A('a2')
+!new B('b1')
+!new B('b2')
+!new C('c1')
+!new C('c2')
+!new D('d1')
+!new D('d2')
+!new X('x1')
+!new X('x2')
+!new Y('y1')
+!new Y('y2')
+!insert (a1,b1) into AB
+!insert (a2,b1) into AB
+!insert (c1,d1) into CD
+!insert (c2,d2) into CD
+!insert (c2,d2) into AB
+!insert (c1,b1) into AB
+!insert (c1,d1) into Subsets_CD
+!insert (c2,d2) into Subsets_CD
+!create bx1:BX between (b1,x1)
+!create bx2:BX between (b1,x2)
+!insert (bx1,y2) into BXY
+!insert (b2,d1,bx2) into B_D_BX
+?AB.allInstances()
+*-> Set{a1_b1_AB,a2_b1_AB,c1_b1_AB,c2_d2_AB} : Set(AB)
+ ?AB.allInstances()->size()
+*-> 4 : Integer
+?AB.allInstances().a
+*-> Bag{a1,a2,c1,c2} : Bag(A)
+?AB.allInstances().b
+*-> Bag{b1,b1,b1,d2} : Bag(B)
+:AB.allInstances()->any(true).b
+*-> B
+:AB.allInstances()->any(true).a
+*-> A
+?Union_AB.allInstances()
+*-> Set{c1_d1_Union_AB,c2_d2_Union_AB} : Set(Union_AB)
+?Subsets_CD.allInstances()
+*-> Set{c1_d1_Subsets_CD,c2_d2_Subsets_CD} : Set(Subsets_CD)
+?Subsets_CD.allInstances()->forAll(cd|cd.oclIsKindOf(Union_AB))
+*-> true : Boolean
+?BX.allInstances()
+*-> Set{bx1,bx2} : Set(BX)
+exit

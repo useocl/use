@@ -123,3 +123,18 @@ t103: ASSL call statement
 t104: Class and association with same name
 t105: SOIL operations
 t106: Model info (output of compiled model)
+t107: oclIsNew()
+t108: Association class inheritance
+t109: Larger case study (RBAC meta model) / byUseId() and useToId()
+t110: Overriding of operations and collection types
+t111: Derived attributes
+t112: Ordered association ends
+t113: UML 2 meta model (union, subsets, derive)
+t114: redefines
+t115: redefines
+t116: Association class inheritance
+t117: Association class inheritance
+t118: Closure operation
+t119: State machine and object creation with invalid state invariant
+t120: Test for new OCL 2.4 operations oclSelectByKind and oclSelectByType
+t121: Correct evaluation of at pre used for operation call in post-conditions

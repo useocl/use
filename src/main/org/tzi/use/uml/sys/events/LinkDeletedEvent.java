@@ -24,50 +24,54 @@ package org.tzi.use.uml.sys.events;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.events.tags.EventContext;
+import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
 
 
 /**
- * TODO
+ * An event including all event information.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
-public class LinkDeletedEvent extends Event {
-	/** TODO */
-	private MAssociation fAssociation;
-	/** TODO */
-	private List<MObject> fParticipants;
-
+public class LinkDeletedEvent extends Event implements SystemStructureChangedEvent {
 	
+	/** The deleted link */
+	private MLink fLink;
+
 	/**
-	 * TODO
-	 * @param creator
-	 * @param association
-	 * @param participants
+	 * Constructs a new LinkDeleteEvent. 
+	 * @param ctx
+	 * @param link
 	 */
-	public LinkDeletedEvent(
-			MAssociation association, 
-			List<MObject> participants) {
-		
-		fAssociation = association;
-		fParticipants = participants;
+	public LinkDeletedEvent(EventContext ctx, MLink link) {
+		super(ctx);
+		fLink = link;
 	}
 	
+	/**
+	 * Returns the deleted link.
+	 */
+	public MLink getLink() {
+		return fLink;
+	}
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns the association the link is deleted from
+	 * @return The <code>association</code>
 	 */
 	public MAssociation getAssociation() {
-		return fAssociation;
+		return fLink.association();
 	}
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Access to the participating objects in the order of the association ends
+	 * @return A <code>List</code> of the participating objects.
 	 */
 	public List<MObject> getParticipants() {
-		return fParticipants;
+		return fLink.linkedObjects();
 	}
 }

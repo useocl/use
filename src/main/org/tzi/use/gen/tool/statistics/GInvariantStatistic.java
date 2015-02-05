@@ -21,21 +21,37 @@
 
 package org.tzi.use.gen.tool.statistics;
 
-import org.tzi.use.gen.model.GFlaggedInvariant;
+import org.tzi.use.uml.mm.MClassInvariant;
 
 /**
  * Counts results of the evaluation of an invariant.
  * @author  Joern Bohling
  */
 public class GInvariantStatistic extends GStatistic {
-    private GFlaggedInvariant fFlaggedInvariant;
+    
+	private final MClassInvariant fInvariant;
 
-    public GFlaggedInvariant flaggedInvariant() {
-        return fFlaggedInvariant;
+	private boolean checkedByBarrier;
+	
+    public MClassInvariant getInvariant() {
+        return fInvariant;
     }
 
-    public GInvariantStatistic(GFlaggedInvariant inv) {
+    public GInvariantStatistic(MClassInvariant inv) {
     	super(inv.toString());
-        fFlaggedInvariant = inv;
+        fInvariant = inv;
     }
+
+	/**
+	 * If <code>true</code>, the encapsulated invariant is
+	 * checked by a barrier instead of at the end of the search. 
+	 * @return
+	 */
+	public boolean isCheckedByBarrier() {
+		return checkedByBarrier;
+	}
+	
+	public void setCheckedByBarrier(boolean newValue) {
+		checkedByBarrier = newValue;
+	}
 }

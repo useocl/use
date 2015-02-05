@@ -36,7 +36,9 @@ import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
 
 /**
- * TODO
+ * PPC handler which logs to a {@link PrintWriter}.
+ * The singleton instance returned by {@link #getDefaultOutputHandler()}
+ * logs to {@link Log#out}.
  * @author Daniel Gent
  *
  */
@@ -60,8 +62,7 @@ public class ExpressionPPCHandler implements PPCHandler {
 	private PrintWriter fOutput;
 	
 	/**
-	 * TODO
-	 * @param output
+	 * Constructs a new handler with default output to <code>output</code>.
 	 */
 	public ExpressionPPCHandler(PrintWriter output) {
 		fOutput = output;
@@ -76,8 +77,6 @@ public class ExpressionPPCHandler implements PPCHandler {
 		fOutput = new PrintWriter(Log.out(), true);
 	}
 
-	
-	
 	@Override
 	public void handlePreConditions(
 			MSystem system,
@@ -124,8 +123,6 @@ public class ExpressionPPCHandler implements PPCHandler {
 				fOutput.print("    " + index-- + ". ");
 				fOutput.println(opCall + " " + opCall.getCallerString());
 			}
-			
-			//throw new PreConditionCheckFailedException(operationCall);
 		}
 	}
 
@@ -176,18 +173,9 @@ public class ExpressionPPCHandler implements PPCHandler {
 				fOutput.print("    " + index-- + ". ");
 				fOutput.println(opCall + " " + opCall.getCallerString());
 			}
-			
-			//throw new PostConditionCheckFailedException(operationCall);
 		}
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param system
-	 * @param preState
-	 * @param ppc
-	 */
 	private void printDetailedPPC(
 			MSystem system, 
 			MSystemState preState, 
@@ -201,5 +189,21 @@ public class ExpressionPPCHandler implements PPCHandler {
 				system.getVariableEnvironment().constructVarBindings(), 
 				fOutput,
 				"    ");
+	}
+
+
+	@Override
+	public void handleTransitionsPre(MSystem system,
+			MOperationCall operationCall)
+			throws PreConditionCheckFailedException {
+		// Should never happen, because query operations do not change system state		
+	}
+
+
+	@Override
+	public void handleTransitionsPost(MSystem system,
+			MOperationCall operationCall)
+			throws PostConditionCheckFailedException {
+		// Should never happen, because query operations do not change system state		
 	}
 }

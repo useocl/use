@@ -52,7 +52,7 @@ public class ExpIterate extends ExpQuery {
                                           accuInitializer.name() + "'.");
     
         // iterExp must be type conform to accuExp
-        if (! queryExp.type().isSubtypeOf(accuInitializer.type()) )
+        if (! queryExp.type().conformsTo(accuInitializer.type()) )
             throw new ExpInvalidException(
                                           "Iteration expression type `" + queryExp.type() +
                                           "' does not match accumulator type `" + 

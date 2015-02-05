@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  
  */
-
+ 
 /* ------------------------------------
   expressionOnly ::= 
     conditionalImpliesExpression
@@ -275,9 +275,13 @@ primaryExpression returns [ASTExpression n]
     | nPc=propertyCall[null, false] { $n = $nPc.n; }
     | LPAREN nExp=expression RPAREN { $n = $nExp.n; }
     | nIfExp=ifExpression { $n = $nIfExp.n; }
-    | id1=IDENT DOT 'allInstances' ( LPAREN RPAREN )?
-      { $n = new ASTAllInstancesExpression($id1); }
-      ( AT 'pre' { $n.setIsPre(); } ) ? 
+    | id1=IDENT DOT 'allInstances' 
+        { $n = new ASTAllInstancesExpression($id1); }
+        ( AT 'pre' { $n.setIsPre(); } ) ?
+        ( LPAREN RPAREN )?
+    | id2=IDENT DOT 'byUseId' ( LPAREN idExp=expression RPAREN )
+      { $n = new ASTObjectByUseIdExpression($id2, $idExp.n); }
+      ( AT 'pre' { $n.setIsPre(); } ) ?
     ;
 
 
@@ -308,6 +312,7 @@ propertyCall[ASTExpression source, boolean followsArrow] returns [ASTExpression 
     | nExpIterate=iterateExpression[source] { $n = $nExpIterate.n; }
     | nExpOperation=operationExpression[source, followsArrow] { $n = $nExpOperation.n; }
     | nExpType=typeExpression[source, followsArrow] { $n = $nExpType.n; }
+    | nExpInState=inStateExpression[source, followsArrow] { $n = $nExpInState.n; }
     ;
 
 
@@ -390,10 +395,18 @@ operationExpression[ASTExpression source, boolean followsArrow]
     { $n.setStartToken($start); }
     ;
 
+inStateExpression[ASTExpression source, boolean followsArrow]
+  returns [ASTInStateExpression n]:
+   opToken='oclInState'
+   LPAREN
+   s = IDENT
+   RPAREN
+   { $n = new ASTInStateExpression($opToken, $source, $s, $followsArrow); }
+;
 
 /* ------------------------------------
   typeExpression ::= 
-    ("oclAsType" | "oclIsKindOf" | "oclIsTypeOf") LPAREN type RPAREN
+    ("oclAsType" | "oclIsKindOf" | "oclIsTypeOf" | "selectByType" | "selectByKind" ) LPAREN type RPAREN
 */
 
 typeExpression[ASTExpression source, boolean followsArrow] 
@@ -401,7 +414,7 @@ typeExpression[ASTExpression source, boolean followsArrow]
 @init { Token opToken = null; }
 :
 	{ opToken = input.LT(1); }
-	( 'oclAsType' | 'oclIsKindOf' |  'oclIsTypeOf' )
+	( 'oclAsType' | 'oclIsKindOf' |  'oclIsTypeOf' | 'selectByType' | 'selectByKind' )
 	LPAREN t=type RPAREN 
       { $n = new ASTTypeArgExpression(opToken, $source, $t.n, $followsArrow); }
     ;
@@ -468,6 +481,7 @@ literal returns [ASTExpression n]
     | nEColIt=emptyCollectionLiteral { $n = $nEColIt.n; }
     | nUndLit=undefinedLiteral {$n = $nUndLit.n; }
     | nTupleLit=tupleLiteral {$n = $nTupleLit.n; }
+    | un=STAR { $n = new ASTUnlimitedNaturalLiteral($un); }
     ;
 
 

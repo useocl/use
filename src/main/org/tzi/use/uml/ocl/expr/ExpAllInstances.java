@@ -23,24 +23,29 @@ package org.tzi.use.uml.ocl.expr;
 
 import java.util.Set;
 
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.LinkValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Type.allInstances
  *
- * @version     $ProjectVersion: 0.393 $
- * @author  Mark Richters
+ * @author Mark Richters
+ * @author Lars Hamann
  */
 public final class ExpAllInstances extends Expression {
-    private ObjectType fSourceType;
+    private MClassifier fSourceType;
     
     public ExpAllInstances(Type sourceType)
         throws ExpInvalidException
@@ -48,20 +53,25 @@ public final class ExpAllInstances extends Expression {
         // result type is a set of sourceType
         super(TypeFactory.mkSet(sourceType));
 
-        if (! sourceType.isTrueObjectType() )
+        if (! sourceType.isKindOfClassifier(VoidHandling.EXCLUDE_VOID) )
             throw new ExpInvalidException("Expected an object type, found `" + sourceType + "'.");
         
-        fSourceType = (ObjectType)sourceType;
+        fSourceType = (MClassifier)sourceType;
     }
 
     /**
      * The type allInstances() is applied to. 
      * @return
      */
-    public ObjectType getSourceType() {
+    public MClassifier getSourceType() {
     	return this.fSourceType;
     }
     
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
+	}
+	
     /**
      * Evaluates expression and returns result value. 
      */
@@ -73,27 +83,46 @@ public final class ExpAllInstances extends Expression {
         // class plus all instances of subclasses
 
         // get set of objects 
-        MClass cls = ((ObjectType) fSourceType).cls();
-        Set<MObject> objSet = systemState.objectsOfClassAndSubClasses(cls);
-        Value[] objValues = new Value[objSet.size()];
-
-        int i = 0;
-        for (MObject obj : objSet) {
-            ObjectType t = TypeFactory.mkObjectType(obj.cls());
-            objValues[i++] = new ObjectValue(t, obj);
+        SetValue res;
+        
+        if(fSourceType.isTypeOfClass()) {
+	        Set<MObject> objSet = systemState.objectsOfClassAndSubClasses((MClass)fSourceType);
+	        Value[] objValues = new Value[objSet.size()];
+	
+	        int i = 0;
+	        for (MObject obj : objSet) {
+	            objValues[i++] = new ObjectValue(obj.cls(), obj);
+	        }
+	
+	        // create result set with object references
+	        res = new SetValue(fSourceType, objValues);
+        } else if (fSourceType.isTypeOfAssociation()) {
+        	MLinkSet links = systemState.linksOfAssociation((MAssociation)fSourceType);
+        	Value[] linkValues = new Value[links.size()];
+        	
+        	int i = 0;
+        	for (MLink link : links.links()) {
+        		linkValues[i++] = new LinkValue(link.association(), link);
+        	}
+        	
+        	res = new SetValue(fSourceType, linkValues);
+        } else {
+        	throw new IllegalArgumentException("allInstances() is only supported on classes and associations.");
         }
-
-        // create result set with object references
-        SetValue res = new SetValue(fSourceType, objValues);
-    
+        
         ctx.exit(this, res);
         return res;
     }
 
+    @Override
+    public String name() {
+    	return "allInstances";
+    }
+    
 	@Override
     public StringBuilder toString(StringBuilder sb) {
 		fSourceType.toString(sb);
-		sb.append(".allInstances");
+		sb.append(".").append(name());
 		return sb.append(atPre());
     }
 	

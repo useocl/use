@@ -23,6 +23,7 @@ package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -52,11 +53,11 @@ public class ASTAttributeAssignmentStatement extends ASTStatement {
 	 * @param attributeName The name of the attribute
 	 * @param value The ASt for the rValue. 
 	 */
-	public ASTAttributeAssignmentStatement(
+	public ASTAttributeAssignmentStatement(Token start,
 			ASTExpression object,
 			String attributeName,
 			ASTRValue rValue) {
-		
+		super(start);
 		fObject = object;
 		fAttributeName = attributeName;
 		fRValue = rValue;
@@ -68,10 +69,10 @@ public class ASTAttributeAssignmentStatement extends ASTStatement {
 	throws CompilationFailedException {
 		
 		Expression object = generateObjectExpression(fObject);
-		MAttribute attribute = generateAttribute(object, fAttributeName);
-		MRValue rValue = generateRValue(fRValue);
-		
-		if (!rValue.getType().isSubtypeOf(attribute.type())) {
+		MAttribute attribute = getAttributeSafe(object, fAttributeName);
+		MRValue rValue = fRValue.generate(this);
+				
+		if (!rValue.getType().conformsTo(attribute.type())) {
 			throw new CompilationFailedException(this,
 					"Type mismatch in assignment expression. Expected type "
 							+ StringUtil.inQuotes(attribute.type())

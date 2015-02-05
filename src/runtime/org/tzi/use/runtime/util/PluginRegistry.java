@@ -1,5 +1,6 @@
 package org.tzi.use.runtime.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -20,7 +21,7 @@ import org.xml.sax.SAXParseException;
  */
 public class PluginRegistry {
 
-	private static PluginRegistry instance = new PluginRegistry();
+	private static final PluginRegistry instance = new PluginRegistry();
 
 	/**
 	 * Method returning the Singleton instance of the PluginRegistry
@@ -37,7 +38,7 @@ public class PluginRegistry {
 	private PluginRegistry() {
 	}
 
-	private final String PLUGINXML = "useplugin.xml";
+	private static final String PLUGINXML = "useplugin.xml";
 
 	private IPluginDescriptor createPluginDescriptor(PluginModel pluginModel,
 			URL location) {
@@ -54,17 +55,15 @@ public class PluginRegistry {
 
 		PluginModel pluginModel = null;
 		try {
-			URL configFile = new URL("jar", "", location + "!/");
-			String jarFilePath = location.getPath();
-			Log.debug("Creating jarfile path: [" + jarFilePath + "]");
-			JarFile jarFile = new JarFile(jarFilePath);
+			File pluginFile = new File(location.toURI());
+			Log.debug("Creating jarfile path: [" + pluginFile + "]");
+			JarFile jarFile = new JarFile(pluginFile);
 
 			InputStream inputStream = jarFile.getInputStream(jarFile
-					.getEntry(this.PLUGINXML));
+					.getEntry(PLUGINXML));
 			try {
 				InputSource inputSource = new InputSource(inputStream);
-				inputSource.setSystemId(configFile.getFile());
-				Log.debug("Creating plugin for: " + location);
+				Log.debug("Creating plugin for: " + pluginFile);
 				pluginModel = new PluginParser().parsePlugin(inputSource);
 			} finally {
 				Log.debug("Closing stream in any case.");

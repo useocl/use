@@ -42,12 +42,12 @@ import org.tzi.use.uml.sys.MSystemState;
  * @author  Joern Bohling
  */
 public class GProcedureCall {
-    private String fName;
+    private GProcedure fProcedure;
     private List<Expression> fParameter;    
     private GSignature signature = null;
     
-    public GProcedureCall (String name, List<Expression> params) {
-        fName = name;
+    public GProcedureCall (GProcedure procedure, List<Expression> params) {
+        fProcedure = procedure;
         fParameter = params;
     }
 
@@ -63,7 +63,7 @@ public class GProcedureCall {
     public GSignature getSignature() {
         if (signature == null)
         {
-        	signature = new GSignature(fName, getParameterTypes());
+        	signature = new GSignature(fProcedure.name(), getParameterTypes());
         }
         
         return signature;
@@ -72,19 +72,11 @@ public class GProcedureCall {
     public String signatureString() {
         return getSignature().toString();
     }
-    
-    public GProcedure findMatching( List<GProcedure> procedures ) {
-        GSignature sig = getSignature();
-        
-        for (GProcedure proc : procedures) {
-            if (proc.getSignature().conformsTo(sig) )
-                return proc;
-        }
-        
-        return null;
+
+    public GProcedure getProcedure() {
+    	return fProcedure;
     }
-
-
+    
     public List<Value> evaluateParams(MSystemState state) {
         List<Value> values = new ArrayList<Value>();
         Evaluator evaluator = new Evaluator();

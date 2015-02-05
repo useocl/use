@@ -1,11 +1,13 @@
-# $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+# $Id$
 
 TOPDIR = ..
+LOCALE = en_US.UTF-8
+DIFFLINECOUNT = 50
 
 ifeq ($(OS), Windows_NT)
-	USE = $(TOPDIR)/bin/use.bat -nogui -nr -t
+	USE = $(TOPDIR)/bin/use.bat -nogui -nr -t -oclAnyCollectionsChecks:E -extendedTypeSystemChecks:E
 else
-	USE = $(TOPDIR)/bin/use -nogui -nr -t
+	USE = LANG=$(LOCALE) $(TOPDIR)/bin/use -nogui -nr -t -oclAnyCollectionsChecks:E -extendedTypeSystemChecks:E
 endif
 
 INFILES := $(wildcard *.in)
@@ -29,10 +31,11 @@ test-out1: t1.out
 test-out2: t2.out
 	$(USE) $(basename $<).use $(basename $<).cmd 
 
-# Die Zeit, die der Generator benötigt, wird aus dem Ergebnis herausgenommen.
+# Die Zeit, die der Generator benÃ¶tigt, wird aus dem Ergebnis herausgenommen.
 %.result: %.in %.use %.cmd
-	-rm -f $@
-	$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | dos2unix | diff -u --strip-trailing-cr --ignore-blank-lines --ignore-all-space  $(basename $<).out - > $(basename $<).result
+	@-rm -f $@
+	@$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | dos2unix | diff -U 1 --strip-trailing-cr --ignore-blank-lines --ignore-all-space  $(basename $<).out - > $(basename $<).result || (cat $(basename $<).result | head -n $(DIFFLINECOUNT); [ $$( wc -l < $(basename $<).result ) -gt $(DIFFLINECOUNT) ] && echo "[... (truncated all but first $(DIFFLINECOUNT) lines)]" && echo "http://ci.db.informatik.uni-bremen.de:8080/job/USE_4.0/ws/test/$(basename $<).result/*view*/"; echo "Test $(basename $<) FAILED!"; false)
+	@echo "Test $(basename $<) passed."
 
 clean:
 	rm -f $(RESULTFILES) *~ core

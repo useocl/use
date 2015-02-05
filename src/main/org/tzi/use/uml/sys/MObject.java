@@ -23,10 +23,8 @@ package org.tzi.use.uml.sys;
 
 import java.util.List;
 
-import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 
@@ -46,12 +44,6 @@ public interface MObject {
      * Returns the class of this object.
      */
     public MClass cls();
-
-    /**
-     * Returns the type of this object.
-     */
-    public ObjectType type();
-
 
     /**
      * Returns a name for this object.
@@ -79,20 +71,6 @@ public interface MObject {
     public boolean exists( MSystemState systemState );
 
     /**
-     * Returns a list of objects at <code>dstEnd</code> which are
-     * linked to this object at <code>srcEnd</code> with the (possible) given qualifier values.
-     *
-     * @param systemState The <code>MSystemState</code> used to evaluate
-     * @param srcEnd The association end to navigate from
-     * @param dstEnd The association end to navigate to
-     * @param qualifierValues The <code>List</code> of qualifier values which determines the objects. May be <code>null</code>. 
-     * @return List(MObject)
-     */
-	public List<MObject> getLinkedObjects(MSystemState systemState,
-			MAssociationEnd srcEnd, MAssociationEnd dstEnd,
-			List<Value> qualifierValues);
-
-    /**
      * Returns a list of objects at <code>dst</code> which are
      * connected to this object at <code>src</code> by the (possible) given qualifiers.
      * This is needed for navigation.
@@ -115,5 +93,9 @@ public interface MObject {
      */
     public boolean equals( Object obj );
 
+    /**
+     * Returns the name of the object.
+     * @return The name of the object
+     */
     public String toString();
 }

@@ -22,46 +22,42 @@
 package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
-import java.util.LinkedHashMap;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTOperationExpression;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.ObjectType;
+import org.tzi.use.uml.sys.soil.MLibraryOperationCallStatement;
+import org.tzi.use.uml.sys.soil.MObjectOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MOperationCallStatement;
+import org.tzi.use.uml.sys.soil.library.LibraryOperation;
+import org.tzi.use.uml.sys.soil.library.SoilLibrary;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST node of a statement, which encapsulates an OCL operation call expression.
+ * The operation must be defined as a soil operation.
  * @author Daniel Gent
  *
  */
 public class ASTOperationCallStatement extends ASTStatement {
-	/** TODO */
+	
 	private ASTExpression fOperationCall;
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new operation call statement AST node.
+	 * This node encapsulates a call to a soil operation.
 	 * @param operationCall
 	 */
-	public ASTOperationCallStatement(ASTExpression operationCall) {
+	public ASTOperationCallStatement(Token start, ASTExpression operationCall) {
+		super(start);
 		fOperationCall = operationCall;
 	}
-		
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTExpression getOperationCall() {
-		return fOperationCall;
-	}
-	
 	
 	@Override
 	protected MOperationCallStatement generateStatement() throws CompilationFailedException {
@@ -73,36 +69,28 @@ public class ASTOperationCallStatement extends ASTStatement {
 					" does not give a reference to an operation.");
 		}
 		
-		ASTOperationExpression operationExpression =
-			(ASTOperationExpression)fOperationCall;
+		ASTOperationExpression operationExpression = (ASTOperationExpression)fOperationCall;
 		
 		// needs to conform to
 		// sourceExpression '.'  operation '(' argumentExpressions ')'
-		if (!operationExpression.isObjectOperation()) {			
-			throw new CompilationFailedException(this, "Expression " +
-					StringUtil.inQuotes(fOperationCall.getStringRep()) +
-					" does not give a reference to an operation.");
+		if (!operationExpression.isObjectOperation()) {
+			return generateLibraryCall(operationExpression);
 		}
 		
-		ASTExpression objectExpression = 
-			operationExpression.getSourceExpression();
+		ASTExpression objectExpression = operationExpression.getSourceExpression();
 		
 		// for error message produced when there is no such object
 		objectExpression.setStringRep(fOperationCall.getStringRep());
-		
-		Expression object = 
-			generateObjectExpression(objectExpression);
+		Expression object = generateObjectExpression(objectExpression);
 				
-		MClass objectClass = ((ObjectType)object.type()).cls();
+		MClass objectClass = (MClass)object.type();
 
 		String operationName = operationExpression.getOpToken().getText();
 		
 		// determine the operation
-		MOperation operation = 
-			generateOperation(objectClass, operationName);
+		MOperation operation = getOperationSafe(objectClass, operationName);
 		
 		if (!operation.hasStatement()) {
-			
 			throw new CompilationFailedException(this, "Operation "
 					+ StringUtil.inQuotes(objectClass.name() + "::"
 							+ operationName)
@@ -110,14 +98,34 @@ public class ASTOperationCallStatement extends ASTStatement {
 		}
 		
 		// construct arguments
-		LinkedHashMap<String, Expression> arguments = 
+		Expression[] arguments = 
 			generateOperationArguments(
 					operation, 
 					operationExpression.getArgs());
 		
-		return new MOperationCallStatement(object, operation, arguments);
+		return new MObjectOperationCallStatement(object, operation, arguments);
 	}
 
+	private MOperationCallStatement generateLibraryCall(ASTOperationExpression operationExpression) throws CompilationFailedException {
+				
+		Expression[] arguments = new Expression[operationExpression.getArgs().size()];
+		int i = 0;
+		for (ASTExpression astExp : operationExpression.getArgs()) {
+			Expression exp = generateExpression(astExp);
+			arguments[i] = exp;
+			++i;
+		}
+		
+		LibraryOperation op = SoilLibrary.getInstance().findOperation(operationExpression.getOpToken().getText(), arguments);
+				
+		if (op == null) {
+			throw new CompilationFailedException(this, "Expression " +
+					StringUtil.inQuotes(fOperationCall.getStringRep()) +
+					" does not give a reference to an operation.");
+		}
+		
+		return new MLibraryOperationCallStatement(op, arguments);
+	}
 	
 	@Override
 	protected void printTree(StringBuilder prelude, PrintWriter target) {
@@ -127,20 +135,6 @@ public class ASTOperationCallStatement extends ASTStatement {
 	
 	@Override
 	public String toString() {
-		/*StringBuilder sB = new StringBuilder();
-		sB.append(fObject.getStringRep());
-		sB.append(".");
-		sB.append(fOperationName);
-		sB.append("(");
-		for (ASTExpression argument : fArguments) {
-			sB.append(argument.getStringRep());
-			sB.append(",");
-		}
-		sB.delete(sB.length() - 1, sB.length());
-		sB.append(")");
-		
-		return sB.toString();*/
-		
 		return fOperationCall.getStringRep();
 	}
 }

@@ -26,11 +26,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.ExpCollectionLiteral;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
@@ -40,32 +42,24 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST node of an object deletion statement.
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class ASTObjectDestructionStatement extends ASTStatement {
-	/** TODO */
+	/** An expression leading to an object or a collection of objects */
 	private ASTExpression fToDelete;
 
 	
 	/**
-	 * TODO
-	 * @param object
+	 * Constructs a new AST node for the deletion of an object
+	 * or a collection of objects.
+	 * @param toDelete AST node of an expression leading to an object or a collection of objects
 	 */
-	public ASTObjectDestructionStatement(ASTExpression toDelete) {
+	public ASTObjectDestructionStatement(Token start, ASTExpression toDelete) {
+		super(start);
 		fToDelete = toDelete;
 	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTExpression getToDelete() {
-		return fToDelete;
-	}
-	
 	
 	@Override
 	protected MStatement generateStatement() throws CompilationFailedException {
@@ -82,7 +76,7 @@ public class ASTObjectDestructionStatement extends ASTStatement {
 			
 			// check if each element is an object
 			for (Expression element : collection.getElemExpr()) {
-				if (!element.type().isObjectType()) {
+				if (!element.type().isTypeOfClass()) {
 					throw new CompilationFailedException(this, "Expected "
 							+ StringUtil.inQuotes(fToDelete.getStringRep())
 							+ " to be a collection of objects, found "
@@ -92,8 +86,8 @@ public class ASTObjectDestructionStatement extends ASTStatement {
 			
 			objects = Arrays.asList(collection.getElemExpr());
 			
-		} else if (type.isObjectType() || 
-				(type.isCollection(false) && ((CollectionType)type).elemType().isObjectType())) {
+		} else if (type.isTypeOfClass() || 
+				(type.isKindOfCollection(VoidHandling.EXCLUDE_VOID) && ((CollectionType)type).elemType().isTypeOfClass())) {
 			// note: this could also be a collection, but just not literal
 			// (e.g. .allInstances). since those collections must be handled
 			// at evaluation time, this is done in MObjectDestructionStatement

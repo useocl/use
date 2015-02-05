@@ -48,20 +48,16 @@ import org.tzi.use.util.NullPrintWriter;
 
 
 /**
- * TODO
+ * Test for different statements
  * @author Daniel Gent
  *
  */
 public class StatementGenerationTest extends TestCase {
-	/** TODO */
+	
 	private MStatement fStatement;
-	/** TODO */
+	
 	private TestSystem fTestSystem;
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Before
 	@Override
 	public void setUp() throws Exception {
@@ -70,10 +66,6 @@ public class StatementGenerationTest extends TestCase {
   	    Options.explicitVariableDeclarations = false;
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testEmptyStatement() {
 		// basic empty statement
@@ -94,10 +86,6 @@ public class StatementGenerationTest extends TestCase {
 		assertTrue(fStatement.isEmptyStatement());
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testSequenceStatement() {
 		// type of a certain
@@ -122,10 +110,6 @@ public class StatementGenerationTest extends TestCase {
 		assertNull(fStatement);		
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testVariableAssignment() {
 		// simple variable assignment
@@ -200,10 +184,6 @@ public class StatementGenerationTest extends TestCase {
 		assertNull(fStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testAttributeAssignment() {
 		// valid attribute + valid value
@@ -222,10 +202,6 @@ public class StatementGenerationTest extends TestCase {
 		assertNull(fStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testObjectCreation() {
 		// simple object creation
@@ -255,10 +231,6 @@ public class StatementGenerationTest extends TestCase {
 		assertNull(fStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testLinkObjectCreation() {
 		// simple link object creation
@@ -305,10 +277,6 @@ public class StatementGenerationTest extends TestCase {
 		assertNull(fStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testObjectDestruction() {
 		// simple object destruction
@@ -349,10 +317,6 @@ public class StatementGenerationTest extends TestCase {
 		assertTrue(fStatement instanceof MObjectDestructionStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testLinkInsertion() {
 		// simple link insertion
@@ -392,10 +356,6 @@ public class StatementGenerationTest extends TestCase {
 		assertNull(fStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testLinkDeletion() {
 		// simple link deletion
@@ -425,14 +385,10 @@ public class StatementGenerationTest extends TestCase {
 		assertNull(fStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testConditionalExecution() {
 		// conditional execution without else statement
-		Options.checkWarningsUnrelatedTypes = WarningType.IGNORE;
+		Options.setCheckWarningsUnrelatedTypes(WarningType.IGNORE);
 		fStatement = generateStatement("if o1 = o2 then v := 42 end");
 		assertNotNull(fStatement);
 		assertTrue(fStatement instanceof MConditionalExecutionStatement);
@@ -453,13 +409,9 @@ public class StatementGenerationTest extends TestCase {
 		fStatement = null;
 		fStatement = generateStatement("if o1 then v := 42 end");
 		assertNull(fStatement);
-		Options.checkWarningsUnrelatedTypes = WarningType.ERROR;
+		Options.setCheckWarningsUnrelatedTypes(WarningType.ERROR);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testIteration() {
 		// simple iteration
@@ -478,10 +430,6 @@ public class StatementGenerationTest extends TestCase {
 		assertNull(fStatement);
 	}
 	
-	
-	/**
-	 * TODO
-	 */
 	@Test
 	public void testOperationCall() {
 		// simple operation call

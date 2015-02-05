@@ -11,18 +11,17 @@
 !set b.bAttr := 42
 
 ? a.aAttr
-*-> @b : B
+*-> b : B
 
 ? a.aAttr.bAttr
 *-> 42 : Integer
 
 !destroy b
 
-# the attribute still points to b, ...
+# the attribute is set to undefined
 ? a.aAttr
-*-> @b : B
+*-> Undefined : OclVoid
 
-# ..., however an attempt to access the object results in undefined
 ? a.aAttr.bAttr
 *-> Undefined : OclVoid
 

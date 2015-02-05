@@ -8,24 +8,26 @@
 /* ------------------------------------
   model ::= 
     "model" id
-    { enumTypeDefinition } 
-    {   classDefinition 
+    {   
+        classDefinition 
       | associationDefinition 
       | "constraints" { invariant | prePost }
+      | signalDefinition
+      | enumTypeDefinition
     } 
 */
 model returns [ASTModel n]
 :
 	as = annotationSet
     'model' modelName=IDENT { $n = new ASTModel($modelName); $n.setAnnotations($as.annotations); }
-    ( e=enumTypeDefinition { $n.addEnumTypeDef($e.n); } )*
-    (   ( generalClassDefinition[$n] )
-      | ( a=associationDefinition { $n.addAssociation($a.n); } )
+    (   generalClassifierDefinition[$n]
+      | a=associationDefinition { $n.addAssociation($a.n); }
       | ( 'constraints'
           (   cons=invariant { $n.addConstraint($cons.n); } 
             | ppc=prePost { $n.addPrePost($ppc.n); } 
           )*  
         )
+      | e=enumTypeDefinition { $n.addEnumTypeDef($e.n); }
     )*
     EOF
     ;
@@ -42,19 +44,27 @@ enumTypeDefinition returns [ASTEnumTypeDefinition n]
     ;
 
 /* ------------------------------------
-  generalClassDefinition ::=
+  generalClassifierDefinition ::=
     [ "abstract" ]
-   	 { classDefinition | associationClassDefinition }
+   	 { classDefinition | associationClassDefinition | signalDefinition }
 */
-generalClassDefinition[ASTModel n]
+generalClassifierDefinition[ASTModel n]
 @init{ 
   boolean isAbstract = false;
 }
 :
 	as = annotationSet
     ( 'abstract' { isAbstract = true; } )? 
-    ( ( c=classDefinition[isAbstract] { $n.addClass($c.n); $c.n.setAnnotations($as.annotations); } ) | 
-      ( ac=associationClassDefinition[isAbstract] { $n.addAssociationClass($ac.n); $ac.n.setAnnotations($as.annotations); } ) )
+    ( 
+        c  = classDefinition[isAbstract] 
+             { $n.addClass($c.n); $c.n.setAnnotations($as.annotations); }
+      
+      | ac = associationClassDefinition[isAbstract]
+             { $n.addAssociationClass($ac.n); $ac.n.setAnnotations($as.annotations); }
+             
+      | s  = signalDefinition[isAbstract]
+             { $n.addSignal($s.n); $s.n.setAnnotations($as.annotations); }
+    )
        
 ;
 
@@ -64,12 +74,14 @@ generalClassDefinition[ASTModel n]
     [ attributes ] 
     [ operations ] 
     [ constraints ]
+    [ statemachines ]
     "end"
 
   specialization ::= "<" idList
   attributes ::= "attributes" { attributeDefinition }
   operations ::= "operations" { operationDefinition }
   constraints ::= "constraints" { invariantClause }
+  statemachines ::= "statemachines" { stateMachine }
 */
 classDefinition[boolean isAbstract] returns [ASTClass n]
 @init{ List idList; }
@@ -85,6 +97,11 @@ classDefinition[boolean isAbstract] returns [ASTClass n]
     ( 'constraints'
       (
         inv=invariantClause { $n.addInvariantClause($inv.n); }
+      )*
+    )?
+    ( 'statemachines'
+      (
+        sm=stateMachine { $n.addStateMachine($sm.n); }
       )*
     )?
     'end'
@@ -133,6 +150,12 @@ associationClassDefinition[boolean isAbstract] returns [ASTAssociationClass n]
         inv=invariantClause { $n.addInvariantClause($inv.n); }
       )*
     )?
+    ( 'statemachines'
+      (
+        sm=stateMachine { $n.addStateMachine($sm.n); }
+      )*
+    )?
+    
     ( { t = input.LT(1); }
       ( keyAggregation | keyComposition )
       { $n.setKind(t); }
@@ -147,8 +170,20 @@ associationClassDefinition[boolean isAbstract] returns [ASTAssociationClass n]
 attributeDefinition returns [ASTAttribute n]
 :
 	as = annotationSet
-    name=IDENT COLON t=type ( SEMI )?
-        { $n = new ASTAttribute($name, $t.n); $n.setAnnotations($as.annotations); }
+    name=IDENT COLON t=type 
+    
+    (
+        ((keyDerive|keyDerived) (COLON|EQUAL) deriveExpression = expression)
+      |
+        (keyInit   (COLON|EQUAL)   initExpression = expression)
+    )?
+    SEMI?
+    { 
+       $n = new ASTAttribute($name, $t.n); 
+       $n.setAnnotations($as.annotations);
+       $n.setDeriveExpression($deriveExpression.n);
+       $n.setInitExpression($initExpression.n);
+    }
     ;
 
 /* ------------------------------------
@@ -209,7 +244,7 @@ associationEnd returns [ASTAssociationEnd n]
       | 'subsets' sr=IDENT { $n.addSubsetsRolename($sr); }
       | keyUnion { $n.setUnion(true); }
       | 'redefines' rd=IDENT { $n.addRedefinesRolename($rd); }
-      | keyDerived EQUAL exp=expression { $n.setDerived($exp.n); }
+      | (keyDerived|keyDerive) ( LPAREN parameter = elemVarsDeclaration RPAREN)? EQUAL exp=expression { $n.setDerived($exp.n, $parameter.n); }
       | keyQualifier qualifiers = paramList {$n.setQualifiers($qualifiers.paramList); }
     )*
     ( SEMI )?
@@ -344,6 +379,59 @@ annotationValue returns [Token name, Token value]:
 	aValue=NON_OCL_STRING { $value = $aValue; }
 ;
 
+stateMachine returns [ASTStateMachine n]
+:
+    (  
+       'psm' { $n = new ASTProtocolStateMachine(); } 
+     /* | 'bsm' { $n = new ASTStateMachine(); } */
+    ) 
+     
+    smName = IDENT { $n.setName($smName); }
+    
+    'states'
+         (s = stateDefinition { $n.addStateDefinition($s.n); })+
+    'transitions'
+         (t = transitionDefinition { $n.addTransitionDefinition($t.n); })+
+    'end'
+;
+
+stateDefinition returns [ASTStateDefinition n]:
+  sn=IDENT {$n = new ASTStateDefinition($sn); }
+  ( COLON stateType=IDENT {$n.setType($stateType); } )?
+  ( LBRACK stateInv = expression RBRACK {$n.setStateInvariant($stateInv.n); } )?
+;
+
+transitionDefinition returns [ASTTransitionDefinition n]:
+  source=IDENT ARROW target=IDENT { $n = new ASTTransitionDefinition($source, $target); } 
+    (LBRACE 
+      (LBRACK pre=expression { $n.setPreCondition($pre.n); } RBRACK)?
+      (
+          e=event { n.setEvent($e.t); }
+        | o=IDENT { n.setOperation($o); } LPAREN (args=paramList { $n.setOperationArgs($args.paramList); } )? RPAREN
+      )
+      (LBRACK post=expression { $n.setPostCondition($post.n); } RBRACK)?
+    RBRACE)?
+;
+
+event returns [Token t]:
+    tcr = 'create' {$t = $tcr;}
+; 
+
+signalDefinition[boolean isAbstract] returns [ASTSignal n]:
+    keySignal name=IDENT { $n = new ASTSignal($name, $isAbstract); }
+    
+    ( LESS idListRes=idList { $n.addGenerals($idListRes.idList); } )?
+    ( 'attributes' 
+      ( a=attributeDefinition { $n.addAttribute($a.n); } )* 
+    )?
+    ( 'constraints'
+      (
+        inv=invariantClause { $n.addInvariantClause($inv.n); }
+      )*
+    )?
+    'end'
+    ;  
+
 keyUnion:
   {input.LT(1).getText().equals("union")}? IDENT ;
   
@@ -362,8 +450,17 @@ keyAggregation:
 keyClass:
   {input.LT(1).getText().equals("class")}? IDENT ;
 
+keySignal:
+  {input.LT(1).getText().equals("signal")}? IDENT ;
+  
 keyDerived:
   {input.LT(1).getText().equals("derived")}? IDENT ;
   
+keyDerive:
+  {input.LT(1).getText().equals("derive")}? IDENT ;
+
+keyInit:
+  {input.LT(1).getText().equals("init")}? IDENT ;
+    
 keyQualifier:
   {input.LT(1).getText().equals("qualifier")}? IDENT ;

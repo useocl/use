@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.type.Type;
@@ -28,17 +26,16 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * TODO
- *
+ * A RValue which creates a new link object.
  */
 public class MRValueNewLinkObject extends MRValue {
-	/** TODO */
+	/** The encapsulated new link object statement. */
 	private MNewLinkObjectStatement fNewLinkObjectStatement;
 	
 	
 	/**
-	 * TODO
-	 * @param newLinkObjectStatement
+	 * Constructs a new RValue to create a new link object.  
+	 * @param newLinkObjectStatement The encapsulated new link object statement.
 	 */
 	public MRValueNewLinkObject(
 			MNewLinkObjectStatement newLinkObjectStatement) {
@@ -46,31 +43,26 @@ public class MRValueNewLinkObject extends MRValue {
 		fNewLinkObjectStatement = newLinkObjectStatement;
 	}
 
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public MNewLinkObjectStatement getNewLinkObjectStatement() {
-		return fNewLinkObjectStatement;
-	}
-	
-
 	@Override
 	public Value evaluate(
 			SoilEvaluationContext context,
-			StatementEvaluationResult result,
-			MStatement parent) throws EvaluationFailedException {
+			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		fNewLinkObjectStatement.execute(context, result);
 		
 		return fNewLinkObjectStatement.getCreatedLinkObject().value();
 	}
 
+	/**
+	 * @return the fNewLinkObjectStatement
+	 */
+	public MNewLinkObjectStatement getNewLinkObjectStatement() {
+		return fNewLinkObjectStatement;
+	}
 
 	@Override
 	public Type getType() {
-		return fNewLinkObjectStatement.getAssociationClass().type();
+		return fNewLinkObjectStatement.getAssociationClass();
 	}
 
 

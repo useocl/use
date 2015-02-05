@@ -9,7 +9,6 @@ import org.tzi.use.main.shell.Shell;
  * 
  * @author Roman Asendorf
  */
-
 public interface IPluginShellCmd {
 
 	/**
@@ -20,7 +19,7 @@ public interface IPluginShellCmd {
 	 * @param cmdArguments
 	 *            The Shell Command's arguments
 	 */
-	public void executeCmd(String cmd, String cmdArguments);
+	public void executeCmd(String cmd, String cmdArguments, String[] argList);
 
 	/**
 	 * Method to get the Shell Command's name
@@ -44,9 +43,20 @@ public interface IPluginShellCmd {
 	public Shell getShell();
 
 	/**
-	 * Method to get the Shell Command's arguments
+	 * Method to get the Shell Command's arguments as a plain {@code String}.
 	 * 
 	 * @return The Shell Command's arguments
+	 * @see #getCmdArgumentList()
 	 */
 	public String getCmdArguments();
+	
+	/**
+	 * Method to get the Shell Command's arguments as a split
+	 * {@code String array}. The splitting handles single quoted, double quoted
+	 * and arguments without quotes.
+	 * 
+	 * @return The Shell Command's arguments
+	 * @see #getCmdArguments()
+	 */
+	public String[] getCmdArgumentList();
 }

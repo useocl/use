@@ -24,34 +24,34 @@ package org.tzi.use.uml.mm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.sys.MOperationCall;
 
 
 /**
  * An associationclass is a class and a association at once.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
+ * @author Lars Hamann
  * @see MAssociationImpl
  * @see MClassImpl
  */
 
-public class MAssociationClassImpl extends MModelElementImpl implements MAssociationClass {
+public class MAssociationClassImpl extends MClassifierImpl implements MAssociationClass {
 
     private MAssociationImpl fAssociationImpl;
     private MClassImpl fClassImpl;
-    private int fPositionInModel;
-    private ObjectType fType;
     
     /**
      * Creates a new associationclass.
@@ -61,10 +61,9 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
      *                      is defined abstract.
      */
     MAssociationClassImpl( String name, boolean isAbstract ) {
-        super( name );
+        super( name, isAbstract );
         fClassImpl = new MClassImpl( name, isAbstract );
         fAssociationImpl = new MAssociationImpl( name );
-        fType = new ObjectType(this);
     }
 
     /**
@@ -87,44 +86,46 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
     public Type getType( Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
         MAssociation assoc = src.association();
         if (assoc.associationEnds().size() > 2) 
-            return TypeFactory.mkSet( TypeFactory.mkObjectType( this ) );
+            return TypeFactory.mkSet(this);
         
         MAssociationEnd otherEnd;
         if (src == assoc.associationEnds().get(0))
             otherEnd = (MAssociationEnd) assoc.associationEnds().get(1);
         else
             otherEnd = (MAssociationEnd) assoc.associationEnds().get(0);
-        
-        Type thisType = TypeFactory.mkObjectType( this );
+
         if (src.hasQualifiers()) {
         	if (qualifiedAccess) {
         		if (otherEnd.multiplicity().isCollection()) {
     				if ( otherEnd.isOrdered() )
-    	                return TypeFactory.mkOrderedSet( thisType );
+    	                return TypeFactory.mkOrderedSet( this );
     	            else
-    	                return TypeFactory.mkSet( thisType );
+    	                return TypeFactory.mkSet( this );
     			}
         	} else {
         		if ( otherEnd.isOrdered() )
-	                return TypeFactory.mkSequence( thisType );
+	                return TypeFactory.mkSequence( this );
 	            else
-	                return TypeFactory.mkBag( thisType );
+	                return TypeFactory.mkBag( this );
         	}
         } else {
 	        if (otherEnd.multiplicity().isCollection()) {
 	            if (otherEnd.isOrdered())
-	                return TypeFactory.mkOrderedSet(thisType);
+	                return TypeFactory.mkOrderedSet(this);
 	            else
-	                return TypeFactory.mkSet(thisType);
+	                return TypeFactory.mkSet(this);
 	        }
         }
-        return thisType;
+        return this;
     }
 
     public MAssociation association() {
         return this;
     }
 
+    public MAssociation getInternalAssociation() {
+    	return fAssociationImpl;
+    }
 
     //////////////////////////////////////////////////
     // DELEGATION OF MClassImpl
@@ -141,21 +142,15 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
     /**
      * Returns the name of this class with lowercase first letter.
      */
+    @Override
     public String nameAsRolename() {
         return fClassImpl.nameAsRolename();
-    }
-    
-    /**
-     * returns the corresponding type
-     * @return the corresponding type
-     */
-    public ObjectType type() {
-    	return fType;
     }
 
     /**
      * Returns the model owning this class.
      */
+    @Override
     public MModel model() {
         return fClassImpl.model();
     }
@@ -166,8 +161,10 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
      *
      * @see MModel#addClass
      */
+    @Override
     public void setModel( MModel model ) {
         fClassImpl.setModel( model );
+        fAssociationImpl.setModel( model );
     }
 
     /**
@@ -180,6 +177,7 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
      *            attribute with the same name or a name clash
      *            occured.
      */
+    @Override
     public void addAttribute( MAttribute attr ) throws MInvalidModelException {
         // Well-Formedness Rule No. 1 of AssociationClass of OMG 1.4
         for (MAssociationEnd ae : associationEnds()) {
@@ -304,58 +302,79 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
     public void registerNavigableEnds( List<MNavigableElement> associationEnds ) {
         fClassImpl.registerNavigableEnds( associationEnds );
     }
+    
+    @Override
+	public boolean isTypeOfClassifier() {
+		return false;
+	}
 
-    public void deleteNavigableElements () {
-        fClassImpl.deleteNavigableElements();
+	@Override
+	public boolean isKindOfClass(VoidHandling h) {
+		return true;
+	}
+
+	@Override
+	public boolean isTypeOfClass() {
+		return true;
+	}
+
+	@Override
+	public boolean isKindOfAssociation(VoidHandling h) {
+		return true;
+	}
+
+	@Override
+	public boolean isTypeOfAssociation() {
+		return true;
+	}
+
+	@Override
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Association class only inherit from other association classes
+	public Set<MAssociationClass> parents() {
+		return (Set)model().generalizationGraph().targetNodeSet(this);
+    }
+
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Association class only inherit from other association classes
+    public Set<MAssociationClass> allParents() {
+    	return (Set)model().generalizationGraph().targetNodeClosureSet(this);
+    }
+
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Association class only inherit from other association classes
+	public Iterable<MAssociationClass> generalizationHierachie(final boolean includeThis) {
+    	return new Iterable<MAssociationClass>() {
+			@Override
+			public Iterator<MAssociationClass> iterator() {
+				return (Iterator)model().generalizationGraph().targetNodeClosureSetIterator(MAssociationClassImpl.this, includeThis);
+			}
+		};
+	}
+
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Association class only inherit from other association classes
+	public Iterable<MAssociationClass> specializationHierachie(final boolean includeThis) {
+    	return new Iterable<MAssociationClass>() {
+			@Override
+			public Iterator<MAssociationClass> iterator() {
+				return (Iterator)model().generalizationGraph().sourceNodeClosureSetIterator(MAssociationClassImpl.this, includeThis);
+			}
+		};
+	}
+    
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Association class only inherit from other association classes
+    public Set<MAssociationClass> allChildren() {
+        return (Set)model().generalizationGraph().sourceNodeClosureSet(this);
+    }
+
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Association class only inherit from other association classes
+    public Set<MAssociationClass> children() {
+    	return (Set)model().generalizationGraph().sourceNodeSet(this);
     }
     
-    /**
-     * Returns the set of all direct parent classes (without this
-     * class).
-     *
-     * @return Set(MClass)
-     */
-    public Set<MClass> parents() {
-        return fClassImpl.parents();
-    }
-
-    /**
-     * Returns the set of all parent classes (without this
-     * class). This is the transitive closure of the generalization
-     * relation.
-     *
-     * @return Set(MClass)
-     */
-    public Set<MClass> allParents() {
-        return fClassImpl.allParents();
-    }
-
-    /**
-     * Returns the set of all child classes (without this class). This
-     * is the transitive closure of the generalization relation.
-     *
-     * @return Set(MClass)
-     */
-    public Set<MClass> allChildren() {
-        return fClassImpl.allChildren();
-    }
-
-    /**
-     * Returns the set of all direct child classes (without this
-     * class).
-     *
-     * @return Set(MClass) 
-     */
-    public Set<MClass> children() {
-        return fClassImpl.children();
-    }
-    
-    /**
-     * Returns the set of associations this class directly
-     * participates in.
-     *
-     * @return Set(MAssociation).
-     */
+    @Override
     public Set<MAssociation> associations() {
         return fClassImpl.associations();
     }
@@ -370,15 +389,16 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
         return fClassImpl.allAssociations();
     }
 
-    /**
-     * Returns true if this class is a child of
-     * <code>otherClass</code> or equal to it.
-     */
-    public boolean isSubClassOf( MClass otherClass ) {
-        return fClassImpl.isSubClassOf( otherClass );
+    @Override
+    public boolean isSubClassOf( MClassifier otherClassifier ) {
+        return fClassImpl.isSubClassOf( otherClassifier );
     }
 
-
+    @Override
+    public boolean isSubClassOf( MClassifier otherClassifier, boolean excludeThis ) {
+        return fClassImpl.isSubClassOf( otherClassifier, excludeThis );
+    }
+    
     //////////////////////////////////////////////////
     // DELEGATION OF MAssociationImpl
     //////////////////////////////////////////////////
@@ -390,7 +410,7 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
      *              or aggregation end.
      * @see         MAssociation#addAssociationEnd( MAssociationEnd )
      */
-    public void addAssociationEnd( MAssociationEnd aend ) throws MInvalidModelException {
+    public void addAssociationEnd( @NonNull MAssociationEnd aend ) throws MInvalidModelException {
         // Aggregation or composition is not allowed in combination
         // with a ternary associationclass
         if ( aggregationKind() == MAggregationKind.AGGREGATION
@@ -437,9 +457,7 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
     }
     
     
-    /**
-     * TODO
-     */
+    @Override
     public List<String> roleNames() {
     	return fAssociationImpl.roleNames();
     }
@@ -519,26 +537,12 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
         return ne;
     }
 
-    /**
-     * Returns the position in the defined USE-Model.
-     */
-    public int getPositionInModel() {
-        return fPositionInModel;
-    }
-
-    /**
-     * Sets the position in the defined USE-Model.
-     */
-    public void setPositionInModel(int position) {
-        fPositionInModel = position;
-    }
-
     public boolean isAssignableFrom(MClass[] classes) {
         return fAssociationImpl.isAssignableFrom(classes);
     }
 
 	@Override
-	public void addSubsets(MAssociation asso) {
+	public void addSubsets(@NonNull MAssociation asso) {
 		this.fAssociationImpl.addSubsets(asso);
 	}
 
@@ -547,7 +551,6 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
 		return this.fAssociationImpl.getSubsets();
 	}
 
-	
 	@Override
 	public List<MAssociationEnd> getAssociationEnd(String subsetsRolename) {
 		return this.fClassImpl.getAssociationEnd(subsetsRolename);
@@ -564,7 +567,7 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
 	}
 	
 	@Override
-	public void addSubsettedBy(MAssociation asso) {
+	public void addSubsettedBy(@NonNull MAssociation asso) {
 		this.fAssociationImpl.addSubsettedBy(asso);
 	}
 
@@ -579,12 +582,12 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
 	}
 
 	@Override
-	public void addRedefinedBy(MAssociation association) {
+	public void addRedefinedBy(@NonNull MAssociation association) {
 		this.fAssociationImpl.addRedefinedBy(association);		
 	}
 
 	@Override
-	public void addRedefines(MAssociation parentAssociation) {
+	public void addRedefines(@NonNull MAssociation parentAssociation) {
 		this.fAssociationImpl.addRedefines(parentAssociation);
 	}
 
@@ -600,9 +603,14 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
 
 	@Override
 	public Set<MAssociation> getRedefinedByClosure() {
-		return this.fAssociationImpl.getRedefinedBy();
+		return this.fAssociationImpl.getRedefinedByClosure();
 	}
 
+	@Override
+	public Set<MAssociation> getSpecifiedRedefinedByClosure() {
+		return this.fAssociationImpl.getSpecifiedRedefinedByClosure();
+	}
+	
 	@Override
 	public Set<MAssociation> getRedefinesClosure() {
 		return this.fAssociationImpl.getRedefinesClosure();
@@ -651,35 +659,23 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
 		return this.fAssociationImpl.associationEnds();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#hasQualifiedEnds()
-	 */
 	@Override
 	public boolean hasQualifiedEnds() {
 		return this.fAssociationImpl.hasQualifiedEnds();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MNavigableElement#getQualifiers()
-	 */
 	@Override
 	public List<VarDecl> getQualifiers() {
 		return Collections.emptyList();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MNavigableElement#hasQualifiers()
-	 */
 	@Override
 	public boolean hasQualifiers() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#getSourceEnd(org.tzi.use.uml.mm.MClass, org.tzi.use.uml.mm.MNavigableElement, java.lang.String)
-	 */
 	@Override
-	public MNavigableElement getSourceEnd(MClass srcClass, MNavigableElement dst, String explicitRolename) {
+	public MNavigableElement getSourceEnd(MClassifier srcClass, MNavigableElement dst, String explicitRolename) {
 		if (srcClass.equals(this)) {
 			return this;
 		} else if (srcClass instanceof MAssociationClass ) {
@@ -692,46 +688,43 @@ public class MAssociationClassImpl extends MModelElementImpl implements MAssocia
 		return this.fAssociationImpl.getSourceEnd(srcClass, dst, explicitRolename);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MNavigableElement#isCollection()
-	 */
 	@Override
 	public boolean isCollection() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociationClass#validateAssociation()
-	 */
-	@Override
-	public void validateInheritance() {
-		for (MClass cls : allParents()) {
-			if (cls instanceof MAssociationClass) {
-				this.fAssociationImpl = ((MAssociationClassImpl)cls).fAssociationImpl;
-				return;
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#getAllParentAssociations()
-	 */
-	@Override
-	public Set<MAssociation> getAllParentAssociations() {
-		Set<MAssociation> parents = new HashSet<MAssociation>();
-		for (MClass cls : this.allParents()) {
-			if (cls instanceof MAssociationClass) {
-				parents.add((MAssociation)cls);
-			}
-		}
-		return parents;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MAssociation#isOrdered()
-	 */
 	@Override
 	public boolean isOrdered() {
 		return this.fAssociationImpl.isOrdered();
+	}
+
+	@Override
+	public void addOwnedProtocolStateMachine(MProtocolStateMachine psm) {
+		this.fClassImpl.addOwnedProtocolStateMachine(psm);
+	}
+
+	@Override
+	public Set<MProtocolStateMachine> getOwnedProtocolStateMachines() {
+		return this.fClassImpl.getOwnedProtocolStateMachines();
+	}
+
+	@Override
+	public Set<MProtocolStateMachine> getAllOwnedProtocolStateMachines() {
+		return this.fClassImpl.getAllOwnedProtocolStateMachines();
+	}
+
+	@Override
+	public boolean hasStateMachineWhichHandles(MOperationCall operationCall) {
+		return this.fClassImpl.hasStateMachineWhichHandles(operationCall);
+	}
+
+	@Override
+	public boolean isRedefining() {
+		return this.fAssociationImpl.isRedefining();
+	}
+
+	@Override
+	public void calculateRedefinedByClosure() {
+		this.fAssociationImpl.calculateRedefinedByClosure();
 	}
 }

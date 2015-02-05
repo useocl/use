@@ -23,29 +23,39 @@ package org.tzi.use.config;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TypedProperties;
-import org.tzi.use.util.collections.LimitedStack;
 
 
 /**
  * Global options for all packages.
- *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "3.0.6";
+    public static final String RELEASE_VERSION = "4.0.0";
 
-    // the copyright:
-    public static final String COPYRIGHT = "Copyright (C) 1999-2011 University of Bremen";
+    // the copyright
+    public static final String COPYRIGHT = "Copyright (C) 1999-2014 University of Bremen";
 
+    // the trained support apes
+    public static final String SUPPORT_MAIL = "grp-usedevel@informatik.uni-bremen.de";
+    
     /**
 	 * Name of the file for system properties located in the etc subdirectory of
 	 * the installation directory.
@@ -85,34 +95,72 @@ public class Options {
     public static String USE_HISTORY_PATH = ".use_history";
 
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
-    public static String FILE_SEPARATOR = System.getProperty("file.separator");
-
-	public static String URL_PREFIX = "file:" + FILE_SEPARATOR + FILE_SEPARATOR
-			+ FILE_SEPARATOR;
 
     /**
      * Name of the property giving the path to the monitor aspect template.
      */
     private static final String MONITOR_ASPECT_TEMPLATE_P = "use.monitor-aspect-template.path";
-    public static String MONITOR_ASPECT_TEMPLATE = "etc/USEMonitor.java.template";
 
+    public static Path MONITOR_ASPECT_TEMPLATE;
+    
     /*
      * Global options set by command line arguments.
      */
-    public static String homeDir = null;
-    public static String iconDir = null;
+    
+    /**
+     * The home directory of USE.
+     * Used to retrieve settings and icons.
+     */
+    public static Path homeDir = null;
+        
+    private static Path iconDir = null;
+    
+    public static Path getIconDir() {
+    	return iconDir;
+    }
+    
+    public static Path getIconPath(String iconName) {
+    	return iconDir.resolve(iconName).toAbsolutePath();
+    }
+    
     public static boolean compileOnly = false;
-    public static boolean daVinciClassDiagram = false;
+    
     public static boolean compileAndPrint = false;
+    
+    /**
+     * If <code>true</code> the USE GUI is started.
+     * Otherwise, only the shell is available.
+     */
     public static boolean doGUI = true;
+    
     public static boolean suppressWarningsAboutMissingReadlineLibrary = false;
+    
     public static boolean quiet = false;
+    
+    private static boolean debug = false;
+    
     public static boolean quietAndVerboseConstraintCheck = false;
+    
     public static boolean disableCollectShorthand = false;
+    
+    /**
+     * If <code>true</code>, OCL extensions which are
+     * specified using ruby in ./oclextensions are
+     * disabled. 
+     */
     public static boolean disableExtensions = false;
+    
     public static boolean readlineTest = false;
     
     public static boolean explicitVariableDeclarations = true;
+    
+    private static boolean checkTransitions = true;
+    
+    /**
+     * If <code>true</code>, state invariants are
+     * evaluated after every system state change.
+     */
+    private static boolean checkStateInvariants = false;
     
     public enum WarningType {
     	IGNORE("I"),
@@ -134,16 +182,15 @@ public class Options {
     				return t;
     			}
     		}
-    		
     		return null;
     	}
     }
-    
-    public static WarningType checkWarningsOclAnyInCollections = WarningType.ERROR;
-    public static WarningType checkWarningsUnrelatedTypes = WarningType.ERROR;
-    
-   
-    /**
+
+	private static WarningType checkWarningsOclAnyInCollections = WarningType.WARN;
+
+	private static WarningType checkWarningsUnrelatedTypes = WarningType.WARN;
+
+	/**
 	 * enable/disable plugin architecture
 	 *
 	 **/
@@ -152,12 +199,12 @@ public class Options {
 	/**
 	 * static plugin directory
 	 */
-	public static String pluginDir = "lib/plugins/";
+	public static Path pluginDir = null;
 
 	/**
-     * Size of the diagram panel. 
+     * Preferred size of the diagram views. 
      */
-    public static Dimension fDiagramDimension = new Dimension( 400, 400 );
+    public static Dimension fDiagramDimension = new Dimension( 600, 600 );
     
     /**
      * The application's properties set.
@@ -170,10 +217,15 @@ public class Options {
      */
     public static final String PROTOCOL_FILE = "use.protocol";
 
+	/**
+	 * Default precision for floating-point number comparisons.
+	 */
+	public static final int DEFAULT_FLOAT_PRECISION = 8;
+    
     /**
      * Contains the ten last opened files
      */
-    private static LimitedStack<String> openedFiles = new LimitedStack<String>(10); 
+    private static RecentItems recentSpecifications = new RecentItems(10, Preferences.userRoot().node( "/org/tzi/use/main" )); 
     
     /** no instances */
 	private Options() {}
@@ -185,34 +237,27 @@ public class Options {
         System.out.println("options:");
         System.out.println("  -c            compile only");
         System.out.println("  -cp           compile and print specification");
-		System.out
-				.println("  -daVinciClass output a daVinci graph representing the class diagram");
-		System.out
-				.println("  -disableCollectShorthand flag use of OCL shorthand notation as error");
-		System.out.println("  -oclAnyCollectionsChecks: (W)arn|(E)rror|(I)gnore");
-		System.out.println("  -extendedTypeSystemChecks:(W)arn|(E)rror|(I)gnore");
+		System.out.println("  -disableCollectShorthand");
+		System.out.println("                flag use of OCL shorthand notation as error");
+		System.out.println("  -oclAnyCollectionsChecks:W");
+		System.out.println("                (W)arn|(E)rror|(I)gnore");
+		System.out.println("  -extendedTypeSystemChecks:W");
+		System.out.println("                (W)arn|(E)rror|(I)gnore");
 		System.out.println("  -implicitTypes  Implicit variable typing in operations");
         System.out.println("  -nogui        do not use GUI");
 		System.out.println("  -noplugins    do not use plugins");
         System.out.println("  -h            print help");
         System.out.println("  -H=path       home of use installation");
-		System.out
-				.println("  -nr           suppress warnings about missing readline library");
-		System.out
-				.println("  -q            reads spec_file, executes cmd_file, and checks constraints");
-		System.out
-				.println("                exit code is 1 if constraints fail, otherwise 0");
-		System.out
-				.println("  -qv           like -q but with verbose output of constraint check");
+		System.out.println("  -nr           suppress warnings about missing readline library");
+		System.out.println("  -q            reads spec_file, executes cmd_file, and checks constraints");
+		System.out.println("                exit code is 1 if constraints fail, otherwise 0");
+		System.out.println("  -qv           like -q but with verbose output of constraint check");
         System.out.println("  -v            print verbose messages");
-		System.out
-				.println("  -vt           print verbose messages with time info");
+		System.out.println("  -vt           print verbose messages with time info");
         System.out.println("  -V            print version info and exit");
         System.out.println();
-		System.out
-				.println("spec_file:      file containing a USE specification");
-		System.out
-				.println("cmd_file:       script file containing commands (will be executed on startup)");
+		System.out.println("spec_file:      file containing a USE specification");
+		System.out.println("cmd_file:       script file containing commands (will be executed on startup)");
         System.out.println();
         System.out.println("diagnostics:");
         System.out.println("  -debug        print lots of messages");
@@ -222,20 +267,27 @@ public class Options {
     }
 
     /**
-     * The name of the file containing the specification.
+     * The name of the file containing the specification,
+     * which was provided as an argument. 
      */
     public static String specFilename = null;
 
     /**
-     * The name of a file containing script commands.
+     * The name of a file containing script commands,
+     * which was provided as an argument.
      */
     public static String cmdFilename = null;
 
     /**
-     * The name of the file containing diagram information.
+     * The last opened directory.
+     * Used to set the starting directory for open and save dialogs.
      */
-    public static String diagramFilename = null;
-
+    private static Path lastDirectory = Paths.get(System.getProperty("user.dir"));
+    
+    /**
+     * If <code>true</code>, all non deterministic output like duration
+     * is suppressed.
+     */
 	public static boolean testMode;
 
     /**
@@ -254,8 +306,6 @@ public class Options {
                 } else if (arg.equals("cp") ) {
                     Options.compileOnly = true;
                     Options.compileAndPrint = true;
-                } else if (arg.equals("daVinciClass")) {
-                	Options.daVinciClassDiagram = true;
                 } else if (arg.equals("disableCollectShorthand")) {
                 	Options.disableCollectShorthand = true;
                 } else if (arg.equals("nogui")) {
@@ -265,7 +315,12 @@ public class Options {
                 } else if (arg.equals("readlineTest")) { 
                     Options.readlineTest = true;
                 } else if (arg.startsWith("H=")) { 
-                    homeDir = arg.substring(2);
+                	try {
+                		homeDir = Paths.get(arg.substring(2));
+                	} catch (InvalidPathException e) {
+                		System.err.println("Invalid path " + StringUtil.inQuotes(arg.substring(2)) + " for home directory specified.");
+                		System.exit(1);
+                	}
                 } else if (arg.equals("nr")) { 
                     suppressWarningsAboutMissingReadlineLibrary = true;
                 } else if (arg.equals("q")) {
@@ -288,10 +343,7 @@ public class Options {
                 } else if (arg.equals("implicitTypes")) {
                     Options.explicitVariableDeclarations = false;
                 } else if (arg.equals("debug")) {
-					Log.setDebug(true);
-                    Log.setTrace(true);
-                    Log.setPrintStackTrace(true);
-                    Log.setVerbose(true);
+					setDebug(true);
                 } else if (arg.equals("p")) { 
                     Log.setPrintStackTrace(true);
                 } else if (arg.equals("h")) {
@@ -303,38 +355,58 @@ public class Options {
                     }
                 } else if (arg.startsWith("oclAnyCollectionsChecks:")) {
                 	String value = arg.substring("oclAnyCollectionsChecks:".length());
-                	checkWarningsOclAnyInCollections = WarningType.getType(value);
+                	WarningType wt = WarningType.getType(value);
+                	if(wt != null){
+                		checkWarningsOclAnyInCollections = wt;
+                	}
                 } else if (arg.startsWith("extendedTypeSystemChecks:")) {
                 	String value = arg.substring("extendedTypeSystemChecks:".length());
-                	checkWarningsUnrelatedTypes = WarningType.getType(value);
+                	WarningType wt = WarningType.getType(value);
+                	if(wt != null){
+                		checkWarningsUnrelatedTypes = wt;
+                	}
                 } else {
                 	System.out.println("invalid argument `" + arg
 							+ "\', try `use -h' for help.");
                     System.exit(1);
                 }
-            } else if (specFilename == null )
+            } else if (specFilename == null ) {
                 specFilename = args[i];
-            else if (cmdFilename == null )
+            } else if (cmdFilename == null ) {
                 cmdFilename = args[i];
-            else {
+            } else {
                 System.err.println("extra argument `" + args[i] + "'");
                 System.exit(1);
             }
         }
-
+        
+        if (homeDir == null) {
+        	// Try to get the home from Java
+        	URL path = Options.class.getProtectionDomain().getCodeSource().getLocation();
+        	try {
+        		URI pathUri = path.toURI();
+        		Path home = Paths.get(pathUri);
+				if (Files.isRegularFile(home)) {
+					// resolve jar file path
+					home = home.getParent();
+				}
+				// resolve lib/ folder path, assuming default folder structure
+				homeDir = home.getParent();
+			} catch (URISyntaxException e) { }
+        }
+        
         if (homeDir == null ) {
-			System.err.println("missing path to USE installation, "
-					+ "try `use -h' for help.");
+			System.err.println("Missing path to USE installation, try `use -h' for help.");
             System.exit(1);
         }
-        iconDir = homeDir + FILE_SEPARATOR + "images" + FILE_SEPARATOR;
-    
-		pluginDir = URL_PREFIX + FILE_SEPARATOR + homeDir + FILE_SEPARATOR
-				+ pluginDir;
+        
+        setLastDirectory(homeDir);
+        iconDir = homeDir.resolve("images");
+		pluginDir = homeDir.resolve("lib").resolve("plugins");
 
         if (quiet && (specFilename == null || cmdFilename == null) ) {
 			System.err
-					.println("need specification file and command file with option -q,"
+					.println("Need specification file and command file with option -q,"
                                + LINE_SEPARATOR + "try `use -h' for help.");
             System.exit(1);
         }
@@ -343,25 +415,40 @@ public class Options {
         initProperties(homeDir);
 
         // args ok, print welcome message if in interactive mode
-        if (! compileOnly && ! daVinciClassDiagram && ! quiet ) {
-			Log.println("use version " + Options.RELEASE_VERSION + ", "
-					+ Options.COPYRIGHT);
+        if (!compileOnly && !quiet ) {
+			Log.println("USE version " + Options.RELEASE_VERSION + ", " + Options.COPYRIGHT);
         }
     }
 
+    /**
+     * Enables or disables debug output.
+     * @param debug
+     */
+	public static void setDebug(boolean debug) {
+		Options.debug = debug;
+		Log.setDebug(debug);
+		Log.setTrace(debug);
+		Log.setPrintStackTrace(debug);
+		Log.setVerbose(debug);
+	}
+
+	public static boolean getDebug() {
+		return debug;
+	}
+	
     /** 
 	 * Read properties for use. First the property file from the installation
 	 * directory is read. Next, we search for a file in the current working
 	 * directory or in the user's home directory.
 	 */
-    private static void initProperties(String useHome) {
+    private static void initProperties(Path useHome) {
         props = new TypedProperties(System.getProperties());
 
         // load the system properties
-        File propFile = null;
-        propFile = new File(useHome, "etc" + FILE_SEPARATOR + USE_PROP_FILE);
-        if (! propFile.exists() ) {
-			System.err.println("property file `" + propFile.getAbsolutePath()
+        Path propFile;
+        propFile = useHome.resolve("etc").resolve(USE_PROP_FILE);
+        if (!Files.isReadable(propFile)) {
+			System.err.println("property file `" + propFile.toString()
 					+ "' not found. Use -H to set the "
 					+ "home of the use installation");
             System.exit(1);
@@ -369,20 +456,16 @@ public class Options {
         loadProperties(propFile);
     
         // load user properties if found
-		propFile = new File(props.getProperty("user.dir", null), USER_PROP_FILE);
-        if (propFile.exists() )
+		propFile = Paths.get(props.getProperty("user.dir", null), USER_PROP_FILE);
+        if ( Files.isReadable(propFile)) {
             loadProperties(propFile);
-        else {
-            propFile = new File(props.getProperty("user.home", null), 
-                                USER_PROP_FILE);
-            if (propFile.exists() )
+        } else {
+            propFile = Paths.get(props.getProperty("user.home", null), USER_PROP_FILE);
+            if ( Files.isReadable(propFile) )
                 loadProperties(propFile);
         }
 
-		MONITOR_ASPECT_TEMPLATE = useHome
-				+ FILE_SEPARATOR
-				+ props.getProperty(MONITOR_ASPECT_TEMPLATE_P,
-                              MONITOR_ASPECT_TEMPLATE);
+		MONITOR_ASPECT_TEMPLATE = useHome.resolve(props.getProperty(MONITOR_ASPECT_TEMPLATE_P, "etc/USEMonitor.java.template"));
 
 		EVAL_NUMTHREADS = props.getRangeIntProperty(EVAL_NUMTHREADS_P,
 				EVAL_NUMTHREADS, 1, Integer.MAX_VALUE);
@@ -402,12 +485,9 @@ public class Options {
 		USE_HISTORY_PATH = props.getProperty("user.home", ".")
 				+ props.getProperty("file.separator") + USE_HISTORY_PATH;
 
-        //props.list(System.out);
-
         // add our properties to the system properties so that
         // Font.getFont() works with our application specific fonts.
         System.setProperties(props);
-        // System.getProperties().list(System.out);
     }
 
     /**
@@ -416,26 +496,13 @@ public class Options {
 	 * @param propFile
 	 *            The property file to read (must exist).
      */
-    private static void loadProperties(File propFile) {
-        Log.verbose("loading properties from: " + propFile.getAbsolutePath());
-        FileInputStream fin = null;
-        try {
-            fin = new FileInputStream(propFile);
+    private static void loadProperties(Path propFile) {
+        Log.verbose("loading properties from: " + propFile.toString());
+        try (InputStream fin = Files.newInputStream(propFile)) {
             props.load(fin);
-        } catch (FileNotFoundException e) {
-			System.err.println("unable to load properties: "
-					+ propFile.getAbsolutePath());
-            System.exit(1);
         } catch (IOException e) {
-			System.err.println("unable to load properties: "
-					+ propFile.getAbsolutePath());
+			System.err.println("unable to load properties: " + propFile.toString());
             System.exit(1);
-        } 
-        try {
-            if (fin != null )
-                fin.close();
-        } catch (IOException e) {
-            // ignored
         }
     }
     
@@ -464,34 +531,129 @@ public class Options {
 	}
 
 	/**
+	 * 
+	 * @return
+	 */
+	public static void setCheckWarningsUnrelatedTypes(WarningType warningLevel) {
+		checkWarningsUnrelatedTypes = warningLevel;
+	}
+	
+	/**
 	 * @param ignore
 	 */
 	public static void setCheckWarningsOclAnyInCollections(WarningType warningLevel) {
 		checkWarningsOclAnyInCollections = warningLevel;
 	}
 
-	private static String lastDirectory = System.getProperty("user.dir");;
-	
 	/**
 	 * We always use the last directory for file choose operations
 	 * @param string
 	 */
-	public static void setLastDirectory(String string) {
-		lastDirectory = string;
+	public static void setLastDirectory(Path dir) {
+		lastDirectory = dir;
 	}
 	
 	/**
 	 * We always use the last directory for file choose operations
 	 */
-	public static String getLastDirectory() {
+	public static Path getLastDirectory() {
 		return lastDirectory;
 	}
 	
-	public static LimitedStack<String> getRecentFiles() {
-		return openedFiles;
+	/**
+	 * Returns an absolute file path to the given file considering the
+	 * {@link #lastDirectory}.
+	 * 
+	 * @see #getFilenameToOpen(String)
+	 */
+	public static String getFilenameToOpen(File file) {
+		if(file.isAbsolute()){
+			return file.getAbsolutePath();
+		}
+		
+		return lastDirectory.resolve(file.toPath()).toString();
+	}
+
+	/**
+	 * Returns an absolute file path to the given filename considering the
+	 * {@link #lastDirectory}.
+	 * 
+	 * @see #getFilenameToOpen(File)
+	 */
+	public static String getFilenameToOpen(String filepath) {
+		return getFilenameToOpen(new File(filepath));
 	}
 	
+	public static RecentItems getRecentFiles() {
+		return recentSpecifications;
+	}
+	
+	/**
+	 * Returns the last opened file with this extension or <code>null</code>
+	 * if none was opened.
+	 * @param extension
+	 * @return
+	 */
+	public static Path getRecentFile(String extension) {
+		for (String recent : getRecentFiles().getItems()) {
+			if (recent.endsWith("." + extension))
+				return Paths.get(recent);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns a list of recently opened files with the given
+	 * <code>extension</code>.
+	 * The first element of the list is the most recently opened file. 
+	 * @param extension
+	 * @return
+	 */
+	public static List<Path> getRecentFiles(String extension) {
+		List<Path> result = new LinkedList<>();
+		for (String recent : getRecentFiles().getItems()) {
+			if (recent.endsWith("." + extension))
+				result.add(Paths.get(recent));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns the USE version.
+	 * @return
+	 */
 	public static String getUSEVersion() {
 		return RELEASE_VERSION;
+	}
+	
+	/**
+	 * @param selected
+	 */
+	public static void setCheckTransitions(boolean b) {
+		checkTransitions = b;
+	}
+	
+	public static boolean getCheckTransitions() {
+		return checkTransitions;
+	}
+
+	/**
+	 * Returns the current setting for the check
+	 * of state invariants when the system state changes.
+	 * @return
+	 */
+	public static boolean getCheckStateInvariants() {
+		return checkStateInvariants;
+	}
+
+	/**
+	 * If set to <code>true</code>, state invariants are
+	 * evaluated after every state change.
+	 * @param newValue
+	 */
+	public static void setCheckStateInvariants(boolean newValue) {
+		checkStateInvariants = newValue;
 	}
 }

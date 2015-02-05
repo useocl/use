@@ -42,12 +42,12 @@ public final class ExpLet extends Expression {
                   Expression inExpr)
         throws ExpInvalidException
     {
-        super(inExpr.type(), varExpr, inExpr);
+        super(inExpr.type());
         fVarname = varname;
         fVarType = varType;
         fVarExpr = varExpr;
         fInExpr = inExpr;
-        if (! fVarExpr.type().isSubtypeOf(fVarType) )
+        if (! fVarExpr.type().conformsTo(fVarType) )
             throw new ExpInvalidException(
                                           "Type of variable expression `" + fVarExpr.type() +
                                           "' does not match declared type `" + fVarType + "'.");
@@ -101,5 +101,13 @@ public final class ExpLet extends Expression {
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitLet(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
+	 */
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return fVarExpr.requiresPreState() ||  fInExpr.requiresPreState();
 	}
 }

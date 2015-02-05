@@ -24,34 +24,39 @@ package org.tzi.use.uml.sys.events;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.events.tags.EventContext;
+import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
 
 
 /**
- * TODO
+ * Information about the event of an attribute assignment.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
-public class AttributeAssignedEvent extends Event {
-	/** TODO */
+public class AttributeAssignedEvent extends Event implements SystemStateChangedEvent {
+	/** The object that was assigned a new attribute value */
 	private MObject fObject;
-	/** TODO */
+	/** The attribute which was assigned a new value */
 	private MAttribute fAttribute;
-	/** TODO */
+	/** The assigned value */
 	private Value fValue;
 	
 	
 	/**
-	 * TODO
-	 * @param creator
-	 * @param object
-	 * @param attribute
-	 * @param value
+	 * Constructs a new <code>AttributeAssignedEvent</code> with
+	 * all needed information.
+	 * @param context The context in which the event is raised, e. g., UNDO
+	 * @param object The <code>MObject</code> that was assigned a new attribute value
+	 * @param attribute The <code>MAttribute</code> which was assigned a new value
+	 * @param value The assigned <code>Value</code>
 	 */
 	public AttributeAssignedEvent(
+			EventContext context,
 			MObject object, 
 			MAttribute attribute, 
 			Value value) {
-		
+		super(context);
 		fObject = object;
 		fAttribute = attribute;
 		fValue = value;
@@ -59,8 +64,8 @@ public class AttributeAssignedEvent extends Event {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The object that was assigned a new attribute value
+	 * @return The object that was assigned a new attribute value
 	 */
 	public MObject getObject() {
 		return fObject;
@@ -68,8 +73,8 @@ public class AttributeAssignedEvent extends Event {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The attribute which was assigned a new value
+	 * @return The <code>MAttribute</code>
 	 */
 	public MAttribute getAttribute() {
 		return fAttribute;
@@ -77,8 +82,8 @@ public class AttributeAssignedEvent extends Event {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 *  The assigned value
+	 * @return The <code>Value</code>
 	 */
 	public Value getValue() {
 		return fValue;

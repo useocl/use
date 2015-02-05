@@ -26,11 +26,10 @@ import java.util.Set;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.expr.ExpAllInstances;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -50,13 +49,15 @@ public class ASTAllInstancesExpression extends ASTExpression {
         String name = fToken.getText();
 
         // check for object type
-        MClass cls = ctx.model().getClass(name);
-        if (cls == null )
+        MClassifier cls = ctx.model().getClassifier(name);
+        
+        if (cls == null ) {
             throw new SemanticException(fToken,
                                         "Expected object type, found `" + name + "'.");
-
+        }
+        
         try {
-            res = new ExpAllInstances(TypeFactory.mkObjectType(cls));
+            res = new ExpAllInstances(cls);
             if (isPre()) res.setIsPre();
         } catch (ExpInvalidException ex) {
             throw new SemanticException(fToken, ex);

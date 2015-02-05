@@ -11,9 +11,9 @@ import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.util.Selection.ChangeEvent;
 import org.tzi.use.gui.util.Selection.ChangeListener;
-import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram.ClassDiagramData;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramData;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.uml.mm.MClassifier;
 
 /** 
@@ -122,7 +122,7 @@ public class SelectionClassTableModel extends AbstractTableModel implements Chan
 		}
 	    
 		classDiagram.getNodeSelection().addChangeListener(this);
-		classDiagram.invalidateContent();
+		classDiagram.invalidateContent(true);
 	}
 
 	/**

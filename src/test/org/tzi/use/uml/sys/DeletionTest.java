@@ -55,7 +55,7 @@ public class DeletionTest extends TestCase {
             MSystem system = ObjectCreation.getInstance()
                     .createModelWithObjectsAndLinkObject();
 
-            UseSystemApi api = UseSystemApi.create(system);
+            UseSystemApi api = UseSystemApi.create(system, false);
             
             api.deleteLink("Job", new String[] {"p1", "c1"});
             
@@ -76,7 +76,7 @@ public class DeletionTest extends TestCase {
             MSystem system = 
             	ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             
-            UseSystemApi api = UseSystemApi.create(system);
+            UseSystemApi api = UseSystemApi.create(system, false);
             
             api.deleteObject("j1");
             assertNull( system.state().objectByName( "j1" ) );
@@ -103,7 +103,7 @@ public class DeletionTest extends TestCase {
             MSystem system = 
             	ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             
-            UseSystemApi api = UseSystemApi.create(system);
+            UseSystemApi api = UseSystemApi.create(system, false);
             
             api.deleteObject("p1");
             

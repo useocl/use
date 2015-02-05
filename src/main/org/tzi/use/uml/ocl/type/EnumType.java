@@ -26,46 +26,39 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.tzi.use.uml.mm.Annotatable;
 import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MElementAnnotation;
-import org.tzi.use.util.collections.CollectionUtil;
+import org.tzi.use.uml.mm.MClassifierImpl;
+import org.tzi.use.uml.mm.MMVisitor;
+import org.tzi.use.uml.mm.MModel;
+
+import com.google.common.collect.Iterators;
 
 /**
  * An enumeration type.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class EnumType extends Type implements Annotatable, MClassifier {
-    //TODO: Use delegation for Annotatable?
-	private String fName;
-    
+public final class EnumType extends MClassifierImpl {
     /**
      * list of enumeration literals
      */
-    private ArrayList<String> fLiterals;
+    private List<String> fLiterals;
     
     /**
      * for fast access
      */
-    private HashSet<String> fLiteralSet;
-    
-    /**
-     * Possible annotations of this model element.
-     */
-    private Map<String, MElementAnnotation> annotations = Collections.emptyMap();
+    private Set<String> fLiteralSet;
     
     /**
      * Constructs an enumeration type with name and list of literals
      * (String objects). The list of literals is checked for
      * duplicates.
      */
-    protected EnumType(String name, List<String> literals) {
-        fName = name;
+    protected EnumType(MModel model, String name, List<String> literals) {
+    	super(name, false);
+        setModel(model);
         fLiterals = new ArrayList<String>(literals);
         fLiteralSet = new HashSet<String>(fLiterals.size());
         
@@ -77,18 +70,22 @@ public final class EnumType extends Type implements Annotatable, MClassifier {
         }
     }
     
-    public boolean isEnum() {
+    @Override
+    public boolean isTypeOfEnum() {
     	return true;
     }
     
-    /** 
-     * Returns the name of the enumeration type.
-     */
-    public String name() {
-        return fName;
+    @Override
+    public boolean isKindOfEnum(VoidHandling h) {
+    	return true;
     }
+    
+    @Override
+	public boolean isTypeOfClassifier() {
+		return false;
+	}
 
-    /** 
+	/** 
      * Returns an iterator over the literals.
      */
     public Iterator<String> literals() {
@@ -113,13 +110,15 @@ public final class EnumType extends Type implements Annotatable, MClassifier {
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
-        return equals(t) || t.isTrueOclAny();
+    @Override
+    public boolean conformsTo(Type t) {
+        return equals(t) || t.isTypeOfOclAny();
     }
 
     /** 
      * Returns the set of all supertypes (including this type).
      */
+    @Override
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>(2);
         res.add(TypeFactory.mkOclAny());
@@ -127,73 +126,51 @@ public final class EnumType extends Type implements Annotatable, MClassifier {
         return res;
     }
 
-    @Override
-    public boolean isAnnotatable() {
-    	return true;
-    }
     
-    @Override
-    public Map<String, MElementAnnotation> getAllAnnotations() {
-    	return this.annotations;
-    }
-    
-    @Override
-    public boolean isAnnotated() {
-    	return !this.annotations.isEmpty();
-    }
-    
-    @Override
-    public MElementAnnotation getAnnotation(String name) {
-    	if (this.annotations.containsKey(name)) {
-    		return this.annotations.get(name);
-    	} else {
-    		return null;
-    	}
-    }
-    
-    @Override
-    public String getAnnotationValue(String annotationName, String attributeName) {
-    	MElementAnnotation ann = getAnnotation(annotationName);
-    	
-    	if (ann == null) return null;
-    	
-    	return ann.getAnnotationValue(attributeName);
-    }
-    
-    @Override
-    public void addAnnotation(MElementAnnotation annotation) {
-    	this.annotations = CollectionUtil.initAsHashMap(this.annotations);
-    	this.annotations.put(annotation.getName(), annotation);
-    }
-    
-    /**
-     * Returns true if the passed type is equal.
-     */
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj == this ) return true;
-        if (obj.getClass().equals(getClass())) 
-            return fName.equals(((EnumType) obj).fName);
-        return false;
-    }
-
-    public int hashCode() {
-        return fName.hashCode();
-    }
-    
-    /** 
-     * Return complete printable type name, e.g. 'Set(Bag(Integer))'. 
-     */
-    @Override
-    public StringBuilder toString(StringBuilder sb) {
-        return sb.append(fName);
-    }
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MClassifier#isAbstract()
-	 */
 	@Override
-	public boolean isAbstract() {
-		return false;
+	public Set<? extends MClassifier> parents() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Set<? extends MClassifier> allParents() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Set<? extends MClassifier> allChildren() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Set<? extends MClassifier> children() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Iterable<? extends MClassifier> generalizationHierachie(boolean includeThis) {
+		// We don't support generalization of enumerations, yet
+		return new Iterable<MClassifier>() {
+			@Override
+			public Iterator<MClassifier> iterator() {
+				return Iterators.emptyIterator();
+			}
+		};
+	}
+	
+	@Override
+	public Iterable<? extends MClassifier> specializationHierachie(boolean includeThis) {
+		// We don't support generalization of enumerations, yet
+		return new Iterable<MClassifier>() {
+			@Override
+			public Iterator<MClassifier> iterator() {
+				return Iterators.emptyIterator();
+			}
+		};
+	}
+
+	@Override
+	public void processWithVisitor(MMVisitor v) {
+		v.visitEnum(this);
 	}
 }

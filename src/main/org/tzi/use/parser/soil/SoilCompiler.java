@@ -45,7 +45,7 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  * {@link MStatement Soil statement} from some
  * text input.
  * <p>
- * This is accomplished with the an ANTLR generated
+ * This is accomplished with the ANTLR generated
  * parser and lexer, which build an
  * {@link ASTStatement abstract syntax tree} as an
  * intermediate data structure.
@@ -59,9 +59,7 @@ public class SoilCompiler {
 	 * default constructor hidden, since we don't need
 	 * instances of this class
 	 */
-	private SoilCompiler() {
-		
-	}
+	private SoilCompiler() {}
 	
 	
 	/**
@@ -120,50 +118,34 @@ public class SoilCompiler {
 	 * @return
 	 *   if the input was a valid soil statement, an evaluable soil statement, null else
 	 */
-	public static MStatement compileStatement(
-			MModel model,
-            MSystemState state,
-            VariableEnvironment variableEnvironment,
-            InputStream input, 
-            String inputName,
-            PrintWriter errorOutput,
-            boolean verbose) {
+	public static MStatement compileStatement(MModel model, MSystemState state,
+			VariableEnvironment variableEnvironment, InputStream input,
+			String inputName, PrintWriter errorOutput, boolean verbose) {
 		
-        ASTStatement ast = 
-        	constructAST(
-        		input, 
-        		inputName, 
-        		errorOutput, 
-        		verbose);
+		ASTStatement ast = constructAST(input, inputName, errorOutput, verbose);
         
         if (ast == null) {
         	return null;
         }
         
-        MStatement statement = 
-        	constructStatement(
-        			ast, 
-        			inputName, 
-        			errorOutput, 
-        			state, 
-        			model, 
-        			variableEnvironment, 
-        			verbose);
+		MStatement statement = constructStatement(ast, inputName, errorOutput,
+				state, model, variableEnvironment, verbose);
 		
 		return statement;
 	 }
 	
 	
 	/**
-	 * 
-	 * @param model
-	 * @param state
-	 * @param variableEnvironment
-	 * @param input
-	 * @param inputName
-	 * @param errorOutput
-	 * @param verbose
-	 * @return
+	 * Parses <code>input</code> and returns an AST node
+	 * if the input could be parsed successful.
+	 * If not, information about errors is written to <code>errorOuput</code>
+	 * and <code>null</code> is returned.
+	 * @param input The input stream to be parsed.
+	 * @param inputName A logical name for the input (used for error reporting). 
+	 * @param errorOutput An information sink for error messages.
+	 * @param verbose If <code>true</code>, additional information is written to <code>errorOutput</code> 
+	 * in case of an error. 
+	 * @return The AST of the parsed statement.
 	 */
 	public static ASTStatement constructAST(
             InputStream input, 
@@ -252,7 +234,7 @@ public class SoilCompiler {
 			VariableEnvironment variableEnvironment,
 			boolean verbose) {
 	
-		// TODO
+		// TODO: Verbose output.
 		PrintWriter verboseOutput = new PrintWriter(System.out);
 		
 		if (verbose) {	
@@ -286,7 +268,7 @@ public class SoilCompiler {
 				
 		} catch (CompilationFailedException e) {
 			errorOutput.print("Error: ");
-			errorOutput.println(e.getMessage(statement));
+			errorOutput.println(e.getMessage(true));
 			
 			if (verbose) {
 				errorOutput.println("-----------\n");

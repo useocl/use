@@ -29,13 +29,16 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
+import org.tzi.use.parser.ocl.ASTElemVarsDeclaration;
 import org.tzi.use.parser.ocl.ASTExpression;
+import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMultiplicity;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
@@ -71,6 +74,12 @@ public class ASTAssociationEnd extends ASTAnnotatable {
      * which is replaced at the first time of writing. 
      */
     private List<ASTVariableDeclaration> qualifiers = Collections.emptyList();
+    
+    
+    /**
+     * Parameter declarations for the derive expression
+     */
+    private ASTElemVarsDeclaration deriveParameter = null;
     
     /**
      * AST for the optional derive expression
@@ -193,10 +202,13 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     /**
      * Marks this association end as derived by providing a corresponding derive expression.<br/>
      * The Type of the expression must match the type of the association end.
-     * @param exp The <code>ASTExpression</code> the derived values are calulated from.
+     * @param exp The <code>ASTExpression</code> the derived values are calculated from.
+     * @param parameter The parameter defined for the derive expression. Can be <code>null</code>.
      */
-    public void setDerived(ASTExpression exp) {
+    public void setDerived(ASTExpression exp, ASTElemVarsDeclaration parameter) {
     	this.derivedExpression = exp;
+    	if (parameter != null && !parameter.isEmpty())
+    		this.deriveParameter = parameter;
     }
     
     /**
@@ -254,7 +266,8 @@ public class ASTAssociationEnd extends ASTAnnotatable {
         												mult, kind, fOrdered, generatedQualifiers);
 
         mAend.setUnion(this.isUnion);
-                
+        mAend.setDerived(this.derivedExpression != null);
+        
         this.genAnnotations(mAend);
         
         return mAend;
@@ -268,26 +281,67 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     public void genDerived(Context ctx) throws SemanticException {
     	if (!this.isDerived()) return;
     	
-		Symtable vars = ctx.varTable();
-        vars.enterScope();
-        Type otherType = mAend.getAllOtherAssociationEnds().get(0).cls().type();
-        vars.add("self", otherType, null);
-        ctx.exprContext().push("self", otherType);
+    	VarDeclList parameter = new VarDeclList(false);
+    	boolean exprContextChanged = false;
+    	Symtable vars = ctx.varTable();
+    	vars.enterScope();
     	
-    	Expression exp = derivedExpression.gen(ctx);
     	
-    	// We can ignore redefinition here
-    	if (!exp.type().isSubtypeOf(mAend.getType())) {
-    		throw new SemanticException(derivedExpression.getStartToken(), 
-    				"The type " +
-    				StringUtil.inQuotes(exp.type().toString()) + " of the derive expression at association end " +
-    				StringUtil.inQuotes(mAend.association().toString() + "::" + getRolename(ctx)) + " does not conform to the end type " + StringUtil.inQuotes(mAend.getType()) + ".");
+    	try {
+	    	if (this.deriveParameter == null || this.deriveParameter.isEmpty()) { 
+	    		// Short notation using self
+	    		if (this.mAend.association().associationEnds().size() == 2) {
+	    			MClass ot = mAend.getAllOtherAssociationEnds().get(0).cls();
+	    			parameter.add(new VarDecl("self", ot));
+	    			ctx.exprContext().push("self", ot);
+	    			exprContextChanged = true;
+	    		} else {
+	    			throw new SemanticException(fName, "Derived n-ary associations must define parameter for the derive expression.");
+	    		}
+	    	} else {
+	    		if (this.deriveParameter.getVarNames().size() != mAend.association().associationEnds().size() - 1) {
+	    			throw new SemanticException(fName, "Invalid number of parameter for derive expression!");
+	    		}
+	    		
+	    		int parIndex = 0;
+	    		for (int index = 0; index < mAend.association().associationEnds().size(); ++index) {
+		    		if (mAend.association().associationEnds().get(index) != mAend ) {		    			
+		    			// Use association end type. Can be more generic in declaration
+		    			Type varType = mAend.association().associationEnds().get(index).cls();
+		    			
+		    			ASTType astType = deriveParameter.getVarTypes().get(parIndex);
+		    			if (astType != null) {
+		    				Type declaredType =  astType.gen(ctx);
+		    				if (!varType.conformsTo(declaredType)) {
+		    					throw new SemanticException(astType.getStartToken(), "The derive parameter must be of type " + StringUtil.inQuotes(varType.toString()) + " or one of its supertypes.");
+		    				}
+		    				varType = declaredType;
+		    			}
+		    			
+		    			parameter.add(new VarDecl(deriveParameter.getVarTokens().get(parIndex), varType));
+		    			parIndex++;
+		    		}
+	    		}
+	    	}
+			
+	    	parameter.addVariablesToSymtable(vars);
+	    	
+	    	Expression exp = derivedExpression.gen(ctx);
+	    	
+	    	// We can ignore redefinition here
+	    	if (!exp.type().conformsTo(mAend.getType())) {
+	    		throw new SemanticException(derivedExpression.getStartToken(), 
+	    				"The type " +
+	    				StringUtil.inQuotes(exp.type().toString()) + " of the derive expression at association end " +
+	    				StringUtil.inQuotes(mAend.association().toString() + "::" + getRolename(ctx)) + " does not conform to the end type " + StringUtil.inQuotes(mAend.getType()) + ".");
+	    	}
+	    	
+	    	mAend.setDeriveExpression(parameter, exp);
+    	} finally {
+    		ctx.varTable().exitScope();
+    		if (exprContextChanged)
+    			ctx.exprContext().pop();
     	}
-    	
-    	mAend.setDeriveExpression(exp);
-    	
-		ctx.varTable().exitScope();
-		ctx.exprContext().pop();
     }
     
     @Override

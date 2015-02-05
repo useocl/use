@@ -24,8 +24,8 @@ package org.tzi.use.uml.mm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseModelApi;
 
 /**
  * The class <code>TestModelUtil</code> offers methods for creating
@@ -320,6 +320,9 @@ public class TestModelUtil {
             
             // adds an operation
             api.createOperation( "Person", "equalsName", new String[][] {new String[] {"name", "String"}}, "Boolean" ); 
+            
+            // adds a void operation
+            api.createOperation( "Person", "init", new String[][] {new String[] {"name", "String"}}, null );
             
             return api.getModel();
         } catch ( UseApiException e ) {

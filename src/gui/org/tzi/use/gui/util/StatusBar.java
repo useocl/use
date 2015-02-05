@@ -21,8 +21,10 @@
 
 package org.tzi.use.gui.util;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -36,14 +38,21 @@ import javax.swing.Timer;
  */
 @SuppressWarnings("serial")
 public class StatusBar extends JPanel {
-    private JLabel fMsgLabel;
-    private Timer fTimer;
+    
+	private final JLabel fMsgLabel;
+    
+	private final JLabel fMsgLabelEast;
+	
+    private final Timer fTimer;
 
     public StatusBar() {
         super(new BorderLayout());
         fMsgLabel = new JLabel("Ready.");
+        fMsgLabelEast = new JLabel("");
+        
         add(fMsgLabel, BorderLayout.WEST);
-    
+        add(fMsgLabelEast, BorderLayout.EAST);
+        
         // create timer for automatic clearing of messages after a
         // specified delay.
         fTimer = new Timer(8000, new TimerListener());
@@ -65,18 +74,33 @@ public class StatusBar extends JPanel {
     }
 
     /**
+     * Displays a message in the status bar.
+     * @param msg The message to show
+     * @param position Either {@link BorderLayout#WEST} or {@link BorderLayout#EAST}. 
+     */
+    public void showMessage(String msg, String position) {
+    	// prevent status bar from disappearing completely
+        if (msg == null || msg.length() == 0 )
+            msg = " ";
+        
+        if (position.equals(BorderLayout.WEST))
+        	fMsgLabel.setText(msg);
+        else if (position.equals(BorderLayout.EAST))
+        	fMsgLabelEast.setText(msg);
+        else 
+        	throw new IllegalArgumentException("Only WEST or EAST are allowed in status bar.");
+        
+        // stop timer if running
+        if (position.equals(BorderLayout.WEST) && fTimer.isRunning() )
+            fTimer.stop();
+    }
+    
+    /**
      * Display a message. The message will be deleted only be a subsequent
      * call to showTmpMessage or showMessage.
      */
     public void showMessage(String msg) {
-        // prevent status bar from disappearing completely
-        if (msg == null || msg.length() == 0 )
-            msg = " ";
-        fMsgLabel.setText(msg);
-
-        // stop timer if running
-        if (fTimer.isRunning() )
-            fTimer.stop();
+        showMessage(msg, BorderLayout.WEST);
     }
 
     /**
@@ -84,12 +108,14 @@ public class StatusBar extends JPanel {
      */
     public void clearMessage() {
         showMessage("Ready.");
+        showMessage("", BorderLayout.EAST);
     }
 
     class TimerListener implements ActionListener {
         // The actionPerformed method is called each time the Timer
         // fires
-        public void actionPerformed(ActionEvent evt) {
+        @Override
+		public void actionPerformed(ActionEvent evt) {
             fTimer.stop();
             fMsgLabel.setText("Ready.");
         }

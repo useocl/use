@@ -45,13 +45,13 @@ public class GUI extends JFrame {
 
         try {
             DirectedEdgeFactory.createInheritance(100, 100, 200, 100).draw(graphic);
-            DirectedEdgeFactory.createAggregation(100, 100, 200, 0).draw(graphic);
-            DirectedEdgeFactory.createAssociation(100, 100, 100, 0).draw(graphic);
-            DirectedEdgeFactory.createComposition(100, 100, 0, 0).draw(graphic);
+            DirectedEdgeFactory.createAggregation(100, 100, 200, 0, false).draw(graphic);
+            DirectedEdgeFactory.createAssociation(100, 100, 100, 0, false).draw(graphic);
+            DirectedEdgeFactory.createComposition(100, 100, 0, 0, false).draw(graphic);
             DirectedEdgeFactory.createDependency(100, 100, 0, 100).draw(graphic);
             DirectedEdgeFactory.createImplementation(100, 100, 0, 200).draw(graphic);
             DirectedEdgeFactory.createInheritance(100, 100, 100, 200).draw(graphic);
-            DirectedEdgeFactory.createAggregation(100, 100, 200, 200).draw(graphic);
+            DirectedEdgeFactory.createAggregation(100, 100, 200, 200, false).draw(graphic);
             DirectedEdgeFactory.createDependency(300, 100, 400, 100, 50, 10).draw(graphic);
             DirectedEdgeFactory.createImplementation(300, 100, 400, 0, 5, 5).draw(graphic);
 

@@ -16,11 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-// $Id$
-
 package org.tzi.use.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -28,10 +27,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.OCLCompiler;
+import org.tzi.use.parser.soil.SoilCompiler;
+import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
@@ -45,17 +47,21 @@ import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MMultiplicity;
 import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.EnumType;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 /**
  * <p>This class encapsulates access to the USE model
@@ -313,7 +319,7 @@ public class UseModelApi {
 	}
 	
 	/**
-	 * <p>Creates an operation with the name <code>operationName</code> for the class
+	 * <p>Creates an operation signature with the name <code>operationName</code> for the class
 	 * identified by <code>ownerName</code>.</p>
 	 * <p>The return type of the operation is defined by the parameter <code>returnType</code>.
 	 * It can be any built-in or already created user defined type.
@@ -350,7 +356,10 @@ public class UseModelApi {
 			vars.add(new VarDecl(var[0], t));
 		}
 		
-		Type resultType = getType(returnType);
+		Type resultType = null; 
+		if (returnType != null) {
+			 resultType = getType(returnType);
+		}
 	
 		return createOperationEx(owner, operationName, vars, resultType);
 	}
@@ -379,6 +388,195 @@ public class UseModelApi {
 		}
 		
 		return op;
+	}
+	
+	/**
+	 * Creates a new query operation named <code>operationName</code>
+	 * for the class <code>ownerName</code>.
+	 * <p>The return type of the operation is defined by the parameter <code>returnType</code>.
+	 * It can be any built-in or already created user defined type.
+	 * </p>
+	 * <p>The parameters of the operation to create are specified by a two dimensional array.
+	 * The first dimension defines the parameter position. The second dimension has exactly two entries:
+	 * <ol>
+	 *   <li> At index 0 the name of the parameter</li>
+	 *   <li> At index 1 the type of the parameter</li>
+	 * </ol>
+	 * </p>
+	 * <p>The <code>body</code> of the operation can be any valid <i>OCL</i>-expression that conforms to the return type.</p>
+	 * @param owner The class to create the operation for.
+	 * @param operationName The name of the operation to create.
+	 * @param parameter The operation parameters 
+	 * @param returnType The return type of the operation (can be <code>null</code>).
+	 * @param body The OCL-expression of the operation.
+	 * @return The created <code>MOperation</code>.
+	 * @throws UseApiException
+	 */
+	public MOperation createQueryOperation(String ownerName, String operationName,
+			String[][] parameter, String returnType, String body) throws UseApiException {
+		
+		MOperation op = createOperation(ownerName, operationName, parameter, returnType);
+		
+		StringWriter errBuffer = new StringWriter();
+		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
+		
+		Symtable symTable = new Symtable();
+		try {
+			symTable.add("self", op.cls(), null);
+		} catch (SemanticException e) {
+			throw new UseApiException("Could not create query operation.", e);
+		}
+		
+		Expression bodyExp = OCLCompiler.compileExpression(this.mModel, body, "body", errorPrinter, symTable);
+		
+		if (bodyExp == null) {
+			throw new UseApiException(
+					"Compilation of body expression failed:\n"
+							+ errBuffer.toString());
+		}
+		
+		try {
+			op.setExpression(bodyExp);
+		} catch (MInvalidModelException e) {
+			throw new UseApiException("Could not create query operation.", e);
+		}
+		
+		return op;
+	}
+	
+	/**
+	 * Creates a new operation with an imperative body named <code>operationName</code>
+	 * for the class <code>ownerName</code>.
+	 * <p>The return type of the operation is defined by the parameter <code>returnType</code>.
+	 * It can be any built-in or already created user defined type.
+	 * </p>
+	 * <p>The parameters of the operation to create are specified by a two dimensional array.
+	 * The first dimension defines the parameter position. The second dimension has exactly two entries:
+	 * <ol>
+	 *   <li> At index 0 the name of the parameter</li>
+	 *   <li> At index 1 the type of the parameter</li>
+	 * </ol>
+	 * </p>
+	 * <p>The <code>body</code> of the operation can be any valid <i>SOIL</i>-operation body that conforms to the return type.</p>
+	 * @param owner The class to create the operation for.
+	 * @param operationName The name of the operation to create.
+	 * @param parameter The operation parameters 
+	 * @param returnType The return type of the operation (can be <code>null</code>).
+	 * @param body The SOIL-body of the operation.
+	 * @return The created <code>MOperation</code>.
+	 * @throws UseApiException
+	 */
+	public MOperation createImperativeOperation(String ownerName, String operationName,
+			String[][] parameter, String returnType, String body) throws UseApiException {
+		
+		MOperation op = createOperation(ownerName, operationName, parameter, returnType);
+
+		InputStream input = new ByteArrayInputStream(body.getBytes());
+
+		StringWriter errBuffer = new StringWriter();
+		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
+		
+		ASTStatement statementAst = SoilCompiler.constructAST(input, "USE Api", errorPrinter, false);
+		
+		if (statementAst == null) {
+			throw new UseApiException("Could not create operation. Syntax error in SOIL body:\n" + errBuffer.toString());
+		}
+		
+		Context ctx = new Context("USE APi", errorPrinter, new VarBindings(), null);
+		ctx.setModel(getModel());
+		MStatement statement;
+		
+		try {
+			statement = statementAst.generateStatement(ctx, op);
+		} catch (CompilationFailedException e) {
+			throw new UseApiException("Could not create operation:\n" + e.getMessage(), e);
+		}
+		
+		op.setStatement(statement);
+		return op;
+	}
+	
+	/**
+	 * Creates a new pre- or postcondition named {@code name} for the
+	 * operation {@code operationName} of the class {@code ownerName}
+	 * with the expression {@code condition}. The switch {@code isPre}
+	 * is used to control whether a pre- or a postcondition is created.
+	 * 
+	 * @param ownerName The class the operation is assigned to.
+	 * @param operationName The name of the operation.
+	 * @param name The name of the pre-/postcondition.
+	 * @param condition The OCL-Expression of the condition.
+	 * @param isPre Switch whether the condition is a precondition or not.
+	 * @return The created {@link MPrePostCondition}.
+	 * @throws UseApiException
+	 */
+	public MPrePostCondition createPrePostCondition(String ownerName,
+			String operationName, String name, String condition, boolean isPre)
+			throws UseApiException {
+		MClass cls = getClassSafe(ownerName);
+		MOperation op = cls.operation(operationName, false);
+		
+		if(op == null){
+			throw new UseApiException("Unknown operation "
+					+ StringUtil.inQuotes(ownerName + "::" + operationName)
+					+ ".");
+		}
+		
+		StringWriter errBuffer = new StringWriter();
+		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
+		
+		Symtable symTable = new Symtable();
+		try {
+			symTable.add("self", cls, null);
+			for(VarDecl var : op.paramList()){
+				symTable.add(var.name(), var.type(), null);
+			}
+			if(op.hasResultType()){
+				symTable.add("result", op.resultType(), null);
+			}
+		}
+		catch(SemanticException ex){
+			throw new UseApiException("Could not create pre-/postcondition.", ex);
+		}
+		
+		Expression conditionExp = OCLCompiler.compileExpression(this.mModel,
+				condition, "condition", errorPrinter, symTable);
+		
+		if (conditionExp == null) {
+			throw new UseApiException(
+					"Compilation of condition expression failed:\n"
+							+ errBuffer.toString());
+		}
+		
+		return createPrePostConditionEx(name, op, isPre, conditionExp);
+	}
+	
+	/**
+	 * Creates a new pre- or postcondition with the name {@code name} for
+	 * the operation {@code op} with the expression {@code condition}.
+	 * The switch {@code isPre} is used to control whether a pre- or a
+	 * postcondition is created.
+	 * 
+	 * @param name The name of the pre-/postcondition.
+	 * @param op The operation the condition shall be assigned to.
+	 * @param isPre Switch whether the condition is a precondition or not.
+	 * @param condition The OCL-Expression of the condition.
+	 * @return The created {@link MPrePostCondition}.
+	 * @throws UseApiException
+	 */
+	public MPrePostCondition createPrePostConditionEx(String name,
+			MOperation op, boolean isPre, Expression condition)
+			throws UseApiException {
+		
+		MPrePostCondition cond;
+		try {
+			cond = mFactory.createPrePostCondition(name, op, isPre, condition);
+			mModel.addPrePostCondition(cond);
+		} catch (ExpInvalidException | MInvalidModelException ex) {
+			throw new UseApiException("Could not create pre-/postcondition.", ex);
+		}
+		
+		return cond;
 	}
 	
 	/**
@@ -455,37 +653,36 @@ public class UseModelApi {
 	}
 	
 	/**
-	 * This method create an invariant, the so called boolean expression. It
-	 * needs to be true in every system state for each object until end of the
-	 * class. The operation has a valid name <code>invName</code> and a body
-	 * <code>invBody</code>.
+	 * This method creates a class invariant for the class given by <code>contextName</code>.
+	 * The body expression <code>invBody</code> needs to be a boolean OCL expression. 
+	 * "Normal" invariants are validated for all instances of the context class when {@link UseSystemApi#checkState()}
+	 * is called. If <code>isExistential</code> is <code>true</code>, the invariant 
+	 * checks if the body is <code>true</code>, for at least one instance (<code>exists</code> instead of <code>forAll</code>). 
+	 *  
+	 * @param invName An optional name for the invariant to create.
+	 * @param contextName The name of the class to define the constraint on.
+	 * @param invBody The body of the invariant.
+	 * @param isExistential Should <code>forAll</code> or <code>exists</code> be used.
 	 * 
-	 * @param invName
-	 * @param contextName
-	 * @param invBody
-	 * @param isExistential
+	 * @return MClassInvariant The new invariant added to the current model.
 	 * 
-	 * @return mClassInvariant
-	 * @throws MInvalidModelException
 	 * @throws ApiException
-	 *             If the type of the context name is in conflict with other
-	 *             type or by empty invariant expression.
+	 *             If the type of the context name is unknown or not a class name,
+	 *             the body expression is invalid or the invariant name is already used
+	 *             for this class.
 	 */
 	public MClassInvariant createInvariant(String invName, String contextName,
 			String invBody, boolean isExistential) throws UseApiException {
 
-		//FIXME: Double check!
-		Type contextType = getType(contextName);
-		if (!contextType.isObjectType()) {
-			throw new UseApiException("Type Collision");
-		}
-		ObjectType oType = (ObjectType) contextType;
+		MClass cls = getClassSafe(contextName);
+
 		Symtable vars = new Symtable();
 		try {
-			vars.add("self", oType, new SrcPos("self", 1, 1));
+			vars.add("self", cls, new SrcPos("self", 1, 1));
 		} catch (SemanticException e1) {
 			e1.printStackTrace();
 		}
+		
 		StringWriter errBuffer = new StringWriter();
 		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
 
@@ -498,7 +695,7 @@ public class UseModelApi {
 		MClassInvariant mClassInvariant = null;
 		try {
 			mClassInvariant = mFactory.createClassInvariant(invName, null,
-					oType.cls(), invExp, isExistential);
+					cls, invExp, isExistential);
 			
 			mModel.addClassInvariant(mClassInvariant);
 		} catch (ExpInvalidException e) {
@@ -523,9 +720,9 @@ public class UseModelApi {
 	 */
 	public MGeneralization createGeneralization(String childName, String parentName) throws UseApiException {
 
-		MClass mChild = getClassSafe(childName);
-		MClass mParent = getClassSafe(parentName);
-		
+		MClass mChild = getClass(childName);
+		MClass mParent = getClass(parentName);
+
 		return createGeneralizationEx(mChild, mParent);
 	}
 
@@ -542,10 +739,55 @@ public class UseModelApi {
 	 */
 	public MGeneralization createGeneralizationEx(MClass child, MClass parent) throws UseApiException {
 		
-		if (child.model() != mModel || child.model() != mModel) {
+		if (child.model() != mModel || parent.model() != mModel) {
 			throw new UseApiException("The provided model elements must be in the model handled by the API instance!");
 		}
 		
+		MGeneralization mGeneralization = mFactory.createGeneralization(child, parent);
+		
+		try {
+			mModel.addGeneralization(mGeneralization);
+		} catch (MInvalidModelException e) { 
+			throw new UseApiException("Creation of generalization failed!", e);
+		}
+		
+		return mGeneralization;
+	}
+	
+	/**
+	 * Creates a new generalization relationship between the two associations.
+	 * Note, that an association class can only inherit from another association class.
+	 * @param child The more specific association
+	 * @param parent The more general association
+	 * @return
+	 * @throws UseApiException If the inheritance relation is invalid.
+	 */
+	public MGeneralization createGeneralizationEx(MAssociation child, MAssociation parent) throws UseApiException {
+		MGeneralization mGeneralization = mFactory.createGeneralization(child, parent);
+		
+		try {
+			mModel.addGeneralization(mGeneralization);
+		} catch (MInvalidModelException e) { 
+			throw new UseApiException("Creation of generalization failed!", e);
+		}
+		
+		return mGeneralization;
+	}
+	
+	
+	public MGeneralization createGeneralizationEx(MAssociationClass child, MAssociationClass parent) throws UseApiException {
+		MGeneralization mGeneralization = mFactory.createGeneralization(child, parent);
+		
+		try {
+			mModel.addGeneralization(mGeneralization);
+		} catch (MInvalidModelException e) { 
+			throw new UseApiException("Creation of generalization failed!", e);
+		}
+		
+		return mGeneralization;
+	}
+	
+	public MGeneralization createGeneralizationEx(MSignal child, MSignal parent) throws UseApiException {
 		MGeneralization mGeneralization = mFactory.createGeneralization(child, parent);
 		
 		try {
@@ -698,6 +940,14 @@ public class UseModelApi {
 		return end;
 	}
 	
+	public void createRedefineConstraint(String childAssociation, String redefiningEnd, String redefinedEnd) {
+		
+	}
+	
+	public void createRedefineConstraintEx(MAssociationEnd redefiningEnd, MAssociationEnd redefinedEnd) {
+		
+	}
+
 	/**
 	 * Helper method to safely retrieve a class.
 	 * Safe by the degree, that if no exception is thrown you get a valid class
@@ -733,5 +983,46 @@ public class UseModelApi {
 					+ StringUtil.inQuotes(typeExpr) + ".");
 		
 		return type;
+	}
+
+	/**
+	 * Creates a new instance of the signal meta class.
+	 * @param name The name of the signal.
+	 * @param isAbstract <code>true</code> if the signal is abstract, i.e., it cannot be instantiated.
+	 * @return
+	 */
+	public MSignal createSignal(String name, boolean isAbstract) throws UseApiException {
+		MSignal signal = mFactory.createSignal(name, isAbstract);
+		
+		try {
+			mModel.addSignal(signal);
+			signal.setModel(mModel);
+		} catch (MInvalidModelException e) {
+			throw new UseApiException("Error during signal creation.", e);
+		}
+		
+		return signal;
+	}
+
+	/**
+	 * Creates a new attribute for the given signal <code>s</code>.
+	 * @param owningSignal The signal to add the attribute to.
+	 * @param attributeName The name of the attribute to create.
+	 * @param attributeType The type of the new attribute.
+	 * @throws UseApiException If creation fails (see cause).
+	 */
+	public MAttribute createAttributeEx(MSignal owningSignal, String attributeName, String attributeType) throws UseApiException {
+		
+		Type t = getType(attributeType);
+		
+		MAttribute attr = mFactory.createAttribute(attributeName, t);
+		
+		try {
+			owningSignal.addAttribute(attr);
+		} catch (MInvalidModelException e) {
+			throw new UseApiException("Error during attribute creation.", e);
+		}
+		
+		return attr;
 	}
 }

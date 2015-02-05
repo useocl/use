@@ -3,7 +3,6 @@ package org.tzi.use.uml.sys.testsuite;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MClass;
@@ -14,12 +13,10 @@ import org.tzi.use.util.NullWriter;
 public class MAssertClassInvariants extends MAssert {
 
 	private MClass cls;
-	private Set<MClassInvariant> invariants;
 	
-	public MAssertClassInvariants(SrcPos position, String expressionString, String message, boolean shouldBeValid, MClass cls, Set<MClassInvariant> invariants) {
+	public MAssertClassInvariants(SrcPos position, String expressionString, String message, boolean shouldBeValid, MClass cls) {
 		super(position, expressionString, message, shouldBeValid);
 		this.cls = cls;
-		this.invariants = invariants;
 	}
 
 	public MClass getMClass() {
@@ -30,7 +27,7 @@ public class MAssertClassInvariants extends MAssert {
 	protected boolean doEval(EvalContext ctx) {
 		List<String> invs = new ArrayList<String>();
 	
-		for (MClassInvariant inv : this.invariants) {
+		for (MClassInvariant inv : cls.model().allClassInvariants(cls)) {
 			invs.add(inv.toString());
 		}
 		

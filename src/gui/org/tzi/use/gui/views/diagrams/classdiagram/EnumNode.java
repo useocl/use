@@ -21,31 +21,32 @@
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.uml.ocl.type.EnumType;
 
 /**
  * A node representing an enumeration.
  * 
- * @version $ProjectVersion: 0.393 $
+ * @author Lars Hamann
  * @author Fabian Gutsche
  */
 public class EnumNode extends ClassifierNode implements SortChangeListener {
 
-    private List<String> fLiterals;
+    private final String[] fLiterals;
         
-    private static final String ENUMERATION = "<<enumeration>>";
+    private static final String ENUMERATION = "\u00ABenumeration\u00BB";
     
     EnumNode( EnumType enumeration, DiagramOptions opt ) {
     	super(enumeration, opt);
-        fLiterals = enumeration.getLiterals();
+        fLiterals = enumeration.getLiterals().toArray(new String[0]);
     }
     
     public EnumType getEnum() {
@@ -55,7 +56,8 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
     /**
      * After the occurence of an event the attribute list is updated.
      */
-    public void stateChanged( SortChangeEvent e ) {
+    @Override
+	public void stateChanged( SortChangeEvent e ) {
     	//TODO: Implement sorting
         // the sort algorithem in the model browser is not implemented yet.
         //        fLiterals = (ArrayList) ModelBrowserSorting.getInstance()
@@ -65,21 +67,13 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
     @Override
     protected void calculateNameRectSize(Graphics2D g, Rectangle2D.Double rect) {
     	FontMetrics fm = g.getFontMetrics();
-        rect.width = Math.max( fm.stringWidth( getClassifier().name() ), fm.stringWidth( ENUMERATION ) ) + 10;
-        rect.height = fm.getHeight() * 2;
+        rect.width = Math.max( fm.stringWidth( getClassifier().name() ), fm.stringWidth( ENUMERATION ) ) + HORIZONTAL_INDENT * 2;
+        rect.height = Util.getLineHeight(fm) * 2 + Util.getLeading(fm) + 2 * VERTICAL_INDENT;
     }
     
     @Override
     protected void calculateAttributeRectSize(Graphics2D g, Rectangle2D.Double rect) {
-    	FontMetrics fm = g.getFontMetrics();
-    	rect.height = 0;
-    	rect.width = 0;
-    	
-        for (String literal : fLiterals) {
-            rect.width = Math.max( rect.width, fm.stringWidth( literal ) );
-        }
-        rect.height = fm.getHeight() * fLiterals.size() + 3;
-        rect.width += 10;
+    	calculateCompartmentRectSize(g, rect, fLiterals);
     }
     
     @Override
@@ -103,48 +97,58 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
     /**
      * Draws a box with a label.
      */
-    protected void onDraw( Graphics2D g ) {
-        int x = (int) getCenter().getX();
+    @Override
+	protected void onDraw( Graphics2D g ) {
         int y;
+        Color textColor = fOpt.getNODE_LABEL_COLOR();
+        Color frameColor = fOpt.getNODE_FRAME_COLOR();
+                
+        Graphics2D shapeG = (Graphics2D)g.create();
         
-        Rectangle2D bounds = getBounds();
+        Rectangle2D.Double roundedBounds = getRoundedBounds();
+        
         FontMetrics fm = g.getFontMetrics();
-        
-        int labelWidth = fm.stringWidth( getClassifier().name() );
-        int enumerationWidth = fm.stringWidth( ENUMERATION );
+        int singleHeight = (int)Math.round(Util.getLineHeight(fm));
         
         if ( isSelected() ) {
-            g.setColor( fOpt.getNODE_SELECTED_COLOR() );
+        	shapeG.setColor( fOpt.getNODE_SELECTED_COLOR() );
         } else {
-            g.setColor( fOpt.getNODE_COLOR() );
+        	shapeG.setColor( fOpt.getNODE_COLOR() );
         }
         
-        g.fillPolygon( dimension() );
-       
-        g.setColor( fOpt.getNODE_FRAME_COLOR() );
-        g.drawPolygon( dimension() );
+        shapeG.fill( roundedBounds );
+        shapeG.setColor( frameColor );
+        shapeG.draw( roundedBounds );
+
+        y = (int)roundedBounds.getY() + fm.getAscent() + VERTICAL_INDENT;
         
-        y = (int)bounds.getY() + fm.getAscent() + 2;
-        g.setColor( fOpt.getNODE_LABEL_COLOR() );
+        shapeG.setColor(textColor);
+        drawTextCentered(shapeG, ENUMERATION, roundedBounds.x, y, roundedBounds.width);
+        y += singleHeight;
         
-        x -= enumerationWidth / 2;
-        g.drawString( ENUMERATION, x, y );
+        drawTextCentered(shapeG, getClassifier().name(), roundedBounds.x, y, roundedBounds.width);
         
-        y += fm.getHeight();
-        x = (int) getCenter().getX();
-        x -= labelWidth / 2;
-        g.drawString( getClassifier().name(), x, y );
+        y += VERTICAL_INDENT + fm.getDescent();
         
         if ( fOpt.isShowAttributes() ) {
             // compartment divider
-            x  = (int)getCenter().getX();
-            g.drawLine( (int)bounds.getX(), y + 3, (int)bounds.getMaxX() - 1, y + 3 );
-            x -= ( getWidth() - 10 ) / 2;
-            y += 3;
-            for ( String literal : fLiterals ) {
-                y += fm.getHeight();
-                g.drawString( literal, x, y );
-            }
+            y += VERTICAL_INDENT;
+            shapeG.setColor(frameColor);
+            shapeG.drawLine( (int)roundedBounds.getX(), y, (int)roundedBounds.getMaxX(), y );
+            shapeG.setColor(textColor);
+            drawCompartment(shapeG, y, fLiterals, new Color[fLiterals.length], roundedBounds);
         }
+        
+        shapeG.dispose();
+    }
+    
+    @Override
+    public boolean hasAttributes() {
+    	return fLiterals.length > 0;
+    }
+    
+    @Override
+    public boolean hasOperations() {
+    	return false;
     }
 }

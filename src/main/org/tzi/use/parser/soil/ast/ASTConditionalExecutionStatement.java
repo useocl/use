@@ -23,6 +23,7 @@ package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.soil.MConditionalExecutionStatement;
@@ -58,16 +59,14 @@ public class ASTConditionalExecutionStatement extends ASTStatement {
 	 * @param elseStatement AST of the else statement
 	 */
 	public ASTConditionalExecutionStatement(
+			Token sourcePosition,
 			ASTExpression condition,
 			ASTStatement thenStatement,
 			ASTStatement elseStatement) {
-		
+		super(sourcePosition);
 		fCondition = condition;
 		fThenStatement = thenStatement;
 		fElseStatement = elseStatement;
-		
-		addChildStatement(fThenStatement);
-		addChildStatement(fElseStatement);
 	}
 
 	
@@ -104,7 +103,7 @@ public class ASTConditionalExecutionStatement extends ASTStatement {
 		
 		// generate the condition expression and check if it's boolean
 		Expression condition = generateExpression(fCondition);
-		if (!condition.type().isBoolean()) {
+		if (!condition.type().isTypeOfBoolean()) {
 			throw new CompilationFailedException(this, "Expression "
 					+ StringUtil.inQuotes(fCondition.getStringRep())
 					+ " is expected to be of type "

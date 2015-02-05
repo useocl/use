@@ -21,6 +21,8 @@
 
 package org.tzi.use.graph;
 
+import org.tzi.use.util.StringUtil;
+
 /**
  * A Node was referenced that is not part of the Graph.
  *
@@ -37,7 +39,7 @@ public class NodeDoesNotExistException extends RuntimeException {
         super();
     }
 
-    public NodeDoesNotExistException(String s) {
-        super(s);
+    public NodeDoesNotExistException(Object node) {
+        super("Node " + StringUtil.inQuotes(node.toString()) + "does not exist");
     }
 }

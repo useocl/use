@@ -23,6 +23,7 @@ package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.ocl.type.Type;
@@ -48,16 +49,18 @@ public class ASTVariableAssignmentStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
-	 * @param variableName
-	 * @param value
+	 * Constructs a new AST node.
+	 * @param start The start token of the statement.
+	 * @param variableName The name of the variable to assign the value to.
+	 * @param value The RValue that the variable is assigned.
 	 * @param mandatoryType
 	 */
 	public ASTVariableAssignmentStatement(
+			Token start,
 			String variableName, 
 			ASTRValue value,
 			ASTType mandatoryType) {
-		
+		super(start);
 		fVariableName = variableName;
 		fRValue = value;
 		fMandatoryType = mandatoryType;
@@ -65,56 +68,41 @@ public class ASTVariableAssignmentStatement extends ASTStatement {
 
 
 	/**
-	 * TODO
-	 * @param variableName
-	 * @param value
+	 * Constructs a new AST node.
+	 * @param start The start token of the statement.
+	 * @param variableName The name of the variable to assign the value to.
+	 * @param value The value to assign.
 	 */
 	public ASTVariableAssignmentStatement(
+			Token start,
 			String variableName, 
 			ASTRValue value) {
 		
-		this(variableName, value, null);
+		this(start, variableName, value, null);
 	}
 	
 	
 	/**
-	 * TODO
-	 * @param variableName
-	 * @param expression
-	 * @param mandatoryType
+	 * Constructs a new AST node.
+	 * @param start The start token of the statement.
+	 * @param variableName The name of the variable to assign the value to.
+	 * @param expression The expression used to get the value to assign from.
+	 * @param mandatoryType The required type of the variable. The type of <code>expression</code> must conform to it.
 	 */
 	public ASTVariableAssignmentStatement(
+			Token start,
 			String variableName,
 			ASTExpression expression,
 			ASTType mandatoryType) {
 		
-		this(
+		this(   start,
 				variableName, 
 				new ASTRValueExpressionOrOpCall(expression), 
 				mandatoryType);
 	}
 	
-	
 	/**
-	 * TODO
-	 * @return
-	 */
-	public String getVariableName() {
-		return fVariableName;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTType getMandatoryType() {
-		return fMandatoryType;
-	}
-	
-	
-	/**
-	 * TODO
+	 * Returns the RValue that is assigned to the variable.
 	 * @return
 	 */
 	public ASTRValue getRValue() {
@@ -125,7 +113,7 @@ public class ASTVariableAssignmentStatement extends ASTStatement {
 	@Override
 	protected MStatement generateStatement() throws CompilationFailedException {
 			
-		MRValue rValue = generateRValue(fRValue);
+		MRValue rValue = fRValue.generate(this);
 		Type valueType = rValue.getType();
 		
 		if (valueType == null) {
@@ -138,7 +126,7 @@ public class ASTVariableAssignmentStatement extends ASTStatement {
 		if (fMandatoryType != null) {
 			Type mandatoryType = generateType(fMandatoryType);
 			
-			if (!valueType.isSubtypeOf(mandatoryType)) {
+			if (!valueType.conformsTo(mandatoryType)) {
 				throw new CompilationFailedException(this,
 						"Type of expression does not match declaration. Expected "
 								+ StringUtil.inQuotes(mandatoryType)
@@ -154,7 +142,7 @@ public class ASTVariableAssignmentStatement extends ASTStatement {
 			if (!fSymtable.contains(fVariableName))
 				throw new CompilationFailedException(this, "Variable " + fVariableName + " was not declared.");
 			Type t = fSymtable.getType(fVariableName);
-			if (! variableType.isSubtypeOf(t)) 
+			if (! variableType.conformsTo(t)) 
 				throw new CompilationFailedException(this, "Variable " + fVariableName + " of type " + t + ", which is incompatible with " + variableType);
 		} else {
 			fBoundSet.add(fVariableName, variableType);

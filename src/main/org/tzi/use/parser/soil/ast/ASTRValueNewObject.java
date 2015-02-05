@@ -21,7 +21,7 @@
 
 package org.tzi.use.parser.soil.ast;
 
-import org.tzi.use.parser.ocl.ASTExpression;
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTSimpleType;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
@@ -31,60 +31,33 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * 
+ * A AST-node for an RValue encapsulating
+ * an AST for a NewObjectStatement. 
  * @author Daniel Gent
  *
  */
 public class ASTRValueNewObject extends ASTRValue {
-	/** TODO */
+	/** The AST of the encapsulated statement */
 	private ASTNewObjectStatement fNewObjectStatement;
 
 	
 	/**
-	 * TODO
+	 * Constructs a new ATS node.
 	 * @param newObjectStatement
 	 */
 	public ASTRValueNewObject(
 			ASTNewObjectStatement newObjectStatement) {
-		
 		fNewObjectStatement = newObjectStatement;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param objectType
-	 * @param objectName
-	 */
-	public ASTRValueNewObject(
-			ASTSimpleType objectType,
-			ASTExpression objectName) {
-		
-		this(new ASTNewObjectStatement(objectType, objectName));	
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param objectType
-	 * @param objectName
-	 */
-	public ASTRValueNewObject(
-			ASTSimpleType objectType,
-			String objectName) {
-		
-		this(new ASTNewObjectStatement(objectType, objectName));
-	}
-	
-	
-	/**
-	 * TODO
+	 * Constructs a new ATS node.
 	 * @param objectType
 	 */
 	public ASTRValueNewObject(
+			Token start,
 			ASTSimpleType objectType) {
-		
-		this(new ASTNewObjectStatement(objectType));
+		this(new ASTNewObjectStatement(start, objectType));
 	}
 	
 

@@ -36,15 +36,21 @@ public final class StringType extends BasicType {
         super("String");
     }
     
-    public boolean isString() {
+    @Override
+    public boolean isTypeOfString() {
+    	return true;
+    }
+    
+    @Override
+    public boolean isKindOfString(VoidHandling h) {
     	return true;
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
-        return equals(t) || t.isTrueOclAny();
+    public boolean conformsTo(Type t) {
+        return equals(t) || t.isTypeOfOclAny();
     }
 
     /** 

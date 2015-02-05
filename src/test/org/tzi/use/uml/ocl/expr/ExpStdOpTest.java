@@ -159,27 +159,27 @@ public class ExpStdOpTest extends TestCase {
 
     public void testSetConstruction() throws ExpInvalidException {
         Expression[] args;        
-        ExpStdOp op;
+        Expression setLiteral;
         Value values[];
 
-        args = new Expression[] { new ExpConstInteger(1), new ExpConstInteger(10)};
-        op = ExpStdOp.create("mkSetRange", args);
+        args = new Expression[] {new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
+        setLiteral = new ExpSetLiteral(args);
         values = new Value[10];
         for (int i = 1; i <= 10; i++)
             values[i - 1] = IntegerValue.valueOf(i);
         assertEquals(
-                     op.toString(),
+                     setLiteral.toString(),
                      new SetValue(TypeFactory.mkInteger(), values),
-                     e.eval(op, state));
+                     e.eval(setLiteral, state));
     }
 
     public void testSequenceConstruction() throws ExpInvalidException {
         Expression[] args;
-        ExpStdOp op;
+        Expression op;
         Value values[];
 
-        args = new Expression[] { new ExpConstInteger(1), new ExpConstInteger(10)};
-        op = ExpStdOp.create("mkSequenceRange", args);
+        args = new Expression[] { new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
+        op = new ExpSequenceLiteral(args);
         values = new Value[10];
         for (int i = 1; i <= 10; i++)
             values[i - 1] = IntegerValue.valueOf(i);
@@ -191,11 +191,11 @@ public class ExpStdOpTest extends TestCase {
 
     public void testBagConstruction() throws ExpInvalidException {
         Expression[] args;
-        ExpStdOp op;
+        Expression op;
         Value values[];
 
-        args = new Expression[] { new ExpConstInteger(1), new ExpConstInteger(10)};
-        op = ExpStdOp.create("mkBagRange", args);
+        args = new Expression[] { new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
+        op = new ExpBagLiteral(args);
         values = new Value[10];
         for (int i = 1; i <= 10; i++)
             values[i - 1] = IntegerValue.valueOf(i);

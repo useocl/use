@@ -77,7 +77,7 @@ class GMatcherCreate_AC implements IGInstructionMatcher {
     		if (!(param.get(index) instanceof GValueInstruction)) return false;
     		
     		GValueInstruction instr = (GValueInstruction)param.get(index);
-    		if (!instr.type().isSubtypeOf(associationClass.associationEnds().get(index - 1).cls().type())) {
+    		if (!instr.type().conformsTo(associationClass.associationEnds().get(index - 1).cls())) {
     			return false;
     		}
     	}

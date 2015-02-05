@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
@@ -61,10 +62,11 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 	 * @param qualifierValues The <code>MRValue</code>s of the qualifiers. Can be <code>null</code>.
 	 */
 	public ASTLinkInsertionStatement(
+			Token start,
 			String associationName,
 			List<ASTRValue> participants,
 			List<List<ASTRValue>> qualifierValues ) {
-		
+		super(start);
 		this.fAssociationName = associationName;
 		this.fParticipants = participants;
 		this.qualifierValues = qualifierValues;
@@ -93,7 +95,7 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 		
 		// generate association
 		MAssociation association = 
-			getAssociation(fAssociationName);
+			getAssociationSafe(fAssociationName);
 				
 		// generate participants
 		List<MRValue> participants = 
@@ -116,7 +118,7 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 					endQualifierRValues = new ArrayList<MRValue>();
 					
 					for (ASTRValue value : endQualifierValues) {
-						endQualifierRValues.add(this.generateRValue(value));
+						endQualifierRValues.add(value.generate(this));
 					}
 				}
 				qualifierRValues.add(endQualifierRValues);

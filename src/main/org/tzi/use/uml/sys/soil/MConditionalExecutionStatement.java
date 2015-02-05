@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -29,21 +27,21 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * TODO
+ * "Compiled" version of an <code>if ... then ... else ... end</code> statement. 
+ * @author Lars Hamann
  * @author Daniel Gent
- *
  */
 public class MConditionalExecutionStatement extends MStatement {
-	/** TODO */
+	/** The condition expression */
 	private Expression fCondition;
-	/** TODO */
+	/** The statement executed if {@link #fCondition} is <code>true</code>. */
 	private MStatement fThenStatement;
-	/** TODO */
+	/** The statement executed if {@link #fCondition} is <code>false</code>. */
 	private MStatement fElseStatement;
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new conditional execution statement.
 	 * @param condition
 	 * @param thenStatement
 	 * @param elseStatement
@@ -58,48 +56,40 @@ public class MConditionalExecutionStatement extends MStatement {
 		fElseStatement = elseStatement;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @return
+	 * @return the fCondition
 	 */
 	public Expression getCondition() {
 		return fCondition;
 	}
-	
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * @return the fThenStatement
 	 */
 	public MStatement getThenStatement() {
 		return fThenStatement;
 	}
-	
-	
+
 	/**
-	 * TODO
-	 * @return
-	 */
-	public boolean hasElseStatement() {
-		return !fElseStatement.isEmptyStatement();
-	}
-	
-	
-	/**
-	 * TODO
-	 * @return
+	 * @return the fElseStatement
 	 */
 	public MStatement getElseStatement() {
 		return fElseStatement;
 	}
-	
+
+	/**
+	 * <code>true</code> if {@link #fElseStatement} is not the {@link MEmptyStatement}.
+	 * @return
+	 */
+	private boolean hasElseStatement() {
+		return !fElseStatement.isEmptyStatement();
+	}
 	
 	@Override
-    public void execute(SoilEvaluationContext context,
+    public Value execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
-		Value value = EvalUtil.evaluateExpression(this, context, result, fCondition, false);
+		Value value = EvalUtil.evaluateExpression(context, fCondition, false);
 		
 		MStatement toEvaluate;
 		if ((value.isDefined() 
@@ -113,6 +103,8 @@ public class MConditionalExecutionStatement extends MStatement {
 		}
 		
 		toEvaluate.execute(context, result);
+		
+		return null;
 	}
 	
 	
@@ -167,5 +159,10 @@ public class MConditionalExecutionStatement extends MStatement {
 	@Override
 	public String toString() {
 		return shellCommand();
+	}
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
 	}
 }

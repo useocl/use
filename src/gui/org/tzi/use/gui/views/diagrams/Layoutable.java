@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-// $Id$
-
 package org.tzi.use.gui.views.diagrams;
 
 import java.awt.geom.Point2D;
 
 /**
- * The layouts of use can automatically
- * position objects of that type.
+ * The layouts of USE can automatically
+ * position objects of this type.
  * @author Lars Hamann
  *
  */
@@ -35,6 +32,10 @@ public interface Layoutable {
 	 * @return The center <code>Point2D</code> of the object to layout
 	 */
 	Point2D getCenter();
+	
+	double getHeight();
+	
+	double getWidth();
 	
 	/**
 	 * Sets the calculated center of the object.

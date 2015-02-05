@@ -22,16 +22,16 @@
 package org.tzi.use.util.soil;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.collections.CollectionUtil;
 
 
 /**
@@ -49,20 +49,64 @@ import org.tzi.use.uml.sys.soil.MStatement;
  * {@code add...LinkObject} versions, if you know you deal with a link object.
  *   
  * @author Daniel Gent
+ * @author Lars Hamann
  */
 public class StateDifference {
-	/** objects created during evaluation */
-	private Set<MObject> fNewObjects = new HashSet<MObject>();
-	/** objects deleted during evaluation */
-	private Set<MObject> fDeletedObjects = new HashSet<MObject>();
-	/** objects modified during evaluation */
-	private Set<MObject> fModifiedObjects = new HashSet<MObject>();
-	/** links created during evaluation */
-    private Set<MLink> fNewLinks = new HashSet<MLink>();
-    /** links deleted during evaluation */
-    private Set<MLink> fDeletedLinks = new HashSet<MLink>();
+	/** Objects created during evaluation. 
+	 * <p><b>Important</b>: Before adding something to the collection, 
+	 *                   the collection must be initialized with a call to
+	 *                   {@link CollectionUtil#initAsHashSet(Set)} like:</p>
+	 *                   <p><code>fNewObjects = CollectionUtil.initAsHashSet(fNewObjects);<br/>
+	 *                            fNewObjects.add(o);
+	 *                   </code></p>
+     */
+	private Set<MObject> fNewObjects = Collections.emptySet();
+	
+	/** 
+	 * Objects deleted during evaluation.
+	 * <p><b>Important</b>: Before adding something to the collection, 
+	 *                   the collection must be initialized with a call to
+	 *                   {@link CollectionUtil#initAsHashSet(Set)} like:</p>
+	 *                   <p><code>fDeletedObjects = CollectionUtil.initAsHashSet(fDeletedObjects);<br/>
+	 *                            fDeletedObjects.add(o);
+	 *                   </code></p>
+	 */
+	private Set<MObject> fDeletedObjects = Collections.emptySet();
+	
+	/** 
+	 * Objects modified during evaluation.
+     * <p><b>Important</b>: Before adding something to the collection, 
+	 *                   the collection must be initialized with a call to
+	 *                   {@link CollectionUtil#initAsHashSet(Set)} like:</p>
+	 *                   <p><code>fModifiedObjects = CollectionUtil.initAsHashSet(fModifiedObjects);<br/>
+	 *                            fModifiedObjects.add(o);
+	 *                   </code></p>
+     */
+	private Set<MObject> fModifiedObjects = Collections.emptySet();
+	
+	/**
+	 * Links created during evaluation.
+	 * <p><b>Important</b>: Before adding something to the collection, 
+	 *                   the collection must be initialized with a call to
+	 *                   {@link CollectionUtil#initAsHashSet(Set)} like:</p>
+	 *                   <p><code>fNewLinks = CollectionUtil.initAsHashSet(fNewLinks);<br/>
+	 *                            fNewLinks.add(l);
+	 *                   </code></p>
+     */
+    private Set<MLink> fNewLinks = Collections.emptySet();
     
-
+    /** 
+     * Links deleted during evaluation.
+     * <p>
+     * <b>Important</b>: Before adding something to the collection, 
+	 *                   the collection must be initialized with a call to
+	 *                   {@link CollectionUtil#initAsHashSet(Set)} like:</p>
+	 *                   <p><code>fDeletedLinks = CollectionUtil.initAsHashSet(fDeletedLinks);<br/>
+	 *                            fDeletedLinks.add(o);
+	 *                   </code></p>
+     */
+    private Set<MLink> fDeletedLinks = Collections.emptySet();
+    
     /**
      * restores the initial state of this containing nothing
      */
@@ -102,8 +146,10 @@ public class StateDifference {
     	
     	if (wasDeleted) {
     		// might have been modified before deleting
+    		fModifiedObjects = CollectionUtil.initAsHashSet(fModifiedObjects);
     		fModifiedObjects.add(object);
     	} else {
+    		fNewObjects = CollectionUtil.initAsHashSet(fNewObjects);
     		fNewObjects.add(object);
     	}
     }
@@ -219,6 +265,7 @@ public class StateDifference {
     	remove(object);
     	
     	if (!wasNew) {
+    		fDeletedObjects = CollectionUtil.initAsHashSet(fDeletedObjects);
     		fDeletedObjects.add(object);
     	}
     }
@@ -338,8 +385,10 @@ public class StateDifference {
     	remove(object);
     	
     	if (wasNew) {
+    		fNewObjects = CollectionUtil.initAsHashSet(fNewObjects);
     		fNewObjects.add(object);
     	} else {
+    		fModifiedObjects = CollectionUtil.initAsHashSet(fModifiedObjects);
     		fModifiedObjects.add(object);
     	}
     }
@@ -387,6 +436,7 @@ public class StateDifference {
     	remove(link);
     	
     	if (!wasDeleted) {
+    		fNewLinks = CollectionUtil.initAsHashSet(fNewLinks);
     		fNewLinks.add(link);
     	}
     }
@@ -454,6 +504,7 @@ public class StateDifference {
     	remove(link);
     	
     	if (!wasNew) {
+    		fDeletedLinks = CollectionUtil.initAsHashSet(fDeletedLinks);
     		fDeletedLinks.add(link);
     	}
     }
@@ -525,8 +576,9 @@ public class StateDifference {
     
     
     /**
-     * TODO
-     * @param stateDiff
+     * Adds all state differences of <code>stateDiff</code>
+     * to this state difference.
+     * @param stateDiff The state differences to add.
      */
     public void addStateDifference(StateDifference stateDiff) {
     	addNewObjects(stateDiff.fNewObjects);
@@ -609,22 +661,13 @@ public class StateDifference {
 		return fDeletedLinks;
 	}
 
-
-	/**
-	 * add the information stored in this object to the
-	 * {@code StateChangeEvent}.
-	 * 
-	 * @param sce the event to add information to
-	 */
-	public void fillStateChangeEvent(StateChangeEvent sce) {
-    	sce.addNewObjects(fNewObjects);
-    	sce.addDeletedObjects(fDeletedObjects);
-    	sce.addModifiedObjects(fModifiedObjects);
-    	sce.addNewLinks(fNewLinks);
-    	sce.addDeletedLinks(fDeletedLinks);
-    }
-    
-    
+	public boolean structureHasChanged() {
+		return !fNewObjects.isEmpty()
+				|| !fDeletedObjects.isEmpty()
+				|| !fNewLinks.isEmpty()
+				|| !fDeletedLinks.isEmpty();
+	}
+	
     @Override
     public String toString() {
     	StringBuilder sb = new StringBuilder();

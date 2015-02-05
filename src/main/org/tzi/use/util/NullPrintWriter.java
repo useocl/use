@@ -24,25 +24,20 @@ package org.tzi.use.util;
 import java.io.PrintWriter;
 
 /**
- * TODO
+ * A PrintWriter doing nothing.
  * @author Daniel Gent
  *
  */
 public class NullPrintWriter extends PrintWriter {
-	/** TODO */
+	/** The singleton instance */
 	private static NullPrintWriter fInstance = new NullPrintWriter();
-	
-	
-	/**
-	 * TODO
-	 */
+
 	private NullPrintWriter() {
 		super(new NullWriter());
 	}
 	
-	
 	/**
-	 * TODO
+	 * The singleton instance
 	 * @return
 	 */
 	public static NullPrintWriter getInstance() {

@@ -23,7 +23,7 @@ package org.tzi.use.parser.soil.ast;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -37,57 +37,24 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST-node representing a sequence of commands.
  * @author Daniel Gent
- *
  */
 public class ASTSequenceStatement extends ASTStatement {
-	/** TODO */
+	/** The sequence of statements */
 	private List<ASTStatement> fStatements;
 	
 
 	/**
-	 * TODO
+	 * Constructs a new AST-node.
 	 */
-	public ASTSequenceStatement() {
+	public ASTSequenceStatement(Token start) {
+		super(start);
 		fStatements = new ArrayList<ASTStatement>();
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param initialCapacity
-	 */
-	public ASTSequenceStatement(int initialCapacity) {
-		fStatements = new ArrayList<ASTStatement>(initialCapacity);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param statements
-	 */
-	public ASTSequenceStatement(
-			List<ASTStatement> statements) {
-		
-		fStatements = statements;
-		addChildStatements(fStatements);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param statements
-	 */
-	public ASTSequenceStatement(
-			ASTStatement... statements) {
-		
-		this(Arrays.asList(statements));
-	}
-	
-	
-	/**
-	 * TODO
+	 * The number of statements in this sequence.
 	 * @return
 	 */
 	public int getNumStatements() {
@@ -96,47 +63,20 @@ public class ASTSequenceStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
+	 * Access to the sequence of statements.
 	 * @return
 	 */
 	public List<ASTStatement> getStatements() {
 		return fStatements;
 	}
 	
-	
 	/**
-	 * TODO
+	 * Adds a new statement AST to the sequence.
 	 * @param statement
-	 */
-	public void addStatement(ASTStatement statement) {
-		fStatements.add(statement);
-		addChildStatement(statement);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param statement
-	 * @param sourcePosition
-	 */
-	public void addStatement(ASTStatement statement, Token sourcePosition) {
-		addStatement(statement);
-		statement.setSourcePosition(sourcePosition);
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param statement
-	 * @param sourcePosition
 	 */
 	public void addStatement(
-			ASTStatement statement, 
-			Token sourcePosition,
-			String parsedText) {
-		
-		addStatement(statement);
-		statement.setSourcePosition(sourcePosition);
+			ASTStatement statement) {
+		fStatements.add(statement);
 	}
 	
 	
@@ -179,17 +119,14 @@ public class ASTSequenceStatement extends ASTStatement {
 		
 		return new MSequenceStatement(statements);
 	}
-		
-	
-
 
 	/**
-	 * TODO
+	 * Checks if variable assignments in <code>s2</code> are valid w.r.t. 
+	 * the current assignments.
 	 * @param s2
 	 * @throws CompilationFailedException
 	 */
-	private void checkS2Validity(
-			ASTStatement s2) throws CompilationFailedException {
+	private void checkS2Validity(ASTStatement s2) throws CompilationFailedException {
 	
 		if (fBoundSet.isEmpty() || s2.fAssignedSet.isEmpty()) {
 			return;
@@ -205,7 +142,7 @@ public class ASTSequenceStatement extends ASTStatement {
 			
 			for (Type assignedType : assignedTypes) {
 				for (Type boundType : boundTypes) {
-					if (!assignedType.isSubtypeOf(boundType)) {
+					if (!assignedType.conformsTo(boundType)) {
 						ASTStatement cause = fSymtable.getCause(name);
 						throw new CompilationFailedException(
 								this,
@@ -248,12 +185,25 @@ public class ASTSequenceStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Simplifies the sequence statements by returning,
+	 * <ul>
+	 *   <li>an empty statement if this sequence is empty,</li>
+	 *   <li>the contained statement if <code>size() == 1</code> or </li>
+	 *   <li><code>this</code> if the sequence contains more than one statement.</li>
+	 * </ul>
+	 * @return A simplified statement or <code>this</code>.
 	 */
 	public ASTStatement simplify() {
 		
 		ASTStatement result;
+		
+		// Remove empty statements
+		for (Iterator<ASTStatement> iter = fStatements.iterator(); iter.hasNext();) {
+			ASTStatement s = iter.next();
+			if (s == null || s instanceof ASTEmptyStatement) {
+				iter.remove();
+			}
+		}
 		
 		switch (fStatements.size()) {
 		case  0: result = new ASTEmptyStatement(); break;

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import java.util.ArrayList;
@@ -26,8 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
@@ -36,18 +34,18 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * TODO
+ * "Compiled" version of a link deletion statement.
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class MLinkDeletionStatement extends MStatement {
 	/**
-	 * The name of the association to delete the link from. 
+	 * The association to delete the link from. 
 	 */
 	private MAssociation fAssociation;
 	
 	/**
-	 * The List of objects that form the link which is deleted
+	 * The List of objects that build the link which is deleted
 	 */
 	private List<MRValue> fParticipants;
 	
@@ -57,10 +55,10 @@ public class MLinkDeletionStatement extends MStatement {
 	private List<List<MRValue>> qualifier;
 	
 	/**
-	 * TODO
-	 * @param association
-	 * @param participants
-	 * @param qualifiers
+	 * Constructs a new link deletion statement.
+	 * @param association The association to delete the link from.
+	 * @param participants The List of objects that build the link which is deleted.
+	 * @param qualifiers The qualifier values of the associations ends.
 	 */
 	public MLinkDeletionStatement(
 			MAssociation association, 
@@ -72,32 +70,11 @@ public class MLinkDeletionStatement extends MStatement {
 		this.qualifier = qualifiers;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @param association
-	 * @param participants
-	 */
-	public MLinkDeletionStatement(
-			MAssociation association, 
-			Expression[] participants,
-			List<List<MRValue>> qualifiers) {
-		
-		fAssociation = association;
-		
-		fParticipants = new ArrayList<MRValue>(participants.length);
-		for (Expression participant : participants) {
-			fParticipants.add(new MRValueExpression(participant));
-		}
-		
-		this.qualifier = qualifiers;
-	}
-	
-	
-	/**
-	 * TODO
-	 * @param association
-	 * @param participants
+	 * Constructs a new link deletion statement.
+	 * @param association The association to delete the link from.
+	 * @param participants The objects that build the link which is deleted.
+	 * @param qualifiers The qualifier values of the associations ends.
 	 */
 	public MLinkDeletionStatement(
 			MAssociation association,
@@ -113,49 +90,77 @@ public class MLinkDeletionStatement extends MStatement {
 		this.qualifier = qualifiers;
 	}
 	
-	
+	public MLinkDeletionStatement(MLink link) {
+		fAssociation = link.association();
+		fParticipants = new ArrayList<MRValue>(link.linkedObjectsAsArray().length);
+		for (MObject participant : link.linkedObjects()) {
+			fParticipants.add(new MRValueExpression(participant));
+		}
+		
+		
+		this.qualifier = new ArrayList<List<MRValue>>();
+		for (List<Value> endQualifiers : link.getQualifier()) {
+			List<MRValue> endQualifierValues;
+			
+			if (endQualifiers == null || endQualifiers.isEmpty() ) {
+				endQualifierValues = Collections.emptyList();
+			} else {
+				endQualifierValues = new ArrayList<MRValue>();
+				for (Value v : endQualifiers) {
+					endQualifierValues.add(new MRValueExpression(v));
+				}
+			}
+			
+			this.qualifier.add(endQualifierValues);
+		}
+		
+	}
 	/**
-	 * TODO
-	 * @return
+	 * @return the fAssociation
 	 */
 	public MAssociation getAssociation() {
 		return fAssociation;
 	}
-	
-	
+
 	/**
-	 * Returns an unmodifiable List of the objects that participate in the link which is going to be deleted.
-	 * @return An unmodifiable <code>List</code> of the objects of the link to delete.
+	 * @return the fParticipants
 	 */
 	public List<MRValue> getParticipants() {
-		return Collections.unmodifiableList(fParticipants);
+		return fParticipants;
 	}
-	
-	
+
+	/**
+	 * @return the qualifier
+	 */
+	public List<List<MRValue>> getQualifiers() {
+		return qualifier;
+	}
+
 	@Override
-    public void execute(SoilEvaluationContext context,
+    public Value execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 		
 		List<MObject> vresult = new ArrayList<MObject>(fParticipants.size());
-                
-                for (MRValue rValue : fParticipants) {
-                	vresult.add(EvalUtil.evaluateObjectRValue(this, context, result, rValue));
-                }
-        List<MObject> participants = vresult;
+
+		for (MRValue rValue : fParticipants) {
+			vresult.add(EvalUtil.evaluateObjectRValue(context, result, rValue));
+		}
+		List<MObject> participants = vresult;
 		List<List<Value>> qualifierValues;
-		
+
 		if (this.qualifier == null || this.qualifier.isEmpty()) {
 			qualifierValues = Collections.emptyList();
 		} else {
 			qualifierValues = new ArrayList<List<Value>>();
-			for (List<MRValue> endRValues : qualifier ) {
+			for (List<MRValue> endRValues : qualifier) {
 				List<Value> endQualifierValues;
-				if (endRValues == null || endRValues.isEmpty() ) {
+				if (endRValues == null || endRValues.isEmpty()) {
 					endQualifierValues = Collections.emptyList();
 				} else {
 					endQualifierValues = new ArrayList<Value>();
 					for (MRValue endRValue : endRValues) {
-						endQualifierValues.add(EvalUtil.evaluateRValue(this, context, result, endRValue, false));
+						endQualifierValues.add(EvalUtil.evaluateRValue(context,
+								result, endRValue, false));
 					}
 				}
 				qualifierValues.add(endQualifierValues);
@@ -165,8 +170,10 @@ public class MLinkDeletionStatement extends MStatement {
 		try {
             context.getSystem().deleteLink(result, fAssociation, participants, qualifierValues);
         } catch (MSystemException e) {
-            throw new EvaluationFailedException(this, e.getMessage());
+            throw new EvaluationFailedException(e.getMessage());
         }
+		
+		return null;
 	}
 	
 	
@@ -198,9 +205,14 @@ public class MLinkDeletionStatement extends MStatement {
 		return result.toString();
 	}
 	
-
+	
 	@Override
 	public String toString() {
 		return shellCommand();	
+	}
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
 	}
 }

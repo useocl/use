@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
+
 import org.tzi.use.api.impl.UseSystemApiNative;
 import org.tzi.use.api.impl.UseSystemApiUndoable;
 import org.tzi.use.config.Options;
@@ -65,34 +67,31 @@ public abstract class UseSystemApi {
 	public static UseSystemApi create(Session session) {
 		return new UseSystemApiUndoable(session);
 	}
+	
+	/**
+	 * Creates a new system API for the given system.
+	 * @param system The system to encapsulate with the API.
+	 * @param enableUndo Whether the API should generate undo statements
+	 * @return A new UseSystemApi instance with the system state encapsulated to manipulate it.
+	 */
+	public static UseSystemApi create(MSystem system, boolean enableUndo) {
+		if (enableUndo)
+			return new UseSystemApiUndoable(system);
+		else 
+			return new UseSystemApiNative(system);
+	}
 
+	/**
+	 * Creates a new system API for the given model.
+	 * @param model The model to create a new system API for. 
+	 * @param enableUndo Whether the API should generate undo statements
+	 * @return A new UseSystemApi instance with an empty system state to manipulate.
+	 */
 	public static UseSystemApi create(MModel model, boolean enableUndo) {
 		if (enableUndo)
 			return new UseSystemApiUndoable(model);
 		else 
 			return new UseSystemApiNative(model);
-	}
-	
-	/**
-	 * Creates a new system API for the given model.
-	 * The returned API implementation is designed to be used
-	 * inside an application using USE as a library. 
-	 * @param model The model to create a new system API for. 
-	 * @return A new UseSystemApi instance with an empty system state to manipulate.
-	 */
-	public static UseSystemApi create(MModel model) {
-		return new UseSystemApiNative(model);
-	}
-	
-	/**
-	 * Creates a new system API for the given system.
-	 * The returned API implementation is designed to be used
-	 * inside an application using USE as a library. 
-	 * @param system The system to encapsulate with the API.
-	 * @return A new UseSystemApi instance with the system state encapsulated to manipulate it.
-	 */
-	public static UseSystemApi create(MSystem system) {
-		return new UseSystemApiNative(system);
 	}
 	
 	protected final MSystem system;
@@ -187,7 +186,7 @@ public abstract class UseSystemApi {
 	 * Creates a new {@link MObject} of for the class <code>objectClass</code>.
 	 * 
 	 * @param objectClass The class for which a new object should be created.
-	 * @param objectName The name of the new object.
+	 * @param objectName The name of the new object. If <code>null</code>, a unique name is generated.
 	 * 
 	 * @return The created {@link MObject}.
 	 * @throws ApiException
@@ -560,7 +559,21 @@ public abstract class UseSystemApi {
      * @param link The link to be deleted.
      */
     public abstract void deleteLinkEx(MLink link) throws UseApiException;
-    		
+
+    /**
+	 * Undoes the last executed statement.
+	 * @throws UseApiException If no statement is present or undone went wrong.
+	 * @throws OperationNotSupportedException If this api instance is not undoable. 
+	 */
+	public abstract void undo() throws UseApiException, OperationNotSupportedException;
+	
+	/**
+	 * Redoes the last undone statement.
+	 * @throws UseApiException If no statement is present or redo went wrong.
+	 * @throws OperationNotSupportedException If this api instance is not undoable. 
+	 */
+	public abstract void redo() throws UseApiException, OperationNotSupportedException;
+	
     /**
 	 * <p>This method validates the current state of
 	 * the encapsulated system and returns the result of the 
@@ -589,9 +602,13 @@ public abstract class UseSystemApi {
 	 * @return <code>true</code> if the state of the encapsulated system is valid.
 	 */
 	public boolean checkState(PrintWriter error) {
-		//FIXME: Implement!
-		return system.state().checkStructure(error);
+		boolean isValid;
+		// Check structure
+		isValid = system.state().checkStructure(error);
+		// Check Invariants
+		isValid = isValid && system.state().check(error, false, false, true, Collections.<String>emptyList());
 		
+		return isValid;
 	}
 
 	/**
@@ -605,17 +622,17 @@ public abstract class UseSystemApi {
 		StringWriter errBuffer = new StringWriter();
 		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
 		
-		WarningType orgWarningOclAny = Options.checkWarningsOclAnyInCollections;
-		WarningType orgWarningUnrelated = Options.checkWarningsUnrelatedTypes;
+		WarningType orgWarningOclAny = Options.checkWarningsOclAnyInCollections();
+		WarningType orgWarningUnrelated = Options.checkWarningsUnrelatedTypes();
 		
-		Options.checkWarningsOclAnyInCollections = WarningType.IGNORE;
-		Options.checkWarningsUnrelatedTypes = WarningType.IGNORE;
+		Options.setCheckWarningsOclAnyInCollections(WarningType.IGNORE);
+		Options.setCheckWarningsUnrelatedTypes(WarningType.IGNORE);
 		
 		Expression expr = OCLCompiler.compileExpression(modelApi.getModel(), expression,
 				"USE Api", errorPrinter, system.varBindings());
 		
-		Options.checkWarningsOclAnyInCollections = orgWarningOclAny;
-		Options.checkWarningsUnrelatedTypes = orgWarningUnrelated;
+		Options.setCheckWarningsOclAnyInCollections(orgWarningOclAny);
+		Options.setCheckWarningsUnrelatedTypes(orgWarningUnrelated);
 		
 		if (expr == null) {
 			throw new UseApiException("Invalid expression "

@@ -24,11 +24,14 @@ package org.tzi.use.parser.ocl;
 import java.util.Set;
 
 import org.tzi.use.parser.AST;
+import org.tzi.use.parser.Context;
+import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.ExpRange;
+import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ASTCollectionItem extends AST {
@@ -48,6 +51,21 @@ public class ASTCollectionItem extends AST {
 		fFirst.getFreeVariables(freeVars);
 		if (fSecond != null) {
 			fSecond.getFreeVariables(freeVars);
+		}
+	}
+
+	public Expression gen(Context ctx) throws SemanticException {
+		Expression first = fFirst.gen(ctx);
+		
+		if (fSecond == null) {
+			return first; 
+		} else {
+			Expression second = fSecond.gen(ctx);
+			
+			if (!(first.type().isTypeOfInteger() && second.type().isTypeOfInteger()))
+				throw new SemanticException("Ranges must be of type Integer.");
+			
+			return new ExpRange(first, second);
 		}
 	}
 }    

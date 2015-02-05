@@ -29,7 +29,6 @@ import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.SequenceType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -56,7 +55,7 @@ public class GInstrCreateN_C_Integer implements GValueInstruction {
     }
 
     public Type type() {
-        return new SequenceType(TypeFactory.mkObjectType(fClass));
+        return new SequenceType(fClass);
     }
     
     public String toString() {

@@ -12,15 +12,21 @@ end
 class Tile
 end
 
-composition MapTile between
+association MapTile between
   Map[1] qualifier (x:Integer, y:Integer)
   Tile[0..1]
 end
 
 class Bank
+  attributes
+    a:Integer
+	b:Integer
 end
 
 class Person
+  attributes
+    a:Integer
+	b:Integer
 end
 
 associationclass Exam between
@@ -104,6 +110,14 @@ association Childs between
   Node[0..1] role child
 end
 
+class Node1
+end
+
+association Childs1 between
+  Node1[0..1] role parent
+  Node1[0..1] role child
+end
+
 -- Test association class
 class Employee
 end
@@ -144,4 +158,9 @@ end
 association B1 between
   B[*] role b1s qualifier (b1:Integer)
   B[*] role b1t qualifier (b1:Integer)
+end
+
+association B2 between
+  B[*] role b2s qualifier (b2:Integer)
+  B[*] role b2t qualifier (b2:Integer)
 end

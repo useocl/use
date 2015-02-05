@@ -124,7 +124,7 @@ public class ModelBrowser extends JPanel
     private static IRuntime fPluginRuntime;
 
     public JEditorPane getHTMLPane() {
-	return this.fHtmlPane;
+    	return this.fHtmlPane;
     }
 
     public Map<String, Collection<?>> getModelCollections() {
@@ -161,7 +161,7 @@ public class ModelBrowser extends JPanel
      * Creates a browser with no model.
      */
     public ModelBrowser(MainWindow mainWindow, IRuntime pluginRuntime) {
-	this(null, mainWindow, pluginRuntime);
+    	this(null, mainWindow, pluginRuntime);
         fListenerList = new EventListenerList();
     }
 
@@ -236,8 +236,9 @@ public class ModelBrowser extends JPanel
         Dimension minimumSize = new Dimension(100, 50);
         htmlView.setMinimumSize(minimumSize);
         treeView.setMinimumSize(minimumSize);
-        splitPane.setDividerLocation(200);
         splitPane.setPreferredSize(new Dimension(500, 300));
+        splitPane.setDividerLocation(240);
+        splitPane.setResizeWeight(.6d);
 
         setLayout(new BorderLayout());
         add(splitPane, BorderLayout.CENTER);
@@ -312,16 +313,15 @@ public class ModelBrowser extends JPanel
         if (fTree == null ) {
             fTreeModel = new DefaultTreeModel(fTop);
             fTree = new JTree(fTreeModel);
+            fMbs = ModelBrowserSorting.getInstance();
+            fMbs.addSortChangeListener( this );
+            
+            fMouseHandler = new ModelBrowserMouseHandling( this );
+            fTree.addMouseListener( fMouseHandler );
         } else {
-            fTreeModel = (DefaultTreeModel) fTree.getModel();
             fTreeModel.setRoot(fTop);
+            fTreeModel = (DefaultTreeModel) fTree.getModel();
         }
-
-        fMbs = ModelBrowserSorting.getInstance();
-        fMbs.addSortChangeListener( this );
-        
-        fMouseHandler = new ModelBrowserMouseHandling( this );
-        fTree.addMouseListener( fMouseHandler );
 
         // reset HTML pane
         if (fHtmlPane != null )
@@ -344,7 +344,7 @@ public class ModelBrowser extends JPanel
 
         element.processWithVisitor(v);
 
-        sw.write("</body></html>");
+        sw.write("</font></body></html>");
         String spec = sw.toString();
         fHtmlPane.setText(spec);
     }
@@ -377,8 +377,7 @@ public class ModelBrowser extends JPanel
 			    .sortPluginCollection((Collection<?>) modelCollectionMapEntry
 				    .getValue());
 		    addChildNodes(top, modelCollectionName, modelCollection);
-    }
-
+		}
     }
 
     /**

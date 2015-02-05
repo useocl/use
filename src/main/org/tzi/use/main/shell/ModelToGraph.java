@@ -98,7 +98,7 @@ class ModelToGraph {
         }
 
         // add generalization edges to graph
-        DirectedGraph<MClass, MGeneralization> genGraph = model.generalizationGraph();
+        DirectedGraph<MClassifier, MGeneralization> genGraph = model.generalizationGraph();
         Iterator<MGeneralization> edgeIter = genGraph.edgeIterator();
         
         while (edgeIter.hasNext() ) {

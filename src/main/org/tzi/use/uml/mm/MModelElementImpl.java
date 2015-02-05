@@ -40,14 +40,14 @@ public abstract class MModelElementImpl implements MModelElement {
 	
 	private static Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
 	
-	private String fName;
+	private final String fName;
 	
 	/**
 	 * The hash code of an model elements does not change after loading,
 	 * therefore we don't need to calculate it every time.
 	 * 
 	 */
-    private int hashCode;
+    private final int hashCode;
     
     /**
      * Possible annotations of this model element.
@@ -74,7 +74,7 @@ public abstract class MModelElementImpl implements MModelElement {
      * they may still clash with some user defined name.
      */
     protected MModelElementImpl(String name, String prefix) {
-        if (name == null || name.length() == 0 ) {
+        if (name == null || name.trim().length() == 0 ) {
             MutableInteger i = fNameMap.get(prefix);
             if (i == null ) {
                 i = new MutableInteger();
@@ -99,11 +99,6 @@ public abstract class MModelElementImpl implements MModelElement {
      */
     public abstract void processWithVisitor(MMVisitor v);
 
-    @Override
-    public boolean isAnnotatable() {
-    	return true;
-    }
-    
     @Override
     public Map<String, MElementAnnotation> getAllAnnotations() {
     	return this.annotations;
@@ -150,10 +145,17 @@ public abstract class MModelElementImpl implements MModelElement {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == this )
+    	if (obj == this )
             return true;
-        if (obj instanceof MModelElement )
+    	if (obj == null)
+    		return false;
+    	
+        if (hashCode != obj.hashCode())
+        	return false;
+                
+        if (obj instanceof MModelElement)
             return fName.equals(((MModelElement) obj).name());
+        
         return false;
     }
 
@@ -164,7 +166,7 @@ public abstract class MModelElementImpl implements MModelElement {
         if (o == this )
             return 0;
 
-        return fName.compareTo(((MModelElement) o).name());
+        return fName.compareTo(o.name());
     }
 
     /**

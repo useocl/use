@@ -22,34 +22,33 @@
 package org.tzi.use.uml.sys.events;
 
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.events.tags.EventContext;
 
 
 /**
- * TODO
+ * Information about the event of an operation entrance.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
 public class OperationEnteredEvent extends Event {
-	/** TODO */
+	/** The operation call which let to this operation enter event */
 	private MOperationCall fOperationCall;
 
 	
 	/**
-	 * TODO
-	 * @param creator
-	 * @param operationCall
-	 * @param failed
+	 * Constructs a new operation entered event.
+	 * @param operationCall The operation call which let to this operation enter event
 	 */
-	public OperationEnteredEvent(
-			MOperationCall operationCall) {
-		
+	public OperationEnteredEvent(EventContext ctx, MOperationCall operationCall) {
+		super(ctx);
 		fOperationCall = operationCall;
 	}
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The operation call which let to this operation enter event
+	 * @return The operation call which let to this operation enter event
 	 */
 	public MOperationCall getOperationCall() {
 		return fOperationCall;

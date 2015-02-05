@@ -26,15 +26,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enum to define directions.
+ * Enumeration to define directions.
  * @author Lars Hamann
  *
  */
 public enum Direction {
-	UNKNOWN(0),
+	/**
+	 * Given two points <code>source</code> and <code>target</code>:<br/>
+	 * <code>source.equals(target)</code>
+	 */
+	CENTER(0),
+	/**
+	 * Given two points <code>source</code> and <code>target</code>:<br/>
+	 * <code>source.y > target.y</code>
+	 */
 	NORTH(1),
+	/**
+	 * Given two points <code>source</code> and <code>target</code>:<br/>
+	 * <code>source.x < target.x</code>
+	 */
 	EAST(2),
+	/**
+	 * Given two points <code>source</code> and <code>target</code>:<br/>
+	 * <code>source.y < target.y</code>
+	 */
 	SOUTH(4),
+	/**
+	 * Given two points <code>source</code> and <code>target</code>:<br/>
+	 * <code>source.x > target.x</code>
+	 */
 	WEST(8),
 	NORTH_EAST(NORTH.getValue() + EAST.getValue()),
 	SOUTH_EAST(SOUTH.getValue() + EAST.getValue()),
@@ -107,5 +127,49 @@ public enum Direction {
 	
 	public static Direction getDirection(int value) {
 		return intMap.get(value);
+	}
+	
+	/**
+	 * Returns an array of ordinal directions in clockwise order (NE, SE, SW, NW). 
+	 * @return An array of ordinal directions
+	 */
+	public static Direction[] getOrdinalDirections() {
+		return new Direction[]{NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST};
+	}
+
+	/**
+	 * Returns an array of all valid directions in clockwise order (N, NE, E, SE, S, SW, W, NW). 
+	 * @return An array of ordinal directions
+	 */
+	public static Direction[] getDefinedDirections() {
+		return new Direction[]{NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST};
+	}
+	
+	/**
+	 * @param alpha
+	 * @return
+	 */
+	public static Direction fromAngle(double alpha) {
+		int angle = ((int)Math.round(alpha)) % 360;
+		// TODO: fasten with 2.pow()
+		if (angle == 0) {
+			return EAST;
+		} else if (angle == 90) {
+			return SOUTH;
+		} else if (angle == 180) {
+			return WEST;
+		} else if (angle == 270) {
+			return NORTH;
+		} else if (angle > 0 && angle < 90) {
+			return SOUTH_EAST;
+		} else if (angle > 90 && angle < 180) {
+			return SOUTH_WEST;
+		} else if (angle > 180 && angle < 270) {
+			return NORTH_WEST;
+		} else if (angle > 270 && angle < 360) {
+			return NORTH_EAST;
+		}
+		
+		return null;
 	}
 }

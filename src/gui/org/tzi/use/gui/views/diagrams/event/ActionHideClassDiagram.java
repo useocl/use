@@ -22,14 +22,16 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 import java.util.Set;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.NodeBase;
 import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClassifier;
 
 /**
@@ -41,7 +43,7 @@ import org.tzi.use.uml.mm.MClassifier;
 @SuppressWarnings("serial")
 public final class ActionHideClassDiagram extends ActionHide<MClassifier> {
     public ActionHideClassDiagram( String text, Set<? extends MClassifier> nodesToHide,
-                                   Selection<? extends Selectable> nodeSelection, DirectedGraph<NodeBase, EdgeBase> graph,
+                                   Selection<? extends Selectable> nodeSelection, DirectedGraph<PlaceableNode, EdgeBase> graph,
                                    ClassDiagram diagram ) {
         super( text, diagram, nodeSelection );
         setNodes( nodesToHide );
@@ -53,27 +55,25 @@ public final class ActionHideClassDiagram extends ActionHide<MClassifier> {
     	return (ClassDiagram)diagram;
     }
     
-    public void showAllHiddenElements() {
+    @Override
+	public void showAllHiddenElements() {
         // add all hidden nodes
     	getDiagram().showAll();
-        getDiagram().invalidateContent();
+        getDiagram().invalidateContent(true);
     }
 
     /**
      * Hides all nodes with their connecting edges.
      */
-    public void hideNodesAndEdges() {
-        getDiagram().hideElementsInDiagram( fNodesToHide );
+    @Override
+	public void hideNodesAndEdges() {
+        getDiagram().hideElementsInDiagram( fNodesToHide, Collections.<MAssociation>emptySet() );
         fNodeSelection.clear();
-        getDiagram().invalidateContent();
+        getDiagram().invalidateContent(true);
     }
     
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         hideNodesAndEdges();
-    }
-
-    public void showHiddenElements(Set<MClassifier> hiddenElements) {
-    	getDiagram().showElementsInDiagram(hiddenElements);
-    	getDiagram().invalidateContent();
     }
 }

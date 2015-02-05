@@ -25,7 +25,7 @@ public class ASTTestCase extends AST {
 		OK,
 		FAILURE,
 		ERROR
-	};
+	}
 	
 	private Token name;
 	private List<AST> statements = new ArrayList<AST>();

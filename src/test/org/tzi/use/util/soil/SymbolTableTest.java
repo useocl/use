@@ -66,7 +66,7 @@ public class SymbolTableTest extends TestCase {
 		fStringType = TypeFactory.mkString();
 		fStatement = new ASTEmptyStatement();
 		
-		assertTrue(fIntegerType.isSubtypeOf(fRealType));
+		assertTrue(fIntegerType.conformsTo(fRealType));
 	}
 	
 	

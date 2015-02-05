@@ -46,6 +46,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.CollectionType;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -89,7 +90,7 @@ public class ASTQueryExpression extends ASTExpression {
                                             opname + "'.");
         }
 
-        if (!range.type().isCollection(false) )
+        if (!range.type().isKindOfCollection(VoidHandling.INCLUDE_VOID))
             throw new SemanticException(fOp, 
                                         "Source of `" + opname + "' expression must be a collection, " + 
                                         "found source expression of type `" + range.type() + "'.");

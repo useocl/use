@@ -32,9 +32,14 @@ import java.util.Set;
 public class UniqueLeastCommonSupertypeDeterminator {
 
 	public Type calculateFor(Set<Type> types) {
-		if (types.isEmpty()) return TypeFactory.mkVoidType();
+		if (types.isEmpty()) 
+			return TypeFactory.mkVoidType();
 		
-		//TODO: The first two steps can be optimized
+		if (types.size() == 1) {
+			return types.iterator().next();
+		}
+		
+		//TODO:  The first two steps can be optimized
 		
 		// First step: Determine the set of common super-types of all elements
     	Set<Type> allSuperTypes = new HashSet<Type>();
@@ -59,7 +64,7 @@ public class UniqueLeastCommonSupertypeDeterminator {
 				if (result == null) { 
 					result = t;
 				}
-				else if (t.isSubtypeOf(result)) {
+				else if (t.conformsTo(result)) {
 					result = t;
 				}
 			}
@@ -75,7 +80,7 @@ public class UniqueLeastCommonSupertypeDeterminator {
 	 */
 	private boolean typeIsComparableToAll(Type t, Set<Type> allSuperTypes) {
 		for (Type t1 : allSuperTypes) {
-			if (! (t1.isSubtypeOf(t) || t.isSubtypeOf(t1)))  
+			if (! (t1.conformsTo(t) || t.conformsTo(t1)))  
 				return false;
 		}
 		return true;
@@ -89,7 +94,7 @@ public class UniqueLeastCommonSupertypeDeterminator {
 	 */
 	private boolean typeIsSupertypeOfAll(Type t, Set<Type> types) {
 		for (Type t1 : types) {
-			if (! t1.isSubtypeOf(t)) {
+			if (! t1.conformsTo(t)) {
 				return false;
 			}
 		}

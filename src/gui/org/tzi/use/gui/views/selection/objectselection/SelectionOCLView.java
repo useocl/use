@@ -48,7 +48,7 @@ import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -58,7 +58,6 @@ import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.StateChangeEvent;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TeeWriter;
 
@@ -71,7 +70,7 @@ import org.tzi.use.util.TeeWriter;
 @SuppressWarnings("serial")
 public class SelectionOCLView extends JPanel implements View, ActionListener {
 
-	public static MSystem fSystem;
+	public MSystem fSystem;
 
 	private JButton fBtnShowAll;
 
@@ -101,12 +100,12 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 	private ButtonGroup buttonGroup = new ButtonGroup();
 
-	private NewObjectDiagram diagram;
+	private DiagramViewWithObjectNode diagram;
 	
 	/**
 	 * Constructor for SelectionOCLView.
 	 */
-	public SelectionOCLView(MainWindow parent, MSystem system, NewObjectDiagram diagram) {
+	public SelectionOCLView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
 		super(new BorderLayout());
 		fSystem = system;
 		this.diagram = diagram;
@@ -219,12 +218,12 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 	protected void applyHideAllObjects(ActionEvent ev) {
 		this.diagram.hideAll();
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	protected void applyShowAllObjects() {
 		this.diagram.showAll();
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
@@ -248,7 +247,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 				new TextComponentWriter(fTextOut), msgWriter), true);
 
 		// compile query
-		Expression expr = OCLCompiler.compileExpression(fSystem.model(), in, 
+		Expression expr = OCLCompiler.compileExpression(fSystem.model(), fSystem.state(), in, 
 														"Error", out, fSystem.varBindings());
 		
 		Options.setCheckWarningsOclAnyInCollections(backUp);
@@ -297,7 +296,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 				
 				// If the element type is OclAny it is still possible
 				// that all elements are object types.
-				if (!col.elemType().isObjectType()) {
+				if (!col.elemType().isTypeOfClass()) {
 					for (Value elem : col.collection()) {
 						if (!elem.isObject()) {
 							validResult = false;
@@ -334,7 +333,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 			} else if (showart.equalsIgnoreCase("hide")) {
 				this.diagram.hideObjects(objects);
 			}
-			this.diagram.invalidateContent();
+			this.diagram.invalidateContent(true);
 		} catch (MultiplicityViolationException e) {
 			fTextOut.setText("Could not evaluate. " + e.getMessage());
 		}
@@ -345,20 +344,8 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 	}
 
 	/**
-	 * Method stateChanged call due to an external change of state.
-	 * 
-	 * @see org.tzi.use.uml.sys.StateChangeListener#stateChanged(StateChangeEvent)
-	 */
-	public void stateChanged(StateChangeEvent e) {
-	}
-
-	/**
 	 * Method detachModel detaches the view from its model.
-	 * 
-	 * @see org.tzi.use.gui.views.View#detachModel()
 	 */
-	public void detachModel() {
-		fSystem.removeChangeListener(this);
-	}
+	public void detachModel() {}
 
 }

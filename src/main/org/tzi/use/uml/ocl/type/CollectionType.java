@@ -23,7 +23,12 @@ package org.tzi.use.uml.ocl.type;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.StringUtil;
 
 /**
  * Collection is the abstract base class for set, sequence, and bag.
@@ -34,9 +39,9 @@ import java.util.Set;
  * @see     SequenceType
  * @see     BagType
  */
-public class CollectionType extends Type {
+public class CollectionType extends TypeImpl {
 
-    private Type fElemType;
+    private final Type fElemType;
 
     protected CollectionType(Type elemType) {
         fElemType = elemType;
@@ -47,36 +52,37 @@ public class CollectionType extends Type {
     }
 
     @Override
-    public boolean isCollection(boolean excludeVoid) {
+    public boolean isKindOfCollection(VoidHandling h) {
     	return true;
     }
     
-    public boolean isTrueCollection() {
+    @Override
+    public boolean isTypeOfCollection() {
     	return true;
     }
     
-    /** 
-     * Returns true if this type is a subtype of <code>t</code>. 
-     */
-    public boolean isSubtypeOf(Type t) {
-        if (! t.isTrueCollection() )
+    @Override
+	public boolean conformsTo(Type other) {
+    	if (!other.isTypeOfCollection())
             return false;
 
-        CollectionType t2 = (CollectionType) t;
-        if (fElemType.isSubtypeOf(t2.elemType()) )
+        CollectionType t2 = (CollectionType) other;
+        if (fElemType.conformsTo(t2.elemType()))
             return true;
+        
         return false;
-    }
+	}
 
     /** 
      * Returns the set of all supertypes (including this type).  If
      * this collection has type Collection(T) the result is the set of
      * all types Collection(T') where T' <= T.
      */
+    @Override
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>();
-        Set<Type> elemSuper = fElemType.allSupertypes();
-        Iterator<Type> typeIter = elemSuper.iterator();
+        Set<? extends Type> elemSuper = fElemType.allSupertypes();
+        Iterator<? extends Type> typeIter = elemSuper.iterator();
         
         while (typeIter.hasNext() ) {
             Type t = typeIter.next();
@@ -86,12 +92,13 @@ public class CollectionType extends Type {
         return res;
     }
 
+    @Override
     public Type getLeastCommonSupertype(Type type)
     {
-    	if (!type.isCollection(false))
+    	if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
     		return null;
     	
-    	if (type.isVoidType())
+    	if (type.isTypeOfVoidType())
     		return this;
     	
     	CollectionType cType = (CollectionType)type;
@@ -110,6 +117,7 @@ public class CollectionType extends Type {
         return sb.append(")");
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -119,6 +127,7 @@ public class CollectionType extends Type {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return fElemType.hashCode();
     }
@@ -126,5 +135,36 @@ public class CollectionType extends Type {
     @Override
     public boolean isVoidOrElementTypeIsVoid() {
 		return elemType().isVoidOrElementTypeIsVoid();
+	}
+
+	/**
+	 * Creates a collection type with the same
+	 * kind of collection and the given element type.
+	 * <p>
+	 * <code>
+	 * Collection(OclAny).createCollectionType(String) => Collection(String)<br/>
+	 * Set(OclAny).createCollectionType(String) => Set(String)
+	 * </code>
+	 * </p>
+	 * @param t The new type of the elements
+	 * @return
+	 */
+	public Type createCollectionType(Type t) {
+		return TypeFactory.mkCollection(t);
+	}
+
+	/**
+	 * Creates a new collection value of this type, if possible.
+	 * Note: The type <code>Collection</code> cannot be instantiated. 
+	 * @param values The values of the elements of the collection. 
+	 * @return
+	 * @throws UnsupportedOperationException If called on CollectionType.
+	 */
+	public CollectionValue createCollectionValue(List<Value> values) {
+		throw new UnsupportedOperationException("The abstract type " + StringUtil.inQuotes("Collection") + " cannot be instantiated.");
+	}
+	
+	public CollectionValue createCollectionValue(Value[] values) {
+		throw new UnsupportedOperationException("The abstract type " + StringUtil.inQuotes("Collection") + " cannot be instantiated.");
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2010 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2012 Mark Richters, University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,23 +26,18 @@ import junit.framework.TestSuite;
 
 
 /**
- * TODO
+ * All shell parser tests.
  * @author Daniel Gent
+ * @author Lars Hamann
  */
 public class AllTests {
 
-	
-	/**
-	 * TODO
-	 */
-	private AllTests() {
-		
-	}
+	private AllTests() {}
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * Returns a new <code>TestSuite</code> containing all shell parser tests. 
+	 * @return A new test suite.
 	 */
 	public static Test suite() {
 		final TestSuite testSuite = new TestSuite("All shell parser tests");

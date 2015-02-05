@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2010 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2012 Mark Richters, University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -29,24 +27,23 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * TODO
+ * The "compiled" <code>for ... in ... do ... end</code> statement.
  * @author Daniel Gent
  *
  */
 public class MIterationStatement extends MStatement {
-	/** TODO */
+	/** The name of the iteration variable */
 	private String fVariableName;
-	/** TODO */
+	/** The range expression of the iteration (the iteration source) */
 	private Expression fRange;
-	/** TODO */
+	/** The body of the iteration */
 	private MStatement fBody;
 	
-	
 	/**
-	 * TODO
-	 * @param variableName
-	 * @param range
-	 * @param body
+	 * Constructs a new iteration statement.
+	 * @param variableName The name of the iteration variable
+	 * @param range The range expression of the iteration (the iteration source)
+	 * @param body The body of the iteration
 	 */
 	public MIterationStatement(
 			String variableName, 
@@ -58,42 +55,35 @@ public class MIterationStatement extends MStatement {
 		fBody = body;
 	}
 	
-	
 	/**
-	 * TODO
-	 * @return
+	 * @return the fVariableName
 	 */
 	public String getVariableName() {
 		return fVariableName;
 	}
-	
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * @return the fRange
 	 */
 	public Expression getRange() {
 		return fRange;
 	}
-	
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * @return the fBody
 	 */
 	public MStatement getBody() {
 		return fBody;
 	}
 
-	
 	@Override
-    public void execute(SoilEvaluationContext context,
+    public Value execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
 	
-		Value val = EvalUtil.evaluateExpression(this, context, result, fRange);
+		Value val = EvalUtil.evaluateExpression(context, fRange);
 		
 		if (val.isUndefined())
-			return;
+			return null;
 		
 		CollectionValue range = (CollectionValue)val;
 		for (Value elem : range) {
@@ -101,6 +91,7 @@ public class MIterationStatement extends MStatement {
 			fBody.execute(context, result);
 		}
 		
+		return null;
 	}
 	
 	
@@ -146,5 +137,10 @@ public class MIterationStatement extends MStatement {
 	@Override
 	public String toString() {
 		return shellCommand();
+	}
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
 	}
 }

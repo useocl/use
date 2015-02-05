@@ -22,6 +22,7 @@
 package org.tzi.use.gui.views.diagrams;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.EventListener;
 
 /**
@@ -30,6 +31,8 @@ import java.util.EventListener;
  * 
  * @author Lars Hamann
  */
-public interface PositionChangedListener<TSource> extends EventListener {
-	void positionChanged(TSource source, Point2D newPosition, double deltaX, double deltaY);
+public interface PositionChangedListener extends EventListener {
+	void positionChanged(Object source, Point2D newPosition, double deltaX, double deltaY);
+	
+	void boundsChanged(Object source, Rectangle2D oldBounds, Rectangle2D newBounds);
 }

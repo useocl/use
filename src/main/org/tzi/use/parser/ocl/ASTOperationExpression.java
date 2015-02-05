@@ -32,13 +32,17 @@ import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.ExpAttrOp;
+import org.tzi.use.uml.ocl.expr.ExpBagLiteral;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpNavigation;
+import org.tzi.use.uml.ocl.expr.ExpNavigationClassifierSource;
 import org.tzi.use.uml.ocl.expr.ExpObjAsSet;
 import org.tzi.use.uml.ocl.expr.ExpObjOp;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
@@ -46,17 +50,30 @@ import org.tzi.use.uml.ocl.expr.ExpTupleSelectOp;
 import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
- *
- * @version     $ProjectVersion: 0.393 $
+ * 
+ * This AST class generates different expressions, depending
+ * on the context:
+ * 
+ * <ol> 
+ *   <li>predefined OCL operation</li>
+ *   <li>attribute operation on object type (no arguments)</li>
+ *   <li>"isQuery" operation on object type (possibly with arguments)</li>
+ *   <li>navigation operation on object type (with possibly with rolename or qualifiers)</li>
+ *   <li>shorthand for collect</li>
+ *   <li>set operation on single object resulting from
+ *       navigation over associations with multiplicity zero or one (p. 7-13 of OMG UML 1.3)</li>
+ *   <li>variable</li>
+ * </ol>
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
 public class ASTOperationExpression extends ASTExpression {
     private Token fOp;
@@ -194,7 +211,7 @@ public class ASTOperationExpression extends ASTExpression {
                     // construct source expression
                     ExprContext.Entry e = ec.peek();
                     srcExpr = new ExpVariable(e.fName, e.fType);
-                    if (e.fType.isCollection(true) )
+                    if (e.fType.isKindOfCollection(VoidHandling.EXCLUDE_VOID) )
                         fFollowsArrow = true;
                     res = gen1(ctx, srcExpr);
                 } else
@@ -266,11 +283,11 @@ public class ASTOperationExpression extends ASTExpression {
         final int PARENTHESES         = 0x0001;
 
         int opcase;
-        if (srcType.isTrueObjectType() )
+        if (srcType.isKindOfClassifier(VoidHandling.EXCLUDE_VOID) )
             opcase = SRC_OBJECT_TYPE;
-        else if (srcType.isCollection(true) )
+        else if (srcType.isKindOfCollection(VoidHandling.EXCLUDE_VOID) )
             opcase = SRC_COLLECTION_TYPE;
-        else if (srcType.isTupleType(true) ) 
+        else if (srcType.isKindOfTupleType(VoidHandling.EXCLUDE_VOID) ) 
             opcase = SRC_TUPLE_TYPE;
         else
             opcase = SRC_SIMPLE_TYPE;
@@ -290,16 +307,25 @@ public class ASTOperationExpression extends ASTExpression {
 
         case SRC_SIMPLE_TYPE + ARROW + NO_PARENTHESES:
         case SRC_SIMPLE_TYPE + ARROW + PARENTHESES:
-            ctx.reportWarning(fOp, "application of `" + opname + 
-                              "' to a single value should be done with `.' " +
-                              "instead of `->'.");
+        	// If source is null literal, convert to Bag{} (OCL 2.3.1 p. 146)
+        	if (fArgExprs[0].type().isTypeOfVoidType()) {
+        		try {
+					fArgExprs[0] = new ExpBagLiteral(new Expression[0]);
+				} catch (ExpInvalidException e) { }
+        	} else {
+	            ctx.reportWarning(fOp, "application of `" + opname + 
+	                              "' to a single value should be done with `.' " +
+	                              "instead of `->'.");
+        	}
+        
             // (1) predefined OCL operation
             res = genStdOperation(ctx, fOp, opname, fArgExprs);
             break;
 
         case SRC_OBJECT_TYPE + DOT + NO_PARENTHESES:
-            MClass srcClass = ((ObjectType) srcType).cls();
-            MAttribute attr = srcClass.attribute(opname, true);
+            MClassifier srcClass = (MClassifier)srcType;
+        	MAttribute attr = srcClass.attribute(opname, true);
+        	
             if (attr != null ) {
                 // (2) attribute operation on object type (no arguments)
                 res = new ExpAttrOp(attr, srcExpr);
@@ -318,7 +344,7 @@ public class ASTOperationExpression extends ASTExpression {
             break;
 
         case SRC_OBJECT_TYPE + DOT + NO_PARENTHESES + EXPLICIT_ROLENAME:
-            MClass srcClass3 = ( ( ObjectType ) srcType ).cls();
+            MClassifier srcClass3 = (MClassifier)srcType;
             // (4) navigation operation on object type
             // must be a role name
             MNavigableElement dst = srcClass3.navigableEnd( opname );
@@ -334,7 +360,7 @@ public class ASTOperationExpression extends ASTExpression {
         case SRC_OBJECT_TYPE + DOT + PARENTHESES:
             // (3) "isQuery" operation on object type (possibly with
             // arguments) or (1)
-            MClass srcClass2 = ((ObjectType) srcType).cls();
+            MClassifier srcClass2 = (MClassifier)srcType;
             res = genObjOperation(ctx, srcClass2, srcExpr);
             break;
 
@@ -343,7 +369,9 @@ public class ASTOperationExpression extends ASTExpression {
             // (6) set operation on single object resulting from
             // navigation over associations with multiplicity zero
             // or one (p. 7-13 of OMG UML 1.3)
-            if (srcExpr instanceof ExpNavigation ) {
+            if (srcExpr instanceof ExpNavigation 
+            	|| /* I'm to lazy to introduce an inheritance hierarchy for this */
+            	srcExpr instanceof ExpNavigationClassifierSource) {
                 // first map object to set with internal operation
                 Expression mappedSrcExpr = new ExpObjAsSet(srcExpr);
                 // replace receiver in arg list
@@ -413,11 +441,13 @@ public class ASTOperationExpression extends ASTExpression {
     {
         Expression res = null;
         // c.op    200 (5) with implicit (2,4,1)
-        CollectionType cType = (CollectionType ) srcExpr.type();
+        CollectionType cType = (CollectionType)srcExpr.type();
         Type elemType = cType.elemType();
-        if (elemType.isTrueObjectType() ) {
-            MClass srcClass = ((ObjectType) elemType).cls();
+        
+        if (elemType.isKindOfClassifier(VoidHandling.EXCLUDE_VOID)) {
+            MClassifier srcClass = (MClassifier)elemType;
             MAttribute attr = srcClass.attribute(opname, true);
+            
             if (attr != null ) {
                 // (2) attribute operation on object type (no arguments)
 
@@ -439,7 +469,7 @@ public class ASTOperationExpression extends ASTExpression {
                     res = genImplicitCollect(srcExpr, eNav, elemType);
                 }
             }
-        } else if (elemType.isTupleType(true)) {
+        } else if (elemType.isKindOfTupleType(VoidHandling.EXCLUDE_VOID)) {
         	TupleType t = (TupleType)elemType;
         	TupleType.Part p = t.getPart(opname);
         	
@@ -471,8 +501,8 @@ public class ASTOperationExpression extends ASTExpression {
         // c.op()  201 (5) with implicit (3,1)
         CollectionType cType = (CollectionType ) srcExpr.type();
         Type elemType = cType.elemType();
-        if (elemType.isTrueObjectType() ) {
-            MClass srcClass = ((ObjectType) elemType).cls();
+        if (elemType.isTypeOfClass() ) {
+            MClass srcClass = (MClass)elemType;
             MOperation op = srcClass.operation(opname, true);
             if (op != null ) {
                 
@@ -500,14 +530,14 @@ public class ASTOperationExpression extends ASTExpression {
             				" is not a query operation.");
             	}
             	
-                
+            		
                 // transform c.op(...) into c->collect($e | $e.op(...))
                 ExpVariable eVar = new ExpVariable("$e", elemType);
                 fArgExprs[0] = eVar;
                 try { 
                     // constructor performs additional checks
                     res = new ExpObjOp(op, fArgExprs);
-                    res.setSourceExpression(this);
+                    res.setSourcePosition(new SrcPos(fOp));
                 } catch (ExpInvalidException ex) {
                     throw new SemanticException(fOp, 
                                                 "In operation call `" + srcClass.name() + "::" + 
@@ -569,15 +599,17 @@ public class ASTOperationExpression extends ASTExpression {
 
 
     // checks (3) and (1)
-    private Expression genObjOperation(Context ctx, 
-                                       MClass srcClass, Expression srcExpr)
-        throws SemanticException
-    {
+    private Expression genObjOperation(Context ctx, MClassifier srcClass, Expression srcExpr) throws SemanticException {
         Expression res = null;
 
         // find operation
         String opname = fOp.getText();
-        MOperation op = srcClass.operation(opname, true);
+        MOperation op = null;
+        
+        if (srcClass.isTypeOfClass()) {
+        	op = ((MClass)srcClass).operation(opname, true);
+        }
+        
         if (op != null ) {
         	
         	// operation must have a body
@@ -607,7 +639,7 @@ public class ASTOperationExpression extends ASTExpression {
             try { 
                 // constructor performs additional checks
                 res = new ExpObjOp(op, fArgExprs);
-                res.setSourceExpression(this);
+                res.setSourcePosition(new SrcPos(fOp));
             } catch (ExpInvalidException ex) {
                 throw new SemanticException(fOp, 
                                             "In operation call `" + srcClass.name() + "::" + 

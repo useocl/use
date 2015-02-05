@@ -48,7 +48,7 @@ public class ObjectPathTableModel extends TableModel<MObject> {
 				int depth = fView.getDepth(mo);
 				String name = mo.name() + " (0-" + depth + ")";
 				
-				rows.add(new Row<MObject>(name, depth, depth, mo));
+				rows.add(new Row<MObject>(name, 1, depth, mo));
 			}
 		}
 		

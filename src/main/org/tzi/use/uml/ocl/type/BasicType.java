@@ -28,12 +28,17 @@ package org.tzi.use.uml.ocl.type;
  * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public abstract class BasicType extends Type {
+public abstract class BasicType extends TypeImpl {
 
     private final String fTypename;
 
     protected BasicType(String t) {
         fTypename = t;
+    }
+    
+    @Override
+    public boolean isKindOfOclAny(VoidHandling h) {
+    	return true;
     }
     
     @Override
@@ -55,5 +60,4 @@ public abstract class BasicType extends Type {
     public int hashCode() {
         return getClass().hashCode();
     }
-    
 }

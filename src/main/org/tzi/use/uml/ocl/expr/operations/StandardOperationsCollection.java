@@ -9,23 +9,21 @@ import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.TupleType.Part;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
-import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.RealValue;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.Multimap;
 
 public class StandardOperationsCollection {
-	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
+	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
 		// operations on Collection
 		OpGeneric.registerOperation(new Op_collection_size(), opmap);
 		OpGeneric.registerOperation(new Op_collection_includes(), opmap);
@@ -43,8 +41,9 @@ public class StandardOperationsCollection {
 		OpGeneric.registerOperation(new Op_collection_asSequence(), opmap);
 		OpGeneric.registerOperation(new Op_collection_asOrderedSet(), opmap);
 		OpGeneric.registerOperation(new Op_collection_asBag(), opmap);
+		OpGeneric.registerOperation(new Op_collection_flatten(), opmap);
 		
-		OpGeneric.registerOperation(new Op_collection_flatten(), opmap); // USE specific
+		OpGeneric.registerOperation(new Op_collection_single(), opmap); // USE specific
 		
 	}
 }
@@ -70,7 +69,7 @@ final class Op_collection_size extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isCollection(true)) ? TypeFactory
+		return (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
 				.mkInteger() : null;
 	}
 
@@ -100,7 +99,7 @@ final class Op_collection_includes extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isCollection(true)) {			
+		if (params.length == 2 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {			
 			CollectionType coll = (CollectionType) params[0];
 			if (params[1].getLeastCommonSupertype(coll.elemType()) != null)
 				return TypeFactory.mkBoolean();
@@ -123,7 +122,7 @@ final class Op_collection_includes extends OpGeneric {
 		CollectionType  col = (CollectionType) args[0].type();
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to false, " + StringUtil.NEWLINE +
 					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
@@ -152,8 +151,7 @@ final class Op_collection_excludes extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isCollection(true)) {
-
+		if (params.length == 2 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType coll = (CollectionType) params[0];
 			if (params[1].getLeastCommonSupertype(coll.elemType()) != null)
 				return TypeFactory.mkBoolean();
@@ -174,7 +172,7 @@ final class Op_collection_excludes extends OpGeneric {
 		CollectionType  col = (CollectionType) args[0].type();
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to true, " + StringUtil.NEWLINE +
 					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
@@ -203,7 +201,7 @@ final class Op_collection_count extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isCollection(true)) {
+		if (params.length == 2 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType coll = (CollectionType) params[0];
 			if (params[1].getLeastCommonSupertype(coll.elemType()) != null)
 				return TypeFactory.mkInteger();
@@ -224,7 +222,7 @@ final class Op_collection_count extends OpGeneric {
 		CollectionType  col = (CollectionType) args[0].type();
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to true, " + StringUtil.NEWLINE +
 					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
@@ -252,7 +250,9 @@ final class Op_collection_includesAll extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isCollection(true) && params[1].isCollection(true)) {
+		if (params.length == 2 && 
+			params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID) && 
+			params[1].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType coll1 = (CollectionType) params[0];
 			CollectionType coll2 = (CollectionType) params[1];
 
@@ -279,7 +279,7 @@ final class Op_collection_includesAll extends OpGeneric {
 		
 		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
 		
-		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to false, " + StringUtil.NEWLINE +
 					 "because the element types " + StringUtil.inQuotes(elemType1) + 
@@ -307,8 +307,10 @@ final class Op_collection_excludesAll extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isCollection(true)
-				&& params[1].isCollection(true)) {
+		if (params.length == 2 && 
+			params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID) &&
+			params[1].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+			
 			CollectionType coll1 = (CollectionType) params[0];
 			CollectionType coll2 = (CollectionType) params[1];
 
@@ -335,7 +337,7 @@ final class Op_collection_excludesAll extends OpGeneric {
 		
 		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
 		
-		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to true, " + StringUtil.NEWLINE +
 					 "because the element type " + StringUtil.inQuotes(elemType1) + 
@@ -363,7 +365,7 @@ final class Op_collection_isEmpty extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isCollection(true)) ? TypeFactory
+		return (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
 				.mkBoolean() : null;
 	}
 
@@ -392,7 +394,7 @@ final class Op_collection_notEmpty extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isCollection(true)) ? TypeFactory
+		return (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
 				.mkBoolean() : null;
 	}
 
@@ -420,11 +422,11 @@ final class Op_collection_sum extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isCollection(true)) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType c = (CollectionType) params[0];
-			if (c.elemType().isInteger())
+			if (c.elemType().isTypeOfInteger())
 				return TypeFactory.mkInteger();
-			else if (c.elemType().isReal())
+			else if (c.elemType().isTypeOfReal())
 				return TypeFactory.mkReal();
 		}
 		return null;
@@ -432,7 +434,7 @@ final class Op_collection_sum extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		CollectionValue coll = (CollectionValue) args[0];
-		boolean isIntegerCollection = coll.elemType().isInteger();
+		boolean isIntegerCollection = coll.elemType().isTypeOfInteger();
 
 		if (isIntegerCollection) {
 			int isum = 0;
@@ -473,14 +475,14 @@ final class Op_collection_product extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isCollection(true)
-				&& params[1].isCollection(true)) {
+		if (params.length == 2 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)
+				&& params[1].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType c = (CollectionType) params[0];
 			CollectionType c2 = (CollectionType) params[1];
 
 			Part[] parts = new Part[2];
-			parts[0] = new Part("first", c.elemType());
-			parts[1] = new Part("second", c2.elemType());
+			parts[0] = new Part(0, "first", c.elemType());
+			parts[1] = new Part(1, "second", c2.elemType());
 
 			TupleType tupleType = TypeFactory.mkTuple(parts);
 			return TypeFactory.mkSet(tupleType);
@@ -516,18 +518,11 @@ final class Op_collection_flatten extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isCollection(true)) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType c1 = (CollectionType) params[0];
-			if (c1.elemType().isCollection(true)) {
+			if (c1.elemType().isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 				CollectionType c2 = (CollectionType) c1.elemType();
-				if (c1.isSet())
-					return TypeFactory.mkSet(c2.elemType());
-				else if (c1.isBag())
-					return TypeFactory.mkBag(c2.elemType());
-				else if (c1.isSequence() /* && c2.isSequence() */)
-					return TypeFactory.mkSequence(c2.elemType());
-				else
-					return c1.elemType();
+				return c1.createCollectionType(c2.elemType());
 			} else {
 				return c1;
 			}
@@ -537,18 +532,7 @@ final class Op_collection_flatten extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		CollectionValue coll = (CollectionValue) args[0];
-
-		if (coll.isBag())
-			return ((BagValue) coll).flatten();
-		else if (coll.isSet())
-			return ((SetValue) coll).flatten();
-		else if (coll.isSequence())
-			return ((SequenceValue) coll).flatten();
-		else if (coll.isOrderedSet())
-			return ((OrderedSetValue) coll).flatten();
-		else
-			throw new RuntimeException("Unexpected collection type `"
-					+ coll.type() + "'.");
+		return coll.flatten(resultType);
 	}
 }
 
@@ -567,7 +551,7 @@ final class Op_collection_asBag extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isCollection(true)) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType col = (CollectionType) params[0];
 			return TypeFactory.mkBag(col.elemType());
 		}
@@ -595,7 +579,7 @@ final class Op_collection_asSet extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isCollection(true)) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType col = (CollectionType) params[0];
 			return TypeFactory.mkSet(col.elemType());
 		}
@@ -623,7 +607,7 @@ final class Op_collection_asSequence extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isCollection(true)) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType col = (CollectionType) params[0];
 			return TypeFactory.mkSequence(col.elemType());
 		}
@@ -651,7 +635,7 @@ final class Op_collection_asOrderedSet extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isCollection(true)) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType col = (CollectionType) params[0];
 			return TypeFactory.mkOrderedSet(col.elemType());
 		}
@@ -679,7 +663,7 @@ final class Op_collection_max extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isCollection(true)) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType t = (CollectionType)params[0];
 
 			// Check if basic type supports max operation
@@ -731,10 +715,10 @@ final class Op_collection_min extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 1 && params[0].isCollection(true)) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType t = (CollectionType)params[0];
 
-			// Check if basic type supports max operation
+			// Check if basic type supports min operation
 			if (ExpStdOp.exists("min", new Type[]{t.elemType(), t.elemType()}))
 				return t.elemType();
 		}
@@ -765,5 +749,40 @@ final class Op_collection_min extends OpGeneric {
 		}
 		
 		return max;
+	}	
+}
+/* single : Collection(T) -> T */
+final class Op_collection_single extends OpGeneric {
+	public String name() {
+		return "single";
+	}
+
+	public int kind() {
+		return OPERATION;
+	}
+
+	public boolean isInfixOrPrefix() {
+		return false;
+	}
+
+	public Type matches(Type params[]) {
+		if (params.length == 1 && params[0].isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+			CollectionType t = (CollectionType)params[0];
+			return t.elemType();
+		}
+		
+		return null;
+	}
+
+	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		CollectionValue col = (CollectionValue) args[0];
+		
+		Value res = UndefinedValue.instance;
+		
+		if (col.size() == 1) {
+			res = col.collection().iterator().next();
+		}
+		
+		return res;
 	}
 }

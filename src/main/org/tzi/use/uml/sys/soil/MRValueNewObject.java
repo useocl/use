@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.type.Type;
@@ -27,39 +25,43 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
+ *  A RValue which creates a new object.
  * 
  * @author Daniel Gent
- * 
+ * @author Lars Hamann
  */
 public class MRValueNewObject extends MRValue {
-    /** TODO */
-    private MNewObjectStatement fNewObjectStatement;
-
-    /**
-     * TODO
-     * 
-     * @param newObjectStatement
-     */
+	/** The encapsulated new object statement. */
+	private MNewObjectStatement fNewObjectStatement;
+	
+	/**
+	 * Constructs a new RValue to create a new object.  
+	 * @param newObjectStatement The encapsulated new object statement.
+	 */
     public MRValueNewObject(MNewObjectStatement newObjectStatement) {
+		fNewObjectStatement = newObjectStatement;
+	}
 
-        fNewObjectStatement = newObjectStatement;
-    }
+	@Override
+	public Value evaluate(SoilEvaluationContext context,
+			StatementEvaluationResult result) throws EvaluationFailedException {
+        return fNewObjectStatement.execute(context, result);
+	}
 
-    @Override
-    public Value evaluate(SoilEvaluationContext context, StatementEvaluationResult result,
-            MStatement parent) throws EvaluationFailedException {
-        fNewObjectStatement.execute(context, result);
-        return fNewObjectStatement.getCreatedObject().value();
-    }
+	/**
+	 * @return the fNewObjectStatement
+	 */
+	public MNewObjectStatement getNewObjectStatement() {
+		return fNewObjectStatement;
+	}
+	
+	@Override
+	public Type getType() {
+		return fNewObjectStatement.getObjectType();
+	}
 
-    @Override
-    public Type getType() {
-        return fNewObjectStatement.getObjectType();
-    }
-
-    @Override
-    public String toString() {
-        return fNewObjectStatement.shellCommand();
-    }
+	@Override
+	public String toString() {
+		return fNewObjectStatement.shellCommand();
+	}
 }

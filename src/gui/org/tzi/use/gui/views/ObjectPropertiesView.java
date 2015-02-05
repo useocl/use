@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views;
 
 import java.awt.BorderLayout;
@@ -29,6 +27,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,14 +59,17 @@ import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
-import org.tzi.use.util.Log;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A view for showing and changing object properties (attributes).
- * 
- * @version     $ProjectVersion: 0.393 $
+ *  
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")
@@ -77,7 +80,7 @@ public class ObjectPropertiesView extends JPanel implements View {
     private MSystem fSystem;
     private MObject fObject;
 
-    private JComboBox fObjectComboBox;
+    private JComboBox<String> fObjectComboBox;
     private JTable fTable;
     private JScrollPane fTablePane;
     private JButton fBtnApply;
@@ -117,11 +120,10 @@ public class ObjectPropertiesView extends JPanel implements View {
                 return fValues[row];
         }
         public boolean isCellEditable(int row, int col) {
-            return col == 1; 
+            return col == 1 && !fAttributes.get(row).isDerived();
         }
 
         public void setValueAt(Object value, int row, int col) {
-            Log.trace(this, "row = " + row + ", col = " + col + ", value = " + value);
             fValues[row] = value.toString();
             fireTableCellUpdated(row, col);
         }
@@ -131,25 +133,30 @@ public class ObjectPropertiesView extends JPanel implements View {
             if ( haveObject() ) {
                 MObjectState objState = fObject.state(fSystem.state());
                 fAttributeValueMap = objState.attributeValueMap();
-                final int N = fAttributeValueMap.size();
+                                
+                Collection<MAttribute> attributes = ModelBrowserSorting.getInstance().sortAttributes( fAttributeValueMap.keySet() );
                 
-                fAttributes = ModelBrowserSorting.getInstance().sortAttributes( 
-                					fAttributeValueMap.keySet() );
+                attributes = Collections2.filter(attributes, new Predicate<MAttribute>() {
+					@Override
+					public boolean apply(MAttribute input) {
+						return !input.isDerived();
+					}
+				});
                 
-                fValues = new String[N];
-                for (int i = 0; i < N; i++)
-                    fValues[i] = 
-                        ((Value) fAttributeValueMap
-                                .get((MAttribute) fAttributes.get(i))).toString();
+                fAttributes = Lists.newArrayList(attributes);
+                fValues = new String[fAttributes.size()];
+                for (int i = 0; i < fValues.length; i++) {
+                    fValues[i] = fAttributeValueMap.get(fAttributes.get(i)).toString();
+                }
             } else {
-                fAttributes = new ArrayList<MAttribute>();
+                fAttributes = Collections.emptyList();
                 fValues = new String[0];
             }
             fireTableDataChanged();
         }
         
         /**
-         * After the occurence of an event the attribute list is updated.
+         * After the occurrence of an event the attribute list is updated.
          */
         public void stateChanged( SortChangeEvent e ) {
             fAttributes = ModelBrowserSorting.getInstance()
@@ -160,10 +167,9 @@ public class ObjectPropertiesView extends JPanel implements View {
 
     class ObjectComboBoxActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            JComboBox cb = (JComboBox) e.getSource();
-            String objName = (String) cb.getSelectedItem();
-            Log.trace(this, "fObjectComboBox.actionPerformed(): " + objName);
-            if (objName != NO_OBJECTS_AVAILABLE )
+            String objName = (String)fObjectComboBox.getSelectedItem();
+            
+            if (!NO_OBJECTS_AVAILABLE.equals(objName))
                 selectObject(objName);
         }
     }
@@ -172,10 +178,11 @@ public class ObjectPropertiesView extends JPanel implements View {
         super(new BorderLayout());
         fMainWindow = parent;
         fSystem = system;
-        fSystem.addChangeListener(this);
+        fSystem.registerRequiresAllDerivedValues();
+        fSystem.getEventBus().register(this);
 
         // create combo box with available objects
-        fObjectComboBox = new JComboBox();
+        fObjectComboBox = new JComboBox<String>();
         fObjectComboBoxActionListener = new ObjectComboBoxActionListener();
 
         // create table of attribute/value pairs
@@ -235,7 +242,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         }
         
         // Don't refresh after first change...
-        fSystem.removeChangeListener(this);
+        fSystem.getEventBus().unregister(this);
         boolean error = false;
         
         for (int i = 0; i < fValues.length; ++i) {
@@ -285,7 +292,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         
         if (!error) update();
         
-        fSystem.addChangeListener(this);
+        fSystem.getEventBus().register(this);
     }
 
     private boolean haveObject() {
@@ -296,8 +303,6 @@ public class ObjectPropertiesView extends JPanel implements View {
      * Initializes and updates the list of available objects.
      */
     private void updateGUIState() {
-        Log.trace(this, "updateGUIState1");
-
         // temporarily turn off action listener, since setting the
         // model triggers a select action which cannot be
         // distinguished from a user initiated selection
@@ -320,17 +325,16 @@ public class ObjectPropertiesView extends JPanel implements View {
         } else
             fObjectComboBox.setEnabled(true);
         
-        Object[] objNames = livingObjects.toArray();
+        String[] objNames = livingObjects.toArray(new String[]{});
         Arrays.sort(objNames);
 
         // create combo box with available objects
-        fObjectComboBox.setModel(new DefaultComboBoxModel(objNames));
+        fObjectComboBox.setModel(new DefaultComboBoxModel<String>(objNames));
         
         // try to keep selection
         if (haveObject() )
             fObjectComboBox.setSelectedItem(fObject.name());
         fObjectComboBox.addActionListener(fObjectComboBoxActionListener);
-        Log.trace(this, "updateGUIState2");
     }
 
     /**
@@ -352,18 +356,17 @@ public class ObjectPropertiesView extends JPanel implements View {
         fTableModel.update();
     }
     
-    /** 
-     * Called due to an external change of state.
-     */
-    public void stateChanged(StateChangeEvent e) {
-        update();
+    @Subscribe
+    public void onStateChanged(SystemStateChangedEvent e) {
+    	update();
     }
-
+    
     /**
      * Detaches the view from its model.
      */
     public void detachModel() {
-        fSystem.removeChangeListener(this);
+        fSystem.getEventBus().unregister(this);
+        fSystem.unregisterRequiresAllDerivedValues();
     }
 }
 

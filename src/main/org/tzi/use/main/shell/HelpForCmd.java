@@ -21,9 +21,11 @@
 
 package org.tzi.use.main.shell;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -41,7 +43,6 @@ import org.tzi.use.util.Log;
  * Example: help.net.syntax=net help.net=Read commands from socket
  * help.net.detail=Read commands from a socket. Socket number is 1777.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick </a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche </a>
  * @author green
@@ -50,17 +51,15 @@ public class HelpForCmd {
 
     private static HelpForCmd INSTANCE;
 
-    private static final String INTENT = "  ";
+    private static final String INDENT = "  ";
 
-    private final String HELP_PROPERTY_FILE = "help.properties";
+    private static final String HELP_PROPERTY_FILE = "help.properties";
 
     private ResourceBundle resource;
 
     private HelpForCmd() {
-        try {
-            FileInputStream fis = new FileInputStream(Options.homeDir
-                    + Options.FILE_SEPARATOR + "etc" + Options.FILE_SEPARATOR
-                    + HELP_PROPERTY_FILE);
+    	Path path = Options.homeDir.resolve("etc").resolve(HELP_PROPERTY_FILE);
+        try (InputStream fis = Files.newInputStream(path)) {
             resource = new PropertyResourceBundle(fis);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -89,13 +88,13 @@ public class HelpForCmd {
             String detail = resource.getString(key+".detail");
             detail = detail.replaceAll("\\n",Options.LINE_SEPARATOR + "  ");
             System.out.println("SYNTAX");
-            System.out.println(INTENT + syntax);
+            System.out.println(INDENT + syntax);
             System.out.println();
             System.out.println("SYNOPSIS");
-            System.out.println(INTENT + shortStr);
+            System.out.println(INDENT + shortStr);
             System.out.println();
             System.out.println("DESCRIPTION");
-            System.out.println(INTENT + detail);
+            System.out.println(INDENT + detail);
             System.out.println();
         } catch (MissingResourceException e) {
             Log.error("help missing for " + key);
@@ -205,6 +204,8 @@ public class HelpForCmd {
             printDetailedHelpByKey("help.net");
         } else if (cmd.startsWith("open")) {
             printDetailedHelpByKey("help.open");
+        } else if (cmd.startsWith("reopen")) {
+        	printDetailedHelpByKey("help.reopen");
         } else if (cmd.startsWith("load")) {
             printDetailedHelpByKey("help.load");
         } else if (cmd.startsWith("readq")) {
@@ -239,6 +240,8 @@ public class HelpForCmd {
             printDetailedHelpByKey("help.gen.result");   
 		} else if (cmd.startsWith("plugins")) {
 			printDetailedHelpByKey("help.plugins");
+		} else if (cmd.startsWith("delay")) {
+			printDetailedHelpByKey("help.delay");
         } else
             Log.error("Unknown command `" + cmd + "'. " + "Try `help'.");
     }
@@ -249,6 +252,7 @@ public class HelpForCmd {
     private void printHelpOverview() {
         printHeader("General commands");
         printOneLineHelpByKey("help.help");
+        printOneLineHelpByKey("help.delay");
         printHeader("Evaluation commands");
         printOneLineHelpByKey("help.eval");
         printOneLineHelpByKey("help.eval.verbose");
@@ -267,6 +271,7 @@ public class HelpForCmd {
         printOneLineHelpByKey("help.stepon");
         printHeader("File input");
         printOneLineHelpByKey("help.open");
+        printOneLineHelpByKey("help.reopen");
         printOneLineHelpByKey("help.read");
         printOneLineHelpByKey("help.readq");
         printOneLineHelpByKey("help.reset");

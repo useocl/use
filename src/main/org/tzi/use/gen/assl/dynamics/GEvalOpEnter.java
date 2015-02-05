@@ -1,8 +1,6 @@
 package org.tzi.use.gen.assl.dynamics;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.tzi.use.gen.assl.statics.GInstrOpEnter;
 import org.tzi.use.gen.assl.statics.GOCLExpression;
@@ -11,7 +9,6 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystemException;
@@ -51,26 +48,24 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 			Expression expr = new ExpressionWithValue( value );
 
 			Type t = expr.type();
-			if (! t.isObjectType() ) throw new GEvaluationException();
-			MClass cls = ((ObjectType) t).cls();
-			MOperation op = cls.operation
-			(fInstr.opname(), true);
+			if (!t.isTypeOfClass() ) throw new GEvaluationException();
+			
+			MClass cls = (MClass)t;
+			MOperation op = cls.operation(fInstr.opname(), true);
 
 			// get Parameter and transform them into expressions
 			Iterator<GValueInstruction> paramIter = fInstr.parameter().iterator();
 			argExprs = new Expression[fInstr.parameter().size()];
 			int i=0;
-			Map<String, Expression> arguments = new HashMap<String, Expression>();
 			while (paramIter.hasNext()){
 				GOCLExpression goexpr = (GOCLExpression) paramIter.next();
 				Value v2 = conf.evalExpression(goexpr.expression());
 				argExprs[i] = new ExpressionWithValue(v2);
-				// soil adapted
-				arguments.put(op.paramList().varDecl(i).name(), argExprs[i]);
 				i++;
 			}
+			
 			// generate statement for openter command 
-			MEnterOperationStatement stmt = new MEnterOperationStatement(expr, op, arguments);
+			MEnterOperationStatement stmt = new MEnterOperationStatement(expr, op, argExprs);
 			MStatement inverseStatement = null;
 			StatementEvaluationResult evaluationResult = null;
 			try {
@@ -97,7 +92,6 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 				if (!collector.getPrePostViolation())
 					conf.systemState().system().execute(inverseStatement, true, false, false);
 			} catch (MSystemException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

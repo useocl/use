@@ -29,4 +29,14 @@
 		]]>
 		</body>
 	</operation>
+	
+	<operation source="String" name="matchesER" returnType="Boolean">
+		<parameter>
+			<par name="pattern" type="String" />
+		</parameter>
+		<body><![CDATA[
+			!($self =~ Regexp.new($pattern)).nil?
+		]]>
+		</body>
+	</operation>
 </extensions>

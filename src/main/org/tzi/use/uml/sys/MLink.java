@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * A link is an instance of an association.
@@ -64,4 +65,19 @@ public interface MLink {
      * Returns the link end for the given association end.
      */
     MLinkEnd linkEnd(MAssociationEnd aend);
+
+    /** 
+     * Returns the link end for the given index.
+     */
+    MLinkEnd getLinkEnd(int index);
+    
+	/**
+	 * Returns <code>true</code> if the link is nor really present
+	 * in the system state, i. e., it was not created by the user.
+	 * <p>For example, derived association ends create such links.</p>
+	 * @return <code>true</code> if this link is somehow derived.
+	 */
+	boolean isVirtual();
+	
+	List<List<Value>> getQualifier();
 }

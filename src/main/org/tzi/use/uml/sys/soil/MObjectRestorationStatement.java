@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
 import java.util.List;
@@ -31,76 +29,97 @@ import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
+import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
- * TODO
+ * Statement used internally as the inverse statement of an object
+ * delete statement.
  * 
  * @author Daniel Gent
- * 
+ *
  */
 public class MObjectRestorationStatement extends MStatement {
-    /** TODO */
-    private DeleteObjectResult fDeleteObjectResult;
-    /** TODO */
-    private Map<MObject, List<String>> fUndefinedTopLevelReferences;
-
-    /**
-     * 
-     * @param deleteObjectResult
-     * @param undefinedTopLevelReferences
-     */
+	/** 
+	 * The result of the object delete statement this statement is the inverse of
+	 */
+	private DeleteObjectResult fDeleteObjectResult;
+	
+	/** 
+	 * Used to restore top level variables
+	 */
+	private Map<MObject, List<String>> fUndefinedTopLevelReferences;
+	
+	/**
+	 * 
+	 * @param deleteObjectResult
+	 * @param undefinedTopLevelReferences
+	 */
     public MObjectRestorationStatement(DeleteObjectResult deleteObjectResult,
-            Map<MObject, List<String>> undefinedTopLevelReferences) {
-
-        fDeleteObjectResult = deleteObjectResult;
-        fUndefinedTopLevelReferences = undefinedTopLevelReferences;
-    }
-
-    @Override
-    public void execute(SoilEvaluationContext context, StatementEvaluationResult result)
+			Map<MObject, List<String>> undefinedTopLevelReferences) {
+		
+		fDeleteObjectResult = deleteObjectResult;
+		fUndefinedTopLevelReferences = undefinedTopLevelReferences;
+	}
+	
+	@Override
+    public Value execute(SoilEvaluationContext context, StatementEvaluationResult result)
             throws EvaluationFailedException {
-
-        // restore objects
+		
+		// restore objects
         Set<MObjectState> removedObjectStates = fDeleteObjectResult.getRemovedObjectStates();
-
-        for (MObjectState objectState : removedObjectStates) {
+		
+		for (MObjectState objectState : removedObjectStates) {
             try {
-                context.getState().restoreObject(objectState);
+            	context.getSystem().restoreObject(objectState);
                 result.getStateDifference().addNewObject(objectState.object());
             } catch (MSystemException e) {
-                throw new EvaluationFailedException(this, e);
+                throw new EvaluationFailedException(e);
             }
         }
-
-        // restore links
-        Set<MLink> removedLinks = fDeleteObjectResult.getRemovedLinks();
-
+		
+		// restore links
+		Set<MLink> removedLinks = fDeleteObjectResult.getRemovedLinks();
+	
         for (MLink link : removedLinks) {
-            context.getState().insertLink(link);
+            context.getSystem().restoreLink(link);
             result.getStateDifference().addNewLink(link);
         }
-
+        
+        // Restore modified attributes
+        for (ObjectStateModification stateMod : fDeleteObjectResult.getModifiedStates()) {
+        	MObjectState state = stateMod.getObjectState();
+        	state.setAttributeValue(stateMod.getAttribute(), stateMod.getObject().value());
+            result.getStateDifference().addModifiedObject(stateMod.getObject());
+        }
+        
         // restore top level variables
         Set<Entry<MObject, List<String>>> undefinedVariables = fUndefinedTopLevelReferences
                 .entrySet();
-        for (Entry<MObject, List<String>> entry : undefinedVariables) {
-            Value value = entry.getKey().value();
-            for (String name : entry.getValue()) {
+        for (Entry<MObject, List<String>> entry :undefinedVariables) {
+        	Value value = entry.getKey().value();
+        	for (String name : entry.getValue()) {
                 context.getVarEnv().assign(name, value);
-            }
+        	}
         }
-    }
+        
+        return null;
+	}
+	
+	@Override
+	protected String shellCommand() {
+		return "<object restoration>";
+	}
+	
+	@Override
+	public String toString() {
+		return shellCommand();
+	}
 
-    @Override
-    protected String shellCommand() {
-        return "<object restoration>";
-    }
-
-    @Override
-    public String toString() {
-        return shellCommand();
-    }
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
+	}
 }

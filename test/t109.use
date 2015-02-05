@@ -1,0 +1,572 @@
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+-- [1] Role-Based Access Control Models
+-- Ravi S. Sandhu, Edward J. Coyne, Hal L. Feinstein and Charles E. Youman
+-- \Literatur\RBAC\nocite\sandhu96.pdf
+
+-- A:   user, role, permission, session
+
+-- B:   permission to role assignment, user to role assignment
+
+-- C:   active user (user : S -> U), active roles (roles : S -> 2^R)
+
+-- D:   role hierarchies, junior roles, senior roles
+
+-- E:   policy constraints (static)
+-- E1:  mutually exclusive roles in terms of user assignment
+-- E2:  mutually exclusive roles in terms of permission assignment 
+-- E3:  role: maximum number of members
+-- E4:  user: maximum number of roles
+-- E5:  permission: maximum number of roles 
+-- E6:  prerequisite roles
+-- E7:  prerequisite permissions
+-- E8:  mutually exclusive roles in terms of a session
+-- E9:  user: maximum number of sessions active at the same time
+-- E10: permission: maximum number of sessions activating the permission at the same time
+-- E11: role: maximum number of junior roles
+-- E12: role: maximum number of senior roles
+-- E13: roles: no common junior roles
+-- E14: roles: no common senior roles
+-- E15: mutually exclusive roles (in terms of user assignment) may allow identical senior
+-- E16: user: maximum number of roles respecting role hierarchy
+
+-----------------------------------------------------------------------
+
+-- [2] Analyzing and Managing Role-Based Access Control Policies
+-- Karsten Sohr, Michael Drouineaud, Gail-Joon Ahn, Senior Member, IEEE, and Martin Gogolla
+-- \Literatur\RBAC\nocite\AnalyzingAndManagingRBACPolicies.pdf
+
+-- F:   actions and resources (operations and objects), resource access
+
+-- G:   policy constraints
+-- G1:  resource access only with respective permission
+-- G2:  resource-based dynamic separation of duty
+-- G3:  history-based dynamic separation of duty
+
+-----------------------------------------------------------------------
+
+-- Z:   additional policy constraints (static)
+-- Z1:  required roles must not be exclusive with respect to user assignment
+-- Z2:  exclusion links must determine at least one particular exclusion
+-- Z3:  roles must not be self-exclusive
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+-- SNAP: snapshot concepts
+
+-- S:   snapshot constraints (dynamic)
+-- S1:  snapshots establish one chain
+-- S2:  successive users belong to successive snapshots
+-- S3:  successive sessions related to successive users
+-- S4:  successive accesses related to successive sessions
+-- S5:  user names identify users over time
+-- S6:  session ids identify sessions over time
+-- S7:  access ids identify accesses over time
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+model RBAC
+
+------------------- policy classes (static) ---------------------------
+------------------- administrative view -------------------------------
+------------------- no changes over time ------------------------------
+
+class User ------------------------------------------------------ A [1]
+attributes
+  name : String ---------------------------------------------------- S5
+  maxRoles : Integer ------------------------------------------- E4 [1]
+  maxRolesRespectingHierarchy : Boolean ----------------------- E16 [1]
+  maxSessions : Integer ---------------------------------------- E9 [1]
+  affiliation : String
+operations
+
+-- For CD View:
+--  successors() : Set(User) = Set{}
+
+  successors() : Set(User) = if self.succ.isDefined then --------- SNAP
+    successorsAux(Sequence{self.succ})->asSet() else Set{} endif
+  successorsAux(users:Sequence(User)) : Sequence(User) =
+    let successor = users->last().succ in
+    if successor.isDefined() then
+      successorsAux(users->append(successor))
+    else users endif
+    
+  predecessors() : Set(User) = if self.pred.isDefined then --------- SNAP
+    predecessorsAux(Sequence{self.pred})->asSet() else Set{} endif
+  predecessorsAux(users:Sequence(User)) : Sequence(User) =
+    let predecessor = users->last().pred in
+    if predecessor.isDefined() then
+      predecessorsAux(users->append(predecessor))
+    else users endif
+end 
+
+class Role ------------------------------------------------------ A [1]
+attributes
+  name : String
+  maxMembers : Integer ----------------------------------------- E3 [1]
+  maxJuniors : Integer ---------------------------------------- E11 [1]
+  exclusiveJuniorsAllowed : Boolean --------------------------- E15 [1]
+  maxSeniors : Integer ---------------------------------------- E12 [1]
+operations  
+  userAssignmentExclusives() : Set(Role) =
+    mutuallyExclusive[roleA]->select(wrtUserAssignment).roleB
+    ->union(
+    mutuallyExclusive[roleB]->select(wrtUserAssignment).roleA)
+    ->asSet()   
+  permissionAssignmentExclusives() : Set(Role) =
+    mutuallyExclusive[roleA]->select(wrtPermissionAssignment).roleB
+    ->union(
+    mutuallyExclusive[roleB]->select(wrtPermissionAssignment).roleA)
+    ->asSet() 
+  activeRolesExclusives() : Set(Role) =
+    mutuallyExclusive[roleA]->select(wrtActiveRoles).roleB
+    ->union(
+    mutuallyExclusive[roleB]->select(wrtActiveRoles).roleA)
+    ->asSet()  
+  juniorsExclusives() : Set(Role) =
+    mutuallyExclusive[roleA]->select(wrtJuniors).roleB
+    ->union(
+    mutuallyExclusive[roleB]->select(wrtJuniors).roleA)
+    ->asSet() 
+  seniorsExclusives() : Set(Role) =
+    mutuallyExclusive[roleA]->select(wrtSeniors).roleB
+    ->union(
+    mutuallyExclusive[roleB]->select(wrtSeniors).roleA)
+    ->asSet()
+
+-- For CD View:
+--  juniors() : Set(Role) = Set{}
+--  seniors() : Set(Role) = Set{}
+--  required() : Set(Role) = Set{}
+
+  juniors() : Set(Role) = juniorsAux(self.junior) --------------- D [1]
+  juniorsAux(roles:Set(Role)) : Set(Role) = 
+    let juniorRoles = roles.junior->asSet() in 
+    if roles->includesAll(juniorRoles) then roles
+    else juniorsAux(roles->union(juniorRoles))
+    endif
+
+  seniors() : Set(Role) = seniorsAux(self.senior) --------------- D [1] 
+  seniorsAux(roles:Set(Role)) : Set(Role) = 
+    let seniorRoles = roles.senior->asSet() in 
+    if roles->includesAll(seniorRoles) then roles
+    else seniorsAux(roles->union(seniorRoles))
+    endif
+    
+  required() : Set(Role) = requiredAux(self.required) ---------- E6 [1]
+  requiredAux(roles:Set(Role)) : Set(Role) = 
+    let requiredRoles = roles.required->asSet() in 
+    if roles->includesAll(requiredRoles) then roles
+    else requiredAux(roles->union(requiredRoles))
+    endif
+end
+ 
+associationclass Permission between --------------------- A [1] / F [2] 
+Action[*]
+Resource[*]              
+attributes
+  name : String
+  maxRoles : Integer ------------------------------------------- E5 [1]
+  maxSessions : Integer --------------------------------------- E10 [1]   
+end
+
+class Action ---------------------------------------------------- F [2]
+attributes 
+  name : String
+operations  
+  resourceAndUserExclusives() : Set(Action) =
+    mutuallyExclusiveActions[roleA]->select(wrtResourceAndUser).roleB
+    ->union(
+    mutuallyExclusiveActions[roleB]->select(wrtResourceAndUser).roleA)
+    ->asSet()   
+  affiliationExclusives() : Set(Action) =
+mutuallyExclusiveActions[roleA]->select(wrtAffiliation).roleB
+->union(
+mutuallyExclusiveActions[roleB]->select(wrtAffiliation).roleA)
+->asSet()
+end
+
+class Resource -------------------------------------------------- F [2]
+attributes
+  name : String
+  resourceBasedDynamicSeparationOfDuty : Boolean --------------- G2 [2]
+  historyBasedDynamicSeparationOfDuty: Boolean ----------------- G3 [2]
+end
+
+------------------- user activity classes (dynamic) -------------------
+------------------- user activity view --------------------------------
+------------------- instances may change over time --------------------
+
+class Session --------------------------------------------------- A [1]
+attributes
+  id : String ------------------------------------------------------ S6
+operations
+--  successors() : Set(Session) = Set{}
+  successors() : Set(Session) = if self.succ.isDefined then ------ SNAP
+    successorsAux(Sequence{self.succ})->asSet() else Set{} endif
+  successorsAux(sessions:Sequence(Session)) : Sequence(Session) =
+    let successor = sessions->last().succ in
+    if successor.isDefined() then
+      successorsAux(sessions->append(successor))
+    else sessions endif
+end
+
+class Access ---------------------------------------------------- F [2]
+attributes
+  id : String ------------------------------------------------------ S7
+end
+
+------------------- policy associations (static) ----------------------
+------------------- administrative view -------------------------------
+------------------- no changes over time ------------------------------
+
+association PermissionAssignment between ------------------------ B [1]
+Permission[1..*]
+Role[*]
+end
+
+association UserAssignment between ------------------------------ B [1]
+User[*]
+Role[1..*]
+end
+
+association RoleHierarchy between ------------------------------- D [1]
+Role[*] role senior
+Role[*] role junior
+end
+
+association PrerequisiteRoles between -------------------------- E6 [1]
+Role[*] role required
+Role[*] role dependent
+end
+
+association LessMoreMembers between
+Role [0..1 ] role less
+Role [0..1 ] role more
+end
+
+association PrerequisitePermissions between -------------------- E7 [1]
+Permission[*] role required
+Permission[*] role dependent
+end
+
+associationclass PrerequisiteActions between -------------------- E7 [1]
+Action[*] role required
+Action[*] role dependent
+attributes
+  wrtResource:Boolean
+  wrtResourceAndUser:Boolean
+end
+
+associationclass MutuallyExclusive between ---------------------- E [1] 
+Role[*] role roleA
+Role[*] role roleB
+attributes
+  id : String
+  wrtUserAssignment : Boolean ---------------------------------- E1 [1]
+  identicalSeniorAllowed : Boolean ---------------------------- E15 [1]
+  wrtPermissionAssignment : Boolean ---------------------------- E2 [1]
+  wrtActiveRoles : Boolean ------------------------------------- E8 [1]
+  wrtJuniors : Boolean ---------------------------------------- E13 [1]
+  wrtSeniors : Boolean ---------------------------------------- E14 [1]
+end
+
+associationclass MutuallyExclusiveActions between
+Action[*] role roleA
+Action[*] role roleB
+attributes
+  id : String
+  wrtResourceAndUser : Boolean
+  wrtAffiliation : Boolean
+end
+
+------------------- user activity assocations (dynamic) ---------------
+------------------- user activity view --------------------------------
+------------------- instances may change over time --------------------
+
+association ActiveUser between ---------------------------------- C [1]
+Session[*]
+User[1]
+end
+
+association ActiveRoles between --------------------------------- C [1]
+Session[*]
+Role[*]
+end
+
+composition ActiveAccess between -------------------------------- F [2]
+Session[1]
+Access[*]
+end
+
+association AccessAction between -------------------------------- F [2]
+Access[*]
+Action[1]
+end
+
+association AccessResource between ------------------------------ F [2]
+Access[*]
+Resource[1]
+end
+
+------------------- snapshot concepts (dynamic) -----------------------
+------------------- basis for dynamic user activity -------------------
+
+class Snapshot --------------------------------------------------- SNAP
+operations
+
+-- For CD View:
+--    successors() : Set(Snapshot) = Set{}
+
+  successors() : Set(Snapshot) = successorsAux(Set{self.succ}) --- SNAP
+  
+  successorsAux(snapshots:Set(Snapshot)) : Set(Snapshot) = 
+    let succSnapshots = snapshots->collect(s |
+        if s.succ.isDefined() then s.succ else s endif)->asSet() in 
+    if snapshots->includesAll(succSnapshots) then snapshots
+    else successorsAux(snapshots->union(succSnapshots))
+    endif
+    
+  predecessors() : Set(Snapshot) = predecessorsAux(Set{self.pred})
+  predecessorsAux(snapshots:Set(Snapshot)) : Set(Snapshot) = 
+    let predSnapshots = snapshots->collect(s |
+        if s.pred.isDefined() then s.pred else s endif)->asSet() in 
+    if snapshots->includesAll(predSnapshots) then snapshots
+    else predecessorsAux(snapshots->union(predSnapshots))
+    endif
+end
+
+association PredSuccSnapshot between ----------------------------- SNAP
+Snapshot[0..1] role pred
+Snapshot[0..1] role succ
+end
+
+association PredSuccUser between --------------------------------- SNAP
+User[0..1] role pred
+User[0..1] role succ
+end
+
+association PredSuccSession between ------------------------------ SNAP
+Session[0..1] role pred
+Session[0..1] role succ
+end
+
+association PredSuccAccess between ------------------------------- SNAP
+Access[0..1] role pred
+Access[0..1] role succ
+end
+
+association SnapshotUser between --------------------------------- SNAP
+Snapshot[1]
+User[*]
+end
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+constraints
+
+------------------- policy constraints (static) -----------------------
+------------------- administrative view -------------------------------
+------------------- constraints independent from snapshots ------------
+  
+context u:User
+  inv NoUserAssignedToExclusiveRoles: -------------------------- E1 [1]
+    u.role->forAll(r1, r2 | 
+      r1.userAssignmentExclusives()->excludes(r2))
+  inv MaximumNumberOfRoles: -------------------------------- E4/E16 [1]
+    let numberOfRoles = 
+      if u.maxRolesRespectingHierarchy.isDefined and
+         u.maxRolesRespectingHierarchy then 
+           u.role->union(u.role.juniors())->asSet()->size()
+      else u.role->size() endif
+    in maxRoles.isDefined implies numberOfRoles <= maxRoles
+  inv MaximumNumberOfSessions: --------------------------------- E9 [1]
+    u.maxSessions.isDefined implies u.session->size() <= u.maxSessions
+  
+context r:Role
+  inv RoleHierarchyPartialOrder: -------------------------------- D [1]
+    r.seniors()->excludes(r)
+  inv MaximumNumberOfMembers: ---------------------------------- E3 [1]
+    r.maxMembers.isDefined implies r.user->size() <= r.maxMembers
+  inv RequiredRolesPresent: ------------------------------------ E6 [1]
+    r.user->forAll(u | u.role->includesAll(r.required))
+  inv RequiredRolesNotExclusive: ----------------------------------- Z1 
+    r.required()->excludesAll(r.userAssignmentExclusives())
+  inv MaximumNumberOfJuniors: --------------------------------- E11 [1]
+    r.maxJuniors.isDefined implies r.junior->size() <= r.maxJuniors  
+  inv MaximumNumberOfSeniors: --------------------------------- E12 [1]
+    r.maxSeniors.isDefined implies r.senior->size() <= r.maxSeniors
+  inv NoSharedJuniorsOfExclusiveRoles: ------------------------ E13 [1]
+    r.juniors()->excludesAll(r.juniorsExclusives().juniors())
+  inv NoSharedSeniorsOfExclusiveRoles: ------------------------ E14 [1]
+    r.seniors()->excludesAll(r.seniorsExclusives().seniors())
+  inv SeniorsWithExclusiveJuniors: ---------------------------- E15 [1]
+    r.exclusiveJuniorsAllowed or
+    r.juniors()->forAll(r1, r2 |
+      r1.mutuallyExclusive[roleA]->union(r1.mutuallyExclusive[roleB])
+        ->forAll(m | m.wrtUserAssignment.isDefined() and 
+                     m.wrtUserAssignment and m.roleB=r2 implies 
+                       m.identicalSeniorAllowed))
+         
+context p:Permission
+  inv NoPermissionAssignedtoExclusiveRoles: -------------------- E2 [1]
+    p.role->forAll(r1, r2 | 
+      r1.permissionAssignmentExclusives()->excludes(r2))
+  inv MaximumNumberOfRoles: ------------------------------------ E5 [1]
+    p.maxRoles.isDefined implies p.role->size() <= p.maxRoles
+  inv RequiredPermissionsPresent: ------------------------------ E7 [1] 
+    p.role->forAll(r | r.permission->includesAll(p.required))
+      
+context s:Session 
+  inv ActiveRolesSubsetUserRoles: ------------------------------- C [1]
+    let directUserRoles = s.user.role in 
+    let userRoles = directUserRoles->union(directUserRoles.juniors()) 
+    in userRoles->includesAll(s.role)
+  inv ActionsPermitted: ---------------------------------------- G1 [2]
+    s.access->forAll(a |
+      let neededPermissions = a.action.permission
+          ->select(p | p.resource = a.resource) in
+      neededPermissions->notEmpty() and
+      s.role.permission->union(s.role.juniors().permission)->asSet()
+        ->includesAll(neededPermissions)) 
+
+context m:MutuallyExclusive ---------------------------------------- Z2
+  inv DeterminationOfAtLeastOneExclusion:
+    m.wrtUserAssignment or m.wrtPermissionAssignment or
+    m.wrtActiveRoles or m.wrtJuniors or m.wrtSeniors
+  inv NoSelfExclusion: --------------------------------------------- Z3
+    m.roleA <> m.roleB  
+ 
+context m:PrerequisiteActions   
+  inv RequiredActionsPrecedeDependendActions:
+      Resource.allInstances()->forAll(r | 
+        m.dependent.access->select(resource = r)->forAll(acc |
+          let u = acc.session.user in
+            u.snapshot.predecessors()->including(u.snapshot)->exists(snap |
+              let relevantAcc = 
+                if wrtResource then snap.user.session.access
+                else snap.user->select(name = u.name).session.access endif in
+              relevantAcc->select(resource = r).action->includes(m.required))))
+  inv DeterminationOfExactlyOneDependencyType:
+    wrtResource xor wrtResourceAndUser
+    
+------------------- policy constraints (dynamic) ----------------------
+------------------- administrative view -------------------------------
+------------------- constraints depending on snapshots ----------------
+
+context p:Permission
+  inv MaximumNumberOfSessions: -------------------------------- E10 [1]
+    p.maxSessions.isDefined implies 
+      Snapshot.allInstances()->forAll(snap |
+        p.role.session->asSet()->select(s |
+          s.user.snapshot = snap)->size() <= p.maxSessions)
+  
+-- erroneous version        
+--  inv MaximumNumberOfSessions: -------------------------------- E10 [1]
+--    p.maxSessions.isDefined implies 
+--      p.role.session->asSet()->size() <= p.maxSessions
+
+context u:User
+  inv ResourceBasedDynamicSeparationOfDuty: -------------------- G2 [2]
+    Resource.allInstances()->forAll(r | 
+      r.resourceBasedDynamicSeparationOfDuty.isDefined and 
+      r.resourceBasedDynamicSeparationOfDuty implies
+        r.access->select(a | 
+          u.successors()->including(u)->includes(a.session.user))
+            .action->asSet()->size() <= 1)
+  inv HistoryBasedDynamicSeparationOfDuty: --------------------- G3 [2]
+    Resource.allInstances()->forAll(r |
+      let availableActions = r.action->size() in 
+      r.historyBasedDynamicSeparationOfDuty.isDefined and 
+      r.historyBasedDynamicSeparationOfDuty and 
+      availableActions > 1 implies
+        r.access->select(a | 
+          u.successors()->including(u)->includes(a.session.user))
+            .action->asSet->size() < availableActions)
+  inv NoUserAccessesResourceViaExclusiveActions:
+    Resource.allInstances()->forAll(r | 
+      r.access->select(a | 
+	    u.successors()->including(u)->includes(a.session.user)).action
+		  ->forAll(act1, act2| 
+		    act1.resourceAndUserExclusives()->excludes(act2)))    
+      
+-- erroneous version     
+--  inv HistoryBasedDynamicSeparationOfDuty: --------------------- G3 [2]
+--    Resource.allInstances()->forAll(r |
+--      let availableActions = r.action->size() in 
+--      r.historyBasedDynamicSeparationOfDuty.isDefined and 
+--      r.historyBasedDynamicSeparationOfDuty implies
+--        r.access->select(a | 
+--          u.successors()->including(u)->includes(a.session.user))
+--            .action->asSet->size() < availableActions)
+
+context s:Session
+  inv NoExclusiveRolesActive: ---------------------------------- E8 [1]
+    let activeRoles = s.successors().role->union(s.role) in
+    activeRoles->excludesAll(activeRoles.activeRolesExclusives())
+
+------------------- snapshot constraints (dynamic) --------------------
+------------------- basis for dynamic user activity -------------------
+
+context snap:Snapshot
+  inv ChainOfSnapshots: -------------------------------------------- S1
+    let allSnapshots = Snapshot.allInstances in
+    snap.successors()->excludes(snap) and
+    allSnapshots->exists(s | 
+      s.successors()->includesAll(allSnapshots-Set{s}))
+   
+context u:User
+  inv SuccUserInSuccSnapshot: -------------------------------------- S2
+    u.succ.isDefined implies u.succ.snapshot = u.snapshot.succ
+  inv UserNameIdentifies: ------------------------------------------ S5
+    u.succ.isDefined implies u.succ.name = u.name
+    
+context s:Session
+  inv SuccSessionRelatedToSuccUser: -------------------------------- S3
+    s.succ.isDefined implies s.succ.user = s.user.succ
+  inv SessionIdIdentifies: ----------------------------------------- S6
+    s.succ.isDefined implies s.succ.id = s.id
+    
+context acc:Access
+  inv SuccAccessRelatedToSuccSession: ------------------------------ S4
+    acc.succ.isDefined implies acc.succ.session = acc.session.succ
+  inv AccessIdIdentifies: ------------------------------------------ S7
+    acc.succ.isDefined implies acc.succ.id = acc.id
+	
+context acc:Resource
+  inv checkAffiliation:
+    Resource.allInstances()->forAll( r |
+      r.access.action->forAll(act1, act2 |
+      let benutzer1 = act1.access.session.user->asSequence()->at(1) in
+      let benutzer2 = act2.access.session.user->asSequence()->at(1) in
+      let alle = benutzer1.successors()->including(benutzer1)->
+        union(benutzer1.predecessors()) in
+    act1.affiliationExclusives()->includes(act2)implies
+    benutzer1.affiliation <> benutzer2.affiliation or
+    alle->includes(benutzer2)))
+
+context r:Role
+  inv checkQuantityOfMembers:
+    r.more.isDefined implies r.user->size() <= r.more.user->size()
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            

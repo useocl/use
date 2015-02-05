@@ -30,21 +30,6 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
-import org.tzi.use.gui.main.sorting.AlphabeticalAssociationComparator;
-import org.tzi.use.gui.main.sorting.AlphabeticalAttributeComparator;
-import org.tzi.use.gui.main.sorting.AlphabeticalClassComparator;
-import org.tzi.use.gui.main.sorting.AlphabeticalConditionByNameComparator;
-import org.tzi.use.gui.main.sorting.AlphabeticalConditionByOperationComparator;
-import org.tzi.use.gui.main.sorting.AlphabeticalConditionByPreComparator;
-import org.tzi.use.gui.main.sorting.AlphabeticalInvariantByClassComparator;
-import org.tzi.use.gui.main.sorting.AlphabeticalInvariantByNameComparator;
-import org.tzi.use.gui.main.sorting.AlphabeticalOperationComparator;
-import org.tzi.use.gui.main.sorting.UseFileOrderAssociationComparator;
-import org.tzi.use.gui.main.sorting.UseFileOrderAttributeComparator;
-import org.tzi.use.gui.main.sorting.UseFileOrderClassComparator;
-import org.tzi.use.gui.main.sorting.UseFileOrderConditionComparator;
-import org.tzi.use.gui.main.sorting.UseFileOrderInvariantComparator;
-import org.tzi.use.gui.main.sorting.UseFileOrderOperationComparator;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAttribute;
@@ -52,6 +37,13 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.statemachines.MStateMachine;
+import org.tzi.use.util.uml.sorting.AlphabeticalConditionByNameComparator;
+import org.tzi.use.util.uml.sorting.AlphabeticalConditionComparator;
+import org.tzi.use.util.uml.sorting.AlphabeticalInvariantComparator;
+import org.tzi.use.util.uml.sorting.AlphabeticalNamedElementComparator;
+import org.tzi.use.util.uml.sorting.AlphabeticalOperationComparator;
+import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
 
 
 /**
@@ -109,70 +101,80 @@ public class ModelBrowserSorting  {
     public int invOrder = 2;
 
     /**
+     * Starting state machine order.
+     */
+    public StateMachineOrder stateMachineOrder = StateMachineOrder.USE;
+    
+    public enum StateMachineOrder {
+    	USE,
+    	ALPHABETIC
+    }
+    
+    /**
      * Signals that the classes will be sorted in alphabetic order.
      */
-    public final int CLS_ALPHABETIC = 1;
+    public static final int CLS_ALPHABETIC = 1;
 
     /**
      * Signals that the classes will be sorted in the
      * way they were written in the USE-File.
      */
-    public final int CLS_USE_ORDER = 2;
+    public static final int CLS_USE_ORDER = 2;
 
     /**
      * Signals that the attributes will be sorted in alphabetic order.
      */
-    public final int ATTR_ALPHABETIC = 1;
+    public static final int ATTR_ALPHABETIC = 1;
 
     /**
      * Signals that the attributes will be sorted in the
      * way they were written in the USE-File.
      */
-    public final int ATTR_USE_ORDER = 2;
+    public static final int ATTR_USE_ORDER = 2;
 
    /**
      * Signals that the operations will be sorted in alphabetic order.
      */
-    public final int OPR_ALPHABETIC = 1;
+    public static final int OPR_ALPHABETIC = 1;
 
     /**
      * Signals that the operations will be sorted in the
      * way they were written in the USE-File.
      */
-    public final int OPR_USE_ORDER = 2;
+    public static final int OPR_USE_ORDER = 2;
 
     /**
      * Signals that the associations will be sorted in alphabetic order.
      */
-    public final int ASSOC_ALPHABETIC = 1;
+    public static final int ASSOC_ALPHABETIC = 1;
     /**
      * Signals that the associations will be sorted in the
      * way they were written in the USE-File.
      */
-    public final int ASSOC_USE_ORDER = 2;
+    public static final int ASSOC_USE_ORDER = 2;
 
     /**
      * Signals that all invarants will be sorted in alphabetic order 
      * by class name first
      */
-    public final int INV_ALPHABETIC_BY_CLASS = 1;
+    public static final int INV_ALPHABETIC_BY_CLASS = 1;
 
     /**
      * Signals that the invariants will be sorted in the
      * way they were written in the USE-File.
      */
-    public final int INV_USE_ORDER = 2;
+    public static final int INV_USE_ORDER = 2;
 
     /**
      * Signals that all invarants will be sorted in alphabetic order 
      * by invariant name first
      */
-    public final int INV_ALPHABETIC_INV_NAME = 5;
+    public static final int INV_ALPHABETIC_INV_NAME = 5;
     public int condOrder = 10;
-    public final int COND_ALPHABETIC_BY_OPERATION = 7;
-    public final int COND_ALPHABETIC_BY_NAME = 8;
-    public final int COND_ALPHABETIC_BY_PRE = 9;
-    public final int COND_USE_ORDER = 10;
+    public static final int COND_ALPHABETIC_BY_OPERATION = 7;
+    public static final int COND_ALPHABETIC_BY_NAME = 8;
+    public static final int COND_ALPHABETIC_BY_PRE = 9;
+    public static final int COND_USE_ORDER = 10;
 
 
     private ModelBrowserSorting() {
@@ -206,10 +208,10 @@ public class ModelBrowserSorting  {
         if (classes.size() > 0) {
             switch (clsOrder) {
                 case CLS_ALPHABETIC:
-                    Collections.sort(classes, new AlphabeticalClassComparator());
+                    Collections.sort(classes, new AlphabeticalNamedElementComparator());
                     break;
                 case CLS_USE_ORDER:
-                    Collections.sort(classes, new UseFileOrderClassComparator());
+                    Collections.sort(classes, new UseFileOrderComparator());
                     break;
                 default:
                     break;
@@ -219,9 +221,9 @@ public class ModelBrowserSorting  {
     }
     
     /**
-     * Calls the specific algorithem in which way the tree will be sorted.
+     * Calls the specific algorithm in which way the tree will be sorted.
      *
-     * @return The correct sorted <code>ArrayList</code>.
+     * @return A new list containing the attributes in the currently set sort order.
      */
     public List<MAttribute> sortAttributes(Collection<MAttribute> items) {
         ArrayList<MAttribute> attributes = new ArrayList<MAttribute>( items );
@@ -229,10 +231,10 @@ public class ModelBrowserSorting  {
         if ( attributes.size() > 0 ) {
             switch ( attrOrder ) {
                 case ATTR_ALPHABETIC:
-                    Collections.sort(attributes, new AlphabeticalAttributeComparator());
+                    Collections.sort(attributes, new AlphabeticalNamedElementComparator());
                     break;
                 case ATTR_USE_ORDER:
-                    Collections.sort(attributes, new UseFileOrderAttributeComparator());
+                    Collections.sort(attributes, new UseFileOrderComparator());
                     break;
                 default:
                     break;
@@ -256,7 +258,7 @@ public class ModelBrowserSorting  {
                     Collections.sort(operations, new AlphabeticalOperationComparator());
                     break;
                 case OPR_USE_ORDER:
-                    Collections.sort(operations, new UseFileOrderOperationComparator());
+                    Collections.sort(operations, new UseFileOrderComparator());
                     break;
                 default:
                     break;
@@ -282,10 +284,10 @@ public class ModelBrowserSorting  {
             
             switch (assocOrder) {
                 case ASSOC_ALPHABETIC:
-                    Collections.sort(onlyAssocs, new AlphabeticalAssociationComparator());
+                    Collections.sort(onlyAssocs, new AlphabeticalNamedElementComparator());
                     break;
                 case ASSOC_USE_ORDER:
-                    Collections.sort(onlyAssocs, new UseFileOrderAssociationComparator());
+                    Collections.sort(onlyAssocs, new UseFileOrderComparator());
                     break;
                 default:
                     break;
@@ -306,13 +308,13 @@ public class ModelBrowserSorting  {
         if (sortedInvs.size() > 0) {
             switch (invOrder) {
             case INV_ALPHABETIC_BY_CLASS:
-                Collections.sort(sortedInvs, new AlphabeticalInvariantByClassComparator());
+                Collections.sort(sortedInvs, new AlphabeticalInvariantComparator(true));
                 break;
             case INV_USE_ORDER:
-                Collections.sort(sortedInvs, new UseFileOrderInvariantComparator());
+                Collections.sort(sortedInvs, new UseFileOrderComparator());
                 break;
             case INV_ALPHABETIC_INV_NAME:
-                Collections.sort(sortedInvs, new AlphabeticalInvariantByNameComparator());
+                Collections.sort(sortedInvs, new AlphabeticalInvariantComparator(false));
                 break;
             default:
                 break;
@@ -333,16 +335,16 @@ public class ModelBrowserSorting  {
         if (sortedConds.size() > 0) {
             switch (condOrder) {
                 case COND_ALPHABETIC_BY_OPERATION:
-                    Collections.sort(sortedConds, new AlphabeticalConditionByOperationComparator());
+                    Collections.sort(sortedConds, new AlphabeticalConditionComparator(false));
                     break;
                 case COND_ALPHABETIC_BY_NAME:
                     Collections.sort(sortedConds, new AlphabeticalConditionByNameComparator());
                     break;
                 case COND_ALPHABETIC_BY_PRE:
-                    Collections.sort(sortedConds, new AlphabeticalConditionByPreComparator());
+                    Collections.sort(sortedConds, new AlphabeticalConditionComparator(true));
                     break;
                 case COND_USE_ORDER:
-                    Collections.sort(sortedConds, new UseFileOrderConditionComparator());
+                    Collections.sort(sortedConds, new UseFileOrderComparator());
                     break;
                 default:
                     break;
@@ -379,4 +381,35 @@ public class ModelBrowserSorting  {
             }          
         }
     }
+
+	/**
+	 * @param newObjectDiagramView
+	 */
+	public void removeSortChangeListener(SortChangeListener l) {
+		fListenerList.remove( SortChangeListener.class, l );
+	}
+
+	/**
+	 * @param allOwnedProtocolStateMachines
+	 * @return
+	 */
+	public List<MStateMachine> sortStateMachines(
+			Collection<? extends MStateMachine> stateMachines) {
+		
+		ArrayList<MStateMachine> sms = new ArrayList<MStateMachine>(stateMachines);
+        if (!sms.isEmpty()) {
+            switch (stateMachineOrder) {
+                case ALPHABETIC:
+                    Collections.sort(sms, new AlphabeticalNamedElementComparator());
+                    break;
+                case USE:
+                    Collections.sort(sms, new UseFileOrderComparator());
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        return sms;
+	}
 }

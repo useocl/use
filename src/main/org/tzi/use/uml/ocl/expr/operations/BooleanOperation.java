@@ -19,5 +19,9 @@ public abstract class BooleanOperation extends OpGeneric {
 		throw new RuntimeException("Use evalWithArgs");
 	}
 
+	public boolean isBooleanOperation() {
+    	return true;
+    }
+	
 	public abstract Value evalWithArgs(EvalContext ctx, Expression args[]);
 }

@@ -27,22 +27,17 @@ import junit.framework.TestSuite;
 
 
 /**
- * TODO
+ * All system soil tests
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
 public class AllTests {
 	
-	/**
-	 * TODO
-	 */
-	private AllTests() {
-		
-	}
+	private AllTests() {}
 	
 	
 	/**
-	 * TODO
+	 * Returns a new <code>TestSuite</code> containing all system soil tests.
 	 * @return
 	 */
 	public static Test suite() {

@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
+import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
@@ -273,11 +275,18 @@ public class MMInstanceGenerator implements MMVisitor {
         //FIXME: implement
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MMVisitor#visitAnnotation(org.tzi.use.uml.mm.MElementAnnotation)
-	 */
 	@Override
 	public void visitAnnotation(MElementAnnotation a) {
 		// NoOp		
 	}
+
+	@Override
+	public void visitSignal(MSignal mSignalImpl) {
+		//FIXME: implement		
+	}
+
+	@Override
+	public void visitEnum(EnumType enumType) {
+		// NoOp		
+	}	
 }

@@ -55,8 +55,9 @@ public class EvaluatorTest extends TestCase {
             // Sequence { 1..i * factor }->iterate(e; acc : Integer= 0 | acc + e);
             Expression arg0 = new ExpConstInteger(1);
             Expression arg1 = new ExpConstInteger((numExpr - i) * factor);
-            Expression[] args = { arg0, arg1 };
-            Expression rangeExp = ExpStdOp.create("mkSequenceRange", args);
+            Expression args = new ExpRange(arg0, arg1);
+            
+            Expression rangeExp = new ExpSequenceLiteral(new Expression[]{args});
 
             // create iterate
             Expression[] args2 =

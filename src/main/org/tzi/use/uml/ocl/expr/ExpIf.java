@@ -42,7 +42,7 @@ public final class ExpIf extends Expression {
         throws ExpInvalidException
     {
         // result type is type of then/else branch (must be identical)
-        super(thenExp.type().getLeastCommonSupertype(elseExp.type()), condition, thenExp, elseExp);
+        super(thenExp.type().getLeastCommonSupertype(elseExp.type()));
         fCondition = condition;
         fCondition.assertBoolean();
         fThenExp = thenExp;
@@ -107,5 +107,13 @@ public final class ExpIf extends Expression {
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitIf(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
+	 */
+	@Override
+	protected boolean childExpressionRequiresPreState() {		
+		return  fCondition.requiresPreState() || fThenExp.requiresPreState() || fElseExp.requiresPreState();
 	}
 }

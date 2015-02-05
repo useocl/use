@@ -20,12 +20,14 @@ import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.StateChangeEvent;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+
+import com.google.common.eventbus.Subscribe;
 
 /** 
  * A ObjectSelectionView is derived from JPanel and the superclass of the three other subclasses. 
@@ -63,15 +65,15 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 
 	public AbstractTableModel fTableModel;
 
-	protected NewObjectDiagram diagram;
+	protected DiagramViewWithObjectNode diagram;
 	
-	public ObjectSelectionView(MainWindow parent, MSystem system, NewObjectDiagram diagram) {
+	public ObjectSelectionView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
 		super(new BorderLayout());
 		this.fSystem = system;
 		this.fMainWindow = parent;
 		this.diagram = diagram;
 		
-		fSystem.addChangeListener(this);
+		fSystem.getEventBus().register(this);
 		initClassSelectionView();
 	}
 	
@@ -144,20 +146,20 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
 		this.diagram.showAll();
-		this.diagram.invalidateContent();
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
 	 * Hides all objects and links.
 	 */
 	public void applyHideAllChanges(ActionEvent ev) {
-		Iterator<NodeBase> it = this.diagram.getGraph().iterator();
+		Iterator<PlaceableNode> it = this.diagram.getGraph().iterator();
 		Set<MObject> hideojects = new HashSet<MObject>();
 		
 		while (it.hasNext()) {
 			Object node = it.next();
-			if (node instanceof ObjectNode) {
-				MObject mo = ((ObjectNode) node).object();
+			if (node instanceof ObjectNodeActivity) {
+				MObject mo = ((ObjectNodeActivity) node).object();
 				hideojects.add(mo);
 			}
 		}
@@ -173,7 +175,8 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	/**
 	 * Method stateChanged called due to an external change of state.
 	 */
-	public void stateChanged(StateChangeEvent e) {
+	@Subscribe
+	public void onStatementExecuted(StatementExecutedEvent e) {
 		update();
 	}
 
@@ -181,6 +184,6 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	 * Method detachModel detaches the view from its model.
 	 */
 	public void detachModel() {
-		fSystem.removeChangeListener(this);
+		fSystem.getEventBus().unregister(this);
 	}
 }

@@ -42,7 +42,8 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * Compiler for shell commands,
+ * which are handled by soil.
  * @author Daniel Gent
  *
  */
@@ -54,17 +55,25 @@ public class ShellCommandCompiler {
 	 */
 	private ShellCommandCompiler() { }
 	
-	
 	/**
-	 * TODO
-	 * @param model
-	 * @param state
-	 * @param variableEnvironment
-	 * @param input
-	 * @param inputName
-	 * @param errorOutput
-	 * @param verbose
+	 * Builds an {@link ASTStatement abstract syntax tree} which
+	 * in turn generates an evaluable {@link MStatement soil statement}.
+	 * <p>
+	 * All checked exceptions that could happen during this process are
+	 * handled. If the input was not a valid soil statement
+	 * {@code null} is returned.
+	 * 
+	 * Encapsulates the string <code>input</code> as an input stream
+	 * and delegates to {@link ShellCommandCompiler#compileShellCommand(MModel, MSystemState, VariableEnvironment, InputStream, String, PrintWriter, boolean)}
+	 * @param model the model
+	 * @param state the system state
+	 * @param variableEnvironment holds the existing variables
+	 * @param input the input source
+	 * @param inputName the name of the source
+	 * @param errorOutput target for error messages
+	 * @param verbose if true, additional information is produced in case of errors
 	 * @return
+	 *   if the input was a valid soil statement, an evaluable soil statement, null else
 	 */
 	public static MStatement compileShellCommand(
 			MModel model,
@@ -87,8 +96,8 @@ public class ShellCommandCompiler {
 	
 	
 	/**
-	 * builds an {@link ASTStatement abstract syntax tree} which
-	 * in turn generates a evaluable {@link MStatement soil statement}.
+	 * Builds an {@link ASTStatement abstract syntax tree} which
+	 * in turn generates an evaluable {@link MStatement soil statement}.
 	 * <p>
 	 * All checked exceptions that could happen during this process are
 	 * handled. If the input was not a valid soil statement
@@ -121,19 +130,18 @@ public class ShellCommandCompiler {
 		return statement;
 	 }
 	
-	
 	/**
+	 * Constructs an AST for a shell command represented as 
+	 * a soil statement from <code>input</code>.
 	 * 
-	 * @param model
-	 * @param state
-	 * @param variableEnvironment
-	 * @param input
-	 * @param inputName
-	 * @param errorOutput
-	 * @param verbose
+	 * @param input The shell input
+	 * @param inputName Name of the in stream for error reporting.
+	 * @param errorOutput Writer to log errors to.
+	 * @param verbose If <code>true</code> additional information is written
+	 *        to <code>errorOutput</code>.
 	 * @return
 	 */
-	public static ASTStatement constructAST(InputStream input,
+	protected static ASTStatement constructAST(InputStream input,
 			String inputName, PrintWriter errorOutput, boolean verbose) {
 		
 		ANTLRInputStream aInput;
@@ -148,14 +156,11 @@ public class ShellCommandCompiler {
 		}
 		
 		// set up lexer & parser
-		ShellCommandLexer shellLexer = 
-			new ShellCommandLexer(aInput);
-		CommonTokenStream tokenStream = 
-			new CommonTokenStream(shellLexer);
-		ShellCommandParser shellParser = 
-			new ShellCommandParser(tokenStream);
-		ParseErrorHandler errorHandler = 
-			new ParseErrorHandler(inputName, errorOutput);
+		ShellCommandLexer shellLexer = new ShellCommandLexer(aInput);
+		CommonTokenStream tokenStream = new CommonTokenStream(shellLexer);
+		ShellCommandParser shellParser = new ShellCommandParser(tokenStream);
+		ParseErrorHandler errorHandler = new ParseErrorHandler(inputName, errorOutput);
+		
 		shellLexer.init(errorHandler);
 		shellParser.init(errorHandler);
 		
@@ -194,8 +199,7 @@ public class ShellCommandCompiler {
 		//statement.flatten();
 		return statement;
 	}
-	
-	
+		
 	/**
 	 * Constructs a MStatement from the given AST.
 	 * If the compilation fails <code>null</code> is returned.
@@ -247,7 +251,7 @@ public class ShellCommandCompiler {
 				
 		} catch (CompilationFailedException e) {
 
-			errorOutput.println(e.getMessage(statement));
+			errorOutput.println(e.getMessage(true));
 			
 			if (verbose) {
 				errorOutput.println("-----------\n");

@@ -1,12 +1,13 @@
 # $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
 
 TOPDIR = ../..
+LOCALE = en_US.UTF-8
 
 # change switch to `-qv' to get output in case of test failures
 ifeq ($(OS), Windows_NT)
 	USE = $(TOPDIR)/bin/use.bat -q
 else
-	USE = $(TOPDIR)/bin/use -q
+	USE = LANG=$(LOCALE) $(TOPDIR)/bin/use -q
 endif
 
 GOOD_CMD_FILES := $(wildcard *-good*.cmd)

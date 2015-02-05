@@ -18,12 +18,12 @@ undo
 !create a3 : A
 
 ? a1
-*-> @a1 : A
+*-> a1 : A
 
 ? a2
-*-> @a2 : A
+*-> a2 : A
 
 ? a2
-*-> @a2 : A
+*-> a2 : A
 
 exit

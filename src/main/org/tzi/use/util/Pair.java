@@ -22,7 +22,7 @@
 package org.tzi.use.util;
 
 /**
- * TODO
+ * Data structure for a mathematical pair.
  * @author Lars Hamann
  *
  */
@@ -48,6 +48,7 @@ public class Pair<T> {
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
+		if (obj == null) return false;
 		if (this.hashCode() != obj.hashCode()) return false;
 		
 		boolean equals = false;

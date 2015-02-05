@@ -26,8 +26,6 @@ import java.util.Set;
 
 /**
  * The OCL Integer type.
- *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class IntegerType extends BasicType {
@@ -36,25 +34,39 @@ public final class IntegerType extends BasicType {
         super("Integer");
     }
     
-    public boolean isNumber() {
+    @Override
+	public boolean isTypeOfInteger() {
     	return true;
     }
     
-    public boolean isInteger() {
+    @Override
+	public boolean isKindOfInteger(VoidHandling h) {
+		return true;
+	}
+
+	@Override
+	public boolean isKindOfNumber(VoidHandling h) {
     	return true;
+    }
+    
+    @Override
+  	public boolean isKindOfReal(VoidHandling h) {
+      	return true;
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
-    public boolean isSubtypeOf(Type t) {
-        return !t.isVoidType() && (t.isNumber() || t.isTrueOclAny());
+    @Override
+	public boolean conformsTo(Type t) {
+        return !t.isTypeOfVoidType() && (t.isKindOfNumber(VoidHandling.EXCLUDE_VOID) || t.isTypeOfOclAny());
     }
 
     /** 
      * Returns the set of all supertypes (including this type).
      */
-    public Set<Type> allSupertypes() {
+    @Override
+	public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>(3);
         res.add(TypeFactory.mkOclAny());
         res.add(TypeFactory.mkReal());

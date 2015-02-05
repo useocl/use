@@ -29,14 +29,16 @@ import org.tzi.use.uml.ocl.expr.operations.BooleanOperation;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.HashMultiMap;
-import org.tzi.use.util.collections.MultiMap;
 
 import antlr.SemanticException;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 /**
  * General operation expressions. Each operation is implemented by its own
@@ -51,11 +53,11 @@ import antlr.SemanticException;
 public final class ExpStdOp extends Expression {
 
 	// opname / possible (overloaded) operations
-    public static MultiMap<String, OpGeneric> opmap;
+    public static ListMultimap<String, OpGeneric> opmap;
 
     // initialize operation map
     static {
-        opmap = new HashMultiMap<String, OpGeneric>(90);
+        opmap = ArrayListMultimap.create(150, 5);
         OpGeneric.registerOperations(opmap);
     }
 
@@ -167,22 +169,22 @@ public final class ExpStdOp extends Expression {
 	private static void checkOclAnyCollectionsWarning(OpGeneric op, Type[] params, Type resultType, WarningType warningType) throws ExpInvalidException {
 		Type sourceType = params[0];
 		
-		if (sourceType.isCollection(true)) {
+		if (sourceType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			CollectionType sourceCollectionType = (CollectionType)sourceType;
 			Type sourceElementType = sourceCollectionType.elemType();
 			
-			while (sourceElementType.isCollection(true)) {
+			while (sourceElementType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 				sourceElementType = ((CollectionType)sourceElementType).elemType();
 			}
 			
-			if (sourceElementType.isTrueOclAny()) return;
+			if (sourceElementType.isTypeOfOclAny()) return;
 			
 			Type resultElementType = resultType;
-			while (resultElementType.isCollection(true)) {
+			while (resultElementType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 				resultElementType = ((CollectionType)resultElementType).elemType();
 			}
 			
-			if (resultElementType.isTrueOclAny()) {
+			if (resultElementType.isTypeOfOclAny()) {
 				StringBuilder paramTypes = new StringBuilder();
 				for (int index = 1; index < params.length; ++index) {
 					if (index > 1) {
@@ -212,7 +214,7 @@ public final class ExpStdOp extends Expression {
         // build error message with type names of arguments
         Type srcType = args[0].type();
         StringBuffer s = new StringBuffer(srcType
-                + (srcType.isCollection(true) ? "->" : ".") + name + "(");
+                + (srcType.isKindOfCollection(VoidHandling.EXCLUDE_VOID) ? "->" : ".") + name + "(");
         for (int i = 1; i < args.length; i++) {
             if (i > 1)
                 s.append(", ");
@@ -228,34 +230,46 @@ public final class ExpStdOp extends Expression {
     private Expression fArgs[];
 
     private ExpStdOp(OpGeneric op, Expression args[], Type t) {
-        super(t, args);
+        super(t);
         fOp = op;
         fArgs = args;
     }
 
     @Override
     public StringBuilder toString(StringBuilder sb) {
-        return sb.append(fOp.stringRep(fArgs, atPre()));
+        return sb.append(getOperation().stringRep(fArgs, atPre()));
     }
 
     public String opname() {
-        return fOp.name();
+        return getOperation().name();
     }
 
-    public String name() {
-        return fOp.name();
+    /**
+	 * @return the fOp
+	 */
+	public OpGeneric getOperation() {
+		return fOp;
+	}
+
+	public String name() {
+        return getOperation().name();
     }
 
     public Expression[] args() {
         return fArgs;
     }
 
-    /* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#containsPre()
-	 */
 	@Override
-	public boolean requiresPreState() {
-		return this.opname().equals("oclIsNew") || super.requiresPreState();
+	protected boolean childExpressionRequiresPreState() {
+		if (this.opname().equals("oclIsNew")) return true;
+		
+		for (Expression e : fArgs) {
+			if (e.requiresPreState()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
     /**
@@ -268,17 +282,20 @@ public final class ExpStdOp extends Expression {
         // Boolean operations need special treatment of undefined
         // arguments. Also, short-circuit evaluation may be used to
         // speed up the evaluation process.
-        if (fOp instanceof BooleanOperation) {
-            res = ((BooleanOperation) fOp).evalWithArgs(ctx, fArgs);
+        if (getOperation().isBooleanOperation()) {
+            res = ((BooleanOperation) getOperation()).evalWithArgs(ctx, fArgs);
         } else {
-            Value argValues[] = new Value[fArgs.length];
-            int opKind = fOp.kind();
+            final Value argValues[] = new Value[fArgs.length];
+            final int opKind = getOperation().kind();
+            
+            Value v;
+            
             for (int i = 0; i < fArgs.length && res == null; i++) {
-                argValues[i] = fArgs[i].eval(ctx);
+                argValues[i] = v = fArgs[i].eval(ctx);
                 // if any of the arguments is undefined, the result
                 // depends on the kind of operation we are about to
                 // call.
-                if (argValues[i].isUndefined()) {
+                if (v.isUndefined()) {
                     switch (opKind) {
                     case OpGeneric.OPERATION:
                         // strict evaluation, result is undefined, no
@@ -297,7 +314,7 @@ public final class ExpStdOp extends Expression {
             }
             if (res == null) {
                 try {
-                    res = fOp.eval(ctx, argValues, type());
+                    res = getOperation().eval(ctx, argValues, type());
                 } catch (ArithmeticException ex) {
                     // catch e.g. division by zero
                     res = UndefinedValue.instance;
@@ -308,9 +325,6 @@ public final class ExpStdOp extends Expression {
         return res;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitStdOp(this);

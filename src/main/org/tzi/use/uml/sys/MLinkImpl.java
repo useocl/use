@@ -21,15 +21,11 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.MAssociation;
@@ -40,59 +36,58 @@ import org.tzi.use.util.StringUtil;
 /**
  * A link is an instance of an association.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author Mark Richters
+ * @author Lars Hamann
  */
-
-final class MLinkImpl implements MLink {
-    private MAssociation fAssociation; // The type of this link
-
-    /**
-     * For each association end we store the corresponding link end.
-     */
-    private Map<MAssociationEnd, MLinkEnd> fLinkEnds;
+class MLinkImpl implements MLink {
+	/** The type of this link */
+    private final MAssociation fAssociation;
 
     /**
      * The set of all link ends to avoid copying.
      */
-    private Set<MLinkEnd> linkEnds;
+    private final MLinkEnd[] linkEnds;
     
     /**
      * Other representation of linked objects,
      * because of performance improvements
      */
-    MObject[] linkedObjects;
+    private final MObject[] linkedObjects;
 
     /**
      * Links are immutable. Therefore the hash code can
      * be stored.
      */
-    private int hashCode;
+    private final int hashCode;
 
+    
+    private List<List<Value>> qualifierValues;
+    
     /**
      * Creates a new link for the given association.
      *
-     * @param objects List(MObject)
+     * @param assoc The association to create the link for.
+     * @param objects The list of connected objects in the same order as the association ends.
+     * @param qualifierValues The qualifier values for each end.
      * @exception MSystemException objects do not conform to the
      *            association ends.
      */
-    MLinkImpl(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues) throws MSystemException {
+    protected MLinkImpl(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues) throws MSystemException {
         fAssociation = assoc;
         if (assoc.associationEnds().size() != objects.size() )
             throw new IllegalArgumentException("Number of association ends (" +
                                                assoc.associationEnds().size() +
                                                ") does not match number of passed objects (" +
                                                objects.size() + ")");
-        
-        fLinkEnds = new HashMap<MAssociationEnd, MLinkEnd>(assoc.associationEnds().size());
-        linkEnds = new HashSet<MLinkEnd>();
 
+        linkEnds = new MLinkEnd[assoc.associationEnds().size()];
+        this.qualifierValues = qualifierValues;
         Iterator<MAssociationEnd> it1 = assoc.associationEnds().iterator();
         Iterator<MObject> it2 = objects.iterator();
         boolean hasQualifiers = (qualifierValues != null && qualifierValues.size() > 0);
         Iterator<List<Value>> it3 = (hasQualifiers ? qualifierValues.iterator() : null);
         
-        hashCode = fAssociation.hashCode();
+        int newHashCode = fAssociation.hashCode();
         linkedObjects = new MObject[objects.size()];
         int i = 0;
 
@@ -107,12 +102,13 @@ final class MLinkImpl implements MLink {
             	endQualifierValues = null;
             
             MLinkEnd lend = new MLinkEnd(aend, obj, endQualifierValues);
-            hashCode += lend.hashCode();
-            fLinkEnds.put(aend, lend);
-            linkEnds.add(lend);
+            newHashCode += lend.hashCode();
+            linkEnds[i] = lend;
             linkedObjects[i] = obj;
             ++i;
         }
+        
+        this.hashCode = newHashCode;
     }
 
     /**
@@ -128,7 +124,7 @@ final class MLinkImpl implements MLink {
      * @return read only list of the link ends
      */
     public Set<MLinkEnd> linkEnds() {
-    	return Collections.unmodifiableSet(linkEnds);
+    	return new HashSet<MLinkEnd>(Arrays.asList(linkEnds));
     }
 
     /**
@@ -153,9 +149,18 @@ final class MLinkImpl implements MLink {
      * Returns the link end for the given association end.
      */
     public MLinkEnd linkEnd(MAssociationEnd aend) {
-        return fLinkEnds.get(aend);
+        // Should be fast enough for normal associations
+    	int i = fAssociation.associationEnds().indexOf(aend);
+    	return linkEnds[i];
     }
 
+    /** 
+     * Returns the link end for the given index.
+     */
+    public MLinkEnd getLinkEnd(int index) {
+    	return linkEnds[index];
+    }
+    
     public int hashCode() { 
         return hashCode;
     }
@@ -190,22 +195,33 @@ final class MLinkImpl implements MLink {
     	// For the link identification in an object diagram we need to 
     	// build a deterministic string representation.
     	// Therefore, the link ends are ordered by the association end name
-    	StringBuilder result = new StringBuilder("[");
+    	StringBuilder result = new StringBuilder();
+    	if (isVirtual()) result.append("virtual");
+    	result.append("[");
     	result.append(fAssociation.name()).append(" : (");
-        
-    	List<MLinkEnd> ends = new ArrayList<MLinkEnd>(fLinkEnds.values());
-    	Collections.sort(ends, new Comparator<MLinkEnd>() {
+
+    	MLinkEnd[] sortedEnds = Arrays.copyOf(linkEnds, linkEnds.length); 
+    	Arrays.sort(sortedEnds, new Comparator<MLinkEnd>() {
 			@Override
 			public int compare(MLinkEnd o1, MLinkEnd o2) {
 				return o1.associationEnd().name().compareTo(o2.associationEnd().name());
 			}
 		});
     	
-        StringUtil.fmtSeq(result, ends, ", ");
+        StringUtil.fmtSeq(result, sortedEnds, ", ");
             
         result.append(")]");
         
         return result.toString();
     }
 
+	@Override
+	public boolean isVirtual() {
+		return false;
+	}
+
+	@Override
+	public List<List<Value>> getQualifier() {
+		return this.qualifierValues;
+	}
 }

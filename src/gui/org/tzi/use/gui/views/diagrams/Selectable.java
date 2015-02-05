@@ -23,14 +23,14 @@ package org.tzi.use.gui.views.diagrams;
 
 /**
  * Represents a selectable object in a diagram. 
- * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
+ * @author Lars Hamann
  */
 public interface Selectable {
     
     /**
      * Sets if this node is selected or not.
+     * @param on The new value of the selection
      */
     public void setSelected( boolean on );
     
@@ -40,11 +40,17 @@ public interface Selectable {
     public boolean isSelected();
     
     /**
-     * Sets if this node is dragged or not.
+     * Sets, if a resize of a selected element is
+     * currently allowed.
+     * For example, it is the only selected element.
+     * @param allowed
      */
-    public void setDragged( boolean draging );
+    public void setResizeAllowed( boolean allowed );
+    
     /**
-     * Returns if this node is dragged. 
+     * <code>true</code>, if an element is allowed to
+     * be resized. 
+     * @return
      */
-    public boolean isDragged();
+    public boolean getResizeAllowed();
 }

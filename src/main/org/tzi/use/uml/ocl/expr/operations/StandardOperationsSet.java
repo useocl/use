@@ -8,15 +8,15 @@ import org.tzi.use.uml.ocl.type.SetType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
-import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.Multimap;
 
 public class StandardOperationsSet {
-	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
+	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
 		// operations on Set
 		OpGeneric.registerOperation(new Op_set_union(), opmap);
 		OpGeneric.registerOperation(new Op_set_union_bag(), opmap);
@@ -31,56 +31,6 @@ public class StandardOperationsSet {
 		// reject
 		// collect
 		// count: inherited from Collection		
-		// Constructors
-		OpGeneric.registerOperation(new Op_mkSetRange(), opmap);
-	}
-}
-
-//--------------------------------------------------------
-//
-// Set constructors.
-//
-// --------------------------------------------------------
-/* mkSetRange : Integer x Integer, ... -> Set(Integer) */
-final class Op_mkSetRange extends OpGeneric {
-	public String name() {
-		return "mkSetRange";
-	}
-
-	public int kind() {
-		return OPERATION;
-	}
-
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
-
-	public Type matches(Type params[]) {
-		return (params.length >= 2 && params.length % 2 == 0
-				&& params[0].isInteger() && params[1].isInteger()) ? TypeFactory
-				.mkSet(TypeFactory.mkInteger())
-				: null;
-	}
-
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		int[] ranges = new int[args.length];
-		for (int i = 0; i < args.length; i++)
-			ranges[i] = ((IntegerValue) args[i]).value();
-
-		return new SetValue(TypeFactory.mkInteger(), ranges);
-	}
-
-	public String stringRep(Expression args[], String atPre) {
-		if (args.length % 2 != 0)
-			throw new IllegalArgumentException("length=" + args.length);
-		String s = "Set{";
-		for (int i = 0; i < args.length; i += 2) {
-			if (i > 0)
-				s += ",";
-			s += args[i] + ".." + args[i + 1];
-		}
-		s += "}";
-		return s;
 	}
 }
 
@@ -105,7 +55,10 @@ final class Op_set_union extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfSet() && 
+			params[1].isTypeOfSet()) {
+			
 			return params[0].getLeastCommonSupertype(params[1]);
 		}
 
@@ -115,7 +68,7 @@ final class Op_set_union extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SetValue set1 = (SetValue) args[0];
 		SetValue set2 = (SetValue) args[1];
-		return set1.union(set2);
+		return set1.union(resultType, set2);
 	}
 }
 
@@ -136,7 +89,9 @@ final class Op_set_union_bag extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSet() && params[1].isBag()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfSet() && 
+			params[1].isTypeOfBag()) {
 			SetType set = (SetType) params[0];
 			BagType bag = (BagType) params[1];
 			Type newElementType = set.elemType().getLeastCommonSupertype(
@@ -151,7 +106,7 @@ final class Op_set_union_bag extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SetValue set = (SetValue) args[0];
 		BagValue bag = (BagValue) args[1];
-		return set.union(bag);
+		return set.union(resultType, bag);
 	}
 }
 
@@ -172,7 +127,10 @@ final class Op_set_intersection extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfSet() &&
+			params[1].isTypeOfSet()) {
+			
 			SetType set1 = (SetType) params[0];
 			SetType set2 = (SetType) params[1];
 			Type commonElementType = set1.elemType().getLeastCommonSupertype(
@@ -187,7 +145,7 @@ final class Op_set_intersection extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SetValue set1 = (SetValue) args[0];
 		SetValue set2 = (SetValue) args[1];
-		return set1.intersection(set2);
+		return set1.intersection(resultType, set2);
 	}
 	
 	@Override
@@ -200,7 +158,7 @@ final class Op_set_intersection extends OpGeneric {
 		
 		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
 		
-		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to an empty set, " + StringUtil.NEWLINE +
 					 "because the element types " + StringUtil.inQuotes(elemType1) + 
@@ -228,7 +186,10 @@ final class Op_set_intersection_bag extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSet() && params[1].isBag()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfSet() && 
+			params[1].isTypeOfBag()) {
+			
 			SetType set = (SetType) params[0];
 			BagType bag = (BagType) params[1];
 
@@ -244,7 +205,7 @@ final class Op_set_intersection_bag extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SetValue set = (SetValue) args[0];
 		BagValue bag = (BagValue) args[1];
-		return set.intersection(bag);
+		return set.intersection(resultType, bag);
 	}
 	
 	@Override
@@ -257,7 +218,7 @@ final class Op_set_intersection_bag extends OpGeneric {
 		
 		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
 		
-		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to an empty, " + StringUtil.NEWLINE +
 					 "because the element type " + StringUtil.inQuotes(elemType1) + 
@@ -285,7 +246,10 @@ final class Op_set_difference extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfSet() && 
+			params[1].isTypeOfSet()) {
+			
 			SetType set1 = (SetType) params[0];
 			SetType set2 = (SetType) params[1];
 			Type commonElementType = set1.elemType().getLeastCommonSupertype(
@@ -300,7 +264,7 @@ final class Op_set_difference extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SetValue set1 = (SetValue) args[0];
 		SetValue set2 = (SetValue) args[1];
-		return set1.difference(set2);
+		return set1.difference(resultType, set2);
 	}
 	
 	@Override
@@ -313,7 +277,7 @@ final class Op_set_difference extends OpGeneric {
 		
 		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
 		
-		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to the same set, " + StringUtil.NEWLINE +
 					 "because the element types " + StringUtil.inQuotes(elemType1) + 
@@ -341,11 +305,11 @@ final class Op_set_including extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSet()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfSet()) {
 			SetType set1 = (SetType) params[0];
 
-			Type commonElementType = set1.elemType().getLeastCommonSupertype(
-					params[1]);
+			Type commonElementType = set1.elemType().getLeastCommonSupertype(params[1]);
 
 			if (commonElementType != null)
 				return TypeFactory.mkSet(commonElementType);
@@ -358,7 +322,8 @@ final class Op_set_including extends OpGeneric {
 		if (args[0].isUndefined())
 			return UndefinedValue.instance;
 		SetValue set1 = (SetValue) args[0];
-		return set1.including(args[1]);
+				
+		return set1.including(resultType, args[1]);
 	}
 }
 
@@ -379,7 +344,9 @@ final class Op_set_excluding extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSet()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfSet()) {
+			
 			SetType set1 = (SetType) params[0];
 			Type commonElementType = set1.elemType().getLeastCommonSupertype(
 					params[1]);
@@ -394,7 +361,7 @@ final class Op_set_excluding extends OpGeneric {
 		if (args[0].isUndefined())
 			return UndefinedValue.instance;
 		SetValue set1 = (SetValue) args[0];
-		return set1.excluding(args[1]);
+		return set1.excluding(resultType, args[1]);
 	}
 	
 	@Override
@@ -403,7 +370,7 @@ final class Op_set_excluding extends OpGeneric {
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(col.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to the same set, " + StringUtil.NEWLINE +
 					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
@@ -431,7 +398,10 @@ final class Op_set_symmetricDifference extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isSet() && params[1].isSet()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfSet() &&
+			params[1].isTypeOfSet()) {
+			
 			SetType set1 = (SetType) params[0];
 			SetType set2 = (SetType) params[1];
 
@@ -447,7 +417,7 @@ final class Op_set_symmetricDifference extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SetValue set1 = (SetValue) args[0];
 		SetValue set2 = (SetValue) args[1];
-		return set1.symmetricDifference(set2);
+		return set1.symmetricDifference(resultType, set2);
 	}
 	
 	@Override
@@ -460,7 +430,7 @@ final class Op_set_symmetricDifference extends OpGeneric {
 		
 		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
 		
-		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " will always evaluate to the union of both sets, " + StringUtil.NEWLINE +
 					 "because the element types " + StringUtil.inQuotes(elemType1) + 

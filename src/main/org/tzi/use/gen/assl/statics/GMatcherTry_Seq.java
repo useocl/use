@@ -24,8 +24,9 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import org.tzi.use.uml.mm.MModel;
 import java.util.List;
+
+import org.tzi.use.uml.mm.MModel;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -50,7 +51,7 @@ class GMatcherTry_Seq implements IGInstructionMatcher {
         return 
             param.size() == 1 &&
             param.get(0) instanceof GValueInstruction &&
-            ((GValueInstruction) param.get(0)).type().isSequence();
+            ((GValueInstruction) param.get(0)).type().isTypeOfSequence();
     }
 }
 

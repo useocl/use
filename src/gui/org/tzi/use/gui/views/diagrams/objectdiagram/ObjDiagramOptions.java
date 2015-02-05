@@ -23,29 +23,70 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import java.awt.Color;
 
+import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.w3c.dom.Element;
 
 /**
  * Contains all optional settings for the object diagram.
  *
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public final class ObjDiagramOptions extends DiagramOptions {    
-    public ObjDiagramOptions() {
-        // color settings
-        NODE_COLOR = new Color(0xe0, 0xe0, 0xe0);
-        NODE_SELECTED_COLOR = Color.orange;
-        NODE_FRAME_COLOR = Color.black;
-        NODE_LABEL_COLOR = Color.black;
-        DIAMONDNODE_COLOR = Color.white;
-        DIAMONDNODE_FRAME_COLOR = Color.black;
-        EDGE_COLOR = Color.red;
-        EDGE_LABEL_COLOR = Color.darkGray;
-        EDGE_SELECTED_COLOR = Color.orange;
+    
+	private boolean isShowStates = false;
+
+	public ObjDiagramOptions() {
     }
 
+	/** 
+	 * Copy constructor
+	 */
+	public ObjDiagramOptions(ObjDiagramOptions opt) {
+		super(opt);
+	}
+
+	@Override
+	protected void registerAdditionalColors() {
+		// color settings
+        registerTypeColor(NODE_COLOR, new Color(0xe0, 0xe0, 0xe0), new Color(0xF0, 0xF0, 0xF0));
+    	registerTypeColor(NODE_SELECTED_COLOR, Color.ORANGE, new Color(0xD0, 0xD0, 0xD0));
+    	registerTypeColor(NODE_FRAME_COLOR, Color.BLACK, Color.BLACK);
+    	registerTypeColor(NODE_LABEL_COLOR, Color.BLACK, Color.BLACK);
+    	registerTypeColor(DIAMONDNODE_COLOR, Color.WHITE, Color.WHITE);
+    	registerTypeColor(DIAMONDNODE_FRAME_COLOR, Color.RED, Color.BLACK);
+    	registerTypeColor(EDGE_COLOR, Color.RED, Color.BLACK);
+    	registerTypeColor(EDGE_LABEL_COLOR, Color.DARK_GRAY, Color.BLACK);
+    	registerTypeColor(EDGE_SELECTED_COLOR, Color.ORANGE, new Color(0x50, 0x50, 0x50));
+	}
+	
     public boolean isShowMutliplicities() { return false; }
     public void setShowMutliplicities( boolean showMutliplicities ) {}
     
+    /**
+	 * @return the isShowStates
+	 */
+	public boolean isShowStates() {
+		return isShowStates;
+	}
+
+	/**
+	 * @param isShowStates the isShowStates to set
+	 */
+	public void setShowStates(boolean isShowStates) {
+		this.isShowStates = isShowStates;
+		this.onOptionChanged("SHOWSTATES");
+	}
+	
+	@Override
+	public void saveOptions(PersistHelper helper, Element parent) {
+		super.saveOptions(helper, parent);
+		helper.appendChild(parent, "ShowStates", String.valueOf(this.isShowStates));
+	}
+
+	@Override
+	public void loadOptions(PersistHelper helper, int version) {
+		super.loadOptions(helper, version);
+		this.isShowStates = helper.getElementBooleanValue("ShowStates");
+	}
 }

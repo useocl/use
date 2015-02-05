@@ -29,6 +29,8 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.ocl.expr.ExpressionVisitor;
+import org.tzi.use.uml.ocl.expr.GenerateHTMLExpressionVisitor;
 import org.tzi.use.uml.sys.soil.MStatement;
 
 /**
@@ -44,6 +46,11 @@ public class MMHTMLPrintVisitor extends MMPrintVisitor {
         super(out);
     }
 
+    @Override
+    protected ExpressionVisitor createExpressionVisitor() {
+    	return new GenerateHTMLExpressionVisitor(fOut);
+    }
+    
     /**
      * Can be overriden by subclasses to achieve a different output style.
      */

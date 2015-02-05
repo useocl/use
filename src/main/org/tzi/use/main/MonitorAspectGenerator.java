@@ -21,12 +21,19 @@
 
 package org.tzi.use.main;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.MOperation;
 
 /** 
  * @version     $ProjectVersion: 0.393 $
@@ -65,10 +72,9 @@ public class MonitorAspectGenerator {
     }
 
     public void write() {
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new FileReader(Options.MONITOR_ASPECT_TEMPLATE));
-            while (true ) {
+        
+        try (BufferedReader in = Files.newBufferedReader(Options.MONITOR_ASPECT_TEMPLATE, Charset.defaultCharset())) {
+            while (true) {
                 String line = in.readLine();
                 if (line == null )
                     break;
@@ -80,12 +86,6 @@ public class MonitorAspectGenerator {
             }
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
-        } finally {
-            fOut.close();
-            if (in != null )
-                try { in.close(); } catch (IOException ex) { 
-                    // ignored
-                }
         }
     }
 

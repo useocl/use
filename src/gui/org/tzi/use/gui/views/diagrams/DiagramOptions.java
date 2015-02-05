@@ -22,7 +22,9 @@
 package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Color;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.tzi.use.gui.util.PersistHelper;
@@ -39,7 +41,7 @@ public abstract class DiagramOptions {
 	/**
 	 * The current version number of the layout informations
 	 */
-	public static int XML_LAYOUT_VERSION = 4;
+	public static int XML_LAYOUT_VERSION = 13;
 	
     protected boolean fDoAutoLayout = false;
     protected boolean fShowRolenames = false;
@@ -49,21 +51,71 @@ public abstract class DiagramOptions {
     protected boolean fShowAttributes = false;
     protected boolean fShowOperations = false;
     protected boolean fShowGrid = false;
-    protected boolean fShowCoverage = false;
+    protected boolean fGrayscale = false;
+
+    protected boolean showUnionConstraints = true;
+    protected boolean showSubsetsConstraints = true;
+    protected boolean showRedefinesConstraints = true;
+    
+    protected Path modelFileName = null;
     
     // color settings
-    protected Color NODE_COLOR;
-    protected Color NODE_SELECTED_COLOR;
-    protected Color NODE_FRAME_COLOR;
-    protected Color NODE_LABEL_COLOR;
-    protected Color DIAMONDNODE_COLOR;
-    protected Color DIAMONDNODE_FRAME_COLOR;
-    protected Color EDGE_COLOR;
-    protected Color EDGE_LABEL_COLOR;
-    protected Color EDGE_SELECTED_COLOR;
+    public static final String NODE_COLOR = "NODE_COLOR";
+    public static final String NODE_SELECTED_COLOR = "NODE_SELECTED_COLOR";
+    public static final String NODE_FRAME_COLOR = "NODE_FRAME_COLOR";
+    public static final String NODE_LABEL_COLOR = "NODE_LABEL_COLOR";
+    public static final String DIAMONDNODE_COLOR = "DIAMONDNODE_COLOR";
+    public static final String DIAMONDNODE_FRAME_COLOR = "DIAMONDNODE_FRAME_COLOR";
+    public static final String EDGE_COLOR = "EDGE_COLOR";
+    public static final String EDGE_LABEL_COLOR = "EDGE_LABEL_COLOR";
+    public static final String EDGE_SELECTED_COLOR = "EDGE_SELECTED_COLOR";
     
     public abstract boolean isShowMutliplicities();
+    
     public abstract void setShowMutliplicities( boolean showMutliplicities );
+
+    private List<DiagramOptionChangedListener> optionChangedListener = new ArrayList<DiagramOptionChangedListener>();
+    
+    public DiagramOptions() {
+    	registerColors();
+    	registerAdditionalColors();
+    }
+    
+    /**
+     * Copy constructor. Copies only the settings, no listeners.
+     * @param source
+     */
+    public DiagramOptions(DiagramOptions source) {
+    	
+    	this.colorSafe = new HashMap<String, DiagramOptions.ColorContainer>(source.colorSafe);
+        
+        this.fDoAutoLayout = source.fDoAutoLayout;
+        this.fShowRolenames = source.fShowRolenames;
+        this.fShowAssocNames = source.fShowAssocNames;
+        this.fDoAntiAliasing = source.fDoAntiAliasing;
+        this.fShowMutliplicities = source.fShowMutliplicities;
+        this.fShowAttributes = source.fShowAttributes;
+        this.fShowOperations = source.fShowOperations;
+        this.fShowGrid = source.fShowGrid;
+        this.fGrayscale = source.fGrayscale;
+
+        this.modelFileName = source.modelFileName;
+    }
+    
+    private void registerColors() {
+    	// default colors
+        registerTypeColor(NODE_COLOR, new Color( 0xff, 0xf8, 0xb4 ), new Color(0xF0, 0xF0, 0xF0));
+    	registerTypeColor(NODE_SELECTED_COLOR, Color.orange, new Color(0xD0, 0xD0, 0xD0));
+    	registerTypeColor(NODE_FRAME_COLOR, Color.blue, Color.BLACK);
+    	registerTypeColor(NODE_LABEL_COLOR, Color.black, Color.BLACK);
+    	registerTypeColor(DIAMONDNODE_COLOR, Color.white, Color.WHITE);
+    	registerTypeColor(DIAMONDNODE_FRAME_COLOR, Color.black, Color.BLACK);
+    	registerTypeColor(EDGE_COLOR, Color.BLACK, Color.BLACK);
+    	registerTypeColor(EDGE_LABEL_COLOR, Color.black, Color.BLACK);
+    	registerTypeColor(EDGE_SELECTED_COLOR, Color.ORANGE, new Color(0x50, 0x50, 0x50));
+    }
+    
+    protected abstract void registerAdditionalColors();
     
     public boolean isDoAutoLayout() {
         return fDoAutoLayout;
@@ -112,19 +164,6 @@ public abstract class DiagramOptions {
         fShowOperations = showOperations;
         onOptionChanged("SHOWOPERATIONS");
     }
-    
-    /**
-	 * @param b
-	 */
-	public void setShowCoverage(boolean showCoverage) {
-		fShowCoverage = showCoverage;
-		onOptionChanged("SHOWCOVERAGE");
-	}
-
-	public boolean isShowCoverage() {
-		return fShowCoverage;
-	}
-
 	
 	public boolean showGrid() {
 		return fShowGrid;
@@ -134,32 +173,66 @@ public abstract class DiagramOptions {
 		onOptionChanged("SHOWGRID");
 	}
 	
+	private static class ColorContainer {
+		public final Color inColor;
+		public final Color inGray;
+		
+		public ColorContainer(Color inColor, Color inGray) {
+			this.inColor = inColor;
+			this.inGray = inGray;
+		}
+	}
+	
+	private HashMap<String, ColorContainer> colorSafe = new HashMap<String, ColorContainer>(10);
+	
+	public boolean grayscale() {
+		return fGrayscale;
+	}
+	
+	public void registerTypeColor(String key, Color inColor, Color inGray) {
+		this.colorSafe.put(key, new ColorContainer(inColor, inGray));
+	}
+	
+	public void setGrayscale(boolean grayscale) {
+		fGrayscale = grayscale;
+		onOptionChanged("GRAYSCALE");
+	}
+	
+	public Color getColor(String key) {
+		if (!this.colorSafe.containsKey(key))
+			throw new IllegalArgumentException("unknown color key!");
+		
+		ColorContainer c = this.colorSafe.get(key);
+		
+		return (this.grayscale() ? c.inGray : c.inColor);
+	}
+	
     public Color getDIAMONDNODE_COLOR() {
-        return DIAMONDNODE_COLOR;
+        return getColor("DIAMONDNODE_COLOR");
     }
     public Color getDIAMONDNODE_FRAME_COLOR() {
-        return DIAMONDNODE_FRAME_COLOR;
+    	return getColor("DIAMONDNODE_FRAME_COLOR");
     }
     public Color getEDGE_COLOR() {
-        return EDGE_COLOR;
+    	return getColor("EDGE_COLOR");
     }
     public Color getEDGE_LABEL_COLOR() {
-        return EDGE_LABEL_COLOR;
+    	return getColor("EDGE_LABEL_COLOR");
     }
     public Color getEDGE_SELECTED_COLOR() {
-        return EDGE_SELECTED_COLOR;
+    	return getColor("EDGE_SELECTED_COLOR");
     }
     public Color getNODE_COLOR() {
-        return NODE_COLOR;
+    	return getColor("NODE_COLOR");
     }
     public Color getNODE_FRAME_COLOR() {
-        return NODE_FRAME_COLOR;
+    	return getColor("NODE_FRAME_COLOR");
     }
     public Color getNODE_LABEL_COLOR() {
-        return NODE_LABEL_COLOR;
+    	return getColor("NODE_LABEL_COLOR");
     }
     public Color getNODE_SELECTED_COLOR() {
-        return NODE_SELECTED_COLOR;
+    	return getColor("NODE_SELECTED_COLOR");
     }
     
     protected boolean fIsLoadingLayout = false;
@@ -193,20 +266,18 @@ public abstract class DiagramOptions {
 	/**
 	 * @param rootElement
 	 */
-	public void loadOptions(PersistHelper helper, Element parent, int version) {
-		setDoAutoLayout(helper.getElementBooleanValue(parent, LayoutTags.AUTOLAYOUT));
-		setDoAntiAliasing(helper.getElementBooleanValue(parent, LayoutTags.ANTIALIASING));
-		setShowAssocNames(helper.getElementBooleanValue(parent, LayoutTags.SHOWASSOCNAMES));
-		setShowAttributes(helper.getElementBooleanValue(parent, LayoutTags.SHOWATTRIBUTES));
-		setShowMutliplicities(helper.getElementBooleanValue(parent, LayoutTags.SHOWMULTIPLICITIES));
-		setShowOperations(helper.getElementBooleanValue(parent, LayoutTags.SHOWOPERATIONS));
-		setShowRolenames(helper.getElementBooleanValue(parent, LayoutTags.SHOWROLENAMES));
+	public void loadOptions(PersistHelper helper, int version) {
+		setDoAutoLayout(helper.getElementBooleanValue(LayoutTags.AUTOLAYOUT));
+		setDoAntiAliasing(helper.getElementBooleanValue(LayoutTags.ANTIALIASING));
+		setShowAssocNames(helper.getElementBooleanValue(LayoutTags.SHOWASSOCNAMES));
+		setShowAttributes(helper.getElementBooleanValue(LayoutTags.SHOWATTRIBUTES));
+		setShowMutliplicities(helper.getElementBooleanValue(LayoutTags.SHOWMULTIPLICITIES));
+		setShowOperations(helper.getElementBooleanValue(LayoutTags.SHOWOPERATIONS));
+		setShowRolenames(helper.getElementBooleanValue(LayoutTags.SHOWROLENAMES));
 		if (version > 1) {
-			setShowGrid(helper.getElementBooleanValue(parent, LayoutTags.SHOWGRID));
+			setShowGrid(helper.getElementBooleanValue(LayoutTags.SHOWGRID));
 		}
 	}
-	
-	private List<DiagramOptionChangedListener> optionChangedListener = new ArrayList<DiagramOptionChangedListener>();
 	
 	public void addOptionChangedListener(DiagramOptionChangedListener listener) {
 		optionChangedListener.add(listener);
@@ -220,5 +291,60 @@ public abstract class DiagramOptions {
 		for (DiagramOptionChangedListener listener : optionChangedListener) {
 			listener.optionChanged(optionname);
 		}
+	}
+	/**
+	 * @return the directory
+	 */
+	public Path getDirectory() {
+		return modelFileName == null ? null : modelFileName.toAbsolutePath().getParent();
+	}
+		
+	/**
+	 * @return the modelFileName
+	 */
+	public Path getModelFileName() {
+		return modelFileName;
+	}
+	
+	/**
+	 * @param modelFileName the modelFileName to set
+	 */
+	public void setModelFileName(Path modelFileName) {
+		this.modelFileName = modelFileName;
+	}
+	/**
+	 * @return
+	 */
+	public boolean isShowUnionConstraints() {
+		return showUnionConstraints;
+	}
+	
+	public void setShowUnionConstraints(boolean show) {
+		this.showUnionConstraints = show;
+		onOptionChanged("SHOW_UNION_CONSTRAINTS");
+	}
+	
+	/**
+	 * @return
+	 */
+	public boolean isShowSubsetsConstraints() {
+		return showSubsetsConstraints;
+	}
+	
+	public void setShowSubsetsConstraints(boolean show) {
+		this.showSubsetsConstraints = show;
+		onOptionChanged("SHOW_SUBSETS_CONSTRAINTS");
+	}
+	
+	/**
+	 * @return
+	 */
+	public boolean isShowRedefinesConstraints() {
+		return showRedefinesConstraints;
+	}
+	
+	public void setShowRedefinesConstraints(boolean show) {
+		this.showRedefinesConstraints = show;
+		onOptionChanged("SHOW_REDEFINES_CONSTRAINTS");
 	}
 }

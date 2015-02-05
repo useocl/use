@@ -68,12 +68,13 @@ import org.tzi.use.uml.sys.MSystemState;
 public class VariableEnvironment {
 	/** the stack of frames */
 	private Deque<Map<String,Value>> fFrames;
-	/** TODO */
+	/** The stack of information about visibility of global objects for the frames.
+	 *  This stack has the same number of elements as {@link #fFrames}.
+	 */
 	private Deque<Boolean> fObjectVisibility;
 	/** reference to the current frame */
 	private Map<String, Value> fCurrentFrame;
-
-	/** TODO */
+	/** the system state this variable environment is defined for. */
 	private MSystemState fSystemState;
 	
 
@@ -428,7 +429,7 @@ public class VariableEnvironment {
 				sb.append(VAR_INDENT);
 				sb.append(objectName);
 				sb.append(COLON);
-				sb.append(object.type());
+				sb.append(object.cls());
 				sb.append(EQUAL);
 				sb.append(object.value());
 				sb.append(NEWLN);

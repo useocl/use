@@ -1,7 +1,9 @@
 package org.tzi.use.gui.views.selection.classselection;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -9,21 +11,27 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.NodeBase;
+import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.edges.AssociationEdge;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.SelectionComparator;
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.util.collections.CollectionUtil;
 
 /** 
  * ClassSelection is responsible for the new functions "Show", "Crop" and "Hide" in the class diagram. 
@@ -33,8 +41,9 @@ import org.tzi.use.uml.sys.MObject;
  */
 
 public class ClassSelection {
-	protected ClassDiagram diagram;
-		
+	
+	private final ClassDiagram diagram;
+	
 	/**
 	 * Constructor for ClassSelection.
 	 */ 
@@ -52,11 +61,17 @@ public class ClassSelection {
 			super(text);
 		}
 
-		/**
-		 * @see java.awt.event.ActionListener#actionPerformed(ActionEvent)
-		 */
-		public void actionPerformed(ActionEvent e) {  
-			MainWindow.instance().showClassSelectionClassView(diagram); 
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			SelectionClassView opv = new SelectionClassView(MainWindow.instance(), diagram);
+	    	
+	        ViewFrame f = new ViewFrame("Selection classes", opv, "ObjectProperties.gif");
+	        
+	        JComponent c = (JComponent) f.getContentPane();
+	        c.setLayout(new BorderLayout());
+	        c.add(opv, BorderLayout.CENTER);
+	        MainWindow.instance().addNewViewFrame(f);
+	        f.setSize(580,230);
 		}
 	}
 	
@@ -66,8 +81,8 @@ public class ClassSelection {
 	
 	@SuppressWarnings("serial")
 	class ActionSelectedAssociationPathView extends AbstractAction {
-		private Set<MClass> selectedClasses;
-		private Set<MAssociation> selectedAssociations;
+		private final Set<MClass> selectedClasses;
+		private final Set<MAssociation> selectedAssociations;
 		
 		ActionSelectedAssociationPathView(String text, Set<MClass> sc, Set<MAssociation> selectedAssociations) {
 			super(text);
@@ -75,8 +90,18 @@ public class ClassSelection {
 			selectedClasses = sc;
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
-			MainWindow.instance().showSelectedAssociationPathView(diagram, selectedClasses, selectedAssociations);
+			SelectedAssociationPathView opv = new SelectedAssociationPathView(
+					MainWindow.instance(), diagram, selectedClasses,
+					selectedAssociations);
+	        ViewFrame f = new ViewFrame("Selection association path length", opv,
+	                "ObjectProperties.gif");
+	        JComponent c = (JComponent) f.getContentPane();
+	        c.setLayout(new BorderLayout());
+	        c.add(opv, BorderLayout.CENTER);
+	        MainWindow.instance().addNewViewFrame(f);
+	        f.setSize(450,200);
 		}
 	}
 	
@@ -86,15 +111,24 @@ public class ClassSelection {
 	
 	@SuppressWarnings("serial")
 	class ActionSelectedClassPathView extends AbstractAction {
-		private Set<MClass> selectedClasses;
+		private final Set<MClass> selectedClasses;
 
 		ActionSelectedClassPathView(String text, Set<MClass> sc) {
 			super(text);
 			selectedClasses = sc;
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
-			MainWindow.instance().showSelectedClassPathView(diagram, selectedClasses);
+			SelectedClassPathView opv = new SelectedClassPathView(
+					MainWindow.instance(), diagram, selectedClasses);
+			ViewFrame f = new ViewFrame("Selection by path length", opv,
+					"ObjectProperties.gif");
+			JComponent c = (JComponent) f.getContentPane();
+			c.setLayout(new BorderLayout());
+			c.add(opv, BorderLayout.CENTER);
+			MainWindow.instance().addNewViewFrame(f);
+			f.setSize(450, 200);
 		}
 	}
 	
@@ -110,7 +144,8 @@ public class ClassSelection {
 		all.addAll(selectedClasses);
 
 		for (MClass mc : selectedClasses) {
-			all.addAll(mc.allChildren());
+			Set<MClass> allChildrenClass = CollectionUtil.downCastUnsafe(mc.allChildren());
+			all.addAll(allChildrenClass);
 		}
 		
 		return all;
@@ -128,7 +163,7 @@ public class ClassSelection {
 			
 			if (diag.getGraph() != null && diag.getGraph().size() > 0) {
 				for (MClass mc : classes) {
-					Iterator<NodeBase> itobject = diag.getGraph().iterator();
+					Iterator<PlaceableNode> itobject = diag.getGraph().iterator();
 					
 					// scan in fgraph
 					while(itobject.hasNext()){
@@ -159,7 +194,7 @@ public class ClassSelection {
 			
 			if (diag.getHiddenNodes() != null && diag.getHiddenNodes().size() > 0 ) {
 				for (MClass mc : classes) {
-					Iterator<? extends NodeBase> itobject = diag.getHiddenNodes().iterator();
+					Iterator<? extends PlaceableNode> itobject = diag.getHiddenNodes().iterator();
 					
 					while(itobject.hasNext()){
 						Object node = itobject.next();
@@ -182,7 +217,7 @@ public class ClassSelection {
 	 * @return JMenu
 	 */
 	public JMenu getSubMenuHideClass() {
-		JMenu subMenuSelectionClassHide = new JMenu("Selection hide class");
+		JMenu subMenuSelectionClassHide = new JMenu("Hide classes");
 
 		SelectionComparator sort = new SelectionComparator();
 		TreeSet<ClassNode> sortedNodes = new TreeSet<ClassNode>(sort);
@@ -204,11 +239,11 @@ public class ClassSelection {
 			
 			Set<MClass> hideClass = new HashSet<MClass>();
 			hideClass.add(cls);
-			subMenuSelectionClassHide.add(diagram.getAction("hide " + classname, hideClass));
+			subMenuSelectionClassHide.add(diagram.getActionHideNodes("Hide " + classname, hideClass));
 		}
 		
 		if (nodesize > 1) {
-			subMenuSelectionClassHide.addSeparator();
+			subMenuSelectionClassHide.insertSeparator(0);
 			it = diagram.getGraph().iterator();
 			Set<MClass> hideClass = new HashSet<MClass>();
 			while(it.hasNext()){
@@ -218,59 +253,104 @@ public class ClassSelection {
 					hideClass.add(cls);
 				}
 			}
-			subMenuSelectionClassHide.add(diagram.getAction("Hide all classes", hideClass));
+			subMenuSelectionClassHide.insert(diagram.getActionHideNodes("Hide all classes", hideClass), 0);
 		}
 		return subMenuSelectionClassHide;
 	}
 
 	/**
-	 * Method getSubMenuShowClass supplies a list of the sorted classes in the context menu, 
-	 * which are already hidden.
+	 * This creates a JMenu with a sub menu for each currently hidden
+	 * class to show it.
 	 * @return JMenu
 	 */
 	public JMenu getSubMenuShowClass() {
-		JMenu subMenuSelectionClassShow = new JMenu("Selection show class");
-
-		Iterator<?> it = diagram.getHiddenNodes().iterator();
+		JMenu subMenuSelectionClassShow = new JMenu("Show classes");
 		SelectionComparator sort = new SelectionComparator();
-		
-		TreeSet<MClass> sortedNodes = new TreeSet<MClass>(sort);
-		while(it.hasNext()){
-			Object node = it.next();
-			if (node instanceof MClass) {
-				sortedNodes.add((MClass)node);
-			}
-		}
-		
-		for (MClass cls : sortedNodes) {
-			String classname = cls.name();
-			final Set<MClass> sclasses = new HashSet<MClass>();
-			sclasses.clear();
-			sclasses.add(cls);
-
-			final JMenuItem showClasses = new JMenuItem(
-							"Show " + classname);
-			showClasses.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-							diagram.showElementsInDiagram(sclasses);
-						}
-					});
-				subMenuSelectionClassShow.add(showClasses);
-		}
 
 		if (diagram.getHiddenNodes().size() > 1) {
-			subMenuSelectionClassShow.addSeparator();
-			final JMenuItem showAllClasses = new JMenuItem(
-			"Show all classes");
+			final JMenuItem showAllClasses = new JMenuItem("Show all classes");
 			showAllClasses.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent ev) {
 					diagram.showAll();
-					diagram.invalidateContent();
+					diagram.invalidateContent(true);
 				}
 			});
 			subMenuSelectionClassShow.add(showAllClasses);
+			subMenuSelectionClassShow.addSeparator();
 		}
+		
+		TreeSet<MClass> sortedNodes = new TreeSet<MClass>(sort);
+		for (PlaceableNode node : diagram.getHiddenNodes()) {
+			if (node instanceof ClassNode) {
+				ClassNode cNode = (ClassNode)node; 
+				sortedNodes.add(cNode.cls());
+			}
+		}
+		
+		for (final MClass cls : sortedNodes) {
+			String classname = cls.name();
+			final JMenuItem showClasses = new JMenuItem("Show " + classname);
+			showClasses.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ev) {
+					diagram.showClass(cls);
+					diagram.repaint();
+				}
+			});
+			subMenuSelectionClassShow.add(showClasses);
+		}
+
 		return subMenuSelectionClassShow;
+	}
+
+	/**
+	 * @return
+	 */
+	public JMenu getSubMenuShowAssociation() {
+		JMenu subMenu = new JMenu("Show associations");
+		Comparator<MAssociation> sort = new Comparator<MAssociation>() {
+			@Override
+			public int compare(MAssociation o1, MAssociation o2) {
+				return o1.name().compareTo(o2.name());
+			}
+		};
+		
+		TreeSet<MAssociation> sortedAssociations = new TreeSet<>(sort);
+		for (EdgeBase edge : diagram.getHiddenEdges()) {
+			MAssociation association = null;
+			
+			if (edge instanceof AssociationEdge) {
+				association = ((AssociationEdge)edge).getAssociation();
+				boolean allVisible = true;
+				
+				for (MAssociationEnd end : association.associationEnds()) {
+					if (!diagram.isVisible(end.cls())) {
+						allVisible = false;
+						break;
+					}
+				}
+				
+				if (allVisible) {
+					sortedAssociations.add(association);
+				}
+			}
+		}
+		
+		for (final MAssociation assoc : sortedAssociations) {
+			final JMenuItem showAssoc = new JMenuItem("Show " + assoc.name());
+			showAssoc.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ev) {
+					diagram.showAssociation(assoc);
+					diagram.repaint();
+				}
+			});
+			
+			subMenu.add(showAssoc);
+		}
+				
+		return subMenu;
 	}
 	
 }

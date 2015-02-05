@@ -47,22 +47,27 @@ var theFemales: Sequence(Person), theMales: Sequence(Person),
 begin
 theFemales:=CreateN(Person,[numFemale]);
 theMales:=CreateN(Person,[numMale]);
+
 for i:Integer in [Sequence{1..numFemale}]
-  begin [theFemales->at(i)].name:=Any([Sequence{'Ada','Bel','Cam','Day',
+  begin [theFemales->at(i)].name:=Try([Sequence{'Ada','Bel','Cam','Day',
     'Eva','Flo','Gen','Hao','Ina','Jen'}]);
   [theFemales->at(i)].civstat:=
-    Any([Sequence{#single,#married,#divorced,#widowed}]);
-  [theFemales->at(i)].gender:=Any([Sequence{#female,#male}]);
-  [theFemales->at(i)].alive:=Any([Sequence{false,true}]); end;
-for i:Integer in [Sequence{1..numMale}]
-  begin [theMales->at(i)].name:=Any([Sequence{'Ali','Bob','Cyd','Dan',
+    Try([Sequence{#single,#married,#divorced,#widowed}]);
+  [theFemales->at(i)].gender:=Try([Sequence{#female,#male}]);
+  [theFemales->at(i)].alive:=Try([Sequence{false,true}]);
+end;
+
+for i:Integer in [Sequence{1..numMale}] begin 
+  [theMales->at(i)].name:=Try([Sequence{'Ali','Bob','Cyd','Dan',
     'Eli','Fox','Gil','Hal','Ike','Jan'}]);
   [theMales->at(i)].civstat:=
-    Any([Sequence{#single,#married,#divorced,#widowed}]);
-  [theMales->at(i)].gender:=Any([Sequence{#female,#male}]);
-  [theMales->at(i)].alive:=Any([Sequence{false,true}]); end;
+    Try([Sequence{#single,#married,#divorced,#widowed}]);
+  [theMales->at(i)].gender:=Try([Sequence{#female,#male}]);
+  [theMales->at(i)].alive:=Try([Sequence{false,true}]);
+end;
+
 for i:Integer in [Sequence{1..numMarriage}]
-  begin f:=Any([theFemales]); m:=Any([theMales]);
+  begin f:=Try([theFemales]); m:=Try([theMales]);
   Insert(Marriage,[f],[m]); end;
 end;
 

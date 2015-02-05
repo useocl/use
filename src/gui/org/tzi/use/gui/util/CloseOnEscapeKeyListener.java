@@ -21,6 +21,7 @@
 
 package org.tzi.use.gui.util;
 
+import java.awt.KeyEventDispatcher;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -30,20 +31,28 @@ import java.awt.event.KeyEvent;
  * A KeyAdapter listening on escape key events. The specified window
  * will be closed and disposed when the escape key was pressed.
  * 
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author Mark Richters
+ * @author Frank Hilken 
  */
-public class CloseOnEscapeKeyListener extends KeyAdapter {
+public class CloseOnEscapeKeyListener extends KeyAdapter implements KeyEventDispatcher {
     private Window fComp;
 
     public CloseOnEscapeKeyListener(Window comp) {
         fComp = comp;
     }
 
+    @Override
     public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar() == KeyEvent.VK_ESCAPE ) {
-            fComp.setVisible(false);
-            fComp.dispose();
-        }
+        dispatchKeyEvent(e);
     }
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent e) {
+		if (e.getKeyChar() == KeyEvent.VK_ESCAPE ) {
+			fComp.setVisible(false);
+			fComp.dispose();
+			return true;
+		}
+		return false;
+	}
 }

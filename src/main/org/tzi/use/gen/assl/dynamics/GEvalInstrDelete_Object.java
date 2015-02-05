@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 
 import org.tzi.use.gen.assl.statics.GInstrDelete_Object;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
@@ -78,7 +79,7 @@ public class GEvalInstrDelete_Object extends GEvalInstruction
     	MSystem system = state.system();
     	PrintWriter basicOutput = collector.basicPrintWriter();
     	
-    	MStatement statement = new MObjectDestructionStatement(value);
+    	MStatement statement = new MObjectDestructionStatement((ObjectValue)value);
     	MStatement inverseStatement;
     	
     	basicOutput.println(statement.getShellCommand());

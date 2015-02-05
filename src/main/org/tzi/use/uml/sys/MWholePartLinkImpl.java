@@ -24,19 +24,19 @@ package org.tzi.use.uml.sys;
 import java.util.List;
 import java.util.Set;
 
-import org.tzi.use.uml.mm.MAggregationKind;
+import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * A link is an instance of an fAssociation.
  *
- * @version     $ProjectVersion: 2-3-1-release.3 $
  * @author      Duc-Hanh
  */
 
 final class MWholePartLinkImpl implements MWholePartLink {
-    private MLink delegatesLink; 
+    private final MLink delegatesLink; 
 
     /**
      * Constructor.     
@@ -110,31 +110,20 @@ final class MWholePartLinkImpl implements MWholePartLink {
      * Returns the source node of this edge //parent or whole
      */
     @Override
+    @NonNull
     public MObject source(){
-        int aggregationKind = association().aggregationKind();
-        
-        if ( (aggregationKind == MAggregationKind.AGGREGATION) || 
-         (aggregationKind == MAggregationKind.COMPOSITION) ){            
-            MObject[] temp = linkedObjectsAsArray();
-            return temp[0];
-        }
-        return null;
+        MObject[] temp = linkedObjectsAsArray();
+        return temp[0];
     }
     
     /**
      * Returns the target node of this edge. //child or part
      */
     @Override
+    @NonNull
     public MObject target(){
-        int aggregationKind = association().aggregationKind();
-        
-        if ( (aggregationKind == MAggregationKind.AGGREGATION) || 
-         (aggregationKind == MAggregationKind.COMPOSITION) ){       
-            MObject[] temp = linkedObjectsAsArray();             
-            return temp[1];            
-        }
-        
-        return null;        
+        MObject[] temp = linkedObjectsAsArray();             
+        return temp[1];            
     }
 
     /**
@@ -143,5 +132,20 @@ final class MWholePartLinkImpl implements MWholePartLink {
     public boolean isReflexive(){
         MObject[] temp = linkedObjectsAsArray();
         return temp[0] == temp[1];
-    }    
+    }
+
+	@Override
+	public boolean isVirtual() {
+		return delegatesLink.isVirtual();
+	}
+
+	@Override
+	public List<List<Value>> getQualifier() {
+		return delegatesLink.getQualifier();
+	}
+
+	@Override
+	public MLinkEnd getLinkEnd(int index) {
+		return delegatesLink.getLinkEnd(index);
+	}
 }

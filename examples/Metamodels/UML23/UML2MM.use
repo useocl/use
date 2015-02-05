@@ -1,5 +1,3 @@
--- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
-
 model UML23_MetaModel
 
 enum VisibilityKind {
@@ -148,18 +146,18 @@ association A_Element_AnnotatedElement_Comment_Comment between
 end
  
 association A_Relationship_Relationship_Element_RelatedElement between
-  Relationship[*] role relationship union
   Element[1..*] role relatedElement union
+  Relationship[*] role relationship union
 end
 
 association A_DirectedRelationship_DirectedRelationship_Element_Target between
-  DirectedRelationship[*] role notNavigableTarget subsets relationship
   Element[1..*] role target subsets relatedElement union
+  DirectedRelationship[*] role notNavigableTarget subsets relationship
 end
 
 association A_DirectedRelationship_DirectedRelationship_Element_Source between
-  DirectedRelationship[*] role notNavigableSource subsets relationship
   Element[1..*] role source subsets relatedElement union
+  DirectedRelationship[*] role notNavigableSource subsets relationship
 end
 
 --------------------------------------------------------------------------------------------------------
@@ -176,9 +174,12 @@ end
 abstract class NamedElement < Element
 attributes
   name : String
-  visibility : VisibilityKind
-  -- TODO: Abgeleitetes Attribut
+  visibility : VisibilityKind 
+    init = #public
+	
   qualifiedName : String
+    derive = self.allNamespaces()->iterate( ns : Namespace; result: String = self.name |
+                                             ns.name.concat(self.separator()).concat(result))
   
 operations
   /*
@@ -453,8 +454,8 @@ composition C_Namespace_ImportingNamespace_ElementImport_ElementImport between
 end
 
 association A_ElementImport_ElementImport_PackageableElement_ImportedElement between
-  ElementImport[*] role notNavigableImportedElement -- Spec says: 1
   PackageableElement[1] role importedElement subsets target
+  ElementImport[*] role notNavigableImportedElement -- Spec says: 1
 end
 
 composition C_Namespace_ImportingNamespace_PackageImport_PackageImport between
@@ -463,8 +464,8 @@ composition C_Namespace_ImportingNamespace_PackageImport_PackageImport between
 end
 
 association A_PackageImport_PackageImport_Package_ImportedPackage between
-  PackageImport[*] role notNavigableImportedPackage
   Package[1] role importedPackage subsets target
+  PackageImport[*] role notNavigableImportedPackage
 end
 --------------------------------------------------------------------------------------------------------
 -- End Fig. 7.4
@@ -645,6 +646,11 @@ abstract class ValueSpecification < PackageableElement, TypedElement
 	[6] The query isNull() returns true when it can be computed that the value is null.
 	*/
 	isNull() : Boolean = false
+	
+	/*
+	Extension to UML
+	*/
+	getValue() : OclAny = null
 end
 
 /*
@@ -664,13 +670,13 @@ abstract class Type < PackageableElement
 end
 
 composition C_MultiplicityElement_OwningUpper_ValueSpecification_UpperValue between
-  MultiplicityElement[0..1] role owningUpper subsets ownedElement
-  ValueSpecification[0..1] role upperValue subsets owner
+  MultiplicityElement[0..1] role owningUpper subsets owner
+  ValueSpecification[0..1] role upperValue subsets ownedElement
 end
 
 composition C_MultiplicityElement_OwningLower_ValueSpecification_LowerValue between
-  MultiplicityElement[0..1] role owningLower subsets ownedElement
-  ValueSpecification[0..1] role lowerValue subsets owner
+  MultiplicityElement[0..1] role owningLower subsets owner
+  ValueSpecification[0..1] role lowerValue subsets ownedElement
 end
 
 association A_TypedElement_TypedElement_Type_Type between
@@ -776,6 +782,8 @@ UML 2.3 p. 87:
 An instance value is a value specification that identifies an instance.
 */
 class InstanceValue < ValueSpecification
+  operations
+    getValue() : OclAny = self.instance
 end
 
 /*
@@ -802,6 +810,11 @@ class LiteralBoolean < LiteralSpecification
 	[2] The query booleanValue() gives the value.
 	*/
 	booleanValue() : Boolean = value
+	
+	/*
+	UML extension
+	*/
+	getValue() : OclAny = self.value
 end
 
 /*
@@ -826,6 +839,11 @@ class LiteralInteger < LiteralSpecification
 	[2] The query integerValue() gives the value.
 	*/
 	integerValue() : Integer = value
+	
+	/*
+	UML extension
+	*/
+	getValue() : OclAny = self.value
 end
 
 /*
@@ -851,6 +869,11 @@ class LiteralString < LiteralSpecification
 	[2] The query stringValue() gives the value.
 	*/
 	stringValue() : String = value
+	
+	/*
+	UML extension
+	*/
+	getValue() : OclAny = self.value
 end
 
 /*
@@ -863,7 +886,7 @@ class LiteralUnlimitedNatural < LiteralSpecification
 	UML 2.3 p. 96:
 	The specified UnlimitedNatural value. Default value is 0.
 	*/
-    value : Integer -- @Modified Should be UnlimitedNatural
+    value : UnlimitedNatural
   operations
     /*
 	UML 2.3 p. 96:
@@ -876,7 +899,12 @@ class LiteralUnlimitedNatural < LiteralSpecification
 	[2] The query unlimitedValue() gives the value.
 	@Modified Should be UnlimitedNatural
 	*/
-	unlimitedValue() : Integer = value
+	unlimitedValue() : UnlimitedNatural
+	
+	/*
+	UML extension
+	*/
+	getValue() : OclAny = self.value
 end
 
 /*
@@ -1002,8 +1030,8 @@ composition C_InstanceSpecification_OwningInstanceSpec_ValueSpecification_Specif
 end
 
 association A_InstanceSpecification_InstanceSpecification_Classifier_Classifier between
-  InstanceSpecification[*] role notNavigableClassifier
   Classifier[*] role classifier
+  InstanceSpecification[*] role notNavigableClassifier
 end
 --------------------------------------------------------------------------------------------------------
 -- End Fig. 7.8
@@ -1023,6 +1051,7 @@ abstract class Classifier < RedefinableElement, Type, Namespace
 	Default value is false.
 	*/
     isAbstract : Boolean
+	  init = false
 	
 	/*
 	UML 2.3 p. 53:
@@ -1035,6 +1064,7 @@ abstract class Classifier < RedefinableElement, Type, Namespace
 	Default is false.
 	*/
 	isFinalSpecialization : Boolean
+	  init = false
   
   operations
     /*
@@ -1069,7 +1099,8 @@ abstract class Classifier < RedefinableElement, Type, Namespace
 	restrictions apply.
 	*/
 	inheritableMembers(c: Classifier): Set(NamedElement) =
-	  member->select(m | c.hasVisibilityOf(m))
+	  -- member->select(m | c.hasVisibilityOf(m))
+	  member->select(m | m.visibility <> VisibilityKind::private)
 	pre: c.allParents()->includes(self)
 	
 	/*
@@ -1091,7 +1122,7 @@ abstract class Classifier < RedefinableElement, Type, Namespace
 	that conforms to another. This is used, for example, in the specification of 
 	signature conformance for operations.
 	*/
-	conformsTo(other: Classifier): Boolean =
+	conformsTo(other: Type): Boolean =
 		self=other or self.allParents()->includes(other)
 
 	/*
@@ -1180,8 +1211,8 @@ association A_RedefinableElement_RedefinableElement_RedefinableElement_Redefined
 end
 
 association A_RedefinableElement_RedefinableElement_Classifier_RedefinitionContext between
-  RedefinableElement[*] role notNavigableRedefinitionContext
   Classifier[*] role redefinitionContext union
+  RedefinableElement[*] role notNavigableRedefinitionContext
 end
 
 association A_Classifier_Classifier_Property_Attribute between
@@ -1200,7 +1231,7 @@ composition C_Classifier_Specific_Generalization_Generalization between
 end
 
 association A_Classifier_Classifier_NamedElement_InheritedMember between
-  Classifier[*] role notNavigableInheritedMember
+  Classifier[*] role notNavigableInheritedMember subsets notNavigableMember
   /*
   UML 2.3 p. 54:
   [4] The inheritedMember association is derived by inheriting the inheritable members of the parents.
@@ -1556,6 +1587,7 @@ class Property < StructuralFeature, ConnectableElement /* From Fig. 9.2: */
 		The default value is none.
 		*/
 		aggregation : AggregationKind /*[1]*/
+		  init = #none
 		
 		/*
 		UML 2.3 p. 126:
@@ -1570,7 +1602,7 @@ class Property < StructuralFeature, ConnectableElement /* From Fig. 9.2: */
 		This is a derived value, indicating whether the aggregation 
 		of the Property is composite or not.
 		*/
-		isComposite : Boolean /*[1]*/ -- derived
+		isComposite : Boolean derive = self.aggregation = AggregationKind::composite
 		
 		/*
 		UML 2.3 p. 126:
@@ -1652,6 +1684,56 @@ class Property < StructuralFeature, ConnectableElement /* From Fig. 9.2: */
 		isAttribute(p : Property) : Boolean = 
 			Classifier.allInstances->exists(c| c.attribute->includes(p))
 
+		/*
+		Extension to the UML
+		*/
+		getConnectedObjects():Set(Tuple(source:Sequence(InstanceSpecification), conn:Set(ValueSpecification))) = 
+		  -- Because we use allFeatures(), we include sub classes or sub associations
+		  let instances = InstanceSpecification.allInstances()->select(i | i.classifier.allFeatures()->includes(self)) in
+		  
+		  if self.isDerivedUnion then
+			  Property.allInstances()->select(f | f.oclAsType(Property).subsettedProperty->includes(self))
+			    ->collect( f | f.oclAsType(Property).getConnectedObjects())->iterate(derivedValues ; res:Set(Tuple(source:Sequence(InstanceSpecification), conn:Set(ValueSpecification)))=Set{} |
+					let existingValues = res->any(t2 | t2.source = derivedValues.source) in
+					if existingValues <> null then
+					  res->excluding(existingValues)->including(Tuple{source=existingValues.source, conn=existingValues.conn->union(derivedValues.conn)})
+					else
+					  res->including(derivedValues)
+					endif
+				)
+	      else if self.owner.oclIsTypeOf(Class) then
+		    -- Property is owned by a class
+			-- Instances of class are the source and the defined values in the slot are the connected objects
+			instances->collect(i | Tuple{source=Sequence{i}, conn=i.slot->any(s|s.definingFeature=self).value->asSet()})->asSet()
+		  else
+		    -- Property is owned by association
+			-- Collect sequences of source tuples (seq->size() = 1 for binary associations and n-1 for n-ary) 
+			-- and the set of connected objects
+		    let assoc:Association = self.owner.oclAsType(Association) in
+			-- Collect a set for each link with information about linked object and the linked property
+            let sourceObjects:Set(Sequence(Tuple(property:Property, obj:InstanceValue))) = 
+			  instances->collectNested(i | 
+			    -- Reject the association end which is linked to ourself
+			    assoc.memberEnd->reject(mEnd | mEnd = self)
+			    -- Collect the source instances tuple
+				->collect(mEnd |
+				  Tuple{property=mEnd, obj=i.slot->any(s | s.definingFeature = mEnd).value->any(true).oclAsType(InstanceValue)}
+				)
+			  )->asSet()
+            in
+			  -- Collect for each source tuple the connected objects			 
+			  sourceObjects->collect(link:Sequence(Tuple(property:Property, obj:InstanceValue)) |
+			    -- Select all instances which are linked by the given objects at the given ends
+			    let linkedInstances = instances->select(i |
+                  link->forAll(t:Tuple(property:Property, obj:InstanceValue) | 
+                    i.slot->exists(definingFeature=t.property and value->any(true).oclAsType(InstanceValue).instance = t.obj.instance)
+                  )
+                )->collect(slot->any(definingFeature=self).value)->asSet() in
+			    Tuple{source=link.obj.instance,conn=linkedInstances}
+			  )->asSet()
+			endif
+         endif
+
 	constraints
 		inv isDerivedIsDefined:
 			self.isDerived.isDefined()
@@ -1661,25 +1743,6 @@ class Property < StructuralFeature, ConnectableElement /* From Fig. 9.2: */
 		
 		inv isCompositeIsDefined:
 			self.isComposite.isDefined()
-		/*
-		UML 2.3 p. 127:	
-		[1] If this property is owned by a class associated with a binary association, 
-		and the other end of the association is also owned by a class, 
-		then opposite gives the other end.
-		@Modified any(true); excluding instead of -; replaced Set{} with null
-		*/
-		inv:
-			opposite = 
-			if owningAssociation->isEmpty() and association.memberEnd->size() = 2 then
-				let otherEnd = (association.memberEnd->excluding(self))->any(true) in
-					if otherEnd.owningAssociation->isEmpty() then 
-						otherEnd
-					else 
-						null
-					endif
-			else
-				null
-			endif
 		/*
 		UML 2.3 p. 127:	
 		[2] A multiplicity on an aggregate end of a composite aggregation 
@@ -1761,6 +1824,33 @@ class Property < StructuralFeature, ConnectableElement /* From Fig. 9.2: */
 		inv subsetRequiresDifferentname:
 			self.subsettedProperty->notEmpty() implies
 				self.subsettedProperty->forAll(sp | sp.name <> self.name)
+		
+        /*
+		Extension to UML
+        */		
+		inv subsettingIsValid:
+         let subsetLinks = self.getConnectedObjects() in
+         self.subsettedProperty->forAll(supersetProperty |
+           let supersetLinks = supersetProperty.getConnectedObjects() in
+           subsetLinks->forAll(t1 |
+             supersetLinks->one(t2 | t1.source=t2.source and 
+               t2.conn.getValue()->asSet()->includesAll(
+                 t1.conn.getValue()->asSet()))
+	       )
+         )
+		inv unionIsValid:
+         self.isDerivedUnion implies (
+		   let subsetter = Property.allInstances()->select(p |
+		     p.subsettedProperty->includes(self)) in
+			 
+		   let unionLinks = self.getConnectedObjects() in
+		
+		   unionLinks->forAll(t1 | 
+		     subsetter->collect(p |
+		       p.getConnectedObjects()->select(t2 |
+			     t1.source = t2.source).conn.getValue())->asSet() = t1.conn.getValue()->asSet()
+		   )
+		 )
 end
 
 /*
@@ -1876,12 +1966,29 @@ end
 
 association A_Property_Property_Property_Opposite between
   Property[0..1] role notNavigableOpposite
-  Property[0..1] role opposite
+  /*
+  UML 2.3 p. 127:	
+  [1] If this property is owned by a class associated with a binary association, 
+  and the other end of the association is also owned by a class, 
+  then opposite gives the other end.
+  @Modified any(true); excluding instead of -; replaced Set{} with null
+  */
+  Property[0..1] role opposite derived = 
+    if self.owningAssociation->isEmpty() and self.association.memberEnd->size() = 2 then
+	  let otherEnd = (association.memberEnd->excluding(self))->any(true) in
+      if otherEnd.owningAssociation->isEmpty() then 
+	    otherEnd
+      else 
+        null
+      endif
+	else
+	  null
+	endif
 end
 
 association A_Property_MemberEnd_Association_Association between
-  Property[2..*] role memberEnd ordered subsets member
   Association[0..1] role association subsets notNavigableMember
+  Property[2..*] role memberEnd ordered subsets member
 end
 
 composition C_Association_OwningAssociation_Property_OwnedEnd between
@@ -1904,8 +2011,8 @@ end
   [3] endType is derived from the types of the member ends.
 */
 association A_Association_Association_Type_EndType between
-  Association[*] role notNavigableEndType subsets relationship -- Not marked in Spec                    was missing!
   Type[1..*] role endType ordered subsets relatedElement derived = self.memberEnd->collect(e | e.type)->asOrderedSet()
+  Association[*] role notNavigableEndType subsets relationship -- Not marked in Spec                    was missing!
 end
 --------------------------------------------------------------------------------------------------------
 -- End Figure 7.12
@@ -2049,8 +2156,8 @@ composition C_Package_ReceivingPackage_PackageMerge_PackageMerge between
 end
 
 association A_PackageMerge_PackageMerge_Package_MergedPackage between
-  PackageMerge[*] role notNavigableMergedPackage subsets notNavigableTarget
   Package[1] role mergedPackage subsets target
+  PackageMerge[*] role notNavigableMergedPackage subsets notNavigableTarget
 end
 
 composition C_Package_NestingPackage_Package_Nestedpackage between
@@ -2116,14 +2223,14 @@ end
 
 -- @TODO: In the specification the subsets constraint is on the wrong end?!?
 association A_Dependency_SupplierDependency_NamedElement_Supplier between
-  Dependency[*] role supplierDependency
   NamedElement[1..*] role supplier subsets target
+  Dependency[*] role supplierDependency
 end
 
 -- In the specification the subsets constraint is on the wrong end?!?
 association A_Dependency_ClientDependency_NamedElement_Client between
-  Dependency[*] role clientDependency
   NamedElement[1..*] role client subsets source
+  Dependency[*] role clientDependency
 end
 
 composition C_Abstraction_Abstraction_OpaqueExpression_Mapping between
@@ -2132,8 +2239,8 @@ composition C_Abstraction_Abstraction_OpaqueExpression_Mapping between
 end
 
 association A_Substitution_Substitution_Classifier_Contract between
-  Substitution[*] role notNavigableSubstitution subsets supplierDependency -- not mentioned in Spec.
   Classifier[1] role contract subsets supplier
+  Substitution[*] role notNavigableSubstitution subsets supplierDependency -- not mentioned in Spec.
 end
 
 composition C_Classifier_SubstitutingClassifier_Substitution_Substitution between
@@ -2203,8 +2310,8 @@ association A_Interface_Interface_Interface_RedefinedInterface between
 end
 
 association InterfaceRealization_InterfaceRealization_Interface_Contract between
-  InterfaceRealization[*] role notNavigableContract -- not mentioned in Spec.: subsets supplierDependency
   Interface[1] role contract subsets supplier
+  InterfaceRealization[*] role notNavigableContract -- not mentioned in Spec.: subsets supplierDependency
 end
 
 composition C_BehavioredClassifier_ImplementingClassifier_InterfaceRealization_InterfaceRealization between
@@ -2454,8 +2561,8 @@ association A_Component_Component_Interface_Provided between
 end
 
 association A_ComponentRealization_ComponentRealization_Classifier_RealizingClassifier between
-  ComponentRealization[*] role notNavigableRealizingClassifier -- not mentioned in Spec.: subsets supplierDependency
   Classifier[1..*] role realizingClassifier subsets supplier
+  ComponentRealization[*] role notNavigableRealizingClassifier -- not mentioned in Spec.: subsets supplierDependency
 end
 --------------------------------------------------------------------------------------------------------
 -- End Figure 8.2

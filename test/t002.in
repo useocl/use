@@ -21,20 +21,20 @@
 #
 
 ? B.allInstances
-*-> Set{@b1} : Set(B)
+*-> Set{b1} : Set(B)
 
 ? A.allInstances
-*-> Set{@a1,@a2,@b1} : Set(A)
+*-> Set{a1,a2,b1} : Set(A)
 
 #
 ## navigation
 #
 
 ? a1.c
-*-> Set{@c1} : Set(C)
+*-> Set{c1} : Set(C)
 
 ? c1.a
-*-> Set{@a1,@b1} : Set(A)
+*-> Set{a1,b1} : Set(A)
 
 #
 ## subtyping
@@ -62,10 +62,10 @@
 *-> Bag{true,true} : Bag(Boolean)
 
 ? Set{a1,a2}->including(b1)->select(o | o.oclIsKindOf(B))
-*-> Set{@b1} : Set(B)
+*-> Set{b1} : Set(B)
 
 ? Set{a1,a2}->including(b1)->select(o : OclAny | o.oclIsKindOf(OclAny))
-*-> Set{@a1,@a2,@b1} : Set(A)
+*-> Set{a1,a2,b1} : Set(A)
 
 ? 3.oclIsTypeOf(Real)
 *-> false : Boolean
@@ -80,10 +80,10 @@
 *-> false : Boolean
 
 ? Set{a1,a2}->including(b1)->select(o | o.oclIsTypeOf(B))
-*-> Set{@b1} : Set(B)
+*-> Set{b1} : Set(B)
 
 ? Set{Set{a1},Set{a2}}->select(s : Collection(A) | s->notEmpty)
-*-> Set{Set{@a1},Set{@a2}} : Set(Set(A))
+*-> Set{Set{a1},Set{a2}} : Set(Set(A))
 
 ? Set{false,true}->collect(b : OclAny | b.oclAsType(Boolean))
 *-> Bag{false,true} : Bag(Boolean)
@@ -133,6 +133,6 @@
 #
 
 ? Set{a1}->iterate(v; result : A = oclUndefined(A) | v)
-*-> @a1 : A
+*-> a1 : A
 
 exit

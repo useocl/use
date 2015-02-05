@@ -21,7 +21,7 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import org.tzi.use.gen.model.GFlaggedInvariant;
+import org.tzi.use.uml.mm.MClassInvariant;
 
 /**
  * Instruction class for a calculated barrier
@@ -36,14 +36,11 @@ public class GInstrCalculatedBarrier extends GInstrBarrier {
 	 * Constructs a new barrier statement for a calculated barrier.
 	 * @param flaggedInvariant The flagged invariant this barrier checks.
 	 */
-	public GInstrCalculatedBarrier(GFlaggedInvariant flaggedInvariant) {
-		super(flaggedInvariant.getFlaggedExpression());
+	public GInstrCalculatedBarrier(MClassInvariant flaggedInvariant) {
+		super(flaggedInvariant.flaggedExpression());
 		invName = flaggedInvariant.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.statics.GInstrBarrier#toString()
-	 */
 	@Override
 	public String toString() {
 		return "*Barrier(" + invName + ")";

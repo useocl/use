@@ -12,16 +12,12 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.BagValue;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.RealValue;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -50,8 +46,8 @@ public class RubyHelper {
 			result = new RealValue(((Double)rubyValue).doubleValue());
 		} else if (rubyValue instanceof MObject) {
 			MObject obj = (MObject)rubyValue;
-			result = new ObjectValue(TypeFactory.mkObjectType(obj.cls()), obj);
-		} else if (rubyValue instanceof List<?> && expectedType.isCollection(true)) {
+			result = new ObjectValue(obj.cls(), obj);
+		} else if (rubyValue instanceof List<?> && expectedType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
 			List<?> list = (List<?>)rubyValue;
 			Value[] elements = new Value[list.size()];
 			
@@ -60,20 +56,12 @@ public class RubyHelper {
 			}
 			
 			CollectionType expectedCollectionType = (CollectionType)expectedType;
-			if (expectedCollectionType.isSet()) {
-				result = new SetValue(expectedCollectionType.elemType(), elements);
-			} else if (expectedCollectionType.isSequence() || expectedCollectionType.isTrueCollection()) {
-				result = new SequenceValue(expectedCollectionType.elemType(), elements);
-			} else if (expectedCollectionType.isBag()) {
-				result = new BagValue(expectedCollectionType.elemType(), elements);
-			} else if (expectedCollectionType.isOrderedSet()) {
-				result = new OrderedSetValue(expectedCollectionType.elemType(), elements);
-			}
+			result = expectedCollectionType.createCollectionValue(elements);
 		} else {
 			Log.warn("rubyValueToUseValue: Unhandeled Ruby value: " + rubyValue.toString());
 		}
 		
-		if (result.type().isSubtypeOf(expectedType)) {
+		if (result.type().conformsTo(expectedType)) {
 			return result;
 		} else {
 			Log.warn("rubyValueToUseValue: converted type of value (`"
@@ -135,7 +123,7 @@ public class RubyHelper {
 		}
 		if (rubyValue instanceof MObject) {
 			MObject obj = (MObject)rubyValue;
-			return new ExpressionWithValue(new ObjectValue(TypeFactory.mkObjectType(obj.cls()), obj));
+			return new ExpressionWithValue(new ObjectValue(obj.cls(), obj));
 		}
 		if (rubyValue != null) {
 			Log.warn("makeUSEExpression: Unhandeled Ruby value: " + rubyValue.toString() + ":" + rubyValue.getClass().getName());

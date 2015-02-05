@@ -98,7 +98,7 @@ public class VariableSetTest extends TestCase {
 	    Type integerType = TypeFactory.mkInteger();
 	    Type realType = TypeFactory.mkReal();
 	    // just to make sure...
-	    assertTrue(integerType.isSubtypeOf(realType));
+	    assertTrue(integerType.conformsTo(realType));
 	    
 	    fA.add("aInt_bReal", integerType);
 	    fB.add("aInt_bReal", realType);
@@ -233,7 +233,7 @@ public class VariableSetTest extends TestCase {
 				assertTrue(fB.contains(name));
 				boolean containsSubType = false;
 				for (Type otherType : fB.getTypes(name)) {
-					if (otherType.isSubtypeOf(type)) {
+					if (otherType.conformsTo(type)) {
 						containsSubType = true;
 						break;
 					}

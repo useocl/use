@@ -22,7 +22,8 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -44,7 +45,7 @@ public class ActionLoadLayout extends AbstractAction {
     private String fAppendix = "";
     private DiagramView fDiagram;
     
-    private File lastFile = null;
+    private Path lastFile = null;
     
     public ActionLoadLayout(String title, String appendix, DiagramView diagram) {
         super("Load layout...");
@@ -57,23 +58,24 @@ public class ActionLoadLayout extends AbstractAction {
         // reuse chooser if possible
     	JFileChooser fileChooser;
     	
-        fileChooser = new JFileChooser(Options.getLastDirectory());
+        fileChooser = new JFileChooser(Options.getLastDirectory().toFile());
         
         ExtFileFilter filter = new ExtFileFilter( fAppendix, fTitle );
-        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.setFileFilter(filter);
         fileChooser.setDialogTitle("Load layout");
         
-		if (lastFile != null && lastFile.exists()
-				&& lastFile.getParent().equals(Options.getLastDirectory())) {
-			fileChooser.setSelectedFile(lastFile);
+		if (   lastFile != null 
+			&& Files.isReadable(lastFile)
+			&& lastFile.getParent().equals(Options.getLastDirectory())) {
+			fileChooser.setSelectedFile(lastFile.toFile());
 		}
         
         int returnVal = fileChooser.showOpenDialog( fDiagram );
         if (returnVal != JFileChooser.APPROVE_OPTION)
             return;
 
-        Options.setLastDirectory(fileChooser.getCurrentDirectory().toString());
-        lastFile = fileChooser.getSelectedFile();
+        Options.setLastDirectory(fileChooser.getCurrentDirectory().toPath());
+        lastFile = fileChooser.getSelectedFile().toPath();
 
         fDiagram.loadLayout(lastFile);
     }

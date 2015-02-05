@@ -27,7 +27,8 @@ import javax.swing.AbstractAction;
 
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.DiagramView.DiagramData;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 
 @SuppressWarnings("serial")
 public class ActionSelectAll extends AbstractAction {
@@ -41,7 +42,13 @@ public class ActionSelectAll extends AbstractAction {
     }
     
     public void actionPerformed( ActionEvent e ) {
-    	fSelection.addAll(fDiagram.getVisibleData().getNodes());
+    	DiagramData data = fDiagram.getVisibleData(); 
+    	// Not all diagrams support hide and show operations
+    	if (data != null)
+    		fSelection.addAll(data.getNodes());
+    	else
+    		fSelection.addAll(fDiagram.getGraph().getNodes());
+    	
     	fDiagram.repaint();
     }
     

@@ -53,41 +53,32 @@ import org.tzi.use.util.NullPrintWriter;
 
 
 /**
- * TODO
+ * test the generation of statements
  * @author Daniel Gent
  */
 public class StatementGenerationTest extends TestCase {
-	/** TODO */
+	
 	private MStatement fStatement;
-	/** TODO */
+	
 	private MModel fModel;
-	/** TODO */
+	
 	private MSystemState fState;
-	/** TODO */
+	
 	private MObject fO1;
-	/** TODO */
+	
 	private MObject fO2;
-	/** TODO */
+	
 	private MObject fO3;
-	/** TODO */
+	
 	private MObject fO4;
 
-	
-	/**
-	 * TODO
-	 * @throws Exception
-	 */
 	@Before
 	@Override
 	public void setUp() throws Exception {
 		fStatement = null;
 		generateModelAndState();	
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testLegacyCommandList() {
 		
@@ -99,11 +90,7 @@ public class StatementGenerationTest extends TestCase {
 			assertTrue(statement instanceof MObjectDestructionStatement);
 		}
 	}
-	
-	
-	/**
-	 * TODO
-	 */
+
 	@Test
 	public void testOpEnter() {
 		// correct way to call an undefined operation
@@ -136,12 +123,7 @@ public class StatementGenerationTest extends TestCase {
 		fStatement = generateStatement("openter o1 o1('42')");
 		assertNull(fStatement);
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws Exception
-	 */
+
 	private void generateModelAndState() throws Exception {
 		List<VarDecl> emptyQualifiers = Collections.emptyList();
 		
@@ -257,13 +239,7 @@ public class StatementGenerationTest extends TestCase {
 		
 		fState.createLink(a1, Arrays.asList(fO3, fO4), null);
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param input
-	 * @return
-	 */
+
 	private MStatement generateStatement(String input) {
 		
 		return ShellCommandCompiler.compileShellCommand(

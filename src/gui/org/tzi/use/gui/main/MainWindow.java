@@ -17,15 +17,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.main;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Event;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Polygon;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -35,12 +42,14 @@ import java.awt.print.PrinterJob;
 import java.beans.PropertyVetoException;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +57,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -61,15 +72,22 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.config.RecentItems;
+import org.tzi.use.config.RecentItems.RecentItemsObserver;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.StatusBar;
@@ -82,21 +100,15 @@ import org.tzi.use.gui.views.CommandView;
 import org.tzi.use.gui.views.LinkCountView;
 import org.tzi.use.gui.views.ObjectCountView;
 import org.tzi.use.gui.views.ObjectPropertiesView;
+import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.StateEvolutionView;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
+import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
+import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SDScrollPane;
+import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SequenceDiagramView;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
-import org.tzi.use.gui.views.selection.classselection.SelectedAssociationPathView;
-import org.tzi.use.gui.views.selection.classselection.SelectedClassPathView;
-import org.tzi.use.gui.views.selection.classselection.SelectionClassView;
-import org.tzi.use.gui.views.selection.objectselection.SelectedLinkPathView;
-import org.tzi.use.gui.views.selection.objectselection.SelectedObjectPathView;
-import org.tzi.use.gui.views.selection.objectselection.SelectionOCLView;
-import org.tzi.use.gui.views.selection.objectselection.SelectionObjectView;
-import org.tzi.use.gui.views.seqDiag.SDScrollPane;
-import org.tzi.use.gui.views.seqDiag.SequenceDiagramView;
+import org.tzi.use.gui.views.diagrams.statemachine.StateMachineDiagramView;
 import org.tzi.use.main.ChangeEvent;
 import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;
@@ -105,58 +117,74 @@ import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
-import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
+import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.StateChangeEvent;
-import org.tzi.use.uml.sys.StateChangeListener;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
+import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.USEWriter;
+
+import com.google.common.eventbus.Subscribe;
+import com.itextpdf.awt.PdfGraphics2D;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * The main application window of USE.
  * 
- * @version $ProjectVersion: 0.393 $
+ *  
  * @author Mark Richters
+ * @author Lars Hamann
+ * @author Frank Hilken
  */
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame implements StateChangeListener {
-    private Session fSession;
+public class MainWindow extends JFrame {
+    private final Session fSession;
 
-    private StatusBar fStatusBar;
+    private final StatusBar fStatusBar;
 
-    private LogPanel fLogPanel;
+    private final LogPanel fLogPanel;
 
-    private PrintWriter fLogWriter;
+    private final PrintWriter fLogWriter;
 
-    private JDesktopPane fDesk;
+    private final JDesktopPane fDesk;
 
-    private JSplitPane fTopSplitPane;
+    private final JSplitPane fTopSplitPane;
 
-    private ModelBrowser fModelBrowser;
+    private final ModelBrowser fModelBrowser;
 
-    private JMenuItem fMenuItemEditUndo;
-    private JMenuItem fMenuItemEditRedo;
+    private final JMenuItem fMenuItemEditUndo;
+    private final JMenuItem fMenuItemEditRedo;
 
-	private JToolBar fToolBar;
-	private JMenuBar fMenuBar;
-    private JButton fBtnEditUndo;
-    private JButton fBtnEditRedo;
+	private final JToolBar fToolBar;
+	private final JMenuBar fMenuBar;
+	private final JMenu statemachineMenu;
+	
+    private final JButton fBtnEditUndo;
+    private final JButton fBtnEditRedo;
 
-    private JCheckBoxMenuItem fCbMenuItemCheckStructure;
+    private final JCheckBoxMenuItem fCbMenuItemCheckStructure;
 
-    private List<ClassDiagramView> classDiagrams = new ArrayList<ClassDiagramView>();
+    private final List<ClassDiagramView> classDiagrams = new ArrayList<ClassDiagramView>();
+    private final List<NewObjectDiagramView> objectDiagrams = new ArrayList<NewObjectDiagramView>();
+    private final List<CommunicationDiagramView> communicationDiagrams = new ArrayList<CommunicationDiagramView>();
+    
     private static final String DEFAULT_UNDO_TEXT = "Undo last statement";
-    private List<NewObjectDiagramView> objectDiagrams = new ArrayList<NewObjectDiagramView>();
     private static final String DEFAULT_REDO_TEXT = "Redo last undone statement";
 
     private static final String STATE_EVAL_OCL = "Evaluate OCL expression";
@@ -165,12 +193,20 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
     private static MainWindow fInstance; // global instance of main window
 
-    private JButton addToToolBar(JToolBar toolBar, AbstractAction action,
-            String toolTip) {
-        JButton tb = toolBar.add(action);
-        tb.setToolTipText(toolTip);
-        tb.setText("");
+    private JMenu recentFilesMenu;
+    
+    private JButton addToToolBar(JToolBar toolBar, AbstractAction action, String toolTip) {
+        JButton tb = new JButton(action);
+        addToToolBar(toolBar, tb, toolTip);
         return tb;
+    }
+    
+    private AbstractButton addToToolBar(JToolBar toolBar, AbstractButton button, String toolTip) {
+    	toolBar.add(button);
+    	button.setMaximumSize(new Dimension(30, 30));
+    	button.setToolTipText(toolTip);
+    	button.setText("");
+    	return button;
     }
 
 	private static IRuntime fPluginRuntime;
@@ -185,37 +221,22 @@ public class MainWindow extends JFrame implements StateChangeListener {
 		}
         fInstance = this;
         fSession = session;
-        // the session may be changed from the shell
-        fSession.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                    	sessionChanged();
-                    }
-                });
-            }
-        }); 
-        
-        /**
-         * for soil statements
-         */
-        fSession.addEvaluatedStatementListener(
-        		new Session.EvaluatedStatementListener(){
-        			@Override
-        			public void evaluatedStatement(EvaluatedStatement event) {
-        				SwingUtilities.invokeLater(new Runnable(){
-        					@Override
-        					public void run() {
-        						setUndoRedoButtons();
-        					}
-        				});
-        			}});
 
         // create toolbar
 		fToolBar = new JToolBar();
+		fToolBar.setFloatable(false);
+		
+		fToolBar.addSeparator();
+		
 		addToToolBar(fToolBar, fActionFileOpenSpec,  "Open specification");
+		addToToolBar(fToolBar, fActionFileReload,  "Reload  current specification");
+		
+		fActionFileReload.setEnabled(!Options.getRecentFiles().isEmpty());
+		
 		addToToolBar(fToolBar, fActionFilePrint,     "Print diagram");
 		addToToolBar(fToolBar, fActionFilePrintView, "Print view");
+		addToToolBar(fToolBar, fActionFileExportView, "Export content of view as PDF");
+		
 		fToolBar.addSeparator();
 
 		fBtnEditUndo = addToToolBar(fToolBar, fActionEditUndo, DEFAULT_UNDO_TEXT);
@@ -229,6 +250,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
 
 		addToToolBar(fToolBar, fActionViewCreateClassDiagram,
                 "Create class diagram view");
+		addToToolBar(fToolBar, fStateMachineDropdown,
+				"Create statemachine diagram view");
 		addToToolBar(fToolBar, fActionViewCreateObjectDiagram,
                 "Create object diagram view");
 		addToToolBar(fToolBar, fActionViewCreateClassInvariant,
@@ -248,6 +271,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 "Create class extent view");
 		addToToolBar(fToolBar, fActionViewCreateSequenceDiagram,
                 "Create sequence diagram view");
+		addToToolBar(fToolBar, fActionViewCreateCommunicationDiagram,
+	                "Create communication diagram view");
 		addToToolBar(fToolBar, fActionViewCreateCallStack,
                 "Create call stack view");
 		addToToolBar(fToolBar, fActionViewCreateCommandList,
@@ -270,6 +295,23 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 .getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK));
         mi.setMnemonic('O');
 
+        {
+			recentFilesMenu = new JMenu("Open recent specification");
+			recentFilesMenu.setIcon(getIcon("document-open.png"));
+			
+        	menu.add(recentFilesMenu);
+        	
+        	setRecentfiles();
+        	
+        	Options.getRecentFiles().addObserver(new RecentItemsObserver() {
+        		@Override
+				public void onRecentItemChange(RecentItems src) {
+					setRecentfiles();
+					fActionFileReload.setEnabled(!Options.getRecentFiles().isEmpty());
+				}
+			});
+        }
+        
         mi = menu.add(fActionFileSaveScript);
         mi.setMnemonic('S');
 
@@ -279,7 +321,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         mi = menu.add(fActionFilePrinterSetup);
         mi = menu.add(fActionFilePrint);
         mi = menu.add(fActionFilePrintView);
-
+        mi = menu.add(fActionFileExportViewAll);
+        
         menu.addSeparator();
         mi = menu.add(fActionFileExit);
         mi.setMnemonic('x');
@@ -324,6 +367,36 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fCbMenuItemCheckStructure.setSelected(false);
         menu.add(fCbMenuItemCheckStructure);
 
+        menu.add(new JSeparator());
+        JCheckBoxMenuItem fCbMenuItemCheckValidTransitions = new JCheckBoxMenuItem(
+                "Check state machine transitions");
+        fCbMenuItemCheckValidTransitions.setMnemonic('t');
+        fCbMenuItemCheckValidTransitions.setSelected(Options.getCheckTransitions());
+        fCbMenuItemCheckValidTransitions.addChangeListener(new javax.swing.event.ChangeListener() {
+			@Override
+			public void stateChanged(javax.swing.event.ChangeEvent e) {
+				Options.setCheckTransitions(((JCheckBoxMenuItem)e.getSource()).isSelected());
+			}
+		});
+        menu.add(fCbMenuItemCheckValidTransitions);
+        
+        
+        JCheckBoxMenuItem fCbMenuItemCheckStateInvariants = new JCheckBoxMenuItem(
+                "Check state invariants after every change");
+        fCbMenuItemCheckStateInvariants.setMnemonic('i');
+        fCbMenuItemCheckStateInvariants.setSelected(Options.getCheckStateInvariants());
+        fCbMenuItemCheckStateInvariants.addChangeListener(new javax.swing.event.ChangeListener() {
+			@Override
+			public void stateChanged(javax.swing.event.ChangeEvent e) {
+				Options.setCheckStateInvariants(((JCheckBoxMenuItem)e.getSource()).isSelected());
+			}
+		});
+        menu.add(fCbMenuItemCheckStateInvariants);
+        
+        menu.add(fActionDetermineStates);
+        menu.add(fActionCheckStateInvariants);
+        
+        menu.add(new JSeparator());
         mi = menu.add(fActionStateReset);
         mi.setMnemonic('R');
 
@@ -335,16 +408,22 @@ public class MainWindow extends JFrame implements StateChangeListener {
         JMenu submenu = new JMenu("Create View");
         submenu.setMnemonic('C');
         menu.add(submenu);
-        mi = submenu.add(fActionViewCreateObjectCount);
-        mi.setMnemonic('O');
-        mi = submenu.add(fActionViewCreateLinkCount);
-        mi.setMnemonic('L');
         mi = submenu.add(fActionViewCreateClassDiagram);
         mi.setMnemonic('V');
+        
+        statemachineMenu = new JMenu("State machine diagram");
+        statemachineMenu.setIcon(getIcon("Diagram.gif"));
+        createStateMachineMenuEntries(statemachineMenu);
+        submenu.add(statemachineMenu);
+        
         mi = submenu.add(fActionViewCreateObjectDiagram);
         mi.setMnemonic('d');
         mi = submenu.add(fActionViewCreateClassInvariant);
         mi.setMnemonic('C');
+        mi = submenu.add(fActionViewCreateObjectCount);
+        mi.setMnemonic('O');
+        mi = submenu.add(fActionViewCreateLinkCount);
+        mi.setMnemonic('L');
         mi = submenu.add(fActionViewCreateStateEvolution);
         mi.setMnemonic('S');
         mi = submenu.add(fActionViewCreateObjectProperties);
@@ -353,6 +432,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         mi.setMnemonic('e');
         mi = submenu.add(fActionViewCreateSequenceDiagram);
         mi.setMnemonic('q');
+        mi = submenu.add(fActionViewCreateCommunicationDiagram);
+        mi.setMnemonic('m');
         mi = submenu.add(fActionViewCreateCallStack);
         mi.setMnemonic('a');
         mi = submenu.add(fActionViewCreateCommandList);
@@ -387,6 +468,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fTopSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, fLogPanel);
         fTopSplitPane.setDividerLocation(400);
         fTopSplitPane.setOneTouchExpandable(true);
+        fTopSplitPane.setResizeWeight(.8d);
 
         // Layout and set the content pane
         JPanel contentPane = new JPanel();
@@ -398,7 +480,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         setContentPane(contentPane);
 
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+            @Override
+			public void windowClosing(WindowEvent e) {
                 close();
             }
         });
@@ -487,15 +570,59 @@ public class MainWindow extends JFrame implements StateChangeListener {
 		menu = new JMenu("Help");
 		menu.setMnemonic('H');
 		fMenuBar.add(menu);
+		
 		// not yet implemented in swing: menuBar.setHelpMenu(menu);
 		mi = menu.add(fActionHelpAbout);
 		mi.setMnemonic('A');
 
         // initialize application state to current system
         sessionChanged();
+        
+     // the session may be changed from the shell
+        fSession.addChangeListener(new ChangeListener() {
+            @Override
+			public void stateChanged(ChangeEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+					public void run() {
+                    	sessionChanged();
+                    }
+                });
+            }
+        }); 
+        
+        /**
+         * for soil statements
+         */
+        fSession.addEvaluatedStatementListener(
+        		new Session.EvaluatedStatementListener(){
+        			@Override
+        			public void evaluatedStatement(EvaluatedStatement event) {
+        				SwingUtilities.invokeLater(new Runnable(){
+        					@Override
+        					public void run() {
+        						setUndoRedoButtons();
+        					}
+        				});
+        			}});
     }
 
+	private void setRecentfiles() {
+		recentFilesMenu.removeAll();
+		
+		for (Path recent : Options.getRecentFiles("use")) {
+			recentFilesMenu.add(new ActionFileOpenSpecRecent(recent));
+		}
+	}
+
     /**
+	 * @return the fPluginRuntime
+	 */
+	public static IRuntime getfPluginRuntime() {
+		return fPluginRuntime;
+	}
+
+	/**
      * Returns the selected view of all internal views. If none is selected null
      * is returned.
      */
@@ -529,6 +656,14 @@ public class MainWindow extends JFrame implements StateChangeListener {
     	return this.objectDiagrams;
     }
     
+    /**
+     * A list of all displayed communication diagrams 
+     * @return
+     */
+    public List<CommunicationDiagramView> getCommunicationDiagrams() {
+    	return this.communicationDiagrams;
+    }
+    
     private void close() {
         setVisible(false);
         dispose();
@@ -560,6 +695,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 fPageFormat.setOrientation(PageFormat.LANDSCAPE);
             else if (Options.PRINT_PAGEFORMAT_ORIENTATION.equals("seascape"))
                 fPageFormat.setOrientation(PageFormat.REVERSE_LANDSCAPE);
+            
         }
         return fPageFormat;
     }
@@ -577,20 +713,57 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
 
     private void checkStructure() {
-        // fLogWriter.println("Checking structure...");
         boolean ok = fSession.system().state().checkStructure(fLogWriter);
+        
         fLogWriter.println("checking structure, "
                 + ((ok) ? "ok." : "found errors."));
         fLogWriter.flush();
     }
 
-    public void stateChanged(StateChangeEvent e) {
-    	setUndoRedoButtons();
+    private void createStateMachineMenuEntries(Container menu){
+    	int elems = 0;
+    	if(fSession.hasSystem()){
+    		for (final MClass cls : fSession.system().model().classes()) {
+    			for (final MStateMachine sm : cls.getOwnedProtocolStateMachines()) {
+    				JMenuItem item = new JMenuItem(cls.name() + "::" + sm.name());
+    				item.addActionListener(new ActionListener() {
+    					@Override
+    					public void actionPerformed(ActionEvent e) {
+    						showStateMachineView(sm);
+    					}
+    				});
+    				menu.add(item);
+    				++elems;
+    			}
+    		}
+    	}
     	
-        if (e.structureHasChanged() && fCbMenuItemCheckStructure.isSelected()) {
-        	 checkStructure();
+    	if (elems == 0) {
+    		JMenuItem item = new JMenuItem("<html><i>No statemachines available.</i></html>");
+    		item.setEnabled(false);
+    		menu.add(item);
+    	}
+    }
+    
+    @Subscribe
+	public void onSystemChanged(SystemStateChangedEvent e) {
+    	if (Options.getCheckStateInvariants()) {
+        	fLogWriter.println("Checking state invariants.");
+        	fSession.system().state().checkStateInvariants(fLogWriter);
         }
-        
+    }
+    
+    @Subscribe
+	public void onStructureChanged(SystemStructureChangedEvent e) {
+		if (fCbMenuItemCheckStructure.isSelected()) {
+			checkStructure();
+		}
+	}
+    
+    @Subscribe
+	public void onStatementExecuted(StatementExecutedEvent e) {
+    	setUndoRedoButtons();
+
         fActionFileSaveScript.setEnabled(
         		fSession.system().numEvaluatedStatements() > 0);
     }
@@ -619,13 +792,19 @@ public class MainWindow extends JFrame implements StateChangeListener {
         final boolean isPrintable = f.isPrintable();
         final boolean isViewPrintable = (f.getView() instanceof SequenceDiagramView);
         f.addInternalFrameListener(new InternalFrameAdapter() {
-            public void internalFrameActivated(InternalFrameEvent ev) {
+            @Override
+			public void internalFrameActivated(InternalFrameEvent ev) {
                 fActionFilePrint.setEnabled(isPrintable);
+                fActionFileExportView.setEnabled(isPrintable);
+                fActionFileExportViewAll.setEnabled(isPrintable);
                 fActionFilePrintView.setEnabled(isViewPrintable);
             }
 
-            public void internalFrameDeactivated(InternalFrameEvent ev) {
+            @Override
+			public void internalFrameDeactivated(InternalFrameEvent ev) {
                 fActionFilePrint.setEnabled(false);
+                fActionFileExportView.setEnabled(false);
+                fActionFileExportViewAll.setEnabled(false);
                 fActionFilePrintView.setEnabled(false);
             }
         });
@@ -639,37 +818,44 @@ public class MainWindow extends JFrame implements StateChangeListener {
     void sessionChanged() {
         boolean on = fSession.hasSystem();
         fActionStateCreateObject.setEnabled(on);
-        fActionStateEvalOCL.setEnabled(on);
         fActionStateCheckStructure.setEnabled(on);
+        fActionDetermineStates.setEnabled(on);
+        fActionCheckStateInvariants.setEnabled(on);
+        fActionStateReset.setEnabled(on);
         fActionViewCreateObjectCount.setEnabled(on);
         fActionViewCreateObjectCount.setEnabled(on);
         fActionViewCreateLinkCount.setEnabled(on);
         fActionViewCreateClassDiagram.setEnabled(on);
+        fStateMachineDropdown.setEnabled(on);
+        statemachineMenu.setEnabled(on);
         fActionViewCreateObjectDiagram.setEnabled(on);
         fActionViewCreateClassInvariant.setEnabled(on);
         fActionViewCreateStateEvolution.setEnabled(on);
         fActionViewCreateObjectProperties.setEnabled(on);
         fActionViewCreateClassExtent.setEnabled(on);
         fActionViewCreateSequenceDiagram.setEnabled(on);
+        fActionViewCreateCommunicationDiagram.setEnabled(on);
         fActionViewCreateCallStack.setEnabled(on);
         fActionViewCreateCommandList.setEnabled(on);
+        fActionViewAssociationInfo.setEnabled(on);
         
 		if (Options.doPLUGIN) {
 			for (AbstractAction currentAction : pluginActions.values()) {
 				currentAction.setEnabled(on);
 			}
 		}
-        disableUndo();
+		setUndoRedoButtons();
         closeAllViews();
+        statemachineMenu.removeAll();
+        createStateMachineMenuEntries(statemachineMenu);
 
         if (on) {
             MSystem system = fSession.system();
             fModelBrowser.setModel(system.model());
-            system.addChangeListener(this);
+            system.getEventBus().register(this);
             setTitle("USE: " + new File(system.model().filename()).getName());
         } else {
             fModelBrowser.setModel(null);
-            // fSession.system().removeChangeListener(this);
             fActionFileSaveScript.setEnabled(false);
             setTitle("USE");
         }
@@ -692,8 +878,13 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
     
     private void setUndoRedoButtons() {
-    	String nextToUndo = 
-			fSession.system().getUndoDescription();
+    	if(!fSession.hasSystem()){
+    		disableUndo();
+    		disableRedo();
+    		return;
+    	}
+    	
+    	String nextToUndo = fSession.system().getUndoDescription();
 		
 		if (nextToUndo != null) {
 			enableUndo(nextToUndo);
@@ -718,13 +909,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
         fActionEditUndo.setEnabled(true);
         // change text of menu item, leave toolbar button untouched
         String s = "Undo: " + name;
-
-        if (fMenuItemEditUndo != null) {
-            fMenuItemEditUndo.setText(s);
-        }
-        if (fBtnEditUndo != null) {
-            fBtnEditUndo.setToolTipText(s);
-        }
+        fMenuItemEditUndo.setText(s);
+        fBtnEditUndo.setToolTipText(s);
     }
 
     /**
@@ -744,13 +930,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
     	 fActionEditRedo.setEnabled(true);
          // change text of menu item, leave toolbar button untouched
          String s = "Redo: " + name;
-         // FIXME: apparently enableUndo is sometimes called before GUI setup
-         if (fMenuItemEditRedo != null) {
-             fMenuItemEditRedo.setText(s);
-         }
-         if (fBtnEditRedo != null) {
-             fBtnEditRedo.setToolTipText(s);
-         }
+         fMenuItemEditRedo.setText(s);
+         fBtnEditRedo.setToolTipText(s);
     }
     
     /**
@@ -816,131 +997,205 @@ public class MainWindow extends JFrame implements StateChangeListener {
     
     // Actions
 
-    private ActionFileOpenSpec fActionFileOpenSpec = new ActionFileOpenSpec();
+    private final ActionFileOpenSpec fActionFileOpenSpec = new ActionFileOpenSpec();
 
-    private ActionFileSaveScript fActionFileSaveScript = new ActionFileSaveScript();
-
-    private ActionFileSaveProtocol fActionFileSaveProtocol = new ActionFileSaveProtocol();
-
-    private ActionFilePrinterSetup fActionFilePrinterSetup = new ActionFilePrinterSetup();
-
-    private ActionFilePrint fActionFilePrint = new ActionFilePrint();
-
-    private ActionFilePrintView fActionFilePrintView = new ActionFilePrintView();
-
-    private ActionFileExit fActionFileExit = new ActionFileExit();
-
-    private ActionEditUndo fActionEditUndo = new ActionEditUndo();
-    private ActionEditRedo fActionEditRedo = new ActionEditRedo();
-
-    private ActionStateCreateObject fActionStateCreateObject = new ActionStateCreateObject();
-
-    private ActionStateEvalOCL fActionStateEvalOCL = new ActionStateEvalOCL();
-
-    private ActionStateCheckStructure fActionStateCheckStructure = new ActionStateCheckStructure();
-
-    private ActionStateReset fActionStateReset = new ActionStateReset();
-
-    private ActionViewCreateObjectCount fActionViewCreateObjectCount = new ActionViewCreateObjectCount();
-
-    private ActionViewCreateLinkCount fActionViewCreateLinkCount = new ActionViewCreateLinkCount();
-
-    private ActionViewCreateClassDiagram fActionViewCreateClassDiagram = new ActionViewCreateClassDiagram();
-
-    private ActionViewCreateObjectDiagram fActionViewCreateObjectDiagram = new ActionViewCreateObjectDiagram();
-
-    private ActionViewCreateClassInvariant fActionViewCreateClassInvariant = new ActionViewCreateClassInvariant();
-
-    // private ActionViewCreateStateTreeView fActionViewCreateStateTree =
-    // new ActionViewCreateStateTreeView();
-    private ActionViewCreateStateEvolution fActionViewCreateStateEvolution = new ActionViewCreateStateEvolution();
-
-    private ActionViewCreateObjectProperties fActionViewCreateObjectProperties = new ActionViewCreateObjectProperties();
-
-    private ActionViewCreateClassExtent fActionViewCreateClassExtent = new ActionViewCreateClassExtent();
-
-    private ActionViewCreateSequenceDiagram fActionViewCreateSequenceDiagram = new ActionViewCreateSequenceDiagram();
-
-    private ActionViewCreateCallStack fActionViewCreateCallStack = new ActionViewCreateCallStack();
-
-    private ActionViewCreateCommandList fActionViewCreateCommandList = new ActionViewCreateCommandList();
-
-    private ActionViewAssociationInfo fActionViewAssociationInfo = new ActionViewAssociationInfo();
+    private final ActionFileRefreshSpec fActionFileReload = new ActionFileRefreshSpec();
     
-    private ActionViewTile fActionViewTile = new ActionViewTile();
+    private final ActionFileSaveScript fActionFileSaveScript = new ActionFileSaveScript();
 
-    private ActionViewCloseAll fActionViewCloseAll = new ActionViewCloseAll();
+    private final ActionFileSaveProtocol fActionFileSaveProtocol = new ActionFileSaveProtocol();
 
-    private ActionHelpAbout fActionHelpAbout = new ActionHelpAbout();
+    private final ActionFilePrinterSetup fActionFilePrinterSetup = new ActionFilePrinterSetup();
+
+    private final ActionFilePrint fActionFilePrint = new ActionFilePrint();
+
+    private final ActionFilePrintView fActionFilePrintView = new ActionFilePrintView();
+
+    private final ActionFileExportView fActionFileExportView = new ActionFileExportView(false);
+    
+    private final ActionFileExportView fActionFileExportViewAll = new ActionFileExportView(true);
+    
+    private final ActionFileExit fActionFileExit = new ActionFileExit();
+
+    private final ActionEditUndo fActionEditUndo = new ActionEditUndo();
+    private final ActionEditRedo fActionEditRedo = new ActionEditRedo();
+
+    private final ActionStateCreateObject fActionStateCreateObject = new ActionStateCreateObject();
+
+    private final ActionStateEvalOCL fActionStateEvalOCL = new ActionStateEvalOCL();
+
+    private final ActionStateCheckStructure fActionStateCheckStructure = new ActionStateCheckStructure();
+
+    private final ActionDetermineStates fActionDetermineStates = new ActionDetermineStates();
+    
+    private final ActionCheckStateInvariants fActionCheckStateInvariants = new ActionCheckStateInvariants();
+    
+    private final ActionStateReset fActionStateReset = new ActionStateReset();
+
+    private final ActionViewCreateObjectCount fActionViewCreateObjectCount = new ActionViewCreateObjectCount();
+
+    private final ActionViewCreateLinkCount fActionViewCreateLinkCount = new ActionViewCreateLinkCount();
+
+    private final ActionViewCreateClassDiagram fActionViewCreateClassDiagram = new ActionViewCreateClassDiagram();
+
+    private final StateMachineDropdown fStateMachineDropdown = new StateMachineDropdown();
+    
+    private final ActionViewCreateObjectDiagram fActionViewCreateObjectDiagram = new ActionViewCreateObjectDiagram();
+
+    private final ActionViewCreateClassInvariant fActionViewCreateClassInvariant = new ActionViewCreateClassInvariant();
+
+    private final ActionViewCreateStateEvolution fActionViewCreateStateEvolution = new ActionViewCreateStateEvolution();
+
+    private final ActionViewCreateObjectProperties fActionViewCreateObjectProperties = new ActionViewCreateObjectProperties();
+
+    private final ActionViewCreateClassExtent fActionViewCreateClassExtent = new ActionViewCreateClassExtent();
+
+    private final ActionViewCreateSequenceDiagram fActionViewCreateSequenceDiagram = new ActionViewCreateSequenceDiagram();
+
+    private final ActionViewCreateCommunicationDiagram fActionViewCreateCommunicationDiagram = new ActionViewCreateCommunicationDiagram();
+    
+    private final ActionViewCreateCallStack fActionViewCreateCallStack = new ActionViewCreateCallStack();
+
+    private final ActionViewCreateCommandList fActionViewCreateCommandList = new ActionViewCreateCommandList();
+
+    private final ActionViewAssociationInfo fActionViewAssociationInfo = new ActionViewAssociationInfo();
+    
+    private final ActionViewTile fActionViewTile = new ActionViewTile();
+
+    private final ActionViewCloseAll fActionViewCloseAll = new ActionViewCloseAll();
+
+    private final ActionHelpAbout fActionHelpAbout = new ActionHelpAbout();
 
     /**
      * Opens and compiles a specification file.
      */
     private class ActionFileOpenSpec extends AbstractAction {
-        private JFileChooser fChooser;
+        private boolean wasUsed;
 
         ActionFileOpenSpec() {
-            super("Open specification...", new ImageIcon(Options.iconDir
-                    + "Open.gif"));
+            super("Open specification...", getIcon("document-open.png"));
         }
 
-        public void actionPerformed(ActionEvent e) {
-            String path;
-            // reuse chooser if possible
-            if (fChooser == null) {
-                path = Options.getLastDirectory();
-                fChooser = new JFileChooser(path);
-                ExtFileFilter filter = new ExtFileFilter("use",
-                        "USE specifications");
-                fChooser.addChoosableFileFilter(filter);
-                fChooser.setDialogTitle("Open specification");
-            }
+        protected ActionFileOpenSpec(String title) {
+            super(title);
+        }
+        
+        protected ActionFileOpenSpec(String title, Icon icon) {
+            super(title, icon);
+        }
+        
+        @Override
+		public void actionPerformed(ActionEvent e) {
+        	if (!validateOpenPossible()) return;
+
+            JFileChooser fChooser = new JFileChooser(Options.getLastDirectory().toFile());
+            ExtFileFilter filter = new ExtFileFilter("use", "USE specifications");
+            fChooser.setFileFilter(filter);
+            fChooser.setDialogTitle("Open specification");
+            
+            if (wasUsed)
+            	fChooser.setSelectedFile(Options.getRecentFile("use").toFile());
+
             int returnVal = fChooser.showOpenDialog(MainWindow.this);
             if (returnVal != JFileChooser.APPROVE_OPTION)
                 return;
 
-            path = fChooser.getCurrentDirectory().toString();
+            Path path = fChooser.getCurrentDirectory().toPath();
             Options.setLastDirectory(path);
-            File f = new File(path, fChooser.getSelectedFile().getName());
+            Path f = fChooser.getSelectedFile().toPath();
 
-            fLogPanel.clear();
-            showLogPanel();
             compile(f);
+            
+            Options.getRecentFiles().push(f.toAbsolutePath().toString());
+            wasUsed = true;
         }
 
-        private void compile(final File f) {
-            fLogWriter
-                    .println("compiling specification " + f.getName() + "...");
+        protected boolean validateOpenPossible() {
+        	if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
+				JOptionPane
+						.showMessageDialog(
+								MainWindow.this,
+								"The system is currently executing a statement.\nPlease end the execution before opening a new model.",
+								"USE is executing",
+								JOptionPane.ERROR_MESSAGE);
+				return false;
+        	} else {
+        		return true;
+        	}
+        }
+                    
+        protected boolean compile(final Path f) {
+        	fLogPanel.clear();
+            showLogPanel();
+            
+        	fLogWriter.println("compiling specification " + f.toString() + "...");
+        	
             MModel model = null;
-            MSystem system = null;
-            FileInputStream iStream = null;
-            try {
-                iStream = new FileInputStream(f);
-                model = USECompiler.compileSpecification(iStream, f.getAbsolutePath(),
+            try (InputStream iStream = Files.newInputStream(f)) {
+                model = USECompiler.compileSpecification(iStream, f.toAbsolutePath().toString(),
                         fLogWriter, new ModelFactory());
                 fLogWriter.println("done.");
-                if (model != null) {
-                    fLogWriter.println(model.getStats());
-                    // create system
-                    system = new MSystem(model);
-                }
-            } catch (FileNotFoundException ex) {
-                Log.error("File `" + f.getAbsolutePath() + "' not found.");
-            } finally {
-                if (iStream != null)
-                    try {
-                        iStream.close();
-                    } catch (IOException ex) {
-                        // ignored
-                    }
+            } catch (IOException ex) {
+                fLogWriter.println("File `" + f.toAbsolutePath().toString() + "' not found.");
             }
+            
+            final MSystem system;
+            if (model != null) {
+            	fLogWriter.println(model.getStats());
+            	// create system
+            	system = new MSystem(model);
+            } else {
+            	system = null;
+            }
+            
             // set new system (may be null if compilation failed)
-            final MSystem system2 = system; // need final variable for Runnable
             SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    fSession.setSystem(system2);
+                @Override
+				public void run() {
+                    fSession.setSystem(system);
                 }
             });
+            
+            if (system != null) {
+            	Options.getRecentFiles().push(f.toString());
+            	Options.setLastDirectory(f.getParent());
+            	return true;
+            } else {
+            	return false;
+            }
+        }
+    }
+
+    private class ActionFileOpenSpecRecent extends ActionFileOpenSpec {
+    	
+    	private final Path fileName;
+    	
+    	public ActionFileOpenSpecRecent(Path filename) {
+    		super(filename.toString());
+    		this.fileName = filename;
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent e) {
+    		if (!validateOpenPossible()) return;
+            compile(fileName);
+        }
+    }
+    
+    private class ActionFileRefreshSpec extends ActionFileOpenSpec {
+    	public ActionFileRefreshSpec() {
+    		super("Reload specification", getIcon("refresh.png"));
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent e) {
+    		if (!validateOpenPossible()) return;
+    		
+    		Path file = Options.getRecentFile("use");
+            
+    		if (file != null) {
+            	compile(file);
+            }
         }
     }
 
@@ -951,18 +1206,17 @@ public class MainWindow extends JFrame implements StateChangeListener {
         private JFileChooser fChooser;
 
         ActionFileSaveScript() {
-			super("Save script (.soil)...", new ImageIcon(Options.iconDir
-					+ "Save.gif"));
+			super("Save script (.soil)...", getIcon("save.png"));
 			
 			setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             String path;
             // reuse chooser if possible
             if (fChooser == null) {
-                path = System.getProperty("user.dir");
-                fChooser = new JFileChooser(path);
+                fChooser = new JFileChooser(Options.getLastDirectory().toFile());
                 ExtFileFilter filter = new ExtFileFilter("soil", "soil scripts");
                 fChooser.setFileFilter(filter);
                 fChooser.setDialogTitle("Save script");
@@ -1010,16 +1264,15 @@ public class MainWindow extends JFrame implements StateChangeListener {
         private JFileChooser fChooser;
 
         ActionFileSaveProtocol() {
-            super("Save protocol...", new ImageIcon(Options.iconDir
-                    + "Save.gif"));
+            super("Save protocol...", getIcon("save.png"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             String path;
             // reuse chooser if possible
             if (fChooser == null) {
-                path = System.getProperty("user.dir");
-                fChooser = new JFileChooser(path);
+                fChooser = new JFileChooser(Options.getLastDirectory().toFile());
                 ExtFileFilter filter = new ExtFileFilter("txt",
                         "Textfiles");
                 fChooser.setFileFilter(filter);
@@ -1051,7 +1304,6 @@ public class MainWindow extends JFrame implements StateChangeListener {
                 fOut.flush();
                 fOut.close();
             } catch (IOException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         }
@@ -1066,7 +1318,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
             super("Printer Setup...");
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
             // initialize page format if necessary
             pageFormat();
@@ -1080,12 +1333,12 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionFilePrint extends AbstractAction {
         ActionFilePrint() {
-            super("Print diagram...", new ImageIcon(Options.iconDir
-                    + "Print.gif"));
+            super("Print diagram...", getIcon("document-print.png"));
             this.setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             ViewFrame vf = null;
 
             // jdk1.3: vf = (ViewFrame) fDesk.getSelectedFrame();
@@ -1105,11 +1358,12 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionFilePrintView extends AbstractAction {
         ActionFilePrintView() {
-            super("Print View...", new ImageIcon(Options.iconDir + "Print.gif"));
+            super("Print View...", getIcon("document-print.png"));
             this.setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             ViewFrame vf = null;
 
             // jdk1.3: vf = (ViewFrame) fDesk.getSelectedFrame();
@@ -1127,6 +1381,112 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
 
     /**
+     * Print visible view of diagram.
+     */
+    private class ActionFileExportView extends AbstractAction {
+    	
+    	private JFileChooser chooser;
+    	
+    	private final boolean exportAll;
+    	
+    	ActionFileExportView(boolean exportAll) {
+            super("Export view as PDF...", getIcon("export_pdf.png"));
+            this.setEnabled(false);
+            this.exportAll = exportAll;
+        }
+
+        @Override
+		public void actionPerformed(ActionEvent e) {
+            ViewFrame vf = null;
+            File f;
+            
+            JInternalFrame[] frames = fDesk.getAllFrames();
+            for (int i = 0; i < frames.length; i++)
+                if (frames[i].isSelected())
+                    vf = (ViewFrame) frames[i];
+
+            if (vf != null && vf.isPrintable()) {
+            	// Ask for filename
+            	int option = JOptionPane.YES_OPTION;
+
+            	if (chooser == null) {
+            		chooser = new JFileChooser(Options.getLastDirectory().toFile());
+            		ExtFileFilter filter = new ExtFileFilter("pdf", "PDF");
+            		chooser.setFileFilter(filter);
+            		chooser.setDialogTitle("Export to PDF");
+            	}
+            	
+                do {
+                    int returnVal = chooser.showSaveDialog( new JPanel() );
+                    if (returnVal != JFileChooser.APPROVE_OPTION)
+                        return;
+
+                    Options.setLastDirectory(chooser.getCurrentDirectory().toPath());
+                    String filename = chooser.getSelectedFile().getName();
+
+                    f = chooser.getSelectedFile();
+                    String filePath = f.getPath();
+                    if(!filePath.toLowerCase().endsWith(".pdf"))
+                    {
+                        f = new File(filePath + ".pdf");
+                    }
+
+                    if (f.exists()) {
+                        option = JOptionPane.showConfirmDialog(new JPanel(),
+                                "Overwrite existing file " + filename + "?",
+                                "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
+                        if (option == JOptionPane.CANCEL_OPTION) {
+                            return;
+                        }
+
+                    }
+                    // display the saving dialog, as long as the file
+                    // will be overwritten or cancel is pressed.
+                } while (option != JOptionPane.YES_OPTION);
+
+                PrintableView pv = (PrintableView)vf.getView();
+                
+                Rectangle size;
+                if (exportAll) {
+                	size = new Rectangle(vf.getWidth(), vf.getHeight());
+                } else {
+                	size = new Rectangle(pv.getContentWidth(), pv.getContentHeight());
+                }
+                
+                // step 1
+                Document document = new Document(size);
+                // step 2
+                PdfWriter writer;
+				try {
+					writer = PdfWriter.getInstance(document, new FileOutputStream(f));
+				} catch (FileNotFoundException e1) {
+					JOptionPane.showMessageDialog(MainWindow.this, e1.getMessage(), "Error accessing file!", JOptionPane.ERROR_MESSAGE);
+					return;
+				} catch (DocumentException e1) {
+					e1.printStackTrace();
+					return;
+				}
+				
+                // step 3
+                document.open();
+                // step 4
+                PdfContentByte canvas = writer.getDirectContent();
+                Graphics2D g2 = new PdfGraphics2D(canvas, size.getWidth(), size.getHeight());
+                vf.export(g2, exportAll);
+                                
+                g2.dispose();
+                // step 5
+                document.close();
+                
+				JOptionPane.showMessageDialog(MainWindow.this,
+						"Export finished.", "USE " + Options.getUSEVersion(),
+						JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+    
+    /**
      * Exit application.
      */
     private class ActionFileExit extends AbstractAction {
@@ -1134,7 +1494,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
             super("Exit");
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             close();
         }
     }
@@ -1144,26 +1505,25 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     class ActionEditUndo extends AbstractAction {
         ActionEditUndo() {
-            super("Undo", new ImageIcon(Options.iconDir + "Undo.gif"));
+            super("Undo", getIcon("undo.png"));
             this.setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent e) {
-        	
-        	MSystem system = fSession.system();
+        @Override
+		public void actionPerformed(ActionEvent e) {
+        	if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
+				JOptionPane
+						.showMessageDialog(
+								MainWindow.this,
+								"The system is currently executing a statement.\nPlease end the execution before undoing.",
+								"USE is executing",
+								JOptionPane.ERROR_MESSAGE);
+				return;
+        	}
         	
             try {
-                /*fSession.system().undoCmd();
-                String name = fSession.system().nextUndoableCmdName();
-                if (name != null)
-                    enableUndo(name);
-                else
-                    disableUndo();*/
-            	
-            	system.undoLastStatement();
-            	
+            	fSession.system().undoLastStatement();
             	setUndoRedoButtons();
-            	
             } catch (MSystemException ex) {
                 JOptionPane.showMessageDialog(
                 		MainWindow.this, 
@@ -1178,13 +1538,22 @@ public class MainWindow extends JFrame implements StateChangeListener {
     class ActionEditRedo extends AbstractAction {
     	
     	ActionEditRedo() {
-    		super("Redo", new ImageIcon(Options.iconDir + "Redo.gif"));
+    		super("Redo", getIcon("redo.png"));
             this.setEnabled(false);
     	}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+        	if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
+				JOptionPane
+						.showMessageDialog(
+								MainWindow.this,
+								"The system is currently executing a statement.\nPlease end the execution before redoing.",
+								"USE is executing",
+								JOptionPane.ERROR_MESSAGE);
+				return;
+        	}
+        				
 			MSystem system = fSession.system();
 			
 			MStatement nextToRedo = system.nextToRedo();
@@ -1223,7 +1592,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
             super("Create object...");
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             CreateObjectDialog dlg = new CreateObjectDialog(fSession, MainWindow.this);
             dlg.setVisible(true);
         }
@@ -1234,11 +1604,11 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionStateEvalOCL extends AbstractAction {
         ActionStateEvalOCL() {
-            super("Evaluate OCL expression...", new ImageIcon(Options.iconDir
-                    + "OCL.gif"));
+            super("Evaluate OCL expression...", getIcon("OCL.gif"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             EvalOCLDialog dlg = new EvalOCLDialog(fSession, MainWindow.this);
             dlg.setVisible(true);
         }
@@ -1252,11 +1622,34 @@ public class MainWindow extends JFrame implements StateChangeListener {
             super("Check structure now");
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             checkStructure();
         }
     }
 
+    private class ActionCheckStateInvariants extends AbstractAction {
+    	ActionCheckStateInvariants() {
+			super("Check state invariants");
+		}
+    	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			fSession.system().state().checkStateInvariants(fLogWriter);
+		}
+	}
+    
+    private class ActionDetermineStates extends AbstractAction {
+    	ActionDetermineStates() {
+			super("Determine states");
+		}
+    	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			fSession.system().determineStates(fLogWriter);
+		}
+	}
+    
     /**
      * Resets the system to its initial empty state.
      */
@@ -1265,7 +1658,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
             super("Reset");
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             int n = JOptionPane
                     .showConfirmDialog(
                             MainWindow.this,
@@ -1281,17 +1675,19 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionViewCreateObjectCount extends AbstractAction {
         ActionViewCreateObjectCount() {
-            super("Object count", new ImageIcon(Options.iconDir
-                    + "ObjectCountView.gif"));
+            super("Object count", getIcon("blue-chart-icon.png"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             ObjectCountView ov = new ObjectCountView(fSession.system());
             ViewFrame f = new ViewFrame("Object count", ov,
-                    "ObjectCountView.gif");
+                    "blue-chart-icon.png");
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
-            c.add(new JScrollPane(ov), BorderLayout.CENTER);
+            JScrollPane jsp = new JScrollPane(ov);
+            jsp.getVerticalScrollBar().setUnitIncrement(16);
+            c.add(jsp, BorderLayout.CENTER);
             addNewViewFrame(f);
         }
     }
@@ -1301,16 +1697,18 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionViewCreateLinkCount extends AbstractAction {
         ActionViewCreateLinkCount() {
-            super("Link count", new ImageIcon(Options.iconDir
-                    + "LinkCountView.gif"));
+            super("Link count", getIcon("red-chart-icon.png"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             LinkCountView lv = new LinkCountView(fSession.system());
-            ViewFrame f = new ViewFrame("Link count", lv, "LinkCountView.gif");
+            ViewFrame f = new ViewFrame("Link count", lv, "red-chart-icon.png");
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
-            c.add(new JScrollPane(lv), BorderLayout.CENTER);
+            JScrollPane jsp = new JScrollPane(lv);
+            jsp.getVerticalScrollBar().setUnitIncrement(16);
+            c.add(jsp, BorderLayout.CENTER);
             addNewViewFrame(f);
         }
     }
@@ -1320,30 +1718,32 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionViewCreateClassDiagram extends AbstractAction {
         ActionViewCreateClassDiagram() {
-            super("Class diagram", new ImageIcon(Options.iconDir
-                    + "ClassDiagram.gif"));
+            super("Class diagram", getIcon("ClassDiagram.gif"));
         }
 
-        public void actionPerformed(ActionEvent e) {
-            ClassDiagramView cdv = new ClassDiagramView(MainWindow.this,
-                    fSession.system());
-            ViewFrame f = new ViewFrame("Class diagram", cdv,
-                    "ClassDiagram.gif");
+        @Override
+		public void actionPerformed(ActionEvent e) {
+        	// Don' load layout if shift key is pressed
+        	boolean loadLayout = (e.getModifiers() & ActionEvent.SHIFT_MASK) == 0;
+        		
+            ClassDiagramView cdv = new ClassDiagramView(MainWindow.this, fSession.system(), loadLayout);
+            ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
             // give some help information
             f.addInternalFrameListener(new InternalFrameAdapter() {
-                public void internalFrameActivated(InternalFrameEvent ev) {
+                @Override
+				public void internalFrameActivated(InternalFrameEvent ev) {
                     fStatusBar.showTmpMessage("Use left mouse button to move "
                             + "classes, right button for popup menu.");
                 }
 
-                public void internalFrameDeactivated(InternalFrameEvent ev) {
+                @Override
+				public void internalFrameDeactivated(InternalFrameEvent ev) {
                     fStatusBar.clearMessage();
                 }
 
 				@Override
 				public void internalFrameClosed(InternalFrameEvent e) {
-					super.internalFrameClosed(e);
-					classDiagrams.remove((ClassDiagramView)((ViewFrame)e.getSource()).getView());
+					classDiagrams.remove(((ViewFrame)e.getSource()).getView());
 				}
             });
             
@@ -1356,34 +1756,105 @@ public class MainWindow extends JFrame implements StateChangeListener {
     }
 
     /**
+     * Button for statemachine selection from the toolbar.
+     */
+    private class StateMachineDropdown extends JToggleButton {
+
+		private final JPopupMenu menu = new JPopupMenu();
+
+		public StateMachineDropdown() {
+			setIcon(MainWindow.this.getIcon("Diagram.gif"));
+			menu.addPopupMenuListener(new PopupListener());
+			addItemListener(new DropdownItemListener());
+			
+			// reserve space for arrow (there must be a nicer solution, also: magic numbers)
+			Insets in = getMargin();
+			Insets in2 = new Insets(in.top +1, 2, in.bottom, 12);
+			setMargin(in2);
+		}
+
+		@Override
+		public Dimension getMaximumSize() {
+			// hacky?
+			return super.getPreferredSize();
+		}
+		
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+
+			Color oldColor = g.getColor();
+			if(isEnabled()){
+				g.setColor(Color.BLACK);
+			}
+			else {
+				g.setColor(Color.GRAY);
+			}
+			
+			Polygon triangle = new Polygon(new int[]{ 0, 9, 5 }, new int[]{ 0, 0, 4 }, 3);
+			triangle.translate(23, 13);
+			g.fillPolygon(triangle);
+			
+			g.setColor(oldColor);
+		}
+		
+		private class DropdownItemListener implements ItemListener {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					menu.removeAll();
+					createStateMachineMenuEntries(menu);
+					menu.show(StateMachineDropdown.this, 0, getHeight());
+				}
+			}
+		}
+
+		private class PopupListener implements PopupMenuListener {
+			@Override
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+			}
+
+			@Override
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+				StateMachineDropdown.this.setSelected(false);
+			}
+
+			@Override
+			public void popupMenuCanceled(PopupMenuEvent e) {
+			}
+		}
+
+	}
+    
+    /**
      * Creates a new object diagram view.
      */
     private class ActionViewCreateObjectDiagram extends AbstractAction {
         ActionViewCreateObjectDiagram() {
-            super("Object diagram", new ImageIcon(Options.iconDir
-                    + "ObjectDiagram.gif"));
+            super("Object diagram", getIcon("ObjectDiagram.gif"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             NewObjectDiagramView odv = new NewObjectDiagramView(MainWindow.this, fSession.system());
-            ViewFrame f = new ViewFrame("Object diagram", 
-            					odv, "ObjectDiagram.gif");
+            ViewFrame f = new ViewFrame("Object diagram", odv, "ObjectDiagram.gif");
             
             // give some help information
             f.addInternalFrameListener(new InternalFrameAdapter() {
-                public void internalFrameActivated(InternalFrameEvent ev) {
+                @Override
+				public void internalFrameActivated(InternalFrameEvent ev) {
                     fStatusBar.showTmpMessage("Use left mouse button to move "
                             + "objects, right button for popup menu.");
                 }
 
-                public void internalFrameDeactivated(InternalFrameEvent ev) {
+                @Override
+				public void internalFrameDeactivated(InternalFrameEvent ev) {
                     fStatusBar.clearMessage();
                 }
                 
                 @Override
 				public void internalFrameClosed(InternalFrameEvent e) {
-					super.internalFrameClosed(e);
-					objectDiagrams.remove((NewObjectDiagramView)((ViewFrame)e.getSource()).getView());
+					objectDiagrams.remove(((ViewFrame)e.getSource()).getView());
 				}
             });
             
@@ -1409,21 +1880,74 @@ public class MainWindow extends JFrame implements StateChangeListener {
             objectDiagrams.add(odv);
         }
     }
+    
+    /**
+     * Creates a new communication diagram view.
+     */
+    private class ActionViewCreateCommunicationDiagram extends AbstractAction {
+	ActionViewCreateCommunicationDiagram() {
+	    super("Communication diagram", getIcon("CommunicationDiagram.gif"));
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+	    CommunicationDiagramView cdv = new CommunicationDiagramView(MainWindow.this, fSession.system());
+	    ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
+	    // give some help information
+	    f.addInternalFrameListener(new InternalFrameAdapter() {
+			@Override
+			public void internalFrameActivated(InternalFrameEvent ev) {
+				fStatusBar.showTmpMessage("Use left mouse button to move "
+								+ "actor, object and link boxes, right button for popup menu.");
+			}
+
+			@Override
+			public void internalFrameDeactivated(InternalFrameEvent ev) {
+				fStatusBar.clearMessage();
+			}
+
+			@Override
+			public void internalFrameClosed(InternalFrameEvent e) {
+				communicationDiagrams.remove(((ViewFrame) e.getSource()).getView());
+			}
+	    });
+
+	    JComponent c = (JComponent) f.getContentPane();
+	    c.setLayout(new BorderLayout());
+	    c.add(cdv, BorderLayout.CENTER);
+	    addNewViewFrame(f);
+	    communicationDiagrams.add(cdv);
+	}
+    }
 
     /**
      * Creates a new class invariant view.
      */
     private class ActionViewCreateClassInvariant extends AbstractAction {
         ActionViewCreateClassInvariant() {
-            super("Class invariants", new ImageIcon(Options.iconDir
-                    + "InvariantView.gif"));
+            super("Class invariants", getIcon("invariant-view.png"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             ClassInvariantView civ = new ClassInvariantView(MainWindow.this,
                     fSession.system());
             ViewFrame f = new ViewFrame("Class invariants", civ,
                     "InvariantView.gif");
+            
+			f.addInternalFrameListener(new InternalFrameAdapter() {
+				@Override
+				public void internalFrameActivated(InternalFrameEvent ev) {
+					fStatusBar.showTmpMessage("Use right mouse button for popup menu.");
+				}
+
+				@Override
+				public void internalFrameDeactivated(InternalFrameEvent ev) {
+					fStatusBar.clearMessage();
+				}
+			});
+            
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(civ, BorderLayout.CENTER);
@@ -1431,38 +1955,19 @@ public class MainWindow extends JFrame implements StateChangeListener {
         }
     }
 
-    // /**
-    // * Creates a new state tree view.
-    // */
-    // private class ActionViewCreateStateTreeView extends AbstractAction {
-    // ActionViewCreateStateTreeView() {
-    // super("State tree",
-    // new ImageIcon(Options.iconDir + "InvariantView.gif"));
-    // }
-    //
-    // public void actionPerformed(ActionEvent e) {
-    // StateTreeView stv = new StateTreeView(fSession.system());
-    // ViewFrame f = new ViewFrame("State tree", stv, "InvariantView.gif");
-    // JComponent c = (JComponent) f.getContentPane();
-    // c.setLayout(new BorderLayout());
-    // c.add(stv, BorderLayout.CENTER);
-    // addNewViewFrame(f);
-    // }
-    // }
-
     /**
      * Creates a new state evolution view.
      */
     private class ActionViewCreateStateEvolution extends AbstractAction {
         ActionViewCreateStateEvolution() {
-            super("State evolution", new ImageIcon(Options.iconDir
-                    + "LineChartView.gif"));
+            super("State evolution", getIcon("line-chart.png"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             StateEvolutionView sev = new StateEvolutionView(fSession.system());
             ViewFrame f = new ViewFrame("State evolution", sev,
-                    "LineChartView.gif");
+                    "line-chart.png");
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(sev, BorderLayout.CENTER);
@@ -1475,11 +1980,11 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionViewCreateObjectProperties extends AbstractAction {
         ActionViewCreateObjectProperties() {
-            super("Object properties", new ImageIcon(Options.iconDir
-                    + "ObjectProperties.gif"));
+            super("Object properties", getIcon("ObjectProperties.gif"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             showObjectPropertiesView();
         }
     }
@@ -1489,15 +1994,26 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionViewCreateClassExtent extends AbstractAction {
         ActionViewCreateClassExtent() {
-            super("Class extent", new ImageIcon(Options.iconDir
-                    + "ClassExtentView.gif"));
+            super("Class extent", getIcon("ClassExtentView.gif"));
         }
 
-        public void actionPerformed(ActionEvent e) {
-            ClassExtentView cev = new ClassExtentView(MainWindow.this, fSession
-                    .system());
-            ViewFrame f = new ViewFrame("Class extent", cev,
-                    "ClassExtentView.gif");
+        @Override
+		public void actionPerformed(ActionEvent e) {
+            ClassExtentView cev = new ClassExtentView(MainWindow.this, fSession.system());
+            ViewFrame f = new ViewFrame("Class extent", cev, "ClassExtentView.gif");
+            
+            f.addInternalFrameListener(new InternalFrameAdapter() {
+            	@Override
+				public void internalFrameActivated(InternalFrameEvent ev) {
+					fStatusBar.showTmpMessage("Use right mouse button for popup menu.");
+				}
+
+				@Override
+				public void internalFrameDeactivated(InternalFrameEvent ev) {
+					fStatusBar.clearMessage();
+				}
+			});
+            
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(cev, BorderLayout.CENTER);
@@ -1508,42 +2024,40 @@ public class MainWindow extends JFrame implements StateChangeListener {
     /**
      * Creates a new sequence diagram view.
      */
-    private class ActionViewCreateSequenceDiagram extends AbstractAction {
-        ActionViewCreateSequenceDiagram() {
-            super("Sequence diagram", new ImageIcon(Options.iconDir
-                    + "SequenceDiagram.gif"));
-        }
+	private class ActionViewCreateSequenceDiagram extends AbstractAction {
+		ActionViewCreateSequenceDiagram() {
+			super("Sequence diagram", getIcon("SequenceDiagram.gif"));
+		}
 
-        public void actionPerformed(ActionEvent e) {
-            SequenceDiagramView sv = createSeqDiagView();
-            ViewFrame f = new ViewFrame("Sequence diagram", sv,
-                    "SequenceDiagram.gif");
-            JComponent c = (JComponent) f.getContentPane();
-            c.setLayout(new BorderLayout());
-            c.add(new SDScrollPane(sv), BorderLayout.CENTER);
-            addNewViewFrame(f);
-        }
-    }
-
-    public SequenceDiagramView createSeqDiagView() {
-        return new SequenceDiagramView(fSession.system(), this);
-    }
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			SequenceDiagramView sv = new SequenceDiagramView(fSession.system(), MainWindow.this);
+			ViewFrame f = new ViewFrame("Sequence diagram", sv,
+					"SequenceDiagram.gif");
+			JComponent c = (JComponent) f.getContentPane();
+			c.setLayout(new BorderLayout());
+			c.add(new SDScrollPane(sv), BorderLayout.CENTER);
+			addNewViewFrame(f);
+		}
+	}
 
     /**
      * Creates a new call stack view.
      */
     private class ActionViewCreateCallStack extends AbstractAction {
         ActionViewCreateCallStack() {
-            super("Call stack",
-                    new ImageIcon(Options.iconDir + "CallStack.gif"));
+            super("Call stack", getIcon("CallStack.gif"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             CallStackView csv = new CallStackView(fSession.system());
             ViewFrame f = new ViewFrame("Call stack", csv, "CallStack.gif");
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
-            c.add(new JScrollPane(csv), BorderLayout.CENTER);
+            JScrollPane jsp = new JScrollPane(csv);
+            jsp.getVerticalScrollBar().setUnitIncrement(16);
+            c.add(jsp, BorderLayout.CENTER);
             addNewViewFrame(f);
         }
     }
@@ -1553,16 +2067,18 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionViewCreateCommandList extends AbstractAction {
         ActionViewCreateCommandList() {
-            super("Command list",
-                    new ImageIcon(Options.iconDir + "CmdList.gif"));
+            super("Command list", getIcon("CmdList.gif"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             CommandView cv = new CommandView(fSession.system());
             ViewFrame f = new ViewFrame("Command list", cv, "CmdList.gif");
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
-            c.add(new JScrollPane(cv), BorderLayout.CENTER);
+            JScrollPane jsp = new JScrollPane(cv);
+            jsp.getVerticalScrollBar().setUnitIncrement(16);
+            c.add(jsp, BorderLayout.CENTER);
             addNewViewFrame(f);
         }
     }
@@ -1572,16 +2088,18 @@ public class MainWindow extends JFrame implements StateChangeListener {
      */
     private class ActionViewAssociationInfo extends AbstractAction {
     	ActionViewAssociationInfo() {
-            super("Association ends informations", new ImageIcon(Options.iconDir
-                    + "Association.gif"));
+            super("Association ends informations", getIcon("Association.gif"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
         	AssociationEndsInfo v = new AssociationEndsInfo(MainWindow.this, fSession.system());
             ViewFrame f = new ViewFrame("Association ends info", v, "Association.gif");
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
-            c.add(new JScrollPane(v), BorderLayout.CENTER);
+            JScrollPane jsp = new JScrollPane(v);
+            jsp.getVerticalScrollBar().setUnitIncrement(16);
+            c.add(jsp, BorderLayout.CENTER);
             addNewViewFrame(f);
         }
     }
@@ -1595,7 +2113,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
             super("Close all");
         }
 
-        public void actionPerformed(ActionEvent ev) {
+        @Override
+		public void actionPerformed(ActionEvent ev) {
             closeAllViews();
         }
     }
@@ -1608,7 +2127,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
             super("Tile");
         }
 
-        public void actionPerformed(ActionEvent ev) {
+        @Override
+		public void actionPerformed(ActionEvent ev) {
             // How many frames do we have?
             JInternalFrame[] allframes = fDesk.getAllFrames();
             int count = allframes.length;
@@ -1635,8 +2155,7 @@ public class MainWindow extends JFrame implements StateChangeListener {
             int y = 0;
 
             // Iterate over the frames, deiconifying any iconified frames and
-            // then
-            // relocating & resizing each
+            // then relocating & resizing each
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols && ((i * cols) + j < count); j++) {
                     JInternalFrame f = allframes[(i * cols) + j];
@@ -1665,7 +2184,8 @@ public class MainWindow extends JFrame implements StateChangeListener {
             super("About...");
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             AboutDialog dlg = new AboutDialog(MainWindow.this);
             dlg.setVisible(true);
         }
@@ -1699,104 +2219,42 @@ public class MainWindow extends JFrame implements StateChangeListener {
         return win;
     }
     
-    //von hier jj
-	public SelectionClassView showClassSelectionClassView(ClassDiagram classDiagram) { // jj object selection class 
-    	
-    	SelectionClassView opv = new SelectionClassView(MainWindow.this, fSession.system(), classDiagram);
-    	
-        ViewFrame f = new ViewFrame("Selection classes", opv,
-                "ObjectProperties.gif");
+    public void showStateMachineView(MProtocolStateMachine sm, MObject instance) {
+    	StateMachineDiagramView dv = showStateMachineView(sm);
+    	dv.setMonitoredInstance(instance);
+    }
+    
+	/**
+	 * @param psm
+	 */
+	public StateMachineDiagramView showStateMachineView(MStateMachine sm) {
+		StateMachineDiagramView dv = new StateMachineDiagramView(MainWindow.this, fSession.system(), sm);
+        
+		ViewFrame f = new ViewFrame("State machine " + StringUtil.inQuotes(sm.name()), dv, "ClassDiagram.gif");
+        
+		// give some help information
+        f.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+			public void internalFrameActivated(InternalFrameEvent ev) {
+                fStatusBar.showTmpMessage("Use left mouse button to move "
+                        + "objects, right button for popup menu.");
+            }
+
+            @Override
+			public void internalFrameDeactivated(InternalFrameEvent ev) {
+                fStatusBar.clearMessage();
+            }
+        });
         
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());
-        c.add(opv, BorderLayout.CENTER);
+        c.add(dv, BorderLayout.CENTER);
         addNewViewFrame(f);
-        f.setSize(580,230);
-        return opv;
-}
-    
-    /**
-     * Creates a new assocation path length view.
-     */
-    public SelectedAssociationPathView showSelectedAssociationPathView(ClassDiagram diagram, Set<MClass> selectedClasses, Set<MAssociation> selectedAssociations) { // jj object selection class 
-		SelectedAssociationPathView opv = new SelectedAssociationPathView(
-				MainWindow.this, fSession.system(), diagram, selectedClasses,
-				selectedAssociations);
-        ViewFrame f = new ViewFrame("Selection association path length", opv,
-                "ObjectProperties.gif");
-        JComponent c = (JComponent) f.getContentPane();
-        c.setLayout(new BorderLayout());
-        c.add(opv, BorderLayout.CENTER);
-        addNewViewFrame(f);
-        f.setSize(450,200);
-        return opv;
-    }
-    
-    //selection class path view
-    public SelectedClassPathView showSelectedClassPathView(ClassDiagram diagram, Set<MClass> selectedClasses) { // jj object selection class 
-    	SelectedClassPathView opv = new SelectedClassPathView(MainWindow.this, fSession.system(),
-    									diagram, selectedClasses);
-        ViewFrame f = new ViewFrame("Selection by path length", opv,
-                "ObjectProperties.gif");
-        JComponent c = (JComponent) f.getContentPane();
-        c.setLayout(new BorderLayout());
-        c.add(opv, BorderLayout.CENTER);
-        addNewViewFrame(f);
-        f.setSize(450,200);
-        return opv;
-    }
-    
-    //  selection class path view
-    public SelectedLinkPathView showSelectedLinkPathView(NewObjectDiagram diagram, Set<MObject> selectedClasses, Set<MLink> selectedLinks) { 
-    	// jj object selection class 
-    	SelectedLinkPathView opv = 
-    		new SelectedLinkPathView(MainWindow.this, fSession.system(), diagram, selectedClasses, selectedLinks);
         
-    	ViewFrame f = new ViewFrame("Selection by path length", opv,
-                "ObjectProperties.gif");
-        JComponent c = (JComponent) f.getContentPane();
-        c.setLayout(new BorderLayout());
-        c.add(opv, BorderLayout.CENTER);
-        addNewViewFrame(f);
-        f.setSize(450,200);
-        return opv;
-    }
-    
-    //selection object path view
-    public SelectedObjectPathView showSelectedObjectPathView(NewObjectDiagram diagram, Set<MObject> selectedObjects) { // jj object selection class 
-    	SelectedObjectPathView opv = new SelectedObjectPathView(MainWindow.this, fSession.system(), diagram, selectedObjects);
-        ViewFrame f = new ViewFrame("Selection by path length", opv,
-                "ObjectProperties.gif");
-        JComponent c = (JComponent) f.getContentPane();
-        c.setLayout(new BorderLayout());
-        c.add(opv, BorderLayout.CENTER);
-        addNewViewFrame(f);
-        f.setSize(450,200);
-        return opv;
-    }
-    
-    public SelectionObjectView showSelectionObjectView(NewObjectDiagram diagram) { // jj object selection class 
-    	SelectionObjectView opv = new SelectionObjectView(MainWindow.this, fSession.system(), diagram);
-        ViewFrame f = new ViewFrame("Select objects", opv,
-                "ObjectProperties.gif");
-        JComponent c = (JComponent) f.getContentPane();
-        c.setLayout(new BorderLayout());
-        c.add(opv, BorderLayout.CENTER);
-        addNewViewFrame(f);
-        f.setSize(530,230);
-        return opv;
-    }
-    
-    public SelectionOCLView showSelectionOCLView(NewObjectDiagram diagram) { // jj ocl selection class 
-    	SelectionOCLView opv = new SelectionOCLView(MainWindow.this, fSession.system(), diagram);
-    	ViewFrame f = new ViewFrame("Selection by OCL expression", opv,
-                "ObjectProperties.gif");
-        JComponent c = (JComponent) f.getContentPane();
-       
-        c.setLayout(new BorderLayout());
-        c.add(opv, BorderLayout.CENTER);
-        addNewViewFrame(f);
-        f.setSize(370,250);
-        return opv;
-    }
+        return dv;
+	}
+	
+	private Icon getIcon(String name) {
+		return new ImageIcon(Options.getIconPath(name).toString());
+	}
 }

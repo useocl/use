@@ -27,8 +27,6 @@ import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * Generates an undefined value of the specified type.
- *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpUndefined extends Expression {
@@ -53,16 +51,16 @@ public final class ExpUndefined extends Expression {
 
     @Override
     public StringBuilder toString(StringBuilder sb) {
-        sb.append("oclUndefined(");
-        type().toString(sb);
-        return sb.append(")");
+        return sb.append("null");
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitUndefined(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {	
+		return false;
 	}
 }

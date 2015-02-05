@@ -30,21 +30,19 @@ import java.util.Set;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public final class OclAnyType extends Type {
+public final class OclAnyType extends TypeImpl {
 
-    /** 
-     * Returns true if this type is a subtype of <code>t</code>. 
-     */
-    public boolean isSubtypeOf(Type t) {
-        // OclAny has no supertypes
-        return equals(t);
-    }
-
-    public boolean isTrueOclAny() {
+	@Override
+    public boolean isTypeOfOclAny() {
     	return true;
     }
     
-    /** 
+    @Override
+	public boolean isKindOfOclAny(VoidHandling h) {
+		return true;
+	}
+
+	/** 
      * Returns the set of all supertypes (including this type).
      */
     public Set<Type> allSupertypes() {
@@ -74,4 +72,9 @@ public final class OclAnyType extends Type {
     public StringBuilder toString(StringBuilder sb) {
         return sb.append("OclAny");
     }
+
+	@Override
+	public boolean conformsTo(Type other) {
+		return other.isTypeOfOclAny();
+	}
 }

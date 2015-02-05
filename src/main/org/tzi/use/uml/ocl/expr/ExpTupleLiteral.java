@@ -21,8 +21,8 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
@@ -35,8 +35,8 @@ import org.tzi.use.util.StringUtil;
 /**
  * Constant tuple literal.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
+ * @author  Lars Hamann  
  */
 public final class ExpTupleLiteral extends Expression {
     private Part[] fParts;
@@ -55,6 +55,10 @@ public final class ExpTupleLiteral extends Expression {
         public Part(String name, Expression expr, Type givenType) {
             this(name, expr);
             this.givenType = givenType;
+        }
+        
+        public String getName(){
+        	return fName;
         }
         
         public Expression getExpression() {
@@ -94,12 +98,11 @@ public final class ExpTupleLiteral extends Expression {
         Expression[] childExpressions = new Expression[fParts.length];
         
         for (int i = 0; i < fParts.length; i++) {
-        	 typeParts[i] = new TupleType.Part(fParts[i].fName, fParts[i].getType());
+        	 typeParts[i] = new TupleType.Part(i, fParts[i].fName, fParts[i].getType());
         	 childExpressions[i] = fParts[i].fExpr;
         }
         
         setResultType(TypeFactory.mkTuple(typeParts));
-        addChildExpressions(childExpressions);
     }
 
     /**
@@ -116,10 +119,10 @@ public final class ExpTupleLiteral extends Expression {
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = null;
-        Map<String, Value> parts = new HashMap<String, Value>(fParts.length);
+        List<TupleValue.Part> parts = new ArrayList<TupleValue.Part>(fParts.length);
         
         for (int i = 0; i < fParts.length; i++) {
-            parts.put(fParts[i].fName, fParts[i].fExpr.eval(ctx));
+            parts.add(new TupleValue.Part(i, fParts[i].fName, fParts[i].fExpr.eval(ctx)));
         }
         
         res = new TupleValue((TupleType) type(), parts);
@@ -140,5 +143,17 @@ public final class ExpTupleLiteral extends Expression {
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitTupleLiteral(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
+	 */
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		for (Part p : fParts) {
+			if (p.fExpr.requiresPreState())
+				return true;
+		}
+		return false;
 	}
 }

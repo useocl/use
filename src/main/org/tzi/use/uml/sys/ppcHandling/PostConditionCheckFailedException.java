@@ -26,29 +26,22 @@ import org.tzi.use.util.StringUtil;
 
 
 /**
- * TODO
+ * Exception used to signal a failed post condition.
  * @author Daniel Gent
  *
  */
 public class PostConditionCheckFailedException extends PPCCheckFailedException {
-	/** TODO */
 	private static final long serialVersionUID = 1L;
 
-	
-	/**
-	 * TODO
-	 * @param culprit
-	 */
 	public PostConditionCheckFailedException(MOperationCall culprit) {
 		super(culprit);
 	}
-	
 	
 	@Override
 	public String getMessage() {
 		return 
 			"postcondition false in operation call " + 
-			StringUtil.inQuotes(getCulprit()) + 
+			StringUtil.inQuotes(getOperationCall()) + 
 			".";
 	}
 }

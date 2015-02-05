@@ -50,54 +50,39 @@ import org.tzi.use.util.soil.VariableEnvironment;
 
 
 /**
- * TODO
+ * Test cases to test the effects of different statements.
  * @author Daniel Gent
  *
  */
 public class StatementEffectTest extends TestCase {
-	/** TODO */
+
 	private TestSystem fTestSystem;
-	/** TODO */
+
 	private UseSystemApi systemApi;
-	/** TODO */
+
 	private MSystemState fState;
-	/** TODO */
+
 	private MSystemState fOldState;
-	/** TODO */
+
 	private VariableEnvironment fOldVarEnv;
-	
-	
-	/**
-	 * TODO
-	 * @throws Exception
-	 */
+
 	@Before
 	@Override
 	public void setUp() throws MInvalidModelException, MSystemException, ExpInvalidException {
 		fTestSystem = new TestSystem();
-		systemApi = UseSystemApi.create(fTestSystem.getSystem());
+		systemApi = UseSystemApi.create(fTestSystem.getSystem(), false);
 		fState = fTestSystem.getState();
 		fOldState = new MSystemState("oldState", fState);
 		fOldVarEnv = new VariableEnvironment(fTestSystem.getVarEnv());
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws Exception 
-	 */
+
 	private void reset() throws MSystemException {
 		fTestSystem.reset();
 		fState = fTestSystem.getState();
 		fOldState = new MSystemState("oldState", fState);
 		fOldVarEnv = new VariableEnvironment(fTestSystem.getVarEnv());
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
+
 	@Test
 	public void testVariableAssignment() throws MSystemException {
 		
@@ -243,11 +228,6 @@ public class StatementEffectTest extends TestCase {
 
 	}
 	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
 	@Test
 	public void testAttributeAssignment() throws MSystemException {
 		
@@ -307,11 +287,6 @@ public class StatementEffectTest extends TestCase {
 		assertEquals(newAttVal, IntegerValue.valueOf(attVal2));
 	}
 
-
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
 	@Test
 	public void testObjectCreation() throws MSystemException {
 		
@@ -463,11 +438,6 @@ public class StatementEffectTest extends TestCase {
 		assertEquals(((IntegerValue)varVal).value(), 42);
 	}
 	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
 	@Test
 	public void testLinkObjectCreation() throws MSystemException {
 		
@@ -724,12 +694,7 @@ public class StatementEffectTest extends TestCase {
 		assertEquals(linkedObject2.value(), lookUpVar(pMName2));
 		assertEquals(newLinkObject.value(), lookUpVar(mandatoryName));
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
+
 	@Test
 	public void testObjectDestruction() throws MSystemException {
 		
@@ -754,7 +719,7 @@ public class StatementEffectTest extends TestCase {
 		// variable should be undefined, but still exist
 		Value varVal1 = lookUpVar(vNameObj1);
 		assertNotNull(varVal1);
-		assertTrue(varVal1.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj1).type()));
+		assertTrue(varVal1.type().conformsTo(fOldVarEnv.lookUp(vNameObj1).type()));
 		assertTrue(varVal1.isUndefined());
 		
 		//////////
@@ -785,7 +750,7 @@ public class StatementEffectTest extends TestCase {
 		// variable should be undefined, but still exist
 		varVal1 = lookUpVar(vNameObj1);
 		assertNotNull(varVal1);
-		assertTrue(varVal1.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj1).type()));
+		assertTrue(varVal1.type().conformsTo(fOldVarEnv.lookUp(vNameObj1).type()));
 		assertTrue(varVal1.isUndefined());
 		
 		/////////////////////////////////////
@@ -818,11 +783,11 @@ public class StatementEffectTest extends TestCase {
 		// variables should undefined
 		varVal1 = lookUpVar(vNameObj1);
 		assertNotNull(varVal1);
-		assertTrue(varVal1.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj1).type()));
+		assertTrue(varVal1.type().conformsTo(fOldVarEnv.lookUp(vNameObj1).type()));
 		assertTrue(varVal1.isUndefined());
 		Value varVal2 = lookUpVar(vNameObj2);
 		assertNotNull(varVal2);
-		assertTrue(varVal2.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj2).type()));
+		assertTrue(varVal2.type().conformsTo(fOldVarEnv.lookUp(vNameObj2).type()));
 		assertTrue(varVal2.isUndefined());
 		
 		///////////////////////////////////////////////
@@ -846,11 +811,11 @@ public class StatementEffectTest extends TestCase {
 		// variables should undefined
 		varVal1 = lookUpVar(vNameObj1);
 		assertNotNull(varVal1);
-		assertTrue(varVal1.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj1).type()));
+		assertTrue(varVal1.type().conformsTo(fOldVarEnv.lookUp(vNameObj1).type()));
 		assertTrue(varVal1.isUndefined());
 		varVal2 = lookUpVar(vNameObj2);
 		assertNotNull(varVal2);
-		assertTrue(varVal2.type().isSubtypeOf(fOldVarEnv.lookUp(vNameObj2).type()));
+		assertTrue(varVal2.type().conformsTo(fOldVarEnv.lookUp(vNameObj2).type()));
 		assertTrue(varVal2.isUndefined());
 		
 		//////////////////////////////////////////////
@@ -896,15 +861,9 @@ public class StatementEffectTest extends TestCase {
 		
 		
 		
-		// TODO
-		// link object destruction?
+		// TODO: link object destruction?
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
+
 	@Test
 	public void testLinkInsertion() throws MSystemException {
 		
@@ -1019,12 +978,7 @@ public class StatementEffectTest extends TestCase {
 		assertTrue(linkedObjects.contains(linkedObject1));
 		assertTrue(linkedObjects.contains(linkedObject2));
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
+
 	@Test
 	public void testLinkDeletion() throws MSystemException {
 		
@@ -1112,12 +1066,7 @@ public class StatementEffectTest extends TestCase {
 		assertFalse(fState.allLinks().contains(link));
 		assertFalse(fState.allObjects().contains(linkObject));
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
+
 	@Test
 	public void testConditional() throws MSystemException {
 			
@@ -1242,12 +1191,7 @@ public class StatementEffectTest extends TestCase {
 		evaluateStatement(statement);
 		assertNotNull(lookUpVar(varName));
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
+
 	@Test
 	public void testIteration() throws MSystemException {
 		
@@ -1267,7 +1211,7 @@ public class StatementEffectTest extends TestCase {
 			sum += x;
 		}
 		
-		assertEquals(lookUpVar("sum"), IntegerValue.valueOf(sum));
+		assertEquals(IntegerValue.valueOf(sum), lookUpVar("sum"));
 		
 		///////////////////////////////////////////////////
 		// iteration variable shadows existing variables //
@@ -1294,12 +1238,7 @@ public class StatementEffectTest extends TestCase {
 		evaluateStatement(statement);
 		assertNotNull(lookUpVar("y"));
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
+
 	@Test
 	public void testOperationCall() throws MSystemException {
 		
@@ -1390,11 +1329,6 @@ public class StatementEffectTest extends TestCase {
 		assertTrue(fTestSystem.getSystem().getCallStack().isEmpty());
 	}
 		
-	
-	/**
-	 * TODO
-	 * @throws MSystemException 
-	 */
 	@Test
 	public void testOpEnterOpExit() throws MSystemException {
 		
@@ -1507,13 +1441,6 @@ public class StatementEffectTest extends TestCase {
 		assertTrue(fTestSystem.getSystem().getCallStack().isEmpty());
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param varName
-	 * @param varEnv
-	 * @return
-	 */
 	private Value lookUpVar(
 			String varName, 
 			VariableEnvironment varEnv) {
@@ -1521,44 +1448,18 @@ public class StatementEffectTest extends TestCase {
 		return varEnv.lookUp(varName);
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param varName
-	 * @return
-	 */
 	private Value lookUpVar(String varName) {
 		return lookUpVar(varName, fTestSystem.getVarEnv());
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param objectName
-	 * @param state
-	 * @return
-	 */
 	private MObject getObject(String objectName, MSystemState state) {
 		return state.objectByName(objectName);
 	}
-	
-	
-	/**
-	 * TODO
-	 * @param objectName
-	 * @return
-	 */
+
 	private MObject getObject(String objectName) {
 		return getObject(objectName, fTestSystem.getState());
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param varName
-	 * @param varEnv
-	 * @return
-	 */
 	private MObject getObjectByVarName(String varName, VariableEnvironment varEnv) {
 		
 		Value varVal = lookUpVar(varName, varEnv);
@@ -1574,23 +1475,10 @@ public class StatementEffectTest extends TestCase {
 		return null;
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param varName
-	 * @return
-	 */
 	private MObject getObjectByVarName(String varName) {
 		return getObjectByVarName(varName, fTestSystem.getVarEnv());
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param object
-	 * @param attName
-	 * @return
-	 */
 	private Value getAttVal(MObject object, String attName) {
 		
 		if (fState.allObjects().contains(object)) {
@@ -1600,11 +1488,6 @@ public class StatementEffectTest extends TestCase {
 		return null;
 	}
 	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
 	private List<String> getNewVars() {
 		List<String> result = 
 			new ArrayList<String>(fTestSystem.getVarEnv().getCurrentMappings().keySet());
@@ -1613,12 +1496,7 @@ public class StatementEffectTest extends TestCase {
 		
 		return result;
 	}
-	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
+
 	private List<MObject> getNewObjects() {
 		List<MObject> result = 
 			new ArrayList<MObject>(fTestSystem.getState().allObjects());
@@ -1627,11 +1505,6 @@ public class StatementEffectTest extends TestCase {
 		return result;
 	}
 	
-
-	/**
-	 * TODO
-	 * @return
-	 */
 	private List<MLink> getNewLinks() {
 		List<MLink> result = 
 			new ArrayList<MLink>(fTestSystem.getState().allLinks());
@@ -1641,13 +1514,6 @@ public class StatementEffectTest extends TestCase {
 		return result;
 	}
 	
-	
-	/**
-	 * TODO
-	 * @param assocName
-	 * @param participants
-	 * @return
-	 */
 	private MLink getLink(String assocName, MObject... participants) {
 		
 		List<MObject> partList = Arrays.asList(participants);
@@ -1663,43 +1529,19 @@ public class StatementEffectTest extends TestCase {
 		
 		return null;
 	}
-	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException
-	 */
+
 	private void undo() throws MSystemException {
 		fTestSystem.getSystem().undoLastStatement();
 	}
 	
-	
-	/**
-	 * TODO
-	 * @throws MSystemException
-	 */
 	private void redo() throws MSystemException {
 		fTestSystem.getSystem().redoStatement();
 	}
-	
-	
-	/**
-     * TODO
-     * @param statement
-     * @throws MSystemException
-     */
-    public void evaluateStatement(
-    		String statement) throws MSystemException {
-    	
+
+    public void evaluateStatement(String statement) throws MSystemException {
     	systemApi.getSystem().execute(generateStatement(statement));
     }
-    
-    
-    /**
-	 * TODO
-	 * @param input
-	 * @return
-	 */
+
 	private MStatement generateStatement(String input) {
 		
 		return ShellCommandCompiler.compileShellCommand(

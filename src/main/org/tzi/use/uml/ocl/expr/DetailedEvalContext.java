@@ -54,36 +54,30 @@ public class DetailedEvalContext extends EvalContext {
         return fRootNode;
     }    
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.EvalContext#isEnableEvalTree()
-	 */
 	@Override
 	public boolean isEnableEvalTree() {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.EvalContext#enter(org.tzi.use.uml.ocl.expr.Expression)
-	 */
 	@Override
 	void enter(Expression expr) {
 		super.enter(expr);
-		fNodeStack.push(new EvalNode(varBindings()));
+		EvalNode n = new EvalNode(varBindings());
+		n.setExpression(expr);
+		fNodeStack.push(n);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.EvalContext#exit(org.tzi.use.uml.ocl.expr.Expression, org.tzi.use.uml.ocl.value.Value)
-	 */
 	@Override
 	void exit(Expression expr, Value result) {
 		super.exit(expr, result);
 	    EvalNode n = fNodeStack.pop();
-	    n.setExpression(expr);
 	    n.setResult(result);
 	    
-	    if ( !fNodeStack.empty() )
-	        fNodeStack.peek().addChild(n);
-	    else
-	        fRootNode = n;
+	    if ( !fNodeStack.empty() ) {
+	    	fNodeStack.peek().addChild(n);
+	    } else {
+	    	fRootNode = n;
+	    	fRootNode.sortSubtree();
+	    }
 	}
 }

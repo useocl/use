@@ -1,0 +1,45 @@
+<project name="AssociationExtend" default="build" basedir=".">
+	<description>AssociationExtent plugin for USE</description>
+
+	<!-- Setup following configurations //-->
+	<property name="use.path" value="${basedir}/../.." />
+	<property name="release.version" value="1.0" />
+
+	<!-- Do not touch following configurations //-->
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="manifest" value="${basedir}/META-INF/MANIFEST.MF"/>
+	<property name="use.classes" value="${use.path}/build/classes" />
+
+	<path id="classpath">
+		<fileset dir="${use.path}/lib" includes="*.jar" excludes="use*" />
+		<pathelement location="${use.classes}"/>
+	</path>
+	
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="build.classes.dir" value="${build.dir}/classes" />
+	<property name="build.jarfiledest" value="${build.dir}/AssociationExtend.jar"/>
+	<property name="resources.dir" value="${basedir}/resources"/>
+
+	<target name="build-use" description="Build the components of USE that are required for the plugin">
+		<subant target="compile-use" buildpath="${use.path}"/>
+	</target>
+
+	<target name="build" depends="build-use" description="Build the plugin jar-file">
+		<mkdir dir="${build.classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${build.classes.dir}"
+			classpathref="classpath" includeantruntime="no" />
+		<jar destfile="${build.jarfiledest}" manifest="${manifest}">
+			<fileset dir="${build.classes.dir}" />
+			<fileset dir="${basedir}" includes="resources/**" />
+			<fileset dir="${basedir}" includes="useplugin.xml" />
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+	
+	<target name="deploy" depends="build">
+		<copy file="${build.jarfiledest}" todir="${use.path}/lib/plugins" />
+	</target>
+</project>

@@ -51,16 +51,16 @@ import org.tzi.use.uml.sys.MSystem;
 
 /** 
  * A dialog for creating objects.
- * 
- * @version     $ProjectVersion: 0.393 $
+ *  
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
 @SuppressWarnings("serial")
 class CreateObjectDialog extends JDialog {
     private MSystem fSystem;
     private MainWindow fParent;
     private List<MClass> fClasses;
-    private JList fListClasses;
+    private JList<MClass> fListClasses;
     private JTextField fTextObjectName;
 
     CreateObjectDialog(Session session, MainWindow parent) {
@@ -85,7 +85,7 @@ class CreateObjectDialog extends JDialog {
         		fClasses.add(cls);
         }
         
-        fListClasses = new JList(fClasses.toArray());
+        fListClasses = new JList<MClass>(fClasses.toArray(new MClass[]{}));
         fListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JLabel labelClasses = new JLabel("Select class:");
         labelClasses.setDisplayedMnemonic('S');
@@ -170,8 +170,8 @@ class CreateObjectDialog extends JDialog {
         }
 
         // get class
-        int i = fListClasses.getSelectedIndex();
-        if (i < 0 || i >= fClasses.size() ) {
+        MClass cls = fListClasses.getSelectedValue();
+        if ( cls == null ) {
             JOptionPane.showMessageDialog(this,
                                           "You need to specify a class for the new object.",
                                           "Error",
@@ -179,7 +179,7 @@ class CreateObjectDialog extends JDialog {
             return;
         }
 
-        fParent.createObject((MClass)fClasses.get(i), name);
+        fParent.createObject(cls, name);
     }
 }
 

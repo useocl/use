@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
+
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.main.Session;
@@ -36,6 +38,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
@@ -61,13 +64,14 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		super(session.system());
 	}
 	
+	public UseSystemApiUndoable(MSystem system) {
+		super(system);
+	}
+	
 	public UseSystemApiUndoable(MModel model) {
 		super(model);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#createObjectEx(org.tzi.use.uml.mm.MClass, java.lang.String)
-	 */
 	@Override
 	public MObject createObjectEx(MClass objectClass, String objectName)
 			throws UseApiException {
@@ -86,9 +90,6 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		return res.getStateDifference().getNewObjects().iterator().next();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#setAttributeValueEx(org.tzi.use.uml.sys.MObject, org.tzi.use.uml.mm.MAttribute, org.tzi.use.uml.ocl.value.Value)
-	 */
 	@Override
 	public void setAttributeValueEx(MObject object, MAttribute attribute, Value value) throws UseApiException {
     	try {
@@ -102,9 +103,6 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		}
     }
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#createLinkEx(org.tzi.use.uml.mm.MAssociation, org.tzi.use.uml.sys.MObject[], org.tzi.use.uml.ocl.value.Value[][])
-	 */
 	@Override
 	public MLink createLinkEx(MAssociation association, MObject[] connectedObjects, Value[][] qualifierValues) throws UseApiException {
 		List<List<Value>> qualifierValuesList = getQualifierValuesAsList(qualifierValues);
@@ -121,9 +119,6 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		return mlink;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#createLinkObjectEx(org.tzi.use.uml.mm.MAssociationClass, java.lang.String, org.tzi.use.uml.sys.MObject[], org.tzi.use.uml.ocl.value.Value[][])
-	 */
 	@Override
 	public MLinkObject createLinkObjectEx(
 			MAssociationClass associationClass,
@@ -148,10 +143,7 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		
 		return (MLinkObject)res.getStateDifference().getNewObjects().iterator().next();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#deleteLinkEx(org.tzi.use.uml.mm.MAssociation, org.tzi.use.uml.sys.MObject[], org.tzi.use.uml.ocl.value.Value[][])
-	 */
+
 	@Override
 	public void deleteLinkEx(
     		MAssociation association,
@@ -187,9 +179,6 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		}
     }
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#deleteLinkEx(org.tzi.use.uml.sys.MLink)
-	 */
 	@Override
 	public void deleteLinkEx(MLink link) throws UseApiException {
 		List<List<MRValue>> qualifiers = new ArrayList<List<MRValue>>();
@@ -219,17 +208,32 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#deleteObjectEx(org.tzi.use.uml.sys.MObject)
-	 */
 	@Override
 	public void deleteObjectEx(MObject object) throws UseApiException {
 		try {
 			evaluateStatement(
 					new MObjectDestructionStatement(
-							new ObjectValue(object.type(), object)));
+							new ObjectValue(object.cls(), object)));
 		} catch (MSystemException e) {
 			throw new UseApiException("Object could not be deleted!", e);
+		}
+	}
+
+	@Override
+	public void undo() throws UseApiException, OperationNotSupportedException {
+		try {
+			system.undoLastStatement();
+		} catch (MSystemException e) {
+			throw new UseApiException("Error during undo of last statement.", e);
+		}
+	}
+	
+	@Override
+	public void redo() throws UseApiException, OperationNotSupportedException {
+		try {
+			system.redoStatement();
+		} catch (MSystemException e) {
+			throw new UseApiException("Error during redo.", e);
 		}
 	}
 	

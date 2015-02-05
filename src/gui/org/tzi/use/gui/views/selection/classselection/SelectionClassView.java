@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.swing.Box;
@@ -36,12 +37,12 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram.ClassDiagramData;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramData;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.selection.ClassSelectionView;
+import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.sys.MSystem;
 
 /** 
  * This view shows all classes in a table and allows
@@ -61,8 +62,8 @@ public class SelectionClassView extends ClassSelectionView {
 	/**
 	 * Constructor for SelectionClassView.
 	 */
-	public SelectionClassView(MainWindow parent, MSystem system, ClassDiagram classDiagram) {
-		super(parent, system, classDiagram);
+	public SelectionClassView(MainWindow parent, ClassDiagram classDiagram) {
+		super(parent, classDiagram);
 		initSelectionClassView();
 	}
 
@@ -122,7 +123,7 @@ public class SelectionClassView extends ClassSelectionView {
 		Set<MClassifier> classifierToHide = getClassifierToHide(selectedClassifier, true); 
 		
 		if (!classifierToHide.isEmpty()) {
-			diagram.hideElementsInDiagram(classifierToHide);
+			diagram.hideElementsInDiagram(classifierToHide, Collections.<MAssociation>emptySet());
 		}
 
 		Set<MClassifier> classifierToShow = getClassifierToShow(selectedClassifier);
@@ -134,7 +135,7 @@ public class SelectionClassView extends ClassSelectionView {
 			diagram.getNodeSelection().addAll(selectedNodes);
 		}
 		
-		diagram.invalidateContent();
+		diagram.invalidateContent(true);
 		((SelectionClassTableModel) fTableModel).update();
 	}
 
@@ -151,7 +152,7 @@ public class SelectionClassView extends ClassSelectionView {
 			selected.retainAll(classifierToShow);
 			Set<PlaceableNode> selectedNodes = ((ClassDiagramData)diagram.getVisibleData()).getNodes(selected);
 			diagram.getNodeSelection().addAll(selectedNodes);
-			diagram.invalidateContent();
+			diagram.invalidateContent(true);
 		}
 	}
 
@@ -162,8 +163,8 @@ public class SelectionClassView extends ClassSelectionView {
 		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedClassifier(), false);
 		
 		if (classifierToHide.size() > 0) {
-			diagram.hideElementsInDiagram(classifierToHide);
-			diagram.invalidateContent();
+			diagram.hideElementsInDiagram(classifierToHide, Collections.<MAssociation>emptySet());
+			diagram.invalidateContent(true);
 			((SelectionClassTableModel) fTableModel).update();
 		}
 	}
@@ -187,10 +188,7 @@ public class SelectionClassView extends ClassSelectionView {
 	public void update() {
 		((SelectionClassTableModel)fTableModel).update();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.selection.ClassSelectionView#detachModel()
-	 */
+
 	@Override
 	public void detachModel() {
 		super.detachModel();
@@ -209,8 +207,7 @@ public class SelectionClassView extends ClassSelectionView {
 				} else {
 					this.setForeground(Color.black);
 				}
-				
-				
+								
 				return defaultRenderer;
 	    }
 	}

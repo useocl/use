@@ -21,6 +21,8 @@
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
+import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,48 +30,55 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
-import javax.xml.xpath.XPathConstants;
 
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser.SelectionChangedListener;
+import org.tzi.use.gui.main.ModelBrowserSorting;
+import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
+import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.AssociationName;
-import org.tzi.use.gui.views.diagrams.AssociationOrLinkPartEdge;
-import org.tzi.use.gui.views.diagrams.BinaryAssociationClassOrObject;
-import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.DiamondNode;
-import org.tzi.use.gui.views.diagrams.EdgeBase;
-import org.tzi.use.gui.views.diagrams.GeneralizationEdge;
-import org.tzi.use.gui.views.diagrams.NAryAssociationClassOrObjectEdge;
-import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramOptions.ShowCoverage;
+import org.tzi.use.gui.views.diagrams.elements.AssociationName;
+import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
+import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.Rolename;
+import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
+import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationClassOrObject;
+import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
+import org.tzi.use.gui.views.diagrams.elements.edges.GeneralizationEdge;
+import org.tzi.use.gui.views.diagrams.elements.edges.NAryAssociationClassOrObjectEdge;
 import org.tzi.use.gui.views.diagrams.event.ActionHideClassDiagram;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
@@ -80,158 +89,62 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.selection.classselection.ClassSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
-import org.tzi.use.parser.ocl.OCLCompiler;
-import org.tzi.use.uml.mm.Annotatable;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MElementAnnotation;
 import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MMPrintVisitor;
-import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MNamedElement;
+import org.tzi.use.uml.mm.MNamedElementComparator;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
+import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
+import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.ocl.type.EnumType;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.util.NullPrintWriter;
+import org.tzi.use.util.StringUtil;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
+import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 
 /**
- * A panel drawing UML class diagrams.
+ * A panel drawing a UML class diagrams.
  * 
- * @version $ProjectVersion: 2-3-1-release.3 $
  * @author Fabian Gutsche
+ * @author Lars Hamann
  */
 @SuppressWarnings("serial")
 public class ClassDiagram extends DiagramView 
-                             implements HighlightChangeListener, SelectionChangedListener {
+                             implements HighlightChangeListener, SelectionChangedListener, SortChangeListener {
 
-    public static class ClassDiagramData implements DiagramData {
-		/**
-		 * All mappings from (association-)classes to nodes.
-		 */
-		public Map<MClass, ClassNode> fClassToNodeMap;
-		/**
-		 * 
-		 */
-		public Map<EnumType, EnumNode> fEnumToNodeMap;
-		/**
-		 * 
-		 */
-		public Map<MAssociation, BinaryAssociationOrLinkEdge> fBinaryAssocToEdgeMap;
-		/**
-		 * 
-		 */
-		public Map<MAssociationClass, EdgeBase> fAssocClassToEdgeMap;
-		/**
-		 * 
-		 */
-		public Map<MAssociation, DiamondNode> fNaryAssocToDiamondNodeMap;
-		/**
-		 * 
-		 */
-		public Map<MAssociation, List<EdgeBase>> fNaryAssocToHalfEdgeMap;
-		/**
-		 * 
-		 */
-		public Map<MGeneralization, GeneralizationEdge> fGenToGeneralizationEdge;
+    private final ClassDiagramView fParent;
+    
+    private final ClassDiagramData visibleData = new ClassDiagramData();
 
-		/**
-		 * 
-		 */
-		public ClassDiagramData() {
-			fClassToNodeMap = new HashMap<MClass, ClassNode>();
-	        fEnumToNodeMap = new HashMap<EnumType, EnumNode>();
-	        fBinaryAssocToEdgeMap = new HashMap<MAssociation, BinaryAssociationOrLinkEdge>();
-	        fAssocClassToEdgeMap = new HashMap<MAssociationClass, EdgeBase>();
-	        fNaryAssocToDiamondNodeMap = new HashMap<MAssociation, DiamondNode>();
-	        fNaryAssocToHalfEdgeMap = new HashMap<MAssociation, List<EdgeBase>>();
-	        fGenToGeneralizationEdge = new HashMap<MGeneralization, GeneralizationEdge>();
-		}
-		
-		public boolean hasNodes() {
-			return !(fClassToNodeMap.isEmpty() && fEnumToNodeMap.isEmpty());
-		}
+    private final ClassDiagramData hiddenData = new ClassDiagramData();
 
-		/* (non-Javadoc)
-		 * @see org.tzi.use.gui.views.diagrams.DiagramView.DiagramData#getNodes()
-		 */
-		@Override
-		public Set<PlaceableNode> getNodes() {
-			Set<PlaceableNode> result = new HashSet<PlaceableNode>(fClassToNodeMap.values());
-			result.addAll(fEnumToNodeMap.values());
-			return result;
-		}
+	private final ClassSelection fSelection;
+	
+	private final DiagramInputHandling inputHandling;
 
-		/**
-		 * Searches for the given classifier and returns the node
-		 * which represents it.
-		 * @param cf
-		 * @return
-		 */
-		public PlaceableNode getNode(MClassifier cf) {
-			PlaceableNode n = this.fClassToNodeMap.get(cf);
-			if (n != null) return n;
-			return this.fEnumToNodeMap.get(cf);
-		}
-		
-		public boolean containsNodeForClassifer(MClassifier cf) {
-			return this.fClassToNodeMap.containsKey(cf) || this.fEnumToNodeMap.containsKey(cf);
-		}
-
-		/**
-		 * Returns all placeable nodes for the given classifiers.
-		 * @param selected
-		 * @return
-		 */
-		public Set<PlaceableNode> getNodes(Set<MClassifier> classifier) {
-			Set<PlaceableNode> nodes = new HashSet<PlaceableNode>();
-			for (MClassifier cf : classifier) {
-				PlaceableNode node = getNode(cf);
-				if (node != null)
-					nodes.add(node);
-			}
-			return nodes;
-		}
+	ClassDiagram( ClassDiagramView parent, PrintWriter log ) {
+		this(parent, log, new ClassDiagramOptions(Paths.get(parent.system().model().filename())));
 	}
-
-	private ClassDiagramView fParent;
-    
-    private ClassDiagramData visibleData = new ClassDiagramData();
-
-    private ClassDiagramData hiddenData = new ClassDiagramData();
-    
-    /**
-     * True if a user loads or saves a layout
-     */
-    private boolean hasUserDefinedLayout = false;
-    
-	// jj anfangen
-	private ClassSelection fSelection;
-	private DiagramInputHandling inputHandling;
-	// jj end
-    
-    ClassDiagram( ClassDiagramView parent, PrintWriter log ) {
-    	super(new ClassDiagramOptions(), log);
+	
+    ClassDiagram( ClassDiagramView parent, PrintWriter log, ClassDiagramOptions opt ) {
+    	super(opt, log);
         
         fParent = parent;
         
-        inputHandling = 
-            new DiagramInputHandling( fNodeSelection, fEdgeSelection, this);
+        inputHandling = new DiagramInputHandling( fNodeSelection, fEdgeSelection, this);
         
         fSelection = new ClassSelection(this);
         
@@ -246,32 +159,46 @@ public class ClassDiagram extends DiagramView
                 
         fParent.getModelBrowser().addHighlightChangeListener( this );
         fParent.getModelBrowser().addSelectionChangedListener( this );
+        ModelBrowserSorting.getInstance().addSortChangeListener( this );
         
         addComponentListener( new ComponentAdapter() {
-            public void componentResized( ComponentEvent e ) {
+            @Override
+			public void componentResized( ComponentEvent e ) {
                 // need a new layouter to adapt to new window size
                 fLayouter = null;
             }
         } );
+        
         startLayoutThread();
     }
 
-    public MSystem getSystem() {
-    	return fParent.system();
+    /**
+     * Returns the options of a specific diagram.
+     */
+    @Override
+    public ClassDiagramOptions getOptions() {
+        return (ClassDiagramOptions)fOpt;
     }
     
-    public Map<MClass, ClassNode> getClassToNodeMap() {
-    	return this.visibleData.fClassToNodeMap;
+    public MSystem getSystem() {
+    	return fParent.system();
     }
     
     public Selection<PlaceableNode> getNodeSelection() {
 		return this.fNodeSelection;
 	}
-    
+
+	@Override
+	public void resetLayout() {
+		fParent.initDiagram(false, (ClassDiagramOptions)fOpt);
+		fParent.validate();
+	}
+	
     /**
-     * Displays the selected class of the modelbrowser in the class diagram.
+     * Displays the selected class of the model browser in the class diagram.
      */
-    public void stateChanged( HighlightChangeEvent e ) {
+    @Override
+	public void stateChanged( HighlightChangeEvent e ) {
         if ( !fParent.isSelectedView() ) {
             return;
         }
@@ -285,18 +212,18 @@ public class ClassDiagram extends DiagramView
             int size = ((MAssociation) elem).associationEnds().size();
             EdgeBase eb = null;
             if ( size == 2 ) {
-                    eb = visibleData.fBinaryAssocToEdgeMap.get( (MAssociation) elem );
+                    eb = visibleData.fBinaryAssocToEdgeMap.get( elem );
                 if ( elem instanceof MAssociationClass ) {
-                    eb = visibleData.fAssocClassToEdgeMap.get( (MAssociationClass) elem );
+                    eb = visibleData.fAssocClassToEdgeMap.get( elem );
                 }
                 edges.add( eb );
             } else {
-				List<EdgeBase> halfEdges = visibleData.fNaryAssocToHalfEdgeMap.get((MAssociation) elem);
-                if ( edges != null && halfEdges != null ) {
+				List<EdgeBase> halfEdges = visibleData.fNaryAssocToHalfEdgeMap.get(elem);
+                if ( halfEdges != null ) {
                     edges.addAll( halfEdges );
                 }
                 if ( elem instanceof MAssociationClass ) {
-                    eb = visibleData.fAssocClassToEdgeMap.get( (MAssociationClass) elem );
+                    eb = visibleData.fAssocClassToEdgeMap.get( elem );
                     if ( !edges.contains( eb ) ) {
                         edges.add( eb );
                     }
@@ -320,7 +247,7 @@ public class ClassDiagram extends DiagramView
         
         // elem is a class
         if ( elem != null && elem instanceof MClass ) {
-            NodeBase node = visibleData.fClassToNodeMap.get( (MClass) elem );
+        	PlaceableNode node = visibleData.fClassToNodeMap.get( elem );
             if ( node != null ) {
                 if ( elem instanceof MAssociationClass ) {
                     if ( fNodeSelection.isSelected( node ) && allEdgesSelected ) {
@@ -338,7 +265,7 @@ public class ClassDiagram extends DiagramView
             }
         }
                 
-        invalidateContent();
+        invalidateContent(true);
     }
 
     @Override
@@ -349,6 +276,22 @@ public class ClassDiagram extends DiagramView
     	
     	while (hiddenData.fEnumToNodeMap.size() > 0) {
     		showEnum(hiddenData.fEnumToNodeMap.keySet().iterator().next());
+    	}
+    	
+    	while (hiddenData.fBinaryAssocToEdgeMap.size() > 0) {
+    		showAssociation(hiddenData.fBinaryAssocToEdgeMap.keySet().iterator().next());
+    	}
+    	
+    	while (hiddenData.fAssocClassToEdgeMap.size() > 0) {
+    		showAssociation(hiddenData.fAssocClassToEdgeMap.keySet().iterator().next());
+    	}
+    	
+    	while (hiddenData.fNaryAssocToDiamondNodeMap.size() > 0) {
+    		showAssociation(hiddenData.fNaryAssocToDiamondNodeMap.keySet().iterator().next());
+    	}
+    	
+    	while (hiddenData.fNaryAssocToHalfEdgeMap.size() > 0) {
+    		showAssociation(hiddenData.fNaryAssocToHalfEdgeMap.keySet().iterator().next());
     	}
     }
     
@@ -369,20 +312,37 @@ public class ClassDiagram extends DiagramView
      * @param cls Class to be added.
      */
     public void addClass( MClass cls ) {
-        // Find a random new position. getWidth and getheight return 0
+        // Find a random new position. getWidth and getHeight return 0
         // if we are called on a new diagram.
-        int fNextNodeX = (int)(Math.random() * Math.max( 100, getWidth() ));
-        int fNextNodeY = (int)(Math.random() * Math.max( 100, getHeight() ));
+        int fNextNodeX = (int)(Math.random() * Math.max( 100, fParent.getWidth() - 50 ));
+        int fNextNodeY = (int)(Math.random() * Math.max( 100, fParent.getHeight() - 50 ));
+        
         ClassNode n = new ClassNode( cls, fOpt );
         n.setPosition( fNextNodeX, fNextNodeY );
+        
         n.setMinWidth(minClassNodeWidth);
         n.setMinHeight(minClassNodeHeight);
         
-        synchronized ( fLock ) {
-            fGraph.add( n );
-            visibleData.fClassToNodeMap.put( cls, n );
-            fLayouter = null;
-        }
+        fGraph.add( n );
+        visibleData.fClassToNodeMap.put( cls, n );
+        fLayouter = null;
+    }
+    
+    public void addSignal( MSignal signal ) {
+        // Find a random new position. getWidth and getHeight return 0
+        // if we are called on a new diagram.
+        int fNextNodeX = (int)(Math.random() * Math.max( 100, fParent.getWidth() - 50 ));
+        int fNextNodeY = (int)(Math.random() * Math.max( 100, fParent.getHeight() - 50 ));
+        
+        SignalNode n = new SignalNode( signal, fOpt );
+        n.setPosition( fNextNodeX, fNextNodeY );
+        
+        n.setMinWidth(minClassNodeWidth);
+        n.setMinHeight(minClassNodeHeight);
+        
+        fGraph.add( n );
+        visibleData.fSignalToNodeMap.put( signal, n );
+        fLayouter = null;
     }
 
     /**
@@ -450,7 +410,9 @@ public class ClassDiagram extends DiagramView
     }
     
     /**
-     * Shows an already hidden class.
+     * Shows or hides a class.
+     * @param cls The <code>MClass</code> to show or hide
+     * @param show If <code>true</code>, the class is shown otherwise it is hidden.
      */
     protected void showOrHideClassNode( MClass cls, boolean show ) {
     	ClassDiagramData source = (show ? hiddenData : visibleData);
@@ -459,20 +421,18 @@ public class ClassDiagram extends DiagramView
     	ClassNode n = source.fClassToNodeMap.get( cls );
 
     	if (n != null) {
-        	synchronized ( fLock ) {
-        		if (!show && this.getNodeSelection().isSelected(n))
-        			this.getNodeSelection().remove(n);
-        		
-                if (show) 
-                	fGraph.add( n );
-                else
-                	fGraph.remove(n);
-                
-                source.fClassToNodeMap.remove( cls );
-                target.fClassToNodeMap.put(cls, n);
-                
-                fLayouter = null;
-            }
+    		if (!show && this.getNodeSelection().isSelected(n))
+    			this.getNodeSelection().remove(n);
+    		
+            if (show) 
+            	fGraph.add( n );
+            else
+            	fGraph.remove( n );
+            
+            source.fClassToNodeMap.remove( cls );
+            target.fClassToNodeMap.put(cls, n);
+            
+            fLayouter = null;
         }
     }
     
@@ -489,11 +449,9 @@ public class ClassDiagram extends DiagramView
         EnumNode n = new EnumNode( enumeration, fOpt );
         n.setPosition( fNextNodeX, fNextNodeY );
 
-        synchronized ( fLock ) {
-            fGraph.add( n );
-            visibleData.fEnumToNodeMap.put( enumeration, n );
-            fLayouter = null;
-        }
+        fGraph.add( n );
+        visibleData.fEnumToNodeMap.put( enumeration, n );
+        fLayouter = null;
     }
 
     /**
@@ -517,19 +475,18 @@ public class ClassDiagram extends DiagramView
     	EnumNode n = source.fEnumToNodeMap.get( enumeration );
         
         if (n != null) {
-        	synchronized ( fLock ) {
-        		if (!show && this.getNodeSelection().isSelected(n))
-        			this.getNodeSelection().remove(n);
-        		
-                if (show)
-                	fGraph.add( n );
-                else
-                	fGraph.remove( n );
-                
-                source.fEnumToNodeMap.remove( enumeration );
-                target.fEnumToNodeMap.put(enumeration, n);
-                fLayouter = null;
-            }
+        	
+    		if (!show && this.getNodeSelection().isSelected(n))
+    			this.getNodeSelection().remove(n);
+    		
+            if (show)
+            	fGraph.add( n );
+            else
+            	fGraph.remove( n );
+            
+            source.fEnumToNodeMap.remove( enumeration );
+            target.fEnumToNodeMap.put(enumeration, n);
+            fLayouter = null;
         }
     }
     
@@ -582,20 +539,19 @@ public class ClassDiagram extends DiagramView
         // association class
         if ( assoc instanceof MAssociationClass ) {
             BinaryAssociationClassOrObject e = 
-                new BinaryAssociationClassOrObject( 
+                BinaryAssociationClassOrObject.create( 
                 			  visibleData.fClassToNodeMap.get( cls1 ),
                 			  visibleData.fClassToNodeMap.get( cls2 ),
                               assocEnd1, assocEnd2,
                               visibleData.fClassToNodeMap.get( assoc ),
                               this, assoc );
-            synchronized (fLock) {
-                fGraph.addEdge(e);
-                visibleData.fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
-                fLayouter = null;
-            }
+            
+            fGraph.addEdge(e);
+            visibleData.fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
+            fLayouter = null;
         } else {
-        	NodeBase source;
-        	NodeBase target;
+        	PlaceableNode source;
+        	PlaceableNode target;
         	
         	// for reflexive associations with exactly one qualifier
         	// the qualifier end must be the source!
@@ -613,58 +569,56 @@ public class ClassDiagram extends DiagramView
         	
             // binary association
         	BinaryAssociationOrLinkEdge e = 
-                new BinaryAssociationOrLinkEdge( source, 
-                                		   	     target, 
-                                		   	     assocEnd1, assocEnd2, 
-                                		   	     this, assoc );
-            synchronized ( fLock ) {
-                fGraph.addEdge(e);
-                visibleData.fBinaryAssocToEdgeMap.put(assoc, e);
-                fLayouter = null;
-            }
+                BinaryAssociationOrLinkEdge.create( source, 
+                                		   	        target, 
+                                		   	        assocEnd1, assocEnd2, 
+                                		   	        this, assoc );
+        	
+            fGraph.addEdge(e);
+            visibleData.fBinaryAssocToEdgeMap.put(assoc, e);
+            fLayouter = null;
         }
     }
 
     protected void addNAryAssociation(MAssociation assoc) {
-    	        
-        synchronized (fLock) {
-            // Find a random new position. getWidth and getheight return 0
-            // if we are called on a new diagram.
-            double fNextNodeX = Math.random() * Math.max(100, getWidth());
-            double fNextNodeY = Math.random() * Math.max(100, getHeight());
+
+        // Find a random new position. getWidth and getheight return 0
+        // if we are called on a new diagram.
+        double fNextNodeX = Math.random() * Math.max(100, getWidth());
+        double fNextNodeY = Math.random() * Math.max(100, getHeight());
+        
+        // n-ary association: create a diamond node and n edges to classes
+        DiamondNode node = new DiamondNode( assoc, fOpt );
+        node.setPosition( fNextNodeX, fNextNodeY );
+        fGraph.add(node);
+        // connected to an associationclass
+        if ( assoc instanceof MAssociationClass ) {
+			NAryAssociationClassOrObjectEdge e = NAryAssociationClassOrObjectEdge
+					.create(node, visibleData.fClassToNodeMap.get(assoc),
+							this, assoc, false);
             
-            // n-ary association: create a diamond node and n edges to classes
-            DiamondNode node = new DiamondNode( assoc, fOpt );
-            node.setPosition( fNextNodeX, fNextNodeY );
-            fGraph.add(node);
-            // connected to an associationclass
-            if ( assoc instanceof MAssociationClass ) {
-                NAryAssociationClassOrObjectEdge e = 
-                    new NAryAssociationClassOrObjectEdge(
-                    			  node, 
-                                  visibleData.fClassToNodeMap.get( assoc ),
-                                  this, assoc, false );
-                
-                fGraph.addEdge(e);
-                visibleData.fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
-                fLayouter = null;
-            }
-            
-            // connected to a "normal" class
-            visibleData.fNaryAssocToDiamondNodeMap.put( assoc, node );
-            List<EdgeBase> halfEdges = new ArrayList<EdgeBase>();
-            
-            for (MAssociationEnd assocEnd : assoc.associationEnds()) {
-                MClass cls = assocEnd.cls();
-                AssociationOrLinkPartEdge e = 
-                    new AssociationOrLinkPartEdge(node, visibleData.fClassToNodeMap.get( cls ), assocEnd, this, assoc, null );
-                fGraph.addEdge(e);
-                halfEdges.add( e );
-            }
-            node.setHalfEdges( halfEdges );
-            visibleData.fNaryAssocToHalfEdgeMap.put( assoc, halfEdges );
+            fGraph.addEdge(e);
+            visibleData.fAssocClassToEdgeMap.put( (MAssociationClass)assoc, e );
             fLayouter = null;
         }
+        
+        // connected to a "normal" class
+        visibleData.fNaryAssocToDiamondNodeMap.put( assoc, node );
+        List<EdgeBase> halfEdges = new ArrayList<>();
+        List<String> edgeIds = new ArrayList<>();
+        
+        for (MAssociationEnd assocEnd : assoc.associationEnds()) {
+            MClass cls = assocEnd.cls();
+            AssociationOrLinkPartEdge e = 
+                AssociationOrLinkPartEdge.create(node, visibleData.fClassToNodeMap.get( cls ), assocEnd, this, assoc, null );
+            fGraph.addEdge(e);
+            halfEdges.add( e );
+            edgeIds.add(assocEnd.nameAsRolename());
+        }
+        node.setHalfEdges( halfEdges, edgeIds );
+        
+        visibleData.fNaryAssocToHalfEdgeMap.put( assoc, halfEdges );
+        fLayouter = null;
     }
 
 	protected void hideBinaryAssociation(MAssociation assoc) {
@@ -688,21 +642,19 @@ public class ClassDiagram extends DiagramView
         }
 
         if (e != null) {
-	        synchronized (fLock) {
-	            if (show) 
-	            	fGraph.addEdge( e );
-	            else
-	            	fGraph.removeEdge( e );
-	            
-	            if ( assoc instanceof MAssociationClass ) {
-	            	source.fAssocClassToEdgeMap.remove( assoc );
-	            	target.fAssocClassToEdgeMap.put((MAssociationClass)assoc, e);
-	            } else {
-	            	source.fBinaryAssocToEdgeMap.remove( assoc );
-	            	target.fBinaryAssocToEdgeMap.put(assoc, (BinaryAssociationOrLinkEdge)e);
-	            }
-	            fLayouter = null;
-	        }
+            if (show) 
+            	fGraph.addEdge( e );
+            else
+            	fGraph.removeEdge( e );
+            
+            if ( assoc instanceof MAssociationClass ) {
+            	source.fAssocClassToEdgeMap.remove( assoc );
+            	target.fAssocClassToEdgeMap.put((MAssociationClass)assoc, e);
+            } else {
+            	source.fBinaryAssocToEdgeMap.remove( assoc );
+            	target.fBinaryAssocToEdgeMap.put(assoc, (BinaryAssociationOrLinkEdge)e);
+            }
+            fLayouter = null;
         }
 	}
 
@@ -721,39 +673,37 @@ public class ClassDiagram extends DiagramView
 		DiamondNode n = source.fNaryAssocToDiamondNodeMap.get( assoc );
 
         if (n != null) {
-            synchronized ( fLock ) {
-                // all dangling HalfLinkEdges are removed by the graph
+            // all dangling HalfLinkEdges are removed by the graph
+        	if (show)
+        		fGraph.add( n );
+        	else
+        		fGraph.remove( n );
+        	
+            source.fNaryAssocToDiamondNodeMap.remove( assoc );
+            target.fNaryAssocToDiamondNodeMap.put(assoc, n);
+            
+            List<EdgeBase> values = source.fNaryAssocToHalfEdgeMap.remove( assoc );
+            target.fNaryAssocToHalfEdgeMap.put(assoc, values);
+            
+            for (EdgeBase e : values) {
             	if (show)
-            		fGraph.add( n );
+            		fGraph.addEdge(e);
             	else
-            		fGraph.remove( n );
-            	
-                source.fNaryAssocToDiamondNodeMap.remove( assoc );
-                target.fNaryAssocToDiamondNodeMap.put(assoc, n);
-                
-                List<EdgeBase> values = source.fNaryAssocToHalfEdgeMap.remove( assoc );
-                target.fNaryAssocToHalfEdgeMap.put(assoc, values);
-                
-                for (EdgeBase e : values) {
-                	if (show)
-                		fGraph.addEdge(e);
-                	else
-                		fGraph.removeEdge(e);
-                }
-                
-                fLayouter = null;
+            		fGraph.removeEdge(e);
+            }
+            
+            fLayouter = null;
 
-                if ( assoc instanceof MAssociationClass ) {
-                    EdgeBase edge = source.fAssocClassToEdgeMap.get( assoc );
-                    if ( edge != null ) {
-                        if (show)
-                        	fGraph.addEdge(edge);
-                        else
-                        	fGraph.removeEdge( edge );
-                        
-                        source.fAssocClassToEdgeMap.remove( assoc );
-                        target.fAssocClassToEdgeMap.put((MAssociationClass)assoc, edge);
-                    }
+            if ( assoc instanceof MAssociationClass ) {
+                EdgeBase edge = source.fAssocClassToEdgeMap.get( assoc );
+                if ( edge != null ) {
+                    if (show)
+                    	fGraph.addEdge(edge);
+                    else
+                    	fGraph.removeEdge( edge );
+                    
+                    source.fAssocClassToEdgeMap.remove( assoc );
+                    target.fAssocClassToEdgeMap.put((MAssociationClass)assoc, edge);
                 }
             }
         }
@@ -763,16 +713,28 @@ public class ClassDiagram extends DiagramView
      * Adds a generalization to the diagram.
      */
     public void addGeneralization( MGeneralization gen ) {
-        MClass parent = gen.parent();
-        MClass child = gen.child();
-        GeneralizationEdge e = 
-            new GeneralizationEdge( visibleData.fClassToNodeMap.get( child ),
-                                    visibleData.fClassToNodeMap.get( parent ), this );
-        synchronized ( fLock ) {
-            fGraph.addEdge( e );
-            visibleData.fGenToGeneralizationEdge.put( gen, e );
-            fLayouter = null;
-        }
+    	MClassifier parent = gen.parent();
+    	MClassifier child = gen.child();
+    	
+    	//TODO: Show generalizations of associations
+    	if (parent instanceof MAssociation && !(parent instanceof MAssociationClass))
+    		return;
+    	
+    	Map<?, ? extends PlaceableNode> lookup;
+    	
+    	if (parent instanceof MSignal) {
+    		lookup = visibleData.fSignalToNodeMap;
+    	} else {
+    		lookup = visibleData.fClassToNodeMap;
+    	}
+    	
+		GeneralizationEdge e = GeneralizationEdge.create(
+				lookup.get(child),
+				lookup.get(parent), this);
+
+        fGraph.addEdge( e );
+        visibleData.fGenToGeneralizationEdge.put( gen, e );
+        fLayouter = null;
     }
 
     /**
@@ -796,276 +758,366 @@ public class ClassDiagram extends DiagramView
     	GeneralizationEdge e = source.fGenToGeneralizationEdge.get( gen );
         
         if ( e != null ) {
-        	synchronized ( fLock ) {
-                if (show)
-                	fGraph.addEdge( e );
-                else
-                	fGraph.removeEdge( e );
-                
-                source.fGenToGeneralizationEdge.remove( gen );
-                target.fGenToGeneralizationEdge.put(gen, e);
-                fLayouter = null;
-            }
+            if (show)
+            	fGraph.addEdge( e );
+            else
+            	fGraph.removeEdge( e );
+            
+            source.fGenToGeneralizationEdge.remove( gen );
+            target.fGenToGeneralizationEdge.put(gen, e);
+            fLayouter = null;
         }
     }
     
     /**
-     * Creates and shows popup menu if mouse event is the trigger for popups.
+     * Creates popup menu for class diagram.
      */
-    public boolean maybeShowPopup( MouseEvent e ) {
-        boolean separatorNeeded = false;
-        
-        if ( !e.isPopupTrigger() )
-            return false;
-
-        // create the popup menu
-        JPopupMenu popupMenu = unionOfPopUpMenu();
+    @Override
+    protected PopupMenuInfo unionOfPopUpMenu() {
+        // get the base popup menu
+        PopupMenuInfo info = super.unionOfPopUpMenu();
+        JPopupMenu popupMenu = info.popupMenu;
         
         // position for the popupMenu items 
         int pos = 0;
-        Set<MClass> selectedClassesOfAssociation = new HashSet<MClass>(); //jj
-		Set<MAssociation> selectedAssociations = new HashSet<MAssociation>(); // jj
         
-		final Set<MClass> selectedClasses = new HashSet<MClass>(); // jj add final
-		
-		final Set<MClassifier> selectedClassifier = new HashSet<MClassifier>();
+        // Sets for the different selections
+        
+        // This set identifies all associated classes of associations, to allow to crop an association
+        final Set<MClass>       selectedClassesOfAssociation = new HashSet<>();
+		final Set<MClass>       selectedClasses = new HashSet<>();
+		final Set<MAssociation> selectedAssociations = new HashSet<>();
+		final Set<MClassifier>  selectedClassifier = new HashSet<>();
 				
-        if ( !fNodeSelection.isEmpty() ) {
-            for (PlaceableNode node : fNodeSelection) {
-                if ( node instanceof ClassNode && node.isDeletable() ) {
-                	ClassNode cn = (ClassNode)node;
-                	selectedClasses.add( cn.cls() );
-                    selectedClassifier.add( cn.cls() );
-                } else if ( node instanceof EnumNode && node.isDeletable() ) {
-                    EnumNode eNode = (EnumNode)node;
-                	selectedClassifier.add(eNode.getEnum());
-                } else if (node instanceof AssociationName) { //jj
-                	MAssociation assoc = ((AssociationName) node).getAssociation();
-					selectedClassesOfAssociation.addAll(assoc.associatedClasses());
-					selectedAssociations.add(assoc);//jj
-                } //jj
+        // Split-up the selection of GUI elements to the different model elements
+    	for (PlaceableNode node : fNodeSelection) {
+            if (node instanceof ClassifierNode) {
+            	ClassifierNode cn = (ClassifierNode)node;
+            	selectedClassifier.add( cn.getClassifier() );
             }
-            
-            //begin jj
-			if(selectedClasses.isEmpty() && !selectedClassesOfAssociation.isEmpty()) {
-				String info;
-				if (selectedAssociations.size() == 1) {
-					info = selectedAssociations.iterator().next().name();
-				}
-				else{
-					info = "" + selectedAssociations.size();
-				}
-				
-				popupMenu.insert(
-						getAction("Crop association " + info, 
-								getNoneSelectedElementsByElements(selectedClassesOfAssociation)), pos++);
-				
-				popupMenu.insert(
-						getAction("Hide association " + info, 
-								selectedClassesOfAssociation), pos++);  //fixxx
-				
-				popupMenu.insert(new JSeparator(),pos++);
-				popupMenu.insert(fSelection.getSelectedAssociationPathView(
-								"Selection association path length...", 
-								selectedClassesOfAssociation, selectedAssociations), pos++);
-				
-				popupMenu.insert(new JSeparator(), pos++);
-				
-			}
-			//end jj
-            
-			String txt = null;
-            if ( selectedClassifier.size() == 1 ) {
-                MNamedElement m = selectedClassifier.iterator().next();
-                txt = "'" + m.name() + "'";
-            } else if ( selectedClasses.size() > 1 ) {
-                txt = selectedClasses.size() + " classes";
-            }
-            
-            if ( txt != null && txt.length() > 0 ) {
-            	popupMenu.insert( getAction( "Crop " + txt, getNoneSelectedElementsByElements( selectedClassifier ) ), pos++ );
-                popupMenu.insert( getAction( "Hide " + txt, selectedClassifier ), pos++ );
-                
-				// pathlength view anfangs jj
-				popupMenu.insert(new JSeparator(),pos++);
-				popupMenu.insert(fSelection.getSelectedClassPathView("Selection " + txt + " path length...", 
-								 selectedClasses), pos++);
-				
-				boolean hasHiddenObjects = fSelection.classHasHiddenObjects(fSelection.getAllKindClasses(selectedClasses));
-				boolean hasShownObjects = fSelection.classHasDisplayedObjects(fSelection.getAllKindClasses(selectedClasses));
-				
-				if ( (hasShownObjects || hasHiddenObjects) && MainWindow.instance().getObjectDiagrams().size() > 0) {
-					popupMenu.insert(new JSeparator(),pos++);
-					if(hasShownObjects) {
-						popupMenu.insert(new AbstractAction("Hide all objects of " + txt) {
-							public void actionPerformed(ActionEvent e) {
-								// Hide objects in all object diagrams
-								Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
-																
-								for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
-									NewObjectDiagram diagram = oDiagView.getDiagram();
-									Set<MObject> allObjectsToHide = diagram.getObjectSelection().getDisplayedObjectsForClasses(allClasses);
-									diagram.hideElementsInDiagram(allObjectsToHide);
-								}
-							}}, pos++);
-					}
-					
-					if(hasHiddenObjects){
-						final JMenuItem showobj = new JMenuItem("Show all objects of " + txt);
-						showobj.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent ev) {
-								// Show objects in all object diagrams
-								Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
-
-								for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
-									NewObjectDiagram diagram = oDiagView.getDiagram();
-									Set<MObject> allObjects = diagram.getObjectSelection().getHiddenObjects(allClasses);
-									
-									// If allObjects contains an object which is not hidden, this
-									// is handled by the HideAdministration
-									diagram.showObjects(allObjects);
-									diagram.invalidateContent();
-								}
-							}
-						});
-						popupMenu.insert(showobj,pos++);
-					}
-					
-					//crop all objects of selected classes
-					final JMenuItem cropobj = new JMenuItem("Crop all objects of " + txt);
-					cropobj.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
-							
-							for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
-								NewObjectDiagram diagram = oDiagView.getDiagram();
-								Set<MObject> objectsToHide = diagram.getObjectSelection().getCropHideObjects(allClasses);
-								Set<MObject> objectsToShow = diagram.getObjectSelection().getHiddenObjects(allClasses);
-								
-								diagram.getAction("Hide", objectsToHide).actionPerformed(ev);							
-								diagram.showObjects(objectsToShow);
-							}
-						}
-					});
-					popupMenu.insert(cropobj,pos++);
-				} // end jj
-                separatorNeeded = true;
+    		
+    		if (node instanceof ClassNode) {
+            	ClassNode cn = (ClassNode)node;
+            	selectedClasses.add( cn.cls() );
+            } else if (node instanceof AssociationName) {
+            	MAssociation assoc = ((AssociationName) node).getAssociation();
+				selectedClassesOfAssociation.addAll(assoc.associatedClasses());
+				selectedAssociations.add(assoc);
             }
         }
         
-        if ( hiddenData.hasNodes() ) {
-            final JMenuItem showAllClasses = new JMenuItem( "Show hidden classes" );
+        for (EdgeBase edge : fEdgeSelection) {
+        	//TODO: Find a more elegant solution
+        	if (edge instanceof AssociationOrLinkPartEdge) {
+        		AssociationOrLinkPartEdge pEdge = (AssociationOrLinkPartEdge)edge;
+        		selectedAssociations.add(pEdge.getAssociation());
+        	} else if (edge instanceof NAryAssociationClassOrObjectEdge) {
+        		NAryAssociationClassOrObjectEdge nEdge = (NAryAssociationClassOrObjectEdge)edge;
+        		selectedAssociations.add(nEdge.getAssociation());
+        	}
+        }
+        
+    	String selectionText = null;
+        if ( selectedClassifier.size() == 1 ) {
+            MNamedElement m = exactlyOne(selectedClassifier);
+            selectionText = "'" + m.name() + "'";
+        } else if ( selectedClasses.size() > 1 ) {
+            selectionText = selectedClasses.size() + " classes";
+        }
+
+    	// No class is selected, but some associations.
+    	// Allow the associations to be hidden
+		if (selectedClasses.isEmpty() && !selectedAssociations.isEmpty()) {
+			String infoHide;
+			
+			if (selectedAssociations.size() == 1) {
+				// Show the name of the association to the user
+				infoHide = "Hide association '" + exactlyOne(selectedAssociations).name() + "'";
+			} else {
+				// Show the number of selected associations to the user
+				infoHide = "Hide " + selectedAssociations.size() + " associations";
+			}
+			
+			popupMenu.insert(new AbstractAction(infoHide) {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (MAssociation assoc : selectedAssociations) {
+						hideAssociation(assoc);
+						repaint();
+					}
+				}
+				
+			}, pos++);
+
+			popupMenu.insert(new JSeparator(), pos++);
+			
+		}
+
+		// Crop or hide the selection
+        if ( selectionText != null && selectionText.length() > 0 ) {
+        	popupMenu.insert( getActionHideNodes( "Crop " + selectionText, getNoneSelectedElementsByElements( selectedClassifier ) ), pos++ );
+            popupMenu.insert( getActionHideNodes( "Hide " + selectionText, selectedClassifier ), pos++ );
+            popupMenu.insert(new JSeparator(), pos++);
+        }
+        
+        if ( hiddenData.hasNodes() || hiddenData.hasEdges() ) {
+            final JMenuItem showAllClasses = new JMenuItem( "Show hidden classes and associations" );
             showAllClasses.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ev) {
+                @Override
+				public void actionPerformed(ActionEvent ev) {
                     showAll();
-                    invalidateContent();
+                    invalidateContent(true);
                 }
             });
 
             popupMenu.insert( showAllClasses, pos++ );
-            separatorNeeded = true;
+        }
+        
+        // Submenu for views which allow to configure visibility
+        final JMenu menuShowHideCrop = new JMenu("Show/hide/crop classes");
+        menuShowHideCrop.add(fSelection.getSelectedClassPathView("By path length...", selectedClasses));
+        menuShowHideCrop.add(fSelection.getSelectionClassView("With view..."));
+
+		if (hiddenData.hasNodes()) {
+			popupMenu.insert(fSelection.getSubMenuShowClass(), pos++);
+		}
+		
+		if (fGraph.size() > 0) {
+			popupMenu.insert(fSelection.getSubMenuHideClass(), pos++);
+		}
+
+        popupMenu.insert(menuShowHideCrop, pos++);
+        popupMenu.insert(new JSeparator(), pos++);
+        
+        if (hiddenData.hasEdges()) {
+        	popupMenu.insert(fSelection.getSubMenuShowAssociation(), pos++);
+        	popupMenu.insert(new JSeparator(), pos++);
+        }
+        
+        // If object diagrams are open, allow to hide/crop/show objects of selected classes 
+        if (!selectedClasses.isEmpty()) {
+	        boolean hasHiddenObjects = fSelection.classHasHiddenObjects(fSelection.getAllKindClasses(selectedClasses));
+			boolean hasShownObjects = fSelection.classHasDisplayedObjects(fSelection.getAllKindClasses(selectedClasses));
+			
+			if ( (hasShownObjects || hasHiddenObjects) && MainWindow.instance().getObjectDiagrams().size() > 0) {
+				if(hasShownObjects) {
+					popupMenu.insert(new AbstractAction("Hide all objects of " + selectionText) {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							// Hide objects in all object diagrams
+							Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
+															
+							for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
+								NewObjectDiagram diagram = oDiagView.getDiagram();
+								Set<MObject> allObjectsToHide = diagram.getObjectSelection().getDisplayedObjectsForClasses(allClasses);
+								diagram.hideElementsInDiagram(allObjectsToHide);
+								diagram.invalidateContent(true);
+							}
+						}}, pos++);
+				}
+				
+				if(hasHiddenObjects){
+					final JMenuItem showobj = new JMenuItem("Show all objects of " + selectionText);
+					showobj.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent ev) {
+							// Show objects in all object diagrams
+							Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
+	
+							for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
+								NewObjectDiagram diagram = oDiagView.getDiagram();
+								Set<MObject> allObjects = diagram.getObjectSelection().getHiddenObjects(allClasses);
+								
+								// If allObjects contains an object which is not hidden, this
+								// is handled by the HideAdministration
+								diagram.showObjects(allObjects);
+								diagram.invalidateContent(true);
+							}
+						}
+					});
+					popupMenu.insert(showobj,pos++);
+				}
+				
+				//crop all objects of selected classes
+				final JMenuItem cropobj = new JMenuItem("Crop all objects of " + selectionText);
+				cropobj.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent ev) {
+						Set<MClass> allClasses = fSelection.getAllKindClasses(selectedClasses);
+						
+						for (NewObjectDiagramView oDiagView : MainWindow.instance().getObjectDiagrams()) {
+							NewObjectDiagram diagram = oDiagView.getDiagram();
+							Set<MObject> objectsToHide = diagram.getObjectSelection().getCropHideObjects(allClasses);
+							Set<MObject> objectsToShow = diagram.getObjectSelection().getHiddenObjects(allClasses);
+							
+							diagram.getAction("Hide", objectsToHide).actionPerformed(ev);							
+							diagram.showObjects(objectsToShow);
+						}
+					}
+				});
+				popupMenu.insert(cropobj,pos++);
+				popupMenu.insert(new JSeparator(),pos++);
+			}
+        }
+        
+        final JMenu showProtocolStateMachine = new JMenu( "Show protocol state machine..." );
+        showProtocolStateMachine.setEnabled(false);
+        
+        if (selectedClassifier.size() == 1) {
+        	MClassifier clf = selectedClassifier.iterator().next();
+        	if (clf instanceof MClass) {
+        		MClass selectedClass = (MClass)clf;
+				List<MProtocolStateMachine> sortedPSMs = new LinkedList<MProtocolStateMachine>(
+						selectedClass.getOwnedProtocolStateMachines());
+				Collections.sort(sortedPSMs, new MNamedElementComparator());
+        		
+        		for (MProtocolStateMachine psm : sortedPSMs) {
+        			showProtocolStateMachine.setEnabled(true);
+        			final JMenuItem showGivenPSM = new JMenuItem( psm.name() );
+        			showGivenPSM.addActionListener(new ActionListener() {
+						protected MStateMachine sm;
+						
+        				@Override
+						public void actionPerformed(ActionEvent ev) {
+							MainWindow.instance().showStateMachineView(sm);
+						}
+        				
+        				public ActionListener setStateMachine(MStateMachine sm) {
+        					this.sm = sm;
+        					return this;
+        				}
+					}.setStateMachine(psm));
+        			showProtocolStateMachine.add(showGivenPSM);
+        		}
+        	}
         }
 
-        if ( separatorNeeded ) {
-            popupMenu.insert( new JSeparator(), pos++ );
-            separatorNeeded = false;
-        }
+        popupMenu.insert( showProtocolStateMachine, pos++ );
+        popupMenu.insert(new JSeparator(), pos++);
         
-        // setting the right position for the popupMenu items 
-        // from this point on.
-        pos = pos + 3;
-        
-        final JCheckBoxMenuItem cbMultiplicities = 
-            new JCheckBoxMenuItem( "Show multiplicities" );
+        final JCheckBoxMenuItem cbMultiplicities = new JCheckBoxMenuItem( "Show multiplicities" );
         cbMultiplicities.setState( fOpt.isShowMutliplicities() );
         cbMultiplicities.addItemListener( new ItemListener() {
-            public void itemStateChanged( ItemEvent ev ) {
-                fOpt.setShowMutliplicities( ev.getStateChange() 
-                                            == ItemEvent.SELECTED );
+            @Override
+			public void itemStateChanged( ItemEvent ev ) {
+                fOpt.setShowMutliplicities( ev.getStateChange() == ItemEvent.SELECTED );
                 repaint();
             }
         } );
 
-        final JCheckBoxMenuItem cbOperations =
-            new JCheckBoxMenuItem("Show operations" );
+        final JCheckBoxMenuItem cbUnion = new JCheckBoxMenuItem( "Show union constraints" );
+        cbUnion.setState( fOpt.isShowUnionConstraints() );
+        cbUnion.addItemListener( new ItemListener() {
+            @Override
+			public void itemStateChanged( ItemEvent ev ) {
+                fOpt.setShowUnionConstraints( ev.getStateChange() == ItemEvent.SELECTED );
+                repaint();
+            }
+        } );
+        
+        final JCheckBoxMenuItem cbSubsets = new JCheckBoxMenuItem( "Show subset constraints" );
+        cbSubsets.setState( fOpt.isShowSubsetsConstraints() );
+        cbSubsets.addItemListener( new ItemListener() {
+            @Override
+			public void itemStateChanged( ItemEvent ev ) {
+                fOpt.setShowSubsetsConstraints( ev.getStateChange() == ItemEvent.SELECTED );
+                repaint();
+            }
+        } );
+        
+        final JCheckBoxMenuItem cbRedefines = new JCheckBoxMenuItem( "Show redefines constraints" );
+        cbRedefines.setState( fOpt.isShowRedefinesConstraints() );
+        cbRedefines.addItemListener( new ItemListener() {
+            @Override
+			public void itemStateChanged( ItemEvent ev ) {
+                fOpt.setShowRedefinesConstraints( ev.getStateChange() == ItemEvent.SELECTED );
+                repaint();
+            }
+        } );
+        
+        final JCheckBoxMenuItem cbOperations = new JCheckBoxMenuItem("Show operations" );
         cbOperations.setState( fOpt.isShowOperations() );
         cbOperations.addItemListener( new ItemListener() {
-            public void itemStateChanged( ItemEvent ev ) {
-                fOpt
-                    .setShowOperations( ev.getStateChange() == ItemEvent.SELECTED );
+            @Override
+			public void itemStateChanged( ItemEvent ev ) {
+                fOpt.setShowOperations( ev.getStateChange() == ItemEvent.SELECTED );
                 repaint();
             }
         } );
 
-        popupMenu.insert( cbMultiplicities, pos++-1 );
-        popupMenu.insert( cbOperations, pos++ );
+        // setting the right position for the popupMenu items 
+        // from this point on.
+        pos += info.generalShowHideStart;
+        // Add multiplicities before attributes
+        popupMenu.insert( cbMultiplicities, ++pos );
+        popupMenu.insert( cbUnion, ++pos );
+        popupMenu.insert( cbSubsets, ++pos );
+        popupMenu.insert( cbRedefines, ++pos );
         
-
-        final JCheckBoxMenuItem cbCoverage =
-                new JCheckBoxMenuItem("Show coverage" );
-        cbCoverage.setState( fOpt.isShowCoverage() );
-        cbCoverage.addItemListener( new ItemListener() {
-                public void itemStateChanged( ItemEvent ev ) {
-                    fOpt.setShowCoverage( ev.getStateChange() == ItemEvent.SELECTED );
-                    setCoverageColor();
-                }
-            } );
-
-        popupMenu.insert( cbCoverage, pos++ );
+        popupMenu.insert( cbOperations, pos + 3 );
+        pos += info.generalShowHideLength + 1;
         
-        // jj anfangen this
-		if (fGraph.size() > 0 || hiddenData.hasNodes()) {
-			popupMenu.addSeparator();
-			if (hiddenData.hasNodes()) {
-				popupMenu.add(fSelection.getSubMenuShowClass());
-			}
-			if (fGraph.size() > 0) {
-				popupMenu.add(fSelection.getSubMenuHideClass());
-			}
+        {
+	        final JMenu menuCoverage = new JMenu("Show coverage" );
+	        // Add different coverage options
+	        ButtonGroup bgCoverage = new ButtonGroup();
+	        for (final ShowCoverage coverageOption : ShowCoverage.values()) {
+	        	JRadioButtonMenuItem optionItem = new JRadioButtonMenuItem();
+	        	menuCoverage.add(optionItem);
+	        	bgCoverage.add(optionItem);
+	        	optionItem.setText(coverageOption.toString());
+	        	optionItem.setSelected( getOptions().getShowCoverage() == coverageOption);
+	        	optionItem.addItemListener(new ItemListener() {
+	        		
+	        		ShowCoverage selectedOption = coverageOption;
+	        		
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						getOptions().setShowCoverage( selectedOption );
+	                    setCoverageColor();
+					}
+				});
+	        }
+	        
+	        popupMenu.insert( menuCoverage, pos++ );
+        }
+        
+		final JMenuItem cbExport = new JMenuItem(new AbstractAction("Export visible elements as new model...") {
+			private Path lastFile = null;
 			
-			popupMenu.add(fSelection.getSelectionClassView("Selection classes..."));
-			
-		} // end jj
-        
-		final JMenuItem cbExport =
-                new JMenuItem("Export visible elements as new model..." );
-        cbExport.addActionListener(new ActionListener() {
-        	File lastFile = null;
-        	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int option = JOptionPane.YES_OPTION;
 
-				JFileChooser fChooser = new JFileChooser(Options.getLastDirectory());
+				JFileChooser fChooser = new JFileChooser(Options.getLastDirectory().toFile());
 				ExtFileFilter filter = new ExtFileFilter("use", "USE model");
-				fChooser.addChoosableFileFilter(filter);
+				fChooser.setFileFilter(filter);
 				fChooser.setDialogTitle("Save visible elements as model...");
 		        
-		        if (lastFile != null && lastFile.exists()
-						&& lastFile.getParent().equals(Options.getLastDirectory())) {
-					fChooser.setSelectedFile(lastFile);
+				if (lastFile != null
+						&& Files.exists(lastFile)
+						&& lastFile.getParent().equals( Options.getLastDirectory()) ) {
+					fChooser.setSelectedFile(lastFile.toFile());
 				}
 		        
 		        do {
-		            int returnVal = fChooser.showSaveDialog( ClassDiagram.this );
+		            int returnVal = fChooser.showSaveDialog(null);
+		            
 		            if (returnVal != JFileChooser.APPROVE_OPTION)
 		                return;
 
-		            Options.setLastDirectory(fChooser.getCurrentDirectory().toString());
+		            Options.setLastDirectory(fChooser.getCurrentDirectory().toPath());
 		            String filename = fChooser.getSelectedFile().getName();
 
 		            // if file does not have the appendix .use
-		            int dot = filename.lastIndexOf(".");
-		            if (dot == -1 || !filename.substring(dot, 
-		                                       filename.length()).trim()
-		                                       .equals( ".use" )) {
+		            if (!filename.endsWith(".use")) {
 		                filename += ".use";
 		            }
 
-		            lastFile = new File(Options.getLastDirectory(), filename);
+		            lastFile = Options.getLastDirectory().resolve(filename);
 		            
-		            if (lastFile.exists()) {
-		                option = JOptionPane.showConfirmDialog(ClassDiagram.this,
+		            if (Files.isWritable(lastFile)) {
+		                option = JOptionPane.showConfirmDialog(null,
 		                        "Overwrite existing file " + lastFile + "?",
 		                        "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
 		                if (option == JOptionPane.CANCEL_OPTION) {
@@ -1076,13 +1128,30 @@ public class ClassDiagram extends DiagramView
 		            // display the saving dialog, as long as the file
 		            // will be overwritten or cancel is pressed.
 		        } while (option != JOptionPane.YES_OPTION);
-				exportVisibleClassesAsModel(lastFile);
+		        
+				ModelExporter exporter = new ModelExporter();
+				// Binary associations
+				Set<MAssociation> sourceAssociations = new HashSet<MAssociation>(visibleData.fBinaryAssocToEdgeMap.keySet());
+				// n-ary associations
+				sourceAssociations.addAll(visibleData.fNaryAssocToDiamondNodeMap.keySet());
+				
+		        try {
+					exporter.export(lastFile, getSystem(), visibleData.fClassToNodeMap.keySet(), visibleData.fEnumToNodeMap.keySet(), sourceAssociations);
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(ClassDiagram.this, e1.getMessage(),
+							"Error saving the USE model", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+		        
+		        JOptionPane.showMessageDialog(null, "Export succesfull",
+						"Export successfull", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
-
+				
+		popupMenu.insert(new JSeparator(), pos++);
         popupMenu.insert( cbExport, pos++ );
-        popupMenu.show( e.getComponent(), e.getX(), e.getY() );
-        return true;
+        
+        return info;
     }
 
     /**
@@ -1093,11 +1162,11 @@ public class ClassDiagram extends DiagramView
     private Set<MClassifier> getNoneSelectedElementsByElements( Set<? extends MClassifier> selectedElements ) {
     	Set<MClassifier> noneSelectedElements = new HashSet<MClassifier>();
         
-        Iterator<NodeBase> it = fGraph.iterator();
+        Iterator<PlaceableNode> it = fGraph.iterator();
         MClassifier namedElement;
         
         while ( it.hasNext() ) {
-            NodeBase o = it.next();
+            PlaceableNode o = it.next();
             
             if ( o instanceof ClassNode ) {
             	namedElement = ((ClassNode) o).cls();
@@ -1119,13 +1188,17 @@ public class ClassDiagram extends DiagramView
      * Hides the given elements in this diagram.
      * @param nodesToHide A set of {@link MClassifier} ({@link MClass} or {@link EnumType}) to hide
      */
-    public void hideElementsInDiagram( Set<MClassifier> nodesToHide ) {
-        for (Object elem : nodesToHide) {
+    public void hideElementsInDiagram( Set<MClassifier> nodesToHide, Set<MAssociation> edgesToHide) {
+        for (MClassifier elem : nodesToHide) {
             if ( elem instanceof MClass ) {
                 hideClass( (MClass) elem );
             } else if ( elem instanceof EnumType ) {
                 hideEnum( (EnumType) elem );
             }
+        }
+        
+        for (MAssociation assoc : edgesToHide) {
+        	hideAssociation(assoc);
         }
     }
     
@@ -1142,80 +1215,13 @@ public class ClassDiagram extends DiagramView
             }
         }
     }
-    
-    protected File getDefaultLayoutFile() {
-		if (this.getSystem().model().getModelDirectory() == null)
-    		return null;
-    	
-		File modelFile = new File(this.getSystem().model().filename()); 
-		String fileNameOnly = modelFile.getName();
-		if (fileNameOnly.contains(".")) {
-			fileNameOnly = fileNameOnly.substring(0, fileNameOnly.lastIndexOf('.'));
-		}
-		
-    	File defaultLayoutFile = new File(this.getSystem().model().getModelDirectory(),  fileNameOnly + "_default.clt");
-		return defaultLayoutFile;
-	}
-    
-    /**
-     * Tries to load the default layout from the file "default.clt" in the same
-     * directory as the model file.
-     * If no such file is present, nothing is done. 
-     */
-    protected void loadDefaultLayout() {
-    	File defaultLayoutFile = getDefaultLayoutFile();
-    	
-    	if (defaultLayoutFile == null || !defaultLayoutFile.exists()) 
-    		return;
-    	
-    	loadLayout(defaultLayoutFile);
-    	hasUserDefinedLayout = false;
-    }
-
-    /* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#afterLoadLayout(java.io.File)
-	 */
-	@Override
-	protected void afterLoadLayout(File layoutFile) {
-		super.afterLoadLayout(layoutFile);
-		hasUserDefinedLayout = true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#afterSaveLayout(java.io.File)
-	 */
-	@Override
-	protected void afterSaveLayout(File layoutFile) {
-		super.afterSaveLayout(layoutFile);
-		hasUserDefinedLayout = true;
-	}
-
-	/**
-     * Saves the current layout to the file "default.clt" if no other
-     * layout was loaded or saved.
-     */
-    private void saveDefaultLayout() {
-    	if (this.hasUserDefinedLayout) return;
-    	    	
-    	File defaultLayoutFile = getDefaultLayoutFile();
-    	if (defaultLayoutFile == null) 
-    		return;
-    	
-    	saveLayout(defaultLayoutFile);
-    	
-    	hasUserDefinedLayout = false;
-    }
-
-    
-    /* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#onClosing()
-	 */
+  
 	@Override
 	protected void onClosing() {
 		super.onClosing();
 		fParent.getModelBrowser().removeHighlightChangeListener( this );
         fParent.getModelBrowser().removeSelectionChangedListener( this );
-        saveDefaultLayout();
+        ModelBrowserSorting.getInstance().removeSortChangeListener( this );
 	}
 
 	@Override
@@ -1253,131 +1259,181 @@ public class ClassDiagram extends DiagramView
         }
     }
 
+    private class RestoreHandler {
+    	protected AutoPilot ap;
+    	protected PersistHelper helper;
+    	protected int version;
+    	
+    	public RestoreHandler(AutoPilot ap, PersistHelper helper, int version) {
+    		this.ap = ap;
+    		this.helper = helper;
+    		this.version = version;
+    	}
+    	
+    	public final void handle(String xpathExpr, RestoreItemHandler handler) {
+    		helper.getNav().push();
+    		try {
+    			// Restore edges
+    			ap.selectXPath(xpathExpr);
+    			
+    			try {
+    				while (ap.evalXPath() != -1) {
+    					handler.handleItem(helper, version);
+    				}
+    			} catch (XPathEvalException e) {
+    				fLog.append(e.getMessage());
+    			} catch (NavException e) {
+    				fLog.append(e.getMessage());
+    			}
+    		} catch (XPathParseException e) {
+    			fLog.append(e.getMessage());
+    		}
+    		ap.resetXPath();
+    		helper.getNav().pop();
+    	}
+    }
+    
+    protected interface RestoreItemHandler {
+    	void handleItem(PersistHelper helper, int version);
+    }
+    
 	@Override
-	public void restorePlacementInfos(PersistHelper helper, Element rootElement, int version) {
-		Set<MClassifier> hiddenClassifier = new HashSet<MClassifier>();
+	public void restorePlacementInfos(PersistHelper helper, int version) {
+		if (version < 12) return;
+		
+		final Set<MClassifier>  hiddenClassifier = new HashSet<MClassifier>();
+		final Set<MAssociation> hiddenAssociations = new HashSet<MAssociation>();
+		
+		// First restore edges to get possible new nodes, then nodes
+		AutoPilot ap = new AutoPilot(helper.getNav());
+		RestoreHandler h = new RestoreHandler(ap, helper, version);
+		
+		// Simply binary associations
+		h.handle("./edge[@type='BinaryEdge']", new RestoreItemHandler() {
+			@Override
+			public void handleItem(PersistHelper helper, int version) {
+				String name = helper.getElementStringValue("name");
+				MAssociation assoc = fParent.system().model().getAssociation(name);
+				// Could be deleted
+				if (assoc != null) {
+					BinaryAssociationOrLinkEdge edge = visibleData.fBinaryAssocToEdgeMap.get(assoc);
+					// Could have been changed to a n-ary
+					if (edge != null) {
+						try {
+							edge.restorePlacementInfo(helper, version);
+							if (isHidden(helper, version)) hiddenAssociations.add(assoc);
+						} catch (Exception e) {
+							fLog.append("Error restoring binary edge " + StringUtil.inQuotes(assoc.name()) + ":" + e.getMessage() + "\n");
+						}
+					}
+				}
+			}
+		});
+		
+		// Edges of association classes
+		h.handle("./edge[@type='NodeEdge']", new RestoreItemHandler() {
+			@Override
+			public void handleItem(PersistHelper helper, int version) {
+				String name = helper.getElementStringValue("name");
+				MAssociation assoc = fParent.system().model().getAssociation(name);
+				// Could be deleted
+				if (assoc != null) {
+					EdgeBase edge = visibleData.fAssocClassToEdgeMap.get(assoc);
+					edge.restorePlacementInfo(helper, version);
+					if (isHidden(helper, version)) hiddenAssociations.add(assoc);
+				}
+			}
+		});
+		
+		// Inheritance
+		h.handle("./edge[@type='" + (version == 1 ? "Inheritance" : "Generalization")  + "']", new RestoreItemHandler() {
+			@Override
+			public void handleItem(PersistHelper helper, int version) {
+				String source = helper.getElementStringValue(LayoutTags.SOURCE);
+				String target = helper.getElementStringValue(LayoutTags.TARGET);
+					
+				MClass child = fParent.system().model().getClass(source);
+				MClass parent = fParent.system().model().getClass(target);
 				
-		// Restore class nodes
-		NodeList elements = (NodeList) helper.evaluateXPathSave(rootElement,
-				"./" + LayoutTags.NODE + "[@type='Class']",
-				XPathConstants.NODESET);
-		
-		for (int i = 0; i < elements.getLength(); ++i) {
-			Element nodeElement = (Element)elements.item(i);			
-			String name = helper.getElementStringValue(nodeElement, "name");
-			MClass cls = fParent.system().model().getClass(name);
-			// Could be deleted
-			if (cls != null) {
-				ClassNode node = visibleData.fClassToNodeMap.get(cls);
-				node.restorePlacementInfo(helper, nodeElement, version);
-				if (isHidden(helper, nodeElement, version)) hiddenClassifier.add(cls);
-			}
-		}
-		
-		// Restore enum nodes
-		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
-				+ LayoutTags.NODE + "[@type='Enumeration']",
-				XPathConstants.NODESET);
-		
-		for (int i = 0; i < elements.getLength(); ++i) {		
-			Element nodeElement = (Element)elements.item(i);
-			String name = helper.getElementStringValue(nodeElement, "name");
-			EnumType enumType = fParent.system().model().enumType(name);
-			// Could be deleted
-			if (enumType != null) {
-				EnumNode node = visibleData.fEnumToNodeMap.get(enumType);
-				node.restorePlacementInfo(helper, nodeElement, version);
-				if (isHidden(helper, nodeElement, version)) hiddenClassifier.add(enumType);
-			}
-		}
-		
-		// Restore diamond nodes
-		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
-				+ LayoutTags.NODE + "[@type='DiamondNode']",
-				XPathConstants.NODESET);
-		
-		for (int i = 0; i < elements.getLength(); ++i) {		
-			Element nodeElement = (Element)elements.item(i);
-			String name = helper.getElementStringValue(nodeElement, "name");
-			MAssociation assoc = fParent.system().model().getAssociation(name);
-			// Could be deleted
-			if (assoc != null) {
-				// Could be made to a binary association
-				DiamondNode node = visibleData.fNaryAssocToDiamondNodeMap.get(assoc);
-				if (node != null) {
-					node.restorePlacementInfo(helper, nodeElement, version);
-				}
-			}   
-		}
-		
-		// Restore edges
-		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
-				+ LayoutTags.EDGE + "[@type='BinaryEdge']",
-				XPathConstants.NODESET);
-		
-		for (int i = 0; i < elements.getLength(); ++i) {
-			Element edgeElement = (Element)elements.item(i);
-			
-			String name = helper.getElementStringValue(edgeElement, "name");
-			MAssociation assoc = fParent.system().model().getAssociation(name);
-			// Could be deleted
-			if (assoc != null) {
-				BinaryAssociationOrLinkEdge edge = visibleData.fBinaryAssocToEdgeMap.get(assoc);
-				// Could have been changed to a n-ary
-				if (edge != null) {
-					edge.restorePlacementInfo(helper, edgeElement, version);
+				if (child != null && parent != null) {
+					Set<MGeneralization> genSet = fParent.system().model().generalizationGraph().edgesBetween(child, parent);
+					if (!genSet.isEmpty()) {
+						MGeneralization gen = genSet.iterator().next();
+						GeneralizationEdge edge = visibleData.fGenToGeneralizationEdge.get(gen);
+						edge.restorePlacementInfo(helper, version);
+					}
 				}
 			}
-		}
+		});
 		
-		// Restore edges
-		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
-				+ LayoutTags.EDGE + "[@type='NodeEdge']",
-				XPathConstants.NODESET);
-		
-		for (int i = 0; i < elements.getLength(); ++i) {
-			Element edgeElement = (Element)elements.item(i);
-			
-			String name = helper.getElementStringValue(edgeElement, "name");
-			MAssociation assoc = fParent.system().model().getAssociation(name);
-			// Could be deleted
-			if (assoc != null) {
-				EdgeBase edge = visibleData.fAssocClassToEdgeMap.get(assoc);
-				edge.restorePlacementInfo(helper, edgeElement, version);
-			}
-		}
-		
-		elements = (NodeList) helper.evaluateXPathSave(rootElement, "./"
-				+ LayoutTags.EDGE + "[@type='" + (version == 1 ? "Inheritance" : "Generalization")  + "']",
-				XPathConstants.NODESET);
-		
-		for (int i = 0; i < elements.getLength(); ++i) {
-			Element edgeElement = (Element)elements.item(i);
-			String source = helper.getElementStringValue(edgeElement, LayoutTags.SOURCE);
-			String target = helper.getElementStringValue(edgeElement, LayoutTags.TARGET);
-				
-			MClass child = fParent.system().model().getClass(source);
-			MClass parent = fParent.system().model().getClass(target);
-			
-			if (child != null && parent != null) {
-				Set<MGeneralization> genSet = fParent.system().model().generalizationGraph().edgesBetween(child, parent);
-				if (!genSet.isEmpty()) {
-					MGeneralization gen = genSet.iterator().next();
-					GeneralizationEdge edge = visibleData.fGenToGeneralizationEdge.get(gen);
-					edge.restorePlacementInfo(helper, edgeElement, version);
+		// Simply the class nodes
+		h.handle("./node[@type='Class']", new RestoreItemHandler() {
+			@Override
+			public void handleItem(PersistHelper helper, int version) {
+				String name = helper.getElementStringValue("name");
+				MClass cls = fParent.system().model().getClass(name);
+				// Could be deleted
+				if (cls != null) {
+					ClassNode node = visibleData.fClassToNodeMap.get(cls);
+					try {
+						node.restorePlacementInfo(helper, version);
+						if (isHidden(helper, version)) hiddenClassifier.add(cls);
+					} catch (Exception e) {
+						fLog.append("Error restoring class node " + StringUtil.inQuotes(cls.name()) + ":" + e.getMessage() + "\n");
+					}
 				}
 			}
-		}
-
+		});
+		
+		// Simply the enumeration nodes
+		h.handle("./node[@type='Enumeration']", new RestoreItemHandler() {
+			@Override
+			public void handleItem(PersistHelper helper, int version) {
+				String name = helper.getElementStringValue("name");
+				EnumType enumType = fParent.system().model().enumType(name);
+				// Could be deleted
+				if (enumType != null) {
+					EnumNode node = visibleData.fEnumToNodeMap.get(enumType);
+					try {						
+						node.restorePlacementInfo(helper, version);
+						if (isHidden(helper, version)) hiddenClassifier.add(enumType);
+					} catch (Exception e) {
+						fLog.append("Error restoring enum node " + StringUtil.inQuotes(enumType.name()) + ":" + e.getMessage() + "\n");
+					}
+				}
+			}
+		});
+		
+		// Now diamonds of n-ary associations
+		h.handle("./node[@type='DiamondNode']", new RestoreItemHandler() {
+			@Override
+			public void handleItem(PersistHelper helper, int version) {
+				String name = helper.getElementStringValue("name");
+				MAssociation assoc = fParent.system().model().getAssociation(name);
+				// Could be deleted
+				if (assoc != null) {
+					DiamondNode node = visibleData.fNaryAssocToDiamondNodeMap.get(assoc);
+					if (node != null) {
+						try {
+							node.restorePlacementInfo(helper, version);
+							if (isHidden(helper, version)) hiddenAssociations.add(assoc);
+						} catch (Exception e) {
+							fLog.append("Error restoring diamond node " + StringUtil.inQuotes(node.name()) + ":" + e.getMessage() + "\n");
+						}
+					}
+				}		
+			}
+		});
+		
 		// Hide elements
-		hideElementsInDiagram(hiddenClassifier);
+		hideElementsInDiagram(hiddenClassifier, hiddenAssociations);
 	}
 	
-	protected boolean isHidden(PersistHelper helper, Element element, int version) {
-		return helper.getElementBooleanValue(element, LayoutTags.HIDDEN);
+	protected boolean isHidden(PersistHelper helper, int version) {
+		return helper.getElementBooleanValue(LayoutTags.HIDDEN);
 	}
 	
-	public ActionHideClassDiagram getAction( String text, Set<? extends MClassifier> selectedNodes ) {
+	public ActionHideClassDiagram getActionHideNodes( String text, Set<? extends MClassifier> selectedNodes ) {
         return new ActionHideClassDiagram( text, selectedNodes,
                                            fNodeSelection, fGraph,
                                            this );
@@ -1387,11 +1443,13 @@ public class ClassDiagram extends DiagramView
 	
 	private void setCoverageColor() {
 
-		if (fOpt.isShowCoverage()) {
+		if (getOptions().getShowCoverage() != ShowCoverage.DONT_SHOW) {
 			MModel model = this.fParent.system().model();
 			
-			if (data == null)
-				data = CoverageAnalyzer.calculateModelCoverage(model);
+			data = CoverageAnalyzer
+					.calculateModelCoverage(
+							model,
+							(getOptions().getShowCoverage() == ShowCoverage.SHOW_EXPAND_OPERATIONS));
 			
 			MModelElement selectedElement = this.fParent.getModelBrowser().getSelectedModelElement();
 			
@@ -1430,24 +1488,25 @@ public class ClassDiagram extends DiagramView
 					}
 					n.setAttributeColor(att, scaleColor(value, minCover, maxAttCover));
 				}
+				
+				for (MOperation op : cls.operations()) {
+					if (propCover.containsKey(op)) {
+						value = theData.getOperationCoverage().get(op);
+					} else {
+						value = 0;
+					}
+					n.setOperationColor(op, scaleColor(value, minCover, maxAttCover));
+				}
 			}
-			
-			for (BinaryAssociationOrLinkEdge edge : visibleData.fBinaryAssocToEdgeMap.values()) {
-				if (propCover.containsKey(edge.getSourceRolename().getEnd())) {
-					value = propCover.get(edge.getSourceRolename().getEnd());
+
+			for (Rolename rolename : visibleData.getAllRolenames()) {
+				if (propCover.containsKey(rolename.getEnd())) {
+					value = propCover.get(rolename.getEnd());
 				} else {
 					value = 0;
 				}
 				
-				edge.getSourceRolename().setColor(scaleColor(value, minCover, maxAttCover));
-				
-				if (propCover.containsKey(edge.getTargetRolename().getEnd())) {
-					value = propCover.get(edge.getTargetRolename().getEnd());
-				} else {
-					value = 0;
-				}
-				
-				edge.getTargetRolename().setColor(scaleColor(value, minCover, maxAttCover));
+				rolename.setColor(scaleColor(value, minCover, maxAttCover));
 			}
 		} else {
 			resetColor();
@@ -1460,15 +1519,16 @@ public class ClassDiagram extends DiagramView
 		for (ClassNode n : visibleData.fClassToNodeMap.values()) {
 			n.setColor(null);
 			n.resetAttributeColor();
+			n.resetOperationColor();
 		}
 		for (ClassNode n : hiddenData.fClassToNodeMap.values()) {
 			n.setColor(null);
 			n.resetAttributeColor();
+			n.resetOperationColor();
 		}
 		
-		for (BinaryAssociationOrLinkEdge edge : visibleData.fBinaryAssocToEdgeMap.values()) {
-			edge.getSourceRolename().setColor(null);
-			edge.getTargetRolename().setColor(null);
+		for (EdgeProperty rolename : visibleData.getAllRolenames()) {
+			rolename.setColor(null);
 		}
 	}
 	
@@ -1487,39 +1547,37 @@ public class ClassDiagram extends DiagramView
 	    return color;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.main.ModelBrowser.SelectionChangedListener#selectionChanged(org.tzi.use.uml.mm.MModelElement)
-	 */
 	@Override
 	public void selectionChanged(MModelElement element) {
 		setCoverageColor();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getHiddenNodes()
-	 */
 	@Override
 	public Set<PlaceableNode> getHiddenNodes() {
 		return hiddenData.getNodes();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getVisibleData()
+	/**
+	 * @return
 	 */
+	public Set<EdgeBase> getHiddenEdges() {
+		return hiddenData.getAllEdges();
+	}
+	
 	@Override
 	public DiagramData getVisibleData() {
 		return visibleData;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.views.diagrams.DiagramView#getHiddenData()
-	 */
 	@Override
 	public DiagramData getHiddenData() {
 		return hiddenData;
 	}
 	
 	/**
+	 * Returns <code>true</code>, if the given classifier <code>cs</code>
+	 * is currently visible in the diagram.
+	 * 
 	 * @param cs
 	 * @return
 	 */
@@ -1527,231 +1585,26 @@ public class ClassDiagram extends DiagramView
 		return visibleData.fClassToNodeMap.containsKey(cs) || 
 			   visibleData.fEnumToNodeMap.containsKey(cs);
 	}
-	
-	private void exportVisibleClassesAsModel(File exportFile) {
-		ModelFactory f = new ModelFactory();
-		MModel sourceModel = getSystem().model();
-		MModel targetModel = f.createModel(sourceModel.name());
-		
-		copyAnnotations(sourceModel, targetModel);
-		
-		// Create "skeletons" for class
-		for (MClass sourceClass : this.visibleData.fClassToNodeMap.keySet()) {
-			try {
-				MClass targetClass;
-				
-				if (sourceClass instanceof MAssociationClass)
-					targetClass = f.createAssociationClass(sourceClass.name(), sourceClass.isAbstract());
-				else
-					targetClass = f.createClass(sourceClass.name(), sourceClass.isAbstract());
-				
-				targetModel.addClass(targetClass);
-				copyAnnotations(sourceClass, targetClass);
-			} catch (MInvalidModelException e) { /* Cannot happen */ }
-		}
-		
-		// Create enumerations
-		for (EnumType sourceEnum : visibleData.fEnumToNodeMap.keySet()) {
-			try {
-				EnumType targetEnum = TypeFactory.mkEnum(sourceEnum.name(), sourceEnum.getLiterals());
-				targetModel.addEnumType(targetEnum);
-				copyAnnotations(sourceEnum, targetEnum);
-			} catch (MInvalidModelException e) { /* Cannot happen */ }
-		}
-		
-		// Create inheritance and attributes
-		for (MClass targetClass : targetModel.classes()) {
-			MClass sourceClass = sourceModel.getClass(targetClass.name());
-			
-			// Inheritance
-			for (MClass sourceParentClass : sourceClass.parents()) {
-				MClass targetParentClass = findMostSpecificExportedType(sourceParentClass, targetModel);
-				
-				// Could be hidden!
-				if (targetParentClass != null) {
-					try {
-						targetModel.addGeneralization(f.createGeneralization(targetClass, targetParentClass));
-					} catch (MInvalidModelException e) { /* Cannot happen */ }
-				}
-			}
-			
-			// Attributes
-			for (MAttribute sourceAttribute : sourceClass.attributes()) {
-				Type attType = OCLCompiler.compileType(
-						targetModel, sourceAttribute.type().toString(),
-						"Export", NullPrintWriter.getInstance());
-				
-				// if type is not exported, don't export the attribute
-				if (attType != null) {
-					MAttribute targetAttribute = f.createAttribute(sourceAttribute.name(), attType);
-					try {
-						targetClass.addAttribute(targetAttribute);
-					} catch (MInvalidModelException e) { /* Cannot happen */ }
-					copyAnnotations(sourceAttribute, targetAttribute);
-				}
-			}
-			
-			// Operations
-			for (MOperation sourceOperation : sourceClass.operations()) {
-				boolean hasErrors = false;
-				Type resultType = null;
-				
-				if (sourceOperation.hasResultType()) {
-					resultType = OCLCompiler.compileType(
-							targetModel, sourceOperation.resultType().toString(),
-							"Export", NullPrintWriter.getInstance());
-					
-					// Result Type is not exported
-					if (resultType == null)
-						continue;
-				}
-				
-				VarDeclList targetArgs = new VarDeclList(false);
-									
-				// Build arguments
-				for (VarDecl arg : sourceOperation.paramList()) {
-					VarDecl v = cloneVarDecl(targetModel, arg);
-					if (v == null) {
-						hasErrors = true;
-						break;
-					}
 
-					targetArgs.add(v);
-				}
-				
-				// If arg type is not present, continue to next operation
-				if (hasErrors)
-					continue;
-				
-				MOperation targetOperation = f.createOperation(sourceOperation.name(), targetArgs, resultType);
-									
-				try {
-					targetClass.addOperation(targetOperation);
-				} catch (MInvalidModelException e) { /* Cannot happen */ }
-				
-				copyAnnotations(sourceOperation, targetOperation);
-			}
-		}
-		
-		// Binary associations
-		Set<MAssociation> sourceAssociations = new HashSet<MAssociation>(visibleData.fBinaryAssocToEdgeMap.keySet());
-		// n-ary associations
-		sourceAssociations.addAll(visibleData.fNaryAssocToDiamondNodeMap.keySet());
-		
-		for (MAssociation sourceAssoc : sourceAssociations) {
-			MAssociation targetAssoc;
-			if (sourceAssoc instanceof MAssociationClass) {
-				targetAssoc = (MAssociation)targetModel.getClass(sourceAssoc.name());
-			} else {
-				targetAssoc = f.createAssociation(sourceAssoc.name());
-				copyAnnotations(sourceAssoc, targetAssoc);
-			}
-			
-			for (MAssociationEnd sourceEnd : sourceAssoc.associationEnds()) {
-				List<VarDecl> targetQualifiers = new ArrayList<VarDecl>();
-				boolean hasErrors = false;
-				
-				for (VarDecl sourceQualifier : sourceEnd.getQualifiers()) {
-					VarDecl targetQualifier = cloneVarDecl(targetModel, sourceQualifier);
-					if (targetQualifier == null) {
-						hasErrors = true;
-						break;
-					}
-					
-					targetQualifiers.add(targetQualifier);
-				}
-				
-				if (hasErrors)
-					continue;
-				
-				MAssociationEnd targetEnd = 
-						f.createAssociationEnd(
-								targetModel.getClass(sourceEnd.cls().name()),
-								sourceEnd.name(),
-								sourceEnd.multiplicity(),
-								sourceEnd.aggregationKind(),
-								sourceEnd.isOrdered(),
-								targetQualifiers);
-
-				copyAnnotations(sourceEnd, targetEnd);
-				try {
-					targetAssoc.addAssociationEnd(targetEnd);
-				} catch (MInvalidModelException e) {
-					
-				}
-			}
-			
-			try {
-				targetModel.addAssociation(targetAssoc);
-			} catch (MInvalidModelException e) {
-
-			}
-		}
-
-		// Write result
-		FileOutputStream out;
-		try {
-			out = new FileOutputStream(exportFile, false);
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(ClassDiagram.this, e.getMessage(),
-					"Error saving the USE model", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		
-		MMVisitor v = new MMPrintVisitor(new PrintWriter(out, true));
-        targetModel.processWithVisitor(v);
-        
-        try {
-			out.close();
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(ClassDiagram.this, e.getMessage(),
-					"Error saving the USE model", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-        
-		JOptionPane.showMessageDialog(ClassDiagram.this, "Export succesfull",
-				"Export successfull", JOptionPane.INFORMATION_MESSAGE);
+	@Override
+	protected String getDefaultLayoutFileSuffix() {
+		return "_default.clt";
 	}
 
 	/**
-	 * @param sourceParentClass
-	 * @param targetModel
-	 * @return
+	 * @param opt
 	 */
-	private MClass findMostSpecificExportedType(MClass sourceParentClass, MModel targetModel) {
-		MClass parent = targetModel.getClass(sourceParentClass.name());
-		
-		if (parent != null)
-			return parent;
-		
-		for (MClass otherParent : sourceParentClass.parents()) {
-			parent = findMostSpecificExportedType(otherParent, targetModel); 
-			if (parent != null)
-				return parent;
-		}
-		
-		return null;
+	public void setDiagramOptions(ClassDiagramOptions opt) {
+		fOpt = opt;
 	}
 
-	private VarDecl cloneVarDecl(MModel targetModel, VarDecl v) {
-		Type argType = OCLCompiler.compileType(
-				targetModel, v.type().toString(),
-				"Export", NullPrintWriter.getInstance());
-		
-		if (argType == null) {
-			return null;
+	@Override
+	public void stateChanged(SortChangeEvent e) {
+		for (ClassNode n : this.visibleData.fClassToNodeMap.values()) {
+			n.stateChanged(e);
 		}
-		
-		return new VarDecl(v.name(), argType);
-	}
-	
-	/**
-	 * @param sourceModel
-	 * @param targetModel
-	 */
-	private void copyAnnotations(Annotatable source, Annotatable target) {
-		for (MElementAnnotation an : source.getAllAnnotations().values()) {
-			target.addAnnotation(an);
+		for (ClassNode n : this.hiddenData.fClassToNodeMap.values()) {
+			n.stateChanged(e);
 		}
 	}
 }

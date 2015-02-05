@@ -16,25 +16,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 /**
  * A node representing a class.
@@ -43,31 +46,42 @@ import org.tzi.use.uml.mm.MOperation;
  * @author Fabian Gutsche
  */
 public class ClassNode extends ClassifierNode implements SortChangeListener {
-
+		
     private List<MAttribute> fAttributes;
     private List<MOperation> fOperations;
     
-    private String[] fAttrValues;
-    private Color[] fAttrColors;
+    private final String[] fAttrValues;
+    private final Color[] fAttrColors;
     
-    private String[] fOprSignatures;
+    private final String[] fOprSignatures;
+    private final Color[] fOperationColors;
     
     private Color color = null;
 
     ClassNode( MClass cls, DiagramOptions opt ) {
     	super(cls, opt);
         
-        fAttributes = ModelBrowserSorting.getInstance()
-            .sortAttributes(cls.attributes()); 
+        fAttributes = cls.attributes(); 
         fAttrValues = new String[fAttributes.size()];
         fAttrColors = new Color[fAttributes.size()];
+
+        fOperations = new ArrayList<>(Collections2.filter(cls.operations(), new Predicate<MOperation>() {
+			@Override
+			public boolean apply(MOperation input) {
+				return !input.getAnnotationValue("View", "hideInDiagram").equals("true");
+			}
+		}));
         
-        fOperations = cls.operations();
         fOprSignatures = new String[fOperations.size()];
-        fOperations = ModelBrowserSorting.getInstance()
-            .sortOperations( fOperations );
-        ModelBrowserSorting.getInstance().addSortChangeListener( this );
+        fOperationColors = new Color[fOperations.size()];
+                        
+        copyDisplayedValues();
     }
+    
+    @Override
+	public boolean isResizable() {
+		return true;
+	}
     
     /**
      * Gets the {@link MClass} represented by this class node.
@@ -105,6 +119,15 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
 	}
 	
 	/**
+	 * Sets the color of the operation <code>op</code> to <code>color</code>.
+	 * @param op
+	 * @param color
+	 */
+	public void setOperationColor(MOperation op, Color color) {
+		fOperationColors[fOperations.indexOf(op)] = color;
+	}
+	
+	/**
 	 * Resets the attribute colors to the color of the class node
 	 */
 	public void resetAttributeColor() {
@@ -114,15 +137,36 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
 	}
 	
 	/**
+	 * Resets the operation colors to the color of the class node
+	 */
+	public void resetOperationColor() {
+		for (int i = 0; i < fOperationColors.length; i++) {
+			fOperationColors[i] = null;
+		}
+	}
+	
+	/**
      * After the occurrence of an event the attribute list is updated.
      */
-    public void stateChanged( SortChangeEvent e ) {
-        fAttributes = ModelBrowserSorting.getInstance()
-             .sortAttributes( fAttributes );
-        fOperations = ModelBrowserSorting.getInstance()
-            .sortOperations( fOperations );
+    @Override
+	public void stateChanged( SortChangeEvent e ) {
+        copyDisplayedValues();
     }
     
+    private void copyDisplayedValues() {
+    	fAttributes = ModelBrowserSorting.getInstance().sortAttributes( fAttributes );
+    	fOperations = ModelBrowserSorting.getInstance().sortOperations( fOperations );
+    	
+    	for ( int i = 0; i < fAttributes.size(); i++ ) {
+            MAttribute attr = fAttributes.get( i );
+            fAttrValues[i] = attr.toString();
+        }
+    	
+    	for ( int i = 0; i < fOperations.size(); i++ ) {
+            MOperation opr = fOperations.get( i );
+            fOprSignatures[i] = opr.signature();
+        }
+    }
     @Override
     protected void calculateNameRectSize(Graphics2D g, Rectangle2D.Double rect) {
         Font classNameFont;
@@ -136,35 +180,24 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         FontMetrics classNameFontMetrics = g.getFontMetrics( classNameFont );
         
         rect.width = classNameFontMetrics.stringWidth( fLabel );
-        rect.height = classNameFontMetrics.getHeight();
+		rect.height = classNameFontMetrics.getDescent()
+				+ classNameFontMetrics.getAscent() + (2 * VERTICAL_INDENT);
+		
+		// At least the class name should be visible
+		this.setRequiredHeight("CLASSNODE", rect.height);
+		this.setRequiredWidth("CLASSNODE", rect.width + (2 * HORIZONTAL_INDENT));
     }
     
     @Override
     protected void calculateAttributeRectSize(Graphics2D g, Rectangle2D.Double rect) {
-    	FontMetrics fm = g.getFontMetrics();
-    	
-    	for ( int i = 0; i < fAttributes.size(); i++ ) {
-            MAttribute attr = (MAttribute) fAttributes.get( i );
-            fAttrValues[i] = attr.toString();
-            rect.width = Math.max( attributesRect.width, fm.stringWidth( fAttrValues[i] ) );
-        }
-    	
-        rect.height = fm.getHeight() * fAttributes.size() + 4;
+    	calculateCompartmentRectSize(g, rect, fAttrValues);
     }
     
     @Override
     protected void calculateOperationsRectSize(Graphics2D g, Rectangle2D.Double rect) {
-    	FontMetrics fm = g.getFontMetrics();
-    	
-    	for ( int i = 0; i < fOperations.size(); i++ ) {
-            MOperation opr = (MOperation) fOperations.get( i );
-            fOprSignatures[i] = opr.signature();
-            operationsRect.width = Math.max( operationsRect.width, fm.stringWidth( fOprSignatures[i] ) );
-        }
-    	
-        operationsRect.height = fm.getHeight() * fOperations.size() + 4;
+    	calculateCompartmentRectSize(g, rect, fOprSignatures);
     }
-        
+    
     public String ident() {
         return "Class." + cls().name();
     }
@@ -177,17 +210,23 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
      */
     @Override
     protected void onDraw( Graphics2D g ) {
-        int x = (int) getCenter().getX();
+    	Rectangle2D.Double currentBounds = getRoundedBounds();
+    	
+    	if (g.getClipBounds() != null && 
+    	    !Util.enlargeRectangle(currentBounds, 10).intersects(g.getClipBounds())) {
+    		return;
+    	}
+                
         int y;
-        
-        Rectangle2D currentBounds = this.getBounds();
-        FontMetrics fm = g.getFontMetrics();
+                
+        FontMetrics fm; 
         
         Font oldFont = g.getFont();
         if ( cls().isAbstract() ) {
             g.setFont( oldFont.deriveFont( Font.ITALIC ) );
-            fm = g.getFontMetrics();
-        }
+        } 
+        
+        fm = g.getFontMetrics();
         
         int labelWidth = fm.stringWidth( fLabel );
         
@@ -201,54 +240,67 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         }
         
         g.fill( currentBounds );
-        g.setColor( fOpt.getNODE_FRAME_COLOR() );
-        g.draw(currentBounds);
-        
+                        
+        double x = getCenter().getX();
         x -= labelWidth / 2;
-        y = (int)currentBounds.getY() + fm.getAscent() + 2;
+        y = (int)currentBounds.getY() + fm.getAscent() + VERTICAL_INDENT;
         g.setColor( fOpt.getNODE_LABEL_COLOR() );
+        // We know that the name fits, because we require this size
+        g.drawString( fLabel, Math.round(x), y );
         
-        g.drawString( fLabel, x, y );
+        y += VERTICAL_INDENT + fm.getDescent();
+        
         // resetting font and fontMetrics if the class was abstract
         g.setFont( oldFont );
         fm = g.getFontMetrics();
         
+        Line2D.Double lineAttrDivider = new Line2D.Double(currentBounds.getX(), y, currentBounds.getMaxX(), y);
+        Line2D.Double lineOpDivider = new Line2D.Double(currentBounds.getX(), y, currentBounds.getMaxX(), y);
+        
         if ( fOpt.isShowAttributes() ) {
             // compartment divider
-        	y += 3;
-            g.drawLine( (int)currentBounds.getX(), y, (int)currentBounds.getMaxX() - 1, y );
-            // add insets
-            x = (int)currentBounds.getX() + 5;
-            
-            Color orgColor = g.getColor(); 
-                        
-            for ( int i = 0; i < fAttributes.size(); i++ ) {
-            	if (!isSelected() && fAttrColors[i] != null) {
-            		int height = fm.getHeight();
-            		if (i == 0) height += 2;
-            		if (i == fAttributes.size() - 1) height += 2;
-            		
-            		g.setColor(fAttrColors[i]);
-            		g.fillRect((int)currentBounds.getX() + 1, y + 1, (int)currentBounds.getWidth() - 2, height);
-            		g.setColor(orgColor);
-            	}
-            	
-                y += fm.getHeight() + (i == 0 ? 2 : 0);
-                g.drawString( fAttrValues[i], x, y - fm.getDescent() );
-            }
+        	lineAttrDivider.y1 = y;
+        	lineAttrDivider.y2 = y;
+        	
+        	if (fAttributes.isEmpty()) {
+        		y += 2 * VERTICAL_INDENT; 
+        	} else {
+	        	Rectangle2D.Double attributeBounds = new Rectangle2D.Double(currentBounds.x, y, currentBounds.width, currentBounds.height);
+	        	
+	        	if (fOpt.isShowOperations())
+	        		attributeBounds.height = currentBounds.getMaxY() - y - VERTICAL_INDENT - Util.getLineHeight(fm);
+	        	
+	            y = drawCompartment(g, y, fAttrValues, fAttrColors, attributeBounds);
+        	}
         }
         
         if ( fOpt.isShowOperations() ) {
-            // compartment divider
-            g.drawLine( (int)currentBounds.getX(), y + 3, (int)currentBounds.getMaxX() - 1, y + 3 );
-            // add insets
-            x = (int)currentBounds.getX() + 5;
-            y += 3;
-            for ( int i = 0; i < fOperations.size(); i++ ) {
-                y += fm.getHeight();
-                g.drawString( fOprSignatures[i], x, y );
-            }
+        	// compartment divider
+        	lineOpDivider.y1 = y;
+        	lineOpDivider.y2 = y;
+
+            y = drawCompartment(g, y, fOprSignatures, fOperationColors, currentBounds);
         }
+        
+        g.setColor( fOpt.getNODE_FRAME_COLOR() );
+        g.draw( currentBounds );
+        
+        if ( fOpt.isShowAttributes() ) {
+        	g.draw(lineAttrDivider);
+        }
+        if ( fOpt.isShowOperations() ) {
+        	g.draw(lineOpDivider);
+        }
+    }
+    
+    @Override
+    public boolean hasAttributes() {
+    	return !fAttributes.isEmpty();
+    }
+    
+    @Override
+    public boolean hasOperations() {
+    	return !fOperations.isEmpty();
     }
     
     @Override

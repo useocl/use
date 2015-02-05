@@ -99,5 +99,13 @@ public class VarDecl {
     public String toString() {
         return fVar + " : " + fType;
     }
+
+
+	/**
+	 * @param generateHTMLExpressionVisitor
+	 */
+	public void processWithVisitor(ExpressionVisitor v) {
+		v.visitVarDecl(this);
+	}
 }
 

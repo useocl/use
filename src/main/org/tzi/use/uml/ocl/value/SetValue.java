@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 
@@ -100,31 +101,28 @@ public class SetValue extends CollectionValue {
     }
     
     @Override
-    public void doSetElemType() {
-        setType( TypeFactory.mkSet(fElemType));
+    public CollectionType getRuntimeType(Type elementType) {
+        return TypeFactory.mkSet(elementType);
     }
     
     /**
-     * Adds an element to the set. The element's type is checked.
+     * Adds an element to the set. The element's type is <b>not</b> checked.
      * 
      */
     void add(Value v) {
         fElements.add(v);
-        markTypeAsDirty();
     }
 
     void addAll(Collection<Value> v) {
         fElements.addAll(v);
-        markTypeAsDirty();
     }
 
     /**
-     * Adds an element to the set. The element's type is checked.
-     * 
+     * Removes an element from this set. 
+     * The element's type is not checked.
      */
     void remove(Value v) {
         fElements.remove(v);
-        markTypeAsDirty();
     }
 
     /**
@@ -132,14 +130,12 @@ public class SetValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
      */
-    public SetValue union(SetValue v) {
-        if (v.isEmpty())
-            return this;
-
-        SetValue res = new SetValue(elemType());
-
-        // add elements of this set to result
-        res.addAll(fElements);
+    public SetValue union(Type resultType, SetValue v) {
+    	Type elementType = getResultElementType(resultType);
+    	SetValue res = new SetValue(elementType, fElements);
+    	
+    	if (v.isEmpty())
+            return res;
 
         // add elements of v set to result
         res.addAll(v.fElements);
@@ -152,8 +148,9 @@ public class SetValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Set(T1) and v has type Bag(T2).
      */
-    public BagValue union(BagValue v) {
-        BagValue res = new BagValue(elemType());
+    public BagValue union(Type resultType, BagValue v) {
+    	Type elementType = getResultElementType(resultType);
+    	BagValue res = new BagValue(elementType);
 
         // add elements of this set to result
         res.addAll(fElements);
@@ -169,8 +166,9 @@ public class SetValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
      */
-    public SetValue intersection(SetValue v) {
-        SetValue res = new SetValue(elemType());
+    public SetValue intersection(Type resultType, SetValue v) {
+    	Type elementType = getResultElementType(resultType);
+    	SetValue res = new SetValue(elementType);
         if (this.isEmpty() || v.isEmpty())
             return res;
 
@@ -193,8 +191,8 @@ public class SetValue extends CollectionValue {
         return res;
     }
 
-    public SetValue intersection(BagValue v) {
-        return intersection(v.asSet());
+    public SetValue intersection(Type resultType, BagValue v) {
+        return intersection(resultType, v.asSet());
     }
 
     /**
@@ -202,11 +200,9 @@ public class SetValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
      */
-    public SetValue difference(SetValue v) {
-        if (v.isEmpty())
-            return this;
-
-        SetValue res = new SetValue(elemType());
+    public SetValue difference(Type resultType, SetValue v) {
+        Type elementType = getResultElementType(resultType);
+        SetValue res = new SetValue(elementType);
 
         // add elements of this set to result
         Iterator<Value> it = fElements.iterator();
@@ -223,9 +219,9 @@ public class SetValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
      */
-    public SetValue including(Value v) {
-        // copy this set
-        SetValue res = new SetValue(elemType(), fElements);
+    public SetValue including(Type resultType, Value v) {
+        Type elementType = getResultElementType(resultType);
+        SetValue res = new SetValue(elementType, fElements);
         res.add(v);
         return res;
     }
@@ -235,9 +231,10 @@ public class SetValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Set(T1) and v has type T2.
      */
-    public SetValue excluding(Value v) {
-        // copy this set
-        SetValue res = new SetValue(elemType(), fElements);
+    public SetValue excluding(Type resultType, Value v) {
+    	Type elementType = getResultElementType(resultType);
+    	// copy this set
+        SetValue res = new SetValue(elementType, fElements);
         res.remove(v);
         return res;
     }
@@ -248,8 +245,8 @@ public class SetValue extends CollectionValue {
      * 
      * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
      */
-    public SetValue symmetricDifference(SetValue v) {
-        return this.difference(v).union(v.difference(this));
+    public SetValue symmetricDifference(Type resultType, SetValue v) {
+        return this.difference(resultType, v).union(resultType, v.difference(resultType, this));
     }
 
     public Iterator<Value> iterator() {
@@ -295,16 +292,19 @@ public class SetValue extends CollectionValue {
     /**
      * Returns a new "flattened" set. This set must have collection elements.
      */
-    public SetValue flatten() {
-        if (!elemType().isCollection(true))
+    public SetValue flatten(Type resultType) {
+        if (!elemType().isKindOfCollection(VoidHandling.EXCLUDE_VOID))
             return this;
 
-        CollectionType c2 = (CollectionType) elemType();
-        SetValue res = new SetValue(c2.elemType());
+        SetValue res = new SetValue(getResultElementType(resultType));
         Iterator<Value> it = fElements.iterator();
         
         while (it.hasNext()) {
-            CollectionValue elem = (CollectionValue) it.next();
+        	Value v = it.next();
+        	if (v.isUndefined())
+        		continue;
+        	
+            CollectionValue elem = (CollectionValue)v;
             Iterator<Value> it2 = elem.iterator();
             while (it2.hasNext()) {
                 Value elem2 = it2.next();
@@ -331,7 +331,7 @@ public class SetValue extends CollectionValue {
 
     protected Integer getClassCompareNr()
     {
-    	return new Integer(1);
+    	return Integer.valueOf(1);
     }
     
     /**

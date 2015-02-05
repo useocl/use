@@ -35,6 +35,7 @@ import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.expr.VarInitializer;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -79,7 +80,7 @@ public class ASTIterateExpression extends ASTExpression {
                                             "Need a collection to apply `iterate'.");
         }
 
-        if (! range.type().isCollection(false) )
+        if (! range.type().isKindOfCollection(VoidHandling.INCLUDE_VOID) )
             throw new SemanticException(fIterateToken, 
                                         "Source of `iterate' expression must be a collection, " + 
                                         "found source expression of type `" + range.type() + "'.");
@@ -113,7 +114,7 @@ public class ASTIterateExpression extends ASTExpression {
 	
 		HashSet<String> freeVarsInExpr = new HashSet<String>();
 		fExpr.getFreeVariables(freeVarsInExpr);
-		HashSet<String> declaredVars = fDeclList.getVarNames();
+		Set<String> declaredVars = fDeclList.getVarNames();
 		freeVarsInExpr.removeAll(declaredVars);
 		freeVarsInExpr.remove(fInit.nameToken().getText());
 		

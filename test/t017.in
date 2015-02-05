@@ -12,14 +12,14 @@
 !insert (A1,A2,B1) into R
 !insert (A2,A3,B1) into R
 ? B1.r1
-*-> Set{@A1,@A2} : Set(A)
+*-> Set{A1,A2} : Set(A)
 ? B1.r2
-*-> Set{@A2,@A3} : Set(A)
+*-> Set{A2,A3} : Set(A)
 !create A4:A
 !create B2:B
 !insert (A4,A4,B2) into R
 ? B2.r1
-*-> Set{@A4} : Set(A)
+*-> Set{A4} : Set(A)
 ? B2.r2
-*-> Set{@A4} : Set(A)
+*-> Set{A4} : Set(A)
 quit

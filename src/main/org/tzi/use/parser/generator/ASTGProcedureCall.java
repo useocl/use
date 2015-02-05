@@ -33,12 +33,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.runtime.Token;
+import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.tool.GProcedureCall;
+import org.tzi.use.gen.tool.GSignature;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
 
 public class ASTGProcedureCall extends AST {
     private Token fName;
@@ -55,11 +58,19 @@ public class ASTGProcedureCall extends AST {
 
     public GProcedureCall gen(Context ctx) throws SemanticException {
         List<Expression> params = new ArrayList<Expression>();
+        List<Type> paramTypes = new ArrayList<Type>();
         
-        for (ASTExpression exp : fParameter) {
-            params.add( exp.gen(ctx) );
+        for (ASTExpression astExp : fParameter) {
+        	Expression exp = astExp.gen(ctx); 
+        	params.add(exp);
+            paramTypes.add(exp.type());
         }
-    
-        return new GProcedureCall( fName.getText(), params );
+        
+        GSignature sig = new GSignature(fName.getText(), paramTypes);
+        GProcedure proc = sig.findMatching(ctx.getProcedures());
+        
+        if (proc == null) return null;
+        
+        return new GProcedureCall( proc, params );
     }    
 }

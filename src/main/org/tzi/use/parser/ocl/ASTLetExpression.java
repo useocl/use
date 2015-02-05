@@ -65,7 +65,7 @@ public class ASTLetExpression extends ASTExpression {
             varType = varExpr.type();
         else {
             varType = fVarType.gen(ctx);
-            if (! varExpr.type().isSubtypeOf(varType) )
+            if (! varExpr.type().conformsTo(varType) )
                 throw new SemanticException(fVarExpr.getStartToken(),
                                             "Expected expression of type `" +
                                             varType + "', found `" +

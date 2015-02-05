@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
+
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MAssociation;
@@ -57,9 +59,6 @@ public class UseSystemApiNative extends UseSystemApi {
 		super(system);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#createObjectEx(org.tzi.use.uml.mm.MClass, java.lang.String)
-	 */
 	@Override
 	public MObject createObjectEx(MClass objectClass, String objectName)
 			throws UseApiException {
@@ -71,10 +70,7 @@ public class UseSystemApiNative extends UseSystemApi {
 					+ " could not be created!", e);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#setAttributeValueEx(org.tzi.use.uml.sys.MObject, org.tzi.use.uml.mm.MAttribute, org.tzi.use.uml.ocl.value.Value)
-	 */
+
 	@Override
 	public void setAttributeValueEx(MObject object, MAttribute attribute,
 			Value value) throws UseApiException {
@@ -85,9 +81,6 @@ public class UseSystemApiNative extends UseSystemApi {
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#createLinkEx(org.tzi.use.uml.mm.MAssociation, org.tzi.use.uml.sys.MObject[], org.tzi.use.uml.ocl.value.Value[][])
-	 */
 	@Override
 	public MLink createLinkEx(MAssociation association,
 			MObject[] connectedObjects, Value[][] qualifierValues)
@@ -105,9 +98,6 @@ public class UseSystemApiNative extends UseSystemApi {
 		return newLink;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#createLinkObjectEx(org.tzi.use.uml.mm.MAssociationClass, java.lang.String, org.tzi.use.uml.sys.MObject[], org.tzi.use.uml.ocl.value.Value[][])
-	 */
 	@Override
 	public MLinkObject createLinkObjectEx(MAssociationClass associationClass,
 			String newObjectName, MObject[] connectedObjects,
@@ -126,18 +116,12 @@ public class UseSystemApiNative extends UseSystemApi {
 		
 		return linkObject;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#deleteObjectEx(org.tzi.use.uml.sys.MObject)
-	 */
+
 	@Override
 	public void deleteObjectEx(MObject object) throws UseApiException {
 		system.state().deleteObject(object);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#deleteLinkEx(org.tzi.use.uml.mm.MAssociation, org.tzi.use.uml.sys.MObject[], org.tzi.use.uml.ocl.value.Value[][])
-	 */
 	@Override
 	public void deleteLinkEx(MAssociation association,
 			MObject[] connectedObjects, Value[][] qualifierValues)
@@ -151,9 +135,6 @@ public class UseSystemApiNative extends UseSystemApi {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.api.UseSystemApi#deleteLinkEx(org.tzi.use.uml.sys.MLink)
-	 */
 	@Override
 	public void deleteLinkEx(MLink link) throws UseApiException {
 		
@@ -178,5 +159,15 @@ public class UseSystemApiNative extends UseSystemApi {
 		} catch (MSystemException e) {
 			throw new UseApiException("Link could not be deleted!", e);
 		}		
+	}
+
+	@Override
+	public void undo() throws UseApiException, OperationNotSupportedException {
+		throw new OperationNotSupportedException();
+	}
+
+	@Override
+	public void redo() throws UseApiException, OperationNotSupportedException {
+		throw new OperationNotSupportedException();
 	}
 }

@@ -16,7 +16,7 @@ WS:
 // Single-line comments
 SL_COMMENT:
     ('//' | '--')
-    (~('\n'|'\r'))* NEWLINE
+    (~(NEWLINE))*
     { $channel=HIDDEN; }
     ;
 
@@ -113,12 +113,12 @@ HEX_DIGIT:
 
 // An identifier.  Note that testLiterals is set to true!  This means
 // that after we match the rule, we look in the literals table to see
-// if it's a literal or really an identifer.
+// if it's a literal or really an identifier.
 
 IDENT:
     ('$' | 'a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*
     ;
-
+    
 // A dummy rule to force vocabulary to be all characters (except
 // special ones that ANTLR uses internally (0 to 2)
 

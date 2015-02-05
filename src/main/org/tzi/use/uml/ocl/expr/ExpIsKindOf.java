@@ -22,24 +22,23 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BooleanValue;
+import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * oclIsKindOf
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpIsKindOf extends Expression {
     private Expression fSourceExpr;
     private Type fTargetType;
     
-    public ExpIsKindOf(Expression sourceExpr, Type targetType)
-        throws ExpInvalidException
-    {
-        super(TypeFactory.mkBoolean(), sourceExpr);
+    public ExpIsKindOf(Expression sourceExpr, Type targetType) throws ExpInvalidException {
+        super(TypeFactory.mkBoolean());
         fSourceExpr = sourceExpr;
         fTargetType = targetType;
     }
@@ -67,11 +66,19 @@ public final class ExpIsKindOf extends Expression {
         ctx.enter(this);
         Value res = BooleanValue.FALSE;
         Value v = fSourceExpr.eval(ctx);
-    
+        Type t;
+        
+        if (v.isCollection()) {
+        	// Collections calculate the runtime type on demand.
+        	t = ((CollectionValue)v).getRuntimeType();
+        } else {
+        	t = v.getRuntimeType();
+        }
+        
         // Note: the value may be undefined, still the type test is valid!
-        //System.err.println("value: " + v + ", type: " + v.type());
-        if (v.type().isSubtypeOf(fTargetType) )
+        if (t.conformsTo(fTargetType))
             res = BooleanValue.TRUE;
+        
         ctx.exit(this, res);
         return res;
     }
@@ -80,7 +87,7 @@ public final class ExpIsKindOf extends Expression {
     public StringBuilder toString(StringBuilder sb) {
         fSourceExpr.toString(sb);
         
-        if (fSourceExpr.type().isCollection(true))
+        if (fSourceExpr.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID))
         	sb.append("->");
         else
         	sb.append(".");
@@ -90,11 +97,18 @@ public final class ExpIsKindOf extends Expression {
         return sb.append(")");
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitIsKindOf(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return fSourceExpr.requiresPreState();
+	}
+	
+	@Override
+	public String name() {
+		return "oclIsKindOf";
 	}
 }

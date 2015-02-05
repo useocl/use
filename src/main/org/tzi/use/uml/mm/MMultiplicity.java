@@ -22,6 +22,8 @@
 package org.tzi.use.uml.mm;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.tzi.use.util.StringUtil;
 
@@ -58,7 +60,7 @@ public final class MMultiplicity {
      */
     public static final MMultiplicity ZERO_ONE = new MMultiplicity(0, 1);
     
-    private final class Range {
+    public final class Range {
         int fLower;
         int fUpper;
 
@@ -70,7 +72,7 @@ public final class MMultiplicity {
             //   l     *    ok 
             //   l     u    l <= u, l >= 0, u > 0
             if (upper != MANY && 
-                (lower > upper || lower < 0 ||  upper < 1 ) )
+                (lower > upper || lower < 0 ||  upper < 0 ) )
                 throw new IllegalArgumentException(
                                                    "Invalid multiplicity range `" + 
                                                    lower + ".." + upper + "'.");
@@ -79,12 +81,26 @@ public final class MMultiplicity {
             fLower = lower;
             fUpper = upper;
         }
+        
+        /**
+		 * @return the fLower
+		 */
+		public int getLower() {
+			return fLower;
+		}
+		
+		/**
+		 * @return the fUpper
+		 */
+		public int getUpper() {
+			return fUpper;
+		}
 
         /**
          * Test if range contains a specified value.
          */
         public boolean contains(int n) {
-            return fLower <= n && ( fUpper == MANY || n <= fUpper );
+            return n == MANY && fUpper == MANY || fLower <= n && ( fUpper == MANY || n <= fUpper );
         }
 
         /**
@@ -108,21 +124,26 @@ public final class MMultiplicity {
         }
     }
     
-    private ArrayList<Range> mRanges;
-
+    private List<Range> mRanges = new ArrayList<MMultiplicity.Range>();
+    
+    /**
+	 * @return the mRanges
+	 */
+	public List<Range> getRanges() {
+		return Collections.unmodifiableList(mRanges);
+	}
+    
     /**
      * Creates a new multiplicity. You need to add ranges before the
      * multiplicity is actually valid.
      */
     public MMultiplicity() {
-        mRanges = new ArrayList<Range>();
     }
 
     /**
      * Creates a multiplicity with given range.
      */
     public MMultiplicity(int lower, int upper) {
-        this();
         addRange(lower, upper);
     }
 
@@ -146,6 +167,33 @@ public final class MMultiplicity {
         return false;
     }
 
+    /**
+     * UML 2.4.1 p. 97:
+     * The query includesMultiplicity() checks whether this multiplicity includes all 
+     * the cardinalities allowed by the specified multiplicity.
+     *   MultiplicityElement::includesMultiplicity(M : MultiplicityElement) : Boolean;
+     *     pre: self.upperBound()->notEmpty() and self.lowerBound()->notEmpty()
+     *          and M.upperBound()->notEmpty() and M.lowerBound()->notEmpty()
+     *     includesMultiplicity = (self.lowerBound() <= M.lowerBound()) and (self.upperBound() >= M.upperBound())
+     *     
+     * Because USE supports ranges of multiplicities, this query differs from the original specification.
+     **/
+    public boolean includesMultiplicity(MMultiplicity m, boolean includeLowerBounds) {
+    	//TODO improve support of multiple ranges
+    	if (mRanges.size() != m.mRanges.size())
+    		return false;
+    	
+    	for (int i = 0; i < mRanges.size(); ++i) {
+    		Range ourRange = mRanges.get(i);
+    		Range otherRange = m.mRanges.get(i);
+    		if (!((!includeLowerBounds || ourRange.contains(otherRange.fLower)) &&
+    			  ourRange.contains(otherRange.fUpper)))
+    			  return false;
+    	}
+    	
+    	return true;
+    }
+    
     /**
      * Returns true if this multiplicity denotes a collection of
      * objects, i.e., the maximal upper range value is greater than

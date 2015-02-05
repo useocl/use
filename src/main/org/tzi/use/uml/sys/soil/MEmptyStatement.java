@@ -17,34 +17,26 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.soil;
 
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 
 /**
- * TODO
+ * MStatement class for an empty (do nothing) statement.
  * @author Daniel Gent
- *
  */
 public class MEmptyStatement extends MStatement {
-	/** TODO */
+	/** The single instance of this class (no state) */
 	private static MEmptyStatement INSTANCE = new MEmptyStatement();
 
-	
-	/**
-	 * TODO
-	 */
-	private MEmptyStatement() {
-		
-	}
+	private MEmptyStatement() { }
 	
 	
 	/**
-	 * TODO
+	 * Returns the singleton instance of the empty statement.
 	 * @return
 	 */
 	public static MEmptyStatement getInstance() {
@@ -54,9 +46,9 @@ public class MEmptyStatement extends MStatement {
 	
 	
 	@Override
-    public void execute(SoilEvaluationContext context,
+    public Value execute(SoilEvaluationContext context,
 			StatementEvaluationResult result) throws EvaluationFailedException {
-		
+		return null;
 	}
 	
 	
@@ -65,9 +57,14 @@ public class MEmptyStatement extends MStatement {
 		return "";
 	}
 	
-
+	
 	@Override
 	public String toString() {
 		return "<empty>";
+	}
+
+	@Override
+	public void processWithVisitor(MStatementVisitor v) throws Exception {
+		v.visit(this);
 	}
 }

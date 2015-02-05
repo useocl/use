@@ -23,11 +23,8 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.BagValue;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.SetValue;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 
 /** 
@@ -47,11 +44,11 @@ public class ExpCollect extends ExpQuery {
         throws ExpInvalidException
     {
         // result type is bag or sequence of query expression type
-        super( rangeExp.type().isSequence() || rangeExp.type().isOrderedSet()
+        super( rangeExp.type().isTypeOfSequence() || rangeExp.type().isTypeOfOrderedSet()
                ? (Type) TypeFactory.mkSequence(
-            		   (queryExp.type().isCollection(true) ? ((CollectionType)queryExp.type()).elemType() : queryExp.type()))
+            		   (queryExp.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID) ? ((CollectionType)queryExp.type()).elemType() : queryExp.type()))
                : (Type) TypeFactory.mkBag(
-            		   (queryExp.type().isCollection(true) ? ((CollectionType)queryExp.type()).elemType() : queryExp.type())), 
+            		   (queryExp.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID) ? ((CollectionType)queryExp.type()).elemType() : queryExp.type())), 
                ( elemVarDecl != null ) 
                ? new VarDeclList(elemVarDecl) 
                : new VarDeclList(true),
@@ -70,24 +67,19 @@ public class ExpCollect extends ExpQuery {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = evalCollectNested(ctx);
         
-        if (res.isUndefined()) 
-        	res = UndefinedValue.instance;
-        else if (res.isBag())           
-        	res = ((BagValue) res).flatten();
-        else if (res.isSet())      
-        	res = ((SetValue) res).flatten();
-        else if (res.isSequence()) 
-        	res = ((SequenceValue) res).flatten();
+        Value res;
+        
+        if (this.fQueryExp.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+        	res = evalCollectOnNested(ctx);
+        } else {
+        	res = evalCollect(ctx);
+        }
         
         ctx.exit(this, res);
         return res;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitCollect(this);

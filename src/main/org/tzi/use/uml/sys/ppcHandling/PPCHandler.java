@@ -21,18 +21,20 @@
 
 package org.tzi.use.uml.sys.ppcHandling;
 
-import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.MSystem;
 
 /**
- * TODO
+ * Interface used by the validation engine to handle
+ * pre- and post-conditions.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
 public interface PPCHandler {
 	
 	/**
-	 * TODO
+	 * Called if the pre conditions of an operation need to be handled.
 	 * @param system
 	 * @param operationCall
 	 * @throws PreConditionCheckFailedException
@@ -42,7 +44,7 @@ public interface PPCHandler {
 			MOperationCall operationCall) throws PreConditionCheckFailedException;
 	
 	/**
-	 * TODO
+	 * Called if the post conditions of an operation need to be handled.
 	 * @param system
 	 * @param operationCall
 	 * @throws PostConditionCheckFailedException
@@ -50,4 +52,26 @@ public interface PPCHandler {
 	public abstract void handlePostConditions(
 			MSystem system, 
 			MOperationCall operationCall) throws PostConditionCheckFailedException;
-};
+	
+	
+	/**
+	 * Called after the possible transitions of an operation call
+	 * were calculated.
+	 * @param system
+	 * @param operationCall
+	 * @throws PostConditionCheckFailedException
+	 */
+	public abstract void handleTransitionsPre(
+			MSystem system, 
+			MOperationCall operationCall) throws PreConditionCheckFailedException;
+	
+	/**
+	 * Called after the transition to execute was calculated.
+	 * @param system
+	 * @param operationCall
+	 * @throws PostConditionCheckFailedException
+	 */
+	public abstract void handleTransitionsPost(
+			MSystem system, 
+			MOperationCall operationCall) throws PostConditionCheckFailedException;
+}

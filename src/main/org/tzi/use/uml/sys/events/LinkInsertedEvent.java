@@ -24,59 +24,62 @@ package org.tzi.use.uml.sys.events;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.events.tags.EventContext;
+import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
 
 
 /**
- * TODO
+ * Event class that provides information about a new link event.
+ * 
  * @author Daniel Gent
- *
+ * @author Lars Hamann
  */
-public class LinkInsertedEvent extends Event {
-	/** TODO */
-	private MAssociation fAssociation;
-	/** TODO */
-	private List<MObject> fParticipants;
-
+public class LinkInsertedEvent extends Event implements SystemStructureChangedEvent {
+	/** The association the link is inserted into. */
+	private MLink fLink;
 	
 	/**
-	 * TODO
-	 * @param creator
-	 * @param association
-	 * @param participants
+	 * Constructs a new link event instance.
+	 * @param ctx The EventContext
+	 * @param link The inserted link.
 	 */
-	public LinkInsertedEvent(
-			MAssociation association, 
-			List<MObject> participants) {
-		
-		fAssociation = association;
-		fParticipants = participants;
+	public LinkInsertedEvent(EventContext ctx, MLink link) {
+		super(ctx);
+		fLink = link;
 	}
 	
-	
 	/**
-	 * TODO
+	 * Returns the inserted link.
 	 * @return
+	 */
+	public MLink getLink() {
+		return fLink;
+	}
+	/**
+	 * The association the link is inserted into.
+	 * @return The association
 	 */
 	public MAssociation getAssociation() {
-		return fAssociation;
+		return fLink.association();
 	}
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The participating objects in the same order as the link ends of the association.
+	 * @return The participating objects.
 	 */
 	public List<MObject> getParticipants() {
-		return fParticipants;
+		return fLink.linkedObjects();
 	}
 	
 	
 	/**
-	 * TODO
-	 * @return
+	 * The number of participating instances, same as <code>getParticipants().size()</code>.
+	 * @return The number of participating instances.
 	 */
 	public int getNumParticipants() {
-		return fParticipants.size();
+		return fLink.linkedObjects().size();
 	}
 }

@@ -193,7 +193,7 @@ public class SymbolTable {
 			Entry thisEntry = fEntries.get(name);
 			Entry thatEntry = poppedState.get(name);
 			
-			if (!thatEntry.type.isSubtypeOf(thisEntry.type)) {
+			if (!thatEntry.type.conformsTo(thisEntry.type)) {
 				thisEntry.isDirty = true;
 				thisEntry.cause = cause;
 			} else if (thatEntry.isDirty) {
@@ -228,7 +228,7 @@ public class SymbolTable {
 		if (entry == null && fVisibleState != null) {
 			MObject obj = fVisibleState.objectByName(name);
 			if (obj != null)
-				return new Entry(obj.type());
+				return new Entry(obj.cls());
 		}
 		
 		return entry;
@@ -343,6 +343,6 @@ public class SymbolTable {
 	 */
 	public boolean isExplicit() {
 		return fExplicitState.peek();
-	}
+}
 
 }

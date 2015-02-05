@@ -22,6 +22,7 @@
 
 package org.tzi.use.gui.views.diagrams.util;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ import java.util.ArrayList;
  */
 public class FilledDirectedGraphic extends DirectedGraphic {
 
+	private Color fillColor = null;
+	
     FilledDirectedGraphic(final ArrayList<I_DirectedLine> lines) {
         this.containedLines.addAll(lines);
     }
@@ -52,14 +55,38 @@ public class FilledDirectedGraphic extends DirectedGraphic {
     }
 
     /**
+     * Creates a FilledDirectedGraphic from the given graphic if that one is closed
+     *
+     * @param directedGraphic graphic to be filled (should be closed)
+     * @return filled graphic
+     */
+    public static FilledDirectedGraphic fillDirectedGraphic(final I_DirectedGraphic directedGraphic, Color fillColor) {
+        if (directedGraphic.isClosed()) {
+        	FilledDirectedGraphic g = new FilledDirectedGraphic(directedGraphic.getLines());
+        	g.fillColor = fillColor;
+        	return g;
+        }
+        throw new IllegalArgumentException("fillDirectedGraphic: directed graphic <"
+                + directedGraphic + "> is not a closed shape");
+    }
+    
+    /**
      * Draws this graphic as a polygon
      *
      * @param graphic to be drawn into
      * @return this graphic
      */
     public I_DirectedGraphic draw(final Graphics graphic) {
-        final Polygon polygon = createPolygon();
+    	final Polygon polygon = createPolygon();
+    	final Color org = graphic.getColor();
+    	
+        if (fillColor != null) {
+        	graphic.setColor(fillColor);
+        }
+        
         graphic.fillPolygon(polygon);
+        graphic.setColor(org);
+        
         graphic.drawPolygon(polygon);
         return this;
     }
@@ -100,7 +127,9 @@ public class FilledDirectedGraphic extends DirectedGraphic {
     }
 
     I_DirectedGraphic doCreateDirectedGraphic(final ArrayList<I_DirectedLine> containedLines) {
-        return new FilledDirectedGraphic(containedLines);
+    	FilledDirectedGraphic res = new FilledDirectedGraphic(containedLines); 
+    	res.fillColor = fillColor;
+    	return res;
     }
 
 }

@@ -12,66 +12,66 @@
 # sets
 
 ?Set{a,b}
-*-> Set{@a,@b} : Set(A)
+*-> Set{a,b} : Set(A)
 :Set{a,b}
 *-> Set(A)
 
 ?let x:Set(OclAny) = Set{a,b} in x
-*-> Set{@a,@b} : Set(A)
+*-> Set{a,b} : Set(A)
 :let x:Set(OclAny) = Set{a,b} in x
 *-> Set(OclAny)
 
 ?Set{a,b,e}
-*-> Set{@a,@b,@e} : Set(OclAny)
+*-> Set{a,b,e} : Set(OclAny)
 :Set{a,b,e}
 *-> Set(OclAny)
 
 ?Set{a,b,e}->reject(x|x = e)
-*-> Set{@a,@b} : Set(A)
+*-> Set{a,b} : Set(A)
 :Set{a,b,e}->reject(x|x <> e)
 *-> Set(OclAny)
 
 # bags
 
 ?Bag{a,b}
-*-> Bag{@a,@b} : Bag(A)
+*-> Bag{a,b} : Bag(A)
 :Bag{a,b}
 *-> Bag(A)
 
 ?let x:Bag(OclAny) = Bag{a,b} in x
-*-> Bag{@a,@b} : Bag(A)
+*-> Bag{a,b} : Bag(A)
 :let x:Bag(OclAny) = Bag{a,b} in x
 *-> Bag(OclAny)
 
 ?Bag{a,b,e}
-*-> Bag{@a,@b,@e} : Bag(OclAny)
+*-> Bag{a,b,e} : Bag(OclAny)
 :Bag{a,b,e}
 *-> Bag(OclAny)
 
 ?Bag{a,b,e}->reject(x|x = e)
-*-> Bag{@a,@b} : Bag(A)
+*-> Bag{a,b} : Bag(A)
 :Bag{a,b,e}->reject(x|x <> e)
 *-> Bag(OclAny)
 
 # sequences
 
 ?Sequence{a,b}
-*-> Sequence{@a,@b} : Sequence(A)
+*-> Sequence{a,b} : Sequence(A)
 :Sequence{a,b}
 *-> Sequence(A)
 
 ?let x:Sequence(OclAny) = Sequence{a,b} in x
-*-> Sequence{@a,@b} : Sequence(A)
+*-> Sequence{a,b} : Sequence(A)
 :let x:Sequence(OclAny) = Sequence{a,b} in x
 *-> Sequence(OclAny)
 
 ?Sequence{a,b,e}
-*-> Sequence{@a,@b,@e} : Sequence(OclAny)
+*-> Sequence{a,b,e} : Sequence(OclAny)
 :Sequence{a,b,e}
 *-> Sequence(OclAny)
 
 ?Sequence{a,b,e}->reject(x|x = e)
-*-> Sequence{@a,@b} : Sequence(A)
+*-> Sequence{a,b} : Sequence(A)
 :Sequence{a,b,e}->reject(x|x <> e)
 *-> Sequence(OclAny)
 

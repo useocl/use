@@ -27,15 +27,16 @@ package org.tzi.use.gen.assl.statics;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.util.collections.HashMultiMap;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 /**
  * @see org.tzi.use.gen.assl.statics
  * @author  Joern Bohling
  */
 public class GInstructionCreator { 
-    private MultiMap<String, IGInstructionMatcher> matchermap = null;
+    private ListMultimap<String, IGInstructionMatcher> matchermap = null;
 
     /**
      * A handle to the unique Singleton instance.
@@ -59,7 +60,7 @@ public class GInstructionCreator {
             new GMatcherSub_Seq_Integer(),
             new GMatcherCreate_AC()
         };
-        matchermap = new HashMultiMap<String, IGInstructionMatcher>();
+        matchermap = ArrayListMultimap.create();
         for (int i = 0; i < matcherlist.length; i++)
             matchermap.put(matcherlist[i].name(), matcherlist[i]);
     }

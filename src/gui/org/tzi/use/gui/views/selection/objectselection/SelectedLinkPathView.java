@@ -34,7 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.selection.TableModel.Row;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
@@ -58,7 +58,7 @@ public class SelectedLinkPathView extends SelectedObjectPathView {
 	/**
 	 * Constructor for SelectedLinkPathView.
 	 */
-	public SelectedLinkPathView(MainWindow parent, MSystem system, NewObjectDiagram diagram, 
+	public SelectedLinkPathView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram, 
 				Set<MObject> selectedObjects, Set<MLink> selectedLinks) {
 		super(parent, system, diagram, selectedObjects);
 		initSelectedAssociationPathView(selectedLinks);

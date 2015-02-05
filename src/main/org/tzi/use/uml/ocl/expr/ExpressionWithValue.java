@@ -30,14 +30,22 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Joern Bohling
  */
 public class ExpressionWithValue extends Expression  {
-    private Value fValue;
+    
+	private final Value fValue;
 
     public ExpressionWithValue( Value value ) {
         super(value.type());
         fValue = value;
     }
     
-    public Value eval(EvalContext ctx) {
+    /**
+	 * @return the fValue
+	 */
+	public Value getValue() {
+		return fValue;
+	}
+
+	public Value eval(EvalContext ctx) {
         return fValue;
     }
     
@@ -46,13 +54,14 @@ public class ExpressionWithValue extends Expression  {
     	return sb.append(fValue.toString());
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitWithValue(this);		
 	}
-    
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
+	}
 }
 

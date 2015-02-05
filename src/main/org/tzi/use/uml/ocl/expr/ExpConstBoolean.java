@@ -65,5 +65,13 @@ public final class ExpConstBoolean extends Expression {
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitConstBoolean(this);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
+	 */
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
+	}
 }
 

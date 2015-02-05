@@ -34,8 +34,6 @@ import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.ObjectType;
-import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -56,42 +54,50 @@ public class ASTInvariantClause extends ASTAnnotatable {
         return fExpr.toString();
     }
 
-
     void gen(Context ctx, List<Token> varTokens, MClass cls) {
+    	gen(ctx, varTokens, cls, true);
+    }
+    
+    MClassInvariant gen(Context ctx, List<Token> varTokens, MClass cls, boolean addToModel) {
         // enter context variable into scope of invariant
-        ObjectType ot = TypeFactory.mkObjectType(cls);
         Symtable vars = ctx.varTable();
         vars.enterScope();
 
         List<String> varNames = new ArrayList<String>();
+        MClassInvariant inv = null;
         
         try {
             if (varTokens != null && varTokens.size() > 0) {                
             	for (Token var : varTokens) {
-            		vars.add(var, ot);
-            		ctx.exprContext().push(var.getText(), ot);
+            		vars.add(var, cls);
+            		ctx.exprContext().push(var.getText(), cls);
             		varNames.add(var.getText());
             	}
             } else {
                 // create pseudo-variable "self"
-                vars.add("self", ot, null);
-                ctx.exprContext().push("self", ot);
+                vars.add("self", cls, null);
+                ctx.exprContext().push("self", cls);
                 varNames.add("self");
             }
 
             Expression expr = fExpr.gen(ctx);
             String invName = null;
-            if (fName != null )
-                invName = fName.getText();
             
-            MClassInvariant inv = onCreateMClassInvariant(ctx, cls, varNames,
-					expr, invName);
+			if (fName == null) {
+				invName = ctx.model().createModelElementName("inv");
+			} else {
+				invName = fName.getText();
+			}
+            
+            inv = onCreateMClassInvariant(ctx, cls, varNames, expr, invName);
             
             this.genAnnotations(inv);
             
             // sets the line position of the USE-Model in this  invarinat
             inv.setPositionInModel( fExpr.getStartToken().getLine() );
-            ctx.model().addClassInvariant(inv);
+            if(addToModel){
+            	ctx.model().addClassInvariant(inv);
+            }
         } catch (MInvalidModelException ex) {
             ctx.reportError(fExpr.getStartToken(), ex);
         } catch (ExpInvalidException ex) {
@@ -101,6 +107,7 @@ public class ASTInvariantClause extends ASTAnnotatable {
         }
         vars.exitScope(); 
         ctx.exprContext().pop();
+        return inv;
     }
 
 	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClass cls,

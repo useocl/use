@@ -70,5 +70,13 @@ public final class ExpConstReal extends Expression {
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitConstReal(this);		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
+	 */
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
+	}
 }
 

@@ -21,17 +21,13 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.VoidType;
-import org.tzi.use.uml.ocl.value.BagValue;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * Expression for creating an empty collection.
- *
- * @version     $ProjectVersion: 0.393 $
+ * (USE specific extension, only for backward compatibility)
  * @author  Mark Richters
  */
 public final class ExpEmptyCollection extends Expression {
@@ -42,11 +38,9 @@ public final class ExpEmptyCollection extends Expression {
         // result type is the specified collection type
         super(collType);
 
-        if (! ( collType.isSet() 
-                || collType.isBag() 
-                || collType.isSequence() ) )
+        if (!collType.isInstantiableCollection())
             throw new ExpInvalidException(
-                                          "Expected set, bag, or sequence type, found `" + 
+                                          "Expected set, bag, ordered set, or sequence type, found `" + 
                                           collType + "'.");
     }
 
@@ -56,33 +50,33 @@ public final class ExpEmptyCollection extends Expression {
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = null;
-        Type t = type();
-        Type elemType = new VoidType(); //((CollectionType) t).elemType();
+        CollectionType t = (CollectionType) type();
         
-        if (t.isSet() )
-            res = new SetValue(elemType);
-        else if (t.isBag() )
-            res = new BagValue(elemType);
-        else if (t.isSequence() )
-            res = new SequenceValue(elemType);
-        else
-            throw new RuntimeException("Unexpected type `" + t + "'.");
+        res = t.createCollectionValue(new Value[0]);
+        		
         ctx.exit(this, res);
         return res;
     }
 
     @Override
+    public String name() {
+    	return "oclEmpty";
+    }
+    
+    @Override
     public StringBuilder toString(StringBuilder sb) {
-        sb.append("oclEmpty(");
+        sb.append(name()).append("(");
         type().toString(sb);
         return sb.append(")");
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitEmptyCollection(this);
+	}
+
+	@Override
+	protected boolean childExpressionRequiresPreState() {
+		return false;
 	}
 }

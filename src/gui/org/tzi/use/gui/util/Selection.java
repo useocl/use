@@ -24,8 +24,8 @@ package org.tzi.use.gui.util;
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.EventObject;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.swing.event.EventListenerList;
@@ -71,27 +71,41 @@ public class Selection<T extends Selectable> implements Iterable<T> {
     }
 
     public Selection() {
-        fSelection = new HashSet<T>();
+        fSelection = new LinkedHashSet<T>();
     }
 
-    public void add(T sel) {
-        fSelection.add(sel);
-        sel.setSelected(true);
-        fireStateChanged();
+    /**
+     * Allow resize if only a single element is selected.
+     */
+    private void setResizeable() {
+    	boolean allowed = (fSelection.size() == 1); 
+		for (T s : fSelection) {
+        	s.setResizeAllowed(allowed);
+        }
+    }
+    
+    public void add(T sel) {  	
+    	fSelection.add(sel);
+    	sel.setSelected(true);
+    	setResizeable();
+    	fireStateChanged();
     }
 
-    public void addAll(Collection<T> sel) {
+    
+    public void addAll(Collection<? extends T> sel) {
         for (T s : sel) {
         	fSelection.add(s);
         	s.setSelected(true);
         }
-        
+
+    	setResizeable();
         fireStateChanged();
     }
     
     public void remove(T sel) {
         fSelection.remove(sel);
         sel.setSelected(false);
+        setResizeable();
         fireStateChanged();
     }
 

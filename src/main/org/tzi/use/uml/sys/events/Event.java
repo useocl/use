@@ -21,12 +21,34 @@
 
 package org.tzi.use.uml.sys.events;
 
+import org.tzi.use.uml.sys.events.tags.EventContext;
+
 
 /**
- * TODO
+ * Base class for all events, like {@link AttributeAssignedEvent}.
+ * These events are for exaple used in the sequence diagram.
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
 public abstract class Event {
+	private final EventContext context;
+
+	/**
+	 * Constructs a new system event with
+	 * information about its execution context. 
+	 * @param context
+	 */
+	public Event(EventContext context) {
+		super();
+		this.context = context;
+	}
 	
+	/**
+	 * The context inside this event was raised.
+	 * @return
+	 */
+	public EventContext getContext() {
+		return this.context;
+	}
 }

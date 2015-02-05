@@ -24,19 +24,15 @@ package org.tzi.use.uml.sys.ppcHandling;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.util.StringUtil;
 
+/**
+ * Exception used to signal a failed pre condition.
+ * @author Daniel Gent
+ *
+ */
 public class PreConditionCheckFailedException extends PPCCheckFailedException {
-	/** TODO */
 	private static final long serialVersionUID = 1L;
 
-	
-	/**
-	 * TODO
-	 * @param culprit
-	 * @param message
-	 */
-	public PreConditionCheckFailedException(
-			MOperationCall culprit) {
-		
+	public PreConditionCheckFailedException(MOperationCall culprit) {
 		super(culprit);
 	}
 	
@@ -45,7 +41,7 @@ public class PreConditionCheckFailedException extends PPCCheckFailedException {
 	public String getMessage() {
 		return 
 			"precondition false in operation call " + 
-			StringUtil.inQuotes(getCulprit()) + 
+			StringUtil.inQuotes(getOperationCall()) + 
 			".";
 	}
 }

@@ -110,8 +110,7 @@ public class ASTOperation extends ASTAnnotatable {
             resultType = fType.gen(ctx);
         }
         
-        fOperation = ctx.modelFactory().createOperation(fName.getText(), varDeclList,
-                                                        resultType);
+        fOperation = ctx.modelFactory().createOperation(fName.getText(), varDeclList, resultType);
         
         // sets the line position of the USE-Model in this attribute
         fOperation.setPositionInModel( fName.getLine() );
@@ -131,8 +130,7 @@ public class ASTOperation extends ASTAnnotatable {
         return fOperation;
     }
 
-    public void genFinal(Context ctx) 
-        throws SemanticException 
+    public void genFinal(Context ctx) throws SemanticException 
     {
         // fOperation is null if genSignature exited with an Exception
         if (fOperation == null )
@@ -184,10 +182,21 @@ public class ASTOperation extends ASTAnnotatable {
 			message.append("\nCould not compile soil defined operation ");
 			message.append(StringUtil.inQuotes(fOperation.signature()));
 			message.append(" due to the following error:\n");
-			message.append(e.getMessage());
+			message.append(e.getMessage(true));
 			
 			throw new SemanticException(fName, message.toString());
 		}
+	}
+
+
+	/**
+	 * During compilation, this operation marks this AST-node
+	 * as invali, because the signature had errors.
+	 * Any call to {@link #genFinal(Context)} afterwards 
+	 * is ignored.
+	 */
+	public void setSignatureGenFailed() {
+		this.fOperation = null;
 	}
 }
 

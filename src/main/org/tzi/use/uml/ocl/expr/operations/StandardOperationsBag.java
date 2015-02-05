@@ -5,17 +5,18 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.BagType;
 import org.tzi.use.uml.ocl.type.SetType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
-import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.collections.MultiMap;
+
+import com.google.common.collect.Multimap;
 
 public class StandardOperationsBag {
-	public static void registerTypeOperations(MultiMap<String, OpGeneric> opmap) {
+	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
 		// operations on Bag
 		OpGeneric.registerOperation(new Op_bag_union(), opmap);
 		OpGeneric.registerOperation(new Op_bag_union_set(), opmap);
@@ -28,57 +29,6 @@ public class StandardOperationsBag {
 		// reject
 		// collect
 		// count: inherited from Collection		
-		// Constructors
-		OpGeneric.registerOperation(new Op_mkBagRange(), opmap);
-	}
-}
-
-//--------------------------------------------------------
-//
-// Bag constructors.
-//
-// --------------------------------------------------------
-
-/* mkBagRange : Integer x Integer, ... -> Bag(Integer) */
-final class Op_mkBagRange extends OpGeneric {
-	public String name() {
-		return "mkBagRange";
-	}
-
-	public int kind() {
-		return OPERATION;
-	}
-
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
-
-	public Type matches(Type params[]) {
-		return (params.length >= 2 && params.length % 2 == 0
-				&& params[0].isInteger() && params[1].isInteger()) ? TypeFactory
-				.mkBag(TypeFactory.mkInteger())
-				: null;
-	}
-
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		int[] ranges = new int[args.length];
-		for (int i = 0; i < args.length; i++)
-			ranges[i] = ((IntegerValue) args[i]).value();
-
-		return new BagValue(TypeFactory.mkInteger(), ranges);
-	}
-
-	public String stringRep(Expression args[], String atPre) {
-		if (args.length % 2 != 0)
-			throw new IllegalArgumentException("length=" + args.length);
-		String s = "Bag{";
-		for (int i = 0; i < args.length; i += 2) {
-			if (i > 0)
-				s += ",";
-			s += args[i] + ".." + args[i + 1];
-		}
-		s += "}";
-		return s;
 	}
 }
 
@@ -103,7 +53,10 @@ final class Op_bag_union extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isBag() && params[1].isBag()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfBag() &&
+			params[1].isTypeOfBag()) {
+			
 			BagType bag1 = (BagType) params[0];
 			BagType bag2 = (BagType) params[1];
 
@@ -119,7 +72,7 @@ final class Op_bag_union extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		BagValue bag1 = (BagValue) args[0];
 		BagValue bag2 = (BagValue) args[1];
-		return bag1.union(bag2);
+		return bag1.union(resultType,bag2);
 	}
 }
 
@@ -140,7 +93,9 @@ final class Op_bag_union_set extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isBag() && params[1].isSet()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfBag() && 
+			params[1].isTypeOfSet()) {
 			BagType bag = (BagType) params[0];
 			SetType set = (SetType) params[1];
 
@@ -156,7 +111,7 @@ final class Op_bag_union_set extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		BagValue bag = (BagValue) args[0];
 		SetValue set = (SetValue) args[1];
-		return bag.union(set.asBag());
+		return bag.union(resultType, set.asBag());
 	}
 }
 
@@ -177,8 +132,14 @@ final class Op_bag_intersection extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isBag() && params[1].isBag()) {
+		if (params.length != 2) return null;
+		
+		if (params[0].isTypeOfBag() && 
+			params[1].isKindOfBag(VoidHandling.INCLUDE_VOID)) {
 			BagType bag1 = (BagType) params[0];
+			
+			if (params[1].isTypeOfVoidType()) return bag1;
+			
 			BagType bag2 = (BagType) params[1];
 
 			Type commonElementType = bag1.elemType().getLeastCommonSupertype(
@@ -188,13 +149,15 @@ final class Op_bag_intersection extends OpGeneric {
 				return TypeFactory.mkBag(commonElementType);
 
 		}
+		
 		return null;
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		BagValue bag1 = (BagValue) args[0];
+		//FIXME: Handle null-value
 		BagValue bag2 = (BagValue) args[1];
-		return bag1.intersection(bag2);
+		return bag1.intersection(resultType, bag2);
 	}
 	
 	@Override
@@ -207,9 +170,9 @@ final class Op_bag_intersection extends OpGeneric {
 		
 		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
 		
-		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return  "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
-					 " can never evaluate to more then an empty bag, " + StringUtil.NEWLINE +
+					 " can never evaluate to more than an empty bag, " + StringUtil.NEWLINE +
 					 "because the element types " + StringUtil.inQuotes(elemType1) + 
 					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
 		}
@@ -235,7 +198,10 @@ final class Op_bag_intersection_set extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isBag() && params[1].isSet()) {
+		if (params.length == 2 && 
+			params[0].isTypeOfBag() && 
+			params[1].isTypeOfSet()) {
+			
 			BagType bag = (BagType) params[0];
 			SetType set = (SetType) params[1];
 
@@ -251,7 +217,7 @@ final class Op_bag_intersection_set extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		BagValue bag = (BagValue) args[0];
 		SetValue set = (SetValue) args[1];
-		return bag.asSet().intersection(set);
+		return bag.asSet().intersection(resultType, set);
 	}
 	
 	@Override
@@ -264,7 +230,7 @@ final class Op_bag_intersection_set extends OpGeneric {
 		
 		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
 		
-		if (!(elemType1.isTrueOclAny() || elemType2.isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to more then an empty set, " + StringUtil.NEWLINE +
 					 "because the element types " + StringUtil.inQuotes(elemType1) + 
@@ -292,7 +258,7 @@ final class Op_bag_including extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isBag()) {
+		if (params.length == 2 && params[0].isTypeOfBag()) {
 			BagType bag = (BagType) params[0];
 			Type commonElementType = bag.elemType().getLeastCommonSupertype(
 					params[1]);
@@ -307,7 +273,7 @@ final class Op_bag_including extends OpGeneric {
 		if (args[0].isUndefined())
 			return UndefinedValue.instance;
 		BagValue bag = (BagValue) args[0];
-		return bag.including(args[1]);
+		return bag.including(resultType, args[1]);
 	}
 }
 
@@ -328,7 +294,7 @@ final class Op_bag_excluding extends OpGeneric {
 	}
 
 	public Type matches(Type params[]) {
-		if (params.length == 2 && params[0].isBag()) {
+		if (params.length == 2 && params[0].isTypeOfBag()) {
 			BagType bag = (BagType) params[0];
 			Type commonElementType = bag.elemType().getLeastCommonSupertype(
 					params[1]);
@@ -343,7 +309,7 @@ final class Op_bag_excluding extends OpGeneric {
 		if (args[0].isUndefined())
 			return UndefinedValue.instance;
 		BagValue bag = (BagValue) args[0];
-		return bag.excluding(args[1]);
+		return bag.excluding(resultType, args[1]);
 	}
 	
 	@Override
@@ -351,7 +317,7 @@ final class Op_bag_excluding extends OpGeneric {
 		BagType  bag = (BagType) args[0].type();
 		Type commonElementType = bag.elemType().getLeastCommonSupertype(args[1].type());
 		
-		if (!(bag.elemType().isTrueOclAny() || args[1].type().isTrueOclAny()) && commonElementType.isTrueOclAny()) {
+		if (!(bag.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					" will always evaluate to the same bag, " + StringUtil.NEWLINE +
 					"because the element type " + StringUtil.inQuotes(bag.elemType()) + 

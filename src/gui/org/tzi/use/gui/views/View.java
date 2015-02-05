@@ -21,16 +21,14 @@
 
 package org.tzi.use.gui.views;
 
-import org.tzi.use.uml.sys.StateChangeListener;
 
 
 /** 
  * An interface implemented by all specialized views.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
-public interface View extends StateChangeListener {
+public interface View {
     /**
      * Detaches the view from its model.
      */

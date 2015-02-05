@@ -32,7 +32,6 @@ import org.tzi.use.util.StringUtil;
 /** 
  * A list of variable declarations.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class VarDeclList implements Iterable<VarDecl> {
@@ -82,7 +81,7 @@ public class VarDeclList implements Iterable<VarDecl> {
      * Returns the nth variable declaration.
      */
     public VarDecl varDecl(int n) {
-        return (VarDecl) fVarDecls.get(n);
+        return fVarDecls.get(n);
     }
 
     /**
@@ -93,15 +92,23 @@ public class VarDeclList implements Iterable<VarDecl> {
     }
 
     /**
-     * Returns <tt>true</tt> if this list contains no declarations.
+     * Returns {@code true} if this list contains no declarations.
      */
     public boolean isEmpty() {
         return fVarDecls.isEmpty();
     }
-
+    
     /**
-     * Returns <tt>true</tt> if this list contains a declaration for
-     * <code>varName</code>.
+	 * Returns {@code true} if this lists elements all have to be the same
+	 * type.
+	 */
+	public boolean allHaveSameType() {
+		return fAllHaveSameType;
+	}
+    
+    /**
+     * Returns {@code true} if this list contains a declaration for
+     * {@code varName}.
      */
     public boolean containsName(String varName) {
         for (VarDecl decl : fVarDecls) {
@@ -160,13 +167,19 @@ public class VarDeclList implements Iterable<VarDecl> {
 			vars.add(var.name(), var.type(), var.getSourcePosition());
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
-	 */
+	
 	@Override
 	public Iterator<VarDecl> iterator() {
 		return fVarDecls.iterator();
+	}
+	
+
+	/**
+	 * @param generateHTMLExpressionVisitor
+	 */
+	public void processWithVisitor(
+			ExpressionVisitor v) {
+		v.visitVarDeclList(this);		
 	}
 }
 

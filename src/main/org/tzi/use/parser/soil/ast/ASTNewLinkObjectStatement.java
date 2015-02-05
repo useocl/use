@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTSimpleType;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -37,18 +38,18 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 
 /**
- * TODO
+ * AST class for a new link object statement
  * @author Daniel Gent
+ * @author Lars Hamann
  *
  */
 public class ASTNewLinkObjectStatement extends ASTStatement {
-	/** TODO */
+	
 	private ASTSimpleType fAssociationClassName;
 	
-	/** TODO */
 	private List<ASTRValue> fParticipants;
-		
-	/** TODO */
+	
+	/** Expression to retrieve the new object name from can be <code>null</code> */
 	private ASTExpression fLinkObjectName;
 	
 	/**
@@ -58,19 +59,19 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 	
 	
 	/**
-	 * Constructs a new AST node.
-	 * @param associationName
-	 * @param objectName
+	 * Constructs a new ASTNewLinkObjectStatement node using the provided information.
+	 * @param associationClassName
 	 * @param participants
 	 * @param qualifierValues
 	 * @param linkObjectName
 	 */
 	public ASTNewLinkObjectStatement(
+			Token start,
 			ASTSimpleType associationClassName, 
 			List<ASTRValue> participants,
 			List<List<ASTRValue>> qualifierValues,
 			ASTExpression linkObjectName) {
-		
+		super(start);
 		fAssociationClassName = associationClassName;
 		fParticipants = participants;
 		fLinkObjectName = linkObjectName;
@@ -79,36 +80,22 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 	
 	
 	/**
-	 * TODO
+	 * Constructs a new ASTNewLinkObjectStatement node using the
+	 * provided information.
+	 * <p>The object name is set by the system.</p> 
 	 * @param associationClassName
 	 * @param participants
+	 * @param qualifierValues
 	 */
 	public ASTNewLinkObjectStatement(
+			Token start,
 			ASTSimpleType associationClassName, 
 			List<ASTRValue> participants,
 			List<List<ASTRValue>> qualifierValues) {
 		
-		this(associationClassName, participants, qualifierValues, null);
-	}
-		
-	/**
-	 * TODO
-	 * @return
-	 */
-	public ASTExpression getLinkObjectName() {
-		return fLinkObjectName;
+		this(start, associationClassName, participants, qualifierValues, null);
 	}
 	
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public List<ASTRValue> getParticipants() {
-		return fParticipants;
-	}
-
-
 	@Override
 	protected MStatement generateStatement() throws CompilationFailedException {
 
@@ -140,7 +127,7 @@ public class ASTNewLinkObjectStatement extends ASTStatement {
 					endQualifierRValues = new ArrayList<MRValue>();
 					
 					for (ASTRValue value : endQualifierValues) {
-						endQualifierRValues.add(this.generateRValue(value));
+						endQualifierRValues.add(value.generate(this));
 					}
 				}
 				qualifierRValues.add(endQualifierRValues);

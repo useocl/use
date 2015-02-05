@@ -37,7 +37,6 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.ObjectType;
 import org.tzi.use.uml.ocl.type.Type;
 
 public class ASTGAttributeAssignment extends ASTGInstruction {
@@ -56,12 +55,12 @@ public class ASTGAttributeAssignment extends ASTGInstruction {
     public GInstruction gen(Context ctx) throws SemanticException {
         GValueInstruction targetinstr
             = (GValueInstruction) fTargetObject.gen(ctx);
-        if (! targetinstr.type().isTrueObjectType()) {
+        if (! targetinstr.type().isTypeOfClass()) {
             String err = "The type of `" + targetinstr 
                 + "' must be an object type.";
             throw new SemanticException( fAttributeName, err );
         }
-        MClass targetcls = ((ObjectType) targetinstr.type()).cls();
+        MClass targetcls = (MClass)targetinstr.type();
         MAttribute targetAttribute
             = targetcls.attribute(fAttributeName.getText(), true);
         if (targetAttribute == null) {
@@ -83,7 +82,7 @@ public class ASTGAttributeAssignment extends ASTGInstruction {
         GValueInstruction valuesource = (GValueInstruction) source;
         // The type of the source must be the same type or
         // a subtype of the target.
-        if (! valuesource.type().isSubtypeOf(type)) {
+        if (! valuesource.type().conformsTo(type)) {
             String err = "Invalid assignment: " +
                 "`" + targetinstr + "." +targetAttribute.name()+ "'" +
                 " is of type " + type + "." +

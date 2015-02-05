@@ -21,23 +21,26 @@
 
 package org.tzi.use.uml.mm;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.graph.DirectedEdge;
 
 /** 
- * A generalization connects two classes. We currently don't support
- * generalizations of associations.
- *
- * @version     $ProjectVersion: 0.393 $
+ * A generalization connects two classifier.
+ * 
  * @author      Mark Richters 
  */
-public final class MGeneralization extends MModelElementImpl implements DirectedEdge<MClass> {
-    private final MClass fParent;
-    private final MClass fChild;
+public final class MGeneralization extends MModelElementImpl implements DirectedEdge<MClassifier> {
+
+	@NonNull
+	private final MClassifier fParent;
+
+	@NonNull
+	private final MClassifier fChild;
 
     /** 
      * Creates a new generalization.
      */
-    MGeneralization(MClass child, MClass parent) {
+    MGeneralization(@NonNull MClassifier child, @NonNull MClassifier parent) {
         super("GEN_" + child.name() + "_" + parent.name());
         fChild = child;
         fParent = parent;
@@ -46,14 +49,16 @@ public final class MGeneralization extends MModelElementImpl implements Directed
     /**
      * Returns the child class of this generalization.
      */
-    public MClass child() {
+    @NonNull
+    public MClassifier child() {
         return fChild;
     }
 
     /**
      * Returns the parent class of this generalization.
      */
-    public MClass parent() {
+    @NonNull
+    public MClassifier parent() {
         return fParent;
     }
 
@@ -62,14 +67,18 @@ public final class MGeneralization extends MModelElementImpl implements Directed
     /**
      * Returns the source node of this edge.
      */
-    public MClass source() {
+    @Override
+    @NonNull
+    public MClassifier source() {
         return fChild;
     }
 
     /**
      * Returns the target node of this edge.
      */
-    public MClass target() {
+    @Override
+    @NonNull
+    public MClassifier target() {
         return fParent;
     }
 
@@ -86,4 +95,22 @@ public final class MGeneralization extends MModelElementImpl implements Directed
     public void processWithVisitor(MMVisitor v) {
         v.visitGeneralization(this);
     }
+    
+    @Override
+	public int hashCode() {
+		return fChild.hashCode() & fParent.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		
+		if (obj instanceof MGeneralization) {
+			MGeneralization other = (MGeneralization)obj;
+			return fChild.equals(other.fChild) && fParent.equals(other.fParent);
+		} else {
+			return false;
+		}
+	}
 }

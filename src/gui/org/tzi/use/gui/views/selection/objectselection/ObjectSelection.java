@@ -1,45 +1,61 @@
 package org.tzi.use.gui.views.selection.objectselection;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.diagrams.BinaryAssociationOrLinkEdge;
-import org.tzi.use.gui.views.diagrams.DiamondNode;
-import org.tzi.use.gui.views.diagrams.NodeBase;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
-import org.tzi.use.gui.views.selection.SelectionComparator;
+import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MNamedElementComparator;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.util.collections.CollectionUtil;
 
-/** 
- * ClassSelection is responsible for the new functions in the object diagram. 
+import com.google.common.collect.Sets;
+
+/**
+ * ClassSelection is responsible for the new functions in the object diagram.
  * 
- * @author   Jun Zhang 
- * @author   Jie Xu
- * @author   Lars Hamann
+ * @author Jun Zhang
+ * @author Jie Xu
+ * @author Lars Hamann
  */
 public class ObjectSelection {
 
-	private NewObjectDiagram diagram;
+	private final DiagramViewWithObjectNode diagram;
+
+	private final MSystem system;
 
 	/**
 	 * Constructor for ObjectSelection.
 	 */
-	public ObjectSelection(NewObjectDiagram diagram) {
+	public ObjectSelection(DiagramViewWithObjectNode diagram, MSystem system) {
 		this.diagram = diagram;
+		this.system = system;
 	}
 
 	@SuppressWarnings("serial")
@@ -54,8 +70,14 @@ public class ObjectSelection {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			MainWindow.instance().showSelectedLinkPathView(
-					ObjectSelection.this.diagram, selectedObjects, selectedLinks);
+			SelectedLinkPathView opv = new SelectedLinkPathView(MainWindow.instance(), system, diagram, selectedObjects, selectedLinks);
+
+			ViewFrame f = new ViewFrame("Selection by path length", opv, "ObjectProperties.gif");
+			JComponent c = (JComponent) f.getContentPane();
+			c.setLayout(new BorderLayout());
+			c.add(opv, BorderLayout.CENTER);
+			MainWindow.instance().addNewViewFrame(f);
+			f.setSize(450, 200);
 		}
 	}
 
@@ -73,7 +95,13 @@ public class ObjectSelection {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			MainWindow.instance().showSelectedObjectPathView(ObjectSelection.this.diagram, selectedObjects);
+			SelectedObjectPathView opv = new SelectedObjectPathView(MainWindow.instance(), system, diagram, selectedObjects);
+			ViewFrame f = new ViewFrame("Selection by path length", opv, "ObjectProperties.gif");
+			JComponent c = (JComponent) f.getContentPane();
+			c.setLayout(new BorderLayout());
+			c.add(opv, BorderLayout.CENTER);
+			MainWindow.instance().addNewViewFrame(f);
+			f.setSize(450, 200);
 		}
 	}
 
@@ -84,12 +112,18 @@ public class ObjectSelection {
 	@SuppressWarnings("serial")
 	class ActionSelectionObjectView extends AbstractAction {
 		ActionSelectionObjectView() {
-			super("Select objects...");
+			super("With view...");
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			MainWindow.instance().showSelectionObjectView(
-					ObjectSelection.this.diagram);
+			SelectionObjectView opv = new SelectionObjectView(MainWindow.instance(), system, diagram);
+			ViewFrame f = new ViewFrame("Select objects", opv, "ObjectProperties.gif");
+			JComponent c = (JComponent) f.getContentPane();
+			c.setLayout(new BorderLayout());
+			c.add(opv, BorderLayout.CENTER);
+			MainWindow.instance().addNewViewFrame(f);
+
+			f.setSize(530, 230);
 		}
 	}
 
@@ -103,11 +137,18 @@ public class ObjectSelection {
 	@SuppressWarnings("serial")
 	class ActionSelectionOCLView extends AbstractAction {
 		ActionSelectionOCLView() {
-			super("Selection with OCL...");
+			super("With OCL...");
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			MainWindow.instance().showSelectionOCLView(ObjectSelection.this.diagram);
+			SelectionOCLView opv = new SelectionOCLView(MainWindow.instance(), system, diagram);
+			ViewFrame f = new ViewFrame("Selection by OCL expression", opv, "ObjectProperties.gif");
+			JComponent c = (JComponent) f.getContentPane();
+
+			c.setLayout(new BorderLayout());
+			c.add(opv, BorderLayout.CENTER);
+			MainWindow.instance().addNewViewFrame(f);
+			f.setSize(370, 250);
 		}
 	}
 
@@ -115,366 +156,301 @@ public class ObjectSelection {
 		return new ActionSelectionOCLView();
 	}
 
-	/**
-	 * Method getSelectedObjectsofAssociation returns all relevant objects, 
-	 * which are connected with the Association selected by the user. 
-	 */
-	public Set<MObject> getSelectedObjectsofAssociation(MAssociation node,
-														Set<MObject> selectedObjectsOfAssociation) {
+    /**
+     * Method getSelectedObjectsofAssociation returns all relevant objects,
+     * which are connected with the Association selected by the user.
+     */
+    public Set<MObject> getSelectedObjectsofAssociation(MAssociation node, Set<MObject> selectedObjectsOfAssociation) {
 		HashSet<MObject> objects = new HashSet<MObject>();
-		Iterator<?> it = this.diagram.getGraph().edgeIterator();
+		Iterator<EdgeBase> it = this.diagram.getGraph().edgeIterator();
 		String name = node.name();
-
+	
 		while (it.hasNext()) {
-			Object o = it.next();
-
-			if (o instanceof BinaryAssociationOrLinkEdge) {
+		    EdgeBase o = it.next();
+	
+		    if (o instanceof BinaryAssociationOrLinkEdge) {
 				BinaryAssociationOrLinkEdge edge = (BinaryAssociationOrLinkEdge) o;
-
-				if (edge.getAssocName() != null && edge.getAssocName().equals(node)) {
-
-					MObject mo = ((ObjectNode) (edge.source())).object();
-					if (!selectedObjectsOfAssociation.contains(mo)) {
-						objects.add(mo);
-					}
-					mo = ((ObjectNode) (edge.target())).object();
-					if (!selectedObjectsOfAssociation.contains(mo)
-							&& !objects.contains(mo)) {
-						objects.add(mo);
-					}
-					return objects;
-				}
-			}
-		}
 		
-		it = diagram.getGraph().iterator();
-		while (it.hasNext()) {
-			Object o = it.next();
-			if (o instanceof DiamondNode) {
-				if (((DiamondNode) o).name().equalsIgnoreCase(name)) {
-					DiamondNode dnode = (DiamondNode) o;
-
-					for (MObject mo : dnode.link().linkedObjects()) {
-						if (!selectedObjectsOfAssociation.contains(mo)
-								&& !objects.contains(mo)) {
-							objects.add(mo);
-						}
-					}
-					return objects;
+				if (edge.getAssociation() != null && edge.getAssociation().equals(node)) {
+				    MObject mo = ((ObjectNodeActivity) (edge.source())).object();
+				    if (!selectedObjectsOfAssociation.contains(mo)) {
+					objects.add(mo);
+				    }
+				    mo = ((ObjectNodeActivity) (edge.target())).object();
+				    if (!selectedObjectsOfAssociation.contains(mo) && !objects.contains(mo)) {
+					objects.add(mo);
+				    }
+				    return objects;
 				}
-			}
+		    }
+		}
+	
+		Iterator<PlaceableNode> nodeIter = diagram.getGraph().iterator();
+		
+		while (it.hasNext()) {
+		    PlaceableNode o = nodeIter.next();
+		    if (o instanceof DiamondNode) {
+				if (((DiamondNode) o).name().equalsIgnoreCase(name)) {
+				    DiamondNode dnode = (DiamondNode) o;
+		
+				    for (MObject mo : dnode.link().linkedObjects()) {
+						if (!selectedObjectsOfAssociation.contains(mo) && !objects.contains(mo)) {
+						    objects.add(mo);
+						}
+				    }
+				    return objects;
+				}
+		    }
 		}
 		return objects;
-	}
+    }
 
+    private class ObjectNodeActivityComparator implements Comparator<ObjectNodeActivity> {
+		@Override
+		public int compare(ObjectNodeActivity o1, ObjectNodeActivity o2) {
+			return o1.object().name().compareTo(o2.object().name());
+		}
+    }
+    
 	/**
-	 * Method getSubMenuHideObject supplies a list of the sorted objects in the context menu.
-	 * which are not hidden.
+	 * Method getSubMenuHideObject supplies a list of the sorted objects in the
+	 * context menu. which are not hidden.
+	 * 
 	 * @return JMenu
 	 */
 	public JMenu getSubMenuHideObject() {
-		JMenu subMenuHideObject;
-		Iterator<?> it = null;
-
-		it = diagram.getGraph().iterator();
-		subMenuHideObject = new JMenu("Hide object");
-
-		SelectionComparator sort = new SelectionComparator();
-		TreeSet<MClass> classes = new TreeSet<MClass>(sort);
-		ArrayList<JMenu> submenus = new ArrayList<JMenu>();
-
-		Iterator<?> itt = diagram.getGraph().iterator();
-		final HashSet<MObject> objects = new HashSet<MObject>();
-
-		// hide all objects
-		while (itt.hasNext()) {
-			Object node = itt.next();
-			if (node instanceof ObjectNode) {
-				MObject mobj = ((ObjectNode) node).object();
-				objects.add(mobj);
+		Set<PlaceableNode> visibleNodes = Sets.newHashSet(diagram.getGraph().getVisibleNodesIterator());
+		Set<ObjectNodeActivity> visibleObjectNodes = CollectionUtil.filterByType(visibleNodes, ObjectNodeActivity.class);
+		
+		JMenu subMenuHideObject = new JMenu("Hide object");
+		final JMenuItem hideAllObjects = new JMenuItem("Hide all objects");
+		hideAllObjects.setEnabled(diagram.getVisibleData().hasNodes());
+		hideAllObjects.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				diagram.hideAll();
+				diagram.repaint();
 			}
-		}
-
-		subMenuHideObject.add(diagram.getAction("Hide all objects", objects));
-
+		});
+		subMenuHideObject.add(hideAllObjects);
 		subMenuHideObject.addSeparator();
 
-		// all classe find out
-		while (it.hasNext()) {
-			Object node = it.next();
-			if (node instanceof ObjectNode) {
-				MClass cls = null;
+		TreeSet<ObjectNodeActivity> sortedObjectNodes = new TreeSet<ObjectNodeActivity>(new ObjectNodeActivityComparator());
+		sortedObjectNodes.addAll(visibleObjectNodes);
 
-				cls = ((ObjectNode) node).cls();
-				if (!classes.contains(cls)) {
-					classes.add(cls);
-				}
-			}
-		}
+		Map<MClass, JMenu> classMenus = new HashMap<MClass, JMenu>();
+		for (ObjectNodeActivity objNode : sortedObjectNodes) {
+			final MClass cls = objNode.cls();
+			final MObject obj = objNode.object();
 
-		// sort classes
-		it = classes.iterator();
-		while (it.hasNext()) {
-			String name = ((MClass) (it.next())).name();
-			JMenu subm = new JMenu("Class " + name);
-			subm.setName("Class " + name);
-			subMenuHideObject.add(subm);
-			submenus.add(subm);
+			if (!classMenus.containsKey(cls)) {
+				JMenu subm = new JMenu("Class " + cls.name());
+				classMenus.put(cls, subm);
 
-		}
-
-		String info;
-		TreeSet<ObjectNode> sortedNodes = new TreeSet<ObjectNode>(sort);
-
-		it = diagram.getGraph().iterator();
-		while (it.hasNext()) {
-			Object node = it.next();
-			if (node instanceof ObjectNode) {
-				sortedNodes.add((ObjectNode) node);
-			}
-		}
-		info = "Hide ";
-		it = sortedNodes.iterator();
-
-		// add every object menu
-		while (it.hasNext()) {
-			Object node = it.next();
-			String objectname = "";
-
-			if (node instanceof ObjectNode) {
-				MClass cls = null;
-				MObject mobj = null;
-
-				mobj = ((ObjectNode) node).object();
-				cls = mobj.cls();
-				objectname = mobj.name();
-				final HashSet<MObject> objects2 = new HashSet<MObject>();
-				objects2.add(mobj);
-
-				Iterator<JMenu> cl = submenus.iterator();
-				while (cl.hasNext()) {
-					JMenu jm = (JMenu) (cl.next());
-					if (jm.getName().contains(cls.name())) {
-						jm.add(diagram.getAction(info + objectname, objects2));
+				// Add show all
+				JMenuItem showAll = new JMenuItem("Hide all");
+				showAll.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						diagram.hideObjects(getVisibleObjects(cls));
+						diagram.repaint();
 					}
-				}
+				});
+				subm.add(showAll);
+				subm.addSeparator();
 			}
-		}
-		// add menu "hide/show all object"
-		Iterator<JMenu> cl = submenus.iterator();
-		
-		while (cl.hasNext()) {
-			JMenu subm = (JMenu) (cl.next());
-			if (subm.getItemCount() > 1) {
-				it = diagram.getGraph().iterator();
-				info = "Hide all";
-				final HashSet<MObject> objects3 = new HashSet<MObject>();
 
-				while (it.hasNext()) {
-					Object node = it.next();
-					MClass cls = null;
-					MObject mobj = null;
-					if (node instanceof ObjectNode) {
-						mobj = ((ObjectNode) node).object();
-						cls = mobj.cls();
-						if (subm.getName().contains(cls.name())) {
-							objects3.add(mobj);
-						}
-					}
+			JMenu parent = classMenus.get(cls);
+
+			final JMenuItem showObject = new JMenuItem("Hide " + obj.name());
+			showObject.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ev) {
+					diagram.hideObject(obj);
+					diagram.repaint();
 				}
-				subm.insert(diagram.getAction(info, objects3), 0);
-				subm.insertSeparator(1);
-			}
+			});
+			parent.add(showObject);
 		}
+
+		List<MClass> classes = new ArrayList<MClass>(classMenus.keySet());
+		Collections.sort(classes, new MNamedElementComparator());
+
+		for (MClass cls : classes) {
+			subMenuHideObject.add(classMenus.get(cls));
+		}
+
 		return subMenuHideObject;
 	}
 
 	/**
-	 * Method getSubMenuShowObject supplies a list of the sorted objects in the context menu.
-	 * which are hidden.
+	 * Method getSubMenuShowObject supplies a list of the sorted objects in the
+	 * context menu. which are hidden.
+	 * 
 	 * @return JMenu
 	 */
 	public JMenu getSubMenuShowObject() {
-		JMenu subMenuShowObject;
-
-		Iterator<?> it = null;
-		it = diagram.getHiddenNodes().iterator();
-		subMenuShowObject = new JMenu("Show object");
-
-		SelectionComparator sort = new SelectionComparator();
-
-		TreeSet<MClass> classes = new TreeSet<MClass>(sort);
-		ArrayList<JMenu> submenus = new ArrayList<JMenu>();
-		final JMenuItem showAllObjects = new JMenuItem("Show all objects");
+		JMenu subMenuShowObject = new JMenu("Show object");
+		Set<? extends PlaceableNode> hiddenNodes = diagram.getHiddenNodes();
+		Set<ObjectNodeActivity> hiddenObjectNodes = CollectionUtil.filterByType(hiddenNodes, ObjectNodeActivity.class);
+		
+		final JMenuItem showAllObjects = new JMenuItem("Show all hidden objects");
+		showAllObjects.setEnabled(!hiddenObjectNodes.isEmpty());
 		showAllObjects.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				diagram.showAll();
-				diagram.invalidateContent();
-
+				diagram.repaint();
 			}
 		});
 
 		subMenuShowObject.add(showAllObjects);
-
 		subMenuShowObject.addSeparator();
-		while (it.hasNext()) {
-			Object node = it.next();
-			if (node instanceof MObject) {
-				MClass cls = null;
-				cls = ((MObject) node).cls();
-				if (!classes.contains(cls)) {
-					classes.add(cls);
-				}
-			}
-		}
 
-		it = classes.iterator();
-		while (it.hasNext()) {
-			String name = ((MClass) (it.next())).name();
-			JMenu subm = new JMenu("Class " + name);
-			subm.setName("Class " + name);
-			subMenuShowObject.add(subm);
-			submenus.add(subm);
-		}
-
-		String info;
-
-		TreeSet<Object> sortedNodes = new TreeSet<Object>(sort);
-
-		sortedNodes.addAll(diagram.getHiddenNodes());
-		info = "Show ";
-		it = sortedNodes.iterator();
-		while (it.hasNext()) {
-
-			// add every object menu
-			Object node = it.next();
-			String objectname = "";
-
-			if (node instanceof MObject) {
-				MClass cls = null;
-				MObject mobj = null;
-				mobj = (MObject) node;
-				cls = mobj.cls();
-				objectname = mobj.name();
-				final HashSet<MObject> objects = new HashSet<MObject>();
-				objects.add(mobj);
-
-				final JMenuItem showObjects = new JMenuItem("Show "
-						+ objectname);
-				showObjects.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent ev) {
-						diagram.showObjects(objects);
-					}
-				});
-				
-				for (JMenu jm : submenus) {
-					if (jm.getName().contains(cls.name())) {
-						jm.add(showObjects);
-					}
-				}
-			}
-		}
+		TreeSet<ObjectNodeActivity> sortedNodes = new TreeSet<ObjectNodeActivity>(new ObjectNodeActivityComparator());
 		
-		// add menu "hide/show all object"
-		for (JMenu subm : submenus) {
-			if (subm.getItemCount() > 1) {
-				it = diagram.getHiddenNodes().iterator();
-				info = "Show all";
-				final HashSet<MObject> objects = new HashSet<MObject>();
+		sortedNodes.addAll(hiddenObjectNodes);
 
-				while (it.hasNext()) {
-					Object node = it.next();
-					MClass cls = null;
-					MObject mobj = null;
-					if (node instanceof MObject) {
-						mobj = (MObject) node;
-						cls = mobj.cls();
-						if (subm.getName().contains(cls.name())) {
-							objects.add(mobj);
-						}
-					}
-				}
+		Map<MClass, JMenu> classMenus = new HashMap<MClass, JMenu>();
+		for (ObjectNodeActivity node : sortedNodes) {
+			final ObjectNodeActivity objNode = (ObjectNodeActivity) node;
+			final MClass cls = objNode.cls();
+			final MObject obj = objNode.object();
 
-				final JMenuItem showObjects = new JMenuItem(info);
-				showObjects.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent ev) {
-						diagram.showObjects(objects);
+			if (!classMenus.containsKey(cls)) {
+				JMenu subm = new JMenu("Class " + cls.name());
+				classMenus.put(cls, subm);
+
+				// Add show all
+				JMenuItem showAll = new JMenuItem("Show all");
+				showAll.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						diagram.showObjects(getHiddenObjects(cls));
+						diagram.repaint();
 					}
 				});
-				subm.insert(showObjects, 0);
-				subm.insertSeparator(1);
+				subm.add(showAll);
+				subm.addSeparator();
 			}
+
+			JMenu parent = classMenus.get(cls);
+
+			final JMenuItem showObject = new JMenuItem("Show " + obj.name());
+			showObject.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ev) {
+					diagram.showObject(obj);
+					diagram.repaint();
+				}
+			});
+			parent.add(showObject);
 		}
+
+		List<MClass> classes = new ArrayList<MClass>(classMenus.keySet());
+		Collections.sort(classes, new MNamedElementComparator());
+
+		for (MClass cls : classes) {
+			subMenuShowObject.add(classMenus.get(cls));
+		}
+
 		return subMenuShowObject;
 	}
 
 	/**
 	 * Returns a set of all displayed objects for the given classes
+	 * 
 	 * @param allClasses
 	 * @return
 	 */
 	public Set<MObject> getDisplayedObjectsForClasses(Set<MClass> allClasses) {
 		Set<MObject> objects = new HashSet<MObject>();
-		
-		for (MClass mc : allClasses) {
-			Iterator<NodeBase> itobject = diagram.getGraph().iterator();
-			
-			while(itobject.hasNext()){
-				Object node = itobject.next();
-				if (node instanceof ObjectNode) {
-					MObject mobj = ((ObjectNode) node).object();
-					if(mobj.cls().equals(mc)){
-						objects.add(mobj);
-					}
+		Iterator<PlaceableNode> itobject = diagram.getVisibleData().getNodes().iterator();
+
+		while (itobject.hasNext()) {
+			Object node = itobject.next();
+			if (node instanceof ObjectNodeActivity) {
+				MObject mobj = ((ObjectNodeActivity) node).object();
+				if (allClasses.contains(mobj.cls())) {
+					objects.add(mobj);
 				}
 			}
 		}
-		
+
 		return objects;
 	}
-	
-	
-	public Set<MObject> getCropHideObjects(Set<MClass> classes) { 
+
+	/**
+	 * Returns a set of all displayed objects for the given class
+	 * 
+	 * @param cls
+	 * @return
+	 */
+	public Set<MObject> getVisibleObjects(MClass cls) {
+		Set<MObject> objects = new HashSet<MObject>();
+
+		for (PlaceableNode node : diagram.getVisibleData().getNodes()) {
+			if (node instanceof ObjectNodeActivity) {
+				MObject mobj = ((ObjectNodeActivity) node).object();
+				if (cls.equals(mobj.cls())) {
+					objects.add(mobj);
+				}
+			}
+		}
+
+		return objects;
+	}
+
+	public Set<MObject> getCropHideObjects(Set<MClass> classes) {
 		Set<MClass> classesToHide = new HashSet<MClass>();
-		Iterator<NodeBase> itg = diagram.getGraph().iterator();
-		
+		Iterator<PlaceableNode> itg = diagram.getGraph().iterator();
+
 		while (itg.hasNext()) {
 			Object node = itg.next();
-			if(node instanceof ObjectNode) {
-				MObject mobj = ((ObjectNode) node).object();
-				if( !classes.contains(mobj.cls()) ){
+			if (node instanceof ObjectNodeActivity) {
+				MObject mobj = ((ObjectNodeActivity) node).object();
+				if (!classes.contains(mobj.cls())) {
 					classesToHide.add(mobj.cls());
 				}
 			}
 		}
-		
+
 		for (Object node : diagram.getHiddenNodes()) {
-			if(node instanceof MObject){
-				MObject mobj = (MObject)(node);
-								
-				if(!classes.contains(mobj.cls())) {
+			if (node instanceof MObject) {
+				MObject mobj = (MObject) (node);
+
+				if (!classes.contains(mobj.cls())) {
 					classesToHide.add(mobj.cls());
 				}
 			}
 		}
-		
+
 		return getDisplayedObjectsForClasses(classesToHide);
 	}
-	
+
 	public Set<MObject> getHiddenObjects(Set<MClass> classes) {
 		final Set<MObject> objects = new HashSet<MObject>();
-		
-		for (MClass mc : classes) {
-			for (NodeBase node : diagram.getHiddenNodes()) {
-				if(node instanceof ObjectNode){
-					ObjectNode mobj = (ObjectNode)(node);
-					if(mobj.cls().equals(mc)){
-						objects.add(mobj.object());
-					}
+
+		for (PlaceableNode node : diagram.getHiddenNodes()) {
+			if (node instanceof ObjectNodeActivity) {
+				ObjectNodeActivity mobj = (ObjectNodeActivity) (node);
+				if (classes.contains(mobj.cls())) {
+					objects.add(mobj.object());
 				}
 			}
 		}
-		
+
+		return objects;
+	}
+
+	public Set<MObject> getHiddenObjects(MClass cls) {
+		final Set<MObject> objects = new HashSet<MObject>();
+
+		for (PlaceableNode node : diagram.getHiddenNodes()) {
+			if (node instanceof ObjectNodeActivity) {
+				ObjectNodeActivity mobj = (ObjectNodeActivity) (node);
+				if (mobj.cls().equals(cls)) {
+					objects.add(mobj.object());
+				}
+			}
+		}
+
 		return objects;
 	}
 }
