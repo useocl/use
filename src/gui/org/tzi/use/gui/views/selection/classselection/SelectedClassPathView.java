@@ -35,10 +35,10 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.selection.ClassSelectionView;
 import org.tzi.use.gui.views.selection.TableModel.Row;
@@ -75,7 +75,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 	 */
 	void initView(AbstractTableModel model) {
 		fTableModel = model;
-		fTable = new JTable(fTableModel);
+		fTable = new ExtendedJTable(fTableModel);
 		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		fTablePane = new JScrollPane(fTable);
 

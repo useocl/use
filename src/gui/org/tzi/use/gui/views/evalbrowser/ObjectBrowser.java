@@ -143,8 +143,7 @@ public class ObjectBrowser extends JFrame {
                         fAttributes, 0, N);
                 Arrays.sort(fAttributes);
                 for (int i = 0; i < N; i++)
-                    fValues[i] = 
-                        ((Value) fAttributeValueMap.get(fAttributes[i])).toString();
+                    fValues[i] = fAttributeValueMap.get(fAttributes[i]).toString();
                 
                 final int M = fAssoc.size();
                 fAssociations = new String[M];
@@ -270,7 +269,7 @@ public class ObjectBrowser extends JFrame {
         fTopLabel.setVerticalAlignment(JLabel.CENTER);
         
         JButton button = new JButton("Close");
-        button.setSize(new Dimension(30,(int)button.getHeight()));
+        button.setSize(new Dimension(30, button.getHeight()));
         button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event){
                 setVisible(false);
@@ -291,7 +290,7 @@ public class ObjectBrowser extends JFrame {
                 int modelColumn = convertColumnIndexToModel( column );
                 
                 if(modelColumn == 3 && row < fAssoc.size()) {
-                    return (TableCellEditor)fCellEditors.get(fAssoc.get(row).toString()); 
+                    return fCellEditors.get(fAssoc.get(row).toString()); 
                 }   
                 return super.getCellEditor(row,column);
                 

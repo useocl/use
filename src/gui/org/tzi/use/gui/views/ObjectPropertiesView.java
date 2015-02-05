@@ -50,6 +50,7 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -187,7 +188,7 @@ public class ObjectPropertiesView extends JPanel implements View {
 
         // create table of attribute/value pairs
         fTableModel = new TableModel();
-        fTable = new JTable(fTableModel);
+        fTable = new ExtendedJTable(fTableModel);
         fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
         fTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         fTablePane = new JScrollPane(fTable);

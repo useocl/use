@@ -45,6 +45,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
+import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
@@ -67,9 +68,6 @@ import org.tzi.use.util.StringUtil;
  */
 public class QualifierInputView extends JDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6361281949862418261L;
 	
 	/**
@@ -105,7 +103,7 @@ public class QualifierInputView extends JDialog {
 	private void initGui() {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.tableModels = new TableModel[association.associationEnds().size()];
-		this.tables = new JTable[association.associationEnds().size()];
+		this.tables = new ExtendedJTable[association.associationEnds().size()];
 		int index = 0; 
 		JPanel entryPanel = new JPanel();
 		entryPanel.setLayout(new BoxLayout(entryPanel, BoxLayout.Y_AXIS));

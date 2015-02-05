@@ -118,7 +118,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         // get a class
         Collection<MClass> classes = fSystem.model().classes();
         if (!classes.isEmpty()) {
-            fClass = (MClass) classes.iterator().next();
+            fClass = classes.iterator().next();
         }
 
         // create table of attribute/value pairs
@@ -424,7 +424,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         }
 
         public String getColumnName(int col) {
-            return (String) fColumnNames.get(col);
+            return fColumnNames.get(col);
         }
 
         public int getColumnCount() {
@@ -444,11 +444,11 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
 
         public Object getValueAt(int row, int col) {
 
-            MObject obj = (MObject) fObjects.get(row);
+            MObject obj = fObjects.get(row);
             if (col == 0)
                 return obj.name();
             else if (col <= fAttributes.length) {
-                String[] values = (String[]) fObjectValueStrMap.get(obj);
+                String[] values = fObjectValueStrMap.get(obj);
                 return values[col - 1];
             } else {
                 MClassInvariant inv = fClassInvariants[col - fAttributes.length - 1];
@@ -479,8 +479,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
             MObjectState objState = obj.state(fSystem.state());
             String[] values = new String[fAttributes.length];
             for (int i = 0; i < fAttributes.length; i++)
-                values[i] = ((Value) objState.attributeValue(fAttributes[i]))
-                        .toString();
+                values[i] = objState.attributeValue(fAttributes[i]).toString();
 
             fObjectValueStrMap.put(obj, values);
         }
