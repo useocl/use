@@ -559,7 +559,7 @@ public class ExprEvalBrowser extends JPanel {
 			public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     Entry var = fVarAssList.getSelectedValue();
-                    if(var.getValue().type().isTypeOfClass()){
+                    if(var != null && var.getValue().type().isTypeOfClass()){
                     	new ObjectBrowser(fSystem, ((ObjectValue) var.getValue()).value());
                     }
                 }
