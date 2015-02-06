@@ -692,10 +692,36 @@ public class UseModelApi {
 			throw new UseApiException(errBuffer.toString());
 		}
 		
+		return createInvariantEx(invName, contextName, invExp, isExistential);
+	}
+
+	/**
+	 * This method creates a class invariant for the class given by <code>contextName</code>.
+	 * The body expression <code>invBody</code> needs to be a boolean OCL expression. 
+	 * "Normal" invariants are validated for all instances of the context class when {@link UseSystemApi#checkState()}
+	 * is called. If <code>isExistential</code> is <code>true</code>, the invariant 
+	 * checks if the body is <code>true</code>, for at least one instance (<code>exists</code> instead of <code>forAll</code>). 
+	 *  
+	 * @param invName An optional name for the invariant to create.
+	 * @param contextName The name of the class to define the constraint on.
+	 * @param invBody The expression of the invariant.
+	 * @param isExistential Should <code>forAll</code> or <code>exists</code> be used.
+	 * 
+	 * @return MClassInvariant The new invariant added to the current model.
+	 * 
+	 * @throws ApiException
+	 *             If the type of the context name is unknown or not a class name,
+	 *             the body expression is invalid or the invariant name is already used
+	 *             for this class.
+	 */
+	public MClassInvariant createInvariantEx(String invName, String contextName,
+			Expression invBody, boolean isExistential) throws UseApiException {
+		MClass cls = getClassSafe(contextName);
+		
 		MClassInvariant mClassInvariant = null;
 		try {
 			mClassInvariant = mFactory.createClassInvariant(invName, null,
-					cls, invExp, isExistential);
+					cls, invBody, isExistential);
 			
 			mModel.addClassInvariant(mClassInvariant);
 		} catch (ExpInvalidException e) {
@@ -703,10 +729,10 @@ public class UseModelApi {
 		} catch (MInvalidModelException e) {
 			throw new UseApiException("Invariant creation failed!", e);
 		}
-
+		
 		return mClassInvariant;
 	}
-
+	
 	/**
 	 * This method creates a generalization relation two classes.
 	 * The name of the parent class is provided by <code>parentName</code>.
