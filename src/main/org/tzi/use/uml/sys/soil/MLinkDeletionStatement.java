@@ -200,7 +200,7 @@ public class MLinkDeletionStatement extends MStatement {
 		});
 		
 		result.append(") from ");
-		result.append(fAssociation);
+		result.append(fAssociation.name());
 			
 		return result.toString();
 	}

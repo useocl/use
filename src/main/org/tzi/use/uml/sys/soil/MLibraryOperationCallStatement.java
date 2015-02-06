@@ -83,12 +83,12 @@ public class MLibraryOperationCallStatement extends MOperationCallStatement {
 
 	@Override
 	protected String shellCommand() {
-		return toString();
+		return operation.getName() + "(" + StringUtil.fmtSeq(arguments, ",") + ")";
 	}
 
 	@Override
 	public String toString() {
-		return operation.getName() + "(" + StringUtil.fmtSeq(arguments, ",") + ")";
+		return shellCommand();
 	}
 
 	@Override

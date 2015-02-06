@@ -213,7 +213,7 @@ public class MLinkInsertionStatement extends MStatement {
 		StringUtil.fmtSeqWithSubSeq(result, fParticipants, ",", qualifiers, ",", "{", "}");
 		
 		result.append(") into ");
-		result.append(fAssociation);
+		result.append(fAssociation.name());
 			
 		return result.toString();
 	}

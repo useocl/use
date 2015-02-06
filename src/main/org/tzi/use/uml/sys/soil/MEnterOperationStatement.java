@@ -165,7 +165,7 @@ public class MEnterOperationStatement extends MStatement {
 		result.append("openter ");
 		result.append(fObject);
 		result.append(" ");
-		result.append(fOperation);
+		result.append(fOperation.name());
 		result.append("(");
 		StringUtil.fmtSeq(result, fArguments, ", ");
 		result.append(")");
