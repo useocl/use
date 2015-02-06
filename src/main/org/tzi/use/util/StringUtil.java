@@ -348,6 +348,22 @@ public final class StringUtil {
         return fmtSeq(objarr, 0, divider);
     }
 
+    public static <T> StringBuilder fmtSeq(StringBuilder sb, T[] arr, String divider, IElementFormatter<T> formatter) {
+    	if (arr != null ) {
+            boolean first = true;
+            for (int i = 0; i < arr.length; ++i) {
+                if (first)
+                    first = false;
+                else
+                	sb.append(divider);
+                
+                sb.append(formatter.format(arr[i]));
+            }
+        }
+    	
+    	return sb;
+    }
+    
     /**
      * <p>
      * Returns a <code>String</code> of all <code>toString</code> representations 

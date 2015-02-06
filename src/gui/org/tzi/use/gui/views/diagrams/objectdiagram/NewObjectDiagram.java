@@ -105,6 +105,7 @@ import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.StringUtil.IElementFormatter;
 import org.w3c.dom.Element;
 
 import com.ximpleware.AutoPilot;
@@ -864,7 +865,12 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
             fParticipants = participants;
 
         	StringBuilder txt = new StringBuilder("insert (");
-        	StringUtil.fmtSeq(txt, participants, ",");
+        	StringUtil.fmtSeq(txt, participants, ",", new IElementFormatter<MObject>() {
+				@Override
+				public String format(MObject element) {
+					return element.name();
+				} });
+        	
             txt.append(") into ")
                .append(association.name());
             

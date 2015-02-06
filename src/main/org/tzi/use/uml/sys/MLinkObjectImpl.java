@@ -180,16 +180,15 @@ public class MLinkObjectImpl implements MLinkObject {
 		return delegatesLink.isVirtual();
 	}
 
-
 	@Override
 	public List<List<Value>> getQualifier() {
 		return delegatesLink.getQualifier();
 	}
 	
-	    /**
-		 * @return the delegatesLink
-		 */
-		public MLink getDelegatesLink() {
-		    return delegatesLink;
-		}
+    /**
+	 * @return the delegatesLink
+	 */
+	public MLink getDelegatesLink() {
+	    return delegatesLink;
+	}
 }
