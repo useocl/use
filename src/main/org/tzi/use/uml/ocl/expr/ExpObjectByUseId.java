@@ -94,7 +94,7 @@ public final class ExpObjectByUseId extends Expression {
 	@Override
     public StringBuilder toString(StringBuilder sb) {
 		sourceType.toString(sb);
-		sb.append(".objectByUseId(");
+		sb.append(".byUseId(");
 		idExpr.toString(sb);
 		sb.append(")");
 		return sb.append(atPre());
