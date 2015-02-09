@@ -515,9 +515,11 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 	@Override
 	public void visitObjectByUseId(ExpObjectByUseId expObjectByUseId) {
 		writer.write(expObjectByUseId.getSourceType().name());
-		writer.write("(");
+		writer.write(".");
+		writer.write(operation(expObjectByUseId.name(), expObjectByUseId));
+		writer.write(operator("(", expObjectByUseId));
 		expObjectByUseId.processWithVisitor(this);
-		writer.write(")");
+		writer.write(operator(")", expObjectByUseId));
 		atPre(expObjectByUseId);
 	}
 

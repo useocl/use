@@ -67,9 +67,15 @@ public final class ExpObjectByUseId extends Expression {
     	return this.idExpr;
     }
     
+    @Override
+    public String name() {
+    	return "byUseId";
+    }
+    
     /**
      * Evaluates expression and returns result value. 
      */
+    @Override
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
         MSystemState systemState = isPre() ? ctx.preState() : ctx.postState();
@@ -90,11 +96,13 @@ public final class ExpObjectByUseId extends Expression {
         ctx.exit(this, res);
         return res;
     }
-
+    
 	@Override
     public StringBuilder toString(StringBuilder sb) {
 		sourceType.toString(sb);
-		sb.append(".byUseId(");
+		sb.append(".");
+		sb.append(name());
+		sb.append("(");
 		idExpr.toString(sb);
 		sb.append(")");
 		return sb.append(atPre());
