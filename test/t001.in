@@ -1199,6 +1199,12 @@
 ? Set{4,2,3,1,6,5}->one(e | e = 7)
 *-> false : Boolean
 
+? Set{1..9}->one(e1,e2| e1 = e2 and e1 * e2 = 9)
+*-> true : Boolean
+
+? Set{1..9}->one(e1,e2| e1 * e2 = 9)
+*-> false : Boolean
+
 ? oclEmpty(Set(Integer))->one(e | e = 2)
 *-> false : Boolean
 
