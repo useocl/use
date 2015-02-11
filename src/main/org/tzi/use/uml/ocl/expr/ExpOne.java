@@ -24,29 +24,30 @@ package org.tzi.use.uml.ocl.expr;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 
 /** 
- * OCL 1.4 one expression.
- *
- * @version     $ProjectVersion: 0.393 $
+ * OCL one expression.
+ * @since OCL 1.4
+ * 
  * @author  Mark Richters
+ * @author  Lars Hamann
  */
 public class ExpOne extends ExpQuery {
     
     /**
-     * Constructs a one expression. <code>elemVarDecl</code> may be null.
+     * Constructs a one expression.
      */
-    public ExpOne(VarDecl elemVarDecl,
+    public ExpOne(VarDeclList elemVarDecl,
                   Expression rangeExp, 
                   Expression queryExp) 
         throws ExpInvalidException
     {
         // result is of boolean type
         super(TypeFactory.mkBoolean(),
-              ( elemVarDecl != null ) ? 
-              new VarDeclList(elemVarDecl) : new VarDeclList(true),
+              elemVarDecl,
               rangeExp, queryExp);
     
         // queryExp must be a boolean expression
@@ -64,22 +65,87 @@ public class ExpOne extends ExpQuery {
      * Evaluates expression and returns result value.
      */
     public Value eval(EvalContext ctx) {
-        Value res;
-        ctx.enter(this);
-        Value v = evalSelectOrReject(ctx, true);
-        if (v.isUndefined() )
-            res = UndefinedValue.instance;
-        else {
-            CollectionValue coll = (CollectionValue) v;
-            res = BooleanValue.get(coll.size() == 1);
+        Value res = UndefinedValue.instance;
+    	ctx.enter(this);
+    	
+        // evaluate range
+        Value v = fRangeExp.eval(ctx);
+        
+        if (!v.isUndefined()) {
+        	CollectionValue rangeVal = (CollectionValue) v;
+
+        	if (ctx.isEnableEvalTree()) {
+    			rangeVal = new SequenceValue(rangeVal.elemType(), rangeVal.getSortedElements());
+    		}
+        	
+	        // we need recursion for the permutation of assignments of
+	        // range values to all element variables.
+        	int found = evalAux(0, rangeVal, ctx);
+	        res = BooleanValue.get(found == 1);
         }
+        
         ctx.exit(this, res);
+        
         return res;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
+	/**
+	 * @param nesting
+	 * @param rangeVal
+	 * @param ctx
+	 * @return
 	 */
+	private int evalAux(int nesting, CollectionValue rangeVal, EvalContext ctx) {
+		int found = 0;
+				
+		for (Value elemVal : rangeVal) {
+
+            // bind element variable to range element, if variable was
+            // declared
+            if (!fElemVarDecls.isEmpty())
+                ctx.pushVarBinding(fElemVarDecls.varDecl(nesting).name(), elemVal);
+
+            if (!fElemVarDecls.isEmpty() && nesting < fElemVarDecls.size() - 1) {
+                // call recursively to iterate over range while
+                // assigning each value to each element variable
+                // eventually
+                found += evalAux(nesting + 1, rangeVal, ctx);
+                
+                if (found > 1) {
+                	if (ctx.isEnableEvalTree()) {
+	                    // don't change the result value and continue iteration
+	                    evalAux(nesting + 1, rangeVal, ctx);
+                	} else {
+                		if (!fElemVarDecls.isEmpty())
+                			ctx.popVarBinding();
+                		break;
+                	}
+                }
+            } else {
+                // evaluate predicate expression
+                Value queryVal = fQueryExp.eval(ctx);
+
+                // undefined query values default to false
+                if (queryVal.isUndefined())
+                    queryVal = BooleanValue.FALSE;
+
+                // don't change the result value when expression is true
+                found += ((BooleanValue) queryVal).value() ? 1 : 0;
+                
+                if (found > 1 && !ctx.isEnableEvalTree()) {
+                	if (!fElemVarDecls.isEmpty())
+                        ctx.popVarBinding();
+                	break;
+                }
+            }
+            
+            if (!fElemVarDecls.isEmpty())
+                ctx.popVarBinding();
+		}
+        
+        return found;
+	}
+
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitOne(this);

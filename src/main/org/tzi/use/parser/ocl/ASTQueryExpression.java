@@ -122,7 +122,7 @@ public class ASTQueryExpression extends ASTExpression {
         }
 
         try {
-            Integer id = (Integer) ParserHelper.queryIdentMap.get(opname);
+            Integer id = ParserHelper.queryIdentMap.get(opname);
             if (id == null )
                 throw new SemanticException(fOp,
                                             "Internal error: unknown query operation `" +
@@ -137,7 +137,6 @@ public class ASTQueryExpression extends ASTExpression {
             case ParserHelper.Q_ISUNIQUE_ID:
             case ParserHelper.Q_SORTEDBY_ID:
             case ParserHelper.Q_ANY_ID:
-            case ParserHelper.Q_ONE_ID:
             case ParserHelper.Q_CLOSURE_ID:
                 VarDecl decl;
                 if (declList.isEmpty() )
@@ -169,9 +168,6 @@ public class ASTQueryExpression extends ASTExpression {
                 case ParserHelper.Q_ANY_ID:
                     res = new ExpAny(decl, range, expr);
                     break;
-                case ParserHelper.Q_ONE_ID:
-                    res = new ExpOne(decl, range, expr);
-                    break;
                 case ParserHelper.Q_CLOSURE_ID:
                     res = new ExpClosure(decl, range, expr);
                     break;
@@ -179,6 +175,9 @@ public class ASTQueryExpression extends ASTExpression {
                     // TODO: ignore or error on default?
                 }
                 break;
+            case ParserHelper.Q_ONE_ID:
+            	res = new ExpOne(declList, range, expr);
+                break;            	
             case ParserHelper.Q_EXISTS_ID:
                 res = new ExpExists(declList, range, expr);
                 break;
