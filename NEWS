@@ -1,6 +1,21 @@
 USE NEWS -- history of user-visible changes. -*- Text -*-
-
 Please see the file `README' for a description of how to report bugs.
+
+** Changes since version 4.0.0
+* [UML] Support of UML protocol state machines
+
+* [UML] Initialization of attributes
+
+* [UML] Derived properties (attributes and association ends)
+
+* [UML] allInstances() on Associations
+
+* [USE] Simple Model and System API
+
+* [GUI] PDF export for diagram views
+
+* [GUI] Usability improvements in the GUI
+
 ** Changes since version 3.0.3
 * [USE] Added special USE operation Class.byUseId(String.expr) to
   retrieve object from object id given as a string.
