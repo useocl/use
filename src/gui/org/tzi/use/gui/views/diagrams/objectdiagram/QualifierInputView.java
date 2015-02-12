@@ -103,7 +103,7 @@ public class QualifierInputView extends JDialog {
 	private void initGui() {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.tableModels = new TableModel[association.associationEnds().size()];
-		this.tables = new ExtendedJTable[association.associationEnds().size()];
+		this.tables = new JTable[association.associationEnds().size()];
 		int index = 0; 
 		JPanel entryPanel = new JPanel();
 		entryPanel.setLayout(new BoxLayout(entryPanel, BoxLayout.Y_AXIS));
@@ -119,7 +119,7 @@ public class QualifierInputView extends JDialog {
 				this.tableModels[index] = new TableModel(qualifierNames);
 				
 				entryPanel.add(new JLabel("Qualifier values for association end " + StringUtil.inQuotes(end.name())));
-				JTable table = new JTable(this.tableModels[index]);
+				JTable table = new ExtendedJTable(this.tableModels[index]);
 		        table.setPreferredScrollableViewportSize(new Dimension(250, 70));
 		        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		        entryPanel.add(new JScrollPane(table));
