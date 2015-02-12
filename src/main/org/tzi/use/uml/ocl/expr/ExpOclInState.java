@@ -22,6 +22,7 @@ import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
@@ -46,22 +47,17 @@ public class ExpOclInState extends Expression {
 		this.stateToCheck = state;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#eval(org.tzi.use.uml.ocl.expr.EvalContext)
-	 */
 	@Override
 	public Value eval(EvalContext ctx) {
 		ctx.enter(this);
-        Value res = BooleanValue.FALSE;
+        Value res = UndefinedValue.instance;
         Value v = sourceExpr.eval(ctx);
     
         if (!v.isUndefined()) {
         	ObjectValue o = (ObjectValue)v;
         	MObject obj = o.value();
         	MObjectState objState = obj.state(ctx.postState());
-        	if (objState.isInState(stateToCheck)) {
-        		res = BooleanValue.TRUE;
-        	}
+        	res = BooleanValue.get(objState.isInState(stateToCheck));
         }
         
         ctx.exit(this, res);
