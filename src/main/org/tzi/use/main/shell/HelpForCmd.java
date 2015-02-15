@@ -242,6 +242,8 @@ public class HelpForCmd {
 			printDetailedHelpByKey("help.plugins");
 		} else if (cmd.startsWith("delay")) {
 			printDetailedHelpByKey("help.delay");
+		} else if (cmd.startsWith("coverage")) {
+			printDetailedHelpByKey("help.info.coverage");
         } else
             Log.error("Unknown command `" + cmd + "'. " + "Try `help'.");
     }
@@ -285,6 +287,7 @@ public class HelpForCmd {
         printOneLineHelpByKey("help.info.opstack");
         printOneLineHelpByKey("help.info.prog");
         printOneLineHelpByKey("help.info.vars");
+        printOneLineHelpByKey("help.info.coverage");
         printHeader("Generator commands");
         printOneLineHelpByKey("help.gen.load");
         printOneLineHelpByKey("help.gen.unload");
