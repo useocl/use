@@ -3,7 +3,7 @@
 
 	<property environment="env"/>
 
-	<property name="release.version.base" value="4.0.0"/>
+	<property name="release.version.base" value="4.0.1"/>
 
 	<condition property="release.version" value="${release.version.base}-${env.BUILD_NUMBER}" else="${release.version.base}">
 		<isset property="env.BUILD_NUMBER"/>
