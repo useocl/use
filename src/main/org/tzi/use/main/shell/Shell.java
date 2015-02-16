@@ -444,7 +444,7 @@ public final class Shell implements Runnable, PPCHandler {
         else if (line.startsWith("reload extensions"))
         	cmdReloadExtensions();
         else if (line.startsWith("coverage"))
-        	cmdCoverage();
+        	cmdCoverage(line);
 		else if (line.startsWith("plugins") || line.equals("plugins"))
 			cmdShowPlugins();
 		else if (line.startsWith("delay"))
@@ -494,7 +494,19 @@ public final class Shell implements Runnable, PPCHandler {
 		System.out.println("=================================================================");
 	}
 
-	private void cmdCoverage() {
+	private void cmdCoverage(String line) {
+		boolean printSums = false;
+		
+		String[] args = line.split(" ");
+		for (int i = 1; i < args.length; ++i) {
+			if ("-sum".equals(args[i])) {
+				printSums = true;
+			} else {
+				Log.error("Invalid argument " + args[i]);
+				return;
+			}
+		}
+		
 		MModel model = fSession.system().model(); 
 		if (model == null) {
 			Log.error("No model loaded");
@@ -583,44 +595,69 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 		});
 		
+		String total, classes, classesComp, assocs, attr, props;
+		
 		for (MClassInvariant inv : sortedInvs) {
 			data = completeData.get(inv);
+			
+			if (printSums) {
+				total = " " + Integer.toString(
+							data.getCompleteCoveredClasses().size() +
+							data.getAssociationCoverage().keySet().size() +
+							data.getAttributeAccessCoverage().keySet().size() +
+							data.getPropertyCoverage().keySet().size()
+						);
+				
+				classes = Integer.toString(data.getCoveredClasses().size());
+				classesComp = Integer.toString(data.getCompleteCoveredClasses().size());
+				assocs = Integer.toString(data.getAssociationCoverage().keySet().size());
+				attr = Integer.toString(data.getAttributeAccessCoverage().keySet().size());
+				props = Integer.toString(data.getPropertyCoverage().keySet().size());
+			} else {
+				total = "";
+				classes = StringUtil.fmtSeq(data.getCoveredClasses(), ", ");
+				classesComp = StringUtil.fmtSeq(data.getCompleteCoveredClasses(), ", ");
+				assocs = StringUtil.fmtSeq(data.getAssociationCoverage().keySet(), ", ");
+				attr = StringUtil.fmtSeq(data.getAttributeAccessCoverage().keySet(), ", ", new StringUtil.IElementFormatter<AttributeAccessInfo>() {
+					@Override
+					public String format(AttributeAccessInfo element) {
+						String inherited = "";
+						if (element.isInherited())
+							inherited = " (inherited)";
+						
+						return element.getSourceClass().name() + "." + element.getAttribute().name() + inherited;
+					}
+				});
+				props = StringUtil.fmtSeq(data.getPropertyCoverage().keySet(), ", ", new StringUtil.IElementFormatter<MModelElement>() {
+					@Override
+					public String format(MModelElement element) {
+						return element.name();
+					}
+				});
+			}
 			
 			Log.println();
 			Log.print("  ");
 			Log.print(inv.cls().name());
 			Log.print("::");
 			Log.print(inv.name());
-			Log.println(":");
+			Log.print(":");
+			Log.println(total);
 			
 			Log.print("   -Classes:            ");
-			Log.println(StringUtil.fmtSeq(data.getCoveredClasses(), ", "));
+			Log.println(classes);
 			
 			Log.print("   -Classes (complete): ");
-			Log.println(StringUtil.fmtSeq(data.getCompleteCoveredClasses(), ", "));
+			Log.println(classesComp);
 			
 			Log.print("   -Associations:       ");
-			Log.println(StringUtil.fmtSeq(data.getAssociationCoverage().keySet(), ", "));
+			Log.println(assocs);
 			
 			Log.print("   -Attributes:         ");
-			Log.println(StringUtil.fmtSeq(data.getAttributeAccessCoverage().keySet(), ", ", new StringUtil.IElementFormatter<AttributeAccessInfo>() {
-				@Override
-				public String format(AttributeAccessInfo element) {
-					String inherited = "";
-					if (element.isInherited())
-						inherited = " (inherited)";
-					
-					return element.getSourceClass().name() + "." + element.getAttribute().name() + inherited;
-				}
-			}));
+			Log.println(attr);
 			
 			Log.print("   -Properties:         ");
-			Log.println(StringUtil.fmtSeq(data.getPropertyCoverage().keySet(), ", ", new StringUtil.IElementFormatter<MModelElement>() {
-				@Override
-				public String format(MModelElement element) {
-					return element.name();
-				}
-			}));
+			Log.println(props);
 		}
 	}
 	
