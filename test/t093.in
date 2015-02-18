@@ -1,4 +1,7 @@
 open t093.use
+*compiling specification...
+*done
+*Model TreeList (1 class, 2 associations, 1 invariant, 6 operations, 0 pre-/postconditions, 0 state machines)
 gen start -t -r 6436 -nb -dc -ac t093.assl tryWorld(3)
 gen result
 *Random number generator was initialized with 6436.

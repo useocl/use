@@ -1354,11 +1354,12 @@ public final class Shell implements Runnable, PPCHandler {
         String filename = getFilenameToOpen(file);
         
         try {
-            Log.verbose("compiling specification...");
+            Log.println("compiling specification...");
             specStream = new BufferedInputStream(new FileInputStream(filename));
             handleBOM(specStream);
             model = USECompiler.compileSpecification(specStream, filename,
                     new PrintWriter(System.err), new ModelFactory());
+	    Log.println("done");
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");
         } catch (IOException e) {
@@ -1373,7 +1374,7 @@ public final class Shell implements Runnable, PPCHandler {
         // compile ok?
         if (model != null) {
             // print some info about model
-            Log.verbose(model.getStats());
+            Log.println(model.getStats());
 
             // create system
             fSession.setSystem(new MSystem(model));

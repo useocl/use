@@ -1,5 +1,8 @@
 read relativepath/Szenario1/szenario1.cmd
 *relativepath/Szenario1/szenario1.cmd> open ../library.use
+*compiling specification...
+*done
+*Model Library (7 classes, 2 associations, 2 invariants, 21 operations, 18 pre-/postconditions, 0 state machines)
 *relativepath/Szenario1/szenario1.cmd> 
 *relativepath/Szenario1/szenario1.cmd> !create ada:User
 *relativepath/Szenario1/szenario1.cmd> !openter ada init('Ada','NY')
