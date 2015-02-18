@@ -1359,7 +1359,6 @@ public final class Shell implements Runnable, PPCHandler {
             handleBOM(specStream);
             model = USECompiler.compileSpecification(specStream, filename,
                     new PrintWriter(System.err), new ModelFactory());
-	    Log.println("done");
         } catch (FileNotFoundException e) {
             Log.error("File `" + filename + "' not found.");
         } catch (IOException e) {
@@ -1374,6 +1373,7 @@ public final class Shell implements Runnable, PPCHandler {
         // compile ok?
         if (model != null) {
             // print some info about model
+        	Log.println("done");
             Log.println(model.getStats());
 
             // create system
