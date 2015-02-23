@@ -1232,6 +1232,7 @@ public final class Shell implements Runnable, PPCHandler {
         	}
         	
         	String filename = getFilenameToOpen(token);
+        	filename = Options.getFilenameToOpen(filename);
             String firstWord = getFirstWordOfFile(filename);
             setFileClosed();
             
@@ -1258,7 +1259,7 @@ public final class Shell implements Runnable, PPCHandler {
             } else if (firstWord.startsWith("testsuite")) {
             	cmdRunTestSuite(token);
             } else {
-                cmdRead(token, doEcho);
+                cmdRead(filename, doEcho);
             }
             
             if (this.openFiles.size() <= 1) {

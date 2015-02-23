@@ -29,6 +29,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 
@@ -70,7 +71,7 @@ public class ActionLoadLayout extends AbstractAction {
 			fileChooser.setSelectedFile(lastFile.toFile());
 		}
         
-        int returnVal = fileChooser.showOpenDialog( fDiagram );
+        int returnVal = fileChooser.showOpenDialog( MainWindow.instance() );
         if (returnVal != JFileChooser.APPROVE_OPTION)
             return;
 

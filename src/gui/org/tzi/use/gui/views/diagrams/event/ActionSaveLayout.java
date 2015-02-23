@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.tzi.use.config.Options;
+import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 
@@ -56,7 +57,6 @@ public class ActionSaveLayout extends AbstractAction {
         fDiagram = diagram;
     }
     
-    
     public void actionPerformed(ActionEvent e) {        
         int option = JOptionPane.YES_OPTION;
 
@@ -73,7 +73,7 @@ public class ActionSaveLayout extends AbstractAction {
 		}
         
         do {
-            int returnVal = fChooser.showSaveDialog( new JPanel() );
+            int returnVal = fChooser.showSaveDialog( MainWindow.instance() );
             if (returnVal != JFileChooser.APPROVE_OPTION)
                 return;
 
