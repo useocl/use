@@ -46,7 +46,7 @@ public class ExpSelectByType extends ExpSelectByKind {
 	}
 
 	@Override
-	protected String getOperationName() {
+	public String name() {
 		return "selectByType";
 	}
 

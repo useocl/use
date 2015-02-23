@@ -43,7 +43,7 @@ public class ExpSelectByKind extends Expression {
 	
 	/**
 	 * @param t
-	 * @throws SemanticException 
+	 * @throws SemanticException
 	 */
 	public ExpSelectByKind(Expression source, Type t) throws SemanticException {
 		super(null);
@@ -55,7 +55,7 @@ public class ExpSelectByKind extends Expression {
         } else if (source.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
         	type = ((CollectionType)source.type()).createCollectionType(t);
         } else {
-        	throw new SemanticException("The operation " + StringUtil.inQuotes(getOperationName()) + " is only applicable on collections." );
+        	throw new SemanticException("The operation " + StringUtil.inQuotes(name()) + " is only applicable on collections." );
         }
 		
 		this.setResultType(type);
@@ -107,13 +107,13 @@ public class ExpSelectByKind extends Expression {
 		return sourceExpr.requiresPreState();
 	}
 
-	protected String getOperationName() {
+	public String name() {
 		return "selectByKind";
 	}
 	
 	@Override
 	public StringBuilder toString(StringBuilder sb) {
-		sourceExpr.toString(sb).append("->").append(getOperationName()).append("(");
+		sourceExpr.toString(sb).append("->").append(name()).append("(");
 		type().elemType().toString(sb).append(")");
 		return sb;
 	}
