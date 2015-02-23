@@ -34,7 +34,7 @@ test-out2: t2.out
 # Die Zeit, die der Generator benötigt, wird aus dem Ergebnis herausgenommen.
 %.result: %.in %.use %.cmd
 	@-rm -f $@
-	@$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | dos2unix | diff -U 1 --strip-trailing-cr --ignore-blank-lines --ignore-all-space  $(basename $<).out - > $(basename $<).result || (cat $(basename $<).result | head -n $(DIFFLINECOUNT); [ $$( wc -l < $(basename $<).result ) -gt $(DIFFLINECOUNT) ] && echo "[... (truncated all but first $(DIFFLINECOUNT) lines)]" && echo "http://ci.db.informatik.uni-bremen.de:8080/job/USE_4.0/ws/test/$(basename $<).result/*view*/"; echo "Test $(basename $<) FAILED!"; false)
+	@$(USE) $(basename $<).use $(basename $<).cmd 2>&1 | sed 's/in [0-9][0-9]*.[0-9][0-9]*s//' | tail --lines=+2 | dos2unix | diff -U 1 --strip-trailing-cr --ignore-blank-lines --ignore-all-space  $(basename $<).out - > $(basename $<).result || (cat $(basename $<).result | head -n $(DIFFLINECOUNT); [ $$( wc -l < $(basename $<).result ) -gt $(DIFFLINECOUNT) ] && echo "[... (truncated all but first $(DIFFLINECOUNT) lines)]" && echo "http://ci.db.informatik.uni-bremen.de:8080/job/USE Trunk/ws/test/$(basename $<).result/*view*/"; echo "Test $(basename $<) FAILED!"; false)
 	@echo "Test $(basename $<) passed."
 
 clean:
