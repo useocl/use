@@ -118,23 +118,16 @@ public final class Main {
 
 		// compile spec if filename given as argument
 		if (Options.specFilename != null) {
-			FileInputStream specStream = null;
-			try {
+			try (FileInputStream specStream = new FileInputStream(Options.specFilename)){
 				Log.verbose("compiling specification...");
-				specStream = new FileInputStream(Options.specFilename);
 				model = USECompiler.compileSpecification(specStream,
 						Options.specFilename, new PrintWriter(System.err),
 						new ModelFactory());
 			} catch (FileNotFoundException e) {
 				Log.error("File `" + Options.specFilename + "' not found.");
 				System.exit(1);
-			} finally {
-				if (specStream != null)
-					try {
-						specStream.close();
-					} catch (IOException ex) {
-						// ignored
-					}
+			} catch (IOException e1) {
+				// close failed
 			}
 
 			// compile errors?
@@ -142,7 +135,7 @@ public final class Main {
 				System.exit(1);
 			}
 
-			Options.setLastDirectory(new java.io.File(Options.specFilename).toPath().getParent());
+			Options.setLastDirectory(new java.io.File(Options.specFilename).getAbsoluteFile().toPath().getParent());
 			if (!Options.testMode)
 				Options.getRecentFiles().push(Options.specFilename);
 			
