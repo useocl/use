@@ -226,7 +226,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 		if (Options.cmdFilename != null) {
 			// Include filename in "" to be able to handle spaces
-			cmdOpen("\"" + Options.cmdFilename + "\"");
+			cmdOpen("\"" + new File(Options.cmdFilename).getAbsolutePath() + "\"");
 		} else {
 			Log.verbose("Enter `help' for a list of available commands.");
 			
