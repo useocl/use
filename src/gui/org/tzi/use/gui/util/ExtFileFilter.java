@@ -166,7 +166,7 @@ public class ExtFileFilter extends FileFilter {
                 return true;
             }
             String extension = getExtension(f);
-            if (extension != null && filters.get(extension) != null) {
+            if (extension != null && filters.containsKey(extension)) {
                 return true;
             }
         }
@@ -230,9 +230,9 @@ public class ExtFileFilter extends FileFilter {
                 // build the description from the extension list
                 Iterator<String> extensions = filters.keySet().iterator();
                 if (extensions != null) {
-                    fullDescription += "." + (String) extensions.next();
+                    fullDescription += "." + extensions.next();
                     while (extensions.hasNext()) {
-                        fullDescription += ", " + (String) extensions.next();
+                        fullDescription += ", ." + extensions.next();
                     }
                 }
                 fullDescription += ")";

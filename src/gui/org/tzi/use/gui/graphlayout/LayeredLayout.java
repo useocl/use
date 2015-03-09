@@ -21,9 +21,17 @@
 
 package org.tzi.use.gui.graphlayout;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-import org.tzi.use.graph.*;
+import org.tzi.use.graph.DirectedEdge;
+import org.tzi.use.graph.DirectedEdgeBase;
+import org.tzi.use.graph.DirectedGraph;
+import org.tzi.use.graph.DirectedGraphBase;
 
 
 /**
@@ -121,7 +129,7 @@ public class LayeredLayout<N, E extends DirectedEdge<N>> {
         
         Iterator<LayoutNode> predIter = predecessors.iterator();
         while (predIter.hasNext() ) {
-            node = (LayoutNode) predIter.next();
+            node = predIter.next();
             if (layer > node.fLayer )
                 node.fLayer = layer;
             layerWalk(node, layer + 1);
@@ -171,7 +179,7 @@ public class LayeredLayout<N, E extends DirectedEdge<N>> {
 
         edgeIter = dummyEdges.iterator();
         while (edgeIter.hasNext() )
-            fOutGraph.addEdge((DirectedEdge<LayoutNode>) edgeIter.next());
+            fOutGraph.addEdge(edgeIter.next());
     }
 
     /**
@@ -203,7 +211,7 @@ public class LayeredLayout<N, E extends DirectedEdge<N>> {
         // place nodes into layer array
         nodeIter = fOutGraph.iterator();
         while (nodeIter.hasNext() ) {
-            LayoutNode node = (LayoutNode) nodeIter.next();
+            LayoutNode node = nodeIter.next();
             layers[node.fLayer][node.fLayerX] = node;
         }
 
@@ -227,7 +235,7 @@ public class LayeredLayout<N, E extends DirectedEdge<N>> {
                 Set<LayoutNode> neighbors = fOutGraph.targetNodeSet(u);
                 nodeIter = neighbors.iterator();
                 while (nodeIter.hasNext() ) {
-                    LayoutNode v = (LayoutNode) nodeIter.next();
+                    LayoutNode v = nodeIter.next();
                     sum += v.fX;
                 }
                 int x = sum / neighbors.size();

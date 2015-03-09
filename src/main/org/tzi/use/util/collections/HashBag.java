@@ -132,7 +132,7 @@ public class HashBag<T> extends AbstractBag<T> {
     public boolean add(T obj, int c) {
         if (c < 1 ) 
             throw new IllegalArgumentException("count: " + c);
-        MutableInteger count = (MutableInteger) fMap.get(obj);
+        MutableInteger count = fMap.get(obj);
         if (count == null )
             fMap.put(obj, new MutableInteger(c));
         else

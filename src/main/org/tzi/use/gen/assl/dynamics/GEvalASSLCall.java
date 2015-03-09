@@ -35,7 +35,7 @@ public class GEvalASSLCall extends GEvalInstruction implements IGCaller {
 		
 		// adding parameter to callString and varBindings stack
 		while (paramIter.hasNext()){
-			GOCLExpression expr = (GOCLExpression) paramIter.next();
+			GOCLExpression expr = paramIter.next();
             Value val = eval.eval(expr.expression(), conf.systemState(), conf.varBindings());
             paramValues.add(val);
 		}
@@ -50,7 +50,7 @@ public class GEvalASSLCall extends GEvalInstruction implements IGCaller {
         
         Iterator<Value> valuesIt = paramValues.iterator();
         while (declIt.hasNext()) {
-            String varName = ((VarDecl) declIt.next()).name();
+            String varName = declIt.next().name();
             Value value = valuesIt.next();
             conf.varBindings().push(varName, value); 
             collector.detailPrintWriter().println( varName + ":=" + value );
@@ -60,7 +60,7 @@ public class GEvalASSLCall extends GEvalInstruction implements IGCaller {
         varNumber += proc.localDecls().size(); //new
         // add local variable-declarations to varBindings stack
         while (declIt.hasNext()) {
-            VarDecl localDecl = (VarDecl) declIt.next();
+            VarDecl localDecl = declIt.next();
             Value value = UndefinedValue.instance;
             conf.varBindings().push(localDecl.name(), value); 
             collector.detailPrintWriter().println(localDecl.name() + ":=" + value);

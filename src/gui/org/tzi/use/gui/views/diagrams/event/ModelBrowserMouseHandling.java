@@ -362,7 +362,7 @@ public class ModelBrowserMouseHandling implements MouseListener {
                 boolean highlight = false;
                 if ( fHighlightElements.containsKey( fElem ) ) {
                     highlight = 
-                        ((Boolean) fHighlightElements.get( fElem )).booleanValue();
+                        fHighlightElements.get( fElem ).booleanValue();
                     if ( highlight ) {
                         highlight = false;
                     } else {

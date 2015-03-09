@@ -446,7 +446,7 @@ public class MModel extends MModelElementImpl {
      * @return null if enumeration type does not exist.
      */
     public EnumType enumType(String name) {
-        return (EnumType) fEnumTypes.get(name);
+        return fEnumTypes.get(name);
     }
 
     /**
@@ -458,7 +458,7 @@ public class MModel extends MModelElementImpl {
         Iterator<EnumType> it = fEnumTypes.values().iterator();
         
         while (it.hasNext()) {
-            EnumType t = (EnumType) it.next();
+            EnumType t = it.next();
             if (t.contains(literal))
                 return t;
         }

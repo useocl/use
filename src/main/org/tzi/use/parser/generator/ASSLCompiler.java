@@ -95,7 +95,7 @@ public class ASSLCompiler {
                 while (astgproc.hasNext() && !error ) {
                     Context ctx = new Context(inName, err, null, null);
                     ctx.setModel(model);
-                    ASTGProcedure astgProc = (ASTGProcedure) astgproc.next();
+                    ASTGProcedure astgProc = astgproc.next();
                     GProcedure proc = astgProc.genSignature(ctx);
                     if (ctx.errorCount() != 0 )
                         error = true;
@@ -103,7 +103,7 @@ public class ASSLCompiler {
                         boolean ignore = false;
                         Iterator<GProcedure> it = procedures.iterator();
                         while (it.hasNext())
-                            if (((GProcedure) it.next()).getSignature().equals(proc.getSignature() ) ) {
+                            if ( it.next().getSignature().equals(proc.getSignature() ) ) {
                                 err.println("Warning: Ignoring redefinition of " + proc);
                                 ignore = true;
                             }
@@ -117,7 +117,7 @@ public class ASSLCompiler {
                 	Context ctx = new Context(inName, err, null, null);
                     ctx.setModel(model);
                     ctx.setProcedures(procedures);
-                    ASTGProcedure astgProc = (ASTGProcedure) astgproc.next();
+                    ASTGProcedure astgProc = astgproc.next();
                     astgProc.genBody(ctx);
                     if (ctx.errorCount() != 0 )
                         error = true;

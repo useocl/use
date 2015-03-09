@@ -341,12 +341,10 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 		// We need to check inheritance
 		if (!foundDirectEnd) {
 			for (MClass parent : sourceObjectType.parents()) {
-				if (parent instanceof MClass) {
-					resultType = getRedefinedType(parent);
-					
-					if (resultType != null) {
-						break;
-					}
+				resultType = getRedefinedType(parent);
+				
+				if (resultType != null) {
+					break;
 				}
 			}
 		}

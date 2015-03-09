@@ -90,9 +90,9 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
         
         MAssociationEnd otherEnd;
         if (src == assoc.associationEnds().get(0))
-            otherEnd = (MAssociationEnd) assoc.associationEnds().get(1);
+            otherEnd = assoc.associationEnds().get(1);
         else
-            otherEnd = (MAssociationEnd) assoc.associationEnds().get(0);
+            otherEnd = assoc.associationEnds().get(0);
 
         if (src.hasQualifiers()) {
         	if (qualifiedAccess) {

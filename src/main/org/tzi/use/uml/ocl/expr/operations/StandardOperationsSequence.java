@@ -182,8 +182,7 @@ final class Op_sequence_insertAt extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SequenceValue seq = (SequenceValue) args[0];
-		SequenceValue res = seq.insertAt(resultType, (IntegerValue) args[1],
-				(Value) args[2]);
+		SequenceValue res = seq.insertAt(resultType, (IntegerValue) args[1], args[2]);
 
 		if (res == null)
 			return UndefinedValue.instance;

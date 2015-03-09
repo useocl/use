@@ -21,9 +21,14 @@
 
 package org.tzi.use.gui.graphlayout;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.util.Iterator;
-import javax.swing.*;
+
+import javax.swing.JPanel;
 
 import org.tzi.use.graph.DirectedEdge;
 import org.tzi.use.graph.DirectedGraph;
@@ -74,8 +79,8 @@ public class GraphPanel extends JPanel {
         while (edgeIter.hasNext() ) {
             DirectedEdge<LayoutNode> edge = edgeIter.next();
             // Log.trace(this, edge.toString());
-            LayoutNode source = (LayoutNode) edge.source();
-            LayoutNode target = (LayoutNode) edge.target();
+            LayoutNode source = edge.source();
+            LayoutNode target = edge.target();
             int x1 = source.getX() * 80 + 30;
             int y1 = 50 + source.fLayer * 50;
             //          if (source.isDummy() )

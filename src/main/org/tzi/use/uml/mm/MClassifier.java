@@ -33,7 +33,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author Lars Hamann
  *
  */
-public interface MClassifier extends Type, MNamedElement, MModelElement, UseFileLocatable {
+public interface MClassifier extends Type, MModelElement, MNamedElement, UseFileLocatable {
 	
 	/**
      * Returns the model owning this classifier.

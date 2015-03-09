@@ -90,7 +90,7 @@ public class ParserHelper {
     public static String getTokenParaphrase(String internalTokenname)
     {
     	if (tokenParaphrases.containsKey(internalTokenname))
-    		return (String)tokenParaphrases.get(internalTokenname);
+    		return tokenParaphrases.get(internalTokenname);
     	else
     		return internalTokenname;
     }

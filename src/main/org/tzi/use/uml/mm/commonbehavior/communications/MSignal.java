@@ -21,12 +21,10 @@ package org.tzi.use.uml.mm.commonbehavior.communications;
 
 import java.util.Set;
 
-import org.tzi.use.uml.mm.Annotatable;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.UseFileLocatable;
 import org.tzi.use.uml.ocl.type.MessageType;
 
 /**
@@ -34,7 +32,7 @@ import org.tzi.use.uml.ocl.type.MessageType;
  * @author Lars Hamann
  *
  */
-public interface MSignal extends MClassifier, Annotatable, UseFileLocatable {
+public interface MSignal extends MClassifier {
 	
 	/**
 	 * UML 2.4.1 p. 466

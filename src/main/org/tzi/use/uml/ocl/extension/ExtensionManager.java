@@ -87,22 +87,15 @@ public class ExtensionManager {
 		File rubyLib = new File(EXTENSIONS_FOLDER + "/RubyMethodCall.lib");
 	    StringBuilder contents = new StringBuilder();
 	    
-	    try {
-	      BufferedReader input =  new BufferedReader(new FileReader(rubyLib));
-	      try {
-	        String line = null;
-	        while (( line = input.readLine()) != null) {
-	          contents.append(line);
-	          contents.append(System.getProperty("line.separator"));
-	        }
-	      }
-	      finally {
-	        input.close();
-	      }
-	    }
-	    catch (IOException ex){
-	      ex.printStackTrace();
-	    }
+		try (BufferedReader input = new BufferedReader(new FileReader(rubyLib))) {
+			String line = null;
+			while ((line = input.readLine()) != null) {
+				contents.append(line);
+				contents.append(System.getProperty("line.separator"));
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	    
 	    rubyMethodCallLibrary = contents.toString();
 	}

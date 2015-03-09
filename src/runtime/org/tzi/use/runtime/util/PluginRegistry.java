@@ -3,16 +3,17 @@ package org.tzi.use.runtime.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.jar.JarFile;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.tzi.use.runtime.IPluginDescriptor;
 import org.tzi.use.runtime.impl.PluginDescriptor;
 import org.tzi.use.runtime.model.PluginModel;
 import org.tzi.use.util.Log;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXParseException;
+import org.xml.sax.SAXException;
 
 /**
  * The Plugin Registry class registers the Plugins. It
@@ -54,30 +55,18 @@ public class PluginRegistry {
 	private PluginModel parseConfigFile(URL location) {
 
 		PluginModel pluginModel = null;
-		try {
-			File pluginFile = new File(location.toURI());
+		File pluginFile = new File(location.getFile());
+		
+		try (JarFile jarFile = new JarFile(pluginFile); InputStream inputStream = jarFile.getInputStream(jarFile.getEntry(PLUGINXML))){
 			Log.debug("Creating jarfile path: [" + pluginFile + "]");
-			JarFile jarFile = new JarFile(pluginFile);
-
-			InputStream inputStream = jarFile.getInputStream(jarFile
-					.getEntry(PLUGINXML));
-			try {
-				InputSource inputSource = new InputSource(inputStream);
-				Log.debug("Creating plugin for: " + pluginFile);
-				pluginModel = new PluginParser().parsePlugin(inputSource);
-			} finally {
-				Log.debug("Closing stream in any case.");
-				inputStream.close();
-				jarFile.close();
-			}
-		} catch (MalformedURLException mfue) {
-			Log.error("Error creating config file location URL: ", mfue);
-		} catch (SAXParseException se) {
+			
+			InputSource inputSource = new InputSource(inputStream);
+			Log.debug("Creating plugin for: " + pluginFile);
+			pluginModel = new PluginParser().parsePlugin(inputSource);
+		} catch (SAXException | ParserConfigurationException se) {
 			Log.error("Error while parsing plugin config file: ", se);
 		} catch (IOException ioe) {
 			Log.error("No such plugin config file: 	", ioe);
-		} catch (Exception e) {
-			Log.error("An unexpected error accured: ", e);
 		}
 		return pluginModel;
 	}

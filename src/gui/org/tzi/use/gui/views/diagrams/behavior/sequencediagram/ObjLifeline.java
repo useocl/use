@@ -134,7 +134,7 @@ public class ObjLifeline extends Lifeline {
 		synchronized (this) {
 			while (activationIter.hasNext()) {
 				y_start = objectBox.getYPosOfBoxStart();
-				Activation a = (Activation) activationIter.next();
+				Activation a = activationIter.next();
 				// y-value of the activation message
 				y = a.getYOfActivationMessArrow();
 
@@ -281,7 +281,7 @@ public class ObjLifeline extends Lifeline {
 		activationIter = activationsList.iterator();
 		synchronized (this) {
 			while (activationIter.hasNext()) {
-				Activation a = (Activation) activationIter.next();
+				Activation a = activationIter.next();
 				y = a.getYOfActivationMessArrow();
 				// if Object destroyed or Link deleted -> draw cross
 				if (a.getEvent() instanceof ObjectDestroyedEvent) {

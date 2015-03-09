@@ -92,7 +92,7 @@ public class RecentItems
     
     public String get(int index)
     {
-        return (String)m_items.get(index);
+        return m_items.get(index);
     }
     
     public List<String> getItems()

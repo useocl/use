@@ -121,7 +121,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         fObjectLists.add( objects );
     
         if (fIterator.hasNext()) {
-            fLastEvaluatedInstruction = (GInstruction) fIterator.next();
+            fLastEvaluatedInstruction = fIterator.next();
             fLastEvaluatedInstruction.createEvalInstr().eval(conf,this,collector);
             fIterator.previous();
         }

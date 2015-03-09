@@ -374,8 +374,7 @@ public class ModelBrowser extends JPanel
 		    String modelCollectionName = modelCollectionMapEntry.getKey()
 			    .toString();
 		    Collection<?> modelCollection = fMbs
-			    .sortPluginCollection((Collection<?>) modelCollectionMapEntry
-				    .getValue());
+			    .sortPluginCollection(modelCollectionMapEntry.getValue());
 		    addChildNodes(top, modelCollectionName, modelCollection);
 		}
     }

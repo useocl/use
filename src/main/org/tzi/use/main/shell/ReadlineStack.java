@@ -46,7 +46,7 @@ public class ReadlineStack {
     
     public synchronized void closeAll() {
         for (Iterator<Readline> it = fReadlineStack.iterator(); it.hasNext();) {
-            Readline rl = (Readline) it.next();
+            Readline rl = it.next();
             try {
                 rl.close();
             } catch (IOException e) {
@@ -57,7 +57,7 @@ public class ReadlineStack {
     }
 
     public synchronized Readline getCurrentReadline() {
-        return (Readline) fReadlineStack.peek();
+        return fReadlineStack.peek();
     }
     
     public synchronized boolean popCurrentReadline() {

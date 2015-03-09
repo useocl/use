@@ -153,7 +153,7 @@ public class BagValue extends CollectionValue {
 
         Iterator<Value> it = v1.fElements.uniqueIterator();
         while (it.hasNext()) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (v2.includes(elem)) {
                 // result is the minimum number of objects
                 // contained in both bags.

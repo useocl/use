@@ -263,7 +263,7 @@ public class LinkTest extends TestCase {
 
             Iterator<MLink> linkSet = system.state().linksOfAssociation( assocClass ).links().iterator();
             while ( linkSet.hasNext() ) {
-                MLink link = ( MLink ) linkSet.next();
+                MLink link = linkSet.next();
                 Iterator<MObject> it = link.linkedObjects().iterator();
                 MObject first = it.next();
                 MObject second = it.next();

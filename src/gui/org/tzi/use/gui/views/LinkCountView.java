@@ -47,7 +47,7 @@ public class LinkCountView extends BarChartView implements View {
         super("Association", "# Links", Color.red);
         fSystem = system;
         Collection<MAssociation> associations = fSystem.model().associations();
-        fAssociations = associations.toArray(new MAssociation[0]);
+        fAssociations = associations.toArray(new MAssociation[associations.size()]);
         Arrays.sort(fAssociations);
         setNames(fAssociations);
         fSystem.registerRequiresAllDerivedValues();
@@ -59,8 +59,7 @@ public class LinkCountView extends BarChartView implements View {
         int[] values = new int[fAssociations.length];
         MSystemState systemState = fSystem.state();
         for (int i = 0; i < fAssociations.length; i++) {
-            values[i] = 
-                systemState.linksOfAssociation((MAssociation) fAssociations[i]).size();
+            values[i] = systemState.linksOfAssociation(fAssociations[i]).size();
         }
         setValues(values);
     }

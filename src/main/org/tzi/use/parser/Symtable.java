@@ -128,7 +128,7 @@ public class Symtable {
         // System.out.println("--- lookup: " + name);
         for (int i = fScopes.size() - 1; i >= 0; i--) {
             Map<String, Entry> names = fScopes.elementAt(i);
-            Entry e = (Entry) names.get(name);
+            Entry e = names.get(name);
             if (e != null )
                 return e.fType;
         }

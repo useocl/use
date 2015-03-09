@@ -32,7 +32,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public interface MAssociation extends MClassifier, UseFileLocatable {
+public interface MAssociation extends MClassifier {
     
 	/** 
      * Adds an association end.

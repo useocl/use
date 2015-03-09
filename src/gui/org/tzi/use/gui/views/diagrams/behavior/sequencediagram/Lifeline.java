@@ -579,7 +579,7 @@ public abstract class Lifeline implements Selectable {
 	 */
 	protected void drawFrames(Graphics2D g) {
 		for (int i = 0; i < fFrames.size(); i++) {
-			Frame frame = (Frame) fFrames.get(i);
+			Frame frame = fFrames.get(i);
 			frame.drawFrame(g);
 		}
 	}
@@ -605,7 +605,7 @@ public abstract class Lifeline implements Selectable {
 		int returnValue = 0;
 		// regard each activation of this lifeline
 		for (int i = 0; i < activationsList.size(); i++) {
-			Activation a = (Activation) activationsList.get(i);
+			Activation a = activationsList.get(i);
 			// length of the longest message of the regarded activation
 			int messLength = a.getMessLength();
 			// if bigger than fMaxMessLength -> new fMaxMessLength

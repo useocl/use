@@ -22,7 +22,3 @@ find-fixme:
 
 find-todo:
 	find $(src_dir) -name "*.java" | xargs grep -n TODO
-
-# dirty.. generates buglist 
-update-buglist: 
-	cd intern; make-buglist.pl bug???? > buglist.html

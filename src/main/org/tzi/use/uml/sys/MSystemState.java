@@ -757,7 +757,6 @@ public final class MSystemState {
 		
 		MLink link = null;
 		StringWriter sw = new StringWriter();
-		PrintWriter out = new PrintWriter(sw);
 
 		if(assoc.isDerived()){
 			throw new MSystemException("Cannot create link for association with derived end.");
@@ -765,7 +764,7 @@ public final class MSystemState {
 		
 		validateLinkQualifiers(assoc, qualifierValues);
 		
-		if (!validateRedefinesForLink(assoc, objects, out)) {
+		if (!validateRedefinesForLink(assoc, objects, new PrintWriter(sw))) {
 			throw new MSystemException(sw.toString());
 		}
 		

@@ -324,7 +324,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
                 for (MLink link : links) {
                     eb = visibleData.fBinaryLinkToEdgeMap.get( link );
                     if ( elem instanceof MAssociationClass ) {
-                        eb = visibleData.fLinkObjectToNodeEdge.get( (MLinkObject) link );
+                        eb = visibleData.fLinkObjectToNodeEdge.get( link );
                     }
                     edges.add( eb );
                 }
@@ -712,7 +712,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
             else
             	fGraph.removeEdge(e);
             
-            source.fLinkObjectToNodeEdge.remove((MLinkObject)link);
+            source.fLinkObjectToNodeEdge.remove(link);
             target.fLinkObjectToNodeEdge.put((MLinkObject)link, e);
             fLayouter = null;
         } else {
@@ -1310,7 +1310,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
      */
     public void mayBeShowObjectInfo( MouseEvent e ) {
         if (fNodeSelection.size() == 1) {
-            PlaceableNode node = (PlaceableNode) fNodeSelection.iterator().next();
+            PlaceableNode node = fNodeSelection.iterator().next();
             if (node instanceof ObjectNode) {
                 displayObjectInfo(((ObjectNode) node).object(), e);
             }

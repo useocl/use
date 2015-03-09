@@ -118,8 +118,8 @@ public class GStatistic {
 					double validFactor2 =  o2.fCountValid_Local / total2;
 					
 					// time per evaluation
-					double timeFactor1 = (double)o1.totalTime_Local / total1;
-					double timeFactor2 = (double)o2.totalTime_Local / total2;
+					double timeFactor1 = o1.totalTime_Local / total1;
+					double timeFactor2 = o2.totalTime_Local / total2;
 					
 					// ratio of valid invariants multiplied by ratio of evaluation time
 					double f1 = validFactor1 * (timeFactor1 / timeFactor2);

@@ -849,21 +849,13 @@ public final class Shell implements Runnable, PPCHandler {
     private void cmdGenMonitor() throws NoSystemException {
         MSystem system = system();
         String filename = "USEMonitor.java";
-        PrintWriter out = null;
-        try {
-        	out = new PrintWriter(new BufferedWriter(new FileWriter(
-                    filename)));
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filename)))){
             Log.verbose("writing file `" + filename + "'...");
 
             new MonitorAspectGenerator(out, system.model()).write();
             Log.verbose("done.");
         } catch (IOException ex) {
             Log.error(ex.getMessage());
-        } finally {
-            if (out != null) {
-                out.flush();
-                out.close();
-            }
         }
     }
 
@@ -1350,13 +1342,11 @@ public final class Shell implements Runnable, PPCHandler {
      */
     private void cmdOpenUseFile(String file) {
         MModel model = null;
-        BufferedInputStream specStream = null;
 
         String filename = getFilenameToOpen(file);
         
-        try {
+        try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
             Log.println("compiling specification...");
-            specStream = new BufferedInputStream(new FileInputStream(filename));
             handleBOM(specStream);
             model = USECompiler.compileSpecification(specStream, filename,
                     new PrintWriter(System.err), new ModelFactory());
@@ -1365,11 +1355,6 @@ public final class Shell implements Runnable, PPCHandler {
             Log.error("File `" + filename + "' not found.");
         } catch (IOException e) {
         	Log.error("IO error while accessing `" + filename + "': " + e.getMessage());
-		} finally {
-			if (specStream != null)
-				try {
-					specStream.close();
-				} catch (IOException ex) {}
 		}
 
         // compile ok?
@@ -1385,7 +1370,6 @@ public final class Shell implements Runnable, PPCHandler {
     }
 
     private void cmdRunTestSuite(String file) {
-    	BufferedInputStream specStream = null;
         String filename = getFilenameToOpen(file);
         MTestSuite testSuite = null;
         MModel model = null;
@@ -1397,9 +1381,8 @@ public final class Shell implements Runnable, PPCHandler {
         	return;
         }
         
-        try {
+        try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
             Log.verbose("compiling test suite...");
-            specStream = new BufferedInputStream(new FileInputStream(filename));
             handleBOM(specStream);
             testSuite = TestSuiteCompiler.compileTestSuite(specStream, filename,
                     new PrintWriter(System.err), model);
@@ -1407,12 +1390,7 @@ public final class Shell implements Runnable, PPCHandler {
             Log.error("File `" + filename + "' not found.");
         } catch (IOException e) {
 			Log.error("Error accessing file " + StringUtil.inQuotes(filename) + ": " + e.getMessage());
-		} finally {
-            if (specStream != null)
-                try {
-                	specStream.close();
-                } catch (IOException ex) {}
-        }
+		}
 
         // compile ok?
         if (testSuite != null) {
@@ -1636,10 +1614,8 @@ public final class Shell implements Runnable, PPCHandler {
 		if (filename.length() == 0)
 			Log.error("syntax is `load FILE'");
 		else {
-			BufferedInputStream in = null;
-			try {
-				filename = getFilenameToOpen(filename);
-				in = new BufferedInputStream(new FileInputStream(filename));
+			filename = getFilenameToOpen(filename);
+			try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename))){
 				handleBOM(in);
 				
 				system.loadInvariants(in, str.trim(), doEcho, new PrintWriter(getOut(), true));
@@ -1651,12 +1627,6 @@ public final class Shell implements Runnable, PPCHandler {
 			} catch (IOException e) {
 				Log.error("Error accessing file " + StringUtil.inQuotes(filename) + ": " + e.getMessage());
 				return;
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (IOException e) {}
-				}
 			}
 		}
 	}

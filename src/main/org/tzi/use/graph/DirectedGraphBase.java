@@ -634,7 +634,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     }
     
     private void targetNodeClosureSet0(Set<N> closure, N n) {
-        NodeInfo ni = (NodeInfo) fNodes.get(n);
+        NodeInfo ni = fNodes.get(n);
         if ( ni != null ) {
             Iterator<E> it = ni.outgoingEdgeIterator();
             while (it.hasNext() ) {
@@ -705,7 +705,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     }
     
     private void sourceNodeClosureSet0(Set<N> closure, N n) {
-        NodeInfo ni = (NodeInfo) fNodes.get(n);
+        NodeInfo ni = fNodes.get(n);
         Iterator<E> it = ni.incomingEdgeIterator();
         
         while (it.hasNext() ) {
@@ -719,7 +719,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     }
 
     private <T extends N> void sourceNodeClosureSet0(Class<T> s, Set<T> closure, T n) {
-        NodeInfo ni = (NodeInfo) fNodes.get(n);
+        NodeInfo ni = fNodes.get(n);
         Iterator<E> it = ni.incomingEdgeIterator();
         
         while (it.hasNext() ) {
@@ -762,7 +762,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         if (!oneWay) {
         	edgeIter = niSource.incomingEdgeIterator();
 	        while (edgeIter.hasNext() ) {
-	            E e = (E) edgeIter.next();
+	            E e = edgeIter.next();
 	            if (e.source().equals(target) )
 	                result.add(e);
 	        }

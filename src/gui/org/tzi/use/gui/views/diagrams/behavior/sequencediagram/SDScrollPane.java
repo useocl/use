@@ -61,7 +61,7 @@ public class SDScrollPane extends JScrollPane {
 		setPreferredSize(preferredDimensionOfSDPane);
 
 		// inform the SequenceDiagramView object about the new view bounds
-		((SequenceDiagramView) sequenceDiagramView).setViewBounds(new Rectangle(horizontalScrollBar.getValue(), verticalScrollBar.getValue(),
+		sequenceDiagramView.setViewBounds(new Rectangle(horizontalScrollBar.getValue(), verticalScrollBar.getValue(),
 				(int) preferredDimensionOfSDPane.getWidth(), (int) preferredDimensionOfSDPane.getHeight()));
 
 		// update sequence diagram
@@ -110,10 +110,10 @@ public class SDScrollPane extends JScrollPane {
 		 */
 		public void paintChildren(Graphics g) {
 			// inform the SequenceDiagramView object about the new view bounds
-			((SequenceDiagramView) sequenceDiagramView).setViewBounds(new Rectangle((int) horizontalScrollBar.getValue(), (int) verticalScrollBar.getValue(),
+			sequenceDiagramView.setViewBounds(new Rectangle(horizontalScrollBar.getValue(), verticalScrollBar.getValue(),
 					getExtentSize().width, getExtentSize().height));
 			// update sequence diagram
-			((SequenceDiagramView) sequenceDiagramView).update();
+			sequenceDiagramView.update();
 			super.paintChildren(g);
 		}
 

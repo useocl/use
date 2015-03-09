@@ -55,11 +55,11 @@ import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.collections.CollectionUtil;
-import org.tzi.use.util.collections.MinCombinationsIterator;
-import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.Pair;
+import org.tzi.use.util.collections.CollectionUtil;
+import org.tzi.use.util.collections.CollectionUtil.UniqueList;
+import org.tzi.use.util.collections.MinCombinationsIterator;
 
 
 public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
@@ -122,7 +122,7 @@ public class GEvalInstrTry_Assoc_LinkendSeqs extends GEvalInstrTry
         fObjectLists.add( objects );
     
         if (fIterator.hasNext()) {
-            fLastEvaluatedInstruction = (GInstruction) fIterator.next();
+            fLastEvaluatedInstruction = fIterator.next();
             fLastEvaluatedInstruction.createEvalInstr().eval(conf,this,collector);
             fIterator.previous();
         }

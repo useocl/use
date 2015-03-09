@@ -242,10 +242,8 @@ public class USECompilerTest extends TestCase {
 
     private void failCompileSpecFailedFailFileDiffers(String specFileName, StringOutputStream errStr, File failFile) {
         System.err.println("Expected: #############");
-        BufferedReader failReader = null;
         
-        try {
-            failReader = new BufferedReader(new FileReader(failFile));
+        try (BufferedReader failReader = new BufferedReader(new FileReader(failFile))){
             while (true) {
                 String line = failReader.readLine();
                 if (line == null) {
@@ -255,12 +253,6 @@ public class USECompilerTest extends TestCase {
             }
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
-        } finally {
-        	if (failReader != null) {
-				try {
-					failReader.close();
-				} catch (IOException e) {}
-        	}
         }
         System.err.println("Got: ##################");
         System.err.print(errStr.toString());
@@ -285,15 +277,13 @@ public class USECompilerTest extends TestCase {
 
     private boolean isErrorMessageAsExpected(File failFile, StringOutputStream errStr) throws FileNotFoundException {
         // check whether error output equals expected output
-        BufferedReader failReader =
-            new BufferedReader(new FileReader(failFile));
         String[] expect = errStr.toString().split("\n|(\r\n)");
         //                        for (int i = 0; i < expect.length; i++) {
         //                            System.out.println("[" + expect[i] + "]");
         //                        }
         int j = 0;
         boolean ok = true;
-        try {
+        try (BufferedReader failReader = new BufferedReader(new FileReader(failFile))){
             while (ok) {
                 String line = failReader.readLine();
                 if (line == null) {
@@ -307,10 +297,6 @@ public class USECompilerTest extends TestCase {
             ok = false;
         } catch (IndexOutOfBoundsException ex) {
         	ok = false;
-        } finally {
-			try {
-				failReader.close();
-			} catch (IOException e) {}
         }
         return ok;
     }
@@ -334,12 +320,11 @@ public class USECompilerTest extends TestCase {
 
 
     private MModel compileSpecification(File specFile, PrintWriter newErr) throws FileNotFoundException {
-        FileInputStream specStream = new FileInputStream(specFile);
-        MModel result;
+        MModel result = null;
         
-        result = USECompiler.compileSpecification(specStream, specFile.getName(), 
-                                                newErr, new ModelFactory());
-        try {
+        try (FileInputStream specStream = new FileInputStream(specFile)){
+			result = USECompiler.compileSpecification(specStream,
+					specFile.getName(), newErr, new ModelFactory());
 			specStream.close();
 		} catch (IOException e) {
 			// This can be ignored

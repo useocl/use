@@ -1080,7 +1080,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 			// get last activation
 			Activation srcAct = null;
 			if (!activationStack.empty()) {
-				srcAct = (Activation) activationStack.peek();
+				srcAct = activationStack.peek();
 			}
 			// if the source-lifeline is not marked to be hidden
 			if (srcAct == null || !srcAct.owner().isHidden()) {
@@ -1228,7 +1228,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 		if ((fProperties.showSet() && !ll.isHidden()) || !fProperties.compactDisplay()) {
 			Activation srcAct = null;
 			if (!activationStack.empty())
-				srcAct = (Activation) activationStack.peek();
+				srcAct = activationStack.peek();
 
 			if (srcAct == null || !srcAct.owner().isHidden()) {
 				ObjectBox objBox = ll.getObjectBox();
@@ -1245,7 +1245,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 					a.calculateMessLength();
 					ll.exitActivation();
 					activationStack.push(a);
-					a = (Activation) activationStack.pop();
+					a = activationStack.pop();
 				}
 
 				fNumSteps++;
@@ -1381,7 +1381,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 			Activation srcAct = null;
 
 			if (!activationStack.empty()) {
-				srcAct = (Activation) activationStack.peek();
+				srcAct = activationStack.peek();
 			}
 			if (srcAct == null || !srcAct.owner().isHidden()) {
 				yValue = calculateNextMessPosition(yValue, event, ll);
@@ -1485,7 +1485,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 		if (fProperties.showDelete() && !ll.isHidden()) {
 			Activation srcAct = null;
 			if (!activationStack.empty()) {
-				srcAct = (Activation) activationStack.peek();
+				srcAct = activationStack.peek();
 			}
 			if (srcAct == null || !srcAct.owner().isHidden()) {
 				if (srcAct == null || !srcAct.owner().isHidden()) {
@@ -1509,7 +1509,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 					activationStack.push(a);
 					fNumSteps++;
 
-					a = (Activation) activationStack.pop();
+					a = activationStack.pop();
 					a.setEnd(0);
 					yValue = calculateNextMessPosition(lastYValue, event, ll);
 

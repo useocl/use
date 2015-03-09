@@ -114,6 +114,6 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
                          ")' not found.";
             throw new SemanticException(fName, err);
         }
-        return (GInstruction) instr;
+        return instr;
     }
 }

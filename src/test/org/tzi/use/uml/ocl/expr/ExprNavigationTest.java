@@ -38,7 +38,6 @@ import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SetValue;
@@ -82,7 +81,7 @@ public class ExprNavigationTest extends TestCase {
         MAssociationEnd personEnd = null;
         MAssociationEnd companyEnd = null;
         for ( int i = 0; i < assocEnds.size(); i++ ) {
-            MAssociationEnd ae = ( MAssociationEnd ) assocEnds.get( i );
+            MAssociationEnd ae = assocEnds.get( i );
             if ( ae.cls().name().equals( "Person" ) ) {
                 personEnd = ae;
             }
@@ -113,7 +112,7 @@ public class ExprNavigationTest extends TestCase {
         MAssociationEnd personEnd = null;
         MAssociationEnd companyEnd = null;
         for ( int i = 0; i < assocEnds.size(); i++ ) {
-            MAssociationEnd ae = ( MAssociationEnd ) assocEnds.get( i );
+            MAssociationEnd ae = assocEnds.get( i );
             if ( ae.cls().name().equals( "Person" ) ) {
                 personEnd = ae;
             }
@@ -156,7 +155,7 @@ public class ExprNavigationTest extends TestCase {
         List<MAssociationEnd> assocEnds = job.associationEnds();
         MAssociationEnd personEnd = null;
         for ( int i = 0; i < assocEnds.size(); i++ ) {
-            MAssociationEnd ae = ( MAssociationEnd ) assocEnds.get( i );
+            MAssociationEnd ae = assocEnds.get( i );
             if ( ae.cls().name().equals( "Person" ) ) {
                 personEnd = ae;
             }
@@ -230,14 +229,12 @@ public class ExprNavigationTest extends TestCase {
 
             MAssociationClass job = system.model().getAssociationClass( "Job" );
             MAssociationEnd personEnd =
-                    ( MAssociationEnd ) job.associationEndsAt( 
-                        system.model().getClass( "Person" ) ).iterator().next();
+                    job.associationEndsAt( system.model().getClass( "Person" ) ).iterator().next();
 
             // navigation from p1 to linkobject j1
             MObject p1 = system.state().objectByName( "p1" );
 
-            List<MObject> objects = system.state().getNavigableObjects( p1, ( MNavigableElement ) personEnd, 
-                                                               ( MNavigableElement ) job, emptyQualiferValues );
+            List<MObject> objects = system.state().getNavigableObjects( p1, personEnd, job, emptyQualiferValues );
 
             assertEquals( 2, objects.size() );
             
@@ -255,8 +252,7 @@ public class ExprNavigationTest extends TestCase {
         try {
             MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             MAssociationClass job = system.model().getAssociationClass( "Job" );
-            MAssociationEnd personEnd = ( MAssociationEnd ) job
-                .associationEndsAt( system.model().getClass( "Person" ) ).iterator().next();
+            MAssociationEnd personEnd = job.associationEndsAt( system.model().getClass( "Person" ) ).iterator().next();
 
             // navigation from linkobject j1 to p1
             MObject j1 = system.state().objectByName( "j1" );
@@ -264,7 +260,7 @@ public class ExprNavigationTest extends TestCase {
             List<MObject> objects = system.state().getNavigableObjects( j1, job, personEnd, emptyQualiferValues );
 
             assertEquals( 1, objects.size() );
-            assertEquals( "p1", ( ( MObject ) objects.get( 0 ) ).name() );
+            assertEquals( "p1", ( objects.get( 0 ) ).name() );
         } catch ( Exception e ) {
             fail( "Exception was thrown: " + e.getMessage() );
         }
@@ -279,11 +275,9 @@ public class ExprNavigationTest extends TestCase {
             MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             MAssociationClass job = system.model().getAssociationClass( "Job" );
             MAssociationEnd personEnd =
-                ( MAssociationEnd ) job.associationEndsAt( 
-                    system.model().getClass( "Person" ) ).iterator().next();
+                job.associationEndsAt( system.model().getClass( "Person" ) ).iterator().next();
             MAssociationEnd companyEnd =
-                ( MAssociationEnd ) job.associationEndsAt( 
-                    system.model().getClass( "Company" ) ).iterator().next();
+                job.associationEndsAt( system.model().getClass( "Company" ) ).iterator().next();
 
             // navigation from linkobject j1 to p1
             MObject p1 = system.state().objectByName( "p1" );
@@ -291,7 +285,7 @@ public class ExprNavigationTest extends TestCase {
             List<MObject> objects = system.state().getNavigableObjects( p1, personEnd, companyEnd, emptyQualiferValues );
 
             assertEquals( 1, objects.size() );
-            assertEquals( "c1", ( ( MObject ) objects.get( 0 ) ).name() );
+            assertEquals( "c1", ( objects.get( 0 ) ).name() );
         } catch ( Exception e ) {
             fail( "Exception was thrown: " + e.getMessage() );
         }
@@ -333,7 +327,7 @@ public class ExprNavigationTest extends TestCase {
             Iterator<String> it = names.iterator();
             
             while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( (String) it.next() );
+                MObject obj =  system.state().objectByName( it.next() );
                 exprs.add(new MRValueExpression(new ExpVariable( obj.name(), obj.cls() )));
             }
             MAssociation assoc = model.getAssociation( "Job" );
@@ -342,11 +336,9 @@ public class ExprNavigationTest extends TestCase {
             
             MAssociation job = system.model().getAssociation( "Job" );
             MAssociationEnd personEnd =
-                ( MAssociationEnd ) job.associationEndsAt( 
-                    system.model().getClass( "Person" ) ).iterator().next();
+                job.associationEndsAt( system.model().getClass( "Person" ) ).iterator().next();
             MAssociationEnd companyEnd =
-                ( MAssociationEnd ) job.associationEndsAt( 
-                    system.model().getClass( "Company" ) ).iterator().next();
+                job.associationEndsAt( system.model().getClass( "Company" ) ).iterator().next();
 
             // navigation from p1 to linkobject j1
             MObject p1 = system.state().objectByName( "p1" );
@@ -355,8 +347,8 @@ public class ExprNavigationTest extends TestCase {
 
             names = Arrays.asList("c1", "c2");
             assertEquals( 2, objects.size() );
-            assertTrue( names.contains(( ( MObject ) objects.get( 1 ) ).name() ) );
-            assertTrue( names.contains(( ( MObject ) objects.get( 0 ) ).name() ) );
+            assertTrue( names.contains( objects.get( 1 ).name() ) );
+            assertTrue( names.contains( objects.get( 0 ).name() ) );
         } catch ( MSystemException e ) {
             fail( "Exception was thrown: " + e.getMessage() );
         }

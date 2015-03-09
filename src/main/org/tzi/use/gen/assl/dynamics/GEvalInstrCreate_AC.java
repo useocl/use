@@ -99,7 +99,7 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
         fObjectList.add( new MRValueExpression(objVal.value()) );
     
         if (fIterator.hasNext()) {
-            fLastEvaluatedInstruction = (GInstruction) fIterator.next();
+            fLastEvaluatedInstruction = fIterator.next();
             fLastEvaluatedInstruction.createEvalInstr().eval(conf, this, collector);
             fIterator.previous();
         }

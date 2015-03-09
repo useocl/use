@@ -207,7 +207,7 @@ public class SetValue extends CollectionValue {
         // add elements of this set to result
         Iterator<Value> it = fElements.iterator();
         while (it.hasNext()) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (!v.includes(elem))
                 res.add(elem);
         }
@@ -278,7 +278,7 @@ public class SetValue extends CollectionValue {
     public boolean excludesAll(CollectionValue v) {
         Iterator<Value> it = v.iterator();
         while (it.hasNext()) {
-            Value elem = (Value) it.next();
+            Value elem = it.next();
             if (fElements.contains(elem))
                 return false;
         }

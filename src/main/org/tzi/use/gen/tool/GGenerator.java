@@ -75,11 +75,9 @@ public class GGenerator {
 
     protected void internalError(GEvaluationException e, long randomNr) {
         String nl = Options.LINE_SEPARATOR;
-        try {
-            PrintWriter pw
-                = new PrintWriter(new FileWriter("generator_error.txt"));
+        try (PrintWriter pw = new PrintWriter(new FileWriter("generator_error.txt"))){
             pw.println("Program version: " + Options.RELEASE_VERSION);
-            pw.println("Stack trace: ");
+            pw.println("Stack trace:");
             e.printStackTrace(pw);
             pw.close();
             System.err.println("THE GENERATOR HAS AN INTERNAL ERROR." + nl +

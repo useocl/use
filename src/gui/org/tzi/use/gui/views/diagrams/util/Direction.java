@@ -58,8 +58,8 @@ public enum Direction {
 	WEST(8),
 	NORTH_EAST(NORTH.getValue() + EAST.getValue()),
 	SOUTH_EAST(SOUTH.getValue() + EAST.getValue()),
-	SOUTH_WEST(SOUTH.getValue() + WEST.getValue()),
-	NORTH_WEST(NORTH.getValue() + WEST.getValue());
+	NORTH_WEST(NORTH.getValue() + WEST.getValue()),
+	SOUTH_WEST(SOUTH.getValue() + WEST.getValue());
 	
 	static Map<Integer, Direction> intMap = new HashMap<Integer, Direction>();
 	static {
@@ -150,7 +150,7 @@ public enum Direction {
 	 * @return
 	 */
 	public static Direction fromAngle(double alpha) {
-		int angle = ((int)Math.round(alpha)) % 360;
+		int angle = (int) (Math.round(alpha) % 360);
 		// TODO: fasten with 2.pow()
 		if (angle == 0) {
 			return EAST;

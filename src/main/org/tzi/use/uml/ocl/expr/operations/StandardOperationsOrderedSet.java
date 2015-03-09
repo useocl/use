@@ -182,8 +182,7 @@ final class Op_orderedSet_insertAt extends OpGeneric {
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		OrderedSetValue oset = (OrderedSetValue) args[0];
-		OrderedSetValue res = oset.insertAt(resultType, (IntegerValue) args[1],
-				(Value) args[2]);
+		OrderedSetValue res = oset.insertAt(resultType, (IntegerValue) args[1], args[2]);
 
 		if (res == null)
 			return UndefinedValue.instance;

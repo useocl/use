@@ -84,8 +84,7 @@ public class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
                          IGCollector collector ) throws GEvaluationException {
         if (value.isUndefined()) {
             collector.invalid( buildCantExecuteMessage(fInstr,
-                                                       (GValueInstruction) fInstr.linkEnds()
-                                                       .get(fIterator.previousIndex())) );
+                                                       fInstr.linkEnds().get(fIterator.previousIndex())) );
             return;
         }
 

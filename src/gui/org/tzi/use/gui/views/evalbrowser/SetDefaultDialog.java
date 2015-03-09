@@ -175,11 +175,11 @@ class SetDefaultDialog extends JDialog {
                     // f = new File(System.getProperty("user.home", null),
                     // ".userc");
                     // read the config file int string s
-                    FileReader reader = new FileReader(f);
-                    for (int c; (c = reader.read()) != -1;) {
-                        s.append((char) c);
+                    try(FileReader reader = new FileReader(f)){
+	                    for (int c; (c = reader.read()) != -1;) {
+	                        s.append((char) c);
+	                    }
                     }
-                    reader.close();
                     if (s.length() != 0 && s.charAt(s.length() - 1) != '\n')
                         s.append("\n");
                     
@@ -245,10 +245,11 @@ class SetDefaultDialog extends JDialog {
                             SetDefaultDialog.this.exprEvalBrowser.fNoColorHighlightingChk.isSelected());
 
                     // rewrite the config file
-                    FileWriter writer = new FileWriter(f);
-                    for (int i = 0; i < str.length(); i++)
-                        writer.write(str.charAt(i));
-                    writer.close();
+                    try(FileWriter writer = new FileWriter(f)){
+	                    for (int i = 0; i < str.length(); i++){
+	                    	writer.write(str.charAt(i));
+	                    }
+                    }
                 } catch (IOException e) {
 					JOptionPane.showConfirmDialog(
 							exprEvalBrowser,
