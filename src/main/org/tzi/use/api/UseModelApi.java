@@ -830,12 +830,12 @@ public class UseModelApi {
 	 * <code>associationName</code>. The association connects two classes defined by
 	 * the parameters <code>end1ClassName</code> and <code>end2ClassName</code>.
 	 * For each end the following parameters must be provided (# must be replaced by the end number): 
-	 * <el>
+	 * <ul>
 	 *  <li> end#ClassName: The name of the class at this end.</li>
 	 *  <li> end#RoleName: The role name of the class at this end.</li>
 	 *  <li> end#Multiplicity: The multiplicity at this end. Can be defined by using a range (1..*) or a single value (2).</li>
 	 *  <li> end#Aggregation: The aggregation kind at this end (see {@link MAggregationKind}).</li>
-	 * </el>
+	 * </ul>
 	 * @param associationName The name of the association to create. Must be unique inside a single model.
 	 * @param end1ClassName The name of the class at the first association end.
 	 * @param end1RoleName The role name of the first association end. 
