@@ -80,36 +80,6 @@ public class ClassSelection {
 	}
 	
 	@SuppressWarnings("serial")
-	class ActionSelectedAssociationPathView extends AbstractAction {
-		private final Set<MClass> selectedClasses;
-		private final Set<MAssociation> selectedAssociations;
-		
-		ActionSelectedAssociationPathView(String text, Set<MClass> sc, Set<MAssociation> selectedAssociations) {
-			super(text);
-			this.selectedAssociations = selectedAssociations;
-			selectedClasses = sc;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			SelectedAssociationPathView opv = new SelectedAssociationPathView(
-					MainWindow.instance(), diagram, selectedClasses,
-					selectedAssociations);
-	        ViewFrame f = new ViewFrame("Selection association path length", opv,
-	                "ObjectProperties.gif");
-	        JComponent c = (JComponent) f.getContentPane();
-	        c.setLayout(new BorderLayout());
-	        c.add(opv, BorderLayout.CENTER);
-	        MainWindow.instance().addNewViewFrame(f);
-	        f.setSize(450,200);
-		}
-	}
-	
-	public ActionSelectedAssociationPathView getSelectedAssociationPathView(String text, Set<MClass> sc, Set<MAssociation> selectedAssociations){
-		return new ActionSelectedAssociationPathView(text, sc, selectedAssociations);
-	}
-	
-	@SuppressWarnings("serial")
 	class ActionSelectedClassPathView extends AbstractAction {
 		private final Set<MClass> selectedClasses;
 

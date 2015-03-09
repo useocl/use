@@ -602,11 +602,11 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
         return closureCache.getUnchecked(n);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked" })
 	public synchronized <T extends N> Set<T> targetNodeClosureSet(Class<T> s, T n) {
     	// check for existing node
         getNodeInfo(n);
-        return (Set)closureCache.getUnchecked(n);
+        return (Set<T>)closureCache.getUnchecked(n);
     }
     
     /**

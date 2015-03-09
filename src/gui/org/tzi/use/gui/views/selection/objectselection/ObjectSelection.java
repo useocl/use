@@ -30,7 +30,6 @@ import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNamedElementComparator;
-import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.collections.CollectionUtil;
@@ -56,33 +55,6 @@ public class ObjectSelection {
 	public ObjectSelection(DiagramViewWithObjectNode diagram, MSystem system) {
 		this.diagram = diagram;
 		this.system = system;
-	}
-
-	@SuppressWarnings("serial")
-	class ActionShowSelectedLinkPathView extends AbstractAction {
-		private Set<MObject> selectedObjects;
-		private Set<MLink> selectedLinks;
-
-		ActionShowSelectedLinkPathView(Set<MObject> sc, Set<MLink> links) {
-			super("Selection by path length...");
-			this.selectedLinks = links;
-			selectedObjects = sc;
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			SelectedLinkPathView opv = new SelectedLinkPathView(MainWindow.instance(), system, diagram, selectedObjects, selectedLinks);
-
-			ViewFrame f = new ViewFrame("Selection by path length", opv, "ObjectProperties.gif");
-			JComponent c = (JComponent) f.getContentPane();
-			c.setLayout(new BorderLayout());
-			c.add(opv, BorderLayout.CENTER);
-			MainWindow.instance().addNewViewFrame(f);
-			f.setSize(450, 200);
-		}
-	}
-
-	public ActionShowSelectedLinkPathView getSelectionByPathLengthView(Set<MObject> sc, Set<MLink> links) {
-		return new ActionShowSelectedLinkPathView(sc, links);
 	}
 
 	@SuppressWarnings("serial")
@@ -310,7 +282,7 @@ public class ObjectSelection {
 
 		Map<MClass, JMenu> classMenus = new HashMap<MClass, JMenu>();
 		for (ObjectNodeActivity node : sortedNodes) {
-			final ObjectNodeActivity objNode = (ObjectNodeActivity) node;
+			final ObjectNodeActivity objNode = node;
 			final MClass cls = objNode.cls();
 			final MObject obj = objNode.object();
 
