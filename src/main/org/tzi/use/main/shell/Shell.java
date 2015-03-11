@@ -113,52 +113,52 @@ class NoSystemException extends Exception {
 
 /**
  * A shell for reading and executing user commands.
- * 
+ *
  * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 
 public final class Shell implements Runnable, PPCHandler {
-    public static final String PROMPT = "use> ";
+	public static final String PROMPT = "use> ";
 
-    public static final String CONTINUE_PROMPT = "> ";
+	public static final String CONTINUE_PROMPT = "> ";
 
-    
-    /**
-     * Run program until true. Set by exit command.
-     */
-    private volatile boolean fFinished = false;
 
-    /**
-     * If true read multiple lines into a single command before processing.
-     */
-    private boolean fMultiLineMode = false;
+	/**
+	 * Run program until true. Set by exit command.
+	 */
+	private volatile boolean fFinished = false;
 
-    /**
-     * The session contains the system most commands act on.
-     */
-    private Session fSession;
+	/**
+	 * If true read multiple lines into a single command before processing.
+	 */
+	private boolean fMultiLineMode = false;
 
-    /**
-     * Result of last check command.
-     */
-    private boolean fLastCheckResult = false;
+	/**
+	 * The session contains the system most commands act on.
+	 */
+	private Session fSession;
 
-    private int delay = 0;
-    
-    /**
-     * Single-step commands.
-     */
-    private boolean fStepMode = false;
+	/**
+	 * Result of last check command.
+	 */
+	private boolean fLastCheckResult = false;
 
-    private ReadlineStack fReadlineStack = null;
-    
-    /**
-     * Actual readline that is used.
-     */
-    private Readline fReadline = null;
+	private int delay = 0;
 
-    private static Shell fShell = null;
+	/**
+	 * Single-step commands.
+	 */
+	private boolean fStepMode = false;
+
+	private ReadlineStack fReadlineStack = null;
+
+	/**
+	 * Actual readline that is used.
+	 */
+	private Readline fReadline = null;
+
+	private static Shell fShell = null;
 
 	private IPluginShellExtensionPoint shellExtensionPoint;
 
@@ -166,23 +166,23 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private IRuntime fPluginRuntime;
 
-    /**
-     * Constructs a new shell.
-     */
+	/**
+	 * Constructs a new shell.
+	 */
 	private Shell(Session session, IRuntime pluginRuntime) {
-        fReadlineStack = new ReadlineStack();
-        // no need to listen on session changes since every command
-        // explicitly retrieves the current system
-        fSession = session;
-        
-        try {
+		fReadlineStack = new ReadlineStack();
+		// no need to listen on session changes since every command
+		// explicitly retrieves the current system
+		fSession = session;
+
+		try {
 			system().registerPPCHandlerOverride(this);
 		} catch (NoSystemException e) {
 			// out of luck...
 		}
-        
+
 		this.fPluginRuntime = pluginRuntime;
-        
+
 		// integrate plugin commands
 		if (Options.doPLUGIN) {
 			this.shellExtensionPoint = (IPluginShellExtensionPoint) this.fPluginRuntime
@@ -196,32 +196,33 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 
 	public static void createInstance(Session session, IRuntime pluginRuntime) {
-			fShell = new Shell(session, pluginRuntime);
-        }
-	
+		fShell = new Shell(session, pluginRuntime);
+	}
+
 	public static Shell getInstance() {
-        return fShell;
-    }
+		return fShell;
+	}
 
 	public PrintStream getOut() {
 		return System.out;
 	}
-	
+
 	public PrintStream getErr() {
 		return System.err;
 	}
-	
-    /**
-     * Returns the result of the last check command.
-     */
-    public boolean lastCheckResult() {
-        return fLastCheckResult;
-    }
 
-    /**
-     * Main loop for accepting input and processing it.
-     */
-    public void run() {
+	/**
+	 * Returns the result of the last check command.
+	 */
+	public boolean lastCheckResult() {
+		return fLastCheckResult;
+	}
+
+	/**
+	 * Main loop for accepting input and processing it.
+	 */
+	@Override
+	public void run() {
 		setupReadline();
 
 		if (Options.cmdFilename != null) {
@@ -229,227 +230,233 @@ public final class Shell implements Runnable, PPCHandler {
 			cmdOpen("\"" + new File(Options.cmdFilename).getAbsolutePath() + "\"");
 		} else {
 			Log.verbose("Enter `help' for a list of available commands.");
-			
+
 			if (Options.doPLUGIN) {
 				Log.verbose("Enter `plugins' for a list of available plugin commands.");
 			}
 		}
 
-        while (!fFinished) {
-            Thread.yield();
-            Log.resetOutputFlag();
+		while (!fFinished) {
+			Thread.yield();
+			Log.resetOutputFlag();
 
-            String line = "";
+			String line = "";
 
-            // get current readline (may be e.g. console or file)
-            fReadline = fReadlineStack.getCurrentReadline();
-            try {
-                if (fMultiLineMode) {
-                    while (true) {
-                        // use special prompt to emphasize multi-line input
-                        String oneLine = fReadline.readline(CONTINUE_PROMPT);
-                        
-                        // end of input or a single dot terminates the input
-                        // loop
-                        if (oneLine == null || oneLine.equals("."))
-                            break;
-                        line += oneLine + Options.LINE_SEPARATOR;
-                    }
-                    fMultiLineMode = false;
-                } else {
-                    line = fReadline.readline(PROMPT);
-                }
-            } catch (IOException ex) {
-                Log.error("Cannot read line: " + ex.getMessage());
-            }
-            if (line != null) {
-            	if (!fReadline.doEcho())
-            		USEWriter.getInstance().protocol(line);
-            	
-                processLineSafely(line);
-            } else {
-            	fFinished = fReadlineStack.popCurrentReadline();
-            	setFileClosed();
-                if (fFinished && Options.quiet)
-            		processLineSafely("check");
-            }
-        }
-        cmdExit();
-    }
+			// get current readline (may be e.g. console or file)
+			fReadline = fReadlineStack.getCurrentReadline();
+			try {
+				if (fMultiLineMode) {
+					while (true) {
+						// use special prompt to emphasize multi-line input
+						String oneLine = fReadline.readline(CONTINUE_PROMPT);
 
-    /**
-     * Initializes readline.
-     */
-    private void setupReadline() {
-    	if(Options.quiet){
-    		// no readline required in quiet mode
-    		return;
-    	}
-    	
-        String GNUReadlineNotAvailable;
-        if (Options.suppressWarningsAboutMissingReadlineLibrary)
-            GNUReadlineNotAvailable = null;
-        else
-            GNUReadlineNotAvailable = "Apparently, the GNU readline library is not available on your system."
-                    + Options.LINE_SEPARATOR
-                    + "The program will continue using a simple readline implementation."
-                    + Options.LINE_SEPARATOR
-                    + "You can turn off this warning message by using the switch -nr";
+						// end of input or a single dot terminates the input
+						// loop
+						if (oneLine == null || oneLine.equals(".")) {
+							break;
+						}
+						line += oneLine + Options.LINE_SEPARATOR;
+					}
+					fMultiLineMode = false;
+				} else {
+					line = fReadline.readline(PROMPT);
+				}
+			} catch (IOException ex) {
+				Log.error("Cannot read line: " + ex.getMessage());
+			}
+			if (line != null) {
+				if (!fReadline.doEcho()) {
+					USEWriter.getInstance().protocol(line);
+				}
 
-        fReadline = LineInput.getUserInputReadline(GNUReadlineNotAvailable);
-        fReadline.usingHistory();
+				processLineSafely(line);
+			} else {
+				fFinished = fReadlineStack.popCurrentReadline();
+				setFileClosed();
+				if (fFinished && Options.quiet) {
+					processLineSafely("check");
+				}
+			}
+		}
+		cmdExit();
+	}
 
-        // Read command history from previous sessions
-        try {
-            fReadline.readHistory(Options.USE_HISTORY_PATH);
-        } catch (IOException ex) {
-            // Fail silently if history file does not exist
-        }
-        fReadlineStack.push(fReadline);
-    }
+	/**
+	 * Initializes readline.
+	 */
+	private void setupReadline() {
+		if(Options.quiet){
+			// no readline required in quiet mode
+			return;
+		}
 
-    /**
-     * Analyzes a line of input and calls the method implementing a command.
-     */
-    public void processLineSafely(String line) {
-        try {            
-            processLine(line);
-        } catch (NoSystemException ex) {
+		String GNUReadlineNotAvailable;
+		if (Options.suppressWarningsAboutMissingReadlineLibrary) {
+			GNUReadlineNotAvailable = null;
+		} else {
+			GNUReadlineNotAvailable = "Apparently, the GNU readline library is not available on your system."
+					+ Options.LINE_SEPARATOR
+					+ "The program will continue using a simple readline implementation."
+					+ Options.LINE_SEPARATOR
+					+ "You can turn off this warning message by using the switch -nr";
+		}
+
+		fReadline = LineInput.getUserInputReadline(GNUReadlineNotAvailable);
+		fReadline.usingHistory();
+
+		// Read command history from previous sessions
+		try {
+			fReadline.readHistory(Options.USE_HISTORY_PATH);
+		} catch (IOException ex) {
+			// Fail silently if history file does not exist
+		}
+		fReadlineStack.push(fReadline);
+	}
+
+	/**
+	 * Analyzes a line of input and calls the method implementing a command.
+	 */
+	public void processLineSafely(String line) {
+		try {
+			processLine(line);
+		} catch (NoSystemException ex) {
 			Log.error("No System available. Please load a model before executing this command.");
-        } catch (Exception ex) {
-            System.err.println();
-            String nl = Options.LINE_SEPARATOR;
-            System.err
-                    .println("INTERNAL ERROR: An unexpected exception occured. This happened most probably"
-                            + nl
-                            + "due to an error in the program. The program will try to continue, but may"
-                            + nl
-                            + "not be able to recover from the error. Please send a bug report to"
-                            + nl
-                            + Options.SUPPORT_MAIL
-                            + nl
-                            + "with a description of your last input and include the following output:");
-            System.err.println("Program version: " + Options.RELEASE_VERSION);
-            System.err.print("Stack trace: ");
-            ex.printStackTrace(System.err);
-        }
-    }
+		} catch (Exception ex) {
+			System.err.println();
+			String nl = Options.LINE_SEPARATOR;
+			System.err
+			.println("INTERNAL ERROR: An unexpected exception occured. This happened most probably"
+					+ nl
+					+ "due to an error in the program. The program will try to continue, but may"
+					+ nl
+					+ "not be able to recover from the error. Please send a bug report to"
+					+ nl
+					+ Options.SUPPORT_MAIL
+					+ nl
+					+ "with a description of your last input and include the following output:");
+			System.err.println("Program version: " + Options.RELEASE_VERSION);
+			System.err.print("Stack trace: ");
+			ex.printStackTrace(System.err);
+		}
+	}
 
-    /**
-     * Method is called out of the GUI to exit the command line. <br>
-     * 
-     * (This way the command line exits after hitting return once after closing
-     * the window. It is not the preferd solution, but so far nothing better was
-     * found)
-     */
-    public void exit() {
-        try {
-            processLine("exit");
-        } catch (NoSystemException ex) {
+	/**
+	 * Method is called out of the GUI to exit the command line. <br>
+	 *
+	 * (This way the command line exits after hitting return once after closing
+	 * the window. It is not the preferd solution, but so far nothing better was
+	 * found)
+	 */
+	public void exit() {
+		try {
+			processLine("exit");
+		} catch (NoSystemException ex) {
 			Log.error("No System available. Please load a model before executing this command.");
-        }
-    }
+		}
+	}
 
-    /**
-     * Analyses a line of input and calls the method implementing a command.
-     */
-    private void processLine(String line) throws NoSystemException {
-    	
-    	if (delay > 0) {
+	/**
+	 * Analyses a line of input and calls the method implementing a command.
+	 */
+	private void processLine(String line) throws NoSystemException {
+
+		if (delay > 0) {
 			try {
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {}
-    	}
-    	
-        line = (line == null ? "" : line.trim());
-        if (line.length() == 0 || line.startsWith("//") || line.startsWith("--"))
-            return;
+		}
 
-        if (fStepMode) {
-            Log.println("[step mode: `return' continues, "
-                    + "`escape' followed by `return' exits step mode.]");
-            try {
-                int c = System.in.read();
-                if (c == 0x1b)
-                    fStepMode = false;
-            } catch (IOException ex) { }
-        }
+		line = (line == null ? "" : line.trim());
+		if (line.length() == 0 || line.startsWith("//") || line.startsWith("--")) {
+			return;
+		}
 
-        if (line.startsWith("help") || line.endsWith("--help"))
-            cmdHelp(line);
-        else if (line.equals("q") || line.equals("quit") || line.equals("exit"))
-            cmdExit();
-        else if (line.startsWith("??"))
-            cmdQuery(line.substring(2).trim(), true);
-        else if (line.startsWith("?"))
-            cmdQuery(line.substring(1).trim(), false);
-        else if (line.startsWith(":"))
-            cmdDeriveStaticType(line.substring(1).trim());
-        else if (line.startsWith("!!"))
-        	cmdExec(line.substring(2).trim(), true);
-        else if (line.startsWith("!"))
-        	cmdExec(line.substring(1).trim(), false);
-        else if (line.equals("\\"))
-            cmdMultiLine();
-        else if (line.equals("check") || line.startsWith("check "))
-            cmdCheck(line);
-        else if (line.equals("genvcg"))
-            cmdGenVCG(null);
-        else if (line.startsWith("genvcg "))
-            cmdGenVCG(line.substring(7));
-        else if (line.equals("genmm"))
-            cmdGenMM(null);
-        else if (line.startsWith("genmm "))
-            cmdGenMM(line.substring(6));
-        else if (line.equals("genmonitor"))
-            cmdGenMonitor();
-        else if (line.startsWith("info "))
-            cmdInfo(line.substring(5));
-        else if (line.equals("net"))
-            cmdNet();
-        else if (line.startsWith("open "))
-            cmdOpen(line.substring(5));
-        else if (line.startsWith("reopen"))
-        	cmdReOpen(line.substring(6));
-        else if (line.startsWith("read "))
-            cmdRead(line.substring(5), true);
-        else if (line.startsWith("readq "))
-            cmdRead(line.substring(6), false);
-        else if (line.equals("reset"))
-            cmdReset();
-        else if (line.equals("step on"))
-            cmdStepOn();
-        else if (line.equals("undo"))
-            cmdUndo();
-        else if (line.equals("redo"))
-            cmdRedo();
-        else if (line.equals("write"))
-            cmdWrite(null);
-        else if (line.startsWith("write "))
-            cmdWrite(line.substring(6));
-        else if (line.startsWith("load -q "))
-            cmdGenLoadInvariants(line.substring(8), system(), false);
-        else if (line.startsWith("gen loaded"))
-            cmdGenPrintLoadedInvariants(system());
-        else if (line.startsWith("gen load"))
-            cmdGenLoadInvariants(line.substring(8), system(), true);
-        else if (line.startsWith("gen unload") || line.equals("unload"))
-            cmdGenUnloadInvariants(line.substring(10), system());
-        else if (line.startsWith("gen start") || line.equals("gen start"))
-            cmdGenStartProcedure(line.substring(9), system());
-        else if (line.startsWith("gen flags") || line.equals("gen flags"))
-            cmdGenInvariantFlags(line.substring(9), system());
-        else if (line.startsWith("gen result") || line.equals("gen result"))
-            cmdGenResult(line.substring(10), system());
-        else if (line.startsWith("reload extensions"))
-        	cmdReloadExtensions();
-        else if (line.startsWith("coverage"))
-        	cmdCoverage(line);
-		else if (line.startsWith("plugins") || line.equals("plugins"))
+		if (fStepMode) {
+			Log.println("[step mode: `return' continues, "
+					+ "`escape' followed by `return' exits step mode.]");
+			try {
+				int c = System.in.read();
+				if (c == 0x1b) {
+					fStepMode = false;
+				}
+			} catch (IOException ex) { }
+		}
+
+		if (line.startsWith("help") || line.endsWith("--help")) {
+			cmdHelp(line);
+		} else if (line.equals("q") || line.equals("quit") || line.equals("exit")) {
+			cmdExit();
+		} else if (line.startsWith("??")) {
+			cmdQuery(line.substring(2).trim(), true);
+		} else if (line.startsWith("?")) {
+			cmdQuery(line.substring(1).trim(), false);
+		} else if (line.startsWith(":")) {
+			cmdDeriveStaticType(line.substring(1).trim());
+		} else if (line.startsWith("!!")) {
+			cmdExec(line.substring(2).trim(), true);
+		} else if (line.startsWith("!")) {
+			cmdExec(line.substring(1).trim(), false);
+		} else if (line.equals("\\")) {
+			cmdMultiLine();
+		} else if (line.equals("check") || line.startsWith("check ")) {
+			cmdCheck(line);
+		} else if (line.equals("genvcg")) {
+			cmdGenVCG(null);
+		} else if (line.startsWith("genvcg ")) {
+			cmdGenVCG(line.substring(7));
+		} else if (line.equals("genmm")) {
+			cmdGenMM(null);
+		} else if (line.startsWith("genmm ")) {
+			cmdGenMM(line.substring(6));
+		} else if (line.equals("genmonitor")) {
+			cmdGenMonitor();
+		} else if (line.startsWith("info ")) {
+			cmdInfo(line.substring(5));
+		} else if (line.equals("net")) {
+			cmdNet();
+		} else if (line.startsWith("open ")) {
+			cmdOpen(line.substring(5));
+		} else if (line.startsWith("reopen")) {
+			cmdReOpen(line.substring(6));
+		} else if (line.startsWith("read ")) {
+			cmdRead(line.substring(5), true);
+		} else if (line.startsWith("readq ")) {
+			cmdRead(line.substring(6), false);
+		} else if (line.equals("reset")) {
+			cmdReset();
+		} else if (line.equals("step on")) {
+			cmdStepOn();
+		} else if (line.equals("undo")) {
+			cmdUndo();
+		} else if (line.equals("redo")) {
+			cmdRedo();
+		} else if (line.equals("write")) {
+			cmdWrite(null);
+		} else if (line.startsWith("write ")) {
+			cmdWrite(line.substring(6));
+		} else if (line.startsWith("load -q ")) {
+			cmdGenLoadInvariants(line.substring(8), system(), false);
+		} else if (line.startsWith("gen loaded")) {
+			cmdGenPrintLoadedInvariants(system());
+		} else if (line.startsWith("gen load")) {
+			cmdGenLoadInvariants(line.substring(8), system(), true);
+		} else if (line.startsWith("gen unload") || line.equals("unload")) {
+			cmdGenUnloadInvariants(line.substring(10), system());
+		} else if (line.startsWith("gen start") || line.equals("gen start")) {
+			cmdGenStartProcedure(line.substring(9), system());
+		} else if (line.startsWith("gen flags") || line.equals("gen flags")) {
+			cmdGenInvariantFlags(line.substring(9), system());
+		} else if (line.startsWith("gen result") || line.equals("gen result")) {
+			cmdGenResult(line.substring(10), system());
+		} else if (line.startsWith("reload extensions")) {
+			cmdReloadExtensions();
+		} else if (line.startsWith("coverage")) {
+			cmdCoverage(line);
+		} else if (line.startsWith("plugins") || line.equals("plugins")) {
 			cmdShowPlugins();
-		else if (line.startsWith("delay"))
+		} else if (line.startsWith("delay")) {
 			cmdSetDelay(line);
-		else if (line.startsWith("debug")) {
+		} else if (line.startsWith("debug")) {
 			String[] tokens = line.split(" ");
 			if (tokens.length < 2) {
 				Log.error("Missing value [on|off] for debug");
@@ -479,24 +486,25 @@ public final class Shell implements Runnable, PPCHandler {
 				String arguments = line.substring(cmd.getCmd().length());
 				cmd.getProxy().executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
 			}
-			
-		} else
+
+		} else {
 			Log.error("Unknown command `" + line + "'. Try `help'.");
+		}
 	}
 
 	private void cmdShowPlugins() {
 		System.out.println("================== Plugin commands available ====================");
-		
+
 		for (PluginShellCmdContainer currentCmdMapEntry : this.pluginCommands) {
 			System.out.println(currentCmdMapEntry.getCmd() + " : " + currentCmdMapEntry.getHelp());
 		}
-		
+
 		System.out.println("=================================================================");
 	}
 
 	private void cmdCoverage(String line) {
 		boolean printSums = false;
-		
+
 		String[] args = line.split(" ");
 		for (int i = 1; i < args.length; ++i) {
 			if ("-sum".equals(args[i])) {
@@ -506,23 +514,23 @@ public final class Shell implements Runnable, PPCHandler {
 				return;
 			}
 		}
-		
-		MModel model = fSession.system().model(); 
+
+		MModel model = fSession.system().model();
 		if (model == null) {
 			Log.error("No model loaded");
 			return;
 		}
-		
+
 		Map<MModelElement, CoverageData> completeData = CoverageAnalyzer.calculateModelCoverage(model, true);
 		CoverageData data = completeData.get(model);
-		
+
 		Log.println("Covered classes by invariants:      "
 				+ data.getCoveredClasses().size() + "/"
 				+ model.classes().size());
-		
+
 		List<Map.Entry<MClass, Integer>> entries = new ArrayList<Map.Entry<MClass, Integer>>(
 				data.getClassCoverage().entrySet());
-		
+
 		Collections.sort(entries, new Comparator<Map.Entry<MClass, Integer>>() {
 			@Override
 			public int compare(Entry<MClass, Integer> o1,
@@ -530,24 +538,24 @@ public final class Shell implements Runnable, PPCHandler {
 				return o2.getValue().compareTo(o1.getValue());
 			}
 		});
-		
+
 		for (Map.Entry<MClass, Integer> entry : entries) {
 			Log.println("  " + entry.getKey().name() + ": " + entry.getValue().toString());
 		}
-		
+
 		Set<MClass> notCovered = new HashSet<MClass>(model.classes());
 		notCovered.removeAll(data.getClassCoverage().keySet());
-		
+
 		for (MClass entry : notCovered) {
 			Log.println("  " + entry.name() + ": " + 0);
 		}
-		
+
 		Log.println("Covered classes (complete) by invariants: "
 				+ data.getCompleteCoveredClasses().size() + "/"
 				+ model.classes().size());
-		
+
 		entries = new ArrayList<Map.Entry<MClass, Integer>>(data.getCompleteClassCoverage().entrySet());
-		
+
 		Collections.sort(entries, new Comparator<Map.Entry<MClass, Integer>>() {
 			@Override
 			public int compare(Entry<MClass, Integer> o1,
@@ -555,59 +563,60 @@ public final class Shell implements Runnable, PPCHandler {
 				return o2.getValue().compareTo(o1.getValue());
 			}
 		});
-		
+
 		for (Map.Entry<MClass, Integer> entry : entries) {
 			Log.println("  " + entry.getKey().name() + ": " + entry.getValue().toString());
 		}
-		
+
 		notCovered = new HashSet<MClass>(model.classes());
 		notCovered.removeAll(data.getCompleteClassCoverage().keySet());
-		
+
 		for (MClass entry : notCovered) {
 			Log.println("  " + entry.name() + ": " + 0);
 		}
-		
+
 		Log.println("Covered associations by invariants: "
 				+ data.getAssociationCoverage().size() + "/"
 				+ model.associations().size());
-		
+
 		int attCount = 0;
 		for (MClass cls : model.classes()) {
 			attCount += cls.attributes().size();
 		}
-		
+
 		Log.println("Covered attributes by invariants:   "
 				+ data.getAttributeAccessCoverage().size() + "/"
 				+ attCount);
-		
+
 		Log.println();
 		Log.println("Coverage by Invariant:");
-		
+
 		List<MClassInvariant> sortedInvs = new ArrayList<MClassInvariant>(model.classInvariants());
 		Collections.sort(sortedInvs, new Comparator<MClassInvariant>() {
 			@Override
 			public int compare(MClassInvariant o1, MClassInvariant o2) {
 				int clsCmp = o1.cls().compareTo(o2);
-				if (clsCmp == 0)
+				if (clsCmp == 0) {
 					return o1.name().compareTo(o2.name());
-				else
+				} else {
 					return clsCmp;
+				}
 			}
 		});
-		
+
 		String total, classes, classesComp, assocs, attr, props;
-		
+
 		for (MClassInvariant inv : sortedInvs) {
 			data = completeData.get(inv);
-			
+
 			if (printSums) {
 				total = " " + Integer.toString(
-							data.getCompleteCoveredClasses().size() +
-							data.getAssociationCoverage().keySet().size() +
-							data.getAttributeAccessCoverage().keySet().size() +
-							data.getPropertyCoverage().keySet().size()
+						data.getCompleteCoveredClasses().size() +
+						data.getAssociationCoverage().keySet().size() +
+						data.getAttributeAccessCoverage().keySet().size() +
+						data.getPropertyCoverage().keySet().size()
 						);
-				
+
 				classes = Integer.toString(data.getCoveredClasses().size());
 				classesComp = Integer.toString(data.getCompleteCoveredClasses().size());
 				assocs = Integer.toString(data.getAssociationCoverage().keySet().size());
@@ -622,9 +631,10 @@ public final class Shell implements Runnable, PPCHandler {
 					@Override
 					public String format(AttributeAccessInfo element) {
 						String inherited = "";
-						if (element.isInherited())
+						if (element.isInherited()) {
 							inherited = " (inherited)";
-						
+						}
+
 						return element.getSourceClass().name() + "." + element.getAttribute().name() + inherited;
 					}
 				});
@@ -635,7 +645,7 @@ public final class Shell implements Runnable, PPCHandler {
 					}
 				});
 			}
-			
+
 			Log.println();
 			Log.print("  ");
 			Log.print(inv.cls().name());
@@ -643,300 +653,304 @@ public final class Shell implements Runnable, PPCHandler {
 			Log.print(inv.name());
 			Log.print(":");
 			Log.println(total);
-			
+
 			Log.print("   -Classes:            ");
 			Log.println(classes);
-			
+
 			Log.print("   -Classes (complete): ");
 			Log.println(classesComp);
-			
+
 			Log.print("   -Associations:       ");
 			Log.println(assocs);
-			
+
 			Log.print("   -Attributes:         ");
 			Log.println(attr);
-			
+
 			Log.print("   -Properties:         ");
 			Log.println(props);
 		}
 	}
-	
-    /**
-     * Checks integrity constraints of current system state.
-     */
-    private void cmdCheck(String line) throws NoSystemException {
-        boolean verbose = false;
-        boolean details = false;
-        boolean all = false;
-        ArrayList<String> invNames = new ArrayList<String>();
-        StringTokenizer tokenizer = new StringTokenizer(line);
-        // skip command
-        tokenizer.nextToken();
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            if (token.equals("-v")) {
-                verbose = true;
-            } else if (token.equals("-d")) {
-                details = true;
-            } else if (token.equals("-a")) {
-                all = true;
-            } else {
-                MClassInvariant inv = system().model().getClassInvariant(token);
-                if (inv == null){
-					Log.error("Model has no invariant named " + StringUtil.inQuotes(token) + ".");
-                }
-                else {
-                	invNames.add(token);
-                }
-            }
-        }
 
-        PrintWriter out;
-        if (Options.quiet && !Options.quietAndVerboseConstraintCheck) {
-            out = new PrintWriter(new NullWriter());
-        } else {
-            out = new PrintWriter(Log.out());
-        }
-        fLastCheckResult = system().state().check(out, verbose, details, all,
-                invNames);
-    }
-    
-    
-    /**
-     * Executes a SOIL statement (started by <code>!</code> or <code>!!</code>)
-     * @param line The command line without <code>!</code>
-     * @param verbose If <code>true</code> detailed messages are written to the shell. 
-     * @throws NoSystemException
-     */
+	/**
+	 * Checks integrity constraints of current system state.
+	 */
+	private void cmdCheck(String line) throws NoSystemException {
+		boolean verbose = false;
+		boolean details = false;
+		boolean all = false;
+		ArrayList<String> invNames = new ArrayList<String>();
+		StringTokenizer tokenizer = new StringTokenizer(line);
+		// skip command
+		tokenizer.nextToken();
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (token.equals("-v")) {
+				verbose = true;
+			} else if (token.equals("-d")) {
+				details = true;
+			} else if (token.equals("-a")) {
+				all = true;
+			} else {
+				MClassInvariant inv = system().model().getClassInvariant(token);
+				if (inv == null){
+					Log.error("Model has no invariant named " + StringUtil.inQuotes(token) + ".");
+				}
+				else {
+					invNames.add(token);
+				}
+			}
+		}
+
+		PrintWriter out;
+		if (Options.quiet && !Options.quietAndVerboseConstraintCheck) {
+			out = new PrintWriter(new NullWriter());
+		} else {
+			out = new PrintWriter(Log.out());
+		}
+		fLastCheckResult = system().state().check(out, verbose, details, all,
+				invNames);
+	}
+
+
+	/**
+	 * Executes a SOIL statement (started by <code>!</code> or <code>!!</code>)
+	 * @param line The command line without <code>!</code>
+	 * @param verbose If <code>true</code> detailed messages are written to the shell.
+	 * @throws NoSystemException
+	 */
 	private void cmdExec(String line, boolean verbose) throws NoSystemException {
-    	
-    	if (line == null || line.length() == 0) {
-    		Log.error("ERROR: Statement expected.");
-    		return;
-    	}
-    	
-    	MSystem system = system();
-    	MStatement statement = ShellCommandCompiler.compileShellCommand(
-    			system.model(),
-    			system.state(),
-    			system.getVariableEnvironment(),
-    			line,
-    			"<input>",
-    			new PrintWriter(System.err),
-    			verbose);
-    	
-    	if (statement == null) {
-    		return;
-    	}
-    	
-    	if (Log.isTracing()) {
+
+		if (line == null || line.length() == 0) {
+			Log.error("ERROR: Statement expected.");
+			return;
+		}
+
+		MSystem system = system();
+		MStatement statement = ShellCommandCompiler.compileShellCommand(
+				system.model(),
+				system.state(),
+				system.getVariableEnvironment(),
+				line,
+				"<input>",
+				new PrintWriter(System.err),
+				verbose);
+
+		if (statement == null) {
+			return;
+		}
+
+		if (Log.isTracing()) {
 			Log.trace(this, "--- Executing shell command: " + statement.getShellCommand());
-    	}
-            
+		}
+
 		try {
 			if ((statement instanceof MEnterOperationStatement)
 					|| (statement instanceof MExitOperationStatement)) {
-				
+
 				system.execute(statement, false, true, true);
 			} else {
 				system.execute(statement);
 			}
 		} catch (MSystemException e) {
 			String message = e.getMessage();
-			
-			if ((e.getCause() != null) && 
+
+			if ((e.getCause() != null) &&
 					(e.getCause() instanceof EvaluationFailedException)) {
-				
-				EvaluationFailedException exception = 
-					(EvaluationFailedException)e.getCause();
-			
+
+				EvaluationFailedException exception =
+						(EvaluationFailedException)e.getCause();
+
 				message = exception.getMessage();
 			}
-			
+
 			Log.error(message);
 		} finally {
 			fSession.evaluatedStatement(statement);
 		}
-    } 
-    
-    /**
-     * Terminates the program.
-     */
-    private void cmdExit() {
-        // clean up
-        Log.verbose("Exiting...");
-        
-        // Write command history to file
-        if (!Options.quiet) {
-            try {
-                fReadline.writeHistory(Options.USE_HISTORY_PATH);
-            } catch (IOException ex) {
-                Log.error("Can't write history file "
-                        + Options.USE_HISTORY_PATH + " : " + ex.getMessage());
-            }
-        }
-        
-        synchronized( fReadlineStack ) {
-            fFinished = true;
-            int exitCode = 0;
-            if (Options.quiet && ! lastCheckResult() )
-                exitCode = 1;
-    
-            if (Options.readlineTest) {
-                System.err.println("readline balance: "+ ReadlineTestReadlineDecorator.getBalance());
-                System.err.flush();
-                exitCode = ReadlineTestReadlineDecorator.getBalance();
-            }
+	}
 
-            System.exit(exitCode);
-        }
-    }
-    
-    /**
-     * Writes a VCG file for a class diagram of the model.
-     */
-    private void cmdGenVCG(String filename) throws NoSystemException {
-        MSystem system = system();
-        PrintWriter out = null;
-        try {
-            if (filename == null)
-                out = new PrintWriter(System.out);
-            else {
-                out = new PrintWriter(new BufferedWriter(new FileWriter(
-                        filename)));
-            }
-            ModelToGraph.write(out, system.model());
-        } catch (IOException ex) {
-            Log.error(ex.getMessage());
-        } finally {
-            if (out != null) {
-                out.flush();
-                if (filename != null)
-                    out.close();
-            }
-        }
-    }
+	/**
+	 * Terminates the program.
+	 */
+	private void cmdExit() {
+		// clean up
+		Log.verbose("Exiting...");
 
-    /**
-     * Prints commands for generating a metamodel instance.
-     */
-    private void cmdGenMM(String filename) throws NoSystemException {
-        MSystem system = system();
-        PrintWriter out = null;
-        try {
-            if (filename == null)
-                out = new PrintWriter(System.out);
-            else {
-                out = new PrintWriter(new BufferedWriter(new FileWriter(
-                        filename)));
-            }
-            MMVisitor v = new MMInstanceGenerator(out);
-            system.model().processWithVisitor(v);
-        } catch (IOException ex) {
-            Log.error(ex.getMessage());
-        } finally {
-            if (out != null) {
-                out.flush();
-                if (filename != null)
-                    out.close();
-            }
-        }
-    }
+		// Write command history to file
+		if (!Options.quiet) {
+			try {
+				fReadline.writeHistory(Options.USE_HISTORY_PATH);
+			} catch (IOException ex) {
+				Log.error("Can't write history file "
+						+ Options.USE_HISTORY_PATH + " : " + ex.getMessage());
+			}
+		}
 
-    /**
-     * Writes source files for aspect-based monitoring of applications.
-     */
-    private void cmdGenMonitor() throws NoSystemException {
-        MSystem system = system();
-        String filename = "USEMonitor.java";
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filename)))){
-            Log.verbose("writing file `" + filename + "'...");
+		synchronized( fReadlineStack ) {
+			fFinished = true;
+			int exitCode = 0;
+			if (Options.quiet && ! lastCheckResult() ) {
+				exitCode = 1;
+			}
 
-            new MonitorAspectGenerator(out, system.model()).write();
-            Log.verbose("done.");
-        } catch (IOException ex) {
-            Log.error(ex.getMessage());
-        }
-    }
+			if (Options.readlineTest) {
+				System.err.println("readline balance: "+ ReadlineTestReadlineDecorator.getBalance());
+				System.err.flush();
+				exitCode = ReadlineTestReadlineDecorator.getBalance();
+			}
 
-    /**
-     * Prints help.
-     */
-    private void cmdHelp(String line) {
-        String cmd = "";
+			System.exit(exitCode);
+		}
+	}
 
-        if (line.indexOf("--help") < 0) {
-            cmd = line.substring(4, line.length());
-        } else {
-            cmd = line.substring(0, line.indexOf("--help"));
-        }
-        HelpForCmd.getInstance().printHelp(cmd);
-    }
+	/**
+	 * Writes a VCG file for a class diagram of the model.
+	 */
+	private void cmdGenVCG(String filename) throws NoSystemException {
+		MSystem system = system();
+		PrintWriter out = null;
+		try {
+			if (filename == null) {
+				out = new PrintWriter(System.out);
+			} else {
+				out = new PrintWriter(new BufferedWriter(new FileWriter(
+						filename)));
+			}
+			ModelToGraph.write(out, system.model());
+		} catch (IOException ex) {
+			Log.error(ex.getMessage());
+		} finally {
+			if (out != null) {
+				out.flush();
+				if (filename != null) {
+					out.close();
+				}
+			}
+		}
+	}
 
-    /**
-     * Prints information about various things.
-     */
-    private void cmdInfo(String line) throws NoSystemException {
-        StringTokenizer tokenizer = new StringTokenizer(line);
-        try {
-            String subCmd = tokenizer.nextToken();
-            if (subCmd.equals("class")) {
-                String arg = tokenizer.nextToken();
-                cmdInfoClass(arg);
-            } else if (subCmd.equals("model")) {
-                cmdInfoModel();
-            } else if (subCmd.equals("state")) {
-                cmdInfoState();
-            } else if (subCmd.equals("opstack")) {
-                cmdInfoOpStack();
-            } else if (subCmd.equals("prog")) {
-                cmdInfoProg();
-            } else if (subCmd.equals("vars")) {
-                cmdInfoVars();
-            } else
-                Log.error("Syntax error in info command. Try `help'.");
-        } catch (NoSuchElementException ex) {
-            Log.error("Missing argument to `info' command. Try `help'.");
-        }
-    }
+	/**
+	 * Prints commands for generating a metamodel instance.
+	 */
+	private void cmdGenMM(String filename) throws NoSystemException {
+		MSystem system = system();
+		PrintWriter out = null;
+		try {
+			if (filename == null) {
+				out = new PrintWriter(System.out);
+			} else {
+				out = new PrintWriter(new BufferedWriter(new FileWriter(
+						filename)));
+			}
+			MMVisitor v = new MMInstanceGenerator(out);
+			system.model().processWithVisitor(v);
+		} catch (IOException ex) {
+			Log.error(ex.getMessage());
+		} finally {
+			if (out != null) {
+				out.flush();
+				if (filename != null) {
+					out.close();
+				}
+			}
+		}
+	}
 
-    /**
-     * Prints information about a class.
-     */
-    private void cmdInfoClass(String classname) throws NoSystemException {
-        MSystem system = system();
-        MClass cls = system.model().getClass(classname);
-        if (cls == null)
-            Log.error("Class `" + classname + "' not found.");
-        else {
-            MMVisitor v = new MMPrintVisitor(new PrintWriter(System.out, true));
-            cls.processWithVisitor(v);
-            int numObjects = system.state().objectsOfClass(cls).size();
-            System.out.println(numObjects + " object"
-                    + ((numObjects == 1) ? "" : "s")
-                    + " of this class in current state.");
-        }
-    }
+	/**
+	 * Writes source files for aspect-based monitoring of applications.
+	 */
+	private void cmdGenMonitor() throws NoSystemException {
+		MSystem system = system();
+		String filename = "USEMonitor.java";
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filename)))){
+			Log.verbose("writing file `" + filename + "'...");
 
-    /**
-     * Prints information about the model.
-     */
-    private void cmdInfoModel() throws NoSystemException {
-        MSystem system = system();
-        MMVisitor v = new MMPrintVisitor(new PrintWriter(System.out, true));
-        system.model().processWithVisitor(v);
-        int numObjects = system.state().allObjects().size();
-        System.out.println(numObjects + " object"
-                + ((numObjects == 1) ? "" : "s") + " total in current state.");
-    }
+			new MonitorAspectGenerator(out, system.model()).write();
+			Log.verbose("done.");
+		} catch (IOException ex) {
+			Log.error(ex.getMessage());
+		}
+	}
 
-    /**
-     * Prints the stack of active operations.
-     */
-    private void cmdInfoOpStack() throws NoSystemException {
-        MSystem system = system();  
-        Deque<MOperationCall> callStack = system.getCallStack();
-        int index = callStack.size();
+	/**
+	 * Prints help.
+	 */
+	private void cmdHelp(String line) {
+		String cmd = "";
+
+		if (line.indexOf("--help") < 0) {
+			cmd = line.substring(4, line.length());
+		} else {
+			cmd = line.substring(0, line.indexOf("--help"));
+		}
+		HelpForCmd.getInstance().printHelp(cmd);
+	}
+
+	/**
+	 * Prints information about various things.
+	 */
+	private void cmdInfo(String line) throws NoSystemException {
+		StringTokenizer tokenizer = new StringTokenizer(line);
+		try {
+			String subCmd = tokenizer.nextToken();
+			if (subCmd.equals("class")) {
+				String arg = tokenizer.nextToken();
+				cmdInfoClass(arg);
+			} else if (subCmd.equals("model")) {
+				cmdInfoModel();
+			} else if (subCmd.equals("state")) {
+				cmdInfoState();
+			} else if (subCmd.equals("opstack")) {
+				cmdInfoOpStack();
+			} else if (subCmd.equals("prog")) {
+				cmdInfoProg();
+			} else if (subCmd.equals("vars")) {
+				cmdInfoVars();
+			} else {
+				Log.error("Syntax error in info command. Try `help'.");
+			}
+		} catch (NoSuchElementException ex) {
+			Log.error("Missing argument to `info' command. Try `help'.");
+		}
+	}
+
+	/**
+	 * Prints information about a class.
+	 */
+	private void cmdInfoClass(String classname) throws NoSystemException {
+		MSystem system = system();
+		MClass cls = system.model().getClass(classname);
+		if (cls == null) {
+			Log.error("Class `" + classname + "' not found.");
+		} else {
+			MMVisitor v = new MMPrintVisitor(new PrintWriter(System.out, true));
+			cls.processWithVisitor(v);
+			int numObjects = system.state().objectsOfClass(cls).size();
+			System.out.println(numObjects + " object"
+					+ ((numObjects == 1) ? "" : "s")
+					+ " of this class in current state.");
+		}
+	}
+
+	/**
+	 * Prints information about the model.
+	 */
+	private void cmdInfoModel() throws NoSystemException {
+		MSystem system = system();
+		MMVisitor v = new MMPrintVisitor(new PrintWriter(System.out, true));
+		system.model().processWithVisitor(v);
+		int numObjects = system.state().allObjects().size();
+		System.out.println(numObjects + " object"
+				+ ((numObjects == 1) ? "" : "s") + " total in current state.");
+	}
+
+	/**
+	 * Prints the stack of active operations.
+	 */
+	private void cmdInfoOpStack() throws NoSystemException {
+		MSystem system = system();
+		Deque<MOperationCall> callStack = system.getCallStack();
+		int index = callStack.size();
 		for (MOperationCall call : callStack) {
 			Log.print(index-- + ". ");
 			Log.println(call.toString() + " " + call.getCallerString());
@@ -944,369 +958,374 @@ public final class Shell implements Runnable, PPCHandler {
 		if (callStack.isEmpty()) {
 			Log.println("no active operations.");
 		}
-    }
+	}
 
-    /**
-     * Prints information about the running program.
-     */
-    private void cmdInfoProg() {
-        long total = Runtime.getRuntime().totalMemory();
-        long free = Runtime.getRuntime().freeMemory();
-        NumberFormat nf = NumberFormat.getInstance();
-        Log.println("(mem: "
-                + NumberFormat.getPercentInstance().format(
-                        (double) free / (double) total) + " = "
-                + nf.format(free) + " bytes free, " + nf.format(total)
-                + " bytes total)");
-    }
+	/**
+	 * Prints information about the running program.
+	 */
+	private void cmdInfoProg() {
+		long total = Runtime.getRuntime().totalMemory();
+		long free = Runtime.getRuntime().freeMemory();
+		NumberFormat nf = NumberFormat.getInstance();
+		Log.println("(mem: "
+				+ NumberFormat.getPercentInstance().format(
+						(double) free / (double) total) + " = "
+						+ nf.format(free) + " bytes free, " + nf.format(total)
+						+ " bytes total)");
+	}
 
-    /**
-     * Prints information about the current system state.
-     */
-    private void cmdInfoState() throws NoSystemException {
-        MSystem system = system();
-        MModel model = system.model();
-        MSystemState state = system.state();
-        NumberFormat nf = NumberFormat.getInstance();
+	/**
+	 * Prints information about the current system state.
+	 */
+	private void cmdInfoState() throws NoSystemException {
+		MSystem system = system();
+		MModel model = system.model();
+		MSystemState state = system.state();
+		NumberFormat nf = NumberFormat.getInstance();
 
-        System.out.println("State: " + state.name());
+		System.out.println("State: " + state.name());
 
-        // generate report for objects
-        Report report = new Report(3, "$l : $r $r");
+		// generate report for objects
+		Report report = new Report(3, "$l : $r $r");
 
-        // header
-        report.addRow();
-        report.addCell("class");
-        report.addCell("#objects");
-        report.addCell("+ #objects in subclasses");
-        report.addRuler('-');
+		// header
+		report.addRow();
+		report.addCell("class");
+		report.addCell("#objects");
+		report.addCell("+ #objects in subclasses");
+		report.addRuler('-');
 
-        // data
-        long total = 0;
-        int n;
+		// data
+		long total = 0;
+		int n;
 
-        for (MClass cls : model.classes()) {
-            report.addRow();
-            String clsname = cls.name();
-            if (cls.isAbstract())
-                clsname = '(' + clsname + ')';
-            report.addCell(clsname);
-            n = state.objectsOfClass(cls).size();
-            total += n;
-            report.addCell(nf.format(n));
-            n = state.objectsOfClassAndSubClasses(cls).size();
-            report.addCell(nf.format(n));
-        }
+		for (MClass cls : model.classes()) {
+			report.addRow();
+			String clsname = cls.name();
+			if (cls.isAbstract()) {
+				clsname = '(' + clsname + ')';
+			}
+			report.addCell(clsname);
+			n = state.objectsOfClass(cls).size();
+			total += n;
+			report.addCell(nf.format(n));
+			n = state.objectsOfClassAndSubClasses(cls).size();
+			report.addCell(nf.format(n));
+		}
 
-        // footer
-        report.addRuler('-');
-        report.addRow();
-        report.addCell("total");
-        report.addCell(nf.format(total));
-        report.addCell("");
+		// footer
+		report.addRuler('-');
+		report.addRow();
+		report.addCell("total");
+		report.addCell(nf.format(total));
+		report.addCell("");
 
-        // print report
-        report.printOn(System.out);
-        System.out.println();
+		// print report
+		report.printOn(System.out);
+		System.out.println();
 
-        // generate report for links
-        report = new Report(2, "$l : $r");
+		// generate report for links
+		report = new Report(2, "$l : $r");
 
-        // header
-        report.addRow();
-        report.addCell("association");
-        report.addCell("#links");
-        report.addRuler('-');
+		// header
+		report.addRow();
+		report.addCell("association");
+		report.addCell("#links");
+		report.addRuler('-');
 
-        // data
-        total = 0;
+		// data
+		total = 0;
 
-        for (MAssociation assoc : model.associations()) {
-            report.addRow();
-            report.addCell(assoc.name());
-            n = state.linksOfAssociation(assoc).size();
-            report.addCell(nf.format(n));
-            total += n;
-        }
+		for (MAssociation assoc : model.associations()) {
+			report.addRow();
+			report.addCell(assoc.name());
+			n = state.linksOfAssociation(assoc).size();
+			report.addCell(nf.format(n));
+			total += n;
+		}
 
-        // footer
-        report.addRuler('-');
-        report.addRow();
-        report.addCell("total");
-        report.addCell(nf.format(total));
+		// footer
+		report.addRuler('-');
+		report.addRow();
+		report.addCell("total");
+		report.addCell(nf.format(total));
 
-        // print report
-        report.printOn(System.out);
-    }
+		// print report
+		report.printOn(System.out);
+	}
 
-    /**
-     * Prints information about global variables.
-     */
-    private void cmdInfoVars() throws NoSystemException {
-        MSystem system = system();
-        
-        System.out.print(system.getVariableEnvironment());
-    }
+	/**
+	 * Prints information about global variables.
+	 */
+	private void cmdInfoVars() throws NoSystemException {
+		MSystem system = system();
 
-    /**
-     * Sets input to multi-line mode.
-     */
-    private void cmdMultiLine() {
-        fMultiLineMode = true;
-    }
+		System.out.print(system.getVariableEnvironment());
+	}
 
-    /**
-     * Reads commands from a socket.
-     */
-    private void cmdNet() {
-        int port = 1777;
-        Log.verbose("waiting for connection on port " + port + "...");
-        
-        try (ServerSocket socket = new ServerSocket(port)) {
-            Socket client = socket.accept();
-            InetAddress clientAddr = client.getInetAddress();
-            
-            Log.verbose("connected to " + clientAddr.getHostName() + ":" + client.getPort());
-            
-            Readline readline = new SocketReadline(client, true, "net>");
-            fReadlineStack.push(readline);
-        } catch (IOException ex) {
-            Log.error("Can't bind or listen on port " + port + ".");
-        }
-    }
+	/**
+	 * Sets input to multi-line mode.
+	 */
+	private void cmdMultiLine() {
+		fMultiLineMode = true;
+	}
 
-    /**
-     * Saves pathname of the currently opened file and returns the absolute path.
-     * All other files can be opened relative to it.
-     */
-    private Stack<File> openFiles = new Stack<File>();
-    private Stack<String> relativeNames = new Stack<String>();
-    
-    public String getFilenameToOpen(String filename) {
-    	return getFilenameToOpen(filename, true);
-    }
-    
-    /**
-     * This operation handles filenames provided to the USE-Shell.
-     * Surrounding characters like <code>'</code> or <code>"</code>  
-     * (even if mixed) are removed. 
-     * <p>If an absolute path is given as <code>filename</code>,
-     * this file name (with removed quotes) is returned.<p>
-     * <p>If a relative path is provided as <code>filename</code>,
-     * the currently opened file is used as the starting point to calculate
-     * the absolute path.</p>
-     * <p><b>Warning:</b> No check is made if the calculated file exists.
-     * This has to be done by the caller.</p>
-     * @param filename A absolute or relative filename to open.
-     * @param useAsCurrentFile If <code>true</code>, the opened file is stored as currently opened
-     * and is used as the starting point to calculate subsequent relative file names.
-     * After the file is no longer the current file, i.e., it was closed or the file was not opened, {@link #setFileClosed()} must be called.
-     * @return
-     */
-    public String getFilenameToOpen(String filename, boolean useAsCurrentFile) {
-    	if (filename.matches("([\"']).+?\\1")) // matches '<name>' or "<name>", not "<name>'
-    		filename = filename.substring(1, filename.length() - 1);
-    		
-    	File f = new File(filename);
-    	String result;
-    	
-    	if (f.isAbsolute()) {
-    		result = filename;
+	/**
+	 * Reads commands from a socket.
+	 */
+	private void cmdNet() {
+		int port = 1777;
+		Log.verbose("waiting for connection on port " + port + "...");
+
+		try (ServerSocket socket = new ServerSocket(port)) {
+			Socket client = socket.accept();
+			InetAddress clientAddr = client.getInetAddress();
+
+			Log.verbose("connected to " + clientAddr.getHostName() + ":" + client.getPort());
+
+			Readline readline = new SocketReadline(client, true, "net>");
+			fReadlineStack.push(readline);
+		} catch (IOException ex) {
+			Log.error("Can't bind or listen on port " + port + ".");
+		}
+	}
+
+	/**
+	 * Saves pathname of the currently opened file and returns the absolute path.
+	 * All other files can be opened relative to it.
+	 */
+	private Stack<File> openFiles = new Stack<File>();
+	private Stack<String> relativeNames = new Stack<String>();
+
+	public String getFilenameToOpen(String filename) {
+		return getFilenameToOpen(filename, true);
+	}
+
+	/**
+	 * This operation handles filenames provided to the USE-Shell.
+	 * Surrounding characters like <code>'</code> or <code>"</code>
+	 * (even if mixed) are removed.
+	 * <p>If an absolute path is given as <code>filename</code>,
+	 * this file name (with removed quotes) is returned.<p>
+	 * <p>If a relative path is provided as <code>filename</code>,
+	 * the currently opened file is used as the starting point to calculate
+	 * the absolute path.</p>
+	 * <p><b>Warning:</b> No check is made if the calculated file exists.
+	 * This has to be done by the caller.</p>
+	 * @param filename A absolute or relative filename to open.
+	 * @param useAsCurrentFile If <code>true</code>, the opened file is stored as currently opened
+	 * and is used as the starting point to calculate subsequent relative file names.
+	 * After the file is no longer the current file, i.e., it was closed or the file was not opened, {@link #setFileClosed()} must be called.
+	 * @return
+	 */
+	public String getFilenameToOpen(String filename, boolean useAsCurrentFile) {
+		// matches '<name>' or "<name>", not "<name>'
+		if (filename.matches("([\"']).+?\\1")) {
+			filename = filename.substring(1, filename.length() - 1);
+		}
+
+		File f = new File(filename);
+		String result;
+
+		if (f.isAbsolute()) {
+			result = filename;
 			if (useAsCurrentFile) {
 				relativeNames.push("");
 			}
-    	} else {
-    		if (openFiles.isEmpty()) {
-    			result = filename;
-    			if (useAsCurrentFile) {
-    				relativeNames.push(getPathWithoutFile(result));
-    			}
-    		} else {
-    			File currentFile = openFiles.peek();
-    			f = new File(currentFile.getParentFile(), filename);
-    			
-    			if (useAsCurrentFile) {
-    				relativeNames.push(getPathWithoutFile(relativeNames.peek() + filename));
-    			}
-    			
-    			result = f.getAbsolutePath();
-    		}
-    	}
-    	
-    	if (useAsCurrentFile) {
-    		openFiles.push(f);
-    	}
-    	
-    	return result;
-    }
-    
-    private String getRelativeFileNameOfCurrentFile() {
-    	if (relativeNames.isEmpty()) {
-    		return "";
-    	} else {
-    		return relativeNames.peek() + openFiles.peek().getName();
-    	}
-    }
-    
-    private String getPathWithoutFile(String file) {
-    	int lastDirSep = -1;
-    	lastDirSep = file.lastIndexOf("\\");
-    	lastDirSep = Math.max(lastDirSep, file.lastIndexOf("/"));
-    	
-    	if (lastDirSep == -1)
-    		return "";
-    	else
-    		return file.substring(0, lastDirSep + 1);
-    }
-    
-    /**
-     * Removes the currently opened file from the stack of opened files.
-     */
-    public void setFileClosed() {
-    	if(!openFiles.empty()){
-    		openFiles.pop();
-    	}
-    	if(!relativeNames.empty()){
-    		relativeNames.pop();
-    	}
-    }
-    
-    /**
-     * Shorthand for {@link #cmdOpen(String, boolean)}.
-     * 
-     * @param line Path and filename to be opened.
-     * @see #cmdOpen(String, boolean)
-     */
-    private void cmdOpen(String line){
-    	cmdOpen(line, false);
-    }
-    
-    /**
+		} else {
+			if (openFiles.isEmpty()) {
+				result = filename;
+				if (useAsCurrentFile) {
+					relativeNames.push(getPathWithoutFile(result));
+				}
+			} else {
+				File currentFile = openFiles.peek();
+				f = new File(currentFile.getParentFile(), filename);
+
+				if (useAsCurrentFile) {
+					relativeNames.push(getPathWithoutFile(relativeNames.peek() + filename));
+				}
+
+				result = f.getAbsolutePath();
+			}
+		}
+
+		if (useAsCurrentFile) {
+			openFiles.push(f);
+		}
+
+		return result;
+	}
+
+	private String getRelativeFileNameOfCurrentFile() {
+		if (relativeNames.isEmpty()) {
+			return "";
+		} else {
+			return relativeNames.peek() + openFiles.peek().getName();
+		}
+	}
+
+	private String getPathWithoutFile(String file) {
+		int lastDirSep = -1;
+		lastDirSep = file.lastIndexOf("\\");
+		lastDirSep = Math.max(lastDirSep, file.lastIndexOf("/"));
+
+		if (lastDirSep == -1) {
+			return "";
+		} else {
+			return file.substring(0, lastDirSep + 1);
+		}
+	}
+
+	/**
+	 * Removes the currently opened file from the stack of opened files.
+	 */
+	public void setFileClosed() {
+		if(!openFiles.empty()){
+			openFiles.pop();
+		}
+		if(!relativeNames.empty()){
+			relativeNames.pop();
+		}
+	}
+
+	/**
+	 * Shorthand for {@link #cmdOpen(String, boolean)}.
+	 *
+	 * @param line Path and filename to be opened.
+	 * @see #cmdOpen(String, boolean)
+	 */
+	private void cmdOpen(String line){
+		cmdOpen(line, false);
+	}
+
+	/**
 	 * Checks which file type is to be opened and calls the specific open
 	 * command (<code>cmdOpenUseFile</code>,<code>cmdRead</code>,
 	 * <code>cmdLoad</code>). If the parameter {@code forcequiet} is
 	 * {@code true}, the output will be suppressed.
-	 * 
+	 *
 	 * @param line
 	 *            Path and filename to be opened.
 	 */
-    private void cmdOpen(String line, boolean forcequiet) {
-        boolean doEcho = forcequiet?false:true;
-        StringTokenizer st = new StringTokenizer(line);
+	private void cmdOpen(String line, boolean forcequiet) {
+		boolean doEcho = forcequiet?false:true;
+		StringTokenizer st = new StringTokenizer(line);
 
-        // if there is no filename and option
-        if (!st.hasMoreTokens()) {
-            Log.error("Unknown command `open " + line + "'. " + "Try `help'.");
-            return;
-        }
+		// if there is no filename and option
+		if (!st.hasMoreTokens()) {
+			Log.error("Unknown command `open " + line + "'. " + "Try `help'.");
+			return;
+		}
 
-        String token = st.nextToken();
-        // option quiet
-        if (token.equals("-q")) {
-            doEcho = false;
+		String token = st.nextToken();
+		// option quiet
+		if (token.equals("-q")) {
+			doEcho = false;
 
-            // if there is no filename
-            if (!st.hasMoreTokens()) {
-                Log.error("Unknown command `open " + line + "'. "
-                        + "Try `help'.");
-                return;
-            }
-            token = st.nextToken();
-        }
+			// if there is no filename
+			if (!st.hasMoreTokens()) {
+				Log.error("Unknown command `open " + line + "'. "
+						+ "Try `help'.");
+				return;
+			}
+			token = st.nextToken();
+		}
 
-        // to find out what command will be needed
-        try {
-        	// if quoted add remaining tokens
-        	if (token.startsWith("\"") || token.startsWith("'")) {
-        		while (st.hasMoreTokens()) {
-        			token += " " + st.nextToken();
-        		}
-        	}
-        	
-        	String filename = getFilenameToOpen(token);
-        	filename = Options.getFilenameToOpen(filename);
-            String firstWord = getFirstWordOfFile(filename);
-            setFileClosed();
-            
-            // if getFirstWordOfFile returned with error code, than
-            // end this method.
-            if (firstWord != null && firstWord.equals("ERROR: -1")) {
-                return;
-            }
-            if (firstWord == null) {
-                Log.println("Nothing to do, because file `" + line + "' "
-                        + "contains no data!");
-                // Necessary if USE is started with a cmd-file and option -q or
-                // -qv. This call provides the readline stack with the one
-                // readline object and no EmptyStackException will be thrown.
-                if (Options.cmdFilename != null) {
-                    cmdRead(Options.cmdFilename, false);
-                }
-                return;
-            }
-            if (firstWord.startsWith("model") || firstWord.startsWith("@")) {
-                cmdOpenUseFile(token);
-            } else if (firstWord.startsWith("context")) {
-                cmdGenLoadInvariants(token, system(), doEcho);
-            } else if (firstWord.startsWith("testsuite")) {
-            	cmdRunTestSuite(token);
-            } else {
-                cmdRead(filename, doEcho);
-            }
-            
-            if (this.openFiles.size() <= 1) {
-            	String opened;
-            	
-            	if (this.openFiles.size() == 0)
-            		opened = filename;
-            	else
-            		opened = this.openFiles.peek().toString();
+		// to find out what command will be needed
+		try {
+			// if quoted add remaining tokens
+			if (token.startsWith("\"") || token.startsWith("'")) {
+				while (st.hasMoreTokens()) {
+					token += " " + st.nextToken();
+				}
+			}
 
-        		Options.getRecentFiles().push(opened);
-        		Options.setLastDirectory(Paths.get(opened).getParent());
-        	}
-        } catch (NoSystemException e) {
-            Log.error("No System available. Please load a model before "
-                    + "executing this command.");
-        }
-    }
+			String filename = getFilenameToOpen(token);
+			filename = Options.getFilenameToOpen(filename);
+			String firstWord = getFirstWordOfFile(filename);
+			setFileClosed();
 
-    /**
-     * <ul>
-     *   <li>Executes the last open command if no arguments are specified.</li>
-     *   <li>If <code>-l</code> is specified prints a list of the last opened files.</li>
-     *   <li>If a number (<code>n</code>) is specified as an argument the <code>n</code>-th recent file is opened.</li>
-     * </ul>
-     * @param line The command line without the command reopen.
-     */
-    private void cmdReOpen(String line) {
-    	line = (line == null ? "" : line.trim());
-    	boolean quiet = false;
-    	
-    	List<String> recentFiles = Options.getRecentFiles().getItems();
-    	
-    	if (line.startsWith("-l")) {
-    		if (recentFiles.isEmpty()) {
-    			Log.println("No files were opened, yet.");
-    			return;
-    		}
+			// if getFirstWordOfFile returned with error code, than
+			// end this method.
+			if (firstWord != null && firstWord.equals("ERROR: -1")) {
+				return;
+			}
+			if (firstWord == null) {
+				Log.println("Nothing to do, because file `" + line + "' "
+						+ "contains no data!");
+				// Necessary if USE is started with a cmd-file and option -q or
+				// -qv. This call provides the readline stack with the one
+				// readline object and no EmptyStackException will be thrown.
+				if (Options.cmdFilename != null) {
+					cmdRead(Options.cmdFilename, false);
+				}
+				return;
+			}
+			if (firstWord.startsWith("model") || firstWord.startsWith("@")) {
+				cmdOpenUseFile(token);
+			} else if (firstWord.startsWith("context")) {
+				cmdGenLoadInvariants(token, system(), doEcho);
+			} else if (firstWord.startsWith("testsuite")) {
+				cmdRunTestSuite(token);
+			} else {
+				cmdRead(filename, doEcho);
+			}
 
-    		int length = (int) Math.log10(recentFiles.size()) + 1;
-    		for (int index = 0; index < recentFiles.size(); ++index) {
-    			Log.println(String.format("%" + length + "d: %s", index+1, recentFiles.get(index)));
-    		}
-    		return;
-    	}
-    	else if(line.startsWith("-q")){
-    		line = line.substring(2).trim();
-    		quiet = true;
-    	}
-    	
-    	if (recentFiles.isEmpty()) {
+			if (this.openFiles.size() <= 1) {
+				String opened;
+
+				if (this.openFiles.size() == 0) {
+					opened = filename;
+				} else {
+					opened = this.openFiles.peek().toString();
+				}
+
+				Options.getRecentFiles().push(opened);
+				Options.setLastDirectory(Paths.get(opened).getParent());
+			}
+		} catch (NoSystemException e) {
+			Log.error("No System available. Please load a model before "
+					+ "executing this command.");
+		}
+	}
+
+	/**
+	 * <ul>
+	 *   <li>Executes the last open command if no arguments are specified.</li>
+	 *   <li>If <code>-l</code> is specified prints a list of the last opened files.</li>
+	 *   <li>If a number (<code>n</code>) is specified as an argument the <code>n</code>-th recent file is opened.</li>
+	 * </ul>
+	 * @param line The command line without the command reopen.
+	 */
+	private void cmdReOpen(String line) {
+		line = (line == null ? "" : line.trim());
+		boolean quiet = false;
+
+		List<String> recentFiles = Options.getRecentFiles().getItems();
+
+		if (line.startsWith("-l")) {
+			if (recentFiles.isEmpty()) {
+				Log.println("No files were opened, yet.");
+				return;
+			}
+
+			int length = (int) Math.log10(recentFiles.size()) + 1;
+			for (int index = 0; index < recentFiles.size(); ++index) {
+				Log.println(String.format("%" + length + "d: %s", index+1, recentFiles.get(index)));
+			}
+			return;
+		}
+		else if(line.startsWith("-q")){
+			line = line.substring(2).trim();
+			quiet = true;
+		}
+
+		if (recentFiles.isEmpty()) {
 			Log.error("No recent files to reopen.");
 			return;
 		}
-    	
+
 		String filename;
 		if (line.equals("")) {
 			try {
@@ -1315,311 +1334,315 @@ public final class Shell implements Runnable, PPCHandler {
 				Log.error("No recent file available");
 				return;
 			}
-    	} else {
-    		int fileNr;
-    		try {
-    			fileNr = Integer.parseInt(line);
-    		} catch (NumberFormatException e) {
-    			Log.error("Invalid argument " + line);
-    			Log.println("Options: [-l] | [[-q] num]");
-    			return;
-    		}
-    		
-    		if (fileNr < 1 || fileNr > recentFiles.size()) {
-    			Log.error("Invalid recent file number");
-    			return;
-    		}
+		} else {
+			int fileNr;
+			try {
+				fileNr = Integer.parseInt(line);
+			} catch (NumberFormatException e) {
+				Log.error("Invalid argument " + line);
+				Log.println("Options: [-l] | [[-q] num]");
+				return;
+			}
 
-    		filename = recentFiles.get(fileNr - 1);
-    	}
-    	
-    	Log.println(filename);
-		cmdOpen("\"" + filename + "\"", quiet);
-    }
-    
-    /**
-     * Reads a specification file.
-     */
-    private void cmdOpenUseFile(String file) {
-        MModel model = null;
+			if (fileNr < 1 || fileNr > recentFiles.size()) {
+				Log.error("Invalid recent file number");
+				return;
+			}
 
-        String filename = getFilenameToOpen(file);
-        
-        try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
-            Log.println("compiling specification...");
-            handleBOM(specStream);
-            model = USECompiler.compileSpecification(specStream, filename,
-                    new PrintWriter(System.err), new ModelFactory());
-	    Log.println("done");
-        } catch (FileNotFoundException e) {
-            Log.error("File `" + filename + "' not found.");
-        } catch (IOException e) {
-        	Log.error("IO error while accessing `" + filename + "': " + e.getMessage());
+			filename = recentFiles.get(fileNr - 1);
 		}
 
-        // compile ok?
-        if (model != null) {
-            // print some info about model
-            Log.println(model.getStats());
+		Log.println(filename);
+		cmdOpen("\"" + filename + "\"", quiet);
+	}
 
-            // create system
-            fSession.setSystem(new MSystem(model));
-        }
-        
-        setFileClosed();
-    }
+	/**
+	 * Reads a specification file.
+	 */
+	private void cmdOpenUseFile(String file) {
+		MModel model = null;
 
-    private void cmdRunTestSuite(String file) {
-        String filename = getFilenameToOpen(file);
-        MTestSuite testSuite = null;
-        MModel model = null;
-        
-        try {
-        	model = system().model();
-        } catch (NoSystemException e) {
-        	Log.error("Cannot run test suite without a loaded model");
-        	return;
-        }
-        
-        try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
-            Log.verbose("compiling test suite...");
-            handleBOM(specStream);
-            testSuite = TestSuiteCompiler.compileTestSuite(specStream, filename,
-                    new PrintWriter(System.err), model);
-        } catch (FileNotFoundException e) {
-            Log.error("File `" + filename + "' not found.");
-        } catch (IOException e) {
+		String filename = getFilenameToOpen(file);
+
+		try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
+			Log.println("compiling specification...");
+			handleBOM(specStream);
+			model = USECompiler.compileSpecification(specStream, filename,
+					new PrintWriter(System.err), new ModelFactory());
+			Log.println("done");
+		} catch (FileNotFoundException e) {
+			Log.error("File `" + filename + "' not found.");
+		} catch (IOException e) {
+			Log.error("IO error while accessing `" + filename + "': " + e.getMessage());
+		}
+
+		// compile ok?
+		if (model != null) {
+			// print some info about model
+			Log.println(model.getStats());
+
+			// create system
+			fSession.setSystem(new MSystem(model));
+		}
+
+		setFileClosed();
+	}
+
+	private void cmdRunTestSuite(String file) {
+		String filename = getFilenameToOpen(file);
+		MTestSuite testSuite = null;
+		MModel model = null;
+
+		try {
+			model = system().model();
+		} catch (NoSystemException e) {
+			Log.error("Cannot run test suite without a loaded model");
+			return;
+		}
+
+		try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
+			Log.verbose("compiling test suite...");
+			handleBOM(specStream);
+			testSuite = TestSuiteCompiler.compileTestSuite(specStream, filename,
+					new PrintWriter(System.err), model);
+		} catch (FileNotFoundException e) {
+			Log.error("File `" + filename + "' not found.");
+		} catch (IOException e) {
 			Log.error("Error accessing file " + StringUtil.inQuotes(filename) + ": " + e.getMessage());
 		}
 
-        // compile ok?
-        if (testSuite != null) {
-            PrintWriter output = new PrintWriter(Log.out());
-            Log.println(testSuite.getStats());
-            // create system
-            testSuite.run(output);
-        }
-        
-        setFileClosed();
-    }
-    
-    /**
-     * Performs a query.
-     */
-    private void cmdQuery(String line, boolean verboseEval)
-            throws NoSystemException {
-        Log.trace(this, line);
-        
-        if (line.length() == 0) {
-            Log.error("Expression expected after `?'. Try `help'.");
-            return;
-        }
-        
-        // compile query
-        MSystem system;
-        try {
+		// compile ok?
+		if (testSuite != null) {
+			PrintWriter output = new PrintWriter(Log.out());
+			Log.println(testSuite.getStats());
+			// create system
+			testSuite.run(output);
+		}
+
+		setFileClosed();
+	}
+
+	/**
+	 * Performs a query.
+	 */
+	private void cmdQuery(String line, boolean verboseEval)
+			throws NoSystemException {
+		Log.trace(this, line);
+
+		if (line.length() == 0) {
+			Log.error("Expression expected after `?'. Try `help'.");
+			return;
+		}
+
+		// compile query
+		MSystem system;
+		try {
 			system = system();
-        }
-        catch (NoSystemException e) {
-        	MModel model = new ModelFactory().createModel("empty model");
+		}
+		catch (NoSystemException e) {
+			MModel model = new ModelFactory().createModel("empty model");
 			system = new MSystem(model);
 		}
-        InputStream stream = new ByteArrayInputStream(line.getBytes());
-            
+		InputStream stream = new ByteArrayInputStream(line.getBytes());
+
 		Expression expr = OCLCompiler.compileExpression(
-				system.model(), 
+				system.model(),
 				system.state(),
 				stream,
-				"<input>", 
-				new PrintWriter(System.err), 
+				"<input>",
+				new PrintWriter(System.err),
 				system.varBindings());
-		
-        // compile errors?
-        if (expr == null)
-            return;
 
-        // evaluate it with current system state
-        PrintWriter output = null;
-        Evaluator evaluator = new Evaluator(verboseEval);
-        if (verboseEval) {
-            Log.println("Detailed results of subexpressions:");
-            output = new PrintWriter(Log.out());
-        }
+		// compile errors?
+		if (expr == null) {
+			return;
+		}
 
-        try {
-            Value val = evaluator.eval(expr, system.state(), system
-                    .varBindings(), output);
-            // print result
-            System.out.println("-> " + val.toStringWithType());
-        } catch (MultiplicityViolationException e) {
-            System.out.println("-> " + "Could not evaluate. " + e.getMessage());
-        }
-    }
+		// evaluate it with current system state
+		PrintWriter output = null;
+		Evaluator evaluator = new Evaluator(verboseEval);
+		if (verboseEval) {
+			Log.println("Detailed results of subexpressions:");
+			output = new PrintWriter(Log.out());
+		}
 
-    /**
-     * Derives the static type of an expression.
-     */
-    private void cmdDeriveStaticType(String line) throws NoSystemException {
-        Log.trace(this, line);
-        if (line.length() == 0) {
-            Log.error("Expression expected after `?'. Try `help'.");
-            return;
-        }
+		try {
+			Value val = evaluator.eval(expr, system.state(), system
+					.varBindings(), output);
+			// print result
+			System.out.println("-> " + val.toStringWithType());
+		} catch (MultiplicityViolationException e) {
+			System.out.println("-> " + "Could not evaluate. " + e.getMessage());
+		}
+	}
 
-        // compile query
-        MSystem system;
-        try {
+	/**
+	 * Derives the static type of an expression.
+	 */
+	private void cmdDeriveStaticType(String line) throws NoSystemException {
+		Log.trace(this, line);
+		if (line.length() == 0) {
+			Log.error("Expression expected after `?'. Try `help'.");
+			return;
+		}
+
+		// compile query
+		MSystem system;
+		try {
 			system = system();
-        }
-        catch (NoSystemException e) {
-        	MModel model = new ModelFactory().createModel("empty model");
+		}
+		catch (NoSystemException e) {
+			MModel model = new ModelFactory().createModel("empty model");
 			system = new MSystem(model);
 		}
-        InputStream stream = new ByteArrayInputStream(line.getBytes());
-           
+		InputStream stream = new ByteArrayInputStream(line.getBytes());
+
 		Expression expr = OCLCompiler.compileExpression(
-				system.model(), 
+				system.model(),
 				system.state(),
 				stream,
-				"<input>", 
-				new PrintWriter(System.err), 
+				"<input>",
+				new PrintWriter(System.err),
 				system.varBindings());
-		
 
-        // compile errors?
-        if (expr == null)
-            return;
 
-        System.out.println("-> " + expr.type());
-    }
+		// compile errors?
+		if (expr == null) {
+			return;
+		}
 
-    /**
-     * Reads a file with commands and processes them.
-     */
-    public void cmdRead(String filename, boolean doEcho) {
-        try {
-        	filename = getFilenameToOpen(filename);
-        	
-        	Reader r = getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
-        	BufferedReader reader = new BufferedReader(r);
-            
-            // read from file, echo each line as it is read
-            Readline fReadline;
-            
-            if (Options.quiet || !doEcho)
+		System.out.println("-> " + expr.type());
+	}
+
+	/**
+	 * Reads a file with commands and processes them.
+	 */
+	public void cmdRead(String filename, boolean doEcho) {
+		try {
+			filename = getFilenameToOpen(filename);
+
+			Reader r = getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
+			BufferedReader reader = new BufferedReader(r);
+
+			// read from file, echo each line as it is read
+			Readline fReadline;
+
+			if (Options.quiet || !doEcho) {
 				fReadline = LineInput.getStreamReadline(reader, false, "");
-            else
+			} else {
 				fReadline = LineInput.getStreamReadline(reader, true, getRelativeFileNameOfCurrentFile() + "> ");
-            fReadlineStack.push(fReadline);
-            
-        } catch (FileNotFoundException e) {
-            Log.error("File `" + filename + "' not found.");
-        } catch (IOException e) {
+			}
+			fReadlineStack.push(fReadline);
+
+		} catch (FileNotFoundException e) {
+			Log.error("File `" + filename + "' not found.");
+		} catch (IOException e) {
 			Log.error("IO error accessing file " + StringUtil.inQuotes(filename) + ":" + e.getMessage());
 		}
-    }
+	}
 
-    /**
-     * Resets system to empty state.
-     */
-    private void cmdReset() throws NoSystemException {
-        fSession.reset();
-    }
+	/**
+	 * Resets system to empty state.
+	 */
+	private void cmdReset() throws NoSystemException {
+		fSession.reset();
+	}
 
-    private void cmdReloadExtensions() {
-    	ExtensionManager.getInstance().unloadExtensions();
-    	ExtensionManager.getInstance().loadExtensions();
-    }
-    
-    /**
-     * Activates step mode.
-     */
-    private void cmdStepOn() {
-        fStepMode = true;
-        Log.println("Step mode turned on.");
-    }
+	private void cmdReloadExtensions() {
+		ExtensionManager.getInstance().unloadExtensions();
+		ExtensionManager.getInstance().loadExtensions();
+	}
 
-    private void cmdSetDelay(String line) {
-    	String[] parts = line.split("\\s");
-    	delay = 0;
-    	
-    	if (parts.length > 2) {
-    		Log.error("Invalid number of arguments. Please use delay [number].");
-    	} else if (parts.length == 2) {
-    		try {
-    			delay = Integer.parseInt(parts[1]);
-    		} catch (NumberFormatException e) {
-    			Log.error("Invalid delay specified. Please provide a valid number.");
-    		}
-    	}
-    	Log.println(String.format("Delay was set to %1$d.", delay));
-    }
-    
-    /**
-     * Undoes the last command.
-     */
-    private void cmdUndo() throws NoSystemException {
-    	try {
+	/**
+	 * Activates step mode.
+	 */
+	private void cmdStepOn() {
+		fStepMode = true;
+		Log.println("Step mode turned on.");
+	}
+
+	private void cmdSetDelay(String line) {
+		String[] parts = line.split("\\s");
+		delay = 0;
+
+		if (parts.length > 2) {
+			Log.error("Invalid number of arguments. Please use delay [number].");
+		} else if (parts.length == 2) {
+			try {
+				delay = Integer.parseInt(parts[1]);
+			} catch (NumberFormatException e) {
+				Log.error("Invalid delay specified. Please provide a valid number.");
+			}
+		}
+		Log.println(String.format("Delay was set to %1$d.", delay));
+	}
+
+	/**
+	 * Undoes the last command.
+	 */
+	private void cmdUndo() throws NoSystemException {
+		try {
 			system().undoLastStatement();
 		} catch (MSystemException e) {
 			Log.error(e.getMessage());
 		}
-    }
-    
-    
-    /**
-     * Redoes the last undone command.
-     */
-    private void cmdRedo() throws NoSystemException {
-    	try {
+	}
+
+
+	/**
+	 * Redoes the last undone command.
+	 */
+	private void cmdRedo() throws NoSystemException {
+		try {
 			system().redoStatement();
 		} catch (MSystemException e) {
 			Log.error(e.getMessage());
 		}
-    }
-    
-    /**
-     * Prints commands executed so far.
-     */
-    private void cmdWrite(String filename) throws NoSystemException {
-        MSystem system = system();
-        PrintWriter out = null;
-        try {
-            if (filename == null)
-                out = new PrintWriter(getOut());
-            else {
-                out = new PrintWriter(new BufferedWriter(new FileWriter(
-                        filename)));
-            }
-			out.println("-- Script generated by USE " + Options.RELEASE_VERSION);
-            out.println();
-            system.writeSoilStatements(out);
-        } catch (IOException ex) {
-            Log.error(ex.getMessage());
-        } finally {
-            if (out != null) {
-                out.flush();
-                if (filename != null)
-                    out.close();
-            }
-        }
-    }
+	}
 
-    //***********************************************************
-    // Generator Commands
-    //***********************************************************
+	/**
+	 * Prints commands executed so far.
+	 */
+	private void cmdWrite(String filename) throws NoSystemException {
+		MSystem system = system();
+		PrintWriter out = null;
+		try {
+			if (filename == null) {
+				out = new PrintWriter(getOut());
+			} else {
+				out = new PrintWriter(new BufferedWriter(new FileWriter(
+						filename)));
+			}
+			out.println("-- Script generated by USE " + Options.RELEASE_VERSION);
+			out.println();
+			system.writeSoilStatements(out);
+		} catch (IOException ex) {
+			Log.error(ex.getMessage());
+		} finally {
+			if (out != null) {
+				out.flush();
+				if (filename != null) {
+					out.close();
+				}
+			}
+		}
+	}
+
+	//***********************************************************
+	// Generator Commands
+	//***********************************************************
 
 	private void cmdGenLoadInvariants(String str, MSystem system, boolean doEcho) {
 		String filename = str.trim();
-		if (filename.length() == 0)
+		if (filename.length() == 0) {
 			Log.error("syntax is `load FILE'");
-		else {
+		} else {
 			filename = getFilenameToOpen(filename);
 			try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename))){
 				handleBOM(in);
-				
+
 				system.loadInvariants(in, str.trim(), doEcho, new PrintWriter(getOut(), true));
-				
+
 				setFileClosed();
 			} catch (FileNotFoundException e) {
 				Log.error("File " + StringUtil.inQuotes(filename) + " not found!");
@@ -1631,233 +1654,236 @@ public final class Shell implements Runnable, PPCHandler {
 		}
 	}
 
-    private void cmdGenUnloadInvariants(String str, MSystem system) {
-        StringTokenizer st = new StringTokenizer(str);
-        Set<String> names = new TreeSet<String>();
-        try {
-            while (st.hasMoreTokens()){
-            	names.add(st.nextToken());
-            }
-            
-            // if no invariant names are given all invariants are removed
-            if(names.isEmpty()){
-            	for(MClassInvariant inv : system.model().getLoadedClassInvariants()){
-            		names.add(inv.qualifiedName());
-            	}
-            }
-            
-            system.unloadInvariants(names, new PrintWriter(Log.out(), true));
-        } catch (NoSuchElementException e) {
-            Log.error("syntax is " + StringUtil.inQuotes("unload [invnames]"));
-        }
-    }
+	private void cmdGenUnloadInvariants(String str, MSystem system) {
+		StringTokenizer st = new StringTokenizer(str);
+		Set<String> names = new TreeSet<String>();
+		try {
+			while (st.hasMoreTokens()){
+				names.add(st.nextToken());
+			}
 
-    private void cmdGenPrintLoadedInvariants(MSystem system) {
-        system.generator().printLoadedInvariants();
-    }
+			// if no invariant names are given all invariants are removed
+			if(names.isEmpty()){
+				for(MClassInvariant inv : system.model().getLoadedClassInvariants()){
+					names.add(inv.qualifiedName());
+				}
+			}
 
-    private void cmdGenResult(String str, MSystem system) {
-        str = str.trim();
-        try {
-            if (str.length() == 0) {
-                PrintWriter pw = new PrintWriter(System.out);
-                system.generator().printResult(pw);
-                pw.flush();
-            } else if (str.equals("inv"))
-                system.generator().printResultStatistics();
-            else if (str.equals("accept"))
-                system.generator().acceptResult();
-            else
-                Log.error("Unknown command `result " + str + "'. Try help.");
-        } catch (GNoResultException e) {
-            Log.error("No result available.");
-        }
-    }
+			system.unloadInvariants(names, new PrintWriter(Log.out(), true));
+		} catch (NoSuchElementException e) {
+			Log.error("syntax is " + StringUtil.inQuotes("unload [invnames]"));
+		}
+	}
 
-    private void cmdGenInvariantFlags(String str, MSystem system) {
-        // Syntax: gen flags (invariant)* [+d|-d] [+n|-n]
-        StringTokenizer st = new StringTokenizer(str);
-        Set<String> names = new TreeSet<String>();
-        Boolean disabled = null;
-        Boolean negated = null;
-        boolean error = false;
-        boolean optionDetected = false;
-        String tok = null;
+	private void cmdGenPrintLoadedInvariants(MSystem system) {
+		system.generator().printLoadedInvariants();
+	}
 
-        try {
-            while (st.hasMoreTokens() && !optionDetected) {
-                tok = st.nextToken();
-                if (tok.startsWith("+") || tok.startsWith("-")) {
-                	optionDetected = true;
-                } else {
-                    names.add(tok);
-                }
-            }
-            while (optionDetected && !error) {
-                if (tok.equals("+d") || tok.equals("-d")) {
-                    if (disabled != null)
-                        error = true;
-                    else if (tok.equals("+d"))
-                        disabled = Boolean.TRUE;
-                    else
-                        disabled = Boolean.FALSE;
+	private void cmdGenResult(String str, MSystem system) {
+		str = str.trim();
+		try {
+			if (str.length() == 0) {
+				PrintWriter pw = new PrintWriter(System.out);
+				system.generator().printResult(pw);
+				pw.flush();
+			} else if (str.equals("inv")) {
+				system.generator().printResultStatistics();
+			} else if (str.equals("accept")) {
+				system.generator().acceptResult();
+			} else {
+				Log.error("Unknown command `result " + str + "'. Try help.");
+			}
+		} catch (GNoResultException e) {
+			Log.error("No result available.");
+		}
+	}
 
-                } else if (tok.equals("+n") || tok.equals("-n")) {
-                    if (negated != null)
-                        error = true;
-                    else if (tok.equals("+n"))
-                        negated = Boolean.TRUE;
-                    else
-                        negated = Boolean.FALSE;
-                } else
-                    error = true;
-                if (st.hasMoreTokens())
-                    tok = st.nextToken();
-                else
-                    optionDetected = false;
-            }
-        } catch (NoSuchElementException e) {
-            error = true;
-        }
-        
-        Collection<MClassInvariant> invs;
-        
-        if (names.isEmpty()) {
-        	invs = system.model().classInvariants();
-        } else {
-        	invs = new HashSet<MClassInvariant>();
-        
-	        for(String invName : names){
-	        	MClassInvariant inv = system.model().getClassInvariant(invName);
-	        	if(inv == null){
-	        		Log.error("Invariant " + StringUtil.inQuotes(invName) + " does not exist. " + 
-	                        "Ignoring " + StringUtil.inQuotes(invName) + ".");
-	        		error = true;
-	        		continue;
-	        	}
-	        	invs.add(inv);
-	        }
-        }
-        
-        if (error){
-        	Log.error("syntax is `flags (-all|[invnames]) ((+d|-d) | (+n|-n))'");
-        }
-        else if (disabled == null && negated == null){
-        	system.generator().printInvariantFlags(invs);
-        }
-        else {
-        	system.setClassInvariantFlags(invs, (disabled == null)? null : Boolean.valueOf(!disabled.booleanValue()), negated);
-        }
-    }
+	private void cmdGenInvariantFlags(String str, MSystem system) {
+		// Syntax: gen flags (invariant)* [+d|-d] [+n|-n]
+		StringTokenizer st = new StringTokenizer(str);
+		Set<String> names = new TreeSet<String>();
+		Boolean disabled = null;
+		Boolean negated = null;
+		boolean error = false;
+		boolean optionDetected = false;
+		String tok = null;
 
-    /**
-     *  
-     */
-    private void cmdGenStartProcedure(String str, MSystem system) {
-        GGeneratorArguments args = GGeneratorArguments.parseCallstring(str);
-        
-        if (args == null) return;
-        
-        // Filename correction (relative pathes...)
-        args.setFilename(this.getFilenameToOpen(args.getFilename()));
-        this.setFileClosed();
+		try {
+			while (st.hasMoreTokens() && !optionDetected) {
+				tok = st.nextToken();
+				if (tok.startsWith("+") || tok.startsWith("-")) {
+					optionDetected = true;
+				} else {
+					names.add(tok);
+				}
+			}
+			while (optionDetected && !error) {
+				if (tok.equals("+d") || tok.equals("-d")) {
+					if (disabled != null) {
+						error = true;
+					} else if (tok.equals("+d")) {
+						disabled = Boolean.TRUE;
+					} else {
+						disabled = Boolean.FALSE;
+					}
 
-        system.generator().startProcedure(args.getCallString(), args);
-    }
+				} else if (tok.equals("+n") || tok.equals("-n")) {
+					if (negated != null) {
+						error = true;
+					} else if (tok.equals("+n")) {
+						negated = Boolean.TRUE;
+					} else {
+						negated = Boolean.FALSE;
+					}
+				} else {
+					error = true;
+				}
+				if (st.hasMoreTokens()) {
+					tok = st.nextToken();
+				} else {
+					optionDetected = false;
+				}
+			}
+		} catch (NoSuchElementException e) {
+			error = true;
+		}
 
-    private MSystem system() throws NoSystemException {
-        if (!fSession.hasSystem())
-            throw new NoSystemException();
-        fSession.system().registerPPCHandlerOverride(this);
-        return fSession.system();
-    }
+		Collection<MClassInvariant> invs;
 
-    //***********************************************************
-    // Method for deferring Read-Commands
-    //***********************************************************
-    private String getFirstWordOfFile(String filename) {
-    	BufferedReader bf = null;
-    	
-    	try {
-            String result = "";
-            // Handle possible UTF BOM
-            Reader r = getReaderFromFilename(filename);
-            bf = new BufferedReader(r);
-            boolean isComment = false;
-            boolean noCase = false;
-            boolean cont = false;
+		if (names.isEmpty()) {
+			invs = system.model().classInvariants();
+		} else {
+			invs = new HashSet<MClassInvariant>();
 
-            for (String line = bf.readLine(); line != null; line = bf
-                    .readLine()) {
-                line = line.trim();
-                while (!noCase) {
-                    noCase = true;
-                    if (line.startsWith("--")) {
-                        noCase = true;
-                        cont = true;
-                        continue;
-                    }
-                    if (line.startsWith("@")) {
-                        noCase = true;
-                        cont = true;
-                        continue;
-                    }
-                    if (line.startsWith("/*")) {
-                        noCase = false;
-                        isComment = true;
-                        line = line.substring(line.indexOf("/*") + 2).trim();
-                    }
-                    if (isComment == true) {
-                        noCase = false;
-                        int index = line.indexOf("*/");
-                        if (index != -1) {
-                            line = line.substring(index + 2).trim();
-                            isComment = false;
-                        }
-                        if (index == -1) {
-                            noCase = true;
-                            cont = true;
-                            continue;
-                        }
-                    }
-                }
-                if (cont || line.trim().equals("")) {
-                    cont = false;
-                    noCase = false;
-                    continue;
-                }
-                StringTokenizer st = new StringTokenizer(line);
-                result = st.nextToken();
-                return result;
-            }
-        } catch (FileNotFoundException e) {
-            // ignored
-            Log.println("Error: File `" + filename + "' could not be found!");
-            return "ERROR: -1";
-        } catch (IOException e) {
-            // ignored
-        } finally {
-        	if (bf != null)
-				try {
-					bf.close();
-				} catch (IOException e) {}
-        }
-        return null;
-    }
+			for(String invName : names){
+				MClassInvariant inv = system.model().getClassInvariant(invName);
+				if(inv == null){
+					Log.error("Invariant " + StringUtil.inQuotes(invName) + " does not exist. " +
+							"Ignoring " + StringUtil.inQuotes(invName) + ".");
+					error = true;
+					continue;
+				}
+				invs.add(inv);
+			}
+		}
 
-    
+		if (error){
+			Log.error("syntax is `flags (-all|[invnames]) ((+d|-d) | (+n|-n))'");
+		}
+		else if (disabled == null && negated == null){
+			system.generator().printInvariantFlags(invs);
+		}
+		else {
+			system.setClassInvariantFlags(invs, (disabled == null)? null : Boolean.valueOf(!disabled.booleanValue()), negated);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void cmdGenStartProcedure(String str, MSystem system) {
+		GGeneratorArguments args = GGeneratorArguments.parseCallstring(str);
+
+		if (args == null) {
+			return;
+		}
+
+		// Filename correction (relative pathes...)
+		args.setFilename(this.getFilenameToOpen(args.getFilename()));
+		this.setFileClosed();
+
+		system.generator().startProcedure(args.getCallString(), args);
+	}
+
+	private MSystem system() throws NoSystemException {
+		if (!fSession.hasSystem()) {
+			throw new NoSystemException();
+		}
+		fSession.system().registerPPCHandlerOverride(this);
+		return fSession.system();
+	}
+
+	//***********************************************************
+	// Method for deferring Read-Commands
+	//***********************************************************
+	private String getFirstWordOfFile(String filename) {
+		try {
+			String result = "";
+			// Handle possible UTF BOM
+			Reader r = getReaderFromFilename(filename);
+			
+			try (BufferedReader bf = new BufferedReader(r)){
+				boolean isComment = false;
+				boolean noCase = false;
+				boolean cont = false;
+				
+				for (String line = bf.readLine(); line != null; line = bf
+						.readLine()) {
+					line = line.trim();
+					while (!noCase) {
+						noCase = true;
+						if (line.startsWith("--")) {
+							noCase = true;
+							cont = true;
+							continue;
+						}
+						if (line.startsWith("@")) {
+							noCase = true;
+							cont = true;
+							continue;
+						}
+						if (line.startsWith("/*")) {
+							noCase = false;
+							isComment = true;
+							line = line.substring(line.indexOf("/*") + 2).trim();
+						}
+						if (isComment == true) {
+							noCase = false;
+							int index = line.indexOf("*/");
+							if (index != -1) {
+								line = line.substring(index + 2).trim();
+								isComment = false;
+							}
+							if (index == -1) {
+								noCase = true;
+								cont = true;
+								continue;
+							}
+						}
+					}
+					if (cont || line.trim().equals("")) {
+						cont = false;
+						noCase = false;
+						continue;
+					}
+					StringTokenizer st = new StringTokenizer(line);
+					result = st.nextToken();
+					return result;
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// ignored
+			Log.println("Error: File `" + filename + "' could not be found!");
+			return "ERROR: -1";
+		} catch (IOException e) {
+			// ignored
+		}
+		return null;
+	}
+
+
 	@Override
 	public void handlePreConditions(
 			MSystem system,
 			MOperationCall operationCall) throws PreConditionCheckFailedException {
-		
+
 		PPCHandler ppcHandler;
 		if (operationCall.hasPreferredPPCHandler()) {
 			ppcHandler = operationCall.getPreferredPPCHandler();
 		} else {
 			ppcHandler = operationCall.getDefaultPPCHandler();
 		}
-		
+
 		try {
 			ppcHandler.handlePreConditions(system, operationCall);
 		} catch (PreConditionCheckFailedException e) {
@@ -1874,28 +1900,28 @@ public final class Shell implements Runnable, PPCHandler {
 			} else {
 				throw e;
 			}
-		}	
-    }
+		}
+	}
 
-	
+
 	@Override
 	public void handlePostConditions(
-			MSystem system, 
+			MSystem system,
 			MOperationCall operationCall) throws PostConditionCheckFailedException {
-		
+
 		PPCHandler ppcHandler;
 		if (operationCall.hasPreferredPPCHandler()) {
 			ppcHandler = operationCall.getPreferredPPCHandler();
 		} else {
 			ppcHandler = operationCall.getDefaultPPCHandler();
 		}
-		
+
 		// we don't want to take care of openter/opexit
 		if (!operationCall.getOperation().hasBody()) {
 			ppcHandler.handlePostConditions(system, operationCall);
 			return;
 		}
-		
+
 		try {
 			ppcHandler.handlePostConditions(system, operationCall);
 		} catch (PostConditionCheckFailedException e) {
@@ -1909,67 +1935,67 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 		}
 	}
-	
+
 
 	@Override
 	public void handleTransitionsPre(MSystem system,
 			MOperationCall operationCall)
-			throws PreConditionCheckFailedException {
+					throws PreConditionCheckFailedException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void handleTransitionsPost(MSystem system,
 			MOperationCall operationCall)
-			throws PostConditionCheckFailedException {
+					throws PostConditionCheckFailedException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	
+
+
 	private void ppcShell(MSystem system) throws NoSystemException, IOException {
 		PrintWriter output = new PrintWriter(Log.out(), true);
 
-    	final String PROMPT = "> ";
-    	final String HELP = 
-    		"\nCurrently only commands starting with " + 
-    		StringUtil.inQuotes("?") +
-    		", " +
-    		StringUtil.inQuotes(":") +
-    		", " +
-    		StringUtil.inQuotes("help") +
-    		" or " +
-    		StringUtil.inQuotes("info") +
-    		" are allowed.\n" +
-    		StringUtil.inQuotes("c") + 
-    		" continues the evaluation (i.e. unwinds the stack).\n";
-    	
-    	//FIXME: Required?
-    	// system.updateListeners();
-    	
-    	if (!Options.testMode) {
-    	output.println();
-    	output.println("+------------------------------------------------------------------+");
-    	output.println("| Evaluation is paused. You may inspect, but not modify the state. |");
-    	output.println("+------------------------------------------------------------------+");
-    	output.println(HELP);
-    	}
-    	String input;
-    	do {
-    		
+		final String PROMPT = "> ";
+		final String HELP =
+				"\nCurrently only commands starting with " +
+						StringUtil.inQuotes("?") +
+						", " +
+						StringUtil.inQuotes(":") +
+						", " +
+						StringUtil.inQuotes("help") +
+						" or " +
+						StringUtil.inQuotes("info") +
+						" are allowed.\n" +
+						StringUtil.inQuotes("c") +
+						" continues the evaluation (i.e. unwinds the stack).\n";
+
+		//FIXME: Required?
+		// system.updateListeners();
+
+		if (!Options.testMode) {
+			output.println();
+			output.println("+------------------------------------------------------------------+");
+			output.println("| Evaluation is paused. You may inspect, but not modify the state. |");
+			output.println("+------------------------------------------------------------------+");
+			output.println(HELP);
+		}
+		String input;
+		do {
+
 			input = fReadline.readline(PROMPT);
 			if (input == null) {
 				return;
 			}
-			
+
 			input = input.trim();
-			
+
 			if (input.equals("c")) {
 				return;
 			}
 			if (
-					input.startsWith("?") || 
+					input.startsWith("?") ||
 					input.startsWith(":") ||
 					input.startsWith("info") ||
 					input.startsWith("help")) {
@@ -1977,13 +2003,13 @@ public final class Shell implements Runnable, PPCHandler {
 			} else {
 				output.println(HELP);
 			}
-			
-    	} while (!input.equals("c"));
+
+		} while (!input.equals("c"));
 	}
-	
+
 	/**
 	 * Safe way to get a reader from a filename.
-	 * This operation examines a possible valid unicode BOM. 
+	 * This operation examines a possible valid unicode BOM.
 	 * @param filename
 	 * @return
 	 * @throws FileNotFoundException
@@ -1993,10 +2019,10 @@ public final class Shell implements Runnable, PPCHandler {
 		Reader r = getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
 		return r;
 	}
-	
+
 	/**
 	 * Safe way to get a reader from an input stream.
-	 * This operation examines a possible valid unicode BOM. 
+	 * This operation examines a possible valid unicode BOM.
 	 * @param filename
 	 * @return
 	 * @throws FileNotFoundException
@@ -2004,14 +2030,14 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private Reader getReaderFromInputStream(BufferedInputStream in) throws IOException {
 		String encoding = handleBOM(in);
-		
+
 		if (encoding == null) {
 			return new InputStreamReader(in);
 		} else {
 			return new InputStreamReader(in, encoding);
 		}
 	}
-	
+
 	/**
 	 * Reads the first bytes of an input stream an checks for a unicode BOM.
 	 * If no BOM is present, the stream is reset. Otherwise the stream
@@ -2022,7 +2048,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private String handleBOM(BufferedInputStream in) throws IOException {
 		String encoding = null;
-		
+
 		in.mark(3);
 		int byte1 = in.read();
 		int byte2 = in.read();
@@ -2038,7 +2064,7 @@ public final class Shell implements Runnable, PPCHandler {
 				in.reset();
 			}
 		}
-		
+
 		return encoding;
 	}
 }
