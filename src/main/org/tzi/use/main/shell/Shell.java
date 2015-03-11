@@ -464,7 +464,7 @@ public final class Shell implements Runnable, PPCHandler {
 			cmdReloadExtensions();
 		} else if (line.startsWith("coverage")) {
 			cmdCoverage(line);
-		} else if (line.startsWith("plugins") || line.equals("plugins")) {
+		} else if (line.startsWith("plugins")) {
 			cmdShowPlugins();
 		} else if (line.startsWith("delay")) {
 			cmdSetDelay(line);
@@ -484,10 +484,15 @@ public final class Shell implements Runnable, PPCHandler {
 		} else if (Options.doPLUGIN) {
 			PluginShellCmdContainer cmd = null;
 
+			boolean alias = false;
+			
 			for (PluginShellCmdContainer currentCmdMapEntry : pluginCommands) {
-				if (line.startsWith(currentCmdMapEntry.getCmd())
-						|| line.equals(currentCmdMapEntry.getCmd())) {
+				if (line.startsWith(currentCmdMapEntry.getCmd())) {
 					cmd = currentCmdMapEntry;
+					break;
+				} else if ((currentCmdMapEntry.getAlias() != null && line.startsWith(currentCmdMapEntry.getAlias()))){
+					cmd = currentCmdMapEntry;
+					alias = true;
 					break;
 				}
 			}
@@ -495,7 +500,12 @@ public final class Shell implements Runnable, PPCHandler {
 			if(cmd == null){
 				Log.error("Unknown command `" + line + "'. Try `help'.");
 			} else {
-				String arguments = line.substring(cmd.getCmd().length());
+				String arguments;
+				if(alias){
+					arguments = line.substring(cmd.getAlias().length());
+				} else {
+					arguments = line.substring(cmd.getCmd().length());
+				}
 				cmd.getProxy().executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
 			}
 
@@ -514,6 +524,9 @@ public final class Shell implements Runnable, PPCHandler {
 
 		for (PluginShellCmdContainer currentCmdMapEntry : this.pluginCommands) {
 			System.out.println(currentCmdMapEntry.getCmd() + " : " + currentCmdMapEntry.getHelp());
+			if(currentCmdMapEntry.getAlias() != null){
+				System.out.println("  Alias: " + currentCmdMapEntry.getAlias());
+			}
 		}
 
 		System.out.println("=================================================================");
@@ -1151,7 +1164,7 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 		} else {
 			if (openFiles.isEmpty()) {
-				result = filename;
+				result = Options.getFilenameToOpen(filename);
 				if (useAsCurrentFile) {
 					relativeNames.push(getPathWithoutFile(result));
 				}
@@ -1166,7 +1179,7 @@ public final class Shell implements Runnable, PPCHandler {
 				result = f.getAbsolutePath();
 			}
 		}
-
+		
 		if (useAsCurrentFile) {
 			openFiles.push(f);
 		}

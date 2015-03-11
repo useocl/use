@@ -22,6 +22,7 @@ public interface IPluginParserSymbols {
 	public static final String PLUGIN_COMMAND_ID = "id";
 	public static final String PLUGIN_COMMAND_LABEL = "label";
 	public static final String PLUGIN_COMMAND_SHELLCMD = "shellcmd";
+	public static final String PLUGIN_COMMAND_ALIAS = "alias";
 	public static final String PLUGIN_COMMAND_CLASS = "class";
 	public static final String PLUGIN_COMMAND_HELP = "help";
 

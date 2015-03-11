@@ -1,5 +1,6 @@
 package org.tzi.use.runtime.model;
 
+
 /**
  * The Plugin Shell Command Model providing all Plugin Command Model meta
  * information.
@@ -12,6 +13,7 @@ public class PluginShellCmdModel {
 	private String label = null;
 	private String cmdClass = null;
 	private String shellCmd = null;
+	private String alias = null;
 	private String cmdHelp = null;
 
 	/**
@@ -22,7 +24,11 @@ public class PluginShellCmdModel {
 	public String getCmdClass() {
 		return cmdClass;
 	}
-
+	
+	public String getAlias() {
+		return alias;
+	}
+	
 	/**
 	 * Method to get the Plugin Shell Command help description.
 	 * 
@@ -107,5 +113,9 @@ public class PluginShellCmdModel {
 	 */
 	public void setShellCmd(String shellCmd) {
 		this.shellCmd = shellCmd;
+	}
+	
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 }

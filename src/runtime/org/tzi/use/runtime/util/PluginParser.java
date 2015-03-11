@@ -225,6 +225,9 @@ public class PluginParser extends DefaultHandler implements
 			} else if (attrName.equals(PLUGIN_COMMAND_SHELLCMD)) {
 				command.setShellCmd(attrValue);
 				Log.debug("Setting " + attrName);
+			} else if (attrName.equals(PLUGIN_COMMAND_ALIAS)) {
+				command.setAlias(attrValue);
+				Log.debug("Setting " + attrName);
 			} else if (attrName.equals(PLUGIN_COMMAND_HELP)) {
 				command.setCmdHelp(attrValue);
 				Log.debug("Setting " + attrName);

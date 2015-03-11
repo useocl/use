@@ -54,7 +54,7 @@ public class PluginShellCmdFactory {
 		
 		for (IPluginShellCmdDescriptor currentCmdDescriptor : cmds) {
 			PluginShellCmdModel currentCmdModel = currentCmdDescriptor.getPluginCmdModel();
-			cmdList.add(new PluginShellCmdContainer(currentCmdModel.getShellCmd(), currentCmdModel.getCmdHelp(),
+			cmdList.add(new PluginShellCmdContainer(currentCmdModel.getShellCmd(), currentCmdModel.getAlias(), currentCmdModel.getCmdHelp(),
 					new PluginShellCmdProxy(currentCmdDescriptor, session, shell)));
 		}
 		
@@ -76,11 +76,13 @@ public class PluginShellCmdFactory {
 	
 	public static class PluginShellCmdContainer {
 		private final String cmd;
+		private final String alias;
 		private final String help;
 		private final PluginShellCmdProxy proxy;
 		
-		private PluginShellCmdContainer(String cmd, String help, PluginShellCmdProxy proxy){
+		private PluginShellCmdContainer(String cmd, String alias, String help, PluginShellCmdProxy proxy){
 			this.cmd = cmd;
+			this.alias = alias;
 			this.help = help;
 			this.proxy = proxy;
 		}
@@ -89,6 +91,10 @@ public class PluginShellCmdFactory {
 			return cmd;
 		}
 
+		public String getAlias() {
+			return alias;
+		}
+		
 		public String getHelp() {
 			return help;
 		}
