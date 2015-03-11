@@ -2,7 +2,7 @@
 
 # See the README file in this directory for information about the file
 # format.
-gen flags +d
+constraints -flags +d
 !create z:Zug
 gen start -t t015.assl waggonkette(z, 4)
 gen result accept

@@ -1,33 +1,33 @@
-gen flags Snapshot::birth_pos_civstatAssigned +d
-gen flags Snapshot::birth_pos_genderAssigned +d
-gen flags Snapshot::birth_pos_isAliveAssigned +d
-gen flags Snapshot::birth_pos_nameAssigned +d
-gen flags Snapshot::birth_pre_freshUnlinkedPerson +d
-gen flags Snapshot::death_pos_husbandWidowed +d
-gen flags Snapshot::death_pos_notAlive +d
-gen flags Snapshot::death_pos_wifeWidowed +d
-gen flags Snapshot::death_pre_isAlive +d
-gen flags Snapshot::divorce_pos_husbandDivorced +d
-gen flags Snapshot::divorce_pos_isDivorced +d
-gen flags Snapshot::divorce_pos_wifeDivorced +d
-gen flags Snapshot::divorce_pre_husbandAlive +d
-gen flags Snapshot::divorce_pre_isAlive +d
-gen flags Snapshot::divorce_pre_isMarried +d
-gen flags Snapshot::divorce_pre_wifeAlive +d
-gen flags Snapshot::inv_attributesDefined +d
-gen flags Snapshot::inv_femaleHasNoWife +d
-gen flags Snapshot::inv_maleHasNoHusband +d
-gen flags Snapshot::inv_nameCapitalThenSmallLetters +d
-gen flags Snapshot::inv_nameIsUnique +d
-gen flags Snapshot::marry_pos_femaleHasMarriedHusband +d
-gen flags Snapshot::marry_pos_isMarried +d
-gen flags Snapshot::marry_pos_maleHasMarriedWife +d
-gen flags Snapshot::marry_pre_aSpouseAlive +d
-gen flags Snapshot::marry_pre_aSpouseDefined +d
-gen flags Snapshot::marry_pre_aSpouseUnmarried +d
-gen flags Snapshot::marry_pre_differentGenders +d
-gen flags Snapshot::marry_pre_isAlive +d
-gen flags Snapshot::marry_pre_isUnmarried +d
+constraints -flags Snapshot::birth_pos_civstatAssigned +d
+constraints -flags Snapshot::birth_pos_genderAssigned +d
+constraints -flags Snapshot::birth_pos_isAliveAssigned +d
+constraints -flags Snapshot::birth_pos_nameAssigned +d
+constraints -flags Snapshot::birth_pre_freshUnlinkedPerson +d
+constraints -flags Snapshot::death_pos_husbandWidowed +d
+constraints -flags Snapshot::death_pos_notAlive +d
+constraints -flags Snapshot::death_pos_wifeWidowed +d
+constraints -flags Snapshot::death_pre_isAlive +d
+constraints -flags Snapshot::divorce_pos_husbandDivorced +d
+constraints -flags Snapshot::divorce_pos_isDivorced +d
+constraints -flags Snapshot::divorce_pos_wifeDivorced +d
+constraints -flags Snapshot::divorce_pre_husbandAlive +d
+constraints -flags Snapshot::divorce_pre_isAlive +d
+constraints -flags Snapshot::divorce_pre_isMarried +d
+constraints -flags Snapshot::divorce_pre_wifeAlive +d
+constraints -flags Snapshot::inv_attributesDefined +d
+constraints -flags Snapshot::inv_femaleHasNoWife +d
+constraints -flags Snapshot::inv_maleHasNoHusband +d
+constraints -flags Snapshot::inv_nameCapitalThenSmallLetters +d
+constraints -flags Snapshot::inv_nameIsUnique +d
+constraints -flags Snapshot::marry_pos_femaleHasMarriedHusband +d
+constraints -flags Snapshot::marry_pos_isMarried +d
+constraints -flags Snapshot::marry_pos_maleHasMarriedWife +d
+constraints -flags Snapshot::marry_pre_aSpouseAlive +d
+constraints -flags Snapshot::marry_pre_aSpouseDefined +d
+constraints -flags Snapshot::marry_pre_aSpouseUnmarried +d
+constraints -flags Snapshot::marry_pre_differentGenders +d
+constraints -flags Snapshot::marry_pre_isAlive +d
+constraints -flags Snapshot::marry_pre_isUnmarried +d
 gen start -s -r 1568 -t t043.assl transition(1,1)
 gen result
 *Random number generator was initialized with 1568.
@@ -59,7 +59,7 @@ gen result
 *!Person2.alive := false
 gen result accept
 *Generated result (system state) accepted.
-gen flags -d
+constraints -flags -d
 check
 *checking structure...
 *checking invariants...
