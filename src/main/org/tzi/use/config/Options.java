@@ -48,10 +48,10 @@ import org.tzi.use.util.TypedProperties;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "4.0.1";
+    public static final String RELEASE_VERSION = "4.1.0";
 
     // the copyright
-    public static final String COPYRIGHT = "Copyright (C) 1999-2014 University of Bremen";
+    public static final String COPYRIGHT = "Copyright (C) 1999-2015 University of Bremen";
 
     // the trained support apes
     public static final String SUPPORT_MAIL = "grp-usedevel@informatik.uni-bremen.de";

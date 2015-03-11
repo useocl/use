@@ -3,7 +3,7 @@
 
 	<property environment="env"/>
 
-	<property name="release.version.base" value="4.0.1"/>
+	<property name="release.version.base" value="4.1.0"/>
 
 	<condition property="release.version" value="${release.version.base}-${env.BUILD_NUMBER}" else="${release.version.base}">
 		<isset property="env.BUILD_NUMBER"/>
@@ -532,8 +532,8 @@
 		</condition>
 	</target>
 	
+	<property name="package" value="org.tzi.use"/>
 	<target name="test-classcycles" depends="compile-use,check-classcycles-available" if="classcycleslib.available">
-		<property name="package" value="org.tzi.use"/>
 		<taskdef name="classycleDependencyCheck" 
 				             classname="classycle.ant.DependencyCheckingTask" classpath="lib_build/Classycle1.3.3/classycle.jar"/>
 		

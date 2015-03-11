@@ -1,6 +1,11 @@
 USE NEWS -- history of user-visible changes. -*- Text -*-
 Please see the file `README' for a description of how to report bugs.
 
+** Changes since version 4.0.0
+* [CMD] Renamed some commands.
+  'gen load|unload|loaded|flags' -> 'constraints -load|-unload|-loaded|-flags' (note the dash)
+  Support for the old commands will be dropped in Version 4.2 of USE.
+
 ** Changes since version 3.0.6
 * [UML] Support of UML protocol state machines
 
@@ -197,9 +202,6 @@ Please see the file `README' for a description of how to report bugs.
 * [GUI] New view "Association end information" to get an overview of dependencies between 
   associations and their subsets, union, redefines relations.
 
-*
-  
-
 ** Changes since version 2.4.0
 * [OCL] The collection type OrderedSet is now supported.
 
@@ -234,9 +236,8 @@ Please see the file `README' for a description of how to report bugs.
   
 * [GUI] Improved object diagram support for aggregation and composition.
 
-
-** Changes since version 2.3.1
 
+** Changes since version 2.3.1
 * [General] When no specification is given, USE starts with an empty model.
 
 * [OCL] The tuple values can now be written as 'Tuple{a=1,b=2}', which
@@ -247,7 +248,7 @@ Please see the file `README' for a description of how to report bugs.
   can now be configured in several ways. The browser now opens on ??
   and on the evaluation dialog.
 
-
+
 ** Changes since version 2.3.0
 
 * [GUI] The sequence diagram view has been improved. Events can now be filtered,
@@ -277,7 +278,6 @@ Please see the file `README' for a description of how to report bugs.
 * Tuple types are now fully supported.
 
 
-
 ** Changes since version 2.2.0
 
   Special features:
@@ -317,7 +317,7 @@ Please see the file `README' for a description of how to report bugs.
   The association part and the class part have been switched. People
   seem to find this more intuitive.
 
-
+
 ** Changes since version 2.1.0
 
 * The startup scripts (bin/use and bin/use.bat) automatically
@@ -385,8 +385,6 @@ Please see the file `README' for a description of how to report bugs.
   dialog in the GUI).
 
 
-
-
 ** Changes since version 2.0.1
 
 * The build system has been simplified and switched from "make" to
@@ -447,7 +445,7 @@ Please see the file `README' for a description of how to report bugs.
   For an example, see the specification SwapLinks.use in the examples
   directory.
 
-
+
 ** Changes since version 2.0.0
 
 * An Extension to USE 2.0.0. was added. It is extended by a tool for
@@ -475,7 +473,7 @@ Please see the file `README' for a description of how to report bugs.
     type differed from the collection element type. Reported by Arne
     Lindow.
 
-
+
 ** Changes since version 1.5.0
 
 * Support for pre- and postconditions has been added. Examples can be
@@ -566,7 +564,7 @@ Please see the file `README' for a description of how to report bugs.
     UML13All.use and actionsemantics.use. Reported by Christophe
     Lecamus.
 
-
+
 ** Changes since version 1.4.0
 
 * A new view for class extents has been added. A table shows all
@@ -613,7 +611,7 @@ Please see the file `README' for a description of how to report bugs.
     scope. For example, after doing `!create p : Person', the variable
     p was not available in commands like `!set p.age=p.age + 1'.
 
-
+
 ** Changes since version 1.3.0
 
 * Thanks to Jose Alvarez and Andy Evans from the University of York,
@@ -663,7 +661,7 @@ Please see the file `README' for a description of how to report bugs.
     change in the caller's context. See the file test/t5.in for an
     example. Bug report and fix submitted by Jean-Paul Bodeveix.
 
-
+
 ** Changes since version 1.2.0
 
 * The OCL shorthand notation for collect has been implemented (see
@@ -681,7 +679,7 @@ Please see the file `README' for a description of how to report bugs.
     undefined enumeration literal appeared in an OCL
     expression. Reported by Joern Bohling.
 
-
+
 ** Changes since version 1.1.0
 
 * The USE parser will issue a warning if the `ordered' feature is
@@ -737,7 +735,7 @@ Please see the file `README' for a description of how to report bugs.
     Set{1.3}). This bug caused WRONG RESULTS IN OCL EXPRESSIONS in
     previous releases. Reported by Joern Bohling.
 
-
+
 ** Changes since version 1.0.1
 
 * The new operation `oclUndefined(type)' allows to denote the
@@ -785,7 +783,7 @@ Please see the file `README' for a description of how to report bugs.
     Message/Message, UseCase/Include, and UseCase/Extend. Fixed by
     adding different role names.
 
-
+
 ** Changes since version 1.0.0
 
 * A number of bugs related to type checking and evaluating OCL
@@ -797,7 +795,7 @@ Please see the file `README' for a description of how to report bugs.
 * An almost complete specification of the UML 1.3 metamodel is
   available in examples/UML13All.use.
 
-
+
 ** Changes since version 0.9.0
 
 * Objects can be created by dragging a class from the model browser

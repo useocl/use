@@ -419,8 +419,10 @@ public final class Shell implements Runnable, PPCHandler {
 		} else if (line.startsWith("reopen")) {
 			cmdReOpen(line.substring(6));
 		} else if (line.startsWith("read ")) {
+			printDeprecatedCmdMessage("read", "open");
 			cmdRead(line.substring(5), true);
 		} else if (line.startsWith("readq ")) {
+			printDeprecatedCmdMessage("readq", "open -q");
 			cmdRead(line.substring(6), false);
 		} else if (line.equals("reset")) {
 			cmdReset();
@@ -434,19 +436,29 @@ public final class Shell implements Runnable, PPCHandler {
 			cmdWrite(null);
 		} else if (line.startsWith("write ")) {
 			cmdWrite(line.substring(6));
-		} else if (line.startsWith("load -q ")) {
-			cmdGenLoadInvariants(line.substring(8), system(), false);
-		} else if (line.startsWith("gen loaded")) {
+		} else if (line.startsWith("constraints -loaded")) {
 			cmdGenPrintLoadedInvariants(system());
+		} else if (line.startsWith("gen loaded")) {
+			printDeprecatedCmdMessage("gen loaded", "constraints -loaded");
+			cmdGenPrintLoadedInvariants(system());
+		} else if (line.startsWith("constraints -load")) {
+			cmdGenLoadInvariants(line.substring(17), system(), true);
 		} else if (line.startsWith("gen load")) {
+			printDeprecatedCmdMessage("gen load", "constraints -load");
 			cmdGenLoadInvariants(line.substring(8), system(), true);
-		} else if (line.startsWith("gen unload") || line.equals("unload")) {
+		} else if (line.startsWith("constraints -unload")) {
+			cmdGenUnloadInvariants(line.substring(19), system());
+		} else if (line.startsWith("gen unload")) {
+			printDeprecatedCmdMessage("gen unload", "constraints -unload");
 			cmdGenUnloadInvariants(line.substring(10), system());
-		} else if (line.startsWith("gen start") || line.equals("gen start")) {
-			cmdGenStartProcedure(line.substring(9), system());
-		} else if (line.startsWith("gen flags") || line.equals("gen flags")) {
+		} else if (line.startsWith("constraints -flags")) {
+			cmdGenInvariantFlags(line.substring(18), system());
+		} else if (line.startsWith("gen flags")) {
+			printDeprecatedCmdMessage("gen flags", "constraints -flags");
 			cmdGenInvariantFlags(line.substring(9), system());
-		} else if (line.startsWith("gen result") || line.equals("gen result")) {
+		} else if (line.startsWith("gen start")) {
+			cmdGenStartProcedure(line.substring(9), system());
+		} else if (line.startsWith("gen result")) {
 			cmdGenResult(line.substring(10), system());
 		} else if (line.startsWith("reload extensions")) {
 			cmdReloadExtensions();
@@ -490,6 +502,11 @@ public final class Shell implements Runnable, PPCHandler {
 		} else {
 			Log.error("Unknown command `" + line + "'. Try `help'.");
 		}
+	}
+	
+	private void printDeprecatedCmdMessage(String enteredCmd, String replacement){
+		//TODO remove deprecated commands in Version 4.2.0 of USE, dont forget the help
+		Log.warn("The command " + StringUtil.inQuotes(enteredCmd) + " is deprecated and will be removed in the next USE release. Please replace it with the command " + StringUtil.inQuotes(replacement) + ".");
 	}
 
 	private void cmdShowPlugins() {

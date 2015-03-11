@@ -206,8 +206,6 @@ public class HelpForCmd {
             printDetailedHelpByKey("help.open");
         } else if (cmd.startsWith("reopen")) {
         	printDetailedHelpByKey("help.reopen");
-        } else if (cmd.startsWith("load")) {
-            printDetailedHelpByKey("help.load");
         } else if (cmd.startsWith("readq")) {
             printDetailedHelpByKey("help.readq");
         } else if (cmd.startsWith("read")) {
@@ -222,7 +220,15 @@ public class HelpForCmd {
             printDetailedHelpByKey("help.undo");
         } else if (cmd.startsWith("write")) {
             printDetailedHelpByKey("help.write");
-        } else if (cmd.startsWith("gen load")) {
+        } else if (cmd.startsWith("constraints -load")) {
+        	printDetailedHelpByKey("help.constraints.load");
+        } else if (cmd.startsWith("constraints -unload")) {
+        	printDetailedHelpByKey("help.constraints.unload");
+        } else if (cmd.startsWith("constraints -loaded")) {
+        	printDetailedHelpByKey("help.constraints.loaded");
+        } else if (cmd.startsWith("constraints -flags")) {
+        	printDetailedHelpByKey("help.constraints.flags");
+        } else if (cmd.startsWith("gen load")) { //TODO deprecated since USE 4.1, remove in USE 4.2
             printDetailedHelpByKey("help.gen.load");
         } else if (cmd.startsWith("gen unload")) {
             printDetailedHelpByKey("help.gen.unload");
@@ -288,11 +294,12 @@ public class HelpForCmd {
         printOneLineHelpByKey("help.info.prog");
         printOneLineHelpByKey("help.info.vars");
         printOneLineHelpByKey("help.info.coverage");
+        printHeader("Constraint commands");
+        printOneLineHelpByKey("help.constraints.load");
+        printOneLineHelpByKey("help.constraints.unload");
+        printOneLineHelpByKey("help.constraints.loaded");
+        printOneLineHelpByKey("help.constraints.flags");
         printHeader("Generator commands");
-        printOneLineHelpByKey("help.gen.load");
-        printOneLineHelpByKey("help.gen.unload");
-        printOneLineHelpByKey("help.gen.loaded");
-        printOneLineHelpByKey("help.gen.flags");
         printOneLineHelpByKey("help.gen.start");
         printOneLineHelpByKey("help.gen.result");
         printOneLineHelpByKey("help.gen.result.inv");
