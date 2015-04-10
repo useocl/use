@@ -580,49 +580,28 @@ public class UseModelApi {
 	}
 	
 	/**
-	 * This method creates an association class. The association class is a
-	 * class and a association at once. The operation has a valid name
-	 * <code>assoClassName</code> and is mark by the parameter name
-	 * <code>isAbstract</code> if its an abstract class or not. A ternary
-	 * association class is not allow to have an aggregation or composition.
-	 * 
-	 * @param associationClassName
-	 * @param isAbstract
-	 * @param end1ClassName
-	 * @param end1RoleName
-	 * @param end1Multiplicity
-	 * @param end1Aggregation
-	 * @param end2ClassName
-	 * @param end2RoleName
-	 * @param end2Multiplicity
-	 * @param end2Aggregation
-	 * 
-	 * @return mAssociationClass
-	 * @throws MInvalidModelException
-	 * @throws ApiException
-	 * 
+	 * This method creates a binary association class. The association class is
+	 * a class and an association at once. The association class has a valid
+	 * name <code>associationClassName</code> and is mark by the parameter name
+	 * <code>isAbstract</code> if its an abstract class or not.
 	 */
 	public MAssociationClass createAssociationClass(String associationClassName, boolean isAbstract, 
 			                                        String end1ClassName, String end1RoleName, String end1Multiplicity, int end1Aggregation,
 			                                        String end2ClassName, String end2RoleName, String end2Multiplicity, int end2Aggregation)
 			throws UseApiException {
 
-		return createAssociationClass(associationClassName, isAbstract, 
-				new String[] {end1ClassName, end2ClassName}, 
+		return createAssociationClass(associationClassName, isAbstract,
+				new String[] {end1ClassName, end2ClassName},
 				new String[] {end1RoleName, end2RoleName},
 				new String[] {end1Multiplicity, end2Multiplicity},
 				new int[] {end1Aggregation, end2Aggregation});
 	}
-
+	
 	/**
-	 * 
-	 * @param associationClassName
-	 * @param isAbstract
-	 * @param classNames
-	 * @param roleNames
-	 * @param multiplicities
-	 * @param aggregationKinds
-	 * @throws UseApiException
+	 * This method creates an n-ary association class. The association class is
+	 * a class and an association at once. The association class has a valid
+	 * name <code>associationClassName</code> and is mark by the parameter name
+	 * <code>isAbstract</code> if its an abstract class or not.
 	 */
 	public MAssociationClass createAssociationClass(String associationClassName, boolean isAbstract,
 		                               String[] classNames, String[] roleNames, String[] multiplicities, int[] aggregationKinds) throws UseApiException {
@@ -649,6 +628,49 @@ public class UseModelApi {
 			throw new UseApiException(e.getMessage());
 		}
 		
+		return associationClass;		
+	}
+	
+	/**
+	 * This method creates an n-ary association class. The association class is
+	 * a class and an association at once. The association class has a valid
+	 * name <code>associationClassName</code> and is mark by the parameter name
+	 * <code>isAbstract</code> if its an abstract class or not.
+	 * 
+	 * @param qualifier A three dimensional array containing for each association end (dimension one) 
+	 *                  the qualifier information (dimension two) as a string array of length two (dimension three).
+	 *                  The first element in the array of the third dimension is the name of the qualifier, the second
+	 *                  element is the type. 
+	 * @throws UseApiException
+	 */
+	public MAssociationClass createAssociationClass(String associationClassName, boolean isAbstract,
+			String[] classNames, String[] roleNames, String[] multiplicities, int[] aggregationKinds,
+			boolean[] orderedInfo, String[][][] qualifier) throws UseApiException {
+		int numEnds = classNames.length; 
+
+		if ( numEnds != roleNames.length ||
+				numEnds != multiplicities.length ||
+				numEnds != aggregationKinds.length ||
+				numEnds != orderedInfo.length ||
+				(qualifier.length > 0 && qualifier.length != numEnds)) {
+			throw new UseApiException("The number of class names, role names, multiplicities and aggregation kinds must match.");
+		}
+
+		MAssociationClass associationClass = mFactory.createAssociationClass(associationClassName, isAbstract);
+
+		try {
+			for (int i = 0; i < numEnds; ++i) {
+				associationClass.addAssociationEnd(createAssociationEnd(
+						classNames[i], roleNames[i], multiplicities[i],
+						aggregationKinds[i], orderedInfo[i], (qualifier.length == 0 ? new String[0][] : qualifier[i])));
+			}
+
+			mModel.addAssociation(associationClass);
+			mModel.addClass(associationClass);
+		} catch (MInvalidModelException e) {
+			throw new UseApiException(e.getMessage(), e);
+		}
+
 		return associationClass;		
 	}
 	
@@ -680,7 +702,7 @@ public class UseModelApi {
 		try {
 			vars.add("self", cls, new SrcPos("self", 1, 1));
 		} catch (SemanticException e1) {
-			e1.printStackTrace();
+			throw new UseApiException("Could not add " + StringUtil.inQuotes("self") + " to symtable.", e1);
 		}
 		
 		StringWriter errBuffer = new StringWriter();
