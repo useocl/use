@@ -6,6 +6,10 @@ Please see the file `README' for a description of how to report bugs.
   'gen load|unload|loaded|flags' -> 'constraints -load|-unload|-loaded|-flags' (note the dash)
   Support for the old commands will be dropped in Version 4.2 of USE.
 
+* [USE] Added option for aliases for Plugin API Shell commands.
+
+* [CMD] Improved handling of relative paths across all file handling commands.
+
 ** Changes since version 3.0.6
 * [UML] Support of UML protocol state machines
 
