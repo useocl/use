@@ -52,6 +52,13 @@ public class ExpOne extends ExpQuery {
     
         // queryExp must be a boolean expression
         assertBooleanQuery();
+    } 
+    
+    /**
+     * Constructs a one expression.
+     */
+    public ExpOne(VarDecl elemVarDecl, Expression rangeExp, Expression queryExp) throws ExpInvalidException {
+    	this((elemVarDecl != null) ? new VarDeclList(elemVarDecl) : new VarDeclList(true), rangeExp, queryExp);
     }
 
     /** 
