@@ -229,7 +229,7 @@ public class MainWindow extends JFrame {
 		fToolBar.addSeparator();
 		
 		addToToolBar(fToolBar, fActionFileOpenSpec,  "Open specification");
-		addToToolBar(fToolBar, fActionFileReload,  "Reload  current specification");
+		addToToolBar(fToolBar, fActionFileReload,  "Reload current specification");
 		
 		fActionFileReload.setEnabled(!Options.getRecentFiles().isEmpty());
 		
@@ -1332,14 +1332,7 @@ public class MainWindow extends JFrame {
 
         @Override
 		public void actionPerformed(ActionEvent e) {
-            ViewFrame vf = null;
-
-            // jdk1.3: vf = (ViewFrame) fDesk.getSelectedFrame();
-
-            JInternalFrame[] frames = fDesk.getAllFrames();
-            for (int i = 0; i < frames.length; i++)
-                if (frames[i].isSelected())
-                    vf = (ViewFrame) frames[i];
+            ViewFrame vf = (ViewFrame) fDesk.getSelectedFrame();
 
             if (vf != null && vf.isPrintable())
                 vf.print(pageFormat());
@@ -1357,14 +1350,7 @@ public class MainWindow extends JFrame {
 
         @Override
 		public void actionPerformed(ActionEvent e) {
-            ViewFrame vf = null;
-
-            // jdk1.3: vf = (ViewFrame) fDesk.getSelectedFrame();
-
-            JInternalFrame[] frames = fDesk.getAllFrames();
-            for (int i = 0; i < frames.length; i++)
-                if (frames[i].isSelected())
-                    vf = (ViewFrame) frames[i];
+            ViewFrame vf = (ViewFrame) fDesk.getSelectedFrame();
 
             if (vf != null && vf.isPrintable()) {
                 View view = vf.getView();
@@ -1390,13 +1376,8 @@ public class MainWindow extends JFrame {
 
         @Override
 		public void actionPerformed(ActionEvent e) {
-            ViewFrame vf = null;
+            ViewFrame vf = (ViewFrame) fDesk.getSelectedFrame();
             File f;
-            
-            JInternalFrame[] frames = fDesk.getAllFrames();
-            for (int i = 0; i < frames.length; i++)
-                if (frames[i].isSelected())
-                    vf = (ViewFrame) frames[i];
 
             if (vf != null && vf.isPrintable()) {
             	// Ask for filename
@@ -1410,7 +1391,7 @@ public class MainWindow extends JFrame {
             	}
             	
                 do {
-                    int returnVal = chooser.showSaveDialog( new JPanel() );
+                    int returnVal = chooser.showSaveDialog( MainWindow.this );
                     if (returnVal != JFileChooser.APPROVE_OPTION)
                         return;
 
@@ -1425,7 +1406,7 @@ public class MainWindow extends JFrame {
                     }
 
                     if (f.exists()) {
-                        option = JOptionPane.showConfirmDialog(new JPanel(),
+                        option = JOptionPane.showConfirmDialog(MainWindow.this,
                                 "Overwrite existing file " + filename + "?",
                                 "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
                         if (option == JOptionPane.CANCEL_OPTION) {
@@ -2208,6 +2189,7 @@ public class MainWindow extends JFrame {
 		final MainWindow win = new MainWindow(session, pluginRuntime);
 
         win.pack();
+        win.setLocationRelativeTo(null);
         win.setVisible(true);
         return win;
     }

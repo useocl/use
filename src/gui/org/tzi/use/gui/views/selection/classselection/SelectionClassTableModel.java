@@ -194,9 +194,6 @@ public class SelectionClassTableModel extends AbstractTableModel implements Chan
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.gui.util.Selection.ChangeListener#stateChanged(org.tzi.use.gui.util.Selection.ChangeEvent)
-	 */
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		update();		

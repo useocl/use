@@ -19,7 +19,7 @@
 
 package org.tzi.use.main.shell;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +40,7 @@ public final class ShellUtil {
 	 */
 	public static String[] parseArgumentList(String arguments) {
 		arguments = arguments.trim();
-		List<String> argList = new LinkedList<String>();
+		List<String> argList = new ArrayList<String>();
 		Pattern p = Pattern.compile("([\"'])(.+?)\\1");
 		Matcher m = p.matcher(arguments);
 		int cursor = 0;
