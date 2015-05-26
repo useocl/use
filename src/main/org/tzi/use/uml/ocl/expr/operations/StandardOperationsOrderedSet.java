@@ -204,7 +204,7 @@ final class Op_orderedSet_subOrderedSet extends OpGeneric {
 	}
 
 	public boolean isInfixOrPrefix() {
-		return true;
+		return false;
 	}
 
 	public Type matches(Type params[]) {
