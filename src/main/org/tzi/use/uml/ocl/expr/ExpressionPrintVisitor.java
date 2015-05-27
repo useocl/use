@@ -21,6 +21,8 @@ package org.tzi.use.uml.ocl.expr;
 
 import java.io.PrintWriter;
 
+import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 
 /**
@@ -292,7 +294,19 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 		exp.getObjectExpression().processWithVisitor(this);
 		writer.write('.');
 		writer.write(exp.getDestination().nameAsRolename());
-		//TODO if arity > 2 and source destination is ambiguous, print explicit source destination. E.g.: "[succ]" in "self.opC[succ]"
+		
+		// check necessity for specifying the source role
+		MAssociation assoc = exp.getDestination().association();
+		MClass src = exp.getSource().cls();
+		MClass dest = exp.getDestination().cls();
+		int endsRequired = src.equals(dest) ? 2 : 1;
+		
+		if(assoc.associationEndsAt(src).size() > endsRequired){
+			writer.write('[');
+			writer.write(exp.getSource().nameAsRolename());
+			writer.write(']');
+		}
+		
 		//TODO check qualifier syntax
 		if(exp.getQualifierExpression().length > 0){
 			writer.write('[');
