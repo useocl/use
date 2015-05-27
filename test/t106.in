@@ -37,6 +37,7 @@ info model
 *
 *context Person::doIt()
 *      @Test(sdkjf="sdflj")
-*      post post2: true*
+*      post post2: true
+*
 *0 objects total in current state.
 quit
