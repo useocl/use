@@ -152,26 +152,50 @@ public class MMPrintVisitor implements MMVisitor {
         print( ws() );
         print( id( e.name() ) );
 
-        Set<? extends MClass> parents = e.parents();
+        Set<MAssociationClass> parents = e.parents();
         if ( !parents.isEmpty() ) {
             fOut.print( ws() + other( "<" ) + ws() +
                         other( StringUtil.fmtSeq( parents.iterator(), "," ) ) );
         }
 
-        // visit aggregation kind
-        if ( e.aggregationKind() == MAggregationKind.NONE ) {
-            // normale associationclass
-            indent();
-            println( ws() + keyword( "between" ) );
-        } else {
-            // aggregations or composition
-            indent();
-            println( ws() + keyword( MAggregationKind.name( e.aggregationKind() ) ) + ws() +
-                     keyword( "between" ) );
+        // check parents for definition of roles
+        boolean doAssociationEnds = true;
+        List<MAssociationEnd> associationEnds = e.associationEnds();
+        for(MAssociationClass parent : parents){
+        	List<MAssociationEnd> parentAssociationEnds = parent.associationEnds();
+        	boolean allEndsTheSame = true;
+        	for(int i = 0; i < associationEnds.size(); i++){
+        		MAssociationEnd associationEnd = associationEnds.get(i);
+        		MAssociationEnd parentAssociationEnd = parentAssociationEnds.get(i);
+        		
+				if (associationEnd.name().equals(parentAssociationEnd.name())
+						&& !parentAssociationEnd.getRedefiningEndsClosure().contains(associationEnd)) {
+        			allEndsTheSame = false;
+        			break;
+        		}
+        	}
+        	if(allEndsTheSame){
+        		doAssociationEnds = false;
+        	}
         }
-        incIndent();
-
-        visitAssociationEnds( e );
+        if(parents.isEmpty() || doAssociationEnds){
+        	// visit aggregation kind
+        	if ( e.aggregationKind() == MAggregationKind.NONE ) {
+        		// normal association class
+        		indent();
+        		println( ws() + keyword( "between" ) );
+        	} else {
+        		// aggregations or composition
+        		indent();
+        		println( ws() + keyword( MAggregationKind.name( e.aggregationKind() ) ) + ws() +
+        				keyword( "between" ) );
+        	}
+        	incIndent();
+        	
+        	visitAssociationEnds( e );
+        } else {
+        	println();
+        }
         visitAttributesAndOperations( e );
         
         indent();
