@@ -117,8 +117,8 @@ public class MMPrintVisitor implements MMVisitor {
 
     @Override
 	public void visitAssociation(MAssociation e) {
-        indent();
         visitAnnotations(e);
+        indent();
         println(keyword(MAggregationKind.name(e.aggregationKind())) + ws() + 
                 id(e.name()) + ws() + keyword("between"));
 
@@ -141,8 +141,8 @@ public class MMPrintVisitor implements MMVisitor {
     
     @Override
 	public void visitAssociationClass( MAssociationClass e ) {
-    	indent();
     	visitAnnotations(e);
+    	indent();
         if ( e.isAbstract() ) {
             print( keyword( "abstract" ) );
             print( ws() );
@@ -204,10 +204,10 @@ public class MMPrintVisitor implements MMVisitor {
 
     @Override
 	public void visitAssociationEnd(MAssociationEnd e) {
-        indent();
         visitAnnotations(e);
         StringBuilder result = new StringBuilder();
         
+        indent();
         result.append(id(e.cls().name()));
         result.append(other("[" + e.multiplicity() + "]"));
         result.append(ws());
@@ -272,9 +272,9 @@ public class MMPrintVisitor implements MMVisitor {
 
     @Override
 	public void visitAttribute(MAttribute e) {
-        indent();
         visitAnnotations(e);
         
+        indent();
         print(id(e.name()) + ws() + other(":") + ws() +
                 other(e.type().toString()));
         
@@ -327,8 +327,8 @@ public class MMPrintVisitor implements MMVisitor {
     
     @Override
 	public void visitClass(MClass e) {
-        indent();
         visitAnnotations(e);
+        indent();
         if (e.isAbstract() )
             print(keyword("abstract") + ws());
         print(keyword("class") + ws() + id(e.name()));
@@ -348,8 +348,6 @@ public class MMPrintVisitor implements MMVisitor {
 
     @Override
 	public void visitClassInvariant(MClassInvariant e) {
-    	visitAnnotations(e);
-    	
     	StringBuilder line = new StringBuilder();
     	line.append(keyword("context"));
     	line.append(ws());
@@ -362,7 +360,16 @@ public class MMPrintVisitor implements MMVisitor {
     	}
     	
     	line.append(other(e.cls().name()));
-    	line.append(ws());
+    	
+    	if(e.isAnnotated()){
+    		println(line.toString());
+    		incIndent();
+    		visitAnnotations(e);
+    		line = new StringBuilder();
+    		indent();
+    	} else {
+    		line.append(ws());
+    	}
     	
     	if (e.isExistential()) {
     		line.append(keyword("existential"));
@@ -395,8 +402,8 @@ public class MMPrintVisitor implements MMVisitor {
 
     @Override
 	public void visitModel(MModel e) {
-        indent(); 
         visitAnnotations(e);
+        indent();
         println(keyword("model") + ws() + id(e.name()));
         println();
     
@@ -447,8 +454,8 @@ public class MMPrintVisitor implements MMVisitor {
 
     @Override
 	public void visitOperation(MOperation e) {
-        indent(); 
         visitAnnotations(e);
+        indent(); 
         print(id(e.name()) + 
               other("(" + e.paramList() + ")"));
         
@@ -486,11 +493,11 @@ public class MMPrintVisitor implements MMVisitor {
     
     @Override
 	public void visitPrePostCondition(MPrePostCondition e) {
-    	visitAnnotations(e);
         println(keyword("context") + ws() +
                 other(e.cls().name()) + other("::") +
                 other(e.operation().signature()));
         incIndent();
+        visitAnnotations(e);
         indent();
         print(keyword(e.isPre() ? "pre" : "post") + 
               ws() + id(e.name()) + other(":") + ws());
@@ -513,6 +520,7 @@ public class MMPrintVisitor implements MMVisitor {
 
 	@Override
 	public void visitAnnotation(MElementAnnotation a) {
+		indent();
 		print(keyword("@" + a.getName()));
 		print("(");
 		
@@ -531,7 +539,6 @@ public class MMPrintVisitor implements MMVisitor {
 		}
 		
 		println(")");
-		indent();
 	}
 	
 	private void visitAnnotations(Annotatable e) {
@@ -559,8 +566,8 @@ public class MMPrintVisitor implements MMVisitor {
 
 	@Override
 	public void visitEnum(EnumType enumType) {
-		indent();
 		visitAnnotations(enumType);
+		indent();
 		println(keyword("enum") + ws() + other(enumType.name()) + ws() + other("{"));
 		
 		incIndent();

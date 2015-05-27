@@ -127,8 +127,8 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 		writer.write(type(exp.getSourceType().toString(), exp));
 		writer.write(".");
 		writer.write(operation(exp.name(), exp));
-		writer.write(operator("()", exp));
 		atPre(exp);
+		writer.write(operator("()", exp));
 	}
 
 	@Override
@@ -270,6 +270,7 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 
 	@Override
 	public void visitLet(ExpLet exp) {
+		writer.write(operator("(", exp));
 		writer.write(keyword("let", exp));
 		writer.write(ws());
 		writer.write(variable(exp.getVarname(), exp));
@@ -283,6 +284,7 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 		writer.write(keyword("in", exp));
 		writer.write(ws());
 		exp.getInExpression().processWithVisitor(this);
+		writer.write(operator(")", exp));
 	}
 
 	@Override
@@ -290,6 +292,20 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 		exp.getObjectExpression().processWithVisitor(this);
 		writer.write('.');
 		writer.write(exp.getDestination().nameAsRolename());
+		//TODO if arity > 2 and source destination is ambiguous, print explicit source destination. E.g.: "[succ]" in "self.opC[succ]"
+		//TODO check qualifier syntax
+		if(exp.getQualifierExpression().length > 0){
+			writer.write('[');
+			boolean first = true;
+			for(Expression e : exp.getQualifierExpression()){
+				if(!first){
+					writer.write(',');
+				}
+				e.processWithVisitor(this);
+				first = false;
+			}
+			writer.write(']');
+		}
 		atPre(exp);
 	}
 
@@ -357,6 +373,7 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 		writer.write(operator("|", exp));
 		writer.write(ws());
 		exp.getQueryExpression().processWithVisitor(this);
+		writer.write(ws());
 		writer.write(operator(")", exp));
 	}
 	
@@ -464,7 +481,7 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 	public void visitTupleSelectOp(ExpTupleSelectOp exp) {
 		exp.getTupleExp().processWithVisitor(this);
 		writer.write(".");
-		writer.write(exp.getPart().toString());
+		writer.write(exp.getPart().name());
 	}
 
 	@Override

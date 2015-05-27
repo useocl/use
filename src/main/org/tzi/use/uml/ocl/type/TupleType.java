@@ -57,7 +57,7 @@ public final class TupleType extends TypeImpl {
 
         @Override
         public String toString() {
-            return this.toString(new StringBuilder()).toString();
+            return toString(new StringBuilder()).toString();
         }
 
         @Override
