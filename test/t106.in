@@ -13,29 +13,30 @@ info model
 *end
 *
 *constraints
-*@Test()
-*context self : Person inv testInv:
-*  true
+*context self : Person
+*  @Test()
+*  inv testInv:
+*    true
 *
-*@Test(name="kljsdf")
-*context self : Person inv test2:
-*  true
+*context self : Person
+*    @Test(name="kljsdf")
+*    inv test2:
+*      true
 *
-*@Test()
 *context Person::doIt()
-*  pre pre1: true
+*      @Test()
+*      pre pre1: true
 *
-*@Test()
 *context Person::doIt()
-*  post post1: true
+*      @Test()
+*      post post1: true
 *
-*@Test(test="sdas")
 *context Person::doIt()
-*  pre pre2: true
+*      @Test(test="sdas")
+*      pre pre2: true
 *
-*@Test(sdkjf="sdflj")
 *context Person::doIt()
-*  post post2: true
-*
+*      @Test(sdkjf="sdflj")
+*      post post2: true*
 *0 objects total in current state.
 quit
