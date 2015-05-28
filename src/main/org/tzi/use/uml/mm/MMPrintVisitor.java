@@ -270,8 +270,10 @@ public class MMPrintVisitor implements MMVisitor {
         	result.append(ws());
         	result.append(other("="));
         	result.append(ws());
+        	fOut.write(result.toString());
         	ExpressionVisitor visitor = createExpressionVisitor();
         	e.getDeriveExpression().processWithVisitor(visitor);
+        	result = new StringBuilder();
         }
         
         println(result.toString());
