@@ -135,7 +135,9 @@ public final class Main {
 				System.exit(1);
 			}
 
-			Options.setLastDirectory(new java.io.File(Options.specFilename).getAbsoluteFile().toPath().getParent());
+			if(!Options.quiet){
+				Options.setLastDirectory(new java.io.File(Options.specFilename).getAbsoluteFile().toPath().getParent());
+			}
 			if (!Options.testMode)
 				Options.getRecentFiles().push(Options.specFilename);
 			

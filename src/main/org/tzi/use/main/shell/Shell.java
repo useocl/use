@@ -242,6 +242,9 @@ public final class Shell implements Runnable, PPCHandler {
 
 			String line = "";
 
+			if(Options.quiet && !fReadlineStack.hasReadline()){
+				return;
+			}
 			// get current readline (may be e.g. console or file)
 			fReadline = fReadlineStack.getCurrentReadline();
 			try {
@@ -1272,7 +1275,6 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 
 			String filename = getFilenameToOpen(token);
-			filename = Options.getFilenameToOpen(filename);
 			String firstWord = getFirstWordOfFile(filename);
 			setFileClosed();
 
@@ -1284,12 +1286,6 @@ public final class Shell implements Runnable, PPCHandler {
 			if (firstWord == null) {
 				Log.println("Nothing to do, because file `" + line + "' "
 						+ "contains no data!");
-				// Necessary if USE is started with a cmd-file and option -q or
-				// -qv. This call provides the readline stack with the one
-				// readline object and no EmptyStackException will be thrown.
-				if (Options.cmdFilename != null) {
-					cmdRead(Options.cmdFilename, false);
-				}
 				return;
 			}
 			if (firstWord.startsWith("model") || firstWord.startsWith("@")) {

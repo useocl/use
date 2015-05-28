@@ -77,4 +77,8 @@ public class ReadlineStack {
     public synchronized void push(Readline readline) {
         fReadlineStack.push(readline);
     }
+    
+    public synchronized boolean hasReadline(){
+    	return !fReadlineStack.empty();
+    }
 }
