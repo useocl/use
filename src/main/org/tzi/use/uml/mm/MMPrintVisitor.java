@@ -210,24 +210,30 @@ public class MMPrintVisitor implements MMVisitor {
         indent();
         result.append(id(e.cls().name()));
         result.append(other("[" + e.multiplicity() + "]"));
-        result.append(ws());
-        result.append(keyword("role"));
-        result.append(ws());
-        result.append(id(e.name()));
+        
+        if(!e.cls().nameAsRolename().equals(e.nameAsRolename())){
+        	result.append(ws());
+        	result.append(keyword("role"));
+        	result.append(ws());
+        	result.append(id(e.name()));
+        }
         
         if (e.hasQualifiers()) {
-        	result.append(" ");
+        	result.append(ws());
         	result.append(keyword("qualifier"));
-        	result.append(" (");
+        	result.append(ws());
+        	result.append('(');
         	
         	boolean first = true;
         	for (VarDecl q : e.getQualifiers()) {
-        		if (!first)
-        			result.append(", ");
+        		if (!first){
+        			result.append(',');
+					result.append(ws());
+        		}
         		result.append(q.toString());
         		first = false;
         	}
-        	result.append(")");
+        	result.append(')');
         }
         
         if (e.getSubsettedEnds().size() > 0) {
@@ -264,7 +270,8 @@ public class MMPrintVisitor implements MMVisitor {
         	result.append(ws());
         	result.append(other("="));
         	result.append(ws());
-        	e.getDeriveExpression().toString(result);
+        	ExpressionVisitor visitor = createExpressionVisitor();
+        	e.getDeriveExpression().processWithVisitor(visitor);
         }
         
         println(result.toString());

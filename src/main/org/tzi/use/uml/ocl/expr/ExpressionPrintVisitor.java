@@ -295,25 +295,25 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 		writer.write('.');
 		writer.write(exp.getDestination().nameAsRolename());
 		
-		// check necessity for specifying the source role
 		MAssociation assoc = exp.getDestination().association();
 		MClass src = exp.getSource().cls();
 		MClass dest = exp.getDestination().cls();
 		int endsRequired = src.equals(dest) ? 2 : 1;
 		
 		if(assoc.associationEndsAt(src).size() > endsRequired){
+			// check necessity for specifying the source role
 			writer.write('[');
 			writer.write(exp.getSource().nameAsRolename());
 			writer.write(']');
 		}
-		
-		//TODO check qualifier syntax
-		if(exp.getQualifierExpression().length > 0){
+		else if(exp.getQualifierExpression().length > 0){
+			// qualifier values
 			writer.write('[');
 			boolean first = true;
 			for(Expression e : exp.getQualifierExpression()){
 				if(!first){
 					writer.write(',');
+					writer.write(ws());
 				}
 				e.processWithVisitor(this);
 				first = false;
