@@ -1,6 +1,18 @@
 USE NEWS -- history of user-visible changes. -*- Text -*-
 Please see the file `README' for a description of how to report bugs.
 
+** Change since version 4.1.0
+
+* [GUI] Fixed a crash of the communication diagram when an operation with
+  result value returns to the actor
+
+* [USE] Fixed various errors when exporting model descriptions
+  (e.g. by the command `info model') including: ternary-association navigation, annotations,
+  @pre on allInstances(), let-expressions, inheritance on association classes and
+  derived expressions
+
+* [USE] Added possibility of specifying parents when creating association class in model API
+
 ** Changes since version 4.0.0
 * [CMD] Renamed some commands.
   'gen load|unload|loaded|flags' -> 'constraints -load|-unload|-loaded|-flags' (note the dash)
