@@ -1,5 +1,6 @@
 package org.tzi.use.runtime.impl;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -104,13 +105,15 @@ public class PluginRuntime implements IPluginRuntime {
 
 			IPluginDescriptor otherPlugin = getPlugin(currentPluginDescriptor.getPluginModel().getName());
 			if(otherPlugin != null){
-				Log.error("Cannot load plugin ["
-						+ currentPluginDescriptor.getPluginModel().getName()
+				Log.error("Cannot load plugin "
+						+ StringUtil.inQuotes(currentPluginDescriptor.getPluginModel().getName())
+						+ " in file ["
+						+ new File(currentPluginDescriptor.getPluginLocation().getPath()).getName()
 						+ "] with version "
 						+ StringUtil.inQuotes(currentPluginDescriptor.getPluginModel().getVersion())
-						+ ". Another plugin with the same name of version "
+						+ ". Another plugin with the same name and version "
 						+ StringUtil.inQuotes(otherPlugin.getPluginModel().getVersion())
-						+ " is already registered.");
+						+ " is already loaded.");
 				return;
 			}
 			
