@@ -446,7 +446,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 
 		popupMenu.insert(showSomeMessagesItem, pos++);
 
-		final JCheckBoxMenuItem resetEnumItem = new JCheckBoxMenuItem("Relativ numbering");
+		final JCheckBoxMenuItem resetEnumItem = new JCheckBoxMenuItem("Relative numbering");
 		resetEnumItem.setState(resetEnum);
 		resetEnumItem.addItemListener(new ItemListener() {
 			@Override
