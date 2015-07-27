@@ -571,7 +571,11 @@ public class Options {
 			return file.getAbsolutePath();
 		}
 		
-		return lastDirectory.resolve(file.toPath()).toString();
+		try {
+			return lastDirectory.resolve(file.toPath()).toString();
+		} catch (InvalidPathException ex) {
+			return file.toString();
+		}
 	}
 
 	/**
