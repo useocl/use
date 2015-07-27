@@ -16,6 +16,9 @@
 	<property name="java.targetversion" value="1.7" />
 	<property name="java.sourceversion" value="1.7" />
 	<property name="use.mainClass" value="org.tzi.use.main.Main" />
+	<!-- DO NOT ENABLE DEBUG HERE!
+		 To enable debug LOCALLY, run ant with argument '-Djavac.debug=true' -->
+	<property name="javac.debug" value="off" />
 
 	<!-- define top-level directories -->
 	<property name="bin.dir"            location="${basedir}/bin"/>
@@ -270,12 +273,12 @@
 	<target name="compile-use-main" depends="create-parser, setversion">
 		<mkdir dir="${build.classes.dir}" />
 		<javac srcdir="${src.main.dir}:${src.runtime.dir}:${src.gui.dir}"
-			destdir="${build.classes.dir}" deprecation="on" debug="off" listfiles="off"
+			destdir="${build.classes.dir}" deprecation="on" debug="${javac.debug}" listfiles="off"
 			classpath="${antlr.jar}:${jruby.jar}:${combinatoricslib.jar}:${vtd-xml.jar}:${itextpdf.jar}:${guava.jar}:${annotation.jar}"
 			source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
 		</javac>
 		<javac srcdir="${src.test.dir}"
-			destdir="${build.classes.dir}" deprecation="on" debug="on" listfiles="off"
+			destdir="${build.classes.dir}" deprecation="on" debug="${javac.debug}" listfiles="off"
 			classpath="${antlr.jar}:${junit.jar}:${gsbase.jar}:${combinatoricslib.jar}:${vtd-xml.jar}:${itextpdf.jar}"
 			source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
 			<exclude name="org/tzi/use/gui/**/*.java" />
@@ -285,12 +288,12 @@
 	<target name="compile-use-gui" depends="compile-use-main">
 		<mkdir dir="${build.classes.dir}" />
 		<javac srcdir="${src.gui.dir}:${src.runtime.dir}"
-			destdir="${build.classes.dir}" deprecation="on" debug="off" listfiles="off"
+			destdir="${build.classes.dir}" deprecation="on" debug="${javac.debug}" listfiles="off"
 			classpath="${antlr.jar}:${vtd-xml.jar}:${itextpdf.jar}:${annotation.jar}"
 			source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
 		</javac>
 		<javac srcdir="${src.test.dir}"
-			destdir="${build.classes.dir}" deprecation="on" debug="off" listfiles="off"
+			destdir="${build.classes.dir}" deprecation="on" debug="${javac.debug}" listfiles="off"
 			classpath="${antlr.jar}:${junit.jar}:${gsbase.jar}:${vtd-xml.jar}:${itextpdf.jar}"
 			source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
 			<include name="org/tzi/use/gui/**/*.java" />
@@ -300,7 +303,7 @@
 	<target name="compile-use-runtime" depends="compile-use-gui">
 		<mkdir dir="${build.classes.dir}" />
 		<javac srcdir="${src.runtime.dir}"
-			destdir="${build.classes.dir}" deprecation="on" debug="off" listfiles="off"
+			destdir="${build.classes.dir}" deprecation="on" debug="${javac.debug}" listfiles="off"
 			classpath="${antlr.jar}:${annotation.jar}"
 			source="${java.sourceversion}" target="${java.targetversion}" includeantruntime="false">
 		</javac>
