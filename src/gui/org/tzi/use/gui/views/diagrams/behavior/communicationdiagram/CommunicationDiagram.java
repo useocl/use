@@ -1286,14 +1286,11 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 		raiseSequenceNumber();
 
 		CommunicationDiagramEdge edge = getSingleEdge(objectNodeToDestroy, callOpNode);
-
 		if (edge == null) {
 			edge = new CommunicationDiagramEdge(callOpNode, objectNodeToDestroy, this, false);
-			edge.addNewMessage(mess);
 			fGraph.invalidateEdge(edge);
-		} else {
-			edge.addNewMessage(mess);
 		}
+		edge.addNewMessage(mess);
 
 		fLayouter = null;
 	}
