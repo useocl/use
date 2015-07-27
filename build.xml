@@ -308,7 +308,7 @@
 
 	<target name="setversion">
 		<replaceregexp file="${src.main.dir}/org/tzi/use/config/Options.java"
-			match='RELEASE_VERSION = ".*"' replace='RELEASE_VERSION = "${release.version}"'/>
+			match='RELEASE_VERSION = ".*?"' replace='RELEASE_VERSION = "${release.version}"'/>
 	</target>
 
 	<!-- create USE jar -->

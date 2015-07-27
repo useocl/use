@@ -19,6 +19,7 @@ import org.tzi.use.runtime.shell.impl.ShellExtensionPoint;
 import org.tzi.use.runtime.util.PluginRegistry;
 import org.tzi.use.runtime.util.ServiceRegistry;
 import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
 
 /**
  * @author Roman Asendorf
@@ -36,9 +37,9 @@ public class PluginRuntime implements IPluginRuntime {
 		return instance;
 	}
 
-	private Map<String, IPluginDescriptor> registeredPlugins;
+	private Map<String, IPluginDescriptor> registeredPlugins = new HashMap<String, IPluginDescriptor>();
 
-	private Map<String, IPluginServiceDescriptor> registeredServices;
+	private Map<String, IPluginServiceDescriptor> registeredServices = new HashMap<String, IPluginServiceDescriptor>();
 
 	public IExtensionPoint getExtensionPoint(String extensionPoint) {
 		if (extensionPoint.equals("action")) {
@@ -63,9 +64,6 @@ public class PluginRuntime implements IPluginRuntime {
 	}
 
 	public Map<String, IPluginDescriptor> getPlugins() {
-		if (this.registeredPlugins == null) {
-			this.registeredPlugins = new HashMap<String, IPluginDescriptor>();
-		}
 		return this.registeredPlugins;
 	}
 
@@ -82,9 +80,6 @@ public class PluginRuntime implements IPluginRuntime {
 	}
 
 	public Map<String, IPluginServiceDescriptor> getServices() {
-		if (this.registeredServices == null) {
-			this.registeredServices = new HashMap<String, IPluginServiceDescriptor>();
-		}
 		return this.registeredServices;
 	}
 
@@ -100,15 +95,28 @@ public class PluginRuntime implements IPluginRuntime {
 					.registerPlugin(newPluginURL);
 			if (currentPluginDescriptor == null) {
 				Log.error("Got no Plugin Descriptor !");
-			} else {
-				Log.debug("Registering plugin ["
-						+ currentPluginDescriptor.getPluginModel().getName()
-						+ "]");
-
-				getPlugins().put(
-						currentPluginDescriptor.getPluginModel().getName(),
-						currentPluginDescriptor);
+				return;
 			}
+			
+			Log.debug("Registering plugin ["
+					+ currentPluginDescriptor.getPluginModel().getName()
+					+ "]");
+
+			IPluginDescriptor otherPlugin = getPlugin(currentPluginDescriptor.getPluginModel().getName());
+			if(otherPlugin != null){
+				Log.error("Cannot load plugin ["
+						+ currentPluginDescriptor.getPluginModel().getName()
+						+ "] with version "
+						+ StringUtil.inQuotes(currentPluginDescriptor.getPluginModel().getVersion())
+						+ ". Another plugin with the same name of version "
+						+ StringUtil.inQuotes(otherPlugin.getPluginModel().getVersion())
+						+ " is already registered.");
+				return;
+			}
+			
+			getPlugins().put(
+					currentPluginDescriptor.getPluginModel().getName(),
+					currentPluginDescriptor);
 		} catch (MalformedURLException mfurle) {
 			Log.error("No valid URL given to register plugin: " + mfurle);
 		}
