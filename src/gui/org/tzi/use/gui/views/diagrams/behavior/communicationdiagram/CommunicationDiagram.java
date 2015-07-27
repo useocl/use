@@ -1482,12 +1482,11 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 		MOperationCall operationCall = event.getOperationCall();
 		MObject obj = operationCall.getSelf();
 		BaseNode obn = getNodeForObject(obj);
-
-		CommunicationDiagramEdge edge = null;
-
+		
 		if (!operationsCaller.isEmpty()) {
 			operationsCaller.remove(operationsCaller.size() - 1);
 		}
+		sequenceNumbers.remove(sequenceNumbers.size() - 1);
 
 		if (operationCall.getResultValue() != null) {
 			MMessage mess = new MMessage(event, getSequenceNumber(), operationCall.getResultValue().toString());
@@ -1497,21 +1496,18 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 			}
 			messageRecorder.addMessage(mess);
 
+			PlaceableNode sourceNode;
 			if (!operationsCaller.isEmpty()) {
-
 				MObject sourceObject = operationsCaller.get(operationsCaller.size() - 1);
-				BaseNode sourceNode;
-
 				sourceNode = getNodeForObject(sourceObject);
-
-				CommunicationDiagramEdge edgeBetweenSourceTarget = getSingleEdge(sourceNode, obn);
-
-				if (edgeBetweenSourceTarget == null) {
-					edge = new CommunicationDiagramEdge(sourceNode, obn, this, false);
-					fGraph.addEdge(edge);
-				} else {
-					edge = edgeBetweenSourceTarget;
-				}
+			} else {
+				sourceNode = actorSymbolNode;
+			}
+				
+			CommunicationDiagramEdge edge = getSingleEdge(sourceNode, obn);
+			if (edge == null) {
+				edge = new CommunicationDiagramEdge(sourceNode, obn, this, false);
+				fGraph.addEdge(edge);
 			}
 
 			edge.addNewMessage(mess);
@@ -1522,7 +1518,6 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 			operationsStack.pop();
 		}
 
-		sequenceNumbers.remove(sequenceNumbers.size() - 1);
 		raiseSequenceNumber();
 	}
 
