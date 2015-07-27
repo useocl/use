@@ -13,6 +13,8 @@ Please see the file `README' for a description of how to report bugs.
 
 * [USE] Added possibility of specifying parents when creating association class in model API
 
+* [USE] Added error message to Plugin API when trying loading the same plugin more than once
+
 ** Changes since version 4.0.0
 * [CMD] Renamed some commands.
   'gen load|unload|loaded|flags' -> 'constraints -load|-unload|-loaded|-flags' (note the dash)
