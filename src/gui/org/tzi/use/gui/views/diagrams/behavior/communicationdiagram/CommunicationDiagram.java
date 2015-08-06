@@ -1043,8 +1043,10 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 					}
 					
 					msg.setResetedSequenceNumber(buildNewSequenceNumber(counters, msgDepth));
-				}else {
-					counters.set(msgDepth-1, counters.get(msgDepth-1)+1);
+				} else {
+					if(msg.getDirection() != MMessage.RETURN){
+						counters.set(msgDepth-1, counters.get(msgDepth-1)+1);
+					}
 					
 					for (int i = msgDepth; i < counters.size(); i++) {
 						counters.set(i, 0);
