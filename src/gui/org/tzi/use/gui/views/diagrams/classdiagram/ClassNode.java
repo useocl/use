@@ -263,12 +263,17 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         	lineAttrDivider.y2 = y;
         	
         	if (fAttributes.isEmpty()) {
-        		y += 2 * VERTICAL_INDENT; 
+        		y += 2 * VERTICAL_INDENT;
         	} else {
 	        	Rectangle2D.Double attributeBounds = new Rectangle2D.Double(currentBounds.x, y, currentBounds.width, currentBounds.height);
 	        	
-	        	if (fOpt.isShowOperations())
-	        		attributeBounds.height = currentBounds.getMaxY() - y - VERTICAL_INDENT - Util.getLineHeight(fm);
+	        	if (fOpt.isShowOperations()){
+	        		if(!cls().operations().isEmpty()){
+	        			attributeBounds.height = currentBounds.getMaxY() - y - VERTICAL_INDENT - Util.getLineHeight(fm);
+	        		} else {
+	        			attributeBounds.height = currentBounds.getMaxY() - y - VERTICAL_INDENT - 2*Util.getLeading(fm);
+	        		}
+	        	}
 	        	
 	            y = drawCompartment(g, y, fAttrValues, fAttrColors, attributeBounds);
         	}
