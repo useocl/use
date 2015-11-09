@@ -70,7 +70,7 @@ public final class ExpNavigation extends Expression {
                     "Target expression of navigation operation must have " +
                     "object type, found `" + objExp.type() + "'." );
         
-        if (!src.hasQualifiers() && !theQualifierExpressions.isEmpty()) {
+        if (!src.hasQualifiers() && qualifierExpressions.length > 0) {
         	throw new ExpInvalidException("The navigation end " + StringUtil.inQuotes(dst.nameAsRolename()) +
         			" has no defined qualifiers, but qualifer values were provided.");
         }
