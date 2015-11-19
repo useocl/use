@@ -62,7 +62,8 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
     /**
      * Multiplicity which is on the target side of this edge.
      */
-    EdgeProperty fTargetMultiplicity;
+    //EdgeProperty fTargetMultiplicity;
+    Multiplicity fTargetMultiplicity;
     
     /**
      * Association this edge belongs to.
@@ -120,6 +121,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
         
         fTargetMultiplicity = new Multiplicity( getId() + "::target::multiplicity", fTargetEnd, fTargetWayPoint, fOpt);
         properties.put(PropertyOwner.TARGET, fTargetMultiplicity);
+        
 	}
 
 	/**

@@ -13,8 +13,8 @@
   <node id="Rec" sizeCalculated="true" type="Class">
     <name>Rec</name>
     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>46.0</x>
-      <y>37.0</y>
+      <x>75.0</x>
+      <y>60.0</y>
     </strategy>
     <hidden>false</hidden>
   </node>

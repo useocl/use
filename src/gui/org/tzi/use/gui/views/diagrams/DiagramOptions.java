@@ -50,6 +50,7 @@ public abstract class DiagramOptions {
     protected boolean fShowMutliplicities = false;
     protected boolean fShowAttributes = false;
     protected boolean fShowOperations = false;
+    protected boolean fGroupMR = false;
     protected boolean fShowGrid = false;
     protected boolean fGrayscale = false;
 
@@ -163,6 +164,14 @@ public abstract class DiagramOptions {
     public void setShowOperations( boolean showOperations ) {
         fShowOperations = showOperations;
         onOptionChanged("SHOWOPERATIONS");
+    }
+    
+    public boolean isGroupMR() {
+        return fGroupMR;
+    }
+    public void setGroupMR( boolean groupMR ) {
+        fGroupMR = groupMR;
+        onOptionChanged("GROUPMR");
     }
 	
 	public boolean showGrid() {

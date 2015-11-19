@@ -17,135 +17,84 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id: Rolename.java 4735 2014-01-20 17:22:23Z lhamann $
-
 package org.tzi.use.gui.views.diagrams.elements;
 
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached;
-import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached.Placement;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.util.StringUtil;
+import org.tzi.use.gui.views.diagrams.PositionChangedListener;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase.PropertyOwner;
 
 /**
- * Represents a role name node in a diagram. 
+ * Represents a role name node in a diagram.
  * 
- * @author Fabian Gutsche
- * @author Lars Hamann
+ * @author ms
  */
-public final class MultiplicityRolenameWrapper extends EdgeProperty implements DiagramOptionChangedListener {
+public final class MultiplicityRolenameWrapper implements DiagramOptionChangedListener {
 
-	MAssociationEnd fAssocEnd;
-    
-	/**
-     * 
-     * @param assocEnd The <code>MAassociationEnd</code> this role name belongs to.
-     * @param source The <code>NodeBase</code> which represents the class or object node this role name is attached to. 
-     * @param target The <code>NodeBase</code> which represents the class, object or diamond node of the opposite end.
-     * @param sourceWayPoint
-     * @param targetWayPoint
-     * @param opt
-     * @param side
-     * @param edge
-     */
-    public MultiplicityRolenameWrapper( String id, MAssociationEnd assocEnd, AttachedWayPoint attached, DiagramOptions opt ) {
-    	super(id, new PlaceableNode[] {attached}, false, opt);
-    	
-        fAssocEnd = assocEnd;
-        fAssoc = fAssocEnd.association();
-        
-        setName();
-        
-        fOpt.addOptionChangedListener(this);
-        setStrategy(new StrategyRelativeToAttached(this, attached, Placement.TOP, 8, 8)); 
-    }
-    
-    private void setName() {
-    	List<String> constraints = new ArrayList<String>();
-    		
-    	if (fAssocEnd.isOrdered()) {
-    		constraints.add("ordered");
-    	}
-    	
-    	if (fOpt.isShowUnionConstraints() &&  fAssocEnd.isUnion()) {
-    		constraints.add("union");
-    	}
-    	
-    	if (fOpt.isShowSubsetsConstraints()) {
-			for (MAssociationEnd subsettedEnd : fAssocEnd.getSubsettedEnds()) {
-				constraints.add("subsets " + subsettedEnd.nameAsRolename());
-			}
-    	}
-    	
-    	if (fOpt.isShowRedefinesConstraints()) {
-			for (MAssociationEnd redefinedEnd : fAssocEnd.getRedefinedEnds()) {
-				constraints.add("redefines " + redefinedEnd.nameAsRolename());    			
-			}
-    	}
-    	
-		if (fAssocEnd.isDerived())
-			fName = "/" + fAssocEnd.nameAsRolename();
-		else
-			fName = fAssocEnd.nameAsRolename();
-    	
-    	if (constraints.size() > 0) {
-    		fName = fName + " {" + StringUtil.fmtSeq(constraints.iterator(), ", ") + "}";
-    	}
-    }
-    
-    public MAssociationEnd getEnd() {
-    	return fAssocEnd;
-    }
-    
-    /**
-     * Draws a role name on a binary edge.
-     */
-    @Override
-    protected void onDraw( Graphics2D g ) {
-    	if ( fAssocEnd == null || !fAssocEnd.isNavigable() )
-    		return;
-    	
-    	if (forceRecalc) {
-    		calculateSize(g);
-    		forceRecalc = false;
-    	}
-    	
-    	super.onDraw(g);
-    }
+	Multiplicity multiplicity_client;
+	Rolename rolename_client;
+	PropertyOwner end;
 
-	@Override
-    public String getStoreType() {
-    	return "rolename";
-    }
-	
-	@Override
-	public String toString() {
-		return "Rolename: " + fName;
+	public MultiplicityRolenameWrapper(Multiplicity multiplicity_client, Rolename rolename_client, PropertyOwner end, DiagramOptions options) {
+		this.multiplicity_client = multiplicity_client;
+		this.rolename_client = rolename_client;
+		this.end = end;
+		
+		//options.addOptionChangedListener(this);
+		addPositionChangedListener();
 	}
 
-	/**
-	 * @param newText
-	 */
-	public void setText(String newText) {
-		setName(newText);
+	protected void addPositionChangedListener() {
+		PositionChangedListener listener = new PositionChangedListener() {
+			@Override
+			public void positionChanged(Object source, Point2D currentPosition, double deltaX, double deltaY) {
+				
+				if (source instanceof Multiplicity) {
+					//if(end.equals(PropertyOwner.SOURCE)); new_x = currentPosition.getX()+20;
+					//if(end.equals(PropertyOwner.TARGET)); new_x = currentPosition.getX()-20;
+					
+					//System.out.println( ((Multiplicity) source).fAssocEnd.multiplicity().toString().length() );
+					
+					double distance = 0;
+					
+					int ln = ((Multiplicity) source).fAssocEnd.multiplicity().toString().length();
+					
+					if(ln > 1) {
+						distance = 20;
+					}
+					else {
+						distance = 8;
+					}
+					
+					rolename_client.moveToPosition(currentPosition.getX()+distance, currentPosition.getY());
+
+				} else if (source instanceof Rolename) {
+					//if(end.equals(PropertyOwner.SOURCE)); new_x = currentPosition.getX()+20;
+					//if(end.equals(PropertyOwner.TARGET)); new_x = currentPosition.getX()-20;
+					
+					double distance = 10;
+					
+					//multiplicity_client.moveToPosition(currentPosition.getX(), currentPosition.getY());
+				
+				} else {
+					throw new RuntimeException("Position source object not recognized!");
+				}
+			}
+
+			@Override
+			public void boundsChanged(Object source, Rectangle2D oldBounds,	Rectangle2D newBounds) {}
+		};
+
+		multiplicity_client.fListenerList.add(PositionChangedListener.class, listener);
+		rolename_client.fListenerList.add(PositionChangedListener.class, listener);
 	}
 
-	private boolean forceRecalc = false;
-	
+
 	@Override
 	public void optionChanged(String optionname) {
-		if (optionname.equals("SHOW_UNION_CONSTRAINTS")   ||
-			optionname.equals("SHOW_SUBSETS_CONSTRAINTS") ||
-			optionname.equals("SHOW_REDEFINES_CONSTRAINTS")    ) {
-			setName();
-			//FIXME: CHANGE!!!
-			forceRecalc = true;
-		}
+		System.out.println(optionname);
 	}
 }

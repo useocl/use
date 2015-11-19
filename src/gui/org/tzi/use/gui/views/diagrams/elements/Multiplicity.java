@@ -54,4 +54,8 @@ public final class Multiplicity extends EdgeProperty {
     public String toString() {
     	return "Multiplicity: " + fAssocEnd.multiplicity().toString();
     }
+    
+    //public MAssociationEnd get_fAssocEnd() {
+    //	return fAssocEnd;
+    //}
 }

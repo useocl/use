@@ -625,7 +625,11 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
     }
     
     public void moveToPosition(Point2D position) {
-    	this.strategy.moveTo(this, position.getX(), position.getY());
+    	moveToPosition(position.getX(), position.getY());
+    }
+    
+    public void moveToPosition(double x, double y) {
+    	this.strategy.moveTo(this, x, y);
     }
     
     /**

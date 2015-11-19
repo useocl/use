@@ -596,6 +596,19 @@ public abstract class DiagramView extends JPanel
             }
         });
         
+        /* menue item: checkbox assoc/links */
+        final JCheckBoxMenuItem cbAssocLinks = new JCheckBoxMenuItem(
+                "Show associations / links");
+        		cbAssocLinks.setState( fOpt.isShowAssocNames() );
+        		cbAssocLinks.addItemListener(new ItemListener() {
+                    @Override
+        			public void itemStateChanged(ItemEvent ev) {
+                        fOpt.setShowAssocNames( ev.getStateChange() == ItemEvent.SELECTED );
+                        invalidateContent(true);
+                    }
+                });
+        /**/        
+        
         final JCheckBoxMenuItem cbRolenames = new JCheckBoxMenuItem(
         "Show role names");
         cbRolenames.setState( fOpt.isShowRolenames() );
@@ -651,6 +664,9 @@ public abstract class DiagramView extends JPanel
         // This is the start of the general section to show or hide elements
         info.generalShowHideStart = popupMenu.getComponentCount();
         popupMenu.add(cbAssocNames);
+        
+        popupMenu.add(cbAssocLinks);
+        
         popupMenu.add(cbRolenames);
         popupMenu.add(cbAttrValues);
         info.generalShowHideLength = popupMenu.getComponentCount() - info.generalShowHideStart;

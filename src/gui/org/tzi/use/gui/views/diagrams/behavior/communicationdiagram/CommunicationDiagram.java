@@ -1510,6 +1510,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 			}
 
 			edge.addNewMessage(mess);
+			
 			fLayouter = null;
 		}
 

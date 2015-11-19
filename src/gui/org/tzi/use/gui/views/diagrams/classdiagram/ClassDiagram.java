@@ -1044,6 +1044,16 @@ public class ClassDiagram extends DiagramView
                 repaint();
             }
         } );
+        
+        final JCheckBoxMenuItem cbGroupMR = new JCheckBoxMenuItem("Group multiplicities / role names" );
+        cbGroupMR.setState( fOpt.isGroupMR() );
+        cbGroupMR.addItemListener( new ItemListener() {
+            @Override
+			public void itemStateChanged( ItemEvent ev ) {
+                fOpt.setGroupMR( ev.getStateChange() == ItemEvent.SELECTED );
+                repaint();
+            }
+        } );
 
         // setting the right position for the popupMenu items 
         // from this point on.
@@ -1055,6 +1065,7 @@ public class ClassDiagram extends DiagramView
         popupMenu.insert( cbRedefines, ++pos );
         
         popupMenu.insert( cbOperations, pos + 3 );
+        popupMenu.insert( cbGroupMR, pos + 4 );
         pos += info.generalShowHideLength + 1;
         
         {
