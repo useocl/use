@@ -1065,7 +1065,9 @@ public class ClassDiagram extends DiagramView
         popupMenu.insert( cbRedefines, ++pos );
         
         popupMenu.insert( cbOperations, pos + 3 );
+        
         popupMenu.insert( cbGroupMR, pos + 4 );
+        
         pos += info.generalShowHideLength + 1;
         
         {

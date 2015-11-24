@@ -151,8 +151,8 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		fAssocName = new AssociationName(getId() + "::AssociationName", fAssoc.name(), fSourceWayPoint, fTargetWayPoint, fOpt, this, fAssoc, link);
 		properties.put(PropertyOwner.EDGE, fAssocName);
 		
-		//fSourceMRWrapper = new MultiplicityRolenameWrapper(fSourceMultiplicity, fSourceRolename, PropertyOwner.SOURCE, fOpt); 
-		//fTargetMRWrapper = new MultiplicityRolenameWrapper(fTargetMultiplicity, fTargetRolename, PropertyOwner.TARGET, fOpt);
+		fSourceMRWrapper = new MultiplicityRolenameWrapper(fSourceMultiplicity, fSourceRolename, PropertyOwner.SOURCE, fOpt); 
+		fTargetMRWrapper = new MultiplicityRolenameWrapper(fTargetMultiplicity, fTargetRolename, PropertyOwner.TARGET, fOpt);
 	}
 	
 	/**

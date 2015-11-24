@@ -28,73 +28,102 @@ import org.tzi.use.gui.views.diagrams.PositionChangedListener;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase.PropertyOwner;
 
 /**
- * Represents a role name node in a diagram.
- * 
  * @author ms
  */
-public final class MultiplicityRolenameWrapper implements DiagramOptionChangedListener {
+public final class MultiplicityRolenameWrapper implements
+		DiagramOptionChangedListener {
 
-	Multiplicity multiplicity_client;
-	Rolename rolename_client;
-	PropertyOwner end;
+	private Multiplicity multiplicity_client;
+	private Rolename rolename_client;
 
-	public MultiplicityRolenameWrapper(Multiplicity multiplicity_client, Rolename rolename_client, PropertyOwner end, DiagramOptions options) {
+	// Currently not needed, maybe of use later.
+	private PropertyOwner end;
+
+	PositionChangedListener position_changed_listener = null;
+
+	private boolean do_group = false;
+
+	double offset = 0;
+
+	public MultiplicityRolenameWrapper(Multiplicity multiplicity_client,
+			Rolename rolename_client, PropertyOwner end, DiagramOptions options) {
 		this.multiplicity_client = multiplicity_client;
 		this.rolename_client = rolename_client;
 		this.end = end;
-		
-		//options.addOptionChangedListener(this);
-		addPositionChangedListener();
+
+		// Let this wrapper be informed whenever options are changed.
+		options.addOptionChangedListener(this);
+
+		// Calculate sufficient distance between multiplicity and role name
+		// node.
+		determine_offset();
+
+		// Let this wrapper listen to position changes of either multiplicity or
+		// role name nodes.
+		instantiatePositionChangedListeners();
 	}
-
-	protected void addPositionChangedListener() {
-		PositionChangedListener listener = new PositionChangedListener() {
-			@Override
-			public void positionChanged(Object source, Point2D currentPosition, double deltaX, double deltaY) {
-				
-				if (source instanceof Multiplicity) {
-					//if(end.equals(PropertyOwner.SOURCE)); new_x = currentPosition.getX()+20;
-					//if(end.equals(PropertyOwner.TARGET)); new_x = currentPosition.getX()-20;
-					
-					//System.out.println( ((Multiplicity) source).fAssocEnd.multiplicity().toString().length() );
-					
-					double distance = 0;
-					
-					int ln = ((Multiplicity) source).fAssocEnd.multiplicity().toString().length();
-					
-					if(ln > 1) {
-						distance = 20;
-					}
-					else {
-						distance = 8;
-					}
-					
-					rolename_client.moveToPosition(currentPosition.getX()+distance, currentPosition.getY());
-
-				} else if (source instanceof Rolename) {
-					//if(end.equals(PropertyOwner.SOURCE)); new_x = currentPosition.getX()+20;
-					//if(end.equals(PropertyOwner.TARGET)); new_x = currentPosition.getX()-20;
-					
-					double distance = 10;
-					
-					//multiplicity_client.moveToPosition(currentPosition.getX(), currentPosition.getY());
-				
-				} else {
-					throw new RuntimeException("Position source object not recognized!");
-				}
-			}
-
-			@Override
-			public void boundsChanged(Object source, Rectangle2D oldBounds,	Rectangle2D newBounds) {}
-		};
-
-		multiplicity_client.fListenerList.add(PositionChangedListener.class, listener);
-		rolename_client.fListenerList.add(PositionChangedListener.class, listener);
-	}
-
 
 	@Override
 	public void optionChanged(String optionname) {
-		System.out.println(optionname);
+		if (optionname.equals("GROUPMR"))
+			do_group = !do_group;
+
+		if (do_group)
+			attach_listeners();
+		else
+			detach_listeners();
+
+		// System.out.println("Grouping:" + String.valueOf(do_group));
+	}
+
+	protected void determine_offset() {
+		int x = multiplicity_client.fAssocEnd.multiplicity().toString()
+				.length();
+
+		offset = (Math.pow(x, 2) - x) + 8;
+	}
+
+	protected void instantiatePositionChangedListeners() {
+		position_changed_listener = new PositionChangedListener() {
+			@Override
+			public void positionChanged(Object source, Point2D currentPosition,
+					double deltaX, double deltaY) {
+
+				detach_listeners();
+
+				if (source instanceof Multiplicity)
+					rolename_client.moveToPosition(currentPosition.getX()
+							+ offset, currentPosition.getY());
+
+				else if (source instanceof Rolename)
+					multiplicity_client.moveToPosition(currentPosition.getX()
+							- offset, currentPosition.getY());
+
+				else
+					throw new RuntimeException(
+							"Position source object not recognized.");
+
+				attach_listeners();
+			}
+
+			@Override
+			public void boundsChanged(Object source, Rectangle2D oldBounds,
+					Rectangle2D newBounds) {
+			}
+		};
+	}
+
+	protected void attach_listeners() {
+		multiplicity_client.fListenerList.add(PositionChangedListener.class,
+				position_changed_listener);
+		rolename_client.fListenerList.add(PositionChangedListener.class,
+				position_changed_listener);
+	}
+
+	protected void detach_listeners() {
+		multiplicity_client.fListenerList.remove(PositionChangedListener.class,
+				position_changed_listener);
+		rolename_client.fListenerList.remove(PositionChangedListener.class,
+				position_changed_listener);
 	}
 }
