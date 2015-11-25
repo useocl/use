@@ -1059,14 +1059,13 @@ public class ClassDiagram extends DiagramView
         // from this point on.
         pos += info.generalShowHideStart;
         // Add multiplicities before attributes
-        popupMenu.insert( cbMultiplicities, ++pos );
+        popupMenu.insert( cbGroupMR, pos);
+        popupMenu.insert( cbMultiplicities, ++pos);
+        popupMenu.insert( cbOperations, ++pos);
+        
         popupMenu.insert( cbUnion, ++pos );
         popupMenu.insert( cbSubsets, ++pos );
         popupMenu.insert( cbRedefines, ++pos );
-        
-        popupMenu.insert( cbOperations, pos + 3 );
-        
-        popupMenu.insert( cbGroupMR, pos + 4 );
         
         pos += info.generalShowHideLength + 1;
         

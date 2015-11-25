@@ -60,7 +60,7 @@ public final class MultiplicityRolenameWrapper implements
 
 		// Let this wrapper listen to position changes of either multiplicity or
 		// role name nodes.
-		instantiatePositionChangedListeners();
+		instantiatePositionChangedListener();
 	}
 
 	@Override
@@ -69,9 +69,9 @@ public final class MultiplicityRolenameWrapper implements
 			do_group = !do_group;
 
 		if (do_group)
-			attach_listeners();
+			attach_listener();
 		else
-			detach_listeners();
+			detach_listener();
 
 		// System.out.println("Grouping:" + String.valueOf(do_group));
 	}
@@ -83,13 +83,13 @@ public final class MultiplicityRolenameWrapper implements
 		offset = (Math.pow(x, 2) - x) + 8;
 	}
 
-	protected void instantiatePositionChangedListeners() {
+	protected void instantiatePositionChangedListener() {
 		position_changed_listener = new PositionChangedListener() {
 			@Override
 			public void positionChanged(Object source, Point2D currentPosition,
 					double deltaX, double deltaY) {
 
-				detach_listeners();
+				detach_listener();
 
 				if (source instanceof Multiplicity)
 					rolename_client.moveToPosition(currentPosition.getX()
@@ -103,7 +103,7 @@ public final class MultiplicityRolenameWrapper implements
 					throw new RuntimeException(
 							"Position source object not recognized.");
 
-				attach_listeners();
+				attach_listener();
 			}
 
 			@Override
@@ -113,14 +113,14 @@ public final class MultiplicityRolenameWrapper implements
 		};
 	}
 
-	protected void attach_listeners() {
+	protected void attach_listener() {
 		multiplicity_client.fListenerList.add(PositionChangedListener.class,
 				position_changed_listener);
 		rolename_client.fListenerList.add(PositionChangedListener.class,
 				position_changed_listener);
 	}
 
-	protected void detach_listeners() {
+	protected void detach_listener() {
 		multiplicity_client.fListenerList.remove(PositionChangedListener.class,
 				position_changed_listener);
 		rolename_client.fListenerList.remove(PositionChangedListener.class,
