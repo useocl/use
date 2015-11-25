@@ -995,6 +995,18 @@ public class ClassDiagram extends DiagramView
         popupMenu.insert( showProtocolStateMachine, pos++ );
         popupMenu.insert(new JSeparator(), pos++);
         
+        final JCheckBoxMenuItem cbGroupMR = new JCheckBoxMenuItem("Group multiplicities / role names" );
+        cbGroupMR.setState( fOpt.isGroupMR() );
+        cbGroupMR.addItemListener( new ItemListener() {
+            @Override
+			public void itemStateChanged( ItemEvent ev ) {
+                fOpt.setGroupMR( ev.getStateChange() == ItemEvent.SELECTED );
+                repaint();
+            }
+        } );
+        
+        popupMenu.insert( cbGroupMR, pos++);
+        
         final JCheckBoxMenuItem cbMultiplicities = new JCheckBoxMenuItem( "Show multiplicities" );
         cbMultiplicities.setState( fOpt.isShowMutliplicities() );
         cbMultiplicities.addItemListener( new ItemListener() {
@@ -1045,21 +1057,10 @@ public class ClassDiagram extends DiagramView
             }
         } );
         
-        final JCheckBoxMenuItem cbGroupMR = new JCheckBoxMenuItem("Group multiplicities / role names" );
-        cbGroupMR.setState( fOpt.isGroupMR() );
-        cbGroupMR.addItemListener( new ItemListener() {
-            @Override
-			public void itemStateChanged( ItemEvent ev ) {
-                fOpt.setGroupMR( ev.getStateChange() == ItemEvent.SELECTED );
-                repaint();
-            }
-        } );
-
         // setting the right position for the popupMenu items 
         // from this point on.
         pos += info.generalShowHideStart;
         // Add multiplicities before attributes
-        popupMenu.insert( cbGroupMR, pos);
         popupMenu.insert( cbMultiplicities, ++pos);
         popupMenu.insert( cbOperations, ++pos);
         
