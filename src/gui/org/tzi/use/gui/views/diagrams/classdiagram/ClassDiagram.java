@@ -992,20 +992,11 @@ public class ClassDiagram extends DiagramView
         	}
         }
 
+        
         popupMenu.insert( showProtocolStateMachine, pos++ );
         popupMenu.insert(new JSeparator(), pos++);
         
-        final JCheckBoxMenuItem cbGroupMR = new JCheckBoxMenuItem("Group multiplicities / role names" );
-        cbGroupMR.setState( fOpt.isGroupMR() );
-        cbGroupMR.addItemListener( new ItemListener() {
-            @Override
-			public void itemStateChanged( ItemEvent ev ) {
-                fOpt.setGroupMR( ev.getStateChange() == ItemEvent.SELECTED );
-                repaint();
-            }
-        } );
         
-        popupMenu.insert( cbGroupMR, pos++);
         
         final JCheckBoxMenuItem cbMultiplicities = new JCheckBoxMenuItem( "Show multiplicities" );
         cbMultiplicities.setState( fOpt.isShowMutliplicities() );
@@ -1060,10 +1051,25 @@ public class ClassDiagram extends DiagramView
         // setting the right position for the popupMenu items 
         // from this point on.
         pos += info.generalShowHideStart;
-        // Add multiplicities before attributes
-        popupMenu.insert( cbMultiplicities, ++pos);
-        popupMenu.insert( cbOperations, ++pos);
+
+        // put this node before separator
+        final JCheckBoxMenuItem cbGroupMR = new JCheckBoxMenuItem("Group multiplicities / role names" );
+        cbGroupMR.setState( fOpt.isGroupMR() );
+        cbGroupMR.addItemListener( new ItemListener() {
+        	@Override
+        	public void itemStateChanged( ItemEvent ev ) {
+        		fOpt.setGroupMR( ev.getStateChange() == ItemEvent.SELECTED );
+        		repaint();
+        	}
+        } );
+        popupMenu.insert( cbGroupMR, pos-1);
         
+        // start general show/hide check boxes
+        pos++; // Skip 'show attributes'
+        popupMenu.insert( cbOperations, ++pos);
+        pos++; // Skip 'show association names'
+        popupMenu.insert( cbMultiplicities, ++pos);
+        pos++; // Skip 'show role names'
         popupMenu.insert( cbUnion, ++pos );
         popupMenu.insert( cbSubsets, ++pos );
         popupMenu.insert( cbRedefines, ++pos );

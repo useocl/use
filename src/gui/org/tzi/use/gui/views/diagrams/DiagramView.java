@@ -583,7 +583,40 @@ public abstract class DiagramView extends JPanel
 
         final JMenuItem cbCommentNode = getMenuItemCommentNode(info);
         popupMenu.add(cbCommentNode);
+        
+        boolean selectionCanBeHidden = !fNodeSelection.isEmpty();
+        for (PlaceableNode node : fNodeSelection) {
+        	if (!(node instanceof EdgeProperty)) {
+        		selectionCanBeHidden = false;
+        		break;
+        	}
+        }
+        
+        if (selectionCanBeHidden) {
+        	popupMenu.add(new AbstractAction("Hide selected properties") {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (PlaceableNode n : fNodeSelection) {
+						EdgeProperty ep = (EdgeProperty)n;
+						ep.setVisible(false);
+						DiagramView.this.repaint();
+					}
+				}
+			});
+        }
+        
         popupMenu.add(new JSeparator());
+        
+        final JCheckBoxMenuItem cbAttrValues = new JCheckBoxMenuItem(
+        "Show attributes"); // values");
+        cbAttrValues.setState( fOpt.isShowAttributes() );
+        cbAttrValues.addItemListener(new ItemListener() {
+            @Override
+			public void itemStateChanged(ItemEvent ev) {
+                fOpt.setShowAttributes( ev.getStateChange() == ItemEvent.SELECTED );
+                invalidateContent(true);
+            }
+        });
         
         final JCheckBoxMenuItem cbAssocNames = new JCheckBoxMenuItem(
         "Show association names");
@@ -606,42 +639,9 @@ public abstract class DiagramView extends JPanel
                 invalidateContent(true);
             }
         });
-        
-        final JCheckBoxMenuItem cbAttrValues = new JCheckBoxMenuItem(
-        "Show attributes"); // values");
-        cbAttrValues.setState( fOpt.isShowAttributes() );
-        cbAttrValues.addItemListener(new ItemListener() {
-            @Override
-			public void itemStateChanged(ItemEvent ev) {
-                fOpt.setShowAttributes( ev.getStateChange() == ItemEvent.SELECTED );
-                invalidateContent(true);
-            }
-        });
-        
+       
         if (!this.fEdgeSelection.isEmpty()) {
         	popupMenu.add(getMenuItemEdgePropertiesVivibility());
-        }
-        
-        boolean selectionCanBeHidden = !fNodeSelection.isEmpty();
-        for (PlaceableNode node : fNodeSelection) {
-        	if (!(node instanceof EdgeProperty)) {
-        		selectionCanBeHidden = false;
-        		break;
-        	}
-        }
-        
-        if (selectionCanBeHidden) {
-        	popupMenu.add(new AbstractAction("Hide selected properties") {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					for (PlaceableNode n : fNodeSelection) {
-						EdgeProperty ep = (EdgeProperty)n;
-						ep.setVisible(false);
-						DiagramView.this.repaint();
-					}
-				}
-			});
-        	popupMenu.addSeparator();
         }
         
         final JCheckBoxMenuItem cbAntiAliasing = getMenuItemAntiAliasing();
@@ -650,10 +650,11 @@ public abstract class DiagramView extends JPanel
         
         // This is the start of the general section to show or hide elements
         info.generalShowHideStart = popupMenu.getComponentCount();
-        popupMenu.add(cbAssocNames);
-        
-        popupMenu.add(cbRolenames);
         popupMenu.add(cbAttrValues);
+
+        popupMenu.add(cbAssocNames);
+        popupMenu.add(cbRolenames);
+        
         info.generalShowHideLength = popupMenu.getComponentCount() - info.generalShowHideStart;
         
         popupMenu.addSeparator();
