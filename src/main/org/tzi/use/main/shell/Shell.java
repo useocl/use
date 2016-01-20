@@ -466,7 +466,9 @@ public final class Shell implements Runnable, PPCHandler {
 		} else if (line.startsWith("reload extensions")) {
 			cmdReloadExtensions();
 		} else if (line.startsWith("coverage")) {
+			
 			cmdCoverage(line);
+			
 		} else if (line.startsWith("plugins")) {
 			cmdShowPlugins();
 		} else if (line.startsWith("delay")) {
@@ -534,8 +536,14 @@ public final class Shell implements Runnable, PPCHandler {
 
 		System.out.println("=================================================================");
 	}
-
+	
 	private void cmdCoverage(String line) {
+		//String result = (new ShellCoverageCommandProcessor(line)).evaluate();
+		
+		_cmdCoverage(line);
+	}
+
+	private void _cmdCoverage(String line) {
 		boolean printSums = false;
 
 		String[] args = line.split(" ");
