@@ -21,24 +21,6 @@
 
 package org.tzi.use.main.shell;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.tzi.use.analysis.coverage.AttributeAccessInfo;
-import org.tzi.use.analysis.coverage.CoverageAnalyzer;
-import org.tzi.use.analysis.coverage.CoverageData;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.util.Log;
-import org.tzi.use.util.StringUtil;
 
 /**
  * TODO
@@ -57,6 +39,8 @@ public class ShellCoverageCommandProcessor {
 		this.line = line;
 	}
 
+/**
+	
 	public boolean evaluate() {
 
 		if(check_syntax()) {
@@ -66,6 +50,8 @@ public class ShellCoverageCommandProcessor {
 		}
 		return false;
 	}
+	
+
 
 	private boolean check_syntax() {
 		
@@ -248,5 +234,6 @@ public class ShellCoverageCommandProcessor {
 		}
 
 	}
+**/
 
 }
