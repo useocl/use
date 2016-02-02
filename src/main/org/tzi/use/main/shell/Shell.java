@@ -1161,7 +1161,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	public String getFilenameToOpen(String filename, boolean useAsCurrentFile) {
 		// matches '<name>' or "<name>", not "<name>'
-		if (filename.matches("([\"']).+?\\1")) {
+		if (filename.matches("([\"']).+\\1")) {
 			filename = filename.substring(1, filename.length() - 1);
 		}
 
