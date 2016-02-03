@@ -67,6 +67,7 @@ import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
 import org.tzi.use.parser.use.USECompiler;
+import org.tzi.use.runtime.model.PluginModel;
 import org.tzi.use.runtime.shell.impl.PluginShellCmdFactory.PluginShellCmdContainer;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
@@ -511,7 +512,33 @@ public final class Shell implements Runnable, PPCHandler {
 				} else {
 					arguments = line.substring(cmd.getCmd().length());
 				}
-				cmd.getProxy().executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
+				try {
+					cmd.getProxy().executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
+				}
+				catch(Exception ex){
+					PluginModel crashedPlugin = cmd.getProxy().getDescriptor().getParent().getPluginModel();
+					System.err.println();
+					String nl = Options.LINE_SEPARATOR;
+					System.err.println("INTERNAL ERROR in Plugin "
+							+ StringUtil.inQuotes(crashedPlugin.getName()) + ":"
+							+ nl
+							+ "An unexpected exception occured. This happened most probably due to an"
+							+ nl
+							+ "error in the plugin. The program will try to continue, but may not be"
+							+ nl
+							+ "able to recover from the error. If the problem persists, please contact"
+							+ nl
+							+ "the plugin creators with a description of your last input and include"
+							+ nl
+							+ "the following output:");
+					System.err.println("USE version: " + Options.RELEASE_VERSION);
+					System.err.println("Plugin version: " + crashedPlugin.getVersion());
+					System.err.println("Plugin publisher: " + crashedPlugin.getPublisher());
+					System.err.println("Executed command: " + line);
+					System.err.print("Stack trace: ");
+					ex.printStackTrace(System.err);
+				}
+				
 			}
 
 		} else {
