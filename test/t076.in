@@ -434,3 +434,4 @@
 *-> false : Boolean
 ?let c:Collection(Integer) = OrderedSet{1, 2}, c2 = c in c2 = c
 *-> true : Boolean
+exit
