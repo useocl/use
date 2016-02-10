@@ -1,31 +1,55 @@
 -- Test Set comparsion
 ?Set{} = Bag{}
+*Warning: Expression `(Set {} = Bag {})' can never evaluate to true because `Set(OclVoid)' and `Bag(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Set{} <> Bag{}
+*Warning: Expression `(Set {} <> Bag {})' can never evaluate to false because `Set(OclVoid)' and `Bag(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Set{} = OrderedSet{}
+*Warning: Expression `(Set {} = OrderedSet {})' can never evaluate to true because `Set(OclVoid)' and `OrderedSet(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Set{} <> OrderedSet{}
+*Warning: Expression `(Set {} <> OrderedSet {})' can never evaluate to false because `Set(OclVoid)' and `OrderedSet(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Set{} = Sequence{}
+*Warning: Expression `(Set {} = Sequence {})' can never evaluate to true because `Set(OclVoid)' and `Sequence(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Set{} <> Sequence{}
+*Warning: Expression `(Set {} <> Sequence {})' can never evaluate to false because `Set(OclVoid)' and `Sequence(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Set{} = Set{}
 *-> true : Boolean
 ?Set{} <> Set{}
 *-> false : Boolean
 ?Set{1,2,2,1} = Sequence{1,2,2,1}
+*Warning: Expression `(Set {1,2,2,1} = Sequence {1,2,2,1})' can never evaluate to true because `Set(Integer)' and `Sequence(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Set{1,2,2,1} <> Sequence{1,2,2,1}
+*Warning: Expression `(Set {1,2,2,1} <> Sequence {1,2,2,1})' can never evaluate to false because `Set(Integer)' and `Sequence(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Set{1,2,2,1} = Bag{1,2,2,1}
+*Warning: Expression `(Set {1,2,2,1} = Bag {1,2,2,1})' can never evaluate to true because `Set(Integer)' and `Bag(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Set{1,2,2,1} <> Bag{1,2,2,1}
+*Warning: Expression `(Set {1,2,2,1} <> Bag {1,2,2,1})' can never evaluate to false because `Set(Integer)' and `Bag(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Set{1,2,2,1} = OrderedSet{1,2,2,1}
+*Warning: Expression `(Set {1,2,2,1} = OrderedSet {1,2,2,1})' can never evaluate to true because `Set(Integer)' and `OrderedSet(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Set{1,2,2,1} <> OrderedSet{1,2,2,1}
+*Warning: Expression `(Set {1,2,2,1} <> OrderedSet {1,2,2,1})' can never evaluate to false because `Set(Integer)' and `OrderedSet(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Set{1,2,2,1}=Set{1,2,2,1}
 *-> true : Boolean
@@ -58,36 +82,60 @@
 *-> true : Boolean
 -- test OrderedSet comparsion
 ?OrderedSet{} = Bag{}
+*Warning: Expression `(OrderedSet {} = Bag {})' can never evaluate to true because `OrderedSet(OclVoid)' and `Bag(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?OrderedSet{} <> Bag{}
+*Warning: Expression `(OrderedSet {} <> Bag {})' can never evaluate to false because `OrderedSet(OclVoid)' and `Bag(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?OrderedSet{} = OrderedSet{}
 *-> true : Boolean
 ?OrderedSet{} <> OrderedSet{}
 *-> false : Boolean
 ?OrderedSet{} = Sequence{}
+*Warning: Expression `(OrderedSet {} = Sequence {})' can never evaluate to true because `OrderedSet(OclVoid)' and `Sequence(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?OrderedSet{} <> Sequence{}
+*Warning: Expression `(OrderedSet {} <> Sequence {})' can never evaluate to false because `OrderedSet(OclVoid)' and `Sequence(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?OrderedSet{} = Set{}
+*Warning: Expression `(OrderedSet {} = Set {})' can never evaluate to true because `OrderedSet(OclVoid)' and `Set(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?OrderedSet{} <> Set{}
+*Warning: Expression `(OrderedSet {} <> Set {})' can never evaluate to false because `OrderedSet(OclVoid)' and `Set(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?OrderedSet{1,2,2,1} = Sequence{1,2,2,1}
+*Warning: Expression `(OrderedSet {1,2,2,1} = Sequence {1,2,2,1})' can never evaluate to true because `OrderedSet(Integer)' and `Sequence(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?OrderedSet{1,2,2,1} <> Sequence{1,2,2,1}
+*Warning: Expression `(OrderedSet {1,2,2,1} <> Sequence {1,2,2,1})' can never evaluate to false because `OrderedSet(Integer)' and `Sequence(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?OrderedSet{1,2,2,1} = Bag{1,2,2,1}
+*Warning: Expression `(OrderedSet {1,2,2,1} = Bag {1,2,2,1})' can never evaluate to true because `OrderedSet(Integer)' and `Bag(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?OrderedSet{1,2,2,1} <> Bag{1,2,2,1}
+*Warning: Expression `(OrderedSet {1,2,2,1} <> Bag {1,2,2,1})' can never evaluate to false because `OrderedSet(Integer)' and `Bag(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?OrderedSet{1,2,2,1} = OrderedSet{1,2,2,1}
 *-> true : Boolean
 ?OrderedSet{1,2,2,1} <> OrderedSet{1,2,2,1}
 *-> false : Boolean
 ?OrderedSet{1,2,2,1}=Set{1,2,2,1}
+*Warning: Expression `(OrderedSet {1,2,2,1} = Set {1,2,2,1})' can never evaluate to true because `OrderedSet(Integer)' and `Set(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?OrderedSet{1,2,2,1} <> Set{1,2,2,1}
+*Warning: Expression `(OrderedSet {1,2,2,1} <> Set {1,2,2,1})' can never evaluate to false because `OrderedSet(Integer)' and `Set(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?OrderedSet{1, 2} = OrderedSet{2, 1}
 *-> false : Boolean
@@ -119,36 +167,60 @@
 *-> true : Boolean
 -- test Sequence comparsion
 ?Sequence{} = Bag{}
+*Warning: Expression `(Sequence {} = Bag {})' can never evaluate to true because `Sequence(OclVoid)' and `Bag(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Sequence{} <> Bag{}
+*Warning: Expression `(Sequence {} <> Bag {})' can never evaluate to false because `Sequence(OclVoid)' and `Bag(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Sequence{} = OrderedSet{}
+*Warning: Expression `(Sequence {} = OrderedSet {})' can never evaluate to true because `Sequence(OclVoid)' and `OrderedSet(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Sequence{} <> OrderedSet{}
+*Warning: Expression `(Sequence {} <> OrderedSet {})' can never evaluate to false because `Sequence(OclVoid)' and `OrderedSet(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Sequence{} = Sequence{}
 *-> true : Boolean
 ?Sequence{} <> Sequence{}
 *-> false : Boolean
 ?Sequence{} = Set{}
+*Warning: Expression `(Sequence {} = Set {})' can never evaluate to true because `Sequence(OclVoid)' and `Set(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Sequence{} <> Set{}
+*Warning: Expression `(Sequence {} <> Set {})' can never evaluate to false because `Sequence(OclVoid)' and `Set(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Sequence{1,2,2,1} = Sequence{1,2,2,1}
 *-> true : Boolean
 ?Sequence{1,2,2,1} <> Sequence{1,2,2,1}
 *-> false : Boolean
 ?Sequence{1,2,2,1} = Bag{1,2,2,1}
+*Warning: Expression `(Sequence {1,2,2,1} = Bag {1,2,2,1})' can never evaluate to true because `Sequence(Integer)' and `Bag(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Sequence{1,2,2,1} <> Bag{1,2,2,1}
+*Warning: Expression `(Sequence {1,2,2,1} <> Bag {1,2,2,1})' can never evaluate to false because `Sequence(Integer)' and `Bag(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Sequence{1,2,2,1} = OrderedSet{1,2,2,1}
+*Warning: Expression `(Sequence {1,2,2,1} = OrderedSet {1,2,2,1})' can never evaluate to true because `Sequence(Integer)' and `OrderedSet(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Sequence{1,2,2,1} <> OrderedSet{1,2,2,1}
+*Warning: Expression `(Sequence {1,2,2,1} <> OrderedSet {1,2,2,1})' can never evaluate to false because `Sequence(Integer)' and `OrderedSet(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Sequence{1,2,2,1}=Set{1,2,2,1}
+*Warning: Expression `(Sequence {1,2,2,1} = Set {1,2,2,1})' can never evaluate to true because `Sequence(Integer)' and `Set(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Sequence{1,2,2,1} <> Set{1,2,2,1}
+*Warning: Expression `(Sequence {1,2,2,1} <> Set {1,2,2,1})' can never evaluate to false because `Sequence(Integer)' and `Set(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Sequence{1, 2} = Sequence{2, 1}
 *-> false : Boolean
@@ -184,32 +256,56 @@
 ?Bag{} <> Bag{}
 *-> false : Boolean
 ?Bag{} = OrderedSet{}
+*Warning: Expression `(Bag {} = OrderedSet {})' can never evaluate to true because `Bag(OclVoid)' and `OrderedSet(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Bag{} <> OrderedSet{}
+*Warning: Expression `(Bag {} <> OrderedSet {})' can never evaluate to false because `Bag(OclVoid)' and `OrderedSet(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Bag{} = Sequence{}
+*Warning: Expression `(Bag {} = Sequence {})' can never evaluate to true because `Bag(OclVoid)' and `Sequence(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Bag{} <> Sequence{}
+*Warning: Expression `(Bag {} <> Sequence {})' can never evaluate to false because `Bag(OclVoid)' and `Sequence(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Bag{} = Set{}
+*Warning: Expression `(Bag {} = Set {})' can never evaluate to true because `Bag(OclVoid)' and `Set(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Bag{} <> Set{}
+*Warning: Expression `(Bag {} <> Set {})' can never evaluate to false because `Bag(OclVoid)' and `Set(OclVoid)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Bag{1,2,2,1} = Sequence{1,2,2,1}
+*Warning: Expression `(Bag {1,2,2,1} = Sequence {1,2,2,1})' can never evaluate to true because `Bag(Integer)' and `Sequence(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Bag{1,2,2,1} <> Sequence{1,2,2,1}
+*Warning: Expression `(Bag {1,2,2,1} <> Sequence {1,2,2,1})' can never evaluate to false because `Bag(Integer)' and `Sequence(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Bag{1,2,2,1} = Bag{1,2,2,1}
 *-> true : Boolean
 ?Bag{1,2,2,1} <> Bag{1,2,2,1}
 *-> false : Boolean
 ?Bag{1,2,2,1} = OrderedSet{1,2,2,1}
+*Warning: Expression `(Bag {1,2,2,1} = OrderedSet {1,2,2,1})' can never evaluate to true because `Bag(Integer)' and `OrderedSet(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Bag{1,2,2,1} <> OrderedSet{1,2,2,1}
+*Warning: Expression `(Bag {1,2,2,1} <> OrderedSet {1,2,2,1})' can never evaluate to false because `Bag(Integer)' and `OrderedSet(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Bag{1,2,2,1}=Set{1,2,2,1}
+*Warning: Expression `(Bag {1,2,2,1} = Set {1,2,2,1})' can never evaluate to true because `Bag(Integer)' and `Set(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> false : Boolean
 ?Bag{1,2,2,1} <> Set{1,2,2,1}
+*Warning: Expression `(Bag {1,2,2,1} <> Set {1,2,2,1})' can never evaluate to false because `Bag(Integer)' and `Set(Integer)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
 *-> true : Boolean
 ?Bag{1, 2} = Bag{2, 1}
 *-> true : Boolean
@@ -386,4 +482,3 @@
 *-> false : Boolean
 ?let c:Collection(Integer) = OrderedSet{1, 2}, c2 = c in c2 = c
 *-> true : Boolean
-exit
