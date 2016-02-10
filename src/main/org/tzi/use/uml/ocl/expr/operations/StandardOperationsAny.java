@@ -53,7 +53,8 @@ final class Op_equal extends OpGeneric {
 	public String checkWarningUnrelatedTypes(Expression args[]) {
 		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
 		
-		if (!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) {
+		if ((!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) ||
+				(!(args[0].type().isTypeOfCollection() || args[1].type().isTypeOfCollection()) && lcst.isTypeOfCollection())) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to true because " + StringUtil.inQuotes(args[0].type()) + 
 					 " and " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
@@ -114,7 +115,8 @@ final class Op_notequal extends OpGeneric {
 	public String checkWarningUnrelatedTypes(Expression args[]) {
 		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
 		
-		if (!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) {
+		if ((!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) ||
+				(!(args[0].type().isTypeOfCollection() || args[1].type().isTypeOfCollection()) && lcst.isTypeOfCollection())) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to false because " + StringUtil.inQuotes(args[0].type()) + 
 					 " and " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
