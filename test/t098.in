@@ -1,2 +1,3 @@
 *t098.use:88:6: Class `LoyaltyAccount' already contains an operation named `isEmpty'.
-
+*t098.use:19:16: Expression `(result = self.partners->collect($e : ProgramPartner | $e.deliveredServices))' can never evaluate to true because `Set(Service)' and `Bag(Service)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
