@@ -933,7 +933,7 @@ public class UseModelApi {
 						multiplicities[i],
 						aggregationKinds[i],
 						orderedInfo[i],
-						(qualifier.length == 0 ? new String[][]{} : qualifier[i]));
+						(qualifier.length == 0 ? new String[0][] : qualifier[i]));
 
 				assoc.addAssociationEnd(end);
 			}

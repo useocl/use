@@ -613,6 +613,12 @@
 			<fileset dir="${build.lib.dir}"/>
 		</copy>
 		
+		<!-- copy lib_build files -->
+		<mkdir dir="${build.release.dir}/lib_build"/>
+		<copy todir="${build.release.dir}/lib_build">
+			<fileset dir="${build.libbuild.dir}"/>
+		</copy>
+		
 		<!-- copy src files -->
 		<mkdir dir="${build.release.dir}/src"/>
 		<copy todir="${build.release.dir}/src">
