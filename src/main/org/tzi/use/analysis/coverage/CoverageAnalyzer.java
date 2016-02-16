@@ -21,17 +21,13 @@
 
 package org.tzi.use.analysis.coverage;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MPrePostCondition;
-import org.tzi.use.util.Log;
 
 /**
  * This class provides operations to analyze the model coverage of OCl
@@ -59,13 +55,13 @@ public class CoverageAnalyzer {
 
 			result.put(invariant, localVisitor.getCoverageData());
 		}
-		
+
 		globalVisitor.getCoverageData().addUncoveredClasses(model);
 		result.put(model, globalVisitor.getCoverageData());
 
 		return result;
 	}
-	
+
 	public static Map<MModelElement, CoverageData> calculatePreConditionCoverage(
 			MModel model, boolean expandOperations) {
 
@@ -90,7 +86,7 @@ public class CoverageAnalyzer {
 
 		return result;
 	}
-	
+
 	public static Map<MModelElement, CoverageData> calculatePostConditionCoverage(
 			MModel model, boolean expandOperations) {
 
@@ -138,36 +134,6 @@ public class CoverageAnalyzer {
 		CoverageCalculationVisitor globalVisitor = new CoverageCalculationVisitor(
 				expandOperations);
 		CoverageCalculationVisitor localVisitor;
-
-		// //////////////////////////////////////////////////////////////////////////////////////////////////////
-		Map<MClass, Set<MClassInvariant>> classInvariantMap = new HashMap<MClass, Set<MClassInvariant>>();
-		for (MClass mClass : model.classes()) {
-			classInvariantMap.put(mClass, model.classInvariants(mClass));
-		}
-
-		Log.println("Classes covered by invariants:");
-		String className;
-		ArrayList<String> invariantNames;
-		for (Map.Entry<MClass, Set<MClassInvariant>> e : classInvariantMap
-				.entrySet()) {
-			className = e.getKey().name();
-
-			invariantNames = new ArrayList<String>();
-			for (MClassInvariant invariant : e.getValue()) {
-				invariantNames.add(invariant.name());
-			}
-
-			Log.println(className + " => " + invariantNames.toString() + " "
-					+ "(" + invariantNames.size() + ")");
-		}
-		// //////////////////////////////////////////////////////////////////////////////////////////////////////
-		for (MPrePostCondition mPrePostCondition : model.prePostConditions()) {
-			Log.println(mPrePostCondition.expression().toString());
-			Log.println(mPrePostCondition.operation().toString());
-			Log.println(mPrePostCondition.operation().cls().toString());
-			// classInvariantMap.put(mClass, model.classInvariants(mClass));
-		}
-		// //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		for (MClassInvariant invariant : model.classInvariants()) {
 			localVisitor = new CoverageCalculationVisitor(expandOperations);
