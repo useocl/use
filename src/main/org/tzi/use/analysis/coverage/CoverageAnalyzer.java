@@ -111,6 +111,31 @@ public class CoverageAnalyzer {
 
 		return result;
 	}
+	
+	public static Map<MModelElement, CoverageData> calculateContractCoverage(
+			MModel model, boolean expandOperations) {
+
+		Map<MModelElement, CoverageData> result = new HashMap<MModelElement, CoverageData>();
+
+		CoverageCalculationVisitor globalVisitor = new CoverageCalculationVisitor(
+				expandOperations);
+		CoverageCalculationVisitor localVisitor;
+
+		for (MPrePostCondition ppc : model.prePostConditions()) {
+
+			localVisitor = new CoverageCalculationVisitor(expandOperations);
+			ppc.expression().processWithVisitor(localVisitor);
+
+			ppc.expression().processWithVisitor(globalVisitor);
+
+			result.put(ppc, localVisitor.getCoverageData());
+		}
+
+		globalVisitor.getCoverageData().addUncoveredClasses(model);
+		result.put(model, globalVisitor.getCoverageData());
+
+		return result;
+	}
 
 	/**
 	 * Calculates the model coverage for the complete model and for each

@@ -104,6 +104,11 @@ public class ShellCoverageCommandProcessor {
 			else if ("-postconditions".equals(args[i])) {
 				_postConditionsCoverage();
 				return;
+			}
+
+			else if ("-contracts".equals(args[i])) {
+				_contractsCoverage();
+				return;
 
 			} else {
 				Log.error("Invalid argument " + args[i]);
@@ -275,6 +280,18 @@ public class ShellCoverageCommandProcessor {
 				model.postConditions());
 
 		_displayPrePostDetails(completeData, postconditions, "Postcondition");
+	}
+
+	private void _contractsCoverage() {
+		Map<MModelElement, CoverageData> completeData = CoverageAnalyzer
+				.calculateContractCoverage(model, true);
+
+		_displayCoverage(completeData, "contracts");
+
+		List<MPrePostCondition> conditions = new ArrayList<MPrePostCondition>(
+				model.prePostConditions());
+
+		_displayPrePostDetails(completeData, conditions, "Contract");
 	}
 
 	private void _displayCoverage(
