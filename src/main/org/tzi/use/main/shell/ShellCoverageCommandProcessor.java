@@ -43,7 +43,7 @@ import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 
 /**
- * TODO
+ * Provides logic for the shell coverage command.
  * 
  * @author ms
  *
@@ -56,7 +56,6 @@ public class ShellCoverageCommandProcessor {
 	private boolean displaySum = false;
 
 	private String fSpace = " ";
-	private String fColon = ":";
 	private String fSpaceTwo = fSpace + fSpace;
 	private String fSpaceColon = ": ";
 	private String fCommaSpace = ", ";
@@ -91,17 +90,22 @@ public class ShellCoverageCommandProcessor {
 				displaySum = true;
 			}
 
+			else if ("-total".equals(args[i])) {
+				_totalCoverage();
+				return;
+			}
+
 			else if ("-invariants".equals(args[i])) {
 				_invariantsCoverage();
 				return;
 			}
 
-			else if ("-preconditions".equals(args[i])) {
+			else if ("-pre".equals(args[i])) {
 				_preConditionsCoverage();
 				return;
 			}
 
-			else if ("-postconditions".equals(args[i])) {
+			else if ("-post".equals(args[i])) {
 				_postConditionsCoverage();
 				return;
 			}
@@ -115,6 +119,13 @@ public class ShellCoverageCommandProcessor {
 				return;
 			}
 		}
+	}
+
+	private void _totalCoverage() {
+		Map<MModelElement, CoverageData> completeData = CoverageAnalyzer
+				.calculateTotalCoverage(model, true);
+
+		_displayCoverage(completeData, "total");
 	}
 
 	private void _invariantsCoverage() {
@@ -227,36 +238,6 @@ public class ShellCoverageCommandProcessor {
 
 		Log.println();
 	}
-
-	/**
-	 * //
-	 * ///////////////////////////////////////////////////////////////////////
-	 * /////////////////////////////// Map<MClass, Set<MClassInvariant>>
-	 * classInvariantMap = new HashMap<MClass, Set<MClassInvariant>>(); for
-	 * (MClass mClass : model.classes()) { classInvariantMap.put(mClass,
-	 * model.classInvariants(mClass)); }
-	 * 
-	 * Log.println("Classes covered by invariants:"); String className;
-	 * ArrayList<String> invariantNames; for (Map.Entry<MClass,
-	 * Set<MClassInvariant>> e : classInvariantMap .entrySet()) { className =
-	 * e.getKey().name();
-	 * 
-	 * invariantNames = new ArrayList<String>(); for (MClassInvariant invariant
-	 * : e.getValue()) { invariantNames.add(invariant.name()); }
-	 * 
-	 * Log.println(className + " => " + invariantNames.toString() + " " + "(" +
-	 * invariantNames.size() + ")"); } //
-	 * ///////////////////////////////////////
-	 * /////////////////////////////////////////////////////////////// for
-	 * (MPrePostCondition mPrePostCondition : model.prePostConditions()) {
-	 * Log.println(mPrePostCondition.expression().toString());
-	 * Log.println(mPrePostCondition.operation().toString());
-	 * Log.println(mPrePostCondition.operation().cls().toString()); //
-	 * classInvariantMap.put(mClass, model.classInvariants(mClass)); } //
-	 * ///////
-	 * ///////////////////////////////////////////////////////////////////
-	 * ////////////////////////////
-	 **/
 
 	private void _preConditionsCoverage() {
 		Map<MModelElement, CoverageData> completeData = CoverageAnalyzer
@@ -479,4 +460,35 @@ public class ShellCoverageCommandProcessor {
 		Log.println();
 	}
 
+		/*
+		Map<MClass, Set<MClassInvariant>> classInvariantMap = new HashMap<MClass, Set<MClassInvariant>>();
+
+		for (MClass mClass : model.classes()) {
+			classInvariantMap.put(mClass, model.classInvariants(mClass));
+		}
+
+		Log.println("Classes covered by invariants:");
+
+		String className;
+		ArrayList<String> invariantNames;
+		for (Map.Entry<MClass, Set<MClassInvariant>> e : classInvariantMap
+				.entrySet()) {
+			className = e.getKey().name();
+
+			invariantNames = new ArrayList<String>();
+			for (MClassInvariant invariant : e.getValue()) {
+				invariantNames.add(invariant.name());
+			}
+
+			Log.println(className + " => " + invariantNames.toString() + " "
+					+ "(" + invariantNames.size() + ")");
+		}
+
+		for (MPrePostCondition mPrePostCondition : model.prePostConditions()) {
+			Log.println(mPrePostCondition.expression().toString());
+			Log.println(mPrePostCondition.operation().toString());
+			Log.println(mPrePostCondition.operation().cls().toString());
+			classInvariantMap.put(mClass, model.classInvariants(mClass));
+		}
+		*/
 }

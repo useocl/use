@@ -111,7 +111,7 @@ public class CoverageAnalyzer {
 
 		return result;
 	}
-	
+
 	public static Map<MModelElement, CoverageData> calculateContractCoverage(
 			MModel model, boolean expandOperations) {
 
@@ -151,10 +151,10 @@ public class CoverageAnalyzer {
 	 *         {@link MClassInvariant} and {@link MPrePostCondition} and for the
 	 *         complete {@link MModel}.
 	 */
-	public static Map<MModelElement, CoverageData> calculateModelCoverage(
+	public static Map<MModelElement, CoverageData> calculateTotalCoverage(
 			MModel model, boolean expandOperations) {
-		Map<MModelElement, CoverageData> result = new HashMap<MModelElement, CoverageData>(
-				model.classInvariants().size() + 1);
+		
+		Map<MModelElement, CoverageData> result = new HashMap<MModelElement, CoverageData>();
 
 		CoverageCalculationVisitor globalVisitor = new CoverageCalculationVisitor(
 				expandOperations);
@@ -162,7 +162,7 @@ public class CoverageAnalyzer {
 
 		for (MClassInvariant invariant : model.classInvariants()) {
 			localVisitor = new CoverageCalculationVisitor(expandOperations);
-			invariant.expandedExpression().processWithVisitor(localVisitor); // accept
+			invariant.expandedExpression().processWithVisitor(localVisitor);
 
 			invariant.expandedExpression().processWithVisitor(globalVisitor);
 

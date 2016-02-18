@@ -1466,7 +1466,7 @@ public class ClassDiagram extends DiagramView
 			MModel model = this.fParent.system().model();
 			
 			data = CoverageAnalyzer
-					.calculateModelCoverage(
+					.calculateTotalCoverage(
 							model,
 							(getOptions().getShowCoverage() == ShowCoverage.SHOW_EXPAND_OPERATIONS));
 			

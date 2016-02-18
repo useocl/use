@@ -557,6 +557,17 @@ public final class Shell implements Runnable, PPCHandler {
 		System.out.println("=================================================================");
 	}
 	
+	/**
+	 * Runs shell coverage command.
+	 * 
+	 * Supported switches for shell 'coverage' command:
+	 * 	-sum 		(numeric sum of coverage measurement results)
+	 * 	-invariants (covers only invariants)
+	 * 	-pre 		(covers only preconditions)
+	 *  -post 		(covers only postconditions)
+	 *  -total		(covers all)
+	 *  
+	 */
 	private void cmdCoverage(String line) {
 		ShellCoverageCommandProcessor processor = new ShellCoverageCommandProcessor(fSession, line);
 		processor.run();
