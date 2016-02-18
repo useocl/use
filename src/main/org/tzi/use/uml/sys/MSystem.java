@@ -344,28 +344,30 @@ public final class MSystem {
 				.compileInvariants(fModel, in, inputName,
 						out);
 
-		for(Iterator<MClassInvariant> it = invs.iterator(); it.hasNext();){
-			MClassInvariant inv = it.next();
-			try {
-				fModel.addClassInvariant(inv);
-			} catch (MInvalidModelException e) {
-				it.remove();
-				out.println(e.getMessage());
+		if(invs != null){
+			for(Iterator<MClassInvariant> it = invs.iterator(); it.hasNext();){
+				MClassInvariant inv = it.next();
+				try {
+					fModel.addClassInvariant(inv);
+				} catch (MInvalidModelException e) {
+					it.remove();
+					out.println(e.getMessage());
+				}
 			}
-		}
-		
-		if(invs != null && invs.size() > 0){
-			fireClassInvariantsLoadedEvent(invs);
-		}
-
-		if (invs != null && doEcho) {
-			out.println("Added invariants:");
-
-			if (invs.isEmpty()) {
-				out.println("(none)");
-			} else {
-				for (MClassInvariant inv : invs) {
-					out.println(inv.toString());
+			
+			if(invs.size() > 0){
+				fireClassInvariantsLoadedEvent(invs);
+			}
+			
+			if (doEcho) {
+				out.println("Added invariants:");
+				
+				if (invs.isEmpty()) {
+					out.println("(none)");
+				} else {
+					for (MClassInvariant inv : invs) {
+						out.println(inv.toString());
+					}
 				}
 			}
 		}

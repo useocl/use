@@ -632,7 +632,7 @@ collectionType returns [ASTCollectionType n]
     { op = input.LT(1); } 
     ( 'Collection' | 'Set' | 'Sequence' | 'Bag' | 'OrderedSet' ) 
     LPAREN elemType=type RPAREN
-    { $n = new ASTCollectionType(op, $elemType.n); if ($n != null) $n.setStartToken(op);}
+    { $n = new ASTCollectionType(op, $elemType.n); $n.setStartToken(op);}
     ;
 
 
