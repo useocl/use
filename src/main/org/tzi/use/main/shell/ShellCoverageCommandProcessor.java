@@ -33,7 +33,6 @@ import java.util.Set;
 import org.tzi.use.analysis.coverage.AttributeAccessInfo;
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
-import org.tzi.use.main.Session;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
@@ -50,20 +49,19 @@ import org.tzi.use.util.StringUtil;
  */
 public class ShellCoverageCommandProcessor {
 
-	private Session fSession;
-	private MModel model;
-	private String line;
+	private final MModel model;
+	private final String line;
 	private boolean displaySum = false;
 
-	private String fSpace = " ";
-	private String fSpaceTwo = fSpace + fSpace;
-	private String fSpaceColon = ": ";
-	private String fCommaSpace = ", ";
-	private String fDot = ".";
-	private String fTab = "\t";
+	private final String fSpace = " ";
+	private final String fSpaceTwo = fSpace + fSpace;
+	private final String fSpaceColon = ": ";
+	private final String fCommaSpace = ", ";
+	private final String fDot = ".";
+	private final String fTab = "\t";
 
-	public ShellCoverageCommandProcessor(Session fSession, String line) {
-		this.fSession = fSession;
+	public ShellCoverageCommandProcessor(MModel model, String line) {
+		this.model = model;
 		this.line = line;
 	}
 
@@ -77,7 +75,6 @@ public class ShellCoverageCommandProcessor {
 	}
 
 	private boolean checkModelAvailable() {
-		model = fSession.system().model();
 		return model != null;
 	}
 

@@ -64,7 +64,6 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 	 * Source and target wrapper to keep multiplicity and role name close.
 	 */
 	MultiplicityRolenameWrapper fSourceMRWrapper;
-	MultiplicityRolenameWrapper fTargetMRWrapper;
 
 	/**
      * Association name / link name of this edge.
@@ -152,7 +151,6 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		properties.put(PropertyOwner.EDGE, fAssocName);
 		
 		fSourceMRWrapper = new MultiplicityRolenameWrapper(fSourceMultiplicity, fSourceRolename, PropertyOwner.SOURCE, fOpt); 
-		fTargetMRWrapper = new MultiplicityRolenameWrapper(fTargetMultiplicity, fTargetRolename, PropertyOwner.TARGET, fOpt);
 	}
 	
 	/**
