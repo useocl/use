@@ -28,6 +28,8 @@ import org.tzi.use.gui.views.diagrams.PositionChangedListener;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase.PropertyOwner;
 
 /**
+ * Provides logic for grouping multiplicity and role name nodes.
+ * 
  * @author ms
  */
 public final class MultiplicityRolenameWrapper implements
@@ -37,7 +39,7 @@ public final class MultiplicityRolenameWrapper implements
 	private Rolename rolename_client;
 
 	// Currently not needed, maybe of use later.
-	private PropertyOwner end;
+	// private PropertyOwner end;
 
 	PositionChangedListener position_changed_listener = null;
 
@@ -49,7 +51,8 @@ public final class MultiplicityRolenameWrapper implements
 			Rolename rolename_client, PropertyOwner end, DiagramOptions options) {
 		this.multiplicity_client = multiplicity_client;
 		this.rolename_client = rolename_client;
-		this.end = end;
+
+		// this.end = end;
 
 		// Let this wrapper be informed whenever options are changed.
 		options.addOptionChangedListener(this);
@@ -73,7 +76,6 @@ public final class MultiplicityRolenameWrapper implements
 		else
 			detach_listener();
 
-		// System.out.println("Grouping:" + String.valueOf(do_group));
 	}
 
 	protected void determine_offset() {
