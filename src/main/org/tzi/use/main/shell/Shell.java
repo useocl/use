@@ -565,6 +565,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 * 	-invariants (covers only invariants)
 	 * 	-pre 		(covers only preconditions)
 	 *  -post 		(covers only postconditions)
+	 *  -contracts  (covers only contracts, so pre- and post-conditions)
 	 *  -total		(covers all)
 	 *  
 	 */
