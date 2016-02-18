@@ -29,7 +29,7 @@ import java.io.IOException;
  * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
-public interface Readline {
+public interface Readline extends AutoCloseable {
 
     /**
      * Reads a line of text.

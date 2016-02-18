@@ -277,6 +277,10 @@ public final class Shell implements Runnable, PPCHandler {
 		}
 		cmdExit();
 	}
+	
+	public Readline getCurrentReadline() {
+		return fReadlineStack.getCurrentReadline();
+	}
 
 	/**
 	 * Initializes readline.
@@ -569,8 +573,8 @@ public final class Shell implements Runnable, PPCHandler {
 	 *  -total		(covers all)
 	 *  
 	 */
-	private void cmdCoverage(String line) {
-		ShellCoverageCommandProcessor processor = new ShellCoverageCommandProcessor(fSession, line);
+	private void cmdCoverage(String line) throws NoSystemException {
+		ShellCoverageCommandProcessor processor = new ShellCoverageCommandProcessor(system().model(), line);
 		processor.run();
 	}
 	
@@ -1413,10 +1417,11 @@ public final class Shell implements Runnable, PPCHandler {
 	/**
 	 * Reads a file with commands and processes them.
 	 */
+	@SuppressWarnings("resource")
 	public void cmdRead(String filename, boolean doEcho) {
+		filename = getFilenameToOpen(filename);
+		
 		try {
-			filename = getFilenameToOpen(filename);
-
 			Reader r = getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
 			BufferedReader reader = new BufferedReader(r);
 
