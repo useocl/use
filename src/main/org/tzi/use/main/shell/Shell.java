@@ -50,6 +50,7 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.tzi.use.analysis.metrics.ShellMetricCommandProcessor;
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.gen.tool.GNoResultException;
@@ -463,9 +464,11 @@ public final class Shell implements Runnable, PPCHandler {
 			cmdGenResult(line.substring(10), system());
 		} else if (line.startsWith("reload extensions")) {
 			cmdReloadExtensions();
+		
 		} else if (line.startsWith("coverage")) {
-			
 			cmdCoverage(line);
+		} else if (line.startsWith("metric")) {
+			cmdMetric(line);
 			
 		} else if (line.startsWith("plugins")) {
 			cmdShowPlugins();
@@ -575,6 +578,11 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdCoverage(String line) throws NoSystemException {
 		ShellCoverageCommandProcessor processor = new ShellCoverageCommandProcessor(system().model(), line);
+		processor.run();
+	}
+	
+	private void cmdMetric(String line) throws NoSystemException {
+		ShellMetricCommandProcessor processor = new ShellMetricCommandProcessor(system().model(), line);
 		processor.run();
 	}
 	
