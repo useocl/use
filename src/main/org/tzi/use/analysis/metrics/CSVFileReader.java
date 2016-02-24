@@ -57,7 +57,11 @@ public class CSVFileReader {
 	private void parse() throws FileNotFoundException {
 		BufferedReader csvBuffer = null;
 		try {
+			
+			Log.info();
 			Log.info("Loading" + " " + path());
+			Log.info();
+			
 			csvBuffer = new BufferedReader(new FileReader(path()));
 
 			String csvLine;

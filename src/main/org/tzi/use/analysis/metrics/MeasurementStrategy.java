@@ -21,6 +21,8 @@
 
 package org.tzi.use.analysis.metrics;
 
+import java.util.ArrayList;
+
 import org.tzi.use.uml.ocl.expr.Expression;
 
 
@@ -39,7 +41,7 @@ public class MeasurementStrategy {
 		return 0;
 	}
 
-	public void pushSingleShot(Expression exp) {
+	public void pushSingleShot(Expression expression, ArrayList<Expression> stackTrace) {
 	}
 
 	public float inject() {
@@ -47,5 +49,9 @@ public class MeasurementStrategy {
 	}
 
 	public void reset() {
+	}
+
+	public float getWeightForDepth(String name, int depth) {
+		return 0;
 	}
 }

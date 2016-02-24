@@ -36,6 +36,18 @@ public class GSMetric extends MeasurementStrategy {
 	private final GSMetricConfiguration configuration;
 	private ArrayList<SingleShot> singleShots = new ArrayList<SingleShot>();
 
+	// TODO abstract input argument wrapper
+	public enum NestingMode {
+		none,								// does not consider depth at all
+		simpleNesting, 						// just considers depth value
+		simpleSymmetricNestingCustom,		// considers custom depth value for symmetric nesting (ex: forAll,sd2,5)
+		simpleAsymmetricNestingCustom,		// considers custom depth value for asymmetric nesting (ex: forAll,ad2,7)
+		traceNestingCustom 					// considers traces/paths (ex: forAll:forAll:one,8)
+	}
+
+	// TODO argument input
+	private final NestingMode nestingMode = NestingMode.simpleNesting;
+
 	/**
 	 * 
 	 */
@@ -53,15 +65,14 @@ public class GSMetric extends MeasurementStrategy {
 		object.accept(visitor);
 	}
 
-	public void pushSingleShot(Expression expression) {
-		SingleShot singleShot = new SingleShot(this, expression);
+	public void pushSingleShot(Expression expression, ArrayList<Expression> stackTrace) {
+		SingleShot singleShot = new SingleShot(this, nestingMode, expression, stackTrace);
 		singleShots.add(singleShot);
 	}
 
 	public float inject() {
 		float total = 0;
 		for(SingleShot singleShot: singleShots) total += singleShot.measuredValue();
-
 		return total;
 	}
 
@@ -72,6 +83,11 @@ public class GSMetric extends MeasurementStrategy {
 	// [SingleShot] -delegate-> GSMetricConfiguration
 	public float getWeightFor(String name) {
 		return configuration.getWeightFor(name);
+	}
+	
+	// [SingleShot] -delegate-> GSMetricConfiguration
+	public float getWeightForDepth(String name, int depth) {
+		return configuration.getWeightForDepth(name, depth);
 	}
 
 }

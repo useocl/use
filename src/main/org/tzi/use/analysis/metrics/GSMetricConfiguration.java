@@ -60,5 +60,17 @@ public class GSMetricConfiguration {
 		ConfigurationEntry entry = entries.get(name);
 		return entry.getWeightValue();
 	}
-
+	
+	public float getWeightForDepth(String name, int depth) {
+		
+		// TODO each key (i.e. operation name) has multiple value definitions assigned
+		// TODO change entries to array of tuples or introduce ConfigurationEntryGroups per
+		// TODO operation name ->* depth/value specifications
+		
+		//ConfigurationEntry entry = entries.get(name);
+		//return entry.getWeightValueByDepth(depth);
+		
+		return 1;
+	}
+	
 }

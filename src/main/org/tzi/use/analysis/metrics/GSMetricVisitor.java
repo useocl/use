@@ -21,7 +21,14 @@
 
 package org.tzi.use.analysis.metrics;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
+import org.tzi.use.uml.ocl.expr.ExpExists;
 import org.tzi.use.uml.ocl.expr.ExpForAll;
+import org.tzi.use.uml.ocl.expr.ExpOne;
+import org.tzi.use.uml.ocl.expr.ExpSelect;
+import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
  * TODO
@@ -29,6 +36,11 @@ import org.tzi.use.uml.ocl.expr.ExpForAll;
  *
  */
 public class GSMetricVisitor extends AbstractMetricVisitor {
+
+	private Stack<ExpForAll> forAllStack = new Stack<ExpForAll>(); 
+	private Stack<ExpSelect> selectStack = new Stack<ExpSelect>();
+	private Stack<ExpExists> existsStack = new Stack<ExpExists>();
+	private Stack<ExpOne> oneStack = new Stack<ExpOne>();
 
 	/**
 	 * @param expandOperations
@@ -39,10 +51,41 @@ public class GSMetricVisitor extends AbstractMetricVisitor {
 
 	@Override
 	public void visitForAll(ExpForAll exp) {
+
 		// Log.info("Visiting ", exp);
 
-		measurement.pushSingleShot(exp);
-		
-		// visitQuery(exp);
+		forAllStack.push(exp);
+
+		// Log.info();
+		// Log.info("LEVEL:", forAllStack.size());
+		// Log.info();
+
+		measurement.pushSingleShot(exp, new ArrayList<Expression>(forAllStack));
+		visitQuery(exp);
+		forAllStack.pop();
+	}
+
+	@Override
+	public void visitSelect(ExpSelect exp) {
+		selectStack.push(exp);
+		measurement.pushSingleShot(exp, new ArrayList<Expression>(selectStack));
+		visitQuery(exp);
+		selectStack.pop();
+	}
+
+	@Override
+	public void visitExists(ExpExists exp) {
+		existsStack.push(exp);
+		measurement.pushSingleShot(exp, new ArrayList<Expression>(existsStack));
+		visitQuery(exp);
+		existsStack.pop();
+	}
+
+	@Override
+	public void visitOne(ExpOne exp) {
+		oneStack.push(exp);
+		measurement.pushSingleShot(exp, new ArrayList<Expression>(oneStack));
+		visitQuery(exp);
+		oneStack.pop();
 	}
 }

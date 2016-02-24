@@ -46,5 +46,14 @@ public class ConfigurationEntry {
 		// for now assuming format (name -> weight)
 		return Float.parseFloat(values.get(0));
 	}
+	
+	public boolean deliversWeightValueByDepth(int depth) {
+		return true;
+	}
+	
+	public float getWeightValueByDepth() {
+		// for now assuming format (name -> depth, weight)
+		return Float.parseFloat(values.get(0));
+	}
 
 }

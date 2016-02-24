@@ -21,6 +21,9 @@
 
 package org.tzi.use.analysis.metrics;
 
+import java.util.ArrayList;
+
+import org.tzi.use.analysis.metrics.GSMetric.NestingMode;
 import org.tzi.use.uml.ocl.expr.Expression;
 
 
@@ -30,16 +33,40 @@ import org.tzi.use.uml.ocl.expr.Expression;
  *
  */
 public class SingleShot extends ExpressionProxy {
-	
-	private final MeasurementStrategy metric;
 
-	public SingleShot(MeasurementStrategy metric, Expression client) {
+	private final MeasurementStrategy metric;
+	private final NestingMode nestingMode;
+	private final ArrayList<Expression> stackTrace;
+
+	public SingleShot(MeasurementStrategy metric, NestingMode nestingMode, Expression client, ArrayList<Expression> stackTrace) {
 		super(client);
 		this.metric = metric;
+		this.nestingMode = nestingMode;
+		this.stackTrace = stackTrace;
 	}
-	
+
 	public float measuredValue() {
-		return metric.getWeightFor(name());
+		float interim = 0;
+
+		switch(nestingMode) {
+		case none: 
+			interim = metric.getWeightFor(name());
+			break;
+		case simpleNesting:
+			interim = metric.getWeightFor(name()) * depth();
+			break;
+		case simpleSymmetricNestingCustom:
+			interim = metric.getWeightForDepth(name(), depth());
+			break;
+		default:
+			break;
+		}
+
+		return interim;
+	}
+
+	public int depth() {
+		return stackTrace.size();
 	}
 
 }
