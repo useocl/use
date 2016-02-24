@@ -82,9 +82,11 @@ import org.tzi.use.uml.ocl.expr.VarDeclList;
  */
 public abstract class AbstractMetricVisitor implements ExpressionVisitor {
 
+	protected final MeasurementStrategy measurement;
 	protected final boolean expandOperations;
 
-	public AbstractMetricVisitor(boolean expandOperations) {
+	public AbstractMetricVisitor(MeasurementStrategy measurement, boolean expandOperations) {
+		this.measurement = measurement;
 		this.expandOperations = expandOperations;
 	}
 

@@ -21,8 +21,8 @@
 
 package org.tzi.use.analysis.metrics;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * TODO
@@ -31,11 +31,11 @@ import java.util.List;
  */
 public class GSMetricConfiguration {
 	
-	private static CSVFileReader csvProxy;
-	private HashMap<String,ConfigurationEntry> entries;
+	private CSVFileReader csvProxy;
+	private HashMap<String,ConfigurationEntry> entries = new HashMap<String,ConfigurationEntry>(); 
 	
 	public static GSMetricConfiguration load(String fileName) {
-		CSVFileReader csvProxy = new CSVFileReader(fileName);
+		CSVFileReader csvProxy = new CSVFileReader("metrics/gs-metric/" + fileName);
 		return new GSMetricConfiguration(csvProxy);
 	}
 	
@@ -49,7 +49,7 @@ public class GSMetricConfiguration {
 	}
 	
 	private void load() {
-		for(List<String> tuple: csvProxy.getLines()) {
+		for(ArrayList<String> tuple: csvProxy.getLines()) {
 			String key = tuple.get(0);
 			tuple.remove(0);
 			entries.put(key, new ConfigurationEntry(key, tuple));
@@ -57,8 +57,8 @@ public class GSMetricConfiguration {
 	}
 
 	public float getWeightFor(String name) {
-		//return bufferedGetWeightFor(name);
-		return 0;
+		ConfigurationEntry entry = entries.get(name);
+		return entry.getWeightValue();
 	}
 
 }

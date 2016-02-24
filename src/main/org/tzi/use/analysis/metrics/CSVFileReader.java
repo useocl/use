@@ -27,7 +27,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
+import jline.internal.Log;
 
 /**
  * TODO
@@ -37,14 +38,14 @@ import java.util.List;
 
 public class CSVFileReader {
 
-	private final String fileName;
-	private ArrayList<List<String>> lines;
-
+	private final String tailPath;
+	private ArrayList<ArrayList<String>> lines = new ArrayList<ArrayList<String>>();
+	
 	/**
 	 * 
 	 */
-	public CSVFileReader(String fileName) {
-		this.fileName = fileName;
+	public CSVFileReader(String tailPath) {
+		this.tailPath = tailPath;
 		try {
 			parse();
 		}
@@ -56,11 +57,14 @@ public class CSVFileReader {
 	private void parse() throws FileNotFoundException {
 		BufferedReader csvBuffer = null;
 		try {
-			csvBuffer = new BufferedReader(new FileReader(fileName));
+			Log.info("Loading" + " " + path());
+			csvBuffer = new BufferedReader(new FileReader(path()));
 
 			String csvLine;
 			while((csvLine = csvBuffer.readLine()) != null) {
-				lines.add(Arrays.asList(csvLine.split("\\s*,\\s*")));
+				String[] splits = csvLine.split("\\s*,\\s*");
+				ArrayList<String> result = new ArrayList<String>(Arrays.asList(splits));
+				lines.add(result);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -73,7 +77,11 @@ public class CSVFileReader {
 		}
 	}
 	
-	public ArrayList<List<String>> getLines() {
+	private String path() {
+		return System.getProperty("user.dir") + "/" + tailPath + ".csv";
+	}
+	
+	public ArrayList<ArrayList<String>> getLines() {
 		return lines;
 	}
 }

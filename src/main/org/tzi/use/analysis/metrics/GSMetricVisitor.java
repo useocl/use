@@ -21,8 +21,6 @@
 
 package org.tzi.use.analysis.metrics;
 
-import jline.internal.Log;
-
 import org.tzi.use.uml.ocl.expr.ExpForAll;
 
 /**
@@ -35,14 +33,16 @@ public class GSMetricVisitor extends AbstractMetricVisitor {
 	/**
 	 * @param expandOperations
 	 */
-	public GSMetricVisitor(boolean expandOperations) {
-		super(expandOperations);
+	public GSMetricVisitor(GSMetric measurement, boolean expandOperations) {
+		super(measurement, expandOperations);
 	}
 
 	@Override
 	public void visitForAll(ExpForAll exp) {
-		Log.info(exp);
-				
+		// Log.info("Visiting ", exp);
+
+		measurement.pushSingleShot(exp);
+		
 		// visitQuery(exp);
 	}
 }

@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 public class GSMetric extends MeasurementStrategy {
 
 	private final GSMetricConfiguration configuration;
-	private ArrayList<SingleShot> singleShots;
+	private ArrayList<SingleShot> singleShots = new ArrayList<SingleShot>();
 
 	/**
 	 * 
@@ -48,7 +48,7 @@ public class GSMetric extends MeasurementStrategy {
 	public void apply(MeasuringObject object) {
 
 		// TODO Handle expandOperations properly
-		GSMetricVisitor visitor = new GSMetricVisitor(true);
+		GSMetricVisitor visitor = new GSMetricVisitor(this, true);
 
 		object.accept(visitor);
 	}
@@ -57,17 +57,21 @@ public class GSMetric extends MeasurementStrategy {
 		SingleShot singleShot = new SingleShot(this, expression);
 		singleShots.add(singleShot);
 	}
-	
+
 	public float inject() {
 		float total = 0;
 		for(SingleShot singleShot: singleShots) total += singleShot.measuredValue();
-		
+
 		return total;
 	}
-	
-	// delegate
+
+	public void reset() {
+		singleShots.clear();
+	}
+
+	// [SingleShot] -delegate-> GSMetricConfiguration
 	public float getWeightFor(String name) {
 		return configuration.getWeightFor(name);
 	}
-	
+
 }

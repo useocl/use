@@ -21,6 +21,9 @@
 
 package org.tzi.use.analysis.metrics;
 
+import org.tzi.use.uml.ocl.expr.Expression;
+
+
 
 /**
  * TODO
@@ -34,5 +37,15 @@ public class MeasurementStrategy {
 	
 	public float getWeightFor(String name) {
 		return 0;
+	}
+
+	public void pushSingleShot(Expression exp) {
+	}
+
+	public float inject() {
+		return 0;
+	}
+
+	public void reset() {
 	}
 }

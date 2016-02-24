@@ -35,10 +35,16 @@ public class ConfigurationEntry {
 
 	/**
 	 * @param key
+	 * @param values
 	 */
 	public ConfigurationEntry(String key, List<String> values) {
 		this.key = key;
 		this.values = values;
+	}
+	
+	public float getWeightValue() {
+		// for now assuming format (name -> weight)
+		return Float.parseFloat(values.get(0));
 	}
 
 }

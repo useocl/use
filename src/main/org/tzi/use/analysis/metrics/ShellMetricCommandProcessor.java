@@ -51,7 +51,7 @@ public class ShellMetricCommandProcessor extends AbstractShellCommandProcessor {
 		Set<String> delta = Sets.difference(actualArgs, validArgs);
 
 		if(delta.isEmpty()) {
-			Log.info("Arguments valid");
+			//Log.info("Arguments valid");
 
 			// TODO Extract metric name.
 			// TODO Extract configuration file name.
@@ -63,7 +63,7 @@ public class ShellMetricCommandProcessor extends AbstractShellCommandProcessor {
 	}
 
 	private void _measure(String metricName, String fileName) {
-		Log.info("Measuring");
+		//Log.info("Measuring");
 		
 		MeasurementStrategy strategy = null;
 		
@@ -75,6 +75,9 @@ public class ShellMetricCommandProcessor extends AbstractShellCommandProcessor {
 		
 		Measurement measurement = new Measurement(strategy, model);
 		measurement.perform();
+		measurement.displayResults();
+		
+		//Log.info("Result/Complexity: " + measurement.getResult());
 		
 	}
 }
