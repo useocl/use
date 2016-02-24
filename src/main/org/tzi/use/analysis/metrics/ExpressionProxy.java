@@ -21,44 +21,30 @@
 
 package org.tzi.use.analysis.metrics;
 
-import java.util.HashMap;
-import java.util.List;
+import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
  * TODO
  * @author ms
  *
  */
-public class GSMetricConfiguration {
+public abstract class ExpressionProxy {
 	
-	private static CSVFileReader csvProxy;
-	private HashMap<String,ConfigurationEntry> entries;
-	
-	public static GSMetricConfiguration load(String fileName) {
-		CSVFileReader csvProxy = new CSVFileReader(fileName);
-		return new GSMetricConfiguration(csvProxy);
-	}
-	
-	/**
-	 * 
-	 */
-	public GSMetricConfiguration(CSVFileReader csvProxy) {
-		super();
-		this.csvProxy = csvProxy;
-		load();
-	}
-	
-	private void load() {
-		for(List<String> tuple: csvProxy.getLines()) {
-			String key = tuple.get(0);
-			tuple.remove(0);
-			entries.put(key, new ConfigurationEntry(key, tuple));
-		}
-	}
+	protected final Expression client;
 
-	public float getWeightFor(String name) {
-		//return bufferedGetWeightFor(name);
-		return 0;
+	/**
+	 * @param client
+	 */
+	public ExpressionProxy(Expression client) {
+		this.client = client;
+	}
+	
+	public String name() {
+		return client.name();
+	}
+	
+	public void accept(AbstractMetricVisitor visitor) {
+		client.processWithVisitor(visitor);
 	}
 
 }

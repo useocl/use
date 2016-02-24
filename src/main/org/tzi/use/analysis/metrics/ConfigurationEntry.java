@@ -21,7 +21,6 @@
 
 package org.tzi.use.analysis.metrics;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,36 +28,17 @@ import java.util.List;
  * @author ms
  *
  */
-public class GSMetricConfiguration {
-	
-	private static CSVFileReader csvProxy;
-	private HashMap<String,ConfigurationEntry> entries;
-	
-	public static GSMetricConfiguration load(String fileName) {
-		CSVFileReader csvProxy = new CSVFileReader(fileName);
-		return new GSMetricConfiguration(csvProxy);
-	}
-	
-	/**
-	 * 
-	 */
-	public GSMetricConfiguration(CSVFileReader csvProxy) {
-		super();
-		this.csvProxy = csvProxy;
-		load();
-	}
-	
-	private void load() {
-		for(List<String> tuple: csvProxy.getLines()) {
-			String key = tuple.get(0);
-			tuple.remove(0);
-			entries.put(key, new ConfigurationEntry(key, tuple));
-		}
-	}
+public class ConfigurationEntry {
 
-	public float getWeightFor(String name) {
-		//return bufferedGetWeightFor(name);
-		return 0;
+	private final String key;
+	private List<String> values;
+
+	/**
+	 * @param key
+	 */
+	public ConfigurationEntry(String key, List<String> values) {
+		this.key = key;
+		this.values = values;
 	}
 
 }

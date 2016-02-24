@@ -21,6 +21,10 @@
 
 package org.tzi.use.analysis.metrics;
 
+import jline.internal.Log;
+
+import org.tzi.use.uml.ocl.expr.ExpForAll;
+
 /**
  * TODO
  * @author ms
@@ -33,7 +37,12 @@ public class GSMetricVisitor extends AbstractMetricVisitor {
 	 */
 	public GSMetricVisitor(boolean expandOperations) {
 		super(expandOperations);
-		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public void visitForAll(ExpForAll exp) {
+		Log.info(exp);
+				
+		// visitQuery(exp);
+	}
 }

@@ -28,18 +28,13 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author ms
  *
  */
-public class MeasuringObject {
+public class MeasuringObject extends ExpressionProxy {
 	
-	private final Expression client;
-
 	/**
 	 * @param client
 	 */
 	public MeasuringObject(Expression client) {
-		this.client = client;
+		super(client);
 	}
 	
-	public void accept(AbstractMetricVisitor visitor) {
-		client.processWithVisitor(visitor);
-	}
 }

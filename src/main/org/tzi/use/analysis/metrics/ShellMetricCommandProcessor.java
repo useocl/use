@@ -52,17 +52,27 @@ public class ShellMetricCommandProcessor extends AbstractShellCommandProcessor {
 
 		if(delta.isEmpty()) {
 			Log.info("Arguments valid");
-			if(actualArgs.contains("--run")) _measure();
+
+			// TODO Extract metric name.
+			// TODO Extract configuration file name.
+			if(actualArgs.contains("--run")) _measure("sg", "default");
 		}
 		else {
 			Log.error("Invalid arguments: ", delta);
 		}
 	}
 
-	private void _measure() {
+	private void _measure(String metricName, String fileName) {
 		Log.info("Measuring");
 		
-		MeasurementStrategy strategy = new GSMetric("default.xml");
+		MeasurementStrategy strategy = null;
+		
+		switch(metricName) {
+		case "sg": 
+			strategy = new GSMetric(fileName);
+			break;
+		}
+		
 		Measurement measurement = new Measurement(strategy, model);
 		measurement.perform();
 		

@@ -23,6 +23,8 @@ package org.tzi.use.analysis.metrics;
 
 import java.util.ArrayList;
 
+import org.tzi.use.uml.ocl.expr.Expression;
+
 
 /**
  * TODO
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 public class GSMetric extends MeasurementStrategy {
 
 	private final GSMetricConfiguration configuration;
-	private ArrayList<String> artefactsOccurrences;
+	private ArrayList<SingleShot> singleShots;
 
 	/**
 	 * 
@@ -44,17 +46,28 @@ public class GSMetric extends MeasurementStrategy {
 
 	@Override
 	public void apply(MeasuringObject object) {
+
+		// TODO Handle expandOperations properly
 		GSMetricVisitor visitor = new GSMetricVisitor(true);
+
 		object.accept(visitor);
 	}
 
-	public void push(String artefact) {
-		artefactsOccurrences.add(artefact);
+	public void pushSingleShot(Expression expression) {
+		SingleShot singleShot = new SingleShot(this, expression);
+		singleShots.add(singleShot);
 	}
 	
-	public void calculate() {
-		for(String artefact: artefactsOccurrences) {
-			configuration.getWeightFor(artefact);
-		}
+	public float inject() {
+		float total = 0;
+		for(SingleShot singleShot: singleShots) total += singleShot.measuredValue();
+		
+		return total;
 	}
+	
+	// delegate
+	public float getWeightFor(String name) {
+		return configuration.getWeightFor(name);
+	}
+	
 }

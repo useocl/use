@@ -31,4 +31,8 @@ public class MeasurementStrategy {
 
 	public void apply(MeasuringObject object) {
 	}
+	
+	public float getWeightFor(String name) {
+		return 0;
+	}
 }
