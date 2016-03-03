@@ -66,6 +66,10 @@ public class CSVFileReader {
 
 			String csvLine;
 			while((csvLine = csvBuffer.readLine()) != null) {
+				
+				// skip comment lines starting with #
+				if(csvLine.startsWith("#")) continue;
+				
 				String[] splits = csvLine.split("\\s*,\\s*");
 				ArrayList<String> result = new ArrayList<String>(Arrays.asList(splits));
 				lines.add(result);

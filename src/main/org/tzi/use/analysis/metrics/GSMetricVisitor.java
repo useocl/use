@@ -22,8 +22,14 @@
 package org.tzi.use.analysis.metrics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
+import org.tzi.use.uml.ocl.expr.ExpAllInstances;
+import org.tzi.use.uml.ocl.expr.ExpAny;
+import org.tzi.use.uml.ocl.expr.ExpAsType;
+import org.tzi.use.uml.ocl.expr.ExpCollect;
+import org.tzi.use.uml.ocl.expr.ExpCollectNested;
 import org.tzi.use.uml.ocl.expr.ExpExists;
 import org.tzi.use.uml.ocl.expr.ExpForAll;
 import org.tzi.use.uml.ocl.expr.ExpOne;
@@ -37,10 +43,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
  */
 public class GSMetricVisitor extends AbstractMetricVisitor {
 
-	private Stack<ExpForAll> forAllStack = new Stack<ExpForAll>(); 
-	private Stack<ExpSelect> selectStack = new Stack<ExpSelect>();
-	private Stack<ExpExists> existsStack = new Stack<ExpExists>();
-	private Stack<ExpOne> oneStack = new Stack<ExpOne>();
+	private HashMap<String, Stack<Expression>> stackMap = new HashMap<String, Stack<Expression>>();
 
 	/**
 	 * @param expandOperations
@@ -48,44 +51,97 @@ public class GSMetricVisitor extends AbstractMetricVisitor {
 	public GSMetricVisitor(GSMetric measurement, boolean expandOperations) {
 		super(measurement, expandOperations);
 	}
+	
+	// TODO visitPlain, visitDescend
+	
+	@Override
+	public void visitAllInstances(ExpAllInstances exp) {
+		visitExpression(exp);
+		popFromStack(exp);
+	}
+	
+	@Override
+	public void visitAny(ExpAny exp) {
+		visitExpression(exp);
+		visitQuery(exp);
+		popFromStack(exp);
+	}
+	
+	@Override
+	public void visitAsType(ExpAsType exp) {
+		visitExpression(exp);
+		popFromStack(exp);
+	}
+
+	@Override
+	public void visitCollect(ExpCollect exp) {
+		visitExpression(exp);
+		visitQuery(exp);
+		popFromStack(exp);
+	}
+	
+	@Override
+	public void visitCollectNested(ExpCollectNested exp) {
+		visitExpression(exp);
+		visitQuery(exp);
+		popFromStack(exp);
+	}
+	
+	// XXX
 
 	@Override
 	public void visitForAll(ExpForAll exp) {
-
-		// Log.info("Visiting ", exp);
-
-		forAllStack.push(exp);
-
-		// Log.info();
-		// Log.info("LEVEL:", forAllStack.size());
-		// Log.info();
-
-		measurement.pushSingleShot(exp, new ArrayList<Expression>(forAllStack));
+		visitExpression(exp);
 		visitQuery(exp);
-		forAllStack.pop();
+		popFromStack(exp);
 	}
 
 	@Override
 	public void visitSelect(ExpSelect exp) {
-		selectStack.push(exp);
-		measurement.pushSingleShot(exp, new ArrayList<Expression>(selectStack));
+		visitExpression(exp);
 		visitQuery(exp);
-		selectStack.pop();
+		popFromStack(exp);
 	}
 
 	@Override
 	public void visitExists(ExpExists exp) {
-		existsStack.push(exp);
-		measurement.pushSingleShot(exp, new ArrayList<Expression>(existsStack));
+		visitExpression(exp);
 		visitQuery(exp);
-		existsStack.pop();
+		popFromStack(exp);
 	}
 
 	@Override
 	public void visitOne(ExpOne exp) {
-		oneStack.push(exp);
-		measurement.pushSingleShot(exp, new ArrayList<Expression>(oneStack));
+		visitExpression(exp);
 		visitQuery(exp);
-		oneStack.pop();
+		popFromStack(exp);
 	}
+	
+	
+	/** private section **/
+	
+	private String pushToStack(Expression expression) {
+		String stackKey = expression.getClass().getName(); 
+		Stack<Expression> stack = stackMap.get(stackKey);
+
+		if(stack == null) {
+			stack = new Stack<Expression>();
+			stackMap.put(stackKey, stack);
+		}
+
+		stackMap.get(stackKey).push(expression);
+
+		return stackKey;
+	}
+
+	private void popFromStack(Expression expression) {
+		String stackKey = expression.getClass().getName();
+		stackMap.get(stackKey).pop();
+	}
+
+	private void visitExpression(Expression expression) {
+		String stackKey = pushToStack(expression);
+		measurement.pushSingleShot(expression, new ArrayList<Expression>(stackMap.get(stackKey)));
+	}
+
 }

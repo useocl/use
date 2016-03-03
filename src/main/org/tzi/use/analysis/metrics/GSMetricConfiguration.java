@@ -24,6 +24,8 @@ package org.tzi.use.analysis.metrics;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.tzi.use.util.Log;
+
 /**
  * TODO
  * @author ms
@@ -57,6 +59,12 @@ public class GSMetricConfiguration {
 	}
 
 	public float getWeightFor(String name) {
+		
+		if(!entries.containsKey(name)) {
+			Log.error("No weight found for >" + name + "< expressions, using 0.");
+			return 0;
+		}
+		
 		ConfigurationEntry entry = entries.get(name);
 		return entry.getWeightValue();
 	}

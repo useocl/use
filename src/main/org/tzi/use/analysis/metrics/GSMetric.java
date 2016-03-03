@@ -46,7 +46,7 @@ public class GSMetric extends MeasurementStrategy {
 	}
 
 	// TODO argument input
-	private final NestingMode nestingMode = NestingMode.simpleNesting;
+	private final NestingMode nestingMode = NestingMode.none;
 
 	/**
 	 * 
@@ -70,6 +70,8 @@ public class GSMetric extends MeasurementStrategy {
 		singleShots.add(singleShot);
 	}
 
+	// total is the sum of all single shot measurements
+	// each single shot represents the measurement of one compound OCL expression
 	public float inject() {
 		float total = 0;
 		for(SingleShot singleShot: singleShots) total += singleShot.measuredValue();
