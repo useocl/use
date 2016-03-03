@@ -32,8 +32,11 @@ import org.tzi.use.uml.ocl.expr.ExpCollect;
 import org.tzi.use.uml.ocl.expr.ExpCollectNested;
 import org.tzi.use.uml.ocl.expr.ExpExists;
 import org.tzi.use.uml.ocl.expr.ExpForAll;
+import org.tzi.use.uml.ocl.expr.ExpIterate;
 import org.tzi.use.uml.ocl.expr.ExpOne;
+import org.tzi.use.uml.ocl.expr.ExpReject;
 import org.tzi.use.uml.ocl.expr.ExpSelect;
+import org.tzi.use.uml.ocl.expr.ExpSortedBy;
 import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
@@ -87,29 +90,27 @@ public class GSMetricVisitor extends AbstractMetricVisitor {
 		popFromStack(exp);
 	}
 	
-	// XXX
-
-	@Override
-	public void visitForAll(ExpForAll exp) {
-		visitExpression(exp);
-		visitQuery(exp);
-		popFromStack(exp);
-	}
-
-	@Override
-	public void visitSelect(ExpSelect exp) {
-		visitExpression(exp);
-		visitQuery(exp);
-		popFromStack(exp);
-	}
-
 	@Override
 	public void visitExists(ExpExists exp) {
 		visitExpression(exp);
 		visitQuery(exp);
 		popFromStack(exp);
 	}
-
+	
+	@Override
+	public void visitForAll(ExpForAll exp) {
+		visitExpression(exp);
+		visitQuery(exp);
+		popFromStack(exp);
+	}
+	
+	@Override
+	public void visitIterate(ExpIterate exp) {
+		visitExpression(exp);
+		visitQuery(exp);
+		popFromStack(exp);
+	}
+	
 	@Override
 	public void visitOne(ExpOne exp) {
 		visitExpression(exp);
@@ -117,6 +118,26 @@ public class GSMetricVisitor extends AbstractMetricVisitor {
 		popFromStack(exp);
 	}
 	
+	@Override
+	public void visitReject(ExpReject exp) {
+		visitExpression(exp);
+		visitQuery(exp);
+		popFromStack(exp);
+	}
+	
+	@Override
+	public void visitSelect(ExpSelect exp) {
+		visitExpression(exp);
+		visitQuery(exp);
+		popFromStack(exp);
+	}
+	
+	@Override
+	public void visitSortedBy(ExpSortedBy exp) {
+		visitExpression(exp);
+		visitQuery(exp);
+		popFromStack(exp);
+	}
 	
 	/** private section **/
 	
