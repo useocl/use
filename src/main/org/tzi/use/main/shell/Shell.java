@@ -249,8 +249,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 				processLineSafely(line);
 			} else {
-				fFinished = fReadlineStack.popCurrentReadline();
-				setFileClosed();
+				fFinished = !fReadlineStack.hasReadline();
 				if (fFinished && Options.quiet) {
 					processLineSafely("check");
 				}
@@ -270,6 +269,7 @@ public final class Shell implements Runnable, PPCHandler {
 			
 			if(line == null){
 				boolean readlineStackEmpty = fReadlineStack.popCurrentReadline();
+				setFileClosed();
 				if(readlineStackEmpty){
 					if(multiLine){
 						// End of input terminates multiline but executes it
