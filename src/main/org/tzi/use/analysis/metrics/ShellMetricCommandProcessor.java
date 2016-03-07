@@ -75,7 +75,8 @@ public class ShellMetricCommandProcessor extends AbstractShellCommandProcessor {
 		
 		Measurement measurement = new Measurement(strategy, model);
 		measurement.perform();
-		measurement.displayResults();
+		MeasurementReport report = measurement.getReport();
+		report.publishPlain();
 		
 		//Log.info("Result/Complexity: " + measurement.getResult());
 		
