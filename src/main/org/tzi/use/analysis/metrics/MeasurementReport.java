@@ -42,6 +42,8 @@ public class MeasurementReport {
 	// TODO categorize output, therefore group and sort objects
 	// TODO delegate sorting to objects
 	
+	// TODO see http://www.dynamicreports.org/getting-started for sophisticated report output
+	
 	public void publishPlain() {
 
 		Log.info();
@@ -53,7 +55,10 @@ public class MeasurementReport {
 		
 		while(each.hasNext()) {
 			MeasurementResultElement resultElement = each.next();
-			Log.info(String.join("\r\n", resultElement.publishPlain()));
+			
+			// Log.info(String.join("\r\n", resultElement.publishPlain()));
+			Log.info(resultElement.publishPlain());
+
 			each.remove(); // avoids ConcurrentModificationExceptions
 		}
 		
