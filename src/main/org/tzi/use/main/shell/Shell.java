@@ -125,11 +125,6 @@ public final class Shell implements Runnable, PPCHandler {
 	private volatile boolean fFinished = false;
 
 	/**
-	 * If true read multiple lines into a single command before processing.
-	 */
-	private boolean fMultiLineMode = false;
-
-	/**
 	 * The session contains the system most commands act on.
 	 */
 	private Session fSession;
@@ -243,22 +238,7 @@ public final class Shell implements Runnable, PPCHandler {
 			// get current readline (may be e.g. console or file)
 			fReadline = fReadlineStack.getCurrentReadline();
 			try {
-				if (fMultiLineMode) {
-					while (true) {
-						// use special prompt to emphasize multi-line input
-						String oneLine = fReadline.readline(CONTINUE_PROMPT);
-
-						// end of input or a single dot terminates the input
-						// loop
-						if (oneLine == null || oneLine.equals(".")) {
-							break;
-						}
-						line += oneLine + Options.LINE_SEPARATOR;
-					}
-					fMultiLineMode = false;
-				} else {
-					line = fReadline.readline(PROMPT);
-				}
+				line = readline(PROMPT);
 			} catch (IOException ex) {
 				Log.error("Cannot read line: " + ex.getMessage());
 			}
@@ -279,10 +259,44 @@ public final class Shell implements Runnable, PPCHandler {
 		cmdExit();
 	}
 	
-	public Readline getCurrentReadline() {
-		return fReadlineStack.getCurrentReadline();
+	public synchronized String readline(String prompt) throws IOException {
+		String line = null;
+		
+		boolean multiLine = false;
+		final StringBuilder multiSB = new StringBuilder();
+		do {
+			String usedPrompt = multiLine ? CONTINUE_PROMPT : prompt;
+			line = fReadlineStack.getCurrentReadline().readline(usedPrompt);
+			
+			if(line == null){
+				boolean readlineStackEmpty = fReadlineStack.popCurrentReadline();
+				if(readlineStackEmpty){
+					if(multiLine){
+						// End of input terminates multiline but executes it
+						return multiSB.toString();
+					} else {
+						return null;
+					}
+				}
+				continue;
+			}
+			
+			if (multiLine) {
+				if (line.equals(".")) {
+					multiLine = false;
+					line = multiSB.toString();
+				} else {
+					multiSB.append(line).append(Options.LINE_SEPARATOR);
+				}
+			} else if(line.equals("\\")){
+				// enter multiline mode
+				multiLine = true;
+			}
+		} while(multiLine || line == null);
+		
+		return line;
 	}
-
+	
 	/**
 	 * Initializes readline.
 	 */
@@ -398,8 +412,6 @@ public final class Shell implements Runnable, PPCHandler {
 			cmdExec(line.substring(2).trim(), true);
 		} else if (line.startsWith("!")) {
 			cmdExec(line.substring(1).trim(), false);
-		} else if (line.equals("\\")) {
-			cmdMultiLine();
 		} else if (line.equals("check") || line.startsWith("check ")) {
 			cmdCheck(line);
 		} else if (line.equals("genvcg")) {
@@ -976,13 +988,6 @@ public final class Shell implements Runnable, PPCHandler {
 		MSystem system = system();
 
 		System.out.print(system.getVariableEnvironment());
-	}
-
-	/**
-	 * Sets input to multi-line mode.
-	 */
-	private void cmdMultiLine() {
-		fMultiLineMode = true;
 	}
 
 	/**

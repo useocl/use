@@ -71,8 +71,9 @@ public class StreamReadline implements Readline {
     public String readline(String prompt) throws IOException {
         if (fStaticPrompt != null ) {
             USEWriter.getInstance().getOut().print(fStaticPrompt);
-        } else
+        } else {
             USEWriter.getInstance().getOut().print(prompt);
+        }
         
         String line = fBufferedReader.readLine();
         
