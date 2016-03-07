@@ -61,9 +61,6 @@ public class ReadlineStack {
     }
     
     public synchronized boolean popCurrentReadline() {
-//    	if(fReadlineStack.isEmpty()){
-//    		return true;
-//    	}
         try {
     		getCurrentReadline().close();
         } catch (IOException ex) {
