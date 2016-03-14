@@ -28,6 +28,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
@@ -48,6 +49,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -558,6 +560,28 @@ public abstract class DiagramView extends JPanel
     	
         return res;
     }
+    
+    public Set<PlaceableNode> findNodesInArea(Rectangle r){
+    	Set<PlaceableNode> res = new HashSet<PlaceableNode>();
+    	
+    	synchronized (fGraph) {
+    		Iterator<PlaceableNode> nIter = fGraph.getVisibleNodesIterator();
+    		while (nIter.hasNext()) {
+	            PlaceableNode n = nIter.next();
+	            if (!n.isInitialized()) continue;
+	            
+	            if(r.contains(n.getBounds())){
+	            	res.add(n);
+	            }
+    		}
+		}
+    	
+    	return res;
+    }
+    
+	public SelectionBox createSelectionBox(Point p) {
+		return new SelectionBox(p);
+	}
     
     protected class PopupMenuInfo {
     	
