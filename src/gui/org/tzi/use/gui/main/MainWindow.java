@@ -1368,6 +1368,9 @@ public class MainWindow extends JFrame {
     	
     	private final boolean exportAll;
     	
+    	/**
+    	 * @param exportAll whether to export the view border or not
+    	 */
     	ActionFileExportView(boolean exportAll) {
             super("Export view as PDF...", getIcon("export_pdf.png"));
             this.setEnabled(false);

@@ -179,11 +179,11 @@ public class StateMachineDiagramView extends JPanel implements View, PrintableVi
 	
 	@Override
 	public float getContentHeight() {
-		return (float)diagram.getPreferredSize().getHeight();
+		return diagram.getPreferredSize().height;
 	}
 
 	@Override
 	public float getContentWidth() {
-		return (float)diagram.getPreferredSize().getWidth();
+		return diagram.getPreferredSize().width;
 	}
 }

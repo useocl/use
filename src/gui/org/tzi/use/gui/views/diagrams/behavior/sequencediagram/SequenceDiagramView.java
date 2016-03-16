@@ -132,12 +132,12 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView {
 
 	@Override
 	public float getContentHeight() {
-		return (float) fSeqDiag.getPreferredSize().getHeight();
+		return fSeqDiag.getPreferredSize().height;
 	}
 
 	@Override
 	public float getContentWidth() {
-		return (float) fSeqDiag.getPreferredSize().getWidth();
+		return fSeqDiag.getPreferredSize().width;
 	}
 
 }

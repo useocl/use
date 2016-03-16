@@ -168,11 +168,11 @@ public class ClassDiagramView extends JPanel
 
 	@Override
 	public float getContentHeight() {
-		return this.getHeight();
+		return fClassDiagram.getPreferredSize().height;
 	}
 	
 	@Override
 	public float getContentWidth() {
-		return this.getWidth();
+		return fClassDiagram.getPreferredSize().width;
 	}
 }

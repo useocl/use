@@ -155,12 +155,12 @@ public class CommunicationDiagramView extends JPanel implements View, PrintableV
 
 	@Override
 	public float getContentHeight() {
-		return this.getHeight();
+		return comDia.getPreferredSize().height;
 	}
 
 	@Override
 	public float getContentWidth() {
-		return this.getWidth();
+		return comDia.getPreferredSize().width;
 	}
 
 	@Override

@@ -360,6 +360,15 @@ public abstract class DiagramView extends JPanel
 	        	PlaceableNode southNode = e.getWayPointMostTo(Direction.SOUTH);
 	        	maxY = Math.max(maxY, southNode.getY() + southNode.getHeight());
 	        	e.drawProperties(g2d);
+	        	
+	        	for (EdgeProperty ep : e.getProperties()) {
+	        		//TODO refactor hidden/visible management on PlaceableNode (EdgeProperty)
+	        		if(!ep.isVisible()){
+	        			continue;
+	        		}
+					maxX = Math.max(maxX, ep.getX() + ep.getWidth());
+					maxY = Math.max(maxY, ep.getY() + ep.getHeight());
+				}
 	        }
 	        
 	        Dimension newDimension = new Dimension( (int)maxX + 5, (int)maxY + 5);

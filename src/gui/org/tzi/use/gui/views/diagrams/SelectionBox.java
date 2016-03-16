@@ -49,11 +49,11 @@ public class SelectionBox extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Color oldColor = g.getColor();
-        g.setColor(Color.BLACK);
-        g.drawRect(0, 0, this.getWidth()-1, this.getHeight()-1);
-        
         g.setColor(new Color(192, 192, 192, 50));
-        g.fillRect(1, 1, this.getWidth()-2, this.getHeight()-2);
+        g.fillRect(1, 1, Math.max(0, this.getWidth()-2), Math.max(0, this.getHeight()-2));
+        
+        g.setColor(Color.DARK_GRAY);
+        g.drawRect(0, 0, Math.max(0, this.getWidth()-1), Math.max(0, this.getHeight()-1));
         g.setColor(oldColor);
     }
     

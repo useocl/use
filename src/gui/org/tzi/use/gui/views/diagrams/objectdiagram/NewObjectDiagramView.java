@@ -92,7 +92,7 @@ public class NewObjectDiagramView extends JPanel
         initDiagram(false, null);
     }
 
-    public void initDiagram(boolean loadDefaultLayout, ObjDiagramOptions opt) {		
+    public void initDiagram(boolean loadDefaultLayout, ObjDiagramOptions opt) {
     	if (opt == null)
 			fObjectDiagram = new NewObjectDiagram( this, fMainWindow.logWriter());
 		else
@@ -325,11 +325,11 @@ public class NewObjectDiagramView extends JPanel
 
 	@Override
 	public float getContentHeight() {
-		return this.getHeight();
+		return fObjectDiagram.getPreferredSize().height;
 	}
 
 	@Override
 	public float getContentWidth() {
-		return this.getWidth();
+		return fObjectDiagram.getPreferredSize().width;
 	}
 }

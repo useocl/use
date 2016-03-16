@@ -69,10 +69,11 @@ public class ViewFrame extends JInternalFrame {
     	
     	if (!exportThis) {
     		component = (JComponent)fView;
+    		
     		// Dirty hack to remove the exported frame of a scroll bar
     		if (component.getComponent(0) instanceof JScrollPane) {
-    			component = (JComponent)component.getComponent(0);
-    			component = (JComponent)component.getComponent(0);
+    			JScrollPane scrollPane = (JScrollPane) component.getComponent(0);
+    			component = (JComponent) scrollPane.getViewport().getView();
     		}
     	} else {
     		component = this;
