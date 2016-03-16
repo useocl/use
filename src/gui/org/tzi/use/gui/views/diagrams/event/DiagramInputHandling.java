@@ -195,7 +195,7 @@ public final class DiagramInputHandling implements MouseListener,
 		        
 		    	fDiagram.repaint();
 		    }
-		    if (pickedEdge != null) {
+		    else if (pickedEdge != null) {
 		        // add or remove this component to the selection
 		        if (fEdgeSelection.isSelected(pickedEdge))
 		        	fEdgeSelection.remove(pickedEdge);
@@ -203,6 +203,13 @@ public final class DiagramInputHandling implements MouseListener,
 		        	fEdgeSelection.add( pickedEdge );
 		        
 		        fDiagram.repaint();
+		    }
+		    else {
+		    	// additive selection rectangle
+		    	selectionRectangle = fDiagram.createSelectionBox(e.getPoint());
+                fDiagram.add(selectionRectangle);
+                
+                fDiagram.repaint();
 		    }
 		break;
         case InputEvent.BUTTON2_MASK:
@@ -258,7 +265,7 @@ public final class DiagramInputHandling implements MouseListener,
     @Override
 	public synchronized void mouseDragged(MouseEvent e) {
     	
-    	// repaint selection rectangle
+    	// update selection rectangle
     	if(selectionRectangle != null){
     		selectionRectangle.updateForCursorPosition(e.getPoint());
     	}
