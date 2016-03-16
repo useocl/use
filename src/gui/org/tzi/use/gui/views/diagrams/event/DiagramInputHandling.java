@@ -121,6 +121,7 @@ public final class DiagramInputHandling implements MouseListener,
                 return;
            } else if ( pickedObjectNode instanceof ResizeNode) {
         	   ((ResizeNode) pickedObjectNode).setToCalculatedSize();
+        	   fDiagram.invalidateNode(((ResizeNode) pickedObjectNode).getNodeToResize());
                fDiagram.repaint();
                return;
            } else if ( pickedObjectNode instanceof CommentNode) {

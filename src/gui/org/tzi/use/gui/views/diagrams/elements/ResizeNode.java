@@ -127,11 +127,12 @@ public class ResizeNode extends PlaceableNode {
 	protected String getStoreType() {
 		return "";
 	}
+	
+	public PlaceableNode getNodeToResize() {
+		return nodeToResize;
+	}
 
-	/**
-	 * 
-	 */
 	public void setToCalculatedSize() {
-		this.nodeToResize.setSizeIsCalculated(false);
+		this.nodeToResize.setSizeIsCalculated(true);
 	}
 }
