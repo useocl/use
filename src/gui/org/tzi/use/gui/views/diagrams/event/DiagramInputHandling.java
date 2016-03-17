@@ -159,6 +159,7 @@ public final class DiagramInputHandling implements MouseListener,
                 	resizeNode = (ResizeNode)pickedObjectNode;
                 	fDragMode = DragMode.RESIZE_ITEM;
                 } else {
+                	fIsDragging = true;
                 	fDragMode = DragMode.DRAG_ITEMS;
                 	resizeNode = null;
                 }
