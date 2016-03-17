@@ -638,10 +638,14 @@ public abstract class DiagramView extends JPanel
 			});
         }
         
+        if (!this.fEdgeSelection.isEmpty()) {
+        	popupMenu.add(getMenuItemEdgePropertiesVivibility());
+        }
+        
         popupMenu.add(new JSeparator());
         
-        final JCheckBoxMenuItem cbAttrValues = new JCheckBoxMenuItem(
-        "Show attributes"); // values");
+
+		final JCheckBoxMenuItem cbAttrValues = new JCheckBoxMenuItem("Show attributes"); // values");
         cbAttrValues.setState( fOpt.isShowAttributes() );
         cbAttrValues.addItemListener(new ItemListener() {
             @Override
@@ -651,8 +655,7 @@ public abstract class DiagramView extends JPanel
             }
         });
         
-        final JCheckBoxMenuItem cbAssocNames = new JCheckBoxMenuItem(
-        "Show association names");
+        final JCheckBoxMenuItem cbAssocNames = new JCheckBoxMenuItem("Show association names");
         cbAssocNames.setState( fOpt.isShowAssocNames() );
         cbAssocNames.addItemListener(new ItemListener() {
             @Override
@@ -662,8 +665,7 @@ public abstract class DiagramView extends JPanel
             }
         });
         
-        final JCheckBoxMenuItem cbRolenames = new JCheckBoxMenuItem(
-        "Show role names");
+        final JCheckBoxMenuItem cbRolenames = new JCheckBoxMenuItem("Show role names");
         cbRolenames.setState( fOpt.isShowRolenames() );
         cbRolenames.addItemListener(new ItemListener() {
             @Override
@@ -673,10 +675,6 @@ public abstract class DiagramView extends JPanel
             }
         });
        
-        if (!this.fEdgeSelection.isEmpty()) {
-        	popupMenu.add(getMenuItemEdgePropertiesVivibility());
-        }
-        
         final JCheckBoxMenuItem cbAntiAliasing = getMenuItemAntiAliasing();
         final JCheckBoxMenuItem cbShowGrid = getMenuItemShowGrid();
         final JCheckBoxMenuItem cbGrayscale = getMenuItemGrayscale();
