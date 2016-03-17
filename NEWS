@@ -1,8 +1,22 @@
-USE NEWS -- history of user-visible changes. -*- Text -*-
+USE NEWS -- history of user-visible changes.
 Please see the file `README' for a description of how to report bugs.
 
-** Change since version 4.1.0
+** Change since version 4.1.1
+* [GUI] Improved selection of nodes in diagram views
+    * It is now possible to select multiple nodes at once by drawing a selection rectangle around them with the left mouse button
+	* Holding down `Shift' during the selection adds objects to the selection
 
+* [GUI] Exporting a diagram now exports the complete diagram instead of only the parts visible in the GUI
+
+* [GUI] In the class diagram it is possible to group multiplicities and rolenames to easier adjust their positions
+
+* [OCL] Improved identification of tautologies and contradiction in OCL parser regarding collection types
+
+* [USE] Added interface to the shell allowing plugins to ask for user input. This takes into account currently read files opened via the shell
+
+* [USE] Many bug fixes in the diagram views
+
+** Change since version 4.1.0
 * [GUI] Fixed a crash of the communication diagram when an operation with
   result value returns to the actor
 
