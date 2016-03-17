@@ -1543,4 +1543,12 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 	public Set<? extends PlaceableNode> getHiddenNodes() {
 		return Sets.newHashSet(fGraph.getHiddenNodesIterator());
 	}
+	
+	@Override
+	public void moveObjectNode( MObject obj, int x, int y ) {
+		PlaceableNode node = getNodeForObject(obj);
+		if(node != null){
+			node.moveToPosition(x, y);
+		}
+	}
 }

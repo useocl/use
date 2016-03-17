@@ -453,6 +453,19 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
     	}
     }
     
+    @Override
+    public void moveObjectNode( MObject obj, int x, int y ) {
+    	PlaceableNode node = null; 
+    	if(visibleData.fObjectToNodeMap.containsKey(obj)){
+    		node = visibleData.fObjectToNodeMap.get(obj);
+    	}
+    	else if(hiddenData.fObjectToNodeMap.containsKey(obj)){
+    		node = hiddenData.fObjectToNodeMap.get(obj);
+    	}
+    	if(node != null){
+    		node.moveToPosition(x, y);
+    	}
+    }
 	
     /**
      * Hides an object in the diagram
@@ -986,7 +999,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
 		for (PlaceableNode node : fNodeSelection) {
             if (node instanceof ObjectNode ) {
                 selectedObjects.add(((ObjectNode) node).object());
-            } else if (node instanceof AssociationName) { 
+			} else if (node instanceof AssociationName) { 
 				MLink link = ((AssociationName)node).getLink();
 				selectedObjectsOfAssociation.addAll(link.linkedObjects());
 				selectedLinks.add(link);

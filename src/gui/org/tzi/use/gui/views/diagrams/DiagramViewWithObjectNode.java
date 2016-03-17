@@ -29,24 +29,17 @@ import org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram;
 import org.tzi.use.uml.sys.MObject;
 
 /**
- * TODO
  * @author Quang Dung Nguyen
- *
  */
 @SuppressWarnings("serial")
 public abstract class DiagramViewWithObjectNode extends DiagramView {
 
-    /**
-     * @param opt
-     * @param log
-     */
     public DiagramViewWithObjectNode(DiagramOptions opt, PrintWriter log) {
 	super(opt, log);
     }
 
     /**
      * Show all objects contained in <code>objects</code>
-	 * @param objects
 	 */
     public void showObjects(Set<MObject> objects) {
 	for (MObject o : objects) {
@@ -56,22 +49,15 @@ public abstract class DiagramViewWithObjectNode extends DiagramView {
     
     /**
 	 * Hides all objects included in <code>objects</code>
-	 * @param objects
 	 */
     public void hideObjects(Set<MObject> objects) {
 	for (MObject o : objects)
 		hideObject(o);
     }
 
-    /**
-     * @param obj
-     */
     public abstract void hideObject(MObject obj);
-
-    /**
-     * @param obj
-     */
     public abstract void showObject(MObject obj);
+    public abstract void moveObjectNode(MObject obj, int x, int y);
 
     /**
      * Hides all elements included in <code>objectsToHide</code> in this diagram.
