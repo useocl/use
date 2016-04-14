@@ -1051,6 +1051,7 @@ public class ClassDiagram extends DiagramView
         // setting the right position for the popupMenu items 
         // from this point on.
         pos += info.generalShowHideStart;
+        int extraShowHideLength = info.generalShowHideLength;
 
         // put this node before separator
         final JCheckBoxMenuItem cbGroupMR = new JCheckBoxMenuItem("Group multiplicities / role names" );
@@ -1066,15 +1067,18 @@ public class ClassDiagram extends DiagramView
         
         // start general show/hide check boxes
         pos++; // Skip 'show attributes'
+        extraShowHideLength--;
         popupMenu.insert( cbOperations, ++pos);
         pos++; // Skip 'show association names'
+        extraShowHideLength--;
         popupMenu.insert( cbMultiplicities, ++pos);
         pos++; // Skip 'show role names'
+        extraShowHideLength--;
         popupMenu.insert( cbUnion, ++pos );
         popupMenu.insert( cbSubsets, ++pos );
         popupMenu.insert( cbRedefines, ++pos );
         
-        pos += info.generalShowHideLength + 1;
+        pos += extraShowHideLength + 1;
         
         {
 	        final JMenu menuCoverage = new JMenu("Show coverage" );
