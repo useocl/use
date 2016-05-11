@@ -189,6 +189,18 @@ public class DiamondNode extends PlaceableNode {
 		super.setDraggedPosition(deltaX, deltaY);
 	}
 
+	public void resetPositionStrategy(){
+		Set<PlaceableNode> related = new HashSet<PlaceableNode>();
+		
+		for (EdgeBase edgeBase : fHalfEdges) {
+			related.add(edgeBase.target());
+		}
+		
+		if(related.size() > 1){
+			this.setStrategy(new StrategyInBetween(this, related.toArray(new PlaceableNode[0]), 0, 0));
+		}
+	}
+	
 	@Override
 	public PlaceableNode getRelatedNode(double x, double y) {
 		if (fAssocName != null && fAssocName.occupies(x, y))

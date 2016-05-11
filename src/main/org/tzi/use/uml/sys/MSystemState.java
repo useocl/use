@@ -1466,7 +1466,7 @@ public final class MSystemState {
 			try {
 				linkedObjects = evaluateDeriveExpression(sourceObjects, derivedEnd);
 			} catch (StackOverflowError e) {
-				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to an stack overflow!\nMaybe an infinite recursion is defined.");
+				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a stack overflow!\nMaybe an infinite recursion is defined.");
 				continue;
 			} catch (RuntimeException e) {
 				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a runtime exception: " + e.getMessage());

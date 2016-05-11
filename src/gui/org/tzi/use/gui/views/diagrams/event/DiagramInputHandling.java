@@ -43,6 +43,7 @@ import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.SelectionBox;
 import org.tzi.use.gui.views.diagrams.elements.CommentNode;
+import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.ResizeNode;
@@ -124,6 +125,10 @@ public final class DiagramInputHandling implements MouseListener,
         	   fDiagram.invalidateNode(((ResizeNode) pickedObjectNode).getNodeToResize());
                fDiagram.repaint();
                return;
+           } else if ( pickedObjectNode instanceof DiamondNode) {
+        	   ((DiamondNode) pickedObjectNode).resetPositionStrategy();
+        	   fDiagram.invalidateNode(pickedObjectNode);
+        	   fDiagram.repaint();
            } else if ( pickedObjectNode instanceof CommentNode) {
         	   // Contextmenuitem for CommentNode 
         	   ((CommentNode) pickedObjectNode).setEditable();
