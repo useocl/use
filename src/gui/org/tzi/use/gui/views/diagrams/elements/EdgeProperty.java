@@ -30,6 +30,7 @@ import java.awt.font.TextAttribute;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -209,7 +210,8 @@ public abstract class EdgeProperty extends PlaceableNode {
 		Font font;
 		
 		if ( this.isLink ) {
-        	Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>(); 
+			//TODO does not work in PDF export
+        	Map<TextAttribute, Integer> attributes = new HashMap<TextAttribute, Integer>(); 
         	attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         	font = g.getFont().deriveFont(attributes);
         } else {
@@ -250,7 +252,8 @@ public abstract class EdgeProperty extends PlaceableNode {
     	
     	String[] lines = fName.split("\n");
     	for (String line : lines) {
-    		g2.drawString(line, x, y);
+    		AttributedString str = new AttributedString(line, g2.getFont().getAttributes());
+    		g2.drawString(str.getIterator(), x, y);
     		y += lineHeight;
     	}
     }
