@@ -6,6 +6,7 @@
 # Add -Xss20m to VMARGS when using the generator
 VMARGS=""
 
+unset CDPATH
 BIN_DIR="$( cd "$( dirname "$0" )" && pwd )"
 USE_HOME="$BIN_DIR/.."
 USE_JAR="$USE_HOME/lib/use.jar"
@@ -15,7 +16,7 @@ if [ ! -f "$USE_JAR" ]; then
 	exit 1
 fi
 
-LD_LIBRARY_PATH="$USE_HOME/lib"
+export LD_LIBRARY_PATH="$USE_HOME/lib:$LD_LIBRARY_PATH"
 
 # set cmd for running USE
 java $VMARGS -jar "$USE_JAR" "$@"
