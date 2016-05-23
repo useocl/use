@@ -61,6 +61,10 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
         return fOwner;
     }
 
+    public String qualifiedName(){
+    	return fOwner.name() + "::" + name();
+    }
+    
     /**
      * Returns the type of this attribute.
      */

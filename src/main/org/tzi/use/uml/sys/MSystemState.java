@@ -229,7 +229,7 @@ public final class MSystemState {
 			this.derivedIsDirty = true;
 			
 			if(fSystem.isImmediatlyCalculateDerivedValues()){
-				for (int i = 0; i < derivedValuesController.length; ++i) { 
+				for (int i = 0; i < derivedValuesController.length; ++i) {
 					derivedValuesController[i].updateState(diff);
 				}
 				this.derivedIsDirty = false;
@@ -1472,7 +1472,7 @@ public final class MSystemState {
 				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a runtime exception: " + e.getMessage());
 				continue;
 			} catch (MSystemException e) {
-				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a runtime exception: " + e.getMessage());
+				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a system exception: " + e.getMessage());
 				continue;
 			}
 			
@@ -1551,11 +1551,17 @@ public final class MSystemState {
 	}
 
 	public Value evaluateDeriveExpression(final ObjectValue source, final MAttribute attribute) {
-		final EvalContext ctx = new SimpleEvalContext(this, this, system().varBindings()); 
+		final EvalContext ctx = new SimpleEvalContext(this, this, system().varBindings());
     	
         ctx.pushVarBinding("self", source);
-        
-    	return attribute.getDeriveExpression().eval(ctx);
+		try {
+			return attribute.getDeriveExpression().eval(ctx);
+		} catch (StackOverflowError e) {
+			Log.error("Derive expression of attribute " + StringUtil.inQuotes(attribute.qualifiedName()) + " let to a stack overflow!\nMaybe an infinite recursion is defined.");
+		} catch (RuntimeException e) {
+			Log.error("Derive expression of attribute " + StringUtil.inQuotes(attribute.qualifiedName()) + " let to a runtime exception: " + e.getMessage());
+		}
+		return UndefinedValue.instance;
 	}
 	
 	public Value evaluateDeriveExpression(final MObject source, final MAttribute attribute) {
