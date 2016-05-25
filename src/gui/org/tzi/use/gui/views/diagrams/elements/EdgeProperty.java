@@ -210,7 +210,6 @@ public abstract class EdgeProperty extends PlaceableNode {
 		Font font;
 		
 		if ( this.isLink ) {
-			//TODO does not work in PDF export
         	Map<TextAttribute, Integer> attributes = new HashMap<TextAttribute, Integer>(); 
         	attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         	font = g.getFont().deriveFont(attributes);
