@@ -71,6 +71,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
+import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 
 /** 
@@ -367,7 +368,7 @@ public class ModelBrowser extends JPanel
         final Collection<MPrePostCondition> sortedConditions = 
             fMbs.sortPrePostConditions(fModel.prePostConditions());
         addChildNodes( top, "Pre-/Postconditions", sortedConditions );
-		
+        
 		Set<Map.Entry<String, Collection<?>>> modelCollectionEntrySet = this.modelCollections.entrySet();
 				
 		for (Map.Entry<String, Collection<?>> modelCollectionMapEntry : modelCollectionEntrySet) {
@@ -377,6 +378,17 @@ public class ModelBrowser extends JPanel
 			    .sortPluginCollection(modelCollectionMapEntry.getValue());
 		    addChildNodes(top, modelCollectionName, modelCollection);
 		}
+		
+		final Collection<MOperation> queryOperations = new ArrayList<MOperation>();
+		for (MClass mClass : fModel.classes()) {
+			for (MOperation mOperation : mClass.operations()) {
+				if(mOperation.hasExpression()){
+					queryOperations.add(mOperation);
+				}
+			}
+		}
+		
+		addChildNodes(top, "Query Operations", queryOperations);
     }
 
     /**

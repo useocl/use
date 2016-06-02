@@ -24,9 +24,11 @@ package org.tzi.use.analysis.coverage;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MModelElement;
+import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 
 /**
@@ -177,6 +179,20 @@ public class CoverageAnalyzer {
 			ppc.expression().processWithVisitor(globalVisitor);
 
 			result.put(ppc, localVisitor.getCoverageData());
+		}
+		
+		for (MClass mClass : model.classes()) {
+			for (MOperation mOperation : mClass.operations()) {
+				if(!mOperation.hasExpression()){
+					continue;
+				}
+				
+				localVisitor = new CoverageCalculationVisitor(expandOperations);
+				
+				mOperation.expression().processWithVisitor(localVisitor);
+				
+				result.put(mOperation, localVisitor.getCoverageData());
+			}
 		}
 
 		globalVisitor.getCoverageData().addUncoveredClasses(model);

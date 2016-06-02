@@ -347,4 +347,13 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
 		else
 			return super.compareTo(o);
 	}
+	
+	public String qualifiedName() {
+		return fClass.name() + "::" + name();
+	}
+	
+	@Override
+	public String toString() {
+		return qualifiedName();
+	}
 }
