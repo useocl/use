@@ -43,7 +43,7 @@ public class StreamReadline implements Readline {
      * line read will be echoed to stdout. staticPrompt may be used to
      * overwrite the prompt passed to the readline method.
      */
-     StreamReadline(BufferedReader reader,
+     public StreamReadline(BufferedReader reader,
                           boolean doEcho,
                           String staticPrompt) {
         fBufferedReader = reader;
@@ -70,7 +70,9 @@ public class StreamReadline implements Readline {
      */
     public String readline(String prompt) throws IOException {
         if (fStaticPrompt != null ) {
-            USEWriter.getInstance().getOut().print(fStaticPrompt);
+        	if(!fStaticPrompt.isEmpty()){
+        		USEWriter.getInstance().getOut().print(fStaticPrompt);
+        	}
         } else {
             USEWriter.getInstance().getOut().print(prompt);
         }
