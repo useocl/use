@@ -110,6 +110,9 @@ final class Op_sequence_append extends OpGeneric {
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		if(args[0].isUndefined()){
+			return UndefinedValue.instance;
+		}
 		SequenceValue seq = (SequenceValue) args[0];
 		return seq.append(resultType, args[1]);
 	}
@@ -145,6 +148,9 @@ final class Op_sequence_prepend extends OpGeneric {
 	}
 
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+		if(args[0].isUndefined()){
+			return UndefinedValue.instance;
+		}
 		SequenceValue seq = (SequenceValue) args[0];
 		return seq.prepend(resultType, args[1]);
 	}
