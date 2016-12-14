@@ -1,0 +1,59 @@
+<extensions>
+  <operation source="Integer" name="bitNot" returnType="Integer">
+	<body><![CDATA[
+		~$self
+	]]></body>
+  </operation>
+  <operation source="Integer" name="bitAnd" returnType="Integer">
+    <parameter>
+		<par name="i" type="Integer"/>
+	</parameter>
+	<body><![CDATA[
+		$self & $i
+	]]></body>
+  </operation>
+  <operation source="Integer" name="bitOr" returnType="Integer">
+    <parameter>
+		<par name="i" type="Integer"/>
+	</parameter>
+	<body><![CDATA[
+		$self | $i
+	]]></body>
+  </operation>
+  <operation source="Integer" name="bitXor" returnType="Integer">
+    <parameter>
+		<par name="i" type="Integer"/>
+	</parameter>
+	<body><![CDATA[
+		$self ^ $i
+	]]></body>
+  </operation>
+  <operation source="Integer" name="bitShiftLeft" returnType="Integer">
+	<body><![CDATA[
+		$self << 1
+	]]></body>
+  </operation>
+  <operation source="Integer" name="bitShiftLeftN" returnType="Integer">
+    <parameter>
+		<par name="n" type="Integer"/>
+	</parameter>
+	<body><![CDATA[
+		$self << $n
+	]]></body>
+  </operation>
+  <operation source="Integer" name="bin2Int" returnType="Integer">
+	<body><![CDATA[
+		eval("0b" + $self.to_s)
+	]]></body>
+  </operation>
+  <operation source="String" name="bin2Int" returnType="Integer">
+	<body><![CDATA[
+		eval("0b" + $self)
+	]]></body>
+  </operation>
+  <operation source="Integer" name="int2Bin" returnType="String">
+	<body><![CDATA[
+		"%b" % $self
+	]]></body>
+  </operation>
+</extensions>
