@@ -44,11 +44,11 @@ public abstract class DiagramOptions {
 	public static int XML_LAYOUT_VERSION = 13;
 	
     protected boolean fDoAutoLayout = false;
-    protected boolean fShowRolenames = false;
-    protected boolean fShowAssocNames = true;
+    protected boolean fShowRolenames = true;
+    protected boolean fShowAssocNames = false;
     protected boolean fDoAntiAliasing = false;
     protected boolean fShowMutliplicities = false;
-    protected boolean fShowAttributes = false;
+    protected boolean fShowAttributes = true;
     protected boolean fShowOperations = false;
     protected boolean fGroupMR = false;
     protected boolean fShowGrid = false;
