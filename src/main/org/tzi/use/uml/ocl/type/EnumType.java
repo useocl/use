@@ -33,8 +33,6 @@ import org.tzi.use.uml.mm.MClassifierImpl;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 
-import com.google.common.collect.Iterators;
-
 /**
  * An enumeration type.
  *
@@ -153,7 +151,7 @@ public final class EnumType extends MClassifierImpl {
 		return new Iterable<MClassifier>() {
 			@Override
 			public Iterator<MClassifier> iterator() {
-				return Iterators.emptyIterator();
+				return Collections.emptyIterator();
 			}
 		};
 	}
@@ -164,7 +162,7 @@ public final class EnumType extends MClassifierImpl {
 		return new Iterable<MClassifier>() {
 			@Override
 			public Iterator<MClassifier> iterator() {
-				return Iterators.emptyIterator();
+				return Collections.emptyIterator();
 			}
 		};
 	}

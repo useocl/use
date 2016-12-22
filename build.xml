@@ -53,7 +53,7 @@
 	<property name="combinatoricslib.jar" location="${lib.dir}/combinatoricslib-0.2.jar"/>
     <property name="vtd-xml.jar"          location="${lib.dir}/vtd-xml.jar"/>
     <property name="itextpdf.jar"         location="${lib.dir}/itextpdf-5.5.2.jar"/>
-	<property name="guava.jar"            location="${lib.dir}/guava-17.0.jar"/>
+	<property name="guava.jar"            location="${lib.dir}/guava-20.0.jar"/>
 	<property name="annotation.jar"       location="${build.libbuild.dir}/org.eclipse.jdt.annotation_1.1.0.v20130513-1648.jar"/> 
 	<property name="readline.src.dir"     location="${src.main.dir}/org/tzi/use/util/input"/>
 	<property name="parser.dir"           location="${src.main.dir}/org/tzi/use/parser"/>
