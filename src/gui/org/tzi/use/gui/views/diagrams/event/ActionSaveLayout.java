@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
@@ -38,7 +37,6 @@ import org.tzi.use.gui.views.diagrams.DiagramView;
 /**
  * Saves the current layout to a file.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 @SuppressWarnings("serial")
@@ -88,7 +86,7 @@ public class ActionSaveLayout extends AbstractAction {
             lastFile = Options.getLastDirectory().resolve(filename);
             
             if (Files.exists(lastFile)) {
-                option = JOptionPane.showConfirmDialog(new JPanel(),
+                option = JOptionPane.showConfirmDialog(MainWindow.instance(),
                         "Overwrite existing file " + lastFile + "?",
                         "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
                 if (option == JOptionPane.CANCEL_OPTION) {
