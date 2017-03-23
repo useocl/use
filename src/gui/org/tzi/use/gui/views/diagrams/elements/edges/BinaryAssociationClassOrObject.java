@@ -203,4 +203,9 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 		BinaryAssociationClassOrObject edge = new BinaryAssociationClassOrObject(source, target, sourceEnd, targetEnd, linkObjectNode, diagram, link);
 		return edge;
     }
+	
+	public PlaceableNode getClassOrObjectNode() {
+		return fAssociationClassOrObjectNode;
+	}
+	
 }

@@ -27,6 +27,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +67,7 @@ import org.tzi.use.uml.sys.events.ClassInvariantChangedEvent;
 import org.tzi.use.uml.sys.events.ClassInvariantsLoadedEvent;
 import org.tzi.use.uml.sys.events.ClassInvariantsUnloadedEvent;
 import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
+import org.tzi.use.util.NullWriter;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -283,7 +285,7 @@ public class ClassInvariantView extends JPanel implements View {
         fLabel.setForeground(Color.black);
         bottomPanel.add(fLabel, BorderLayout.CENTER);
         fProgressBar = new JProgressBar();
-        fProgressBar.setPreferredSize(new Dimension(100, 20));
+        fProgressBar.setPreferredSize(new Dimension(50, 17));
         fProgressBar.setStringPainted(true);
         bottomPanel.add(fProgressBar, BorderLayout.EAST);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -484,6 +486,7 @@ public class ClassInvariantView extends JPanel implements View {
     	int progress = 0;
     	int progressEnd = 0;
     	long duration = 0;
+    	boolean structureOK = true;
     	
     	// determines if the MultiplicityViolation Label should be shown
     	boolean violationLabel = false; 
@@ -556,6 +559,8 @@ public class ClassInvariantView extends JPanel implements View {
             	f.cancel(true);
             }
 
+            structureOK = systemState.checkStructure(new PrintWriter(new NullWriter()), false);
+            
             duration = System.currentTimeMillis() - start;
             return null;
         }
@@ -587,11 +592,26 @@ public class ClassInvariantView extends JPanel implements View {
                     text = "Model inherent constraints violated (see Log for details).";
                 } else {
                     fLabel.setForeground(Color.black);
-                    text = "Constraints ok.";
+                    text = "Constrs. OK.";
                 }
             } else {
                 fLabel.setForeground(Color.red);
                 text = numFailures + " constraint" + ((numFailures > 1) ? "s" : "") + " failed.";
+            }
+            
+            if(numFailures == 0 && structureOK && !violationLabel){
+            	fLabel.setForeground(Color.black);
+            	text = "Cnstrs. OK.";
+            } else if (numFailures == 0 && violationLabel){
+            	fLabel.setForeground(Color.red);
+            	text = "Model inherent constraints violated (see Log for details).";
+            } else if(numFailures == 0 && !structureOK){
+            	fLabel.setForeground(Color.red);
+            	text = "Explicit cnstrs. OK. Inherent cnstrs. failed.";
+            } else {
+            	fLabel.setForeground(Color.red);
+            	text = numFailures + " cnstr" + ((numFailures > 1) ? "s" : "") + ". failed.";
+            	text = text + " Inherent cnstrs. " + (structureOK?"OK":"failed") + ".";
             }
             
             text = text + String.format(" (%,dms)", duration);

@@ -135,4 +135,8 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase implements Associ
 		
 		return edge;
 	}
+	
+	public PlaceableNode getClassOrLinkObjectNode() {
+		return fAssociationClassOrLinkObjectNode;
+	}
 }
