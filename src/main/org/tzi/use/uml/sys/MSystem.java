@@ -711,7 +711,7 @@ public final class MSystem {
 			assertPostConditions(ctx, operationCall);
 
 			if (Options.getCheckTransitions())
-				doTransition(ctx, operationCall);
+				doTransition(result, ctx, operationCall);
 
 			operationCall.setExitedSuccessfully(true);
 
@@ -724,11 +724,9 @@ public final class MSystem {
 	/**
 	 * Executes a transition for all state machines if possible.
 	 * 
-	 * @param ctx
-	 * @param operationCall
 	 * @throws MSystemException If no valid transition exits in a state machine.
 	 */
-	private void doTransition(EvalContext ctx, MOperationCall operationCall) throws MSystemException {
+	private void doTransition(StatementEvaluationResult result, EvalContext ctx, MOperationCall operationCall) throws MSystemException {
 		if (!operationCall.hasPossibleTransitions())
 			return;
 
@@ -775,7 +773,8 @@ public final class MSystem {
 				for (TransitionResult r : toExecute) {
 					psm.doTransition(r.getTransition());
 					operationCall.addExecutedTransition(psm, r.getTransition());
-					fireTransition(operationCall.getSelf(), psm.getProtocolStateMachine(), r.getTransition());
+					result.appendEvent(fireTransition(operationCall.getSelf(), psm.getProtocolStateMachine(), r.getTransition()));
+					state().updateDerivedValues(result.getStateDifference());
 				}
 				psm.setExecutingTransition(false);
 			} else {
@@ -786,12 +785,14 @@ public final class MSystem {
 	}
 
 	/**
+	 * @param result 
 	 * @param key
 	 * @param t
 	 */
-	public void revertTransition(MProtocolStateMachineInstance psmI, MTransition t) {
+	public void revertTransition(StatementEvaluationResult result, MProtocolStateMachineInstance psmI, MTransition t) {
 		psmI.revertTransition(t);
-		fireTransition(psmI.getObject(), psmI.getProtocolStateMachine(), t);
+		result.appendEvent(fireTransition(psmI.getObject(), psmI.getProtocolStateMachine(), t));
+		state().updateDerivedValues(result.getStateDifference());
 	}
 	
 	/**
@@ -806,6 +807,7 @@ public final class MSystem {
 			for (MProtocolStateMachineInstance psmI : o.state(this.state()).getProtocolStateMachinesInstances()) {
 				psmI.determineState(this.state(), out);
 				fireTransition(o, psmI.getProtocolStateMachine(), null);
+				state().updateDerivedValues();
 			}
 		}
 		
