@@ -235,10 +235,12 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
     }
     
     public final void initialize() {
-        initializeWayPoints();
-        this.edgeProperties = HashMultimap.create(3, 3);
-        initializeProperties(this.edgeProperties);
-        initializeFinal();
+		if (!initialized) {
+			initializeWayPoints();
+			this.edgeProperties = HashMultimap.create(3, 3);
+			initializeProperties(this.edgeProperties);
+			initializeFinal();
+		}
         this.initialized = true;
     }
     
