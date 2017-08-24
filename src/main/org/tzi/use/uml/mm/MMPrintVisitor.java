@@ -112,7 +112,7 @@ public class MMPrintVisitor implements MMVisitor {
      */
     protected void indent() {
         for (int i = 0; i < fIndent; i++)
-            fOut.print(ws());
+            print(ws());
     }
 
     @Override
@@ -154,7 +154,7 @@ public class MMPrintVisitor implements MMVisitor {
 
         Set<MAssociationClass> parents = e.parents();
         if ( !parents.isEmpty() ) {
-            fOut.print( ws() + other( "<" ) + ws() +
+            print( ws() + other( "<" ) + ws() +
                         other( StringUtil.fmtSeq( parents.iterator(), "," ) ) );
         }
 
@@ -168,8 +168,7 @@ public class MMPrintVisitor implements MMVisitor {
         		MAssociationEnd associationEnd = associationEnds.get(i);
         		MAssociationEnd parentAssociationEnd = parentAssociationEnds.get(i);
         		
-				if (associationEnd.name().equals(parentAssociationEnd.name())
-						&& !parentAssociationEnd.getRedefiningEndsClosure().contains(associationEnd)) {
+				if (!associationEnd.name().equals(parentAssociationEnd.name()) && associationEnd.getRedefinedEnds().contains(parentAssociationEnd)) {
         			allEndsTheSame = false;
         			break;
         		}
@@ -270,7 +269,7 @@ public class MMPrintVisitor implements MMVisitor {
         	result.append(ws());
         	result.append(other("="));
         	result.append(ws());
-        	fOut.write(result.toString());
+        	print(result.toString());
         	ExpressionVisitor visitor = createExpressionVisitor();
         	e.getDeriveExpression().processWithVisitor(visitor);
         	result = new StringBuilder();
@@ -344,7 +343,7 @@ public class MMPrintVisitor implements MMVisitor {
 
         Set<? extends MClassifier> parents = e.parents();
         if (! parents.isEmpty() ) {
-            fOut.print(ws() + other("<") + ws() + 
+            print(ws() + other("<") + ws() + 
                        other(StringUtil.fmtSeq(parents.iterator(), ",")));
         }
         println();
