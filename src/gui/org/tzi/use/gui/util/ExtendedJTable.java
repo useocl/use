@@ -41,6 +41,7 @@ import javax.swing.text.JTextComponent;
  * whole text for easy overriding if desired.
  * 
  * @author Frank Hilken
+ * @author (Modified for Java 9 by Andreas Kaestner)
  */
 public class ExtendedJTable extends JTable {
 
@@ -77,7 +78,7 @@ public class ExtendedJTable extends JTable {
 	/**
 	 * @see JTable#JTable(Vector, Vector)
 	 */
-	public ExtendedJTable(Vector<?> rowData, Vector<?> columnNames) {
+	public ExtendedJTable(Vector<? extends Vector<?>> rowData, Vector<?> columnNames) {
 		super(rowData, columnNames);
 	}
 

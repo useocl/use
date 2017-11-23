@@ -1,66 +1,24 @@
 package org.tzi.use.runtime.util;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.jar.Attributes;
 
 import org.tzi.use.runtime.IPluginClassLoader;
-import org.tzi.use.util.Log;
 
 /**
  * This class provides the Plugin ClassLoader.
  * 
  * @author Roman Asendorf
+ * @author (Modified for Java 9 by Andreas Kaestner)
  */
 public class PluginClassLoader implements IPluginClassLoader {
-
-	static class ClassLoaderUtil {
-
-		private final static Class<?>[] parameters = new Class[] { URL.class };
-
-		public static void addURL(URL url) throws IOException {
-
-			URL urls[] = PluginClassLoader.classLoader.getURLs();
-			for (int i = 0; i < urls.length; i++) {
-				if (urls[i].toString().equalsIgnoreCase(url.toString())) {
-					Log.debug("URL " + url + " is already in the CLASSPATH");
-					return;
-				}
-			}
-			Class<?> sysclass = URLClassLoader.class;
-			try {
-				Method method = sysclass
-						.getDeclaredMethod("addURL", parameters);
-				method.setAccessible(true);
-				method.invoke(PluginClassLoader.classLoader,
-						new Object[] { url });
-			} catch (Throwable t) {
-				t.printStackTrace();
-				throw new IOException(
-						"Error, could not add URL to system classloader");
-			}
-		}
-	}
-
-	static URLClassLoader classLoader;
-
-	static URL[] addURLsToClassLoader(URL location) {
-		URL url = null;
-
-		try {
-			ClassLoaderUtil.addURL(location);
-			url = new URL("jar:" + location + "!/");
-			Log.debug("Adding url to classLoader [" + url.toString() + "]");
-		} catch (IOException ioe) {
-			Log.error("Plugin path [" + url + "] could not be added.", ioe);
-		}
-		URL[] urls = new URL[] { url };
-		return urls;
-	}
-
+	/** This URLClassLoader can load all current plugin classes */
+	private static URLClassLoader classLoader;
+	/** The current URL of this specific plugin */
 	private final URL url;
 
 	/**
@@ -71,9 +29,17 @@ public class PluginClassLoader implements IPluginClassLoader {
 	 *            Plugin location path.
 	 */
 	public PluginClassLoader(URL location) {
-		PluginClassLoader.classLoader = (URLClassLoader) ClassLoader
-				.getSystemClassLoader();
-		addURLsToClassLoader(location);
+		if (classLoader == null) {
+			URL[] firstURL = { location };
+			classLoader = new URLClassLoader(firstURL);
+		} else {
+			URL[] previousURLs = classLoader.getURLs();
+			if (!Arrays.asList(previousURLs).contains(location)) {
+				URL[] newURLs = Arrays.copyOf(previousURLs, previousURLs.length + 1);
+				newURLs[newURLs.length - 1] = location;
+				classLoader = new URLClassLoader(newURLs);
+			}
+		}
 		this.url = location;
 	}
 

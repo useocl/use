@@ -41,9 +41,9 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -87,15 +87,17 @@ import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 
 /**
  * Combines everything that the class and object diagram have in common.
  * 
  * @author Fabian Gutsche
  * @author Lars Hamann
+ * @author (Modified for Java 9 by Andreas Kaestner)
  */
 @SuppressWarnings("serial")
 public abstract class DiagramView extends JPanel 
@@ -883,18 +885,22 @@ public abstract class DiagramView extends JPanel
 		this.getOptions().saveOptions(helper, optionsElement);
 		this.storePlacementInfos( helper, rootElement );
 
-        // use specific Xerces class to write DOM-data to a file:
-        OutputFormat format = new OutputFormat(doc);
-        format.setLineWidth(65);
-        format.setIndenting(true);
-        format.setIndent(2);
-        
-        XMLSerializer serializer = new XMLSerializer(format);
-        
-        try (Writer w = Files.newBufferedWriter(layoutFile, Charset.defaultCharset())) {
-			serializer.setOutputCharStream(w);
-			serializer.serialize(doc);
-		} catch (IOException e1) {
+		DOMImplementationLS impl;
+		try {
+			DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+			impl = (DOMImplementationLS)registry.getDOMImplementation("LS");
+		} catch(ClassNotFoundException|IllegalAccessException|InstantiationException e1){
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+			return;
+		}
+		try (FileOutputStream outStream = new FileOutputStream(layoutFile.toFile())) {
+			LSSerializer serializer = impl.createLSSerializer();
+			serializer.getDomConfig().setParameter("format-pretty-print", true);
+			LSOutput output = impl.createLSOutput();
+			output.setEncoding(Charset.defaultCharset().name());
+			output.setByteStream(outStream);
+			serializer.write(doc, output);
+		} catch(IOException e1){
 			JOptionPane.showMessageDialog(this, e1.getMessage());
 		}
         
