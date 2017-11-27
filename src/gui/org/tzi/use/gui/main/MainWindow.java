@@ -24,13 +24,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -292,7 +292,7 @@ public class MainWindow extends JFrame {
 
         mi = menu.add(fActionFileOpenSpec);
         mi.setAccelerator(KeyStroke
-                .getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK));
+                .getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
         mi.setMnemonic('O');
 
         {
@@ -327,7 +327,7 @@ public class MainWindow extends JFrame {
         mi = menu.add(fActionFileExit);
         mi.setMnemonic('x');
         mi.setAccelerator(KeyStroke
-                .getKeyStroke(KeyEvent.VK_Q, Event.CTRL_MASK));
+                .getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
 
         // `Edit' submenu
         menu = new JMenu("Edit");
@@ -337,12 +337,12 @@ public class MainWindow extends JFrame {
         fMenuItemEditUndo = menu.add(fActionEditUndo);
         fMenuItemEditUndo.setMnemonic('U');
         fMenuItemEditUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-                Event.CTRL_MASK));
+        		InputEvent.CTRL_DOWN_MASK));
         
         fMenuItemEditRedo = menu.add(fActionEditRedo);
         fMenuItemEditRedo.setMnemonic('R');
         fMenuItemEditRedo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-                Event.CTRL_MASK + Event.SHIFT_MASK));
+        		InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
         
         // `State' submenu
         menu = new JMenu("State");

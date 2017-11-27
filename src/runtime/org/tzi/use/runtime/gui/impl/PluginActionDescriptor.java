@@ -1,5 +1,7 @@
 package org.tzi.use.runtime.gui.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.tzi.use.runtime.IPluginClassLoader;
 import org.tzi.use.runtime.IPluginDescriptor;
 import org.tzi.use.runtime.gui.IPluginActionDelegate;
@@ -53,7 +55,7 @@ public class PluginActionDescriptor implements IPluginActionDescriptor {
 						+ actionClass.getClassLoader().toString() + "]");
 
 				this.pluginAction = (IPluginActionDelegate) actionClass
-						.newInstance();
+						.getDeclaredConstructor().newInstance();
 			} catch (ClassNotFoundException cnfe) {
 				Log.error("No action class [" + className + "]: ", cnfe);
 			} catch (InstantiationException ie) {
@@ -62,6 +64,10 @@ public class PluginActionDescriptor implements IPluginActionDescriptor {
 								+ "]", ie);
 			} catch (IllegalAccessException iae) {
 				Log.error("Could not access class [" + className + "]", iae);
+			} catch(InvocationTargetException ite) {
+				Log.error("InvocationTargetException [" + className + "]: ", ite);
+			} catch(NoSuchMethodException nsme) {
+				Log.error("Method not found for [" + className + "]: ", nsme);
 			}
 			if (this.pluginAction == null) {
 				Log.error("PAD, Could not get class [" + className + "]");

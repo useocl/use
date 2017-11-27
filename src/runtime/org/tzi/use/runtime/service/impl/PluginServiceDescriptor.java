@@ -1,5 +1,7 @@
 package org.tzi.use.runtime.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.tzi.use.runtime.IPluginClassLoader;
 import org.tzi.use.runtime.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginServiceModel;
@@ -54,7 +56,7 @@ public class PluginServiceDescriptor implements IPluginServiceDescriptor {
 					+ currentClassLoader.toString() + "]");
 			try {
 				this.pluginService = (IPluginService) currentClassLoader
-						.loadClass(className).newInstance();
+						.loadClass(className).getDeclaredConstructor().newInstance();
 			} catch (ClassNotFoundException cnfe) {
 				Log.error("No service class [" + className + "]: ", cnfe);
 			} catch (InstantiationException ie) {
@@ -63,6 +65,10 @@ public class PluginServiceDescriptor implements IPluginServiceDescriptor {
 								+ "]", ie);
 			} catch (IllegalAccessException iae) {
 				Log.error("Could not access class [" + className + "]", iae);
+			} catch(InvocationTargetException ite) {
+				Log.error("InvocationTargetException [" + className + "]: ", ite);
+			} catch(NoSuchMethodException nsme) {
+				Log.error("Method not found for [" + className + "]: ", nsme);
 			}
 			if (this.pluginService == null) {
 				Log.error("Could not get class [" + className + "]");

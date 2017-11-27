@@ -1,5 +1,6 @@
 package org.tzi.use.runtime.shell.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import org.tzi.use.runtime.IPluginClassLoader;
@@ -51,7 +52,7 @@ public class PluginShellCmdDescriptor implements IPluginShellCmdDescriptor {
 					+ currentClassLoader.toString() + "]");
 			try {
 				this.pluginCmd = (IPluginShellCmdDelegate) currentClassLoader
-						.loadClass(className).newInstance();
+						.loadClass(className).getDeclaredConstructor().newInstance();
 			} catch (ClassNotFoundException cnfe) {
 				Log.error("No command class [" + className + "]: ", cnfe);
 			} catch (InstantiationException ie) {
@@ -60,6 +61,10 @@ public class PluginShellCmdDescriptor implements IPluginShellCmdDescriptor {
 								+ "]", ie);
 			} catch (IllegalAccessException iae) {
 				Log.error("Could not access class [" + className + "]", iae);
+			} catch(InvocationTargetException ite) {
+				Log.error("InvocationTargetException [" + className + "]: ", ite);
+			} catch(NoSuchMethodException nsme) {
+				Log.error("Method not found for [" + className + "]: ", nsme);
 			}
 			if (this.pluginCmd == null) {
 				Log.error("Could not get class [" + className + "]");

@@ -244,10 +244,10 @@ public class DirectedEdge implements I_DirectedEdge {
                                          double.class, double.class };
         final int tailWidth = calculateTailWidth( sourceX, sourceY, targetX,
                                                   targetY, headWidth );
-        final Object[] parameters = { new Double( sourceX ),
-                                      new Double( sourceY ),
-                                      new Double( sourceX + tailWidth ),
-                                      new Double( sourceY ) };
+        final Object[] parameters = { Double.valueOf( sourceX ),
+                                      Double.valueOf( sourceY ),
+                                      Double.valueOf( sourceX + tailWidth ),
+                                      Double.valueOf( sourceY ) };
         createTailLineAuxiliary( tailType, parameterTypes, parameters,
                                  gradientAngle );
     }

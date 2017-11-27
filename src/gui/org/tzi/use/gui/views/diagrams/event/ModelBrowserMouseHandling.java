@@ -357,7 +357,7 @@ public class ModelBrowserMouseHandling implements MouseListener {
     }
     
     private void tryToFireStateChangeEvent( MouseEvent e ) {
-        if ( e.getModifiers() == InputEvent.BUTTON2_MASK ) {
+        if ( e.getModifiersEx() == InputEvent.BUTTON2_DOWN_MASK ) {
             if ( fRectangle != null && fRectangle.contains( e.getPoint() ) ) {
                 boolean highlight = false;
                 if ( fHighlightElements.containsKey( fElem ) ) {

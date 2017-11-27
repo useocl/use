@@ -21,9 +21,11 @@
 
 package org.tzi.use.util;
 
-import java.io.PrintWriter;
 import java.io.PrintStream;
-import java.util.*;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * A Report formats data as a table. The complete report is built up
@@ -150,7 +152,7 @@ public class Report {
     public void addRuler(char rulerChar) {
         fCurrentRow = null;
         fCurrentColumn = 0;
-        fRows.add(new Character(rulerChar));
+        fRows.add(Character.valueOf(rulerChar));
     }
 
     /**

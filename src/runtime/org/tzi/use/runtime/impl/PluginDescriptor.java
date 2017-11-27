@@ -1,6 +1,7 @@
 package org.tzi.use.runtime.impl;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import org.tzi.use.runtime.IPlugin;
@@ -48,7 +49,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 				className = pluginClassLoader.getMainClassName();
 				try {
 					this.plugin = (IPlugin) pluginClassLoader.loadClass(
-							className).newInstance();
+							className).getDeclaredConstructor().newInstance();
 				} catch (ClassNotFoundException cnfe) {
 					Log.error("No plugin class [" + className + "]: ", cnfe);
 				} catch (InstantiationException ie) {
@@ -60,6 +61,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 							.error(
 									"Could not access class [" + className
 											+ "]", iae);
+				} catch(InvocationTargetException ite) {
+					Log.error("InvocationTargetException [" + className + "]: ", ite);
+				} catch(NoSuchMethodException nsme) {
+					Log.error("Method not found for [" + className + "]: ", nsme);
 				}
 				if (this.plugin == null) {
 					Log.error("PD, Could not get class [" + className + "]");

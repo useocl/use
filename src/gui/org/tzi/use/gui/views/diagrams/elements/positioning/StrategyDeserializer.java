@@ -21,6 +21,8 @@
 
 package org.tzi.use.gui.views.diagrams.elements.positioning;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.RestoreLayoutException;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -55,11 +57,17 @@ public class StrategyDeserializer {
 		}
 		
 		try {
-			newInstance = cls.newInstance();
+			newInstance = cls.getDeclaredConstructor().newInstance();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			return null;
 		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return null;
+		} catch(InvocationTargetException e) {
+			e.printStackTrace();
+			return null;
+		} catch(NoSuchMethodException e) {
 			e.printStackTrace();
 			return null;
 		}

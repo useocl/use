@@ -39,20 +39,20 @@ public class ReportTest extends TestCase {
         r.addRuler('-');
         r.addRow();
         r.addCell("foo");
-        r.addCell(new Integer(3));
-        r.addCell(new Double(1.2));
+        r.addCell(Integer.valueOf(3));
+        r.addCell(Double.valueOf(1.2));
         r.addCell(Boolean.FALSE);
 
         r.addRow();
         r.addCell("foobar");
-        r.addCell(new Integer(453453));
-        r.addCell(new Double(-1.245345345));
+        r.addCell(Integer.valueOf(453453));
+        r.addCell(Double.valueOf(-1.245345345));
         r.addCell(Boolean.TRUE);
 
         r.addRow();
         r.addCell("line");
-        r.addCell(new Integer(555));
-        r.addCell(new Double(999.0));
+        r.addCell(Integer.valueOf(555));
+        r.addCell(Double.valueOf(999.0));
         r.addCell(Boolean.TRUE);
         r.addRuler('=');
 

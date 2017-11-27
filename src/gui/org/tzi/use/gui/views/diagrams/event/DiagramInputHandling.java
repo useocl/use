@@ -106,7 +106,7 @@ public final class DiagramInputHandling implements MouseListener,
         
         fDiagram.addMouseMotionListener(this);
         fDiagram.stopLayoutThread();
-        int modifiers = e.getModifiers();
+        int modifiers = e.getModifiersEx();
         
         // mouse over node?
         PlaceableNode pickedObjectNode = fDiagram.findNode(e.getX(), e.getY());
@@ -114,7 +114,7 @@ public final class DiagramInputHandling implements MouseListener,
         EdgeBase pickedEdge = fDiagram.findEdge(e.getX(), e.getY());
         
         // double click on EdgeProperty than reposition.
-        if ( e.getClickCount() == 2  && modifiers == InputEvent.BUTTON1_MASK ) {
+        if ( e.getClickCount() == 2  && modifiers == InputEvent.BUTTON1_DOWN_MASK ) {
         	//FIXME: Define interface!
            if ( pickedObjectNode instanceof EdgeProperty ) {
                 ((EdgeProperty) pickedObjectNode).setToAutoPosition();
@@ -143,7 +143,7 @@ public final class DiagramInputHandling implements MouseListener,
         }
         
         switch (modifiers) {
-        case InputEvent.BUTTON1_MASK:
+        case InputEvent.BUTTON1_DOWN_MASK:
             if (pickedObjectNode != null) {
                 // If this item is not currently selected, remove all
                 // other items from the selection and only select this
@@ -191,7 +191,7 @@ public final class DiagramInputHandling implements MouseListener,
                 fDiagram.repaint();
             }
         break;
-        case InputEvent.SHIFT_MASK + InputEvent.BUTTON1_MASK:
+        case InputEvent.SHIFT_DOWN_MASK | InputEvent.BUTTON1_DOWN_MASK:
             fDragMode = DragMode.DRAG_NONE;
 		    if (pickedObjectNode != null) {
 		        // add or remove this component to the selection
@@ -219,7 +219,7 @@ public final class DiagramInputHandling implements MouseListener,
                 fDiagram.repaint();
 		    }
 		break;
-        case InputEvent.BUTTON2_MASK:
+        case InputEvent.BUTTON2_DOWN_MASK:
             if ( fDiagram instanceof NewObjectDiagram ) {
                 ((NewObjectDiagram) fDiagram).mayBeShowObjectInfo( e );
             }

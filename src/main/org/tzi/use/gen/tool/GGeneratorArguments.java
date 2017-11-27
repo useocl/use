@@ -94,8 +94,8 @@ public class GGeneratorArguments {
     private boolean calculateBarriers = true;
     
     public GGeneratorArguments() {
-    	fRandomNr = new Long((new Random()).nextInt(10000));
-    	fLimit = new Long(Long.MAX_VALUE);
+    	fRandomNr = Long.valueOf((new Random()).nextInt(10000));
+    	fLimit = Long.valueOf(Long.MAX_VALUE);
     }
     
 	/**
@@ -327,7 +327,7 @@ public class GGeneratorArguments {
                         error = true;
                     else {
                         try {
-                            args.setRandomNr(new Long(st.nextToken()));
+                            args.setRandomNr(Long.valueOf(st.nextToken()));
                         } catch (NumberFormatException e) {
                             error = true;
                         }
@@ -343,7 +343,7 @@ public class GGeneratorArguments {
                         error = true;
                     else {
                         try {
-                            args.setLimit(new Long(st.nextToken()));
+                            args.setLimit(Long.valueOf(st.nextToken()));
                         } catch (NumberFormatException e) {
                             error = true;
                         }

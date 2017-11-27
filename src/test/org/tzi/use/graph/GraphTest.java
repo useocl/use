@@ -51,12 +51,12 @@ public class GraphTest extends TestCase {
         // ----
         //      env.printHeader("testing graph creation...");
         g = new DirectedGraphBase<Integer, DirectedEdgeBase<Integer>>();
-        g.add(n0 = new Integer(0));
-        g.add(n1 = new Integer(1));
-        g.add(n2 = new Integer(2));
-        g.add(n3 = new Integer(3));
-        g.add(n4 = new Integer(4));
-        g.add(n5 = new Integer(5));
+        g.add(n0 = Integer.valueOf(0));
+        g.add(n1 = Integer.valueOf(1));
+        g.add(n2 = Integer.valueOf(2));
+        g.add(n3 = Integer.valueOf(3));
+        g.add(n4 = Integer.valueOf(4));
+        g.add(n5 = Integer.valueOf(5));
         assertEquals(6, g.size());
 
         // connect nodes
@@ -173,12 +173,12 @@ public class GraphTest extends TestCase {
         // ----
         //      env.printHeader("testing graph creation...");
         g = new DirectedGraphBase<Integer, DirectedEdgeBase<Integer>>();
-        g.add(n0 = new Integer(0));
-        g.add(n1 = new Integer(1));
-        g.add(n2 = new Integer(2));
-        g.add(n3 = new Integer(3));
-        g.add(n4 = new Integer(4));
-        g.add(n5 = new Integer(5));
+        g.add(n0 = Integer.valueOf(0));
+        g.add(n1 = Integer.valueOf(1));
+        g.add(n2 = Integer.valueOf(2));
+        g.add(n3 = Integer.valueOf(3));
+        g.add(n4 = Integer.valueOf(4));
+        g.add(n5 = Integer.valueOf(5));
         assertEquals(6, g.size());
 
         // connect nodes

@@ -1673,13 +1673,13 @@ public class SequenceDiagram extends JPanel implements Printable {
 
 		public void mousePressed(MouseEvent event) {
 
-			int modifiers = event.getModifiers();
+			int modifiers = event.getModifiersEx();
 			// The last selected lifeline
 			Lifeline pickedLifeline = getLifeline(event.getX(), event.getY());
 
 			switch (modifiers) {
 			// If only left key of mouse is clicked
-			case InputEvent.BUTTON1_MASK:
+			case InputEvent.BUTTON1_DOWN_MASK:
 				if (pickedLifeline != null) {
 					if (!choosedLifelines.isSelected(pickedLifeline)) {
 						choosedLifelines.clear();
@@ -1695,7 +1695,7 @@ public class SequenceDiagram extends JPanel implements Printable {
 				}
 				break;
 			// If shift key with left key of mouse are clicked
-			case InputEvent.SHIFT_MASK + InputEvent.BUTTON1_MASK:
+			case InputEvent.SHIFT_DOWN_MASK | InputEvent.BUTTON1_DOWN_MASK:
 				if (pickedLifeline != null) {
 					// add or remove this component to the selection
 					if (choosedLifelines.isSelected(pickedLifeline))

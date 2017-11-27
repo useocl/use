@@ -68,7 +68,7 @@ public final class RealValue extends Value {
     public int hashCode() {
         // Note: this must be the same hash code as for IntegerValue
         // if we want to treat, e.g., 1.0 equal to 1 in collections.
-        return new Double(fValue).hashCode();
+        return Double.valueOf(fValue).hashCode();
     }
 
     @Override
@@ -80,7 +80,7 @@ public final class RealValue extends Value {
             return ( fValue < val2 ? -1 : ( fValue == val2 ? 0 : +1) );
         } else if (o instanceof RealValue ) {
             double val2 = ((RealValue) o).fValue;
-            return new Double(fValue).compareTo(new Double(val2));
+            return Double.valueOf(fValue).compareTo(Double.valueOf(val2));
         } else if (o instanceof UndefinedValue ) {
             return +1;
         } else

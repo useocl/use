@@ -59,7 +59,7 @@ public class Measurement {
 		for (MPrePostCondition pres : model.preConditions()) {
 			MeasuringObject object = new MeasuringObject(pres.expression());
 			strategy.apply(object);
-			interimResult.put(pres, new Float(strategy.inject()));
+			interimResult.put(pres, Float.valueOf(strategy.inject()));
 
 			strategy.reset();
 		}
@@ -72,7 +72,7 @@ public class Measurement {
 		for (MPrePostCondition posts : model.postConditions()) {
 			MeasuringObject object = new MeasuringObject(posts.expression());
 			strategy.apply(object);
-			interimResult.put(posts, new Float(strategy.inject()));
+			interimResult.put(posts, Float.valueOf(strategy.inject()));
 
 			strategy.reset();
 		}
@@ -85,7 +85,7 @@ public class Measurement {
 		for (MClassInvariant invariant : model.classInvariants()) {
 			MeasuringObject object = new MeasuringObject(invariant.expandedExpression());
 			strategy.apply(object);
-			interimResult.put(invariant, new Float(strategy.inject()));
+			interimResult.put(invariant, Float.valueOf(strategy.inject()));
 
 			strategy.reset();
 		}
