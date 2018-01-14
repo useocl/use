@@ -58,7 +58,7 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
     
     private Color color = null;
 
-    ClassNode( MClass cls, DiagramOptions opt ) {
+    protected ClassNode( MClass cls, DiagramOptions opt ) {
     	super(cls, opt);
         
         fAttributes = cls.attributes(); 

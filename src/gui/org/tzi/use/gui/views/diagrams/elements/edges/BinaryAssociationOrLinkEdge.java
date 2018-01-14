@@ -349,7 +349,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      * @param g The edge is drawn in this graphics object.
      */
     @Override
-	void drawEdge( Graphics2D g ) {
+	protected void drawEdge( Graphics2D g ) {
         WayPoint n1 = null;
         Point2D p1 = null;
         
@@ -416,7 +416,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     /**
      * Draws a straightline edge between source and target node.
      */
-    void drawBinaryEdge( Graphics2D g ) {
+    protected void drawBinaryEdge( Graphics2D g ) {
         if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
         } else {

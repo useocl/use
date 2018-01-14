@@ -74,6 +74,7 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.ObjectPropertiesView;
+import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
@@ -95,6 +96,7 @@ import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModelElement;
@@ -229,7 +231,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
 		}
 	}
 
-    private ObjectDiagramData visibleData = new ObjectDiagramData();
+    protected ObjectDiagramData visibleData = new ObjectDiagramData();
     
     private ObjectDiagramData hiddenData = new ObjectDiagramData();
     
@@ -241,7 +243,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
 	 * to a specific position when an object
 	 * is created by drag & drop.
 	 */
-	private Point2D.Double nextNodePosition = new Point2D.Double();
+	protected Point2D.Double nextNodePosition = new Point2D.Double();
     
 	/**
 	 * Last position of deleted nodes and links. In case of restoration, the
@@ -251,13 +253,13 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
 	private Map<MObject, Point2D> lastKnownNodePositions = new WeakHashMap<>();
 	private Map<MLink, PositionStrategy> lastKnownLinkPositions = new WeakHashMap<>();
 	
-    private ShowObjectPropertiesViewMouseListener 
+    protected ShowObjectPropertiesViewMouseListener 
         showObjectPropertiesViewMouseListener 
             = new ShowObjectPropertiesViewMouseListener();
 
 	private ObjectSelection fSelection;
 	
-	private DiagramInputHandling inputHandling;
+	protected DiagramInputHandling inputHandling;
 
     /**
      * Creates a new empty diagram.
@@ -266,7 +268,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
     	this(parent, log, new ObjDiagramOptions());
     }
 
-    NewObjectDiagram(NewObjectDiagramView parent, PrintWriter log, ObjDiagramOptions options) {
+    protected NewObjectDiagram(NewObjectDiagramView parent, PrintWriter log, ObjDiagramOptions options) {
     	super(options, log);
     	this.getRandomNextPosition();
     	
@@ -622,7 +624,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
         		isHidden = true;
         	}
         	
-			BinaryAssociationOrLinkEdge e = BinaryAssociationOrLinkEdge.create(
+			BinaryAssociationOrLinkEdge e = createBinaryAssociationOrLinkEdge(
 					node1,
 					node2,
 					linkEnd1.associationEnd(), linkEnd2.associationEnd(), this,
@@ -640,6 +642,18 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
 				fLayouter = null;
 			}
         }
+    }
+    
+    /**
+     * This part is a separate method for easier inheritance.
+     * @author Andreas Kaestner
+     */
+    protected BinaryAssociationOrLinkEdge createBinaryAssociationOrLinkEdge(
+    		PlaceableNode source, PlaceableNode target,
+			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
+			DiagramView diagram, MLink link) {
+    	return BinaryAssociationOrLinkEdge.create(
+    			source, target, sourceEnd, targetEnd, diagram, link);
     }
     
     protected void addNAryLink(MLink link) {        
@@ -1395,7 +1409,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode
 	 * Finds a random new position for the next
 	 * object node.
 	 */
-	private void getRandomNextPosition() {
+	protected void getRandomNextPosition() {
 		// getWidth and getHeight return 0
         // if we are called on a new diagram.
 		nextNodePosition.x = Math.random() * Math.max(100, getWidth() - 100);

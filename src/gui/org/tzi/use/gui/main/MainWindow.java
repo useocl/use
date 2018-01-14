@@ -841,7 +841,12 @@ public class MainWindow extends JFrame {
         
 		if (Options.doPLUGIN) {
 			for (AbstractAction currentAction : pluginActions.values()) {
-				currentAction.setEnabled(on);
+				Object actionName = currentAction.getValue(AbstractAction.NAME);
+				if(actionName != null && actionName.equals("Object to Class")) {
+					currentAction.setEnabled(true);
+				} else {
+					currentAction.setEnabled(on);
+				}
 			}
 		}
 		setUndoRedoButtons();

@@ -55,11 +55,11 @@ public class ClassDiagramView extends JPanel
                                  implements View, 
                                             PrintableView {
 
-    private final MainWindow fMainWindow;
+    protected final MainWindow fMainWindow;
     
     private final MSystem fSystem;
     
-    private ClassDiagram fClassDiagram;
+    protected ClassDiagram fClassDiagram;
 
     public ClassDiagramView( MainWindow mainWindow, MSystem system, boolean loadLayout ) { 
     	this.setFocusable(true);

@@ -58,7 +58,7 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
     private final NewObjectDiagramView fParent;
     private final MObject fObject;
     private final String fLabel;
-    AttributedString fLabelA;
+    protected AttributedString fLabelA;
     
     private List<MAttribute> fAttributes;
     private final String[] fValues;

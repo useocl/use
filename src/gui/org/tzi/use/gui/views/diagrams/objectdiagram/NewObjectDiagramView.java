@@ -71,8 +71,8 @@ import com.google.common.eventbus.Subscribe;
 public class NewObjectDiagramView extends JPanel 
   implements View, PrintableView, SortChangeListener {
 
-    private final MSystem fSystem;
-    private final MainWindow fMainWindow;
+    protected final MSystem fSystem;
+    protected final MainWindow fMainWindow;
 
     protected NewObjectDiagram fObjectDiagram;
     public static int viewcount = 0;

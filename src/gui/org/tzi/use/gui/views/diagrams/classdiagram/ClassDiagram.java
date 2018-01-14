@@ -127,7 +127,7 @@ public class ClassDiagram extends DiagramView
 
     private final ClassDiagramView fParent;
     
-    private final ClassDiagramData visibleData = new ClassDiagramData();
+    protected final ClassDiagramData visibleData = new ClassDiagramData();
 
     private final ClassDiagramData hiddenData = new ClassDiagramData();
 
@@ -139,7 +139,7 @@ public class ClassDiagram extends DiagramView
 		this(parent, log, new ClassDiagramOptions(Paths.get(parent.system().model().filename())));
 	}
 	
-    ClassDiagram( ClassDiagramView parent, PrintWriter log, ClassDiagramOptions opt ) {
+    protected ClassDiagram( ClassDiagramView parent, PrintWriter log, ClassDiagramOptions opt ) {
     	super(opt, log);
         
         fParent = parent;
@@ -568,16 +568,28 @@ public class ClassDiagram extends DiagramView
         	}
         	
             // binary association
-        	BinaryAssociationOrLinkEdge e = 
-                BinaryAssociationOrLinkEdge.create( source, 
-                                		   	        target, 
-                                		   	        assocEnd1, assocEnd2, 
-                                		   	        this, assoc );
+        	BinaryAssociationOrLinkEdge e = createBinaryAssociationOrLinkEdge(
+        			source,
+        			target,
+        			assocEnd1, assocEnd2, this,
+        			assoc);
         	
             fGraph.addEdge(e);
             visibleData.fBinaryAssocToEdgeMap.put(assoc, e);
             fLayouter = null;
         }
+    }
+    
+    /**
+     * This part is a separate method for easier inheritance.
+     * @author Andreas Kaestner
+     */
+    protected BinaryAssociationOrLinkEdge createBinaryAssociationOrLinkEdge(
+    		PlaceableNode source, PlaceableNode target,
+			MAssociationEnd sourceEnd, MAssociationEnd targetEnd, 
+			DiagramView diagram, MAssociation assoc) {
+    	return BinaryAssociationOrLinkEdge.create(
+    			source, target, sourceEnd, targetEnd, this, assoc);
     }
 
     protected void addNAryAssociation(MAssociation assoc) {

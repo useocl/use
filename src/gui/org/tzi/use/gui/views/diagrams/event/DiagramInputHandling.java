@@ -57,7 +57,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public final class DiagramInputHandling implements MouseListener,
+public class DiagramInputHandling implements MouseListener,
                                                    MouseMotionListener, 
                                                    DropTargetListener,
                                                    KeyListener {
@@ -117,7 +117,7 @@ public final class DiagramInputHandling implements MouseListener,
         if ( e.getClickCount() == 2  && modifiers == InputEvent.BUTTON1_DOWN_MASK ) {
         	//FIXME: Define interface!
            if ( pickedObjectNode instanceof EdgeProperty ) {
-                ((EdgeProperty) pickedObjectNode).setToAutoPosition();
+        	   handleDoubleClickForEdgeProperty((EdgeProperty) pickedObjectNode);
                 fDiagram.repaint();
                 return;
            } else if ( pickedObjectNode instanceof ResizeNode) {
@@ -227,6 +227,14 @@ public final class DiagramInputHandling implements MouseListener,
         default:
             // do nothing
         }
+    }
+    
+    /**
+     * extra method for easier inheritance
+     * @author Andreas Kaestner
+     */
+    protected void handleDoubleClickForEdgeProperty(EdgeProperty edgeProperty){
+    	edgeProperty.setToAutoPosition();
     }
     
     @Override
