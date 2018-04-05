@@ -756,7 +756,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode {
 							fGraph.edgeIterator(),
 							CommunicationDiagramEdge.class);
 
-					//FIXME: Über alle edges laufen und dann XPAth auswerten sollte schneller sein
+					//FIXME: ueber alle edges laufen und dann XPAth auswerten sollte schneller sein
 					while (iter.hasNext()) {
 						EdgeBase edge = iter.next();
 						if (edge.getName().equals(edgeName)) {

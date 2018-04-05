@@ -100,7 +100,7 @@ import org.tzi.use.uml.sys.MSystem;
  * A tree view showing evaluation results of an expression. Each node is adorned
  * with the result of evaluating the sub-expression.
  *
- * @author Jens Brüning
+ * @author Jens Bruening
  */
 @SuppressWarnings("serial")
 public class ExprEvalBrowser extends JPanel {
