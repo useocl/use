@@ -30,7 +30,15 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -58,7 +66,13 @@ import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.events.*;
+import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
+import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
+import org.tzi.use.uml.sys.events.OperationEnteredEvent;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.w3c.dom.Element;
 
@@ -1402,7 +1416,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 							fGraph.edgeIterator(),
 							CommunicationDiagramEdge.class);
 
-					//FIXME: Über alle edges laufen und
+					//FIXME: ueber alle edges laufen und
 					// dann XPAth auswerten sollte schneller sein
 					while (iter.hasNext()) {
 						EdgeBase edge = iter.next();
