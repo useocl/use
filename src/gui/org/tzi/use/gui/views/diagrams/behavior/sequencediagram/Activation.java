@@ -29,18 +29,15 @@ import java.awt.Stroke;
 import java.util.List;
 
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.Lifeline.ObjectBox;
-import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.Event;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
 import org.tzi.use.uml.sys.events.LinkInsertedEvent;
 import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
 import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
 import org.tzi.use.uml.sys.events.OperationEnteredEvent;
-import org.tzi.use.util.StringUtil;
 
 // ************************************************************************************************************
 /**
@@ -121,7 +118,7 @@ public class Activation {
 	 * @param start the position on the time axis on which the activation
 	 *            message is positioned
 	 * @param owner the lifeline which is receiver of the activation message
-	 * @param cmd the command which should be represented
+	 * @param src the command which should be represented
 	 * @param yValue the y-value on which the activation message should be drawn
 	 */
 	public Activation(int start, Lifeline owner, Event event, Activation src, int yValue, SequenceDiagram sequenceDiagram) {
@@ -800,83 +797,6 @@ public class Activation {
 		g.setColor(Color.black);
 	}
 
-	private String createOperationEnterMessage() {
-		String msgLabel = "";
-		MOperationCall fOpCall = ((OperationEnteredEvent) eventOfActivation).getOperationCall();
-		msgLabel = fOpCall.getOperation().name();
-		if (fProperties.showValues()) {
-			StringBuilder argMsg = new StringBuilder();
-			argMsg.append("(");
-			StringUtil.fmtSeq(argMsg, fOpCall.getArgumentsAsNamesAndValues().values(), ",");
-			argMsg.append(")");
-			msgLabel += argMsg;
-		}
-		return msgLabel;
-	}
-
-	private String createCreateMassage() {
-		return "create";
-	}
-
-	private String createDestroyMassage() {
-		return "destroy";
-	}
-
-	private String createAttributeAssignMessage() {
-		String msgLabel = "";
-		String attribute = ((AttributeAssignedEvent) eventOfActivation).getAttribute().name();
-		String value = ((AttributeAssignedEvent) eventOfActivation).getValue().toString();
-		msgLabel = "set " + attribute;
-		if (fProperties.showValues())
-			msgLabel = msgLabel + " := " + value;
-		return msgLabel;
-	}
-
-	private String createLinkInsertMessage() {
-		String msgLabel = "";
-		boolean isLinkObject = (((LinkInsertedEvent) eventOfActivation).getAssociation() instanceof MAssociationClass);
-
-		if (isLinkObject) {
-			msgLabel = "create";
-		} else {
-			msgLabel = "insert";
-		}
-
-		if (fProperties.showValues()) {
-			if (isLinkObject) {
-				msgLabel = msgLabel + " between ";
-			}
-
-			List<MObject> objects = ((LinkInsertedEvent) eventOfActivation).getParticipants();
-			msgLabel = msgLabel + "(@";
-			for (int i = 0; i < objects.size(); i++) {
-				MObject object = objects.get(i);
-				msgLabel = msgLabel + object.toString();
-				if (i < (objects.size() - 1))
-					msgLabel = msgLabel + ",@";
-				else
-					msgLabel = msgLabel + ")";
-			}
-		}
-		return msgLabel;
-	}
-
-	private String createLinkDeleteMassage() {
-		String msgLabel = "delete";
-		if (fProperties.showValues()) {
-			List<MObject> objects = ((LinkDeletedEvent) eventOfActivation).getParticipants();
-			msgLabel = msgLabel + "(@";
-			for (int i = 0; i < objects.size(); i++) {
-				MObject object = objects.get(i);
-				msgLabel = msgLabel + object.toString();
-				if (i < (objects.size() - 1))
-					msgLabel = msgLabel + ",@";
-				else
-					msgLabel = msgLabel + ")";
-			}
-		}
-		return msgLabel;
-	}
 
 	/**
 	 * Creates the message which should be sent to the goal lifeline.
@@ -884,20 +804,6 @@ public class Activation {
 	 * @return the message
 	 */
 	private String createMessage() {
-		String msgLabel = "";
-		if (eventOfActivation instanceof OperationEnteredEvent) {
-			msgLabel = createOperationEnterMessage();
-		} else if (eventOfActivation instanceof ObjectCreatedEvent) {
-			msgLabel = createCreateMassage();
-		} else if (eventOfActivation instanceof ObjectDestroyedEvent) {
-			msgLabel = createDestroyMassage();
-		} else if (eventOfActivation instanceof AttributeAssignedEvent) {
-			msgLabel = createAttributeAssignMessage();
-		} else if (eventOfActivation instanceof LinkInsertedEvent) {
-			msgLabel = createLinkInsertMessage();
-		} else if (eventOfActivation instanceof LinkDeletedEvent) {
-			msgLabel = createLinkDeleteMassage();
-		}
-		return msgLabel;
+		return EventMessageCreator.createMessage(eventOfActivation, fProperties.showValues());
 	}
 }

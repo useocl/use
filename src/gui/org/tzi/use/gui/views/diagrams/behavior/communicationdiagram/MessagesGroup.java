@@ -331,7 +331,7 @@ public final class MessagesGroup extends EdgeProperty {
 	}
 
 	/**
-	 * Returns the all visible messages of the Edge
+	 * Returns all visible messages of the Edge
 	 * 
 	 * @return messages of the Edge
 	 */
@@ -341,16 +341,12 @@ public final class MessagesGroup extends EdgeProperty {
 
 		for (int i = 0; i < ((CommunicationDiagramEdge) fEdge).getMessages().size(); i++) {
 			MMessage mess = ((CommunicationDiagramEdge) fEdge).getMessages().get(i);
-			if(mess.isVisible() && !mess.isAbsentFromGraph()){
+			if(((CommunicationDiagramEdge) fEdge).getParentView().isMessageVisible(mess) &&
+					!((CommunicationDiagramEdge) fEdge).getParentView().isMessageAbsentFromGraph(mess)){
 				messages.add(mess);
 			}
 		}
 		return messages;
 	}
 
-	/**
-	 * @param counter the counter to set
-	 */
-	public void setCounter(int counter) {
-	}
 }

@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.Map;
 
+import com.ximpleware.ParseException;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -60,6 +61,18 @@ public class PersistHelper {
 	public PersistHelper(Path fileToRead, PrintWriter log) {
 		vg = new VTDGen();
 		vg.parseFile(fileToRead.toAbsolutePath().toString(), false);
+		vn = vg.getNav();
+		this.log = log;
+	}
+
+	/**
+	 * Sets up a new helper for reading a document
+	 * @param file
+	 */
+	public PersistHelper(byte[] toLoad, PrintWriter log) throws ParseException {
+		vg = new VTDGen();
+		vg.setDoc(toLoad);
+		vg.parse(true);
 		vn = vg.getNav();
 		this.log = log;
 	}

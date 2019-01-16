@@ -29,6 +29,7 @@ import java.text.AttributedString;
 
 import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleData;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.util.Util;
 
@@ -52,7 +53,8 @@ public abstract class BaseNode extends PlaceableNode {
 
 	// Underlined Label
 	private AttributedString formattedLabel;
-	private ObjectState lifeState = ObjectState.NEW;
+	private ObjectState originalLifeState = ObjectState.NEW;
+	private ObjectState currentLifeState = ObjectState.NEW;
 
 	private Rectangle2D.Double nameRect = new Rectangle2D.Double();
 
@@ -83,16 +85,28 @@ public abstract class BaseNode extends PlaceableNode {
 
 	/**
 	 * Change the current life state
-	 * 
-	 * @param stateString
-	 *            new life state as string
+	 *
+	 * @param state new life state as string
 	 */
 	public void setState(ObjectState state) {
-		this.lifeState = state;
+		this.currentLifeState = state;
 	}
 
 	public ObjectState getState() {
-		return lifeState;
+		return currentLifeState;
+	}
+
+	/**
+	 * Change the current life state
+	 *
+	 * @param state new life state as string
+	 */
+	public void setOriginalLifeState(ObjectState state) {
+		this.originalLifeState = state;
+	}
+
+	public ObjectState getOriginalLifeState() {
+		return originalLifeState;
 	}
 	
 	@Override
@@ -136,8 +150,8 @@ public abstract class BaseNode extends PlaceableNode {
 	 * 
 	 * @return all of life states as string
 	 */
-	public String getLifeStatesString() {
-		return lifeState.toString();
+	private String getLifeStatesString() {
+		return currentLifeState.toString();
 	}
 
 	/**
@@ -191,4 +205,7 @@ public abstract class BaseNode extends PlaceableNode {
 		this.fOpt.removeOptionChangedListener(fOptChaneListener);
 	}
 
+	CommunicationDiagramView getComDiaView() {
+		return comDiaView;
+	}
 }

@@ -108,8 +108,10 @@ public class SDScrollPane extends JScrollPane {
 		 * Actualize the SequenceDiagramView and calls the paintChildren-Method
 		 * of the super-class JViewport.
 		 */
+		@Override
 		public void paintChildren(Graphics g) {
 			// inform the SequenceDiagramView object about the new view bounds
+			// warning: never call repaint in this method
 			sequenceDiagramView.setViewBounds(new Rectangle(horizontalScrollBar.getValue(), verticalScrollBar.getValue(),
 					getExtentSize().width, getExtentSize().height));
 			// update sequence diagram

@@ -48,7 +48,6 @@ import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -100,15 +99,15 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 	private ButtonGroup buttonGroup = new ButtonGroup();
 
-	private DiagramViewWithObjectNode diagram;
+	private DataHolder dataHolder;
 	
 	/**
 	 * Constructor for SelectionOCLView.
 	 */
-	public SelectionOCLView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
+	public SelectionOCLView(MainWindow parent, MSystem system, DataHolder dataHolder) {
 		super(new BorderLayout());
 		fSystem = system;
-		this.diagram = diagram;
+		this.dataHolder = dataHolder;
 		
 		// create text components and labels
 		fTextIn = new JTextArea();
@@ -217,13 +216,13 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 	}
 
 	protected void applyHideAllObjects(ActionEvent ev) {
-		this.diagram.hideAll();
-		this.diagram.invalidateContent(true);
+		this.dataHolder.hideAll();
+		this.dataHolder.invalidateContent(true);
 	}
 
 	protected void applyShowAllObjects() {
-		this.diagram.showAll();
-		this.diagram.invalidateContent(true);
+		this.dataHolder.showAll();
+		this.dataHolder.invalidateContent(true);
 	}
 
 	/**
@@ -326,14 +325,14 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 			fTextOut.setText(val.toStringWithType());
 			
 			if (showart.equalsIgnoreCase("crop")) {
-				this.diagram.hideAll();
-				this.diagram.showObjects(objects);
+				this.dataHolder.hideAll();
+				this.dataHolder.showObjects(objects);
 			} else if (showart.equalsIgnoreCase("show")) {
-				this.diagram.showObjects(objects);
+				this.dataHolder.showObjects(objects);
 			} else if (showart.equalsIgnoreCase("hide")) {
-				this.diagram.hideObjects(objects);
+				this.dataHolder.hideObjects(objects);
 			}
-			this.diagram.invalidateContent(true);
+			this.dataHolder.invalidateContent(true);
 		} catch (MultiplicityViolationException e) {
 			fTextOut.setText("Could not evaluate. " + e.getMessage());
 		}

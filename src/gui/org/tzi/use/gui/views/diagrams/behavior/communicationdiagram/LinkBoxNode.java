@@ -22,14 +22,20 @@
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleData;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
+import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.util.StringUtil;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 /**
- * Association classes and links will be represented as LinkBoxNode
+ * Association links will be represented as LinkBoxNode
  * 
  * @author Quang Dung Nguyen
+ * @author Carsten Schlobohm
  * 
  */
 public class LinkBoxNode extends BaseNode {
@@ -71,4 +77,33 @@ public class LinkBoxNode extends BaseNode {
 		return "LinkObjectNode[" + link.toString() + "]";
 	}
 
+	@Override
+	public boolean willBeDrawn() {
+		VisibleData visibleData = getComDiaView().getCommunicationDiagram().getSharedVisibleManager().getData();
+		if (visibleData.areElementsAlwaysVisible(new HashSet<MObject>(), new HashSet<MLink>(Arrays.asList(link)))) {
+			return true;
+		}
+		return super.willBeDrawn();
+	}
+
+	@Override
+	public boolean isHidden() {
+		if (getOriginalLifeState() != ObjectState.DELETED && getOriginalLifeState() != ObjectState.TRANSIENT) {
+			VisibleData visibleData = getComDiaView().getCommunicationDiagram().getSharedVisibleManager().getData();
+			return !visibleData.isLinkVisible(link);
+		} else {
+			return super.isHidden();
+		}
+
+	}
+
+	@Override
+	public void setHidden(boolean isHidden) {
+		if (getOriginalLifeState() != ObjectState.DELETED && getOriginalLifeState() != ObjectState.TRANSIENT) {
+			VisibleData visibleData = getComDiaView().getCommunicationDiagram().getSharedVisibleManager().getData();
+			visibleData.changeLinkVisibility(link, !isHidden);
+		} else {
+			super.setHidden(isHidden);
+		}
+	}
 }

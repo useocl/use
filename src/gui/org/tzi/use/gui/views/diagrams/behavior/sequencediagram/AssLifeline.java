@@ -38,6 +38,7 @@ import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.mm.statemachines.MVertex;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
 import org.tzi.use.uml.sys.events.LinkInsertedEvent;
@@ -47,12 +48,18 @@ import org.tzi.use.uml.sys.events.OperationEnteredEvent;
  * Represents a lifeline for Associations.
  * 
  * @author Antje Werner
+ * @author Carsten Schlobohm
  */
 public class AssLifeline extends Lifeline {
 	/**
 	 * The association of this lifeline.
 	 */
 	private MAssociation fAss;
+
+	/**
+	 * The link to the lifeline
+	 */
+	private MLink fLink;
 
 	/**
 	 * The list of the objects involved in the association of this lifeline.
@@ -68,9 +75,11 @@ public class AssLifeline extends Lifeline {
 	 * @param objects list of the objects which are involved in the association
 	 *            ass
 	 */
-	AssLifeline(int col, MAssociation ass, Lifeline antecessor, List<MObject> objects, SequenceDiagram sequenceDiagram) {
+	AssLifeline(int col, MAssociation ass, Lifeline antecessor, List<MObject> objects,
+				SequenceDiagram sequenceDiagram, MLink link) {
 		super(sequenceDiagram);
 		columnNumber = col;
+		fLink = link;
 		fAss = ass;
 		activationsList = new ArrayList<Activation>();
 		objectBox = new ObjectBox(-1, -1, " :" + fAss.name());
@@ -104,6 +113,10 @@ public class AssLifeline extends Lifeline {
 		fDraw = false;
 		fIsDeleted = false;
 		maxOfMessLength = 0;
+	}
+
+	public MLink getLink() {
+		return fLink;
 	}
 
 	/**
@@ -263,12 +276,12 @@ public class AssLifeline extends Lifeline {
 		
 		yEndPos = y_end;
 
-		if (sequenceDiagram.getChoosedLinelines().isSelected(this)) {
+		if (sequenceDiagram.getChoosedLifelines().isSelected(this)) {
 			drawSelectedBound(g, y_start, y_end);
 		}
 
 		// draw objectBox in the right position (->y_start)
-		objectBox.drawBox(g, fm, y_start, sequenceDiagram.getChoosedLinelines().isSelected(this));
+		objectBox.drawBox(g, fm, y_start, sequenceDiagram.getChoosedLifelines().isSelected(this));
 
 		// if only the visible view should be drawn
 		if (sequenceDiagram.isOnlyView()) {
@@ -302,6 +315,23 @@ public class AssLifeline extends Lifeline {
 		if (fProperties.isStatesShown() && hasStatesMachine) {
 			// draw states for this lifeline
 			drawStateNodes(g);
+		}
+	}
+
+	@Override
+	boolean isHidden() {
+		if (getSequenceDiagram().getVisibleDataManager().getData().isLinkKnown(fLink)) {
+			return !getSequenceDiagram().getVisibleDataManager().getData().isLinkVisible(fLink);
+		}
+		return super.isHidden();
+	}
+
+	@Override
+	void setHidden(boolean hidden) {
+		if (getSequenceDiagram().getVisibleDataManager().getData().isLinkKnown(fLink)) {
+			getSequenceDiagram().getVisibleDataManager().getData().changeLinkVisibility(fLink, !hidden);
+		} else {
+			super.setHidden(hidden);
 		}
 	}
 }

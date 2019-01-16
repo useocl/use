@@ -209,7 +209,7 @@ public abstract class Lifeline implements Selectable {
 	/**
 	 * Marks the lifeline's states to be showed in the sequence diagram.
 	 * 
-	 * @param hidden true if the lifeline's states should be showed; false
+	 * @param showStates true if the lifeline's states should be showed; false
 	 *            otherwise
 	 */
 	void setShowStates(boolean showStates) {
@@ -480,12 +480,13 @@ public abstract class Lifeline implements Selectable {
 
 	/**
 	 * Marks the lifeline to be hidden in the sequence diagram.
-	 * 
+	 *
 	 * @param hidden true if the lifeline should be hidden; false otherwise
 	 */
 	void setHidden(boolean hidden) {
 		isHidden = hidden;
 	}
+
 
 	/**
 	 * Indicates if this lifeline should be hidden.
@@ -494,6 +495,7 @@ public abstract class Lifeline implements Selectable {
 	 */
 	boolean isHidden() {
 		return isHidden;
+		//return sequenceDiagram.isLifeLineHidden(this);
 	}
 
 	/**
@@ -661,7 +663,7 @@ public abstract class Lifeline implements Selectable {
 		// beginning of the diagram
 		int xValue = fProperties.getLeftMargin() + fProperties.frWidth();
 		// if there is no lifeline chosen by the user
-		if (sequenceDiagram.getChoosedLinelines().isEmpty()) {
+		if (sequenceDiagram.getChoosedLifelines().isEmpty()) {
 			// calculate xValue and in case of fDraw=true fXValue
 			// subject to the user settings for the distance
 			// of two lifelines

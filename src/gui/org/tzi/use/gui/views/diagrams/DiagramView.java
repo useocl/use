@@ -44,6 +44,7 @@ import java.awt.print.PrinterJob;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -91,6 +92,10 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import com.ximpleware.ParseException;
 
 /**
  * Combines everything that the class and object diagram have in common.
@@ -808,6 +813,35 @@ public abstract class DiagramView extends JPanel
 	
 	protected void beforeSaveLayout(Path layoutFile) {}
 	
+	public void loadLayoutFromString(String layoutString) {
+		PersistHelper helper = null;
+		try {
+			helper = new PersistHelper(layoutString.getBytes(), fLog);
+		} catch (ParseException e) {
+			return;
+		}
+
+
+		this.showAll();
+
+		int version = 1;
+
+		if (helper.hasAttribute("version"))
+			version = Integer.valueOf(helper.getAttributeValue("version"));
+
+		if (beforeRestorePlacementInfos(version)) {
+			helper.toFirstChild("diagramOptions");
+			this.getOptions().loadOptions(helper, version);
+			helper.toParent();
+
+			helper.setAllNodes(this.collectAllNodes());
+			this.restorePlacementInfos(helper, version);
+			this.invalidateContent(false);
+		}
+
+		this.repaint();
+	}
+	
 	public void loadLayout(Path layoutFile) {
 		beforeLoadLayout(layoutFile);
 		
@@ -858,6 +892,50 @@ public abstract class DiagramView extends JPanel
 		}
 		
 		return allNodes;
+	}
+	
+	private Document saveLayout() throws ParserConfigurationException {
+		DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder;
+		Document doc;
+
+		docBuilder = fact.newDocumentBuilder();
+		doc = docBuilder.newDocument();
+
+		PersistHelper helper = new PersistHelper(fLog);
+		Element rootElement = doc.createElement("diagram_Layout");
+		rootElement.setAttribute("version", String.valueOf(DiagramOptions.XML_LAYOUT_VERSION));
+		doc.appendChild(rootElement);
+
+		Element optionsElement = doc.createElement("diagramOptions");
+		rootElement.appendChild(optionsElement);
+		this.getOptions().saveOptions(helper, optionsElement);
+		this.storePlacementInfos( helper, rootElement );
+		return doc;
+	}
+	
+	public String saveLayoutAsString() {
+		Document doc = null;
+		try {
+			doc = saveLayout();
+		} catch (ParserConfigurationException e1) {
+			// layout can not be saved
+			return null;
+		}
+		// use specific Xerces class to write DOM-data to a file:
+		
+		OutputFormat format = new OutputFormat();
+		format.setLineWidth(65);
+		format.setIndenting(true);
+		format.setIndent(2);
+		StringWriter stringOut = new StringWriter();
+		XMLSerializer serializer = new XMLSerializer(stringOut, format);
+		try {
+			serializer.serialize(doc);
+		} catch (IOException e1) {
+			return "";
+		}
+		return stringOut.toString();
 	}
 	
 	public void saveLayout(Path layoutFile) {

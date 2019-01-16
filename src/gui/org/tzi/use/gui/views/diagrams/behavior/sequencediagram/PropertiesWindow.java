@@ -21,6 +21,9 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
+import org.tzi.use.gui.views.diagrams.behavior.shared.CancelButton;
+import org.tzi.use.gui.views.diagrams.behavior.shared.OKButton;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;

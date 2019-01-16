@@ -19,7 +19,7 @@
 
 // $Id$
 
-package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
+package org.tzi.use.gui.views.diagrams.behavior.shared;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -33,19 +33,29 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.CancelButton;
-import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.OKButton;
-
 /**
  * @author Antje Werner
  * @author Thomas Schaefer
+ * @author Carsten Schlobohm
  * 
  *         A window for choosing the commands to show in the communication diagram.
  *         By default only operation calls are diagramed,but it is also possible
  *         to diagram create-, destroy-, insert-, delete- and/or set-commands.
  */
-
-public class CmdChooseWindowComDiag extends JDialog implements ActionListener {
+public class CmdChooseWindow extends JDialog implements ActionListener {
+	public interface CmdChooseWindowDelegate {
+		boolean isCreateSelected();
+		boolean isDestroySelected();
+		boolean isInsertSelected();
+		boolean isDeleteSelected();
+		boolean isAssignSelected();
+		void setCreateVisible(boolean selected);
+		void setDestroyVisible(boolean selected);
+		void setInsertVisible(boolean selected);
+		void setDeleteVisible(boolean selected);
+		void setAssignVisible(boolean selected);
+		void filterGraphByEvent();
+	}
 	/**
 	 * 
 	 */
@@ -62,23 +72,18 @@ public class CmdChooseWindowComDiag extends JDialog implements ActionListener {
 	 */
 	private Container contentContainer;
 
-	/**
-	 * The {@link CommunicationDiagram} from which this window is called.
-	 */
-	private CommunicationDiagram fComDiag;
+	private CmdChooseWindowDelegate delegate;
 
 	/**
 	 * Constructs an new CmdChooseWindow.
 	 * 
 	 */
-	
-	private boolean[] filter = new boolean[5];
-	
-	public CmdChooseWindowComDiag(CommunicationDiagram comDiag) {
+	public CmdChooseWindow(CmdChooseWindowDelegate delegate) {
 		setTitle("Choose Commands...");
-		fComDiag = comDiag;
+		this.delegate = delegate;
 		contentContainer = getContentPane();
 		contentContainer.setLayout(new BorderLayout(20, 10));
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		JLabel label1 = new JLabel("");
 		JLabel label2 = new JLabel("");
@@ -86,11 +91,11 @@ public class CmdChooseWindowComDiag extends JDialog implements ActionListener {
 		JPanel checkBoxPanel = new JPanel();
 		checkBoxPanel.setLayout(new GridLayout(3, 2, 20, 0));
 
-		checkBoxes[0] = new JCheckBox("Create", fComDiag.isCreateSelected());
-		checkBoxes[1] = new JCheckBox("Destroy",fComDiag.isDestroySelected());
-		checkBoxes[2] = new JCheckBox("Insert",fComDiag.isInsertSelected());
-		checkBoxes[3] = new JCheckBox("Delete",fComDiag.isDeleteSelected());
-		checkBoxes[4] = new JCheckBox("Set", fComDiag.isSetSelected());
+		checkBoxes[0] = new JCheckBox("Create", delegate.isCreateSelected());
+		checkBoxes[1] = new JCheckBox("Destroy",delegate.isDestroySelected());
+		checkBoxes[2] = new JCheckBox("Insert",delegate.isInsertSelected());
+		checkBoxes[3] = new JCheckBox("Delete",delegate.isDeleteSelected());
+		checkBoxes[4] = new JCheckBox("Set", delegate.isAssignSelected());
 
 		for (int i = 0; i < checkBoxes.length; i++) {
 			checkBoxPanel.add(checkBoxes[i]);
@@ -115,11 +120,10 @@ public class CmdChooseWindowComDiag extends JDialog implements ActionListener {
 	 * Shows the setup dialog for sequence diagram.
 	 * 
 	 */
-	void showWindow() {
-		CmdChooseWindowComDiag cmdChooseW = new CmdChooseWindowComDiag(fComDiag);
-		cmdChooseW.setSize(200, 150);
-		cmdChooseW.setLocation(300, 200);
-		cmdChooseW.setVisible(true);
+	public void showWindow() {
+		this.setSize(200, 150);
+		this.setLocation(300, 200);
+		this.setVisible(true);
 	}
 
 	/**
@@ -127,12 +131,12 @@ public class CmdChooseWindowComDiag extends JDialog implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if ("Ok".equals(e.getActionCommand())) {
-			filter[0] = !checkBoxes[0].isSelected();
-			filter[1] = !checkBoxes[1].isSelected();
-			filter[2] = !checkBoxes[2].isSelected();
-			filter[3] = !checkBoxes[3].isSelected();
-			filter[4] = !checkBoxes[4].isSelected();
-			fComDiag.filterGraphByEvent(filter);
+			delegate.setCreateVisible(checkBoxes[0].isSelected());
+			delegate.setDestroyVisible(checkBoxes[1].isSelected());
+			delegate.setInsertVisible(checkBoxes[2].isSelected());
+			delegate.setDeleteVisible(checkBoxes[3].isSelected());
+			delegate.setAssignVisible(checkBoxes[4].isSelected());
+			delegate.filterGraphByEvent();
 			dispose();
 		}
 		if ("Cancel".equals(e.getActionCommand())) {

@@ -45,6 +45,7 @@ import com.google.common.collect.Multimap;
  * communication diagrams.
  * 
  * @author Quang Dung Nguyen
+ * @author Carsten Schlobohm
  * 
  */
 public class CommunicationDiagramEdge extends EdgeBase {
@@ -69,14 +70,13 @@ public class CommunicationDiagramEdge extends EdgeBase {
 	private MessagesGroup messagesGroup;
 
 	/**
-	 * Is absent in current view, i. e.,
-	 * it cannot be made visible by the user.
+	 * Indicates if the edge is an link
 	 */
-	private boolean isAbsentInCurrentView = false;
+	private boolean isLinkEdge = false;
 
-	private DiagramView parentView;
+	private CommunicationDiagram parentView;
 
-	public CommunicationDiagramEdge(PlaceableNode source, PlaceableNode target, DiagramView diagram, boolean completeEdgeMoveMovesUserWayPoints) {
+	public CommunicationDiagramEdge(PlaceableNode source, PlaceableNode target, CommunicationDiagram diagram, boolean completeEdgeMoveMovesUserWayPoints) {
 		super(source, target, source.name() + " - " + target.name(), diagram.getOptions(), false);
 		messages = new ArrayList<MMessage>();
 		isActivated = false;
@@ -93,12 +93,16 @@ public class CommunicationDiagramEdge extends EdgeBase {
 
 	@Override
 	public boolean isVisible() {
-		return super.isVisible() && !isAbsentInCurrentView();
+		return super.isVisible();
 	}
 
 	@Override
 	public void setHidden(boolean isHidden){
 		super.setHidden(isHidden);
+	}
+
+	public CommunicationDiagram getParentView() {
+		return parentView;
 	}
 
 	public void setActivate(boolean on) {
@@ -132,20 +136,6 @@ public class CommunicationDiagramEdge extends EdgeBase {
 
 	public MessagesGroup getMessagesGroup() {
 		return messagesGroup;
-	}
-
-	/**
-	 * @return the isAbsentInCurrentView
-	 */
-	public boolean isAbsentInCurrentView() {
-		return isAbsentInCurrentView;
-	}
-
-	/**
-	 * @param isAbsentInCurrentView the isAbsentInCurrentView to set
-	 */
-	public void setAbsentInCurrentView(boolean isAbsentInCurrentView) {
-		this.isAbsentInCurrentView = isAbsentInCurrentView;
 	}
 
 	public MMessage getLongestMessage() {
@@ -262,7 +252,7 @@ public class CommunicationDiagramEdge extends EdgeBase {
 
 	@Override
 	public boolean isLink() {
-		return false;
+		return isLinkEdge;
 	}
 
 	@Override
@@ -275,8 +265,15 @@ public class CommunicationDiagramEdge extends EdgeBase {
 		return "Communication Edge";
 	}
 
-	static CommunicationDiagramEdge create(PlaceableNode source, PlaceableNode target, DiagramView diagram, boolean completeEdgeMoveMovesUserWayPoints) {
+	static CommunicationDiagramEdge create(PlaceableNode source, PlaceableNode target, CommunicationDiagram diagram, boolean completeEdgeMoveMovesUserWayPoints) {
 		CommunicationDiagramEdge edge = new CommunicationDiagramEdge(source, target, diagram, completeEdgeMoveMovesUserWayPoints);
+		edge.initialize();
+		return edge;
+	}
+
+	static CommunicationDiagramEdge createLink(PlaceableNode source, PlaceableNode target, CommunicationDiagram diagram, boolean completeEdgeMoveMovesUserWayPoints) {
+		CommunicationDiagramEdge edge = new CommunicationDiagramEdge(source, target, diagram, completeEdgeMoveMovesUserWayPoints);
+		edge.isLinkEdge = true;
 		edge.initialize();
 		return edge;
 	}

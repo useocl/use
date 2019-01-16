@@ -72,31 +72,6 @@ class SDProperties {
 	private boolean fCompactDisplay;
 
 	/**
-	 * Specifies if create commands should be shown in the sequence diagram.
-	 */
-	private boolean fShowCreate;
-
-	/**
-	 * Specifies if set commands should be shown in the sequence diagram.
-	 */
-	private boolean fShowSet;
-
-	/**
-	 * Specifies if destroy commands should be shown in the sequence diagram.
-	 */
-	private boolean fShowDestroy;
-
-	/**
-	 * Specifies if insert commands should be shown in the sequence diagram.
-	 */
-	private boolean fShowInsert;
-
-	/**
-	 * Specifies if delete commands should be shown in the sequence diagram.
-	 */
-	private boolean fShowDelete;
-
-	/**
 	 * Specifies if each lifeline should have an individual distance (due to the
 	 * longest message length) to the antecessor lifeline or if the distance
 	 * should be the same between all lifelines.
@@ -195,11 +170,6 @@ class SDProperties {
 		fShowValues = true;
 		showStates = false;
 		fCompactDisplay = true;
-		fShowCreate = false;
-		fShowSet = false;
-		fShowDestroy = false;
-		fShowInsert = false;
-		fShowDelete = false;
 		fIndividualLl = false;
 		fLikeLongMess = false;
 		isStateNodeManualSize = false;
@@ -309,56 +279,6 @@ class SDProperties {
 	 */
 	public void compactDisplay(boolean value) {
 		fCompactDisplay = value;
-	}
-
-	/**
-	 * Sets the value of the fShowCreate-Variable.
-	 * 
-	 * @param value true, if create should be drawn in the diagram, false
-	 *            otherwise.
-	 */
-	public void showCreate(boolean value) {
-		fShowCreate = value;
-	}
-
-	/**
-	 * Sets the value of the fShowSet-Variable.
-	 * 
-	 * @param value true, if set should be drawn in the diagram, false
-	 *            otherwise.
-	 */
-	public void showSet(boolean value) {
-		fShowSet = value;
-	}
-
-	/**
-	 * Sets the value of the fShowDestroy-Variable.
-	 * 
-	 * @param value true, if destroy should be drawn in the diagram, false
-	 *            otherwise.
-	 */
-	public void showDestroy(boolean value) {
-		fShowDestroy = value;
-	}
-
-	/**
-	 * Sets the value of the fShowinsert-Variable.
-	 * 
-	 * @param value true, if insert should be drawn in the diagram, false
-	 *            otherwise.
-	 */
-	public void showInsert(boolean value) {
-		fShowInsert = value;
-	}
-
-	/**
-	 * Sets the value of the fShowDeslete-Variable.
-	 * 
-	 * @param value true, if delete should be drawn in the diagram, false
-	 *            otherwise.
-	 */
-	public void showDelete(boolean value) {
-		fShowDelete = value;
 	}
 
 	/**
@@ -541,51 +461,6 @@ class SDProperties {
 	 */
 	public boolean compactDisplay() {
 		return fCompactDisplay;
-	}
-
-	/**
-	 * Indicates whether or not create commands should be shown in the diagram.
-	 * 
-	 * @return true if create should be shown; false otherwise.
-	 */
-	public boolean showCreate() {
-		return fShowCreate;
-	}
-
-	/**
-	 * Indicates whether or not set commands should be shown in the diagram.
-	 * 
-	 * @return true if set should be shown; false otherwise.
-	 */
-	public boolean showSet() {
-		return fShowSet;
-	}
-
-	/**
-	 * Indicates whether or not destroy commands should be shown in the diagram.
-	 * 
-	 * @return true if destroy should be shown; false otherwise.
-	 */
-	public boolean showDestroy() {
-		return fShowDestroy;
-	}
-
-	/**
-	 * Indicates whether or not insert commands should be shown in the diagram.
-	 * 
-	 * @return true if insert should be shown; false otherwise.
-	 */
-	public boolean showInsert() {
-		return fShowInsert;
-	}
-
-	/**
-	 * Indicates whether or not delete commands should be shown in the diagram.
-	 * 
-	 * @return true if delete should be shown; false otherwise.
-	 */
-	public boolean showDelete() {
-		return fShowDelete;
 	}
 
 	/**

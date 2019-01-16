@@ -71,6 +71,7 @@ public class MessagesNavigationDialog extends JDialog {
 		setResizable(true);
 		setMaximumSize(new Dimension(800, 120));
 		setMinimumSize(new Dimension(250, 120));
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		sequenceNumberLabel = new JLabel("Message : ");
 		sequenceNumberLabel.setLabelFor(messagesBox);

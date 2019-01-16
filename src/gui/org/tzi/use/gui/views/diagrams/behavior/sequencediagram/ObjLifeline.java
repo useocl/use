@@ -44,6 +44,7 @@ import org.tzi.use.uml.sys.events.OperationEnteredEvent;
  * Represents a lifeline for Objects.
  * 
  * @author Antje Werner
+ * @author Carsten Schlobohm
  */
 public class ObjLifeline extends Lifeline {
 	/**
@@ -256,12 +257,12 @@ public class ObjLifeline extends Lifeline {
 		
 		yEndPos = y_end;
 
-		if (sequenceDiagram.getChoosedLinelines().isSelected(this)) {
+		if (sequenceDiagram.getChoosedLifelines().isSelected(this)) {
 			drawSelectedBound(g, y_start, y_end);
 		}
 
 		// draw objectBox in the right position (->y_start)
-		objectBox.drawBox(g, fm, y_start, sequenceDiagram.getChoosedLinelines().isSelected(this));
+		objectBox.drawBox(g, fm, y_start, sequenceDiagram.getChoosedLifelines().isSelected(this));
 
 		// if only the visible view should be drawn
 		if (sequenceDiagram.isOnlyView()) {
@@ -297,4 +298,20 @@ public class ObjLifeline extends Lifeline {
 		}
 	}
 
+	@Override
+	boolean isHidden() {
+		if (getSequenceDiagram().getVisibleDataManager().getData().isObjectKnown(fObj)) {
+			return !getSequenceDiagram().getVisibleDataManager().getData().isObjectVisible(fObj);
+		}
+		return super.isHidden();
+	}
+
+	@Override
+	void setHidden(boolean hidden) {
+		if (getSequenceDiagram().getVisibleDataManager().getData().isObjectKnown(fObj)) {
+			getSequenceDiagram().getVisibleDataManager().getData().changeObjectVisibility(fObj, !hidden);
+		} else {
+			super.setHidden(hidden);
+		}
+	}
 }

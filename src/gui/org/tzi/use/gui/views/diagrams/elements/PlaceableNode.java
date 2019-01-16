@@ -213,7 +213,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * @param g Graphics object the node is drawn to.
      */
     public final void draw(Graphics2D g) {
-    	if (!isVisible() || isAbsentFromGraph) return;
+    	if (!willBeDrawn()) return;
     	
     	onDraw(g);
     	if (isSelected() && isResizable())
@@ -256,7 +256,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 	 * @return <code>true</code>, if this node is drawn.
 	 */
 	public boolean isVisible() {
-		return !isHidden;
+		return !isHidden();
 	}
 
 	/**
@@ -1065,7 +1065,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 			helper.toParent();
 		}
     	
-		isHidden = helper.getElementBooleanValue(LayoutTags.HIDDEN);
+		setHidden(helper.getElementBooleanValue(LayoutTags.HIDDEN));
 		
     	restoreAdditionalInfo(helper, version);
     }
@@ -1131,6 +1131,10 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 	 */
 	public boolean isAbsentFromGraph() {
 		return isAbsentFromGraph;
+	}
+
+	public boolean willBeDrawn() {
+		return isVisible() && !isAbsentFromGraph;
 	}
 
 	/**

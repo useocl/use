@@ -26,13 +26,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram;
+import org.tzi.use.gui.views.selection.objectselection.DataHolder;
 import org.tzi.use.uml.sys.MObject;
 
 /**
  * @author Quang Dung Nguyen
  */
 @SuppressWarnings("serial")
-public abstract class DiagramViewWithObjectNode extends DiagramView {
+public abstract class DiagramViewWithObjectNode extends DiagramView implements DataHolder {
 
     public DiagramViewWithObjectNode(DiagramOptions opt, PrintWriter log) {
 	super(opt, log);

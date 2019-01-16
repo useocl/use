@@ -23,13 +23,19 @@ package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleData;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * This class represents node of objects in communication diagrams
  * 
  * @author Quang Dung Nguyen
+ * @author Carsten Schlobohm
  * 
  */
 public class ObjectBoxNode extends BaseNode implements ObjectNodeActivity {
@@ -75,4 +81,32 @@ public class ObjectBoxNode extends BaseNode implements ObjectNodeActivity {
 		return "ObjectBoxNode[" + object().name() + "]";
 	}
 
+	@Override
+	public boolean willBeDrawn() {
+		VisibleData visibleData = getComDiaView().getCommunicationDiagram().getSharedVisibleManager().getData();
+		if (visibleData.areElementsAlwaysVisible(new HashSet<MObject>(Arrays.asList(obj)), new HashSet<MLink>())) {
+			return true;
+		}
+		return super.willBeDrawn();
+	}
+
+	@Override
+	public boolean isHidden() {
+		if (getOriginalLifeState() != ObjectState.DELETED && getOriginalLifeState() != ObjectState.TRANSIENT) {
+			VisibleData visibleData = getComDiaView().getCommunicationDiagram().getSharedVisibleManager().getData();
+			return !visibleData.isObjectVisible(obj);
+		} else {
+			return super.isHidden();
+		}
+	}
+
+	@Override
+	public void setHidden(boolean isHidden) {
+		if (getOriginalLifeState() != ObjectState.DELETED && getOriginalLifeState() != ObjectState.TRANSIENT) {
+			VisibleData visibleData = getComDiaView().getCommunicationDiagram().getSharedVisibleManager().getData();
+			visibleData.changeObjectVisibility(obj, !isHidden);
+		} else {
+			super.setHidden(isHidden);
+		}
+	}
 }

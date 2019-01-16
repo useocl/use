@@ -29,10 +29,15 @@ import org.tzi.use.uml.sys.events.Event;
  * 
  * @author Quang Dung Nguyen
  * @author Thomas Schaefer
+ * @author Carsten Schlobohm
  * 
  */
 public class MMessage implements MNamedElement {
 
+	/** Original event from system */
+	private final Event event;
+
+	/** Indicates in which direction the arrow will point */
 	public static final int FORWARD = 1;
 	public static final int BACKWARD = 2;
 	public static final int RETURN = 3;
@@ -46,34 +51,14 @@ public class MMessage implements MNamedElement {
 	private CommunicationDiagramEdge owner;
 
 	private boolean isVisible = true;
-	private boolean isAbsentFromGraphByDepth = false;
 	private boolean isAbsentFromGraphByEvent = false;
-	
-	/**
-	 * 
-	 * @param number the new Sequencenumber
-	 */
-	
-	public void setResetedSequenceNumber(String sequenceNumber){
-		resetedSequenceNumber = sequenceNumber;
-	}
-	
-	/**
-	 * @return the isVisible
-	 */
-	public boolean isVisible() {
-		return isVisible;
-	}
 
 	/**
-	 * @param isVisible the isVisible to set
+	 * Custom constructor
+	 * @param e	contains the event from the system which spawns this message
+	 * @param sequenceNumber number for ordering the messages (look communication diagram)
+	 * @param message as string which will be shown
 	 */
-	public void setVisible(boolean isVisible) {
-		this.isVisible = isVisible;
-	}
-
-	private final Event event;
-	
 	public MMessage(Event e, String sequenceNumber, String message) {
 		this.sequenceNumber = sequenceNumber;
 		this.name = message;
@@ -81,11 +66,23 @@ public class MMessage implements MNamedElement {
 		this.event = e;
 	}
 
+	/**
+	 * Custom constructor for test cases
+	 * @param e is the event which spawns this message
+	 */
 	public MMessage(Event e) {
 		this.sequenceNumber = "";
 		this.name = "";
 		this.failedReturn = false;
 		this.event = e;
+	}
+
+	/**
+	 * Allows to set a new sequence number after a message selection
+	 * @param sequenceNumber new sequence number
+	 */
+	public void setResetedSequenceNumber(String sequenceNumber){
+		resetedSequenceNumber = sequenceNumber;
 	}
 
 	public String getSequenceNumber() {
@@ -101,20 +98,6 @@ public class MMessage implements MNamedElement {
 	}
 	
 	public String getResetedNumberMessage(){
-//		String [] strings = sequenceNumber.split("\\.");
-//		String newSequenceNumber = "";
-//		
-//		if(strings.length == 1)
-//		{
-//			strings[0] = resetedSequenceNumber;
-//		}else if(strings.length > 1){
-//			strings[0] = resetedSequenceNumber + ".";
-//		}
-//		
-//		for (int i = 0; i < strings.length; i++) {
-//			newSequenceNumber = newSequenceNumber + strings[i];
-//		}
-		
 		return resetedSequenceNumber + " : " + name;
 	}
 
@@ -154,14 +137,14 @@ public class MMessage implements MNamedElement {
 	}
 
 	/**
-	 * @param owner the owner to set
+	 * @param owner of the message
 	 */
 	public void setOwner(CommunicationDiagramEdge owner) {
 		this.owner = owner;
 	}
 
 	/**
-	 * @return the event
+	 * @return the stored event
 	 */
 	public Event getEvent() {
 		return event;
@@ -195,23 +178,5 @@ public class MMessage implements MNamedElement {
 	@Override
 	public String toString() {
 		return name();
-	}
-
-	/**
-	 * @return the isAbsentFromGraph
-	 */
-	public boolean isAbsentFromGraph() {
-		return isAbsentFromGraphByDepth || isAbsentFromGraphByEvent;
-	}
-
-	/**
-	 * @param isAbsentFromGraph the isAbsentFromGraph to set
-	 */
-	public void setAbsentFromGraphByDepth(boolean isAbsentFromGraph) {
-		this.isAbsentFromGraphByDepth = isAbsentFromGraph;
-	}
-	
-	public void setAbsentFromGraphByEvent(boolean isAbsentFromGraph) {
-		this.isAbsentFromGraphByEvent = isAbsentFromGraph;
 	}
 }

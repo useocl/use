@@ -33,34 +33,73 @@ import javax.swing.JPanel;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
-
-import com.google.common.eventbus.Subscribe;
+import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
 
 /**
  * A SequenceDiagramView shows a UML sequence diagramm of events.
  * 
  * @author Mark Richters
  * @author Antje Werner
+ * @author Carsten Schlobohm
  */
 
 @SuppressWarnings("serial")
-public class SequenceDiagramView extends JPanel implements View, PrintableView {
+public class SequenceDiagramView extends JPanel implements View, PrintableView,
+		VisibleDataManager.VisibleDataObserver {
 
-	private MSystem fSystem;
+	private SequenceDiagram fSeqDia;
 
-	private SequenceDiagram fSeqDiag;
+	private VisibleDataManager visibleDataManager;
 
-	public SequenceDiagramView(MSystem system, MainWindow mainW) {
+	/**
+	 * Creates a SequenceDiagramView
+	 * @param system USE system which stores all information about the current state
+	 * @param mainWindow parent view
+	 * @param manager manages which data is currently visible or should be set hidden
+	 * @return a new created SequenceDiagramView
+	 */
+	public static SequenceDiagramView createSequenceDiagramView(MSystem system,
+												 MainWindow mainWindow,
+												 VisibleDataManager manager) {
+		SequenceDiagramView sequenceDiagram = new SequenceDiagramView(system, manager);
+		sequenceDiagram.postConstruction(system, mainWindow);
+		return sequenceDiagram;
+	}
+
+	/**
+	 * Custom constructor
+	 * @param system USE system which stores all information about the current state
+	 * @param pVisibleDataManager manages which data is currently visible or should be set hidden
+	 */
+	private SequenceDiagramView(final MSystem system,
+							   final VisibleDataManager pVisibleDataManager) {
 		setDoubleBuffered(true);
-		fSystem = system;
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder());
-		fSeqDiag = new SequenceDiagram(system, mainW);
-		add(fSeqDiag, BorderLayout.CENTER);
+		if (pVisibleDataManager == null) {
+			this.visibleDataManager = VisibleDataManager.createVisibleDataManager(system);
+			initVisibleDataManager();
+		} else {
+			this.visibleDataManager = pVisibleDataManager;
+		}
+	}
 
-		fSystem.getEventBus().register(this);
+	/**
+	 * Do here all initialisation or function calls
+	 * which needs 'this' as param or relies on it in some manner.
+	 * Use the constructor for all other initialisation.
+	 * Especially register listener only in this method, so
+	 * we can prevent multi-threading issues because of a not fully
+	 * initialed SequenceDiagramView
+	 */
+	private void postConstruction(final MSystem system,
+								  final MainWindow mainWindow) {
+		fSeqDia = new SequenceDiagram(system, mainWindow, this, this.visibleDataManager);
+		this.visibleDataManager.registerObserver(this);
+		add(fSeqDia, BorderLayout.CENTER);
 	}
 
 	/**
@@ -69,37 +108,27 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView {
 	 * 
 	 * @param bounds the new view bounds
 	 */
-	public void setViewBounds(Rectangle bounds) {
-		fSeqDiag.setViewBounds(bounds);
+	void setViewBounds(Rectangle bounds) {
+		fSeqDia.setViewBounds(bounds);
 	}
 
 	/**
 	 * Updates the current sequence diagram.
 	 */
 	public void update() {
-		fSeqDiag.update();
+		fSeqDia.update();
 	}
 
-	/**
-	 * Returns the SequenceDiagram-Object which is saved in fSeqDiag.
-	 * 
-	 * @return the SequenceDiagram-Object
-	 */
-	public SequenceDiagram getSeqDiag() {
-		return fSeqDiag;
-	}
-
-	@Subscribe
-	public void onStateChanged(SystemStateChangedEvent event) {
-		// TODO: Handle event types to be able to update the diagram stepwise
-		fSeqDiag.update();
+	private void initVisibleDataManager() {
+		visibleDataManager.getData().setAllEventTypesVisible(false);
 	}
 
 	/**
 	 * Detaches the view from its model.
 	 */
 	public void detachModel() {
-		fSystem.getEventBus().unregister(this);
+		visibleDataManager.unregisterObserver(this);
+		visibleDataManager.secureTermination();
 	}
 
 	/**
@@ -108,12 +137,12 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView {
 	 * @param pf The PageFormat-Object for the printing.
 	 */
 	public void printView(PageFormat pf) {
-		fSeqDiag.printDiagram(pf);
+		fSeqDia.printDiagram(pf);
 	}
 
 	@Override
 	public void export(Graphics2D g) {
-		JComponent toExport = fSeqDiag;
+		JComponent toExport = fSeqDia;
 
 		boolean oldDb = toExport.isDoubleBuffered();
 		toExport.setDoubleBuffered(false);
@@ -127,17 +156,35 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView {
 	 * @param pf The PageFormat-Object for the printing.
 	 */
 	public void printOnlyView(PageFormat pf) {
-		fSeqDiag.printView(pf);
+		fSeqDia.printView(pf);
 	}
 
 	@Override
 	public float getContentHeight() {
-		return fSeqDiag.getPreferredSize().height;
+		return fSeqDia.getPreferredSize().height;
 	}
 
 	@Override
 	public float getContentWidth() {
-		return fSeqDiag.getPreferredSize().width;
+		return fSeqDia.getPreferredSize().width;
 	}
 
+	@Override
+	public void onObservableChanged() {
+		fSeqDia.update();
+		fSeqDia.repaint();
+	}
+
+	@Override
+	public void onStatement(Event event) {}
+
+	@Override
+	public void onEventExecuted(StatementExecutedEvent event) {
+		fSeqDia.update();
+		fSeqDia.repaint();
+	}
+
+	void notifyDataManager() {
+		visibleDataManager.notifyObservers(this);
+	}
 }

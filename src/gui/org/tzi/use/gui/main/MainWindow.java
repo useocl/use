@@ -106,6 +106,7 @@ import org.tzi.use.gui.views.View;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SDScrollPane;
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SequenceDiagramView;
+import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.statemachine.StateMachineDiagramView;
@@ -605,6 +606,51 @@ public class MainWindow extends JFrame {
         					}
         				});
         			}});
+    }
+	
+	public void createSequenceDiagram(VisibleDataManager visibleDataManger) {
+        SequenceDiagramView sv = SequenceDiagramView.createSequenceDiagramView(
+                fSession.system(),
+                MainWindow.this,
+                visibleDataManger);
+        ViewFrame f = new ViewFrame("Sequence diagram", sv,
+                "SequenceDiagram.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(new SDScrollPane(sv), BorderLayout.CENTER);
+        addNewViewFrame(f);
+    }
+
+    public void createCommunicationDiagram(VisibleDataManager visibleDataManger) {
+        CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(
+                MainWindow.this,
+                fSession.system(),
+                visibleDataManger);
+        ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
+        // give some help information
+        f.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(InternalFrameEvent ev) {
+                fStatusBar.showTmpMessage("Use left mouse button to move "
+                        + "actor, object and link boxes, right button for popup menu.");
+            }
+
+            @Override
+            public void internalFrameDeactivated(InternalFrameEvent ev) {
+                fStatusBar.clearMessage();
+            }
+
+            @Override
+            public void internalFrameClosed(InternalFrameEvent e) {
+                communicationDiagrams.remove(((ViewFrame) e.getSource()).getView());
+            }
+        });
+
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(cdv, BorderLayout.CENTER);
+        addNewViewFrame(f);
+        communicationDiagrams.add(cdv);
     }
 
 	private void setRecentfiles() {
@@ -1874,7 +1920,8 @@ public class MainWindow extends JFrame {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-	    CommunicationDiagramView cdv = new CommunicationDiagramView(MainWindow.this, fSession.system());
+		CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(
+				MainWindow.this, fSession.system(), VisibleDataManager.createVisibleDataManager(fSession.system()));//new CommunicationDiagramView(MainWindow.this, fSession.system());
 	    ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
 	    // give some help information
 	    f.addInternalFrameListener(new InternalFrameAdapter() {
@@ -2013,7 +2060,7 @@ public class MainWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			SequenceDiagramView sv = new SequenceDiagramView(fSession.system(), MainWindow.this);
+			SequenceDiagramView sv = SequenceDiagramView.createSequenceDiagramView(fSession.system(), MainWindow.this, null);
 			ViewFrame f = new ViewFrame("Sequence diagram", sv,
 					"SequenceDiagram.gif");
 			JComponent c = (JComponent) f.getContentPane();

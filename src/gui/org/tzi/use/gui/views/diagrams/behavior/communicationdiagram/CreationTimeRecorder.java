@@ -33,7 +33,7 @@ import com.google.common.collect.Multimap;
 
 /**
  * Saves the time stamps of the creation events
- * of objects and links that are treaded as equal by USE.
+ * of objects and links that are treated as equal by USE.
  * This is for all events in the current use session.
  * For example:
  * 1 !create ada:Person  (ada:Person -> {1})
@@ -58,7 +58,7 @@ public class CreationTimeRecorder {
 	}
 	
 	/**
-	 * @param mess
+	 * @param mess to add
 	 */
 	public void addMessage(MMessage mess) {
 		messages.add(mess);
@@ -79,7 +79,7 @@ public class CreationTimeRecorder {
 	}
 	
 	/**
-	 * @return
+	 * @return current creation time
 	 */
 	public int getTime() {
 		return time;
@@ -87,14 +87,13 @@ public class CreationTimeRecorder {
 	
 	/** Marks the birth of an element.
 	 * The time is incremented.
-	 * @param obj
-	 * @return
+	 * @param obj to the creation time
 	 */
 	private void elementCreated(Object obj) {
 		elementCreationTime.put(obj, time);
 	}
 	
-	public int[] getCreationTimes(Object obj) {
+	private int[] getCreationTimes(Object obj) {
 		Collection<Integer> values = elementCreationTime.get(obj);
 		int[] times = new int[values.size()];
 		int i = 0;
@@ -107,10 +106,8 @@ public class CreationTimeRecorder {
 	}
 	
 	/**
-	 * Returns the last time an object with this value
-	 * was created.
-	 * @param obj
-	 * @return
+	 * @param obj identifier for the creation time
+	 * @return last creation time of obj
 	 */
 	public int getLastCreationTime(Object obj) {
 		return MathUtil.max(true, getCreationTimes(obj));
@@ -119,9 +116,9 @@ public class CreationTimeRecorder {
 	/**
 	 * Returns the last time an object with this value
 	 * was created before time <code>before</code>.
-	 * @param obj
-	 * @param before
-	 * @return
+	 * @param obj created object
+	 * @param before reference time
+	 * @return creation time
 	 */
 	public int getLastCreationTime(Object obj, int before) {
 		int[] creationTimes = getCreationTimes(obj);

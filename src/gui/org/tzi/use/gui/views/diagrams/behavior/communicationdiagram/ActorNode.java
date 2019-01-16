@@ -29,11 +29,14 @@ import java.awt.geom.Rectangle2D;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.behavior.DrawingUtil;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed;
+import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyUnmovable;
 
 /**
  * This class represents the actor as a node in communication diagrams.
  * 
  * @author Quang Dung Nguyen
+ * @author Carsten Schlobohm
  * 
  */
 public class ActorNode extends PlaceableNode {
@@ -42,13 +45,20 @@ public class ActorNode extends PlaceableNode {
 	private final DiagramOptions fOpt;
 
 	private Actor user;
-	private int labelWidth;
-	private boolean isUnmovable;
+	private boolean isAlwaysVisible;
 
 	public ActorNode(Actor user) {
 		this.user = user;
 		this.fOpt = new CommunicationDiagramOptions();
-		isUnmovable = false;
+		isAlwaysVisible = false;
+	}
+
+	public ActorNode(Actor user, boolean isAlwaysVisible, boolean isMovable) {
+		this(user);
+		this.isAlwaysVisible = isAlwaysVisible;
+		if (!isMovable) {
+			strategy = StrategyUnmovable.instance;
+		}
 	}
 
 	public Actor getActorData() {
@@ -57,6 +67,19 @@ public class ActorNode extends PlaceableNode {
 
 	public String ident() {
 		return "User." + getActorData().getUserName();
+	}
+
+	@Override
+	public boolean isHidden() {
+		if (!isAlwaysVisible) {
+			return super.isHidden();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return !isHidden();
 	}
 
 	@Override
@@ -102,7 +125,7 @@ public class ActorNode extends PlaceableNode {
 	public void doCalculateSize(Graphics2D g) {
 		FontMetrics fm = g.getFontMetrics();
 
-		labelWidth = fm.stringWidth(user.getUserName());
+		int labelWidth = fm.stringWidth(user.getUserName());
 		int nameHeight = fm.getAscent();
 		int maxWidth;
 
@@ -126,17 +149,36 @@ public class ActorNode extends PlaceableNode {
 	 * @return true if actor node movable, otherwise false
 	 */
 	public boolean isUnmovable() {
-		return isUnmovable;
+		return (strategy instanceof StrategyUnmovable);
 	}
 
 	/**
-	 * Set the actor node unmovable.
+	 * Set the actor node unmovable and the strategy.
 	 * 
-	 * @param unmovableActor
+	 * @param unmovableActor 'true' if the actor shouldn't move
 	 * 
 	 */
 	public void setUnmovable(boolean unmovableActor) {
-		this.isUnmovable = unmovableActor;
+		if (unmovableActor) {
+			setStrategy(StrategyUnmovable.instance);
+		} else {
+			setStrategy(StrategyFixed.instance);
+		}
+	}
+
+	/**
+	 *
+	 * @param isAlwaysVisible if true the actor node can't be hidden
+	 */
+	public void setIsAlwaysVisible(boolean isAlwaysVisible) {
+		this.isAlwaysVisible = isAlwaysVisible;
+	}
+
+	/**
+	 * @return true if it is possible to hide the actor node else false
+	 */
+	public boolean isAlwaysVisible() {
+		return isAlwaysVisible;
 	}
 
 	@Override

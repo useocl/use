@@ -19,7 +19,7 @@
 
 // $Id$
 
-package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
+package org.tzi.use.gui.views.diagrams.behavior.shared;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
