@@ -79,6 +79,7 @@ import org.tzi.use.gui.views.selection.objectselection.ObjectSelectionHelper;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MLinkObjectImpl;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectImpl;
@@ -227,6 +228,19 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 		allLifelines.putAll(fObjectLifelines);
 		allLifelines.putAll(fLinkLifelines);
 		return allLifelines;
+	}
+	
+	public Lifeline getSpecificLifeline(MObject obj) {
+		if(obj instanceof MLinkObject) {
+			for(LinkInsertedEvent lie : fLinkLifelines.keySet()) {
+				if(lie.getLink().equals(obj)) {
+					return fLinkLifelines.get(lie);
+				}
+			}
+		} else {
+			return fObjectLifelines.get(obj);
+		}
+		return null;
 	}
 
 	public MSystem getSystem() {
@@ -1242,7 +1256,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 						MOperationCall opcall = ((OperationExitedEvent) event).getOperationCall();
 						MObject obj = opcall.getSelf();
 						// MObject obj = getObj(a.getCmd());
-						Lifeline ll = fObjectLifelines.get(obj);
+						Lifeline ll = getSpecificLifeline(obj);
 						// if the lifeline and the source-lifeline is not marked
 						// to be hidden
 						if (!ll.isHidden() && (a.getSrc() == null || !a.getSrc().isHidden())) {
@@ -1531,7 +1545,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	private synchronized int drawSet(AttributeAssignedEvent event, Stack<Activation> activationStack, int lastYValue, Activation lastAct) {
 
 		MObject obj = event.getObject();
-		Lifeline ll = fObjectLifelines.get(obj);
+		Lifeline ll = getSpecificLifeline(obj);
 
 		int yValue = lastYValue;
 		if ((visibleEvent(event) && !ll.isHidden()) || !fProperties.compactDisplay()) {
@@ -1607,7 +1621,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 		MOperationCall operationCall = event.getOperationCall();
 
 		MObject obj = operationCall.getSelf();
-		Lifeline ll = fObjectLifelines.get(obj);
+		Lifeline ll = getSpecificLifeline(obj);
 		int yValue = lastYValue;
 		if (visibleEvent(event)) {
 
