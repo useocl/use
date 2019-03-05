@@ -169,8 +169,8 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 		this.sharedVisibleManager = sharedVisibleManager;
 
 		initializeActor(options.getActorDefaultName(),
-				options.isActorAlwaysVisible(),
-				options.isActorMovableDefault());
+				options.isActorAlwaysVisible(), true);
+				//options.isActorMovableDefault()); //FIXME is this really needed instead of true?
 	}
 
 	/**
