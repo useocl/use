@@ -5,6 +5,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,7 +20,11 @@ import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.selection.objectselection.DataHolder;
+import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.events.StatementExecutedEvent;
 
@@ -59,6 +66,18 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 
 	public AbstractTableModel fTableModel;
 
+	protected DiagramViewWithObjectNode diagram;
+	
+	public ObjectSelectionView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
+		super(new BorderLayout());
+		this.fSystem = system;
+		this.fMainWindow = parent;
+		this.diagram = diagram;
+		
+		fSystem.getEventBus().register(this);
+		initClassSelectionView();
+	}
+	
 	protected DataHolder dataHolder;
 	
 	public ObjectSelectionView(MainWindow parent, MSystem system, DataHolder dataHolder) {
@@ -89,8 +108,7 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 		fBtnHideAll.setMnemonic('H');
 		fBtnHideAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dataHolder.hideAll();
-				dataHolder.repaint();
+				applyHideAllChanges(e);
 			}
 		});
 
@@ -140,8 +158,26 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	 * Shows all objects and links.
 	 */
 	public void applyShowAllChanges(ActionEvent ev) {
-		this.dataHolder.showAll();
-		this.dataHolder.invalidateContent(true);
+		this.diagram.showAll();
+		this.diagram.invalidateContent(true);
+	}
+
+	/**
+	 * Hides all objects and links.
+	 */
+	public void applyHideAllChanges(ActionEvent ev) {
+		Iterator<PlaceableNode> it = this.diagram.getGraph().iterator();
+		Set<MObject> hideojects = new HashSet<MObject>();
+		
+		while (it.hasNext()) {
+			Object node = it.next();
+			if (node instanceof ObjectNodeActivity) {
+				MObject mo = ((ObjectNodeActivity) node).object();
+				hideojects.add(mo);
+			}
+		}
+		
+		this.diagram.getAction("Hide all objects", hideojects).actionPerformed(ev);
 	}
 	
 	public abstract void applyCropChanges(ActionEvent ev);

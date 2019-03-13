@@ -31,7 +31,7 @@ import org.tzi.use.gui.views.diagrams.DiagramOptions;
  * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
-public class ClassDiagramOptions extends DiagramOptions {
+public final class ClassDiagramOptions extends DiagramOptions {
 
 	public enum ShowCoverage {
 		DONT_SHOW,

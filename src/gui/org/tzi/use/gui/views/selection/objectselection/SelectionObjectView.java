@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.selection.ObjectSelectionView;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
@@ -64,6 +65,13 @@ public class SelectionObjectView extends ObjectSelectionView {
 	/**
 	 * Constructor for SelectionObjectView.
 	 */
+	public SelectionObjectView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
+		super(parent, system, diagram);
+		this.fSystem = system;
+		initSelectionObjectView();
+		update();
+	}
+	
 	public SelectionObjectView(MainWindow parent, MSystem system, DataHolder dataHolder) {
 		super(parent, system, dataHolder);
 		this.fSystem = system;
@@ -144,25 +152,25 @@ public class SelectionObjectView extends ObjectSelectionView {
 	public void applyCropChanges(ActionEvent ev) {
 		Set<MObject> selectedObjects = getSelectedObjects();
 		
-		this.dataHolder.hideAll();
-		this.dataHolder.showObjects(selectedObjects);
-		this.dataHolder.invalidateContent(true);
+		this.diagram.hideAll();
+		this.diagram.showObjects(selectedObjects);
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
 	 * Method applyShowChanges shows the appropriate marked objects.
 	 */
 	public void applyShowChanges(ActionEvent ev) {
-		this.dataHolder.showObjects(getSelectedObjects());
-		this.dataHolder.invalidateContent(true);
+		this.diagram.showObjects(getSelectedObjects());
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
 	 * Method applyHideChanges hides the appropriate marked objects.
 	 */
 	public void applyHideChanges(ActionEvent ev) {
-		this.dataHolder.hideObjects(getSelectedObjects());
-		this.dataHolder.invalidateContent(true);
+		this.diagram.hideObjects(getSelectedObjects());
+		this.diagram.invalidateContent(true);
 	}
 
 	public void update() {

@@ -164,25 +164,25 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	public void applyCropChanges(ActionEvent ev) {
 		Set<MObject> selectedPathObjects = getSelectedPathObjects();
 		
-		this.dataHolder.hideAll();
-		this.dataHolder.showObjects(selectedPathObjects);
-		this.dataHolder.invalidateContent(true);
+		this.diagram.hideAll();
+		this.diagram.showObjects(selectedPathObjects);
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
 	 * Method applyShowChanges shows the appropriate marked classes.
 	 */
 	public void applyShowChanges(ActionEvent ev) {
-		this.dataHolder.showObjects(getSelectedPathObjects());
-		this.dataHolder.invalidateContent(true);
+		this.diagram.showObjects(getSelectedPathObjects());
+		this.diagram.invalidateContent(true);
 	}
 
 	/**
 	 * Method applyHideChanges hides the appropriate marked classes.
 	 */
 	public void applyHideChanges(ActionEvent ev) {
-		this.dataHolder.hideObjects(getSelectedPathObjects());
-		this.dataHolder.invalidateContent(true);
+		this.diagram.hideObjects(getSelectedPathObjects());
+		this.diagram.invalidateContent(true);
 	}
 
 	public void update() {

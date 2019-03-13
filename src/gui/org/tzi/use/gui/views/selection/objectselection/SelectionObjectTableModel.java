@@ -9,38 +9,40 @@ import java.util.TreeSet;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.tzi.use.gui.util.AlphanumComparator;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
 
-/** 
- * This table model stores represents all objects of a given
- * MClass and allows to select or delect it.
- * @author   Jun Zhang 
- * @author   Jie Xu
- * @author   Lars Hamann
+/**
+ * This table model stores represents all objects of a given MClass and allows
+ * to select or delect it.
+ * 
+ * @author Jun Zhang
+ * @author Jie Xu
+ * @author Lars Hamann
  */
 @SuppressWarnings("serial")
 public class SelectionObjectTableModel extends AbstractTableModel {
 	public MClass fClass = null;
-	
+
 	MSystem fSystem;
 
 	private List<Row> rows = new ArrayList<Row>();
-	
+
 	private static class Row {
 		public String name;
 		public boolean value;
 		public MObject item;
-		
+
 		public Row(String name, boolean value, MObject item) {
 			this.name = name;
 			this.value = value;
 			this.item = item;
-		}	
+		}
 	}
-	
+
 	/**
 	 * Constructor for SelectionObjectTableModel.
 	 */
@@ -48,7 +50,9 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 		this.fSystem = system;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 */
 	@Override
@@ -62,8 +66,8 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 	}
 
 	/**
-	 * Method getColumnClass determine the default renderer/ editor for
-	 * each cell. 
+	 * Method getColumnClass determine the default renderer/ editor for each
+	 * cell.
 	 */
 	public Class<?> getColumnClass(int column) {
 		switch (column) {
@@ -80,44 +84,44 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#setValueAt(Object, int, int)
 	 */
 	public void setValueAt(Object value, int row, int col) {
-		Boolean bValue = (Boolean)value;
+		Boolean bValue = (Boolean) value;
 		Row r = rows.get(row);
 		r.value = bValue;
-		
+
 		fireTableCellUpdated(row, col);
 	}
 
-	public void setSelected(MClass mc){
+	public void setSelected(MClass mc) {
 		fClass = mc;
 		update();
 	}
-	
+
 	/**
-	 * Method update updates the data of Table. 
+	 * Method update updates the data of Table.
 	 */
 	public void update() {
 		rows.clear();
-		
-		if (fClass != null) {		
+
+		if (fClass != null) {
 			MSystemState state = fSystem.state();
 			Set<MObject> objects = state.objectsOfClass(fClass);
-			TreeSet<MObject> sortedObjects = new TreeSet<MObject>(new Comparator<MObject>() {
-				@Override
-				public int compare(MObject o1, MObject o2) {
-					return o1.name().compareTo(o2.name());
-				}
-			});
+
+			TreeSet<MObject> sortedObjects = new TreeSet<MObject>(
+					Comparator.comparing((MObject obj) -> obj.name(), new AlphanumComparator()));
+
 			sortedObjects.addAll(objects);
-			
+
 			for (MObject o : sortedObjects) {
 				rows.add(new Row(o.name(), false, o));
 			}
 		}
-		
+
 		fireTableDataChanged();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
 	@Override
@@ -125,7 +129,9 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 		return rows.size();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	@Override
@@ -133,7 +139,9 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 		return 2;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	@Override
@@ -147,18 +155,20 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 */
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return columnIndex == 1;
 	}
-	
+
 	/**
 	 * Sets all selection values to true
 	 */
-	public void selectAll() { 
+	public void selectAll() {
 		for (Row r : rows) {
 			r.value = true;
 		}
@@ -185,7 +195,7 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 				selected.add(row.item);
 			}
 		}
-		
+
 		return selected;
 	}
 
