@@ -510,10 +510,10 @@ public class ClassDiagram extends DiagramView
 	}
 
 	/**
-	 * Show an association Wenn die übergebene Assoziation nicht sichtbar isd,
-	 * wird sie in die Darstellung aufgenommen. Werden für die Darstellung
-	 * Klassen benötigt, werden diese ebenfalls sichtbar gemacht, damit keine
-	 * ungültige Darstellung entsteht.
+	 * Show an association Wenn die uebergebene Assoziation nicht sichtbar isd,
+	 * wird sie in die Darstellung aufgenommen. Werden fuer die Darstellung
+	 * Klassen benoetigt, werden diese ebenfalls sichtbar gemacht, damit keine
+	 * ungueltige Darstellung entsteht.
 	 * 
 	 * @param assoc
 	 */
@@ -924,7 +924,7 @@ public class ClassDiagram extends DiagramView
 			JMenu menuSubSuperClasses = new JMenu("Sub/Superclasses");
 
 			// Wenn nur Gens selektiert, dann show super-classes
-			// Nach Rücksprache sollen auch hidden wieder auftauchen.
+			// Nach Ruecksprache sollen auch hidden wieder auftauchen.
 			if (!selectedClasses.isEmpty()) {
 
 				Set<MClass> filteredSelectedClasses = selectedClasses.stream().filter(cls -> !cls.parents().isEmpty())

@@ -13,8 +13,8 @@
 	<property name="release.name" value="${ant.project.name}-${release.version}"/>
 
 	<!-- define Java source and target version -->
-	<property name="java.targetversion" value="1.7" />
-	<property name="java.sourceversion" value="1.7" />
+	<property name="java.targetversion" value="1.8" />
+	<property name="java.sourceversion" value="1.8" />
 	<property name="use.mainClass" value="org.tzi.use.main.Main" />
 	<!-- DO NOT ENABLE DEBUG HERE!
 		 To enable debug LOCALLY, run ant with argument '-Djavac.debug=true' -->

@@ -1611,7 +1611,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 					// %TODO: Auskommentiert, da es sonst Probleme beim Laden
 					// von Layouts gibt,
-					// wenn die Darstellung versteckte Elemente enthält. Die
+					// wenn die Darstellung versteckte Elemente enthaelt. Die
 					// Stellen waren bereits
 					// mit "Could be deleted" markiert.
 					/*

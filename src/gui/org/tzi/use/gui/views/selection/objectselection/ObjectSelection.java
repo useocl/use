@@ -358,7 +358,7 @@ public class ObjectSelection {
 	}
 
 	/**
-	 * Formatiere Link-Bezeichung für die GUI-Anzeige. Vorgabe Martin: Wenn
+	 * Formatiere Link-Bezeichung fuer die GUI-Anzeige. Vorgabe Martin: Wenn
 	 * nicht reflexiv, dann Format von [AssocName : (role1:Object1,
 	 * role2:Object2)] nach AssocName (Object1, Object2) Wenn reflexiv, dann
 	 * Format von [AssocName : (role1:Object1, role2:Object2)] nach AssocName
