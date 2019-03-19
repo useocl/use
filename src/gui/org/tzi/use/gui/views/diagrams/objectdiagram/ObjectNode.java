@@ -21,6 +21,7 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
@@ -33,7 +34,6 @@ import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.util.Util;
@@ -236,28 +236,29 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 
 		int labelWidth = g.getFontMetrics().stringWidth(fLabel);
 
-		if (isSelected()) {
-			g.setColor(fOpt.getNODE_SELECTED_COLOR());
-			g.fill(currentBounds);
-			g.setColor(fOpt.getNODE_FRAME_COLOR());
-			g.draw(currentBounds);
+		// set default colors
+		Color fillColor = fOpt.getNODE_COLOR();
+		Color lineColor = fOpt.getNODE_FRAME_COLOR();
+		// change colors if needed
+		if(isSelected() && isGreyed()) {
+			fillColor = Color.DARK_GRAY;
+			lineColor = Color.LIGHT_GRAY;
+		} else if (isSelected()) {
+			fillColor = fOpt.getNODE_SELECTED_COLOR();
+			lineColor = fOpt.getNODE_FRAME_COLOR();
 		} else if (isGreyed()) {
-			g.setColor(fOpt.getNODE_GREYED_COLOR());
-			g.fill(currentBounds);
-			g.setColor(fOpt.getNODE_GREYED_FRAME_COLOR());
-			g.draw(currentBounds);
-		} else {
-			g.setColor(fOpt.getNODE_COLOR());
-			g.fill(currentBounds);
-			g.setColor(fOpt.getNODE_FRAME_COLOR());
-			g.draw(currentBounds);
-
+			fillColor = fOpt.getNODE_GREYED_COLOR();
+			lineColor = fOpt.getNODE_GREYED_FRAME_COLOR();
 		}
+		g.setColor(fillColor);
+		g.fill(currentBounds);
+		g.setColor(lineColor);
+		g.draw(currentBounds);
 
 		x = (currentBounds.getCenterX() - labelWidth / 2);
 		y = (int) currentBounds.getY() + g.getFontMetrics().getAscent() + 2;
 
-		g.setColor(fOpt.getColor(DiagramOptions.NODE_LABEL_COLOR));
+		//g.setColor(fOpt.getColor(DiagramOptions.NODE_LABEL_COLOR));
 		g.drawString(fLabelA.getIterator(), Math.round(x), y);
 
 		if (fOpt.isShowAttributes()) {

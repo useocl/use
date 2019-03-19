@@ -32,12 +32,14 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyIdentity;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.sys.MLinkEnd;
 import org.w3c.dom.Element;
 
 /**
@@ -75,9 +77,9 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
      * Use this constructor if it is a binary object link.
      */
     protected BinaryAssociationClassOrObject( PlaceableNode source, PlaceableNode target,
-                     MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
+                     MLinkEnd sourceEnd, MLinkEnd targetEnd,
                      PlaceableNode linkObjectNode,
-                     DiagramView diagram, MLink link ) {
+                     NewObjectDiagram diagram, MLink link ) {
         super( source, target, sourceEnd, targetEnd, diagram, link );
         fAssociationClassOrObjectNode = linkObjectNode;
     }
@@ -197,9 +199,9 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
      * Use this constructor if it is a binary object link.
      */
 	public static BinaryAssociationClassOrObject create ( PlaceableNode source, PlaceableNode target,
-                     MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
+                     MLinkEnd sourceEnd, MLinkEnd targetEnd,
                      PlaceableNode linkObjectNode,
-                     DiagramView diagram, MLink link ) {
+                     NewObjectDiagram diagram, MLink link ) {
 		BinaryAssociationClassOrObject edge = new BinaryAssociationClassOrObject(source, target, sourceEnd, targetEnd, linkObjectNode, diagram, link);
 		return edge;
     }

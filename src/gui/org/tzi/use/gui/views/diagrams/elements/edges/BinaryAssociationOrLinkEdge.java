@@ -21,9 +21,11 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import java.util.List;
 
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramView;
@@ -38,6 +40,9 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.PositionStrategy;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram.ObjectDiagramData;
+import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint.ResetStrategy;
 import org.tzi.use.gui.views.diagrams.waypoints.QualifierWayPoint;
@@ -47,6 +52,8 @@ import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.sys.MLinkEnd;
+import org.tzi.use.uml.sys.MObject;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Supplier;
@@ -121,6 +128,8 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		this(source, target, sourceEnd, targetEnd, diagram, assoc, null);
 	}
 	
+	private NewObjectDiagram objectDiagram; //FIXME this should probably be in the super class
+	
 	/**
      * Constructs a new binary link edge.
      * 
@@ -132,9 +141,10 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      * @param link The represented link. 
      */
 	protected BinaryAssociationOrLinkEdge(PlaceableNode source, PlaceableNode target,
-			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
-			DiagramView diagram, MLink link) {
-		this(source, target, sourceEnd, targetEnd, diagram, link.association(), link);
+			MLinkEnd sourceEnd, MLinkEnd targetEnd,
+			NewObjectDiagram diagram, MLink link) {
+		this(source, target, sourceEnd.associationEnd(), targetEnd.associationEnd(), diagram, link.association(), link);
+		objectDiagram = diagram;
 	}
 	
 	@Override
@@ -413,12 +423,34 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
         }
     }
     
+    private boolean adjacentObjectNodeGreyed() { //FIXME
+    	
+    	if(!isLink()) {
+    		return false;
+    	}
+    	
+		ObjectDiagramData visibleData = objectDiagram.getVisibleData();
+		if (visibleData.containsLink(link)) {
+			List<MObject> adjacentObjects = getLink().linkedObjects();
+			for (MObject adjacentObject : adjacentObjects) {
+				ObjectNode node = visibleData.fObjectToNodeMap.get(adjacentObject);
+				if(node.isGreyed()) {
+					return true;
+				}
+			}
+		}
+    	
+    	return false;
+    }
+    
     /**
      * Draws a straightline edge between source and target node.
      */
     protected void drawBinaryEdge( Graphics2D g ) {
         if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
+        } else if (adjacentObjectNodeGreyed()) {
+        	g.setColor(Color.LIGHT_GRAY);
         } else {
             g.setColor( fOpt.getEDGE_COLOR() );
         }
@@ -496,8 +528,8 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      * @param link The represented link. 
      */
 	public static BinaryAssociationOrLinkEdge create(PlaceableNode source, PlaceableNode target,
-			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
-			DiagramView diagram, MLink link) {
+			MLinkEnd sourceEnd, MLinkEnd targetEnd,
+			NewObjectDiagram diagram, MLink link) {
 		BinaryAssociationOrLinkEdge edge = new BinaryAssociationOrLinkEdge(source, target, sourceEnd, targetEnd, diagram, link);
 		return edge;
 	}

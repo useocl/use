@@ -75,7 +75,6 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.ObjectPropertiesView;
-import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
@@ -98,7 +97,6 @@ import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationClassImpl;
-import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModelElement;
@@ -625,7 +623,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		if (link instanceof MLinkObject) {
 			BinaryAssociationClassOrObject e = BinaryAssociationClassOrObject.create(
 					visibleData.fObjectToNodeMap.get(obj1), visibleData.fObjectToNodeMap.get(obj2),
-					linkEnd1.associationEnd(), linkEnd2.associationEnd(), visibleData.fObjectToNodeMap.get(link), this,
+					linkEnd1, linkEnd2, visibleData.fObjectToNodeMap.get(link), this,
 					link);
 
 			if (lastKnownLinkPositions.containsKey(link)) {
@@ -658,8 +656,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				isHidden = true;
 			}
 
-			BinaryAssociationOrLinkEdge e = createBinaryAssociationOrLinkEdge(node1, node2, linkEnd1.associationEnd(),
-					linkEnd2.associationEnd(), this, link);
+			BinaryAssociationOrLinkEdge e = createBinaryAssociationOrLinkEdge(node1, node2, linkEnd1,
+					linkEnd2, this, link);
 
 			if (link.isVirtual()) {
 				e.setDashed(true);
@@ -681,7 +679,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * @author Andreas Kaestner
 	 */
 	protected BinaryAssociationOrLinkEdge createBinaryAssociationOrLinkEdge(PlaceableNode source, PlaceableNode target,
-			MAssociationEnd sourceEnd, MAssociationEnd targetEnd, DiagramView diagram, MLink link) {
+			MLinkEnd sourceEnd, MLinkEnd targetEnd, NewObjectDiagram diagram, MLink link) {
 		return BinaryAssociationOrLinkEdge.create(source, target, sourceEnd, targetEnd, diagram, link);
 	}
 
@@ -1822,7 +1820,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	}
 
 	@Override
-	public DiagramData getVisibleData() {
+	public ObjectDiagramData getVisibleData() {
 		return visibleData;
 	}
 
