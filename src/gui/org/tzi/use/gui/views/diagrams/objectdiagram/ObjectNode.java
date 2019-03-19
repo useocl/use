@@ -241,14 +241,14 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 		Color lineColor = fOpt.getNODE_FRAME_COLOR();
 		// change colors if needed
 		if(isSelected() && isGreyed()) {
-			fillColor = Color.DARK_GRAY;
-			lineColor = Color.LIGHT_GRAY;
+			fillColor = fOpt.getGREYED_SELECTED_FILL_COLOR();
+			lineColor = fOpt.getGREYED_LINE_COLOR();
 		} else if (isSelected()) {
 			fillColor = fOpt.getNODE_SELECTED_COLOR();
 			lineColor = fOpt.getNODE_FRAME_COLOR();
 		} else if (isGreyed()) {
-			fillColor = fOpt.getNODE_GREYED_COLOR();
-			lineColor = fOpt.getNODE_GREYED_FRAME_COLOR();
+			fillColor = fOpt.getGREYED_FILL_COLOR();
+			lineColor = fOpt.getGREYED_LINE_COLOR();
 		}
 		g.setColor(fillColor);
 		g.fill(currentBounds);

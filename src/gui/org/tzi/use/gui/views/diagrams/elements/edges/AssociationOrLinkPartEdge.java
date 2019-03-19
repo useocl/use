@@ -122,7 +122,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
 	protected void initializeProperties(Multimap<PropertyOwner, EdgeProperty> properties) {
 		super.initializeProperties(properties);
 		
-        fTargetRolename = new Rolename( getId() + "::target::rolename", fTargetEnd, fTargetWayPoint, fOpt);
+        fTargetRolename = new Rolename( getId() + "::target::rolename", fTargetEnd, fTargetWayPoint, fOpt, this);
         properties.put(PropertyOwner.TARGET, fTargetRolename);
         
         fTargetMultiplicity = new Multiplicity( getId() + "::target::multiplicity", fTargetEnd, fTargetWayPoint, fOpt);

@@ -37,7 +37,7 @@ public final class Multiplicity extends EdgeProperty {
     MAssociationEnd fAssocEnd;
     
     public Multiplicity( String id, MAssociationEnd assocEnd, AttachedWayPoint attached, DiagramOptions opt ) {
-    	super(id, new PlaceableNode[] {attached}, false, opt);
+    	super(id, new PlaceableNode[] {attached}, false, opt, null);
     	
         fAssocEnd = assocEnd;
         fName = fAssocEnd.multiplicity().toString();

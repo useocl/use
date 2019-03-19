@@ -43,7 +43,7 @@ public final class AssociationName extends EdgeProperty {
     
     public AssociationName( String id, String name, AttachedWayPoint source, AttachedWayPoint target, 
                      DiagramOptions opt, EdgeBase edge, MAssociation assoc, MLink link ) {
-    	super(id, new PlaceableNode[] {source, target}, link != null, opt);
+    	super(id, new PlaceableNode[] {source, target}, link != null, opt, null);
     	
         fName = name;
         fAssoc = assoc;
@@ -62,7 +62,7 @@ public final class AssociationName extends EdgeProperty {
      */
     AssociationName( String id, String name, DiagramOptions opt,
                      DiamondNode source, MAssociation assoc, MLink link ) {
-    	super(id, new PlaceableNode[] {source}, link != null, opt);
+    	super(id, new PlaceableNode[] {source}, link != null, opt, null);
         fName = name;
         fAssoc = assoc;
         this.link = link;

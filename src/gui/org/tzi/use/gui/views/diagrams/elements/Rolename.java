@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached.Placement;
 import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
@@ -54,8 +55,8 @@ public final class Rolename extends EdgeProperty implements DiagramOptionChanged
      * @param side
      * @param edge
      */
-    public Rolename( String id, MAssociationEnd assocEnd, AttachedWayPoint attached, DiagramOptions opt ) {
-    	super(id, new PlaceableNode[] {attached}, false, opt);
+    public Rolename( String id, MAssociationEnd assocEnd, AttachedWayPoint attached, DiagramOptions opt, EdgeBase edgeBase ) {
+    	super(id, new PlaceableNode[] {attached}, false, opt, edgeBase);
     	
         fAssocEnd = assocEnd;
         fAssoc = fAssocEnd.association();

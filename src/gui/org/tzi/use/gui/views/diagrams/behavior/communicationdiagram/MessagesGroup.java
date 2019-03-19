@@ -97,7 +97,7 @@ public final class MessagesGroup extends EdgeProperty {
 	private Color activatedMessageColor = CommunicationDiagram.ACTIVATED_MESSAGE_COLOR;
 
 	public MessagesGroup(DiagramOptions opt, CommunicationDiagramEdge edge) {
-		super(edge.getId(), new PlaceableNode[] { edge.getSourceWayPoint(), edge.getTargetWayPoint() }, false, opt);
+		super(edge.getId(), new PlaceableNode[] { edge.getSourceWayPoint(), edge.getTargetWayPoint() }, false, opt, null);
 		fName = edge.getId();
 		fOpt = opt;
 		fEdge = edge;

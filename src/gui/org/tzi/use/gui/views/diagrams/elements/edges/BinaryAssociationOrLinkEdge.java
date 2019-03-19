@@ -21,7 +21,6 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
@@ -151,7 +150,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 	protected void initializeProperties(Multimap<PropertyOwner, EdgeProperty> properties) {
 		super.initializeProperties(properties);
 		 
-		fSourceRolename = new Rolename( getId() + "::source::rolename", fSourceEnd, fSourceWayPoint, fOpt );
+		fSourceRolename = new Rolename( getId() + "::source::rolename", fSourceEnd, fSourceWayPoint, fOpt, this );
 		properties.put(PropertyOwner.SOURCE, fSourceRolename);
 		
 		fSourceMultiplicity = new Multiplicity( getId() + "::source::multiplicity", fSourceEnd, fSourceWayPoint, fOpt);
@@ -423,7 +422,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
         }
     }
     
-    private boolean adjacentObjectNodeGreyed() { //FIXME
+    public boolean adjacentObjectNodeGreyed() { //FIXME
     	
     	if(!isLink()) {
     		return false;
@@ -450,7 +449,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
         if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
         } else if (adjacentObjectNodeGreyed()) {
-        	g.setColor(Color.LIGHT_GRAY);
+        	g.setColor( fOpt.getGREYED_LINE_COLOR() );
         } else {
             g.setColor( fOpt.getEDGE_COLOR() );
         }

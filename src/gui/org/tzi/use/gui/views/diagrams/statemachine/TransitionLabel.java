@@ -31,7 +31,7 @@ public class TransitionLabel extends EdgeProperty {
 
 	public TransitionLabel(String id, String label, TransitionEdge edge, VertexNode source, EdgeProperty sourceWayPoint, VertexNode target,
 			EdgeProperty targetWayPoint, DiagramOptions opt) {
-		super(id, new PlaceableNode[] {sourceWayPoint, targetWayPoint}, false, opt); 
+		super(id, new PlaceableNode[] {sourceWayPoint, targetWayPoint}, false, opt, null); 
 		fName = label;
 		this.fEdge = edge;
 		this.strategy = new StrategyInBetween(this, new PlaceableNode[] {sourceWayPoint, targetWayPoint}, 0, 10);
