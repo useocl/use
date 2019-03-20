@@ -120,19 +120,11 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     	associationClassEdge.setColor(fOpt.getEDGE_COLOR());
     	
     	if(fAssociationClassOrObjectNode instanceof ObjectNode) {
-    		ObjectNode objNode = (ObjectNode) fAssociationClassOrObjectNode;
-    		boolean adjGrey = adjacentObjectNodeGreyed();
-//    		if( ! objNode.isGreyed()) {//FIXME might need more cases here. maybe move this to ObjectNode?
-//    			objNode.setGreyed(adjGrey);
-//    		}
-    		if(adjGrey) {
-    			objNode.setGreyed(true);
-    		}
-    		
-    		if(objNode.isGreyed()) {
+    		if(((ObjectNode) fAssociationClassOrObjectNode).isGreyed()) {
     			associationClassEdge.setColor(fOpt.getGREYED_LINE_COLOR());
     		}
     	}
+    	
         associationClassEdge.onDraw(g);
     }
     

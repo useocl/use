@@ -26,6 +26,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import java.util.List;
 
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
@@ -34,12 +35,16 @@ import org.tzi.use.gui.views.diagrams.elements.Multiplicity;
 import org.tzi.use.gui.views.diagrams.elements.MultiplicityRolenameWrapper;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.Rolename;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram.ObjectDiagramData;
+import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.sys.MObject;
 
 import com.google.common.collect.Multimap;
 
@@ -87,6 +92,11 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
     protected final MLink link;
     
     /**
+     * The object diagram, if any.
+     */
+    protected final NewObjectDiagram objectDiagram;
+    
+    /**
      * if <code>true</code> a dashed line is drawn instead of a solid one.
      */
     boolean isDashed = false;
@@ -114,6 +124,11 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
         super( source, target, name, diagram.getOptions(), true );
         
         this.link = link;
+        if(diagram instanceof NewObjectDiagram) {
+        	this.objectDiagram = (NewObjectDiagram) diagram;
+        } else {
+        	this.objectDiagram = null;
+        }
         fAssoc = assoc;
         fTargetEnd = targetEnd;
     }
@@ -198,10 +213,41 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
         return res;
     }
     
+    public boolean adjacentObjectNodeGreyed() {
+    	
+    	if(!isLink()) {
+    		return false;
+    	}
+    	
+		ObjectDiagramData visibleData = objectDiagram.getVisibleData();
+		if (visibleData.containsLink(link)) {
+			//special treatment for associationObj: objGreyed => linkGreyed
+			if(this instanceof BinaryAssociationClassOrObject) {
+				BinaryAssociationClassOrObject binaryLink = (BinaryAssociationClassOrObject) this;
+				ObjectNode node = (ObjectNode) binaryLink.getClassOrObjectNode();
+				if(node.isGreyed()) {
+					return true;
+				}
+			}
+			
+			List<MObject> adjacentObjects = getLink().linkedObjects();
+			for (MObject adjacentObject : adjacentObjects) {
+				ObjectNode node = visibleData.fObjectToNodeMap.get(adjacentObject);
+				if(node.isGreyed()) {
+					return true;
+				}
+			}
+		}
+    	
+    	return false;
+    }
+    
     @Override
     protected void onDraw( Graphics2D g ) {
         if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
+        } else if (adjacentObjectNodeGreyed()) {
+        	g.setColor( fOpt.getGREYED_LINE_COLOR() );
         } else {
             g.setColor( fOpt.getEDGE_COLOR() );
         }

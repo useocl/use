@@ -72,7 +72,7 @@ public abstract class DiagramOptions {
     public static final String EDGE_SELECTED_COLOR = "EDGE_SELECTED_COLOR";
     public static final String GREYED_FILL_COLOR = "GREYED_FILL_COLOR";
 	public static final String GREYED_LINE_COLOR = "GREYED_LINE_COLOR";
-	public static final String GREYED_SELECTED_FILL_COLOR = "GREYED_SELECTED_FILL_COLOR";
+	public static final String GREYED_SELECTED_LINE_COLOR = "GREYED_SELECTED_LINE_COLOR";
     
     public abstract boolean isShowMutliplicities();
     
@@ -119,7 +119,7 @@ public abstract class DiagramOptions {
     	registerTypeColor(EDGE_SELECTED_COLOR, Color.ORANGE, new Color(0x50, 0x50, 0x50));
     	registerTypeColor(GREYED_FILL_COLOR, new Color(249, 249, 249), Color.WHITE);
 		registerTypeColor(GREYED_LINE_COLOR, new Color(189, 189, 191), Color.WHITE);
-		registerTypeColor(GREYED_SELECTED_FILL_COLOR, new Color(120, 120, 120), Color.WHITE);
+		registerTypeColor(GREYED_SELECTED_LINE_COLOR, new Color(120, 120, 120), Color.WHITE);
     }
     
     protected abstract void registerAdditionalColors();
@@ -255,8 +255,8 @@ public abstract class DiagramOptions {
 	public Color getGREYED_LINE_COLOR() {
 		return getColor(GREYED_LINE_COLOR);
 	}
-	public Color getGREYED_SELECTED_FILL_COLOR() {
-		return getColor(GREYED_SELECTED_FILL_COLOR);
+	public Color getGREYED_SELECTED_LINE_COLOR() {
+		return getColor(GREYED_SELECTED_LINE_COLOR);
 	}
     
     protected boolean fIsLoadingLayout = false;

@@ -36,7 +36,7 @@ import java.util.Map;
 
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge;
+import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
@@ -301,7 +301,7 @@ public abstract class EdgeProperty extends PlaceableNode {
 	void setColor(Graphics2D g) {
 		if (isSelected() || (fEdge != null && fEdge.isSelected())) {
 			g.setColor(fOpt.getEDGE_SELECTED_COLOR());
-		} else if(fEdge instanceof BinaryAssociationOrLinkEdge && ((BinaryAssociationOrLinkEdge) fEdge).adjacentObjectNodeGreyed()) { //FIXME
+		} else if(fEdge instanceof AssociationOrLinkPartEdge && ((AssociationOrLinkPartEdge) fEdge).adjacentObjectNodeGreyed()) {
 			g.setColor(fOpt.getGREYED_LINE_COLOR());
 		} else {
 			g.setColor(fOpt.getEDGE_LABEL_COLOR());

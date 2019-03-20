@@ -24,7 +24,6 @@ package org.tzi.use.gui.views.diagrams.elements.edges;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
-import java.util.List;
 
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramView;
@@ -40,8 +39,6 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram.ObjectDiagramData;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint.ResetStrategy;
 import org.tzi.use.gui.views.diagrams.waypoints.QualifierWayPoint;
@@ -52,7 +49,6 @@ import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkEnd;
-import org.tzi.use.uml.sys.MObject;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Supplier;
@@ -127,8 +123,6 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 		this(source, target, sourceEnd, targetEnd, diagram, assoc, null);
 	}
 	
-	private NewObjectDiagram objectDiagram; //FIXME this should probably be in the super class
-	
 	/**
      * Constructs a new binary link edge.
      * 
@@ -143,7 +137,6 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
 			MLinkEnd sourceEnd, MLinkEnd targetEnd,
 			NewObjectDiagram diagram, MLink link) {
 		this(source, target, sourceEnd.associationEnd(), targetEnd.associationEnd(), diagram, link.association(), link);
-		objectDiagram = diagram;
 	}
 	
 	@Override
@@ -420,35 +413,6 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
                 }
             }
         }
-    }
-    
-    public boolean adjacentObjectNodeGreyed() { //FIXME
-    	
-    	if(!isLink()) {
-    		return false;
-    	}
-    	
-		ObjectDiagramData visibleData = objectDiagram.getVisibleData();
-		if (visibleData.containsLink(link)) {
-			//special treatment for associationObj: objGreyed => linkGreyed
-			if(this instanceof BinaryAssociationClassOrObject) {
-				BinaryAssociationClassOrObject binaryLink = (BinaryAssociationClassOrObject) this;
-				ObjectNode node = (ObjectNode) binaryLink.getClassOrObjectNode();
-				if(node.isGreyed()) {
-					return true;
-				}
-			}
-			
-			List<MObject> adjacentObjects = getLink().linkedObjects();
-			for (MObject adjacentObject : adjacentObjects) {
-				ObjectNode node = visibleData.fObjectToNodeMap.get(adjacentObject);
-				if(node.isGreyed()) {
-					return true;
-				}
-			}
-		}
-    	
-    	return false;
     }
     
     /**
