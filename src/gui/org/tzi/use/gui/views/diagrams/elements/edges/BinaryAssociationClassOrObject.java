@@ -33,6 +33,7 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
+import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
@@ -115,6 +116,23 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     @Override
     protected void onDraw( Graphics2D g ) {
     	super.onDraw(g);
+    	// begin by restoring the default color for the small line
+    	associationClassEdge.setColor(fOpt.getEDGE_COLOR());
+    	
+    	if(fAssociationClassOrObjectNode instanceof ObjectNode) {
+    		ObjectNode objNode = (ObjectNode) fAssociationClassOrObjectNode;
+    		boolean adjGrey = adjacentObjectNodeGreyed();
+//    		if( ! objNode.isGreyed()) {//FIXME might need more cases here. maybe move this to ObjectNode?
+//    			objNode.setGreyed(adjGrey);
+//    		}
+    		if(adjGrey) {
+    			objNode.setGreyed(true);
+    		}
+    		
+    		if(objNode.isGreyed()) {
+    			associationClassEdge.setColor(fOpt.getGREYED_LINE_COLOR());
+    		}
+    	}
         associationClassEdge.onDraw(g);
     }
     

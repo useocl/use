@@ -430,6 +430,15 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
     	
 		ObjectDiagramData visibleData = objectDiagram.getVisibleData();
 		if (visibleData.containsLink(link)) {
+			//special treatment for associationObj: objGreyed => linkGreyed
+			if(this instanceof BinaryAssociationClassOrObject) {
+				BinaryAssociationClassOrObject binaryLink = (BinaryAssociationClassOrObject) this;
+				ObjectNode node = (ObjectNode) binaryLink.getClassOrObjectNode();
+				if(node.isGreyed()) {
+					return true;
+				}
+			}
+			
 			List<MObject> adjacentObjects = getLink().linkedObjects();
 			for (MObject adjacentObject : adjacentObjects) {
 				ObjectNode node = visibleData.fObjectToNodeMap.get(adjacentObject);
