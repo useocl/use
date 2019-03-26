@@ -169,8 +169,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 		this.sharedVisibleManager = sharedVisibleManager;
 
 		initializeActor(options.getActorDefaultName(),
-				options.isActorAlwaysVisible(), true);
-				//options.isActorMovableDefault()); //FIXME is this really needed instead of true?
+				options.isActorAlwaysVisible(), options.isActorMovableDefault());
 	}
 
 	/**
@@ -1123,7 +1122,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	}
 
 	void afterSelectionAction() {
-		applySettings();
+		// applySettings(); FIXME removed for now because it does not work
 		filterEdges();
 		fParent.notifyDataManager();
 	}

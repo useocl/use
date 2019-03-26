@@ -21,10 +21,17 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.shared;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * @author Antje Werner
@@ -151,6 +158,8 @@ public class MessageSelectionView  extends JDialog implements ActionListener {
             for (int i = fromComboBox.getSelectedIndex()+1; i < delegate.messageLabels().size(); i++) {
                 tillComboBox.addItem(delegate.messageLabels().get(i));
             }
+            // select the last item by default
+            tillComboBox.setSelectedIndex(tillComboBox.getModel().getSize() - 1);
         }else{
             if ("Ok".equals(e.getActionCommand())) {
                 delegate.selectMessageFromToAndDepth(
