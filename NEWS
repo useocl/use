@@ -1,6 +1,21 @@
 USE NEWS -- history of user-visible changes.
 Please see the file `README' for a description of how to report bugs.
 
+** Changes between version 5.0.1 and 5.1.0
+* New features for the communication and sequence diagrams
+    * Creating a communication diagram from a sequence diagram and the other way around
+    * New filters for the message selection in the communication diagram
+* New features for the object and class diagrams
+    * Hide/Crop/Show now works for all cases
+    * It is now possible to grey out objects in the object diagram
+* Bug fixes
+
+** Changes between version 5.0.0 and 5.0.1
+* USE is now compatible with the o2c plugin
+
+** Changes between version 4.2.0 and 5.0.0
+* USE now runs on Java 9
+
 ** Change since version 4.1.1
 * [GUI] Improved selection of nodes in diagram views
     * It is now possible to select multiple nodes at once by drawing a selection rectangle around them with the left mouse button
