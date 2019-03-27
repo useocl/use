@@ -21,14 +21,28 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import org.tzi.use.gui.util.GridBagHelper;
 import org.tzi.use.gui.views.diagrams.behavior.shared.CancelButton;
 import org.tzi.use.gui.views.diagrams.behavior.shared.OKButton;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * @author Carsten Schlobohm
@@ -206,8 +220,8 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 		// ===== end Actor Settings  ===================
 
 
-		fTabbedPane.add(fDiag, "Diagram", 0);
-		fTabbedPane.addTab("After selection", selectionSettings);
+		//fTabbedPane.add(fDiag, "Diagram", 0); FIXME currently not used because it led to a bug (ticket 192)
+		//fTabbedPane.addTab("After selection", selectionSettings);
 		fTabbedPane.addTab("Actor settings", actorSettings);
 
 		fC.add("Center", fTabbedPane);

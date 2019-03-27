@@ -1122,7 +1122,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	}
 
 	void afterSelectionAction() {
-		// applySettings(); FIXME removed for now because it does not work
+		// applySettings(); FIXME removed for now because it does not work (ticket 192)
 		filterEdges();
 		fParent.notifyDataManager();
 	}
