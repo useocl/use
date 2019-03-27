@@ -1591,59 +1591,50 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	@Override
 	public void restorePlacementInfos(PersistHelper helper, int version) {
-		if (version < 12)
-			return;
-
+		if (version < 12) return;
+		
 		Set<MObject> hiddenObjects = new HashSet<MObject>();
 		AutoPilot ap = new AutoPilot(helper.getNav());
-
+		
 		// First restore edges to get possible new nodes, then nodes
 		helper.getNav().push();
-
+		
 		try {
 			// Restore edges
 			ap.selectXPath("./edge[@type='BinaryEdge']");
-
+			
 			try {
-				while (ap.evalXPath() != -1) {
-
-					// %TODO: Auskommentiert, da es sonst Probleme beim Laden
-					// von Layouts gibt,
-					// wenn die Darstellung versteckte Elemente enthaelt. Die
-					// Stellen waren bereits
-					// mit "Could be deleted" markiert.
-					/*
-					 * String name = helper.getElementStringValue("name");
-					 * MAssociation assoc =
-					 * fParent.system().model().getAssociation(name); String
-					 * sourceObjectName =
-					 * helper.getElementStringValue("source"); String
-					 * targetObjectName =
-					 * helper.getElementStringValue("target");
-					 */
-					// MObject sourceObject =
-					// fParent.system().state().objectByName(sourceObjectName);
-					// MObject targetObject =
-					// fParent.system().state().objectByName(targetObjectName);
-
+				while (ap.evalXPath() != -1) {			
+					String name = helper.getElementStringValue("name");
+					MAssociation assoc = fParent.system().model().getAssociation(name);
+					String sourceObjectName = helper.getElementStringValue("source");
+					String targetObjectName = helper.getElementStringValue("target");
+					
+					MObject sourceObject = fParent.system().state().objectByName(sourceObjectName);
+					MObject targetObject = fParent.system().state().objectByName(targetObjectName);
+					
 					// Could be deleted
-					/*
-					 * if (assoc != null && sourceObject != null && targetObject
-					 * != null) { MLink link;
-					 * 
-					 * if (assoc.hasQualifiedEnds()) { String linkValue =
-					 * helper.getElementStringValue("linkValue"); link =
-					 * getLinkByValue(assoc, Arrays.asList(sourceObject,
-					 * targetObject), linkValue); } else { // No qualifier
-					 * values are present. link =
-					 * fParent.system().state().linkBetweenObjects(assoc,
-					 * Arrays.asList(sourceObject, targetObject),
-					 * Collections.<List<Value>>emptyList()); }
-					 * 
-					 * if (link != null) { BinaryAssociationOrLinkEdge edge =
-					 * visibleData.fBinaryLinkToEdgeMap.get(link);
-					 * edge.restorePlacementInfo(helper, version); } }
-					 */
+					if (assoc != null && sourceObject != null && targetObject != null) {
+						MLink link;
+						
+						if (assoc.hasQualifiedEnds()) {
+							String linkValue = helper.getElementStringValue("linkValue");
+							link = getLinkByValue(assoc, Arrays.asList(sourceObject, targetObject), linkValue);
+						} else {
+							// No qualifier values are present. 
+							link = fParent
+									.system()
+									.state()
+									.linkBetweenObjects(assoc,
+											Arrays.asList(sourceObject, targetObject),
+											Collections.<List<Value>>emptyList());
+						}
+						
+						if (link != null) {
+							BinaryAssociationOrLinkEdge edge = visibleData.fBinaryLinkToEdgeMap.get(link);
+							edge.restorePlacementInfo(helper, version);
+						}
+					}
 				}
 			} catch (XPathEvalException e) {
 				fLog.append(e.getMessage());
@@ -1655,38 +1646,41 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 		ap.resetXPath();
 		helper.getNav().pop();
-
+		
 		helper.getNav().push();
 		try {
 			// Restore edges
 			ap.selectXPath("./edge[@type='NodeEdge']");
-
+			
 			try {
-				while (ap.evalXPath() != -1) {
+				while(ap.evalXPath() != -1) {
 					String name = helper.getElementStringValue("name");
 					MAssociation assoc = fParent.system().model().getAssociation(name);
 					String sourceObjectName = helper.getElementStringValue("source");
 					String targetObjectName = helper.getElementStringValue("target");
-
+					
 					MObject sourceObject = fParent.system().state().objectByName(sourceObjectName);
 					MObject targetObject = fParent.system().state().objectByName(targetObjectName);
-
+					
 					// Could be deleted
 					if (assoc != null && sourceObject != null && targetObject != null) {
 						MLink link;
-
+						
 						if (assoc.hasQualifiedEnds()) {
 							String linkValue = helper.getElementStringValue("linkValue");
 							link = getLinkByValue(assoc, Arrays.asList(sourceObject, targetObject), linkValue);
 						} else {
-							// No qualifier values are present.
-							link = fParent.system().state().linkBetweenObjects(assoc,
-									Arrays.asList(sourceObject, targetObject), Collections.<List<Value>>emptyList());
+							// No qualifier values are present. 
+							link = fParent
+									.system()
+									.state()
+									.linkBetweenObjects(assoc,
+											Arrays.asList(sourceObject, targetObject),
+											Collections.<List<Value>> emptyList());
 						}
-
+						
 						if (link != null) {
-							BinaryAssociationClassOrObject edge = (BinaryAssociationClassOrObject) visibleData.fLinkObjectToNodeEdge
-									.get(link);
+							BinaryAssociationClassOrObject edge = (BinaryAssociationClassOrObject)visibleData.fLinkObjectToNodeEdge.get(link);
 							edge.restorePlacementInfo(helper, version);
 						}
 					}
@@ -1701,21 +1695,20 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 		helper.getNav().pop();
 		ap.resetXPath();
-
+				
 		helper.getNav().push();
 		try {
 			ap.selectXPath("./node[@type='Object']");
-
+		
 			try {
-				while (ap.evalXPath() != -1) {
+				while(ap.evalXPath() != -1) {
 					String name = helper.getElementStringValue("name");
 					MObject obj = fParent.system().state().objectByName(name);
 					// Could be deleted
 					if (obj != null) {
 						ObjectNode node = visibleData.fObjectToNodeMap.get(obj);
 						node.restorePlacementInfo(helper, version);
-						if (isHidden(helper, version))
-							hiddenObjects.add(obj);
+						if (isHidden(helper, version)) hiddenObjects.add(obj);
 					}
 				}
 			} catch (XPathEvalException e) {
@@ -1726,60 +1719,56 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		} catch (XPathParseException e) {
 			fLog.append(e.getMessage());
 		}
-
+		
 		helper.getNav().pop();
 		ap.resetXPath();
-
+		
 		helper.getNav().push();
 		try {
 			// Restore diamond nodes
 			ap.selectXPath("./node[@type='DiamondNode']");
-
+			
 			try {
 				while (ap.evalXPath() != -1) {
 					String name = helper.getElementStringValue("name");
 					MAssociation assoc = fParent.system().model().getAssociation(name);
 
 					// Renamed or deleted
-					if (assoc == null)
-						continue;
-
+					if (assoc == null) continue;
+					
 					// Get connected objects
 					List<MObject> connectedObjects = new LinkedList<MObject>();
 					if (!helper.toFirstChild("connectedNode"))
 						break;
-
+					
 					String objectName = helper.getElementStringValue();
 					MObject obj = fParent.system().state().objectByName(objectName);
-
+					
 					if (obj != null)
 						connectedObjects.add(obj);
-
+					
 					while (helper.toNextSibling("connectedNode")) {
 						objectName = helper.getElementStringValue();
 						obj = fParent.system().state().objectByName(objectName);
-
+						
 						if (obj != null) {
 							connectedObjects.add(obj);
 						}
 					}
-
+					
 					// Modified
 					if (assoc.associationEnds().size() != connectedObjects.size())
 						continue;
-
-					// n-ary links cannot be qualified therefore an empty list
-					// for the qualifer values is provided
-					MLink link = fParent.system().state().linkBetweenObjects(assoc, connectedObjects,
-							Collections.<List<Value>>emptyList());
-
+					
+					// n-ary links cannot be qualified therefore an empty list for the qualifer values is provided
+					MLink link = fParent.system().state().linkBetweenObjects(assoc, connectedObjects, Collections.<List<Value>>emptyList());
+					
 					// Could be deleted
-					/*
-					 * if (link != null) { DiamondNode node =
-					 * visibleData.fNaryLinkToDiamondNodeMap.get(link);
-					 * helper.toParent(); node.restorePlacementInfo(helper,
-					 * version); }
-					 */
+					if (link != null) {
+						DiamondNode node = visibleData.fNaryLinkToDiamondNodeMap.get(link);
+						helper.toParent();
+						node.restorePlacementInfo(helper, version);
+					}   
 				}
 			} catch (XPathEvalException e) {
 				fLog.append(e.getMessage());
@@ -1791,7 +1780,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 		helper.getNav().pop();
 		ap.resetXPath();
-
+		
 		// Hide elements
 		hideElementsInDiagram(hiddenObjects);
 	}
