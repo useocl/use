@@ -685,9 +685,14 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	protected void addNAryLink(MLink link) {
 		getRandomNextPosition();
+		
+		List<ObjectNode> linkedObjectNodes = new ArrayList<ObjectNode>();
+		for(MObject linkedObject : link.linkedObjects()) {
+			linkedObjectNodes.add(visibleData.fObjectToNodeMap.get(linkedObject));
+		}
 
 		// n-ary link: create a diamond node and n edges to objects
-		DiamondNode node = new DiamondNode(link, fOpt);
+		DiamondNode node = new DiamondNode(link, fOpt, linkedObjectNodes);
 		node.setPosition(nextNodePosition);
 		fGraph.add(node);
 

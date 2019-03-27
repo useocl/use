@@ -36,6 +36,7 @@ import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
+import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -62,6 +63,7 @@ public class DiamondNode extends PlaceableNode {
     private AssociationName fAssocName;
     private final List<String> fConnectedNodes;
     private final String fName;
+    private List<ObjectNode> linkedObjectNodes;
     
     private List<EdgeBase> fHalfEdges; // participating edges
     
@@ -81,11 +83,12 @@ public class DiamondNode extends PlaceableNode {
         }
     }
 
-    public DiamondNode( MLink link, DiagramOptions opt ) {
+    public DiamondNode( MLink link, DiagramOptions opt, List<ObjectNode> linkedObjectNodes ) {
         fAssoc = link.association();
         fLink = link;
         fName = fAssoc.name();
         fOpt = opt;
+        this.linkedObjectNodes = linkedObjectNodes;
         fConnectedNodes = new ArrayList<String>();
         List<MObject> objects = link.linkedObjects();
         
@@ -133,6 +136,15 @@ public class DiamondNode extends PlaceableNode {
         	this.setStrategy(new StrategyInBetween(this, related.toArray(new PlaceableNode[0]), 0, 0));
     }
     
+    private boolean isAdjacentNodeGreyed() {
+    	for(ObjectNode node : linkedObjectNodes) {
+    		if(node.isGreyed()) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
     /**
      * Draws a diamond with an underlined label in the object diagram.
      */
@@ -147,7 +159,11 @@ public class DiamondNode extends PlaceableNode {
 
         Shape ourShape = getShape();
         g.fill( ourShape );
-        g.setColor( fOpt.getDIAMONDNODE_FRAME_COLOR() );
+        if (isAdjacentNodeGreyed()) {
+        	g.setColor( fOpt.getGREYED_LINE_COLOR() );
+        } else {
+        	g.setColor( fOpt.getDIAMONDNODE_FRAME_COLOR() );
+        }
                 
         g.draw( ourShape );
         
