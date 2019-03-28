@@ -26,6 +26,7 @@ import java.awt.Graphics2D;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.uml.mm.MAssociation;
 
 /**
@@ -91,6 +92,15 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase implements Associ
 		return "naryedge::" + fSource.getId() + "::" + fTarget.getId();
 	}
 	
+	private boolean isPartOfGreyedNode() {
+		if(fAssociationClassOrLinkObjectNode instanceof ObjectNode) {
+    		if(((ObjectNode) fAssociationClassOrLinkObjectNode).isGreyed()) {
+    			return true;
+    		}
+    	}
+		return false;
+	}
+	
     /**
      * Draws the dashed line starting at the mid point of the solid line.<br/>
      * Invokes draw on the diamond node
@@ -99,9 +109,11 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase implements Associ
 	@Override
     public void onDraw( Graphics2D g ) {
 		if ( isSelected() ) {
-            g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
+			dashedEdge.setColor( fOpt.getEDGE_SELECTED_COLOR() );
+		} else if(isPartOfGreyedNode()) {
+			dashedEdge.setColor( fOpt.getGREYED_LINE_COLOR());
         } else {
-            g.setColor( fOpt.getEDGE_COLOR() );
+        	dashedEdge.setColor( fOpt.getEDGE_COLOR() );
         }
                 
         dashedEdge.onDraw( g );
