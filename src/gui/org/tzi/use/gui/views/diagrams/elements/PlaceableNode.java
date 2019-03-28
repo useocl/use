@@ -126,6 +126,11 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
     private boolean isAbsentFromGraph = false;
     
     /**
+     * <code>true</code>, if this PlacebleNode is an association class/object.
+     */
+    private boolean isAssocClassOrObject = false;
+    
+    /**
      * The drawing engine uses this map to register
      * different types of required heights.
      * For each required height a supplier is given, to allow
@@ -271,6 +276,20 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 	 */
 	public void setHidden(boolean isHidden) {
 		this.isHidden = isHidden;
+	}
+	
+	/**
+     * <code>true</code>, if this PlacebleNode is an association class/object.
+     */
+	public boolean isAssocClassOrObject() {
+		return isAssocClassOrObject;
+	}
+
+	/**
+	 * Marks this PlacebleNode as an association class/object.
+	 */
+	public void setAssocClassOrObject() {
+		this.isAssocClassOrObject = true;
 	}
 
 	/**

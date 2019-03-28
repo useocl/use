@@ -72,6 +72,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
                      DiagramView diagram, MAssociation assoc ) {
         super( source, target, sourceEnd, targetEnd, diagram, assoc );
         fAssociationClassOrObjectNode = associationClassNode;
+        fAssociationClassOrObjectNode.setAssocClassOrObject();
     }
     
     /**
@@ -83,6 +84,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
                      NewObjectDiagram diagram, MLink link ) {
         super( source, target, sourceEnd, targetEnd, diagram, link );
         fAssociationClassOrObjectNode = linkObjectNode;
+        fAssociationClassOrObjectNode.setAssocClassOrObject();
     }
 
     /**

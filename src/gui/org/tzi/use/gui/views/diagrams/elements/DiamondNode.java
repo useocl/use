@@ -137,6 +137,11 @@ public class DiamondNode extends PlaceableNode {
     }
     
     private boolean isAdjacentNodeGreyed() {
+    	// just return false, if this is a class
+    	if(linkedObjectNodes == null) {
+    		return false;
+    	}
+    	
     	for(ObjectNode node : linkedObjectNodes) {
     		if(node.isGreyed()) {
     			return true;

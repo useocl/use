@@ -345,6 +345,12 @@ public class DiagramInputHandling implements MouseListener,
 		// move all selected components to new position, 
 		// or resize 
 		for (PlaceableNode sel : fNodeSelection) {
+			// do not move the assoc class/object if more than one element is selected
+			// this stops moving the element twice as much as intended
+			if(sel.isAssocClassOrObject() && fNodeSelection.size() > 1) {
+				continue;
+			}
+			
 			sel.setDraggedPosition(dx, dy);
 		    // WayPoints and other selectable nodes are not in the graph
 		    if (fDiagram.getGraph().contains(sel))
