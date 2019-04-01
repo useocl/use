@@ -25,6 +25,8 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -225,7 +227,28 @@ public class Options {
     /**
      * Contains the ten last opened files
      */
-    private static RecentItems recentSpecifications = new RecentItems(10, Preferences.userRoot().node( "/org/tzi/use/main" )); 
+    private static RecentItems recentSpecifications = createRecentItems();
+    
+    /**
+     * This is an extra method to hide a java bug that just happens in some versions
+     * @see https://github.com/julienvollering/MIAmaxent/issues/1
+     * @see https://stackoverflow.com/questions/16428098/groovy-shell-warning-could-not-open-create-prefs-root-node
+     * @return The ten last opened files
+     */
+    private static RecentItems createRecentItems() {
+    	PrintStream originalStream = System.err;
+    	PrintStream dummyStream = new PrintStream(new OutputStream(){
+    	    public void write(int b) {
+    	        // do nothing
+    	    }
+    	});
+    	
+    	System.setErr(dummyStream);
+    	Preferences userRoot = Preferences.userRoot();
+    	System.setErr(originalStream);
+    	
+    	return new RecentItems(10, userRoot.node( "/org/tzi/use/main" ));
+    }
     
     /** no instances */
 	private Options() {}
