@@ -525,6 +525,12 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 *            The <code>MObject</code> to hide
 	 */
 	public void hideObject(MObject obj) {
+		// a hidden object should no longer be selected
+		ObjectNode removedNode = visibleData.fObjectToNodeMap.get(obj);
+		if(removedNode!=null) {
+			fNodeSelection.remove(removedNode);
+		}
+		
 		showOrHideObjectNode(obj, false);
 
 		// Hide all links the object participates in
