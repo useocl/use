@@ -204,7 +204,7 @@ public class AssociationExtentView extends JPanel implements View {
 
 		@Override
 		public int getColumnCount() {
-			return assocEnds.length + 1;
+			return fAssociation == null ? 0 : assocEnds.length + 1;
 		}
 
 		@Override
