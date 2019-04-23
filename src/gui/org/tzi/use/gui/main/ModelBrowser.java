@@ -58,6 +58,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
@@ -238,7 +239,7 @@ public class ModelBrowser extends JPanel
         htmlView.setMinimumSize(minimumSize);
         treeView.setMinimumSize(minimumSize);
         splitPane.setPreferredSize(new Dimension(500, 300));
-        splitPane.setDividerLocation(240);
+        splitPane.setDividerLocation((int) (0.42 * Options.DEFAULT_HEIGHT));//FIXME 240);
         splitPane.setResizeWeight(.6d);
 
         setLayout(new BorderLayout());

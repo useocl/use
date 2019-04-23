@@ -21,6 +21,7 @@ package org.tzi.use.gui.views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -50,6 +51,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
@@ -333,10 +336,53 @@ public class ClassInvariantView extends JPanel implements View {
             }
         });
         
-        updateTableStructure();
         init();
+        updateTableStructure();
         update();
     }
+    
+    /**
+     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
+     */
+    private int getMaxWidthOfInvNames() {
+    	// only column 0 which contains the invariant names
+    	final int column = 0;
+        TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
+        int preferredWidth = tableColumn.getMinWidth();
+        int maxWidth = tableColumn.getMaxWidth();
+     
+        for (int row = 0; row < fTable.getRowCount(); row++) {
+            TableCellRenderer cellRenderer = fTable.getCellRenderer(row, column);
+            Component c = fTable.prepareRenderer(cellRenderer, row, column);
+            int width = c.getPreferredSize().width + fTable.getIntercellSpacing().width;
+            preferredWidth = Math.max(preferredWidth, width);
+     
+            //  We've exceeded the maximum width, no need to check other rows
+            if (preferredWidth >= maxWidth)
+            {
+                preferredWidth = maxWidth;
+                break;
+            }
+        }
+        return preferredWidth;
+    }
+    
+    /**
+     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
+     */
+    private int getColumnHeaderHeight(int column)
+	{
+		TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
+		Object value = tableColumn.getHeaderValue();
+		TableCellRenderer renderer = tableColumn.getHeaderRenderer();
+
+		if (renderer == null) {
+			renderer = fTable.getTableHeader().getDefaultRenderer();
+		}
+
+		Component c = renderer.getTableCellRendererComponent(fTable, value, false, false, -1, column);
+		return c.getPreferredSize().height;
+	}
 
 	private JPopupMenu createPopupMenu() {
 		JPopupMenu menu = new JPopupMenu();
@@ -441,10 +487,17 @@ public class ClassInvariantView extends JPanel implements View {
      */
     private void updateTableStructure() {
     	fMyTableModel.fireTableStructureChanged();
-		for (int i = 0; i < fTable.getColumnModel().getColumnCount(); i++) {
+    	fTable.getColumnModel().getColumn(0).setPreferredWidth(getMaxWidthOfInvNames());
+    	// initialize totalWidth with the width of the invariant name column
+    	int totalWidth = getMaxWidthOfInvNames();
+    	// start at 1, because 0 was already handled
+		for (int i = 1; i < fTable.getColumnModel().getColumnCount(); i++) {
+			// add every column width to the total width
+			totalWidth += fMyTableModel.getColumnWidth(i);
 			fTable.getColumnModel().getColumn(i).setPreferredWidth(fMyTableModel.getColumnWidth(i));
 		}
-		fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
+		int height = getColumnHeaderHeight(0) + fTable.getRowHeight() * fClassInvariants.length;
+		fTable.setPreferredScrollableViewportSize(new Dimension(totalWidth, height));
 
 		int satisifedCol = 1;
 		if (showFlags) {

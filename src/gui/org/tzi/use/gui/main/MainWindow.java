@@ -465,16 +465,16 @@ public class MainWindow extends JFrame {
         // put the three panels into split panes
         JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 fModelBrowser, fDesk);
-        sp.setDividerLocation(200);
+        sp.setDividerLocation((int) (0.25 * Options.DEFAULT_WIDTH));//FIXME 200);
         fTopSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, fLogPanel);
-        fTopSplitPane.setDividerLocation(400);
+        fTopSplitPane.setDividerLocation((int) (0.72 * Options.DEFAULT_HEIGHT));//FIXME 400);
         fTopSplitPane.setOneTouchExpandable(true);
         fTopSplitPane.setResizeWeight(.8d);
 
         // Layout and set the content pane
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
-        contentPane.setPreferredSize(new Dimension(800, 550));
+        contentPane.setPreferredSize(new Dimension(Options.DEFAULT_WIDTH, Options.DEFAULT_HEIGHT));// FIXME 800, 550));
 		contentPane.add(fToolBar, BorderLayout.NORTH);
         contentPane.add(fTopSplitPane, BorderLayout.CENTER);
         contentPane.add(fStatusBar, BorderLayout.SOUTH);
@@ -817,12 +817,28 @@ public class MainWindow extends JFrame {
     private int fViewFrameX = 0;
 
     private int fViewFrameY = 0;
-
+    
     /**
      * Adds a new view (internal frame) to the desktop.
      */
 	public void addNewViewFrame(ViewFrame f) {
-        f.setBounds(fViewFrameX, fViewFrameY, 300, 200);
+		addNewViewFrame(f, true);
+	}
+
+    /**
+     * Adds a new view (internal frame) to the desktop.
+     * @param legacySize 
+     * This was always true in USE 5.1.0 and earlier. Now it can be set to false, 
+     * which calculates the size of the frame based on the subcomponents
+     */
+	private void addNewViewFrame(ViewFrame f, boolean legacySize) {
+		if(legacySize) {
+        	f.setBounds(fViewFrameX, fViewFrameY, 300, 200);
+		} else {
+			f.setLocation(fViewFrameX, fViewFrameY);
+			f.pack();
+		}
+		
         fDesk.add(f, JDesktopPane.DEFAULT_LAYER);
         fDesk.moveToFront(f);
         // position for next frame
@@ -1980,7 +1996,7 @@ public class MainWindow extends JFrame {
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(civ, BorderLayout.CENTER);
-            addNewViewFrame(f);
+            addNewViewFrame(f, false);
         }
     }
 

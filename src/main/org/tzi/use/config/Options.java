@@ -75,6 +75,11 @@ public class Options {
      */
     private static final String EVAL_NUMTHREADS_P = "use.eval.numthreads";
     public static int EVAL_NUMTHREADS = 1;
+    
+    private static final String DEFAULT_WIDTH_P = "use.gui.main.defaultWidth";
+    public static int DEFAULT_WIDTH = 800;
+    private static final String DEFAULT_HEIGHT_P = "use.gui.main.defaultHeight";
+    public static int DEFAULT_HEIGHT = 550;
 
     /**
      * Name of the properties of page format for printing.
@@ -492,6 +497,11 @@ public class Options {
 
 		EVAL_NUMTHREADS = props.getRangeIntProperty(EVAL_NUMTHREADS_P,
 				EVAL_NUMTHREADS, 1, Integer.MAX_VALUE);
+		
+		DEFAULT_WIDTH = props.getRangeIntProperty(DEFAULT_WIDTH_P,
+				DEFAULT_WIDTH, 1, Integer.MAX_VALUE);
+		DEFAULT_HEIGHT = props.getRangeIntProperty(DEFAULT_HEIGHT_P,
+				DEFAULT_HEIGHT, 1, Integer.MAX_VALUE);
  
 		PRINT_PAGEFORMAT_WIDTH = props.getRangeDoubleProperty(
 				PRINT_PAGEFORMAT_WIDTH_P, PRINT_PAGEFORMAT_WIDTH, 72.0,
