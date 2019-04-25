@@ -56,6 +56,7 @@ import javax.swing.table.TableColumn;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
@@ -110,26 +111,25 @@ public class ClassInvariantView extends JPanel implements View {
     private ClassInvariantTableModel fMyTableModel;
     private int fSelectedRow = -1;
     private boolean fOpenEvalBrowserEnabled = false;
-    private boolean showFlags = true;
+    private boolean showFlags = false;
     private boolean showDuration = false;
     
     private InvWorker worker = null;
 
     private ExecutorService executor = Executors.newFixedThreadPool(Options.EVAL_NUMTHREADS);
+    
+    private ViewFrame fViewFrame;
+    public void setViewFrame(ViewFrame vf) {
+    	this.fViewFrame = vf;
+    }
 
     private class ClassInvariantTableModel extends AbstractTableModel {
-        private final String[] columnNames = { "Invariant", "Loaded", "Active", "Negate", "Satisfied", "Duration (ms)" };
-        private final int[] columnWidths =   {  150,         50,       50,       50,       70,          70 };
+        private final String[] columnNames = { "Invariant", "Loaded", "Active", "Negate", "Satisfied", "Time(ms)" };
 
         @Override
 		public String getColumnName(int col) {
         	col = calcColumnByOptions(col);
             return columnNames[col];
-        }
-
-        public int getColumnWidth(int col){
-        	col = calcColumnByOptions(col);
-        	return columnWidths[col];
         }
         
         @Override
@@ -341,48 +341,63 @@ public class ClassInvariantView extends JPanel implements View {
         update();
     }
     
-    /**
-     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
-     */
-    private int getMaxWidthOfInvNames() {
-    	// only column 0 which contains the invariant names
-    	final int column = 0;
-        TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
-        int preferredWidth = tableColumn.getMinWidth();
-        int maxWidth = tableColumn.getMaxWidth();
-     
-        for (int row = 0; row < fTable.getRowCount(); row++) {
-            TableCellRenderer cellRenderer = fTable.getCellRenderer(row, column);
-            Component c = fTable.prepareRenderer(cellRenderer, row, column);
-            int width = c.getPreferredSize().width + fTable.getIntercellSpacing().width;
-            preferredWidth = Math.max(preferredWidth, width);
-     
-            //  We've exceeded the maximum width, no need to check other rows
-            if (preferredWidth >= maxWidth)
-            {
-                preferredWidth = maxWidth;
-                break;
-            }
-        }
-        return preferredWidth;
-    }
-    
-    /**
-     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
-     */
-    private int getColumnHeaderHeight(int column)
-	{
-		TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
-		Object value = tableColumn.getHeaderValue();
-		TableCellRenderer renderer = tableColumn.getHeaderRenderer();
-
-		if (renderer == null) {
-			renderer = fTable.getTableHeader().getDefaultRenderer();
+    private class TableSizeUtilities {
+	    /**
+	     * Returns the max width of the column but does NOT include the header.
+	     * 
+	     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
+	     */
+	    private int getMaxWidthOfColumn(int column) {
+	        TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
+	        int preferredWidth = tableColumn.getMinWidth();
+	        int maxWidth = tableColumn.getMaxWidth();
+	     
+	        for (int row = 0; row < fTable.getRowCount(); row++) {
+	            TableCellRenderer cellRenderer = fTable.getCellRenderer(row, column);
+	            Component c = fTable.prepareRenderer(cellRenderer, row, column);
+	            int width = c.getPreferredSize().width + fTable.getIntercellSpacing().width;
+	            preferredWidth = Math.max(preferredWidth, width);
+	     
+	            //  We've exceeded the maximum width, no need to check other rows
+	            if (preferredWidth >= maxWidth)
+	            {
+	                preferredWidth = maxWidth;
+	                break;
+	            }
+	        }
+	        return preferredWidth;
+	    }
+	    
+	    private int getColumnHeaderHeight(int column) {
+	    	return getColumnHeaderDimension(column, true);
+	    }
+	    
+	    private int getColumnHeaderWidth(int column) {
+	    	return getColumnHeaderDimension(column, false);
+	    }
+	    
+	    /**
+	     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
+	     */
+	    private int getColumnHeaderDimension(int column, boolean isHeight)
+		{
+			TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
+			Object value = tableColumn.getHeaderValue();
+			TableCellRenderer renderer = tableColumn.getHeaderRenderer();
+	
+			if (renderer == null) {
+				renderer = fTable.getTableHeader().getDefaultRenderer();
+			}
+	
+			Component c = renderer.getTableCellRendererComponent(fTable, value, false, false, -1, column);
+			
+			if(isHeight) {
+				return c.getPreferredSize().height;
+			} else {
+				return c.getPreferredSize().width;
+			}
 		}
-
-		Component c = renderer.getTableCellRendererComponent(fTable, value, false, false, -1, column);
-		return c.getPreferredSize().height;
-	}
+    }
 
 	private JPopupMenu createPopupMenu() {
 		JPopupMenu menu = new JPopupMenu();
@@ -486,17 +501,26 @@ public class ClassInvariantView extends JPanel implements View {
      * Updates the table when its structure (columns) change.
      */
     private void updateTableStructure() {
+    	TableSizeUtilities tsu = new TableSizeUtilities();
     	fMyTableModel.fireTableStructureChanged();
-    	fTable.getColumnModel().getColumn(0).setPreferredWidth(getMaxWidthOfInvNames());
+    	fTable.getColumnModel().getColumn(0).setPreferredWidth(tsu.getMaxWidthOfColumn(0));
     	// initialize totalWidth with the width of the invariant name column
-    	int totalWidth = getMaxWidthOfInvNames();
+    	int totalWidth = tsu.getMaxWidthOfColumn(0);
     	// start at 1, because 0 was already handled
 		for (int i = 1; i < fTable.getColumnModel().getColumnCount(); i++) {
-			// add every column width to the total width
-			totalWidth += fMyTableModel.getColumnWidth(i);
-			fTable.getColumnModel().getColumn(i).setPreferredWidth(fMyTableModel.getColumnWidth(i));
+			// for all columns besides the name, only use the header width
+			// +2 to make it a bit bigger than the data indicates
+			int currentWidth = tsu.getColumnHeaderWidth(i) + 2;
+			totalWidth += currentWidth;
+			fTable.getColumnModel().getColumn(i).setPreferredWidth(currentWidth);
 		}
-		int height = getColumnHeaderHeight(0) + fTable.getRowHeight() * fClassInvariants.length;
+		int height;
+		// fViewFrame is null on the first call of this method
+		if(fViewFrame == null) {
+			height = tsu.getColumnHeaderHeight(0) + fTable.getRowHeight() * fClassInvariants.length;
+		} else {
+			height = fTable.getRowHeight() * fClassInvariants.length;
+		}
 		fTable.setPreferredScrollableViewportSize(new Dimension(totalWidth, height));
 
 		int satisifedCol = 1;
@@ -516,6 +540,10 @@ public class ClassInvariantView extends JPanel implements View {
 			DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
 			rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
 			fTable.getColumnModel().getColumn(durationCol).setCellRenderer(rightRenderer);
+		}
+		
+		if(fViewFrame != null) {
+			fViewFrame.pack();
 		}
 	}
     

@@ -1980,6 +1980,7 @@ public class MainWindow extends JFrame {
                     fSession.system());
             ViewFrame f = new ViewFrame("Class invariants", civ,
                     "InvariantView.gif");
+            civ.setViewFrame(f);
             
 			f.addInternalFrameListener(new InternalFrameAdapter() {
 				@Override
