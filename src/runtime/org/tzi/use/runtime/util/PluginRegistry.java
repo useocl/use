@@ -55,7 +55,9 @@ public class PluginRegistry {
 	private PluginModel parseConfigFile(URL location) {
 
 		PluginModel pluginModel = null;
-		File pluginFile = new File(location.getFile());
+		// during the URL creation, spaces were transformed to %20
+		// replace all occurrences of %20 back to a space
+		File pluginFile = new File(location.getFile().replaceAll("%20", " "));
 		
 		try (JarFile jarFile = new JarFile(pluginFile); InputStream inputStream = jarFile.getInputStream(jarFile.getEntry(PLUGINXML))){
 			Log.debug("Creating jarfile path: [" + pluginFile + "]");

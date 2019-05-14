@@ -11,7 +11,7 @@ set VMARGS=
 
 set BIN_DIR=%~dp0
 set USE_HOME=%BIN_DIR%..
-set USE_JAR=%USE_HOME%\lib\use.jar
+set USE_JAR="%USE_HOME%\lib\use.jar"
 
 IF NOT EXIST %USE_JAR% (
 	echo Cannot find USE executable. Please provide correct path to use.jar.
