@@ -518,9 +518,13 @@ public class ClassInvariantView extends JPanel implements View {
 		// fViewFrame is null on the first call of this method
 		if(fViewFrame == null) {
 			height = tsu.getColumnHeaderHeight(0) + fTable.getRowHeight() * fClassInvariants.length;
+			height = Math.min(height, 377); // FIXME does this number work for other resolutions
 		} else {
 			height = fTable.getRowHeight() * fClassInvariants.length;
+			height = Math.min(height, 358); // FIXME does this number work for other resolutions
 		}
+		
+		//int mainWindowHeight = (int) MainWindow.instance().getCurrentContentPaneDimension().getHeight();		
 		fTable.setPreferredScrollableViewportSize(new Dimension(totalWidth, height));
 
 		int satisifedCol = 1;
