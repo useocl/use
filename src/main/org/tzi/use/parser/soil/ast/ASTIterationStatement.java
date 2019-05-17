@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
+import org.tzi.use.parser.soil.SoilLexer;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
@@ -65,6 +66,14 @@ public class ASTIterationStatement extends ASTStatement {
 		fIterVarName = iterVarName;
 		fRange = range;
 		fBody = body;
+		
+		int type = fRange.getStartToken().getType();
+		// 44 is Bag, 48 is Set
+		if(type == SoilLexer.T__44 || type == SoilLexer.T__48) {
+			System.out.println(
+					"Warning: Iteration over a non-ordered collection. Order of the result might not be as expected. "
+					+ "(" + toString() + ")");
+		}
 	}
 	
 	
