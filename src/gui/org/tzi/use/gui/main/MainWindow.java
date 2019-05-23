@@ -465,7 +465,7 @@ public class MainWindow extends JFrame {
         // put the three panels into split panes
         JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 fModelBrowser, fDesk);
-        sp.setDividerLocation((int) (0.25 * Options.DEFAULT_WIDTH));//FIXME 200);
+        sp.setDividerLocation((int) (0.25 * Options.DEFAULT_WIDTH));//FIXME 200); 
         fTopSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, fLogPanel);
         fTopSplitPane.setDividerLocation((int) (0.72 * Options.DEFAULT_HEIGHT));//FIXME 400);
         fTopSplitPane.setOneTouchExpandable(true);
