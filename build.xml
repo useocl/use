@@ -486,7 +486,7 @@
 	</target>
 	
 	<!-- run all tests -->
-	<target name="test" description="run all tests" depends="test-classcycles, test-junit, test-other" />
+	<target name="test" description="run all tests" depends="test-junit, test-other" />
 	
 	<!-- run unit tests -->
 	<target name="test-junit" description="run unit tests" depends="build">

@@ -677,7 +677,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 		fPopupMenu.add(cbShowSomeCommands);
 
 		// Message selection
-		final JMenuItem messageSelection = new JMenuItem("Message selection...");
+		final JMenuItem messageSelection = new JMenuItem("Message interval/depth selection...");
 		ActionListener messageSelectionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				createMessageSelectionWindow();
