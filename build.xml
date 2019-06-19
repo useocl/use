@@ -486,7 +486,7 @@
 	</target>
 	
 	<!-- run all tests -->
-	<target name="test" description="run all tests" depends="test-junit, test-other" />
+	<target name="test" description="run all tests" depends="test-classcycles, test-junit, test-other" />
 	
 	<!-- run unit tests -->
 	<target name="test-junit" description="run unit tests" depends="build">
@@ -531,14 +531,14 @@
 	<!-- perform classcycle checks -->
 	<target name="check-classcycles-available">
 		<condition property="classcycleslib.available">
-			<available file="${build.libbuild.dir}/Classycle1.3.3/classycle.jar" />
+			<available file="${build.libbuild.dir}/Classycle1.4.2/classycle.jar" />
 		</condition>
 	</target>
 	
 	<property name="package" value="org.tzi.use"/>
 	<target name="test-classcycles" depends="compile-use,check-classcycles-available" if="classcycleslib.available">
 		<taskdef name="classycleDependencyCheck" 
-				             classname="classycle.ant.DependencyCheckingTask" classpath="lib_build/Classycle1.3.3/classycle.jar"/>
+				             classname="classycle.ant.DependencyCheckingTask" classpath="lib_build/Classycle1.4.2/classycle.jar"/>
 		
 		<classycleDependencyCheck failOnUnwantedDependencies="false"
 			                              excludingClasses="*Test,*Tests,*.All*Tests">
