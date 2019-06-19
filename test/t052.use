@@ -1,0 +1,26 @@
+model t052
+
+class Person
+attributes
+  name :String
+operations 
+  kill(p:Person)
+  
+  getNameOCLImplemented(aPrefix:String):String = aPrefix.concat(name)
+    pre: aPrefix.isDefined()
+	post: aPrefix.isDefined()
+	post: result = aPrefix.concat(name)
+	
+  getNameSOILImplemented(aPrefix:String):String 
+  begin
+    result := aPrefix.concat(self.name)
+  end
+    pre: aPrefix.isDefined()
+    post: aPrefix.isDefined()
+	post: result = aPrefix.concat(name)
+
+  getNameNoImplementation(aPrefix:String):String 
+    pre: aPrefix.isDefined()
+    post: aPrefix.isDefined()
+    post: result = aPrefix.concat(name)
+end

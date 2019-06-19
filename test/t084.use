@@ -1,0 +1,30 @@
+model t084
+
+class C
+operations
+  
+  f(x : Integer) : Integer begin
+    result := self.g(x);
+    result := result + 1
+  end  
+
+  g(x : Integer) : Integer begin
+    result := self.h(x) + 1
+  end
+
+  h(x : Integer) : Integer = x + 1
+
+  i() : Integer
+  begin
+    declare c1 : C;
+      c1 := new C;
+      result := 1
+    end
+  post notOne: result <> 1
+
+  k() 
+    begin
+  declare x : Integer;
+      x := self.i();
+    end
+end
