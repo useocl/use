@@ -43,7 +43,7 @@ public final class UndefinedValue extends Value {
     
     @Override
     public StringBuilder toString(StringBuilder sb) {
-        return sb.append("Undefined");
+        return sb.append("null");
     }
 
     @Override
