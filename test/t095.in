@@ -10,9 +10,9 @@
 *    self : Person = cyd
 *    self.wife : Person = ada
 *    self : Person = cyd
-*    self.husband : OclVoid = Undefined
+*    self.husband : OclVoid = null
 *    Set {self.wife,self.husband} : Set(Person) = Set{null,ada}
-*    null : OclVoid = Undefined
+*    null : OclVoid = null
 *    Set {self.wife,self.husband}->excluding(null) : Set(Person) = Set{ada}
 *    self.spouse() : Set(Person) = Set{ada}
 *    aSpouse : Person = ada
@@ -20,9 +20,9 @@
 *    (self.spouse() = Set {aSpouse}) : Boolean = true
 *    aSpouse : Person = ada
 *    self : Person = ada
-*    self.wife : OclVoid = Undefined
+*    self.wife : OclVoid = null
 *    self : Person = ada
-*    aSpouse.spouse() : OclVoid = Undefined
+*    aSpouse.spouse() : OclVoid = null
 *    Evaluation failed because of multiplicity violation: expected link set size 1 at association end `husband', found: 2
 *
 *  call stack at the time of evaluation:
