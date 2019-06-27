@@ -40,7 +40,7 @@ info vars
 *  self : C = C1
 *  c1 : C = C2
 *[frame 1]
-*  x : OclVoid = Undefined
+*  x : OclVoid = null
 *  self : C = C1
 *[frame 0]
 *  x : Integer = 4
