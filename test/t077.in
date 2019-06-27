@@ -8,7 +8,7 @@
 ?12.3.toString()
 *-> '12.3' : String
 ?let i:Integer = null in i.toString()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 -- New operations on String
 -- +
@@ -27,11 +27,11 @@
 ?'0'.toInteger()
 *-> 0 : Integer
 ?''.toInteger()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?'-120'.toInteger()
 *-> -120 : Integer
 ?'120.5'.toInteger()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 -- toReal
 ?'120.5'.toReal()
@@ -39,7 +39,7 @@
 ?'0'.toReal()
 *-> 0.0 : Real
 ?''.toReal()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?'-120.3'.toReal()
 *-> -120.3 : Real
 ?'120'.toReal()
@@ -73,7 +73,7 @@
 
 -- at
 ?'abcd'.at(0)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?'abcd'.at(1)
 *-> 'a' : String
 ?'abcd'.at(2)
@@ -83,7 +83,7 @@
 ?'abcd'.at(4)
 *-> 'd' : String
 ?'abcd'.at(5)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 -- characters
 ?'abcda'.characters()
@@ -113,50 +113,50 @@
 ?Set{1.0, 2.0, 3.0, 4.0}->min()
 *-> 1.0 : Real
 ?Set{}->min()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?Bag{1, 2, 3, 4}->min()
 *-> 1 : Integer
 ?Bag{1.0, 2.0, 3.0, 4.0}->min()
 *-> 1.0 : Real
 ?Bag{}->min()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?OrderedSet{1, 2, 3, 4}->min()
 *-> 1 : Integer
 ?OrderedSet{1.0, 2.0, 3.0, 4.0}->min()
 *-> 1.0 : Real
 ?OrderedSet{}->min()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?Sequence{1, 2, 3, 4}->min()
 *-> 1 : Integer
 ?Sequence{1.0, 2.0, 3.0, 4.0}->min()
 *-> 1.0 : Real
 ?Sequence{}->min()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 -- max
 ?Set{1, 2, 3, 4}->max()
 *-> 4 : Integer
 ?Set{1.0, 2.0, 3.0, 4.0}->max()
 *-> 4.0 : Real
 ?Set{}->max()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?Bag{1, 2, 3, 4}->max()
 *-> 4 : Integer
 ?Bag{1.0, 2.0, 3.0, 4.0}->max()
 *-> 4.0 : Real
 ?Bag{}->max()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?OrderedSet{1, 2, 3, 4}->max()
 *-> 4 : Integer
 ?OrderedSet{1.0, 2.0, 3.0, 4.0}->max()
 *-> 4.0 : Real
 ?OrderedSet{}->max()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?Sequence{1, 2, 3, 4}->max()
 *-> 4 : Integer
 ?Sequence{1.0, 2.0, 3.0, 4.0}->max()
 *-> 4.0 : Real
 ?Sequence{}->max()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 -- #################################
 -- asSet
 -- #################################

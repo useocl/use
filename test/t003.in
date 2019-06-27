@@ -20,7 +20,7 @@
 *-> b1 : B
 
 ? a2.b
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? a1.b->isEmpty()
 *-> false : Boolean

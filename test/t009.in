@@ -20,9 +20,9 @@
 
 # the attribute is set to undefined
 ? a.aAttr
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? a.aAttr.bAttr
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 exit

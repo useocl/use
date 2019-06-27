@@ -90,5 +90,5 @@ check
 ?j2 = null
 *-> true : Boolean
 ?j2
-*-> Undefined : OclVoid
+*-> null : OclVoid
 exit

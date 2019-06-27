@@ -44,10 +44,10 @@
 *-> ''' : String
 
 ? oclUndefined(String)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Set(String))
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 #
 ## Operations on Integers and Reals
@@ -78,10 +78,10 @@
 *-> -5 : Integer
 
 ? 3 / 0
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? 3 div 0
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? 10.mod(3)
 *-> 1 : Integer
@@ -171,7 +171,7 @@
 *-> true : Boolean
 
 ? not oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? not not true
 *-> true : Boolean
@@ -180,7 +180,7 @@
 *-> false : Boolean
 
 ? not not oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 # or
 
@@ -191,7 +191,7 @@
 *-> true : Boolean
 
 ? false or oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? true or false
 *-> true : Boolean
@@ -203,13 +203,13 @@
 *-> true : Boolean
 
 ? oclUndefined(Boolean) or false
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Boolean) or true
 *-> true : Boolean
 
 ? oclUndefined(Boolean) or oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 # and
 
@@ -229,16 +229,16 @@
 *-> true : Boolean
 
 ? true and oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Boolean) and false
 *-> false : Boolean
 
 ? oclUndefined(Boolean) and true
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Boolean) and oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 # xor
 
@@ -249,7 +249,7 @@
 *-> true : Boolean
 
 ? false xor oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? true xor false
 *-> true : Boolean
@@ -258,16 +258,16 @@
 *-> false : Boolean
 
 ? true xor oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Boolean) xor false
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Boolean) xor true
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Boolean) xor oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 # implies
 
@@ -287,16 +287,16 @@
 *-> true : Boolean
 
 ? true implies oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Boolean) implies false
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? oclUndefined(Boolean) implies true
 *-> true : Boolean
 
 ? oclUndefined(Boolean) implies oclUndefined(Boolean)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 # misc.
 
@@ -376,7 +376,7 @@
 *-> 3 : Integer
 
 ? if oclUndefined(Boolean) then 2 else 3 endif
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? if true then 'a' else 1 endif
 *-> 'a' : String 
@@ -435,19 +435,19 @@
 *-> Set{1,2,3,4,5,6,7,8,9} : Set(Integer)
 
 ? Set{oclUndefined(Integer)}
-*-> Set{Undefined} : Set(OclVoid)
+*-> Set{null} : Set(OclVoid)
 
 ? Set{1,1 div 0}
-*-> Set{Undefined,1} : Set(Integer)
+*-> Set{null,1} : Set(Integer)
 
 ? Set{oclUndefined(Integer),1}
-*-> Set{Undefined,1} : Set(Integer)
+*-> Set{null,1} : Set(Integer)
 
 ? Set{oclUndefined(Real),1.0}
-*-> Set{Undefined,1.0} : Set(Real)
+*-> Set{null,1.0} : Set(Real)
 
 ? Set{1,oclUndefined(Integer)}
-*-> Set{Undefined,1} : Set(Integer)
+*-> Set{null,1} : Set(Integer)
 
 ? Set{Set{1}, Set{2}}
 *-> Set{Set{1},Set{2}} : Set(Set(Integer))
@@ -849,7 +849,7 @@
 *-> Bag{1,2,2,3,5} : Bag(Integer)
 
 ? Bag{1,2,2,3}->including(oclUndefined(Integer))
-*-> Bag{Undefined,1,2,2,3} : Bag(Integer)
+*-> Bag{null,1,2,2,3} : Bag(Integer)
 
 ? Bag{1,2,2,3}->excluding(2)
 *-> Bag{1,3} : Bag(Integer)
@@ -992,7 +992,7 @@
 *-> Sequence{2,1} : Sequence(Integer)
 
 ? Sequence{3,2,1}->subSequence(0,3)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? Sequence{1,2,3}->at(1)
 *-> 1 : Integer
@@ -1007,13 +1007,13 @@
 *-> 1 : Integer
 
 ? oclEmpty(Sequence(Integer))->first
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? Sequence{1,2,3}->last
 *-> 3 : Integer
 
 ? oclEmpty(Sequence(Integer))->last
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? Sequence{1,2,3}->including(0)
 *-> Sequence{1,2,3,0} : Sequence(Integer)
@@ -1050,13 +1050,13 @@
 *-> Bag{1,1,1,1,2,2,3} : Bag(Integer)
 
 ? Bag{oclUndefined(Bag(Integer))}->flatten
-*-> Bag{Undefined} : Bag(OclVoid)
+*-> Bag{null} : Bag(OclVoid)
 
 ? Bag{Sequence{1,2}, Sequence{2,1}, Sequence{2,3}}->flatten
 *-> Bag{1,1,2,2,2,3} : Bag(Integer)
 
 ? Bag{oclUndefined(Sequence(Integer))}->flatten
-*-> Bag{Undefined} : Bag(OclVoid)
+*-> Bag{null} : Bag(OclVoid)
 
 ? Set{Set{1}, Set{2}, Set{2}, Set{3}}->flatten
 *-> Set{1,2,3} : Set(Integer)
@@ -1216,7 +1216,7 @@
 *-> 1 : Integer
 
 ? Set{1,2}->any(e | e < 1)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? Set{1,2}->any(e | e < 3) < 3
 *-> true : Boolean
@@ -1225,7 +1225,7 @@
 *-> 1 : Integer
 
 ? Sequence{3,2,1,2,3}->any(e | e < 1)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ? Sequence{3,2,1,2,3}->any(e | e < 3) < 3
 *-> true : Boolean
@@ -1234,7 +1234,7 @@
 ## reverse
 #
 ?let s:Sequence(Integer) = null in s->reverse()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ?let s:Sequence(Integer) = Sequence{} in s->reverse()
 *-> Sequence{} : Sequence(OclVoid)
@@ -1252,7 +1252,7 @@
 *-> Sequence{2,1,3} : Sequence(Integer)
 
 ?let s:OrderedSet(Integer) = null in s->reverse()
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ?let s:OrderedSet(Integer) = OrderedSet{} in s->reverse()
 *-> OrderedSet{} : OrderedSet(OclVoid)

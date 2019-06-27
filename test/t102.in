@@ -47,5 +47,5 @@ gen result accept
 ?Snapshot1.opC[pred]
 *-> deathC1 : deathC
 ?Snapshot1.opC[succ]
-*-> Undefined : OclVoid
+*-> null : OclVoid
 exit

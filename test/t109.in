@@ -51,9 +51,9 @@
 ?Permission.byUseId('Permission3')
 *-> Permission3:Permission
 ?Permission.byUseId('Permission4')
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?Permission.byUseId(null)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?Permission.byUseId(5)
 *<input>:1:0: Operation Permission.byUseId(expression) requires an expression of type `String', found `Integer'.
 !a := new User('ada')

@@ -45,5 +45,5 @@
 
 ?null->selectByKind(B)
 * <input>:1:6: Warning: application of `selectByKind' to a single value should be done with `.' instead of `->'.
-* -> Undefined : OclVoid
+*-> null : OclVoid
 exit

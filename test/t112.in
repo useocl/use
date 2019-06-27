@@ -37,21 +37,21 @@ check
 ?a1.b->indexOf(b1)
 *-> 1 : Integer
 ?a1.b->indexOf(b2)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?a1.b->indexOf(b3)
 *-> 2 : Integer
 !delete (a1,b1) from AB
 ?a1.b->indexOf(b1)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?a1.b->indexOf(b2)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?a1.b->indexOf(b3)
 *-> 1 : Integer
 !insert (a1,b1) into AB
 ?a1.b->indexOf(b1)
 *-> 2 : Integer
 ?a1.b->indexOf(b2)
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?a1.b->indexOf(b3)
 *-> 1 : Integer
 !insert (a1,b2) into AB

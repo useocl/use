@@ -42,7 +42,7 @@
 !insert (c,c1) into PredSuccC
 
 ?c1.succ
-*-> Undefined : OclVoid
+*-> null : OclVoid
 ?c1.pred
 *-> c : C
 :c1.pred

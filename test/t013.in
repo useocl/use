@@ -10,7 +10,7 @@
 !insert (a,b) into R
 
 ? a.rb.battr
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 !set a.rb.battr := 42
 

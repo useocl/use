@@ -11,9 +11,9 @@
 *-> 1 : Integer
 
 ?c.var2.y
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ?c.var2.y.y
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 quit

@@ -11,7 +11,7 @@
 *    self.wife : Person = ada
 *    self : Person = cyd
 *    self.husband : OclVoid = Undefined
-*    Set {self.wife,self.husband} : Set(Person) = Set{Undefined,ada}
+*    Set {self.wife,self.husband} : Set(Person) = Set{null,ada}
 *    null : OclVoid = Undefined
 *    Set {self.wife,self.husband}->excluding(null) : Set(Person) = Set{ada}
 *    self.spouse() : Set(Person) = Set{ada}

@@ -25,28 +25,28 @@
 *-> a1 : A1
 
 ?c1.a1[r12]
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ?c1.a2[r21]
 *-> a2 : A2
 
 ?c1.a2[r22]
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ?c1.a3[r31]
 *-> Set{a3} : Set(A3)
 
 ?c1.a3[r32]
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ?c2.a1[r11]
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ?c2.a1[r12]
 *-> a1 : A1
 
 ?c2.a2[r21]
-*-> Undefined : OclVoid
+*-> null : OclVoid
 
 ?c2.a2[r22]
 *-> a2 : A2
