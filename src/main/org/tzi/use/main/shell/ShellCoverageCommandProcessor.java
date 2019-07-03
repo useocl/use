@@ -80,6 +80,16 @@ public class ShellCoverageCommandProcessor {
 
 	private void dispatch() {
 		String[] args = line.split(" ");
+		
+		/*
+		 * If the input only contains the coverage command without any optional
+		 * commands, go back to the USE 4.1.1 behavior of showing the coverage
+		 * for invariants. 
+		 */
+		if(args.length == 1) {
+			_invariantsCoverage();
+			return;
+		}
 
 		for (int i = 1; i < args.length; ++i) {
 
