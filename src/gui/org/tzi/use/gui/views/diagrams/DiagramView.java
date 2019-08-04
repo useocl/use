@@ -746,11 +746,11 @@ public abstract class DiagramView extends JPanel
     }
 
     public enum LayoutType {
-        Tree,
         Hierarchical,
         Horizontal,
         HierarchicalUpsideDown,
-        HorizontalRightToLeft
+        HorizontalRightToLeft,
+        Swimlane
     }
 
     public void startLayoutFormatThread(LayoutType layoutType, int horizontalSpacing, int verticalSpacing, boolean isPutAssociationsOnRelationsEnabled) {
@@ -767,14 +767,14 @@ public abstract class DiagramView extends JPanel
             case HierarchicalUpsideDown:
                 fLayoutThread.doHierarchicalUpsideDownLayout = true;
                 break;
-            case Tree:
-                fLayoutThread.doTreeLayout = true;
-                break;
             case Horizontal:
                 fLayoutThread.doHorizontalLayout = true;
                 break;
             case HorizontalRightToLeft:
                 fLayoutThread.doHorizontalRightToLeftLayout = true;
+                break;
+            case Swimlane:
+                fLayoutThread.doSwimlaneLayout = true;
                 break;
         }
         fLayoutThread.start();
@@ -852,13 +852,26 @@ public abstract class DiagramView extends JPanel
         repaint();
     }
 
+    protected synchronized void SwimlaneLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
+        if (fLayouter == null) {
+            int w = getWidth();
+            int h = getHeight();
+            if (w == 0 || h == 0)
+                return;
+            fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph, w, h, 20, 20);
+            fAllLayoutTypes.setEdgeLen(150);
+        }
+        fAllLayoutTypes.SwimlaneLayout(HorizontalSpacing, VerticalSpacing, IsPutAssociationsOnRelationsEnabled);
+        repaint();
+    }
+
     class LayoutThread extends Thread {
         public boolean doLayout = true;
-        public boolean doTreeLayout = false;
         public boolean doHierarchicalLayout = false;
         public boolean doHierarchicalUpsideDownLayout = false;
         public boolean doHorizontalLayout = false;
         public boolean doHorizontalRightToLeftLayout = false;
+        public boolean doSwimlaneLayout = false;
         public int horizontalSpacing = 120;
         public int verticalSpacing = 120;
         public boolean isPutAssociationsOnRelationsEnabled = true;
@@ -868,13 +881,6 @@ public abstract class DiagramView extends JPanel
             while (doLayout) {
                 if (isDoAutoLayout()) {
                     autoLayout();
-                } else if (doTreeLayout) {
-                    if (fGraph.hasCycle()) {
-                        JOptionPane.showMessageDialog(null, "Diagram is not a tree!!!");
-                        return;
-                    }
-                    HierarchicalLayout(horizontalSpacing, verticalSpacing, isPutAssociationsOnRelationsEnabled);
-                    doTreeLayout = false;
                 } else if (doHierarchicalLayout) {
                     HierarchicalLayout(horizontalSpacing, verticalSpacing, isPutAssociationsOnRelationsEnabled);
                     doHierarchicalLayout = false;
@@ -887,6 +893,9 @@ public abstract class DiagramView extends JPanel
                 } else if (doHorizontalRightToLeftLayout) {
                     HorizontalRightToLeftLayout(horizontalSpacing, verticalSpacing, isPutAssociationsOnRelationsEnabled);
                     doHorizontalRightToLeftLayout = false;
+                } else if (doSwimlaneLayout) {
+                    SwimlaneLayout(horizontalSpacing, verticalSpacing, isPutAssociationsOnRelationsEnabled);
+                    doSwimlaneLayout = false;
                 }
                 try {
                     Thread.sleep(25);
@@ -1562,14 +1571,6 @@ public abstract class DiagramView extends JPanel
 
         // Different Layouts
         JMenu layouts = new JMenu("Layouts");
-        final JMenuItem treeLayout = new JMenuItem("Tree layout");
-        treeLayout.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.Tree);
-                layoutsOptionDialog.setModal(true);
-                layoutsOptionDialog.setVisible(true);
-            }
-        });
         final JMenuItem hierarchicalLayout = new JMenuItem("Hierarchical layout");
         hierarchicalLayout.addActionListener(new ActionListener() {
             @Override
@@ -1606,15 +1607,23 @@ public abstract class DiagramView extends JPanel
                 layoutsOptionDialog.setVisible(true);
             }
         });
+        final JMenuItem swimlaneLayout = new JMenuItem("Swimlane(Based on Filmstrip) layout");
+        swimlaneLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.Swimlane);
+                layoutsOptionDialog.setModal(true);
+                layoutsOptionDialog.setVisible(true);
+            }
+        });
 
-
-        layouts.add(treeLayout);
-        layouts.addSeparator();
         layouts.add(hierarchicalLayout);
         layouts.add(hierarchicalUpsideDownLayout);
         layouts.addSeparator();
         layouts.add(horizontalLayout);
         layouts.add(horizontalRightToLeftLayout);
+        layouts.addSeparator();
+        layouts.add(swimlaneLayout);
 
         popupMenu.addSeparator();
         popupMenu.add(cbAutoLayout);

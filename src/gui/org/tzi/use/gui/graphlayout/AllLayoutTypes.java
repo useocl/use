@@ -1,13 +1,18 @@
 package org.tzi.use.gui.graphlayout;
 
+import org.tzi.use.graph.DirectedEdge;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.views.diagrams.Layoutable;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
+import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
+import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MAssociationClassImpl;
 import org.tzi.use.uml.sys.MLinkObject;
 
+import javax.swing.*;
 import java.util.*;
 
 
@@ -41,7 +46,8 @@ public class AllLayoutTypes<N extends Layoutable> {
         Hierarchical,
         Horizontal,
         HierarchicalUpsideDown,
-        HorizontalRightToLeft
+        HorizontalRightToLeft,
+        Swimlane
     }
 
     public AllLayoutTypes(DirectedGraph<N, ?> g,
@@ -85,6 +91,7 @@ public class AllLayoutTypes<N extends Layoutable> {
         CurrentLongestRootPath = 0;
         CurrentRootPathLong = 0;
         sourceLayerLevelNodeCount = new LinkedHashMap<N, Integer>();
+        sourceLayerLevelNodeCount = new LinkedHashMap<N, Integer>();
     }
 
     public void HierarchicalLayout(int horizontalSpacing, int verticalSpacing, boolean isPutAssociationsOnRelationsEnabled) {
@@ -113,6 +120,19 @@ public class AllLayoutTypes<N extends Layoutable> {
         VerticalSpacing = verticalSpacing;
         IsPutAssociationsOnRelationsEnabled = isPutAssociationsOnRelationsEnabled;
         layout(LayoutType.HorizontalRightToLeft);
+    }
+
+    public void SwimlaneLayout(int horizontalSpacing, int verticalSpacing, boolean isPutAssociationsOnRelationsEnabled) {
+        HorizontalSpacing = horizontalSpacing;
+        VerticalSpacing = verticalSpacing;
+        IsPutAssociationsOnRelationsEnabled = isPutAssociationsOnRelationsEnabled;
+        for (N n : fGraph.getNodes()) {
+            if (!(n instanceof ObjectNode || n instanceof DiamondNode)) {
+                JOptionPane.showMessageDialog(null, "Just for ObjectDiagram!!");
+                return;
+            }
+        }
+        SwimlaneLayout();
     }
 
     private void layout(LayoutType layoutType) {
@@ -567,11 +587,38 @@ public class AllLayoutTypes<N extends Layoutable> {
         AssociationsLevelNodeCount = new LinkedHashMap<N, Integer>();
         AssociationsParentNode = new LinkedHashMap<N, N>();
         AssociationsSourceNode = new LinkedHashMap<N, N>();
-        if (GetMaxLayerCount() <= 1)
+        if (GetMaxLayerCount() <= 0)
             return;
         for (N node : AssociationNodes) {
             int firstLevel = 0;
             int SecondLevel = 0;
+
+            if (node instanceof ClassNode) {
+                if (((ClassNode) node).cls() instanceof MAssociationClass)
+                    for (int i = 0; i < ((MAssociationClassImpl) ((ClassNode) node).getClassifier()).associationEnds().size(); i++) {
+                        String parentName = (((MAssociationClassImpl) ((ClassNode) node).getClassifier()).associationEnds().get(i).cls().name().toString());
+                        for (N nodeLevel : LayerLevelNodeCount.keySet()) {
+                            if (((ClassNode) nodeLevel).name() == parentName) {
+                                if (i == 0) {
+                                    firstLevel = LayerLevelNodeCount.get(nodeLevel).intValue();
+                                    AssociationsLevelNodeCount.put(node, firstLevel);
+                                    AssociationsParentNode.put(node, nodeLevel);
+                                } else {
+                                    SecondLevel = LayerLevelNodeCount.get(nodeLevel).intValue();
+                                    if (firstLevel < SecondLevel) {
+                                        AssociationsSourceNode.put(node, AssociationsParentNode.get(node));
+                                        AssociationsParentNode.remove(node);
+                                        AssociationsLevelNodeCount.remove(node);
+                                        AssociationsLevelNodeCount.put(node, SecondLevel);
+                                        AssociationsParentNode.put(node, nodeLevel);
+                                    } else {
+                                        AssociationsSourceNode.put(node, nodeLevel);
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
 
             if (node instanceof ObjectNode) {
                 for (int i = 0; i < ((MLinkObject) ((ObjectNode) node).object()).linkedObjects().size(); i++) {
@@ -852,9 +899,15 @@ public class AllLayoutTypes<N extends Layoutable> {
                                     currentY = parentY;
                                 }
                                 if (IsPutAssociationsOnRelationsEnabled == true) {
-                                    ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
+                                    if (n instanceof ClassNode)
+                                        ((ClassNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
+                                    else
+                                        ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
                                 } else {
-                                    ((ObjectNode) n).moveToPosition((currentX - (n.getWidth() / 2)) + n.getWidth(), currentY - (n.getHeight() / 2));
+                                    if (n instanceof ClassNode)
+                                        ((ClassNode) n).moveToPosition((currentX - (n.getWidth() / 2)) + n.getWidth(), currentY - (n.getHeight() / 2));
+                                    else
+                                        ((ObjectNode) n).moveToPosition((currentX - (n.getWidth() / 2)) + n.getWidth(), currentY - (n.getHeight() / 2));
                                 }
                             }
                         }
@@ -973,9 +1026,15 @@ public class AllLayoutTypes<N extends Layoutable> {
                                     currentY = parentY;
                                 }
                                 if (IsPutAssociationsOnRelationsEnabled == true) {
-                                    ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
+                                    if (n instanceof ClassNode)
+                                        ((ClassNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
+                                    else
+                                        ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
                                 } else {
-                                    ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2) + n.getWidth(), currentY - (n.getHeight() / 2));
+                                    if (n instanceof ClassNode)
+                                        ((ClassNode) n).moveToPosition(currentX - (n.getWidth() / 2) + n.getWidth(), currentY - (n.getHeight() / 2));
+                                    else
+                                        ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2) + n.getWidth(), currentY - (n.getHeight() / 2));
                                 }
                             }
                         }
@@ -1014,4 +1073,564 @@ public class AllLayoutTypes<N extends Layoutable> {
         }
     }
 
+    private Map<N, String> sortByStringValue(Map<N, String> unsortMap) {
+
+        // 1. Convert Map to List of Map
+        List<Map.Entry<N, String>> list =
+                new LinkedList<Map.Entry<N, String>>(unsortMap.entrySet());
+
+        // 2. Sort list with Collections.sort(), provide a custom Comparator
+        //    Try switch the o1 o2 position for a different order
+        Collections.sort(list, new Comparator<Map.Entry<N, String>>() {
+            public int compare(Map.Entry<N, String> o1,
+                               Map.Entry<N, String> o2) {
+                return (o2.getValue()).compareTo(o1.getValue());
+            }
+        });
+
+        // 3. Loop the sorted list and put it into a new insertion order Map LinkedHashMap
+        Map<N, String> sortedMap = new LinkedHashMap<N, String>();
+        for (Map.Entry<N, String> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
+    private Map<String, Integer> sortStringByIntegerValue(Map<String, Integer> unsortMap) {
+
+        // 1. Convert Map to List of Map
+        List<Map.Entry<String, Integer>> list =
+                new LinkedList<Map.Entry<String, Integer>>(unsortMap.entrySet());
+
+        // 2. Sort list with Collections.sort(), provide a custom Comparator
+        //    Try switch the o1 o2 position for a different order
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            public int compare(Map.Entry<String, Integer> o1,
+                               Map.Entry<String, Integer> o2) {
+                return (o2.getValue()).compareTo(o1.getValue());
+            }
+        });
+
+        // 3. Loop the sorted list and put it into a new insertion order Map LinkedHashMap
+        Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+        for (Map.Entry<String, Integer> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
+    private void SwimlaneLayout() {
+        MakeAllParametersEmpty();
+        SetRootNodes();
+
+        Map<N, String> SwimlaneGroupping = new LinkedHashMap<N, String>();
+        Map<String, Integer> SwimlaneGrouppingCount = new LinkedHashMap<String, Integer>();
+        Map<N, Integer> SwimlaneGrouppingNodeCount = new LinkedHashMap<N, Integer>();
+        Map<N, Integer> SwimlaneGrouppingRootNodeCount = new LinkedHashMap<N, Integer>();
+
+        for (N n : fGraph.getNodes()) {
+            if (n instanceof ObjectNode) {
+                SwimlaneGroupping.put(n, ((ObjectNode) n).cls().name());
+            }
+        }
+
+        Map<N, String> sortedSwimlaneGroupping = sortByStringValue(SwimlaneGroupping);
+        SwimlaneGroupping = sortedSwimlaneGroupping;
+
+        for (N node : SwimlaneGroupping.keySet()) {
+            if (SwimlaneGrouppingCount.keySet().contains(SwimlaneGroupping.get(node))) {
+                SwimlaneGrouppingCount.replace(SwimlaneGroupping.get(node), SwimlaneGrouppingCount.get(SwimlaneGroupping.get(node)) + 1);
+            } else {
+                SwimlaneGrouppingCount.put(SwimlaneGroupping.get(node), 1);
+            }
+        }
+
+        SwimlaneGrouppingCount = sortStringByIntegerValue(SwimlaneGrouppingCount);
+
+        if (SwimlaneGrouppingCount.size() <= 1) {
+            JOptionPane.showMessageDialog(null, "Diagram is not based on Filmstrip!!!");
+            return;
+        }
+
+
+        for (N n : SwimlaneGroupping.keySet()) {
+            SwimlaneGrouppingNodeCount.put(n, SwimlaneGrouppingCount.get(SwimlaneGroupping.get(n)).intValue());
+        }
+
+        SwimlaneGrouppingNodeCount = sortByValue(SwimlaneGrouppingNodeCount);
+
+        for (N n : RootNodes) {
+            SwimlaneGrouppingRootNodeCount.put(n, SwimlaneGrouppingNodeCount.get(n).intValue());
+        }
+        SwimlaneGrouppingRootNodeCount = sortByValue(SwimlaneGrouppingRootNodeCount);
+        RootNodes.clear();
+        for (N rootNode : SwimlaneGrouppingRootNodeCount.keySet()) {
+            RootNodes.add(rootNode);
+        }
+
+
+        int count = 0;
+        Map<N, String> tracedRootNodes = new LinkedHashMap<N, String>();
+        Map<N, Integer> TempLayerLevelNodeCount = new LinkedHashMap<N, Integer>();
+
+        if (RootNodes.size() == 0) {
+            //Show all Nodes - there is not any edge
+        } else {
+            for (N rootNode : RootNodes) {
+                if (tracedRootNodes.containsKey(rootNode)) {
+                    continue;
+                }
+                LayerLevelNodeCount.put(rootNode, count);
+                //JustOneLevelNodes.put(rootNode, count);
+                tracedRootNodes.put(rootNode, SwimlaneGroupping.get(rootNode));
+                for (N n : SwimlaneGroupping.keySet()) {
+                    if (SwimlaneGroupping.get(n) == ((ObjectNode) rootNode).cls().name()) {
+                        LayerLevelNodeCount.put(n, count);
+                        tracedRootNodes.put(n, SwimlaneGroupping.get(n));
+                    }
+                }
+
+                sortLayerLevelNodeCount();
+                SplitRootLayerLevel();
+                count = GetMaxLayerCount() + 1;
+                sortLayerLevelNodeCount();
+            }
+        }
+
+        sortLayerLevelNodeCount();
+        SplitRootLayerLevel();
+        count = GetMaxLayerCount() + 1;
+        sortLayerLevelNodeCount();
+        TempSortedLayerLevelNodeCount.clear();
+
+        do {
+            TempLayerLevelNodeCount.clear();
+            for (N node : LayerLevelNodeCount.keySet()) {
+                for (N targetNode : fGraph.targetNodeSet(node)) {
+                    if (tracedRootNodes.containsKey(targetNode)) {
+                        continue;
+                    }
+                    TempLayerLevelNodeCount.put(targetNode, count);
+                    tracedRootNodes.put(targetNode, SwimlaneGroupping.get(targetNode));
+                    for (N nf : SwimlaneGroupping.keySet()) {
+                        if (SwimlaneGroupping.get(nf) == ((ObjectNode) targetNode).cls().name()) {
+                            TempLayerLevelNodeCount.put(nf, count);
+                            tracedRootNodes.put(nf, SwimlaneGroupping.get(nf));
+                        }
+                    }
+                    count++;
+                }
+            }
+            LayerLevelNodeCount.putAll(TempLayerLevelNodeCount);
+            sortLayerLevelNodeCount();
+            SplitRootLayerLevel();
+            count = GetMaxLayerCount() + 1;
+            sortLayerLevelNodeCount();
+        } while (TempLayerLevelNodeCount.size() > 0);
+
+        do {
+            TempLayerLevelNodeCount.clear();
+            for (N node : LayerLevelNodeCount.keySet()) {
+                for (N sourceNode : fGraph.sourceNodeSet(node)) {
+                    if (tracedRootNodes.containsKey(sourceNode)) {
+                        continue;
+                    }
+                    if (sourceNode instanceof DiamondNode) {
+                        for (N n : fGraph.getNodes()) {
+                            if (fGraph.sourceNodeSet(n).contains(sourceNode)) {
+                                if (n != node && !tracedRootNodes.containsKey(n)) {
+
+                                    TempLayerLevelNodeCount.put(sourceNode, count);
+                                    tracedRootNodes.put(sourceNode, SwimlaneGroupping.get(sourceNode));
+                                    count++;
+
+                                    TempLayerLevelNodeCount.put(n, count);
+                                    tracedRootNodes.put(n, SwimlaneGroupping.get(n));
+                                    for (N nf : SwimlaneGroupping.keySet()) {
+                                        if (SwimlaneGroupping.get(nf) == ((ObjectNode) n).cls().name()) {
+                                            TempLayerLevelNodeCount.put(nf, count);
+                                            tracedRootNodes.put(nf, SwimlaneGroupping.get(nf));
+                                        }
+                                    }
+                                    count++;
+                                }
+                            }
+                        }
+
+                    } else {
+                        TempLayerLevelNodeCount.put(sourceNode, count);
+                        tracedRootNodes.put(sourceNode, SwimlaneGroupping.get(sourceNode));
+                        for (N nf : SwimlaneGroupping.keySet()) {
+                            if (SwimlaneGroupping.get(nf) == ((ObjectNode) sourceNode).cls().name()) {
+                                TempLayerLevelNodeCount.put(nf, count);
+                                tracedRootNodes.put(nf, SwimlaneGroupping.get(nf));
+                            }
+                        }
+                        count++;
+                    }
+                }
+            }
+            LayerLevelNodeCount.putAll(TempLayerLevelNodeCount);
+            sortLayerLevelNodeCount();
+            SplitRootLayerLevel();
+            count = GetMaxLayerCount() + 1;
+            sortLayerLevelNodeCount();
+        } while (TempLayerLevelNodeCount.size() > 0);
+
+        int tempLevelCount1 = 0;
+        int tempLevelCount2 = 0;
+        do {
+            tempLevelCount1 = GetMaxLayerCount();
+            sortLayerLevelNodeCount();
+            SplitRootLayerLevel();
+            sortLayerLevelNodeCount();
+            tempLevelCount2 = GetMaxLayerCount();
+
+        } while (tempLevelCount1 != tempLevelCount2);
+
+        SplitNotRelatedLayerLevel();
+
+        DrawHierarchicalSwimlane();
+
+    }
+
+    private void SplitRootLayerLevel() {
+        Map<N, Integer> LastLayerNodes = new LinkedHashMap<N, Integer>();
+        for (int i = 0; i <= GetMaxLayerCount(); i++) {
+            Map<N, Integer> TempSplitedLayerLevelNodeCount = new LinkedHashMap<N, Integer>();
+            Map<N, Integer> LayerNodes = new LinkedHashMap<N, Integer>();
+            Map<N, Integer> SpecialNodes = new LinkedHashMap<N, Integer>();
+            for (N node : LayerLevelNodeCount.keySet()) {
+                if (LayerLevelNodeCount.get(node).intValue() == i && !(node instanceof DiamondNode)) {
+                    LayerNodes.put(node, LayerLevelNodeCount.get(node).intValue());
+                }
+                if (node instanceof DiamondNode) {
+                    TempSplitedLayerLevelNodeCount.put(node, LayerLevelNodeCount.get(node).intValue());
+                    SpecialNodes.put(node, LayerLevelNodeCount.get(node).intValue());
+                }
+            }
+            if (LayerNodes.size() <= 1 || LastLayerNodes.keySet().containsAll(LayerNodes.keySet()))
+                continue;
+
+            TempSplitedLayerLevelNodeCount.put(LayerNodes.entrySet().iterator().next().getKey()
+                    , LayerLevelNodeCount.get(LayerNodes.entrySet().iterator().next().getKey()).intValue());
+
+            for (N firstNode : LayerNodes.keySet()) {
+                for (N secondNode : LayerNodes.keySet()) {
+                    if (firstNode == secondNode) {
+                        continue;
+                    }
+                    for (DirectedEdge e : fGraph.edgesBetween(firstNode, secondNode)) {
+                        if (((AssociationOrLinkPartEdge) (e)).getAssociation().aggregationKind() == MAggregationKind.AGGREGATION) {
+                            if (TempSplitedLayerLevelNodeCount.keySet().contains(firstNode)) {
+                                TempSplitedLayerLevelNodeCount.put(secondNode, LayerNodes.get(secondNode).intValue());
+                            }
+                        }
+                    }
+                }
+            }
+            LastLayerNodes.clear();
+            LastLayerNodes = LayerNodes;
+
+
+            Set<N> tempNode = new HashSet<N>();
+            if (TempSplitedLayerLevelNodeCount.size() - SpecialNodes.size() == 1 && LayerNodes.size() > 1) {
+                Map<N, Integer> sortThisLayer = new LinkedHashMap<N, Integer>();
+                LayerLevelNodeCount.keySet().removeAll(LayerNodes.keySet());
+                for (N node : LayerLevelNodeCount.keySet()) {
+                    if (!LayerLevelNodeCount.keySet().contains(node))
+                        continue;
+                    N Tnode = TempSplitedLayerLevelNodeCount.keySet().iterator().next();
+                    if (!LayerNodes.containsKey(Tnode))
+                        continue;
+                    if (LayerLevelNodeCount.get(node).intValue() < LayerNodes.get(Tnode).intValue()) {
+                        for (N targetNode : fGraph.targetNodeSet(node)) {
+                            if (LayerNodes.keySet().contains(targetNode)) {
+                                sortThisLayer.put(targetNode, LayerNodes.get(targetNode).intValue());
+                            }
+                        }
+                    }
+                }
+                LayerLevelNodeCount.putAll(sortThisLayer);
+                for (N node : LayerNodes.keySet()) {
+                    if (!LayerLevelNodeCount.keySet().contains(node)) {
+                        LayerLevelNodeCount.put(node, LayerNodes.get(node).intValue());
+                    }
+                }
+            }
+            if (TempSplitedLayerLevelNodeCount.size() - SpecialNodes.size() > 1 && !TempSplitedLayerLevelNodeCount.keySet().containsAll(LayerNodes.keySet())) {
+                Integer level = TempSplitedLayerLevelNodeCount.get(TempSplitedLayerLevelNodeCount.keySet().iterator().next()).intValue();
+                Integer max = GetMaxLayerCount();
+                for (int j = max; j >= level; j--) {
+                    for (N n : LayerLevelNodeCount.keySet()) {
+                        if (LayerLevelNodeCount.get(n).intValue() == j) {
+                            if (j == level) {
+                                if (!tempNode.contains(n) && !TempSplitedLayerLevelNodeCount.keySet().contains(n)) {
+                                    LayerLevelNodeCount.replace(n, j + 1);
+                                    tempNode.add(n);
+                                }
+                            } else {
+                                if (!tempNode.contains(n)) {
+                                    LayerLevelNodeCount.replace(n, j + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Map<N, Integer> TempSortedLayerLevelNodeCount = new LinkedHashMap<N, Integer>();
+
+    private void sortLayerLevelNodeCount() {
+        TempSortedLayerLevelNodeCount = new LinkedHashMap<N, Integer>();
+        for (int i = 0; i <= GetMaxLayerCount(); i++) {
+            Map<N, Integer> LayerNodes = new LinkedHashMap<N, Integer>();
+            Map<N, Integer> SpecialNodes = new LinkedHashMap<N, Integer>();
+            for (N node : LayerLevelNodeCount.keySet()) {
+                if (LayerLevelNodeCount.get(node).intValue() == i && !(node instanceof DiamondNode)) {
+                    LayerNodes.put(node, LayerLevelNodeCount.get(node).intValue());
+                }
+                if (node instanceof DiamondNode) {
+                    TempSortedLayerLevelNodeCount.put(node, LayerLevelNodeCount.get(node).intValue());
+                    SpecialNodes.put(node, LayerLevelNodeCount.get(node).intValue());
+                }
+            }
+            if (LayerNodes.size() <= 1)
+                continue;
+
+            for (N node : LayerNodes.keySet()) {
+                boolean isInLevel = false;
+                for (N sourceNode : fGraph.sourceNodeSet(node)) {
+                    if (LayerNodes.keySet().contains(sourceNode)) {
+                        isInLevel = true;
+                        break;
+                    }
+                }
+                if (isInLevel == false) {
+                    TempSortedLayerLevelNodeCount.put(node, LayerLevelNodeCount.get(node).intValue());
+                    AddTargetToLayerLevelNodeCount(LayerNodes, node);
+                }
+            }
+
+            if (TempSortedLayerLevelNodeCount.size() - SpecialNodes.size() == 0) {
+                TempSortedLayerLevelNodeCount.put(LayerNodes.entrySet().iterator().next().getKey()
+                        , LayerLevelNodeCount.get(LayerNodes.entrySet().iterator().next().getKey()).intValue());
+                AddTargetToLayerLevelNodeCount(LayerNodes, LayerNodes.entrySet().iterator().next().getKey());
+            }
+
+
+            if (TempSortedLayerLevelNodeCount.keySet().containsAll(LayerNodes.keySet())) {
+                LayerLevelNodeCount.keySet().removeAll(TempSortedLayerLevelNodeCount.keySet());
+                LayerLevelNodeCount.putAll(TempSortedLayerLevelNodeCount);
+            } else {
+                if (i != 0) {
+                    TempSortedLayerLevelNodeCount.clear();
+                    for (N node : LayerLevelNodeCount.keySet()) {
+                        if (node instanceof DiamondNode) {
+                            TempSortedLayerLevelNodeCount.put(node, LayerLevelNodeCount.get(node).intValue());
+                        }
+                    }
+                    for (N node : sortByValue(LayerLevelNodeCount).keySet()) {
+                        if (LayerLevelNodeCount.get(node).intValue() < i) {
+                            for (N layerNode : LayerNodes.keySet()) {
+                                if (fGraph.targetNodeSet(node).contains(layerNode)) {
+                                    TempSortedLayerLevelNodeCount.put(layerNode, LayerLevelNodeCount.get(layerNode).intValue());
+                                }
+                            }
+                        }
+                    }
+                    for (N node : LayerNodes.keySet()) {
+                        if (!TempSortedLayerLevelNodeCount.containsKey(node)) {
+                            TempSortedLayerLevelNodeCount.put(node, LayerLevelNodeCount.get(node).intValue());
+                        }
+                    }
+                    LayerLevelNodeCount.keySet().removeAll(TempSortedLayerLevelNodeCount.keySet());
+                    LayerLevelNodeCount.putAll(TempSortedLayerLevelNodeCount);
+                }
+            }
+            TempSortedLayerLevelNodeCount.clear();
+        }
+    }
+
+    private void AddTargetToLayerLevelNodeCount(Map<N, Integer> LayerNodes, N n) {
+
+        if (fGraph.targetNodeSet(n).size() == 0 || (fGraph.targetNodeSet(n).size() == 1 && fGraph.targetNodeSet(n).contains(n)))
+            return;
+        boolean isAny = false;
+        for (N targetNode : fGraph.targetNodeSet(n)) {
+            if (LayerNodes.keySet().contains(targetNode) && LayerNodes.get(targetNode) == LayerNodes.get(n))
+                isAny = true;
+        }
+        if (isAny == false)
+            return;
+
+        for (N targetNode : fGraph.targetNodeSet(n)) {
+            if (!LayerNodes.keySet().contains(targetNode))
+                continue;
+            if (targetNode != n && LayerNodes.get(targetNode) == LayerNodes.get(n)) {
+                if (!TempSortedLayerLevelNodeCount.keySet().contains(targetNode))
+                    TempSortedLayerLevelNodeCount.put(targetNode, LayerNodes.get(targetNode));
+            }
+        }
+        for (N targetNode : fGraph.targetNodeSet(n)) {
+            if (!LayerNodes.keySet().contains(targetNode))
+                continue;
+            if (targetNode != n && LayerNodes.get(targetNode) == LayerNodes.get(n)) {
+                AddTargetToLayerLevelNodeCount(LayerNodes, targetNode);
+            }
+        }
+    }
+
+    private void SplitNotRelatedLayerLevel() {
+        Map<N, Integer> LastLayerNodes = new LinkedHashMap<N, Integer>();
+        for (int i = 0; i <= GetMaxLayerCount(); i++) {
+            Map<N, Integer> TempSplitedLayerLevelNodeCount = new LinkedHashMap<N, Integer>();
+            Map<N, Integer> LayerNodes = new LinkedHashMap<N, Integer>();
+            Map<N, Integer> SpecialNodes = new LinkedHashMap<N, Integer>();
+            for (N node : LayerLevelNodeCount.keySet()) {
+                if (LayerLevelNodeCount.get(node).intValue() == i && !(node instanceof DiamondNode)) {
+                    LayerNodes.put(node, LayerLevelNodeCount.get(node).intValue());
+                }
+                if (node instanceof DiamondNode) {
+                    TempSplitedLayerLevelNodeCount.put(node, LayerLevelNodeCount.get(node).intValue());
+                    SpecialNodes.put(node, LayerLevelNodeCount.get(node).intValue());
+                }
+            }
+            if (LayerNodes.size() <= 1)
+                continue;
+
+            TempSplitedLayerLevelNodeCount.put(LayerNodes.entrySet().iterator().next().getKey()
+                    , LayerLevelNodeCount.get(LayerNodes.entrySet().iterator().next().getKey()).intValue());
+
+            for (N firstNode : LayerNodes.keySet()) {
+                for (N secondNode : LayerNodes.keySet()) {
+                    if (firstNode == secondNode) {
+                        continue;
+                    }
+                    for (DirectedEdge e : fGraph.edgesBetween(firstNode, secondNode)) {
+                        if (((AssociationOrLinkPartEdge) (e)).getAssociation().aggregationKind() == MAggregationKind.AGGREGATION) {
+                            if (TempSplitedLayerLevelNodeCount.keySet().contains(firstNode)) {
+                                TempSplitedLayerLevelNodeCount.put(secondNode, LayerNodes.get(secondNode).intValue());
+                            }
+                        }
+                    }
+                }
+            }
+            LastLayerNodes.clear();
+
+            Set<N> tempNode = new HashSet<N>();
+            if (TempSplitedLayerLevelNodeCount.size() - SpecialNodes.size() == 1 && LayerNodes.size() > 1) {
+                Map<N, Integer> sortThisLayer = new LinkedHashMap<N, Integer>();
+                LayerLevelNodeCount.keySet().removeAll(LayerNodes.keySet());
+                for (N node : LayerLevelNodeCount.keySet()) {
+                    if (!LayerLevelNodeCount.keySet().contains(node))
+                        continue;
+                    N Tnode = TempSplitedLayerLevelNodeCount.keySet().iterator().next();
+                    if (!LayerNodes.containsKey(Tnode))
+                        continue;
+                    if (LayerLevelNodeCount.get(node).intValue() < LayerNodes.get(Tnode).intValue()) {
+                        for (N targetNode : fGraph.targetNodeSet(node)) {
+                            if (LayerNodes.keySet().contains(targetNode)) {
+                                sortThisLayer.put(targetNode, LayerNodes.get(targetNode).intValue());
+                            }
+                        }
+                    }
+                }
+                LayerLevelNodeCount.putAll(sortThisLayer);
+                for (N node : LayerNodes.keySet()) {
+                    if (!LayerLevelNodeCount.keySet().contains(node)) {
+                        LayerLevelNodeCount.put(node, LayerNodes.get(node).intValue());
+                    }
+                }
+            }
+        }
+    }
+
+    private void DrawHierarchicalSwimlane() {
+        double currentX = fMarginX;
+        double currentY = fMarginY;
+        double maxCurrentHeight = 0;
+        double maxCurrentWidth = 0;
+
+        for (int i = 0; i <= GetMaxLayerCount(); i++) {
+            maxCurrentHeight = 0;
+            for (N node : LayerLevelNodeCount.keySet()) {
+                if (node.getWidth() > maxCurrentWidth) {
+                    maxCurrentWidth = node.getWidth();
+                }
+            }
+
+            for (N node : LayerLevelNodeCount.keySet()) {
+                if (LayerLevelNodeCount.get(node).intValue() == i) {
+                    if (node.getHeight() > maxCurrentHeight) {
+                        maxCurrentHeight = node.getHeight();
+                    }
+                }
+            }
+
+            //currentX += (maxCurrentWidth / 2);
+            currentY += (maxCurrentHeight / 2);
+            if (i == 0) {
+                for (N node : LayerLevelNodeCount.keySet()) {
+                    if (LayerLevelNodeCount.get(node).intValue() == i) {
+                        currentX += (node.getWidth() / 2);
+                        node.setCenter(currentX, currentY);
+                        currentX += (node.getWidth() / 2) + HorizontalSpacing;
+                    }
+                }
+            } else {
+                for (N node : LayerLevelNodeCount.keySet()) {
+                    if (LayerLevelNodeCount.get(node).intValue() == i) {
+                        //First Node in Level
+                        if (node instanceof DiamondNode) {
+                            for (N parentNode : LayerLevelNodeCount.keySet()) {
+                                if (LayerLevelNodeCount.get(parentNode).intValue() < i) {
+                                    if (fGraph.sourceNodeSet(node).contains(parentNode)) {
+                                        currentX += (parentNode.getCenter().getX());
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            boolean hasTarget=false;
+                            for (N parentNode : LayerLevelNodeCount.keySet()) {
+                                if (LayerLevelNodeCount.get(parentNode).intValue() < i) {
+                                    if (fGraph.targetNodeSet(node).contains(parentNode)) {
+                                        currentX += (parentNode.getCenter().getX());
+                                        hasTarget=true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(hasTarget == false){
+                                for (N parentNode : LayerLevelNodeCount.keySet()) {
+                                    if (LayerLevelNodeCount.get(parentNode).intValue() < i) {
+                                        if (fGraph.sourceNodeSet(node).contains(parentNode)) {
+                                            currentX += (parentNode.getCenter().getX());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                for (N node : LayerLevelNodeCount.keySet()) {
+                    if (LayerLevelNodeCount.get(node).intValue() == i) {
+                        currentX += (node.getWidth() / 2);
+                        node.setCenter(currentX, currentY);
+                        currentX += (node.getWidth() / 2) + HorizontalSpacing;
+                    }
+                }
+            }
+            currentX = fMarginX;
+            currentY += (maxCurrentHeight / 2) + VerticalSpacing;
+        }
+    }
 }
