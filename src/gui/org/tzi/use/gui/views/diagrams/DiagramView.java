@@ -53,6 +53,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jcodings.util.Hash;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.graphlayout.AllLayoutTypes;
 import org.tzi.use.gui.graphlayout.SpringLayout;
@@ -750,7 +751,8 @@ public abstract class DiagramView extends JPanel
         Horizontal,
         HierarchicalUpsideDown,
         HorizontalRightToLeft,
-        Swimlane
+        LandscapeSwimlane,
+        PortraitSwimlane
     }
 
     public void startLayoutFormatThread(LayoutType layoutType, int horizontalSpacing, int verticalSpacing, boolean isPutAssociationsOnRelationsEnabled) {
@@ -773,8 +775,11 @@ public abstract class DiagramView extends JPanel
             case HorizontalRightToLeft:
                 fLayoutThread.doHorizontalRightToLeftLayout = true;
                 break;
-            case Swimlane:
-                fLayoutThread.doSwimlaneLayout = true;
+            case LandscapeSwimlane:
+                fLayoutThread.doLandscapeSwimlaneLayout = true;
+                break;
+            case PortraitSwimlane:
+                fLayoutThread.doPortraitSwimlaneLayout = true;
                 break;
         }
         fLayoutThread.start();
@@ -806,7 +811,11 @@ public abstract class DiagramView extends JPanel
             int h = getHeight();
             if (w == 0 || h == 0)
                 return;
-            fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph, w, h, 20, 20);
+            if(DiagramView.this.getHiddenData() != null)
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,DiagramView.this.getHiddenData().getNodes(), w, h, 20, 20);
+            else
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,new HashSet<>(), w, h, 20, 20);
+
             fAllLayoutTypes.setEdgeLen(150);
         }
         fAllLayoutTypes.HierarchicalLayout(HorizontalSpacing, VerticalSpacing, IsPutAssociationsOnRelationsEnabled);
@@ -819,7 +828,10 @@ public abstract class DiagramView extends JPanel
             int h = getHeight();
             if (w == 0 || h == 0)
                 return;
-            fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph, w, h, 20, 20);
+            if(DiagramView.this.getHiddenData() != null)
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,DiagramView.this.getHiddenData().getNodes(), w, h, 20, 20);
+            else
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,new HashSet<>(), w, h, 20, 20);
             fAllLayoutTypes.setEdgeLen(150);
         }
         fAllLayoutTypes.HierarchicalUpsideDownLayout(HorizontalSpacing, VerticalSpacing, IsPutAssociationsOnRelationsEnabled);
@@ -832,7 +844,10 @@ public abstract class DiagramView extends JPanel
             int h = getHeight();
             if (w == 0 || h == 0)
                 return;
-            fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph, w, h, 20, 20);
+            if(DiagramView.this.getHiddenData() != null)
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,DiagramView.this.getHiddenData().getNodes(), w, h, 20, 20);
+            else
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,new HashSet<>(), w, h, 20, 20);
             fAllLayoutTypes.setEdgeLen(150);
         }
         fAllLayoutTypes.HorizontalLayout(HorizontalSpacing, VerticalSpacing, IsPutAssociationsOnRelationsEnabled);
@@ -845,23 +860,45 @@ public abstract class DiagramView extends JPanel
             int h = getHeight();
             if (w == 0 || h == 0)
                 return;
-            fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph, w, h, 20, 20);
+            if(DiagramView.this.getHiddenData() != null)
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,DiagramView.this.getHiddenData().getNodes(), w, h, 20, 20);
+            else
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,new HashSet<>(), w, h, 20, 20);
             fAllLayoutTypes.setEdgeLen(150);
         }
         fAllLayoutTypes.HorizontalRightToLeftLayout(HorizontalSpacing, VerticalSpacing, IsPutAssociationsOnRelationsEnabled);
         repaint();
     }
 
-    protected synchronized void SwimlaneLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
+    protected synchronized void LandscapeSwimlaneLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
         if (fLayouter == null) {
             int w = getWidth();
             int h = getHeight();
             if (w == 0 || h == 0)
                 return;
-            fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph, w, h, 20, 20);
+            if(DiagramView.this.getHiddenData() != null)
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,DiagramView.this.getHiddenData().getNodes(), w, h, 20, 20);
+            else
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,new HashSet<>(), w, h, 20, 20);
             fAllLayoutTypes.setEdgeLen(150);
         }
-        fAllLayoutTypes.SwimlaneLayout(HorizontalSpacing, VerticalSpacing, IsPutAssociationsOnRelationsEnabled);
+        fAllLayoutTypes.LandscapeSwimlaneLayout(HorizontalSpacing, VerticalSpacing, IsPutAssociationsOnRelationsEnabled);
+        repaint();
+    }
+
+    protected synchronized void PortraitSwimlaneLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
+        if (fLayouter == null) {
+            int w = getWidth();
+            int h = getHeight();
+            if (w == 0 || h == 0)
+                return;
+            if(DiagramView.this.getHiddenData() != null)
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,DiagramView.this.getHiddenData().getNodes(), w, h, 20, 20);
+            else
+                fAllLayoutTypes = new AllLayoutTypes<PlaceableNode>(fGraph,new HashSet<>(), w, h, 20, 20);
+            fAllLayoutTypes.setEdgeLen(150);
+        }
+        fAllLayoutTypes.PortraitSwimlaneLayout(HorizontalSpacing, VerticalSpacing, IsPutAssociationsOnRelationsEnabled);
         repaint();
     }
 
@@ -871,7 +908,8 @@ public abstract class DiagramView extends JPanel
         public boolean doHierarchicalUpsideDownLayout = false;
         public boolean doHorizontalLayout = false;
         public boolean doHorizontalRightToLeftLayout = false;
-        public boolean doSwimlaneLayout = false;
+        public boolean doLandscapeSwimlaneLayout = false;
+        public boolean doPortraitSwimlaneLayout = false;
         public int horizontalSpacing = 120;
         public int verticalSpacing = 120;
         public boolean isPutAssociationsOnRelationsEnabled = true;
@@ -893,9 +931,12 @@ public abstract class DiagramView extends JPanel
                 } else if (doHorizontalRightToLeftLayout) {
                     HorizontalRightToLeftLayout(horizontalSpacing, verticalSpacing, isPutAssociationsOnRelationsEnabled);
                     doHorizontalRightToLeftLayout = false;
-                } else if (doSwimlaneLayout) {
-                    SwimlaneLayout(horizontalSpacing, verticalSpacing, isPutAssociationsOnRelationsEnabled);
-                    doSwimlaneLayout = false;
+                } else if (doLandscapeSwimlaneLayout) {
+                    LandscapeSwimlaneLayout(horizontalSpacing, verticalSpacing, isPutAssociationsOnRelationsEnabled);
+                    doLandscapeSwimlaneLayout = false;
+                }else if (doPortraitSwimlaneLayout) {
+                    PortraitSwimlaneLayout(horizontalSpacing, verticalSpacing, isPutAssociationsOnRelationsEnabled);
+                    doPortraitSwimlaneLayout = false;
                 }
                 try {
                     Thread.sleep(25);
@@ -1607,11 +1648,21 @@ public abstract class DiagramView extends JPanel
                 layoutsOptionDialog.setVisible(true);
             }
         });
-        final JMenuItem swimlaneLayout = new JMenuItem("Swimlane(Based on Filmstrip) layout");
-        swimlaneLayout.addActionListener(new ActionListener() {
+        final JMenuItem landscapeSwimlaneLayout = new JMenuItem("Swimlane(Based on Filmstrip) Landscape layout");
+        landscapeSwimlaneLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.Swimlane);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.LandscapeSwimlane);
+                layoutsOptionDialog.setModal(true);
+                layoutsOptionDialog.setVisible(true);
+            }
+        });
+
+        final JMenuItem portraitSwimlaneLayout = new JMenuItem("Swimlane(Based on Filmstrip) Portrait layout");
+        portraitSwimlaneLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.PortraitSwimlane);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1623,7 +1674,8 @@ public abstract class DiagramView extends JPanel
         layouts.add(horizontalLayout);
         layouts.add(horizontalRightToLeftLayout);
         layouts.addSeparator();
-        layouts.add(swimlaneLayout);
+        layouts.add(landscapeSwimlaneLayout);
+        layouts.add(portraitSwimlaneLayout);
 
         popupMenu.addSeparator();
         popupMenu.add(cbAutoLayout);
