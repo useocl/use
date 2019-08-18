@@ -510,7 +510,10 @@ public class AllLayoutTypes<N extends Layoutable> {
                 layerSourceCount = sourceLayerLevelNodeCount.get(rootNode).intValue();
             if (LayerLevelNodeCount.keySet().contains(sourceNode) || TracedNodes.contains(sourceNode) || sourceLayerLevelNodeCount.keySet().contains(sourceNode))
                 continue;
-            layerSourceCount--;
+            if (layerSourceCount - 1 < 0)
+                layerSourceCount = 0;
+            else
+                layerSourceCount--;
             sourceLayerLevelNodeCount.put(sourceNode, layerSourceCount);
             SetTreeLayerCountTarget(sourceNode, sourceNode);
             ExpandLayerLevelsToSourceNodes(sourceNode, mainRootNode);
@@ -588,29 +591,37 @@ public class AllLayoutTypes<N extends Layoutable> {
 
     private void AddDiamondNodesToLayers() {
         for (N dnode : DiamondNodes) {
+            boolean isInRoot = true;
             for (N targetNode : fGraph.targetNodeSet(dnode)) {
-                if (!LayerLevelNodeCount.keySet().contains(targetNode)) {
-                    boolean hasFound = false;
-                    int minLayerCount = 0;
-                    for (N targetNode2 : fGraph.targetNodeSet(dnode)) {
-                        for (N node : LayerLevelNodeCount.keySet()) {
-                            if (node == targetNode2) {
-                                hasFound = true;
-                                if (minLayerCount == 0)
-                                    minLayerCount = LayerLevelNodeCount.get(node).intValue();
-                                else {
-                                    if (LayerLevelNodeCount.get(node).intValue() < minLayerCount)
-                                        minLayerCount = LayerLevelNodeCount.get(node).intValue();
-                                }
-                            }
-                        }
-                        if (LayerLevelNodeCount.keySet().contains(targetNode)) {
-                            break;
-                        }
-                    }
-                    if (hasFound == true && !(LayerLevelNodeCount.keySet().contains(targetNode)))
-                        LayerLevelNodeCount.put(targetNode, minLayerCount + 1);
+                if (fGraph.numIncomingEdges(targetNode) > 1 || fGraph.numOutgoingEdges(targetNode) > 0)
+                    isInRoot = false;
+            }
+            if (isInRoot == true) {
+                LayerLevelNodeCount.replace(dnode, 0);
+                for (N targetNode : fGraph.targetNodeSet(dnode)) {
+                    LayerLevelNodeCount.replace(targetNode, 1);
                 }
+                continue;
+            }
+            int minLayerCount = Integer.MAX_VALUE;
+            boolean minFound = false;
+            for (N targetNode : fGraph.targetNodeSet(dnode)) {
+                if (fGraph.numIncomingEdges(targetNode) > 1 || fGraph.numOutgoingEdges(targetNode) > 0)
+                    if (LayerLevelNodeCount.keySet().contains(targetNode))
+                        if (minLayerCount > LayerLevelNodeCount.get(targetNode).intValue()) {
+                            minLayerCount = LayerLevelNodeCount.get(targetNode).intValue();
+                            minFound = true;
+                        }
+            }
+            if (minFound == false)
+                continue;
+            LayerLevelNodeCount.replace(dnode, minLayerCount + 1);
+            for (N targetNode : fGraph.targetNodeSet(dnode)) {
+
+                if (LayerLevelNodeCount.get(targetNode).intValue() != minLayerCount)
+                    LayerLevelNodeCount.replace(targetNode, minLayerCount + 2);
+                else if (!(fGraph.numIncomingEdges(targetNode) > 1 || fGraph.numOutgoingEdges(targetNode) > 0))
+                    LayerLevelNodeCount.replace(targetNode, minLayerCount + 2);
             }
         }
     }
@@ -905,7 +916,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                                 double parentY = 0;
                                 double sourceX = 0;
                                 double sourceY = 0;
-                                if(AssociationsParentNode.get(anode) == null || AssociationsSourceNode.get(anode) == null){
+                                if (AssociationsParentNode.get(anode) == null || AssociationsSourceNode.get(anode) == null) {
                                     continue;
                                 }
                                 if (AssociationsParentNode.get(anode) != null) {
@@ -1035,7 +1046,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                                 double parentY = 0;
                                 double sourceX = 0;
                                 double sourceY = 0;
-                                if(AssociationsParentNode.get(anode) == null || AssociationsSourceNode.get(anode) == null){
+                                if (AssociationsParentNode.get(anode) == null || AssociationsSourceNode.get(anode) == null) {
                                     continue;
                                 }
                                 if (AssociationsParentNode.get(anode) != null) {
@@ -1198,6 +1209,8 @@ public class AllLayoutTypes<N extends Layoutable> {
         SwimlaneGrouppingNodeCount = sortByValue(SwimlaneGrouppingNodeCount);
 
         for (N n : RootNodes) {
+            if (n instanceof DiamondNode)
+                continue;
             SwimlaneGrouppingRootNodeCount.put(n, SwimlaneGrouppingNodeCount.get(n).intValue());
         }
         SwimlaneGrouppingRootNodeCount = sortByValue(SwimlaneGrouppingRootNodeCount);
