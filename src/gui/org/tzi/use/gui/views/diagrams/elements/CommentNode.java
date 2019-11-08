@@ -138,7 +138,7 @@ public class CommentNode extends PlaceableNode {
 		for (int i = 0; i < actualLines; i++) {
 			String currentLine = lines[i];
 			int currentLinePixelLength = SwingUtilities.computeStringWidth(fm, currentLine);
-			if(currentLinePixelLength+10 > textMaxWidth){
+			if(currentLinePixelLength > textMaxWidth){
 				String ellipsis = "...";
 				int currentStringPixelLength = SwingUtilities.computeStringWidth(fm, ellipsis);
 				int currentStringCharCount = 0;
