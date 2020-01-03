@@ -53,7 +53,7 @@ public class Options {
     public static final String RELEASE_VERSION = "5.2.0";
 
     // the copyright
-    public static final String COPYRIGHT = "Copyright (C) 1999-2019 University of Bremen";
+    public static final String COPYRIGHT = "Copyright (C) 1999-2020 University of Bremen";
 
     // the trained support apes
     public static final String SUPPORT_MAIL = "grp-usedevel@informatik.uni-bremen.de";
