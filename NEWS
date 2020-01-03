@@ -1,6 +1,14 @@
 USE NEWS -- history of user-visible changes.
 Please see the file `README' for a description of how to report bugs.
 
+** Changes between version 5.1.0 and 5.2.0
+* GUI
+    * Tree, Hierarchical and Horizontal Layouts
+    * Default size in invariant view changes based on data
+    * Main window a bit larger by default with the possibility to change default size in use.properties
+* New filmstrip plugin version
+* Bug fixes
+
 ** Changes between version 5.0.1 and 5.1.0
 * New features for the communication and sequence diagrams
     * Creating a communication diagram from a sequence diagram and the other way around
