@@ -1,6 +1,12 @@
 USE NEWS -- history of user-visible changes.
 Please see the file `README' for a description of how to report bugs.
 
+** Changes between version 5.2.0 and 6.0.0
+* New OCL complexity plugin
+* New object to class plugin version
+* New model validator plugin version
+* Bug fixes
+
 ** Changes between version 5.1.0 and 5.2.0
 * GUI
     * Tree, Hierarchical and Horizontal Layouts
