@@ -1,15 +1,9 @@
--*- Text -*-
-$Id$
-
-
-      USE - UML-Based Specification Environment
-      =========================================
+# USE - UML-based Specification Environment
 
 (Note that this is a release of a research prototype. There is no
 warranty of any kind.)
 
-1. Overview
------------
+## Overview
 
 USE is a system for the specification of information systems. It is
 based on a subset of the Unified Modeling Language (UML) [1]. A USE
@@ -33,28 +27,27 @@ in [5] and [6].
 
 Further information about USE is available online at
 
-   http://www.db.informatik.uni-bremen.de/projects/USE/
+<http://www.db.informatik.uni-bremen.de/projects/USE/>
 
 This page also provides a link for down-loading the latest release of
 the USE software.
 
 
-2. Installation
----------------
+## Installation
 
-To install USE, read the instructions in the INSTALL file.
+To install USE, read the instructions in the [INSTALL](INSTALL) file.
 
-
-3. Getting started
-------------------
+## Getting started
 
 After successful installation, the following command can be used to
 invoke USE on an example specification. Change the current directory
 to the top level directory of the distribution and enter the following
 (the exact commands may depend on your platform):
 
-	cd examples
-	../bin/use -v Demo.use
+```bash
+cd examples
+../bin/use -v Documentation/Demo/Demo.use
+```
 
 The last command will compile and check the file Demo.use in the
 examples directory. It contains a USE specification for a simple model
@@ -63,20 +56,27 @@ output. The main interface to the tool is a command line interface
 where you enter commands at a prompt. The output should therefore be
 similar to the following.
 
-	loading properties from: /home/mr/work/java/use/examples/../use.properties
-	use version x.y.z, Copyright (C) 1999-2004 Mark Richters
-	compiling specification...
-	Model Company
-	Enter `help' for a list of available commands.
-	use> 
+```
+loading properties from: C:\Dev\USE\use-6.0.0\etc\use.properties
+USE version X.X.X, Copyright (C) 1999-2021 University of Bremen
+Plugin path: [C:\Dev\USE\use-6.0.0\lib\plugins]
+Plugin filename(s) [AssociationExtend.jar,ModelValidatorPlugin-5.2.0-r1.jar,ObjectToClassPlugin-2.0.jar,OCLComplexityPlugin5.1.0.jar,use-filmstrip.jar]
+compiling specification...
+Model Company (3 classes, 3 associations, 4 invariants, 0 operations, 0 pre-/postconditions, 0 state machines)
+Enter `help' for a list of available commands.
+Enter `plugins' for a list of available plugin commands.
+use>
+```
 
-At this point you can enter commands at the prompt (try 'help' for a
+At this point you can enter commands at the prompt (try `help' for a
 list of available commands). You can enter OCL-like expressions by
 starting the input with a question mark. The expression will be
 evaluated and its result will be shown, e.g.:
 
-	use> ? Set{1,2,3}->select(e | e > 1)
-	-> Set{2,3} : Set(Integer)
+```ocl
+use> ? Set{1,2,3}->select(e | e > 1)
+-> Set{2,3} : Set(Integer)
+```
 
 The file test/queries.cmd contains a large number of examples for
 valid expressions.
@@ -86,16 +86,15 @@ command. Look at the files Demo*.cmd in the same directory. For
 example, starting with Demo0.cmd, an object is created and the new
 system state will be visualized in the system state window.
 
-	use> read Demo0.cmd 
-	Demo0.cmd> !create d0:Department;
+```use
+use> open Demo0.cmd
+Demo0.cmd> !create d0:Department;
+```
 
 For more information about the graphical user interface please refer
-to the quick tour at
-http://www.db.informatik.uni-bremen.de/projects/USE/
+to the [quick tour](http://www.db.informatik.uni-bremen.de/projects/USE/).
 
-
-4. Documentation
-----------------
+## Documentation
 
 Documentation is available in the doc directory. It contains a quick
 tour demonstrating the central features of USE. The tool is heavily
@@ -105,101 +104,69 @@ the end of the file.
 Some information about issues related to OCL can be found in the file
 README.OCL.
 
+## Contact
 
-5. Contact
-----------
+Comments and bug reports are welcome and should be addressed on [GitHub](https://github.com/useocl/use/issues).
 
-Comments and bug reports are welcome and should be addressed to:
+The project's web site is <https://github.com/useocl/use/>
 
-   https://sourceforge.net/p/useocl/use-tickets/
-
-The project's web site is
-
-   http://www.db.informatik.uni-bremen.de/projects/USE/
-
-
-6. Mailing lists
-----------------
-
-There are two mailing lists related to USE. If you want to get
-notifications about new releases, you should subscribe to the list
-use-announce. This is a moderated list only used for
-announcements. The list use is for general discussions about USE.
-
-To subscribe to a list, send "subscribe" in the body of a message
-to the appropriate *-request address:
-
-use-announce-request@informatik.uni-bremen.de
-use-request@informatik.uni-bremen.de
-
-To report problems with any of the mailing lists, send mail to
-
-owner-use@informatik.uni-bremen.de
-
-
-7. Credits
-----------
+## Credits
 
 The parser for USE specifications is implemented with the ANTLR parser
 generator which is in the public domain. We have included the source
 code of ANTLR in this distribution, so that the USE parser can be
 easily regenerated. We would like to thank Terence Parr and the other
-developers of ANTLR for making this great tool freely available. For
-more information see http://www.antlr.org
+developers of [ANTLR](http://www.antlr.org) for making this great tool freely available.
 
-
-8. Copying
-----------
+## Copying
 
 USE is released under the GNU public license, see the file COPYING for
 details. The distribution contains the following libraries from
 external parties. Source code for these libraries is available from
 the web.
 
- - The ANTLR parser generator tool (see http://www.antlr.org) 
- - The junit library (see http://www.junit.org) 
+- The [ANTLR parser generator tool](http://www.antlr.org)
+- The [JUnit library](http://www.junit.org)
 
+## Reporting bugs
 
-9. Reporting bugs
------------------
+Bug reports can submitted on [GitHub](https://github.com/useocl/use/issues)
 
-Bug reports can submitted on SourceForge
+When submitting bug reports, use the available bug template and always include:
 
-   https://sourceforge.net/p/useocl/use-tickets/
-
-When submitting bug reports, always include:
-  - a complete description of the problem encountered
-  - the output of `use -V'
-  - the operating system and version
-  - the architecture.
+- a complete description of the problem encountered
+- the output of `use -V'
+- the operating system and version
+- the architecture.
 
 If possible, include:
-  - a stack trace, if an exception occurred
+
+- a stack trace, if an exception occurred
 
 These steps will help diagnose the problem.
 
-
-10. Acknowledgments
--------------------
+## Acknowledgments
 
 The following people from the database systems working group at the
 University of Bremen made very helpful contributions to the USE
 project. A big "thank you" to all of you.
 
-Fabian Büttner
-Heino Gärtner
+Fabian BÃ¼ttner
+Heino GÃ¤rtner
 Martin Gogolla
+Frank Hilken
+Andreas KÃ¤stner
 Ralf Kollmann
+Mirco Kuhlmann
 Arne Lindow
 Oliver Radfelder
 Paul Ziemann
 
 There are many other people who provided comments and input on
-USE. Although I cannot list them all by name here, their feedback was
+USE. Although we cannot list them all by name here, their feedback was
 very helpful and is highly appreciated.
 
-11. References
--------------
+## References
 
 [1] OMG Unified Modeling Language Specification, Version 1.3, June
     1999. Object Management Group, Inc., Framingham, Mass., Internet:
