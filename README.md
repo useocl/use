@@ -25,14 +25,6 @@ presented a formalization of OCL which attempts to provide a solution
 for most of the problems. The USE approach to validation is described
 in [5] and [6].
 
-Further information about USE is available online at
-
-<http://www.db.informatik.uni-bremen.de/projects/USE/>
-
-This page also provides a link for down-loading the latest release of
-the USE software.
-
-
 ## Installation
 
 To install USE, read the instructions in the [INSTALL](INSTALL) file.
