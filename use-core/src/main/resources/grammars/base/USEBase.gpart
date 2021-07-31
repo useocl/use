@@ -362,15 +362,15 @@ annotationSet returns [Set<ASTAnnotation> annotations]
 annotation returns [ASTAnnotation n]:
 	AT name=IDENT {$n = new ASTAnnotation($name);} 
 	LPAREN 
-		values = annotationValues { $n.setValues($values.values); }
+		values = annotationValues { $n.setValues($values.annoValues); }
 	RPAREN
 ;
 
-annotationValues returns [Map<Token, Token> values]
-@init{ $values = new HashMap<Token, Token>(); }
+annotationValues returns [Map<Token, Token> annoValues]
+@init{ $annoValues = new HashMap<Token, Token>(); }
 :
-	(firstVal = annotationValue { $values.put($firstVal.name, $firstVal.value); })?
-	(COMMA val=annotationValue { $values.put($val.name, $val.value); })*
+	(firstVal = annotationValue { $annoValues.put($firstVal.name, $firstVal.value); })?
+	(COMMA val=annotationValue { $annoValues.put($val.name, $val.value); })*
 ;
 
 annotationValue returns [Token name, Token value]:

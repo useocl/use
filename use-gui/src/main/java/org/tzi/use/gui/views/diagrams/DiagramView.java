@@ -17,43 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
+// $Id: DiagramView.java 6552 2019-08-11 13:03:32Z  $
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.NumberFormat;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.*;
-import javax.swing.text.NumberFormatter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.jcodings.util.Hash;
+import com.ximpleware.ParseException;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.graphlayout.AllLayoutTypes;
 import org.tzi.use.gui.graphlayout.SpringLayout;
@@ -78,9 +48,27 @@ import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-import com.ximpleware.ParseException;
+import javax.swing.*;
+import javax.swing.text.NumberFormatter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * Combines everything that the class and object diagram have in common.
@@ -107,7 +95,7 @@ public abstract class DiagramView extends JPanel
     // needed for auto layout
     protected LayoutThread fLayoutThread;
 
-    protected volatile SpringLayout<PlaceableNode> fLayouter;
+    protected volatile org.tzi.use.gui.graphlayout.SpringLayout<PlaceableNode> fLayouter;
 
     protected volatile AllLayoutTypes<PlaceableNode> fAllLayoutTypes;
 

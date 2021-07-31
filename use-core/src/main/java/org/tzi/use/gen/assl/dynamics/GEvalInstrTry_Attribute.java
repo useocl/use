@@ -22,9 +22,11 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.paukov.combinatorics.ICombinatoricsVector;
 import org.tzi.use.gen.assl.statics.GInstrTry_Attribute;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.value.CollectionValue;
@@ -37,9 +39,8 @@ import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
-import combinatorics.CombinatoricsVector;
-import combinatorics.Iterator;
-import combinatorics.permutations.PermutationWithRepetitionGenerator;
+import org.paukov.combinatorics.CombinatoricsVector;
+import org.paukov.combinatorics.permutations.PermutationWithRepetitionGenerator;
 
 /**
  * Dynamic part of the attribute try
@@ -49,12 +50,12 @@ import combinatorics.permutations.PermutationWithRepetitionGenerator;
 public class GEvalInstrTry_Attribute extends GEvalInstrTry {
 
 	GInstrTry_Attribute instr;
-	
+
 	/**
 	 * @param instr
 	 */
 	public GEvalInstrTry_Attribute(GInstrTry_Attribute instr, boolean first ) {
-    	super(first);
+		super(first);
 		this.instr = instr;
 	}
 
@@ -64,98 +65,98 @@ public class GEvalInstrTry_Attribute extends GEvalInstrTry {
 	@Override
 	public void eval(GConfiguration conf, IGCaller caller, IGCollector collector)
 			throws GEvaluationException {
-		
+
 		if (collector.doDetailPrinting())
 			collector.detailPrintWriter().println(
 					new StringBuilder("evaluating `").append(instr)
 							.append("'").toString());
-		
+
 		Value rangeResult = conf.evalExpression(instr.getObjects().expression());
-		
+
 		if (rangeResult.isUndefined()) {
-			 collector.invalid( "Can't execute `" + instr +
-                     "', because the result of `" + 
-                     instr.getObjects() +
-                     "' returned the undefined value." );
-			 return;
+			collector.invalid( "Can't execute `" + instr +
+					"', because the result of `" +
+					instr.getObjects() +
+					"' returned the undefined value." );
+			return;
 		}
-		
+
 		Value valuesResult = conf.evalExpression(instr.getValues().expression());
-		
+
 		if (valuesResult.isUndefined()) {
-			 collector.invalid( "Can't execute `" + instr +
-                     "', because the result of `" + 
-                     instr.getValues() +
-                     "' returned the undefined value." );
-			 return;
+			collector.invalid( "Can't execute `" + instr +
+					"', because the result of `" +
+					instr.getValues() +
+					"' returned the undefined value." );
+			return;
 		}
-		
+
 		CollectionValue range = (CollectionValue)rangeResult;
 		CollectionValue values = (CollectionValue)valuesResult;
-		
-		List<Value> valuesList = new ArrayList<Value>(values.collection()); 
+
+		List<Value> valuesList = new ArrayList<Value>(values.collection());
 		List<MObject> rangeObjects = new LinkedList<MObject>();
 		for (Value object : range.collection()) {
 			if (object.isUndefined()) {
 				collector.invalid( "Can't execute `" + instr +
-	                     "', because the result of `" + 
-	                     instr.getObjects() +
-	                     "' contained the undefined value." );
+						"', because the result of `" +
+						instr.getObjects() +
+						"' contained the undefined value." );
 				return;
 			}
 			rangeObjects.add(((ObjectValue)object).value() );
 		}
-		
-		CombinatoricsVector<Value> vector = new CombinatoricsVector<Value>(valuesList);
+
+		ICombinatoricsVector<Value> vector = new CombinatoricsVector<Value>(valuesList);
 		PermutationWithRepetitionGenerator<Value> gen = new PermutationWithRepetitionGenerator<Value>(
 				vector, range.size());
-		Iterator<CombinatoricsVector<Value>> iter = gen.createIterator();
+		Iterator<ICombinatoricsVector<Value>> iter = gen.createIterator();
 		MSequenceStatement assignStatements = new MSequenceStatement();
 		this.initProgress(gen.getNumberOfGeneratedObjects());
-		
+
 		MAttribute attr = instr.getAttribute();
 		int iValue = 0;
-		CombinatoricsVector<Value> currentCombination;
+		ICombinatoricsVector<Value> currentCombination;
 		MStatement assignStmt;
 		MSystem system = conf.systemState().system();
 		long cmb = 0;
-		
+
 		while (!collector.canStop() && iter.hasNext()) {
 			assignStatements.clear();
 			currentCombination = iter.next();
 			iValue = 0;
-			
+
 			for (MObject source : rangeObjects) {
 				assignStmt = new MAttributeAssignmentStatement(source, attr, currentCombination.getValue(iValue));
 				if (collector.doBasicPrinting())
-	                collector.basicPrintWriter().println(assignStmt.getShellCommand());
-				
+					collector.basicPrintWriter().println(assignStmt.getShellCommand());
+
 				assignStatements.appendStatement(assignStmt);
 				++iValue;
 			}
-		
-			try {	
-	    		system.execute(assignStatements, true, false, false);
+
+			try {
+				system.execute(assignStatements, true, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}
-			
+
 			this.outPutProgress(++cmb);
-			
+
 			caller.feedback(conf, null, collector);
-		
+
 			// Remove unique name state, because no undo statements are executed
-        	system.getUniqueNameGenerator().popState();
-        	
+			system.getUniqueNameGenerator().popState();
+
 			if (collector.expectSubsequentReporting()) {
-            	for (MStatement s : assignStatements.getStatements()) {
-            		if (!s.isEmptyStatement()) {
-            			collector.subsequentlyPrependStatement(s);
-            		}
-            	}
-            }
+				for (MStatement s : assignStatements.getStatements()) {
+					if (!s.isEmptyStatement()) {
+						collector.subsequentlyPrependStatement(s);
+					}
+				}
+			}
 		}
-		
+
 		this.endProgress();
 	}
 
