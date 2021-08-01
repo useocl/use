@@ -127,7 +127,12 @@ public class Options {
     }
     
     public static Path getIconPath(String iconName) {
-    	return iconDir.resolve(iconName).toAbsolutePath();
+        try {
+            return Path.of(ClassLoader.getSystemResource("images/" + iconName).toURI());
+        } catch (URISyntaxException e) {
+            Log.warn(String.format("Image '%s' not found!", iconName));
+            return null;
+        }
     }
     
     public static boolean compileOnly = false;
@@ -236,8 +241,8 @@ public class Options {
     
     /**
      * This is an extra method to hide a java bug that just happens in some versions
-     * @see https://github.com/julienvollering/MIAmaxent/issues/1
-     * @see https://stackoverflow.com/questions/16428098/groovy-shell-warning-could-not-open-create-prefs-root-node
+     * Infos can be found <a href="https://github.com/julienvollering/MIAmaxent/issues/1">here</a> and
+     * <a href="https://stackoverflow.com/questions/16428098/groovy-shell-warning-could-not-open-create-prefs-root-node">here</a>
      * @return The ten last opened files
      */
     private static RecentItems createRecentItems() {
@@ -473,10 +478,18 @@ public class Options {
         props = new TypedProperties(System.getProperties());
 
         // load the system properties
-        Path propFile;
-        propFile = useHome.resolve("etc").resolve(USE_PROP_FILE);
-        if (!Files.isReadable(propFile)) {
-			System.err.println("property file `" + propFile.toString()
+        Path    propFile   = null;
+        boolean isReadable = true;
+
+        try {
+            propFile = Path.of(ClassLoader.getSystemResource("etc/use.properties").toURI());
+            isReadable = Files.isReadable(propFile);
+        } catch (NullPointerException | URISyntaxException e) {
+            isReadable = false;
+        }
+
+        if (!isReadable) {
+			System.err.println("property file `" + (propFile == null ? "etc/use.properties" : propFile.toString())
 					+ "' not found. Use -H to set the "
 					+ "home of the use installation");
             System.exit(1);
@@ -572,7 +585,7 @@ public class Options {
 	}
 	
 	/**
-	 * @param ignore
+	 * @param warningLevel
 	 */
 	public static void setCheckWarningsOclAnyInCollections(WarningType warningLevel) {
 		checkWarningsOclAnyInCollections = warningLevel;
@@ -580,7 +593,7 @@ public class Options {
 
 	/**
 	 * We always use the last directory for file choose operations
-	 * @param string
+	 * @param dir
 	 */
 	public static void setLastDirectory(Path dir) {
 		lastDirectory = dir;
@@ -666,7 +679,7 @@ public class Options {
 	}
 	
 	/**
-	 * @param selected
+	 * @param b
 	 */
 	public static void setCheckTransitions(boolean b) {
 		checkTransitions = b;

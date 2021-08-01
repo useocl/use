@@ -2272,7 +2272,7 @@ public class MainWindow extends JFrame {
     }
     
 	/**
-	 * @param psm
+	 * @param sm
 	 */
 	public StateMachineDiagramView showStateMachineView(MStateMachine sm) {
 		StateMachineDiagramView dv = new StateMachineDiagramView(MainWindow.this, fSession.system(), sm);

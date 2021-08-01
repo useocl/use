@@ -50,8 +50,7 @@ import org.tzi.use.util.USEWriter;
 
 /**
  * Main class.
- * 
- * @version $ProjectVersion: 0.393 $
+ *
  * @author Mark Richters
  */
 public final class Main {
