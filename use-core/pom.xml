@@ -178,7 +178,72 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>move-antlr-parser-use</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/USELexer.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/use/USELexer.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/USEParser.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/use/USEParser.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/GeneratorLexer.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorLexer.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/GeneratorParser.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorParser.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/OCLLexer.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/ocl/OCLLexer.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/OCLParser.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/ocl/OCLParser.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/ShellCommandLexer.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/shell/ShellCommandLexer.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/ShellCommandParser.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/shell/ShellCommandParser.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/SoilLexer.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/soil/SoilLexer.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/SoilParser.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/soil/SoilParser.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/TestSuiteLexer.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/testsuite/TestSuiteLexer.java</destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>target/generated-sources/antlr3/TestSuiteParser.java</sourceFile>
+                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/testsuite/TestSuiteParser.java</destinationFile>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
