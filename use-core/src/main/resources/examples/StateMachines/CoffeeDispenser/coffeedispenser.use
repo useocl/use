@@ -1,0 +1,67 @@
+model CoffeeDispenser
+ /*
+  * A simple class for a coffee dispenser.
+  */
+ class CoffeeDispenser
+   attributes
+     /* This attribute stores the money inserted into 
+        the dispenser.
+        It is initialized with 0 during creation.*/
+     amount : Integer init = 0
+     
+   operations
+     /* A coin is inserted into the dispenser.
+        Valid coins are: 10,20,50,100 and 200. */
+     accept(i:Integer)
+     begin
+       self.amount := self.amount + i;
+     end
+     pre: let validCoins = Set{10,20,50,100,200} in validCoins->includes(i)
+     
+     /* A coffee should be brewed. Note, that there is 
+      * no pre condition. The state machine below handles 
+      * the correct amount.*/
+     brew()
+     begin
+       self.amount := 0;
+     end
+     
+     -- Return the coins currently in the dispenser
+     reset()
+     begin
+       self.amount := 0;
+     end
+   
+   statemachines
+     /* This state machine describes the
+      * "lifecycle" of the coffee dispenser.
+      */
+     psm Usage
+       states
+         -- The start node
+         startUp:initial
+         -- The initial state after creation.
+         noCoins      [amount = 0]
+         -- Some coins were inserted, but not enough.
+         hasCoins     [amount > 0 and amount < 100]
+         -- Enough coins, ready to brew.
+         enoughCoins  [amount >= 100]
+       transitions
+         -- Define the first state after creation.
+         startUp  -> noCoins     { create }
+         -- A coin was inserted, but it wasn't enough.
+         noCoins  -> hasCoins    { [i + amount < 100] accept() }
+         -- Enough money was inserted.
+         noCoins  -> enoughCoins { [i + amount >= 100] accept() }
+         -- Abort
+         hasCoins -> noCoins     { reset()  }
+         -- Enough money was inserted.
+         hasCoins -> enoughCoins { [i + amount >= 100] accept() }
+         -- Another coin was inserted, but it wasn't enough.
+         hasCoins -> hasCoins    { [i + amount < 100] accept() }
+         -- Abort
+         enoughCoins -> noCoins  { reset()  }
+         -- Brew coffe, no change ;-)
+         enoughCoins -> noCoins  { brew()   }
+     end
+ end
