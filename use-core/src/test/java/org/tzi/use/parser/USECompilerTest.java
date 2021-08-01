@@ -18,7 +18,7 @@
  */
 
 /*
-// $Id$
+// $Id: USECompilerTest.java 5574 2015-03-09 15:07:18Z fhilken $
  */
 package org.tzi.use.parser;
 
@@ -32,6 +32,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,7 +70,6 @@ import org.tzi.use.util.SuffixFileFilter;
  *
  *
  *@created    May 21, 2004
- *@version    $ProjectVersion: 0.393 $
  *@author     Mark Richters
  */
 
@@ -75,12 +77,27 @@ public class USECompilerTest extends TestCase {
     // Set this to true to see more details about what is tested.
     private static final boolean VERBOSE = false;
 
-    private static final String TEST_PATH =
-        System.getProperty("user.dir")
-        + "/src/test/org/tzi/use/parser".replace('/', File.separatorChar);
-    private static final String EXAMPLES_PATH =
-        System.getProperty("user.dir") + "/examples".replace('/', File.separatorChar);
+    private static File TEST_PATH;
+    private static File EXAMPLES_PATH;
+    private static File TEST_EXPR_FILE;
 
+    static {
+        try {
+            TEST_PATH = new File(ClassLoader.getSystemResource("org/tzi/use/parser").toURI());
+            EXAMPLES_PATH = new File(ClassLoader.getSystemResource("examples").toURI());
+            TEST_EXPR_FILE = new File(ClassLoader.getSystemResource("org/tzi/use/parser/test_expr.in").toURI());
+        } catch (NullPointerException e) {
+            TEST_PATH = null;
+            EXAMPLES_PATH = null;
+            TEST_EXPR_FILE = null;
+            fail("Folders including tests are missing!");
+        } catch (URISyntaxException e) {
+            TEST_PATH = null;
+            EXAMPLES_PATH = null;
+            TEST_EXPR_FILE = null;
+            fail("Folders including tests are missing!");
+        }
+    }
 
     // java.io has a StringWriter but we need an OutputStream for
     // System.err
@@ -105,12 +122,11 @@ public class USECompilerTest extends TestCase {
 
 
     public void testSpecification() {
-  	    Options.explicitVariableDeclarations = false;
+        Options.explicitVariableDeclarations = false;
 
         List<File> fileList = getFilesMatchingSuffix(".use", 32);
         // add all the example files which should have no errors
-        File dir = new File(EXAMPLES_PATH);
-        File[] files = dir.listFiles( new SuffixFileFilter(".use") );
+        File[] files = EXAMPLES_PATH.listFiles( new SuffixFileFilter(".use") );
         assertNotNull(files);
         fileList.addAll(Arrays.asList(files));
 
@@ -123,7 +139,7 @@ public class USECompilerTest extends TestCase {
             try {
                 MModel model = compileSpecification(specFile, newErr);
                 File failFile = getFailFileFromUseFile(specFileName);
-          
+
                 if (failFile.exists()) {
                     if (model != null) {
                         failCompileSpecSucceededButErrorsExpected(specFileName, failFile);
@@ -147,22 +163,16 @@ public class USECompilerTest extends TestCase {
         }
     }
 
-
-    private static final String TEST_EXPR_FILE =
-        System.getProperty("user.dir")
-        + "/src/test/org/tzi/use/parser/test_expr.in".replace('/', File.separatorChar);
-
-
     public void testExpression() throws IOException {
         MModel model = new ModelFactory().createModel("Test");
         // read expressions and expected results from file
         BufferedReader in = new BufferedReader(new FileReader(TEST_EXPR_FILE));
         int lineNr = 0;
-        
+
         while (true) {
             String line = in.readLine();
             lineNr++;
-            
+
             if (line == null) {
                 break;
             }
@@ -180,9 +190,9 @@ public class USECompilerTest extends TestCase {
             while (true) {
                 line = in.readLine();
                 lineNr++;
-                
+
                 if (line == null) {
-                	in.close();
+                    in.close();
                     throw new RuntimeException("missing result line");
                 }
                 if (line.startsWith("-> ")) {
@@ -195,16 +205,16 @@ public class USECompilerTest extends TestCase {
             if (VERBOSE) {
                 System.out.println("expression: " + expStr);
             }
-            
+
             InputStream stream = new ByteArrayInputStream(expStr.getBytes());
-            
+
             Expression expr =
-                OCLCompiler.compileExpression(
-                                              model,
-                                              stream,
-                                              TEST_EXPR_FILE,
-                                              new PrintWriter(System.err),
-                                              new VarBindings());
+                    OCLCompiler.compileExpression(
+                            model,
+                            stream,
+                            TEST_EXPR_FILE.toString(),
+                            new PrintWriter(System.err),
+                            new VarBindings());
             assertNotNull(expr + " compiles", expr);
 
             MSystemState systemState = new MSystem(model).state();
@@ -212,14 +222,14 @@ public class USECompilerTest extends TestCase {
             Value val = new Evaluator().eval(expr, systemState);
             assertEquals(TEST_EXPR_FILE + ":" + lineNr + " evaluate: " + expStr, resultStr, val.toStringWithType());
         }
-        
+
         in.close();
     }
 
     private File getFailFileFromUseFile(String specFileName) {
         // check for a failure file
         String failFileName =
-            specFileName.substring(0, specFileName.length() - 4) + ".fail";
+                specFileName.substring(0, specFileName.length() - 4) + ".fail";
         File failFile = new File(TEST_PATH, failFileName);
         return failFile;
     }
@@ -231,18 +241,18 @@ public class USECompilerTest extends TestCase {
         System.err.print(errStr.toString());
         System.err.println("#######################");
         fail(
-             "compilation of "
-             + specFileName
-             + " had errors, but there is "
-             + "no file `"
-             + failFile.getName()
-             + "'.");
+                "compilation of "
+                        + specFileName
+                        + " had errors, but there is "
+                        + "no file `"
+                        + failFile.getName()
+                        + "'.");
     }
 
 
     private void failCompileSpecFailedFailFileDiffers(String specFileName, StringOutputStream errStr, File failFile) {
         System.err.println("Expected: #############");
-        
+
         try (BufferedReader failReader = new BufferedReader(new FileReader(failFile))){
             while (true) {
                 String line = failReader.readLine();
@@ -258,21 +268,21 @@ public class USECompilerTest extends TestCase {
         System.err.print(errStr.toString());
         System.err.println("#######################");
         fail(
-             "compilation of "
-             + specFileName
-             + " had errors, "
-             + "but the expected error output differs.");
+                "compilation of "
+                        + specFileName
+                        + " had errors, "
+                        + "but the expected error output differs.");
     }
 
 
     private void failCompileSpecSucceededButErrorsExpected(String specFileName, File failFile) {
         fail(
-             "compilation of "
-             + specFileName
-             + " succeeded, "
-             + "but errors were expected (see "
-             + failFile
-             + ").");
+                "compilation of "
+                        + specFileName
+                        + " succeeded, "
+                        + "but errors were expected (see "
+                        + failFile
+                        + ").");
     }
 
     private boolean isErrorMessageAsExpected(File failFile, StringOutputStream errStr) throws FileNotFoundException {
@@ -296,24 +306,24 @@ public class USECompilerTest extends TestCase {
         } catch (IOException ex) {
             ok = false;
         } catch (IndexOutOfBoundsException ex) {
-        	ok = false;
+            ok = false;
         }
         return ok;
     }
 
     private List<File> getFilesMatchingSuffix(String suffix, int expected) {
         List<File> fileList = new ArrayList<File>();
-        File dir = new File(TEST_PATH);
+        File dir = new File(TEST_PATH.toURI());
         File[] files = dir.listFiles( new SuffixFileFilter(suffix) );
         assertNotNull(files);
         fileList.addAll(Arrays.asList(files));
 
         // make sure we don't silently miss the input files
         assertEquals(
-                     "make sure that all test files can be found "
-                     + " (or update expected number if you have added test files)",
-                     expected,
-                     fileList.size());
+                "make sure that all test files can be found "
+                        + " (or update expected number if you have added test files)",
+                expected,
+                fileList.size());
 
         return fileList;
     }
@@ -321,16 +331,16 @@ public class USECompilerTest extends TestCase {
 
     private MModel compileSpecification(File specFile, PrintWriter newErr) throws FileNotFoundException {
         MModel result = null;
-        
+
         try (FileInputStream specStream = new FileInputStream(specFile)){
-			result = USECompiler.compileSpecification(specStream,
-					specFile.getName(), newErr, new ModelFactory());
-			specStream.close();
-		} catch (IOException e) {
-			// This can be ignored
-			e.printStackTrace();
-		}
-        
+            result = USECompiler.compileSpecification(specStream,
+                    specFile.getName(), newErr, new ModelFactory());
+            specStream.close();
+        } catch (IOException e) {
+            // This can be ignored
+            e.printStackTrace();
+        }
+
         return result;
     }
 
