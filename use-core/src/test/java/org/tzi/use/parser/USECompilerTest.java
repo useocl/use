@@ -69,8 +69,8 @@ import org.tzi.use.util.SuffixFileFilter;
  *  </ol>
  *
  *
- *@created    May 21, 2004
- *@author     Mark Richters
+ * @created    May 21, 2004
+ * @author     Mark Richters
  */
 
 public class USECompilerTest extends TestCase {
@@ -86,12 +86,7 @@ public class USECompilerTest extends TestCase {
             TEST_PATH = new File(ClassLoader.getSystemResource("org/tzi/use/parser").toURI());
             EXAMPLES_PATH = new File(ClassLoader.getSystemResource("examples").toURI());
             TEST_EXPR_FILE = new File(ClassLoader.getSystemResource("org/tzi/use/parser/test_expr.in").toURI());
-        } catch (NullPointerException e) {
-            TEST_PATH = null;
-            EXAMPLES_PATH = null;
-            TEST_EXPR_FILE = null;
-            fail("Folders including tests are missing!");
-        } catch (URISyntaxException e) {
+        } catch (NullPointerException | URISyntaxException e) {
             TEST_PATH = null;
             EXAMPLES_PATH = null;
             TEST_EXPR_FILE = null;

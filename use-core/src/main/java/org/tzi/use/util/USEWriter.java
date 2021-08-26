@@ -46,7 +46,9 @@ public class USEWriter {
     
     private ByteArrayOutputStream log;
     private PrintStream logWriter;
-    
+
+    private boolean quietMode = false;
+
     private USEWriter() {
         noProtocolOut = System.out;
         out = new PrintStream(new LoggingOutputStreamDecorator(System.out));
@@ -78,7 +80,14 @@ public class USEWriter {
         out.write(log.toByteArray());
     }
 
-    
+    public boolean isQuietMode() {
+        return quietMode;
+    }
+
+    public void setQuietMode(boolean quietMode) {
+        this.quietMode = quietMode;
+    }
+
     public class LoggingOutputStreamDecorator extends OutputStream {
         
         private OutputStream os;
@@ -91,8 +100,11 @@ public class USEWriter {
          * @see java.io.OutputStream#write(int)
          */
         public void write(int b) throws IOException {
-            os.write(b);
-            os.flush();
+            if (!quietMode) {
+                os.write(b);
+                os.flush();
+            }
+
             log.write(b);
         }
     }
