@@ -1,0 +1,4 @@
+!create hh:Point
+*Error: Object creation failed:
+*State invariant violation in state `born' of psm `Point::PointLife' for object hh
+exit

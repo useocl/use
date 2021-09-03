@@ -1,0 +1,11 @@
+procedure tryWorld(numElem:Integer)
+var theElems: Sequence(Elem);
+begin
+theElems:=CreateN(Elem,[numElem]);
+for i:Integer in [Sequence{1..numElem}]
+  begin
+  [theElems->at(i)].value:=Any([Sequence{11,22,33,44,55,66,77,88,99}]);
+  end;
+Try(LeftElem,[theElems],[theElems]);
+Try(RightElem,[theElems],[theElems]);
+end;

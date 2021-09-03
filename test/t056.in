@@ -1,5 +1,0 @@
-?Set{OrderedSet{8,9},Sequence{8,9}}
-*-> Set{Sequence{8,9},OrderedSet{8,9}} : Set(Collection(Integer))
-?Set{OrderedSet{7,8},Sequence{7,8},Set{7,8},Bag{7,8}}
-*-> Set{Set{7,8},Sequence{7,8},Bag{7,8},OrderedSet{7,8}} : Set(Collection(Integer))
-exit

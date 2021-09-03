@@ -1,0 +1,6 @@
+!create ada,bob,cyd:Person
+!set ada.gender:=#female
+!set bob.gender:=#male
+!set cyd.gender:=#male
+!ada.marry(bob)
+exit

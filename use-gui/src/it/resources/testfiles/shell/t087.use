@@ -1,0 +1,16 @@
+model Inheritance
+
+class C
+end
+
+class D < C
+end
+
+class E < C
+end
+
+class A < D, E
+end
+
+class B < D, E
+end

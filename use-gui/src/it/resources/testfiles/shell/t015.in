@@ -1,0 +1,12 @@
+# $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+# See the README file in this directory for information about the file
+# format.
+constraints -flags +d
+!create z:Zug
+gen start -t t015.assl waggonkette(z, 4)
+gen result accept
+*Generated result (system state) accepted.
+? z.waggon->size
+*-> 4 : Integer
+quit

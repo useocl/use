@@ -1,0 +1,60 @@
+-- associationclass A1
+-- between
+--   C[1] role r11
+--   C[1] role r12
+-- end
+
+-- associationclass A2
+-- between
+--   C[0..1] role r21
+--   C[1] role r22
+-- end
+    
+-- associationclass A3
+-- between
+--   C[1] role r31
+--   C[*] role r32
+-- end
+
+!create c1:C
+!create c2:C
+!create a1 : A1 between (c1,c2)
+!create a2 : A2 between (c1,c2)
+!create a3 : A3 between (c1,c2)
+?c1.a1[r11]
+*-> a1 : A1
+
+?c1.a1[r12]
+*-> null : OclVoid
+
+?c1.a2[r21]
+*-> a2 : A2
+
+?c1.a2[r22]
+*-> null : OclVoid
+
+?c1.a3[r31]
+*-> Set{a3} : Set(A3)
+
+?c1.a3[r32]
+*-> null : OclVoid
+
+?c2.a1[r11]
+*-> null : OclVoid
+
+?c2.a1[r12]
+*-> a1 : A1
+
+?c2.a2[r21]
+*-> null : OclVoid
+
+?c2.a2[r22]
+*-> a2 : A2
+
+?c2.a3[r31]
+*-> Set{} : Set(OclVoid)
+
+?c2.a3[r32]
+*-> a3 : A3
+
+quit

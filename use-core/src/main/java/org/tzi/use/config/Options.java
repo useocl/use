@@ -22,11 +22,7 @@
 package org.tzi.use.config;
 
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -478,32 +474,38 @@ public class Options {
         props = new TypedProperties(System.getProperties());
 
         // load the system properties
-        Path    propFile   = null;
+        InputStream propStream = null;
         boolean isReadable = true;
 
-        try {
-            propFile = Path.of(ClassLoader.getSystemResource("etc/use.properties").toURI());
-            isReadable = Files.isReadable(propFile);
-        } catch (NullPointerException | URISyntaxException e) {
-            isReadable = false;
-        }
+        propStream = Options.class.getResourceAsStream("/etc/use.properties");
+        isReadable =  propStream != null;
 
         if (!isReadable) {
-			System.err.println("property file `" + (propFile == null ? "etc/use.properties" : propFile.toString())
+			System.err.println("property file `etc/use.properties"
 					+ "' not found. Use -H to set the "
 					+ "home of the use installation");
             System.exit(1);
         }
-        loadProperties(propFile);
+
+        loadProperties(propStream);
     
         // load user properties if found
-		propFile = Paths.get(props.getProperty("user.dir", null), USER_PROP_FILE);
+		Path propFile = Paths.get(props.getProperty("user.dir", null), USER_PROP_FILE);
         if ( Files.isReadable(propFile)) {
-            loadProperties(propFile);
+            try {
+                loadProperties(new FileInputStream(propFile.toFile()));
+            } catch (FileNotFoundException e) {
+                // In microseconds gone...
+            }
         } else {
             propFile = Paths.get(props.getProperty("user.home", null), USER_PROP_FILE);
-            if ( Files.isReadable(propFile) )
-                loadProperties(propFile);
+            if ( Files.isReadable(propFile) ) {
+                try {
+                    loadProperties(new FileInputStream(propFile.toFile()));
+                } catch (FileNotFoundException e) {
+                    // In microseconds gone...
+                }
+            }
         }
 
 		MONITOR_ASPECT_TEMPLATE = useHome.resolve(props.getProperty(MONITOR_ASPECT_TEMPLATE_P, "etc/USEMonitor.java.template"));
@@ -539,15 +541,13 @@ public class Options {
     /**
      * Try to read a property file.
 	 * 
-	 * @param propFile
-	 *            The property file to read (must exist).
+	 * @param propStream Stream to the properties.
      */
-    private static void loadProperties(Path propFile) {
-        Log.verbose("loading properties from: " + propFile.toString());
-        try (InputStream fin = Files.newInputStream(propFile)) {
-            props.load(fin);
+    private static void loadProperties(InputStream propStream) {
+        try (propStream) {
+            props.load(propStream);
         } catch (IOException e) {
-			System.err.println("unable to load properties: " + propFile.toString());
+			System.err.println("unable to load properties!");
             System.exit(1);
         }
     }

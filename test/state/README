@@ -1,6 +1,0 @@
-This directory contains test cases for checking system states. For
-each specification there are usually several command files which are
-read in producing a system state. The state is checked for model
-inherent constraints and OCL invariants. Command files having the word
-`good' in their name should produce valid states, those which have the
-word `bad' in their name should produce invalid states.

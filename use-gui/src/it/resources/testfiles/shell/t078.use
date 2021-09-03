@@ -1,0 +1,159 @@
+---------------------------------------------------------------- Library
+model Library
+------------------------------------------------------------- class User
+class User
+attributes
+  name:String -- key
+  address:String
+operations
+  init(aName:String, anAddress:String)
+  borrow(aCopy:Copy)
+  return(aCopy:Copy)
+end
+------------------------------------------------------------- class Copy
+class Copy
+attributes
+  signature:String -- key
+  numReturns:Integer
+operations
+  init(aSignature:String, aBook:Book)
+  borrow(aUser:User)
+  return()
+end
+------------------------------------------------------------- class Book
+class Book
+attributes
+  title:String -- key
+  authSeq:Sequence(String)
+  year:Integer
+operations
+  init(aTitle:String, anAuthSeq:Sequence(String), aYear:Integer)
+end
+---------------------------------------------------- association Borrows
+association Borrows between
+  User[0..1] role user
+  Copy[0..*] role copy
+end
+-- - - - - - - - - - - - - - - - - - - - - - - - - association BelongsTo
+association BelongsTo between
+  Copy[0..*] role copy
+  Book[1] role book
+end
+------------------------------------------------------------ constraints
+constraints
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  User
+context u:User inv nameAddressFormatOk:
+  u.name<>oclUndefined(String) and u.name<>'' and
+  u.address<>oclUndefined(String) and u.address<>''
+context u1:User inv nameIsKey: User.allInstances->forAll(u2 |
+  u1<>u2 implies u1.name<>u2.name)
+context u:User inv noDoubleBorrowings:
+  not(u.copy->exists(c1,c2|c1<>c2 and c1.book=c2.book))
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy
+context c:Copy inv signatureFormatOk:
+  c.signature<>oclUndefined(String) and c.signature<>''
+context c1:Copy inv signatureIsKey: Copy.allInstances->forAll(c2 |
+  c1<>c2 implies c1.signature<>c2.signature)
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  Book
+context b:Book inv titleFormatOk:
+  b.title<>oclUndefined(String) and b.title<>''
+context b1:Book inv titleIsKey: Book.allInstances->forAll(b2 |
+  b1<>b2 implies b1.title<>b2.title)
+context b:Book inv authSeqFormatOk: Set{1..b.authSeq->size()}->forAll(i|
+  authSeq->at(i)<>oclUndefined(String) and authSeq->at(i)<>'')
+context b:Book inv authSeqExistsAndUnique: b.authSeq->size()>0 and
+  Set{1..b.authSeq->size()-1}->forAll(i|
+    Set{i+1..b.authSeq->size()}->forAll(j|
+      authSeq->at(i)<>authSeq->at(j)))
+context b:Book inv yearPlausible:
+  1455<=b.year
+------------------------------------------------------------- User::init
+context User::init(aName:String, anAddress:String)
+pre freshUser:
+  self.name=oclUndefined(String) and
+  self.address=oclUndefined(String) and self.copy->isEmpty()
+post attrsAssigned:
+  aName=self.name and anAddress=self.address
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  User::borrow
+context User::borrow(aCopy:Copy)
+pre copyOk:
+  aCopy<>oclUndefined(Copy) and aCopy.user->isEmpty()
+post linkAssigned:
+  self.copy@pre->including(aCopy)=self.copy
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  User::return
+context User::return(aCopy:Copy)
+pre aCopyOk:
+  aCopy<>oclUndefined(Copy) and self.copy->includes(aCopy)
+post linkRemoved:
+  self.copy@pre->excluding(aCopy)=self.copy
+post numReturnsIncreased:
+  aCopy.numReturns@pre+1=aCopy.numReturns
+------------------------------------------------------------- Copy::init
+context Copy::init(aSignature:String, aBook:Book)
+pre freshCopy:
+  self.signature=oclUndefined(String) and
+  self.numReturns=oclUndefined(Integer) and
+  self.user->isEmpty() and self.book->isEmpty()
+pre bookOk:
+  aBook<>oclUndefined(Book)
+post attrsAndLinkAssigned:
+  aSignature=self.signature and 0=self.numReturns and
+  aBook=self.book
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow
+context Copy::borrow(aUser:User)
+pre userOk:
+  aUser<>oclUndefined(User)
+pre notBorrowed:
+  self.user->isEmpty()
+post linkAssigned:
+  aUser=self.user
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return
+context Copy::return()
+pre copyOk:
+  self.user->notEmpty()
+post linkRemoved:
+  self.user->isEmpty()
+post numReturnsIncreased:
+  self.numReturns@pre+1=self.numReturns
+------------------------------------------------------------- Book::init
+context Book::
+  init(aTitle:String, anAuthSeq:Sequence(String), aYear:Integer)
+pre freshBook:
+  self.title=oclUndefined(String) and
+  self.authSeq=oclUndefined(Sequence(String)) and
+  self.year=oclUndefined(Integer) and
+  self.copy->isEmpty()
+post attrsAssigned:
+  aTitle=self.title and anAuthSeq=self.authSeq and aYear=self.year
+------------------------------------------------------------------------
+class Clean -- use case
+attributes
+  -- threshold (use case input) indicates which copies have to be
+  -- deleted because of extensive borrowing and returning; copies to be
+  -- deleted have threshold or higher number of returns (numReturns);
+  -- all such copies which are currently not borrowed are destroyed;
+  -- all such copies which are currently borrowed are collected in
+  -- a set-valued attribute and are noted in this way so that they are
+  -- destroyed later
+  threshold:Integer
+  -- use case output attributes
+  signaturesOfDeletedCopies:Set(String)
+  copiesToBeDeleted:Set(Copy)
+operations
+  exec()
+end
+constraints
+context Clean::exec() pre thresholdPositive:
+  threshold>0
+context Clean::exec() post oldAvailableCopiesDeletedImp:
+  signaturesOfDeletedCopies=Copy.allInstances@pre()->
+    select(c|c.numReturns@pre>=threshold and c.user@pre->isEmpty()).
+      signature@pre->asSet()
+context Clean::exec() post oldAvailableCopiesDeleted:
+  signaturesOfDeletedCopies=Copy.allInstances@pre()->
+    select(c|c.numReturns@pre>=threshold and c.user@pre->isEmpty())->
+      collect(c|c.signature@pre)->asSet()
+context Clean::exec() post oldUnavailableCopiesNoted:
+  copiesToBeDeleted=Copy.allInstances@pre()->
+    select(c|c.numReturns@pre>=threshold and c.user@pre->notEmpty())
+------------------------------------------------------------------------

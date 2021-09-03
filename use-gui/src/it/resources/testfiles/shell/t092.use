@@ -1,0 +1,13 @@
+model t084
+
+class Test
+attributes 
+  aReal : Real
+operations
+  l() begin
+    declare x : Real;
+    x := 1.1;
+    while x < 100 do x := x * x end;
+    self.aReal := x
+  end
+end

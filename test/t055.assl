@@ -1,4 +1,0 @@
-procedure set_attr(a:A)
-begin
-[a].name:=[''];
-end;

@@ -1,0 +1,13 @@
+model t081
+
+class A
+end
+
+class B
+end
+
+association AB between
+  A[*]
+  B[*]
+end
+

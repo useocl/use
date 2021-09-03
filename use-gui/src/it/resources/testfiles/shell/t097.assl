@@ -1,0 +1,29 @@
+procedure tryAC(numA:Integer, numB:Integer)
+var abs:Set(AB);
+
+begin
+CreateN(A, [numA]);
+CreateN(B, [numB]);
+
+abs := Try(AB, [A.allInstances->asSequence()],[B.allInstances->asSequence()]);
+
+for ab:AB in [abs->asSequence()]
+begin
+  [ab].c := [1];
+end;
+
+end;
+
+procedure createAC(numA:Integer, numB:Integer)
+var ab:AB;
+begin
+CreateN(A, [numA]);
+CreateN(B, [numB]);
+
+for b:B in [B.allInstances()->asSequence()]
+begin
+  ab := Create(AB, [A.allInstances()->any(true)], [b]);
+  [ab].c := [1];
+end;
+
+end;

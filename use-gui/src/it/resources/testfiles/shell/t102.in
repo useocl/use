@@ -1,0 +1,51 @@
+gen start -t -nb -r 1348 t102.assl transition(2, 1)
+gen result
+*Random number generator was initialized with 1348.
+*Checked 31,675 snapshots.
+*Made 0 try cuts.
+*Ignored at least 0 useless link combinations.
+*Barriers blocked 0 times.
+*Result: Valid state found.
+*Commands to produce the valid state:
+*!new Person('Person1')
+*!new Person('Person2')
+*!Person1.name := 'Ada'
+*!Person1.civstat := CivilStatus::divorced
+*!Person1.gender := Gender::female
+*!Person1.alive := false
+*!Person2.name := 'Bel'
+*!Person2.civstat := CivilStatus::widowed
+*!Person2.gender := Gender::female
+*!Person2.alive := true
+*!new Snapshot('Snapshot1')
+*!insert (Snapshot1,Person1) into SnapshotPerson
+*!insert (Snapshot1,Person2) into SnapshotPerson
+*!new Person('Person3')
+*!new Person('Person4')
+*!Person3.name := 'Ada'
+*!Person3.civstat := CivilStatus::divorced
+*!Person3.gender := Gender::female
+*!Person3.alive := false
+*!Person4.name := 'Bel'
+*!Person4.civstat := CivilStatus::widowed
+*!Person4.gender := Gender::female
+*!Person4.alive := true
+*!new Snapshot('Snapshot2')
+*!insert (Snapshot2,Person3) into SnapshotPerson
+*!insert (Person1,Person3) into PredSuccPerson
+*!insert (Snapshot2,Person4) into SnapshotPerson
+*!insert (Person2,Person4) into PredSuccPerson
+*!new deathC('deathC1') between (Snapshot1,Snapshot2)
+*!deathC1.aSelf := Person2
+*!Person4.alive := false
+gen result accept
+*Generated result (system state) accepted.
+?deathC1.pred
+*-> Snapshot1 : Snapshot
+?deathC1.succ
+*-> Snapshot2 : Snapshot
+?Snapshot1.opC[pred]
+*-> deathC1 : deathC
+?Snapshot1.opC[succ]
+*-> null : OclVoid
+exit

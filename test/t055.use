@@ -1,9 +1,0 @@
-model assl_inh
-
-class A
-attributes
-  name:String
-end
-
-class B < A
-end

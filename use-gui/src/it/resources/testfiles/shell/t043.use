@@ -1,0 +1,299 @@
+model CivilStatusSnapshotWorld
+
+enum CivilStatus {single, married, divorced, widowed}
+enum Gender {female, male}
+
+class Person
+
+attributes
+  name:String
+  civstat:CivilStatus
+  gender:Gender
+  alive:Boolean
+
+operations
+
+-- birth(aName:String, aGender:Gender)
+-- pre  freshUnlinkedPerson: name.isUndefined and civstat.isUndefined and
+--      gender.isUndefined and alive.isUndefined and
+--      wife.isUndefined and husband.isUndefined
+-- post nameAssigned: name=aName
+-- post civstatAssigned: civstat=#single
+-- post genderAssigned: gender=aGender
+-- post isAliveAssigned: alive=true
+
+-- marry(aSpouse:Person)
+-- pre  aSpouseDefined: aSpouse.isDefined
+-- pre  isAlive: alive
+-- pre  aSpouseAlive: aSpouse.alive
+-- pre  isUnmarried: civstat<>#married
+-- pre  aSpouseUnmarried: aSpouse.civstat<>#married
+-- pre  differentGenders: gender<>aSpouse.gender
+-- post isMarried: civstat=#married
+-- post femaleHasMarriedHusband: gender=#female implies
+--      husband=aSpouse and husband.civstat=#married
+-- post maleHasMarriedWife: gender=#male implies
+--      wife=aSpouse and wife.civstat=#married
+
+-- divorce()
+-- pre  isMarried: civstat=#married
+-- pre  isAlive: alive
+-- pre  husbandAlive: gender=#female implies husband.alive
+-- pre  wifeAlive: gender=#male implies wife.alive
+-- post isDivorced: civstat=#divorced
+-- post husbandDivorced: gender=#female implies
+--      husband.isUndefined and husband@pre.civstat=#divorced
+-- post wifeDivorced: gender=#male implies
+--      wife.isUndefined and wife@pre.civstat=#divorced
+
+-- death()
+-- pre  isAlive: alive
+-- post notAlive: not(alive)
+-- post husbandWidowed: gender=#female and husband@pre.isDefined implies
+--      husband@pre.wife.isUndefined and husband@pre.civstat=#widowed
+-- post wifeWidowed: gender=#male and wife@pre.isDefined implies
+--      wife@pre.husband.isUndefined and wife@pre.civstat=#widowed
+
+spouse():Person = if gender=Gender::female then husband else wife endif
+
+-- constraints
+--   inv attributesDefined: name.isDefined and civstat.isDefined and
+--       gender.isDefined and alive.isDefined
+--   inv nameCapitalThenSmallLetters:
+--       let small:Set(String)=
+--         Set{'a','b','c','d','e','f','g','h','i','j','k','l','m',
+--             'n','o','p','q','r','s','t','u','v','w','x','y','z'} in
+--       let capital:Set(String)=
+--         Set{'A','B','C','D','E','F','G','H','I','J','K','L','M',
+--             'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'} in
+--       capital->includes(name.substring(1,1)) and
+--       Set{2..name.size}->forAll(i |
+--         small->includes(name.substring(i,i)))
+--   inv nameIsUnique: Person.allInstances->forAll(self2|
+--       self<>self2 implies self.name<>self2.name)
+--   inv femaleHasNoWife: gender=#female implies wife.isUndefined
+--   inv maleHasNoHusband: gender=#male implies husband.isUndefined
+
+end
+
+class Snapshot
+constraints
+------------------------------------------------------------------------
+inv inv_attributesDefined:
+  self.person->forAll(self1|
+    (self1.name.isDefined and self1.civstat.isDefined and
+     self1.gender.isDefined and self1.alive.isDefined) xor
+    (self1.name.isUndefined and self1.civstat.isUndefined and
+     self1.gender.isUndefined and self1.alive.isUndefined))
+inv inv_nameCapitalThenSmallLetters:
+  self.person->forAll(self1|
+    let small:Set(String)=
+      Set{'a','b','c','d','e','f','g','h','i','j','k','l','m',
+          'n','o','p','q','r','s','t','u','v','w','x','y','z'} in
+    let capital:Set(String)=
+      Set{'A','B','C','D','E','F','G','H','I','J','K','L','M',
+          'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'} in
+    (capital->includes(self1.name.substring(1,1)) and
+     Set{2..self1.name.size}->forAll(i |
+       small->includes(self1.name.substring(i,i)))) xor
+    self1.name.isUndefined)
+inv inv_nameIsUnique:
+  self.person->forAll(self1|self.person->forAll(self2|
+    self1<>self2 implies self1.name<>self2.name))
+inv inv_femaleHasNoWife:
+  self.person->forAll(self1|
+    self1.gender=Gender::female implies self1.wife.isUndefined)
+inv inv_maleHasNoHusband:
+  self.person->forAll(self1|
+    self1.gender=Gender::male implies self1.husband.isUndefined)
+------------------------------------------------------------------------
+inv birth_pre_freshUnlinkedPerson:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(birthC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(birthC) in
+   op.aSelf.name.isUndefined and op.aSelf.civstat.isUndefined and
+   op.aSelf.gender.isUndefined and op.aSelf.alive.isUndefined and
+   op.aSelf.wife.isUndefined and op.aSelf.husband.isUndefined)
+inv birth_pos_nameAssigned:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(birthC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(birthC) in
+   op.aSelf.succ.name=op.aName)
+inv birth_pos_civstatAssigned:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(birthC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(birthC) in
+   op.aSelf.succ.civstat=CivilStatus::single)
+inv birth_pos_genderAssigned:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(birthC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(birthC) in
+   op.aSelf.succ.gender=op.aGender)
+inv birth_pos_isAliveAssigned:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(birthC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(birthC) in
+   op.aSelf.succ.alive=true)
+------------------------------------------------------------------------
+inv marry_pre_aSpouseDefined:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSpouse.isDefined)
+inv marry_pre_isAlive:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSelf.alive)
+inv marry_pre_aSpouseAlive:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSpouse.alive)
+inv marry_pre_isUnmarried:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSelf.civstat<>CivilStatus::married)
+inv marry_pre_aSpouseUnmarried:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSpouse.civstat<>CivilStatus::married)
+inv marry_pre_differentGenders:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSelf.gender<>op.aSpouse.gender)
+inv marry_pos_isMarried:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSelf.succ.civstat=CivilStatus::married)
+inv marry_pos_femaleHasMarriedHusband:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSelf.succ.gender=Gender::female implies
+   op.aSelf.succ.husband=op.aSpouse.succ and 
+   op.aSelf.succ.husband.civstat=CivilStatus::married)
+inv marry_pos_maleHasMarriedWife:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(marryC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(marryC) in
+   op.aSelf.succ.gender=Gender::male implies
+   op.aSelf.succ.wife=op.aSpouse.succ and 
+   op.aSelf.succ.wife.civstat=CivilStatus::married)
+------------------------------------------------------------------------
+inv divorce_pre_isMarried:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(divorceC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(divorceC) in
+   op.aSelf.civstat=CivilStatus::married)
+inv divorce_pre_isAlive:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(divorceC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(divorceC) in
+   op.aSelf.alive)
+inv divorce_pre_husbandAlive:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(divorceC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(divorceC) in
+   op.aSelf.gender=Gender::female implies op.aSelf.husband.alive)
+inv divorce_pre_wifeAlive:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(divorceC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(divorceC) in
+   op.aSelf.gender=Gender::male implies op.aSelf.wife.alive)
+inv divorce_pos_isDivorced:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(divorceC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(divorceC) in
+   op.aSelf.succ.civstat=CivilStatus::divorced)
+inv divorce_pos_husbandDivorced:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(divorceC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(divorceC) in
+   op.aSelf.succ.gender=Gender::female implies
+     op.aSelf.succ.husband.isUndefined and
+     op.aSelf.husband.succ.civstat=CivilStatus::divorced)
+inv divorce_pos_wifeDivorced:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(divorceC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(divorceC) in
+   op.aSelf.succ.gender=Gender::male implies
+     op.aSelf.succ.wife.isUndefined and
+     op.aSelf.wife.succ.civstat=CivilStatus::divorced)
+------------------------------------------------------------------------
+inv death_pre_isAlive:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(deathC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(deathC) in
+   op.aSelf.alive)
+inv death_pos_notAlive:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(deathC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(deathC) in
+   not(op.aSelf.succ.alive))
+inv death_pos_husbandWidowed:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(deathC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(deathC) in
+   op.aSelf.succ.gender=Gender::female and op.aSelf.husband.isDefined implies
+   op.aSelf.husband.succ.wife.isUndefined and
+   op.aSelf.husband.succ.civstat=CivilStatus::widowed)
+inv death_pos_wifeWidowed:
+  self.pred->notEmpty() and
+  self.opC[succ]->any(true).oclIsTypeOf(deathC) implies
+  (let op=self.opC[succ]->any(true).oclAsType(deathC) in
+   op.aSelf.succ.gender=Gender::male and op.aSelf.wife.isDefined implies
+   op.aSelf.wife.succ.husband.isUndefined and
+   op.aSelf.wife.succ.civstat=CivilStatus::widowed)
+------------------------------------------------------------------------
+end
+
+association Marriage between
+  Person [0..1] role wife
+  Person [0..1] role husband
+end
+
+association SnapshotPerson between
+  Snapshot [1] role snapshot
+  Person [0..*] role person
+end
+
+association PredSuccOpC between
+  Snapshot [0..1] role pred
+  Snapshot [0..1] role succ
+  OpC [0..1] role opC
+end
+
+abstract class OpC
+end
+
+abstract class PersonOpC < OpC
+attributes
+  aSelf:Person
+end
+
+class birthC < PersonOpC
+attributes
+  aName:String
+  aGender:Gender
+end
+
+class marryC < PersonOpC
+attributes
+  aSpouse:Person
+end
+
+class divorceC < PersonOpC
+end
+
+class deathC < PersonOpC
+end
+
+association PredSuccPerson between
+  Person [0..1] role pred
+  Person [0..1] role succ
+end

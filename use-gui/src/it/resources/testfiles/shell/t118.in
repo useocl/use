@@ -1,0 +1,12 @@
+!oma := new Person('oma')
+!papa := new Person('papa')
+!mama := new Person('mama')
+!kind := new Person('kind')
+!insert (oma,papa) into Parent
+!insert (papa,kind) into Parent
+!insert (mama,kind) into Parent
+?kind.parents->closure(parents)
+*-> Set{mama,oma,papa} : Set(Person)
+?Set{kind}->closure(parents)
+*-> Set{kind,mama,oma,papa} : Set(Person)
+exit

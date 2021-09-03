@@ -337,7 +337,7 @@ public class MProtocolStateMachineInstance {
 				errOut.print(" of psm ");
 				errOut.print(StringUtil.inQuotes(this.stateMachine.toString()));
 				errOut.print(" for object ");
-				errOut.println(this.contextObject.toString());
+				errOut.print(this.contextObject.toString());
 			}
 		}
 		

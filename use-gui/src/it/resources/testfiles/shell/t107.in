@@ -1,0 +1,6 @@
+!create ada:Person
+!openter ada giveBirth('Eve')
+!create eve:Person
+!opexit eve
+*postcondition `newEarthCitizen' is true
+exit

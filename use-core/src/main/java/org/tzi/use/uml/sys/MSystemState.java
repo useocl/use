@@ -904,7 +904,7 @@ public final class MSystemState {
 							public String format(MAssociationEnd element) {
 								return element.name() + ":" + element.cls().name();
 							}} ));
-						err.println(").");
+						err.print(").");
 					}
 									
 					return false;

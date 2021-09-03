@@ -88,6 +88,11 @@ public class USEWriter {
         this.quietMode = quietMode;
     }
 
+    public void clearLog() {
+        log = new ByteArrayOutputStream();
+        logWriter = new PrintStream(log);
+    }
+
     public class LoggingOutputStreamDecorator extends OutputStream {
         
         private OutputStream os;

@@ -1,0 +1,29 @@
+!create a:A
+?a.b.c
+*-> Bag{} : Bag(OclVoid)
+
+# Set(Set(T))->flatten : Set(T)
+# Set(Bag(T))->flatten : Set(T)
+# Set(Sequence(T))->flatten : Set(T)
+
+# Bag(Set(T))->flatten : Set(T)
+# Bag(Bag(T))->flatten : Set(T)
+# Bag(Sequence(T))->flatten : Set(T)
+
+# Sequence(Set(T))->flatten : Should fail
+# Sequence(Bag(T))->flatten : Should fail
+# Sequence(Sequence(T))->flatten : Sequence(T)
+
+
+# implicit flattening works here
+?Set{a}.b.c
+*-> Bag{} : Bag(OclVoid)
+
+# fails here
+?Sequence{a}.b.c
+*-> Sequence{} : Sequence(OclVoid)
+
+# fails here
+?a.b_ordered.c
+*-> Sequence{} : Sequence(OclVoid)
+quit

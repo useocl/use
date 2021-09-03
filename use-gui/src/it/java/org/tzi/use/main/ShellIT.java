@@ -6,25 +6,21 @@ import com.github.difflib.patch.Patch;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.tzi.use.config.Options;
-import org.tzi.use.main.shell.Shell;
-import org.tzi.use.parser.use.USECompiler;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.USEWriter;
 
+import java.awt.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -50,7 +46,7 @@ public class ShellIT {
         }
 
         try {
-            return java.nio.file.Files.walk(testDirPath).filter(
+            return Files.walk(testDirPath).filter(
                     path -> path.getFileName().toString().endsWith(".in")
                         ).map(mapInFileToTest());
         } catch (IOException e) {
@@ -69,122 +65,170 @@ public class ShellIT {
         };
     }
 
-    private void assertShellExpressions(Path inputFile, Path useFile) {
-        final MModel model;
-        final Session session = new Session();
-        final MSystem system;
+    private void assertShellExpressions(Path testFile, Path useFile) {
 
-        try (FileInputStream specStream = new FileInputStream(useFile.toFile())) {
-
-            model = USECompiler.compileSpecification(specStream,
-                                    useFile.toString(), new PrintWriter(System.err),
-                                    new ModelFactory());
-
-        } catch (FileNotFoundException e) {
-            fail(String.format("File `%s' not found.", useFile));
-            return;
-        } catch (IOException e1) {
-            fail(String.format("File `%s' not accessible.", useFile));
-            return;
-        }
-
-        system = new MSystem(model);
-        session.setSystem(system);
-
-        Options.doPLUGIN = false;
-        Options.quiet = true;
-
-        Shell.createInstance(session, null);
-        Shell sh = Shell.getInstance();
-
-        // set System.out to the OldUSEWriter to protocol the output.
-        System.setOut(USEWriter.getInstance().getOut());
-        // set System.err to the OldUSEWriter to protocol the output.
-        System.setErr(USEWriter.getInstance().getErr());
-        USEWriter.getInstance().setQuietMode(true);
-
+        Path cmdFile = testFile.resolveSibling(testFile.getFileName() + ".cmd");
         List<String> expectedOutput = new LinkedList<>();
-        List<String> actualOutput;
-        List<String> testInput;
 
-        try {
-            testInput = Files.readAllLines(inputFile, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            fail(String.format("File `%s' not accessible.", inputFile));
-            return;
-        }
+        createCommandFile(testFile, cmdFile, expectedOutput);
 
-        boolean multiLine = false;
-        StringBuilder multiLineString = new StringBuilder();
-        String line;
-
-        // Run test USE commands and build expected output
-        for (String inputLine : testInput) {
-            inputLine = inputLine.trim();
-
-            // Ignore comments
-            if (inputLine.startsWith("#") || inputLine.length() == 0) {
-                continue;
-            }
-
-            if (inputLine.startsWith("exit")) {
-                break;
-            }
-
-            if (inputLine.startsWith("\\")) {
-                multiLine = true;
-                continue;
-            }
-
-            if (inputLine.startsWith(".")) {
-                multiLine = false;
-                line = multiLineString.toString();
-                multiLineString.setLength(0);
-            } else {
-                if (multiLine) {
-                    multiLineString.append(inputLine).append(Options.LINE_SEPARATOR);
-                    continue;
-                } else {
-                    line = inputLine;
-                }
-            }
-
-            if (line.startsWith("*")) {
-                // Input line minus prefix(*) is expected output
-                expectedOutput.add(line.substring(1).trim());
-            } else {
-                sh.processLineSafely(line);
-            }
-        }
-
-        ByteArrayOutputStream useOutputStream = new ByteArrayOutputStream();
-        try {
-            USEWriter.getInstance().writeProtocolFile(useOutputStream);
-        } catch (IOException e) {
-            fail(e);
-        }
-
-        String useOutputRaw = useOutputStream.toString();
-        actualOutput = new ArrayList<>();
-        for (String s : useOutputRaw.split(Options.LINE_SEPARATOR)) {
-            String trim = s.trim();
-            actualOutput.add(trim);
-        }
+        List<String> actualOutput = runUSE(useFile, cmdFile);
 
         //compute the patch: this is the diffutils part
         Patch<String> patch = DiffUtils.diff(expectedOutput, actualOutput);
 
         if (!patch.getDeltas().isEmpty()) {
-            StringBuilder diffMsg = new StringBuilder("USE output does not match expected output!");
-            diffMsg.append(Options.LINE_SEPARATOR).append("Note: the position is not the position in the input file!");
-            diffMsg.append(Options.LINE_SEPARATOR).append(Options.LINE_SEPARATOR);
+            StringBuilder diffMsg = new StringBuilder("USE output does not match expected output!").append(System.lineSeparator());
+
+            diffMsg.append("Testfile: ").append(testFile.toString()).append(System.lineSeparator());
+
+            diffMsg.append(System.lineSeparator()).append("Note: the position is not the position in the input file!");
+            diffMsg.append(System.lineSeparator()).append(System.lineSeparator());
 
             //simple output the computed patch to console
             for (AbstractDelta<String> delta : patch.getDeltas()) {
-                diffMsg.append(delta.toString()).append(Options.LINE_SEPARATOR);
+                diffMsg.append(delta.toString()).append(System.lineSeparator());
             }
+
+            writeToFile(expectedOutput, testFile.getParent().resolve(testFile.getFileName().toString() + ".expected" ));
+            writeToFile(actualOutput, testFile.getParent().resolve(testFile.getFileName().toString() + ".actual" ));
 
             fail(diffMsg.toString());
         }
+    }
+
+    private void writeToFile(List<String> data, Path file) {
+        try (FileWriter writer = new FileWriter(file.toFile());) {
+
+            for (String line : data) {
+                writer.write(line);
+                writer.write(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            fail("Testoutput could not be written!", e);
+        }
+    }
+
+    private void createCommandFile(Path inFile, Path cmdFile, List<String> expectedOutput) {
+
+        // Build USE command file and build expected output
+        try (
+                Stream<String> linesStream = Files.lines(inFile, StandardCharsets.UTF_8);
+                FileWriter cmdWriter = new FileWriter(cmdFile.toFile(), StandardCharsets.UTF_8, false);
+        ) {
+            // USE writes a prompt including the filename
+            String prompt = cmdFile.getFileName().toString() + "> ";
+
+            linesStream.forEach(inputLine -> {
+                if (inputLine.startsWith("*")) {
+                    // Input line minus prefix(*) is expected output
+                    expectedOutput.add(inputLine.substring(1).trim());
+                } else if (inputLine.startsWith("#")) {
+                    // Comments especially for tests
+                    return;
+                } else {
+                    inputLine = inputLine.trim();
+
+                    if (inputLine.isEmpty()) {
+                        return;
+                    }
+
+                    try {
+                        cmdWriter.write(inputLine);
+                        cmdWriter.write(Options.LINE_SEPARATOR);
+
+                        expectedOutput.add((prompt + inputLine).trim());
+                    } catch (IOException e1) {
+                        fail("Could not write USE command file for test!", e1);
+                    }
+                }
+            });
+        } catch (IOException e) {
+            fail("Could not write USE command file for test!", e);
+        }
+    }
+
+    private List<String> runUSE(Path useFile, Path cmdFile) {
+        // Find USE jar
+        Optional<Path> useJar;
+
+        try {
+            Path targetDir = useFile.getParent().getParent().getParent().getParent();
+            useJar = Files.walk(targetDir).filter(p -> p.getFileName().toString().matches("use-gui-.*\\.jar")).findFirst();
+        } catch (IOException e) {
+            fail("Could not find USE jar!", e);
+            return Collections.emptyList();
+        }
+
+        if (!useJar.isPresent()) {
+            fail("Could not find USE jar!");
+        }
+
+        Path javaHome = Path.of(System.getProperty("java.home"));
+        Path javaBinary = javaHome.resolve("bin/java.exe");
+
+        if (!javaBinary.toFile().exists()) {
+            javaBinary = javaHome.resolve("bin/java");
+
+            if (!javaBinary.toFile().exists()) {
+                fail("Java binary could not be found");
+            }
+        }
+
+        ProcessBuilder pb = new ProcessBuilder(
+                javaBinary.toString(),
+                "-Duser.country=US",
+                "-Duser.language=en",
+                "-jar",
+                useJar.get().toString(),
+                "-nogui",
+                "-nr",
+                "-t",
+                "-oclAnyCollectionsChecks:E",
+                "-extendedTypeSystemChecks:E",
+                "-H=" + useJar.get().getParent().getParent().getParent().toString(),
+                useFile.getFileName().toString(),
+                cmdFile.getFileName().toString());
+
+        pb.redirectErrorStream(true);
+        pb.directory(useFile.getParent().toFile());
+
+        // Run a java app in a separate system process
+        Process proc = null;
+        try {
+            proc = pb.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Then retreive the process output
+        InputStream in = proc.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        String line;
+        List<String> actualOutput = new LinkedList<>();
+        boolean firstLine = true;
+
+        while(proc.isAlive()) {
+            try {
+                line = reader.readLine();
+
+                if (firstLine) {
+                    // USE writes some information at the beginning
+                    // We ignore this.
+                    firstLine = false;
+                    continue;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
+            }
+
+            if (proc.isAlive()) {
+                line = line == null ? "" : line.trim();
+                actualOutput.add(line);
+            }
+        }
+
+        return actualOutput;
     }
 }

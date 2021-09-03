@@ -1,0 +1,133 @@
+!create amphCar:AmphibianCar
+!create fuelCar:FuelGuzzlingCar
+!create econCar:EconomicalCar
+!create ship:Ship
+?Set{econCar, fuelCar}
+*-> Set{econCar,fuelCar} : Set(Car)
+?Set{econCar, fuelCar, amphCar}
+*-> Set{amphCar,econCar,fuelCar} : Set(Car)
+?Set{econCar, fuelCar, amphCar, ship}
+*-> Set{amphCar,econCar,fuelCar,ship} : Set(Vehicle)
+?Set{amphCar, ship}
+*-> Set{amphCar,ship} : Set(Ship)
+?Set{econCar, fuelCar, amphCar, ship, 'Hello'}
+*-> Set{'Hello',amphCar,econCar,fuelCar,ship} : Set(OclAny)
+?Set{}->including(amphCar)
+*-> Set{amphCar} : Set(AmphibianCar)
+?Set{}->including(amphCar)->including(econCar)
+*-> Set{amphCar,econCar} : Set(Car)
+?Set{}->including(amphCar)->including(econCar)->including(ship)
+*-> Set{amphCar,econCar,ship} : Set(Vehicle)
+?Set{}->including(amphCar)->including(econCar)->including(ship)->including(1)
+*<input>:1:64: Operation call `Set(Vehicle)->including(Integer)' results in type `Set(OclAny)'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Set{1, 2.1}
+*-> Set{1,2.1} : Set(Real)
+?Set{Set{1}}->including(Set{2})
+*-> Set{Set{1},Set{2}} : Set(Set(Integer))
+?Set{Set{1}}->including(Set{'a'})
+*<input>:1:13: Operation call `Set(Set(Integer))->including(Set(String))' results in type `Set(Set(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Set{Set{1}}->including(Bag{1})
+*-> Set{Set{1},Bag{1}} : Set(Collection(Integer))
+?Set{Set{1}}->including(Bag{'a'})
+*<input>:1:13: Operation call `Set(Set(Integer))->including(Bag(String))' results in type `Set(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Set{Set{1}}->including(Sequence{1})
+*-> Set{Set{1},Sequence{1}} : Set(Collection(Integer))
+?Set{Set{1}}->including(Sequence{'a'})
+*<input>:1:13: Operation call `Set(Set(Integer))->including(Sequence(String))' results in type `Set(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Set{Set{1}}->including(OrderedSet{1})
+*-> Set{Set{1},OrderedSet{1}} : Set(Collection(Integer))
+?Set{Set{1}}->including(OrderedSet{'a'})
+*<input>:1:13: Operation call `Set(Set(Integer))->including(OrderedSet(String))' results in type `Set(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+
+?Bag{1, 2.1}
+*-> Bag{1,2.1} : Bag(Real)
+?Bag{Bag{1}}->including(Bag{2})
+*-> Bag{Bag{1},Bag{2}} : Bag(Bag(Integer))
+?Bag{Bag{1}}->including(Bag{'a'})
+*<input>:1:13: Operation call `Bag(Bag(Integer))->including(Bag(String))' results in type `Bag(Bag(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Bag{Bag{1}}->including(Set{1})
+*-> Bag{Set{1},Bag{1}} : Bag(Collection(Integer))
+?Bag{Bag{1}}->including(Set{'a'})
+*<input>:1:13: Operation call `Bag(Bag(Integer))->including(Set(String))' results in type `Bag(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Bag{Bag{1}}->including(Sequence{1})
+*-> Bag{Sequence{1},Bag{1}} : Bag(Collection(Integer))
+?Bag{Bag{1}}->including(Sequence{'a'})
+*<input>:1:13: Operation call `Bag(Bag(Integer))->including(Sequence(String))' results in type `Bag(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Bag{Bag{1}}->including(OrderedSet{1})
+*-> Bag{Bag{1},OrderedSet{1}} : Bag(Collection(Integer))
+?Bag{Bag{1}}->including(OrderedSet{'a'})
+*<input>:1:13: Operation call `Bag(Bag(Integer))->including(OrderedSet(String))' results in type `Bag(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+
+?Sequence{1, 2.1}
+*-> Sequence{1,2.1} : Sequence(Real)
+?Sequence{Sequence{1}}->including(Sequence{2})
+*-> Sequence{Sequence{1},Sequence{2}} : Sequence(Sequence(Integer))
+?Sequence{Sequence{1}}->including(Sequence{'a'})
+*<input>:1:23: Operation call `Sequence(Sequence(Integer))->including(Sequence(String))' results in type `Sequence(Sequence(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Sequence{Sequence{1}}->including(Set{1})
+*-> Sequence{Sequence{1},Set{1}} : Sequence(Collection(Integer))
+?Sequence{Sequence{1}}->including(Set{'a'})
+*<input>:1:23: Operation call `Sequence(Sequence(Integer))->including(Set(String))' results in type `Sequence(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Sequence{Sequence{1}}->including(Bag{1})
+*-> Sequence{Sequence{1},Bag{1}} : Sequence(Collection(Integer))
+?Sequence{Sequence{1}}->including(Bag{'a'})
+*<input>:1:23: Operation call `Sequence(Sequence(Integer))->including(Bag(String))' results in type `Sequence(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?Sequence{Sequence{1}}->including(OrderedSet{1})
+*-> Sequence{Sequence{1},OrderedSet{1}} : Sequence(Collection(Integer))
+?Sequence{Sequence{1}}->including(OrderedSet{'a'})
+*<input>:1:23: Operation call `Sequence(Sequence(Integer))->including(OrderedSet(String))' results in type `Sequence(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+
+?OrderedSet{1, 2.1}
+*-> OrderedSet{1,2.1} : OrderedSet(Real)
+?OrderedSet{OrderedSet{1}}->including(OrderedSet{2})
+*-> OrderedSet{OrderedSet{1},OrderedSet{2}} : OrderedSet(OrderedSet(Integer))
+?OrderedSet{OrderedSet{1}}->including(OrderedSet{'a'})
+*<input>:1:27: Operation call `OrderedSet(OrderedSet(Integer))->including(OrderedSet(String))' results in type `OrderedSet(OrderedSet(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?OrderedSet{OrderedSet{1}}->including(Set{1})
+*-> OrderedSet{OrderedSet{1},Set{1}} : OrderedSet(Collection(Integer))
+?OrderedSet{OrderedSet{1}}->including(Set{'a'})
+*<input>:1:27: Operation call `OrderedSet(OrderedSet(Integer))->including(Set(String))' results in type `OrderedSet(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?OrderedSet{OrderedSet{1}}->including(Bag{1})
+*-> OrderedSet{OrderedSet{1},Bag{1}} : OrderedSet(Collection(Integer))
+?OrderedSet{OrderedSet{1}}->including(Bag{'a'})
+*<input>:1:27: Operation call `OrderedSet(OrderedSet(Integer))->including(Bag(String))' results in type `OrderedSet(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?OrderedSet{OrderedSet{1}}->including(Sequence{1})
+*-> OrderedSet{OrderedSet{1},Sequence{1}} : OrderedSet(Collection(Integer))
+?OrderedSet{OrderedSet{1}}->including(Sequence{'a'})
+*<input>:1:27: Operation call `OrderedSet(OrderedSet(Integer))->including(Sequence(String))' results in type `OrderedSet(Collection(OclAny))'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+
+exit

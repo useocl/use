@@ -1,0 +1,8 @@
+?let x : Set(OclAny) = Set{1,2} in x->union(Set{'Hallo'})
+*-> Set{'Hallo',1,2} : Set(OclAny)
+?let x : Bag(OclAny) = Bag{1,2} in x->union(Bag{'Hallo'})
+*-> Bag{'Hallo',1,2} : Bag(OclAny)
+?let x : Sequence(OclAny) = Sequence{1,2} in x->union(Sequence{'Hallo'})
+*-> Sequence{1,2,'Hallo'} : Sequence(OclAny)
+
+quit

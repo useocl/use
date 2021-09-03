@@ -1,0 +1,90 @@
+------------------------------------------------------------------------
+
+procedure transition(numPerson:Integer,numChanges:Integer)
+var thePersonsPre: Sequence(Person),
+    thePersonsPos: Sequence(Person),
+    preSnapshot: Snapshot,
+    posSnapshot: Snapshot,
+    theOpKind: String,
+    theBirthC: birthC,
+    theMarryC: marryC,
+    theDivorceC: divorceC,
+    theDeathC: deathC,
+    thePerson: Person,
+    theWife: Person,
+    theHusband: Person,
+    theChangeKind: String;
+begin
+thePersonsPre:=CreateN(Person,[numPerson]);
+for i:Integer in [Sequence{1..numPerson}] begin
+  [thePersonsPre->at(i)].name:=Any([Sequence{
+    'Ada','Bel','Cam','Day','Eva','Flo','Gen','Hao','Ina','Jen',
+    'Ali','Bob','Cyd','Dan','Eli','Fox','Gil','Hal','Ike','Jan'}]);
+  [thePersonsPre->at(i)].civstat:=
+    Any([Sequence{CivilStatus::single,CivilStatus::married,CivilStatus::divorced,CivilStatus::widowed}]);
+  [thePersonsPre->at(i)].gender:=Any([Sequence{Gender::female,Gender::male}]);
+  [thePersonsPre->at(i)].alive:=Any([Sequence{false,true}]); end;
+------------------------------------------------------------------------
+preSnapshot:=Create(Snapshot);
+for i:Integer in [Sequence{1..numPerson}] begin
+  Insert(SnapshotPerson,[preSnapshot],[thePersonsPre->at(i)]); end;
+------------------------------------------------------------------------
+thePersonsPos:=CreateN(Person,[numPerson]);
+for i:Integer in [Sequence{1..numPerson}] begin
+  [thePersonsPos->at(i)].name:=[thePersonsPre->at(i).name];
+  [thePersonsPos->at(i)].civstat:=[thePersonsPre->at(i).civstat];
+  [thePersonsPos->at(i)].gender:=[thePersonsPre->at(i).gender];
+  [thePersonsPos->at(i)].alive:=[thePersonsPre->at(i).alive]; end;
+------------------------------------------------------------------------
+posSnapshot:=Create(Snapshot);
+for i:Integer in [Sequence{1..numPerson}] begin
+  Insert(SnapshotPerson,[posSnapshot],[thePersonsPos->at(i)]);
+  Insert(PredSuccPerson,[thePersonsPre->at(i)],[thePersonsPos->at(i)]); end;
+------------------------------------------------------------------------
+theOpKind:=Any([Sequence{'birth','marry','divorce','death'}]);
+if [theOpKind='birth'] then begin
+  theBirthC:=Create(birthC);
+  [theBirthC].aSelf:=Any([thePersonsPre]);
+  [theBirthC].aName:=Any([Sequence{
+    'Ada','Bel','Cam','Day','Eva','Flo','Gen','Hao','Ina','Jen',
+    'Ali','Bob','Cyd','Dan','Eli','Fox','Gil','Hal','Ike','Jan'}]);
+  [theBirthC].aGender:=Any([Sequence{Gender::female,Gender::male}]);
+  Insert(PredSuccOpC,[preSnapshot],[posSnapshot],[theBirthC]); end;
+if [theOpKind='marry'] then begin
+  theMarryC:=Create(marryC);
+  [theMarryC].aSelf:=Any([thePersonsPre]);
+  [theMarryC].aSpouse:=Any([thePersonsPre]);
+  Insert(PredSuccOpC,[preSnapshot],[posSnapshot],[theMarryC]); end;
+if [theOpKind='divorce'] then begin
+  theDivorceC:=Create(divorceC);
+  [theDivorceC].aSelf:=Any([thePersonsPre]);
+  Insert(PredSuccOpC,[preSnapshot],[posSnapshot],[theDivorceC]); end;
+if [theOpKind='death'] then begin
+  theDeathC:=Create(deathC);
+  [theDeathC].aSelf:=Any([thePersonsPre]);
+  Insert(PredSuccOpC,[preSnapshot],[posSnapshot],[theDeathC]); end;
+for i:Integer in [Sequence{1..numChanges}] begin
+  theChangeKind:=
+    Any([Sequence{'name','civstat','gender','alive','Marriage'}]);
+  if [theChangeKind='name'] then begin
+    thePerson:=Any([thePersonsPos]);
+    [thePerson].name:=Any([Sequence{
+      'Ada','Bel','Cam','Day','Eva','Flo','Gen','Hao','Ina','Jen',
+      'Ali','Bob','Cyd','Dan','Eli','Fox','Gil','Hal','Ike','Jan'}]); end;
+  if [theChangeKind='civstat'] then begin
+    thePerson:=Any([thePersonsPos]);
+    [thePerson].civstat:=
+      Any([Sequence{CivilStatus::single,CivilStatus::married,CivilStatus::divorced,CivilStatus::widowed}]); end;
+  if [theChangeKind='gender'] then begin
+    thePerson:=Any([thePersonsPos]);
+    [thePerson].gender:=Any([Sequence{Gender::female,Gender::male}]); end;
+  if [theChangeKind='alive'] then begin
+    thePerson:=Any([thePersonsPos]);
+    [thePerson].alive:=Any([Sequence{false,true}]); end;
+  if [theChangeKind='Marriage'] then begin
+    theWife:=Any([thePersonsPos]);
+    theHusband:=Any([thePersonsPos]);
+    Insert(Marriage,[theWife],[theHusband]); end;
+  end;
+end;
+------------------------------------------------------------------------

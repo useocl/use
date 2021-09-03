@@ -1,0 +1,27 @@
+!create c:C
+?c.aOp()
+*-> 0 : Integer
+!c.inc()
+?c.aOp()
+*-> 1 : Integer
+!set c.a := 0
+!c.inc2()
+*[Error] 1 postcondition in operation call `C::inc2(self:c)' does not hold:
+*  aIncremented: ((self.aOp@pre() + 1) = self.aOp())
+*    self : C = c
+*    self : C = c
+*    self.a : Integer = 0
+*    self.aOp@pre() : Integer = 0
+*    1 : Integer = 1
+*    (self.aOp@pre() + 1) : Integer = 1
+*    self : C = c
+*    self : C = c
+*    self.a : Integer = 2
+*    self.aOp() : Integer = 2
+*    ((self.aOp@pre() + 1) = self.aOp()) : Boolean = false
+*
+*  call stack at the time of evaluation:
+*    1. C::inc2(self:c) [caller: c.inc2()@<input>:1:0]
+c
+*Error: postcondition false in operation call `C::inc2(self:c)'.
+exit

@@ -1,0 +1,20 @@
+# $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+# See the README file in this directory for information about the file
+# format.
+
+# test of new !set syntax
+
+!create a:A
+!create b:B
+!insert (a,b) into R
+
+? a.rb.battr
+*-> null : OclVoid
+
+!set a.rb.battr := 42
+
+? a.rb.battr
+*-> 42 : Integer
+
+exit

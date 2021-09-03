@@ -1,3 +1,0 @@
-?oclEmpty(Collection(Integer))
-*<input>:1:9: Expected set, bag, ordered set, or sequence type, found `Collection(Integer)'.
-exit

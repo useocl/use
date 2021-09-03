@@ -1,0 +1,45 @@
+!let v=Tuple{c1:oclEmpty(Set(Tuple(d1:String)))}
+?v=Tuple{c1:oclEmpty(Set(Tuple(d1:String)))}
+*-> true : Boolean
+?v
+*-> Tuple{c1=Set{}} : Tuple(c1:Set(Tuple(d1:String)))
+!create Person1:Person
+!set Person1.firstName := 'Ada'
+!set Person1.lastName := 'Apple'
+!create Person2:Person
+!set Person2.firstName := 'Ada'
+!set Person2.lastName := 'Apple'
+!create Person3:Person
+!set Person3.firstName := 'Ada'
+!set Person3.lastName := 'Apple'
+?Person.allInstances()
+*-> Set{Person1,Person2,Person3} : Set(Person)
+?Person.allInstances()->asSequence()
+*-> Sequence{Person1,Person2,Person3} : Sequence(Person)
+?Person.allInstances()->asSequence().firstName
+*-> Sequence{'Ada','Ada','Ada'} : Sequence(String)
+?Person.allInstances()->asSequence().lastName
+*-> Sequence{'Apple','Apple','Apple'} : Sequence(String)
+?Person.allInstances()->isUnique(p|Tuple{f:p.firstName,l:p.lastName})
+*-> false : Boolean
+?Person.allInstances()->isUnique(p|Sequence{p.firstName,p.lastName})
+*-> false : Boolean
+!create Person4:Person
+!set Person4.lastName := 'Bob'
+!set Person4.firstName := 'Banana'
+?Set{Person1}->isUnique(p|Tuple{f:p.firstName,l:p.lastName})
+*-> true : Boolean
+?Set{Person1, Person4}->isUnique(p|Tuple{f:p.firstName,l:p.lastName})
+*-> true : Boolean
+?Set{Person1, Person2, Person4}->isUnique(p|Tuple{f:p.firstName,l:p.lastName})
+*-> false : Boolean
+?Tuple{f:Person1.firstName,l:Person1.lastName}=Tuple{f:Person2.firstName,l:Person2.lastName}
+*-> true : Boolean
+?Tuple{f:Person1.firstName,l:Person1.lastName}=Tuple{f:Person4.firstName,l:Person4.lastName}
+*-> false : Boolean
+?Tuple{a='a'} = Tuple{b='a'}
+*<input>:1:13: Expression `(Tuple {a:'a'} = Tuple {b:'a'})' can never evaluate to true because `Tuple(a:String)' and `Tuple(b:String)' are unrelated.
+*You can change this check using the -extendedTypeSystemChecks switch.
+?Tuple{a='a', b='b'} = Tuple{b='b', a='a'}
+*-> true : Boolean
+exit
