@@ -6,21 +6,20 @@ import com.github.difflib.patch.Patch;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.tzi.use.config.Options;
-import org.tzi.use.util.USEWriter;
 
-import java.awt.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -80,7 +79,7 @@ public class ShellIT {
         if (!patch.getDeltas().isEmpty()) {
             StringBuilder diffMsg = new StringBuilder("USE output does not match expected output!").append(System.lineSeparator());
 
-            diffMsg.append("Testfile: ").append(testFile.toString()).append(System.lineSeparator());
+            diffMsg.append("Testfile: ").append(testFile).append(System.lineSeparator());
 
             diffMsg.append(System.lineSeparator()).append("Note: the position is not the position in the input file!");
             diffMsg.append(System.lineSeparator()).append(System.lineSeparator());
@@ -98,7 +97,7 @@ public class ShellIT {
     }
 
     private void writeToFile(List<String> data, Path file) {
-        try (FileWriter writer = new FileWriter(file.toFile());) {
+        try (FileWriter writer = new FileWriter(file.toFile())) {
 
             for (String line : data) {
                 writer.write(line);
@@ -114,7 +113,7 @@ public class ShellIT {
         // Build USE command file and build expected output
         try (
                 Stream<String> linesStream = Files.lines(inFile, StandardCharsets.UTF_8);
-                FileWriter cmdWriter = new FileWriter(cmdFile.toFile(), StandardCharsets.UTF_8, false);
+                FileWriter cmdWriter = new FileWriter(cmdFile.toFile(), StandardCharsets.UTF_8, false)
         ) {
             // USE writes a prompt including the filename
             String prompt = cmdFile.getFileName().toString() + "> ";
@@ -123,10 +122,7 @@ public class ShellIT {
                 if (inputLine.startsWith("*")) {
                     // Input line minus prefix(*) is expected output
                     expectedOutput.add(inputLine.substring(1).trim());
-                } else if (inputLine.startsWith("#")) {
-                    // Comments especially for tests
-                    return;
-                } else {
+                } else if (!inputLine.startsWith("#")) { // Not a comment
                     inputLine = inputLine.trim();
 
                     if (inputLine.isEmpty()) {
@@ -160,7 +156,7 @@ public class ShellIT {
             return Collections.emptyList();
         }
 
-        if (!useJar.isPresent()) {
+        if (useJar.isEmpty()) {
             fail("Could not find USE jar!");
         }
 
@@ -198,10 +194,10 @@ public class ShellIT {
         try {
             proc = pb.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            fail("USE could not be started!", e);
         }
 
-        // Then retreive the process output
+        // Then retrieve the process output
         InputStream in = proc.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         String line;
