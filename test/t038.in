@@ -1,6 +1,0 @@
-!create c1 : C
-?C.allInstances
-*-> Set{c1} : Set(C)
-?C.allInstances()
-*-> Set{c1} : Set(C)
-exit

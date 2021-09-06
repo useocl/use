@@ -1,0 +1,43 @@
+model red
+
+class Snapshot
+end
+
+abstract class SnapshotItem
+end
+
+association SnapshotElement
+between
+  Snapshot [1]
+  SnapshotItem [*]
+end
+
+class A < SnapshotItem
+ attributes
+   b:B
+end
+
+class B < SnapshotItem
+end
+
+class C < A, SnapshotItem
+end
+
+association SnapshotA
+between
+  Snapshot [1] role snapshotA redefines snapshot
+  A [*]
+end
+
+association SnapshotB
+between
+  Snapshot [1] role snapshotB redefines snapshot
+  B [*]
+end
+
+association SnapshotC
+between
+  Snapshot [1] role snapshotC redefines snapshot
+  C [1]
+end
+

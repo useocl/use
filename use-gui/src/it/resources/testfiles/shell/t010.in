@@ -1,0 +1,29 @@
+# $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+# See the README file in this directory for information about the file
+# format.
+
+### test undo of object creation
+
+!create a1 : A
+!create a2 : A
+!create a3 : A
+undo
+!create a3 : A
+undo
+undo
+undo
+!create a1 : A
+!create a2 : A
+!create a3 : A
+
+? a1
+*-> a1 : A
+
+? a2
+*-> a2 : A
+
+? a2
+*-> a2 : A
+
+exit

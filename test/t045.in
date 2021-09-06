@@ -1,9 +1,0 @@
-?Set{Set{1,2},Set{3,4}}->collect(e | e)
-*-> Bag{1,2,3,4} : Bag(Integer)
-?Set{Set{1,2},Set{3,4}}->collect(e | e)->flatten()
-*-> Bag{1,2,3,4} : Bag(Integer)
-?Set{Set{1,2},Set{3,4}}->collectNested(e | e)
-*-> Bag{Set{1,2},Set{3,4}} : Bag(Set(Integer))
-?Set{Set{1,2},Set{3,4}}->collectNested(e | e)->flatten()
-*-> Bag{1,2,3,4} : Bag(Integer)
-exit

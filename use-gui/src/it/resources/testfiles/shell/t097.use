@@ -1,0 +1,18 @@
+model t097
+
+class A
+end
+
+class B
+  constraints
+     inv linkExists:
+	   B.allInstances()->exists(b | b.a.isDefined())
+end
+
+associationclass AB 
+  between
+    A[0..1]
+    B[*]
+  attributes
+    c : Integer
+end

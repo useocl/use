@@ -1,0 +1,94 @@
+!create b1:Bank
+!create b2:Bank
+!create c1:Company
+!create c2:Company
+!create p1:Person
+!create p2:Person
+!insert (p1,b1{100}) into Account
+?b1.customer = Bag{p1}
+*-> true : Boolean
+?b1.customer[100] = p1
+*-> true : Boolean
+!insert (p2,b1{105}) into Account
+?b1.customer = Bag{p1,p2}
+*-> true : Boolean
+!insert (p1,b1{105}) into Account
+check
+*checking structure...
+*Multiplicity constraint violation in association `Account':
+*  Object `b1' of class `Bank' is connected to 2 objects of class `Person'
+*  at association end `customer'  with the qualifier value [105]
+*  but the multiplicity is specified as `0..1'.
+*checking invariants...
+*checked 0 invariants, 0 failures.
+?b1.customer[105]
+*-> Could not evaluate. expected link set size 1 at association end `customer', found: 2
+!delete (p2, b1{105}) from Account
+check
+*checking structure...
+*checking invariants...
+*checked 0 invariants, 0 failures.
+?b1.customer[105] = p1
+*-> true : Boolean
+?b1.customer = Bag{p1,p1}
+*-> true : Boolean
+!insert (p2,b1{110}) into Account
+?b1.customer = Bag{p1,p1,p2}
+*-> true : Boolean
+!insert (p2,b1{120}) into Account
+?b1.customer = Bag{p1,p1,p2,p2}
+*-> true : Boolean
+?b1.customer[100] = p1
+*-> true : Boolean
+?b1.customer[105] = p1
+*-> true : Boolean
+?b1.customer[110] = p2
+*-> true : Boolean
+?b1.customer[120] = p2
+*-> true : Boolean
+!insert (p2,b2{105}) into Account
+!insert (p2,b2{110}) into Account
+!insert (p2,b2{120}) into Account
+?b2.customer = Bag{p2,p2,p2}
+*-> true : Boolean
+?b2.customer[100] = null
+*-> true : Boolean
+?b2.customer[105] = p2
+*-> true : Boolean
+?b2.customer[110] = p2
+*-> true : Boolean
+?b2.customer[120] = p2
+*-> true : Boolean
+!delete (p1, b2) from Account
+*Error: Link `Account' between (p1,b2) does not exist.
+?b2.customer = Bag{p2,p2,p2}
+*-> true : Boolean
+!delete (p2, b2{105}) from Account
+!delete (p2, b2{105}) from Account
+*Error: Link `Account' between (p2,b2{105}) does not exist.
+?b2.customer = Bag{p2,p2}
+*-> true : Boolean
+!create j1:Job between (p1{c1}, c1)
+?c1.employee = Bag{p1}
+*-> true : Boolean
+?p1.employer = Bag{c1}
+*-> true : Boolean
+?p1.job[c1] = j1
+*-> true : Boolean
+?p1.job = Bag{j1}
+*-> true : Boolean
+?j1.employee = p1
+*-> true : Boolean
+?j1.employer = c1
+*-> true : Boolean
+!create j2:Job between (p1{c2}, c1)
+?p1.employer = Bag{c1,c1}
+*-> true : Boolean
+!destroy j2
+?p1.employer = Bag{c1}
+*-> true : Boolean
+?j2 = null
+*-> true : Boolean
+?j2
+*-> null : OclVoid
+exit

@@ -1,0 +1,13 @@
+model t104
+
+class A
+end
+
+class B
+end
+
+association A between
+  A[*]
+  B[*]
+end
+ 

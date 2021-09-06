@@ -1,9 +1,0 @@
-!create c : tuple_crash
-!openter c op()
-*precondition `fresh' is true
-!opexit
-!set c.a := Tuple{one:Set{ Tuple {x:1, y:2}}, two:Set{Tuple{z:2,w:2}}}
-!openter c op()
-*precondition `fresh' is false
-*Error: precondition false in operation call `tuple_crash::op(self:c)'.
-exit

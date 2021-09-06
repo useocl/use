@@ -1,0 +1,23 @@
+model derivedElements
+
+class Invoice
+  attributes
+   total : Real derive = self.lineItem->collect(amount * price)->sum()
+   total2 : Real
+end
+
+class InvoiceLineItem
+  attributes
+    amount : Integer
+    price  : Real
+end
+
+composition LineItems between
+  Invoice[1] role invoice
+  InvoiceLineItem[1..*] role lineItem ordered
+end
+
+association HighValued between
+  Invoice[0..1] role invoiceH
+  InvoiceLineItem[0..*] role highLineItem
+end

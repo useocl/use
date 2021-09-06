@@ -1,0 +1,32 @@
+!create ada,bob,cyd:Person
+!set ada.gender:=#female
+!set bob.gender:=#male
+!set cyd.gender:=#male
+!ada.marry(bob)
+!cyd.marry(ada)
+*[Error] 1 postcondition in operation call `Person::marry(self:cyd, aSpouse:ada)' does not hold:
+*  married: ((self.spouse() = Set {aSpouse}) and (aSpouse.spouse() = Set {self}))
+*    self : Person = cyd
+*    self : Person = cyd
+*    self.wife : Person = ada
+*    self : Person = cyd
+*    self.husband : OclVoid = null
+*    Set {self.wife,self.husband} : Set(Person) = Set{null,ada}
+*    null : OclVoid = null
+*    Set {self.wife,self.husband}->excluding(null) : Set(Person) = Set{ada}
+*    self.spouse() : Set(Person) = Set{ada}
+*    aSpouse : Person = ada
+*    Set {aSpouse} : Set(Person) = Set{ada}
+*    (self.spouse() = Set {aSpouse}) : Boolean = true
+*    aSpouse : Person = ada
+*    self : Person = ada
+*    self.wife : OclVoid = null
+*    self : Person = ada
+*    aSpouse.spouse() : OclVoid = null
+*    Evaluation failed because of multiplicity violation: expected link set size 1 at association end `husband', found: 2
+*
+*  call stack at the time of evaluation:
+*    1. Person::marry(self:cyd, aSpouse:ada) [caller: cyd.marry(ada)@<input>:1:0]
+c
+*Error: postcondition false in operation call `Person::marry(self:cyd, aSpouse:ada)'.
+exit

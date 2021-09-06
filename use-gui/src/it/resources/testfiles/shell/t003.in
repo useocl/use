@@ -1,0 +1,31 @@
+# $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+# See the README file in this directory for information about the file
+# format.
+
+# create some objects
+
+!create a1:A
+!create a2:A
+
+!create b1:B
+
+!insert(a1,b1) into A_B
+
+#
+## navigation
+#
+
+? a1.b
+*-> b1 : B
+
+? a2.b
+*-> null : OclVoid
+
+? a1.b->isEmpty()
+*-> false : Boolean
+
+? a2.b->isEmpty()
+*-> true : Boolean
+
+exit

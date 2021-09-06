@@ -1,6 +1,0 @@
-model RelSchema
-
-class RelSchema
-operations
-  equivClasses():Sequence(Sequence(Sequence(String)))
-end

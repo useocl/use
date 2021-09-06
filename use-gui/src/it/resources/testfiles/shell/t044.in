@@ -1,0 +1,8 @@
+!create c2 : C2
+?c2.op()
+*-> 2 : Integer
+
+!create c3 : C3
+?c3.op()
+*-> 2 : Integer
+exit

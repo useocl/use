@@ -1,0 +1,19 @@
+!create c : C
+!set c.var1 := Tuple{x:1, y:2}
+
+?Tuple{x:10, y:'Hello'}.x
+*-> 10 : Integer
+
+?Tuple{x:10, y:'Hello'}.y
+*-> 'Hello' : String
+
+?c.var1.x
+*-> 1 : Integer
+
+?c.var2.y
+*-> null : OclVoid
+
+?c.var2.y.y
+*-> null : OclVoid
+
+quit

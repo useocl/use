@@ -1,0 +1,72 @@
+-- Build bank
+!create db, diba, comdirect : Bank
+!create ada, bob, cyd, dan, eve : Person
+!insert (db{'100000'}, ada) into BankPerson
+!insert (db{'100100'}, bob) into BankPerson
+!insert (diba{'200000'}, ada) into BankPerson
+!insert (diba{'200200'}, cyd) into BankPerson
+!insert (diba{'200500'}, eve) into BankPerson
+!insert (comdirect{'100000'}, bob) into BankPerson
+!insert (comdirect{'200200'}, cyd) into BankPerson
+!insert (comdirect{'300000'}, eve) into BankPerson
+!insert (comdirect{'300001'}, eve) into BankPerson
+
+?db.customer
+*-> Bag{ada,bob} : Bag(Person)
+?db.customer['100000']
+*-> ada : Person
+?db.customer['100100']
+*-> bob : Person
+
+?diba.customer
+*-> Bag{ada,cyd,eve} : Bag(Person)
+?diba.customer['200000']
+*-> ada : Person
+?diba.customer['200200']
+*-> cyd : Person
+?diba.customer['200500']
+*-> eve : Person
+
+?comdirect.customer
+*-> Bag{bob,cyd,eve,eve} : Bag(Person)
+?comdirect.customer['100000']
+*-> bob : Person
+?comdirect.customer['200200']
+*-> cyd : Person
+?comdirect.customer['300000']
+*-> eve : Person
+?comdirect.customer['300001']
+*-> eve : Person
+
+?ada.bank
+*-> Bag{db,diba} : Bag(Bank)
+?bob.bank
+*-> Bag{comdirect,db} : Bag(Bank)
+?cyd.bank
+*-> Bag{comdirect,diba} : Bag(Bank)
+?dan.bank
+*-> Bag{} : Bag(OclVoid)
+?eve.bank
+*-> Bag{comdirect,comdirect,diba} : Bag(Bank)
+
+-- Build Map
+!map := new Map
+!for x in Sequence{1..9} do for y in Sequence{1..9} do t := new Tile; insert (map{x, y}, t) into MapTile; end; end
+?map.tile->size()
+*-> 81 : Integer
+?map.tile[1,1].isDefined()
+*-> true : Boolean
+
+-- Test HashMap
+!table := new HashMap('table')
+!entry1 := new HashMapEntry('entry1')
+!entry1.hashValue := 2
+!entry2 := new HashMapEntry('entry2')
+!entry2.hashValue := 2
+!insert (table{entry1.hashValue}, entry1) into HashMapEntries
+!insert (table{entry2.hashValue}, entry2) into HashMapEntries
+?table.element[2]
+*-> Set{entry1,entry2} : Set(HashMapEntry)
+?entry1.container
+*-> Bag{table} : Bag(HashMap)
+exit

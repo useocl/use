@@ -1,0 +1,8 @@
+!create x:A
+!insert (x,x) into AC
+*Warning: Object `x' cannot be a part of itself.
+!create y:A
+!insert (x,y) into AC
+!insert (y,x) into AC
+*Warning: Insert has resulted in a cycle in the part-whole hierarchy. Object `y' is a direct or indirect part of `x'.
+exit

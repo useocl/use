@@ -1,0 +1,11 @@
+!create t:Test
+!set t.enum1 := Enum1::Value1
+!set t.enum2 := Enum2::Value1
+!set t.enum1 := Enum2::Value1
+*<input>:1:0: Type mismatch in assignment expression. Expected type `Enum1', found `Enum2'.
+!set t.enum2 := Enum1::Value1
+*<input>:1:0: Type mismatch in assignment expression. Expected type `Enum2', found `Enum1'.
+!set t.enum1 := #Value1
+!set t.enum2 := #Value1
+*<input>:1:0: Type mismatch in assignment expression. Expected type `Enum2', found `Enum1'.
+exit

@@ -1,0 +1,27 @@
+? oclUndefined(String)
+*-> null : OclVoid
+? oclUndefined(Set(String))
+*-> null : OclVoid
+?Set{}
+*-> Set{} : Set(OclVoid)
+?Set{}->including(1)
+*-> Set{1} : Set(Integer)
+?Set{}->including(1)->including('a')
+*<input>:1:21: Operation call `Set(Integer)->including(String)' results in type `Set(OclAny)'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?let s:Set(String) = Set{} in s->including(1)
+*<input>:1:32: Operation call `Set(String)->including(Integer)' results in type `Set(OclAny)'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+?let s:Set(OclAny) = Set{} in s->including(1)->including('a')
+*-> Set{'a',1} : Set(OclAny)
+?let sAny:Set(OclAny) = Set{1} in let sString:Set(String)=Set{'a'} in sAny->union(sString)
+*-> Set{'a',1} : Set(OclAny)
+?let sAny:Set(OclAny) = Set{1} in let sString:Set(String)=Set{'a'} in sString->union(sAny)
+*<input>:1:78: Operation call `Set(String)->union(Set(OclAny))' results in type `Set(OclAny)'.
+*This may lead to unexpected behavior.
+*You can change this check using the -oclAnyCollectionsChecks switch.
+!create b1,b2:B
+!create c1,c2:C
+exit

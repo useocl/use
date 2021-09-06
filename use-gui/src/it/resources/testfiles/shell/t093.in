@@ -1,0 +1,20 @@
+open t093.use
+*compiling specification...
+*done
+*Model TreeList (1 class, 2 associations, 1 invariant, 6 operations, 0 pre-/postconditions, 0 state machines)
+gen start -t -r 6436 -nb -dc -ac t093.assl tryWorld(3)
+gen result
+*Random number generator was initialized with 6436.
+*Checked 13 snapshots.
+*Barriers blocked 0 times.
+*Result: Valid state found.
+*Commands to produce the valid state:
+*!new Elem('Elem1')
+*!new Elem('Elem2')
+*!new Elem('Elem3')
+*!Elem1.value := 66
+*!Elem2.value := 11
+*!Elem3.value := 22
+*!insert (Elem1,Elem3) into RightElem
+*!insert (Elem2,Elem1) into RightElem
+exit

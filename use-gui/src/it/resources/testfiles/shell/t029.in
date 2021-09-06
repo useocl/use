@@ -1,0 +1,23 @@
+!create a:A
+!create b:B
+!create c:C
+
+?a.c 
+*-> Set{} : Set(OclVoid)
+
+?a.b
+*-> Set{} : Set(OclVoid)
+
+?b.a 
+*-> Set{} : Set(OclVoid)
+
+?b.c
+*-> Set{} : Set(OclVoid)
+
+?c.a
+*-> Set{} : Set(OclVoid)
+
+?c.b 
+*-> Set{} : Set(OclVoid)
+
+quit
