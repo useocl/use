@@ -44,7 +44,7 @@ public class ExpSortedBy extends ExpQuery {
         throws ExpInvalidException
     {
         // result type is sequence of range element type
-        super(TypeFactory.mkSequence(((CollectionType) rangeExp.type()).elemType()),
+        super(determineType(rangeExp),
               ( elemVarDecl != null ) 
               ? new VarDeclList(elemVarDecl) 
               : new VarDeclList(true),
@@ -57,6 +57,21 @@ public class ExpSortedBy extends ExpQuery {
                                           "Argument of sortedBy must have basic type " +
                                           "(Integer, Real, or String), found `" + 
                                           queryExp.type() + "'.");
+    }
+
+    /**
+     * Helper method to make the constructor more readable.
+     * That's it.
+     * @param rangeExp The <code>Expression</code> the <code>sortedBy</code> is applied to.
+     * @return The resulting <code>Type</code> of this operation. <code>OrderedSet</code> when called on
+     *         an <code>OrderedSet</code> or a <code>Set</code>, <code>Sequence</code> otherwise.
+     */
+    private static Type determineType(Expression rangeExp) {
+        if (rangeExp.type().isTypeOfOrderedSet() || rangeExp.type().isTypeOfSet()) {
+            return TypeFactory.mkOrderedSet(((CollectionType) rangeExp.type()).elemType());
+        } else {
+            return TypeFactory.mkSequence(((CollectionType) rangeExp.type()).elemType());
+        }
     }
 
     /** 
