@@ -21,25 +21,13 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.BagValue;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.CollectionValue;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.*;
+
+import java.util.*;
 
 /**
  * Abstract base class for select, reject, collect, exists, forAll and iterate
@@ -471,7 +459,12 @@ public abstract class ExpQuery extends Expression {
         }
 
         Type rangeElemType = ((CollectionType) fRangeExp.type()).elemType();
-        return new SequenceValue(rangeElemType, result);
+
+        if (this.type().isTypeOfOrderedSet()) {
+            return new OrderedSetValue(rangeElemType, result);
+        } else {
+            return new SequenceValue(rangeElemType, result);
+        }
     }
 
     // used by evalSortedBy

@@ -516,4 +516,11 @@ Sequence{2,4,6,3}->iterate(
   )
 -> Sequence{2,3,4,6} : Sequence(Integer)
 
-
+# Wrong return type for Set->sortedBy() and OrderedSet->sortBy()
+# https://github.com/useocl/use/issues/8
+?Set{-2..3}->sortedBy(I|I*I)
+-> Sequence{0,-1,1,-2,2,3} : Sequence(Integer)
+?OrderedSet{-2..3}->sortedBy(I|I*I)
+-> Sequence{0,-1,1,-2,2,3} : Sequence(Integer)
+let c:Collection(Integer) = Set{-2..3} in c->sortedBy(I|I*I)
+-> Sequence{0,-1,1,-2,2,3} : Sequence(Integer)
