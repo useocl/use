@@ -23,12 +23,38 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Shell integration tests.
- * Uses input files from it/resources/shell to
- * test input expressions against expected output.
+ * This class implements the shell integration tests.
+ *
+ * These tests represent nearly the exact behavior of the
+ * USE shell. Only some whitespace differences and time outputs are ignored.
+ *
+ * Each test consists of the following files:
+ * <ol>
+ *     <li>a model file (suffix <code>.use</code>) - this file provides the (possible empty) model used
+ *     for the tests</li>
+ *     <li>an input file (suffix: <code>.in</code>) - this file can contain any commands USE supports.
+ *     The expected output must be specified by starting a line with a star <code>*</code></li>
+ *     <li>any other used file from the command line, e.g., ASSL- or command-files.</li>
+ * </ol>
+ *
+ * All <code>.use</code> and </code><code>.in</code> files must share the same name, e.g., t555.use and t555.in for test
+ * case 555. These files must be placed in the folder <code>it/resources/testfiles/shell</code>.
+ *
+ * If an integration test fails, two additional files are created:
+ * <ol>
+ *     <li><code>{testcasename}.expected</code> - The expected output calculated from the <code>{testcase}.in</code>-file</li>
+ *     <li><code>{testcasename}.actual</code> - The ouptut captured while running the test.</li>
+ * </ol>
+ * These files can be used to easily diff expected and current output.
  */
 public class ShellIT {
 
+    /**
+     * This TestFactory enumerates the <code>.in</code>-files in th folder <code>testfiles/shell</code>.
+     * For each file a <Code>DynamicTest</Code> is created with the name of the file.
+     *
+     * @return A <code>Stream</code> with one <code>DynamicTest</code> for each <code>*.in</code>-file.
+     */
     @TestFactory
     public Stream<DynamicTest> evaluateExpressionFiles() {
         URL testDirURL = getClass().getClassLoader().getResource("testfiles/shell");
@@ -55,6 +81,14 @@ public class ShellIT {
         return Stream.empty();
     }
 
+    /**
+     * This <code>Function</code> is used to map
+     * a given testinput-file given as a <code>Path</code>
+     * to a <code>DynamicTest</code>.
+     *
+     * @return A <code>DynamicTest</code> that uses the function <code>assertShellExpression</code>
+     *         to test the given testinput file.
+     */
     private Function<Path, DynamicTest> mapInFileToTest() {
         return path -> {
             final String modelFilename = path.getFileName().toString().replace(".in", ".use");
@@ -64,16 +98,31 @@ public class ShellIT {
         };
     }
 
+    /**
+     * This function controls the overall process for test for a single testfile.
+     *
+     * The process is as follow:
+     * <ol>
+     *     <li>a command file and the expected output are created by examining the input file (via <code>createCommandFile</code>.</li>
+     *     <li>USE is executed using the <code>useFile</code> and the created command file (<code>runUSE</code>).</li>
+     *     <li>The output of USE is compared to the expected output created in 1. (<code>validateOutput</code>).</li>
+     * </ol>
+     *
+     * @param testFile <code>Path</code> to the test input file to execute.
+     * @param useFile <code>Path</code> to the USE file containing the model to load for the test.
+     */
     private void assertShellExpressions(Path testFile, Path useFile) {
 
         Path cmdFile = testFile.resolveSibling(testFile.getFileName() + ".cmd");
-        List<String> expectedOutput = new LinkedList<>();
 
-        createCommandFile(testFile, cmdFile, expectedOutput);
+        List<String> expectedOutput = createCommandFile(testFile, cmdFile);
 
         List<String> actualOutput = runUSE(useFile, cmdFile);
 
-        //compute the patch: this is the diffutils part
+        validateOutput(testFile, expectedOutput, actualOutput);
+    }
+
+    private void validateOutput(Path testFile, List<String> expectedOutput, List<String> actualOutput) {
         Patch<String> patch = DiffUtils.diff(expectedOutput, actualOutput);
 
         if (!patch.getDeltas().isEmpty()) {
@@ -96,6 +145,15 @@ public class ShellIT {
         }
     }
 
+    /**
+     * Helper method that writes the list of strings <code>data</code>
+     * to the file loctaed by the <code>Path</code> <code>file</code>.
+     *
+     * If the file is not accessible, i.e., an IOException is thrown,
+     * the exceptions is cathed and the test case fails.
+     * @param data The <code>List</code> of string (lines) to write.
+     * @param file The path to the file to write (file is overwritten).
+     */
     private void writeToFile(List<String> data, Path file) {
         try (FileWriter writer = new FileWriter(file.toFile())) {
 
@@ -108,7 +166,17 @@ public class ShellIT {
         }
     }
 
-    private void createCommandFile(Path inFile, Path cmdFile, List<String> expectedOutput) {
+    /**
+     * Creates a USE-commandfile at the position located by the path <code>cmdFile</code>.
+     * The file contains all commands that are specified in the <code>inFile</code>.
+     * The expected output, i.e., lines starting with a <code>*</code> are added to the list <code>expectedOutput</code>.
+     *
+     * @param inFile The <code>Path</code> to the test input file.
+     * @param cmdFile The <code>Path</code> where to create the command file.
+     * @return  A <code>List</code> which is filled with the expected output of USE.
+     */
+    private List<String> createCommandFile(Path inFile, Path cmdFile) {
+        List<String> expectedOutput = new LinkedList<>();
 
         // Build USE command file and build expected output
         try (
@@ -142,8 +210,20 @@ public class ShellIT {
         } catch (IOException e) {
             fail("Could not write USE command file for test!", e);
         }
+
+        return expectedOutput;
     }
 
+    /**
+     * Executes USE with the given <code>useFile</code> as the model
+     * and the <code>cmdFile</code> to execute commands.
+     * The output is captured from the output and error streams.
+     *
+     * @param useFile Path to the USE model to load on startup
+     * @param cmdFile Path to the commands file to execute
+     *
+     * @return A <code>List</code> of strings. Each string is one line of output.
+     */
     private List<String> runUSE(Path useFile, Path cmdFile) {
         // Find USE jar
         Optional<Path> useJar;
