@@ -122,6 +122,17 @@ public class ShellIT {
         validateOutput(testFile, expectedOutput, actualOutput);
     }
 
+    /**
+     * Compares the two lists of strings <code>expectedOutput</code>
+     * and <code>actualOutput</code>.
+     * If they differ, two files are written at the location of the
+     * <code>testFile</code>. One with the expected output (<code>.expected</code>)
+     * and one with the actual output (<code>.actual</code>).
+     *
+     * @param testFile The <code>Path</code> to the <code>testFile</code>
+     * @param expectedOutput List of strings with the expected output (one String per line)
+     * @param actualOutput List of strings with the actual output (one String per line)
+     */
     private void validateOutput(Path testFile, List<String> expectedOutput, List<String> actualOutput) {
         Patch<String> patch = DiffUtils.diff(expectedOutput, actualOutput);
 
