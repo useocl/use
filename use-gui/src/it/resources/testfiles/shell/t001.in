@@ -1160,16 +1160,16 @@
 #
 
 ? Set{4,2,3,1,6,5}->sortedBy(e | e)
-*-> Sequence{1,2,3,4,5,6} : Sequence(Integer)
+*-> OrderedSet{1,2,3,4,5,6} : OrderedSet(Integer)
 
 ? Set{4,2,3,1,6,5}->sortedBy(1)->includesAll(Set{4,2,3,1,6,5})
 *-> true : Boolean
 
 ? Set{'c','ca','cc','a','aa'}->sortedBy(e | e)
-*-> Sequence{'a','aa','c','ca','cc'} : Sequence(String)
+*-> OrderedSet{'a','aa','c','ca','cc'} : OrderedSet(String)
 
 ? Set{'c','ca','cc','a','aa'}->sortedBy(e | e)->sortedBy(e | e.size())
-*-> Sequence{'a','c','aa','ca','cc'} : Sequence(String)
+*-> OrderedSet{'a','c','aa','ca','cc'} : OrderedSet(String)
 
 ? Bag{4,4,2,3,1,4,6,1,5}->sortedBy(e | e)
 *-> Sequence{1,1,2,3,4,4,4,5,6} : Sequence(Integer)

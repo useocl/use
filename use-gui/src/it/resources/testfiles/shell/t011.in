@@ -11,6 +11,6 @@
 # Test for bug0014 (internal error)
 
 ? Person.allInstances->sortedBy(p | p.secNumber)
-*-> Sequence{a,b} : Sequence(Person)
+*-> OrderedSet{a,b} : OrderedSet(Person)
 
 exit
