@@ -3,7 +3,7 @@ for them.
 
 The example corresponds to the example
 model in the section `Validating Pre- and Postconditions
-with USE´
+with USEÂ´
 
 Employee.use:
 Corresponds to examples/monitoring/Employee.use,
@@ -23,5 +23,3 @@ after that, the raiseSalary operation with return value
 is executed
 finally the new link is destroyed by executing the
 operation fire
-
-Employee.dgm:

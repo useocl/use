@@ -139,19 +139,27 @@ These steps will help diagnose the problem.
 
 ## Acknowledgments
 
-The following people from the database systems working group at the
-University of Bremen made very helpful contributions to the USE
+The following people made very helpful contributions to the USE
 project. A big "thank you" to all of you.
 
+Hanna Bauerdick
+Joern Bohling
+Jens Brüning
 Fabian Büttner
+Duc-Hanh Dang
 Heino Gärtner
+Daniel Gent
 Martin Gogolla
+Fabian Gutsche
+Lars Hamann
 Frank Hilken
 Andreas Kästner
 Ralf Kollmann
 Mirco Kuhlmann
 Arne Lindow
 Oliver Radfelder
+Mark Richters
+Antje Werner
 Paul Ziemann
 
 There are many other people who provided comments and input on
