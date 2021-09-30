@@ -19,6 +19,7 @@
             </includes>
         </fileSet>
         <fileSet>
+            <!-- Script files to easily start USE -->
             <directory>${project.basedir}/../bin</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
@@ -26,6 +27,23 @@
             </includes>
         </fileSet>
         <fileSet>
+            <!-- OCL extensions defined in Ruby -->
+            <directory>${project.basedir}/../use-core/src/main/resources/oclextensions/</directory>
+            <outputDirectory>oclextensions</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- Directory with models from publications and examples -->
+            <directory>${project.basedir}/../use-core/src/main/resources/examples/</directory>
+            <outputDirectory>examples</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- This file is not really necessary, but including it allows for an easy usage as a library -->
             <directory>${project.basedir}/../use-core/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
@@ -33,17 +51,20 @@
             </includes>
         </fileSet>
         <fileSet>
+            <!-- This is the most important file. -->
             <directory>${project.basedir}/../use-gui/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
-                <include>*.jar</include>
+                <include>use-gui.jar</include>
             </includes>
         </fileSet>
-        <!--
         <fileSet>
-            <directory>${project.build.directory}/site</directory>
-            <outputDirectory>docs</outputDirectory>
+            <!-- Plugins that should be shipped with the USE archive are located here -->
+            <directory>${project.basedir}/src/main/resources/plugins</directory>
+            <outputDirectory>lib/plugins</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
         </fileSet>
-        -->
     </fileSets>
 </assembly>

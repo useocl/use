@@ -68,6 +68,8 @@
                             <mainClass>org.tzi.use.main.Main</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>use-gui</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
