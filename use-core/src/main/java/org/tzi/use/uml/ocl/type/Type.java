@@ -21,9 +21,9 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.Set;
-
 import org.tzi.use.util.BufferedToString;
+
+import java.util.Set;
 
 /**
  * 
