@@ -21,21 +21,8 @@
 
 package org.tzi.use.main;
 
-import java.awt.Font;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.nio.file.Path;
-
-import javax.swing.ImageIcon;
-import javax.swing.UIDefaults;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-
 import org.tzi.use.config.Options;
+import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
@@ -47,6 +34,18 @@ import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.USEWriter;
+
+import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import java.awt.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.nio.file.Path;
 
 /**
  * Main class.
@@ -159,43 +158,12 @@ public final class Main {
 		session.setSystem(system);
 
 		if (Options.doGUI) {
-			Class<?> mainWindowClass = null;
-			try {
-				mainWindowClass = Class
-						.forName("org.tzi.use.gui.main.MainWindow");
-				Log.debug("Initializing [" + mainWindowClass.toString() + "]");
-			} catch (ClassNotFoundException e) {
-				Log
-						.error("Could not load GUI. Probably use-gui-...jar is missing.\n"
-								+ "Try starting use with -nogui switch.\n" + e);
-				System.exit(1);
-			}
-			if (mainWindowClass == null) {
-				Log.error("MainWindow could not be initialized! Exiting!");
-				System.exit(1);
-			}
-			try {
-				if (pluginRuntime == null) {
-					Log.debug("Starting gui without plugin runtime!");
-					Method create = mainWindowClass.getMethod("create",
-							new Class[] { Session.class });
-					Log.debug("Invoking method create with ["
-							+ session.toString() + "]");
-					create.invoke(null, new Object[] { session });
-				} else {
-					Log.debug("Starting gui with plugin runtime.");
-					Method create = mainWindowClass.getMethod("create",
-							new Class[] { Session.class, IRuntime.class });
-					Log.debug("Invoking method create with ["
-							+ session.toString() + "] ["
-							+ pluginRuntime.toString() + "]");
-					create
-							.invoke(null,
-									new Object[] { session, pluginRuntime });
-				}
-			} catch (Exception e) {
-				Log.error("FATAL ERROR.", e);
-				System.exit(1);
+			if (pluginRuntime == null) {
+				Log.debug("Starting gui without plugin runtime!");
+				MainWindow.create(session);
+			} else {
+				Log.debug("Starting gui with plugin runtime.");
+				MainWindow.create(session, pluginRuntime);
 			}
 		}
 
@@ -276,7 +244,7 @@ class MyTheme extends DefaultMetalTheme {
 	}
 
 	private void initIcon(UIDefaults table, String property, String iconFilename) {
-		table.put(property, new ImageIcon(Options.getIconPath(iconFilename).toString()));
+		table.put(property, new ImageIcon(getClass().getResource("/images/" + iconFilename)));
 	}
 
 }

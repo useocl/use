@@ -20,8 +20,16 @@
         </fileSet>
         <fileSet>
             <!-- Script files to easily start USE -->
-            <directory>${project.basedir}/../bin</directory>
+            <directory>${project.basedir}/../use-gui/src/main/resources/bin</directory>
             <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- Script files to easily start USE -->
+            <directory>${project.basedir}/../use-core/src/main/resources/etc</directory>
+            <outputDirectory>etc</outputDirectory>
             <includes>
                 <include>*</include>
             </includes>
