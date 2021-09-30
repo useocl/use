@@ -1,0 +1,19 @@
+forAll,1.0
+select,1.0
+exists,1.0
+one,1.0
+allInstances,5.0
+collect,4.0
+any,2.0
+
+# vollst. kanonische Konf. am Beispiel TAP paper
+# ausg. gesamtkompl. summe
+# class,state-inv/pre/post/ops/transitions/query
+
+# one,d3,50
+
+# one,sd3,50 one->one->one
+# one,ad3,50 x->y->one
+
+# forAll:select:one,25
+
