@@ -1,0 +1,42 @@
+<extensions>
+	<operation source="String" name="startsWith" returnType="Boolean">
+		<parameter>
+			<par name="aString" type="String"/>
+		</parameter>
+		<body><![CDATA[
+			$self[0, $aString.length] == $aString
+		]]>
+		</body>
+	</operation>
+	
+	<operation source="String" name="replace" returnType="String">
+		<parameter>
+			<par name="what" type="String"/>
+			<par name="with" type="String"/>
+		</parameter>
+		<body><![CDATA[
+			$self.gsub $what, $with
+		]]>
+		</body>
+	</operation>
+	
+	<operation source="String" name="splitR" returnType="Sequence(String)">
+		<parameter>
+			<par name="separator" type="String" />
+		</parameter>
+		<body><![CDATA[
+			$self.split($separator)
+		]]>
+		</body>
+	</operation>
+	
+	<operation source="String" name="matchesER" returnType="Boolean">
+		<parameter>
+			<par name="pattern" type="String" />
+		</parameter>
+		<body><![CDATA[
+			!($self =~ Regexp.new($pattern)).nil?
+		]]>
+		</body>
+	</operation>
+</extensions>

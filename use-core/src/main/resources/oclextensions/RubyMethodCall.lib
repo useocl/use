@@ -1,0 +1,87 @@
+require 'date'
+require 'java'
+import "org.tzi.use.uml.ocl.expr.ExpObjOp"
+import "org.tzi.use.uml.ocl.expr.Expression"
+import "org.tzi.use.uml.ocl.type.TypeFactory"
+import "org.tzi.use.uml.sys.MCmdCreateObjects"
+import "org.tzi.use.util.rubyintegration.RubyHelper"
+
+class Object
+	def method_missing(methId, *args)
+	  methodName = methId.id2name
+	  
+	  if methodName =~ /=$/
+		 attName = $`
+		 att = $self.cls.attribute(attName, true)
+		 if !att.nil?
+			set_use_object_attribute(att, args)
+		 else
+			return super
+		 end
+	  else
+		 op = $self.cls.operation(methodName, true)
+	  
+		 if !op.nil?
+			call_use_object_method(op, args)
+		 else
+		    # attribute access?
+		    att = $self.cls.attribute(methodName, true)
+			if !att.nil?
+			  get_use_object_attribute(att)
+			else
+			  return super
+		    end
+		 end			 
+	  end
+	end
+
+	def call_use_object_method(op, args)
+	  useArgs = Array.new
+	  
+	  useArgs.push(RubyHelper.getInstance.makeUSEExpression(self))
+	  args.each { |arg|
+		useArgs.push(RubyHelper.getInstance.makeUSEExpression(arg))
+	  }
+	  
+	  useArgs = RubyHelper.getInstance.makeExpArray(useArgs.to_java)
+	  res = ExpObjOp.new(op, useArgs)
+	  res.eval($ctx)
+	end
+
+	def set_use_object_attribute(att, args)
+	  objState = self.state($ctx.postState)
+	  
+	  newValue = RubyHelper.getInstance.rubyValueToUseValue(args[0])
+	  objState.setAttributeValue(att, newValue)
+	end
+	
+	def get_use_object_attribute(att)
+	  objState = self.state($ctx.postState)
+	  RubyHelper.getInstance.useValueToRubyValue(objState.attributeValue(att))
+	end
+end
+
+class USE
+	def USE.createObject(name, className)
+        system = $ctx.postState.system
+        cls = system.model.getClass(className)
+        names = Array.new
+        names = names | name.to_a
+        
+        if cls.nil?
+            raise "No class named `" << className << "' defined in model."
+        else
+            cmd = MCmdCreateObjects.new (system.state, names, TypeFactory.mkObjectType(cls))
+        end
+        
+        system.executeCmd(cmd)
+        
+        objs = cmd.getObjects
+        
+        if objs.length == 1
+          objs[0]
+        else
+          objs
+        end
+	end
+end
