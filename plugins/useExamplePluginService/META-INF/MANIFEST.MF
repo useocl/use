@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Plugin-Name: Example Plugin
-Plugin-Version: 0.1
-Main-Class: org.tzi.use.examplePlugin.ExamplePlugin
-Plugin-Publisher: Roman Asendorf

@@ -241,7 +241,7 @@ public class ShellIT {
 
         try {
             Path targetDir = useFile.getParent().getParent().getParent().getParent();
-            useJar = Files.walk(targetDir).filter(p -> p.getFileName().toString().matches("use-gui-.*\\.jar")).findFirst();
+            useJar = Files.walk(targetDir).filter(p -> p.getFileName().toString().matches("use-gui.jar")).findFirst();
         } catch (IOException e) {
             fail("Could not find USE jar!", e);
             return Collections.emptyList();
@@ -273,7 +273,14 @@ public class ShellIT {
                 "-t",
                 "-oclAnyCollectionsChecks:E",
                 "-extendedTypeSystemChecks:E",
-                "-H=" + useJar.get().getParent().getParent().getParent().toString(),
+                /* This is currently an unstable workaround
+                   USE determines the plugin and the extensions to OCL by fixed paths.
+                   For now, the use-core module contains the directories including the extensions
+                   and an empty plugins folder.
+                   The folder is located: use/use-core/target/classes
+                   Therefore, this is used as the USE home
+                 */
+                "-H=" + useJar.get().getParent().resolve("../../use-core/target/classes").toString(),
                 useFile.getFileName().toString(),
                 cmdFile.getFileName().toString());
 

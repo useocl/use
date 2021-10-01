@@ -1,0 +1,78 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    <id>use-bin</id>
+    <formats>
+        <format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/../</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>README*</include>
+                <include>ChangeLog*</include>
+                <include>COPYING*</include>
+                <include>INSTALL*</include>
+                <include>NEWS*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- Script files to easily start USE -->
+            <directory>${project.basedir}/../use-gui/src/main/resources/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- Script files to easily start USE -->
+            <directory>${project.basedir}/../use-core/src/main/resources/etc</directory>
+            <outputDirectory>etc</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- OCL extensions defined in Ruby -->
+            <directory>${project.basedir}/../use-core/src/main/resources/oclextensions/</directory>
+            <outputDirectory>oclextensions</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- Directory with models from publications and examples -->
+            <directory>${project.basedir}/../use-core/src/main/resources/examples/</directory>
+            <outputDirectory>examples</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- This file is not really necessary, but including it allows for an easy usage as a library -->
+            <directory>${project.basedir}/../use-core/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- This is the most important file. -->
+            <directory>${project.basedir}/../use-gui/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>use-gui.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <!-- Plugins that should be shipped with the USE archive are located here -->
+            <directory>${project.basedir}/src/main/resources/plugins</directory>
+            <outputDirectory>lib/plugins</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

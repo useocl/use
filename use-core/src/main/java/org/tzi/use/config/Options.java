@@ -21,7 +21,11 @@
 
 package org.tzi.use.config;
 
-import java.awt.Dimension;
+import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.TypedProperties;
+
+import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,10 +37,6 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.prefs.Preferences;
-
-import org.tzi.use.util.Log;
-import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.TypedProperties;
 
 
 /**
@@ -115,22 +115,11 @@ public class Options {
      * Used to retrieve settings and icons.
      */
     public static Path homeDir = null;
-        
-    private static Path iconDir = null;
-    
-    public static Path getIconDir() {
-    	return iconDir;
+
+    public static String getIconPath(String iconName) {
+        return "/images/" + iconName;
     }
-    
-    public static Path getIconPath(String iconName) {
-        try {
-            return Path.of(ClassLoader.getSystemResource("images/" + iconName).toURI());
-        } catch (URISyntaxException e) {
-            Log.warn(String.format("Image '%s' not found!", iconName));
-            return null;
-        }
-    }
-    
+
     public static boolean compileOnly = false;
     
     public static boolean compileAndPrint = false;
@@ -430,7 +419,6 @@ public class Options {
         }
         
         setLastDirectory(homeDir);
-        iconDir = homeDir.resolve("images");
 		pluginDir = homeDir.resolve("lib").resolve("plugins");
 
         if (quiet && (specFilename == null || cmdFilename == null) ) {
