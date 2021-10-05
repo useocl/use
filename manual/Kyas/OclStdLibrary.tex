@@ -281,7 +281,7 @@ collections,
   then this operation returns the set-union of all its elements.\\
   {\bf Notation:} $\mathit{self}$\verb+->flatten()+
 %\subsection{As Set}
-%!!!!! (gibt es in USE nicht. Soll es hinzugefügt werden?) $\mathit{asSet}():
+%!!!!! (gibt es in USE nicht. Soll es hinzugefÃ¼gt werden?) $\mathit{asSet}():
 %  \mathit{Set}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Set}(T)=\mathit{oclEmpty}(\mathit{Set}(T))\mid
 %  a\rightarrow\mathit{including}(e))$ is the identity function.\\
 %  {\bf Notation:} $\mathit{self}$\verb+->asSet()+
@@ -337,7 +337,7 @@ intersection
   of the bag $\mathit{self}$ and the set $y$.\\
   {\bf Notation:} $\mathit{self}$\verb+->intersection(+$y$\verb+)+
 %\subsection{Difference of bags}
-%!!!!! (existiert nicht in USE; hinzufügen?) $-(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the bag obtained from
+%!!!!! (existiert nicht in USE; hinzufÃ¼gen?) $-(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the bag obtained from
 %  $\mathit{self}$ by removing all occurrences of the elements of $y$.\\
 %  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
 \subsection{Flatten}
@@ -352,7 +352,7 @@ $\mathit{asSet}():
   element of $\mathit{self}$.\\
   {\bf Notation:} $\mathit{self}$\verb+->asSet()+
 %\subsection{As Bag}
-%!!!!! (existiert nicht; hinzufügen?) $\mathit{asBag}():\mathit{Bag}(T)$ is the identity function.\\
+%!!!!! (existiert nicht; hinzufÃ¼gen?) $\mathit{asBag}():\mathit{Bag}(T)$ is the identity function.\\
 %  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
 \subsection{As Sequence}
 $\mathit{asSequence}():\mathit{Sequence}(T)$ returns a sequence containing
@@ -414,7 +414,7 @@ $\mathit{subSequence}(y:\mathit{Integer},z:\mathit{Integer}):\mathit{Sequence}(T
   \end{multline*}\\
   {\bf Notation:} $\mathit{self}$\verb+->subSequence(+$y$\verb+)+
 %\subsection{Insert element}
-%!!!!! (existiert nicht, hinzufügen?)
+%!!!!! (existiert nicht, hinzufÃ¼gen?)
 %$\mathit{insertAt}(y:T,z:\mathit{Integer}):\mathit{Sequence}(T)\stackrel{def}{=}
 %  (\mathit{self}\rightarrow\mathit{subSequence}(1,z-1)\rightarrow\mathit{append}(y))\linebreak[0]
 %  \rightarrow\mathit{union}(\mathit{self}\rightarrow
@@ -428,7 +428,7 @@ $\mathit{first}():T\stackrel{def}{=}\mathit{self}\rightarrow\mathit{at}(1)$.\\
 $\mathit{last}():T\stackrel{def}{=}\mathit{self}\rightarrow\mathit{at}(\mathit{self}\rightarrow\mathit{size}())$.\\
   {\bf Notation:} $\mathit{self}$\verb+->last(+$y$\verb+)+
 %\subsection{As Sequence}
-%!!!!! (existiert nicht, hinzufügen?)$\mathit{asSequence}(): \mathit{Sequence}(T)$ is the identity function.\\
+%!!!!! (existiert nicht, hinzufÃ¼gen?)$\mathit{asSequence}(): \mathit{Sequence}(T)$ is the identity function.\\
 %  {\bf Notation:} $\mathit{self}$\verb+->union(+$y$\verb+)+
 \subsection{As Set}
 $\mathit{asSet}():
