@@ -2928,6 +2928,11 @@ Example:
 
 *Description will be available in the next document version.*
 
+### Test suites
+USE can run test suites similar to other XUnit test suites.
+This allows to test defined constraints. A more detailed description
+can be found in [Using model unit tests in USE](testsuites.md).
+
 ## OCL Standard Operations
 
 The OCL Standard operations are described following [@kyas:phd].

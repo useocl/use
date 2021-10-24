@@ -84,7 +84,6 @@ import org.tzi.use.parser.ParseErrorHandler;
 /* ------------------------------------
   testSuite ::= 'testsuite' IDENT 'for' 'model' filename
   				['setup'  cmdList 'end']
-  				['finish' cmdList 'end']
   				tests*
 */
 testSuite returns [ASTTestSuite suite]
@@ -159,9 +158,16 @@ assertStatement returns [ASTAssert n]
 assertionStatementPre[Token s, boolean valid] returns [ASTAssertPre n]
 :
   'pre' objExp=expression opName=IDENT { $n = new ASTAssertPre($s, null, $valid, $objExp.n, $opName); }
-  LPAREN 
-    ( e=expression { $n.addArg($e.n); } ( COMMA e=expression { $n.addArg($e.n); } )* )? 
-  RPAREN (COLON_COLON name=IDENT { $n.setConditionName($name); } )?
+  (
+      (
+      LPAREN
+        ( e=expression { $n.addArg($e.n); } ( COMMA e=expression { $n.addArg($e.n); } )* )?
+      RPAREN
+      )
+   |
+      (LPAREN RPAREN)
+   )
+   (COLON_COLON name=IDENT { $n.setConditionName($name); } )?
   { $n.setEnd(input.LT(-1)); }
 ;
 
