@@ -1,17 +1,4 @@
----
-author:
-- |
-    Database Systems Group\
-    Bremen University
-bibliography:
-- 'Literature.bib'
-title: |
-    USE\
-    A UML based Specification Environment\
-    *Preliminary Version 0.1*
----
-
-# USE Manual Version 0.1 {#version-0.1 .unnumbered}
+# USE Manual Version 0.1
 
 This document represents the first version of the USE documentation.
 Several section will be completed, added or changed in the following
