@@ -33,8 +33,8 @@ example model specifying the class `Car` including an attribute
 `mileage` of type `Integer` and an operation
 `increaseMileage` with one formal parameter and no return value.
 
-![Overview of the Specification
-Workflow[]{name="fig:workflow"}](Pictures/workflow.png)
+<a name="fig:workflow">![](Pictures/workflow.png)</a>
+*Figure 1.1: Overview of the Specification Workflow*
 
 #### Specifying a UML Model
 
