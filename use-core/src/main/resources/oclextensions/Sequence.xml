@@ -1,0 +1,55 @@
+<extensions>
+	<operation source="Sequence(Real)" name="sum" returnType="Sequence(Real)">
+		<parameter>
+			<par name="x" type="Sequence(Real)" />
+		</parameter>
+		<body><![CDATA[
+			(0..$self.size-1).map{ |i| $self[i] + $x[i] }
+		]]>
+		</body>
+	</operation>
+	<operation source="Sequence(Real)" name="minus" returnType="Sequence(Real)">
+		<parameter>
+			<par name="x" type="Sequence(Real)" />
+		</parameter>
+		<body><![CDATA[
+			(0..$self.size-1).map{ |i| $self[i] - $x[i] }
+		]]>
+		</body>
+	</operation>
+	<operation source="Sequence(Real)" name="mult" returnType="Sequence(Real)">
+		<parameter>
+			<par name="s" type="Real" />
+		</parameter>
+		<body><![CDATA[
+			(0..$self.size-1).map{ |i| $s*$self[i] }
+ 		]]>
+		</body>
+	</operation>
+	<operation source="Sequence(Real)" name="avg" returnType="Real">
+		<body><![CDATA[
+			sum = 0.0
+			$self.each {|i|
+				sum += i
+			}
+			return (sum / $self.length.to_f)
+		]]>
+		</body>
+	</operation>
+	<operation source="Sequence(Real)" name="stdDev" returnType="Real">
+		<body><![CDATA[
+			l = $self.length.to_f
+			m = 0.0
+			$self.each {|i|
+				m += i
+			}
+			m = (m / $self.length.to_f)
+            sum = 0.0
+			$self.each {|i|
+				sum += (i-m)*(i-m)
+			}
+			Math.sqrt(sum / (l - 1.0))
+		]]>
+		</body>
+	</operation>
+</extensions>
