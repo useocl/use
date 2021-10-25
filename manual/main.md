@@ -27,14 +27,14 @@ detailed information about a system state.
 
 This section outlines the general workflow for the specification and
 validation of a UML model. Figure
-[1.1](#fig:workflow){reference-type="ref" reference="fig:workflow"}
+[1.1](#fig:workflow)
 gives a general view of the USE approach. Within this section we use an
-example model specifying the class $\mathit{Car}$ including an attribute
-$\mathit{mileage}$ of type $\mathit{Integer}$ and an operation
-$\mathit{increaseMileage}$ with one formal parameter an no return value.
+example model specifying the class `Car` including an attribute
+`mileage` of type `Integer` and an operation
+`increaseMileage` with one formal parameter and no return value.
 
 ![Overview of the Specification
-Workflow[]{label="fig:workflow"}](Pictures/workflow.png){#fig:workflow}
+Workflow[]{name="fig:workflow"}](Pictures/workflow.png)
 
 #### Specifying a UML Model
 
@@ -3484,31 +3484,33 @@ elements of the sequence $\mathit{self}$.\
 **Notation:** $\mathit{self}$`->asBag(`$y$`)`
 
 ## Bibliography
-[GR98a] Martin Gogolla and Mark Richters. On constraints and queries in UML. In Mar-
+<a name="bib-gr98a">[GR98a]</a> Martin Gogolla and Mark Richters. On constraints and queries in UML. In Mar-
 tin Schader and Axel Korthaus, editors, The Unified Modeling Language - Technical
 Aspects and Applications, pages 109–121, Heidelberg, 1998. Physica-Verlag.
 
-[GR98b] Martin Gogolla and Mark Richters. On formalizing the uml object constraint language
+<a name="bib-gr98b">[GR98b]</a> Martin Gogolla and Mark Richters. On formalizing the uml object constraint language
 OCL. In Tok Wang Ling, Sudha Ram, and Mong Li Lee, editors, Proc. 17th Int. Conf.
 Conceptual Modeling (ER’98), volume 1507 of LNCS, pages 449–464, Berlin, 1998.
 Springer.
 
-[GR99] Martin Gogolla and Mark Richters. A metamodel for OCL. In Robert France and
+<a name="bib-gr99">[GR99]</a> Martin Gogolla and Mark Richters. A metamodel for OCL. In Robert France and
 Bernhard Rumpe, editors, Proceedings of the Second International Conference on the
 Unified Modeling Language: UML’99, volume 1723 of LNCS. Springer, 1999.
 
-[GR00] Martin Gogolla and Mark Richters. Validating UML models and OCL constraints. In
+<a name="bib-gr00">[GR00]</a> Martin Gogolla and Mark Richters. Validating UML models and OCL constraints. In
 UML 2000 - The Unified Modeling Language. Advancing the Standard. Third Inter-
 national Conference, volume 1939 of LNCS, York, UK, 2000. Springer.
 
-[Kya06] Marcel Kyas. Verifying OCL Specifications of UML Models: Tool Support and Com-
+<a name="bib-kya06">[Kya06]</a> Marcel Kyas. Verifying OCL Specifications of UML Models: Tool Support and Com-
 positionality. Lehmanns Media, Berlin, 2006.
 
 <a name="bib-obj99">[Obj99]</a> Object Management Group, Inc. OMG Unified Modeling Language Specification,
 Version 1.3, June 1999. Internet: http://www.omg.org.
 
-[Ric02] Mark Richters. A Precise Approach to Validating UML Models and OCL Constraints,
+<a name="bib-ric02">[Ric02]</a> Mark Richters. A Precise Approach to Validating UML Models and OCL Constraints,
 volume 14 of BISS Monographs. Logos, Berlin, 2002.
+
+## Remarks
 
 [^1]: A possible extension to USE would be the import of an XMI file
     created by a CASE tool like Argo UML[^11] or Rational Rose
