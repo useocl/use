@@ -3504,7 +3504,7 @@ national Conference, volume 1939 of LNCS, York, UK, 2000. Springer.
 [Kya06] Marcel Kyas. Verifying OCL Specifications of UML Models: Tool Support and Com-
 positionality. Lehmanns Media, Berlin, 2006.
 
-<a id="Obj99">[Obj99]</a> Object Management Group, Inc. OMG Unified Modeling Language Specification,
+<a id="bib-obj99">[Obj99]</a> Object Management Group, Inc. OMG Unified Modeling Language Specification,
 Version 1.3, June 1999. Internet: http://www.omg.org.
 
 [Ric02] Mark Richters. A Precise Approach to Validating UML Models and OCL Constraints,
