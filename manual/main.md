@@ -8,7 +8,7 @@ versions (e.g. the USE Generator sections).
 
 USE is a system for the specification of information systems. It is
 based on a subset of the Unified Modeling Language (UML)
-[Obj99](bib-obj99).
+[[Obj99]](#bib-obj99).
 
 ### Overview of USE Features
 
@@ -3504,7 +3504,7 @@ national Conference, volume 1939 of LNCS, York, UK, 2000. Springer.
 [Kya06] Marcel Kyas. Verifying OCL Specifications of UML Models: Tool Support and Com-
 positionality. Lehmanns Media, Berlin, 2006.
 
-[[Obj99](#bib-obj99)] Object Management Group, Inc. OMG Unified Modeling Language Specification,
+<a id="Obj99">[Obj99]</a> Object Management Group, Inc. OMG Unified Modeling Language Specification,
 Version 1.3, June 1999. Internet: http://www.omg.org.
 
 [Ric02] Mark Richters. A Precise Approach to Validating UML Models and OCL Constraints,
