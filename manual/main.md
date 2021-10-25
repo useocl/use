@@ -26,7 +26,7 @@ detailed information about a system state.
 ### Working with USE
 
 This section outlines the general workflow for the specification and
-validation of a UML model. [Figure 1.1](#fig:workflow)
+validation of a UML model. [Figure 1.1](#fig-workflow)
 gives a general view of the USE approach. Within this section we use an
 example model specifying the class `Car` including an attribute
 `mileage` of type `Integer` and an operation
@@ -34,7 +34,7 @@ example model specifying the class `Car` including an attribute
 
 ![](Pictures/workflow.png)
 
-<a name="fig:workflow">*Figure 1.1: Overview of the Specification Workflow*</a>
+<a name="fig-workflow">*Figure 1.1: Overview of the Specification Workflow*</a>
 
 #### Specifying a UML Model
 
