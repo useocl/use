@@ -39,11 +39,12 @@ example model specifying the class `Car` including an attribute
 #### Specifying a UML Model
 
 The USE tool expects a textual description of a model and its
-constraints as input. (see section
-[2](#SpecWithUSE){reference-type="ref" reference="SpecWithUSE"}) The
+constraints as input (see section
+[Specifying a UML Model with USE](#specifying-a-uml-model-with-use)). The
 example must therefore be translated into a USE specification[^1] by
 using an external text editor. The USE specification of the example
 model is shown below.
+
 
     model Cars
 
@@ -260,7 +261,7 @@ is only one class $\mathit{Rec}$.
 ![Class diagram of factorial
 example[]{label="fig:FactorialClassDiagram"}](Pictures/NestedClassDiagram.png){#fig:FactorialClassDiagram}
 
-## Specifying a UML Model with USE {#SpecWithUSE}
+## Specifying a UML Model with USE
 
 To define a USE specifications you need an external text editor. The
 syntactic elements are clarified by a grammar defined with the Extended
