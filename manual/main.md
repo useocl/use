@@ -8,7 +8,7 @@ versions (e.g. the USE Generator sections).
 
 USE is a system for the specification of information systems. It is
 based on a subset of the Unified Modeling Language (UML)
-[@uml:00-03-01].
+[Obj99](bib-obj99).
 
 ### Overview of USE Features
 
@@ -2091,21 +2091,20 @@ format.
 #### Shortcuts
 
 The above mentioned commands may be called by using shortcuts. The
-following table shows the shortcuts and the corresponding commands.\
-\
+following table shows the shortcuts and the corresponding commands.
 
-  **Shortcut**   **Command**
-  -------------- ---------------------------------
-  Alt-x          Extended Evaluation (all)
-  Alt-v          Variable Assignment Window
-  Alt-e          Subexpression Evaluation Window
-  Alt-1..4       Treeviews 1..4
-  Alt-0          disable Highlighting
-  Alt-7..9       Highlightings 1..3
-  Alt-f          Fit width
-  Alt-d          Default configuration
-  Alt-s          Set as default
-  Alt-c          Capture to file
+| **Shortcut** |  **Command**                       |
+| -------------|------------------------------------|
+| Alt-x        |  Extended Evaluation (all)         |
+| Alt-v        |   Variable Assignment Window       |
+| Alt-e        |  Subexpression Evaluation Window   |
+| Alt-1..4     |  Treeviews 1..4                    |
+| Alt-0        |  disable Highlighting              |
+| Alt-7..9     |  Highlightings 1..3                |
+| Alt-f        |  Fit width                         |
+| Alt-d        |  Default configuration             |
+| Alt-s        |  Set as default                    |
+| Alt-c        |  Capture to file                   |
 
 #### Context Menu
 
@@ -3483,6 +3482,33 @@ $\mathit{asBag}():
   a\rightarrow\mathit{including}(e))$ returns a bag containing all
 elements of the sequence $\mathit{self}$.\
 **Notation:** $\mathit{self}$`->asBag(`$y$`)`
+
+## Bibliography
+[GR98a] Martin Gogolla and Mark Richters. On constraints and queries in UML. In Mar-
+tin Schader and Axel Korthaus, editors, The Unified Modeling Language - Technical
+Aspects and Applications, pages 109–121, Heidelberg, 1998. Physica-Verlag.
+
+[GR98b] Martin Gogolla and Mark Richters. On formalizing the uml object constraint language
+OCL. In Tok Wang Ling, Sudha Ram, and Mong Li Lee, editors, Proc. 17th Int. Conf.
+Conceptual Modeling (ER’98), volume 1507 of LNCS, pages 449–464, Berlin, 1998.
+Springer.
+
+[GR99] Martin Gogolla and Mark Richters. A metamodel for OCL. In Robert France and
+Bernhard Rumpe, editors, Proceedings of the Second International Conference on the
+Unified Modeling Language: UML’99, volume 1723 of LNCS. Springer, 1999.
+
+[GR00] Martin Gogolla and Mark Richters. Validating UML models and OCL constraints. In
+UML 2000 - The Unified Modeling Language. Advancing the Standard. Third Inter-
+national Conference, volume 1939 of LNCS, York, UK, 2000. Springer.
+
+[Kya06] Marcel Kyas. Verifying OCL Specifications of UML Models: Tool Support and Com-
+positionality. Lehmanns Media, Berlin, 2006.
+
+[[Obj99](#bib-obj99)] Object Management Group, Inc. OMG Unified Modeling Language Specification,
+Version 1.3, June 1999. Internet: http://www.omg.org.
+
+[Ric02] Mark Richters. A Precise Approach to Validating UML Models and OCL Constraints,
+volume 14 of BISS Monographs. Logos, Berlin, 2002.
 
 [^1]: A possible extension to USE would be the import of an XMI file
     created by a CASE tool like Argo UML[^11] or Rational Rose
