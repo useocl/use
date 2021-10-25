@@ -1,0 +1,21 @@
+<extensions>
+
+  <operation source="Real" name="rand" returnType="Real">
+	<body><![CDATA[
+		$self * Random.rand
+	]]>
+	</body>
+  </operation>
+
+  <operation source="Integer" name="srand" returnType="Integer">
+	<body><![CDATA[
+		if $self > 0
+                   return Random.srand($self) %1000000
+                else 
+                   return Random.srand() % 10000000
+                end
+	]]>
+	</body>
+  </operation>
+</extensions>
+
