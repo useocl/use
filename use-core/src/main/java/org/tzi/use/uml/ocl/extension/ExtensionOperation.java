@@ -20,8 +20,8 @@ import java.util.List;
 public class ExtensionOperation extends OpGeneric {
 
 	public static class Parameter {
-		private String name;
-		private String typeName;
+		private final String name;
+		private final String typeName;
 		private Type type;
 		
 		public Parameter(String name, String typeName) {
@@ -106,7 +106,10 @@ public class ExtensionOperation extends OpGeneric {
             
         } catch (ScriptException | EvalFailedException e) {
 			Log.error(e.getMessage());
-			Log.error(errorWriter.toString());
+			
+			if (errorWriter.getBuffer().length() > 0) {
+				Log.error(errorWriter.toString());
+			}
         }
         
         return UndefinedValue.instance;
