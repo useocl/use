@@ -1,13 +1,5 @@
 package org.tzi.use.uml.ocl.extension;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import org.jruby.embed.EvalFailedException;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
@@ -15,8 +7,15 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;
-import org.tzi.use.util.NullWriter;
 import org.tzi.use.util.rubyintegration.RubyHelper;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExtensionOperation extends OpGeneric {
 
@@ -75,14 +74,15 @@ public class ExtensionOperation extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		ScriptEngineManager m = new ScriptEngineManager();
         ScriptEngine rubyEngine = m.getEngineByName("jruby");
-        
+        StringWriter errorWriter = new StringWriter();
+
         if (rubyEngine == null)
             throw new RuntimeException("Did not find the ruby engine. Please verify your classpath");
        
         ScriptContext context = rubyEngine.getContext();
-        context.setErrorWriter(new NullWriter());
+        context.setErrorWriter(errorWriter);
 
-        context.setAttribute("self", RubyHelper.useValueToRubyValue(args[0]), ScriptContext.ENGINE_SCOPE);
+        context.setAttribute("$self", RubyHelper.useValueToRubyValue(args[0]), ScriptContext.ENGINE_SCOPE);
         
         for (int i = 0; i < parameter.size(); i++) {
         	context.setAttribute(parameter.get(i).getName(), 
@@ -104,10 +104,9 @@ public class ExtensionOperation extends OpGeneric {
             	return resultValue;
             }
             
-        } catch (ScriptException e) {
-            Log.error(e.getMessage());
-        } catch (EvalFailedException e) {
-        	Log.error(e.getMessage());
+        } catch (ScriptException | EvalFailedException e) {
+			Log.error(e.getMessage());
+			Log.error(errorWriter.toString());
         }
         
         return UndefinedValue.instance;
@@ -149,17 +148,17 @@ public class ExtensionOperation extends OpGeneric {
 	public void initialize() {
 		this.sourceType = ExtensionManager.getInstance().getType(this.sourceTypeName);
 		if (this.sourceType == null)
-			throw new RuntimeException("Unknown source type '" + this.sourceType + "'");
+			throw new RuntimeException("Unknown source type '" + this.sourceTypeName + "'");
 		
 		this.resultType = ExtensionManager.getInstance().getType(this.resultTypeName);
 		if (this.resultType == null)
-			throw new RuntimeException("Unknown result type '" + this.resultType + "'");
+			throw new RuntimeException("Unknown result type '" + this.resultTypeName + "'");
 		
 		for (Parameter par : this.parameter) {
 			par.setType(ExtensionManager.getInstance().getType(par.getTypeName()));
 			
 			if (par.getType() == null)
-				throw new RuntimeException("Unknown parameter type '" + this.resultType + "'");
+				throw new RuntimeException("Unknown parameter type '" + par.getTypeName() + "'");
 		}
 	}
 }
