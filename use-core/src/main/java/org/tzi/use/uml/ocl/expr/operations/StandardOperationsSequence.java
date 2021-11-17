@@ -1,8 +1,6 @@
 package org.tzi.use.uml.ocl.expr.operations;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
+import com.google.common.collect.Multimap;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
@@ -15,7 +13,8 @@ import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
-import com.google.common.collect.Multimap;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class StandardOperationsSequence {
 	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
@@ -210,7 +209,7 @@ final class Op_sequence_subSequence extends OpGeneric {
 	}
 
 	public boolean isInfixOrPrefix() {
-		return true;
+		return false;
 	}
 
 	public Type matches(Type params[]) {
