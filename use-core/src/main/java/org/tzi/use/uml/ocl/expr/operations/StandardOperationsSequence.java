@@ -17,22 +17,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class StandardOperationsSequence {
-	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
+	public static void registerTypeOperations(Multimap<String, OpGeneric> opMap) {
 		// operations on Sequence
         // count: inherited from Collection
-		OpGeneric.registerOperation(new Op_sequence_union(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_append(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_prepend(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_insertAt(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_subSequence(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_at(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_indexOf(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_first(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_last(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_including(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_excluding(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_reverse(), opmap);
-		OpGeneric.registerOperation(new Op_sequence_shuffle(), opmap);
+		OpGeneric.registerOperation(new Op_sequence_union(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_append(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_prepend(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_insertAt(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_subSequence(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_at(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_indexOf(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_first(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_last(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_including(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_excluding(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_reverse(), opMap);
+		OpGeneric.registerOperation(new Op_sequence_shuffle(), opMap);
 	}
 }
 
@@ -56,7 +56,7 @@ final class Op_sequence_union extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfSequence()
 				&& params[1].isTypeOfSequence()) {
 			SequenceType sequence1 = (SequenceType) params[0];
@@ -95,7 +95,7 @@ final class Op_sequence_append extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
@@ -133,7 +133,7 @@ final class Op_sequence_prepend extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
@@ -171,7 +171,7 @@ final class Op_sequence_insertAt extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 3 && params[0].isTypeOfSequence()
 				&& params[1].isTypeOfInteger()) {
 			SequenceType seqType = (SequenceType) params[0];
@@ -212,7 +212,7 @@ final class Op_sequence_subSequence extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 3 && params[0].isTypeOfSequence()
 				&& params[1].isTypeOfInteger() && params[2].isTypeOfInteger()) ? params[0]
 				: null;
@@ -222,10 +222,11 @@ final class Op_sequence_subSequence extends OpGeneric {
 		SequenceValue seq = (SequenceValue) args[0];
 		int lower = ((IntegerValue) args[1]).value();
 		int upper = ((IntegerValue) args[2]).value();
+
 		if (lower > upper)
 			return UndefinedValue.instance;
 
-		Value res = null;
+		Value res;
 		try {
 			res = seq.subSequence(resultType, lower - 1, upper);
 		} catch (IndexOutOfBoundsException e) {
@@ -251,7 +252,7 @@ final class Op_sequence_at extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfSequence()
 				&& params[1].isTypeOfInteger()) {
 			SequenceType seq = (SequenceType) params[0];
@@ -263,7 +264,8 @@ final class Op_sequence_at extends OpGeneric {
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		SequenceValue seq = (SequenceValue) args[0];
 		IntegerValue n = (IntegerValue) args[1];
-		Value res = null;
+
+		Value res;
 		try {
 			res = seq.get(n.value() - 1);
 		} catch (IndexOutOfBoundsException e) {
@@ -289,7 +291,7 @@ final class Op_sequence_first extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfSequence()) {
 			SequenceType seq = (SequenceType) params[0];
 			return seq.elemType();
@@ -321,7 +323,7 @@ final class Op_sequence_last extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfSequence()) {
 			SequenceType seq = (SequenceType) params[0];
 			return seq.elemType();
@@ -353,7 +355,7 @@ final class Op_sequence_including extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
@@ -391,7 +393,7 @@ final class Op_sequence_excluding extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
@@ -412,7 +414,7 @@ final class Op_sequence_excluding extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col = (CollectionType) args[0].type();
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
@@ -442,7 +444,7 @@ final class Op_sequence_indexOf extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfSequence()) {
 			SequenceType seqType = (SequenceType) params[0];
 
@@ -470,7 +472,7 @@ final class Op_sequence_indexOf extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col = (CollectionType) args[0].type();
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
@@ -500,7 +502,7 @@ final class Op_sequence_reverse extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfSequence()) {
 			return params[0];
 		}
@@ -511,7 +513,7 @@ final class Op_sequence_reverse extends OpGeneric {
 		if (args[0].isUndefined()) return UndefinedValue.instance;
 		
 		SequenceValue col = (SequenceValue)args[0];
-		ArrayList<Value> elements = new ArrayList<Value>(col.collection());
+		ArrayList<Value> elements = new ArrayList<>(col.collection());
 		Collections.reverse(elements);
 		
 		return new SequenceValue(col.elemType(), elements);
@@ -532,7 +534,7 @@ final class Op_sequence_shuffle extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfSequence()) {
 			return params[0];
 		}
@@ -543,7 +545,7 @@ final class Op_sequence_shuffle extends OpGeneric {
 		if (args[0].isUndefined()) return UndefinedValue.instance;
 		
 		SequenceValue col = (SequenceValue)args[0];
-		ArrayList<Value> elements = new ArrayList<Value>(col.collection());
+		ArrayList<Value> elements = new ArrayList<>(col.collection());
 		Collections.shuffle(elements);
 		
 		return new SequenceValue(col.elemType(), elements);
