@@ -88,13 +88,16 @@ to the [quick tour](http://www.db.informatik.uni-bremen.de/projects/USE/).
 
 ## Documentation
 
-Documentation is available in the doc directory. It contains a quick
-tour demonstrating the central features of USE. The tool is heavily
-based on ideas published in [3], [4] and [6]. See the references at
-the end of the file.
+Documentation is available in the [manual](manual/main.md) directory.
+It contains a quick tour demonstrating the central features of USE.
+The tool is heavily based on ideas published in [3], [4] and [6].
+See the references at the end of the file.
 
 Some information about issues related to OCL can be found in the file
 README.OCL.
+
+Note, that the documentation was automatically translated from LaTex to Markdown 
+and has still many issues. Feel free to submit changes to the documentation.
 
 ## Contact
 
