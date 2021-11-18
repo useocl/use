@@ -171,9 +171,8 @@ very helpful and is highly appreciated.
 
 ## References
 
-[1] OMG Unified Modeling Language Specification, Version 1.3, June
-    1999. Object Management Group, Inc., Framingham, Mass., Internet:
-    http://www.omg.org, 1999.
+[1] OMG Unified Modeling Language Specification, Version 2.5.1, December 2017.
+    Object Management Group, Inc., Framingham, Mass., Internet: http://www.omg.org/spec/UML, 2021.
 
 [2] Martin Gogolla and Mark Richters. On constraints and queries in
     UML. In Martin Schader and Axel Korthaus, editors, The Unified
