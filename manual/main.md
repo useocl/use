@@ -271,37 +271,29 @@ Backus-Naur Form.
 
 Every UML Model has a name and an optional body.
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{umlmodel\rangle}&\Coloneqq& \verb+model+ ~
-    \langle\mathit{modelname}\rangle~ [~\langle\mathit{modelbody}\rangle~]\\
-    \langle\mathit{modelname}\rangle &\Coloneqq& \langle\mathit{name}\rangle\end{aligned}$$
+    <umlmodel>  ::= model <modelnam> [<modelbody>]
+    <modelname> ::= <name>
 
-Example:
+#### Example
 
-:   The models name is `Fruits`.
+The models name is `Fruits`.
 
         model Fruits
         ...
 
-The model body consists of at least one class definition and an
+The model body consists class definitions and an
 arbitrary number of association definitions. Enumeration definitions are
-allowed at the top of the body. At the end of the specification OCL
-constraints may be defined.
+also allowed. OCL constraints may be defined inside a constraint block.
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{modelbody}\rangle &\Coloneqq&
-    \{~\langle\mathit{enumerationdefinition}\rangle~\}\\
-    &&\{~\langle\mathit{associationdefinition}\rangle~|~
-    \langle\mathit{associationclassdefinition}\rangle~\}\\
-    &&\langle\mathit{classdefinition}\rangle\\
-    &&\{~\langle\mathit{classdefinition}\rangle ~|~
-    \langle\mathit{associationdefinition}\rangle~
-    |~\langle\mathit{associationclassdefinition}\rangle~\}\\
-    &&[~\verb+constraints+ ~\{~\langle\mathit{constraintdefinition}\rangle~\}~]\end{aligned}$$
+    <modelbody> ::= {<enumerationdefinition> |
+                     <associationdefinition> |
+                     <associationclassdefinition> |
+                     <classdefinition> |
+                     constraints {<constraintdefinition>}}
 
 ### Specification Elements
 
@@ -312,16 +304,11 @@ used in the model body.
 
 Enumerations may be added at the top of the model body.
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{enumerationdefinition}\rangle &\Coloneqq&
-    \verb+enum+~\langle\mathit{enumerationname}\rangle~\verb+{+~
-    \langle\mathit{elementname}\rangle~\{~\verb+,+~\langle\mathit{elementname}\rangle~\}~\verb+}+\\
-    \langle\mathit{enumerationname}\rangle &\Coloneqq&
-    \langle\mathit{name}\rangle\\
-    \langle\mathit{elementname}\rangle &\Coloneqq&
-    \langle\mathit{name}\rangle\end{aligned}$$
+    <enumerationdefinition> ::= enum <enumerationname> {<elementname> {, <elementname>}}
+          <enumerationname> ::= <name>
+              <elementname> ::= <name>
 
 Example:
 
@@ -334,62 +321,56 @@ Example:
 A class has a name and optionally attribute and operation definitions.
 It may be defined as an abstract class.
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{classdefinition}\rangle &\Coloneqq& [~\verb+abstract+~]~\verb+class+~
-    \langle\mathit{classname}\rangle~[~\verb+<+~\langle\mathit{classname}\rangle~
-    \{~\verb+,+~\langle\mathit{classname}\rangle~\}~]\\
-    &&[~\verb+attributes+~\{~\langle\mathit{attributename}\rangle
-    ~\verb+:+~\langle\mathit{type}\rangle~\}~]\\
-    &&[~\verb+operations+~\{~\langle\mathit{operationdeclaration}\rangle
-    ~[~\verb+=+~\langle\mathit{oclexpression}\rangle~]\\
-    &&\{~\langle\mathit{preconditiondefinition}\rangle~|~
-    \langle\mathit{postconditiondefinition}\rangle~\}~\}~]\\
-    && [~\verb+constraints+~\{~\langle\mathit{invariantdefinition}\rangle~\}~]\\
-    && \verb+end+\\
-    \langle\mathit{classname}\rangle &\Coloneqq& \langle\mathit{name}\rangle\\
-    \langle\mathit{attributename}\rangle &\Coloneqq& \langle\mathit{name}\rangle\end{aligned}$$
+    <classdefinition> ::= [ abstract ] class <classname> [ < <classname> { , <classname> } ]
+                          [ attributes { <attributename> : <type> } ]
+                          [ operations { <operationdeclaration> [ = <oclexpression> ]
+                          { <preconditiondefinition> | <postconditiondefinition> } } ]
+                          [ constraints { <invariantdefinition> } ]
+                          end
+          <classname> ::= <name>
+      <attributename> ::= <name>
 
 Example:
 
-:   The example shows five different class definitions. The class
-    $\mathit{Apple}$ inherits two and the class $\mathit{Banana}$ one
-    class. The class $\mathit{Lemon}$ is abstract and class
-    $\mathit{Banana}$ defines pre- and postconditions for the operation
-    $\mathit{peel}$ within its body. The class $\mathit{Peach}$ shows
-    how invariants can be integrated into the classes body.
+The example shows five different class definitions. The class
+`Apple` inherits two and the class `Banana` one
+class. The class `Lemon` is abstract and class
+`Banana` defines pre- and postconditions for the operation
+`peel` within its body. The class `Peach` shows
+how invariants can be integrated into the classes body.
 
-        class Apple < Orange, Lemon
-        end
+    class Apple < Orange, Lemon
+    end
 
-        abstract class Orange
-        attributes
-          juice : Boolean
-        end
+    abstract class Orange
+    attributes
+      juice : Boolean
+    end
 
-        class Lemon
-        operations
-          squeeze(i : Integer) : Integer = i + 1
-        end
+    class Lemon
+    operations
+      squeeze(i : Integer) : Integer = i + 1
+    end
 
-        class Banana < Lemon
-        attributes
-          flatware : Set(Sequence(Flatware))
-        operations
-          peel() : String = 'abcd'
-              pre: true
-              post: 2 = 2
-              post: result = 'theResult'
-        end
+    class Banana < Lemon
+    attributes
+      flatware : Set(Sequence(Flatware))
+    operations
+      peel() : String = 'abcd'
+          pre: true
+          post: 2 = 2
+          post: result = 'theResult'
+    end
 
-        class Peach
-        attributes
-        operations
-        constraints
-          inv: 3 > 2
-          inv neverViolated: true
-        end
+    class Peach
+    attributes
+    operations
+    constraints
+      inv: 3 > 2
+      inv neverViolated: true
+    end
 
 #### Associations
 
@@ -397,89 +378,71 @@ It is possible to define n ary associations . The definition requires a
 name, at least two participating classes and multiplicity information.
 Role names are optional.
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{associationdefinition}\rangle &\Coloneqq&
-    (~\verb+association+~|~\verb+composition+~|~\verb+aggregation+~)\\
-    &&\langle\mathit{associationname}\rangle~\verb+between+\\
-    &&\langle\mathit{classname}\rangle~\verb+[+~\langle\mathit{multiplicity}\rangle~
-    \verb+]+~[~\verb+role+~\langle\mathit{rolename}\rangle~]~[~\verb+ordered+~]\\
-    &&\langle\mathit{classname}\rangle~\verb+[+~\langle\mathit{multiplicity}\rangle~
-    \verb+]+~[~\verb+role+~\langle\mathit{rolename}\rangle~]~[~\verb+ordered+~]\\
-    &&\{~\langle\mathit{classname}\rangle~\verb+[+~\langle\mathit{multiplicity}\rangle~
-    \verb+]+~[~\verb+role+~\langle\mathit{rolename}\rangle~]~[~\verb+ordered+~]~\}\\
-    &&\verb+end+\\
-    \langle\mathit{multiplicity}\rangle &\Coloneqq&
-    (~\verb+*+~|~\langle\mathit{digit}\rangle~\{~\langle\mathit{digit}\rangle~\}~
-    [~\verb+..+~(~\verb+*+~|~\langle\mathit{digit}\rangle~\{~\langle\mathit{digit}\rangle~\}~)~]~)\\
-    && \{~\verb+,+~(~\verb+*+~|~\langle\mathit{digit}\rangle~\{~\langle\mathit{digit}\rangle~\}~
-    [~\verb+..+~(~\verb+*+~|~\langle\mathit{digit}\rangle~\{~\langle\mathit{digit}\rangle~\}~)~]~)~\}\\
-    \langle\mathit{associationname}\rangle &\Coloneqq& \langle\mathit{name}\rangle\\
-    \langle\mathit{rolename}\rangle &\Coloneqq& \langle\mathit{name}\rangle\end{aligned}$$
+    <associationdefinition> ::= ( association | composition | aggregation )
+                                <associationname> between
+                                <classname> [ <multiplicity> ] [ role <rolename> ] [ ordered ]
+                                <classname> [ <multiplicity> ] [ role <rolename> ] [ ordered ]
+                                { <classname> [ <multiplicity> ] [ role <rolename> ] [ ordered ] }
+                                end
+             <multiplicity> ::= ( * | <digit> { <digit> } [ .. ( * | <digit> { <digit> } ) ] )
+                                { , ( * | <digit> { <digit> } [ .. ( * | <digit> { <digit> } ) ] ) }
+          <associationname> ::= <name>
+                 <rolename> ::= <name>
 
-Example:
+#### Example
 
-:   This Examples shows a binary and a tertiary association with
-    different multiplicities and optional role names. The first
-    association is defined as a composition. The diamond appears at the
-    first participating class. You may order the elements by using the
-    keyword `ordered`.
+This Examples shows a binary and a tertiary association with
+different multiplicities and optional role names. The first
+association is defined as a composition. The diamond appears at the
+first participating class. You may order the elements by using the
+keyword `ordered`.
 
-        composition AppleSpritzer between
-          Apple[*] role base
-          Lemon[1..8,10,15..*] role flavor
-        end
+    composition AppleSpritzer between
+      Apple[*] role base
+      Lemon[1..8,10,15..*] role flavor
+    end
 
-        association Ingredients between
-          Apple[*] role mainIngredient
-          Orange[1]
-          Lemon[1..*] role lemon ordered
-        end
+    association Ingredients between
+      Apple[*] role mainIngredient
+      Orange[1]
+      Lemon[1..*] role lemon ordered
+    end
 
 #### Association classes
 
 Association classes combine the body elements of classes and
 associations.
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{associationclassdefinition}\rangle &\Coloneqq&
-    [~\verb+abstract+~]~\verb+associationclass+~
-    \langle\mathit{classname}\rangle\\
-    &&[~\verb+<+~\langle\mathit{classname}\rangle~
-    \{~\verb+,+~\langle\mathit{classname}\rangle~\}~]~\verb+between+\\
-    &&\langle\mathit{classname}\rangle~\verb+[+~\langle\mathit{multiplicity}\rangle~
-    \verb+]+~[~\verb+role+~\langle\mathit{rolename}\rangle~]~[~\verb+ordered+~]\\
-    &&\langle\mathit{classname}\rangle~\verb+[+~\langle\mathit{multiplicity}\rangle~
-    \verb+]+~[~\verb+role+~\langle\mathit{rolename}\rangle~]~[~\verb+ordered+~]\\
-    &&\{~\langle\mathit{classname}\rangle~\verb+[+~\langle\mathit{multiplicity}\rangle~
-    \verb+]+~[~\verb+role+~\langle\mathit{rolename}\rangle~]~[~\verb+ordered+~]~\}\\
-    &&[~\verb+attributes+~\{~\langle\mathit{attributename}\rangle
-    ~\verb+:+~\langle\mathit{type}\rangle~\}~]\\
-    &&[~\verb+operations+~\{~\langle\mathit{operationdeclaration}\rangle
-    ~[~\verb+=+~\langle\mathit{oclexpression}\rangle~]\\
-    &&\{~\langle\mathit{preconditiondefinition}\rangle~|~
-    \langle\mathit{postconditiondefinition}\rangle~\}~\}~]\\
-    && [~\verb+constraints+~\{~\langle\mathit{invariantdefinition}\rangle~\}~]\\
-    && \verb+end+\end{aligned}$$
+    <associationclassdefinition> ::= [ abstract ] associationclass <classname>
+                                     [ < <classname> { , <classname> } ] between
+                                     <classname> [ <multiplicity> ] [ role <rolename> ] [ ordered ]
+                                     <classname> [ <multiplicity> ] [ role <rolename> ] [ ordered ]
+                                     { <classname> [ <multiplicity> ] [ role <rolename> ] [ ordered ] }
+                                     [ attributes { <attributename> : <type> } ]
+                                     [ operations { <operationdeclaration> [ = <oclexpression> ]
+                                     { <preconditiondefinition> | <postconditiondefinition> } } ]
+                                     [ constraints { <invariantdefinition> } ]
+                                     end
 
 Example:
 
-:   The example defines an association class between two classes. It has
-    two attributes and one operation, which is no query.
+The example defines an association class between two classes. It has
+two attributes and one operation, which is no query.
 
-        associationclass FruitSalad < Orange
-         between
-          Banana[0..1]
-          Apple[1..*]
-        attributes
-          name : String
-          weight : Real
-        operations
-          putIn(apple : Apple, banana : Banana)
-        end
+    associationclass FruitSalad < Orange
+      between
+      Banana[0..1]
+      Apple[1..*]
+    attributes
+      name : String
+      weight : Real
+    operations
+      putIn(apple : Apple, banana : Banana)
+    end
 
 #### Constraints
 
@@ -488,112 +451,171 @@ segment. An arbitrary number of invariants may be defined in context of
 a class. In addition to that, you may define pre- and postconditions to
 constrain operations. Every constraint can be named.
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{constraintdefinition}\rangle &\Coloneqq&
-    \langle\mathit{invariantcontext}\rangle~|~\langle\mathit{operationcontext}\rangle\\
-    \langle\mathit{invariantcontext}\rangle &\Coloneqq&
-    \verb+context+~[~\langle\mathit{variablename}\rangle~\verb+:+~]~\langle\mathit{classname}\rangle\\
-    &&\{~\langle\mathit{invariantdefinition}\rangle~\}\\
-    \langle\mathit{operationcontext}\rangle &\Coloneqq&
-    \verb+context+~\langle\mathit{classname}\rangle~\langle\mathit{operationconstraints}\rangle\\
-    \langle\mathit{invariantdefinition}\rangle &\Coloneqq&
-    \verb+inv+~[~\langle\mathit{invariantname}\rangle~]~\verb+:+~\langle\mathit{booleanoclexpression}\rangle\\
-    \langle\mathit{operationconstraints}\rangle &\Coloneqq&
-    \verb+::+~\langle\mathit{operationdeclaration}\rangle\\
-    &&(~\langle\mathit{preconditiondefinition}\rangle~|~\langle\mathit{postconditiondefinition}\rangle~)\\
-    &&\{~\langle\mathit{preconditiondefinition}\rangle~|~
-    \langle\mathit{postconditiondefinition}\rangle~\}\\
-    \langle\mathit{preconditiondefinition}\rangle &\Coloneqq&
-    \verb+pre+~[~\langle\mathit{preconditionname}\rangle~]~
-    \verb+:+~\langle\mathit{booleanoclexpression}\rangle\\
-    \langle\mathit{postconditiondefinition}\rangle &\Coloneqq&
-    \verb+post+~[~\langle\mathit{postconditionname}\rangle~]~
-    \verb+:+~\langle\mathit{booleanoclexpression}\rangle~)\\
-    \langle\mathit{invariantname}\rangle &\Coloneqq& \langle\mathit{name}\rangle\\
-    \langle\mathit{variablename}\rangle &\Coloneqq& \langle\mathit{name}\rangle\\
-    \langle\mathit{preconditionname}\rangle &\Coloneqq& \langle\mathit{name}\rangle\\
-    \langle\mathit{postconditionname}\rangle &\Coloneqq& \langle\mathit{name}\rangle\end{aligned}$$
+       <constraintdefinition> ::= <invariantcontext> | <operationcontext>
+           <invariantcontext> ::= context [ <variablename> : ] <classname>
+                                  { <invariantdefinition> }
+           <operationcontext> ::= context <classname> <operationconstraints>
+        <invariantdefinition> ::= inv [ <invariantname> ] : <booleanoclexpression>
+       <operationconstraints> ::= :: <operationdeclaration>
+                                ( <preconditiondefinition> | <postconditiondefinition> )
+                                { <preconditiondefinition> | <postconditiondefinition> }
+     <preconditiondefinition> ::= pre [ <preconditionname> ] : <booleanoclexpression>
+    <postconditiondefinition> ::= post [ <postconditionname> ] : <booleanoclexpression> )
+              <invariantname> ::= <name>
+               <variablename> ::= <name>
+           <preconditionname> ::= <name>
+          <postconditionname> ::= <name>
 
-Example:
+#### Example
 
-:   The first two definitions are showing three invariants of the class
-    $\mathit{Orange}$. The second definition defines the variable
-    $\mathit{orange}$ which may be used in the OCL expression similar to
-    $\mathit{self}$. The third invariant is not named. USE will assign a
-    name like $\mathit{inv2}$ to it. Two preconditions and one
-    postcondition constrain the Operation $\mathit{squeeze}$ in class
-    $\mathit{Lemon}$.
+The first two definitions are showing three invariants of the class
+*Orange*. The second definition defines the variable
+*orange* which may be used in the OCL expression similar to
+*self*. The third invariant is not named. USE will assign a
+name like *inv2* to it. Two preconditions and one
+postcondition constrain the Operation *squeeze* in class
+*Lemon*.
 
-        context Orange
-         inv OrangeInv: 1 = 1
+    context Orange
+      inv OrangeInv: 1 = 1
 
-        context orange : Orange
-         inv alwaysTrue: orange = orange
-         inv: juice = true
+    context orange : Orange
+      inv alwaysTrue: orange = orange
+      inv: juice = true
 
-        context Lemon :: squeeze(i : Integer) : Integer
-          pre: i>0
-          pre lessThanTenOranges: i<10
-          post alwaysTrue: true
+    context Lemon :: squeeze(i : Integer) : Integer
+      pre: i > 0
+      pre lessThanTenOranges: i < 10
+      post alwaysTrue: true
 
 #### Operation declarations
 
 The declaration of an operation consists of the operation name, optional
 parameters and the return type.
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{operationdeclaration}\rangle &\Coloneqq&
-    \langle\mathit{operationname}\rangle~\verb+(+~[~\langle\mathit{parameters}\rangle~]~
-    \verb+)+~[~\verb+:+~\langle\mathit{type}\rangle~]\\
-    \langle\mathit{parameters}\rangle &\Coloneqq&
-    \langle\mathit{parametername}\rangle~\verb+:+~\langle\mathit{type}\rangle~
-    \{~\verb+,+~\langle\mathit{parametername}\rangle~\verb+:+~\langle\mathit{type}\rangle~\}\\
-    \langle\mathit{operationname}\rangle &\Coloneqq& \langle\mathit{name}\rangle\\
-    \langle\mathit{parametername}\rangle &\Coloneqq& \langle\mathit{name}\rangle\end{aligned}$$
+    <operationdeclaration> ::= <operationname> ( [ <parameters> ] ) [ : <type> ]
+              <parameters> ::= <parametername> : <type> { , <parametername> : <type> }
+           <operationname> ::= <name>
+           <parametername> ::= <name>
 
-Example:
+#### Example
 
-:   Three operation declarations are shown within the class definition
-    example.
+Three operation declarations are shown within the class definition example.
+
+#### Protocol State Machines
+
+Protocol state machines can be defined inside the *state machines* section in class definitions.
+
+#### Syntax
+
+    <protocolstatemachine> ::= psm <statemachinename> 
+                                 states <statedefinition>*
+                                 transitions <transitiondefinition>* 
+         <statedefinition> ::= <statename> [ : <statetype>] [sateinvariant]
+               <statename> ::= <name>
+               <statetype> ::= initial | final
+          <stateinvariant> ::= <booleanoclexpression>
+    <transitiondefinition> ::= <sourcestate> -> <targetstate> {'['<precondition>']' (<event> | <operationdeclaration>) '['<postcondition>']'}
+        <statemachinename> ::= <name>
+        <precondition> ::= <booleanoclexpression>
+        <postcondition> ::= <booleanoclexpression>
+        <event> ::= create
+
+#### Example
+
+    model CoffeeDispenser
+    
+    class CoffeeDispenser
+      attributes
+        /* This attribute stores the money inserted into
+          the dispenser.
+          It is initialized with 0 during creation.*/
+        amount : Integer init = 0
+
+      operations
+        /* A coin is inserted into the dispenser.
+          Valid coins are: 10,20,50,100 and 200. */
+        accept(i:Integer)
+        begin
+          self.amount := self.amount + i;
+        end
+        pre: let validCoins = Set{10,20,50,100,200} in validCoins->includes(i)
+
+        /* A coffee should be brewed. Note, that there is
+        * no pre condition. The state machine below handles
+        * the correct amount.*/
+        brew()
+        begin
+          self.amount := 0;
+        end
+
+        -- Return the coins currently in the dispenser
+        reset()
+        begin
+          self.amount := 0;
+        end
+
+        statemachines
+          /* This state machine describes the
+          * "lifecycle" of the coffee dispenser.
+          */
+          psm Usage
+            states
+              -- The start node
+              startUp:initial
+              -- The initial state after creation.
+              noCoins      [amount = 0]
+              -- Some coins were inserted, but not enough.
+              hasCoins     [amount > 0 and amount < 100]
+              -- Enough coins, ready to brew.
+              enoughCoins  [amount >= 100]
+            transitions
+              -- Define the first state after creation.
+              startUp  -> noCoins     { create }
+              -- A coin was inserted, but it wasn't enough.
+              noCoins  -> hasCoins    { [i + amount < 100] accept() }
+              -- Enough money was inserted.
+              noCoins  -> enoughCoins { [i + amount >= 100] accept() }
+              -- Abort
+              hasCoins -> noCoins     { reset()  }
+              -- Enough money was inserted.
+              hasCoins -> enoughCoins { [i + amount >= 100] accept() }
+              -- Another coin was inserted, but it wasn't enough.
+              hasCoins -> hasCoins    { [i + amount < 100] accept() }
+              -- Abort
+              enoughCoins -> noCoins  { reset()  }
+              -- Brew coffee, no change ;-)
+              enoughCoins -> noCoins  { brew()   }
+          end
+    end
 
 #### Types
 
-Types may be simple ($\langle\mathit{simpletype}\rangle$) or complex
-($\langle\mathit{collectiontype}\rangle$).
+Types may be simple (`<simpletype>`) or complex (`<collectiontype>`).
 
-Syntax:
+#### Syntax
 
-:   $$\begin{aligned}
-    \langle\mathit{type}\rangle &\Coloneqq& \langle\mathit{collectiontype}\rangle~
-    |~\langle\mathit{simpletype}\rangle~|~\langle\mathit{enumerationname}\rangle\\
-    \langle\mathit{collectiontype}\rangle &\Coloneqq& (~\verb+Set+~|~\verb+Bag+~|~\verb+Sequence+~)~
-    \verb+(+\\
-    &&\{~\langle\mathit{collectiontype}\rangle~
-    |~\langle\mathit{simpletype}\rangle~|~\langle\mathit{enumerationname}\rangle~\}~\verb+)+\\
-    \langle\mathit{simpletype}\rangle &\Coloneqq& \verb+Integer+~|~\verb+Real+~|~\verb+Boolean+~|~
-    \verb+String+~|~\langle\mathit{classname}\rangle\end{aligned}$$
+              <type> ::= <collectiontype> | <simpletype> | <enumerationname>
+    <collectiontype> ::= ( Set | Bag | Sequence ) (
+                         { <collectiontype> | <simpletype> | <enumerationname> } )
+        <simpletype> ::= Integer | Real | Boolean | String | <classname>
 
-Example:
+#### Example
 
-:   The attribute $\mathit{flatware}$ has a complex type.
+The attribute *flatware* has a complex type.
 
 #### Names, Numbers and OCL-Expressions
 
-$$\begin{aligned}
-\langle\mathit{name}\rangle &\Coloneqq& (~\langle\mathit{letter}\rangle ~|~ \_~)~
-\{~\langle\mathit{letter}\rangle~ |~ \langle\mathit{digit}\rangle ~|~ \_~\}\\
-\langle\mathit{letter}\rangle &\Coloneqq&  \verb+a+~ |~ \verb+b+~
-|~ \dots~ |~ \verb+z+~ | ~\verb+A+~ |~ \verb+B+~ |~ \dots~ | ~\verb+Z+\\
-\langle\mathit{digit}\rangle &\Coloneqq& \verb+0+~ |~ \verb+1+~ |~ \dots~ |~ \verb+9+\\
-\langle\mathit{oclexpression}\rangle &\Coloneqq&
-(^*~\mathrm{Replace~this ~symbol~ by~ an ~ordinary ~OCL ~expression.}~^*)\\
-\langle\mathit{booleanoclexpression}\rangle &\Coloneqq&
-(^*~\mathrm{Replace~ this ~symbol~ by~ an~ ordinary~ OCL expression}\\
-&&\mathrm{which~results ~in~ a ~boolean~ value.}~^*)\end{aligned}$$
+                    <name> ::= ( <letter>  |  _ ) { <letter> | <digit> | _ }
+                  <letter> ::= a | b | ... | z | A | B | ... | Z
+                   <digit> ::= 0 | 1 | ... | 9
+           <oclexpression> ::= (* Replace this symbol by an ordinary OCL expression. *)
+    <booleanoclexpression> ::= (* Replace this symbol by an ordinary OCL expression.
+                                  which results in a boolean value. *)
 
 ### Specifications of the Examples
 
@@ -2215,7 +2237,7 @@ menu[]{label="fig:EvaluationBrowserObjectBrowserDropDown"}](Screenshots/GUI/Eval
 
 Prints all available commands and a synopsis of their description.
 
-Syntax:
+#### Syntax:
 
 :   `help`
 
@@ -2224,7 +2246,7 @@ Syntax:
 Prints the syntax for the use of command $\mathit{cmd}$ and its
 description with synopsis.
 
-Syntax:
+#### Syntax:
 
 :   `help` $\mathit{cmd}$
 
@@ -2239,7 +2261,7 @@ command is comparable to the function of the Evaluation Window in the
 GUI. (see section [4.1.3.2](#evalExpr){reference-type="ref"
 reference="evalExpr"})
 
-Syntax:
+#### Syntax:
 
 :   `?` $\mathit{OclExpr}$
 
@@ -2264,7 +2286,7 @@ output of subexpression results. After evaluating the expression the
 Evaluation Browser is displayed. It shows the evaluation tree for
 $\mathit{OclExpr}$.
 
-Syntax:
+#### Syntax:
 
 :   `??` $\mathit{OclExpr}$
 
@@ -2290,7 +2312,7 @@ Example:
 
 Compiles the expression $\mathit{OclExpr}$ and shows its static type.
 
-Syntax:
+#### Syntax:
 
 :   `:` $\mathit{OclExpr}$
 
@@ -2313,7 +2335,7 @@ Example:
 Use `\` to enter a multiline mode. Finish with a '.' on a single line.
 In multiline mode an OCL expression may be split into several lines.
 
-Syntax:
+#### Syntax:
 
 :   The OCL expression is split into $n$ parts. Lines may be blank.
 
@@ -2355,7 +2377,7 @@ $\mathit{idList}$ have to be specified with the keyword `between`. The
 order of the names in $\mathit{idList}$ must conform to the definition
 of the associationclass.
 
-Syntax:
+#### Syntax:
 
 :   `!create` $\mathit{newIdList}$ `:` $\mathit{class}$ $[$`between (`
     $\mathit{IdList}$ `)`$]$
@@ -2394,7 +2416,7 @@ least one object name. If the destroyed object is a link end, the
 corresponding link is deleted resp. the associationclass object is
 destroyed.
 
-Syntax:
+#### Syntax:
 
 :   `!destroy` $\mathit{idList}$
 
@@ -2411,7 +2433,7 @@ Example:
 Inserts a link between the objects in the $\mathit{idList}$ into the
 association $\mathit{assoc}$.
 
-Syntax:
+#### Syntax:
 
 :   `!insert` $\mathit{idList}$ `into` $\mathit{assoc}$
 
@@ -2434,7 +2456,7 @@ Example:
 Deletes the link between the objects in the $\mathit{idList}$ from the
 association $\mathit{assoc}$.
 
-Syntax:
+#### Syntax:
 
 :   `!delete` $\mathit{idList}$ `from` $\mathit{assoc}$
 
@@ -2454,7 +2476,7 @@ Example:
 Sets the attribute $\mathit{attr}$ of the object $\mathit{obj}$ to a new
 value given by $\mathit{OclExpr}$.
 
-Syntax:
+#### Syntax:
 
 :   `!set` $\mathit{obj}$`.`$\mathit{attr}$ `:=` $\mathit{OclExpr}$
 
@@ -2480,9 +2502,9 @@ corresponding values. If there is more than one operation call a call
 stack is used to remember the entered operations. The deepest call has
 to be exited first.
 
-Syntax:
+#### Syntax:
 
-:   `!openter` $\mathit{ObjExpr~}$
+:   `!openter` $\mathit{ObjExpr }$
     $\mathit{OpName}$`(`$\mathit{ExprList}$`)`
 
 Example without parameters:
@@ -2536,7 +2558,7 @@ This command exits the least recently entered operation, i.e. the top of
 the call stack. If the operation has a return value it has to be
 specified behind the `opexit` command.
 
-Syntax:
+#### Syntax:
 
 :   `!opexit` $\mathit{ReturnValExpr}$
 
@@ -2601,9 +2623,9 @@ entering an $\mathit{invList}$. Use the following invariant signature:
 $\mathit{context}$`::`$\mathit{invName}$. The signatures have to be
 separated with a blank.
 
-Syntax:
+#### Syntax:
 
-:   `check` $[$`-v`$]~[$`-d`$]~[$`-a`$~|~\mathit{invList}~]$
+:   `check` $[$`-v`$] [$`-d`$] [$`-a`$ | \mathit{invList} ]$
 
 Example without options:
 
@@ -2664,7 +2686,7 @@ Example with options:
 This command activates the single step mode to read in a script step by
 step.
 
-Syntax:
+#### Syntax:
 
 :   `step on`
 
@@ -2701,10 +2723,10 @@ have to enter the sub path beginning at the USE root. (see example) If
 the file does not exist in the USE directory you have to enter the whole
 path.
 
-Syntax:
+#### Syntax:
 
 :   `open` $[\mathit{path}]$
-    $\mathit{fileName}$`.`$(~$`use`$~|~$`cmd`$~|~$`invs`$~)$
+    $\mathit{fileName}$`.`$( $`use`$ | $`cmd`$ | $`invs`$ )$
 
 Example file in USE sub directory:
 
@@ -2743,7 +2765,7 @@ Example file not in USE directory:
 Resets the USE system state to an empty state. All objects and links are
 deleted.
 
-Syntax:
+#### Syntax:
 
 :   `reset`
 
@@ -2751,15 +2773,15 @@ Syntax:
 
 Enter `q`, `quit` or `exit` to exit USE.
 
-Syntax:
+#### Syntax:
 
-:   $(~$`q`$~|~$`quit`$~|~$`exit`$~)$
+:   $( $`q`$ | $`quit`$ | $`exit`$ )$
 
 #### Undo last state manipulation command
 
 Undoes the last state manipulation command.
 
-Syntax:
+#### Syntax:
 
 :   `undo`
 
@@ -2767,7 +2789,7 @@ Syntax:
 
 Prints information about a class existing in the specification.
 
-Syntax:
+#### Syntax:
 
 :   `info class` $\mathit{className}$
 
@@ -2792,7 +2814,7 @@ Example:
 Prints all information about the loaded model (classes, associations,
 constraints).
 
-Syntax:
+#### Syntax:
 
 :   `info model`
 
@@ -2809,7 +2831,7 @@ Example:
 Prints information about the current system state. Shows how many
 objects and links are created.
 
-Syntax:
+#### Syntax:
 
 :   `info state`
 
@@ -2850,7 +2872,7 @@ Example:
 Prints all operations, which did not terminate yet, i.e. the operation
 call stack.
 
-Syntax:
+#### Syntax:
 
 :   `info opstack`
 
@@ -2879,7 +2901,7 @@ Example:
 
 Prints information about the USE process (i.e., memory usage).
 
-Syntax:
+#### Syntax:
 
 :   `info prog`
 
@@ -2901,7 +2923,7 @@ Example:
 
 Prints information about global variables.
 
-Syntax:
+#### Syntax:
 
 :   `info vars`
 
@@ -2985,6 +3007,12 @@ if the callee is an instance of type $T$ or one of $T$s subtypes, that
 is, the callee conforms to the type $T$.\
 **Notation:** $\mathit{self}$`.isKindOf(`$T$`)`
 
+### oclIsInState
+
+`oclIsInState(<statename>) : Boolean` evaluates to `true` if the callee has a state machine defined that currently is in the state `<statename>`.
+
+*Remark: This operation was implemented incorrectly using the name `oclInState`. The wrong name is still supported for backward compatibility.*
+
 ### Boolean Types
 
 | $a$              | $b$              | $\mathit{not}\ b$ | $a\ \mathit{and}\ b$ | $a\ \mathit{or}\ b$ | $a\ \mathit{implies}\ b$ | $a\ \mathit{xor}\ b$ |
@@ -3065,7 +3093,7 @@ is less than the value of $y$. In any other case, it is undefined.\
 
 #### Absolute Values
 
-$\mathit{abs}():\mathit{Real}\stackrel{def}{=}\mathit{if}~ \mathit{self} < 0~ \mathit{then}~ -\mathit{self}~\mathit{else}\ \mathit{self}\ \mathit{endif}$ describes the absolute
+$\mathit{abs}():\mathit{Real}\stackrel{def}{=}\mathit{if}  \mathit{self} < 0  \mathit{then}  -\mathit{self} \mathit{else}\ \mathit{self}\ \mathit{endif}$ describes the absolute
 value of $\mathit{self}$.\
 **Notation:** $\mathit{self}$`.abs()`
 
@@ -3085,7 +3113,7 @@ rounds $\mathit{self}$ to the nearest integer.\
 
 #### Maximum
 
-$\mathit{max}(y:\mathit{Real}):\mathit{Real}\stackrel{def}{=}\mathit{if}~ \mathit{self} < y\ \mathit{then}~ y\ \mathit{else}\ \mathit{self}\ \mathit{endif}$ results in the greater
+$\mathit{max}(y:\mathit{Real}):\mathit{Real}\stackrel{def}{=}\mathit{if}  \mathit{self} < y\ \mathit{then}  y\ \mathit{else}\ \mathit{self}\ \mathit{endif}$ results in the greater
 value of $\mathit{self}$ and $y$.\
 **Notation:** $\mathit{self}$`.max(`$y$`)`
 
@@ -3197,7 +3225,7 @@ value of $\mathit{self}$ and $y$.\
 
 ### Collection
 
-$\langle\mathit{col}\rangle \Coloneqq \mathit{Set}\ |\ \mathit{Bag}\ |\ \mathit{Sequence}$
+$<col> \Coloneqq \mathit{Set}\ |\ \mathit{Bag}\ |\ \mathit{Sequence}$
 
 #### Size
 
@@ -3225,13 +3253,13 @@ returns true if and only if $y$ does not occur in the collection.\
 
 #### Includes all
 
-$\mathit{includesAll}(,y:\langle\mathit{col}\rangle(T)):\mathit{Boolean}\stackrel{def}{=}
+$\mathit{includesAll}(,y:<col>(T)):\mathit{Boolean}\stackrel{def}{=}
   y\rightarrow\mathit{forAll}(e\mid \mathit{self}\rightarrow\mathit{includes}(e))$.\
 **Notation:** $\mathit{self}$`->includesAll(`$y$`)`
 
 #### Excludes all
 
-$\mathit{excludesAll}(,y:\langle\mathit{col}\rangle(T)):\mathit{Boolean}\stackrel{def}{=}
+$\mathit{excludesAll}(,y:<col>(T)):\mathit{Boolean}\stackrel{def}{=}
   y\rightarrow\mathit{forAll}(e\mid \mathit{self}\rightarrow\mathit{excludes}(e))$.\
 **Notation:** $\mathit{self}$`->excludesAll(`$y$`)`
 
@@ -3441,7 +3469,7 @@ $\mathit{self}$ with $y$ prepended.\
 
 #### Excluding elements
 
-$\mathit{excluding}(y:T):\mathit{Sequence}(T)\stackrel{def}{=} \mathit{self}\rightarrow~ \mathit{iterate}(i;a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T))\mid \mathit {if}\ y=i\ \mathit{then}\ a\ \newline \mathit{else}\ a\rightarrow\mathit{append}(i)\ \mathit{endif})$
+$\mathit{excluding}(y:T):\mathit{Sequence}(T)\stackrel{def}{=} \mathit{self}\rightarrow  \mathit{iterate}(i;a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T))\mid \mathit {if}\ y=i\ \mathit{then}\ a\ \newline \mathit{else}\ a\rightarrow\mathit{append}(i)\ \mathit{endif})$
 results in the largest sub-sequence of $\mathit{self}$, in which $y$
 does not occur.\
 **Notation:** $\mathit{self}$`->excluding(`$y$`)`

@@ -67,7 +67,7 @@ public class ExpOclInState extends Expression {
 	@Override
 	public StringBuilder toString(StringBuilder sb) {
 		sourceExpr.toString(sb);
-		sb.append(".oclInState(");
+		sb.append(".oclIsInState(");
 		sb.append(stateToCheck.name());
 		sb.append(")");
 		
@@ -101,6 +101,6 @@ public class ExpOclInState extends Expression {
 
 	@Override
 	public String name() {
-		return "oclInState";
+		return "oclIsInState";
 	}
 }

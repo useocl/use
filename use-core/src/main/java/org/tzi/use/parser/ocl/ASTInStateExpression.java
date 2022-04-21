@@ -18,8 +18,6 @@
  */
 package org.tzi.use.parser.ocl;
 
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
@@ -35,6 +33,8 @@ import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.util.StringUtil;
+
+import java.util.Set;
 
 /**
  * @author Lars Hamann
@@ -59,7 +59,14 @@ public class ASTInStateExpression extends ASTExpression {
     public Expression gen(Context ctx) throws SemanticException {
         Expression res = null;
         Expression expr;
-        
+
+        // The first version of USE supporting state machines named
+        // oclIsInState as oclInState
+        // We support the old wrong expression, but warn the user
+        if (this.fOpToken.getText() == "oclInState") {
+            ctx.reportWarning(fOpToken, "The use of oclInState is deprecated. Use oslIsInState instead.");
+        }
+
         // check for empty source: do we have a context expression that
         // is implicitly assumed to be the source expression?
         if (fSourceExpr != null ) {
@@ -107,7 +114,7 @@ public class ASTInStateExpression extends ASTExpression {
     private Expression genExpr(Expression sourceExpr) throws SemanticException 
     {
     	if (!sourceExpr.type().isTypeOfClass()) {
-    		throw new SemanticException(fOpToken, "Need an object to apply `oclInState(" + this.fStateIdentifier.getText() + ")'.");
+    		throw new SemanticException(fOpToken, "Need an object to apply `oclIsInState(" + this.fStateIdentifier.getText() + ")'.");
     	}
     	
     	MClass srcClass = (MClass)sourceExpr.type();
@@ -115,7 +122,7 @@ public class ASTInStateExpression extends ASTExpression {
         
     	Set<MProtocolStateMachine> psms = srcClass.getAllOwnedProtocolStateMachines(); 
     	if (psms.isEmpty()) {
-            throw new SemanticException(fOpToken, "Invalid use of oclInState, because the class " + StringUtil.inQuotes(srcClass) + " has no defined state machines.");
+            throw new SemanticException(fOpToken, "Invalid use of oclIsInState, because the class " + StringUtil.inQuotes(srcClass) + " has no defined state machines.");
         }
     
     	MState state = null;
@@ -130,7 +137,7 @@ public class ASTInStateExpression extends ASTExpression {
     	if (state == null) {
 			throw new SemanticException(
 					fOpToken,
-					"Invalid use of oclInState, because the class "
+					"Invalid use of oclIsInState, because the class "
 							+ StringUtil.inQuotes(srcClass)
 							+ " has no state machine containing a state with the given name "
 							+ StringUtil.inQuotes(stateName) + ".");
