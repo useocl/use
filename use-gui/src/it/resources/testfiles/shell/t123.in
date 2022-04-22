@@ -34,3 +34,4 @@
 *-> false : Boolean
 ?cd.oclIsInState(enoughCoins)
 *-> false : Boolean
+exit
