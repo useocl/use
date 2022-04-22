@@ -396,12 +396,15 @@ operationExpression[ASTExpression source, boolean followsArrow]
     ;
 
 inStateExpression[ASTExpression source, boolean followsArrow]
-  returns [ASTInStateExpression n]:
-   opToken='oclInState'
+    returns [ASTInStateExpression n]
+@init { Token opToken = null; }
+:
+   { opToken = input.LT(1); }
+   ( 'oclIsInState' | 'oclInState' )
    LPAREN
    s = IDENT
    RPAREN
-   { $n = new ASTInStateExpression($opToken, $source, $s, $followsArrow); }
+   { $n = new ASTInStateExpression(opToken, $source, $s, $followsArrow); }
 ;
 
 /* ------------------------------------

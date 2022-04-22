@@ -1,0 +1,37 @@
+!create cd:CoffeeDispenser
+?cd.oclInState(noCoins)
+*-> true : Boolean
+?cd.oclInState(hasCoins)
+*-> false : Boolean
+?cd.oclIsInState(noCoins)
+*-> true : Boolean
+?cd.oclIsInState(hasCoins)
+*-> false : Boolean
+?cd.oclIsInState(enoughCoins)
+*-> false : Boolean
+?cd.oclIsInState(NoCoins)
+*<input>:1:3: Invalid use of oclIsInState, because the class `CoffeeDispenser' has no state machine containing a state with the given name `NoCoins'.
+!cd.accept(10)
+?cd.oclIsInState(noCoins)
+*-> false : Boolean
+?cd.oclIsInState(hasCoins)
+*-> true : Boolean
+?cd.oclIsInState(enoughCoins)
+*-> false : Boolean
+!cd.accept(20)
+!cd.accept(20)
+!cd.accept(50)
+?cd.oclIsInState(noCoins)
+*-> false : Boolean
+?cd.oclIsInState(hasCoins)
+*-> false : Boolean
+?cd.oclIsInState(enoughCoins)
+*-> true : Boolean
+!cd.brew()
+?cd.oclIsInState(noCoins)
+*-> true : Boolean
+?cd.oclIsInState(hasCoins)
+*-> false : Boolean
+?cd.oclIsInState(enoughCoins)
+*-> false : Boolean
+exit
