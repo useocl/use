@@ -3019,13 +3019,13 @@ is, the callee conforms to the type $T$.\
 |------------------|------------------|-------------------|----------------------|---------------------|--------------------------|----------------------|
 | `true`  | `true`  | `false`  | `true`      | `true`     | `true`          | `false`     |
 | `true`  | `false` | `true`   | `false`     | `true`     | `false`         | `true`      |
-| `true`  |     $\bot$       |     $\bot$        |     $\bot$           | `true`     |     $\bot$               |     $\bot$           |
+| `true`  |   ⊥     |     ⊥        |     ⊥           | `true`     |     ⊥               |     ⊥           |
 | `false` | `true`  | `false`  | `false`     | `true`     | `true`          | `true`      |
 | `false` | `false` | `true`   | `false`     | `false`    | `true`          | `false`     |
-| `false` |     $\bot$       |     $\bot$        | `false`     |     $\bot$          | `true`          |    $\bot$            |
-|       $\bot$     | `true`  |  `false` |     $\bot$           | `true`     | `true`          |    $\bot$            |
-|       $\bot$     | `false` |  `true`  | `false`     |     $\bot$          |     $\bot$               |    $\bot$            |
-|       $\bot$     |     $\bot$       |      $\bot$       |     $\bot$           |     $\bot$          |     $\bot$               |    $\bot$            |
+| `false` |     ⊥       |     ⊥        | `false`     |     ⊥          | `true`          |    ⊥            |
+|       ⊥     | `true`  |  `false` |     ⊥           | `true`     | `true`          |    ⊥            |
+|       ⊥     | `false` |  `true`  | `false`     |     ⊥          |     ⊥               |    ⊥            |
+|       ⊥     |     ⊥       |      ⊥       |     ⊥           |     ⊥          |     ⊥               |    ⊥            |
 
 ### Real
 
