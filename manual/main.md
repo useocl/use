@@ -1906,7 +1906,7 @@ figure [4.24](#fig:EvaluationBrowser){reference-type="ref"
 reference="fig:EvaluationBrowser"} shows the variable `self` of
 type `Department` and its value $\mathit{@cs}$. The
 corresponding node represents the expression
-$\mathit{@cs}.`project`\rightarrow`size`=2$.
+$\mathit{@cs}.`project`->`size`=2$.
 
 #### Subexpression Evaluation Window
 
@@ -1916,10 +1916,10 @@ the subexpressions of the marked tree node, which are evaluated in the
 next step. The example in figure
 [4.24](#fig:EvaluationBrowser){reference-type="ref"
 reference="fig:EvaluationBrowser"} marks a tree node with expression
-$\mathit{@cs}.`project`\rightarrow`size`=2$. The
+$\mathit{@cs}.`project`->`size`=2$. The
 navigation expression has to be evaluated next. So the window shows the
 result of this subexpression:
-$`Set`\{\mathit{@research},\mathit{@teaching}\}\rightarrow `size`=2$
+$`Set`\{\mathit{@research},\mathit{@teaching}\}-> `size`=2$
 
 #### Tree Views
 
@@ -3229,53 +3229,53 @@ $<col> \Coloneqq `Set`\ |\ `Bag`\ |\ `Sequence`$
 
 #### Size
 
-$`size`():`Integer`\stackrel{def}{=}`self`\rightarrow`iterate`(e;a:`Integer`=0\mid
+$`size`():`Integer`\stackrel{def}{=}`self`->`iterate`(e;a:`Integer`=0\mid
 a+1)$\
 **Notation:** `self``->size()`
 
 #### Count
 
 $`count`(,y:T):`Integer`\stackrel{def}{=}
-  `self`\rightarrow`iterate`(i;a:`Iterate`=0\mid`if`\ y=i\ `then`\ a+1\ `else`\ a\ `endif`)$ counts how often $y$ occurs in the collection.\
+  `self`->`iterate`(i;a:`Iterate`=0\mid`if`\ y=i\ `then`\ a+1\ `else`\ a\ `endif`)$ counts how often $y$ occurs in the collection.\
 **Notation:** `self``->count(`$y$`)`
 
 #### Includes
 
-$`includes`(,y:T):`Boolean`\stackrel{def}{=}`self`\rightarrow`count`(y)>0$
+$`includes`(,y:T):`Boolean`\stackrel{def}{=}`self`->`count`(y)>0$
 returns true if and only if $y$ occurs in the collection.\
 **Notation:** `self``->includes(`$y$`)`
 
 #### Excludes
 
-$`excludes`(,y:T):`Boolean`\stackrel{def}{=}`self`\rightarrow`count`(y)=0$
+$`excludes`(,y:T):`Boolean`\stackrel{def}{=}`self`->`count`(y)=0$
 returns true if and only if $y$ does not occur in the collection.\
 **Notation:** `self``->excludes(`$y$`)`
 
 #### Includes all
 
 $`includesAll`(,y:<col>(T)):`Boolean`\stackrel{def}{=}
-  y\rightarrow`forAll`(e\mid `self`\rightarrow`includes`(e))$.\
+  y->`forAll`(e\mid `self`->`includes`(e))$.\
 **Notation:** `self``->includesAll(`$y$`)`
 
 #### Excludes all
 
 $`excludesAll`(,y:<col>(T)):`Boolean`\stackrel{def}{=}
-  y\rightarrow`forAll`(e\mid `self`\rightarrow`excludes`(e))$.\
+  y->`forAll`(e\mid `self`->`excludes`(e))$.\
 **Notation:** `self``->excludesAll(`$y$`)`
 
 #### Is empty
 
-$`isEmpty`():`Boolean`\stackrel{def}{=}`self`\rightarrow`size`()=0$.\
+$`isEmpty`():`Boolean`\stackrel{def}{=}`self`->`size`()=0$.\
 **Notation:** `self``->isEmpty()`
 
 #### Not empty
 
-$`notEmpty`():`Boolean`\stackrel{def}{=}`self`\rightarrow`size`()<>0$.\
+$`notEmpty`():`Boolean`\stackrel{def}{=}`self`->`size`()<>0$.\
 **Notation:** `self``->notEmpty()`
 
 #### Sum
 
-$`sum`():T\stackrel{def}{=}`self`\rightarrow`iterate`(e;a:`Iterate`=0\mid a +
+$`sum`():T\stackrel{def}{=}`self`->`iterate`(e;a:`Iterate`=0\mid a +
 e)$.\
 **Notation:** `self``->sum()`
 
@@ -3340,8 +3340,8 @@ elements.\
 #### As Bag
 
 $`asBag`():
-  `Bag`(T)\stackrel{def}{=}`self`\rightarrow`iterate`(e;a:`Bag`(T)=`oclEmpty`(`Bag`(T))\mid
-  a\rightarrow`including`(e))$ returns a bag which includes each
+  `Bag`(T)\stackrel{def}{=}`self`->`iterate`(e;a:`Bag`(T)=`oclEmpty`(`Bag`(T))\mid
+  a->`including`(e))$ returns a bag which includes each
 element of `self` exactly once.\
 **Notation:** `self``->asBag()`
 
@@ -3351,8 +3351,8 @@ $`asSequence`(): `Sequence`(T)$
  returns a sequence
 containing all elements of `self` exactly once. The order of
 the elements is arbitrary. It is equivalent to the expression
-$`self`\rightarrow`iterate`(e;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T)\mid
-      a\rightarrow`append`(e))\quad.$\
+$`self`->`iterate`(e;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T)\mid
+      a->`append`(e))\quad.$\
 **Notation:** `self``->asSequence()`
 
 ### Bag
@@ -3410,8 +3410,8 @@ elements.\
 #### As Set
 
 $`asSet`():
-  `Set`(T)\stackrel{def}{=}`self`\rightarrow`iterate`(e;a:`Set`(T)=`oclEmpty`(`Set`(T))\mid
-  a\rightarrow`including`(e))$ returns a set which contains each
+  `Set`(T)\stackrel{def}{=}`self`->`iterate`(e;a:`Set`(T)=`oclEmpty`(`Set`(T))\mid
+  a->`including`(e))$ returns a set which contains each
 element of `self`.\
 **Notation:** `self``->asSet()`
 
@@ -3420,8 +3420,8 @@ element of `self`.\
 $`asSequence`():`Sequence`(T)$ returns a sequence
 containing all elements of `self` as often as they occur in the
 multi-set. The order of the elements is arbitrary. It is equivalent to:
-$`self`\rightarrow`iterate`(e;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T))\mid
-    a\rightarrow`append`(e))\quad.$ **Notation:**
+$`self`->`iterate`(e;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T))\mid
+    a->`append`(e))\quad.$ **Notation:**
 `self``->union(`$y$`)`
 
 ### Sequence
@@ -3434,7 +3434,7 @@ position of the sequence.\
 
 #### Equality
 
-$=(y:`Sequence`(T)):`Boolean`\stackrel{def}{=}`let`\ s={`self`\rightarrow`size`()}\ `in`\ s={y\rightarrow`size`()}\ \newline`and`\newline `Sequence`\{1..s\}\rightarrow`forAll`(i:`Integer`\mid `self`\rightarrow`at`(i)=y\rightarrow`at`(i))$
+$=(y:`Sequence`(T)):`Boolean`\stackrel{def}{=}`let`\ s={`self`->`size`()}\ `in`\ s={y->`size`()}\ \newline`and`\newline `Sequence`\{1..s\}->`forAll`(i:`Integer`\mid `self`->`at`(i)=y->`at`(i))$
 describes equality of sequences.
 **Notation:** `self``=`$y$
 
@@ -3454,7 +3454,7 @@ returns the sequence concatenation of all its elements.\
 #### Append elements
 
 $`append`(y:T):`Sequence`(T)\stackrel{def}{=}
-`self`\rightarrow`union`(`Sequence`\{y\})$ results
+`self`->`union`(`Sequence`\{y\})$ results
 in the sequence which consists of all elements of $y$ with $y$
 appended.\
 **Notation:** `self``->append(`$y$`)`
@@ -3462,14 +3462,14 @@ appended.\
 #### Prepend elements
 
 $`prepend`(y:T):`Sequence`(T)\stackrel{def}{=}
-  `Sequence`\{y\}\rightarrow`union`(`self`)$
+  `Sequence`\{y\}->`union`(`self`)$
 results in the sequence which consists of all elements of
 `self` with $y$ prepended.\
 **Notation:** `self``->prepend(`$y$`)`
 
 #### Excluding elements
 
-$`excluding`(y:T):`Sequence`(T)\stackrel{def}{=} `self`\rightarrow  `iterate`(i;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T))\mid \mathit {if}\ y=i\ `then`\ a\ \newline `else`\ a\rightarrow`append`(i)\ `endif`)$
+$`excluding`(y:T):`Sequence`(T)\stackrel{def}{=} `self`->  `iterate`(i;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T))\mid \mathit {if}\ y=i\ `then`\ a\ \newline `else`\ a->`append`(i)\ `endif`)$
 results in the largest sub-sequence of `self`, in which $y$
 does not occur.\
 **Notation:** `self``->excluding(`$y$`)`
@@ -3479,36 +3479,36 @@ does not occur.\
 $`subSequence`(y:`Integer`,z:`Integer`):`Sequence`(T)$
 results in the subsequence of `self` starting at index $y$ and
 ending at index $z$. It is equivalent to: $$\begin{gathered}
-    `Sequence`\{1..z\}\rightarrow`iterate`(i;
+    `Sequence`\{1..z\}->`iterate`(i;
     a:`Sequence`(T)=`oclEmpty`(`Sequence`(T))\mid{}\\
     `if`\ y\leq i\ `and`\ i\leq z\ `then`\\
-    a\rightarrow`append`(`self`\rightarrow`at`(i))\ `else`\ a\ `endif`)
+    a->`append`(`self`->`at`(i))\ `else`\ a\ `endif`)
   \end{gathered}$$\
 **Notation:** `self``->subSequence(`$y$`)`
 
 #### Get first element
 
-$`first`():T\stackrel{def}{=}`self`\rightarrow`at`(1)$.\
+$`first`():T\stackrel{def}{=}`self`->`at`(1)$.\
 **Notation:** `self``->first(`$y$`)`
 
 #### Get last element
 
-$`last`():T\stackrel{def}{=}`self`\rightarrow`at`(`self`\rightarrow`size`())$.\
+$`last`():T\stackrel{def}{=}`self`->`at`(`self`->`size`())$.\
 **Notation:** `self``->last(`$y$`)`
 
 #### As Set
 
 $`asSet`():
-  `asSet`(T)\stackrel{def}{=}`self`\rightarrow`iterate`(e;a:`Set`(T)=`oclEmpty`(`Set`(T))\mid
-  a\rightarrow`including`(e))$ returns a set which contains each
+  `asSet`(T)\stackrel{def}{=}`self`->`iterate`(e;a:`Set`(T)=`oclEmpty`(`Set`(T))\mid
+  a->`including`(e))$ returns a set which contains each
 element of `self`.\
 **Notation:** `self``->asSet(`$y$`)`
 
 #### As Bag
 
 $`asBag`():
-  `Bag`(T)\stackrel{def}{=}`self`\rightarrow`iterate`(e;a:`Bag`(T)=`oclEmpty`(`Bag`(T))\mid
-  a\rightarrow`including`(e))$ returns a bag containing all
+  `Bag`(T)\stackrel{def}{=}`self`->`iterate`(e;a:`Bag`(T)=`oclEmpty`(`Bag`(T))\mid
+  a->`including`(e))$ returns a bag containing all
 elements of the sequence `self`.\
 **Notation:** `self``->asBag(`$y$`)`
 
