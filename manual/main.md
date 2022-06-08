@@ -1919,7 +1919,7 @@ reference="fig:EvaluationBrowser"} marks a tree node with expression
 $\mathit{@cs}.`project`->`size`=2$. The
 navigation expression has to be evaluated next. So the window shows the
 result of this subexpression:
-$`Set`\{\mathit{@research},\mathit{@teaching}\}-> `size`=2$
+`Set`\{\mathit{@research},\mathit{@teaching}\}-> `size`=2$
 
 #### Tree Views
 
@@ -2379,7 +2379,7 @@ of the associationclass.
 
 #### Syntax:
 
-:   `!create` `newIdList` `:` `class` $[$`between (`
+:   `!create` `newIdList` `:` `class` $[`between (`
     `IdList` `)`$]$
 
 Example for classes:
@@ -2625,7 +2625,7 @@ separated with a blank.
 
 #### Syntax:
 
-:   `check` $[$`-v`$] [$`-d`$] [$`-a`$ | `invList` ]$
+:   `check` $[`-v`$] [`-d`$] [`-a`$ | `invList` ]$
 
 Example without options:
 
@@ -2726,7 +2726,7 @@ path.
 #### Syntax:
 
 :   `open` $[`path`]$
-    `fileName``.`$( $`use`$ | $`cmd`$ | $`invs`$ )$
+    `fileName``.`$( `use`$ | `cmd`$ | `invs`$ )$
 
 Example file in USE sub directory:
 
@@ -2775,7 +2775,7 @@ Enter `q`, `quit` or `exit` to exit USE.
 
 #### Syntax:
 
-:   $( $`q`$ | $`quit`$ | $`exit`$ )$
+:   $( `q`$ | `quit`$ | `exit`$ )$
 
 #### Undo last state manipulation command
 
@@ -2963,554 +2963,541 @@ The OCL Standard operations are described following [@kyas:phd].
 
 #### Equality
 
-$=(y:`OclAny`):`$ represents equality between
-objects. It evaluates to true if `self` is the same as $y$.\
-**Notation:** `self``=`$y$
+`=(y:OclAny):Boolean`: represents equality between
+objects. It evaluates to true if `self` is the same as `y`.  
+**Notation:** `self = y`
 
 #### Inequality
 
-$<>(y:`OclAny`):`Boolean`\stackrel{`def`}{=}`not`\ (
-`self`=y)$ represents inequality between objects.\
-**Notation:** `self``<>`$y$
+`<>(y:OclAny):Boolean := not(self = y)` represents inequality between objects.  
+**Notation:** `self <> y`
 
 #### isUndefined
 
-$`isUndefined`():`Boolean`$ evaluates to true, if the
-callee is undefined.\
-**Notation:** `self``.isUndefined()`
+`isUndefined():Boolean` evaluates to true, if the
+callee is undefined.  
+**Notation:** `self.isUndefined()`
 
 #### oclIsNew
 
-$`oclIsNew`():`Boolean`\stackrel{`def`}{=}
-`self`@`pre`.`isUndefined`()$ can only be used in a
+`oclIsNew():Boolean := self@pre.isUndefined()` can only be used in a
 postcondition and states that the object has been newly created during
-the execution of an operation.\
-**Notation:** `self``.oclIsNew()`
+the execution of an operation.  
+**Notation:** `self.oclIsNew()`
 
 #### oclAsType
 
-$`oclAsType`(T):T$ is a "cast" or "retyping" expression,
-evaluating to the value of the callee, if it is an instance of $T$, and
-to `Undefined` otherwise.\
-**Notation:** `self``.oclAsType(`$T$`)`
+`oclAsType(T):T` is a "cast" or "retyping" expression,
+evaluating to the value of the callee, if it is an instance of `T`, and
+to `Undefined` otherwise.  
+**Notation:** `self.oclAsType(T)`
 
 #### oclIsTypeOf
 
-$`oclIsTypeOf`(T):`Boolean`$ evaluates to `true`
-if the callee is an instance of type $T$.\
-**Notation:** `self``.oclIsTypeOf(`$T$`)`
+`oclIsTypeOf(T):Boolean` evaluates to `true`
+if the callee is an instance of type `T`.  
+**Notation:** `self.oclIsTypeOf(T)`
 
 #### oclIsKindOf
 
-$`oclIsKindOf`(T):`Boolean`$ evaluates to `true`
-if the callee is an instance of type $T$ or one of $T$s subtypes, that
-is, the callee conforms to the type $T$.\
-**Notation:** `self``.isKindOf(`$T$`)`
+`oclIsKindOf(T):Boolean` evaluates to `true`
+if the callee is an instance of type `T` or one of `T`s subtypes, that
+is, the callee conforms to the type `T`.  
+**Notation:** `self.isKindOf(T)`
 
 ### oclIsInState
 
-`oclIsInState(<statename>) : Boolean` evaluates to `true` if the callee has a state machine defined that currently is in the state `<statename>`.
+`oclIsInState(<statename>) : Boolean` evaluates to `true` if the callee has a state machine defined that currently is in the state `<statename>`.  
+**Notation:** `self.oclIsInState(Ready)`
 
 *Remark: This operation was implemented incorrectly using the name `oclInState`. The wrong name is still supported for backward compatibility.*
 
 ### Boolean Types
 
-| $a$              | $b$              | $`not`\ b$ | $a\ `and`\ b$ | $a\ `or`\ b$ | $a\ `implies`\ b$ | $a\ `xor`\ b$ |
-|------------------|------------------|-------------------|----------------------|---------------------|--------------------------|----------------------|
-| `true`  | `true`  | `false`  | `true`      | `true`     | `true`          | `false`     |
-| `true`  | `false` | `true`   | `false`     | `true`     | `false`         | `true`      |
-| `true`  |   ⊥     |     ⊥        |     ⊥           | `true`     |     ⊥               |     ⊥           |
-| `false` | `true`  | `false`  | `false`     | `true`     | `true`          | `true`      |
-| `false` | `false` | `true`   | `false`     | `false`    | `true`          | `false`     |
-| `false` |     ⊥       |     ⊥        | `false`     |     ⊥          | `true`          |    ⊥            |
-|       ⊥     | `true`  |  `false` |     ⊥           | `true`     | `true`          |    ⊥            |
-|       ⊥     | `false` |  `true`  | `false`     |     ⊥          |     ⊥               |    ⊥            |
-|       ⊥     |     ⊥       |      ⊥       |     ⊥           |     ⊥          |     ⊥               |    ⊥            |
+| **a**   | **b**   | `not` **b** | **a** `and` **b** | **a** `or` **b** | **a** `implies` **b** | **a** `xor` **b** |
+|---------|---------|-------------|-------------------|------------------|-----------------------|-------------------|
+| `true`  | `true`  | `false`     | `true`            | `true`           | `true`                | `false`           |
+| `true`  | `false` | `true`      | `false`           | `true`           | `false`               | `true`            |
+| `true`  | ⊥       | ⊥           | ⊥                 | `true`           | ⊥                     | ⊥                 |
+| `false` | `true`  | `false`     | `false`           | `true`           | `true`                | `true`            |
+| `false` | `false` | `true`      | `false`           | `false`          | `true`                | `false`           |
+| `false` | ⊥       | ⊥           | `false`           | ⊥                | `true`                | ⊥                 |
+| ⊥       | `true`  | `false`     | ⊥                 | `true`           | `true`                | ⊥                 |
+| ⊥       | `false` | `true`      | `false`           | ⊥                | ⊥                     | ⊥                 |
+| ⊥       | ⊥       | ⊥           | ⊥                 | ⊥                | ⊥                     | ⊥                 |
 
 ### Real
 
 #### Addition
 
-$+(y:`Real`):`Real`$ describes the sum of `self`
-and $y$.\
-**Notation:** `self``+`$y$
+`+(y:Real):Real` describes the sum of `self`
+and `y`.  
+**Notation:** `self + y`
 
 #### Subtraction
 
-$-(y:`Real`):`Real`$ describes the difference between
-`self` and $y$.\
-**Notation:** `self``-`$y$
+`-(y:Real):Real` describes the difference between
+`self` and `y`.  
+**Notation:** `self - y`
 
 #### Multiplication
 
-$*(y:`Real`):`Real`$ describes the product of
-`self` and $y$.\
-**Notation:** `self``*`$y$
+`*(y:Real):Real` describes the product of
+`self` and `y`.  
+**Notation:** `self * y`
 
 #### Division
 
-$/(y:`Real`):`Real`$ describes the quotient of
-`self` and $y$.\
-**Notation:** `self``/`$y$
+`/(y:Real):Real` describes the quotient of
+`self` and `y`.  
+**Notation:** `self / y`
 
 #### Negation
 
-$-():`Real`\stackrel{def}{=} 0-`self`$ describes the
-negation of `self`.\
-**Notation:** `-``self`
+`-():Real := 0 - self` describes the
+negation of `self`.  
+**Notation:** `- self`
 
 #### Less
 
-$<(y:`Real`):`Boolean`$ evaluates to `true`, if
-the value of `self` is less than the value of $y$. It evaluates
+`<(y:Real):Boolean` evaluates to `true`, if
+the value of `self` is less than the value of `y`. It evaluates
 to `false`, if the value of `self` is equal to or
-greater than the value of $y$. In any other case, it is undefined.\
-**Notation:** `self``<`$y$
+greater than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self < y`
 
 #### Greater
 
-$>(y:`Real`):`Boolean`$ evaluates to `true`, if
-the value of `self` is greater than the value of $y$. It
+`(y:Real):Boolean` evaluates to `true`, if
+the value of `self` is greater than the value of `y`. It
 evaluates to `false`, if the value of `self` is less
-than or equal to the value of $y$. In any other case, it is undefined.\
-**Notation:** `self``>`$y$
+than or equal to the value of `y`. In any other case, it is undefined.  
+**Notation:** `self > y`
 
 #### Less or equal
 
-$<=(y:`Real`):`Boolean`$ evaluates to `true`, if
-the value of `self` is less than or equal to the value of $y$.
+`<=(y:Real):Boolean` evaluates to `true`, if
+the value of `self` is less than or equal to the value of `y`.
 It evaluates to `false`, if the value of `self` is
-greater than the value of $y$. In any other case, it is undefined.\
-**Notation:** `self``<=`$y$
+greater than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self <= y`
 
 #### Greater or equal
 
-$>=(y:`Real`):`Boolean`$ evaluates to `true`, if
+`>=(y:Real):Boolean` evaluates to `true`, if
 the value of `self` is equal to or greater than the value of
-$y$. It evaluates to `false`, if the value of `self`
-is less than the value of $y$. In any other case, it is undefined.\
-**Notation:** `self``>=`$y$
+`y`. It evaluates to `false`, if the value of `self`
+is less than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self >= y`
 
 #### Absolute Values
 
-$`abs`():`Real`\stackrel{def}{=}`if`  `self` < 0  `then`  -`self` `else`\ `self`\ `endif`$ describes the absolute
-value of `self`.\
-**Notation:** `self``.abs()`
+`abs():Real := if self < 0 then -self else self endif` describes the absolute
+value of `self`.  
+**Notation:** `self.abs()`
 
 #### Floor
 
-$`floor`():`Integer`$ describes the largest integer which
-is not greater than `self`.\
-**Notation:** `self``.floor()`\
-**Note:** `floor` binds stronger than $-$. That means
-$(-3.3).floor() = -4$ and $-3.3.floor() = -(3.3.floor()) = -3$.
+`floor():Integer` describes the largest integer which
+is not greater than `self`.  
+**Notation:** `self.floor()`  
+**Note:** `floor` binds stronger than `-`. That means
+`(-3.3).floor() = -4` and `-3.3.floor() = -(3.3.floor()) = -3`.
 
 #### Round
 
-$`round`():`integer`\stackrel{def}{=}(`self`+0.5).`floor`()$
-rounds `self` to the nearest integer.\
-**Notation:** `self``.round()`
+`round():Integer := self + 0.5).floor()`
+rounds `self` to the nearest integer.  
+**Notation:** `self.round()`
 
 #### Maximum
 
-$`max`(y:`Real`):`Real`\stackrel{def}{=}`if`  `self` < y\ `then`  y\ `else`\ `self`\ `endif`$ results in the greater
-value of `self` and $y$.\
-**Notation:** `self``.max(`$y$`)`
+`max(y:Real):Real := if  self < y then y else self endif` results in the greater
+value of `self` and `y`.  
+**Notation:** `self.max(y)`
 
 #### Minimum
 
-$`min`(y:`Real`):`Real`\stackrel{def}{=}`if`\ `self`\ > y\ `then`\ y\ `else`\ `self`\ `endif`$ results in the smaller value of
-`self` and $y$.\
-**Notation:** `self``.min(`$y$`)`
+`min(y:Real):Real := if self > y then y else self endif` results in the smaller value of
+`self` and `y`.  
+**Notation:** `self.min(y)`
 
 ### Integer
 
 #### Addition
 
-$+(y:`Integer`):`Integer`$ describes the sum of
-`self` and $y$.\
-**Notation:** `self``+`$y$
+`+(y:Integer):Integer` describes the sum of
+`self` and `y`.  
+**Notation:** `self + y`
 
 #### Subtraction
 
-$-(y:`Integer`):`Integer`$ describes the difference
-between `self` and $y$.\
-**Notation:** `self``-`$y$
+`-(y:Integer):Integer` describes the difference
+between `self` and `y`.  
+**Notation:** `self - y`
 
 #### Multiplication
 
-$*(y:`Integer`):`Integer`$ describes the product of
-`self` and $y$.\
-**Notation:** `self``*`$y$
+`*(y:Integer):Integer` describes the product of
+`self` and `y`.  
+**Notation:** `self * y`
 
 #### Division
 
-$/(y:`Integer`):`Real`$ describes the quotient of
-`self` and $y$.\
-**Notation:** `self``/`$y$
+`/(y:Integer):Real` describes the quotient of
+`self` and `y`.  
+**Notation:** `self / y`
 
 #### Negation
 
-$-():`Integer`\stackrel{def}{=} 0-`self`$ describes the
-negation of `self`.\
-**Notation:** `-``self`
+`-():Integer := 0 - self` describes the negation of `self`.  
+**Notation:** `-self`
 
 #### Less
 
-$<(y:`Integer`):`Boolean`$ evaluates to `true`,
-if the value of `self` is less than the value of $y$. It
+`<(y:Integer):Boolean` evaluates to `true`,
+if the value of `self` is less than the value of `y`. It
 evaluates to `false`, if the value of `self` is equal
-to or greater than the value of $y$. In any other case, it is
-undefined.\
-**Notation:** `self``<`$y$
+to or greater than the value of `y`. In any other case, it is
+undefined.  
+**Notation:** `self < y`
 
 #### Greater
 
-$>(y:`Integer`):`Boolean`$ evaluates to `true`,
-if the value of `self` is greater than the value of $y$. It
+`>(y:Integer):Boolean` evaluates to `true`,
+if the value of `self` is greater than the value of `y`. It
 evaluates to `false`, if the value of `self` is less
-than or equal to the value of $y$. In any other case, it is undefined.\
-**Notation:** `self``>`$y$
+than or equal to the value of `y`. In any other case, it is undefined.  
+**Notation:** `self > y`
 
 #### Less or equal
 
-$<=(y:`Integer`):`Boolean`$ evaluates to `true`,
+`<=(y:Integer):Boolean` evaluates to `true`,
 if the value of `self` is less than or equal to the value of
-$y$. It evaluates to `false`, if the value of `self`
-is greater than the value of $y$. In any other case, it is undefined.\
-**Notation:** `self``<=`$y$
+`y`. It evaluates to `false`, if the value of `self`
+is greater than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self <= y`
 
 #### Greater or equal
 
-$>=(y:`Integer`):`Boolean`$ evaluates to `true`,
+`>=(y:Integer):Boolean` evaluates to `true`,
 if the value of `self` is equal to or greater than the value of
-$y$. It evaluates to `false`, if the value of `self`
-is less than the value of $y$. In any other case, it is undefined.\
-**Notation:** `self``>=`$y$
+`y`. It evaluates to `false`, if the value of `self`
+is less than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self >= y`
 
 #### Absolute Values
 
-$`abs`():`Integer`\stackrel{def}{=}`if`\ `self`\ < 0\ `then`\ -`self`\ `else`\ `self`\ `endif`$ describes the absolute value of
-`self`.\
-**Notation:** `self``.abs()`
+`abs():Integer := if self < 0 then - self else self endif` describes the absolute value of
+`self`.  
+**Notation:** `self.abs()`
 
 #### Euclidean division
 
-$`div`(y:`Integer`):`Integer`$ describes Euclidean
-division of `self` by $y$, that is, it results in the unique
-integer $z$ such that there exists an $0\leq r < y$ with
-$z* y + r=`self`$.\
-**Notation:** `self`` div `$y$
+`div(y:Integer):Integer` describes Euclidean
+division of `self` by `y`, that is, it results in the unique
+integer `z` such that there exists an `0 <= r < y` with
+`z * y + r = self`.  
+**Notation:** `self div y`
 
 #### Modulo
 
-$`mod`(y:`Integer`):`Integer`$ describes Euclidean
-reminder of `self` divided by $y$, that is, it results in the
-unique integer $0\leq r < y$ such that there exists an integer $z$ with
-$z* y +
-  r=`self`$.\
-**Notation:** `self``.mod(`$y$`)`
+`mod(y:Integer):Integer` describes Euclidean
+reminder of `self` divided by `y`, that is, it results in the
+unique integer $0\leq r < y$ such that there exists an integer `z` with
+`z * y + r = self`.  
+**Notation:** `self.mod(y)`
 
 #### Maximum
 
-$`max`(y:`Integer`):`Integer`\stackrel{def}{=}`if`\ `self`\ < y\ `then`\ y\ `else`\ `self`\ `endif`$ evaluates to the greater value of
-`self` and $y$.\
-**Notation:** `self``.max(`$y$`)`
+`max(y:Integer):Integer := if self < y then y else self endif` evaluates to the greater value of
+`self` and `y`.  
+**Notation:** `self.max(y)`
 
 #### Minimum
 
-$`min`(y:`Integer`):`Integer`\stackrel{def}{=}`if`\ `self` > y\ `then`\ y\ `else`\ `self`\ `endif`$ evaluates to the smaller
-value of `self` and $y$.\
-**Notation:** `self``.min(`$y$`)`
+`min(y:Integer):Integer := if self > y then y else self endif` evaluates to the smaller
+value of `self` and `y`.  
+**Notation:** `self.min(y)`
 
 ### Collection
 
-$<col> \Coloneqq `Set`\ |\ `Bag`\ |\ `Sequence`$
+`<col> ::= Set | Bag | Sequence`
 
 #### Size
 
-$`size`():`Integer`\stackrel{def}{=}`self`->`iterate`(e;a:`Integer`=0\mid
-a+1)$\
-**Notation:** `self``->size()`
+`size():Integer := self->iterate(e; a:Integer = 0 | a + 1)`  
+**Notation:** `self->size()`
 
 #### Count
 
-$`count`(,y:T):`Integer`\stackrel{def}{=}
-  `self`->`iterate`(i;a:`Iterate`=0\mid`if`\ y=i\ `then`\ a+1\ `else`\ a\ `endif`)$ counts how often $y$ occurs in the collection.\
-**Notation:** `self``->count(`$y$`)`
+`count(y:T):Integer := 
+  self->iterate(i; a:Integer = 0 | if y = i then a + 1 else a endif)` counts how often `y` occurs in the collection.\
+**Notation:** `self->count(y)`
 
 #### Includes
 
-$`includes`(,y:T):`Boolean`\stackrel{def}{=}`self`->`count`(y)>0$
-returns true if and only if $y$ occurs in the collection.\
-**Notation:** `self``->includes(`$y$`)`
+`includes(y:T):Boolean := self->count(y) > 0`
+returns `true` if and only if `y` occurs in the collection.  
+**Notation:** `self->includes(y)`
 
 #### Excludes
 
-$`excludes`(,y:T):`Boolean`\stackrel{def}{=}`self`->`count`(y)=0$
-returns true if and only if $y$ does not occur in the collection.\
-**Notation:** `self``->excludes(`$y$`)`
+`excludes(y:T):Boolean := self->count(y) = 0`
+returns `true` if and only if `y` does not occur in the collection.  
+**Notation:** `self->excludes(y)`
 
 #### Includes all
 
-$`includesAll`(,y:<col>(T)):`Boolean`\stackrel{def}{=}
-  y->`forAll`(e\mid `self`->`includes`(e))$.\
-**Notation:** `self``->includesAll(`$y$`)`
+`includesAll(y:<col>(T)):Boolean := y->forAll(e | self->includes(e))`.  
+**Notation:** `self->includesAll(y)`
 
 #### Excludes all
 
-$`excludesAll`(,y:<col>(T)):`Boolean`\stackrel{def}{=}
-  y->`forAll`(e\mid `self`->`excludes`(e))$.\
-**Notation:** `self``->excludesAll(`$y$`)`
+`excludesAll(y:<col>(T)):Boolean := y->forAll(e | self->excludes(e))`.  
+**Notation:** `self->excludesAll(y)`
 
 #### Is empty
 
-$`isEmpty`():`Boolean`\stackrel{def}{=}`self`->`size`()=0$.\
-**Notation:** `self``->isEmpty()`
+`isEmpty():Boolean := self->size() = 0`.  
+**Notation:** `self->isEmpty()`
 
 #### Not empty
 
-$`notEmpty`():`Boolean`\stackrel{def}{=}`self`->`size`()<>0$.\
-**Notation:** `self``->notEmpty()`
+`notEmpty():Boolean := self->size() <> 0`.  
+**Notation:** `self->notEmpty()`
 
 #### Sum
 
-$`sum`():T\stackrel{def}{=}`self`->`iterate`(e;a:`Iterate`=0\mid a +
-e)$.\
-**Notation:** `self``->sum()`
+`sum():T := self->iterate(e; a:Iterate = 0 | a + e)`.  
+**Notation:** `self->sum()`
 
 ### Set
 
 #### Set-Equality
 
-$=(y:`Set`(T)):`Boolean`$ describes set-equality.\
-**Notation:** `self``=`$y$
+`=(y:Set(T)):Boolean` describes set-equality.  
+**Notation:** `self = y`
 
 #### Including elements
 
-$`including`(y:T):`Set`(T)$ describes the set obtained
-from `self` by including $y$.\
-**Notation:** `self``->including(`$y$`)`
+`including(y:T):Set(T)` describes the set obtained
+from `self` by including `y`.  
+**Notation:** `self->including(y)`
 
 #### Excluding elements
 
-$`excluding`(y:T):`Set`(T)$ describes the set obtained
-from `self` by excluding $y$.\
-**Notation:** `self``->excluding(`$y$`)`
+`excluding(y:T):Set(T)` describes the set obtained
+from `self` by excluding `y`.  
+**Notation:** `self->excluding(y)`
 
 #### Union
 
-$`union`(y:`Set`(T)):`Set`(T)$ describes the union
-of the set `self` and the set $y$.\
-**Notation:** `self``->union(`$y$`)`
+`union(y:Set(T)):Set(T)` describes the union
+of the set `self` and the set `y`.  
+**Notation:** `self->union(y)`
 
 #### Union with Bag
 
-$`union`(y:`Bag`(T)):`Bag`(T)$ describes the union
+`union(y:Bag(T)):Bag(T)` describes the union
 of the set obtained from `self` by assuming that each element
-of `self` occurs exactly once and the bag $y$.\
-**Notation:** `self``->union(`$y$`)`
+of `self` occurs exactly once and the bag `y`.  
+**Notation:** `self->union(y)`
 
 #### Intersection
 
-$`intersection`(y:`Set`(T)):`Set`(T)$ describes the
-intersection of the set `self` the set $y$.\
-**Notation:** `self``->intersection(`$y$`)`
+`intersection(y:Set(T)):Set(T)` describes the
+intersection of the set `self` the set `y`.  
+**Notation:** `self->intersection(y)`
 
 #### Intersection with Bag
 
-$`intersection`(y:`Bag`(T)):`Set`(T)$ describes the
-intersection of the set `self` and the set obtained from $y$ by
-including every element contained in $y$.\
-**Notation:** `self``->intersection(`$y$`)`
+`intersection(y:Bag(T)):Set(T)` describes the
+intersection of the set `self` and the set obtained from `y` by
+including every element contained in `y`.  
+**Notation:** `self->intersection(y)`
 
 #### Difference of sets
 
-$-(y:`Set`(T)):`Set`(T)$ describes the difference of the
-set `self` the set $y$.\
-**Notation:** `self``-`$y$
+`-(y:Set(T)):Set(T)` describes the difference of the
+set `self` the set `y`.  
+**Notation:** `self - y`
 
 #### Flatten
 
-$`flatten`():`Set`(T')$. If `self` is a set of
+`flatten():Set(T')`. If `self` is a set of
 collections, then this operation returns the set-union of all its
-elements.\
-**Notation:** `self``->flatten()`
+elements.  
+**Notation:** `self->flatten()`
 
 #### As Bag
 
-$`asBag`():
-  `Bag`(T)\stackrel{def}{=}`self`->`iterate`(e;a:`Bag`(T)=`oclEmpty`(`Bag`(T))\mid
-  a->`including`(e))$ returns a bag which includes each
-element of `self` exactly once.\
-**Notation:** `self``->asBag()`
+`asBag():Bag(T) := self->iterate(e; a:Bag(T) = oclEmpty(Bag(T)) | a->including(e))` returns a bag which includes each
+element of `self` exactly once.  
+**Notation:** `self->asBag()`
 
 #### As Sequence
 
-$`asSequence`(): `Sequence`(T)$
- returns a sequence
-containing all elements of `self` exactly once. The order of
+`asSequence():Sequence(T)`
+ returns a sequence containing all elements of `self` exactly once. The order of
 the elements is arbitrary. It is equivalent to the expression
-$`self`->`iterate`(e;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T)\mid
-      a->`append`(e))\quad.$\
-**Notation:** `self``->asSequence()`
+`self->iterate(e; a:Sequence(T)=oclEmpty(Sequence(T)) | a->append(e))`  
+**Notation:** `self->asSequence()`
 
 ### Bag
 
 #### Equality
 
-$=(y:`Bag`(T)):`Boolean`$ describes equality of
-multi-sets.\
-**Notation:** `self``=`$y$
+`=(y:Bag(T)):Boolean` describes equality of
+multi-sets.  
+**Notation:** `self=y`
 
 #### Including elements
 
-$`including`(y:T):`Bag`(T)$ describes the bag obtained
-from `self` by including $y$.\
-**Notation:** `self``->including(`$y$`)`
+`including(y:T):Bag(T)` describes the bag obtained
+from `self` by including `y`.  
+**Notation:** `self->including(y)`
 
 #### Excluding elements
 
-$`excluding`(y:T):`Bag`(T)$ describes the bag obtained
-from `self` by excluding all occurrences of $y$.\
-**Notation:** `self``->excluding(`$y$`)`
+`excluding(y:T):Bag(T)` describes the bag obtained
+from `self` by excluding all occurrences of `y`.  
+**Notation:** `self->excluding(y)`
 
 #### Union
 
-$`union`(y:`Bag`(T)):`Bag`(T)$ describes the union
-of the bag `self` and the bag $y$.\
-**Notation:** `self``->union(`$y$`)`
+`union(y:Bag(T)):Bag(T)` describes the union
+of the bag `self` and the bag `y`.  
+**Notation:** `self->union(y)`
 
 #### Union with Set
 
-$`union`(y:`Set`(T)):`Bag`(T)$ describes the union
-of the bag `self` and the set obtained from $y$ by including
-each element of $y$ exactly once.\
-**Notation:** `self``->union(`$y$`)`
+`union(y:Set(T)):Bag(T)` describes the union
+of the bag `self` and the set obtained from `y` by including
+each element of `y` exactly once.  
+**Notation:** `self->union(y)`
 
 #### Intersection
 
-$`intersection`(y:`Bag`(T)):`Bag`(T)$ describes the
-intersection of the bag `self` and the bag $y$.\
-**Notation:** `self``->intersection(`$y$`)`
+`intersection(y:Bag(T)):Bag(T)` describes the
+intersection of the bag `self` and the bag `y`.  
+**Notation:** `self->intersection(y)`
 
 #### Intersection with Set
 
-$`intersection`(y:`Set`(T)):`Set`(T)$ describes the
-intersection of the bag `self` and the set $y$.\
-**Notation:** `self``->intersection(`$y$`)`
+`intersection(y:Set(T)):Set(T)` describes the
+intersection of the bag `self` and the set `y`.  
+**Notation:** `self->intersection(y)`
 
 #### Flatten
 
-$`flatten`():`Bag`(T')$. If `self` is a bag of
+`flatten():Bag(T')`. If `self` is a bag of
 collections, then this operation returns the bag union of all its
-elements.\
-**Notation:** `self``->flatten(`$y$`)`
+elements.  
+**Notation:** `self->flatten(y)`
 
 #### As Set
 
-$`asSet`():
-  `Set`(T)\stackrel{def}{=}`self`->`iterate`(e;a:`Set`(T)=`oclEmpty`(`Set`(T))\mid
-  a->`including`(e))$ returns a set which contains each
-element of `self`.\
-**Notation:** `self``->asSet()`
+`asSet():
+  Set(T) := self->iterate(e; a:Set(T) = oclEmpty(Set(T)) | a->including(e))` returns a set which contains each
+element of `self`.  
+**Notation:** `self->asSet()`
 
 #### As Sequence
 
-$`asSequence`():`Sequence`(T)$ returns a sequence
+`asSequence():Sequence(T)` returns a sequence
 containing all elements of `self` as often as they occur in the
 multi-set. The order of the elements is arbitrary. It is equivalent to:
-$`self`->`iterate`(e;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T))\mid
-    a->`append`(e))\quad.$ **Notation:**
-`self``->union(`$y$`)`
+`self->iterate(e; a:Sequence(T)=oclEmpty(Sequence(T)) | a->append(e))`.  
+**Notation:** `self->asSequence()`
 
 ### Sequence
 
 #### Get element
 
-$`at`(y:`Integer`):T$ results in the element at the $y$th
-position of the sequence.\
-**Notation:** `self``->at(`$y$`)`
+`at(y:Integer):T` results in the element at the `y`th
+position of the sequence.  
+**Notation:** `self->at(y)`
 
 #### Equality
 
-$=(y:`Sequence`(T)):`Boolean`\stackrel{def}{=}`let`\ s={`self`->`size`()}\ `in`\ s={y->`size`()}\ \newline`and`\newline `Sequence`\{1..s\}->`forAll`(i:`Integer`\mid `self`->`at`(i)=y->`at`(i))$
+`=(y:Sequence(T)):Boolean := let s={self->size()} in s={y->size()} \newline and \newline Sequence{1..s}->forAll(i:Integer | self->at(i) = y->at(i))`
 describes equality of sequences.
-**Notation:** `self``=`$y$
+**Notation:** `self = y`
 
 #### Union
 
-$`union`(y:`Sequence`(T)):`Sequence`(T)$ describes
-the concatenation of `self` and $y$.\
-**Notation:** `self``->union(`$y$`)`
+`union(y:Sequence(T)):Sequence(T)` describes
+the concatenation of `self` and `y`.  
+**Notation:** `self->union(y)`
 
 #### Flatten
 
-$`flatten`(`self`:`Sequence`(T)):`Sequence`(T')$.
+`flatten(self:Sequence(T)):Sequence(T')`.
 If `self` is a sequence of collections, then this operation
-returns the sequence concatenation of all its elements.\
-**Notation:** `self``->flatten()`
+returns the sequence concatenation of all its elements.  
+**Notation:** `self->flatten()`
 
 #### Append elements
 
-$`append`(y:T):`Sequence`(T)\stackrel{def}{=}
-`self`->`union`(`Sequence`\{y\})$ results
-in the sequence which consists of all elements of $y$ with $y$
-appended.\
-**Notation:** `self``->append(`$y$`)`
+`append(y:T):Sequence(T) := 
+ self->union(Sequence{y})` results
+in the sequence which consists of all elements of `y` with `y`
+appended.  
+**Notation:** `self->append(y)`
 
 #### Prepend elements
 
-$`prepend`(y:T):`Sequence`(T)\stackrel{def}{=}
-  `Sequence`\{y\}->`union`(`self`)$
+`prepend(y:T):Sequence(T) := 
+  Sequence{y}->union(self)`
 results in the sequence which consists of all elements of
-`self` with $y$ prepended.\
-**Notation:** `self``->prepend(`$y$`)`
+`self` with `y` prepended.  
+**Notation:** `self->prepend(y)`
 
 #### Excluding elements
 
-$`excluding`(y:T):`Sequence`(T)\stackrel{def}{=} `self`->  `iterate`(i;a:`Sequence`(T)=`oclEmpty`(`Sequence`(T))\mid \mathit {if}\ y=i\ `then`\ a\ \newline `else`\ a->`append`(i)\ `endif`)$
-results in the largest sub-sequence of `self`, in which $y$
-does not occur.\
-**Notation:** `self``->excluding(`$y$`)`
+`excluding(y:T):Sequence(T) := self->iterate(i; a:Sequence(T)=oclEmpty(Sequence(T)) | if y = i then a else a->append(i) endif)`
+results in the largest sub-sequence of `self`, in which `y`
+does not occur.  
+**Notation:** `self->excluding(y)`
 
 #### Subsequence
 
-$`subSequence`(y:`Integer`,z:`Integer`):`Sequence`(T)$
-results in the subsequence of `self` starting at index $y$ and
-ending at index $z$. It is equivalent to: $$\begin{gathered}
-    `Sequence`\{1..z\}->`iterate`(i;
-    a:`Sequence`(T)=`oclEmpty`(`Sequence`(T))\mid{}\\
-    `if`\ y\leq i\ `and`\ i\leq z\ `then`\\
-    a->`append`(`self`->`at`(i))\ `else`\ a\ `endif`)
-  \end{gathered}$$\
-**Notation:** `self``->subSequence(`$y$`)`
+`subSequence(y:Integer, z:Integer):Sequence(T)`
+results in the subsequence of `self` starting at index `y` and
+ending at index `z`. It is equivalent to:
+```
+Sequence{1..z}->iterate(i; a:Sequence(T)=oclEmpty(Sequence(T)) |
+                           if y <= i and i <= z then
+                              a->append(self->at(i))
+                           else
+                              a
+                           endif)
+```
+**Notation:** `self->subSequence(y)`
 
 #### Get first element
 
-$`first`():T\stackrel{def}{=}`self`->`at`(1)$.\
-**Notation:** `self``->first(`$y$`)`
+`first():T := self->at(1)`.  
+**Notation:** `self->first(y)`
 
 #### Get last element
 
-$`last`():T\stackrel{def}{=}`self`->`at`(`self`->`size`())$.\
-**Notation:** `self``->last(`$y$`)`
+`last():T := self->at(self->size())`.  
+**Notation:** `self->last(y)`
 
 #### As Set
 
-$`asSet`():
-  `asSet`(T)\stackrel{def}{=}`self`->`iterate`(e;a:`Set`(T)=`oclEmpty`(`Set`(T))\mid
-  a->`including`(e))$ returns a set which contains each
-element of `self`.\
-**Notation:** `self``->asSet(`$y$`)`
+`asSet(): asSet(T) := self->iterate(e; a:Set(T)=oclEmpty(Set(T)) |
+  a->including(e))` returns a set which contains each
+element of `self`.  
+**Notation:** `self->asSet(y)`
 
 #### As Bag
 
-$`asBag`():
-  `Bag`(T)\stackrel{def}{=}`self`->`iterate`(e;a:`Bag`(T)=`oclEmpty`(`Bag`(T))\mid
-  a->`including`(e))$ returns a bag containing all
-elements of the sequence `self`.\
-**Notation:** `self``->asBag(`$y$`)`
+`asBag() : Bag(T) := self->iterate(e; a:Bag(T)=oclEmpty(Bag(T)) | a->including(e))` returns a bag containing all
+elements of the sequence `self`.  
+**Notation:** `self->asBag(y)`
 
 ## Bibliography
 <a name="bib-gr98a">[GR98a]</a> Martin Gogolla and Mark Richters. On constraints and queries in UML. In Mar-
