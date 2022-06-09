@@ -521,8 +521,8 @@ Protocol state machines can be defined inside the *state machines* section in cl
           <stateinvariant> ::= <booleanoclexpression>
     <transitiondefinition> ::= <sourcestate> -> <targetstate> {'['<precondition>']' (<event> | <operationdeclaration>) '['<postcondition>']'}
         <statemachinename> ::= <name>
-        <precondition> ::= <booleanoclexpression>
-        <postcondition> ::= <booleanoclexpression>
+            <precondition> ::= <booleanoclexpression>
+           <postcondition> ::= <booleanoclexpression>
         <event> ::= create
 
 #### Example
