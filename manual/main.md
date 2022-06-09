@@ -135,11 +135,11 @@ an object diagram once we have created objects and links.
 
 #### Creating Objects and Setting Attributes
 
-Now you can create and destroy objects of type $\mathit{Car}$ and set
+Now you can create and destroy objects of type `Car` and set
 their attributes. More complex specifications allow more commands to
 manipulate the system state. (see section
 [5.1](#ShellCommands){reference-type="ref" reference="ShellCommands"}).\
-We create two objects $\mathit{smallCar}$ and $\mathit{bigCar}$ and set
+We create two objects `smallCar` and `bigCar` and set
 their mileage to $2000$ resp. $-1500$ kilometers. The commands are shown
 below. They can be entered step by step or by reading in a command file.
 To read in the corresponding command file use the following USE command:
@@ -154,7 +154,7 @@ To read in the corresponding command file use the following USE command:
 #### Checking OCL Invariants
 
 After creating the system state the Class Invariant View shows that
-$\mathit{MileageNotNegative}$ is violated. (see figure
+`MileageNotNegative` is violated. (see figure
 [1.5](#fig:InvFailed){reference-type="ref" reference="fig:InvFailed"})\
 
 ![Constraint
@@ -165,7 +165,7 @@ To get more information you can double click on the failed invariant.
 This opens the Evaluation Browser showing the evaluation of the marked
 invariant. In figure [1.6](#fig:InvFailedBrowser){reference-type="ref"
 reference="fig:InvFailedBrowser"} you can see, that object
-$\mathit{bigCar}$ violates the invariant because its mileage is a
+`bigCar` violates the invariant because its mileage is a
 negative number.
 
 ![Evaluation of the violated
@@ -185,8 +185,8 @@ expression[]{label="fig:EvalSetExpr"}](Screenshots/GUI/EvalSetExpr.png){#fig:Eva
 \
 The example in figure [1.8](#fig:EvalSelectExpr){reference-type="ref"
 reference="fig:EvalSelectExpr"} shows a more complex expression with
-$\mathit{allInstances}$ and the collection operations $\mathit{select}$,
-$\mathit{collect}$ and $\mathit{exists}$.
+`allInstances` and the collection operations `select`,
+`collect` and `exists`.
 
 ![Evaluating a more complex
 expression[]{label="fig:EvalSelectExpr"}](Screenshots/GUI/EvalSelectExpr.png){#fig:EvalSelectExpr}
@@ -229,7 +229,7 @@ The UML class diagram in figure
 [1.10](#fig:DiagramPersonCompany){reference-type="ref"
 reference="fig:DiagramPersonCompany"} shows an altered model
 representing persons and companies. Persons have a name, an age, and a
-salary, which can be raised with the operation $\mathit{raiseSalary}$ by
+salary, which can be raised with the operation `raiseSalary` by
 a specific amount. They work for at most one company, which has a name
 and a location. Companies can hire and fire persons.
 
@@ -239,10 +239,10 @@ example[]{label="fig:DiagramPersonCompany"}](Pictures/cls-Employee.png){#fig:Dia
 #### Graphs {#graphsExample}
 
 This example is modeling a graph structure. Objects of class
-$\mathit{Node}$ represent nodes of a graph that can be connected by
+`Node` represent nodes of a graph that can be connected by
 edges. Each node can be connected to an arbitrary number of source and
-target nodes. The $\mathit{Node}$ class contains an operation
-$\mathit{newTarget}$. The purpose of this operation is to create a new
+target nodes. The `Node` class contains an operation
+`newTarget`. The purpose of this operation is to create a new
 node and to insert a new edge between the source node and the new target
 node.
 
@@ -256,7 +256,7 @@ simulation. It also shows that postconditions may be specified on
 operations without side effects. An OCL expression can be given to
 describe the computation of a side effect free operation. In the
 example, we use a recursive definition of the factorial function. There
-is only one class $\mathit{Rec}$.
+is only one class `Rec`.
 
 ![Class diagram of factorial
 example[]{label="fig:FactorialClassDiagram"}](Pictures/NestedClassDiagram.png){#fig:FactorialClassDiagram}
@@ -521,8 +521,8 @@ Protocol state machines can be defined inside the *state machines* section in cl
           <stateinvariant> ::= <booleanoclexpression>
     <transitiondefinition> ::= <sourcestate> -> <targetstate> {'['<precondition>']' (<event> | <operationdeclaration>) '['<postcondition>']'}
         <statemachinename> ::= <name>
-        <precondition> ::= <booleanoclexpression>
-        <postcondition> ::= <booleanoclexpression>
+            <precondition> ::= <booleanoclexpression>
+           <postcondition> ::= <booleanoclexpression>
         <event> ::= create
 
 #### Example
@@ -762,8 +762,8 @@ reference="fig:DiagramPersonCompany"}.
       Company[0..1] role employer
     end
 
-We add pre- and postconditions for the $\mathit{hire}$ and
-$\mathit{fire}$ operations in class Company. The USE specification is
+We add pre- and postconditions for the `hire` and
+`fire` operations in class Company. The USE specification is
 extended as follows.
 
     -- constraints
@@ -780,13 +780,13 @@ extended as follows.
       post firePost: employee->excludes(p)
 
 The first precondition of the hire operation is named
-$\mathit{hirePre1}$ and makes sure that the operation can only be called
+`hirePre1` and makes sure that the operation can only be called
 with a well defined person object.[^7] The second precondition
-$\mathit{hirePre2}$ makes sure that the person passed as parameter $p$
+`hirePre2` makes sure that the person passed as parameter $p$
 is not already an employee of the company. The postcondition
-$\mathit{hirePost}$ guarantees that after the operation has exited, the
+`hirePost` guarantees that after the operation has exited, the
 person actually has been added to the set of employees. The constraints
-for the operation $\mathit{fire}$ work just the other way round.
+for the operation `fire` work just the other way round.
 
 #### Graphs {#graphsSpec}
 
@@ -817,8 +817,8 @@ reference="graphsExample"}) is shown below.
       post targetNodeIsNew:
         (target - target@pre)->forAll(n | n.oclIsNew())
 
-The postcondition $\mathit{targetNodeIsNew}$ also demonstrates the
-application of the OCL operation $\mathit{oclIsNew}$ to check for the
+The postcondition `targetNodeIsNew` also demonstrates the
+application of the OCL operation `oclIsNew` to check for the
 creation of new objects.
 
 #### Factorial {#factorialSpec}
@@ -881,9 +881,9 @@ Figure [3.2](#fig:ViewsWithObject){reference-type="ref"
 reference="fig:ViewsWithObject"} is similar to figure
 [1.4](#fig:WorkingspaceViews){reference-type="ref"
 reference="fig:WorkingspaceViews"}, but the specification changed to the
-Employees, Departments and Projects example and the object $\mathit{cs}$
+Employees, Departments and Projects example and the object `cs`
 was created. The lower left view indicates that there is now one
-$\mathit{Department}$ object, and the object diagram shows this object
+`Department` object, and the object diagram shows this object
 graphically.\
 
 ![Main window with views after creating a new
@@ -895,7 +895,7 @@ provides several display options. For example, the automatic layout can
 be turned off, the layout of the diagram can be saved and restored from
 a file, etc. In the previous picture we have turned on the display of
 attribute values. You can see that the attribute values of the
-$\mathit{Department}$ object are all undefined. For changing attribute
+`Department` object are all undefined. For changing attribute
 values, we can use the `set` command:
 
     use> !set cs.name := 'Computer Science'
@@ -904,7 +904,7 @@ values, we can use the `set` command:
 
 Attributes can also be changed with an Object Properties View. If you
 choose `View|Create|` `Object Properties` from the `View` menu and
-select the $\mathit{cs}$ object, you get the view shown in figure
+select the `cs` object, you get the view shown in figure
 [3.3](#fig:ObjectProperties){reference-type="ref"
 reference="fig:ObjectProperties"} where you can inspect and change
 attributes of the selected object.\
@@ -913,7 +913,7 @@ attributes of the selected object.\
 View[]{label="fig:ObjectProperties"}](Screenshots/GUI/ObjectProperties.png){#fig:ObjectProperties}
 
 \
-We continue by adding two $\mathit{Employee}$ objects and setting their
+We continue by adding two `Employee` objects and setting their
 attributes.[^8]
 
     use> !create john : Employee
@@ -959,7 +959,7 @@ class diagram shown in figure
 [1.9](#fig:exampleModel){reference-type="ref"
 reference="fig:exampleModel"}) In our current state, no employee has a
 link to a department. In order to fix this, we insert the missing links
-into the $\mathit{WorksIn}$ association:
+into the `WorksIn` association:
 
     use> !insert (john,cs) into WorksIn
     use> !insert (frank,cs) into WorksIn
@@ -969,7 +969,7 @@ the object diagram and choosing the `insert` command from the context
 menu.\
 \
 The new state shows the links in the object diagram as red edges between
-the $\mathit{Employee}$ objects and the $\mathit{Department}$ object.
+the `Employee` objects and the `Department` object.
 (see figure [3.4](#fig:ViewsWithLinks){reference-type="ref"
 reference="fig:ViewsWithLinks"})
 
@@ -1005,11 +1005,11 @@ The resulting state is shown in figure
 file[]{label="fig:ViewsDemo"}](Screenshots/GUI/ViewsDemo.png){#fig:ViewsDemo}
 
 In this state, three of the four invariants are true but one fails. The
-failing one has the name $\mathit{BudgetWithinDepartmentBudget}$. This
+failing one has the name `BudgetWithinDepartmentBudget`. This
 invariant states that the budget of a project must not exceed the budget
 of the controlling department. Obviously, one of the two projects in our
 example must have a budget higher than the budget of the department.\
-The value $\mathit{false}$ finally resulting from an evaluation of an
+The value `false` finally resulting from an evaluation of an
 invariant is not very helpful in finding the reason for an illegal
 system state. An Evaluation Browser provides a more detailed view of an
 expression by showing the results of all sub expressions. (see section
@@ -1027,11 +1027,11 @@ The root node in the evaluation browser shows the complete expression
 and its result, which is false for the chosen invariant. For each
 component of an expression there are child nodes displaying the sub
 expressions and their results. You can see that the argument expression
-of the $\mathit{forAll}$ quantifier is false, thus making the whole
+of the `forAll` quantifier is false, thus making the whole
 expression result false. In this sub expression, the variable
-$\mathit{self}$ is bound to the object $\mathit{research}$. The
+`self` is bound to the object `research`. The
 Evaluation Browser has helped to find out that it is the
-$\mathit{budget}$ attribute value of this object which causes the
+`budget` attribute value of this object which causes the
 invariant to fail.
 
 ### Validating Pre- and Postconditions
@@ -1071,8 +1071,8 @@ reference="fig:EmployeeObjects"}).\
 example[]{label="fig:EmployeeObjects"}](Screenshots/GUI/EmployeeObjects.png){#fig:EmployeeObjects}
 
 \
-Next, we want to call the operation $\mathit{hire}$ on the company
-object to hire $\mathit{joe}$ as a new employee.
+Next, we want to call the operation `hire` on the company
+object to hire `joe` as a new employee.
 
 ##### Calling Operations and Checking Preconditions
 
@@ -1086,8 +1086,8 @@ refer to existing objects.
     ibm : Company = @ibm
     joe : Person = @joe
 
-We invoke the operation $\mathit{hire}$ on the receiver object
-$\mathit{ibm}$ and pass the object $\mathit{joe}$ as parameter.
+We invoke the operation `hire` on the receiver object
+`ibm` and pass the object `joe` as parameter.
 
     use> !openter ibm hire(joe)
     precondition `hirePre1' is true
@@ -1099,7 +1099,7 @@ The openter command has the following effect.
 
 2. The argument expressions are evaluated.
 
-3. The variable $\mathit{self}$ is bound to the receiver object and the
+3. The variable `self` is bound to the receiver object and the
    argument values are bound to the formal parameters of the operation.
    These bindings determine the local scope of the operation.
 
@@ -1108,7 +1108,7 @@ The openter command has the following effect.
 5. If all preconditions are satisfied, the current system state is
    saved and the operation call is saved on a call stack.
 
-In the example, the call of the operation $\mathit{hire}$ was successful
+In the example, the call of the operation `hire` was successful
 because both preconditions are satisfied. The stack of currently active
 operations can be viewed by issuing the following command.
 
@@ -1116,7 +1116,7 @@ operations can be viewed by issuing the following command.
     active operations:
     1. Company::hire(p : Person)
 
-We can verify the bindings of the $\mathit{self}$ variable and the
+We can verify the bindings of the `self` variable and the
 formal parameter $p$ as follows.
 
     use> info vars
@@ -1129,7 +1129,7 @@ formal parameter $p$ as follows.
 
 We can simulate the execution of an operation with the usual USE
 primitives for changing a system state. The postcondition of the
-$\mathit{hire}$ operation requires that a $\mathit{WorksFor}$ link
+`hire` operation requires that a `WorksFor` link
 between the person and the company has to be created. We also set the
 salary of the new employee.
 
@@ -1139,7 +1139,7 @@ salary of the new employee.
 The object diagram in
 [3.8](#fig:EmployeeObjectsLinks){reference-type="ref"
 reference="fig:EmployeeObjectsLinks"} shows the new system state with
-the link between the $\mathit{Person}$ and $\mathit{Company}$ objects.
+the link between the `Person` and `Company` objects.
 
 ![Object diagram of the Person & Company example after changing the
 state[]{label="fig:EmployeeObjectsLinks"}](Screenshots/GUI/EmployeeObjectsLinks.png){#fig:EmployeeObjectsLinks}
@@ -1150,11 +1150,11 @@ After generating all side effects of an operation, we are ready to exit
 the operation and check its postconditions. The command `opexit`
 simulates a return from the currently active operation. The syntax is:\
 \
-`!opexit` $\mathit{ReturnValExpr}$\
+`!opexit` `ReturnValExpr`\
 \
-The optional $\mathit{ReturnValExpr}$ is only required for operations
+The optional `ReturnValExpr` is only required for operations
 with a result value. An example will be given later. The operation
-$\mathit{hire}$ specifies no result, so we can just issue:
+`hire` specifies no result, so we can just issue:
 
     use> !opexit
     postcondition `hirePost' is true
@@ -1164,7 +1164,7 @@ The opexit command has the following effect.
 1. The currently active operation is popped from the call stack.
 
 2. If an optional result value is given, it is bound to the special OCL
-   variable $\mathit{result}$.
+   variable `result`.
 
 3. All postconditions specified for the operation are evaluated in
    context of the current system state and the pre state saved at
@@ -1172,7 +1172,7 @@ The opexit command has the following effect.
 
 4. All local variable bindings are removed.
 
-In our example, the postcondition $\mathit{hirePost}$ is satisfied.\
+In our example, the postcondition `hirePost` is satisfied.\
 \
 The operation has been removed from the call stack:
 
@@ -1191,7 +1191,7 @@ available after exiting the operation.
 
 ##### Result Values and References to the Previous State
 
-The operation $\mathit{raiseSalary}$ in class $\mathit{Person}$ is used
+The operation `raiseSalary` in class `Person` is used
 for changing the salary of an employee by a given rate. The following
 constraints are added to the model specification.
 
@@ -1201,23 +1201,23 @@ constraints are added to the model specification.
       post resultPost:
         result = salary
 
-The first postcondition $\mathit{raiseSalaryPost}$ requires that the new
+The first postcondition `raiseSalaryPost` requires that the new
 value of the salary attribute equals a value that is computed in terms
 of the previous value using the $\mathit{@pre}$ modifier. The second
-postcondition $\mathit{resultPost}$ specifies that the result value of
+postcondition `resultPost` specifies that the result value of
 the operation equals the new salary.\
 \
-We call $\mathit{raiseSalary}$ on the new employee $\mathit{joe}$. The
+We call `raiseSalary` on the new employee `joe`. The
 rate $0.1$ is given to raise the salary by $10\%$.
 
     use> !openter joe raiseSalary(0.1)
 
-The $\mathit{salary}$ attribute is assigned a new value with the `set`
+The `salary` attribute is assigned a new value with the `set`
 command.
 
     use> !set self.salary := self.salary + self.salary * rate
 
-Since $\mathit{raiseSalary}$ is an operation with a return value, we
+Since `raiseSalary` is an operation with a return value, we
 have to specify a result value on exit. This value is bound to the OCL
 result variable when the postconditions are evaluated.
 
@@ -1241,7 +1241,7 @@ example[]{label="fig:EmployeeSequence"}](Screenshots/GUI/EmployeeSequence.png){#
 
 The graph model specified in section
 [2.3.3](#graphsSpec){reference-type="ref" reference="graphsSpec"}
-includes constraints calling the operation $\mathit{oclIsNew}$. We use
+includes constraints calling the operation `oclIsNew`. We use
 the following command script for animating the model. The script
 simulates three operation calls. The first one is expected to succeed
 while the second and third one should violate the postconditions.
@@ -1390,12 +1390,12 @@ a corresponding button available at the toolbar.
 ##### Open Specification... {#openSpec}
 
 Loads an available USE specification from file
-($\mathit{filename}$`.use`).
+(`filename``.use`).
 
 ##### Save Script...
 
 Saves all previously entered operation calls and commands which changed
-the system state to file ($\mathit{filename}$`.cmd`).
+the system state to file (`filename``.cmd`).
 
 ##### Save Protocol...
 
@@ -1643,7 +1643,7 @@ names, multiplicities, attributes or operations should be displayed. If
 you enable the `Auto-Layout` option, the system tries to arrange the
 class diagram elements optimally. The `Anti-aliasing` option switches
 the anti aliasing on and off. It is possible to save resp. load an
-diagram layout to resp. from file ($\mathit{filename}$`.clt`).\
+diagram layout to resp. from file (`filename``.clt`).\
 If you select at least one Element, you can hide it or all other
 elements but the selected ones. The `Show` command recovers the hidden
 elements. (see figure
@@ -1717,8 +1717,8 @@ Example)[]{label="fig:ClassInvariantView"}](Screenshots/GUI/Views/ClassInvariant
 If no instance of the invariant context violates the corresponding
 invariant and no model inherent constraint (see section
 [3.1.1](#modelinherent){reference-type="ref" reference="modelinherent"})
-the view shows $\mathit{true}$. If an objects violates a model inherent
-constraint it appears $N/A$. $\mathit{false}$ appears otherwise. The
+the view shows `true`. If an objects violates a model inherent
+constraint it appears $N/A$. `false` appears otherwise. The
 bottom of the window shows the number of violated invariants in the
 actual system state. A double click opens the evaluation browser
 analyzing the current invariant with respect to the actual system state.
@@ -1839,7 +1839,7 @@ reference="classextendview"}) or the OCL Evaluation Window (see section
 figure [4.24](#fig:EvaluationBrowser){reference-type="ref"
 reference="fig:EvaluationBrowser"} shows the Evaluation Browser
 displaying the evaluation tree for the invariant
-$\mathit{MoreEmployeesThanProjects}$ in the Employees, Departments and
+`MoreEmployeesThanProjects` in the Employees, Departments and
 Projects example.\
 
 ![Evaluation Browser (Employees, Departments and Projects
@@ -1851,8 +1851,8 @@ the following subsections.
 
 #### Extended Evaluation
 
-You can select which OCL operations ($\mathit{exists}$,
-$\mathit{forAll}$, $\mathit{and}$, $\mathit{or}$, $\mathit{implies}$)
+You can select which OCL operations (`exists`,
+`forAll`, `and`, `or`, `implies`)
 should be evaluated extendedly. (see figure
 [4.25](#fig:EvaluationBrowserExtended){reference-type="ref"
 reference="fig:EvaluationBrowserExtended"}
@@ -1862,35 +1862,35 @@ Evaluation[]{label="fig:EvaluationBrowserExtended"}](Screenshots/GUI/EvaluationB
 
 ##### exists
 
-Selecting the menu entry `exists` implicates that all $\mathit{exists}$
+Selecting the menu entry `exists` implicates that all `exists`
 expressions are evaluated extendedly. The extended evaluation does not
-stop if an element fulfilling the body of the $\mathit{exists}$
+stop if an element fulfilling the body of the `exists`
 expression was already found. The whole collection expression is
 evaluated and all elements fulfilling the expression are displayed.
 
 ##### forAll
 
-If you select the option `forAll` every $\mathit{forAll}$ expression is
+If you select the option `forAll` every `forAll` expression is
 evaluated extendedly. If an element does not fulfill the body of a
-$\mathit{forAll}$ expression, the extended evaluation does not stop, but
+`forAll` expression, the extended evaluation does not stop, but
 continues the iteration until the last element was regarded. All
 elements and their evaluation results are displayed.
 
 ##### and
 
-The extended evaluation of $\mathit{and}$ expressions implies, that the
-right side of an $\mathit{and}$ expression is evaluated even if the left
+The extended evaluation of `and` expressions implies, that the
+right side of an `and` expression is evaluated even if the left
 side is not true. The result of the right side is always displayed.
 
 ##### or
 
-If the left side of an $\mathit{or}$ expression is true, USE normally
+If the left side of an `or` expression is true, USE normally
 stops the evaluation of this expression. You can continue the evaluation
 even though the left side is already true, by selecting the `or` option.
 
 ##### implies
 
-The extended evaluation of $\mathit{implies}$ expressions evaluate the
+The extended evaluation of `implies` expressions evaluate the
 conclusions even if the premises are false.
 
 ##### all
@@ -1903,10 +1903,10 @@ If you switch on the Variable Assignment Window, it is displayed on the
 right side of the evaluation Tree. [^9] It shows all value assignments
 of the existing variables in the selected tree node. The example in
 figure [4.24](#fig:EvaluationBrowser){reference-type="ref"
-reference="fig:EvaluationBrowser"} shows the variable $\mathit{self}$ of
-type $\mathit{Department}$ and its value $\mathit{@cs}$. The
+reference="fig:EvaluationBrowser"} shows the variable `self` of
+type `Department` and its value $\mathit{@cs}$. The
 corresponding node represents the expression
-$\mathit{@cs}.\mathit{project}\rightarrow\mathit{size}=2$.
+$\mathit{@cs}.`project`->`size`=2$.
 
 #### Subexpression Evaluation Window
 
@@ -1916,10 +1916,10 @@ the subexpressions of the marked tree node, which are evaluated in the
 next step. The example in figure
 [4.24](#fig:EvaluationBrowser){reference-type="ref"
 reference="fig:EvaluationBrowser"} marks a tree node with expression
-$\mathit{@cs}.\mathit{project}\rightarrow\mathit{size}=2$. The
+$\mathit{@cs}.`project`->`size`=2$. The
 navigation expression has to be evaluated next. So the window shows the
 result of this subexpression:
-$\mathit{Set}\{\mathit{@research},\mathit{@teaching}\}\rightarrow \mathit{size}=2$
+`Set`\{\mathit{@research},\mathit{@teaching}\}-> `size`=2$
 
 #### Tree Views
 
@@ -1998,9 +1998,9 @@ reference="fig:EvaluationBrowserMenuTrueFalse"})
 Highlighting[]{label="fig:EvaluationBrowserMenuTrueFalse"}](Screenshots/GUI/EvaluationBrowserMenuTrueFalse.png){#fig:EvaluationBrowserMenuTrueFalse}
 
 Enabling highlighting changes the color resp. font of the tree nodes.
-Nodes representing an expression, which evaluates to $\mathit{true}$,
+Nodes representing an expression, which evaluates to `true`,
 receives a green color resp. a bold font, if the `No colors` option is
-switched on. If an expression evaluates to $\mathit{false}$, the node
+switched on. If an expression evaluates to `false`, the node
 appears red resp. inverse colored. Neutral nodes showing value
 assignments and undefined expressions are not highlighted. You can
 choose between different highlighting modes. They are listed below.
@@ -2172,12 +2172,12 @@ Opens all nodes existing in the evaluation tree.
 ##### Expand all true
 
 All displayed nodes of type boolean and their child nodes are opened if
-they evaluate to $\mathit{true}$.
+they evaluate to `true`.
 
 ##### Expand all false
 
 All displayed nodes of type boolean and their child nodes are opened if
-they evaluate to $\mathit{false}$.
+they evaluate to `false`.
 
 ##### Collapse
 
@@ -2243,12 +2243,12 @@ Prints all available commands and a synopsis of their description.
 
 #### Help about a specific Shell command
 
-Prints the syntax for the use of command $\mathit{cmd}$ and its
+Prints the syntax for the use of command `cmd` and its
 description with synopsis.
 
 #### Syntax:
 
-:   `help` $\mathit{cmd}$
+:   `help` `cmd`
 
 Example:
 
@@ -2256,14 +2256,14 @@ Example:
 
 #### Compile and evaluate an OCL expression
 
-Compiles and evaluates the expression $\mathit{OclExpr}$. This Shell
+Compiles and evaluates the expression `OclExpr`. This Shell
 command is comparable to the function of the Evaluation Window in the
 GUI. (see section [4.1.3.2](#evalExpr){reference-type="ref"
 reference="evalExpr"})
 
 #### Syntax:
 
-:   `?` $\mathit{OclExpr}$
+:   `?` `OclExpr`
 
 Example:
 
@@ -2281,14 +2281,14 @@ Example:
 
 #### Compile and evaluate an OCL expression (verbose)
 
-Compiles and evaluates the Expression $\mathit{OclExpr}$ with verbose
+Compiles and evaluates the Expression `OclExpr` with verbose
 output of subexpression results. After evaluating the expression the
 Evaluation Browser is displayed. It shows the evaluation tree for
-$\mathit{OclExpr}$.
+`OclExpr`.
 
 #### Syntax:
 
-:   `??` $\mathit{OclExpr}$
+:   `??` `OclExpr`
 
 Example:
 
@@ -2310,11 +2310,11 @@ Example:
 
 #### Compile an OCL expression and show its static type
 
-Compiles the expression $\mathit{OclExpr}$ and shows its static type.
+Compiles the expression `OclExpr` and shows its static type.
 
 #### Syntax:
 
-:   `:` $\mathit{OclExpr}$
+:   `:` `OclExpr`
 
 Example:
 
@@ -2370,23 +2370,23 @@ Example:
 #### Create objects {#createObjects}
 
 Creates one or more objects of a given class or associationclass. The
-$\mathit{newIdList}$ has to include at least one object name. These
-names identify the new objects of the type $\mathit{class}$. If
-$\mathit{class}$ is an association class the link ends given with
-$\mathit{idList}$ have to be specified with the keyword `between`. The
-order of the names in $\mathit{idList}$ must conform to the definition
+`newIdList` has to include at least one object name. These
+names identify the new objects of the type `class`. If
+`class` is an association class the link ends given with
+`idList` have to be specified with the keyword `between`. The
+order of the names in `idList` must conform to the definition
 of the associationclass.
 
 #### Syntax:
 
-:   `!create` $\mathit{newIdList}$ `:` $\mathit{class}$ $[$`between (`
-    $\mathit{IdList}$ `)`$]$
+:   `!create` `newIdList` `:` `class` $[`between (`
+    `IdList` `)`$]$
 
 Example for classes:
 
 :   The following commands create three objects for the class
-    $\mathit{Apple}$ and one for the classes $\mathit{Lemon}$ and
-    $\mathit{Banana}$.
+    `Apple` and one for the classes `Lemon` and
+    `Banana`.
 
     User input:
 
@@ -2399,9 +2399,9 @@ Example for classes:
 Example for association classes:
 
 :   This example creates an instance of the associationclass
-    $\mathit{FruitSalad}$. The actual link ends are the existing objects
-    $\mathit{banana}$ with type $\mathit{Banana}$ and
-    $\mathit{redApple}$ with type $\mathit{Apple}$.
+    `FruitSalad`. The actual link ends are the existing objects
+    `banana` with type `Banana` and
+    `redApple` with type `Apple`.
 
     User input:
 
@@ -2411,14 +2411,14 @@ Example for association classes:
 
 #### Destroy objects
 
-Destroys the objects given by the $\mathit{idList}$, which includes at
+Destroys the objects given by the `idList`, which includes at
 least one object name. If the destroyed object is a link end, the
 corresponding link is deleted resp. the associationclass object is
 destroyed.
 
 #### Syntax:
 
-:   `!destroy` $\mathit{idList}$
+:   `!destroy` `idList`
 
 Example:
 
@@ -2430,20 +2430,20 @@ Example:
 
 #### Insert a link into an association {#insertInto}
 
-Inserts a link between the objects in the $\mathit{idList}$ into the
-association $\mathit{assoc}$.
+Inserts a link between the objects in the `idList` into the
+association `assoc`.
 
 #### Syntax:
 
-:   `!insert` $\mathit{idList}$ `into` $\mathit{assoc}$
+:   `!insert` `idList` `into` `assoc`
 
 Example:
 
 :   This command inserts a link into the 3 ary association
-    $\mathit{Ingredients}$. The second link end must have the type
-    $\mathit{Orange}$. This is an abstract class. It cannot be
-    instantiated. $\mathit{Apple}$ is a subtype of this class. That
-    means we may use the object $\mathit{yellowApple}$.
+    `Ingredients`. The second link end must have the type
+    `Orange`. This is an abstract class. It cannot be
+    instantiated. `Apple` is a subtype of this class. That
+    means we may use the object `yellowApple`.
 
     User input:
 
@@ -2453,12 +2453,12 @@ Example:
 
 #### Delete a link from an association
 
-Deletes the link between the objects in the $\mathit{idList}$ from the
-association $\mathit{assoc}$.
+Deletes the link between the objects in the `idList` from the
+association `assoc`.
 
 #### Syntax:
 
-:   `!delete` $\mathit{idList}$ `from` $\mathit{assoc}$
+:   `!delete` `idList` `from` `assoc`
 
 Example:
 
@@ -2473,18 +2473,18 @@ Example:
 
 #### Set an attribute value of an object
 
-Sets the attribute $\mathit{attr}$ of the object $\mathit{obj}$ to a new
-value given by $\mathit{OclExpr}$.
+Sets the attribute `attr` of the object `obj` to a new
+value given by `OclExpr`.
 
 #### Syntax:
 
-:   `!set` $\mathit{obj}$`.`$\mathit{attr}$ `:=` $\mathit{OclExpr}$
+:   `!set` `obj``.``attr` `:=` `OclExpr`
 
 Example:
 
 :   Both commands set the boolean attribute of object
-    $\mathit{redApple}$ to true. It inherits the $\mathit{juice}$
-    attribute from $\mathit{Orange}$.
+    `redApple` to true. It inherits the `juice`
+    attribute from `Orange`.
 
     User input:
 
@@ -2495,9 +2495,9 @@ Example:
 
 #### Enter object operation {#openterCmd}
 
-Invokes an operation with the name $\mathit{OpName}$ on the object
-$\mathit{ObjExpr}$. If the operation has $n$ parameters, the
-$\mathit{ExprList}$ includes $n$ expressions which evaluate to the
+Invokes an operation with the name `OpName` on the object
+`ObjExpr`. If the operation has $n$ parameters, the
+`ExprList` includes $n$ expressions which evaluate to the
 corresponding values. If there is more than one operation call a call
 stack is used to remember the entered operations. The deepest call has
 to be exited first.
@@ -2505,12 +2505,12 @@ to be exited first.
 #### Syntax:
 
 :   `!openter` $\mathit{ObjExpr }$
-    $\mathit{OpName}$`(`$\mathit{ExprList}$`)`
+    `OpName``(``ExprList``)`
 
 Example without parameters:
 
-:   The object $\mathit{banana}$ is an instance of class
-    $\mathit{Banana}$ which defines the operation $\mathit{peel}$. This
+:   The object `banana` is an instance of class
+    `Banana` which defines the operation `peel`. This
     operation has no parameters.
 
     User input:
@@ -2525,9 +2525,9 @@ Example without parameters:
 
 Example with formal parameter:
 
-:   The operation $\mathit{squeeze}$ is invoked on object
-    $\mathit{bigLemon}$. It has one explicitly defined parameter of type
-    $\mathit{Integer}$.
+:   The operation `squeeze` is invoked on object
+    `bigLemon`. It has one explicitly defined parameter of type
+    `Integer`.
 
     User input:
 
@@ -2560,12 +2560,12 @@ specified behind the `opexit` command.
 
 #### Syntax:
 
-:   `!opexit` $\mathit{ReturnValExpr}$
+:   `!opexit` `ReturnValExpr`
 
 Example - second call:
 
-:   The operation $\mathit{squeeze}$ is the least recently entered
-    operation. Its return value has to be of type $\mathit{Integer}$.
+:   The operation `squeeze` is the least recently entered
+    operation. Its return value has to be of type `Integer`.
 
     User input:
 
@@ -2579,8 +2579,8 @@ Example - second call:
 
 Example - first call:
 
-:   The operation $\mathit{peel}$ has been called before. It can be
-    exited now. The result value has to be a $\mathit{String}$.
+:   The operation `peel` has been called before. It can be
+    exited now. The result value has to be a `String`.
 
     User input:
 
@@ -2589,7 +2589,7 @@ Example - first call:
     Result:
 
     :   One postcondition is false because the result value has to be
-        $'\mathit{theResult}'$. Even though the result value is wrong
+        $'`theResult`'$. Even though the result value is wrong
         the operation is exited.
 
             postcondition `post1' is true
@@ -2619,13 +2619,13 @@ enables the verbose output of the subexpression results for violated
 invariants. The option `-d` shows which instances cause an invariant to
 fail. The option `-a` checks all invariants including the ones loaded by
 the generator. You can specify which invariants should be checked by
-entering an $\mathit{invList}$. Use the following invariant signature:
-$\mathit{context}$`::`$\mathit{invName}$. The signatures have to be
+entering an `invList`. Use the following invariant signature:
+`context``::``invName`. The signatures have to be
 separated with a blank.
 
 #### Syntax:
 
-:   `check` $[$`-v`$] [$`-d`$] [$`-a`$ | \mathit{invList} ]$
+:   `check` $[`-v`$] [`-d`$] [`-a`$ | `invList` ]$
 
 Example without options:
 
@@ -2670,8 +2670,8 @@ Example with options:
 
     Result:
 
-    :   The option `-d` shows, that $\mathit{redApple}$ and
-        $\mathit{yellowApple}$ violate the invariant $\mathit{inv2}$.
+    :   The option `-d` shows, that `redApple` and
+        `yellowApple` violate the invariant `inv2`.
         with these options.
 
             ...
@@ -2712,21 +2712,21 @@ Example:
 #### Read information from File
 
 Reads information from a file. It may be a USE specification
-($\mathit{fileName}$`.use`), a command file ($\mathit{fileName}$`.cmd`),
-or an invariants file ($\mathit{fileName}$`.invs`). If a command file is
+(`fileName``.use`), a command file (`fileName``.cmd`),
+or an invariants file (`fileName``.invs`). If a command file is
 read in, every line is shown in the Shell. You have to load a
 specification before you can read in command files. The `-q` option
 allows a quiet reading. If the filename is in the root directory of USE,
 there is no need to enter the path. If the file exists in a subdirectory
-of the USE root directory (usually named `use-`$\mathit{version}$), you
+of the USE root directory (usually named `use-``version`), you
 have to enter the sub path beginning at the USE root. (see example) If
 the file does not exist in the USE directory you have to enter the whole
 path.
 
 #### Syntax:
 
-:   `open` $[\mathit{path}]$
-    $\mathit{fileName}$`.`$( $`use`$ | $`cmd`$ | $`invs`$ )$
+:   `open` $[`path`]$
+    `fileName``.`$( `use`$ | `cmd`$ | `invs`$ )$
 
 Example file in USE sub directory:
 
@@ -2775,7 +2775,7 @@ Enter `q`, `quit` or `exit` to exit USE.
 
 #### Syntax:
 
-:   $( $`q`$ | $`quit`$ | $`exit`$ )$
+:   $( `q`$ | `quit`$ | `exit`$ )$
 
 #### Undo last state manipulation command
 
@@ -2791,11 +2791,11 @@ Prints information about a class existing in the specification.
 
 #### Syntax:
 
-:   `info class` $\mathit{className}$
+:   `info class` `className`
 
 Example:
 
-:   Get information about the $\mathit{Apple}$.
+:   Get information about the `Apple`.
 
     User input:
 
@@ -2963,554 +2963,541 @@ The OCL Standard operations are described following [@kyas:phd].
 
 #### Equality
 
-$=(y:\mathit{OclAny}):\mathit{Boolean}$ represents equality between
-objects. It evaluates to true if $\mathit{self}$ is the same as $y$.\
-**Notation:** $\mathit{self}$`=`$y$
+`=(y:OclAny):Boolean`: represents equality between
+objects. It evaluates to true if `self` is the same as `y`.  
+**Notation:** `self = y`
 
 #### Inequality
 
-$<>(y:\mathit{OclAny}):\mathit{Boolean}\stackrel{\mathit{def}}{=}\mathit{not}\ (
-\mathit{self}=y)$ represents inequality between objects.\
-**Notation:** $\mathit{self}$`<>`$y$
+`<>(y:OclAny):Boolean := not(self = y)` represents inequality between objects.  
+**Notation:** `self <> y`
 
 #### isUndefined
 
-$\mathit{isUndefined}():\mathit{Boolean}$ evaluates to true, if the
-callee is undefined.\
-**Notation:** $\mathit{self}$`.isUndefined()`
+`isUndefined():Boolean` evaluates to true, if the
+callee is undefined.  
+**Notation:** `self.isUndefined()`
 
 #### oclIsNew
 
-$\mathit{oclIsNew}():\mathit{Boolean}\stackrel{\mathit{def}}{=}
-\mathit{self}@\mathit{pre}.\mathit{isUndefined}()$ can only be used in a
+`oclIsNew():Boolean := self@pre.isUndefined()` can only be used in a
 postcondition and states that the object has been newly created during
-the execution of an operation.\
-**Notation:** $\mathit{self}$`.oclIsNew()`
+the execution of an operation.  
+**Notation:** `self.oclIsNew()`
 
 #### oclAsType
 
-$\mathit{oclAsType}(T):T$ is a "cast" or "retyping" expression,
-evaluating to the value of the callee, if it is an instance of $T$, and
-to $\mathit{Undefined}$ otherwise.\
-**Notation:** $\mathit{self}$`.oclAsType(`$T$`)`
+`oclAsType(T):T` is a "cast" or "retyping" expression,
+evaluating to the value of the callee, if it is an instance of `T`, and
+to `Undefined` otherwise.  
+**Notation:** `self.oclAsType(T)`
 
 #### oclIsTypeOf
 
-$\mathit{oclIsTypeOf}(T):\mathit{Boolean}$ evaluates to $\mathit{true}$
-if the callee is an instance of type $T$.\
-**Notation:** $\mathit{self}$`.oclIsTypeOf(`$T$`)`
+`oclIsTypeOf(T):Boolean` evaluates to `true`
+if the callee is an instance of type `T`.  
+**Notation:** `self.oclIsTypeOf(T)`
 
 #### oclIsKindOf
 
-$\mathit{oclIsKindOf}(T):\mathit{Boolean}$ evaluates to $\mathit{true}$
-if the callee is an instance of type $T$ or one of $T$s subtypes, that
-is, the callee conforms to the type $T$.\
-**Notation:** $\mathit{self}$`.isKindOf(`$T$`)`
+`oclIsKindOf(T):Boolean` evaluates to `true`
+if the callee is an instance of type `T` or one of `T`s subtypes, that
+is, the callee conforms to the type `T`.  
+**Notation:** `self.isKindOf(T)`
 
 ### oclIsInState
 
-`oclIsInState(<statename>) : Boolean` evaluates to `true` if the callee has a state machine defined that currently is in the state `<statename>`.
+`oclIsInState(<statename>) : Boolean` evaluates to `true` if the callee has a state machine defined that currently is in the state `<statename>`.  
+**Notation:** `self.oclIsInState(Ready)`
 
 *Remark: This operation was implemented incorrectly using the name `oclInState`. The wrong name is still supported for backward compatibility.*
 
 ### Boolean Types
 
-| $a$              | $b$              | $\mathit{not}\ b$ | $a\ \mathit{and}\ b$ | $a\ \mathit{or}\ b$ | $a\ \mathit{implies}\ b$ | $a\ \mathit{xor}\ b$ |
-|------------------|------------------|-------------------|----------------------|---------------------|--------------------------|----------------------|
-| $\mathit{true}$  | $\mathit{true}$  | $\mathit{false}$  | $\mathit{true}$      | $\mathit{true}$     | $\mathit{true}$          | $\mathit{false}$     |
-| $\mathit{true}$  | $\mathit{false}$ | $\mathit{true}$   | $\mathit{false}$     | $\mathit{true}$     | $\mathit{false}$         | $\mathit{true}$      |
-| $\mathit{true}$  |     $\bot$       |     $\bot$        |     $\bot$           | $\mathit{true}$     |     $\bot$               |     $\bot$           |
-| $\mathit{false}$ | $\mathit{true}$  | $\mathit{false}$  | $\mathit{false}$     | $\mathit{true}$     | $\mathit{true}$          | $\mathit{true}$      |
-| $\mathit{false}$ | $\mathit{false}$ | $\mathit{true}$   | $\mathit{false}$     | $\mathit{false}$    | $\mathit{true}$          | $\mathit{false}$     |
-| $\mathit{false}$ |     $\bot$       |     $\bot$        | $\mathit{false}$     |     $\bot$          | $\mathit{true}$          |    $\bot$            |
-|       $\bot$     | $\mathit{true}$  |  $\mathit{false}$ |     $\bot$           | $\mathit{true}$     | $\mathit{true}$          |    $\bot$            |
-|       $\bot$     | $\mathit{false}$ |  $\mathit{true}$  | $\mathit{false}$     |     $\bot$          |     $\bot$               |    $\bot$            |
-|       $\bot$     |     $\bot$       |      $\bot$       |     $\bot$           |     $\bot$          |     $\bot$               |    $\bot$            |
+| **a**   | **b**   | `not` **b** | **a** `and` **b** | **a** `or` **b** | **a** `implies` **b** | **a** `xor` **b** |
+|---------|---------|-------------|-------------------|------------------|-----------------------|-------------------|
+| `true`  | `true`  | `false`     | `true`            | `true`           | `true`                | `false`           |
+| `true`  | `false` | `true`      | `false`           | `true`           | `false`               | `true`            |
+| `true`  | ⊥       | ⊥           | ⊥                 | `true`           | ⊥                     | ⊥                 |
+| `false` | `true`  | `false`     | `false`           | `true`           | `true`                | `true`            |
+| `false` | `false` | `true`      | `false`           | `false`          | `true`                | `false`           |
+| `false` | ⊥       | ⊥           | `false`           | ⊥                | `true`                | ⊥                 |
+| ⊥       | `true`  | `false`     | ⊥                 | `true`           | `true`                | ⊥                 |
+| ⊥       | `false` | `true`      | `false`           | ⊥                | ⊥                     | ⊥                 |
+| ⊥       | ⊥       | ⊥           | ⊥                 | ⊥                | ⊥                     | ⊥                 |
 
 ### Real
 
 #### Addition
 
-$+(y:\mathit{Real}):\mathit{Real}$ describes the sum of $\mathit{self}$
-and $y$.\
-**Notation:** $\mathit{self}$`+`$y$
+`+(y:Real):Real` describes the sum of `self`
+and `y`.  
+**Notation:** `self + y`
 
 #### Subtraction
 
-$-(y:\mathit{Real}):\mathit{Real}$ describes the difference between
-$\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`-`$y$
+`-(y:Real):Real` describes the difference between
+`self` and `y`.  
+**Notation:** `self - y`
 
 #### Multiplication
 
-$*(y:\mathit{Real}):\mathit{Real}$ describes the product of
-$\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`*`$y$
+`*(y:Real):Real` describes the product of
+`self` and `y`.  
+**Notation:** `self * y`
 
 #### Division
 
-$/(y:\mathit{Real}):\mathit{Real}$ describes the quotient of
-$\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`/`$y$
+`/(y:Real):Real` describes the quotient of
+`self` and `y`.  
+**Notation:** `self / y`
 
 #### Negation
 
-$-():\mathit{Real}\stackrel{def}{=} 0-\mathit{self}$ describes the
-negation of $\mathit{self}$.\
-**Notation:** `-`$\mathit{self}$
+`-():Real := 0 - self` describes the
+negation of `self`.  
+**Notation:** `- self`
 
 #### Less
 
-$<(y:\mathit{Real}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if
-the value of $\mathit{self}$ is less than the value of $y$. It evaluates
-to $\mathit{false}$, if the value of $\mathit{self}$ is equal to or
-greater than the value of $y$. In any other case, it is undefined.\
-**Notation:** $\mathit{self}$`<`$y$
+`<(y:Real):Boolean` evaluates to `true`, if
+the value of `self` is less than the value of `y`. It evaluates
+to `false`, if the value of `self` is equal to or
+greater than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self < y`
 
 #### Greater
 
-$>(y:\mathit{Real}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if
-the value of $\mathit{self}$ is greater than the value of $y$. It
-evaluates to $\mathit{false}$, if the value of $\mathit{self}$ is less
-than or equal to the value of $y$. In any other case, it is undefined.\
-**Notation:** $\mathit{self}$`>`$y$
+`(y:Real):Boolean` evaluates to `true`, if
+the value of `self` is greater than the value of `y`. It
+evaluates to `false`, if the value of `self` is less
+than or equal to the value of `y`. In any other case, it is undefined.  
+**Notation:** `self > y`
 
 #### Less or equal
 
-$<=(y:\mathit{Real}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if
-the value of $\mathit{self}$ is less than or equal to the value of $y$.
-It evaluates to $\mathit{false}$, if the value of $\mathit{self}$ is
-greater than the value of $y$. In any other case, it is undefined.\
-**Notation:** $\mathit{self}$`<=`$y$
+`<=(y:Real):Boolean` evaluates to `true`, if
+the value of `self` is less than or equal to the value of `y`.
+It evaluates to `false`, if the value of `self` is
+greater than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self <= y`
 
 #### Greater or equal
 
-$>=(y:\mathit{Real}):\mathit{Boolean}$ evaluates to $\mathit{true}$, if
-the value of $\mathit{self}$ is equal to or greater than the value of
-$y$. It evaluates to $\mathit{false}$, if the value of $\mathit{self}$
-is less than the value of $y$. In any other case, it is undefined.\
-**Notation:** $\mathit{self}$`>=`$y$
+`>=(y:Real):Boolean` evaluates to `true`, if
+the value of `self` is equal to or greater than the value of
+`y`. It evaluates to `false`, if the value of `self`
+is less than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self >= y`
 
 #### Absolute Values
 
-$\mathit{abs}():\mathit{Real}\stackrel{def}{=}\mathit{if}  \mathit{self} < 0  \mathit{then}  -\mathit{self} \mathit{else}\ \mathit{self}\ \mathit{endif}$ describes the absolute
-value of $\mathit{self}$.\
-**Notation:** $\mathit{self}$`.abs()`
+`abs():Real := if self < 0 then -self else self endif` describes the absolute
+value of `self`.  
+**Notation:** `self.abs()`
 
 #### Floor
 
-$\mathit{floor}():\mathit{Integer}$ describes the largest integer which
-is not greater than $\mathit{self}$.\
-**Notation:** $\mathit{self}$`.floor()`\
-**Note:** $\mathit{floor}$ binds stronger than $-$. That means
-$(-3.3).floor() = -4$ and $-3.3.floor() = -(3.3.floor()) = -3$.
+`floor():Integer` describes the largest integer which
+is not greater than `self`.  
+**Notation:** `self.floor()`  
+**Note:** `floor` binds stronger than `-`. That means
+`(-3.3).floor() = -4` and `-3.3.floor() = -(3.3.floor()) = -3`.
 
 #### Round
 
-$\mathit{round}():\mathit{integer}\stackrel{def}{=}(\mathit{self}+0.5).\mathit{floor}()$
-rounds $\mathit{self}$ to the nearest integer.\
-**Notation:** $\mathit{self}$`.round()`
+`round():Integer := self + 0.5).floor()`
+rounds `self` to the nearest integer.  
+**Notation:** `self.round()`
 
 #### Maximum
 
-$\mathit{max}(y:\mathit{Real}):\mathit{Real}\stackrel{def}{=}\mathit{if}  \mathit{self} < y\ \mathit{then}  y\ \mathit{else}\ \mathit{self}\ \mathit{endif}$ results in the greater
-value of $\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`.max(`$y$`)`
+`max(y:Real):Real := if  self < y then y else self endif` results in the greater
+value of `self` and `y`.  
+**Notation:** `self.max(y)`
 
 #### Minimum
 
-$\mathit{min}(y:\mathit{Real}):\mathit{Real}\stackrel{def}{=}\mathit{if}\ \mathit{self}\ > y\ \mathit{then}\ y\ \mathit{else}\ \mathit{self}\ \mathit{endif}$ results in the smaller value of
-$\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`.min(`$y$`)`
+`min(y:Real):Real := if self > y then y else self endif` results in the smaller value of
+`self` and `y`.  
+**Notation:** `self.min(y)`
 
 ### Integer
 
 #### Addition
 
-$+(y:\mathit{Integer}):\mathit{Integer}$ describes the sum of
-$\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`+`$y$
+`+(y:Integer):Integer` describes the sum of
+`self` and `y`.  
+**Notation:** `self + y`
 
 #### Subtraction
 
-$-(y:\mathit{Integer}):\mathit{Integer}$ describes the difference
-between $\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`-`$y$
+`-(y:Integer):Integer` describes the difference
+between `self` and `y`.  
+**Notation:** `self - y`
 
 #### Multiplication
 
-$*(y:\mathit{Integer}):\mathit{Integer}$ describes the product of
-$\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`*`$y$
+`*(y:Integer):Integer` describes the product of
+`self` and `y`.  
+**Notation:** `self * y`
 
 #### Division
 
-$/(y:\mathit{Integer}):\mathit{Real}$ describes the quotient of
-$\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`/`$y$
+`/(y:Integer):Real` describes the quotient of
+`self` and `y`.  
+**Notation:** `self / y`
 
 #### Negation
 
-$-():\mathit{Integer}\stackrel{def}{=} 0-\mathit{self}$ describes the
-negation of $\mathit{self}$.\
-**Notation:** `-`$\mathit{self}$
+`-():Integer := 0 - self` describes the negation of `self`.  
+**Notation:** `-self`
 
 #### Less
 
-$<(y:\mathit{Integer}):\mathit{Boolean}$ evaluates to $\mathit{true}$,
-if the value of $\mathit{self}$ is less than the value of $y$. It
-evaluates to $\mathit{false}$, if the value of $\mathit{self}$ is equal
-to or greater than the value of $y$. In any other case, it is
-undefined.\
-**Notation:** $\mathit{self}$`<`$y$
+`<(y:Integer):Boolean` evaluates to `true`,
+if the value of `self` is less than the value of `y`. It
+evaluates to `false`, if the value of `self` is equal
+to or greater than the value of `y`. In any other case, it is
+undefined.  
+**Notation:** `self < y`
 
 #### Greater
 
-$>(y:\mathit{Integer}):\mathit{Boolean}$ evaluates to $\mathit{true}$,
-if the value of $\mathit{self}$ is greater than the value of $y$. It
-evaluates to $\mathit{false}$, if the value of $\mathit{self}$ is less
-than or equal to the value of $y$. In any other case, it is undefined.\
-**Notation:** $\mathit{self}$`>`$y$
+`>(y:Integer):Boolean` evaluates to `true`,
+if the value of `self` is greater than the value of `y`. It
+evaluates to `false`, if the value of `self` is less
+than or equal to the value of `y`. In any other case, it is undefined.  
+**Notation:** `self > y`
 
 #### Less or equal
 
-$<=(y:\mathit{Integer}):\mathit{Boolean}$ evaluates to $\mathit{true}$,
-if the value of $\mathit{self}$ is less than or equal to the value of
-$y$. It evaluates to $\mathit{false}$, if the value of $\mathit{self}$
-is greater than the value of $y$. In any other case, it is undefined.\
-**Notation:** $\mathit{self}$`<=`$y$
+`<=(y:Integer):Boolean` evaluates to `true`,
+if the value of `self` is less than or equal to the value of
+`y`. It evaluates to `false`, if the value of `self`
+is greater than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self <= y`
 
 #### Greater or equal
 
-$>=(y:\mathit{Integer}):\mathit{Boolean}$ evaluates to $\mathit{true}$,
-if the value of $\mathit{self}$ is equal to or greater than the value of
-$y$. It evaluates to $\mathit{false}$, if the value of $\mathit{self}$
-is less than the value of $y$. In any other case, it is undefined.\
-**Notation:** $\mathit{self}$`>=`$y$
+`>=(y:Integer):Boolean` evaluates to `true`,
+if the value of `self` is equal to or greater than the value of
+`y`. It evaluates to `false`, if the value of `self`
+is less than the value of `y`. In any other case, it is undefined.  
+**Notation:** `self >= y`
 
 #### Absolute Values
 
-$\mathit{abs}():\mathit{Integer}\stackrel{def}{=}\mathit{if}\ \mathit{self}\ < 0\ \mathit{then}\ -\mathit{self}\ \mathit{else}\ \mathit{self}\ \mathit{endif}$ describes the absolute value of
-$\mathit{self}$.\
-**Notation:** $\mathit{self}$`.abs()`
+`abs():Integer := if self < 0 then - self else self endif` describes the absolute value of
+`self`.  
+**Notation:** `self.abs()`
 
 #### Euclidean division
 
-$\mathit{div}(y:\mathit{Integer}):\mathit{Integer}$ describes Euclidean
-division of $\mathit{self}$ by $y$, that is, it results in the unique
-integer $z$ such that there exists an $0\leq r < y$ with
-$z* y + r=\mathit{self}$.\
-**Notation:** $\mathit{self}$` div `$y$
+`div(y:Integer):Integer` describes Euclidean
+division of `self` by `y`, that is, it results in the unique
+integer `z` such that there exists an `0 <= r < y` with
+`z * y + r = self`.  
+**Notation:** `self div y`
 
 #### Modulo
 
-$\mathit{mod}(y:\mathit{Integer}):\mathit{Integer}$ describes Euclidean
-reminder of $\mathit{self}$ divided by $y$, that is, it results in the
-unique integer $0\leq r < y$ such that there exists an integer $z$ with
-$z* y +
-  r=\mathit{self}$.\
-**Notation:** $\mathit{self}$`.mod(`$y$`)`
+`mod(y:Integer):Integer` describes Euclidean
+reminder of `self` divided by `y`, that is, it results in the
+unique integer $0\leq r < y$ such that there exists an integer `z` with
+`z * y + r = self`.  
+**Notation:** `self.mod(y)`
 
 #### Maximum
 
-$\mathit{max}(y:\mathit{Integer}):\mathit{Integer}\stackrel{def}{=}\mathit{if}\ \mathit{self}\ < y\ \mathit{then}\ y\ \mathit{else}\ \mathit{self}\ \mathit{endif}$ evaluates to the greater value of
-$\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`.max(`$y$`)`
+`max(y:Integer):Integer := if self < y then y else self endif` evaluates to the greater value of
+`self` and `y`.  
+**Notation:** `self.max(y)`
 
 #### Minimum
 
-$\mathit{min}(y:\mathit{Integer}):\mathit{Integer}\stackrel{def}{=}\mathit{if}\ \mathit{self} > y\ \mathit{then}\ y\ \mathit{else}\ \mathit{self}\ \mathit{endif}$ evaluates to the smaller
-value of $\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`.min(`$y$`)`
+`min(y:Integer):Integer := if self > y then y else self endif` evaluates to the smaller
+value of `self` and `y`.  
+**Notation:** `self.min(y)`
 
 ### Collection
 
-$<col> \Coloneqq \mathit{Set}\ |\ \mathit{Bag}\ |\ \mathit{Sequence}$
+`<col> ::= Set | Bag | Sequence`
 
 #### Size
 
-$\mathit{size}():\mathit{Integer}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Integer}=0\mid
-a+1)$\
-**Notation:** $\mathit{self}$`->size()`
+`size():Integer := self->iterate(e; a:Integer = 0 | a + 1)`  
+**Notation:** `self->size()`
 
 #### Count
 
-$\mathit{count}(,y:T):\mathit{Integer}\stackrel{def}{=}
-  \mathit{self}\rightarrow\mathit{iterate}(i;a:\mathit{Iterate}=0\mid\mathit{if}\ y=i\ \mathit{then}\ a+1\ \mathit{else}\ a\ \mathit{endif})$ counts how often $y$ occurs in the collection.\
-**Notation:** $\mathit{self}$`->count(`$y$`)`
+`count(y:T):Integer := 
+  self->iterate(i; a:Integer = 0 | if y = i then a + 1 else a endif)` counts how often `y` occurs in the collection.\
+**Notation:** `self->count(y)`
 
 #### Includes
 
-$\mathit{includes}(,y:T):\mathit{Boolean}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{count}(y)>0$
-returns true if and only if $y$ occurs in the collection.\
-**Notation:** $\mathit{self}$`->includes(`$y$`)`
+`includes(y:T):Boolean := self->count(y) > 0`
+returns `true` if and only if `y` occurs in the collection.  
+**Notation:** `self->includes(y)`
 
 #### Excludes
 
-$\mathit{excludes}(,y:T):\mathit{Boolean}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{count}(y)=0$
-returns true if and only if $y$ does not occur in the collection.\
-**Notation:** $\mathit{self}$`->excludes(`$y$`)`
+`excludes(y:T):Boolean := self->count(y) = 0`
+returns `true` if and only if `y` does not occur in the collection.  
+**Notation:** `self->excludes(y)`
 
 #### Includes all
 
-$\mathit{includesAll}(,y:<col>(T)):\mathit{Boolean}\stackrel{def}{=}
-  y\rightarrow\mathit{forAll}(e\mid \mathit{self}\rightarrow\mathit{includes}(e))$.\
-**Notation:** $\mathit{self}$`->includesAll(`$y$`)`
+`includesAll(y:<col>(T)):Boolean := y->forAll(e | self->includes(e))`.  
+**Notation:** `self->includesAll(y)`
 
 #### Excludes all
 
-$\mathit{excludesAll}(,y:<col>(T)):\mathit{Boolean}\stackrel{def}{=}
-  y\rightarrow\mathit{forAll}(e\mid \mathit{self}\rightarrow\mathit{excludes}(e))$.\
-**Notation:** $\mathit{self}$`->excludesAll(`$y$`)`
+`excludesAll(y:<col>(T)):Boolean := y->forAll(e | self->excludes(e))`.  
+**Notation:** `self->excludesAll(y)`
 
 #### Is empty
 
-$\mathit{isEmpty}():\mathit{Boolean}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{size}()=0$.\
-**Notation:** $\mathit{self}$`->isEmpty()`
+`isEmpty():Boolean := self->size() = 0`.  
+**Notation:** `self->isEmpty()`
 
 #### Not empty
 
-$\mathit{notEmpty}():\mathit{Boolean}\stackrel{def}{=}\mathit{self}\rightarrow\mathit{size}()<>0$.\
-**Notation:** $\mathit{self}$`->notEmpty()`
+`notEmpty():Boolean := self->size() <> 0`.  
+**Notation:** `self->notEmpty()`
 
 #### Sum
 
-$\mathit{sum}():T\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Iterate}=0\mid a +
-e)$.\
-**Notation:** $\mathit{self}$`->sum()`
+`sum():T := self->iterate(e; a:Iterate = 0 | a + e)`.  
+**Notation:** `self->sum()`
 
 ### Set
 
 #### Set-Equality
 
-$=(y:\mathit{Set}(T)):\mathit{Boolean}$ describes set-equality.\
-**Notation:** $\mathit{self}$`=`$y$
+`=(y:Set(T)):Boolean` describes set-equality.  
+**Notation:** `self = y`
 
 #### Including elements
 
-$\mathit{including}(y:T):\mathit{Set}(T)$ describes the set obtained
-from $\mathit{self}$ by including $y$.\
-**Notation:** $\mathit{self}$`->including(`$y$`)`
+`including(y:T):Set(T)` describes the set obtained
+from `self` by including `y`.  
+**Notation:** `self->including(y)`
 
 #### Excluding elements
 
-$\mathit{excluding}(y:T):\mathit{Set}(T)$ describes the set obtained
-from $\mathit{self}$ by excluding $y$.\
-**Notation:** $\mathit{self}$`->excluding(`$y$`)`
+`excluding(y:T):Set(T)` describes the set obtained
+from `self` by excluding `y`.  
+**Notation:** `self->excluding(y)`
 
 #### Union
 
-$\mathit{union}(y:\mathit{Set}(T)):\mathit{Set}(T)$ describes the union
-of the set $\mathit{self}$ and the set $y$.\
-**Notation:** $\mathit{self}$`->union(`$y$`)`
+`union(y:Set(T)):Set(T)` describes the union
+of the set `self` and the set `y`.  
+**Notation:** `self->union(y)`
 
 #### Union with Bag
 
-$\mathit{union}(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the union
-of the set obtained from $\mathit{self}$ by assuming that each element
-of $\mathit{self}$ occurs exactly once and the bag $y$.\
-**Notation:** $\mathit{self}$`->union(`$y$`)`
+`union(y:Bag(T)):Bag(T)` describes the union
+of the set obtained from `self` by assuming that each element
+of `self` occurs exactly once and the bag `y`.  
+**Notation:** `self->union(y)`
 
 #### Intersection
 
-$\mathit{intersection}(y:\mathit{Set}(T)):\mathit{Set}(T)$ describes the
-intersection of the set $\mathit{self}$ the set $y$.\
-**Notation:** $\mathit{self}$`->intersection(`$y$`)`
+`intersection(y:Set(T)):Set(T)` describes the
+intersection of the set `self` the set `y`.  
+**Notation:** `self->intersection(y)`
 
 #### Intersection with Bag
 
-$\mathit{intersection}(y:\mathit{Bag}(T)):\mathit{Set}(T)$ describes the
-intersection of the set $\mathit{self}$ and the set obtained from $y$ by
-including every element contained in $y$.\
-**Notation:** $\mathit{self}$`->intersection(`$y$`)`
+`intersection(y:Bag(T)):Set(T)` describes the
+intersection of the set `self` and the set obtained from `y` by
+including every element contained in `y`.  
+**Notation:** `self->intersection(y)`
 
 #### Difference of sets
 
-$-(y:\mathit{Set}(T)):\mathit{Set}(T)$ describes the difference of the
-set $\mathit{self}$ the set $y$.\
-**Notation:** $\mathit{self}$`-`$y$
+`-(y:Set(T)):Set(T)` describes the difference of the
+set `self` the set `y`.  
+**Notation:** `self - y`
 
 #### Flatten
 
-$\mathit{flatten}():\mathit{Set}(T')$. If $\mathit{self}$ is a set of
+`flatten():Set(T')`. If `self` is a set of
 collections, then this operation returns the set-union of all its
-elements.\
-**Notation:** $\mathit{self}$`->flatten()`
+elements.  
+**Notation:** `self->flatten()`
 
 #### As Bag
 
-$\mathit{asBag}():
-  \mathit{Bag}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Bag}(T)=\mathit{oclEmpty}(\mathit{Bag}(T))\mid
-  a\rightarrow\mathit{including}(e))$ returns a bag which includes each
-element of $\mathit{self}$ exactly once.\
-**Notation:** $\mathit{self}$`->asBag()`
+`asBag():Bag(T) := self->iterate(e; a:Bag(T) = oclEmpty(Bag(T)) | a->including(e))` returns a bag which includes each
+element of `self` exactly once.  
+**Notation:** `self->asBag()`
 
 #### As Sequence
 
-$\mathit{asSequence}(): \mathit{Sequence}(T)$
- returns a sequence
-containing all elements of $\mathit{self}$ exactly once. The order of
+`asSequence():Sequence(T)`
+ returns a sequence containing all elements of `self` exactly once. The order of
 the elements is arbitrary. It is equivalent to the expression
-$\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T)\mid
-      a\rightarrow\mathit{append}(e))\quad.$\
-**Notation:** $\mathit{self}$`->asSequence()`
+`self->iterate(e; a:Sequence(T)=oclEmpty(Sequence(T)) | a->append(e))`  
+**Notation:** `self->asSequence()`
 
 ### Bag
 
 #### Equality
 
-$=(y:\mathit{Bag}(T)):\mathit{Boolean}$ describes equality of
-multi-sets.\
-**Notation:** $\mathit{self}$`=`$y$
+`=(y:Bag(T)):Boolean` describes equality of
+multi-sets.  
+**Notation:** `self=y`
 
 #### Including elements
 
-$\mathit{including}(y:T):\mathit{Bag}(T)$ describes the bag obtained
-from $\mathit{self}$ by including $y$.\
-**Notation:** $\mathit{self}$`->including(`$y$`)`
+`including(y:T):Bag(T)` describes the bag obtained
+from `self` by including `y`.  
+**Notation:** `self->including(y)`
 
 #### Excluding elements
 
-$\mathit{excluding}(y:T):\mathit{Bag}(T)$ describes the bag obtained
-from $\mathit{self}$ by excluding all occurrences of $y$.\
-**Notation:** $\mathit{self}$`->excluding(`$y$`)`
+`excluding(y:T):Bag(T)` describes the bag obtained
+from `self` by excluding all occurrences of `y`.  
+**Notation:** `self->excluding(y)`
 
 #### Union
 
-$\mathit{union}(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the union
-of the bag $\mathit{self}$ and the bag $y$.\
-**Notation:** $\mathit{self}$`->union(`$y$`)`
+`union(y:Bag(T)):Bag(T)` describes the union
+of the bag `self` and the bag `y`.  
+**Notation:** `self->union(y)`
 
 #### Union with Set
 
-$\mathit{union}(y:\mathit{Set}(T)):\mathit{Bag}(T)$ describes the union
-of the bag $\mathit{self}$ and the set obtained from $y$ by including
-each element of $y$ exactly once.\
-**Notation:** $\mathit{self}$`->union(`$y$`)`
+`union(y:Set(T)):Bag(T)` describes the union
+of the bag `self` and the set obtained from `y` by including
+each element of `y` exactly once.  
+**Notation:** `self->union(y)`
 
 #### Intersection
 
-$\mathit{intersection}(y:\mathit{Bag}(T)):\mathit{Bag}(T)$ describes the
-intersection of the bag $\mathit{self}$ and the bag $y$.\
-**Notation:** $\mathit{self}$`->intersection(`$y$`)`
+`intersection(y:Bag(T)):Bag(T)` describes the
+intersection of the bag `self` and the bag `y`.  
+**Notation:** `self->intersection(y)`
 
 #### Intersection with Set
 
-$\mathit{intersection}(y:\mathit{Set}(T)):\mathit{Set}(T)$ describes the
-intersection of the bag $\mathit{self}$ and the set $y$.\
-**Notation:** $\mathit{self}$`->intersection(`$y$`)`
+`intersection(y:Set(T)):Set(T)` describes the
+intersection of the bag `self` and the set `y`.  
+**Notation:** `self->intersection(y)`
 
 #### Flatten
 
-$\mathit{flatten}():\mathit{Bag}(T')$. If $\mathit{self}$ is a bag of
+`flatten():Bag(T')`. If `self` is a bag of
 collections, then this operation returns the bag union of all its
-elements.\
-**Notation:** $\mathit{self}$`->flatten(`$y$`)`
+elements.  
+**Notation:** `self->flatten(y)`
 
 #### As Set
 
-$\mathit{asSet}():
-  \mathit{Set}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Set}(T)=\mathit{oclEmpty}(\mathit{Set}(T))\mid
-  a\rightarrow\mathit{including}(e))$ returns a set which contains each
-element of $\mathit{self}$.\
-**Notation:** $\mathit{self}$`->asSet()`
+`asSet():
+  Set(T) := self->iterate(e; a:Set(T) = oclEmpty(Set(T)) | a->including(e))` returns a set which contains each
+element of `self`.  
+**Notation:** `self->asSet()`
 
 #### As Sequence
 
-$\mathit{asSequence}():\mathit{Sequence}(T)$ returns a sequence
-containing all elements of $\mathit{self}$ as often as they occur in the
+`asSequence():Sequence(T)` returns a sequence
+containing all elements of `self` as often as they occur in the
 multi-set. The order of the elements is arbitrary. It is equivalent to:
-$\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T))\mid
-    a\rightarrow\mathit{append}(e))\quad.$ **Notation:**
-$\mathit{self}$`->union(`$y$`)`
+`self->iterate(e; a:Sequence(T)=oclEmpty(Sequence(T)) | a->append(e))`.  
+**Notation:** `self->asSequence()`
 
 ### Sequence
 
 #### Get element
 
-$\mathit{at}(y:\mathit{Integer}):T$ results in the element at the $y$th
-position of the sequence.\
-**Notation:** $\mathit{self}$`->at(`$y$`)`
+`at(y:Integer):T` results in the element at the `y`th
+position of the sequence.  
+**Notation:** `self->at(y)`
 
 #### Equality
 
-$=(y:\mathit{Sequence}(T)):\mathit{Boolean}\stackrel{def}{=}\mathit{let}\ s={\mathit{self}\rightarrow\mathit{size}()}\ \mathit{in}\ s={y\rightarrow\mathit{size}()}\ \newline\mathit{and}\newline \mathit{Sequence}\{1..s\}\rightarrow\mathit{forAll}(i:\mathit{Integer}\mid \mathit{self}\rightarrow\mathit{at}(i)=y\rightarrow\mathit{at}(i))$
+`=(y:Sequence(T)):Boolean := let s={self->size()} in s={y->size()} \newline and \newline Sequence{1..s}->forAll(i:Integer | self->at(i) = y->at(i))`
 describes equality of sequences.
-**Notation:** $\mathit{self}$`=`$y$
+**Notation:** `self = y`
 
 #### Union
 
-$\mathit{union}(y:\mathit{Sequence}(T)):\mathit{Sequence}(T)$ describes
-the concatenation of $\mathit{self}$ and $y$.\
-**Notation:** $\mathit{self}$`->union(`$y$`)`
+`union(y:Sequence(T)):Sequence(T)` describes
+the concatenation of `self` and `y`.  
+**Notation:** `self->union(y)`
 
 #### Flatten
 
-$\mathit{flatten}(\mathit{self}:\mathit{Sequence}(T)):\mathit{Sequence}(T')$.
-If $\mathit{self}$ is a sequence of collections, then this operation
-returns the sequence concatenation of all its elements.\
-**Notation:** $\mathit{self}$`->flatten()`
+`flatten(self:Sequence(T)):Sequence(T')`.
+If `self` is a sequence of collections, then this operation
+returns the sequence concatenation of all its elements.  
+**Notation:** `self->flatten()`
 
 #### Append elements
 
-$\mathit{append}(y:T):\mathit{Sequence}(T)\stackrel{def}{=}
-\mathit{self}\rightarrow\mathit{union}(\mathit{Sequence}\{y\})$ results
-in the sequence which consists of all elements of $y$ with $y$
-appended.\
-**Notation:** $\mathit{self}$`->append(`$y$`)`
+`append(y:T):Sequence(T) := 
+ self->union(Sequence{y})` results
+in the sequence which consists of all elements of `y` with `y`
+appended.  
+**Notation:** `self->append(y)`
 
 #### Prepend elements
 
-$\mathit{prepend}(y:T):\mathit{Sequence}(T)\stackrel{def}{=}
-  \mathit{Sequence}\{y\}\rightarrow\mathit{union}(\mathit{self})$
+`prepend(y:T):Sequence(T) := 
+  Sequence{y}->union(self)`
 results in the sequence which consists of all elements of
-$\mathit{self}$ with $y$ prepended.\
-**Notation:** $\mathit{self}$`->prepend(`$y$`)`
+`self` with `y` prepended.  
+**Notation:** `self->prepend(y)`
 
 #### Excluding elements
 
-$\mathit{excluding}(y:T):\mathit{Sequence}(T)\stackrel{def}{=} \mathit{self}\rightarrow  \mathit{iterate}(i;a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T))\mid \mathit {if}\ y=i\ \mathit{then}\ a\ \newline \mathit{else}\ a\rightarrow\mathit{append}(i)\ \mathit{endif})$
-results in the largest sub-sequence of $\mathit{self}$, in which $y$
-does not occur.\
-**Notation:** $\mathit{self}$`->excluding(`$y$`)`
+`excluding(y:T):Sequence(T) := self->iterate(i; a:Sequence(T)=oclEmpty(Sequence(T)) | if y = i then a else a->append(i) endif)`
+results in the largest sub-sequence of `self`, in which `y`
+does not occur.  
+**Notation:** `self->excluding(y)`
 
 #### Subsequence
 
-$\mathit{subSequence}(y:\mathit{Integer},z:\mathit{Integer}):\mathit{Sequence}(T)$
-results in the subsequence of $\mathit{self}$ starting at index $y$ and
-ending at index $z$. It is equivalent to: $$\begin{gathered}
-    \mathit{Sequence}\{1..z\}\rightarrow\mathit{iterate}(i;
-    a:\mathit{Sequence}(T)=\mathit{oclEmpty}(\mathit{Sequence}(T))\mid{}\\
-    \mathit{if}\ y\leq i\ \mathit{and}\ i\leq z\ \mathit{then}\\
-    a\rightarrow\mathit{append}(\mathit{self}\rightarrow\mathit{at}(i))\ \mathit{else}\ a\ \mathit{endif})
-  \end{gathered}$$\
-**Notation:** $\mathit{self}$`->subSequence(`$y$`)`
+`subSequence(y:Integer, z:Integer):Sequence(T)`
+results in the subsequence of `self` starting at index `y` and
+ending at index `z`. It is equivalent to:
+```
+Sequence{1..z}->iterate(i; a:Sequence(T)=oclEmpty(Sequence(T)) |
+                           if y <= i and i <= z then
+                              a->append(self->at(i))
+                           else
+                              a
+                           endif)
+```
+**Notation:** `self->subSequence(y)`
 
 #### Get first element
 
-$\mathit{first}():T\stackrel{def}{=}\mathit{self}\rightarrow\mathit{at}(1)$.\
-**Notation:** $\mathit{self}$`->first(`$y$`)`
+`first():T := self->at(1)`.  
+**Notation:** `self->first(y)`
 
 #### Get last element
 
-$\mathit{last}():T\stackrel{def}{=}\mathit{self}\rightarrow\mathit{at}(\mathit{self}\rightarrow\mathit{size}())$.\
-**Notation:** $\mathit{self}$`->last(`$y$`)`
+`last():T := self->at(self->size())`.  
+**Notation:** `self->last(y)`
 
 #### As Set
 
-$\mathit{asSet}():
-  \mathit{asSet}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Set}(T)=\mathit{oclEmpty}(\mathit{Set}(T))\mid
-  a\rightarrow\mathit{including}(e))$ returns a set which contains each
-element of $\mathit{self}$.\
-**Notation:** $\mathit{self}$`->asSet(`$y$`)`
+`asSet(): asSet(T) := self->iterate(e; a:Set(T)=oclEmpty(Set(T)) |
+  a->including(e))` returns a set which contains each
+element of `self`.  
+**Notation:** `self->asSet(y)`
 
 #### As Bag
 
-$\mathit{asBag}():
-  \mathit{Bag}(T)\stackrel{def}{=}\mathit{self}\rightarrow\mathit{iterate}(e;a:\mathit{Bag}(T)=\mathit{oclEmpty}(\mathit{Bag}(T))\mid
-  a\rightarrow\mathit{including}(e))$ returns a bag containing all
-elements of the sequence $\mathit{self}$.\
-**Notation:** $\mathit{self}$`->asBag(`$y$`)`
+`asBag() : Bag(T) := self->iterate(e; a:Bag(T)=oclEmpty(Bag(T)) | a->including(e))` returns a bag containing all
+elements of the sequence `self`.  
+**Notation:** `self->asBag(y)`
 
 ## Bibliography
 <a name="bib-gr98a">[GR98a]</a> Martin Gogolla and Mark Richters. On constraints and queries in UML. In Mar-
@@ -3556,7 +3543,7 @@ volume 14 of BISS Monographs. Logos, Berlin, 2002.
 
 [^6]: http://www.db.informatik.uni-bremen.de/projects/USE/Demo.use
 
-[^7]: Note that the operation $\mathit{isDefined}$ is a USE extension.
+[^7]: Note that the operation `isDefined` is a USE extension.
     It is not possible to express this constraint with standard OCL.
 
 [^8]: Again, we use the command line interface here, but the same can be
