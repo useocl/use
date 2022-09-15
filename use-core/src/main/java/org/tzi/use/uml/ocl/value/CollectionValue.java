@@ -21,22 +21,11 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.TupleType;
+import org.tzi.use.uml.ocl.type.*;
 import org.tzi.use.uml.ocl.type.TupleType.Part;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.type.UniqueLeastCommonSupertypeDeterminator;
 import org.tzi.use.util.collections.CollectionComparator;
+
+import java.util.*;
 
 /**
  * Base class for collection values.
@@ -85,7 +74,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     protected abstract CollectionType getRuntimeType(Type elementType);
     
     /**
-     * Returns the element type of the <code>resultType</code> if 
+     * Returns the type of the elements of <code>resultType</code>, if
      * it is a collection type. 
      * Otherwise, a runtime exception is thrown.
 	 * @param resultType

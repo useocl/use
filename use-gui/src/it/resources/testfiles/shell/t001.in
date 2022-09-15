@@ -1039,6 +1039,24 @@
 ? Sequence{1,2,2,3}->asSet
 *-> Set{1,2,3} : Set(Integer)
 
+? Sequence{}->insertAt(1, 'Z')
+*-> Sequence{'Z'} : Sequence(String)
+
+? Sequence{'A','B'}->insertAt(1, 'Z')
+*-> Sequence{'Z','A','B'} : Sequence(String)
+
+? Sequence{'A','B'}->insertAt(2, 'Z')
+*-> Sequence{'A','Z','B'} : Sequence(String)
+
+? Sequence{'A','B'}->insertAt(3, 'Z')
+*-> Sequence{'A','B','Z'} : Sequence(String)
+
+? Sequence{'A','B'}->insertAt(4, 'Z')
+*-> null : OclVoid
+
+? Sequence{'A','B'}->insertAt(0, 'Z')
+*-> null : OclVoid
+
 #
 ## Flattening
 #
