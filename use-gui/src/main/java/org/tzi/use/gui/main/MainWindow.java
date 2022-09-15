@@ -842,13 +842,8 @@ public class MainWindow extends JFrame {
         fActionViewAssociationInfo.setEnabled(on);
         
 		if (Options.doPLUGIN) {
-			for (AbstractAction currentAction : pluginActions.values()) {
-				Object actionName = currentAction.getValue(AbstractAction.NAME);
-				if(actionName != null && actionName.equals("Object to Class")) {
-					currentAction.setEnabled(true);
-				} else {
-					currentAction.setEnabled(on);
-				}
+			for (PluginActionProxy currentAction : pluginActions.values()) {
+				currentAction.calculateEnabled();
 			}
 		}
 		setUndoRedoButtons();

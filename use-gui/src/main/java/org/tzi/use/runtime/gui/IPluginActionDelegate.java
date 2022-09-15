@@ -15,5 +15,17 @@ public interface IPluginActionDelegate {
 	 * @param pluginAction
 	 *            The Plugin Action Proxy
 	 */
-	public void performAction(IPluginAction pluginAction);
+	void performAction(IPluginAction pluginAction);
+
+	/**
+	 * PluginActionDelegates can override the behavior when their invoking user interfaces
+	 * should be enabled.
+	 *
+	 * @param pluginAction
+	 * 			The plugins Action Proxy
+	 * @return <code>true</code>, if user interface elements for invoking this action should be enabled.
+	 */
+	default boolean shouldBeEnabled(IPluginAction pluginAction) {
+		return pluginAction.getSession().hasSystem();
+	};
 }

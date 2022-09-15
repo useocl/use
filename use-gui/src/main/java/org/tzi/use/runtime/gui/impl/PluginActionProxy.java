@@ -1,16 +1,15 @@
 package org.tzi.use.runtime.gui.impl;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.swing.ImageIcon;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.runtime.gui.IPluginActionDescriptor;
 import org.tzi.use.util.Log;
+
+import javax.swing.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * This Plugin Action Proxy class.
@@ -23,6 +22,10 @@ public class PluginActionProxy extends PluginAction {
 	 * Serial for this class.
 	 */
 	private static final long serialVersionUID = -8929195916819522778L;
+
+	public void calculateEnable() {
+
+	}
 
 	private static String createActionName(
 			IPluginActionDescriptor pluginActionDescriptor) {
