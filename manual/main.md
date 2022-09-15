@@ -3438,13 +3438,19 @@ If `self` is a sequence of collections, then this operation
 returns the sequence concatenation of all its elements.  
 **Notation:** `self->flatten()`
 
-#### Append elements
+#### Adding elements
 
 `append(y:T):Sequence(T) := 
  self->union(Sequence{y})` results
-in the sequence which consists of all elements of `y` with `y`
+in the sequence which consists of all elements of `self` with `y`
 appended.  
 **Notation:** `self->append(y)`
+
+`insertAt(index:Integer,y:T):Sequence(T)` results
+in the sequence which consists of all elements of `self` with `y`
+inserted at position `index`. All elements that were at a position `p` with `p >= index`
+are afterwards at position `p + 1`, i.e., they moved right.    
+**Notation:** `self->insertAt(1, y)`
 
 #### Prepend elements
 

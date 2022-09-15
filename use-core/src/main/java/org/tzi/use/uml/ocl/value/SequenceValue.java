@@ -21,16 +21,16 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Sequence values.
@@ -208,13 +208,22 @@ public class SequenceValue extends CollectionValue {
         return res;
     }
 
+    /**
+     * Constructs a new {@link SequenceValue} with {@link Value} <code>v</code> inserted
+     * at the position <code>index</code>.
+     * @param resultType The {link Type} of the newly created {@link SequenceValue}
+     * @param index The position to insert the element at
+     * @param v The value that is inserted at position <code>index</code>
+     * @return A new {@link SequenceValue} with <code>v</code> inserted at position <code>index</code> or
+     *         <code>null</code> if <code>index</code> is not a valid index.
+     */
     public SequenceValue insertAt(Type resultType, IntegerValue index, Value v) {
-    	if (index.value() < 1 || index.value() >= fElements.size())
+    	if (index.value() < 1 || index.value() > fElements.size() + 1)
     		return null;
     	
     	SequenceValue res = new SequenceValue(getResultElementType(resultType));
     	res.addAll(fElements);
-    	res.fElements.add(index.value(), v);
+    	res.fElements.add(index.value() - 1, v);
     	
     	return res;
     }
