@@ -20,17 +20,16 @@ import java.awt.event.ActionEvent;
  * 
  * @author Roman Asendorf
  */
-@SuppressWarnings("serial")
 public abstract class PluginAction extends AbstractAction implements
 		IPluginAction {
 
-	private IPluginActionDescriptor pluginActionDescriptor;
+	private final IPluginActionDescriptor pluginActionDescriptor;
 
 	private IPluginActionDelegate pluginActionDelegate;
 
-	private Session session;
+	private final Session session;
 
-	private MainWindow parent;
+	private final MainWindow parent;
 
 	/**
 	 * Constructor to create a Plugin Action Proxy with the given Plugin Action
@@ -67,9 +66,14 @@ public abstract class PluginAction extends AbstractAction implements
 		this.getPluginActionDelegate().performAction(this);
 	}
 
+	/**
+	 * <p>If the system state or session changes this operation
+	 * should be called to "ask" the action if it is executable at the moment.</p>
+	 * <p>This is used to enable or disable GUI elements.</p>
+	 */
 	public void calculateEnabled() {
-		boolean shouldBeAnabled = this.getPluginActionDelegate().shouldBeEnabled(this);
-		this.setEnabled(shouldBeAnabled);
+		boolean shouldBeEnabled = this.getPluginActionDelegate().shouldBeEnabled(this);
+		this.setEnabled(shouldBeEnabled);
 	}
 
 	/**

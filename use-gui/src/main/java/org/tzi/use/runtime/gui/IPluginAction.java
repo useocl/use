@@ -1,9 +1,9 @@
 package org.tzi.use.runtime.gui;
 
-import java.awt.event.ActionEvent;
-
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
+
+import java.awt.event.ActionEvent;
 
 /**
  * This interface provides the Plugin Action Proxy's behaviour. - This interface
@@ -19,19 +19,19 @@ public interface IPluginAction {
 	 * @param event
 	 *            The ActionEvent
 	 */
-	public void actionPerformed(ActionEvent event);
+	void actionPerformed(ActionEvent event);
 
 	/**
 	 * Method to get the application's Session object
 	 * 
 	 * @return The Session object
 	 */
-	public Session getSession();
+	Session getSession();
 
 	/**
 	 * Method to get the application's MainWindow object
 	 * 
 	 * @return The MainWindow object
 	 */
-	public MainWindow getParent();
+	MainWindow getParent();
 }

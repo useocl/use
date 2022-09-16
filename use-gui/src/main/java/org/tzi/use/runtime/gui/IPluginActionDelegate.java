@@ -6,6 +6,7 @@ package org.tzi.use.runtime.gui;
  * Actions.
  * 
  * @author Roman Asendorf
+ * @author Lars Hamann
  */
 public interface IPluginActionDelegate {
 
@@ -18,14 +19,15 @@ public interface IPluginActionDelegate {
 	void performAction(IPluginAction pluginAction);
 
 	/**
-	 * PluginActionDelegates can override the behavior when their invoking user interfaces
+	 * {@link IPluginActionDelegate}s can override the behavior when their invoking user interfaces
 	 * should be enabled.
+	 * The default behaviour is to disable any action if no system (model) is loaded.
 	 *
 	 * @param pluginAction
-	 * 			The plugins Action Proxy
+	 * 			The plugins action with information about the session.
 	 * @return <code>true</code>, if user interface elements for invoking this action should be enabled.
 	 */
 	default boolean shouldBeEnabled(IPluginAction pluginAction) {
 		return pluginAction.getSession().hasSystem();
-	};
+	}
 }
