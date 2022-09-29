@@ -1,0 +1,36 @@
+name: Publish new version
+
+on:
+  push:
+    branches:
+      - 'release/v*'
+    
+jobs:
+  generate-release-archive:
+     name: Generate release archive
+     runs-on: windows-latest
+     
+     permissions:
+       contents: write
+
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v2
+         with:
+           fetch-depth: 0
+
+       - name: Set up JDK
+         uses: actions/setup-java@v2
+         with:
+           java-version: '15'
+           distribution: 'adopt'
+           cache: maven
+
+       - name: Build with Maven
+         run: mvn --batch-mode --update-snapshots verify
+  
+       - name: Create release
+         uses: ncipollo/release-action@v1
+         with:
+           artifacts: "use-assembly/target/*.zip"
+           generateReleaseNotes: true
