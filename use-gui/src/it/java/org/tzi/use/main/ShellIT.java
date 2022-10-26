@@ -134,8 +134,15 @@ public class ShellIT {
      */
     private void validateOutput(Path testFile, List<String> expectedOutput, List<String> actualOutput) {
         Patch<String> patch = DiffUtils.diff(expectedOutput, actualOutput);
+        boolean nonWhitespaceChange = false;
 
-        if (!patch.getDeltas().isEmpty()) {
+        // Check if non whitespace diffs are present
+        nonWhitespaceChange = patch.getDeltas().stream().anyMatch(
+                (delta) -> delta.getSource().getLines().stream().anyMatch(line -> !line.isBlank()) ||
+                           delta.getTarget().getLines().stream().anyMatch(line -> !line.isBlank())
+        );
+
+        if (nonWhitespaceChange) {
             StringBuilder diffMsg = new StringBuilder("USE output does not match expected output!").append(System.lineSeparator());
 
             diffMsg.append("Testfile: ").append(testFile).append(System.lineSeparator());
@@ -325,7 +332,9 @@ public class ShellIT {
 
             if (proc.isAlive()) {
                 line = line == null ? "" : line.trim();
-                actualOutput.add(line);
+                if (!line.equals("")) {
+                    actualOutput.add(line);
+                }
             }
         }
 
