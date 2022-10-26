@@ -145,7 +145,14 @@ public class ShellIT {
 
             //simple output the computed patch to console
             for (AbstractDelta<String> delta : patch.getDeltas()) {
-                diffMsg.append(delta.toString()).append(System.lineSeparator());
+                diffMsg.append("Diff [")
+                        .append(delta.getType())
+                        .append("] Source: '")
+                        .append(delta.getSource().toString())
+                        .append("' Target: '" )
+                        .append(delta.getTarget().toString())
+                        .append("'")
+                        .append(System.lineSeparator());
             }
 
             writeToFile(expectedOutput, testFile.getParent().resolve(testFile.getFileName().toString() + ".expected" ));
