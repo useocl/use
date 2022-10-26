@@ -5,7 +5,6 @@ import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.Patch;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.tzi.use.config.Options;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -210,7 +209,7 @@ public class ShellIT {
 
                     try {
                         cmdWriter.write(inputLine);
-                        cmdWriter.write(Options.LINE_SEPARATOR);
+                        cmdWriter.write(System.lineSeparator());
 
                         expectedOutput.add((prompt + inputLine).trim());
                     } catch (IOException e1) {
