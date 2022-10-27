@@ -7,7 +7,7 @@
     <groupId>org.tzi.use</groupId>
     <artifactId>use</artifactId>
     <packaging>pom</packaging>
-    <version>7.0.1</version>
+    <version>7.1.0</version>
     <modules>
         <module>use-core</module>
         <module>use-gui</module>

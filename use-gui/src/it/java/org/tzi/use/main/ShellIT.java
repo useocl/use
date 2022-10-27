@@ -5,7 +5,6 @@ import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.Patch;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.tzi.use.config.Options;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -135,8 +134,15 @@ public class ShellIT {
      */
     private void validateOutput(Path testFile, List<String> expectedOutput, List<String> actualOutput) {
         Patch<String> patch = DiffUtils.diff(expectedOutput, actualOutput);
+        boolean nonWhitespaceChange = false;
 
-        if (!patch.getDeltas().isEmpty()) {
+        // Check if non whitespace diffs are present
+        nonWhitespaceChange = patch.getDeltas().stream().anyMatch(
+                (delta) -> delta.getSource().getLines().stream().anyMatch(line -> !line.isBlank()) ||
+                           delta.getTarget().getLines().stream().anyMatch(line -> !line.isBlank())
+        );
+
+        if (nonWhitespaceChange) {
             StringBuilder diffMsg = new StringBuilder("USE output does not match expected output!").append(System.lineSeparator());
 
             diffMsg.append("Testfile: ").append(testFile).append(System.lineSeparator());
@@ -146,7 +152,14 @@ public class ShellIT {
 
             //simple output the computed patch to console
             for (AbstractDelta<String> delta : patch.getDeltas()) {
-                diffMsg.append(delta.toString()).append(System.lineSeparator());
+                diffMsg.append("Diff [")
+                        .append(delta.getType())
+                        .append("] Source: '")
+                        .append(delta.getSource().toString())
+                        .append("' Target: '" )
+                        .append(delta.getTarget().toString())
+                        .append("'")
+                        .append(System.lineSeparator());
             }
 
             writeToFile(expectedOutput, testFile.getParent().resolve(testFile.getFileName().toString() + ".expected" ));
@@ -210,7 +223,7 @@ public class ShellIT {
 
                     try {
                         cmdWriter.write(inputLine);
-                        cmdWriter.write(Options.LINE_SEPARATOR);
+                        cmdWriter.write(System.lineSeparator());
 
                         expectedOutput.add((prompt + inputLine).trim());
                     } catch (IOException e1) {
@@ -319,7 +332,9 @@ public class ShellIT {
 
             if (proc.isAlive()) {
                 line = line == null ? "" : line.trim();
-                actualOutput.add(line);
+                if (!line.equals("")) {
+                    actualOutput.add(line);
+                }
             }
         }
 
