@@ -1,0 +1,115 @@
+<extensions>
+
+  <operation source="Real" name="expDistr" returnType="Real">
+	<body><![CDATA[
+		if $self != 0
+           return (6.9077553 - Math.log(Random.rand(1000) + 1)) * $self
+        else 
+           return 0.0
+        end
+	]]>
+	</body>
+  </operation>
+
+  <operation source="Real" name="normalDistr" returnType="Real">
+		<parameter>
+			<par name="s" type="Real" />
+		</parameter>
+	<body><![CDATA[
+       return $self + ( $s * Math.sqrt(-2.0 * Math.log(Random.rand)) * Math.cos(6.283185307 * Random.rand) )
+	]]>
+	</body>
+  </operation>
+
+  <operation source="Real" name="pdf01" returnType="Real">
+	<body><![CDATA[
+           #  Distribution.Normal.pdf($self)
+           (1.0 / (Math.sqrt(2 * Math::PI)))*Math::exp(-(($self**2)/2.0))	
+        ]]>
+	</body>
+  </operation>
+
+  <operation source="Real" name="pdf" returnType="Real">
+		<parameter>
+			<par name="m" type="Real" />
+			<par name="s" type="Real" />
+		</parameter>
+	<body><![CDATA[
+	   # Distribution.Normal.pdf(($self-$m)/$s)/$s
+           (1.0 / (Math.sqrt(2 * Math::PI))) * Math::exp(-(((($self-$m)/$s)**2)/2.0))/$s	
+        ]]>
+	</body>
+  </operation>
+
+  <operation source="Real" name="cdf01" returnType="Real">
+	<body><![CDATA[
+# Distribution.Normal.cdf($self)
+def cdf01(z)
+  0.0 if z < -12 
+  1.0 if z > 12
+  0.5 if z == 0.0 
+
+  if z > 0.0
+    e = true
+  else
+    e = false
+    z = -z
+  end
+  z = z.to_f
+  z2 = z * z
+  t = q = z * Math.exp(-0.5 * z2) / (Math.sqrt(2 * Math::PI))
+
+  3.step(199, 2) do |i|
+    prev = q
+    t *= z2 / i
+    q += t
+    if q <= prev
+      return(e ? 0.5 + q : 0.5 - q)
+    end
+  end
+  e ? 1.0 : 0.0
+end
+cdf01($self)
+        ]]>
+	</body>
+  </operation>
+
+  <operation source="Real" name="cdf" returnType="Real">
+		<parameter>
+			<par name="m" type="Real" />
+			<par name="s" type="Real" />
+		</parameter>
+	<body><![CDATA[
+# Distribution.Normal.cdf(($self-$m)/$s)
+def cdf01(z)
+  0.0 if z < -12 
+  1.0 if z > 12
+  0.5 if z == 0.0 
+
+  if z > 0.0
+    e = true
+  else
+    e = false
+    z = -z
+  end
+  z = z.to_f
+  z2 = z * z
+  t = q = z * Math.exp(-0.5 * z2) / (Math.sqrt(2 * Math::PI))
+
+  3.step(199, 2) do |i|
+    prev = q
+    t *= z2 / i
+    q += t
+    if q <= prev
+      return(e ? 0.5 + q : 0.5 - q)
+    end
+  end
+  e ? 1.0 : 0.0
+end
+cdf01(($self-$m)/$s)
+        ]]>
+	</body>
+  </operation>
+
+</extensions>
+
