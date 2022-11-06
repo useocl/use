@@ -102,7 +102,7 @@ public class VarDecl {
 
 
 	/**
-	 * @param generateHTMLExpressionVisitor
+	 * @param v
 	 */
 	public void processWithVisitor(ExpressionVisitor v) {
 		v.visitVarDecl(this);

@@ -18,14 +18,14 @@
  */
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.util.soil.StateDifference;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.util.soil.StateDifference;
 
 /**
  * This class controls the "virtual" links inside a system state.
@@ -91,8 +91,8 @@ public abstract class DerivedLinkController implements DerivedValueController {
 
 	/**
 	 * Calculates all derived links for a single derived association end.
+	 * @param linksSink
 	 * @param associationEnd
-	 * @return
 	 */
 	protected abstract void determineDerivedLinks(Set<MDerivedLink> linksSink, MAssociationEnd associationEnd);
 	

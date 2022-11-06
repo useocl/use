@@ -18,15 +18,6 @@
  */
 package org.tzi.use.api;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.SrcPos;
@@ -35,20 +26,7 @@ import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.soil.SoilCompiler;
 import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.parser.use.USECompiler;
-import org.tzi.use.uml.mm.MAggregationKind;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MMultiplicity;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.MPrePostCondition;
-import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -62,6 +40,15 @@ import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>This class encapsulates access to the USE model
@@ -198,11 +185,10 @@ public class UseModelApi {
 	 * Creates a new USE model, which contains all other model elements. This
 	 * operation is called after the creation of the new session. System and
 	 * model may change during a session. At the beginning of building a valid
-	 * USE model is needed only an unique model name <code>modelName</code>.
+	 * USE model is needed only a unique model name <code>modelName</code>.
 	 *
-	 * @param modelName
+	 * @param modelName The name of the model to create.
 	 * @return the new created model
-	 * @throws ApiException
 	 */
 	public MModel createModel(String modelName) {
 		mModel = mFactory.createModel(modelName);
@@ -243,7 +229,8 @@ public class UseModelApi {
 	 * @param enumerationName The name of the enumeration (<i>required</i>).
 	 * @param literals The enumeration literals
 	 * @return The created enumeration
-	 * @throws UseApiException
+	 * @throws UseApiException If <code>enumerationName</code> is <code>null</code> or empty string.
+	 *                         If name is a duplicate.
 	 */
 	public EnumType createEnumeration(String enumerationName, String... literals) throws UseApiException {
 		return createEnumeration(enumerationName, Arrays.asList(literals));
@@ -254,7 +241,8 @@ public class UseModelApi {
 	 * @param enumerationName The name of the enumeration (<i>required</i>).
 	 * @param literals The enumeration literals
 	 * @return The created enumeration
-	 * @throws UseApiException
+	 * @throws UseApiException If <code>enumerationName</code> is <code>null</code> or empty string.
+	 *                         If name is a duplicate.
 	 */
 	public EnumType createEnumeration(String enumerationName, List<String> literals) throws UseApiException {
 
@@ -282,7 +270,7 @@ public class UseModelApi {
 	 * @param attributeName The name of the attribute to create.
 	 * @param attributeType The type of the attribute.
 	 * @return The created <code>MAttribute</code> with given name and type.
-	 * @throws UseApiException
+	 * @throws UseApiException If type is not known or attribute is a duplicate.
 	 */
 	public MAttribute createAttribute(String owningClassName, String attributeName, String attributeType)
 			throws UseApiException {
@@ -305,7 +293,7 @@ public class UseModelApi {
 	 * @param attributeName The name of the attribute to create.
 	 * @param attributeType The type of the attribute.
 	 * @return The created <code>MAttribute</code> with given name and type.
-	 * @throws UseApiException
+	 * @throws UseApiException If name is a duplicate.
 	 */
 	public MAttribute createAttributeEx(MClass owningClass, String attributeName, Type attributeType)
 			throws UseApiException {
@@ -400,13 +388,13 @@ public class UseModelApi {
 	 * </p>
 	 * <p>The parameters of the operation to create are specified by a two dimensional array.
 	 * The first dimension defines the parameter position. The second dimension has exactly two entries:
+	 * </p>
 	 * <ol>
 	 *   <li> At index 0 the name of the parameter</li>
 	 *   <li> At index 1 the type of the parameter</li>
 	 * </ol>
-	 * </p>
 	 * <p>The <code>body</code> of the operation can be any valid <i>OCL</i>-expression that conforms to the return type.</p>
-	 * @param owner The class to create the operation for.
+	 * @param ownerName The name of the class to create the operation for.
 	 * @param operationName The name of the operation to create.
 	 * @param parameter The operation parameters
 	 * @param returnType The return type of the operation (can be <code>null</code>).
@@ -454,13 +442,13 @@ public class UseModelApi {
 	 * </p>
 	 * <p>The parameters of the operation to create are specified by a two dimensional array.
 	 * The first dimension defines the parameter position. The second dimension has exactly two entries:
+	 * </p>
 	 * <ol>
 	 *   <li> At index 0 the name of the parameter</li>
 	 *   <li> At index 1 the type of the parameter</li>
 	 * </ol>
-	 * </p>
 	 * <p>The <code>body</code> of the operation can be any valid <i>SOIL</i>-operation body that conforms to the return type.</p>
-	 * @param owner The class to create the operation for.
+	 * @param ownerName The name of the class to create the operation for.
 	 * @param operationName The name of the operation to create.
 	 * @param parameter The operation parameters
 	 * @param returnType The return type of the operation (can be <code>null</code>).
@@ -694,7 +682,7 @@ public class UseModelApi {
 	 *
 	 * @return MClassInvariant The new invariant added to the current model.
 	 *
-	 * @throws ApiException
+	 * @throws UseApiException
 	 *             If the type of the context name is unknown or not a class name,
 	 *             the body expression is invalid or the invariant name is already used
 	 *             for this class.
@@ -737,7 +725,7 @@ public class UseModelApi {
 	 *
 	 * @return MClassInvariant The new invariant added to the current model.
 	 *
-	 * @throws ApiException
+	 * @throws UseApiException
 	 *             If the type of the context name is unknown or not a class name,
 	 *             the body expression is invalid or the invariant name is already used
 	 *             for this class.
@@ -769,7 +757,7 @@ public class UseModelApi {
 	 * @param childName The name of the subclass
 	 * @param parentName The name of the parent, i. e., general class
 	 * @return The generalization instance
-	 * @throws ApiException
+	 * @throws UseApiException
 	 *         If the class names are invalid.
 	 */
 	public MGeneralization createGeneralization(String childName, String parentName) throws UseApiException {
@@ -788,7 +776,7 @@ public class UseModelApi {
 	 * @param child The subclass
 	 * @param parent The general class
 	 * @return The generalization instance
-	 * @throws ApiException
+	 * @throws UseApiException
 	 *         If the class names are invalid.
 	 */
 	public MGeneralization createGeneralizationEx(MClass child, MClass parent) throws UseApiException {
@@ -875,7 +863,7 @@ public class UseModelApi {
 	 * @param end2Aggregation The aggregation kind ({@link MAggregationKind}) of the second association end.
 	 *
 	 * @return The new association as an instance of the meta-class {@link MAssociation}.
-	 * @throws ApiException
+	 * @throws UseApiException
 	 *             If the association name is empty or already defined.
 	 */
 	public MAssociation createAssociation(String associationName,

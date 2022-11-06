@@ -19,17 +19,17 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.tzi.use.analysis.coverage.CoverageCalculationVisitor;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.util.soil.StateDifference;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Calculates values of derived attributes after the system
@@ -56,7 +56,9 @@ public class DerivedAttributeController implements DerivedValueController {
 	
 	/**
 	 * Copy constructor
-	 * @param derivedLinkController
+	 * @param state
+	 * @param objectStates
+	 * @param derivedAttributeController
 	 */
 	public DerivedAttributeController(MSystemState state, Map<MObject, MObjectState> objectStates, DerivedAttributeController derivedAttributeController) {
 		this.state = state;

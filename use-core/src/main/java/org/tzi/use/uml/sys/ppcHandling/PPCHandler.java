@@ -59,7 +59,7 @@ public interface PPCHandler {
 	 * were calculated.
 	 * @param system
 	 * @param operationCall
-	 * @throws PostConditionCheckFailedException
+	 * @throws PreConditionCheckFailedException
 	 */
 	public abstract void handleTransitionsPre(
 			MSystem system, 

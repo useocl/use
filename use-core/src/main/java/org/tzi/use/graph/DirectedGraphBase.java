@@ -21,35 +21,21 @@
 
 package org.tzi.use.graph;
 
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 
+import java.util.*;
+
 /** 
  * Basic implementation of directed graphs.
  * @author  	Mark Richters
  * @author		Lars Hamann
  * @see         DirectedGraph
- * @param N Type of the nodes
- * @param E Type of the edges
+ * @param <N> Type of the nodes
+ * @param <E> Type of the edges
  */
 public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCollection<N> implements DirectedGraph<N, E> {
     
@@ -158,8 +144,8 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
 
     /**
      * Returns the number of nodes in this graph.  If this graph
-     * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
-     * <tt>Integer.MAX_VALUE</tt>.
+     * contains more than <code>Integer.MAX_VALUE</code> elements, returns
+     * <code>Integer.MAX_VALUE</code>.
      * 
      * @return the number of nodes in this graph
      */
@@ -168,13 +154,13 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
     }
 
     /**
-     * Returns <tt>true</tt> if this graph contains the specified
-     * node.  More formally, returns <tt>true</tt> if and only if this
-     * graph contains at least one node <tt>e</tt> such that
-     * <tt>(o==null ? e==null : o.equals(e))</tt>.
+     * Returns <code>true</code> if this graph contains the specified
+     * node.  More formally, returns <code>true</code> if and only if this
+     * graph contains at least one node <code>e</code> such that
+     * <code>(o==null ? e==null : o.equals(e))</code>.
      *
      * @param o element whose presence in this graph is to be tested.
-     * @return <tt>true</tt> if this graph contains the specified
+     * @return <code>true</code> if this graph contains the specified
      *         node
      */
     public boolean contains(Object o) {
@@ -188,7 +174,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * a node comparator was provided, there are no
      * guarantees concerning the order in which the nodes are returned.
      * 
-     * @return an <tt>Iterator</tt> over the nodes in this graph
+     * @return an <code>Iterator</code> over the nodes in this graph
      */
     public Iterator<N> iterator() {
         return fNodes.keySet().iterator();
@@ -198,10 +184,10 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * Adds the specified node to this graph if it is not already
      * present.  If this graph already contains the specified node,
      * the call leaves this Graph unchanged and returns
-     * <tt>false</tt>.
+     * <code>false</code>.
      *
      * @param o node to be added to this graph.
-     * @return <tt>true</tt> if this graph did not already contain the
+     * @return <code>true</code> if this graph did not already contain the
      *          specified node.
      * @throws NullPointerException n is null.  
      */
@@ -222,10 +208,10 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * Removes the specified node and all incident edges from this
      * graph if it is present.  If this graph does not contain the
      * specified node, the call leaves this Graph unchanged and
-     * returns <tt>false</tt>.
+     * returns <code>false</code>.
      *
      * @param o node to be removed from this graph.
-     * @return <tt>true</tt> if this graph did contain the
+     * @return <code>true</code> if this graph did contain the
      *          specified node and removed it.  
      */
     public boolean remove(Object o) {
@@ -371,7 +357,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * returned. The iterator delivers instances of type
      * <code>DirectedEdge</code>.
      * 
-     * @return an <tt>Iterator</tt> over the edges in this graph 
+     * @return an <code>Iterator</code> over the edges in this graph 
      * @see DirectedEdge
      */
     public Iterator<E> edgeIterator() {
@@ -394,7 +380,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * equals method is pair-wise false.
      *
      * @param e edge to be added to this graph.
-     * @return <tt>true</tt> if this graph did not already contain the
+     * @return <code>true</code> if this graph did not already contain the
      *          specified edge.
      * @exception NodeDoesNotExistException node referenced by e is
      *            not part of this graph.
@@ -428,7 +414,7 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * Removes the specified edge from this graph.
      *
      * @param e edge to be removed from this graph.
-     * @return <tt>true</tt> if the specified edge could be removed.
+     * @return <code>true</code> if the specified edge could be removed.
      * @throws NullPointerException e is null.
      */
     public boolean removeEdge(E e) {
@@ -802,7 +788,6 @@ public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCol
      * @param node The current node
      * @param targetNode The node to reach
      * @param visitedNodes All visited nodes of the graph
-     * @param visitedNodesTree All visited nodes in this search path
      * @return
      */
     private boolean dfs_path(N node, N targetNode, Set<N> visitedNodes) {

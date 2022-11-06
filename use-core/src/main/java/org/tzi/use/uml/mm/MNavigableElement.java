@@ -21,12 +21,12 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.List;
-import java.util.Set;
-
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * MNavigableElement instances represent model elements which can be
@@ -41,20 +41,21 @@ public interface MNavigableElement {
     public MClass cls();
 
     /**
-     * Returns the <code>Type</code> of the navigation from <code>sourceObjectType</code> via
-     * the association end <code>src</code> to this end.
+     * <p>Returns the <code>Type</code> of the navigation from <code>sourceObjectType</code> via
+     * the association end <code>src</code> to this end.</p>
      * 
-     * <code>src</code> is required because redefined ends
+     * <p><code>src</code> is required because redefined ends
      * or the navigation over an qualified association without qualifier values
-     * can change the type of the navigation.
+     * can change the type of the navigation.</p>
      * 
-     * let C be the class at dstEnd, then the result type is:
-     * <li> <code>C</code> if the multiplicity is max. one, this is binary association and qualifier values are provided for a qualified association
-     * <li> <code>OrderedSet(C)</code> if this association end is marked as {ordered} and qualifier values are provided for a qualified association
-     * <li> <code>Set(C)</code> if the multiplicity is greater than 1 qualifier values are provided for a qualified association
-     * <li> <code>Bag(C)</code> if <code>src</code> has qualifiers, but no qualifier values are provided
-     * <li> <code>Sequence(C)</code> if this association end is marked as {ordered} and <code>src</code> has qualifiers, but no qualifier values are provided
-     * 
+     * <p>let C be the class at dstEnd, then the result type is:</p>
+     * <ul>
+     *   <li> <code>C</code> if the multiplicity is max. one, this is binary association and qualifier values are provided for a qualified association
+     *   <li> <code>OrderedSet(C)</code> if this association end is marked as {ordered} and qualifier values are provided for a qualified association
+     *   <li> <code>Set(C)</code> if the multiplicity is greater than 1 qualifier values are provided for a qualified association
+     *   <li> <code>Bag(C)</code> if <code>src</code> has qualifiers, but no qualifier values are provided
+     *   <li> <code>Sequence(C)</code> if this association end is marked as {ordered} and <code>src</code> has qualifiers, but no qualifier values are provided
+     * </ul>
      * @param sourceObjectType The concrete <code>Type</code> the navigation starts from. 
      * @param src The source end the navigation starts from.
      * @param qualifiedAccess Boolean value whether qualifier values are used or not. 

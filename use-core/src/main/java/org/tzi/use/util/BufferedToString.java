@@ -39,7 +39,7 @@ public interface BufferedToString {
 	 * </P>
 	 * @since 3.0.0
 	 * @param sb The buffer to append
-	 * @return The same StringBuilder that was provided which allows shorter implementations (cf. {@link StringBuilder#append(String))} 
+	 * @return The same StringBuilder that was provided to allow for shorter implementations (cf. {@link StringBuilder#append(String)})
 	 */
 	StringBuilder toString(StringBuilder sb);
 }

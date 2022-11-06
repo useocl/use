@@ -70,7 +70,7 @@ public class MAttributeAssignmentStatement extends MStatement {
      * 
 	 * @param object The object to assign the new value to.
 	 * @param attribute The attribute to assign the value to
-	 * @param rValue The expression leading to the value to assign
+	 * @param value The expression leading to the value to assign
 	 */
     public MAttributeAssignmentStatement(MObject object, MAttribute attribute, Expression value) {
 		
@@ -82,7 +82,7 @@ public class MAttributeAssignmentStatement extends MStatement {
      * 
 	 * @param object The object to assign the new value to.
 	 * @param attribute The attribute to assign the value to
-	 * @param rValue The value to assign
+	 * @param value The value to assign
 	 */
     public MAttributeAssignmentStatement(MObject object, MAttribute attribute, Value value) {
 		

@@ -48,7 +48,7 @@ public class MProtocolStateMachine extends MStateMachine {
 	}
 	
 	/**
-	 * @param mObjectState
+	 * @param object
 	 * @return
 	 */
 	public MProtocolStateMachineInstance createInstance(MObject object) {

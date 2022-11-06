@@ -21,16 +21,6 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
@@ -39,14 +29,13 @@ import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
-import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
-import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
-import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
-import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
+import org.tzi.use.uml.sys.ppcHandling.*;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.StringUtil;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 
 /**
@@ -395,9 +384,9 @@ public class MOperationCall {
 	 * The default values are:
 	 * <ul>
 	 *   <li>{@link ExpressionPPCHandler#getDefaultOutputHandler()}: <br/>If the called operation has an OCL-body, i. e., it is a OCL query operation.
-	 *   <li>{@link SoilPPCHandler#getDefaultOutputHandler()}:</br> If the called operation has a SOIL-body.
-	 *   <li>{@link OpEnterOpExitPPCHandler#getDefaultOutputHandler()}:</br> If it has no body (legacy openter / opexit).
-	 *   <li>{@link DoNothingPPCHandler#getInstance()}:</br> otherwise.
+	 *   <li>{@link SoilPPCHandler#getDefaultOutputHandler()}:<br/> If the called operation has a SOIL-body.
+	 *   <li>{@link OpEnterOpExitPPCHandler#getDefaultOutputHandler()}:<br/> If it has no body (legacy openter / opexit).
+	 *   <li>{@link DoNothingPPCHandler#getInstance()}:<br/> otherwise.
 	 * </ul> 
 	 * @return The default PPCHandler for the called operation.
 	 */
@@ -623,7 +612,6 @@ public class MOperationCall {
 	/**
 	 * Returns previously set transitions that were taken
 	 * after the operation executed.
-	 * @param psm
 	 * @return
 	 */
 	public Map<MProtocolStateMachineInstance, Set<MTransition>> getExecutedTransitions() {

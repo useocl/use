@@ -30,39 +30,38 @@ import java.util.Set;
  * Basic interface of graphs with directed edges. A graph is a collection
  * of node objects which may be connected by directed edges.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * 
- * @param N Type of the nodes
- * @param E Type of the Edges 
+ * @param <N> Type of the nodes
+ * @param <E> Type of the Edges
  */
 
 
 public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<N> {
     /**
      * Returns the number of nodes in this graph.  If this graph
-     * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
-     * <tt>Integer.MAX_VALUE</tt>.
+     * contains more than <code>Integer.MAX_VALUE</code> elements, returns
+     * <code>Integer.MAX_VALUE</code>.
      * 
      * @return the number of nodes in this graph
      */
     int size();
 
     /**
-     * Returns <tt>true</tt> if this graph contains no nodes.
+     * Returns <code>true</code> if this graph contains no nodes.
      *
-     * @return <tt>true</tt> if this graph contains no nodes
+     * @return <code>true</code> if this graph contains no nodes
      */
     boolean isEmpty();
 
     /**
-     * Returns <tt>true</tt> if this graph contains the specified
-     * node.  More formally, returns <tt>true</tt> if and only if this
-     * graph contains at least one node <tt>e</tt> such that
-     * <tt>(o==null ? e==null : o.equals(e))</tt>.
+     * Returns <code>true</code> if this graph contains the specified
+     * node.  More formally, returns <code>true</code> if and only if this
+     * graph contains at least one node <code>e</code> such that
+     * <code>(o==null ? e==null : o.equals(e))</code>.
      *
      * @param o element whose presence in this graph is to be tested.
-     * @return <tt>true</tt> if this graph contains the specified
+     * @return <code>true</code> if this graph contains the specified
      *         node
      */
     boolean contains(Object o);
@@ -71,13 +70,13 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<
      * Returns an iterator over the nodes in this collection.  There are no
      * guarantees concerning the order in which the nodes are returned.
      * 
-     * @return an <tt>Iterator</tt> over the nodes in this graph
+     * @return an <code>Iterator</code> over the nodes in this graph
      */
     Iterator<N> iterator();
 
     /**
      * Returns an array containing all of the nodes in this graph.
-     * Obeys the general contract of the <tt>Collection.toArray</tt> method.
+     * Obeys the general contract of the <code>Collection.toArray</code> method.
      *
      * @return an array containing all of the nodes in this set.
      */
@@ -97,10 +96,10 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<
      * Adds the specified node to this graph if it is not already
      * present.  If this graph already contains the specified node,
      * the call leaves this Graph unchanged and returns
-     * <tt>false</tt>.
+     * <code>false</code>.
      *
      * @param o node to be added to this graph.
-     * @return <tt>true</tt> if this graph did not already contain the
+     * @return <code>true</code> if this graph did not already contain the
      *          specified node.
      * @throws NullPointerException n is null.  
      */
@@ -110,10 +109,10 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<
      * Removes the specified node and all incident edges from this
      * graph if it is present.  If this graph does not contain the
      * specified node, the call leaves this Graph unchanged and
-     * returns <tt>false</tt>.
+     * returns <code>false</code>.
      *
      * @param o node to be removed from this graph.
-     * @return <tt>true</tt> if this graph did contain the
+     * @return <code>true</code> if this graph did contain the
      *          specified node and removed it.  
      */
     boolean remove(Object o);
@@ -166,7 +165,7 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<
      * returned. The iterator delivers instances of type
      * <code>DirectedEdge</code>.
      * 
-     * @return an <tt>Iterator</tt> over the edges in this graph 
+     * @return an <code>Iterator</code> over the edges in this graph 
      * @see DirectedEdge
      */
     Iterator<E> edgeIterator();
@@ -177,7 +176,7 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<
      * equals method is pair-wise false.
      *
      * @param e edge to be added to this graph.
-     * @return <tt>true</tt> if this graph did not already contain the
+     * @return <code>true</code> if this graph did not already contain the
      *          specified edge.
      * @throws NodeDoesNotExistException node referenced by e is
      *            not part of this graph.
@@ -189,7 +188,7 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<
      * Removes the specified edge from this graph.
      *
      * @param e edge to be removed from this graph.
-     * @return <tt>true</tt> if the specified edge could be removed.
+     * @return <code>true</code> if the specified edge could be removed.
      * @throws NullPointerException e is null.
      */
     boolean removeEdge(E e);

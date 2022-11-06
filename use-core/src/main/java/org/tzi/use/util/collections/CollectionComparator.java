@@ -29,7 +29,6 @@ import java.util.Iterator;
  * A CollectionComparator compares two collections. The collections
  * must be ordered and their elements must be comparable. 
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public final class CollectionComparator<I extends Comparable<I>> implements Comparator<Collection<I>> {
@@ -38,7 +37,7 @@ public final class CollectionComparator<I extends Comparable<I>> implements Comp
     /** 
      * Compare two collections.
      *
-     * @pre o1, o2 must be Collections, their iterators must have a
+     * @ocl.pre o1, o2 must be Collections, their iterators must have a
      * defined order, and the collection elements must implement the
      * Comparable interface.  
      */

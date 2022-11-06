@@ -93,7 +93,6 @@ public final class StringUtil {
      * 
      * @param target The StringBuffer the elements are appended
      * @param objarr The elements to append to the buffer
-     * @param beginIndex Index to start appending from
      * @param divider String to be used as a separator between elements
      * 
      */
@@ -290,7 +289,7 @@ public final class StringUtil {
      * @since 3.0.0
      * 
      * @param target The StringBuffer to append to
-     * @param it The Iterator to get the elements from
+     * @param seq The <code>Collection</code> to get the elements from
      * @param divider The separator between elements
      * @see #fmtSeqBuffered(StringBuilder, Collection, String)
      */
@@ -337,7 +336,6 @@ public final class StringUtil {
      * copying of characters. 
      * </p>
      * @param objarr The elements to print
-     * @param beginIndex The index to start printing from
      * @param divider String that separates the elements
      * @return A <code>String</code> with all elements separated by <code>divider</code> 
      * 
@@ -611,8 +609,7 @@ public final class StringUtil {
 	 * Prints the elements of the collection <code>mainSequence</code> separated by <code>delimiter</code> with
 	 * the sub collection appended to each element, if present.
 	 * E. g., ada{ibm}, bob
-	 * 
-     * @param buffer
+	 *
      * @param mainSequence
      * @param delimiter
      * @param subSequences

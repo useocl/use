@@ -21,13 +21,13 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /** 
  * A list of variable declarations.
@@ -175,7 +175,7 @@ public class VarDeclList implements Iterable<VarDecl> {
 	
 
 	/**
-	 * @param generateHTMLExpressionVisitor
+	 * @param v
 	 */
 	public void processWithVisitor(
 			ExpressionVisitor v) {

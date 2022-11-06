@@ -19,9 +19,6 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -32,6 +29,9 @@ import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 
 /**
@@ -51,7 +51,7 @@ public class MExitOperationStatement extends MStatement {
 	
 	/**
 	 * Creates a new exit operation statement.
-	 * @param result The expression used to calculate the operation call result.
+	 * @param operationResult The expression used to calculate the operation call result.
 	 */
 	public MExitOperationStatement(Expression operationResult) {
 		fOperationResult = operationResult;
@@ -59,7 +59,7 @@ public class MExitOperationStatement extends MStatement {
 
 	/**
 	 * Used to revert an OperationCall
-	 * @param result
+	 * @param operationResult
 	 * @param customPPCHandler
 	 */
 	public MExitOperationStatement(

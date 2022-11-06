@@ -21,22 +21,13 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.ocl.value.VarBindings.Entry;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
 
 /**
  * Context information used during evaluation.
@@ -110,7 +101,7 @@ public class EvalNode {
 
     /**
 	 * Sorts the node tree to match the sorted display order of unsorted types.
-	 * E.g. for the expression <code>Set{2,3,1}->forAll( i | i < 5 )</code> the
+	 * E.g. for the expression <code>Set{2,3,1}-&gt;forAll( i | i &lt; 5 )</code> the
 	 * range expression is displayed as <code>Set{1,2,3}</code> and the order of
 	 * the evaluation details should follow this order.
 	 */

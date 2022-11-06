@@ -19,47 +19,18 @@
 
 package org.tzi.use.uml.sys;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
-import org.tzi.use.uml.mm.MAggregationKind;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpStdOp;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.expr.SimpleEvalContext;
-import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.CollectionValue;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.ocl.value.*;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.Log;
@@ -72,10 +43,10 @@ import org.tzi.use.util.collections.HashBag;
 import org.tzi.use.util.collections.Queue;
 import org.tzi.use.util.soil.StateDifference;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * A system state represents a valid instance of a model. It contains a set of
@@ -400,7 +371,7 @@ public final class MSystemState {
 	 * Returns all links between the given objects, ignoring possible
 	 * qualifier values.
 	 * @param assoc
-	 * @param asList
+	 * @param objects
 	 * @return
 	 */
 	public Set<MLink> linkBetweenObjects(MAssociation assoc, List<MObject> objects) {
@@ -1261,8 +1232,9 @@ public final class MSystemState {
 	 * object <code>obj</code> at <code>src</code>. This is needed for navigation.
 	 * It recursively calls this method if there are child associations.
 	 * @param obj The object the navigation starts
-	 * @param src The source end the navigation starts 
-	 * @param dst The end to navigate to
+	 * @param assoc The association to calculate the list of objets for.
+	 * @param srcIndex The source end the navigation starts
+	 * @param dstIndex The end to navigate to
 	 * @param qualifierValues The values which qualify the navigation
 	 * @param excludeDerivedLinks If <code>true</code>, the concrete link sets are queried only for non virtual links. Derived association ends are still evaluated.
 	 * @param excludeRedefines If <code>true</code>, redefining associations are not considered. Needed, because the first association queries all redefining associations.  
@@ -2094,7 +2066,7 @@ public final class MSystemState {
 	}
 
 	/**
-	 * @param fLogWriter
+	 * @param out
 	 */
 	public void checkStateInvariants(@NonNull PrintWriter out) {
 		boolean error = false;

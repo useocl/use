@@ -19,23 +19,12 @@
 
 package org.tzi.use.util.collections;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-
-import org.tzi.use.util.Pair;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
+import org.tzi.use.util.Pair;
+
+import java.util.*;
 
 /**
  * Class with useful class operations for modifying collections.
@@ -215,7 +204,7 @@ public final class CollectionUtil {
     /**
      * Returns the same map <code>theMap</code> if it has elements,
      * otherwise it returns a new <code>HashMap</code>.
-     * Can be used in combination with {@link CollectionUtil#emptyMapIfNull(List)} to
+     * Can be used in combination with {@link CollectionUtil#emptyMapIfNull(Map)} to
      * use a singleton empty map as initial value.
      * <p>
      * <strong>Pre:</strong> <code>theMap != null</code>
@@ -224,7 +213,7 @@ public final class CollectionUtil {
      * <strong>Post:</strong> <code>result</code> is writable. 
      * @param <TK> Element type of the keys
      * @param <TV> Element type of the values
-     * @param theList A <code>List</code>
+     * @param theMap A <code>Map</code>
      * @return The same <code>Map</code> if <code>theMap.size() > 0</code> or a new <code>HashMap</code>  
      */
     public static <TK, TV> Map<TK,TV> initAsHashMap(final Map<TK,TV> theMap) {
@@ -268,7 +257,7 @@ public final class CollectionUtil {
     }
 
 	/**
-	 * Returns the single element from <code>collection<code>.
+	 * Returns the single element from <code>collection</code>.
 	 * If the collection has more than one element or is empty,
 	 * an exception is thrown.
 	 * @param collection The collection to retrieve the single element from.

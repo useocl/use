@@ -21,8 +21,8 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.List;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.uml.ocl.expr.operations.BooleanOperation;
@@ -35,10 +35,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 
-import antlr.SemanticException;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+import java.util.List;
 
 /**
  * General operation expressions. Each operation is implemented by its own
@@ -103,11 +100,9 @@ public final class ExpStdOp extends Expression {
     }
 
     /**
-     * Try to create a new instance of ExpOperation.
-     * 
-     * @exception ExpInvalidException
-     *                cannot find a match for operation
-     * @throws SemanticException 
+     * Try to create a new instance of <code>ExpStdOp</code>.
+     *
+     * @throws ExpInvalidException cannot find a match for operation
      */
     public static ExpStdOp create(String name, Expression args[])
             throws ExpInvalidException {
@@ -162,8 +157,9 @@ public final class ExpStdOp extends Expression {
      * If <code>true</code> a warning is reported.
      * <p><b>Note</b>: Leaf element type means the last element type which is not a collection.</p> 
 	 * @param op The operation which is called
-	 * @param sourceType The <code>Type</code> of the object the operation is called on.
+	 * @param params
 	 * @param resultType The <code>Type</code> of the result.
+     * @param warningType
      * @throws ExpInvalidException 
 	 */
 	private static void checkOclAnyCollectionsWarning(OpGeneric op, Type[] params, Type resultType, WarningType warningType) throws ExpInvalidException {

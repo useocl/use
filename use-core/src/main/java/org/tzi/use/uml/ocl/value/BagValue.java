@@ -21,11 +21,6 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
@@ -33,6 +28,11 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.Bag;
 import org.tzi.use.util.collections.HashBag;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Bag value. The bag is read-only outside of this package. Changes always
@@ -117,7 +117,7 @@ public class BagValue extends CollectionValue {
     /**
      * Returns a new bag which is the union of this and v.
      * 
-     * @pre T2 <= T1, if this has type Bag(T1) and v has type Bag(T2).
+     * @ocl.pre T2 &lt;= T1, if this has type Bag(T1) and v has type Bag(T2).
      */
     public BagValue union(Type resultType, BagValue v) {
         if (v.isEmpty())
@@ -134,7 +134,7 @@ public class BagValue extends CollectionValue {
     /**
      * Returns a new bag which is the intersection of this bag and v.
      * 
-     * @pre T2 <= T1, if this has type Bag(T1) and v has type Bag(T2).
+     * @ocl.pre T2 &lt;= T1, if this has type Bag(T1) and v has type Bag(T2).
      */
     public BagValue intersection(Type resultType, BagValue v) {
         BagValue res = new BagValue(getResultElementType(resultType));
@@ -200,7 +200,7 @@ public class BagValue extends CollectionValue {
     /**
      * Returns a copy of this bag including v
      * 
-     * @pre T2 <= T1, if this has type Bag(T1) and v has type T2.
+     * @ocl.pre T2 &lt;= T1, if this has type Bag(T1) and v has type T2.
      */
     public BagValue including(Type resultType, Value v) {
         // copy this bag
@@ -213,7 +213,7 @@ public class BagValue extends CollectionValue {
     /**
      * Return a copy of this bag excluding v
      * 
-     * @pre T2 <= T1, if this has type Bag(T1) and v has type T2.
+     * @ocl.pre T2 &lt;= T1, if this has type Bag(T1) and v has type T2.
      */
     public BagValue excluding(Type resultType, Value v) {
         // copy this bag
@@ -275,7 +275,7 @@ public class BagValue extends CollectionValue {
      * Two bags are equal iff they contain the same elements. The declared types
      * may be different.
      * 
-     * @pre T2 and T1 have a common supertype, if this has type Bag(T1) and obj has type Bag(T2).
+     * @ocl.pre T2 and T1 have a common supertype, if this has type Bag(T1) and obj has type Bag(T2).
      */
     public boolean equals(Object obj) {
         if (obj == null)

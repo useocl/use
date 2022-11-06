@@ -43,8 +43,7 @@ public abstract class MRValue {
 	/**
 	 * Evaluates the RValue.
 	 * @param context The evaluation context
-	 * @param result A result object that can store additional information. 
-	 * @param parent The parent statement of this RValue.
+	 * @param result A result object that can store additional information.
 	 * @return The evaluated value.
 	 * @throws EvaluationFailedException
 	 */

@@ -21,14 +21,14 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.ocl.value.BagValue;
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.Value;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.tzi.use.uml.ocl.value.BagValue;
-import org.tzi.use.uml.ocl.value.CollectionValue;
-import org.tzi.use.uml.ocl.value.Value;
 
 /**
  * The OCL Bag type.
@@ -87,7 +87,7 @@ public final class BagType extends CollectionType {
     /** 
      * Returns the set of all supertypes (including this type).  If
      * this collection has type Bag(T) the result is the set of
-     * all types Bag(T') and Collection(T') where T' <= T.
+     * all types Bag(T') and Collection(T') where T' &lt;= T.
      */
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>();

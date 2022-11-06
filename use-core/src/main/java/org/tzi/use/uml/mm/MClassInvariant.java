@@ -21,18 +21,9 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.List;
+import org.tzi.use.uml.ocl.expr.*;
 
-import org.tzi.use.uml.ocl.expr.ExpAllInstances;
-import org.tzi.use.uml.ocl.expr.ExpExists;
-import org.tzi.use.uml.ocl.expr.ExpForAll;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpReject;
-import org.tzi.use.uml.ocl.expr.ExpSelect;
-import org.tzi.use.uml.ocl.expr.ExpStdOp;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
+import java.util.List;
 
 
 /**
@@ -200,8 +191,8 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /** 
      * Returns an expression for selecting all instances that violate
      * the invariant.  The expression is generated as
-     * <code>C.allInstances->reject(v1 | <inv>)<code> if it has one iteration variable.
-     * For two and more variables, an additional <code>C.allInstances()->forAll(v2| <inv>)</code>
+     * <code>C.allInstances->reject(v1 | &lt;inv&gt;)</code> if it has one iteration variable.
+     * For two and more variables, an additional <code>C.allInstances()->forAll(v2| &lt;inv&gt;)</code>
      * is introduced, because reject only allows one iteration variable.
      */
     public Expression getExpressionForViolatingInstances() {
@@ -234,8 +225,8 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /** 
      * Returns an expression for selecting all instances that satisfy
      * the invariant.  The expression is generated as
-     * <code>C.allInstances->seject(v1 | <inv>)<code> if it has one iteration variable.
-     * For two and more variables, an additional <code>C.allInstances()->forAll(v2| <inv>)</code>
+     * <code>C.allInstances->select(v1 | &lt;inv&gt;)</code> if it has one iteration variable.
+     * For two and more variables, an additional <code>C.allInstances()->forAll(v2| &lt;inv&gt;)</code>
      * is introduced, because select only allows one iteration variable.
      */
     public Expression getExpressionForSatisfyingInstances() {

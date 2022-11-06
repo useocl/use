@@ -25,7 +25,7 @@ import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * TODO
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public final class SimpleEvalContext extends EvalContext {
@@ -34,8 +34,6 @@ public final class SimpleEvalContext extends EvalContext {
 	 * @param preState
 	 * @param postState
 	 * @param globalBindings
-	 * @param evalLog
-	 * @param evalLogIndent
 	 */
 	public SimpleEvalContext(MSystemState preState, MSystemState postState, VarBindings globalBindings) {
 		super(preState, postState, globalBindings, null, "");
