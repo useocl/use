@@ -21,13 +21,9 @@
 
 package org.tzi.use.uml.mm.statemachines;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.tzi.use.uml.sys.MSystemException;
+
+import java.util.*;
 
 /**
  * A region is an orthogonal part of either a composite state or a state machine. 
@@ -161,7 +157,7 @@ public class MRegion {
 	}
 
 	/**
-	 * @param value
+	 * @param from
 	 * @return
 	 */
 	public Set<MTransition> getOutgoingTransitions(MVertex from) {

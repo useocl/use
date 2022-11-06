@@ -24,13 +24,6 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.tzi.use.analysis.coverage.BasicCoverageData;
 import org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
@@ -40,6 +33,8 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
+
+import java.util.*;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -114,7 +109,8 @@ public class GProcedure {
     }
 
 	/**
-	 * @param fGModel
+	 * @param collector
+     * @param model
 	 */
 	public void calculateBarriers(IGCollector collector, MModel model) {
 		

@@ -26,10 +26,9 @@ import org.eclipse.jdt.annotation.NonNull;
 /** 
  * Basic interface of directed binary edges in a graph.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     DirectedGraph
- * @param N The Type of the Nodes
+ * @param <N> The Type of the Nodes
  */
 
 

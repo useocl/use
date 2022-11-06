@@ -21,15 +21,15 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Ordered set values.
@@ -150,7 +150,7 @@ public class OrderedSetValue extends CollectionValue {
     /** 
      * Returns a copy of this orderedset excluding all occurrences of v.
      *
-     * @pre T2 <= T1, if this has type OrderedSet(T1) and v has type T2.
+     * @ocl.pre T2 &lt;= T1, if this has type OrderedSet(T1) and v has type T2.
      */
     public OrderedSetValue excluding(Type resultType, Value v) {
         OrderedSetValue res = new OrderedSetValue(getResultElementType(resultType));
@@ -273,8 +273,8 @@ public class OrderedSetValue extends CollectionValue {
      * Two ordered sets are equal iff they contain the same elements in
      * same order. However, the declared types may be different.
      *
-     * @pre T2 and T1 have common supertype, if this has type OrderedSet(T1) and 
-     *      obj has type OrderedSet(T2). 
+     * @ocl.pre T2 and T1 have common supertype, if this has type OrderedSet(T1) and
+     *          obj has type OrderedSet(T2).
      */
     public boolean equals(Object obj) {
         if (obj == null) return false;

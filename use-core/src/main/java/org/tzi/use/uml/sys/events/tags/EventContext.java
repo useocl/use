@@ -28,7 +28,7 @@ package org.tzi.use.uml.sys.events.tags;
  *   <li>NORMAL_EXECUTION</li>
  *   <li>UNDO</li>
  *   <li>REDO</li>
- * <ul>
+ * </ul>
  * @author Lars Hamann
  *
  */

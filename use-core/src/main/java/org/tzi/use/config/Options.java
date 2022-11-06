@@ -309,9 +309,8 @@ public class Options {
 	public static boolean testMode;
 
     /**
-     * Parses command line arguments and sets options accordingly.
-     *
-     * @return calls System.exit(1) in case of errors
+     * <p>Parses command line arguments and sets options accordingly.</p>
+     * <p>Calls System.exit(1) in case of errors.</p>
      */
     public static void processArgs(String args[]) {
         // parse command options
@@ -566,7 +565,7 @@ public class Options {
 
 	/**
 	 * 
-	 * @return
+	 * @param warningLevel
 	 */
 	public static void setCheckWarningsUnrelatedTypes(WarningType warningLevel) {
 		checkWarningsUnrelatedTypes = warningLevel;

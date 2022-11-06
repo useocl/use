@@ -41,9 +41,9 @@ import org.tzi.use.uml.ocl.expr.Expression;
 public class MProtocolTransition extends MTransition {
 	
 	/**
+	 * @param container
 	 * @param source
 	 * @param target
-	 * @param preConditionExp
 	 */
 	public MProtocolTransition(MRegion container, MVertex source, MVertex target) {
 		super(container, source, target);
@@ -75,7 +75,7 @@ public class MProtocolTransition extends MTransition {
 	}
 	
 	/**
-	 * @param prePostConditionExp
+	 * @param condition
 	 */
 	public void setPostCondition(Expression condition) {
 		this.postCondition = condition;

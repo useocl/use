@@ -22,17 +22,12 @@
 package org.tzi.use.util.soil;
 
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
+
+import java.util.*;
 
 
 /**
@@ -150,8 +145,7 @@ public class SymbolTable {
 	/**
 	 * copies the current state and pushes it to a stack
 	 * 
-	 * @see #restoreState()
-	 * @see #restoreState(ASTStatement)
+	 * @see SymbolTable#restoreState(ASTStatement)
 	 */
 	public void storeState(Boolean explicit) {
 		fStates.push(new LinkedHashMap<String, Entry>(fEntries));

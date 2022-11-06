@@ -18,26 +18,13 @@
  */
 package org.tzi.use.api;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.naming.OperationNotSupportedException;
-
 import org.tzi.use.api.impl.UseSystemApiNative;
 import org.tzi.use.api.impl.UseSystemApiUndoable;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.main.Session;
 import org.tzi.use.parser.ocl.OCLCompiler;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
@@ -48,6 +35,14 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
+
+import javax.naming.OperationNotSupportedException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class eases the access to a USE session.
@@ -173,7 +168,7 @@ public abstract class UseSystemApi {
 	 * @param objectName The name of the new object.
 	 * 
 	 * @return The created {@link MObject}.
-	 * @throws ApiException
+	 * @throws UseApiException
 	 *             If the object class name is empty or unknown.
 	 */
 	public final MObject createObject(String className, String objectName)
@@ -189,7 +184,7 @@ public abstract class UseSystemApi {
 	 * @param objectName The name of the new object. If <code>null</code>, a unique name is generated.
 	 * 
 	 * @return The created {@link MObject}.
-	 * @throws ApiException
+	 * @throws UseApiException
 	 *             If the object class name is empty or unknown.
 	 */
 	public abstract MObject createObjectEx(MClass objectClass, String objectName) throws UseApiException;
@@ -305,12 +300,12 @@ public abstract class UseSystemApi {
      * are provided by the parameter <code>connectedObjectNames</code>.
      * The order of the participating objects must correspond to the order of the
      * association ends.
-     * <p>The values of the qualifiers for the different association ends are provided as a two dimensional array:
+     * <p>The values of the qualifiers for the different association ends are provided as a two dimensional array:</p>
      * <ul>
      *   <li>The first dimension specifies the association end the qualifier values are provided for (in the same order as they are defined).</li>
      *   <li>The second dimension specifies the value expressions (a valid OCL expression as a <code>String</code>) of the qualifiers at this end (in the same order as they are defined).</li>
      * </ul>
-     * </p>
+     *
      * @param associationName The name of the association to create the link for.
      * @param connectedObjectNames The names (identifier) of the connected objects in valid order w.r.t. the association ends.
      * @param qualifierValueExpressions The value expressions of the qualifiers at each end (if any).
@@ -350,12 +345,12 @@ public abstract class UseSystemApi {
      * The order of the participating objects must correspond to the order of the
      * association ends.</p>
      * <p>The values of the qualifiers for the different association ends are provided as a 
-     * two dimensional array:
+     * two dimensional array:</p>
      * <ul>
      *   <li>The first dimension specifies the association end the qualifier values are provided for (in the same order as they are defined).</li>
      *   <li>The second dimension provides the values of the qualifiers at this end (in the same order as they are defined).</li>
      * </ul>
-     * </p>
+     *
      * @param association The association to create the link for.
      * @param connectedObjects The connected objects in valid order w.r.t. the association ends.
      * @param qualifierValues The values of the qualifiers at each end (if any).
@@ -496,13 +491,13 @@ public abstract class UseSystemApi {
     /**
      * Deletes the {@link MLink} connecting the objects identified by <code>connectedObjectNames</code>
      * using the qualifier value expressions provided by <code>qualifierValueExpressions</code> 
-     * from from the set of links for the association named <code>associationName</code>.
-     * <p>The values of the qualifiers for the different association ends are provided as a two dimensional array:
+     * from the set of links for the association named <code>associationName</code>.
+     * <p>The values of the qualifiers for the different association ends are provided as a two dimensional array:</p>
      * <ul>
      *   <li>The first dimension specifies the association end the qualifier values are provided for (in the same order as they are defined).</li>
      *   <li>The second dimension specifies the value expressions (a valid OCL expression as a <code>String</code>) of the qualifiers at this end (in the same order as they are defined).</li>
      * </ul>
-     * </p>  
+     *
      * @param associationName The name of the association containing the link.
      * @param connectedObjectNames The names (identifier) of the connected objects in valid order w.r.t. the association ends.
      * @param qualifierValueExpressions The value expressions of the qualifiers at each end (if any). 
@@ -538,12 +533,12 @@ public abstract class UseSystemApi {
      * Deletes the {@link MLink} connecting the objects <code>connectedObjects</code>
      * using the qualifier values provided by <code>qualifierValues</code> 
      * from from the set of links for the association <code>association</code>.
-     * <p>The values of the qualifiers for the different association ends are provided as a two dimensional array:
+     * <p>The values of the qualifiers for the different association ends are provided as a two dimensional array:</p>
      * <ul>
      *   <li>The first dimension specifies the association end the qualifier values are provided for (in the same order as they are defined).</li>
      *   <li>The second dimension specifies the value of the qualifiers at this end (in the same order as they are defined).</li>
      * </ul>
-     * </p>  
+     *
      * @param association The association containing the link.
      * @param connectedObjects The connected objects in valid order w.r.t. the association ends.
      * @param qualifierValues The values of the qualifiers at each end (if any). 

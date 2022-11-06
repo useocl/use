@@ -19,37 +19,11 @@
 
 package org.tzi.use.uml.sys;
 
-import static org.tzi.use.util.StringUtil.inQuotes;
-
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-
+import com.google.common.eventbus.EventBus;
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.tool.GGenerator;
 import org.tzi.use.parser.generator.ASSLCompiler;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MTransition;
@@ -62,35 +36,13 @@ import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
-import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
-import org.tzi.use.uml.sys.events.ClassInvariantChangedEvent;
+import org.tzi.use.uml.sys.events.*;
 import org.tzi.use.uml.sys.events.ClassInvariantChangedEvent.InvariantStateChange;
-import org.tzi.use.uml.sys.events.ClassInvariantsLoadedEvent;
-import org.tzi.use.uml.sys.events.ClassInvariantsUnloadedEvent;
-import org.tzi.use.uml.sys.events.Event;
-import org.tzi.use.uml.sys.events.LinkDeletedEvent;
-import org.tzi.use.uml.sys.events.LinkInsertedEvent;
-import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
-import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
-import org.tzi.use.uml.sys.events.OperationEnteredEvent;
-import org.tzi.use.uml.sys.events.OperationExitedEvent;
-import org.tzi.use.uml.sys.events.StatementExecutedEvent;
-import org.tzi.use.uml.sys.events.TransitionEvent;
 import org.tzi.use.uml.sys.events.tags.EventContext;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PostConditionCheckFailedException;
 import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
-import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
-import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
-import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
-import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
-import org.tzi.use.uml.sys.soil.MObjectRestorationStatement;
-import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.uml.sys.soil.MRValueExpression;
-import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
-import org.tzi.use.uml.sys.soil.MVariableDestructionStatement;
-import org.tzi.use.uml.sys.soil.SoilEvaluationContext;
+import org.tzi.use.uml.sys.soil.*;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance.TransitionResult;
 import org.tzi.use.util.Log;
@@ -99,7 +51,11 @@ import org.tzi.use.util.UniqueNameGenerator;
 import org.tzi.use.util.soil.VariableEnvironment;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
-import com.google.common.eventbus.EventBus;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.*;
+
+import static org.tzi.use.util.StringUtil.inQuotes;
 
 /**
  * A system maintains a system state and provides functionality for doing state
@@ -786,7 +742,7 @@ public final class MSystem {
 
 	/**
 	 * @param result 
-	 * @param key
+	 * @param psmI
 	 * @param t
 	 */
 	public void revertTransition(StatementEvaluationResult result, MProtocolStateMachineInstance psmI, MTransition t) {
@@ -818,7 +774,8 @@ public final class MSystem {
 	 * Evaluate and check all preconditions of an operation call. If any is not
 	 * fulfilled, an exception is raised. Before the exception is raised, the
 	 * PPC handler (if any) is invoked.
-	 * 
+	 *
+	 * @param ctx
 	 * @param operationCall
 	 * @throws MSystemException
 	 */
@@ -906,7 +863,6 @@ public final class MSystem {
 	 * the operation.
 	 * 
 	 * @param resultValue
-	 * @param forceExit
 	 * @param operation
 	 * @throws MSystemException
 	 */
@@ -1079,7 +1035,7 @@ public final class MSystem {
 	 * @param association
 	 * @param participants
 	 * @param qualifierValues
-	 * @throws EvaluationFailedException
+	 * @throws MSystemException
 	 */
 	public MLink createLink(StatementEvaluationResult result, MAssociation association, List<MObject> participants, List<List<Value>> qualifierValues)
 			throws MSystemException {
@@ -1124,7 +1080,6 @@ public final class MSystem {
 	 * @param association
 	 * @param participants
 	 * @throws MSystemException
-	 * @throws EvaluationFailedException
 	 */
 	public void deleteLink(StatementEvaluationResult result, MAssociation association, List<MObject> participants, List<List<Value>> qualifierValues)
 			throws MSystemException {
@@ -1192,7 +1147,6 @@ public final class MSystem {
 	 * @param participants
 	 * @return
 	 * @throws MSystemException
-	 * @throws EvaluationFailedException
 	 */
 	public MLinkObject createLinkObject(StatementEvaluationResult result, MAssociationClass associationClass, String linkObjectName,
 			List<MObject> participants, List<List<Value>> qualifierValues) throws MSystemException {
@@ -1219,7 +1173,6 @@ public final class MSystem {
 	 * @param attribute
 	 * @param value
 	 * @throws MSystemException
-	 * @throws EvaluationFailedException
 	 */
 	public void assignAttribute(StatementEvaluationResult result, MObject object, MAttribute attribute, Value value) throws MSystemException {
 
@@ -1272,7 +1225,7 @@ public final class MSystem {
 	 * are reverted. Update listeners are notified and the result is stored.
 	 * 
 	 * @param statement The statement to execute.
-	 * @throws EvaluationFailedException
+	 * @throws MSystemException
 	 */
 	public StatementEvaluationResult execute(MStatement statement) throws MSystemException {
 		return execute(statement, true, true, true);
@@ -1287,7 +1240,7 @@ public final class MSystem {
 	 * @param notifyUpdateStateListeners If <code>true</code> the registered
 	 *            system state listeners are notified after the successful
 	 *            execution.
-	 * @throws EvaluationFailedException
+	 * @throws MSystemException
 	 */
 	public StatementEvaluationResult execute(MStatement statement, boolean notifyUpdateStateListeners) throws MSystemException {
 
@@ -1308,7 +1261,7 @@ public final class MSystem {
 	 *            system state listeners are notified after the successful
 	 *            execution.
 	 * @return
-	 * @throws EvaluationFailedException
+	 * @throws MSystemException
 	 */
 	public StatementEvaluationResult execute(MStatement statement, boolean undoOnFailure, boolean storeResult, boolean notifyUpdateStateListeners)
 			throws MSystemException {
@@ -1382,7 +1335,6 @@ public final class MSystem {
 	 * 
 	 * @return
 	 * @throws MSystemException
-	 * @throws EvaluationFailedException
 	 */
 	public StatementEvaluationResult undoLastStatement() throws MSystemException {
 
@@ -1412,7 +1364,6 @@ public final class MSystem {
 	 * Redoes the last undone statement.
 	 * 
 	 * @throws MSystemException
-	 * @throws EvaluationFailedException
 	 */
 	public StatementEvaluationResult redoStatement() throws MSystemException {
 

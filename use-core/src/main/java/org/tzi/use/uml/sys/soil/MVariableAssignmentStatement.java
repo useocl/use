@@ -38,7 +38,7 @@ public class MVariableAssignmentStatement extends MStatement {
 	/**
 	 * Constructs a new variable assignment statement.
 	 * @param variableName The name of the variable to assign a value to.
-	 * @param value The RValue to assign.
+	 * @param rValue The RValue to assign.
 	 */
 	public MVariableAssignmentStatement(
 			String variableName, 

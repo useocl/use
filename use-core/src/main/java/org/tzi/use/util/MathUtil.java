@@ -46,7 +46,7 @@ public class MathUtil {
 	
 	/**
 	 * Calculates the maximum of the given parameters
-	 * @param useInt This parameter can be removed when Sun/Oracle fixes a <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6199075">bug</a> with parameter arrays.</br>
+	 * @param useInt This parameter can be removed when Sun/Oracle fixes a <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6199075">bug</a> with parameter arrays.<br/>
 	 * 				 The compiler wrongly determines max(double...) and max(int...) as ambiguous.
 	 * @param value List of values to retrieve the maximum from
 	 * @return The maximum value of all given values
@@ -78,7 +78,7 @@ public class MathUtil {
 	
 	/**
 	 * Calculates the minimum of the given parameters
-	 * @param useInt This parameter can be removed when Sun/Oracle fixes a <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6199075">bug</a> with parameter arrays.</br>
+	 * @param useInt This parameter can be removed when Sun/Oracle fixes a <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6199075">bug</a> with parameter arrays.<br/>
 	 * 				 The compiler wrongly determines max(double...) and max(int...) as ambiguous.
 	 * @param value List of values to retrieve the minimum from
 	 * @return The minimum value of all given values

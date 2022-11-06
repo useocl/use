@@ -19,20 +19,14 @@
 
 package org.tzi.use.parser.use;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.mm.MAggregationKind;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MNavigableElement;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -152,8 +146,6 @@ public class ASTAssociation extends ASTAnnotatable {
     	}
     	
 		/**
-		 * @param ctx
-		 * @param association
 		 */
 		public void generate() throws SemanticException {
 			// if the association could not be generated in the first step
@@ -190,10 +182,7 @@ public class ASTAssociation extends ASTAnnotatable {
 		 * 7.3.45 in constraints [3,4,5] imply that any association end that subsets or redefines another association end forces the
 		 * association of the subsetting or redefining association end to be a specialization of the association of the subsetted or
 		 * redefined association end respectively.</p>
-		 * 
-		 * @param ctx
-		 * @param model
-		 * @param association
+		 *
 		 * @param aEnd
 		 * @throws SemanticException
 		 */

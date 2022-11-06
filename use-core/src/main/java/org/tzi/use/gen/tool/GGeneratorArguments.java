@@ -21,11 +21,11 @@
 
 package org.tzi.use.gen.tool;
 
+import org.tzi.use.util.Log;
+
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.StringTokenizer;
-
-import org.tzi.use.util.Log;
 
 /**
  * Holds information about the use specified configuration, e. g., 
@@ -106,7 +106,7 @@ public class GGeneratorArguments {
 	}
 
 	/**
-	 * @param fFilename the fFilename to set
+	 * @param filename the filename to set
 	 */
 	public void setFilename(String filename) {
 		this.fFilename = filename;
@@ -120,7 +120,7 @@ public class GGeneratorArguments {
 	}
 
 	/**
-	 * @param fLimit the fLimit to set
+	 * @param limit the limit to set
 	 */
 	public void setLimit(Long limit) {
 		this.fLimit = limit;
@@ -134,7 +134,7 @@ public class GGeneratorArguments {
 	}
 
 	/**
-	 * @param fPrintFilename the fPrintFilename to set
+	 * @param printFilename the printFilename to set
 	 */
 	public void setPrintFilename(String printFilename) {
 		this.fPrintFilename = printFilename;
@@ -148,7 +148,7 @@ public class GGeneratorArguments {
 	}
 
 	/**
-	 * @param fPrintBasics the fPrintBasics to set
+	 * @param printBasics the printBasics to set
 	 */
 	public void setDoPrintBasics(boolean printBasics) {
 		this.fPrintBasics = printBasics;
@@ -162,7 +162,7 @@ public class GGeneratorArguments {
 	}
 
 	/**
-	 * @param fPrintDetails the fPrintDetails to set
+	 * @param printDetails the printDetails to set
 	 */
 	public void setDoPrintDetails(boolean printDetails) {
 		this.fPrintDetails = printDetails;
@@ -176,7 +176,7 @@ public class GGeneratorArguments {
 	}
 
 	/**
-	 * @param fRandomNr the fRandomNr to set
+	 * @param randomNr the randomNr to set
 	 */
 	public void setRandomNr(Long randomNr) {
 		this.fRandomNr = randomNr;

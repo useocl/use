@@ -69,7 +69,7 @@ public abstract class MStatement {
      * state. The result object captures additional data about the execution of
      * the statement.
      * 
-     * @param hasUndoStatement
+     * @param context
      * @throws EvaluationFailedException
 	 */
     public abstract Value execute(SoilEvaluationContext context, StatementEvaluationResult result) throws EvaluationFailedException;
@@ -109,7 +109,7 @@ public abstract class MStatement {
 	/**
      * Returns the concrete representation of this statement in the concrete syntax.  
      * @param indent Indentation 
-     * @param indentIncr Indentation increment (for nested statements).
+     * @param indentIncrease Indentation increment (for nested statements).
      * @param target The result string is appended here
 	 */
     protected void toConcreteSyntax(StringBuilder indent, String indentIncrease, StringBuilder target) {

@@ -18,15 +18,15 @@
  */
 package org.tzi.use.parser.use.statemachines;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Lars Hamann
@@ -75,7 +75,6 @@ public class ASTStateMachine extends AST {
 
 	/**
 	 * @param ctx
-	 * @return
 	 */
 	public void genTransitionsAndStateInvariants(Context ctx) throws SemanticException {
 

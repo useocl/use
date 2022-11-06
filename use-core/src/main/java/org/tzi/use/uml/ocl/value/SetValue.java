@@ -21,16 +21,16 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Set value. The set is read-only outside of this package. Changes always
@@ -128,7 +128,7 @@ public class SetValue extends CollectionValue {
     /**
      * Returns a new set which is the union of this and v.
      * 
-     * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
+     * @ocl.pre T2 &lt;= T1, if this has type Set(T1) and v has type Set(T2).
      */
     public SetValue union(Type resultType, SetValue v) {
     	Type elementType = getResultElementType(resultType);
@@ -146,7 +146,7 @@ public class SetValue extends CollectionValue {
     /**
      * Returns a new bag which is the union of this and v.
      * 
-     * @pre T2 <= T1, if this has type Set(T1) and v has type Bag(T2).
+     * @ocl.pre T2 &lt;= T1, if this has type Set(T1) and v has type Bag(T2).
      */
     public BagValue union(Type resultType, BagValue v) {
     	Type elementType = getResultElementType(resultType);
@@ -164,7 +164,7 @@ public class SetValue extends CollectionValue {
     /**
      * Return a new set which is the intersection of this and v.
      * 
-     * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
+     * @ocl.pre T2 &lt;= T1, if this has type Set(T1) and v has type Set(T2).
      */
     public SetValue intersection(Type resultType, SetValue v) {
     	Type elementType = getResultElementType(resultType);
@@ -198,7 +198,7 @@ public class SetValue extends CollectionValue {
     /**
      * Return a new set which is the difference of this and v.
      * 
-     * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
+     * @ocl.pre T2 &lt;= T1, if this has type Set(T1) and v has type Set(T2).
      */
     public SetValue difference(Type resultType, SetValue v) {
         Type elementType = getResultElementType(resultType);
@@ -217,7 +217,7 @@ public class SetValue extends CollectionValue {
     /**
      * Return a copy of this set including v
      * 
-     * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
+     * @ocl.pre T2 &lt;= T1, if this has type Set(T1) and v has type Set(T2).
      */
     public SetValue including(Type resultType, Value v) {
         Type elementType = getResultElementType(resultType);
@@ -229,7 +229,7 @@ public class SetValue extends CollectionValue {
     /**
      * Return a copy of this set excluding v
      * 
-     * @pre T2 <= T1, if this has type Set(T1) and v has type T2.
+     * ocl.pre T2 &lt;= T1, if this has type Set(T1) and v has type T2.
      */
     public SetValue excluding(Type resultType, Value v) {
     	Type elementType = getResultElementType(resultType);
@@ -243,7 +243,7 @@ public class SetValue extends CollectionValue {
      * Return a new set which is the symmetric difference of this and v, ie. (A -
      * B) U (B - A).
      * 
-     * @pre T2 <= T1, if this has type Set(T1) and v has type Set(T2).
+     * @ocl.pre T2 &lt;= T1, if this has type Set(T1) and v has type Set(T2).
      */
     public SetValue symmetricDifference(Type resultType, SetValue v) {
         return this.difference(resultType, v).union(resultType, v.difference(resultType, this));
@@ -338,7 +338,7 @@ public class SetValue extends CollectionValue {
      * Two sets are equal iff they contain the same elements. However, the
      * declared types may be different.
      * 
-     * @pre T2 and T1 have common supertype, if this has type Set(T1) and obj has type Set(T2).
+     * @ocl.pre T2 and T1 have common supertype, if this has type Set(T1) and obj has type Set(T2).
      */
     public boolean equals(Object obj) {
         if (obj == null)

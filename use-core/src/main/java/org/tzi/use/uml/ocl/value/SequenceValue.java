@@ -161,7 +161,7 @@ public class SequenceValue extends CollectionValue {
     /** 
      * Returns a copy of this sequence excluding all occurrences of v.
      *
-     * @pre T2 <= T1, if this has type Sequence(T1) and v has type T2.
+     * @ocl.pre T2 &lt;= T1, if this has type Sequence(T1) and v has type T2.
      */
     public SequenceValue excluding(Type resultType, Value v) {
         SequenceValue res = new SequenceValue(getResultElementType(resultType));
@@ -305,8 +305,8 @@ public class SequenceValue extends CollectionValue {
      * Two sequences are equal iff they contain the same elements in
      * same order. However, the declared types may be different.
      *
-     * @pre T2 and T1 have common supertype, if this has type Sequence(T1) and 
-     *      obj has type Sequence(T2). 
+     * @ocl.pre T2 and T1 have common supertype, if this has type Sequence(T1) and
+     *          obj has type Sequence(T2).
      */
     @Override
 	public boolean equals(Object obj) {

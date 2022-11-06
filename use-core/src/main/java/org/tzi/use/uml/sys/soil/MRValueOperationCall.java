@@ -34,7 +34,7 @@ public class MRValueOperationCall extends MRValue {
 	
 	/**
 	 * Constructs a new <code>MRValueOperationCall</code> which
-	 * encapsulates <code>operationCallStatement<(code>.
+	 * encapsulates <code>operationCallStatement</code>.
      * 
 	 * @param operationCallStatement
 	 */

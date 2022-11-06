@@ -22,22 +22,15 @@
 package org.tzi.use.util.soil;
 
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 
 /**
@@ -159,7 +152,7 @@ public class VariableEnvironment {
 	 * removes the most recent level pushed with {@code pushLevel}. if only one
 	 * level exists, this does nothing
 	 * 
-	 * @see #pushFrame()
+	 * @see VariableEnvironment#pushFrame(boolean)
 	 */
 	public void popFrame() {
 		fFrames.pop();

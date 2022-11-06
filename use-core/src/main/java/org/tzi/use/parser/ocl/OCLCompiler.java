@@ -21,11 +21,6 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -39,6 +34,11 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+
 public class OCLCompiler {
 
     private OCLCompiler() {} // no instances
@@ -47,11 +47,11 @@ public class OCLCompiler {
     /**
 	 * Compiles an expression.
 	 * @param model the model
-	 * @param input the source to compile
+	 * @param in the source to compile
 	 * @param inName name of the source stream
 	 * @param err output stream for error messages
 	 * @param globalBindings the variable bindings
-	 * @return null if there were any errors
+	 * @return <code>null</code> if there were any errors
 	 */
     public static Expression compileExpression(MModel model,
 	                                           String in, 
@@ -70,11 +70,11 @@ public class OCLCompiler {
     /**
 	 * Compiles an expression.
 	 * @param model the model
-	 * @param input the source to compile
+	 * @param in the source to compile
 	 * @param inName name of the source stream
 	 * @param err output stream for error messages
-	 * @param globalBindings the variable bindings
-	 * @return null if there were any errors
+	 * @param varTable the variable bindings
+	 * @return <code>null</code> if there were any errors
 	 */
     public static Expression compileExpression(MModel model,
 	                                           String in, 
@@ -95,7 +95,7 @@ public class OCLCompiler {
     /**
 	 * Compiles an expression.
 	 * @param model the model
-	 * @param input the source to compile
+	 * @param in the source to compile
 	 * @param inName name of the source stream
 	 * @param err output stream for error messages
 	 * @param globalBindings the variable bindings

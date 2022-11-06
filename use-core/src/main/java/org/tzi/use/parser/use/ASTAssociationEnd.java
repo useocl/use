@@ -21,10 +21,6 @@
 
 package org.tzi.use.parser.use;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -41,6 +37,10 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -181,7 +181,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     
     /**
      * Adds a name to the list of association end names this end redefines. 
-     * @param name The <code>Token</code> of the association end name this end should redefine.
+     * @param rolename The <code>Token</code> of the association end name this end should redefine.
      */
     public void addRedefinesRolename(Token rolename) {
     	// Lazy initialization of the list.
@@ -228,8 +228,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     }
     
     /**
-     * Gets the list of defined qualifiers at this end. 
-     * @param qualifier
+     * Gets the list of defined qualifiers at this end.
      */
     public List<ASTVariableDeclaration> getQualifiers() {
     	return this.qualifiers;

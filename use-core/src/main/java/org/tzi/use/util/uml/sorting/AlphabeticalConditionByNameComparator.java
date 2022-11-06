@@ -21,9 +21,9 @@
 
 package org.tzi.use.util.uml.sorting;
 
-import java.util.Comparator;
-
 import org.tzi.use.uml.mm.MPrePostCondition;
+
+import java.util.Comparator;
 
 /**
  *
@@ -34,8 +34,8 @@ public class AlphabeticalConditionByNameComparator implements Comparator<MPrePos
    
     /**
      * Compares two Pre-/Postconditions by their name
-     * @param object1 first Pre-/Postcondition (has to be of type MPrePostCondition)
-     * @param object2 second Pre-/Postcondition (has to be of type MPrePostCondition)
+     * @param firstCondition first Pre-/Postcondition (has to be of type MPrePostCondition)
+     * @param secondCondition second Pre-/Postcondition (has to be of type MPrePostCondition)
      * @return a negative integer, zero, or a positive integer as the
      *         first argument is less than, equal to, or greater than the
      *         second.

@@ -21,10 +21,10 @@
 
 package org.tzi.use.uml.mm;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import java.util.List;
 import java.util.Set;
-
-import org.eclipse.jdt.annotation.NonNull;
 
 /** 
  * An association connects two or more classes.
@@ -37,7 +37,7 @@ public interface MAssociation extends MClassifier {
 	/** 
      * Adds an association end.
      *
-     * @exception MInvalidModel trying to add another composition
+     * @exception MInvalidModelException trying to add another composition
      *            or aggregation end.
      */
     void addAssociationEnd(@NonNull MAssociationEnd aend) throws MInvalidModelException;

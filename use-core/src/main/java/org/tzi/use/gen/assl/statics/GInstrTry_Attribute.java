@@ -41,8 +41,8 @@ public class GInstrTry_Attribute extends GInstrTry implements GInstruction {
     
 	/**
 	 * @param range
-	 * @param attribute2
-	 * @param values2
+	 * @param attribute
+	 * @param values
 	 */
 	public GInstrTry_Attribute(GOCLExpression range, MAttribute attribute,
 			GOCLExpression values) {

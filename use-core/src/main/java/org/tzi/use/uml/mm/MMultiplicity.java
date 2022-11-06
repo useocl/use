@@ -21,17 +21,16 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.tzi.use.util.StringUtil;
 
 /** 
  * A Multiplicity specifies possible cardinality values for instances
  * participating in associations.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class MMultiplicity {
@@ -171,11 +170,12 @@ public final class MMultiplicity {
      * UML 2.4.1 p. 97:
      * The query includesMultiplicity() checks whether this multiplicity includes all 
      * the cardinalities allowed by the specified multiplicity.
+     * <code>
      *   MultiplicityElement::includesMultiplicity(M : MultiplicityElement) : Boolean;
-     *     pre: self.upperBound()->notEmpty() and self.lowerBound()->notEmpty()
-     *          and M.upperBound()->notEmpty() and M.lowerBound()->notEmpty()
-     *     includesMultiplicity = (self.lowerBound() <= M.lowerBound()) and (self.upperBound() >= M.upperBound())
-     *     
+     *     pre: self.upperBound()-&gt;notEmpty() and self.lowerBound()-&gt;notEmpty()
+     *          and M.upperBound()-&gt;notEmpty() and M.lowerBound()-&gt;notEmpty()
+     *     includesMultiplicity = (self.lowerBound() &lt;= M.lowerBound()) and (self.upperBound() &gt;= M.upperBound())
+     * </code>
      * Because USE supports ranges of multiplicities, this query differs from the original specification.
      **/
     public boolean includesMultiplicity(MMultiplicity m, boolean includeLowerBounds) {

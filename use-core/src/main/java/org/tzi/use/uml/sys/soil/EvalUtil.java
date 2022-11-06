@@ -21,9 +21,6 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
@@ -34,6 +31,9 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Static helper class for the evaluation of expressions (from within MStatement and its subclasses).
@@ -133,7 +133,7 @@ public class EvalUtil {
      * and performs a type check (result is an object) to the result.
      * 
      * @param context The context to evaluate the expression with. 
-     * @param expression The expression to evaluate.
+     * @param expressions The expressions to evaluate.
      * @return The resulting objects.
      * @throws EvaluationFailedException If a multiplicity violation occurs or if the expression does not return a string value.
      */

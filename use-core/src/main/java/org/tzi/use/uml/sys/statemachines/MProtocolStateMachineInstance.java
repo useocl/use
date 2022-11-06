@@ -18,21 +18,8 @@
  */
 package org.tzi.use.uml.sys.statemachines;
 
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.jdt.annotation.NonNull;
-import org.tzi.use.uml.mm.statemachines.MFinalState;
-import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.mm.statemachines.MProtocolTransition;
-import org.tzi.use.uml.mm.statemachines.MRegion;
-import org.tzi.use.uml.mm.statemachines.MState;
-import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.mm.statemachines.MVertex;
+import org.tzi.use.uml.mm.statemachines.*;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.value.BooleanValue;
@@ -43,6 +30,9 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.StringUtil;
+
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * @author Lars Hamann
@@ -64,7 +54,8 @@ public class MProtocolStateMachineInstance {
 	protected boolean executingTransition = false;
 	
 	/**
-	 * @param objectState
+	 * @param machine
+	 * @param object
 	 */
 	public MProtocolStateMachineInstance(MProtocolStateMachine machine, MObject object) {
 		this.contextObject = object;
@@ -245,7 +236,6 @@ public class MProtocolStateMachineInstance {
 	 * @param t
 	 * @param ctx
 	 * @param operationCall
-	 * @param An error printer, can be <code>null</code>.
 	 * @return
 	 */
 	public TransitionResult evaluateTransition(MTransition t, EvalContext ctx, MOperationCall operationCall) {

@@ -89,7 +89,6 @@ public class MTrigger implements MNamedElement {
 
 	/**
 	 * @param op
-	 * @param currentClass
 	 * @return
 	 */
 	public static MTrigger create(MOperation op) {

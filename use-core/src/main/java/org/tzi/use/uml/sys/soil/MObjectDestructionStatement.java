@@ -48,7 +48,7 @@ public class MObjectDestructionStatement extends MStatement {
 	 * deleted from the system. 
      * <p>The given expression must be either an object type or a collection of object type.<br/>
      *    This is <b>not</b> checked!</p>
-	 * @param object
+	 * @param toDelete
 	 */
 	public MObjectDestructionStatement(Expression toDelete) {
 		fToDelete = toDelete;

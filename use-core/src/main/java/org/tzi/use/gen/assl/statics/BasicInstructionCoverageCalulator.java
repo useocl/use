@@ -21,11 +21,11 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import java.util.List;
-
 import org.tzi.use.analysis.coverage.BasicCoverageData;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
+
+import java.util.List;
 
 /**
  * Calculates the coverage informations about a 
@@ -37,11 +37,11 @@ public class BasicInstructionCoverageCalulator implements InstructionVisitor {
 	BasicCoverageData coverage;
 	
 	/**
-	 * @param subList
 	 */
 	public BasicInstructionCoverageCalulator() {}
 
 	/**
+	 * @param instrList
 	 * @return
 	 */
 	public BasicCoverageData calcualteCoverage(List<GInstruction> instrList) {
@@ -230,7 +230,7 @@ public class BasicInstructionCoverageCalulator implements InstructionVisitor {
 	}
 
 	/**
-	 * @param gInstrCreate_AC
+	 * @param cls
 	 */
 	private void addClassCoverage(MClass cls) {
 		this.coverage.getCoveredClasses().add(cls);

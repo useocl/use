@@ -21,10 +21,10 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.ocl.type.Type;
+
 import java.util.Map;
 import java.util.Set;
-
-import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * Interface representing a classifier of
@@ -75,8 +75,7 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
 
     /**
      * Returns an iterable over the generalization hierarchy.
-     * The iteration starts at this class and goes up. Information about
-     * the level of the parent class is accessible by querying {@link TargetNodeSetIterator#getDepth()}.
+     * The iteration starts at this class and goes up.
      * @param includeThis If <code>true</code>, the first element of the iteration is this class.
      * @return An iterable over the generalization hierarchy.
      */
@@ -84,8 +83,7 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
     
     /**
      * Returns an iterable over the generalization hierarchy.
-     * The iteration starts at this class and goes down. Information about
-     * the level of the child class is accessible by querying {@link TargetNodeSetIterator#getDepth()}.
+     * The iteration starts at this class and goes down.
      * @param includeThis If <code>true</code>, the first element of the iteration is this class.
      * @return An iterable over the generalization hierarchy.
      */

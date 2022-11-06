@@ -21,12 +21,6 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
@@ -38,6 +32,8 @@ import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
+
+import java.util.*;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -65,7 +61,7 @@ public class ASTElemVarsDeclaration extends AST {
 	}
 	
     /**
-     * Returns <tt>true</tt> if this list contains no declarations.
+     * Returns <code>true</code> if this list contains no declarations.
      */
     public boolean isEmpty() {
         return fIdList.isEmpty();

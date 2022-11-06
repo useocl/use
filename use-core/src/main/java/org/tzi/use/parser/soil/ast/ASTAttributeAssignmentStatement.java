@@ -21,8 +21,6 @@
 
 package org.tzi.use.parser.soil.ast;
 
-import java.io.PrintWriter;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MAttribute;
@@ -31,6 +29,8 @@ import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+
+import java.io.PrintWriter;
 
 
 /**
@@ -49,9 +49,10 @@ public class ASTAttributeAssignmentStatement extends ASTStatement {
 	
 	/**
 	 * Constructs a new AST with the given values.
+	 * @param start Token that starts this expression.
 	 * @param object Expression for the source object
 	 * @param attributeName The name of the attribute
-	 * @param value The ASt for the rValue. 
+	 * @param rValue The ASt for the rValue.
 	 */
 	public ASTAttributeAssignmentStatement(Token start,
 			ASTExpression object,

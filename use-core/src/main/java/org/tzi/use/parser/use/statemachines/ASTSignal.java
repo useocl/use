@@ -19,9 +19,6 @@
 
 package org.tzi.use.parser.use.statemachines;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -33,6 +30,9 @@ import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AST node for signal definitions
@@ -73,7 +73,7 @@ public class ASTSignal extends ASTAnnotatable {
 	}
 
 	/**
-	 * @param idListRes
+	 * @param generals
 	 */
 	public void addGenerals(List<Token> generals) {
 		this.generals = generals;

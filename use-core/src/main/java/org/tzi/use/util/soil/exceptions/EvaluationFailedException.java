@@ -35,7 +35,6 @@ public class EvaluationFailedException extends Exception {
 		
 	/**
 	 * Constructs a new evaluation failed exception.
-	 * @param failedStatement The failed statement.
 	 * @param message A user defined message.
 	 */
 	public EvaluationFailedException(String message) {
@@ -56,7 +55,6 @@ public class EvaluationFailedException extends Exception {
 	
 	/**
 	 * Constructs a new evaluation failed exception.
-	 * @param failedStatement The failed statement.
 	 * @param cause The original cause of the failure.
 	 */
 	public EvaluationFailedException(Throwable cause) {

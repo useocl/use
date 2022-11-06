@@ -21,28 +21,12 @@
 
 package org.tzi.use.parser.soil.ast;
 
-import static org.tzi.use.util.StringUtil.inQuotes;
-
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
-import org.tzi.use.parser.AST;
-import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.SrcPos;
-import org.tzi.use.parser.Symtable;
+import org.tzi.use.parser.*;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
@@ -53,6 +37,13 @@ import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.SymbolTable;
 import org.tzi.use.util.soil.VariableSet;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static org.tzi.use.util.StringUtil.inQuotes;
 
 
 /**
@@ -229,7 +220,7 @@ public abstract class ASTStatement extends AST {
 	
 	/**
 	 * Gets the current {@link PrintWriter} to output verbose messages to.
-	 * @returns The current {@link PrintWriter} for verbose output.
+	 * @return The current {@link PrintWriter} for verbose output.
 	 */
 	public static PrintWriter getVerboseOutput() {
 		return VERBOSE_OUT;
@@ -533,7 +524,7 @@ public abstract class ASTStatement extends AST {
 
 
 	/**
-	 * @param objectExpr
+	 * @param expression
 	 * @throws CompilationFailedException
 	 */
 	private void validateObjectType(Expression expression)
@@ -564,7 +555,7 @@ public abstract class ASTStatement extends AST {
 	 * Generates the type from the given AST.
 	 * @param type AST node of the type to generate
 	 * @return
-	 * @throws NotATypeException
+	 * @throws CompilationFailedException
 	 */
 	protected Type generateType(ASTType type) throws CompilationFailedException {
 		try {

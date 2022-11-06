@@ -65,7 +65,7 @@ public class MElementAnnotation {
 	/**
 	 * All annotation values defined for this annotation.
 	 * The returned <code>Map</code> is immutable.
-	 * @return An <UnmodifiableMap> which contains the informations defined for this annotation.
+	 * @return An <code>UnmodifiableMap</code> which contains information defined for this annotation.
 	 */
 	public Map<String, String> getValues() {
 		return this.annotationValues;
@@ -90,7 +90,7 @@ public class MElementAnnotation {
 	}
 
 	/**
-	 * @param mmPrintVisitor
+	 * @param v
 	 */
 	public void processWithVisitor(MMVisitor v) {
 		v.visitAnnotation(this);

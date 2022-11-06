@@ -19,28 +19,20 @@
 
 package org.tzi.use.parser.use;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.use.ASTAssociation.AssociationEndConstraintsGenerator;
-import org.tzi.use.uml.mm.MAggregationKind;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * @version     $ProjectVersion: 0.393 $
- * @author <a href="mailto:hanna@tzi.de>Hanna Bauerdick</a>
- * @author <a href="mailto:gutsche@tzi.de>Fabian Gutsche</a>
+ * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
+ * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
 public class ASTAssociationClass extends ASTClass {
 
@@ -244,7 +236,6 @@ public class ASTAssociationClass extends ASTClass {
 
 	/**
 	 * @param ctx
-	 * @param model
 	 */
 	public void genEndConstraints(Context ctx) throws SemanticException {
 		AssociationEndConstraintsGenerator gen = new AssociationEndConstraintsGenerator(
