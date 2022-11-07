@@ -47,7 +47,7 @@ Checks out the commit that triggered the execution of the release process (the t
 
 #### 1.2 Setup JDK
 
-Sets the used JDK to the used version.
+Sets up a JDK with the used version (currently 15) by using [actions/setup-java@v3](https://github.com/actions/setup-java).
 
 #### 1.3 Maven Build
 
@@ -56,7 +56,7 @@ Executes a complete Maven build inclusing all tests and assemling an archive.
 #### 1.4 Create Release
 
 Creates a new GitHub release that is accessible from the project page.
-This is done using this [release action](https://github.com/ncipollo/release-action).
+This is done using [release-action](https://github.com/ncipollo/release-action).
 
 #### 1.5 Create Bump Version Issue
 
