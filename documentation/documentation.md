@@ -43,7 +43,7 @@ This is the only job of the release action, because all steps depend on the succ
 
 #### 1.1 Checkout
 
-Checks out the commit that triggered the execution of the release process (the tag).
+Checks out the commit that triggered the execution of the release process (the tag) using [actions/checkout](https://github.com/actions/checkout).
 
 #### 1.2 Setup JDK
 
