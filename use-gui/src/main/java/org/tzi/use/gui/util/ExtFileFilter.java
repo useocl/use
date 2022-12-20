@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 /* 
  * This code is a modified version of a file from the JDK to which the
  * following copyright applies.  

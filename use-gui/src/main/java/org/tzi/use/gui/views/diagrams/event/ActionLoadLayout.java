@@ -17,21 +17,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.event;
-
-import java.awt.event.ActionEvent;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import javax.swing.AbstractAction;
-import javax.swing.JFileChooser;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Loads the current layout from a file.

@@ -17,15 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
 package org.tzi.use.uml.sys;
 
-import java.util.Arrays;
-
-import javax.naming.OperationNotSupportedException;
-
 import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
@@ -39,6 +33,9 @@ import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.sys.soil.MIterationStatement;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
+
+import javax.naming.OperationNotSupportedException;
+import java.util.Arrays;
 
 /**
  * @author green
