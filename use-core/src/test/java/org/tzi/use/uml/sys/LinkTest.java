@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys;
 
 import java.util.Iterator;
@@ -38,7 +36,6 @@ import org.tzi.use.uml.mm.TestModelUtil;
  * The class <code>LinkTest</code> creates an instance of an
  * association class.
  *
- * @version $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

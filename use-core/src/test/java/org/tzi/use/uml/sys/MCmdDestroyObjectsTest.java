@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys;
 
 import junit.framework.TestCase;
@@ -36,7 +34,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * Test the destruction of objects.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Fabian Gutsche
  * @see     MCmdDestroyObjects
  */

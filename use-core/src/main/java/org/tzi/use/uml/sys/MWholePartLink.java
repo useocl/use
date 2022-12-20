@@ -17,14 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys;
 
 /**
  * A link is an instance of an association.
  *
- * @version     $ProjectVersion: 2-3-1-release.3 $
  * @author      Duc-Hanh
  * @param 		N The type of the connected Nodes
  */ 

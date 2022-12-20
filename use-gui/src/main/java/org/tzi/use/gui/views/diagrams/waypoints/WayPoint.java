@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.waypoints;
 
 import java.awt.Color;
@@ -39,7 +37,6 @@ import org.w3c.dom.Element;
 /**
  * Represents a way point on an edge. 
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public class WayPoint extends EdgeProperty {

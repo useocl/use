@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.BorderLayout;
@@ -54,7 +52,6 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
  * Handles the mouse movements and keyboard inputs 
  * of the class and object diagram.
  *  
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public class DiagramInputHandling implements MouseListener,

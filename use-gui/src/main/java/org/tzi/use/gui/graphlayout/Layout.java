@@ -17,15 +17,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.graphlayout;
 
 import org.tzi.use.graph.*;
 
 
 /**
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

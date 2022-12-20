@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.util;
 
 import java.io.PrintWriter;
@@ -37,7 +35,6 @@ import org.tzi.use.uml.sys.soil.MStatement;
  * Visitor for dumping a HTML representation of model elements on an output
  * stream.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class MMHTMLPrintVisitor extends MMPrintVisitor {

@@ -17,32 +17,21 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
-
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 import org.tzi.use.gui.views.diagrams.statemachine.StateNode;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClassImpl;
-import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.mm.statemachines.MRegion;
-import org.tzi.use.uml.mm.statemachines.MState;
-import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.mm.statemachines.MVertex;
+import org.tzi.use.uml.mm.statemachines.*;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
 import org.tzi.use.uml.sys.events.LinkInsertedEvent;
 import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+
+import java.awt.*;
+import java.util.List;
+import java.util.*;
 
 /**
  * Represents a lifeline for Associations.

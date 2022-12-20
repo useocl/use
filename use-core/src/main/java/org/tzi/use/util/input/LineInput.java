@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util.input;
 
 import java.io.BufferedReader;
@@ -31,7 +29,6 @@ import org.tzi.use.config.Options;
  * implementation. The GNU readline library is preferably used if
  * installed.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class LineInput {

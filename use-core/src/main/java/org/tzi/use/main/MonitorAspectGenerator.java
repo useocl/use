@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.main;
 
 import java.io.BufferedReader;
@@ -36,7 +34,6 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MOperation;
 
 /** 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class MonitorAspectGenerator {

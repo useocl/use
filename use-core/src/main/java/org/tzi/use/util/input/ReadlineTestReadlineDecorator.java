@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 /*
  * Created on 07.07.2005
  */
@@ -27,7 +25,7 @@ package org.tzi.use.util.input;
 import java.io.IOException;
 
 /**
- * @author green
+ * @author Fabian Buettner
  */
 public class ReadlineTestReadlineDecorator implements Readline {
 

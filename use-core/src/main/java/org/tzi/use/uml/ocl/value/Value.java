@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.ocl.type.Type;
@@ -32,7 +30,6 @@ import org.tzi.use.util.BufferedToString;
  * abstract semantics of values, however. Note that all values
  * must be able of being compared with an <code>UndefinedValue</code>.</p>
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     Type
  */

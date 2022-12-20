@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util;
 
 import java.io.PrintStream;
@@ -29,8 +27,7 @@ import java.util.Date;
  * Class Log provides a set of static methods for writing log messages on output
  * streams.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public final class Log {
 

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util;
 
 import java.util.Properties;
@@ -27,7 +25,6 @@ import java.util.Arrays;
 /**
  * Extension of Properties class allowing type checking of values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class TypedProperties extends Properties {

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.graphlayout;
 
 import java.awt.*;
@@ -31,7 +29,6 @@ import org.tzi.use.graph.*;
 /**
  * Test class.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class LayeredLayout_test {

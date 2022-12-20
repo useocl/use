@@ -34,7 +34,6 @@ import java.util.Iterator;
 /**
  * Ordered set values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Lars Hamann
  */
 public class OrderedSetValue extends CollectionValue {

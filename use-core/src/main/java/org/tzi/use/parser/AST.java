@@ -17,14 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.parser;
 
 /**
  * Node of all abstract syntax trees constructed by the parsers in this package.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

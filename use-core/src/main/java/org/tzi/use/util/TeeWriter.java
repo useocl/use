@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util;
 
 import java.io.Writer;
@@ -28,7 +26,6 @@ import java.io.IOException;
 /** 
  * A TeeWriter sends its output to two writers.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class TeeWriter extends Writer {

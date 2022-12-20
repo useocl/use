@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.parser;
 
 import java.util.HashMap;
@@ -34,7 +32,6 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 /**
  * Symbol table for variable declarations with nested scopes.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class Symtable {

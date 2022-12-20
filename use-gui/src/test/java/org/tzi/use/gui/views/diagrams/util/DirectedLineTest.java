@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.util;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
@@ -27,8 +25,7 @@ import junit.framework.TestCase;
 /**
  * Test DirectedLine class.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author  green
+ * @author Fabian Buettner
  * @see     DirectedLine
  */
 

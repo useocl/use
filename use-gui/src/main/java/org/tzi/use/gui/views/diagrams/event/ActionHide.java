@@ -17,14 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.event;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.AbstractAction;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
@@ -33,10 +26,13 @@ import org.tzi.use.gui.views.diagrams.Selectable;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 
+import javax.swing.*;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * 
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 @SuppressWarnings("serial")

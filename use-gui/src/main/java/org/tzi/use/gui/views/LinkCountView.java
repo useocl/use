@@ -35,7 +35,6 @@ import com.google.common.eventbus.Subscribe;
  * A BarChartView showing the number of links in the current system
  * state.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")

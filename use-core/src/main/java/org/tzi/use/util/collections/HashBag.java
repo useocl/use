@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util.collections;
 
 import java.util.HashMap;
@@ -29,7 +27,6 @@ import java.util.NoSuchElementException;
 /**
  * A Bag stores objects and for each object the number of its occurrences.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class HashBag<T> extends AbstractBag<T> {

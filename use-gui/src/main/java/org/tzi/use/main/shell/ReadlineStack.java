@@ -17,22 +17,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 /*
  * Created on 07.07.2005
  */
 package org.tzi.use.main.shell;
 
+import org.tzi.use.util.Log;
+import org.tzi.use.util.input.Readline;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Stack;
 
-import org.tzi.use.util.Log;
-import org.tzi.use.util.input.Readline;
-
 /**
- * @author green
+ * @author Fabian Buettner
  */
 public class ReadlineStack {
     /**

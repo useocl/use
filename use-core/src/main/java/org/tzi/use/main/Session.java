@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.main;
 
 import java.util.EventListener;
@@ -33,7 +31,6 @@ import org.tzi.use.uml.sys.soil.MStatement;
  * A session manages a system and its model. System and model may
  * change during a session. Interested listeners are then notified.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class Session {

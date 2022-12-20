@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys;
 
 import java.util.Arrays;
@@ -34,7 +32,6 @@ import org.tzi.use.util.StringUtil;
  * A link end keeps a reference to an object as defined by an
  * association end.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public final class MLinkEnd {

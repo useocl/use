@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.util;
 
 import java.io.IOException;
@@ -30,7 +28,6 @@ import javax.swing.text.JTextComponent;
 /** 
  * A Writer directing its ouptut into a JTextComponent.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class TextComponentWriter extends Writer {

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.parser.use;
 
 import org.antlr.runtime.Token;
@@ -45,7 +43,6 @@ import java.util.List;
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ASTAssociationEnd extends ASTAnnotatable {

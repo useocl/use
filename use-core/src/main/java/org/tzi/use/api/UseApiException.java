@@ -17,13 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.api;
 
 /**
  * Exception thrown by the USE API
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class UseApiException extends Exception {

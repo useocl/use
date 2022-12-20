@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
@@ -35,7 +33,6 @@ import java.util.List;
 /**
  * Sequence values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class SequenceValue extends CollectionValue {

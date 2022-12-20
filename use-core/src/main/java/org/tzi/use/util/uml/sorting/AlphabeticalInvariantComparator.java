@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util.uml.sorting;
 
 import java.util.Comparator;
@@ -28,7 +26,6 @@ import org.tzi.use.uml.mm.MClassInvariant;
 /**
  *
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
- * @version $ProjectVersion: 0.393 $
  */
 public class AlphabeticalInvariantComparator implements Comparator<MClassInvariant> {
     private final boolean classNameSortsFirst;

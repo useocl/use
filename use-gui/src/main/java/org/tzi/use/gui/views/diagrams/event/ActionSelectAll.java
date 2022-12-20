@@ -17,18 +17,15 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.event;
-
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
 
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiagramView.DiagramData;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
 public class ActionSelectAll extends AbstractAction {

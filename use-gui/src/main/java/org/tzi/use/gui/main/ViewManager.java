@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.main;
 
 import javax.swing.DefaultDesktopManager;
@@ -27,7 +25,6 @@ import javax.swing.JInternalFrame;
 /** 
  * A DesktopManager that knows about ViewFrames.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.mm;
 
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
@@ -28,7 +26,6 @@ import org.tzi.use.uml.ocl.type.EnumType;
 /**
  * Visitor interface for model elements.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public interface MMVisitor {

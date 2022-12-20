@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gen.assl.statics;
 
 /**
@@ -27,7 +25,8 @@ package org.tzi.use.gen.assl.statics;
  *
  */
 public interface InstructionVisitor {
-	
+	
+
 	/**
 	 * @param gAttributeAssignment
 	 */

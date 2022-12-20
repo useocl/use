@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.elements;
 
 import java.awt.Graphics2D;
@@ -53,7 +51,6 @@ import com.ximpleware.XPathParseException;
 /**
  * A pseude-node representing a diamond in an n-ary association.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public class DiamondNode extends PlaceableNode {

@@ -47,7 +47,6 @@ import org.tzi.use.uml.sys.MSystem;
  * A graph showing an class diagram with all elements in the
  * current instance of MModel
  *
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  * */
 @SuppressWarnings("serial")

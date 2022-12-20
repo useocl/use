@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util;
 
 import java.io.Writer;
@@ -27,7 +25,6 @@ import java.io.Writer;
 /** 
  * A NullWriter simply discards all output.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class NullWriter extends Writer {

@@ -17,22 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * A special ScrollPane for the sequence diagram.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Antje Werner
  */
 @SuppressWarnings("serial")

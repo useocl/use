@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util.input;
 
 import java.io.IOException;
@@ -30,7 +28,6 @@ import java.io.IOException;
  * platforms. Use LineInput.getReadline() to get an appropriate
  * implementation instead.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class GNUReadline implements Readline {

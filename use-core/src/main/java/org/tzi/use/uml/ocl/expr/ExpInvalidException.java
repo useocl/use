@@ -17,14 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.expr;
 
 /**
  * Signals the attempt to construct an ill-formed expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class ExpInvalidException extends Exception {

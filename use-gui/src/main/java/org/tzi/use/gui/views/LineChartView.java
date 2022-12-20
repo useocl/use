@@ -17,18 +17,15 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views;
 
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
 
 /** 
  * This panel produces a line chart view. 
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 @SuppressWarnings("serial")
 public class LineChartView extends JPanel {

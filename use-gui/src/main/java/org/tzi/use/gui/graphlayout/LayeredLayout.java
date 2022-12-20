@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.graphlayout;
 
 import java.util.ArrayList;
@@ -35,7 +33,6 @@ import org.tzi.use.graph.DirectedGraphBase;
 
 
 /**
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

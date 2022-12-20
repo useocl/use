@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.util;
 
 import java.util.Collection;
@@ -40,7 +38,6 @@ import org.tzi.use.gui.views.diagrams.Selectable;
  * Note: All graphical presentation and updates have to be done by
  * client classes.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class Selection<T extends Selectable> implements Iterable<T> { 

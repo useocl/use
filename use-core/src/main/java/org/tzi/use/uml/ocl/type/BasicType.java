@@ -17,15 +17,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.type;
 
 /**
  * Abstract base class for basic types (Integer, Real, Boolean, and
  * String).
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public abstract class BasicType extends TypeImpl {

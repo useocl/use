@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.parser;
 
 import org.antlr.runtime.Token;
@@ -26,7 +24,6 @@ import org.antlr.runtime.Token;
 /**
  * A ScrPos object keeps information about a position in a source file.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class SrcPos {

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util.input;
 
 import java.io.*;
@@ -27,7 +25,6 @@ import java.net.Socket;
 /**
  * A Readline implementation using a socket as source.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class SocketReadline implements Readline {

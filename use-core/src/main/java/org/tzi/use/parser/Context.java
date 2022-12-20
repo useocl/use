@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.parser;
 
 import java.io.PrintWriter;
@@ -40,7 +38,6 @@ import org.tzi.use.uml.sys.MSystemState;
 /**
  * Context information available when walking the abstract syntax tree.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class Context {

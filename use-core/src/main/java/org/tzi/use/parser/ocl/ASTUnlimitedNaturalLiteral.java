@@ -17,20 +17,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.parser.ocl;
-
-import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpConstUnlimitedNatural;
+import org.tzi.use.uml.ocl.expr.Expression;
+
+import java.util.Set;
 
 /**
- * TODO
- * @author lhamann
+ * Abstract syntax class representing the
+ * unlimited natural literal <code>*</code>
+ * @author Lars Hamann
  *
  */
 public class ASTUnlimitedNaturalLiteral extends ASTExpression {

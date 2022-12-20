@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util;
 
 import java.io.PrintStream;
@@ -33,8 +31,7 @@ import java.util.Iterator;
  * column widths. Each column may be left-aligned, centered, or
  * right-aligned.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public class Report {
 

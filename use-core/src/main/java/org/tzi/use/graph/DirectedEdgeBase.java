@@ -17,14 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.graph;
 
 /** 
  * Basic implementation of directed binary edges in a graph.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     DirectedGraph
  */

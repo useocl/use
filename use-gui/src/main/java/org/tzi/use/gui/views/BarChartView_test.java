@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views;
 
 import java.awt.*;
@@ -26,7 +24,6 @@ import java.util.Random;
 import javax.swing.*;
 
 /** 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class BarChartView_test {

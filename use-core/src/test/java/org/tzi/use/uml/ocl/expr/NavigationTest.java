@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.expr;
 
 import java.io.PrintWriter;
@@ -35,7 +33,6 @@ import org.tzi.use.uml.sys.ObjectCreation;
 /**
  * NavigationTest tests the navigation with an linkobject.
  *
- * @version $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

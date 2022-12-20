@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.util;
 
 import java.awt.event.MouseAdapter;
@@ -28,7 +26,6 @@ import javax.swing.JPopupMenu;
 /** 
  * A Mouse listener for context menus.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class PopupListener extends MouseAdapter {

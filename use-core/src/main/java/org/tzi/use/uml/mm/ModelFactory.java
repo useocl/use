@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.mm;
 
 import java.util.List;
@@ -34,7 +32,6 @@ import org.tzi.use.uml.ocl.type.Type;
 /** 
  * A ModelFactory creates instances of the Metamodel.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ModelFactory {

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.event;
 
 import java.awt.event.ActionEvent;
@@ -34,7 +32,6 @@ import org.tzi.use.uml.sys.MObject;
 /**
  * Hides the selected objects.
  *
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
   */
 @SuppressWarnings("serial")

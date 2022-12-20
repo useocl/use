@@ -17,20 +17,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
-
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.behavior.DrawingUtil;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyUnmovable;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * This class represents the actor as a node in communication diagrams.

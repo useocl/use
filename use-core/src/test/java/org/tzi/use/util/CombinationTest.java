@@ -34,7 +34,6 @@ import junit.framework.TestCase;
 /**
  * Test comparing Bags with each other.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Fabian Gutsche
  */
 public class CombinationTest extends TestCase {

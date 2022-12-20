@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util;
 
 import junit.framework.TestCase;
@@ -38,7 +36,6 @@ import org.tzi.use.uml.sys.MSystem;
 /**
  * Test comparing Bags with each other.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Fabian Gutsche
  */
 public class AbstractBagTest extends TestCase {

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util.collections;
 
 import java.util.Collection;
@@ -29,7 +27,6 @@ import java.util.Iterator;
  * elements. It does so by storing for each object the number of its
  * occurrences.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see         java.util.Set
  */

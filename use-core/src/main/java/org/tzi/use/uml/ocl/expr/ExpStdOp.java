@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.expr;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -44,7 +42,6 @@ import java.util.List;
  * below). Also, this way the new operation symbol is already known to the
  * specification compiler.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 public final class ExpStdOp extends Expression {

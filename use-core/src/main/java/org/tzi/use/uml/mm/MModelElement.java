@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.mm;
 
 
@@ -26,7 +24,6 @@ package org.tzi.use.uml.mm;
 /**
  * Base for all model elements.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public interface MModelElement extends MNamedElement, Annotatable, Comparable<MModelElement> {

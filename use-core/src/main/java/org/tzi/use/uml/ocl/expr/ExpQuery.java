@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
@@ -33,7 +31,6 @@ import java.util.*;
  * Abstract base class for select, reject, collect, exists, forAll and iterate
  * expressions.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 

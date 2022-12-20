@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.graph;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,7 +27,6 @@ import junit.framework.TestCase;
 /**
  * Test Graph classes.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters
  * @see         DirectedGraph
  */

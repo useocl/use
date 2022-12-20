@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys;
 
 import java.util.List;
@@ -31,8 +29,7 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * A link is an instance of an association.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public interface MLink {
     /**

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.mm;
 
 import java.io.PrintWriter;
@@ -38,7 +36,6 @@ import org.tzi.use.util.StringUtil;
  * be used as input commands for USE in combination with the
  * specification of the UML metamodel.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class MMInstanceGenerator implements MMVisitor {

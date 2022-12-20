@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.util;
 
 import java.awt.BorderLayout;
@@ -33,7 +31,6 @@ import javax.swing.Timer;
 /** 
  * A StatusBar consisting of a single line of text.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")

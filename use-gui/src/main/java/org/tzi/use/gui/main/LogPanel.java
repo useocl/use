@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.main;
 
 import java.awt.*;
@@ -28,7 +26,6 @@ import javax.swing.*;
 /** 
  * A Log panel with a scrollable text area.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.graphlayout;
 
 import java.util.Iterator;
@@ -31,8 +29,7 @@ import org.tzi.use.gui.views.diagrams.Layoutable;
  * A spring embedder layout algorithm. See, e.g. G. Di Battista et
  * al.: "Graph Drawing", pp. 303, Prentice Hall, 1999.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public class SpringLayout<N extends Layoutable> {
 	/** the graph to be layouted **/

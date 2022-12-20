@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util;
 
 import java.io.*;
@@ -26,7 +24,6 @@ import java.io.*;
 /** 
  * A filter which counts the characters as they are read.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class CountReader extends FilterReader {

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.mm;
 
 import java.util.Collections;
@@ -38,7 +36,6 @@ import org.tzi.use.util.collections.CollectionUtil;
  * An AssociationEnd stores information about the role a class plays
  * in an association.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class MAssociationEnd extends MModelElementImpl implements MNavigableElement {

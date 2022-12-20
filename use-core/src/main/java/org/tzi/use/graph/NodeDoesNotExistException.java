@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.graph;
 
 import org.tzi.use.util.StringUtil;
@@ -26,8 +24,7 @@ import org.tzi.use.util.StringUtil;
 /**
  * A Node was referenced that is not part of the Graph.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public class NodeDoesNotExistException extends RuntimeException {
 	/**

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.type;
 
 import java.util.HashSet;
@@ -27,7 +25,6 @@ import java.util.Set;
 /**
  * The OclAny type.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class OclAnyType extends TypeImpl {

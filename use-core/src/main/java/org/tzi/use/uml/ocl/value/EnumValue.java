@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -26,7 +24,6 @@ import org.tzi.use.uml.ocl.type.EnumType;
 /**
  * An enumeration value.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     org.tzi.use.uml.ocl.type.EnumType
  */

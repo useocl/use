@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams;
 
 import java.awt.Color;
@@ -34,7 +32,6 @@ import org.w3c.dom.Element;
 /**
  * Contains Options for the class and object diagrams.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public abstract class DiagramOptions {

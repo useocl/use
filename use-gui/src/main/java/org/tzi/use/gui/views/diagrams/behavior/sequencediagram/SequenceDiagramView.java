@@ -17,18 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
-
-import java.awt.BorderLayout;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.print.PageFormat;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.PrintableView;
@@ -37,6 +26,10 @@ import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.events.Event;
 import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.print.PageFormat;
 
 /**
  * A SequenceDiagramView shows a UML sequence diagramm of events.

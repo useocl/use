@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 /*
  * Created on Jun 24, 2005
  */
@@ -30,7 +28,7 @@ import java.io.PrintWriter;
  * Used by all parsers in this package. 
  * Collects error information during parsing.
  * 
- * @author green
+ * @author Fabian Buettner
  */
 public class ParseErrorHandler {
     private int fErrorCount = 0;
