@@ -27,7 +27,6 @@ import org.tzi.use.util.FloatUtil;
 /**
  * Real values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     IntegerValue
  */

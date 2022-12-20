@@ -29,8 +29,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * Pre- or postconditions are attached to an operation and hold OCL
  * expressions.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public final class MPrePostCondition extends MModelElementImpl implements UseFileLocatable {
     private MOperation fOp; //  operation to be constrained

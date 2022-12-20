@@ -29,7 +29,6 @@ import java.util.NoSuchElementException;
 /**
  * A Bag stores objects and for each object the number of its occurrences.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class HashBag<T> extends AbstractBag<T> {

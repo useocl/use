@@ -31,7 +31,6 @@ import org.tzi.use.graph.*;
 /**
  * Test class.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class LayeredLayout_test {

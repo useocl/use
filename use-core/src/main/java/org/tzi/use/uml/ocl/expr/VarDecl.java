@@ -28,8 +28,7 @@ import org.tzi.use.uml.ocl.type.Type;
 /** 
  * A Variable declaration associates a variable name with a type.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public class VarDecl {
     private String fVar;

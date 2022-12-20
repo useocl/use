@@ -34,7 +34,6 @@ import org.tzi.use.uml.ocl.value.Value;
  * object states over time. This class allows references to objects
  * across different system states.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Marc Richters
  */
 public final class MObjectImpl implements MObject {

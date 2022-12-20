@@ -33,8 +33,7 @@ import java.util.Iterator;
  * column widths. Each column may be left-aligned, centered, or
  * right-aligned.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public class Report {
 

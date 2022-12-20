@@ -40,7 +40,6 @@ import org.tzi.use.uml.sys.MSystemState;
 /**
  * Context information available when walking the abstract syntax tree.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class Context {

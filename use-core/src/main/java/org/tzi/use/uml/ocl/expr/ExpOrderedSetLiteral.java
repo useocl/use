@@ -29,7 +29,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * Constant sequence literal.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Lars Hamann
  */
 public final class ExpOrderedSetLiteral extends ExpCollectionLiteral {

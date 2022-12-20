@@ -31,7 +31,6 @@ import org.tzi.use.uml.mm.TestModelUtil;
  * ObjectCreation is needed for creating instances of a specific
  * model. This class is only needed for the tests.
  *
- * @version $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

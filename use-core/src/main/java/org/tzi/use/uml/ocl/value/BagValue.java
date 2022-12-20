@@ -40,7 +40,6 @@ import java.util.List;
  * IllegalArgumentException if a passed value's type does not conform to the
  * element type of the bag.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 public class BagValue extends CollectionValue {

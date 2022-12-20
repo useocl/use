@@ -35,7 +35,6 @@ import org.tzi.use.util.collections.Queue;
 /**
  * Test Evaluator class.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

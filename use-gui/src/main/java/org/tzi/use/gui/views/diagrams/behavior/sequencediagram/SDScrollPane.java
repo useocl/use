@@ -32,7 +32,6 @@ import javax.swing.JViewport;
 /**
  * A special ScrollPane for the sequence diagram.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Antje Werner
  */
 @SuppressWarnings("serial")

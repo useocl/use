@@ -33,7 +33,6 @@ import javax.swing.Timer;
 /** 
  * A StatusBar consisting of a single line of text.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")

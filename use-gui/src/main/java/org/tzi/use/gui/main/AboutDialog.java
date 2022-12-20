@@ -21,30 +21,17 @@
 
 package org.tzi.use.gui.main;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /** 
  * About dialog.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")

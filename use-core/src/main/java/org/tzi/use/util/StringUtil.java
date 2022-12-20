@@ -28,7 +28,6 @@ import java.util.Iterator;
  * Provides static methods for formating strings and sequences of
  * Objects.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters
  * @author 		Lars Hamann 
  */

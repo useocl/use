@@ -30,7 +30,6 @@ import java.util.*;
 /**
  * Base class for collection values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     SetValue
  * @see     SequenceValue

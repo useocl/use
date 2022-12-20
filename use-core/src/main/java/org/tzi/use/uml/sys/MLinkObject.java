@@ -26,7 +26,6 @@ package org.tzi.use.uml.sys;
  * different object states over time and is connected to several
  * objects.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

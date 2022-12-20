@@ -25,7 +25,6 @@ package org.tzi.use.uml.mm;
  * Signals that the effect of an operation would result in an invalid
  * model.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class MInvalidModelException extends Exception {

@@ -25,8 +25,7 @@ package org.tzi.use.graph;
  * Base class of all exceptions that may be thrown by code in this
  * package.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public abstract class GraphException extends Exception {
 	/**

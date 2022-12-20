@@ -38,7 +38,6 @@ import javax.swing.JPanel;
  * their top. While the names are fixed after initialization, their
  * associated values may change over time.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 @SuppressWarnings("serial")

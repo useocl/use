@@ -28,7 +28,6 @@ import org.tzi.use.uml.mm.MClassInvariant;
 /**
  *
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
- * @version $ProjectVersion: 0.393 $
  */
 public class AlphabeticalInvariantComparator implements Comparator<MClassInvariant> {
     private final boolean classNameSortsFirst;

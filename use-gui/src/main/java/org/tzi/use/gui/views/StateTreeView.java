@@ -43,8 +43,7 @@ import com.google.common.eventbus.Subscribe;
  * A StateBrowser provides a tree view of objects and links in the
  * current system state.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 @SuppressWarnings("serial")
 public class StateTreeView extends JTree implements View {

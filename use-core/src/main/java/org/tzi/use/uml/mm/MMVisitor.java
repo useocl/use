@@ -28,7 +28,6 @@ import org.tzi.use.uml.ocl.type.EnumType;
 /**
  * Visitor interface for model elements.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public interface MMVisitor {

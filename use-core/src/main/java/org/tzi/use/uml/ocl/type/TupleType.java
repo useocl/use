@@ -38,7 +38,6 @@ import org.tzi.use.util.StringUtil;
 /**
  * OCL Tuple type.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public final class TupleType extends TypeImpl {

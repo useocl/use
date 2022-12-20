@@ -33,7 +33,6 @@ import java.util.Set;
 /**
  * The OCL Sequence type.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     SetType
  * @see     BagType

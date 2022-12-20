@@ -29,7 +29,6 @@ import java.util.TreeMap;
 /**
  * A Bag stores objects and for each object the number of its occurrences.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 public class TreeBag<T> extends AbstractBag<T> {

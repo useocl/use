@@ -28,7 +28,6 @@ import org.tzi.use.uml.sys.MObject;
 /**
  * A value referring to an object.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ObjectValue extends Value {

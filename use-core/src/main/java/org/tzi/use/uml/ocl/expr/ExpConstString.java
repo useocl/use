@@ -28,7 +28,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * Constant string expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpConstString extends Expression {

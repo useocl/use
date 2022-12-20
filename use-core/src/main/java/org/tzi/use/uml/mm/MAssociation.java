@@ -29,7 +29,6 @@ import java.util.Set;
 /** 
  * An association connects two or more classes.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public interface MAssociation extends MClassifier {

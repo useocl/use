@@ -29,8 +29,7 @@ import java.util.Date;
  * Class Log provides a set of static methods for writing log messages on output
  * streams.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public final class Log {
 

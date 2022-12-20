@@ -25,7 +25,6 @@ import junit.framework.TestCase;
 /**
  * Test StringUtil class.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

@@ -47,7 +47,6 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ASTOperation extends ASTAnnotatable {

@@ -42,7 +42,6 @@ import org.tzi.use.uml.sys.soil.MRValueExpression;
  * The class <code>ModelCreationTest</code> tries to instantiate Objects
  * and Links of all models in <code>TestModelUtil</code>.
  *
- * @version $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

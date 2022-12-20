@@ -27,7 +27,6 @@ import java.util.Arrays;
 /**
  * Extension of Properties class allowing type checking of values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class TypedProperties extends Properties {

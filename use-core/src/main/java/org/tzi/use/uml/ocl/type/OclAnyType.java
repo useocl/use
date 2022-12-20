@@ -27,7 +27,6 @@ import java.util.Set;
 /**
  * The OclAny type.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class OclAnyType extends TypeImpl {

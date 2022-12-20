@@ -38,7 +38,6 @@ import org.tzi.use.util.collections.CollectionUtil;
  * An AssociationEnd stores information about the role a class plays
  * in an association.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class MAssociationEnd extends MModelElementImpl implements MNavigableElement {

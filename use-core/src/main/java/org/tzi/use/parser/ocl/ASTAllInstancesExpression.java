@@ -21,8 +21,6 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -31,10 +29,11 @@ import org.tzi.use.uml.ocl.expr.ExpAllInstances;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
 
+import java.util.Set;
+
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ASTAllInstancesExpression extends ASTExpression {

@@ -34,7 +34,6 @@ import org.tzi.use.uml.sys.MObject;
 /**
  * Hides the selected objects.
  *
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
   */
 @SuppressWarnings("serial")

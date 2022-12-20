@@ -27,7 +27,6 @@ import java.util.Iterator;
 /**
  * Skeleton for implementations of the Bag interface.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public abstract class AbstractBag<T> extends AbstractCollection<T> implements Bag<T> {

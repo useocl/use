@@ -33,7 +33,6 @@ import java.util.*;
  * Abstract base class for select, reject, collect, exists, forAll and iterate
  * expressions.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 

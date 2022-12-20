@@ -38,7 +38,6 @@ import org.tzi.use.uml.mm.TestModelUtil;
  * The class <code>LinkTest</code> creates an instance of an
  * association class.
  *
- * @version $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

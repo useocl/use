@@ -41,7 +41,6 @@ import org.tzi.use.uml.mm.statemachines.MStateMachine;
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ASTClass extends ASTAnnotatable {

@@ -34,7 +34,6 @@ import org.tzi.use.util.StringUtil;
  * A link end keeps a reference to an object as defined by an
  * association end.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public final class MLinkEnd {

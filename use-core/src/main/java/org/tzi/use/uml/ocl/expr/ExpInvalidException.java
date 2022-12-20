@@ -24,7 +24,6 @@ package org.tzi.use.uml.ocl.expr;
 /**
  * Signals the attempt to construct an ill-formed expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class ExpInvalidException extends Exception {

@@ -28,7 +28,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * If-then-else-endif.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpIf extends Expression {

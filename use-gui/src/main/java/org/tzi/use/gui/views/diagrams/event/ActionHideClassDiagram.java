@@ -37,7 +37,6 @@ import org.tzi.use.uml.mm.MClassifier;
 /**
  * Hides selected nodes and edges from a given diagram.
  *
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
   */
 @SuppressWarnings("serial")

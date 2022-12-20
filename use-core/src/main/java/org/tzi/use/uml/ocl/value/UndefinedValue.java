@@ -26,7 +26,6 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 /**
  * The undefined value.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class UndefinedValue extends Value {

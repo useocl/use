@@ -38,7 +38,6 @@ import java.util.Set;
  * IllegalArgumentException if a passed value's type does not conform to the
  * element type of the set.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 public class SetValue extends CollectionValue {

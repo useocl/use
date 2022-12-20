@@ -26,7 +26,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /** 
  * OCL select expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ExpSelect extends ExpQuery {

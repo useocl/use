@@ -28,7 +28,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /** 
  * OCL iterate expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ExpIterate extends ExpQuery {

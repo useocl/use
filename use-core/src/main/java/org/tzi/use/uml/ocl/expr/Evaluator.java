@@ -33,7 +33,6 @@ import org.tzi.use.util.collections.Queue;
 /**
  * Evaluation of expressions.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class Evaluator {

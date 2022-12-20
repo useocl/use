@@ -34,7 +34,6 @@ import org.w3c.dom.Element;
 /**
  * Contains Options for the class and object diagrams.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public abstract class DiagramOptions {

@@ -27,7 +27,6 @@ import javax.swing.JInternalFrame;
 /** 
  * A DesktopManager that knows about ViewFrames.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")

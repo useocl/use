@@ -37,7 +37,6 @@ import org.tzi.use.util.collections.CollectionComparator;
 /**
  * Tuple values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class TupleValue extends Value {

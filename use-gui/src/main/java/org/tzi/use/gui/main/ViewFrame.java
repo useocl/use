@@ -21,22 +21,17 @@
 
 package org.tzi.use.gui.main;
 
-import java.awt.Graphics2D;
-import java.awt.print.PageFormat;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.JScrollPane;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.print.PageFormat;
+
 /** 
  * An internal frame holding a view of a system state.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")

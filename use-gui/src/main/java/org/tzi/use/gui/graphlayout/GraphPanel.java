@@ -35,8 +35,7 @@ import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.util.Log;
 
 /** 
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 @SuppressWarnings("serial")
 public class GraphPanel extends JPanel {

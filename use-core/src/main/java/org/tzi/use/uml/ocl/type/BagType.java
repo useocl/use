@@ -33,7 +33,6 @@ import java.util.Set;
 /**
  * The OCL Bag type.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     SetType
  */

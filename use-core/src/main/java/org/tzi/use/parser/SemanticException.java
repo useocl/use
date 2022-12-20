@@ -26,7 +26,6 @@ import org.antlr.runtime.Token;
 /** 
  * Exception thrown during code generation in AST walking.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class SemanticException extends Exception {

@@ -25,8 +25,7 @@ package org.tzi.use.gui.xmlparser;
  * This class provides just the tags for categorizing movies in a XML
  * file.
  * 
- * @version     $ProjectVersion: 0.393 $
- * @author      Fabian Gutsche 
+ * @author      Fabian Gutsche
  */
 public class LayoutTags {
 

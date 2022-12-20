@@ -26,7 +26,6 @@ import java.io.*;
 /** 
  * A filter which counts the characters as they are read.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class CountReader extends FilterReader {

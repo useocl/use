@@ -36,7 +36,6 @@ import org.tzi.use.gui.views.diagrams.DiagramView;
 /**
  * Loads the current layout from a file.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 @SuppressWarnings("serial")

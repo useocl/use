@@ -27,7 +27,6 @@ import junit.framework.TestCase;
 /**
  * Test DirectedLine class.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  green
  * @see     DirectedLine
  */

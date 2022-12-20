@@ -51,7 +51,6 @@ import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ASTQueryExpression extends ASTExpression {

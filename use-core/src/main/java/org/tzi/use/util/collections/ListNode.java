@@ -25,7 +25,6 @@ package org.tzi.use.util.collections;
  * A Node in a single linked list containing data and a link to the
  * next node.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class ListNode {

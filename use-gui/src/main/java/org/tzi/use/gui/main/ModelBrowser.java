@@ -81,8 +81,7 @@ import org.tzi.use.uml.mm.MPrePostCondition;
  * class can be dragged onto an object diagram to create a new object of this
  * class.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 @SuppressWarnings("serial")
 public class ModelBrowser extends JPanel 

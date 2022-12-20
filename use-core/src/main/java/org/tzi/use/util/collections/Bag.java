@@ -29,7 +29,6 @@ import java.util.Iterator;
  * elements. It does so by storing for each object the number of its
  * occurrences.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see         java.util.Set
  */

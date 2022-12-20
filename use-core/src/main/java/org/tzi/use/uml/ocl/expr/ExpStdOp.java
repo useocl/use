@@ -44,7 +44,6 @@ import java.util.List;
  * below). Also, this way the new operation symbol is already known to the
  * specification compiler.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 public final class ExpStdOp extends Expression {

@@ -54,7 +54,6 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
  * Handles the mouse movements and keyboard inputs 
  * of the class and object diagram.
  *  
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public class DiagramInputHandling implements MouseListener,

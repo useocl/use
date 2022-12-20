@@ -40,7 +40,6 @@ import org.tzi.use.gui.views.diagrams.Selectable;
  * Note: All graphical presentation and updates have to be done by
  * client classes.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class Selection<T extends Selectable> implements Iterable<T> { 

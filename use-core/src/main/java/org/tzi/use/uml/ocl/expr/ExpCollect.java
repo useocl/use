@@ -30,7 +30,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /** 
  * OCL collect expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ExpCollect extends ExpQuery {

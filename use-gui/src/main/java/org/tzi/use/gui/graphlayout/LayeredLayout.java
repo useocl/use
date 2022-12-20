@@ -35,7 +35,6 @@ import org.tzi.use.graph.DirectedGraphBase;
 
 
 /**
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

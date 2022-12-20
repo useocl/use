@@ -25,7 +25,6 @@ package org.tzi.use.util.collections;
 /**
  * A thread-safe FIFO Queue.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class Queue {

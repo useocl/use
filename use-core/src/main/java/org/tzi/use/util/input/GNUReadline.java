@@ -30,7 +30,6 @@ import java.io.IOException;
  * platforms. Use LineInput.getReadline() to get an appropriate
  * implementation instead.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class GNUReadline implements Readline {

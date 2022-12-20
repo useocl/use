@@ -19,28 +19,6 @@
 
 package org.tzi.use.gui.main;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.TextComponentWriter;
@@ -59,10 +37,18 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TeeWriter;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * A dialog for entering and evaluating OCL expressions.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 @SuppressWarnings("serial")

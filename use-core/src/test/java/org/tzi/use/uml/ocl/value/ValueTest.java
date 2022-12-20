@@ -21,17 +21,16 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import java.util.Arrays;
-
 import com.gargoylesoftware.base.testing.EqualsTester;
 import junit.framework.TestCase;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 
+import java.util.Arrays;
+
 /**
  * Test Value classes.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

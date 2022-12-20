@@ -39,7 +39,6 @@ import org.w3c.dom.Element;
 /**
  * Represents a way point on an edge. 
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public class WayPoint extends EdgeProperty {

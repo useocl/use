@@ -27,7 +27,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * OCL Let-expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpLet extends Expression {

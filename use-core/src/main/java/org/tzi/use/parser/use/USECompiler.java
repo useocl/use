@@ -40,8 +40,7 @@ import org.tzi.use.uml.mm.ModelFactory;
  * class has a set of static methods providing a simple interface to
  * the lexer, parser and code generation process.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public class USECompiler {
 

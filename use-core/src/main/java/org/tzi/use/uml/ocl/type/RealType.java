@@ -27,7 +27,6 @@ import java.util.Set;
 /**
  * The OCL Real type.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class RealType extends BasicType {

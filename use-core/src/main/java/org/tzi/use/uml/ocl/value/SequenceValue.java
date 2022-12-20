@@ -35,7 +35,6 @@ import java.util.List;
 /**
  * Sequence values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class SequenceValue extends CollectionValue {

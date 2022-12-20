@@ -28,7 +28,6 @@ import org.tzi.use.gui.views.diagrams.DiagramOptions;
 /**
  * Contains all optional settings for the class diagram.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public class ClassDiagramOptions extends DiagramOptions {

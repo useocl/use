@@ -33,7 +33,6 @@ import org.tzi.use.uml.sys.soil.MStatement;
  * A session manages a system and its model. System and model may
  * change during a session. Interested listeners are then notified.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class Session {

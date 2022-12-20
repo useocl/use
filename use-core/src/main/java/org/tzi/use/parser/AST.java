@@ -24,7 +24,6 @@ package org.tzi.use.parser;
 /**
  * Node of all abstract syntax trees constructed by the parsers in this package.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

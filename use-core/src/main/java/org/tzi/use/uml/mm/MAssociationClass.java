@@ -26,7 +26,6 @@ import java.util.Set;
 /**
  * MAssociationClass instances represent associationclasses in a model.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

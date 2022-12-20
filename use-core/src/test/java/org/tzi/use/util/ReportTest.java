@@ -28,7 +28,6 @@ import junit.framework.TestCase;
 /**
  * Test Report class.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

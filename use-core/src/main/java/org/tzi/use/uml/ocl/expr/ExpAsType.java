@@ -31,7 +31,6 @@ import org.tzi.use.uml.sys.MObject;
 /**
  * oclAsType
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpAsType extends Expression {

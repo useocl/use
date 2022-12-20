@@ -37,7 +37,6 @@ import org.tzi.use.uml.sys.soil.MStatement;
  * Visitor for dumping a HTML representation of model elements on an output
  * stream.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class MMHTMLPrintVisitor extends MMPrintVisitor {

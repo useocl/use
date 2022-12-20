@@ -31,7 +31,6 @@ import org.tzi.use.api.UseModelApi;
  * The class <code>TestModelUtil</code> offers methods for creating
  * different USE-models.
  *
- * @version $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

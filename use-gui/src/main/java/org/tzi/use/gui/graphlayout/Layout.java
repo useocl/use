@@ -25,7 +25,6 @@ import org.tzi.use.graph.*;
 
 
 /**
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

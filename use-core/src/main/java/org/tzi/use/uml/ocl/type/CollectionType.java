@@ -33,7 +33,6 @@ import java.util.Set;
 /**
  * Collection is the abstract base class for set, sequence, and bag.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     SetType
  * @see     SequenceType

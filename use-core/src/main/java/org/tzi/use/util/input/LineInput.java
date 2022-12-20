@@ -31,7 +31,6 @@ import org.tzi.use.config.Options;
  * implementation. The GNU readline library is preferably used if
  * installed.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class LineInput {

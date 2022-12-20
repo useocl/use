@@ -34,7 +34,6 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 /**
  * Symbol table for variable declarations with nested scopes.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class Symtable {

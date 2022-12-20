@@ -53,7 +53,6 @@ import com.ximpleware.XPathParseException;
 /**
  * A pseude-node representing a diamond in an n-ary association.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public class DiamondNode extends PlaceableNode {

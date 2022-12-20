@@ -31,7 +31,6 @@ import org.tzi.use.util.collections.Queue;
 /**
  * An evaluator with parallel execution.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 class ThreadedEvaluator {

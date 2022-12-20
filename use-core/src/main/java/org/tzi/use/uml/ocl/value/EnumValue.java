@@ -26,7 +26,6 @@ import org.tzi.use.uml.ocl.type.EnumType;
 /**
  * An enumeration value.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     org.tzi.use.uml.ocl.type.EnumType
  */

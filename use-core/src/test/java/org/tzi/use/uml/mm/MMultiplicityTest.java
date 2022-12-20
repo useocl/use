@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 /**
  * Test MMultiplicity.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     MMultiplicity
  */

@@ -27,8 +27,7 @@ import java.awt.*;
  * A helper class for adding components to a container with a
  * GridBagLayout.
  * 
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public class GridBagHelper {
     private Container fContainer;

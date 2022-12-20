@@ -31,7 +31,6 @@ import org.tzi.use.util.collections.CollectionUtil;
 /**
  * Base class for all model elements.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

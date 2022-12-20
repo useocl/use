@@ -26,7 +26,6 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 /**
  * Boolean values.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class BooleanValue extends Value {

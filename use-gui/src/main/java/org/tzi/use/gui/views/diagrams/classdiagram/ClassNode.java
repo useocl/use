@@ -42,7 +42,6 @@ import com.google.common.collect.Collections2;
 /**
  * A node representing a class.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Fabian Gutsche
  */
 public class ClassNode extends ClassifierNode implements SortChangeListener {

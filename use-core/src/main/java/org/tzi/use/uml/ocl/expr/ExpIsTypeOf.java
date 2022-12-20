@@ -31,7 +31,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * oclIsTypeOf
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpIsTypeOf extends Expression {

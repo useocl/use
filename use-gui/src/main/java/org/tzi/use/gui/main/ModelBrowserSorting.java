@@ -52,7 +52,6 @@ import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
  * sorting algorithem.
  *
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
- * @version $ProjectVersion: 2-3-1-release.3 $
  */
 public class ModelBrowserSorting  {
     

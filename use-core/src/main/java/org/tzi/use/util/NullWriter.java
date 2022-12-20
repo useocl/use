@@ -27,7 +27,6 @@ import java.io.Writer;
 /** 
  * A NullWriter simply discards all output.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class NullWriter extends Writer {

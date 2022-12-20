@@ -28,7 +28,6 @@ import java.io.IOException;
 /** 
  * A TeeWriter sends its output to two writers.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class TeeWriter extends Writer {

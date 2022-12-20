@@ -26,7 +26,6 @@ import java.util.Random;
 import javax.swing.*;
 
 /** 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class BarChartView_test {

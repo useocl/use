@@ -31,8 +31,7 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * A link is an instance of an association.
  *
- * @version     $ProjectVersion: 0.393 $
- * @author      Mark Richters 
+ * @author      Mark Richters
  */
 public interface MLink {
     /**

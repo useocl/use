@@ -29,7 +29,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * Constant bag literal.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpBagLiteral extends ExpCollectionLiteral {

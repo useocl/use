@@ -26,7 +26,6 @@ import java.io.IOException;
 /**
  * The general readline interface.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public interface Readline extends AutoCloseable {

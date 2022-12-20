@@ -32,7 +32,6 @@ import java.util.Set;
  * MNavigableElement instances represent model elements which can be
  * used for navigation in OCL.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */

@@ -23,7 +23,6 @@ package org.tzi.use.gui.graphlayout;
 
 
 /**
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 

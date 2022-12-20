@@ -28,7 +28,6 @@ import javax.swing.JPopupMenu;
 /** 
  * A Mouse listener for context menus.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class PopupListener extends MouseAdapter {

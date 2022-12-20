@@ -26,7 +26,6 @@ import org.antlr.runtime.Token;
 /**
  * A ScrPos object keeps information about a position in a source file.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class SrcPos {

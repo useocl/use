@@ -55,7 +55,6 @@ import org.tzi.use.uml.sys.MSystemState;
 /**
  * Test ExpQuery and subclasses.
  * 
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 

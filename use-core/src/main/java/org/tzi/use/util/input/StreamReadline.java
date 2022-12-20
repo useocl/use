@@ -30,7 +30,6 @@ import org.tzi.use.util.USEWriter;
 /**
  * A Readline implementation using a BufferedReader as source.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters 
  */
 public class StreamReadline implements Readline {

@@ -27,7 +27,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * Variable expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpVariable extends Expression  {

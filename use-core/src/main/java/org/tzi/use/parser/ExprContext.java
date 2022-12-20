@@ -28,7 +28,6 @@ import org.tzi.use.uml.ocl.type.Type;
 /**
  * Stack for default context variable in nested expressions.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ExprContext {

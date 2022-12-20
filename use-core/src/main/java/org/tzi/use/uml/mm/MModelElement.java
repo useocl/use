@@ -26,7 +26,6 @@ package org.tzi.use.uml.mm;
 /**
  * Base for all model elements.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public interface MModelElement extends MNamedElement, Annotatable, Comparable<MModelElement> {

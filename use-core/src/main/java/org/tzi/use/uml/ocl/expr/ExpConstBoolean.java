@@ -28,7 +28,6 @@ import org.tzi.use.uml.ocl.value.Value;
 /**
  * Constant boolean expression.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public final class ExpConstBoolean extends Expression {

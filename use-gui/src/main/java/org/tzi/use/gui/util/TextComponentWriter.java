@@ -30,7 +30,6 @@ import javax.swing.text.JTextComponent;
 /** 
  * A Writer directing its ouptut into a JTextComponent.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class TextComponentWriter extends Writer {

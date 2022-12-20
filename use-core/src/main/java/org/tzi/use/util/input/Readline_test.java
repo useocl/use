@@ -26,7 +26,6 @@ import java.io.IOException;
 /**
  * Test Readline implementation.
  * 
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 class Readline_test {

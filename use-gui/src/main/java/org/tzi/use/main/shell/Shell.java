@@ -19,37 +19,6 @@
 
 package org.tzi.use.main.shell;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.file.Paths;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.gen.tool.GNoResultException;
@@ -63,14 +32,7 @@ import org.tzi.use.parser.testsuite.TestSuiteCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.model.PluginModel;
 import org.tzi.use.runtime.shell.impl.PluginShellCmdFactory.PluginShellCmdContainer;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MMInstanceGenerator;
-import org.tzi.use.uml.mm.MMPrintVisitor;
-import org.tzi.use.uml.mm.MMVisitor;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
@@ -87,16 +49,20 @@ import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.testsuite.MTestSuite;
-import org.tzi.use.util.Log;
-import org.tzi.use.util.NullWriter;
-import org.tzi.use.util.Report;
-import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.USEWriter;
+import org.tzi.use.util.*;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.ReadlineTestReadlineDecorator;
 import org.tzi.use.util.input.SocketReadline;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.file.Paths;
+import java.text.NumberFormat;
+import java.util.*;
 
 class NoSystemException extends Exception {
 	/**
@@ -108,7 +74,6 @@ class NoSystemException extends Exception {
 /**
  * A shell for reading and executing user commands.
  *
- * @version $ProjectVersion: 0.393 $
  * @author Mark Richters
  */
 

@@ -34,7 +34,6 @@ import org.tzi.use.uml.ocl.type.Type;
 /** 
  * A ModelFactory creates instances of the Metamodel.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ModelFactory {

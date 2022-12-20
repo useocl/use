@@ -29,7 +29,6 @@ import junit.framework.TestCase;
 /**
  * Test Graph classes.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author      Mark Richters
  * @see         DirectedGraph
  */
