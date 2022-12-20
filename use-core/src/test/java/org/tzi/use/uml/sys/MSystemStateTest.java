@@ -38,7 +38,7 @@ import javax.naming.OperationNotSupportedException;
 import java.util.Arrays;
 
 /**
- * @author green
+ * @author Fabian Buettner
  */
 public class MSystemStateTest extends TestCase {
 

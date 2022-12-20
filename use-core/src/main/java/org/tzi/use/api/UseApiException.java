@@ -21,7 +21,7 @@ package org.tzi.use.api;
 
 /**
  * Exception thrown by the USE API
- * @author lhamann
+ * @author Lars Hamann
  *
  */
 public class UseApiException extends Exception {

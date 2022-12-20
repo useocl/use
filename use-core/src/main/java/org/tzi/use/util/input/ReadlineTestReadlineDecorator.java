@@ -25,7 +25,7 @@ package org.tzi.use.util.input;
 import java.io.IOException;
 
 /**
- * @author green
+ * @author Fabian Buettner
  */
 public class ReadlineTestReadlineDecorator implements Readline {
 

@@ -20,8 +20,9 @@
 package org.tzi.use.gui.util;
 
 /**
- * TODO
- * @author lhamann
+ * Exception indicating that the stored layout information
+ * is no longer valid, i.e., could not be loaded.
+ * @author Lars Hamann
  *
  */
 public class RestoreLayoutException extends Exception {

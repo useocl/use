@@ -28,7 +28,7 @@ import java.io.PrintWriter;
  * Used by all parsers in this package. 
  * Collects error information during parsing.
  * 
- * @author green
+ * @author Fabian Buettner
  */
 public class ParseErrorHandler {
     private int fErrorCount = 0;

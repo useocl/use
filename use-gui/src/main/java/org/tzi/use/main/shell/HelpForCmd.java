@@ -19,6 +19,9 @@
 
 package org.tzi.use.main.shell;
 
+import org.tzi.use.config.Options;
+import org.tzi.use.util.Log;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +30,6 @@ import java.nio.file.Path;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-
-import org.tzi.use.config.Options;
-import org.tzi.use.util.Log;
 
 /**
  * Singleton helper class for the command line help. The actual help texts are
@@ -43,7 +43,7 @@ import org.tzi.use.util.Log;
  * 
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick </a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche </a>
- * @author green
+ * @author Fabian Buettner
  */
 public class HelpForCmd {
 

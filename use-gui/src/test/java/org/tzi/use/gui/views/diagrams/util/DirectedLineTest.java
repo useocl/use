@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 /**
  * Test DirectedLine class.
  *
- * @author  green
+ * @author Fabian Buettner
  * @see     DirectedLine
  */
 
