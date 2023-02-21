@@ -57,6 +57,12 @@ public final class Main {
 	}
 
 	private static void initGUIdefaults() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+				 UnsupportedLookAndFeelException e) {
+		}
+
 		MetalLookAndFeel.setCurrentTheme(new MyTheme());
 	}
 
