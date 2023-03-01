@@ -52,7 +52,6 @@ import org.tzi.use.uml.sys.testsuite.MTestSuite;
 import org.tzi.use.util.*;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
-import org.tzi.use.util.input.ReadlineTestReadlineDecorator;
 import org.tzi.use.util.input.SocketReadline;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
@@ -673,12 +672,6 @@ public final class Shell implements Runnable, PPCHandler {
 			int exitCode = 0;
 			if (Options.quiet && ! lastCheckResult() ) {
 				exitCode = 1;
-			}
-
-			if (Options.readlineTest) {
-				System.err.println("readline balance: "+ ReadlineTestReadlineDecorator.getBalance());
-				System.err.flush();
-				exitCode = ReadlineTestReadlineDecorator.getBalance();
 			}
 
 			System.exit(exitCode);

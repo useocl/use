@@ -144,9 +144,7 @@ public class Options {
      * disabled. 
      */
     public static boolean disableExtensions = false;
-    
-    public static boolean readlineTest = false;
-    
+
     public static boolean explicitVariableDeclarations = true;
     
     private static boolean checkTransitions = true;
@@ -327,8 +325,6 @@ public class Options {
                 	Options.doGUI = false;
                 } else if (arg.equals("noplugins")) {
 					Options.doPLUGIN = false;
-                } else if (arg.equals("readlineTest")) { 
-                    Options.readlineTest = true;
                 } else if (arg.startsWith("H=")) { 
                 	try {
                 		homeDir = Paths.get(arg.substring(2));
