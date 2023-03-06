@@ -51,12 +51,6 @@ public class Options {
 
     // the trained support apes
     public static final String SUPPORT_MAIL = "grp-usedevel@informatik.uni-bremen.de";
-    
-    /**
-	 * Name of the file for system properties located in the etc subdirectory of
-	 * the installation directory.
-     */
-    private static final String USE_PROP_FILE = "use.properties";
 
     /**
      * Name of the file for user properties.
@@ -85,11 +79,6 @@ public class Options {
     public static double PRINT_PAGEFORMAT_HEIGHT = 842.0;
     public static String PRINT_PAGEFORMAT_ORIENTATION = "portrait";
 
-    /**
-     * Encoding for xml-files.
-     */
-    public static final String ENCODING = "ISO-8859-1";
-    
     /**
      * Path for command history file.
      */
@@ -160,8 +149,8 @@ public class Options {
     	WARN("W"),
     	ERROR("E");
     	
-    	private String type;
-    	private WarningType(String type) {
+    	private final String type;
+    	WarningType(String type) {
     		this.type = type;
     	}
 
@@ -204,12 +193,6 @@ public class Options {
      */
     private static TypedProperties props = null;
 
-    /**
-	 * Name for protocol file. Every given output in USE is protocoled in this
-	 * file.
-     */
-    public static final String PROTOCOL_FILE = "use.protocol";
-
 	/**
 	 * Default precision for floating-point number comparisons.
 	 */
@@ -218,7 +201,7 @@ public class Options {
     /**
      * Contains the ten last opened files
      */
-    private static RecentItems recentSpecifications = createRecentItems();
+    private static final RecentItems recentSpecifications = createRecentItems();
     
     /**
      * This is an extra method to hide a java bug that just happens in some versions
@@ -308,7 +291,7 @@ public class Options {
      * <p>Parses command line arguments and sets options accordingly.</p>
      * <p>Calls System.exit(1) in case of errors.</p>
      */
-    public static void processArgs(String args[]) {
+    public static void processArgs(String[] args) {
         // parse command options
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-") ) {
@@ -378,7 +361,7 @@ public class Options {
                 	}
                 } else {
                 	System.out.println("invalid argument `" + arg
-							+ "\', try `use -h' for help.");
+							+ "', try `use -h' for help.");
                     System.exit(1);
                 }
             } else if (specFilename == null ) {
@@ -403,7 +386,7 @@ public class Options {
 				}
 				// resolve lib/ folder path, assuming default folder structure
 				homeDir = home.getParent();
-			} catch (URISyntaxException e) { }
+			} catch (URISyntaxException e) { /* homeDir == null is handled later */ }
         }
         
         if (homeDir == null ) {
@@ -432,7 +415,8 @@ public class Options {
 
     /**
      * Enables or disables debug output.
-     * @param debug
+	 * Short for setting debug, trace, printstacktrace, verbose levels in <code>Log</code>
+     * @param debug if <code>true</code> logging is set to the most verbose settings.
      */
 	public static void setDebug(boolean debug) {
 		Options.debug = debug;
@@ -455,11 +439,8 @@ public class Options {
         props = new TypedProperties(System.getProperties());
 
         // load the system properties
-        InputStream propStream = null;
-        boolean isReadable = true;
-
-        propStream = Options.class.getResourceAsStream("/etc/use.properties");
-        isReadable =  propStream != null;
+		InputStream propStream = Options.class.getResourceAsStream("/etc/use.properties");
+		boolean isReadable = propStream != null;
 
         if (!isReadable) {
 			System.err.println("property file `etc/use.properties"
@@ -534,47 +515,75 @@ public class Options {
     }
     
     private static void setDimension( String width, String height ) {
-        int dWidth = fDiagramDimension.width;
-        int dHeight = fDiagramDimension.height;
-                
-        dWidth = Integer.parseInt( width );
-        dHeight = Integer.parseInt( height );
-        
+        int dWidth = Integer.parseInt( width );
+        int dHeight = Integer.parseInt( height );
+
         fDiagramDimension.setSize( dWidth, dHeight );
     }
 
 	/**
-	 * @return
+	 * Gets the currently set warning type for the check of
+	 * operations on collections leading to <code>OclAny</code>.
+	 * <p>
+	 * <i>Example</i>:<br/>
+	 * <code>Set{}->including(1)->including('a')</code><br/>
+	 * leads to the following message:<br/>
+	 * <code>Operation call `Set(Integer)->including(String)' results in type `Set(OclAny)'.
+	 * This may lead to unexpected behavior.
+	 * You can change this check using the -oclAnyCollectionsChecks switch.</code>
+	 * </p>
+	 * <p>If set to <code>WarningType::ERROR</code>, expressions resulting <code>OclAny</code>
+	 * are reported as an error. Resp., <code>WarningType::WARN</code> reports a warning.
+	 * If set to <code>WarningType::IGNORE</code> nothing is reported.
+	 * </p>
+	 * @return The configured <code>WarningType</code>
 	 */
 	public static WarningType checkWarningsOclAnyInCollections() {
 		return checkWarningsOclAnyInCollections;
 	}
 
 	/**
-	 * @return
+	 * <p>Gets the currently set warning type for the check of
+	 * unrelated types in comparisons.</p>
+	 * <p>
+	 * <i>Example:</i><br/>
+	 * <code>?Set{} <> Bag{}
+	 * Expression `(Set {} <> Bag {})' can never evaluate to false because `Set(OclVoid)' and `Bag(OclVoid)' are unrelated.
+	 * You can change this check using the -extendedTypeSystemChecks switch.</code></p>
+	 *
+	 * <p>If set to <code>WarningType::ERROR</code>,
+	 * expressions resulting in a collection with element type <code>OclAny</code>
+	 * are reported as an error. Resp., <code>WarningType::WARN</code> reports a warning.
+	 * If set to <code>WarningType::IGNORE</code> nothing is reported.</p>
+	 *
+	 * @return The configured <code>WarningType</code>
 	 */
 	public static WarningType checkWarningsUnrelatedTypes() {
 		return checkWarningsUnrelatedTypes;
 	}
 
 	/**
-	 * 
-	 * @param warningLevel
+	 * Sets warning type for the check of unrelated types in comparisons.
+	 * @see Options#checkWarningsUnrelatedTypes
+	 * @param warningLevel The warning level to set.
 	 */
 	public static void setCheckWarningsUnrelatedTypes(WarningType warningLevel) {
 		checkWarningsUnrelatedTypes = warningLevel;
 	}
-	
+
 	/**
-	 * @param warningLevel
+	 * Sets warning type for the check of OclAny in collections.
+	 * @see Options#checkWarningsOclAnyInCollections
+	 * @param warningLevel The warning level to set.
 	 */
 	public static void setCheckWarningsOclAnyInCollections(WarningType warningLevel) {
 		checkWarningsOclAnyInCollections = warningLevel;
 	}
 
 	/**
-	 * We always use the last directory for file choose operations
-	 * @param dir
+	 * We always use the last directory for file choose operations.
+	 * This <code>Path</code> is stored here.
+	 * @param dir The <code>Path</code> defining the last used directory.
 	 */
 	public static void setLastDirectory(Path dir) {
 		lastDirectory = dir;
@@ -621,9 +630,9 @@ public class Options {
 	
 	/**
 	 * Returns the last opened file with this extension or <code>null</code>
-	 * if none was opened.
-	 * @param extension
-	 * @return
+	 * if none was opened before.
+	 * @param extension The extension to search for.
+	 * @return The last opened file if any. Otherwise <code>null</code>.
 	 */
 	public static Path getRecentFile(String extension) {
 		for (String recent : getRecentFiles().getItems()) {
@@ -638,8 +647,8 @@ public class Options {
 	 * Returns a list of recently opened files with the given
 	 * <code>extension</code>.
 	 * The first element of the list is the most recently opened file. 
-	 * @param extension
-	 * @return
+	 * @param extension The extension to search for.
+	 * @return A <code>List</code> containing all the last opened files with the given extension.
 	 */
 	public static List<Path> getRecentFiles(String extension) {
 		List<Path> result = new LinkedList<>();
@@ -652,20 +661,26 @@ public class Options {
 	}
 	
 	/**
-	 * Returns the USE version.
-	 * @return
+	 * Returns the USE version following (more or less) the semantic versioning pattern (see <a href="https://semver.org">semver.org</a>).
+	 * @return A <code>String</code> representing the USE version.
 	 */
 	public static String getUSEVersion() {
 		return RELEASE_VERSION;
 	}
 	
 	/**
-	 * @param b
+	 * Activates or deactivates the validation of state machine transitions.
+	 * Useful, if an initial system state needs to be created before validation can start.
+	 * @param b The new value
 	 */
 	public static void setCheckTransitions(boolean b) {
 		checkTransitions = b;
 	}
-	
+
+	/**
+	 * Can be queried to determine if validation of state machine transitions is activated or not.
+	 * Useful, if an initial system state needs to be created before validation can start.
+	 */
 	public static boolean getCheckTransitions() {
 		return checkTransitions;
 	}
@@ -673,7 +688,7 @@ public class Options {
 	/**
 	 * Returns the current setting for the check
 	 * of state invariants when the system state changes.
-	 * @return
+	 * @return The current value of the flag
 	 */
 	public static boolean getCheckStateInvariants() {
 		return checkStateInvariants;
@@ -682,7 +697,7 @@ public class Options {
 	/**
 	 * If set to <code>true</code>, state invariants are
 	 * evaluated after every state change.
-	 * @param newValue
+	 * @param newValue The new state of the flag
 	 */
 	public static void setCheckStateInvariants(boolean newValue) {
 		checkStateInvariants = newValue;
