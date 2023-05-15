@@ -36,6 +36,10 @@ import org.tzi.use.uml.ocl.type.Type;
  */
 public class ModelFactory {
 
+    public MMLModel createMLModel(String name) {
+        return new MMLModel(name);
+    }
+
     public MModel createModel(String name) {
         return new MModel(name);
     }

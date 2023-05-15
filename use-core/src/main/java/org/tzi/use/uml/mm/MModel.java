@@ -67,6 +67,7 @@ public class MModel extends MModelElementImpl {
 
 	private Map<String, MPrePostCondition> fPrePostConditions;
 
+	//
 	private String fFilename; // name of .use file
 
 	private Map<String, MSignal> signals;

@@ -5,6 +5,19 @@
 
 // grammar start
 
+
+/*
+    mlm ::= 'mlm' internal_model (internal_model) * EOF
+*/
+
+mlm returns [ASTMLModel n]
+:
+    'mlm' mlmName=IDENT {$n = new ASTMLModel($mlmName);}
+    m=internal_model {$n.addModel($m.n);}
+    (m=internal_model { $n.addModel($m.n); } )*
+    EOF
+    ;
+
 /*
     model ::= internal_model EOF
 */
