@@ -5,9 +5,19 @@
 
 // grammar start
 
+/*
+    model ::= internal_model EOF
+*/
+
+model returns [ASTModel n]
+:
+    m=internal_model {$n=$m.n;}
+    EOF
+    ;
+
 /* ------------------------------------
-  model ::= 
-    "model" id
+  internal_model ::=
+    "internal_model" id
     {   
         classDefinition 
       | associationDefinition 
@@ -16,7 +26,7 @@
       | enumTypeDefinition
     } 
 */
-model returns [ASTModel n]
+internal_model returns [ASTModel n]
 :
 	as = annotationSet
     'model' modelName=IDENT { $n = new ASTModel($modelName); $n.setAnnotations($as.annotations); }
@@ -29,7 +39,6 @@ model returns [ASTModel n]
         )
       | e=enumTypeDefinition { $n.addEnumTypeDef($e.n); }
     )*
-    EOF
     ;
     
 /* ------------------------------------
