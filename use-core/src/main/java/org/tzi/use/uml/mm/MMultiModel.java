@@ -1,17 +1,14 @@
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.type.EnumType;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class MMLModel {
+public class MMultiModel {
     private Map<String, MModel> fModels;
     private String fName;
     private String fFilename; // name of .use file
 
-    public MMLModel(String name) {
+    public MMultiModel(String name) {
         fName = name;
         fModels = new TreeMap<>();
         fFilename = "";

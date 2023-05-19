@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import org.antlr.runtime.Token;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MMLModel;
+import org.tzi.use.uml.mm.MMultiModel;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.type.Type;
@@ -52,7 +52,7 @@ public class Context {
     
     private PrintWriter fErr;
     private PrintWriter fOut;
-    private MMLModel fMMLModel;
+    private MMultiModel fMultiModel;
     private MModel fModel;
     private MClass fCurrentClass;
     private ModelFactory fModelFactory;
@@ -136,8 +136,8 @@ public class Context {
         return fExprContext;
     }
 
-    public void setMLModel(MMLModel model) {
-        fMMLModel = model;
+    public void setMultiModel(MMultiModel model) {
+        fMultiModel = model;
     }
 
     public void setModel(MModel model) {
@@ -147,8 +147,8 @@ public class Context {
     public MModel model() {
         return fModel;
     }
-    public MMLModel mlmodel() {
-        return fMMLModel;
+    public MMultiModel multiModel() {
+        return fMultiModel;
     }
 
 

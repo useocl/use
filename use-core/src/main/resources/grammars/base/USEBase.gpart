@@ -7,12 +7,12 @@
 
 
 /*
-    mlm ::= 'mlm' internal_model (internal_model) * EOF
+    multi_model ::= "multi_model" internal_model (internal_model) * EOF
 */
 
-mlm returns [ASTMLModel n]
+multi_model returns [ASTMultiModel n]
 :
-    'mlm' mlmName=IDENT {$n = new ASTMLModel($mlmName);}
+    'multi_model' mmName=IDENT {$n = new ASTMultiModel($mmName);}
     m=internal_model {$n.addModel($m.n);}
     (m=internal_model { $n.addModel($m.n); } )*
     EOF
@@ -30,7 +30,7 @@ model returns [ASTModel n]
 
 /* ------------------------------------
   internal_model ::=
-    "internal_model" id
+    "model" id
     {   
         classDefinition 
       | associationDefinition 
