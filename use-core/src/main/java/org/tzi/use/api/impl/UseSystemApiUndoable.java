@@ -25,6 +25,7 @@ import java.util.List;
 import javax.naming.OperationNotSupportedException;
 
 import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.main.Session;
 import org.tzi.use.uml.mm.MAssociation;
@@ -70,6 +71,10 @@ public class UseSystemApiUndoable extends UseSystemApi {
 	
 	public UseSystemApiUndoable(MModel model) {
 		super(model);
+	}
+
+	public UseSystemApiUndoable(UseModelApi api){
+		super(api);
 	}
 	
 	@Override

@@ -59,11 +59,11 @@ public class MModel extends MModelElementImpl {
 
 	private Map<String, MClass> fClasses;
 
-	private Map<String, MAssociation> fAssociations;
+	protected Map<String, MAssociation> fAssociations;
 
 	private DirectedGraph<MClassifier, MGeneralization> fGenGraph;
 
-	private Map<String, MClassInvariant> fClassInvariants;
+	protected Map<String, MClassInvariant> fClassInvariants;
 
 	private Map<String, MPrePostCondition> fPrePostConditions;
 

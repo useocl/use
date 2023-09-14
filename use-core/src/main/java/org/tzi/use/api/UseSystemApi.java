@@ -101,6 +101,11 @@ public abstract class UseSystemApi {
 		this.system = system;
 		this.modelApi = new UseModelApi(system.model());
 	}
+
+	protected UseSystemApi(UseModelApi api) {
+		this.system = new MSystem(api.getModel());
+		this.modelApi = api;
+	}
 	
 	/**
 	 * Provides access to the encapsulated {@link MSystem} instance.
