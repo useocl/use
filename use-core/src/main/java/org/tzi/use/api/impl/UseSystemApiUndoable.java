@@ -73,6 +73,12 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		super(model);
 	}
 
+	/**
+	 * Initializes a new instance of the {@link UseSystemApiUndoable} class by inheriting the constructor
+	 * from the {@link UseSystemApi} class.
+	 *
+	 * @param api The {@link UseModelApi} instance to be passed to the parent class constructor.
+	 */
 	public UseSystemApiUndoable(UseModelApi api){
 		super(api);
 	}
